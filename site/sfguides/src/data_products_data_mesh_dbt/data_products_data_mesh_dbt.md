@@ -10,7 +10,7 @@ authors: Sean McIntyre, Doug Guthrie
 # Build Data Products and a Data Mesh with dbt Cloud
 
 <!-- ------------------------ -->
-## Introduction
+## Overview
 Duration: 5
 
 Welcome to the Build Data Products and Data Mesh with dbt Cloud Quickstart guide! Before you begin getting your hands into the technology, let's define what a data mesh is and describe what motivates the topic.
@@ -66,14 +66,6 @@ The properties of a data product are:
 - **Secure and governed:** it has proper access controls
 - **Useful:** it has value
 
-### Learning more
-
-To learn more about data mesh, you may refer to dbt Labs' [Guide to Data Mesh e-book](https://8698602.fs1.hubspotusercontent-na1.net/hubfs/8698602/Guide%20to%20data%20mesh%20eBook%20V2.pdf).
-
-<!-- ------------------------ -->
-## About this guide
-Duration: 5
-
 ### What this guide covers
 
 Throughout this guide, imagine yourself building a data platform with Snowflake and dbt Cloud for your organization, starting with two teams:
@@ -81,17 +73,12 @@ Throughout this guide, imagine yourself building a data platform with Snowflake 
 1. **Central data team:** a team of experienced data engineers who build foundational data marts in Snowflake organized in a star schema of fact and dimensional tables
 2. **Finance team:** a team that includes data analysts in the finance department who want to own their data and data processes
 
-Each step of the guide will show you how to use features of both Snowflake and dbt Cloud to achieve building **data products**. As mentioned in the introduction, data products have the following properties:
+Each step of the guide will show you how to use features of both Snowflake and dbt Cloud to achieve building **data products**.
 
-- **Discoverable:** it is easy to find
-- **Addressable:** it has a unique, labeled location for retrieval
-- **Trustworthy and truthful:** it is worthy of consumer trust
-- **Self-describing:** it comes with product information
-- **Interoperable:** it works with other products
-- **Secure and governed:** it has proper access controls
-- **Useful:** it has value
-
-At the end of this guide, you will have achieved **federated governance** and a small scale **data mesh** by using **self-service data platforms**, as an alternative to a monolithic data architecture, which may be slow and brittle at scale.
+At the end of this guide, you will have achieved:
+- **Federated governance**
+- A small scale **data mesh** 
+- And **self-service data platforms**, as an alternative to a monolithic data architecture
 
 ### What this guide doesn't cover
 
@@ -128,14 +115,6 @@ In the following step within this Quickstart Guide, you will be given instructio
 > aside negative
 > 
 > **You should use a dbt Cloud Enterprise account.** It is possible to complete most of the steps with other editions of dbt Cloud, but some steps require Enterprise.
->
-> If you are participating in the **Snowflake Summit Hands On Lab session**, [please use this form](https://forms.gle/S7P9Rw1Udbfxf7TdA) to submit your account information so your account can be upgraded for the duration of the Hands On Lab.
->
-> Otherwise, you may receive a dbt Cloud Enterprise account for evaluation purposes by [requesting one from the dbt Labs team](https://www.getdbt.com/contact).
-
-#### Basic dbt familiarity
-
-To get the most out of this course, it is recommended you know the basics of dbt. To gain basic dbt familiarity, please do [dbt Fundamentals](https://courses.getdbt.com/courses/fundamentals) first.
 
 <!-- ------------------------ -->
 ## Launch Snowflake and dbt Cloud for this Quickstart
@@ -145,7 +124,9 @@ In this step, you will set up Snowflake and dbt Cloud accounts for use in the re
 
 ### Sign up for a Snowflake Enterprise trial account
 
-Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the steps. **Make sure to select an Enterprise account.**  You'll also be prompted to select a cloud provider - Microsoft Azure, Amazon Web Services, or Google Cloud Platform.  Choose the one that makes the most sense for you. <br>
+Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the steps. A few things to note:
+- **Make sure to select an Enterprise account.**
+- Select a cloud provider - Microsoft Azure, Amazon Web Services, or Google Cloud Platform.  Choose the one that makes the most sense for you. - Additionally, select a region.  Select one of the US West regions as it's known to have partner connect available.
 
 ![Snowflake Cloud Provider](assets/snowflake_cloud_provider.png)<br>
 
@@ -183,11 +164,15 @@ When prompted to either explore a sample data set or load data into snowflake, s
 
     ![Activate Partner Connect](assets/snowflake_activate_partner_connect.png)
 
-6. You should be redirected to a dbt Cloud registration page. Fill out the form and make sure to save the password somewhere for login in the future.
+6. You should be redirected to a dbt Cloud registration page. If your email is already associated with a dbt Cloud account, you'll see the screen below.  Fill out the Account Name and click "Complete Registration".  That will then redirect you to the login screen.  Fill out the form and make sure to save the password somewhere for login in the future. <br>
 
-    ![dbt Cloud Registration](assets/dbt_Cloud_registration.png)
+    ![dbt Cloud Registration - Already Exists](assets/dbt_registration_page.png)
 
-7. Click on `Complete Registration`. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
+If this is your first time in dbt Cloud, you'll see the screen below.  Add your Account Name and a password for your user.
+
+  ![dbt Cloud Registration - New User](assets/dbt_registration_page_2.png)
+
+7. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
 
     ![dbt Cloud Home Page](assets/dbt_Cloud_home_page.png)
 
@@ -216,7 +201,9 @@ In the Snowflake UI, click on `Projects` in the lefthand sidebar, then `Workshee
 
 ![Snowflake SQL Worksheet](assets/snowflake_sql_worksheet.png)
 
-Then copy the code below, paste it into the worksheet, select all (Ctrl + A or Cmd + A), and Execute (Ctrl + Enter or Cmd + Enter or Click the blue play icon in the top right)
+Then copy the code below, paste it into the worksheet, and either:
+- Select all of the code (Ctrl + A or Cmd + A) and Execute (Ctrl + Enter or Cmd + Enter) or
+- Click the dropdown next to the blue play icon in the top right and select Run All
 
 ```sql
 use role accountadmin;
@@ -262,18 +249,21 @@ grant usage on database finance_db to role finance_role;
 grant usage on schema finance_db.prod to role finance_role;
 grant select on all tables in schema finance_db.prod to role finance_role;
 
-grant usage on database foundational_db to role finance_role;
-grant usage on schema foundational_db.prod to role finance_role;
-grant select on all tables in schema foundational_db.prod to role finance_role;
+grant create schema on database finance_db to role finance_role;
+grant create table on schema finance_db.prod to role finance_role;
+grant create view on schema foundational_db.prod to role finance_role;
 ```
 
 ### Grant yourself permissions
 
-To get this all working correctly, make sure to assign the relevant roles to your own Snowflake database user.  **Ensure that you're replacing <your-snowflake-username> in the script below with your Snowflake username.**.
+To get this all working correctly, make sure to assign the relevant roles to your own Snowflake database user.  **Ensure that you're replacing <your-snowflake-username> in the script below with your Snowflake username.**.  If you've forgotten your username, you can find it in the bottom left icon -> My Profile.
+
+    ![dbt Cloud Registration](assets/snowflake_my_profile.png)
 
 ```sql
 use role accountadmin;
 
+grant role foundational_role to user pc_dbt_user;
 grant role foundational_role to user <your-snowflake-username>;
 grant role foundational_pii_reader_role to user <your-snowflake-username>;
 grant role finance_role to user <your-snowflake-username>;
@@ -305,38 +295,23 @@ You will notice that you need to input your Snowflake credentials and resources 
 
 ### Create the foundational project for the central data team
 
-Now you will create the foundational project in dbt Cloud, which is to be exclusively developed by the central data team. It is sometimes referred to as the **Upstream Project** when other dbt projects build upon it. Here are the steps:
+Now you will create the foundational project in dbt Cloud, which is to be exclusively developed by the central data team. It is sometimes referred to as the **Upstream Project** when other dbt projects build upon it. We can use the project that was already created for us by Partner Connect:
 
 1. Click the gear icon in the top-right corner of the navbar and then select **Account Settings**.
-2. From **Account settings**, select projects in the left sidebar, and then click **+ New Project** near the top-right corner.
-2. In the **Project name** field, enter `Foundational Project` and click **Continue**.
-3. Select **Snowflake** as your data platform, then **Next** to set up your connection.
-4. In the **Configure your environment** section, enter the **Settings** for your new project.
-  - Account: The Snowflake account you are operating in.
-  - Optional settings:
-    - Role: `foundational_role`
-    - Database: `foundational_db`
-    - Warehouse: `foundational_wh`
-  - Development credentials:
-    - Auth method: `Username and password`
-    - Username: Your Snowflake username
-    - Password: Your Snowflake password
-5. Click **Test Connection**. This verifies that dbt Cloud can access your data platform account.
-6. Click **Next** if the test succeeded. If it fails, you might need to go back and double-check your settings.
-7. Select Managed Repo, name it `foundational_repo`, and click "Create".
-8. In the "Deployment Environments" section in the middle of the screen, click "Create Environment".
-9. In the **Create new Environment** section, enter the settings for your environment.
-  - Environment name: `Production`
-  - Deployment type: `Production` (This should already be set appropriately.)
-  - dbt version: `Keep on latest version`
-  - Deployment connection:
-    - These are optional and allow for creating overrides for the connection we set up when creating the project.  You can leave these as is.
-  - Deployment credentials:
-    - Auth method: `Username and password`
-    - Username: Your Snowflake username
-    - Password: Your Snowflake password
-    - schema: `prod`
-  - Test the connection (bottom of form) and then save (top-right of form) once successful.
+2. From **Account settings**, select projects in the left sidebar, and then click your single project, **Partner Connect Trial**.
+3. Click the "Edit" button in the bottom right, rename your project to `Foundational Project`, and click "Save" in the bottom right.  When prompted with "Your change will impact all users", click "Continue".
+4. Now select the Deploy dropdown in the navbar -> Environments
+5. You'll notice that two environments have already been created for you:  Deployment and Development.  We're going to update our Deployment environment to use some of the objects we created earlier in Snowflake.  **Click on "Deployment"**.  Then, select the "Settings" button in the top-right corner of the page.
+6. We want to change several things here, so select the "Edit" button in the top-right corner.
+- Environment name: `Production`
+- Deployment Type: `Production`
+- Role: `foundational_role`
+- Database: `foundational_db`
+- Warehouse: `foundational_wh`
+- Username: <your-snowflake-username>
+- Password: <your-snowflake-password>
+- Schema: `prod`
+- **Click Save**
 
 **Normally, we'd use a service account here to write to the production space**
 
@@ -354,20 +329,20 @@ Meanwhile, the finance team will build on these foundations, and add more specif
 2. In the **Project name** field, enter `Finance Project` and click **Continue**.
 3. Select **Snowflake** as your data platform, then **Next** to set up your connection.
 4. In the **Configure your environment** section, enter the **Settings** for your new project.
-  - Account: The Snowflake account you are operating in
+  - Account: Your Snowflake Account identifier.  If you're not sure what this is, it can be found within your existing Snowflake connection setup in your `Foundational Project` (Account Settings > Projects > Foundational Project > Snowflake)
   - Optional settings:
     - Role: `finance_role`
     - Database: `finance_db`
     - Warehouse: `finance_wh`
   - Development credentials:
     - Auth method: `Username and password`
-    - Username: Your Snowflake username
-    - Password: Your Snowflake password
+    - Username: <your-snowflake-username>
+    - Password: <your-snowflake-password>
 5. Click **Test Connection**. This verifies that dbt Cloud can access your data platform account.
 6. Click **Next** if the test succeeded. If it fails, you might need to go back and double-check your settings.
 7. Select Managed Repo, and name it `finance_repo`.
-8. In the "Deployment Environments" section in the middle of the screen, click "Create Environment".
-9. In the **Create new Environment** section, enter the settings for your environment.
+8. Now select the Deploy dropdown in the navbar -> Environments
+9. Select the "Create environment" button in the top-right
   - Environment name: `Production`
   - Deployment type: `Production` (This should already be set appropriately.)
   - dbt version: `Keep on latest version`
@@ -375,8 +350,8 @@ Meanwhile, the finance team will build on these foundations, and add more specif
     - These are optional and allow for creating overrides for the connection we set up when creating the project.  You can leave these as is.
   - Deployment credentials:
     - Auth method: `Username and password`
-    - Username: Your Snowflake username
-    - Password: Your Snowflake password
+    - Username: <your-snowflake-username>
+    - Password: <your-snowflake-password>
     - schema: `prod`
   - Test the connection (bottom of form) and then save (top-right of form) once successful.
 
@@ -414,7 +389,7 @@ Now it's time for you to add dbt code in the foundational project using the dbt 
 Here are the steps:
 
 1. Navigate back to the foundational project via the account / project dropdown in the top-right section of the navbar.
-2. First, navigate to the **Cloud IDE** via the **Develop** dropdown in the navbar to verify your setup.
+2. Then, navigate to the **Cloud IDE** via the **Develop** dropdown in the navbar to verify your setup.
 3. If the repo you are working on is empty, click the **Initialize dbt project** button and commit the changes.
 4. Create a new branch.
 5. Delete the `models/example` folder.  
@@ -999,11 +974,13 @@ You have now completed your data product journey!
 - ✅ **Useful:** it has value
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion and Resources
 Duration: 5
 
 During this quickstart guide, you tried out native features of Snowflake and dbt Cloud that can be combined to create data products. By using dbt Cloud, you gained additional governance, automation, and interoperability mechanisms than from Snowflake alone. Overall, these two self-service platforms combined increase the likelihood of success of a data mesh project.
 
 If you are interested in this solution for your organization, [contact dbt Labs](https://www.getdbt.com/contact) to get started!
+
+To learn more about data mesh, you may refer to dbt Labs' [Guide to Data Mesh e-book](https://8698602.fs1.hubspotusercontent-na1.net/hubfs/8698602/Guide%20to%20data%20mesh%20eBook%20V2.pdf).
 
 ![Discover project recommendations](assets/data-domains.png)
