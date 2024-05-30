@@ -96,38 +96,6 @@ where
 ```
 
 <!-- ------------------------ -->
-## **Account Usage Queries**
-Duration: 10
-
-- [Account Usage](https://docs.snowflake.com/en/sql-reference/account-usage) is a powerful tool in an administrator's toolbox to identify optimization opportunites. Apart from metadata about objects in the Snowflake account, it  contains usage metrics related to all services consumed in the account - Credits, Storage, Data Transfer. 
-- In addition, [Query History](https://docs.snowflake.com/en/sql-reference/account-usage/query_history) contains all information related to a query - metrics for each operation in a query, rows scanned, warehouse used, query text etc. The below queries are examples for viewing results of different views in Account Usage schema.
-
-#### SQL
-```sql
--- SETTING CONTEXT FOR THE SESSION --
-USE ROLE ACCOUNTADMIN;
-USE SCHEMA SNOWFLAKE.ACCOUNT_USAGE;
-
-use warehouse hol_compute_wh;
-
--- SAMPLE ACCOUNT USAGE QUERIES
--- Warehouse Usage Metrics
-select * from snowflake.account_usage.warehouse_metering_history limit 10;
-
--- Access History for objects used in queries
-select * from snowflake.account_usage.access_history limit 10;
-
--- Snowpipe Usage Metrics
-select * from snowflake.account_usage.pipe_usage_history limit 10;
-
--- Storage Metrics
-select * from snowflake.account_usage.storage_usage limit 10;
-
--- Table Storage Detailed Metrics
-select * from snowflake.account_usage.table_storage_metrics limit 10;
-```
-
-<!-- ------------------------ -->
 ## **Warehouse Controls**
 Duration: 10
 
@@ -163,6 +131,38 @@ CREATE OR REPLACE RESOURCE MONITOR Credits_Quota_Monitoring
 
 -- Activating a resource monitor
 alter warehouse hol_compute_wh set resource_monitor=Credits_Quota_Monitoring;
+```
+
+<!-- ------------------------ -->
+## **Account Usage Queries**
+Duration: 10
+
+- [Account Usage](https://docs.snowflake.com/en/sql-reference/account-usage) is a powerful tool in an administrator's toolbox to identify optimization opportunites. Apart from metadata about objects in the Snowflake account, it  contains usage metrics related to all services consumed in the account - Credits, Storage, Data Transfer. 
+- In addition, [Query History](https://docs.snowflake.com/en/sql-reference/account-usage/query_history) contains all information related to a query - metrics for each operation in a query, rows scanned, warehouse used, query text etc. The below queries are examples for viewing results of different views in Account Usage schema.
+
+#### SQL
+```sql
+-- SETTING CONTEXT FOR THE SESSION --
+USE ROLE ACCOUNTADMIN;
+USE SCHEMA SNOWFLAKE.ACCOUNT_USAGE;
+
+use warehouse hol_compute_wh;
+
+-- SAMPLE ACCOUNT USAGE QUERIES
+-- Warehouse Usage Metrics
+select * from snowflake.account_usage.warehouse_metering_history limit 10;
+
+-- Access History for objects used in queries
+select * from snowflake.account_usage.access_history limit 10;
+
+-- Snowpipe Usage Metrics
+select * from snowflake.account_usage.pipe_usage_history limit 10;
+
+-- Storage Metrics
+select * from snowflake.account_usage.storage_usage limit 10;
+
+-- Table Storage Detailed Metrics
+select * from snowflake.account_usage.table_storage_metrics limit 10;
 ```
 
 <!-- ------------------------ -->
@@ -257,7 +257,7 @@ WHERE   ah.table_name is NULL
 ## **Automatic Clustering**
 Duration: 10
 
-This section covers [Automatic Clustering](https://docs.snowflake.com/en/user-guide/tables-auto-reclustering)
+This section covers [Automatic Clustering](https://docs.snowflake.com/en/user-guide/tables-auto-reclustering). Automatic Clustering is a Snowflake managed service that manages reclustering (as needed) of clustered tables. Reclustering is the process of reordering data in tables to colocate rows that have same cluster key values, which reduces the number of micro-partitions that need to be scanned during execution of a query thereby reducing execution times and help with efficient query execution on smaller sized warehouses. 
 
 #### SQL
 ```sql
@@ -303,7 +303,7 @@ WHERE   l_shipdate BETWEEN '1995-01-01' AND '1995-03-01'
 ## **Materialized Views**
 Duration: 5
 
-This section covers use of [Materialized Views](https://docs.snowflake.com/en/user-guide/views-materialized) as an option to optimize Snowflake workloads.
+This section covers use of [Materialized Views](https://docs.snowflake.com/en/user-guide/views-materialized) as an option to optimize Snowflake workloads. A materialized view is a pre-computed data set derived from a query specification and stored for later use. Because the data is pre-computed, querying a materialized view is faster than executing a query against the base table of the view. This performance difference can be significant when a query is run frequently or is sufficiently complex. As a result, materialized views can speed up expensive aggregation, projection, and selection operations, especially those that run frequently and that run on large data sets.
 
 #### SQL
 ```sql
@@ -338,7 +338,14 @@ GROUP BY
 ## **Query Acceleration**
 Duration: 10
 
-This section covers use of [Query Acceleration](https://docs.snowflake.com/en/user-guide/query-acceleration-service)
+This section covers use of [Query Acceleration Service](https://docs.snowflake.com/en/user-guide/query-acceleration-service) which can accelerate parts of a query workload in a warehouse. When it is enabled for a warehouse, it can improve overall warehouse performance by reducing the impact of outlier queries, which are queries that use more resources than the typical query. The query acceleration service does this by offloading portions of the query processing work to shared compute resources that are provided by the service.
+
+Examples of the types of workloads that might benefit from the query acceleration service include:
+- Ad hoc analytics.
+- Workloads with unpredictable data volume per query.
+- Queries with large scans and selective filters.
+
+The query acceleration service can handle these types of workloads more efficiently by performing more work in parallel and reducing the wall-clock time spent in scanning and filtering.
 
 #### SQL
 ```sql
@@ -421,7 +428,15 @@ SELECT SYSTEM$ESTIMATE_QUERY_ACCELERATION('');
 ## **Search Optimization**
 Duration: 10
 
-This section covers use of [Search Optimization](https://docs.snowflake.com/en/user-guide/search-optimization-service)
+This section covers use of [Search Optimization](https://docs.snowflake.com/en/user-guide/search-optimization-service) which can significantly improve the performance of certain types of lookup and analytical queries. The search optimization service aims to significantly improve the performance of certain types of queries on tables, such as:
+- Selective point lookup queries on tables
+- Substring and regular expression searches
+- Queries on fields in VARIANT, OBJECT, and ARRAY (semi-structured) columns that use the following types of predicates: EQUALITY, IN, ARRAY_CONTAINS, ARRAYS_OVERLAP etc. 
+- Queries that use selected geospatial functions with GEOGRAPHY values
+
+The search optimization service is generally transparent to users. Queries work the same as they do without search optimization; some are just faster. To improve performance of search queries, the search optimization service creates and maintains a persistent data structure called a search access path. The search access path keeps track of which values of the table’s columns might be found in each of its micro-partitions, allowing some micro-partitions to be skipped when scanning the table.
+
+A maintenance service is responsible for creating and maintaining the search access path.
 
 #### SQL
 ```sql
@@ -430,7 +445,7 @@ USE ROLE ACCOUNTADMIN;
 USE WAREHOUSE hol_compute_wh;
 USE SCHEMA OPT_HOL.DEMO;
 
-SELECT SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS('OPT_HOL.DEMOO.CATALOG_RETURNS')
+SELECT SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS('OPT_HOL.DEMO.CATALOG_RETURNS')
   AS estimate_for_table_without_search_optimization;
 
 SELECT SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS('OPT_HOL.DEMO.CATALOG_RETURNS', 'EQUALITY(CR_ITEM_SK)')

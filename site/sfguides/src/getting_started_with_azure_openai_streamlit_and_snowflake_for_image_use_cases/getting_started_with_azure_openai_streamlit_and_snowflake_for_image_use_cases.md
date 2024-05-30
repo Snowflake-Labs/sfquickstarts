@@ -53,7 +53,7 @@ This use case will leverage sample urls along with sample images that will be pa
 
 Duration: 10
 
-For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to [platform.openi.com/api-keys](platform.openi.com/api-keys) and create a new secret key as it looks below. Make note of the model name and keyas you will need this to generate a response. 
+For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to login and navigate to api-keys in your openai account and create a new secret key as it looks below. Make note of the model name and keyas you will need this to generate a response. 
 
 ![](assets/openai.png)
 
