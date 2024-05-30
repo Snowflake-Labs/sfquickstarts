@@ -1,7 +1,6 @@
 author: AUTHOR_NAME
 id: SFGUIDE_NAME
 summary: This is a sample Snowflake Guide
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started
 environments: web
 status: Published 
@@ -169,15 +168,19 @@ Videos from youtube can be directly embedded:
 ![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Duration: 1
 
 At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
 
 If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
 
-### What we've covered
+### What You Learned
 - creating steps and setting duration
 - adding code snippets
 - embedding images, videos, and surveys
 - importing other markdown files
+
+### Related Resources
+- <link to github code repo>
+- <link to documentation>

@@ -329,7 +329,7 @@ SELECT
     chunk_number, 
     chunk_text, 
     combined_chunk_text,
-    snowflake.cortex.embed_text('e5-base-v2', combined_chunk_text) as combined_chunk_vector
+    snowflake.cortex.embed_text_768('e5-base-v2', combined_chunk_text) as combined_chunk_vector
 FROM 
     repair_manuals_chunked;
 
@@ -355,7 +355,7 @@ AS
             v.file_name,
             v.chunk_number,
             v.chunk_text,
-            VECTOR_COSINE_DISTANCE(v.combined_chunk_vector, snowflake.cortex.embed_text('e5-base-v2', prompt)) AS score
+            VECTOR_COSINE_SIMILARITY(v.combined_chunk_vector, snowflake.cortex.embed_text_768('e5-base-v2', prompt)) AS score
         FROM 
             repair_manuals_chunked_vectors v
         ORDER BY 
@@ -498,7 +498,7 @@ SELECT
     equipment_id,
     problem_reported,
     resolution_notes,
-    snowflake.cortex.embed_text('e5-base-v2', combined_text) as combined_vector
+    snowflake.cortex.embed_text_768('e5-base-v2', combined_text) as combined_vector
 FROM repair_logs_formatted;
 
 --Validate
@@ -521,9 +521,9 @@ AS
        WITH best_match_repair_logs AS (
             SELECT 
                 *, 
-                VECTOR_COSINE_DISTANCE(
+                VECTOR_COSINE_SIMILARITY(
                     combined_vector,
-                    snowflake.cortex.embed_text('e5-base-v2', prompt)
+                    snowflake.cortex.embed_text_768('e5-base-v2', prompt)
                 ) AS score
             FROM
                 repair_logs_vectors

@@ -34,11 +34,12 @@ The Snowflake Native App Framework is a fantastic way for Snowflake application 
 ### What You'll need
 
 * A Snowflake account in AWS
-* A Snowflake user created with ACCOUNTADMIN permissions - this is more than is strictly necessary and you can read more about the permissions required [here](https://docs.snowflake.com/en/sql-reference/sql/create-application-package#access-control-requirements)
+* A Snowflake user created with **ACCOUNTADMIN** permissions - this is more than is strictly necessary and you can read more about the permissions required [here](https://docs.snowflake.com/en/sql-reference/sql/create-application-package#access-control-requirements). You MUST execute the entire tutorial using the **accountadmin** role.
+* You must have setup your preferred connection using the latest **Snowflake CLI** version available, which can be downloaded **[here](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)**.
 
+### Snowflake CLI
 
-
-
+Snowflake CLI is a command-line tool that allow the developers to execute powerful and simplified SQL operations. New features are added continuously and it is a preview feature itself, but it is available for all accounts. It is important to keep the CLI updated to ensure the newest features and bug fixes.
 
 ### The Scenario
 The scenario is as follows. You are a Snowflake Native Application provider. Your application requires the consumer of the application to pass in a column in a table that contains an IP address and you will write out enhanced data for that particular IP address to another column in the same consumer defined table.
@@ -63,7 +64,7 @@ The first solution is not really what we want to be doing because the consumer w
 
 > aside positive
 > 
-> **Note** - The following steps explain how to create the app using the Snowflake CLI, as this option presents as a faster, more straightforward way to build Native Apps. You can also accomplish it by manually creating the folder structure and executing the SQL commands in Snowsight, but this alternative is out of the scope for this Quickstart.
+> **Note** - The following steps explain how to create the app using the **Snowflake CLI**, as this option presents as a faster, more straightforward way to build Native Apps. You can also accomplish it by manually creating the folder structure and executing the SQL commands in Snowsight, but this alternative is out of the scope for this Quickstart. Remember to have the latest CLI version installed.
 
 <!-- ------------------------ -->
 ## Project Structure
@@ -101,18 +102,18 @@ From the project's root, create a new folder and name it **scripts**, inside, cr
 
 Finally, replace the content of **snowflake.yml** file with the following code:
 
-    ```sh
-    definition_version: 1
-    native_app:
-    name: IP2LOCATION_STREAMLIT
-    source_stage: app_src.stage
-    artifacts:
-        - src: app/*
-        dest: ./
-    package:
-        scripts:
-        - scripts/setup_package_script.sql
-    ```
+```sh
+definition_version: 1 
+native_app:
+name: IP2LOCATION_STREAMLIT
+source_stage: app_src.stage
+artifacts:
+    - src: app/*
+      dest: ./
+package:
+    scripts:
+    - scripts/setup_package_script.sql
+```
 
 
 Finally, the tree structure inside your project structure should look like this:
@@ -120,8 +121,7 @@ Finally, the tree structure inside your project structure should look like this:
 <img src="assets/folder_structure.png" width="288" />
 
 
-### Snowflake CLI
-Snowflake CLI is a tool that allow you to issue simple and powerful commands directly to your Snowflake account. You can find more information and installation instructions [here](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation).
+
 
 
 
@@ -182,26 +182,29 @@ file_format = LOCATION_CSV;" --database ip2location --schema ip2location
 snow stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location 
 
 # Copy the csv file from the stage to load the table
-snow sql -q "
-copy into litedb11 from @location_data_stage
+snow sql -q "copy into litedb11 from @location_data_stage
 files = ('IP2LOCATION-LITE-DB11.CSV')
 ;" --database ip2location --schema ip2location
 
 # Simple query test to ensure the table is correctly filled.
-snow sql -q "SELECT COUNT(*) FROM LITEDB11;
+snow sql -q "
+SELECT COUNT(*) FROM LITEDB11;
 SELECT * FROM LITEDB11 LIMIT 10;" --database ip2location --schema ip2location
 
 # Create test database and schema.
-snow sql -q "CREATE DATABASE IF NOT EXISTS TEST_IPLOCATION;
-CREATE SCHEMA IF NOT EXISTS TEST_IPLOCATION;
+snow sql -q "
+DATABASE IF NOT EXISTS TEST_IPLOCATION;
+CREATE SCHEMA IF NOT EXISTS TEST_IPLOCATION;"
 
 # Create test table to insert some values
+snow sql -q "
 CREATE OR REPLACE TABLE TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA (
 	IP VARCHAR(16),
 	IP_DATA VARIANT
-);
+);"
 
 # Insert testing values to use later on
+snow sql -q "
 INSERT INTO TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
 ```
 
@@ -217,12 +220,7 @@ Duration: 5
 
 > aside positive
 > 
-> **Note** - This code is here to illustrate how would you normally do the app creation using the manual steps, but **this step is executed automatically by the CLI**, for example, in a manual environment you will need to update your files to a stage, but that is managed by the **`snow app run`** command.  In the following steps there will be instructions on how to execute it.
-
-
-> aside positive
-> 
-> **Note** - You need to replace the content in the **setup_package_script.sql** file with the following code. The **{{ package_name }}** directive, allows the application to use whatever name the app package has, according to myoury system username, as a code variable.
+> **Note** - You will need to replace the content in the **setup_package_script.sql** file with the following code. The **{{ package_name }}** directive, allows the application to use whatever name the app package has, according to the user's system username, as a code variable.
 
 ```sql
 --Create a schema in the applcation package
@@ -263,6 +261,7 @@ The named stage in this example is the stage with the label **APPLICATION_STAGE*
 ```yaml
 manifest_version: 1
 artifacts:
+  readme: README.md
   setup_script: setup_script.sql
   default_streamlit: ui."Dashboard"
 

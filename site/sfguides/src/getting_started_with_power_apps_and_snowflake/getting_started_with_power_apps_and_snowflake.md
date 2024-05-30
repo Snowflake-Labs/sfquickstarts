@@ -97,7 +97,7 @@ Now we need to set up an app registration for Active Directory (Entra ID) OAuth,
 
 1.	In [Step 1: Configure the OAuth Resource in Azure AD](https://docs.snowflake.com/en/user-guide/oauth-azure#configure-the-oauth-resource-in-azure-ad), follow steps 1-10 and define the scope as SESSION:ROLE-ANY by following these [instructions](https://docs.snowflake.com/en/user-guide/oauth-azure#using-any-role-with-external-oauth).
 2.	In [Step 2: Create an OAuth Client in Azure AD](https://docs.snowflake.com/en/user-guide/oauth-azure#create-an-oauth-client-in-azure-ad), follow steps 1-13.
-3.	Navigate to Authentication -> Platform configurations -> Add a platform -> Add "https://global.consent.azure-apim.net/redirect" -> Click Save. Ensure that the redirect URL is set in the Snowflake OAuth Client and not the Snowflake OAuth Resource.
+3.	Navigate to Authentication -> Platform configurations -> Add a platform -> Add "https://global.consent.azure-apim.net/redirect/snowflakepa" -> Click Save. Ensure that the redirect URL is set in the Snowflake OAuth Client and not the Snowflake OAuth Resource.
 4.	Go to the resource created in Step 1 and go to Expose an API -> Add a client application -> Add your APPLICATION_CLIENT_ID from earlier in step 3 above -> Click Save
 5.	Follow [Step 3: Collect Azure AD Information for Snowflake](https://docs.snowflake.com/en/user-guide/oauth-azure#collect-azure-ad-information-for-snowflake) entirely.
 6.	If you have already established a connection using the Snowflake certified connector, Update existing security integration in Snowflake.  
