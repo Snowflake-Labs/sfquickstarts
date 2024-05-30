@@ -128,7 +128,7 @@ Then, click `Start` and run the Notebook start to finish! Repeat this process wi
 ## Set up the data in Snowflake
 Duration: 7
 
-Open the following notebook and run each of the cells: [1_sf_nb_snowflake_ml_data_ingest](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/1_sf_nb_snowflake_ml_data_ingest.ipynb)
+Open the following notebook in Snowflake Notebooks and run each of the cells: [1_sf_nb_snowflake_ml_data_ingest](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/1_sf_nb_snowflake_ml_data_ingest.ipynb)
 
 Within this notebook, we will clean and ingest the `diamonds` dataset into a Snowflake table from an external stage. The `diamonds` dataset has been widely used in data science and machine learning, and we will use it to demonstrate Snowflake's native data science transformers throughout this quickstart. 
 
@@ -138,7 +138,7 @@ The overall goal of this ML project is to predict the price of diamonds given di
 ## ML Feature Transformations
 Duration: 10
 
-Open the following notebook and run each of the cells: [2_sf_nb_snowflake_ml_feature_transformations.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/2_sf_nb_snowflake_ml_feature_transformations.ipynb)
+Open the following notebook in Snowflake Notebooks and run each of the cells: [2_sf_nb_snowflake_ml_feature_transformations.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/2_sf_nb_snowflake_ml_feature_transformations.ipynb)
 
 In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Modeling. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
 
@@ -146,7 +146,7 @@ In this notebook, we will walk through a few transformations on the `diamonds` d
 ## ML Model Training and Inference
 Duration: 15
 
-Open the following jupyter notebook and run each of the cells: [3_sf_nb_snowflake_ml_model_training_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/3_sf_nb_snowflake_ml_model_training_inference.ipynb)
+Open the following notebook in Snowflake Notebooks and run each of the cells: [3_sf_nb_snowflake_ml_model_training_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/3_sf_nb_snowflake_ml_model_training_inference.ipynb)
 
 In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Modeling. We also show how to execute batch inference through the Snowflake Model Registry.
 
