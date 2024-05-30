@@ -1,31 +1,38 @@
 author: caleb-baechtold
 id: getting_started_with_snowpark_pandas
-summary: Through this quickstart guide, you will learn how to use the Snowpark Pandas API
+summary: Through this quickstart guide, you will learn how to use the Snowpark pandas API
 categories: Getting-Started
 environments: web
 status: Draft 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
-# Getting Started with Snowpark Pandas
+# Getting Started with Snowpark pandas
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will explore how to get started with the [Snowpark Pandas API]().
+Through this quickstart guide, you will explore how to get started with the [Snowpark pandas API](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas) and do large-scale data processing, analysis, and transformation using familiar pandas programming constructs.
 
 ### What is Snowpark?
 
-Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
+Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake. Snowpark can be used to build data pipelines, ML models, apps, and other data processing tasks.
+
+![snowpark](./assets/snowpark_overview.png)
 
 **Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark API for data pipelines and apps and the Snowpark ML API for end to end machine learning.
 
-**Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtimes include Python, Java, and Scala in virtual warehouses with CPU compute or Snowpark Container Services (public preview) to execute any language of choice with CPU or GPU compute.
+**Code Execution Environments** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtime options include: Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
 
 Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
-### What is Snowpark Pandas?
+### What is Snowpark pandas?
 
-[Snowpark Pandas]() is a new Python library that unlocks the power of Snowflake for pandas developers. pandas is the go-to data processing library for millions worldwide, including countless Snowflake users. However, pandas was never built to handle data at the scale organizations are operating today. Running pandas code requires transferring and loading all of the data into a single in-memory process. It becomes unwieldy on moderate-to-large data sets and breaks down completely on data sets that grow beyond what a single node can handle. We know organizations work with this volume of data today, and Snowpark pandas enables you to execute that same pandas code, but with all the pandas processing pushed down to run in a distributed fashion in Snowflake. Your data never leaves Snowflake, and your pandas workflows can process much more efficiently using the Snowflake elastic engine. This brings the power of Snowflake to pandas developers everywhere.
+[Snowpark pandas](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas) is an extension of the Snowpark API  that unlocks the power of Snowflake for pandas developers. With the expansion of Snowpark to provide a pandas-compatible API layer, with minimal code changes, users will be able to get the same pandas-native experience they know and love with Snowflake’s performance, scale and governance. 
+
+![pandas_overview.png](./assets/pandas_overview.png)
+
+### Why use Snowpark pandas?
+pandas is the go-to data processing library for millions worldwide, including countless Snowflake users. However, pandas was never built to handle data at the scale organizations are operating today. Running pandas code requires transferring and loading all of the data into a single in-memory process. It becomes unwieldy on moderate-to-large data sets and breaks down completely on data sets that grow beyond what a single node can handle. We know organizations work with this volume of data today, and Snowpark pandas enables you to execute that same pandas code, but with all the pandas processing pushed down to run in a distributed fashion in Snowflake. Your data never leaves Snowflake, and your pandas workflows can process much more efficiently using the Snowflake elastic engine. This brings the power of Snowflake to pandas developers everywhere.
 
 This quickstart will focus on getting started with Snowpark pandas, and enable you to perform common pandas operations on huge volumes of data using the power of Snowflake.
 
@@ -37,7 +44,7 @@ This quickstart will focus on getting started with Snowpark pandas, and enable y
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
     > aside positive
     >
-    >Download the [git repo]()
+    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas)
 - [Anaconda](https://www.anaconda.com/) installed
 - [Python 3.11](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.9 in the **Setup the Python Environment** step
@@ -55,7 +62,7 @@ Duration: 2
 
 > aside positive
 >
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python).
+> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas).
 
 Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
@@ -112,9 +119,9 @@ Duration: 7
 
 > aside positive
 >
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO]().
+> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas).
 
-### Snowpark for Python and Snowpark ML
+### Snowpark pandas
 
 - Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.9, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
 
@@ -158,7 +165,7 @@ Duration: 7
 ## Get started with Snowpark pandas
 Duration: 20
 
-Open the following jupyter notebook and run each of the cells: [01_snowpark_pandas.ipynb]()
+Open the following jupyter notebook and run each of the cells: [01_snowpark_pandas.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas/tree/main/01_snowpark_pandas.ipynb)
 
 Within this notebook, we will import the Snowpark pandas API, connect to Snowflake, and perform common pandas operations on a dataset with over 220M records.
 
@@ -169,8 +176,8 @@ Congratulations, you have successfully completed this quickstart! Through this q
 For more information, check out the resources below:
 
 ### Related Resources
-- [Source Code on GitHub]()
-- [Snowpark pandas Docs]()
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas)
+- [Snowpark pandas Docs](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas)
 - [Snowpark pandas examples](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/snowpark-pandas)
 - [Snowpark for Python Developer Docs](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 
