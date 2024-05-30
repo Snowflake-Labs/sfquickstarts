@@ -110,25 +110,7 @@ Now, let's create our first Notebook by importing a `.ipynb` file. First, make s
 
 ![Notebook Dropdown](./assets/nb_dropdown.png)
 
-Next, click the gray upload/import .ipynb button, and select [1_sf_nb_snowpark_ml_data_ingest.ipynb](./1_sf_nb_snowpark_ml_data_ingest.ipynb) from your local filesystem:
-
-![Notebook Upload](./assets/nb_import.png)
-
-Leave the populated notebook name as-is (or change it if you'd like!), and make sure that the location is set to `ML_HOL_DB` and `ML_HOL_SCHEMA`. Lastly, make sure the Notebook warehouse is `ML_HOL_WH`, and click Create:
-
-![Notebook Config](./assets/nb_config.png)
-
-This will create and open the notebook you just uploaded. Follow the instructions at the top of the Notebook to select any necessary packages you might need via the Packages drop-down:
-
-![Packages](./assets/sample_packages.png)
-
-Then, click `Start` and run the Notebook start to finish! Repeat this process with all three Notebooks to see how easy it is to write Python and SQL code in a single, familiar Notebook interface directly in Snowsight!
-
-Now, let's create our first Notebook by importing a `.ipynb` file. First, make sure your current role is SYSADMIN. Then, select the Notebooks tab under the Projects drop-down in the left side-bar:
-
-![Notebook Dropdown](./assets/nb_dropdown.png)
-
-Next, click the gray upload/import .ipynb button, and select [1_sf_nb_snowpark_ml_data_ingest.ipynb](./1_sf_nb_snowpark_ml_data_ingest.ipynb) from your local filesystem:
+Next, click the gray upload/import .ipynb button, and select [1_sf_nb_snowflake_ml_data_ingest.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/1_sf_nb_snowflake_ml_data_ingest.ipynb) from your local filesystem:
 
 ![Notebook Upload](./assets/nb_import.png)
 
