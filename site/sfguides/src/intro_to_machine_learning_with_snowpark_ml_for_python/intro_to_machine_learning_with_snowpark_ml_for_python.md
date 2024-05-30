@@ -152,7 +152,7 @@ In this notebook, we will illustrate how to train an XGBoost model with the `dia
 
 <!-- ------------------------ -->
 ## Conclusion
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowpark for Machine Learning through the introduction of Snowflake ML, the integrated set of capabilities for end-to-end ML workflows. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake ML, the integrated set of capabilities for end-to-end ML workflows. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code.
 
 For more information, check out the resources below:
 
