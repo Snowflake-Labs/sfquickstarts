@@ -68,7 +68,7 @@ On the Snowflake connection page, fill in the following fields:
 6. Enter the **Warehouse**.
 7. Specify the **Schema** of your database.
 8. Enter the **Role**.
-- The `SYSADMIN` role should be granted to the specified user. Make sure you’re using a non-public role because it doesn’t have enough permissions for the load process.
+   - The `SYSADMIN` role should be granted to the specified user. Make sure you’re using a non-public role because it doesn’t have enough permissions for the load process.
 9. Select the necessary **Use static IP** option from the dropdown.
 
 ### AI Agent and your Snowflake data
