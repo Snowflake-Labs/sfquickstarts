@@ -220,6 +220,19 @@ By following these steps, you'll be ready to build and deploy your Recommender S
 > aside positive
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
+The last step is to stream data from snowflake tables into RelationalAI model:
+
+```bash
+rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.TRAIN --model recommendation_demo
+rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.TEST --model recommendation_demo
+rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.MOVIE_DETAILS --model recommendation_demo
+```
+
+- `--source`: This flag specifies the fully-qualified name of a Snowflake table or view.
+- `--model`: This flag specifies the name of the model to which the data in the Snowflake table or view is streamed.
+
+> IMPORTANT: An import stream utilizes [change data capture](https://docs.snowflake.com/en/user-guide/streams)
+to synchronize your Snowflake data with your RelationalAI model at an interval of once per minute. 
 <!-- ------------------------ -->
 ## Building a Recommender System
 
@@ -242,7 +255,7 @@ To get started, follow these steps:
 2) Open and run through the cells in [collaborative_filtering.ipynb](https://github.com/RelationalAI/rai-samples/blob/main/samples/recommender-system/collaborative_filtering.ipynb)
 
 > aside positive
-> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***rai_demo***-- which is the name of the environment created in **Setup Environment** step.
+> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***rai_recsys***-- which is the name of the environment created in **Setup Environment** step.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
