@@ -9,16 +9,29 @@ tags: Getting Started
 
 # Improvado Guide
 <!-- ------------------------ -->
-## Overview
+## Introduction
 Duration: 2
 
 This guide will show you how to connect your Snowflake database to Improvado platform, manage user & data access, and understand how AI Agent uses your Snowflake data for analytics & marketing data governance.
 
-Improvado is AI-powered marketing analytics & intelligence and provides secure and efficient data integration across your Snowflake databases.
+### Improvado Platform Overview
 
-Improvado's core product focuses on providing robust Extract, Transform, Load (ETL) capabilities. It supports over 500 data sources for seamless data extraction and load. 
+Improvado is an AI-powered composable marketing analytics & intelligence platform that provides secure and efficient data integration across Snowflake databases.
 
-AI Agent allows you to automatically analyze your Snowflake data, generating valuable metadata and ensuring accurate and consistent analytics reports. By leveraging advanced data profiling, AI Agent enhances your marketing data governance workflows, ensuring high data quality and compliance.
+Improvado platform is comprised of two main components: **Data Platform** and **AI Agent**. 
+
+Improvado's core product focuses on providing robust Extract, Load, Transform (ELT) capabilities. It supports over 500 data sources for seamless data extraction and load. 
+
+On top of the core platform, the AI Agent enhances the value of your data by providing advanced analytics and governance capabilities. Our AI Agent offers several advanced features:
+
+- **Automated Data Analysis**: The AI Agent enables automatic analysis of your Snowflake data, ensuring that all data points are accurately processed and interpreted.
+- **Snowflake Metadata**: By generating comprehensive metadata, the AI Agent provides valuable context to your data, enhancing its usability for analytics and reporting.
+- **Marketing Data Governance**: Leverages advanced data profiling to ensure high data quality and compliance with marketing data governance workflows.
+- **Action Pulse**: Provides actionable insights on your marketing data, helping you make informed decisions and improve performance.
+- **Reverse ETL for Data Activation**: Transforms and routes data back into operational tools for activation, enabling data-driven actions across your marketing stack.
+
+This layered approach ensures that Improvado not only integrates and processes data effectively but also enriches it with insights and governance for better decision-making.
+
 
 The following diagram illustrates the overview of Improvado platform capabilities:
 
@@ -43,7 +56,7 @@ Additionally, Improvado offers a custom Marketing Data Governance solution to en
 ## Connect Snowflake to Improvado
 Duration: 2
 
-In this step, we’ll learn how to connect your Snowflake schema to Improvado. Improvado integrates with Snowflake using a JDBC driver, ensuring efficient data transfer and fast updates.
+In this step, we’ll learn how to connect your Snowflake schema to Improvado. Improvado integrates with Snowflake using a native Python Connector, ensuring efficient data transfers and fast updates.
 
 ### Step 1. Database permissions
 Now you’ll need to grant the following permissions to your Snowflake database schema:
@@ -53,7 +66,8 @@ Now you’ll need to grant the following permissions to your Snowflake database 
 - `INSERT`
 
 ### Step 2. Select a destination
-Go to Improvado and select the **Destinations** tab. This catalog shows all the Destinations that you can use for Data Loading.
+Log in to the Improvado platform and navigate to the Destinations page from the left-hand side menu. This page is a catalog of all the available destinations for data loading.
+
 ![Catalog](assets/add_a_new_destination.png)
 
 Click on the **Snowflake** tile.
@@ -75,7 +89,7 @@ On the Snowflake connection page, fill in the following fields:
 After successfully connecting your Snowflake database, Improvado AI Agent will automatically analyze data in your Snowflake storage and generate metadata for accurate analytics reports and consistent Marketing Data Governance workflows.
 
 ### Connecting a Data source
-Connecting a Data source in Improvado enables you to extract, transform, and load data seamlessly into your analytics and reporting frameworks. Follow these simple steps to connect a data source:
+Connecting a Data source in Improvado enables you to extract and load data seamlessly into your analytics and reporting frameworks. Follow these simple steps to connect a data source:
 Go to the Data sources page and select a necessary Data source to extract your data
 Enter required credentials or authorize using OAuth (depending on Data source API capabilities)
 Then, you’ll be redirected to the Connection Details page, where you can set up data extraction.
@@ -103,7 +117,7 @@ Workspaces allow for access management and control within a single Improvado ins
 ## Data Access and Consumption
 Duration: 2
 
-The AI Agent automatically scans and collects metadata for each table, row, and column in your Snowflake storage. This step is crucial as it enables the AI Agent to understand the structure and relationships within your database.
+The AI Agent automatically scans and collects metadata for each table, column and row values in your Snowflake storage. This step is crucial as it enables the AI Agent to understand the structure and relationships within your database.
 
 Improvado’s integration with Snowflake ensures that your analytics, machine learning, and ETL services are all connected within a unified platform. This integration simplifies the data management process and enhances the overall efficiency of your data workflows.
 
