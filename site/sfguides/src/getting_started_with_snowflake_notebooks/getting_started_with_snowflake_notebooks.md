@@ -25,7 +25,7 @@ You can write and execute code, visualize results, and tell the story of your an
 * Run your notebook on a schedule. See [Schedule your Snowflake Notebook to run](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks-schedule).
 * Make use of the role-based access control and other data governance functionality available in Snowflake to allow other users with the same role to view and collaborate on the notebook.
 
-![App](assets/sf-notebooks-welcome.gif)
+![Notebook](assets/sf-notebooks-welcome.gif)
 
 In this guide, we will learn how to get started with your first notebook project!
 
@@ -58,7 +58,7 @@ In this example, we will upload an existing notebook from [Snowflake Notebooks d
 
 ## Load demo notebooks to Snowflake
 
-The notebook files are available for download as `.ipynb` files. To load the demo notebooks into your Snowflake Notebook, follow these steps: 
+The notebook files are available for download as `.ipynb` files in the demo repository. To load the demo notebooks into your Snowflake Notebook, follow these steps: 
 
 1. On Github, click into each folder containing the tutorial and the corresponding `.ipynb file`, such as [this](https://github.com/Snowflake-Labs/notebook-demo/blob/main/My%20First%20Notebook%20Project/My%20First%20Notebook%20Project.ipynb). Download the file by clicking on the `Download raw file` from the top right.
 
@@ -68,49 +68,119 @@ The notebook files are available for download as `.ipynb` files. To load the dem
 
 4. Import the .ipynb file you've download into your Snowflake Notebook by using the `Import from .ipynb` button located on the top right of the Notebooks page.
 
-![App](assets/snowflake_notebook.png)
+![Import](assets/snowflake_notebook.png)
 
 5. Select the file from your local directory and press `Open`.
 
 6. A `Create Notebook` dialog will show up. Select a database, schema, and warehouse for the Notebook and click `Create`.
 
 <!-- ------------------------ -->
-## Snowflake Cortex
+## Running Snowflake Notebooks
 
 Duration: 5
 
-Given the data in `call_transcripts` table, let’s see how we can use Snowflake Cortex. It offers access to industry-leading AI models, without requiring any knowledge of how the AI models work, how to deploy LLMs, or how to manage GPU infrastructure.
+Let's walk through the first demo notebook in Snowflake now.
 
-### Translate
-Using Snowflake Cortex function **snowflake.cortex.translate** we can easily translate any text from one language to another. Let’s see how easy it is to use this function….
+### Adding Python Packages
 
-```sql
-select snowflake.cortex.translate('wie geht es dir heute?','de_DE','en_XX');
+Notebooks comes pre-installed with common Python libraries for data science 🧪 and machine learning 🧠, such as numpy, pandas, matplotlib, and more!
+
+If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
+
+For the purpose of this demo, let's add the matplotlib and scipy package from the package picker.
+
+![PackagePicker](assets/package_picker.png)
+
+### Switching between SQL and Python cells
+
+We often work with SQL query and different Python packages in the data exploration phase. How to switch between SQL and Python cells in the same notebook?
+
+While creating a new cell, you can select between `SQL`, `Python` and `Markdown` cells to select an appropriate one you need.
+
+Every cell at the top left has a drop down list that shows the type of cell along with the cell number as well.
+
+![CellType](assets/cell_type.png)
+
+### Accessing cell outputs as variables in Python
+
+You can give cells a custom name (as opposed to the default cell#) and refer to the cell output in subsequent cells as well.
+
+For example, you can refer to the output of the SQL query in `cell5` in a `Python variable` called `cell5` in subsequent cells.
+
+![CellType](assets/cell_output.png)
+
+### Visualize your data
+
+You can use different visualization libraries such as Altair, Streamlit, Matplotlib, etc to plot your data.
+
+Let's use Altair to easily visualize our data distribution as a histogram.
+
+![Histogram](assets/histogram.png)
+
+To learn more on how to install different visualization libraries and visualize your data, refer to the [documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-visualize-data)
+
+### Working with Data using Snowpark
+
+In addition to using your favorite Python data science libraries, you can also use the [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index) to query and process your data at scale within the Notebook. 
+
+First, you can get your session variable directly through the active notebook session.The session variable is the entrypoint that gives you access to using Snowflake's Python API.
+
+```python
+    from snowflake.snowpark.context import get_active_session
+    session = get_active_session()
+
+    session.write_pandas(df,"SNOW_CATALOG",auto_create_table=True, table_type="temp")
 ```
 
-Executing the above SQL should generate ***"How are you today?"***
+### Using Python variables in SQL cells
 
-Now let’s see how you can translate call transcripts from German to English in batch mode using just SQL.
+You can use the Jinja syntax `{{..}}` to refer to Python variables within your SQL queries as follows. 
 
-```sql
-select transcript,snowflake.cortex.translate(transcript,'de_DE','en_XX') from call_transcripts where language = 'German';
+```python
+threshold = 5
 ```
 
-### Sentiment Score
-Now let’s see how we can use **snowflake.cortex.sentiment** function to generate sentiment scores on call transcripts. 
-
-*Note: Score is between -1 and 1; -1 = most negative, 1 = positive, 0 = neutral*
-
 ```sql
-select transcript, snowflake.cortex.sentiment(transcript) from call_transcripts where language = 'English';
+-- Reference Python variable in SQL
+SELECT * FROM SNOW_CATALOG where RATING > {{threshold}}
 ```
 
-### Summarize
-
-Now that we know how to translate call transcripts in English, it would be great to have the model pull out the most important details from each transcript so we don’t have to read the whole thing. Let’s see how **snowflake.cortex.summarize** function can do this and try it on one record.
+Likewise, you can reference a Pandas dataframe within your SQL statment:
 
 ```sql
-select transcript,snowflake.cortex.summarize(transcript) from call_transcripts where language = 'English' limit 1;
+-- Filtering from a Pandas dataframe
+SELECT * FROM {{my_df}} where VAR = 6
+```
+
+### Simplifying your subqueries
+
+Let's start with the output of `cell21` in this notebook. Here is how it looks!
+
+```sql
+    SELECT * FROM SNOW_CATALOG;
+```
+
+![Cell21_Output](assets/cell_21.png)
+
+You can simplify long subqueries with [CTEs](https://docs.snowflake.com/en/user-guide/queries-cte) by combining what we've learned with Python and SQL cell result referencing. 
+
+For example, if we want to compute the average rating of all products with ratings above 5. We would typically have to write something like the following:
+
+```sql
+    WITH RatingsAboveFive AS (
+    SELECT RATING
+    FROM SNOW_CATALOG
+    WHERE RATING > 5
+)
+SELECT AVG(RATING) AS AVG_RATING_ABOVE_FIVE
+FROM RatingsAboveFive;
+```
+
+With Snowflake Notebooks, the query is much simpler! You can get the same result by filtering a SQL table from another SQL cell by referencing it with Jinja, e.g., `{{my_cell}}`. 
+
+```sql  
+    SELECT AVG(RATING) FROM {{cell21}}
+    WHERE RATING > 5
 ```
 
 <!-- ------------------------ -->
