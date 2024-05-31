@@ -36,7 +36,7 @@ This lab builds directly on the same code and solution as the [Build a Data App 
 > aside positive
 > **Snowpark Container Services availability**
 > 
->  Snowpark Container Services is currently in a *Public Preview* and is available across a [range of Snowflake AWS accounts](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions, or [create a Trial account](https://medium.com/r/?url=https%3A%2F%2Fsignup.snowflake.com%2F) in one of them.
+>  Snowpark Container Services is currently in a *Public Preview* and is available across a [range of Snowflake AWS accounts](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
 
 ### What You’ll Learn 
 - How to configure and build a custom API Powered by Snowflake, written in Node.js
@@ -64,6 +64,11 @@ The solution consists of two services hosted on Snowpark Container Services:
 - **The frontend service** - which hosts the React JS Web Application that connects to that API, and a router service in NGINX that allows calls from the browser-based React frontend to be routed to the backend services also.
 
 Without the router part of the frontend service, CORS would actually prevent the browser from talking to the backend service, even if we opened up a public endpoint for it. This is due to the fact that we cannot add our own headers to requests coming to the service endpoints - for security reasons Snowpark Container Services networking strips out any headers (but adds a few useful ones that we will use for authentication later).
+
+
+
+
+
 
 
 <!-- ------------------------ -->
@@ -347,6 +352,14 @@ You can spend some time creating the queries for each of these and then check yo
         sum(price) desc;
 ```
 
+
+
+
+
+
+
+
+
 <!-- ------------------------ -->
 
 ## Setup Snowflake
@@ -512,6 +525,14 @@ CREATE USER IF NOT EXISTS user3 PASSWORD='password270' MUST_CHANGE_PASSWORD=TRUE
 GRANT ROLE tasty_app_ext_role TO USER user3;
 ```
 
+
+
+
+
+
+
+
+
 <!-- ------------------------ -->
 
 ## Building the backend code
@@ -526,9 +547,10 @@ If you have access to GitHub and credits on an account that let's you run GitHub
 If you don't have access to this, or prefer to build this locally, go to Option 2 instead.
 
 First, create your on fork of the main repository, go to the GitHub repository at [GitHub: Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs.git) and create your own fork of the repo.
+![Fork Repository](assets/fork_repository.png)
 
 Once you have your own fork, go to the '<> CODE' button and select 'Codespaces' and create a new.
-
+![Create Codespace](assets/create_codespace.png)
 
 
 
@@ -578,6 +600,7 @@ docker compose up
 ```
 
 Try to access the API by calling the endpoint now. If you are in GitHub Codespaces, you will be offered a unique URL that is generated for you, like 'https://<random-generated-identifier>-3000.app.github.dev/' that you can access, if you are on your local environment, it will be a localhost URL, like 'http://localhost:3000/'
+![Forwarded ports](assets/forwarded_port_host.png)
 ```bash
 curl https://<random-generated-identifier>-3000.app.github.dev/franchise/1
 ```
@@ -809,15 +832,21 @@ When the service is running on SPCS, the file located at `/snowflake/session/tok
 Once connected, the rest of the backend code is working the same, regardless if it is running in the SPCS environment or somewhere else, like a local testing environment.
 
 
+
+
+
+
+
+
 <!-- ------------------------ -->
 
 ## Building the frontend code
 Duration: 3
 
 ### Overview
-The frontend now also needs to be updated to take advantage of the changes and for us to be able to run it on SPCS.
+We can now look at how the frontend has been updated to take advantage of the changes and for us to be able to run it on SPCS.
 
-There are two areas that needs to be updated here to run in the new environment:
+There are two areas that is updated here to allow it to run in the new environment:
 
 - Authentication - by placing the service behind a public endpoint that forces users to login, it no longer makes sense to keep the login form in the client, the required authentication is already captured by the Snowflake OAuth login form
 - Routing from client to the backend API, we can no longer directly control the CORS directives for the services, and calls from the client are actually made directly from the users' browsers.
@@ -885,6 +914,23 @@ CMD ["/bin/sh" , "-c" , "envsubst '$FRONTEND_SERVICE $BACKEND_SERVICE' < /nginx.
 ```
 
 The last line substitutes these variables for values taken from the `environment` it is running in, before copying the contents into the `nginx.conf` file and starting up the server.
+
+You can test the router by running the container locally. From `/src/frontend` run the following:
+bash
+```
+docker compose --env-file .env.local.example up
+```
+This should run the router and the frontend on local ports. Test it out by running:
+bash
+```
+curl http://localhost:8888/test
+```
+It should return HTLM, like:
+html
+```
+<html><body><h1>This is the router testpage</h1><li>Sf-Context-Current-User: </li><li>Host: localhost:8888</li><li>Frontend Server: localhost:4000</li><li>Backend Server: localhost:3000</li></body></html>
+```
+Terminate the running containers byt pressing `ctrl+c` in the terminal again.
 
 ### Step 5.2 Updating the frontend code
 
@@ -1060,6 +1106,13 @@ fetch(url, getRequestOptions(location.state))
 
 With those changes, the code should be ready to be Dockerized and then deployed in Snowpark Container Services.
 
+
+
+
+
+
+
+
 <!-- ------------------------ -->
 
 ## Containerize the Application
@@ -1226,6 +1279,13 @@ The output should be similar to this:
    ]
 }
 ```
+
+
+
+
+
+
+
 
 <!-- ------------------------ -->
 
@@ -1457,6 +1517,13 @@ docker image prune --all
 > aside negative
 >
 > Warning, the above removes _all_ unused Docker images. If you have other Docker images that you don't want to remove, then manually remove the images created in this guide using `docker image rm <IMAGE NAME>`.
+
+
+
+
+
+
+
 
 <!-- ------------------------ -->
 
