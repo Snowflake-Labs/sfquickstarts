@@ -66,14 +66,16 @@ The properties of a data product are:
 - **Secure and governed:** it has proper access controls
 - **Useful:** it has value
 
-### What this guide covers
+### What you will learn
 
 Throughout this guide, imagine yourself building a data platform with Snowflake and dbt Cloud for your organization, starting with two teams:
 
 1. **Central data team:** a team of experienced data engineers who build foundational data marts in Snowflake organized in a star schema of fact and dimensional tables
 2. **Finance team:** a team that includes data analysts in the finance department who want to own their data and data processes
 
-Each step of the guide will show you how to use features of both Snowflake and dbt Cloud to achieve building **data products**.
+Each step of the guide will learn how to use features of both Snowflake and dbt Cloud to achieve building **data products**.
+
+### What you will build
 
 At the end of this guide, you will have achieved:
 - **Federated governance**
@@ -88,7 +90,7 @@ At the end of this guide, you will have achieved:
 
 - **Building a business case for data mesh:** This guide also doesn't cover how to build a business case for data mesh. Adopting the principles in this guide are good general best practices for any data team. However, if you are looking to tackle larger organizational inefficiencies to meet business goals by rolling out a data mesh strategy, then you may likely need a business case in order to show the value and return on investment of your endeavors to your management and leadership, and attach it to strategic initiatives. To learn more about this step, you can refer to dbt Labs' [Guide to Data Mesh e-book](https://8698602.fs1.hubspotusercontent-na1.net/hubfs/8698602/Guide%20to%20data%20mesh%20eBook%20V2.pdf).
 
-### Prerequisites
+### What you will need
 
 #### Snowflake
 
@@ -978,7 +980,19 @@ You have now completed your data product journey!
 ## Conclusion and Resources
 Duration: 5
 
-During this quickstart guide, you tried out native features of Snowflake and dbt Cloud that can be combined to create data products. By using dbt Cloud, you gained additional governance, automation, and interoperability mechanisms than from Snowflake alone. Overall, these two self-service platforms combined increase the likelihood of success of a data mesh project.
+During this quickstart guide, you used native features of Snowflake and dbt Cloud that can be combined to create data products. By using dbt Cloud, you gained additional governance, automation, and interoperability mechanisms than from Snowflake alone. Overall, these two self-service platforms combined increase the likelihood of success of a data mesh project.
+
+### What we've covered
+
+- Creating Snowflake resources with a least privileged access principle
+- Setting up dbt Cloud with two projects that relate to each other
+- Added dbt models to build core datasets in Snowflake
+- Added data masking with Snowflake, applied with dbt Cloud
+- Created model contracts in dbt that govern the data used by other teams
+- Executed the SQL code on Snowflake with dbt Cloud jobs
+- Used dbt Explorer in order to explore data assets that were created by dbt
+
+### Related resources
 
 If you are interested in this solution for your organization, [contact dbt Labs](https://www.getdbt.com/contact) to get started!
 
