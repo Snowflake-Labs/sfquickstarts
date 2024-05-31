@@ -140,13 +140,20 @@ From the app folder, create conda environment. Then activate conda environment a
 > conda create -n rai_communities python=3.11.8
 > conda activate rai_communities    
 > pip install jupyterlab 
-> pip install relationalai  
+> pip install relationalai==0.2.9
 ```
 
 ### RelationalAI Config File
 After installing the `relationalai` package, you will need to setup an initial RAI configuration with the Snowflake credentials you want to use (similar to the configuration for Snowflake CLI):
 
 ![RAI Init](assets/rai_init.png)
+
+After this is complete, it will write a TOML file to your directory. Open that file and append the following 2 lines to the bottom of the file.
+
+```
+[compiler]
+use_multi_valued = true
+```
 
 ## Run the Notebook in Jupyter Lab
 Duration: 15
@@ -161,8 +168,43 @@ and visit the url (something like 'locationhost:8888/lab?token=XXXX) printed in 
 3) Open the `community_detection_RelationalAI_V1.ipynb` file in Jupyter lab.  You should see the top of the notebook:
 ![RAI Notebook 1](assets/rai_notebook_1.png)
 
-The notebook will walk you through defining a knowledge graph out of your harmonized Snowflake table, first defining a Record type from your Snowflake table
+The notebook will walk you through defining a knowledge graph out of your harmonized Snowflake table.
+
+When you open the Jupyter notebook, you should give the Model a unique name. If you do not, you can namespace clash with another person who creates a model with an identical name on the same Snowflake Account.
+
+Adding my last name as a prefix would look like this
+```
+model = rai.Model("LOYALTY_ORDERS_REGION_CALIFORNIA") =>
+model = rai.Model("**BERTOLANI**_LOYALTY_ORDERS_REGION_CALIFORNIA")
+```
+
+In version 0.2.9 of the relationalai python package, there is an additional step the very first time you run the notebook. When it reaches the 3rd cell
+
+```python
+sf = Snowflake(model)
+Record = sf.TASTYBYTES.HARMONIZED.LOYALTY_ORDERS_REGION_CALIFORNIA
+```
+
+it will raise an error. However, it will print the command you need to run to create a stream between the Model and the data in the table. The command will look something like this
+```
+>rai imports:stream --source frostbyte_tasty_bytes.harmonized.loyalty_orders_region_california --model BERTOLANI_LOYALTY_ORDERS_REGION_CALIFORNIA
+```
+
+Creating a stream may take a few minutes ( depending on the size of the database). You can check the status of the stream by running
+```
+rai imports:list
+```
+
+This will show something like this.
+![Stream Status](assets/rai_stream_1.png)
+
+Once the stream status is SYNCED, you can now run the notebook.
+
+---
+
+First we define a Record type from your Snowflake table
 ![RAI Notebook 2](assets/rai_notebook_2.png)
+
 
 Then creating our other concepts in our knowledge graph, Customers, Trucks, Transactions, Connections and Communities
 ![RAI Notebook 3](assets/rai_notebook_3.png)
