@@ -48,15 +48,13 @@ TODO: (fix the error that says worksheet in the ipynb markdown)
 - **Keyboard Shortcuts in Notebooks**: How to use Keyboard shortcuts in Notebooks to developer faster
 
 <!-- ------------------------ -->
-## Setup
+## Load demo notebooks to Snowflake
 
 Duration: 5
 
 You can create a Snowflake Notebook directly from the Snowsight UI or upload an existing IPython Notebook to Snowflake.
 
 In this example, we will upload an existing notebook from [Snowflake Notebooks demo repo](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main) into a Snowflake account.
-
-## Load demo notebooks to Snowflake
 
 The notebook files are available for download as `.ipynb` files in the demo repository. To load the demo notebooks into your Snowflake Notebook, follow these steps: 
 
@@ -83,7 +81,7 @@ Let's walk through the first demo notebook in Snowflake now.
 
 ### Adding Python Packages
 
-Notebooks comes pre-installed with common Python libraries for data science 🧪 and machine learning 🧠, such as numpy, pandas, matplotlib, and more!
+Notebooks comes pre-installed with common Python libraries for data science and machine learning, such as numpy, pandas, matplotlib, and more!
 
 If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
 
@@ -245,7 +243,7 @@ These shortcuts can help you navigate around your notebook more quickly.
 | **Delete this cell** | d+d |
 
 \
-You can view the full list of shortcuts by clicking the `?` button on the bottom right.
+You can view the full list of shortcuts by clicking the `?` button on the bottom right on your Snowsight UI.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
