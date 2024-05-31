@@ -184,120 +184,68 @@ With Snowflake Notebooks, the query is much simpler! You can get the same result
 ```
 
 <!-- ------------------------ -->
-## Snowflake Arctic
+## Create Interactive Streamlit App
 
 Duration: 5
 
-### Prompt Engineering
-Being able to pull out the summary is good, but it would be great if we specifically pull out the product name, what part of the product was defective, and limit the summary to 200 words. 
+Putting all our learnings together, let's build a streamlit app to explore how different parameters impact the shape of the data distribution histogram.
 
-Let’s see how we can accomplish this using the **snowflake.cortex.complete** function.
-
-```sql
-SET prompt = 
-'### 
-Summarize this transcript in less than 200 words. 
-Put the product name, defect and summary in JSON format. 
-###';
-
-select snowflake.cortex.complete('snowflake-arctic',concat('[INST]',$prompt,transcript,'[/INST]')) as summary
-from call_transcripts where language = 'English' limit 1;
-```
-
-Here we’re selecting the Snowflake Arctic model and giving it a prompt telling it how to customize the output. Sample response:
-
-```json
-{
-    "product": "XtremeX helmets",
-    "defect": "broken buckles",
-    "summary": "Mountain Ski Adventures received a batch of XtremeX helmets with broken buckles. The agent apologized and offered a replacement or refund. The customer preferred a replacement, and the agent expedited a new shipment of ten helmets with functioning buckles to arrive within 3-5 business days."
-}
-```
-
-<!-- ------------------------ -->
-## Streamlit Application
-
-Duration: 9
-
-To put it all together, let's create a Streamlit application in Snowflake.
-
-### Setup
-
-**Step 1.** Click on **Streamlit** on the left navigation menu
-
-**Step 2.** Click on **+ Streamlit App** on the top right
-
-**Step 3.** Enter **App name**
-
-**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
-
-**Step 5.** Click on **Create**
-
-- At this point, you will be provided code for an example Streamlit application
-
-**Step 6.** Replace the entire sample application code on the left with the following code snippet.
+Here is the code snippet to build interactive sliders:
 
 ```python
-import streamlit as st
-from snowflake.snowpark.context import get_active_session
-
-st.set_page_config(layout='wide')
-session = get_active_session()
-
-def summarize():
-    with st.container():
-        st.header("JSON Summary With Snowflake Arctic")
-        entered_text = st.text_area("Enter text",label_visibility="hidden",height=400,placeholder='For example: customer call transcript')    
-        if entered_text:
-            entered_text = entered_text.replace("'", "\\'")
-            prompt = f"Summarize this transcript in less than 200 words. Put the product name, defect if any, and summary in JSON format: {entered_text}"
-            cortex_prompt = "'[INST] " + prompt + " [/INST]'"
-            cortex_response = session.sql(f"select snowflake.cortex.complete('snowflake-arctic', {cortex_prompt}) as response").to_pandas().iloc[0]['RESPONSE']
-            st.json(cortex_response)
-
-def translate():
-    supported_languages = {'German':'de','French':'fr','Korean':'ko','Portuguese':'pt','English':'en','Italian':'it','Russian':'ru','Swedish':'sv','Spanish':'es','Japanese':'ja','Polish':'pl'}
-    with st.container():
-        st.header("Translate With Snowflake Cortex")
-        col1,col2 = st.columns(2)
-        with col1:
-            from_language = st.selectbox('From',dict(sorted(supported_languages.items())))
-        with col2:
-            to_language = st.selectbox('To',dict(sorted(supported_languages.items())))
-        entered_text = st.text_area("Enter text",label_visibility="hidden",height=300,placeholder='For example: call customer transcript')
-        if entered_text:
-          entered_text = entered_text.replace("'", "\\'")
-          cortex_response = session.sql(f"select snowflake.cortex.translate('{entered_text}','{supported_languages[from_language]}','{supported_languages[to_language]}') as response").to_pandas().iloc[0]['RESPONSE']
-          st.write(cortex_response)
-
-def sentiment_analysis():
-    with st.container():
-        st.header("Sentiment Analysis With Snowflake Cortex")
-        entered_text = st.text_area("Enter text",label_visibility="hidden",height=400,placeholder='For example: customer call transcript')
-        if entered_text:
-          entered_text = entered_text.replace("'", "\\'")
-          cortex_response = session.sql(f"select snowflake.cortex.sentiment('{entered_text}') as sentiment").to_pandas()
-          st.caption("Score is between -1 and 1; -1 = Most negative, 1 = Positive, 0 = Neutral")  
-          st.write(cortex_response)
-
-page_names_to_funcs = {
-    "JSON Summary": summarize,
-    "Translate": translate,
-    "Sentiment Analysis": sentiment_analysis,
-}
-
-selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
-page_names_to_funcs[selected_page]()
+    import streamlit as st
+    st.markdown("# Move the slider to adjust and watch the results update! 👇")
+    col1, col2 = st.columns(2)
+    with col1:
+        mean = st.slider('Mean of on RATING Distribution',0,10,3) 
+    with col2:
+        stdev = st.slider('Standard Deviation of RATING Distribution', 0, 10, 5)
 ```
 
-### Run
+![Streamlit_Slider](assets/streamlit_slider.png)
 
-To run the application, click on **Run** located at the top right corner. If all goes well, you should see the application running as shown below.
+Now, let us capture the mean and standard deviation values from the above slider and use it to generate a distribution of values to plot a histogram.
 
-![App](assets/snowflake_arctic.gif)
+```sql
+    CREATE OR REPLACE TABLE SNOW_CATALOG AS 
+    SELECT CONCAT('SNOW-',UNIFORM(1000,9999, RANDOM())) AS PRODUCT_ID, 
+            ABS(NORMAL({{mean}}, {{stdev}}, RANDOM())) AS RATING, 
+            ABS(NORMAL(750, 200::FLOAT, RANDOM())) AS PRICE
+    FROM TABLE(GENERATOR(ROWCOUNT => 100));
+```
 
-> aside positive
-> Note: Besides Snowflake Arctic you can also use [other supported LLMs in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) with `snowflake.cortex.complete` function.
+Let's plot the histogram using Altair.
+
+```python
+    # Read table from Snowpark and plot the results
+    df = session.table("SNOW_CATALOG").to_pandas()
+    # Let's plot the results with Altair
+    alt.Chart(df).mark_bar().encode(
+        alt.X("RATING", bin=alt.Bin(step=2)),
+        y='count()',
+    )
+```
+
+![Histogram_Slider](assets/histogram_slider.png)
+
+<!-- ------------------------ -->
+## Keyboard Shortcuts 
+
+Duration: 1
+
+These shortcuts can help you navigate around your notebook more quickly. 
+
+| Command | Shortcut |
+| --- | ----------- |
+| **Run this cell and advance** | SHIFT + ENTER |
+| **Run this cell only** | CMD + ENTER |
+| **Run all cells** | CMD + SHIFT + ENTER |
+| **Add cell BELOW** | b |
+| **Add cell ABOVE** | a |
+| **Delete this cell** | d+d |
+
+\
+You can view the full list of shortcuts by clicking the `?` button on the bottom right.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
