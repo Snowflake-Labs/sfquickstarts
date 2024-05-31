@@ -173,10 +173,10 @@ The notebook will walk you through defining a knowledge graph out of your harmon
 When you open the Jupyter notebook, you should give the Model a unique name. If you do not, you can namespace clash with another person who creates a model with an identical name on the same Snowflake Account.
 
 Adding my last name as a prefix would look like this
-```
-model = rai.Model("LOYALTY_ORDERS_REGION_CALIFORNIA") =>
-model = rai.Model("**BERTOLANI**_LOYALTY_ORDERS_REGION_CALIFORNIA")
-```
+
+
+>model = rai.Model("**BERTOLANI**_LOYALTY_ORDERS_REGION_CALIFORNIA")
+
 
 In version 0.2.9 of the relationalai python package, there is an additional step the very first time you run the notebook. When it reaches the 3rd cell
 
