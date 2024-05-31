@@ -170,8 +170,12 @@ Open the following jupyter notebook and run each of the cells: [01_snowpark_pand
 Within this notebook, we will import the Snowpark pandas API, connect to Snowflake, and perform common pandas operations on a dataset with over 220M records.
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion and Resources
 Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how Snowpark pandas allows pandas developers to easily get started processing and analyzing data at tremendous scale using familiar programming constructs and APIs.
+
+### What you learned
+- How to install and configure the Snowpark pandas library
+- How to use Snowpark pandas to transform and analyze large datasets using the power of Snowflake
 
 For more information, check out the resources below:
 
