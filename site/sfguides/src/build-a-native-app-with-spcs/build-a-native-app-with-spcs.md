@@ -303,3 +303,7 @@ In this Quickstart we covered the following:
 
 This Quickstart can provide a template for you to accomplish the basic steps of building a Native App that includes a Snowpark Container Service to deploy & monetize whatever unique code to your Snowflake consumers accounts.  
 
+### Related Resources
+- [Snowflake Native Apps](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N)
+- [Snowflake Native Apps Documentation](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
+- [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N)
