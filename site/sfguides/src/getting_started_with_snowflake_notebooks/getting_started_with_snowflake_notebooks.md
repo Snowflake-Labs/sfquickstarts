@@ -40,7 +40,6 @@ Here is a summary of what you will be able to learn in each step by following th
 
 - **Adding Python Packages**: How to use pre-installed libraries in Notebooks as well as adding additional packages from package picker
 - **Switching between SQL and Python cells**: How to switch between SQL and Python cells in the same notebook
-TODO: (fix the error that says worksheet in the ipynb markdown)
 - **Visualize your Data**: How to use Altair and Matplotlib to visualize your data
 - **Working with Snowpark**: How to use Snowpark API to process data at scale within the Notebook
 - **Using Python Variables in SQL cells**: How to use Jinja syntax `{{.}}` to refer to Python variables within SQL queries, to reference previous cell outputs in your SQL query and more.
