@@ -1307,7 +1307,7 @@ over a specific time frame to detect trends and patterns in the data.
 > **ROWS BETWEEN** may NOT yield correct results, as the number of rows that make up the 1 minute interval could be inconsistent. In this case for a 5 second tag without gaps, you might have assumed 12 rows would make up 1 minute.
 >
 
-#### NOTE: At the time of publishing this lab, in late May 2024, the RANGE BETWEEN function was in Private Preview, we have included it in the lab content below for reference. If you receive errors when running the RANGE BETWEEN queries, it may NOT be released in your region just yet, it is targeted to be Public Preview soon. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
+#### NOTE: At the time of publishing this lab, in late May 2024, the RANGE BETWEEN function was in Private Preview. We have included it in the lab content for reference. If you receive errors when running the RANGE BETWEEN queries, it may NOT be released in your region just yet, it is targeted to be Public Preview soon. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
 
 > aside positive
 > 
@@ -1625,15 +1625,17 @@ ORDER BY DATASET, TAGNAME, TIMESTAMP;
 <img src="assets/analysis_chart_forecast.png" />
 
 
-### Co-Pilot
+### Ask Copilot
 
 **[Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot)** is an **LLM-powered assistant** that simplifies data analysis while maintaining robust data governance, and seamlessly integrates into your existing Snowflake workflow.
 
-Snowflake Copilot is **powered by a model fine-tuned by Snowflake that runs securely inside Snowflake Cortex**, Snowflake’s intelligent, fully managed AI service.
+Snowflake Copilot is **powered by a model fine-tuned by Snowflake that runs securely inside Snowflake Cortex**, Snowflake’s intelligent, fully managed AI service. Snowflake Copilot uses the names of your databases, schemas, tables, and columns and also the data types of your columns to determine what data is available to query.
 
-Please review [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot#tips-for-using-sf-copilot) when using Copilot.
+Snowflake Copilot also has access to [Snowflake documentation](https://docs.snowflake.com/) and can answer general questions about Snowflake or SQL.
 
-#### NOTE: At the time of publishing this lab, in late May 2024, Co-Pilot was in Public Preview in AWS US regions, we have included it in the lab content below for reference. If you do not see Co-Pilot, it may NOT be released in your region just yet. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
+For more information, please review [How to use Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot#how-to-use-sf-copilot) and [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot#tips-for-using-sf-copilot).
+
+#### NOTE: At the time of publishing this lab, in late May 2024, Snowflake Copilot was in Public Preview in AWS US regions. We have included it in the lab content for reference. If you do not see "Ask Copilot", it may NOT be released in your region just yet. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
 
 1. At the top left of the screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 
@@ -1643,7 +1645,7 @@ Please review [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/u
 
 <img src="assets/analysis_askcopilot.png" />
 
-3. A Copilot tab will appear to the right of the window, at the bottom click **Select Database**.
+3. A **Snowflake Copilot** tab will appear to the right of the window, at the bottom click **Select Database**.
 
 <img src="assets/analysis_selectdatabase.png" />
 
@@ -1651,7 +1653,7 @@ Please review [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/u
 
 <img src="assets/analysis_database_analytics.png" />
 
-5. **Try asking Copilot the following prompts**, by entering them into the text prompt box. Copilot will output a **generated SQL query** along with annotations of how it structures the SQL query.
+5. **Try asking Snowflake Copilot the following prompts**, by entering them into the text prompt box. Snowflake Copilot will return a **generated SQL query along with annotations** of how it structures the SQL query.
 
     - Show me namespace, tag name, time, and latest value for tag /IOT/SENSOR/TAG301
     - Show me the average values by namespace and tag name
@@ -1659,6 +1661,11 @@ Please review [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/u
     - Show me 1hr averages for tag /IOT/SENSOR/TAG301 on January 3 2024 by tag
 
 <img src="assets/analysis_query_copilot.png" />
+
+> aside negative
+> 
+> If **Snowflake Copilot** is in the process of indexing objects, results will return **"We are in the process of indexing the tables and views in the selected database and schema. Please try again later."**.
+>
 
 6. Click the `Run` button below the generated SQL query. If it's correct, please give the generated prompt output a **thumbs up**!
 
@@ -1668,12 +1675,6 @@ Please review [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/u
 
 <img src="assets/analysis_query_copilot_hourlybin.png" />
 
-
-> aside positive
-> 
-> You have now run through several **Time Series Analysis** queries, we can now look at creating **Time Series Functions**.
->
-
 > aside negative
 > 
 > ### Troubleshooting
@@ -1682,7 +1683,15 @@ Please review [Tips for using Snowflake Copilot](https://docs.snowflake.com/en/u
 >
 > #### RANGE BETWEEN Query Returning Error: Invalid window frame
 >
-> At the time of publishing this lab, in late May 2024, the RANGE BETWEEN function was in Private Preview, we have included it in the lab content below for reference. If you receive errors when running the RANGE BETWEEN queries, it may NOT be released in your region just yet, it is targeted to be Public Preview soon. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
+> At the time of publishing this lab, in late May 2024, the RANGE BETWEEN function was in Private Preview. We have included it in the lab content for reference. If you receive errors when running the RANGE BETWEEN queries, it may NOT be released in your region just yet, it is targeted to be Public Preview soon. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
+>
+> #### "Ask Copilot" is NOT Showing in Worksheets
+> 
+> At the time of publishing this lab, in late May 2024, Snowflake Copilot was in Public Preview in AWS US regions. We have included it in the lab content for reference. If you do not see "Ask Copilot", it may NOT be released in your region just yet. Please review the [Snowflake Preview Features](https://docs.snowflake.com/en/release-notes/preview-features) page for more information.
+>
+> #### Snowflake Copilot Returns "We are in the process of indexing the tables and views in the selected database and schema. Please try again later."
+>
+> If Snowflake Copilot is in the process of indexing objects, results will return "We are in the process of indexing the tables and views in the selected database and schema. Please try again later.".
 >
 
 <!-- ------------------------ -->

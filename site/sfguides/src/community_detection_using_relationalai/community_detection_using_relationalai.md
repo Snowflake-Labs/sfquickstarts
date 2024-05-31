@@ -34,11 +34,10 @@ Users can build a knowledge graph using Python, and materialize it on top of the
 - A visualization of this data
 
 <!-- ------------------------ -->
-## Build a Harmonized View 
+## Build a Harmonized Customer Loyalty Data
 Duration: 5
 
-The base TastyBytes data contains point-of-sale data. Before forming a graph on the data we're interested in, we
-will create a harmonized view that gives us individual customer loyalty data for each order. 
+The base TastyBytes data contains point-of-sale data. Before forming a graph on the data we're interested in, we will create a harmonized dataset that gives us individual customer loyalty data for each order. 
 
 ```sql
 CREATE OR REPLACE TABLE FROSTBYTE_TASTY_BYTES.HARMONIZED.LOYALTY_ORDERS
@@ -92,7 +91,7 @@ LEFT JOIN frostbyte_tasty_bytes.raw_customer.customer_loyalty cl
 	ON oh.customer_id = cl.customer_id;
 ```
 
-Now we'll create a subset view for the California-based orders in which we're interested. 
+Now we'll create a subset table for the California-based orders in which we're interested. 
 
 ```sql
 CREATE OR REPLACE TABLE LOYALTY_ORDERS_REGION_CALIFORNIA AS
@@ -138,7 +137,7 @@ Download the miniconda installer from https://conda.io/miniconda.html. (OR, you 
 
 From the app folder, create conda environment. Then activate conda environment and install JupyterLab and RelationalAI package
 ```console
-> conda create -n rai_communities python=3.12
+> conda create -n rai_communities python=3.11.8
 > conda activate rai_communities    
 > pip install jupyterlab 
 > pip install relationalai  
