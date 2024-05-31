@@ -1,7 +1,6 @@
 author: Charles Yorek
 id: build-a-native-app-with-spcs
 summary: This is a sample Snowflake Guide
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started
 environments: web
 status: Published 
@@ -290,7 +289,7 @@ drop role nac;
 
 
 <!-- ------------------------ -->
-## Conclusion 
+## Conclusion and Resources
 Duration: 5
 
 Congratulations!  You've now deployed a Snowflake Native App that includes Snowpark Container Service hosting a customer Frontend and Backend for a web application.  
