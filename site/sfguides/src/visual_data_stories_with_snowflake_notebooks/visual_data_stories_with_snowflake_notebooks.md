@@ -27,12 +27,13 @@ You can write and execute code, visualize results, and tell the story of your an
 
 ![Notebook](assets/sf-notebooks-welcome.gif)
 
-In this guide, we will learn how to build visualizations in Snowflake notebook!
+In this tutorial, we will walk you through the different ways you can enrich your data narrative through engaging visuals in Snowflake Notebooks. We will demonstrate how you can develop visualizations, work with Markdown text, embed images, and build awesome data apps all within your notebook, alongside your code and data.
 
 ### Prerequisites
 
 - A [Snowflake](https://signup.snowflake.com/) account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required.
 - Access to download `.ipynb` file from [Snowflake notebooks demo repo](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main)
+- Please add the `matplotlib` and `plotly` package from the package picker on the top right. We will be using these packages in the notebook.
 
 ### What will you build?
 
@@ -54,7 +55,7 @@ In this example, we will upload an existing notebook from [Snowflake Notebooks d
 
 The notebook files are available for download as `.ipynb` files in the demo repository. To load the demo notebooks into your Snowflake Notebook, follow these steps: 
 
-1. On Github, click into each folder containing the tutorial and the corresponding `.ipynb file`, such as [this](https://github.com/Snowflake-Labs/notebook-demo/blob/main/My%20First%20Notebook%20Project/My%20First%20Notebook%20Project.ipynb). Download the file by clicking on the `Download raw file` from the top right.
+1. On Github, click into each folder containing the tutorial and the corresponding `.ipynb file`, such as [this](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Visual%20Data%20Stories%20with%20Snowflake%20Notebooks/Visual%20Data%20Stories%20with%20Snowflake%20Notebooks.ipynb). Download the file by clicking on the `Download raw file` from the top right.
 
 2. Go to the Snowflake web interface, [Snowsight](https://app.snowflake.com), on your browser.
 
@@ -69,201 +70,225 @@ The notebook files are available for download as `.ipynb` files in the demo repo
 6. A `Create Notebook` dialog will show up. Select a database, schema, and warehouse for the Notebook and click `Create`.
 
 <!-- ------------------------ -->
-## Running Snowflake Notebooks
+## Plotting data using Altair, Matplotlob and Plotly
 
 Duration: 5
 
-Let's walk through the first demo notebook in Snowflake now.
+With Snowflake Notebook, you can use your favorite Python visualization library, including Altair, matplotlib and plotly, to develop your visualization. 
 
-### Adding Python Packages
-
-Notebooks comes pre-installed with common Python libraries for data science and machine learning, such as numpy, pandas, matplotlib, and more!
-
-If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
-
-For the purpose of this demo, let's add the `matplotlib` and `scipy` package from the package picker.
-
-![PackagePicker](assets/package_picker.png)
-
-### Switching between SQL and Python cells
-
-It is often useful to switch between working with SQL and Python at different stages in your data analysis workflow.
-
-While creating a new cell, you can select between `SQL`, `Python` and `Markdown` cells to select an appropriate one you need.
-
-Every cell at the top left has a drop down list that shows the type of cell along with the cell number as well.
-
-![CellType](assets/cell_type.png)
-
-### Accessing cell outputs as variables in Python
-
-You can give cells a custom name (as opposed to the default cell#) and refer to the cell output in subsequent cells as well.
-
-For example, you can refer to the output of the SQL query in `cell5` in a `Python variable` called `cell5` in subsequent cells.
-
-![CellType](assets/cell_output.png)
-
-### Visualize your data
-
-You can use different visualization libraries such as Altair, Streamlit, matplotlib to plot your data.
-
-Let's use Altair to easily visualize our data distribution as a histogram.
-
-![Histogram](assets/histogram.png)
-
-To learn more on how to visualize your data with other visualization libraries, refer to the [documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-visualize-data).
-
-### Working with Data using Snowpark
-
-In addition to using your favorite Python data science libraries, you can also use the [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index) to query and process your data at scale within the Notebook. 
-
-First, you can get your session variable directly through the active notebook session. 
-The session variable is the entrypoint that gives you access to using Snowflake's Python API.
+First, let's generate some toy data for the Iris dataset.
 
 ```python
-    from snowflake.snowpark.context import get_active_session
-    session = get_active_session()
+# Sample data
+species = ["setosa"] * 3 + ["versicolor"] * 3 + ["virginica"] * 3
+measurements = ["sepal_length", "sepal_width", "petal_length"] * 3
+values = [5.1, 3.5, 1.4, 6.2, 2.9, 4.3, 7.3, 3.0, 6.3]
+df = pd.DataFrame({"species": species,"measurement": measurements,"value": values})
+df
 ```
-Here we use the Snowpark API to write a pandas dataframe as a Snowpark table named `SNOW_CATALOG`.
+
+### Plotting with Altair
+
+Now let's plot a bar chart in Altair. You can learn more about Altair [here](https://altair-viz.github.io/).
 
 ```python
-    session.write_pandas(df, "SNOW_CATALOG", auto_create_table=True, table_type="temp")
-```
-
-### Using Python variables in SQL cells
-
-You can use the Jinja syntax `{{..}}` to refer to Python variables within your SQL queries as follows. 
-
-```python
-threshold = 5
-```
-
-```sql
--- Reference Python variable in SQL
-SELECT * FROM SNOW_CATALOG where RATING > {{threshold}}
-```
-
-Likewise, you can reference a Pandas dataframe within your SQL statment:
-
-```sql
--- Filtering from a Pandas dataframe
-SELECT * FROM {{my_df}} where VAR = 6
-```
-
-### Simplifying your subqueries
-
-Let's start with the output of `cell21` in this notebook. Here is how it looks!
-
-```sql
-    SELECT * FROM SNOW_CATALOG;
-```
-
-![Cell21_Output](assets/cell_21.png)
-
-You can simplify long subqueries with [CTEs](https://docs.snowflake.com/en/user-guide/queries-cte) by combining what we've learned with Python and SQL cell result referencing. 
-
-For example, if we want to compute the average rating of all products with ratings above 5. We would typically have to write something like the following:
-
-```sql
-WITH RatingsAboveFive AS (
-    SELECT RATING
-    FROM SNOW_CATALOG
-    WHERE RATING > 5
+import altair as alt
+alt.Chart(df).mark_bar().encode(
+    x= alt.X("measurement", axis = alt.Axis(labelAngle=0)),
+    y="value",
+    color="species"
+).properties(
+    width=700,
+    height=500
 )
-SELECT AVG(RATING) AS AVG_RATING_ABOVE_FIVE
-FROM RatingsAboveFive;
 ```
 
-With Snowflake Notebooks, the query is much simpler! You can get the same result by filtering a SQL table from another SQL cell by referencing it with Jinja, e.g., `{{my_cell}}`. 
+![altair](assets/altair.png)
 
-```sql  
-SELECT AVG(RATING) FROM {{cell21}}
-WHERE RATING > 5
+### Plotting with Matplotlib
+
+Let's do the same with matplotlib. Note how convenient it is to do `df.plot` with your dataframe with pandas. This uses matplotlib underneath the hood to generate the plots. You can learn more about pandas's [pd.DataFrame.plot](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html) and about matplotlib [here](https://matplotlib.org/).
+
+First, let's pivot our data so that our data is stacked.
+
+```python
+pivot_df = pd.pivot_table(data=df, index=['measurement'], columns=['species'], values='value')
 ```
+
+We build a quick Streamlit app to visualize the pivot operation. (Don't worry we will discuss what the st. Streamlit commands mean later in the tutorial!)
+
+```python
+col1, col2 = st.columns(2)
+with col1: 
+    st.markdown("Old Dataframe")
+    st.dataframe(df)    
+with col2:
+    st.markdown("Pivoted Dataframe")
+    st.dataframe(pivot_df)
+```
+
+Now let's use matplotlib to plot the stacked bar chart.
+
+```python
+import matplotlib.pyplot as plt
+ax = pivot_df.plot.bar(stacked=True)
+_ = ax.set_xticklabels(list(pivot_df.index), rotation=0)
+```
+
+![matplotlib](assets/matplotlib.png)
+
+### Plotting with Plotly
+
+Finally, let's do the same plot with plotly. Learn more about plotly [here](https://plotly.com/python/plotly-express/).
+
+```python
+import plotly.express as px
+px.bar(df, x='measurement', y='value', color='species')
+```
+
+![plotly](assets/plotly.png)
 
 <!-- ------------------------ -->
-## Create Interactive Streamlit App
+## Working with Markdown cells
 
 Duration: 5
 
-Putting all our learnings together, let's build a streamlit app to explore how different parameters impact the shape of the data distribution histogram.
+With Snowflake Notebooks, you can leverage Markdown language to develop rich text displays with formatting.
 
-Here is the code snippet to build interactive sliders:
+You can change a cell type to render Markdown by clicking on the dropdown on the top left to select `Markdown` (or use `m` as the hotkey to convert a cell type to Markdown).
+
+![Markdown](assets/markdown.png)
+
+### Inline Text Formatting
+
+Here is some *italicized* text and **bolded text**.
+Markdown: `Here is some *italicized text* and **bolded text**`.
+
+Here is a link to the [Snowflake website](https://snowflake.com/)
+Markdown: `Here is a link to the [Snowflake website](https://snowflake.com/)`
+
+From here on, you can double click onto each Markdown cell to take a look at the underlying Markdown content.
+
+### Bulleted List
+
+Here is a bulleted list (with emojis 😊)
+
+- ❄️
+- ❄️❄️
+- ❄️❄️❄️
+    - Nested ❄️
+    - Nested ❄️❄️
+
+![BulletedList](assets/bulleted_list.png)
+
+### Formatting Code
+
+Python: 
+```python
+import pandas as pd
+df = pd.DataFrame([1,2,3])
+```
+
+SQL: 
+```sql
+SELECT * FROM MYTABLE
+```
+
+Inline Code formatting: 
+
+My data is stored in `DB.SCHEMA`. 
+
+![FormattingCode](assets/formatting_code.png)
+
+### Embedding Images and GIFs
+
+You can use the Markdown Syntax to embed images and GIFs in your notebook.
+
+The syntax looks like `![text](hyperlink)`. Here are some examples!
+
+`![](https://www.snowflake.com/wp-content/themes/snowflake/assets/img/brand-guidelines/logo-sno-blue-example.svg)`
+`![](https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif)`
+
+<!-- ------------------------ -->
+## Create Streamlit App
+
+Duration: 5
+
+You can bring your data narrative alive in notebooks and make it even more interactive by using Streamlit.
+
+[Streamlit](https://streamlit.io/) is an open-source framework for building interactive data apps in Python (not a single line of HTML or Javascript required!)
+
+Unlike in other notebooks where you need to navigate to a separate terminal window to serve up your Streamlit app, you can test and develop your Streamlit app directly in your notebook. 
+
+We saw how you can embed images using Markdown. Here we show how you can embed images in your notebook using Streamlit which gives you more image customization options.
 
 ```python
 import streamlit as st
-st.markdown("# Move the slider to adjust and watch the results update! 👇")
-col1, col2 = st.columns(2)
-with col1:
-    mean = st.slider('Mean of on RATING Distribution',0,10,3) 
-with col2:
-    stdev = st.slider('Standard Deviation of RATING Distribution', 0, 10, 5)
+st.image("https://www.snowflake.com/wp-content/themes/snowflake/assets/img/brand-guidelines/logo-sno-blue-example.svg",width=500)
 ```
-
-![Streamlit_Slider](assets/streamlit_slider.png)
-
-Now, let us capture the mean and standard deviation values from the above slider and use it to generate a distribution of values to plot a histogram.
-
-```sql
-CREATE OR REPLACE TABLE SNOW_CATALOG AS 
-SELECT CONCAT('SNOW-',UNIFORM(1000,9999, RANDOM())) AS PRODUCT_ID, 
-        ABS(NORMAL({{mean}}, {{stdev}}, RANDOM())) AS RATING, 
-        ABS(NORMAL(750, 200::FLOAT, RANDOM())) AS PRICE
-FROM TABLE(GENERATOR(ROWCOUNT => 100));
-```
-
-Let's plot the histogram using Altair.
 
 ```python
-# Read table from Snowpark and plot the results
-df = session.table("SNOW_CATALOG").to_pandas()
-# Let's plot the results with Altair
-alt.Chart(df).mark_bar().encode(
-    alt.X("RATING", bin=alt.Bin(step=2)),
-    y='count()',
-)
+# Also works with a GIF animation!
+st.image("https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif", caption="Rotating Earth!")
 ```
 
-As you adjust the slider values, you will see that cells below re-executes and the histogram updates based on the updated data.
+Let's say you have some images in your Snowflake stage, you can stream in the image file and display it with Streamlit.
 
-![Histogram_Slider](assets/histogram_slider.png)
+```sql
+LS @IMAGE_STAGE;
+```
 
+```python
+from snowflake.snowpark.context import get_active_session
+session = get_active_session()
+image=session.file.get_stream("@IMAGE_STAGE/snowflake-logo.png", decompress=False).read() 
+st.image(image)
+```
 <!-- ------------------------ -->
-## Keyboard Shortcuts 
+## Interactive Data Apps using Streamlit
 
-Duration: 1
+Duration: 5
 
-These shortcuts can help you navigate around your notebook more quickly. 
+Think of each cell in your Snowflake Notebook as a mini Streamlit app. As you interact with your data app, the relevant cells will get re-executed and the results in your app updates.
 
-| Command | Shortcut |
-| --- | ----------- |
-| **Run this cell and advance** | SHIFT + ENTER |
-| **Run this cell only** | CMD + ENTER |
-| **Run all cells** | CMD + SHIFT + ENTER |
-| **Add cell BELOW** | b |
-| **Add cell ABOVE** | a |
-| **Delete this cell** | d+d |
+```python
+st.markdown("""# Interactive Filtering with Streamlit! :balloon: 
+Values will automatically cascade down the notebook cells""")
+value = st.slider("Move the slider to change the filter value 👇", df.value.min(), df.value.max(), df.value.mean(), step = 0.3
+```
 
-\
-You can view the full list of shortcuts by clicking the `?` button on the bottom right on your Snowsight UI.
+![interactive_filtering](assets/interactive_filtering.png)
+
+```python
+# Filter the table from above using the Streamlit slider
+df[df["value"]>value].sort_values("value")
+```
+
+```python
+alt.Chart(df).mark_bar().encode(
+    x= alt.X("measurement", axis = alt.Axis(labelAngle=0)),
+    y="value",
+    color="species"
+).properties(width=500,height=300)
+```
+
+![altair_v2](assets/altair_v2.png)
+
+Try out Notebooks yourself to build your own data narrative!
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 Duration: 1
 
-Congratulations! You've successfully completed the Getting Started with Snowflake Notebooks quickstart guide. 
+Congratulations! You've successfully completed the Visual Data Stories with Snowflake Notebooks quickstart guide. 
 
 ### What You Learned
 
-- **Adding Python Packages**: How to use pre-installed libraries in Notebooks as well as adding additional packages from package picker
-- **Switching between SQL and Python cells**: How to switch between SQL and Python cells in the same notebook
-TODO: (fix the error that says worksheet in the ipynb markdown)
-- **Visualize your Data**: How to use Altair and Matplotlib to visualize your data
-- **Working with Snowpark**: How to use Snowpark API to process data at scale within the Notebook
-- **Using Python Variables in SQL cells**: How to use Jinja syntax `{{.}}` to refer to Python variables within SQL queries, to reference previous cell outputs in your SQL query and more.
-- **Creating an Interactive app with Streamlit**: How to build a simple interactive Streamlit app
-- **Keyboard Shortcuts in Notebooks**: How to use Keyboard shortcuts in Notebooks to developer faster
+- **Plot with Altair, Matplotlib and Plotly**: How to use different visualization libraries in Snowflake Notebooks
+- **Working with Markdown cells**: How to develop your narratives using Markdown language
+- **Building Streamlit Apps from Notebook**: How to use Streamlit API to build data apps within the Notebook
+- **Interactive Data Apps in Notebook**: How to build interactive dashboards and data apps using Streamlit in Snowflake Notebook
 
 ### Related Resources
 
