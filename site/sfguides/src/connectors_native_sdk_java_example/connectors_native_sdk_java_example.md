@@ -49,10 +49,7 @@ Duration: 6
 
 The project contains multiple subdirectories which will be shortly described in the following section.
 
-### Connectors Native SDK
-The `connectors-native-sdk` directory contains all the Connectors Native SDK code. It is further split into subdirectories as described below.
-
-#### Connectors Native SDK Java
+### Connectors Native SDK Java
 The `connectors-native-sdk-java` directory contains all the Native SDK Java code with unit tests and integration tests for the SDK components. 
 Because of the nature of the Native Apps inside Snowflake this means not only Java code, but also sql code, which is necessary to create a working application.
 The definitions of the database objects can be found inside `src/main/resources` directory. 
@@ -61,8 +58,8 @@ In this example we use `all.sql` file, which creates objects for all the availab
 This file will be executed during the installation process of the application.
 For now this code is not available as jar archive that can be used as a dependency in java project and has to be included as source files.
 
-#### Connectors Native SDK Java test
-The `connectors-native-sdk-java-test` directory contains source code of a helper library used in unit tests, for example objects used to mock particular components, custom assertions etc.
+### Connectors Native SDK Java test
+The `connectors-native-sdk-test-java` directory contains source code of a helper library used in unit tests, for example objects used to mock particular components, custom assertions etc.
 Those files are neither a part of the library nor the application.
 
 ### Example Java GitHub connector
@@ -77,13 +74,21 @@ This file specifies application properties, as well as permissions needed by the
 Additionally, `examples/connectors-native-sdk-example-java-github-connector` directory contains `src/` subdirectory which contains 
 custom connector logic, such as implementation of the required classes and customizations of the default SDK components.
 
-Other files in the directory are gradle related files, the `Makefile` contains build,
-deploy and installation convenience scripts, which will be described in the next step of this tutorial.
+### Connectors Native SDK Template 
+The template Gradle Java project with inbuilt Connectors Native SDK Java that allows the developer to deploy, install, and run the
+sample, mocked source connector right after downloading the template. You can find it inside `templates/connectors-native-sdk-template`. 
+The template is filled with some code already which shows how to use the Native SDK for Connectors Java according to the 
+connector flow defined by the Native SDK for Connectors. Reach the [official tutorial](https://docs.snowflake.com/en/developer-guide/native-apps/connector-sdk/tutorials/native_sdk_tutorial) 
+that will guide through the whole developer flow starting from cloning the template project, through the implementation 
+process of key functionalities, ending with the deployed and running connector in the Snowflake environment!
+
+Other files in the directory are gradle related files, `README.md`, `CONTRIBUTING.md` and `LICENSE` that deliver the
+general information about the repository.
 
 ## Build, deploy and installation
 Duration: 10
 
-The `Makefile` in the `connectors-examples/examples/connectors-native-sdk-example-java-github-connector/` directory contains convenience scripts to build, deploy and install the connector. 
+The `Makefile` in the `examples/connectors-native-sdk-example-java-github-connector/` directory contains convenience scripts to build, deploy and install the connector. 
 Those scripts execute specific gradle tasks, execute some shell scripts and run sql commands in Snowflake. 
 They require a `snowsql` connection to be defined on the local machine. 
 The name of the connection should be provided in the `CONNECTION` environmental variable at the top of the `Makefile`.
@@ -93,12 +98,12 @@ To perform all the needed scripts, one of the 2 commands below will be enough,
 however the following sections will go deeper to explain the whole process and what is happening under the hood.
 
 ```shell
-cd connectors-example/examples/connectors-native-sdk-example-java-github-connector
+cd examples/connectors-native-sdk-example-java-github-connector
 make complex_create_app_instance_from_app_version
 ```
 
 ```shell
-cd connectors-example/examples/connectors-native-sdk-example-java-github-connector
+cd examples/connectors-native-sdk-example-java-github-connector
 make complex_create_app_instance_from_version_dir
 ```
 
