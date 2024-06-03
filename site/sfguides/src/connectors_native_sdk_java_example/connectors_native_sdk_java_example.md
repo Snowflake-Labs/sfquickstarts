@@ -38,7 +38,7 @@ Before starting this tutorial please be sure that below prerequisites are satisf
 Duration: 3
 
 - Install Java 11
-- Clone the [connectors-examples](https://github.com/snowflakedb/connectors-native-sdk) repository
+- Clone the [connectors-native-sdk](https://github.com/snowflakedb/connectors-native-sdk) repository
 - Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
 - Configure `snowsql` to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
 - Configure `snowsql` to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
