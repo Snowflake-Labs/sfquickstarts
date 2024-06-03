@@ -80,17 +80,6 @@ custom connector logic, such as implementation of the required classes and custo
 Other files in the directory are gradle related files, the `Makefile` contains build,
 deploy and installation convenience scripts, which will be described in the next step of this tutorial.
 
-## Build and publish locally the sdk code
-Duration: 2
-
-As mentioned before the project currently contains Connectors Native SDK Java as source files, because it's not available in Maven repository yet. 
-For that reason it needs to be built and published to local repository. This step might seem unnecessary, 
-because it could be just directly linked as a module, but will show the future experience we are aiming for when the artifacts are available in public maven repositories.
-```shell
-cd connectors-examples/connectors-native-sdk
-./publish-sdk-locally.sh
-```
-
 ## Build, deploy and installation
 Duration: 10
 
