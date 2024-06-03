@@ -27,7 +27,7 @@ Users can build a knowledge graph using Python, and materialize it on top of the
 - Basic knowledge of using a Snowflake SQL Worksheet
 - Snowflake privileges on your user to [Install a Native Application](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges)
 - A Database named `FROSTBYTE_TASTY_BYTES` with the "TastyBytes" demo data set. To get access to this data, please send an email request to `sales@relational.ai`, with your SF account identifier for us to share the data
-- The [RAI Community Detection Jupyter notebook](https://github.com/RelationalAI/rai-samples/blob/main/samples/tastybytes-communities/community_detection_RelationalAI_V1.ipynb) used in this quickstart
+- The [RAI Community Detection Jupyter notebook](https://github.com/RelationalAI/rai-samples/blob/main/samples/tastybytes-communities/community_detection_RelationalAI_0.3.ipynb) used in this quickstart
 
 ### What You’ll Build 
 - A community detection algorithm to find which food truck customers frequently eat together
