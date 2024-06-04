@@ -134,7 +134,14 @@ To overcome this, we could fine-tune `mistral-7b` particularly for this task. Th
 
 To fine-tune the language model, we need training data that includes support ticket requests and right category labels for each of them. Annotations for millions of support tickets are not readily available. So we could leverage an existing large language model to create category labels and prepare the dataset for fine-tuning.
 
-Next step is to split the curated dataset into a training and a test set. Once we have the training data, we could use Snowflake Cortex AI Studio to fine-tune. Cortex AI features a no-code fine-tuning from the UI using the `Create Custom LLM` option.
+Next step is to split the curated dataset into a training and a test set. There are two ways you can fine-tune a large language model. 
+
+- Use Snowflake Cortex AI Studio that allows you to run fine-tuning from the UI. This is currently in PrPr
+- Use FINETUNE() Cortex function to run the fine-tune job using SQL queries. This is currently available in PuPr.
+
+#### Fine-tuning using Cortex AI Studio
+
+Once we have the training data, we could use Snowflake Cortex AI Studio to fine-tune. Cortex AI features a no-code fine-tuning from the UI using the `Create Custom LLM` option.
 
 ![CortexStudio](./assets/cortex_studio.png)
 
@@ -145,7 +152,38 @@ Next step is to split the curated dataset into a training and a test set. Once w
 - In the end, select the validation data for Cortex to evaluate the fine-tuning process too
 - Inferencing the fine-tuned model
 
+#### Fine-tuning using `FINETUNE()` SQL API
+
+Alternatively, you can also fine-tune the LLM using SQL API `FINETUNE()`. Learn more about the syntax [here](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning).
+
+```sql
+select snowflake.cortex.finetune(
+'CREATE', 
+'CORTEX_FINETUNING_DB.PUBLIC.SUPPORT_TICKETS_FINETUNED_MISTRAL_7B', 'mistral-7b', 
+'SELECT prompt, mistral_large_response as completion from CORTEX_FINETUNING_DB.PUBLIC.support_tickets_train', 
+'SELECT prompt, mistral_large_response as completion from CORTEX_FINETUNING_DB.PUBLIC.support_tickets_eval'
+);
+```
+After running the above query, we can keep track of the fine-tuning job using the below command.
+
+```sql
+select snowflake.cortex.finetune('DESCRIBE', 'CortexFineTuningWorkflow_f4016e33-92ce-45d3-918a-19115c398f10');
+```
+
+#### Inferencing the fine-tuned model
+
 Once the fine-tuning is complete, we could run inference on the model by simply invoking the Cortex AI `COMPLETE()` with the fine-tuned model name as one of the parameters.
+
+```python
+fine_tuned_model_name = 'SUPPORT_TICKETS_FINETUNED_MISTRAL_7B'
+sql = f"""select ticket_id, request,
+trim(snowflake.cortex.complete('{fine_tuned_model_name}',concat('{prompt}',request)),'\n') as fine_tuned_mistral_7b_model_response
+from support_tickets"""
+
+df_fine_tuned_mistral_7b_response = session.sql(sql)
+df_fine_tuned_mistral_7b_response
+
+```
 
 ### Automated Generation of Email Responses to support tickets using LLMs
 
@@ -213,6 +251,6 @@ You have learnt how to use Snowflake Cortex AI to:
 ### Related Resources
 
 - [Snowflake Cortex: Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
-- [Snowflake Cortex: LLM Functions](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions)
+- [Snowflake Cortex Fine-tuning](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning)
 - [Snowflake Cortex: COMPLETE()](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete)
 - [Snowflake Notebooks: Demo Repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks)
