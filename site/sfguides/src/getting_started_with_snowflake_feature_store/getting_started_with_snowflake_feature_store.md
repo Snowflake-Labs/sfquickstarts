@@ -156,26 +156,21 @@ Note: if you are installing onto a Apple Mac with Apple silicon you will need to
 ```python
 conda config --env --set subdir osx-64
 ```
-**Step 5:** Install SQLGlot with pip install in the conda environment **py-snowpark_df_ml_fs** by running the following command in the same terminal window.  We will use this package to format the SQL produced from Snowpark so that it is human-readable in the Dynamic Tables that Feature Store creates.
+
+**Step 5:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **py-snowpark_df_ml_fs** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
 
 ```python
-python3 -m pip install "sqlglot[rs]" --no-deps
-```
-
-**Step 6:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **py-snowpark_df_ml_fs** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
-
-```python
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python>=1.16.0 snowflake-ml-python>=1.5.1 notebook
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python=1.16.0 snowflake-ml-python=1.5.1 notebook
 pip install snowflake
 ```
 
 
-**Step 7:** Create a Jupyter Kernel to represent the environment that we have just created using
+**Step 6:** Create a Jupyter Kernel to represent the environment that we have just created using
 
 ```python
 ipython kernel install --user --name=py-snowpark_df_ml_fs
 ```
-**Step 8:** Make sure you are in the top level directory for this QuickStart, and start Jupyter to test the it is setup correctly
+**Step 7:** Make sure you are in the top level directory for this QuickStart, and start Jupyter to test the it is setup correctly
 
 ```python
 jupyter lab
@@ -183,7 +178,7 @@ jupyter lab
 
 Follow the instructions output by Jupyter in the console to open jupyter lab in your browser, if it has not automatically open a tab in your browser.
 
-**Step 9:** 
+**Step 8:** 
 You will need a Snowflake login and to setup a connection for use within the provided Jupyter Notebooks. 
 
 There are several options for creating a Snowpark connection.  You can use the method described here in [snowpark connection](https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview#connecting-to-snowflake).  You will need to create an entry in your [SnowSQL configuration file](https://docs.snowflake.com/en/user-guide/snowsql-config).
