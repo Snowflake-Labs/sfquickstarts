@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowflake Cortex, Streamlit
 authors: Vino Duraisamy
 
-# Fine-tuning LLMs using Snowflake Cortex AI
+# Serverless LLM Fine-tuning using Snowflake Cortex AI
 <!-- ------------------------ -->
 ## Overview
 
