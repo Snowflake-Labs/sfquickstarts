@@ -13,14 +13,19 @@ authors: Vino Duraisamy
 
 Duration: 5
 
-Getting started with AI on enterprise data can seem overwhelming. Between getting familiar with LLMs, how to perform custom prompt engineering, fine-tuning an existing foundation model and how to get a wide range of LLMs deployed/integrated to run multiple tests all while keeping that valuable enterprise data secure. Well, a lot of these complexities are being abstracted away for you in Snowflake Cortex.
+Getting started with AI on enterprise data can seem overwhelming. Between getting familiar with LLMs, how to perform custom prompt engineering, fine-tuning an existing foundation model and how to get a wide range of LLMs deployed/integrated to run multiple tests all while keeping that valuable enterprise data secure. Well, a lot of these complexities are being abstracted away for you in Snowflake Cortex AI.
 
 ### What is Snowflake Cortex?
 
-Snowflake Cortex is an intelligent, fully managed service that offers machine learning and AI solutions to Snowflake users. Snowflake Cortex capabilities include:
+Snowflake Cortex is an intelligent, fully managed service that provides access to industry-leading large language models (LLMs) and chat with your data services.. Cortex AI capabilities include:
 
-**LLM Functions**: SQL and Python functions that leverage large language models (LLMs) for understanding, querying, translating, summarizing, and generating free-form text.
-**ML Functions**: SQL functions that perform predictive analysis using machine learning to help you gain insights into your structured data and accelerate everyday analytics.
+![Cortex](./assets/cortex.png)
+
+**Models**: Access to tasks specific functions such as sentiment analysis, translation as well as Foundation Models from Snowflake, Meta, Mistral AI. Leading models from Meta and Mistral AI are available for serverless fine-tuning (public preview). 
+
+**Chat Services**:  Ask questions against unstructured data, such as documents using Cortex Search or ask questions to structured data, such as sales transactions using Cortex Analyst - both coming soon to public preview. 
+
+**AI & ML Studio**: This a no-code development workspace in Snowflake. Specifically for LLMs, Studio lets users quickly try out models, easily fine-tune models, and set up use cases such as search so you can expedite delivery of applications.
 
 In this quickstart, we will go through 2 flows – Use Cortex AI to fine-tune an LLM to categorize customer support tickets for a Telecom provider, and generate custom email/text communications tailored to each customer ticket.
 
@@ -28,7 +33,7 @@ Learn more about [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/sno
 
 ### Fine-tuning for Enterprise Use-cases
 
-A generic large language model such as `mistral-large` can be used to categorize support tickets with higher accuracy. But using a large language model comes with higher costs for organizations. 
+Compared to a smaller size model such as Mistral 7B, a foundation large language model such as `mistral-large` can be used to categorize support tickets with higher accuracy. But using a large language model comes with higher inference costs. 
 
 Using fine-tuning, organizations can make smaller models really good at specific tasks to deliver results with the accuracy of larger models at just a fraction of the cost.
 
@@ -119,11 +124,11 @@ Try doing it for this request and return only the request category only.
 """
 ```
 
-Using a powerful and large language model such as `mistral-large` might be highly accurate but running `mistral-large` on millions of support tickets comes with a cost. So, let’s try the Cortex `COMPLETE()` function with the same prompt but this time using a smaller model such as `mistral-7b`.
+Using a powerful and large language model such as `mistral-large` might be highly accurate without doing any complex customizations but running `mistral-large` on millions of support tickets comes with a cost. So, let’s try the same COMPLETE() function with the same prompt but this time with a smaller model such as `mistral-7b`. 
 
-As we can see, the smaller model `mistral-7b` underperforms in this specific task compared to `mistral-large`. This is because a general purpose model is not good at specific tasks such as the task at hand – Support ticket categorization. 
+As we can see, the smaller model `mistral-7b` does not generate results with a consistent structure.
 
-To overcome this, we could fine-tune `mistral-7b` particularly for this task. This fine-tuned model will be smaller in size and costs only a fraction of what a larger model would cost. 
+To overcome this, we could fine-tune `mistral-7b` particularly for this task. This fine-tuned model will be smaller in size and the inference cost is only a fraction of what a larger model would cost. 
 
 ### Fine-tuning
 
@@ -144,9 +149,9 @@ Once the fine-tuning is complete, we could run inference on the model by simply 
 
 ### Automated Generation of Email Responses to support tickets using LLMs
 
-After categorizing the support tickets into different categories based on the reason for support request, we can also use Cortex AI to auto-generate the email/text responses to these support requests.
+After categorizing the support tickets into different categories based on the reason for the support request, we can also use Cortex AI to auto-generate the email/text responses to these support requests.
 
-The following code snippet creates a nimble steamlit application in a Snowflake Notebook that you can use to iterate through the different prompts while invoking the COMPLETE() function.
+The following code snippet creates a nimble steamlit application in a Snowflake Notebook that you can use to iterate through the different prompts while invoking the Complete() function.
 
 ```python
 st.subheader("Auto-generate custom emails or text messages")
