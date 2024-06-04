@@ -53,7 +53,7 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 > Note: Cortex Fine-tuning is not available in Snowflake Free Trial accounts. Use your own accounts or reach out to your account representative to use this in your account.
 
 - A GitHub account. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started. 
-- Download the Snowflake Notebook from [this Git repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks) for fine-tuning the model.
+- Download the Snowflake Notebook from [this Git repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb) for fine-tuning the model.
 
 <!-- ------------------------ -->
 ## Setup
@@ -62,7 +62,7 @@ Duration: 5
 
 ### Load the Demo Notebook
 
-A Snowflake Notebook with the required code snippets for this quickstart are available in [this](https://github.com/Snowflake-Labs/snowflake-demo-notebooks) repository. 
+A Snowflake Notebook with the required code snippets for this quickstart are available in [this](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb) repository. 
 
 To load the demo notebook into your Snowflake account, follow these steps:
 
@@ -253,4 +253,4 @@ You have learnt how to use Snowflake Cortex AI to:
 - [Snowflake Cortex: Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Snowflake Cortex Fine-tuning](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning)
 - [Snowflake Cortex: COMPLETE()](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete)
-- [Snowflake Notebooks: Demo Repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks)
+- [Snowflake Notebooks: Demo Repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb)
