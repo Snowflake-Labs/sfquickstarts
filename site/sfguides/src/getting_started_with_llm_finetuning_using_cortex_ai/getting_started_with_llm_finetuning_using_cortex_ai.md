@@ -94,180 +94,120 @@ COPY into CALL_TRANSCRIPTS
 ```
 
 <!-- ------------------------ -->
-## Snowflake Cortex
+## Fine-tuning LLMs using Snowflake Cortex AI
 
-Duration: 5
+Duration: 10
 
-Given the data in `call_transcripts` table, let’s see how we can use Snowflake Cortex. It offers access to industry-leading AI models, without requiring any knowledge of how the AI models work, how to deploy LLMs, or how to manage GPU infrastructure.
+### Support Ticket Categorization using Cortex AI
 
-### Translate
-Using Snowflake Cortex function **snowflake.cortex.translate** we can easily translate any text from one language to another. Let’s see how easy it is to use this function….
+First, let's use Snowflake Cortex `COMPLETE()` to categorize the support tickets into different buckets – Roaming Fees, Slow data speed, Add new line, Closing account and more.
 
-```sql
-select snowflake.cortex.translate('wie geht es dir heute?','de_DE','en_XX');
-```
-
-Executing the above SQL should generate ***"How are you today?"***
-
-Now let’s see how you can translate call transcripts from German to English in batch mode using just SQL.
-
-```sql
-select transcript,snowflake.cortex.translate(transcript,'de_DE','en_XX') from call_transcripts where language = 'German';
-```
-
-### Sentiment Score
-Now let’s see how we can use **snowflake.cortex.sentiment** function to generate sentiment scores on call transcripts. 
-
-*Note: Score is between -1 and 1; -1 = most negative, 1 = positive, 0 = neutral*
-
-```sql
-select transcript, snowflake.cortex.sentiment(transcript) from call_transcripts where language = 'English';
-```
-
-### Summarize
-
-Now that we know how to translate call transcripts in English, it would be great to have the model pull out the most important details from each transcript so we don’t have to read the whole thing. Let’s see how **snowflake.cortex.summarize** function can do this and try it on one record.
-
-```sql
-select transcript,snowflake.cortex.summarize(transcript) from call_transcripts where language = 'English' limit 1;
-```
-
-<!-- ------------------------ -->
-## Snowflake Arctic
-
-Duration: 5
-
-### Prompt Engineering
-Being able to pull out the summary is good, but it would be great if we specifically pull out the product name, what part of the product was defective, and limit the summary to 200 words. 
-
-Let’s see how we can accomplish this using the **snowflake.cortex.complete** function.
-
-```sql
-SET prompt = 
-'### 
-Summarize this transcript in less than 200 words. 
-Put the product name, defect and summary in JSON format. 
-###';
-
-select snowflake.cortex.complete('snowflake-arctic',concat('[INST]',$prompt,transcript,'[/INST]')) as summary
-from call_transcripts where language = 'English' limit 1;
-```
-
-Here we’re selecting the Snowflake Arctic model and giving it a prompt telling it how to customize the output. Sample response:
-
-```json
-{
-    "product": "XtremeX helmets",
-    "defect": "broken buckles",
-    "summary": "Mountain Ski Adventures received a batch of XtremeX helmets with broken buckles. The agent apologized and offered a replacement or refund. The customer preferred a replacement, and the agent expedited a new shipment of ten helmets with functioning buckles to arrive within 3-5 business days."
-}
-```
-
-<!-- ------------------------ -->
-## Streamlit Application
-
-Duration: 9
-
-To put it all together, let's create a Streamlit application in Snowflake.
-
-### Setup
-
-**Step 1.** Click on **Streamlit** on the left navigation menu
-
-**Step 2.** Click on **+ Streamlit App** on the top right
-
-**Step 3.** Enter **App name**
-
-**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
-
-**Step 5.** Click on **Create**
-
-- At this point, you will be provided code for an example Streamlit application
-
-**Step 6.** Replace the entire sample application code on the left with the following code snippet.
+We can use any Cortex supported model under the hood to invoke the `COMPLETE()` function. In this quickstart, let’s use `mistral-large` and use the following prompt.
 
 ```python
-import streamlit as st
-from snowflake.snowpark.context import get_active_session
+prompt = """You are an agent that helps organize requests that come to our support team. 
 
-st.set_page_config(layout='wide')
-session = get_active_session()
+The request category is the reason why the customer reached out. These are the possible types of request categories:
 
-def summarize():
-    with st.container():
-        st.header("JSON Summary With Snowflake Arctic")
-        entered_text = st.text_area("Enter text",label_visibility="hidden",height=400,placeholder='For example: customer call transcript')    
-        if entered_text:
-            entered_text = entered_text.replace("'", "\\'")
-            prompt = f"Summarize this transcript in less than 200 words. Put the product name, defect if any, and summary in JSON format: {entered_text}"
-            cortex_prompt = "'[INST] " + prompt + " [/INST]'"
-            cortex_response = session.sql(f"select snowflake.cortex.complete('snowflake-arctic', {cortex_prompt}) as response").to_pandas().iloc[0]['RESPONSE']
-            st.json(cortex_response)
+Roaming fees
+Slow data speed
+Lost phone
+Add new line
+Closing account
 
-def translate():
-    supported_languages = {'German':'de','French':'fr','Korean':'ko','Portuguese':'pt','English':'en','Italian':'it','Russian':'ru','Swedish':'sv','Spanish':'es','Japanese':'ja','Polish':'pl'}
-    with st.container():
-        st.header("Translate With Snowflake Cortex")
-        col1,col2 = st.columns(2)
-        with col1:
-            from_language = st.selectbox('From',dict(sorted(supported_languages.items())))
-        with col2:
-            to_language = st.selectbox('To',dict(sorted(supported_languages.items())))
-        entered_text = st.text_area("Enter text",label_visibility="hidden",height=300,placeholder='For example: call customer transcript')
-        if entered_text:
-          entered_text = entered_text.replace("'", "\\'")
-          cortex_response = session.sql(f"select snowflake.cortex.translate('{entered_text}','{supported_languages[from_language]}','{supported_languages[to_language]}') as response").to_pandas().iloc[0]['RESPONSE']
-          st.write(cortex_response)
-
-def sentiment_analysis():
-    with st.container():
-        st.header("Sentiment Analysis With Snowflake Cortex")
-        entered_text = st.text_area("Enter text",label_visibility="hidden",height=400,placeholder='For example: customer call transcript')
-        if entered_text:
-          entered_text = entered_text.replace("'", "\\'")
-          cortex_response = session.sql(f"select snowflake.cortex.sentiment('{entered_text}') as sentiment").to_pandas()
-          st.caption("Score is between -1 and 1; -1 = Most negative, 1 = Positive, 0 = Neutral")  
-          st.write(cortex_response)
-
-page_names_to_funcs = {
-    "JSON Summary": summarize,
-    "Translate": translate,
-    "Sentiment Analysis": sentiment_analysis,
-}
-
-selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
-page_names_to_funcs[selected_page]()
+Try doing it for this request and return only the request category only.
+"""
 ```
 
-### Run
+Using a powerful and large language model such as `mistral-large` might be highly accurate but running `mistral-large` on millions of support tickets comes with a cost. So, let’s try the Cortex `COMPLETE()` function with the same prompt but this time using a smaller model such as `mistral-7b`.
 
-To run the application, click on **Run** located at the top right corner. If all goes well, you should see the application running as shown below.
+As we can see, the smaller model `mistral-7b` underperforms in this specific task compared to `mistral-large`. This is because a general purpose model is not good at specific tasks such as the task at hand – Support ticket categorization. 
 
-![App](assets/snowflake_arctic.gif)
+To overcome this, we could fine-tune `mistral-7b` particularly for this task. This fine-tuned model will be smaller in size and costs only a fraction of what a larger model would cost. 
 
-> aside positive
-> Note: Besides Snowflake Arctic you can also use [other supported LLMs in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) with `snowflake.cortex.complete` function.
+### Fine-tuning
+
+To fine-tune the language model, we need training data that includes support ticket requests and right category labels for each of them. Annotations for millions of support tickets are not readily available. So we could leverage an existing large language model to create category labels and prepare the dataset for fine-tuning.
+
+Next step is to split the curated dataset into a training and a test set. Once we have the training data, we could use Snowflake Cortex AI Studio to fine-tune. Cortex AI features a no-code fine-tuning from the UI using the `Create Custom LLM` option.
+
+![CortexStudio](./assets/cortex_studio.png)
+
+- In the wizard that appears, select the base model for fine-tuning. In this case, `mistral-7b`. 
+- Select the appropriate role and warehouse for model fine-tuning.
+- Select the right database to store the fine-tuned model as well.
+- Select the training data including the prompt column, and complete column
+- In the end, select the validation data for Cortex to evaluate the fine-tuning process too
+- Inferencing the fine-tuned model
+
+Once the fine-tuning is complete, we could run inference on the model by simply invoking the Cortex AI `COMPLETE()` with the fine-tuned model name as one of the parameters.
+
+### Automated Generation of Email Responses to support tickets using LLMs
+
+After categorizing the support tickets into different categories based on the reason for support request, we can also use Cortex AI to auto-generate the email/text responses to these support requests.
+
+The following code snippet creates a nimble steamlit application in a Snowflake Notebook that you can use to iterate through the different prompts while invoking the COMPLETE() function.
+
+```python
+st.subheader("Auto-generate custom emails or text messages")
+
+with st.container():
+    with st.expander("Edit prompt and select LLM", expanded=True):
+        entered_prompt = st.text_area('Prompt',"""Please write an email or text promoting a new plan that will save customers total costs. If the customer requested to be contacted by text message, write text message response in less than 25 words, otherwise write email response in maximum 100 words.""")
+    
+        with st.container():
+            left_col,right_col = st.columns(2)
+            with left_col:
+                selected_category = st.selectbox('Select category',('Roaming fees', 'Closing account', 'Add new line', 'Slow data speed'))
+            with right_col:
+                selected_llm = st.selectbox('Select LLM',('snowflake-arctic','llama3-8b','mistral-large', 'reka-flash',))
+
+with st.container():
+    _,mid_col,_ = st.columns([.4,.3,.3])
+    with mid_col:
+        generate_template = st.button('Generate messages ⚡',type="primary")
+
+with st.container():
+    if generate_template:
+        sql = f"""select s.ticket_id, s.customer_name, concat(IFF(s.contact_preference = 'Email', '📩', '📲'), ' ', s.contact_preference) as contact_preference, snowflake.cortex.complete('{selected_llm}',
+        concat('{entered_prompt}','Here is the customer information: Name: ',customer_name,', Contact preference: ', contact_preference))
+        as llm_response from support_tickets as s join support_tickets_train as t on s.ticket_id = t.ticket_id
+        where t.mistral_large_response = '{selected_category}' limit 10"""
+
+        with st.status("In progress...") as status:
+            df_llm_response = session.sql(sql).to_pandas()
+            st.subheader("LLM-generated emails and text messages")
+            for row in df_llm_response.itertuples():
+                status.caption(f"Ticket ID: `{row.TICKET_ID}`")
+                status.caption(f"To: {row.CUSTOMER_NAME}")
+                status.caption(f"Contact through: {row.CONTACT_PREFERENCE}")
+                status.markdown(row.LLM_RESPONSE.replace("--", ""))
+                status.divider()
+            status.update(label="Done!", state="complete", expanded=True)
+
+```
+
+Depending on the values in the `contact_preference` column, Cortex AI can generate text or email messages that can be used for customer support responses.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 Duration: 1
 
-Congratulations! You've successfully completed the Getting Started with Snowflake Arctic quickstart guide. 
+Congratulations! You've successfully completed the Cortex Fine-tuning Quickstart Guide. You can use any of [these](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=TNKw8Mx5&_fsi=TNKw8Mx5#availability) supported LLMs for fine-tuning with Cortex.
 
-> aside positive
-> Note: Besides Snowflake Arctic you can also use [other supported LLMs in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) with `snowflake.cortex.complete` function.
 
 ### What You Learned
 
-- How to build a Streamlit application that uses Snowflake Arctic for custom tasks like summarizing long-form text into JSON formatted output.
+You have learnt how to use Snowflake Cortex AI to:
+**Categorize**: Use LLM to categorize support tickets
+**Generate**: Prepare training dataset for fine-tuning by leveraging an LLM for annotations
+**Fine-tune**: Use smaller, fine-tune model to achieve accuracy of larger model at fraction of cost
+**Generate**: Custom email/text communications tailored to each support ticket
 
 ### Related Resources
 
 - [Snowflake Cortex: Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Snowflake Cortex: LLM Functions](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions)
-- [Snowflake Cortex: ML Functions](https://docs.snowflake.com/en/guides-overview-ml-functions)
-- [Snowflake Arctic: Hugging Face](https://huggingface.co/Snowflake/snowflake-arctic-instruct)
-- [Snowflake Arctic: Cookbooks](https://www.snowflake.com/en/data-cloud/arctic/cookbook/)
-- [Snowflake Arctic: Benchmarks](https://www.snowflake.com/blog/arctic-open-efficient-foundation-language-models-snowflake/)
-- [Snowflake Arctic: GitHub repo](https://github.com/Snowflake-Labs/snowflake-arctic)
+- [Snowflake Cortex: COMPLETE()](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete)
+- [Snowflake Notebooks: Demo Repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks)
