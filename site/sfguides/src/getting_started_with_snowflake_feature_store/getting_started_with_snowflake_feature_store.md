@@ -36,7 +36,8 @@ In case you are new to some of the technologies mentioned above, here’s a quic
 
 Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake.
 
-**Client Side Libraries** - Snowpark libraries can be downloaded, installed and used from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark ML API, which provides Python APIs for machine learning workflows in Snowflake.
+
+**Client Side Libraries** - Snowpark libraries can be downloaded, installed and used from any client-side notebook or IDE and are used for code development and deployment. Libraries include the [Snowpark ML API)[https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview#installing-snowpark-ml], which provides Python APIs for machine learning workflows in Snowflake.
 
 **Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
 
@@ -44,7 +45,7 @@ Learn more about Snowpark [here](https://www.snowflake.com/snowpark/).
 
 ### What is Snowflake ML?
 
-Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use [ML Functions](https://docs.snowflake.com/en/guides-overview-ml-functions) to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
+[Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview) is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use [ML Functions](https://docs.snowflake.com/en/guides-overview-ml-functions) to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 Capabilities for custom ML include:
 - Snowflake Notebooks for a familiar, easy-to-use notebook interface that blends Python, SQL, and Markdown
@@ -57,10 +58,6 @@ Capabilities for custom ML include:
 To get started with Snowflake ML, developers can use the Python APIs from the [Snowpark ML library](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index) to interact with all development and operations features across the ML workflow.
 
 ![snowpark_ml](assets/snowflake_ml.png)
-
-[Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index?_fsi=g3LX4YOG) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. With Snowpark ML, data scientists and ML engineers can use familiar Python frameworks for preprocessing, feature engineering, and training models that can be managed entirely in Snowflake without any data movement, silos or governance trade-offs. Snowpark ML has 2 key  components: Snowpark ML Modeling for model development and Snowpark ML Operations including the Model Registry (public preview) for model management and batch inference, and Feature Store for feature-engineering & curation.
-
-![snowpark_ml](assets/snowflake_ml_2.png)
 
 This quickstart will focus on
 
@@ -78,6 +75,7 @@ This quickstart will focus on
 Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features.
 
 ![Snowpark](assets/snowpark_ml_arch.png)
+
 
 ### What You Will Learn
 
@@ -159,26 +157,21 @@ Note: if you are installing onto a Apple Mac with Apple silicon you will need to
 ```python
 conda config --env --set subdir osx-64
 ```
-**Step 5:** Install SQLGlot with pip install in the conda environment **py-snowpark_df_ml_fs** by running the following command in the same terminal window.  We will use this package to format the SQL produced from Snowpark so that it is human-readable in the Dynamic Tables that Feature Store creates.
+
+**Step 5:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **py-snowpark_df_ml_fs** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
 
 ```python
-python3 -m pip install "sqlglot[rs]" --no-deps
-```
-
-**Step 6:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **py-snowpark_df_ml_fs** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
-
-```python
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python>=1.16.0 snowflake-ml-python>=1.5.1 notebook
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python=1.16.0 snowflake-ml-python=1.5.1 notebook
 pip install snowflake
 ```
 
 
-**Step 7:** Create a Jupyter Kernel to represent the environment that we have just created using
+**Step 6:** Create a Jupyter Kernel to represent the environment that we have just created using
 
 ```python
 ipython kernel install --user --name=py-snowpark_df_ml_fs
 ```
-**Step 8:** Make sure you are in the top level directory for this QuickStart, and start Jupyter to test the it is setup correctly
+**Step 7:** Make sure you are in the top level directory for this QuickStart, and start Jupyter to test the it is setup correctly
 
 ```python
 jupyter lab
@@ -186,7 +179,7 @@ jupyter lab
 
 Follow the instructions output by Jupyter in the console to open jupyter lab in your browser, if it has not automatically open a tab in your browser.
 
-**Step 9:** 
+**Step 8:** 
 You will need a Snowflake login and to setup a connection for use within the provided Jupyter Notebooks. 
 
 There are several options for creating a Snowpark connection.  You can use the method described here in [snowpark connection](https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview#connecting-to-snowflake).  You will need to create an entry in your [SnowSQL configuration file](https://docs.snowflake.com/en/user-guide/snowsql-config).
