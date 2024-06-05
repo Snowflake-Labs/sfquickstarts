@@ -5,7 +5,7 @@ categories: Tasty-Bytes, Getting-Started
 environments: web
 status: Unpublished
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Price Optimization, Snowflake Notebooks
+tags: Getting Started, Tasty Bytes, Price Optimization, Notebooks
 
 # Extracting Insights from Unstructured Data with Document AI
 <!-- ------------------------ -->
