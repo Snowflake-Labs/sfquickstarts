@@ -132,7 +132,7 @@ Duration: 2
 
 Now, let's create a database that we will use to store provider's shipping data. This is the data that we will share with the application so that the consumer can enrich their own supply chain data with it when they install the app in their account.
 
-This commands are run by executing the **prepare_data.sh** file. But first we are going to explained its contents.
+This commands are run by executing the **prepare_data.sh** file. But first we are going to explain its contents.
 
 First the file creates the database, warehouse, schema, and defines the table that will hold the shipping data.
 
@@ -159,7 +159,7 @@ CREATE OR REPLACE TABLE MFG_SHIPPING (
 
 ### Upload Consumer Supply Chain Data
 
-In this scenario, consumers will provider their own supply chain data (orders and site recovery data) from their own Snowflake account. The app will use the consumer's data to render graphs representing different aspects of the supply chain.
+In this scenario, consumers will provide their own supply chain data (orders and site recovery data) from their own Snowflake account. The app will use the consumer's data to render graphs representing different aspects of the supply chain.
 
 We'll use the `NATIVE_APP_QUICKSTART_DB` to store the consumer supply chain data.
 
