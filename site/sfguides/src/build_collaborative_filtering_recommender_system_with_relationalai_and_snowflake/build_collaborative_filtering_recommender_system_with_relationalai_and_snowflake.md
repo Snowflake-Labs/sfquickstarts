@@ -231,6 +231,7 @@ rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.MOVIE_DETAILS --model rec
 - `--source`: This flag specifies the fully-qualified name of a Snowflake table or view.
 - `--model`: This flag specifies the name of the model to which the data in the Snowflake table or view is streamed.
 
+> aside positive
 > IMPORTANT: An import stream utilizes [change data capture](https://docs.snowflake.com/en/user-guide/streams)
 to synchronize your Snowflake data with your RelationalAI model at an interval of once per minute. 
 <!-- ------------------------ -->

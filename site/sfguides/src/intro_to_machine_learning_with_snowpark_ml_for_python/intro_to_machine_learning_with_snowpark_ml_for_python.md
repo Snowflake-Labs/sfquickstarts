@@ -19,7 +19,7 @@ Snowpark is the set of libraries and code execution environments that run Python
 
 **Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark ML API, which provides Python APIs for machine learning workflows in Snowflake.
 
-**Elastic Compute Runtimes** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options  include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework,or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
+**Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options  include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework,or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
 
 Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
