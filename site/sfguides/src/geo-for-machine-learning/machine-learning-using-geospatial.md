@@ -78,7 +78,7 @@ Navigate to the query editor by clicking on `Worksheets` on the top left navigat
 
 <img src ='assets/geo_ml_3.png' width=700>
 
-Create a new database and schema where you will store datasets in the `GEOMETRY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
+Create a new database and schema where you will store datasets in the `GEOGRAPHY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
 ```
 CREATE DATABASE advanced_analytics;
@@ -86,7 +86,6 @@ CREATE DATABASE advanced_analytics;
 USE advanced_analytics.public;
 USE WAREHOUSE my_wh;
 ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT='WKT';
-ALTER SESSION SET USE_CACHED_RESULT = FALSE;
 ```
 ## Forecasting time series on a map
 
@@ -115,8 +114,6 @@ The New York Taxi and Limousine Commission (TLC) has provided detailed, anonymiz
 > aside negative
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
-change the name of the database from the default to `Carto_Academy`, as all future instructions will assume this name for the database.
-
 <img src ='assets/geo_ml_10.png' width=500>
 
 Another dataset you will use is events data and you can also get it from the Snowflake Marketplace. It is provided by PredictHQ and called [PredictHQ Quickstart Demo](https://app.snowflake.com/marketplace/listing/GZSTZ3TGTNLQM/predicthq-quickstart-demo).
@@ -125,7 +122,7 @@ Another dataset you will use is events data and you can also get it from the Sno
 
 <img src ='assets/geo_ml_4.png' width=700>
 
-* On the `Get Data` screen, change the name of the database from the default to `PredictHQ_Demo`.
+* On the `Get Data` screen click `Get`.
 
 <img src ='assets/geo_ml_6.png' width=500>
 
@@ -142,10 +139,10 @@ H3 offers 16 different resolutions for dividing areas into hexagons, ranging fro
 As a source of the trips data you will use `TLC_YELLOW_TRIPS_2014` and `TLC_YELLOW_TRIPS_2015` tables from the CARTO listing. We are interested in the following fields:
 * Pickup Time
 * Dropoff Time
-* Distance
-* Pickup Location
-* Dropoff Location
-* Total Amount
+* Pickup Latitude
+* Pickup Longitude
+* Dropoff Latitude
+* Dropoff Longitude
 
 First, specify the default Database, Schema and the Warehouse:
 ```
@@ -165,23 +162,19 @@ SELECT CONVERT_TIMEZONE('UTC', 'America/New_York', to_timestamp(PICKUP_DATETIME:
        CONVERT_TIMEZONE('UTC', 'America/New_York', to_timestamp(DROPOFF_DATETIME::varchar)) DROPOFF_TIME,
        st_point(PICKUP_LONGITUDE, PICKUP_LATITUDE) AS PICKUP_LOCATION,
        st_point(DROPOFF_LONGITUDE, DROPOFF_LATITUDE) AS DROPOFF_LOCATION,
-       trip_distance,
-       total_amount
-FROM CARTO_ACADEMY.CARTO.TLC_YELLOW_TRIPS_2014
+FROM CARTO_ACADEMY__DATA_FOR_TUTORIALS.CARTO.TLC_YELLOW_TRIPS_2014
 WHERE pickup_latitude BETWEEN -90 AND 90
   AND dropoff_latitude BETWEEN -90 AND 90
   AND pickup_longitude BETWEEN -180 AND 180
   AND dropoff_longitude BETWEEN -180 AND 180
   AND st_distance(st_point(PICKUP_LONGITUDE, PICKUP_LATITUDE), st_point(DROPOFF_LONGITUDE, DROPOFF_LATITUDE)) > 10
-  AND TIMEDIFF(MINUTE, to_timestamp(PICKUP_DATETIME::varchar), to_timestamp(DROPOFF_DATETIME::varchar)) > 1
+  AND TIMEDIFF(MINUTE, PICKUP_TIME, DROPOFF_TIME) > 1
 UNION ALL
 SELECT CONVERT_TIMEZONE('UTC', 'America/New_York', to_timestamp(PICKUP_DATETIME::varchar)) PICKUP_TIME,
        CONVERT_TIMEZONE('UTC', 'America/New_York', to_timestamp(DROPOFF_DATETIME::varchar)) DROPOFF_TIME,
        st_point(PICKUP_LONGITUDE, PICKUP_LATITUDE) AS PICKUP_LOCATION,
        st_point(DROPOFF_LONGITUDE, DROPOFF_LATITUDE) AS DROPOFF_LOCATION,
-       trip_distance,
-       total_amount
-FROM CARTO_ACADEMY.CARTO.TLC_YELLOW_TRIPS_2015
+FROM CARTO_ACADEMY__DATA_FOR_TUTORIALS.CARTO.TLC_YELLOW_TRIPS_2015
 WHERE pickup_latitude BETWEEN -90 AND 90
   AND dropoff_latitude BETWEEN -90 AND 90
   AND pickup_longitude BETWEEN -180 AND 180
@@ -247,14 +240,14 @@ SELECT t1.*,
        IFF(t4.category = 'sports', t4.labels[0]::string, 'None') AS sport_event
 FROM advanced_analytics.public.ny_taxi_rides_h3 t1
 LEFT JOIN (SELECT distinct title, category, event_start, event_end, labels 
-           FROM PREDICTHQ_DEMO.PREDICTHQ.PREDICTHQ_EVENTS_SNOWFLAKE_SUMMIT_2024 
+           FROM QUICKSTART_DEMO.PREDICTHQ.PREDICTHQ_EVENTS_SNOWFLAKE_SUMMIT_2024 
            WHERE category = 'school-holidays' and title ilike 'New York%') t2 
     ON DATE(t1.pickup_time) between t2.event_start AND t2.event_end
 LEFT JOIN (SELECT distinct title, category, event_start, event_end, labels 
-           FROM PREDICTHQ_DEMO.PREDICTHQ.PREDICTHQ_EVENTS_SNOWFLAKE_SUMMIT_2024 
+           FROM QUICKSTART_DEMO.PREDICTHQ.PREDICTHQ_EVENTS_SNOWFLAKE_SUMMIT_2024 
            WHERE array_contains('holiday-national'::variant, labels)) t3 
     ON DATE(t1.pickup_time) between t3.event_start AND t3.event_end
-LEFT JOIN (SELECT * from PREDICTHQ_DEMO.PREDICTHQ.PREDICTHQ_EVENTS_SNOWFLAKE_SUMMIT_2024 
+LEFT JOIN (SELECT * from QUICKSTART_DEMO.PREDICTHQ.PREDICTHQ_EVENTS_SNOWFLAKE_SUMMIT_2024 
            WHERE phq_rank > 70 and category = 'sports') t4 
     ON t1.pickup_time = date_trunc('hour', t4.event_start) 
     AND t1.h3 = h3_point_to_cell_string(t4.geo, 8);
