@@ -21,6 +21,7 @@ Tasty Bytes is one of the largest food truck networks in the world with localize
 - A Snowflake Account
     - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/). When signing up, please make sure to select **Enterprise** edition. You can choose any AWS or Azure [Snowflake Region](https://docs.snowflake.com/en/user-guide/intro-regions).
     - After registering, you will receive an email with an activation link and your Snowflake Account URL.
+- 
 
 ### What does this Quickstart aim to solve?
 - In the Machine Learning with Snowpark section for this vignette, we will train & deploy an ML model which leverages historical menu-item sale data to understand how menu-item demand changes with varying price. By utilizing this trained model, we would recommend the optimal day of week prices for all menu-items for the upcoming month to our food-truck brands.
@@ -48,7 +49,24 @@ promotions by utilizing Snowflake Notebooks and Streamlit to:
 - Train & deploy an ML model to understand how menu-item demand changes with varying price
 - User-friendly application to use deployed ML-model to inform pricing strategies
 
-## Setup Environment
+## Setting up Data in Snowflake
 Duration: 3
 
+### Overview
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
+- Create Snowflake objects (warehouse, database, schema, raw tables)
+- Ingest data from S3 to raw tables
 
+### Creating Objects, Loading Data, and Joining Data
+- Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`.
+- Paste and run both the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema, raw tables), and ingest shift  data from S3
+- [Price Optimization Setup SQL 1](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/po_setup_1.sql)
+- [Price Optimization Setup SQL 2](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/po_setup_2.sql)
+
+## Setting up Snowflake Notebook
+Duration 3
+
+### Overview
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
+
+- Download the notebook 
