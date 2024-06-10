@@ -5,7 +5,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Resource Optimization, Cost Optimization, Performance, Optimization, Performance Optimization, Monitoring
-authors: Matt Meredith
+authors: Praveen Purushothaman
 
 # Resource Optimization: Performance
 

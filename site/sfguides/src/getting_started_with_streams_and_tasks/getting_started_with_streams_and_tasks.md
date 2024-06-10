@@ -22,7 +22,7 @@ This Lab will also construct a Directed Acyclic Graph (DAG), which is a series o
 
 A simulated streaming datafeed will be used for this exercise, using a Snowpark-based Stored Procedure, to simplify your setup and focus on these two capabilities.  The simulation will be high-volume, at 1 million transactions a minute (exceeding 15k/second), of credit card purchases and returns.
 This prerequisite streaming ingestion was modeled to mirror one created from Snowflake's Kafka Connector, without the distraction of having to setup a running Kafka instance.  
-While not covered in this exercise, one can use these building blocks to further enrich your data with Snowflake Data Marketplace data, train and deploy machine learning models, perform fraud detection, and other use cases by combining these skills with other Snowflake virtual hands-on labs.
+While not covered in this exercise, one can use these building blocks to further enrich your data with Snowflake Marketplace data, train and deploy machine learning models, perform fraud detection, and other use cases by combining these skills with other Snowflake virtual hands-on labs.
 
 
 ### Prerequisites

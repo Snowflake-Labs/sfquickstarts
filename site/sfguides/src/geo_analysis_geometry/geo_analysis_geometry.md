@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Geospatial, Python UDFs
 
-# Geospatial Analysis using Geometry Data Type
+# Geospatial Analysis using Geometry and Geography Data Type
 <!-- ----------------------------------------- -->
 ## Overview 
 
