@@ -441,6 +441,33 @@ select * from flights_vw;
 As a result, you will see a nicely structured output with columns derived from the JSONs at the [source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky).
 ![](assets/flight_view.png)
 
+<!---------------------------->
+## Use Copilot to interact with your data 
+[Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot) is an LLM-powered assistant that simplifies data analysis while maintaining robust data governance, and seamlessly integrates into your existing Snowflake workflow. You can gain insights from your data stored in Snowflake by using natural language. 
+
+To get started, on the console, click 'Ask Copilot' button located at the bottom. 
+
+![](assets/ask-copilot.png)
+
+In the conversation window, type in a question like the following:
+```
+show me the unique flights from KLAX arriving at KSFO between 2000 to 4000 feet altitude?
+```
+Copilot will then analyze the question and show you its thinking process step-by-step and give you the SQL command to get the answer.
+
+![](assets/copilot1.gif)
+
+Let's ask Copilot another question that uses Snowflake's geo-spatial functions to calculate the distance between two locations.
+
+Ask a question like the following.
+```
+if the lattitude and longitude for KSFO is 37.619254,-122.4491623 respectively, calculate the distance (in miles) between the flights to KSFO with Snowflake's geo-spatial functions, also show the related flight ids, original and destination airports
+```
+
+Again, Copilot gives the SQL command which you can execute to get the distance between all flights to San Francisco internation airport.
+
+![](assets/copilot2.gif)
+
 
 <!---------------------------->
 ## Use Amazon Managed Service for Flink for real-time analytics - Optional
