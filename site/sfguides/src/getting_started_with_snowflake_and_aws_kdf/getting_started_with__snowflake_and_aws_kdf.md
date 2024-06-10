@@ -442,7 +442,7 @@ As a result, you will see a nicely structured output with columns derived from t
 ![](assets/flight_view.png)
 
 <!---------------------------->
-## Use Copilot to interact with your data 
+## Use Copilot to interact with your data in natural language
 Duration: 5
 
 [Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot) is an LLM-powered assistant that simplifies data analysis while maintaining robust data governance, and seamlessly integrates into your existing Snowflake workflow. You can gain insights from your data stored in Snowflake by using natural language. 
