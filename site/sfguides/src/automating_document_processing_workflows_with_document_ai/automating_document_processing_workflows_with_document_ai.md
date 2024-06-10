@@ -1,6 +1,6 @@
 author: Mats Stellwall
-id: getting_started_with_document_ai
-summary: This guide will provide step-by-step details for getting started with Document AI.
+id: automating_document_processing_workflows_with_document_ai
+summary: This guide will provide step-by-step details for automating document processing workflows with Document AI
 categories: Getting-Started
 environments: web
 status: Published 
@@ -145,14 +145,14 @@ In this step we wil upload example documents that we will use to ask value extra
     >The recommendation is to use at least 20 documents, but in this qucikstart we will only use 5 to speed up the review step.  
 1. Click on **Upload documents** to start the process of uploading documents  
 ![Upload Documents Start](assets/start_upload.png)  
-2. Click on **Uploads documents** and add the documents in the **training_documents** folder and click **Upload**  
+2. Add the documents in the **training_documents** folder and click **Upload**  
 ![Upload Dialog](assets/upload_dialog.png)  
-3. Once the documents are processed click on the first in the list, **EbixInc_20010515_10-Q_EX-10.3_4049767_EX-10.3_Co-Branding Agreement.pdf**, to start specify values  
-![Upload Dialog](assets/uploaded_documents.png)  
+3. Click on **Define values** to open the page for define the questions for extracting values  
+![Upload Dialog](assets/start_define_values.png)  
 
 ### Step 3: Specify values
 In this step we will define the questions for extracting values and the name of the key the value will be added to.  
-1. Click on **+ Value** and start adding the value names and questions from the table below   
+1. Click on **Add Value** and start adding the value names and questions from the table below   
 <table>
     <thead>
         <tr>
@@ -200,11 +200,15 @@ In this step we will define the questions for extracting values and the name of 
 3. If a value is missing or for example it is a **No** for a value, you can verify if it is correct by searching for the term in the document  
 ![Search Icon](assets/search_icon.png)  
 ![Search term](assets/term_search.png)  
-4. Step through all documents and verify the values and for the document **EdietsComInc_20001030_10QSB_EX-10.4_2606646_EX-10.4_Co-Branding Agreement.pdf** the payment_terms is not correct since it is a schedule, so it should be cleared which is done by clicking on **...** next to the value and choose **Clear answer**  
-![Search Icon](assets/more_options.png)  
-![Search Icon](assets/cleared_answer.png)  
-5. Once done with all documents click **Accept and close** and then click on **Publish** and in the dialog **Publish**. Once published you will see a green published square next to the model name.  
-![Search Icon](assets/model_published.png)  
+4. Step through all documents and verify the values and for the document **EdietsComInc_20001030_10QSB_EX-10.4_2606646_EX-10.4_Co-Branding Agreement.pdf** the **payment_terms** is not correct since it is a schedule, so it should be cleared which is done by clicking on **...** next to the value and choose **Clear answer**  
+![More Options](assets/more_options.png)  
+![Cleared Answer](assets/cleared_answer.png)  
+5. Once done with all documents click **Accept and close** and then click on **Build Details**   
+![Go to Build Details](assets/go_build_details.png)  
+6. Click on **Publish version**  
+![Publish Version](assets/publish_version.png)  
+7. Click on **Publish** in the dialog  
+![Publish Dialog](assets/publish_data_dialog.png)  
 
 We are now ready to create a document processing pipeline.
 
@@ -217,11 +221,7 @@ In this step we will use our previously published model to extract values from n
 
 ### Step 1: Get the model instructions 
 First we need to get the SQL for calling the model.  
-1. Click on **Build Details** in the dataset view (if you open the model from the Document AI page you do not need to do this step)  
-![Model Build Details Icon](assets/model_build_details_icon.png)  
-2. Click on **See Instructions**  
-![Go to Instructions](assets/get_to_instructions.png)  
-3. Copy the SQL in the box and save it in a text document  
+1. In the **Extracting Query** section, make a note of the fully qualified name of the build, in this example **DOC_AI_QS_DB.DOC_AI_SCHEMA.DOC_AI_QS_CO_BRANDING!PREDICT**, and the version, in this case **1**.
 ![See Instructions](assets/model_instructions.png)  
 
 ### Step 2: Upload documents to a stage
@@ -248,7 +248,8 @@ LS @doc_ai_stage;
 3. Add the following SQL, this will create a table, **CO_BRANDING_AGREEMENTS**, that will contain the extracted values and the scores of the extractions. Execture the SQL, this wil take a couple of minutes.  
 ```SQL
 ALTER WAREHOUSE doc_ai_qs_wh
-SET WAREHOUSE_SIZE = MEDIUM;
+SET WAREHOUSE_SIZE = MEDIUM 
+    WAIT_FOR_COMPLETION = TRUE;
 
 -- Create a table with all values and scores
 CREATE OR REPLACE TABLE doc_ai_qs_db.doc_ai_schema.CO_BRANDING_AGREEMENTS
@@ -289,6 +290,10 @@ file_name
 , json:renewal_options[0]:score::FLOAT AS have_renewal_options_score
 , json:renewal_options[0]:value::STRING AS have_renewal_options_value
 FROM temp;
+-- Scale down the WH
+ALTER WAREHOUSE doc_ai_qs_wh
+SET WAREHOUSE_SIZE = XSMALL 
+    WAIT_FOR_COMPLETION = TRUE;
 ```  
 4. Check that there is a result by running the following SQL  
 ```SQL
@@ -311,11 +316,13 @@ In this step we will create a Streamlit application in Snowflake to be used for 
 The Python code for this step can also be found **streamlit_app.py** file.
 1. Navigate to Streamlit by click on the **projects** icon to the left and choose **Streamlit**  
 ![Streamlit navigation](assets/streamlit_icon.png)  
-2. Click on **+ Streamlit App**  
+3. Make sure you are using the **doc_ai_qs_role** role  
+![Streamlit role](assets/streamlit_role.png)  
+4. Click on **+ Streamlit App**  
 ![Streamlit page](assets/streamlit_page.png)  
-3. Give it a title and choose the **DOCK_AI_QS_DB** and **STREAMLIT_SCHEMA** for **App location** and **DOC_AI_WH** as **App warehouse** and click **Create**  
+5. Give it a title and choose the **DOCK_AI_QS_DB** and **STREAMLIT_SCHEMA** for **App location** and **DOC_AI_WH** as **App warehouse** and click **Create**  
 ![Streamlit create dialog](assets/create_streamlit_dialog.png)  
-4. Replace the code in the left pane with the code below  
+6. Replace the code in the left pane with the code below  
 ```python
 # Import python packages
 import streamlit as st
@@ -573,5 +580,6 @@ Congratulations, you have successfully completed this quickstart! Through this q
 * How to create a Streamlit application in Snowflake to verify extracted values
 
 ### Related Resources
+* [Extracting Insights from Unstructured Data with Document AI QuickStart](https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index#0)
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai)
 * [Document AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview)
