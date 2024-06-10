@@ -36,9 +36,9 @@ Tasty Bytes is one of the largest food truck networks in the world with localize
 - Train Snowpark ML model
 - Register model on Model Registry
 
-#### Model Untilization
-- Stored prcedure to utilize deployed model
-- Elsatic scalability
+#### Model Utilization
+- Stored procedure to utilize deployed model
+- Elastic scalability
 - Data Driven Insights
 
 ### What you will learn
