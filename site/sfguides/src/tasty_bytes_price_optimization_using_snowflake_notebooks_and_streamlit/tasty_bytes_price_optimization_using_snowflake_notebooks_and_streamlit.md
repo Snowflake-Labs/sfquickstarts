@@ -63,18 +63,14 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 - [Price Optimization Setup SQL 2](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/setup/po_setup_2.sql)
 
 <!-- ------------------------ -->
-## Machine Learning With Snowpark Part 1 - Setting Up Snowflake Notebook
+## Machine Learning With Snowpark Part 1 - Price Optimization: Setting Up Snowflake Notebook
 Duration 13
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
-
 - Download the notebook **tasty_bytes_price_optimization_and_recommendation.ipynb** using this repository [link](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/notebook/tasty_bytes_price_optimization_and_recommendations.ipynb)
-
 - Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on Projects -> Notebook
-
 - Using the import button on the top right, import the downloaded **tasty_bytes_price_optimization_and_recommendation.ipynb** notebook.
-
 - Provide a name for the notebook and select appropriate database `JOVIANE_DEMO_TASTYBYTESPRICEOPTIMIZATION_PROD`, schema `ANALYTICS` and warehouse `JOVIANE_DEMO_TASTYBYTESPRICEOPTIMIZATION_DS_WH`.
 
 - Open the notebook once created and add the following packages by using the "Packages" button on the top right and selecting their appropriate versions
@@ -92,7 +88,7 @@ Once the notebook has uploaded, scroll down to cell 39 and click on `Run all abo
 <img src="assets/cell39.png"/>
 
 <!-- ------------------------ -->
-## Machine Learning With Snowpark Part 2 - Streamlit in Snowflake
+## Machine Learning With Snowpark Part 2 - Price Recommendations
 Duration 3
 
 ### Overview
@@ -267,3 +263,7 @@ GRANT USAGE ON DATABASE joviane_demo_tastybytespriceoptimization_prod TO ROLE jo
 GRANT USAGE ON SCHEMA joviane_demo_tastybytespriceoptimization_prod.analytics TO ROLE joviane_demo_tastybytespriceoptimization_brand_manager;
 ```
 
+Now, return to the notebook that was created in **Machine Learning With Snowpark Part 1 - Price Optimization: Setting Up Snowflake Notebook** and scroll down to cell 39 and click on `Run cell and advance`.
+
+## Streamlit in Snowflake
+Duration 3
