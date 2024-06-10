@@ -54,7 +54,7 @@ Additionally, Improvado offers a custom Marketing Data Governance solution to en
 
 <!-- ------------------------ -->
 ## Connect Snowflake to Improvado
-Duration: 2
+Duration: 4
 
 In this step, we’ll learn how to connect your Snowflake schema to Improvado. Improvado integrates with Snowflake using a native Python Connector, ensuring efficient data transfers and fast updates.
 
@@ -93,6 +93,35 @@ Connecting a Data source in Improvado enables you to extract and load data seaml
 Go to the Data sources page and select a necessary Data source to extract your data
 Enter required credentials or authorize using OAuth (depending on Data source API capabilities)
 Then, you’ll be redirected to the Connection Details page, where you can set up data extraction.
+
+### How to access your data using Snowsight
+1. Sign in to your [Snowflake](https://app.snowflake.com/) account.
+
+![snowsight_signin](assets/snowsight_signin.png)
+
+2. Go to the Databases tab to see a full list of databases in your Snowflake instance.
+
+![snowsight_databases](assets/snowsight_databases.png)
+
+
+3. Select the necessary schema to where you’ve setup Data Load to see a list of its tables. 
+
+![snowsight_tables](assets/snowsight_tables.png)
+
+
+4. To query your data, you’ll need to create a new SQL Worksheet. First, go to the Projects > Worksheets page. Click the Plus button and select SQL Worksheet from the dropdown. 
+
+![snowsight_worksheets](assets/snowsight_worksheets.png)
+
+5. Here you can select the necessary table that you want to query using SQL and see its structure.
+
+![snowsight_sql1](assets/snowsight_sql1.png)
+
+6. Check the data loaded to this table in the Results view or create a Chart to help you visualize it.
+
+![snowsight_sql2](assets/snowsight_sql2.png)
+
+
 
 
 <!-- ------------------------ -->
