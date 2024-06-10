@@ -463,7 +463,7 @@ Let's ask Copilot another question that uses Snowflake's geo-spatial functions t
 
 Ask a question like the following.
 ```
-if the lattitude and longitude for KSFO is 37.619254,-122.4491623 respectively, calculate the distance (in miles) between the flights to KSFO with Snowflake's geo-spatial functions, also show the related flight ids, original and destination airports
+if the lattitude and longitude for KSFO is 37.619254,-122.4491623 respectively, calculate the distance (in miles) between the flights and KSFO with Snowflake's geo-spatial functions, also show the related flight ids, original and destination airports
 ```
 
 Again, Copilot gives the SQL command which you can execute to get the distance between all flights to San Francisco internation airport.
