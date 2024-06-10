@@ -83,13 +83,13 @@ CREATE or REPLACE file format csvformat
 
 CREATE or REPLACE stage support_tickets_data_stage
   file_format = csvformat
-  url = 's3://sfquickstarts/finetuning_llm_using_snowflake_cortex_ai/support_tickets.csv';
+  url = 's3://sfquickstarts/finetuning_llm_using_snowflake_cortex_ai/';
 
 CREATE or REPLACE TABLE SUPPORT_TICKETS (
-	ticket_id VARCHAR(60),
-	customer_name VARCHAR(60),
-	customer_email VARCHAR(60),
-	service_type VARCHAR(60),
+  ticket_id VARCHAR(60),
+  customer_name VARCHAR(60),
+  customer_email VARCHAR(60),
+  service_type VARCHAR(60),
   request VARCHAR,
   contact_preference VARCHAR(60)
 );
