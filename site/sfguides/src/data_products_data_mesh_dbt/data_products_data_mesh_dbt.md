@@ -254,7 +254,10 @@ grant select on all tables in schema finance_db.prod to role finance_role;
 
 grant create schema on database finance_db to role finance_role;
 grant create table on schema finance_db.prod to role finance_role;
-grant create view on schema foundational_db.prod to role finance_role;
+grant create view on schema finance_db.prod to role finance_role;
+
+grant usage on database foundational_db to role finance_role;
+grant usage on schema foundational_db.prod to role finance_role;
 ```
 
 ### Grant yourself permissions
