@@ -7,8 +7,8 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Containers, Snowpark, Python API
 
-# Intro to Snowpark Container Services
-<!-- ------------------------ -->
+# Intro to Snowpark Container Services with Snowflake Python APIs
+<!-- ------------------------ ----------------------------------->
 ## Overview 
 Duration: 3
 
