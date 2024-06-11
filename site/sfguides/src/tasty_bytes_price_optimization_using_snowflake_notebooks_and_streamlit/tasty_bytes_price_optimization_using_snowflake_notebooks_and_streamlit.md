@@ -22,7 +22,7 @@ Tasty Bytes is one of the largest food truck networks in the world with localize
     - After registering, you will receive an email with an activation link and your Snowflake Account URL.
 
 ### What does this Quickstart aim to solve?
-- In the Machine Learning with Snowpark section for this vignette, we will train & deploy an ML model which leverages historical menu-item sale data to understand how menu-item demand changes with varying price. By utilizing this trained model, we would recommend the optimal day of week prices for all menu-items for the upcoming month to our food-truck brands.
+- In the Machine Learning with Snowpark section for this quickstart, we will train & deploy an ML model which leverages historical menu-item sale data to understand how menu-item demand changes with varying price. By utilizing this trained model, we would recommend the optimal day of week prices for all menu-items for the upcoming month to our food-truck brands.
 
 #### Data Exploration
 - Connect to Snowflake
@@ -440,3 +440,16 @@ with st.expander("View Submitted Prices"):
 ```
 - Next we need to add a few packages to this Application. Click on Packages in the top left corner:
 - Search for "snowflake-ml-python" and add "snowflake-ml-python"
+
+<!-- ------------------------ -->
+## Conclusion
+Duration 1
+
+**Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price.
+
+### What we've covered
+With the completion of this quickstart, you have now delved into:
+- Data Exploration
+- Feature Engineering
+- Model Training & Deployment
+- Model Utilization
