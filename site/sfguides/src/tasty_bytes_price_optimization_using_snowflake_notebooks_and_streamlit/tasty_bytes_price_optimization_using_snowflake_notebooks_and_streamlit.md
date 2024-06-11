@@ -274,7 +274,7 @@ At Tasty Bytes, brand managers are responsible for setting their food-truck bran
 By default, price for the upcoming month is set to the current price. As tasty data scientists, we want to create a user-friendly way for brand managers to use ML-models to inform their pricing and increase the company's profits. We will build a Streamlit in Snowflake (SiS) application that will show the recommended price per item per day-of-week and the profit lift over the current price. We will allow users to change prices and see the impact on demand and profit. Finalized prices will be saved back to Snowflake. The app will be secure and low-maintenance as it will be deployed through Snowflake.
 
 #### Purpose
-**The purpose of this vignette is to showcase how easily an application can be built and deployed to allow business users to submit data into Snowflake and interact directly with a ML model.** We will build a Streamlit App on the fly in Snowflake to support Tasty Bytes's brand managers in deciding monthly pricing.
+**The purpose of this final step is to showcase how easily an application can be built and deployed to allow business users to submit data into Snowflake and interact directly with a ML model.** We will build a Streamlit App on the fly in Snowflake to support Tasty Bytes's brand managers in deciding monthly pricing.
 - **Describe Current Pricing Process**
   - Import an excel spreadsheet and inference the demand model
   - Calculate profit lift from new prices
