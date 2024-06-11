@@ -347,7 +347,7 @@ conda activate iceberg-cortex-demo
 jupyter notebook
 ```
 
-Download the notebook [spark.ipynb provided here](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/iceberg_cortex/spark.ipynb), then open from Jupyter. Update and run the cells that are applicable to the cloud in which your Snowflake account is located.
+Download the [spark.ipynb notebook here](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/iceberg_cortex/spark.ipynb) and [.env file here](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/iceberg_cortex/.env) in the same directory. Update the values in the .env file for your setup, then open the notebook with Jupyter. Update and run the cells that are applicable to the cloud in which your Snowflake account is located.
 
 ![PySpark](assets/img.png)
 
