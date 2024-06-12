@@ -19,27 +19,10 @@ Tasty Bytes is one of the largest food truck networks in the world with localize
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - A Snowflake Account
     - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/). When signing up, please make sure to select **Enterprise** edition. You can choose any AWS or Azure [Snowflake Region](https://docs.snowflake.com/en/user-guide/intro-regions).
-    - After registering, you will receive an email with an activation link and your Snowflake Account URL.
+    - After registering, you will receive an email with an activation link and your Snowflake Account URL
 
 ### What does this Quickstart aim to solve?
 - In this quickstart, we will train & deploy an ML model which leverages historical menu-item sale data to understand how menu-item demand changes with varying price. By utilizing this trained model, we would recommend the optimal day of week prices for all menu-items for the upcoming month to our food-truck brands. Afterward, we will showcase an application that can be built and deployed to allow business users to submit data into Snowflake and interact directly with a ML model.
-
-#### Data Exploration
-- Connect to Snowflake
-- Snowpark DataFrame API
-
-#### Feature Engineering
-- Window & Aggregate functions
-- Imputation and train/test split
-
-#### Model Training & Deployment
-- Train Snowpark ML model
-- Register model on Model Registry
-
-#### Model Utilization
-- Stored procedure to utilize deployed model
-- Elastic scalability
-- Data Driven Insights
 
 ### What you will learn
 In this Quickstart guide, we will implement price optimization for their diversified food-truck brands to inform their pricing and 
@@ -47,17 +30,52 @@ promotions by utilizing Snowflake Notebooks and Streamlit to:
 - Train & deploy an ML model to understand how menu-item demand changes with varying price
 - User-friendly application to use deployed ML-model to inform pricing strategies
 
+Along the way, we will delve more into these topics:
+
+### Price Optimization - Train & Deploy ML Model
+
+- **Data Exploration**
+  - Connect to Snowflake
+  - Snowpark DataFrame API
+
+- **Feature Engineering**
+  - Window & Aggregate functions
+  - Imputation and train/test split
+
+- **Model Training & Deployment**
+  - Train Snowpark ML model
+  - Register model on Model Registry
+
+- **Model Utilization**
+  - Stored procedure to utilize deployed model
+  - Elastic scalability
+  - Data Driven Insights
+
+### Price Recommendation - Create User-Friendly Application Using Deployed ML Model
+
+- **Describe Current Pricing Process**
+  - Import an Excel spreadsheet and inference the demand model
+  - Calculate profit lift from new prices
+
+- **Build an Application to Set Pricing and Interact with Recommendations**
+  - View and edit pricing data
+  - Show impact of price changes
+  - Write changes back to Snowflake
+
+- **Application Deployment**
+  - Share the application in Snowflake with the brand managers
+
 <!-- ------------------------ -->
 ## Setting up Data in Snowflake
 Duration: 3
 
 ### Overview
-You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to:
 - Create Snowflake objects (warehouse, database, schema, raw tables)
 - Ingest data from S3 to raw tables
 
 ### Creating Objects, Loading Data, and Joining Data
-- Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`.
+- Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 - Paste and run both the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema, raw tables), and ingest shift  data from S3
 - [Price Optimization Setup SQL 1](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/setup/po_setup_1.sql)
 - [Price Optimization Setup SQL 2](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/setup/po_setup_2.sql)
@@ -67,11 +85,11 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 Duration 13
 
 ### Overview
-You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook
 - Download the notebook **tasty_bytes_price_optimization_and_recommendation.ipynb** using this repository [link](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/notebook/tasty_bytes_price_optimization_and_recommendations.ipynb)
 - Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on Projects -> Notebook
-- Using the import button on the top right, import the downloaded **tasty_bytes_price_optimization_and_recommendation.ipynb** notebook.
-- Provide a name for the notebook and select appropriate database `JOVIANE_DEMO_TASTYBYTESPRICEOPTIMIZATION_PROD`, schema `ANALYTICS` and warehouse `JOVIANE_DEMO_TASTYBYTESPRICEOPTIMIZATION_DS_WH`.
+- Using the import button on the top right, import the downloaded **tasty_bytes_price_optimization_and_recommendation.ipynb** notebook
+- Provide a name for the notebook and select appropriate database `JOVIANE_DEMO_TASTYBYTESPRICEOPTIMIZATION_PROD`, schema `ANALYTICS` and warehouse `JOVIANE_DEMO_TASTYBYTESPRICEOPTIMIZATION_DS_WH`
 
 - Open the notebook once created and add the following packages by using the "Packages" button on the top right and selecting their appropriate versions
     - matplotlib -> 3.7.3
@@ -84,7 +102,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
     - xgboost -> 1.7.3
     - seaborn -> latest
 
-Once the notebook has uploaded, scroll down to cell 39 and click on `Run all above`.
+- Once the notebook has uploaded, scroll down to cell 39 and click on `Run all above`
 <img src="assets/cell39.png"/>
 
 <!-- ------------------------ -->
@@ -92,7 +110,7 @@ Once the notebook has uploaded, scroll down to cell 39 and click on `Run all abo
 Duration 3
 
 ### Overview
-- Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`.
+- Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 - Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema, raw tables)
 ```
 /***************************************************************************************************
@@ -263,7 +281,7 @@ GRANT USAGE ON DATABASE joviane_demo_tastybytespriceoptimization_prod TO ROLE jo
 GRANT USAGE ON SCHEMA joviane_demo_tastybytespriceoptimization_prod.analytics TO ROLE joviane_demo_tastybytespriceoptimization_brand_manager;
 ```
 
-Now, return to the notebook that was created in **Machine Learning With Snowpark Part 1 - Price Optimization: Setting Up Snowflake Notebook** and scroll down to cell 39 and click on `Run cell and advance`.
+- Now, return to the notebook that was created in **Machine Learning With Snowpark Part 1 - Price Optimization: Setting Up Snowflake Notebook** and scroll down to cell 39 and click on `Run cell and advance`
 
 <!-- ------------------------ -->
 ## Streamlit in Snowflake
@@ -273,15 +291,17 @@ Duration 3
 At Tasty Bytes, brand managers are responsible for setting their food-truck brand's menu item prices for the upcoming month. 
 By default, price for the upcoming month is set to the current price. As tasty data scientists, we want to create a user-friendly way for brand managers to use ML-models to inform their pricing and increase the company's profits. We will build a Streamlit in Snowflake (SiS) application that will show the recommended price per item per day-of-week and the profit lift over the current price. We will allow users to change prices and see the impact on demand and profit. Finalized prices will be saved back to Snowflake. The app will be secure and low-maintenance as it will be deployed through Snowflake.
 
-#### Purpose
+### Purpose
 **The purpose of this final step is to showcase how easily an application can be built and deployed to allow business users to submit data into Snowflake and interact directly with a ML model.** We will build a Streamlit App on the fly in Snowflake to support Tasty Bytes's brand managers in deciding monthly pricing.
 - **Describe Current Pricing Process**
   - Import an excel spreadsheet and inference the demand model
   - Calculate profit lift from new prices
+  
 - **Build an Application to Set Pricing and Interact with Recommendations**
   - View and edit pricing data
   - Show impact of price changes
   - Write changes back to Snowflake
+  
 - **Application Deployment**
   - Share the application in Snowflake with the brand managers
 
@@ -295,7 +315,7 @@ By default, price for the upcoming month is set to the current price. As tasty d
 - Set the database to joviane_demo_tastybytespriceoptimization_prod
 - Place the Applciation in the analytics Schema
 - This will create a sample Streamlit Application
-- Replace the sample code with the below Python code using Edit.
+- Replace the sample code with the below Python code using Edit
 ```
 # Import python packages
 import streamlit as st
