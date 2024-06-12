@@ -62,6 +62,8 @@ This demo consists of a native application that provides a framework to easily u
 ## Prerequisites
 - Install [Snow CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)
 
+> ⚠️ **This application requires Streamlit Custom Components** Request this to be enabled in your account and in the application package.
+
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
 - [VSCode](https://code.visualstudio.com/download) Installed
