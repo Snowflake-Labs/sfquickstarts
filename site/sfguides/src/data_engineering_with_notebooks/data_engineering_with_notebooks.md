@@ -130,10 +130,10 @@ Duration: 10
 
 Since the focus of this Quickstart is on Notebooks, we're going to use a Notebook to set up our Snowflake demo environment. 
 
-### Download the Notebook
+### Download the 00 Notebook
 The Notebook we're going to use to set up our Snowflake demo environment can be found in your forked repository. From the GitHub web UI open the `00_start_here.ipynb` file and then download the raw file (using one of the links near the top right of the page).
 
-### Import the Notebook to Snowflake
+### Import the 00 Notebook to Snowflake
 Follow these steps to import the Notebook into your Snowflake account:
 
 * Log into Snowsight
@@ -143,7 +143,7 @@ Follow these steps to import the Notebook into your Snowflake account:
 * Choose a database and schema for the notebook to live in and then a default warehouse for the notebook
 * Click "Create"
 
-### Run the Setup Notebook Cells
+### Run the 00 Setup Notebook Cells
 Before you can run the set up steps in the `00_start_here.ipynb` Notebook you need to first add the `snowflake` package to it. To do that, follow these steps: 
 
 * Open the Notebook
@@ -207,34 +207,246 @@ That's it... we don't have to do anything from here to keep this data updated. T
 ## Load Location and Order Detail
 Duration: 10
 
+During this step we will be loading data from two Excel files in S3 into the `LOCATION` and `ORDER_DETAIL` tables. To do this we'll take advantage of the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python#reading-files). For more details on this please see my related blog post [Simplify data ingestion with Snowpark Python file access](https://medium.com/snowflake/simplify-data-ingestion-with-snowpark-python-file-access-f2bc0e4cd887).
+
+> aside negative
+> 
+> **Note** - As of 6/11/2024, the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python#reading-files), which relies on the `SnowflakeFile` class, does not yet work inside Notebooks. So we are using a workaround of copying the file locally to the Notebook and then processing from there.
+
+To put this in context, we are on step **#6** in our data flow overview:
+
+<img src="assets/quickstart_overview.png" width="800" />
+
 ### Run the Notebook
+
+In step 3 we deployed development versions of our two data engineering notebooks, which are owned by the `DEMO_ROLE` role. So first switch roles in Snowsight to the `DEMO_ROLE` and then open the `DEV_06_load_excel_files` Notebook.
+
+> aside positive
+> 
+>  **Tip** - Since we will be going back to the `00_start_here` Notebook later, it might be easier to open a new Snowsight tab and set the default role to `DEMO_ROLE` there, and leave your current tab with the `00_start_here` Notebook open as well.
+
+Once you've opened the `DEV_06_load_excel_files` Notebook click on the "Run all" button near the top right of the window. This will execute all cells in the notebook, in order.
+
 ### Notebook Git Integration
+
+You will notice that to the left of the main Notebook area there is a sidebar which shows the files that make up the Notebook. And since we created this Notebook from our Git repository you will also notice the Git related identifiers. From the sidebar you can see which branch the Notebook is working from along with the ability to pull changes from the repo. So here is even more Git integration built directly in Snowsight. Here's a screenshot:
+
+<img src="assets/snowsight_notebook_git.png" width="400" />
+
 ### Notebook Cell References
-### Loading Excel Files
-### Dynamic File Access?
-### Snowpark DataFrame API
+
+You'll notice in the Notebook examples that we can pass values between cells. So for example, in the `sql_get_context` cell we have:
+
+```sql
+SELECT current_database() AS DATABASE_NAME, current_schema() AS SCHEMA_NAME
+```
+
+And then later in the `py_imports` cell you'll find the following code:
+
+```python
+current_context_df = cells.sql_get_context.to_pandas()
+database_name = current_context_df.iloc[0,0]
+schema_name = current_context_df.iloc[0,1]
+```
+
+So we're able to take the results of a SQL query and use them in Python! And this works the other direction as well, accessing Python values in SQL. For more details please see [Reference cells and variables in Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-develop-run#reference-cells-and-variables-in-sf-notebooks) in our documentation.
+
+### Dynamic File Access
+
+Like I mentioned at the beginning of this section, we're able to read on process Excel files with the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python#reading-files). And this same prinipal applies to more than just Excel files, you can use it to process any file format you'd like. For more details on this please see my related blog post [Simplify data ingestion with Snowpark Python file access](https://medium.com/snowflake/simplify-data-ingestion-with-snowpark-python-file-access-f2bc0e4cd887).
+
+> aside negative
+> 
+> **Note** - As of 6/11/2024, the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python#reading-files), which relies on the `SnowflakeFile` class, does not yet work inside Notebooks. So we are using a workaround of copying the file locally to the Notebook and then processing from there.
 
 
 <!-- ------------------------ -->
 ## Load Daily City Metrics
 Duration: 10
 
+During this step we will be joining data from our `LOCATION` and `ORDER_DETAIL` tables (from the previous step) with the weather data we set up in step 5 to produce an aggreated reporting table `DAILY_CITY_METRICS`. We'll leverage the Snowpark DataFrame API to perform the data transformations, and will also show how to incorporate logging into your code. To put this in context, we are on step **#7** in our data flow overview:
+
+<img src="assets/quickstart_overview.png" width="800" />
+
 ### Run the Notebook
+
+In step 3 we deployed development versions of our two data engineering notebooks, which are owned by the `DEMO_ROLE` role. So first switch roles in Snowsight to the `DEMO_ROLE` and then open the `DEV_07_load_daily_city_metrics` Notebook. If you already switched roles in the previous step you can simply close the previous Notebook and open this one.
+
+Once you've opened the `DEV_07_load_daily_city_metrics` Notebook click on the "Run all" button near the top right of the window. This will execute all cells in the notebook, in order.
+
+### Snowpark DataFrame API
+
+In this step we're starting to really use the Snowpark DataFrame API for data transformations. The Snowpark API provides the same functionality as the [Spark SQL API](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html). To begin with you need to create a Snowpark session object. Like in PySpark, this can be accomplished with the `Session.builder.configs().create()` methods. But within a Snowflake Notebook this is simplified and can be accomplished simply with `session = get_active_session()`.
+
+One you have a Snowpark session you can begin working with data. In this Notebook we're using DataFrames to join the data from different tables into an `order_detail` DataFrame using the `join()` API.
+
+```python
+order_detail = order_detail.join(location, order_detail['LOCATION_ID'] == location['LOCATION_ID'])
+order_detail = order_detail.join(history_day, (F.builtin("DATE")(order_detail['ORDER_TS']) == history_day['DATE_VALID_STD']) & (location['ISO_COUNTRY_CODE'] == history_day['COUNTRY']) & (location['CITY'] == history_day['CITY_NAME']))
+```
+
+After that we're then aggregating the DataFrame using APIs such as `agg()`, `group_by()`, and `select()`.
+
+```python
+final_agg = order_detail.group_by(F.col('DATE_VALID_STD'), F.col('CITY_NAME'), F.col('ISO_COUNTRY_CODE')) \
+                        .agg( \
+                            F.sum('PRICE').alias('DAILY_SALES_SUM'), \
+                            F.avg('AVG_TEMPERATURE_AIR_2M_F').alias("AVG_TEMPERATURE_F"), \
+                            F.avg("TOT_PRECIPITATION_IN").alias("AVG_PRECIPITATION_IN"), \
+                        ) \
+                        .select(F.col("DATE_VALID_STD").alias("DATE"), F.col("CITY_NAME"), F.col("ISO_COUNTRY_CODE").alias("COUNTRY_DESC"), \
+                            F.builtin("ZEROIFNULL")(F.col("DAILY_SALES_SUM")).alias("DAILY_SALES"), \
+                            F.round(F.col("AVG_TEMPERATURE_F"), 2).alias("AVG_TEMPERATURE_FAHRENHEIT"), \
+                            F.round(F.col("AVG_PRECIPITATION_IN"), 2).alias("AVG_PRECIPITATION_INCHES"), \
+                        )
+```
+
+And finally if the target table exists we're using the `merge()` DataFrame API to perform and Upsert operation on the target table. This is what enables us to perform incremental processing.
+
+```python
+    dcm.merge(final_agg, (dcm['DATE'] == final_agg['DATE']) & (dcm['CITY_NAME'] == final_agg['CITY_NAME']) & (dcm['COUNTRY_DESC'] == final_agg['COUNTRY_DESC']), \
+                        [F.when_matched().update(cols_to_update), F.when_not_matched().insert(cols_to_update)])
+```
+
+Again, for more details about the Snowpark Python DataFrame API, please check out our [Working with Dataframe in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html) page.
+
 ### Python Management API
+
+The new Python Management API allows us to programaticaly interact with Snowflake with native Python. This API can be used to both inspect and manage Snowflake objects. In the previous Quickstart we checked for the existing of an object by using SQL like this:
+
+```sql
+def table_exists(session, database_name='', schema_name='', table_name=''):
+    exists = session.sql("SELECT EXISTS (SELECT * FROM {}.INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{}' AND TABLE_NAME = '{}') AS TABLE_EXISTS".format(database_name, schema_name, table_name)).collect()[0]['TABLE_EXISTS']
+    return exists
+```
+
+But with the Python Management API this can now be done with native Python like this:
+
+```python
+def table_exists(session, database_name='', schema_name='', table_name=''):
+    root = Root(session)
+    tables = root.databases[database_name].schemas[schema_name].tables.iter(like=table_name)
+    for table_obj in tables:
+        if table_obj.name == table_name:
+            return True
+
+    return False
+```
+
+And this is really just the beginning of what you can do with this new library. Please check out the [Snowflake Python Management API](https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-overview) documentation for more details.
+
 ### Logging in Python
+
+A key aspect of building robust data engineering pipelines involves instrumenting our code. This enables the monitoring and operations of our code, as is especially importnat when auotmating the deployment and monitoring of our pipelines with DevOps. Snowflake has a rich set of [Logging and Tracing](https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-tracing-overview) capabilities to help.
+
+You'll notice that in the `py_imports` cell of this Notebook we're using Snowflake's logging capabilities. There are two steps to do so in your code. The first is to create a logger to use:
+
+```python
+logger = logging.getLogger("demo_logger")
+```
+
+And the second is to actually log debugging and informational messages at the appropriate places in your code:
+
+```python
+logger.info("07_load_daily_city_metrics start")
+```
+
+In addition to custom logging, Snowflake is instrumenting all services/features to take advantage of logging and tracing as well. For example, when you ran this Notebook earlier it logged a number of messages by default, like when each cell executed.
+
+All of your log messages can be found in your default logging table, which we created in step 3. If you look back at the code from step 3 you'll find that we created an event table named `DEMO_DB.INTEGRATIONS.DEMO_EVENTS` and then set that as the default event table for the account. You can now use this table just like any other table in Snowflake to query and act on the log data.
+
 ### Log Viewer in Snowsight
 
+In addition to directly querying the event table, you can also use our new log viewer directly inside Snowsight to make things even easier. To find the log viewer click on "Monitoring" followed by "Logs" in the left navigation bar. Once on that page you can visualize, filter and search through your logs.
 
 <!-- ------------------------ -->
 ## Orchestrate Jobs
 Duration: 10
 
-### Python Task DAG API
+During this step we will be orchestrating our new Snowpark Notebook pipelines with Snowflake's native orchestration feature named Tasks. You can create and deploy Snowflake Task objects using SQL as well as Python Task APIs. For this quickstart, we will use Snowflake Python Task APIs to create the Tasks. We will create two tasks, one for each Notebook, and chain them together. To put this in context, we are on step **#8** in our data flow overview:
+
+<img src="assets/quickstart_overview.png" width="800" />
+
 ### Deploy Task DAG
+
+Toggle back to the `00_start_here` Notebook, scroll down to the "Step 08 Orchestrate Pipelines" section, and run each of the cells.
+
+### Python Task DAG API
+
+In this step we will create a DAG (or Directed Acyclic Graph) of Tasks using the new [Snowflake Python Management API](https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-overview). The Task DAG API builds upon the Python Management API to provide advanced Task management capabilities. And if you've used Airflow before, this Python API should look familiar as it's similar to the Airflow v1 Python API. For more details see [Managing Snowflake tasks and task graphs with Python](https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-managing-tasks).
+
+Here is the key part of the code:
+
+```python
+# Define the DAG
+with DAG(dag_name, schedule=timedelta(days=1), warehouse=warehouse_name) as dag:
+    dag_task1 = DAGTask("LOAD_EXCEL_FILES_TASK", definition=f'''EXECUTE NOTEBOOK "{database_name}"."{schema_name}"."{env}_05_load_excel_files"()''', warehouse=warehouse_name)
+    dag_task2 = DAGTask("LOAD_DAILY_CITY_METRICS", definition=f'''EXECUTE NOTEBOOK "{database_name}"."{schema_name}"."{env}_06_load_daily_city_metrics"()''', warehouse=warehouse_name)
+
+    # Define the dependencies between the tasks
+    dag_task1 >> dag_task2 # dag_task1 is a predecessor of dag_task2
+
+# Create the DAG in Snowflake
+dag_op.deploy(dag, mode="orreplace")
+```
+
+You can see that we're defining two tasks, one for each Notebook, and that each task simply calls `EXECUTE NOTEBOOK` for the corresponding Notebook. We then define the dependencies and deploy the DAG. As you can see this makes managing complex Task DAGs much easier!
+
+This code is also available in the `scripts/deploy_task_dag.py` script which could be used to automate the Task DAG deployment.
+
 ### Task Viewer in Snowsight
+
+Now, after your dag is deployed, all the tasks in your dag will be running as per the defined schedule. However, as a Snowflake user, how can you peek into the success and failure of each run, look at the task run time, and more?
+
+Snowflake provides some rich task observability features in the Snowsight UI. Try it out for yourself by following these steps:
+
+1. In the Snowsight navigation menu, click **Data** » **Databases**.
+1. In the right pane, using the object explorer, navigate to the `DEMO_DB` database and `DEV_SCHEMA` schema.
+1. For the selected schema, select and expand **Tasks**.
+1. Select a task. Task information is displayed, including **Task Details**, **Graph**, and **Run History** sub-tabs.
+1. Select the **Graph** tab. The task graph appears, displaying a hierarchy of child tasks.
+1. Select a task to view its details.
+
+Here's what the task graph looks like:
+
+<img src="assets/snowsight_task_graph.png" width="800" />
+
+And here's an example of the task run history:
+
+<img src="assets/snowsight_task_run_history.png" width="800" />
+
+For more details, and to learn about viewing account level task history, please check out our [Viewing Task History](https://docs.snowflake.com/en/user-guide/ui-snowsight-tasks.html) documentation.
+
 ### Executing the DAG
+
+The easiest way to manually kick off the Task DAG execution is to open up the root `DEMO_DAG` task, click on the "Graph" tab and then click on the "Run Task Graph" play button above the diagram. If not already set, you may have to pick a warehouse to use.
+
 ### Task Metadata
 
+Snowflake keeps metadata for almost everything you do, and makes that metadata available for you to query (and to create any type of process around). Tasks are no different, Snowflake maintains rich metadata to help you monitor your task runs. Here are a few sample SQL queries you can use to monitor your tasks runs:
+
+```sql
+-- Get a list of tasks
+SHOW TASKS;
+
+-- Task execution history in the past day
+SELECT *
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    SCHEDULED_TIME_RANGE_START=>DATEADD('DAY',-1,CURRENT_TIMESTAMP()),
+    RESULT_LIMIT => 100))
+ORDER BY SCHEDULED_TIME DESC
+;
+
+-- Scheduled task runs
+SELECT
+    TIMESTAMPDIFF(SECOND, CURRENT_TIMESTAMP, SCHEDULED_TIME) NEXT_RUN,
+    SCHEDULED_TIME,
+    NAME,
+    STATE
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY())
+WHERE STATE = 'SCHEDULED'
+ORDER BY COMPLETED_TIME DESC;
+```
 
 <!-- ------------------------ -->
 ## Deploy to Production
