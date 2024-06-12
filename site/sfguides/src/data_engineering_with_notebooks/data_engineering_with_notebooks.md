@@ -20,7 +20,7 @@ This Quickstart will focus on how to build Python data engineering pipelines usi
 
 > aside negative
 > 
-> **Note** - As of 6/10/2024, the [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) are in Public Preview.
+> **Note** - As of 6/11/2024, the [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) are in Public Preview.
 
 ### What You’ll Learn
 * How to ingest custom file formats (like Excel) with Snowpark from an external stage (such as an S3 bucket) into a Snowflake table
@@ -58,7 +58,7 @@ Duration: 10
 ### Create a GitHub Personal Access Token
 In order for Snowflake to authenticate to your GitHub repository, you will need to generate a personal access token. Please follow the [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) instructions to create your token.
 
-Make sure to note down the token until step 3 of the Quickstart, where we will be securely storing it within a Snowflake secret object.
+Make sure to write down the token until step 3 of the Quickstart, where we will be securely storing it within a Snowflake `SECRET` object.
 
 ### Fork the Quickstart Repository
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering with Snowflake Notebooks associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
@@ -123,87 +123,84 @@ When you’re finished adding all the secrets, the page should look like this:
 > 
 >  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
 
-### Create GitHub Codespace
-For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be more than enough for this lab.
-
-To create a GitHub Codespace, click on the green `<> Code` button from the GitHub repository homepage. In the Code popup, click on the `Codespaces` tab and then on the green `Create codespace on main`.
-
-<img src="assets/codespaces_setup.png" width="800" />
-
-This will open a new tab and begin setting up your codespace. This will take a few minutes as it sets up the entire environment for this Quickstart. Here is what is being done for you:
-
-* Creating a container for your environment
-* Installing Anaconda (miniconda)
-* Creating a directory and default config files
-* Anaconda setup
-    * Creating the Anaconda environment
-    * Installing the Snowpark Python library
-    * Installing the Snowflake CLI Python CLI
-* VS Code setup
-    * Installing VS Code
-    * Configuring VS Code for the Python Anaconda environment
-    * Installing the Snowflake VS Code extension
-* Starting a hosted, web-based VS Code editor
-
-Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
-
-### Configure Snowflake Credentials
-Both the [Snowflake Connector for Python](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector) and the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) use the same configuration files, which can be found in the `~/.snowflake` folder. Default configuration files were created for you during the codespace setup.
-
-For this Quickstart you'll only need to edit the `~/.snowflake/connections.toml` file. The easiest way to edit the default `~/.snowflake/connections.toml` file is directly from VS Code in your codespace. Type `Command-P`, type (or paste) `~/.snowflake/connections.toml` and hit return. The config file should now be open. You just need to edit the file and replace the `account`, `user`, and `password` with your values. Then save and close the file.
-
-**Note:** The Snowflake CLI (and by extension this Quickstart) currently does not work with Key Pair authentication. It simply grabs your username and password details from the config file.
-
-### Verify Your Anaconda Environment is Activated
-During the codespace setup we created an Anaconda environment named `snowflake-demo`. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see `(snowflake-demo)` before your bash prompt.
-
-<img src="assets/vscode_terminal_conda.png" width="800" />
-
-If for some reason it wasn't activiated simply run `conda activate snowflake-demo` in your terminal.
-
 
 <!-- ------------------------ -->
 ## Setup Snowflake
 Duration: 10
 
-### Snowflake Extensions for VS Code
-You can run SQL queries against Snowflake in many different ways (through the Snowsight UI, SnowSQL, etc.) but for this Quickstart we'll be using the Snowflake extension for VS Code. For a brief overview of Snowflake's native extension for VS Code, please check out our [VS Code Marketplace Snowflake extension page](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc).
+Since the focus of this Quickstart is on Notebooks, we're going to use a Notebook to set up our Snowflake demo environment. 
 
-### Run the Setup Script
-To set up all the objects we'll need in Snowflake for this Quickstart you'll need to run the `scripts/setup.sql` script.
+### Download the Notebook
+The Notebook we're going to use to set up our Snowflake demo environment can be found in your forked repository. From the GitHub web UI open the `00_start_here.ipynb` file and then download the raw file (using one of the links near the top right of the page).
 
-Start by clicking on the Snowflake extension in the left navigation bar in VS Code. Then login to your Snowflake account with a user that has ACCOUNTADMIN permissions. Once logged in to Snowflake, open the `scripts/setup.sql` script in VS Code by going back to the file Explorer in the left navigation bar. Next, update the 4 `GITHUB_` SQL variables at the top of script before running. Use the value of your GitHub personal access token in the `GITHUB_SECRET_PASSWORD` variable.
+### Import the Notebook to Snowflake
+Follow these steps to import the Notebook into your Snowflake account:
 
-To run all the queries in this script, use the "Execute All Statements" button in the upper right corner of the editor window. Or, if you want to run them in chunks, you can highlight the ones you want to run and press CMD/CTRL+Enter. 
+* Log into Snowsight
+* Browse to "Notebooks" in the left navigation (under "Projects")
+* Click on arrow next to the blue "+ Notebook" on top right, then select "Import .ipynb file"
+* Select the `00_start_here.ipynb` file you downloaded previously
+* Choose a database and schema for the notebook to live in and then a default warehouse for the notebook
+* Click "Create"
+
+### Run the Setup Notebook Cells
+Before you can run the set up steps in the `00_start_here.ipynb` Notebook you need to first add the `snowflake` package to it. To do that, follow these steps: 
+
+* Open the Notebook
+* Click on the "Packages" drop down on the top menu bar, near the right
+* Type "snowflake" in the "Find Packages" search box and select it from the drop down
+
+Once you have all the required packages configured, click the "Start" button on the top menu bar, near the right. Once the Notebook session has started you're ready to run cells in the Notebook. And notice how quickly the session starts up, especially compared to starting a Spark cluster!
+
+Scroll down to the "Step 03 Setup Snowflake" section. You'll want to run all the cells in this section. But before doing so make sure and update the 4 `GITHUB_` SQL variables in the first `sql_step03_set_context` cell. Use the value of your GitHub personal access token in the `GITHUB_SECRET_PASSWORD` variable. Then run all the cells in this section. To run a given cell simply click anywhere in the cell to select it and press CMD/CTRL+Enter. You can alternatively click on the Run arrow near the top right of the cell.
 
 
 <!-- ------------------------ -->
 ## Deploy to Dev
 Duration: 10
 
-In the previous step, when you ran the `scripts/setup.sql` script from VS Code it created a number of objects, including a Notebook named `00_start_here`. We will use that Notebook a few times during this Quickstart to help with some of the steps.
-
-During this step we will be deploying the dev versions of our two data engineering Notebooks: `DEV_05_load_excel_files` and `DEV_06_load_daily_city_metrics`. For this Quickstart you will notice that our main data engineering Notebooks will be named with a prefix for the environment label, like `DEV_` for dev and `PROD_` for prod. A full discussion of different approaches for managing multiple environments with Snowflake is out of scope for this Quickstart. For a real world use case, you may or may not need to do the same, depending on your Snowflake set up.
+During this step we will be deploying the dev versions of our two data engineering Notebooks: `DEV_06_load_excel_files` and `DEV_07_load_daily_city_metrics`. For this Quickstart you will notice that our main data engineering Notebooks will be named with a prefix for the environment label, like `DEV_` for dev and `PROD_` for prod. A full discussion of different approaches for managing multiple environments with Snowflake is out of scope for this Quickstart. For a real world use case, you may or may not need to do the same, depending on your Snowflake set up.
 
 To put this in context, we are on step **#4** in our data flow overview:
 
 <img src="assets/quickstart_overview.png" width="800" />
 
 ### Git in Snowsight
-When you ran the `scripts/setup.sql` script in the previous step, you created a Git Integration in Snowflake for your forked GitHub repository! Please see [Using a Git repository in Snowflake](https://docs.snowflake.com/en/developer-guide/git/git-overview) for more details.
+When you ran the setup cells in the `00_start_here.ipynb` Notebook in the previous step, you created a Git Integration in Snowflake for your forked GitHub repository! Please see [Using a Git repository in Snowflake](https://docs.snowflake.com/en/developer-guide/git/git-overview) for more details.
 
-### Notebook Overview
+You can browse your Git repository in Snowsight, by using our Snowsight Git integration features. First To do that, click on "Data" -> "Databases" in the left navigation. Then click on "DEMO_DB" database, then "INTEGRATIONS" schema, then "Git Repositories" and finally "DEMO_GIT_REPO". You will see the details and content of your Git repository in Snowsight. You can change branches and browse the files in the repo by clicking on the folder names to drill down.
+
 ### Deploy Notebooks
+Scroll down to the "Step 04 Deploy to Dev" section of the `00_start_here.ipynb` Notebook and run the Python cell there. This cell will deploy both the `06_load_excel_files` and `07_load_daily_city_metrics` Notebooks to our `DEV_SCHEMA` schema (and will prefix both workbook names with `DEV_`).
+
 ### EXECUTE IMMEDIATE FROM with Jinja Templating
+The [EXECUTE IMMEDIATE FROM](https://docs.snowflake.com/en/sql-reference/sql/execute-immediate-from) command is very powerful and allows you to run an entire SQL script directly from Snowflake. And you'll notice here that we executing a SQL script directly from the `main` branch of our Git repo (`@DEMO_GIT_REPO/branches/main`). At this point please review the contents of the `scripts/deploy_notebooks.sql` script in your forked repo to see what we just executed.
+
+Also, please note that the `scripts/deploy_notebooks.sql` script also includes Jinja Templating. Jinja templating allows us to parameterize this script so we can run the same core logic in each environment! You will see later in step 9 that we will call this same script from our GitHub Actions pipeline in order to deploy these Notebooks to production.
 
 
 <!-- ------------------------ -->
 ## Load Weather
 Duration: 10
 
-### Snowflake Marketplace
-### Weather data from Snowflake Marketplace
-### Test the Weather Data
+During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#5** in our data flow overview:
+
+<img src="assets/quickstart_overview.png" width="800" />
+
+### Load Weather Data from Snowflake Marketplace
+Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let's connect to the `Weather Source LLC: frostbyte` feed from Weather Source in the Snowflake Marketplace by following these steps:
+
+* Login to Snowsight
+* Click on the `Marketplace` link in the left navigation bar
+* Enter "Weather Source LLC: frostbyte" in the search box and click return
+* Click on the "Weather Source LLC: frostbyte" listing tile
+* Click the blue "Get" button
+    * Expand the "Options" dialog
+    * Change the "Database name" to read "FROSTBYTE_WEATHERSOURCE" (all capital letters)
+    * Select the "HOL_ROLE" role to have access to the new database
+* Click on the blue "Get" button
+
+That's it... we don't have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they have published. How amazing is that? Just think of all the things you didn't have do here to get access to an always up-to-date, third-party dataset!
 
 
 <!-- ------------------------ -->
