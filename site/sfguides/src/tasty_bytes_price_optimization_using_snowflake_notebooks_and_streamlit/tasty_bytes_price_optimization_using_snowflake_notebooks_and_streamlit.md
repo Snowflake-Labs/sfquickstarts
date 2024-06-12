@@ -22,7 +22,7 @@ Tasty Bytes is one of the largest food truck networks in the world with localize
     - After registering, you will receive an email with an activation link and your Snowflake Account URL.
 
 ### What does this Quickstart aim to solve?
-- In the Machine Learning with Snowpark section for this quickstart, we will train & deploy an ML model which leverages historical menu-item sale data to understand how menu-item demand changes with varying price. By utilizing this trained model, we would recommend the optimal day of week prices for all menu-items for the upcoming month to our food-truck brands.
+- In this quickstart, we will train & deploy an ML model which leverages historical menu-item sale data to understand how menu-item demand changes with varying price. By utilizing this trained model, we would recommend the optimal day of week prices for all menu-items for the upcoming month to our food-truck brands. Afterward, we will showcase an application that can be built and deployed to allow business users to submit data into Snowflake and interact directly with a ML model.
 
 #### Data Exploration
 - Connect to Snowflake
