@@ -111,7 +111,6 @@ Name the external volume you create `iceberg_cortex_vol`.
 
 <!-- ------------------------ -->
 ### Create an Iceberg Table
-Duration: 10
 
 Iceberg Tables can currently use Snowflake, AWS Glue, or object storage as the catalog. In public preview soon, Snowflake can use catalog integration with an Iceberg REST endpoint. In this quickstart, use Snowflake as the catalog to allow read and write operations to the table. More information about integrating catalogs can be found [here](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration).
 
@@ -134,6 +133,7 @@ CREATE OR REPLACE ICEBERG TABLE demo.public.product_reviews (
 ```
 
 ## Load CSV files into Iceberg via Snowpark Python
+Duration: 5
 
 There are multiple ways to load new data into Snowflake-managed Iceberg Tables including INSERT, [COPY INTO](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table), and [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto).
 
@@ -201,6 +201,7 @@ You now see metadata files and Parquet data files in your object storage, whethe
 ![iceberg_files](assets/iceberg_files.png)
 
 ## Snowflake Cortex LLM Functions
+Duration: 3
 
 Now you can query the Iceberg Table using LLM functions from Snowflake Cortex. Run the query below to calculate sentiment scores for product reviews.
 
@@ -224,6 +225,7 @@ UPDATE demo.public.product_reviews AS pr
 ```
 
 ## Create a CDC Pipeline
+Duration: 8
 
 Suppose new product reviews continue to be generated, stored as new CSV files, and you'd like to use Snowflake to automatically compute sentiment scores on new product reviews.
 
