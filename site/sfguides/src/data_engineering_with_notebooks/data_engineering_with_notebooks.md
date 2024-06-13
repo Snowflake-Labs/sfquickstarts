@@ -34,6 +34,13 @@ This Quickstart will focus on how to build Python data engineering pipelines usi
 * How to build CI/CD pipelines using Snowflake's Git Integration, the Snowflake CLI, and GitHub Actions
 * How to deploy Snowflake Notebooks from dev to production
 
+### What You'll Build
+* A data share from the Snowflake Marketplace to access weather data
+* A data engineering pipeline with a Notebook to ingest Excel files into Snowflake
+* A data engineering pipeline with a Notebook to transform and aggreggate data
+* A DAG (or Directed Acyclic Graph) of Tasks to orchestrate/schedule the pipelines
+* A CI/CD pipeline to deploy the Notebooks to production
+
 ### Prerequisites
 * Familiarity with Python
 * Familiarity with the DataFrame API
@@ -44,7 +51,7 @@ This Quickstart will focus on how to build Python data engineering pipelines usi
 You will need the following things before beginning:
 
 * Snowflake account
-    * **A Snowflake Account**
+    * **A Snowflake Account**. Visit the [Snowflake Account Sign In](https://app.snowflake.com/) page to log into your account or to sign up for a trial account.
     * **A Snowflake user created with ACCOUNTADMIN permissions**. This user will be used to get things setup in Snowflake.
     * **Anaconda Terms & Conditions accepted**. See Getting Started section in [Third-Party Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#getting-started).
 * GitHub account
@@ -542,7 +549,7 @@ Once you're finished with the Quickstart and want to clean things up, toggle bac
 Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Duration: 5
 
 Congratulations! You have now built end-to-end data engineering pipelines with Notebooks in Snowflake. You've also seen how to follow a complete Software Development Life Cycle (SDLC) for data engineering with Notebooks, including integration with Git, deploying to multiple environments through a CI/CD pipeline, instrumenting your code for monitoring and debugging, and orchestrating the pipelines with Task DAGs. Here's a quick visual recap:
