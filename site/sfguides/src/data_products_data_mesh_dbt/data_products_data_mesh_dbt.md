@@ -254,13 +254,15 @@ grant select on all tables in schema finance_db.prod to role finance_role;
 
 grant create schema on database finance_db to role finance_role;
 grant create table on schema finance_db.prod to role finance_role;
-grant create view on schema foundational_db.prod to role finance_role;
+grant create view on schema finance_db.prod to role finance_role;
+
+grant usage on database foundational_db to role finance_role;
+grant usage on schema foundational_db.prod to role finance_role;
 ```
 
 ### Grant yourself permissions
 
 To get this all working correctly, make sure to assign the relevant roles to your own Snowflake database user.  **Ensure that you're replacing <your-snowflake-username> in the script below with your Snowflake username.**.  If you've forgotten your username, you can find it in the bottom left icon -> My Profile.
-
     ![dbt Cloud Registration](assets/snowflake_my_profile.png)
 
 ```sql

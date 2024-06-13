@@ -1,4 +1,4 @@
-author: Gilberto Hernandez and Kamesh Sampath
+author: Gilberto Hernandez, Kamesh Sampath
 id: getting-started-snowflake-python-api
 summary: Learn how to get started with Snowflake's Python API to manage Snowflake objects and tasks.
 categories: Getting-Started
@@ -261,7 +261,6 @@ schema = database.schemas.create(
     name="PYTHON_API_SCHEMA"),
     mode=CreateMode.or_replace,
   )
-)
 ```
 
 ```py
@@ -514,7 +513,7 @@ Navigate to your Snowflake account and confirm the change in warehouse size.
 
 ![large warw](./assets/large_wh.png)
 
-Finally, delete the warehouse and close your Snowflake session by running the final cell:
+**OPTIONAL** Delete the warehouse and close your Snowflake session by running the final cell. This is optional so that you can continue to use the warehouse in the subsequent steps. If you run the cell, be sure to create a new warehouse so that you can complete the subsequent steps.
 
 ```py
 warehouse.delete()
@@ -760,7 +759,7 @@ Let's cover these patterns in the notebook. Take a look at the following cell:
 
 ```python
 new_compute_pool_def = ComputePool(
-    name="MyComputePool"
+    name="MyComputePool",
     instance_family="CPU_X64_XS",
     min_nodes=1,
     max_nodes=2,

@@ -12,73 +12,78 @@ authors: Simon Field
 ## Overview 
 Duration: 5
 
-This guide walks through an end-to-end customer segmentation machine-learning use-case using Snowflake Feature-Store and Model-Registry.  By completing this guide, you will be able to go from ingesting raw data through to implementing a production inference data-pipeline to maintain customer segments.
+This guide walks through an end-to-end customer segmentation machine-learning use-case using Snowflake Feature Store and Model Registry.  By completing this guide, you will be able to go from ingesting raw data through to implementing a production inference data-pipeline with Snowflake ML to maintain customer segments.
 
-The primary focus in this guide is the Snowflake Feature Stores functionality and how it integrates within the broader ML eco-system within Snowflake.
+The primary focus in this guide is the Snowflake Feature Stores functionality and how it integrates within the broader ecosystem within Snowflake ML.
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
 - **Setup Environment**: Use stages and tables to ingest and organize raw data from S3 into Snowflake tables.  Setup a scheduled process to simulate incremental data-ingest into Snowflake tables.
-- **Feature Engineering**: Leverage Snowpark for Python DataFrames to perform data cleansing, transformations such as group by, aggregate, pivot, and join to create features the data for machine-learning.
-- **Feature Store**: Use Snowflakes feature-store to register and maintain feature-engineering pipelines and understand how to monitor them once operational. 
-- **Machine Learning**: Perform feature transformation and run ML Training in Snowflake using Snowpark ML. Register the trained ML model for inference from Snowpark ML Model Registry
-- **Operationalise a Model**: Implementing a production inference data-pipeline to maintain customer segments as underlying customer behaviours change in source data.
+- **Feature Engineering**: Leverage Snowparks Python DataFrames to perform data cleansing, transformations such as group by, aggregate, pivot, and join to create features for machine learning.
+- **Feature Store**: Use Snowflakes Feature Store to register and maintain feature-engineering pipelines and understand how to monitor them once operational. 
+- **Machine Learning**: Perform feature transformation and run ML Training in Snowflake using Snowpark ML. Register the trained ML model for inference from the Snowflake Model Registry
+- **Operationalise a Model**: Implementing a production inference data-pipeline to maintain customer segments as underlying customer behaviors change in source data.
 
 The diagram below provides an overview of what we will be building in this QuickStart.
 ![Snowpark](assets/quickstart_pipeline.png)
+
+> aside negative
+> __Note__:  Snowflake Feature Store uses Snowflake Enterprise Edition features and therefore requires Enterprise Edition or higher.
 
 In case you are new to some of the technologies mentioned above, here’s a quick summary with links to documentation.
 
 ### What is Snowpark?
 
-Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
+Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake.
 
-**Client Side Libraries** - Snowpark libraries can be downloaded, installed and used from any client-side notebook or IDE and are used for code development and deployment. They are also available for use directly within Snowflake Python Worksheets, Notebooks.  The Libraries include the Snowpark API for data pipelines and apps and the Snowpark ML API for end to end machine learning.
 
-**Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtimes include Python, Java, and Scala in virtual warehouses with CPU compute or Snowpark Container Services (public preview) to execute any language of choice with CPU or GPU compute.
+**Client Side Libraries** - Snowpark libraries can be downloaded, installed and used from any client-side notebook or IDE and are used for code development and deployment. Libraries include the [Snowpark ML API)[https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview#installing-snowpark-ml], which provides Python APIs for machine learning workflows in Snowflake.
 
-Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+**Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
 
-### What is Snowpark ML?
+Learn more about Snowpark [here](https://www.snowflake.com/snowpark/).
 
-[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index?_fsi=g3LX4YOG) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. With Snowpark ML, data scientists and ML engineers can use familiar Python frameworks for preprocessing, feature engineering, and training models that can be managed entirely in Snowflake without any data movement, silos or governance trade-offs. Snowpark ML has 2 key  components: Snowpark ML Modeling for model development and Snowpark ML Operations including the Model Registry (public preview) for model management and batch inference, and Feature Store for feature-engineering & curation.
+### What is Snowflake ML?
 
-![snowpark_ml](assets/snowpark_ml.png)
+[Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview) is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use [ML Functions](https://docs.snowflake.com/en/guides-overview-ml-functions) to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
+
+Capabilities for custom ML include:
+- Snowflake Notebooks for a familiar, easy-to-use notebook interface that blends Python, SQL, and Markdown
+- Container Runtimes for distributed CPU and GPU processing out of the box from Snowflake Notebooks
+- Snowpark ML Modeling for feature engineering and model training with familiar Python frameworks
+- Snowflake Feature Store for continuous, automated refreshes on batch or streaming data
+- Snowflake Model Registry to manage models and their metadata
+- ML Lineage to trace end-to-end feature and model lineage (currently in private preview)
+
+To get started with Snowflake ML, developers can use the Python APIs from the [Snowpark ML library](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index) to interact with all development and operations features across the ML workflow.
+
+![snowpark_ml](assets/snowflake_ml.png)
 
 This quickstart will focus on
 
-- [Snowpark ML Feature Store](https://docs.snowflake.com/LIMITEDACCESS/snowflake-feature-store#generating-datasets-for-training), which enables the creation of feature-engineering pipelines, and efficient, time-accurate retrieval of features for model training and inference. Snowflake Feature Store enables data engineers, data scientists and ML engineers to centralise the curation, maintainenance and sharing of features that can be used in machine-learning models.  Snowflakes Snowsight UI can be used to search, discover and review available Features for a given machine-learning task, enabling re-use of features across multiple models, and expediting the time required to implement machine-learning projects.  The feature-store provides lineage of data from source tables, through feature-engineering to model and model-inference enabling users to understand the broader impact in data-quality issues in source data, answering questions like:
-  * what features and models are derived from this source/table.
-  * what data-engineering and transformations are applied to derive this feature.
+- [Snowflake Feature Store](https://docs.snowflake.com/LIMITEDACCESS/snowflake-feature-store#generating-datasets-for-training), which enables the creation of feature-engineering pipelines, and efficient, time-accurate retrieval of features for model training and inference. Snowflake Feature Store enables data engineers, data scientists and ML engineers to centralize the curation, maintenance and sharing of features that can be used in machine-learning models.  
 
-  You can create multiple Feature-Stores within a Snowflake account, for example organised by environment or business unit.  Features are automatically maintained using Snowflake Dynamic Tables to ensure that the feature-engineering pipeline keeps features updated to the required level of freshness. When retrieving features for training or inference, feature-store ensures that the feature values are retrieved at the required point-in-time using Snowflake AsOf joins.
+  You can create multiple Feature-Stores within a Snowflake account, for example organized by environment or business unit.  Features are automatically maintained using Snowflake Dynamic Tables to ensure that the feature-engineering pipeline keeps features updated to the required level of freshness. When retrieving features for training or inference, feature-store ensures that the feature values are retrieved at the required point-in-time using Snowflake AsOf joins.
 
   ![Snowpark](assets/snowflake_feature_store.png)
 
 - [Snowpark ML Modeling](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling), which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature pre-processing and model training without the need to move data out of Snowflake.
 
-  **Feature Engineering and Preprocessing** - Improve performance and scalability with distributed execution for common feature-engineering and scikit-learn preprocessing tasks.
-
-  **Model Training** - Accelerate model training for scikit-learn, XGBoost and LightGBM models without the need to manually create stored procedures or user-defined functions (UDFs), and leverage distributed hyperparameter optimization (public preview).
-
 ![Snowpark](assets/snowpark_ml_modeling.png)
 
-- [Snowpark Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-model-registry), which provides scalable and secure model management of ML models in Snowflake, regardless of origin.
+- [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-model-registry), which provides scalable and secure model management of ML models in Snowflake, regardless of origin.
 Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features.
 
-  The Snowflake Model Registry allows customers to securely manage models and their metadata in Snowflake, regardless of origin. The model registry stores machine learning models as first-class schema-level objects in Snowflake so they can easily be found and used by others in your organization. You can create registries, and store models in them, using classes in the Snowpark ML library. Models can have multiple versions, and you can designate a version as the default.
-
-  **Model Management and Batch Inference** - Manage ML models created  within Snowflake and execute micro-batch inference.
-
 ![Snowpark](assets/snowpark_ml_arch.png)
+
 
 ### What You Will Learn
 
 - How to perform data and feature engineering tasks using Snowpark DataFrames and APIs
 - How to create a Snowflake Feature Store, and the key objects within it like Entities and Feature Views
 - How to train ML model using Snowpark ML in Snowflake using features and training data derived from Snowflake Feature Store
-- How to register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
-- How to operationalise an end-to-end feature-engineering and ML model to perform micro-batch inference.
+- How to register ML model and use it for inference from Snowflake Model Registry.
+- How to operationalize an end-to-end feature-engineering and ML model to perform micro-batch inference.
 
 ### Prerequisites
 
@@ -88,7 +93,7 @@ Using these features, you can build and operationalize a complete ML workflow, t
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). 
 - A Snowflake account login with the ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to use a different role that has the ability to create database, schema, tables, dynamic tables, tags,  stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you have been granted the permissions to create the afore mentioned objects.
 
-> IMPORTANT: Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
+> **IMPORTANT**: Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
 
 
 ### What You’ll Build 
@@ -152,26 +157,21 @@ Note: if you are installing onto a Apple Mac with Apple silicon you will need to
 ```python
 conda config --env --set subdir osx-64
 ```
-**Step 5:** Install SQLGlot with pip install in the conda environment **py-snowpark_df_ml_fs** by running the following command in the same terminal window.  We will use this package to format the SQL produced from Snowpark so that it is human-readable in the Dynamic Tables that Feature Store creates.
+
+**Step 5:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **py-snowpark_df_ml_fs** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
 
 ```python
-python3 -m pip install "sqlglot[rs]" --no-deps
-```
-
-**Step 6:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **py-snowpark_df_ml_fs** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
-
-```python
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python>=1.16.0 snowflake-ml-python>=1.5.1 notebook
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python=1.16.0 snowflake-ml-python=1.5.1 notebook
 pip install snowflake
 ```
 
 
-**Step 7:** Create a Jupyter Kernel to represent the environment that we have just created using
+**Step 6:** Create a Jupyter Kernel to represent the environment that we have just created using
 
 ```python
 ipython kernel install --user --name=py-snowpark_df_ml_fs
 ```
-**Step 8:** Make sure you are in the top level directory for this QuickStart, and start Jupyter to test the it is setup correctly
+**Step 7:** Make sure you are in the top level directory for this QuickStart, and start Jupyter to test the it is setup correctly
 
 ```python
 jupyter lab
@@ -179,7 +179,7 @@ jupyter lab
 
 Follow the instructions output by Jupyter in the console to open jupyter lab in your browser, if it has not automatically open a tab in your browser.
 
-**Step 9:** 
+**Step 8:** 
 You will need a Snowflake login and to setup a connection for use within the provided Jupyter Notebooks. 
 
 There are several options for creating a Snowpark connection.  You can use the method described here in [snowpark connection](https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview#connecting-to-snowflake).  You will need to create an entry in your [SnowSQL configuration file](https://docs.snowflake.com/en/user-guide/snowsql-config).
@@ -343,7 +343,7 @@ Feature engineering pipelines are defined using Snowpark dataframes (or SQL expr
 In this way we can build up a complex pipeline step-by-step and use it to derive a FeatureView, that will be maintained as a pipeline in Snowflake.
 
 ### FeatureView Creation
-We will use the dataframe that we defined in the prior step for the FeatureView we are creating. The FeatureView will create a Dynamic Table in our Feature Store schema.  We could use the dataframe directly within the definition of the FeatureView.  The SQL query generated from Snowpark through the dataframe definition, is machine generated and not necessarily easy for a human to parse.  Therefore when used and viewed within the Dynamic Table.  Therefore optionally we can parse the SQL and format it to something more human readable.  We use the `sqlglot` Python package to do this.  We created a simple function that takes the raw SQL generated from Snowpark, parses it and returns a formatted SQL statement. Depending on your preference, you can choose to convert sub-selects to common-table-expressions.  
+We will use the dataframe that we defined in the prior step for the FeatureView we are creating. The FeatureView will create a Dynamic Table in our Feature Store schema.  We could use the dataframe directly within the definition of the FeatureView.  The SQL query generated from Snowpark through the dataframe definition, is machine generated and not necessarily easy for a human to parse, when used and viewed within the Dynamic Table.  Therefore optionally we can parse the SQL and format it to something more human readable.  We use the `sqlglot` Python package to do this.  We created a simple function that takes the raw SQL generated from Snowpark, parses it and returns a formatted SQL statement. Depending on your preference, you can choose to convert sub-selects to common-table-expressions.  
 
 The image below shows the FeatureView creation process, and calls out a few key elements of the FeatureView definition.
 
@@ -353,13 +353,17 @@ Similarly to the Entity creation,  this is a two step process, first creating th
 
 We add the Entity (`CUSTOMER`) that we created earlier. This allows the relationship, and join keys, available in the Feature View to be defined.  We will see how this is used when we want to retrieve Features from the feature store. 
 
-If we provide `refresh_freq` [optional argument] the database object that is created from the Feature View definition is a Dynamic Table, otherwise a View is created.  In the case of a Dynamic Table, the table is initially populated with data, and from that point forward incrementally maintained when new data lands in the source tables. As we have created incrementing data sources, we can observe this incremental processing being applied to the table, using Snowsights Dynamic Table observation features.  See the image below.
+If we provide `refresh_freq` [optional argument] the database object that is created from the Feature View definition is a Dynamic Table, otherwise a View is created.  In the case of a Dynamic Table, the table is initially populated with data, and from that point forward incrementally maintained when new data lands in the source tables. As we have created incrementing data sources, we can observe this incremental processing being applied to the table, using Snowsight's Dynamic Table observation features.  See the image below.
 
 ![Snowpark](assets/fv_dynamic_table.png)
 
-The Snowsight UI also contains a new section supporting Feature Store discovery and observability. The below image shows the Snowsight UI Feature Store section, Entity level view.  We can see the FeatureView that we have created, under the Customer Entity.  We can also see other Entities, and FeatureViews that have been created for other use-cases within this Feature Store.
+The Snowsight UI also contains a new section supporting Feature Store discovery and observability. can be used to search, discover and review available Features for a given machine-learning task, enabling re-use of features across multiple models, and expediting the time required to implement machine-learning projects. The below image shows the Snowsight UI Feature Store section, Entity level view.  We can see the FeatureView that we have created, under the Customer Entity.  We can also see other Entities, and FeatureViews that have been created for other use-cases within this Feature Store.
 
 ![Snowpark](assets/FeatureStore_Snowsight.png)
+
+The feature-store provides lineage of data from source tables, through feature-engineering to model and model-inference enabling users to understand the broader impact in data-quality issues in source data, answering questions like:
+  * what features and models are derived from this source/table.
+  * what data-engineering and transformations are applied to derive this feature.
 
 ### Feature Retrieval
 Now we have a Feature View with data being maintained within it, we can use it to retrieve data for model-training, and model-inference.  The Feature Store enables feature-values to be retrieved for a given set of Entity-keys, relative to a reference point-in-time.  Under the covers the Feature Store uses the new SQL AsOf join functionality in Snowflake to efficiently retrieve the requested features across the FeatureViews.  The Entity-Keys and Timestamps are provided as a dataframe, which we call a Spine.  The Spine can be defined using Snowpark Dataframe funcionality, or via a SQL expression.
@@ -387,9 +391,9 @@ training_dataset_pdf = training_dataset.read.to_pandas()
 ### Fit a Snowpark-ML Kmeans Model
 We use the training Dataset we created in the previous step to fit a Snowpark-ML Kmeans model. You can read more about Snowpark ML Model Development in this [section](https://docs.snowflake.com/developer-guide/snowpark-ml/modeling) of the documentation. To do so we define our model fitting pipeline as a function that includes some feature pre-processing to scale our input variables using min-max scaling.  These transformations need to be applied at model time, as they capture the global state (e.g. minimum and maximum values for columns) of our training sample.
 
-We fit the model and log it to the Model Registry that we created earlier. You can read more about Snowpark ML Model Registry in this [section](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview) of the documentation. As with the Snowflake Feature Store models in the registry are versioned. When we fit our model with Snowpark ML, using the Feature Store and register the model in the Registry, Snowflake captures the full lineage from source tables through to the model. We can interogate the lineage information to understand what models might be impacted by a data-quality problem in our source tables for example.
+We fit the model and log it to the Model Registry that we created earlier. You can read more about Snowflake ML Model Registry in this [section](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview) of the documentation. As with the Snowflake Feature Store, models in the registry are versioned. When we fit our model with Snowpark ML, using the Feature Store and register the model in the Registry, Snowflake captures the full lineage from source tables through to the model. We can interogate the lineage information to understand what models might be impacted by a data-quality problem in our source tables for example.
 
-Model fitting and optimisation is typically a highly iterative process where different subsets of features, over varying data samples are used in combination with different sets of model hyper-parameters.  With feature store and model lineage and Model-Registry all the the information related to each fitting run is captured, so that we have full Model Reproducibility and Discovery should we need. During this process we would normally check our model against a test dataset, to generate test-scores for the model.   Many more sophisticated  validation techniques exist, but are beyond the scope of this Quickstart. 
+Model fitting and optimisation is typically a highly iterative process where different subsets of features, over varying data samples are used in combination with different sets of model hyper-parameters.  With feature store and model lineage and Model Registry all the the information related to each fitting run is captured, so that we have full Model Reproducibility and Discovery should we need. During this process we would normally check our model against a test dataset, to generate test-scores for the model.   Many more sophisticated  validation techniques exist, but are beyond the scope of this Quickstart. 
 
 * Within-Cluster Sum of Squares
 * Silhouette Score
@@ -487,9 +491,9 @@ If you want to keep the data, but shut down the Tasks and Dynamic Tables to mini
 
 Duration: 3
 
-Congratulations! You've successfully performed Feature Engineering using Snowpark, made use of Snowflake Feature Store to publish and maintain features in a development and production environment. Youve learnt how you can deploy a model from Snowflake Model Registry and combine it with a feature-engineering pipeline in Feature Store to operationalise an incremental inference process.
+Congratulations! You've successfully performed Feature Engineering using Snowpark, made use of Snowflake Feature Store to publish and maintain features in a development and production environment. You've learnt how you can deploy a model from the Snowflake Model Registry and combine it with a feature-engineering pipeline in Feature Store to operationalise an incremental inference process in Snowflake ML.
 
-We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/XKd8rXPUNs2G1yM28).
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/JeZWYwkCMk3gty7D7).
 
 ### What You Learned
 
@@ -497,7 +501,7 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
 - How to create Snowflake Tasks to automate data pipelines
 - How to train ML model using Snowpark ML in Snowflake
-- How to register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+- How to register ML model and use it for inference from Snowflake Model Registry
 - How to create Streamlit application that uses the ML Model for inference based on user input
 
 ### Related Resources

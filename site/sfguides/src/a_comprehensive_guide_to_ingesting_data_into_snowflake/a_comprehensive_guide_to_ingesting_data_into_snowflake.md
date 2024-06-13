@@ -1,5 +1,5 @@
 summary: Learn how to ingest data into Snowflake with Python Connector, Streaming SDK, Snowpipe, Snowpark, and Kafka
-id: tour_of_ingest 
+id: a_comprehensive_guide_to_ingesting_data_into_snowflake 
 categories: featured, getting-started, data-engineering
 environments: web
 status: Published 
@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Data Applications, Ingest
 authors: Brad Culberson
 
-# Tour of Ingest
+# A Comprehensive Guide: Ingesting Data into Snowflake
 
 ## Overview 
 Duration: 3
@@ -55,7 +55,7 @@ By the end of this guide you should be familiar with many ways to load data, and
 - [Conda](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html) Installed in Ubuntu
 
 ### What You’ll Build 
-- A project which can load data many different ways
+- A project which can load data many different ways into your Snowflake account.
 
 ## Environment Setup
 Duration: 3
@@ -69,13 +69,14 @@ Create a file named environment.yml with the following contents
 ```yaml
 name: sf-ingest-examples
 channels:
+  - main
   - conda-forge
   - defaults
 dependencies:
   - faker=8.8.1
   - kafka-python=2.0.2
   - maven=3.9.6
-  - openjdk=11.0.13
+  - openjdk=11.0.6
   - pandas=1.5.3
   - pip=23.0.1
   - pyarrow=10.0.1
@@ -1014,14 +1015,14 @@ services:
 Create a file called Dockerfile with the following contents:
 
 ```
-FROM docker.redpanda.com/redpandadata/connectors:latest
+FROM docker.redpanda.com/redpandadata/connectors:v1.0.27
 
 USER root
 
-RUN mkdir -p /opt/kafka/connect-plugins/snowflake
-RUN curl -o /opt/kafka/connect-plugins/snowflake/snowflake-kafka-connector-2.1.2.jar https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.1.2/snowflake-kafka-connector-2.1.2.jar
-RUN curl -o /opt/kafka/connect-plugins/snowflake/bc-fips-1.0.1.jar https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar
-RUN curl -o /opt/kafka/connect-plugins/snowflake/bcpkix-fips-1.0.3.jar https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar
+RUN mkdir -p /opt/kafka/redpanda-plugins/snowflake
+RUN curl -o /opt/kafka/redpanda-plugins/snowflake/snowflake-kafka-connector-2.1.2.jar https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.2.2/snowflake-kafka-connector-2.2.2.jar
+RUN curl -o /opt/kafka/redpanda-plugins/snowflake/bc-fips-1.0.1.jar https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar
+RUN curl -o /opt/kafka/redpanda-plugins/snowflake/bcpkix-fips-1.0.3.jar https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar
 
 USER redpanda
 
@@ -1656,14 +1657,12 @@ conda deactivate
 conda remove -n sf-ingest-examples --all
 ```
 
-## Conclusion & Next Steps
+## Conclusion And Resources
 Duration: 1
 
 As you've seen, there are many ways to load data into Snowflake. It is important to understand the benefits and consequenses so you can make the right choice when ingesting data into Snowflake. 
 
-While some examples only focussed on the Python connector, these patterns are often applicable to our other connectors if your language of choice is not Python. Connectors are available for Python, Java, Node.js, Go, .NET, and PHP.
-
-I hope you see based on the load times, that batch size worth tuning.
+While some examples only focussed on the Python connector, these patterns are often applicable to our other connectors if your language of choice is not Python. Connectors are available for Python, Java, Node.js, Go, .NET, and PHP. Note that based on the load times, batch size would be worth tuning.
 
 Serverless Tasks, Snowpipe, and Streaming are all built on Snowflake's serverless compute which make it much simpler to have efficient utilization of infrastructure. Managing warehouses and keeping them fully loaded is not easy or even possible in many cases.
 
@@ -1671,8 +1670,7 @@ If you're using the Kafka connector for Snowflake, put it in Streaming mode. It 
 
 When well-sized batches are not possible, leveraging our Streaming ingest will significantly increase efficiency. We will merge those tiny batches together in Snowflake later in a very efficient workflow while making that data available for query quickly.
 
-
-### What We've Covered
+### What You Learned
 - How to Ingest data with Connectors
 - Using Serverless Tasks and Snowpipe to save credit consumption
 - How to Use the Kafka Connectors for Snowflake
