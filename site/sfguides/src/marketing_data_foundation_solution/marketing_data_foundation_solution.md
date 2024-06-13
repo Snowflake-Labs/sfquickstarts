@@ -1,5 +1,5 @@
 author: Manuel Figueroa
-id: marketing_data_foundation_solution
+id: marketing_data_foundation_starter_v2
 summary: Marketing Data Foundation Solution
 categories: Data-Engineering
 environments: web
