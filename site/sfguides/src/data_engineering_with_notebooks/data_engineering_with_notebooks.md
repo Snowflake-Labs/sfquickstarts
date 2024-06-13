@@ -10,7 +10,7 @@ tags: Data Engineering, Snowpark, Python, Notebooks
 # Data Engineering with Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
-Duration: 15
+Duration: 10
 
 Notebooks are a very popular tool that are used to do everything from ad-hoc exploration of data to productionalized data engineering pipelines. While Notebooks can contain a mix of both Python and SQL, most of the time they're used for Python coding. In my previous Quickstart I detailed [how to build Python data engineering pipelines in Snowflake](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html?index=..%2F..index#0) using Visual Studio Code, from a lower-level developer perspective.
 
@@ -53,12 +53,12 @@ You will need the following things before beginning:
 
 <!-- ------------------------ -->
 ## Quickstart Setup
-Duration: 10
+Duration: 15
 
 ### Create a GitHub Personal Access Token
 In order for Snowflake to authenticate to your GitHub repository, you will need to generate a personal access token. Please follow the [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) instructions to create your token.
 
-Make sure to write down the token until step 3 of the Quickstart, where we will be securely storing it within a Snowflake `SECRET` object.
+Make sure to save the token before leaving the page, as we will be using it a couple of times during this Quickstart.
 
 ### Fork the Quickstart Repository
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering with Snowflake Notebooks associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
@@ -138,7 +138,7 @@ Follow these steps to import the Notebook into your Snowflake account:
 
 * Log into Snowsight
 * Browse to "Notebooks" in the left navigation (under "Projects")
-* Click on arrow next to the blue "+ Notebook" on top right, then select "Import .ipynb file"
+* Click on arrow next to the blue "+ Notebook" button on top right, then select "Import .ipynb file"
 * Select the `00_start_here.ipynb` file you downloaded previously
 * Choose a database and schema for the notebook to live in and then a default warehouse for the notebook
 * Click "Create"
@@ -157,7 +157,7 @@ Scroll down to the "Step 03 Setup Snowflake" section. You'll want to run all the
 
 <!-- ------------------------ -->
 ## Deploy to Dev
-Duration: 10
+Duration: 5
 
 During this step we will be deploying the dev versions of our two data engineering Notebooks: `DEV_06_load_excel_files` and `DEV_07_load_daily_city_metrics`. For this Quickstart you will notice that our main data engineering Notebooks will be named with a prefix for the environment label, like `DEV_` for dev and `PROD_` for prod. A full discussion of different approaches for managing multiple environments with Snowflake is out of scope for this Quickstart. For a real world use case, you may or may not need to do the same, depending on your Snowflake set up.
 
@@ -168,7 +168,7 @@ To put this in context, we are on step **#4** in our data flow overview:
 ### Git in Snowsight
 When you ran the setup cells in the `00_start_here.ipynb` Notebook in the previous step, you created a Git Integration in Snowflake for your forked GitHub repository! Please see [Using a Git repository in Snowflake](https://docs.snowflake.com/en/developer-guide/git/git-overview) for more details.
 
-You can browse your Git repository in Snowsight, by using our Snowsight Git integration features. First To do that, click on "Data" -> "Databases" in the left navigation. Then click on "DEMO_DB" database, then "INTEGRATIONS" schema, then "Git Repositories" and finally "DEMO_GIT_REPO". You will see the details and content of your Git repository in Snowsight. You can change branches and browse the files in the repo by clicking on the folder names to drill down.
+You can browse your Git repository in Snowsight, by using our Snowsight Git integration features. To do that, click on "Data" -> "Databases" in the left navigation. Then click on "DEMO_DB" database, then "INTEGRATIONS" schema, then "Git Repositories" and finally "DEMO_GIT_REPO". You will see the details and content of your Git repository in Snowsight. You can change branches and browse the files in the repo by clicking on the folder names to drill down.
 
 ### Deploy Notebooks
 Scroll down to the "Step 04 Deploy to Dev" section of the `00_start_here.ipynb` Notebook and run the Python cell there. This cell will deploy both the `06_load_excel_files` and `07_load_daily_city_metrics` Notebooks to our `DEV_SCHEMA` schema (and will prefix both workbook names with `DEV_`).
@@ -181,7 +181,7 @@ Also, please note that the `scripts/deploy_notebooks.sql` script also includes J
 
 <!-- ------------------------ -->
 ## Load Weather
-Duration: 10
+Duration: 5
 
 During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#5** in our data flow overview:
 
@@ -205,7 +205,7 @@ That's it... we don't have to do anything from here to keep this data updated. T
 
 <!-- ------------------------ -->
 ## Load Location and Order Detail
-Duration: 10
+Duration: 8
 
 During this step we will be loading data from two Excel files in S3 into the `LOCATION` and `ORDER_DETAIL` tables. To do this we'll take advantage of the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python#reading-files). For more details on this please see my related blog post [Simplify data ingestion with Snowpark Python file access](https://medium.com/snowflake/simplify-data-ingestion-with-snowpark-python-file-access-f2bc0e4cd887).
 
@@ -276,7 +276,7 @@ Once you've opened the `DEV_07_load_daily_city_metrics` Notebook click on the "R
 
 ### Snowpark DataFrame API
 
-In this step we're starting to really use the Snowpark DataFrame API for data transformations. The Snowpark API provides the same functionality as the [Spark SQL API](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html). To begin with you need to create a Snowpark session object. Like in PySpark, this can be accomplished with the `Session.builder.configs().create()` methods. But within a Snowflake Notebook this is simplified and can be accomplished simply with `session = get_active_session()`.
+In this step we're starting to really use the Snowpark DataFrame API for data transformations. The Snowpark API provides the same functionality as the [Spark SQL API](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html). To begin with you need to create a Snowpark session object. Like in PySpark, this can be accomplished with the `Session.builder.configs().create()` methods. But within a Snowflake Notebook this is simplified and can be accomplished with just `session = get_active_session()`.
 
 One you have a Snowpark session you can begin working with data. In this Notebook we're using DataFrames to join the data from different tables into an `order_detail` DataFrame using the `join()` API.
 
@@ -308,11 +308,11 @@ And finally if the target table exists we're using the `merge()` DataFrame API t
                         [F.when_matched().update(cols_to_update), F.when_not_matched().insert(cols_to_update)])
 ```
 
-Again, for more details about the Snowpark Python DataFrame API, please check out our [Working with Dataframe in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html) page.
+For more details about the Snowpark Python DataFrame API, please check out our [Working with Dataframe in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html) page.
 
 ### Python Management API
 
-The new Python Management API allows us to programmatically interact with Snowflake with native Python. This API can be used to both inspect and manage Snowflake objects. In the previous Quickstart we checked for the existing of an object by using SQL like this:
+The new Python Management API allows us to programmatically interact with Snowflake with native Python objects. This API can be used to both inspect and manage Snowflake objects. In the previous Quickstart we checked for the existing of an object by using SQL like this:
 
 ```sql
 def table_exists(session, database_name='', schema_name='', table_name=''):
@@ -320,7 +320,7 @@ def table_exists(session, database_name='', schema_name='', table_name=''):
     return exists
 ```
 
-But with the Python Management API this can now be done with native Python like this:
+But with the Python Management API this can now be done with native Python objects like this:
 
 ```python
 def table_exists(session, database_name='', schema_name='', table_name=''):
@@ -337,7 +337,7 @@ And this is really just the beginning of what you can do with this new library. 
 
 ### Logging in Python
 
-A key aspect of building robust data engineering pipelines involves instrumenting our code. This enables the monitoring and operations of our code, as is especially important when automating the deployment and monitoring of our pipelines with DevOps. Snowflake has a rich set of [Logging and Tracing](https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-tracing-overview) capabilities to help.
+A key aspect of building robust data engineering pipelines involves instrumenting our code. This enables the monitoring and operations of our code, and is especially important when automating the deployment and monitoring of our pipelines with DevOps. Snowflake has a rich set of [Logging and Tracing](https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-tracing-overview) capabilities to help.
 
 You'll notice that in the `py_imports` cell of this Notebook we're using Snowflake's logging capabilities. There are two steps to do so in your code. The first is to create a logger to use:
 
@@ -361,9 +361,9 @@ In addition to directly querying the event table, you can also use our new log v
 
 <!-- ------------------------ -->
 ## Orchestrate Jobs
-Duration: 10
+Duration: 8
 
-During this step we will be orchestrating our new Snowpark Notebook pipelines with Snowflake's native orchestration feature named Tasks. You can create and deploy Snowflake Task objects using SQL as well as Python Task APIs. For this Quickstart, we will use Snowflake Python Task APIs to create the Tasks. We will create two tasks, one for each Notebook, and chain them together. To put this in context, we are on step **#8** in our data flow overview:
+During this step we will be orchestrating our new Snowpark Notebook pipelines with Snowflake's native orchestration feature named Tasks. You can create and deploy Snowflake Task objects using SQL as well as with our Python Task APIs. For this Quickstart, we will use Snowflake Python Task APIs to create the Tasks. We will create two tasks, one for each Notebook, and chain them together. To put this in context, we are on step **#8** in our data flow overview:
 
 <img src="assets/quickstart_overview.png" width="800" />
 
@@ -392,7 +392,7 @@ dag_op.deploy(dag, mode="orreplace")
 
 You can see that we're defining two tasks, one for each Notebook, and that each task simply calls `EXECUTE NOTEBOOK` for the corresponding Notebook. We then define the dependencies and deploy the DAG. As you can see this makes managing complex Task DAGs much easier!
 
-This code is also available in the `scripts/deploy_task_dag.py` script which could be used to automate the Task DAG deployment.
+This code is also available in the `scripts/deploy_task_dag.py` script which could be used to automate the Task DAG deployment further.
 
 ### Task Viewer in Snowsight
 
@@ -450,7 +450,7 @@ ORDER BY COMPLETED_TIME DESC;
 
 <!-- ------------------------ -->
 ## Deploy to Production
-Duration: 10
+Duration: 12
 
 During this step we will be deploying our Notebooks to production using a CI/CD pipeline. We will make a small change to a Notebook and then commit that change to our Git repo all within Snowsight. After that we will create a Pull Request (or PR), merge our changes to `main` and deploy with GitHub Actions. To put this in context, we are on step **#9** in our data flow overview:
 
@@ -458,12 +458,12 @@ During this step we will be deploying our Notebooks to production using a CI/CD 
 
 ### Update the 06 Notebook
 
-Let's make a change to the `DEV_06_load_excel_files` Notebook and commit it to our forked repository. So begin by opening the `DEV_06_load_excel_files` Notebook. For this Quickstart we will make a trivial change just so we can see how the overall process works. So scroll down to the bottom to the `sql_debugging` cell and add a SQL comment to the final line, like this:
+Let's make a change to the `DEV_06_load_excel_files` Notebook and commit it to our forked repository. So begin by opening the `DEV_06_load_excel_files` Notebook. For this Quickstart we will make a trivial change just so we can see how the overall process works. So scroll down to the bottom to the `sql_debugging` cell and uncomment the final line, like this:
 
 ```sql
 --DESCRIBE TABLE LOCATION;
 --SELECT * FROM LOCATION;
---SHOW TABLES;
+SHOW TABLES;
 ```
 
 In the left sidebar you will now see a small yellow "M" next to the `.ipynb` Notebook file indicating that you've modified it. To commit this change to the `dev` branch click on the "Commit" button near the top right of the window. In the "Commit to Repository" dialog you will see the list of modified files (one in this case) along with other details. Enter a basic commit message and then enter your "Personal access token" in the related Credentials field (the same one you created in step 2). Once finished click on the "Commit" button at the bottom.
@@ -502,7 +502,7 @@ snow sql -q "ALTER GIT REPOSITORY DEMO_GIT_REPO FETCH" --temporary-connection --
 snow sql -q "EXECUTE IMMEDIATE FROM @DEMO_GIT_REPO/branches/main/scripts/deploy_notebooks.sql USING (env => 'PROD', branch => 'main')" --temporary-connection --account $SNOWFLAKE_ACCOUNT --user $SNOWFLAKE_USER --role $SNOWFLAKE_ROLE --warehouse $SNOWFLAKE_WAREHOUSE --database $SNOWFLAKE_DATABASE --schema $SNOWFLAKE_SCHEMA
 ```
 
-We're running to commands for the deployment, and both are calling the Snowflake CLI to help us run the appropriate SQL commands. In the first command we are running an `ALTER GIT REPOSITORY ... FETCH` command to make sure our Git Repository in Snowflake is up to date. And in the second command we are calling the same `EXECUTE IMMEDIATE FROM` command that we ran in the `00_start_here` Notebook in step 4 to deploy the dev versions of the Notebooks. You'll notice that the only difference is this time we're passing different parameters to the script, to match our production environment: `USING (env => 'PROD', branch => 'main')`. But pretty cool that we can use the same command from a Notebook interactively or from the Snowflake CLI via a CI/CD pipeline!
+We're running two commands for the deployment, and both are calling the Snowflake CLI to help us run the appropriate SQL commands. In the first command we are running an `ALTER GIT REPOSITORY ... FETCH` command to make sure our Git Repository in Snowflake is up to date. And in the second command we are calling the same `EXECUTE IMMEDIATE FROM` command that we ran in the `00_start_here` Notebook in step 4 to deploy the dev versions of the Notebooks. You'll notice that the only difference is this time we're passing different parameters to the script, to match our production environment: `USING (env => 'PROD', branch => 'main')`. But pretty cool that we can use the same command from a Notebook interactively or from the Snowflake CLI via a CI/CD pipeline!
 
 ### Snowflake CLI
 
@@ -519,9 +519,9 @@ In addition to running SQL commands and scripts, the Snowflake CLI allows develo
 
 ### Executing the Production DAG
 
-This step is option, but if you want to actually run the production version of your Notebooks you simply need to deploy the production version of your Task DAG and then execute it.
+This step is optional, but if you want to actually run the production version of your Notebooks you simply need to deploy the production version of your Task DAG and then execute it.
 
-Toggle back to the `00_start_here` Notebook and scroll back to the "Step 08 Orchestrate Pipelines" section. In the `py_step08_set_env` section change the `schema_name` variable to "PROD_SCHEMA". Then re-run all the cells in this section to deploy the production version of the Task DAG.
+Toggle back to the `00_start_here` Notebook and scroll back to the "Step 08 Orchestrate Pipelines" section. In the `py_step08_set_env` cell change the `schema_name` variable to "PROD_SCHEMA". Then re-run all the cells in this section to deploy the production version of the Task DAG.
 
 Finally, to execute the production version of the Task DAG, follow the steps we did in step 8.
 
@@ -543,13 +543,13 @@ Finally, you can delete the `00_start_here` Notebook. With the Notebook open cli
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 10
+Duration: 5
 
 Congratulations! You have now built end-to-end data engineering pipelines with Notebooks in Snowflake. You've also seen how to follow a complete Software Development Life Cycle (SDLC) for data engineering with Notebooks, including integration with Git, deploying to multiple environments through a CI/CD pipeline, instrumenting your code for monitoring and debugging, and orchestrating the pipelines with Task DAGs. Here's a quick visual recap:
 
 <img src="assets/quickstart_overview.png" width="800" />
 
-Hopefully you now have the building blocks, and examples, you need to get started building your own data engineering pipeline with Notebooks. So, what will you build now?
+Hopefully you now have the building blocks, and examples, you need to get started building your own data engineering pipelines with Notebooks. So, what will you build now?
 
 ### What You Learned
 * How to ingest custom file formats (like Excel) with Snowpark from an external stage (such as an S3 bucket) into a Snowflake table
@@ -565,6 +565,6 @@ Hopefully you now have the building blocks, and examples, you need to get starte
 
 ### Related Resources
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks)
-* [Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html?index=..%2F..index#0)
+* [Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html?index=..%2F..index#0) (Advanced Quickstart)
 * [About Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 * [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index)
