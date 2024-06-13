@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Engineering, Snowpark, Python, Notebooks
 
-# Data Engineering with Snowflake Notebooks
+# Getting Started with Data Engineering using Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
 Duration: 10
