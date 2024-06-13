@@ -1,6 +1,6 @@
 author: Mats Stellwall
-id: deploying_custom_models_to_snowpark_model_registry
-summary: Through this quickstart guide, you will learn how to deploy a custom model to the Snowpark Model Registry.
+id: deploying_custom_models_to_snowflake_model_registry
+summary: Through this quickstart guide, you will learn how to deploy a custom model to the Snowflake Model Registry.
 <!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started
 environments: web
@@ -8,11 +8,11 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning, Snowpark, Model registry 
 
-# Deploying Custom Models to Snowpark Model Registry
+# Deploying Custom Models to Snowflake Model Registry
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will learn how to ad a custom model to the Snowpark Model Registry. You will set up your Snowflake and Python environments, train a model using the PyCaret library, deploy that model to the Snowpark Model Registry and run the inference within your Snowflake enviroment.
+Through this quickstart guide, you will learn how to add a custom model to the Snowflake Model Registry. You will set up your Snowflake and Python environments, train a model using the PyCaret library, deploy that model to the Model Registry and run the inference within your Snowflake environment.
 
 ### What is Snowpark?
 
@@ -26,7 +26,7 @@ Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
 ### What is Snowpark ML?
 
-[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. With Snowpark ML, data scientists and ML engineers can use familiar Python frameworks for preprocessing, feature engineering, and training models that can be managed entirely in Snowflake without any data movement, silos or governance trade-offs. Snowpark ML has 2 components: Snowpark ML Modeling for model development and Snowpark ML Operations including the Snowpark Model Registry for model management and batch inference.
+[Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview) is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use [ML Functions](https://docs.snowflake.com/en/guides-overview-ml-functions) to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 ![snowpark_ml_overview](assets/snowpark_ml_overview.png)
 
@@ -34,7 +34,7 @@ This qucikstart will focus on the Snowflake Model Registry, which provides scala
 
 ### What is Snowflake Model Registry?  
 
-A part of Snowpark ML Operations (MLOps), the [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-model-registry) allows customers to securely manage models and their metadata in Snowflake, regardless of origin. The model registry stores machine learning models as first-class schema-level objects in Snowflake so they can easily be found and used by others in your organization. You can create registries, and store models in them, using classes in the Snowpark ML library. Models can have multiple versions, and you can designate a version as the default.
+The [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-model-registry) allows customers to securely manage models and their metadata in Snowflake, regardless of origin. The model registry stores machine learning models as first-class schema-level objects in Snowflake so they can easily be found and used by others in your organization. You can create registries, and store models in them, using classes in the Snowpark ML library. Models can have multiple versions, and you can designate a version as the default.
 
 The Snowflake Model Registry supports the following types of models.
 * Snowpark ML Modeling
@@ -99,7 +99,7 @@ Duration: 10
 >
 > MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python).
 
-### Snowpark for Python and Snowpark ML
+### Install the Snowpark for Python and Snowpark ML libraries
 
 - Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.10, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
 
