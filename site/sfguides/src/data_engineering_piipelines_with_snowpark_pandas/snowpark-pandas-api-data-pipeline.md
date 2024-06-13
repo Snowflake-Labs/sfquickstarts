@@ -1,5 +1,5 @@
 author: Mats Stellwall
-id: snowpark-pandas-api-data-pipeline
+id: data_engineering_pipelines_with_snowpark_pandas
 summary: This is a sample Snowflake Guide
 <!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started
@@ -16,11 +16,10 @@ Through this quickstart guide, you will learn how to use the Snowpark Pandas API
 
 ### What is Snowpark?
 
-Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
+Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake.
 
-**Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark API for data pipelines and apps and the Snowpark ML API for end to end machine learning.
-
-**Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtimes include Python, Java, and Scala in virtual warehouses with CPU compute or Snowpark Container Services (public preview) to execute any language of choice with CPU or GPU compute.
+* **Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark Pandas API, which provides Python APIs to run your pandas code directly on your data in Snowflake.
+* **Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework,or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
 
 Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
