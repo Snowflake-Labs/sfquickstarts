@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Marketing, Data Engineering, Native Application
 
-# Marketing Data Foundation Solution Setup Guide
+# Marketing Data Foundation Starter V2 Guide
 <!-- ------------------------ -->
 ## Overview
 
@@ -16,11 +16,11 @@ Duration: 15
 Customers looking to use Snowflake for marketing use cases initially face a significant challenge: it is difficult to import all relevant marketing data into Snowflake and structure it in a unified format that downstream applications can easily utilize to power data-driven marketing.
 This starter solution tackles this challenge by offering an integrated application that unifies data sets from different Connectors and Marketing Data providers.
 
-In this example we are adding support for 
+In this example, we are adding support for 
   - Fivetran / Facebook Ads
   - Omnata / LinkedIn Ads
 
-This solution was inspired by how Snowflake runs its own end-to-end Marketing workflows entirely on top of the Snowflake Marketing Data Cloud.
+This solution was inspired by how Snowflake runs its own end-to-end Marketing workflows entirely on top of the Snowflake AI Data Cloud for Marketing.
 
 
 ### Problem Space
@@ -39,7 +39,7 @@ As described in the diagram below, this solution aims to support the two Marketi
 
 ![usecase](assets/context.png)
 
-More specifically, this solution covers Data Ingestion, Semantic Unification, and based Analytics for the Campaign Intelligence data.
+More specifically, this solution covers Data Ingestion, Semantic Unification, and base Analytics for the Campaign Intelligence data.
 
 ![usecase](assets/context2.png)
 
@@ -53,7 +53,7 @@ The solution consists of the following components:
 
 ### The App Architecture
 
-This demo consists of a native application that provides a framework to easily unify marketing data sources and then leverage LLM functions to explore that data and get valuable business intelligence information from the data that was ingested.
+This solution consists of a native application that provides a framework to easily unify marketing data sources and then leverage LLM functions to explore that data and get valuable business intelligence information from the data that was ingested.
 
 ![Architecture](assets/ArchitectureDiagram.png)
 
@@ -131,9 +131,9 @@ Refer to the screenshot below:
 
 Duration: 2
 
-We prepared a deployment jupyter notebook that executes all the steps required to configure this demo in your account.
+We prepared a deployment Jupyter notebook that executes all the steps required to configure this solution in your account.
 
-First lets export the connection name to the default connection
+First, lets export the connection name to the default connection
 
 ```console
 export SNOWFLAKE_DEFAULT_CONNECTION_NAME=marketing_demo_conn
@@ -144,17 +144,18 @@ export SNOWFLAKE_DEFAULT_CONNECTION_NAME=marketing_demo_conn
 
 Duration: 5
 
-Once the Snowflake connection is set as default you can proceed to execute the jupyter notebook that deploy the application in your Snowflake account.
+Once the Snowflake connection is set as default, you can proceed to execute the Jupyter notebook that deploys the application in your Snowflake account.
 
-For this you can execute it using VSCode or Jupyter in your command line. We recommend you to use VSCode.
+For this you can execute it using VSCode or Jupyter in your command line. We recommend you use VSCode.
 
 #### To use VSCode:
 
-First you will need to create a python virtual environment to install dependencies and be able to successfully execute the deployment notebook.
+You will need to create a Python virtual environment to install dependencies and be able to successfully execute the deployment notebook.
 
-If you already install python, then proceed with the virtual environment creation. Follow this [guide](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#create-and-use-virtual-environments) to get more information about how to create a python virtual environment.
+If you already install Python, then proceed with the virtual environment creation. Follow this [guide](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#create-and-use-virtual-environments) to get more information about how to create a Python virtual environment.
 
-Install the python dependencies in your virtual environment
+Install the python dependencies in your virtual environment:
+
 ```shell
 pip install -r requirements.txt
 
@@ -162,7 +163,7 @@ pip install -r requirements.txt
 
 Open the project with VSCode and select the ***deployment.ipynb*** file from the File explorer.
 
-First select the virtual enviroment you created as the execution kernel for this notebook.
+Then, select the virtual environment you created as the execution kernel for this notebook.
 
 ![](assets/JupyterNotebook.png)
 
@@ -187,7 +188,7 @@ In the ***Data Products/ Apps*** section, you will see the recently created Mark
 
 
 ## How to use the application
-After you deployed this native app in your account, navigate to
+After you deploy this native app in your account, navigate to
 the Data Products / Apps section in Snowsight and open the  
 **Marketing Data Foundation** application.
 
@@ -195,32 +196,32 @@ the Data Products / Apps section in Snowsight and open the
 
 ### 1. Select the Data provider
  
- To execute the demo open the Data Models & Mappings section in the application's sidebar menu:
+ To execute the solution open the Data Models & Mappings section in the application's sidebar menu:
 
  ![Step1](assets/Step1.png)
 
- You will see the list of supported Data source providers, for this version only Facebook and LinkedIn are supported.
+ You will see the list of supported Data source providers. For this version only Facebook and LinkedIn are supported.
 
  ![Step1.1](assets/Step1.1.png)
 
-Select any of those options to continue with the demo. Sample Data are proviede for both options so it is not a requirement to have Fivetran or Omnata installed and configured.
+Select any of those options to continue with the solution. Sample data are provided for both options so it is not a requirement to have Fivetran or Omnata installed and configured.
 
 The provided sample data emulates the structure of the raw data generated by both connectors.
 
-For this demo, only the combinations of Fivetran/Facebook and Linked/Omnata are supported.
+For this solution, only the combinations of Fivetran/Facebook and Linked/Omnata are supported.
 
 
 ### 2. Configure the connection
 
-After you select any of the Data providers option you will continue to the Connection configuration.
+After you select any of the Data providers options you will continue to the Connection configuration.
 
-This steps will provide instructions on how to bring the data to Snowflake or connect with data that already exists in Snowflake.
+These steps will provide instructions on how to bring the data to Snowflake or connect it with data already in Snowflake.
 
 ![Data](assets/ConnectionConfiguration.png)
 
-Since we are going to use the sample data you can continue to the ***Link data already in Snowflake*** option.
+Since we are going to use the sample data, you can continue to the ***Link data already in Snowflake*** option.
 
-Depending on the platform selected in the previous step, plese select either of these options
+Depending on the platform selected in the previous step, please select either of these options
 
 Facebook:
  - DATABASE: ```FIVETRAN_CONNECTOR_DEMO``` SCHEMA: ```FACEBOOK_RAW``` 
@@ -234,13 +235,13 @@ When you click on the connect option, the application will verify you have acces
 
 ### 3. Explore and Apply Mappings
 
-This application applies a set of predefined mappings to generate an unified marketing data model that can be used for business intelligence over the data that was ingested.
+This application applies a set of predefined mappings to generate a unified marketing data model that can be used for business intelligence over the data that was ingested.
 
-You can explore or apply the mappings using the options provied in this screen:
+You can explore or apply the mappings using the options provided in this screen:
 
 ![Mappings](assets/Mappings1.png)
 
-The mappings are shown using a custom component that highlight the columns used from the source data and the target column in the unified data model:
+The mappings are shown using a custom component that highlights the columns used from the source data and the target column in the unified data model:
 
 ![Mappings](assets/Mappings2.png)
 
@@ -248,11 +249,11 @@ The mappings are shown using a custom component that highlight the columns used 
 ### 4. Visualizations
 
 After you apply the mappings the application will generate several schemas inside the application's database. 
-The unified data model will be used to generate some basic visualizations that provides insights about the ingested data:
+The unified data model will be used to generate some basic visualizations that provide insights about the ingested data:
 
 ![DataExplorer](assets/DataExplorer.png)
 
-The unified data model is stored in the Database ```Marketing Data Foundation```and the Schema ```AGGREGATED_REPORTS```.
+The unified data model is stored in the Database ```Marketing Data Foundation``` and the Schema ```AGGREGATED_REPORTS```.
 
 ### 5. AI Functions
 
@@ -265,15 +266,15 @@ Provides access to a set of predefined Snowflake Notebooks with some sample Cust
 
 #### AI Assistant Bot
 
-Under the AI Assistant option you will find a Chatbot that allows you to ask question related to either Data Engineering or Campaign Management using your ingested data as input.
+Under the AI Assistant option you will find a Chatbot that allows you to ask questions related to either Data Engineering using your ingested data as input.
 
 ![](assets/AIAssistant.png)
 
 ![](assets/AIAssist2.png)
 
 
-## Restart the Demo
-If you connect both Data providers and want to start the demo again, you can execute this clean up script in a SQL Worksheet to delete the Unified Data Model tables and clean up the connected sources.
+## Restart the Solution
+If you connect both Data providers and want to start the solution again, you can execute this clean-up script in an SQL Worksheet to delete the Unified Data Model tables and clean up the connected sources.
 
 Replace ***<USERNAME>*** with the actual value of your application.
 
@@ -303,17 +304,18 @@ TRUNCATE TABLE MARKETING_DATA_FOUNDATION_<USERNAME>.USER_SETTINGS.EXISTING_SOURC
 ## Conclusion
 Duration: 1
 
-Congratulations! You have successfully learnt how to easily build an end to end Native Application and loading sample data. 
-
+Congratulations! You have successfully learned how to easily build an end-to-end Native Application and load sample data.
+ 
 You will see your application listed in your account:
 ![](assets/NativeAppListing.png)
 
 
 ### What you learned
 
-* How to host build a basic native app for Marketing Campaign Intelligence data.
+* How to host and build a basic native app for Marketing Campaign Intelligence data.
 * Generate a set of views that aggregate data from Marketing providers like LinkedIn and Facebook.
-* Generate quick summaries and Charts using that data to create an integrated dashboard using streamlit.
+* Generate quick summaries and Charts using that data to create an integrated dashboard using Streamlit.
+
 
 
 ### Related Resources
