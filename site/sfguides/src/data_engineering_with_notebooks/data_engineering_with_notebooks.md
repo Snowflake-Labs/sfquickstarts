@@ -211,7 +211,7 @@ Weather Source is a leading provider of global weather and climate data and thei
 * Click the blue "Get" button
     * Expand the "Options" dialog
     * Change the "Database name" to read "FROSTBYTE_WEATHERSOURCE" (all capital letters)
-    * Select the "HOL_ROLE" role to have access to the new database
+    * Select the "DEMO_ROLE" role to have access to the new database
 * Click on the blue "Get" button
 
 That's it... we don't have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they have published. How amazing is that? Just think of all the things you didn't have do here to get access to an always up-to-date, third-party dataset!
