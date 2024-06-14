@@ -62,7 +62,7 @@ This quickstart will focus on
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
     > aside positive
     >
-    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python)
+    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry)
 - [Anaconda](https://www.anaconda.com/) installed
 - [Python 3.10](https://www.python.org/downloads/) installed
     - Note that you will be creating a Python environment with 3.10 in the **Setup the Python Environment** step
@@ -73,12 +73,27 @@ This quickstart will focus on
 A set on notebooks that trains a PyCaret model, creates a CustomModel for it and log and use it in Snowflake.
 
 <!-- ------------------------ -->
-## Set up the Snowflake environment
-Duration: 5
 
-> aside positive
->
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python).
+## Set up the environment
+Duration: 10
+
+### Clone the git repository
+The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry). This repository contains all the code you will need to successfully complete this QuickStart Guide.
+
+Using HTTPS:
+
+```shell
+git clone https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry.git
+```
+
+OR, using SSH:
+
+```shell
+git clone git@github.com:Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry.git
+```
+
+
+### Setup Snowflake
 
 Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
@@ -89,33 +104,28 @@ CREATE OR REPLACE DATABASE MRCM_HOL_DB; -- will be used to store the custom mode
 CREATE OR REPLACE SCHEMA MRCM_HOL_SCHEMA;  -- will be used to store the custom model
 ```
 
-These can also be found in the **setup.sql** file.
+These can also be found in the [setup.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/setup.sql) file.
 
-<!-- ------------------------ -->
-## Set up the Python environment
-Duration: 10
+### Set up the Python environment
 
-> aside positive
->
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python).
-
-### Install the Snowpark for Python and Snowpark ML libraries
+#### Install the Snowpark for Python and Snowpark ML libraries
 
 - Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.10, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
 
 - Open a new terminal window and execute the following commands in the same terminal window:
 
-  1. Create the conda environment.
+  1. Make sure you are in the **sfguide-deploying-custom-models-snowflake-model-registry** directory
+  2. Create the conda environment.
   ```
   conda env create -f conda_env.yml
   ```
 
-  2. Activate the conda environment.
+  3. Activate the conda environment.
   ```
   conda activate custom-model-hol
   ```
 
-  2. `Optionally` start notebook server:
+  4. `Optionally` start notebook server:
   ```
   $ jupyter notebook &> /tmp/notebook.log &
   ```  
@@ -141,28 +151,32 @@ Duration: 10
 
 <!-- ------------------------ -->
 ## Train a PyCaret model
-Duration: 7
+Duration: 20
 
-Open the following jupyter notebook and run each of the cells: [1_train_pycaret_model.ipynb](https://github.com/Snowflake-Labs/)
+During this step we will train a PyCaret model and save it to local disc.
 
-In this notebook, we will train a PyCaret model and save it to local disc.
+* Open the following jupyter notebook and run each of the cells: [1_train_pycaret_model.ipynb](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/1_train_pycaret_model.ipynb)
 
 <!-- ------------------------ -->
 ## Create a CustoModel and log it to Snowflake Model Registry
-Duration: 10
+Duration: 20
 
-Open the following jupyter notebook and run each of the cells: [2_create_and_deploy_custom_model.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/2_snowpark_ml_feature_transformations.ipynb)
+During this step we will create a CustomModel class that we will use with our trained PyCaret model, created in porevious notebook, log it into the Snowflake Model Registry and do inference using the logged model on a Snowpark DataFrame.
 
-In this notebook, we will create a CustomModel class that we will use with our trained PyCaret model, created in porevious notebook,  og it into the Snowflake Model Registry and do inference using the logged model on a Snowpark DataFrame.
+* Open the following jupyter notebook and run each of the cells: [2_create_and_deploy_custom_model.ipynb](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/2_create_and_deploy_custom_model.ipynb)
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use the CustomModel class to log a model trained with a Machine Learning library that is not supported by default, but exists in the Snowflake Anaconda channel.
 
-For more information, check out the resources below:
+### What You Learned
+* How to train a PyCaret model
+* How to to create a Custom Modle for the trained PyCaret model
+* How to to store the Custom Model in Snowflake Model Registry
+* How to use the Custom Model with data in Snowflake
 
 ### Related Resources
-- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python)
-- [Storing Custom Models in the Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-custom-models)
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/)
+- [Storing Custom Models in the Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/custom-models)
 - [Snowpark ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
 <!-- ------------------------ -->
