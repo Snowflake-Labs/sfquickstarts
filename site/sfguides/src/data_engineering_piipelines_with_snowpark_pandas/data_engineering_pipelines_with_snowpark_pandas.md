@@ -45,7 +45,7 @@ Learn more about [Snowpark Pandas API](https://docs.snowflake.com/en/developer-g
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
     > aside positive
     >
-    >Clone or download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai)
+    >Clone or download the [git repo](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas)
 * A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 * A Snowflake account login with a role that has the ability to create database, schema and tables. If not, you will need to register for a free trial or use a different role.
 
@@ -60,16 +60,85 @@ Duration: 10
 This section covers cloning of the GitHub repository and creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..)
 
 ### Clone the git repository
-The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai). This repository contains all the code you will need to successfully complete this QuickStart Guide.
+The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas). This repository contains all the code you will need to successfully complete this QuickStart Guide.
 
 Using HTTPS:
 
 ```shell
-git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai.git
+git clone https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas.git
 ```
 
 OR, using SSH:
 
 ```shell
-git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-document-ai.git
+git clone git@github.com:Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas.git
 ```
+
+You can also use the git integration feature of Snowflake Notebooks, in order to do that you need to fork the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) to be allowed to commit changes. For instructions how to set up integration for your Snowflake account see ... and for using it with Snowflake Notebooks see ..
+
+<!-- ------------------------ -->
+## Setup Snowflake
+
+Duration: 10
+
+During this step you will verify that the [Snowflake Sample TPC-H dataset](https://docs.snowflake.com/en/user-guide/sample-data-tpch) is avalible in your account, and if not add the share.
+
+### Verify that the Snowflake Sample TPC-H dataset is avalible
+
+1. Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) for your account
+2. Navigate to **Databases**
+3. Check that you ...
+
+### Create database, schema and warehouse to be used
+
+```SQL
+USE ROLE ACCOUNTADMIN;
+
+CREATE DATABASE SNOW_PANDAS_DE_QS;
+CREATE SCHEMA SNOW_PANDAS_DE_QS.NOTEBOOKS;
+CREATE SCHEMA SNOW_PANDAS_DE_QS.DATA;
+
+CREATE WAREHOUSE SNOW_PANDAS_DE_QS_WH;
+```
+
+
+<!-- ------------------------ -->
+## Data Engineering with Snowpark Pandas
+Duration: 30
+
+During this step you will learn how to use the Snowpark Pandas API to
+* Create datframe from a Snowflake table
+* Aggregate data to create new features
+* Join dataframes
+* Save the result into a Snowflake table
+* Create a serverless task to schedule the feature engineering
+
+### Navigate to Snowflake notebooks
+
+1. Navigate to the Notebooks section by clicking **Projects** and then **Notebooks**  
+![Navigate to Notebooks](assets/navigate_to_notebooks.png)  
+2. Click on the **down arrow* next to **+ Notebook**  
+![New notebook drop down](assets/new_notebook_dropdown.png)  
+3. If you have set up git integration choose  **Create from repository** if not, then choose **import .ipynb file**.
+![New notebook from menu](assets/notebook_from_menu.png)  
+
+### Import .ipynb file
+1. Navigate to where you have cloned the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) and select **Customer Profile Creation Pipeline.ipynb** and click **Open**  
+![Select Notebook File](assets/select_notebook_file.png)  
+2. Keep the name, select **SNOW_PANDAS_DE_QS** and **NOTEBOOKS** for **Notebooki location**, **SNOW_PANDAS_DE_QS_WH** for **Notebook warehouse** and click **Create**  
+![Select Notebook File](assets/notebook_dialog.png)  
+
+### Create from repository
+
+If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) and create a integration to it in Snowflake you can open the notebook directly from the git repository.
+
+1. In the **Create Notebook from Repository** dialog click on **Select .ipynb file**  
+![Create Notebook from Repository Dialog](assets/create_from_rep_start.png)  
+2 Click on the repository integration you are using and select **Customer Profile Creation Pipeline.ipynb** and click **Select File**, if you do not see the file press **Fetch** to refresh with the latest changes from the repository  
+![Select Notebook File from Repository](assets/select_file_from_rep.png)  
+3. Name it **Customer Profile Creation Pipeline**, select **SNOW_PANDAS_DE_QS**, **NOTEBOOKS** for **Notebooki location** and **SNOW_PANDAS_DE_QS_WH** for **Notebook warehouse** and click **Create**  
+![Create Notebook from Repository Dialog](assets/create_from_rep_end.png)  
+
+### Add needed libraries to the Notebook
+
+
