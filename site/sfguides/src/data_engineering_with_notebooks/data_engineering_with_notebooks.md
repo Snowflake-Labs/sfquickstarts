@@ -369,9 +369,6 @@ In addition to custom logging, Snowflake is instrumenting all services/features 
 
 All of your log messages can be found in your default logging table, which we created in step 3. If you look back at the code from step 3 you'll find that we created an event table named `DEMO_DB.INTEGRATIONS.DEMO_EVENTS` and then set that as the default event table for the account. You can now use this table just like any other table in Snowflake to query and act on the log data.
 
-### Log Viewer in Snowsight
-
-In addition to directly querying the event table, you can also use our new log viewer directly inside Snowsight to make things even easier. To find the log viewer click on "Monitoring" followed by "Logs" in the left navigation bar. Once on that page you can visualize, filter and search through your logs.
 
 <!-- ------------------------ -->
 ## Orchestrate Jobs
