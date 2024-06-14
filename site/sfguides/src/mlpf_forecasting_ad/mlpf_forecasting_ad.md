@@ -5,9 +5,9 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science,
 
-# Getting Started with Snowflake Cortex ML-Based Functions
+# Getting Started with Snowflake ML Functions: Anomaly Detection & Forecasting
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -578,7 +578,7 @@ Some considerations to keep in mind from the above code:
 <!-- ------------------------ -->
 ## Conclusion
 
-**You did it!** Congrats on building your first set of models using Snowflake Cortex ML-Based Functions. 
+**You did it!** Congrats on building your first set of models using Snowflake ML Functions. 
 
 As a review, in this guide we covered how you are able to: 
 
@@ -589,7 +589,7 @@ As a review, in this guide we covered how you are able to:
 - Productionize pipelines using Tasks & Stored Procedures, so you can get the latest results from your model on a regular cadence
 
 ### Resources: 
-This guide contained code patterns that you can leverage to get quickly started with Snowflake Cortex ML-Based Functions. For further details, here are some useful resources: 
+This guide contained code patterns that you can leverage to get quickly started with Snowflake ML Functions. For further details, here are some useful resources: 
 
 - [Anomaly Detection](https://docs.snowflake.com/en/user-guide/analysis-anomaly-detection) Product Docs, alongside the [anomaly syntax](https://docs.snowflake.com/en/sql-reference/classes/anomaly_detection)
 - [Forecasting](https://docs.snowflake.com/en/user-guide/analysis-forecasting) Product Docs, alongside the [forecasting syntax](https://docs.snowflake.com/sql-reference/classes/forecast)
