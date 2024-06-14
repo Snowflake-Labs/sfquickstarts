@@ -141,4 +141,14 @@ If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfg
 
 ### Add needed libraries to the Notebook
 
+Before you run the notebook you need to ad the libraries that is using.
+
+The notebook is depened on the following Python libraries:
+* snowflake-snowpark-python (version 1.17 or higher)
+* modin
+* snowflake
+* matplotlib
+* seaborn
+
+1. In the Notebook click on **Packages**  
 
