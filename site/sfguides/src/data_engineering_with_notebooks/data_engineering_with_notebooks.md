@@ -70,6 +70,13 @@ Make sure to save the token before leaving the page, as we will be using it a co
 ### Fork the Quickstart Repository
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering with Snowflake Notebooks associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
+### Create the dev Branch
+During this Quickstart we will do our development work in a `dev` branch of the repository. So let's create the `dev` branch in your forked repository now. To do that begin by clicking on the "Branch" link in GitHub just above the list of repository files.
+
+<img src="assets/github_repo_branches.png" width="800" />
+
+On the Branches page, click on the green "New branch" button in the upper right to open the dialog to create a branch. In the "New branch name" field enter "dev" (all lowercase) then click the green "Create new branch" button.
+
 ### Configure GitHub Actions
 By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Notebooks, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.
 
