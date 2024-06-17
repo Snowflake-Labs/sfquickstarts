@@ -33,7 +33,7 @@ promotions by utilizing **Snowflake Notebooks** and **Streamlit** to:
 
 Along the way, we will delve more into these topics:
 
-#### Price Optimization - Train & Deploy ML Model
+#### Part 1 - Price Optimization - Train & Deploy ML Model
 
 - **Data Exploration**
   - Connect to Snowflake
@@ -52,7 +52,7 @@ Along the way, we will delve more into these topics:
   - Elastic scalability
   - Data Driven Insights
 
-#### Price Recommendation - Create User-Friendly Application Using Deployed ML Model
+#### Part 2 - Price Recommendation - Create User-Friendly Application Using Deployed ML Model
 
 - **Describe Current Pricing Process**
   - Import an Excel spreadsheet and inference the demand model
