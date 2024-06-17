@@ -7,13 +7,13 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning, Snowpark, Model registry 
 
-# Deploying Custom Models to Snowflake Model Registry
+# Deploying Custom Models To Snowflake Model Registry
 <!-- ------------------------ -->
 ## Overview 
 
 Through this quickstart guide, you will learn how to add a custom model to the Snowflake Model Registry. You will set up your Snowflake and Python environments, train a model using the PyCaret library, deploy that model to the Model Registry and run the inference within your Snowflake environment.
 
-### What is Snowpark?
+### What Is Snowpark?
 
 Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
 
@@ -23,7 +23,7 @@ Snowpark is the set of libraries and runtimes that securely enable developers to
 
 Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
-### What is Snowpark ML?
+### What Is Snowpark ML?
 
 [Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/overview) is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use [ML Functions](https://docs.snowflake.com/en/guides-overview-ml-functions) to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
@@ -31,7 +31,7 @@ Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
 This qucikstart will focus on the Snowflake Model Registry, which provides scalable and secure model management of ML models in Snowflake, regardless of origin.
 
-### What is Snowflake Model Registry?  
+### What Is Snowflake Model Registry?  
 
 The [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-model-registry) allows customers to securely manage models and their metadata in Snowflake, regardless of origin. The model registry stores machine learning models as first-class schema-level objects in Snowflake so they can easily be found and used by others in your organization. You can create registries, and store models in them, using classes in the Snowpark ML library. Models can have multiple versions, and you can designate a version as the default.
 
@@ -73,10 +73,10 @@ A set on notebooks that trains a PyCaret model, creates a CustomModel for it and
 
 <!-- ------------------------ -->
 
-## Set up the environment
+## Setup The Environment
 Duration: 10
 
-### Clone the git repository
+### Clone The Git Repository
 The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry). This repository contains all the code you will need to successfully complete this QuickStart Guide.
 
 Using HTTPS:
@@ -105,9 +105,9 @@ CREATE OR REPLACE SCHEMA MRCM_HOL_SCHEMA;  -- will be used to store the custom m
 
 These can also be found in the [setup.sql](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/setup.sql) file.
 
-### Set up the Python environment
+### Setup The Python Environment
 
-#### Install the Snowpark for Python and Snowpark ML libraries
+#### Install The Snowpark For Python And Snowpark ML Libraries
 
 - Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.10, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)).
 
@@ -149,7 +149,7 @@ These can also be found in the [setup.sql](https://github.com/Snowflake-Labs/sfg
 > **Note:** For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.
 
 <!-- ------------------------ -->
-## Train a PyCaret model
+## Train A PyCaret Model
 Duration: 20
 
 During this step we will train a PyCaret model and save it to local disc.
@@ -157,7 +157,7 @@ During this step we will train a PyCaret model and save it to local disc.
 * Open the following jupyter notebook and run each of the cells: [1_train_pycaret_model.ipynb](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/1_train_pycaret_model.ipynb)
 
 <!-- ------------------------ -->
-## Create and deploy a Custom Model
+## Create And Deploy A Custom Model
 Duration: 20
 
 During this step we will create a CustomModel class that we will use with our trained PyCaret model, created in previous notebook, log it into the Snowflake Model Registry and do inference using the logged model on a Snowpark DataFrame.
