@@ -27,7 +27,7 @@ We will train & deploy an ML model which leverages historical menu-item sale dat
 
 ### What you will learn
 We will implement price optimization for their diversified food-truck brands to inform their pricing and 
-promotions by utilizing Snowflake Notebooks and Streamlit to:
+promotions by utilizing **Snowflake Notebooks** and **Streamlit** to:
 - Train & deploy an ML model to understand how menu-item demand changes with varying price
 - User-friendly application to use deployed ML-model to inform pricing strategies
 
@@ -52,7 +52,7 @@ Along the way, we will delve more into these topics:
   - Elastic scalability
   - Data Driven Insights
 
-### Price Recommendation - Create User-Friendly Application Using Deployed ML Model
+#### Price Recommendation - Create User-Friendly Application Using Deployed ML Model
 
 - **Describe Current Pricing Process**
   - Import an Excel spreadsheet and inference the demand model
