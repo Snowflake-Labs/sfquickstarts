@@ -108,7 +108,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Machine Learning With Snowpark Part 2 - Price Recommendations
-Duration 3
+Duration: 15
 
 ### Overview
 - Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
@@ -286,7 +286,7 @@ GRANT USAGE ON SCHEMA joviane_demo_tastybytespriceoptimization_prod.analytics TO
 
 <!-- ------------------------ -->
 ## Streamlit in Snowflake
-Duration 3
+Duration: 5
 
 ### Overview
 At Tasty Bytes, brand managers are responsible for setting their food-truck brand's menu item prices for the upcoming month. 
@@ -464,7 +464,7 @@ with st.expander("View Submitted Prices"):
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration 1
+Duration: 1
 
 **Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price.
 
