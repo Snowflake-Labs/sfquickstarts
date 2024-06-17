@@ -1,7 +1,6 @@
 author: Mats Stellwall
 id: data_engineering_pipelines_with_snowpark_pandas
 summary: This is a sample Snowflake Guide
-
 categories: Getting-Started
 environments: web
 status: Published 
