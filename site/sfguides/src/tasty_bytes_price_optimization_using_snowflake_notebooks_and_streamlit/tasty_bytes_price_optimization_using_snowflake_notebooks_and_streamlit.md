@@ -68,14 +68,14 @@ Along the way, we will delve more into these topics:
 
 <!-- ------------------------ -->
 ## Setting up Data in Snowflake
-Duration: 3
+Duration: 10
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to:
 - Create Snowflake objects (warehouse, database, schema, raw tables)
 - Ingest data from S3 to raw tables
 
-### Creating Objects, Loading Data, and Joining Data
+#### Creating Objects, Loading Data, and Joining Data
 - Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 - Paste and run both the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema, raw tables), and ingest shift  data from S3
 - [Price Optimization Setup SQL 1](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/setup/po_setup_1.sql)
