@@ -157,7 +157,7 @@ During this step we will train a PyCaret model and save it to local disc.
 * Open the following jupyter notebook and run each of the cells: [1_train_pycaret_model.ipynb](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/1_train_pycaret_model.ipynb)
 
 <!-- ------------------------ -->
-## Create a CustoModel and log it to Snowflake Model Registry
+## Create a CustomModel and log it to Snowflake Model Registry
 Duration: 20
 
 During this step we will create a CustomModel class that we will use with our trained PyCaret model, created in porevious notebook, log it into the Snowflake Model Registry and do inference using the logged model on a Snowpark DataFrame.
