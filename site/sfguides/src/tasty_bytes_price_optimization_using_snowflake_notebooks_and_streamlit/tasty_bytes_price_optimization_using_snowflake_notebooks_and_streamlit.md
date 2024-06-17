@@ -9,6 +9,7 @@ tags: Getting Started, Tasty Bytes, Price Optimization, Notebooks
 
 # Price Optimization using Snowflake Notebooks and Streamlit in Snowflake
 <!-- ------------------------ -->
+
 ## Overview
 Duration: 1
 <img src="assets/price_optimization_header.png"/>
