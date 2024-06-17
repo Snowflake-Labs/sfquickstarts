@@ -83,7 +83,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Machine Learning With Snowpark Part 1 - Price Optimization: Setting Up Snowflake Notebook
-Duration 13
+Duration: 15
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook
@@ -108,7 +108,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Machine Learning With Snowpark Part 2 - Price Recommendations
-Duration: 15
+Duration: 7
 
 ### Overview
 - Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
