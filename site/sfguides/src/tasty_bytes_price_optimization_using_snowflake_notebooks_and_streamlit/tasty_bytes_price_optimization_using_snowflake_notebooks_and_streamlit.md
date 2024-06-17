@@ -33,7 +33,7 @@ promotions by utilizing Snowflake Notebooks and Streamlit to:
 
 Along the way, we will delve more into these topics:
 
-### Price Optimization - Train & Deploy ML Model
+##### Price Optimization - Train & Deploy ML Model
 
 - **Data Exploration**
   - Connect to Snowflake
