@@ -70,6 +70,13 @@ Make sure to save the token before leaving the page, as we will be using it a co
 ### Fork the Quickstart Repository
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering with Snowflake Notebooks associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
+### Create the dev Branch
+During this Quickstart we will do our development work in a `dev` branch of the repository. So let's create the `dev` branch in your forked repository now. To do that begin by clicking on the branch selector just above the list of files in the repository, type the word "dev" (all lowercase) into the "Find or create a branch..." box and then click on "Create branch dev from main" (see screenshot below).
+
+<img src="assets/github_repo_branches.png" width="800" />
+
+Your new branch will be created and you will now be back on the repository code page with your `dev` branch selected (notice the value of the branch selector).
+
 ### Configure GitHub Actions
 By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Notebooks, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.
 
@@ -77,7 +84,7 @@ By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in
 
 The last step to enable your GitHub Actions workflow is to create the required secrets. In order for your GitHub Actions workflow to be able to connect to your Snowflake account you will need to store your Snowflake credentials in GitHub. Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used by the Snowflake CLI.
 
-From the repository, click on the `Settings` tab near the top of the page. From the Settings page, click on the `Secrets and variables` then `Actions` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
+From the repository, click on the "Settings" tab near the top of the page. From the Settings page, click on the `Secrets and variables` then `Actions` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
 
 <table>
     <thead>
@@ -204,7 +211,7 @@ Weather Source is a leading provider of global weather and climate data and thei
 * Click the blue "Get" button
     * Expand the "Options" dialog
     * Change the "Database name" to read "FROSTBYTE_WEATHERSOURCE" (all capital letters)
-    * Select the "HOL_ROLE" role to have access to the new database
+    * Select the "DEMO_ROLE" role to have access to the new database
 * Click on the blue "Get" button
 
 That's it... we don't have to do anything from here to keep this data updated. The provider will do that for us and data sharing means we are always seeing whatever they have published. How amazing is that? Just think of all the things you didn't have do here to get access to an always up-to-date, third-party dataset!
@@ -362,9 +369,6 @@ In addition to custom logging, Snowflake is instrumenting all services/features 
 
 All of your log messages can be found in your default logging table, which we created in step 3. If you look back at the code from step 3 you'll find that we created an event table named `DEMO_DB.INTEGRATIONS.DEMO_EVENTS` and then set that as the default event table for the account. You can now use this table just like any other table in Snowflake to query and act on the log data.
 
-### Log Viewer in Snowsight
-
-In addition to directly querying the event table, you can also use our new log viewer directly inside Snowsight to make things even easier. To find the log viewer click on "Monitoring" followed by "Logs" in the left navigation bar. Once on that page you can visualize, filter and search through your logs.
 
 <!-- ------------------------ -->
 ## Orchestrate Jobs
@@ -479,11 +483,21 @@ Once that completes you will have committed your first change to your forked Git
 
 ### Create PR and Merge to Main
 
-In order to create the Pull Request (PR) and merge our changes to the `main` branch we will need to use the GitHub UI. So toggle back over to your GitHub repository and refresh the page. You will see a notification that the `dev` branch had recent changes pushed:
+In order to create the Pull Request (PR) and merge our changes to the `main` branch we will need to use the GitHub UI. So toggle back over to your GitHub repository and open up the main repository code page by clicking on the "<> Code" tab near the top of the page. In order to create the PR you will need to switch to the `dev` branch. To do this, simply click on the branch selector just above the list of files in the repository and click on the `dev` branch.
+
+Next click on the "Contribute" button just below the branch selector and click on the green "Open pull request" button (see screenshot below).
 
 <img src="assets/github_repo_changes.png" width="800" />
 
-To create the PR, click on the green "Compare & pull request" button. On the create pull request page enter a simple title and description, and then scroll down to verify that the change you made appears correctly. Then click on the green "Create pull request" button. You will be taken to the PR page.
+**Important**: By default GitHub will compare the `dev` branch in your forked repository with the `main` branch in the official Quickstart repository. You must change this. To change it click on the drop down that says "base repository" and change it to your forked repository. It should start with your GitHub username, not with "Snowflake-Labs" (see screenshot below).
+
+<img src="assets/github_repo_pr_change_base.png" width="800" />
+
+Once you change it the "Comparing changes" box should look like this:
+
+<img src="assets/github_repo_pr_change_base2.png" width="800" />
+
+Finally enter a simple title and description, and then scroll down to verify that the change you made appears correctly. Then click on the green "Create pull request" button. You will be taken to the PR page.
 
 To merge the PR all you need to do is click on the green "Merge pull request" button and then click on the green "Confirm merge" button that appears. You will see a message saying "Pull request successfully merged and closed". At this point the changes have been merged to the `main` branch, the PR has been closed, and the GitHub Actions CI/CD pipeline has been initiated.
 
