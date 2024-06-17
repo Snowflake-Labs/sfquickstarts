@@ -1,7 +1,6 @@
 author: Mats Stellwall
 id: deploying_custom_models_to_snowflake_model_registry
 summary: Through this quickstart guide, you will learn how to deploy a custom model to the Snowflake Model Registry.
-
 categories: Getting-Started
 environments: web
 status: Draft 
