@@ -7,7 +7,7 @@ status: Unpublished
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tasty Bytes, Price Optimization, Notebooks
 
-# Price Optimization using Snowflake Notebooks and Streamlit in Snowflake
+## Price Optimization using Snowflake Notebooks and Streamlit in Snowflake
 <!-- ------------------------ -->
 
 ## Overview
@@ -110,7 +110,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 ## Machine Learning With Snowpark Part 2 - Price Recommendations
 Duration: 7
 
-### Overview
 - Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 - Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema, raw tables)
 ```
