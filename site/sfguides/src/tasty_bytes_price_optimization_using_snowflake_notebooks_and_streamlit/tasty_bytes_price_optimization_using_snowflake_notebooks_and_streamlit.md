@@ -7,7 +7,7 @@ status: Unpublished
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tasty Bytes, Price Optimization, Notebooks
 
-## Price Optimization using Snowflake Notebooks and Streamlit in Snowflake
+# Price Optimization using Snowflake Notebooks and Streamlit in Snowflake
 <!-- ------------------------ -->
 
 ## Overview
