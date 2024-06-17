@@ -1,7 +1,7 @@
 author: Mats Stellwall
 id: deploying_custom_models_to_snowflake_model_registry
 summary: Through this quickstart guide, you will learn how to deploy a custom model to the Snowflake Model Registry.
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
+
 categories: Getting-Started
 environments: web
 status: Draft 
@@ -104,7 +104,7 @@ CREATE OR REPLACE DATABASE MRCM_HOL_DB; -- will be used to store the custom mode
 CREATE OR REPLACE SCHEMA MRCM_HOL_SCHEMA;  -- will be used to store the custom model
 ```
 
-These can also be found in the [setup.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowpark-ml-for-python/blob/main/setup.sql) file.
+These can also be found in the [setup.sql](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/setup.sql) file.
 
 ### Set up the Python environment
 
