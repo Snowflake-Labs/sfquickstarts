@@ -1,7 +1,7 @@
 author: Mats Stellwall
 id: data_engineering_pipelines_with_snowpark_pandas
 summary: This is a sample Snowflake Guide
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
+
 categories: Getting-Started
 environments: web
 status: Published 
