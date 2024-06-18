@@ -65,7 +65,7 @@ git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-document-ai
 ```
 
 ### Creating Objects
-Run the following SQL commands, those can also be found in the **setup.sql** file, in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema) and [role](https://docs.snowflake.com/en/sql-reference/sql/create-role).
+Run the following SQL commands, those can also be found in the [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai/blob/main/setup.sql) file, in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database), [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema) and [role](https://docs.snowflake.com/en/sql-reference/sql/create-role).
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
@@ -233,7 +233,7 @@ Second step is to add the documnets we want to extract values from to a Snowflak
 
 
 ### Step 3: Exectue the extraction SQL
-Third step is to use the published model to extract values from our documents, all SQLs can also be found in the **extraction.sql** file.
+Third step is to use the published model to extract values from our documents, all SQLs can also be found in the [extraction.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai/blob/main/extraction.sql) file.
 1. Create a new SQL Worksheet
 2. Check that we have files in the stage by executing the following SQL
 ```SQL
@@ -248,7 +248,7 @@ LS @doc_ai_stage;
 3. Add the following SQL, this will create a table, **CO_BRANDING_AGREEMENTS**, that will contain the extracted values and the scores of the extractions. Execture the SQL, this wil take a couple of minutes.  
 ```SQL
 ALTER WAREHOUSE doc_ai_qs_wh
-SET WAREHOUSE_SIZE = MEDIUM 
+SET WAREHOUSE_SIZE = XSMALL 
     WAIT_FOR_COMPLETION = TRUE;
 
 -- Create a table with all values and scores
@@ -313,7 +313,7 @@ Duration: 10
 In this step we will create a Streamlit application in Snowflake to be used for verifying the extracted values.
 
 ### Step 1: Create a Streamlit application
-The Python code for this step can also be found **streamlit_app.py** file.
+The Python code for this step can also be found [streamlit_app.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai/blob/main/streamlit_app.py) file.
 1. Navigate to Streamlit by click on the **projects** icon to the left and choose **Streamlit**  
 ![Streamlit navigation](assets/streamlit_icon.png)  
 3. Make sure you are using the **doc_ai_qs_role** role  
