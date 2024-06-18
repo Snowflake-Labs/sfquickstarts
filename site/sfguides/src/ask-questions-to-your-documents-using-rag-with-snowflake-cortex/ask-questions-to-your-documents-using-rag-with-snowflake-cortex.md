@@ -25,7 +25,7 @@ Along the way, we will also share tips on how you could turn what may seem like 
 ### What You Will Build
 The final product includes an application that lets users test how the LLM responds with and without the context document(s) to show how RAG can address hallucinations.  
 
-![App](assets/qs_cortex_intro.gif)
+![App](assets/qs_cortex_intro_arctic.gif)
 
 ### RAG Overview
 
@@ -47,8 +47,6 @@ The final product includes an application that lets users test how the LLM respo
 - A Snowflake account with [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) enabled by ORGADMIN.
 - Snowflake Cortex vector functions for semantic distance calculations along with VECTOR as a data type enabled.
 
-> aside negative
-> NOTE: To get access to Snowflake Cortex vector functions and vector datatype (both currently in private preview) reach out to your Snowflake account team.
 
 <!-- ------------------------ -->
 ## Organize Documents and Create Pre-Processing Functions
@@ -58,12 +56,12 @@ In Snowflake, databases and schemas are used to organize and govern access to da
 
 **Step 1**. Download example documents
 
-Let's download at least two user guides for smart devices. You can always add more or use a different type of documents that you want to try asking questions against. At the end we are going to test how the LLM responds with and without access to the information in the documents. 
+Let's download a few documents we have created about bikes. In those documents we have added some very specific information about those ficticious models. You can always add more or use a different type of documents that you want to try asking questions against. At the end we are going to test how the LLM responds with and without access to the information in the documents. 
 
-- [Roku TV User Guide](https://image.roku.com/c3VwcG9ydC1B/Roku-TV-User-Guide-10-0-en-US-.pdf)
-
-- [Peloton Bike User Guide](https://onepeloton.my.salesforce.com/sfc/p/#15000000kWYQ/a/6O000001nHhI/sGjFDlh80Zv78WgXF_5BCbHrZkrBA3bmIYmWNjxW42c)
-
+- [Mondracer Infant Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Mondracer_Infant_Bike.pdf)
+- [Premium Bycycle User Guide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Premium_Bicycle_User_Guide.pdf)
+- [Ski Boots TDBootz Special](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Ski_Boots_TDBootz_Special.pdf)
+- [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Ultimate_Downhill_Bike.pdf)
 
 **Step 2**. Open a new Worksheet
 
@@ -177,9 +175,6 @@ Duration: 15
 
 In this step we are going to leverage our document processing functions to prepare documents before turning the text into embeddings using Snowflake Cortex. These embeddings will be stored in a Snowflake Table using the new native VECTOR data type. 
 
-> aside negative
-> NOTE: To get access to these features (currently in private preview) reach out to your Snowflake account team.
-
 ![App](assets/fig4.png)
 
 **Step 1**. Create the table where we are going to store the chunks and vectors for each PDF. Note here the usage of the new VECTOR data type:
@@ -204,7 +199,7 @@ insert into docs_chunks_table (relative_path, size, file_url,
             file_url, 
             build_scoped_file_url(@docs, relative_path) as scoped_file_url,
             func.chunk as chunk,
-            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
+            SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2',chunk) as chunk_vec
     from 
         directory(@docs),
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path))) as func;
@@ -217,10 +212,10 @@ The insert statement is reading the records from the docs_stream stream and it i
 The **chunk** text is passed to Snowflake Cortex to generate the embeddings with this code:
 
 ```code
-            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
+            SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2',chunk) as chunk_vec
 ````
 
-That code is calling the embed_text function using the e5-base-v2 trnasformer and returning an embedding vector.
+That code is calling the embed_text function using the e5-base-v2 transformer and returning an embedding vector.
 
 
 If you check the **docs_chunks_table** table, you should see the PDFs has been processed 
@@ -284,35 +279,35 @@ import streamlit as st # Import python packages
 from snowflake.snowpark.context import get_active_session
 session = get_active_session() # Get the current credentials
 
+import pandas as pd
+
+pd.set_option("max_colwidth",None)
+num_chunks = 3 # Num-chunks provided as context. Play with this to check how it affects your accuracy
+
 def create_prompt (myquestion, rag):
 
     if rag == 1:    
-        createsql = f"""
-            create or replace table query_vec (qvec vector(float, 768))
-        """
-        session.sql(createsql).collect()
 
-        insertsql = f"""
-            insert into query_vec 
-              select snowflake.cortex.embed_text('e5-base-v2', '{myquestion}')
-        """
-
-        session.sql(insertsql).collect()
-
-        cmd = f"""
-        with results as
-        (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query_vec.qvec) as distance,
+        cmd = """
+         with results as
+         (SELECT RELATIVE_PATH,
+           VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+                    SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
            chunk
-        from docs_chunks_table, query_vec
-        order by distance desc
-        limit 1)
-        select chunk, relative_path from results 
-        """
+         from docs_chunks_table
+         order by similarity desc
+         limit ?)
+         select chunk, relative_path from results 
+         """
+    
+        df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()      
+        
+        context_lenght = len(df_context) -1
 
-        df_context = session.sql(cmd).to_pandas()
+        prompt_context = ""
+        for i in range (0, context_lenght):
+            prompt_context += df_context._get_value(i, 'CHUNK')
 
-        prompt_context = df_context._get_value(0,'CHUNK')
         prompt_context = prompt_context.replace("'", "")
         relative_path =  df_context._get_value(0,'RELATIVE_PATH')
     
@@ -344,13 +339,10 @@ def complete(myquestion, model_name, rag = 1):
 
     prompt, url_link, relative_path =create_prompt (myquestion, rag)
     cmd = f"""
-        select snowflake.cortex.complete(
-            '{model_name}',
-            {prompt})
-            as response
-            """
+             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
+           """
     
-    df_response = session.sql(cmd).collect()
+    df_response = session.sql(cmd, params=[model_name, prompt]).collect()
     return df_response, url_link, relative_path
 
 def display_response (question, model, rag=0):
@@ -361,25 +353,32 @@ def display_response (question, model, rag=0):
         display_url = f"Link to [{relative_path}]({url_link}) that may be useful"
         st.markdown(display_url)
 
+#Main code
+
 st.title("Asking Questions to Your Own Documents with Snowflake Cortex:")
 st.write("""You can ask questions and decide if you want to use your documents for context or allow the model to create their own response.""")
-st.write("This is the list of documents you already have. Just upload new documents into your DOCS staging area and they will be automatically processed")
+st.write("This is the list of documents you already have:")
 docs_available = session.sql("ls @docs").collect()
 list_docs = []
 for doc in docs_available:
     list_docs.append(doc["name"])
 st.dataframe(list_docs)
 
+#Here you can choose what LLM to use. Please note that they will have different cost & performance
+model = st.sidebar.selectbox('Select your model:',(
+                                    'mixtral-8x7b',
+                                    'snowflake-arctic',
+                                    'mistral-large',
+                                    'llama3-8b',
+                                    'llama3-70b',
+                                    'reka-flash',
+                                     'mistral-7b',
+                                     'llama2-70b-chat',
+                                     'gemma-7b'))
 
-model = st.selectbox('Select your model:',('mistral-7b',
-                                           'llama2-70b-chat',
-                                           'mixtral-8x7b',
-                                           'gemma-7b'))
+question = st.text_input("Enter question", placeholder="Is there any special lubricant to be used with the premium bike?", label_visibility="collapsed")
 
-
-question = st.text_input("Enter question", placeholder="What is the warranty for the frame of the bike?", label_visibility="collapsed")
-
-rag = st.checkbox('Use your own documents as context?')
+rag = st.sidebar.checkbox('Use your own documents as context?')
 
 print (rag)
 
@@ -390,7 +389,6 @@ else:
 
 if question:
     display_response (question, model, use_rag)
-
 ```
 ### Explanation
 
@@ -398,29 +396,24 @@ Let´s go step by step what that code is doing:
 
 create_prompt() receives a question as an argument and whether it has to use the context documents or not. This can be used to compare how the LLM responds when using the RAG framework vs. using existing knowledge gained during pre-training. 
 
-When the box is checked, this code is going embed the question and look for the PDF chunk with the closest similarity to the question being asked. That text will be added to the prompt as context and a link to download the source of the answer is made available for the user to verify the results. 
+When the box is checked, this code is going embed the question and look for the PDF chunk with the closest similarity to the question being asked. We can limit the number of chunks we want to provide as a context. That text will be added to the prompt as context and a link to download the source of the answer is made available for the user to verify the results. 
 
 ```python
-        insertsql = f"""
-            insert into query_vec 
-              select snowflake.cortex.embed_text('e5-base-v2', '{myquestion}')
-        """
-
-        session.sql(insertsql).collect()
-
-        cmd = f"""
-        with results as
-        (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec, query_vec.qvec) as distance,
+         cmd = """
+          with results as
+         (SELECT RELATIVE_PATH,
+           VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+                    SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
            chunk
-        from docs_chunks_table, query_vec
-        order by distance desc
-        limit 1)
-        select chunk, relative_path from results 
-        """
+         from docs_chunks_table
+         order by similarity desc
+         limit ?)
+         select chunk, relative_path from results 
 
-        df_context = session.sql(cmd).to_pandas()
-``` 
+          """
+    
+        df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()      
+ ``` 
 
 So the code is doing a similarity search to look for the closest chunk of text and provide it as context in the prompt:
 
@@ -429,18 +422,16 @@ So the code is doing a similarity search to look for the closest chunk of text a
 The next section worth calling out is the complete() function which combines the LLM, the prompt template and whether to use the context or not to generate a response which includes a link to the asset from which the answer was obtained. 
 
 ```python
-def complete(myquestion, model, rag = 1):
+def complete(myquestion, model_name, rag = 1):
 
     prompt, url_link, relative_path =create_prompt (myquestion, rag)
     cmd = f"""
-        select snowflake.cortex.complete(
-            '{model}',
-            {prompt})
-            as response
-            """
+             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
+           """
     
-    df_response = session.sql(cmd).collect()
+    df_response = session.sql(cmd, params=[model_name, prompt]).collect()
     return df_response, url_link, relative_path
+
 ```
 
 ![App](assets/fig9.png)
@@ -451,18 +442,20 @@ Streamlit in Snowflake provides a side-by-side editor and preview screen that ma
 
 ![App](assets/fig10.png)
 
-In the app, we can see the two documents we had uploaded previously and can be used to ask questions while trying multiple options using interactive widgets:
+In the app, we can see the documents we had uploaded previously and can be used to ask questions while trying multiple options using interactive widgets:
 
 - LLM dropdown: Evaluate the response to the same question from different LLMs available in Snowflake Cortex.
 - Context toggle: Check the box to receive answer with RAG. Uncheck to see how LLM answers without access to the context.
 
-To test out the RAG framework, here a few questions you can ask and then use the interactive widgets to compare the results when using a different LLM or when choosing to get a response without the context. 
+To test out the RAG framework, here a few questions you can ask and then use the interactive widgets to compare the results when using a different LLM or when choosing to get a response without the context. This is related to very specific information that we have added into the documents and that is very unique to our products.
 
-- Describe all the steps to rearrange tiles in my tv
-- Can I enable parental controls on my tv? Let me know how to do it
-- How can I set a sleep timer on my tv?
-- What is the warranty for my bike pedals?
-- What is the warranty for the frame of the bike?
+- Is there any special lubricant to be used with the premium bike?
+- What is the warranty for the premium bike?
+- Does the mondracer infant bike need any special tool?
+- Is there any temperature to be considered with the premium bicycle?
+- What is the temperature to store the ski boots?
+- Where have the ski boots been tested and who tested them?
+
 
 ### Other things to test
 
@@ -490,6 +483,413 @@ You can also try different instructions in your prompt and see how the responses
            """
 ```
 
+You can also try to change the number of chunks that are provided as context by simply modifying this value:
+
+```python
+num_chunks = 3
+```
+
+<!-- ------------------------ -->
+## Build a ChatBot UI that Remember Previous Conversations
+Duration: 15
+
+In the previous section we have created a simple interface where we can ask questions about our documents and select the LLM running within Snowflake Cortex to answer the question. We have seen that when no context from our documents is provided, we just get a general answer, versus a specific answer related to our documents when we use context from the PDFs. But what if we want to have a conversation sytle?
+
+Streamlit makes it very easy to create chat interfaces with its [Chat Elements](https://docs.streamlit.io/library/api-reference/chat). In this section we are going to see how we can write a simple app that can be used to have a conversation, and how it uses the data from our documents to provide answers.
+
+Large Language Models (LLMs) are stateless. That means when we make a call to any of them, it does not remember what  the previous call was about. With Snowflake Cortex, each complete() call we make is independent, even when using the same model. There are several techniques that can be used to keep the conversation flow and do not forget the chat history. In summary, the app needs to keep a memory of the conversation and provide it in each call to the LLM. As we know, calls to LLMs are restricted by the context window length that can be used.
+
+In this lab, we are going to use a slide window concept. This helps to remember just a number of past interactions when calling the LLM. We are also going to summarize the previous conversation in order to find the right chunk in our documents that will help the LLM and provide the right answer. In the previous section, we were embedding the new question to find the right chunk for context. Here, we are going to also include the previous summary to find the chunks that will be used as context.
+
+First let´s create the new Streamlit App and then we will discuss each of the steps. Give it a name and create it within the database and schema that we are using in this lab (CC_QUICKSTART_CORTEX_DOCS.DATA) or whatever name you may have chosen.
+
+![App](assets/fig11_chatbot_app.png)
+
+
+The Streamlit app comes with a default template you can delete and replace with this code which includes the front-end elements:
+
+
+```python
+import streamlit as st # Import python packages
+from snowflake.snowpark.context import get_active_session
+session = get_active_session() # Get the current credentials
+
+import pandas as pd
+
+pd.set_option("max_colwidth",None)
+
+### Default Values
+#model_name = 'mistral-7b' #Default but we allow user to select one
+num_chunks = 3 # Num-chunks provided as context. Play with this to check how it affects your accuracy
+slide_window = 7 # how many last conversations to remember. This is the slide window.
+#debug = 1 #Set this to 1 if you want to see what is the text created as summary and sent to get chunks
+#use_chat_history = 0 #Use the chat history by default
+
+### Functions
+
+def main():
+    
+    st.title(f":speech_balloon: Chat Document Assistant with Snowflake Cortex")
+    st.write("This is the list of documents you already have and that will be used to answer your questions:")
+    docs_available = session.sql("ls @docs").collect()
+    list_docs = []
+    for doc in docs_available:
+        list_docs.append(doc["name"])
+    st.dataframe(list_docs)
+
+    config_options()
+    init_messages()
+     
+    # Display chat messages from history on app rerun
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+    
+    # Accept user input
+    if question := st.chat_input("What do you want to know about your products?"):
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": question})
+        # Display user message in chat message container
+        with st.chat_message("user"):
+            st.markdown(question)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
+    
+            question = question.replace("'","")
+    
+            with st.spinner(f"{st.session_state.model_name} thinking..."):
+                response = complete(question)
+                res_text = response[0].RESPONSE     
+            
+                res_text = res_text.replace("'", "")
+                message_placeholder.markdown(res_text)
+        
+        st.session_state.messages.append({"role": "assistant", "content": res_text})
+
+
+def config_options():
+
+
+    
+    st.sidebar.selectbox('Select your model:',(
+                                    'mixtral-8x7b',
+                                    'snowflake-arctic',
+                                    'mistral-large',
+                                    'llama3-8b',
+                                    'llama3-70b',
+                                    'reka-flash',
+                                     'mistral-7b',
+                                     'llama2-70b-chat',
+                                     'gemma-7b'), key="model_name")
+                                           
+    # For educational purposes. Users can chech the difference when using memory or not
+    st.sidebar.checkbox('Do you want that I remember the chat history?', key="use_chat_history", value = True)
+
+    st.sidebar.checkbox('Debug: Click to see summary generated of previous conversation', key="debug", value = True)
+    st.sidebar.button("Start Over", key="clear_conversation")
+    st.sidebar.expander("Session State").write(st.session_state)
+
+
+def init_messages():
+
+    # Initialize chat history
+    if st.session_state.clear_conversation or "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    
+def get_similar_chunks (question):
+
+    cmd = """
+        with results as
+        (SELECT RELATIVE_PATH,
+           VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+                    SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
+           chunk
+        from docs_chunks_table
+        order by similarity desc
+        limit ?)
+        select chunk, relative_path from results 
+    """
+    
+    df_chunks = session.sql(cmd, params=[question, num_chunks]).to_pandas()       
+
+    df_chunks_lenght = len(df_chunks) -1
+
+    similar_chunks = ""
+    for i in range (0, df_chunks_lenght):
+        similar_chunks += df_chunks._get_value(i, 'CHUNK')
+
+    similar_chunks = similar_chunks.replace("'", "")
+             
+    return similar_chunks
+
+
+def get_chat_history():
+#Get the history from the st.session_stage.messages according to the slide window parameter
+    
+    chat_history = []
+    
+    start_index = max(0, len(st.session_state.messages) - slide_window)
+    for i in range (start_index , len(st.session_state.messages) -1):
+         chat_history.append(st.session_state.messages[i])
+
+    return chat_history
+
+    
+def summarize_question_with_history(chat_history, question):
+# To get the right context, use the LLM to first summarize the previous conversation
+# This will be used to get embeddings and find similar chunks in the docs for context
+
+    prompt = f"""
+        Based on the chat history below and the question, generate a query that extend the question
+        with the chat history provided. The query should be in natual language. 
+        Answer with only the query. Do not add any explanation.
+        
+        <chat_history>
+        {chat_history}
+        </chat_history>
+        <question>
+        {question}
+        </question>
+        """
+    
+    cmd = """
+            select snowflake.cortex.complete(?, ?) as response
+          """
+    df_response = session.sql(cmd, params=[st.session_state.model_name, prompt]).collect()
+    sumary = df_response[0].RESPONSE     
+
+    if st.session_state.debug:
+        st.sidebar.text("Summary to be used to find similar chunks in the docs:")
+        st.sidebar.caption(sumary)
+
+    sumary = sumary.replace("'", "")
+
+    return sumary
+
+def create_prompt (myquestion):
+
+    if st.session_state.use_chat_history:
+        chat_history = get_chat_history()
+
+        if chat_history != []: #There is chat_history, so not first question
+            question_summary = summarize_question_with_history(chat_history, myquestion)
+            prompt_context =  get_similar_chunks(question_summary)
+        else:
+            prompt_context = get_similar_chunks(myquestion) #First question when using history
+    else:
+        prompt_context = get_similar_chunks(myquestion)
+        chat_history = ""
+  
+    prompt = f"""
+           You are an expert chat assistance that extracs information from the CONTEXT provided
+           between <context> and </context> tags.
+           You offer a chat experience considering the information included in the CHAT HISTORY
+           provided between <chat_history> and </chat_history> tags..
+           When ansering the question contained between <question> and </question> tags
+           be concise and do not hallucinate. 
+           If you don´t have the information just say so.
+           
+           Do not mention the CONTEXT used in your answer.
+           Do not mention the CHAT HISTORY used in your asnwer.
+           
+           <chat_history>
+           {chat_history}
+           </chat_history>
+           <context>          
+           {prompt_context}
+           </context>
+           <question>  
+           {myquestion}
+           </question>
+           Answer: 
+           """
+
+    return prompt
+
+
+def complete(myquestion):
+
+    prompt =create_prompt (myquestion)
+    cmd = """
+            select snowflake.cortex.complete(?, ?) as response
+          """
+    
+    df_response = session.sql(cmd, params=[st.session_state.model_name, prompt]).collect()
+    return df_response
+
+if __name__ == "__main__":
+    main()
+
+```
+
+The app will look like this (note the side bar where you can select several options)
+
+![App](assets/fig12_UI.png)
+
+Before we go deep into the code explanation, you can run a quick test to see how the ChatBot works when using memory (the chat history) or not. This would be the conversation we would expect from any ChatBot:
+
+![App](assets/fig13_chatbot_memory.png)
+
+We are asking for the name of the ski boots, and when we ask where have been tested  and later what they are good for the ChatBoot understand we are talking about the ski boots.
+
+For educational purposes (because this is not something we will implement when creating the ChatBot) we have enabled a check "Do you want that I remember the chat history?" that when disabled, the app will not use memory. So each question will be independent from the previous ones. This is what happens with the same questions:
+
+![App](assets/fig14_chatbot_no_memory.png)
+
+Basically, each question is answered individually. The second question loses the context of ski boots and looks for what has been tested in our documents. The third one, just find references to what are good for, but with no context.
+
+### Code Explanation
+
+```python
+def get_similar_chunks (question):
+```
+Given a question, this function is going to calculate its embeddings and look for the most similar chunks within the table. Will return those chunks of text with the highest similarity.
+
+```python
+def get_chat_history():
+```
+This function is going to return the previous conversation in the chat up to a limit defined by the global variable slide_window. We take advantage of:
+
+<code>st.session_state.messages</code>
+
+Everytime a question is asked is stored in the state with this code:
+
+    st.session_state.messages.append({"role": "user", "content": question})
+
+And the responses provided are also stored:
+
+    st.session_state.messages.append({"role": "assistant", "content": res_text})
+
+Therefore <code>st.session_state.messages</code> is used as the chat memory
+
+This next function <code>summarize_question_with_history()</code> takes the chat_history that we have got previously and the new question being asked. Remember that we are using the information from the PDF documents to answer questions. Therefore, we need to identify using vectors and cosine_similarity what chunk of text will be relevant to answer the question. 
+
+Therefore, if we just use "where have been tested" sentence to look for the similar vector, probably we will not get the right one. We need to inclue more information in the call we make to <code>get_similar_chunks()</code>. 
+
+Take a look this <code>summarize_question_with_history()</code> function:
+
+```python
+def summarize_question_with_history(chat_history, question):
+# To get the right context, use the LLM to first summarize the previous conversation
+# This will be used to get embeddings and find similar chunks in the docs for context
+
+    prompt = f"""
+        Based on the chat history below and the question, generate a query that extend the question
+        with the chat history provided. The query should be in natual language. 
+        Answer with only the query. Do not add any explanation.
+        
+        <chat_history>
+        {chat_history}
+        </chat_history>
+        <question>
+        {question}
+        </question>
+        """
+    
+    cmd = """
+            select snowflake.cortex.complete(?, ?) as response
+          """
+    df_response = session.sql(cmd, params=[st.session_state.model_name, prompt]).collect()
+    sumary = df_response[0].RESPONSE     
+
+    if st.session_state.debug:
+        st.sidebar.text("Summary to be used to find similar chunks in the docs:")
+        st.sidebar.caption(sumary)
+
+    sumary = sumary.replace("'", "")
+
+    return sumary
+
+```
+
+In that function we are using the <code>complete()</code> function where we have created a specific prompt to provide a chat history and the new question in order to get the query that will be used to find the right context.
+
+In order to experiment with this, we have also created a selection check "Debug: Click to see summary generated of previous conversation" that will allow you to see what is the question being used to look for similar chunks.
+
+In the example provided above, this will be the question used:
+
+![App](assets/fig15_debug.png)
+
+So the question that is being vectorized and used to look for similarities is "What is the place where the TDBootz Special ski boots have been tested?" that will provide better results than just "Where have been tested" as in the case of not using memory in the chat.
+
+Now the function:
+
+```python
+def create_prompt (myquestion):
+```
+
+Use all those previous functions to get the <b>chat_history</b> and <b>prompt_context</b> and build the prompt. So, this prompt is adding the previous conversation plus the context extracted from the PDFs and the new question.
+
+```python
+     prompt = f"""
+           You are an expert chat assistance that extracs information from the CONTEXT provided
+           between <context> and </context> tags.
+           You offer a chat experience considering the information included in the CHAT HISTORY
+           provided between <chat_history> and </chat_history> tags..
+           When ansering the question contained between <question> and </question> tags
+           be concise and do not hallucinate. 
+           If you don´t have the information just say so.
+           
+           Do not mention the CONTEXT used in your answer.
+           Do not mention the CHAT HISTORY used in your asnwer.
+           
+           <chat_history>
+           {chat_history}
+           </chat_history>
+           <context>          
+           {prompt_context}
+           </context>
+           <question>  
+           {myquestion}
+           </question>
+           Answer: 
+           """
+ ```
+
+What makes this very easy with Streamlit are [st.chat_input](https://docs.streamlit.io/library/api-reference/chat/st.chat_input) and [st.chat_message](https://docs.streamlit.io/library/api-reference/chat/st.chat_message). This is the code that get the question with st.chat_input, add it to st.chat_message and to the memmory with st.session_state.messages.append and call <b>complete()</b> function to get the answer that is also printed and stored:
+
+```python
+if question := st.chat_input("What do you want to know about your products"): 
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": question})
+        # Display user message in chat message container
+        with st.chat_message("user"):
+            st.markdown(question)
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
+    
+            question = question.replace("'","")
+    
+            with st.spinner(f"{st.session_state.model_name} thinking..."):
+                response = complete(question)
+                res_text = response[0].RESPONSE     
+            
+                res_text = res_text.replace("'", "")
+                message_placeholder.markdown(res_text)
+        
+        st.session_state.messages.append({"role": "assistant", "content": res_text})
+```
+
+Here you have other examples of chats using info from your documents:
+
+![App](assets/fig16_downhill.png)
+
+Another example:
+
+![App](assets/fig17_infant.png)
+
+Here another suggestion based on specific info from the documents (unique for us):
+
+- What is the name of the ski boots?
+- Where have been tested?
+- Who tested them?
+- Do they include any special component?
+
+
+You can try with your own documents. You will notice different peformance depending on the LLM you will be using. 
 
 <!-- ------------------------ -->
 ## Optional: Automatic Processing of New Documents
@@ -520,7 +920,7 @@ create or replace task task_extract_chunk_vec_from_pdf
             file_url, 
             build_scoped_file_url(@docs, relative_path) as scoped_file_url,
             func.chunk as chunk,
-            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
+            SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2',chunk) as chunk_vec
     from 
         docs_stream,
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path)))            as func;
@@ -528,7 +928,29 @@ create or replace task task_extract_chunk_vec_from_pdf
 alter task task_extract_chunk_vec_from_pdf resume;
 ```
 
-You can add a new PDF document and check that in around a minute, it will be available to be used within your Streamlit application.
+You can add a new PDF document and check that in around a minute, it will be available to be used within your Streamlit application. You may want to upload your own documents or try with this new bike guide:
+
+- [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Xtreme_Road_Bike_105_SL.pdf)
+
+After uploading the document (and if you are fast enough before the doc is automatically processed) you can see the doc in the stream:
+
+```SQL
+select * from docs_stream;
+```
+
+It will return no value once the doc has been processed. Once the documet is in your table, you can start asking questions and will be used in the RAG Process
+
+```SQL
+select * from docs_chunks_table where relative_path ilike '%Road_Bike%';
+```
+
+
+Try asking questions that are unique in that new bike guide like:
+
+- What tires model brings the road bike?
+- Is there any discount for the Xtreme Road Bike?
+
+(note: try different models to see different results)
 
 Once you have finish testing uploading new documents and asking questions, you may want to suspend the task:
 

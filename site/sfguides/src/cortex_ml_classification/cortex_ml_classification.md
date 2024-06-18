@@ -1,13 +1,23 @@
 author: Harsh Patel
+<<<<<<< HEAD
 id: snowflake_ml_classification
+=======
+id: cortex_ml_classification
+>>>>>>> master
 summary: Getting started with the Classification ML-Powered Function
 categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+<<<<<<< HEAD
 tags: Getting Started, Data Science, Machine Learning
 
 # Getting Started with Snowflake ML Classification Function
+=======
+tags: Getting Started, Data Science, Cortex
+
+# Getting Started with Snowflake Cortex ML Classification
+>>>>>>> master
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -28,7 +38,11 @@ For further details on ML Functions, please refer to the [snowflake documentatio
 
 ### Prerequisites
 - Working knowledge of SQL
+<<<<<<< HEAD
 - A Snowflake account login with an ACCOUNTADMIN role. If not, you will need to use a different role that has the ability to create database, schema, table, stages, and use the ML functions. 
+=======
+- A Snowflake account login with an ACCOUNTADMIN role. If not, you will need to use a different role that has the ability to create database, schema, table, stages, and the cortex functions. 
+>>>>>>> master
 
 ### What You’ll Learn 
 - How to make use of the classfication ML Function to create models and produce predictions
@@ -46,7 +60,11 @@ After we build the model, we will evaluate it and look at the feature importance
 
 Let's get started!
 
+<<<<<<< HEAD
 **IMPORTANT NOTE:** As of June 2024, ML Classification is in Public Preview. From time to time, Snowflake may refine the underlying algorithm and will roll out the improvements through the regular Snowflake release process. You cannot revert to a previous version of the model, but models you have created with a pervious version will continue to use that version. These changes in the underlying algorithm also means that the results you get when you run through the quickstart may differ from the images you see. 
+=======
+**IMPORTANT NOTE:** As of March 2024, Cortex ML Classification is in Public Preview. From time to time, Snowflake may refine the underlying algorithm and will roll out the improvements through the regular Snowflake release process. You cannot revert to a previous version of the model, but models you have created with a pervious version will continue to use that version. These changes in the underlying algorithm also means that the results you get when you run through the quickstart may differ from the images you see. 
+>>>>>>> master
 
 <!-- ------------------------ -->
 ## Setting Up Data in Snowflake
@@ -146,7 +164,11 @@ The variables in this dataset can be roughly grouped into three categories:
 2. Data around the interactions that the bank may have had with the customer previously, i.e `contact` which describes communication type used (either cellular or telephone), and `previous` which describes the number of contacts that were performed before the campaign was run
 3. Social and economic data (i.e `employee_variation_rate`, etc..) that details economic indicators during the time that the contact was made. These variables add information about the macroeconomic for when the customer was contacted, and may prove to be useful in predicting whether or not the customer accepts the term deposit.
 
+<<<<<<< HEAD
 The target variable that we will want to predict is the column denoted by `client_subscribed`. This is a binary variable, meaning it takes on one of two values, either `TRUE` OR `FALSE`. While in this case we only have two values, ML Classification function can also handle [Multi-Class Classification](https://en.wikipedia.org/wiki/Multiclass_classification), where there are more than three classes we want to group/classify.
+=======
+The target variable that we will want to predict is the column denoted by `client_subscribed`. This is a binary variable, meaning it takes on one of two values, either `TRUE` OR `FALSE`. While in this case we only have two values, Cortex ML Classification function can also handle [Multi-Class Classification](https://en.wikipedia.org/wiki/Multiclass_classification), where there are more than three classes we want to group/classify.
+>>>>>>> master
 
 For the full data dictionary, refer to the [Bank Marketing Dataset](https://archive.ics.uci.edu/dataset/222/bank+marketing) for the Variables Table. **Note** that the macroeconomic variables are not listed in the chart, you may find that by downloading the dataset, and opening the file `bank-additional-names.txt` contained within the `bank-additional` folder. 
 
@@ -198,7 +220,11 @@ Duration: 15
 
 ### Step 1: Building our Classifier
 
+<<<<<<< HEAD
 In the previous section we created separate views for our training data, and a holdout set to make predictions on. We will now feed our training data into the ML Classification function, and create our classifier. Follow the SQL commands below. 
+=======
+In the previous section we created separate views for our training data, and a holdout set to make predictions on. We will now feed our training data into the Cortex ML Classification function, and create our classifier. Follow the SQL commands below. 
+>>>>>>> master
 
 ```sql
 -- Train our classifier: 
@@ -290,7 +316,11 @@ We can turn the output table above into a visualization by:
 
 <img src = "assets/confusion_matrix_viz.png">
 
+<<<<<<< HEAD
 With our confusion matrix, we can calculate both precision, recall and other classifier metrics by running the following queries below. The first one will provide model metrics against each class (i.e True vs False for `CLIENT_SUBSCRIBED`), while the global evaluation metrics provides the averaged model metrics across classes. For more information on how these metrics are calculated, please refer to the [documentation](https://docs.snowflake.com/user-guide/ml-functions/classification#metrics-in-show-evaluation-metrics) for further details. **Note:** The metrics below are calculated on a previously unseen holdout set that we had configured when first training the model. 
+=======
+With our confusion matrix, we can calculate both precision, recall and other classifier metrics by running the following queries below. The first one will provide model metrics against each class (i.e True vs False for `CLIENT_SUBSCRIBED`), while the global evaluation metrics provides the averaged model metrics across classes. For more information on how these metrics are calculated, please refer to the [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-powered/classification#metrics-in-show-evaluation-metrics) for further details. **Note:** The metrics below are calculated on a previously unseen holdout set that we had configured when first training the model. 
+>>>>>>> master
 
 
 ```sql
@@ -306,7 +336,11 @@ This image above calculates the overall precision, recall, f1, and AUC across al
 
 ### Step 2: Threshold Metrics
 
+<<<<<<< HEAD
 When we produced the inferences in the previous section and stored them in the `predictions` table, we had a column for both the True and False probabilities. By default, the ML Classification function chooses the class with the highest probability for its prediction. Often times, when working with a binary classification model, we may want to 'threshold' the model, and only predict the True class if the probability is sufficiently high (i.e .8 vs .6). 
+=======
+When we produced the inferences in the previous section and stored them in the `predictions` table, we had a column for both the True and False probabilities. By default, the Cortex ML Classification function chooses the class with the highest probability for its prediction. Often times, when working with a binary classification model, we may want to 'threshold' the model, and only predict the True class if the probability is sufficiently high (i.e .8 vs .6). 
+>>>>>>> master
 
 We may want to increase the threshold for predicting the class of interest if we want to be more certain that entity we are making a prediction on belongs to that particular class. To select what probability we want to threshold at, we can use the `SHOW_THRESHOLD_METRICS` to give us a sense of how the precision and recall change. This is the basis of creating a [precision-recall curve](https://www.datacamp.com/tutorial/precision-recall-curve-tutorial) that will let you select the best threshold to make a prediction on.
 
@@ -324,7 +358,11 @@ The last thing we want to understand when evaluating the classifier is to get a 
 1. Better understand what's driving a model's prediction to give us more insight into the business process we are trying to model out
 2. Engineer new features or remove ones that are not too impactful to increase the model's performance. 
 
+<<<<<<< HEAD
 The ML Classification function provides a method to do just this, and provides us a ranked list of the relative importance of all the input features, such that their values are between 0 and 1, and the importances across all the features sum to be 1. The higher the number, the more influential that data point was in driving the prediction the model made. For more details on how the feature importance is calculated, please refer to the [documentation](https://docs.snowflake.com/user-guide/ml-functions/classification#understanding-feature-importance). 
+=======
+The ML Classification function provides a method to do just this, and provides us a ranked list of the relative importance of all the input features, such that their values are between 0 and 1, and the importances across all the features sum to be 1. The higher the number, the more influential that data point was in driving the prediction the model made. For more details on how the feature importance is calculated, please refer to the [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-powered/classification#understanding-feature-importance). 
+>>>>>>> master
 
 ```sql
 CALL bank_classifier!SHOW_FEATURE_IMPORTANCE();
@@ -337,7 +375,11 @@ For this particular dataset, it appears that `Duration`, `Euribor_3_month_rate`,
 <!-- ------------------------ -->
 ## Conclusion
 
+<<<<<<< HEAD
 **You did it!** You've successfully built and evaluated your ML Classifier! 
+=======
+**You did it!** You've successfully built and evaluated your Cortex ML Classifier! 
+>>>>>>> master
 
 As a review, in this guide we covered how you are able to: 
 
@@ -350,7 +392,14 @@ Having gone through this guide, you are now eqipped to start building your own c
 
 
 ### Resources: 
+<<<<<<< HEAD
 This guide contained code patterns that you can leverage to get quickly started with Snowflake ML Functions. For further details, here are some useful resources: 
 
 - [Classification](https://docs.snowflake.com/user-guide/ml-functions/classification) Product Docs, alongside the [classification syntax](https://docs.snowflake.com/sql-reference/classes/classification)
 - To explore other  ML Functions, please refer to the [ML-Powered Functions Page](https://docs.snowflake.com/en/guides-overview-ml-powered-functions)
+=======
+This guide contained code patterns that you can leverage to get quickly started with Snowflake Cortex ML-Based Functions. For further details, here are some useful resources: 
+
+- [Classification](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ml-powered/classification) Product Docs, alongside the [classification syntax](https://docs.snowflake.com/sql-reference/classes/classification)
+- To explore other Cortex ML Functions, please refer to the [ML-Powered Functions Page](https://docs.snowflake.com/en/guides-overview-ml-powered-functions)
+>>>>>>> master

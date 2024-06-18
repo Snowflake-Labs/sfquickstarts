@@ -60,6 +60,10 @@ Let's assume that you are a data engineer at an online retail company, where a w
 
 ### Sample data
 
+You can either [follow these instructions to setup a local Kafka docker environment](https://github.com/sfc-gh-pjain/sfguides/tree/DT_QS_Kafka/site/sfguides/src/getting_started_with_dynamic_tables/kafka_docker_setup)
+
+OR
+
 We will use the Python "Faker" library to generate some test data required for this project. You don't need to learn python to use Dynamic Tables, it's only used to generate sample datasets. In order to run this python code we will build and use [Python UDTF](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
 
 We are going to build our lab in a database called **"demo"** and schema name **"dt_demo"**. Feel free to use any database if "demo" database is already in use or you don't have access to it.
@@ -70,6 +74,12 @@ Go to your Snowflake account and open a worksheet and write or paste this code a
 CREATE DATABASE IF NOT EXISTS DEMO;
 CREATE SCHEMA IF NOT EXISTS DEMO.DT_DEMO;
 USE SCHEMA DEMO.DT_DEMO;
+
+CREATE WAREHOUSE XSMALL_WH 
+WAREHOUSE_TYPE = STANDARD
+  WAREHOUSE_SIZE = XSMALL
+  AUTO_SUSPEND = 300
+  AUTO_RESUME = TRUE;
 
 ```
 
@@ -236,7 +246,7 @@ USE SCHEMA DEMO.DT_DEMO;
 
 CREATE OR REPLACE DYNAMIC TABLE customer_sales_data_history
     LAG='DOWNSTREAM'
-    WAREHOUSE=lab_s_wh
+    WAREHOUSE=XSMALL_WH
 AS
 select 
     s.custid as customer_id,
@@ -265,7 +275,7 @@ Now, let's combine these results with the product table and create a SCD TYPE 2 
 ```
 CREATE OR REPLACE DYNAMIC TABLE salesreport
     LAG = '1 MINUTE'
-    WAREHOUSE=lab_s_wh
+    WAREHOUSE=XSMALL_WH
 AS
     Select
         t1.customer_id,
@@ -366,7 +376,7 @@ This function computes the cumulative total and can be seamlessly incorporated i
 
 CREATE OR REPLACE DYNAMIC TABLE cumulative_purchase
     LAG = '1 MINUTE'
-    WAREHOUSE=lab_s_wh
+    WAREHOUSE=XSMALL_WH
 AS
     select 
         month(creationtime) monthNum,
@@ -402,7 +412,7 @@ USE SCHEMA DEMO.DT_DEMO;
 
 CREATE OR REPLACE DYNAMIC TABLE PROD_INV_ALERT
     LAG = '1 MINUTE'
-    WAREHOUSE=LAB_S_WH
+    WAREHOUSE=XSMALL_WH
 AS
     SELECT 
         S.PRODUCT_ID, 
@@ -440,7 +450,7 @@ CREATE NOTIFICATION INTEGRATION IF NOT EXISTS
 ;
 
 CREATE OR REPLACE ALERT alert_low_inv
-  WAREHOUSE = my_warehouse
+  WAREHOUSE = XSMALL_WH
   SCHEDULE = '30 MINUTE'
   IF (EXISTS (
       SELECT *
@@ -585,3 +595,13 @@ Dynamic Tables are a new kind of Snowflake table which is defined as a query and
 - Creating data validation rule using Dynamic tables
 - Alerting on those rules
 - Monitoring Dynamic table using dashboard and SQL
+
+### Cleaup after Demo/HOL is complete for any cost/credits loss prevention
+
+```
+DROP SCHEMA DEMO.DT_DEMO;
+
+-- if you wish to drop the entire database
+DROP DATABASE DEMO;
+
+```

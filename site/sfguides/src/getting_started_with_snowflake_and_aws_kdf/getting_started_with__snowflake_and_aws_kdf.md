@@ -70,7 +70,7 @@ to SSH if your instance is in a private subnet
 - Create an [ADF delivery stream](https://docs.aws.amazon.com/firehose/latest/dev/basic-create.html)
 - Setup `Direct Put` as the source for the ADF delivery stream
 - Setup `Snowflake` as the destination for the ADF delivery stream
-- Secure the connection between Snowflake and ADF with [Privatelink](https://aws.amazon.com/privatelink)
+- Optionally, secure the connection between Snowflake and ADF with [Privatelink](https://aws.amazon.com/privatelink)
 - A Snowflake database and table for hosting real-time flight data
 
 <!---------------------------->
@@ -78,7 +78,7 @@ to SSH if your instance is in a private subnet
 Duration: 10
 
 #### 1. Create an EC2 instance
-First, click [here](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=ADF-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_KDF/kdf-bastion.json)
+First, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=ADF-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_KDF/kdf-bastion.json)
 to launch an EC2 instance(jumphost) with Cloudformation. Note the default AWS region is `us-west-2 (Oregon)`, at the time of writing this quickstart, three regions are available
 for this integration preview: `us-east-1`, `us-west-2`, and `eu-west-1`.
 
@@ -219,6 +219,24 @@ WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 Please write down the Account Identifier, we will need it later.
 ![](assets/account-identifier.png)
 
+We need to retrieve the `Snowflake private account URL` for use later, run below SQL command now and record the output, e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`
+
+```sql
+with PL as
+(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-account-url')
+SELECT concat('https://'|| REPLACE(VALUE,'"','')) AS SNOWFLAKE_PRIVATE_ACCOUNT_URL
+from PL;
+```
+
+Now we need to retrieve the value of `VPCE ID` for use later, run below SQL command now and record the output, e.g. `com.amazonaws.vpce.us-west-2.vpce-svc-xyzabce999777333f1`.
+
+```sql
+with PL as
+(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-vpce-id')
+SELECT REPLACE(VALUE,'"','') AS PRIVATE_LINK_VPCE_ID
+from PL;
+```
+
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
 First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/ssm-user/pub.Key` (see `step 4` in `section #2 Provision a Linux jumphost in AWS` located in the left pane) in the following SQL command and execute.
@@ -287,7 +305,7 @@ In this step, we are going to create an ADF delivery stream for data streaming.
 
 Navigate to the [ADF console](https://console.aws.amazon.com/firehose/home?streams) and click `Create delivery stream`.
 
-In the `Source` section, select `Direct PUT` from the drop-down menu.
+In the `Source` section, select `Direct PUT` from the drop-down menu. Optionally, you can pick `Kinesis Data Streams` as the source, but we will focus on `Direct Put` in this workshop.
 
 In the `Destination` section, select `Snowflake` from the drop-down menu.
 
@@ -297,19 +315,11 @@ Type in a name for the `Firehose stream name`.
 
 Skip `Transform records` setup.
 
-For `Snowflake account URL`, run this SQL command in your Snowflake account to obtain the value:
-```
-with PL as
-(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-account-url')
-SELECT concat('https://'|| REPLACE(VALUE,'"','')) AS PRIVATE_LINK_VPCE_ID
-from PL;
-```
+For `Snowflake account URL`, enter the URL you recorded previously from step 1 in Chapter 3, e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`.
 
-e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`
+Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and ADF, so the URL is a private endpoint with `privatelink` as a substring. 
 
-Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and ADF, so the
-URL is a private endpoint with `privatelink` as a substring. Alternatively, you can use the public endpoint without 
-the `privatelink` substring, e.g. `https://xyz12345.us-west-2.snowflakecomputing.com`, if this is the case, leave the `VPCE ID` field blank below.
+Alternatively, you can use the public endpoint without the `privatelink` substring, e.g. `https://xyz12345.us-west-2.snowflakecomputing.com`, if this is the case, also leave the `VPCE ID` field blank below.
 
 For `User`, type in `STREAMING_USER`.
 
@@ -325,13 +335,7 @@ For `Passphrase`, type in the phrase you used when generating the public key wit
 
 For `Role`, select `Use custom Snowflake role` and type in `ADF_STREAMING_RL`.
 
-For `VPCE ID`, run the following SQL command in your Snowflake account with a user with `accountadmin` privileges to obtain the value.
-```commandline
-with PL as
-(SELECT * FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_PRIVATELINK_CONFIG()))) where key = 'privatelink-vpce-id')
-SELECT REPLACE(VALUE,'"','') AS PRIVATE_LINK_VPCE_ID
-from PL;
-```
+For `VPCE ID`, enter the value you recorded from step 1 in Chapter 3, e.g. `com.amazonaws.vpce.us-west-2.vpce-svc-xyzabce999777333f1`.
 
 For `Snowflake database`, type in `ADF_STREAMING_DB`.
 
@@ -430,22 +434,138 @@ The SQL command creates a view, converts timestamps to different time zones, and
 You can also easily calculate the distance in miles between two geo locations. In above example, the `st_distance` function is used to calculate the distance between an airplane and San Francisco Airport.
 
 Let's query the view `flights_vw` now.
-```commandline
+```sql
 select * from flights_vw;
 ```
 
 As a result, you will see a nicely structured output with columns derived from the JSONs at the [source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky).
 ![](assets/flight_view.png)
 
+
+<!---------------------------->
+## Use Amazon Managed Service for Flink for real-time analytics - Optional
+Duration: 20
+
+Note that you will need to complete the base workshop first without cleaning up the resources in order to proceed.
+
+Apache Flink is a powerful stream processing framework with a wide range of use cases across industries. Some common applications include Real-time analytics, Fraud detection, Sendor data process, Supply chain optimization, and many more.
+
+Here we will show you how to integrate our current demo with [Amazon Managed Service for Apache Flink](https://aws.amazon.com/managed-service-apache-flink/) and [Kinesis Data Streams (KDS)](https://aws.amazon.com/kinesis/data-streams/) to do real-time analytics.
+
+The schematic diagram below illustrates the flow of data from the source, which is streamed into an input Kinesis stream. The data is then processed by [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-sinks.html#sinks-firehose-create) in real-time, before being ingested into an output Kinesis stream, it is picked up by Data Firehose and ultimately lands in Snowflake. [AWS Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) serves as a metadata store for Flink Studio notebook tables.
+
+![](assets/flink-schematic.png)
+
+We will be focusing on using Flink Studio notebook for this demo. Optionally, if you are writing Flink applications instead of using the Flink Studio notebook, you can use the [Firehose Producer](https://docs.aws.amazon.com/managed-flink/latest/java/how-sinks.html#sinks-firehose-create) to bypass the output Kinesis stream.
+
+#### 1. Create a table in Snowflake to receive Flink-filtered data
+Log into the Snowflake account as `streaming_user`. Run the following SQL commands to generate a table for capturing the filtered streams.
+
+```sql
+use ADF_STREAMING_DB;
+use schema ADF_STREAMING_SCHEMA;
+create or replace TABLE ADF_FLINK_TBL (
+	ORIG VARCHAR(5),
+	UTC VARCHAR(20),
+	ALT INTEGER,
+	ICAO VARCHAR(20),
+	LON FLOAT,
+	ID VARCHAR(10),
+	DEST VARCHAR(5),
+	LAT FLOAT
+);
+```
+
+#### 2. Deploy Flink Studio notebook and Kinesis Data Streams
+To make the process of deploying necessary resources easier, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=amf-snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_ADF/flink-kds-cfn.json) to deploy necessary resources including a [Flink Studio notebook](https://docs.aws.amazon.com/managed-flink/latest/java/how-notebook.html), a Glue database to store metadata of the tables in Flink and two Kinesis Data Streams (KDS). One Kinesis stream serves as the input stream to Flink and the other one serves as the output stream.
+
+Please enter appropriate values into the empty fields where you entered(i.e. bucket, private key, keyphrase, etc.) in previous modules when prompted during Cloudformation deployment. In about 5 minutes, the template should be deployed successfully.
+
+The Cloudformant template will be deployed in about 5 minutes, navigate to the 
+
+#### 3. Configure Flink Studio notebook
+Navigate to the [Studio notebook console](https://console.aws.amazon.com/flink/home#/list/notebooks), you should see that your notebook status is ready. Check the notebook and click `Run` button at the top. The notebook status should change to `Running` in about 5 minutes. 
+
+![](assets/run-flink-nb.png)
+
+Navigate to the CloudFormation stack that we successfully deployed (e.g.`amf_snowflake`) and click on the `Outputs` tab to record the values for `KinesisDataInputStream` and `KinesisDataOutputStream`, we will need them later.
+
+![](assets/cfn-output.png)
+
+You will also notice notice that a Glue database is also created. Navigate to the [Glue console](https://us-west-2.console.aws.amazon.com/glue/home#/v2/data-catalog/databases) to verify.
+
+
+#### 4. Configure Zeppelin notebook
+Click `Open Apache Zeppelin` when the notebook is running.
+![](assets/zeppelin.png)
+
+Download a Zeppelin note from [here](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_ADF/Flink-nb.zpln), and save it to your desktop.
+
+In Zeppelin, click `import note`.
+
+![](assets/zeppelin-import-note-1.png)
+
+Give the note a name, i.e. `myNote`. Select `Select JSON File/IPYNB File` when prompted.
+![](assets/zeppelin-import-note-2.png)
+
+Pick the `Flink-nb.zpln` file you just dowonloaded. You should now see the note name in the browser window, click the note to open.
+
+#### 5. Run Flink notebook
+In the left cell, type in the value for `KinesisDataInputStream` you recorded from step 3 above, change `aws.region` to your local region. Highlight the content of the left cell, then click the triangle play button at the top. You should see the status changing from `Pending` to `Running` to `Finished`. This creates a Flink input table which maps to the input Kinesis data stream.
+
+Do the same thing for the right cell. A Flink output table is also created.
+
+![](assets/flink-nb-run-2.png)
+
+Now, scroll down to the remaining two cells to start filtering and monitoring by clicking the play button located at the top-right corner of each cell.
+
+First cell is to filter out any live United Airlines flight tracks below 7000 feet and the other cell is to monitor the filtered results.
+
+![](assets/flink-nb-run-3.png)
+
+Leave your Flink notebook window open.
+
+#### 6. Start ingesting live data to the input Kinesis data stream
+We are ready to ingest data now. Go to your EC2 console via [Session Manager](https://console.aws.amazon.com/systems-manager/session-manager) as instructed in step 3 of Chapter 2.
+
+Kick off the ingestion by executing below shell command, replace `<your input Kinesis stream>` with the name of your input Kinesis stream.
+
+```shell
+curl -s https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_ADF/kds-producer.py | python3 - <your input Kinesis stream name>
+```
+![](assets/kds-ingestion.gif)
+
+ In a short moment, you will see some filtered data appearing in the Flink notebook monitoring cell and they are all UA airplanes flying below 7000 feet.
+
+
+![](assets/real-time-analytics.gif)
+
+
+#### 7. Verify the results in Snowflake
+Now go back to your Snowflake account as user 'streaming_user', and run the following SQL commands:
+
+```sql
+USE ADF_STREAMING_DB;
+USE SCHEMA ADF_STREAMING_SCHEMA;
+SELECT * from ADF_FLINK_TBL;
+```
+You should see the filtered flight tracks are captured in table `ADF_FLINK_TBL`.
+
+
+![](assets/verify-snowflake-result.png)
+
 <!---------------------------->
 ## Cleanup
 Duration: 5
+
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://console.aws.amazon.com/cloudformation/home?stacks) console.
-Select the Cloudformation template you used to deploy the jumphost at the start of the demo, then click the `Delete` tab.
+Select the Cloudformation template you used to deploy the jumphost at the start of the demo, also the template for Amazon Managed Flink if you optionally deployed it, then click the `Delete` tab.
 
 See example screen capture below.
 
 ![](assets/cleanup.png)
+
+Navigate to the [EC2 console](https://console.aws.amazon.com/ec2/home#Instances:instanceState=running) and delete the jumphost.
 
 You will also need to delete the Firehose delivery stream. Navigate to the [ADF Console](https://console.aws.amazon.com/firehose/home?streams), select the delivery stream you created, and select `Delete` button at the top.
 
@@ -464,13 +584,13 @@ For those of you who are interested in learning more about how to build sleek da
 
 Related Resources
 
+- [Uplevel your data architecture with real- time streaming using Amazon Data Firehose and Snowflake](https://aws.amazon.com/blogs/big-data/uplevel-your-data-architecture-with-real-time-streaming-using-amazon-data-firehose-and-snowflake/)
 - [Unleashing the Full Potential of Real-Time Streaming with Amazon Kinesis Data Firehose and Snowpipe Streaming](https://medium.com/snowflake/unleashing-the-full-potential-of-real-time-streaming-with-amazon-kinesis-data-firehose-and-snowpipe-0283fb599364#Snowflake)
 - [Amazon Data Firehose (ADF)](https://aws.amazon.com/firehose/)
+- [Amazon Managed Service for Apache Flink](https://aws.amazon.com/managed-service-apache-flink/)
 - [Snowpipe Streaming Demystified](https://medium.com/snowflake/snowpipe-streaming-demystified-e1ee385c6d9c)
 - [Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding](https://quickstarts.snowflake.com/guide/getting_started_with_amg_and_streamlit_on_real-time_dashboarding/)
 - [Getting started with Snowflake](https://quickstarts.snowflake.com/)
 - [Snowflake on AWS Marketplace](https://aws.amazon.com/marketplace/seller-profile?id=18d60ae8-2c99-4881-a31a-e74770d70347)
 - [Snowflake for Data Sharing](https://www.snowflake.com/Workloads/data-sharing/)
 - [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
-
-

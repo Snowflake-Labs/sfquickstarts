@@ -22,7 +22,7 @@ Snowpark allows developers to query and create data applications in Python, Java
 Streamlit *(acquired by Snowflake in March 2022)* is a Python library that makes it easy to create and share custom web apps. Learn more about [Streamlit](https://docs.streamlit.io/).
 
 ### What You Will Learn 
-- How to access third-party data from the **Snowflake Data Marketplace**
+- How to access third-party data from the **Snowflake Marketplace**
 - How to explore data & perform **feature engineering with Snowpark DataFrame APIs**
 - How to **train a model in Snowflake** with a stored procedure
 - How to **deploy a model in Snowflake** to a user-defined function for model inference
