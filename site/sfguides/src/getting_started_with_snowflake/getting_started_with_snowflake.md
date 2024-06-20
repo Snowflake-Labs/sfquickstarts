@@ -303,7 +303,7 @@ From the **Databases** tab, click the `CYBERSYN` database and `PUBLIC` schema. C
 
 ![stages create](assets/4PreLoad_8.png)
 
-In the `Create Securable Object` dialog that opens, replace the following values in the SQL statement:
+In the `Create Stage` dialog that opens, replace the following values in the SQL statement:
 
 **Stage Name**: `cybersyn_company_metadata`
 **URL**: `s3://sfquickstarts/zero_to_snowflake/cybersyn-consumer-company-metadata-csv/`
