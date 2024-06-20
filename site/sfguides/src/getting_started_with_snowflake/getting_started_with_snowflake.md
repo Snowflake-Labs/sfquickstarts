@@ -733,7 +733,7 @@ SELECT
     meta.company_name,
     ts.date,
     ts.value AS post_market_close,
-    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date) - 1)::DOUBLE AS daily_return,
+    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date))::DOUBLE AS daily_return,
     AVG(ts.value) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
 FROM Financial__Economic_Essentials.cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
@@ -755,7 +755,7 @@ SELECT
     meta.company_name,
     ts.date,
     ts.value AS nasdaq_volume,
-    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date) - 1)::DOUBLE AS volume_change
+    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date))::DOUBLE AS volume_change
 FROM cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
@@ -776,7 +776,7 @@ SELECT
     meta.company_name,
     ts.date,
     ts.value AS post_market_close,
-    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY primary_ticker ORDER BY date) - 1)::DOUBLE AS daily_return,
+    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY primary_ticker ORDER BY ts.date))::DOUBLE AS daily_return,
     AVG(ts.value) OVER (PARTITION BY primary_ticker ORDER BY date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
 FROM cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
