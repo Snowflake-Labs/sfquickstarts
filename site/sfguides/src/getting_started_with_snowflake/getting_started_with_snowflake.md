@@ -303,7 +303,7 @@ From the **Databases** tab, click the `CYBERSYN` database and `PUBLIC` schema. C
 
 ![stages create](assets/4PreLoad_8.png)
 
-In the `Create Securable Object` dialog that opens, replace the following values in the SQL statement:
+In the `Create Stage` dialog that opens, replace the following values in the SQL statement:
 
 **Stage Name**: `cybersyn_company_metadata`
 **URL**: `s3://sfquickstarts/zero_to_snowflake/cybersyn-consumer-company-metadata-csv/`
@@ -669,7 +669,7 @@ SELECT
     meta.company_name,
     ts.date,
     ts.value AS post_market_close,
-    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date) - 1)::DOUBLE AS daily_return,
+    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date))::DOUBLE AS daily_return,
     AVG(ts.value) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
 FROM Cybersyn_Financial_Economic.cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
@@ -712,7 +712,7 @@ SELECT
     meta.company_name,
     ts.date,
     ts.value AS post_market_close,
-    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY primary_ticker ORDER BY date) - 1)::DOUBLE AS daily_return,
+    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY primary_ticker ORDER BY ts.date))::DOUBLE AS daily_return,
     AVG(ts.value) OVER (PARTITION BY primary_ticker ORDER BY date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
 FROM Cybersyn_Financial_Economic.cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
