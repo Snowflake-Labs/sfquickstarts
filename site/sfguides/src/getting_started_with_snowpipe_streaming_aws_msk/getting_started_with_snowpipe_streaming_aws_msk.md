@@ -506,7 +506,7 @@ Go back to the Linux console and execute the following commands to start the Kaf
 $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
 ```
 
-If everything goes well, you should something similar to screen capture below:
+If everything goes well, you should see something similar to screen capture below:
 ![](assets/snowpipe-streaming-kc.png)
 
 #### 2. Start the producer that will ingest real-time data to the MSK cluster
