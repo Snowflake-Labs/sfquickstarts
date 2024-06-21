@@ -200,7 +200,7 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
 
 - #### [Integrating Tasty Bytes Location Recommendations ML Model into the React Native Data Application](https://quickstarts.snowflake.com/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app/index.html?index=..%2F..index)
 
-
+- #### [Tasty Bytes - Working with Iceberg Tables](https://quickstarts.snowflake.com/guide/tasty_bytes_working_with_iceberg_tables/index.html?index=..%2F..index)
 
 
 

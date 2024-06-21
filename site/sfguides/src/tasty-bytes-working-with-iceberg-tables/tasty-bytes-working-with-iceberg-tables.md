@@ -65,7 +65,7 @@ CREATE OR REPLACE SCHEMA RAW;
 --Warehouse
 CREATE OR REPLACE WAREHOUSE iceberg_quickstart_wh with
 WAREHOUSE_SIZE = MEDIUM
-AUTO_SUSPEND = 60
+AUTO_SUSPEND = 60;
 ```
 
 ### Load data to S3
@@ -186,7 +186,7 @@ CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
     STORAGE_LOCATIONS =
         (
             (
-                NAME = 'us-west-2'
+                NAME = 'my-s3-bucket'
                 STORAGE_PROVIDER = 'S3'
                 STORAGE_BASE_URL = 's3://< bucket >/'
                 STORAGE_AWS_ROLE_ARN = '< iam_role >'
@@ -260,6 +260,8 @@ FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) WHERE "property" = 'STORAGE_LOCATION_1'
 
 ### Load Tasty Bytes Order Data into Snowflake
 
+We will use Tasty Bytes order data to enrich Iceberg tables within Snowflake. 
+
 ````
 CREATE OR REPLACE TABLE tasty_bytes_db.raw.order_header
 (
@@ -287,7 +289,7 @@ type = 'csv';
 CREATE OR REPLACE STAGE tasty_bytes_db.raw.s3load
 COMMENT = 'Quickstarts S3 Stage Connection'
 url = 's3://sfquickstarts/frostbyte_tastybytes/'
-file_format = tasty_bytes_db.public.csv_ff;
+file_format = tasty_bytes_db.raw.csv_ff;
 
 COPY INTO tasty_bytes_db.raw.order_header
 FROM @tasty_bytes_db.raw.s3load/raw_pos/order_header/;
@@ -367,6 +369,12 @@ LOCATION = @tasty_bytes_db.raw.stg_truck_reviews/
 AUTO_REFRESH = TRUE
 FILE_FORMAT = tasty_bytes_db.raw.ff_csv
 PATTERN ='.*truck_reviews.*[.]csv';
+````
+
+Let's take a look at the data in the external table
+
+````
+SELECT * FROM tasty_bytes_db.raw.ext_survey_data LIMIT 100;
 ````
 
 <!-- ------------------------ -->
@@ -480,7 +488,7 @@ FROM tasty_bytes_db.raw.ext_survey_data;
 Let's query the data. You can query the table just as you would standard tables in Snowflake. 
 
 ````
-SELECT TOP 100 * FROM tasty_bytes_db.raw.icb_truck_reviews
+SELECT TOP 100 * FROM tasty_bytes_db.raw.icb_truck_reviews;
 ````
 
 You can also do joins and enrich the Iceberg data with data residing in Snowflake. Let's get some more information on reviews that have associated orders using the `order_header` table.
@@ -496,6 +504,18 @@ SELECT
 FROM tasty_bytes_db.raw.order_header oh
 JOIN tasty_bytes_db.raw.icb_truck_reviews tr
     ON tr.order_id = oh.order_id;
+````
+
+<!-- ------------------------ -->
+## Account Cleanup
+
+Run the following command to remove all Snowflake objects created in this quickstart. Do not forget the AWS roles, policy, and bucket!
+
+````
+DROP DATABASE IF EXISTS tasty_bytes_db;
+DROP WAREHOUSE IF EXISTS iceberg_quickstart_wh;
+DROP INTEGRATION IF EXISTS int_tastybytes_truckreviews;
+DROP EXTERNAL VOLUME IF EXISTS vol_tastybytes_truckreviews;
 ````
 
 <!-- ------------------------ -->
