@@ -772,7 +772,7 @@ DROP USER IF EXISTS STREAMING_USER;
 ```
 
 <!---------------------------->
-## Conclusions
+## Conclusion and Resources
 Duration: 5
 
 In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using a self-managed Kafka 

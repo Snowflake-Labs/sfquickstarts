@@ -64,7 +64,7 @@ To participate in the virtual hands-on lab, attendees need the following resourc
 - A Snowflake database to receive real-time flight data
 
 <!---------------------------->
-## Create an Event Hub and a Linux virtual machine in Azure cloud
+## Create an Event Hub and a VM in Azure
 Duration: 25
 
 #### 1. Create a resource group
@@ -82,7 +82,7 @@ See below sample screen capture for reference, here we have created a namespace 
 
 ![](assets/eventhubs.png)
 
-#### 3. Create a Linux virtual machine
+#### 3. Create a Linux VM
 
 In the same resource group, create a Linux(Red Hat enterprise) virtual machine by
 following this [doc](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu). Choose `Redhat Enterprise` as the image. Note that this quickstart guide was written using scripts based on the RedHat syntax, optionally you can select Ubuntu or other Linux distributions but will need to modify the scripts.
@@ -194,7 +194,7 @@ echo "export BS=$BS" >> ~/.bashrc
 
 ```
 
-#### 8. Create a configuration file `connect-standalone.properties` for the Kafka connector
+#### 8. Create a configuration file for the Kafka connector
 
 Run the following commands to generate a configuration file `connect-standalone.properties` in directory `/home/azureuser/snowpipe-streaming/scripts` for the client to authenticate with the Event hubs namespace.
 
@@ -229,7 +229,7 @@ EOF
 ```
 A configuration file `connect-standalone.properties` is created in directory `/home/azureuser/snowpipe-streaming/scripts`
 
-#### 9. Create a security client.properties configuration file for the producer
+#### 9. Create a security configuration file for the producer
 
 Run the following commands to create a security configuration file `client.properties`.
 
@@ -246,7 +246,7 @@ EOF
 
 A configuration file `client.properties` is created in directory `/home/azureuser/snowpipe-streaming/scripts`
 
-#### 10. Create an event hub called “streaming” in the namespace
+#### 10. Create an event hub in the namespace
 
 Go to the Event Hubs namespace and clicke `+ Event Hub`.
 
@@ -396,10 +396,13 @@ You can edit the [`~/.snowsql/config`](https://docs.snowflake.com/en/user-guide/
 At this point, the Snowflake setup is complete.
 
 <!---------------------------->
-## Configure Kafka connector for Snowpipe Streaming
+## Configure the Kafka connector for Snowpipe Streaming
 Duration: 10
 
-#### 1. Run the following commands to collect various connection parameters for the Kafka connector
+#### 1. Collect parameters for the Kafka connector
+
+Run the following commands to collect various connection parameters for the Kafka connector.
+
 ```commandline
 cd $HOME
 outf=/tmp/params
@@ -449,7 +452,10 @@ See below example screen capture.
 
 ![](assets/get_params.png)
 
-#### 2. Run the following commands to create a Snowflake Kafka connect property configuration file:
+#### 2. Create a Snowflake Kafka connect configuration file
+
+Run the following commands to generate a configuration file for the Kafka connector.
+
 ```commandline
 dir=/home/azureuser/snowpipe-streaming/scripts
 cat << EOF > $dir/snowflakeconnectorAZ.properties
@@ -496,7 +502,7 @@ If everything goes well, you should see something similar to screen capture belo
 
 Leave this screen open and let the connector continue to run.
 
-#### 2. Start the producer that will ingest real-time data to the Event Hub
+#### 2. Start the producer
 
 Open up a new ssh session connection to the VM. In the shell, run the following command:
 
@@ -614,7 +620,7 @@ DROP USER IF EXISTS STREAMING_USER;
 ```
 
 <!---------------------------->
-## Conclusion
+## Conclusion and Resources
 Duration: 5
 
 In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using an Azure event hub and the Kafka connector for Snowpipe streaming hosted on a VM. You can also containerize the connector on the [Azure Kubernetes Services (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service) to leverage the benefits of scability and manageability.
