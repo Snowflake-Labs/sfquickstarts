@@ -81,7 +81,7 @@ See below sample screen capture for reference, here we have created a namespace 
 
 ![](assets/eventhubs.png)
 
-### 3. Create a Linux virtual machine
+#### 3. Create a Linux virtual machine
 In the same resource group, create a Linux(Red Hat enterprise) virtual machine by
 following this [doc](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu). Choose `Redhat Enterprise` as the image. Note that this quickstart guide was written using scripts based on the RedHat syntax, optionally you can select Ubuntu or other Linux distributions but will need to modify the scripts.
 
