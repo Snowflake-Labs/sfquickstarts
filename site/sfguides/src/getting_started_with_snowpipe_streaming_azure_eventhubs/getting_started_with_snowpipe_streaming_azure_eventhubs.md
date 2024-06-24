@@ -74,6 +74,7 @@ Follow this [Azure doc](https://learn.microsoft.com/en-us/azure/azure-resource-m
 ![](assets/rg.png)
 
 #### 2. Create an Event Hub in the resource group
+
 Go to the newly created resource group, and click `+ Create` tab to create an event hub by
 following this [Azure doc](https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-create). Select the `Standard` [pricing tier](https://azure.microsoft.com/en-us/pricing/details/event-hubs/) to use Apache Kafka. Make sure that you select public access to the Event Hub in the networking setting.
 
@@ -82,6 +83,7 @@ See below sample screen capture for reference, here we have created a namespace 
 ![](assets/eventhubs.png)
 
 #### 3. Create a Linux virtual machine
+
 In the same resource group, create a Linux(Red Hat enterprise) virtual machine by
 following this [doc](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu). Choose `Redhat Enterprise` as the image. Note that this quickstart guide was written using scripts based on the RedHat syntax, optionally you can select Ubuntu or other Linux distributions but will need to modify the scripts.
 
@@ -92,12 +94,15 @@ Download and save the private key for use in the next step.
 Once the VM is provisioned, we will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer. We will be using the default VM user `azureuser` for this workshop.
 
 Here is a screen capture of the VM overview for reference.
+
 ![](assets/vm-overview.png)
 
 #### 4. Connect to the Linux VM console
+
 From you local machine, either using a ssh application such as [Putty](https://www.putty.org/) if you have a Windows PC or simply the ssh CLI (`ssh -i <your private_key for the VM> <VM's public IP address> -l azureuser)` for Linux or Mac based systems.
 
 #### 5. Create a key-pair to be used for authenticating with Snowflake
+
 Create a key pair in the VM console by executing the following commands. You will be prompted to give an encryption password, remember 
 this phrase, you will need it later.
 
@@ -332,7 +337,7 @@ Please write down the Account Identifier, we will need it later.
 
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
-First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/azureuser/pub.Key` (see `step 4` by clicking on `section #2 Create a Linux virtual machine` in the left pane) in the following SQL command and execute.
+First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/azureuser/pub.Key` (see `step 5` by clicking on `section #2 Create an Event Hub and a Linux virtual machine in Azure cloud` in the left pane) in the following SQL command and execute.
 ```commandline
 use role accountadmin;
 alter user streaming_user set rsa_public_key='< pubKey >';
