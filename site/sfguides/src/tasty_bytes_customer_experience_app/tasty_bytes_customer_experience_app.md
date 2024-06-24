@@ -71,7 +71,9 @@ COMMENT = 'Quickstarts S3 Stage Connection'
 file_format = tasty_bytes_chatbot.app.csv_ff; 
 
 CREATE OR REPLACE STAGE tasty_bytes_enhancing_customer_experience.raw_doc.inspection_reports
-COMMENT = 'Inspection reports images';
+COMMENT = 'Inspection reports images'
+DIRECTORY = (ENABLE = TRUE) 
+ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 
 -- raw layer
 CREATE OR REPLACE TABLE tasty_bytes_enhancing_customer_experience.raw_doc.inspection_report_raw_extract (
