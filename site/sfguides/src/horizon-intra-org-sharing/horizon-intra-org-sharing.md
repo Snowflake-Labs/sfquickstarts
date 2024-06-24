@@ -3,29 +3,31 @@ id: horizon_intra_org_sharing
 summary: explore Horizon Access pillar features for intra-company sharing of data and apps
 categories: Data-Sharing
 environments: web
-status: Published 
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+status: Published
+feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Summit HOL, Data Sharing, Horizon Access
 
-# Horizon Access Pillar: Intra-Company Sharing
+# Horizon Access for Intra-Company Sharing
 <!-- ------------------------ -->
-## Overview 
+## Overview
+
 Duration: 15
 
-Sharing information between departments, business units and subsidiaries of a company is critical for success, particularly when there are organizational silos in place. A modern data platform must provide decentralized ownership, universal discovery, access control, federated governance, and observability. 
+Sharing information between departments, business units and subsidiaries of a company is critical for success, particularly when there are organizational silos in place. A modern data platform must provide decentralized ownership, universal discovery, access control, federated governance, and observability.
 
 **Snowflake Horizon** is a unified suite of governance and discovery capabilities organized into five pillars.
 
 ![Snowflake Horizon Diagram](assets/snowflake_horizon.jpg)
 
-This Quickstart is focused on the <mark>Access</mark> pillar.
+This Quickstart is focused on the `Horizon Access` pillar.
 
 The objective of the Access pillar is to make it simple to share, discover, understand/build trust and access listings across any boundary, internal or external to the organization, and to make loose objects discoverable across account boundaries within an organization, supported by the tools necessary to ensure policy compliance, security, and data quality.
 
-In this lab you will experience the latest **Snowflake Horizon Access pillar** features for sharing data and applications intra-company: organizational listings, unified search & discovery, data quality monitoring, role-based governance policies and programmatic management of data products. We will cover structured and unstructured data that is stored on-platform or on external storage.
+In this lab you will experience the latest **Snowflake Horizon Access pillar** features for sharing data and native apps intra-company: organizational listings, unified search & discovery, data quality monitoring, role-based governance policies and programmatic management of data products. We will cover structured and unstructured data that is stored on-platform or on external storage.
 
-### What You’ll Learn 
-- How to blend TastyBytes Point-of-Sale and Marketplace Weather data to build analytics data products, then publish Listings targeted at accounts in your company 
+### What You’ll Learn
+
+- How to blend TastyBytes Point-of-Sale and Marketplace Weather data to build analytics data products, then publish Listings targeted at accounts in your company
 - How to configure data privacy polices that are preserved in the consumer accounts that install the listings. Tag-based column masking, row-access, aggregation and projection policies will be created with database roles.
 - How to setup Data Metrics Functions to monitor data quality of the shared data products
 - How to share Iceberg Tables within a cloud region
@@ -35,144 +37,151 @@ In this lab you will experience the latest **Snowflake Horizon Access pillar** f
 - How to use Universal Search and Snowflake Copilot to explore data from all sources
 -->
 
-### What You’ll Need 
+### What You’ll Need
+
 - Basic knowledge of SQL, Database Concepts, Snowflake [Listings](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about)
 - Familiarity with [Snowsight Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs)
 
-### What You’ll Build 
+### What You’ll Build
+
 - Analytics data products for TastyBytes, that models a global food truck network with localized menu options in 15 countries, 30 major cities and 15 core brands
 - Listings comprised of metadata, data and application code, targeted at accounts in the same organization but in different cloud regions
 - Governance policies based on shared role-based-access-controls that are enforced at the target account consuming the listing
 - Install listings containing Iceberg Tables, then blend with local datasets to derive insights
-- Exploration of all shared and local data with Universal Search and Copilot 
+<!--
+- Exploration of all shared and local data with Universal Search and Copilot
+-->
 
 ### Prerequisites
+
 #### Create 3 Snowflake Trial Accounts in the same Snowflake Organization
+
 Signup for an AWS trial account [here](https://signup.snowflake.com/)
 
-   - Choose **AWS** as cloud provider, **Business Critical** edition, **AWS_US_WEST_2 (Oregon)** region
-  - Activate account with username `horizonadmin` (has ACCOUNTADMIN, ORGADMIN roles)
-  - Login and create a SQL Worksheet named _**Account Setup**_
-    >
-    > Note: you _can_ use an existing account that meets these requirements. Create a user named `horizonadmin` that is granted the ACCOUNTADMIN and ORGADMIN system roles.
+- Choose **AWS** as cloud provider, **Business Critical** edition, **AWS_US_WEST_2 (Oregon)** region
+- Activate trial account with admin user `horizonadmin`
+  - admin user has system roles: ACCOUNTADMIN, ORGADMIN, SYSADMIN
+- Login and create a SQL Worksheet named _**Account Setup**_
 
+<ins>Note:</ins> alternatively you _can_ use an existing account instead of a trial account, provided that account has the `ORGADMIN` system role enabled.
+
+- Create user `horizonadmin`, grant it ACCOUNTADMIN and ORGADMIN roles.
 
 Execute the following SQL commands in the _**Account Setup**_ worksheet to bootstrap:
-    
-  > ```sql
-    > USE ROLE accountadmin;
-    > SET my_user_var = CURRENT_USER();
-    > ALTER USER identifier($my_user_var) SET DEFAULT_ROLE = accountadmin;
-    > CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=small INITIALLY_SUSPENDED=TRUE;
-    > GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
-    > CREATE DATABASE IF NOT EXISTS snowflake_sample_data FROM SHARE sfc_samples.sample_data;
-    > GRANT IMPORTED PRIVILEGES ON DATABASE snowflake_sample_data TO public;
-    > 
-    >
-    > -- Create an AWS Consumer account
-    > USE ROLE orgadmin;
-    > CREATE ACCOUNT horizon_lab_aws_consumer
-    >   admin_name = horizonadmin
-    >   admin_password = 'FILL_IN_PASSWORD'
-    >   email = 'FILL_IN_EMAIL'
-    >   must_change_password = false
-    >   edition = business_critical
-    >   region = AWS_US_WEST_2;
-    > 
-    > -- Create an Azure Consumer account
-    > CREATE ACCOUNT horizon_lab_azure_consumer
-    >   admin_name = horizonadmin
-    >   admin_password = 'FILL_IN_PASSWORD'
-    >   email = 'FILL_IN_EMAIL'
-    >   must_change_password = false
-    >   edition = business_critical
-    >   region = AZURE_WESTEUROPE;
-    >
-    > -- Verify that all three accounts are now created. Also, get the URLs
-    > -- from the column account_url to log in to your consumer accounts later
-    > SHOW ORGANIZATION ACCOUNTS;
-    >
-    > -- Enable the ACCOUNTADMIN role on this account to enable global auto-fulfillment
-    > USE ROLE orgadmin;
-    > SELECT current_account_name();
-    > SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('!FILL IN CURRENT_ACCOUNT_NAME()!');
-    >
-    > -- PLEASE NOTE DOWN: "orgname-accountname" is the account format needed to add a connection to the Snowflake CLI
-    > SELECT current_organization_name() || '-' || current_account_name();
-    > ``` 
 
-  Login to the **HORIZON_LAB_AWS_CONSUMER** and **HORIZON_LAB_AZURE_CONSUMER** accounts as `horizonadmin` and run in a worksheet in each of the two accounts:
+```sql
+USE ROLE accountadmin;
+SET my_user_var = CURRENT_USER();
+ALTER USER identifier($my_user_var) SET DEFAULT_ROLE = accountadmin;
+CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=small INITIALLY_SUSPENDED=TRUE;
+GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
+CREATE DATABASE IF NOT EXISTS snowflake_sample_data FROM SHARE sfc_samples.sample_data;
+GRANT IMPORTED PRIVILEGES ON DATABASE snowflake_sample_data TO public;
 
-   > ```sql
-    > USE ROLE accountadmin;
-    > SET my_user_var = CURRENT_USER();
-    > ALTER USER identifier($my_user_var) SET DEFAULT_ROLE = accountadmin;
-    > CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=medium INITIALLY_SUSPENDED=TRUE;
-    > GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
-    > CREATE DATABASE IF NOT EXISTS snowflake_sample_data FROM SHARE sfc_samples.sample_data;
-    > GRANT IMPORTED PRIVILEGES ON DATABASE snowflake_sample_data TO public;
-    > 
-    > USE ROLE useradmin;
-    > CREATE OR REPLACE ROLE sales_emea_role
-    >      COMMENT = 'EMEA Sales role for Tasty Bytes';
-    >
-    > CREATE OR REPLACE ROLE sales_americas_role
-    >      COMMENT = 'Americas Sales role for Tasty Bytes';
-    >
-    > CREATE OR REPLACE ROLE sales_apj_role
-    >      COMMENT = 'APJ Sales role for Tasty Bytes';
-    >
-    > CREATE OR REPLACE ROLE sales_manager_role
-    >      COMMENT = 'Sales Manager (all-access) role for Tasty Bytes';
-    >
-    > -- grant all these roles to the login user
-    > GRANT ROLE sales_emea_role TO USER identifier($my_user_var);
-    > GRANT ROLE sales_americas_role TO USER identifier($my_user_var);
-    > GRANT ROLE sales_apj_role TO USER identifier($my_user_var);
-    > GRANT ROLE sales_manager_role TO USER identifier($my_user_var);
-    >
-    > SHOW ROLES;
-    > 
-    > 
-    > ```
+-- Create an AWS Consumer account
+USE ROLE orgadmin;
+CREATE ACCOUNT horizon_lab_aws_consumer
+  admin_name = horizonadmin
+  admin_password = 'FILL_IN_PASSWORD'
+  email = 'FILL_IN_EMAIL'
+  must_change_password = false
+  edition = business_critical
+  region = AWS_US_WEST_2;
+ 
+-- Create an Azure Consumer account
+CREATE ACCOUNT horizon_lab_azure_consumer
+  admin_name = horizonadmin
+  admin_password = 'FILL_IN_PASSWORD'
+  email = 'FILL_IN_EMAIL'
+  must_change_password = false
+  edition = business_critical
+  region = AZURE_WESTEUROPE;
+
+-- Verify that all three accounts are now created. Also, get the URLs
+-- from the column account_url to log in to your consumer accounts later
+SHOW ORGANIZATION ACCOUNTS;
+
+-- Enable the ACCOUNTADMIN role on this account to enable global auto-fulfillment
+USE ROLE orgadmin;
+SELECT current_account_name();
+SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('!FILL IN CURRENT_ACCOUNT_NAME()!');
+
+-- PLEASE NOTE DOWN: "orgname-accountname" is the account format needed to add a connection to the Snowflake CLI
+SELECT current_organization_name() || '-' || current_account_name();
+```
+
+Login to the **HORIZON_LAB_AWS_CONSUMER** and **HORIZON_LAB_AZURE_CONSUMER** accounts as `horizonadmin` and run the following in a worksheet in each of the two accounts:
+
+```sql
+USE ROLE accountadmin;
+SET my_user_var = CURRENT_USER();
+ALTER USER identifier($my_user_var) SET DEFAULT_ROLE = accountadmin;
+CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=medium INITIALLY_SUSPENDED=TRUE;
+GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
+CREATE DATABASE IF NOT EXISTS snowflake_sample_data FROM SHARE sfc_samples.sample_data;
+GRANT IMPORTED PRIVILEGES ON DATABASE snowflake_sample_data TO public;
+ 
+USE ROLE useradmin;
+CREATE OR REPLACE ROLE sales_emea_role
+      COMMENT = 'EMEA Sales role for Tasty Bytes';
+
+CREATE OR REPLACE ROLE sales_americas_role
+      COMMENT = 'Americas Sales role for Tasty Bytes';
+
+CREATE OR REPLACE ROLE sales_apj_role
+      COMMENT = 'APJ Sales role for Tasty Bytes';
+
+CREATE OR REPLACE ROLE sales_manager_role
+      COMMENT = 'Sales Manager (all-access) role for Tasty Bytes';
+
+-- grant all these roles to the login user
+GRANT ROLE sales_emea_role TO USER identifier($my_user_var);
+GRANT ROLE sales_americas_role TO USER identifier($my_user_var);
+GRANT ROLE sales_apj_role TO USER identifier($my_user_var);
+GRANT ROLE sales_manager_role TO USER identifier($my_user_var);
+
+SHOW ROLES;
+```
 
 #### Install Snowflake CLI and configure Connections to Snowflake accounts
 
-  - Install Python (3.8 or higher): `python --version`
-    - [Homebrew](https://brew.sh/) makes it simple to install python
-      - `% brew install python`
-      - (optional): `% sudo ln -s /usr/bin/python3 /usr/local/bin/python`
-  - Install [pipx](https://pipx.pypa.io/stable/installation/)
+- Install Python (3.8 or higher): `python --version`
+  - [Homebrew](https://brew.sh/) makes it simple to install python
+    - `% brew install python`
+    - (optional): `% sudo ln -s /usr/bin/python3 /usr/local/bin/python`
+- Install [pipx](https://pipx.pypa.io/stable/installation/) or [pip](https://macpaw.com/how-to/install-pip-mac)
   (MacOS)
-    - `% brew install pipx`
-    - `% pipx ensurepath`
-    - exit and open a new Terminal so path takes effect
-  - Install [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation#label-snowcli-install-pipx)
+  - `% brew install pipx`
+  - `% pipx ensurepath`
+  - exit and open a new Terminal so path takes effect
+- Install [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation#label-snowcli-install-pipx)
 
   Create CLI connections to the 3 accounts using [snow connection add](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/connecting/specify-credentials#how-to-add-credentials-using-a-sf-cli-connection-command):
-  - use connection names: `horizon-aws-provider, horizon-aws-consumer, horizon-azure-consumer`
-  - Snowflake CLI expects the account format <mark>orgname-accountname</mark>
-    - `SELECT current_organization_name() || '-' || current_account_name();` 
-  - enter password when prompted, just hit _**return**_ for the remaining prompts
+
+- use connection names: `horizon-aws-provider, horizon-aws-consumer, horizon-azure-consumer`
+- Snowflake CLI expects the account format **orgname-accountname**
+  - `SELECT current_organization_name() || '-' || current_account_name();`
+- enter password when prompted, just hit _**return**_ for the remaining prompts
   
 ```bash
-% snow connection add -n horizon-aws-provider -a [orgname]-[provider_accountname] -u horizonadmin -r accountadmin -w compute_wh
-% snow connection add -n horizon-aws-consumer -a [orgname]-horizon_lab_aws_consumer -u horizonadmin -r accountadmin -w compute_wh
-% snow connection add -n horizon-azure-consumer -a [orgname]-horizon_lab_azure_consumer -u horizonadmin -r accountadmin -w compute_wh
-% snow connection set-default "horizon-aws-provider"
-% snow connection test --connection horizon-aws-provider
-% snow connection test --connection horizon-aws-consumer
-% snow connection test --connection horizon-azure-consumer
+snow connection add -n horizon-aws-provider -a [orgname]-[provider_accountname] -u horizonadmin -r accountadmin -w compute_wh
+snow connection add -n horizon-aws-consumer -a [orgname]-horizon_lab_aws_consumer -u horizonadmin -r accountadmin -w compute_wh
+snow connection add -n horizon-azure-consumer -a [orgname]-horizon_lab_azure_consumer -u horizonadmin -r accountadmin -w compute_wh
+snow connection set-default "horizon-aws-provider"
+snow connection test --connection horizon-aws-provider
+snow connection test --connection horizon-aws-consumer
+snow connection test --connection horizon-azure-consumer
 
-# list all connections and check default
-% snow connection list
+# list all connections and check that default is horizon-aws-provider
+snow connection list
 
 # you can also manually edit the config.toml file to remove or modify connections
-% snow --info
+snow --info
 ```
 
 <!-- ------------------------ -->
 ## Citations and Terms of Use
+
 Duration: 1
 
 Raw text data provided for this lab is an extract from the [IMDB Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/)
@@ -187,16 +196,17 @@ Use of this dataset requires that we cite this ACL 2011 paper by Andrew Maas, et
   address   = {Portland, Oregon, USA},
   publisher = {Association for Computational Linguistics},
   pages     = {142--150},
-  url       = {http://www.aclweb.org/anthology/P11-1015}
+  url       = {<http://www.aclweb.org/anthology/P11-1015}>
 }
 
 [Weather Source LLC: frostbyte](https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL/weather-source-llc-weather-source-llc-frostbyte) Marketplace listing requires accepting terms of use by the Provider and Snowflake.
 
 <!-- ------------------------ -->
-## Horizon AWS Provider Account Setup 
+## Horizon AWS Provider Account Setup
+
 Duration: 10
 
-Clone the Lab Scripts repository to your local machine with `git`:
+Clone our [Horizon Quickstart Scripts](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing) repository to your local machine with `git`:
 
 ```bash
 mkdir ~/snowflakelabs
@@ -214,20 +224,21 @@ Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](htt
 
 ### Execute Setup SQL Scripts
 
-1. `100_Setup_Data_Model`: create the TastyBytes foundational data model. 
+1. `100_Setup_Data_Model`: create the TastyBytes foundational data model.
 [TastyBytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3) is a fictitious global food truck network that operates in 30 major cities located in 15 countries with localized menu options and brands. The single `Frostbytes_Tasty_Bytes` is organized in the following schemas:
-  - `RAW_CUSTOMER`: raw customer loyalty data with personally identifiable information (PII)
-  - `RAW_POS`: raw point-of-sale data denormalized by orders, menu, franchise and country 
-  - `HARMONIZED`: blended metrics for customers and orders
-  - `ANALYTICS`: analytic data that delivers insights for aggregate trends and drill down
+
+- `RAW_CUSTOMER`: raw customer loyalty data with personally identifiable information (PII)
+- `RAW_POS`: raw point-of-sale data denormalized by orders, menu, franchise and country
+- `HARMONIZED`: blended metrics for customers and orders
+- `ANALYTICS`: analytic data that delivers insights for aggregate trends and drill down
 b
-Use the __Run All__ pulldown command to run `100_Setup_Data_Model`:
+Use the **Run All** pulldown command to run `100_Setup_Data_Model`:
 
 ![Run All in Worksheet](assets/003_Run_All.png)
 
 2. `200_Setup_Data_Products`: build data assets to share in a Listing.
 
-In step 1(a) of thescript `200_Setup_Data_Products` you will acquire the <mark>Weather Source LLC</mark> listing from the Marketplace and install it as a shared database `FROSTBYTE_WEATHERSOURCE`.
+In step 1(a) of thescript `200_Setup_Data_Products` you will acquire the **Weather Source LLC** listing from the Marketplace and install it as a shared database `FROSTBYTE_WEATHERSOURCE`.
 
 ```sql
 -- Step 1(a) - Acquire "Weather Source LLC: frostbyte" Snowflake Marketplace Listing
@@ -247,12 +258,11 @@ In step 1(a) of thescript `200_Setup_Data_Products` you will acquire the <mark>W
 
 ![006_WeatherSource](assets/006_WeatherSource.png)
 
-Then proceed to execute all remaining steps in this script. This will create secure views, materialized views, functions and dynamic tables in the ANALYTICS schema, and an internal stage for sharing text data. 
+Then proceed to execute all remaining steps in this script. This will create secure views, materialized views, functions and dynamic tables in the ANALYTICS schema, and an internal stage for sharing text data.
 
-Check out all the new objects created in the ANALYTICS and HARMONIZED schemas in the Snowsight Object Explorer panel. You will later create a Listing to share all of these objects. 
+Check out all the new objects created in the ANALYTICS and HARMONIZED schemas in the Snowsight Object Explorer panel. You will later create a Listing to share all of these objects.
 
 ![Database-Explorer](assets/004_Database_Explorer.png)
-
 
 ### Upload Unstructured Data into an Internal Stage
 
@@ -272,153 +282,163 @@ snow stage list-files @frostbyte_tasty_bytes.movie_reviews.movie_stage
 Setup is now complete!
 
 <!-- ------------------------ -->
-## Create, Publish and Install a Data Listing 
+## Create, Publish and Install a Data Listing
+
 Duration: 20
 
 In this section you will create, publish, consume, alter, and monitor a [listing](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about).
+
 ### Build and Publish a Listing in the Provider Studio UI
 
- 1. Navigate to the Provider Studio and click the +Listing button in the top right:
+1. Navigate to the Provider Studio and click the +Listing button in the top right:
 
-![ProviderStudio](assets/101_ProviderStudio+Listing.png)
+    ![ProviderStudio](assets/101_ProviderStudio+Listing.png)
 
-2. Give your listing a meaningful title. Then select the option that "Only Specified Consumers" can discover the listing, and that it will be a free listing. Click "Next".
+2. Give your listing a meaningful title. Let's use TASTY_BYTES_ANALYTICS in this lab. Then select the option that "Only Specified Consumers" can discover the listing, and click "Next".
 
-![102_CreateListing](assets/102_CreateListing.png)
+    ![102_CreateListing](assets/102_CreateListing.png)
 
-3. Click "+ Select" and add the secure functions, the dynamic table, and all the secure views in the ANALYTICS and HARMOIZED schemas to this listing. 
+3. Click "+ Select" and add the secure functions, the dynamic table, and all the secure views in the ANALYTICS and HARMONIZED schemas to this listing.
 
-![103_CreateListing_SelectObjects](assets/103_CreateListings_SelectObjects.png)
+    ![103_CreateListing_SelectObjects](assets/103_CreateListing_SelectObjects.png)
 
 4. Continue the listing specification:
-- Add a description to document your listing. 
-  - For example: "This listing shares the Tasty Bytes Analytics and Harmonized data objects, including views, functions, and a dynamic table that provide a wealth of useful information."
 
-- Add your two secondary accounts for this lab (one on AWS and one on Azure) as consumer accounts for this listing. Specify each consumer account as ```org-name.account-name```, which you can obtain as follows:
-  ```sql
-  select current_organization_name() ||'.'||  current_account_name();
-  ```
+    - Add a description to document your listing.
+      - For example: "This listing shares the Tasty Bytes Analytics and Harmonized data objects, including views, functions, and a dynamic table that provide a wealth of useful information."
 
-- Further down in the same dialog, enter your email address to receive notifications about this listing. 
-- Click "SAVE & ADD MORE INFORMATION" to add even more metdata to your listing.
+    - Add your two secondary accounts for this lab (one on AWS and one on Azure) as consumer accounts for this listing. Specify each consumer account as ```org-name.account-name```, which you can obtain as follows:
 
-![104_CreateListing_AddConsumers](assets/104_CreateListing_AddConsumers.png)
+    ```sql
+    select current_organization_name() ||'.'||  current_account_name();
+    ```
+
+    - Further down in the same dialog, enter your email address to receive notifications about this listing.
+    - Click "SAVE & ADD MORE INFORMATION" to add even more metdata to your listing.
+
+    ![104_CreateListing_AddConsumers](assets/104_CreateListing_AddConsumers.png)
 
 5. You are now looking at your draft listing. Scroll down and add all optional information items to your listing.
 
-![105_CreateListing_OptionalInformation](assets/105_CreateListing_OptionalInformation.png)
+    ![105_CreateListing_OptionalInformation](assets/105_CreateListing_OptionalInformation.png)
 
-This will add additional sections to your listing. 
+    This will add additional sections to your listing.
 
-Click the ADD button in each of these sections to configure the data dictionary and to add business needs, sample queries, and attributes: 
-- Configuring the data dictionary allows you to select "featured" objects that consumers will see first in the dictionary.
-  - Select the views CUSTOMER_LOYALTY_METRICS_V and ORDERS_BY_POSTAL_CODE_V as well as the function FAHRENHEIT_TO_CELSIUS as featured objects.
-- You can grab some sample queries from the script 1000_Consumer_Queries.sql
-- Attributes allow you to specify service level objectives such as how often you intend to update the data product or other properties.
+    Click the ADD button in each of these sections to configure the data dictionary and to add business needs, sample queries, and attributes:
 
+    - Configuring the data dictionary allows you to select "featured" objects that consumers will see first in the dictionary.
+    - Select the views CUSTOMER_LOYALTY_METRICS_V and ORDERS_BY_POSTAL_CODE_V as well as the function FAHRENHEIT_TO_CELSIUS as featured objects.
+    - You can grab some sample queries from the script 1000_Consumer_Queries.sql
+    - Attributes allow you to specify service level objectives such as how often you intend to update the data product or other properties.
 
-![106_CreateListing_OptionalInfo_Part2](assets/106_CreateListing_OptionalInfo_Part2.png)
+    ![106_CreateListing_OptionalInfo_Part2](assets/106_CreateListing_OptionalInfo_Part2.png)
 
-6. In your draft listing, navigate to the section "Consumer Accounts". Click the three dots on the right to update the refresh frequency of the replica that Snowflake will automatiucally create to share the data product with your Azure account. 
-- For the purpose of this lab, set the replication frequency to 1 minute.
+6. In your draft listing, navigate to the section "Consumer Accounts". Click the three dots on the right to update the refresh frequency of the replica that Snowflake will automatiucally create to share the data product with your Azure account.
 
-![107_CreateListing_ReplicationFrequency](assets/107_CreateListing_ReplicationFrequency.png)
+    - For the purpose of this lab, set the replication frequency to 1 minute.
+
+    ![107_CreateListing_ReplicationFrequency](assets/107_CreateListing_ReplicationFrequency.png)
 
 7. Publish your listing.
 
-- You can preview your draft listing at any time. 
-- When done, click the blue "Publish Listing" button in the top rigt corner. 
-
-
+    - You can preview your draft listing at any time.
+    - When done, click the blue "Publish Listing" button in the top right corner.
 
 ### Install the Listing in your Consumer Accounts
 
-
 1. Switch to Consumer Account: Horizon_Lab_Azure_Consumer
-- In a different tab of your web browser login to your account "horizon_lab_azure_consumer" that you created in the Azure West Europe Region.
-- Use the menu in the bottom left of the UI to switch to the ACCOUNTADMIN role.
-- Navigate to "Data Products" and then "Private Sharing" in the left hand menu panel.
-- You will now see the listing that has been shared with this account.
-- Click the listing name (not the Get button) to open and examine the listing details. For example, explore the data dictionary for the views and fucntions.
 
-![201_Consumer_DiscoverListing](assets/201_Consumer_DiscoverListing.png)
+    - In a different tab of your web browser login to your account "horizon_lab_azure_consumer" that you created in the Azure West Europe Region.
+    - Use the menu in the bottom left of the UI to switch to the ACCOUNTADMIN role.
+    - Navigate to "Data Products" and then "Private Sharing" in the left hand menu panel.
+    - You will now see the listing that has been shared with this account.
+    - Click the listing name (not the Get button) to open and examine the listing details. For example, explore the data dictionary for the views and functions.
 
-2. After reviewing the listing, click the GET button. 
-- You may be asked for your name & email address if this is the first time a listing is being consumed in this Snowflake  account. Do provide this information, then go to your Email Inbox and validate the email that was sent.
-- After you click the GET button Snowflake performs a one-time setup of the replication process ([auto-fulfillment](https://other-docs.snowflake.com/en/collaboration/provider-listings-auto-fulfillment)) to the local region.
-- You may have to wait for several minutes for this one-time setup to complete. Click OK. We will check back later.
+    ![201_Consumer_DiscoverListing](assets/201_Consumer_DiscoverListing.png)
 
-![202_Consumer_WaitForReplica](assets/202_Consumer_WaitForReplica.png)
+2. After reviewing the listing, click the GET button.
+
+    - You may be asked for your name & email address if this is the first time a listing is being consumed in this Snowflake  account. Do provide this information, then go to your Email Inbox and validate the email that was sent.
+    - After you click the GET button Snowflake performs a one-time setup of the replication process ([auto-fulfillment](https://other-docs.snowflake.com/en/collaboration/provider-listings-auto-fulfillment)) to the local region.
+    - You may have to wait for several minutes for this one-time setup to complete. Click OK. We will check back later.
+
+    ![202_Consumer_WaitForReplica](assets/202_Consumer_WaitForReplica.png)
 
 3. Switch to Consumer Account: Horizon_Lab_AWS_Consumer
-- In yet another tab of your web browser login to your account "horizon_lab_aws_consumer".
-- Use the menu in the bottom left to switch to the ACCOUNTADMIN role.
-- Navigate to "Data Products" and then "Private Sharing".
-- Click the listing name (not the Get button) to open and examine the listing details.
 
-4. After reviewing the listing, click the GET button. 
-- Again, you may be asked to provide and validate your email address.
-- After you click the GET button you can immediately mount the shared data product. There is no replication setup in this case since the provider account is in the same cloud region as this consumer account.
-- Under "Options" leave the local database name as is, and select the SALES_MANAGER_ROLE as an additional role to have immediate access to the data product. 
-- Click GET to confirm 
+    - In yet another tab of your web browser login to your account "horizon_lab_aws_consumer".
+    - Use the menu in the bottom left to switch to the ACCOUNTADMIN role.
+    - Navigate to "Data Products" and then "Private Sharing".
+    - Click the listing name (not the Get button) to open and examine the listing details.
 
-![203_Consumer_GET](assets/203_Consumer_GET.png)
+4. After reviewing the listing, click the GET button.
 
-- You can now use a worksheet or the database explorer to examine the shared data as a consumer.
+    - Again, you may be asked to provide and validate your email address.
+    - After you click the GET button you can immediately mount the shared data product. There is no replication setup in this case since the provider account is in the same cloud region as this consumer account.
+    - Under "Options" leave the local database name as is (it should be TASTY_BYTES_ANALYTICS), and select SALES_MANAGER_ROLE as an additional role to have immediate access to the data product.
+    - Click GET to confirm
+
+    ![203_Consumer_GET](assets/203_Consumer_GET.png)
+
+    You can now use a worksheet or the database explorer to examine the shared data as a consumer.
 
 5. Observe live data sharing in action
-- Switch to the **AWS Provider** account where you published the listing
-- Insert or update some of the source data. You can use the following statement which uses [a very cool SQL feature](https://docs.snowflake.com/en/sql-reference/sql/select#label-select-cmd-examples-select-all-in-table-replace) to modify the columns produced by ```SELECT *```.  
-The syntax ```SELECT * REPLACE (<expression> AS <column_name>)``` returns all columns but replaces the column ```<column_name>``` with the ```<expression>```.
 
-```sql
--- re-insert existing data for Berlin but give it today's date as the valid date 
-INSERT INTO FROSTBYTE_TASTY_BYTES.WEATHER.HISTORY_DAY
-  SELECT * REPLACE  (current_date AS DATE_VALID_STD) 
-  FROM FROSTBYTE_TASTY_BYTES.WEATHER.HISTORY_DAY
-  WHERE city_name = 'Berlin'
-  ORDER BY date_valid_std DESC;
-  ```
+    - Switch to the **AWS Provider** account where you published the listing
+    - Insert or update some of the source data. You can use the following statement which uses [a very cool SQL feature](https://docs.snowflake.com/en/sql-reference/sql/select#label-select-cmd-examples-select-all-in-table-replace) to modify the columns produced by ```SELECT *```.  
+      - The syntax ```SELECT * REPLACE (<expression> AS <column_name>)``` returns all columns but replaces the column ```<column_name>``` with the ```<expression>```.
 
-- Switch back to your **Horizon_Lab_AWS_Consumer** account to see that the data changes are instantly visible. For example:
+    ```sql
+    -- re-insert existing data for Berlin but give it today's date as the valid date 
+    INSERT INTO FROSTBYTE_TASTY_BYTES.WEATHER.HISTORY_DAY
+      SELECT * REPLACE  (current_date AS DATE_VALID_STD) 
+      FROM FROSTBYTE_TASTY_BYTES.WEATHER.HISTORY_DAY
+      WHERE city_name = 'Berlin'
+      ORDER BY date_valid_std DESC;
+      ```
 
-```sql
-SELECT *
-FROM tasty_bytes_analytics.HARMONIZED.DAILY_WEATHER_V
-WHERE city_name = 'Berlin'
-ORDER BY date_valid_std DESC;
-```
+    - Switch back to your **Horizon_Lab_AWS_Consumer** account to see that the data changes are instantly visible. For example:
 
+    ```sql
+    SELECT *
+    FROM tasty_bytes_analytics.HARMONIZED.DAILY_WEATHER_V
+    WHERE city_name = 'Berlin'
+    ORDER BY date_valid_std DESC;
+    ```
 
 ## Listing Management and Monitoring
+
 Duration: 20
 
-### Use the Listing API to modify listing properties programmatically.
+### Use the Listing API to modify listing properties programmatically
 
 1. [SHOW LISTINGS](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings) in the AWS Provider account where you published the listing.
 
-![301_Provider_API_Show](assets/301_Provider_API_Show.png)
+    ![301_Provider_API_Show](assets/301_Provider_API_Show.png)
 
 2. Copy the Snowflake object name of your listing and use it in the subsequent [DESCRIBE LISTING](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) command.
-  - Note: If that listing name contains special characters other than the underscore, then the name must be in double quotes and is case-sensitive.
+
+    - Note: If that listing name contains special characters other than the underscore, then the name must be in double quotes and is case-sensitive.
+
 3. In the result of DESCRIBE LISTING, scroll to the right to the column [MANIFEST_YAML](https://other-docs.snowflake.com/en/progaccess/listing-manifest-reference) and copy its column value. This YAML file is a complete representation of the listing and enables programmatic management of listings.
 
-![302_Provider_API_Describe](assets/302_Provider_API_Describe.png)
+    ![302_Provider_API_Describe](assets/302_Provider_API_Describe.png)
 
 4. Paste the copied YAML into an [ALTER LISTING](https://other-docs.snowflake.com/en/sql-reference/sql/alter-listing) statement using the listing name obtained in step 2 above (Show Listing).
-- Make some changes in the YAML that you can easily verify in the UI and on the consumer side. For example, update the title and the first line of the description. 
-- Execute the ALTER LISTING statement.
 
-![303_Provider_API_AlterListing](assets/303_Provider_API_AlterListing.png)
+    - Make some changes in the YAML that you can easily verify in the UI and on the consumer side. For example, update the title and the first line of the description.
+    - Execute the ALTER LISTING statement.
+
+    ![303_Provider_API_AlterListing](assets/303_Provider_API_AlterListing.png)
 
 5. Verify the immediate effect of the ALTER LISTING statement
-- In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing. 
 
-![304_Provider_Studio](assets/304_Provider_Studio.png)
+    - In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing.
 
-- Switch to your consumer account Horizon_Lab_AWS_Consumer.
-- Navigate to "Data Products", then "Private Sharing", and open the listing page again. Refresh if needed to see the changes from the ALTER LISTING statement. 
+    ![304_Provider_Studio](assets/304_Provider_Studio.png)
 
+    - Switch to your consumer account Horizon_Lab_AWS_Consumer.
+    - Navigate to "Data Products", then "Private Sharing", and open the listing page again. Refresh if needed to see the changes from the ALTER LISTING statement.
 
 ### Monitor Auto Fulfillment status and cost
 
@@ -428,7 +448,7 @@ Time to revisit the second consumer account ("horizon_lab_azure_consumer") and t
 
 2. Click the GET button to mount the data product locally, as you did in the "horizon_lab_aws_consumer" account.
 
-3. Switch to the AWS Provider account and take the following steps to monitor replication status and cost. 
+3. Switch to the AWS Provider account and take the following steps to monitor replication status and cost.
 
 4. Navigate to the "Provider Studio", select "Listings" from the horizontal menu at the top, and open your listing.
 
@@ -436,46 +456,45 @@ Time to revisit the second consumer account ("horizon_lab_azure_consumer") and t
 
 6. Select the "Azure West Europe Region" to see the timestamp of the latest refresh to that region.
 
-![400_MonitorReplicationStatus](assets/400_MonitorReplicationStatus.png)
+    ![400_MonitorReplicationStatus](assets/400_MonitorReplicationStatus.png)
 
-7. Go back to the Provider Studio, select "Analytics" from the horizontal menu at the top. This is where summarized and detailed statistics about the usage of the listings will be displayed eventually. There is some delay in populating these statistics, but the following screenshots give you an idea of what you will see.   
+7. Go back to the Provider Studio, select "Analytics" from the horizontal menu at the top. This is where summarized and detailed statistics about the usage of the listings will be displayed eventually. There is some delay in populating these statistics, but the following screenshots give you an idea of what you will see.
 
-![401_Provider_Dashboard](assets/401_Provider_Dashboard.png)
+    ![401_Provider_Dashboard](assets/401_Provider_Dashboard.png)
 
-The same information as well as replication details can also be obtained from various views in the schema [SNOWFLAKE.DATA_SHARING_USAGE](https://docs.snowflake.com/en/sql-reference/data-sharing-usage) and [SNOWFLAKE.ORGANIZATION_USAGE](https://docs.snowflake.com/en/sql-reference/organization-usage):
+    The same information as well as replication details can also be obtained from various views in the schema [SNOWFLAKE.DATA_SHARING_USAGE](https://docs.snowflake.com/en/sql-reference/data-sharing-usage) and [SNOWFLAKE.ORGANIZATION_USAGE](https://docs.snowflake.com/en/sql-reference/organization-usage):
 
-```sql
-use database SNOWFLAKE;
+    ```sql
+    use database SNOWFLAKE;
 
-select * from DATA_SHARING_USAGE.LISTING_ACCESS_HISTORY;
+    select * from DATA_SHARING_USAGE.LISTING_ACCESS_HISTORY;
 
-select * from DATA_SHARING_USAGE.LISTING_AUTO_FULFILLMENT_DATABASE_STORAGE_DAILY;
+    select * from DATA_SHARING_USAGE.LISTING_AUTO_FULFILLMENT_DATABASE_STORAGE_DAILY;
 
-select * from DATA_SHARING_USAGE.LISTING_AUTO_FULFILLMENT_REFRESH_DAILY;
+    select * from DATA_SHARING_USAGE.LISTING_AUTO_FULFILLMENT_REFRESH_DAILY;
 
-select * from DATA_SHARING_USAGE.LISTING_EVENTS_DAILY;
+    select * from DATA_SHARING_USAGE.LISTING_EVENTS_DAILY;
 
-select * from DATA_SHARING_USAGE.LISTING_TELEMETRY_DAILY;
+    select * from DATA_SHARING_USAGE.LISTING_TELEMETRY_DAILY;
 
-select * from ORGANIZATION_USAGE.LISTING_AUTO_FULFILLMENT_USAGE_HISTORY;
+    select * from ORGANIZATION_USAGE.LISTING_AUTO_FULFILLMENT_USAGE_HISTORY;
 
-select * from ORGANIZATION_USAGE.REPLICATION_USAGE_HISTORY:
-```
+    select * from ORGANIZATION_USAGE.REPLICATION_USAGE_HISTORY;
+    ```
 
 8. The [replication cost](https://other-docs.snowflake.com/en/collaboration/provider-understand-cost-auto-fulfillment) can also be monitored in the UI. Navigate to the "Admin" menu in the left-hand panel, then to "Cost Management" and "Consumption". Switch the filter from "All Services" to "Cross-Cloud Auto-Fulfillment". Here is an example from a different test replicating a listing to the region Azure UK South:
 
-![402_Provider_LAF_Cost_Compute](assets/402_Provider_LAF_Cost_Compute.png)
+    ![402_Provider_LAF_Cost_Compute](assets/402_Provider_LAF_Cost_Compute.png)
 
- Additional filters enable you to select a time period, pick a specific target region, or toggle between compute cost, storage cost, and data transfer volume incurred by the listing auto-fulfillment.
+    Additional filters enable you to select a time period, pick a specific target region, or toggle between compute cost, storage cost, and data transfer volume incurred by the listing auto-fulfillment.
 
-![403_Provider_LAF_DataTransfer](assets/403_Provider_LAF_DataTransfer.png)
+    ![403_Provider_LAF_DataTransfer](assets/403_Provider_LAF_DataTransfer.png)
 
-![404_Provider_LAF_DataTransfer_Details](assets/404_Provider_LAF_DataTransfer_Details.png)
+    ![404_Provider_LAF_DataTransfer_Details](assets/404_Provider_LAF_DataTransfer_Details.png)
 
+### Enable and Consume Change Tracking
 
-### Enable and Consume Change Tracking 
-
-The provider of a listing can choose to enable [change tracking](https://docs.snowflake.com/en/user-guide/streams) on the some or all of the tables or views that are shared in a listing. This enables the consumer to track the data changes. Let's do that with the view DAILY_WEATHER_V: 
+The provider of a listing can choose to enable [change tracking](https://docs.snowflake.com/en/user-guide/streams) on the some or all of the tables or views that are shared in a listing. This enables the consumer to track the data changes. Let's do that with the view DAILY_WEATHER_V:
 
 ```sql
 -- in the provider account:
@@ -514,22 +533,22 @@ SELECT METADATA$ACTION, METADATA$ISUPDATE, *
 FROM stream_daily_weather_changes;
 ```
 
-
 <!-- ------------------------ -->
-## Protect Data with Governance Policies 
+## Protect Data with Governance Policies
+
 Duration: 20
 
 This section of the lab introduces several capabilities for data providers to restrict the usage of their products by consumers.
 
 ### Cross-Account Row-Level Access Policies
 
-Frosty the data steward is concerned that our listing that we have shared includes the view ANALYTICS.CUSTOMER_LOYALTY_METRICS_V which contains sensitive information that must not be accessible to all data consumers. He requests the following restrictions: 
+Frosty the data steward is concerned that our listing that we have shared includes the view ANALYTICS.CUSTOMER_LOYALTY_METRICS_V which contains sensitive information that must not be accessible to all data consumers. He requests the following restrictions:
 
 ![500_DataSteward_1](assets/500_DataSteward_1.png)
 
-Let's implement a [row-level access policy](https://docs.snowflake.com/en/user-guide/security-row-intro) to implement the required access control. Note the usage of the context function **current_account_name()** to detect which consumer account is accessing the shared view. 
+Let's implement a [row-level access policy](https://docs.snowflake.com/en/user-guide/security-row-intro) to implement the required access control. Note the usage of the context function **current_account_name()** to detect which consumer account is accessing the shared view.
 
-<mark>Fill in AWS Provider Account Name below</mark>
+**Fill in AWS Provider Account Name below**
 
 ```sql
 use database frostbyte_tasty_bytes;
@@ -555,19 +574,20 @@ Then apply the policy to the shared view:
 ```sql
 ALTER VIEW CUSTOMER_LOYALTY_METRICS_V ADD ROW ACCESS POLICY country_filter ON (country);
 ```
+
 Now switch to the consumer account HORIZON_LAB_AWS_CONSUMER to confirm that only US and Canadian client data is visible in the view ANALYTICS.CUSTOMER_LOYALTY_METRICS_V.
 
 After the replication interval of 1 minute you will also see that the consumer account HORIZON_LAB_AZURE_CONSUMER can only see the Eurpean clients.
 
+### Cross-Account Column Masking
 
-###  Cross-Account Column Masking 
 But, Frosty the data steward is not yet satisfied:
 
 ![501_DataSteward_2](assets/501_DataSteward_2.png)
 
-Ok, let's get to work. 
+Ok, let's get to work.
 
-To make things easy, let's first create a tag that you can use to indicate which columns contain PII data. 
+To make things easy, let's first create a tag that you can use to indicate which columns contain PII data.
 
 ```sql
 CREATE SCHEMA IF NOT EXISTS tags;
@@ -594,7 +614,7 @@ Optionally, you can also use the UI to add or see the tags on these columns:
 
 Now let's create a slightly more advanced [policy to mask the PII columns depending on their tag](https://docs.snowflake.com/en/user-guide/tag-based-masking-policies) value and the consmer account:
 
-<mark>Fill in AWS Provider Account Name below</mark>
+**Fill in AWS Provider Account Name below**
 
 ```sql
 CREATE OR REPLACE MASKING POLICY pii_string_mask AS (value STRING) RETURNS STRING ->
@@ -633,15 +653,15 @@ After the replication interval of 1 minute you will see in the account HORIZON_L
 
 ### Database Roles - Provider Side
 
-Just when we thought we had all the necessary governance controls in place, Frosty has a new requirement for us. 
+Just when we thought we had all the necessary governance controls in place, Frosty has a new requirement for us.
 
 ![503_DataSteward_3](assets/503_DataSteward_3.png)
 
-So far we have been using the context function **CURRENT_ACCOUNT_NAME()** in our governance policies to control which consumer account can see which data. Now Frosty is telling us, that this needs to be more fine-grained down to indivudal roles on the consumer side. 
+So far we have been using the context function **CURRENT_ACCOUNT_NAME()** in our governance policies to control which consumer account can see which data. Now Frosty is telling us, that this needs to be more fine-grained down to indivudal roles on the consumer side.
 
 We will be using roles and [database roles](https://docs.snowflake.com/en/sql-reference/sql/create-database-role) for 3 different continents. Let's check that we have the correct roles in place.
 
-On the AWS Provider account, use **show database roles** to confirm that you have 4 database roles in place. Else create them now. 
+On the AWS Provider account, use **show database roles** to confirm that you have 4 database roles in place. Else create them now.
 
 ```sql
 show database roles in database FROSTBYTE_TASTY_BYTES;
@@ -673,11 +693,9 @@ grant select on view  ANALYTICS.CUSTOMER_LOYALTY_METRICS_V
              to database role tastybytes_manager_role; 
 ```
 
-
 Next, use the context function [**IS_DATABASE_ROLE_IN_SESSION()**](https://docs.snowflake.com/en/sql-reference/functions/is_database_role_in_session) to recreate our row-level access policy to define which role can see customer loyality data from which country.
 
-<mark>Fill in Provider Account Name in the last WHEN clause of the policy below</mark>
-
+**Fill in Provider Account Name in the last WHEN clause of the policy below**
 
 ```sql
 use database frostbyte_tasty_bytes;
@@ -685,7 +703,7 @@ use schema analytics;
 
 ALTER VIEW CUSTOMER_LOYALTY_METRICS_V DROP ROW ACCESS POLICY country_filter;
 
-<mark>Fill in Provider Account Name below</mark>
+-- Fill in Provider Account Name below
 
 CREATE OR REPLACE ROW ACCESS POLICY country_filter AS (country string) 
 RETURNS boolean ->
@@ -717,7 +735,7 @@ ALTER VIEW CUSTOMER_LOYALTY_METRICS_V
       ADD ROW ACCESS POLICY country_filter ON (country);
 ```
 
-For a larger number of roles and countries you can certainly use a mapping table from role to country so that the policy simply performs a lookup in the mapping table. 
+For a larger number of roles and countries you can certainly use a mapping table from role to country so that the policy simply performs a lookup in the mapping table.
 
 The final step in the provider account is to share the database roles to the consumer accounts along with the data product.  This is achieved by [granting the database roles to the share](https://docs.snowflake.com/en/sql-reference/sql/grant-database-role-share):
 
@@ -729,6 +747,7 @@ GRANT DATABASE ROLE tastybytes_americas_role TO SHARE <share_name>;
 GRANT DATABASE ROLE tastybytes_apj_role      TO SHARE <share_name>;
 GRANT DATABASE ROLE tastybytes_manager_role  TO SHARE <share_name>;
 ```
+
 Here are two options how to find the share name for your listing:
 
 **Option 1:**
@@ -736,17 +755,17 @@ Here are two options how to find the share name for your listing:
 In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing. In the section "Data Product" you find the name of the Secure Share that bundles the shared data objects.
 ![602_DMF_AddTableToShare_1](assets/602_DMF_AddTableToShare_1.png)
 
-
 **Option 2:**
 
 Use the SHOW SHARES command:
 
 ![504_ShowShares](assets/504_ShowShares.png)
 
-Copy the share name to a text file or worksheet because you will need it again later. 
+Copy the share name to a text file or worksheet because you will need it again later.
 
 ### Database Roles - Consumer Side
-To complete the configuration of cross-account role-based access control you need to assign the shared database roles to local account roles in the consumer roles. 
+
+To complete the configuration of cross-account role-based access control you need to assign the shared database roles to local account roles in the consumer roles.
 
 Switch to your consumer accounts.  
 
@@ -760,7 +779,8 @@ CREATE OR REPLACE ROLE sales_americas_role COMMENT = 'Americas Sales role ';
 CREATE OR REPLACE ROLE sales_apj_role      COMMENT = 'APJ Sales role ';
 CREATE OR REPLACE ROLE sales_manager_role  COMMENT = 'Manager (all-access) role';
 ```
-In a real-world scenario you would now assign each of these roles to different users. For simplicity in this lab, grant all of these roles to yourself: 
+
+In a real-world scenario you would now assign each of these roles to different users. For simplicity in this lab, grant all of these roles to yourself:
 
 ```sql
 SET my_user_var  = CURRENT_USER();
@@ -770,7 +790,7 @@ GRANT ROLE sales_apj_role      TO USER identifier($my_user_var);
 GRANT ROLE sales_manager_role  TO USER identifier($my_user_var);
 ```
 
-And finally, grant the shared database roles to the local account roles. This connects these local consumers roles to the row-access policy that you create on the provider side. 
+And finally, grant the shared database roles to the local account roles. This connects these local consumers roles to the row-access policy that you create on the provider side.
 
 ```sql
 use database TASTY_BYTES_ANALYTICS;
@@ -779,22 +799,22 @@ grant database role tastybytes_americas_role to role sales_americas_role;
 grant database role tastybytes_apj_role      to role sales_apj_role; 
 grant database role tastybytes_manager_role  to role sales_manager_role;
 ```
+
 The following picture illustrates the use of our database roles in this data sharing scenario.
 
 ![505_Database_Roles_Sharing](assets/505_Database_Roles_Sharing.png)
 
 Now switch to the different local roles (sales_emea_role, sales_apj_role, etc) in each of your consumer accounts to verify that each local role can only see those rows in the CUSTOMER_LOYALTY_METRICS_V view that are permitted by the row-level access policy in the provider account.
 
-
 ### Aggregation and Projection Policies
 
 ![550_DataSteward_4](assets/550_DataSteward_4.png)
 
-Frosty the data steward has a new requirement for us. In the consumer accounts, only admins and managers may see the detailed per-customer loyalty data. Anyone else may see aggregated data only. 
+Frosty the data steward has a new requirement for us. In the consumer accounts, only admins and managers may see the detailed per-customer loyalty data. Anyone else may see aggregated data only.
 
 Create the following [aggregation policy](https://docs.snowflake.com/en/user-guide/aggregation-policies) to implement this requirement:
 
-<mark>Fill in AWS Provider Account Name below</mark>
+**Fill in AWS Provider Account Name below**
 
 ```sql
 CREATE OR REPLACE AGGREGATION POLICY tasty_aggregation_policy
@@ -837,9 +857,9 @@ Switch back to your AWS Provider account and issue the following command to deac
 ALTER TABLE analytics.CUSTOMER_LOYALTY_METRICS_V UNSET AGGREGATION POLICY;
 ```
 
-Next, let's also create a [projection policy](https://docs.snowflake.com/en/user-guide/projection-policies) that prevents the **city** column from appearing in a result set but allows its usage in predicates to the restrict a query result: 
+Next, let's also create a [projection policy](https://docs.snowflake.com/en/user-guide/projection-policies) that prevents the **city** column from appearing in a result set but allows its usage in predicates to the restrict a query result:
 
-<mark>Fill in AWS Provider Account Name below</mark>
+**Fill in AWS Provider Account Name below**
 
 ```sql
 CREATE OR REPLACE PROJECTION POLICY tasty_projection_policy
@@ -859,7 +879,6 @@ ALTER VIEW analytics.CUSTOMER_LOYALTY_METRICS_V
   MODIFY COLUMN city 
   SET PROJECTION POLICY tasty_projection_policy;
 ```
-
 
  Switch to your consumer account **horizon_lab_aws_consumer** again to explore the effect of the projection policy on the results or the following queries:
 
@@ -887,15 +906,15 @@ FROM analytics.CUSTOMER_LOYALTY_METRICS_V
 WHERE city = 'Melbourne' AND last_name = 'Arellano';
 ```
 
-
 ## Publish and Monitor Data Quality Metrics for Listings
+
 Duration: 15
 
 In this section the data provider will capture [data quality metrics](https://docs.snowflake.com/en/user-guide/data-quality-intro) and share them with the data consumers. In particular, we want to monitor the data quality in the view ANALYTICS.ORDERS_BY_POSTAL_CODE_V.
 
 ### Assign Built-in and Custom Data Quality Metrics to Shared Data
 
-On AWS Provider account, execute the following commands to create a database where we will define any custom quality functions. 
+On AWS Provider account, execute the following commands to create a database where we will define any custom quality functions.
 
 ```sql
 use role accountadmin;
@@ -904,7 +923,7 @@ use database tasty_bytes_quality;
 create schema dq_functions;
 ```
 
-Next, let's define how often the quality of ORDERS_BY_POSTAL_CODE_V should be checked. For a table, the quality checks can be triggered by data changes or executed on a schedule. For views, the quality metrics can (currently) be evaluated on a schedule. 
+Next, let's define how often the quality of ORDERS_BY_POSTAL_CODE_V should be checked. For a table, the quality checks can be triggered by data changes or executed on a schedule. For views, the quality metrics can (currently) be evaluated on a schedule.
 
 Let's set the schedule to the shortest possible interval, which is 5 minutes:
 
@@ -957,7 +976,7 @@ ALTER VIEW FROSTBYTE_TASTY_BYTES.ANALYTICS.ORDERS_BY_POSTAL_CODE_V
   ON (count_order);
 ```
 
-Use the following command to verify that all three quality metrics have been scheduled correctly. Any permission problems would be reflected in the column "schedule_status". Possible status values are [documented here](https://docs.snowflake.com/sql-reference/functions/data_metric_function_references#returns). 
+Use the following command to verify that all three quality metrics have been scheduled correctly. Any permission problems would be reflected in the column "schedule_status". Possible status values are [documented here](https://docs.snowflake.com/sql-reference/functions/data_metric_function_references#returns).
 
 ```sql
   SELECT schedule_status, *
@@ -967,13 +986,12 @@ Use the following command to verify that all three quality metrics have been sch
       REF_ENTITY_DOMAIN => 'VIEW'  )
   );
 ```  
+
 ![600_DMF_Status](assets/600_DMF_Status.png)
 
 After 5 minutes you can start observing quality metrics in the [default event table](https://docs.snowflake.com/en/user-guide/data-quality-working#view-the-dmf-results) where all quality results are recorded:
 
-  
-  
-<mark>Unfortuately, accessing **snowflake.local.data_quality_monitoring_results** is not yet available in Snowflake trial accounts. Skip ahead to the next section *Sharing Data quality Metrics* if you are using a trial account.</mark>
+**Unfortunately, accessing `snowflake.local.data_quality_monitoring_results` is not yet available in Snowflake trial accounts!** Please skip ahead to the next section _Sharing Data Quality Metrics_ if you are using a trial account.
 
 ```sql
 SELECT scheduled_time, measurement_time, metric_name, metric_schema,
@@ -981,16 +999,16 @@ SELECT scheduled_time, measurement_time, metric_name, metric_schema,
 FROM snowflake.local.data_quality_monitoring_results  /* not yet available in trial accounts! */
 ORDER BY measurement_time DESC;
 ```
+
 ![601_DMF_Results](assets/601_DMF_Results.png)
 
-Additionally, you could define [Alerts](https://docs.snowflake.com/en/user-guide/alerts) to watch the data quality metrics and take action automatically if acceptable thresholds are exceeded. For example, if the number of outliers reported by our custom quality function exceeds a certain value an alert could copy the offending rows into an exception table for review and send an [email notification](https://docs.snowflake.com/en/user-guide/email-stored-procedures). 
-
-  
+Additionally, you could define [Alerts](https://docs.snowflake.com/en/user-guide/alerts) to watch the data quality metrics and take action automatically if acceptable thresholds are exceeded. For example, if the number of outliers reported by our custom quality function exceeds a certain value an alert could copy the offending rows into an exception table for review and send an [email notification](https://docs.snowflake.com/en/user-guide/email-stored-procedures).
 
 ### Sharing Data Quality Metrics
-How to share quality metrics from the event table with data consumers? At the time of authoring this lab (May 2024) event tables cannot be shared in a Listing directly. Similarly, views, streams, and dynamic tables are not yet an option for sharing data quality events. 
 
-And since Snowflake trial accounts cannot access the event table (yet!), let's setup a task that regularly inserts data quality metrics into a table for sharing: 
+How to share quality metrics from the event table with data consumers? At the time of authoring this lab (May 2024) event tables cannot be shared in a Listing directly. Similarly, views, streams, and dynamic tables are not yet an option for sharing data quality events.
+
+And since Snowflake trial accounts cannot access the event table (yet!), let's setup a task that regularly inserts data quality metrics into a table for sharing:
 
 ```sql
 USE DATABASE FROSTBYTE_TASTY_BYTES;
@@ -1044,9 +1062,9 @@ ALTER TASK subset_quality_events RESUME;
 
 Now you can add the table "shared_quality_events" to the shared data product. Here are 2 options how you can so this.
 
-**Option 1: Programmatically** 
+**Option 1: Programmatically**
 
-Grant the share the necessary access to the "shared_quality_events" table. You should already have the share name from the early section on Database Roles. Else, get the share name as in the first step of option 2 below. 
+Grant the share the necessary access to the "shared_quality_events" table. You should already have the share name from the early section on Database Roles. Else, get the share name as in the first step of option 2 below.
 
 ```sql
 GRANT USAGE ON SCHEMA FROSTBYTE_TASTY_BYTES.dq TO SHARE <share_name>;
@@ -1054,7 +1072,7 @@ GRANT USAGE ON SCHEMA FROSTBYTE_TASTY_BYTES.dq TO SHARE <share_name>;
 GRANT SELECT ON FROSTBYTE_TASTY_BYTES.dq.shared_quality_events TO SHARE <share_name>;
 ```
 
-**Option 2: In the UI** 
+**Option 2: In the UI**
 
 Take the following 3 steps in the UI:
 
@@ -1064,12 +1082,13 @@ Take the following 3 steps in the UI:
 2. You are now looking at a page detailing the underlying share. In the section "Data", click the "Edit" button:
 ![603_DMF_AddTableToShare_2](assets/603_DMF_AddTableToShare_2.png)
 
-3. Now you can open the data explorer to find and select the table "dq.shared_quality_events". Click "Done" and "Save" to finalize the update of your data product. 
+3. Now you can open the data explorer to find and select the table "dq.shared_quality_events". Click "Done" and "Save" to finalize the update of your data product.
 ![604_DMF_AddTableToShare_3](assets/604_DMF_AddTableToShare_3.png)
 
 4. Switch to your consumer account "horizon_lab_aws_consumer" to verify that the data quality metrics are immediately visible as a new table in the data product. In the second consumer account "horizon_lab_azure_consumer" you will see the same after the 1 minute replication interval.
 
 5. Go back to your provider account and suspend the task, to save credits in your trial account.
+
 ```sql
   ALTER TASK subset_quality_events SUSPEND;
   
@@ -1077,26 +1096,29 @@ Take the following 3 steps in the UI:
   UNSET DATA_METRIC_SCHEDULE;
 ```
 
-
 <!-- ------------------------ -->
 ## Create, Publish and Install a Native Application Listing
+
 Duration: 20
 
-The [Snowflake Native Application Framework](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/native-apps/overview) provides developers the ability to create data intensive applications that run *within* the Snowflake platform with versioning controls.
-- Native Apps allow sharing of data and related business logic with other Snowflake accounts. 
-- Native Apps are shared with Consumer accounts using a Listing. 
+The [Snowflake Native Application Framework](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/native-apps/overview) provides developers the ability to create data intensive applications that run _within_ the Snowflake platform with versioning controls.
+
+- Native Apps allow sharing of data and related business logic with other Snowflake accounts.
+- Native Apps are shared with Consumer accounts using a Listing.
   - A listing can be free or paid, published on Marketplace or to specific accounts
 - Rich visualizations can be include in the application with Streamlit.
 
 ### Native App Workflow
+
 ![High Level View of Snowflake Native App Framework](assets/native-app-framework.jpg)
 
-You will build a native app that visualizes Tasty Bytes food truck Sales over Time by City. 
+You will build a native app that visualizes Tasty Bytes food truck Sales over Time by City.
 
-The app will allow filtering on Year and City, while displaying the underlying raw data and associated SQL query. 
+The app will allow filtering on Year and City, while displaying the underlying raw data and associated SQL query.
 Consumer account admins responsible for installing the application will supply a country lookup table that restricts what is shown by Country using a row-access policy.
 
 ### Overview of Project Structure
+
 Here is the directory structure of the code repository that was cloned or downloaded from GitHub earlier, relevant to `app` artifacts for the native app:
 
 ```plaintext
@@ -1120,6 +1142,7 @@ Here is the directory structure of the code repository that was cloned or downlo
 >`setup_script.sql` - defines all Snowflake objects used within the application. Runs every time a user installs the application, such as when a Consumer account installs the listing.
 
 Here is a snippet from `setup_script.sql` that shows how a row-access policy limits country sales based on consumer region and role.
+
 ```sql
 -- Create Row-Access Policy to limit access by Consumer region using a local mapping table
 CREATE OR REPLACE TABLE app_instance_schema.region_country_map(region STRING, country STRING);
@@ -1157,7 +1180,6 @@ ALTER VIEW app_instance_schema.orders_v
 
 Refer to the [Getting Started with Native Apps](https://quickstarts.snowflake.com/guide/getting_started_with_native_apps/index.html?index=..%2F..index#0) Quickstart for more details.
 
-
 ### Create Application Package using Snowflake CLI
 
 Now let's create the Snowflake Application Package from the project files in our repo!
@@ -1192,7 +1214,7 @@ The `app version create` command will upload source files to a stage and create 
 Setting the default release version and patch is a required step before the application package can be published in a listing.
 Documentation for publishing native applications is [here](https://other-docs.snowflake.com/en/native-apps/provider-publishing-app-package#workflow-for-publishing-an-application-package)
 
-You should now see the <mark>HORIZON_QUICKSTART_PACKAGE</mark> listed under the `Databases` panel in Snowsight.
+You should now see the **HORIZON_QUICKSTART_PACKAGE** listed under the `Databases` panel in Snowsight.
 
 ![HORIZON_QUICKSTART_APP](assets/horizon_quickstart_app_pkg.jpg)
 
@@ -1207,7 +1229,7 @@ Navigate to **Provider Studio** (under Data Products) and click on `+ Listing` t
 Now select the `HORIZON_QUICKSTART_PACKAGE` and fill in a brief description using the rich text editor.
 You can use this text to get started, but feel free to get creative!
 
-> _[Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#0) is a fictitious global food truck network_ 
+> _[Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#0) is a fictitious global food truck network_
 > _that is on a mission to serve unique food options with high quality items in a safe, convenient and cost effective way._
 > _In order to drive forward on their mission, Tasty Bytes is beginning to leverage the Snowflake Data Cloud._
 >
@@ -1217,7 +1239,7 @@ You can use this text to get started, but feel free to get creative!
 
 Add 2 Consumer Accounts: `<YOUR-ORGNAME>.HORIZON_LAB_AWS_CONSUMER` and `<YOUR-ORGNAME>.HORIZON_LAB_AZURE_CONSUMER`
 
-The addition of a consumer account in a different cloud (or region) will reveal the auto-fulfillment panel. 
+The addition of a consumer account in a different cloud (or region) will reveal the auto-fulfillment panel.
 Provide your email to receive notifications and **Publish**
 
 ![Publish Listing](assets/create-native-app-listing-detail.jpg)
@@ -1226,12 +1248,11 @@ Initially the auto-fulfillment frequency is set to 1 Day, you can change it to 1
 
 ![Update Refresh Frequency](assets/manage-regions-replication.jpg)
 
-
 ### Install the Tasty Bytes Sales App on Azure Consumer (HORIZON_LAB_AZURE_CONSUMER)
 
 We are now at the moment of truth! ![snowflake](assets/snowflake-icon.jpg)
 
-<mark>HORIZON_LAB_AZURE_CONSUMER</mark>
+**Switch to the HORIZON_LAB_AZURE_CONSUMER account**
 
 With listing auto-fulfillment, replication will only be initiated from Provider AWS region to Consumer Azure region when there is a request.
 Navigate to Snowsight `Data Products -> Private Sharing` to acquire the Tasty Bytes Global Sales application:
@@ -1240,7 +1261,7 @@ Navigate to Snowsight `Data Products -> Private Sharing` to acquire the Tasty By
 
 While the application objects are being delivered cross-cloud, we can now switch to the local AWS region consumer and install immediately.
 
-<mark>HORIZON_LAB_AWS_CONSUMER</mark>
+**Switch to the HORIZON_LAB_AWS_CONSUMER account**
 
 ![Application Install on AWS](assets/aws-install-app.jpg)
 
@@ -1254,11 +1275,12 @@ Now try adding a few cities in addition to _Vancouver_:
 
 Tasty Bytes is sold in 15 countries and 30 cities worldwide.
 Consider these questions and see if you can come up with convincing answers:
+
   1. What is the query that generates the city list in the Streamlit graph? [Hint: see `frosty_bytes_sis.py`]
   2. How many cities can be selected? If not all, why not? [Hint: see `setup_script.sql`]
   3. Try different roles [`ACCOUNTADMIN`,`SALES_MANAGER_ROLE`,`PUBLIC`] - does the city list change?
 
-Now it is time to return to <mark>HORIZON_LAB_AZURE_CONSUMER</mark> and check if auto-fulfillment has completed...
+Now it is time to return to **HORIZON_LAB_AZURE_CONSUMER** and check if auto-fulfillment has completed...
 
 Open the application and again while it is spinning up, click on the `Manage Access` button to give **PUBLIC** access.
 
@@ -1273,7 +1295,7 @@ Try adding a few cities in addition to _Vancouver_ as we did with the AWS US Wes
 Streamlit does not currently allow role-based policies because of security concerns, so only the region mapping in the policy will apply.
 ```
 
-To observe how the row-access policy evaluation of `current_role()` works in an application instance, outside of Streamlit, step through this SQL snippet in a `Worksheet` on <mark>HORIZON_LAB_AWS_CONSUMER</mark> and <mark>HORIZON_LAB_AZURE_CONSUMER</mark> accounts:
+To observe how the row-access policy evaluation of `current_role()` works in an application instance, outside of Streamlit, step through this SQL snippet in a `Worksheet` on the **HORIZON_LAB_AWS_CONSUMER** and **HORIZON_LAB_AZURE_CONSUMER** accounts:
 
 ```sql
 USE APPLICATION TASTY_BYTES_GLOBAL_SALES;
@@ -1294,85 +1316,141 @@ USE ROLE SALES_MANAGER_ROLE;
 select distinct primary_city from tasty_bytes_global_sales.app_instance_schema.orders_v;
 ```
 
-
 <!-- ------------------------ -->
 ## Share Snowflake-Managed Iceberg Tables
+
 Duration: 10
 
 Iceberg tables in Snowflake combine the performance and query semantics of regular Snowflake tables with external cloud storage managed by the customer. Snowflake supports Iceberg tables that use the Apache Parquet file format.
 
 Creating and writing data into a Snowflake Iceberg table is beyond the scope of this lab; we will focus only on the Consumer side of Iceberg table sharing.
 
-Using the method outlined in [Getting Started with Iceberg Tables](https://quickstarts.snowflake.com/guide/getting_started_iceberg_tables/index.html?index=..%2F..index#0) Quickstart, create Iceberg Tables and policies based on what we created in the previous lab section:
-- Provider AWS Account: create an Iceberg Table `ICEBERG_LAB.RAW_CUSTOMER.CUSTOMER_LOYALTY` from the `FROSTBYTE_TASTY_BYTES.RAW_CUSTOMER.CUSTOMER_LOYALTY` table.
-- Provider AWS Account: create an Iceberg Table `ICEBERG_LAB.RAW_POS.ORDER_HEADER` from the `FROSTBYTE_TASTY_BYTES.RAW_POS.ORDER_HEADER` table.
-- Provider AWS Account: create `ICEBERG_LAB.ANALYTICS.CUSTOMER_LOYALTY_METRICS_V` secure view, create row-access policy `ICEBERG_LAB.GOVERNANCE.CUSTOMER_COUNTRY_ROW_POLICY` and apply to `CUSTOMER_LOYALTY.COUNTRY` column. 
-- Provider AWS Account: create aggregation policy `ICEBERG_LAB.GOVERNANCE.TASTY_ORDER_AGG_POLICY` and apply to `ORDER_HEADER` table.
-- Provider AWS Account: create a listing called `ICEBERG_LAB_ANALYTICS`, attach the `ICEBERG_LAB` table and view objects, share with the Consumer AWS account.
+Using the method outlined in [Getting Started with Iceberg Tables](https://quickstarts.snowflake.com/guide/getting_started_iceberg_tables/index.html?index=..%2F..index#0) Quickstart, create Iceberg Tables and policies based on what we created in the previous lab section.
 
-<mark>On HORIZON_LAB_AWS_CONSUMER and HORIZON_LAB_AZURE_CONSUMER accounts:</mark>
+On the `Provider AWS Account` execute the steps listed in `code/sql/reference/iceberg_provider.sql` cloned from [Horizon Quickstart Scripts](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing) repository earlier:
 
-In Snowsight, navigate to `Private Sharing` and install the `ICEBERG_LAB_ANALYTICS` listing that was shared by the AWS Provider.
+1. Create External Volume in Snowflake, after configuring an external volume with your cloud service provider (AWS, Azure, GCP).
+2. Create a `FROSTBYTE_ICEBERG` database with schemas for ANALYTICS, RAW_POS, RAW_CUSTOMER, GOVERNANCE, TPCH.
+3. Create Iceberg Tables `CUSTOMER_LOYALTY_ICEBERG`, `ORDER_HEADER_ICEBERG`, `CUSTOMER_TPCH_ICEBERG`, `NATION_TPCH_ICEBERG`.
+4. Create Secure View `CUSTOMER_LOYALTY_METRICS_V` that joins multiple iceberg tables.
+5. Create Database Roles `TASTYBYTES_MANAGER_ROLE` and `TASTYBYTES_ANALYST_ROLE` to restrict access for consumers.
+6. Create and apply row-access policy `CUSTOMER_COUNTRY_ROW_POLICY` to `CUSTOMER_LOYALTY_ICEBERG.COUNTRY` column that filters based on database role using the `is_database_role_in_session()` context function.
+7. Create a listing called `ICEBERG_LAB_ANALYTICS`, attach iceberg tables and secure view.
+8. In the **Listing Description** section: enter instructions on post-installation steps (see below)
+9. In the **Sample Queries** section: enter queries for the consumer to run
 
-Now run these queries and compare performance and results for Iceberg Tables with the regular tables/views we explored earlier.
+Now switch to the **HORIZON_LAB_AWS_CONSUMER** account.
+
+Navigate to `Private Sharing` in Snowsight and install the `ICEBERG_LAB_ANALYTICS` listing that was shared by the AWS Provider.
+Run these post-installation steps in a worksheet.
 
 ```sql
---- Verify row-access policy is in effect for the Iceberg Customer_Loyalty table
-USE DATABASE ICEBERG_LAB_ANALYTICS;
-
-USE ROLE sales_manager_role;
-SELECT
-    clm.city,
-    ROUND(SUM(clm.total_sales), 0) AS total_sales_usd
-FROM analytics.customer_loyalty_metrics_v clm
-GROUP BY clm.city
-ORDER BY total_sales_usd DESC;
-
-USE ROLE sales_apj_role;
-SELECT
-    clm.city,
-    ROUND(SUM(clm.total_sales), 0) AS total_sales_usd
-FROM analytics.customer_loyalty_metrics_v clm
-GROUP BY clm.city
-ORDER BY total_sales_usd DESC;
+USE ROLE accountadmin;
+SHOW DATABASE ROLES IN DATABASE iceberg_lab_analytics;
+GRANT DATABASE ROLE iceberg_lab_analytics.tastybytes_manager_role to ROLE sales_manager_role;
+GRANT DATABASE ROLE iceberg_lab_analytics.tastybytes_analyst_role to ROLE public;
 ```
 
-Now let us try a join between both shared Iceberg tables and observe how the policies established by the Provider are enforced.
+Create two users to test access controls on the incoming Iceberg Analytics listing.
 
 ```sql
--- Check join between two Iceberg Tables with aggregation policy
-USE DATABASE ICEBERG_LAB_ANALYTICS;
+USE ROLE ACCOUNTADMIN;
 
--- What are the Total Order amounts in each city by Gender?
-USE ROLE sales_manager_role;
+CREATE OR REPLACE USER horizonengineer
+PASSWORD='' 
+DEFAULT_ROLE = PUBLIC 
+MUST_CHANGE_PASSWORD = FALSE 
+DEFAULT_WAREHOUSE = COMPUTE_WH;
+
+CREATE OR REPLACE USER horizonmanager
+PASSWORD='' 
+DEFAULT_ROLE = SALES_MANAGER_ROLE 
+MUST_CHANGE_PASSWORD = FALSE 
+DEFAULT_WAREHOUSE = COMPUTE_WH;
+
+GRANT ROLE SALES_MANAGER_ROLE TO USER horizonmanager;
+```
+
+Now run these queries that were entered as **Sample Queries** in the Iceberg listing.
+Compare results as a `horizonengineer` and `horizonmanager` user that leverages the row-access policy to limit sales analytics.
+
+```sql
+// Customer Sales by City
+/*
+Total food truck sales in USD by city
+*/
+SELECT
+    clm.city,
+    ROUND(SUM(clm.total_sales), 0) AS total_sales_usd
+FROM analytics.customer_loyalty_metrics_v clm
+GROUP BY clm.city
+ORDER BY total_sales_usd DESC;
+
+// Total Orders by Gender
+/*
+What are the total order amounts in each city by gender?
+*/
 SELECT 
     cl.gender,
     cl.city,
     COUNT(oh.order_id) AS count_order,
     ROUND(SUM(oh.order_amount),0) AS order_total,
     current_time()
-FROM raw_pos.order_header oh
-JOIN raw_customer.customer_loyalty cl
+FROM raw_pos.order_header_iceberg oh
+JOIN raw_customer.customer_loyalty_iceberg cl
     ON oh.customer_id = cl.customer_id
 GROUP BY ALL
 ORDER BY order_total DESC;
 
-USE ROLE sales_americas_role;
-SELECT 
-    cl.gender,
-    cl.city,
-    COUNT(oh.order_id) AS count_order,
-    ROUND(SUM(oh.order_amount),0) AS order_total,
-    current_time()
-FROM raw_pos.order_header oh
-JOIN raw_customer.customer_loyalty cl
-    ON oh.customer_id = cl.customer_id
-GROUP BY ALL
-ORDER BY order_total DESC;
+// Visible Countries and Cities
+/*
+How many cities in what countries can I view analytics data for?
+*/
+SELECT DISTINCT COUNTRY, CITY FROM analytics.customer_loyalty_metrics_v ORDER BY COUNTRY;
+;
+
+// TPCH Benchmark - Returned Item Reporting Query (Q10)
+/*
+The Returned Item Reporting Query finds the top 10 customers, in terms of their effect on lost revenue for a given quarter, who have returned parts. The customers are listed in descending order of lost revenue.
+*/
+SELECT
+     c_custkey,
+     c_name,
+     TRUNCATE(SUM(l_extendedprice * (1 - l_discount))) AS lost_revenue,
+     c_acctbal,
+     n_name,
+     c_address,
+     c_phone,
+     c_comment
+FROM
+     tpch.customer_tpch_iceberg,
+     SNOWFLAKE_SAMPLE_DATA.TPCH_SF100.ORDERS,
+     SNOWFLAKE_SAMPLE_DATA.TPCH_SF100.LINEITEM,
+     tpch.nation_tpch_iceberg
+WHERE
+     c_custkey = o_custkey
+     AND l_orderkey = o_orderkey
+     AND o_orderdate >= to_date('1993-10-01')
+     AND o_orderdate < dateadd(month, 3, to_date('1993-10-01'))
+     AND l_returnflag = 'R'
+     AND c_nationkey = n_nationkey
+GROUP BY
+     c_custkey,
+     c_name,
+     c_acctbal,
+     c_phone,
+     n_name,
+     c_address,
+     c_comment
+ORDER BY
+     lost_revenue DESC
+LIMIT 10
+;
 ```
 
 <!-- ------------------------ -->
 ## Share Unstructured Data within and across cloud regions
+
 Duration: 20
 
 We have previously staged 100 movie reviews extracted from the [IMDB Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/).
@@ -1389,13 +1467,14 @@ SELECT * FROM DIRECTORY(@movie_stage);
 ```
 
 Snowflake offers access to unstructured data through three types of URLs based on the access policy that is required:
+
 1. [Scoped URL](https://docs.snowflake.com/en/sql-reference/functions/build_scoped_file_url.html?_fsi=A9hUbkt2&_fsi=A9hUbkt2): encoded URL to give a user temporary access (currently 24 hours) to a file without giving access to the stage.
 2. [File URL](https://docs.snowflake.com/en/sql-reference/functions/build_stage_file_url.html): requires user authentication with Snowflake and read privileges on the stage.
 3. [Pre-signed URL](https://docs.snowflake.com/en/sql-reference/functions/get_presigned_url.html): pre-authenticated URL that allows download directly from a browser.
 
-We will use **Scoped URL* to share these text files within and across cloud regions. Unlike with data and app sharing, the unstructured data will not be physically replicated cross-cloud.
+We will use **_Scoped URL_** to share these text files within and across cloud regions. Unlike with data and app sharing, the unstructured data will not be physically replicated cross-cloud.
 
-On <mark>AWS Provider Account</mark> open a SQL Worksheet **Unstructured Data Vignette** and execute these commands sequentially:
+On the **AWS Provider Account** open a SQL Worksheet called `Unstructured Data` and execute these commands sequentially:
 
 ```sql
 USE ROLE sysadmin;
@@ -1404,7 +1483,7 @@ USE SCHEMA frostbyte_tasty_bytes.movie_reviews;
 
 -- Here are the 100 review text files: click on any scoped URL to download and view
 SELECT relative_path
-	, build_scoped_file_url(@movie_stage, relative_path) as scoped_url
+ , build_scoped_file_url(@movie_stage, relative_path) as scoped_url
 from directory(@movie_stage);
 
 -- Snowpark Python UDF to extract review contents from each file URL
@@ -1448,27 +1527,33 @@ LIMIT 10;
 Now this secure view can be shared in a private listing targeted at `horizon_lab_aws_consumer` and `horizon_lab_azure_consumer` just as we did in earlier sections with data and apps.
 
 Create a new listing called `IMDB Movie Reviews` in Provider Studio to publish the review files and content:
-- share the `MOVIE_REVIEWS_V` view 
+
+- share the `MOVIE_REVIEWS_V` view
 - add a description that includes a link to the highest grossing film of all time: [Avatar](https://www.youtube.com/watch?v=5PSNL1qE6VY) and this link that documents the reference dataset [IMDB Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/)
 - target the two Consumer accounts in AWS and Azure regions
-- include the `SUMMARIZE` and `SENTIMENT` Cortex LLM queries in the Sample Queries section for Consumer use
-
-<mark>Publishing Fails</mark> - do you understand why?
+- include the query that calls `SUMMARIZE` and `SENTIMENT` Cortex LLM functions in the Sample Queries section to make it easy for Consumers
 
 ![Listing publish failure](assets/error-publishing-python-function.jpg)
 
-> Since the review content extraction requires a Python function, _it can only be shared in a Native App!_
+**Publishing Fails** - do you understand why?
+> Hint: `MOVIE_REVIEWS_V` uses a Python UDF for review content extraction, _which can only be shared in a Native App!_
 
-Return to the `HORIZON_QUICKSTART_PACKAGE` we created in the previous section and publish an update with these unstructured data artifacts:
-> 1. Modify `setup_package_script.sql`: share the `MOVIE_REVIEWS_V` view similar to how we shared `ORDERS_V` view previously.
-> 2. Create a new app version V2
-> 3. Set the DEFAULT RELEASE DIRECTIVE to version V2 patch 0
+Return to the `HORIZON_QUICKSTART_PACKAGE` we created in the previous section and publish an update after adding `MOVIE_REVIEWS_V`. Here are the steps:
+>
+> 1. Modify `scripts/setup_package_script.sql`:
+> share the `movie_reviews_v` view similar to how `orders_v` view was handled
+> 2. Modify `app/src/setup_script.sql`:
+> create a proxy view `movie_reviews_v` similar to `orders_v` in `app_instance_schema`
+> grant select on `movie_reviews_v` to the application role `app_instance_role` to make it visible
+> 3. Create a new app version V2 by issuing:
+> `snow app version create V2 --skip-git-check`
+> 4. Set the DEFAULT RELEASE DIRECTIVE to version V2 patch 0
+> `snow sql -q 'ALTER APPLICATION PACKAGE horizon_quickstart_package SET DEFAULT RELEASE DIRECTIVE version=V2 patch=0'`
 
-_Here is the [documentation](https://docs.snowflake.com/en/developer-guide/native-apps/versioning#workflow-for-upgrading-an-native-app) for App Upgrade Workflow_
+And that is all it takes to upgrade a native app!
+_(here is the [App Upgrade Workflow doc](https://docs.snowflake.com/en/developer-guide/native-apps/versioning#workflow-for-upgrading-an-native-app))_
 
-That is all it takes to upgrade a native app!
-
-On the <mark>AWS Consumer Account</mark> open a SQL Worksheet:
+On the **AWS Consumer Account** run this in a SQL Worksheet:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -1495,22 +1580,24 @@ SELECT *
   WHERE SERVICE_TYPE='AI_SERVICES';
 ```
 
-Try the same steps on the <mark>Azure Consumer Account</mark>
+Try the same steps on the **Azure Consumer Account**:
 
-> How does the refresh frequency for cross-cloud fulfillment impact the application upgrade?
+> How do you expect the refresh frequency for cross-cloud fulfillment to impact the application upgrade?
 > (documentation on cross-region application upgrades [here](https://docs.snowflake.com/en/developer-guide/native-apps/versioning#upgrade-an-installed-app-across-multiple-regions))
 
 <!-- ------------------------ -->
 ## Conclusion & Resources
+
 Duration: 5
 
-Congratulations, you made it through our Horizon Access journey! You have exercised a broad range of data sharing and governance capabilities. You have worked with different types of data products including structured data, unstructured data, and native applications. And you have deployed different types of governance policies to implement data access and data privacy restrictions. 
+Congratulations, you made it through our Horizon Access journey! You have exercised a broad range of data sharing and governance capabilities. You have worked with different types of data products including structured data, unstructured data, and native applications. And you have deployed different types of governance policies to implement data access and data privacy restrictions.
 
 ### What you Learned
+
 - How to blend local Point-of-Sale data with Marketplace Weather data to build analytics data products.
 
-- How to publish data products as Listings targeted at accounts in your company 
-- How to configure data access and privacy polices as a data provider to restrict data access by data consumers. 
+- How to publish data products as Listings targeted at accounts in your company
+- How to configure data access and privacy polices as a data provider to restrict data access by data consumers.
 - How to use tag-based column masking, row-access, aggregation and projection policies with database roles in a collaboration scenario.
 - How to manage Listings via the Listings API.
 - How to setup data quality monitoring of shared data products
@@ -1519,6 +1606,7 @@ Congratulations, you made it through our Horizon Access journey! You have exerci
 - How to share unstructured text files and process with Cortex LLM functions
 
 ### Related Resources
+
 - [Lab Source Code on Github](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
 
 - [Snowflake Listings](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about) and [Managing Listings via API](https://docs.snowflake.com/en/sql-reference/commands-listings)

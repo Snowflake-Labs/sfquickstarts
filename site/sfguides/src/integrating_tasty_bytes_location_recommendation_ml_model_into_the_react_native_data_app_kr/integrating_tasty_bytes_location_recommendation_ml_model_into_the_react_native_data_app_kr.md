@@ -202,7 +202,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_ml_app.raw TO ROLE ta
 USE ROLE useradmin;
 
 -- Open the ~/.ssh/snowflake_app_key.pub file from Step 1 and copy the contents starting just after the PUBLIC KEY header, 
--- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE.
+-- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE. It should be a single line string.
 CREATE USER data_ml_app_demo
 RSA_PUBLIC_KEY='<INSERT_RSA_PUBLIC_KEY_HERE>' 
 DEFAULT_ROLE=tasty_bytes_data_ml_app_demo 
@@ -433,14 +433,14 @@ Duration: 10
 
 ### 1단계: 소스 코드 가져오기
 
-1. `https://github.com/sf-gh-sjasti/IntegrationTastyBytesMLModelInDataApp.git reactNativeMLApp`을 사용하여 리포지토리를 복제합니다.
+1. `git clone https://github.com/sf-gh-sjasti/IntegrationTastyBytesMLModelInDataApp.git reactNativeMLApp`을 사용하여 리포지토리를 복제합니다.
 2. `cd reactNativeMLApp` 폴더로 이동합니다.
 3. 종속성을 설치하기 위해 `npm install`을 실행합니다.
 
 ### 2단계: 애플리케이션 구성
 
 1. VS Code 또는 선호하는 IDE에서 `reactNativeMLApp` 폴더를 엽니다.
-2. `.env` 파일을 열고 개인 키로 `PRIVATE_KEY` 값을 업데이트합니다. 헤더(`-----BEGIN RSA PRIVATE KEY-----`) 및 푸터(`-----END RSA PRIVATE KEY-----`)를 비롯한 전체 개인 키를 `~/.ssh/snowflake_app_key.pub`에서 복사하여 붙여넣습니다.
+2. `.env` 파일을 열고 개인 키로 `PRIVATE_KEY` 값을 업데이트합니다. 헤더(`-----BEGIN RSA PRIVATE KEY-----`) 및 푸터(`-----END RSA PRIVATE KEY-----`)를 비롯한 전체 개인 키를 `~/.ssh/snowflake_app_key`에서 복사하여 붙여넣습니다.
 3. us-west 리전에 있다면 Snowflake 계정으로 `SNOWFLAKE_ACCOUNT_IDENTIFIER`를 업데이트합니다. 또는, us-west 리전 외부에 있다면 `SNOWFLAKE_ACCOUNT_IDENTIFIER`를 '<SNOWFLAKE ACCOUNT>.<REGION>'으로 업데이트합니다. Snowflake에서 snowflake_account 값을 가져오려면 Snowsight에서 `SELECT CURRENT_ACCOUNT()`를 실행합니다. Snowflake에서 리전 값을 가져오려면 Snowsight에서 `SELECT CURRENT_REGION()`을 실행합니다. SNOWFLAKE_ACCOUNT_IDENTIFIER 및 SNOWFLAKE_ACCOUNT는 us-west에서도 동일합니다.
 4. Snowflake 계정으로 `SNOWFLAKE_ACCOUNT`를 업데이트합니다.
 5. 자신의 공개 키 지문으로 `PUBLIC_KEY_FINGERPRINT`를 업데이트합니다. 공개 키 지문을 가져오려면 Snowsight에서 `DESCRIBE USER data_app_demo ` SQL을 실행하여 RSA_PUBLIC_KEY_FP 속성 값을 가져옵니다.

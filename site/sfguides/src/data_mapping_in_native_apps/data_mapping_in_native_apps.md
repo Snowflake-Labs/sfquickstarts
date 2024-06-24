@@ -34,11 +34,12 @@ The Snowflake Native App Framework is a fantastic way for Snowflake application 
 ### What You'll need
 
 * A Snowflake account in AWS
-* A Snowflake user created with ACCOUNTADMIN permissions - this is more than is strictly necessary and you can read more about the permissions required [here](https://docs.snowflake.com/en/sql-reference/sql/create-application-package#access-control-requirements)
+* A Snowflake user created with **ACCOUNTADMIN** permissions - this is more than is strictly necessary and you can read more about the permissions required [here](https://docs.snowflake.com/en/sql-reference/sql/create-application-package#access-control-requirements). You MUST execute the entire tutorial using the **accountadmin** role.
+* You must have setup your preferred connection using the latest **Snowflake CLI** version available, which can be downloaded **[here](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)**.
 
+### Snowflake CLI
 
-
-
+Snowflake CLI is a command-line tool that allow the developers to execute powerful and simplified SQL operations. New features are added continuously and it is a preview feature itself, but it is available for all accounts. It is important to keep the CLI updated to ensure the newest features and bug fixes.
 
 ### The Scenario
 The scenario is as follows. You are a Snowflake Native Application provider. Your application requires the consumer of the application to pass in a column in a table that contains an IP address and you will write out enhanced data for that particular IP address to another column in the same consumer defined table.
@@ -63,7 +64,7 @@ The first solution is not really what we want to be doing because the consumer w
 
 > aside positive
 > 
-> **Note** - The following steps explain how to create the app using the Snowflake CLI, as this option presents as a faster, more straightforward way to build Native Apps. You can also accomplish it by manually creating the folder structure and executing the SQL commands in Snowsight, but this alternative is out of the scope for this Quickstart.
+> **Note** - The following steps explain how to create the app using the **Snowflake CLI**, as this option presents as a faster, more straightforward way to build Native Apps. You can also accomplish it by manually creating the folder structure and executing the SQL commands in Snowsight, but this alternative is out of the scope for this Quickstart. Remember to have the latest CLI version installed.
 
 <!-- ------------------------ -->
 ## Project Structure
@@ -101,18 +102,18 @@ From the project's root, create a new folder and name it **scripts**, inside, cr
 
 Finally, replace the content of **snowflake.yml** file with the following code:
 
-    ```sh
-    definition_version: 1
-    native_app:
-    name: IP2LOCATION_STREAMLIT
-    source_stage: app_src.stage
-    artifacts:
-        - src: app/*
-        dest: ./
-    package:
-        scripts:
-        - scripts/setup_package_script.sql
-    ```
+```sh
+definition_version: 1 
+native_app:
+name: IP2LOCATION_STREAMLIT
+source_stage: app_src.stage
+artifacts:
+    - src: app/*
+      dest: ./
+package:
+    scripts:
+    - scripts/setup_package_script.sql
+```
 
 
 Finally, the tree structure inside your project structure should look like this:
@@ -120,8 +121,7 @@ Finally, the tree structure inside your project structure should look like this:
 <img src="assets/folder_structure.png" width="288" />
 
 
-### Snowflake CLI
-Snowflake CLI is a tool that allow you to issue simple and powerful commands directly to your Snowflake account. You can find more information and installation instructions [here](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation).
+
 
 
 
@@ -182,34 +182,37 @@ file_format = LOCATION_CSV;" --database ip2location --schema ip2location
 snow stage copy /USER_PATH_HERE/IP2LOCATION-LITE-DB11.CSV @location_data_stage --database ip2location --schema ip2location 
 
 # Copy the csv file from the stage to load the table
-snow sql -q "
-copy into litedb11 from @location_data_stage
+snow sql -q "copy into litedb11 from @location_data_stage
 files = ('IP2LOCATION-LITE-DB11.CSV')
 ;" --database ip2location --schema ip2location
 
 # Simple query test to ensure the table is correctly filled.
-snow sql -q "SELECT COUNT(*) FROM LITEDB11;
+snow sql -q "
+SELECT COUNT(*) FROM LITEDB11;
 SELECT * FROM LITEDB11 LIMIT 10;" --database ip2location --schema ip2location
 
 # Create test database and schema.
-snow sql -q "CREATE DATABASE IF NOT EXISTS TEST_IPLOCATION;
-CREATE SCHEMA IF NOT EXISTS TEST_IPLOCATION;
+snow sql -q "
+DATABASE IF NOT EXISTS TEST_IPLOCATION;
+CREATE SCHEMA IF NOT EXISTS TEST_IPLOCATION;"
 
 # Create test table to insert some values
+snow sql -q "
 CREATE OR REPLACE TABLE TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA (
 	IP VARCHAR(16),
 	IP_DATA VARIANT
-);
+);"
 
 # Insert testing values to use later on
+snow sql -q "
 INSERT INTO TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
 ```
 
-You can the file it by executing:
+You can run the file by executing:
  ```SNOWFLAKE_DEFAULT_CONNECTION_NAME=your_connection ./prepare_data.sh```  
  in the folder root.
 
-We now have the reference database setup in the provider account so are ready to start building the application itself.
+We now have the referenced database setup in the provider account so we are ready to start building the application itself.
 
 <!-- ------------------------ -->
 ## Provider Setup
@@ -217,12 +220,7 @@ Duration: 5
 
 > aside positive
 > 
-> **Note** - This code is here to illustrate how would you normally do the app creation using the manual steps, but **this step is executed automatically by the CLI**, for example, in a manual environment you will need to update your files to a stage, but that is managed by the **`snow app run`** command.  In the following steps there will be instructions on how to execute it.
-
-
-> aside positive
-> 
-> **Note** - You need to replace the content in the **setup_package_script.sql** file with the following code. The **{{ package_name }}** directive, allows the application to use whatever name the app package has, according to myoury system username, as a code variable.
+> **Note** - You will need to replace the content in the **setup_package_script.sql** file with the following code. The **{{ package_name }}** directive, allows the application to use whatever name the app package has, according to the user's system username, as a code variable.
 
 ```sql
 --Create a schema in the applcation package
@@ -254,7 +252,7 @@ Every Snowflake Native App is required to have a manifest file.  The manifest fi
 * The manifest file must be uploaded to a named stage so that it is accessible when creating an application package or Snowflake Native App.
 * The manifest file must exist at the root of the directory structure on the named stage.
 
-The named stage in this example is the stage with the label **APPLICATION_STAGE** created earlier.
+The named stage in this example is going to be created when we execute the **snow app run** command.
 
 > aside positive
 >
@@ -263,6 +261,7 @@ The named stage in this example is the stage with the label **APPLICATION_STAGE*
 ```yaml
 manifest_version: 1
 artifacts:
+  readme: README.md
   setup_script: setup_script.sql
   default_streamlit: ui."Dashboard"
 
@@ -406,7 +405,7 @@ $$;
 
 > aside positive
 > 
-> **Note** - In the setup script we defined a stored procedure labeled **ENRICHIP.enrich_ip_data**.  In the body we make calls to **REFERENCE(tabletouse)**.  This reference was defined in the manifest file and it is the table to which the consumer has granted us permissions.  Because, as the application prodcuer, we have no way of knowing that ahead of time, the Snowflake Native App framework adds this facility and will resolve the references once permissions have been granted.
+> **Note** - In the setup script we defined a stored procedure labeled **ENRICHIP.enrich_ip_data**.  In the body we make calls to **REFERENCE(tabletouse)**.  This reference was defined in the manifest file and it is the table to which the consumer has granted us permissions.  Because, as the application producer, we have no way of knowing that ahead of time, the Snowflake Native App framework adds this facility and will resolve the references once permissions have been granted.
 
 <!-- ------------------------ -->
 ## Creating the Streamlit
@@ -492,7 +491,7 @@ There are a few ways we could deploy our application:
 In a manual environment you would have to upload the files to the stage APPLICATION_STAGE and then run other commands from a SQL worksheet, but instead, we are taking the Snowflake CLI approach and run:
 
 ```sh
-    snow app run -i --database ip2location
+    snow app run --database ip2location
 ```
 
 At the root of the project, and the CLI is going to create the application for you, using the files explained in the previous steps, as well as the other configuration files present in the project folder.
@@ -501,7 +500,7 @@ At the root of the project, and the CLI is going to create the application for y
 
 Because we have installed the application locally we needed to create a table to test with. That step we did it in the **prepare_data.sh** file.
 
-Click on the link to your localhost that appeared in your console output.
+Click on the link that appeared in your console output.
 
  The application if you remember needs permissions onto a table in the consumer account (the one we just created).  We have now switched roles to being the consumer.  We are finished with being the application provider.  Over on the right hand side hit the shield icon to go to **Security**.
 
@@ -519,7 +518,7 @@ Click **Add** and navigate to the table we just created and select it:
 
 <img src="assets/table_chosen.png" width="719" />
 
-Once we click **Done** and **Save** then the application has been assigned the needed permissions.  Now go back to apps and click on the app itself.  It should open to a screen like the following:
+Once we click **Done** and **Save** then the application has been assigned the needed permissions.  Now go back to the **Dashboard** section and click it. It should open to a screen like the following:
 
 <img src="assets/app_entry.png" width="975" />
 
@@ -556,6 +555,10 @@ snow app teardown
 Duration: 1
 
 We have covered a lot of ground in this Quickstart.  We have covered the building blocks of almost every Snowflake Native App you will ever build.  Sure some will be more complicated but the way you structure them will be very similar to what you have covered here.
+
+> aside positive
+> 
+> **Note** - In [this repository](https://github.com/snowflakedb/native-apps-examples/tree/main/data-mapping) you can find all this code with the instructions to execute it.
 
 ### What we learned
 

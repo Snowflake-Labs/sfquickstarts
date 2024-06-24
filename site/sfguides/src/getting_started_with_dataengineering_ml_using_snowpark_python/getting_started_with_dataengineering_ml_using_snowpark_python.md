@@ -20,43 +20,45 @@ Here is a summary of what you will be able to learn in each step by following th
 - **Setup Environment**: Use stages and tables to ingest and organize raw data from S3 into Snowflake
 - **Data Engineering**: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications
 - **Data Pipelines**: Use Snowflake Tasks to turn your data pipeline code into operational pipelines with integrated monitoring
-- **Machine Learning**: Process data and run ML Training in Snowflake using Snowpark ML, and register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+- **Machine Learning**: Process data and run training in Snowflake ML using the Snowpark ML library, and register ML model and use it for inference from Snowflake Model Registry
 - **Streamlit**: Build an interactive Streamlit application using Python (no web development experience required) to help visualize the ROI of different advertising spend budgets
-
-In case you are new to some of the technologies mentioned above, here’s a quick summary with links to documentation.
 
 ### What is Snowpark?
 
-Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
+Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake. Snowpark can be used to build data pipelines, ML models, apps, and other data processing tasks.
+
+![Snowpark](assets/snowpark.png)
 
 **Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark API for data pipelines and apps and the Snowpark ML API for end to end machine learning.
 
-**Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtimes include Python, Java, and Scala in virtual warehouses with CPU compute or Snowpark Container Services (public preview) to execute any language of choice with CPU or GPU compute.
+**Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtime options include: Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
 
 Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
-### What is Snowpark ML?
+### What is Snowflake ML?
 
-[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index?_fsi=g3LX4YOG) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. With Snowpark ML, data scientists and ML engineers can use familiar Python frameworks for preprocessing, feature engineering, and training models that can be managed entirely in Snowflake without any data movement, silos or governance trade-offs. Snowpark ML has 2 components: Snowpark ML Modeling for model development and Snowpark ML Operations including the Snowpark Model Registry (public preview) for model management and batch inference.
+Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use ML Functions to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
-![Snowpark](assets/snowpark_ml.png)
+To get started with Snowflake ML, developers can use the Python APIs from the [Snowpark ML library](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index), directly from Snowflake Notebooks (public preview) or downloaded and installed into any IDE of choice, including Jupyter or Hex.
+
+![Snowpark](assets/snowflake_ml.png)
 
 This quickstart will focus on
 
 - Snowpark ML Modeling API, which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake.
 
-- Snowpark Model Registry, which provides scalable and secure model management of ML models in Snowflake, regardless of origin.
+- Snowflake Model Registry, which provides scalable and secure model management of ML models in Snowflake, regardless of origin.
 Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features.
 
 **Feature Engineering and Preprocessing** - Improve performance and scalability with distributed execution for common scikit-learn preprocessing functions.
 
-**Model Training** - Accelerate model training for scikit-learn, XGBoost and LightGBM models without the need to manually create stored procedures or user-defined functions (UDFs), and leverage distributed hyperparameter optimization (public preview).
+**Model Training** - Accelerate model training for scikit-learn, XGBoost and LightGBM models without the need to manually create stored procedures or user-defined functions (UDFs), and leverage distributed hyperparameter optimization.
 
 ![Snowpark](assets/snowpark_ml_modeling.png)
 
 **Model Management and Batch Inference** - Manage several types of ML models created both within and outside Snowflake and execute batch inference.
 
-![Snowpark](assets/snowpark_ml_arch.png)
+![Snowpark](assets/snowflake_ml_arch.png)
 
 ### What is Streamlit?
 
@@ -475,7 +477,7 @@ The Notebook linked below covers the following machine learning tasks.
 2) Load features and target from Snowflake table into Snowpark DataFrame
 3) Prepare features for model training
 4) Train ML model using Snowpark ML in Snowflake
-5) Register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+5) Register ML model and use it for inference from Snowflake Model Registry
 
 ### Machine Learning Notebook in Jupyter or Visual Studio Code
 
@@ -579,13 +581,13 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
 - How to create Snowflake Tasks to automate data pipelines
 - How to train ML model using Snowpark ML in Snowflake
-- How to register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+- How to register ML model and use it for inference from Snowflake Model Registry
 - How to create Streamlit application that uses the ML Model for inference based on user input
 
 ### Related Resources
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [Intro to Machine Learning with Snowpark ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/index.html)
+- [Getting Started with Snowflake ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/index.html)
 - [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
 - [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)

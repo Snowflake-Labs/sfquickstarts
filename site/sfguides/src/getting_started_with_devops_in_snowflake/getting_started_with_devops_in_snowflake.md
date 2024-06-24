@@ -1,13 +1,13 @@
 author: Vincent Raudszus
-id: getting_started_with_devops_in_snowflake
-summary: Getting Started with DevOps in Snowflake
+id: getting_started_with_snowflake_devops
+summary: Getting Started with Snowflake DevOps
 categories: devops,getting-started,data-engineering
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Getting Started with DevOps in Snowflake
+# Getting Started with Snowflake DevOps
 
 <!-- ------------------------ -->
 ## Overview
@@ -80,7 +80,7 @@ Duration: 4
 
 ### Fork the Quickstart Repository
 
-You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [associated GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-devops-in-snowflake) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
+You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [associated GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-devops) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
 ### Create GitHub Codespace
 
@@ -572,7 +572,7 @@ You have learned a ton in this guide. Here are the highlights:
 
 ### Related Resources
 
-- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-devops-in-snowflake)
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-devops)
 - [DevOps in Snowflake: How Git and Database Change Management enable a file-based object lifecycle](https://medium.com/snowflake/devops-in-snowflake-how-git-and-database-change-management-enable-a-file-based-object-lifecycle-1f61a0d5257c)
 - [DevOps: Database Change Management with Terraform and GitHub](https://quickstarts.snowflake.com/guide/devops_dcm_terraform_github/#0)
 - [Advanced: Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/#0)
