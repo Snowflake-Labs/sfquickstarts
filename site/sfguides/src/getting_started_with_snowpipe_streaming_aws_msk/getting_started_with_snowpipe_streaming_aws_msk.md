@@ -171,7 +171,7 @@ see below example screenshot:
 Run the following command to install the Kafka connector and Snowpipe streaming SDK
 
 ```commandline
-passwd=changeit  # Use the default password for the Java keystore, you should chang it after finishing the lab
+passwd=changeit  # Use the default password for the Java keystore, you should change it after finishing the lab
 directory=/home/azureuser/snowpipe-streaming # Installation directory
 
 cd $HOME
@@ -197,6 +197,7 @@ wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1
 wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
 
 ```
+Note that the version numbers for Kafka, the Snowflake Kafka connector, and the Snowpipe Streaming SDK are dynamic, as new versions are continually published. We are using the version numbers that have been validated to work.
 
 #### 6. Retrieve the broker string from the MSK cluster.
 Go to the [MSK](https://us-west-2.console.aws.amazon.com/msk/#/clusters) console and click the newly created MSK cluster, it should have a substring `MSKCluster` in its name.

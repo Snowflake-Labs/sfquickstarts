@@ -89,7 +89,10 @@ Also make sure that you allow ssh access to the VM in the network rule setting.
 
 Download and save the private key for use in the next step.
 
-Once the VM is provisioned, we will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer.
+Once the VM is provisioned, we will then use it to run the Kafka connector with Snowpipe streaming SDK and the producer. We will be using the default VM user `azureuser` for this workshop.
+
+Here is a screen capture of the VM overview for reference.
+![](assets/vm-overview.png)
 
 #### 4. Connect to the Linux VM console
 From you local machine, either using a ssh application such as [Putty](https://www.putty.org/) if you have a Windows PC or simply the ssh CLI (`ssh -i <your private_key for the VM> <VM's public IP address> -l azureuser)` for Linux or Mac based systems.
@@ -129,7 +132,7 @@ see below example screenshot:
 Run the following command to install the Kafka connector and Snowpipe streaming SDK
 
 ```commandline
-passwd=changeit  # Use the default password for the Java keystore, you should chang it after finishing the lab
+passwd=changeit  # Use the default password for the Java keystore, you should change it after finishing the lab
 directory=/home/azureuser/snowpipe-streaming # Installation directory
 
 cd $HOME
@@ -154,6 +157,7 @@ wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1
 wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
 
 ```
+Note that the version numbers for Kafka, the Snowflake Kafka connector, and the Snowpipe Streaming SDK are dynamic, as new versions are continually published. We are using the version numbers that have been validated to work.
 
 #### 7. Retrieve the connection string 
 
@@ -247,7 +251,7 @@ Give the event hub a name, say `streaming`, then click `Next: Capture`.
 
 ![](assets/create-topic-2.png)
 
-Leave everthing as default, and click `Next: Review + create`.
+Leave everything as default, and click `Next: Review + create`.
 
 ![](assets/create-topic-3.png)
 
