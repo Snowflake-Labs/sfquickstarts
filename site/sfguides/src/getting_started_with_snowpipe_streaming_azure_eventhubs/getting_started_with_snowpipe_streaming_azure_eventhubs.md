@@ -359,6 +359,8 @@ CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 
 #### 2. Install SnowSQL (optional but highly recommended)
 
+This step is optional for this workshop but is highly recommended if you prefer to use the CLI to interact with Snowflake later instead of the web console.
+
 [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
 
 To install SnowSQL. Execute the following commands on the Linux Session Manager console:
@@ -492,9 +494,11 @@ $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpi
 If everything goes well, you should see something similar to screen capture below:
 ![](assets/snowpipe-streaming-kc.png)
 
+Leave this screen open and let the connector continue to run.
+
 #### 2. Start the producer that will ingest real-time data to the Event Hub
 
-In the VM shell, run the following command:
+Open up a new ssh session connection to the VM. In the shell, run the following command:
 
 ```commandline
 curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming
@@ -527,7 +531,9 @@ use schema az_streaming_schema;
 show channels in table az_streaming_tbl;
 ```
 You should see that there are two channels, corresponding to the two partitions created earlier in the topic.
-![](assets/channels.png)
+![](assets/channels.png). 
+
+Note that, unlike the screen capture above, at this point, you should only see one row in the table, as we have only ingested data once. We will see new rows being added later as we continue to ingest more data.
 
 Now run the following query on the table.
 ```

@@ -375,6 +375,8 @@ CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 
 #### 2. Install SnowSQL (optional but highly recommended)
 
+This step is optional for this workshop but is highly recommended if you prefer to use the CLI to interact with Snowflake later instead of the web console.
+
 [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
 
 To install SnowSQL. Execute the following commands on the Linux Session Manager console:
@@ -545,6 +547,8 @@ show channels in table msk_streaming_tbl;
 ```
 You should see that there are two channels, corresponding to the two partitions created earlier in the topic.
 ![](assets/channels.png)
+
+Note that, unlike the screen capture above, at this point, you should only see one row in the table, as we have only ingested data once. We will see new rows being added later as we continue to ingest more data.
 
 Now run the following query on the table.
 ```
