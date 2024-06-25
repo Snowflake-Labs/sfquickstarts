@@ -1,6 +1,6 @@
 author: Charlie Hammond
 id: tasty_bytes_customer_support_email_app
-summary: This quickstart builds a customer support email application in Streamlit using Cortex LLM features to help agents quickly and effectively answer custome questions. 
+summary: This quickstart builds a customer support email application in Streamlit using Cortex LLM features to help agents quickly and effectively answer customer questions. 
 categories: Tasty-Bytes, Getting-Started, Cortex
 environments: web
 status: Published 
@@ -18,12 +18,12 @@ Welcome to the Powered by Tasty Bytes - Customer Support Email App!
 
 This application streamlines the workload of call center agents by automating responses to customer emails using a knowledge base. When an email arrives, a Cortex LLM determines if it can address the customer query using the knowledge base. If it can, an automatic response is sent; if not, the email is directed to an agent. Agents have the choice to reply to customer emails, with a Cortex LLM offering suggested responses.
 
-Additionally, agents can contribute responses to the knowledge base, enabling the LLM to automatically address similar queries in the future. Sentiment scores are generated from both agent and auto-responses for further analysis. Moreover, there's an option to simulate a new email for demo purposes.
+Additionally, agents can contribute responses to the knowledge base, enabling the LLM to address similar queries automatically in the future. Sentiment scores are generated from both agent and auto-responses for further analysis. Moreover, there's an option to simulate a new email for demo purposes.
 
 ### What You’ll Learn 
 - How Snowflake tools can build a full email support application using powerful LLM functionality
 - How to build a multi-page Streamlit in Snowflake App
-- Learn how to use Cortex LLMs in your application including:
+- How to use Cortex LLMs in your application, including:
   - [Cortex Complete](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex)
   - [Cortex Sentiment Analysis](https://docs.snowflake.com/en/sql-reference/functions/sentiment-snowflake-cortex)
 
@@ -49,8 +49,8 @@ Open a new Snowsight worksheet and run all commands from setup.sql.
 ### Step 3 - Load Streamlit Files
 
 - Download all files from the [app directory](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-enhancing-customer-experience/tree/main/customer-support-email-app/app). This includes all files in the pages subdirectory.
-- In Snowsight, change role to sysadmin
-- open the tasty_bytes_customer_support_email.app.customer_support_email_app stage
+- In Snowsight, change the role to **sysadmin**
+- open the **tasty_bytes_customer_support_email.app.customer_support_email_app** stage
 
 ![stage](assets/stage-location.png)
 
@@ -80,9 +80,9 @@ GRANT USAGE ON STREAMLIT tasty_bytes_customer_support_email.app.customer_support
 
 ### Step 5 - Open the Streamlit App
 
-- From Snowsight, ensure you are using the customer_support_email_role role.
+- From Snowsight, ensure you are using the **customer_support_email_role** role.
 - Under Projects, click Streamlit
-- Open CUSTOMER_SUPPORT_EMAIL_APP from the list of apps
+- Open **CUSTOMER_SUPPORT_EMAIL_APP** from the list of apps
 
 ![streamlit-app](assets/streamlit-app.png)
 
@@ -115,7 +115,7 @@ To do this, please follow the steps below:
 
 ![auto-response](assets/auto-response.png)
 
-- Click Send to dispatch the email. Subsequently, you'll be prompted to add the response to the knowledge base.
+- Click Send to dispatch the email. You will then be prompted to add the response to the knowledge base.
 - Choose Yes to add it, which will provide a summary for addition.
 - Click Save to store the response in the knowledge base. Additionally, you have the option to interact with the chatbot for further assistance.
 
@@ -145,7 +145,7 @@ Cortex complete generates a response (completion) to a prompt using your choice 
 
 We add additional information to the prompt to ensure the email is answered accurately.
 - **get_context** uses RAG to find the most similar support case and passes the text into our prompt.
-- **background_info** is a document explaining many high level details of Tasty Bytes. This add Tasty Bytes specific data to the prompt.  
+- **background_info** is a document explaining many high-level details of Tasty Bytes. This add Tasty Bytes specific data to the prompt.  
 
 ```python
 def generate_email_response(email):
@@ -210,7 +210,7 @@ The app has an embedded RAG chatbot for agents to ask more questions of the know
 ## Conclusion And Resources
 Duration: 1
 
-Congratulations, you have built a customer support email application in Streamlit using Cortex LLMs. This powerful application helps Tasty Bytes customer support agents quickly and accurately answer customer emails, including automatic responses. 
+Congratulations! You have built a customer support email application in Streamlit using Cortex LLMs. This powerful application helps Tasty Bytes customer support agents quickly and accurately answer customer emails, including automatic responses. 
 
 Check out several the [Tasty Bytes - RAG Chatbot Using Cortex and Streamlit](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html?index=..%2F..index) and [Tasty Bytes - Enhance Customer Experience Streamlit App](https://quickstarts.snowflake.com/guide/tasty_bytes_rag_chatbot_using_cortex_and_streamlit/index.html?index=..%2F..index) to learn more about how Streamlit and Cortex helps Tasty Bytes improve customer experience. 
 
