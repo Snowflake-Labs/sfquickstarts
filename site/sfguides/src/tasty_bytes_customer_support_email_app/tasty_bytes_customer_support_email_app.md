@@ -73,6 +73,8 @@ CREATE OR REPLACE STREAMLIT tasty_bytes_customer_support_email.app.customer_supp
 ROOT_LOCATION = '@tasty_bytes_customer_support_email.app.customer_support_email_app'
 MAIN_FILE = '01_Queue.py'
 QUERY_WAREHOUSE = 'tasty_bytes_customer_support_email_wh';
+
+GRANT USAGE ON STREAMLIT tasty_bytes_customer_support_email.app.customer_support_email_app TO ROLE customer_support_email_role;
 ```
 
 ### Step 5 - Open the Streamlit App
