@@ -49,7 +49,8 @@ Open a new Snowsight worksheet and run all commands from setup.sql.
 ### Step 3 - Load Streamlit Files
 
 - Download all files from the [app directory](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-enhancing-customer-experience/tree/main/customer-support-email-app/app). This includes all files in the pages subdirectory.
-- In Snowsight, open the tasty_bytes_customer_support_email.app.customer_support_email_app stage
+- In Snowsight, change role to sysadmin
+- open the tasty_bytes_customer_support_email.app.customer_support_email_app stage
 
 ![stage](assets/stage-location.png)
 
