@@ -1,5 +1,5 @@
 author: Charlie Hammond
-id: tasty_bytes_rag_customer_experience_app
+id: tasty_bytes_customer_experience_app
 summary: This application supports Tasty Bytes management by analyzing both customer reviews and food truck inspections, streamlining communication with truck owners to improve the overall customer experience.
 categories: Getting-Started, Tasty-Bytes, Cortex
 environments: web
