@@ -16,13 +16,13 @@ Duration: 1
 
 Welcome to the Powered by Tasty Bytes - Enhance Customer Experience Streamlit App Quickstart!
 
-This application supports Tasty Bytes management by analyzing both customer reviews and food truck inspections, streamlining communication with truck owners to improve the overall customer experience. By leveraging Cortex functions, it conducts sentiment analysis to assist in drafting emails for owners. Moreover, it includes built-in analytics for users to interact with review data and generate plots using LLM's capabilities. Additionally, the integration of Document AI enhances its analytical prowess by extracting insights from handwritten, unstructured inspection documents.
+This application supports Tasty Bytes management by analyzing both customer reviews and food truck inspections, streamlining communication with truck owners to improve the overall customer experience. By leveraging Cortex functions, it conducts sentiment analysis to assist in drafting emails for owners. Moreover, it includes built-in analytics for users to interact with review data and generate plots using LLM capabilities. Additionally, the integration of Document AI enhances its analytical prowess by extracting insights from handwritten, unstructured inspection documents.
 
 ### What You’ll Learn 
-- How to build a Streamlit in Snowflake App
-- How to build a multi-page Streamlit in Snowflake App
-- Learn how to use Cortex LLMs in your application including
-- Learn how DocumentAI can be used to create analytics from unstructured data
+- How to build a Streamlit app in Snowflake
+- How to build a multi-page Streamlit app in Snowflake
+- How to use Cortex LLMs in your application
+- How DocumentAI can be used to create analytics from unstructured data
 
 ### What You’ll Need 
 - Snowflake account 
@@ -77,7 +77,7 @@ GRANT USAGE ON STREAMLIT tasty_bytes_enhancing_customer_experience.app.enhancing
 
 ### Step 5 - Open the Streamlit App
 
-- From Snowsight, ensure you are using the enhancing_customer_expereience_role role.
+- From Snowsight, ensure you are using the enhancing_customer_experience_role role.
 - Under Projects, click Streamlit
 - Open ENHANCE_CUSTOMER_EXPERIENCE_APP from the list of apps
 
@@ -151,8 +151,8 @@ If you want to learn more about Enhancing Customer Experience with Tasty Bytes, 
 ### What You Learned
 - How to build a Streamlit in Snowflake App
 - How to build a multi-page Streamlit in Snowflake App
-- Learn how to use Cortex LLMs in your application including
-- Learn how DocumentAI can be used to create analytics from unstructured data
+- How to use Cortex LLMs in your application including
+- How DocumentAI can be used to create analytics from unstructured data
 
 ### Related Resources
 - [Extracting Insights from Unstructured Data with Document AI](https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index#0) 
