@@ -1,11 +1,11 @@
 author: Charlie Hammond
 id: tasty_bytes_customer_support_email_app
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
+categories: Tasty-Bytes, Getting-Started, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
@@ -38,134 +38,96 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 - A Snowflake Guide
 
 <!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
+## Setup
+Duration: 10
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+### Step 1 - Accessing hosted Setup SQL in GitHub
+- Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
 
+<button>[setup.sql](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-enhancing-customer-experience/blob/main/customer-support-email-app/setup/setup.sql)</button>
 
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
+### Step 2 - Run the contents of setup.sql
 
----
+Open a new Snowsight worksheet and run all commands from setup.sql.
 
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
+### Step 3 - Load Streamlit Files
 
+- Download all files from the [app directory](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-enhancing-customer-experience/tree/main/customer-support-email-app/app). This includes all files in the pages subdirectory.
+- In Snowsight, open the tasty_bytes_customer_support_email.app.customer_support_email_app stage
 
-<!-- ------------------------ -->
-## Creating a Step
-Duration: 2
+![stage](assets/stage-location.png)
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
+- Click + Files in the top right of the stage
+- Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory
+  - 01_Queue.py and environment.yml are at the top level
+  - 02_History.py and 03_Simulate_New_Email.py and in the pages folder. 
 
-```markdown
-## Step 1 Title
-Duration: 3
+![streamlit-files](assets/streamlit-stage.png)
 
-All the content for the step goes here.
+### Step 4 - Create the Streamlit App
 
-## Step 2 Title
-Duration: 1
+Run the code below in a Snowsight worksheet to build the Streamlit app.
 
-All the content for the step goes here.
+```sql
+USE ROLE sysadmin;
+
+CREATE OR REPLACE STREAMLIT tasty_bytes_customer_support_email.app.customer_support_email_app
+ROOT_LOCATION = '@tasty_bytes_customer_support_email.app.customer_support_email_app'
+MAIN_FILE = '01_Queue.py'
+QUERY_WAREHOUSE = 'tasty_bytes_customer_support_email_wh';
 ```
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+### Step 5 - Open the Streamlit App
 
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+- From Snowsight, ensure you are using the customer_support_email_role role.
+- Under Projects, click Streamlit
+- Open CUSTOMER_SUPPORT_EMAIL_APP from the list of apps
 
-<!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
-
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
-
-
-> aside negative
-> 
->  This will appear in a negative info box.
-
-### Buttons
-<button>
-
-  [This is a download button](link.com)
-</button>
-
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
-
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+![streamlit-app](assets/streamlit-app.png)
 
 <!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
+## Running the Customer Support Email App
+Duration: 5
 
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
+This application is divided into three sections.
 
-### Images
-![Puppy](assets/SAMPLE.jpg)
+- Queue displays a list of emails awaiting responses to customers.
+- History showcases emails previously addressed by agents and auto-responses from LLM.
+- Additionally, there's an option to Simulate a New Email, acting as a customer for demonstration purposes.
+The primary objective of this demonstration is to illustrate how the app utilizes the knowledge base in real-time.
 
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
+Let's simulate a scenario where we first act as a customer, sending an email that the LLM cannot answer. Then, we will act as a Customer Support Agent to respond, adding the summarized response to our knowledge base or corpus, and resend a similar email to trigger an auto-response from LLM.
 
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
+To do this, please follow the steps below:
 
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
+- Click on Simulate New Email
+- Send a new email with the following information:
+  - Body: I wanted to ask if the the Buffalo Wings at Toronto Plant Palace are still Vegan? Last time I was there they were.
+  - Email Address: Use your email or a fake email address
+  - Subject: Are the Buffalo Wings at Toronto Plant Palace still vegan?
+-   - Click Send to dispatch the email, which the LLM will process. Since the auto-response Knowledge Base lacks information about this query, it will be routed to an agent.
+- Navigate to the Queue to view the list of emails to be addressed.
+- Scroll to the bottom and click Reply next to the email sent. This action reveals the full email and a suggested response generated by LLM for sending to the customer.
+- Click Send to dispatch the email. Subsequently, you'll be prompted to add the response to the knowledge base.
+- Choose Yes to add it, which will provide a summary for addition.
+- Click Save to store the response in the knowledge base. Additionally, you have the option to interact with the chatbot for further assistance.
+- Now that the response is saved to the knowledge base, you can pose the same or a similar question again to observe the auto-response.
+- Once the auto-response is received, navigate to the History section to view the response.
+
+P.S. If you prefer not to find something new to add to the knowledge base for each demo, you can simply delete the ones you added by executing the commands below:
+```sql
+delete from tasty_bytes_customer_support_email.harmonized.chunk_text
+where source = 'EMAIL';
+
+delete from tasty_bytes_customer_support_email.harmonized.vector_store
+where source = 'EMAIL';
+```
+
+<!-- ------------------------ -->
+## Understanding the Customer Support Email App
+Duration: 10
+
+The following features are used in the customer support email app.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
