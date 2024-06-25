@@ -36,7 +36,7 @@ In this guide, we will build a Cortex LLM powered chatbot to help Tasty Bytes ag
 ## Setup
 Duration: 10
 
-### Create Snowflake Database, Schema and Warehouse
+### Create Snowflake Database, Schema, and Warehouse
 
 Run the code below in a Snowsight worksheet. It creates basic objects in Snowflake.
 
@@ -319,7 +319,7 @@ The chatbot application uses retrieval augemented generation (RAG) to find the m
 
 The code below finds the document most similar to the current chat from our vector_store table. The documents in the table include chat logs and other public-facing documents (Annual Reports, FAQs). 
 
-[Vector Embeddings](https://docs.snowflake.com/en/user-guide/snowflake-cortex/vector-embeddings#create-vector-embeddings-from-text) have previously been created for documents (chat logs, annual reports, etc.) in the vector_store table. In our application, we use Cortex Embed to create a vector for the current chat. This allows us to detemine the [Vector Cosine Similarity](https://docs.snowflake.com/en/sql-reference/functions/vector_cosine_similarity) between the chat and existing documents and return the most similar document. The text of the most relevant document is later used in our prompt to ensure responses have all relevant information. 
+[Vector Embeddings](https://docs.snowflake.com/en/user-guide/snowflake-cortex/vector-embeddings#create-vector-embeddings-from-text) have previously been created for documents (chat logs, annual reports, etc.) in the vector_store table. In our application, we use Cortex Embed to create a vector for the current chat. This allows us to determine the [Vector Cosine Similarity](https://docs.snowflake.com/en/sql-reference/functions/vector_cosine_similarity) between the chat and existing documents and return the most similar document. The text of the most relevant document is later used in our prompt to ensure responses have all relevant information. 
 
 ```python
 # text: current chat
@@ -369,7 +369,7 @@ If you want to learn more about RAG and Cortex from Snowflake, check out this in
 ### What You Learned
 - How to build a chatbot using Cortex LLMs 
 - How to build a Streamlit in Snowflake application 
-- Basics of retrieval augemented generation (RAG) 
+- Basics of retrieval augmented generation (RAG) 
 
 ### Related Resources
 - [Easy and Secure LLM Inference and Retrieval Augmented Generation (RAG) Using Snowflake Cortex](https://www.snowflake.com/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/)
