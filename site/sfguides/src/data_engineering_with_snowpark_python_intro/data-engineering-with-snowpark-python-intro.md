@@ -338,6 +338,13 @@ You can also view the shared database `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL
 ## Load Raw
 Duration: 10 
 
+> aside negative
+> **IMPORTANT**:
+>
+> Make sure your local Python environment is ready with required pip packages:
+> - snowflake
+> - snowflake-snowpark-python
+
 During this step we will be loading the raw Tasty Bytes POS and Customer loyalty data from raw Parquet files in `s3://sfquickstarts/data-engineering-with-snowpark-python/` to our `RAW_POS` and `RAW_CUSTOMER` schemas in Snowflake. And you are going to be orchestrating this process from your laptop in Python using the Snowpark Python API. To put this in context, we are on step **#5** in our data flow overview:
 
 <img src="assets/data_pipeline_overview.png" width="800" />
@@ -349,6 +356,11 @@ To load the raw data, execute the `app/05_load_raw_data.py` script. This can be 
 python app/05_load_raw_data.py
 ```
 
+> aside negative
+> **NOTE**:
+>
+> The data load will take few mins(5-10 mins) to complete
+
 While that is running, please open the script in VS Code and continue on this page to understand what is happening.
 
 ### Running Snowpark Python Locally
@@ -359,7 +371,10 @@ In this step you will be running the Snowpark Python code locally from your lapt
 if __name__ == "__main__":
     # Create a local Snowpark session
     with Session.builder.getOrCreate() as session:
+        # Set the right database context to use
+        session.use_database("HOL_DB")
         load_all_raw_tables(session)
+        validate_raw_tables(session)
 ```
 
 A few things to point out here. First, the local Snowpark session is being created by `Session.builder.getOrCreate()`. This method either pulls in an existing session, or creates a new one based on the `.snowflake/connections.toml` file.
