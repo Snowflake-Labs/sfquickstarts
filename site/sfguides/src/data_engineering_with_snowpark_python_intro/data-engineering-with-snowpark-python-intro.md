@@ -363,7 +363,7 @@ During this step we will be loading the raw Tasty Bytes POS and Customer loyalty
 To load the raw data, execute the `app/05_load_raw_data.py` script. This can be done a number of ways in VS Code, from a terminal or directly by VS Code. For this demo you will need to execute the Python scripts from the terminal. So go back to the terminal in VS Code, make sure that your `snowflake-demo` conda environment is active, then run the following commands (which assume that your terminal has the root of your repository open):
 
 ```bash
-python app/05_load_raw_
+python app/05_load_raw_data.py
 ```
 
 While that is running, please open the script in VS Code and continue on this page to understand what is happening.
@@ -448,7 +448,7 @@ During this step we will be transforming the raw data into an aggregated metrics
 
 To run this step, we will follow the same process as before. From your terminal, run the following command:
 ```bash
-python 
+python app/06_load_daily_city_metrics.py
 ```
 
 To put this in context, we are on step **#6** in our data flow overview:
