@@ -1,19 +1,19 @@
 author: Armin Efendic
-id: building_ml_models_in_minutes_with_hex_and_cortex
-summary: This lab will walk you through how to use Cortex ML Functions and Hex.
+id: building_ml_models_in_minutes_with_hex_and_snowflake_ml_functions
+summary: This lab will walk you through how to use Snowflake ML Functions and Hex.
 categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Hex, Notebooks, Partner Connect
 
-# Building ML Models In Minutes With Hex And Cortex
+# Building ML Models In Minutes With Hex And Snowflake ML Functions
 
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
 
-In this quickstart, we will be utilizing population data gathered by the US Census Bureau. This dataset will be used to forecast population growth of various countries. For the forecasting model we will use is the Cortex Forecast function. 
+In this quickstart, we will be utilizing population data gathered by the US Census Bureau. This dataset will be used to forecast population growth of various countries. For the forecasting model we will use is the Snowflake ML Forecast function. 
 
 ### Prerequisites
 - Familiarity with basic Python and SQL 
@@ -51,13 +51,13 @@ The following issues may occur if you have an existing Hex account and you're no
 <!-- ------------------------ -->
 
 ### What You Will Learn
-* How to perform model training using Cortex ML functions
+* How to perform model training using Snowflake ML functions
 * How to handle model training for multi-series datasets
 * How to call the model for inference
 * How to create charts in Hex and finally a Hex App
 
 ### What You Will Build
-In this quickstart, you will create a few machine learning models using Cortex ML. In the end we will use our results and data exploration to create a final Hex app.
+In this quickstart, you will create a few machine learning models using Snowflake ML functions. In the end we will use our results and data exploration to create a final Hex app.
 <!-- ------------------------ -->
 
 ## Getting Started with Hex
@@ -119,7 +119,7 @@ Now that we've completed going through our project, we can share this project wi
 Congratulations on making it to the end of this Lab! You've successfully trained an forecast model to predict the country population using only SQL. At the end, you created a Hex app highlight your analysis that can be easily shared with others.
 
 ### What You Learned
-* How to use the Cortex Forecast Function
+* How to use the Snowflake ML Forecast Function
 * How to handle multi-series datasets
 * How to call the model to perform inference and recieve population growth projections
 * How to chart those predictions and other useful information with Hex's native visual cells
@@ -127,7 +127,7 @@ Congratulations on making it to the end of this Lab! You've successfully trained
 
 ### Related Resources
 * [Final Project](https://app.hex.tech/hex-public/hex/dbac0486-1d27-4a10-9db8-7eb73a7ce4e4/draft/logic?utm_source=quickstart)
-* [Building ML Models In Minutes With Hex and Snowflake Cortex](https://medium.com/snowflake/building-ml-models-in-minutes-with-hex-and-snowflake-cortex-434e94486365)
-* [Machine Learning Made Easy With Cortex ML Functions And Hex](https://www.youtube.com/watch?v=Sj64VEyfwww)
-* [Cortex ML Functions Documentation](https://docs.snowflake.com/en/guides-overview-ml-functions)
+* [Building ML Models In Minutes With Hex and Snowflake ML Functions](https://medium.com/snowflake/building-ml-models-in-minutes-with-hex-and-snowflake-cortex-434e94486365)
+* [Machine Learning Made Easy With SNowflake ML Functions And Hex](https://www.youtube.com/watch?v=Sj64VEyfwww)
+* [Snowflake ML Functions Documentation](https://docs.snowflake.com/en/guides-overview-ml-functions)
 * [Hex Documentation](https://learn.hex.tech/)
