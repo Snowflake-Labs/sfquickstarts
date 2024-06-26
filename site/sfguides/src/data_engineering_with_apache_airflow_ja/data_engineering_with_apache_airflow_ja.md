@@ -80,8 +80,8 @@ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.3.0/docker-compose.y
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
-    - ./dbt:/dbt # add this in
-    - ./dags:/dags # add this in
+    - ${AIRFLOW_PROJ_DIR:-.}/dbt:/dbt # add this in
+    - ${AIRFLOW_PROJ_DIR:-.}/dags:/dags # add this in
 
 ```
 
