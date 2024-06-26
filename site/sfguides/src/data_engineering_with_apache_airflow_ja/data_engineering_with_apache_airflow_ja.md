@@ -268,7 +268,7 @@ dbt deps
 
 ここまでで、次のようなフォルダ構造になります。
 
-![airflow](assets/data_engineering_with_apache_airflow_3_dbt_structure.png)
+![airflow](assets/data_engineering_with_apache_airflow_3_dbt_structure_fixed.png)
 
 これでdbtの設定は完了です。次のセクションでは、csvファイルとdagsの作成に進みましょう。
 
