@@ -1,4 +1,4 @@
-author: Vino Duraisamy
+author: Vino Duraisamy, Kamesh Sampath
 id: data_engineering_with_snowpark_python_intro
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python
 categories: Getting-Started, featured, data-engineering
@@ -80,37 +80,6 @@ Duration: 10
 
 The very first step is to fork the GitHub repository [Intro to Data Engineering with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro). This repository contains all the code you need to successfully complete this Quickstart guide.  Click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
-### Create a GitHub Personal Access Token
-
-In order for Snowflake to authenticate to your Github repository, you will need to generate a personal access token. To create a personal access token, follow the instructions [located here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic). 
-
-Make sure to note down the token until step 3 of the Quickstart, where we will be securely storing it within a Snowflake secret object.
-
-### Create GitHub Codespace
-
-For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be enough to work through this lab.
-
-To create a GitHub Codespace, click on the green `<> Code` button from the GitHub repository homepage. In the Code popup, click on the `Codespaces` tab and then on the green `Create codespace on main`.
-
-<img src="assets/codespace_setup.png" width="800" />
-
-This will open a new tab and begin setting up your codespace. It will take a few minutes as it sets up the entire environment for this Quickstart. Here is what is being done for you:
-
-- Creating a container for your environment
-- Installing Anaconda (miniconda)
-- SnowCLI setup
-  - Installing SnowCLI
-  - Creating a directory and default config file for SnowCLI
-- Anaconda setup
-  - Creating the Anaconda environment
-  - Installing the Snowpark Python library
-- VS Code setup
-  - Installing VS Code
-  - Installing the Snowflake VS Code extension
-- Starting a hosted, web-based VS Code editor
-
-Once the codespace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
-
 ### Configure Snowflake Credentials
 We will not be directly using [the SnowCLI command line client](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) for this Quickstart, but we will be storing our Snowflake connection details in the SnowCLI connections file located at `~/.snowflake/connections.toml`. A default connection file was created for you during the codespace setup.
 
@@ -123,7 +92,7 @@ The easiest way to edit the default `~/.snowflake/connections.toml` file is dire
 During the codespace setup we created an Anaconda environment named `snowflake-demo`. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see `(snowflake-demo)` before your bash prompt.
 
 <!-- ------------------------ -->
-## Setup Snowflake
+## Setup Snowflake Objects
 
 Duration: 20
 
@@ -147,8 +116,6 @@ For the purpose of this quickstart, we will initially use VS Code to create the 
 
 Open '03_git_config.sql' in VS Code. 
 
-
-
 ---
 
 ![Execute in VS Code](assets/vscode_execute.png)
@@ -162,10 +129,11 @@ Open '03_git_config.sql' in VS Code.
 >
 > - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
-Let's run through the commands individually and understand what each command does.
+Let's run through the commands individually and understand what each command does and finally create Snowflake Objects required for the lab.
 
-### Creating Account Level Objects
-- In this step, we create the role `SECRETS_ADMIN` and assign it to `CURRENT_USER()` within Snowflake. This role will have the necessary permissions to create Snowflake objects needed to interact with your forked git repo and securely manage the secret needed to authenticate with Github. The role is granted to SYSADMIN so any objects created can still be managed by this role. 
+#### Account Level Objects
+
+- We created the role `GIT_ADMIN` and assign it to `CURRENT_USER()` within Snowflake. This role will have the necessary permissions to create Snowflake objects needed to interact with your forked git repo. The role is granted to SYSADMIN so any objects created can still be managed by this role. 
 
 ```sql
 USE ROLE SECURITYADMIN;
@@ -175,7 +143,7 @@ GRANT ROLE GIT_ADMIN to ROLE SYSADMIN;
 GRANT ROLE GIT_ADMIN TO USER IDENTIFIER($MY_USER);
 ```
 
-- Next, we create the database that will house the objects and ensure the new role has ownership of them so that it can manage them. 
+- Next, we create the database that will house the Git Repo and ensure the new role has ownership of them so that it can manage them. 
 
 ```sql
 USE ROLE SYSADMIN;
@@ -186,21 +154,17 @@ USE DATABASE GIT_REPO;
 GRANT OWNERSHIP ON SCHEMA PUBLIC TO ROLE GIT_ADMIN;
 ```
 
-- Finally, we will securely store our Github secret and make the connection to Github. Snowflake uses the `SECRET` object to securely store passwords and other sensitive artifacts that can then be accessed only by roles granted the authority to do so. We then grant the ability for `GIT_ADMIN` to create API integrations. API integrations are used to define URLs that are allowed to be accessed by Snowflake, and any secrets needed to authenticate to those sites. We then create a specific `GIT REPOSITORY` object that allows you to restrict specific roles' access to individual repositories. 
+- We then grant the ability for `GIT_ADMIN` to create API integrations. API integrations are used to define URLs that are allowed to be accessed by Snowflake, and any secrets needed to authenticate to those sites. We then create a specific `GIT REPOSITORY` object that allows you to restrict specific roles' access to individual repositories. 
 
 > aside positive
 > IMPORTANT
 > 
-> Make sure to update lines 22, 23, 32, and 39 with the values specific to your Github repo
+> Make sure to update `API_ALLOWED_PREFIXES` and `ORIGIN`  with the values specific to your Github repo
 
 ```sql
 USE ROLE GIT_ADMIN;
 USE DATABASE GIT_REPO;
 USE SCHEMA PUBLIC;
-CREATE OR REPLACE SECRET GIT_SECRET 
-    TYPE = PASSWORD 
-    USERNAME = '<your_git_user' 
-    PASSWORD = '<your_personal_access_token>';
 
 --Create an API integration for interacting with the repository API
 USE ROLE ACCOUNTADMIN; 
@@ -209,15 +173,12 @@ USE ROLE GIT_ADMIN;
 
 CREATE OR REPLACE API INTEGRATION GIT_API_INTEGRATION 
     API_PROVIDER = GIT_HTTPS_API 
-    API_ALLOWED_PREFIXES = ('https://github.com/<your_git_user>') 
-    ALLOWED_AUTHENTICATION_SECRETS = (GIT_SECRET) 
+    API_ALLOWED_PREFIXES = ('https://github.com/<your_git_user>')
     ENABLED = TRUE;
     
 CREATE OR REPLACE GIT REPOSITORY DE_QUICKSTART 
     API_INTEGRATION = GIT_API_INTEGRATION 
-    GIT_CREDENTIALS = GIT_SECRET 
     ORIGIN = '<your git repo URL ending in .git>';
-
 ```
 
 ### Verify Git Repo and Execute Script to Create Lab Specific Objects
@@ -241,7 +202,7 @@ EXECUTE IMMEDIATE
 
 While they are running, lets review what this script is doing.
 
-### Creating Account Level Objects
+### Review Snowflake Objects Created for the Lab
 
 - In this step, we create the role `HOL_ROLE` and assign this role to `CURRENT_USER()` within Snowflake. This role will have access permissions to create all the Snowflake objects needed for the quickstart. First, grant the `HOL_ROLE` the same permissions as `SYSADMIN` role. Then, grant permissions to run tasks, monitor the execution of tasks, read our git repository, and to import privileges on the `SNOWFLAKE` database to `HOL_ROLE`. 
 
@@ -278,19 +239,41 @@ CREATE OR REPLACE WAREHOUSE HOL_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 300, 
 GRANT OWNERSHIP ON WAREHOUSE HOL_WH TO ROLE HOL_ROLE;
 ```
 
-### Creating Database Level Objects
+####  Database Level Objects
 
-- In this step, we will set the Snowflake scope to `HOL_ROLE`, `HOL_DB` and `HOL_WH` and create the schema and stage.
+- Set the right Database Context such as role, warehouse and database,
 
 ```sql
-CREATE OR REPLACE SCHEMA HOL_SCHEMA;
+USE ROLE HOL_ROLE;
+USE WAREHOUSE HOL_WH;
+USE DATABASE HOL_DB;
+```
 
-USE SCHEMA HOL_SCHEMA;
-CREATE OR REPLACE STAGE FROSTBYTE_RAW_STAGE
+- Create the schemas that will be used as part of various lab exercises,
+
+```sql
+-- Default schema to hold labs objects
+CREATE OR REPLACE SCHEMA HOL_SCHEMA;
+-- Schema to hold external stages
+CREATE OR REPLACE SCHEMA EXTERNAL;
+-- Schema to hold raw POS data
+CREATE OR REPLACE SCHEMA RAW_POS;
+-- Schema to customer data
+CREATE OR REPLACE SCHEMA RAW_CUSTOMER;
+```
+
+- Create the stage on `EXTERNAL` schema to load the data files from s3,
+
+```sql
+CREATE OR REPLACE STAGE EXTERNAL.FROSTBYTE_RAW_STAGE
     URL = 's3://sfquickstarts/data-engineering-with-snowpark-python/';
 ```
 
+- Use the `HOL_SCHEMA` as the default schema for all operations that does not call out the schema explicitly.
 
+```sql
+USE HOL_SCHEMA;
+```
 
 <!-- ------------------------ -->
 ## Load Weather
