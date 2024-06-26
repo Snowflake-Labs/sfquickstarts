@@ -90,7 +90,7 @@ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.3.0/docker-compose.y
 `.env`
 
 ```bash
-_PIP_ADDITIONAL_REQUIREMENTS=dbt==0.19.0
+_PIP_ADDITIONAL_REQUIREMENTS=dbt-snowflake==1.7.3
 ```
 
 ---
