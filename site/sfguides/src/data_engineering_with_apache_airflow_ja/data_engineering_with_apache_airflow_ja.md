@@ -215,6 +215,8 @@ packages:
 dbt_project.yml
 
 ```yml
+name: example
+profile: default
 models:
   my_new_project:
       # Applies to all files under models/example/
@@ -224,6 +226,7 @@ models:
       analysis:
           schema: analysis
           materialized: view
+seed-paths: ["data"]
 ```
 
 次に、`packages.yml`内に配置した`fishtown-analytics/dbt_utils`をインストールします。これを行うには、`dbt`フォルダから`dbt deps`コマンドを実行します。
