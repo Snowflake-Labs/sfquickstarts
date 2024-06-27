@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Connectors, Native Apps, External connectivity
 
-# Native Connector - Python (Pull Based)
+# Build a Pull-based Native Connector in Python
 
 ## Overview
 Duration: 1

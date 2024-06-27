@@ -167,7 +167,7 @@ Run the following command to install the Kafka connector and Snowpipe streaming 
 
 ```commandline
 passwd=changeit  # Use the default password for the Java keystore, you should chang it after finishing the lab
-directory=/home/ssm-user/snowpipe-streaming # Installation directory
+directory=/home/azureuser/snowpipe-streaming # Installation directory
 
 cd $HOME
 mkdir -p $directory
@@ -220,11 +220,11 @@ See the following example screen capture.
 ![](assets/bs-4.png)
 #### 7. Create a configuration file `connect-standalone.properties` for the Kafka connector
 
-Run the following commands to generate a configuration file `connect-standalone.properties` in directory `/home/ssm-user/snowpipe-streaming/scripts` for the client to authenticate
+Run the following commands to generate a configuration file `connect-standalone.properties` in directory `/home/azureuser/snowpipe-streaming/scripts` for the client to authenticate
 with the Kafka cluster.
 
 ```commandline
-dir=/home/ssm-user/snowpipe-streaming/scripts
+dir=/home/azureuser/snowpipe-streaming/scripts
 mkdir -p $dir && cd $dir
 cat << EOF > $dir/connect-standalone.properties
 #************CREATING SNOWFLAKE Connector****************
@@ -254,13 +254,13 @@ consumer.ssl.enabled.protocols=TLSv1.1,TLSv1.2
 EOF
 
 ```
-A configuration file `connect-standalone.properties` is created in directory `/home/ssm-user/snowpipe-streaming/scripts`
+A configuration file `connect-standalone.properties` is created in directory `/home/azureuser/snowpipe-streaming/scripts`
 
 #### 8. Create a security client.properties configuration file for the producer
 
 Run the following commands to create a security configuration file `client.properties` for the MSK cluster
 ```commandline
-dir=/home/ssm-user/snowpipe-streaming/scripts
+dir=/home/azureuser/snowpipe-streaming/scripts
 cat << EOF > $dir/client.properties
 security.protocol=SSL
 ssl.truststore.location=/tmp/kafka.client.truststore.jks
@@ -270,7 +270,7 @@ EOF
 
 ```
 
-A configuration file `client.properties` is created in directory `/home/ssm-user/snowpipe-streaming/scripts`
+A configuration file `client.properties` is created in directory `/home/azureuser/snowpipe-streaming/scripts`
 
 #### 9. Create a streaming topic called “streaming” in the MSK cluster
 
@@ -347,7 +347,7 @@ CREATE OR REPLACE SCHEMA IDENTIFIER($SCHEMA);
 
 [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql.html) is the command line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
 
-First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/ssm-user/pub.Key` (see step 3 in previous section) in the following SQL command and execute.
+First, in the Snowflake worksheet, replace `<pubKey>` with the content of the file `/home/azureuser/pub.Key` (see step 3 in previous section) in the following SQL command and execute.
 ```commandline
 use role accountadmin;
 alter user streaming_user set rsa_public_key='<pubKey>';
@@ -439,10 +439,10 @@ done
 echo export key_pass=\$pass >> $outf
 export key_pass=\$pass
 
-read -p "Full path to your Snowflake private key file, default: /home/ssm-user/rsa_key.p8 ==> " p8
+read -p "Full path to your Snowflake private key file, default: /home/azureuser/rsa_key.p8 ==> " p8
 if [[ \$p8 == "" ]]
 then
-   p8="/home/ssm-user/rsa_key.p8"
+   p8="/home/azureuser/rsa_key.p8"
 fi
 
 priv_key=\`cat \$p8 | grep -v PRIVATE | tr -d '\n'\`
@@ -459,7 +459,7 @@ See below example screen capture.
 
 #### 2. Run the following commands to create a Snowflake Kafka connect property configuration file:
 ```commandline
-dir=/home/ssm-user/snowpipe-streaming/scripts
+dir=/home/azureuser/snowpipe-streaming/scripts
 cat << EOF > $dir/snowflakeconnectorMSK.properties
 name=snowpipeStreaming
 connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
