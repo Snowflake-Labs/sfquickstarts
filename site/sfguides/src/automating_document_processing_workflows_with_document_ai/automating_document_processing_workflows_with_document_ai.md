@@ -5,9 +5,9 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started,  LLMs, Generative AI, Streamlit, Data Engineering
+tags: Getting Started,  LLMs, Generative AI, Streamlit, Data Engineering, Document AI
 
-# Getting Started with Document AI
+# Automating Document Processing Workflows With Document AI
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
