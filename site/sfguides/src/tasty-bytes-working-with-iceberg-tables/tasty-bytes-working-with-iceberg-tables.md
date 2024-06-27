@@ -507,7 +507,7 @@ JOIN tasty_bytes_db.raw.icb_truck_reviews tr
 ````
 
 <!-- ------------------------ -->
-## Account Cleanup
+## Cleanup
 
 Run the following command to remove all Snowflake objects created in this quickstart. Do not forget the AWS roles, policy, and bucket!
 
@@ -519,7 +519,7 @@ DROP EXTERNAL VOLUME IF EXISTS vol_tastybytes_truckreviews;
 ````
 
 <!-- ------------------------ -->
-## Conclusion and Next Steps
+## Conclusion and Resources
 
 In this quickstart, we explored the use of Iceberg tables in Snowflake to manage and analyze restaurant review data efficiently. We began by setting up the necessary infrastructure in Snowflake, AWS, and S3, including creating databases, warehouses, IAM policies, roles, and storage integrations.
 
