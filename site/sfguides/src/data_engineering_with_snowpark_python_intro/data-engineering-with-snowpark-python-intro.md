@@ -1,4 +1,4 @@
-author: Vino Duraisamy, Kamesh Sampath
+author: Vino Duraisamy
 id: data_engineering_with_snowpark_python_intro
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python
 categories: Getting-Started, featured, data-engineering
@@ -26,11 +26,11 @@ In case you are new to some of the technologies mentioned above, here is a quick
 
 ### What is Snowpark?
 
-Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake. Snowpark can be used to build data pipelines, ML models, apps, and other data processing tasks.
+The set of libraries and runtimes in Snowflake that securely deploy and process non-SQL code, including Python, Java and Scala.
 
-**Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark API for data pipelines and apps and the Snowpark ML API for end to end machine learning.
+**Familiar Client Side Libraries** - Snowpark brings deeply integrated, DataFrame-style programming and OSS compatible APIs to the languages data practitioners like to use. It also includes the Snowpark ML API for more efficient ML modeling and ML operations.
 
-**Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. These server-side capabilities allow users to bring in and run custom logic in Python with user-defined functions and stored procedures. 
+**Flexible Runtime Constructs** - Snowpark provides flexible runtime constructs that allow users to bring in and run custom logic. Developers can seamlessly build data pipelines, ML models, and data applications with User-Defined Functions and Stored Procedures.
 
 Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
@@ -103,10 +103,6 @@ This will open a new tab and begin setting up your codespace. It will take a few
 
 Once the codepsace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
 
-> aside positive
-> **NOTE**:
-> Going forward references to `VS Code` means the VS Code editor on the Codespaces
-
 ### Configure Snowflake Credentials
 We will not be directly using [the SnowSQL command line client](https://docs.snowflake.com/en/user-guide/snowsql.html) for this Quickstart, but we will be storing our Snowflake connection details in the SnowSQL config file located at `~/.snowsql/config`. A default config file was created for you during the codespace setup.
 
@@ -119,7 +115,7 @@ The easiest way to edit the default `~/.snowsql/config` file is directly from VS
 During the codespace setup we created an Anaconda environment named `snowflake-demo`. And when VS Code started up it should have automatically activated the environment in your terminal. You should see something like this in the terminal, and in particular you should see `(snowflake-demo)` before your bash prompt.
 
 <!-- ------------------------ -->
-## Setup Snowflake Objects
+## Setup Snowflake
 
 Duration: 10
 
@@ -154,7 +150,7 @@ For the purpose of this quickstart, we will use VS Code to run the SQL commands 
 >
 > - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
-Let's run through the commands individually and understand what each command does and finally create Snowflake Objects required for the lab.
+Let's run through the commands individually and understand what each command does.
 
 ### Creating Account Level Objects
 
@@ -185,14 +181,12 @@ CREATE OR REPLACE WAREHOUSE HOL_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 300, 
 GRANT OWNERSHIP ON WAREHOUSE HOL_WH TO ROLE HOL_ROLE;
 ```
 
-####  Database Level Objects
+### Creating Database Level Objects
 
-- Set the right Database Context such as role, warehouse and database,
+- In this step, we will set the Snowflake scope to `HOL_ROLE`, `HOL_DB` and `HOL_WH` and create the schema and stage.
 
 ```sql
-USE ROLE HOL_ROLE;
-USE WAREHOUSE HOL_WH;
-USE DATABASE HOL_DB;
+CREATE OR REPLACE SCHEMA HOL_SCHEMA;
 
 USE SCHEMA HOL_SCHEMA;
 CREATE OR REPLACE STAGE FROSTBYTE_RAW_STAGE
