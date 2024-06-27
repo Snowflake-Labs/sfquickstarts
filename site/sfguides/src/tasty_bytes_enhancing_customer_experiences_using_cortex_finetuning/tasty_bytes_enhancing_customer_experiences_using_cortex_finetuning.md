@@ -74,18 +74,21 @@ Within Worksheets, click the "+" button in the top-right corner of Snowsight.
 
 Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Cortex Fine Tuning"
 
-### Step 6 - Accessing Quickstart SQL in GitHub
+### Step 6 - Accessing Quickstart SQL from the  GitHub repo 
 
 Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
 
 [Source Code - Cortex FineTuning.sql](https://github.com/Snowflake-Labs/sfguide-enhancing-customer-experiences-using-cortex-finetuning/blob/main/setup/Cortex_FineTuning.sql)
 
-Step 7 - Copying Setup SQL from GitHub
+Step 7 - Copying Setup SQL from GitHub.
+
 Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard. 
 
 <img src="assets/copysnowsight.png"/>
 
+
 ## Setup and Prepare Data
+### NOTE : DO NOT CLICK RUN ALL OR HIGHLIGHT ALL THE CODE AND ATTEMPT RUNNING AT ONCE. The model creation job takes 5-10 minutes and the subsequent statements are dependent on the Job completion.
 
 ### Step 1 : Setup Database, Schema, role, warehouse,stage and tables.
 To begin, let's execute all the DDL statements and setup various database objects. We will be creating a separate role and implementing access control for ensuring privacy and security.  Set the context.
@@ -109,7 +112,7 @@ Cortex Fine Tuning job needs only a small number of samples and by some experime
 The following code calls the FINETUNE function and uses the SELECT ... AS syntax to set two of the columns in the query result to prompt and completion. 
 
 ### Pasting Setup SQL from GitHub into your Snowflake Worksheet
-Path back to Snowsight and your newly created Worksheet and Paste (CMD + V for Mac or CTRL + V for Windows) which we just copied from GitHub.
+Path back to Snowsight and your newly created Worksheet and Paste (CMD + V for Mac or CTRL + V for Windows) which we just copied from GitHub. 
 
 ```
 SELECT SNOWFLAKE.CORTEX.FINETUNE(
@@ -132,11 +135,13 @@ Select SNOWFLAKE.CORTEX.FINETUNE(
   '<>' -- replace the placeholder with the output from the previous statement
 );
 
-Sample Output:
+#### The model creation job takes 5-10 minutes and the subsequent statements are dependent on the Job completion. Wait until the Output moves to "SUCCESS" status indicating successful creation of the fine tuned model. 
+
+Sample Output of the Job Status showing successful Job Completion:
 {"base_model":"mistral-7b","created_on":1718917728596,"finished_on":1718917883007,"id":"CortexFineTuningWorkflow_6dad71ea-1233-4193-1233424535","model":"SUPPORT_MISTRAL_7B\","progress":1.0,"status":"SUCCESS","training_data":"SELECT BODY AS PROMPT, GOLDEN_JSON AS COMPLETION FROM TRAINING","trained_tokens":112855,"training_result":{"validation_loss":0.8271147012710571,"training_loss":0.8407678074306912},"validation_data":""}
 ```
 
-Now we will create a function to compute the accuracy of the returned outputs by the Fine Tuned model.
+Once the Status turns to "SUCCESS" we will create a function to compute the accuracy of the returned outputs by the Fine Tuned model.
 
 ```
 CREATE OR REPLACE FUNCTION ACCURACY(candidate STRING, reference STRING)
@@ -162,7 +167,24 @@ Click Next –>
 
 ## Evaluate the Output
 
+```
+
+CREATE OR REPLACE TABLE FINE_TUNING_VALIDATION_FINETUNED AS (
+    SELECT
+        -- Carry over fields from source for convenience.
+        ID, BODY, LABELED_TRUCK, LABELED_LOCATION,
+        -- Run the custom fine-tuned LLM.
+        SNOWFLAKE.CORTEX.COMPLETE(
+            -- Custom model
+            'SUPPORT_MISTRAL_7B', 
+            body 
+        ) AS RESPONSE
+    FROM FINE_TUNING_VALIDATION
+);
+
+```
 The FINE_TUNING_VALIDATION_FINETUNED table contains the output by leveraging the Fine Tuned Model on the response body of the email. Further using the ACCURACY() function the accuracy score using the Fine Tuned Model with the Cortex COMPLETE Function is determined.
+
 
 ### Cleanup
 Navigate to Snowsight Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet". Paste and run the following SQL in the worksheet to drop Snowflake objects created in the Quickstart.
