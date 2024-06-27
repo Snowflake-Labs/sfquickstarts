@@ -180,14 +180,6 @@ VALUES
 ('June',35,50,35,85,8.22);
 ```
 
-Run the following commands to create Snowflake [internal stages](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage) for storing Stored Procedures, UDFs, and ML model files.
-
-```sql
-CREATE OR REPLACE STAGE dash_sprocs;
-CREATE OR REPLACE STAGE dash_models;
-CREATE OR REPLACE STAGE dash_udfs;
-```
-
 Optionally, you can also open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/setup.sql) in Snowsight and run all SQL statements to create the objects and load data from AWS S3.
 
 > aside positive
