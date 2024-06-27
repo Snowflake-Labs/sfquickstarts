@@ -80,6 +80,35 @@ Duration: 10
 
 The very first step is to fork the GitHub repository [Intro to Data Engineering with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro). This repository contains all the code you need to successfully complete this Quickstart guide.  Click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
+### Create GitHub Codespace
+
+For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) for our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be enough to work through this lab.
+
+To create a GitHub Codespace, click on the green `<> Code` button from the GitHub repository homepage. In the Code popup, click on the `Codespaces` tab and then on the green `Create codespace on main`.
+
+<img src="assets/codespace_setup.png" width="800" />
+
+This will open a new tab and begin setting up your codespace. It will take a few minutes as it sets up the entire environment for this Quickstart. Here is what is being done for you:
+
+- Creating a container for your environment
+- Installing Anaconda (miniconda)
+- SnowCLI setup
+  - Installing SnowCLI
+  - Creating a directory and default config file for SnowCLI
+- Anaconda setup
+  - Creating the Anaconda environment
+  - Installing the Snowpark Python library
+- VS Code setup
+  - Installing VS Code
+  - Installing the Snowflake VS Code extension
+- Starting a hosted, web-based VS Code editor
+
+Once the codespace has been created and started you should see a hosted web-based version of VS Code with your forked repository set up! Just a couple more things and we're ready to start.
+
+> aside positive
+> **NOTE**:
+> Going forward references to `VS Code` means the VS Code editor on the Codespaces
+
 ### Configure Snowflake Credentials
 We will not be directly using [the SnowCLI command line client](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) for this Quickstart, but we will be storing our Snowflake connection details in the SnowCLI connections file located at `~/.snowflake/connections.toml`. A default connection file was created for you during the codespace setup.
 
