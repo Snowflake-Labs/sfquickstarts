@@ -110,7 +110,7 @@ Run the following SQL commands to create the [warehouse](https://docs.snowflake.
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR REPLACE WAREHOUSE DASH_L WAREHOUSE_SIZE=LARGE;
+CREATE OR REPLACE WAREHOUSE DASH_S WAREHOUSE_SIZE=SMALL;
 CREATE OR REPLACE DATABASE DASH_DB;
 CREATE OR REPLACE SCHEMA DASH_SCHEMA;
 
@@ -201,23 +201,29 @@ The Notebook linked below covers the following data engineering tasks.
 
 To get started, follow these steps:
 
-1) Download [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_DE.ipynb)
+1) Click on [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_DE.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
 
 2) In your Snowflake account:
   * On the left hand navigation menu, click on **Projects** >> **Notebooks**  
   * On the top right, click on **Notebook** down arrow and select **Import .ipynb file** from the dropdown menu
   * Select the file you downloaded in step 1 above
+
+3) In the Create Notebook popup
+  * For **Notebook location**, select DASH_DB and DASH_SCHEMA
+  * For **SQL warehouse**, select DASH_S
   * Click on **Create** button
 
-If all goes well, you should see the following:
+If all goes well, you should see the following Notebook:
 
 ![Snowflake DE NB](assets/snowflake_de_nb.png)
 
-3) On the top right, click on **Packages** and make sure you have the following packages installed.
+4) On the top right, click on **Packages** and make sure you install `snowflake` package by typing it in the search box and clicking on the first one.
 
 ![Snowflake DE NB](assets/snowflake_de_nb_packages.png)
 
-4) On the top right, click on **Start** and run through the cells to perform the data engineering tasks highlighted above.
+5) On the top right, click on **Start**. ***(NOTE: The first time it will take a couple of mins to install the packages.)***
+
+6) Once the packages are installed and the state changes from **Start** >> **Starting** >> **Active**, you can either click on **Run all** to execute all cells, or you can run individual cells in the order from top to bottom by clicking on the play icon on the top right corner of each cell. 
 
 <!-- ------------------------ -->
 ## Data Pipelines
@@ -381,23 +387,27 @@ The Notebook linked below covers the following machine learning tasks.
 
 ### Machine Learning Notebook
 
-1) Download [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_ML.ipynb)
+1) Click on [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_ML.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
 
 2) In your Snowflake account:
   * On the left hand navigation menu, click on **Projects** >> **Notebooks**  
   * On the top right, click on **Notebook** down arrow and select **Import .ipynb file** from the dropdown menu
   * Select the file you downloaded in step 1 above
+  * For **Notebook location**, select DASH_DB and DASH_SCHEMA
+  * For **SQL warehouse**, select DASH_S
   * Click on **Create** button
 
 If all goes well, you should see the following:
 
 ![Snowflake DE NB](assets/snowflake_ml_nb.png)
 
-3) On the top right, click on **Packages** and make sure you have the following packages installed.
+3) On the top right, click on **Packages** and make sure you install `snowflake-ml` package by typing it in the search box and selecting the first one.
 
 ![Snowflake DE NB](assets/snowflake_ml_nb_packages.png)
 
-4) On the top right, click on **Start** and run through the cells to perform the machine learning tasks highlighted above.
+4) On the top right, click on **Start**. ***(NOTE: The first time it will take a couple of mins to install the packages.)***
+
+5) Once the packages are installed and the state changes from **Start** >> **Starting** >> **Active**, you can either click on **Run all** to execute all cells, or you can run individual cells in the order from top to bottom by clicking on the play icon on the top right corner of every cell. 
 
 <!-- ------------------------ -->
 ## Streamlit Application
