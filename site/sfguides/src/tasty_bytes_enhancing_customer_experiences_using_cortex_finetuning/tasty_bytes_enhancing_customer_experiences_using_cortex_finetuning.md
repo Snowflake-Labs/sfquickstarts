@@ -10,7 +10,7 @@ tags: Getting Started, Tasty Bytes,AI, Cortex,
 # Enhancing Customer Experiences using Cortex Fine Tuning
 <!-- ------------------------ -->
 
-## Enhancing Customer Experiences using Cortex Fine Tuning
+## Overview
 Duration: 1
 <img src="assets/ece_header.png"/>
 
@@ -54,33 +54,33 @@ For example if there are required labels with missing values in the email, then 
 Within this Quickstart we will follow the above Tasty Bytes Customer Support center story via a Snowsight SQL Worksheet and this page will serve as a side by side guide with additional commentary, images and documentation links.
 This section will walk you through logging into Snowflake, Creating a New Worksheet, Renaming the Worksheet, Copying SQL from GitHub, and Pasting the SQL we will be leveraging within this Quickstart.
 
-### Step 1 - Accessing Snowflake via URL
+**Step 1**. - Accessing Snowflake via URL
 
 Open a browser window and enter the URL of your Snowflake Account
 
-### Step 2 - Logging into Snowflake
+**Step 2**. - Logging into Snowflake
 
 Log into your Snowflake account.
 
-### Step 3 - Navigating to Worksheets
+**Step 3**. - Navigating to Worksheets
 
 Click on the Projects Tab in the left-hand navigation bar and click Worksheets.
 
-### Step 4 - Creating a SQL Worksheet
+**Step 4**. - Creating a SQL Worksheet
 
 Within Worksheets, click the "+" button in the top-right corner of Snowsight.
 
-### Step 5 - Renaming a Worksheet
+**Step 5**. - Renaming a Worksheet
 
 Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Cortex Fine Tuning"
 
-### Step 6 - Accessing Quickstart SQL from the  GitHub repo 
+**Step 6**. - Accessing Quickstart SQL from the  GitHub repo 
 
 Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
 
 [Source Code - Cortex FineTuning.sql](https://github.com/Snowflake-Labs/sfguide-enhancing-customer-experiences-using-cortex-finetuning/blob/main/setup/Cortex_FineTuning.sql)
 
-Step 7 - Copying Setup SQL from GitHub.
+**Step 7**. - Copying Setup SQL from GitHub.
 
 Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard. 
 
@@ -200,14 +200,15 @@ DROP ROLE CFT_ROLE;
 
 Snowflake Cortex Fine-Tuning function incurs compute cost based on the number of tokens used in training. To get an estimate of the cost for the Fine Tuning job, refer to the consumption table for each cost in credits per million tokens. Also there are normal storage and warehouse costs applicable for storing the output customized adaptors, as well as for running any SQL commands.
 
-## Conclusion
+## Conclusion and Resources
 
+### Conclusion
 You did it! You have successfully completed the Tasty Bytes Enhancing Customer Experiences using Cortex Fine Tuning - Quickstart.
 By doing so you have learned how to:
 - Fine tune LLM to adapt for a domain specific business use case
 - Build an automated AI agent for responding to customer emails in natural language with highest accuracy and efficiency.
 
-### Other Cortex QuickStarts
+### Resources
 
 - #### [Customer Reviews Analytics using Snowflake Cortex](https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/index.html?index=..%2F..index#0)
 
