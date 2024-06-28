@@ -92,7 +92,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 <!-- ------------------------ -->
 ## Setup Environment
 
-Duration: 15
+Duration: 8
 
 ### Create Tables, Load Data and Setup Stages
 
@@ -188,7 +188,7 @@ Optionally, you can also open [setup.sql](https://github.com/Snowflake-Labs/sfgu
 <!-- ------------------------ -->
 ## Data Engineering
 
-Duration: 20
+Duration: 15
 
 The Notebook linked below covers the following data engineering tasks.
 
@@ -373,7 +373,7 @@ You can also enable push notifications to a cloud messaging service when errors 
 <!-- ------------------------ -->
 ## Machine Learning
 
-Duration: 20
+Duration: 15
 
 > aside negative
 > PREREQUISITE: Successful completion of Data Engineering steps outlined in [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_DE.ipynb).
@@ -460,8 +460,6 @@ root_task.suspend()
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-
-Duration: 3
 
 Congratulations! You've successfully performed data engineering tasks and trained a Linear Regression model to predict future ROI (Return On Investment) of variable advertising spend budgets across multiple channels including Search, Video, Social Media, and Email using Snowpark for Python and scikit-learn. And then you created a Streamlit application that uses that model to generate predictions on new budget allocations based on user input.
 
