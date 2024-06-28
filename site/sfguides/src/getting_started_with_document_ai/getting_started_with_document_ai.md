@@ -1,7 +1,6 @@
 author: Mats Stellwall
 id: getting_started_with_document_ai
 summary: This guide will provide step-by-step details for getting started with Document AI.
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Getting-Started
 environments: web
 status: Published 
@@ -92,6 +91,10 @@ USE ROLE doc_ai_qs_role;
 
 -- CREATE A SCHEMA FOR THE DOCUEMNT AI MODEL, STAGE etc
 CREATE SCHEMA doc_ai_qs_db.doc_ai_schema;
+
+-- EXPLICIT GRANT USAGE AND snowflake.ml.document_intelligence on the  SCHEMA
+GRANT USAGE ON SCHEMA doc_ai_qs_db.doc_ai_schema to role doc_ai_qs_role;
+GRANT CREATE snowflake.ml.document_intelligence on schema doc_ai_qs_db.doc_ai_schema to role doc_ai_qs_role;
 
 -- CREATE A STAGE FOR STORING DOCUMENTS
 CREATE STAGE doc_ai_qs_db.doc_ai_schema.doc_ai_stage
@@ -561,10 +564,14 @@ with st.container():
 
 You can now start verifying documents.
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Document AI and how easy it is to use for extracting values from your document.
 
-### What we've covered
-- creating a Document AI model to extract values from documents
-- creating a docuemnt extraction pipline
-- creatinga Streamlit application in Snowflake to verify extracted values
+### What You Learned
+* How to create a Document AI model to extract values from documents
+* How to create a document extraction pipline
+* How to create a Streamlit application in Snowflake to verify extracted values
+
+### Related Resources
+* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-document-ai)
+* [Document AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview)

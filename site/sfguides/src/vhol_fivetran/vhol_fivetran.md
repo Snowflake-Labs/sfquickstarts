@@ -503,7 +503,7 @@ group by ad_group_name,
 order by 6 desc;
 ```
 
-16. These are interesting results, but you have a hypothesis:  clicks increase with snowy weather.  Let’s go to the Snowflake Data Marketplace and find what we need.  The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab).  Click on Preview App at the top of the UI.
+16. These are interesting results, but you have a hypothesis:  clicks increase with snowy weather.  Let’s go to the Snowflake Marketplace and find what we need.  The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab).  Click on Preview App at the top of the UI.
 ![Snowflake Part 2 - 16](assets/image11.png)  
 
 17. Click **Sign in to continue**.  You will need to use the same user and pw that you used to login to your Snowflake account the first time.

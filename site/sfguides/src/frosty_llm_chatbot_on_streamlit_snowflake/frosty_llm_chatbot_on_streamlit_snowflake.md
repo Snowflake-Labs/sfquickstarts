@@ -114,7 +114,7 @@ You can also access Snowsight from the Classic Console:
 4. Select the appropriate roles to access the database being created and accept the Snowflake consumer terms and Cybersyn's terms of use.
 5. Select **"Query Data,"** which will open a worksheet with example queries.
 
-![Example queries for the Cybersyn Financial & Economic Essentials dataset from the Snowflake Data Marketplace](assets/Cybersyn_Example_Queries.png)
+![Example queries for the Cybersyn Financial & Economic Essentials dataset from the Snowflake Marketplace](assets/Cybersyn_Example_Queries.png)
 
 ### Prep database
 Before building our app, we need to run a set of SQL statements in Snowflake to create two views. The first view is `FROSTY_SAMPLE.CYBERSYN_FINANCIAL.FINANCIAL_ENTITY_ATTRIBUTES_LIMITED`, which includes:

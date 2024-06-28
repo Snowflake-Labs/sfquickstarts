@@ -23,7 +23,7 @@ Il set di librerie e runtime in Snowflake che consente di distribuire ed elabora
 
 **Costrutti runtime flessibili**: Snowpark fornisce costrutti runtime flessibili che consentono agli utenti di inserire ed eseguire logica personalizzata. Gli sviluppatori possono creare in modo fluido pipeline di dati, modelli ML e applicazioni basate sui dati utilizzando User Defined Function e stored procedure.
 
-Scopri di più su [Snowpark](https://www.snowflake.com/snowpark/).
+Scopri di più su [Snowpark](https://www.snowflake.com/it/data-cloud/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -61,7 +61,7 @@ IMPORTANTE: per procedere con la configurazione del workshop descritta sotto, de
 
 <button>[Configura l’ambiente del workshop](https://app.snowflake.com/resources/labs/getStartedWithSnowparkInPythonWorksheets)</button>
 
-Il pulsante qui sopra ti porterà a una pagina nella versione di prova intitolata **Guida introduttiva all’uso di Snowpark nei fogli di lavoro Snowflake Python**, dove ti verrà chiesto di fare clic su **Setup Lab**. L’operazione richiederà meno di un minuto e fornirà una configurazione con dati e codice Python di esempio corredati da spiegazioni.
+Il pulsante qui sopra ti porterà a una pagina nella versione di prova per la **Guida introduttiva all’uso di Snowpark nei fogli di lavoro Snowflake Python**, dove ti verrà chiesto di fare clic su **Setup Lab**. L’operazione richiederà meno di un minuto e fornirà una configurazione con dati e codice Python di esempio corredati da spiegazioni.
 
 ==================================================================================================
 
