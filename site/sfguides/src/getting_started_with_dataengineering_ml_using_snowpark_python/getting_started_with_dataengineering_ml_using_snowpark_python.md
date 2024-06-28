@@ -376,7 +376,7 @@ You can also enable push notifications to a cloud messaging service when errors 
 Duration: 15
 
 > aside negative
-> PREREQUISITE: Successful completion of Data Engineering steps outlined in [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_DE.ipynb).
+> PREREQUISITE: Successful completion of steps outlined under [Data Engineering](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html#2).
 
 The Notebook linked below covers the following machine learning tasks.
 
