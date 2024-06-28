@@ -270,7 +270,7 @@ my_task = Task(name='campaign_spend_data_pipeline_task'
                , definition=StoredProcedureCall(
                    campaign_spend_data_pipeline, stage_location='@dash_sprocs'
                )
-               , warehouse='DASH_L'
+               , warehouse='DASH_S'
                , schedule=timedelta(minutes=3))
 
 tasks = root.databases[session.get_current_database()].schemas[session.get_current_schema()].tasks
@@ -307,14 +307,14 @@ with DAG("de_pipeline_dag", schedule=timedelta(minutes=3)) as dag:
                         , definition=StoredProcedureCall(
                                     campaign_spend_data_pipeline, stage_location='@dash_sprocs'
                                 )
-                        ,warehouse='DASH_L'
+                        ,warehouse='DASH_S'
                         )
     # Create a task that runs our second pipleine
     dag_revenue_task = DAGTask(name='monthly_revenue_data_pipeline'
                           , definition=StoredProcedureCall(
                                 monthly_revenue_data_pipeline, stage_location='@dash_sprocs'
                             )
-                        ,warehouse='DASH_L'
+                        ,warehouse='DASH_S'
                         )
 
 # Shift right and left operators can specify task relationships
@@ -393,6 +393,8 @@ The Notebook linked below covers the following machine learning tasks.
   * On the left hand navigation menu, click on **Projects** >> **Notebooks**  
   * On the top right, click on **Notebook** down arrow and select **Import .ipynb file** from the dropdown menu
   * Select the file you downloaded in step 1 above
+
+3) In the Create Notebook popup
   * For **Notebook location**, select DASH_DB and DASH_SCHEMA
   * For **SQL warehouse**, select DASH_S
   * Click on **Create** button
@@ -405,9 +407,9 @@ If all goes well, you should see the following:
 
 ![Snowflake DE NB](assets/snowflake_ml_nb_packages.png)
 
-4) On the top right, click on **Start**. ***(NOTE: The first time it will take a couple of mins to install the packages.)***
+5) On the top right, click on **Start**. ***(NOTE: The first time it will take a couple of mins to install the packages.)***
 
-5) Once the packages are installed and the state changes from **Start** >> **Starting** >> **Active**, you can either click on **Run all** to execute all cells, or you can run individual cells in the order from top to bottom by clicking on the play icon on the top right corner of every cell. 
+6) Once the packages are installed and the state changes from **Start** >> **Starting** >> **Active**, you can either click on **Run all** to execute all cells, or you can run individual cells in the order from top to bottom by clicking on the play icon on the top right corner of every cell. 
 
 <!-- ------------------------ -->
 ## Streamlit Application
@@ -422,7 +424,7 @@ Follow these steps to build Streamlit application in Snowsight.
 
 **Step 3.** Enter **App title**
 
-**Step 4.** Select **App location** (DASH_DB and DASH_SCHEMA) and **App warehouse** (DASH_L) 
+**Step 4.** Select **App location** (DASH_DB and DASH_SCHEMA) and **App warehouse** (DASH_S) 
 
 **Step 5.** Click on **Create**
 
