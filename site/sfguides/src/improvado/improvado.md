@@ -12,11 +12,11 @@ tags: Getting Started
 ## Introduction
 Duration: 2
 
-This guide will show you how to connect your Snowflake database to Improvado platform, manage user & data access, and understand how AI Agent uses your Snowflake data for analytics & marketing data governance.
+This guide will show you how to connect your Snowflake AI Data Cloud to Improvado platform, manage user & data access, and understand how AI Agent uses your Snowflake data for analytics & marketing data governance.
 
 ### Improvado Platform Overview
 
-Improvado is an AI-powered composable marketing analytics & intelligence platform that provides secure and efficient data integration across Snowflake databases.
+Improvado is an AI-powered composable marketing analytics & intelligence platform that provides secure and efficient data integration with Snowflake.
 
 Improvado platform is comprised of two main components: **Data Platform** and **AI Agent**. 
 
@@ -24,11 +24,12 @@ Improvado's core product focuses on providing robust Extract, Load, Transform (E
 
 On top of the core platform, the AI Agent enhances the value of your data by providing advanced analytics and governance capabilities. Our AI Agent offers several advanced features:
 
+- **Campaign Intelligence**: Offers deep insights and analytics on campaign performance to help marketers optimize their strategies and outcomes.
 - **Automated Data Analysis**: The AI Agent enables automatic analysis of your Snowflake data, ensuring that all data points are accurately processed and interpreted.
 - **Snowflake Metadata**: By generating comprehensive metadata, the AI Agent provides valuable context to your data, enhancing its usability for analytics and reporting.
 - **Marketing Data Governance**: Leverages advanced data profiling to ensure high data quality and compliance with marketing data governance workflows.
 - **Action Pulse**: Provides actionable insights on your marketing data, helping you make informed decisions and improve performance.
-- **Reverse ETL for Data Activation**: Transforms and routes data back into operational tools for activation, enabling data-driven actions across your marketing stack.
+- **Data Activation**: Transforms and routes data back into operational tools for activation, enabling data-driven actions across your marketing stack.
 
 This layered approach ensures that Improvado not only integrates and processes data effectively but also enriches it with insights and governance for better decision-making.
 
@@ -58,6 +59,16 @@ Duration: 4
 
 In this step, we’ll learn how to connect your Snowflake schema to Improvado. Improvado integrates with Snowflake using a native Python Connector, ensuring efficient data transfers and fast updates.
 
+### Connecting a Data source
+Connecting a Data source in Improvado enables you to extract data and then load it into your analytics and reporting frameworks. Improvado offers 500+ integrations with Marketing, eCommerce, CRM, Flat Data, SEO & SEM, and many other providers.
+
+![DataSources](assets/data_sources.png) 
+
+
+Follow these simple steps to connect a data source:
+Go to the Data sources page and select a necessary Data source to extract your data
+Enter required credentials or authorize using OAuth (depending on Data source API capabilities)
+Then, you’ll be redirected to the Connection Details page, where you can set up data extraction.
 ### Step 1. Database permissions
 Now you’ll need to grant the following permissions to your Snowflake database schema:
 - `CREATE`
@@ -87,13 +98,6 @@ On the Snowflake connection page, fill in the following fields:
 
 ### AI Agent and your Snowflake data
 After successfully connecting your Snowflake database, Improvado AI Agent will automatically analyze data in your Snowflake storage and generate metadata for accurate analytics reports and consistent Marketing Data Governance workflows.
-
-### Connecting a Data source
-Connecting a Data source in Improvado enables you to extract and load data seamlessly into your analytics and reporting frameworks. Follow these simple steps to connect a data source:
-Go to the Data sources page and select a necessary Data source to extract your data
-Enter required credentials or authorize using OAuth (depending on Data source API capabilities)
-Then, you’ll be redirected to the Connection Details page, where you can set up data extraction.
-
 ### How to access your data using Snowsight
 1. Sign in to your [Snowflake](https://app.snowflake.com/) account.
 
