@@ -72,7 +72,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
 - How to create Snowflake Tasks to automate data pipelines
 - How to train ML model using Snowpark ML in Snowflake
-- How to register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+- How to register ML model and use it for inference from Snowpark ML Model Registry
 - How to create Streamlit application that uses the ML Model for inference based on user input
 
 ### What You Will Build
@@ -105,7 +105,7 @@ Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#
 >
 > - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
-Run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
+In a new SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -117,7 +117,7 @@ CREATE OR REPLACE SCHEMA DASH_SCHEMA;
 USE DASH_DB.DASH_SCHEMA;
 ```
 
-Run the following SQL commands to create table **CAMPAIGN_SPEND** from data hosted on publicly accessible S3 bucket.
+In the same SQL worksheet, run the following SQL commands to create table **CAMPAIGN_SPEND** from data hosted on publicly accessible S3 bucket.
 
 ```sql
 CREATE or REPLACE file format csvformat
@@ -141,7 +141,7 @@ COPY into CAMPAIGN_SPEND
   from @campaign_data_stage;
 ```
 
-Run the following SQL commands to create table **MONTHLY_REVENUE** from data hosted on publicly accessible S3 bucket.
+In the same SQL worksheet, run the following SQL commands to create table **MONTHLY_REVENUE** from data hosted on publicly accessible S3 bucket.
 
 ```sql
 CREATE or REPLACE stage monthly_revenue_data_stage
@@ -158,7 +158,7 @@ COPY into MONTHLY_REVENUE
   from @monthly_revenue_data_stage;
 ```
 
-Run the following SQL commands to create table **BUDGET_ALLOCATIONS_AND_ROI** that holds the last six months of budget allocations and ROI.
+In the same SQL worksheet, run the following SQL commands to create table **BUDGET_ALLOCATIONS_AND_ROI** that holds the last six months of budget allocations and ROI.
 
 ```sql
 CREATE or REPLACE TABLE BUDGET_ALLOCATIONS_AND_ROI (
