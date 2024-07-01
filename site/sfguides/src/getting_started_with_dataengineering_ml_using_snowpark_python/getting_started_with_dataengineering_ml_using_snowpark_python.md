@@ -96,7 +96,7 @@ Duration: 8
 
 ### Create Tables and Load Data
 
-Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, load data from Amazon S3, and setup Snowflake internal stages.
+Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables and load data from Amazon S3.
 
 > aside positive
 > IMPORTANT:
