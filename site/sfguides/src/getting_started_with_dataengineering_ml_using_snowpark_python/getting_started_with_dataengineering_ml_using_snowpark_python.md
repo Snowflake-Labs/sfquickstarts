@@ -94,7 +94,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 
 Duration: 8
 
-### Create Tables, Load Data and Setup Stages
+### Create Tables and Load Data
 
 Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, load data from Amazon S3, and setup Snowflake internal stages.
 
