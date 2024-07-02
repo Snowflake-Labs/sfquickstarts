@@ -10,21 +10,23 @@ tags: Getting Started, Data Science, Data Engineering, RelationalAI, Recommender
 # Recommender Systems with RelationalAI’s Snowflake Native App
 
 ## Overview 
-Duration: 5
+Duration: 1
 
 By completing this guide, you will be able to build a collaborative filtering recommender system RelationalAI’s Native App on Snowflake.
 
 ### What Is RelationalAI?
+
 RelationalAI is a cloud-native platform that enables organizations to streamline and enhance decisions with intelligence. RelationalAI extends Snowflake with native support for an expanding set of AI workloads (e.g., graph analytics, rule-based reasoning, and optimization), all within your Snowflake account, offering the same ease of use, scalability, security, and governance.
 
 Users can build a knowledge graph using Python, and materialize it on top of their Snowflake data, shared with the RelationalAI app through Snowflake Streams.  Insights can be written to Snowflake tables and shared across the organization.
 
-### What you will learn
-Here is a summary of what you will be able to learn in each step by following this quickstart:
+### What You'll Learn
 
-- **Setup Environment**: How to run graph algorithms on your data, where it already lives.
-- **Data Preparation**: How to load data from a Snowflake table into a RelationalAI model
-- **Build Recommender system**: How to use the graph representation to build a recommendation algorithm
+In this quickstart, you'll learn how to:
+
+- **Set Up Your Environment**: How to run graph algorithms on your data, where it already lives.
+- **Prepare Data**: How to load data from a Snowflake table into a RelationalAI model
+- **Build a Recommender System**: How to use the graph representation to build a recommendation algorithm
 
 
 ### What You’ll Need 
@@ -38,55 +40,169 @@ Here is a summary of what you will be able to learn in each step by following th
 <!-- ------------------------ -->
 
 ## Install the RelationalAI Native App In Your Account
-Duration: 5
+Duration: 7
 
-In the [Snowflake Marketplace](https://app.snowflake.com/marketplace), search for the ‘RelationalAI’ Native App and install it in your account by clicking the “Get” button.  You will be prompted to accept permission granting, after which an installation dialog will run.  
-You should see a screen like this prompting you to choose a warehouse:
-![RAI Install Warehouse Selection](./assets/rai_warehouse_selection.png)
+### Installation Sequence
 
-After selecting a warehouse (any size will do, this is only for installation), a progress dialog will briefly show, followed by the Streamlit splash screen for the RelationalAI App.
-![RAI Native App Splash Screen](./assets/rai_splash_screen.png)
+In the [Snowflake Marketplace](https://app.snowflake.com/marketplace), search for the ‘RelationalAI’ Native App and request it by clicking the “Request” button. When your request is approved by the RelationalAI team, you'll see the RelationalAI app under *Data Products > Apps*. Click the “Buy” button to install the app in your Snowflake account.
 
-The link provided contains the full initial setup guide as well as system documentation and a user guide.  First run through the initial setup guide, which involves setting up additional permissions using the Shield Icon:
-![RAI Native App Shield Icon](./assets/rai_shield_highlight.png)
+<img src="assets/rai_1_install.png" alt="RAI Install Get Button" width="800">
 
-At the end of the install guide you will start up the RelationalAI service using the SQL command:
+When the installation process is complete, you'll see RelationalAI in your list of installed apps:
+
+<img src="assets/rai_2_installed_apps.png" alt="RAI Install Get Button" width="800">
+
+Click on the RelationalAI app to open it. The first screen prompts you to grant the necessary privileges for the app to run:
+
+<img src="assets/rai_3_grant.png" alt="RAI Install Grant-Privileges Button" width="800">
+
+The next button prompts you to activate the app:
+
+<img src="assets/rai_4_activate.png" alt="RAI Install Activate Button" width="800">
+
+The last screen in this sequence prompts you to launch the app, but you can skip that step.
+
+Congratulations! The RelationalAI app is now available in your Snowflake account.
+
+### Setup
+
+Next, open a Snowsight SQL worksheet and run the SQL commands below from top to bottom. Note that this worksheet includes some appendices with commands that you may need later.
+
 ```sql
-CALL relationalai.app.start_service('rai_compute_pool','rai_warehouse');
-```
+-- Main Script: Basic Setup
 
-Finally, you need to create a role that should be granted to any users permitted to use this application
-```sql
+-- Step 0: Use the ACCOUNTADMIN role for the following operations
+USE ROLE ACCOUNTADMIN;
+
+-- Step 1: Create an event table (customize the database, schema, and table name as needed)
+
+-- first, check whether you already have an event table:
+SHOW PARAMETERS LIKE 'event_table' in ACCOUNT;
+
+-- if the above command returns an empty result, create an event table
+-- (customize the database, schema, and table name as needed):
+CREATE DATABASE IF NOT EXISTS TELEMETRY;
+CREATE SCHEMA IF NOT EXISTS TELEMETRY.PUBLIC;
+CREATE EVENT TABLE IF NOT EXISTS TELEMETRY.PUBLIC.EVENTS;
+ALTER ACCOUNT SET EVENT_TABLE = TELEMETRY.PUBLIC.EVENTS;
+
+-- Enable telemetry sharing
+ALTER APPLICATION relationalai SET SHARE_EVENTS_WITH_PROVIDER = TRUE;
+
+-- Step 2: Create compute pools for the RAI service and engines
+CREATE COMPUTE POOL IF NOT EXISTS rai_service_pool
+      FOR APPLICATION relationalai
+      MIN_NODES = 1
+      MAX_NODES = 1
+      AUTO_RESUME = TRUE
+      AUTO_SUSPEND_SECS = 300
+      INSTANCE_FAMILY = CPU_X64_S;
+GRANT USAGE, MONITOR ON COMPUTE POOL rai_service_pool TO APPLICATION relationalai;
+
+CREATE COMPUTE POOL IF NOT EXISTS rai_engine_pool_s
+      FOR APPLICATION relationalai
+      MIN_NODES = 1
+      MAX_NODES = 10
+      AUTO_RESUME = TRUE
+      AUTO_SUSPEND_SECS = 300
+      INSTANCE_FAMILY = HIGHMEM_X64_S;
+GRANT USAGE, MONITOR ON COMPUTE POOL rai_engine_pool_s TO APPLICATION relationalai;
+
+CREATE COMPUTE POOL IF NOT EXISTS rai_engine_pool_m
+      FOR APPLICATION relationalai
+      MIN_NODES = 1
+      MAX_NODES = 10
+      AUTO_RESUME = TRUE
+      AUTO_SUSPEND_SECS = 300
+      INSTANCE_FAMILY = HIGHMEM_X64_M;
+GRANT USAGE, MONITOR ON COMPUTE POOL rai_engine_pool_m TO APPLICATION relationalai;
+
+-- Create a warehouse for the app to use
+CREATE WAREHOUSE IF NOT EXISTS rai_warehouse WITH
+      MAX_CONCURRENCY_LEVEL = 8
+      WAREHOUSE_SIZE = 'X-SMALL'
+      AUTO_SUSPEND = 180
+      AUTO_RESUME = TRUE
+      INITIALLY_SUSPENDED = TRUE;
+GRANT USAGE ON WAREHOUSE rai_warehouse TO APPLICATION relationalai;
+
+-- Step 3: Start the RAI service
+-- use this command to poll the compute pool until its state is 'Active/Idle':
+-- (this usually takes 1-2 minutes)
+DESCRIBE COMPUTE POOL rai_service_pool;
+
+-- ...then start the RAI service:
+CALL RELATIONALAI.APP.START_SERVICE('rai_service_pool', 'rai_warehouse');
+
+-- Step 6: Setting up CDC
+-- create an engine for change-data-capture
+-- (this command usually takes 3-4 minutes to run)
+CALL RELATIONALAI.API.CREATE_ENGINE('cdc_engine', 'rai_engine_pool_s', 'HighMem|S');
+
+-- set that engine to be the CDC engine
+CALL RELATIONALAI.APP.SETUP_CDC('cdc_engine');
+
+-- Congatulations! Your RelationalAI app is ready to use.
+-- Check out the Simple Start notebook at 
+-- https://relational.ai/docs/example-notebooks
+-- to try a simple demo
+
+--------------------------------------------------------------------------------------
+
+-- Appendix 1: Suspending the Service
+
+-- If you aren't going to use the service for a while, 
+-- suspend it to avoid incurring unnecessary costs:
+
+-- Suspend CDC
+CALL RELATIONALAI.APP.SUSPEND_CDC();
+
+-- Delete the CDC engine:
+CALL RELATIONALAI.API.DELETE_ENGINE('cdc_engine', TRUE);
+
+-- List the engines:
+SELECT * FROM RELATIONALAI.API.ENGINES;
+
+-- For each engine name in the output of the above `SELECT` statement (if any),
+-- fill in the engine name in the following command and run it:
+-- CALL RELATIONALAI.API.DELETE_ENGINE('<engine_name>', TRUE);
+
+-- Suspend the service
+CALL RELATIONALAI.APP.SUSPEND_SERVICE();
+
+--------------------------------------------------------------------------------------
+
+-- Appendix 2: Resuming the Service
+
+-- Resume the service after suspending it:
+CALL RELATIONALAI.APP.RESUME_SERVICE();
+
+-- Recreate the engine if necessary:
+CALL RELATIONALAI.API.CREATE_ENGINE('cdc_engine', 'rai_engine_pool_s', 'HighMem|S');
+
+-- Resume CDC:
+CALL RELATIONALAI.APP.RESUME_CDC();
+
+--------------------------------------------------------------------------------------
+
+-- Appendix 3: Defining a RelationalAI User Role
+
+-- To create a role that can be granted to any users permitted to use this application
+
 -- In your account, create a role specific for accessing the app
 CREATE ROLE rai_user;
--- Link the app's user role to the created role
-GRANT APPLICATION ROLE relationalai.user TO ROLE rai_user;
+
+-- Link the app's user role to the created role. 
+-- Note that you can create more fine-grained roles later.
+GRANT APPLICATION ROLE relationalai.all_admin TO ROLE rai_user;
+
+-- Allow the role to see engine compute pools.
+-- This is needed for the RAI Python library to manage engines.
+GRANT MONITOR ON COMPUTE POOL rai_engine_pool_s TO ROLE rai_user;
+GRANT MONITOR ON COMPUTE POOL rai_engine_pool_m TO ROLE rai_user;
 ```
 
-Refer to the [initial setup](https://github.com/RelationalAI/rai-sf-app-docs/wiki/Guide-%E2%80%90-Initial-Setup)  for full instructions and the user guide.  
-
-<!-- ------------------------ -->
-
-## Setup Your Environment
-Duration: 5
-
-Now with your Snowflake account is ready to go, to build a knowledge graph using RelationalAI from within your Snowflake account, we need to setup the local environment with Jupyter Lab and the RelationalAI Python library.  The easiest way to do this is using the miniconda installer:
-Download the miniconda installer from https://conda.io/miniconda.html. (OR, you may use any other Python environment with Python 3.11).
-
-
-From the app folder, create conda environment. Then activate conda environment and install JupyterLab and RelationalAI package
-```console
-> conda create -n rai_recsys python=3.11.8
-> conda activate rai_recsys    
-> pip install jupyterlab
-> pip install snowflake
-> pip install relationalai  
-```
-
-### RelationalAI Config File
-After installing the `relationalai` package, you will need to setup an initial RAI configuration with the Snowflake credentials you want to use (similar to the configuration for Snowflake CLI):
-
-![RAI Init](./assets/rai_init.png)
+Refer to the [documentation](https://relational.ai/docs/native_app/installation) for full instructions and more details about how to use the RelationalAI Native App.
 
 <!-- ------------------------ -->
 ## Data Preparation
@@ -223,9 +339,7 @@ By following these steps, you'll be ready to build and deploy your Recommender S
 The last step is to stream data from snowflake tables into RelationalAI model:
 
 ```bash
-rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.TRAIN --model recommendation_demo
-rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.TEST --model recommendation_demo
-rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.MOVIE_DETAILS --model recommendation_demo
+rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.TRAIN --source RECOMMENDATION_DEMO.PUBLIC.TEST --source RECOMMENDATION_DEMO.PUBLIC.MOVIE_DETAILS --model recommendation_demo
 ```
 
 - `--source`: This flag specifies the fully-qualified name of a Snowflake table or view.
