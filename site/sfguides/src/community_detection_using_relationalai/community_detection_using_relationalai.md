@@ -17,11 +17,12 @@ In this quickstart, we'll use RelationalAI — a Native App available in the Sno
 ### What Is RelationalAI?
 
 RelationalAI is a cloud-native platform that enables organizations to streamline and enhance decisions with intelligence. RelationalAI extends Snowflake with native support for an expanding set of AI workloads (e.g., graph analytics, rule-based reasoning, and optimization), all within your Snowflake account, offering the same ease of use, scalability, security, and governance.
+
 Users can build a knowledge graph using Python and materialize it on top of their Snowflake data, which are shared with the RelationalAI app through Snowflake Streams. Insights can be written to Snowflake tables and shared across the organization.
 
 ### What You’ll Learn
 
-In this quickstart, you'll learn:
+
 
 - How to discover new insights by running a variety of graph algorithms on your Snowflake data
 - How to complement your graph analytics with graph visualizations
