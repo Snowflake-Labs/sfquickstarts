@@ -480,4 +480,4 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 - [Snowpark ML Modeling](https://docs.snowflake.com/developer-guide/snowpark-ml/modeling)
-- [Snowpark ML Model Registry](https://docs.snowflake.com/LIMITEDACCESS/snowflake-ml-model-registry)
+- [Snowpark ML Model Registry](https://docs.snowflake.com/developer-guide/snowpark-ml/model-registry/overview)
