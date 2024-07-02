@@ -69,21 +69,27 @@ Congratulations! The RelationalAI app is now available in your Snowflake account
 Next, open a Snowsight SQL worksheet and run the SQL commands below from top to bottom. Note that this worksheet includes some appendices with commands that you may need later.
 
 ```sql
--- Main Script: Getting Started
+-- Main Script: Basic Setup
 
 -- Step 0: Use the ACCOUNTADMIN role for the following operations
 USE ROLE ACCOUNTADMIN;
 
--- Step 1: Create an event table
-CREATE DATABASE IF NOT EXISTS RAI_DEMO;
-CREATE SCHEMA IF NOT EXISTS RAI_DEMO.SOURCE;
-CREATE EVENT TABLE IF NOT EXISTS RAI_DEMO.SOURCE.EVENT_TABLE;
-ALTER ACCOUNT SET EVENT_TABLE = 'RAI_DEMO.SOURCE.EVENT_TABLE';
+-- Step 1: Create an event table (customize the database, schema, and table name as needed)
 
--- Step 2: Enable telemetry sharing
+-- first, check whether you already have an event table:
+SHOW PARAMETERS LIKE 'event_table' in ACCOUNT;
+
+-- if the above command returns an empty result, create an event table
+-- (customize the database, schema, and table name as needed):
+CREATE DATABASE IF NOT EXISTS TELEMETRY;
+CREATE SCHEMA IF NOT EXISTS TELEMETRY.PUBLIC;
+CREATE EVENT TABLE IF NOT EXISTS TELEMETRY.PUBLIC.EVENTS;
+ALTER ACCOUNT SET EVENT_TABLE = TELEMETRY.PUBLIC.EVENTS;
+
+-- Enable telemetry sharing
 ALTER APPLICATION relationalai SET SHARE_EVENTS_WITH_PROVIDER = TRUE;
 
--- Step 3: Create compute pools for the RAI service and engines
+-- Step 2: Create compute pools for the RAI service and engines
 CREATE COMPUTE POOL IF NOT EXISTS rai_service_pool
       FOR APPLICATION relationalai
       MIN_NODES = 1
@@ -111,7 +117,7 @@ CREATE COMPUTE POOL IF NOT EXISTS rai_engine_pool_m
       INSTANCE_FAMILY = HIGHMEM_X64_M;
 GRANT USAGE, MONITOR ON COMPUTE POOL rai_engine_pool_m TO APPLICATION relationalai;
 
--- Step 4: Create a warehouse for the app to use
+-- Create a warehouse for the app to use
 CREATE WAREHOUSE IF NOT EXISTS rai_warehouse WITH
       MAX_CONCURRENCY_LEVEL = 8
       WAREHOUSE_SIZE = 'X-SMALL'
@@ -120,7 +126,7 @@ CREATE WAREHOUSE IF NOT EXISTS rai_warehouse WITH
       INITIALLY_SUSPENDED = TRUE;
 GRANT USAGE ON WAREHOUSE rai_warehouse TO APPLICATION relationalai;
 
--- Step 5: Start the RAI service
+-- Step 3: Start the RAI service
 -- use this command to poll the compute pool until its state is 'Active/Idle':
 -- (this usually takes 1-2 minutes)
 DESCRIBE COMPUTE POOL rai_service_pool;
@@ -137,13 +143,16 @@ CALL RELATIONALAI.API.CREATE_ENGINE('cdc_engine', 'rai_engine_pool_s', 'HighMem|
 CALL RELATIONALAI.APP.SETUP_CDC('cdc_engine');
 
 -- Congatulations! Your RelationalAI app is ready to use.
+-- Check out the Simple Start notebook at 
+-- https://relational.ai/docs/example-notebooks
+-- to try a simple demo
 
 --------------------------------------------------------------------------------------
 
 -- Appendix 1: Suspending the Service
 
--- If you aren't going to use the service for a while, suspend it to avoid incurring
--- unnecessary costs:
+-- If you aren't going to use the service for a while, 
+-- suspend it to avoid incurring unnecessary costs:
 
 -- Suspend CDC
 CALL RELATIONALAI.APP.SUSPEND_CDC();
@@ -183,10 +192,12 @@ CALL RELATIONALAI.APP.RESUME_CDC();
 -- In your account, create a role specific for accessing the app
 CREATE ROLE rai_user;
 
--- Link the app's user role to the created role. Note that you can create more fine-grained roles at a later point.
+-- Link the app's user role to the created role. 
+-- Note that you can create more fine-grained roles later.
 GRANT APPLICATION ROLE relationalai.all_admin TO ROLE rai_user;
 
--- Allow the role to see engine compute pools. This is needed for the RAI Python library to manage engines.
+-- Allow the role to see engine compute pools.
+-- This is needed for the RAI Python library to manage engines.
 GRANT MONITOR ON COMPUTE POOL rai_engine_pool_s TO ROLE rai_user;
 GRANT MONITOR ON COMPUTE POOL rai_engine_pool_m TO ROLE rai_user;
 ```
