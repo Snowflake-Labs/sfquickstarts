@@ -1,5 +1,5 @@
 id: getting_started_with_dataengineering_ml_using_snowpark_python
-summary: Getting Started with Data Engineering and ML using Snowpark for Python
+summary: Getting Started with Data Engineering and ML using Snowpark for Python and Snowflake Notebooks
 categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published
@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit, scikit-learn, Data Engineering, Machine Learning
 authors: Dash Desai
 
-# Getting Started with Data Engineering and ML using Snowpark for Python
+# Getting Started with Data Engineering and ML using Snowpark for Python and Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
 
