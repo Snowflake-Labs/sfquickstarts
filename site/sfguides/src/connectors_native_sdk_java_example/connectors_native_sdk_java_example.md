@@ -385,7 +385,7 @@ press the `New GitHub App` button.
 6. Select the permissions needed for the connector to work:
    1. `Repository permissions > Issues` with the `Read-only` access
    2. `Repository permissions > Metadata` with the `Read-only` access
-7. If the app will only be used by you, with this example connector - it's best to select
+7. If the app will only be used by you, with this example connector - it is best to select
    `Only on this account` in the installation access section
 
 After the app is created - press the `Install app` option in the left sidebar and install the
@@ -396,7 +396,7 @@ access public repositories.
 #### OAuth integration setup
 
 After installation return to your GitHub app and generate a new client secret. Make sure to copy it
-immediately, as it won't be shown again. Paste the client secret in the OAuth configuration popup
+immediately, as it will not be shown again. Paste the client secret in the OAuth configuration popup
 of your connector. Finally, copy the client ID (not app ID) of your application and also paste it in
 the OAuth configuration popup of your connector.
 
