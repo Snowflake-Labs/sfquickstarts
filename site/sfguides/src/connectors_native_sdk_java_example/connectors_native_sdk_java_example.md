@@ -224,58 +224,11 @@ After all those steps are finished the connector will be ready to start ingestin
 
 ### Prerequisites
 The first step of the Wizard is Prerequisites step. This step will provide you a list of things that must be configured outside the Native App.
-Completing the prerequisites is not required, 
-but it is recommended to ensure smoother configuration process later.
-In the case of the example GitHub connector there are 3 things that need to be taken care of before going further:
+Completing the prerequisites is not required, but it is recommended to ensure smoother configuration process later.
+
+In the case of the example GitHub connector there are 2 things that need to be taken care of before going further:
 - preparing a GitHub account
-- creating a personal access token for that GitHub account
-- configuring external access integration inside Snowflake
-
-For the GitHub related prerequisites please check the [documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
-
-#### External Access
-Setting up external connectivity objects inside Snowflake requires the GitHub prerequisites to be completed. 
-External connectivity objects have to be created on the account level by the `accountadmin`.
-
-In order to access external resources the connector requires 3 objects to be configured:
-- [network rule](https://docs.snowflake.com/en/developer-guide/external-network-access/creating-using-external-network-access#creating-a-network-rule-to-represent-the-external-network-location)
-- [secrets](https://docs.snowflake.com/en/sql-reference/sql/create-secret)
-- [external access integration](https://docs.snowflake.com/en/developer-guide/external-network-access/creating-using-external-network-access)
-
-The following commands create necessary objects. Names can be customized and will be needed during connector Wizard phase later.
-
-```snowflake
-CREATE DATABASE GITHUB_SECRETS;
-
-CREATE OR REPLACE NETWORK RULE GH_RULE
-MODE = EGRESS
-TYPE = HOST_PORT
-VALUE_LIST=('api.github.com:443');
-
-CREATE OR REPLACE SECRET < GITHUB_TOKEN > TYPE=GENERIC_STRING SECRET_STRING='< PASTE API TOKEN >';
-
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION GITHUB_INTEGRATION
-ALLOWED_NETWORK_RULES = (GH_RULE)
-ALLOWED_AUTHENTICATION_SECRETS = ('GITHUB_SECRETS.PUBLIC.< GITHUB_TOKEN >')
-ENABLED = TRUE;
-```
-
-#### Granting privileges to the application
-
-The application needs to have usage the following privileges on the created objects:
-- usage on the external access integration
-- usage on the database and the schema with the secrets
-- read on the secret itself
-To know the application instance name please check the `Makefile` or logs from the installation process.
-
-This translates to queries like those:
-```snowflake
-GRANT USAGE ON INTEGRATION GITHUB_INTEGRATION TO APPLICATION < application name >;
-
-GRANT USAGE ON DATABASE GITHUB_SECRETS TO APPLICATION < application name >;
-GRANT USAGE ON SCHEMA GITHUB_SECRETS.PUBLIC TO APPLICATION < application name >;
-GRANT READ ON SECRET GITHUB_SECRETS.PUBLIC.GITHUB_TOKEN TO APPLICATION < application name >;
-```
+- confirming access to ingested GitHub repositories
 
 ![prerequisites.png](assets/prerequisites.png)
 
@@ -310,29 +263,174 @@ As mentioned before connector requires a database to store ingested data. This d
 Name of the database is up to the user as long as it is unique inside the account.
 
 The completed connector configuration screen will look similar to this one:
-![connector_configuratio.png](assets/connector_configuration.png)
+![connector_configuration.png](assets/connector_configuration.png)
 
 ### Connection Configuration
-Next step of the Wizard is connection configuration. 
-This step allows user to provide names of the external access integration and secret that were created during the Prerequisites step of the Wizard.
-Once the names of the objects are provided in the designated fields, 
-pressing a confirmation button will trigger TEST_CONNECTION procedure inside the connector.
-This procedure will try to access [octocat endpoint](https://api.github.com/octocat) in GitHub to check if the external connectivity was configured correctly,
-additionally if API token is invalid for some reason this verification should fail.
+Next step of the Wizard is connection configuration. This step allows user to set up the connection
+to an external data source. We recommend using OAuth2 authentication whenever possible, instead of
+using user/password or plaintext tokens.
 
-When it succeeds application will proceed into finalization step.
+GitHub currently supports two ways of OAuth2 authentication - OAuth apps and GitHub apps. OAuth apps
+are a bit easier to set up and use, however they do not provide the same level of permission control
+granularity. We recommend using a GitHub app for this example, however if you wish to use an OAuth
+app - the connector will still work as intended.
+
+#### Permission SDK setup
+
+OAuth2 authentication requires a security integration, secret and external access integration to be
+created in the user's account. Our connector uses the [Permission SDK](https://docs.snowflake.com/en/developer-guide/native-apps/requesting-ui) to request the creation
+of those objects. 
+
+References for the external access integration and secret, which are needed by the connector, are
+defined in the `manifest.yml` file:
+
+```yaml
+references:
+  - GITHUB_EAI_REFERENCE:
+      label: "GitHub API access integration"
+      description: "External access integration which will allow connection to the GitHub API using OAuth2"
+      privileges: [USAGE]
+      object_type: "EXTERNAL ACCESS INTEGRATION"
+      register_callback: PUBLIC.REGISTER_REFERENCE
+      configuration_callback: PUBLIC.GET_REFERENCE_CONFIG
+  - GITHUB_SECRET_REFERENCE:
+      label: "GitHub API secret"
+      description: "Secret which will allow connection to the GitHub API using OAuth2"
+      privileges: [READ]
+      object_type: SECRET
+      register_callback: PUBLIC.REGISTER_REFERENCE
+      configuration_callback: PUBLIC.GET_REFERENCE_CONFIG
+```
+
+In addition, a special procedure needs to be added in the `setup.sql` file. It is referenced in the
+`configuration_callback` property for each of the references presented above.
+
+```snowflake
+CREATE OR REPLACE PROCEDURE PUBLIC.GET_REFERENCE_CONFIG(ref_name STRING)
+    RETURNS STRING
+    LANGUAGE SQL
+    AS
+        BEGIN
+            CASE (ref_name)
+                WHEN 'GITHUB_EAI_REFERENCE' THEN
+                    RETURN OBJECT_CONSTRUCT(
+                        'type', 'CONFIGURATION',
+                        'payload', OBJECT_CONSTRUCT(
+                            'host_ports', ARRAY_CONSTRUCT('api.github.com'),
+                            'allowed_secrets', 'LIST',
+                            'secret_references', ARRAY_CONSTRUCT('GITHUB_SECRET_REFERENCE')
+                        )
+                    )::STRING;
+                WHEN 'GITHUB_SECRET_REFERENCE' THEN
+                    RETURN OBJECT_CONSTRUCT(
+                        'type', 'CONFIGURATION',
+                        'payload', OBJECT_CONSTRUCT(
+                            'type', 'OAUTH2',
+                            'security_integration', OBJECT_CONSTRUCT(
+                                'oauth_scopes', ARRAY_CONSTRUCT('repo'),
+                                'oauth_token_endpoint', 'https://github.com/login/oauth/access_token',
+                                'oauth_authorization_endpoint', 'https://github.com/login/oauth/authorize'
+                            )
+                        )
+                    )::STRING;
+                ELSE
+                    RETURN '';
+            END CASE;
+        END;
+```
+
+For the external access integration reference the procedure provides:
+
+- `host_ports` - hostnames of the external data source, which will be accessed during ingestion
+- `secret_references` - array of names of references to OAuth secrets
+- `allowed_secrets` - `LIST`, telling the Permission SDK to use secrets specified in the
+  `secret_references` field
+
+For the secret reference the procedure provides:
+
+- `type` - `OAUTH2` in case of our secret
+- `security_integration` - properties of the created security integration:
+  - `oauth_scopes` - a list of OAuth scopes requested by the connector (if using a GitHub app -
+    this field is optional)
+  - `oauth_token_endpoint` - endpoint from which the refresh and access token will be acquired
+  - `oauth_authorization_endpoint` - endpoint to which the authorization request will be sent
+
+#### GitHub app setup
+
+The next step is the setup of a GitHub app in the user's account. This app will be used to grant
+limited access to the account, so that data can be ingested.
+
+The first step is to press the `Request access` button in the connector UI.
+
+![request_access.png](assets/request_access.png)
+
+The first screen allows you to review the endpoints, for which external connectivity will be allowed.
+
+![review_endpoints.png](assets/review_endpoints.png)
+
+After pressing `Next` - you will see a second screen. Select `OAuth2` to create a new integration
+and secret, and copy the provided redirect URL - it will contain your organization name and the
+region of your account.
+
+![redirect_url.png](assets/redirect_url.png)
+
+Next go to your GitHub account settings page, then into `Developer settings > GitHub Apps` and
+press the `New GitHub App` button.
+
+1. Enter the name and homepage URL of your app
+2. Paste the redirect URL you copied into the `Callback URL` field
+3. Make sure the `Expire user authorization tokens` option is selected
+4. Make sure the `Request user authorization (OAuth) during installation` is not selected
+5. If you do not need it - deselect the `Active` option in the `Webhook` section
+6. Select the permissions needed for the connector to work:
+   1. `Repository permissions > Issues` with the `Read-only` access
+   2. `Repository permissions > Metadata` with the `Read-only` access
+7. If the app will only be used by you, with this example connector - it's best to select
+   `Only on this account` in the installation access section
+
+After the app is created - press the `Install app` option in the left sidebar and install the
+application in your account. You can choose which repositories the app (and by extension the
+connector) will be able to access. Without this installation - the connector will only be able to
+access public repositories.
+
+#### OAuth integration setup
+
+After installation return to your GitHub app and generate a new client secret. Make sure to copy it
+immediately, as it won't be shown again. Paste the client secret in the OAuth configuration popup
+of your connector. Finally, copy the client ID (not app ID) of your application and also paste it in
+the OAuth configuration popup of your connector.
+
+![oauth_configuration.png](assets/oauth_configuration.png)
+
+After pressing `Connect` a GitHub window will pop up, asking you for app authorization on your
+GitHub account. After authorizing - you will be automatically redirected back to the connector UI.
+After successful authorization (it make take a couple seconds to finish and close the popup) the
+page will be populated with the IDs of external access integration and secret references.
 
 ![connection_configuration.png](assets/connection_configuration.png)
 
-### Configuration Finalization
-Finalization is the last step of the Wizard. In this step you will be asked to provide organisation and repository name. 
-This repository should be some repository that was configured to be accessible using the provided GitHub API token.
-For now, it will be used only for connection validation purposes. 
-This is a bit different from the previous step, because test connection procedure only checks if the GitHub API is accessible and the provided token is valid. 
-This step ensures that repository provided by user is accessible with the provided GitHub API token. 
-It will fail if the token does not have required permissions to access the repository, for example if the repository is private.
+Pressing the `Connect` button will trigger the `TEST_CONNECTION` procedure inside the connector.
+This procedure will try to access [GitHub API octocat endpoint](https://api.github.com/octocat), to check if external
+connectivity was configured correctly, and the OAuth access token obtained correctly.
 
-Additionally, during this step the database and schema specified in connector configuration phase will be created.
+When the test succeeds - application will proceed into finalization step.
+
+### Configuration Finalization
+Finalization is the last step of the Wizard. In this step you will be asked to provide an organisation
+and a repository name. This repository must be accessible with the OAuth token obtained during the
+connection configuration step. The provided repository will be used only for connection validation
+purposes.
+
+This is a bit different from the previous step, because the `TEST_CONNECTION` procedure only checks
+if the GitHub API is accessible and the provided token is valid.
+
+Finalization step ensures that repository provided by user is accessible with the provided GitHub
+API token. It will fail if the token does not have required permissions to access the repository.
+If you would like to ingest data from private repositories - we recommend finalizing the configuration
+using a private repository.
+
+Additionally, during this step the database and schema specified in connector configuration phase
+will be created.
 
 ![finalize_configuration.png](assets/finalize_configuration.png)
 
@@ -425,7 +523,7 @@ SELECT * FROM SINK_DATABASE.SINK_SCHEMA.ISSUES_VIEW;
 ```
 
 ### Pausing and resuming
-The connector can be paused and resumed, whenever desired. To do so just click the `Pause` button in the `Data Sync` tab. 
+The connector can be paused and resumed, whenever desired. To do so just press the `Pause` button in the `Data Sync` tab. 
 When pausing is triggered the underlying scheduling and work execution mechanism is disabled. However, the currently processing tasks
 will finish before the connector actually goes into `PAUSED` state. Because of that, it can take some time before it happens.
 
@@ -435,8 +533,9 @@ This will resume the scheduling task which will start queueing new `Work Items`.
 ![pause.png](assets/pause.png)
 
 ### Settings tab
-After configuration one more tab called `Settings` becomes available. This tab allows the user to see current connector and connection configurations.
-The data from this tab is extracted from the underlying configuration table and is read only.
+After configuration one more tab called `Settings` becomes available. This tab allows the user to
+see current connector and connection configurations. The data from this tab is extracted from the
+underlying configuration table and is read only.
 
 ![connector_config_settings.png](assets/connector_config_settings.png)
 
