@@ -146,7 +146,7 @@ Before you run the notebook you need to add the following Python libraries:
 ## Data Engineering With Snowpark Pandas
 Duration: 30
 
-During this step you will learn how to use the Snowpark Pandas API to
+During this step you will learn how to use the Snowpark Pandas API to:
 * Create datframe from a Snowflake table
 * Aggregate data to create new features
 * Join dataframes
