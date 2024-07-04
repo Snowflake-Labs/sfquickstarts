@@ -73,7 +73,7 @@ OR, using SSH:
 git clone git@github.com:Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas.git
 ```
 
-You can also use the git integration feature of Snowflake Notebooks, in order to do that you need to fork the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) to be allowed to commit changes. For instructions how to set up integration for your Snowflake account see ... and for using it with Snowflake Notebooks see ..
+You can also use the Git integration feature of Snowflake Notebooks, in order to do that you need to fork the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) to be allowed to commit changes. For instructions how to set up Git integration for your Snowflake account see [here](https://docs.snowflake.com/developer-guide/git/git-setting-up) and for using it with Snowflake Notebooks see [this page](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit).
 
 <!-- ------------------------ -->
 ## Setup Snowflake
