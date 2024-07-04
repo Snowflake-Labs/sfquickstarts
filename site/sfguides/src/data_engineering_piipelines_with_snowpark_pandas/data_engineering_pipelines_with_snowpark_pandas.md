@@ -129,9 +129,7 @@ If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfg
 
 ### Add Required Python Libraries
 
-Before you run the notebook you need to ad the libraries that it is using.
-
-The notebook is depending on the following Python libraries:
+Before you run the notebook you need to add the following Python libraries:
 * snowflake-snowpark-python (version 1.17 or higher)
 * modin
 * snowflake
