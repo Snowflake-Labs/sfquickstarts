@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering 
 
-# Snowpark Pandas API Data Pipeline
+# Data Engineering Pipeline with Snowpark Pandas
 <!-- ------------------------ -->
 ## Overview 
 
@@ -73,7 +73,7 @@ OR, using SSH:
 git clone git@github.com:Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas.git
 ```
 
-You can also use the git integration feature of Snowflake Notebooks, in order to do that you need to fork the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) to be allowed to commit changes. For instructions how to set up integration for your Snowflake account see ... and for using it with Snowflake Notebooks see ..
+You can also use the Git integration feature of Snowflake Notebooks, in order to do that you need to fork the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) to be allowed to commit changes. For instructions how to set up Git integration for your Snowflake account see [here](https://docs.snowflake.com/developer-guide/git/git-setting-up) and for using it with Snowflake Notebooks see [this page](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit).
 
 <!-- ------------------------ -->
 ## Setup Snowflake
@@ -129,10 +129,7 @@ If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfg
 
 ### Add Required Python Libraries
 
-Before you run the notebook you need to ad the libraries that it is using.
-
-The notebook is depending on the following Python libraries:
-* snowflake-snowpark-python (version 1.17 or higher)
+Before you run the notebook you need to add the following Python libraries:
 * modin
 * snowflake
 * matplotlib
@@ -149,16 +146,14 @@ The notebook is depending on the following Python libraries:
 ## Data Engineering With Snowpark Pandas
 Duration: 30
 
-During this step you will learn how to use the Snowpark Pandas API to
+During this step you will learn how to use the Snowpark Pandas API to:
 * Create datframe from a Snowflake table
 * Aggregate data to create new features
 * Join dataframes
 * Save the result into a Snowflake table
-* Create a serverless task to schedule the feature engineering
+* Create a serverless task to schedule the feature engineering pipeline (Currently in Private Preview)
 
-### Run The Code In The Notebook
-
-Run each of the cells in the Notebook.
+Follow along and run each of the cells in [the Notebook](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas/blob/main/Customer%20Profile%20Creation%20Pipeline.ipynb).
 
 Within this Notebook, we will use Snowpark Pandas API to create DataFrames, join them, create new features and create a serverless task to schedule the feature engineering.
 
@@ -166,7 +161,7 @@ Within this Notebook, we will use Snowpark Pandas API to create DataFrames, join
 ## Conclusion And Resources
 Duration: 4
 
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use the Snowpark Pandas API to create DataFrames, join them, create new features , save the result to a Snowflake table and create a serverless task to schedule the feature engineering.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use the Snowpark Pandas API to create DataFrames, join them, create new features, save the result to a Snowflake table, and create a serverless task to schedule the data transformation pipeline.
 
 ### What we've covered
 
@@ -180,4 +175,4 @@ Congratulations, you have successfully completed this quickstart! Through this q
 
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas)
 * [Snowpark Pandas API Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas)
-* [Getting Started with Snowpark pandas QuikStart](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_pandas/index.html)
+* [Getting Started with Snowpark pandas Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_pandas/index.html)
