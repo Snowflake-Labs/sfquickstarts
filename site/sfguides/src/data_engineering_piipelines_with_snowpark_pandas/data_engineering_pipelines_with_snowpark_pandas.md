@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering 
 
-# Snowpark Pandas API Data Pipeline
+# Data Engineering Pipeline with Snowpark Pandas
 <!-- ------------------------ -->
 ## Overview 
 
