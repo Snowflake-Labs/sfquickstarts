@@ -161,7 +161,7 @@ Within this Notebook, we will use Snowpark Pandas API to create DataFrames, join
 ## Conclusion And Resources
 Duration: 4
 
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use the Snowpark Pandas API to create DataFrames, join them, create new features , save the result to a Snowflake table and create a serverless task to schedule the feature engineering.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use the Snowpark Pandas API to create DataFrames, join them, create new features, save the result to a Snowflake table, and create a serverless task to schedule the data transformation pipeline.
 
 ### What we've covered
 
