@@ -151,7 +151,7 @@ During this step you will learn how to use the Snowpark Pandas API to:
 * Aggregate data to create new features
 * Join dataframes
 * Save the result into a Snowflake table
-* Create a serverless task to schedule the feature engineering
+* Create a serverless task to schedule the feature engineering pipeline (Currently in Private Preview)
 
 ### Run The Code In The Notebook
 
