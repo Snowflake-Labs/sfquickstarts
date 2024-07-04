@@ -404,7 +404,7 @@ the OAuth configuration popup of your connector.
 
 After pressing `Connect` a GitHub window will pop up, asking you for app authorization on your
 GitHub account. After authorizing - you will be automatically redirected back to the connector UI.
-After successful authorization (it make take a couple seconds to finish and close the popup) the
+After successful authorization (it may take a couple seconds to finish and close the popup) the
 page will be populated with the IDs of external access integration and secret references.
 
 ![connection_configuration.png](assets/connection_configuration.png)
