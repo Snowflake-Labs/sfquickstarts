@@ -153,9 +153,7 @@ During this step you will learn how to use the Snowpark Pandas API to:
 * Save the result into a Snowflake table
 * Create a serverless task to schedule the feature engineering pipeline (Currently in Private Preview)
 
-### Run The Code In The Notebook
-
-Run each of the cells in the Notebook.
+Follow along and run each of the cells in [the Notebook](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas/blob/main/Customer%20Profile%20Creation%20Pipeline.ipynb).
 
 Within this Notebook, we will use Snowpark Pandas API to create DataFrames, join them, create new features and create a serverless task to schedule the feature engineering.
 
