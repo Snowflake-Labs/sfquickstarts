@@ -175,4 +175,4 @@ Congratulations, you have successfully completed this quickstart! Through this q
 
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas)
 * [Snowpark Pandas API Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas)
-* [Getting Started with Snowpark pandas QuikStart](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_pandas/index.html)
+* [Getting Started with Snowpark pandas Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_pandas/index.html)
