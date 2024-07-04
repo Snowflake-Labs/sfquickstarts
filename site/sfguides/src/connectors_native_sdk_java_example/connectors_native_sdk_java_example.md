@@ -228,7 +228,7 @@ Completing the prerequisites is not required, but it is recommended to ensure sm
 
 In the case of the example GitHub connector there are 2 things that need to be taken care of before going further:
 - preparing a GitHub account
-- confirming access to ingested GitHub repositories
+- confirming access to the GitHub repositories you want to ingest
 
 ![prerequisites.png](assets/prerequisites.png)
 
@@ -288,14 +288,14 @@ defined in the `manifest.yml` file:
 references:
   - GITHUB_EAI_REFERENCE:
       label: "GitHub API access integration"
-      description: "External access integration which will allow connection to the GitHub API using OAuth2"
+      description: "External access integration that will enable connection to the GitHub API using OAuth2"
       privileges: [USAGE]
       object_type: "EXTERNAL ACCESS INTEGRATION"
       register_callback: PUBLIC.REGISTER_REFERENCE
       configuration_callback: PUBLIC.GET_REFERENCE_CONFIG
   - GITHUB_SECRET_REFERENCE:
       label: "GitHub API secret"
-      description: "Secret which will allow connection to the GitHub API using OAuth2"
+      description: "Secret that will enable connection to the GitHub API using OAuth2"
       privileges: [READ]
       object_type: SECRET
       register_callback: PUBLIC.REGISTER_REFERENCE
