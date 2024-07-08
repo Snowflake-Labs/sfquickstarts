@@ -174,16 +174,16 @@ Duration: 1
 - #### [コスト管理](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/)
   
   - Snowflake仮想ウェアハウスとその構成、リソースモニター、アカウントおよびウェアハウスレベルのタイムアウトパラメータ、そしてコスト調査について学びます。
-- #### [変換](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation_ja/)
+- #### [変換](/guide/tasty_bytes_zero_to_snowflake_transformation_ja/)
   
   - Snowflakeのゼロコピークローン、結果セットキャッシュ、テーブル操作、タイムトラベル、テーブルレベルのスワップ、ドロップ、アンドロップ機能について学びます。
-- #### [半構造化データ](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_ja/)
+- #### [半構造化データ](/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_ja/)
   
   - SnowflakeのVARIANTデータ型、ドット表記による半構造化データ処理、ラテラルフラット化、ビュー作成、Snowsightチャートについて学びます。
 - #### [データガバナンス](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/)
   
   - Snowflakeのシステム定義ロールについて学び、カスタムロールを作成して権限を付与し、タグベースのダイナミックデータマスキングと行アクセスポリシーの両方を展開します。
-- #### [コラボレーション](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration_ja/)
+- #### [コラボレーション](/guide/tasty_bytes_zero_to_snowflake_collaboration_ja/)
   
   - Weathersourceから無料ですぐに利用できるライブデータを活用して、ファーストパーティとサードパーティのソースを調和させたデータドリブンな分析を行うことで、Snowflakeマーケットプレイスに関する理解を深めます。
 - #### [地理空間](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/)
