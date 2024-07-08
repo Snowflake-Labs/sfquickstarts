@@ -19,7 +19,7 @@ To participate in the virtual hands-on lab, attendees need the following:
 
 * Github account - Participants will need to create, or already have, an account on Github. Other git-based source control hosting sites will work fine (Gitlab, Bitbucket), but the instructions will assume Github. An account on Github is free: [link](https://github.com/join/).  See appendix 1 for step-by-step instructions. 
 
-* Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a [free trial](https://signup.snowflake.com/).  Please sign up using an email address that hasn’t been used previously. See appendix 2 for step-by-step instructions. 
+* Snowflake Free Trial - Registrants of the virtual hands-on lab need to sign up for a [free trial](https://signup.snowflake.com/?utm_cta=quickstarts_).  Please sign up using an email address that hasn’t been used previously. See appendix 2 for step-by-step instructions. 
 
 * OPTIONAL: Log in to your Google account, if you have one.
 

@@ -36,7 +36,7 @@ Here is an outline of the workflow:
 - Use Tableau CRM to Sync data to and do live queries with Snowflake
 
 ### What You’ll Need
-- [Snowflake Trial Account](https://signup.snowflake.com/) 
+- [Snowflake Trial Account](https://signup.snowflake.com/?utm_cta=quickstarts_) 
 - [Salesforce Analytics Developer Account](https://trailhead.salesforce.com/en/promo/orgs/analytics-de)
 
 ### What You’ll Build
