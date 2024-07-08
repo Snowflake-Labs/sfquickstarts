@@ -19,15 +19,15 @@ Duration: 1
 
 Tasty Bytesの組織について学んだ後、Tasty Bytes基盤のデータモデル、ワークロード固有のロールとウェアハウス、必要なすべてのロールベースのアクセス制御（RBAC）を設定するプロセスを完了します。
 
-このクイックスタートを終了すると、「[Powered by Tasty Bytes - クイックスタート](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3)」セクションにあるクイックスタートを実行するために必要な基盤が展開されます。
+このクイックスタートを終了すると、「[Powered by Tasty Bytes - クイックスタート](/guide/tasty_bytes_introduction_ja/index.html#3)」セクションにあるクイックスタートを実行するために必要な基盤が展開されます。
 
 ### Tasty Bytesとは
 <img src="assets/who_is_tasty_bytes.png"/>
 
 ### 前提条件
-- サポートされているSnowflake[ブラウザ](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
+- サポートされているSnowflake[ブラウザ](https://docs.snowflake.com/ja/user-guide/setup#browser-requirements)
 - エンタープライズまたはビジネスクリティカルなSnowflakeアカウント
-  - Snowflakeアカウントをお持ちでない場合は、[**30日間の無料トライアルアカウントに登録してください**](https://signup.snowflake.com/)。サインアップする際は、必ず**エンタープライズ**エディションを選択してください。[Snowflakeクラウド/リージョン](https://docs.snowflake.com/en/user-guide/intro-regions)は、どれを選択しても構いません。
+  - Snowflakeアカウントをお持ちでない場合は、[**30日間の無料トライアルアカウントに登録してください**](https://signup.snowflake.com/?_l=ja)。サインアップする際は、必ず**エンタープライズ**エディションを選択してください。[Snowflakeクラウド/リージョン](https://docs.snowflake.com/ja/user-guide/intro-regions)は、どれを選択しても構いません。
   - 登録後、アクティベーションリンクとSnowflakeアカウントURLが記載されたメールが届きます。
   - <img src="assets/choose_edition.png" width="300"/>
 
@@ -47,7 +47,7 @@ Tasty Bytesの組織について学んだ後、Tasty Bytes基盤のデータモ�
 Duration: 6
 
 ### 概要
-このクイックスタートでは、Snowsightとして知られるSnowflakeウェブインターフェースを使用します。Snowsightを初めて利用する場合は、[Snowsightのドキュメント](https://docs.snowflake.com/en/user-guide/ui-snowsight)でその概要を確認することを強くお勧めします。
+このクイックスタートでは、Snowsightとして知られるSnowflakeウェブインターフェースを使用します。Snowsightを初めて利用する場合は、[Snowsightのドキュメント](https://docs.snowflake.com/ja/user-guide/ui-snowsight)でその概要を確認することを強くお勧めします。
 
 ### ステップ1 - URLでSnowflakeにアクセスする
 - ブラウザウィンドウを開き、SnowflakeアカウントのURLを入力します。Snowflakeアカウントをまだお持ちでない場合は、前のセクションに戻って無料のSnowflakeトライアルアカウントに登録してください。
@@ -101,35 +101,35 @@ Tasty Bytesの設定が完了したので、作成したデータベース、ロ
 >
 
 ### ステップ1 - Tasty Bytesデータベースを探索する
-このクエリは、[SHOW DATABASES](https://docs.snowflake.com/en/sql-reference/sql/show-databases.html)で作成したデータベースを返します。
+このクエリは、[SHOW DATABASES](https://docs.snowflake.com/ja/sql-reference/sql/show-databases.html)で作成したデータベースを返します。
 ```
 SHOW DATABASES LIKE 'frostbyte_tasty_bytes';
 ```
 <img src = "assets/show_tb_db.png"> 
 
 ### ステップ2 - Tasty Bytesデータベース内のスキーマを探索する
-このクエリは、[SHOW SCHEMAS](https://docs.snowflake.com/en/sql-reference/sql/show-schemas)で作成したデータベース内のスキーマを返します。
+このクエリは、[SHOW SCHEMAS](https://docs.snowflake.com/ja/sql-reference/sql/show-schemas)で作成したデータベース内のスキーマを返します。
 ```
 SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
 ```
 <img src = "assets/show_tb_schemas.png"> 
 
 ### ステップ3 - Tasty Bytesデータベース内のRAW_POSスキーマ内のテーブルを探索する
-このクエリは、[SHOW TABLES](https://docs.snowflake.com/en/sql-reference/sql/show-tables)を使用して`raw_pos`スキーマ内のテーブルを返します。
+このクエリは、[SHOW TABLES](https://docs.snowflake.com/ja/sql-reference/sql/show-tables)を使用して`raw_pos`スキーマ内のテーブルを返します。
 ```
 SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
 ```
 <img src = "assets/show_tb_tables.png"> 
 
 ### ステップ4 - Tasty Bytesロールを探索する
-このクエリは、[SHOW ROLES](https://docs.snowflake.com/en/sql-reference/sql/show-roles)で作成したロールを返します。
+このクエリは、[SHOW ROLES](https://docs.snowflake.com/ja/sql-reference/sql/show-roles)で作成したロールを返します。
 ```
 SHOW ROLES LIKE 'tasty%';
 ```
 <img src = "assets/show_tb_roles.png"> 
 
 ### ステップ5 - Tasty Bytesウェアハウスを探索する
-このクエリは、[SHOW WAREHOUSES](https://docs.snowflake.com/en/sql-reference/sql/show-warehouses)で作成したウェアハウスを返します。
+このクエリは、[SHOW WAREHOUSES](https://docs.snowflake.com/ja/sql-reference/sql/show-warehouses)で作成したウェアハウスを返します。
 ```
 SHOW WAREHOUSES LIKE 'tasty%';
 ```
@@ -137,8 +137,8 @@ SHOW WAREHOUSES LIKE 'tasty%';
 
 ### ステップ6 - すべてをまとめる
 次の3つのクエリを使用して以下を実行します。
-1. [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html)を使用して`tasty_data_engineer`ロールを引き受けます。
-2. [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html)を使用して`tasty_de_wh`ウェアハウスを活用します。
+1. [USE ROLE](https://docs.snowflake.com/ja/sql-reference/sql/use-role.html)を使用して`tasty_data_engineer`ロールを引き受けます。
+2. [USE WAREHOUSE](https://docs.snowflake.com/ja/sql-reference/sql/use-warehouse.html)を使用して`tasty_de_wh`ウェアハウスを活用します。
 3. `raw_pos.menu`テーブルをクエリし、Plant Palaceブランドのキッチンカーで販売されているメニュー項目を検索します。
 
 ```
@@ -171,19 +171,19 @@ Duration: 1
 
 ### ゼロからのSnowflake
 
-- #### [財務ガバナンス](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/)
+- #### [コスト管理](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/)
   
-  - Snowflake仮想ウェアハウスとその構成、リソースモニター、アカウントおよびウェアハウスレベルのタイムアウトパラメータについて学びます。
-- #### [変換](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation/)
+  - Snowflake仮想ウェアハウスとその構成、リソースモニター、アカウントおよびウェアハウスレベルのタイムアウトパラメータ、そしてコスト調査について学びます。
+- #### [変換](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation_ja/)
   
   - Snowflakeのゼロコピークローン、結果セットキャッシュ、テーブル操作、タイムトラベル、テーブルレベルのスワップ、ドロップ、アンドロップ機能について学びます。
-- #### [半構造化データ](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data/)
+- #### [半構造化データ](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_ja/)
   
   - SnowflakeのVARIANTデータ型、ドット表記による半構造化データ処理、ラテラルフラット化、ビュー作成、Snowsightチャートについて学びます。
 - #### [データガバナンス](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/)
   
   - Snowflakeのシステム定義ロールについて学び、カスタムロールを作成して権限を付与し、タグベースのダイナミックデータマスキングと行アクセスポリシーの両方を展開します。
-- #### [コラボレーション](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration/)
+- #### [コラボレーション](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration_ja/)
   
   - Weathersourceから無料ですぐに利用できるライブデータを活用して、ファーストパーティとサードパーティのソースを調和させたデータドリブンな分析を行うことで、Snowflakeマーケットプレイスに関する理解を深めます。
 - #### [地理空間](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/)
