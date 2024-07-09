@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowflake Arctic, Snowflake Cortex, Streamlit
 authors: Dash Desai
 
-# A Getting Started Guide With Snowflake Arctic and Snowflale Cortex 
+# A Getting Started Guide With Snowflake Arctic and Snowflake Cortex 
 <!-- ------------------------ -->
 ## Overview
 
