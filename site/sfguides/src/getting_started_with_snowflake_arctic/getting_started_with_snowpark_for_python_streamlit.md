@@ -1,5 +1,5 @@
 id: getting_started_with_snowflake_arctic
-summary: This guide provides the instructions for writing a Streamlit application that uses Snowflake Cortex and Snowflake Arctic Large Language Model.
+summary: This guide provides the instructions for writing a Streamlit application that uses Snowflake Arctic for custom tasks like summarizing long-form text into JSON formatted output using prompt engineering and Snowflake Cortex task-specific LLM functions to perform operations like translate text between languages or score the sentiment of a piece of text.
 categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowflake Arctic, Snowflake Cortex, Streamlit
 authors: Dash Desai
 
-# A Getting Started Guide With Snowflake Arctic
+# A Getting Started Guide With Snowflake Arctic and Snowflale Cortex 
 <!-- ------------------------ -->
 ## Overview
 
@@ -40,9 +40,13 @@ Snowflake Arctic is a family of enterprise-grade models built by Snowflake. The 
 
 Learn more about [benchmarks and how Snowflake Arctic was built](https://www.snowflake.com/blog/arctic-open-efficient-foundation-language-models-snowflake/).
 
+### What You Will Learn
+
+How to use Snowflake Arctic for custom tasks like summarizing long-form text into JSON formatted output using prompt engineering and Snowflake Cortex task-specific LLM functions to perform operations like translate text between languages or score the sentiment of a piece of text.
+
 ### What You Will Build
 
-A Streamlit application that uses Snowflake Arctic for custom tasks like summarizing long-form text into JSON formatted output.
+An interactive Streamlit application running in Snowflake.
 
 ![App](assets/snowflake_arctic.gif)
 
@@ -192,8 +196,9 @@ session = get_active_session()
 def summarize():
     with st.container():
         st.header("JSON Summary With Snowflake Arctic")
-        entered_text = st.text_area("Enter text",label_visibility="hidden",height=400,placeholder='For example: customer call transcript')    
-        if entered_text:
+        entered_text = st.text_area("Enter text",label_visibility="hidden",height=400,placeholder='Enter text. For example, a call transcript.')
+        btn_summarize = st.button("Summarize",type="primary")
+        if entered_text and btn_summarize:
             entered_text = entered_text.replace("'", "\\'")
             prompt = f"Summarize this transcript in less than 200 words. Put the product name, defect if any, and summary in JSON format: {entered_text}"
             cortex_prompt = "'[INST] " + prompt + " [/INST]'"
@@ -209,8 +214,9 @@ def translate():
             from_language = st.selectbox('From',dict(sorted(supported_languages.items())))
         with col2:
             to_language = st.selectbox('To',dict(sorted(supported_languages.items())))
-        entered_text = st.text_area("Enter text",label_visibility="hidden",height=300,placeholder='For example: call customer transcript')
-        if entered_text:
+        entered_text = st.text_area("Enter text",label_visibility="hidden",height=300,placeholder='Enter text. For example, a call transcript.')
+        btn_translate = st.button("Translate",type="primary")
+        if entered_text and btn_translate:
           entered_text = entered_text.replace("'", "\\'")
           cortex_response = session.sql(f"select snowflake.cortex.translate('{entered_text}','{supported_languages[from_language]}','{supported_languages[to_language]}') as response").to_pandas().iloc[0]['RESPONSE']
           st.write(cortex_response)
@@ -218,12 +224,13 @@ def translate():
 def sentiment_analysis():
     with st.container():
         st.header("Sentiment Analysis With Snowflake Cortex")
-        entered_text = st.text_area("Enter text",label_visibility="hidden",height=400,placeholder='For example: customer call transcript')
-        if entered_text:
+        entered_text = st.text_area("Enter text",label_visibility="hidden",height=400,placeholder='Enter text. For example, a call transcript.')
+        btn_sentiment = st.button("Sentiment Score",type="primary")
+        if entered_text and btn_sentiment:
           entered_text = entered_text.replace("'", "\\'")
-          cortex_response = session.sql(f"select snowflake.cortex.sentiment('{entered_text}') as sentiment").to_pandas()
-          st.caption("Score is between -1 and 1; -1 = Most negative, 1 = Positive, 0 = Neutral")  
-          st.write(cortex_response)
+          cortex_response = session.sql(f"select snowflake.cortex.sentiment('{entered_text}') as sentiment").to_pandas().iloc[0]['SENTIMENT']
+          st.text(f"Sentiment score: {cortex_response}")
+          st.caption("Note: Score is between -1 and 1; -1 = Most negative, 1 = Positive, 0 = Neutral")  
 
 page_names_to_funcs = {
     "JSON Summary": summarize,
@@ -241,6 +248,20 @@ To run the application, click on **Run** located at the top right corner. If all
 
 ![App](assets/snowflake_arctic.gif)
 
+#### Sample Transcript
+
+Copy and paste the following sample transcript for JSON Summary, Translate, and Sentiment Analysis:
+
+```sh
+Customer: Hello!
+Agent: Hello! I hope you're having a great day. To best assist you, can you please share your first and last name and the company you're calling from?
+Customer: Sure, I'm Michael Green from SnowSolutions.
+Agent: Thanks, Michael! What can I help you with today?
+Customer: We recently ordered several DryProof670 jackets for our store, but when we opened the package, we noticed that half of the jackets have broken zippers. We need to replace them quickly to ensure we have sufficient stock for our customers. Our order number is 60877.
+Agent: I apologize for the inconvenience, Michael. Let me look into your order. It might take me a moment.
+Customer: Thank you.
+```
+
 > aside positive
 > Note: Besides Snowflake Arctic you can also use [other supported LLMs in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) with `snowflake.cortex.complete` function.
 
@@ -249,19 +270,18 @@ To run the application, click on **Run** located at the top right corner. If all
 
 Duration: 1
 
-Congratulations! You've successfully completed the Getting Started with Snowflake Arctic quickstart guide. 
-
-> aside positive
-> Note: Besides Snowflake Arctic you can also use [other supported LLMs in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) with `snowflake.cortex.complete` function.
+Congratulations! You've successfully completed the Getting Started with Snowflake Arctic and Snowflake Cortex quickstart guide. 
 
 ### What You Learned
 
-- How to build a Streamlit application that uses Snowflake Arctic for custom tasks like summarizing long-form text into JSON formatted output.
+- How to use Snowflake Arctic for custom tasks like summarizing long-form text into JSON formatted output using prompt engineering and Snowflake Cortex task-specific LLM functions to perform operations like translate text between languages or score the sentiment of a piece of text.
+- How to build an interactive Streamlit application running in Snowflake.
 
 ### Related Resources
 
 - [Snowflake Cortex: Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Snowflake Cortex: LLM Functions](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions)
+- [Snowflake Cortex: LLM Functions Cost Considerations](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#cost-considerations) and [Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf#page=9)
 - [Snowflake Cortex: ML Functions](https://docs.snowflake.com/en/guides-overview-ml-functions)
 - [Snowflake Arctic: Hugging Face](https://huggingface.co/Snowflake/snowflake-arctic-instruct)
 - [Snowflake Arctic: Cookbooks](https://www.snowflake.com/en/data-cloud/arctic/cookbook/)
