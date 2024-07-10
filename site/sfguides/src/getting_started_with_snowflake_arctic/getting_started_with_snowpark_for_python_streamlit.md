@@ -67,7 +67,28 @@ Let’s create the table and load the data.
 
 ### Create Table and Load Data
 
-Run these SQL statements in a SQL worksheet to create `call_transcripts` table and load data. 
+Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables and load data from Amazon S3.
+
+> aside positive
+> IMPORTANT:
+>
+> - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
+>
+> - For each SQL script block below, select all the statements in the block and execute them top to bottom.
+
+In a new SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+CREATE OR REPLACE WAREHOUSE DASH_S WAREHOUSE_SIZE=SMALL;
+CREATE OR REPLACE DATABASE DASH_DB;
+CREATE OR REPLACE SCHEMA DASH_SCHEMA;
+
+USE DASH_DB.DASH_SCHEMA;
+```
+
+In the same SQL worksheet, run the following SQL commands to create table **CALL_TRANSCRIPTS** from data hosted on publicly accessible S3 bucket.
 
 ```sql
 CREATE or REPLACE file format csvformat
@@ -178,7 +199,7 @@ To put it all together, let's create a Streamlit application in Snowflake.
 
 **Step 3.** Enter **App name**
 
-**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
+**Step 4.** Select **App location** (DASH_DB and DASH_SCHEMA) and **App warehouse** (DASH_S) 
 
 **Step 5.** Click on **Create**
 
