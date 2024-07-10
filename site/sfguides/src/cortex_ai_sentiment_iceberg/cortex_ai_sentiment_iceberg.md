@@ -207,6 +207,7 @@ Now you can query the Iceberg Table using LLM functions from Snowflake Cortex. R
 
 ```sql
 SELECT
+    id,
     product_name,
     review_date,
     snowflake.cortex.sentiment(review) as review_sentiment
@@ -303,7 +304,7 @@ And you can use Streamlit to visualize the results from your SQL query by refere
 ```python
 import streamlit as st
 
-st.bar_chart(sql_reviews.to_df(), x='PRODUCT_NAME', y='SENTIMENT_DIFF')
+st.bar_chart(sql_reviews.to_df(), x='SENTIMENT_DIFF', y='PRODUCT_NAME')
 ```
 
 <!-- ------------------------ -->
