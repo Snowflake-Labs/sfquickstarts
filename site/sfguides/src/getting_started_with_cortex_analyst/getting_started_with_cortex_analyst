@@ -17,7 +17,7 @@ Through this quickstart guide, you will explore how to get started with [Cortex 
 
 Cortex Analyst is fully managed solution that lets business users "talk" to their structured data in Snowflake using natural language. Powered by state-of-the-art Snowflake hosted LLMs it provides a convenient REST API for seamless integration into any application, while ensuring a high-precision experience.
 
-![cortex analyst gif](./assets/cortex_analyst.gif)
+![cortex analyst gif](./assets/cortex.png)
 
 ### Why use Cortex Analyst?
 Cortex Analyst empowers business users to self-service data analysis through conversation, reducing dependency on data teams for ad hoc queries and speeding up time to insights and decisions. Cortex Analyst has a lower total cost of ownership (TCO) and improved accuracy compared to building your own "Talk to Your Data" (TTYD) solution from scratch.
@@ -45,9 +45,9 @@ Duration: 2
 
 > aside positive
 >
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-cortex-analyst).
+> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst).
 
-Open up the [create_snowflake_objects.sql]() file in a SQL worksheet in Snowsight.
+Open up the [create_snowflake_objects.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/create_snowflake_objects.sql) file in a SQL worksheet in Snowsight.
 
 Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
@@ -105,21 +105,21 @@ CREATE OR REPLACE TABLE CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE_BY_
 );
 ```
 
-These can also be found in the **create_snowflake_objects.sql** file.
+These can also be found in the [**create_snowflake_objects.sql**](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/create_snowflake_objects.sql) file.
 
 <!-- ------------------------ -->
 ## Upload and Ingest the Revenue Data and Semantic Model YAML
-Duration: 5
+Duration: 10
 
 > aside positive
 >
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-cortex-analyst).
+> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst).
 
-There are three data files and one YAML file included in the [Git Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-cortex-analyst) that you should have cloned:
-- [daily_revenue.csv]()
-- [daily_revenu_by_region.csv]()
-- [daily_revenue_by_product.csv]()
-- [revenue_timeseries.yaml]()
+There are three data files and one YAML file included in the [Git Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst) that you should have cloned:
+- [daily_revenue_combined.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/daily_revenue_combined.csv)
+- [daily_revenue_by_region_combined.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/daily_revenue_by_region_combined.csv)
+- [daily_revenue_by_product_combined.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/daily_revenue_by_product_combined.csv)
+- [revenue_timeseries.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/revenue_timeseries.yaml)
 
 You will now upload these files to your Snowflake account and ingest the data files into the tables created in the previous step.
 
@@ -139,7 +139,7 @@ Let's go check that the files were successfully uploaded to the stage. In the Sn
 You should see the four files listed in the stage:
 ![staged files](./assets/staged_files.png)
 
-Now, let's load the raw CSV data into the tables. Go back to your Snowflake SQL worksheet and run the following [load_data.sql]() code to load data into the tables:
+Now, let's load the raw CSV data into the tables. Go back to your Snowflake SQL worksheet and run the following [load_data.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/load_data.sql) code to load data into the tables:
 
 ```sql
 /*--
@@ -226,7 +226,7 @@ Now, you will create a demo chat application to call the Cortex Analyst API and 
 Now open the Streamlit code editor:
 ![streamlit code editor](./assets/streamlit_editor.png)
 
-We will copy and paste the following Python code from [cortex_analyst_sis_demo_app.py]() into the editor:
+We will copy and paste the following Python code from [cortex_analyst_sis_demo_app.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/cortex_analyst_sis_demo_app.py) into the editor:
 
 ```python
 import _snowflake
@@ -382,9 +382,9 @@ To preview the app, click Run in the preview pane. You can now begin asking natu
 ## Semantic Model Details
 Duration: 10
 
-The semantic model file [revenue_timeseries.yaml]() is the key that unlocks Cortex Analyst's power. This YAML file dictates the tables, columns, etc. that Analyst can use in order to run queries that answer natural-language questions Let's talk a little about the details of this file:
+The semantic model file [revenue_timeseries.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/revenue_timeseries.yaml) is the key that unlocks Cortex Analyst's power. This YAML file dictates the tables, columns, etc. that Analyst can use in order to run queries that answer natural-language questions Let's talk a little about the details of this file:
 
-TODO: add explanation of YAML
+**TODO: add explanation of YAML**
 
 Here are some tips on building your own semantic model to use with Cortex Analyst:
 
@@ -413,8 +413,8 @@ Congratulations, you have successfully completed this quickstart! Through this q
 For more information, check out the resources below:
 
 ### Related Resources
-- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-cortex-analyst)
-- [Cortex Analyst docs]()
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst)
+- [Cortex Analyst docs](https://docs.snowflake.com/snowflake-cortex/cortex-analyst-overview)
 - [Cortex Analyst examples](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/cortex-analyst)
 - [Semantic Model Generator](https://github.com/Snowflake-Labs/semantic-model-generator)
 
