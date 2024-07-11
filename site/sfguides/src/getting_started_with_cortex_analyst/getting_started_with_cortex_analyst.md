@@ -39,6 +39,8 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 - A Semantic Model over sample financial data
 - A Streamlit app with a conversational interface to Cortex Analyst
 
+![streamlit app](./assets/streamlit_app.png)
+
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
 Duration: 2
