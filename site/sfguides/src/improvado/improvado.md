@@ -1,13 +1,13 @@
 author:
 id: improvado
-summary: Improvado Composable “Agentic” Data Platform with Snowflake
+summary: Getting Started guide to show how users can use Improvado Composable “Agentic” Data Platform with Snowflake
 categories: Getting-Started,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started
 
-# Improvado Guide
+# Improvado Composable “Agentic” Data Platform with Snowflake
 <!-- ------------------------ -->
 ## Introduction
 Duration: 2
