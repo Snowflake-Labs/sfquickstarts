@@ -32,7 +32,7 @@ For this guide we will use a Financial Services use case where Insurance data is
 - How to create Snowflake [Managed](https://docs.snowflake.com/en/user-guide/tables-iceberg-create#create-an-iceberg-table-with-snowflake-as-the-catalog) and [Unmanaged](https://docs.snowflake.com/en/user-guide/tables-iceberg-create#create-an-iceberg-table-with-aws-glue-as-the-catalog) Iceberg Tables  
 
 ### What You’ll Need 
-- A [Snowflake Enterprise Account](https://signup.snowflake.com/) with `ACCOUNTADMIN` access in US WEST (OREGON REGION)
+- A [Snowflake Enterprise Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access in US WEST (OREGON REGION)
 - An [AWS Account](https://aws.amazon.com/free/) with `Administartor Access`
 
 ### What You’ll Build 
@@ -141,7 +141,9 @@ iceberg table` and click **Create database**.
 
 ![Schema](assets/Schema.png)
 
-- **Download** [quotes_schema.json](https://static.us-east-1.prod.workshops.aws/67a19ff1-da71-4102-aade-d77f5d8b1d52/static/Lab1/quotes_schema.json?Key-Pair-Id=K36Q2WVO3JP7QD&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9zdGF0aWMudXMtZWFzdC0xLnByb2Qud29ya3Nob3BzLmF3cy82N2ExOWZmMS1kYTcxLTQxMDItYWFkZS1kNzdmNWQ4YjFkNTIvKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTcxNTg2MTk0M319fV19&Signature=mCdySehcpZhNbLNyRPPjAnajLWA0eLffE6yusPF9rqNC2Kv-tjJxsUNt%7Egm-krnnB6cGrcqevkWOoBWJDAx7wSRzgv1yBLeXMhLd5ms7fa-WtrCzrQ%7ENFglFTvrTIBspAx%7EMbmIEXzEHtfoG5p3LBcDkT3yGdSliw8m8ar2wyyIdfpx2L7OJtdTFitdNxPZLfG46u%7EUYz%7EGDcInFrvQfrJiKVQghR6BK7IaCf-qsoash4Y4ZIy9Y9C4-UrnkETlrHjuATbCdl-fV%7EBTAAf%7E3VlthifZ%7EN6RdDhDOe5MJTegXzoLIgkOG1YRpBCcWcaJb8bpbwNLztKu0FfwWj%7EGpSQ__) . **Remove** the '[ ]' on the screen, **paste** the contents of the **quotes_schema.json** file there,
+- **Download** 
+[quotes_schema.json](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/quotes_schema.json) . 
+**Remove** the '[ ]' on the screen, **paste** the contents of the **quotes_schema.json** file there,
 and **Click Save**.
 
 ![delete](assets/delete.png)

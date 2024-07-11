@@ -27,7 +27,7 @@ Upon finishing this Quickstart, you will have deployed the foundation required t
 ### Prerequisites
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - An Enterprise or Business Critical Snowflake Account
-    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/). When signing up, please make sure to select **Enterprise** edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions).
+    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/?utm_cta=quickstarts_). When signing up, please make sure to select **Enterprise** edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions).
     - After registering, you will receive an email with an activation link and your Snowflake Account URL.
     - <img src="assets/choose_edition.png" width="300"/>
     
@@ -188,9 +188,11 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
     - Learn Snowflake's Geospatial capabilities, beginning with obtaining free, real-time data from SafeGraph. Progress through creating geographic points (ST_POINT), measuring distances (ST_DISTANCE), aggregating coordinates (ST_COLLECT), establishing a Minimum Bounding Polygon (ST_ENVELOPE), determining areas (ST_AREA), identifying central points (ST_CENTROID), and executing advanced Geospatial Analysis using the H3 (Hexagonal Hierarchical Geospatial Indexing System).
 
 ### Other Tasty Bytes Quickstarts
-- #### [Tasty Bytes - Snowpark 101 for Data Science](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index)
+- #### [Extracting Insights from Unstructured Data using DocumentAI](https://quickstarts.snowflake.com/guide/tasty_bytes_extracting_insights_with_docai/index.html?index=..%2F..index)
 
 - #### [Customer Reviews Analytics using Snowflake Cortex](https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/index.html?index=..%2F..index)
+
+- #### [Tasty Bytes - Snowpark 101 for Data Science](https://quickstarts.snowflake.com/guide/tasty_bytes_snowpark_101_for_data_science/index.html?index=..%2F..index)
 
 - #### [Developing React Native Applications using Snowflake Hybrid Tables](https://quickstarts.snowflake.com/guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/index.html?index=..%2F..index)
 
@@ -198,7 +200,7 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
 
 - #### [Integrating Tasty Bytes Location Recommendations ML Model into the React Native Data Application](https://quickstarts.snowflake.com/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app/index.html?index=..%2F..index)
 
-
+- #### [Tasty Bytes - Working with Iceberg Tables](https://quickstarts.snowflake.com/guide/tasty_bytes_working_with_iceberg_tables/index.html?index=..%2F..index)
 
 
 

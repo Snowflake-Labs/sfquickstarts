@@ -80,7 +80,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 ### Prerequisites
 
 - Access to [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) for source code
-- A Snowflake account, if you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Snowflake account, if you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 ### Vocabulary

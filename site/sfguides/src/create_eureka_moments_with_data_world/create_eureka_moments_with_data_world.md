@@ -66,7 +66,7 @@ Duration: 3
 To create a Snowflake trial account, do the following:
 
 
-1. Click [this link](https://signup.snowflake.com).
+1. Click [this link](https://signup.snowflake.com/?utm_cta=quickstarts_).
 2. Enter your first name, last name, email, company, role, and country. Click `Continue`.
     ![3-1](assets/3-1-sf-signup-med.png)
 3. Choose a Snowflake account version (Enterprise recommended) and a cloud provider.
