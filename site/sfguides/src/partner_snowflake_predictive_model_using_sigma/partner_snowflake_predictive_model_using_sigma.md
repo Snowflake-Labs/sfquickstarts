@@ -43,7 +43,7 @@ To ensure that you can follow along during the lab, please complete the work out
 Duration: 5
 
 #### 1: Sign up for a Snowflake Trial:
-You can sign up for a 30-day free trial of Snowflake [here.](https://signup.snowflake.com/) Even if you have a login on an existing Snowflake account, you should still create a new Snowflake account, as you’ll be asked to utilize the `ACCOUNTADMIN` role for some steps below.
+You can sign up for a 30-day free trial of Snowflake [here.](https://signup.snowflake.com/?utm_cta=quickstarts_) Even if you have a login on an existing Snowflake account, you should still create a new Snowflake account, as you’ll be asked to utilize the `ACCOUNTADMIN` role for some steps below.
 
 
 #### 2: Enable Anaconda Packages in Snowflake:
