@@ -43,7 +43,7 @@ To ensure that you can follow along during the lab, please complete the work out
 Duration: 5
 
 #### 1: Sign up for a Snowflake Trial:
-You can sign up for a 30-day free trial of Snowflake [here.](https://signup.snowflake.com/) Even if you have a login on an existing Snowflake account, you should still create a new Snowflake account, as you’ll be asked to utilize the `ACCOUNTADMIN` role for some steps below.
+You can sign up for a 30-day free trial of Snowflake [here.](https://signup.snowflake.com/?utm_cta=quickstarts_) Even if you have a login on an existing Snowflake account, you should still create a new Snowflake account, as you’ll be asked to utilize the `ACCOUNTADMIN` role for some steps below.
 
 
 #### 2: Enable Anaconda Packages in Snowflake:
@@ -131,7 +131,7 @@ A good way to test this is to run the following imports in a notebook cell and m
 ```code
 from snowflake.snowpark import Session
 from snowflake.ml.registry import Registry
-from snowflake.ml.modeling.linear_model import LinearRegression
+from snowflake.ml.modeling.tree import DecisionTreeRegressor
 ```
 
 ![Footer](assets/sigma_footer.png)
@@ -425,12 +425,12 @@ reg = Registry(session, database_name="SE_DEMO_DB", schema_name="ML_REGISTRY")
 
 The new Snowpark ML functions make it super easy to train open-source models on optimized and scalable Snowflake compute. 
 
-We can set up a code block that allows us to easily train a linear regression model with just a few lines. 
+We can set up a code block that allows us to easily train a decision tree regression model with just a few lines. 
 
 You will use the warehouse view locations that you generated in your sigma workbook in the session table calls below:
 
 ```python
-from snowflake.ml.modeling.linear_model import LinearRegression
+from snowflake.ml.modeling.tree import DecisionTreeRegressor
 
 # Specify inputs
 training_table = session.table("[USE WAREHOUSE VIEW LOCATION FOR TRAIN]")
@@ -444,7 +444,7 @@ feature_cols = [
 ]
 target_col = "SHIFT_SALES"
 
-my_model = LinearRegression()
+my_model = DecisionTreeRegressor()
 my_model.set_input_cols(feature_cols)
 my_model.set_label_cols(target_col)
 my_model.set_output_cols("PRED_" + target_col)
@@ -480,7 +480,7 @@ model_ver = reg.log_model(
 
 # Add a description to the model -
 model_ver.set_metric(metric_name="MAE Score", value=mae_score)
-model_ver.comment = "This linear regression model predicts the Shift Sales for a given Location, using Features discovered through Sigma"
+model_ver.comment = "This decision tree regression model predicts the Shift Sales for a given Location, using Features discovered through Sigma"
 
 reg.get_model("SHIFT_SALES_MODEL").show_versions()
 ```
@@ -530,7 +530,7 @@ Voila, you should now see a JSON output in this column.
 
 4: Finally, we can now extract the prediction from the column. Sigma [reads JSON right out of the box](https://help.sigmacomputing.com/docs/json), so we can just right click and extract the columns. 
 
-For linear regression, there is only one output, `PRED_SHIFT_SALES`, that we care about, but we could imagine other models that would have multiple outputs here. 
+For decision tree regression, there is only one output, `PRED_SHIFT_SALES`, that we care about, but we could imagine other models that would have multiple outputs here. 
 
 Confirm your selection, and we have our final prediction that directly runs the model we defined in Snowflake:
 

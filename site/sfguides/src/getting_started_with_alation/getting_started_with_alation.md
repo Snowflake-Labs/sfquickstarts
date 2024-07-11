@@ -27,14 +27,14 @@ During the lab, you’ll kickstart your 14-day free trial of Alation — to whic
 - How to explore data quality metrics against critical data assets
 
 ### - What You’ll Need 
-- A trial [Snowflake](https://signup.snowflake.com/) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake accoount (with ACCOUNTADMIN access)
+- A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account with ACCOUNTADMIN access (optional) or an existing Snowflake accoount (with ACCOUNTADMIN access)
 - Alation free trial through Snowflake Partner Connect 
 
 <!-- ------------------------ -->
-## Getting Your Snowflake Trial Account
+## Getting Your Snowflake Trial Account (Optional)
 Duration: 3
 
-- To create a Snowflake trial account, follow [this link](https://signup.snowflake.com) and fill out the form before clicking Continue. You'll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click: ``` Get Started ```
+- To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_cta=quickstarts_) and fill out the form before clicking Continue. You'll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click: ``` Get Started ```
 
 - Next you will be prompted for the reason you are signing up for a Snowflake trial account. Choose "Virtual hands-on lab or demo" and any other ones that apply. Click: ``` Submit ```
 
@@ -414,25 +414,18 @@ Time to wrap this up with a quick Summary!
 ![VHOL-Screen37](./assets/Section9-Quality-Screen11.png)
 
 <!-- ------------------------ -->
-## Summary
+## Conclusion And Resources 
 Duration: 3
 
-You did it! In this short period, you have seen how Alation:
-- Helps get your data AI ready
-- Improves productivity through self-service analytics
-- Guides users to make better business decisions with trusted data
-- Empowers organizations to continuously improve their data culture
+You did it! In this short period, you have seen how Alation and Snowflake work together bringing the pillars of Horizon to life for data governance and data quality. Whether your working on data mondernization or AI readiness, Snowflake and Alation are the perfect combination.
 
 ![VHOL-Screen38](./assets/Section10-Summary-Screen1.png)
 ![VHOL-Screen39](./assets/Section10-Summary-Screen2.png)
 
 ![VHOL-Border10](./assets/BorderLine.png)
 
-### Continue your Alation Journey
 
-To get the most out of Alation during your trial.
-
-3. The Quick Start Tour has self-guided Self-service Analytics, Data Governance, and Compose demos. The Quick Start Tour is located under the ? in the top right of the webpage.
+3. Throughout the trial, self-guided Self-service Analytics, Data Governance, and Compose SQL Editor demos will be launched. A new one each day will display. Visit Help Center is located under the ? in the top right of the webpage should you need any help about the features you are trying out.
 4. If you would like to explore some of your own Snowflake databases, click on this link to see how to connect your own Snowflake data sources.
 
 ![VHOL-Screen40](./assets/Section10-Summary-Screen3.png)
@@ -443,4 +436,19 @@ To get the most out of Alation during your trial.
 
 Last but not least, please check your email for continued guidance and tips throughout your trial. 
 
-Thanks again for your interest in Alation; we are here for you!
+### What You Learned
+- How to get your data AI-ready with Snowflake Horizon and Alation's Data Quality Processor
+- How to utilize a governance framework that promotes reducing risk while enabling broader use of data 
+- How to easily find data in the organization through Alation's Intelligent Search, increasing productivity through self-service analytics
+- How to curate and classify data to guide users to make better business decisions with trusted data compliantly
+- How to create policies and controls that are front and center to enable compliance
+- How to use Compose to create queries guided by current metadata that extend to interactive forms for business users 
+
+### Related Resources
+
+- [Information on Snowflake Horizon](https://www.snowflake.com/en/data-cloud/horizon/)
+- [Introduction to Data Quality and Data Metric Functions](https://docs.snowflake.com/en/user-guide/data-quality-intro)
+- [Using Dynamic Data Masking](https://docs.snowflake.com/en/user-guide/security-column-ddm-use)
+- [Alation Data Intelligence Platform](https://www.alation.com/product/data-intelligence-platform/)
+- [Alation Open Data Quality Framework](https://www.alation.com/product/data-quality/)
+- [AI Powered by ALLIE](https://www.alation.com/product/allie-ai/)

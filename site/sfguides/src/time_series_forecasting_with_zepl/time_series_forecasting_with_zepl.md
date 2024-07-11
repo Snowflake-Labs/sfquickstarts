@@ -40,7 +40,7 @@ In this guide, we'll be walking you through how to build a time series forecasti
 Duration: 10
 
 ### Create a Snowflake Account:
-[Sign up for free](https://signup.snowflake.com/)
+[Sign up for free](https://signup.snowflake.com/?utm_cta=quickstarts_)
 
 ### Clone data from Snowflake's Data Marketplace
 1. Login to Snowflake > Open the Data Marketplace 

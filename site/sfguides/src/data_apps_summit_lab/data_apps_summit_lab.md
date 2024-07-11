@@ -26,7 +26,7 @@ You will process data with Snowpark, develop a simple ML model and create a Pyth
 
 ### Prerequisites
 
-* Accountadmin role access in Snowflake or a Snowflake trial account: [https://signup.snowflake.com/](https://signup.snowflake.com/)
+* Accountadmin role access in Snowflake or a Snowflake trial account: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_)
 * Basic knowledge of SQL, database concepts, and objects
 * Familiarity with Python.  All code for the lab is provided.
 * Ability to install and run software on your computer

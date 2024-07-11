@@ -57,7 +57,7 @@ git clone https://<user>:<token>@huggingface.co/mistralai/Mistral-7B-Instruct-v0
 > aside negative
 > This is a Native App - Snowpark Container Service implementing the NVIDIA NeMo Microservices inference service. You need to have the NA<>SPCS feature enabled in your account in the regions where it is available. So please reach out to your **Snowflake Account Representative** if you wish to build this App.
 
-- A Snowflake account. A [free trial](https://signup.snowflake.com/) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for most of this lab, but if you’d like to try governance features covered in section 4, you will need [Enterprise](https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition) or [Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition).
+- A Snowflake account(Non Trial) with [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for most of this lab, but if you’d like to try governance features such as Data masking etc, you will need [Enterprise](https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition) or [Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition).
 
 - A storage bucket with the same cloud provider in the same region that hosts your Snowflake account above. Direct credential access required as storage integrations are not supported for External Volumes.
 
@@ -439,7 +439,7 @@ CREATE or REPLACE NETWORK RULE IDENTIFIER($APP_LOCAL_EGRESS_RULE)
   MODE= 'EGRESS'
   VALUE_LIST = ('0.0.0.0:443','0.0.0.0:80');
 
--- If this statement is failing, it is because database NVIDIA_MS_APP_LOCAL_DB doesn't exist
+-- If this statement is failing, it is because database NVIDIA_MS_APP_LOCAL_DB doesnt exist
 -- Check the value of $APP_LOCAL_DB and replace NVIDIA_MS_APP_LOCAL_DB with the value of $APP_LOCAL_DB
 CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION IDENTIFIER($APP_LOCAL_EAI)
   ALLOWED_NETWORK_RULES = (NVIDIA_NEMO_MS_APP_LOCAL_DB.EGRESS.NVIDIA_MS_APP_RULE)
@@ -523,3 +523,4 @@ Learnt How-To,
 - [Mistral-7B-Instruct](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1)
 - [NeMo Microservices](https://developer.nvidia.com/nemo-microservices)
 - [Snowflake Native Apps](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/)
+- [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)

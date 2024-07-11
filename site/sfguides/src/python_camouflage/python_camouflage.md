@@ -28,7 +28,7 @@ Project Python Camouflage provides a basic framework for tokenization in Snowfla
 - How to install and use the Python Camouflage Python UDFs to run FF3 format-preserving encryption in a test setup in your Snowflake account
 
 ### What You’ll Need
-- A [Snowflake Enterprise Edition (or better) account](https://signup.snowflake.com/)
+- A [Snowflake Enterprise Edition (or better) account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 - SnowSQL installed on your machine
 
 ### What You’ll Build
