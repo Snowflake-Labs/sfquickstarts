@@ -77,7 +77,7 @@ Duration: 5
 
 In this section we’re going to sign up for a Snowflake trial account and enable Anaconda-provided Python packages.
 
-1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/). Ensure that your account is set up using **AWS**. 
+1. [Sign up for a Snowflake Trial Account using this form](https://signup.snowflake.com/?utm_cta=quickstarts_). Ensure that your account is set up using **AWS**. 
 
 2. After creating your account and verifying it from your sign-up email, Snowflake will direct you back to the UI called Snowsight.
 

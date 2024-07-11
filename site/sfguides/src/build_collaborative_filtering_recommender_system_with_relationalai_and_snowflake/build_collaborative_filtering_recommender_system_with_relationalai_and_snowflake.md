@@ -30,7 +30,7 @@ In this quickstart, you'll learn how to:
 
 
 ### What You’ll Need 
-- A [Snowflake](https://signup.snowflake.com/) Account
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account
 - Snowflake privileges on your user to [Install a Native Application](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges)
 - The [RAI Recommendation Jupyter notebook](https://github.com/RelationalAI/rai-samples/tree/main/samples/recommender-system/collaborative_filtering.ipynb) used in this quickstart
 

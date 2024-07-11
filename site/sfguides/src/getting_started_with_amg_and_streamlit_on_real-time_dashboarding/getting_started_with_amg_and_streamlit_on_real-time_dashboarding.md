@@ -43,7 +43,7 @@ Note that Streamlit is containerized and managed by [Amazon Elastic Container Se
 
 To participate in the virtual hands-on lab, attendees need the following resources.
 
-- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
+- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access
 - Optional - Finished the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) and has ingested and kept live data in Snowflake.
 - An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with `Administrator Access`
 - Create your own VPC and subnets (This is optional if you have an existing VPC with subnets you can leverage. Please refer
