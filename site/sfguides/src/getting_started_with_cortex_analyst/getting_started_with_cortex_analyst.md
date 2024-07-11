@@ -384,9 +384,61 @@ To preview the app, click Run in the preview pane. You can now begin asking natu
 ## Semantic Model Details
 Duration: 10
 
-The semantic model file [revenue_timeseries.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/revenue_timeseries.yaml) is the key that unlocks Cortex Analyst's power. This YAML file dictates the tables, columns, etc. that Analyst can use in order to run queries that answer natural-language questions Let's talk a little about the details of this file:
+The semantic model file [`revenue_timeseries.yaml`](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/revenue_timeseries.yaml) is the key that unlocks Cortex Analyst's power. This YAML file dictates the tables, columns, etc. that Analyst can use in order to run queries that answer natural-language questions Let's talk a little about the details of this file:
 
-**TODO: add explanation of YAML**
+The [Semantic Model](https://docs.snowflake.com/snowflake-cortex/semantic-model-spec) is composed of a number of different fields that help Cortex Analyst understand the specifics of your data:
+- Logical Tables which are composed of Logical Columns
+- Logical Columns which are one of `dimensions`, `time_dimensions`, or `measures`
+
+Logical Tables are relatively straightforward- these are tables or views within a database. That's it! Pretty simple
+
+Logical Columns get a bit more complicated; a logical column can reference an underlying physical column in a table, or it can be a expression containing one or more physical columns. So, for example, in the [`revenue_timeseries.yaml`](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/revenue_timeseries.yaml), we have a simple logical column `daily_revenue` that is a physical column. In the `daily_revenue` measure defintion, you'll notice that we provide a description, as well as synonyms, data_type, and a default_aggregation, but no `expr` parameter. This is because `revenue` is simply a physical column in the `daily_revenue` table:
+
+```yaml
+measures:
+    - name: daily_revenue
+        expr: revenue
+        description: total revenue for the given day
+        synonyms: ["sales", "income"]
+        default_aggregation: sum
+        data_type: number
+```
+
+In contrast, we define a different measure `daily_profit` which is not in fact a physical column, but rather an expression of the difference between the `revenue` and `cogs` physical columns:
+
+```yaml
+- name: daily_profit
+    description: profit is the difference between revenue and expenses.
+    expr: revenue - cogs
+    data_type: number
+``` 
+In the semantic model, `time_dimensions` specifically capture temporal features of the data, and `dimensions` are not quantitatve fields (e.g. quantitative fields are `measures`, while categorical fields are `dimensions`).
+
+An example `time_dimension`:
+```yaml
+time_dimensions:
+    - name: date
+    expr: date
+    description: date with measures of revenue, COGS, and forecasted revenue for each product line
+    unique: false
+    data_type: date
+```
+
+An example `dimension`:
+```yaml
+dimensions:
+    - name: product_line
+    expr: product_line
+    description: product line associated with it's own slice of revenue
+    unique: false
+    data_type: varchar
+    sample_values:
+        - Electronics
+        - Clothing
+        - Home Appliances
+        - Toys
+        - Books
+```
 
 Here are some tips on building your own semantic model to use with Cortex Analyst:
 
@@ -403,6 +455,7 @@ Some additional items that’ll significantly improve model performance:
   - If any organization specific logic cannot be captured via other spec items, we recommend you to add to verified queries.
 - Start with a simple and small scope, gradually expanding. YAML building is an iterative process.
 
+For more information about the semantic model, please refer to the [documentation](https://docs.snowflake.com/snowflake-cortex/semantic-model-spec).
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
