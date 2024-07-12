@@ -46,7 +46,7 @@ If you are not familiar with the Snowflake User Interface, then please watch the
 
 ### What You’ll Need
 
-- A [Snowflake](https://signup.snowflake.com/) Trial Account
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Trial Account
 
 ### What You’ll Build
 
@@ -60,7 +60,7 @@ Duration: 3
 
 ### Create a Snowflake Account
 
-Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/). Follow the prompts to activate your account via email.
+Snowflake lets you try out their services for free with a [trial account](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to activate your account via email.
 
 If you already have a Snowflake account, you can use it.  You just need a role with permission to create a database.
 

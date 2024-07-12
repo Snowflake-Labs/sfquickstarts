@@ -22,7 +22,7 @@ Snowflake CLI is a command-line interface designed for developers building apps 
 - [Video: Snowflake Data Loading Basics](https://youtu.be/htLsbrJDUqk?si=vfTjL6JaCdEFdiSG)
 - Python 3.8 or later installed on your machine
 - Basic knowledge of Snowflake concepts
-- You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/).
+- You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_).
 
 ### What You’ll Learn
 - How to install Snowflake CLI
@@ -42,7 +42,7 @@ First, you’ll install the Snowflake CLI, and later you'll configure it to conn
 
 ### Create a Snowflake Account
 
-You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/).
+You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_).
 
 ### Access Snowflake’s Web Interface
 
