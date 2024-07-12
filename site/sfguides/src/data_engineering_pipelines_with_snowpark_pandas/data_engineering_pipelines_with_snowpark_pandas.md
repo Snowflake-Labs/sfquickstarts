@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering 
 
-# Data Engineering Pipeline with Snowpark Pandas
+# Data Engineering Pipeline With Snowpark Pandas
 <!-- ------------------------ -->
 ## Overview 
 
@@ -82,7 +82,7 @@ Duration: 10
 
 During this step you will verify that the [Snowflake Sample TPC-H dataset](https://docs.snowflake.com/en/user-guide/sample-data-tpch) is available in your account, and if not add the share.
 
-### Verify that the Snowflake Sample TPC-H Dataset Is Available
+### Verify That The Snowflake Sample TPC-H Dataset Is Available
 
 1. Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) for your account
 2. Navigate to **Databases**
@@ -163,7 +163,7 @@ Duration: 4
 
 Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use the Snowpark Pandas API to create DataFrames, join them, create new features, save the result to a Snowflake table, and create a serverless task to schedule the data transformation pipeline.
 
-### What we've covered
+### What You Learned
 
 * Create datframe from a Snowflake table
 * Aggregate data to create new features
