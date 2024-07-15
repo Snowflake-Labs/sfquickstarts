@@ -17,10 +17,27 @@ In addition, we'll show how to run TruLens feedback functions with Cortex as the
 
 Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens_eval/guardrails/) for filtering retrieved context and reducing hallucination.
 
-![RAG Architecture](assets/production_rag_architecture.png)
+
 
 ## Setup
 Duration: 2
+
+For this quickstart, you will need your Snowflake credentials and a Github PAT Token ready. For example purposes, we assume they are set in a `.env` file that looks like this:
+
+```
+# Loading data from github
+GITHUB_TOKEN=
+
+# Snowflake details
+SNOWFLAKE_USER=
+SNOWFLAKE_USER_PASSWORD=
+SNOWFLAKE_ACCOUNT=
+SNOWFLAKE_DATABASE=
+SNOWFLAKE_SCHEMA=
+SNOWFLAKE_WAREHOUSE=
+SNOWFLAKE_ROLE=
+SNOWFLAKE_CORTEX_SEARCH_SERVICE=
+```
 
 First, we'll install the packages needed:
 
@@ -457,8 +474,7 @@ Duration: 1
 
 ### What You Learned
 - In this quickstart, you learned build a RAG with Cortex Search and Cortex LLM Fucntions.
-- Additionally, you learned how to set up TruLens instrumentation and how to use feedback functions to evaluate RAG.
-- You also learned how to log the instrumented traces and evaluation results to a Snowflake table.
+- Additionally, you learned how to set up TruLens instrumentation and create a custom RAG class with TruLens feedback providers.
 - Finally, you learned how to use feedback results as guardrails to improve a RAG application so it can be production-ready.
 
 ### Related Resources
