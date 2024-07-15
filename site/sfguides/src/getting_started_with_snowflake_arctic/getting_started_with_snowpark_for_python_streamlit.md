@@ -81,9 +81,9 @@ In a new SQL worksheet, run the following SQL commands to create the [warehouse]
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR REPLACE WAREHOUSE DASH_S WAREHOUSE_SIZE=SMALL;
-CREATE OR REPLACE DATABASE DASH_DB;
-CREATE OR REPLACE SCHEMA DASH_SCHEMA;
+CREATE WAREHOUSE DASH_S WAREHOUSE_SIZE=SMALL;
+CREATE DATABASE DASH_DB;
+CREATE SCHEMA DASH_SCHEMA;
 
 USE DASH_DB.DASH_SCHEMA;
 ```
@@ -146,11 +146,16 @@ select transcript, snowflake.cortex.sentiment(transcript) from call_transcripts 
 ```
 
 ### Summarize
-
 Now that we know how to translate call transcripts in English, it would be great to have the model pull out the most important details from each transcript so we don’t have to read the whole thing. Let’s see how **snowflake.cortex.summarize** function can do this and try it on one record.
 
 ```sql
-select transcript,snowflake.cortex.summarize(transcript) from call_transcripts where language = 'English' limit 1;
+select transcript,snowflake.cortex.summarize(transcript) as summary from call_transcripts where language = 'English' limit 1;
+```
+
+#### Summary with tokens count
+
+```sql
+select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.cortex.count_tokens('summarize',transcript) as number_of_tokens from call_transcripts where language = 'English' limit 1;
 ```
 
 <!-- ------------------------ -->
