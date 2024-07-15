@@ -16,23 +16,20 @@ Duration: 1
 In this Snowpark 101 for Data Science Quickstart guide, you will be help the fictitious food truck company, Tasty Bytes, to increase sales by training a model to provide location recommendations to truck drivers. You will use **Snowpark for Python** to prepare data, train a model, and deploy the model. Once deployed, you will create an application prototype using **Streamlit** to demonstrate how truck drivers could use the model to find the best location to park for an upcoming shift.
 
 ### What is Snowpark?
-Snowpark allows developers to query and create data applications in Python, Java, and Scala through APIs and DataFrame-style programming constructs that run on Snowflake's elastic engine. Learn more about [Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/index).
+Snowpark is a set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake. Learn more about [Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/index).
 
 ### What is Streamlit?
-Streamlit *(acquired by Snowflake in March 2022)* is a Python library that makes it easy to create and share custom web apps. Learn more about [Streamlit](https://docs.streamlit.io/).
+Streamlit is a Python library that makes it easy to create and share custom web apps. Learn more about [Streamlit](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit).
 
 ### What You Will Learn 
 - How to access third-party data from the **Snowflake Marketplace**
 - How to explore data & perform **feature engineering with Snowpark DataFrame APIs**
-- How to **train a model in Snowflake** with a stored procedure
-- How to **deploy a model in Snowflake** to a user-defined function for model inference
+- How to **train a model in Snowflake** using a Snowpark ML pipeline
+- How to **deploy a model in Snowflake** using Snowflake Model Registry
 - How to **build a Streamlit app** to interact with the model
 
 ### Prerequisites
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-- [Anaconda](https://www.anaconda.com/) installed
-- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
-- A Snowflake account login with ACCOUNTADMIN role. If not, you will need to register for a free trial or use a different role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. 
+- A Snowflake account login with ACCOUNTADMIN role. If not, you will need to register for a [free trial account](https://signup.snowflake.com/) or use a different role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. 
 
 ### What You Will Build 
 - **A sales forecast by location**<br>
@@ -61,7 +58,7 @@ Tasty Bytes operates food trucks in cities across the globe with each truck havi
 - Follow the steps and video below to access the SafeGraph Marketplace listing in your Snowflake account.
 
   - Click -> Home Icon
-  - Click -> Marketplace
+  - Click -> Data Products
   - Search -> frostbyte
   - Click -> SafeGraph: frostbyte
   - Click -> Get
@@ -101,6 +98,94 @@ COMMENT = 'Quickstarts S3 Stage Connection'
 url = 's3://sfquickstarts/frostbyte_tastybytes/'
 file_format = frostbyte_tasty_bytes_dev.raw.csv_ff;
 
+
+-- create and use a compute warehouse
+CREATE OR REPLACE WAREHOUSE tasty_dsci_wh AUTO_SUSPEND = 60;
+USE WAREHOUSE tasty_dsci_wh;
+show warehouses;
+---------------------------------------------------------------
+---------------------------------------------------------------
+---- CREATING RBAC FOR SNOWPARK 101 DEMO  ---------------------
+---------------------------------------------------------------
+---------------------------------------------------------------
+
+USE ROLE securityadmin;
+
+CREATE ROLE IF NOT EXISTS tasty_bytes_admin;
+CREATE ROLE IF NOT EXISTS tasty_bytes_ds_role;
+
+/* role hierarchy */
+USE ROLE ACCOUNTADMIN;
+GRANT ROLE tasty_bytes_admin TO ROLE SYSADMIN;
+GRANT ROLE tasty_bytes_ds_role TO ROLE tasty_bytes_admin;
+
+/* grant privileges */
+USE ROLE ACCOUNTADMIN;
+
+-- databases
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes_dev TO ROLE tasty_bytes_ds_role;
+
+--schemas 
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT USAGE ON SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT USAGE ON ALL SCHEMAS IN DATABASE frostbyte_tasty_bytes_dev TO ROLE tasty_bytes_ds_role;
+
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_admin;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_admin;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+--tables
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON ALL TABLES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT CREATE TABLE ON SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT CREATE TABLE ON SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT CREATE TABLE ON SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT CREATE STAGE ON SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT CREATE STAGE ON SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT CREATE STAGE ON SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+-- views
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.raw TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.harmonized TO ROLE tasty_bytes_ds_role;
+GRANT ALL ON ALL VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+-- warehouse grants
+GRANT ALL ON WAREHOUSE tasty_dsci_wh TO ROLE tasty_bytes_admin;
+GRANT ALL ON WAREHOUSE tasty_dsci_wh TO ROLE tasty_bytes_ds_role;
+
+-- future grants
+GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT ALL ON FUTURE TABLES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT ALL ON FUTURE VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT ALL ON FUTURE VIEWS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_admin;
+GRANT USAGE ON FUTURE FUNCTIONS IN SCHEMA frostbyte_tasty_bytes_dev.analytics TO ROLE tasty_bytes_ds_role;
+
+---------------------------------------------------------------
+---------------------------------------------------------------
+-------- CREATE TABLES/VIEWS FOR SNOWPARK 101  ----------------
+---------------------------------------------------------------
+---------------------------------------------------------------
+
 -- define shift sales table
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.raw.shift_sales(
 	location_id NUMBER(19,0),
@@ -112,10 +197,6 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.raw.shift_sales(
 	day_of_week NUMBER(2,0),
 	city_population NUMBER(38,0)
 );
-
--- create and use a compute warehouse
-CREATE OR REPLACE WAREHOUSE tasty_dsci_wh AUTO_SUSPEND = 60;
-USE WAREHOUSE tasty_dsci_wh;
 
 -- ingest from S3 into the shift sales table
 COPY INTO frostbyte_tasty_bytes_dev.raw.shift_sales
@@ -134,7 +215,8 @@ SELECT
     a.day_of_week,
     a.city_population,
     b.latitude,
-    b.longitude
+    b.longitude,
+    b.location_name
 FROM frostbyte_tasty_bytes_dev.raw.shift_sales a
 JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s b
 ON a.location_id = b.location_id;
@@ -164,72 +246,40 @@ Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. To support t
     - Aggregate functions
     - Imputation, encoding, and train/test split
   - **Model Training & Deployment**
-    - Training in a stored procedure
+    - Training via a Snowpark ML Pipeline
     - Elastic scalability
-    - Deploying a user-defined function for model inference
+    - Deploying a trained model to Snowflake Model Registry
 
-### Step 1 - Cloning the GitHub Repository
+### Step 1 - Download the Notebook
 
-[Clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science). This repository contains all the code you will need to successfully complete this QuickStart Guide.
+Download [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) from GitHub.
 
-```
-$ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science.git
-```
-### Step 2 - Updating the Authorization File
-- Update [**data_scientist_auth.json**](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/data_scientist_auth.json) file with you Snowflake account credentials. The Python notebook will use this file to access your credentials and connect to Snowflake.<br>
-<img src="assets/auth_file.png">
->aside positive    
-> For the `account` parameter, use your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier). Note that the account identifier does not include the snowflakecomputing.com suffix.
+### Step 2 - Upload the Notebook to Snowflake
+- Log into your Snowflake account.
+- Follow the steps to upload the ipynb file.
 
-### Step 3 - Creating the Python Environment
->aside positive
->These instructions use [Anaconda](https://www.anaconda.com/) for creating the Python environment. *However, you may use any other Python environment with Python 3.8, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/)*.
+  - Click -> Home Icon
+  - Click -> Products
+  - Click -> Notebooks
+  - Click -> Down Arrow, Import .ipynb File
+  - Ensure Database is FROSTBYTE_TASTY_BYTES_DEV
+  - Change Schema to ANALYTICS
+  - Change Warehouse to TASTY_DSCI_WH
 
->aside negative
->**Apple M1**: There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL. Please refer to the [**Snowpark documentation**](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup.html) to solve this issue.<br>
+<img src = "assets/create_notebook.gif">
 
- **From the terminal, execute the following to build the Python environment and launch Jupyter Notebook:**<br>
-i. Create a Python 3.8 environment called "py38_env_tb1" (tb1 = Tasty Bytes 1) using packages (& versions) from the Snowflake Anaconda channel
-```
-conda create --name py38_env_tb1 --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.8
- ```
-ii. Activate the py38_env_tb1 environment
- ```  
-conda activate py38_env_tb1
- ```
-iii. Install the Snowpark Python package and packages that will be used in functions deployed on Snowflake from the Snowflake Anaconda channel
-```
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python numpy pandas scikit-learn joblib cachetools
-```
-v. Install packages that will be used only in the Python environment (i.e. UI, visualization..)
-```
-pip install streamlit matplotlib plotly notebook
-```
-vi. Navigate to the cloned GitHub repo and launch Jupyter Notebook
-```
-jupyter notebook
-```
+### Step 3 - Add Required Packages
+- Click the packages drop down from the top right corner of the notebook. Add the following packages
+
+  - snowflake-ml-python
+  - matplotlib
+  - plotly
+
+<img src = "assets/add_packages.gif">
 
 ### Step 4- Running the Jupyter Notebook
-- Open and run through the cells of [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) in Jupyter Notebook.
+- Run through the cells of [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) from your Snowflake Notebook.
 <img src = "assets/notebook_preview.png">
-
-### Troubleshooting
-- PyArrow related issues: Uninstall `pyarrow` before installing Snowpark.
-- Alternate Python environment build from [environment.yml](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/environment.yml) file:<br>
-
-    i. In the terminal, navigate to the cloned GitHub repository and build the environment
-    ```
-    conda env create -f environment.yml
-    ```
-    ii . Activate the environment
-    ```
-    conda activate py38_env_tb1
-    ```
-    iii. Launch Jupyter Notebook
-    ```
-    jupyter notebook
-    ```
 
 <!-- ------------------------ -->
 ## Application Prototype with Streamlit
@@ -239,10 +289,7 @@ Duration: 6
 Now that you have deployed a model that predicts the shift sales of each location for the upcoming shift, you want to find a way for truck drivers to use these predictions to pick where they will park. You need to create an application prototype to show the engineering team how a truck driver would interact with the shift sales forecast model. The application will allow a user to pick a city and shift time (AM or PM) and show predicted sales by location on a map.
 
 ### Step 1 - Confirming Prerequisites
-- The Streamlit App leverages the Python environment, authentication file, and user-defined function from Step 3. Confirm the following requirements:
-  - The Python 3.8 environment py38_env_tb1 has been created.
-  - The data_scientist_auth.json file has been filled out.
-  - The [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) notebook has been run.
+The [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) notebook needs to be run before running the Streamlit application. 
 
 ### Step 2 - Optional: Reviewing the Code
 - Open [streamlit_app.py](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/streamlit_app.py)
@@ -250,15 +297,17 @@ Now that you have deployed a model that predicts the shift sales of each locatio
 - Identify where the model inference user-defined function is called to give shift sale predictions on the fly.
 
 ### Step 3 - Launching the App
-- In the terminal, navigate to the cloned GitHub repo and activate the py38_env_tb1 Python environment
-  ```  
-  conda activate py38_env_tb1
-  ```
-- Launch the application
-  ```  
-  streamlit run streamlit_app.py
-  ```
-- Use the drop down menu to select a city and view the updated recommendations.
+- From Snowsight, select the Projects and then Streamlit
+- Create a new Streamlit-in-Snowflake application with:
+  - Database: FROSTBYTE_TASTY_BYTES_DEV
+  - Schema: ANALYTICS
+  - Warehouse: TASTY_DSCI_WH
+- Add the following packages from the packages dropdown in the code editor section:
+  - plotly
+  - pydeck
+  - snowflake-ml-python
+- Copy the code from [streamlit_app.py](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/streamlit_app.py) into the code editor section
+- Run the app!
 <img src = "assets/streamlit_preview.png">
 
 
@@ -282,16 +331,8 @@ Duration: 5
       - frostbyte_tasty_bytes_dev.analytics.shift_sales_test
     - **View:** frostbyte_tasty_bytes_dev.analytics.shift_sales_v
     - **Stage:** frostbyte_tasty_bytes_dev.analytics.model_stage
-    - **Procedure:** sproc_train_linreg
-    - **Function:** udf_linreg_predict_location_sales
 - **Shared Database:** frostbyte_safegraph
     - **Table:** frostbyte_safegraph.public.frostbyte_tb_safegraph_s
-
-**Anaconda:**
-- py38_env_tb1 Python environment
-
-**GitHub:**
-- Cloned repository: [sfguide-tasty-bytes-snowpark-101-for-data-science](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/)
 
 ### Step 1 - Removing Snowflake Objects
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -299,24 +340,11 @@ Duration: 5
 
 ```sql
 USE ROLE accountadmin;
-DROP PROCEDURE IF EXISTS frostbyte_tasty_bytes.analytics.sproc_train_linreg(varchar, array, varchar, varchar);
-DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.udf_linreg_predict_location_sales(float, float, float, float, float, float, float, float);
 DROP DATABASE IF EXISTS frostbyte_tasty_bytes_dev;
 DROP DATABASE IF EXISTS frostbyte_safegraph;
 DROP WAREHOUSE IF EXISTS tasty_dsci_wh;
 ```
 
-### Step 2 - Removing Python Environment
-- In the terminal, execute:
-```
-conda remove --name py38_env_tb1 --all
-```
-
-### Step 3 - Removing Cloned GitHub Repository
-- In the terminal from the directory where the GitHub repository was cloned, execute:
-```
-rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
-```
 
 <!-- ------------------------ -->
 ## Conclusion and Next Steps
@@ -328,9 +356,9 @@ Duration: 1
 By doing so you have now:
 - Acquired SafeGraph POI Data from the Snowflake Marketplace
 - Explored data & performed feature engineering with Snowpark
-- Trained a model in Snowflake with a stored procedure
-- Deployed a model to a user-defined function
-- Built a Streamlit application to provide on the fly shift sale predictions by location
+- Trained a model in Snowflake with a Snowpark ML Pipeline
+- Deployed a model to a Snowflake Model Registry
+- Built a Streamlit in Snowflake application to provide on the fly shift sale predictions by location
 
 ### Next Steps
 To continue your journey in the Snowflake Data Cloud, please visit the link below to see more Tasty Bytes - Quickstarts available to you.
