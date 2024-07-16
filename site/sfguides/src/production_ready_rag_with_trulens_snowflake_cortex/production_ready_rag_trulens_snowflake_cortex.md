@@ -8,7 +8,9 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, RAG, LLMs, TruLens, Snowflake
 
 # Production-Ready RAG with TruLens and Snowflake Cortex
-## Overview 
+
+## Overview
+
 Duration: 1
 
 In this quickstart, we'll show how to build a RAG with the full snowflake stack including [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions), [Cortex Search](https://github.com/Snowflake-Labs/cortex-search?tab=readme-ov-file), and [TruLens](https://www.trulens.org/) observability.
@@ -17,9 +19,8 @@ In addition, we'll show how to run TruLens feedback functions with Cortex as the
 
 Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens_eval/guardrails/) for filtering retrieved context and reducing hallucination.
 
-
-
 ## Setup
+
 Duration: 2
 
 For this quickstart, you will need your Snowflake credentials and a GitHub PAT Token ready. For example purposes, we assume they are set in a `.env` file that looks like this:
@@ -75,6 +76,7 @@ session = Session.builder.configs(connection_details).create()
 ```
 
 ## Using Cortex Complete
+
 Duration: 3
 
 With the session set, we have what need to call a Snowflake Cortex LLM:
@@ -91,6 +93,7 @@ print(Complete("mistral-large", "how do snowflakes get their unique patterns?"))
 ```
 
 ## Adding Data for Cortex Search
+
 Duration: 12
 
 Next, we'll turn to the retrieval component of our RAG and set up Cortex Search.
@@ -141,7 +144,7 @@ def clean_up_text(content: str) -> str:
   Remove unwanted characters and patterns in text input.
 
   :param content: Text input.
-  
+
   :return: Cleaned version of original text input.
   """
 
@@ -222,6 +225,7 @@ for curr in tqdm(result):
 ```
 
 ## Calling the Cortex Search Service
+
 Duration: 5
 
 Here we'll create a `CortexSearchRetreiver` class to connect to our cortex search service and add the `retrieve` method that we can leverage for calling it.
@@ -235,7 +239,7 @@ class CortexSearchRetriever:
   def __init__(self, session: Session, limit_to_retrieve: int = 4):
     self._session = session
     self._limit_to_retrieve = limit_to_retrieve
-  
+
   def retrieve(self, query: str) -> List[str]:
     root = Root(self._session)
     cortex_search_service = root.databases[
@@ -263,6 +267,7 @@ len(retrieved_context)
 ```
 
 ## Create a RAG with built-in observability
+
 Duration: 8
 
 Now that we've set up the components we need from Snowflake Cortex, we can build our RAG.
@@ -310,12 +315,12 @@ class RAG_from_scratch:
     Generate answer from context.
     """
     prompt = f"""
-    'You are an expert assistance extracting information from context provided. 
-    Answer the question based on the context. Be concise and do not hallucinate. 
+    'You are an expert assistance extracting information from context provided.
+    Answer the question based on the context. Be concise and do not hallucinate.
     If you don´t have the information just say so.
     Context: {context_str}
-    Question:  
-    {question} 
+    Question:
+    {question}
     Answer: '
     """
     return Complete("mistral-large", query)
@@ -337,7 +342,6 @@ Here, we'll use the [RAG Triad](https://www.trulens.org/trulens_eval/getting_sta
 Satisfactory evaluations on each provides us confidence that our LLM app is free from hallucination.
 
 We will also use [LLM-as-a-Judge](https://arxiv.org/abs/2306.05685) evaluations, using Mistral Large on [Snowflake Cortex](https://www.trulens.org/trulens_eval/api/provider/cortex/) as the LLM.
-
 
 ```python
 from trulens_eval.feedback.provider.cortex import Cortex
@@ -386,6 +390,7 @@ tru_rag = TruCustomApp(rag,
 ```
 
 ## Test the application and observe performance
+
 Duration: 3
 
 ```python
@@ -422,6 +427,7 @@ tru.get_leaderboard()
 ```
 
 ## Use Guardrails
+
 Duration: 7
 
 In addition to making informed iteration, we can also directly use feedback results as guardrails at inference time. In particular, here we show how to use the context relevance score as a guardrail to filter out irrelevant context before it gets passed to the LLM. This both reduces hallucination and improves efficiency.
@@ -457,12 +463,12 @@ class filtered_RAG_from_scratch:
     Generate answer from context.
     """
     prompt = f"""
-    'You are an expert assistance extracting information from context provided. 
-    Answer the question based on the context. Be concise and do not hallucinate. 
+    'You are an expert assistance extracting information from context provided.
+    Answer the question based on the context. Be concise and do not hallucinate.
     If you don´t have the information just say so.
     Context: {context_str}
-    Question:  
-    {question} 
+    Question:
+    {question}
     Answer: '
     """
     return Complete("mistral-large", query)
@@ -476,14 +482,17 @@ filtered_rag = filtered_RAG_from_scratch()
 ```
 
 ## Conclusion and resources
+
 Duration: 1
 
 ### What You Learned
+
 - In this quickstart, we learned build a RAG with Cortex Search and Cortex LLM Fucntions.
 - Additionally, we learned how to set up TruLens instrumentation and create a custom RAG class with TruLens feedback providers.
 - Finally, we learned how to use feedback results as guardrails to improve a RAG application so it can be production-ready.
 
 ### Related Resources
+
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/cortex.html)
 - [TruLens Documentation](https://trulens.org/)
 - [TruLens GitHub Repository](https://github.com/truera/trulens)
