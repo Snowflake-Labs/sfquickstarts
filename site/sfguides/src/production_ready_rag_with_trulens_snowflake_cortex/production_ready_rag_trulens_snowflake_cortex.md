@@ -247,10 +247,11 @@ class CortexSearchRetriever:
         columns=["doc_text"],
         limit=self._limit_to_retrieve,
       )
+    self._session.close()
+
     if resp.results:
       return [curr["doc_text"] for curr in resp.results]
     else return []
-    self._session.close()
 ```
 
 ```python
