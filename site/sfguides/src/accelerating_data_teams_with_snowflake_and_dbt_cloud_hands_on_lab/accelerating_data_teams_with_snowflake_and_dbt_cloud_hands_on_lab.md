@@ -24,7 +24,7 @@ Let's get started.
 
 ### What You'll Use During the Lab
 
-* A trial [Snowflake](https://signup.snowflake.com/) account with ACCOUNTADMIN access
+* A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account with ACCOUNTADMIN access
 
 * A [dbt Cloud](https://www.getdbt.com/signup/) account
 
@@ -58,7 +58,7 @@ Here's a sneak peak of the model lineage that we'll be creating using dbt!
 ## Let's Get Started With Snowflake
 Duration: 5
 
-To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
+To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_cta=quickstarts_) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
 Once your account is created you’ll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
 
 

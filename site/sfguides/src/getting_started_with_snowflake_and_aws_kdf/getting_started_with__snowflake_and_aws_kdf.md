@@ -48,7 +48,7 @@ Please note that in the demo, we are not demonstrating the visualization aspect.
 
 To participate in the virtual hands-on lab, attendees need the following resources.
 
-- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
+- A [Snowflake Enterprise Account on preferred AWS region](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access
 - An [AWS Account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/) with `Administrator Access`
 - Create your own VPC and subnets (This is optional if you have an existing VPC with subnets you can leverage.
   - In the AWS account, [create a VPC](https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html), preferably in the same region as the Snowflake account
@@ -165,7 +165,7 @@ see below example screenshot:
 ![](assets/key-pair-sessionmgr-3.png)
 
 <!---------------------------->
-## Prepare the Snowflake cluster for streaming
+## Prepare the Snowflake account for streaming
 Duration: 15
 
 #### 1. Creating user, role, and database
@@ -239,7 +239,7 @@ from PL;
 
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
-First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/ssm-user/pub.Key` (see `step 4` in `section #2 Provision a Linux jumphost in AWS` located in the left pane) in the following SQL command and execute.
+First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/azureuser/pub.Key` (see `step 4` in `section #2 Provision a Linux jumphost in AWS` located in the left pane) in the following SQL command and execute.
 ```commandline
 use role accountadmin;
 alter user streaming_user set rsa_public_key='< pubKey >';
@@ -440,6 +440,35 @@ select * from flights_vw;
 
 As a result, you will see a nicely structured output with columns derived from the JSONs at the [source](http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky).
 ![](assets/flight_view.png)
+
+<!---------------------------->
+## Use Copilot to interact with your data in natural language
+Duration: 5
+
+[Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot) is an LLM-powered assistant that simplifies data analysis while maintaining robust data governance, and seamlessly integrates into your existing Snowflake workflow. You can gain insights from your data stored in Snowflake by using natural language. 
+
+To get started, on the console, click 'Ask Copilot' button located at the bottom. 
+
+![](assets/ask-copilot.png)
+
+In the conversation window, type in a question like the following:
+```
+show me the unique flights from KLAX arriving at KSFO between 2000 to 4000 feet altitude?
+```
+Copilot will then analyze the question and show you its thinking process step-by-step and give you the SQL command to get the answer.
+
+![](assets/copilot1.gif)
+
+Let's ask Copilot another question that uses Snowflake's geo-spatial functions to calculate the distance between two locations.
+
+Ask a question like the following.
+```
+if the lattitude and longitude for KSFO is 37.619254,-122.4491623 respectively, calculate the distance (in miles) between the flights and KSFO with Snowflake's geo-spatial functions, also show the related flight ids, original and destination airports
+```
+
+Again, Copilot gives the SQL command which you can execute to get the distance between all flights to San Francisco internation airport.
+
+![](assets/copilot2.gif)
 
 
 <!---------------------------->

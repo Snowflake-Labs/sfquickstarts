@@ -19,10 +19,10 @@ Powered by Tasty Bytes - ゼロからのSnowflakeクイックスタートへよ�
 
 このクイックスタートでは、VARIANTデータ型、ドット表記とラテラルフラット化を組み合わせた半構造化データ処理、ビューの作成、Snowsightチャートを詳しく調べることにより、Snowflakeにおける半構造化データの処理について学習します。
 
-Snowflakeにおける半構造化データの詳細については、[半構造化データの概要ドキュメンテーション](https://docs.snowflake.com/en/user-guide/semistructured-concepts)を参照してください。
+Snowflakeにおける半構造化データの詳細については、[半構造化データの概要ドキュメンテーション](https://docs.snowflake.com/ja/user-guide/semistructured-concepts)を参照してください。
 
 ### 前提条件
-- 開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している[**Tasty Bytesの紹介クイックスタート**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html)を完了しておくようにしてください。
+- 開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している[**Tasty Bytesの紹介クイックスタート**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html)を完了しておくようにしてください。
 
 ### 学習する内容
 - バリアントデータ型について
@@ -87,7 +87,7 @@ Tasty Bytesのデータエンジニアとして、私たちは半構造化デー
 はじめに、最初の3つのクエリを一緒に実行してみましょう。これらのクエリによって以下が実行されます。
 - ロールコンテキストを`tasty_data_engineer`に設定する
 - ウェアハウスコンテキストを`tasty_de_wh`に設定する
-- `raw_pos.menu`テーブルの [TOP](https://docs.snowflake.com/en/sql-reference/constructs/top_n) 10の結果セットを生成する
+- `raw_pos.menu`テーブルの [TOP](https://docs.snowflake.com/ja/sql-reference/constructs/top_n) 10の結果セットを生成する
 
 ```
 USE ROLE tasty_data_engineer;
@@ -110,7 +110,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m;
 <img src = "assets/3.1.2.stats.png">
 
 ### ステップ2 - 半構造化列を調査する
-この列がSnowflakeでどのように定義されているかを詳しく調べるには、次のクエリを実行し、[SHOW COLUMNS](https://docs.snowflake.com/en/sql-reference/sql/show-columns)を活用して`menu`テーブルに存在するデータ型を調べてください。
+この列がSnowflakeでどのように定義されているかを詳しく調べるには、次のクエリを実行し、[SHOW COLUMNS](https://docs.snowflake.com/ja/sql-reference/sql/show-columns)を活用して`menu`テーブルに存在するデータ型を調べてください。
 
 ```
 SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
@@ -118,7 +118,7 @@ SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 
 <img src = "assets/3.2.show_columns.png">
 
-結果セットを見ると、`menu_item_health_metrics_obj`は[VARIANT](https://docs.snowflake.com/en/sql-reference/data-types-semistructured)データ型であることが分かります。
+結果セットを見ると、`menu_item_health_metrics_obj`は[VARIANT](https://docs.snowflake.com/ja/sql-reference/data-types-semistructured)データ型であることが分かります。
 
 >aside positive
 > ほとんどが規則的でネイティブから半構造化形式のデータ型（例：JSON形式用の文字列と整数）のみを使用するデータの場合、リレーショナルデータとVARIANT列のデータに対するストレージ要件とクエリパフォーマンスは非常に似ています。
@@ -127,7 +127,7 @@ SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 ### ステップ3 - ドット表記を使用して半構造化データを走査する
 `menu_item_health_metrics_obj`列には、`menu_item_id`が、より深くネストされた原材料および食事制限データと一緒に含まれています。私たちはこれらのデータにアクセスする必要があります。
 
-次のクエリを実行し、[ドット表記](https://docs.snowflake.com/en/user-guide/querying-semistructured#dot-notation)を活用して半構造化データを走査してください。
+次のクエリを実行し、[ドット表記](https://docs.snowflake.com/ja/user-guide/querying-semistructured#dot-notation)を活用して半構造化データを走査してください。
 
 ```
 SELECT 
@@ -157,7 +157,7 @@ Duration: 2
 このセクションでは、要件を満たすために追加の半構造化データ処理を実行します。
 
 ### ステップ1 - Lateral Flattenへの導入
-下流ユーザーが求めているデータを`menu_item_health_metrics_obj`列から抽出するために、次のクエリを実行してください。ここでは、先ほど説明したドット表記機能とともに、Snowflakesの[FLATTEN](https://docs.snowflake.com/en/sql-reference/functions/flatten)関数と[LATERAL JOIN](https://docs.snowflake.com/en/sql-reference/constructs/join-lateral)機能を利用して、求められている最初の`ingredient`配列を取得します。
+下流ユーザーが求めているデータを`menu_item_health_metrics_obj`列から抽出するために、次のクエリを実行してください。ここでは、先ほど説明したドット表記機能とともに、Snowflakesの[FLATTEN](https://docs.snowflake.com/ja/sql-reference/functions/flatten)関数と[LATERAL JOIN](https://docs.snowflake.com/ja/sql-reference/constructs/join-lateral)機能を利用して、求められている最初の`ingredient`配列を取得します。
 
 >aside positive
 > **フラット化：** VARIANT、OBJECT、またはARRAY列を受け取り、ラテラルビューを生成するテーブル関数です。フラット化は、半構造化データをリレーショナル表現に変換するために使用できます。
@@ -176,7 +176,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 <img src = "assets/4.1.lat_flat.png">
 
 ### ステップ2 - 配列関数を調査する
-求められた食事データを抽出する前に、次のクエリを開始してください。ここでは、Snowflake配列関数に着目し、[ARRAY_CONTAINS](https://docs.snowflake.com/en/sql-reference/functions/array_contains)を活用してレタスを含む`menu_item_name`の`ingredients`列を探っていきます。
+求められた食事データを抽出する前に、次のクエリを開始してください。ここでは、Snowflake配列関数に着目し、[ARRAY_CONTAINS](https://docs.snowflake.com/ja/sql-reference/functions/array_contains)を活用してレタスを含む`menu_item_name`の`ingredients`列を探っていきます。
 
 ```
 SELECT 
@@ -226,7 +226,7 @@ Duration: 2
 ### ステップ1 - 半構造化のフラット化SQLを使用してハーモナイズビューを作成する
 前セクションの最後に出てきたクエリをそのまま利用し、次のクエリを実行してください。ここには、このSQLの他に、既に構造化された追加の`menu`テーブルの列がすべて含まれています。
 
-このクエリでは、整合スキーマで[CREATE VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-view)を使用し、半構造化処理ロジックと追加の列をテーブルとしてカプセル化します。
+このクエリでは、整合スキーマで[CREATE VIEW](https://docs.snowflake.com/ja/sql-reference/sql/create-view)を使用し、半構造化処理ロジックと追加の列をテーブルとしてカプセル化します。
 
 >aside positive
 > ビューを使用すると、クエリの結果にテーブルのようにアクセスできます。  ビューは、データの結合、分離、保護など、さまざまな目的に役立ちます。
@@ -262,9 +262,9 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 ### ステップ2 - ハーモナイズから簡単に分析へ昇格させる
 `harmonized.menu_v`を参照しながら、次のクエリを実行してください。このクエリは、ダウンストリームに即座に価値を提供し始める`analytics.menu_v`を作成します。
 
-このクエリには、まだ説明していない新しい関数がいくつか含まれています。まず、[SHOW VIEWS](https://docs.snowflake.com/en/sql-reference/sql/show)コマンドまたはSnowsightインターフェイス内で見られる[COMMENT](https://docs.snowflake.com/en/sql-reference/sql/comment)を追加しを追加しています。これは、ユーザーがこのビューをクエリしたときに表示される内容を文書化する関数です。
+このクエリには、まだ説明していない新しい関数がいくつか含まれています。まず、[SHOW VIEWS](https://docs.snowflake.com/ja/sql-reference/sql/show)コマンドまたはSnowsightインターフェイス内で見られる[COMMENT](https://docs.snowflake.com/ja/sql-reference/sql/comment)を追加しを追加しています。これは、ユーザーがこのビューをクエリしたときに表示される内容を文書化する関数です。
 
-また、[SELECT * EXCLUDEおよびRENAME](https://docs.snowflake.com/en/sql-reference/sql/select#parameters)パラメータを利用し、クエリやビュー定義の複雑さを軽減することで、SQL開発者の作業を大幅に簡略化することもできます。
+また、[SELECT * EXCLUDEおよびRENAME](https://docs.snowflake.com/ja/sql-reference/sql/select#parameters)パラメータを利用し、クエリやビュー定義の複雑さを軽減することで、SQL開発者の作業を大幅に簡略化することもできます。
 
 >aside positive
 > **除外：** すべての列を選択する場合（SELECT \*またはSELECT table_name.\*）、EXCLUDEは、結果から除外する列を指定します。
@@ -285,7 +285,7 @@ Duration: 2
 ### ステップ 1 - 配列を分析する
 前のセクションでは、`ingredients`列がクエリ結果として表示されましたが、ここでは、ドット表記なしで`analytics.menu_v`ビューで利用できるようになりました。
 
-ここで、次のクエリを実行してください、ここでは、[ARRAY_INTERSECTION](https://docs.snowflake.com/en/sql-reference/functions/array_intersection)と[ARRAYS_OVERLAP](https://docs.snowflake.com/en/sql-reference/functions/arrays_overlap)という2つの追加のSnowflake配列関数を活用し、キッチンカーブランドの各メニューで重複している飲料以外のメニュー項目を確認します。
+ここで、次のクエリを実行してください、ここでは、[ARRAY_INTERSECTION](https://docs.snowflake.com/ja/sql-reference/functions/array_intersection)と[ARRAYS_OVERLAP](https://docs.snowflake.com/ja/sql-reference/functions/arrays_overlap)という2つの追加のSnowflake配列関数を活用し、キッチンカーブランドの各メニューで重複している飲料以外のメニュー項目を確認します。
 
 ```
 SELECT 
@@ -312,7 +312,7 @@ ORDER BY m1.menu_type;
 ### ステップ2 - 幹部にメトリックを提供する
 次に、私たちがブランド全体で現在取り組んでいる食事制限に関する高レベルのメトリックを提供することで、Tasty Bytesの幹部がメニューについてデータドリブンな意思決定を下せるようにしましょう。
 
-次のクエリを実行してください。ここでは、[COUNT](https://docs.snowflake.com/en/sql-reference/functions/count)、[SUM](https://docs.snowflake.com/en/sql-reference/functions/sum)、および条件付き[CASE](https://docs.snowflake.com/en/sql-reference/functions/case)ステートメントを利用して`analytics.menu_v`から必要なメトリックを集約します。
+次のクエリを実行してください。ここでは、[COUNT](https://docs.snowflake.com/ja/sql-reference/functions/count)、[SUM](https://docs.snowflake.com/ja/sql-reference/functions/sum)、および条件付き[CASE](https://docs.snowflake.com/ja/sql-reference/functions/case)ステートメントを利用して`analytics.menu_v`から必要なメトリックを集約します。
 
 ```
 SELECT
@@ -347,7 +347,7 @@ GROUP BY m.brand_name;
 
 <img src = "assets/6.3.results.png">
 
-デフォルトでは、Snowsightはクエリ結果を表形式で返します。しかし、まだ紹介していませんでしたが、Snowsightの強力な機能の1つに[チャートの使用](https://docs.snowflake.com/en/user-guide/ui-snowsight-visualizations#using-charts)があります。
+デフォルトでは、Snowsightはクエリ結果を表形式で返します。しかし、まだ紹介していませんでしたが、Snowsightの強力な機能の1つに[チャートの使用](https://docs.snowflake.com/ja/user-guide/ui-snowsight-visualizations#using-charts)があります。
 
 次のスクリーンショットの矢印に従って、特定の食事制限に対応するメニュー項目についての、これらの各種キッチンカーブランド間の比較を示す棒グラフを作成してください。
 
@@ -377,4 +377,4 @@ Duration: 1
 
 引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なその他すべてのPowered by Taste Bytes - クイックスタートをご覧ください。
 
-- ### [Powered by Tasty Bytes - クイックスタート目次](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3)
+- ### [Powered by Tasty Bytes - クイックスタート目次](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html#3)
