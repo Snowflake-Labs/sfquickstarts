@@ -106,63 +106,66 @@ For this example, we want to load Cortex Search with documentation from GitHub a
 Here we'll also expend some effort to clean up the text so we can get better search results.
 
 ```python
+from llama_index.readers.github import GithubRepositoryReader, GithubClient
+import os
+import re
 import nest_asyncio
+
 nest_asyncio.apply()
 
-from llama_index.readers.github import GithubRepositoryReader, GithubClient
 
 github_token = os.environ["GITHUB_TOKEN"]
 client = GithubClient(github_token=github_token, verbose=False)
 
 reader = GithubRepositoryReader(
-  github_client=github_client,
-  owner="streamlit",
-  repo="docs",
-  use_parser=False,
-  verbose=True,
-  filter_directories=(
-    ["content"],
-    GithubRepositoryReader.FilterType.INCLUDE,
-  ),
-  filter_file_extensions=(
-    [".md"],
-    GithubRepositoryReader.FilterType.INCLUDE,
-  )
+    github_client=github_client,
+    owner="streamlit",
+    repo="docs",
+    use_parser=False,
+    verbose=True,
+    filter_directories=(
+        ["content"],
+        GithubRepositoryReader.FilterType.INCLUDE,
+    ),
+    filter_file_extensions=(
+        [".md"],
+        GithubRepositoryReader.FilterType.INCLUDE,
+    ),
 )
 
 documents = reader.load_data(branch="main")
 
-import re
 
 def clean_up_text(content: str) -> str:
-  """
-  Remove unwanted characters and patterns in text input.
+    """
+    Remove unwanted characters and patterns in text input.
 
-  :param content: Text input.
+    :param content: Text input.
 
-  :return: Cleaned version of original text input.
-  """
+    :return: Cleaned version of original text input.
+    """
 
-  # Fix hyphenated words broken by newline
-  content = re.sub(r'(\w+)-\n(\w+)', r'\1\2', content)
+    # Fix hyphenated words broken by newline
+    content = re.sub(r"(\w+)-\n(\w+)", r"\1\2", content)
 
-  unwanted_patterns = ['---\nvisible: false','---', '#','slug:']
-  for pattern in unwanted_patterns:
-    content = re.sub(pattern, "", content)
+    unwanted_patterns = ["---\nvisible: false", "---", "#", "slug:"]
+    for pattern in unwanted_patterns:
+        content = re.sub(pattern, "", content)
 
-  # Remove all slugs starting with a \ and stopping at the first space
-  content = re.sub(r'\\slug: [^\s]*', '', content)
+    # Remove all slugs starting with a \ and stopping at the first space
+    content = re.sub(r"\\slug: [^\s]*", "", content)
 
-  # normalize whitespace
-  content = re.sub(r'\s+', ' ', content)
-  return content
+    # normalize whitespace
+    content = re.sub(r"\s+", " ", content)
+    return content
+
 
 cleaned_documents = []
 
 for d in documents:
-  cleaned_text = clean_up_text(d.text)
-  d.text = cleaned_text
-  cleaned_documents.append(d)
+    cleaned_text = clean_up_text(d.text)
+    d.text = cleaned_text
+    cleaned_documents.append(d)
 ```
 
 ### Process the documents with Semantic Splitting
@@ -176,7 +179,7 @@ from llama_index.core.node_parser import SemanticSplitterNodeParser
 embed_model = HuggingFaceEmbedding("Snowflake/snowflake-arctic-embed-m")
 
 splitter = SemanticSplitterNodeParser(
-  buffer_size=1, breakpoint_percentile_threshold=85, embed_model=embed_model
+    buffer_size=1, breakpoint_percentile_threshold=85, embed_model=embed_model
 )
 ```
 
@@ -186,9 +189,9 @@ With the embed model and splitter, we can execute them in an ingestion pipeline
 from llama_index.core.ingestion import IngestionPipeline
 
 cortex_search_pipeline = IngestionPipeline(
-  transformations=[
-    splitter,
-  ],
+    transformations=[
+        splitter,
+    ],
 )
 
 results = cortex_search_pipeline.run(show_progress=True, documents=cleaned_documents)
@@ -206,17 +209,17 @@ import snowflake.connector
 from tqdm.auto import tqdm
 
 conn = snowflake.connector.connect(
-  user=connection_details["user"],
-  password=connection_details["password"],
-  account=connection_details["account"],
-  warehouse=connection_details["warehouse"],
-  database=connection_details["database"],
-  schema=connection_details["schema"]
+    user=connection_details["user"],
+    password=connection_details["password"],
+    account=connection_details["account"],
+    warehouse=connection_details["warehouse"],
+    database=connection_details["database"],
+    schema=connection_details["schema"],
 )
 
 conn.cursor().execute("CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)")
 for curr in tqdm(results):
-  conn.cursor().execute("INSERT INTO streamlit_docs VALUES (%s)", curr.text)
+    conn.cursor().execute("INSERT INTO streamlit_docs VALUES (%s)", curr.text)
 ```
 
 ## Calling the Cortex Search Service
@@ -230,6 +233,7 @@ import os
 from snowflake.core import Root
 from typing import List
 
+
 class CortexSearchRetriever:
 
     def __init__(self, session: Session, limit_to_retrieve: int = 4):
@@ -239,16 +243,15 @@ class CortexSearchRetriever:
     def retrieve(self, query: str) -> List[str]:
         root = Root(self._session)
         cortex_search_service = (
-        root
-        .databases[os.environ["SNOWFLAKE_DATABASE"]]
-        .schemas[os.environ["SNOWFLAKE_SCHEMA"]]
-        .cortex_search_services[os.environ["SNOWFLAKE_CORTEX_SEARCH_SERVICE"]]
-    )
+            root.databases[os.environ["SNOWFLAKE_DATABASE"]]
+            .schemas[os.environ["SNOWFLAKE_SCHEMA"]]
+            .cortex_search_services[os.environ["SNOWFLAKE_CORTEX_SEARCH_SERVICE"]]
+        )
         resp = cortex_search_service.search(
-                query=query,
-                columns=["doc_text"],
-                limit=self._limit_to_retrieve,
-            )
+            query=query,
+            columns=["doc_text"],
+            limit=self._limit_to_retrieve,
+        )
 
         if resp.results:
             return [curr["doc_text"] for curr in resp.results]
@@ -262,8 +265,6 @@ Once the retriever is created, we can test it out. Now that we have grounded acc
 retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
 
 retrieved_context = retriever.retrieve(query="How do I launch a streamlit app?")
-
-len(retrieved_context)
 ```
 
 ## Create a RAG with built-in observability
@@ -280,13 +281,13 @@ The first thing we need to do however, is to set the database connection where w
 from trulens_eval import Tru
 
 db_url = "snowflake://{user}:{password}@{account}/{dbname}/{schema}?warehouse={warehouse}&role={role}".format(
-  user=os.environ["SNOWFLAKE_USER"],
-  account=os.environ["SNOWFLAKE_ACCOUNT"],
-  password=os.environ["SNOWFLAKE_USER_PASSWORD"],
-  dbname=os.environ["SNOWFLAKE_DATABASE"],
-  schema=os.environ["SNOWFLAKE_SCHEMA"],
-  warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
-  role=os.environ["SNOWFLAKE_ROLE"],
+    user=os.environ["SNOWFLAKE_USER"],
+    account=os.environ["SNOWFLAKE_ACCOUNT"],
+    password=os.environ["SNOWFLAKE_USER_PASSWORD"],
+    dbname=os.environ["SNOWFLAKE_DATABASE"],
+    schema=os.environ["SNOWFLAKE_SCHEMA"],
+    warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
+    role=os.environ["SNOWFLAKE_ROLE"],
 )
 
 tru = Tru(database_url=db_url)
@@ -297,38 +298,40 @@ Now we can construct the RAG.
 ```python
 from trulens_eval.tru_custom_app import instrument
 
+
 class RAG_from_scratch:
 
-  def __init__(self):
-    self.retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
+    def __init__(self):
+        self.retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
 
-  @instrument
-  def retrieve_context(self, query: str) -> list:
-    """
-    Retrieve relevant text from vector store.
-    """
-    return self.retriever.retrieve(query)
+    @instrument
+    def retrieve_context(self, query: str) -> list:
+        """
+        Retrieve relevant text from vector store.
+        """
+        return self.retriever.retrieve(query)
 
-  @instrument
-  def generate_completion(self, query: str, context_str: list) -> str:
-    """
-    Generate answer from context.
-    """
-    prompt = f"""
-    You are an expert assistant extracting information from context provided.
-    Answer the question based on the context. Be concise and do not hallucinate.
-    If you don´t have the information just say so.
-    Context: {context_str}
-    Question:
-    {query}
-    Answer:
-    """
-    return Complete("mistral-large", prompt)
+    @instrument
+    def generate_completion(self, query: str, context_str: list) -> str:
+        """
+        Generate answer from context.
+        """
+        prompt = f"""
+          You are an expert assistant extracting information from context provided.
+          Answer the question based on the context. Be concise and do not hallucinate.
+          If you don´t have the information just say so.
+          Context: {context_str}
+          Question:
+          {query}
+          Answer:
+        """
+        return Complete("mistral-large", prompt)
 
-  @instrument
-  def query(self, query: str) -> str:
-    context_str = self.retrieve_context(query)
-    return self.generate_completion(query, context_str)
+    @instrument
+    def query(self, query: str) -> str:
+        context_str = self.retrieve_context(query)
+        return self.generate_completion(query, context_str)
+
 
 rag = RAG_from_scratch()
 ```
@@ -356,28 +359,23 @@ import numpy as np
 provider = Cortex("mistral-large")
 
 f_groundedness = (
-  Feedback(
-  provider.groundedness_measure_with_cot_reasons, name="Groundedness")
-  .on(Select.RecordCalls.retrieve_context.rets[:].collect())
-  .on_output()
+    Feedback(provider.groundedness_measure_with_cot_reasons, name="Groundedness")
+    .on(Select.RecordCalls.retrieve_context.rets[:].collect())
+    .on_output()
 )
 
 f_context_relevance = (
-  Feedback(
-  provider.context_relevance,
-  name="Context Relevance")
-  .on_input()
-  .on(Select.RecordCalls.retrieve_context.rets[:])
-  .aggregate(np.mean)
+    Feedback(provider.context_relevance, name="Context Relevance")
+    .on_input()
+    .on(Select.RecordCalls.retrieve_context.rets[:])
+    .aggregate(np.mean)
 )
 
 f_answer_relevance = (
-  Feedback(
-  provider.relevance,
-  name="Answer Relevance")
-  .on_input()
-  .on_output()
-  .aggregate(np.mean)
+    Feedback(provider.relevance, name="Answer Relevance")
+    .on_input()
+    .on_output()
+    .aggregate(np.mean)
 )
 ```
 
@@ -385,9 +383,12 @@ After defining the feedback functions to use, we can just add them to the applic
 
 ```python
 from trulens_eval import TruCustomApp
-tru_rag = TruCustomApp(rag,
-  app_id = 'RAG v1',
-  feedbacks = [f_groundedness, f_answer_relevance, f_context_relevance])
+
+tru_rag = TruCustomApp(
+    rag,
+    app_id="RAG v1",
+    feedbacks=[f_groundedness, f_answer_relevance, f_context_relevance],
+)
 ```
 
 ## Test the application and observe performance
@@ -498,23 +499,23 @@ Then we run it on a test set of questions about streamlit to measure its perform
 
 ```python
 prompts = [
-  "How do I launch a streamlit app?",
-  "How can I capture the state of my session in streamlit?",
-  "How do I install streamlit?",
-  "How do I change the background color of a streamlit app?",
-  "What's the advantage of using a streamlit form?",
-  "What are some ways I should use checkboxes?",
-  "How can I conserve space and hide away content?",
-  "Can you recommend some resources for learning Streamlit?",
-  "What are some common use cases for Streamlit?",
-  "How can I deploy a streamlit app on the cloud?",
-  "How do I add a logo to streamlit?",
-  "What is the best way to deploy a Streamlit app?",
-  "How should I use a streamlit toggle?",
-  "How do I add new pages to my streamlit app?",
-  "How do I write a dataframe to display in my dashboard?",
-  "Can I plot a map in streamlit? If so, how?",
-  "How do vector stores enable efficient similarity search?",
+    "How do I launch a streamlit app?",
+    "How can I capture the state of my session in streamlit?",
+    "How do I install streamlit?",
+    "How do I change the background color of a streamlit app?",
+    "What's the advantage of using a streamlit form?",
+    "What are some ways I should use checkboxes?",
+    "How can I conserve space and hide away content?",
+    "Can you recommend some resources for learning Streamlit?",
+    "What are some common use cases for Streamlit?",
+    "How can I deploy a streamlit app on the cloud?",
+    "How do I add a logo to streamlit?",
+    "What is the best way to deploy a Streamlit app?",
+    "How should I use a streamlit toggle?",
+    "How do I add new pages to my streamlit app?",
+    "How do I write a dataframe to display in my dashboard?",
+    "Can I plot a map in streamlit? If so, how?",
+    "How do vector stores enable efficient similarity search?",
 ]
 ```
 
@@ -522,8 +523,8 @@ Last, we can use `get_leaderboard()` to see the performance of the two applicati
 
 ```python
 with tru_rag as recording:
-  for prompt in prompts:
-    rag.query(prompt)
+    for prompt in prompts:
+        rag.query(prompt)
 
 tru.get_leaderboard()
 ```
