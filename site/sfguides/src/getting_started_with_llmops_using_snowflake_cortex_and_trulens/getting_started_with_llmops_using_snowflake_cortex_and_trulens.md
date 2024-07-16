@@ -11,7 +11,7 @@ tags: Getting Started, RAG, LLMs, TruLens, Snowflake
 
 ## Overview
 
-Duration: 1
+Duration: 5
 
 In this quickstart, you'll get started with LLMOps by building a RAG by combining [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) and [Cortex Search](https://github.com/Snowflake-Labs/cortex-search?tab=readme-ov-file), and then using [TruLens](https://www.trulens.org/) to add observability and guardrails.
 
@@ -28,6 +28,21 @@ Cortex Search enables low-latency, high-quality search over your Snowflake data.
 ### What is TruLens?
 
 [TruLens](https://www.trulens.org/) is a library for tracking and evaluating Generative AI applications. It provides an extensive set of feedback functions to systematically measure the quality of your LLM based applications. It also traces the internal steps of your application, and allows you to run feedback functions on any internal step. Feedback function results can be examined in a TruLens dashboard, or used at runtime as guardrails.
+
+### What You Will Learn
+- How to build a RAG with Cortex Search and Cortex LLM Functions.
+- How to use TruLens Feedback Functions and Tracing.
+- How to log TruLens Evaluation Results and Traces to Snowflake.
+- How to use TruLens Feedback Functions as Guardrails to reduce hallucination.
+
+### What You Will Build
+- A retrieval-augmented generation (RAG) app
+- An LLMOps pipeline
+- Context filter guardrails
+
+### Prerequisites
+- A Snowflake account with Cortex LLM Functions and Cortex Search enabled.  If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=yYZEVo4S&_fsi=yYZEVo4S).
+- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 ## Setup
 
