@@ -294,7 +294,7 @@ The [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-t
 ### Step 2 - Optional: Reviewing the Code
 - Open [streamlit_app.py](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/streamlit_app.py)
 - Identify where the connection to Snowflake happens.
-- Identify where the model inference user-defined function is called to give shift sale predictions on the fly.
+- Identify where the model inference is called via Snowflake Model Registry to give shift sale predictions on the fly.
 
 ### Step 3 - Launching the App
 - From Snowsight, select the Projects and then Streamlit
