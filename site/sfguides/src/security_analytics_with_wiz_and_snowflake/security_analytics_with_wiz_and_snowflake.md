@@ -484,7 +484,7 @@ This command deletes the CLOUD_SECURITY_ANALYST_ROLE role.
 
 
 
-## Conclusion & And Resources
+## Conclusion And Resources
 Duration: 1
 
 In this lab, we explored how to integrate and analyze Wiz data in Snowflake. We set up the environment, imported Wiz data, executed queries and build a dashboard to gain insights on Wiz data.
