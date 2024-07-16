@@ -1,13 +1,13 @@
 author: Josh Reini
-id: production_ready_rag_snowflake_trulens
-summary: This is a guide for building a production-ready RAG with Snowflake and TruLens.
+id: getting_started_with_llmops_using_snowflake_cortex_and_trulens
+summary: This is a guide for getting started with LLMOps using Snowflake Cortex and TruLens.
 categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, RAG, LLMs, TruLens, Snowflake
 
-# Production-Ready RAG with TruLens and Snowflake Cortex
+# Getting Started with LLMOps using Snowflake Cortex and TruLens
 
 ## Overview
 
