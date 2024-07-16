@@ -545,6 +545,6 @@ Duration: 1
 
 ### Related Resources
 
-- [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/cortex.html)
+- [Snowflake Cortex Documentation](https://docs.snowflake.com/en/guides-overview-ai-features)
 - [TruLens Documentation](https://trulens.org/)
 - [TruLens GitHub Repository](https://github.com/truera/trulens)
