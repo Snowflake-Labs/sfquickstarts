@@ -170,7 +170,7 @@ for d in documents:
   cleaned_documents.append(d)
 ```
 
-### Embed the preprocessed documents
+### Process the documents with Semantic Splitting
 
 We'll use Snowflake's Arctic Embed model available from HuggingFace to embed the documents. We'll also use Llama-Index's `SemanticSplitterNodeParser` for processing.
 
@@ -220,7 +220,7 @@ conn = snowflake.connector.connect(
 )
 
 conn.cursor().execute("CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)")
-for curr in tqdm(result):
+for curr in tqdm(results):
   conn.cursor().execute("INSERT INTO streamlit_docs VALUES (%s)", curr.text)
 ```
 
@@ -233,29 +233,32 @@ Here we'll create a `CortexSearchRetreiver` class to connect to our cortex searc
 ```python
 import os
 from snowflake.core import Root
+from typing import List
 
 class CortexSearchRetriever:
 
-  def __init__(self, session: Session, limit_to_retrieve: int = 4):
-    self._session = session
-    self._limit_to_retrieve = limit_to_retrieve
+    def __init__(self, session: Session, limit_to_retrieve: int = 4):
+        self._session = session
+        self._limit_to_retrieve = limit_to_retrieve
+    
+    def retrieve(self, query: str) -> List[str]:
+        root = Root(self._session)
+        cortex_search_service = (
+        root
+        .databases["JREINI_DB"]
+        .schemas["TRULENS_DEMO_SCHEMA"]
+        .cortex_search_services["TRULENS_DEMO_CORTEX_SEARCH_SERVICE"]
+    )
+        resp = cortex_search_service.search(
+                query=query,
+                columns=["doc_text"],
+                limit=self._limit_to_retrieve,
+            )
 
-  def retrieve(self, query: str) -> List[str]:
-    root = Root(self._session)
-    cortex_search_service = root.databases[
-        os.environ["SNOWFLAKE_DATABASE"]].schemas[
-          os.environ["SNOWFLAKE_SCHEMA"]].cortex_search_services[
-            os.environ["SNOWFLAKE_CORTEX_SEARCH_SERVICE"]]
-    resp = cortex_search_service.search(
-        query=query,
-        columns=["doc_text"],
-        limit=self._limit_to_retrieve,
-      )
-    self._session.close()
-
-    if resp.results:
-      return [curr["doc_text"] for curr in resp.results]
-    else return []
+        if resp.results:
+            return [curr["doc_text"] for curr in resp.results]
+        else:
+            return []
 ```
 
 Once the retriever is created, we can test it out. Now that we have grounded access to the Streamlit docs, we can ask questions about using Streamlit, like "How do I launch a streamlit app".
@@ -322,7 +325,7 @@ class RAG_from_scratch:
     If you don´t have the information just say so.
     Context: {context_str}
     Question:
-    {question}
+    {query}
     Answer: '
     """
     return Complete("mistral-large", query)
