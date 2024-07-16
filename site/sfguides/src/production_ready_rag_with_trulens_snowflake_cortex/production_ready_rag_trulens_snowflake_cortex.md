@@ -258,6 +258,8 @@ class CortexSearchRetriever:
     else return []
 ```
 
+Once the retriever is created, we can test it out. Now that we have grounded access to the Streamlit docs, we can ask questions about using Streamlit, like "How do I launch a streamlit app".
+
 ```python
 retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
 
@@ -268,7 +270,7 @@ len(retrieved_context)
 
 ## Create a RAG with built-in observability
 
-Duration: 8
+Duration: 5
 
 Now that we've set up the components we need from Snowflake Cortex, we can build our RAG.
 
@@ -333,6 +335,10 @@ class RAG_from_scratch:
 rag = RAG_from_scratch()
 ```
 
+## Add feedback functions
+
+Duration: 5
+
 After constructing the RAG, we can set up the feedback functions we want to use to evaluate the RAG.
 
 Here, we'll use the [RAG Triad](https://www.trulens.org/trulens_eval/getting_started/core_concepts/rag_triad/). The RAG triad is made up of 3 evaluations along each edge of the RAG architecture: context relevance, groundedness and answer relevance.
@@ -375,12 +381,9 @@ f_answer_relevance = (
   .on_output()
   .aggregate(np.mean)
 )
-
-feedbacks = [f_context_relevance,
-      f_answer_relevance,
-      f_groundedness,
-    ]
 ```
+
+After defining the feedback functions to use, we can just add them to the application along with giving the application an ID.
 
 ```python
 from trulens_eval import TruCustomApp
@@ -392,6 +395,8 @@ tru_rag = TruCustomApp(rag,
 ## Test the application and observe performance
 
 Duration: 3
+
+Now that the application is ready, we can run it on a test set of questions about streamlit to measure its performance.
 
 ```python
 prompts = [
@@ -412,9 +417,6 @@ prompts = [
   "How do I write a dataframe to display in my dashboard?",
   "Can I plot a map in streamlit? If so, how?",
   "How do vector stores enable efficient similarity search?",
-  "How do I prevent my child from using the internet?",
-  "What should I pack for a camping trip this weekend?",
-  "How do I defend myself against bear attacks?"
 ]
 ```
 
@@ -480,6 +482,54 @@ class filtered_RAG_from_scratch:
 
 filtered_rag = filtered_RAG_from_scratch()
 ```
+
+## Test the new app version
+
+Duration: 7
+
+We can combine the new version of our app with the feedback functions we already defined
+
+```python
+from trulens_eval import TruCustomApp
+tru_rag = TruCustomApp(rag,
+  app_id = 'RAG v1',
+  feedbacks = [f_groundedness, f_answer_relevance, f_context_relevance])
+```
+
+Then we run it on a test set of questions about streamlit to measure its performance.
+
+```python
+prompts = [
+  "How do I launch a streamlit app?",
+  "How can I capture the state of my session in streamlit?",
+  "How do I install streamlit?",
+  "How do I change the background color of a streamlit app?",
+  "What's the advantage of using a streamlit form?",
+  "What are some ways I should use checkboxes?",
+  "How can I conserve space and hide away content?",
+  "Can you recommend some resources for learning Streamlit?",
+  "What are some common use cases for Streamlit?",
+  "How can I deploy a streamlit app on the cloud?",
+  "How do I add a logo to streamlit?",
+  "What is the best way to deploy a Streamlit app?",
+  "How should I use a streamlit toggle?",
+  "How do I add new pages to my streamlit app?",
+  "How do I write a dataframe to display in my dashboard?",
+  "Can I plot a map in streamlit? If so, how?",
+  "How do vector stores enable efficient similarity search?",
+]
+```
+
+Last, we can use `get_leaderboard()` to see the performance of the two application versions head to head.
+
+```python
+with tru_rag as recording:
+  for prompt in prompts:
+    rag.query(prompt)
+
+tru.get_leaderboard()
+```
+
 
 ## Conclusion and resources
 
