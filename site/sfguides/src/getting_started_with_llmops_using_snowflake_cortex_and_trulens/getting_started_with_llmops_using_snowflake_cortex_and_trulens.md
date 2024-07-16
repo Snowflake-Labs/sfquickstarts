@@ -13,11 +13,23 @@ tags: Getting Started, RAG, LLMs, TruLens, Snowflake
 
 Duration: 1
 
-In this quickstart, we'll show how to build a RAG with the full snowflake stack including [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions), [Cortex Search](https://github.com/Snowflake-Labs/cortex-search?tab=readme-ov-file), and [TruLens](https://www.trulens.org/) observability.
+In this quickstart, you'll get started with LLMOps by building a RAG by combining [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) and [Cortex Search](https://github.com/Snowflake-Labs/cortex-search?tab=readme-ov-file), and then using [TruLens](https://www.trulens.org/) to add observability and guardrails.
 
-In addition, we'll show how to run TruLens feedback functions with Cortex as the [feedback provider](https://www.trulens.org/trulens_eval/api/provider/), and how to [log TruLens traces and evaluation metrics to a Snowflake table](https://www.trulens.org/trulens_eval/tracking/logging/where_to_log/log_in_snowflake/#logging-in-snowflake).
+Along the way, you will also learn how run TruLens feedback functions with Snowflake Cortex as the [feedback provider](https://www.trulens.org/trulens_eval/api/provider/), and how to [log TruLens traces and evaluation metrics to a Snowflake table](https://www.trulens.org/trulens_eval/tracking/logging/where_to_log/log_in_snowflake/#logging-in-snowflake). Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens_eval/guardrails/) for filtering retrieved context and reducing hallucination.
 
-Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens_eval/guardrails/) for filtering retrieved context and reducing hallucination.
+### What are Cortex LLM Functions?
+
+[Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) gives you instant access to industry-leading large language models (LLMs) trained by researchers at companies like Mistral, Reka, Meta, and Google, including Snowflake Arctic, an open enterprise-grade model developed by Snowflake.
+
+### What is Cortex Search?
+
+Cortex Search enables low-latency, high-quality search over your Snowflake data. Cortex Search powers a broad array of search experiences for Snowflake users including Retrieval Augmented Generation (RAG) applications leveraging Large Language Models (LLMs).
+
+Cortex Search gets you up and running with a vector and keyword-based search engine on your text data in minutes, without having to worry about embedding, infrastructure maintenance, search quality parameter tuning, or ongoing index refreshes. This means you can spend less time on infrastructure and search quality tuning, and more time developing high-quality chat and search experiences using your data.
+
+### What is TruLens?
+
+[TruLens](https://www.trulens.org/) is a library for tracking and evaluating Generative AI applications. It provides an extensive set of feedback functions to systematically measure the quality of your LLM based applications. It also traces the internal steps of your application, and allows you to run feedback functions on any internal step. Feedback function results can be examined in a TruLens dashboard, or used at runtime as guardrails.
 
 ## Setup
 
@@ -534,15 +546,18 @@ with tru_rag as recording:
 tru.get_leaderboard()
 ```
 
-## Conclusion and resources
+## Conclusion And Resources
 
-Duration: 1
+Congratulations! You've successfully built a RAG by combining Cortex Search and LLM Functions, adding in TruLens Feedback Functions as Observability. You also set up logging for TruLens to Snowflake, and added TruLens Guardrails to reduce hallucination.
 
-### What We Learned
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/XKd8rXPUNs2G1yM28).
 
-- In this quickstart, we learned build a RAG with Cortex Search and Cortex LLM Functions.
-- Additionally, we learned how to set up TruLens instrumentation and create a custom RAG class with TruLens feedback providers.
-- Finally, we learned how to use feedback results as guardrails to improve a RAG application so it can be production-ready.
+### What You Learned
+
+- How to build a RAG with Cortex Search and Cortex LLM Functions.
+- How to use TruLens Feedback Functions and Tracing.
+- How to log TruLens Evaluation Results and Traces to Snowflake.
+- How to use TruLens Feedback Functions as Guardrails to reduce hallucination.
 
 ### Related Resources
 
