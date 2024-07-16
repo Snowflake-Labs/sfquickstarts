@@ -3,7 +3,7 @@ id: security_analytics_with_wiz_and_snowflake
 summary: learn about the Wiz and Snowflake integration for analyzing Wiz data in Snowflake
 categories: cybersecurity,solution-examples,partner-integrations
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Security, Wiz, Security Data Lake
 
@@ -12,10 +12,12 @@ tags: Getting Started, Security, Wiz, Security Data Lake
 ## Overview 
 Duration: 1
 
-In this guide, you'll learn how to upload Wiz data into Snowflake tables using the Snowflake and Wiz integration. This integration enables teams using Wiz to store Wiz Issues, Vulnerabilities, Host Configuration Findings, and more in Snowflake for historical analysis and other security analytics use cases such as: 
+In this guide, you'll learn how to analyze Wiz data in Snowflake. The Snowflake and Wiz integration enables teams using Wiz to store Wiz Issues, Vulnerabilities, Host Configuration Findings, and other findings in Snowflake for historical analysis and other security analytics use cases such as: 
 1. Incident response
 2. Custom security reports
 3. Analysis for business-critical security SLAs
+
+Mutual Snowflake and Wiz customers usually use Wiz's native Snowflake integration to automatically ingest Wiz reports data into Snowflake. In this lab, we'll skip the part of creating the Snowflake integration in Wiz and start by creating the tables in Snowflake with synthetic Wiz data we generated for this lab.
 
 ### Prerequisites
 1. Basic knowledge of SQL, and database concepts and objects
@@ -146,8 +148,8 @@ CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZISSUES (
 	REPORT_RUN_ID VARCHAR(16777216)
 );
 COPY INTO WIZDB.WIZSCHEMA.WIZISSUES
-FROM s3://sfquickstarts/<new_location>/wizissues.csv
-FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1);
+FROM s3://sfquickstarts/wizvhol/wizissues.tsv
+FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1,FIELD_DELIMITER='0x09');
 ```
 ```sql
 CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZVULNERABILITIES (
@@ -176,8 +178,8 @@ CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZVULNERABILITIES (
 	REPORT_RUN_ID VARCHAR(16777216)
 );
 COPY INTO WIZDB.WIZSCHEMA.WIZVULNERABILITIES
-FROM s3://sfquickstarts/<new_location>/wizVulnerabilities.csv
-FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1);
+FROM s3://sfquickstarts/wizvhol/wizvulnerabilities.tsv
+FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1,FIELD_DELIMITER='0x09');
 ```
 ```sql
 CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZ_HOST_CONFIGURATION_FINDINGS (
@@ -199,8 +201,8 @@ CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZ_HOST_CONFIGURATION_FINDINGS (
 	REPORT_RUN_ID VARCHAR(16777216)
 );
 COPY INTO WIZDB.WIZSCHEMA.WIZVULNERABILITIES
-FROM s3://sfquickstarts/<new_location>/wizhostconfigurations.csv
-FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1);
+FROM s3://sfquickstarts/wizvhol/wizhostconfigurationfindings.tsv
+FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1,FIELD_DELIMITER='0x09');
 ```
 
 Lastly, lets create the `WIZ_REPORTS_RUNS` table and then load the data.
@@ -216,8 +218,8 @@ CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZ_REPORT_RUNS (
 	primary key (REPORT_RUN_ID)
 );
 COPY INTO WIZDB.WIZSCHEMA.WIZ_REPORT_RUNS
-FROM s3://sfquickstarts/<new_location>/wizreportruns.csv
-FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1);
+FROM s3://sfquickstarts/wizvhol/wizreportruns.tsv
+FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1,FIELD_DELIMITER='0x09');
 ```
 
 
@@ -254,9 +256,9 @@ Let's start by looking at specific Issue with the ID 12341234. Let's see how oft
 
 
 ```sql
-select report_run_id, count(*)
+select report_run_id
 from WIZDB.WIZSCHEMA.WIZISSUES
-where issue_id = 'c3a456b42fab3165d62fa61315c4f120f6263e78ab6cfd76253384f9e24acede'
+where issue_id = 'b500f7188a6c978319528f79b97859fd155eaa5a2513c0ed8b83cd54dc859034'
 group by 1;
 ```
 For seeing only the record from the last report we can use the `ISSUES_LATEST` view:
@@ -265,17 +267,18 @@ For seeing only the record from the last report we can use the `ISSUES_LATEST` v
 CREATE OR REPLACE view WIZDB.WIZSCHEMA.ISSUES_LATEST as 
 with latest_issue_report as (
     select wrr.report_run_id as run_id 
-    from WIZDB.WIZSCHEMA.issues 
+    from WIZDB.WIZSCHEMA.wizissues ISSUES
         join wiz_report_runs wrr on issues.report_run_id = wrr.report_run_id 
     order by wrr.start_time desc limit 1
 )
+select issues.* from WIZDB.wizschema.WIZISSUES ISSUES join latest_issue_report on issues.report_run_id = latest_issue_report.run_id;
 ```
 Now if we look for issueID ='304b2794-90c1-4b12-b76c-016a2b446589' in the `WIZDB.WIZSCHEMA.ISSUES_LATEST` table, we can see the latest information on this Issue.
 
 ```sql
 select *
 from WIZDB.WIZSCHEMA.ISSUES_LATEST
-where issue_id = 'c3a456b42fab3165d62fa61315c4f120f6263e78ab6cfd76253384f9e24acede'
+where issue_id = 'b500f7188a6c978319528f79b97859fd155eaa5a2513c0ed8b83cd54dc859034'
 ```
 ### Historical Analysis of Issues
 
@@ -291,16 +294,18 @@ select * from
 select issues.*, 
     row_number() over (partition by issues.issue_id order by wrr.start_time desc) as row_number
 from
-    WIZDB.WIZSCHEMA.WIZISSUES
+    WIZDB.WIZSCHEMA.WIZISSUES issues
     join wiz_report_runs wrr on issues.report_run_id = wrr.report_run_id
 ) where row_number = 1;
+
+
 ```
 
 With this view, we can start answering questions about Issue trends over time. For example, let's see the number of Issues per day, broken down by severity:
 
 ```sql
 --issues identified by day
-select count(*),severity,created_at::date as day 
+select severity,created_at::date as day, count(*)
 from WIZDB.WIZSCHEMA.ISSUES_HISTORICAL 
 group by day,severity;
 ```
@@ -309,7 +314,7 @@ We can visualize the data to see trends more clearly - click on the `Chart` opti
 
 ### Identifying High-Risk Platforms
 
-Another interesting analysis is to understand which cloud platform and subscriptions historically hold most of the critical cloud security risk. To do that, we can count the number of critical Issues by the cloud platform using the following query:
+Another interesting analysis is to understand which cloud platform and subscriptions historically hold most of the cloud security risk. To do that, we can count the number of critical Issues by the cloud platform using the following query:
 
 ```sql
 --Issues found on the cloud platforms along with their severity
@@ -318,22 +323,21 @@ select
         severity,
        count(issue_id) 
 from WIZDB.WIZSCHEMA.ISSUES_HISTORICAL
-WHERE resource_platform IS NOT NULL AND resource_platform != '' and severity = 'CRITICAL'
+WHERE resource_platform IS NOT NULL AND resource_platform != ''
 GROUP BY 1,2;
 ```
-Visualizing this data helps identify platforms with the highest risk - click on the `Chart` option in the results panel and create a bar chart to see the cloud platform with the most Issues. We can see that AWS currently holds the most critical risks - let's add the subscription column to the query to identify the AWS subscription with the most critical Issues.
+Visualizing this data helps identify platforms with the highest risk - click on the `Chart` option in the results panel and create a bar chart to see the cloud platform with the most Issues. We can see that AWS currently holds the most critical risks - let's add the subscription column to the query to identify the AWS subscription with the most Issues.
 
 ```sql
 select 
         resource_platform, 
         subscription_name,
-        severity,
        count(issue_id) 
 from WIZDB.WIZSCHEMA.ISSUES_HISTORICAL 
-WHERE resource_platform IS NOT NULL AND resource_platform != '' and severity = 'CRITICAL' and resource_platform = 'AWS'
-GROUP BY 1,2,3;
+WHERE resource_platform IS NOT NULL AND resource_platform != '' and resource_platform = 'AWS'
+GROUP BY 1,2;
 ```
-We can see that the avc subscription has most of the critical Issues.
+We can see that the `Subscription-10` subscription has most of the critical Issues.
 
 ### Most Common Issue Types
 Knowing the most frequent issue types helps focus remediation efforts. Let's see the most common issue types across all Issues with Critical severity:
@@ -356,7 +360,7 @@ In the last section, we saw that the most common Issue type is "VM/serverless wi
 
 ```sql
 select * 
-from WIZDB.WIZSCHEMA.WIZVULNERABILTIIES 
+from WIZDB.WIZSCHEMA.WIZVULNERABILITIES 
 limit 100; 
 ```
 we can see in the table the information about resouce where the cve was found, the cve severity, status and when the vulnerability was first and last detected on the resouce and remediation steps as well. 
@@ -387,21 +391,21 @@ from (
     group by assetid
     order by oldest_vuln_age desc
 ) group by oldest_vuln_age
-order by 1 desc;
+order by 1 asc;
 ```
 
 As you can see, this query first identifies the oldest unresolved vulnerability for each asset by calculating the difference in days between when the vulnerability was first and last detected. It then counts how many assets have vulnerabilities of each age.
 Let's create a bar chart out of it which will better help understand the data distribution. click on the `Chart` option in the results panel and create a bar chart and change the orientation to vertical.
 
-To better understand which assets are most affected, we can look at the detailed breakdown of the oldest unresolved vulnerabilities for each asset.
+To better understand which assets are most affected, we can look at the detailed breakdown of the oldest unresolved vulnerabilities for each asset and its associated Wiz project which usually maps to a team in the organization.
 The following query provides shows the assests with the oldest Vulnerabilities age:
 
 ```sql
 SELECT
-    assetid, 
+    assetid,projects,
     MAX(DATEDIFF('day', firstdetected, lastdetected)) AS oldest_vuln_age
 FROM WIZDB.WIZSCHEMA.VULNERABILITIES_HISTORICAL
-GROUP BY assetid
+GROUP BY assetid,projects
 ORDER BY oldest_vuln_age DESC;
 ```
 
@@ -410,12 +414,11 @@ ORDER BY oldest_vuln_age DESC;
 Let's use the same queries we created in the last sections in order to create a dashboard where we can track Wiz Issues, vulnerabilities, and Host Configuration Findings. First, let's go to the Dashboards page in Snowflake and create a new dashboard. Then let's hit the "+" button and create a "New Tile" and select "From SQL Worksheet". Let's place the query we used before for identifying the cloud platform with the most Issues:
 ```sql
 select 
-        resource_platform, 
-        severity,
+    resource_platform, 
        count(issue_id) 
-WIZDB.WIZSCHEMA.ISSUES_HISTORICAL 
+from WIZDB.WIZSCHEMA.issues_historical
 WHERE resource_platform IS NOT NULL AND resource_platform != '' and severity = 'CRITICAL'
-GROUP BY 1,2;
+GROUP BY 1;
 ```
 Now, let's select the Heatgrid as the Chart type.
 We can repeat the same process for other queries we executed against the Issues, Vulnerabilities and Host Configuration Findings tables and create a dashbaord such as the following:
@@ -481,7 +484,7 @@ This command deletes the CLOUD_SECURITY_ANALYST_ROLE role.
 
 
 
-## Conclusion And Resources
+## Conclusion & And Resources
 Duration: 1
 
 In this lab, we explored how to integrate and analyze Wiz data in Snowflake. We set up the environment, imported Wiz data, executed queries and build a dashboard to gain insights on Wiz data.
