@@ -86,6 +86,7 @@ CREATE DATABASE DASH_DB;
 CREATE SCHEMA DASH_SCHEMA;
 
 USE DASH_DB.DASH_SCHEMA;
+USE WAREHOUSE DASH_S;
 ```
 
 In the same SQL worksheet, run the following SQL commands to create table **CALL_TRANSCRIPTS** from data hosted on publicly accessible S3 bucket.
