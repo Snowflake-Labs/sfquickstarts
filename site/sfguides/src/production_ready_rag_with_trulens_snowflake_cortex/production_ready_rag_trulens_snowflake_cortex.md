@@ -240,7 +240,7 @@ class CortexSearchRetriever:
     def __init__(self, session: Session, limit_to_retrieve: int = 4):
         self._session = session
         self._limit_to_retrieve = limit_to_retrieve
-    
+
     def retrieve(self, query: str) -> List[str]:
         root = Root(self._session)
         cortex_search_service = (
@@ -532,7 +532,6 @@ with tru_rag as recording:
 
 tru.get_leaderboard()
 ```
-
 
 ## Conclusion and resources
 
