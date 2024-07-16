@@ -245,9 +245,9 @@ class CortexSearchRetriever:
         root = Root(self._session)
         cortex_search_service = (
         root
-        .databases["JREINI_DB"]
-        .schemas["TRULENS_DEMO_SCHEMA"]
-        .cortex_search_services["TRULENS_DEMO_CORTEX_SEARCH_SERVICE"]
+        .databases[os.environ["SNOWFLAKE_DATABASE"]]
+        .schemas[os.environ["SNOWFLAKE_SCHEMA"]]
+        .cortex_search_services[os.environ["SNOWFLAKE_CORTEX_SEARCH_SERVICE"]]
     )
         resp = cortex_search_service.search(
                 query=query,
