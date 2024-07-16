@@ -22,7 +22,7 @@ Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens
 ## Setup
 Duration: 2
 
-For this quickstart, you will need your Snowflake credentials and a Github PAT Token ready. For example purposes, we assume they are set in a `.env` file that looks like this:
+For this quickstart, you will need your Snowflake credentials and a GitHub PAT Token ready. For example purposes, we assume they are set in a `.env` file that looks like this:
 
 ```
 # Loading data from github
@@ -42,14 +42,14 @@ SNOWFLAKE_CORTEX_SEARCH_SERVICE=
 First, we'll install the packages needed:
 
 ```python
-# pip install snowflake-snowpark-python
-# pip install notebook
-# pip install snowflake-ml-python
-# pip install trulens-eval
-# pip install snowflake-sqlalchemy
-# pip install llama-index
-# pip install llama-index-readers-github
-# pip install llama-index-embeddings-huggingface
+pip install snowflake-snowpark-python
+pip install notebook
+pip install snowflake-ml-python
+pip install trulens-eval
+pip install snowflake-sqlalchemy
+pip install llama-index
+pip install llama-index-readers-github
+pip install llama-index-embeddings-huggingface
 ```
 
 Then we can load our credentials and set our Snowflake connection
@@ -62,13 +62,13 @@ import os
 load_dotenv()
 
 connection_details = {
-  'account':  os.environ["SNOWFLAKE_ACCOUNT"],
-  'user': os.environ["SNOWFLAKE_USER"],
-  'password': os.environ["SNOWFLAKE_USER_PASSWORD"],
-  'role': os.environ["SNOWFLAKE_ROLE"],
-  'database': os.environ["SNOWFLAKE_DATABASE"],
-  'schema': os.environ["SNOWFLAKE_SCHEMA"],
-  'warehouse': os.environ["SNOWFLAKE_WAREHOUSE"]
+  "account":  os.environ["SNOWFLAKE_ACCOUNT"],
+  "user": os.environ["SNOWFLAKE_USER"],
+  "password": os.environ["SNOWFLAKE_USER_PASSWORD"],
+  "role": os.environ["SNOWFLAKE_ROLE"],
+  "database": os.environ["SNOWFLAKE_DATABASE"],
+  "schema": os.environ["SNOWFLAKE_SCHEMA"],
+  "warehouse": os.environ["SNOWFLAKE_WAREHOUSE"]
 }
 
 session = Session.builder.configs(connection_details).create()
@@ -224,7 +224,7 @@ for curr in tqdm(result):
 ## Calling the Cortex Search Service
 Duration: 5
 
-Here we'll create a CortexSearchRetreiver class to connect to our cortex search service and add the `retrieve` method that we can leverage for calling it.
+Here we'll create a `CortexSearchRetreiver` class to connect to our cortex search service and add the `retrieve` method that we can leverage for calling it.
 
 ```python
 import os
@@ -232,12 +232,12 @@ from snowflake.core import Root
 
 class CortexSearchRetriever:
 
-  def __init__(self, session = session, limit_to_retrieve: int = 4):
-    self.session = session
+  def __init__(self, session: Session, limit_to_retrieve: int = 4):
+    self._session = session
     self._limit_to_retrieve = limit_to_retrieve
   
-  def retrieve(self, query: str):
-    root = Root(self.session)
+  def retrieve(self, query: str) -> List[str]:
+    root = Root(self._session)
     cortex_search_service = root.databases[
         os.environ["SNOWFLAKE_DATABASE"]].schemas[
           os.environ["SNOWFLAKE_SCHEMA"]].cortex_search_services[
@@ -249,7 +249,8 @@ class CortexSearchRetriever:
       )
     if resp.results:
       return [curr["doc_text"] for curr in resp.results]
-    session.close()
+    else return []
+    self.session.close()
 ```
 
 ```python
@@ -271,7 +272,6 @@ The first thing we need to do however, is to set the database connection where w
 
 ```python
 from trulens_eval import Tru
-
 
 db_url = "snowflake://{user}:{password}@{account}/{dbname}/{schema}?warehouse={warehouse}&role={role}".format(
   user=os.environ["SNOWFLAKE_USER"],
@@ -295,27 +295,34 @@ class RAG_from_scratch:
 
   def __init__(self):
     self.retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
+
   @instrument
   def retrieve_context(self, query: str) -> list:
     """
     Retrieve relevant text from vector store.
     """
-    results = self.retriever.retrieve(query)
-    return results
+    return self.retriever.retrieve(query)
 
   @instrument
   def generate_completion(self, query: str, context_str: list) -> str:
     """
     Generate answer from context.
     """
-    completion = Complete("mistral-large",query)
-    return completion
+    prompt = f"""
+    'You are an expert assistance extracting information from context provided. 
+    Answer the question based on the context. Be concise and do not hallucinate. 
+    If you don´t have the information just say so.
+    Context: {context_str}
+    Question:  
+    {question} 
+    Answer: '
+    """
+    return Complete("mistral-large", query)
 
   @instrument
   def query(self, query: str) -> str:
     context_str = self.retrieve_context(query)
-    completion = self.generate_completion(query, context_str)
-    return completion
+    return self.generate_completion(query, context_str)
 
 rag = RAG_from_scratch()
 ```
@@ -420,62 +427,60 @@ In addition to making informed iteration, we can also directly use feedback resu
 
 ![Context Filter Guardrails](./assets/guardrail_context_filtering.png)
 
-To do so, we'll rebuild our RAG using the `@context-filter decorator` on the method we want to filter, and pass in the feedback function and threshold to use for guardrailing.
+To do so, we'll rebuild our RAG using the `@context-filter` decorator on the method we want to filter, and pass in the feedback function and threshold to use for guardrailing.
 
 ```python
-# note: feedback function used for guardrail must only return a score, not also reasons
-f_context_relevance_score = (
-  Feedback(provider.context_relevance, name = "Context Relevance")
-)
-
 from trulens_eval.guardrails.base import context_filter
 
 # note: feedback function used for guardrail must only return a score, not also reasons
 f_context_relevance_score = (
   Feedback(provider.context_relevance, name = "Context Relevance")
-  .on_input()
-  .on(Select.RecordCalls.retrieve.rets)
 )
-
-from trulens_eval.guardrails.base import context_filter
 
 class filtered_RAG_from_scratch:
 
   def __init__(self):
     self.retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
+
   @instrument
   @context_filter(f_context_relevance_score, 0.75, keyword_for_prompt="query")
   def retrieve_context(self, query: str) -> list:
     """
     Retrieve relevant text from vector store.
     """
-    results = self.retriever.retrieve(query)
-    return results
+    return self.retriever.retrieve(query)
 
   @instrument
   def generate_completion(self, query: str, context_str: list) -> str:
     """
     Generate answer from context.
     """
-    completion = Complete("mistral-large",query)
-    return completion
+    prompt = f"""
+    'You are an expert assistance extracting information from context provided. 
+    Answer the question based on the context. Be concise and do not hallucinate. 
+    If you don´t have the information just say so.
+    Context: {context_str}
+    Question:  
+    {question} 
+    Answer: '
+    """
+    return Complete("mistral-large", query)
 
   @instrument
   def query(self, query: str) -> str:
     context_str = self.retrieve_context(query=query)
-    completion = self.generate_completion(query=query, context_str=context_str)
-    return completion
+    return self.generate_completion(query=query, context_str=context_str)
 
 filtered_rag = filtered_RAG_from_scratch()
 ```
 
-## Conclusion And Resources
+## Conclusion and resources
 Duration: 1
 
 ### What You Learned
-- In this quickstart, you learned build a RAG with Cortex Search and Cortex LLM Fucntions.
-- Additionally, you learned how to set up TruLens instrumentation and create a custom RAG class with TruLens feedback providers.
-- Finally, you learned how to use feedback results as guardrails to improve a RAG application so it can be production-ready.
+- In this quickstart, we learned build a RAG with Cortex Search and Cortex LLM Fucntions.
+- Additionally, we learned how to set up TruLens instrumentation and create a custom RAG class with TruLens feedback providers.
+- Finally, we learned how to use feedback results as guardrails to improve a RAG application so it can be production-ready.
 
 ### Related Resources
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/cortex.html)
