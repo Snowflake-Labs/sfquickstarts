@@ -15,7 +15,7 @@ Duration: 1
 
 In this quickstart, we'll show how to build a RAG with the full snowflake stack including [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions), [Cortex Search](https://github.com/Snowflake-Labs/cortex-search?tab=readme-ov-file), and [TruLens](https://www.trulens.org/) observability.
 
-In addition, we'll show how to run TruLens feedback functions with Cortex as the [feedback provider](https://www.trulens.org/trulens_eval/api/provider/), and how to log TruLens traces and evaluation metrics to a Snowflake table.
+In addition, we'll show how to run TruLens feedback functions with Cortex as the [feedback provider](https://www.trulens.org/trulens_eval/api/provider/), and how to [log TruLens traces and evaluation metrics to a Snowflake table](https://www.trulens.org/trulens_eval/tracking/logging/where_to_log/log_in_snowflake/#logging-in-snowflake).
 
 Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens_eval/guardrails/) for filtering retrieved context and reducing hallucination.
 
@@ -275,7 +275,7 @@ Now that we've set up the components we need from Snowflake Cortex, we can build
 
 We'll do this by creating a custom python class with each the methods we need. We'll also add TruLens instrumentation with the `@instrument` decorator to our app.
 
-The first thing we need to do however, is to set the database connection where we'll log the traces and evaluation results from our application. This way we have a stored record that we can use to understand the app's performance. This is done when initializing `Tru`.
+The first thing we need to do however, is to [set the database connection to Snowflake](https://www.trulens.org/trulens_eval/tracking/logging/where_to_log/log_in_snowflake/#logging-in-snowflake) where we'll log the traces and evaluation results from our application. This way we have a stored record that we can use to understand the app's performance. This is done when initializing `Tru`.
 
 ```python
 from trulens_eval import Tru
