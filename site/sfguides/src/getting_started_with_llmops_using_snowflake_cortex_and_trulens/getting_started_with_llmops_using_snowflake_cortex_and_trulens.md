@@ -13,9 +13,21 @@ tags: Getting Started, RAG, LLMs, TruLens, Snowflake
 
 Duration: 5
 
-In this quickstart, you'll get started with LLMOps by building a RAG by combining [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) and [Cortex Search](https://github.com/Snowflake-Labs/cortex-search?tab=readme-ov-file), and then using [TruLens](https://www.trulens.org/) to add observability and guardrails.
+By completing this guide, you'll get started with LLMOps by building a RAG by combining [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) and [Cortex Search](https://github.com/Snowflake-Labs/cortex-search?tab=readme-ov-file), and then using [TruLens](https://www.trulens.org/) to add observability and guardrails.
 
 Along the way, you will also learn how run TruLens feedback functions with Snowflake Cortex as the [feedback provider](https://www.trulens.org/trulens_eval/api/provider/), and how to [log TruLens traces and evaluation metrics to a Snowflake table](https://www.trulens.org/trulens_eval/tracking/logging/where_to_log/log_in_snowflake/#logging-in-snowflake). Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens_eval/guardrails/) for filtering retrieved context and reducing hallucination.
+
+Here is a summary of what you will be able to learn in each step by following this quickstart:
+
+- **Setup Environment**: Create a session to use Snowflake Cortex capabilities.
+- **Cortex Complete**: Use Cortex `Complete()` to call Mistral Large.
+- **Add Data**: Load and preprocess raw documentation from GitHub, and load to Cortex Search.
+- **Search**: Search over the data loaded to Cortex Search.
+- **Create a RAG**: Create a RAG with Cortex Search and Complete and add TruLens instrumentation.
+- **Feedback Functions**: Add context relevance, groundedness and answer relevance evaluations to the RAG.
+- **Application Testing**: Understand the performance of your RAG across a test set.
+- **Guardrails**: Add context filter guardrails to reduce hallucinations.
+- **Measure Improvement**: See the improved evaluation results after adding guardrails.
 
 ### What are Cortex LLM Functions?
 
@@ -44,7 +56,7 @@ Cortex Search enables low-latency, high-quality search over your Snowflake data.
 - A Snowflake account with Cortex LLM Functions and Cortex Search enabled.  If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=yYZEVo4S&_fsi=yYZEVo4S).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
-## Setup
+## Setup Environment
 
 Duration: 2
 
@@ -100,7 +112,7 @@ connection_details = {
 session = Session.builder.configs(connection_details).create()
 ```
 
-## Using Cortex Complete
+## Cortex Complete
 
 Duration: 3
 
@@ -112,7 +124,7 @@ from snowflake.cortex import Complete
 print(Complete("mistral-large", "how do snowflakes get their unique patterns?"))
 ```
 
-## Adding Data for Cortex Search
+## Add Data
 
 Duration: 12
 
@@ -247,7 +259,7 @@ for curr in tqdm(results):
     conn.cursor().execute("INSERT INTO streamlit_docs VALUES (%s)", curr.text)
 ```
 
-## Calling the Cortex Search Service
+## Search
 
 Duration: 5
 
@@ -292,7 +304,7 @@ retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
 retrieved_context = retriever.retrieve(query="How do I launch a streamlit app?")
 ```
 
-## Create a RAG with built-in observability
+## Create a RAG
 
 Duration: 5
 
@@ -361,7 +373,7 @@ class RAG_from_scratch:
 rag = RAG_from_scratch()
 ```
 
-## Add feedback functions
+## Feedback Functions
 
 Duration: 5
 
@@ -416,7 +428,7 @@ tru_rag = TruCustomApp(
 )
 ```
 
-## Test the application and observe performance
+## Application Testing
 
 Duration: 3
 
@@ -452,7 +464,7 @@ with tru_rag as recording:
 tru.get_leaderboard()
 ```
 
-## Use Guardrails
+## Guardrails
 
 Duration: 7
 
@@ -509,7 +521,7 @@ class filtered_RAG_from_scratch:
 filtered_rag = filtered_RAG_from_scratch()
 ```
 
-## Test the new app version
+## Measure Improvement
 
 Duration: 7
 
