@@ -250,7 +250,7 @@ class CortexSearchRetriever:
     if resp.results:
       return [curr["doc_text"] for curr in resp.results]
     else return []
-    self.session.close()
+    self._session.close()
 ```
 
 ```python
