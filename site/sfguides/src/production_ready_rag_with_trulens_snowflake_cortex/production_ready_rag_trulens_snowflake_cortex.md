@@ -25,7 +25,7 @@ Duration: 2
 
 For this quickstart, you will need your Snowflake credentials and a GitHub PAT Token ready. For example purposes, we assume they are set in a `.env` file that looks like this:
 
-```
+```bash
 # Loading data from github
 GITHUB_TOKEN=
 
@@ -42,15 +42,15 @@ SNOWFLAKE_CORTEX_SEARCH_SERVICE=
 
 First, we'll install the packages needed:
 
-```python
-pip install snowflake-snowpark-python
+```bash
+pip install llama-index
+pip install llama-index-embeddings-huggingface
+pip install llama-index-readers-github
 pip install notebook
 pip install snowflake-ml-python
-pip install trulens-eval
+pip install snowflake-snowpark-python
 pip install snowflake-sqlalchemy
-pip install llama-index
-pip install llama-index-readers-github
-pip install llama-index-embeddings-huggingface
+pip install trulens-eval
 ```
 
 Then we can load our credentials and set our Snowflake connection
@@ -79,15 +79,10 @@ session = Session.builder.configs(connection_details).create()
 
 Duration: 3
 
-With the session set, we have what need to call a Snowflake Cortex LLM:
+With the session set, we have what we need to try out Snowflake Cortex LLM:
 
 ```python
 from snowflake.cortex import Complete
-
-text = """
-  The Snowflake company was co-founded by Thierry Cruanes, Marcin Zukowski,
-  and Benoit Dageville in 2012 and is headquartered in Bozeman, Montana.
-"""
 
 print(Complete("mistral-large", "how do snowflakes get their unique patterns?"))
 ```
@@ -106,7 +101,7 @@ This requires three steps:
 
 ### Read and preprocess unstructured documents
 
-For this example, we want to load Cortex Search with documentation from Github about a popular open-source library, Streamlit. To do so, we'll use a GitHub data loader available from LlamaHub.
+For this example, we want to load Cortex Search with documentation from GitHub about a popular open-source library, Streamlit. To do so, we'll use a GitHub data loader available from LlamaHub.
 
 Here we'll also expend some effort to clean up the text so we can get better search results.
 
@@ -320,15 +315,15 @@ class RAG_from_scratch:
     Generate answer from context.
     """
     prompt = f"""
-    'You are an expert assistance extracting information from context provided.
+    You are an expert assistant extracting information from context provided.
     Answer the question based on the context. Be concise and do not hallucinate.
     If you don´t have the information just say so.
     Context: {context_str}
     Question:
     {query}
-    Answer: '
+    Answer:
     """
-    return Complete("mistral-large", query)
+    return Complete("mistral-large", prompt)
 
   @instrument
   def query(self, query: str) -> str:
@@ -468,15 +463,15 @@ class filtered_RAG_from_scratch:
     Generate answer from context.
     """
     prompt = f"""
-    'You are an expert assistance extracting information from context provided.
+    You are an expert assistant extracting information from context provided.
     Answer the question based on the context. Be concise and do not hallucinate.
     If you don´t have the information just say so.
     Context: {context_str}
     Question:
     {question}
-    Answer: '
+    Answer:
     """
-    return Complete("mistral-large", query)
+    return Complete("mistral-large", prompt)
 
   @instrument
   def query(self, query: str) -> str:
@@ -490,7 +485,7 @@ filtered_rag = filtered_RAG_from_scratch()
 
 Duration: 7
 
-We can combine the new version of our app with the feedback functions we already defined
+We can combine the new version of our app with the feedback functions we already defined.
 
 ```python
 from trulens_eval import TruCustomApp
@@ -537,9 +532,9 @@ tru.get_leaderboard()
 
 Duration: 1
 
-### What You Learned
+### What We Learned
 
-- In this quickstart, we learned build a RAG with Cortex Search and Cortex LLM Fucntions.
+- In this quickstart, we learned build a RAG with Cortex Search and Cortex LLM Functions.
 - Additionally, we learned how to set up TruLens instrumentation and create a custom RAG class with TruLens feedback providers.
 - Finally, we learned how to use feedback results as guardrails to improve a RAG application so it can be production-ready.
 
