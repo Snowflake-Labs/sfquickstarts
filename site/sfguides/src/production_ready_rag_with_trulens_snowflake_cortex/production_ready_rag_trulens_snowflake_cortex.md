@@ -399,30 +399,30 @@ Now that the application is ready, we can run it on a test set of questions abou
 
 ```python
 prompts = [
-  "How do I launch a streamlit app?",
-  "How can I capture the state of my session in streamlit?",
-  "How do I install streamlit?",
-  "How do I change the background color of a streamlit app?",
-  "What's the advantage of using a streamlit form?",
-  "What are some ways I should use checkboxes?",
-  "How can I conserve space and hide away content?",
-  "Can you recommend some resources for learning Streamlit?",
-  "What are some common use cases for Streamlit?",
-  "How can I deploy a streamlit app on the cloud?",
-  "How do I add a logo to streamlit?",
-  "What is the best way to deploy a Streamlit app?",
-  "How should I use a streamlit toggle?",
-  "How do I add new pages to my streamlit app?",
-  "How do I write a dataframe to display in my dashboard?",
-  "Can I plot a map in streamlit? If so, how?",
-  "How do vector stores enable efficient similarity search?",
+    "How do I launch a streamlit app?",
+    "How can I capture the state of my session in streamlit?",
+    "How do I install streamlit?",
+    "How do I change the background color of a streamlit app?",
+    "What's the advantage of using a streamlit form?",
+    "What are some ways I should use checkboxes?",
+    "How can I conserve space and hide away content?",
+    "Can you recommend some resources for learning Streamlit?",
+    "What are some common use cases for Streamlit?",
+    "How can I deploy a streamlit app on the cloud?",
+    "How do I add a logo to streamlit?",
+    "What is the best way to deploy a Streamlit app?",
+    "How should I use a streamlit toggle?",
+    "How do I add new pages to my streamlit app?",
+    "How do I write a dataframe to display in my dashboard?",
+    "Can I plot a map in streamlit? If so, how?",
+    "How do vector stores enable efficient similarity search?",
 ]
 ```
 
 ```python
 with tru_rag as recording:
-  for prompt in prompts:
-    rag.query(prompt)
+    for prompt in prompts:
+        rag.query(prompt)
 
 tru.get_leaderboard()
 ```
@@ -441,43 +441,45 @@ To do so, we'll rebuild our RAG using the `@context-filter` decorator on the met
 from trulens_eval.guardrails.base import context_filter
 
 # note: feedback function used for guardrail must only return a score, not also reasons
-f_context_relevance_score = (
-  Feedback(provider.context_relevance, name = "Context Relevance")
+f_context_relevance_score = Feedback(
+    provider.context_relevance, name="Context Relevance"
 )
+
 
 class filtered_RAG_from_scratch:
 
-  def __init__(self):
-    self.retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
+    def __init__(self):
+        self.retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
 
-  @instrument
-  @context_filter(f_context_relevance_score, 0.75, keyword_for_prompt="query")
-  def retrieve_context(self, query: str) -> list:
-    """
-    Retrieve relevant text from vector store.
-    """
-    return self.retriever.retrieve(query)
+    @instrument
+    @context_filter(f_context_relevance_score, 0.75, keyword_for_prompt="query")
+    def retrieve_context(self, query: str) -> list:
+        """
+        Retrieve relevant text from vector store.
+        """
+        return self.retriever.retrieve(query)
 
-  @instrument
-  def generate_completion(self, query: str, context_str: list) -> str:
-    """
-    Generate answer from context.
-    """
-    prompt = f"""
-    You are an expert assistant extracting information from context provided.
-    Answer the question based on the context. Be concise and do not hallucinate.
-    If you don´t have the information just say so.
-    Context: {context_str}
-    Question:
-    {question}
-    Answer:
-    """
-    return Complete("mistral-large", prompt)
+    @instrument
+    def generate_completion(self, query: str, context_str: list) -> str:
+        """
+        Generate answer from context.
+        """
+        prompt = f"""
+            You are an expert assistant extracting information from context provided.
+            Answer the question based on the context. Be concise and do not hallucinate.
+            If you don´t have the information just say so.
+            Context: {context_str}
+            Question:
+            {question}
+            Answer:
+        """
+        return Complete("mistral-large", prompt)
 
-  @instrument
-  def query(self, query: str) -> str:
-    context_str = self.retrieve_context(query=query)
-    return self.generate_completion(query=query, context_str=context_str)
+    @instrument
+    def query(self, query: str) -> str:
+        context_str = self.retrieve_context(query=query)
+        return self.generate_completion(query=query, context_str=context_str)
+
 
 filtered_rag = filtered_RAG_from_scratch()
 ```
@@ -490,9 +492,12 @@ We can combine the new version of our app with the feedback functions we already
 
 ```python
 from trulens_eval import TruCustomApp
-tru_rag = TruCustomApp(rag,
-  app_id = 'RAG v1',
-  feedbacks = [f_groundedness, f_answer_relevance, f_context_relevance])
+
+tru_rag = TruCustomApp(
+    rag,
+    app_id="RAG v1",
+    feedbacks=[f_groundedness, f_answer_relevance, f_context_relevance],
+)
 ```
 
 Then we run it on a test set of questions about streamlit to measure its performance.
