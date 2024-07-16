@@ -1,4 +1,4 @@
-author:
+author: Ilya Sudakov
 id: improvado
 summary: Getting Started guide to show how users can use Improvado Composable “Agentic” Data Platform with Snowflake
 categories: Getting-Started,partner-integrations,marketing
@@ -163,7 +163,7 @@ Improvado Billing Dashboard offers an in-depth analysis of your data usage, prov
 
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Duration: 1
 
 In this guide, we learned how to connect your Snowflake data to Improvado for analytics & governance.
