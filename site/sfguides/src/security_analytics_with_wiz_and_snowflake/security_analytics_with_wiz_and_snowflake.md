@@ -10,7 +10,7 @@ tags: Getting Started, Security, Wiz, Security Data Lake
 # Security Analytics with Wiz and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 5
 
 In this guide, you'll learn how to analyze Wiz data in Snowflake. The Snowflake and Wiz integration enables teams using Wiz to store Wiz Issues, Vulnerabilities, Host Configuration Findings, and other findings in Snowflake for historical analysis and other security analytics use cases such as: 
 1. Incident response
@@ -37,7 +37,7 @@ Wiz scans cloud workloads and generate Issues and security findings which then a
 - a Snowsight dashbaord that will be powered by these queries
 <!-- ------------------------ -->
 ## Setting up Snowflake
-Duration: 3
+Duration: 5
 
 The first thing you will need to do is to download the following .sql [file](<insert URL here>)
 that contains a series of SQL commands we will execute throughout this lab.
@@ -305,9 +305,10 @@ With this view, we can start answering questions about Issue trends over time. F
 
 ```sql
 --issues identified by day
-select severity,created_at::date as day, count(*)
-from WIZDB.WIZSCHEMA.ISSUES_HISTORICAL 
-group by day,severity;
+select created_at::date as day,severity, count(*), 
+from wizdb.wizschema.issues_historical 
+group by day,severity
+order by 3 desc ;
 ```
 
 We can visualize the data to see trends more clearly - click on the `Chart` option in the results panel and create a line chart to better understand the issues trend.
@@ -345,11 +346,10 @@ Knowing the most frequent issue types helps focus remediation efforts. Let's see
 ```sql
 SELECT
     TITLE,
-    SEVERITY,
     COUNT(*) AS ISSUE_COUNT
-FROM WIZDB.WIZSCHEMA.ISSUES_HISTORICAL
-WHERE severity = 'CRITICAL'
-GROUP BY TITLE, SEVERITY
+FROM wizdb.wizschema.issues_historical
+where severity  = 'CRITICAL'
+GROUP BY TITLE
 ORDER BY ISSUE_COUNT DESC;
 ```
 
@@ -386,9 +386,10 @@ select
 from (
     select
         assetid,
+        id,
         max(datediff('day', firstdetected, lastdetected)) as oldest_vuln_age
     from WIZDB.WIZSCHEMA.VULNERABILITIES_HISTORICAL
-    group by assetid
+    group by assetid,id,cvssseverity
     order by oldest_vuln_age desc
 ) group by oldest_vuln_age
 order by 1 asc;
@@ -402,10 +403,10 @@ The following query provides shows the assests with the oldest Vulnerabilities a
 
 ```sql
 SELECT
-    assetid,projects,
+    assetid,name,projects,
     MAX(DATEDIFF('day', firstdetected, lastdetected)) AS oldest_vuln_age
 FROM WIZDB.WIZSCHEMA.VULNERABILITIES_HISTORICAL
-GROUP BY assetid,projects
+GROUP BY assetid,projects,name
 ORDER BY oldest_vuln_age DESC;
 ```
 
