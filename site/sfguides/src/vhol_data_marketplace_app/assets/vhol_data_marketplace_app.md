@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Building an application on Snowflake with data from Snowflake Data Marketplace
+# Building an application on Snowflake with data from Snowflake Marketplace
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -51,7 +51,7 @@ Snowflake combined with Quasar, a modern Application framework together with AWS
 
 
 ### What You’ll Build 
-- A Quasar .vue chart sourced with Snowflake data marketplace Knoema Economy and Poverty Data.
+- A Quasar .vue chart sourced with Snowflake Marketplace Knoema Economy and Poverty Data.
 - A Snowflake Query using the Regression function
 - A AWS Lambda with the snowflake python connector
 
@@ -464,7 +464,7 @@ Duration: 1
 
 
 
-To learn more about Snowflake Data MarketPlace visit the official website here: [Snowflake Data MarketPlace](https://www.snowflake.com/data-marketplace/)
+To learn more about Snowflake Marketplace visit the official website here: [Snowflake Marketplace](https://www.snowflake.com/data-marketplace/)
 
 To learn more about Building Data Aapplications isit the official  website here: ([Building Data Aapplications](https://www.snowflake.com/workloads/data-applications/)
 

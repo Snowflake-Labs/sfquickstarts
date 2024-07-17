@@ -25,7 +25,7 @@ Along the way, we will also share tips on how you could turn what may seem like 
 ### What You Will Build
 The final product includes an application that lets users test how the LLM responds with and without the context document(s) to show how RAG can address hallucinations.  
 
-![App](assets/qs_cortex_intro.gif)
+![App](assets/qs_cortex_intro_arctic.gif)
 
 ### RAG Overview
 
@@ -47,8 +47,6 @@ The final product includes an application that lets users test how the LLM respo
 - A Snowflake account with [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) enabled by ORGADMIN.
 - Snowflake Cortex vector functions for semantic distance calculations along with VECTOR as a data type enabled.
 
-> aside negative
-> NOTE: To get access to Snowflake Cortex vector functions and vector datatype (both currently in private preview) reach out to your Snowflake account team.
 
 <!-- ------------------------ -->
 ## Organize Documents and Create Pre-Processing Functions
@@ -62,8 +60,8 @@ Let's download a few documents we have created about bikes. In those documents w
 
 - [Mondracer Infant Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Mondracer_Infant_Bike.pdf)
 - [Premium Bycycle User Guide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Premium_Bicycle_User_Guide.pdf)
-- [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Xtreme_Road_Bike_105_SL.pdf)
 - [Ski Boots TDBootz Special](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Ski_Boots_TDBootz_Special.pdf)
+- [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Ultimate_Downhill_Bike.pdf)
 
 **Step 2**. Open a new Worksheet
 
@@ -177,9 +175,6 @@ Duration: 15
 
 In this step we are going to leverage our document processing functions to prepare documents before turning the text into embeddings using Snowflake Cortex. These embeddings will be stored in a Snowflake Table using the new native VECTOR data type. 
 
-> aside negative
-> NOTE: To get access to these features (currently in private preview) reach out to your Snowflake account team.
-
 ![App](assets/fig4.png)
 
 **Step 1**. Create the table where we are going to store the chunks and vectors for each PDF. Note here the usage of the new VECTOR data type:
@@ -204,7 +199,7 @@ insert into docs_chunks_table (relative_path, size, file_url,
             file_url, 
             build_scoped_file_url(@docs, relative_path) as scoped_file_url,
             func.chunk as chunk,
-            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
+            SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2',chunk) as chunk_vec
     from 
         directory(@docs),
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path))) as func;
@@ -217,10 +212,10 @@ The insert statement is reading the records from the docs_stream stream and it i
 The **chunk** text is passed to Snowflake Cortex to generate the embeddings with this code:
 
 ```code
-            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
+            SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2',chunk) as chunk_vec
 ````
 
-That code is calling the embed_text function using the e5-base-v2 trnasformer and returning an embedding vector.
+That code is calling the embed_text function using the e5-base-v2 transformer and returning an embedding vector.
 
 
 If you check the **docs_chunks_table** table, you should see the PDFs has been processed 
@@ -296,11 +291,11 @@ def create_prompt (myquestion, rag):
         cmd = """
          with results as
          (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec,
-                    snowflake.cortex.embed_text('e5-base-v2', ?)) as distance,
+           VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+                    SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
            chunk
          from docs_chunks_table
-         order by distance desc
+         order by similarity desc
          limit ?)
          select chunk, relative_path from results 
          """
@@ -312,9 +307,7 @@ def create_prompt (myquestion, rag):
         prompt_context = ""
         for i in range (0, context_lenght):
             prompt_context += df_context._get_value(i, 'CHUNK')
-        #st.text(prompt_context)
 
-                                #prompt_context = df_context._get_value(0,'CHUNK')
         prompt_context = prompt_context.replace("'", "")
         relative_path =  df_context._get_value(0,'RELATIVE_PATH')
     
@@ -346,7 +339,7 @@ def complete(myquestion, model_name, rag = 1):
 
     prompt, url_link, relative_path =create_prompt (myquestion, rag)
     cmd = f"""
-             select snowflake.cortex.complete(?,?) as response
+             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
            """
     
     df_response = session.sql(cmd, params=[model_name, prompt]).collect()
@@ -371,11 +364,17 @@ for doc in docs_available:
     list_docs.append(doc["name"])
 st.dataframe(list_docs)
 
-
-model = st.sidebar.selectbox('Select your model:',('mistral-7b',
-                                           'llama2-70b-chat',
-                                           'mixtral-8x7b',
-                                           'gemma-7b'))
+#Here you can choose what LLM to use. Please note that they will have different cost & performance
+model = st.sidebar.selectbox('Select your model:',(
+                                    'mixtral-8x7b',
+                                    'snowflake-arctic',
+                                    'mistral-large',
+                                    'llama3-8b',
+                                    'llama3-70b',
+                                    'reka-flash',
+                                     'mistral-7b',
+                                     'llama2-70b-chat',
+                                     'gemma-7b'))
 
 question = st.text_input("Enter question", placeholder="Is there any special lubricant to be used with the premium bike?", label_visibility="collapsed")
 
@@ -390,7 +389,6 @@ else:
 
 if question:
     display_response (question, model, use_rag)
-
 ```
 ### Explanation
 
@@ -402,16 +400,17 @@ When the box is checked, this code is going embed the question and look for the 
 
 ```python
          cmd = """
-         with results as
+          with results as
          (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec,
-                    snowflake.cortex.embed_text('e5-base-v2', ?)) as distance,
+           VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+                    SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
            chunk
          from docs_chunks_table
-         order by distance desc
+         order by similarity desc
          limit ?)
          select chunk, relative_path from results 
-         """
+
+          """
     
         df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()      
  ``` 
@@ -427,7 +426,7 @@ def complete(myquestion, model_name, rag = 1):
 
     prompt, url_link, relative_path =create_prompt (myquestion, rag)
     cmd = f"""
-             select snowflake.cortex.complete(?,?) as response
+             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
            """
     
     df_response = session.sql(cmd, params=[model_name, prompt]).collect()
@@ -443,7 +442,7 @@ Streamlit in Snowflake provides a side-by-side editor and preview screen that ma
 
 ![App](assets/fig10.png)
 
-In the app, we can see the two documents we had uploaded previously and can be used to ask questions while trying multiple options using interactive widgets:
+In the app, we can see the documents we had uploaded previously and can be used to ask questions while trying multiple options using interactive widgets:
 
 - LLM dropdown: Evaluate the response to the same question from different LLMs available in Snowflake Cortex.
 - Context toggle: Check the box to receive answer with RAG. Uncheck to see how LLM answers without access to the context.
@@ -452,12 +451,9 @@ To test out the RAG framework, here a few questions you can ask and then use the
 
 - Is there any special lubricant to be used with the premium bike?
 - What is the warranty for the premium bike?
-- What is the max recommended speed for the infant bike?
 - Does the mondracer infant bike need any special tool?
 - Is there any temperature to be considered with the premium bicycle?
 - What is the temperature to store the ski boots?
-- What are the tires used for the road bike?
-- Is there any discount when buying the road bike?
 - Where have the ski boots been tested and who tested them?
 
 
@@ -574,11 +570,19 @@ def main():
 
 def config_options():
 
-    st.sidebar.selectbox('Select your model:',('mistral-7b',
-                                           'llama2-70b-chat',
-                                           'mixtral-8x7b',
-                                           'gemma-7b'), key="model_name")
 
+    
+    st.sidebar.selectbox('Select your model:',(
+                                    'mixtral-8x7b',
+                                    'snowflake-arctic',
+                                    'mistral-large',
+                                    'llama3-8b',
+                                    'llama3-70b',
+                                    'reka-flash',
+                                     'mistral-7b',
+                                     'llama2-70b-chat',
+                                     'gemma-7b'), key="model_name")
+                                           
     # For educational purposes. Users can chech the difference when using memory or not
     st.sidebar.checkbox('Do you want that I remember the chat history?', key="use_chat_history", value = True)
 
@@ -599,11 +603,11 @@ def get_similar_chunks (question):
     cmd = """
         with results as
         (SELECT RELATIVE_PATH,
-           VECTOR_COSINE_DISTANCE(docs_chunks_table.chunk_vec,
-                    snowflake.cortex.embed_text('e5-base-v2', ?)) as distance,
+           VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+                    SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
            chunk
         from docs_chunks_table
-        order by distance desc
+        order by similarity desc
         limit ?)
         select chunk, relative_path from results 
     """
@@ -669,7 +673,7 @@ def create_prompt (myquestion):
     if st.session_state.use_chat_history:
         chat_history = get_chat_history()
 
-        if chat_history != "": #There is chat_history, so not first question
+        if chat_history != []: #There is chat_history, so not first question
             question_summary = summarize_question_with_history(chat_history, myquestion)
             prompt_context =  get_similar_chunks(question_summary)
         else:
@@ -720,7 +724,7 @@ if __name__ == "__main__":
 
 ```
 
-The app will look like this
+The app will look like this (note the side bar where you can select several options)
 
 ![App](assets/fig12_UI.png)
 
@@ -877,6 +881,14 @@ Another example:
 
 ![App](assets/fig17_infant.png)
 
+Here another suggestion based on specific info from the documents (unique for us):
+
+- What is the name of the ski boots?
+- Where have been tested?
+- Who tested them?
+- Do they include any special component?
+
+
 You can try with your own documents. You will notice different peformance depending on the LLM you will be using. 
 
 <!-- ------------------------ -->
@@ -908,7 +920,7 @@ create or replace task task_extract_chunk_vec_from_pdf
             file_url, 
             build_scoped_file_url(@docs, relative_path) as scoped_file_url,
             func.chunk as chunk,
-            snowflake.cortex.embed_text('e5-base-v2',chunk) as chunk_vec
+            SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2',chunk) as chunk_vec
     from 
         docs_stream,
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path)))            as func;
@@ -918,15 +930,27 @@ alter task task_extract_chunk_vec_from_pdf resume;
 
 You can add a new PDF document and check that in around a minute, it will be available to be used within your Streamlit application. You may want to upload your own documents or try with this new bike guide:
 
-- [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Ultimate_Downhill_Bike.pdf)
+- [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Xtreme_Road_Bike_105_SL.pdf)
+
+After uploading the document (and if you are fast enough before the doc is automatically processed) you can see the doc in the stream:
+
+```SQL
+select * from docs_stream;
+```
+
+It will return no value once the doc has been processed. Once the documet is in your table, you can start asking questions and will be used in the RAG Process
+
+```SQL
+select * from docs_chunks_table where relative_path ilike '%Road_Bike%';
+```
+
 
 Try asking questions that are unique in that new bike guide like:
 
-- What is the name of the ultimate downhill bike?
-- What is the suspension used for the downhill bike?
+- What tires model brings the road bike?
+- Is there any discount for the Xtreme Road Bike?
+
 (note: try different models to see different results)
-- What is the carbon used for the downhill bike?
-- Who are the testers for the downhill bike?
 
 Once you have finish testing uploading new documents and asking questions, you may want to suspend the task:
 
