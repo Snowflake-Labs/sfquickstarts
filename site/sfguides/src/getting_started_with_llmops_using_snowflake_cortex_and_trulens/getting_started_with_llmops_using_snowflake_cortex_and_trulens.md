@@ -263,7 +263,7 @@ for curr in tqdm(results):
 
 Duration: 5
 
-First we need to create a Cortex Search Service in Snowflake. We can do that with the following SQL command:
+First we need to create a Cortex Search Service in Snowflake. We can do that with the following SQL command, replacing `<database>` and `schema` with your database and schema:
 
 ```sql
 CREATE OR REPLACE CORTEX SEARCH SERVICE TRULENS_DEMO_CORTEX_SEARCH_SERVICE
@@ -273,7 +273,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE TRULENS_DEMO_CORTEX_SEARCH_SERVICE
 AS (
   SELECT
       doc_text
-  FROM JREINI_DB.TRULENS_DEMO_SCHEMA.STREAMLIT_DOCS
+  FROM <database>.<schema>.streamlit_docs
 );
 ```
 
