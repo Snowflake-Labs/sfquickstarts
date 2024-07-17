@@ -39,17 +39,11 @@ Wiz scans cloud workloads and generate Issues and security findings which then a
 ## Setting up Snowflake
 Duration: 5
 
-The first thing you will need to do is to download the following .sql [file](<insert URL here>)
-that contains a series of SQL commands we will execute throughout this lab.
-
 At this point, log into your Snowflake account and have a clear screen to start working with. If you have just created a free trial account, feel free to minimize or close and hint boxes that are looking to help guide you. These will not be needed for this lab and most of the hints will be covered throughout the remainder of this exercise.
-
-To ingest our script in the Snowflake UI, navigate to the plus button on the top right hand side of a "SQL Worksheet” and load our script.
-The SQL script file should show up as text in a new worksheet.
 
 Let's go ahead and set the role we want to act as, which will be `SECURITYADMIN` to begin with. We can either set this either manually by hovering over the people icon and choosing SECURITYADMIN from the “Role” dropdown, or we can run the first line of code in our worksheet. In addition to traditional SQL statements, Snowflake Data Definition ([DDL](https://docs.snowflake.com/en/sql-reference/sql-ddl-summary.html)) commands, such as setting the worksheet context, can also be written and executed within the worksheet. 
 
-For convenience all the SQL commands needed are already in the SQL script. Let's execute the first SQL command in the SQL script.
+Let's execute the first SQL command in the SQL script.
 
 ```sql
 USE ROLE SECURITYADMIN;
