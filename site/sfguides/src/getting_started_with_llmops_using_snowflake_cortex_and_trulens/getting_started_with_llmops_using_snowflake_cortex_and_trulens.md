@@ -263,7 +263,21 @@ for curr in tqdm(results):
 
 Duration: 5
 
-Here we'll create a `CortexSearchRetreiver` class to connect to our cortex search service and add the `retrieve` method that we can leverage for calling it.
+First we need to create a Cortex Search Service in Snowflake. We can do that with the following SQL command:
+
+```sql
+CREATE OR REPLACE CORTEX SEARCH SERVICE TRULENS_DEMO_CORTEX_SEARCH_SERVICE
+  ON doc_text
+  WAREHOUSE = JREINI_WH
+  TARGET_LAG = '1 hour'
+AS (
+  SELECT
+      doc_text
+  FROM JREINI_DB.TRULENS_DEMO_SCHEMA.STREAMLIT_DOCS
+);
+```
+
+Next, we will create a `CortexSearchRetreiver` class to connect to our cortex search service and add the `retrieve` method that we can leverage for calling it.
 
 ```python
 import os
