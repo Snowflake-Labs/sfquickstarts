@@ -124,15 +124,16 @@ By default, price for the upcoming month is set to the current price. As tasty d
 
 #### Create Streamlit Application
 - Within Snowsight, Click on the Streamlit Tab
+- Switch Role to `TB_PO_DATA_SCIENTIST`
 - Click on `+Streamlit App` to create a new Streamlit Application
-- Enter App Name, Warehouse and Location.
+- Name the Streamlit app "Application Monthly Pricing App"
+- Select the `TB_PO_PROD` database and `ANALYTICS` schema for the Streamlit application location and `TB_PO_APP_WH` for the warehouse and click `Create`
 - Click `Create`
-- Name the Application Monthly Pricing App
-- Set the Warehouse to joviane_demo_tastybytespriceoptimization_DATA_APP_WH
-- Set the database to joviane_demo_tastybytespriceoptimization_prod
-- Place the Applciation in the analytics Schema
+<img src="assets/streamlit_settings.png"/>
 - This will create a sample Streamlit Application
-- Replace the sample code with the below Python code using Edit
+- Click on Packages in the top left corner and search for "snowflake-ml-python" and add version 1.4.0
+<img src="assets/streamlit_packages.png"/>
+- Replace the sample code with the Python code below using Edit
 ```
 # Import python packages
 import streamlit as st
@@ -172,7 +173,7 @@ st.write(
 
 # Display and get updated prices from the data editor object
 set_prices = session.create_dataframe(
-    st.experimental_data_editor(
+    st.data_editor(
         df.filter((F.col("brand") == brand) & (F.col("item") == item))
     )
 )
@@ -205,7 +206,7 @@ df_demand = set_prices.join(
 ).withColumn("price",F.col("new_price")).withColumn("price_change",F.col("PRICE")- F.col("base_price"))
 
 # Get demand estimator model from registry
-reg = Registry(session=session) 
+reg = Registry(session=session)
 demand_estimator = reg.get_model("DEMAND_ESTIMATION_MODEL").default
 
 for col in feature_cols :
@@ -275,8 +276,6 @@ if st.button("Update Prices"):
 with st.expander("View Submitted Prices"):
     st.table(session.table("pricing_final").order_by(F.col("timestamp").desc()))
 ```
-- Next we need to add a few packages to this Application. Click on Packages in the top left corner:
-- Search for "snowflake-ml-python" and add "snowflake-ml-python"
 
 <!-- ------------------------ -->
 ## Conclusion
