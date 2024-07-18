@@ -15,9 +15,14 @@ Duration: 5
 
 By completing this guide, you will be able to run Apache Airflow application with Celery Executor in Snowpark Container services.
 
-This application is made up of the following containers:
+##
+### Prerequisites
+- A Snowflake account with access to SnowPark Container Services.
+- Docker installed locally for building images.
+- Basic knowledge of Apache Airflow and containerized deployments.
 
 ##
+This application is made up of the following containers:
 - **Airflow Webserver**: Provides a user interface for managing and monitoring workflows. It allows users to trigger tasks, view logs, and visualize DAGs (Directed Acyclic Graphs).
 - **Airflow Scheduler**: Monitors the DAGs and schedules the tasks to run. It determines the order of task execution based on the dependencies defined in the DAGs.
 - **Airflow Workers**: Executes tasks distributed by the Airflow scheduler using Celery for parallel processing. 
@@ -40,22 +45,19 @@ Here is a summary of what you will be doing in each step by following this quick
 - **Run DAG**: Run a sample DAG 
 - **Clean up**: If you don’t plan to explore other tutorials, you should remove billable resources you created.
 
+##
 ### What is Apache Airflow?
 
 Apache Airflow is an open-source platform to programmatically author, schedule, and monitor workflows. Using Directed Acyclic Graphs (DAGs), Airflow allows users to define workflows as code, ensuring flexibility, scalability, and maintainability. It's widely used in various scenarios, from ETL processes and data pipeline automation to machine learning model training and deployment.
 
 Learn more about [Apache Airflow](https://airflow.apache.org/docs/apache-airflow/2.7.3/index.html/).
 
+##
 ### What is Snowpark Container Services?
 Snowpark Container Services (SPCS) is a feature provided by Snowflake that allows users to run containerized workloads within the Snowflake environment. It is designed to enable the execution of custom code and applications in a scalable and efficient manner, leveraging the Snowflake data platform's infrastructure
 
 Learn more about [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview/).
-
-### Prerequisites
-- A Snowflake account with access to SnowPark Container Services.
-- Docker installed locally for building images.
-- Basic knowledge of Apache Airflow and containerized deployments.
-
+##
 
 <!-- ------------------------ -->
 ## Setup Environment
