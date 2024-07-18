@@ -11,7 +11,7 @@ tags: Getting Started, Tasty Bytes, Price Optimization, Notebooks
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 1
+Duration: 2
 <img src="assets/price_optimization_header.png"/>
 
 Tasty Bytes is one of the largest food truck networks in the world with localized menu options spread across 15 food truck brands globally. Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. Price optimization enables Tasty Bytes to achieve this goal by determining the right prices for their menu items to maximize profitability while maintaining customer satisfaction. 
@@ -68,7 +68,7 @@ Along the way, we will delve more into these topics:
 
 <!-- ------------------------ -->
 ## Setting up Data in Snowflake
-Duration: 10
+Duration: 5
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to:
@@ -83,7 +83,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Machine Learning With Snowpark - Price Recommendations: Setting Up Snowflake Notebook
-Duration: 15
+Duration: 10
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create a Snowflake Notebook by importing the notebook
@@ -277,11 +277,13 @@ with st.expander("View Submitted Prices"):
     st.table(session.table("pricing_final").order_by(F.col("timestamp").desc()))
 ```
 
+- This application shows the recommended price per item per day-of-week and the profit lift over the current price. Users can change prices and see the impact on demand and profit. Finalized prices are saved back to Snowflake.
+
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
-**Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price.
+**Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price. 
 
 ### What we've covered
 With the completion of this quickstart, you have now delved into:
