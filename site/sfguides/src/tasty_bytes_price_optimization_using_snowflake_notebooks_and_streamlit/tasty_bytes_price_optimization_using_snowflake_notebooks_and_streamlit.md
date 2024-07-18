@@ -89,22 +89,16 @@ Duration: 15
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create a Snowflake Notebook by importing the notebook
 - Download the notebook **tasty_bytes_price_optimization_and_recommendation.ipynb** using this repository [link](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/notebook/tasty_bytes_price_optimization_and_recommendations.ipynb)
 - Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on Projects -> Notebook
-- Using the import button on the top right, import the downloaded **tasty_bytes_price_optimization_and_recommendation.ipynb** notebook
-- Provide a name for the notebook and select appropriate database `JOVIANE_DEMO_TASTYBYTESPRICEOPTIMIZATION_PROD`, schema `ANALYTICS` and warehouse `JOVIANE_DEMO_TASTYBYTESPRICEOPTIMIZATION_DS_WH`
-
-- Open the notebook once created and add the following packages by using the "Packages" button on the top right and selecting their appropriate versions
-    - matplotlib -> 3.7.3
-    - ipywidgets -> latest
-    - openpyxl -> latest
-    - scikit-learn -> 1.2.2
-    - snowflake-ml-python -> 1.4.0
-    - shap -> latest
-    - numpy -> 1.24.3
-    - xgboost -> 1.7.3
-    - seaborn -> latest
-
-- Once the notebook has uploaded, scroll down to cell 39 and click on `Run all above`
-<img src="assets/cell39.png"/>
+- Switch Role to `TB_PO_DATA_SCIENTIST`
+- Download the [Tasty Bytes Price Optimization and Recommendations Notebook](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/tasty_bytes_price_optimization_and_recommendations.ipynb)
+- Using the import button on the top right, import the downloaded Notebook
+<img src="assets/import_notebook.png"/>
+- Select the `TB_PO_PROD` database and `ANALYTICS` schema for the Notebook Location and `TB_PO_DS_WH` for the Notebook warehouse and click `Create`
+<img src="assets/notebook_settings.png"/>
+- Open the notebook once created and add the following packages by using the "Packages" button on the top right and search for the packages with their respective versions
+<img src="assets/notebook_packages.png"/>
+- At the top of the page, click "Start" to start the Notebook session and run the cells by clicking "Run All"
+<img src="assets/start.png"/>
 
 <!-- ------------------------ -->
 ## Machine Learning With Snowpark Part 2 - Price Recommendations
