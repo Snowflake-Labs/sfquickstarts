@@ -283,7 +283,8 @@ with st.expander("View Submitted Prices"):
 ## Conclusion
 Duration: 1
 
-**Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price. 
+**Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price.
+- To remove all the objects created in this Quickstart, run the [Price Optimization Cleanup SQL](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/sql/tb_po_solution_cleanup.sql) script in a Worksheet
 
 ### What we've covered
 With the completion of this quickstart, you have now delved into:
