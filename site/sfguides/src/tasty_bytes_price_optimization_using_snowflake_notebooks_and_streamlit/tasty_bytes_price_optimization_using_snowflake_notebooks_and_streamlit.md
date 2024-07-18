@@ -163,7 +163,7 @@ item = st.selectbox(
     "Item:", df.filter(F.col("brand") == brand).select("item").distinct()
 )
 
-# Provide instructions for updating pricing and using recommendtions
+# Provide instructions for updating pricing and using recommendations
 st.write(
     """
     View price recommendations and profit lift over current month pricing.
