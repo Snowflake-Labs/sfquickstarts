@@ -111,7 +111,7 @@ By default, price for the upcoming month is set to the current price. As tasty d
 ### Purpose
 **The purpose of this final step is to showcase how easily an application can be built and deployed to allow business users to submit data into Snowflake and interact directly with a ML model.** We will build a Streamlit App on the fly in Snowflake to support Tasty Bytes's brand managers in deciding monthly pricing.
 - **Describe Current Pricing Process**
-  - Import an excel spreadsheet and inference the demand model
+  - Import an Excel spreadsheet and inference the demand model
   - Calculate profit lift from new prices
   
 - **Build an Application to Set Pricing and Interact with Recommendations**
