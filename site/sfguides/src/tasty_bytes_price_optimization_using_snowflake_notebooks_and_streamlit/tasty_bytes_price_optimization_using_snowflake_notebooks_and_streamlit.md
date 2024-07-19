@@ -279,12 +279,36 @@ with st.expander("View Submitted Prices"):
 
 - This application shows the recommended price per item per day-of-week and the profit lift over the current price. Users can change prices and see the impact on demand and profit. Finalized prices are saved back to Snowflake.
 
-<!-- ------------------------ -->
+<-!- ------------------------ -->
+## Clean Up
+Duration: 1
+
+### Remove Snowflake Objects
+- Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
+- Copy and paste the following SQL statements in the worksheet to drop all Snowflake objects created in this Quickstart
+```
+USE ROLE securityadmin;
+DROP ROLE IF EXISTS tb_po_data_scientist;
+USE ROLE accountadmin;
+DROP DATABASE IF EXISTS tb_po_prod;
+DROP WAREHOUSE IF EXISTS tb_po_ds_wh;
+DROP WAREHOUSE IF EXISTS tb_po_app_wh;
+```
+
+**Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price.
+
+### What we've covered
+With the completion of this quickstart, you have now delved into:
+- Data Exploration
+- Feature Engineering
+- Model Training & Deployment
+- Model Utilization
+
+<-!- ------------------------ -->
 ## Conclusion
 Duration: 1
 
 **Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price.
-- To remove all the objects created in this Quickstart, run the [Price Optimization Cleanup SQL](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/sql/tb_po_solution_cleanup.sql) script in a Worksheet
 
 ### What we've covered
 With the completion of this quickstart, you have now delved into:
