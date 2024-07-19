@@ -881,16 +881,22 @@ By default, price for the upcoming month is set to the current price. As Tasty B
 - **Application Deployment**
   - Share the application in Snowflake with the brand managers
 
+<img src="assets/po_gif.gif">
+
 #### Create Streamlit Application
 - Within Snowsight, Click on the `Streamlit` tab
 - Switch Role to `TB_PO_DATA_SCIENTIST`
 - Click on `+Streamlit App` to create a new Streamlit Application
 - Name the Streamlit app "Application Monthly Pricing App"
 - Select the `TB_PO_PROD` database and `ANALYTICS` schema for the Streamlit application location and `TB_PO_APP_WH` for the warehouse and click `Create`
+
 <img src="assets/streamlit_settings.png"/>
+
 - This will create a sample Streamlit Application
 - Click on Packages in the top left corner and search for `snowflake-ml-python` and add version `1.4.0`
+
 <img src="assets/streamlit_packages.png"/>
+
 - Replace the sample code with the Python code below
 - Click `Run` to run the "Application Monthly Pricing App" Streamlit Application
 - This application shows the recommended price per item per day-of-week and the profit lift over the current price. Users can change prices and see the impact on demand and profit. Finalized prices are saved back to Snowflake.
