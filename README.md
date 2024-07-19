@@ -98,7 +98,7 @@ We want to maintain a standard and consistency across all QS guides and it's ver
 
 ## How do I get my Snowflake QuickStart on [quickstarts.snowflake.com](https://quickstarts.snowflake.com)?
 
-Proceeed only if you have followed the quidelines outlined in [Write Your First Quickstart](#write-your-first-quickstart).
+Proceed ONLY if you have followed the quidelines outlined in [Write Your First Quickstart](#write-your-first-quickstart).
 
 1. You will need to sign [Snowflake's CLA](https://github.com/snowflakedb/CLA). The action required on your part is to specify in your (first) pull request comment that you accept it. 
 2. Fork this repository
