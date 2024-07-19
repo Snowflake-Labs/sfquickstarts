@@ -1037,6 +1037,7 @@ with st.expander("View Submitted Prices"):
 ```
 - This application shows the recommended price per item per day-of-week and the profit lift over the current price. Users can change prices and see the impact on demand and profit. Finalized prices are saved back to Snowflake.
 
+
 <-!- ------------------------ -->
 ## Clean Up
 Duration: 1
