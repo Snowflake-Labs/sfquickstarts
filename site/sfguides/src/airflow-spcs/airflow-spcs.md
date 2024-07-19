@@ -13,7 +13,7 @@ tags: Getting Started, Data Science, Data Engineering, Apache Airflow
 
 Duration: 5
 
-In this guide, we will be walking you through how to deploy Apache Airflow application with Celery Executor in Snowpark Container services.
+In this guide, we will be walking you through how to deploy Apache Airflow application with Celery Executor in Snowpark Container Services.
 
 ### What You Will Build
  - Apache Airflow application with Celery Executor, using a PostgreSQL database as the metadata store backed by block storage, and persisting task logs in a Snowflake internal stage. 
