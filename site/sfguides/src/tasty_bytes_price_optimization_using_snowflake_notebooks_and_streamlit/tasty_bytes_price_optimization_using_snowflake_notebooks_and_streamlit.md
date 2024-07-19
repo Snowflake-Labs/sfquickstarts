@@ -851,16 +851,16 @@ At Tasty Bytes, brand managers are responsible for setting their food-truck bran
 
 ### Setting Up Snowflake Notebook
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create a Snowflake Notebook by importing the notebook
-- Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on Projects -> Notebook
+- Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on `Projects` `->` `Notebook`
 - Switch Role to `TB_PO_DATA_SCIENTIST`
 - Download the [Tasty Bytes Price Optimization and Recommendations Notebook](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/tasty_bytes_price_optimization_and_recommendations.ipynb)
-- Using the import button on the top right, import the downloaded Notebook
+- Using the `Import .ipynb file`, import the downloaded Notebook
 <img src="assets/import_notebook.png"/>
 - Select the `TB_PO_PROD` database and `ANALYTICS` schema for the Notebook Location and `TB_PO_DS_WH` for the Notebook warehouse and click `Create`
 <img src="assets/notebook_settings.png"/>
-- Open the Notebook once created and add the following packages by using the "Packages" button on the top right and search for the packages with their respective versions
+- Open the Notebook once created and add the following packages by using the `Packages` button on the top right and search for the packages with their respective versions
 <img src="assets/notebook_packages.png"/>
-- At the top of the page, click "Start" to start the Notebook session and run the cells by clicking "Run All"
+- At the top of the page, click `Start` to start the Notebook session and run the cells by clicking `Run All`
 <img src="assets/start.png"/>
 
 
@@ -870,10 +870,10 @@ Duration: 5
 
 ### Overview
 At Tasty Bytes, brand managers are responsible for setting their food-truck brand's menu item prices for the upcoming month. 
-By default, price for the upcoming month is set to the current price. As tasty data scientists, we want to create a user-friendly way for brand managers to use ML-models to inform their pricing and increase the company's profits. We will build a Streamlit in Snowflake (SiS) application that will show the recommended price per item per day-of-week and the profit lift over the current price. We will allow users to change prices and see the impact on demand and profit. Finalized prices will be saved back to Snowflake. The app will be secure and low-maintenance as it will be deployed through Snowflake.
+By default, price for the upcoming month is set to the current price. As Tasty Bytes Data Scientists, we want to create a user-friendly way for brand managers to use ML-models to inform their pricing and increase the company's profits. We will build a Streamlit in Snowflake (SiS) application that will show the recommended price per item per day-of-week and the profit lift over the current price. We will allow users to change prices and see the impact on demand and profit. Finalized prices will be saved back to Snowflake. The app will be secure and low-maintenance as it will be deployed through Snowflake.
 
 ### Purpose
-**The purpose of this final step is to showcase how easily an application can be built and deployed to allow business users to submit data into Snowflake and interact directly with a ML model.** We will build a Streamlit App on the fly in Snowflake to support Tasty Bytes's brand managers in deciding monthly pricing.
+**The purpose of this final step is to showcase how easily an application can be built and deployed to allow business users to submit data into Snowflake and interact directly with a ML model.** We will build a Streamlit App on the fly in Snowflake to support Tasty Bytes' brand managers in deciding monthly pricing.
 - **Build an Application to Set Pricing and Interact with Recommendations**
   - View and edit pricing data
   - Show impact of price changes
@@ -882,17 +882,16 @@ By default, price for the upcoming month is set to the current price. As tasty d
   - Share the application in Snowflake with the brand managers
 
 #### Create Streamlit Application
-- Within Snowsight, Click on the Streamlit Tab
+- Within Snowsight, Click on the `Streamlit` tab
 - Switch Role to `TB_PO_DATA_SCIENTIST`
 - Click on `+Streamlit App` to create a new Streamlit Application
 - Name the Streamlit app "Application Monthly Pricing App"
 - Select the `TB_PO_PROD` database and `ANALYTICS` schema for the Streamlit application location and `TB_PO_APP_WH` for the warehouse and click `Create`
-- Click `Create`
 <img src="assets/streamlit_settings.png"/>
 - This will create a sample Streamlit Application
-- Click on Packages in the top left corner and search for "snowflake-ml-python" and add version 1.4.0
+- Click on Packages in the top left corner and search for `snowflake-ml-python` and add version `1.4.0`
 <img src="assets/streamlit_packages.png"/>
-- Replace the sample code with the Python code below using Edit
+- Replace the sample code with the Python code below
 - Click `Run` to run the "Application Monthly Pricing App" Streamlit Application
 - This application shows the recommended price per item per day-of-week and the profit lift over the current price. Users can change prices and see the impact on demand and profit. Finalized prices are saved back to Snowflake.
 ```
