@@ -29,6 +29,7 @@ We will implement price optimization for their diversified food-truck brands to 
 - Train & deploy an ML model to understand how menu-item demand changes with varying price
 - User-friendly application to use deployed ML-model to inform pricing strategies
 
+
 <!-- ------------------------ -->
 ## Setting up Data in Snowflake
 Duration: 5
@@ -42,7 +43,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 - Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 <img src="assets/run_all.png"/>
 - Copy and paste the following code to create Snowflake objects (warehouse, database, schema, raw tables), and ingest shift  data from S3 and click `Run All` at the top of the Worksheet
-```angular2html
+```
 use role securityadmin;
 
 -- create tb_po_data_scientist
@@ -825,14 +826,11 @@ SELECT 'price optimization sql is now complete' AS note;
 
 
 <!-- ------------------------ -->
-## Machine Learning With Snowpark - Price Recommendations: Setting Up Snowflake Notebook
+## Machine Learning With Snowpark
 Duration: 10
 
 ### Overview
 At Tasty Bytes, brand managers are responsible for setting their food-truck brand's menu item prices for the upcoming month. By default, price for the upcoming month is set to the current price. As tasty data scientists, we want to create a user-friendly way for brand managers to use ML-models to inform their pricing and increase the company's profits.
-
-[//]: # (We will build a Streamlit in Snowflake &#40;SiS&#41; application that will show the recommended price per item per day-of-week and the profit lift over the current price. We will allow users to change prices and see the impact on demand and profit. Finalized prices will be saved back to Snowflake. The app will be secure and low-maintenance as it will be deployed through Snowflake.)
-
 - You are tasked as Tasty Bytes Data Scientist to perform the following:
   - **Data Exploration**
     - Connect to Snowflake
@@ -851,6 +849,7 @@ At Tasty Bytes, brand managers are responsible for setting their food-truck bran
   - Import an Excel spreadsheet and inference the demand model
   - Calculate profit lift from new prices
 
+### Setting Up Snowflake Notebook
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create a Snowflake Notebook by importing the notebook
 - Download the notebook **tasty_bytes_price_optimization_and_recommendation.ipynb** using this repository [link](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/notebook/tasty_bytes_price_optimization_and_recommendations.ipynb)
 - Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on Projects -> Notebook
@@ -880,7 +879,6 @@ By default, price for the upcoming month is set to the current price. As tasty d
   - View and edit pricing data
   - Show impact of price changes
   - Write changes back to Snowflake
-  
 - **Application Deployment**
   - Share the application in Snowflake with the brand managers
 
@@ -1038,7 +1036,6 @@ if st.button("Update Prices"):
 with st.expander("View Submitted Prices"):
     st.table(session.table("pricing_final").order_by(F.col("timestamp").desc()))
 ```
-
 - This application shows the recommended price per item per day-of-week and the profit lift over the current price. Users can change prices and see the impact on demand and profit. Finalized prices are saved back to Snowflake.
 
 <-!- ------------------------ -->
