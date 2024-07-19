@@ -13,12 +13,22 @@ tags: Getting Started, Data Science, Data Engineering, Apache Airflow
 
 Duration: 5
 
-By completing this guide, you will be able to run Apache Airflow application with Celery Executor in Snowpark Container services.
+In this guide, we will be walking you through how to deploy Apache Airflow application with Celery Executor in Snowpark Container services.
 
-##
+### What You Will Build
+ - Apache Airflow application with Celery Executor, using a PostgreSQL database as the metadata store backed by block storage, and persisting task logs in a Snowflake internal stage. 
+
+### What You Will Learn
+- The working mechanics of Snowpark Container Services
+- How to build and push a containerized Docker image to SPCS along with code and other files
+- How to create SnowGIT integration with your Github repository
+- How to create External Access Integration
+- How to deploy Apache Airflow with Celery Executor in SPCS
+
+
 ### Prerequisites
 - A Snowflake account with access to SnowPark Container Services.
-- Docker installed locally for building images.
+- [Docker](https://www.docker.com/products/docker-desktop/) installed locally for building images.
 - Basic knowledge of Apache Airflow and containerized deployments.
 
 ##
@@ -542,7 +552,25 @@ Steps to Integrate Airflow with Okta for RBAC.
 
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion and Resources
 
+## 1. Conclusion
 Congratulations! You've successfully hosted Apache Airflow with Celery Executor on Snowpark Container Services.
 Running Airflow on Snowpark Container Services simplifies the process of setting up a robust, production-ready orchestration environment. By leveraging Snowflake's integrated ecosystem and scalable infrastructure, you can focus on building and managing your data workflows without the overhead of traditional deployment complexities. Start leveraging the power of Airflow on SPCS today and experience the benefits of a seamless, efficient deployment process.
+
+## 2. What You Learned
+
+- The working mechanics of Snowpark Container Services
+- How to build and push a containerized Docker image to SPCS along with code and data files
+- How to create SnowGIT integration with your Github repository
+- How to create External Access Integration
+- How to deploy Apache Airflow with Celery Executor in SPCS
+
+
+## 3. Resources
+
+- [Apache Airflow](https://airflow.apache.org/docs/apache-airflow/2.7.3/index.html/)
+- [Celery Executor](https://airflow.apache.org/docs/apache-airflow-providers-celery/stable/celery_executor.html)
+- [Snowpark Container Services]()
+- [SnowGIT](https://docs.snowflake.com/en/developer-guide/git/git-setting-up)
+- [Snowflake Secret Objects](https://docs.snowflake.com/en/sql-reference/sql/create-secret)
