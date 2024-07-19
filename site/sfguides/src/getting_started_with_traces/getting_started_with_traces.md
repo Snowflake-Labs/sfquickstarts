@@ -46,17 +46,26 @@ Duration: 2
 
 Login to Snowsight using your credentials in Snowflake.
 
-You'll need a Database and Schema to work in for this quickstart. 
+You'll need a Database, Schema, and Warehouse to get started with the notebook.
 
-Create a new database by clicking on Data, and click + Database and use the database name `TRACING_QUICKSTART`. After creating the database, click on the database under data and add a Schema called `DATA` by clicking on + Schema.
+Run the following sql (in a worksheet) to create the warehouse, database, and schema:
 
-Go to Projects, Notebooks in the left navigation. Click the + Notebook to create a new Notebook. Name the Notebook "Tracking Quickstart" and Select the `TRACING_QUICKSTART` database and the `DATA` schema you created. You can select any warehouse where you would like the Quickstart to run, leave the default Run on warehouse selected and click Create.
+```sql
+CREATE OR REPLACE WAREHOUSE TRACING_QUICKSTART_WH WAREHOUSE_SIZE=XSMALL, INITIALLY_SUSPENDED=TRUE;
+CREATE OR REPLACE DATABASE TRACING_QUICKSTART;
+CREATE OR REPLACE SCHEMA DATA;
+
+```
+
+Refresh Quicksight so the new warehouse will be available.
+
+Go to Projects > Notebooks in the left navigation. Click the + Notebook to create a new Notebook. Name the Notebook `TRACING_QUICKSTART` and Select the `TRACING_QUICKSTART` database and the `DATA` schema you created. Select the `TRACING_QUICKSTART_WH` that was just created, leave the default Run on warehouse selected and click Create.
 
 <!-- ------------------------ -->
-## Cell 1: Setup
+## Setup
 Duration: 2
 
-The first cell will be used to setup the notebook. These variables will be used in subsequent cells.
+The first notebook cell will be used to setup the notebook. These variables will be used in subsequent cells using the {{variable_name}} syntax in SQL cells, and by using the variable names in Python cells.
 
 Paste this code into the first cell. If you'd like to pull data for other cities, edit the city_list.
 
@@ -67,76 +76,83 @@ from snowflake.snowpark.context import get_active_session
 session = get_active_session()
 
 user_name = session.sql("SELECT current_user()").collect()[0][0]
-
-api_key = st.text_input("Enter API key for openweathermap")
 schema_name = "DATA"
 database_name = "TRACING_QUICKSTART"
 
 city_list = [(37.5533204, -122.3059259, 'San Mateo'), (52.3368551, 4.8694973, 'Amsterdam'),(52.5100227, 13.3776724, 'Berlin'), (52.2299305,20.9764142, 'Warsaw'), (18.5645333,73.911966, 'Pune')]
 
+api_key = st.text_input("Enter API key for openweathermap")
 if api_key == "":
     raise Exception("Configuration needed")
+
 ```
 
-When running this cell, it will prompt for entering an API Key. This was done with the streamlit text_input widget. You will need to go to [OpenWeather](https://openweathermap.org/) to get a free API key.
+When running this cell, it will prompt for entering an API Key. This was done with the streamlit text_input widget. 
 
-Enter the key in the dialog and hit enter.
+To get a free API key, sign up for an account on [OpenWeather](https://home.openweathermap.org/users/sign_up).
+
+After signing up, add a new API key by going to [API keys](https://home.openweathermap.org/api_keys). Create a new key with name `snowflake_key` and click Generate, copy the api key to the clipboard.
+
+After generating the key, go back to the Snowsight notebook and paste the key generated in the dialog and hit enter.
 
 <!-- ------------------------ -->
-## Cell 2: Confgure External API Access
+## Confgure External API Access
 Duration: 2
 
-In the second cell, a network rule, secret, and external access integration will be configured to allow outbound connectivity to the OpenWeather API. This is necessary because the Python Notebook does not have
-network access without this configuration. A stage is also created to allow storage of the permanent UDF and procedure. A Permanent (will be stored in the database) UDF and procedure was chosen so these utilities could be called outside the notebook in the future if desired.
+In the second notebook cell, a network rule, secret, and external access integration will be configured to allow outbound connectivity to the OpenWeather API. This is necessary because the Python Notebook does not have network access without this configuration. A stage is also created to allow storage of the permanent UDF and procedure. A Permanent (will be stored in the database) UDF and procedure was chosen so these utilities could be called outside the notebook in the future if desired.
 
-Paste this code into the second cell.
+Paste this code into the second cell, variables are automatically pulled in from the previous cell so no editing is needed.
 
 ```sql
 USE DATABASE "{{database_name}}";
 USE SCHEMA "{{schema_name}}";
 
-CREATE OR REPLACE NETWORK RULE openweathermap_api_network_rule
+CREATE OR REPLACE NETWORK RULE OPENWEATHERMAP_API_NETWORK_RULE
   MODE = EGRESS
   TYPE = HOST_PORT
   VALUE_LIST = ('api.openweathermap.org');
 
-CREATE OR REPLACE SECRET openweathermap_api_key
+CREATE OR REPLACE SECRET OPENWEATHERMAP_API_KEY
     TYPE = GENERIC_STRING
     SECRET_STRING = "{{api_key}}";
 
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION openweathermap_access_integration
-  ALLOWED_NETWORK_RULES = (openweathermap_api_network_rule)
-  ALLOWED_AUTHENTICATION_SECRETS = (openweathermap_api_key)
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION OPENWEATHERMAP_ACCESS_INTEGRATION
+  ALLOWED_NETWORK_RULES = (OPENWEATHERMAP_API_NETWORK_RULE)
+  ALLOWED_AUTHENTICATION_SECRETS = (OPENWEATHERMAP_API_KEY)
   ENABLED = true;
 
 CREATE STAGE IF NOT EXISTS EXEC_STORAGE;
+
 ```
 
-Run this cell to verify it is successful.
+Run this cell and verify it is successful.
 
 <!-- ------------------------ -->
-## Cell 3: Enabling Traces
+## Enabling Traces
 Duration: 2
 
-In order to get logs on errors and get traces, levels need to be modified. This can easily be done in sql.
+In order to get logs, errors and traces, levels need to be modified. This can easily be done in sql.
 
-Cahnge the third cell to SQL and paste this section into the body.
+Change the third notebook cell to SQL and paste this section into the body.
 
 ```sql
-ALTER DATABASE "{{database_name}}" SET LOG_LEVEL = ERROR;
-ALTER SCHEMA "{{schema_name}}" SET LOG_LEVEL = ERROR;
+ALTER DATABASE "{{database_name}}" SET LOG_LEVEL = DEBUG;
+ALTER SCHEMA "{{schema_name}}" SET LOG_LEVEL = DEBUG;
+
 ALTER DATABASE "{{database_name}}" SET TRACE_LEVEL = ALWAYS;
 ALTER SCHEMA "{{schema_name}}" SET TRACE_LEVEL = ALWAYS;
+
 ALTER DATABASE "{{database_name}}" SET METRIC_LEVEL = ALL;
 ALTER SCHEMA "{{schema_name}}" SET METRIC_LEVEL = ALL;
 
 ALTER SESSION SET METRIC_LEVEL = ALL;
+
 ```
 
-Run this cell to verify it is successful.
+Run this cell and verify it is successful.
 
 <!-- ------------------------ -->
-## Cell 4: Create and execute the UDF and Procedure
+## Create the UDF
 Duration: 5
 
 A UDF will use the External Access and Secret created previously and pull data from the OpenWeather API using Python Requests library. It will pull the current weather for a specific latitude and longitude.
@@ -145,9 +161,9 @@ In order to populate the bronze layer, a stored procedure will call the UDF for 
 
 When calling to a 3rd party API like this, it is important to know the performance and potential errors coming from those calls. To trace this information, the function uses a custom span in OpenTelemetry. Review the tracer variable and how that is used. Without the custom span, it would be difficult to know which calls were erroring out to the API and what status code the API was returning.
 
-Both the function and procedure will be stored in the database schema and can be used in the future from sql or python.
+The function will be stored in the database schema and can be used in the future from sql or python, as we will do in the next cell.
 
-Create a new python cell by clicking on + Python.
+Create a new python cell at the bottom of the notebook by clicking on + Python.
 
 Paste this section into the new cell.
 
@@ -155,23 +171,31 @@ Paste this section into the new cell.
 import _snowflake
 import requests
 import json
+import logging
 
 from opentelemetry import trace
 from snowflake import telemetry
 
 rsession = requests.Session()
 def get_weather(lat, lon):
+  """
+  A UDF handler. Given a latitude and longitude, this UDF will use external network access to get the 
+  weather for that area from the OpenWeatherMap API.
+  """
   api_key = _snowflake.get_generic_secret_string('api_key')
   url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&exclude=hourly,daily&appid={api_key}"
   tracer = trace.get_tracer(__name__) 
   with tracer.start_as_current_span(f"openweather_api_call") as p:
     response = rsession.get(url)
+    logging.debug(f"Body from API: {response.text} in get_weather")
     if response.status_code == 200:
         p.set_status(trace.Status(trace.StatusCode.OK))
     else:
         p.set_status(trace.Status(trace.StatusCode.ERROR, str(response.status_code)))
+        logging.warn(f"Unexpected response from API: {response.status_code} in get_weather")
   return response.json()
 
+# Register the UDF
 from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.types import VariantType, FloatType, IntegerType, StringType
 session = get_active_session()
@@ -183,16 +207,52 @@ get_weather_fn = session.udf.register(get_weather,
                                    replace=True,
                                    is_permanent=True,
                                    stage_location="EXEC_STORAGE",
-                                   secrets={'api_key':'openweathermap_api_key'},
-                                   external_access_integrations=["openweathermap_access_integration"],
+                                   secrets={'api_key':'OPENWEATHERMAP_API_KEY'},
+                                   external_access_integrations=["OPENWEATHERMAP_ACCESS_INTEGRATION"],
                                    packages=["snowflake-snowpark-python", "requests", "snowflake-telemetry-python"])
 
+```
+
+Run this cell and verify it is successful.
+
+<!-- ------------------------ -->
+## Test the UDF
+Duration: 2
+
+Now that the UDF is stored in the database, it can easily be tested using SQL.
+
+Create a new SQL cell at the bottom of the notebook by clicking on + SQL.
+
+Paste this section into the new cell.
+
+```sql
+SELECT GET_WEATHER_FN(45.6783036,-111.0347646)
+
+```
+
+Run this cell and verify it is successful, it will return the current weather in Bozeman, MT.
+
+<!-- ------------------------ -->
+## Create the Procedure
+Duration: 5
+
+A procedure will be used to pull the weather for all the cities in the city_list.
+
+Navigate back to the Notebook by clicking on Projects, Notebooks and opening TRACING_QUICKSTART.
+
+Create a new python cell at the bottom of the notebook by clicking on + Python.
+
+```python
 import datetime 
 import time
 import snowflake.snowpark
 from snowflake.snowpark.functions import sproc
 
 def get_weather_for_cities(session, to_table, minutes_to_run, seconds_to_wait):
+    """
+    A stored procedure handler that reads from the city_list table and calls the UDF to add the wather
+    data as a new column
+    """
     df = session.table("city_list")
     stop_time = datetime.datetime.utcnow() + datetime.timedelta(minutes = minutes_to_run)
     while datetime.datetime.utcnow() < stop_time: 
@@ -201,9 +261,11 @@ def get_weather_for_cities(session, to_table, minutes_to_run, seconds_to_wait):
         time.sleep(seconds_to_wait)
     return "OK"
 
+# Store the city_list for use in the procedure
 df = session.create_dataframe(city_list).to_df("lat","lon","name")
 df.write.mode("overwrite").save_as_table("city_list")
 
+# Register the stored procedure
 get_weather_for_cities_sp = session.sproc.register(get_weather_for_cities, 
                                                    name="get_weather_for_cities_sp",
                                                    return_type=StringType(),
@@ -212,13 +274,29 @@ get_weather_for_cities_sp = session.sproc.register(get_weather_for_cities,
                                                    replace=True,
                                                    stage_location="EXEC_STORAGE")
 
-session.sql("call get_weather_for_cities_sp('bronze_weather_api', 1, 15)").collect()
 ```
 
-Run this cell to verify it is successful.
+Run this cell and verify it is successful, it will return the current weather in Bozeman, MT.
 
 <!-- ------------------------ -->
-## Cell 5: Query the Data Ingested
+## Run the Procedure
+Duration: 2
+
+Create a new python cell at the bottom of the notebook by clicking on + Python.
+
+```python
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+session.sql("call get_weather_for_cities_sp('bronze_weather_api', 1, 15)").collect()
+session.table("bronze_weather_api")
+
+```
+
+Verify it is successful. After running, the notebook will output the dataframe of bronze_weather_api which includes the current weather for all the cities in city_list.
+
+<!-- ------------------------ -->
+## Query the Data Ingested
 Duration: 2
 
 Create a new sql cell by clicking on + SQL.
@@ -226,8 +304,12 @@ Create a new sql cell by clicking on + SQL.
 Paste this section into the new cell.
 
 ```sql
-select NAME, CURRENT_WEATHER['main']['temp']::float as kelvin_temp, CURRENT_WEATHER['weather'][0]['main']::varchar as conditions from bronze_weather_api
-QUALIFY row_number() over (partition by NAME order by CURRENT_WEATHER['dt'] desc) = 1;
+SELECT NAME, 
+       CURRENT_WEATHER['main']['temp']::float as KELVIN_TEMP, 
+       CURRENT_WEATHER['weather'][0]['main']::varchar as CONDITIONS 
+FROM bronze_weather_api
+QUALIFY ROW_NUMBER() over (partition by NAME order by CURRENT_WEATHER['dt'] desc) = 1;
+
 ```
 
 Run this cell to verify it is successful.
@@ -236,25 +318,23 @@ This will show the latest weather pulled by the notebook.
 
 
 <!-- ------------------------ -->
-## View the Trace Information
+## View the Traces
 Duration: 5
 
-The previous stored procedure run as well as all the notebook executions thus far have been stored in a trace.
+Click on the left navigation item "Monitoring" > "Traces & Logs".
 
-Click on the left navigation item to get to the "Traces & Logs".
-
-The top entry in the traces will be the Current Notebook.
+The top entry in the traces will be the Current Notebook, if it is not, filter using the `Database` filter and selecting `TRACING_QUICKSTART`.
 
 Look for the `save_as_table` span and the `get_weather_fn` spans which are the more time consuming parts of the procedure.
 
-If you expand the `__main__:openweather_api_call` entry, you can see each instance of the call to get weather and the status of those calls.
+If you expand the `__main__:openweather_api_call` entry, you can see each instance of the call to get weather and the status of those calls. You can also see the Debug Logs by clicking on Logs on the trace to see all the http request information.
 
 This tracing information shows the entire execution timeline with information on every call.
 
 <img src="assets/trace_details.png" width="889" height="513">
 
 <!-- ------------------------ -->
-## View the Metrics Information
+## Query the Metrics, Logs, and Trace Data
 Duration: 3
 
 Memory and CPU metrics are also available because the session set the METRIC_LEVEL to all.
@@ -265,9 +345,10 @@ Find your events table by running this sql:
 
 ```sql
 SHOW PARAMETERS LIKE 'event_table' IN ACCOUNT;
+
 ```
 
-Query the memory and cpu metrics with this query, replaciung `YOUR_EVENT_TABLE` with your event table found in the previous query:
+Query the memory and cpu metrics with this query, replacing `YOUR_EVENT_TABLE` with your event table found in the previous query:
 
 ```sql
 SELECT *
@@ -278,23 +359,57 @@ WHERE
     and RESOURCE_ATTRIBUTES['snow.database.name'] = '{{database_name}}' 
     and RESOURCE_ATTRIBUTES['snow.schema.name'] = '{{schema_name}}'
 ORDER BY TIMESTAMP DESC;
+
+```
+
+Query the traces with this query, replacing `YOUR_EVENT_TABLE` with your event table found in the previous query:
+
+```sql
+SELECT *
+FROM YOUR_EVENT_TABLE
+WHERE
+    RECORD_TYPE = 'SPAN' 
+    and RESOURCE_ATTRIBUTES['db.user'] = '{{user_name}}' 
+    and RESOURCE_ATTRIBUTES['snow.database.name'] = '{{database_name}}' 
+    and RESOURCE_ATTRIBUTES['snow.schema.name'] = '{{schema_name}}'
+ORDER BY TIMESTAMP DESC;
+
+```
+
+Query the logs with this query, replacing `YOUR_EVENT_TABLE` with your event table found in the previous query:
+
+```sql
+SELECT *
+FROM YOUR_EVENT_TABLE
+WHERE
+    RECORD_TYPE = 'LOG' 
+    and RESOURCE_ATTRIBUTES['db.user'] = '{{user_name}}' 
+    and RESOURCE_ATTRIBUTES['snow.database.name'] = '{{database_name}}' 
+    and RESOURCE_ATTRIBUTES['snow.schema.name'] = '{{schema_name}}'
+ORDER BY TIMESTAMP DESC;
+
 ```
 
 <!-- ------------------------ -->
 ## Disabling Traces and Metrics
 Duration: 2
 
-Disabling tracing and metrics can be done similarly to how we enabled it, with SQL.
+Changing the level of tracing, metrics, and logs can be done similarly to how we enabled it, with SQL.
 
 Add a new SQL Cell and paste in the following contents and run.
 
 ```sql
+ALTER DATABASE "{{database_name}}" SET LOG_LEVEL = WARN;
+ALTER SCHEMA "{{schema_name}}" SET LOG_LEVEL = WARN;
+
 ALTER DATABASE "{{database_name}}" SET TRACE_LEVEL = OFF;
 ALTER SCHEMA "{{schema_name}}" SET TRACE_LEVEL = OFF;
+
 ALTER DATABASE "{{database_name}}" SET METRIC_LEVEL = NONE;
 ALTER SCHEMA "{{schema_name}}" SET METRIC_LEVEL = NONE;
 
 ALTER SESSION SET METRIC_LEVEL = NONE;
+
 ```
 
 <!-- ------------------------ -->
@@ -305,9 +420,9 @@ Run the following in a Worksheet to clean up all objects created in this quickst
 
 ```sql
 DROP DATABASE TRACING_QUICKSTART;
-DROP INTEGRATION openweathermap_access_integration;
-DROP SECRET openweathermap_api_key;
-DROP NETWORK RULE openweathermap_api_network_rule;
+DROP INTEGRATION OPENWEATHERMAP_ACCESS_INTEGRATION;
+DROP WAREHOUSE TRACING_QUICKSTART_WH;
+
 ```
 
 <!-- ------------------------ -->
