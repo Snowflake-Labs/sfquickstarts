@@ -60,7 +60,7 @@ Here is a summary of what you will be doing in each step by following this quick
 
 Apache Airflow is an open-source platform to programmatically author, schedule, and monitor workflows. Using Directed Acyclic Graphs (DAGs), Airflow allows users to define workflows as code, ensuring flexibility, scalability, and maintainability. It's widely used in various scenarios, from ETL processes and data pipeline automation to machine learning model training and deployment.
 
-Learn more about [Apache Airflow](https://airflow.apache.org/docs/apache-airflow/2.7.3/index.html/).
+Learn more about [Apache Airflow](https://airflow.apache.org/docs/).
 
 ##
 ### What is Snowpark Container Services?
@@ -554,11 +554,12 @@ Steps to Integrate Airflow with Okta for RBAC.
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-## 1. Conclusion
+#### Conclusion
+
 Congratulations! You've successfully hosted Apache Airflow with Celery Executor on Snowpark Container Services.
 Running Airflow on Snowpark Container Services simplifies the process of setting up a robust, production-ready orchestration environment. By leveraging Snowflake's integrated ecosystem and scalable infrastructure, you can focus on building and managing your data workflows without the overhead of traditional deployment complexities. Start leveraging the power of Airflow on SPCS today and experience the benefits of a seamless, efficient deployment process.
 
-## 2. What You Learned
+### What You Learned
 
 - The working mechanics of Snowpark Container Services
 - How to build and push a containerized Docker image to SPCS along with code and data files
@@ -567,10 +568,10 @@ Running Airflow on Snowpark Container Services simplifies the process of setting
 - How to deploy Apache Airflow with Celery Executor in SPCS
 
 
-## 3. Resources
+### Resources
 
-- [Apache Airflow](https://airflow.apache.org/docs/apache-airflow/2.7.3/index.html/)
+- [Apache Airflow](https://airflow.apache.org/docs/)
 - [Celery Executor](https://airflow.apache.org/docs/apache-airflow-providers-celery/stable/celery_executor.html)
-- [Snowpark Container Services]()
+- [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview/)
 - [SnowGIT](https://docs.snowflake.com/en/developer-guide/git/git-setting-up)
 - [Snowflake Secret Objects](https://docs.snowflake.com/en/sql-reference/sql/create-secret)
