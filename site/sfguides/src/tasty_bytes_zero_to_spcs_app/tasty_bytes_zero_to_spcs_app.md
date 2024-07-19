@@ -1419,6 +1419,13 @@ You can now view tasty_app in the browser.
   On Your Network:  http://10.244.2.15:4000
 ```
 
+Grant service role access to tasty_app_ext_role to the endpoints in the service:
+
+```sql
+GRANT SERVICE ROLE frontend_service!ALL_ENDPOINTS_USAGE TO ROLE tasty_app_ext_role;
+GRANT SERVICE ROLE backend_service!ALL_ENDPOINTS_USAGE TO ROLE tasty_app_ext_role;
+```
+
 ### Step 7.2 Testing the service
 
 We are now finally ready to test the application in a browser. In order to do that we need the public endpoint exposed by the frontend_service. Call `SHOW ENDPOINTS` to retrieve that:
