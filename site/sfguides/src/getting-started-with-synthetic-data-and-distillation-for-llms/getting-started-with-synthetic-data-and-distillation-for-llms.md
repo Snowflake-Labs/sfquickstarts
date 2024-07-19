@@ -35,14 +35,15 @@ Learn more about [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/sno
 
 Compared to a smaller size model such as `llama3-8b`, a foundation large language model such as `llama3.1-405b` can be used to categorize support tickets with higher accuracy. But using a large language model comes with higher inference costs.
 
-Using fine-tuning, organizations can make smaller models really good at specific tasks to deliver results with the accuracy of larger models at just a fraction of the cost.
+Using fine-tuning, organizations can make smaller models really good at specific tasks to deliver results with the accuracy of larger models at just a fraction of the cost. 
+
+Fine-tuning requires some labelled data. In many real-world scenarios this data can be hard to come by. This might be a new use-case that did not exist before or the existing data cannot be accessed. LLMs allow us to solve this issue via synthetic data.
 
 ### What You Will Learn
 
 By the end of this quickstart guide, you will be able to use Snowflake Cortex AI to:
-**Generate Synthetic Data**: Use prompting `llama3.1-405b` to synthetic customer support tickets.
-**Generate**: Prepare training dataset for fine-tuning by leveraging an LLM for annotations
-**Distill**: Distill the knowledge from the large model to fine-tune model a smaller model and achieve high accuracy at fraction of cost
+**Generate Synthetic Data**: Prompt `llama3.1-405b` to generate synthetic customer support tickets.
+**Prepare**: Training dataset for distilling a the knowledge from a foundation model into a small custom LLM.**Distill**: The knowledge from the large model to fine-tune model a smaller model and achieve high accuracy at fraction of cost.
 **Generate**: Custom email/text communications tailored to each support ticket
 
 ### Prerequisites
@@ -54,22 +55,6 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 
 - A GitHub account. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started. 
 - Download the Snowflake Notebook from [this Git repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb) for fine-tuning the model.
-
-<!-- ------------------------ -->
-## Setup
-
-Duration: 5
-
-### TODO Load the Demo Notebook 
-
-A Snowflake Notebook with the required code snippets for this quickstart are available in [this](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb) repository. 
-
-To load the demo notebook into your Snowflake account, follow these steps:
-
-- Download the file by clicking on the `Download raw file` from the top right.
-- Go to the Snowflake web interface, Snowsight, on your browser.
-- Navigate to `Project` > `Notebooks` from the left menu bar.
-- Import the `.ipynb` file you've downloaded into your Snowflake Notebook by using the `Import from .ipynb` button located on the top right of the Notebooks page.
 
 <!-- ------------------------ -->
 ## Generate Synthetic Training Data with Llama3.1-405b and Snowflake Cortex AI
@@ -105,8 +90,7 @@ create or replace table support_tickets as (
         SNOWFLAKE.CORTEX.COMPLETE(
           'llama3.1-405b',
           CONCAT(
-            'Please provide 25 examples of customer service calls in a telecom company for the following category:', category, '. Provide detail and realistic scenarios that customer service representatives might encounter. Ensure the examples are diverse and cover various situations within each category. Please put the  examples into a JSON list. Each element in JSON list should include the following: 
-            {"scenario": <scenario>, "request": <detailed request from the customer, which usually is less than 3 sentences.>}. Only include JSON in output and no other words.'))) as tickets
+            'Please provide 25 examples of customer service calls in a telecom company for the following category:', category, '. Provide detail and realistic scenarios that customer service representatives might encounter. Ensure the examples are diverse and cover various situations within each category. Please put the  examples into a JSON list. Each element in JSON list should include the following: {"scenario": <scenario>, "request": <detailed request from the customer, which usually is less than 3 sentences.>}. Only include JSON in output and no other words.'))) as tickets
     from support_ticket_category
 );
 ```
@@ -118,13 +102,13 @@ create or replace table flatten_support_tickets as (
 select 
     ticket_type, 
     abs(hash(value:request)) % 10000000 as id,
-    value:complaint as request, 
+    value:request as request, 
     value:scenario as scenario
 from support_tickets, lateral flatten(input => tickets) 
-)
-;
+);
+```
 
-We now have a table `flatten_support_tickets` with one ticket per row. We also generated unique IDs for each ticket to be able to reference them later.
+We now have a table `flatten_support_tickets` with one ticket per row. We also generated unique IDs for each ticket.
 
 ### Rating and Filtering Synthetic Data with and LLM as a Judge.
 
@@ -132,10 +116,12 @@ We want to make sure our data is of high quality. Again, we can use an LLM to he
 
 ```sql
 create or replace table rate_support_tickets as (
-    SELECT ticket_type, id, request, scenario, TRY_PARSE_JSON(SNOWFLAKE.CORTEX.COMPLETE('llama3.1-405b', CONCAT('You are a judge to verify if a the support ticket received in a telecom company is realistic, and valid, please give 1–5 scores for each category and give your final recommendation for the given question. Support Ticket: ', request, ' Please give the score in JSON format alone following this example: "{"realistic": 5, "valid": 4}".  You can put a reason into the result JSON as "reason": <reason>. Only include JSON in the output and no other words.'))) as rating
+    SELECT ticket_type, id, request, scenario, TRY_PARSE_JSON(SNOWFLAKE.CORTEX.COMPLETE('llama3.1-405b', CONCAT('You are a judge to verify if a the support ticket received in a telecom company is realistic, and valid, please give scores from 1 to 5 for each category and give your final recommendation for the given question. Support Ticket: ', request, ' Please give the score in JSON format alone following this example: "{"realistic": 5, "valid": 4}".  You can put a reason into the result JSON as "reason": <reason>. Only include JSON in the output and no other words.'))) as rating
     from flatten_support_tickets
 );
 ```
+
+Now we can filter out examples that are below the bar for `realistic` or `valid`. We create the `filtered_support_tickets` table for the next steps.
 
 ```sql
 create or replace table filtered_support_tickets as (
@@ -143,14 +129,19 @@ create or replace table filtered_support_tickets as (
 );
 ```
 
-### (TODO: update) Support Ticket Categorization using Cortex AI
+### Test Base Model Performance for Support Ticket Categorization using Cortex AI
 
-First, let's use Snowflake Cortex `COMPLETE()` to categorize the support tickets into different buckets – Roaming Fees, Slow data speed, Add new line, Closing account and more.
+First, let's use Snowflake Cortex `COMPLETE()` to categorize the support tickets into our categories – Roaming Fees, Slow data speed, Add new line, Closing account and more.
 
 We can use any Cortex supported model under the hood to invoke the `COMPLETE()` function. In this quickstart, let’s use `llama3.1-405b` and use the following prompt.
 
-```python
-prompt = """You are an agent that helps organize requests that come to our support team. 
+```sql
+CREATE OR REPLACE FUNCTION CATEGORIZE_PROMPT_TEMPLATE(request STRING)
+RETURNS STRING
+LANGUAGE SQL
+AS
+$$
+CONCAT('You are an agent that helps organize requests that come to our support team. 
 
 The request category is the reason why the customer reached out. These are the possible types of request categories:
 
@@ -161,16 +152,37 @@ Add new line
 Closing account
 
 Try doing it for this request and return only the request category only.
-"""
+
+request: ', request)
+$$
+;
 ```
 
 Using a powerful and large language model such as `llama3.1-405b` might be highly accurate without doing any complex customizations but running `llama3.1-405b` on millions of support tickets comes with a cost. So, let’s try the same COMPLETE() function with the same prompt but this time with a smaller model such as `llama3-8b`. 
+
+```sql
+SELECT id, SNOWFLAKE.CORTEX.COMPLETE('llama3-8b', CATEGORIZE_PROMPT_TEMPLATE(request)) FROM filtered_support_tickets;
+```
 
 As we can see, the smaller model `llama3-8b` does not generate results with a consistent structure.
 
 To overcome this, we could fine-tune `llama3-8b` particularly for this task. This fine-tuned model will be smaller in size and the inference cost is only a fraction of what a larger model would cost. 
 
-### (TODO: update) Fine-tuning
+### Prepare the Distillation Data
+
+We now split the data into a training and validation portion. We want to use 20% of the data for validation and the remaining 80% for training. To get a reproducible data split between runs, we use the unique ID we to determine if a ticket is part of the training portion or the validation portion:
+
+```sql
+create or replace table training_data as (
+    SELECT * from filtered_support_tickets where ID % 10 < 8 
+);
+
+create or replace table validation_data as (
+    SELECT * from filtered_support_tickets where ID % 10 >= 8 
+);
+```
+
+### Fine-tuning
 
 To fine-tune the language model, we need training data that includes support ticket requests and right category labels for each of them. Annotations for millions of support tickets are not readily available. So we could leverage an existing large language model to create category labels and prepare the dataset for fine-tuning.
 
@@ -192,7 +204,7 @@ Once we have the training data, we could use Snowflake Cortex AI Studio to fine-
 - In the end, select the validation data for Cortex to evaluate the fine-tuning process too
 - Inferencing the fine-tuned model
 
-#### (TODO: update) Fine-tuning using `FINETUNE()` SQL API
+#### Fine-tuning using `FINETUNE()` SQL API
 
 Alternatively, you can also fine-tune the LLM using SQL API `FINETUNE()`. Learn more about the syntax [here](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning).
 
@@ -200,8 +212,8 @@ Alternatively, you can also fine-tune the LLM using SQL API `FINETUNE()`. Learn 
 select snowflake.cortex.finetune(
 'CREATE', 
 'CORTEX_FINETUNING_DB.PUBLIC.SUPPORT_TICKETS_FINETUNED', 'llama3-8b', 
-'SELECT prompt, mistral_large_response as completion from CORTEX_FINETUNING_DB.PUBLIC.support_tickets_train', 
-'SELECT prompt, mistral_large_response as completion from CORTEX_FINETUNING_DB.PUBLIC.support_tickets_eval'
+'SELECT request as prompt, category as completion from CORTEX_FINETUNING_DB.PUBLIC.training_data', 
+'SELECT request as prompt, category as completion from CORTEX_FINETUNING_DB.PUBLIC.validation_data'
 );
 ```
 After running the above query, we can keep track of the fine-tuning job using the below command.
@@ -210,22 +222,21 @@ After running the above query, we can keep track of the fine-tuning job using th
 select snowflake.cortex.finetune('DESCRIBE', 'CortexFineTuningWorkflow_f4016e33-92ce-45d3-918a-19115c398f10');
 ```
 
-#### (TODO: update) Inferencing the fine-tuned model
+#### Inferencing the Distilled Model
 
 Once the fine-tuning is complete, we could run inference on the model by simply invoking the Cortex AI `COMPLETE()` with the fine-tuned model name as one of the parameters.
 
-```python
-fine_tuned_model_name = 'SUPPORT_TICKETS_FINETUNED'
-sql = f"""select ticket_id, request,
-trim(snowflake.cortex.complete('{fine_tuned_model_name}',concat('{prompt}',request)),'\n') as fine_tuned_model_response
-from support_tickets"""
+```sql
+SET fine_tuned_model_name = 'SUPPORT_TICKETS_FINETUNED';
 
-df_fine_tuned_response = session.sql(sql)
-df_fine_tuned_response
-
+SELECT id, request,
+TRIM(SNOWFLAKE.CORTEX.COMPLETE($fine_tuned_model_name, request,'\n') as fine_tuned_model_response
+FROM support_tickets;
 ```
 
-### (TODO: update) Automated Generation of Email Responses to support tickets using LLMs
+Note that we don't need to provide our prompt template with detailed instructions anymore. The model has learned from the training data how to respond to the input without any instructions. 
+
+### Automated Generation of Email Responses to support tickets using LLMs
 
 After categorizing the support tickets into different categories based on the reason for the support request, we can also use Cortex AI to auto-generate the email/text responses to these support requests.
 
@@ -273,19 +284,19 @@ with st.container():
 Depending on the values in the `contact_preference` column, Cortex AI can generate text or email messages that can be used for customer support responses.
 
 <!-- ------------------------ -->
-## (TODO: update) Conclusion And Resources
+## Conclusion And Resources
 
 Duration: 1
 
-Congratulations! You've successfully completed the Cortex Fine-tuning Quickstart Guide. You can use any of [these](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=TNKw8Mx5&_fsi=TNKw8Mx5#availability) supported LLMs for fine-tuning with Cortex.
+Congratulations! You've successfully generated synthetic data and distilled the knowledge from a big foundation model into a small and specialized fine-tuned model. You can use any of [these](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=TNKw8Mx5&_fsi=TNKw8Mx5#availability) supported LLMs for fine-tuning with Cortex.
 
 
-### (TODO: update) What You Learned
+### What You Learned
 
 You have learnt how to use Snowflake Cortex AI to:
-**Categorize**: Use LLM to categorize support tickets
-**Generate**: Prepare training dataset for fine-tuning by leveraging an LLM for annotations
-**Fine-tune**: Use smaller, fine-tune model to achieve accuracy of larger model at fraction of cost
+**Generate Synthetic Data**: Prompt `llama3.1-405b` to generate synthetic customer support tickets.
+**Prepare**: Training dataset for distilling a the knowledge from a foundation model into a small custom LLM.
+**Distill**: The knowledge from the large model to fine-tune model a smaller model and achieve high accuracy at fraction of cost.
 **Generate**: Custom email/text communications tailored to each support ticket
 
 ### Related Resources
