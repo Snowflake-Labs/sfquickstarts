@@ -893,6 +893,8 @@ By default, price for the upcoming month is set to the current price. As tasty d
 - Click on Packages in the top left corner and search for "snowflake-ml-python" and add version 1.4.0
 <img src="assets/streamlit_packages.png"/>
 - Replace the sample code with the Python code below using Edit
+- Click `Run` to run the "Application Monthly Pricing App" Streamlit Application
+- This application shows the recommended price per item per day-of-week and the profit lift over the current price. Users can change prices and see the impact on demand and profit. Finalized prices are saved back to Snowflake.
 ```
 # Import python packages
 import streamlit as st
@@ -1035,10 +1037,10 @@ if st.button("Update Prices"):
 with st.expander("View Submitted Prices"):
     st.table(session.table("pricing_final").order_by(F.col("timestamp").desc()))
 ```
-- This application shows the recommended price per item per day-of-week and the profit lift over the current price. Users can change prices and see the impact on demand and profit. Finalized prices are saved back to Snowflake.
 
 
-<-!- ------------------------ -->
+
+<!- ------------------------ -->
 ## Clean Up
 Duration: 1
 
@@ -1054,7 +1056,8 @@ DROP WAREHOUSE IF EXISTS tb_po_ds_wh;
 DROP WAREHOUSE IF EXISTS tb_po_app_wh;
 ```
 
-<-!- ------------------------ -->
+
+<!- ------------------------ -->
 ## Conclusion
 Duration: 1
 
