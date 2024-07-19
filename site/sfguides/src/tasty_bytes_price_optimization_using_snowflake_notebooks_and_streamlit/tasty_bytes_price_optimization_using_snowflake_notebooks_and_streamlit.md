@@ -1040,7 +1040,7 @@ with st.expander("View Submitted Prices"):
 
 
 
-<!- ------------------------ -->
+<!-- ------------------------ -->
 ## Clean Up
 Duration: 1
 
@@ -1057,7 +1057,7 @@ DROP WAREHOUSE IF EXISTS tb_po_app_wh;
 ```
 
 
-<!- ------------------------ -->
+<!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
