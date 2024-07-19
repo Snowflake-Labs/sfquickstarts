@@ -1063,7 +1063,7 @@ Duration: 1
 
 **Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price.
 
-### What we've covered
+### What We've Covered
 With the completion of this quickstart, you have now delved into:
 - Data Exploration
 - Feature Engineering
