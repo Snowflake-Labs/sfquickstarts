@@ -297,10 +297,10 @@ Congratulations! You've successfully generated synthetic data and distilled the 
 ### What You Learned
 
 You have learnt how to use Snowflake Cortex AI to:
-**Generate Synthetic Data**: Prompt `llama3.1-405b` to generate synthetic customer support tickets.
-**Prepare**: Training dataset for distilling a the knowledge from a foundation model into a small custom LLM.
-**Distill**: The knowledge from the large model to fine-tune model a smaller model and achieve high accuracy at fraction of cost.
-**Generate**: Custom email/text communications tailored to each support ticket
+- **Generate Synthetic Data**: Prompt `llama3.1-405b` to generate synthetic customer support tickets.
+- **Prepare**: Training dataset for distilling a the knowledge from a foundation model into a small custom LLM.
+- **Distill**: The knowledge from the large model to fine-tune model a smaller model and achieve high accuracy at fraction of cost.
+- **Generate**: Custom email/text communications tailored to each support ticket
 
 ### Related Resources
 
