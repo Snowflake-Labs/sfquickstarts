@@ -5,9 +5,9 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake Cortex, Stream 
+tags: Getting Started, Snowflake Cortex, Cortex AI, Meta, Llama 3.1 405B, Llama 405B, Serverless, Fine-Tuning 
 Authors:  Arne Mauser, Kelvin So, Vino Duraisamy, Dash Desai
-# Build Custom LLMs with Synthetic Data Generation and Distillation
+# Use Meta Llama 3.1 405B to Build Custom LLMs with Synthetic Data Generation and Distillation
 <!-- ------------------------ -->
 ## Overview
 
@@ -15,9 +15,11 @@ Duration: 5
 
 Getting started with AI on enterprise data can seem overwhelming. Between getting familiar with LLMs, how to perform custom prompt engineering, fine-tuning an existing foundation model and how to get a wide range of LLMs deployed/integrated to run multiple tests all while keeping that valuable enterprise data secure. Well, a lot of these complexities are being abstracted away for you in Snowflake Cortex AI.
 
-### What is Snowflake Cortex?
+In this quickstart we will specifically show you how to use Llama 3.1 405B and Llama 3 8B but you can follow the same steps with other LLMs available in Snowflake Cortex AI.
 
-Snowflake Cortex is an intelligent, fully managed service that provides access to industry-leading large language models (LLMs) and chat with your data services.. Cortex AI capabilities include:
+### What is Snowflake Cortex AI?
+
+[Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex) is an intelligent, fully managed service that provides access to industry-leading large language models (LLMs) and chat with your data services. Cortex AI capabilities include:
 
 ![Cortex](./assets/cortex.png)
 
@@ -37,18 +39,19 @@ Compared to a smaller size model such as `llama3-8b`, a foundation large languag
 
 Using fine-tuning, organizations can make smaller models really good at specific tasks to deliver results with the accuracy of larger models at just a fraction of the cost. 
 
-Fine-tuning requires some labelled data. In many real-world scenarios this data can be hard to come by. This might be a new use-case that did not exist before or the existing data cannot be accessed. LLMs allow us to solve this issue via synthetic data.
+Fine-tuning requires some labeled data. In many real-world scenarios this data can be hard to come by. This might be a new use-case that did not exist before or the existing data cannot be accessed. LLMs allow us to solve this issue via synthetic data.
 
 ### What You Will Learn
 
 By the end of this quickstart guide, you will be able to use Snowflake Cortex AI to:
-**Generate Synthetic Data**: Prompt `llama3.1-405b` to generate synthetic customer support tickets.
-**Prepare**: Training dataset for distilling a the knowledge from a foundation model into a small custom LLM.**Distill**: The knowledge from the large model to fine-tune model a smaller model and achieve high accuracy at fraction of cost.
-**Generate**: Custom email/text communications tailored to each support ticket
+- **Generate Synthetic Data**: Prompt `llama3.1-405b` to generate synthetic customer support tickets.
+- **Prepare**: Training dataset for distilling the knowledge from a foundation model into a small custom LLM.
+- **Distill**: The knowledge from the large model to fine-tune model a smaller model and achieve high accuracy at fraction of cost.
+- **Generate**: Custom email/text communications tailored to each support ticket
 
 ### Prerequisites
 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex is available. [Check availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex AI is available. [Check availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
 - A Snowflake user created with ACCOUNTADMIN permissions. This user will be used to get things setup in Snowflake.
 > aside positive
 > Note: Cortex Fine-tuning is not available in Snowflake Free Trial accounts. Use your own accounts or reach out to your account representative to use this in your account.
@@ -57,7 +60,7 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 - Download the Snowflake Notebook from [this Git repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb) for fine-tuning the model.
 
 <!-- ------------------------ -->
-## Generate Synthetic Training Data with Llama3.1-405b and Snowflake Cortex AI
+## Generate Synthetic Training Data with Llama 3.1 405B and Snowflake Cortex AI
 
 Duration: 10
 
@@ -78,7 +81,7 @@ INSERT INTO support_ticket_category (category) VALUES
   ('Closing account');
 ```
 
-### Prompt Llama3.1-405b to Generate Synthetic Support Tickets
+### Prompt Llama 3.1 405b to Generate Synthetic Support Tickets
 
 In this step we prompt the LLM to generate 25 synthetic examples of customer support tickets for every category.
 
@@ -90,7 +93,7 @@ create or replace table support_tickets as (
         SNOWFLAKE.CORTEX.COMPLETE(
           'llama3.1-405b',
           CONCAT(
-            'Please provide 25 examples of customer service calls in a telecom company for the following category:', category, '. Provide detail and realistic scenarios that customer service representatives might encounter. Ensure the examples are diverse and cover various situations within each category. Please put the  examples into a JSON list. Each element in JSON list should include the following: {"scenario": <scenario>, "request": <detailed request from the customer, which usually is less than 3 sentences.>}. Only include JSON in output and no other words.'))) as tickets
+            'Please provide 25 examples of customer service calls in a telecom company for the following category:', category, '. Provide detailed and realistic scenarios that customer service representatives might encounter. Ensure the examples are diverse and cover various situations within each category. Please put the  examples into a JSON list. Each element in JSON list should include the following: {"scenario": <scenario>, "request": <detailed request from the customer, which usually is less than 3 sentences.>}. Only include JSON in output and no other words.'))) as tickets
     from support_ticket_category
 );
 ```
@@ -110,7 +113,7 @@ from support_tickets, lateral flatten(input => tickets)
 
 We now have a table `flatten_support_tickets` with one ticket per row. We also generated unique IDs for each ticket.
 
-### Rating and Filtering Synthetic Data with and LLM as a Judge.
+### Rating and Filtering Synthetic Data with an LLM as a Judge.
 
 We want to make sure our data is of high quality. Again, we can use an LLM to help us with this task. Instead of prompting the LLM to generate the support tickets, we now ask the LLM to rate the synthetic data for two criteria: We want the tickets to be (1) realistic and (2) valid. 
 
@@ -131,9 +134,9 @@ create or replace table filtered_support_tickets as (
 
 ### Test Base Model Performance for Support Ticket Categorization using Cortex AI
 
-First, let's use Snowflake Cortex `COMPLETE()` to categorize the support tickets into our categories – Roaming Fees, Slow data speed, Add new line, Closing account and more.
+First, let's use Snowflake Cortex AI `COMPLETE()` to categorize the support tickets into our categories – Roaming Fees, Slow data speed, Add new line, Closing account and more.
 
-We can use any Cortex supported model under the hood to invoke the `COMPLETE()` function. In this quickstart, let’s use `llama3.1-405b` and use the following prompt.
+We can use any Cortex AI supported model under the hood to invoke the `COMPLETE()` function. In this quickstart, let’s use `llama3.1-405b` and use the following prompt.
 
 ```sql
 CREATE OR REPLACE FUNCTION CATEGORIZE_PROMPT_TEMPLATE(request STRING)
@@ -188,12 +191,12 @@ To fine-tune the language model, we need training data that includes support tic
 
 Next step is to split the curated dataset into a training and a test set. There are two ways you can fine-tune a large language model. 
 
-- Use Snowflake Cortex AI Studio that allows you to run fine-tuning from the UI. This is currently in PrPr
+- Use Snowflake Snowflake AI & ML Studio that allows you to run fine-tuning from the UI. This is currently in PrPr
 - Use FINETUNE() Cortex function to run the fine-tune job using SQL queries. This is currently available in PuPr.
 
-#### Fine-tuning using Cortex AI Studio
+#### Fine-tuning using Snowflake AI & ML Studio
 
-Once we have the training data, we could use Snowflake Cortex AI Studio to fine-tune. Cortex AI features a no-code fine-tuning from the UI using the `Create Custom LLM` option.
+Once we have the training data, we could use Snowflake AI & ML Studio to fine-tune. Cortex AI features a no-code fine-tuning from the UI using the `Create Custom LLM` option.
 
 ![CortexStudio](./assets/cortex_studio.png)
 
@@ -304,4 +307,5 @@ You have learnt how to use Snowflake Cortex AI to:
 - [Snowflake Cortex Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Snowflake Cortex Fine-tuning](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning)
 - [Snowflake Cortex COMPLETE()](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete)
+- [Streamlit + Snowflake Cortex AI conversational assistant](https://quickstarts.snowflake.com/guide/asking_questions_to_your_own_documents_with_snowflake_cortex)
 - [Snowflake Notebooks: Demo Repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb)
