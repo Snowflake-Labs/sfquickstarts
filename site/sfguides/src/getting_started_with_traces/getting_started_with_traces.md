@@ -12,9 +12,9 @@ tags: Getting Started, Data Science, Data Engineering, Snowpark Python, Notebook
 ## Overview 
 Duration: 1
 
-This guide will introduce you to Traces and Resource Metrics in Snowflake which are useful you optimize performance and find errors in notebooks, udfs, and stored procedures.
+This guide will introduce you to Logs, Traces, and Metrics in Snowflake which can be used to optimize performance and find errors in Notebooks, UDFs, and stored procedures.
 
-It will use APIs from OpenWeather to showcase the capabilities in Snowflake.
+This guide will use REST APIs from OpenWeather to showcase the fetch weather data as part of a pipeline.
 
 ### Prerequisites
 
@@ -34,11 +34,11 @@ It will use APIs from OpenWeather to showcase the capabilities in Snowflake.
  + Access to create a Database
  + Access to create an Integration
  + Account has accepted [external offering terms](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started)
-* Free API Key from [OpenWeather](https://openweathermap.org/)
+* Free API key from [OpenWeather](https://openweathermap.org/) (The steps to get an API key are covered later in this quickstart)
 
 ### What you will Build 
 
-* A Notebook that can pull weather data into a bronze layer
+* A Notebook that can pull weather data into a bronze layer, as part of a [Medallion Architecture](https://dataengineering.wiki/Concepts/Medallion+Architecture)
 
 <!-- ------------------------ -->
 ## Creating the Notebook
@@ -48,12 +48,15 @@ Login to Snowsight using your credentials in Snowflake.
 
 You'll need a Database, Schema, and Warehouse to get started with the notebook.
 
-Run the following sql (in a worksheet) to create the warehouse, database, and schema:
+Run the following sql (in a worksheet) to create the warehouse, database, and schema with tracing on:
 
 ```sql
 CREATE OR REPLACE WAREHOUSE TRACING_QUICKSTART_WH WAREHOUSE_SIZE=XSMALL, INITIALLY_SUSPENDED=TRUE;
 CREATE OR REPLACE DATABASE TRACING_QUICKSTART;
 CREATE OR REPLACE SCHEMA DATA;
+
+ALTER DATABASE TRACING_QUICKSTART SET TRACE_LEVEL = ALWAYS;
+ALTER SCHEMA DATA SET TRACE_LEVEL = ALWAYS;
 
 ```
 
@@ -87,11 +90,11 @@ if api_key == "":
 
 ```
 
-When running this cell, it will prompt for entering an API Key. This was done with the streamlit text_input widget. 
+When running this cell, it will prompt for entering an API key. This was done with the streamlit `text_input` widget. 
 
 To get a free API key, sign up for an account on [OpenWeather](https://home.openweathermap.org/users/sign_up).
 
-After signing up, add a new API key by going to [API keys](https://home.openweathermap.org/api_keys). Create a new key with name `snowflake_key` and click Generate, copy the api key to the clipboard.
+After signing up, add a new API key by going to [API keys](https://home.openweathermap.org/api_keys). Create a new key with name `snowflake_key` and click Generate, copy the API key to the clipboard.
 
 After generating the key, go back to the Snowsight notebook and paste the key generated in the dialog and hit enter.
 
@@ -99,7 +102,7 @@ After generating the key, go back to the Snowsight notebook and paste the key ge
 ## Confgure External API Access
 Duration: 2
 
-In the second notebook cell, a network rule, secret, and external access integration will be configured to allow outbound connectivity to the OpenWeather API. This is necessary because the Python Notebook does not have network access without this configuration. A stage is also created to allow storage of the permanent UDF and procedure. A Permanent (will be stored in the database) UDF and procedure was chosen so these utilities could be called outside the notebook in the future if desired.
+In the second notebook cell you will configure a network rule, secret, and external access integration to allow outbound connectivity to the OpenWeather API. This is necessary because the Python Notebook is secure by default and does not allow network access. A stage is also created to store the permanent UDF and procedure. "Permanent" means that the UDF and stored procedure will be stored in the database so that they can be called from outside the Notebook in the future, such as from a SQL query.
 
 Paste this code into the second cell, variables are automatically pulled in from the previous cell so no editing is needed.
 
@@ -128,19 +131,16 @@ CREATE STAGE IF NOT EXISTS EXEC_STORAGE;
 Run this cell and verify it is successful.
 
 <!-- ------------------------ -->
-## Enabling Traces
+## Enabling Logging and Metrics
 Duration: 2
 
-In order to get logs, errors and traces, levels need to be modified. This can easily be done in sql.
+In order to get logs and metrics, levels need to be modified. This can easily be done in sql.
 
 Change the third notebook cell to SQL and paste this section into the body.
 
 ```sql
 ALTER DATABASE "{{database_name}}" SET LOG_LEVEL = DEBUG;
 ALTER SCHEMA "{{schema_name}}" SET LOG_LEVEL = DEBUG;
-
-ALTER DATABASE "{{database_name}}" SET TRACE_LEVEL = ALWAYS;
-ALTER SCHEMA "{{schema_name}}" SET TRACE_LEVEL = ALWAYS;
 
 ALTER DATABASE "{{database_name}}" SET METRIC_LEVEL = ALL;
 ALTER SCHEMA "{{schema_name}}" SET METRIC_LEVEL = ALL;
@@ -173,8 +173,6 @@ import requests
 import json
 import logging
 
-from opentelemetry import trace
-from snowflake import telemetry
 
 rsession = requests.Session()
 def get_weather(lat, lon):
@@ -184,15 +182,10 @@ def get_weather(lat, lon):
   """
   api_key = _snowflake.get_generic_secret_string('api_key')
   url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&exclude=hourly,daily&appid={api_key}"
-  tracer = trace.get_tracer(__name__) 
-  with tracer.start_as_current_span(f"openweather_api_call") as p:
-    response = rsession.get(url)
-    logging.debug(f"Body from API: {response.text} in get_weather")
-    if response.status_code == 200:
-        p.set_status(trace.Status(trace.StatusCode.OK))
-    else:
-        p.set_status(trace.Status(trace.StatusCode.ERROR, str(response.status_code)))
-        logging.warn(f"Unexpected response from API: {response.status_code} in get_weather")
+  response = rsession.get(url)
+  logging.debug(f"Body from API: {response.text} in get_weather")
+  if response.status_code != 200:
+    logging.warn(f"Unexpected response from API: {response.status_code} in get_weather")
   return response.json()
 
 # Register the UDF
@@ -246,7 +239,10 @@ Create a new python cell at the bottom of the notebook by clicking on + Python.
 import datetime 
 import time
 import snowflake.snowpark
+
+from opentelemetry import trace
 from snowflake.snowpark.functions import sproc
+
 
 def get_weather_for_cities(session, to_table, minutes_to_run, seconds_to_wait):
     """
@@ -255,9 +251,11 @@ def get_weather_for_cities(session, to_table, minutes_to_run, seconds_to_wait):
     """
     df = session.table("city_list")
     stop_time = datetime.datetime.utcnow() + datetime.timedelta(minutes = minutes_to_run)
-    while datetime.datetime.utcnow() < stop_time: 
-        pdf = df.select(get_weather_fn("lat", "lon").alias("current_weather"), "name")
-        pdf.write.mode("append").save_as_table(to_table)
+    tracer = trace.get_tracer(__name__)
+    while datetime.datetime.utcnow() < stop_time:
+        with tracer.start_as_current_span(f"get_weather_for_all_cities") as p:
+            pdf = df.select(get_weather_fn("lat", "lon").alias("current_weather"), "name")
+            pdf.write.mode("append").save_as_table(to_table)
         time.sleep(seconds_to_wait)
     return "OK"
 
@@ -323,11 +321,11 @@ Duration: 5
 
 Click on the left navigation item "Monitoring" > "Traces & Logs".
 
-The top entry in the traces will be the Current Notebook, if it is not, filter using the `Database` filter and selecting `TRACING_QUICKSTART`.
+The top entry in the traces should be the calls from the Current Notebook, named `TRACING_QUICKSTART`. Traces can take a minute to show up, so you may have to wait and refresh until it appears. You may have to filter using the `Database` filter and selecting `TRACING_QUICKSTART` if there are other traces in the account.
 
-Look for the `save_as_table` span and the `get_weather_fn` spans which are the more time consuming parts of the procedure.
+Click on Trace for the Notebook. Select the Span Type Filters at the top to include UDF and Procedures. Excluding Streamlit will remove the notebook calls from the view. Look for the `get_weather_for_cities_sp` span and the `__main__:get_weather_for_all_cities` spans which are the more time consuming parts of the procedure. You can see fetching the data from the API and saving is only a few seconds, but the entire runtime of the procedure is over a minute.
 
-If you expand the `__main__:openweather_api_call` entry, you can see each instance of the call to get weather and the status of those calls. You can also see the Debug Logs by clicking on Logs on the trace to see all the http request information.
+If you expand the `get_weather_fn` entry under `__main__:get_weather_for_all_cities`, you can see the Debug Logs by clicking on Logs on the trace to see all the http request information.
 
 This tracing information shows the entire execution timeline with information on every call.
 
