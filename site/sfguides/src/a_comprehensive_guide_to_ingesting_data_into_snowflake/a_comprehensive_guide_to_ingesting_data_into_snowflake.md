@@ -1251,6 +1251,61 @@ SELECT count(*) FROM LIFT_TICKETS_KAFKA_STREAMING;
 
 * Streaming is the best ingest pattern when using Kafka.
 
+## From Kafka - Streaming with Schematization
+Duration: 5
+
+The previous methods for loading data from Kafka landed the data in a Variant field. While this is flexible, it is not the most user friendly or performant way to land data. The Snowflake Connector for Kafka can use schematization to maintain the schema of the landed data.
+
+Configure and install a new connector to load data in streaming mode WITH schematization:
+
+Run the following in your shell:
+
+```bash
+export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED
+eval $(cat .env)
+
+URL="https://$SNOWFLAKE_ACCOUNT.snowflakecomputing.com"
+NAME="LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED"
+
+curl -i -X PUT -H "Content-Type:application/json" \
+    "http://localhost:8083/connectors/$NAME/config" \
+    -d '{
+        "connector.class":"com.snowflake.kafka.connector.SnowflakeSinkConnector",
+        "errors.log.enable":"true",
+        "snowflake.database.name":"INGEST",
+        "snowflake.private.key":"'$PRIVATE_KEY'",
+        "snowflake.schema.name":"INGEST",
+        "snowflake.role.name":"INGEST",
+        "snowflake.url.name":"'$URL'",
+        "snowflake.user.name":"'$SNOWFLAKE_USER'",
+        "snowflake.enable.schematization": "TRUE",
+        "snowflake.ingestion.method": "SNOWPIPE_STREAMING",
+        "topics":"'$KAFKA_TOPIC'",
+        "name":"'$NAME'",
+        "value.converter":"org.apache.kafka.connect.json.JsonConverter",
+        "value.converter.schemas.enable":"false",
+        "buffer.count.records":"1000000",
+        "buffer.flush.time":"10",
+        "buffer.size.bytes":"250000000",
+        "snowflake.topic2table.map":"'$KAFKA_TOPIC:LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED'"
+    }'
+```
+
+Verify the connector was created and is running in the Redpanda console.
+
+To send in all your test data, you can run the following in your shell:
+
+```bash
+export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED
+cat data.json.gz | zcat | python ./publish_data.py
+```
+
+The data will land in a table the Connector creates with the schema based on the payload. To see the table and data, run the following SQL:
+
+```sql
+SELECT * FROM LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED;
+```
+
 ## From Java SDK - Using the Snowflake Ingest Service
 Duration: 10
 
