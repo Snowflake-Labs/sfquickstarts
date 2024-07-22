@@ -44,12 +44,12 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 <img src="assets/run_all.png"/>
 - Copy and paste the following code to create Snowflake objects (warehouse, database, schema, raw tables), and ingest shift  data from S3 and click `Run All` at the top of the Worksheet
 ```
-use role securityadmin;
+USE ROLE securityadmin;
 
 -- create tb_po_data_scientist
 CREATE OR REPLACE ROLE tb_po_data_scientist;
 
-use role accountadmin;
+USE ROLE accountadmin;
 
 /*---------------------------*/
 -- create our Database
@@ -128,7 +128,6 @@ GRANT ROLE tb_po_data_scientist TO USER identifier($my_user_var);
 
 USE ROLE tb_po_data_scientist;
 
-show grants to role accountadmin;
 
 /*---------------------------*/
 -- create file format
@@ -854,7 +853,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 - Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on `Projects` `->` `Notebook`
 - Switch Role to `TB_PO_DATA_SCIENTIST`
 - Download the [Tasty Bytes Price Optimization and Recommendations Notebook](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/tasty_bytes_price_optimization_and_recommendations.ipynb)
-- Using the `Import .ipynb file`, import the downloaded Notebook
+- Using the `Import .ipynb file`, import the downloaded notebook
 <img src="assets/import_notebook.png"/>
 - Select the `TB_PO_PROD` database and `ANALYTICS` schema for the Notebook Location and `TB_PO_DS_WH` for the Notebook warehouse and click `Create`
 <img src="assets/notebook_settings.png"/>
