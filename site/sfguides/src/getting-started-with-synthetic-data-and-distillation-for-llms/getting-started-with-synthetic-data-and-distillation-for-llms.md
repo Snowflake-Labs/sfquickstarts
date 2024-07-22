@@ -49,6 +49,10 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 - **Distill**: The knowledge from the large model to fine-tune model a smaller model and achieve high accuracy at fraction of cost.
 - **Generate**: Custom email/text communications tailored to each support ticket
 
+### What You Will Build
+- Fine-tuned model used for support ticket categorization
+- Email/text generation application
+
 ### Prerequisites
 
 - A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex AI is available. [Check availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
@@ -56,7 +60,7 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 > aside positive
 > Note: Cortex Fine-tuning is not available in Snowflake Free Trial accounts. Use your own accounts or reach out to your account representative to use this in your account.
 
-- A GitHub account. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started. 
+
 - Download the Snowflake Notebook from [this Git repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb) for fine-tuning the model.
 
 <!-- ------------------------ -->
