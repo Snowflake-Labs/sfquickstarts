@@ -885,8 +885,8 @@ By default, price for the upcoming month is set to the current price. As Tasty B
 #### Create Streamlit Application
 - Within Snowsight, Click on the `Streamlit` tab
 - Switch Role to `TB_PO_DATA_SCIENTIST`
-- Click on `+Streamlit App` to create a new Streamlit Application
-- Name the Streamlit app "Application Monthly Pricing App"
+- Click on `+Streamlit App` to create a new Streamlit application
+- Name the Streamlit application "Monthly Pricing App"
 - Select the `TB_PO_PROD` database and `ANALYTICS` schema for the Streamlit application location and `TB_PO_APP_WH` for the warehouse and click `Create`
 
 <img src="assets/streamlit_settings.png"/>
