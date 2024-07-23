@@ -1,13 +1,13 @@
-author: Arne Mauser
-id: getting-started-with-synthetic-data-and-distillation-for-llms
+author: Arne Mauser, Kelvin So, Dash Desai
+id: getting_started_with_synthetic_data_and_distillation_for_llms
 summary: This guide provides the instructions for creating custom LLMs with synthetic data and distillation using Snowflake Cortex AI.
 categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowflake Cortex, Cortex AI, Meta, Llama 3.1 405B, Llama 405B, Serverless, Fine-Tuning 
-Authors:  Arne Mauser, Kelvin So, Vino Duraisamy, Dash Desai
-# Use Meta Llama 3.1 405B to Build Custom LLMs with Synthetic Data Generation and Distillation
+
+# Getting Started with Llama 3.1 405B: Build Custom LLMs with Synthetic Data Generation and Distillation
 <!-- ------------------------ -->
 ## Overview
 
