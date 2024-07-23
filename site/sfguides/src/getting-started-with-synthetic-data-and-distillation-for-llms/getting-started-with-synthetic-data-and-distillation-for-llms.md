@@ -64,6 +64,31 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 - Download the Snowflake Notebook from [this Git repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb) for fine-tuning the model.
 
 <!-- ------------------------ -->
+## Setup
+
+Let's create a fresh database for this guide. Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to get started.
+
+> aside positive
+> IMPORTANT:
+>
+> - If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
+>
+> - For each SQL script block below, select all the statements in the block and execute them top to bottom.
+
+In a new SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+CREATE WAREHOUSE DASH_S WAREHOUSE_SIZE=SMALL;
+CREATE DATABASE DASH_DB;
+CREATE SCHEMA DASH_SCHEMA;
+
+USE DASH_DB.DASH_SCHEMA;
+USE WAREHOUSE DASH_S;
+```
+
+<!-- ------------------------ -->
 ## Generate Synthetic Training Data
 
 Duration: 10
