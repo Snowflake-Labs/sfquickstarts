@@ -142,7 +142,7 @@ CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZISSUES (
 	REPORT_RUN_ID VARCHAR(16777216)
 );
 COPY INTO WIZDB.WIZSCHEMA.WIZISSUES
-FROM s3://sfquickstarts/wizvhol/wizissues.tsv
+FROM s3://sfquickstarts/sfguide_security_analytics_with_wiz_and_snowflake/wizissues.tsv
 FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1,FIELD_DELIMITER='0x09');
 ```
 ```sql
@@ -172,7 +172,7 @@ CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZVULNERABILITIES (
 	REPORT_RUN_ID VARCHAR(16777216)
 );
 COPY INTO WIZDB.WIZSCHEMA.WIZVULNERABILITIES
-FROM s3://sfquickstarts/wizvhol/wizvulnerabilities.tsv
+FROM s3://sfquickstarts/sfguide_security_analytics_with_wiz_and_snowflake/wizvulnerabilities.tsv
 FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1,FIELD_DELIMITER='0x09');
 ```
 ```sql
@@ -195,7 +195,7 @@ CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZ_HOST_CONFIGURATION_FINDINGS (
 	REPORT_RUN_ID VARCHAR(16777216)
 );
 COPY INTO WIZDB.WIZSCHEMA.WIZVULNERABILITIES
-FROM s3://sfquickstarts/wizvhol/wizhostconfigurationfindings.tsv
+FROM s3://sfquickstarts/sfguide_security_analytics_with_wiz_and_snowflake/wizhostconfigurationfindings.tsv
 FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1,FIELD_DELIMITER='0x09');
 ```
 
@@ -212,7 +212,7 @@ CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZ_REPORT_RUNS (
 	primary key (REPORT_RUN_ID)
 );
 COPY INTO WIZDB.WIZSCHEMA.WIZ_REPORT_RUNS
-FROM s3://sfquickstarts/wizvhol/wizreportruns.tsv
+FROM s3://sfquickstarts/sfguide_security_analytics_with_wiz_and_snowflake/wizreportruns.tsv
 FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1,FIELD_DELIMITER='0x09');
 ```
 
