@@ -64,7 +64,7 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 - Download the Snowflake Notebook from [this Git repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb) for fine-tuning the model.
 
 <!-- ------------------------ -->
-## Generate Synthetic Training Data with Llama 3.1 405B and Snowflake Cortex AI
+## Generate Synthetic Training Data
 
 Duration: 10
 
