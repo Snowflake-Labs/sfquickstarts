@@ -80,7 +80,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 ### Prerequisites
 
 - Access to [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) for source code
-- A Snowflake account, if you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Snowflake account, if you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 ### Vocabulary
@@ -329,7 +329,7 @@ SELECT
     chunk_number, 
     chunk_text, 
     combined_chunk_text,
-    snowflake.cortex.embed_text('e5-base-v2', combined_chunk_text) as combined_chunk_vector
+    snowflake.cortex.embed_text_768('e5-base-v2', combined_chunk_text) as combined_chunk_vector
 FROM 
     repair_manuals_chunked;
 
@@ -355,7 +355,7 @@ AS
             v.file_name,
             v.chunk_number,
             v.chunk_text,
-            VECTOR_COSINE_DISTANCE(v.combined_chunk_vector, snowflake.cortex.embed_text('e5-base-v2', prompt)) AS score
+            VECTOR_COSINE_SIMILARITY(v.combined_chunk_vector, snowflake.cortex.embed_text_768('e5-base-v2', prompt)) AS score
         FROM 
             repair_manuals_chunked_vectors v
         ORDER BY 
@@ -498,7 +498,7 @@ SELECT
     equipment_id,
     problem_reported,
     resolution_notes,
-    snowflake.cortex.embed_text('e5-base-v2', combined_text) as combined_vector
+    snowflake.cortex.embed_text_768('e5-base-v2', combined_text) as combined_vector
 FROM repair_logs_formatted;
 
 --Validate
@@ -521,9 +521,9 @@ AS
        WITH best_match_repair_logs AS (
             SELECT 
                 *, 
-                VECTOR_COSINE_DISTANCE(
+                VECTOR_COSINE_SIMILARITY(
                     combined_vector,
-                    snowflake.cortex.embed_text('e5-base-v2', prompt)
+                    snowflake.cortex.embed_text_768('e5-base-v2', prompt)
                 ) AS score
             FROM
                 repair_logs_vectors

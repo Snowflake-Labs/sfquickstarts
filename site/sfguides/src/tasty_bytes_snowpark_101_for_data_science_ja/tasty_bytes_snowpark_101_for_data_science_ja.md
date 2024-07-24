@@ -36,7 +36,7 @@ Streamlit *（2022年3月にSnowflakeが買収）* は、カスタムウェブ�
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)がインストールされていること
 - [Anaconda](https://www.anaconda.com/)がインストールされていること
-- [ORGADMINによって有効化されたAnacondaパッケージ](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda)を持つSnowflakeアカウント。Snowflakeアカウントをお持ちでない場合は、[無料トライアルアカウント](https://signup.snowflake.com/)に登録できます。
+- [ORGADMINによって有効化されたAnacondaパッケージ](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda)を持つSnowflakeアカウント。Snowflakeアカウントをお持ちでない場合は、[無料トライアルアカウント](https://signup.snowflake.com/?utm_cta=quickstarts_)に登録できます。
 - アカウント管理者の役割を持つSnowflakeアカウントのログイン。ログインをお持ちでない場合は、無料トライアルに登録するか、データベース、スキーマ、テーブル、ステージ、ユーザー定義関数、ストアドプロシージャを作成する機能を持つ別のロールを使用する必要があります。
 
 ### 構築するもの
@@ -72,7 +72,7 @@ Tasty Bytesは世界中の都市でキッチンカーを運行しており、各
   - frostbyteを検索
   - 「SafeGraph: frostbyte」をクリック
   - 「Get（取得）」をクリック
-  - データベースの名称をFROSTBYTE_WEATHERSOURCE（すべて大文字）に変更
+  - データベースの名称をFROSTBYTE_SAFEGRAPH（すべて大文字）に変更
   - 追加ロールへの付与 -> 「PUBLIC（公開）」
 
 <img src = "assets/acquire_safegraph.gif">

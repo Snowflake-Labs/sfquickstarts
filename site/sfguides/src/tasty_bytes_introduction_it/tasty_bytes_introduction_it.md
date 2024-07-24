@@ -18,15 +18,15 @@ In questo quickstart Introduzione a Tasty Bytes per prima cosa farai la conoscen
 
 Dopo avere conosciuto l’organizzazione Tasty Bytes, completeremo la configurazione del suo modello dati di base, dei ruoli e dei warehouse specifici per i workload e di tutti i controlli degli accessi basati sui ruoli (RBAC) necessari. 
 
-Al termine di questo quickstart avrai implementato l’ambiente base necessario per eseguire i quickstart contenuti nella sezione [Quickstart Powered by Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3).
+Al termine di questo quickstart avrai implementato l’ambiente base necessario per eseguire i quickstart contenuti nella sezione [Quickstart Powered by Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_it/index.html#3).
 
 ### Che cos’è Tasty Bytes?
 <img src="assets/who_is_tasty_bytes.png"/>
 
 ### Prerequisiti
-- Un [browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements) Snowflake supportato
+- Un [browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements) supportato da Snowflake
 - Un account Snowflake Enterprise o Business Critical
-    - Se non hai un account Snowflake, [**richiedi la tua prova gratuita di 30 giorni**](https://signup.snowflake.com/). Al momento della registrazione, assicurati di selezionare **Enterprise** Edition. Puoi scegliere qualsiasi [cloud o regione di Snowflake](https://docs.snowflake.com/en/user-guide/intro-regions).
+    - Se non hai un account Snowflake, [**richiedi la tua prova gratuita di 30 giorni**](https://signup.snowflake.com/?utm_cta=quickstarts_). Al momento della registrazione, assicurati di selezionare **Enterprise** Edition. Puoi scegliere qualsiasi [cloud o regione Snowflake](https://docs.snowflake.com/en/user-guide/intro-regions).
     - Al termine della registrazione, riceverai un’email con un link per l’attivazione e l’URL del tuo account Snowflake.
     - <img src="assets/choose_edition.png" width="300"/>
     
@@ -64,7 +64,7 @@ Per questo quickstart utilizzerai l’interfaccia web di Snowflake nota come Sno
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Passaggio 5 - Rinominare un foglio di lavoro
-- Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo “Tasty Bytes - Setup”
+- Rinomina il foglio di lavoro facendo clic sul nome generato automaticamente (data e ora) e inserendo “Tasty Bytes - Setup”.
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Passaggio 6 - Accedere al file di configurazione SQL su GitHub

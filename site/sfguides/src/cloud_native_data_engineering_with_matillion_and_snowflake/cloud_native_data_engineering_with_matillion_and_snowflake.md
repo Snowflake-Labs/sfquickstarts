@@ -21,7 +21,7 @@ Let's get started.
 - A Matillion account, provisioned through snowflake’s [partner connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html)
 
 ### What You’ll Learn
-- How to source 3rd party data from Snowflake data marketplace  
+- How to source 3rd party data from Snowflake Marketplace  
 - How to use Matillion’s GUI to build end-to-end transformation pipeline  
 - How to use Matillion to extract real time data from public APIs  
 - How to leverage Matillion scale up/down Snowflake’s virtual warehouses  
@@ -36,7 +36,7 @@ Duration: 2
 You are a stock portfolio manager of a team of 10 traders !!! Each of your traders trade stocks in 10 separate industries. You have with you available 10 years of historical data of trades that your team performed, sitting in an S3 bucket - you know what stocks they traded (BUY or SELL), and at what price.
 
 You would like to aggregate their Profit & Loss, and even get a real time aggregated view of total realized and unrealized gains/loss of each of your traders. To accomplish this, we will follow the following steps:
-1. Acquire stocks historical data, freely provided by [Zepl](https://www.snowflake.com/datasets/zepl-us-stock-market-data-for-data-science/), from snowflake data marketplace. This will create a new database in your snowflake account.
+1. Acquire stocks historical data, freely provided by [Zepl](https://www.snowflake.com/datasets/zepl-us-stock-market-data-for-data-science/), from Snowflake Marketplace. This will create a new database in your snowflake account.
 2. Launch a Matillion ETL instance through snowflake partner connect.
 3. Use Matillion to :
   - Ingest your traders’ historical data sitting in a S3 bucket, into a Snowflake table.
@@ -948,7 +948,7 @@ Duration: 1
 Congrats! You have successfully developed a well-orchestrated data engineering pipeline!  
 
 ### What we have covered
-- Source 3rd party data from Snowflake data marketplace  
+- Source 3rd party data from Snowflake Marketplace  
 - Use Matillion’s GUI to build end-to-end transformation pipeline
 - Leverage Matillion scale up/down Snowflake’s virtual warehouses  
 

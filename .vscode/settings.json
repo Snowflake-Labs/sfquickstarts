@@ -10,5 +10,6 @@
         "Sergey",
         "themseselves",
         "workspaceblobstore"
-    ]
+    ],
+    "dbt.queryLimit": 500
 }

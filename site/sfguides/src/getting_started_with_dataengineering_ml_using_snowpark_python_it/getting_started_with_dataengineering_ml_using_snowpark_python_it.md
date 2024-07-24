@@ -33,7 +33,7 @@ Il set di librerie e runtime in Snowflake che consente di distribuire ed elabora
 
 **Costrutti runtime flessibili**: Snowpark fornisce costrutti runtime flessibili che consentono agli utenti di inserire ed eseguire logica personalizzata. Gli sviluppatori possono creare in modo fluido pipeline di dati, modelli ML e applicazioni basate sui dati utilizzando User Defined Function e stored procedure.
 
-Scopri di più su [Snowpark](https://www.snowflake.com/snowpark/).
+Scopri di più su [Snowpark](https://www.snowflake.com/it/data-cloud/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -61,7 +61,7 @@ Streamlit è un framework per app [open source](https://github.com/streamlit/str
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installato
 - [Python 3.9](https://www.python.org/downloads/) installato
   - Nota che creerai un ambiente Python con la versione 3.9 nel passaggio **Operazioni iniziali**
-- Account Snowflake con i [pacchetti Anaconda abilitati da ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Se non hai un account Snowflake, puoi registrarti per una [prova gratuita](https://signup.snowflake.com/).
+- Account Snowflake con i [pacchetti Anaconda abilitati da ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). Se non hai un account Snowflake, puoi registrarti per una [prova gratuita](https://signup.snowflake.com/?utm_cta=quickstarts_).
 - Un login per l’account Snowflake con il ruolo ACCOUNTADMIN. Se hai questo ruolo nel tuo ambiente, puoi scegliere di utilizzarlo. In caso contrario, dovrai 1) registrarti per una prova gratuita, 2) utilizzare un ruolo diverso con la capacità di creare database, schemi, tabelle, stage, task, User Defined Function e stored procedure, oppure 3) usare un database e uno schema esistenti in cui puoi creare gli oggetti elencati.
 
 > aside positive 

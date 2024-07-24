@@ -22,7 +22,7 @@ Let’s explore how to get started using Transformer for Snowflake and some of t
  
 ### Prerequisites
 - Access to [StreamSets DataOps Platform account](https://cloud.login.streamsets.com/login)
-- A [Snowflake](https://signup.snowflake.com/) account and a schema that your user has CREATE TABLE privileges on
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account and a schema that your user has CREATE TABLE privileges on
 - SQL Script located [here](https://github.com/streamsets/Pipeline-Examples/blob/main/SCD_Snowpark/SCD_Snowpark.sql)
 
 ### What You’ll Learn 

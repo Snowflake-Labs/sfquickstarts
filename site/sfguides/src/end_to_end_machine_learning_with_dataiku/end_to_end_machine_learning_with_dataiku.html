@@ -377,13 +377,13 @@ tags: Getting Started, Data Science, Data Engineering, Twitter</p>
 <!-- ------------------------ -->
 <h2 id="overview">Overview</h2>
 <p>Duration: 5</p>
-<p>This Snowflake Quickstart introduces you to the using Snowflake together with Dataiku Cloud as part of a Machine learning project, and build an end-to-end machine learning solution. This lab will showcase seamless integration of both Snowflake and Dataiku at every stage of ML life cycle. We will also use Snowflake Data Marketplace to enrich the dataset.</p>
+<p>This Snowflake Quickstart introduces you to the using Snowflake together with Dataiku Cloud as part of a Machine learning project, and build an end-to-end machine learning solution. This lab will showcase seamless integration of both Snowflake and Dataiku at every stage of ML life cycle. We will also use Snowflake Marketplace to enrich the dataset.</p>
 <h3 id="business-problem">Business Problem</h3>
 <p>Will go through a <strong>supervised machine learning</strong> by building a binary classification model to predict if a lender will default on a loan. <strong>LOAN_STATUS (yes/no)</strong>  considering multiple features.</p>
 <p><strong>Supervised machine learning</strong> is the process of taking a historical dataset with KNOWN outcomes of what we would like to predict, to train a model, that can be used to make future predictions. After building a model we will deploy back to Snowflake for scoring by using Snowpark-java udf.</p>
 <h3 id="dataset">Dataset</h3>
 <p>We will be exploring a financial service use of evaluating loan information to predict if a lender will default on a loan. The base data set was derived from loan data from the Lending Club.</p>
-<p>In addition to base data, this will then be enriched with unemployment data from Knoema on the Snowflake Data Marketplace.</p>
+<p>In addition to base data, this will then be enriched with unemployment data from Knoema on the Snowflake Marketplace.</p>
 <h3 id="what-were-going-to-build">What We’re Going To Build</h3>
 <p>We will build a project. The project contains the input datasets from Snowflake. We’ll build a data science pipeline by applying data transformations, enriching from Marketplace employment data, building a machine learning model, and deploying it to the Flow. We will then see how you can score the model against fresh data from Snowflake and automate</p>
 <p><img src="assets/SF-1.jpg" alt="1"></p>
@@ -599,7 +599,7 @@ SELECT * FROM loan_data LIMIT 100;
 <pre><code>                          ------- End of Part 1 ---------
 </code></pre>
 <p><strong>Step 5</strong> : Time to switch to get <strong>Konema Employement Data</strong> from Snowflake Market place</p>
-<p>We can now look at additional data in the Snowflake Marketplace that can be helpful for improving ML models. It may be good to look at employment data in the region when analyzing loan defaults. Let’s look in the Snowflake Data Marketplace and see what external data is available from the data providers.</p>
+<p>We can now look at additional data in the Snowflake Marketplace that can be helpful for improving ML models. It may be good to look at employment data in the region when analyzing loan defaults. Let’s look in the Snowflake Marketplace and see what external data is available from the data providers.</p>
 <p>Lets go to home screen</p>
 <p><img src="assets/sf-18-dataloading5.png" alt="18"></p>
 <h4 id="imp-note">Imp Note</h4>
@@ -633,7 +633,7 @@ SELECT * FROM loan_data LIMIT 100;
 <p><img src="assets/sf-21-marketplace3.png" alt="21"></p>
 <p>When the confirmation is provided click on done and then you can close the browser tab with the Preview App.</p>
 <p><img src="assets/sf-22-marketplace4.png" alt="22"></p>
-<p>Other advantage of using Snowflake Data Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.After done just to confirm the datasets are properly configured.</p>
+<p>Other advantage of using Snowflake Marketplace does not require any additional work and will show up as a database in your account. A further benefit is that the data will automatically update as soon as the data provider does any updates to the data on their account.After done just to confirm the datasets are properly configured.</p>
 <p>Click on Data tab <strong>Database</strong></p>
 <p>You should see <strong>KNOEMA_LABOR_DATA_ATLAS</strong>  and <strong>ML_DB</strong></p>
 <p><img src="assets/sf-23-marketplace5.png" alt="23"></p>

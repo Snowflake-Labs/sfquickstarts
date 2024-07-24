@@ -6,10 +6,12 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Predictive Modeling, Machine Learning, BI
+
 lastUpdated: 2024-07-09
 
 # Develop a Predictive Model using Snowflake and Sigma
 <!-- The above name is what appears on the website and is searchable. -->
+
 ## Overview 
 Duration: 1 
 
@@ -37,9 +39,7 @@ In this lab you will be creating a machine learning-driven price prediction tool
 - How to expose the model to business users in Sigma
 
 ### Prerequisites
-Thanks for signing up for Snowflake & Sigma’s Hands-On Lab, “Develop a Predictive Model Using Snowflake and Sigma”.
-
-To ensure that you can follow along during the lab, please complete the work outlined below prior to the start of the lab. 
+Thanks for signing up for Snowflake & Sigma’s Hands-On Lab, “Develop a Predictive Model Using Snowflake and Sigma”. To ensure that you can follow along during the lab, please complete the work outlined below prior to the start of the lab. 
 
 1: Sign up for a Snowflake Trial - You can sign up for a 30-day free trial of Snowflake [here.](https://signup.snowflake.com/) Even if you have a login on an existing Snowflake account, you should still create a new Snowflake account, as you’ll be asked to utilize the ACCOUNTADMIN role for some steps below.
 
@@ -55,21 +55,26 @@ Once you are done configuring partner connect, or if you already have a Sigma ac
 USE ROLE SYSADMIN;
 CREATE DATABASE IF NOT EXISTS PC_SIGMA_DB;
 CREATE WAREHOUSE IF NOT EXISTS PC_SIGMA_WH
+
     WAREHOUSE_SIZE='XSMALL'
     INITIALLY_SUSPENDED=TRUE
     AUTO_SUSPEND=120;
 
 USE ROLE SECURITYADMIN;
+
 CREATE ROLE IF NOT EXISTS PC_SIGMA_ROLE;
+
 GRANT ALL ON DATABASE PC_SIGMA_DB TO ROLE PC_SIGMA_ROLE;
 GRANT USAGE ON WAREHOUSE PC_SIGMA_WH TO ROLE PC_SIGMA_ROLE;
 
 GRANT ROLE PC_SIGMA_ROLE TO ROLE SYSADMIN;
 GRANT ROLE PC_SIGMA_ROLE TO USER <your-snowflake-user>;
 
+
 USE ROLE SYSADMIN;
 CREATE DATABASE IF NOT EXISTS SIGMA_INTERNAL;
 CREATE SCHEMA IF NOT EXISTS SIGMA_INTERNAL.WRITEBACK;
+
 
 USE ROLE SECURITYADMIN;
 GRANT ALL ON DATABASE SIGMA_INTERNAL TO ROLE PC_SIGMA_ROLE;
@@ -118,6 +123,7 @@ We're starting from scratch with a blank Sigma workbook. I'll first load our sal
 
 5: Make sure your instance is selected in the connection dropdown (NOT the Sigma Sample Database), and then drag your downloaded file into the upload area and then press save in the upper right to upload the table to your Snowflake instance and view the table in your sigma workbook. 
 
+
 <img src="assets/ml5.png" width="800"/>
 
 ![Footer](assets/sigma_footer.png)
@@ -138,6 +144,7 @@ Drag `Date` and `Shift Sales` columns to the `X` and `Y axis`, respectively:
 
 <img src="assets/ml8.png" width="600"/>
 
+
 3: We can see that Sigma automatically aggregates our data to the `Day level` and applies a `Sum`. 
 
 Lets adjust this to a monthly aggregation to "quiet out" some of the noise. 
@@ -146,19 +153,25 @@ You can adjust the formula directly in the formula bar:
 
 <img src="assets/ml9.png" width="800"/>
 
+
 4: We can see the seasonality of the sales around each January, and we can isolate this further to confirm that suspicion. 
+
 
 We will switch the formula to a [datepart() function](https://help.sigmacomputing.com/docs/datepart), and see that the first 3 months do indeed have the highest sales:
 
 <img src="assets/ml10.png" width="800"/>
 
+
 5: The second factor that we think may play a role in the sales is the shift that the sales took place in. 
+
 
 We can easily add that to our visual, and then switch to a “No Stacking” bar chart, to see the differences between AM and PM shifts:
 
 <img src="assets/ml11.png" width="800"/>
 
+
 6: The third factor that we think may play a role is the weekday that the sales took place on. This is a very similar question to our monthly analysis. 
+
 
 We can duplicate the table:
 
@@ -180,6 +193,7 @@ Just like in the months, we can see that certain weekdays definitely return grea
 ## Create a Dataset for Modeling
 Duration: 20
 
+
 Now that we have identified Month Number, Weekday, and Shift as potential predictors for shift sales, let’s prepare a dataset with these variables for our data scientist. In Sigma, this may be something that a data scientist does in the existing workbook, or the analyst can prepare it with guidance. There is lots of room for collaboration through [live edit](https://help.sigmacomputing.com/docs/workbook-collaboration-with-live-edit) and our [comment feature.](https://help.sigmacomputing.com/docs/workbook-comments)
 
 1: Create a child table of our shift sales table and drag it to the bottom of our workbook:
@@ -187,6 +201,7 @@ Now that we have identified Month Number, Weekday, and Shift as potential predic
 <img src="assets/ml15.png" width="800"/>
 
 2: For our training set, we want the data to be filtered before a certain date so that we can then assess shifts after that date in the test set. 
+
 
 We right click the `Date` column, and then `filter`:
 
@@ -198,7 +213,9 @@ Set the filter to `Between` the dates `1/1/2020 and 12/31/2022`, to get 3 years 
 
 Then, rename this table to `Train` by double-clicking the title, to edit it.
 
+
 3: Now we need to create the columns that we found to drive Sales. 
+
 
 Add a column: 
 
@@ -206,21 +223,27 @@ Add a column:
 
 Define it as `DatePart(“month”, [Date])`, so that we get the month number.
 
+
 4: We can easily duplicate this column to make a weekday column as well. 
+
 
 `Duplicate` the column and then change `month` to `weekday` in the formula:
 
 <img src="assets/ml19.png" width="800"/>
 
+
 5: Finally, your data scientist may want you to encode categorical data into numerical values. 
 
 We can easily do this with Sigma using a formula definition. 
+
 
 Add a new column, define it's function as `If([Shift] = "AM", 1, 0)`, and then rename it to `Encoded Shift`.: 
 
 <img src="assets/ml20.png" width="800"/>
 
+
 6: Now, we need to repeat all the steps to make a Test table....**Just kidding!!**
+
 
 All we need to do is `duplicate` the table: 
 
@@ -309,6 +332,7 @@ mae_score = mean_absolute_error(
 mae_score
 ```
 
+
 ### 4: Log the Model
 
 Finally, we can log this model, and its version, comments, and metrics into the registry that we created above. The final line of this code prints the results, where we see that this model is now deployed to our registry where we can review, improve, and call the model.
@@ -352,6 +376,7 @@ We’ll now show how we can apply that trained model in sigma, and look at an ex
 ```code 
 CallVariant(“SE_DEMO_DB.ML_REGISTRY.SHIFT_SALES_MODEL!Predict”) 
 ```
+
 You should see an error about argument types, as we haven’t provided any input yet. If you get an error about the UDF not existing, there is likely a permissions error. 
 
 <aside class="positive">
@@ -428,6 +453,7 @@ Duration: 5
 
 This section documents examples of how different personas can benefit from deployed ML functions.
 
+
 **1: Business Ops: Scoring new data through Input tables:**<br>
 It’s very common for organizations to have operational steps outside the CDW, in the format of Excel or Google Sheets files. Incorporating those files into a Machine Learning framework has historically involved a fair amount of friction. In Sigma, we can do it very simply using an input table. The input table allows us to paste the values from a Google Sheets table, and then transform the variables for the model, and apply the model all in one step:
 
@@ -480,5 +506,6 @@ Be sure to check out all the latest developments at [Sigma's First Friday Featur
 [<img src="./assets/facebook.png" width="75"/>](https://www.facebook.com/sigmacomputing)
 
 ![Footer](assets/sigma_footer.png)
+
 <!-- END OF WHAT WE COVERED -->
 <!-- END OF QUICKSTART -->

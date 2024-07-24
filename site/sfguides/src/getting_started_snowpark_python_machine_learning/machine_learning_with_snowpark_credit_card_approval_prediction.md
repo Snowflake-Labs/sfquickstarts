@@ -43,7 +43,7 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 - Hyperparameter Tuning with Snowpark ML
 
 ### What You’ll Need 
-- A free [Snowflake Trial Account](https://signup.snowflake.com/) 
+- A free [Snowflake Trial Account](https://signup.snowflake.com/?utm_cta=quickstarts_) 
 - [Anaconda Integration enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda)
 - Python 3.9
 - Jupyter Notebook
