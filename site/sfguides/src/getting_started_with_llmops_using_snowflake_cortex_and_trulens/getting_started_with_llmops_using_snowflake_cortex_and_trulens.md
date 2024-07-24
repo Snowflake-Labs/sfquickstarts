@@ -593,8 +593,6 @@ tru.get_leaderboard()
 
 Congratulations! You've successfully built a RAG by combining Cortex Search and LLM Functions, adding in TruLens Feedback Functions as Observability. You also set up logging for TruLens to Snowflake, and added TruLens Guardrails to reduce hallucination.
 
-We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/XKd8rXPUNs2G1yM28).
-
 ### What You Learned
 
 - How to build a RAG with Cortex Search and Cortex LLM Functions.
