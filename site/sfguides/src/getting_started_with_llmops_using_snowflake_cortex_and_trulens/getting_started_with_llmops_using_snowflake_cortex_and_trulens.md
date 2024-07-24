@@ -77,9 +77,13 @@ SNOWFLAKE_ROLE=
 SNOWFLAKE_CORTEX_SEARCH_SERVICE=
 ```
 
-First, we'll install the packages needed:
+First, we'll create a new conda environment and install the packages required:
 
 ```bash
+conda create -n getting_started_llmops python=3.12
+
+conda activate getting_started_llmops
+
 pip install llama-index
 pip install llama-index-embeddings-huggingface
 pip install llama-index-readers-github
@@ -90,7 +94,7 @@ pip install snowflake-sqlalchemy
 pip install trulens-eval
 ```
 
-Then we can load our credentials and set our Snowflake connection
+Once we have an environment with the right packages installed, we can load our credentials and set our Snowflake connection in a python notebook.
 
 ```python
 from dotenv import load_dotenv
@@ -263,7 +267,7 @@ for curr in tqdm(results):
 
 Duration: 5
 
-First we need to create a Cortex Search Service in Snowflake. We can do that with the following SQL command, replacing `<database>` and `schema` with your database and schema:
+First we need to create a Cortex Search Service in Snowflake. To do so, you can opena SQL Worksheet in your Snowflake instance, and run the following SQL command, replacing `<database>` and `schema` with your database and schema:
 
 ```sql
 CREATE OR REPLACE CORTEX SEARCH SERVICE TRULENS_DEMO_CORTEX_SEARCH_SERVICE
@@ -277,7 +281,7 @@ AS (
 );
 ```
 
-Next, we will create a `CortexSearchRetreiver` class to connect to our cortex search service and add the `retrieve` method that we can leverage for calling it.
+Next, we can go back to our python notebook and create a `CortexSearchRetreiver` class to connect to our cortex search service and add the `retrieve` method that we can leverage for calling it.
 
 ```python
 import os
