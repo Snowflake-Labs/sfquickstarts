@@ -26,6 +26,9 @@ In our example, we'll analyze historic food truck sales data. We aim to develop 
 ### Target Audience
 Anyone who is interested in learning how to easily leverage the power of Snowflakes machine learning features, by using Sigma.
 
+### What You Will Build
+In this lab you will be creating a machine learning-driven price prediction tool, integrating the perspectives of both a business analyst and a data scientist using Snowflake and Sigma.
+
 ### What You Will Learn
 
 - How to explore and build a dataset for training a model
@@ -36,10 +39,7 @@ Anyone who is interested in learning how to easily leverage the power of Snowfla
 ### Prerequisites
 Thanks for signing up for Snowflake & Sigma’s Hands-On Lab, “Develop a Predictive Model Using Snowflake and Sigma”.
 
-To ensure that you can follow along during the lab, please complete the work outlined on the following page prior to the start of the lab. 
-
-## Prerequisites 
-Duration: 5
+To ensure that you can follow along during the lab, please complete the work outlined below prior to the start of the lab. 
 
 1: Sign up for a Snowflake Trial - You can sign up for a 30-day free trial of Snowflake [here.](https://signup.snowflake.com/) Even if you have a login on an existing Snowflake account, you should still create a new Snowflake account, as you’ll be asked to utilize the ACCOUNTADMIN role for some steps below.
 
