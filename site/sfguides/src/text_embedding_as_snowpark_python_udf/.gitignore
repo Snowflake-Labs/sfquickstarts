@@ -1,5 +1,0 @@
-.ipynb_checkpoints
-*.tar
-assets/e5_base_v2_assets/
-assets/__pycache__/
-assets/udf_implementation.py
