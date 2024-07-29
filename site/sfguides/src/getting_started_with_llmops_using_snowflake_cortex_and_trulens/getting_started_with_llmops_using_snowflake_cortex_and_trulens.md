@@ -109,7 +109,7 @@ To open the jupyter notebook, you can follow the following steps:
 
 1) In a terminal window, browse to this folder and run `jupyter notebook` at the command line. (You may also use other tools and IDEs such Visual Studio Code.)
 
-2) Open [snowflake_llmops_quickstart.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/getting_started_with_llmops_using_snowflake_cortex_and_trulens/blob/main/snowflake_llmops_quickstart.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
+2) Open [snowflake_llmops_quickstart.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-llmops-using-snowflake-cortex-and-trulens/blob/main/snowflake_llmops_quickstart.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
 
 > aside positive
 > IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***getting_started_llmops*** -- which is the name of the environment created in the previous step.
