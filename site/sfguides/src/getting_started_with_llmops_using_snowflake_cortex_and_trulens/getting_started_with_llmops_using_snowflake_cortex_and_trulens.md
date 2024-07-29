@@ -58,9 +58,23 @@ Cortex Search enables low-latency, high-quality search over your Snowflake data.
 
 ## Setup Environment
 
-Duration: 2
+Duration: 8
 
-For this quickstart, you will need your Snowflake credentials and a GitHub PAT Token ready. For example purposes, we assume they are set in a `.env` file that looks like this:
+In a new SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+CREATE OR REPLACE WAREHOUSE LLMOPS_S WAREHOUSE_SIZE=SMALL;
+CREATE OR REPLACE DATABASE LLMOPS_DB;
+CREATE OR REPLACE SCHEMA LLMOPS_SCHEMA;
+
+USE LLMOPS_DB.LLMOPS_SCHEMA;
+```
+
+For this quickstart, you will need your Snowflake credentials and a GitHub PAT Token ready. 
+
+In your development environment, create a new `.env` file that looks like this with your details filled in:
 
 ```bash
 # Loading data from github
@@ -81,20 +95,21 @@ First, we'll create a new conda environment and install the packages required:
 
 ```bash
 conda create -n getting_started_llmops python=3.12
-
 conda activate getting_started_llmops
-
-pip install llama-index
-pip install llama-index-embeddings-huggingface
-pip install llama-index-readers-github
-pip install notebook
-pip install snowflake-ml-python
-pip install snowflake-snowpark-python
-pip install snowflake-sqlalchemy
-pip install trulens-eval
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python notebook ipykernel
+pip install trulens-eval llama-index llama-index-embeddings-huggingface llama-index-readers-github snowflake-sqlalchemy
 ```
 
-Once we have an environment with the right packages installed, we can load our credentials and set our Snowflake connection in a python notebook.
+Once we have an environment with the right packages installed, we can load our credentials and set our Snowflake connection in a jupyter notebook notebook.
+
+To open the jupyter notebook, you can follow the following steps:
+
+1) In a terminal window, browse to this folder and run `jupyter notebook` at the command line. (You may also use other tools and IDEs such Visual Studio Code.)
+
+2) Open [snowflake_llmops_quickstart.ipynb](https://github.com/truera/trulens/blob/josh/snowflake_blog/trulens_eval/examples/snowflake_demo/snowflake_llmops_quickstart.ipynb)
+
+> aside positive
+> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***getting_started_llmops***-- which is the name of the environment created in the previous step.
 
 ```python
 from dotenv import load_dotenv
@@ -153,7 +168,6 @@ import re
 import nest_asyncio
 
 nest_asyncio.apply()
-
 
 github_token = os.environ["GITHUB_TOKEN"]
 client = GithubClient(github_token=github_token, verbose=False)
