@@ -3,9 +3,9 @@ id: getting_started_with_llmops_using_snowflake_cortex_and_trulens
 summary: This is a guide for getting started with LLMOps using Snowflake Cortex and TruLens.
 categories: Getting-Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, RAG, LLMs, TruLens, Snowflake
+tags: Getting Started, LLMOps, RAG, LLMs, TruLens, Snowflake
 
 # Getting Started with LLMOps using Snowflake Cortex and TruLens
 
@@ -91,7 +91,7 @@ SNOWFLAKE_ROLE=
 SNOWFLAKE_CORTEX_SEARCH_SERVICE=
 ```
 
-First, we'll create a new conda environment and install the packages required:
+Next create a new conda environment and install the packages required with the following commands in your terminal:
 
 ```bash
 conda create -n getting_started_llmops python=3.12
@@ -109,7 +109,7 @@ To open the jupyter notebook, you can follow the following steps:
 2) Open [snowflake_llmops_quickstart.ipynb](https://github.com/truera/trulens/blob/josh/snowflake_blog/trulens_eval/examples/snowflake_demo/snowflake_llmops_quickstart.ipynb)
 
 > aside positive
-> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***getting_started_llmops***-- which is the name of the environment created in the previous step.
+> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***getting_started_llmops*** -- which is the name of the environment created in the previous step.
 
 ```python
 from dotenv import load_dotenv
