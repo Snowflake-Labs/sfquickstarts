@@ -65,16 +65,16 @@ In a new SQL worksheet, run the following SQL commands to create the [warehouse]
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR REPLACE WAREHOUSE LLMOPS_S WAREHOUSE_SIZE=SMALL;
+CREATE OR REPLACE WAREHOUSE LLMOPS_WH_S WAREHOUSE_SIZE=SMALL;
 CREATE OR REPLACE DATABASE LLMOPS_DB;
 CREATE OR REPLACE SCHEMA LLMOPS_SCHEMA;
 
 USE LLMOPS_DB.LLMOPS_SCHEMA;
 ```
 
-For this quickstart, you will need your Snowflake credentials and a GitHub PAT Token ready. 
+For this quickstart, you will need your Snowflake credentials and a GitHub PAT Token ready. If you don't have a GitHub PAT Token already, you can get one by following the instructions [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token).
 
-In your development environment, create a new `.env` file that looks like this with your details filled in:
+In your development environment, create a new `.env` file that looks like this with your username, password and [account](https://docs.snowflake.com/en/user-guide/admin-account-identifier) filled in:
 
 ```bash
 # Loading data from github
@@ -84,12 +84,15 @@ GITHUB_TOKEN=
 SNOWFLAKE_USER=
 SNOWFLAKE_USER_PASSWORD=
 SNOWFLAKE_ACCOUNT=
-SNOWFLAKE_DATABASE=
-SNOWFLAKE_SCHEMA=
-SNOWFLAKE_WAREHOUSE=
-SNOWFLAKE_ROLE=
-SNOWFLAKE_CORTEX_SEARCH_SERVICE=
+SNOWFLAKE_DATABASE=LLMOPS_DB
+SNOWFLAKE_SCHEMA=LLMOPS_SCHEMA
+SNOWFLAKE_WAREHOUSE=LLMOPS_WH_S
+SNOWFLAKE_ROLE=ACCOUNTADMIN
+SNOWFLAKE_CORTEX_SEARCH_SERVICE=LLMOPS_CORTEX_SEARCH_SERVICE
 ```
+
+> aside positive
+> You will later create a cortex search service with the name ***LLMOPS_CORTEX_SEARCH_SERVICE***. You are welcome to set that now..
 
 Next create a new conda environment and install the packages required with the following commands in your terminal:
 
@@ -281,17 +284,17 @@ for curr in tqdm(results):
 
 Duration: 5
 
-First we need to create a Cortex Search Service in Snowflake. To do so, you can opena SQL Worksheet in your Snowflake instance, and run the following SQL command, replacing `<database>` and `schema` with your database and schema:
+First we need to create a Cortex Search Service in Snowflake. To do so, you can opena SQL Worksheet in your Snowflake instance, and run the following SQL command:
 
 ```sql
-CREATE OR REPLACE CORTEX SEARCH SERVICE TRULENS_DEMO_CORTEX_SEARCH_SERVICE
+CREATE OR REPLACE CORTEX SEARCH SERVICE LLMOPS_CORTEX_SEARCH_SERVICE
   ON doc_text
-  WAREHOUSE = JREINI_WH
+  WAREHOUSE = LLMOPS_WH_S
   TARGET_LAG = '1 hour'
 AS (
   SELECT
       doc_text
-  FROM <database>.<schema>.streamlit_docs
+  FROM LLMOPS_DB.LLMOPS_SCHEMA.streamlit_docs
 );
 ```
 
