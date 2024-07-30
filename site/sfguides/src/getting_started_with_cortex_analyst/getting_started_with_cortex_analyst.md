@@ -458,6 +458,44 @@ Some additional items that’ll significantly improve model performance:
 For more information about the semantic model, please refer to the [documentation](https://docs.snowflake.com/snowflake-cortex/semantic-model-spec).
 
 <!-- ------------------------ -->
+## Using the Verified Query Repository (VQR)
+Duration: 10
+
+In addition to the previously discussed Semantic Model information, the [Cortex Analyst Verified Query Repository (VQR)](https://docs.snowflake.com/snowflake-cortex/cortex-analyst-vqr) can help improve accuracy and trustworthiness of results by providing a collection of questions and corresponding SQL queries to answer them. Cortex Analyst will then use these verified queries when answering similar types of questions in the future.
+
+### Adding Verified Queries
+Verified queries ultimately are specified in the `verified_queries` section of the semantic model, e.g.:
+```yaml
+verified_queries:
+  - name: "California profit"
+    question: "What was the profit from California last month?"
+    verified_at: 1714497970
+    verified_by: Jane Doe
+    sql: "
+SELECT sum(profit)
+FROM __sales_data
+WHERE state = 'CA'
+    AND sale_timestamp >= DATE_TRUNC('month', DATEADD('month', -1, CURRENT_DATE))
+    AND sale_timestamp < DATE_TRUNC('month', CURRENT_DATE)
+"
+```
+
+While verified queries can be added directly to the Semantic Model, Snowflake also provides an OSS Streamlit application to help add verified queries to your model. 
+
+![vqr app](./assets/vqr_app.png)
+
+To install and use this app:
+1. Clone the [semantic-model-generator repository](https://github.com/Snowflake-Labs/semantic-model-generator). Follow the setup instructions in the [repo’s README](https://github.com/Snowflake-Labs/semantic-model-generator/blob/main/README.md) to provide your credentials. Then follow the instructions in the [admin_app README](https://github.com/Snowflake-Labs/semantic-model-generator/blob/main/admin_apps/README.md) to install dependencies and start the app.
+2. Once the app is running, enter the database, schema, and stage location of your semantic model YAML file in the empty fields. The YAML appears in an interactive editor on the left side of the window.
+3. On the right side of the window, ask a question in the chat interface to generate a SQL query.
+4. Inspect the generated query and the results it produces. If it worked as you expected, select the **Save as verified query** button below the assistant answer to add the query to your semantic model.
+5. If generated query is incorrect, select the **Edit** button and modify the query, then run the modified query and see if it produces the intended results. Continue modifying and testing the query until it works the way you want it to. Finally, select **Save as verified query** to save the query to your semantic model.
+6. Select the **Save** button in the bottom left of the window to update the semantic model, then go back to step 2 if you want to add more queries.
+7. When you’re satisfied with the queries you’ve added, select the **Upload** button and enter a file name for your new YAML file, then select **Submit Upload**.
+
+Modify your SiS application code to point at the new Semantic Model YAML file location, and use Cortex Analyst as before!
+
+<!-- ------------------------ -->
 ## Conclusion and Resources
 Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how Cortex Analyst allows business users to ask natural-language questions over their structured data to perform analysis and receive trusted answers to business questions.
 
