@@ -33,6 +33,7 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
     > aside positive
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst)
+- [Python >= 3.9 installed](https://www.python.org/downloads/)
 - A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.
 
 ### What You’ll Build 
@@ -212,173 +213,43 @@ ON_ERROR=CONTINUE
 FORCE = TRUE ;
 ```
 <!-- ------------------------ -->
-## Create a Streamlit in Snowflake (SiS) Conversational App
+## Create a Streamlit Conversational App
 Duration: 10
 
-Now, you will create a demo chat application to call the Cortex Analyst API and ask natural-language questions over our structured revenue datasets. To create the SiS app:
+Now, you will create a demo chat application to call the Cortex Analyst API and ask natural-language questions over our structured revenue datasets. To create the Streamlit application:
 
-- In the left navigation bar, select Projects » Streamlit
-- Select + Streamlit. The Create Streamlit App window opens
-![streamlit app create screenshot](./assets/streamlit_create.png)
-- Enter the name for your app as Cortex Analyst - Demo Chat App
-- In the Warehouse dropdown, select the warehouse CORTEX_ANALYST_WH where you want to run your app and execute queries
-- In the App location dropdown, select the CORTEX_ANALYST_DEMO database and REVENUE_TIMESERIES schema for your app
-- Select Create
-
-Now open the Streamlit code editor:
-![streamlit code editor](./assets/streamlit_editor.png)
-
-We will copy and paste the following Python code from [cortex_analyst_sis_demo_app.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/cortex_analyst_sis_demo_app.py) into the editor:
-
-```python
-import _snowflake
-import json
-import streamlit as st
-import time
-from snowflake.snowpark.context import get_active_session
-
-DATABASE = "CORTEX_ANALYST_DEMO"
-SCHEMA = "REVENUE_TIMESERIES"
-STAGE = "RAW_DATA"
-FILE = "revenue_timeseries.yaml"
-
-def send_message(prompt: str) -> dict:
-    """Calls the REST API and returns the response."""
-    request_body = {
-        "messages": [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": prompt
-                    }
-                ]
-            }
-        ],
-        "semantic_model_file": f"@{DATABASE}.{SCHEMA}.{STAGE}/{FILE}",
-    }
-    resp = _snowflake.send_snow_api_request(
-        "POST",
-        f"/api/v2/cortex/analyst/message",
-        {},
-        {},
-        request_body,
-        {},
-        30000,
-    )
-    if resp["status"] < 400:
-        return json.loads(resp["content"])
-    else:
-        raise Exception(
-            f"Failed request with status {resp['status']}: {resp}"
-        )
-
-def process_message(prompt: str) -> None:
-    """Processes a message and adds the response to the chat."""
-    st.session_state.messages.append(
-        {"role": "user", "content": [{"type": "text", "text": prompt}]}
-    )
-    with st.chat_message("user"):
-        st.markdown(prompt)
-    with st.chat_message("assistant"):
-        with st.spinner("Generating response..."):
-            response = send_message(prompt=prompt)
-            content = response["message"]["content"]
-            display_content(content=content)
-    st.session_state.messages.append({"role": "assistant", "content": content})
-
-
-def display_content(content: list, message_index: int = None) -> None:
-    """Displays a content item for a message."""
-    message_index = message_index or len(st.session_state.messages)
-    for item in content:
-        if item["type"] == "text":
-            st.markdown(item["text"])
-        elif item["type"] == "suggestions":
-            with st.expander("Suggestions", expanded=True):
-                for suggestion_index, suggestion in enumerate(item["suggestions"]):
-                    if st.button(suggestion, key=f"{message_index}_{suggestion_index}"):
-                        st.session_state.active_suggestion = suggestion
-        elif item["type"] == "sql":
-            with st.expander("SQL Query", expanded=False):
-                st.code(item["statement"], language="sql")
-            with st.expander("Results", expanded=True):
-                with st.spinner("Running SQL..."):
-                    session = get_active_session()
-                    df = session.sql(item["statement"]).to_pandas()
-                    if len(df.index) > 1:
-                        data_tab, line_tab, bar_tab = st.tabs(
-                            ["Data", "Line Chart", "Bar Chart"]
-                        )
-                        data_tab.dataframe(df)
-                        if len(df.columns) > 1:
-                            df = df.set_index(df.columns[0])
-                        with line_tab:
-                            st.line_chart(df)
-                        with bar_tab:
-                            st.bar_chart(df)
-                    else:
-                        st.dataframe(df)
-
-
-st.title("Cortex analyst")
-st.markdown(f"Semantic Model: `{FILE}`")
-
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-    st.session_state.suggestions = []
-    st.session_state.active_suggestion = None
-
-for message_index, message in enumerate(st.session_state.messages):
-    with st.chat_message(message["role"]):
-        display_content(content=message["content"], message_index=message_index)
-
-if user_input := st.chat_input("What is your question?"):
-    process_message(prompt=user_input)
-
-if st.session_state.active_suggestion:
-    process_message(prompt=st.session_state.active_suggestion)
-    st.session_state.active_suggestion = None
-```
+- `pip install streamlit snowflake-snowpark-python` in your local Python environment
+- Open up the [cortex_analyst_streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/cortex_analyst_streamlit.py) file in your preferred local code editor
+- Modify the following parameters with your respective account information: `HOST`, `user`, `password`, and `account` information
+- Run the Streamlit app using `streamlit run cortex_analyst_streamlit.py`
 
 Take note of the `send_message` function that is defined in this Python code. This is the function that takes our chat input prompt, packages it up as a JSON object, and sends it to the Cortex Analyst API (with the specified `revenue_timeseries.yaml` Semantic Model). 
 
 ```python
-def send_message(prompt: str) -> dict:
+def send_message(prompt: str) -> Dict[str, Any]:
     """Calls the REST API and returns the response."""
     request_body = {
-        "messages": [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": prompt
-                    }
-                ]
-            }
-        ],
+        "messages": [{"role": "user", "content": [{"type": "text", "text": prompt}]}],
         "semantic_model_file": f"@{DATABASE}.{SCHEMA}.{STAGE}/{FILE}",
     }
-    resp = _snowflake.send_snow_api_request(
-        "POST",
-        f"/api/v2/cortex/analyst/message",
-        {},
-        {},
-        request_body,
-        {},
-        30000,
+    resp = requests.post(
+        url=f"https://{HOST}/api/v2/cortex/analyst/message",
+        json=request_body,
+        headers={
+            "Authorization": f'Snowflake Token="{st.session_state.CONN.rest.token}"',
+            "Content-Type": "application/json",
+        },
     )
-    if resp["status"] < 400:
-        return json.loads(resp["content"])
+    request_id = resp.headers.get("X-Snowflake-Request-Id")
+    if resp.status_code < 400:
+        return {**resp.json(), "request_id": request_id}  # type: ignore[arg-type]
     else:
         raise Exception(
-            f"Failed request with status {resp['status']}: {resp}"
+            f"Failed request (id: {request_id}) with status {resp.status_code}: {resp.text}"
         )
 ```
 
-To preview the app, click Run in the preview pane. You can now begin asking natural language questions about the revenue data in the chat interface (e.g. "What questions can I ask?")
+Navigate to the application in your browser at `localhost:8501`. You can now begin asking natural language questions about the revenue data in the chat interface (e.g. "What questions can I ask?")
 
 <!-- ------------------------ -->
 ## Semantic Model Details
