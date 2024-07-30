@@ -18,13 +18,14 @@ We will be leveraging the the tools within Snowflake to:
 
   - **Discover** where the locations of Large events are and where they may impact stations and Restaurants
 
-  - **Understand** the weather conditions which may impact train stations <<<<will change this and create another one to show weather data impacting key events historically over time.
-
+  - **Understand** the weather conditions which might impact train stations
   - **Generate** 
   
-  * A warning letter to the MP after discovering potential risk
+    * A warning letter to the MP after discovering potential risk
 
-  * Synthezised events events which might happen and will impact services
+    * Synthezised events events which might happen and will impact services
+
+  - **Visualise**  the data using Streamlit
 
 ### Prerequisites
 - A new free trial of Snowflake in **US AWS West**
@@ -55,7 +56,7 @@ We will be leveraging the the tools within Snowflake to:
 
 <!-- ------------------------ -->
 ## Initial Setup
-Duration: 2
+Duration: 5
 
 Open up a new SQL worksheet and run the following commands. To open up a new SQL worksheet, select Projects » Worksheets, then click the blue plus button and select SQL worksheet.
 
@@ -112,7 +113,7 @@ Search for **More Metrics** to get postcode information within the uk
 Press **Get Data**
 
 ## Create a Notebook
-Duration: 3
+Duration: 5
 
 In Snowsight, go back to the home page and select **Projects** » **Notebooks**.
 
@@ -140,7 +141,7 @@ In **Notebook location**, select BUILD_UK from the list of available databases a
 
 
 ## Create your first Map Layer
-Duration: 1
+Duration: 10
 
 Once the notebook has loaded, Remove all cells apart from cell 1.  You should see something like this:
 
@@ -228,7 +229,7 @@ st.map is useful for quickly generating simple maps by rendering latitude and lo
 <!-- ------------------------ -->
 ## Create a Boundary for filtering purposes
 
-Duration: 2
+Duration: 10
 
 You previously loaded the places dataset from Carto Overture maps.  This dataset offers a comprehensive list of places of interest across the world such as restaurants, bars and schools.  We want to filter this dataset to only list places of interest that occur within the Northern Trains locality.  Creating a Boundary box is the easiest option.
 
@@ -312,7 +313,7 @@ When you run the cell, the boundary box should look like this:
 
 <!-- ------------------------ -->
 ## Filtering the data using the boundary box
-Duration: 2
+Duration: 10
 
 Next, lets leverage and filter the overture maps so these will only consist of data within this area.  Overture maps consist of location data across the entire globe.
 
@@ -439,6 +440,7 @@ We have now rendered a multi layer map which overlays restaurants and northern r
 
 <!-- ------------------------ -->
 ## Using Arctic to create a Summary field to describe information about each Train Station
+Duration: 10
 
 At the moment we only have very basic train station information.  Lets add more info from the shared dataset:
 
@@ -559,6 +561,8 @@ Hover over the map and checked the updated tool tips.
 
 <!-- ------------------------ -->
 ## Use Snowflake Arctic to list Key events happening in the North of England
+
+Duration: 10
 
 Any location may be impacted by key events.  Let's try and pinpoint out any key event happening in the north of England and how restaurants and train stations may be impacted by this.  We do not have specific event data for this, so in this case, we will leverage Snowflake Cortex and Snowflake Arctic to suggest events that may impact this area. Arctic is not a live data repository - it simply retrieves data back based on trained history within the model.  
 
@@ -706,6 +710,7 @@ We now have all of this joined together - in the next step we will use an LLM to
 
 <!-- ------------------------ -->
 ## Use an LLM to write a letter to each MP concerning the impacts of the events.
+Duration: 10
 
 Now that we can see where the events impact stations and restaurants, let's  use an LLM to craft a letter to the MP to notify them of these effects.  To do this, we need to put all the information needed into objects to  easily pass them through the cortex function.
 
@@ -825,6 +830,7 @@ That's it. If you wish, you can download the completed python code from here by 
 
 <!-- ------------------------ -->
 ## Generate Synthetic Event Data
+Duration: 10
 
 This streamlit application will generate events occurring during the time of the events, which will involve the train stations and the restaurants.  
 
@@ -1088,6 +1094,7 @@ except:
 
 ```
 ### Running the App to generate data
+Duration: 10
 
 Within the App, generate events for various mp's.   You can decide how many you would like to generate.  Once  you have selected what you would like to generate, press Generate Reports.  This will create Incidents relating to the MP.  They will also be in the context of the specified activity.
 
@@ -1100,6 +1107,7 @@ Finally we will create a Streamlit app which adds this additional information to
 
 <!-- ------------------------ -->
 ## Visualise the data
+Duration: 10
 
 Below is sample code which takes what we have learnt to create a streamlit with all the places event, location and incident data that from the shared datasets as well as synthetic data.
 
@@ -1327,7 +1335,7 @@ st.table(social_media.drop('V'))
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-
+Duration: 5
 ### Conclusion
 
 Snowflake provides powerful capabilities when you bring Cortex with Snowpark and Streamlit's visualization capabilities together.
