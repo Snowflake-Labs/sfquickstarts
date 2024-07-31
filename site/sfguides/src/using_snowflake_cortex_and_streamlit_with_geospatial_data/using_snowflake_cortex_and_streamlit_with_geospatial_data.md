@@ -28,9 +28,7 @@ We will be leveraging the the tools within Snowflake to:
   - **Visualise**  the data using Streamlit
 
 ### Prerequisites
-- A new free trial of Snowflake in **US AWS West**
-
-  Create a trial account in AWS US West (here we have the snowflake-arctic model which we will be trying out)
+- A new free trial of Snowflake in **US AWS West**.
 
 ![alt text](assets/I001.png)
 
