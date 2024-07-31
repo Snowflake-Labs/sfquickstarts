@@ -31,10 +31,10 @@ Share Watch has 2 sections
 2) Monitoring section - Shows the status of schema drift on databases mounted from shares based on the monitors set up in the Configuration section.
 
 ### Prerequisites
-- AccountAdmin role access in your Snowflake account (or a Snowflake trial account)
+- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) [Register for a free trial](https://signup.snowflake.com/), 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, streamlit, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 - One or more data shares set up from Marketplace or Private Listings ([here's a guide for setting up shares](https://www.youtube.com/watch?v=4ksdOBT1HCw))
 - An email address to which schema drift notifications will be sent.
-- Github access to download [install scripts](assets/)
+- Github access to download [install scripts](https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch/tree/main)
 
 
 ### What You’ll Learn 
@@ -54,10 +54,10 @@ Share Watch has 2 sections
 <!-- ------------------------ -->
 ## Install ShareWatch
 
-- Create a SQL worksheet in Snowsight and paste the ShareWatch SQL Setup script from sf-samples. [LINK TO SQL SCRIPT](assets/1-install-sp.sql)
+- Create a SQL worksheet in Snowsight and paste the ShareWatch SQL Setup script from sf-samples. [LINK TO SQL SCRIPT](https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch/blob/main/1-install-sp.sql)
   - Select all commands, and run them all. This will set up all the stored procedures used by the ShareWatch app. 
 
-- Create a Streamlit app in Snowsight and replace the starter code it comes with with the ShareWatch Streamlit script. [LINK TO STREAMLIT SCRIPT](assets/2-install-st.py)
+- Create a Streamlit app in Snowsight and replace the starter code it comes with with the ShareWatch Streamlit script. [LINK TO STREAMLIT SCRIPT](https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch/blob/main/2-install-st.py)
   - Choose an appropriate warehouse and a database to set your Snowflake internal stage that would hold your Streamlit's python files.
 
 - Refresh the app after pasting the ShareWatch Streamlit script and (assuming you've already set up the stored procedures from the SQL script), you should now see the Initial Configuration section in your Streamlit app. 
@@ -150,4 +150,4 @@ Congratulations! You've successfully installed and configured sharewatch app to 
 ### Related Resources
 - [Data sharing best practices: managing schema drift and data changes](https://www.snowflake.com/en/resources/white-paper/data-sharing-best-practices-managing-schema-drift-and-data-change-with-shared-data/)
 - [Getting Started with Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/getting-started)
-- [Sharewatch Code on Github](assets/)
+- [Sharewatch Code on Github](https://github.com/Snowflake-Labs/sfguide-monitor-schema-drift-in-data-shares-with-sharewatch/tree/main)
