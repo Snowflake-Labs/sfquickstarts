@@ -5,7 +5,7 @@ categories: Data-Sharing
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter, Geospatial 
+tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial 
 
 # Analyse the Impact of Big Events in the North of England
 <!-- ------------------------ -->
@@ -1338,7 +1338,7 @@ Go to the Home page and select Notebooks
 
 Download the following file
 
-[weather.ipynb](assets/weather/weather.ipynb)
+[weather.ipynb](https://github.com/sfc-gh-boconnor/snowflake_notebooks/blob/main/weather.ipynb)
 
 In the notebbook menu selection, select Import from .ipynb file and choose the downloaded file
 
