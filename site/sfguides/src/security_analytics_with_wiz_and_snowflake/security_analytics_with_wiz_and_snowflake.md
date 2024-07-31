@@ -194,12 +194,12 @@ CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZ_HOST_CONFIGURATION_FINDINGS (
 	SCOPEOBJECTPROVIDERID VARCHAR(16777216),
 	REPORT_RUN_ID VARCHAR(16777216)
 );
-COPY INTO WIZDB.WIZSCHEMA.WIZVULNERABILITIES
+COPY INTO WIZDB.WIZSCHEMA.WIZ_HOST_CONFIGURATION_FINDINGS
 FROM s3://sfquickstarts/sfguide_security_analytics_with_wiz_and_snowflake/wizhostconfigurationfindings.tsv
 FILE_FORMAT = (TYPE = 'CSV', SKIP_HEADER = 1,FIELD_DELIMITER='0x09');
 ```
 
-Lastly, lets create the `WIZ_REPORTS_RUNS` table and then load the data.
+Lastly, lets create the `WIZ_REPORT_RUNS` table and then load the data.
 
 ```sql
 CREATE OR REPLACE TABLE WIZDB.WIZSCHEMA.WIZ_REPORT_RUNS (
@@ -229,7 +229,7 @@ In the upcoming steps, we'll query different Wiz data sources, but first, let's 
 ## Monitor reports runs
 Wiz reports are automatically pushed into Snowflake tables. We can use the wiz_report_runs table to monitor report execution and Wiz data ingestion into Snowflake. Let's first get a feel for how the data looks:
 ```sql
-select * from WIZDB.WIZSCHEMA.WIZ_REPORTS_RUN limit 10;
+select * from WIZDB.WIZSCHEMA.WIZ_REPORT_RUN limit 10;
 ```
 Each row contains information about the report run start and end time, the report execution status, the report ID, and the specific run ID.
 
@@ -242,11 +242,11 @@ group by 1,2;
 
 <!-- ------------------------ -->
 ## Querying the Issues table
-Duration: 1
+Duration: 5
 Wiz Issues represent real risks in the cloud environment, combining various risk factors such as misconfigurations, vulnerabilities, and more across accounts, users, workloads, APIs, and critical data. These are the risks you should prioritize for fixing.
 
 ### Identifying Critical Issues
-Let's start by looking at specific Issue with the ID 12341234. Let's see how often this Issue appears across different report runs:
+Let's start by looking at specific Issue with the ID b500f7188a6c978319528f79b97859fd155eaa5a2513c0ed8b83cd54dc859034. Let's see how often this Issue appears across different report runs:
 
 
 ```sql
@@ -267,12 +267,12 @@ with latest_issue_report as (
 )
 select issues.* from WIZDB.wizschema.WIZISSUES ISSUES join latest_issue_report on issues.report_run_id = latest_issue_report.run_id;
 ```
-Now if we look for issueID ='304b2794-90c1-4b12-b76c-016a2b446589' in the `WIZDB.WIZSCHEMA.ISSUES_LATEST` table, we can see the latest information on this Issue.
+Now if we look for issueID ='b500f7188a6c978319528f79b97859fd155eaa5a2513c0ed8b83cd54dc859034' in the `WIZDB.WIZSCHEMA.ISSUES_LATEST` table, we can see the latest information on this Issue.
 
 ```sql
 select *
 from WIZDB.WIZSCHEMA.ISSUES_LATEST
-where issue_id = 'b500f7188a6c978319528f79b97859fd155eaa5a2513c0ed8b83cd54dc859034'
+where issue_id = 'b500f7188a6c978319528f79b97859fd155eaa5a2513c0ed8b83cd54dc859034';
 ```
 ### Historical Analysis of Issues
 
@@ -349,7 +349,9 @@ ORDER BY ISSUE_COUNT DESC;
 
 We can see that the most comon issue type is "VM/serverless with high/critical severity network vulnerabilities with a known exploit ".
 <!-- ------------------------ -->
+<!-- ------------------------ -->
 ## Querying the vulnerabilities table
+Duration: 5
 In the last section, we saw that the most common Issue type is "VM/serverless with high/critical severity network vulnerabilities with a known exploit ". Let's use the vulnerabilities table to get a better understanding of the vulnerability-related information that Wiz ingested into Snowflake. The Vulnerabilities data provide insights into resolved and unresolved vulnerabilities in your cloud environment. First, let's have a look at the data:
 
 ```sql
@@ -403,8 +405,9 @@ FROM WIZDB.WIZSCHEMA.VULNERABILITIES_HISTORICAL
 GROUP BY assetid,projects,name
 ORDER BY oldest_vuln_age DESC;
 ```
-
+<!-- ------------------------ -->
 ## Building some dashboards
+Duration: 5
 
 Let's use the same queries we created in the last sections in order to create a dashboard where we can track Wiz Issues, vulnerabilities, and Host Configuration Findings. First, let's go to the Dashboards page in Snowflake and create a new dashboard. Then let's hit the "+" button and create a "New Tile" and select "From SQL Worksheet". Let's place the query we used before for identifying the cloud platform with the most Issues:
 ```sql
@@ -483,3 +486,5 @@ This command deletes the CLOUD_SECURITY_ANALYST_ROLE role.
 Duration: 1
 
 In this lab, we explored how to integrate and analyze Wiz data in Snowflake. We set up the environment, imported Wiz data, executed queries and build a dashboard to gain insights on Wiz data.
+### Related Resources
+* [Snowflake and Wiz integration announcement blog](https://www.wiz.io/blog/wiz-and-snowflake-join-forces-to-power-insights-with-actionable-intelligence)
