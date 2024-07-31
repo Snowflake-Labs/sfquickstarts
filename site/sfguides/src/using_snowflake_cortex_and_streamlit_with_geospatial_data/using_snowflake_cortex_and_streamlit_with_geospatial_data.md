@@ -105,12 +105,10 @@ Click on the following dataset then press **Get**
 Search for the **Met office Weather Data**
 Press **Get** - Keep the name as it is.
 
+![alt text](assets/I005.png)
+
 You will only get a sample dataset - you will need to **request** the full Product to complete the full lab.
 
-Search for **More Metrics** to get postcode information within the uk
-
-![alt text](assets/I005.png)
-Press **Get Data**
 
 ## Create a Notebook
 Duration: 5
@@ -829,7 +827,7 @@ st.write(letterspd.LETTER.iloc[selected_letter])
 That's it. If you wish, you can download the completed python code from here by exporting it as .ipynb that could be used to import it into a new notebook.
 
 <!-- ------------------------ -->
-## Generate Synthetic Event Data
+## Generate Synthetic Incidents and Visualize the results
 Duration: 10
 
 This streamlit application will generate events occurring during the time of the events, which will involve the train stations and the restaurants.  
@@ -1105,9 +1103,9 @@ Once you have generated events, select each MP under the Individual incidents se
 Finally we will create a Streamlit app which adds this additional information to a map.
 
 
-<!-- ------------------------ -->
-## Visualise the data
-Duration: 10
+### Visualise the data
+
+You will now be creating another streamlit app in order to visualise the results.
 
 Below is sample code which takes what we have learnt to create a streamlit with all the places event, location and incident data that from the shared datasets as well as synthetic data.
 
@@ -1332,6 +1330,19 @@ st.table(social_media.drop('V'))
     
 
 ```
+
+<!-- ------------------------ -->
+## Bringing in Met Office Weather
+Duration: 5
+### Met office Weather
+
+Now we will leverage the weather data to understand the weather forecasts for each train Station.  This time we will import a notebook which has already been created.
+
+Go to the Home page and select Notebooks
+
+In the notebbook menu selection, select Import from .ipynb file
+
+![alt text](assets/weather/W001.png)
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
