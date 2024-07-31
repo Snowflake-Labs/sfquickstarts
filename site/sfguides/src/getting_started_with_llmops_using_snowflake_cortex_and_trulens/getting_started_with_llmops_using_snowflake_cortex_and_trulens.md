@@ -13,7 +13,7 @@ tags: Getting Started, LLMOps, RAG, LLMs, TruLens, Snowflake
 
 Duration: 5
 
-By completing this guide, you'll get started with LLMOps by building a RAG by combining [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) and [Cortex Search](https://github.com/Snowflake-Labs/cortex-search?tab=readme-ov-file), and then using [TruLens](https://www.trulens.org/) to add observability and guardrails.
+By completing this guide, you'll get started with LLMOps by building a RAG by combining [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview), and then using [TruLens](https://www.trulens.org/) to add observability and guardrails.
 
 Along the way, you will also learn how run TruLens feedback functions with Snowflake Cortex as the [feedback provider](https://www.trulens.org/trulens_eval/api/provider/), and how to [log TruLens traces and evaluation metrics to a Snowflake table](https://www.trulens.org/trulens_eval/tracking/logging/where_to_log/log_in_snowflake/#logging-in-snowflake). Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens_eval/guardrails/) for filtering retrieved context and reducing hallucination.
 
@@ -65,7 +65,7 @@ In a new SQL worksheet, run the following SQL commands to create the [warehouse]
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR REPLACE WAREHOUSE LLMOPS_WH_S WAREHOUSE_SIZE=SMALL;
+CREATE OR REPLACE WAREHOUSE LLMOPS_WH_M WAREHOUSE_SIZE=MEDIUM;
 CREATE OR REPLACE DATABASE LLMOPS_DB;
 CREATE OR REPLACE SCHEMA LLMOPS_SCHEMA;
 
@@ -86,7 +86,7 @@ SNOWFLAKE_USER_PASSWORD=
 SNOWFLAKE_ACCOUNT=
 SNOWFLAKE_DATABASE=LLMOPS_DB
 SNOWFLAKE_SCHEMA=LLMOPS_SCHEMA
-SNOWFLAKE_WAREHOUSE=LLMOPS_WH_S
+SNOWFLAKE_WAREHOUSE=LLMOPS_WH_M
 SNOWFLAKE_ROLE=ACCOUNTADMIN
 SNOWFLAKE_CORTEX_SEARCH_SERVICE=LLMOPS_CORTEX_SEARCH_SERVICE
 ```
@@ -97,7 +97,7 @@ SNOWFLAKE_CORTEX_SEARCH_SERVICE=LLMOPS_CORTEX_SEARCH_SERVICE
 Next create a new conda environment and install the packages required with the following commands in your terminal:
 
 ```bash
-conda create -n getting_started_llmops python=3.12
+conda create -n getting_started_llmops python=3.11
 conda activate getting_started_llmops
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python notebook ipykernel
 pip install trulens-eval llama-index llama-index-embeddings-huggingface llama-index-readers-github snowflake-sqlalchemy
@@ -176,7 +176,7 @@ github_token = os.environ["GITHUB_TOKEN"]
 client = GithubClient(github_token=github_token, verbose=False)
 
 reader = GithubRepositoryReader(
-    github_client=github_client,
+    github_client=client,
     owner="streamlit",
     repo="docs",
     use_parser=False,
@@ -284,12 +284,12 @@ for curr in tqdm(results):
 
 Duration: 5
 
-First we need to create a Cortex Search Service in Snowflake. To do so, you can opena SQL Worksheet in your Snowflake instance, and run the following SQL command:
+First we need to create a [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) Service in Snowflake. To do so, you can opena SQL Worksheet in your Snowflake instance, and run the following SQL command:
 
 ```sql
 CREATE OR REPLACE CORTEX SEARCH SERVICE LLMOPS_CORTEX_SEARCH_SERVICE
   ON doc_text
-  WAREHOUSE = LLMOPS_WH_S
+  WAREHOUSE = LLMOPS_WH_M
   TARGET_LAG = '1 hour'
 AS (
   SELECT
