@@ -30,13 +30,13 @@ We will be leveraging the the tools within Snowflake to:
 ### Prerequisites
 - A new free trial of Snowflake in **US AWS West**
 
-  Create a trial account in AWS US West (here we have the snowflake-arctic model which we will be trying out
+  Create a trial account in AWS US West (here we have the snowflake-arctic model which we will be trying out)
 
 ![alt text](assets/I001.png)
 
 
 ### What You’ll Learn 
--  
+
 - An understanding of Geospatial data in Snowflake
 - Using Cortex functions with Snowpark
 - Creating a location centric application using Streeamlit 
