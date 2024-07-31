@@ -98,7 +98,7 @@ Next create a new conda environment and install the packages required with the f
 ```bash
 conda create -n getting_started_llmops python=3.11
 conda activate getting_started_llmops
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python notebook ipykernel
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python snowflake.core notebook ipykernel
 pip install trulens-eval llama-index llama-index-embeddings-huggingface llama-index-readers-github snowflake-sqlalchemy
 ```
 
