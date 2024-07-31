@@ -12,7 +12,6 @@ tags: Getting Started, LLMOps, RAG, LLMs, TruLens, Snowflake
 ## Overview
 
 Duration: 5
-
 By completing this guide, you'll get started with LLMOps by building a RAG by combining [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview), and then using [TruLens](https://www.trulens.org/) to add observability and guardrails.
 
 Along the way, you will also learn how run TruLens feedback functions with Snowflake Cortex as the [feedback provider](https://www.trulens.org/trulens_eval/api/provider/), and how to [log TruLens traces and evaluation metrics to a Snowflake table](https://www.trulens.org/trulens_eval/tracking/logging/where_to_log/log_in_snowflake/#logging-in-snowflake). Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens_eval/guardrails/) for filtering retrieved context and reducing hallucination.

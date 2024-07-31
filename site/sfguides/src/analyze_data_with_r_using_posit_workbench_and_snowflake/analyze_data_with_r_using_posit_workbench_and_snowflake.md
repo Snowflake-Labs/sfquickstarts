@@ -104,13 +104,13 @@ Once Posit Workbench is installed, click on the app under `Installed Apps` to la
 
 ![](assets/snowflake/06-open_app.png)
 
-After clicking on the app, you will see a page with installation and configuration instructions.
+After clicking on the app, you will see a page with configuration instructions and a blue `Launch app` button.
 
-![](assets/snowflake/07-app_install.png)
+![](assets/snowflake/09-launch-app.png)
 
-Scroll down to the `Debug` section, then click `List Endpoints`. Click on the endpoint URL to open the Posit Workbench app.
+Click on the app. This should take you to the webpage generated for the Workbench application. You may be prompted to first login to Snowflake using your regular credentials or authentication method.
 
-![](assets/snowflake/08-endpoint.png)
+![](assets/snowflake/10-login.png)
 
 ### Create an RStudio Pro Session
 
