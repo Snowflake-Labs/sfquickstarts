@@ -12,7 +12,7 @@ tags: Getting Started, Containers, Snowpark
 ## Overview 
 Duration: 3
 
-Through this quickstart guide, you will explore [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview), which are now in Public Preview on AWS. You will learn the basic mechanics of working with Snowpark Container Services and build several introductory services. **Please note: this quickstart assumes some existing knowledge and familiarity with containerization (e.g. Docker) and basic familiarity with container orchestration.**
+Through this quickstart guide, you will explore [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview). You will learn the basic mechanics of working with Snowpark Container Services and build several introductory services. **Please note: this quickstart assumes some existing knowledge and familiarity with containerization (e.g. Docker) and basic familiarity with container orchestration.**
 
 ### What is Snowpark Container Services?
 
