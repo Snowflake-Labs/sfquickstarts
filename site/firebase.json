@@ -86,6 +86,11 @@
       "source": "guide/machine_learning_with_aws_autopilot/{,/**}",
       "destination": "/guide/getting_started_with_snowpark_for_machine_learning_on_sagemaker",
       "type": 301
+    },
+    {
+      "source": "guide/tour_of_ingest/{,/**}",
+      "destination": "/guide/a_comprehensive_guide_to_ingesting_data_into_snowflake",
+      "type": 301
     }
     ]
   }

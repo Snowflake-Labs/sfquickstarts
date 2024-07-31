@@ -31,7 +31,7 @@ To keep things simple, we’ll use a nicely manicured dataset to illustrate how 
 
 ### You’ll Need 
 - [Sign up for a Continual account](https://cloud.continual.ai/register?utm_campaign=Snowflake%20QuickStarts&utm_source=continual%20guide)
-- [Snowflake account](https://signup.snowflake.com/)
+- [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 
 ### You’ll Build 
 - An operational, continually updating customer churn ML model

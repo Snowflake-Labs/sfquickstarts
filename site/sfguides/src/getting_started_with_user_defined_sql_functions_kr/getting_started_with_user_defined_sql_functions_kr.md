@@ -45,7 +45,7 @@ Snowflake 사용자 인터페이스에 익숙하지 않다면 아래 동영상�
 
 ### 필요한 것
 
-- [Snowflake](https://signup.snowflake.com/) 평가판 계정
+- [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) 평가판 계정
 
 ### 구축할 것
 
@@ -60,7 +60,7 @@ Duration: 3
 
 ### Snowflake 계정 생성
 
-Snowflake는 무료로 Snowflake 서비스를 이용해 볼 수 있도록 [평가판 계정](https://signup.snowflake.com/)을 제공합니다. 프롬프트에 따라 이메일로 계정을 활성화합니다.
+Snowflake는 무료로 Snowflake 서비스를 이용해 볼 수 있도록 [평가판 계정](https://signup.snowflake.com/?utm_cta=quickstarts_)을 제공합니다. 프롬프트에 따라 이메일로 계정을 활성화합니다.
 
 Snowflake 계정이 이미 있다면 이를 사용할 수 있습니다.  데이터베이스 생성 권한을 가진 역할만 있으면 됩니다.
 
