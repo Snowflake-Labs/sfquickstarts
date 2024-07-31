@@ -47,7 +47,7 @@ The historical data can also be analyzed by BI tools like [Microsoft Power BI on
 
 To participate in the virtual hands-on lab, attendees need the following resources.
 
-- A [Snowflake Enterprise Account on Azure](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
+- A [Snowflake Enterprise Account on Azure](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access
 - An [Azure Account](https://learn.microsoft.com/en-us/dotnet/azure/create-azure-account) with administrator privileges.
 
 ### What You'll Learn

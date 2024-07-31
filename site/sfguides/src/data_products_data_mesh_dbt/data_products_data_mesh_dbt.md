@@ -126,7 +126,7 @@ In this step, you will set up Snowflake and dbt Cloud accounts for use in the re
 
 ### Sign up for a Snowflake Enterprise trial account
 
-Navigate to [signup.snowflake.com](https://signup.snowflake.com/) and follow the steps. A few things to note:
+Navigate to [signup.snowflake.com](https://signup.snowflake.com/?utm_cta=quickstarts_) and follow the steps. A few things to note:
 - Select an Enterprise account
 - Select a cloud provider - Microsoft Azure, Amazon Web Services, or Google Cloud Platform.  Choose the one that makes the most sense for you.
 - Additionally, select a region.  Select one of the US West regions as it's known to have partner connect available.
