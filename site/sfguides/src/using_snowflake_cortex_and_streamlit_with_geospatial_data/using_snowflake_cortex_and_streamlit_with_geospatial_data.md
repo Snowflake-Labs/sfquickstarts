@@ -14,9 +14,9 @@ Duration: 1
 
 Analyzing Location specific data in order to make decisions often requires 'niche' techniques which are often worked on by 'geography' experts.   In snowflake, everyone can be an expert in any location in which they need to understand - whether it's points of interest, transport links or government boundaries - all is feasible using standard functionality available within Snowflake.  
 
-Already, there are so many location specific datasets available within the **Snowflake Marketplace** which saves significantly reduces data ingestion and engineering time.  Getting access to these datasets are as simple as **Get Data**, where you will enjoy leveraging location specific features using either SQL Queries or Snowpark Dataframes.  And these result sets are then rendered easily using **Streamlit in Snowflake** dashboards
+Already, there are so many location specific datasets available within the **Snowflake Marketplace** which significantly reduces data ingestion and engineering time.  Getting access to these datasets are as simple as **Get Data**, where you will enjoy leveraging location specific features using either SQL Queries or Snowpark Dataframes.  And these result sets are then rendered easily using **Streamlit in Snowflake** dashboards.
 
-**Snowflake Cortex LLMs** - are then used to save the analyst, engineer or even BI developer time - which can help a multitude of tasks - from improving the readability of location tooltips, to the generation or synthetic data for testing purposes.
+**Snowflake Cortex LLMs** - are used to save the analyst, engineer or even BI developer time - which can help a multitude of tasks - from improving the readability of location tooltips, to the generation or synthetic data for testing purposes.
 
 In this quickstart, we will be leveraging the the tools within Snowflake to:
 
