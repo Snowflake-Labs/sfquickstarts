@@ -59,19 +59,26 @@ This solution consists of a native application that provides a framework to easi
 
 <!-- ------------------------ -->
 
-## Prerequisites
-- Install [Snow CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)
 
-> ⚠️ **This application requires Streamlit Custom Components** Request this to be enabled in your account and in the application package.
+### What You'll Build 
+- Marketing Data Foundation Solution Native application
 
-### What You’ll Need 
+![MDF](assets/Step1.1.png)
+
+### What You'll Learn
+- The working mechanics of a native application.
+- How to build and push a native app related to Marketing Campaign Intelligence data.
+- How to use open source AI model for handle your marketing data.
+
+### Prerequisites
+
 - A [GitHub](https://github.com/) Account 
 - [VSCode](https://code.visualstudio.com/download) Installed
 - [Snow CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation) Installed 
 - [Python](https://www.python.org/downloads/) Installed
+- Install [Snow CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)
 
-### What You’ll Build 
-- Marketing Data Foundation Solution 
+> ⚠️ **This application requires Streamlit Custom Components** Request this to be enabled in your account and in the application package.
 
 <!-- ------------------------ -->
 
@@ -310,7 +317,7 @@ You will see your application listed in your account:
 ![](assets/NativeAppListing.png)
 
 
-### What you learned
+### What You Learned
 
 * How to host and build a basic native app for Marketing Campaign Intelligence data.
 * Generate a set of views that aggregate data from Marketing providers like LinkedIn and Facebook.
@@ -318,7 +325,7 @@ You will see your application listed in your account:
 
 
 
-### Related Resources
+### Resources
 
 Want to learn more about the tools and technologies used by your app? Check out the following resources:
 
