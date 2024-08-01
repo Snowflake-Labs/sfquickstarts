@@ -7,12 +7,18 @@ status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial 
 
-# Analyse the Impact of Big Events in the North of England
+# Using Snowflake Cortex And Streamlit With Geospatial Data
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
-We will be leveraging the the tools within Snowflake to:
+Analyzing Location specific data in order to make decisions often requires 'niche' techniques which are often worked on by 'geography' experts.   In snowflake, everyone can be an expert in any location in which they need to understand - whether it's points of interest, transport links or government boundaries - all is feasible using standard functionality available within Snowflake.  
+
+Already, there are so many location specific datasets available within the **Snowflake Marketplace** which saves significantly reduces data ingestion and engineering time.  Getting access to these datasets are as simple as **Get Data**, where you will enjoy leveraging location specific features using either SQL Queries or Snowpark Dataframes.  And these result sets are then rendered easily using **Streamlit in Snowflake** dashboards
+
+**Snowflake Cortex LLMs** - are then used to save the analyst, engineer or even BI developer time - which can help a multitude of tasks - from improving the readability of location tooltips, to the generation or synthetic data for testing purposes.
+
+In this quickstart, we will be leveraging the the tools within Snowflake to:
 
   - **Visualise** the location of train stations within the north of england and understand where nearby restaurants are located
 
@@ -44,17 +50,13 @@ We will be leveraging the the tools within Snowflake to:
   - Train Stations
 - Using Notebooks and Streamlit to make discoveries and present findings 
 
-### What You’ll Need 
-- A sense of fun and creativity
-
-
 
 ### What You’ll Build 
 - A streamlit apps and a notebook to visualise your results
 
 <!-- ------------------------ -->
 ## Initial Setup
-Duration: 5
+Duration: 2
 
 Open up a new SQL worksheet and run the following commands. To open up a new SQL worksheet, select Projects » Worksheets, then click the blue plus button and select SQL worksheet.
 
@@ -81,10 +83,10 @@ Go back to the home page
 
 
 <!-- ------------------------ -->
-## Market Place
+## Snowflake Marketplace
 Duration: 2
 
-Once logged in go to the market place - this is under Data Products > Market Place
+Once logged in go to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
 
 ![alt text](assets/I002.png)
 
@@ -431,7 +433,7 @@ layers= [polygon_layer, poi_l, nw_trains_l], tooltip = {'text':"Station Name: {N
 We have now rendered a multi layer map which overlays restaurants and northern rail train stations.  Next, we will leverage Cortex to curate descriptive tooltips derived by station attributes.
 
 <!-- ------------------------ -->
-## Using Arctic to create a Summary field to describe information about each Train Station
+## Use Cortex to describe the Train Stations
 Duration: 10
 
 At the moment we only have very basic train station information.  Lets add more info from the shared dataset:
@@ -552,7 +554,7 @@ Hover over the map and checked the updated tool tips.
 ![tool_tip_image](assets/I020.png)
 
 <!-- ------------------------ -->
-## Use Snowflake Arctic to list Key events happening in the North of England
+## Use Cortex to list Key location events
 
 Duration: 10
 
@@ -701,7 +703,7 @@ st.write(places_h3.limit(10))
 We now have all of this joined together - in the next step we will use an LLM to write a letter to each MP which details the concerns which may impact the events.
 
 <!-- ------------------------ -->
-## Use an LLM to write a letter to each MP concerning the impacts of the events.
+## Use Cortex to write relevant correspondence
 Duration: 10
 
 Now that we can see where the events impact stations and restaurants, let's  use an LLM to craft a letter to the MP to notify them of these effects.  To do this, we need to put all the information needed into objects to  easily pass them through the cortex function.
@@ -821,7 +823,7 @@ st.write(letterspd.LETTER.iloc[selected_letter])
 That's it. If you wish, you can download the completed python code from here by exporting it as .ipynb that could be used to import it into a new notebook.
 
 <!-- ------------------------ -->
-## Generate Synthetic Incidents and Visualize the results
+## Generate Synthetic Incidents and Visualize
 Duration: 10
 
 This streamlit application will generate events occurring during the time of the events, which will involve the train stations and the restaurants.  
