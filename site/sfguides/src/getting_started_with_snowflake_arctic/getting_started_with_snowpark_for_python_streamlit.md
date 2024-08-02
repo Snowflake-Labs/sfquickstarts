@@ -162,7 +162,7 @@ select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.co
 ### Classify Text 
 (***In Public Preview Soon***)
 
-This function takes a piece of text and a set of user-provided categories as inputs and returns a predicted category for that text. The function returns a JSON-formatted.
+This function takes a piece of text and a set of user-provided categories as inputs and returns a predicted category for that text. The function returns a structured JSON-formattet output.
 
 ```sql
 select transcript,snowflake.cortex.classify_text(transcript,['Refund','Exchange']) as classification from call_transcripts where language = 'English';
