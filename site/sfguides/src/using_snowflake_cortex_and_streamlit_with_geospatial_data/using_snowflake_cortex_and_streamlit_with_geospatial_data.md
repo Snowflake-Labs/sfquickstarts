@@ -1336,9 +1336,9 @@ Now we will leverage the weather data to understand the weather forecasts for ea
 
 Go to the Home page and select Notebooks
 
-Download the following file
+Download the following python notebook file
 
-[weather.ipynb](https://github.com/sfc-gh-boconnor/snowflake_notebooks/blob/main/weather.ipynb)
+[**weather.ipynb**](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/weather.ipynb)
 
 In the notebbook menu selection, select Import from .ipynb file and choose the downloaded file
 
@@ -1733,23 +1733,16 @@ You will have learned the following:
 - How to utilise Pydeck to combine local information on a multi layered map.
 
 
-### Resources
+### Related Resources
 
+- [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data)
 
-**Geospatial Functions**
-https://docs.snowflake.com/en/sql-reference/functions-geospatial
+- [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
 
-**H3 Indexing** 
-H3 is a geospatial indexing system that partitions the world into hexagonal cells. H3 is open source under the Apache 2 license. 
-https://h3geo.org/docs/
+- [H3 Indexing](https://h3geo.org/docs/)
 
-**Streamlit**
-Streamlit turns data scripts into shareable web apps in minutes. 
-https://streamlit.io/
+- [Streamlit](https://streamlit.io/)
 
-**Pydeck**
-High-scale spatial rendering in Python, powered by [deck.gl](https://deck.gl/#/).
-https://deckgl.readthedocs.io/en/latest/index.html#
+- [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
 
->Try another quickstart which combines Geospatial and AI using Snowflake Cortex
-[Getting started with Geospatial AI and ML using Snowflake Cortex](https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0)
+- [Getting started with Geospatial AI and ML using Snowflake Cortex](https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0)
