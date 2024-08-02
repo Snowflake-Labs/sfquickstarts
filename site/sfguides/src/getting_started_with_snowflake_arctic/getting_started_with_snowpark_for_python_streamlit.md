@@ -159,6 +159,15 @@ select transcript,snowflake.cortex.summarize(transcript) as summary from call_tr
 select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.cortex.count_tokens('summarize',transcript) as number_of_tokens from call_transcripts where language = 'English' limit 1;
 ```
 
+### Classify Text 
+(***In Public Preview Soon***)
+
+This function takes a piece of text and a set of user-provided categories as inputs and returns a predicted category for that text. The function returns a JSON-formatted.
+
+```sql
+select transcript,snowflake.cortex.classify_text(transcript,['Refund','Exchange']) as classification from call_transcripts where language = 'English';
+```
+
 <!-- ------------------------ -->
 ## Snowflake Arctic
 
