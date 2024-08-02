@@ -360,8 +360,7 @@ We shall now install the following Snowflake UDFs that wrap the functionality of
 - `LLM_SUMMARIZE`: we will be using this UDF to extract summaries of all corpus items that belong to a specific community.
 - `LLM_ANSWER`: this UDF will be used to answer user questions based on the community summaries.
 - `LLM_ANSWER_SUMMARIES`: we shall use this UDF to generate answers to user questions based on the community summaries. The LLM context will be provided by a window of community summaries and prompted to answer the user question if it exists in the context.
-- `LLM_ANSWER_SUMMARIES_RAG`: this is an alternative way to provide context to the LLM, in which we will perform semantic matching on the embeddings of the user input and the community summaries embeddings. Subsequently, the top-k retrieved summaries will be provided as context to the LLM which will be prompted to answer the user question.
-
+- `LLM_ANSWER_RAG`: this function will be used to showcase standard RAG along with GraphRAG. Standard RAG will be done on the embeddings of corpus chunks.
 
 ```sql
 /***
@@ -769,6 +768,7 @@ $$
                     ## 2. Instructions
                         - Summarize the provided text so that all information mentioned in the text is retained.
                         - The text contains information about entities and relations that must be the target of summarization.
+                        - Produce summary of the context you are given and nothing else. Do not extrapolate beyond the context given.
                         - Relations between entities must be preserved.
                         - The summarization must produce coherent and succinct text.
     
@@ -870,9 +870,12 @@ $$
     ) AS response
 $$;
 
-CREATE OR REPLACE PROCEDURE LLM_ANSWER_SUMMARIES(completions_model VARCHAR, summarization_window INTEGER, question VARCHAR) 
+CREATE OR REPLACE PROCEDURE LLM_ANSWER_SUMMARIES(completions_model VARCHAR, summarization_window INTEGER, question VARCHAR)  
 RETURNS TABLE 
-(final_answer VARIANT)
+(
+    answer VARIANT
+    , evidence VARIANT
+)
 LANGUAGE SQL 
 AS 
 $$
@@ -935,6 +938,7 @@ BEGIN
         WITH summary_answers AS (
             SELECT DISTINCT 
                 result:answer AS summary_answer
+                , result:evidence AS summary_evidence
             FROM 
                 temp_results 
             WHERE
@@ -961,7 +965,8 @@ BEGIN
             ) AS r
         )
         SELECT 
-            fla.response:answer AS final_answer
+            fla.response:answer AS answer
+            , fla.response:evidence AS evidence
         FROM 
             final_llm_answer AS fla
     );
@@ -970,9 +975,12 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE LLM_ANSWER_SUMMARIES_RAG(completions_model VARCHAR, embeddings_model VARCHAR, top_k_similar INTEGER, question VARCHAR) 
+CREATE OR REPLACE PROCEDURE LLM_ANSWER_RAG(completions_model VARCHAR, embeddings_model VARCHAR, top_k_similar INTEGER, question VARCHAR) 
 RETURNS TABLE 
-(final_answer VARIANT)
+(
+    answer VARIANT
+    , evidence VARIANT
+)
 LANGUAGE SQL 
 AS 
 $$
@@ -982,10 +990,10 @@ BEGIN
     resultset := (
         WITH cse AS (
             SELECT 
-                community_id
+                corpus_id
                 , embedding AS embedding
             FROM 
-                community_summary_embeddings
+                corpus_embeddings
         )
         , sim AS (
             SELECT  
@@ -994,7 +1002,7 @@ BEGIN
             FROM 
                 cse 
             JOIN 
-                community_summary AS cs ON cs.community_id = cse.community_id 
+                corpus AS cs ON cs.id = cse.corpus_id 
             WHERE 
                 similarity >= 0.8
             ORDER BY 
@@ -1023,7 +1031,8 @@ BEGIN
             ) AS r
         )
         SELECT 
-            fla.response:answer AS final_answer
+            fla.response:answer AS answer
+            , fla.response:evidence AS evidence
         FROM 
             final_llm_answer AS fla
     );
@@ -1041,16 +1050,16 @@ We shall now load the data from the public Azure storage into the `corpus` table
 * Copy data from Azure storage into the corpus table.
 **/
 COPY INTO corpus(content)
-    FROM 'azure://rdaxllm.blob.core.windows.net/dataset/graphrag/csv/tech_industry_cvs.csv'
-    FILE_FORMAT = (
-        TYPE = CSV
-        COMPRESSION = AUTO 
-        FIELD_DELIMITER = '|'
-        NULL_IF = '\\N'
-        EMPTY_FIELD_AS_NULL = TRUE
-        FIELD_OPTIONALLY_ENCLOSED_BY = '"'
-    )
-    ON_ERROR = CONTINUE;
+FROM 'azure://rdaxllm.blob.core.windows.net/dataset/graphrag/csv/tech_industry_cvs.csv'
+FILE_FORMAT = (
+    TYPE = CSV
+    COMPRESSION = AUTO 
+    FIELD_DELIMITER = '|'
+    NULL_IF = '\\N'
+    EMPTY_FIELD_AS_NULL = TRUE
+    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+)
+ON_ERROR = CONTINUE;
 ```
 
 <!-- ------------------------ -->
