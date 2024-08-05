@@ -16,6 +16,8 @@ Lang.ai Native Snowflake application provides AI agents for product managers tha
 
 This quickstart is a guide to installing and running your first Lang AI agent for data analysis in your own Snowflake infrastructure.
 
+![Snowflake and Lang logos](assets/overview_logos.png)
+
 ### Prerequisites
 - Being part of Lang.ai AI Agent Design Partner program
 - Sharing with Lang.ai's Account Executive your Snowflake Account Identifier
@@ -45,9 +47,9 @@ To start, copy the <button>[SQL Script](https://raw.githubusercontent.com/lang-a
 ![Running the script](assets/sample_database_step_2.png)
 
 This script will:
-- Create a Database called *nike_lapsed_customers* and populate it with demo data
-- Create a Database called *nike_users* and populate it with demo data
-- Create a View called *NIKE_LAPSED_CUSTOMERS_VIEW* to connect the data from both tables
+- Create a Database called *zoom_cancellations* and populate it with demo data
+- Create a Database called *zoom_users* and populate it with demo data
+- Create a View called *zoom_cancellations_view* to connect the data from both tables
 
 After the script has successfully executed, you will see a LANG_AI_DEMO database with the following tables and one view:
 
