@@ -3,12 +3,12 @@ id: build_collaborative_large_language_vision_models_with_landingai_and_snowflak
 summary: This guide shows how to use LandingAI LandingLens and Snowflake to create a simple LVM usecase.
 categories: data-science, genai, LLM, LVM, landingai
 environments: web
-status: Published 
+status: Published
 tags: Getting Started, Data Science, Data Engineering, LandingAI, LVM
 
 # Recommender Systems with RelationalAI’s Snowflake Native App
 
-## Overview 
+## Overview
 Duration: 1
 
 By completing this guide, you will be able to build a collaborative LVM model using LandingAI-LandingLens application in Snowflake
@@ -31,25 +31,25 @@ In this quickstart, you'll learn how to:
 - **Build a LifeSciences Pneumonia Detection**: How to build classification LVM model on LandingLens to classify images to detect Pneumonia
 
 
-### What You’ll Need 
+### What You’ll Need
 - A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account
 - Snowflake privileges on your user to [Install a Native Application](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges)
 - The [LandingLens app](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CU/landingai-landinglens-visual-ai-platform?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX) used to build and train LVM models in Snowflake. Please note this app has 30 day free trial for you to build this cool demo. Thanks to LandingAI!!!
 
-### What You’ll Build 
-- A simple LVM classification model to detect defects in Manufacturing domain 
-- A simple LVM classification model to detect Pneumonia in Lifesciences domain 
+### What You’ll Build
+- A simple LVM classification model to detect defects in Manufacturing domain
+- A simple LVM classification model to detect Pneumonia in Lifesciences domain
 
 <!-- ------------------------ -->
 
 ## Install the Native Apps In Your Account
 Duration: 30
 
-- In the [Snowflake Marketplace](https://app.snowflake.com/marketplace), search for the ‘LandingAI’ in our marketplace. You will see a provider with the name "LandingAI", please click the provider. You will see 3 apps under the same provider as below. 
+- In the [Snowflake Marketplace](https://app.snowflake.com/marketplace), search for the ‘LandingAI’ in our marketplace. You will see a provider with the name "LandingAI", please click the provider. You will see 3 apps under the same provider as below.
 
 <img src="assets/lai_list_of_apps.png" alt="LAI list of apps" width="800">
 
-- Click the LandingLens app and click "GET" and "TRY FOR FREE" to install the app.  
+- Click the LandingLens app and click "GET" and "TRY FOR FREE" to install the app.
 
 <img src="assets/lai_get_landingLens.png" alt="LAI get landinglens" width="800">
 
@@ -57,7 +57,7 @@ Duration: 30
 
 <img src="assets/lai_landinglens_provide_grants.png" alt="LAI landinglens grants" width="800">
 
-- When you click review, you will see the screenshot below for the containers to be accessible from outside world. So please click "Connect". You should see a screens below. 
+- When you click review, you will see the screenshot below for the containers to be accessible from outside world. So please click "Connect". You should see a screens below.
 
 <img src="assets/lai_eai_review.png" alt="LAI EAI review" width="800">
 <img src="assets/lai_lens_activate.png" alt="LAI Lens Activate" width="800">
@@ -66,7 +66,7 @@ Duration: 30
 
 <img src="assets/lai_landinglens_launchedapp.png" alt="LAI Lens installer" width="800">
 
-- Then click "Install/Upgrade/Resume" to install the services. This will install around 25 services behind the scenes, so please wait for around 20 minutes for the installation to complete. 
+- Then click "Install/Upgrade/Resume" to install the services. This will install around 25 services behind the scenes, so please wait for around 20 minutes for the installation to complete.
 
 <img src="assets/lai_install_landinglens.png" alt="LAI Lens install progress" width="800">
 
@@ -79,7 +79,7 @@ Congratulations! The LandingLens app is now available in your Snowflake account.
 <img src="assets/lai_landinglens_app.png" alt="LAI Lens app" width="800">
 
 
-- Now, lets get some sample data for LandingLens to perform the classification. Good news is that, LandingAI has launched couple of apps just to have the sample data for building it. First of the kind is [Lifesciences Pnemonia](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX) and the other is [Manufacturing defect detection](https://app.snowflake.com/marketplace/listing/GZTYZ12K65C6/landingai-sample-dataset-for-landinglens-manufacturing-metal-casting?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX) 
+- Now, lets get some sample data for LandingLens to perform the classification. Good news is that, LandingAI has launched couple of apps just to have the sample data for building it. First of the kind is [Lifesciences Pnemonia](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX) and the other is [Manufacturing defect detection](https://app.snowflake.com/marketplace/listing/GZTYZ12K65C6/landingai-sample-dataset-for-landinglens-manufacturing-metal-casting?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX)
 
 - Click [Lifesciences Pnemonia](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX) app, Click "Get" and install the app.
 
@@ -104,7 +104,7 @@ Congratulations! The LandingLens app is now available in your Snowflake account.
 
 Duration: 5
 
-Next, open a Snowsight SQL worksheet and run the SQL commands below from top to bottom. 
+Next, open a Snowsight SQL worksheet and run the SQL commands below from top to bottom.
 
 ```sql
 -- Main Script: Basic Setup
@@ -144,6 +144,11 @@ GRANT READ ON STAGE llens_sample_ds_lifesciences.pneumonia.dataset TO APPLICATIO
 
 <img src="assets/lai_dataapp_create_sample_data_mfg.png" alt="LAI dataapp mfg open download images" width="800">
 
+Once the copy is finished, the app will show you the details about where the dataset was copied to.
+
+Take notes of the database, schema and stage names as you will need them in the next steps.
+
+<img src="assets/lai_dataapp_sample_data_copied_lfs.png" alt="Sample data app data copied" width="800">
 
 Refer to the [documentation](https://landing.ai/snowflake) for more details about how to use the LandingAI Native App.
 
@@ -152,14 +157,25 @@ Refer to the [documentation](https://landing.ai/snowflake) for more details abou
 
 Duration: 20
 
-The Notebook linked below covers the following steps.
+Now, we aregoing to import the copied images to a LandingLens classification project.
 
-1) Convert user-item interactions to a bipartite graph
-2) Use user-item interactions to compute item-item by leveraging the functions supported by the graph analytics library
-3) Use the similarities to predict the scores for all (user, movie) pairs. Each score is an indication of how likely it is for a user to interact with a movie
-4) Sort the scores for every user in order to generate top-k recommendations
-5) Evaluate performance using evaluation metrics that are widely used for recommender systems
+Open the LandingLens app in your Snowflake account, login with your credentials and click on the "Start First Project" button.
 
+In the project creation screen, give a name to your project, select "Classification" as the project type and click on the "sync Snowflake Data" button, as shown below.
+
+<img src="assets/lai_landinglens_sync.png" alt="LAI project creation page" width="800">
+
+In the sync screen, select the database, schema and stage where the images were copied to. If should be `LLENS_SAMPLE_DS_LIFESCIENCES` for database, `PNEUMONIA` for the schema and `DATASET` for the stage.
+
+When you select those values, you will see a warning message saying that it is not possible to read the stage. In order to fix that, you need to copy the commands shown in the sync dialog and run them in a Snowsight SQL worksheet.
+
+After granting permission, you will be able to sync the data. Check the "Classify images based on folder names", so it also imports the labels, and then click on the "Sync" button, as shown below.
+
+<img src="assets/lai_landinglens_sync_folder.png" alt="LAI sync" width="800">
+
+Once the syncronization process finishes, the images will be imported to the project and will be shown in LandingLens data browser. You can now click on the "Train" button to start training the model.
+
+<img src="assets/lai_landinglens_train.png" alt="LAI sync" width="800">
 
 
 <!-- ------------------------ -->
