@@ -157,7 +157,9 @@ Refer to the [documentation](https://landing.ai/snowflake) for more details abou
 
 Duration: 20
 
-Now, we aregoing to import the copied images to a LandingLens classification project.
+
+### Importing the images to LandingLens
+Now, we are going to import the copied images to a LandingLens classification project.
 
 Open the LandingLens app in your Snowflake account, login with your credentials and click on the "Start First Project" button.
 
@@ -175,7 +177,49 @@ After granting permission, you will be able to sync the data. Check the "Classif
 
 Once the syncronization process finishes, the images will be imported to the project and will be shown in LandingLens data browser. You can now click on the "Train" button to start training the model.
 
-<img src="assets/lai_landinglens_train.png" alt="LAI sync" width="800">
+### Training
+
+<img src="assets/lai_landinglens_train.png" alt="LAI train" width="800">
+
+Once you click on the "Train" button, you will see on the right side panel the training progress. LandingLens will provision a GPU, configure the dataset and run the training process. This process can take a few minutes to complete.
+
+<img scr="assets/lai_landinglens_train_in_progress.png" alt="LAI training in progress" width="800">
+
+Once training finishes, you will see both the original labels and the model predictions in the main project page. You will also be able to see the model performance, and the "Try model" button, which allows you to test the model with new images.
+
+In the "Models" tab, you can see the trained model and its details. You can also see detailed metrics about the model performance, which allows you to play with the datasets and labels to improve model performance.
+
+In this example case, the trained model should be already performing quite well.
+
+<img src="lai_landinglens_models.png" alt="LAI models page">
+
+### Deploying the model to an endpoint
+
+Once you are satisfied with the model performance, you can deploy it to an endpoint. To do that, click on the "Deploy" button in the models tab. Select "Cloud deployment", give the new endpoint a name and hit "Deploy".
+
+<img src="lai_landinglens_model_deploy.png" alt="LAI deploying a model">
+
+
+Once the model is deployed, you will be redirected to the "Deploy" tab, with your new endpoint already selected. In this tab, you will need to get the endpoint URL, which you can use to make predictions with the model.
+
+<img src="lai_landinglens_deployment_tab.png" alt="LAI model tab">
+
+LandingLens provide several ways to run inferences using your trained model. You can use the Python library to integrate the model with your applications with very few lines of code. You can find the documentation for the Python library [here](https://landing-ai.github.io/landingai-python/inferences/snowflake-native-app/).
+
+You can also use LandingEdge ([documentation here](https://support.landing.ai/docs/landingedge-overview)) or Docker deployment ([documentation here](https://support.landing.ai/docs/docker-deploy)) to run inferences on the edge or on your own infrastructure.
+
+Another alternative is using our built-in Snowflake functions to make predictions directly from Snowflake. For example:
+
+```sql
+SELECT
+    -- Replace "ac104c43-c6eb-4d1a-8a94-cfaf3dae8f70" below with the deployed cloud endpoint ID
+    LANDING_APP_NAME.code.run_inference(file_url_column, 'ac104c43-c6eb-4d1a-8a94-cfaf3dae8f70') as inference
+FROM table_with_image_files
+WHERE
+    some_condition = true;
+```
+
+For permissions needed to use LandingEdge, Docker deployment and Snowflake functions, please check the "Settings" tab in the LandingLens installer.
 
 
 <!-- ------------------------ -->
