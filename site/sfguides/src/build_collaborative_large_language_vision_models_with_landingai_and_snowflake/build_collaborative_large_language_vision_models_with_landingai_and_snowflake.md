@@ -208,6 +208,8 @@ LandingLens provide several ways to run inferences using your trained model. You
 
 You can also use LandingEdge ([documentation here](https://support.landing.ai/docs/landingedge-overview)) or Docker deployment ([documentation here](https://support.landing.ai/docs/docker-deploy)) to run inferences on the edge or on your own infrastructure.
 
+<!-- TODO: Uncomment this section once the endpoint function will be available.
+
 Another alternative is using our built-in Snowflake functions to make predictions directly from Snowflake. For example:
 
 ```sql
@@ -218,6 +220,7 @@ FROM table_with_image_files
 WHERE
     some_condition = true;
 ```
+-->
 
 For permissions needed to use LandingEdge, Docker deployment and Snowflake functions, please check the "Settings" tab in the LandingLens installer.
 
