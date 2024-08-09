@@ -342,12 +342,6 @@ CREATE OR REPLACE TABLE community_summary(
     , CONTENT VARCHAR
 )
 COMMENT = 'Table to store community-based corpus summaries';
-
-CREATE OR REPLACE TABLE community_summary_embeddings(
-    community_id INTEGER
-    , embedding VECTOR(FLOAT, 768)
-)
-COMMENT = 'Table to store community-based corpus summary embeddings';
 ```
 
 ### Installing the application UDFs
@@ -360,7 +354,6 @@ We shall now install the following Snowflake UDFs that wrap the functionality of
 - `LLM_SUMMARIZE`: we will be using this UDF to extract summaries of all corpus items that belong to a specific community.
 - `LLM_ANSWER`: this UDF will be used to answer user questions based on the community summaries.
 - `LLM_ANSWER_SUMMARIES`: we shall use this UDF to generate answers to user questions based on the community summaries. The LLM context will be provided by a window of community summaries and prompted to answer the user question if it exists in the context.
-- `LLM_ANSWER_RAG`: this function will be used to showcase standard RAG along with GraphRAG. Standard RAG will be done on the embeddings of corpus chunks.
 
 ```sql
 /***
@@ -960,72 +953,6 @@ BEGIN
                 LLM_ANSWER(
                     :completions_model 
                     , fsa.content
-                    , :question
-                )
-            ) AS r
-        )
-        SELECT 
-            fla.response:answer AS answer
-            , fla.response:evidence AS evidence
-        FROM 
-            final_llm_answer AS fla
-    );
-    
-    RETURN TABLE(resultset);
-END;
-$$;
-
-CREATE OR REPLACE PROCEDURE LLM_ANSWER_RAG(completions_model VARCHAR, embeddings_model VARCHAR, top_k_similar INTEGER, question VARCHAR) 
-RETURNS TABLE 
-(
-    answer VARIANT
-    , evidence VARIANT
-)
-LANGUAGE SQL 
-AS 
-$$
-DECLARE
-    resultset RESULTSET;
-BEGIN
-    resultset := (
-        WITH cse AS (
-            SELECT 
-                corpus_id
-                , embedding AS embedding
-            FROM 
-                corpus_embeddings
-        )
-        , sim AS (
-            SELECT  
-                cs.content AS content 
-                , VECTOR_COSINE_SIMILARITY(cse.embedding, SNOWFLAKE.CORTEX.EMBED_TEXT_768(:embeddings_model, :question)) AS similarity
-            FROM 
-                cse 
-            JOIN 
-                corpus AS cs ON cs.id = cse.corpus_id 
-            WHERE 
-                similarity >= 0.8
-            ORDER BY 
-                similarity DESC
-            LIMIT 
-                5
-        )
-        , similar_content AS (
-            SELECT 
-                LISTAGG(DISTINCT sim.content, '\n\n') WITHIN GROUP(ORDER BY sim.content) AS content
-            FROM 
-                sim
-        )
-        , final_llm_answer AS (
-            SELECT 
-                sm.content AS content
-                , PARSE_JSON(LLM_EXTRACT_JSON(r.response)) AS response
-            FROM 
-                similar_content AS sm
-            JOIN TABLE(
-                LLM_ANSWER(
-                    :completions_model
-                    , sm.content
                     , :question
                 )
             ) AS r
