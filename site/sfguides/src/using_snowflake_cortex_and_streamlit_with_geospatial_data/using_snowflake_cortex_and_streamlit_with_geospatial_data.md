@@ -34,7 +34,7 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
   - **Visualise**  the data using Streamlit
 
 ### Prerequisites
-- A new free trial of Snowflake in **US AWS West**.
+- A new free trial of Snowflake in **a region of you choice**.
 
 ![alt text](assets/I001.png)
 
@@ -43,7 +43,7 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
 
 - An understanding of Geospatial data in Snowflake
 - Using Cortex functions with Snowpark
-- Creating a location centric application using Streeamlit 
+- Creating a location centric application using Streamlit 
 - An insight to UK centric Datasets such as
   - Places of Interest
   - Weather
@@ -76,6 +76,10 @@ CREATE OR REPLACE WAREHOUSE BUILD_UK_WAREHOUSE;
 GRANT USAGE, OPERATE ON WAREHOUSE BUILD_UK_WAREHOUSE TO ROLE ACCOUNTADMIN;
 
 GRANT USAGE ON DATABASE BUILD_UK TO ROLE ACCOUNTADMIN;
+
+-------- use this paramater to try the LLMs using a region which does not currently support them.
+
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 
 ~~~
 
