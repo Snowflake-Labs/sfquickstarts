@@ -31,7 +31,8 @@ How to render a map and plot in the Streamlit app
 - A GitHub Account
 - Intermediate knowledge of Snowsight, the UI interface of Snowflake
 
-# Setup
+
+## Setup Snowflake
 <!-- ------------------------ -->
 Duration: 5
 
