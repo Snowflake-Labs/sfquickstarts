@@ -1,29 +1,24 @@
 author: Naveen Thomas
 id: build_collaborative_large_language_vision_models_with_landingai_and_snowflake
-summary: This guide shows how to use LandingAI LandingLens and Snowflake to create a simple LVM usecase.
+summary: This guide shows how to use LandingLens and Snowflake to create a computer vision model that detects pneumonia in X-ray images.
 categories: data-science, genai, LLM, LVM, landingai
 environments: web
 status: Published
 tags: Getting Started, Data Science, Data Engineering, LandingAI, LVM
 
-# Recommender Systems with RelationalAI’s Snowflake Native App
+# Computer Vision Models with LandingLens on Snowflake
 
 ## Overview
 Duration: 1
 
-By completing this guide, you will be able to build a collaborative LVM model using LandingAI-LandingLens application in Snowflake
+In this quickstart, we'll use LandingLens — a Native App available in the Snowflake Marketplace — to create a computer vision model that detects pneumonia in X-ray images. After completing this quickstart, users can use the concepts and procedures from this quickstart to build Object Detection, Segmentation, and Classifications models in LandingLens. 
 
-### What Is LandingAI?
+### What Is LandLens?
+LandingLens is a cloud-based Visual AI platform. LandingLens empowers users to create and train Visual AI models even if you don't have a background in AI, machine learning, or computer vision. LandingLens guides you through the process of uploading images, labeling them, training models, comparing model performance, and deploying models.
 
-LandingAI’s cutting-edge software platform makes computer vision easy for a wide range of applications across all industries. LandingAI extends Snowflake with native support for their Computer Vision application LandingLens, all within your Snowflake account, offering the customers/users to create, test your computer vision AI project in minutes. No need for complex programing or AI knowledge to get started. Please go through the [documentation] (https://landing.ai/snowflake) to learn more.
-
-Users can build a sample LVM model using sample dataset available on Snowflake marketplace and using the LandingLens application on marketplace. With regards to sample dataset, LandingAI offers two sample datasets for free in our marketplace.
-    - Manufacturing Metal Casting defect detection
-    - LifeSciences Pneumonia detection
+To users who are familiar with machine learning, LandingLens offers advanced tools to customize the model training process. LandingLens supports advanced deployment options including cloud deployment as well as [Docker](https://support.landing.ai/landinglens/docs/docker-deploy) and [LandingEdge](https://support.landing.ai/landinglens/docs/landingedge-overview), LandingAI’s edge-deployment solution.
 
 ### What You'll Learn
-
-In this quickstart, you'll learn how to:
 
 - **Set Up Your Environment**: How to install LandingLens and their free dataset apps
 - **Prepare Data**: How to load data from free dataset apps to LandingLens
