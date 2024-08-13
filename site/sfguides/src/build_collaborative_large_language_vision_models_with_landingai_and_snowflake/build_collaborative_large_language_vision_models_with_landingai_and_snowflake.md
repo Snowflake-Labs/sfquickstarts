@@ -150,16 +150,20 @@ To deploy the model with Cloud Deployment, follow these instructions:
 
 1. Open the **Models** tab.
 2. Click **Deploy** in the model's row.
+   <img src="assets/LL_pneumonia_deploy_1.png" alt="Deploy the model" width="800">
 3. Name the endpoint and click **Deploy**.
+
+   <img src="assets/LL_pneumonia_deploy_2.png" alt="Name the endpoint" width="400">
+   
 4. LandingLens deploys the model to the endpoint and opens the **Deploy** page. You can now use this endpoint to run inference.
+   <img src="assets/LL_pneumonia_deploy_3.png" alt="View the deployment" width="800">
 
 
 ### Run Inference
 
 After deploying a model with Cloud Deployment, a custom Python script displays at the bottom of the Deploy page. Copy this script, replace the placeholers with your information, and use the [LandingLens Python library]((https://landing-ai.github.io/landingai-python/inferences/snowflake-native-app/)) to integrate the model with your applications with very few lines of code.
 
-[image]
-
+<img src="assets/LL_pneumonia_deploy_4.png" alt="Copy the Python script" width="800">
 
 
 
@@ -177,23 +181,22 @@ WHERE
 ```
 -->
 
-For permissions needed to use LandingEdge, Docker deployment and Snowflake functions, please check the "Settings" tab in the LandingLens installer.
 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 2
 
-Thanks to RelationalAI’s Native App on Snowflake, we built a recommendation system with just a few steps. Although the dataset used was a small graph with thousands of nodes and edges, our solution can scale to real world datasets due to our cloud-native architecture that separates compute from storage.
+Congratulations on creating a pneumonia detection computer vision model in LandingLens! You can now apply the concepts you've learned to building custom computer vision models in LandingLens.
 
-In this Quickstart you learned
+In this quickstart you learned:
 
-- How to find and install the RelationalAI Native App from the Snowflake Marketplace
-- How to build a knowledge graph on top of your Snowflake data without having to extract data from Snowflake
-- How to create a recommender system using graph algorithms on the MovieLens 100k dataset.
+- How to install the LandingLens Native App from the Snowflake Marketplace
+- How to load images from Snowlfake stages into LandingLens projects
+- How to train and deploy a computer vision project in LandingLens
+
 
 ### Related Resources
-- To learn about more about RelationalAI and view full documentation, visit [https://relational.ai](https://relational.ai)
-- To see a brief summary of the recommender system you just built, see [Blogpost](https://medium.com/@haythemtellili/recommender-systems-with-relationalais-snowflake-native-app-68d9c76bb07f)
-- [Snowflake Marketplace](https://app.snowflake.com/marketplace)
-- More info on [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
+- To learn about more about LandingLens, check out the [LandingLens docs](https://support.landing.ai/docs/snowflake)
+- To connect with other LandingLens users, join the [LandingAI Community](https://community.landing.ai/home)
+- To learn more about LandingAI, check out [landing.ai/](https://landing.ai/)
