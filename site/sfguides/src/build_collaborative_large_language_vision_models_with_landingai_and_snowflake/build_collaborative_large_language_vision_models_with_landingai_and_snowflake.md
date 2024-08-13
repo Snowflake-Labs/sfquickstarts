@@ -82,15 +82,15 @@ Now that you've installed the LandingLens app, you are ready to get the sample i
 To get the sample images, follow these instructions:
 
 1. Open the [Sample Dataset for LandingLens: LifeSciences Pneumonia listing](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia) in the Snowflake Marketplace and click **Get**.
-2.Go to **Snowsight** > **Data Products** > **Apps**. Click the **Sample Dataset for LandingLens: LifeSciences Pneumonia** app listing.
+2. Go to **Snowsight** > **Data Products** > **Apps**. Click the **Sample Dataset for LandingLens: LifeSciences Pneumonia** app listing.
 3. Click the **Shield** icon in the top right corner of this app page.
 4. Click **Review** and allow the CREATE DATABASE privilege, which grants the app to create a database to load the sample data.
 5. Open the **LLENS_DATA_APP** tab.
 6. Click **Create Sample Dataset** to load the dataset into your Snowflake account.
 7. Make a note of the location of the images; you will use these later.
-   --Database: llens_sample_ds_lifesciences
-   --Schema: pneumonia
-   --Stage: dataset
+      - **Database**: llens_sample_ds_lifesciences
+      - **Schema**: pneumonia
+      - **Stage**: dataset
 
 
 
