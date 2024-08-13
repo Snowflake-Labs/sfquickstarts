@@ -42,37 +42,40 @@ Duration: 30
 
 1. Open the [LandingLens app listing](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CU/landingai-landinglens-visual-ai-platform) in the Snowflake Marketplace and click **Get**.
    <img src="assets/LL_VisualAIPlatform.png" alt="LandingLens listing in the Snowflake Marketplace" width="800">
-
-2.Select the **Warehouse** to use for the installation process. The warehouse is only used to install the app, and can be any size (including X-Small).
+   
+2. Select the **Warehouse** to use for the installation process. The warehouse is only used to install the app, and can be any size (including X-Small).
 3. If you want to change the name of the application, click **Options** and enter a name in **Application Name**.
-4. Click **Try for Free**.
+4. Click **Try for Free**. This starts a 30 day free trial of LandingLens.
+   <img src="assets/tryForFree.png" alt="Try Landinglens for Free" width="800">
 
-<img src="assets/lai_get_landingLens.png" alt="LAI get landinglens" width="800">
+5. Go to **Snowsight** > **Data Products** > **Apps**. Double-click the LandingLens app listing. (Although the app is listed in the Installed Apps section, it is not installed yet.)
+   <img src="assets/LLSF_install_2.png" alt="Installed Apps" width="800">
 
-- Once the installation is complete, click "Done" and "Open" the app. Then click "GRANT" and "REVIEW" button as shown below.
+6. A new page opens. It has a series of steps that guide you through the installation process.
+7. In **Step 1**, click **Grant**. These permissions allow LandingLens to create compute pools and perform other tasks in your account.
+   <img src="assets/LLSF_install_3.png" alt="Grant account privileges" width="800">
+   
+8. In **Step 2**, click **Review**. Review the allowed endpoints on the pop-up and click **Connect**. This allows LandingLens to access the World Wide Web (WWW).
+9. Scroll to the top of the page and click **Activate**.
+   <img src="assets/LLSF_install_5.png" alt="Activate" width="800">
+   
+10. LandingLens opens in your Apps. Click **Launch App**.
+      <img src="assets/LLSF_install_7.png" alt="Launch the app installer" width="800">
+   
+11. The installer opens in the **APP_WIZARD** tab.
+12. Click **Install/Upgrade/Resume**. The installer installs all the required services for the LandingLens app. This process takes about 20 to 30 minutes. Do NOT close the tab during the installation process, because it will stop the process.
+      <img src="assets/LLSF_install_8.png" alt="Launch the app installer" width="800">
+   
+13. Once the installation process is complete, all services have the status DONE or READY (green checkmark) and the URL to access LandingLens displays. Copy and paste the URL.  
+      <img src="assets/LLSF_install_9.png" alt="Copy the URL for the LandingLens app" width="800">
+14. Paste the URL into a new tab to open the LandingLens app. We recommend bookmarking this URL. you can log in to the app using the Snowflake credentials you used to install the app. Only users with the correct privileges in the account can access the LandingLens app.
+   <img src="assets/lai_landinglens_app.png" alt="LAI Lens app" width="800">
+   
+    
+<!-- ------------------------ -->
 
-<img src="assets/lai_landinglens_provide_grants.png" alt="LAI landinglens grants" width="800">
-
-- When you click review, you will see the screenshot below for the containers to be accessible from outside world. So please click "Connect". You should see a screens below.
-
-<img src="assets/lai_eai_review.png" alt="LAI EAI review" width="800">
-<img src="assets/lai_lens_activate.png" alt="LAI Lens Activate" width="800">
-
-- Then click "Activate" now, and click "Launch" button which will bring up a streamlit app which installs the app in your account.
-
-<img src="assets/lai_landinglens_launchedapp.png" alt="LAI Lens installer" width="800">
-
-- Then click "Install/Upgrade/Resume" to install the services. This will install around 25 services behind the scenes, so please wait for around 20 minutes for the installation to complete.
-
-<img src="assets/lai_install_landinglens.png" alt="LAI Lens install progress" width="800">
-
-- Once the installation is successful, you will see an endpoint as below screenshot. Open a new tab with the endpoint to open the LandingLens app.
-
-<img src="assets/lai_landinglens_install_success.png" alt="LAI Lens install success" width="800">
-
-Congratulations! The LandingLens app is now available in your Snowflake account. When you open the endpoint in the browser, you will see the app running as below.
-
-<img src="assets/lai_landinglens_app.png" alt="LAI Lens app" width="800">
+## Load Sample Images
+Duration: 15
 
 
 - Now, lets get some sample data for LandingLens to perform the classification. Good news is that, LandingAI has launched couple of apps just to have the sample data for building it. First of the kind is [Lifesciences Pnemonia](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX) and the other is [Manufacturing defect detection](https://app.snowflake.com/marketplace/listing/GZTYZ12K65C6/landingai-sample-dataset-for-landinglens-manufacturing-metal-casting?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX)
