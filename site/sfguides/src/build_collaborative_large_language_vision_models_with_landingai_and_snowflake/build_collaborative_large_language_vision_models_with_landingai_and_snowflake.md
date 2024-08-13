@@ -127,36 +127,41 @@ Now that you've loaded the sample dataset into your Snowflake account, you're re
 Now that all of the images are in the LandingLens project and have classes assigned to them, train a computer vision model. When you train a model, you give the labeled images to a deep learning algorithm. This allows the algorithm to "learn" what to look for in images.
 
 To train a model, click **Train**.
-<img src="assets/LL_pneumonia_train_1.png" alt="train the model" width="800">
+
+<img src="assets/LL_pneumonia_train_1.png" alt="Train the model" width="800">
 
 The right side panel opens and shows the model training progress. This process can take a few minutes.
 
-[image]
+<img src="assets/LL_pneumonia_train_2.png" alt="Model training progress" width="800">
 
 Once training finishes, you will see the model's predictions and performance information. You can click the model tile in the side panel to see more detailed information. In most real-world use cases, you might need to upload and label more images to improve performance. In this example, the model should be performing well, so we will go to the next step, which is deploying the model.
 
+<img src="assets/LL_pneumonia_train_3.png" alt="Model performance" width="800">
+
+
+
+### Deploy the Model to an Endpoint
+
+After you are happy with the results of your trained model, you are ready to use it. To use a model, you **deploy** it, which means you put the model in a virtual location so that you can then upload images to it. When you upload images, the model runs **inference**, which means that it detects what it was trained to look for.
+
+In this example, we're going to show how to use Cloud Deployment. You can also deploy models using [LandingEdge](https://support.landing.ai/docs/landingedge-overview) and [Docker](https://support.landing.ai/docs/docker-deploy).
+
+To deploy the model with Cloud Deployment, follow these instructions:
+
+1. Open the **Models** tab.
+2. Click **Deploy** in the model's row.
+3. Name the endpoint and click **Deploy**.
+4. LandingLens deploys the model to the endpoint and opens the **Deploy** page. You can now use this endpoint to run inference.
+
+
+### Run Inference
+
+After deploying a model with Cloud Deployment, a custom Python script displays at the bottom of the Deploy page. Copy this script, replace the placeholers with your information, and use the [LandingLens Python library]((https://landing-ai.github.io/landingai-python/inferences/snowflake-native-app/)) to integrate the model with your applications with very few lines of code.
+
 [image]
 
-If you want to see more detailed model performance data, click the **Models** tab open the model.
-
-In this example, the trained model should be already performing well. 
-
-<img src="lai_landinglens_models.png" alt="LAI models page">
-
-### Deploying the model to an endpoint
-
-Once you are satisfied with the model performance, you can deploy it to an endpoint. To do that, click on the "Deploy" button in the models tab. Select "Cloud deployment", give the new endpoint a name and hit "Deploy".
-
-<img src="lai_landinglens_model_deploy.png" alt="LAI deploying a model">
 
 
-Once the model is deployed, you will be redirected to the "Deploy" tab, with your new endpoint already selected. In this tab, you will need to get the endpoint URL, which you can use to make predictions with the model.
-
-<img src="lai_landinglens_deployment_tab.png" alt="LAI model tab">
-
-LandingLens provide several ways to run inferences using your trained model. You can use the Python library to integrate the model with your applications with very few lines of code. You can find the documentation for the Python library [here](https://landing-ai.github.io/landingai-python/inferences/snowflake-native-app/).
-
-You can also use LandingEdge ([documentation here](https://support.landing.ai/docs/landingedge-overview)) or Docker deployment ([documentation here](https://support.landing.ai/docs/docker-deploy)) to run inferences on the edge or on your own infrastructure.
 
 <!-- TODO: Uncomment this section once the endpoint function will be available.
 
