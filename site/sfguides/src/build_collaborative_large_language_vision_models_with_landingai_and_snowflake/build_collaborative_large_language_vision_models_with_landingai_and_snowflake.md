@@ -121,21 +121,25 @@ Now that you've loaded the sample dataset into your Snowflake account, you're re
 10. Click **Sync**.
    <img src="assets/LL_pneumonia_load_2.png" alt="Select the snowflake stage to load images from" width="800">
 11. All images in the stage are loaded to the LandingLens project. (Refresh the page to see the images.) The project now has 100 images; 50 images have the class "normal", and 50 have the class "pneumonia".
-   <img src="assets/LL_pneumonia_load_3.png" alt="Select the snowflake stage to load images from" width="800">
+    <img src="assets/LL_pneumonia_load_3.png" alt="Select the snowflake stage to load images from" width="800">
 
 ### Train a Classification Model
+Now that all of the images are in the LandingLens project and have classes assigned to them, train a computer vision model. When you train a model, you give the labeled images to a deep learning algorithm. This allows the algorithm to "learn" what to look for in images.
 
-<img src="assets/lai_landinglens_train.png" alt="LAI train" width="800">
+To train a model, click **Train**.
+<img src="assets/LL_pneumonia_train_1.png" alt="train the model" width="800">
 
-Once you click on the "Train" button, you will see on the right side panel the training progress. LandingLens will provision a GPU, configure the dataset and run the training process. This process can take a few minutes to complete.
+The right side panel opens and shows the model training progress. This process can take a few minutes.
 
-<img scr="assets/lai_landinglens_train_in_progress.png" alt="LAI training in progress" width="800">
+[image]
 
-Once training finishes, you will see both the original labels and the model predictions in the main project page. You will also be able to see the model performance, and the "Try model" button, which allows you to test the model with new images.
+Once training finishes, you will see the model's predictions and performance information. You can click the model tile in the side panel to see more detailed information. In most real-world use cases, you might need to upload and label more images to improve performance. In this example, the model should be performing well, so we will go to the next step, which is deploying the model.
 
-In the "Models" tab, you can see the trained model and its details. You can also see detailed metrics about the model performance, which allows you to play with the datasets and labels to improve model performance.
+[image]
 
-In this example case, the trained model should be already performing quite well.
+If you want to see more detailed model performance data, click the **Models** tab open the model.
+
+In this example, the trained model should be already performing well. 
 
 <img src="lai_landinglens_models.png" alt="LAI models page">
 
