@@ -41,9 +41,11 @@ To users who are familiar with machine learning, LandingLens offers advanced too
 Duration: 30
 
 1. Open the [LandingLens app listing](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CU/landingai-landinglens-visual-ai-platform) in the Snowflake Marketplace and click **Get**.
-   <img src="assets/lai_list_of_apps.png" alt="LAI list of apps" width="800">
+   <img src="assets/LL_VisualAIPlatform.png" alt="LandingLens listing in the Snowflake Marketplace" width="800">
 
-3. Click **Try for Free**.
+2.Select the **Warehouse** to use for the installation process. The warehouse is only used to install the app, and can be any size (including X-Small).
+3. If you want to change the name of the application, click **Options** and enter a name in **Application Name**.
+4. Click **Try for Free**.
 
 <img src="assets/lai_get_landingLens.png" alt="LAI get landinglens" width="800">
 
