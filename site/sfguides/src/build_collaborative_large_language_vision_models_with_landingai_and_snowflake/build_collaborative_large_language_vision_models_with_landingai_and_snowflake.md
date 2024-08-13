@@ -109,7 +109,7 @@ Now that you've loaded the sample dataset into your Snowflake account, you're re
 2. Click **Start First Project** and name your project.
 3. Click **Classification**.
 4. Click **Sync Snowflake Data**.
-
+   <img src="assets/LL_pneumonia_load_1.png" alt="Sync images from Snowflake" width="800">
 5. Enter the location that you saved the sample dataset to earlier. The location should be:
       - **Database**: llens_sample_ds_lifesciences
       - **Schema**: pneumonia
@@ -119,33 +119,11 @@ Now that you've loaded the sample dataset into your Snowflake account, you're re
 8. Click the directory path (**⌄ /**) in the **Specify the path to an existing folder** field. 
 9. Select the **data** directory.
 10. Click **Sync**.
+   <img src="assets/LL_pneumonia_load_2.png" alt="Select the snowflake stage to load images from" width="800">
+11. All images in the stage are loaded to the LandingLens project. (Refresh the page to see the images.) The project now has 100 images; 50 images have the class "normal", and 50 have the class "pneumonia".
+   <img src="assets/LL_pneumonia_load_3.png" alt="Select the snowflake stage to load images from" width="800">
 
-11. All images in the stage are loaded to the LandingLens project. (Refresh the page to see the images.) 50 images will have the class "normal", and 50 will have the class "pneumonia".
-
-
-
-
-
-
-Now, we are going to import the copied images to a LandingLens classification project.
-
-Open the LandingLens app in your Snowflake account, login with your credentials and click on the "Start First Project" button.
-
-In the project creation screen, give a name to your project, select "Classification" as the project type and click on the "sync Snowflake Data" button, as shown below.
-
-<img src="assets/lai_landinglens_sync.png" alt="LAI project creation page" width="800">
-
-In the sync screen, select the database, schema and stage where the images were copied to. If should be `LLENS_SAMPLE_DS_LIFESCIENCES` for database, `PNEUMONIA` for the schema and `DATASET` for the stage.
-
-When you select those values, you will see a warning message saying that it is not possible to read the stage. In order to fix that, you need to copy the commands shown in the sync dialog and run them in a Snowsight SQL worksheet.
-
-After granting permission, you will be able to sync the data. Check the "Classify images based on folder names", so it also imports the labels, and then click on the "Sync" button, as shown below.
-
-<img src="assets/lai_landinglens_sync_folder.png" alt="LAI sync" width="800">
-
-Once the syncronization process finishes, the images will be imported to the project and will be shown in LandingLens data browser. You can now click on the "Train" button to start training the model.
-
-### Training
+### Train a Classification Model
 
 <img src="assets/lai_landinglens_train.png" alt="LAI train" width="800">
 
