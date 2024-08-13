@@ -74,15 +74,25 @@ Duration: 30
     
 <!-- ------------------------ -->
 
-## Load Sample Images
+## Get Sample Images
 Duration: 15
 
+Now that you've installed the LandingLens app, you are ready to get the sample images. LandingAI provides a set of sample images as an "app" that can be downloaded from the Snowflake Marketplace. You will use these images to train a computer vision model in LandingLens that detects pneumonia.
 
-- Now, lets get some sample data for LandingLens to perform the classification. Good news is that, LandingAI has launched couple of apps just to have the sample data for building it. First of the kind is [Lifesciences Pnemonia](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX) and the other is [Manufacturing defect detection](https://app.snowflake.com/marketplace/listing/GZTYZ12K65C6/landingai-sample-dataset-for-landinglens-manufacturing-metal-casting?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX)
+To get the sample images, follow these instructions:
 
-- Click [Lifesciences Pnemonia](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX) app, Click "Get" and install the app.
+1. Open the [Sample Dataset for LandingLens: LifeSciences Pneumonia listing](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia) in the Snowflake Marketplace and click **Get**.
+2.Go to **Snowsight** > **Data Products** > **Apps**. Click the **Sample Dataset for LandingLens: LifeSciences Pneumonia** app listing.
+3. Click the **Shield** icon in the top right corner of this app page.
+4. Click **Review** and allow the CREATE DATABASE privilege, which grants the app to create a database to load the sample data.
+5. Open the **LLENS_DATA_APP** tab.
+6. Click **Create Sample Dataset** to load the dataset into your Snowflake account.
+7. Make a note of the location of the images; you will use these later.
+   --Database: llens_sample_ds_lifesciences
+   --Schema: pneumonia
+   --Stage: dataset
 
-- Click [Manufacturing defect detection](https://app.snowflake.com/marketplace/listing/GZTYZ12K65C6/landingai-sample-dataset-for-landinglens-manufacturing-metal-casting?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX) app, Click "Get" and install the app.
+
 
 - Open both the installed app, click "security icon" and click "Review" and enable the toggle bars to provide grants for the app to create database to load the sample data.
 
