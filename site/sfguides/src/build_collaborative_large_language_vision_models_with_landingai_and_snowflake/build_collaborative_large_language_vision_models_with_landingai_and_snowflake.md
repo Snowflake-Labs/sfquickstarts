@@ -20,31 +20,30 @@ To users who are familiar with machine learning, LandingLens offers advanced too
 
 ### What You'll Learn
 
-- **Set Up Your Environment**: How to install LandingLens and their free dataset apps
-- **Prepare Data**: How to load data from free dataset apps to LandingLens
-- **Build a Manufacturing Defect Detection**: How to build classification LVM model on LandingLens to classify defects in manufacturing usecase
-- **Build a LifeSciences Pneumonia Detection**: How to build classification LVM model on LandingLens to classify images to detect Pneumonia
+- How to install LandingLens from the Snowflake Marketplace
+- How to load sample data from a Snowflake stage
+- How to build a Classification computer vision model in LandingLens
 
 
 ### What You’ll Need
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account
 - Snowflake privileges on your user to [Install a Native Application](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges)
-- The [LandingLens app](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CU/landingai-landinglens-visual-ai-platform?originTab=provider&providerName=LandingAI&profileGlobalName=GZTYZ12K65BX) used to build and train LVM models in Snowflake. Please note this app has 30 day free trial for you to build this cool demo. Thanks to LandingAI!!!
+- A warehouse to *install* LandingLens (the warehouse can be any size and can have auto-suspend enabled)
+- A warehouse to *run* LandingLens
+
 
 ### What You’ll Build
-- A simple LVM classification model to detect defects in Manufacturing domain
-- A simple LVM classification model to detect Pneumonia in Lifesciences domain
+- A computer vision Classification model to detect pneumonia
 
 <!-- ------------------------ -->
 
-## Install the Native Apps In Your Account
+## Install the LandingLens Native App in Your Account
 Duration: 30
 
-- In the [Snowflake Marketplace](https://app.snowflake.com/marketplace), search for the ‘LandingAI’ in our marketplace. You will see a provider with the name "LandingAI", please click the provider. You will see 3 apps under the same provider as below.
+1. Open the [LandingLens app listing](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CU/landingai-landinglens-visual-ai-platform) in the Snowflake Marketplace and click **Get**.
+   <img src="assets/lai_list_of_apps.png" alt="LAI list of apps" width="800">
 
-<img src="assets/lai_list_of_apps.png" alt="LAI list of apps" width="800">
-
-- Click the LandingLens app and click "GET" and "TRY FOR FREE" to install the app.
+3. Click **Try for Free**.
 
 <img src="assets/lai_get_landingLens.png" alt="LAI get landinglens" width="800">
 
