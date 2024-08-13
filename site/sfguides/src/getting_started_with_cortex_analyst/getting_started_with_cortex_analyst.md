@@ -11,18 +11,18 @@ tags: Getting Started, Data Science, GenAI, Cortex, Cortex Analyst
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will explore how to get started with [Cortex Analyst](https://docs.snowflake.com/snowflake-cortex/cortex-analyst-overview) to let business users "talk" to their structured data in Snowflake using natural language.
+Through this quickstart guide, you will explore how to get started with [Cortex Analyst](https://docs.snowflake.com/snowflake-cortex/cortex-analyst-overview), which is a fully managed service in Snowflake that provides a conversational interface to interact with structured data in Snowflake.
 
 ### What is Cortex Analyst?
 
-Cortex Analyst is fully managed service in [Cortex AI](https://www.snowflake.com/en/data-cloud/cortex) that lets business users "talk" to their structured data by efficiently turning natural language into SQL queries that are executed to generate a response. Powered by state-of-the-art LLMs it provides a convenient REST API for data and engineering teams to be able to seamlessly integrate from any application.
+Cortex Analyst is fully managed service in [Cortex AI](https://www.snowflake.com/en/data-cloud/cortex) that provides a conversational interface to interact with structured data in Snowflake. It streamlines the development of intuitive, self-service analytics applications for business users, while providing industry-leading accuracy. To deliver high text-to-SQL accuracy, Cortex Analyst uses an agentic AI setup powered by state-of-the-art LLMs. Available as a convenient REST API, Cortex Analyst can seamlessly integrate into any application. This empowers developers to customize how and where business users interact with results, while still benefiting from Snowflake's integrated security and governance features, including role-based access controls (RBAC), to protect valuable data.
 
 ![cortex analyst gif](./assets/cortex.png)
 
 ### Why use Cortex Analyst?
-Cortex Analyst empowers business users to self-service data analysis through conversation, reducing dependency on data teams for ad hoc queries and speeding up time to insights and decisions. Cortex Analyst has a lower total cost of ownership (TCO) and improved accuracy compared to building your own Text-to-SQL / "Talk to Your Data" (TTYD) solution from scratch.
+Historically, business users have primarily relied on BI dashboards and reports to answer their data questions. However, these resources often lack the flexibility needed, leaving users dependent on overburdened data analysts for updates or answers, which can take days. Cortex Analyst disrupts this cycle by providing a natural language interface with high text-to-SQL accuracy. With Cortex Analyst organizations can streamline the development of intuitive, conversational applications that can enable business users to ask questions using natural language and receive more accurate answers in near real time
 
-This quickstart will focus on getting started with Cortex Analyst, teaching the mechanics of how to interact with the Cortex Analyst service and how to define the Semantic Model definitions that enhance the precision of results from your TTYD on Snowflake.
+This quickstart will focus on getting started with Cortex Analyst, teaching the mechanics of how to interact with the Cortex Analyst service and how to define the Semantic Model definitions that enhance the precision of results from this conversational interface over your Snowflake data.
 
 ### What you will learn 
 - How to construct and configure a Semantic Model for your data
