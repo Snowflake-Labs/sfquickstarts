@@ -82,92 +82,51 @@ Now that you've installed the LandingLens app, you are ready to get the sample i
 To get the sample images, follow these instructions:
 
 1. Open the [Sample Dataset for LandingLens: LifeSciences Pneumonia listing](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CA/landingai-sample-dataset-for-landinglens-lifesciences-pneumonia) in the Snowflake Marketplace and click **Get**.
+   <img src="assets/LL_pneumonia_1.png" alt="Sample dataset listing in the Snowflake Marketplace" width="800">
 2. Go to **Snowsight** > **Data Products** > **Apps**. Click the **Sample Dataset for LandingLens: LifeSciences Pneumonia** app listing.
+   <img src="assets/LL_pneumonia_2.png" alt="Open the app" width="800">
 3. Click the **Shield** icon in the top right corner of this app page.
 4. Click **Review** and allow the CREATE DATABASE privilege, which grants the app to create a database to load the sample data.
+   <img src="assets/LL_pneumonia_3.png" alt="Grant privileges" width="800">
 5. Open the **LLENS_DATA_APP** tab.
 6. Click **Create Sample Dataset** to load the dataset into your Snowflake account.
+   <img src="assets/LL_pneumonia_4.png" alt="Create the database" width="800">
 7. Make a note of the location of the images; you will use these later.
       - **Database**: llens_sample_ds_lifesciences
       - **Schema**: pneumonia
       - **Stage**: dataset
 
 
-
-- Open both the installed app, click "security icon" and click "Review" and enable the toggle bars to provide grants for the app to create database to load the sample data.
-
-<img src="assets/lai_dataapp_grants.png" alt="LAI dataapp grants success" width="800">
-
-- Once the permissions are done, please click the tab as below to open the streamlit app.
-
-<img src="assets/lai_dataapp_click_openapp.png" alt="LAI dataapp open streamlit" width="800">
-
-- Once the permissions are done, please click "Create Sample Dataset" button to download all the images needed for the demo into your snowflake account.
-
-<img src="assets/lai_dataapp_create_sample_data_mfg.png" alt="LAI dataapp mfg open download images" width="800">
-
-<img src="assets/lai_dataapp_lifesciences.png" alt="LAI dataapp hcl open download images" width="800">
-
-
-## Data Preparation
-
-Duration: 5
-
-Next, open a Snowsight SQL worksheet and run the SQL commands below from top to bottom.
-
-```sql
--- Main Script: Basic Setup
-
--- Step 0: Use the ACCOUNTADMIN role for the following operations
-USE ROLE ACCOUNTADMIN;
-
--- Step 1: Create an event table (customize the database, schema, and table name as needed)
-
--- first, check whether you already have an event table:
-SHOW PARAMETERS LIKE 'event_table' in ACCOUNT;
-
--- if the above command returns an empty result, create an event table
--- (customize the database, schema, and table name as needed):
-CREATE DATABASE IF NOT EXISTS TELEMETRY;
-CREATE SCHEMA IF NOT EXISTS TELEMETRY.PUBLIC;
-CREATE EVENT TABLE IF NOT EXISTS TELEMETRY.PUBLIC.EVENTS;
-ALTER ACCOUNT SET EVENT_TABLE = TELEMETRY.PUBLIC.EVENTS;
-
--- Enable telemetry sharing
-ALTER APPLICATION LANDINGLENS__VISUAL_AI_PLATFORM SET SHARE_EVENTS_WITH_PROVIDER = TRUE;
-
--- Step 2: Create access to the LandingLens app to the stages created by both the dataapps in the installation demo
-
-GRANT USAGE ON DATABASE llens_sample_ds_manufacturing TO APPLICATION LANDINGLENS__VISUAL_AI_PLATFORM;
-GRANT USAGE ON SCHEMA llens_sample_ds_manufacturing.ball_bearing TO APPLICATION LANDINGLENS__VISUAL_AI_PLATFORM;
-GRANT READ ON STAGE llens_sample_ds_manufacturing.ball_bearing.dataset TO APPLICATION LANDINGLENS__VISUAL_AI_PLATFORM;
-
-
-GRANT USAGE ON DATABASE llens_sample_ds_lifesciences TO APPLICATION LANDINGLENS__VISUAL_AI_PLATFORM;
-GRANT USAGE ON SCHEMA llens_sample_ds_lifesciences.pneumonia TO APPLICATION LANDINGLENS__VISUAL_AI_PLATFORM;
-GRANT READ ON STAGE llens_sample_ds_lifesciences.pneumonia.dataset TO APPLICATION LANDINGLENS__VISUAL_AI_PLATFORM;
-
-```
-
-- Once the permissions are done, please click "Create Sample Dataset" button to download all the images needed for the demo into your snowflake account.
-
-<img src="assets/lai_dataapp_create_sample_data_mfg.png" alt="LAI dataapp mfg open download images" width="800">
-
-Once the copy is finished, the app will show you the details about where the dataset was copied to.
-
-Take notes of the database, schema and stage names as you will need them in the next steps.
-
-<img src="assets/lai_dataapp_sample_data_copied_lfs.png" alt="Sample data app data copied" width="800">
-
-Refer to the [documentation](https://landing.ai/snowflake) for more details about how to use the LandingAI Native App.
-
 <!-- ------------------------ -->
-## Building a LifeSciences Pnemonia detection project
+## Build a Pneumonia Detection Project
 
 Duration: 20
 
+Now that you've loaded the sample dataset into your Snowflake account, you're ready to create a computer vision model using those images in LandingLens.
 
-### Importing the images to LandingLens
+### Load the Images into LandingLens
+1. Open LandingLens in Snowflake (use the URL generated when you installed the app).
+2. Click **Start First Project** and name your project.
+3. Click **Classification**.
+4. Click **Sync Snowflake Data**.
+
+5. Enter the location that you saved the sample dataset to earlier. The location should be:
+      - **Database**: llens_sample_ds_lifesciences
+      - **Schema**: pneumonia
+      - **Stage**: dataset
+6. You will get a message saying that you don't have access to that location. To fix this, copy the SQL commands at the bottom of the pop-up and run them in a Snowflake worksheet in a different browser tab.
+7. Turn on **Classify images based on folder names**.
+8. Click the directory path (**⌄ /**) in the **Specify the path to an existing folder** field. 
+9. Select the **data** directory.
+10. Click **Sync**.
+
+11. All images in the stage are loaded to the LandingLens project. (Refresh the page to see the images.) 50 images will have the class "normal", and 50 will have the class "pneumonia".
+
+
+
+
+
+
 Now, we are going to import the copied images to a LandingLens classification project.
 
 Open the LandingLens app in your Snowflake account, login with your credentials and click on the "Start First Project" button.
