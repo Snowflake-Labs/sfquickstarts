@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science
 
-# Snowflake Guide Template
+# Getting Started with Partitioned Models in Snowflake Model Registry
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
