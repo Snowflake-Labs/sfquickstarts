@@ -11,7 +11,7 @@ tags: Getting Started, Data Science, GenAI, Cortex, Cortex Analyst
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will explore how to get started with [Cortex Analyst](https://docs.snowflake.com/snowflake-cortex/cortex-analyst-overview), which is a fully managed service in Snowflake that provides a conversational interface to interact with structured data in Snowflake.
+Through this quickstart guide, you will explore how to get started with [Cortex Analyst](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst), which is a fully managed service in Snowflake that provides a conversational interface to interact with structured data in Snowflake.
 
 ### What is Cortex Analyst?
 
@@ -378,7 +378,7 @@ For more information, check out the resources below:
 
 ### Related Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst)
-- [Cortex Analyst docs](https://docs.snowflake.com/snowflake-cortex/cortex-analyst-overview)
+- [Cortex Analyst docs](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst)
 - [Cortex Analyst examples](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/cortex-analyst)
 - [Semantic Model Generator](https://github.com/Snowflake-Labs/semantic-model-generator)
 
