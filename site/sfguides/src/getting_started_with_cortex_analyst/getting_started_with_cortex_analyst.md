@@ -257,7 +257,7 @@ Duration: 10
 
 The semantic model file [`revenue_timeseries.yaml`](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/revenue_timeseries.yaml) is the key that unlocks Cortex Analyst's power. This YAML file dictates the tables, columns, etc. that Analyst can use in order to run queries that answer natural-language questions Let's talk a little about the details of this file:
 
-The [Semantic Model](https://docs.snowflake.com/snowflake-cortex/semantic-model-spec) is composed of a number of different fields that help Cortex Analyst understand the specifics of your data:
+The [Semantic Model](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec) is composed of a number of different fields that help Cortex Analyst understand the specifics of your data:
 - Logical Tables which are composed of Logical Columns
 - Logical Columns which are one of `dimensions`, `time_dimensions`, or `measures`
 
@@ -326,7 +326,7 @@ Some additional items that’ll significantly improve model performance:
   - If any organization specific logic cannot be captured via other spec items, we recommend you to add to verified queries.
 - Start with a simple and small scope, gradually expanding. YAML building is an iterative process.
 
-For more information about the semantic model, please refer to the [documentation](https://docs.snowflake.com/snowflake-cortex/semantic-model-spec).
+For more information about the semantic model, please refer to the [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec).
 
 <!-- ------------------------ -->
 ## Using the Verified Query Repository (VQR)
