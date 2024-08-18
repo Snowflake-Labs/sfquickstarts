@@ -270,7 +270,7 @@ select count(*) from customer_sales_data_history;
 
 ```
 
-Now, let's combine these results with the product table and create a SCD TYPE 2 transformation using window the function "LEAD", it gives us the subsequent rows in the same result set to build a TYPE 2 transformation.
+Now, let's combine these results with the product table and create a SCD TYPE 2 transformation using the window function "LEAD", it gives us the subsequent rows in the same result set to build a TYPE 2 transformation.
 
 ```
 CREATE OR REPLACE DYNAMIC TABLE salesreport
@@ -567,7 +567,7 @@ Dynamic tables incur cost in three ways: [details here](https://docs.snowflake.c
 
 Dynamic tables require a virtual warehouse to perform updates. Snowflake recommends testing dynamic tables using dedicated warehouses in order to understand related costs.Dynamic tables cost is driven by frequency of data refreshes in base tables and target LAG. 
 
-REFRESH_MODE can be FULL or INCREMENTAL based on the query. You can run the Show Dynamic table command or check dynamic table dashboard to determine your DT refresh mode. Check [this page](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-intro-refresh-queries) for more details.
+REFRESH_MODE can be FULL or INCREMENTAL based on the query. You can run the Show Dynamic Tables command or check dynamic table dashboard to determine your DT refresh mode. Check [this page](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh#label-dynamic-tables-intro-refresh-queries) for more details.
 
 Dynamic tables support **Time Travel, Replication, Data Governance, Masking, Tagging** etc. just like a standard Snowflake table.
 
