@@ -145,7 +145,7 @@ Duration: 5
 Review the insights of the AI agent you just created.
 
 ### Navigate Your Agent Insights
-Once the agent has finished processing, click on **View Run** to see the generated insights. In the insights view, you can navigate through the data by sorting and searching.
+Once the agent has finished processing, click on table to see the generated insights. In the insights view, you can navigate through the data by sorting and searching.
 
 ![Navigate Your Agent Insights](assets/review_agent_insights.png)
 
@@ -164,8 +164,8 @@ Duration: 1
 By following this guide, you have successfully set up an AI Agent running on Snowflake to automate your data analysis tasks.
 
 ### Related Resources
-- [Lang.ai Documentation](https://help.lang.ai/en/articles/9584876-setting-up-the-snowflake-native-app)
-- [Creating AI Agents in Lang.ai](https://help.lang.ai/en/articles/9641461-creating-your-first-ai-agent)
+- [Marketplace Listing](https://app.snowflake.com/marketplace/listing/GZTSZ1TJ3IU/lang-ai-snowflake-ai-agents)
+- [Lang.ai Help Center](https://help.lang.ai/en/collections/9808378-build-your-first-ai-agent)
 
 ### What You Learned
 - How to set up the Lang.ai Snowflake Native App
