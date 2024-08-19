@@ -1330,9 +1330,9 @@ st.table(social_media.drop('V'))
 
 ```
 <!-- ------------------------ -->
-## Vector Embeddings
+## Use Cortex to Embed Generated Text
 
-During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.
+During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.
 
 Download the following python notebook file
 
@@ -1759,3 +1759,5 @@ You will have learned the following:
 - [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
 
 - [Getting started with Geospatial AI and ML using Snowflake Cortex](https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0)
+
+- [Build a Retrieval Augmented Generation (RAG) based LLM assistant using Streamlit and Snowflake Cortex](https://quickstarts.snowflake.com/guide/asking_questions_to_your_own_documents_with_snowflake_cortex/index.html#0)
