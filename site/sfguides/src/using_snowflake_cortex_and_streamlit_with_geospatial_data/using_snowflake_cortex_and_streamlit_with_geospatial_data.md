@@ -34,7 +34,7 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
   - **Visualise**  the data using Streamlit
 
 ### Prerequisites
-- A new free trial of Snowflake in **US AWS West**.
+- A new free trial of Snowflake in **a region of you choice**.
 
 ![alt text](assets/I001.png)
 
@@ -43,7 +43,7 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
 
 - An understanding of Geospatial data in Snowflake
 - Using Cortex functions with Snowpark
-- Creating a location centric application using Streeamlit 
+- Creating a location centric application using Streamlit 
 - An insight to UK centric Datasets such as
   - Places of Interest
   - Weather
@@ -77,9 +77,12 @@ GRANT USAGE, OPERATE ON WAREHOUSE BUILD_UK_WAREHOUSE TO ROLE ACCOUNTADMIN;
 
 GRANT USAGE ON DATABASE BUILD_UK TO ROLE ACCOUNTADMIN;
 
+-------- use this paramater to try the LLMs using a region which does not currently support them.
+
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
+
 ~~~
 
-Go back to the home page
 
 
 <!-- ------------------------ -->
@@ -131,7 +134,7 @@ In **Notebook location**, select BUILD_UK from the list of available databases a
 
 > If you wish, you can import the previously created notebook from the following location:
 
-[notebook in Github](https://github.com/sfc-gh-boconnor/Shared_Data_Analytics/blob/main/UK_Analytics_Python.ipynb)
+[notebook in Github](https://github.dev/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Trains%20and%20Restaurants.ipynb)
 
 > However, to experience the creation of the notebook yourself, carry on with the blank notebook, and copy/paste the code as we go along.
 
@@ -568,14 +571,14 @@ Create the following in a new cell which will generate and saves the results in 
 
 json1 = '''{"DATE":"YYYY-MM-DD", "NAME":"event",DESCRIPTION:"describe what the event is" "CENTROID":{
   "coordinates": [
-    -1,
-    54
+    0.000000<<<this needs to be longitude,
+    0.000000<<<<this needs to be latitude
   ],
   "type": "Point"
 },"COLOR":"Random bright and unique color in RGB presented in an array"}'''
 
 
-prompt = f''' Retrieve 6 events each with unique locations within the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
+prompt = f''' Retrieve 6 events within the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
 events = session.create_dataframe([{'prompt':prompt}])
 
 events = events.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','snowflake-arctic',prompt).alias('EVENT_DATA'))
@@ -691,7 +694,7 @@ st.write(trains_h3.limit(1))
 places_h3 = places.with_column('H3',call_function('H3_POINT_TO_CELL_STRING',col('GEOMETRY'),lit(5)))
 places_h3 = places_h3.join(events.select('H3','CENTROID',col('NAME').alias('EVENT_NAME'),'DATE'),'H3')
 places_h3 = places_h3.with_column('DISTANCE_FROM_EVENT',call_function('ST_DISTANCE',col('CENTROID'),col('GEOMETRY')))
-places_h3 = places_h3.filter(col('DISTANCE_FROM_EVENT')< 1000)
+places_h3 = places_h3.filter(col('DISTANCE_FROM_EVENT')< 3000)
 places_h3 = places_h3.sort(col('DISTANCE_FROM_EVENT').asc())
 st.markdown('#### Affected Restaurants')                             
 st.write(places_h3.limit(10))
@@ -1109,7 +1112,7 @@ You will need to install pydeck
 
 ![alt text](assets/streamlit1/st004.png)
 
-Copy and paste this into a streamlit app under the BUILD_UK Streamlits schema
+Copy and paste this into a streamlit app under the BUILD_UK Streamlits schema.  NB - you will need to add the pydeck package before the streamlit will run.
 
 ```python
 
@@ -1326,6 +1329,16 @@ st.table(social_media.drop('V'))
     
 
 ```
+
+### Vector Embeddings
+
+During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.
+
+Download the following python notebook file
+
+[**Vector_Embeddings.ipynb**](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Vector_Embeddings.ipynb)
+
+Import as a new snowflake notebook.  Add it to the BuildUK.NOTEBOOKS schema and follow the instructions provided in the notebook.
 
 <!-- ------------------------ -->
 ## Bringing in Met Office Weather
