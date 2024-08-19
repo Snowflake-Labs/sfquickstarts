@@ -134,7 +134,7 @@ In **Notebook location**, select BUILD_UK from the list of available databases a
 
 > If you wish, you can import the previously created notebook from the following location:
 
-[notebook in Github](https://github.com/sfc-gh-boconnor/Shared_Data_Analytics/blob/main/UK_Analytics_Python.ipynb)
+[notebook in Github](https://github.dev/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Trains%20and%20Restaurants.ipynb)
 
 > However, to experience the creation of the notebook yourself, carry on with the blank notebook, and copy/paste the code as we go along.
 
