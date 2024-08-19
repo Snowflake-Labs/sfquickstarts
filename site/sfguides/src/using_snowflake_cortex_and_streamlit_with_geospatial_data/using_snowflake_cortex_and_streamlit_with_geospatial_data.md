@@ -694,7 +694,7 @@ st.write(trains_h3.limit(1))
 places_h3 = places.with_column('H3',call_function('H3_POINT_TO_CELL_STRING',col('GEOMETRY'),lit(5)))
 places_h3 = places_h3.join(events.select('H3','CENTROID',col('NAME').alias('EVENT_NAME'),'DATE'),'H3')
 places_h3 = places_h3.with_column('DISTANCE_FROM_EVENT',call_function('ST_DISTANCE',col('CENTROID'),col('GEOMETRY')))
-places_h3 = places_h3.filter(col('DISTANCE_FROM_EVENT')< 1000)
+places_h3 = places_h3.filter(col('DISTANCE_FROM_EVENT')< 3000)
 places_h3 = places_h3.sort(col('DISTANCE_FROM_EVENT').asc())
 st.markdown('#### Affected Restaurants')                             
 st.write(places_h3.limit(10))
@@ -1112,7 +1112,7 @@ You will need to install pydeck
 
 ![alt text](assets/streamlit1/st004.png)
 
-Copy and paste this into a streamlit app under the BUILD_UK Streamlits schema
+Copy and paste this into a streamlit app under the BUILD_UK Streamlits schema.  NB - you will need to add the pydeck package before the streamlit will run.
 
 ```python
 
