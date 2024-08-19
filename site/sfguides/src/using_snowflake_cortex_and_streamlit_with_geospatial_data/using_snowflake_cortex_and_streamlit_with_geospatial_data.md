@@ -1329,8 +1329,8 @@ st.table(social_media.drop('V'))
     
 
 ```
-
-### Vector Embeddings
+<!-- ------------------------ -->
+## Vector Embeddings
 
 During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.
 
@@ -1338,7 +1338,7 @@ Download the following python notebook file
 
 [**Vector_Embeddings.ipynb**](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Vector_Embeddings.ipynb)
 
-Import as a new snowflake notebook.  Add it to the BuildUK.NOTEBOOKS schema and follow the instructions provided in the notebook.
+Import as a new snowflake notebook.  Add it to the BUILD.UK.NOTEBOOKS schema and follow the instructions provided in the notebook.
 
 <!-- ------------------------ -->
 ## Bringing in Met Office Weather
