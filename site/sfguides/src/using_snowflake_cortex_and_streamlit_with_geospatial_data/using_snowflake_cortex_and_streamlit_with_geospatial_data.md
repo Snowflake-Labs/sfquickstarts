@@ -83,7 +83,6 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 
 ~~~
 
-Go back to the home page
 
 
 <!-- ------------------------ -->
@@ -572,14 +571,14 @@ Create the following in a new cell which will generate and saves the results in 
 
 json1 = '''{"DATE":"YYYY-MM-DD", "NAME":"event",DESCRIPTION:"describe what the event is" "CENTROID":{
   "coordinates": [
-    -1,
-    54
+    0.000000<<<this needs to be longitude,
+    0.000000<<<<this needs to be latitude
   ],
   "type": "Point"
 },"COLOR":"Random bright and unique color in RGB presented in an array"}'''
 
 
-prompt = f''' Retrieve 6 events each with unique locations within the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
+prompt = f''' Retrieve 6 events within the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
 events = session.create_dataframe([{'prompt':prompt}])
 
 events = events.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','snowflake-arctic',prompt).alias('EVENT_DATA'))
