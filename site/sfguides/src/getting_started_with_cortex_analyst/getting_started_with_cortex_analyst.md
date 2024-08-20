@@ -332,7 +332,7 @@ For more information about the semantic model, please refer to the [documentatio
 ## Using the Verified Query Repository (VQR)
 Duration: 10
 
-In addition to the previously discussed Semantic Model information, the [Cortex Analyst Verified Query Repository (VQR)](https://docs.snowflake.com/snowflake-cortex/cortex-analyst-vqr) can help improve accuracy and trustworthiness of results by providing a collection of questions and corresponding SQL queries to answer them. Cortex Analyst will then use these verified queries when answering similar types of questions in the future.
+In addition to the previously discussed Semantic Model information, the [Cortex Analyst Verified Query Repository (VQR)](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/verified-query-repository) can help improve accuracy and trustworthiness of results by providing a collection of questions and corresponding SQL queries to answer them. Cortex Analyst will then use these verified queries when answering similar types of questions in the future.
 
 ### Adding Verified Queries
 Verified queries ultimately are specified in the `verified_queries` section of the semantic model, e.g.:
