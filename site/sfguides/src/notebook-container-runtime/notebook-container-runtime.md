@@ -42,7 +42,7 @@ Complete the following steps to setup your account:
 
 ```sql
 USE ROLE accountadmin;
-CREATE DATABASE container_runtime_lab;
+CREATE OR REPLACE DATABASE container_runtime_lab;
 CREATE SCHEMA notebooks;
 
 CREATE OR REPLACE ROLE container_runtime_lab_user;
@@ -58,12 +58,12 @@ CREATE OR REPLACE WAREHOUSE CONTAINER_RUNTIME_WH AUTO_SUSPEND = 60;
 GRANT ALL ON WAREHOUSE CONTAINER_RUNTIME_WH TO ROLE container_runtime_lab_user;
 
 -- Create and grant access to compute pools
-CREATE COMPUTE POOL cpu_xs_5_nodes
+CREATE OR REPLACE COMPUTE POOL cpu_xs_5_nodes
   MIN_NODES = 1
   MAX_NODES = 5
   INSTANCE_FAMILY = CPU_X64_XS;
 
-CREATE COMPUTE POOL gpu_s_5_nodes
+CREATE OR REPLACE COMPUTE POOL gpu_s_5_nodes
   MIN_NODES = 1
   MAX_NODES = 5
   INSTANCE_FAMILY = GPU_NV_S;
@@ -103,10 +103,11 @@ GRANT USAGE ON INTEGRATION pypi_access_integration TO ROLE container_runtime_lab
 ## Import Data
 Next, we will upload the diamonds.csv dataset.
 
-- Download diamonds.csv here
+- Download diamonds.csv [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/diamonds.csv)
 - Change role to container_runtime_lab_user
 - In Snowsight, navigate to Data >> Databases and select container_runtime_lab.notebooks 
 - Select Create >> Table >> From File >> Standard in the top right, and upload the diamonds.csv dataset.
+- Add Name of `DIAMONDS`
 - Update columns `row` to `"ROW"` and `table` to `"TABLE"`
 
 ![upload-diamonds](assets/upload-diamonds.png)
@@ -115,7 +116,7 @@ Next, we will upload the diamonds.csv dataset.
 ## Run the Notebook
 Duration: 15
 
-- Download the notebook from this link
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/getting_started_with_container_runtime.ipynb)
 - Change role to CONTAINER_RUNTIME_LAB_USER
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
