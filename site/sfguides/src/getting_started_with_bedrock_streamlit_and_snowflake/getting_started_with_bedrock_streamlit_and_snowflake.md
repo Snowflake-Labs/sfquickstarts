@@ -308,7 +308,7 @@ select ask_bedrock($DEFAULT_LLM_INSTRUCTIONS, 'Home Decor, Furniture, Lighting',
 
 ### Option 2: using IAM Roles for auth
 
-Copy and paste the below code into a worksheet and run it up until the DESC SECURITY INTEGRATION bedrock_security_integration; line.
+Copy and paste the below code into a worksheet and **run it up until the DESC SECURITY INTEGRATION bedrock_security_integration;** line.
 
 ```sql
 use role ACCOUNTADMIN;
