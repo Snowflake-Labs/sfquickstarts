@@ -47,7 +47,7 @@ USE ROLE ACCOUNTADMIN;
 
 -- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
 CREATE OR REPLACE ROLE XGB_GPU_LAB_USER;
-GRANT ROLE XGB_GPU_LAB_USER to USER chammond_sfc;
+GRANT ROLE XGB_GPU_LAB_USER to USER <YOUR_USER>;
 
 -- create our virtual warehouse
 CREATE OR REPLACE WAREHOUSE XGB_WH AUTO_SUSPEND = 60;
@@ -109,7 +109,7 @@ GRANT USAGE ON COMPUTE POOL GPU_NV_M_compute_pool to ROLE XGB_GPU_LAB_USER;
 -- Grant ownership of database and schema to newly created role
 GRANT OWNERSHIP ON DATABASE XGB_GPU_DATABASE TO ROLE XGB_GPU_LAB_USER COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE XGB_GPU_DATABASE  TO ROLE XGB_GPU_LAB_USER COPY CURRENT GRANTS;
-GRANT ALL ON TABLE XGB_GPU_LAB_USER TO ROLE XGB_GPU_LAB_USER;
+GRANT ALL ON TABLE "XGB_GPU_DATABASE"."XGB_GPU_SCHEMA"."VEHICLES_TABLE" TO ROLE XGB_GPU_LAB_USER;
 
 --SETUP IS NOW COMPLETE
 ```
@@ -118,7 +118,7 @@ GRANT ALL ON TABLE XGB_GPU_LAB_USER TO ROLE XGB_GPU_LAB_USER;
 ## Run the Notebook
 Duration: 30
 
-- Download the notebook from this link
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-train-xgboost-model-using-gpus-using-snowflake-notebooks/blob/main/XGBoost_on_GPU_Quickstart.ipynb)
 - Change role to XGB_GPU_LAB_USER
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
