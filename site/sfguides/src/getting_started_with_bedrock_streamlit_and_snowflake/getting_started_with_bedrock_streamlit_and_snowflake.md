@@ -65,6 +65,7 @@ This part should be straightforward, head to your Bedrock service in AWS and let
 You will also need command line access tokens, so familiarize with the process of generating these credentials from the IAM service and know how to easily copy and paste this for later:
 1. Select the ‘IAM’ service
 2. Find your user and select ‘Create access key’
+(YOU DO NOT NEED TO DO THIS IF YOU ARE USING IAM_ROLE AUTH IN THE NEXT STEP)
 
 ![](assets/iam_access.png)
 
@@ -74,6 +75,8 @@ Note: for the purpose of this lab we are using access credentials directly, but 
 Note: if you are using a managed AWS account, the credentials page may look more like the following, in which case you will also need the AWS session token, and should get this value shortly before using the credentials (since they will time out).
 
 ![](assets/cl_access.png)
+
+5. Lastly you will have to go the IAM center an ensure your AWS roles has access to utilzie Bedrock models. Please check out [this page](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) for instructions on enabling an AWS role to have access to use Bedrock models.
 
 <!-- ------------------------ -->
 ## Snowflake Environment
