@@ -1,5 +1,5 @@
 author: Charlie Hammond
-id: getting-started-with-feature-store
+id: intro-to-feature-store
 summary: This guide give an overview of the key features of Snowflake Feature Store
 categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science
 
-# Getting Started with Snowflake Feature Store
+# Introduction to Snowflake Feature Store with Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -100,7 +100,7 @@ GRANT OWNERSHIP ON TABLE FEATURE_STORE_DATABASE.FEATURE_STORE_SCHEMA.CITIBIKE_TR
 ## Run the Notebook
 Duration: 10
 
-- Download the notebook from this link
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-intro-to-feature-store-using-snowflake-notebooks/blob/main/feature_store_overview.ipynb)
 - Change role to FEATURE_STORE_LAB_USER
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
