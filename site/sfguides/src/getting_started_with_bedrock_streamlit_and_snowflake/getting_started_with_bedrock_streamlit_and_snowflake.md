@@ -310,55 +310,6 @@ select ask_bedrock($DEFAULT_LLM_INSTRUCTIONS, 'Home Decor, Furniture, Lighting',
 
 Copy and paste the below code into a worksheet and run it up until the DESC SECURITY INTEGRATION bedrock_security_integration; line.
 
-You will retrieve your <aws role arn> by going into the IAM console on your AWS account, heading to 'roles' then selecting role and copying the ARN associated with that role as shown below.
-
-![](assets/rolearn.png)
-
-Once you run the DESC SECURITY INTEGRATION line record the property_value for the API_AWS_IAM_USER_ARN and API_AWS_EXTERNAL_ID. See below
-
-![](assets/descint.png)
-
-Go back to the IAM center in your AWS console and select your role then select trust relationships and create a new trust relationship just like this filling in the <API_AWS_IAM_USER_ARN> and <API_AWS_EXTERNAL_ID> values.
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "<API_AWS_IAM_USER_ARN>"
-            },
-            "Action": "sts:AssumeRole",
-            "Condition": {
-                "StringEquals": {
-                    "sts:ExternalId": "<API_AWS_EXTERNAL_ID>"
-                }
-            }
-        }
-    ]
-}
-```
-
-If you already have a trust relationship you will add the portion below to your existing "Statement" after a comma.
-
-```json
-{
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "<API_AWS_IAM_USER_ARN>"
-            },
-            "Action": "sts:AssumeRole",
-            "Condition": {
-                "StringEquals": {
-                    "sts:ExternalId": "<API_AWS_EXTERNAL_ID>"
-                }
-            }
-        }
-```
-
-Last, you can run the rest of the SQL script in Snowflake after the DESC SECURITY INTEGRATION command to create the ask_bedrock function.
-
 ```sql
 use role ACCOUNTADMIN;
 use database CUSTOMER_WRAPPED;
@@ -492,6 +443,57 @@ SET DEFAULT_LLM_INSTRUCTIONS = 'Review the customer\'s most frequent retail purc
 SET DEFAULT_MODEL = 'anthropic.claude-3-sonnet-20240229-v1:0';
 select ask_bedrock($DEFAULT_LLM_INSTRUCTIONS, 'Home Decor, Furniture, Lighting', $DEFAULT_MODEL);
 ```
+
+You will retrieve your 'aws role arn' by going into the IAM console on your AWS account, heading to 'roles' then selecting role and copying the ARN associated with that role as shown below.
+
+![](assets/rolearn.png)
+
+Once you run the DESC SECURITY INTEGRATION line record the property_value for the API_AWS_IAM_USER_ARN and API_AWS_EXTERNAL_ID. See below
+
+![](assets/descint.png)
+
+Go back to the IAM center in your AWS console and select your role then select trust relationships and create a new trust relationship just like this filling in the <API_AWS_IAM_USER_ARN> and <API_AWS_EXTERNAL_ID> values.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "<API_AWS_IAM_USER_ARN>"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "sts:ExternalId": "<API_AWS_EXTERNAL_ID>"
+                }
+            }
+        }
+    ]
+}
+```
+
+If you already have a trust relationship you will add the portion below to your existing "Statement" after a comma.
+
+```json
+{
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "<API_AWS_IAM_USER_ARN>"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "sts:ExternalId": "<API_AWS_EXTERNAL_ID>"
+                }
+            }
+        }
+```
+
+Last, you can run the rest of the SQL script in Snowflake after the DESC SECURITY INTEGRATION command to create the ask_bedrock function.
+
+
 
 This block of code builds a User Defined Fucntion (UDF) called ask_bedrock() that accepts three parameters: instructions to the model, context for the model and model type.
 
