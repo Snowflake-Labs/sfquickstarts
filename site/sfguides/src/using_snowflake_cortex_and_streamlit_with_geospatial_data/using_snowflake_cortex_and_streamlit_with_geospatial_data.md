@@ -767,7 +767,7 @@ The results can include a large number of restaurants by MP, so let's only  refe
 all_3 = session.table("DATA.EVENTS_AND_WHAT_IS_AFFECTED")
 all_3 = all_3.select('MP','TRAIN_STATIONS','EVENTS',
                      
-array_slice(col('RESTAURANTS'),lit(0),lit(8)).alias('RESTAURANTS'),
+array_slice(col('RESTAURANTS'),lit(0),lit(8)).alias('RESTAURANTS'))
 
           
 all_3
