@@ -64,6 +64,11 @@ You will need the following things before beginning:
 * GitHub account
     * **A GitHub account**. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
 
+> aside positive
+> Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python.ipynb) and import it to your Snowflake account as shown below.
+
+![notebook_callout](assets/notebook.png)
+
 ### What You’ll Build
 During this Quickstart you will accomplish the following things:
 
@@ -79,6 +84,11 @@ During this Quickstart you will accomplish the following things:
 <!-- ------------------------ -->
 ## Quickstart Setup
 Duration: 10
+
+> aside positive
+> Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python.ipynb) and import it to your Snowflake account as shown below.
+
+![notebook_callout](assets/notebook.png)
 
 ### Fork the Quickstart Repository and Enable GitHub Actions
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering Pipelines with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
