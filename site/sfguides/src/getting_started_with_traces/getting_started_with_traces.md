@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering, Snowpark Python, Notebook
 ## Overview 
 Duration: 1
 
-This guide will introduce you to Logs, Traces, and Metrics in Snowflake which can be used to optimize performance and find errors in Notebooks, UDFs, and stored procedures.
+This guide will introduce you to Logs, Traces, and Metrics in Snowflake which can be used to optimize performance and find errors in UDFs and stored procedures.
 
 This guide will use REST APIs from OpenWeather to showcase the fetch weather data as part of a pipeline.
 
@@ -22,10 +22,10 @@ This guide will use REST APIs from OpenWeather to showcase the fetch weather dat
 
 ### What you will Learn
 
-* How to create a Notebook which incorporates python and SQL cells
-* How to build a python udf which pulls data from an external API
+* How to create a Notebook which incorporates Python and SQL cells
+* How to build a Python UDF which pulls data from an external API
 * How to create a procedure which will populates the bronze level data
-* How to trace performance of the procedure and udf
+* How to trace performance of the procedure and UDF
 * How to get memory and cpu information from the procedure execution
 
 ### What you will Need
@@ -48,7 +48,7 @@ Login to Snowsight using your credentials in Snowflake.
 
 You'll need a Database, Schema, and Warehouse to get started with the notebook.
 
-Run the following sql (in a worksheet) to create the warehouse, database, and schema with tracing on:
+Run the following SQL (in a worksheet) to create the warehouse, database, and schema with tracing on:
 
 ```sql
 CREATE OR REPLACE WAREHOUSE TRACING_QUICKSTART_WH WAREHOUSE_SIZE=XSMALL, INITIALLY_SUSPENDED=TRUE;
@@ -68,7 +68,7 @@ Go to Projects > Notebooks in the left navigation. Click the + Notebook to creat
 ## Setup
 Duration: 2
 
-The first notebook cell will be used to setup the notebook. These variables will be used in subsequent cells using the {{variable_name}} syntax in SQL cells, and by using the variable names in Python cells.
+The first notebook cell will be used to setup the notebook. These variables will be used in subsequent cells using the `{{variable_name}}` syntax in SQL cells, and by using the variable names in Python cells.
 
 Paste this code into the first cell. If you'd like to pull data for other cities, edit the city_list.
 
@@ -134,7 +134,7 @@ Run this cell and verify it is successful.
 ## Enabling Logging and Metrics
 Duration: 2
 
-In order to get logs and metrics, levels need to be modified. This can easily be done in sql.
+In order to get logs and metrics, levels need to be modified. This can easily be done in SQL.
 
 Change the third notebook cell to SQL and paste this section into the body.
 
@@ -161,9 +161,9 @@ In order to populate the bronze layer, a stored procedure will call the UDF for 
 
 When calling to a 3rd party API like this, it is important to know the performance and potential errors coming from those calls. To trace this information, the function uses a custom span in OpenTelemetry. Review the tracer variable and how that is used. Without the custom span, it would be difficult to know which calls were erroring out to the API and what status code the API was returning.
 
-The function will be stored in the database schema and can be used in the future from sql or python, as we will do in the next cell.
+The function will be stored in the database schema and can be used in the future from SQL or Python, as we will do in the next cell.
 
-Create a new python cell at the bottom of the notebook by clicking on + Python.
+Create a new Python cell at the bottom of the notebook by clicking on + Python.
 
 Paste this section into the new cell.
 
@@ -233,7 +233,7 @@ A procedure will be used to pull the weather for all the cities in the city_list
 
 Navigate back to the Notebook by clicking on Projects, Notebooks and opening TRACING_QUICKSTART.
 
-Create a new python cell at the bottom of the notebook by clicking on + Python.
+Create a new Python cell at the bottom of the notebook by clicking on + Python.
 
 ```python
 import datetime 
@@ -280,7 +280,7 @@ Run this cell and verify it is successful, it will return the current weather in
 ## Run the Procedure
 Duration: 2
 
-Create a new python cell at the bottom of the notebook by clicking on + Python.
+Create a new Python cell at the bottom of the notebook by clicking on + Python.
 
 ```python
 from snowflake.snowpark.context import get_active_session
@@ -297,7 +297,7 @@ Verify it is successful. After running, the notebook will output the dataframe o
 ## Query the Data Ingested
 Duration: 2
 
-Create a new sql cell by clicking on + SQL.
+Create a new SQL cell by clicking on + SQL.
 
 Paste this section into the new cell.
 
@@ -321,9 +321,9 @@ Duration: 5
 
 Click on the left navigation item "Monitoring" > "Traces & Logs".
 
-The top entry in the traces should be the calls from the Current Notebook, named `TRACING_QUICKSTART`. Traces can take a minute to show up, so you may have to wait and refresh until it appears. You may have to filter using the `Database` filter and selecting `TRACING_QUICKSTART` if there are other traces in the account.
+Traces can take a minute to show up, so you may have to wait and refresh until they appear. You may have to filter using the `Database` filter and selecting `TRACING_QUICKSTART` if there are other traces in the account.
 
-Click on Trace for the Notebook. Select the Span Type Filters at the top to include UDF and Procedures. Excluding Streamlit will remove the notebook calls from the view. Look for the `get_weather_for_cities_sp` span and the `__main__:get_weather_for_all_cities` spans which are the more time consuming parts of the procedure. You can see fetching the data from the API and saving is only a few seconds, but the entire runtime of the procedure is over a minute.
+Look for the `get_weather_for_cities_sp` span and the `__main__:get_weather_for_all_cities` spans which are the more time consuming parts of the procedure. You can see fetching the data from the API and saving is only a few seconds, but the entire runtime of the procedure is over a minute.
 
 If you expand the `get_weather_fn` entry under `__main__:get_weather_for_all_cities`, you can see the Debug Logs by clicking on Logs on the trace to see all the http request information.
 
@@ -339,7 +339,7 @@ Memory and CPU metrics are also available because the session set the METRIC_LEV
 
 To get to this data, it is in the Events table.
 
-Find your events table by running this sql:
+Find your events table by running this SQL:
 
 ```sql
 SHOW PARAMETERS LIKE 'event_table' IN ACCOUNT;
@@ -436,7 +436,7 @@ Also checkout other related guides:
 - [Snowflake Notebooks](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_notebooks/index.html)
 
 ### What You Learned
-- Creating a notebook
+- Creating a Notebook
 - Creating a Network Rule, Secret and Access Integration to access 3rd party data
 - Enabling & Configuring Tracing and Metrics
 - Adding a custom span for easier debugging
