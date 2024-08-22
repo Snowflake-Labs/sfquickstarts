@@ -730,4 +730,6 @@ After setting up our AWS and Snowflake and envrionments we built two primary thi
 
 - [Provisioned Throughput](https://docs.aws.amazon.com/bedrock/latest/userguide/prov-throughput.html)
 
+- [IAM Role with Snowpark External Access Documentation](https://docs.snowflake.com/en/LIMITEDACCESS/external-network-access/external-network-access-examples#accessing-amazon-s3-with-aws-iam)
+
 If you have any questions, reach out to your Snowflake account team!
