@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science
 
-# Train XGBoost using GPUs
+# Train an XGBoost Model using Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
