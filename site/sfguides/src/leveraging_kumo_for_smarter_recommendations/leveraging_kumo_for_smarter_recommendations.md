@@ -16,7 +16,9 @@ Duration: 5
 
 In this quickstart, you will use Kumo as a Snowflake native app to recommend the top ten products your highest value customers are most likely to buy. These predictions can be used to make product recommendations with the highest probability of converting into actual sales. Kumo gives you the best recommendation algorithms in your Snowflake environment, and as an easy-to-use general ML platform, can cover many predictive tasks to grow your business. 
 
-In summary, this is what you will do:
+#### What you will learn
+
+In summary, you will learn how to:
 
 * Connect the standard Snowflake retail dataset  
 * Create Kumo predictive queries to predict your highest value customers (i.e., highest “lifetime value” customers) and the products they are most likely to buy in the next 30 days  
@@ -400,7 +402,7 @@ DROP COMPUTE POOL IF EXISTS KUMO_COMPUTE_POOL;
 
 You can always restart the compute pool and app at a later time, if needed. For more information about starting/stopping Kumo as a native Snowflake app, please refer to [Kumo’s documentation](https://docs.kumo.ai/docs/installing-kumo-on-spcs\#4-launch-and-use-kumo).
 
-#### What we covered
+#### Conclusion
 
 After importing our sample retail dataset, we developed and trained two predictive queries: one for predicting customer LTV, and the other for making top10 product recommendations for those customers. We then used Kumo’s explainable AI tools for evaluating our models’ performance, and set up our predictive models for production use.
 
