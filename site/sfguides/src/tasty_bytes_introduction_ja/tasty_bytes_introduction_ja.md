@@ -180,7 +180,7 @@ Duration: 1
 - #### [半構造化データ](/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_ja/)
   
   - SnowflakeのVARIANTデータ型、ドット表記による半構造化データ処理、ラテラルフラット化、ビュー作成、Snowsightチャートについて学びます。
-- #### [SnowFlake Horizonを用いたガバナンス](/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/index.html?index=..%2F..index)
+- #### [Snowflake Horizonを用いたガバナンス](/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/index.html?index=..%2F..index)
   
   - Snowflakeのシステム定義ロール、ロール・ベースのアクセス制御、タグベースのマスキング、ポリシー（行アクセス、集約、投影）、データ分類、アクセス履歴、Universal Searchにについて学びます。
 - #### [コラボレーション](/guide/tasty_bytes_zero_to_snowflake_collaboration_ja/)
