@@ -546,15 +546,6 @@ Congratulations on completing the our Question and Answering on Knowledge Graphs
 - [Snowflake Marketplace](https://app.snowflake.com/marketplace)
 - More info on [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 
-author: RelationalAI
-id: question_answering_on_kg_using_relationalai_and_snowflake
-summary: This is a sample Snowflake Guide
-categories: Getting-Started
-environments: web
-status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, GenAI, Knowledge Graphs, RelationalAI, Snowflake Cortex, Snowpark Container Services, Question Answering on Knowledge Graphs
-
 <!-- ------------------------ -->
 
 ### APPENDIX
