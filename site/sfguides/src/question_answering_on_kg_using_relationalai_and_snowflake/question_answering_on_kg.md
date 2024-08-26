@@ -1,6 +1,4 @@
-# KGQA: Question Answering on Knowledge Graphs Using RelationalAI and Snowflake Cortex AI
-
-author: Shivani Shrivastava, Hossein Keshavarz
+author: RelationalAI
 id: kgqa_using_relationalai
 summary: This guide shows how to use RelationalAI and Snowflake to create a system that lets a user ask and answer natural language questions on a custom knowledge graph.
 categories: data-science, graph-analysis, relationalai, generativeai
@@ -8,6 +6,9 @@ environments: web
 status: Published 
 feedback link: https://github.com/RelationalAI/QuestionAnsweringKG/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
+
+
+# KGQA: Question Answering on Knowledge Graphs Using RelationalAI and Snowflake Cortex AI
 
 <!-- ------------------------ -->
 ## Overview 
