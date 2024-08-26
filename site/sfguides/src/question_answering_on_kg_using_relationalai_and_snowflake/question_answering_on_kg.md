@@ -324,7 +324,7 @@ GRANT MONITOR ON COMPUTE POOL rai_engine_pool_m TO ROLE rai_user;
 <!-- ------------------------ -->
 
 ## Architecture Diagram
-<img src="./kgqa_architecture.png" alt="KGQA Architecture" width="1400">
+<img src="./assets/kgqa_architecture.png" alt="KGQA Architecture" width="1400">
 
 Users may already have  their data in Snowflake. RelationalAI runs within the user's Snowflake account, creating a graph index over the Snowflake tables.  This allows a user to create a RelationalAI model in python. This model can be interpreted as an executable Knowledge Graph. When a user asks a natural language question, the system generates a RelationalAI Python query that is then executed and retrieves the relevant answers to the user. Our system is hosted on a Snowpark Container, and uses  Snowflake’s Cortex AI.  In summary, our solution leverages data in Snowflake tables, CortexAI to translate natural language to queries, and RelationalAI’s Native App to construct  an executable Knowledge graph that answers  these queries.
 
@@ -332,7 +332,7 @@ Users may already have  their data in Snowflake. RelationalAI runs within the us
 <!-- ------------------------ -->
 
 ## Example Walkthrough
-<img src="./kgqa_example_udf.png" alt="KGQA Example" width="1400">
+<img src="./assets/kgqa_example_udf.png" alt="KGQA Example" width="1400">
 
 
 - The end-to-end pipeline begins with a natural language question set by the end user. For instance, consider the question: “List the movies directed by John Krasinski.” The goal is to answer this question by using the information in the Wikidata Knowledge Graph. 
