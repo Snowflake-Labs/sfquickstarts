@@ -81,11 +81,12 @@ In a new SQL worksheet, run the following SQL commands to create the [warehouse]
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR REPLACE WAREHOUSE DASH_S WAREHOUSE_SIZE=SMALL;
-CREATE OR REPLACE DATABASE DASH_DB;
-CREATE OR REPLACE SCHEMA DASH_SCHEMA;
+CREATE WAREHOUSE DASH_S WAREHOUSE_SIZE=SMALL;
+CREATE DATABASE DASH_DB;
+CREATE SCHEMA DASH_SCHEMA;
 
 USE DASH_DB.DASH_SCHEMA;
+USE WAREHOUSE DASH_S;
 ```
 
 In the same SQL worksheet, run the following SQL commands to create table **CALL_TRANSCRIPTS** from data hosted on publicly accessible S3 bucket.
@@ -146,11 +147,25 @@ select transcript, snowflake.cortex.sentiment(transcript) from call_transcripts 
 ```
 
 ### Summarize
-
 Now that we know how to translate call transcripts in English, it would be great to have the model pull out the most important details from each transcript so we don’t have to read the whole thing. Let’s see how **snowflake.cortex.summarize** function can do this and try it on one record.
 
 ```sql
-select transcript,snowflake.cortex.summarize(transcript) from call_transcripts where language = 'English' limit 1;
+select transcript,snowflake.cortex.summarize(transcript) as summary from call_transcripts where language = 'English' limit 1;
+```
+
+#### Summary with tokens count
+
+```sql
+select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.cortex.count_tokens('summarize',transcript) as number_of_tokens from call_transcripts where language = 'English' limit 1;
+```
+
+### Classify Text 
+(***In Public Preview Soon***)
+
+This function takes a piece of text and a set of user-provided categories as inputs and returns a predicted category for that text. The function returns a structured JSON-formattet output.
+
+```sql
+select transcript,snowflake.cortex.classify_text(transcript,['Refund','Exchange']) as classification from call_transcripts where language = 'English';
 ```
 
 <!-- ------------------------ -->
@@ -299,6 +314,9 @@ Congratulations! You've successfully completed the Getting Started with Snowflak
 - How to build an interactive Streamlit application running in Snowflake.
 
 ### Related Resources
+
+> aside positive
+> NOTE: For an end-to-end experience using Snowflake Notebooks, download this [.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-arctic-and-snowflake-cortex/blob/main/getting_started_with_snowflake_arctic_and_cortex.ipynb) and [import](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import) it in your Snowflake account.
 
 - [Snowflake Cortex: Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Snowflake Cortex: LLM Functions](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions)

@@ -72,6 +72,11 @@ The button above will take you to a page in the trial titled **Getting Started w
 
 Duration: 1
 
+> aside positive
+> Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Getting%20started%20with%20Snowpark%20using%20Snowflake%20Notebooks/Getting%20Started%20with%20Snowpark%20using%20Snowflake%20notebooks.ipynb) and import it to your Snowflake account as shown below.
+
+![notebook_callout](assets/notebook.png)
+
 First, let’s import the Snowpark Python library.
 
 ```python
