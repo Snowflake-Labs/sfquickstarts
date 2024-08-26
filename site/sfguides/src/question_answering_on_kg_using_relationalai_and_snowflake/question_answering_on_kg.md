@@ -51,7 +51,7 @@ In our case, we will utilize RelationalAI’s Native App to construct an executa
 - Basic knowledge of using a Snowflake SQL Worksheet and Jupyter Notebook
 - [Snowflake privileges on your user to install a Native Application](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges)
 - The [RelationalAI CLI](https://relational.ai/docs/reference/cli/)
-- The [RAI KGQA Jupyter notebook](../kgqa_demo_setup/kgqa_demo_nb/kgqa_demo.ipynb) used in this quickstart 
+- The [RAI KGQA Jupyter notebook](https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_demo_nb/kgqa_demo.ipynb) used in this quickstart 
 - [Docker Setup](https://docs.docker.com/desktop/install/mac-install/)
 
 
