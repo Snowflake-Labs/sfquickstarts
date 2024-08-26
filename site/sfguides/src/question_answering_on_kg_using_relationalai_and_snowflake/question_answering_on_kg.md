@@ -375,7 +375,7 @@ cd $SETUP_PATH
 
 #### STEP 2 : Populate all Snowflake config parameters 
 
-- Update the config parameters in the config file [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_setup/config.json)
+- Update the config parameters in the config file ['config.json'](https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_setup/config.json)
 > **_NOTE:_** Anything prefixed with **temp_** can be customized by the user, along with **account and sf_login_email**. *Everything else should remain unchanged*.
 
 #### STEP 3 : Initializing database in Snowflake - *Copy Paste Output to SF Worksheet and Run*
