@@ -46,10 +46,11 @@ Access to the LandingLens app is available by request. To request the app, follo
 1. Open the [LandingAI](https://app.snowflake.com/marketplace/providers/GZTYZF0O17X/LandingAI) provider page in the Snowflake Marketplace.
 2. Locate and click the **LandingLens - Visual AI Platform** listing.
 3. Click **Request**.
+
    <img src="assets/LLSF_VisualAI_Request.png" alt="Request LandingLens" width="800">
-   
-4. Fill out and submit the request form.
-5. The LandingAI team will review the request and contact you with more information.
+
+5. Fill out and submit the request form.
+6. The LandingAI team will review the request and contact you with more information.
 
 ### Install the LandingLens App
 After you've requested the app and been granted access it, follow the instructions below to install it in Snowflake:
@@ -57,6 +58,7 @@ After you've requested the app and been granted access it, follow the instructio
 1. Open the [LandingAI](https://app.snowflake.com/marketplace/providers/GZTYZF0O17X/LandingAI) provider page in the Snowflake Marketplace.
 2. Locate and click the **LandingLens - Visual AI Platform** listing.
 3. Click **Get**.
+
    <img src="assets/LL_VisualAIPlatform.png" alt="Get LandingLens" width="800">
 
 4. Select the **Warehouse** to use for the installation process. The warehouse is only used to install the app, and can be any size (including X-Small).
@@ -64,6 +66,7 @@ After you've requested the app and been granted access it, follow the instructio
 5. If you want to change the name of the application, click **Options** and enter a name in **Application Name**.
 
 6. Click **Get**.
+
    <img src="assets/LLSF_install_1.png" alt="Get LandingLens" width="800">
 
 7. Go to **Snowsight** > **Data Products** > **Apps**. Double-click the LandingLens app listing. (Although the app is listed in the Installed Apps section, it is not installed yet.)
@@ -77,7 +80,7 @@ After you've requested the app and been granted access it, follow the instructio
 10. In **Step 2**, click **Review**. Review the allowed endpoints on the pop-up and click **Connect**. This allows LandingLens to access the World Wide Web (WWW).
 
 11. Scroll to the top of the page and click **Activate**.
-   <img src="assets/LLSF_install_5.png" alt="Activate" width="800">
+      <img src="assets/LLSF_install_5.png" alt="Activate" width="800">
    
 12. LandingLens opens in your Apps. Click **Launch App**.
       <img src="assets/LLSF_install_7.png" alt="Launch the app installer" width="800">
@@ -91,7 +94,8 @@ After you've requested the app and been granted access it, follow the instructio
       <img src="assets/LLSF_install_9.png" alt="Copy the URL for the LandingLens app" width="800">
 
 16. Paste the URL into a new tab to open the LandingLens app. We recommend bookmarking this URL. you can log in to the app using the Snowflake credentials you used to install the app. Only users with the correct privileges in the account can access the LandingLens app.
-   <img src="assets/lai_landinglens_app.png" alt="LAI Lens app" width="800">
+   
+      <img src="assets/lai_landinglens_app.png" alt="LAI Lens app" width="800">
    
     
 <!-- ------------------------ -->
