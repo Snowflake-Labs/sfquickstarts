@@ -14,7 +14,28 @@ tags: Getting Started, Recommendations, Data Engineering, Snowpark Container Ser
 
 Duration: 5
 
-In this quickstart, you will use Kumo as a Snowflake native app to recommend the top ten products your highest value customers are most likely to buy. These predictions can be used to make product recommendations with the highest probability of converting into actual sales. Kumo gives you the best recommendation algorithms in your Snowflake environment, and as an easy-to-use general ML platform, can cover many predictive tasks to grow your business. 
+In this guide, you will use Kumo as a Snowflake native app to recommend the top ten products your highest value customers are most likely to buy. These predictions can be used to make product recommendations that users are more likely to buy, leading to increase engagement and sales. Kumo gives you the best recommendation algorithms in your Snowflake environment, and as an easy-to-use general ML platform, can cover many predictive tasks to grow your business. 
+
+Specifically, you will learn how to develop the following two models using the TPC-DS sample dataset provided by Snowflake:
+
+- **Customer LTV Prediction**: Predict how much money each customer will spend in the next 30 days
+- **Product Recommendation**: Predict the top 10 products that each user is most likely to buy
+
+#### What is Kumo?
+
+Kumo is an advanced ML platform that leverages _graph neural networks_ to deliver predictions directly from your Snowflake relational data. Kumo ML models are powered by a GNN architecture, inspired by several academic papers in recent history. Data scientists simply need to write a _predictive query_, and then the Kumo platform will automatically craft the proper neural architecture for their data. As a result of this approach, Kumo is able to achieve great predictive performance out of the box, across a wide range of challenging scenarios.
+
+Kumo simplifies the end-to-end ML process by eliminating the need for extensive data preparation, model tuning, and feature engineering, allowing data scientists to focus on generating valuable predictions and insights.
+
+To learn more, please visit [Kumo’s documentation](https://docs.kumo.ai/docs/welcome-to-kumo).
+
+#### What are Graph Neural Networks?
+
+Graph neural networks (GNNs) are an emerging family of deep learning algorithms that bring together all the advantages from traditional deep learning to graphs. GNNs can learn patterns and relations on a grand scale, combining features from neighboring nodes and training predictive models across the entire network.
+
+#### What is a Kumo predictive query?
+
+Kumo predictive queries are easy-to-use programming interfaces that automate the major steps in a typical ML pipeline, including target label engineering, feature engineering, model architecture, hyperparameter search, and model deployment. Predictive queries are written using Kumo’s predictive query language (PQL), a SQL-like scripting language for describing ML predictions.
 
 #### What you will learn
 
@@ -26,21 +47,11 @@ In summary, you will learn how to:
 * Evaluate your predictive models using Kumo’s explainable AI tools   
 * Create batch predictions for production use
 
-#### What are Graph Neural Networks?
+#### What you'll build
 
-Graph neural networks (GNNs) are an emerging family of deep learning algorithms that bring together all the advantages from traditional deep learning to graphs. GNNs can learn patterns and relations on a grand scale, combining features from neighboring nodes and training predictive models across the entire network.
+Using Kumo as a Snowflake native app, you will build predictive models for determining customer lifetime value (LTV) and delivering top ten product recommendations to those customers, all within your Snowflake environment. This high accuracy/fidelity recommendation system is similar to solutions employed at Pinterest, Uber, and Amazon, but requires a fraction of the effort and resources to develop and deploy into production. With Kumo as a Snowflake native app, you can quickly generate high accuracy product recommendations for customers most likely to make purchases, and easily access those predictions from within Snowflake or integrate with your website or email notification system.
 
-#### What is Kumo?
-
-Kumo is an advanced ML platform that leverages GNNs to deliver predictive analytics and insights directly from your Snowflake relational data. Kumo ML models are powered by a hybrid GNN architecture, inspired by several academic papers in recent history. Data scientists can benefit from these advances in model architecture, without needing to code them up manually. As a result of this hybrid GNN approach, Kumo is able to achieve great predictive performance out of the box, across a wide range of challenging scenarios.
-
-Kumo simplifies the end-to-end ML process by eliminating the need for extensive data preparation, model tuning, and feature engineering, allowing you to focus on generating valuable predictions and insights.
-
-To learn more, please visit [Kumo’s documentation](https://docs.kumo.ai/docs/welcome-to-kumo).
-
-#### What is a Kumo predictive query?
-
-Kumo predictive queries are easy-to-use programming interfaces that automate the major steps in a typical ML pipeline, including target label engineering, feature engineering, model architecture, hyperparameter search, and model deployment. Predictive queries are written using Kumo’s predictive query language (PQL), a SQL-like scripting language for describing ML predictions.
+Please note that starting and using Kumo as a Snowflake native app will incur metered costs for running the required compute pool. Be sure to [shut down Kumo](https://docs.kumo.ai/docs/installing-kumo-on-spcs\#step-3-optional-shutting-down-kumo) to suspend the compute pool when the app is not in use.
 
 #### Pre-requisites
 
@@ -50,12 +61,6 @@ Kumo predictive queries are easy-to-use programming interfaces that automate the
 
 | NOTE:  If you haven’t already done so, please [follow these instructions](https://docs.kumo.ai/docs/installing-kumo-on-spcs) to install Kumo as a native Snowflake app. |
 | :---- |
-
-#### What you'll build
-
-Using Kumo as a Snowflake native app, you will build predictive models for determining customer lifetime value (LTV) and delivering top ten product recommendations to those customers, all within your Snowflake environment. This high accuracy/fidelity recommendation system is similar to solutions employed at Pinterest, Uber, and Amazon, but requires a fraction of the effort and resources to develop and deploy into production. With Kumo as a Snowflake native app, you can quickly generate high accuracy product recommendations for customers most likely to make purchases, and easily access those predictions from within Snowflake or integrate with your website or email notification system.
-
-Please note that starting and using Kumo as a Snowflake native app will incur metered costs for running the required compute pool. Be sure to [shut down Kumo](https://docs.kumo.ai/docs/installing-kumo-on-spcs\#step-3-optional-shutting-down-kumo) to suspend the compute pool when the app is not in use.
 
 ## Setting Up Data in Snowflake
 
@@ -379,11 +384,9 @@ For production use cases, your batch prediction jobs can be automated and integr
 
 Please refer to [Kumo’s Documentation](https://docs.kumo.ai/docs/batch-prediction) to learn more about Batch Predictions.
 
-## Conclusion and Resources
+## Cleanup and Shutdown
 
 Duration: 5
-
-#### Cleanup and Shutdown
 
 Once you’re done using the Kumo native app, you should shut it down so as not to incur additional metered costs. You can do this by running the following command in a SQL worksheet:
 
@@ -402,6 +405,10 @@ DROP COMPUTE POOL IF EXISTS KUMO_COMPUTE_POOL;
 
 You can always restart the compute pool and app at a later time, if needed. For more information about starting/stopping Kumo as a native Snowflake app, please refer to [Kumo’s documentation](https://docs.kumo.ai/docs/installing-kumo-on-spcs\#4-launch-and-use-kumo).
 
+## Conclusion and Resources
+
+Duration: 5
+
 #### Conclusion
 
 After importing our sample retail dataset, we developed and trained two predictive queries: one for predicting customer LTV, and the other for making top10 product recommendations for those customers. We then used Kumo’s explainable AI tools for evaluating our models’ performance, and set up our predictive models for production use.
@@ -414,7 +421,7 @@ After importing our sample retail dataset, we developed and trained two predicti
 * How to evaluate model performance with Kumo’s explainable AI tools  
 * How to productionize your Kumo predictive models
 
-#### Related resources
+#### Resources
 
 * [Kumo Documentation](https://docs.kumo.ai/docs/)  
 * [Installing Kumo on SPCS](https://docs.kumo.ai/docs/installing-kumo-on-spcs)  
