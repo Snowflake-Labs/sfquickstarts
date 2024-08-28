@@ -53,7 +53,7 @@ In summary, you will learn how to:
 
 #### What you'll build
 
-Using Kumo as a Snowflake native app, you will build predictive models for determining customer lifetime value (LTV) and delivering top ten product recommendations to those customers, all within your Snowflake environment. This high accuracy/fidelity recommendation system is similar to solutions employed at Pinterest, Uber, and Amazon, but requires a fraction of the effort and resources to develop and deploy into production. With Kumo as a Snowflake native app, you can quickly generate high accuracy product recommendations for customers most likely to make purchases, and easily access those predictions from within Snowflake or integrate with your website or email notification system.
+Using Kumo as a Snowflake native app, you will build predictive models for determining customer lifetime value (LTV) and delivering top ten product recommendations to those customers, all within your Snowflake environment. You can easily access those predictions from within a Snowflake worksheet, and deploy these predictions to your production website or email notification system.
 
 Please note that starting and using Kumo as a Snowflake native app will incur metered costs for running the required compute pool. Be sure to [shut down Kumo](https://docs.kumo.ai/docs/installing-kumo-on-spcs\#step-3-optional-shutting-down-kumo) to suspend the compute pool when the app is not in use.
 
