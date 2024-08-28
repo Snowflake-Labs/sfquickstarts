@@ -6,7 +6,7 @@ environments: web
 status: Published
 tags: Getting Started, Data Science, LandingAI, LVM, Data Applications, healthcare
 
-# Computer Vision Models with LandingLens on Snowflake
+# Visual AI Models with LandingLens on Snowflake
 
 ## Overview
 Duration: 1
