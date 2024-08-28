@@ -97,13 +97,19 @@ Search for Northern Trains Station Data
 
 ![alt text](assets/I003.png)
 
+Press **Get** to get the data from the marketplace.  Do not change the database name.
 
+![alt text](assets/I003a.png)
 
 Search for Overture Maps - Places
 
-Click on the following dataset then press **Get**
-
 ![alt text](assets/I004.png)
+
+Click on the following dataset then press **Get** Do not change the database name.
+
+![alt text](assets/I004a.png)
+
+
 
 Search for the **Met office Weather Data**
 Press **Get** - Keep the name as it is.
@@ -140,14 +146,22 @@ In **Notebook location**, select BUILD_UK from the list of available databases a
 
 
 #### Creating your first Map
-Once the notebook has loaded, Remove all cells apart from cell 1.  You should see something like this:
+
+Once the notebook has loaded, Remove all cells in the notebook.  You should see something like this:
 
 ![alt text](assets/I009.png)
 
+Before we start working in our notebook, we will add an additional package which is not installed as default.  This package is available within the Anaconda Snowflake channel and is easily accessible.
 
-We have the basics to load a snowpark dataframe, but we havent loaded any functions yet.  All functions which include user defined table and scalar functions are accessible within Snowpark.  
+**Add the Pydeck package for visualising location data**
 
-**Start a Session and import all the libraries we will need**
+In the top menu, under Packages » Anaconda Packages, import pydeck.  You need this to render maps. 
+
+![alt text](assets/I010.png)
+
+Now we have all the packages we need.  Lets start the notebook by pressing **Start** which is at the top right hand corner of the screen.
+
+![alt text](assets/I009a.png)
 
 You will be using a variety of Snowflake functions to do some transformation tasks.  Some of the functions are built into the snowpark library (such as array_agg, parse_json), others we need to call using the **call_function** module.  **call_function** allows the user to leverage ANY Snowflake scalar function - you can use this for both built in as well as user defined functions.
 
@@ -155,7 +169,11 @@ All functions are held inside the **snowflake.snowpark.functions** module.
 
 We will import the call_function, streamlit library, json, numpy, pandas and pydeck packages.  For pydeck, you will need to add the package as this is not installed by default.
 
-Replace the contents in the first cell with the following code:
+Click on the + Python button to add a new Python cell.  On the top left hand corner of the screen, you can rename your cell from 'cell1' to something more meaningful.  This is useful for debugging purposes.
+
+**Rename** cell1 to libraries by typing over the text 'cell1'.
+
+Copy and paste the following code into the newly created cell.
 
 ```python
 # Import python packages
@@ -178,18 +196,15 @@ st.write(
 # Get the current credentials
 session = get_active_session()
 ```
-In the top menu, under Packages » Anaconda Packages, import pydeck.  You need this to render maps. 
-
-![alt text](assets/I010.png)
-
-Run the notebook - the notebook will restart. Once it has ran you will see something like this:
-
 
 ![alt text](assets/I011.png)
 
 Add a new python cell by hovering over the bottom edge of the cell and select Python.
 
 ![alt text](assets/I012.png)
+
+Rename the the cell to **n_trains_data**
+
 
 We will firstly leverage the Northern Trains dataset to filter the carto overture maps places dataset.  We want to do this in order to get Points of interests that are relevant for the Northern Trains locality.  Joining by each Station Code would be resource hungry - plus we do not want to join by exact locations, only by roughly where all of the train stations are situated.
 
@@ -1102,7 +1117,8 @@ Once you have generated events, select each MP under the Individual incidents se
 Finally we will create a Streamlit app which adds this additional information to a map.
 
 
-### Visualise the data
+<!-- ------------------------ -->
+## Visualise the data 
 
 You will now be creating another streamlit app in order to visualise the results.
 
