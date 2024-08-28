@@ -14,12 +14,14 @@ tags: Getting Started, Recommendations, Data Engineering, Snowpark Container Ser
 
 Duration: 5
 
-In this guide, you will use Kumo as a Snowflake native app to recommend the top ten products your highest value customers are most likely to buy. These predictions can be used to make product recommendations that users are more likely to buy, leading to increase engagement and sales. Kumo gives you the best recommendation algorithms in your Snowflake environment, and as an easy-to-use general ML platform, can cover many predictive tasks to grow your business. 
+In this guide, you will use Kumo as a Snowflake native app to recommend the top ten products your highest value customers are most likely to buy. These predictions can be used to make product recommendations that users are more likely to buy, leading to increase engagement and sales.
 
-Specifically, you will learn how to develop the following two models using the TPC-DS sample dataset provided by Snowflake:
+Specifically, you will learn how to develop the following two models using Snowflake's TPC-DS dataset.
 
 - **Customer LTV Prediction**: Predict how much money each customer will spend in the next 30 days
 - **Product Recommendation**: Predict the top 10 products that each user is most likely to buy
+
+![][image12]
 
 #### What is Kumo?
 
