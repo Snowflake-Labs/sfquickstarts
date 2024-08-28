@@ -40,41 +40,57 @@ To users who are familiar with machine learning, LandingLens offers advanced too
 ## Install the LandingLens Native App in Your Account
 Duration: 30
 
-1. Open the [LandingLens app listing](https://app.snowflake.com/marketplace/listing/GZTYZ12K65CU/landingai-landinglens-visual-ai-platform) in the Snowflake Marketplace and click **Get**.
-   <img src="assets/LL_VisualAIPlatform.png" alt="LandingLens listing in the Snowflake Marketplace" width="800">
+### Request the LandingLens App
+Access to the LandingLens app is available by request. To request the app, follow the instructions below:
+
+1. Open the [LandingAI](https://app.snowflake.com/marketplace/providers/GZTYZF0O17X/LandingAI) provider page in the Snowflake Marketplace.
+2. Locate and click the **LandingLens - Visual AI Platform** listing.
+3. Click **Request**.
+   <img src="assets/LLSF_VisualAI_Request.png" alt="Request LandingLens" width="800">
    
-2. Select the **Warehouse** to use for the installation process. The warehouse is only used to install the app, and can be any size (including X-Small).
+4. Fill out and submit the request form.
+5. The LandingAI team will review the request and contact you with more information.
 
-3. If you want to change the name of the application, click **Options** and enter a name in **Application Name**.
+### Install the LandingLens App
+After you've requested the app and been granted access it, follow the instructions below to install it in Snowflake:
 
-4. Click **Try for Free**. This starts a 30 day free trial of LandingLens.
-   <img src="assets/tryForFree.png" alt="Try Landinglens for Free" width="800">
+1. Open the [LandingAI](https://app.snowflake.com/marketplace/providers/GZTYZF0O17X/LandingAI) provider page in the Snowflake Marketplace.
+2. Locate and click the **LandingLens - Visual AI Platform** listing.
+3. Click **Get**.
+   <img src="assets/LL_VisualAIPlatform.png" alt="Get LandingLens" width="800">
 
-5. Go to **Snowsight** > **Data Products** > **Apps**. Double-click the LandingLens app listing. (Although the app is listed in the Installed Apps section, it is not installed yet.)
+4. Select the **Warehouse** to use for the installation process. The warehouse is only used to install the app, and can be any size (including X-Small).
+
+5. If you want to change the name of the application, click **Options** and enter a name in **Application Name**.
+
+6. Click **Get**.
+   <img src="assets/LLSF_install_1.png" alt="Get LandingLens" width="800">
+
+7. Go to **Snowsight** > **Data Products** > **Apps**. Double-click the LandingLens app listing. (Although the app is listed in the Installed Apps section, it is not installed yet.)
    <img src="assets/LLSF_install_2.png" alt="Installed Apps" width="800">
 
-6. A new page opens. It has a series of steps that guide you through the installation process.
+8. A new page opens. It has a series of steps that guide you through the installation process.
 
-7. In **Step 1**, click **Grant**. These permissions allow LandingLens to create compute pools and perform other tasks in your account.
+9. In **Step 1**, click **Grant**. These permissions allow LandingLens to create compute pools and perform other tasks in your account.
    <img src="assets/LLSF_install_3.png" alt="Grant account privileges" width="800">
    
-8. In **Step 2**, click **Review**. Review the allowed endpoints on the pop-up and click **Connect**. This allows LandingLens to access the World Wide Web (WWW).
+10. In **Step 2**, click **Review**. Review the allowed endpoints on the pop-up and click **Connect**. This allows LandingLens to access the World Wide Web (WWW).
 
-9. Scroll to the top of the page and click **Activate**.
+11. Scroll to the top of the page and click **Activate**.
    <img src="assets/LLSF_install_5.png" alt="Activate" width="800">
    
-10. LandingLens opens in your Apps. Click **Launch App**.
+12. LandingLens opens in your Apps. Click **Launch App**.
       <img src="assets/LLSF_install_7.png" alt="Launch the app installer" width="800">
    
-11. The installer opens in the **APP_WIZARD** tab.
+13. The installer opens in the **APP_WIZARD** tab.
 
-12. Click **Install/Upgrade/Resume**. The installer installs all the required services for the LandingLens app. This process takes about 20 to 30 minutes. Do NOT close the tab during the installation process, because it will stop the process.
+14. Click **Install/Upgrade/Resume**. The installer installs all the required services for the LandingLens app. This process takes about 20 to 30 minutes. Do NOT close the tab during the installation process, because it will stop the process.
       <img src="assets/LLSF_install_8.png" alt="Launch the app installer" width="800">
    
-13. Once the installation process is complete, all services have the status DONE or READY (green checkmark) and the URL to access LandingLens displays. Copy and paste the URL.  
+15. Once the installation process is complete, all services have the status DONE or READY (green checkmark) and the URL to access LandingLens displays. Copy and paste the URL.  
       <img src="assets/LLSF_install_9.png" alt="Copy the URL for the LandingLens app" width="800">
 
-14. Paste the URL into a new tab to open the LandingLens app. We recommend bookmarking this URL. you can log in to the app using the Snowflake credentials you used to install the app. Only users with the correct privileges in the account can access the LandingLens app.
+16. Paste the URL into a new tab to open the LandingLens app. We recommend bookmarking this URL. you can log in to the app using the Snowflake credentials you used to install the app. Only users with the correct privileges in the account can access the LandingLens app.
    <img src="assets/lai_landinglens_app.png" alt="LAI Lens app" width="800">
    
     
