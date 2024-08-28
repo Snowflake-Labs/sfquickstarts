@@ -63,8 +63,8 @@ Please note that starting and using Kumo as a Snowflake native app will incur me
 * A valid Kumo account installed as a [native Snowflake app](https://app.snowflake.com/marketplace/listing/GZTYZBN5P0/kumo-ai-kumo)  
 * Snowflake’s TPC-DS sample dataset from [https://docs.snowflake.com/en/user-guide/sample-data](https://docs.snowflake.com/en/user-guide/sample-data)
 
-| NOTE:  If you haven’t already done so, please [follow these instructions](https://docs.kumo.ai/docs/installing-kumo-on-spcs) to install Kumo as a native Snowflake app. |
-| :---- |
+> aside positive
+> NOTE:  If you haven’t already done so, please [follow these instructions](https://docs.kumo.ai/docs/installing-kumo-on-spcs) to install Kumo as a native Snowflake app. 
 
 ## Setting Up Data in Snowflake
 
