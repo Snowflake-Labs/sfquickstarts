@@ -34,13 +34,9 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 In our case, we will utilize RelationalAI’s Native App to construct an executable Knowledge graph over a subset of Wikidata to answer natural language queries. 
 
 ### What You’ll Learn
-
 - Loading data from Snowflake into RelationalAI Model
 - Interact with Snowflake Container Service using User-defined Functions
 - Utilize RelationalAI Python Library to execute Queires
-
-### To reproduce the setup using your own data, you'll learn :
-
 - Create a docker image and host it on Snowflake Container Service
 
 ### What You’ll Need
@@ -358,14 +354,12 @@ Note that everything runs securely in the user’s  Snowflake account on snowpar
 
 Follow the below steps to launch End-to-End Demo Setup.
 
-
 > **_NOTE:_** User's Role permissions <br>
 > Users should have access to role "kgqa_public" in their snowflake account, which has ownership and usage access similar to "accountadmin". Follows ths steps mentioned [here](https://docs.snowflake.com/en/user-guide/security-access-control-configure#create-a-role) to create a new role. 
  
-### SETTING THE ENVIRONMENT VARIABLES
+#### SETTING THE ENVIRONMENT VARIABLES
 
 **Here, <your_project_repository> is the path to the local directory where <git_repo> has been cloned.**
-
 
 ```sh
 export SETUP_PATH="<your_project_directory>/kgqa_demo_setup/kgqa_setup"
@@ -380,6 +374,7 @@ cd $SETUP_PATH
 #### STEP 2 : Populate all Snowflake config parameters 
 
 - Update the config parameters in the config file ['config.json'](https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_setup/config.json)
+
 > **_NOTE:_** Anything prefixed with 'temp_' can be customized by the user, along with Snowflake 'account' and 'sf_login_email'. 
 
 **Everything else should remain unchanged.**
@@ -391,6 +386,7 @@ cd $SETUP_PATH
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ sf_db_initialization
 ```
+
 This step will automatically download [triplets](https://kgqa-wikidata.s3.us-east-2.amazonaws.com/wiki_sample_snapshot/claims.csv) and [labels](https://kgqa-wikidata.s3.us-east-2.amazonaws.com/wiki_sample_snapshot/labels.csv) files from AWS S3 Bucket and load the data in Snowflake.
 
 > **_NOTE:_** To execute SQL commands in Snowflake Worksheet, you first need to select a database. Initially, this could be any database. Later in the script, you will create a custom database and switch to it for subsequent commands.
@@ -447,7 +443,7 @@ Now, we are all set to run the Demo notebook!
 Follow the below steps to launch End-to-End pipeline as a Service on Snowflake and interact with it.
 
 
-### SETTING THE ENVIRONMENT VARIABLES
+#### SETTING THE ENVIRONMENT VARIABLES
 
 **Here, <your_project_repository> is the path to the local directory where <git_repo> has been cloned.**
 
@@ -457,12 +453,12 @@ export SETUP_PATH="<your_project_directory>/kgqa_demo_setup/kgqa_setup"
 ```
 
 
-### STEP 1 : Navigate to the KGQA_DOCKER FOLDER
+#### STEP 1 : Navigate to the KGQA_DOCKER FOLDER
 ```sh
 cd <your_project_directory>/kgqa_docker/
 ```
 
-### STEP 2 : Populate all SF config parameters
+#### STEP 2 : Populate all SF config parameters
 
 - Update the config parameters in the config file ['config.json'](https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_setup/config.json)
 
@@ -470,7 +466,7 @@ cd <your_project_directory>/kgqa_docker/
 
 **Everything else should remain unchanged.**
 
-### STEP 3 : Initializing database in Snowflake - *Copy Paste Output to SF Worksheet and Run*
+#### STEP 3 : Initializing database in Snowflake - *Copy Paste Output to SF Worksheet and Run*
 
 *Execute the below sf_db_initialization script to produce SQL File to load and populate the Database and Tables in Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)*
 
@@ -483,7 +479,7 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 This step will automatically download [triplets](https://kgqa-wikidata.s3.us-east-2.amazonaws.com/wiki_sample_snapshot/claims.csv) and [labels](https://kgqa-wikidata.s3.us-east-2.amazonaws.com/wiki_sample_snapshot/labels.csv) files from AWS S3 Bucket and load the data in Snowflake.
 
 
-### STEP 4 : Image Repository Creation - *Copy Paste Output to SF Worksheet and Run*
+#### STEP 4 : Image Repository Creation - *Copy Paste Output to SF Worksheet and Run*
 
 An Image Repository in Snowflake is a storage location where you can store and manage container images. These images are like snapshots of applications and their environments, which can be run on Snowflake's platform.
 
@@ -494,7 +490,7 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 ```
 
 
-### STEP 5 : Generate FAISS Index Files
+#### STEP 5 : Generate FAISS Index Files
 
 The Similarity Search using FAISS relies on index files to find the best matching results. These index files must be included in the container image for the search to function properly.
 
@@ -504,7 +500,7 @@ The Similarity Search using FAISS relies on index files to find the best matchin
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ generate_embeddings --option model="e5-base-v2"
 ```
 
-### STEP 6 : Push Image to Snowflake Image Repository
+#### STEP 6 : Push Image to Snowflake Image Repository
 
 *Execute the below build_push_docker_image script to push docker image to Snowflake's Image Repository.*
 
@@ -513,7 +509,7 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 ```
 
 
-### STEP 7 : Launch a Snowflake service - *Copy Paste Output to SF Worksheet and Run*
+#### STEP 7 : Launch a Snowflake service - *Copy Paste Output to SF Worksheet and Run*
 
 *Execute the below create_service script to produce SQL File to create Snowflake Service ( copy-paste on Snowflake SQL Worksheet and RUN)*
 
@@ -536,7 +532,7 @@ In case you encounter any of the following issues, please follow the recommended
 
 
 2. **Model Unavailable Error**
-    The default models during development are lama3.1-70b for Snowflake Complete Task and e5-base-v2 for Snowflake Text Embedding Task. In case these models are not ['available in the region'](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability), go to the script generated [Step 6](#step-6--launch-a-snowflake-service---copy-paste-output-to-sf-worksheet-and-run) and run from Line that says   *"-- test the UDFs with sample inputs"*  with chosen model name in your region.
+    The default models during development are lama3.1-70b for Snowflake Complete Task and e5-base-v2 for Snowflake Text Embedding Task. In case these models are not ['available in the region'](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability), go to the script generated [Step 6](#step-6--launch-a-snowflake-service---copy-paste-output-to-sf-worksheet-and-run) and run from Line that says   *"-- test the UDFs with sample inputs"*  with chosen model name in your region.<br><br>
 
     **2.1** IF the text embedding model is changed from e5-base-v2 to something else, follow the **Steps [5-7]** under heading [Launch a SF Service on Custom Database](#launch-a-sf-service-on-a-custom-database). **Remember to  Switch to *kgqa_docker* folder to follow them, because that is where the Dockerfile is stored !**
 
