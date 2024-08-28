@@ -35,6 +35,8 @@ To learn more, please visit [Kumo’s documentation](https://docs.kumo.ai/docs/w
 
 Graph neural networks (GNNs) are an emerging family of deep learning algorithms that bring together all the advantages from traditional deep learning to graphs. GNNs can learn patterns and relations on a grand scale, combining features from neighboring nodes and training predictive models across the entire network.
 
+![img](assets/gnn_arch.png)
+
 #### What is a Kumo predictive query?
 
 Kumo predictive queries are easy-to-use programming interfaces that automate the major steps in a typical ML pipeline, including target label engineering, feature engineering, model architecture, hyperparameter search, and model deployment. Predictive queries are written using Kumo’s predictive query language (PQL), a SQL-like scripting language for describing ML predictions.
