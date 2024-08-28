@@ -23,7 +23,7 @@ In this quickstart, we will create a Snowflake service using Snowpark Container 
 - Which movie's director was born in the same city as one of the cast members?
 
 
-*This work is a partial reimplementation of the [QirK: Question Answering via Intermediate Representation on Knowledge Graphs paper](https://arxiv.org/abs/2408.07494). The implementation of the paper can be found [here]('https://github.com/jlscheerer/kgqa/tree/main').*
+*This work is a partial reimplementation of the [QirK: Question Answering via Intermediate Representation on Knowledge Graphs paper](https://arxiv.org/abs/2408.07494). The implementation of the paper can be found [here](https://github.com/jlscheerer/kgqa/tree/main).*
 
 ### What Is RelationalAI?
 
