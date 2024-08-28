@@ -21,7 +21,7 @@ Specifically, you will learn how to develop the following two models using Snowf
 - **Customer LTV Prediction**: Predict how much money each customer will spend in the next 30 days
 - **Product Recommendation**: Predict the top 10 products that each user is most likely to buy
 
-![img](assets/image12.png)
+![img](assets/image29.png)
 
 #### What is Kumo?
 
@@ -122,7 +122,7 @@ CREATE TABLE WEB_SITE AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.WEB_S
 
 Once the sample dataset has been created, you will see the new `KUMO_REC_DEMO` database under the Databases pane.
 
-![img](assets/image1.png)
+![img](assets/image21.png)
 
 ## Registering Your Schema in Kumo
 
@@ -135,12 +135,12 @@ After importing the sample dataset into your Snowflake environment, you will sta
 #### Set Up Connector
 
 After logging in to the Kumo app UI with your Snowflake credentials, click on `Connectors` from the left-hand navigation, followed by the `Configure Connector` button in the top right-hand corner. If you have enrolled in multi-factor authentication (MFA), you will need to first approve and configure the app for this to continue.  
-![img](assets/image2.png)
+![img](assets/image36.png)
 
 In the `Snowflake Connector` modal window, provide a unique `Name` for your connector, as well as your `Account Identifier`, `User`, and `Password`.
 
-| NOTE: You can identify your `Account Identifier` by analyzing the URL of your Kumo app:  ![img](assets/image3.png) |
-| :---- |
+> aside positive
+> NOTE: You can identify your `Account Identifier` by analyzing the URL of your Kumo app: ![img](assets/image32.png)
 
 Input the following values for the remaining fields:
 
