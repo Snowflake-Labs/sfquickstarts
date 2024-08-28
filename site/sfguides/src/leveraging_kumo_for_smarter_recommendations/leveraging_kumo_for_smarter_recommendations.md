@@ -21,7 +21,7 @@ Specifically, you will learn how to develop the following two models using Snowf
 - **Customer LTV Prediction**: Predict how much money each customer will spend in the next 30 days
 - **Product Recommendation**: Predict the top 10 products that each user is most likely to buy
 
-![][image12]
+![img](assets/image12.png)
 
 #### What is Kumo?
 
