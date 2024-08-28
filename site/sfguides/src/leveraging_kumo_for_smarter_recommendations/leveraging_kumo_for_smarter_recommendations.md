@@ -148,31 +148,31 @@ Input the following values for the remaining fields:
 * Warehouse: `WAREHOUSE SMALL`  
 * Schema: `TPCDS_WEB_MINI`
 
-![img](assets/image4.png)
+![img](assets/image17.png)
 
 Click on the `Done` button to finish creating your connector. You should now see your new connector under the Connectors page.
 
-![img](assets/image5.png)
+![img](assets/image18.png)
 
 #### Register Your Table Schemas
 
 Click on `Tables` from the left-hand navigation, followed by the `Connect Table` button in the top right-hand corner.
 
-![img](assets/image6.png)
+![img](assets/image20.png)
 
 You will now connect your first table: **CUSTOMERS\_MINI**.
 
 Under `Connector`, make sure the name of the connector you created in the previous step is selected by default. If not, use the drop-down menu to select it; the options for the `Source Table` drop-down menu will then be populated with the five tables required for this quickstart. 
 
-![img](assets/image7.png)
+![img](assets/image12.png)
 
 Under `Source Table`, select the `CUSTOMERS_MINI` table—Kumo will then automatically fill in the `Name` value (you can accept the default) and load the table’s pre-processing settings for you to configure. Provide an optional description for your table. Set the `C_CUSTOMER_SK` column as the primary key and its Type to `ID`.
 
-![img](assets/image8.png)
+![img](assets/image1.png)
 
 Click the `Save` button to continue. You will be routed to your new table’s detail page. Click on the `Connect Another Table` button to connect the rest of your tables.
 
-![img](assets/image9.png)
+![img](assets/image13.png)
 
 Follow the same steps to create each of the remaining tables (**CUSTOMER\_DEMOGRAPHICS**, **ITEMS\_MINI**, **WEB\_SALES\_MINI**, **WEB\_SITE**). When creating these tables, please take note of the following per table settings:
 
@@ -187,16 +187,16 @@ After creating your last table, click on the `Create Graph` button in the top ri
 
 On the `Graph Setup` page, provide a name and optional description for your graph. Select the `WEB_SITE`, `WEB_SALES_MINI`, `ITEMS_MINI`, `CUSTOMER_DEMOGRAPHICS`, and `CUSTOMERS_MINI` tables to add them to your new Kumo graph
 
-![img](assets/image10.png)
+![img](assets/image7.png)
 
 Click the `Next` button to continue.
 
 On the `Set Links Between Tables` page, set the following linkages between your tables:
 
-![img](assets/image11.png)
+![img](assets/image31.png)
 
 Your data model graph links should look like the following when you are done:  
-![img](assets/image12.png)
+![img](assets/image29.png)
 
 Click the `Complete Graph Creation` button to continue.
 
@@ -228,7 +228,7 @@ FOR EACH CUSTOMERS_MINI.C_CUSTOMER_SK
 
 Click on `Predictive Queries` from the left-hand navigation, followed by the `Write Predictive Queries` button in the top right-hand corner.
 
-![img](assets/image13.png)
+![img](assets/image11.png)
 
 On the `Predictive Query` page, provide a name and option description for your predictive query. Under `Graph Source`, select the graph you just created in the previous step.
 
@@ -243,15 +243,15 @@ Once you have inserted a valid predictive query, Kumo will display the task type
 
 Click on the `Next` button in the top right-hand corner to continue.
 
-![img](assets/image14.png)
+![img](assets/image5.png)
 
 On the `Model Plan` page, you can review your `Run Mode` and `Model Planner` settings. You can accept the default values on this page. Click the `Save and Train` button in the top right-hand corner.
 
-![img](assets/image15.png)
+![img](assets/image27.png)
 
 Once the predictive query starts the training process, you will be routed to your predictive query’s training page, where you can monitor its progress in real-time.
 
-![img](assets/image16.png)
+![img](assets/image24.png)
 
 #### Predicting What Products to Recommend
 
@@ -260,7 +260,9 @@ Once you have generated your predictions for customer LTV, you can then extract 
 ###### What is a link prediction problem?
 
 The recommendation problem forms a bipartite graph between users and items, where nodes represent the users and items, and edges represent the user-item interactions. Edges often come with timestamps. Moreover, multiple edges may exist between pairs of nodes, since a user may repeatedly interact with the same item (e.g., repeat ordering of the same product in e-commerce).  
-![img](assets/image17.png)  
+
+![img](assets/image35.png)  
+
 Given the bipartite graph of the past interactions, a recommendation task can be cast as a link prediction task—one that calls for predicting future interactions between user nodes and item nodes. 
 
 The following PQL statement predicts the top ten products your highest LTV customers are likely to purchase in the next 30 days:
@@ -294,15 +296,15 @@ Once you have inserted a valid predictive query, Kumo will display the task type
 
 Click on the `Next` button in the top right-hand corner to continue.
 
-![img](assets/image18.png)
+![img](assets/image30.png)
 
 On the `Model Plan` page, you can review your `Run Mode` and `Model Planner` settings. You can accept the default values on this page. Click the `Save and Train` button in the top right-hand corner.
 
-![img](assets/image19.png)
+![img](assets/image14.png)
 
 Once the predictive query starts the training process, you will be routed to your predictive query’s training page, where you can monitor its progress in real-time.
 
-![img](assets/image20.png)
+![img](assets/image8.png)
 
 ## Evaluating the Model Performance
 
@@ -310,7 +312,7 @@ Duration: 5
 
 Kumo provides a wide range of mechanisms for gauging the efficacy of your predictive models. On the `Training` tab of your predictive query, Kumo will display various metrics and statistics explaining the results of various neural architecture experiments and model planner parameters.
 
-![img](assets/image21.png)
+![img](assets/image19.png)
 
 #### The Evaluation Tab
 
@@ -324,25 +326,25 @@ Please note that due to the randomly generated nature of the TPC-DS dataset, you
 
 ###### Accessing Your Holdout Predictions in Snowpark
 
-To access your holdout predictions in Snowpark, first click the `Copy` ![img](assets/image23.png) icon in the message directly under the `Evaluation` tab to copy the command to your clipboard.
+To access your holdout predictions in Snowpark, first click the `Copy` ![img](assets/image4.png) icon in the message directly under the `Evaluation` tab to copy the command to your clipboard.
 
-![img](assets/image24.png)
+![img](assets/image16.png)
 
 Log in to your Snowflake account’s Snowsight interface and create a new Python worksheet by clicking on either of the Python Worksheet links/buttons.  
-![img](assets/image25.png)
+![img](assets/image15.png)
 
 Snowsight will load a barebones Python worksheet with some sample code in place. Paste the code from your predictive query’s `Evaluation` tab (currently in your clipboard) into the worksheet, inside the `main` handler. Be sure to keep the `dataframe.show()` and `return dataframe` lines in place so your results appear in the `Results` tab.
 
-![img](assets/image26.png)
+![img](assets/image10.png)
 
 Click the `Run` button in the top right-hand corner. You should now see your prediction results in the `Results` tab of your Python worksheet.  
-![img](assets/image27.png)
+![img](assets/image2.png)
 
 #### The Explorer Tab
 
 If you click on the `Explorer` tab of your predictive query’s detail page, you can view specific insights regarding individual entity-level predictions. For example, in the case of predicting top recommendation (a link prediction task), Kumo will display a list of selectable entity categories for viewing and comparing predictions against historical and ground truth data. You can also analyze the importance score that indicates the significance of each column in the prediction
 
-![img](assets/image28.png)
+![img](assets/image34.png)
 
 Please refer to [Kumo’s documentation](https://docs.kumo.ai/docs/explorer) to learn more about the `Explorer` tab.
 
@@ -352,37 +354,37 @@ Duration: 10
 
 After training your predictive query, you can set up a batch prediction workflow and jobs to run your predictive query on a regular basis. From your predictive query’s detail page, click on `Create BP Workflow` in the top right-hand corner.
 
-![img](assets/image29.png)
+![img](assets/image33.png)
 
 From the `Create a Batch Prediction Workflow` page, provide a name for your batch prediction workflow and an optional description. Make sure that your predictive query is selected in the `PQuery` drop-down menu. You can also click the `Edit PQuery Filters` to override some of your initial predictive query filters for your batch prediction.
 
-![img](assets/image30.png)  
+![img](assets/image23.png)  
 Click on the `Create` button on the top right-hand corner to finish creating your batch prediction workflow.
 
 On your new batch prediction workflow’s detail page, click on the `Run Batch Prediction Job` button to configure your batch prediction job settings.  
-![img](assets/image31.png)
+![img](assets/image3.png)
 
 In the Job Settings modal window, you can provide a `Prediction Anchor Time`, or starting date for your predictions. For this quickstart, leave `Prediction Anchor Time` blank (Kumo will use the latest timestamp in the fact table specified by your predictive query’s target formula) and accept all the default values, but make sure that the connector you created previously is selected under the `Connector` drop-down menu.
 
 Kumo will write your batch predictions to your Snowflake environment, in the table specified under `Table Name` (in this case, `SSC_QUICKSTART_REC_PREDICTIONS`).
 
-![img](assets/image32.png)
+![img](assets/image25.png)
 
 Click the `Submit` button to start your batch prediction job. You will be routed to your batch prediction job’s detail page, where you can monitor its progress in real-time.
 
-![img](assets/image33.png)
+![img](assets/image26.png)
 
-Once your batch prediction job is completed, copy the `Output Destination` to your clipboard by clicking on the `Copy`![img](assets/image34.png) button.
+Once your batch prediction job is completed, copy the `Output Destination` to your clipboard by clicking on the `Copy`![img](assets/image28.png) button.
 
-![img](assets/image35.png)
+![img](assets/image37.png)
 
 Log in to your Snowflake account’s Snowsight interface and create a new SQL worksheet by clicking on either of the SQL Worksheet links/buttons.
 
-![img](assets/image36.png)
+![img](assets/image9.png)
 
 Snowsight will load a blank SQL worksheet. Paste your batch prediction job’s  `Output Destination` (currently in your clipboard) into the worksheet and click the `Run` button in the top right-hand corner. Your batch predictions should appear in the `Results` tab of your SQL worksheet.
 
-![img](assets/image37.png)
+![img](assets/image38.png)
 
 For production use cases, your batch prediction jobs can be automated and integrated into a custom application using Kumo’s REST API, or used to power notifications through a multi-channel provider such as Braze.
 
