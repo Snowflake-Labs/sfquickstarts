@@ -340,11 +340,15 @@ Users may already have  their data in Snowflake. RelationalAI runs within the us
 - IR represents the keywords in the framed question logically. Here the keywords are “director” and “John krasinski”. We use similarity search ( Facebook AI Similarity - FAISS ) to match these keywords to their closest equivalent  entities and relationships in the underlying Wikidata Knowledge Graph. 
     - In this example, we retrieve the top two most similar results for each keyword. 
     - For each match, there is a corresponding ID, which is the Wikidata ID assigned to each property and entity.
-    - So here - “director” is mapped to [ “director” (P57) and “director of photography” (P344)]
-    - “John Krasinski” is mapped to [“John Krasinski” (Q313039) and “John Carpenter” (Q95008) ]
+    - So here :
+        - “director” is mapped to [ “director” (P57) and “director of photography” (P344)]
+        - “John Krasinski” is mapped to [“John Krasinski” (Q313039) and “John Carpenter” (Q95008) ]
+    - As we can see, Similarity Search returns the top 2 potential matches for each keyword. These matches are then checked against the Knowledge Graph, and the match that satisfies all the query criteria and exists in the underlying Knowledge Graph is presented as the probable answer - in this case, “director” and “John Krasinski” which are the desired outputs. 
     - Note that we began with a natural language question, and the system was able to map it to the corresponding Wikidata IDs on its own.
 - The natural language question, Intermediate Representation, and similarity search results are then fed as input to Snowflake Cortex AI which outputs the RelationalAI Python query. 
-- This query is then directly executed on RelationalAI’s Model and the result is returned to the user. Note that everything runs securely in the user’s  Snowflake account on snowpark container services. Given that at the end we are executing a query on a Knowledge Graph, the answer is guaranteed to exist in our dataset, otherwise nothing will be returned.
+- This query is then directly executed on RelationalAI’s Model and the result is returned to the user.  Based on the current Wikidata snapshot, "A Quiet Place" is the expected answer for this question.
+
+Note that everything runs securely in the user’s  Snowflake account on snowpark container services. Given that at the end we are executing a query on a Knowledge Graph, the answer is guaranteed to exist in our dataset, otherwise nothing will be returned.
 
 
 
@@ -360,7 +364,7 @@ Follow the below steps to launch End-to-End Demo Setup.
  
 ### SETTING THE ENVIRONMENT VARIABLES
 
-**<your_project_repository> is the path to the local directory where <git_repo> has been cloned.**
+**Here, <your_project_repository> is the path to the local directory where <git_repo> has been cloned.**
 
 
 ```sh
@@ -376,11 +380,13 @@ cd $SETUP_PATH
 #### STEP 2 : Populate all Snowflake config parameters 
 
 - Update the config parameters in the config file ['config.json'](https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_setup/config.json)
-> **_NOTE:_** Anything prefixed with **temp_** can be customized by the user, along with **account and sf_login_email**. *Everything else should remain unchanged*.
+> **_NOTE:_** Anything prefixed with 'temp_' can be customized by the user, along with Snowflake 'account' and 'sf_login_email'. 
+
+**Everything else should remain unchanged.**
 
 #### STEP 3 : Initializing database in Snowflake - *Copy Paste Output to SF Worksheet and Run*
 
-*Execute the below **sf_db_initialization** script to produce SQL File to load and populate the Database and Tables in Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)*
+*Execute the below sf_db_initialization script to produce SQL File to load and populate the Database and Tables in Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)*
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ sf_db_initialization
@@ -393,7 +399,7 @@ This step will automatically download [triplets](https://kgqa-wikidata.s3.us-eas
 
 An Image Repository in Snowflake is a storage location where you can store and manage container images. These images are like snapshots of applications and their environments, which can be run on Snowflake's platform.
 
-*Execute the below **create_image_repo** script to produce SQL File to create Image Repository on Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)*
+*Execute the below create_image_repo script to produce SQL File to create Image Repository on Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)*
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ create_image_repo
@@ -401,7 +407,7 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 
 #### STEP 5 : Push Image to Snowflake Image Repository
 
-*Execute the below **build_push_docker_image** script to push docker image to Snowflake's Image Repository.*
+*Execute the below build_push_docker_image script to push docker image to Snowflake's Image Repository.*
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ build_push_docker_image --option push_only=True
@@ -412,7 +418,7 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 
 #### STEP 6 : Launch a Snowflake service - *Copy Paste Output to SF Worksheet and Run*
 
-*Execute the below **create_service** script to produce SQL File to create Snowflake Service ( copy-paste on Snowflake SQL Worksheet and RUN)*
+*Execute the below create_service script to produce SQL File to create Snowflake Service ( copy-paste on Snowflake SQL Worksheet and RUN)*
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ create_service
@@ -431,21 +437,7 @@ Now, we are all set to run the Demo notebook!
 
 > **_NOTE:_** After running the 1st cell, you will be prompted to enter your Snowflake account password. Please check the top-center of the screen to enter the password. 
 
-<!-- ------------------------ -->
-
-## Troubleshooting
-
-In case you encounter any of the following issues, please follow the recommended steps:
-
-1. **Server Overload Error**
-   If the Snowflake server becomes unresponsive and shows a 'Server overloaded' error:
-   - To resolve the issue, run [Step 6](#step-6--launch-a-snowflake-service---copy-paste-output-to-sf-worksheet-and-run) from Line that says *"DROP SERVICE IF EXISTS <service_name_defined_in_config>;"*
-
-
-2. **Model Unavailable Error**
-    The default models during development are lama3.1-70b for Snowflake Complete Task and e5-base-v2 for Snowflake Text Embedding Task. In case these models are not ['available in the region'](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability), go to the script generated [Step 6](#step-6--launch-a-snowflake-service---copy-paste-output-to-sf-worksheet-and-run) and run from Line that says   *"-- test the UDFs with sample inputs"*  with chosen model name in your region.
-
-    **2.1** IF the text embedding model is changed from e5-base-v2 to something else, follow the **Steps [5-7]** under heading [Launch a SF Service on Custom Database](#launch-a-sf-service-on-a-custom-database). **Remember to  Switch to *kgqa_docker* folder to follow them !**
+<img src="./assets/kgqa_demo_nb.png" alt="KGQA Example" width="1400">
 
 <!-- ------------------------ -->
 
@@ -457,7 +449,7 @@ Follow the below steps to launch End-to-End pipeline as a Service on Snowflake a
 
 ### SETTING THE ENVIRONMENT VARIABLES
 
-**<your_project_repository> is the path to the local directory where <git_repo> has been cloned.**
+**Here, <your_project_repository> is the path to the local directory where <git_repo> has been cloned.**
 
 
 ```sh
@@ -474,11 +466,13 @@ cd <your_project_directory>/kgqa_docker/
 
 - Update the config parameters in the config file ['config.json'](https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_setup/config.json)
 
-> **_NOTE:_** Anything prefixed with **temp_** can be customized by the user, along with **account and sf_login_email**. *Everything else should remain unchanged*.
+> **_NOTE:_** Anything prefixed with 'temp_' can be customized by the user, along with Snowflake 'account' and 'sf_login_email'. 
+
+**Everything else should remain unchanged.**
 
 ### STEP 3 : Initializing database in Snowflake - *Copy Paste Output to SF Worksheet and Run*
 
-*Execute the below **sf_db_initialization** script to produce SQL File to load and populate the Database and Tables in Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)*
+*Execute the below sf_db_initialization script to produce SQL File to load and populate the Database and Tables in Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)*
 
 > **_NOTE:_** To execute SQL commands in Snowflake Worksheet, you first need to select a database. Initially, this could be any database. Later in the script, you will create a custom database and switch to it for subsequent commands.
 
@@ -493,7 +487,7 @@ This step will automatically download [triplets](https://kgqa-wikidata.s3.us-eas
 
 An Image Repository in Snowflake is a storage location where you can store and manage container images. These images are like snapshots of applications and their environments, which can be run on Snowflake's platform.
 
-*Execute the below **create_image_repo** script to produce SQL File to create Image Repository on Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)*
+*Execute the below create_image_repo script to produce SQL File to create Image Repository on Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)*
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ create_image_repo
@@ -504,7 +498,7 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 
 The Similarity Search using FAISS relies on index files to find the best matching results. These index files must be included in the container image for the search to function properly.
 
-*Execute the below **generate_embeddings** script to create the index files*
+*Execute the below generate_embeddings script to create the index files*
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ generate_embeddings --option model="e5-base-v2"
@@ -512,7 +506,7 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 
 ### STEP 6 : Push Image to Snowflake Image Repository
 
-*Execute the below **build_push_docker_image** script to push docker image to Snowflake's Image Repository.*
+*Execute the below build_push_docker_image script to push docker image to Snowflake's Image Repository.*
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ build_push_docker_image
@@ -521,7 +515,7 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 
 ### STEP 7 : Launch a Snowflake service - *Copy Paste Output to SF Worksheet and Run*
 
-*Execute the below **create_service** script to produce SQL File to create Snowflake Service ( copy-paste on Snowflake SQL Worksheet and RUN)*
+*Execute the below create_service script to produce SQL File to create Snowflake Service ( copy-paste on Snowflake SQL Worksheet and RUN)*
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ create_service
@@ -529,6 +523,22 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 
 > **_NOTE:_** After running the "*CREATE SERVICE ..*" command in SF Worksheet, wait for the service to get **Status="READY"** ( takes around 3-4 minutes ) before creating the UDFs and testing them in the below Worksheet.
 
+
+<!-- ------------------------ -->
+
+## Troubleshooting
+
+In case you encounter any of the following issues, please follow the recommended steps:
+
+1. **Server Overload Error**
+   If the Snowflake server becomes unresponsive and shows a 'Server overloaded' error:
+   - To resolve the issue, run [Step 6](#step-6--launch-a-snowflake-service---copy-paste-output-to-sf-worksheet-and-run) from Line that says *"DROP SERVICE IF EXISTS <service_name_defined_in_config>;"*
+
+
+2. **Model Unavailable Error**
+    The default models during development are lama3.1-70b for Snowflake Complete Task and e5-base-v2 for Snowflake Text Embedding Task. In case these models are not ['available in the region'](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability), go to the script generated [Step 6](#step-6--launch-a-snowflake-service---copy-paste-output-to-sf-worksheet-and-run) and run from Line that says   *"-- test the UDFs with sample inputs"*  with chosen model name in your region.
+
+    **2.1** IF the text embedding model is changed from e5-base-v2 to something else, follow the **Steps [5-7]** under heading [Launch a SF Service on Custom Database](#launch-a-sf-service-on-a-custom-database). **Remember to  Switch to *kgqa_docker* folder to follow them, because that is where the Dockerfile is stored !**
 
 <!-- ------------------------ -->
 
