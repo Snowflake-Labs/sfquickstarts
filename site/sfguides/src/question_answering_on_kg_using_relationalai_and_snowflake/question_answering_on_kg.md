@@ -355,7 +355,7 @@ Users may already have  their data in Snowflake. RelationalAI runs within the us
 Follow the below steps to launch End-to-End Demo Setup.
 
 
-> **_NOTE:_** User's Role permissions 
+> **_NOTE:_** User's Role permissions <br>
 > Users should have access to role "kgqa_public" in their snowflake account, which has ownership and usage access similar to "accountadmin". Follows ths steps mentioned [here](https://docs.snowflake.com/en/user-guide/security-access-control-configure#create-a-role) to create a new role. 
  
 ### SETTING THE ENVIRONMENT VARIABLES
