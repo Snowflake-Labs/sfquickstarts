@@ -16,7 +16,7 @@ Duration: 5
 
 In this guide, you will use Kumo as a Snowflake native app to recommend the top ten products your highest value customers are most likely to buy. These predictions can be used to make product recommendations that users are more likely to buy, leading to increase engagement and sales.
 
-Specifically, you will learn how to develop the following two models using Snowflake's TPC-DS dataset.
+Specifically, you will learn how to develop the following two models using Snowflake's TPC-DS retail dataset.
 
 - **Customer LTV Prediction**: Predict how much money each customer will spend in the next 30 days
 - **Product Recommendation**: Predict the top 10 products that each user is most likely to buy
@@ -45,7 +45,7 @@ Kumo predictive queries are easy-to-use programming interfaces that automate the
 
 In summary, you will learn how to:
 
-* Connect the standard Snowflake retail dataset  
+* Connect Snowflake's TPC-DS retail dataset  
 * Create Kumo predictive queries to predict your highest value customers (i.e., highest “lifetime value” customers) and the products they are most likely to buy in the next 30 days  
 * Train your predictive queries  
 * Evaluate your predictive models using Kumo’s explainable AI tools   
