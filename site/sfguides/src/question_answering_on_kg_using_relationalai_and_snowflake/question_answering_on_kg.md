@@ -22,7 +22,6 @@ In this quickstart, we will create a Snowflake service using Snowpark Container 
 - Name a movie directed by Quentin Tarantino or Martin Scorsese that has De Niro as a cast member
 - Which movie's director was born in the same city as one of the cast members?
 
-
 *This work is a partial reimplementation of the [QirK: Question Answering via Intermediate Representation on Knowledge Graphs paper](https://arxiv.org/abs/2408.07494). The implementation of the paper can be found [here](https://github.com/jlscheerer/kgqa/tree/main).*
 
 ### What Is RelationalAI?
@@ -33,13 +32,16 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 
 In our case, we will utilize RelationalAI’s Native App to construct an executable Knowledge graph over a subset of Wikidata to answer natural language queries. 
 
-### What You’ll Learn
-- Loading data from Snowflake into RelationalAI Model
-- Interact with Snowflake Container Service using User-defined Functions
-- Utilize RelationalAI Python Library to execute Queires
-- Create a docker image and host it on Snowflake Container Service
 
-### What You’ll Need
+### What You will Learn
+
+- Loading data from Snowflake into RelationalAI Model
+- Interact with Snowpark Container Service using External Functions
+- Utilize RelationalAI Python Library to execute queries
+- Create a docker image and host it on Snowpark Container Service
+
+
+### What You will Need
 - A [Snowflake](https://www.snowflake.com/) Account
 - An IDE (such as [Visual Studio Code](https://code.visualstudio.com/))
 - A [Snowflake account](https://trial.snowflake.com/) with `ACCOUNTADMIN` and `KGQA_PUBLIC` access
@@ -51,7 +53,7 @@ In our case, we will utilize RelationalAI’s Native App to construct an executa
 - [Docker Setup](https://docs.docker.com/desktop/install/mac-install/)
 
 
-### What You’ll Build
+### What You will Build
 - A Question Answering System on Knowledge Graphs using RelationalAI and Snowflake Cortex AI
 
 
@@ -470,14 +472,13 @@ cd <your_project_directory>/kgqa_docker/
 
 *Execute the below sf_db_initialization script to produce SQL File to load and populate the Database and Tables in Snowflake ( copy-paste on Snowflake SQL Worksheet and Run)*
 
-> **_NOTE:_** To execute SQL commands in Snowflake Worksheet, you first need to select a database. Initially, this could be any database. Later in the script, you will create a custom database and switch to it for subsequent commands.
+> **_NOTE:_** 
+- To execute SQL commands in Snowflake Worksheet, you first need to select a database. Initially, this could be any database. Later in the script, you will create a custom database and switch to it for subsequent commands. <br>
+- You may already have your custom data in Snowflake, as outlined in the [DB File](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo_setup/kgqa_setup/sf_db_initialization.py). The setup requires four tables. For the schema details, refer to the "CREATE OR REPLACE TABLE..." commands in the file.
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ sf_db_initialization
 ```
-
-This step will automatically download [triplets](https://kgqa-wikidata.s3.us-east-2.amazonaws.com/wiki_sample_snapshot/claims.csv) and [labels](https://kgqa-wikidata.s3.us-east-2.amazonaws.com/wiki_sample_snapshot/labels.csv) files from AWS S3 Bucket and load the data in Snowflake.
-
 
 #### STEP 4 : Image Repository Creation - *Copy Paste Output to SF Worksheet and Run*
 
