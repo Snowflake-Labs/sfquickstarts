@@ -78,15 +78,17 @@ Duration: 10
 ## Conclusion And Resources
 Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+Snowflake ML offers a comprehensive, integrated platform for end-to-end machine learning, allowing data scientists and ML engineers to develop and deploy scalable models seamlessly, all within a governed data environment. With the Snowpark ML Python library, you can build and manage your ML pipelines without the need for data movement or compromising on governance.
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+This Quickstart has demonstrated how to execute an entire ML experiment cycle—from feature creation to model training and inference—while highlighting key features such as the Snowflake Feature Store, Dataset, ML Lineage, Snowpark ML Modeling, and the Snowflake Model Registry.
+
+Ready to elevate your machine learning projects? Dive into the full potential of Snowflake ML and start transforming your data into actionable insights today. Check out the links below to get started and explore more advanced capabilities.
 
 ### What You Learned
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- The key features of Snowflake Feature Store including [entities](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/entities) and [feature views](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/feature-views).
+- How to train a model using [Snowpark ML Modeling](https://docs.snowflake.com/en/developer-guide/snowpark-ml/modeling)
+- Learn how to use ML Lineage in Snowflake
+- How to log and reference models using [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview)
 
 ### Related Resources
 - [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
