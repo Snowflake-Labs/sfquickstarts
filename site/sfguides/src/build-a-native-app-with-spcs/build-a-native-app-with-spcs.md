@@ -7,12 +7,12 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Applications, Native Apps, Snowpark Container Services, SPCS 
 
-# Build a Native App with SPCS
+# Build a Native App with Snowpark Container Service
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
 
-The Snowflake Native App Framework is a powerful way for application providers to build, deploy and market applications via the Snowflake Marketplace.  In this example you will learn how to incorporate Snowpark Container Services into a Native App allowing you to deploy a variety of new capabilities to Native App consumers.  
+The Snowflake Native App Framework is a powerful way for application providers to build, deploy and market applications via the Snowflake Marketplace.  In this example you will learn how to incorporate Snowpark Container Services into a Snowflake Native App allowing you to deploy a variety of new capabilities to the app consumers' Snowflake account.  
 
 
 ### Prerequisites
@@ -28,10 +28,10 @@ The Snowflake Native App Framework is a powerful way for application providers t
 
 
 ### What You’ll Learn 
-- How to create a Native App using the Snowflake Native App framework
+- How to create an app using the Snowflake Native App framework
 - How to build and push container images to a Snowflake account
-- How to integrate those images into a Native App and allow consumers to create Services
-- How to test the Native App Provider and Consumer experience within a single Snowflake account
+- How to integrate those images into a Snowflake Native App and allow consumers to create Services
+- How to test the Snowflake Native App Provider and Consumer experience within a single Snowflake account
 
 
 ### What You’ll Need 
@@ -53,29 +53,19 @@ TPC-H 100 data set and returns the top sales clerks. The frontend provides date 
 ## Snowflake Account Setup & Application Code
 Duration: 5
 ### Overview
-In preparation for building our Native App we need to create a security integration for to allow for authentication.  You will also need to download the code artifacts for the Native App along with the files to create our Container images from Github.  
+In preparation for building our Snowflake Native App you will need to download the code artifacts for the Native App along with the files to create our Container images from Github.  
 
-### Step 2.1 - Create Security Integration
-Run the following command as ACCOUNTADMIN to create the required Security Integration
-```sql
-use role accountadmin;
-create security integration if not exists snowservices_ingress_oauth
-  type=oauth
-  oauth_client=snowservices_ingress
-  enabled=true;
-```
-
-### Step 2.2 - Clone or Download Github Repo
+### Step 2.1 - Clone or Download Github Repo
 The code for the Native App and Container Images are on Github. Start by cloning or downloading the repository into a separate folder. 
 ```shell
 git clone https://github.com/Snowflake-Labs/sfguide-build-a-native-app-with-spcs
 ```
 
 <!-- ------------------------ -->
-## Native App Provider Setup 
+## Provider Setup 
 Duration: 5
 ### Overview
-To simulate the Native App Provider experience we will create a role called 'naspcs_role' and grant it the necessary privileges required to create an [Application Package](https://docs.snowflake.com/en/developer-guide/native-apps/creating-app-package) as well as create a database that will store both our Native App code and Snowpark Container Service Images.  
+To simulate an app provider experience we will create a role called 'naspcs_role' and grant it the necessary privileges required to create an [Application Package](https://docs.snowflake.com/en/developer-guide/native-apps/creating-app-package) as well as create a database that will store both our app code and Snowpark Container Service Images.  
 
 ### Step 3.1 - Create NASPCS role and Grant Privileges
 
@@ -103,10 +93,10 @@ create warehouse if not exists wh_nap with warehouse_size='xsmall';
 ```
 
 <!-- ------------------------ -->
-## Native Consumer Provider Setup 
+## Consumer Privilege Setup 
 Duration: 5
 ### Overview
-To simulate the Native App Consumer experience we will create a role called 'nac' and grant it the necessary privileges required to create Applications as well as set up a database to house the data we'll be querying with our Native App.  
+To simulate the app consumer experience we will create a role called 'nac' and grant it the necessary privileges required to create Applications as well as set up a database to house the data we'll be querying with our Snowflake Native App.  
 
 ### Step 4.1 - Create NAC role and Grant Privileges
 ```sql
@@ -135,7 +125,7 @@ create view if not exists orders as select * from snowflake_sample_data.tpch_sf1
 ## Build and Upload Container Images
 Duration: 10
 ### Overview
-Now that we have a place in our Snowflake account to house our application code and images we need to build the images and push them to our Image Repository.  We'll then upload our Native App files that detail how to install, setup and configure the Native App.  
+Now that we have a place in our Snowflake account to house our application code and images we need to build the images and push them to our Image Repository.  We'll then upload our app files that detail how to install, setup and configure the Snowflake Native App.  
 
 ### Step 5.1 - Get Image Repository URL 
 The code for this Quickstart has shipped with a shell script called 'configuration.sh' that you will use to tell our build process where to upload our Images.  The first step is to find our Image Repository URL which can be accomplished by running the following queries in your Snowflake account. 
@@ -191,8 +181,8 @@ If the Makefile approach doesn't work you can run the following commands to buil
     docker push <SNOWFLAKE_REPO>/eap_router
 ```
 
-### Step 5.3 - Upload Native App Code
-After the Image upload process completes the code we'll use to build our Native App package needs to be uploaded to the **SPCS_APP.NAPP.APP_STAGE** stage.  This can be accomplished by navigating to this stage using Snowsight - click on the 'Database' icon on the left side navigation bar and then on the **SPCS_APP database > NAPP schema > APP_STAGE stage**.  You will need to do the following: 
+### Step 5.3 - Upload App Code
+After the Image upload process completes the code we'll use to build our App package needs to be uploaded to the **SPCS_APP.NAPP.APP_STAGE** stage.  This can be accomplished by navigating to this stage using Snowsight - click on the 'Database' icon on the left side navigation bar and then on the **SPCS_APP database > NAPP schema > APP_STAGE stage**.  You will need to do the following: 
 1. Click on 'Select Warehouse' and choose 'WH_NAP' for the Warehouse 
 2. Click on the '+ Files' button in the top right corner 
 3. Browse to the location where you cloned or downloaded the Github repo and into the '/app/src' folder
@@ -207,7 +197,7 @@ When this is done succesfully your SPCS_APP.NAPP.APP_STAGE should look like the 
 ## Create Application Package
 Duration: 10 
 ### Overview
-With all of our Native App assets uploaded to our Snowflake account we can now create our Application Package using our Provider role.  Since we're doing this in a single Snowflake account we will also grant the Consumer role privileges to install it. 
+With all of our Snowflake Native App assets uploaded to our Snowflake account we can now create our Application Package using our Provider role.  Since we're doing this in a single Snowflake account we will also grant the Consumer role privileges to install it. 
 
 ### Step 6.1 - Create Application Package and Grant Consumer Role Privileges
 ```sql
@@ -221,9 +211,9 @@ grant install, develop on application package spcs_app_pkg to role nac;
 ## Install & Run Application 
 Duration: 10 
 ### Overview
-We can now use the Consumer role to install our Native App - but to get it fully deployed we will also need to create a Compute Pool for our Snowpark Containers to run on as well as start the Service.  
+We can now use the Consumer role to install our Snowflake Native App - but to get it fully deployed we will also need to create a Compute Pool for our Snowpark Containers to run on as well as start the Service.  
 
-### Step 7.1 - Install Native App
+### Step 7.1 - Install App as the Consumer
 ```sql 
 use role nac;
 create application spcs_app_instance from application package spcs_app_pkg using version v1;
@@ -296,12 +286,12 @@ Congratulations!  You've now deployed a Snowflake Native App that includes Snowp
 
 ### What we've covered
 In this Quickstart we covered the following: 
-- How to create a Native App using the Snowflake Native App framework
+- How to create an app using the Snowflake Native App Framework
 - How to build and push container images to a Snowflake account
-- How to integrate those images into a Native App and allow consumers to create Services
-- How to test the Native App Provider and Consumer experience within a single Snowflake account
+- How to integrate those images into a Snowflake Native App and allow consumers to create Services
+- How to test the Snowflake Native App Provider and Consumer experience within a single Snowflake account
 
-This Quickstart can provide a template for you to accomplish the basic steps of building a Native App that includes a Snowpark Container Service to deploy & monetize whatever unique code to your Snowflake consumers accounts.  
+This Quickstart can provide a template for you to accomplish the basic steps of building a Snowflake Native App that includes a Snowpark Container Service to deploy & monetize whatever unique code to your Snowflake consumers accounts.  
 
 ### Related Resources
 - [Snowflake Native Apps](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/?_fsi=vZHZai1N&_fsi=vZHZai1N&_fsi=vZHZai1N)
