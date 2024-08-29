@@ -1,12 +1,11 @@
 author: Carlos Carrero
-id: ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search
+id: ask_questions_to_your_own_documents_with_snowflake_cortex_search
 summary: Step-by-step guide on how to create a RAG app using Snowflake Cortex Search and Streamlit. 
-categories: featured,getting-started,data-science, gen-ai 
+categories: featured,getting-started,data-science,gen-ai 
 environments: web 
 tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings, Getting Started
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-
 
 # Build a Retrieval Augmented Generation (RAG) based LLM assistant using Streamlit and Snowflake Cortex Search
 
@@ -21,9 +20,6 @@ In this quickstart we will show you how to quickly and securely build a full-sta
 This guide will leverage Cortex Search, a fully managed service that automatically creates embeddings for your data and perform retrievals using a hybrid search engine, using embeddings for semantic similarity plus keyword search for lexical similarity, achieving state-of-the-art retrieval quality.
 
 We will show you how easy it is to implement RAG via a chat assistant that knows everything about products. To make the assistant an expert in your bikes and snow gears, we are going to give it access to a few User Manuals. This template can easily be adapted to other documents that may be more interesting to you whether its financial reports, research documents or anything else! 
-
-### What You Will Build
-The final product includes an application that lets users test how the LLM responds with and without the context document(s) to show how RAG can address hallucinations.  
 
 ![App](assets/qs_cortex_search_intro.gif)
 
@@ -43,6 +39,8 @@ Snowflake Cortex is a fully managed indexing and retrieval service that simplifi
 - How to use LLMs using serverless functions in [Snowflake Cortex AI](https://snowflake.com/cortex)
 - How to build a front-end with Python using [Streamlit in Snowflake](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/)
 
+### What You Will Build
+The final product includes an application that lets users test how the LLM responds with and without the context document(s) to show how RAG can address hallucinations.  
 
 ### Prerequisites
 - Snowflake account in a cloud region where Snowflake Cortex LLM functions are supported
@@ -50,7 +48,7 @@ Snowflake Cortex is a fully managed indexing and retrieval service that simplifi
 - A Snowflake account with [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) enabled by ORGADMIN.
 
 <!-- ------------------------ -->
-## Organize Documents and Create Pre-Processing Functions
+## Organize Documents and Create Pre-Processing Function
 Duration: 15
 
 In Snowflake, databases and schemas are used to organize and govern access to data and logic. Let´s start by getting a few documents locally and then create a database that will hold the PDFs, the functions that will process (extract and chunk) those PDFs and the table that will hold the text and that will be used to create the Cortex Search service. 
@@ -59,14 +57,14 @@ In Snowflake, databases and schemas are used to organize and govern access to da
 
 Let's download a few documents we have created about bikes and skis. In those documents we have added some very specific information about those ficticious models. You can always add more or use a different type of documents that you want to try asking questions against. At the end we are going to test how the LLM responds with and without access to the information in the documents. 
 
-- [Mondracer Infant Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Mondracer_Infant_Bike.pdf)
-- [Premium Bycycle User Guide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Premium_Bicycle_User_Guide.pdf)
-- [Ski Boots TDBootz Special](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/Ski_Boots_TDBootz_Special.pdf)
-- [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Ultimate_Downhill_Bike.pdf)
-- [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ask-questions-to-your-documents-using-rag-with-snowflake-cortex/assets/The_Xtreme_Road_Bike_105_SL.pdf)
-- [Carver Skis Specification Guide]
-- [OutPiste Skis Specification Guide]
-- [RacingFast Skis Specification Guide]
+- [Mondracer Infant Bike](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/Mondracer_Infant_Bike.pdf)
+- [Premium Bycycle User Guide](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/Premium_Bicycle_User_Guide.pdf)
+- [Ski Boots TDBootz Special](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/Ski_Boots_TDBootz_Special.pdf)
+- [The Ultimate Downhill Bike](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/The_Ultimate_Downhill_Bike.pdf)
+- [The Xtreme Road Bike 105 SL](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/The_Xtreme_Road_Bike_105_SL.pdf)
+- [Carver Skis Specification Guide](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/Carver%20Skis%20Specification%20Guide.pdf)
+- [OutPiste Skis Specification Guide](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/OutPiste%20Skis%20Specification%20Guide.pdf)
+- [RacingFast Skis Specification Guide](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/RacingFast%20Skis%20Specification%20Guide.pdf)
 
 **Step 2**. Open a new Worksheet
 
@@ -173,7 +171,6 @@ ls @docs;
 
 ![App](assets/fig4_ls_docs.png)
 
-
 <!-- ------------------------ -->
 ## Pre-process and Label Documents
 Duration: 15
@@ -210,7 +207,7 @@ insert into docs_chunks_table (relative_path, size, file_url,
         TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path))) as func;
 ```
 
-### Label the product category:
+### Label the product category
 
 We are going to use the power of Large Language Models to easily classify the documents we are ingesting in our RAG application. We are just going to use the file name but you could also use some of the content of the doc itself. Depending on your use case you may want to use different approaches. We are going to use a foundation LLM but you could even fine-tune your own one for your own classification use case as demoed in this [Serverless LLM Fine-tuning using Snowflake Cortex AI](https://quickstarts.snowflake.com/guide/finetuning_llm_using_snowflake_cortex_ai/index.html?index=..%2F..index#0) quickstart
 
@@ -312,7 +309,7 @@ as (
 This is all what we have to do. There is no need here to create embeddings as that is done automatically. We can now use the API to query the service.
 
 <!-- ------------------------ -->
-## Build Chat UI and Chat (Retrieval and Generation) Logic
+## Build Chat UI with Retrieval and Generation Logic
 Duration: 15
 
 To make it easy for anyone to ask questions against the Cortex Search service, let's create a fairly simple front-end using Streamlit. As part of the app, we will provide the end-user with a toggle that allows testing of LLM responses with and without access to the context to observe the differences. The app will also show what are the pieces of text that the service is returning and that are used to fill the calls to LLM to create the answers.
@@ -494,17 +491,20 @@ if __name__ == "__main__":
     main()
 ```
 
-When you past that code, if it is run, you will get this error:
+> aside positive
+> NOTE: When you paste that code and run the app, you will get this error
+
 ![App](assets/fig10_error.png)
 
 The reason is that we need to add the package **snowflake.core** in our Streamlit App. 
 
 Click on **Packages** and look for **snowflake.core**
+
 ![App](assets/fig11_packages.png)
 
 After adding it you should be able to run the app.
 
-### Explanation
+### Code Walkthrough
 
 Let´s go step by step what that code is doing:
 
@@ -619,7 +619,7 @@ NUM_CHUNKS = 3 # Num-chunks provided as context. Play with this to check how it 
 ```
 
 <!-- ------------------------ -->
-## Build a ChatBot UI that Remember Previous Conversations
+## Build a ChatBot UI with Conversation History
 Duration: 15
 
 In the previous section we have created a simple interface where we can ask questions about our documents and select the LLM running within Snowflake Cortex to answer the question. We have seen that when no context from our documents is provided, we just get a general answer, versus a specific answer related to our documents when we use context from the PDFs. But what if we want to have a conversation sytle?
@@ -636,7 +636,7 @@ First let´s create the new Streamlit App and then we will discuss each of the s
 
 ![App](assets/fig13_streamlit_chatbot.png)
 
-In this second app, we are going to demo how to access the Complete function from Snowlfake Cortex via Python API instead of SQL as we did in the previous app. To get access to the API, you need to specify the snowflake-ml-python package in your Streamlit app:
+In this second app, we are going to demo how to access the Complete function from Snowlfake Cortex via Python API instead of SQL as we did in the previous app. To get access to the API, you need to specify the **snowflake-ml-python** package in your Streamlit app:
 
 ![App](assets/fig13_2_ml_python_package.png)
 
@@ -885,7 +885,7 @@ Now when asking the same questions but using memory the firs thing to notice is 
 The new question that is used to search for similar chunks is "What is the Rincon del Cielo bike made of?"
 
 
-### Code Explanation
+### Code Walkthrough
 
 ```python
 def get_chat_history():
@@ -1026,7 +1026,7 @@ Here another suggestion based on specific info from the documents (unique for us
 You can try with your own documents. You will notice different peformance depending on the LLM you will be using. 
 
 <!-- ------------------------ -->
-## Conclusion & Resources
+## Conclusion And Resources
 Duration: 5
 
 Congratulations! You've successfully performed RAG using Snowflake Cortex Search and securely built a full-stack RAG application in Snowflake without having to build integrations, manage any infrastructure or deal with security concerns with data moving outside of the Snowflake governance framework. 
@@ -1036,7 +1036,6 @@ Congratulations! You've successfully performed RAG using Snowflake Cortex Search
 - Automatically identify document categories using LLMs
 - Using Snowflake Cortex Search to use LLMs to answer questions
 - Building an application front-end with Streamlit
-
 
 ### Related Resources
 
