@@ -199,7 +199,7 @@ create or replace TABLE DOCS_CHUNKS_TABLE (
 
 ```SQL
 insert into docs_chunks_table (relative_path, size, file_url,
-                            scoped_file_url, chunk, chunk_vec)
+                            scoped_file_url, chunk)
     select relative_path, 
             size,
             file_url, 
