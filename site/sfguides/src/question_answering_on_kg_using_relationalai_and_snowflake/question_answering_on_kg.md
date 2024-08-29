@@ -330,6 +330,8 @@ Users may already have  their data in Snowflake. RelationalAI runs within the us
 <!-- ------------------------ -->
 
 ## Example Walkthrough
+Duration: 2
+
 <img src="./assets/kgqa_example_udf.png" alt="KGQA Example" width="1400">
 
 
@@ -353,6 +355,7 @@ Note that everything runs securely in the user’s  Snowflake account on snowpar
 <!-- ------------------------ -->
 
 ## Demo Setup
+Duration: 25
 
 Follow the below steps to launch End-to-End Demo Setup.
 
@@ -430,6 +433,7 @@ Now, we are all set to run the Demo notebook!
 
 
 ## Demo Notebook 
+Duration: 5
 
 - Run the [Notebook](https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_demo_nb/kgqa_demo.ipynb) to play with our pipeline
 
@@ -441,6 +445,7 @@ Now, we are all set to run the Demo notebook!
 
 
 ## Launch a SF Service on a Custom Database
+Duration: 25
 
 Follow the below steps to launch End-to-End pipeline as a Service on Snowflake and interact with it.
 
@@ -524,6 +529,7 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 <!-- ------------------------ -->
 
 ## Troubleshooting
+Duration: 1
 
 In case you encounter any of the following issues, please follow the recommended steps:
 
