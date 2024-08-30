@@ -25,6 +25,8 @@ In this Quickstart guide, you will be help the fictitious food truck company, Ta
 You will need the following things before beginning:
 
 * Snowflake account in a cloud region where Snowflake Cortex LLM functions/models are [supported](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability).
+  * Cortex functions used - Complete, Translate, Sentiment
+  * Models used - mixtral-8x7b, snowflake-arctic, mistral-large
 * Snowflake Notebook enabled in your Snowflake account
   * **Note**: To get access to Snowflake Notebook (currently in private preview) reach out to your Snowflake account team. This solution leverages Snowflake Cortex within Snowflake Notebook and you will not be able run the quickstart successfully otherwise.
 
@@ -35,8 +37,8 @@ In this quickstart, you will learn:
 * How to categorise unstructured review text data at scale
   * How to get rating from reviews
   * How to get intent to recommend from reviews
-* How to derieve customer sentiment from reviews 
-  * How to derieve aspect based customer sentiment from reviews
+* How to derive customer sentiment from reviews 
+  * How to derive aspect based customer sentiment from reviews
 * How to identify issues highlighted in customer reviews
 * How to take action assisted by LLM
 
@@ -297,7 +299,7 @@ In this section, you will make use of **Snowflake Cortex - Complete** to categor
 
 ### Get ratings based on review
 
-* You will utilize **Snowflake Cortex - Complete** function to understand at scale based on a given customer's review what rating that customer is likely to rate their experience at the food truck. The prompt consists of the instruction of the task along with a sample example of the completed task also known as **one-shot learning**. This prompt is then provided to complete function along with the review. This is done within the notebook using following code snippet in cell `GET_RATINGS`.
+* You will utilize **Snowflake Cortex - Complete** function to understand at scale based on a given customer's review what rating that customer is likely to rate their experience at the food truck. The prompt consists of the instruction of the task along with a sample example of the completed task also known as **one-shot learning**. This prompt is then provided to complete function along with the review. This is done within the notebook using the following code snippet in cell `GET_RATINGS`.
 
   ```python
   # Prompt to get a rating based on a customer review
@@ -338,9 +340,9 @@ In this section, you will make use of **Snowflake Cortex - Complete** to categor
 
   review_df.select(["REVIEW","CLEAN_RATING"]).show(3)
   ```
-### Get intention to recommed based on review
+### Get intention to recommend based on review
 
-* You can understand if a customer would recommend the food truck based on their review using **Snowflake Cortex - Complete**. This time prompt doesn't contain any sample examples for the task within the prompt just the task instruction - **zero shot learning**. This is done within the notebook using following code snippet in cell `INTENT_TO_RECOMMEND`.
+* You can understand if a customer would recommend the food truck based on their review using **Snowflake Cortex - Complete**. This time prompt doesn't contain any sample examples for the task within the prompt just the task instruction - **zero shot learning**. This is done within the notebook using the following code snippet in cell `INTENT_TO_RECOMMEND`.
 
   ```python
   # Prompt to understand whether a customer would recommend food truck based on their review 
@@ -373,7 +375,7 @@ Duration: 2
 
 ### Enabled by Cortex Sentiment
 
-So far you saw Snowflake Cortex - Translate & Complete. Next, you will look at another **task specific LLM function in Cortex - Sentiment**. This sentiment function is used to understand customer's tone based on the review they provided. Sentiment return value between -1 and 1 such that -1 is the most negative while 1 is the most positive. This is done within the notebook using following code snippet in cell `CORTEX_SENTIMENT`.
+So far you saw Snowflake Cortex - Translate & Complete. Next, you will look at another **task specific LLM function in Cortex - Sentiment**. This sentiment function is used to understand the customer's tone  based on the review they provided. Sentiment return value between -1 and 1 such that -1 is the most negative while 1 is the most positive. This is done within the notebook using the following code snippet in cell `CORTEX_SENTIMENT`.
 
 ```python
 # Understand the sentiment of customer review using Cortex Sentiment
@@ -388,7 +390,7 @@ Duration: 2
 
 ### Enabled by Cortex Complete 
 
-Taking this analysis a step further, you will be looking at aspect based sentiment instead of just the overall sentiment of review and understand what the customers thinks about different aspects like food quality, service, pricing etc. This done by leveraging **Snowflake cortex - Complete** coupled with a prompt that includes one shot example. This is done within the notebook using following code snippet in cell `ASPECT_BASED_SENTIMENT`.
+Taking this analysis a step further, you will be looking at aspect based sentiment instead of just the overall sentiment of review and understand what the customers think about different aspects like food quality, service, pricing etc. This done by leveraging **Snowflake cortex - Complete** coupled with a prompt that includes one shot example. This is done within the notebook using the following code snippet in cell `ASPECT_BASED_SENTIMENT`.
 
   ```python
   # Prompt to understand sentiment for different categories mentioned in the customer review
@@ -431,7 +433,7 @@ In this section, you will leverage **Snowflake Cortex - Complete** to identify t
 
 ### Issues at business level
 
-* In this step, 100 most negative reviews are aggregrated and provided to **Snowflake Cortex - Complete** along with prompt to identify the  main issues found in those reviews. This is done within the notebook using following code snippet in cell `ALL_MOST_NEG_100`.
+* In this step, 100 most negative reviews are aggregated and provided to **Snowflake Cortex - Complete** along with a prompt to identify the  main issues found in those reviews. This is done within the notebook using the following code snippet in cell `ALL_MOST_NEG_100`.
 
   ```python
   # Aggregrate the 100 most negative reviews for tasty bytes
@@ -449,7 +451,7 @@ In this section, you will leverage **Snowflake Cortex - Complete** to identify t
   ```
 ### Issues at truck level 
 
-* Aggregate sentiment at truck level using `Snowpark Dataframe` functions. This is done within the notebook using following code snippet in cell `SENTIMENT_BY_TRUCK`.
+* Aggregate sentiment at truck level using `Snowpark Dataframe` functions. This is done within the notebook using the following code snippet in cell `SENTIMENT_BY_TRUCK`.
 
   ```python
   # Get average sentiment of reviews for Trucks 
@@ -457,14 +459,14 @@ In this section, you will leverage **Snowflake Cortex - Complete** to identify t
                   .agg(F.avg(F.col('SENTIMENT')).alias('AVG_SENTIMENT'),F.count(F.col('REVIEW_ID')).alias('REVIEW_COUNT')) 
   truck_agg_reviews_df.show(3)
   ```
-* Average sentiment by truck is utilized to find truck which is the most negatively reviewed truck and has atleast 10 reviews. This is done within the notebook using following code snippet in cell `MOST_NEGATIVELY_REVIEWED_TRUCK`.
+* Average sentiment by truck is utilized to find the truck which is the most negatively reviewed truck and has at least 10 reviews. This is done within the notebook using the following code snippet in cell `MOST_NEGATIVELY_REVIEWED_TRUCK`.
 
   ```python
   # Get the truck with most negative average sentiment
   truck_agg_reviews_df.filter(F.col('REVIEW_COUNT') >= 10).order_by(F.col('AVG_SENTIMENT')) \
                   .select(F.col('TRUCK_ID')).limit(1).collect()[0][0]
   ```
-* Quick analysis of the most negative reviews for Truck 5 to understand the main issues that the customers complain about by leveraging **Snowflake cortex - Complete**. Similar to how it was performed at the business level. This is done within the notebook using following code snippet in cell `UNDERSTAND_TRUCK_ISSUES_MD`.
+* Quick analysis of the most negative reviews for Truck 5 to understand the main issues that the customers complain about by leveraging **Snowflake cortex - Complete**. Similar to how it was performed at the business level. This is done within the notebook using the following code snippet in cell `UNDERSTAND_TRUCK_ISSUES_MD`.
 
   ```python
   # Aggregate the most negative reviews for Truck 5
@@ -486,7 +488,7 @@ In this section, you will leverage **Snowflake Cortex - Complete** to identify t
 Duration: 2
 ### Take action assisted by Cortex Complete
 
-In the final step, you will utilize **Snowflake Cortex - Complete** to draft an email to the owner of the most negatively reviewed truck summarizing the issues that are highlighted in cutsomer reviews along with any recommendation to remedy those issues.This is done within the notebook using following code snippet in cell `GENERATE_EMAIL_RESPONSE`.
+In the final step, you will utilize **Snowflake Cortex - Complete** to draft an email to the owner of the most negatively reviewed truck summarizing the issues that are highlighted in customer reviews along with any recommendation to remedy those issues.This is done within the notebook using following code snippet in cell `GENERATE_EMAIL_RESPONSE`.
 
   ```python
   # Prompt to get an email draft which reports the main issues with Truck 5 with recommendations to solve

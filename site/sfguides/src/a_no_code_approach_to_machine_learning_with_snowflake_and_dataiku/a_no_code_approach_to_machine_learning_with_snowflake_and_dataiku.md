@@ -296,7 +296,7 @@ Now lets import our first project.
 
 <button>
 
-  [Starter Project](https://dl.dataiku.com/file/54b4FNnFodrSSoZ3/KaSaDK1kv59uDVQm/LOANDEFAULTSSNOWPARKML.zip)
+  [Starter Project](https://dataiku-partnerships.s3.eu-west-1.amazonaws.com/LOANDEFAULTSSNOWPARKML.zip)
 </button>
 
 Once you have download the starter project we can create our first project

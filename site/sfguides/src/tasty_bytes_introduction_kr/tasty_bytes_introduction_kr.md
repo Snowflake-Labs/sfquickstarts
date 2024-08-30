@@ -30,7 +30,7 @@ Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 �
 
 - 지원되는 Snowflake [브라우저](https://docs.snowflake.com/ko/user-guide/setup#browser-requirements)
 - 엔터프라이즈 또는 비즈니스 크리티컬 Snowflake 계정
-  - Snowflake 계정이 없다면 [**30일 무료 평가판 계정을 위해 등록하십시오**](https://signup.snowflake.com/). 등록할 때 **엔터프라이즈** 에디션을 선택하셔야 합니다. 아무 [Snowflake 클라우드 또는 리전](https://docs.snowflake.com/ko/user-guide/intro-regions)을 선택하셔도 됩니다.
+  - Snowflake 계정이 없다면 [**30일 무료 평가판 계정을 위해 등록하십시오**](https://signup.snowflake.com/?utm_cta=quickstarts_). 등록할 때 **엔터프라이즈** 에디션을 선택하셔야 합니다. 아무 [Snowflake 클라우드 또는 리전](https://docs.snowflake.com/ko/user-guide/intro-regions)을 선택하셔도 됩니다.
   - 등록한 후 활성화 링크와 Snowflake 계정 URL이 포함된 이메일이 전송됩니다.
   - <img src="assets/choose_edition.png" width="300"/>
 

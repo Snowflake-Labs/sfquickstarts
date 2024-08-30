@@ -56,7 +56,7 @@ In this lab you will experience the latest **Snowflake Horizon Access pillar** f
 
 #### Create 3 Snowflake Trial Accounts in the same Snowflake Organization
 
-Signup for an AWS trial account [here](https://signup.snowflake.com/)
+Signup for an AWS trial account [here](https://signup.snowflake.com/?utm_cta=quickstarts_)
 
 - Choose **AWS** as cloud provider, **Business Critical** edition, **AWS_US_WEST_2 (Oregon)** region
 - Activate trial account with admin user `horizonadmin`
@@ -479,7 +479,7 @@ Time to revisit the second consumer account ("horizon_lab_azure_consumer") and t
 
     select * from ORGANIZATION_USAGE.LISTING_AUTO_FULFILLMENT_USAGE_HISTORY;
 
-    select * from ORGANIZATION_USAGE.REPLICATION_USAGE_HISTORY:
+    select * from ORGANIZATION_USAGE.REPLICATION_USAGE_HISTORY;
     ```
 
 8. The [replication cost](https://other-docs.snowflake.com/en/collaboration/provider-understand-cost-auto-fulfillment) can also be monitored in the UI. Navigate to the "Admin" menu in the left-hand panel, then to "Cost Management" and "Consumption". Switch the filter from "All Services" to "Cross-Cloud Auto-Fulfillment". Here is an example from a different test replicating a listing to the region Azure UK South:
@@ -1329,73 +1329,123 @@ Using the method outlined in [Getting Started with Iceberg Tables](https://quick
 
 On the `Provider AWS Account` execute the steps listed in `code/sql/reference/iceberg_provider.sql` cloned from [Horizon Quickstart Scripts](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing) repository earlier:
 
-1. Create Iceberg Table `FROSTBYTE_TASTY_BYTES.ICEBERG_LAB.CUSTOMER_LOYALTY` from the `FROSTBYTE_TASTY_BYTES.RAW_CUSTOMER.CUSTOMER_LOYALTY` table.
-2. Create Iceberg Table `FROSTBYTE_TASTY_BYTES.ICEBERG_LAB.ORDER_HEADER` from the `FROSTBYTE_TASTY_BYTES.RAW_POS.ORDER_HEADER` table.
-3. Create Secure View `FROSTBYTE_TASTY_BYTES.ICEBERG_LAB.CUSTOMER_LOYALTY_METRICS_V` with same definition as the `HARMONIZED` schema view but on `ICEBERG_LAB` schema tables.
-4. Create and apply row-access policy `CUSTOMER_COUNTRY_ROW_POLICY` to `ICEBERG_LAB.CUSTOMER_LOYALTY.COUNTRY` column. This leverages database roles.
-5. Create and apply aggregation policy `TASTY_ORDER_AGG_POLICY` to `ICEBERG_LAB.ORDER_HEADER` table. This leverages database roles.
-6. Create a listing called `ICEBERG_LAB_ANALYTICS`, attach tables and secure views in `ICEBERG_LAB` schema, share with the Consumer AWS account.
-    - (Optional): include some of the queries below as Sample Queries in the listing to make the Consumer experience smoother
+1. Create External Volume in Snowflake, after configuring an external volume with your cloud service provider (AWS, Azure, GCP).
+2. Create a `FROSTBYTE_ICEBERG` database with schemas for ANALYTICS, RAW_POS, RAW_CUSTOMER, GOVERNANCE, TPCH.
+3. Create Iceberg Tables `CUSTOMER_LOYALTY_ICEBERG`, `ORDER_HEADER_ICEBERG`, `CUSTOMER_TPCH_ICEBERG`, `NATION_TPCH_ICEBERG`.
+4. Create Secure View `CUSTOMER_LOYALTY_METRICS_V` that joins multiple iceberg tables.
+5. Create Database Roles `TASTYBYTES_MANAGER_ROLE` and `TASTYBYTES_ANALYST_ROLE` to restrict access for consumers.
+6. Create and apply row-access policy `CUSTOMER_COUNTRY_ROW_POLICY` to `CUSTOMER_LOYALTY_ICEBERG.COUNTRY` column that filters based on database role using the `is_database_role_in_session()` context function.
+7. Create a listing called `ICEBERG_LAB_ANALYTICS`, attach iceberg tables and secure view.
+8. In the **Listing Description** section: enter instructions on post-installation steps (see below)
+9. In the **Sample Queries** section: enter queries for the consumer to run
 
 Now switch to the **HORIZON_LAB_AWS_CONSUMER** account.
 
 Navigate to `Private Sharing` in Snowsight and install the `ICEBERG_LAB_ANALYTICS` listing that was shared by the AWS Provider.
-
-Now run these queries to see how shared Iceberg Tables compare with the regular shared tables and views we explored earlier:
+Run these post-installation steps in a worksheet.
 
 ```sql
---- Verify row-access policy is in effect for the Iceberg Customer_Loyalty table
-USE DATABASE ICEBERG_LAB_ANALYTICS;
-
-USE ROLE sales_manager_role;
-SELECT
-    clm.city,
-    ROUND(SUM(clm.total_sales), 0) AS total_sales_usd
-FROM analytics.customer_loyalty_metrics_v clm
-GROUP BY clm.city
-ORDER BY total_sales_usd DESC;
-
-USE ROLE sales_apj_role;
-SELECT
-    clm.city,
-    ROUND(SUM(clm.total_sales), 0) AS total_sales_usd
-FROM analytics.customer_loyalty_metrics_v clm
-GROUP BY clm.city
-ORDER BY total_sales_usd DESC;
+USE ROLE accountadmin;
+SHOW DATABASE ROLES IN DATABASE iceberg_lab_analytics;
+GRANT DATABASE ROLE iceberg_lab_analytics.tastybytes_manager_role to ROLE sales_manager_role;
+GRANT DATABASE ROLE iceberg_lab_analytics.tastybytes_analyst_role to ROLE public;
 ```
 
-Now let us try a join between both shared Iceberg tables and observe how the policies established by the Provider are enforced.
+Create two users to test access controls on the incoming Iceberg Analytics listing.
 
 ```sql
--- Check join between two Iceberg Tables with aggregation policy
-USE DATABASE ICEBERG_LAB_ANALYTICS;
+USE ROLE ACCOUNTADMIN;
 
--- What are the Total Order amounts in each city by Gender?
-USE ROLE sales_manager_role;
+CREATE OR REPLACE USER horizonengineer
+PASSWORD='' 
+DEFAULT_ROLE = PUBLIC 
+MUST_CHANGE_PASSWORD = FALSE 
+DEFAULT_WAREHOUSE = COMPUTE_WH;
+
+CREATE OR REPLACE USER horizonmanager
+PASSWORD='' 
+DEFAULT_ROLE = SALES_MANAGER_ROLE 
+MUST_CHANGE_PASSWORD = FALSE 
+DEFAULT_WAREHOUSE = COMPUTE_WH;
+
+GRANT ROLE SALES_MANAGER_ROLE TO USER horizonmanager;
+```
+
+Now run these queries that were entered as **Sample Queries** in the Iceberg listing.
+Compare results as a `horizonengineer` and `horizonmanager` user that leverages the row-access policy to limit sales analytics.
+
+```sql
+// Customer Sales by City
+/*
+Total food truck sales in USD by city
+*/
+SELECT
+    clm.city,
+    ROUND(SUM(clm.total_sales), 0) AS total_sales_usd
+FROM analytics.customer_loyalty_metrics_v clm
+GROUP BY clm.city
+ORDER BY total_sales_usd DESC;
+
+// Total Orders by Gender
+/*
+What are the total order amounts in each city by gender?
+*/
 SELECT 
     cl.gender,
     cl.city,
     COUNT(oh.order_id) AS count_order,
     ROUND(SUM(oh.order_amount),0) AS order_total,
     current_time()
-FROM raw_pos.order_header oh
-JOIN raw_customer.customer_loyalty cl
+FROM raw_pos.order_header_iceberg oh
+JOIN raw_customer.customer_loyalty_iceberg cl
     ON oh.customer_id = cl.customer_id
 GROUP BY ALL
 ORDER BY order_total DESC;
 
-USE ROLE sales_americas_role;
-SELECT 
-    cl.gender,
-    cl.city,
-    COUNT(oh.order_id) AS count_order,
-    ROUND(SUM(oh.order_amount),0) AS order_total,
-    current_time()
-FROM raw_pos.order_header oh
-JOIN raw_customer.customer_loyalty cl
-    ON oh.customer_id = cl.customer_id
-GROUP BY ALL
-ORDER BY order_total DESC;
+// Visible Countries and Cities
+/*
+How many cities in what countries can I view analytics data for?
+*/
+SELECT DISTINCT COUNTRY, CITY FROM analytics.customer_loyalty_metrics_v ORDER BY COUNTRY;
+;
+
+// TPCH Benchmark - Returned Item Reporting Query (Q10)
+/*
+The Returned Item Reporting Query finds the top 10 customers, in terms of their effect on lost revenue for a given quarter, who have returned parts. The customers are listed in descending order of lost revenue.
+*/
+SELECT
+     c_custkey,
+     c_name,
+     TRUNCATE(SUM(l_extendedprice * (1 - l_discount))) AS lost_revenue,
+     c_acctbal,
+     n_name,
+     c_address,
+     c_phone,
+     c_comment
+FROM
+     tpch.customer_tpch_iceberg,
+     SNOWFLAKE_SAMPLE_DATA.TPCH_SF100.ORDERS,
+     SNOWFLAKE_SAMPLE_DATA.TPCH_SF100.LINEITEM,
+     tpch.nation_tpch_iceberg
+WHERE
+     c_custkey = o_custkey
+     AND l_orderkey = o_orderkey
+     AND o_orderdate >= to_date('1993-10-01')
+     AND o_orderdate < dateadd(month, 3, to_date('1993-10-01'))
+     AND l_returnflag = 'R'
+     AND c_nationkey = n_nationkey
+GROUP BY
+     c_custkey,
+     c_name,
+     c_acctbal,
+     c_phone,
+     n_name,
+     c_address,
+     c_comment
+ORDER BY
+     lost_revenue DESC
+LIMIT 10
+;
 ```
 
 <!-- ------------------------ -->

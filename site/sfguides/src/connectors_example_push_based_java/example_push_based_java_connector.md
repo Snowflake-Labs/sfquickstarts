@@ -30,17 +30,16 @@ Duration: 1
 - Creating Native Applications in Snowflake
 - Ingesting data to Snowflake using snowflake-ingestion-sdk
 - Running Snowflake procedures using snowflake-jdbc
-- How to optimize merge for the CDC scenario using [deferred merge approach](img/75ce96e228ff90d2.pdf)
+- How to optimize merge for the CDC scenario using [deferred merge approach](img/e5a0394034661f7.pdf)
 ![](assets/deferred_merge.pdf)
 
 ## Prepare your local environment
 Duration: 5
 
-- Install Java 11 or later
-- Install [snowsql](https://docs.snowflake.com/en/user-guide/snowsql)
-- Configure snowsql to allow using [variables](https://docs.snowflake.com/en/user-guide/snowsql-use#enabling-variable-substitution) (`variable_substitution = True`)
-- Configure snowsql to [exit on first error](https://docs.snowflake.com/en/user-guide/snowsql-config#exit-on-error) (`exit_on_error = True`)
-- Clone the [connectors-native-sdk repository](https://github.com/snowflakedb/connectors-native-sdk) and go to `./examples/example-push-based-java-connector`
+- Install Java 11
+- Install [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation)
+- Configure `Snowflake CLI` [connection](hthttps://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/connecting/specify-credentials) named: `native_sdk_connection` or change the CONNECTION environmental variable in the example `examples/connectors-native-sdk-example-java-github-connector/Makefile`
+- Clone the [connectors-native-sdk](https://github.com/snowflakedb/connectors-native-sdk) repository
 
 ## Connector overview
 Duration: 4
@@ -135,9 +134,9 @@ Example application logs various operations during runtime. By default, those lo
 ## Connector configuration
 Duration: 6
 
-### Snowsql configuration
-This quickstart uses some convenience scripts for running necessary commands. Those scripts use snowsql. Before
-proceeding you need to configure snowsql connection to your Snowflake account according to [documentation](https://docs.snowflake.com/en/user-guide/snowsql-start#using-named-connections).
+### Snowflake CLI configuration
+This quickstart uses some convenience scripts for running necessary commands. Those scripts use Snowflake CLI. Before
+proceeding you need to configure Snowflake CLI connection to your Snowflake account according to [documentation](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/connecting/specify-credentials).
 
 ### Generating Pubic and Private Keys
 Java Agent uses `snowflake-ingestion-sdk` library which uses [key pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth).
@@ -163,7 +162,7 @@ The password will be needed for the Java Agent to connect to the Native Applicat
 
 ### Native application configuration
 In order to create a native application you need to adjust the value in the `Makefile` script for:
-- `CONNECTION` - a name of snowsql connection defined in previous step
+- `CONNECTION` - a name of Snowflake CLI connection defined in previous step
 
 You can also change the rest of the properties:
 - `APP_NAME`

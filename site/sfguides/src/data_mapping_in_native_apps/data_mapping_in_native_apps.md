@@ -208,11 +208,11 @@ snow sql -q "
 INSERT INTO TEST_IPLOCATION.TEST_IPLOCATION.TEST_DATA(IP) VALUES('73.153.199.206'),('8.8.8.8');"
 ```
 
-You can the file it by executing:
+You can run the file by executing:
  ```SNOWFLAKE_DEFAULT_CONNECTION_NAME=your_connection ./prepare_data.sh```  
  in the folder root.
 
-We now have the reference database setup in the provider account so are ready to start building the application itself.
+We now have the referenced database setup in the provider account so we are ready to start building the application itself.
 
 <!-- ------------------------ -->
 ## Provider Setup
@@ -252,7 +252,7 @@ Every Snowflake Native App is required to have a manifest file.  The manifest fi
 * The manifest file must be uploaded to a named stage so that it is accessible when creating an application package or Snowflake Native App.
 * The manifest file must exist at the root of the directory structure on the named stage.
 
-The named stage in this example is the stage with the label **APPLICATION_STAGE** created earlier.
+The named stage in this example is going to be created when we execute the **snow app run** command.
 
 > aside positive
 >
@@ -405,7 +405,7 @@ $$;
 
 > aside positive
 > 
-> **Note** - In the setup script we defined a stored procedure labeled **ENRICHIP.enrich_ip_data**.  In the body we make calls to **REFERENCE(tabletouse)**.  This reference was defined in the manifest file and it is the table to which the consumer has granted us permissions.  Because, as the application prodcuer, we have no way of knowing that ahead of time, the Snowflake Native App framework adds this facility and will resolve the references once permissions have been granted.
+> **Note** - In the setup script we defined a stored procedure labeled **ENRICHIP.enrich_ip_data**.  In the body we make calls to **REFERENCE(tabletouse)**.  This reference was defined in the manifest file and it is the table to which the consumer has granted us permissions.  Because, as the application producer, we have no way of knowing that ahead of time, the Snowflake Native App framework adds this facility and will resolve the references once permissions have been granted.
 
 <!-- ------------------------ -->
 ## Creating the Streamlit
@@ -491,7 +491,7 @@ There are a few ways we could deploy our application:
 In a manual environment you would have to upload the files to the stage APPLICATION_STAGE and then run other commands from a SQL worksheet, but instead, we are taking the Snowflake CLI approach and run:
 
 ```sh
-    snow app run -i --database ip2location
+    snow app run --database ip2location
 ```
 
 At the root of the project, and the CLI is going to create the application for you, using the files explained in the previous steps, as well as the other configuration files present in the project folder.
@@ -500,7 +500,7 @@ At the root of the project, and the CLI is going to create the application for y
 
 Because we have installed the application locally we needed to create a table to test with. That step we did it in the **prepare_data.sh** file.
 
-Click on the link to your localhost that appeared in your console output.
+Click on the link that appeared in your console output.
 
  The application if you remember needs permissions onto a table in the consumer account (the one we just created).  We have now switched roles to being the consumer.  We are finished with being the application provider.  Over on the right hand side hit the shield icon to go to **Security**.
 
@@ -518,7 +518,7 @@ Click **Add** and navigate to the table we just created and select it:
 
 <img src="assets/table_chosen.png" width="719" />
 
-Once we click **Done** and **Save** then the application has been assigned the needed permissions.  Now go back to apps and click on the app itself.  It should open to a screen like the following:
+Once we click **Done** and **Save** then the application has been assigned the needed permissions.  Now go back to the **Dashboard** section and click it. It should open to a screen like the following:
 
 <img src="assets/app_entry.png" width="975" />
 
@@ -555,6 +555,10 @@ snow app teardown
 Duration: 1
 
 We have covered a lot of ground in this Quickstart.  We have covered the building blocks of almost every Snowflake Native App you will ever build.  Sure some will be more complicated but the way you structure them will be very similar to what you have covered here.
+
+> aside positive
+> 
+> **Note** - In [this repository](https://github.com/snowflakedb/native-apps-examples/tree/main/data-mapping) you can find all this code with the instructions to execute it.
 
 ### What we learned
 

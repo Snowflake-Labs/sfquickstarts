@@ -5,7 +5,7 @@ environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowflake Cortex, Streamlit
-authors: Vino Duraisamy
+authors: Vino Duraisamy, Dash Desai
 
 # Serverless LLM Fine-tuning using Snowflake Cortex AI
 <!-- ------------------------ -->
@@ -47,7 +47,7 @@ By the end of this quickstart guide, you will be able to use Snowflake Cortex AI
 
 ### Prerequisites
 
-- A [Snowflake](https://signup.snowflake.com/) account in a region where Snowflake Cortex is available. [Check availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex is available. [Check availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability).
 - A Snowflake user created with ACCOUNTADMIN permissions. This user will be used to get things setup in Snowflake.
 > aside positive
 > Note: Cortex Fine-tuning is not available in Snowflake Free Trial accounts. Use your own accounts or reach out to your account representative to use this in your account.
@@ -83,18 +83,18 @@ CREATE or REPLACE file format csvformat
 
 CREATE or REPLACE stage support_tickets_data_stage
   file_format = csvformat
-  url = 's3://sfquickstarts/support_tickets/';
+  url = 's3://sfquickstarts/finetuning_llm_using_snowflake_cortex_ai/';
 
-CREATE or REPLACE table SUPPORT_TICKETS ( 
-  ticket_id varchar(10),
-  customer_name varchar(30),
-  customer_email varchar(60),
-  service_type varchar(60),
-  request varchar(1000),
-  contact_preference varchar(10)
+CREATE or REPLACE TABLE SUPPORT_TICKETS (
+  ticket_id VARCHAR(60),
+  customer_name VARCHAR(60),
+  customer_email VARCHAR(60),
+  service_type VARCHAR(60),
+  request VARCHAR,
+  contact_preference VARCHAR(60)
 );
 
-COPY into CALL_TRANSCRIPTS
+COPY into SUPPORT_TICKETS
   from @support_tickets_data_stage;
 ```
 
@@ -250,7 +250,7 @@ You have learnt how to use Snowflake Cortex AI to:
 
 ### Related Resources
 
-- [Snowflake Cortex: Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
+- [Snowflake Cortex Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Snowflake Cortex Fine-tuning](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning)
-- [Snowflake Cortex: COMPLETE()](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete)
+- [Snowflake Cortex COMPLETE()](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete)
 - [Snowflake Notebooks: Demo Repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb)
