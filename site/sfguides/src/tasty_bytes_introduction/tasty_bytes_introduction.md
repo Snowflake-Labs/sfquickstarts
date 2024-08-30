@@ -27,7 +27,7 @@ Upon finishing this Quickstart, you will have deployed the foundation required t
 ### Prerequisites
 - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
 - An Enterprise or Business Critical Snowflake Account
-    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/). When signing up, please make sure to select **Enterprise** edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions).
+    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/?utm_cta=quickstarts_). When signing up, please make sure to select **Enterprise** edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions).
     - After registering, you will receive an email with an activation link and your Snowflake Account URL.
     - <img src="assets/choose_edition.png" width="300"/>
     
@@ -200,7 +200,7 @@ The Table of Contents below will outline all of the available Tasty Bytes Quicks
 
 - #### [Integrating Tasty Bytes Location Recommendations ML Model into the React Native Data Application](https://quickstarts.snowflake.com/guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app/index.html?index=..%2F..index)
 
-
+- #### [Tasty Bytes - Working with Iceberg Tables](https://quickstarts.snowflake.com/guide/tasty_bytes_working_with_iceberg_tables/index.html?index=..%2F..index)
 
 
 

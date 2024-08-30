@@ -31,18 +31,18 @@ In this tutorial, we will walk you through the different ways you can enrich you
 
 ### Prerequisites
 
-- A [Snowflake](https://signup.snowflake.com/) account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required.
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) account, if required.
 - Access to download `.ipynb` file from [Snowflake notebooks demo repo](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main)
 - Please add the `matplotlib` and `plotly` package from the package picker on the top right. We will be using these packages in the notebook.
 
-### What will you build?
+### What will you Learn?
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
 - **Plot with Altair, Matplotlib and Plotly**: How to use different visualization libraries in Snowflake Notebooks
 - **Working with Markdown cells**: How to develop your narratives using Markdown language
-- **Building Streamlit Apps from Notebook**: How to use Streamlit API to build data apps within the Notebook
-- **Interactive Data Apps in Notebook**: How to build interactive dashboards and data apps using Streamlit in Snowflake Notebook
+- **Using Streamlit in Notebook**: How to use Streamlit to embed images in Notebook
+- **Build Interactive Data Apps**: How to build interactive dashboards and data apps using Streamlit in Snowflake Notebook
 
 <!-- ------------------------ -->
 ## Load demo notebooks to Snowflake
@@ -70,7 +70,7 @@ The notebook files are available for download as `.ipynb` files in the demo repo
 6. A `Create Notebook` dialog will show up. Select a database, schema, and warehouse for the Notebook and click `Create`.
 
 <!-- ------------------------ -->
-## Plotting data using Altair, Matplotlob and Plotly
+## Plotting data using Altair, Matplotlib and Plotly
 
 Duration: 5
 
@@ -210,7 +210,7 @@ The syntax looks like `![text](hyperlink)`. Here are some examples!
 `![](https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif)`
 
 <!-- ------------------------ -->
-## Create Streamlit App
+## Using Streamlit in Notebook
 
 Duration: 5
 
@@ -245,7 +245,7 @@ image=session.file.get_stream("@IMAGE_STAGE/snowflake-logo.png", decompress=Fals
 st.image(image)
 ```
 <!-- ------------------------ -->
-## Interactive Data Apps using Streamlit
+## Build Interactive Data Apps with Streamlit
 
 Duration: 5
 
@@ -274,21 +274,19 @@ alt.Chart(df).mark_bar().encode(
 
 ![altair_v2](assets/altair_v2.png)
 
-Try out Notebooks yourself to build your own data narrative!
-
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 Duration: 1
 
-Congratulations! You've successfully completed the Visual Data Stories with Snowflake Notebooks quickstart guide. 
+Congratulations! You've successfully completed the Visual Data Stories with Snowflake Notebooks quickstart guide. [Try out Notebooks](https://signup.snowflake.com/?utm_cta=quickstarts_) yourself to build your own data narrative!
 
 ### What You Learned
 
 - **Plot with Altair, Matplotlib and Plotly**: How to use different visualization libraries in Snowflake Notebooks
 - **Working with Markdown cells**: How to develop your narratives using Markdown language
-- **Building Streamlit Apps from Notebook**: How to use Streamlit API to build data apps within the Notebook
-- **Interactive Data Apps in Notebook**: How to build interactive dashboards and data apps using Streamlit in Snowflake Notebook
+- **Using Streamlit in Notebook**: How to use Streamlit to embed images in Notebook
+- **Build Interactive Data Apps**: How to build interactive dashboards and data apps using Streamlit in Snowflake Notebook
 
 ### Related Resources
 
