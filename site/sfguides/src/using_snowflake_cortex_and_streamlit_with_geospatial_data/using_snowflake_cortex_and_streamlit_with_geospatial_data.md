@@ -351,7 +351,7 @@ In a new cell which you will name **places_refined**, paste the following and ru
 
 places = places.select(col('NAMES')['primary'].astype(StringType()).alias('NAME'),
                         col('PHONES')['list'][0]['element'].astype(StringType()).alias('PHONE'),
-                      col('CATEGORIES')['main'].astype(StringType()).alias('CATEGORY'),
+                      col('CATEGORIES')['primary'].astype(StringType()).alias('CATEGORY'),
                         col('CATEGORIES')['alternate']['list'][0]['element'].astype(StringType()).alias('ALTERNATE'),
                     col('websites')['list'][0]['element'].astype(StringType()).alias('WEBSITE'),
                       col('GEOMETRY'))
