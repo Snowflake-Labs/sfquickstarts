@@ -288,7 +288,7 @@ Next step is to create the CORTEX SEARCH SERVICE in the table we have created be
 create or replace CORTEX SEARCH SERVICE CC_SEARCH_SERVICE_CS
 ON chunk
 ATTRIBUTES category
-warehouse = XS_WH
+warehouse = COMPUTE_WH
 TARGET_LAG = '1 minute'
 as (
     select chunk,
@@ -302,7 +302,7 @@ as (
 - The name of the service is **CC_SEARCH_SERVICE_CS**
 - The service will use the column **chunk** to create embeddings and perform retrieval based on similarity search
 - The column **category** could be used as a filter
-- To keep this service updated the warehosue **XW_WH** will be used. You may want to type the name of your own warehouse.
+- To keep this service updated the warehosue **COMPUTE_WH** will be used. This name is used by default in trial accounts but you may want to type the name of your own warehouse.
 - The service will be refreshed every minute
 - The data retrieved will contain the **chunk, relative_path, file_url and category**
 
