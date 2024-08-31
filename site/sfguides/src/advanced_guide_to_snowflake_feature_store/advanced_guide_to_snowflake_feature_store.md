@@ -1,14 +1,14 @@
 id: advanced_guide_to_snowflake_feature_store
 summary: Learn how to get started and use Snowflake Feature Store to manage features and deploy models into production
-categories: getting-started
+categories: data-science-&-ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Machine Learning, data-science-&-ml,  Snowpark, Twitter 
+tags: Advanced Guide, Data Science, Data Engineering, Machine Learning, data-science-&-ml,  Snowpark, Twitter 
 authors: Simon Field
 
-# Getting Started with Snowflake Feature Store
-<!-- ------------------------ -->
+# Advanced Guide to Snowflake Feature Store
+<!-- --------------------------------------- -->
 ## Overview 
 Duration: 5
 
