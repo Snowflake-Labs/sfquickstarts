@@ -351,7 +351,7 @@ In a new cell which you will name **places_refined**, paste the following and ru
 
 places = places.select(col('NAMES')['primary'].astype(StringType()).alias('NAME'),
                         col('PHONES')['list'][0]['element'].astype(StringType()).alias('PHONE'),
-                      col('CATEGORIES')['main'].astype(StringType()).alias('CATEGORY'),
+                      col('CATEGORIES')['primary'].astype(StringType()).alias('CATEGORY'),
                         col('CATEGORIES')['alternate']['list'][0]['element'].astype(StringType()).alias('ALTERNATE'),
                     col('websites')['list'][0]['element'].astype(StringType()).alias('WEBSITE'),
                       col('GEOMETRY'))
@@ -1790,7 +1790,19 @@ You will have learned the following:
 
 ### Related Resources
 
+#### Datasources used in the lab
+
+- [Overture Maps - Places](https://app.snowflake.com/marketplace/providers/GZT0ZKUCHE3/CARTO?dbName=OVERTURE_MAPS__PLACES)
+
+- [Northern Trains](https://app.snowflake.com/marketplace/listing/GZTDZ2CEXT/northern-trains-ltd-northern-trains-station-data?search=northern)
+
+- Met office **to follow**
+
+#### Source code
+
 - [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data)
+
+#### Further Related Material
 
 - [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
 
