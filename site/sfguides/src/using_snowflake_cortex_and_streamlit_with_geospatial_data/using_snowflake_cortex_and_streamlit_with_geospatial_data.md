@@ -116,7 +116,7 @@ Press **Get** - Keep the name as it is.
 
 ![alt text](assets/I005.png)
 
-You will only get a sample dataset - you will need to **request** the full Product to complete the full lab.
+You will have access to the dataset for a period of **14 days**
 
 
 ## Create your First map Layer
@@ -1389,25 +1389,37 @@ Duration: 10
 
 Now we will leverage the weather data to understand the weather forecasts for each Event.  This time we will import a notebook which has already been created.
 
-Go to the Home page and select Notebooks
+- Go to the Home page and select Notebooks
 
-Download the following python notebook file
+- Download the following python notebook file
 
 [**weather.ipynb**](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/weather.ipynb)
 
-In the notebbook menu selection, select Import from .ipynb file and choose the downloaded file
+- In the notebbook menu selection, select Import from .ipynb file and choose the downloaded file
 
-![alt text](assets/weather/W001.png)
+    ![alt text](assets/weather/W001.png)
 
 
-Follow the instructions as per the imported notebook.  You will end up with a weather forecast for each of the different events.
 
-![alt text](assets/weather/W002.png)
+- Populate the fields with the following:
+
+![alt text](assets/weather/W003.png)
+
+- Follow the instructions as per the imported notebook.  You will end up with a weather forecast for each of the different events.
+
+    ![alt text](assets/weather/W002.png)
 
 
 ### Streamlit showing weather by Train Station
 
+![alt text](assets/weather/W004.png)
+
 this is an example weather app which shows the weather forecast for each train station
+
+- Copy and paste the code below into a new **streamlit app**
+
+- NOTE: you will need to install the package **pydeck** from the packages menu.
+
 
 ```python
 
@@ -1452,8 +1464,8 @@ trains_latlon = trains_latlon.drop('POSTCODE_SPLIT','POSTCODE_OUTCODE','POSTCODE
 
 # Add hourly and daily weather for each train station
 
-weather_hourly = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS_PRIVATE_BETA.BD1_BETA."advanced_with_solar_hourly_view"')
-weather_daily = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS_PRIVATE_BETA.BD1_BETA."advanced_with_solar_daily_view"')
+weather_hourly = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS__ADVANCED_WITH_SOLAR.PCSECT_FORECAST."advanced_with_solar_hourly_view"')
+weather_daily = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS__ADVANCED_WITH_SOLAR.PCSECT_FORECAST."advanced_with_solar_daily_view"')
 
 weather_hourly_max = weather_hourly.agg(max('"Issued_at"').alias('MAX'))
 weather_hourly = weather_hourly.join(weather_hourly_max,weather_hourly_max['MAX']==weather_hourly['"Issued_at"']).drop('MAX')
@@ -1767,6 +1779,7 @@ if run:
     with col2:
         st.markdown('##### HUMIDITY')
         st.bar_chart(weather_filter_hour,x='HOUR',y=['Relative'])
+
 
 ```
 
