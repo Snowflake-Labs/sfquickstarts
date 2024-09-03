@@ -55,13 +55,17 @@ GRANT ALL ON WAREHOUSE ML_MODEL_WH TO ROLE ML_MODEL_ROLE;
 -- Next create a new database and schema,
 CREATE OR REPLACE DATABASE ML_MODEL_DATABASE;
 CREATE OR REPLACE SCHEMA ML_MODEL_SCHEMA;
+
+GRANT OWNERSHIP ON DATABASE ML_MODEL_DATABASE TO ROLE ML_MODEL_ROLE COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE ML_MODEL_DATABASE TO ROLE ML_MODEL_ROLE COPY CURRENT GRANTS;
 ```
 
 <!-- ------------------------ -->
 ## Run the Notebook
 Duration: 10
 
-- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-intro-to-feature-store-using-snowflake-notebooks/blob/main/feature_store_overview.ipynb)
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-develop-and-manage-ml-models-with-feature-store-and-model-registry/blob/main/notebooks/0_start_here.ipynb)
+- Download [feature-store-ui.png](https://github.com/Snowflake-Labs/sfguide-develop-and-manage-ml-models-with-feature-store-and-model-registry/blob/main/notebooks/feature-store-ui.png) and [model-registry-ui.png](https://github.com/Snowflake-Labs/sfguide-develop-and-manage-ml-models-with-feature-store-and-model-registry/blob/main/notebooks/model-registry-ui.png)
 - Change role to ML_MODEL_ROLE
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
@@ -70,6 +74,7 @@ Duration: 10
   - Warehouse: ML_MODEL_WH
 - Create Notebook
 - Click Packages in the top right, add `snowflake-ml-python` and `snowflake-snowpark-python`
+- Upload both image files by clicking the plus button on the file explorer in the left pane
 - Run cells in the notebook!
 
 ![notebook-preview](assets/ml-model-notebook.png)
