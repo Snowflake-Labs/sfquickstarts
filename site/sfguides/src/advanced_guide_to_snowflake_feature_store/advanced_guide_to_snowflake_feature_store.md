@@ -1,22 +1,22 @@
-id: getting_started_with_snowflake_feature_store
+id: advanced_guide_to_snowflake_feature_store
 summary: Learn how to get started and use Snowflake Feature Store to manage features and deploy models into production
-categories: getting-started
+categories: data-science-&-ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Machine Learning, data-science-&-ml,  Snowpark, Twitter 
+tags: Advanced Guide, Data Science, Data Engineering, Machine Learning, data-science-&-ml,  Snowpark, Twitter 
 authors: Simon Field
 
-# Getting Started with Snowflake Feature Store
-<!-- ------------------------ -->
+# Advanced Guide to Snowflake Feature Store
+<!-- --------------------------------------- -->
 ## Overview 
 Duration: 5
 
-This guide walks through an end-to-end customer segmentation machine-learning use-case using Snowflake Feature Store and Model Registry.  By completing this guide, you will be able to go from ingesting raw data through to implementing a production inference data-pipeline with Snowflake ML to maintain customer segments.
+This advanced guide walks through an end-to-end customer segmentation machine-learning use-case using Snowflake Feature Store and Model Registry.  By completing this guide, you will be able to go from ingesting raw data through to implementing a production inference data-pipeline with Snowflake ML to maintain customer segments.
 
 The primary focus in this guide is the Snowflake Feature Stores functionality and how it integrates within the broader ecosystem within Snowflake ML.
 
-Here is a summary of what you will be able to learn in each step by following this quickstart:
+Here is a summary of what you will be able to learn in each step by following this Guide:
 
 - **Setup Environment**: Use stages and tables to ingest and organize raw data from S3 into Snowflake tables.  Setup a scheduled process to simulate incremental data-ingest into Snowflake tables.
 - **Feature Engineering**: Leverage Snowparks Python DataFrames to perform data cleansing, transformations such as group by, aggregate, pivot, and join to create features for machine learning.
@@ -24,7 +24,7 @@ Here is a summary of what you will be able to learn in each step by following th
 - **Machine Learning**: Perform feature transformation and run ML Training in Snowflake using Snowpark ML. Register the trained ML model for inference from the Snowflake Model Registry
 - **Operationalise a Model**: Implementing a production inference data-pipeline to maintain customer segments as underlying customer behaviors change in source data.
 
-The diagram below provides an overview of what we will be building in this QuickStart.
+The diagram below provides an overview of what we will be building in this Guide.
 ![Snowpark](assets/quickstart_pipeline.png)
 
 > aside negative
@@ -59,7 +59,7 @@ To get started with Snowflake ML, developers can use the Python APIs from the [S
 
 ![snowpark_ml](assets/snowflake_ml.png)
 
-This quickstart will focus on
+This guide will focus on
 
 - [Snowflake Feature Store](https://docs.snowflake.com/LIMITEDACCESS/snowflake-feature-store#generating-datasets-for-training), which enables the creation of feature-engineering pipelines, and efficient, time-accurate retrieval of features for model training and inference. Snowflake Feature Store enables data engineers, data scientists and ML engineers to centralize the curation, maintenance and sharing of features that can be used in machine-learning models.  
 
@@ -110,7 +110,7 @@ This section covers cloning of the GitHub repository and setting up your Snowpar
 
 ### Clone GitHub Repository
 
-The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store). This repository contains all the code you will need to successfully complete this QuickStart Guide.
+The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store). This repository contains all the code you will need to successfully complete this Guide.
 
 Using HTTPS:
 
@@ -126,7 +126,7 @@ git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-snowflake-f
 
 ### Snowpark for Python
 
-To complete the Quickstart we will need a Python environment installed with the prerequisite packages.
+To complete the Guide we will need a Python environment installed with the prerequisite packages.
 
 #### Local Python Environment Installation
 
@@ -171,7 +171,7 @@ pip install snowflake
 ```python
 ipython kernel install --user --name=py-snowpark_df_ml_fs
 ```
-**Step 7:** Make sure you are in the top level directory for this QuickStart, and start Jupyter to test the it is setup correctly
+**Step 7:** Make sure you are in the top level directory for this Guide, and start Jupyter to test the it is setup correctly
 
 ```python
 jupyter lab
@@ -222,9 +222,9 @@ session = Session.builder.configs(connection_parameters).create()
 
 Duration: 20
 
-We will now need to setup the Database to mimic development and production databases environments, where new data is being regularly ingested to maintain the latest data from source systems.  Snowflakes Feature Store automates the maintenance of the feature-engineering pipelines from source tables in Snowflake which we want to observe in this Quickstart.
+We will now need to setup the Database to mimic development and production databases environments, where new data is being regularly ingested to maintain the latest data from source systems.  Snowflakes Feature Store automates the maintenance of the feature-engineering pipelines from source tables in Snowflake which we want to observe in this Guide.
 
-We are using the dataset from [TPCX-AI](https://www.tpc.org/tpcx-ai/default5.asp) and it's usecases for this Quickstart example.  We will use Usecase 1, which performs a customer segmentation using customer Orders, Line-Items and Order-Returns tables.  We will also load the Customer data should you wish to further enrich the use-case with additional customer data.
+We are using the dataset from [TPCX-AI](https://www.tpc.org/tpcx-ai/default5.asp) and it's usecases for this Guide example.  We will use Usecase 1, which performs a customer segmentation using customer Orders, Line-Items and Order-Returns tables.  We will also load the Customer data should you wish to further enrich the use-case with additional customer data.
 
 For each table TPCX-AI provides three parts to the data:
 * __TRAINING__ (_Development_)
@@ -248,7 +248,7 @@ connection_parameters = json.loads('connections.json)
 
 Within your Jupyter session you should see the Notebook file (`Step01_TPCXAI_UC01_Setup.ipynb`) in the file-browswer.  Open the Notebook, select (top-right) the Conda Environment/Jupyter Kernel (`py-snowpark_df_ml_fs`) that we created earlier for the Notebook.
 
-You will need to do the same for the other Notebooks used in this Quickstart
+You will need to do the same for the other Notebooks used in this Guide
 
 Step through the Notebook running the cells to setup the Database environment.
 > aside negative
@@ -276,10 +276,10 @@ You can drill into the Task details from the Data viewer.  For example:
 
 ![Snowpark](assets/append_scoring_lineitem_task.png)
 
-You can see that the Tasks are set to execute every minute if new data is available.  Feel free to reduce the frequency should you want to, although you will then need to wait longer to observe changes in FeatureViews when you create them in the Quickstart.
+You can see that the Tasks are set to execute every minute if new data is available.  Feel free to reduce the frequency should you want to, although you will then need to wait longer to observe changes in FeatureViews when you create them in the Guide.
 
 > aside negative
-> __Note:__ If you are going to leave these running for any length of time, assuming you are completing the Quickstart over a few days. You should also `SUSPEND` the Tasks to minimise costs.  You can `RESUME` them when you want to restart, and they will pick up where they left off, loading any additional data for the interim period.  You can do this via the Elipsis in the top-right corner, or programmatically with SQL if you prefer.
+> __Note:__ If you are going to leave these running for any length of time, assuming you are completing the Guide over a few days. You should also `SUSPEND` the Tasks to minimise costs.  You can `RESUME` them when you want to restart, and they will pick up where they left off, loading any additional data for the interim period.  You can do this via the Elipsis in the top-right corner, or programmatically with SQL if you prefer.
 
 
 <!-- ------------------------ -->
@@ -393,7 +393,7 @@ We use the training Dataset we created in the previous step to fit a Snowpark-ML
 
 We fit the model and log it to the Model Registry that we created earlier. You can read more about Snowflake ML Model Registry in this [section](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview) of the documentation. As with the Snowflake Feature Store, models in the registry are versioned. When we fit our model with Snowpark ML, using the Feature Store and register the model in the Registry, Snowflake captures the full lineage from source tables through to the model. We can interogate the lineage information to understand what models might be impacted by a data-quality problem in our source tables for example.
 
-Model fitting and optimisation is typically a highly iterative process where different subsets of features, over varying data samples are used in combination with different sets of model hyper-parameters.  With feature store and model lineage and Model Registry all the the information related to each fitting run is captured, so that we have full Model Reproducibility and Discovery should we need. During this process we would normally check our model against a test dataset, to generate test-scores for the model.   Many more sophisticated  validation techniques exist, but are beyond the scope of this Quickstart. 
+Model fitting and optimisation is typically a highly iterative process where different subsets of features, over varying data samples are used in combination with different sets of model hyper-parameters.  With feature store and model lineage and Model Registry all the the information related to each fitting run is captured, so that we have full Model Reproducibility and Discovery should we need. During this process we would normally check our model against a test dataset, to generate test-scores for the model.   Many more sophisticated  validation techniques exist, but are beyond the scope of this Guide. 
 
 * Within-Cluster Sum of Squares
 * Silhouette Score
@@ -417,7 +417,7 @@ This notebook shows how you can easily replicate the training feature-engineerin
 ### Recreate the Feature-Engineering pipeline
 We created FeatureViews in our `_TRAINING_FEATURE_STORE` (Development) schema.  We will create another Feature Store (`_SERVING_FEATURE_STORE`) for the Production environment. This will hold new FeatureViews created with the same definition, but running over Production data.  We can easily modify the tables that are referenced in production, versus development, by changing the Schema in the dataframe definition. We assume that the database tables are defined identically between development and production.
 
-For this Quickstart we have chosen to share the Model-Registry across all environments as we will use the model we trained in Development, in Production for inference.  Alternatively, we could also create a new seperate Model Registry for production and Copy models between environments, or retrain the Model in production with appropriate checks and balances to ensure the new model over production data is still good for operationalisation.
+For this Guide we have chosen to share the Model-Registry across all environments as we will use the model we trained in Development, in Production for inference.  Alternatively, we could also create a new seperate Model Registry for production and Copy models between environments, or retrain the Model in production with appropriate checks and balances to ensure the new model over production data is still good for operationalisation.
 
 When we register our model in the Model Registry it packages it as a Python function which enables direct access from [Python](https://docs.snowflake.com/developer-guide/snowpark-ml/model-registry/overview#calling-model-methods) or from [SQL](https://docs.snowflake.com/sql-reference/commands-model#label-snowpark-model-registry-model-methods).  This allows the creation of an inference Feature View that uses the model directly for prediction from our Feature Engineering pipeline, 
 
@@ -482,7 +482,7 @@ We can monitor how CUSTOMERS behaviour (segment) changes over time and take targ
 ## Clean Up
 Duration: 5
 
-Once you have completed this Quickstart and no longer need the databases and objects created by it you will want to clean up.  We provide a Notebook that does this. [Step04_TPCXAI_UC01_Cleanup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store/tree/main/Step04_TPCXAI_UC01_Cleanup.ipynb)
+Once you have completed this Guide and no longer need the databases and objects created by it you will want to clean up.  We provide a Notebook that does this. [Step04_TPCXAI_UC01_Cleanup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store/tree/main/Step04_TPCXAI_UC01_Cleanup.ipynb)
 
 If you want to keep the data, but shut down the Tasks and Dynamic Tables to minimise compute cost, you will need to go to each Task and Dynamic Table to `SUSPEND` them.  This can be done in the Snowsight UI, or you can use the applicable SQL commands to achieve the same.
 
@@ -493,7 +493,7 @@ Duration: 3
 
 Congratulations! You've successfully performed Feature Engineering using Snowpark, made use of Snowflake Feature Store to publish and maintain features in a development and production environment. You've learnt how you can deploy a model from the Snowflake Model Registry and combine it with a feature-engineering pipeline in Feature Store to operationalise an incremental inference process in Snowflake ML.
 
-We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/JeZWYwkCMk3gty7D7).
+We would love your feedback on this Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/JeZWYwkCMk3gty7D7).
 
 ### What You Learned
 
