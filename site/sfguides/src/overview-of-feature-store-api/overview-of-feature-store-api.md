@@ -57,22 +57,27 @@ GRANT ALL ON WAREHOUSE FS_API_WH TO ROLE FS_API_ROLE;
 -- Next create a new database and schema,
 CREATE OR REPLACE DATABASE FS_API_DATABASE;
 CREATE OR REPLACE SCHEMA FS_API_SCHEMA;
+
+GRANT OWNERSHIP ON DATABASE FS_API_DATABASE TO ROLE FS_API_ROLE COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE FS_API_DATABASE TO ROLE FS_API_ROLE COPY CURRENT GRANTS;
 ```
 
 <!-- ------------------------ -->
 ## Run the Notebook
 Duration: 10
 
-- Download the notebook from this [link]()
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-develop-and-manage-ml-models-with-feature-store-and-model-registry/blob/main/notebooks/0_start_here.ipynb)
 - Change role to FS_API_ROLE
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
 - Create a new notebok with the following settings
-  - Notebook Location: ML_MODEL_DATABASE, ML_MODEL_SCHEMA
-  - Warehouse: ML_MODEL_WH
+  - Notebook Location: FS_API_DATABASE, FS_API_SCHEMA
+  - Warehouse: FS_API_WH
 - Create Notebook
 - Click Packages in the top right, add `snowflake-ml-python`
 - Run cells in the notebook!
+
+![feature-store-api-notebook](assets/feature-store-api-notebook.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
