@@ -100,7 +100,7 @@ Next create a new conda environment and install the packages required with the f
 conda create -n getting_started_llmops python=3.11
 conda activate getting_started_llmops
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python notebook ipykernel
-pip install trulens-eval llama-index llama-index-embeddings-huggingface llama-index-readers-github snowflake-sqlalchemy
+pip install trulens trulens-providers-cortex trulens-connectors-snowflake llama-index llama-index-embeddings-huggingface llama-index-readers-github snowflake-sqlalchemy
 ```
 
 Once we have an environment with the right packages installed, we can load our credentials and set our Snowflake connection in a jupyter notebook notebook.
@@ -122,13 +122,13 @@ import os
 load_dotenv()
 
 connection_details = {
-  "account":  os.environ["SNOWFLAKE_ACCOUNT"],
-  "user": os.environ["SNOWFLAKE_USER"],
-  "password": os.environ["SNOWFLAKE_USER_PASSWORD"],
-  "role": os.environ["SNOWFLAKE_ROLE"],
-  "database": os.environ["SNOWFLAKE_DATABASE"],
-  "schema": os.environ["SNOWFLAKE_SCHEMA"],
-  "warehouse": os.environ["SNOWFLAKE_WAREHOUSE"]
+  "account":  os.getenv["SNOWFLAKE_ACCOUNT"],
+  "user": os.getenv["SNOWFLAKE_USER"],
+  "password": os.getenv["SNOWFLAKE_USER_PASSWORD"],
+  "role": os.getenv["SNOWFLAKE_ROLE"],
+  "database": os.getenv["SNOWFLAKE_DATABASE"],
+  "schema": os.getenv["SNOWFLAKE_SCHEMA"],
+  "warehouse": os.getenv["SNOWFLAKE_WAREHOUSE"]
 }
 
 session = Session.builder.configs(connection_details).create()
@@ -172,7 +172,7 @@ import nest_asyncio
 
 nest_asyncio.apply()
 
-github_token = os.environ["GITHUB_TOKEN"]
+github_token = os.getenv["GITHUB_TOKEN"]
 client = GithubClient(github_token=github_token, verbose=False)
 
 reader = GithubRepositoryReader(
@@ -315,9 +315,9 @@ class CortexSearchRetriever:
     def retrieve(self, query: str) -> List[str]:
         root = Root(self._session)
         cortex_search_service = (
-            root.databases[os.environ["SNOWFLAKE_DATABASE"]]
-            .schemas[os.environ["SNOWFLAKE_SCHEMA"]]
-            .cortex_search_services[os.environ["SNOWFLAKE_CORTEX_SEARCH_SERVICE"]]
+            root.databases[os.getenv["SNOWFLAKE_DATABASE"]]
+            .schemas[os.getenv["SNOWFLAKE_SCHEMA"]]
+            .cortex_search_services[os.getenv["SNOWFLAKE_CORTEX_SEARCH_SERVICE"]]
         )
         resp = cortex_search_service.search(
             query=query,
@@ -350,19 +350,18 @@ We'll do this by creating a custom python class with each the methods we need. W
 The first thing we need to do however, is to [set the database connection to Snowflake](https://www.trulens.org/trulens_eval/tracking/logging/where_to_log/log_in_snowflake/#logging-in-snowflake) where we'll log the traces and evaluation results from our application. This way we have a stored record that we can use to understand the app's performance. This is done when initializing `Tru`.
 
 ```python
-from trulens_eval import Tru
-
-db_url = "snowflake://{user}:{password}@{account}/{dbname}/{schema}?warehouse={warehouse}&role={role}".format(
-    user=os.environ["SNOWFLAKE_USER"],
-    account=os.environ["SNOWFLAKE_ACCOUNT"],
-    password=os.environ["SNOWFLAKE_USER_PASSWORD"],
-    dbname=os.environ["SNOWFLAKE_DATABASE"],
-    schema=os.environ["SNOWFLAKE_SCHEMA"],
-    warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
-    role=os.environ["SNOWFLAKE_ROLE"],
+from trulens.core import TruSession
+from trulens.connectors.snowflake import SnowflakeConnector
+conn = SnowflakeConnector(
+    account=os.getenv["SNOWFLAKE_ACCOUNT"],
+    user=os.getenv["SNOWFLAKE_USER"],
+    password=os.getenv["SNOWFLAKE_USER_PASSWORD"],
+    database_name=os.getenv["SNOWFLAKE_DATABASE"],
+    schema_name=os.getenv["SNOWFLAKE_SCHEMA"],
+    warehouse=os.getenv["SNOWFLAKE_WAREHOUSE"],
+    role=os.getenv["SNOWFLAKE_ROLE"],
 )
-
-tru = Tru(database_url=db_url)
+session = TruSession(connector=conn)
 ```
 
 Now we can construct the RAG.
@@ -423,9 +422,9 @@ Satisfactory evaluations on each provides us confidence that our LLM app is free
 We will also use [LLM-as-a-Judge](https://arxiv.org/abs/2306.05685) evaluations, using Mistral Large on [Snowflake Cortex](https://www.trulens.org/trulens_eval/api/provider/cortex/) as the LLM.
 
 ```python
-from trulens_eval.feedback.provider.cortex import Cortex
-from trulens_eval.feedback import Feedback
-from trulens_eval import Select
+from trulens.providers.cortex.provider import Cortex
+from trulens.core.feedback.feedback import Feedback
+from trulens.core.schema import Select
 import numpy as np
 
 provider = Cortex("mistral-large")
@@ -454,12 +453,14 @@ f_answer_relevance = (
 After defining the feedback functions to use, we can just add them to the application along with giving the application an ID.
 
 ```python
-from trulens_eval import TruCustomApp
+from trulens.apps.custom import TruCustomApp
 
 tru_rag = TruCustomApp(
     rag,
-    app_id="RAG v1",
+    app_name="RAG",
+    app_version="simple",
     feedbacks=[f_groundedness, f_answer_relevance, f_context_relevance],
+    )
 )
 ```
 
@@ -510,7 +511,7 @@ In addition to making informed iteration, we can also directly use feedback resu
 To do so, we'll rebuild our RAG using the `@context-filter` decorator on the method we want to filter, and pass in the feedback function and threshold to use for guardrailing.
 
 ```python
-from trulens_eval.guardrails.base import context_filter
+from trulens.core.guardrails.base import context_filter
 
 # note: feedback function used for guardrail must only return a score, not also reasons
 f_context_relevance_score = Feedback(
@@ -563,11 +564,12 @@ Duration: 7
 We can combine the new version of our app with the feedback functions we already defined.
 
 ```python
-from trulens_eval import TruCustomApp
+from trulens.apps.custom import TruCustomApp
 
-tru_rag = TruCustomApp(
-    rag,
-    app_id="RAG v1",
+tru_filtered_rag = TruCustomApp(
+    filtered_rag,
+    app_name="RAG",
+    app_version="filtered",
     feedbacks=[f_groundedness, f_answer_relevance, f_context_relevance],
 )
 ```
