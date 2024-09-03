@@ -4,7 +4,7 @@ summary: Step-by-step guide on how to create a RAG app using Snowflake Cortex Se
 categories: featured,getting-started,data-science,gen-ai 
 environments: web 
 tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings, Getting Started
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Build a Retrieval Augmented Generation (RAG) based LLM assistant using Streamlit and Snowflake Cortex Search
