@@ -175,7 +175,7 @@ You may then preview the data by refreshing the left nav panel (click the `refre
 That's it for transforming the data...now we are ready to build our Streamlit app!
 
 ## Build the Chatbot as a Streamlit Application
-Duration: 2
+Duration: 5
 We are now ready to build our Streamlit application.  Snowflake's Streamlit feature makes creating and sharing applications easy.
 
 **Step 1.** Click the Projects icon in the left menu and select `Streamlit`.
@@ -187,18 +187,18 @@ We are now ready to build our Streamlit application.  Snowflake's Streamlit feat
 Type a name for your chat app.  **VERY IMPORTANT: Ensure you choose the database and schema containing your data.**  Once the fields are set, click `Create`.
 ![Fivetran Snowflake 8](assets/snowflake/s_0080.png)
 
-**Step 3.** Get used to the interface and remove the default code.
+**Step 3.** Get used to the interface and remove the default Streamlit code.
 
 Let's first understand how this screen operates. 
 
-The top right contains application controls.  To change the application settings, click the vertical three dots.  But the two main features of this are the `Run` button and the `Edit` button.  You will notice below that the `Edit` button is not shown.  That is because we are in edit mode.  The next time you go to the Streamlit section and select your application, it will be in "Run" mode, and `Edit` will appear.  This is how you edit your application later.
+The top right contains application controls.  To change the application settings, click the vertical three dots (ex. changing warehouse).  The two main features of this area are the `Run` button and the `Edit` button.  You will notice below that the `Edit` button is not shown.  That is because we are in edit mode.  The next time you go to the Streamlit section and select your application, it will be in "Run" mode, and `Edit` will appear to allow you to edit your application later.
 
-The second portion of the screen is the bottom left panel controls.  There are three that can be toggled on and off.  The first expands/collapses the left nav panel.  The second expands/collapses the code panel.  The third expands/collapses the running application panel.  Get to know how these three buttons work by turning them off and on.  When developing/editing, it seems to be easier having the left nav panel and the right application panel off allowing the code panel to have the full screen.
+The second portion of the screen is the bottom left panel controls.  There are three that can be toggled on and off.  The first expands/collapses the left nav panel (which you really do not need for this lab).  The second expands/collapses the code panel.  The third expands/collapses the running application panel.  Get to know how these three buttons work by turning them off and on.  When developing/editing, it seems to be easier having the left nav panel and the right application panel off allowing the code panel to have the full screen.
 ![Fivetran Snowflake 9](assets/snowflake/s_0090.png)
 
-Once you are comfortable, make the code panel enabled and click in the code, highlight all the code and delete it.  This is simply the default code for a new application.
+Once you are comfortable with the screen navigation, make the code panel enabled and place your cursor in the code, highlight all the code and delete it.  This is simply the default code for a new application.
 
-**Step 4.** Add the code below to the empty code editor.
+**Step 4.** Add the wine assistant chatbot code below to the empty code editor.
 
 ``` python
 #
@@ -209,24 +209,25 @@ Once you are comfortable, make the code panel enabled and click in the code, hig
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
 import pandas as pd
-import re
 import time
 
 # Change this list as needed to add/remove model capabilities.
 MODELS = [
-    "snowflake-arctic",
-    "reka-flash",
-    "llama3-70b",
-    "llama2-70b-chat",
     "gemma-7b",
-    "mistral-large",
+    "mistral-7b",
     "mixtral-8x7b",
-    "llama3-8b",
-    "mistral-7b"
+    "reka-flash",
+    "jamba-instruct", 
+    "snowflake-arctic",
+    "llama3.1-70b",
+    "mistral-large2",
+    "llama3.1-405b"
 ]
 
-# Change this value to control the number of tokens you allow the user to change to control RAG context.
-CHUNK_NUMBER = [5,6,7,8,9,10,12,16,20]
+# Change this value to control the number of tokens you allow the user to change to control RAG context. In
+# this context for the data used, 1 chunk would be approximately 200-400 tokens.  So a limit is placed here
+# so that the LLM does not abort if the context is too large.
+CHUNK_NUMBER = [4,6,8,10,12,14,16]
 
 def build_layout():
     #
@@ -255,8 +256,9 @@ def build_layout():
       all the models. The dataset includes over **700 wineries and vineyards** across all CA wine-producing regions including the 
       North Coast, Central Coast, Central Valley, South Coast and various AVAs sub-AVAs. Let's get started!""")
     user_question_placeholder = "Message your personal CA Wine Country Visit Assistant..."
-    st.sidebar.selectbox("Select a Snowflake Cortex model:", MODELS, key="model_name")
-    st.sidebar.checkbox('Use your Fivetran dataset as context?', key="dataset_context")
+    st.sidebar.selectbox("Select a Snowflake Cortex model:", MODELS, key="model_name", index=3)
+    st.sidebar.checkbox('Use your Fivetran dataset as context?', key="dataset_context", help="""This turns on RAG where the 
+    data replicated by Fivetran and curated in Snowflake will be used to add to the context of the LLM prompt.""")
     if st.button('Reset conversation', key='reset_conversation_button'):
         st.session_state.conversation_state = []
         st.session_state.reset_key += 1
@@ -270,24 +272,23 @@ def build_layout():
     else:
         st.caption("""Please note that :red[**_I am NOT_**] using your Fivetran dataset as context. All models are very 
           creative and can make mistakes. Consider checking important information before heading out to wine country.""")
-    with st.sidebar.expander("Advanced options"):
-        st.selectbox("Select number of context chunks:", CHUNK_NUMBER, key="num_retrieved_chunks")
-        st.checkbox(
-            'Show Token Count', value=True, key="show_token_count")
+    with st.sidebar.expander("Advanced Options"):
+        st.selectbox("Select number of context chunks:", CHUNK_NUMBER, key="num_retrieved_chunks", help="""Adjust based on the 
+        expected number of records/chunks of your data to be sent with the prompt before Cortext calls the LLM.""", index=1)
     st.sidebar.caption("""I use **Snowflake Cortex** which provides instant access to industry-leading large language models (LLMs), 
       including **Snowflake Arctic**, trained by researchers at companies like Mistral, Meta, Google, Reka, and Snowflake.\n\nCortex 
       also offers models that Snowflake has fine-tuned for specific use cases. Since these LLMs are fully hosted and managed by 
       Snowflake, using them requires no setup. My data stays within Snowflake, giving me the performance, scalability, and governance 
       you expect.""")
-    for _ in range(12):
+    for _ in range(6):
         st.sidebar.write("")
     url = 'https://i.imgur.com/9lS8Y34.png'
-    col1, col2, col3 = st.sidebar.columns([1,2,1.3])
+    col1, col2, col3 = st.sidebar.columns([1,2,1])
     with col2:
         st.image(url, width=150)
     caption_col1, caption_col2, caption_col3 = st.sidebar.columns([0.22,2,0.005])
     with caption_col2:
-        st.caption("Fivetran, Snowflake, Streamlit & Cortex")
+        st.caption("Fivetran, Snowflake, Streamlit, & Cortex")
 
     return question
 
@@ -296,61 +297,66 @@ def build_prompt (question):
     # Format the prompt based on if the user chooses to use the RAG option or not.
     #
 
-    # Build the RAG prompt if the user chooses.
+    # Build the RAG prompt if the user chooses.  Defaulting the similarity to 0.8 -> 1 for better matching.
+    chunks_used = []
     if st.session_state.dataset_context:
+        # Get the RAG records.
         context_cmd = f"""
           with context_cte as
-          (select winery_information as winery_chunk, vector_cosine_similarity(winery_embedding,
+          (select winery_or_vineyard, winery_information as winery_chunk, vector_cosine_similarity(winery_embedding,
                 snowflake.cortex.embed_text_768('e5-base-v2', ?)) as v_sim
-          from single_string_winery_review_vector
+          from vineyard_data_vectors
+          having v_sim > 0.79
           order by v_sim desc
           limit ?)
-          select winery_chunk from context_cte 
+          select winery_or_vineyard, winery_chunk from context_cte 
           """
         chunk_limit = st.session_state.num_retrieved_chunks
         context_df = session.sql(context_cmd, params=[question, chunk_limit]).to_pandas()
         context_len = len(context_df) -1
-
+        # Add the vineyard names to a list to be displayed later.
+        chunks_used = context_df['WINERY_OR_VINEYARD'].tolist()
+        # Build the additional prompt context using the wine dataset.
         rag_context = ""
         for i in range (0, context_len):
-            rag_context += context_df._get_value(i, 'WINERY_CHUNK')
+            rag_context += context_df.loc[i, 'WINERY_CHUNK']
         rag_context = rag_context.replace("'", "''")
-
+        # Construct the prompt.
         new_prompt = f"""
-          'Act as a California winery visit expert for visitors to California wine country who want an incredible visit and 
+          Act as a California winery visit expert for visitors to California wine country who want an incredible visit and 
           tasting experience. You are a personal visit assistant named Snowflake CA Wine Country Visit Assistant. Provide 
-          the most accurate information on California wineries based on winery_information from 
-          vineyard_data_vectors table. Only provide information if there is an exact match in the given Context.
+          the most accurate information on California wineries based only on the context provided. Only provide information 
+          if there is an exact match below.  Do not go outside the context provided.  
           Context: {rag_context}
           Question: {question} 
-          Answer: '
+          Answer: 
           """
     else:
-        # Build the generic version of the prompt without RAG.
+        # Construct the generic version of the prompt without RAG to only go against what the LLM was trained.
         new_prompt = f"""
-          'Act as a California winery visit expert for visitors to California wine country who want an incredible visit and 
+          Act as a California winery visit expert for visitors to California wine country who want an incredible visit and 
           tasting experience. You are a personal visit assistant named Snowflake CA Wine Country Visit Assistant. Provide 
           the most accurate information on California wineries.
           Question: {question} 
-          Answer: '
+          Answer: 
           """
-    
-    return new_prompt
 
-def get_model_token_count(question):
+    return new_prompt, chunks_used
+
+def get_model_token_count(prompt_or_response) -> int:
     #
-    # Calculate and return the token count for the model and question used.
+    # Calculate and return the token count for the model and prompt or response.
     #
+    token_count = 0
     try:
-        token_count_sql = f"""
-          select SNOWFLAKE.CORTEX.COUNT_TOKENS('{st.session_state.model_name}', '{question}') as token_count;
-          """
-        token_count_data = session.sql(token_count_sql).collect()
-        token_count = token_count_data[0][0]
-        
-        return token_count
-    except Exception as e:
-        token_count = -1
+        token_cmd = f"""select SNOWFLAKE.CORTEX.COUNT_TOKENS(?, ?) as token_count;"""
+        tc_data = session.sql(token_cmd, params=[st.session_state.model_name, prompt_or_response]).collect()
+        token_count = tc_data[0][0]
+    except Exception:
+        # Negative value just denoting that tokens could not be counted for some reason.
+        token_count = -9999
+
+    return token_count
 
 def calc_times(start_time, first_token_time, end_time, token_count):
     #
@@ -375,19 +381,19 @@ def run_prompt(question):
     #
     # Run the prompt against Cortex.
     #
-    formatted_prompt = build_prompt (question)
-    cmd = f"""
-             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
-           """
-    token_count = get_model_token_count(question)
+    formatted_prompt, chunks_used = build_prompt (question)
+    token_count = get_model_token_count(formatted_prompt)
     start_time = time.time()
-    sql_resp = session.sql(cmd, params=[st.session_state.model_name, formatted_prompt])
+    cortex_cmd = f"""
+             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
+           """    
+    sql_resp = session.sql(cortex_cmd, params=[st.session_state.model_name, formatted_prompt])
     first_token_time = time.time() 
     answer_df = sql_resp.collect()
     end_time = time.time()
     time_to_first_token, time_for_remaining_tokens, tokens_per_second = calc_times(start_time, first_token_time, end_time, token_count)
-    
-    return answer_df, time_to_first_token, time_for_remaining_tokens, tokens_per_second, token_count
+
+    return answer_df, time_to_first_token, time_for_remaining_tokens, tokens_per_second, int(token_count), chunks_used
 
 def main():
     #
@@ -398,18 +404,27 @@ def main():
         with st.spinner("Thinking..."):
             try:
                 # Run the prompt.
-                data, time_to_first_token, time_for_remaining_tokens, tokens_per_second, token_count = run_prompt(question)
+                token_count = 0
+                data, time_to_first_token, time_for_remaining_tokens, tokens_per_second, token_count, chunks_used = run_prompt(question)
                 response = data[0][0]
-                # Conditionally append the token count line based on the checkbox
-                if st.session_state.show_token_count:
+                # Add the response token count to the token total so we get a better prediction of the costs.
+                if response:
+                    token_count += get_model_token_count(response)
+                    # Conditionally append the token count line based on the checkbox
+                    rag_delim = ", "
                     st.session_state.conversation_state.append(
-                        (f"🔢 Token Count for '{st.session_state.model_name}':", 
-                         f"""<span style='color:#808080;'>{token_count} tokens • {tokens_per_second:.2f} tokens/s • 
-                         {time_to_first_token:.2f}s to first token + {time_for_remaining_tokens:.2f}s</span>""")
+                        (f":information_source: RAG Chunks/Records Used:",
+                         f"""<span style='color:#808080;'> {(rag_delim.join([str(ele) for ele in chunks_used])) if chunks_used else 'none'} 
+                         </span><br/><br/>""")
                     )
-                # Append the new results.
-                st.session_state.conversation_state.append((f"CA Wine Country Visit Assistant ({st.session_state.model_name}):", response))
-                st.session_state.conversation_state.append(("You:", question))
+                    st.session_state.conversation_state.append(
+                        (f":1234: Token Count for '{st.session_state.model_name}':", 
+                         f"""<span style='color:#808080;'>{token_count} tokens • {tokens_per_second:.2f} tokens/s • 
+                         {time_to_first_token:.2f}s to first token + {time_for_remaining_tokens:.2f}s.</span>""")
+                    )
+                    # Append the new results.
+                    st.session_state.conversation_state.append((f"CA Wine Country Visit Assistant ({st.session_state.model_name}):", response))
+                    st.session_state.conversation_state.append(("You:", question))
             except Exception as e:
                 st.warning(f"An error occurred while processing your question: {e}")
         
@@ -417,7 +432,7 @@ def main():
         if st.session_state.conversation_state:
             for i in reversed(range(len(st.session_state.conversation_state))):
                 label, message = st.session_state.conversation_state[i]
-                if 'Token Count' in label:
+                if 'Token Count' in label or 'RAG Chunks' in label:
                     # Display the token count in a specific format
                     st.markdown(f"**{label}** {message}", unsafe_allow_html=True)
                 elif i % 2 == 0:
@@ -435,120 +450,146 @@ if __name__ == "__main__":
 
 ```
 
-**Step 5.** Let's break down the code before we run the application.
+**Step 5.** Let's break down the code before we run the application just so we understand how it all comes together.
 
-The application is Python utilizing packages and services hosted in Snowflake.  So the very top of the code imports all packages and references needed to execute the application.  The `MODELS` and `CHUNK_NUMBER` lists load the drop down lists in the left nave panel of the application and are at the top for easy access in the case you would like to alter the list.  The models listed are the ones that are available in Snowflake at the time of the creation of this quickstart.  This list will probably be updated very soon with new and/or updated models.  So change these as needed based on the [LLMs available](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability).  The chunks list values are part of the RAG (retrieval-augmented generation) process.  This number represents how many items/chunks do I want to automatically insert into my context that I send to the LLM so the LLM answers questions about my data.  You will notice that some prompts may only need 5 chunks when you only ask about a few items in your data.  Other, more complex prompts, will require increased chunks.  You will know this when you start to see hallucinations or data that you know is in your dataset comes back with "unknown".  See the [token limitations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#model-restrictions) to better understand how much data can be sent to these LLMs.
+> aside positive
+> Note: There are no additional packages needed to run the lab.  So we do not need to use the `packages` import functionality at the top of the code editor.
+>
 
-Now we can breakdown the functions relatively easy.  The first (starting from the top) is `build_layout`.  This function is builds out the content in the main panel where you type your prompt and the left nav panel where you adjust your application settings such as choosing a different model.  The order is like HTML where the objects are rendered how they are defined top-to-bottom.
+The Streamlit application is, of course, Python utilizing packages and services hosted in Snowflake.  So the very top of the code block imports all packages and references needed to execute the application.  The `MODELS` and `CHUNK_NUMBER` lists load the drop down lists in the left nave panel of the application and are at the top for easy access in the case you would like to alter the list.  The models listed are the ones that are available in Snowflake at the time of the creation of this lab.  This list will probably be updated very soon with different models as they become available.  So change these as needed based on the [LLMs available](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability).  The chunks list numeric values are part of the RAG (retrieval-augmented generation) process.  This number represents how many items/chunks that will automatically be inserted into the context/prompt that is sent to the LLM so that the LLM can answer questions about your data.  You will notice that some prompts may only need a small number of chunks when you only ask about a few items in your data.  Other, more complex prompts, will require increased chunks.  You will know this when you start to see hallucinations or data that you know is in your dataset comes back with "unknowns".  See the [token limitations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#model-restrictions) to better understand how much data can be sent to these LLMs.  In the sample prompts at the end of this guide, we will give hints on the number of chunks to use.
 
-The next function `build_prompt` builds much of the "persona" for you as well as builds the RAG or non-RAG prompt depending if you check the box to use your data.  I suggest you try both to see the differences.  The rest of the prompt structure such as content, task, format, and possibly example are added by you...where truly, those are not completely needed to get results.  But a better prompt structure means better results...depending on the model.  We give some pretty fun examples in the next section.
+Now we can breakdown the Python functions relatively easy.  The first (starting from the top) is `build_layout`.  This function builds the content in the main panel where you type your prompt and the left nav panel where you adjust your application settings such as choosing a different model.  The order is like HTML where the objects are rendered how they are defined top-to-bottom.  This function also acquires the `question` from the text input.
 
-The `get_model_token_count` function calculates what Snowflake will use to run the prompt against the LLM.  See the [Cost Considerations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#cost-considerations) in the docs.
+The `build_prompt` function builds much of the "persona" for you as well as builds the RAG or non-RAG prompt depending if you check the box to use your data.  It is suggested that you try both to see the differences in responses.  The rest of the prompt structure such as content, task, format, and possibly example are added by you...where truly, those are not completely needed to get results.  A better prompt structure typically means better results, and each model will render those results based on the model's training.  We give some pretty fun examples in the following sections, but you can see that they do not conform to any single format.
+
+The `get_model_token_count` function calculates what Snowflake will use to run the prompt against the LLM.  This calculation helps understand the cost implications of using Cortex.  See the [Cost Considerations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#cost-considerations) in the docs.  By default, the lab will generate the token count for the prompt, plus the RAG data is used, as well as the response from the LLM chosen.
 
 The `calc_times` function performs some additional insight into how fast various Cortex calls take to help benchmark LLM efficiency.
 
 The `run_prompt` is the controller function that formats the prompt, calls Cortex, and builds the run times for the processes.
 
-Last, the `main` function, like any other Python application, is the entry point to the entire process, calls all other processes, and displays the results in reverse order so that your most recent prompt results are at the top.
+Last, the `main` function, like any other Python application, is the entry point to the entire process, calls all other processes, and displays the results in reverse order so that your most recent prompt results are at the top of the history.
 
 ## Run the Chatbot
-Duration: 5
+Duration: 2
 Finally, we get to play with our new wine assistant!  
 
+Let's quickly run through the interface controls.
+![Fivetran Snowflake 11](assets/snowflake/s_0110.png)
 
+**Content Area:** The content area (purple box) has two controls.
+- Prompt input textbox.  Type in your prompt, click enter/return and the prompt executes.  
+- The `reset` button clears the prompt and response history, but leaves the side panel settings alone allowing you to start a new prompt to test with the same settings.
+- Also note that next to the `run` button you will see the status drop down list.  You will notice that the status will start spinning when a prompt is running.  If you wonder if your prompt is executing, just see if the status is spinning.
 
+**Side Panel:** The side panel (green box) contains features that alter the functionality of the chatbot.  Prompt refresh occurs automatically meaning if you change any setting in the side panel, the current prompt automatically runs allowing you to compare results from different feature settings.
+- The `models` drop down list contains the list of models defined at the top of the application code block.  Try different models to see how each responds to the prompts, and see which one may fit your use case better.
+- Next is the `use your dataset` checkbox which enables RAG.  When this checkbox is checked or unchecked, you will see the message below the prompt change alerting you of what to expect in your results.  Try a prompt with the checkbox checked and then uncheck to see the response change and see why RAG enables your chatbot to provide insight on "your" data (see the control records section at the in the sample prompts for wineries/vineyards that do not exist in reality).
+- Under `advanced options`, the `number of chunks` list sets the limit on the number of records/chunks to add to the current context for the LLM.  This is the core of the RAG functionality.  As noted before, there are limits to the number of chunks (translated into tokens) for each model.  So keep that in mind.  The current list of numbers in the chunks drop down list should not cause any harm in running in any current LLM.
 
-
-
-
-
-
-
-
-
-
-
-
-### Recap
-> aside positive
-> You can see that with Fivetran Quickstart Data Models, there is no code, no git, and no deployments!  This 'T' in 'ELT' is a great value-add and a great way to start you on your transformations journey.  The open source for these transformations can be found in the [dbt Package Hub](https://hub.getdbt.com/).  One item to note here.  [dbt Labs](https://www.getdbt.com/) creates push-down SQL which runs inside Snowflake.  Fivetran's implementation of this logic incurs no costs on the Fivetran side; transformation jobs are free.  But each time a transformation is executed and data is manipulated, there will be a Snowflake warehouse running consuming Snowflake credits.
+> aside positive 
+> One main item to note is the chatbot does not use previous responses to further refine results.  This feature could be added, but for this iteration, every prompt will be a new prompt for the LLM possibly using a new set of RAG context.
 >
 
-## Build Insights Via Snowflake Dashboard
-Duration: 1
+> aside positive 
+> If you edit the code, adding a new model to the list for example, ensure you click the `run` button in the upper right.  This tells Streamlit to use the updated code.
+>
 
-Now that our models are built and ready to query, let's build some insights into your data!  For the purposes of this lab, we will build a four tile dashboard within Snowflake.  The SQL and accompanying screenshot of each tile setup is given below.  NOTE: Only change the SQL if your database and/or schema name do not match below.
+**The Response:** Review the response for each prompt.  Remember, the newest response will bubble to the top; so you may need to scroll up to see it.
+![Fivetran Snowflake 12](assets/snowflake/s_0120.png)
 
-### Snowflake Dashboard
-Click the `Dashboards` item in the left navbar.  This will display the Dashboard UI.  Click `+ Dashboard` in the upper right to begin the dashboard creation process.
-![Fivetran Dashboard 1](assets/dashboard/d_0001.png)
+There are two additional pieces of information added to the bottom of each response.
+- The first is the token count for the prompt and response along with some timings.  This helps you understand the efficiency and costs of the model run.
+- The second is the RAG data, in this case the vineyard/winery names from your table, that was added to the context sent to the LLM.  If no RAG items are sent to the model, you will see a 'none' for the RAG data.  Just the names are displayed here where the entire unstructured record (winery_information column) was added to the actual LLM call.
+![Fivetran Snowflake 13](assets/snowflake/s_0130.png)
 
-Next give your dashboard a name and click `Create Dashboard`.
-![Fivetran Dashboard 2](assets/dashboard/d_0002.png)
+## Chatbot Tests
+Duration: 2
 
-Then it's time to start building tiles.  See the image below.  Ensure to set the role to `sysadmin` and the warehouse to `pc_fivetran_wh`.  Click the `+ New Tile` to get started with the first dashboard tile.
-![Fivetran Dashboard 3](assets/dashboard/d_0003.png)
+### Testing Notes
+Now that you know your way around the key features, it’s time to put the California Wine Country Visit Assistant to work.
 
-### Tiles in Snowflake
-Tiles represent dashboard objects, and each tile represents a separate execution of SQL and visualization in the dashboard.  Below is the process that can be followed for all tiles in this lab:
-1. After the `New Tile` or `New Tile from Worksheet` buttons are selected, a tile worksheet will be displayed like the ones below.
-2. Copy and paste the SQL for each tile into the SQL section in the tile worksheet.
-3. Click the `Run` button and ensure you are receiving results.  Always use a full path in SQL for database.schema.table/view.
-4. Set tile name and enable the chart display by clicking the `Chart` button (except where a table is to be rendered like Tile #4).
-5. To get the tiles to look like the ones in this lab, simply apply the metadata in the `Chart Type` section (except for Tile #4) on the right side of the UI to match the image in each tile section below.
+The assistant is designed to:
+- Tell you about wineries and vineyards in California
+- Create a trip/travel itinerary for a California Wine Country Visit
 
-Once all the tiles are created, you may move them around on the dashboard to your liking.
+As a reminder, if you “Use your Fivetran dataset as context” then the assistant will be sure to use the dataset that you moved into Snowflake. The dataset is 700+ wineries and vineyards across California with the following information for each one:
+- Winery name
+- CA wine region
+- AVA, Appellation, Sub-Appellation
+- Website
+- Price range
+- Tasting room hours
+- Are reservations required
+- Winery description
+- Primary varietals offered
+- Thoughts on the tasting room experience
+- Amenities
+- Awards and accolades
+- Distance travel time considerations
+- User rating
+- Secondary varietals
+- Wine styles
+- Events and activities
+- Sustainability practices
+- Social media channels
+- Address
+- City
+- State
+- Zip
+- Phone
+- Winemaker
+- Did Kelly Kohlleffel recommend this winery
 
-### Tile 1: Stage Counts by Month - Heatgrid
-```
-select stage_name, close_date, amount 
-from pc_fivetran_db.salesforce.salesforce__opportunity_enhanced
-```
-![Fivetran Dashboard 4](assets/dashboard/d_0010.png)
+There are control records (phantom wineries) in the Fivetran dataset that are guaranteed to not exist in any of the models’ original training datasets:
+- Millman Estate
+- Tony Kelly Pamont Vineyards
+- Hrncir Family Cellars
+- Kai Lee Family Cellars
+- Kohlleffel Vineyards
+- Picchetti Winery (look for Dora)
+Additionally, there are unique aspects in various vineyard descriptions that are guaranteed to not be a part of the models’ original training datasets - here are some examples:
+- Continuum Estate: The owners also have an energetic vizsla dog that runs around the property.
+- Hirsch Vineyards: Kelly Kohlleffel recommends this winery for its location on the extreme Sonoma Coast. You will need your mapping app to navigate here, but you'll find terrific views and world-class pinot noir and chardonnay.
+- Alpha Omega Winery: This winery is highly recommended by Kelly Kohlleffel based on enjoying an afternoon glass of wine on the patio facing the fountains. Also, the AO Era is a must try as well.
 
-### Tile 2: Opportunities Won by Amount - Bar
-```
-select sum(amount) as account_amount, account_name, count(*) as num_won 
-from pc_fivetran_db.salesforce.salesforce__opportunity_enhanced 
-where is_won = true group by account_name order by 1
-```
-![Fivetran Dashboard 5](assets/dashboard/d_0020.png)
+> aside positive 
+> Remember the chunks!  The more vineyards/wineries you ask for, the more chunks you will need to pass to the LLM or the LLM will try to figure it out on its own!
+>
 
-### Tile 3: Average Days to Close - Score
-```
-select round(avg(days_to_close),1) 
-from pc_fivetran_db.salesforce.salesforce__opportunity_enhanced
-```
-![Fivetran Dashboard 6](assets/dashboard/d_0030.png)
+### Simple Prompt Format (4-6 chunks)
+For simple prompts, try things like (if you need winery names, check the california_wine_visits table):
+Tell me about the following wineries:  Kohlleffel, Millman, Hrncir, Peju
 
-### Tile 4: Top 5 Performers - Table
-```
-select top 5 owner_name as "Owner", avg_bookings_amount as "Avg Booking Amt", round(avg_days_to_close,1) as "Avg Days to Close", 
-total_pipeline_amount as "Total Pipeline" 
-from pc_fivetran_db.salesforce.salesforce__owner_performance 
-where total_pipeline_amount is not null 
-order by total_pipeline_amount desc
-```
-![Fivetran Dashboard 7](assets/dashboard/d_0040.png)
+### More Complex Prompt Format (6-8 chunks)
+For a more complex prompt, try:
+Plan a trip to visit 3 wineries during a 1 day trip that are all based in the Sonoma coast. Be sure to include Kohlleffel Vineyards as one of the three wineries.
 
-### Final Dashboard
-Here is the example dashboard giving insights to the data for your use cases in minutes!
-![Fivetran Dashboard 8](assets/dashboard/d_0050.png)
+### Very Complex Prompts (10-16 chunks)
+Provide a winery visit itinerary to visit six wineries during a two day trip. I’d like to visit the Sonoma coast on day 1 and Yountville on day 2. Be sure to include Kohlleffel Vineyards as one of the six wineries on day 1. Provide driving times as well. Organize this into a two day trip. Provide a hotel recommendation for the evening of day one. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. Lastly, what else would you suggest to make this trip even better?
+
+Provide a winery visit itinerary to visit nine wineries during a three day trip. I’d like to visit the Sonoma coast on day one and Yountville on day two and St. Helena on day three. Be sure to include Kohlleffel Vineyards and Millman Estate as two of the wineries on day one.  Ensure that Hrncir Family Cellars is included on day two. Provide driving times as well. Organize this into a three day trip. Provide a hotel recommendation for the evening of day one and a different hotel for the evening of day two. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville and in St. Helena such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. Lastly, what else would you suggest to make this trip even better?
+
+Provide a winery visit itinerary to visit 9 wineries during a 3 day trip. I’d like to visit the Sonoma coast on day 1 and Yountville on day 2 and St. Helena on day 3. Be sure to include Kohlleffel Vineyards and Millman Estate as 2 of the wineries on day 1. Provide driving times as well to get to the first winery and driving times between wineries and other venues. Organize this into a 3 day trip. Provide a hotel recommendation for the evening of day 1 and a different hotel for the evening of day 2. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville and in St. Helena such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Provide your estimate for what this trip will cost and show me the detail on how you estimated the cost. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. What else would you suggest to make this trip even better?
+
+Provide a winery visit itinerary to visit 9 wineries during a 3 day trip. I’d like to visit the Sonoma Coast on day 1 and Yountville on day 2 and Howell Mountain on day 3. Be sure to include Kohlleffel Vineyards and Millman Estate as 2 of the wineries on day 1. Del Dotto as one of the wineries on Day 2. and Sumit Lake Vineyards as one of the wineries on Day 3. Provide addresses of the wineries.  Provide driving times as well to get to the first winery and driving times between wineries and other venues. Organize this into a 3 day trip. Provide a hotel recommendation for the evening of day 1 and a different hotel for the evening of day 2. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville and in St. Helena such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Provide your estimate for what this trip will cost and show me the detail on how you estimated the cost. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. What else would you suggest to make this trip even better? What types of clothing should I bring if I am planning my trip for early June?
 
 ## Conclusion
 Duration: 2
 
-The lab demonstrates the power, flexibility, reliability, and speed to insights by performing ELT with no code!
+Where is your most valuable data?  Inside your application databases, SaaS platforms, and ERPs.
+
+This lab demonstrates the ease at which you can utilize "structured datasets" with GenAI provided by Fivetran's fully automated data integration pipelines allowing you to build value-add applications like this and ask questions against "your" data without having to worry about data freshness!
 
 Here's what we did:
-- Created a production-ready data pipeline from Salesforce to Snowflake via Fivetran in a few clicks!
-- Utilized Fivetran's Quickstart Data Models to curate the data within Snowflake for easy consumption!
-- Designed and built a Snowflake dashboard to give us valuable insights into our Salesforce data!
-- All in less than 40 minutes!
-- But don't stop here.  Take this lab to the next level by adding more tiles and building more insights on your own!
+- Created a production-ready data pipeline from PostgreSQL to Snowflake via Fivetran in a few clicks!
+- Utilized Cortex to take a structured dataset and convert it into an unstructured vector dataset!
+- Created a Streamlit chatbot application to gather insights and build winery planners!
+- Had fun creating wine trips through the California countryside including places only found in your data!
+- All in less than an hour!
 
 ### Snowflake
-See what other customers are [doing with Snowflake](https://www.snowflake.com/en/why-snowflake/customers/) and how Snowflake is the cloud data platform for your [data workloads](https://snowflake.com)!
+See what other customers are [doing with Snowflake](https://www.snowflake.com/en/customers/) and how Snowflake is the cloud data platform for your [data workloads](https://snowflake.com)!
 
 ### Fivetran
 See why [Fivetran](https://fivetran.com) is the ultimate automated data movement platform for any [data source](https://www.fivetran.com/connectors) and why Fivetran is a [Snowflake Elite Partner](https://www.snowflake.com/partners/technology-partners/) and Snowflake Data Integration Partner of the year!
