@@ -466,7 +466,7 @@ Copy and paste the following code into a new cell.  Name the cell **station_attr
 
 ```python
 
-further_train_info = session.table('NORTHERN_TRAINS_STATION_DATA.TESTING."STATION ATTRIBUTES 1"')
+further_train_info = session.table('NORTHERN_TRAINS_STATION_DATA.TESTING."STATION ATTRIBUTES 2"')
 further_train_info.limit(4)
 
 ```
@@ -482,26 +482,33 @@ Paste the following into the new cell and run. This takes around 1.5 minutes to 
 ```python
 
 further_train_info= further_train_info.with_column('OBJECT',object_construct(lit('CRS Code'),
-col('"CRS Code"'),                                                                           lit('Full Timetable Calls'),
-col('"Dec21 Weekday Full Timetable Daily Calls"').astype(IntegerType()),                                                                        lit('Emergency Timetable Calls'),                                                                        col('"Dec21 Weekday Emergency Timetable Daily Calls"').astype(IntegerType()),                                                                           lit('Footfall'),
- col( '"ORR Station Footfall 2020-21"').astype(IntegerType()),
+col('"CRS Code"'),
+lit('Full Timetable Calls'),
+col('"Dec21 Weekday Full Timetable Daily Calls"').astype(IntegerType()),
+lit('Emergency Timetable Calls'),
+col('"Dec21 Weekday Emergency Timetable Daily Calls"').astype(IntegerType()),
+lit('Footfall'),
+col( '"ORR Station Footfall 2020-21"').astype(IntegerType()),
 lit('Parking'),
 col('"Car Parking - Free/Chargeable"'),
 lit('MP'),
 col("MP"),
 lit("Political Party"),
- col('"Political Party"'),
+col('"Political Party"'),
+lit('MP Email Address'),
+col('"MP Email Address"'),                                                                             
 lit('Car Parking Spaces'),
 col('"Car Parking Spaces"').astype(IntegerType()),
 lit('Staffed?'),
 col('"Staffed?"')))
 
-prompt = 'In less than 200 words, write a summary based on the following information'
-prompt2 = 'Do not include Based on the provided information'
+prompt = 'In less than 200 words, write a summary based on the following train station details'
+prompt2 = 'write in the best way for it to describe a point on a map'
 
 further_train_info = further_train_info.select('"CRS Code"',
         'MP',
         '"Political Party"', 
+        '"MP Email Address"',
         call_function('snowflake.cortex.complete','snowflake-arctic',
             concat(lit(prompt),
             col('OBJECT').astype(StringType()),
@@ -516,9 +523,8 @@ While we wait for the train station tooltips to materialise add a **markdown cel
 
 ```markdown
 
-letterspd = letters.to_pandas()
 
->Below we are leveraging Snowflake Arctic to produce meaningfull tooltips relating to over **400** train stations which are managed by **Northern Trains**
+Below we are leveraging Snowflake Arctic to produce meaningful tooltips relating to over **400** train stations which are managed by **Northern Trains**
 
 ```
 Press the tick on the top right hand side of the cell to confirm the edit.
@@ -529,7 +535,7 @@ We used **call_function** to call Snowflake Cortex complete which returns a resp
 
 You should get a new table that will look like this:
 
-![train_details](assets/I019.png)
+![train_details](assets/I0192.png)
 
 > **IMPORTANT** Comment out the write to table command to prevent the LLM being called every time you refresh the notebook.  We now have the data saved in a table so you do not need to run this model again.
 
@@ -590,7 +596,7 @@ layers= [polygon_layer, poi_l, nw_trains_l], tooltip = tooltip
 
 Hover over the map and checked the updated tool tips.
 
-![tool_tip_image](assets/I020.png)
+![tool_tip_image](assets/I0202.png)
 
 <!-- ------------------------ -->
 ## Use Cortex to list Key location events
@@ -753,9 +759,9 @@ Create a new cell celled **letter_restaurants** and copy and paste the following
 
 ```python
 
-object3 = trains_h3.select('H3','MP').distinct()
+object3 = trains_h3.select('H3','MP','"MP Email Address"').distinct()
 object3 = places_h3.join(object3,'H3')  
-object3 = object3.group_by('MP').agg(array_agg(object_construct(lit('NAME'),
+object3 = object3.group_by('MP','"MP Email Address"').agg(array_agg(object_construct(lit('NAME'),
                                                                 col('NAME'),
                                                                 lit('DISTANCE_FROM_EVENT'),
                                                                 round('DISTANCE_FROM_EVENT',5).astype(DecimalType(20,4)),
@@ -803,7 +809,7 @@ The results can include a large number of restaurants by MP, so let's only  refe
 
 ```python
 all_3 = session.table("DATA.EVENTS_AND_WHAT_IS_AFFECTED")
-all_3 = all_3.select('MP','TRAIN_STATIONS','EVENTS',
+all_3 = all_3.select('MP','"MP Email Address"','TRAIN_STATIONS','EVENTS',
                      
 array_slice(col('RESTAURANTS'),lit(0),lit(8)).alias('RESTAURANTS'))
 
@@ -820,7 +826,7 @@ Copy the code below into a new python cell called **prompt_letter**
 
 ```python
 
-prompt = concat(lit('Write to this MP:'),
+prompt = concat(lit('Write an email addressed to this MP:'),
                 col('MP'),
                lit('about these events: '),
                col('EVENTS').astype(StringType()),
@@ -828,7 +834,7 @@ prompt = concat(lit('Write to this MP:'),
                col('TRAIN_STATIONS').astype(StringType()),
                 lit('And these Restaurants: '),
                 col('RESTAURANTS').astype(StringType()),
-               lit('The letter is written by Becky - a concerned Citizen'))
+               lit('The letter is written by Becky - becky.oconnor@snowflake.com - a concerned Citizen'))
 
 
 ```
