@@ -66,7 +66,7 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE FS_API_DATABASE TO ROLE FS_API_ROLE C
 ## Run the Notebook
 Duration: 10
 
-- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-overview-of-feature-store-api/blob/main/notebooks/01_start_here.ipynb)
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-overview-of-feature-store-api/blob/main/notebooks/0_start_here.ipynb)
 - Change role to FS_API_ROLE
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
