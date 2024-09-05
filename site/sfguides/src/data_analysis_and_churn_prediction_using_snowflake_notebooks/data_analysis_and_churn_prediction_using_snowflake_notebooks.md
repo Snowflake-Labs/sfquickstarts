@@ -154,8 +154,18 @@ DROP WAREHOUSE IF EXISTS churn_ds_wh;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
+Duration: 1
 
-### Overview
-Duration: 3
+**Congrats!** You're reached the end of this Quickstart!
 
-**Congrats!**
+### What We Learned
+With the completion of this Quickstart, you have now delved into:
+- How to import/load data with Snowflake Notebook
+- How to train a Random Forest with Snowpark ML model
+- How to visualize the predicted results from the forecasting model
+- How to build an interactive web app and make predictions on new users
+
+### Resources
+- [Snowflake Documentation](https://docs.snowflake.com/)
+- [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
+- [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index)
