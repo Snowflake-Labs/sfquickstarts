@@ -38,6 +38,7 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 ## Setting Up Snowflake Environment
 
 ### Overview
+Duration: 5
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).
 
 #### Creating Objects, Loading Data, and Joining Data
@@ -112,6 +113,8 @@ SELECT 'data analysis and churn prediction sql is now complete' AS note;
 ## Using Snowflake Notebooks
 
 ### Overview
+Duration: 10
+
 For this Quickstart, there are 2 Snowflake Notebooks and they need to be executed in order. Make sure to run the first Notebook fully before running the second Notebook.
 1. The first Snowflake Notebook [1_telco_churn_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb) contains scripts for importing and exploring our data.
 2. The second Snowflake Notebook [2_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb) contains scripts for feature engineering and model training to use in the Streamlit app within the Notebook.
@@ -133,3 +136,26 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 7. At the top of the page, click `Start` to start the Notebook session and run the cells by clicking `Run All`
 <img src="assets/start.png"/>
+
+<!-- ------------------------ -->
+## Clean Up
+Duration: 1
+
+### Remove Snowflake Objects
+- Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
+- Copy and paste the following SQL statements in the worksheet to drop all Snowflake objects created in this Quickstart
+```
+USE ROLE securityadmin;
+DROP ROLE IF EXISTS churn_data_scientist;
+USE ROLE accountadmin;
+DROP DATABASE IF EXISTS churn_prod;
+DROP WAREHOUSE IF EXISTS churn_ds_wh;
+```
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+
+### Overview
+Duration: 3
+
+**Congrats!**
