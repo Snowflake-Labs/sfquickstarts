@@ -1,13 +1,13 @@
 author: David Hrncir
 id: fivetran_vineyard_assistant_chatbot
-summary: Build a RAG-based GenAI Streamlit application using Fivetran and Snowflake using structured data.
+summary: Build a RAG-based GenAI Streamlit application with Fivetran and Snowflake using structured data.
 categories: Getting-Started, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: GenAI, RAG, Fivetran, chat
 
-# Fivetran - Build a RAG-based, GenAI wine assistant chatbot in 30 minutes on structured data!
+# Build a RAG-based, GenAI wine assistant chatbot in 30 minutes using structured data!
 <!-- ------------------------ -->
 ## Overview
 Duration: 3
@@ -135,7 +135,7 @@ Find the `Agriculture` schema in the list, click on the toggle on the right side
 > This is the power of Fivetran.  No allocating resources.  No development.  No code.  No column mapping.  No pre-building schemas or tables in the destination.  A fully automated, production data pipeline in a few steps!
 >
 ## Transform the Wine Structured Dataset
-Duration: 2
+Duration: 3
 
 Now that Fivetran landed the structured dataset into tables in Snowflake, it's time to convert that data into a format a LLM can read.  Since LLMs do not like columnar data, we have to first transform the data into a human readable chunk.  Then secondly, we are going to transform that chunk into vectors.  We could use Snowflake's vector search service, but we are doing this manually in this lab so you can understand all the aspects.  So we will be working in the Snowflake Snowsight UI for the rest of the lab.
 
@@ -543,7 +543,7 @@ There are two additional pieces of information added to the bottom of each respo
 ![Fivetran Snowflake 13](assets/snowflake/s_0130.png)
 
 ## Chatbot Tests
-Duration: 2
+Duration: 0
 
 ### Testing Notes
 Now that you know your way around the key features, it’s time to put the California Wine Country Visit Assistant to work.
@@ -645,6 +645,7 @@ See why [Fivetran](https://fivetran.com) is the ultimate automated data movement
 Fivetran's mission is to "Make data as accessible and reliable as electricity!"  [Let us show you how we do it!](https://go.fivetran.com/demo)
 
 ## Option for Data Loading: Amazon S3
+Duration: 0
 
 If by some chance the PostgreSQL database is unavailable or inaccessible, you may use the below dataset that was copied from the PostgreSQL database to JSON residing in Amazon S3.
 
