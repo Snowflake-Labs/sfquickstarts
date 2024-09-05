@@ -20,13 +20,14 @@ In this Quickstart, we will play the role of a data scientist at a telecom compa
 
 This Quickstart uses Snowflake Notebooks to import and load data, train a Random Forest with Snowpark ML model, visualize the predicted results from the forcasting model by building an interactive web application and make predictions on new users.
 
-### What You Will Learn
-We will implement price optimization for their diversified food-truck brands to inform their pricing and promotions by utilizing **Snowflake Notebooks** and **Streamlit** to:
-- Train & deploy an ML model to understand how menu-item demand changes with varying price
-- Create a user-friendly application to use deployed ML-model to inform pricing strategies
-
 ### Prerequisites
-- A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup#browser-requirements)
-- A Snowflake Account
-    - If you do not have a Snowflake Account, please [**sign up for a Free 30 Day Trial Account**](https://signup.snowflake.com/). When signing up, please make sure to select **Enterprise** edition. You can choose any AWS or Azure [Snowflake Region](https://docs.snowflake.com/en/user-guide/intro-regions).
-    - After registering, you will receive an email with an activation link and your Snowflake Account URL
+- Familiarity with basic Python and SQL
+- Familiarity with training ML models
+- Familiarity with data science notebooks
+- Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
+
+### What You Will Learn
+- How to import/load data with Snowflake Notebook
+- How to train a Random Forest with Snowpark ML model
+- How to visualize the predicted results from the forecasting model
+- How to build an interactive web app and make predictions on new users
