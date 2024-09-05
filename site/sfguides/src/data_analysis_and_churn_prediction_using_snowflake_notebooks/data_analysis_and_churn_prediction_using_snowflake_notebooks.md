@@ -26,6 +26,8 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 - Familiarity with data science notebooks
 - Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
 
+<img src="assets/architecture.png"/>
+
 ### What You Will Learn
 - How to import/load data with Snowflake Notebook
 - How to train a Random Forest with Snowpark ML model
@@ -33,7 +35,7 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 - How to build an interactive web app and make predictions on new users
 
 <!-- ------------------------ -->
-# Setting Up Snowflake Environment
+## Setting Up Snowflake Environment
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).
@@ -42,6 +44,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 - Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 <img src="assets/run_all.png"/>
 - Copy and paste the following code to create Snowflake objects (warehouse, database, schema, role) and click `Run All` at the top of the Worksheet
+
 ```
 USE ROLE securityadmin;
 
@@ -104,3 +107,29 @@ USE ROLE churn_data_scientist;
 /*---------------------------*/
 SELECT 'data analysis and churn prediction sql is now complete' AS note;
 ```
+
+<!-- ------------------------ -->
+## Using Snowflake Notebooks
+
+### Overview
+For this Quickstart, there are 2 Snowflake Notebooks and they need to be executed in order. Make sure to run the first Notebook fully before running the second Notebook.
+1. The first Snowflake Notebook [1_telco_churn_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb) contains scripts for importing and exploring our data.
+2. The second Snowflake Notebook [2_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb) contains scripts for feature engineering and model training to use in the Streamlit app within the Notebook.
+
+### Import Snowflake Notebooks
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create the Snowflake Notebooks by importing the Notebooks
+1. Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on `Projects` `->` `Notebook`
+
+2. Switch Role to `CHURN_DATA_SCIENTIST`
+
+3. Download the [1_telco_churn_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb) and [2_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb) Notebooks
+
+4. Using the `Import .ipynb file`, import the downloaded Notebooks
+<img src="assets/import_notebook.png"/>
+
+5. Select the `CHURN_PROD` database and `ANALYTICS` schema for the Notebook Location and `CHURN_DS_WH` for the Notebook warehouse and click `Create`
+
+6. Click on either Notebook to upload the [environment.yml](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/environment.yml) file by clicking the plus button on the file explorer in the left pane. This file adds the following packages: `altair`, `imbalanced-learn`, `numpy`, `pandas`, and `snowflake-ml-python`.
+
+7. At the top of the page, click `Start` to start the Notebook session and run the cells by clicking `Run All`
+<img src="assets/start.png"/>
