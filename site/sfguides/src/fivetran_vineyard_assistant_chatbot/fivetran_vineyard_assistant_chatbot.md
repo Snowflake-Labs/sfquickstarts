@@ -1,29 +1,36 @@
 author: David Hrncir
 id: fivetran_vineyard_assistant_chatbot
-summary: Build a RAG Streamlit application using Fivetran and Snowflake in 30 minutes using structured data.
+summary: Build a RAG-based GenAI Streamlit application using Fivetran and Snowflake using structured data.
 categories: Getting-Started, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: GenAI, RAG, Fivetran, chat
 
-# Fivetran - Build a wine assistant RAG-based chatbot in 30 minutes on structured data!
+# Fivetran - Build a RAG-based, GenAI wine assistant chatbot in 30 minutes on structured data!
 <!-- ------------------------ -->
 ## Overview
 Duration: 3
 
-GenAI can be used to solve an unlimited number of problems, but this technology can be daunting.  Defining the problem, acquiring data related to that problem, preparing the data, assigning the appropriate models and protocols, training the data, parameter tuning, etc.  Thankfully, there are numerous LLMs available that are ready for use and can be utilized for many use cases out of the box.
+GenAI can be used to solve an unlimited number of problems, but this technology can be daunting.  Defining the problem, acquiring data related to that problem, preparing the data, assigning the appropriate models and protocols, training the data, parameter tuning, etc.  Thankfully, there are numerous LLMs available that are ready for use and can be utilized for many use cases out of the box.  So why RAG?  RAG gives you the ability to utilize your custom dataset along with the LLM thereby expanding the LLMs reach on building customized responses using your valuable data.
 
-But first, we need data.  Where is your most valuable data?  Typically, the valuable data is in places like SaaS applications, ERPs, and databases.  But that would be structured or semi-structured data right?  Second, we have to get that data into a data cloud.  Third, we have to build a structure that LLMs can use.  And fourth, we need to be able to build a simple application to allow us to ask questions on that data.  Sounds hard, but it's not...thanks to Fivetran and Snowflake!
+First, where is your valuable data?  Typically, your valuable data is in places like SaaS applications, ERPs, and databases; these are structured and semi-structured data sources.  Second, we have to get that data into a data cloud.  Third, we have to build a structure that LLMs can use.  And fourth, we need to be able to build a simple application to allow us to ask questions on that data.  Sounds hard, but it's not...thanks to Fivetran and Snowflake!
 
-And if we are going to build a GenAI app, why not make it a fun one? Today you are going to build a RAG-based GenAI application that will serve as a wine assistant to help guide you through more than 700 wineries in the California wine region.  You will be able to ask questions against this wine data to summarization, build a wine region trip, compare wineries...you name it.  And don't worry, we'll give you some examples to try.  I know what you are thinking...how can we get all of this done in 30 minutes?
+And if we are going to build a GenAI app, why not make it a fun one? Today you are going to build a RAG-based, GenAI application that will serve as a wine assistant to help guide you through 700+ real wineries in the California wine region.  You will be able to build a wine region trip for different California wine regions, compare wineries and their attributes...you name it.  And don't worry, we'll give you some example prompts to try.
 
-Fivetran can replicate all of your data from over [600+ data sources](https://www.fivetran.com/connectors) directly into Snowflake (along with many other destinations like Iceberg data lakes) in a fast, secure, SaaS-based, automated, no-code manner where most connectors take less than 5 minutes to set up.  Imagine needing to combine many different data sources into a structure for analytics, or in this case GenAI, and all of that data fully automated and replicated into Snowflake from your data sources utilizing change data capture...the sky is the limit!
+Fivetran can replicate all of your data from over [600+ data sources](https://www.fivetran.com/connectors) directly into Snowflake, or an Iceberg data lake.  Fivetran does this in a fast, secure, SaaS-based, automated, no-code manner where most connectors take less than 5 minutes to set up allowing you to perform all your Snowflake data workloads, in this case GenAI, just as if you were connected to all your source systems.  The sky is the limit!
 
-Snowflake Cortex will be used to handle all of the GenAI needs with ease making this daunting task seem simple.  We are going to be using structured data from a Postgres database.  That's right...no stagnant PDFs or HTML files...database data.  So let’s get started!
+Snowflake Cortex will be used to handle all of the GenAI needs with ease making this daunting task seem simple.  Most GenAI applications utilize unstructured data.  We are going to be using structured data from a PostgreSQL database.  That's right...no stagnant PDFs or HTML files...database data.  So let’s get started!
+
+> aside positive
+> Secondary Source:  At the end of this lab guide, there are instructions on how to use the secondary wine data source (Amazon S3) if the Postgres database is inaccessible.
+>
+
 
 ### Prerequisites
-- Existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_), with 'AccountAdmin' role.  If setting up a new trial account, ensure to select the "Enterprise" edition when prompted to gain access to more Snowflake features!
+- Existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_), with 'AccountAdmin' role.  If 'AccountAdmin' is not available, you will need to get a user with AccountAdmin privileges to grant access to Cortex features described below.  
+- Or, if setting up a new trial account, ensure to select the "Enterprise" edition when prompted to gain access to more Snowflake features.  If you use a new trial, you will automatically have admin access.
+- With either way, the role being used for the lab must be granted the SNOWFLAKE.CORTEX_USER database role which allows you to use the Cortex functions.
 
 
 ### What you'll learn in the lab
@@ -33,7 +40,7 @@ Snowflake Cortex will be used to handle all of the GenAI needs with ease making 
 - How to create the chatbot via Snowflake Streamlit
 
 ### What you'll need
-- All you’ll need is a modern browser like Chrome.  Fivetran provides you the data, SQL, and Python
+- All you’ll need is a modern browser like Chrome.  Fivetran provides you the data, SQL, and Python.
 
 ### What you'll build 
 - A GenAI, RAG-based wine assistant chatbot in Snowflake for over 700+ real wineries in California!
@@ -50,96 +57,116 @@ The outcome of this step is to:
 
 The easiest option to get started with Fivetran and Snowflake is to use Snowflake Partner Connect.  Partner connect allows you to quickly create a Fivetran trial account and configures the default Snowflake destination within Fivetran in one easy step.
 
-### Partner Connect
-Ensure you are in the Snowflake UI as an `ACCOUNTADMIN`.  Expand `Admin`, click `Partner Connect`, under `Data Integration` click the Fivetran tile.
+### Partner Connect Option
+Ensure you are in the Snowflake UI as an `ACCOUNTADMIN`.  Expand `Data Products`, click `Partner Connect`, enter 'fivetran' in the search box, and click the Fivetran tile.
+
 ![Partner Connect](assets/sfpc/s_0010.png)
 
 
-Once the tile is clicked you will be presented with the Fivetran configuration screen below.  Click the `Connect` button.
+Once the tile is clicked you will be presented with the Fivetran account creation screen as shown below.  Click the `Connect` button.
+
 ![Partner Connect Fivetran Configuration](assets/sfpc/s_0020.png)
 
- Click `Activate`.  You will be prompted to enter a Fivetran password.  Record this password.  This will be your password into the Fivetran UI.  That's it!  That will create the free 14 day Fivetran trial account, build your default Snowflake destination within Fivetran, and configure the Snowflake objects needed to ingest data via Fivetran.  
+ Click `Activate`.  You will be prompted to enter a Fivetran password.  Record this password.  This will be your password into the Fivetran UI.  That's it!  This process will will create the free 14 day Fivetran trial account, automatically build your default Snowflake destination within Fivetran, and configure the Snowflake objects/environment needed to ingest data via Fivetran.  
+
 ![Partner Connect Fivetran Configuration](assets/sfpc/s_0030.png)
 
-### Non-Partner Connect Only
-> aside negative
-> In the case where you are unable to use partner connect because of an existing linked Fivetran account, you can create a [Fivetran trial account here](https://fivetran.com/signup).  Post Fivetran account creation, you simply follow [these instructions](https://fivetran.com/docs/destinations/snowflake/setup-guide) to setup your Snowflake destination in Fivetran and Snowflake.  In the case where you have Snowflake and Fivetran accounts already, you may use a current Snowflake destination in Fivetran or simply follow the Snowflake setup guide link above to create a new Snowflake destination in Fivetran.
->
+### Non-Partner Connect Option
+If you do not have a Fivetran account and you are unable to use `Partner Connect` (possibly because this process was done before), please go to the [Fivetran trial account sign up](https://fivetran.com/signup), and sign up for a free 14 day trial.  Post Fivetran account creation, you simply follow [these instructions](https://fivetran.com/docs/destinations/snowflake/setup-guide) to setup your Snowflake destination in Fivetran.
+
+In the case where you have Snowflake and Fivetran accounts already, you may use a current Snowflake destination in Fivetran or simply follow the [Snowflake destination setup guide](https://fivetran.com/docs/destinations/snowflake/setup-guide) to create a new Snowflake destination in Fivetran.
 
 ## Configure the Fivetran PostgreSQL Connector
 Duration: 5
 
 Ok, let's replicate our structured data from a PostgreSQL database into Snowflake via the quickest, easiest, and most reliable method available in the world today...Fivetran!  Ensure you are logged into your Fivetran account.
 
-**Step 1.** With the `Connectors` item selected in the nav panel, click `Add connector`.
+> aside positive
+> Reminder: If you are unable to connect to the database, please use the Amazon S3 Option at the end of this lab.  Then once done there, continue with the Transform section.
+>
+
+**Step 1.** With the `Connectors` item selected in the nav panel, click `Add connector` in the upper right corner.
+
 ![Fivetran Connector 1](assets/fivetran/f_0010.png)
 
-**Step 2.** Enter `postgres` in the search box.  Ensure you scroll down to the postgres connector shown (must use the one shown), highlight the item with your mouse, and click `Set up`.
+**Step 2.** Enter `postgres` in the search box.  Ensure you scroll down to the postgres connector shown (Note: You must use the one shown.), highlight the item with your mouse, and click `Set up`.
+
 ![Fivetran Connector 2](assets/fivetran/f_0020.png)
 
-**Step 3.** Next on the connector configuration screen, enter `yourlastname_genai` as the Destination Schema Prefix.  Next enter the credentials given below into their respective fields.  Note that the Destination Schema Prefix must be unique to the database.  Fivetran will prepend this name to all schemas copied from the postgres database into Snowflake.
+**Step 3.** Next on the connector configuration screen, ensure you enter your last name + `_genai` as the Destination Schema Prefix.  Next enter the credentials given below into their respective fields.  Note that the Destination Schema Prefix must be unique to the database.  Fivetran will prepend this name to all schemas copied from the postgres database into Snowflake.
+- Destination Schema Prefix: yourlastname_genai
 - Host:  34.94.122.157
 - Port:  5432
 - User:  fivetran
 - Password:  2PcnxqFrHh64WKbfsYDU
 - Database:  industry
+
 ![Fivetran Connector 3](assets/fivetran/f_0030.png)
 
-Scroll down and you will see the remainder of the configuration fields.  Once these two selections are made, click `Save & Test`.
+Scroll down and you will see the remainder of the configuration fields.  Set the parameters to the values shown below, and click `Save & Test`.
 - Connection Method:  Connect directly
 - Update Method:  Detect Changes Via Fivetran Teleport Sync
+
 ![Fivetran Connector 4](assets/fivetran/f_0040.png)
 
 **Step 4.** Since we are connecting directly over the internet, Fivetran requires TLS.  Click the radio button next to the certificate, and click `Confirm`.  Once all connector tests complete, click `Continue`.
+
 ![Fivetran Connector 5](assets/fivetran/f_0050.png)
+
 ![Fivetran Connector 6](assets/fivetran/f_0053.png)
 
 **Step 5.** Next you will select the schemas and tables to replicate.  Since we only need one schema, let's first disable all schemas by unchecking the box next to the schema number shown.  Then click the `collapse all` button on the right to get a better view of all the schemas for which we have access.
+
 ![Fivetran Connector 7](assets/fivetran/f_0060.png)
 
 Find the `Agriculture` schema in the list, click on the toggle on the right side to enable the schema, expand the schema by clicking the black arrow next to the schema, and check the box next to the number of tables to select all tables in the schema.  Then click `Save & Continue`.
+
 ![Fivetran Connector 8](assets/fivetran/f_0070.png)
 
-**Step 6.** This screen allows you to determine how you want schema changes to be automated to from the source to the target database.  Leave `Allow all` selected, and click `Continue`.
+**Step 6.** By default, Fivetran will automatically replicate all schema changes to Snowflake so that any change in the source schema automatically appears in Snowflake.  Leave `Allow all` selected, and click `Continue`.
+
 ![Fivetran Connector 9](assets/fivetran/f_0080.png)
 
-**Step 7.** With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`, and let Fivetran seamlessly replicate our database data into Snowflake.  This should only take a minute or two at most.  This process will perform an initial sync of all of the data in the schema and tables selected, and automatically schedule itself to run again in 6 hours.  The sync frequency can be adjusted, but for this lab, there is no CDC occurring behind the scenes; so we will leave it at 6 hours.  Then on the next run and all subsequent runs, Fivetran will only replicate the changes/delta from the previous run into Snowflake ensuring your Snowflake data is always up to date with your source!
+**Step 7.** With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`, and let Fivetran seamlessly replicate our database data into Snowflake.  This should only take a minute or two at most.  This process will perform an initial sync of all of the data in the schema and tables selected, and automatically schedule itself to run again in 6 hours.  The sync frequency can be adjusted, but for this lab, there is no CDC occurring behind the scenes; so we will leave it at 6 hours.  If this data was changing, Fivetran would only replicate the changes/delta from the previous run into Snowflake ensuring your Snowflake data is always up to date with your source!
+
 ![Fivetran Connector 10](assets/fivetran/f_0090.png)
 
 > aside positive
-> This is the power of Fivetran.  No allocating resources.  No development.  No code.  No column mapping.  No pre-building tables in the destination.  A fully automated, production data pipeline in a few steps!
+> This is the power of Fivetran.  No allocating resources.  No development.  No code.  No column mapping.  No pre-building schemas or tables in the destination.  A fully automated, production data pipeline in a few steps!
 >
 ## Transform the Wine Structured Dataset
 Duration: 2
 
-So Fivetran landed the structured dataset into tables in Snowflake.  Now it's time to convert that data into data an LLM can read.  Since LLMs do not like columnar data, we have to first transform the data into a human readable chunk.  Then secondly, we are going to transform that chunk into vectors.  We could use Snowflake's vector search service, but we are doing this manually in this lab so you can understand all the aspects.  So we will be working in the Snowflake Snowsight UI for the rest of the lab.
+Now that Fivetran landed the structured dataset into tables in Snowflake, it's time to convert that data into a format a LLM can read.  Since LLMs do not like columnar data, we have to first transform the data into a human readable chunk.  Then secondly, we are going to transform that chunk into vectors.  We could use Snowflake's vector search service, but we are doing this manually in this lab so you can understand all the aspects.  So we will be working in the Snowflake Snowsight UI for the rest of the lab.
 
 **Security Note:  The role you are using will need to be granted the SNOWFLAKE.CORTEX_USER database role.  This role provides access to the Cortex functions we are going to use today.**
 
-**Step 1.** Let's review our data in Snowflake.  Select `Data/Databases` and then select your database, schema, and finally the `CALIFORNIA_WINE_COUNTRY_VISITS` table.  We will transform this table to be used as RAG context for our chatbot.
-From the Fivetran UI, click `Transformations` in the left navbar.  Then in the `Quickstart` section, click `Get Started`.
+**Step 1.** Let's review our data in Snowflake.  Select `Data/Databases` and then select your database, schema, and finally the `CALIFORNIA_WINE_COUNTRY_VISITS` table.  We will transform this table to be used as RAG context for our chatbot.  Select the various tabs such as `Columns` and `Data Preview` to review the table.
+
 ![Fivetran Snowflake 1](assets/snowflake/s_0010.png)
 
-**Step 2.** Next we will create a new worksheet to run our transform SQL.  Select `Projects/Worksheets` and then click the plus sign in the upper right corner.
+**Step 2.** Next we will create a new worksheet to run our transform SQL.  Select `Projects/Worksheets` and then click the plus sign in the upper right corner.  Ensure the worksheet type is `SQL`.
+
 ![Fivetran Snowflake 2](assets/snowflake/s_0020.png)
 
-**Step 3.** In the new worksheet, expand your database and schema in the left nav panel.  Click the ellipses next to the schema Fivetran created and select `Set worksheet context`.  This will default the database and schema context for our new worksheet (shown in the box below) so that all SQL will run under your database and schema.
+**Step 3.** In the new worksheet, expand your database and schema in the left nav panel.  Click the ellipses next to the schema Fivetran created and select `Set worksheet context`.  This will default the database and schema context for our new worksheet (shown in the box below) so that all SQL will run under your database and schema.  This saves us from having to fully qualify each SQL statement.
+
 ![Fivetran Snowflake 3](assets/snowflake/s_0030.png)
 
 **Step 4.** Copy and paste the below SQL into the worksheet.
 
 ``` SQL
 /** Create each winery and vineyard review as a single field vs multiple fields **/
-    CREATE or REPLACE temporary TABLE single_string_winery_review AS 
-    SELECT CONCAT('This winery name is ', IFNULL(WINERY_OR_VINEYARD, ' Name is not known')
-        , '. California wine region: ', IFNULL(CA_WINE_REGION, 'unknown'), ''
+    CREATE or REPLACE TABLE vineyard_data_single_string AS 
+        SELECT WINERY_OR_VINEYARD, CONCAT(' The winery name is ', IFNULL(WINERY_OR_VINEYARD, ' Name is not known')
+        , ' and resides in the California wine region of ', IFNULL(CA_WINE_REGION, 'unknown'), '.'
         , ' The AVA Appellation is the ', IFNULL(AVA_APPELLATION_SUB_APPELLATION, 'unknown'), '.'
         , ' The website associated with the winery is ', IFNULL(WEBSITE, 'unknown'), '.'
-        , ' Price Range: ', IFNULL(PRICE_RANGE, 'unknown'), '.'
+        , ' The price range is ', IFNULL(PRICE_RANGE, 'unknown'), '.'
         , ' Tasting Room Hours: ', IFNULL(TASTING_ROOM_HOURS, 'unknown'), '.'
-        , ' Are Reservations Required or Not: ', IFNULL(RESERVATION_REQUIRED, 'unknown'), '.'
-        , ' Winery Description: ', IFNULL(WINERY_DESCRIPTION, 'unknown'), ''
-        , ' The Primary Varietals this winery offers: ', IFNULL(PRIMARY_VARIETALS, 'unknown'), '.'
+        , ' The reservation requirement is: ', IFNULL(RESERVATION_REQUIRED, 'unknown'), '.'
+        , ' The Winery Description is: ', IFNULL(WINERY_DESCRIPTION, 'unknown'), ''
+        , ' The Primary Varietals this winery offers is ', IFNULL(PRIMARY_VARIETALS, 'unknown'), '.'
         , ' Thoughts on the Tasting Room Experience: ', IFNULL(TASTING_ROOM_EXPERIENCE, 'unknown'), '.'
         , ' Amenities: ', IFNULL(AMENITIES, 'unknown'), '.'
         , ' Awards and Accolades: ', IFNULL(AWARDS_AND_ACCOLADES, 'unknown'), '.'
@@ -150,26 +177,30 @@ From the Fivetran UI, click `Transformations` in the left navbar.  Then in the `
         , ' Events and Activities: ', IFNULL(EVENTS_AND_ACTIVITIES, 'unknown'), '.'
         , ' Sustainability Practices: ', IFNULL(SUSTAINABILITY_PRACTICES, 'unknown'), '.'
         , ' Social Media Channels: ', IFNULL(SOCIAL_MEDIA, 'unknown'), ''
-        , ' Address: ', IFNULL(ADDRESS, 'unknown'), ''
-        , ' City: ', IFNULL(CITY, 'unknown'), ''
-        , ' State: ', IFNULL(STATE, 'unknown'), ''
-        , ' ZIP: ', IFNULL(ZIP, 'unknown'), ''
-        , ' Phone: ', IFNULL(PHONE, 'unknown'), ''
-        , ' Winemaker: ', IFNULL(WINEMAKER, 'unknown'), ''
+        , ' The address is ', IFNULL(ADDRESS, 'unknown'), ', '
+        , IFNULL(CITY, 'unknown'), ', '
+        , IFNULL(STATE, 'unknown'), ', '
+        , IFNULL(cast(ZIP as varchar(10)), 'unknown'), '.'
+        , ' The Phone Number is ', IFNULL(PHONE, 'unknown'), '.'
+        , ' The Winemaker is ', IFNULL(WINEMAKER, 'unknown'), '.'
         , ' Did Kelly Kohlleffel recommend this winery?: ', IFNULL(KELLY_KOHLLEFFEL_RECOMMENDED, 'unknown'), ''
     ) AS winery_information FROM california_wine_country_visits;
 
     /** Create the vector table from the wine review single field table **/
-      CREATE or REPLACE TABLE single_string_winery_review_vector AS 
-            SELECT winery_information, 
+      CREATE or REPLACE TABLE vineyard_data_vectors AS 
+            SELECT winery_or_vineyard, winery_information, 
             snowflake.cortex.EMBED_TEXT_768('e5-base-v2', winery_information) as WINERY_EMBEDDING 
-            FROM single_string_winery_review;
+            FROM vineyard_data_single_string;
+
+
 ```
 
 Highlight all of the SQL and click the run button in the upper right corner.
+
 ![Fivetran Snowflake 4](assets/snowflake/s_0040.png)
 
 You may then preview the data by refreshing the left nav panel (click the `refresh` icon).  You will see that two new tables were created.  You may select the tables and click the preview icon if you wish to view the transformations.
+
 ![Fivetran Snowflake 5](assets/snowflake/s_0050.png)
 
 That's it for transforming the data...now we are ready to build our Streamlit app!
@@ -179,12 +210,15 @@ Duration: 5
 We are now ready to build our Streamlit application.  Snowflake's Streamlit feature makes creating and sharing applications easy.
 
 **Step 1.** Click the Projects icon in the left menu and select `Streamlit`.
+
 ![Fivetran Snowflake 6](assets/snowflake/s_0060.png)
 
 **Step 2.** Click the `+Streamlit App` in the upper right corner of the screen.
+
 ![Fivetran Snowflake 7](assets/snowflake/s_0070.png)
 
 Type a name for your chat app.  **VERY IMPORTANT: Ensure you choose the database and schema containing your data.**  Once the fields are set, click `Create`.
+
 ![Fivetran Snowflake 8](assets/snowflake/s_0080.png)
 
 **Step 3.** Get used to the interface and remove the default Streamlit code.
@@ -194,9 +228,10 @@ Let's first understand how this screen operates.
 The top right contains application controls.  To change the application settings, click the vertical three dots (ex. changing warehouse).  The two main features of this area are the `Run` button and the `Edit` button.  You will notice below that the `Edit` button is not shown.  That is because we are in edit mode.  The next time you go to the Streamlit section and select your application, it will be in "Run" mode, and `Edit` will appear to allow you to edit your application later.
 
 The second portion of the screen is the bottom left panel controls.  There are three that can be toggled on and off.  The first expands/collapses the left nav panel (which you really do not need for this lab).  The second expands/collapses the code panel.  The third expands/collapses the running application panel.  Get to know how these three buttons work by turning them off and on.  When developing/editing, it seems to be easier having the left nav panel and the right application panel off allowing the code panel to have the full screen.
+
 ![Fivetran Snowflake 9](assets/snowflake/s_0090.png)
 
-Once you are comfortable with the screen navigation, make the code panel enabled and place your cursor in the code, highlight all the code and delete it.  This is simply the default code for a new application.
+Once you are comfortable with the screen navigation, make the code panel enabled and place your cursor in the code, **highlight all the code and delete it**.  This is simply the default code for a new application.
 
 **Step 4.** Add the wine assistant chatbot code below to the empty code editor.
 
@@ -456,25 +491,27 @@ if __name__ == "__main__":
 > Note: There are no additional packages needed to run the lab.  So we do not need to use the `packages` import functionality at the top of the code editor.
 >
 
-The Streamlit application is, of course, Python utilizing packages and services hosted in Snowflake.  So the very top of the code block imports all packages and references needed to execute the application.  The `MODELS` and `CHUNK_NUMBER` lists load the drop down lists in the left nave panel of the application and are at the top for easy access in the case you would like to alter the list.  The models listed are the ones that are available in Snowflake at the time of the creation of this lab.  This list will probably be updated very soon with different models as they become available.  So change these as needed based on the [LLMs available](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability).  The chunks list numeric values are part of the RAG (retrieval-augmented generation) process.  This number represents how many items/chunks that will automatically be inserted into the context/prompt that is sent to the LLM so that the LLM can answer questions about your data.  You will notice that some prompts may only need a small number of chunks when you only ask about a few items in your data.  Other, more complex prompts, will require increased chunks.  You will know this when you start to see hallucinations or data that you know is in your dataset comes back with "unknowns".  See the [token limitations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#model-restrictions) to better understand how much data can be sent to these LLMs.  In the sample prompts at the end of this guide, we will give hints on the number of chunks to use.
+The Streamlit application is, of course, Python utilizing packages and services hosted in Snowflake.  So the very top of the code block imports all packages and references needed to execute the application.  The `MODELS` and `CHUNK_NUMBER` lists load the drop down lists that appear in the left nav panel of the application and are at the top of the code for easy access in the case you would like to alter the list.  The models listed are the ones that are available in Snowflake at the time of the creation of this lab.  This list will probably be updated very soon with different models as they become available.  So change these as needed based on the [LLMs available](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability).  The chunk list values are a part of the RAG (retrieval-augmented generation) process.  The chunk number represents how many items/chunks that will automatically be inserted into the context/prompt that is sent to the LLM so that the LLM can answer questions about your data as well as data the LLM was trained.  You will notice that some prompts may only need a small number of chunks when you only ask about a few items in your data.  Other, more complex prompts, will require more chunks.  You will know this when you start to see hallucinations or data that you know is in your dataset comes back with "unknowns".  See the [token limitations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#model-restrictions) to better understand how much data can be sent to these LLMs.  In the sample prompts at the end of this guide, we will give hints on the number of chunks to use.
 
-Now we can breakdown the Python functions relatively easy.  The first (starting from the top) is `build_layout`.  This function builds the content in the main panel where you type your prompt and the left nav panel where you adjust your application settings such as choosing a different model.  The order is like HTML where the objects are rendered how they are defined top-to-bottom.  This function also acquires the `question` from the text input.
+Now we can breakdown the Python functions in the code relatively easy.  The first (starting from the top) is `build_layout`.  This function builds the content in the main panel where you type your prompt and the left nav panel where you adjust your application settings such as choosing a different model.  The order is like HTML where the objects are rendered based on how they are defined top-to-bottom.  This function also acquires the `question` (question being your prompt) from the text input.
 
-The `build_prompt` function builds much of the "persona" for you as well as builds the RAG or non-RAG prompt depending if you check the box to use your data.  It is suggested that you try both to see the differences in responses.  The rest of the prompt structure such as content, task, format, and possibly example are added by you...where truly, those are not completely needed to get results.  A better prompt structure typically means better results, and each model will render those results based on the model's training.  We give some pretty fun examples in the following sections, but you can see that they do not conform to any single format.
+The `build_prompt` function builds much of the "persona" for you as well as builds the RAG or non-RAG prompt depending if you check the box to use your data.  It is suggested that you try both to see the differences in responses.  The rest of the prompt structure such as content, task, format, and possibly example are added by you...where truly, those are not needed to get results.  But, a better prompt structure typically means better results, and each model will render those results based on the model's training.  We give some pretty fun examples in the following sections, but you can see that they do not conform to any single format.
 
 The `get_model_token_count` function calculates what Snowflake will use to run the prompt against the LLM.  This calculation helps understand the cost implications of using Cortex.  See the [Cost Considerations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#cost-considerations) in the docs.  By default, the lab will generate the token count for the prompt, plus the RAG data is used, as well as the response from the LLM chosen.
 
 The `calc_times` function performs some additional insight into how fast various Cortex calls take to help benchmark LLM efficiency.
 
-The `run_prompt` is the controller function that formats the prompt, calls Cortex, and builds the run times for the processes.
+The `run_prompt` is the controller function that formats the prompt, calls Cortex, and handles the timing calls.
 
 Last, the `main` function, like any other Python application, is the entry point to the entire process, calls all other processes, and displays the results in reverse order so that your most recent prompt results are at the top of the history.
 
 ## Run the Chatbot
 Duration: 2
-Finally, we get to play with our new wine assistant!  
+
+Ok, you are close to the end.  Click the Run button in the upper right corner to run the application.
 
 Let's quickly run through the interface controls.
+
 ![Fivetran Snowflake 11](assets/snowflake/s_0110.png)
 
 **Content Area:** The content area (purple box) has two controls.
@@ -482,10 +519,10 @@ Let's quickly run through the interface controls.
 - The `reset` button clears the prompt and response history, but leaves the side panel settings alone allowing you to start a new prompt to test with the same settings.
 - Also note that next to the `run` button you will see the status drop down list.  You will notice that the status will start spinning when a prompt is running.  If you wonder if your prompt is executing, just see if the status is spinning.
 
-**Side Panel:** The side panel (green box) contains features that alter the functionality of the chatbot.  Prompt refresh occurs automatically meaning if you change any setting in the side panel, the current prompt automatically runs allowing you to compare results from different feature settings.
+**Side Panel:** The side panel (green box) contains features that alter the functionality of the chatbot.  Refresh occurs automatically meaning if you change any setting in the side panel, the current prompt automatically runs allowing you to compare results from different feature settings.
 - The `models` drop down list contains the list of models defined at the top of the application code block.  Try different models to see how each responds to the prompts, and see which one may fit your use case better.
-- Next is the `use your dataset` checkbox which enables RAG.  When this checkbox is checked or unchecked, you will see the message below the prompt change alerting you of what to expect in your results.  Try a prompt with the checkbox checked and then uncheck to see the response change and see why RAG enables your chatbot to provide insight on "your" data (see the control records section at the in the sample prompts for wineries/vineyards that do not exist in reality).
-- Under `advanced options`, the `number of chunks` list sets the limit on the number of records/chunks to add to the current context for the LLM.  This is the core of the RAG functionality.  As noted before, there are limits to the number of chunks (translated into tokens) for each model.  So keep that in mind.  The current list of numbers in the chunks drop down list should not cause any harm in running in any current LLM.
+- Next is the `use your dataset` checkbox which enables RAG.  When this checkbox is checked or unchecked, you will see the message below the prompt change alerting you of what to expect in your results.  Try a prompt with the checkbox checked and then uncheck to see the response change and see why RAG enables your chatbot to provide insight on "your" data (use at least one control record so that you know RAG is being performed since the control records/wineries/vineyards do not exist in reality).
+- Under `advanced options`, the `number of chunks` list sets the limit on the number of records/chunks to add to the current context for the LLM.  This is the core of RAG functionality.  As noted before, there are limits to the number of chunks (translated into tokens) for each model.  So keep that in mind.  The current list of numbers in the chunks drop down list should not cause any harm in running in any current LLM in the list.
 
 > aside positive 
 > One main item to note is the chatbot does not use previous responses to further refine results.  This feature could be added, but for this iteration, every prompt will be a new prompt for the LLM possibly using a new set of RAG context.
@@ -496,11 +533,13 @@ Let's quickly run through the interface controls.
 >
 
 **The Response:** Review the response for each prompt.  Remember, the newest response will bubble to the top; so you may need to scroll up to see it.
+
 ![Fivetran Snowflake 12](assets/snowflake/s_0120.png)
 
 There are two additional pieces of information added to the bottom of each response.
 - The first is the token count for the prompt and response along with some timings.  This helps you understand the efficiency and costs of the model run.
 - The second is the RAG data, in this case the vineyard/winery names from your table, that was added to the context sent to the LLM.  If no RAG items are sent to the model, you will see a 'none' for the RAG data.  Just the names are displayed here where the entire unstructured record (winery_information column) was added to the actual LLM call.
+
 ![Fivetran Snowflake 13](assets/snowflake/s_0130.png)
 
 ## Chatbot Tests
@@ -547,7 +586,10 @@ There are control records (phantom wineries) in the Fivetran dataset that are gu
 - Hrncir Family Cellars
 - Kai Lee Family Cellars
 - Kohlleffel Vineyards
-- Picchetti Winery (look for Dora)
+- Picchetti Winery
+
+These records can be used to ensure the RAG functionality is working where you will see the vineyard name in the RAG data used section.  If you uncheck RAG and use these records and data shows up, then the LLM hallucinated.  Hopefully you will get something like "...could not find the vineyard...".
+
 Additionally, there are unique aspects in various vineyard descriptions that are guaranteed to not be a part of the models’ original training datasets - here are some examples:
 - Continuum Estate: The owners also have an energetic vizsla dog that runs around the property.
 - Hirsch Vineyards: Kelly Kohlleffel recommends this winery for its location on the extreme Sonoma Coast. You will need your mapping app to navigate here, but you'll find terrific views and world-class pinot noir and chardonnay.
@@ -558,33 +600,39 @@ Additionally, there are unique aspects in various vineyard descriptions that are
 >
 
 ### Simple Prompt Format (4-6 chunks)
-For simple prompts, try things like (if you need winery names, check the california_wine_visits table):
-Tell me about the following wineries:  Kohlleffel, Millman, Hrncir, Peju
+For simple prompts, try things like (if you want additional winery names, check the california_wine_visits table):
+- Tell me about the following wineries:  Kohlleffel, Millman, Hrncir, Caymus
+- Tell me about the difference in wine styles between Hrncir Family Cellars and Peju.
 
 ### More Complex Prompt Format (6-8 chunks)
 For a more complex prompt, try:
-Plan a trip to visit 3 wineries during a 1 day trip that are all based in the Sonoma coast. Be sure to include Kohlleffel Vineyards as one of the three wineries.
+- Plan a trip to visit 3 wineries during a 1 day trip that are all based in the Sonoma coast. Be sure to include Kohlleffel Vineyards as one of the three wineries.
+- Plan me a 2 day trip covering 4 wineries in Yountville and Sonoma and include local eateries.  Be sure to include Chandon Estates on day 1 and Tony Kelly on day 2.
 
 ### Very Complex Prompts (10-16 chunks)
-Provide a winery visit itinerary to visit six wineries during a two day trip. I’d like to visit the Sonoma coast on day 1 and Yountville on day 2. Be sure to include Kohlleffel Vineyards as one of the six wineries on day 1. Provide driving times as well. Organize this into a two day trip. Provide a hotel recommendation for the evening of day one. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. Lastly, what else would you suggest to make this trip even better?
+- Provide a winery visit itinerary to visit six wineries during a two day trip. I’d like to visit the Sonoma coast on day 1 and Yountville on day 2. Be sure to include Kohlleffel Vineyards as one of the six wineries on day 1. Provide driving times as well. Organize this into a two day trip. Provide a hotel recommendation for the evening of day one. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. Lastly, what else would you suggest to make this trip even better?
 
-Provide a winery visit itinerary to visit nine wineries during a three day trip. I’d like to visit the Sonoma coast on day one and Yountville on day two and St. Helena on day three. Be sure to include Kohlleffel Vineyards and Millman Estate as two of the wineries on day one.  Ensure that Hrncir Family Cellars is included on day two. Provide driving times as well. Organize this into a three day trip. Provide a hotel recommendation for the evening of day one and a different hotel for the evening of day two. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville and in St. Helena such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. Lastly, what else would you suggest to make this trip even better?
+- Provide a winery visit itinerary to visit nine wineries during a three day trip. I’d like to visit the Sonoma coast on day one and Yountville on day two and St. Helena on day three. Be sure to include Kohlleffel Vineyards and Millman Estate as two of the wineries on day one.  Ensure that Hrncir Family Cellars is included on day two. Provide driving times as well. Organize this into a three day trip. Provide a hotel recommendation for the evening of day one and a different hotel for the evening of day two. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville and in St. Helena such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. Lastly, what else would you suggest to make this trip even better?
 
-Provide a winery visit itinerary to visit 9 wineries during a 3 day trip. I’d like to visit the Sonoma coast on day 1 and Yountville on day 2 and St. Helena on day 3. Be sure to include Kohlleffel Vineyards and Millman Estate as 2 of the wineries on day 1. Provide driving times as well to get to the first winery and driving times between wineries and other venues. Organize this into a 3 day trip. Provide a hotel recommendation for the evening of day 1 and a different hotel for the evening of day 2. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville and in St. Helena such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Provide your estimate for what this trip will cost and show me the detail on how you estimated the cost. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. What else would you suggest to make this trip even better?
+- Provide a winery visit itinerary to visit 9 wineries during a 3 day trip. I’d like to visit the Sonoma coast on day 1 and Yountville on day 2 and St. Helena on day 3. Be sure to include Kohlleffel Vineyards and Millman Estate as 2 of the wineries on day 1. Provide driving times as well to get to the first winery and driving times between wineries and other venues. Organize this into a 3 day trip. Provide a hotel recommendation for the evening of day 1 and a different hotel for the evening of day 2. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville and in St. Helena such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Provide your estimate for what this trip will cost and show me the detail on how you estimated the cost. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. What else would you suggest to make this trip even better?
 
-Provide a winery visit itinerary to visit 9 wineries during a 3 day trip. I’d like to visit the Sonoma Coast on day 1 and Yountville on day 2 and Howell Mountain on day 3. Be sure to include Kohlleffel Vineyards and Millman Estate as 2 of the wineries on day 1. Del Dotto as one of the wineries on Day 2. and Sumit Lake Vineyards as one of the wineries on Day 3. Provide addresses of the wineries.  Provide driving times as well to get to the first winery and driving times between wineries and other venues. Organize this into a 3 day trip. Provide a hotel recommendation for the evening of day 1 and a different hotel for the evening of day 2. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville and in St. Helena such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Provide your estimate for what this trip will cost and show me the detail on how you estimated the cost. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. What else would you suggest to make this trip even better? What types of clothing should I bring if I am planning my trip for early June?
+- Provide a winery visit itinerary to visit 9 wineries during a 3 day trip. I’d like to visit the Sonoma Coast on day 1 and Yountville on day 2 and Howell Mountain on day 3. Be sure to include Kohlleffel Vineyards and Millman Estate as 2 of the wineries on day 1. Del Dotto as one of the wineries on Day 2. and Sumit Lake Vineyards as one of the wineries on Day 3. Provide addresses of the wineries.  Provide driving times as well to get to the first winery and driving times between wineries and other venues. Organize this into a 3 day trip. Provide a hotel recommendation for the evening of day 1 and a different hotel for the evening of day 2. Also let me know about other activities that you recommend on the Sonoma Coast and in Yountville and in St. Helena such as hiking trails. Also provide a catchy name for this trip of no more than seven words. Provide your estimate for what this trip will cost and show me the detail on how you estimated the cost. Take all of the information and organize it with the trip name at the top and all the information in a good printable format. What else would you suggest to make this trip even better? What types of clothing should I bring if I am planning my trip for early June?
+
+### Cortex Search Service Note
+This lab is RAG-based meaning you are using a pre-trained LLM and adding your data as context in the prompt to get very rich responses.  This is just one example of performing RAG for a particular use case.  Snowflake also has the [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#overview) feature which may help simplify this process.  Review this feature to get an understanding of other RAG implementation possibilities as well utilizing Cortex Search on your data only (without invoking a call to a LLM).
+
+### Chunking Note
+You may have noticed that you did not need to build a chunking function to split our concatenated, unstructured string data records into appropriately sized chunks.  The dataset is a controlled dataset where the string records created do not exceed 2000 tokens.  Had there been very large records, a chunking function (text splitting) would have been implemented.
 
 ## Conclusion
 Duration: 2
 
-Where is your most valuable data?  Inside your application databases, SaaS platforms, and ERPs.
-
-This lab demonstrates the ease at which you can utilize "structured datasets" with GenAI provided by Fivetran's fully automated data integration pipelines allowing you to build value-add applications like this and ask questions against "your" data without having to worry about data freshness!
+This lab demonstrates the ease at which you can utilize "structured datasets" for GenAI provided by Fivetran's fully automated data integration pipelines allowing you to build value-add applications in Snowflake and ask questions about "your" data without having to worry about data freshness!
 
 Here's what we did:
 - Created a production-ready data pipeline from PostgreSQL to Snowflake via Fivetran in a few clicks!
 - Utilized Cortex to take a structured dataset and convert it into an unstructured vector dataset!
-- Created a Streamlit chatbot application to gather insights and build winery planners!
+- Created a Streamlit chatbot application!
 - Had fun creating wine trips through the California countryside including places only found in your data!
 - All in less than an hour!
 
@@ -595,3 +643,39 @@ See what other customers are [doing with Snowflake](https://www.snowflake.com/en
 See why [Fivetran](https://fivetran.com) is the ultimate automated data movement platform for any [data source](https://www.fivetran.com/connectors) and why Fivetran is a [Snowflake Elite Partner](https://www.snowflake.com/partners/technology-partners/) and Snowflake Data Integration Partner of the year!
 
 Fivetran's mission is to "Make data as accessible and reliable as electricity!"  [Let us show you how we do it!](https://go.fivetran.com/demo)
+
+## Option for Data Loading: Amazon S3
+
+If by some chance the PostgreSQL database is unavailable or inaccessible, you may use the below dataset that was copied from the PostgreSQL database to JSON residing in Amazon S3.
+
+**Step 1.** With the `Connectors` item selected in the nav panel, click `Add connector` in the upper right corner.
+
+![Fivetran Connector 11](assets/fivetran/f_0100.png)
+
+**Step 2.** Enter `s3` in the search box.  Scroll down to the S3 connector, highlight the item with your mouse, and click `Set up`.
+
+![Fivetran Connector 12](assets/fivetran/f_0110.png)
+
+**Step 3.** Next on the connector configuration screen, enter `yourlastname_genai` as the Destination Schema Prefix.  Next copy and paste the parameters given below into their respective fields.  Note that the Destination Schema Prefix must be unique to the database.  Fivetran will prepend this name to all schemas copied from the postgres database into Snowflake.  **Do not alter any other fields except the ones listed.**
+- Destination table:  california_wine_country_visits
+- Bucket:  ft-s3-lab-bucket
+- Access approach:  Public
+
+![Fivetran Connector 13](assets/fivetran/f_0120.png)
+
+Scroll down and you will see the remainder of the configuration fields.  Set the parameters to the values shown below, and click `Save & Test`.
+- Folder Path:  winedata
+- File Type:  json
+- JSON Delivery Mode:  Unpacked
+
+![Fivetran Connector 14](assets/fivetran/f_0130.png)
+
+**Step 4.** Fivetran will perform connection tests to the bucket as well as verify the files in the folder.  Once all connector tests complete, click `Continue`.
+
+![Fivetran Connector 15](assets/fivetran/f_0140.png)
+
+**Step 5.**  With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`, and let Fivetran seamlessly replicate our S3 file data into Snowflake.  This should only take a minute or two at most.  This process will perform an initial sync of all of the data files in the bucket/folder, and automatically schedule itself to run again in 6 hours.  The sync frequency can be adjusted, but for this lab, there is no CDC occurring behind the scenes; so we will leave it at 6 hours.  If this data was changing, Fivetran would only replicate the changes/delta from the previous run into Snowflake ensuring your Snowflake data is always up to date with your source!
+
+![Fivetran Connector 16](assets/fivetran/f_0150.png)
+
+**Continue to the Transform section**
