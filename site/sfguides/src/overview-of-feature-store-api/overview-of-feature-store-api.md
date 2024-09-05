@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science 
 
-# Overview of Feature Store API
+# Getting Started with Snowflake Feature Store API
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
