@@ -859,8 +859,9 @@ The code below  allows the user to browse the letters with a slider and visualis
 ```python
 
 letterspd = letters.to_pandas()
-
 selected_letter = st.slider('Choose Letter:',0,letterspd.shape[0]-1,1)
+st.markdown(f''' **Email**: {letterspd['MP Email Address'].iloc[selected_letter]}''')
+st.write()
 st.write(letterspd.LETTER.iloc[selected_letter])
 
 ```
