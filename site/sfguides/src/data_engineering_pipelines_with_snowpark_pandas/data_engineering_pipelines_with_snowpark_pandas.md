@@ -1,55 +1,51 @@
-author: Mats Stellwall
+author: Mats Stellwall, Doris Lee
 id: data_engineering_pipelines_with_snowpark_pandas
-summary: This guide will provide step-by-step details for doing data engineering with Snowpark Pandas API
+summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake.
 categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering 
 
-# Data Engineering Pipeline With Snowpark Pandas
+# Data Engineering Pipeline with pandas on Snowflake
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will learn how to use the Snowpark Pandas API to create a customer profile based on the using the [Snowflake Sample TPC-H dataset](https://docs.snowflake.com/en/user-guide/sample-data-tpch), save it into a Snowflake table and to create a serverless task to schedule the feature engineering.
+Through this quickstart, you will learn how to use [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks), [pandas on Snowflake](https://docs.snowflake.com/developer-guide/snowpark/python/snowpark-pandas), [Git integration](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit), and [Serverless Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro) to build an end-to-end data engineering pipeline.
 
-### What Is Snowpark?
+You will create a customer profile using the [Snowflake Sample TPC-H dataset](https://docs.snowflake.com/en/user-guide/sample-data-tpch), save it into a Snowflake table and to create a serverless task to schedule the feature engineering.
 
-Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake.
+![Architecture](https://developers.snowflake.com/wp-content/uploads/2024/07/snowpark-pandas.png)
 
-* **Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark Pandas API, which provides Python APIs to run your pandas code directly on your data in Snowflake.
-* **Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
+### What You’ll Learn
 
-Learn more about [Snowpark](http://www.snowflake.com/snowpark).
+- how to build a Python data pipeline with Snowflake Notebooks
+- how to aggregate and transform data to create new features with pandas on Snowflake
+- how to version control and collaborate with Git integration
+- how to create a Serverless Task to schedule the feature engineering
 
-### What Is Snowpark Pandas API?
-The Snowpark pandas API is a module in the Snowpark library that lets you run your pandas code directly on your data in Snowflake. Just by changing the import statement and a few lines of code, you can get the same pandas-native experience you know and love with the scalability and security benefits of Snowflake. With this API, you can work with much larger datasets so you can avoid the time and expense of porting your pandas pipelines to other big data frameworks or using larger and more expensive machines. It runs workloads natively in Snowflake through translation to SQL, enabling it to take advantage of parallelization and the data governance and security benefits of Snowflake.
+### What is pandas on Snowflake?
 
-#### Benefits Of Using The Snowpark Pandas API
-* **Meeting Python developers where they are** – This API offers a familiar interface to Python developers by providing a pandas-compatible layer that can run natively in Snowflake.
-* **Scalable distributed pandas** – This API bridges the convenience of pandas with the scalability of mature data infrastructure. pandas can now run at Snowflake speed and scale by leveraging pre-existing query optimization techniques within Snowflake. No code rewrites or complex tuning are required, so you can move from prototype to production seamlessly.
-* **Security and governance** – Data does not leave Snowflake’s secure platform. The Snowpark pandas API allows uniformity within data organizations on how data is accessed and allows for easier auditing and governance.
-* **No additional compute infrastructure to manage and tune** – This feature leverages the Snowflake engine, and you do not need to set up or manage any additional compute infrastructure.
+pandas on Snowflake lets you run your pandas code in a distributed manner scalably and securely directly on your data in Snowflake. Just by changing the import statement and a few lines of code, you can get the same pandas-native experience you know and love with the scalability and security benefits of Snowflake. With pandas on Snowflake this API, you can work with much larger datasets and avoid the time and expense of porting your pandas pipelines to other big data frameworks or provisioning large and expensive machines. It runs workloads natively in Snowflake through transpilation to SQL, enabling it to take advantage of parallelization and the data governance and security benefits of Snowflake. 
+
+### Why use pandas on Snowflake?
+pandas is the go-to data processing library for millions worldwide, including countless Snowflake users. However, pandas was never built to handle data at the scale organizations are operating today. Running pandas code requires transferring and loading all of the data into a single in-memory process. It becomes unwieldy on moderate-to-large data sets and breaks down completely on data sets that grow beyond what a single node can handle. With pandas on Snowflake, you can run the same pandas code, but with all the pandas processing pushed down to run in a distributed fashion in Snowflake. Your data never leaves Snowflake, and your pandas workflows can process much more efficiently using the Snowflake elastic engine. This brings the power of Snowflake to pandas developers everywhere.
+
+pandas on Snowflake is delivered through the Snowpark pandas API as part of the Snowpark Python library, which enables scalable data processing of Python code within the Snowflake platform. You will learn how to use Snowpark pandas as part of this quickstart. This quickstart will focus on getting started with Snowpark pandas API, and enable you to perform common pandas operations on large volumes of data while leveraging the power of Snowflake.
 
 Learn more about [Snowpark Pandas API](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas).
 
-### What You’ll Learn
-* how to create Snowpark Pandas dataframe from a Snowflake table
-* how to aggregate data to create new features
-* how to Join Snowpark Pandas dataframes
-* how to save a Snowpark Pandas dataframe into a Snowflake table
-* how to create a serverless task to schedule the feature engineering
 
 ### Prerequisites
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
     > aside positive
     >
-    >Clone or download the [git repo](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas)
+    >Clone or download the [git repo](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake)
 * A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 * A Snowflake account login with a role that has the ability to create database, schema and tables. If not, you will need to register for a free trial or use a different role.
 
 ### What You’ll Build 
-A Customer profile table using the Snowpark Pandas API and a serverless task that will run the feature engineering on a schedule.
+A Customer profile table using the Snowpark Pandas API and a serverless task that will run the feature engineering pipeline on a schedule.
 
 <!-- ------------------------ -->
 ## Setup The Snowflake Environment
@@ -59,21 +55,21 @@ Duration: 10
 This section covers cloning of the GitHub repository and creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..)
 
 ### Clone The Git Repository
-The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas). This repository contains all the code you will need to successfully complete this QuickStart Guide.
+The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake). This repository contains all the code you will need to successfully complete this QuickStart Guide.
 
 Using HTTPS:
 
 ```shell
-git clone https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas.git
+git clone https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake.git
 ```
 
 OR, using SSH:
 
 ```shell
-git clone git@github.com:Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas.git
+git clone git@github.com:Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake.git
 ```
 
-You can also use the Git integration feature of Snowflake Notebooks, in order to do that you need to fork the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) to be allowed to commit changes. For instructions how to set up Git integration for your Snowflake account see [here](https://docs.snowflake.com/developer-guide/git/git-setting-up) and for using it with Snowflake Notebooks see [this page](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit).
+You can also use the Git integration feature of Snowflake Notebooks, in order to do that you need to fork the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake) to be allowed to commit changes. For instructions how to set up Git integration for your Snowflake account see [here](https://docs.snowflake.com/developer-guide/git/git-setting-up) and for using it with Snowflake Notebooks see [this page](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit). You can refer to [this video](https://www.youtube.com/watch?v=4GOa1eUccmQ) for a walkthrough on how you can set up Git integration and use it with Snowflake Notebooks.
 
 <!-- ------------------------ -->
 ## Setup Snowflake
@@ -86,7 +82,7 @@ During this step you will verify that the [Snowflake Sample TPC-H dataset](https
 
 1. Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) for your account
 2. Navigate to **Databases**
-3. Verify that you can see the **SNOWFLAKE_SAMPLE_DATA** database, if it is missing then you can add it folling the instructions in https://docs.snowflake.com/en/user-guide/sample-data-using
+3. Verify that you can see the **SNOWFLAKE_SAMPLE_DATA** database, if it is missing then you can add it folling the instructions [here](https://docs.snowflake.com/en/user-guide/sample-data-using).
 
 ### Create Database, Schema And Warehouse To Be Used
 
@@ -104,21 +100,24 @@ CREATE WAREHOUSE SNOW_PANDAS_DE_QS_WH;
 ### Navigate To Snowflake Notebooks
 
 1. Navigate to the Notebooks section by clicking **Projects** and then **Notebooks**  
-![Navigate to Notebooks](assets/navigate_to_notebooks.png)  
+
+    ![Navigate to Notebooks](assets/navigate_to_notebooks.png)  
 2. Click on the **down arrow* next to **+ Notebook**  
-![New notebook drop down](assets/new_notebook_dropdown.png)  
-3. If you have set up git integration choose  **Create from repository** if not, then choose **import .ipynb file**.
-![New notebook from menu](assets/notebook_from_menu.png)  
+
+    ![New notebook drop down](assets/new_notebook_dropdown.png)  
+3. If you have set up git integration choose  **Create from repository**. If not, then choose **import .ipynb file**.
+
+    ![New notebook from menu](assets/notebook_from_menu.png)  
 
 ### Import .ipynb File
-1. Navigate to where you have cloned the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) and select **Customer Profile Creation Pipeline.ipynb** and click **Open**  
+1. Navigate to where you have cloned the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake) and select **Customer Profile Creation Pipeline.ipynb** and click **Open**  
 ![Select Notebook File](assets/select_notebook_file.png)  
 2. Keep the name, select **SNOW_PANDAS_DE_QS** and **NOTEBOOKS** for **Notebook location**, **SNOW_PANDAS_DE_QS_WH** for **Notebook warehouse** and click **Create**  
 ![Select Notebook File](assets/notebook_dialog.png)  
 
 ### Create From Repository
 
-If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) and create a integration to it in Snowflake you can open the notebook directly from the git repository.
+If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake) and create a integration to it in Snowflake you can open the notebook directly from the git repository.
 
 1. In the **Create Notebook from Repository** dialog click on **Select .ipynb file**  
 ![Create Notebook from Repository Dialog](assets/create_from_rep_start.png)  
@@ -143,36 +142,35 @@ Before you run the notebook you need to add the following Python libraries:
 
 
 <!-- ------------------------ -->
-## Data Engineering With Snowpark Pandas
+## Data Engineering with pandas on Snowflake
 Duration: 30
 
-During this step you will learn how to use the Snowpark Pandas API to:
+During this step you will learn how to use pandas on Snowflake to:
 * Create datframe from a Snowflake table
 * Aggregate data to create new features
 * Join dataframes
 * Save the result into a Snowflake table
 * Create a serverless task to schedule the feature engineering pipeline (Currently in Private Preview)
 
-Follow along and run each of the cells in [the Notebook](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas/blob/main/Customer%20Profile%20Creation%20Pipeline.ipynb).
+Follow along and run each of the cells in [the Notebook](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake/blob/main/notebooks/0_start_here.ipynb).
 
-Within this Notebook, we will use Snowpark Pandas API to create DataFrames, join them, create new features and create a serverless task to schedule the feature engineering.
+Within this Notebook, we will use Snowpark Pandas API to create DataFrames, join them, create new features and create a serverless task to schedule the feature engineering pipeline.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 4
 
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use the Snowpark Pandas API to create DataFrames, join them, create new features, save the result to a Snowflake table, and create a serverless task to schedule the data transformation pipeline.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks), [pandas on Snowflake](https://docs.snowflake.com/developer-guide/snowpark/python/snowpark-pandas), [Git integration](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit), and [Serverless Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro) to build an end-to-end data engineering pipeline.
 
 ### What You Learned
 
-* Create datframe from a Snowflake table
-* Aggregate data to create new features
-* Join dataframes
-* Save the result into a Snowflake table
-* Create a serverless task to schedule the feature engineering
+- how to build a Python data pipeline with Snowflake Notebooks
+- how to aggregate and transform data to create new features with pandas on Snowflake
+- how to version control and collaborate with Git integration
+- how to create a Serverless Task to schedule the feature engineering
 
 ### Related Resources
 
-* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas)
-* [Snowpark Pandas API Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas)
-* [Getting Started with Snowpark pandas Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_pandas/index.html)
+* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake)
+* [pandas on Snowflake Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas)
+* [Getting Started with pandas on Snowflake Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_pandas_on_snowflake/)
