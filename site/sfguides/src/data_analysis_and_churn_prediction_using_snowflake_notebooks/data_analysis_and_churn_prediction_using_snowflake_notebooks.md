@@ -132,7 +132,8 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 5. Select the `CHURN_PROD` database and `ANALYTICS` schema for the Notebook Location and `CHURN_DS_WH` for the Notebook warehouse and click `Create`
 
-6. Click on either Notebook to upload the [environment.yml](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/environment.yml) file by clicking the plus button on the file explorer in the left pane. This file adds the following packages: `altair`, `imbalanced-learn`, `numpy`, `pandas`, and `snowflake-ml-python`.
+6. To add Anaconda packages to both Notebooks separately, select the specified Notebook, click the `Packages` button on the package explorer in the top of the page to add the following packages: `altair`, `imbalanced-learn`, `numpy`, `pandas`, and `snowflake-ml-python`.
+<img src="assets/anaconda.png>
 
 7. At the top of the page, click `Start` to start the Notebook session and run the cells by clicking `Run All`
 <img src="assets/start.png"/>
