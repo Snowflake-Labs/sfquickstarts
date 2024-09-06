@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: GenAI, RAG, Fivetran, chat
 
-# Build a RAG-based, GenAI wine assistant chatbot in 30 minutes using structured data!
+# Fivetran - Build a RAG-based, GenAI wine assistant chatbot in 30 minutes using structured data!
 <!-- ------------------------ -->
 ## Overview
 Duration: 3
