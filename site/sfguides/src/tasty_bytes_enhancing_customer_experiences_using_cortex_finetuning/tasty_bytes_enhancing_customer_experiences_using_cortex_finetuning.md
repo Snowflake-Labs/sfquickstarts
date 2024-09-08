@@ -78,7 +78,7 @@ Rename the Worksheet by clicking on the auto-generated Timestamp name and inputt
 
 Click the button below which will direct you to our Tasty Bytes SQL file that is hosted on GitHub.
 
-[Source Code - Cortex FineTuning.sql](https://github.com/Snowflake-Labs/sfguide-enhancing-customer-experiences-using-cortex-finetuning/blob/main/setup/Cortex_FineTuning.sql)
+[Source Code](https://github.com/Snowflake-Labs/sfguide-enhancing-customer-experiences-using-cortex-finetuning/blob/main/scripts/setup.sql)
 
 **Step 7**. - Copying Setup SQL from GitHub.
 
