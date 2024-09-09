@@ -540,7 +540,7 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
 
 - Go to [https://app.snowflake.com](https://app.snowflake.com) and under Projects->Notebooks, on the right top side in Notebook Dropdown, select Create from Repository. Navigate to the Git repository created in previous step, and select [KGQA_DEMO->notebook_app.ipynb](./KGQA_DEMO/notebook_app.ipynb).
 
-- Run the **KGQA Demo Snowflake Notebook** to play with our pipeline
+- Run the [KGQA Demo Notebook](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/notebook_app.ipynb) in Snowflake to play with our pipeline!
 
 
 <img src="./assets/kgqa_demo_nb.png" alt="KGQA Example" width="1400">
