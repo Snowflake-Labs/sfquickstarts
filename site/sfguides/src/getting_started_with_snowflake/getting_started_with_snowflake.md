@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 authors: Victoria Warner (Cybersyn)
 
-# Getting Started with Snowflake - Zero to Snowflake
+# Getting Started with Snowflake
 
 <!-- ------------------------ -->
 
