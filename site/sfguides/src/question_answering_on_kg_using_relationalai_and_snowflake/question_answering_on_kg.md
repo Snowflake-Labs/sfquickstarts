@@ -538,7 +538,7 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
     - Remote Repository URL - https://github.com/RelationalAI/QuestionAnsweringKG.git
 
 
-- Go to [https://app.snowflake.com](https://app.snowflake.com) and under Projects->Notebooks, on the top right corner in Notebook Dropdown, select *Create from Repository*. Navigate to the Git repository stage created in previous step, and select [KGQA_DEMO->notebook_app.ipynb](./KGQA_DEMO/notebook_app.ipynb).
+- Go to [https://app.snowflake.com](https://app.snowflake.com) and under Projects->Notebooks, on the top right corner in Notebook Dropdown, select *Create from Repository*. Navigate to the Git repository stage created in previous step, and select [KGQA_DEMO->notebook_app.ipynb](./KGQA_DEMO/notebook_app.ipynb). Fill the rest of the details as defined in the [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/kgqa_demo_setup/config.json). 
 
 - Run the [KGQA Demo Notebook](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/notebook_app.ipynb) in Snowflake to play with our pipeline!
 
