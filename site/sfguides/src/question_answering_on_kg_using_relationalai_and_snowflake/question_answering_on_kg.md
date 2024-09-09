@@ -363,7 +363,7 @@ if not skip_appendix:
 ##### APPENDIX 2 - Resume Service and Re-create Engine
 
 ```python
-#python cell
+# python cell
 
 # Recreate service after dropping it
 if not skip_appendix:
@@ -371,7 +371,7 @@ if not skip_appendix:
 ```
 
 ```python
-#python cell
+# python cell
 
 if not skip_appendix:
     session.sql("CALL RELATIONALAI.API.CREATE_ENGINE('demo_engine', 'HIGHMEM_X64_S');").collect()
