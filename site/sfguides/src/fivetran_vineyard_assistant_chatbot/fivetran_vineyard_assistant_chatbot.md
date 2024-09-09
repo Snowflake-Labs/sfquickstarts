@@ -332,7 +332,7 @@ def build_prompt (question):
     # Format the prompt based on if the user chooses to use the RAG option or not.
     #
 
-    # Build the RAG prompt if the user chooses.  Defaulting the similarity to 0.8 -> 1 for better matching.
+    # Build the RAG prompt if the user chooses.  Defaulting the similarity to 0 -> 1 for better matching.
     chunks_used = []
     if st.session_state.dataset_context:
         # Get the RAG records.
@@ -341,7 +341,7 @@ def build_prompt (question):
           (select winery_or_vineyard, winery_information as winery_chunk, vector_cosine_similarity(winery_embedding,
                 snowflake.cortex.embed_text_768('e5-base-v2', ?)) as v_sim
           from vineyard_data_vectors
-          having v_sim > 0.79
+          having v_sim > 0
           order by v_sim desc
           limit ?)
           select winery_or_vineyard, winery_chunk from context_cte 
