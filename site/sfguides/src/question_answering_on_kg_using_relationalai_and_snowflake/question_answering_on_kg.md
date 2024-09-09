@@ -88,122 +88,147 @@ Congratulations! The RelationalAI app is now available in your Snowflake account
 
 > aside negative
 >
-> We recommend **running each SQL cell separately** instead of using the "Run All" feature.
+> Go to https://app.snowflake.com and select + Create Projects > Notebook > Click on "+ Notebook" to create a new notebook
+> We recommend **running each cell separately** instead of using the "Run All" feature.
 
 #### Step 1 - Share Continuous Telemetry Data
 
 To receive support from RelationalAI, you must opt-in to share continuous telemetry data. Telemetry is written to your account’s active [event table](https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-tracing-overview). This telemetry contains operational information such as internal system logs or engine sizes and usage data such as model attributes or obfuscated query plan information. Customer data and personally identifiable information are not included in continuous telemetry data.
 
+
 > aside positive
 >
-> Note that the `ACCOUNTADMIN` role is used in this guide. This role is needed only for the event-table related operations. To manage roles specific the RelationalAI Native App, see Appendix 3 at the bottom of this notebook.
+> Note that the `ACCOUNTADMIN` role is used in this guide. This role is needed only for the event-table related operations in Step 1 and the network rule in Step 4. To manage roles specific the RelationalAI Native App, see Appendix 3 at the bottom of this notebook.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
 ```
 
-##### Step 1A - Check whether active event table exists
+##### Step 1A - Set Up an Event Table
 
-Use the [SHOW PARAMETERS](https://docs.snowflake.com/en/sql-reference/sql/show-parameters) command to determine if you have an active event table.
+The following code block checks whether you have an event table already set up on your account. If you don't have one, it will set one up for you.
 
-If the `event_table` parameter is set, the command returns the name of the active event table. In that case, skip step 1B and move to step 1C.
 
-```sql
-SHOW PARAMETERS LIKE 'event_table' in ACCOUNT;
+```python
+# python cell
+
+session = get_active_session()
+
+event_table_query = "SHOW PARAMETERS LIKE 'event_table' in ACCOUNT;"
+
+event_tables = session.sql(event_table_query).collect()
+
+def set_up_event_table():
+    event_db_name = "TELEMETRY"
+    event_schema_name = "PUBLIC"
+    event_table_name = "EVENTS"
+
+    event_db_schema = f"{event_db_name}.{event_schema_name}"
+    event_db_schema_table = f"{event_db_schema}.{event_table_name}"
+
+    for command in [
+        f"CREATE DATABASE IF NOT EXISTS {event_db_name};",
+        f"CREATE SCHEMA IF NOT EXISTS {event_db_schema};",
+        f"CREATE EVENT TABLE IF NOT EXISTS {event_db_schema_table};",
+        f"ALTER ACCOUNT SET EVENT_TABLE = {event_db_schema_table};",
+    ]:
+        session.sql(command).collect()
+
+if len(event_tables) == 0 or event_tables[0].value == "":
+    set_up_event_table()
 ```
 
-##### Step 1B - Create event table
-
-An empty result indicates that no event table is set, you therefore need to create one.
-
-> aside positive
->
-> You can customize the database, schema and table name below as needed. Default values have been provided.
-
-```sql
-SET event_db_name = 'TELEMETRY';
-SET event_schema_name = 'PUBLIC';
-SET event_table_name = 'EVENTS';
-
--- Define additional helper variables
-SET event_db_schema = $event_db_name || '.' || $event_schema_name;
-SET event_db_schema_table = $event_db_name || '.' || $event_schema_name || '.' || $event_table_name;
-```
-
-```sql
--- Create event database, schema and table
-CREATE DATABASE IF NOT EXISTS IDENTIFIER($event_db_name);
-CREATE SCHEMA IF NOT EXISTS  IDENTIFIER($event_db_schema);
-CREATE EVENT TABLE IF NOT EXISTS IDENTIFIER($event_db_schema_table);
-
-ALTER ACCOUNT SET EVENT_TABLE = $event_db_schema_table;
-```
-
-##### Step 1C - Enable telemetry sharing with RelationalAI
+Now that you've set up an event table, you can enable telemetry sharing.
 
 By running the next code block, you consent to and enable sharing continuous telemetry data with RelationalAI.
 
 ```sql
+-- SQL cell
+
 ALTER APPLICATION relationalai SET SHARE_EVENTS_WITH_PROVIDER = TRUE;
 ```
 
-#### Step 2 - Configure Compute Resources
-
-Dedicated [compute pools](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool) are required for users to consume the RAI service via the [relationalai Python package](https://relational.ai/docs/getting_started). These compute pools host [RAI engines](https://relational.ai/docs/native_app/components/engines), which are the compute resources that execute RAI queries. There are two engine sizes available, each corresponding to a different compute pool instance family: `HIGHMEM_X64_S` and `HIGHMEM_X64_M`.
-
-Engines, not compute pools, incur costs, and the required engine size depends on the workload. Users must choose a compatible compute pool when creating engines. To ensure availability, you may wish to create a compute pool for each engine size. However, you may start with only a `HIGHMEM_X64_S` compute pool and create a `HIGHMEM_X64_M` compute pool later if needed.
-
-> aside positive
->
-> Notice how the `MAX_NODES` attribute is set to 1 by default. This is sufficient for the `rai_service_pool`, but depending on your use case, you might want to adjust it for the other compute pools. You can do this at any point in time by running the `ALTER COMPUTE POOL` command.
-
-> aside positive
->
-> Adjusting the `AUTO_SUSPEND_SECS` parameter helps balance cost control with availability for engine provisioning. See [documentation on Cost Management](https://relational.ai/docs/native_app/cost_management) for details on how costs are accrued.
-
-```sql
--- Create compute pools for the RAI engines, one for each supported instance family
-CREATE COMPUTE POOL IF NOT EXISTS rai_engine_pool_s
-      FOR APPLICATION relationalai
-      MIN_NODES = 1
-      MAX_NODES = 1
-      AUTO_RESUME = TRUE
-      AUTO_SUSPEND_SECS = 300
-      INSTANCE_FAMILY = HIGHMEM_X64_S;
-
-GRANT USAGE, MONITOR ON COMPUTE POOL rai_engine_pool_s TO APPLICATION relationalai;
-
-CREATE COMPUTE POOL IF NOT EXISTS rai_engine_pool_m
-      FOR APPLICATION relationalai
-      MIN_NODES = 1
-      MAX_NODES = 1
-      AUTO_RESUME = TRUE
-      AUTO_SUSPEND_SECS = 300
-      INSTANCE_FAMILY = HIGHMEM_X64_M;
-
-GRANT USAGE, MONITOR ON COMPUTE POOL rai_engine_pool_m TO APPLICATION relationalai;
-```
-
-#### Step 3 - Create the RAI service
+#### Step 2 - Create the RAI service
 
 The *Grant* button under *Data Products > Apps > RelationalAI* in Snowsight runs the following SQL command to grant the necessary permissions to the app. If you haven't clicked that button yet, you can run the code here instead. It doesn't hurt to run it again if you're not sure.
 
 ```sql
-GRANT EXECUTE TASK, EXECUTE MANAGED TASK, CREATE COMPUTE POOL, CREATE WAREHOUSE ON ACCOUNT TO APPLICATION RELATIONALAI;
+-- SQL cell
+
+GRANT EXECUTE TASK, 
+      EXECUTE MANAGED TASK, 
+      CREATE COMPUTE POOL, 
+      CREATE WAREHOUSE 
+      ON ACCOUNT TO APPLICATION RELATIONALAI;
 ```
 
-Now execute the following command to create the RAI service:
+Now execute the following cell to create the RAI service (this usually takes between 5 and 15 minutes):
 
-```sql
-CALL RELATIONALAI.APP.CREATE_SERVICE();
+```python
+# python cell
+
+import sys
+import time
+import json
+import itertools
+
+def poll(f):
+
+    last_message = ""
+    dots = itertools.cycle(["⠧", "⠏", "⠛", "⠹", "⠼", "⠶"])
+
+    def status(message):
+        spaces = " " * (len("⠿ " + last_message) - len(message))
+        sys.stdout.write("\r" + message + spaces)
+        sys.stdout.flush()
+    
+    for ctr in itertools.count():
+        if ctr % 10 == 0:
+            result = f()
+            if isinstance(result, str):
+                message = next(dots) + " " + result
+                status(message)
+                last_message = result
+            if result is True:
+                status("⠿ Done!")
+                return
+        else:
+            message = next(dots) + " " + last_message
+            status(message)
+        time.sleep(0.5)
 ```
 
-Next, check the status of the service to ensure it shows `"message": "Running"` (this usually takes between 30 seconds and a couple minutes):
+```python
+# python cell
 
-```sql
-CALL RELATIONALAI.APP.SERVICE_STATUS();
+def create_service():
+    try:
+        session.sql("CALL RELATIONALAI.APP.CREATE_SERVICE();").collect()
+        return True
+    except Exception as e:
+        if "Unknown user-defined function" in str(e):
+            return "Waiting for app installation to complete..."
+        else:
+            raise e
+
+poll(create_service)
 ```
 
+```python
+# python cell
+
+def check():
+    result = session.sql("CALL RELATIONALAI.APP.SERVICE_STATUS();").collect()
+    status = json.loads(result[0]["SERVICE_STATUS"])[0]["message"]
+    if status.startswith("Readiness probe"):
+        status = "Almost done"
+    if status == "Running":
+        return True
+    else:
+        return status + "..."
+
+poll(check)
+```
 > aside negative
 >
 > **IMPORTANT**
@@ -215,102 +240,164 @@ Streams share Snowflake data with the RAI Native App using change data capture (
 
 To enable CDC, an engine needs to be configured to be the CDC engine.
 
-We start by creating an engine of size `HIGHMEM_X64_S` that we call `kgqa_engine`.
+We start by creating an engine of size `HIGHMEM_X64_S` that we call `demo_engine`. This step usually takes between 1 and 5 minutes.
 
 ```sql
-CALL RELATIONALAI.API.CREATE_ENGINE('kgqa_engine', 'rai_engine_pool_s', 'HIGHMEM_X64_S');
+-- SQL cell
+
+CALL RELATIONALAI.API.CREATE_ENGINE('demo_engine', 'HIGHMEM_X64_S');
 ```
 
-Once the engine creation has finished (this can take anywhere between 1 and 5 minutes), all we need to do is set this engine to be the CDC engine.
+Once the engine creation has finished, we set this engine to be the CDC engine:
+
 
 ```sql
-CALL RELATIONALAI.APP.SETUP_CDC('kgqa_engine');
+-- SQL cell
+
+CALL RELATIONALAI.APP.SETUP_CDC('demo_engine');
+```
+
+#### Step 4 - Setting up Snowflake Notebooks
+
+To use RelationalAI in Snowflake Notebooks, run the cell below to set up a network rule that will allow the app to pass query results back to the notebook.
+
+To enable users who aren't account administrators to run RelationalAI in Snowflake Notebooks, see Appendix 3 for how to create a `rai_user` role and grant access to this integration.
+
+```python
+# python cell
+
+session = get_active_session()
+
+system_allowlist = session.sql("""
+SELECT value:host AS URL
+FROM TABLE(FLATTEN(input=>parse_json(SYSTEM$ALLOWLIST())))
+WHERE value:type = 'STAGE'
+""").collect()
+
+if system_allowlist:
+    urls = ", ".join(row.URL.replace('"', "'") for row in system_allowlist)
+    egress_rule_commands = [
+        f"""
+        CREATE OR REPLACE NETWORK RULE S3_RAI_INTERNAL_BUCKET_EGRESS
+        MODE = EGRESS
+        TYPE = HOST_PORT
+        VALUE_LIST = ({urls});
+        """,
+        """
+        CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION S3_RAI_INTERNAL_BUCKET_EGRESS_INTEGRATION
+        ALLOWED_NETWORK_RULES = (S3_RAI_INTERNAL_BUCKET_EGRESS)
+        ENABLED = true;
+        """
+    ]
+
+    for command in egress_rule_commands:
+        session.sql(command).collect()
+
+    print("Network rule set up successfully.")
 ```
 
 Congratulations! Your RelationalAI app is ready to use.
 
 #### Next Steps
 
-To get up and running with the RelationalAI native app, download the [Simple Start Jupyter notebook](https://relational.ai/notebooks/simple-start.ipynb) and follow the [instructions for running the notebook](https://relational.ai/docs/example_notebooks#instructions).
+To get up and running with RelationalAI in Snowflake Notebooks, download the [Simple Start Snowflake Notebook](https://relational.ai/notebooks/simple-start-snowflake.ipynb), upload it to your Snowflake account (https://app.snowflake.com > + icon in left sidebar > Notebooks > Import .ipynb file), and follow the instructions in the notebook.
+
+To use a local Python installation instead, download the [Simple Start Jupyter notebook](https://relational.ai/notebooks/simple-start.ipynb) and follow the [instructions for running the notebook](https://relational.ai/docs/example_notebooks#instructions).
 
 For a more detailed example and more information about the RelationalAI Python library, check out the [Getting Started guide](https://relational.ai/docs/getting_started).
 
 Links:
-- [Simple Start Notebook](https://relational.ai/notebooks/simple-start.ipynb)
-- [Example Notebooks](https://relational.ai/docs/example_notebooks)
-- [Docs](https://relational.ai/docs)
 
-### APPENDIX 1 - Suspend or drop the RAI Service and deleting all engines
+- Simple Start Notebook: https://relational.ai/notebooks/simple-start.ipynb
+- Example Notebooks: https://relational.ai/docs/example_notebooks
+- Docs: https://relational.ai/docs
 
-Suspending the RAI service temporarily halts operations to reduce costs without completely stopping it. Certain background tasks, continue to run while the service is suspended and may incur charges. It is also possible to drop the service completely.
-The service can be resumed at any time using the `RESUME_SERVICE()` procedure.
+##### APPENDIX 1 - Drop the RAI Service and delete all engines
+
+To reduce costs when you are not using the RAI Native App, suspend CDC, delete all engines, and drop the service.
+
 
 > aside negative
 >
 > Note that this task requires the `app_admin` application role.
 
-```sql
--- Suspend CDC
-CALL RELATIONALAI.APP.SUSPEND_CDC();
 
--- Delete the engine we created:
-CALL RELATIONALAI.API.DELETE_ENGINE('kgqa_engine', TRUE);
+```python
+# python cell
+
+session = get_active_session()
+# note: the use of `skip_appendix` in the Appendices makes the "Run All"
+# feature skip these cells
+skip_appendix = True
 ```
 
-```sql
--- List the engines:
-SELECT * FROM RELATIONALAI.API.ENGINES;
+```python
+# python cell
+
+# Suspend CDC
+if not skip_appendix:
+    session.sql("CALL RELATIONALAI.APP.SUSPEND_CDC();").collect()
+
 ```
 
-```sql
--- For each engine name in the output of the above `SELECT` statement (if any),
--- fill in the engine name in the following command and run it:
-CALL RELATIONALAI.API.DELETE_ENGINE('<engine_name>', TRUE);
-```
-```sql
--- Suspend the service
-CALL RELATIONALAI.APP.SUSPEND_SERVICE();
+```python
+# python cell
+
+# Delete all engines
+if not skip_appendix:
+    for engine in session.sql("SELECT * FROM RELATIONALAI.API.ENGINES;").collect():
+        engine_name = engine.NAME
+        print(f"Deleting engine: {engine_name}")
+        session.sql(f"CALL RELATIONALAI.API.DELETE_ENGINE('{engine_name}', TRUE);")
+        print("Done")
 ```
 
-```sql
--- Drop the service
-CALL RELATIONALAI.APP.DROP_SERVICE();
+```python
+# python cell
+
+# Drop the service
+if not skip_appendix:
+    session.sql("CALL RELATIONALAI.APP.DROP_SERVICE();").collect()
 ```
 
-### APPENDIX 2 - Resume Service and Re-create Engine
+##### APPENDIX 2 - Resume Service and Re-create Engine
 
-```sql
--- Resume the service after suspending it:
-CALL RELATIONALAI.APP.RESUME_SERVICE();
-```
-```sql
--- Recreate service after dropping it
-CALL RELATIONALAI.APP.CREATE_SERVICE();
-```
-```sql
--- Recreate the engine if necessary:
-CALL RELATIONALAI.API.CREATE_ENGINE('kgqa_engine', 'rai_engine_pool_s', 'HIGHMEM_X64_S');
+```python
+#python cell
 
--- Resume CDC:
-CALL RELATIONALAI.APP.RESUME_CDC();
+# Recreate service after dropping it
+if not skip_appendix:
+    session.sql("CALL RELATIONALAI.APP.CREATE_SERVICE();").collect()
 ```
 
-### APPENDIX 3 - Defining a RelationalAI User Role
+```python
+#python cell
+
+if not skip_appendix:
+    session.sql("CALL RELATIONALAI.API.CREATE_ENGINE('demo_engine', 'HIGHMEM_X64_S');").collect()
+    session.sql("CALL RELATIONALAI.APP.RESUME_CDC();").collect()
+```
+
+##### APPENDIX 3 - Defining a RelationalAI User Role
 
 - We start by creating a new role that can be granted to any users permitted to use this application.
 - We then link the application's user role to this new role. Note that it is possible to create more fine-grained roles at a later stage.
 - Finally, we grant `MONITOR` permissions on the role to allow users to see engine compute pools. This is needed for the relationalai Python library to manage engines.
 
-```sql
--- Create a role specific for accessing the app
-CREATE ROLE rai_user;
+```python
+# python cell
 
--- Link the app's user role to the created role.
-GRANT APPLICATION ROLE relationalai.all_admin TO ROLE rai_user;
+if not skip_appendix:
+    # Create a role for accessing the app
+    session.sql("CREATE ROLE rai_user;").collect()
+    
+    # Link the app's user role to the created role.
+    session.sql("GRANT APPLICATION ROLE relationalai.all_admin TO ROLE rai_user;").collect()
 
--- Allow the role to see engine compute pools.
-GRANT MONITOR ON COMPUTE POOL rai_engine_pool_s TO ROLE rai_user;
-GRANT MONITOR ON COMPUTE POOL rai_engine_pool_m TO ROLE rai_user;
+    # Grant USAGE on the egress integration to the role
+    # This is necessary for users with the `rai_user` role to be able to
+    # run the app in Snowflake Notebooks
+    session.sql("GRANT USAGE ON INTEGRATION S3_RAI_INTERNAL_BUCKET_EGRESS_INTEGRATION TO ROLE rai_user;").collect()
 ```
 
 > aside positive
