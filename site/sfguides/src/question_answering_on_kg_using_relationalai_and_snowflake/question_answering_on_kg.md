@@ -76,11 +76,11 @@ Click on the RelationalAI app to open it. The first screen prompts you to grant 
 
 ![RelationaAI Native App privileges](assets/cdc6b23ca12419a2.png)
 
-The next button prompts you to activate the app:
+The *Activate* button prompts you to activate the app:
 
 ![RelationaAI Native App privileges](assets/e8bfeac65ff8cd86.png)
 
-The last screen in this sequence prompts you to launch the app, but you can skip that step.
+Navigate back to the Data Products > Apps page and wait for the spinner in the INSTALLED column to stop running. When it’s done you’ll see “1 minute ago” in that column.
 
 Congratulations! The RelationalAI app is now available in your Snowflake account.
 
@@ -209,7 +209,7 @@ CALL RELATIONALAI.APP.SERVICE_STATUS();
 > **IMPORTANT**
 > While RelationalAI is in preview mode, you must upgrade the application weekly after RAI releases an updated native app. Please review the [Upgrades](https://relational.ai/docs/native_app/upgrades) section of the RelationalAI Native App documentation and subscribe to the release notes to receive notifications about new versions.
 
-#### Step 4 - Setting up Change Data Capture
+#### Step 3 - Setting up Change Data Capture
 
 Streams share Snowflake data with the RAI Native App using change data capture (CDC) to capture source table and view changes once every minute.
 
@@ -367,7 +367,7 @@ Follow the below steps to launch End-to-End Demo Setup.
 **Here, <your_project_repository> is the path to the local directory where <git_repo> has been cloned.**
 
 ```sh
-export SETUP_PATH="<your_project_directory>/kgqa_demo_setup/kgqa_setup"
+export SETUP_PATH="<your_project_directory>/KGQA_DEMO/kgqa_demo_setup"
 ```
 
 
@@ -378,7 +378,7 @@ cd $SETUP_PATH
 
 #### STEP 2 : Populate all Snowflake config parameters 
 
-- Update the config parameters in the config file ['config.json'](https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_setup/config.json)
+- Update the config parameters in the config file ['config.json'](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/kgqa_demo_setup/config.json)
 
 > **_NOTE:_** Anything prefixed with 'temp_' can be customized by the user, along with Snowflake 'account' and 'sf_login_email'. 
 
@@ -435,7 +435,7 @@ Now, we are all set to run the Demo notebook!
 ## Demo Notebook 
 Duration: 5
 
-- Run the [Notebook](https://github.com/RelationalAI/QuestionAnsweringKG/blob/dev_v1/kgqa_demo_setup/kgqa_demo_nb/kgqa_demo.ipynb) to play with our pipeline
+- Run the [Notebook](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/notebook_app.ipynb) to play with our pipeline
 
 > **_NOTE:_** After running the 1st cell, you will be prompted to enter your Snowflake account password. Please check the top-center of the screen to enter the password. 
 
@@ -456,7 +456,7 @@ Follow the below steps to launch End-to-End pipeline as a Service on Snowflake a
 
 
 ```sh
-export SETUP_PATH="<your_project_directory>/kgqa_demo_setup/kgqa_setup"
+export SETUP_PATH="<your_project_directory>/KGQA_DEMO/kgqa_demo_setup"
 ```
 
 
@@ -479,7 +479,7 @@ cd <your_project_directory>/kgqa_docker/
 
 > **_NOTE:_** 
 - To execute SQL commands in Snowflake Worksheet, you first need to select a database. Initially, this could be any database. Later in the script, you will create a custom database and switch to it for subsequent commands. <br>
-- You may already have your custom data in Snowflake, as outlined in the [DB File](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo_setup/kgqa_setup/sf_db_initialization.py). The setup requires four tables. For the schema details, refer to the "CREATE OR REPLACE TABLE..." commands in the file.
+- You may already have your custom data in Snowflake, as outlined in the [DB Initialization File](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/kgqa_demo_setup/sf_db_initialization.py). The setup requires four tables. For the schema details, refer to the "CREATE OR REPLACE TABLE..." commands in the file.
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ sf_db_initialization
