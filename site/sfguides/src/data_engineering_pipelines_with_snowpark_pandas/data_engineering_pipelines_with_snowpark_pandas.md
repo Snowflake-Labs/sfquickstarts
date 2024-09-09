@@ -113,19 +113,17 @@ CREATE WAREHOUSE SNOW_PANDAS_DE_QS_WH;
 ### Import .ipynb File
 1. Navigate to where you have cloned the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) and select **Customer Profile Creation Pipeline.ipynb** and click **Open**  
 ![Select Notebook File](assets/select_notebook_file.png)  
-2. Keep the name, select **SNOW_PANDAS_DE_QS** and **NOTEBOOKS** for **Notebook location**, **SNOW_PANDAS_DE_QS_WH** for **Notebook warehouse** and click **Create**  
+2. Give the notebook a name, then select **SNOW_PANDAS_DE_QS** and **NOTEBOOKS** for **Notebook location**, **SNOW_PANDAS_DE_QS_WH** for **Notebook warehouse** and click **Create**  
 ![Select Notebook File](assets/notebook_dialog.png)  
 
 ### Create From Repository
 
-If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) and create a integration to it in Snowflake you can open the notebook directly from the git repository.
+If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-snowpark-pandas) and create a Git integration to it in Snowflake you can open the notebook directly from the repository. See [here](https://docs.snowflake.com/en/developer-guide/git/git-overview) for instructions on how to set up Git integration.
 
-1. In the **Create Notebook from Repository** dialog click on **Select .ipynb file**  
+1. In the **Create Notebook from Repository** dialog, click on **Select .ipynb file**  
 ![Create Notebook from Repository Dialog](assets/create_from_rep_start.png)  
-2 Click on the repository integration you are using and select **Customer Profile Creation Pipeline.ipynb** and click **Select File**, if you do not see the file press **Fetch** to refresh with the latest changes from the repository  
-![Select Notebook File from Repository](assets/select_file_from_rep.png)  
-3. Name it **Customer Profile Creation Pipeline**, select **SNOW_PANDAS_DE_QS**, **NOTEBOOKS** for **Notebook location** and **SNOW_PANDAS_DE_QS_WH** for **Notebook warehouse** and click **Create**  
-![Create Notebook from Repository Dialog](assets/create_from_rep_end.png)  
+2. In the **Select file from Git Repository** dialog, click on the repository integration you are using and select the notebook file and click **Select File**, if you do not see the file press **Fetch** to refresh with the latest changes from the repository  
+3. Back to the **Create Notebook from Repository** dialog, give the notebook a name, then select **SNOW_PANDAS_DE_QS**, **NOTEBOOKS** for **Notebook location** and **SNOW_PANDAS_DE_QS_WH** for **Notebook warehouse** and click **Create**  
 
 ### Add Required Python Libraries
 
