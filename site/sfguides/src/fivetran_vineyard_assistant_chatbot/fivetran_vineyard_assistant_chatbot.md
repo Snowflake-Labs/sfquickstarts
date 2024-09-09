@@ -624,23 +624,23 @@ This lab is RAG-based meaning you are using a pre-trained LLM and adding your da
 ### Chunking Note
 You may have noticed that you did not need to build a chunking function to split our concatenated, unstructured string data records into appropriately sized chunks.  The dataset is a controlled dataset where the string records created do not exceed 2000 tokens.  Had there been very large records, a chunking function (text splitting) would have been implemented.
 
-## Conclusion
+## Conclusion and Resources
 Duration: 2
 
+### Conclusion:
 This lab demonstrates the ease at which you can utilize "structured datasets" for GenAI provided by Fivetran's fully automated data integration pipelines allowing you to build value-add applications in Snowflake and ask questions about "your" data without having to worry about data freshness!
 
-Here's what we did:
+### What You Learned:
 - Created a production-ready data pipeline from PostgreSQL to Snowflake via Fivetran in a few clicks!
 - Utilized Cortex to take a structured dataset and convert it into an unstructured vector dataset!
 - Created a Streamlit chatbot application!
 - Had fun creating wine trips through the California countryside including places only found in your data!
 - All in less than an hour!
 
-### Snowflake
-See what other customers are [doing with Snowflake](https://www.snowflake.com/en/customers/) and how Snowflake is the cloud data platform for your [data workloads](https://snowflake.com)!
+### Resources:
+See what other customers are [doing with Snowflake](https://www.snowflake.com/en/customers/) and how customers are using [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/) to solve complex business problems!
 
-### Fivetran
-See why [Fivetran](https://fivetran.com) is the ultimate automated data movement platform for any [data source](https://www.fivetran.com/connectors) and why Fivetran is a [Snowflake Elite Partner](https://www.snowflake.com/partners/technology-partners/) and Snowflake Data Integration Partner of the year!
+See why [Fivetran](https://fivetran.com) is the ultimate automated data movement platform for any [data source](https://www.fivetran.com/connectors) and how Fivetran is transforming how [orgainzations operate](https://www.fivetran.com/blog)!
 
 Fivetran's mission is to "Make data as accessible and reliable as electricity!"  [Let us show you how we do it!](https://go.fivetran.com/demo)
 
