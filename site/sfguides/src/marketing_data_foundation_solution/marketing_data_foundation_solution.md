@@ -308,7 +308,8 @@ DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.CAMPAIGN_INTELLIGENCE_
 TRUNCATE TABLE MARKETING_DATA_FOUNDATION_<USERNAME>.USER_SETTINGS.EXISTING_SOURCES;
 ```
 
-## Conclusion
+## Conclusion and Resources
+### Conclusion
 Duration: 1
 
 Congratulations! You have successfully learned how to easily build an end-to-end Native Application and load sample data.
