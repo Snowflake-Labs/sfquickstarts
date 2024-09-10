@@ -644,14 +644,15 @@ In case you encounter any of the following issues, please follow the recommended
 
 1. **Server Overload Error**
    If the Snowflake server becomes unresponsive and shows a 'Server overloaded' error:
-   - To resolve the issue, run the script generated from **[Demo Setup -> Step 6 - Launch a Snowflake Service]** from Line that says *"DROP SERVICE IF EXISTS..."*
+   - To resolve the issue, run the script generated from **[Demo Setup -> Step 6]** from Line that says *"DROP SERVICE IF EXISTS..."*
 
 
 2. **Model Unavailable Error**
-    The default models during development are lama3.1-70b for Snowflake Complete Task and e5-base-v2 for Snowflake Text Embedding Task. In case these models are not ['available in the region'](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability), run the script generated **[Demo Setup -> Step 6 - Launch a Snowflake Service]**  from Line that says   *"-- test the UDFs with sample inputs"*  with chosen model name, available in your region.<br><br>
+    The default models during development are lama3.1-70b for Snowflake Complete Task and e5-base-v2 for Snowflake Text Embedding Task. In case these models are not ['available in the region'](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability), run the script generated **[Demo Setup -> Step 6]**  from Line that says   *"-- test the UDFs with sample inputs"*  with chosen model name, available in your region.<br><br>
 
-    **2.1** IF the text embedding model is changed from e5-base-v2 to something else, follow the **[Launch a SF Service on Custom Database -> Steps [5-7]]**. <br>
+    **2.1** IF the text embedding model is changed from e5-base-v2 to something else, follow the **[Launch a SF Service on Custom Database -> Steps 5 through 7]**. <br>
         - *Since the Dockerfile is present inside **kgqa_docker** folder, remember to  Switch to **kgqa_docker** folder to follow them.*
+
 
 <!-- ------------------------ -->
 
