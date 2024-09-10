@@ -454,7 +454,7 @@ Follow the below steps to launch End-to-End Demo Setup.
 **Here, <your_project_repository> is the path to the local directory where <git_repo> has been cloned.**
 
 ```sh
-export SETUP_PATH="<your_project_directory>/KGQA_DEMO/kgqa_demo_setup"
+export SETUP_PATH="<your_project_directory>/kgqa_demo/kgqa_demo_setup"
 ```
 
 
@@ -465,7 +465,7 @@ cd $SETUP_PATH
 
 #### STEP 2 : Populate all Snowflake config parameters 
 
-- Update the config parameters in the config file ['config.json'](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/kgqa_demo_setup/config.json)
+- Update the config parameters in the config file ['config.json'](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json)
 
 > **_NOTE:_** Anything prefixed with 'temp_' can be customized by the user, along with Snowflake 'account' and 'sf_login_email'. 
 
@@ -523,7 +523,7 @@ Now, we are all set to run the Demo notebook!
 Duration: 10
 
 
-- Open a SQL Worksheet on Snowflake and execute the following command on your database and schema as defined in the [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/kgqa_demo_setup/config.json). 
+- Open a SQL Worksheet on Snowflake and execute the following command on your database and schema as defined in the [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json). 
 
 ```sql
 USE ROLE ACCOUNTADMIN; 
@@ -540,12 +540,12 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
 
 - Go to [https://app.snowflake.com](https://app.snowflake.com) and under Projects->Notebooks, on the top right corner in Notebook Dropdown, select *Create from Repository*. 
     - For *File Location in Repository* , navigate to the Git repository stage created in previous step, and select *KGQA_DEMO->kgqa_demo.ipynb*. 
-    - Fill the rest of the details as defined in the [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/kgqa_demo_setup/config.json). 
+    - Fill the rest of the details as defined in the [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json). 
 
 - Load RelationalAI in Snowflake Notebook using [Installation Guide](https://relational.ai/docs/native_app/installation#ii-set-up-the-rai-native-app). 
     - *Place the `relationalai.zip` file, as specified in the instructions, in the same directory as `kgqa_demo.ipynb` within Snowflake.*
     
-- Run the [KGQA Demo Notebook](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/kgqa_demo.ipynb) in Snowflake to play with our pipeline!
+- Run the [KGQA Demo Notebook](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo.ipynb) in Snowflake to play with our pipeline!
 
 
 <img src="./assets/kgqa_demo_nb.png" alt="KGQA Example" width="1400">
@@ -565,7 +565,7 @@ Follow the below steps to launch End-to-End pipeline as a Service on Snowflake a
 
 
 ```sh
-export SETUP_PATH="<your_project_directory>/KGQA_DEMO/kgqa_demo_setup"
+export SETUP_PATH="<your_project_directory>/kgqa_demo/kgqa_demo_setup"
 ```
 
 
@@ -588,7 +588,7 @@ cd <your_project_directory>/kgqa_docker/
 
 > **_NOTE:_** 
 - To execute SQL commands in Snowflake Worksheet, you first need to select a database. Initially, this could be any database. Later in the script, you will create a custom database and switch to it for subsequent commands. <br>
-- You may already have your custom data in Snowflake, as outlined in the [DB Initialization File](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/KGQA_DEMO/kgqa_demo_setup/sf_db_initialization.py). The setup requires four tables. For the schema details, refer to the "CREATE OR REPLACE TABLE..." commands in the file.
+- You may already have your custom data in Snowflake, as outlined in the [DB Initialization File](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/sf_db_initialization.py). The setup requires four tables. For the schema details, refer to the "CREATE OR REPLACE TABLE..." commands in the file.
 
 ```sh
 python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETUP_PATH/ sf_db_initialization
