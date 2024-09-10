@@ -11,7 +11,7 @@ tags: Getting Started, Churn, Prediction, Notebooks
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 5
+Duration: 10
 <img src="assets/banner.png"/>
 
 Churn prediction relies on data analysis to be effective. Through data analysis, businesses gather, clean, and model customer data to uncover patterns and trends. This understanding of customer behavior is key for building accurate churn prediction models. By applying data analysis techniques, businesses can identify at-risk customers and take targeted actions to retain them. Essentially, data analysis provides the necessary foundation for effective churn prediction, helping businesses reduce churn and boost customer loyalty.
@@ -24,7 +24,7 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 - Familiarity with basic Python and SQL
 - Familiarity with training ML models
 - Familiarity with data science notebooks
-- Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
+- Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in
 
 <img src="assets/architecture.png"/>
 
@@ -36,15 +36,18 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 
 <!-- ------------------------ -->
 ## Setting Up Snowflake Environment
+Duration: 5
 
 ### Overview
 Duration: 5
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).
 
 #### Creating Objects, Loading Data, and Joining Data
-- Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
+1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
+
 <img src="assets/run_all.png"/>
-- Copy and paste the following code to create Snowflake objects (warehouse, database, schema, role) and click `Run All` at the top of the Worksheet
+
+2. Copy and paste the following code to create Snowflake objects (warehouse, database, schema, role) and click `Run All` at the top of the Worksheet
 
 ```
 USE ROLE securityadmin;
@@ -111,16 +114,15 @@ SELECT 'data analysis and churn prediction sql is now complete' AS note;
 
 <!-- ------------------------ -->
 ## Using Snowflake Notebooks
-
-### Overview
 Duration: 10
 
+### Overview
 For this Quickstart, there are 2 Snowflake Notebooks and they need to be executed in order. Make sure to run the first Notebook fully before running the second Notebook.
-1. The first Snowflake Notebook [1_telco_churn_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb) contains scripts for importing and exploring our data.
-2. The second Snowflake Notebook [2_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb) contains scripts for feature engineering and model training to use in the Streamlit app within the Notebook.
+1. The first Snowflake Notebook [1_telco_churn_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb) contains scripts for importing and exploring our data
+2. The second Snowflake Notebook [2_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb) contains scripts for feature engineering and model training to use in the Streamlit app within the Notebook
 
 ### Import Snowflake Notebooks
-You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create the Snowflake Notebooks by importing the Notebooks
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create the Snowflake Notebooks by importing the Notebooks.
 1. Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on `Projects` `->` `Notebook`
 
 2. Switch Role to `CHURN_DATA_SCIENTIST`
@@ -128,23 +130,26 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 3. Download the [1_telco_churn_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb) and [2_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb) Notebooks
 
 4. Using the `Import .ipynb file`, import the downloaded Notebooks
+
 <img src="assets/import_notebook.png"/>
 
 5. Select the `CHURN_PROD` database and `ANALYTICS` schema for the Notebook Location and `CHURN_DS_WH` for the Notebook warehouse and click `Create`
 
-6. To add Anaconda packages to both Notebooks separately, select the specified Notebook, click the `Packages` button on the package explorer in the top of the page to add the following packages: `altair`, `imbalanced-learn`, `numpy`, `pandas`, and `snowflake-ml-python`.
-<img src="assets/anaconda.png>
+6. To add Anaconda packages to both Notebooks separately, select the specified Notebook, click the `Packages` button on the package explorer in the top of the page to add the following packages: `altair`, `imbalanced-learn`, `numpy`, `pandas`, and `snowflake-ml-python`
+
+<img src="assets/anaconda.png"/>
 
 7. At the top of the page, click `Start` to start the Notebook session and run the cells by clicking `Run All`
+
 <img src="assets/start.png"/>
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 1
+Duration: 2
 
 ### Remove Snowflake Objects
-- Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
-- Copy and paste the following SQL statements in the worksheet to drop all Snowflake objects created in this Quickstart
+1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
+2. Copy and paste the following SQL statements in the worksheet to drop all Snowflake objects created in this Quickstart
 ```
 USE ROLE securityadmin;
 DROP ROLE IF EXISTS churn_data_scientist;
@@ -155,9 +160,9 @@ DROP WAREHOUSE IF EXISTS churn_ds_wh;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
+Duration: 5
 
-**Congrats!** You're reached the end of this Quickstart!
+### Congrats! You're reached the end of this Quickstart!
 
 ### What We Learned
 With the completion of this Quickstart, you have now delved into:
