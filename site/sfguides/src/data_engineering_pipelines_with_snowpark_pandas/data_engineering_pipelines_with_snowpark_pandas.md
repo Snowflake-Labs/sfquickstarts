@@ -1,6 +1,6 @@
 author: Mats Stellwall, Doris Lee
 id: data_engineering_pipelines_with_snowpark_pandas
-summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake.
+summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake
 categories: Getting-Started
 environments: web
 status: Published 
@@ -15,14 +15,14 @@ Through this quickstart, you will learn how to use [Snowflake Notebooks](https:/
 
 You will create a customer profile using the [Snowflake Sample TPC-H dataset](https://docs.snowflake.com/en/user-guide/sample-data-tpch), save it into a Snowflake table and to create a serverless task to schedule the feature engineering.
 
-![Architecture](https://developers.snowflake.com/wp-content/uploads/2024/07/snowpark-pandas.png)
+![Architecture](assets/snowpark-pandas.png)
 
 ### What You’ll Learn
 
-- how to build a Python data pipeline with Snowflake Notebooks
-- how to aggregate and transform data to create new features with pandas on Snowflake
-- how to version control and collaborate with Git integration
-- how to create a Serverless Task to schedule the feature engineering
+* how to build a Python data pipeline with Snowflake Notebooks
+* how to aggregate and transform data to create new features with pandas on Snowflake
+* how to version control and collaborate with Git integration
+* how to create a Serverless Task to schedule the feature engineering
 
 ### What is pandas on Snowflake?
 
