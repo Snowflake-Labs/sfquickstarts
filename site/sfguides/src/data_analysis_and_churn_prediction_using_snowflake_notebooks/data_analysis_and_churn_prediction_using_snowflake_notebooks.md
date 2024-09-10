@@ -39,7 +39,6 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 Duration: 5
 
 ### Overview
-Duration: 5
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).
 
 #### Creating Objects, Loading Data, and Joining Data
