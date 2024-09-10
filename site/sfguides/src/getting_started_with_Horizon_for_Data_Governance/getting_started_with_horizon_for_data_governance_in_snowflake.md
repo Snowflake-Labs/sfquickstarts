@@ -34,12 +34,6 @@ Before we dive into the lab, lets take a look at a typical governance workflow a
 ### Typical Governance Workflow  
 ![img](assets/workflow.png)
 
-### 5 Pillars of Horizon  
-![img](assets/5Pillars.png)
-
-  
-![img](assets/lab.png)
-
 
 ### Background video resources 
 
