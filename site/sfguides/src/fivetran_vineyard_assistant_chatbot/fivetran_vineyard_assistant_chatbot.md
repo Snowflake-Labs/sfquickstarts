@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: GenAI, RAG, Fivetran, chat
 
-# Fivetran - Build a RAG-based, GenAI wine assistant chatbot in 30 minutes using structured data!
+# Build a RAG-based, GenAI chatbot using Structured Data with Snowflake and Fivetran!
 <!-- ------------------------ -->
 ## Overview
 Duration: 3
@@ -21,11 +21,6 @@ And if we are going to build a GenAI app, why not make it a fun one? Today you a
 Fivetran can replicate all of your data from over [600+ data sources](https://www.fivetran.com/connectors) directly into Snowflake, or an Iceberg data lake.  Fivetran does this in a fast, secure, SaaS-based, automated, no-code manner where most connectors take less than 5 minutes to set up allowing you to perform all your Snowflake data workloads, in this case GenAI, just as if you were connected to all your source systems.  The sky is the limit!
 
 Snowflake Cortex will be used to handle all of the GenAI needs with ease making this daunting task seem simple.  Most GenAI applications utilize unstructured data.  We are going to be using structured data from a PostgreSQL database.  That's right...no stagnant PDFs or HTML files...database data.  So let’s get started!
-
-> aside positive
-> Secondary Source:  At the end of this lab guide, there are instructions on how to use the secondary wine data source (Amazon S3) if the Postgres database is inaccessible.
->
-
 
 ### Prerequisites
 - Existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_), with 'AccountAdmin' role.  If 'AccountAdmin' is not available, you will need to get a user with AccountAdmin privileges to grant access to Cortex features described below.  
@@ -76,13 +71,13 @@ If you do not have a Fivetran account and you are unable to use `Partner Connect
 
 In the case where you have Snowflake and Fivetran accounts already, you may use a current Snowflake destination in Fivetran or simply follow the [Snowflake destination setup guide](https://fivetran.com/docs/destinations/snowflake/setup-guide) to create a new Snowflake destination in Fivetran.
 
-## Configure the Fivetran PostgreSQL Connector
+## Option 1 PostgreSQL Source
 Duration: 5
 
 Ok, let's replicate our structured data from a PostgreSQL database into Snowflake via the quickest, easiest, and most reliable method available in the world today...Fivetran!  Ensure you are logged into your Fivetran account.
 
-> aside positive
-> Reminder: If you are unable to connect to the database, please use the Amazon S3 Option at the end of this lab.  Then once done there, continue with the Transform section.
+> aside negative
+> Note: If for some reason you are unable to connect to the database, you may use [Option 2 Amazon S3 Source](#option-2-amazon-s3-source).
 >
 
 **Step 1.** With the `Connectors` item selected in the nav panel, click `Add connector` in the upper right corner.
@@ -134,6 +129,44 @@ Find the `Agriculture` schema in the list, click on the toggle on the right side
 > aside positive
 > This is the power of Fivetran.  No allocating resources.  No development.  No code.  No column mapping.  No pre-building schemas or tables in the destination.  A fully automated, production data pipeline in a few steps!
 >
+
+Continue to [Transform the Wine Structured Dataset](#transform-the-wine-structured-dataset).
+
+## Option 2 Amazon S3 Source
+Duration: 0
+
+If by some chance the PostgreSQL database is unavailable or inaccessible, you may use the below dataset that was copied from the PostgreSQL database to JSON residing in Amazon S3.
+
+**Step 1.** With the `Connectors` item selected in the nav panel, click `Add connector` in the upper right corner.
+
+![Fivetran Connector 11](assets/fivetran/f_0100.png)
+
+**Step 2.** Enter `s3` in the search box.  Scroll down to the S3 connector, highlight the item with your mouse, and click `Set up`.
+
+![Fivetran Connector 12](assets/fivetran/f_0110.png)
+
+**Step 3.** Next on the connector configuration screen, enter `yourlastname_genai` as the Destination Schema Prefix.  Next copy and paste the parameters given below into their respective fields.  Note that the Destination Schema Prefix must be unique to the database.  Fivetran will prepend this name to all schemas copied from the postgres database into Snowflake.  **Do not alter any other fields except the ones listed.**
+- Destination table:  california_wine_country_visits
+- Bucket:  ft-s3-lab-bucket
+- Access approach:  Public
+
+![Fivetran Connector 13](assets/fivetran/f_0120.png)
+
+Scroll down and you will see the remainder of the configuration fields.  Set the parameters to the values shown below, and click `Save & Test`.
+- Folder Path:  winedata
+- File Type:  json
+- JSON Delivery Mode:  Unpacked
+
+![Fivetran Connector 14](assets/fivetran/f_0130.png)
+
+**Step 4.** Fivetran will perform connection tests to the bucket as well as verify the files in the folder.  Once all connector tests complete, click `Continue`.
+
+![Fivetran Connector 15](assets/fivetran/f_0140.png)
+
+**Step 5.**  With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`, and let Fivetran seamlessly replicate our S3 file data into Snowflake.  This should only take a minute or two at most.  This process will perform an initial sync of all of the data files in the bucket/folder, and automatically schedule itself to run again in 6 hours.  The sync frequency can be adjusted, but for this lab, there is no CDC occurring behind the scenes; so we will leave it at 6 hours.  If this data was changing, Fivetran would only replicate the changes/delta from the previous run into Snowflake ensuring your Snowflake data is always up to date with your source!
+
+![Fivetran Connector 16](assets/fivetran/f_0150.png)
+
 ## Transform the Wine Structured Dataset
 Duration: 3
 
@@ -627,17 +660,17 @@ You may have noticed that you did not need to build a chunking function to split
 ## Conclusion and Resources
 Duration: 2
 
-### Conclusion:
+### Conclusion
 This lab demonstrates the ease at which you can utilize "structured datasets" for GenAI provided by Fivetran's fully automated data integration pipelines allowing you to build value-add applications in Snowflake and ask questions about "your" data without having to worry about data freshness!
 
-### What You Learned:
+### What You Learned
 - Created a production-ready data pipeline from PostgreSQL to Snowflake via Fivetran in a few clicks!
 - Utilized Cortex to take a structured dataset and convert it into an unstructured vector dataset!
 - Created a Streamlit chatbot application!
 - Had fun creating wine trips through the California countryside including places only found in your data!
 - All in less than an hour!
 
-### Resources:
+### Resources
 See what other customers are [doing with Snowflake](https://www.snowflake.com/en/customers/) and how customers are using [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/) to solve complex business problems!
 
 See why [Fivetran](https://fivetran.com) is the ultimate automated data movement platform for any [data source](https://www.fivetran.com/connectors) and how Fivetran is transforming how [orgainzations operate](https://www.fivetran.com/blog)!
