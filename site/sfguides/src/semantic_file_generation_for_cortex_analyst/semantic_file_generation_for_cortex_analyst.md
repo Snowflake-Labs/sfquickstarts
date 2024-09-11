@@ -25,7 +25,7 @@ To get started with Cortex Analyst, one only needs a semantic data model in the 
 ### What You Will Build
 In this article, we’ll walk through how to set up the generator app and get started with generating your own semantic model from your Snowflake data.
 
-![App](assets/reference%20-%20Main.png)
+![App](assets/reference-main.png)
 
 ### What You Will Learn 
 - How to automatically generate semantic yaml files for use by Cortex Analyst from your Snowflake tables and views.
