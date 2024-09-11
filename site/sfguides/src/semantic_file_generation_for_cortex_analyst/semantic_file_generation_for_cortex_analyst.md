@@ -158,7 +158,7 @@ Finally, after you’ve finished refining your semantic model, you can either do
 ## Conclusion & Resources
 
 ### Conclusion
-You’re now well equipped to start building semantic models using our open source Streamlit tool. If you’d like to take a look into translating your existing semantic model built using frameworks such as dbt and LookML, check out [Part II](add link) of our blog post.
+You’re now well equipped to start building semantic models using our open source Streamlit tool.
 
 For more information on the Snowflake Cortex Analyst .yaml file specification, see our specification [documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec) as well as additional documentation about [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst).
 
