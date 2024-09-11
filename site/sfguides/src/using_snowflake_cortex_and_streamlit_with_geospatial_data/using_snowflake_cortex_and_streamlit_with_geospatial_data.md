@@ -623,7 +623,7 @@ json1 = '''{"DATE":"YYYY-MM-DD", "NAME":"event",DESCRIPTION:"describe what the e
 },"COLOR":"Random bright and unique color in RGB presented in an array"}'''
 
 
-prompt = f''' Retrieve 6 events within the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
+prompt = f''' Retrieve 6 events within different cities of the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
 events = session.create_dataframe([{'prompt':prompt}])
 
 events = events.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','snowflake-arctic',prompt).alias('EVENT_DATA'))
