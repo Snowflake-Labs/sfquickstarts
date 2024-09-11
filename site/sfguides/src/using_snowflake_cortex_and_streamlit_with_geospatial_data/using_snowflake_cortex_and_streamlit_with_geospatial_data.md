@@ -522,12 +522,12 @@ session.table('DATA.TRAIN_STATION_INFORMATION')
 
 ```
 
-While we wait for the train station tooltips to materialise add a **markdown cell** above the cell we have just created. Markdown is useful to help tell a data story within the notebook. Hover above the newly created cell which is currently running and press  **Markdown**.  Name the cell **cortex_description** and paste the following narrative:
+While we wait for the train station tooltips to materialize add a **markdown cell** above the cell we have just created. Markdown is useful to help tell a data story within the notebook. Hover above the newly created cell which is currently running and press  **Markdown**.  Name the cell **cortex_description** and paste the following narrative:
 
 ```markdown
 
 
-Below we are leveraging Snowflake Arctic to produce meaningful tooltips relating to over **400** train stations which are managed by **Northern Trains**
+Below we are leveraging Mistral-large2 to produce meaningful tooltips relating to over **400** train stations which are managed by **Northern Trains**
 
 ```
 Press the tick on the top right hand side of the cell to confirm the edit.
