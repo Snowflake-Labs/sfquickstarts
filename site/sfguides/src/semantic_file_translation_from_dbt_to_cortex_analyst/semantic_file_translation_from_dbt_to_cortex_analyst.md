@@ -4,7 +4,7 @@ summary: Step-by-step guide on how to use the Partner Semantic Generator to tran
 categories: featured,getting-started,gen-ai 
 environments: web 
 tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Cortex Analyst, Semantic Data Model, Getting Started
-<!-- status: Published -->
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Translate Existing Semantic Layers for Use by Cortex Analyst
