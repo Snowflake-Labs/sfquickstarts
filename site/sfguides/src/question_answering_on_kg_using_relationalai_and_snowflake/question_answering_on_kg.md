@@ -539,7 +539,7 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
 
 ### STEP 3 : Load the Demo Notebook as Snowflake Notebook
 - Go to [https://app.snowflake.com](https://app.snowflake.com) and under Projects->Notebooks, on the top right corner in Notebook Dropdown, select *Create from Repository*. 
-    - For *File Location in Repository* , navigate to the Git repository stage created in previous step, and select *kgqa_demo->kgqa_demo.ipynb*. 
+    - For *File Location in Repository* , navigate to the Git repository stage created in previous step, and select *`kgqa_demo->kgqa_demo.ipynb`*. 
     - Fill the rest of the details as defined in the [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json). 
 
 ### STEP 4 : Load RelationalAI in Snowflake Notebook
