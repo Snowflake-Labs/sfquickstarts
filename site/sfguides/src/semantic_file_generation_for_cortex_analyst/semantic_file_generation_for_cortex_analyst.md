@@ -37,7 +37,7 @@ In this article, we’ll walk through how to set up the generator app and get st
 ### Clone the Repository
 You can find the latest version of the app at the [Snowflake-Labs/semantic-model-generator](https://github.com/Snowflake-Labs/semantic-model-generator) repository. To start, please clone the code into a directory of your choice. We would recommend going through the [README](https://github.com/Snowflake-Labs/semantic-model-generator/blob/main/README.md) for a more in-depth walkthrough of the capabilities of the app.
 
-Once you have a local version of the repository, let’s go ahead and install the dependencies necessary for the app to run. If you’re curious, a full list can be found in requirements.txt. Feel free to install the dependencies however you wish; for convenience’s sake, we have provided some Make commands to get started, so you may run to install all required dependencies:
+Once you have a local version of the repository, let’s go ahead and install the dependencies necessary for the app to run. If you’re curious, a full list can be found in [pyproject.toml](https://github.com/Snowflake-Labs/semantic-model-generator/blob/main/pyproject.toml). Feel free to install the dependencies however you wish; for convenience’s sake, we have provided some Make commands to get started, so you may run to install all required dependencies:
 
 ```SQL
 make setup_admin_app
