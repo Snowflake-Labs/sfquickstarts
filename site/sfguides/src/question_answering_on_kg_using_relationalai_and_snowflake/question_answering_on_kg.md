@@ -522,7 +522,7 @@ Now, we are all set to run the Demo notebook!
 ## Demo Notebook 
 Duration: 10
 
-
+### STEP 1 : Create API Integration
 - Open a SQL Worksheet on Snowflake and execute the following command on your database and schema as defined in the [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json). 
 
 ```sql
@@ -533,15 +533,16 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
   API_ALLOWED_PREFIXES = ('https://github.com/RelationalAI')
   ENABLED = TRUE;
 ```
-
+### STEP 2 : Create a Git Repository Stage on Snowflake
 - Then, follow the instructions [here](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#label-integrating-git-repository-api-integration) to create a git repository stage in Snowflake. *NOTE - No secret is needed, since it is a public repository.*
     - Remote Repository URL - https://github.com/RelationalAI/QuestionAnsweringKG.git
 
-
+### STEP 3 : Load the Demo Notebook as Snowflake Notebook
 - Go to [https://app.snowflake.com](https://app.snowflake.com) and under Projects->Notebooks, on the top right corner in Notebook Dropdown, select *Create from Repository*. 
     - For *File Location in Repository* , navigate to the Git repository stage created in previous step, and select *kgqa_demo->kgqa_demo.ipynb*. 
     - Fill the rest of the details as defined in the [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json). 
 
+### STEP 4 : Load RelationalAI in Snowflake Notebook
 - Load RelationalAI in Snowflake Notebook using [Installation Guide](https://relational.ai/docs/native_app/installation#ii-set-up-the-rai-native-app). 
     - *Place the `relationalai.zip` file, as specified in the instructions, in the same directory as `kgqa_demo.ipynb` within Snowflake.*
     
