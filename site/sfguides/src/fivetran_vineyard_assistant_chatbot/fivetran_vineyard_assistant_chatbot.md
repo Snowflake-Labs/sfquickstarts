@@ -77,7 +77,7 @@ Duration: 5
 Ok, let's replicate our structured data from a PostgreSQL database into Snowflake via the quickest, easiest, and most reliable method available in the world today...Fivetran!  Ensure you are logged into your Fivetran account.
 
 > aside negative
-> Note: If for some reason you are unable to connect to the database, you may use [Option 2 Amazon S3 Source](#option-2-amazon-s3-source).
+> Note: If for some reason you are unable to connect to the database, you may use <a href="#3" target="_self">Option 2 Amazon S3 Source</a>.
 >
 
 **Step 1.** With the `Connectors` item selected in the nav panel, click `Add connector` in the upper right corner.
@@ -130,7 +130,7 @@ Find the `Agriculture` schema in the list, click on the toggle on the right side
 > This is the power of Fivetran.  No allocating resources.  No development.  No code.  No column mapping.  No pre-building schemas or tables in the destination.  A fully automated, production data pipeline in a few steps!
 >
 
-Continue to [Transform the Wine Structured Dataset](#transform-the-wine-structured-dataset).
+Continue to <a href="#4" target="_self">Transform the Wine Structured Dataset</a>.
 
 ## Option 2 Amazon S3 Source
 Duration: 0
