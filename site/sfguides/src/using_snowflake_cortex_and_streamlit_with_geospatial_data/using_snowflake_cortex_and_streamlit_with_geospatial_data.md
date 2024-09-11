@@ -512,7 +512,7 @@ further_train_info = further_train_info.select('"CRS Code"',
         'MP',
         '"Political Party"', 
         '"MP Email Address"',
-        call_function('snowflake.cortex.complete','snowflake-arctic',
+        call_function('snowflake.cortex.complete','mistral-large2',
             concat(lit(prompt),
             col('OBJECT').astype(StringType()),
             lit('prompt2'))).alias('ALTERNATE'))
@@ -626,7 +626,10 @@ json1 = '''{"DATE":"YYYY-MM-DD", "NAME":"event",DESCRIPTION:"describe what the e
 prompt = f''' Retrieve 6 events within different cities of the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
 events = session.create_dataframe([{'prompt':prompt}])
 
-events = events.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','snowflake-arctic',prompt).alias('EVENT_DATA'))
+events = events.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','mistral-large2',prompt).alias('EVENT_DATA'))
+
+events = events.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```json'''),lit('')))
+events = events.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```'''),lit('')))
 
 events.write.mode('overwrite').save_as_table("DATA.EVENTS_IN_THE_NORTH")
 session.table('DATA.EVENTS_IN_THE_NORTH')
