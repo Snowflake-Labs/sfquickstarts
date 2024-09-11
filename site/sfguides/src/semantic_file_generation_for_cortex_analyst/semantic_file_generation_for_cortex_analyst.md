@@ -1,19 +1,16 @@
 author: Rachel Blum, Chris Nivera
-id: semantic_file_translation_for_cortex_analyst
-summary: Step-by-step guide on how to use the Partner Semantic Generator for Cortex Analyst
+id: semantic_file_generation_for_cortex_analyst
+summary: Step-by-step guide on how to use the Semantic Model Generator for Cortex Analyst
 categories: featured,getting-started,gen-ai 
 environments: web 
 tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Cortex Analyst, Semantic Data Model, Getting Started
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Translate Existing Semantic Layers for Use by Cortex Analyst
+# Creating Semantic Models for Snowflake’s Cortex Analyst
 
 <!-- ------------------------ -->
 ## Overview 
-
-### Overview
-
 Note: As of the date of this publication, Cortex Analyst is in Public Preview. Please see the [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst#region-availability) for the list of available regions.
 
 Ever wish you could talk directly to your data? Up until this point, gleaning insights from your data would require looking at complicated dashboards or back-and-forth communication with your company’s data analysts.
@@ -156,8 +153,6 @@ Finally, after you’ve finished refining your semantic model, you can either do
 
 <!-- ------------------------ -->
 ## Conclusion & Resources
-
-### Conclusion
 You’re now well equipped to start building semantic models using our open source Streamlit tool.
 
 For more information on the Snowflake Cortex Analyst .yaml file specification, see our specification [documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec) as well as additional documentation about [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst).
