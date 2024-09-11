@@ -11,8 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
-
-### Overview
 [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) is Snowflake’s premier text-to-sql solution for natural language processing on structured data. As noted in Part I of this series, Cortex Analyst requires semantic files with table and column metadata to more accurately respond to user requests. However, many Snowflake customers have already made significant investments in building semantic layers with a number of our semantic layer, data catalog, and business intelligence partners.
 
 To assist customers in leveraging their existing semantic layers for use by Cortex Analyst, the Snowflake Solution Innovation Team has developed a Partner Semantic Translator tool. The brand new tool is tightly integrated as a new module within the [OSS Semantic Model Generator](https://github.com/Snowflake-Labs/semantic-model-generator) introduced in Part I of this series.
@@ -137,16 +135,12 @@ Don’t forget to click “Upload” to save your new yaml file to stage. Select
 
 <!-- ------------------------ -->
 ## Conclusion & Resources
-
-### Conclusion
 For more information on the Snowflake Cortex Analyst yaml file specification, see our specification documentation as well as additional documentation about Cortex Analyst.
 
 ### What You Learned
 How to leverage your existing dbt semantic model data with the OSS Partner Semantic Translator to acclerate text-to-sql querying in Snowflake with [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst).
 
-
 ### Related Resources
-
 - [Docs: Snowflake Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Docs: Cortex Analyst Semantic Model Specification](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec)
 - [Blogs: Cortex Analyst: Paving the Way to Self-Service Analytics with AI](https://www.snowflake.com/en/blog/cortex-analyst-ai-self-service-analytics/)
