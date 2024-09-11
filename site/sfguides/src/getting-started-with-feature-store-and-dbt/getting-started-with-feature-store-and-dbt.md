@@ -81,23 +81,25 @@ This notebook requires a dbt account. You can follow the following steps to setu
 
 ![dbt-connection-settings](assets/dbt-connection-settings.png)
 
+- Go to Your Profile > Credentials and click on Partner Connect Trial
 - Update the Connection Details with:
     - Database: FS_DBT_DATABASE
     - Warehouse: FS_DBT_WH
     - Role: FS_DBT_ROLE
 - Update the Development Credentials 
-    - Add a user that has access to role `FS_DBT_ROLE` (such as your own)
-    - Update the schema to `FS_DBT_SCHEMA`
+    - Add a user that has access to role FS_DBT_ROLE (such as your own)
+    - Update the schema to FS_DBT_SCHEMA
 
 ![dbt-credentials](assets/dbt-credentials.png)
 
 - In dbt, click develop > Cloud IDE
 - Initialize a new project
 - Delete the existing files in the models > example folder
-- Download the four files in [this folder](https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/scripts/dbt-files/models) and add them to the models > example folder
-- Replace dbt_project.yml with the contents of [this file](https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/scripts/dbt-files/dbt_project.yml)
+- Download the four files in [this folder](https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/tree/main/scripts/dbt-files/models) and add them to the models > example folder
+- Replace dbt_project.yml with the contents of [this file](https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/blob/main/scripts/dbt-files/dbt_project.yml)
+- Add file macros > generate_schema_name.sql with the contents of [this file](https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/blob/main/scripts/dbt-files/macros/generate_schema_name.sql)
 
-![feature-store-with-dbt](img/feature-store-with-dbt.png)
+![feature-store-with-dbt](assets/feature-store-with-dbt.png)
 
 <!-- ------------------------ -->
 ## Run the Notebook
@@ -114,8 +116,6 @@ Duration: 10
 - Upload the two images [here](https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/blob/main/scripts/img/) using the plus button on the notebook file explorer
 - Click Packages in the top right, add `snowflake-ml-python`
 - Run cells in the notebook!
-
-![feature-store-api-notebook](assets/feature-store-api-notebook.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
