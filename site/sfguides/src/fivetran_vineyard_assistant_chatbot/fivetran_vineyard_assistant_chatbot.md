@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: GenAI, RAG, Fivetran, chat
 
-# Build a RAG-based, GenAI chatbot using Structured Data with Snowflake and Fivetran!
+# Build a RAG-based, GenAI chatbot using Structured Data with Snowflake and Fivetran
 <!-- ------------------------ -->
 ## Overview
 Duration: 3
