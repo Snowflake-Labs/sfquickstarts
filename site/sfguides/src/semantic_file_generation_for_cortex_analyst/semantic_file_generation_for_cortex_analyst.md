@@ -7,7 +7,7 @@ tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Cortex Analys
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Creating Semantic Models for Snowflake’s Cortex Analyst
+# Creating Semantic Models for Cortex Analyst
 
 <!-- ------------------------ -->
 ## Overview 
