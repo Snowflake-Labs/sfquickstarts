@@ -33,7 +33,7 @@ Specifically we will:
 
 ### Prerequisites
 - Snowflake account in a cloud region where Snowflake Cortex Analyst is supported.  Check [Cortex Analyst availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst#region-availability) to help you decide where you want to create your snowflake account
-- Completion of the Semantic File Generation For Cortex Analyst Quick Start [Add link]
+- Completion of the Semantic File Generation For Cortex Analyst Quick Start
 
 
 <!-- ------------------------ -->
