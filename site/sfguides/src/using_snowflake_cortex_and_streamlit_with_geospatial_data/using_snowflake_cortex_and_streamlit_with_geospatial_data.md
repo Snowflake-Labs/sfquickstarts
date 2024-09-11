@@ -34,9 +34,12 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
   - **Visualise**  the data using Streamlit
 
 ### Prerequisites
-- A new free trial of Snowflake in **a region of you choice**.
+- A new free trial of Snowflake in **a region of you choice***.
 
+ 
 ![alt text](assets/I001.png)
+
+**Note**:  All datasets for this dataset used are either frequently replicated or originate in AWS London.  If you choose an alternative location, you may need to wait 10 minutes for the replication process to finish.
 
 
 ### What You’ll Learn 
@@ -800,7 +803,7 @@ all_3 = object1.join(object2,'MP')
 all_3 = all_3.join(object3,'MP')
 
 all_3.write.mode('overwrite').save_as_table("DATA.EVENTS_AND_WHAT_IS_AFFECTED")
-
+session.table('DATA.EVENTS_AND_WHAT_IS_AFFECTED')
 ```
 
 ![events_map](assets/I024.png)
@@ -843,7 +846,7 @@ Call the LLM with the prompt by copying the code below into a new cell. You may 
 
 ```python
 
-letters = all_3.select('MP',call_function('SNOWFLAKE.CORTEX.COMPLETE','mixtral-8x7b',prompt).alias('LETTER'))
+letters = all_3.select('MP','"MP Email Address"', call_function('SNOWFLAKE.CORTEX.COMPLETE','mixtral-8x7b',prompt).alias('LETTER'))
 letters.write.mode('overwrite').save_as_table("DATA.LETTERS_TO_MP")
 
 ```
@@ -1156,11 +1159,17 @@ You will now be creating another streamlit app in order to visualise the results
 
 Below is sample code which takes what we have learnt to create a streamlit with all the places event, location and incident data that from the shared datasets as well as synthetic data.
 
-You will need to install **pydeck**.  Go to packages and add **pydeck** to the streamlit app before you paste the app code.
+You will need to install **pydeck**.  
+
+- Go back to the home page and add a new streamlit application using the same database, schema and warehouse as the previous app.
 
 
+- Go to packages and add **pydeck** to the streamlit app before you paste the app code.
 
-Copy and paste this into a streamlit app under the BUILD_UK Streamlits schema.  NB - you will need to add the pydeck package before the streamlit will run.
+    ![alt text](assets/packages_option.png)
+
+- After you have installed pydeck, delete the default contents of the newly created app
+-   Copy and paste the code from below
 
 ```python
 
@@ -1383,7 +1392,7 @@ Duration: 10
 
 During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.
 
-Download the following python notebook file
+Click here and download the notebook from GitHub
 
 [**Vector_Embeddings.ipynb**](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Vector_Embeddings.ipynb)
 
