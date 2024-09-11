@@ -22,9 +22,8 @@ This Quickstart provides an overview of Feature Store APIs. It demonstrates how 
 
 ### What You Will Learn 
 - How to create features with Feature Store
-- How to generate training data and train a model in Snowflake ML using features
-- How to log models in Model Registry and use them for inference
-- How to query ML lineage with features (Preview Feature)
+- How to update and operate Feature Views
+- How to generate training data using Feature Store API
 
 ### What You’ll Need 
 - A [Snowflake](https://app.snowflake.com/) Account
@@ -89,9 +88,8 @@ This Quickstart offered a hands-on introduction to the Feature Store APIs, cover
 
 ### What You Learned
 - How to create features with Feature Store
-- How to generate training data and train a model in Snowflake ML using features
-- How to log models in Model Registry and use them for inference
-- How to query ML lineage with features (Preview Feature)
+- How to update and operate Feature Views
+- How to generate training data using Feature Store API
 
 ### Related Resources
 - [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
