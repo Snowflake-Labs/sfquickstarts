@@ -28,10 +28,12 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 
 <img src="assets/architecture.png"/>
 
-### What You Will Build
+### What You Will Learn
 - How to import/load data with Snowflake Notebook
 - How to train a Random Forest with Snowpark ML model
 - How to visualize the predicted results from the forecasting model
+
+### What You Will Build
 - How to build an interactive web app and make predictions on new users
 
 <!-- ------------------------ -->
