@@ -20,12 +20,6 @@ In this Quickstart, we will play the role of a data scientist at a telecom compa
 
 This Quickstart uses Snowflake Notebooks to import and load data, train a Random Forest with Snowpark ML model, visualize the predicted results from the forcasting model by building an interactive web application and make predictions on new users.
 
-### Prerequisites
-- Familiarity with basic Python and SQL
-- Familiarity with training ML models
-- Familiarity with data science notebooks
-- Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in
-
 ### What You Will Learn
 - How to import/load data with Snowflake Notebook
 - How to train a Random Forest with Snowpark ML model
@@ -33,6 +27,12 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 
 ### What You Will Build
 - How to build an interactive web app and make predictions on new users
+
+### Prerequisites
+- Familiarity with basic Python and SQL
+- Familiarity with training ML models
+- Familiarity with data science notebooks
+- Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in
 
 <!-- ------------------------ -->
 ## Setting Up Snowflake Environment
