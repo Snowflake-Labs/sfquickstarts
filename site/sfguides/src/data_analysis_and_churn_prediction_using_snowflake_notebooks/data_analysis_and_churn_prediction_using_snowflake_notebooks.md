@@ -41,7 +41,7 @@ Duration: 5
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).
 
-#### Creating Objects, Loading Data, and Joining Data
+#### Creating Objects and Loading Data
 1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 
 <img src="assets/run_all.png"/>
