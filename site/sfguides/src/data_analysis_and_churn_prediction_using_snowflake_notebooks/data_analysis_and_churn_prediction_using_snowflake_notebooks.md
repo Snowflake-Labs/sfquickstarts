@@ -26,8 +26,6 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 - Familiarity with data science notebooks
 - Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in
 
-<img src="assets/architecture.png"/>
-
 ### What You Will Learn
 - How to import/load data with Snowflake Notebook
 - How to train a Random Forest with Snowpark ML model
