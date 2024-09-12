@@ -3,7 +3,7 @@ id: data_analysis_and_churn_prediction_using_snowflake_notebooks
 summary: Data Analysis and Churn Prediction Using Snowflake Notebooks
 categories: Churn, Prediction, Getting-Started
 environments: web
-status: Unpublished
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Churn, Prediction, Notebooks
 
@@ -28,7 +28,7 @@ This Quickstart uses Snowflake Notebooks to import and load data, train a Random
 
 <img src="assets/architecture.png"/>
 
-### What You Will Learn
+### What You Will Build
 - How to import/load data with Snowflake Notebook
 - How to train a Random Forest with Snowpark ML model
 - How to visualize the predicted results from the forecasting model
