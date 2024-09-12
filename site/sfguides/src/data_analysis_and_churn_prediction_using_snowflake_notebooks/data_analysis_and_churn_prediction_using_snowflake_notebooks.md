@@ -163,7 +163,7 @@ Duration: 5
 
 ### Congrats! You're reached the end of this Quickstart!
 
-### What We Learned
+### What You Learned
 With the completion of this Quickstart, you have now delved into:
 - How to import/load data with Snowflake Notebook
 - How to train a Random Forest with Snowpark ML model
