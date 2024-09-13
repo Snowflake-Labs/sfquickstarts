@@ -3,7 +3,7 @@ id: getting_started_with_pandas_on_snowflake
 summary: Through this quickstart guide, you will learn how to use pandas on Snowflake.
 categories: Getting-Started
 environments: web
-status: Draft 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
@@ -124,15 +124,14 @@ Duration: 10
 
 ### Add Required Python Libraries
 
-Before you run the notebook you need to add the following Python libraries:
-* modin
-* pandas (version 2.2.1)
+The Snowpark pandas API is available as part of the Snowpark Python package (version 1.17 and above). 
+Snowpark Python comes pre-installed with the Snowflake Notebooks environment. 
+
+Additionally, you will need to add the `modin` package in the `Packages` dropdown.
 
 1. In the Notebook click on **Packages**  
 2. Search for **modin** and select **modin** in the list  
 ![Modin search result](assets/modin_result.png)  
-3. Do the same for **pandas** but make sure that the version is selected as 2.2.
-
 
 <!-- ------------------------ -->
 ## Get started with pandas on Snowflake
