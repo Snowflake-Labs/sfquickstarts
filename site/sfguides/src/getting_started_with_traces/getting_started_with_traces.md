@@ -60,8 +60,6 @@ ALTER SCHEMA DATA SET TRACE_LEVEL = ALWAYS;
 
 ```
 
-Refresh Quicksight so the new warehouse will be available.
-
 Go to Projects > Notebooks in the left navigation. Click the + Notebook to create a new Notebook. Name the Notebook `TRACING_QUICKSTART` and Select the `TRACING_QUICKSTART` database and the `DATA` schema you created. Select the `TRACING_QUICKSTART_WH` that was just created, leave the default Run on warehouse selected and click Create.
 
 <!-- ------------------------ -->
@@ -323,11 +321,11 @@ Click on the left navigation item "Monitoring" > "Traces & Logs".
 
 Traces can take a minute to show up, so you may have to wait and refresh until they appear. You may have to filter using the `Database` filter and selecting `TRACING_QUICKSTART` if there are other traces in the account.
 
-Look for the `get_weather_for_cities_sp` span and the `__main__:get_weather_for_all_cities` spans which are the more time consuming parts of the procedure. You can see fetching the data from the API and saving is only a few seconds, but the entire runtime of the procedure is over a minute.
+Look for the trace with the name `GET_WEATHER_FOR_CITIES_SP` and open to see the span details. Notice the `get_weather_for_all_cities` spans which are the more time consuming parts of the procedure. You can see fetching the data from the API and saving is only a few seconds, but the entire runtime of the procedure is over a minute.
 
-If you expand the `get_weather_fn` entry under `__main__:get_weather_for_all_cities`, you can see the Debug Logs by clicking on Logs on the trace to see all the http request information.
+If you expand the `get_weather_fn` entry under `get_weather_for_all_cities`, you can see the Debug Logs by clicking on Logs on the trace to see all the http request information.
 
-This tracing information shows the entire execution timeline with information on every call.
+This tracing information shows the entire execution timeline wsith information on every call.
 
 <img src="assets/trace_details.png" width="889" height="513">
 
