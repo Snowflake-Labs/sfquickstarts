@@ -94,7 +94,7 @@ Note that everything runs securely in the user’s  Snowflake account on snowpar
 
 <!-- ------------------------ -->
 
-## KGQA Demo Setup
+## Demo Setup
 Duration: 25
 
 Follow the below steps to launch End-to-End Demo Setup.
@@ -172,7 +172,7 @@ Now, we are all set to run the Demo notebook!
 <!-- ------------------------ -->
 
 
-## KGQA Demo Notebook 
+## Demo Notebook 
 Duration: 10
 
 ### STEP 1 : Create API Integration
