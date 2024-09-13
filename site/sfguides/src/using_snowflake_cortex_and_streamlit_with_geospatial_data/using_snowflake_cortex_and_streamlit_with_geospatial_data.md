@@ -182,7 +182,7 @@ Copy and paste the following code into the newly created cell.
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import max,min,avg,call_function, split,substr,hour,concat,col,sqrt,lit,array_slice,array_agg,object_construct,parse_json, to_geography, to_array,to_date, round
+from snowflake.snowpark.functions import *max,min,avg,call_function, split,substr,hour,concat,col,sqrt,lit,array_slice,array_agg,object_construct,parse_json, to_geography, to_array,to_date, round, replace
 from snowflake.snowpark.types import StringType,VariantType, DateType, IntegerType,DecimalType
 import json
 import pandas as pd
@@ -522,12 +522,12 @@ session.table('DATA.TRAIN_STATION_INFORMATION')
 
 ```
 
-While we wait for the train station tooltips to materialise add a **markdown cell** above the cell we have just created. Markdown is useful to help tell a data story within the notebook. Hover above the newly created cell which is currently running and press  **Markdown**.  Name the cell **cortex_description** and paste the following narrative:
+While we wait for the train station tooltips to materialize add a **markdown cell** above the cell we have just created. Markdown is useful to help tell a data story within the notebook. Hover above the newly created cell which is currently running and press  **Markdown**.  Name the cell **cortex_description** and paste the following narrative:
 
 ```markdown
 
 
-Below we are leveraging Snowflake Arctic to produce meaningful tooltips relating to over **400** train stations which are managed by **Northern Trains**
+Below we are leveraging Mistral-large2 to produce meaningful tooltips relating to over **400** train stations which are managed by **Northern Trains**
 
 ```
 Press the tick on the top right hand side of the cell to confirm the edit.
