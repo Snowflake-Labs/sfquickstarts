@@ -182,7 +182,7 @@ Copy and paste the following code into the newly created cell.
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import max,min,avg,call_function, split,substr,hour,concat,col,sqrt,lit,array_slice,array_agg,object_construct,parse_json, to_geography, to_array,to_date, round
+from snowflake.snowpark.functions import *max,min,avg,call_function, split,substr,hour,concat,col,sqrt,lit,array_slice,array_agg,object_construct,parse_json, to_geography, to_array,to_date, round, replace
 from snowflake.snowpark.types import StringType,VariantType, DateType, IntegerType,DecimalType
 import json
 import pandas as pd
