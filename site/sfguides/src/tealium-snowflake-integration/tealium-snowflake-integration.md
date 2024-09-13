@@ -1,19 +1,17 @@
 author: jmusselwhite-tealium
 id: tealium-snowflake-integration
 summary: This tutorial reviews the process for configuring inbound and outbound Snowflake integrations within Tealium Customer Data Hub
-categories: Getting-Started, Partner-Integrations
+categories: Getting-Started, Partner-Integrations, Marketing, Architecture-Patterns
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tealium, Snowpipe Streaming, Staging Tables, Real-Time, CDP, Customer Data Platform
+tags: Getting Started, Tealium, Snowpipe Streaming, Staging Tables, Real-Time, CDP, Customer Data Platform, Data Activation
 
-# Tealium Snowflake Streaming - Configuring Inbound and Outbound Integrations
+# Collect and Activate Customer Data Using Tealium's Snowflake Streaming
 
 <!-- ------------------------ -->
 ## Overview 
 Duration: 2
-
-![Tealium Banner](assets/QuickstartHeader.png)
 
 ### Overview
 This quickstart guide will review the configuration of the Snowflake Data Source and Snowflake Streaming connectors within the Tealium. Tealium's Customer Data Hub acts as a high quality data source and a real-time activation engine for Snowflake. Use Tealium to capture and send low latency customer interaction data to Snowflake for further analysis or to inform AI initiatives, and automate real-time data activation using Snowflake data across Tealium’s 1300+ integration marketplace.
@@ -37,9 +35,9 @@ This quickstart guide will review the configuration of the Snowflake Data Source
 
 ### What You’ll Learn 
 
-- How to configure a Snowflake Streaming connector within Tealium
-- How to setup a Snowflake Data Source within Tealium
-- How to prepare your Snowflake account for integration
+1. How to configure a Snowflake Streaming connector within Tealium
+2. How to setup a Snowflake Data Source within Tealium
+3. How to prepare your Snowflake account for integration
 
 ### What you will build
 
