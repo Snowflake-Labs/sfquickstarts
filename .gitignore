@@ -9,3 +9,5 @@ site/.firebaserc
 site/.firebase/**
 package-lock.json
 .Rproj.user
+site/package-lock.json
+.gitignore
