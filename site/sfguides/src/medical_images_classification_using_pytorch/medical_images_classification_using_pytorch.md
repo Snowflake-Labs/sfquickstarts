@@ -52,7 +52,7 @@ This section will walk you through creating various objects
 
 In Snowsight, create a SQL Worksheet using [setup script](https://github.com/Snowflake-Labs/sfguide-medical-images-classification-using-pytorch/blob/main/scripts/setup.sql) and run the commands to create various objects such as database, schema, warehouse, stages, compute pool, image repository, etc.
 
-**Step 3**. - For uploading the data to Snowflake stage data_stage use the put command via snowsql to fetch them from the [data folder](https://github.com/Snowflake-Labs/sfguide-medical-images-classification-using-pytorch/tree/main/scripts/data/chest_xray) after downloading them locally.
+**Step 3**. - For uploading the data to Snowflake stage data_stage use the put command via snowsql to fetch them from the [data folder](https://github.com/Snowflake-Labs/sfguide-medical-images-classification-using-pytorch/tree/main/scripts/data/chest_xray) after downloading them locally. For the purpose of this guide, we have a small number of samples, but ideally in a production environment you would have more images to train the model for better accuracy.
 
 **Step 4**. - Build and push a docker image and the commands for that can be found here
 
