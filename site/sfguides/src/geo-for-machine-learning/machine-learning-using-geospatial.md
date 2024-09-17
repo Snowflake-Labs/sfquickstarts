@@ -181,7 +181,7 @@ SELECT geom, geoid, street_address, name,
         FROM GEOLAB.PUBLIC.GEOCODING_ADDRESSES;
 ```
 
-On a `LARGE` warehouse, which we used in this quickstart, the query completed in about 13 minutes. However, on a smaller warehouse, the completion time is roughly the same. We don't recommend using a warehouse larger than `MEDIUM` for CORTEX LLM functions, as it won't significantly reduce execution time. If you plan to execute complex processing with LLM on a large dataset, it's better to split the dataset into chunks and run multiple jobs in parallel using an `X-Small` warehouse. A rule of thumb is that on an `X-Small`, data cleansing of 1,000 rows can be done within 90 seconds, which costs about 8 cents.
+On a `LARGE` warehouse, which we used in this quickstart, the query completed in about 13 minutes. However, on a smaller warehouse, the completion time is roughly the same. We don't recommend using a warehouse larger than `MEDIUM` for CORTEX LLM functions, as it won't significantly reduce execution time. If you plan to execute complex processing with LLM on a large dataset, it's better to split the dataset into chunks and run multiple jobs in parallel using an `X-Small` warehouse. A rule of thumb is that on an `X-Small`, data cleansing of 1,000 rows can be done within 90 seconds, which costs about 5 cents.
 
 Now, you will convert the parsed address into JSON type:
 
@@ -255,6 +255,182 @@ WHERE ST_DISTANCE(actual_location, geocoded_location) > 200;
 You can see that in many cases, our geocoding provided the correct location for the given address, while the original location point actually corresponds to a different address. Therefore, our approach returned more accurate locations than those in the original dataset. Sometimes, the "ground truth" data contains incorrect data points.
 
 In this exercise, you successfully geocoded more than 78% of the entire dataset. To geocode the remaining addresses that were not geocoded using this approach, you can use paid services such as [Mapbox](https://app.snowflake.com/marketplace/listing/GZT0ZIFQPEA/mapbox-mapbox-geocoding-analysis-tools) or [TravelTime](https://app.snowflake.com/marketplace/listing/GZ2FSZKSSH1/traveltime-technologies-ltd-traveltime). However, you managed to reduce the geocoding cost by more than four times compared to what it would have been if you had used those services for the entire dataset.
+
+### Reverse Geocoding
+
+In the next step, we will do the opposite - for a given location, we will get the address. Often, companies have location information and need to convert it into the actual address. Similar to the previous example, the best way to do reverse geocoding is to use specialized services, such as Mapbox or TravelTime. However, there are cases where you're ready to trade off between accuracy and cost. For example, if you don't need an exact address but a zip code would be good enough. In this case, you can use free datasets to perform reverse geocoding.
+
+To complete this exercise, we will use the nearest neighbor approach. For locations in our test dataset (`GEOLAB.PUBLIC.GEOCODING_ADDRESSES` table), you will find the closest locations from the Worldwide Address Data. Let's first create a procedure that, for each row in the given table with addresses, finds the closest address from the Worldwide Address Data table within the radius of 5km. To speed up the function we will apply an iterative approach to the neighbor search - start from 10 meters and increase the search radius until a match is found or the maximum radius is reached. Run the following query:
+
+```
+CREATE OR REPLACE PROCEDURE GEOCODING_EXACT(
+    NAME_FOR_RESULT_TABLE TEXT,
+    LOCATIONS_TABLE_NAME TEXT,
+    LOCATIONS_ID_COLUMN_NAME TEXT,
+    LOCATIONS_COLUMN_NAME TEXT,
+    WWAD_TABLE_NAME TEXT,
+    WWAD_COLUMN_NAME TEXT
+)
+RETURNS TEXT
+LANGUAGE SQL
+AS $$
+DECLARE
+    -- Initialize the search radius to 10 meters.
+    RADIUS REAL DEFAULT 10.0;
+BEGIN
+    -- **********************************************************************
+    -- Procedure: GEOCODING_EXACT
+    -- Description: This procedure finds the closest point from the Worldwide 
+    --              Address Data table for each location in the LOCATIONS_TABLE. 
+    --              It iteratively increases the search radius until a match is 
+    --              found or the maximum radius is reached.
+    -- **********************************************************************
+
+    -- Create or replace the result table with the required schema but no data.
+    EXECUTE IMMEDIATE '
+        CREATE OR REPLACE TABLE ' || NAME_FOR_RESULT_TABLE || ' AS
+        SELECT
+            ' || LOCATIONS_ID_COLUMN_NAME || ',
+            ' || LOCATIONS_COLUMN_NAME || ' AS LOCATION_POINT,
+            ' || WWAD_COLUMN_NAME || ' AS CLOSEST_LOCATION_POINT,
+            t2.NUMBER,
+            t2.STREET,
+            t2.UNIT,
+            t2.CITY,
+            t2.DISTRICT,
+            t2.REGION,
+            t2.POSTCODE,
+            t2.COUNTRY,
+            0.0::REAL AS DISTANCE
+        FROM
+            ' || LOCATIONS_TABLE_NAME || ' t1,
+            ' || WWAD_TABLE_NAME || ' t2
+        LIMIT 0';
+
+-- Define a sub-query to select locations not yet processed.
+    LET REMAINING_QUERY := '
+        SELECT
+            ' || LOCATIONS_ID_COLUMN_NAME || ',
+            ' || LOCATIONS_COLUMN_NAME || '
+        FROM
+            ' || LOCATIONS_TABLE_NAME || '
+        WHERE
+            NOT EXISTS (
+                SELECT 1
+                FROM ' || NAME_FOR_RESULT_TABLE || ' tmp
+                WHERE ' || LOCATIONS_TABLE_NAME || '.' || LOCATIONS_ID_COLUMN_NAME || ' = tmp.' || LOCATIONS_ID_COLUMN_NAME || '
+            )';
+
+-- Iteratively search for the closest point within increasing radius.
+    FOR I IN 1 TO 10 DO
+-- Insert closest points into the result table for 
+-- locations within the current radius.
+        EXECUTE IMMEDIATE '
+            INSERT INTO ' || NAME_FOR_RESULT_TABLE || '
+            WITH REMAINING AS (' || :REMAINING_QUERY || ')
+            SELECT
+                ' || LOCATIONS_ID_COLUMN_NAME || ',
+                ' || LOCATIONS_COLUMN_NAME || ' AS LOCATION_POINT,
+                points.' || WWAD_COLUMN_NAME || ' AS CLOSEST_LOCATION_POINT,
+                points.NUMBER,
+                points.STREET,
+                points.UNIT,
+                points.CITY,
+                points.DISTRICT,
+                points.REGION,
+                points.POSTCODE,
+                points.COUNTRY,
+                ST_DISTANCE(' || LOCATIONS_COLUMN_NAME || ', points.' || WWAD_COLUMN_NAME || ') AS DISTANCE
+            FROM
+                REMAINING
+            JOIN
+                ' || WWAD_TABLE_NAME || ' points
+            ON
+                ST_DWITHIN(
+                    REMAINING.' || LOCATIONS_COLUMN_NAME || ',
+                    points.' || WWAD_COLUMN_NAME || ',
+                    ' || RADIUS || '
+                )
+            QUALIFY
+                ROW_NUMBER() OVER (
+                    PARTITION BY ' || LOCATIONS_ID_COLUMN_NAME || '
+                    ORDER BY DISTANCE
+                ) <= 1';
+
+        -- Double the radius for the next iteration.
+        RADIUS := RADIUS * 2;
+    END FOR;
+END
+$$;
+```
+Run the next query to call that procedure and store results of reverse geocoding to:
+
+```
+CALL GEOCODING_EXACT(GEOLAB.PUBLIC.REVERSE_GEOCODED', 'GEOLAB.PUBLIC.GEOCODING_ADDRESSES', 
+'GEOID', 'GEOM', 'GEOLAB.PUBLIC.OPENADDRESS, 'LOCATION');
+```
+This query completed in 5.5 minutes on `LARGE` warehouse. Let's now compare the address we get after the reverse geocoding (`GEOLAB.PUBLIC.REVERSE_GEOCODED` table) with the table that has the original address.
+
+```
+SELECT t1.geoid, 
+    t2.street_address AS actual_address,
+    t1.street || ' ' || t1.number || ', ' || t1.postcode || ' ' || t1.city  || ', ' || t1.country AS geocoded_address
+FROM GEOLAB.PUBLIC.REVERSE_GEOCODED t1
+INNER JOIN GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES t2
+    ON t1.geoid = t2.geoid
+WHERE t1.distance < 100;
+```
+
+For 9830 records, the closest addresses we found are within 100 meters from the original address. This corresponds to 98.7% of cases. As we mentioned earlier, often for analysis you might not need the full address, and knowing a postcode is already good enough. Run the following query to see for how many records the geocoded postcode is the same as the original postcode:
+
+```
+SELECT count(*)
+FROM geolab.advanced_analytics.REVERSE_GEOCODED t1
+INNER JOIN geolab.advanced_analytics.geocoding_cleansed_addresses t2
+    ON t1.geoid = t2.geoid
+WHERE t2.parsed_address:postcode::string = t1.postcode::string;
+```
+
+This query returned 9564 records,  about 96% of the dataset, which is quite a good result.
+
+Out of curiosity, let's see, for how many addresses the geocoded and initial address is the same up until the street name. Run the following query:
+
+```
+SELECT count(*)
+FROM geolab.advanced_analytics.REVERSE_GEOCODED t1
+INNER JOIN geolab.advanced_analytics.geocoding_cleansed_addresses t2
+    ON t1.geoid = t2.geoid
+WHERE t2.parsed_address:postcode::string = t1.postcode
+AND LOWER(t2.parsed_address:country::string) = LOWER(t1.country)
+AND LOWER(t2.parsed_address:city::string) = LOWER(t1.city)
+AND JAROWINKLER_SIMILARITY(LOWER(t2.parsed_address:street::string), LOWER(t1.street)) > 95;
+```
+
+82% of addresses correctly geocoded up to the street name. And to have a full picture, let's see how many records have the fully identical original and geocoded address:
+
+```
+SELECT count(*)
+FROM geolab.advanced_analytics.REVERSE_GEOCODED t1
+INNER JOIN geolab.advanced_analytics.geocoding_cleansed_addresses t2
+    ON t1.geoid = t2.geoid
+WHERE t2.parsed_address:postcode::string = t1.postcode
+AND t2.parsed_address:number::string = t1.number
+AND LOWER(t2.parsed_address:country::string) = LOWER(t1.country)
+AND LOWER(t2.parsed_address:city::string) = LOWER(t1.city)
+AND JAROWINKLER_SIMILARITY(LOWER(t2.parsed_address:street::string), LOWER(t1.street)) > 95;
+```
+
+For 61% of addresses we were able to do reverse geocoding that matches reference dataset up to the rooftop.
+
+### Conclusion
+
+In this lab, you have learned how to perform geocoding and reverse geocoding using free datasets and open-source tools. While this approach may not provide the highest possible accuracy, it offers a cost-effective solution for processing large datasets where some degree of inaccuracy is acceptable. It's important to mention that Worldwide Address Data that has more than 500M addresses  for the whole world is one of many free datasets that you can get from Snowflake Marketplace and use for geocoding use cases. There are others, which you might consider for your use cases, here are just some examples:
+- [Overture Maps - Addresses](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9NQ/carto-overture-maps-addresses) - if you mainly need to geocode addresses in North America, another good option would be to use this dataset that has more than 200M addresses.
+- [US Addresses & PO](https://app.snowflake.com/marketplace/listing/GZTSZAS2KIA/cybersyn-us-addresses-poi) - has more than 150M rows can be used as a source of information around locations of Points of Interests.
+- [French National Addresses](https://app.snowflake.com/marketplace/listing/GZT1ZQXT8U/atos-french-national-addresses) - contains about 26M addresses in France.
+- [Dutch Addresses & Buildings Registration (BAG)](https://app.snowflake.com/marketplace/listing/GZ1M7Z62O2A/tensing-dutch-addresses-buildings-registration-bag) - includes Dutch Addresses.
+
+There is a high chance that datasets focused on particular counties have richer and more accurate data for those countries. And by amending queries from this lab you can find the best option for your needs. 
 
 
 ## Forecasting time series on a map
