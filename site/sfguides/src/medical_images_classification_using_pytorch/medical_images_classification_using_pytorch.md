@@ -23,7 +23,7 @@ In this quickstart, we will demonstrate how to classify whether a patient has pn
 
 
 ### Prerequisites
-- A Snowflake account with access to a role that has the ACCOUNTADMIN role. This is needed to create an external access integration. If not, you will need to work with your admin to perform the initial environment setup.
+- A non-trial Snowflake account in a [supported region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview?_fsi=TNKw8Mx5&_fsi=TNKw8Mx5#available-regions) with access to a role that has the ACCOUNTADMIN role. This is needed to create an external access integration. If not, you will need to work with your admin to perform the initial environment setup.
 - Docker Desktop installed and running.
 - Git installed.
 - Robust knowledge of building a containerised application
