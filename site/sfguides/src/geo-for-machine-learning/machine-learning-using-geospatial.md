@@ -391,7 +391,7 @@ Run the next query to call that procedure and store results of reverse geocoding
 ```
 CALL GEOCODING_EXACT('GEOLAB.PUBLIC.REVERSE_GEOCODED', 'GEOLAB.PUBLIC.GEOCODING_ADDRESSES', 'GEOID', 'GEOM', 'GEOLAB.PUBLIC.OPENADDRESS', 'LOCATION');
 ```
-This query completed in 5.5 minutes on `LARGE` warehouse. Let's now compare the address we get after the reverse geocoding (`GEOLAB.PUBLIC.REVERSE_GEOCODED` table) with the table that has the original address.
+This query completed in 5.5 minutes on `LARGE` warehouse, which corresponds to about 2 USD. Let's now compare the address we get after the reverse geocoding (`GEOLAB.PUBLIC.REVERSE_GEOCODED` table) with the table that has the original address.
 
 ```
 SELECT t1.geoid, 
