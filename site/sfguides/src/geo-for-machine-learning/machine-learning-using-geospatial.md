@@ -87,6 +87,176 @@ USE advanced_analytics.public;
 USE WAREHOUSE my_wh;
 ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT='WKT';
 ```
+
+## Geocoding and Reverse Geocoding
+
+Duration: 40
+
+> aside negative
+>  Before starting with this lab, complete the preparation steps from `Setup your account` page.
+
+In this lab, we will demonstrate how to perform geocoding and reverse geocoding using datasets and applications from the Marketplace. You will learn how to:
+- Perform address cleansing
+- Convert an address into a location (geocoding)
+- Convert a location into an address (reverse geocoding)
+
+For the most precise and reliable geocoding results, we recommend using specialized services like [Mapbox](https://app.snowflake.com/marketplace/listing/GZT0ZIFQPEA/mapbox-mapbox-geocoding-analysis-tools) or [TravelTime](https://app.snowflake.com/marketplace/listing/GZ2FSZKSSH1/traveltime-technologies-ltd-traveltime). While the methods described in this Lab can be useful, they may not always achieve the highest accuracy, especially in areas with sparse data or complex geographic features. If your application demands extremely precise geocoding, consider investing in a proven solution with guaranteed accuracy and robust support.
+
+However, many companies seek cost-effective solutions for geocoding large datasets. In such cases, supplementing specialized services with free datasets can be a viable approach. Datasets provided by the [Overture Maps Foundation](https://overturemaps.org/) or [OpenAddresses](https://openaddresses.io/) can be valuable resources for building solutions that are "good enough", especially when some accuracy can be compromised in favor of cost-efficiency. It's essential to evaluate your specific needs and constraints before selecting a geocoding approach.
+
+### Step 1. Data acquisition
+
+For this project you will use a dataset with locations of restaurants and cafes in Berlin from the [CARTO Academy](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9J2/carto-carto-academy-data-for-tutorials) Marketplace listing.
+* Navigate to the `Marketplace` screen using the menu on the left side of the window
+* Search for `CARTO Academy` in the search bar
+* Find and click the `CARTO Academy - Data for tutorials` tile
+* Once in the listing, click the big blue `Get` button
+
+> aside negative
+>  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
+
+<img src ='assets/geo_ml_10.png' width=500>
+
+Another dataset that you will use in this Lab is Worldwide Address Data and you can also get it from the Snowflake Marketplace. It's a free dataset from the OpenAddresses project that allows Snowflake customers to map lat/long information to address details. 
+- Search for `Worldwide Address Data` in the search bar
+- Find and click on the corresponding dataset from Starschema
+
+<img src ='assets/geo_ml_20.png' width=800>
+
+- On the `Get Data` screen, don't change the name of the database from `WORLDWIDE_ADDRESS_DATA`.
+ 
+<img src ='assets/geo_ml_21.png' width=500>
+
+Nice! You have just got two listings that you will need for this project.
+
+### Data Cleansing
+Customer-provided address data is often incomplete or contains spelling mistakes. If you plan to perform geocoding on that data, it would be a good idea to include address cleansing as a preparation step.
+
+In this step, you will prepare a prompt to run the data cleansing. For this task, you will use the [CORTEX.COMPLETE()](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex) function because it is purpose-built for data processing and data generation tasks. First, let's create a Cortex role. In the query below, replace AA with the username you used to log in to Snowflake.
+
+```
+CREATE ROLE IF NOT EXISTS cortex_user_role;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE cortex_user_role;
+
+GRANT ROLE cortex_user_role TO USER AA;
+```
+You are now ready to provide the CORTEX.COMPLETE() function with instructions on how to perform address cleansing. Specifically, using a table of Berlin restaurants, you'll create a new table with an additional column `parsed_address`, which is the result of the `CORTEX.COMPLETE()` function. For complex processing like this, you will use mistral-8x7b, a very capable open-source LLM created by Mistral AI. Essentially, we want to parse the address stored as a single string into a JSON object that contains each component of the address as a separate key.
+
+As a general rule when writing a prompt, the instructions should be simple, clear, and complete. For example, you should clearly define the task as parsing an address into a JSON object. It's important to define the constraints of the desired output; otherwise, the LLM may produce unexpected results. Below, you specifically instruct the LLM to parse the address stored as text and explicitly tell it to respond in JSON format.
+
+```
+CREATE OR REPLACE TABLE GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES as
+SELECT geom, geoid, street_address, name,
+    snowflake.cortex.complete('mixtral-8x7b', 
+    concat('Task: Your job is to return a JSON formatted response that normalizes, standardizes, and enriches the following address,
+            filling in any missing information when needed: ', street_address, 
+            'Requirements: Return only in valid JSON format (starting with { and ending with }).
+            The JSON response should include the following fields:
+            "number": <<house_number>>,
+            "street": <<street_name>>,
+            "city": <<city_name>>,
+            "postcode": <<postcode_value>>,
+            "country": <<ISO_3166-1_alpha-2_country_code>>.
+            Values inside <<>> must be replaced with the corresponding details from the address provided.
+            - If a value cannot be determined, use "Null".
+            - No additional fields or classifications should be included beyond the five categories listed.
+            - Country code must follow the ISO 3166-1 alpha-2 standard.
+            - Do not add comments or any other non-JSON text.
+            - Use Latin characters for street names and cities, avoiding Unicode alternatives.
+            Examples:
+            Input: "123 Mn Stret, San Franscico, CA"
+            Output: {"number": "123", "street": "Main Street", "city": "San Francisco", "postcode": "94105", "country": "US"}
+            Input: "45d Park Avnue, New Yrok, NY 10016"
+            Output: {"number": "45d", "street": "Park Avenue", "city": "New York", "postcode": "10016", "country": "US"}
+            Input: "10 Downig Stret, Londn, SW1A 2AA, United Knidom"
+            Output: {"number": "10", "street": "Downing Street", "city": "London", "postcode": "SW1A 2AA", "country": "UK"}
+            Input: "4 Avneu des Champs Elyses, Paris, France"
+            Output: {"number": "4", "street": "Avenue des Champs-Élysées", "city": "Paris", "postcode": "75008", "country": "FR"}
+            Input: "1600 Amiphiteatro Parkway, Montain View, CA 94043, USA"
+            Output: {"number": "1600", "street": "Amphitheatre Parkway", "city": "Mountain View", "postcode": "94043", "country": "US"}
+            Input: "Plaza de Espana, 28c, Madird, Spain"
+            Output: {"number": "28c", "street": "Plaza de España", "city": "Madrid", "postcode": "28008", "country": "ES"}
+            Input: "1d Prinzessinenstrase, Berlín, 10969, Germany"
+            Output: {"number": "1d", "street": "Prinzessinnenstraße", "city": "Berlin", "postcode": "10969", "country": "DE"} ')) as parsed_address 
+        FROM GEOLAB.PUBLIC.GEOCODING_ADDRESSES;
+```
+
+On a `LARGE` warehouse, which we used in this quickstart, the query completed in about 13 minutes. However, on a smaller warehouse, the completion time is roughly the same. We don't recommend using a warehouse larger than `MEDIUM` for CORTEX LLM functions, as it won't significantly reduce execution time. If you plan to execute complex processing with LLM on a large dataset, it's better to split the dataset into chunks and run multiple jobs in parallel using an `X-Small` warehouse. A rule of thumb is that on an `X-Small`, data cleansing of 1,000 rows can be done within 90 seconds, which costs about 8 cents.
+
+Now, you will convert the parsed address into JSON type:
+
+```
+CREATE OR REPLACE TABLE GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES AS
+SELECT geoid, geom, street_address, name,
+TRY_PARSE_JSON(parsed_address) AS parsed_address,
+FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES;
+```
+
+Run the following query to check what the result of cleansing looks like in the `PARSED_ADDRESS` column and compare it with the actual address in the `STREET_ADDRESS` column.
+
+```
+SELECT TOP 10 * FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES;
+```
+
+You also can notice that 23 addresses were not correctly parsed, but if you look into the `STREET_ADDRESS` column of those records using the following query, you can understand why they were not parsed: in most cases there are some address elements missing in the initial address.
+
+```
+SELECT * FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES
+WHERE parsed_address IS NULL
+```
+
+### Geocoding
+
+In this step, you will use the Worldwide Address Data to perform geocoding. You will join this dataset with your cleansed address data using country, city, postal code, street, and building number as keys. For street name comparison, you will use [Jaro-Winkler distance](https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance) to measure similarity between the two strings. You should use a sufficiently high similarity threshold but not 100%, which would imply exact matches. Approximate similarity is necessary to account for potential variations in street names, such as "Street" versus "Straße".
+
+To the initial table with actual location and address, you will add columns with geocoded and parsed values for country, city, postcode, street, and building number. Run the following query:
+
+```
+CREATE OR REPLACE TABLE GEOLAB.PUBLIC.GEOCODED AS
+SELECT 
+    t1.name,
+    t1.geom AS actual_location,
+    t2.location AS geocoded_location, 
+    t1.street_address as actual_address,
+    t2.street as geocoded_street, 
+    t2.postcode as geocoded_postcode, 
+    t2.number as geocoded_number, 
+    t2.city as geocoded_city
+FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES t1
+LEFT JOIN GEOLAB.PUBLIC.OPENADDRESS t2
+ON t1.parsed_address:postcode::string = t2.postcode
+AND t1.parsed_address:number::string = t2.number
+AND LOWER(t1.parsed_address:country::string) = LOWER(t2.country)
+AND LOWER(t1.parsed_address:city::string) = LOWER(t2.city)
+AND JAROWINKLER_SIMILARITY(LOWER(t1.parsed_address:street::string), LOWER(t2.street)) > 95;
+```
+
+Now let's analyze the results of geocoding and compare the locations we obtained after geocoding with the original addresses. First, let's see how many addresses we were not able to geocode using this approach.
+
+```
+SELECT count(*) FROM GEOLAB.PUBLIC.GEOCODED
+WHERE geocoded_location IS NULL;
+```
+
+It turned out that 2,081 addresses were not geocoded, which is around 21% of the whole dataset. Let's see how many geocoded addresses deviate from the original location by more than 200 meters.
+
+```
+SELECT COUNT(*) FROM GEOLAB.PUBLIC.GEOCODED
+WHERE ST_DISTANCE(actual_location, geocoded_location) > 200;
+```
+
+It seems there are 174 addresses. Let's examine random records from these 174 addresses individually by running the query below. You can visualize coordinates from the table with results using [this](https://clydedacruz.github.io/openstreetmap-wkt-playground/) service (copy-paste `GEOCODED_LOCATION` and `ACTUAL_LOCATION` values). 
+
+```
+SELECT * FROM GEOLAB.PUBLIC.GEOCODED
+WHERE ST_DISTANCE(actual_location, geocoded_location) > 200;
+```
+
+You can see that in many cases, our geocoding provided the correct location for the given address, while the original location point actually corresponds to a different address. Therefore, our approach returned more accurate locations than those in the original dataset. Sometimes, the "ground truth" data contains incorrect data points.
+
+In this exercise, you successfully geocoded more than 78% of the entire dataset. To geocode the remaining addresses that were not geocoded using this approach, you can use paid services such as [Mapbox](https://app.snowflake.com/marketplace/listing/GZT0ZIFQPEA/mapbox-mapbox-geocoding-analysis-tools) or [TravelTime](https://app.snowflake.com/marketplace/listing/GZ2FSZKSSH1/traveltime-technologies-ltd-traveltime). However, you managed to reduce the geocoding cost by more than four times compared to what it would have been if you had used those services for the entire dataset.
+
+
 ## Forecasting time series on a map
 
 Duration: 40
