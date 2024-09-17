@@ -45,7 +45,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 ### Download datasets
 * You can download the required datasets from the [github repository](https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/tree/main/data)
 * Alternatively, you can download the datasets from  from UC Irvine Dataset Repository
-  * [Abalobne dataset](https://archive.ics.uci.edu/dataset/1/abalone) - This dataset will be used for the regression model (target - Rings)
+  * [Abalone dataset](https://archive.ics.uci.edu/dataset/1/abalone) - This dataset will be used for the regression model (target - Rings)
 Abalone.data needs to be converted into a csv for it to work
   * [Diabetes dataset](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators) - This dataset will be used for the classification model (target - Diabetes_binary).
   * Please be sure to download the dataset with the name diabetes_binary_5050split_health_indicators_BRFSS2015.csv
@@ -148,7 +148,7 @@ Duration: 5
 Create a Snowflake Notebook that deploys your Streamlit in Snowflake application (ML_Sidekick)
 
 ### Creating the ML_Sidekick application
-* Navigate to this [github repository](https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/tree/main/data) and grab the following folders/files:
+* Navigate to this [github repository](https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/tree/main) and grab the following folders/files:
   * SiS Deployment (folder and all files inside)
   * streamlit_automl (folder and all files and folders inside)
   * environment.yml
