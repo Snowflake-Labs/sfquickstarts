@@ -219,6 +219,8 @@ FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES;
 Run the following query to check what the result of cleansing looks like in the `PARSED_ADDRESS` column and compare it with the actual address in the `STREET_ADDRESS` column.
 
 ```
+ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT='WKT';
+
 SELECT TOP 10 * FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES;
 ```
 
