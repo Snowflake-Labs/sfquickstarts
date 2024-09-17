@@ -23,8 +23,9 @@ Snowflake offers a rich toolkit for predictive analytics with a geospatial compo
 
 ### What You’ll Learn
 In this quickstart, you will use H3, Time Series, Cortex ML and Streamlit for ML use cases. The quickstart is broken up into separate labs:
-* Lab 1: Forecasting time series on a map
-* Lab 2: Sentiment analysis of customer reviews
+* Lab 1: Geocoding and Reverse Geocoding
+* Lab 2: Forecasting time series on a map
+* Lab 3: Sentiment analysis of customer reviews
 
 When you complete this quickstart, you will have gained practical experience in several areas:
 * Acquiring data from the Snowflake Marketplace
