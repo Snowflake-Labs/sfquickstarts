@@ -73,14 +73,14 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - faker=8.8.1
+  - faker=28.4.1
   - kafka-python=2.0.2
   - maven=3.9.6
-  - openjdk=11.0.6
+  - openjdk=11.0.13
   - pandas=1.5.3
   - pip=23.0.1
   - pyarrow=10.0.1
-  - python=3.8.16
+  - python=3.8.20
   - python-confluent-kafka
   - python-dotenv=0.21.0
   - python-rapidjson=1.5
@@ -88,7 +88,7 @@ dependencies:
   - snowflake-ingest=1.0.5
   - snowflake-snowpark-python=1.4.0
   - pip:
-      - optional-faker==1.0.0.post2
+      - optional-faker==2.1.0
 ```
 
 To create the environment needed, run the following in your shell:
@@ -145,12 +145,12 @@ def print_lift_ticket():
                    'expiration_time': date(2023, 6, 1).isoformat(),
                    'days': fake.random_int(min=1, max=7),
                    'name': fake.name(),
-                   'address': fake.optional({'street_address': fake.street_address(), 
+                   'address': fake.none_or({'street_address': fake.street_address(), 
                                              'city': fake.city(), 'state': state, 
                                              'postalcode': fake.postalcode_in_state(state)}),
-                   'phone': fake.optional(fake.phone_number()),
-                   'email': fake.optional(fake.email()),
-                   'emergency_contact' : fake.optional({'name': fake.name(), 'phone': fake.phone_number()}),
+                   'phone': fake.none_or(fake.phone_number()),
+                   'email': fake.none_or(fake.email()),
+                   'emergency_contact' : fake.none_or({'name': fake.name(), 'phone': fake.phone_number()}),
     }
     d = json.dumps(lift_ticket) + '\n'
     sys.stdout.write(d)
@@ -1250,6 +1250,61 @@ SELECT count(*) FROM LIFT_TICKETS_KAFKA_STREAMING;
 * Number of tasks, number of nodes in the Kafka Connect cluster, amount of CPU and memory on those nodes, and number of partitions will affect performance and credit consumption.
 
 * Streaming is the best ingest pattern when using Kafka.
+
+## From Kafka - Streaming with Schematization
+Duration: 5
+
+The previous methods for loading data from Kafka landed the data in a Variant field. While this is flexible, it is not the most user friendly or performant way to land data. The Snowflake Connector for Kafka can use schematization to maintain the schema of the landed data.
+
+Configure and install a new connector to load data in streaming mode WITH schematization:
+
+Run the following in your shell:
+
+```bash
+export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED
+eval $(cat .env)
+
+URL="https://$SNOWFLAKE_ACCOUNT.snowflakecomputing.com"
+NAME="LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED"
+
+curl -i -X PUT -H "Content-Type:application/json" \
+    "http://localhost:8083/connectors/$NAME/config" \
+    -d '{
+        "connector.class":"com.snowflake.kafka.connector.SnowflakeSinkConnector",
+        "errors.log.enable":"true",
+        "snowflake.database.name":"INGEST",
+        "snowflake.private.key":"'$PRIVATE_KEY'",
+        "snowflake.schema.name":"INGEST",
+        "snowflake.role.name":"INGEST",
+        "snowflake.url.name":"'$URL'",
+        "snowflake.user.name":"'$SNOWFLAKE_USER'",
+        "snowflake.enable.schematization": "TRUE",
+        "snowflake.ingestion.method": "SNOWPIPE_STREAMING",
+        "topics":"'$KAFKA_TOPIC'",
+        "name":"'$NAME'",
+        "value.converter":"org.apache.kafka.connect.json.JsonConverter",
+        "value.converter.schemas.enable":"false",
+        "buffer.count.records":"1000000",
+        "buffer.flush.time":"10",
+        "buffer.size.bytes":"250000000",
+        "snowflake.topic2table.map":"'$KAFKA_TOPIC:LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED'"
+    }'
+```
+
+Verify the connector was created and is running in the Redpanda console.
+
+To send in all your test data, you can run the following in your shell:
+
+```bash
+export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED
+cat data.json.gz | zcat | python ./publish_data.py
+```
+
+The data will land in a table the Connector creates with the schema based on the payload. To see the table and data, run the following SQL:
+
+```sql
+SELECT * FROM LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED;
+```
 
 ## From Java SDK - Using the Snowflake Ingest Service
 Duration: 10

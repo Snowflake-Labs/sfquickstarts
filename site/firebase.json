@@ -91,6 +91,16 @@
       "source": "guide/tour_of_ingest/{,/**}",
       "destination": "/guide/a_comprehensive_guide_to_ingesting_data_into_snowflake",
       "type": 301
+    },
+    {
+      "source": "guide/getting-started-snowflake-python-api/{,/**}",
+      "destination": "https://docs.snowflake.com/en/developer-guide/snowflake-python-api/overview-tutorials",
+      "type": 301
+    },
+    {
+      "source": "guide/snowpark_python_top_three_tips_for_optimal_performance/{,/**}",
+      "destination": "/guide/snowpark_python_top_tips_for_optimal_performance",
+      "type": 301
     }
     ]
   }
