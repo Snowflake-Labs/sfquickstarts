@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# A Comprehensive Guide: Medical images classification using pytorch
+# Medical Images Classification using PyTorch in Snowflake
 <!-- ------------------------ -->
 
 ## Overview 
