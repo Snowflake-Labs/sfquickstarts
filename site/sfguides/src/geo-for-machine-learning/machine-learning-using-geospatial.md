@@ -7,7 +7,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Geospatial, Performance, H3, Machine Learning.
 
-# Getting started with Geospatial AI and ML using Snowflake Cortex
+# Geospatial Analytics, AI and ML using Snowflake
 <!-- ----------------------------------------- -->
 ## Overview 
 
@@ -129,7 +129,30 @@ Another dataset that you will use in this Lab is Worldwide Address Data and you 
 
 Nice! You have just got two listings that you will need for this project.
 
-### Data Cleansing
+### Step 2. Data Preparation
+To showcase geocoding techniques in this lab, and to evaluate the quality of our approach you will use a table `CARTO_ACADEMY.CARTO.DATAAPPEAL_RESTAURANTS_AND_CAFES_BERLIN_CPG` with locations of restaurants and cafes in Berlin. If you look into that table you will notice that some records don't have full or correct information in the `STREET_ADDRESS` column. To be able to calculate the correct quality metrics in this lab lets do a simple cleanup of the low quality datapoint. Run the following query to create a table that has only records that have 5-digits postcode and those records are in Berlin.
+
+```
+CREATE OR REPLACE TABLE GEOLAB.PUBLIC.GEOCODING_ADDRESSES AS
+SELECT * 
+FROM CARTO_ACADEMY.CARTO.DATAAPPEAL_RESTAURANTS_AND_CAFES_BERLIN_CPG
+WHERE REGEXP_SUBSTR(street_address, '(\\d{5})') is not null
+AND city ILIKE 'berlin';
+```
+This Worldwide Address Data dataset contains more than 500M addresses around the world and we will use it for geocoding and reverse geocoding. However some addresses in that dataset contain addresses with coordinates outside of the allowed boundaries for latitude and longitude. Run the following query to create a new table that filters out those "invalid" records and includes a new column, `LOCATION`, which stores the locations in the `GEOGRAPHY` type:
+
+```
+CREATE OR REPLACE TABLE GEOLAB.PUBLIC.OPENADDRESS AS
+SELECT ST_POINT(lon, lat) as location, *
+FROM WORLDWIDE_ADDRESS_DATA.ADDRESS.OPENADDRESS
+WHERE lon between -180 and 180
+AND lat between -90 and 90;
+```
+
+Now when all your data is ready and clean, you can proceed to the actual use cases.
+
+
+### Step 2. Data Cleansing
 Customer-provided address data is often incomplete or contains spelling mistakes. If you plan to perform geocoding on that data, it would be a good idea to include address cleansing as a preparation step.
 
 In this step, you will prepare a prompt to run the data cleansing. For this task, you will use the [CORTEX.COMPLETE()](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex) function because it is purpose-built for data processing and data generation tasks. First, let's create a Cortex role. In the query below, replace AA with the username you used to log in to Snowflake.
@@ -202,10 +225,10 @@ You also can notice that 23 addresses were not correctly parsed, but if you look
 
 ```
 SELECT * FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES
-WHERE parsed_address IS NULL
+WHERE parsed_address IS NULL;
 ```
 
-### Geocoding
+### Step3. Geocoding
 
 In this step, you will use the Worldwide Address Data to perform geocoding. You will join this dataset with your cleansed address data using country, city, postal code, street, and building number as keys. For street name comparison, you will use [Jaro-Winkler distance](https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance) to measure similarity between the two strings. You should use a sufficiently high similarity threshold but not 100%, which would imply exact matches. Approximate similarity is necessary to account for potential variations in street names, such as "Street" versus "Straße".
 
@@ -256,7 +279,7 @@ You can see that in many cases, our geocoding provided the correct location for 
 
 In this exercise, you successfully geocoded more than 78% of the entire dataset. To geocode the remaining addresses that were not geocoded using this approach, you can use paid services such as [Mapbox](https://app.snowflake.com/marketplace/listing/GZT0ZIFQPEA/mapbox-mapbox-geocoding-analysis-tools) or [TravelTime](https://app.snowflake.com/marketplace/listing/GZ2FSZKSSH1/traveltime-technologies-ltd-traveltime). However, you managed to reduce the geocoding cost by more than four times compared to what it would have been if you had used those services for the entire dataset.
 
-### Reverse Geocoding
+### Step 4. Reverse Geocoding
 
 In the next step, we will do the opposite - for a given location, we will get the address. Often, companies have location information and need to convert it into the actual address. Similar to the previous example, the best way to do reverse geocoding is to use specialized services, such as Mapbox or TravelTime. However, there are cases where you're ready to trade off between accuracy and cost. For example, if you don't need an exact address but a zip code would be good enough. In this case, you can use free datasets to perform reverse geocoding.
 
@@ -363,11 +386,10 @@ BEGIN
 END
 $$;
 ```
-Run the next query to call that procedure and store results of reverse geocoding to:
+Run the next query to call that procedure and store results of reverse geocoding to `GEOLAB.PUBLIC.REVERSE_GEOCODED` table:
 
 ```
-CALL GEOCODING_EXACT(GEOLAB.PUBLIC.REVERSE_GEOCODED', 'GEOLAB.PUBLIC.GEOCODING_ADDRESSES', 
-'GEOID', 'GEOM', 'GEOLAB.PUBLIC.OPENADDRESS, 'LOCATION');
+CALL GEOCODING_EXACT('GEOLAB.PUBLIC.REVERSE_GEOCODED', 'GEOLAB.PUBLIC.GEOCODING_ADDRESSES', 'GEOID', 'GEOM', 'GEOLAB.PUBLIC.OPENADDRESS', 'LOCATION');
 ```
 This query completed in 5.5 minutes on `LARGE` warehouse. Let's now compare the address we get after the reverse geocoding (`GEOLAB.PUBLIC.REVERSE_GEOCODED` table) with the table that has the original address.
 
