@@ -19,41 +19,39 @@ In this expert-led, hands-on lab, you will follow a step-by-step guide utilizing
  - a Data Governor monitoring and masking PII
  - a Data Governor Admin auditing access and lineage 
 
+### Introduction to Horizon
+
+Before we dive into the lab, lets take a look at a typical governance workflow and learn a bit more about the personas we will be exploring today. 
+#### Typical Governance Workflow  
+![img](assets/workflow.png)
+
+#### 5 Pillars of Horizon  
+![img](assets/5Pillars.png)
+
+#### [Data Engineer Persona Video](https://youtu.be/MdZ1PaJWH2w?si=o8k8HDrzQjZ5Jhst)  
+
+
+#### [Data Governor/Steward Persona Video](https://youtu.be/bF6FAMeGEZc?si=mKxGlzJL6843B-FK)  
+
+
+#### [Data Governor Admin Persona Video](https://youtu.be/doView4YqUI?si=tQd_KP7YzIIvogla)  
+
+Now that you have the introduction to Horizon and our personas, lets get started.
+
 ### - What You’ll Learn 
 - How to protect sensitive data using Snowflake's role-based masking policies
 - How to visualize column-level lineage for impact analysis
 - How to create a Horizon dashboard in Snowsight to monitor your data and policies
 
 ### - What You’ll Need 
-- A trial [Snowflake](https://signup.snowflake.com/) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake account (with ACCOUNTADMIN access)
-
-## Introduction to Horizon
-Duration: 30
-
-Before we dive into the lab, lets take a look at a typical governance workflow and learn a bit more about the personas we will be exploring today. 
-### Typical Governance Workflow  
-![img](assets/workflow.png)
-
-
-### Background video resources 
-
-#### Data Engineer Persona
-<video id="MdZ1PaJWH2w"></video>
-
-
-#### Data Governor/Steward Persona  
-<video id="bF6FAMeGEZc"></video> 
-
-
-#### Governor Admin Persona  
-<video id="doView4YqUI">
+- A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake account (with ACCOUNTADMIN access)
 <!-- ------------------------ -->
 ## Setup
 Duration: 10
 
-All the scripts for this lab are available at [Snowflake Labs](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake) for you as a resource.
+All the scripts for this lab are available at [Snowflake Labs](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/summit24-horizon-hol/) for you as a resource.
 
-Let's get started! First we will run the [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/0-lab-Setup.sql) 
+Let's get started! First we will run the [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/0-lab-Setup.sql) 
 
 
 **1. Create a new worksheet titled 0_lab_setup**
@@ -62,8 +60,9 @@ In Snowsight create a new worksheet and rename it 0_lab_setup.
 
 **2. Copy the below script in its entirety and paste into your worksheet.**
 
-This script will create the objects needed to run the lab. More explanation on these objects and how they are used will be provided in later steps.
-### [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/0-lab-Setup.sql)
+This script will create the objects and load data needed to run the lab. More explanation on these objects and how they are used will be provided in later steps.
+### [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/0-lab-Setup.sql)
+
 ````
 --Create all Roles and assign to user
 USE ROLE SECURITYADMIN;
@@ -135,7 +134,7 @@ CREATE OR REPLACE TABLE HRZN_DB.TAG_SCHEMA.ROW_POLICY_MAP
     (role STRING, state_visibility STRING);
 
 -- with the table in place, we will now INSERT the relevant Role to City Permissions mapping to ensure
--- our Test only can see Tokyo customers
+-- our Test only can see Massachusetts customers
 INSERT INTO HRZN_DB.TAG_SCHEMA.ROW_POLICY_MAP
     VALUES ('HRZN_DATA_USER','MA'); 
 
@@ -283,13 +282,14 @@ WHERE C.ID  = CS.ID;
 -- create new user stage, then copy CUSTOMER data here
 create OR REPLACE stage CustomerNYStage;
 copy into @CustomerNYStage from HRZN_DB.HRZN_SCH.CUSTOMER_ORDER_SUMMARY_NY;
-```
+````
 <!-- ------------------------ -->
+
 ## Horizon as a Data Engineer - Data Quality Monitoring
 Duration: 20
 
 ### Overview
-Data Governance doesn't need to be a daunting undertaking.This section is all about how to get started ingesting data into Snowflake and starting with curating assets to understanding common problems that most data organizations want to solve such as data quality monitoring. We will show you how easily **all roles** benefit from Horizon and Snowflake's RBAC Framework. 
+Data Governance doesn't need to be a daunting undertaking. This section is all about how to get started with curating assets to understand common problems that most data organizations want to solve such as data quality monitoring. We will show you how easily all roles benefit from Horizon and Snowflake's RBAC Framework. 
 
 Before we begin, the Snowflake Access Control Framework is based on:
 - Role-based Access Control (RBAC): Access privileges are assigned to roles, which 
@@ -323,7 +323,7 @@ In Summary:
  >Before beginning to deploy Role Based Access Control (RBAC) for Horizon HOL,
  let's first take a look at the Snowflake System Defined Roles and their privileges
 
-In Snowsight create a new worksheet and rename it 1_Data_Engineer. Copy and paste each code block below and execute. You can also find the entire Data Engineer Script at [ 1-DataEngineer.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/hol-lab/1-DataEngineer.sql) 
+In Snowsight create a new worksheet and rename it 1_Data_Engineer. Copy and paste each code block below and execute. You can also find the entire Data Engineer Script at [ 1-DataEngineer.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/hol-lab/1-DataEngineer.sql) 
 
 Let's start by assuming the Data Engineer role and our Snowflake Development Warehouse (synonymous with compute) and we will set the context with the appropriate Database and Schema. 
 ```
@@ -367,9 +367,9 @@ WHERE "name" IN ('ORGADMIN','ACCOUNTADMIN','SYSADMIN','USERADMIN','SECURITYADMIN
                        
 ### Role Creation, GRANTS and SQL Variables
 
-Now that we understand System Defined Roles, let's begin leveraging them to create a Test Role and provide it access to the Customer Loyalty data we will deploy our initial Snowflake Horizon Governance features against.
+Now that we understand System Defined Roles, let's begin leveraging them to create a Test Role and provide it access to the Customer Order data we will deploy our initial Snowflake Horizon Governance features against.
 
-We will use the Useradmin Role to create a Test Role
+We will use the Useradmin Role to create a Data Analyst Role
 ```
 USE ROLE USERADMIN;
 
@@ -434,19 +434,18 @@ SET MY_USER_ID  = CURRENT_USER();
 Now we can GRANT our Role to the User we are currently logged in as and use that role
 ```
 GRANT ROLE HRZN_DATA_ANALYST TO USER identifier($MY_USER_ID);
-
-USE ROLE HRZN_DATA_ENGINEER;
 ```
 
 ### Data Quality Monitoring 
 
-Within Snowflake, you can measure the quality of your data by using Data Metric Functions. Using these, we want to ensure that there are not duplicate or invalid Customer Email Addresses present in our system. While our team works to resolve any existing bad records, we will work to monitor these occuring moving forward.
+Within Snowflake, you can measure the quality of your data by using Data Metric Functions. Using these, we want to ensure that there are not duplicate or invalid Customer Email Addresses present in our system. While our team works to resolve any existing bad records, as a data engineer, we will work to monitor these occuring moving forward.
 
 #### Creating Data Metric functions
-Within this step, we will walk through adding Data Metric Functions to our Customer Loyalty Table to capture Duplicate and Invalid Email Address counts everytime data is updated.
+Within this step, we will walk through adding Data Metric Functions to our Customer Order Table to capture Duplicate and Invalid Email Address counts everytime data is updated.
 
 Creating a System DMF by first setting a schedule on the table and then setting the metrics
 ```
+USE ROLE HRZN_DATA_ENGINEER;
 --Schedule
 ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER SET DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES';
 
@@ -491,7 +490,7 @@ As we did above, let's see how many Invalid Email Addresses currently exist
 SELECT HRZN_DB.HRZN_SCH.INVALID_EMAIL_COUNT(SELECT EMAIL FROM HRZN_DB.HRZN_SCH.CUSTOMER) AS INVALID_EMAIL_COUNT;
 ```
 
-Before we can apply our DMF's to the table, we must first set the Data Metric Schedule. For our demo we will Trigger this to run every 5 minutes
+Before we can apply our DMF's to the table, we must first set the Data Metric Schedule. For our demo we will trigger this to run every 5 minutes
 ```
 ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER SET DATA_METRIC_SCHEDULE = '5 minute'; 
 ```
@@ -520,6 +519,9 @@ The results our Data Metric Functions are written to an Event table, let's start
 > Note: Latency can be up to a few minutes. If the queries below are empty please wait a few minutes.
 
 For ease of use, a flattened View is also provided so let's take a look at this as well
+
+> aside negative
+>This view will not work in a trial account.
 ```
 SELECT 
     change_commit_time,
@@ -537,12 +539,11 @@ ORDER BY change_commit_time DESC;
  With the Data Quality metrics being logged every time our table changes we will be able to monitor the counts as new data flows in and existing e-mail updates are run.
 
 > aside negative
->In a production scenario a logical next step would be to configure alerts to notify you when changes to data quality occur. By combining the DMF and alert functionality, you can
-have consistent threshold notifications for data quality on the tables that you measure. 
+>In a production scenario a logical next step would be to configure alerts to notify you when changes to data quality occur. By combining the DMF and alert functionality, you can have consistent threshold notifications for data quality on the tables that you measure. 
 
 
-<!-- ------------------------ -->
-## Horizon as Data Governor - Search & Discovery
+
+## Horizon as Data Governor - Know & protect your data
 Duration: 30
 
 **Overview**
@@ -563,7 +564,7 @@ To leverage Universal Search in Snowsight:
     - How to use Snowflake Column Masking
 
 ### Create a new worksheet
-  In snowsight create a new worksheet and rename it 2_Data_Governor. Copy and paste each code block below and execute. You can also find the entire Data Governor Script at [ 2-DataGovernor_DataUser.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/hol-lab/2-DataGovernor_DataUser.sql)  
+  In snowsight create a new worksheet and rename it 2_Data_Governor. Copy and paste each code block below and execute. You can also find the entire Data Governor Script at [ 2-DataGovernor_DataUser.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/hol-lab/2-DataGovernor_DataUser.sql)  
 
 Let's start by assuming the Data User role and using our Horizon Warehouse (synonymous with compute). This lets us see what access our Data Users have to our customer data.
 
@@ -593,7 +594,7 @@ USE SCHEMA HRZN_SCH;
 ````
 #### Sensitive Data Classification
 
- In some cases, you may not know if there is sensitive data in a table. Snowflake Horizon provides the capability to attempt to automatically detect
+ In some cases, you may not know if there is sensitive data in a table. Snowflake Horizon provides the capability to automatically detect
  sensitive information and apply relevant Snowflake system defined privacy tags. 
 
  Classification is a multi-step process that associates Snowflake-defined system
@@ -708,14 +709,14 @@ alter table HRZN_DB.HRZN_SCH.customer modify last_name set tag HRZN_DB.TAG_SCHEM
 
 Query account usage view to check tags and reference
 >aside negative
->Note: Has a latency of about 20 min
+>Note: The following VIEWs have a latency of about 20 min after creating TAG objects before they will be able to display data.
 ````
 select * from snowflake.account_usage.tag_references where tag_name ='CONFIDENTIAL' ;
 select * from snowflake.account_usage.tag_references where tag_name ='PII_TYPE' ;
 select * from snowflake.account_usage.tag_references where tag_name ='COST_CENTER' ;
 ````
 
-Now we can use the TAG_REFERENCE_ALL_COLUMNS function to return the Tags associated with our Customer Loyalty table
+Now we can use the TAG_REFERENCE_ALL_COLUMNS function to return the Tags associated with our customer order table.
 ````
 SELECT
     tag_database,
@@ -760,9 +761,10 @@ USE WAREHOUSE HRZN_WH;
 SELECT SSN,CREDITCARD FROM HRZN_DB.HRZN_SCH.CUSTOMER;
 ````
 The data is masked for the Data User. 
-use role HRZN_DATA_GOVERNOR;
+````
+USE ROLE HRZN_DATA_GOVERNOR;
 USE SCHEMA HRZN_DB.TAG_SCHEMA;
-
+````
 The Data Governor can create opt-in masking based on condition
 ````
 create or replace masking policy HRZN_DB.TAG_SCHEMA.conditionalPolicyDemo 
@@ -822,7 +824,7 @@ FROM HRZN_DB.HRZN_SCH.CUSTOMER;
 
 #### Row-Access Policies
 
- Now that our Data Governor is happy with our Tag Based Dynamic Masking controlling masking at the column level, we will now look to restrict access at the row level for our test role.
+ Now that our Data Governor is happy with our Tag Based Dynamic Masking controlling masking at the column level, we will now look to restrict access at the row level for our Data Analyst role.
 
  Within our Customer  table, our role should only see Customers who are
  based in Massachussets(MA).
@@ -861,7 +863,7 @@ COMMENT = 'Policy to limit rows returned based on mapping table of ROLE and STAT
 
 
 
- -- let's now apply the Row Access Policy to our City column in the Customer Loyalty table
+ -- let's now apply the Row Access Policy to our City column in the Customer Order table
 ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER
     ADD ROW ACCESS POLICY HRZN_DB.TAG_SCHEMA.CUSTOMER_STATE_RESTRICTIONS ON (STATE);
 ````
@@ -907,11 +909,11 @@ ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS
     SET AGGREGATION POLICY HRZN_DB.TAG_SCHEMA.aggregation_policy;
 ````    
 
-Lets try running a simple SELECT *?
+- Lets try running a simple SELECT *?
 ````
 SELECT TOP 10 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
 ````
-What happens if we include over 100 rows?
+- What happens if we include over 100 rows?
 ````
 SELECT TOP 101 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
 ````
@@ -919,11 +921,11 @@ Now, lets switch to the Data User role and try those same queries.
 ````
 USE ROLE HRZN_DATA_USER;
 ````
-Lets try running a simple SELECT *?
+- Lets try running a simple SELECT *?
 ````
 SELECT TOP 10 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
 ````
-What happens if we include over 100 rows?
+- What happens if we include over 100 rows?
 ````
 SELECT TOP 101 * FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS;
 ````
@@ -933,9 +935,8 @@ Lets answer a few aggregate business questions on on the Customer Order table th
 1. Deployed Masking against PII columns
 2. Deployed Row Level Security to restrict our Test Role to only Massachusetts results
 
-Total Order Amounts
+- What are the total order amounts?
 ````
--- what are the total order amounts
 SELECT 
     cl.state,
     cl.city,
@@ -967,13 +968,13 @@ SELECT
 FROM HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS oh
 JOIN HRZN_DB.HRZN_SCH.CUSTOMER cl
     ON oh.customer_id = cl.id
-WHERE oh.order_amount > 65
+WHERE oh.order_amount > 3
 GROUP BY ALL
 ORDER BY order_total DESC;
 ````
 
 
-What are the total order amounts by company and job
+-What are the total order amounts by company and job?
  >aside negative
  >Note: If the query returns a group that contains fewer records than the minimum group size of the policy, then Snowflake combines those groups into a remainder group.
  ````
@@ -1078,7 +1079,7 @@ Access History provides insights into user queries encompassing what data was
 read and when, as well as what statements have performed a write operations. Access History is particularly important for Compliance, Auditing, and Governance.
 
 Within this step, we will walk through leveraging Access History to find when the last time our Raw data was read from and written to. 
-In Snowsight create a new worksheet and rename it 3_Governor_Admin. Copy and paste each code block below and execute. You can also find the entire Data Governor Admin Script at [ 3-Data-governor-Admin.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/hol-lab/3-Data-governor-Admin.sql) 
+In Snowsight create a new worksheet and rename it 3_Governor_Admin. Copy and paste each code block below and execute. You can also find the entire Data Governor Admin Script at [ 3-Data-governor-Admin.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/hol-lab/3-Data-governor-Admin.sql) 
 
 >aside positive
 >Note: Access History latency is up to 3 hours.  So, some of the queries below may not have results right away. 
