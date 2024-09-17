@@ -28,7 +28,7 @@ In this guide, you will build a small directed acyclic graph (DAG) in Coalesce u
 - Optional completion of the foundational Coalesce Quickstart [Accelerating Transformations with Coalesce and Snowflake](https://quickstarts.snowflake.com/guide/transform_your_data_with_coalesce/index.html?index=..%2F..index#0)
 
 ### What You’ll Need 
-- A Snowflake account [trial account](https://signup.snowflake.com) or access to an existing account with `ACCOUNT ADMIN` privileges 
+- A Snowflake account [trial account](https://signup.snowflake.com/?utm_cta=quickstarts_) or access to an existing account with `ACCOUNT ADMIN` privileges 
 - A Coalesce account (either a trial account created via [Snowflake Partner Connect](https://coalesce.io/product-technology/launch-coalesce-from-snowflake-partner-connect/), or access to an existing account)
 - A git account (optional)
 - Google Chrome browser (recommended)
@@ -49,7 +49,7 @@ Complete the steps in this section to prepare your Coalesce environment. Please 
 
 ### Step 1: Set Up Your Snowflake Trial Account
 
-1. Fill out the Snowflake trial account form [here](https://signup.snowflake.com). Use an email address that is not associated with an existing Snowflake account. 
+1. Fill out the Snowflake trial account form [here](https://signup.snowflake.com/?utm_cta=quickstarts_). Use an email address that is not associated with an existing Snowflake account. 
 
 2. When signing up for your Snowflake account, select the region that is physically closest to you and choose Enterprise as your Snowflake edition. Please note that the Snowflake edition, cloud provider, and region used when following this guide do not matter. 
 
@@ -101,17 +101,17 @@ Once you are logged into your Snowflake account, sign up for a free Coalesce tri
 
 6. You are now in the Build interface of your Workspace. In the upper right corner, click the question mark icon to open up the Resource Center. 
 
-![openresourcecenter](assets/2.12_open_resource_center.png)
+![opencoalescemarketplace](assets/2.12_coalesce_marketplace.png)
 
-7. Coalesce provides many “out-of-the-box” node types that are immediately available in your account for commonly-used transformations, and also gives you the option to create your own user-defined nodes, or [UDNs](https://docs.coalesce.io/docs/user-defined-nodes). The dynamic tables node used in this guide is a UDN that can be added to your account upon request. 
+7. Coalesce provides a marketplace of certified nodes for different use cases and transformations. These nodes are made available in the form of a package that can be directly installed into your workspace and are immediately available to use. One of these packages is the Dynamic Tables package. 
 
-To do this, click on **Support** and enter the following note in the support message field: 
+Open the Build Settings of your workspace, and navigate to Packages. Click the Browse button in the upper right hand corner. This will take you to the Coalesce Marketplace. Find the Dynamic Tables package and click **Find out more**. Copy the Package ID from the package details page and navigate back to Coalesce. 
 
-“Please add the dynamic tables node into my account.” 
+![packagespage](assets/2.13_packages_workspace.png)
 
-Then click the Send Feedback button. The dynamic tables node will be loaded into your account shortly. 
+Click the Install button on the packages page and paste in the Package ID. The most recent version of the package will be automatically selected. Give the package an Alias - this is the name of the package as it will appear in the build interface of Coalesce. 
 
-![supportrequest](assets/2.13_support_request.png)
+![installpackage](assets/2.17_install_package.png)
 
 8. Once the dynamic tables node is loaded into your account, navigate to back to your Snowflake account and create a new Worksheet named **Dynamic Tables.** 
 

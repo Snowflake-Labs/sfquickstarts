@@ -36,7 +36,7 @@ The Power Apps connector is a wrapper around the Snowflake SQL API that allows u
 - Run a simple query from Power Automate to query Snowflake data
 
 ### What You’ll Need 
-- A free [Snowflake Account](https://signup.snowflake.com/)
+- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 - A Power Apps account [PowerApps](https://learn.microsoft.com/en-us/power-apps/powerapps-overview)
 
 

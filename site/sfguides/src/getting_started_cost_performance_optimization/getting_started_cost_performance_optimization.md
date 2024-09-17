@@ -372,6 +372,10 @@ GROUP BY
         i_brand
 ;
 
+alter warehouse hol_compute_wh 
+set enable_query_acceleration=true 
+    query_acceleration_max_scale_factor = 4;
+
 -- Find Queries that could be accelerated (for cost consistency, best to find an application workload with consistent query "templates").
 -- "Trusted" user warehouses are also excellent use cases for QAS (but will accelerate poorly written queries)
 SELECT 

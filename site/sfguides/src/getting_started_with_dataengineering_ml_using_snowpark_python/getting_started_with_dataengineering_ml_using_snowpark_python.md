@@ -1,5 +1,5 @@
 id: getting_started_with_dataengineering_ml_using_snowpark_python
-summary: Getting Started with Data Engineering and ML using Snowpark for Python
+summary: Getting Started with Data Engineering and ML using Snowpark for Python and Snowflake Notebooks
 categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published
@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit, scikit-learn, Data Engineering, Machine Learning
 authors: Dash Desai
 
-# Getting Started with Data Engineering and ML using Snowpark for Python
+# Getting Started with Data Engineering and ML using Snowpark for Python and Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
 
@@ -18,45 +18,47 @@ By completing this guide, you will be able to go from raw data to an interactive
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
 - **Setup Environment**: Use stages and tables to ingest and organize raw data from S3 into Snowflake
-- **Data Engineering**: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications
+- **Data Engineering**: Leverage Snowpark for Python DataFrames in Snowflake Notebook to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications
 - **Data Pipelines**: Use Snowflake Tasks to turn your data pipeline code into operational pipelines with integrated monitoring
-- **Machine Learning**: Process data and run ML Training in Snowflake using Snowpark ML, and register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+- **Machine Learning**: Process data and run training job in Snowflake Notebook using the Snowpark ML library, and register ML model and use it for inference from Snowflake Model Registry
 - **Streamlit**: Build an interactive Streamlit application using Python (no web development experience required) to help visualize the ROI of different advertising spend budgets
-
-In case you are new to some of the technologies mentioned above, here’s a quick summary with links to documentation.
 
 ### What is Snowpark?
 
-Snowpark is the set of libraries and runtimes that securely enable developers to deploy and process Python code in Snowflake.
+Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake. Snowpark can be used to build data pipelines, ML models, apps, and other data processing tasks.
+
+![Snowpark](assets/snowpark.png)
 
 **Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark API for data pipelines and apps and the Snowpark ML API for end to end machine learning.
 
-**Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtimes include Python, Java, and Scala in virtual warehouses with CPU compute or Snowpark Container Services (public preview) to execute any language of choice with CPU or GPU compute.
+**Elastic Compute Runtimes** - Snowpark provides elastic compute runtimes for secure execution of your code in Snowflake. Runtime options include: Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
 
 Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
-### What is Snowpark ML?
+### What is Snowflake ML?
 
-[Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index?_fsi=g3LX4YOG) includes the Python library and underlying infrastructure for end-to-end ML workflows in Snowflake. With Snowpark ML, data scientists and ML engineers can use familiar Python frameworks for preprocessing, feature engineering, and training models that can be managed entirely in Snowflake without any data movement, silos or governance trade-offs. Snowpark ML has 2 components: Snowpark ML Modeling for model development and Snowpark ML Operations including the Snowpark Model Registry (public preview) for model management and batch inference.
+Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use ML Functions to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
-![Snowpark](assets/snowpark_ml.png)
+To get started with Snowflake ML, developers can use the Python APIs from the [Snowpark ML library](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index), directly from Snowflake Notebooks (public preview) or downloaded and installed into any IDE of choice, including Jupyter or Hex.
+
+![Snowpark](assets/snowflake_ml.png)
 
 This quickstart will focus on
 
 - Snowpark ML Modeling API, which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake.
 
-- Snowpark Model Registry, which provides scalable and secure model management of ML models in Snowflake, regardless of origin.
+- Snowflake Model Registry, which provides scalable and secure model management of ML models in Snowflake, regardless of origin.
 Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features.
 
 **Feature Engineering and Preprocessing** - Improve performance and scalability with distributed execution for common scikit-learn preprocessing functions.
 
-**Model Training** - Accelerate model training for scikit-learn, XGBoost and LightGBM models without the need to manually create stored procedures or user-defined functions (UDFs), and leverage distributed hyperparameter optimization (public preview).
+**Model Training** - Accelerate model training for scikit-learn, XGBoost and LightGBM models without the need to manually create stored procedures or user-defined functions (UDFs), and leverage distributed hyperparameter optimization.
 
 ![Snowpark](assets/snowpark_ml_modeling.png)
 
 **Model Management and Batch Inference** - Manage several types of ML models created both within and outside Snowflake and execute batch inference.
 
-![Snowpark](assets/snowpark_ml_arch.png)
+![Snowpark](assets/snowflake_ml_arch.png)
 
 ### What is Streamlit?
 
@@ -70,15 +72,18 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
 - How to create Snowflake Tasks to automate data pipelines
 - How to train ML model using Snowpark ML in Snowflake
-- How to register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+- How to register ML model and use it for inference from Snowpark ML Model Registry
 - How to create Streamlit application that uses the ML Model for inference based on user input
+
+### What You Will Build
+
+- A data engineering pipeline
+- A machine learning model
+- A Streamlit application
 
 ### Prerequisites
 
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-- [Python 3.11](https://www.python.org/downloads/) installed
-  - Note that you will be creating a Python environment with 3.11 in the **Get Started** step
-- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 > aside positive
@@ -87,11 +92,11 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 <!-- ------------------------ -->
 ## Setup Environment
 
-Duration: 15
+Duration: 8
 
-### Create Tables, Load Data and Setup Stages
+### Create Tables and Load Data
 
-Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, load data from Amazon S3, and setup Snowflake internal stages.
+Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables and load data from Amazon S3.
 
 > aside positive
 > IMPORTANT:
@@ -100,19 +105,20 @@ Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#
 >
 > - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
-Run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
+In a new SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR REPLACE WAREHOUSE DASH_L WAREHOUSE_SIZE=LARGE;
-CREATE OR REPLACE DATABASE DASH_DB;
-CREATE OR REPLACE SCHEMA DASH_SCHEMA;
+CREATE WAREHOUSE IF NOT EXISTS DASH_S WAREHOUSE_SIZE=SMALL;
+CREATE DATABASE IF NOT EXISTS DASH_DB;
+CREATE SCHEMA IF NOT EXISTS DASH_SCHEMA;
 
 USE DASH_DB.DASH_SCHEMA;
+USE WAREHOUSE DASH_S;
 ```
 
-Run the following SQL commands to create table **CAMPAIGN_SPEND** from data hosted on publicly accessible S3 bucket.
+In the same SQL worksheet, run the following SQL commands to create table **CAMPAIGN_SPEND** from data hosted on publicly accessible S3 bucket.
 
 ```sql
 CREATE or REPLACE file format csvformat
@@ -136,7 +142,7 @@ COPY into CAMPAIGN_SPEND
   from @campaign_data_stage;
 ```
 
-Run the following SQL commands to create table **MONTHLY_REVENUE** from data hosted on publicly accessible S3 bucket.
+In the same SQL worksheet, run the following SQL commands to create table **MONTHLY_REVENUE** from data hosted on publicly accessible S3 bucket.
 
 ```sql
 CREATE or REPLACE stage monthly_revenue_data_stage
@@ -153,7 +159,7 @@ COPY into MONTHLY_REVENUE
   from @monthly_revenue_data_stage;
 ```
 
-Run the following SQL commands to create table **BUDGET_ALLOCATIONS_AND_ROI** that holds the last six months of budget allocations and ROI.
+In the same SQL worksheet, run the following SQL commands to create table **BUDGET_ALLOCATIONS_AND_ROI** that holds the last six months of budget allocations and ROI.
 
 ```sql
 CREATE or REPLACE TABLE BUDGET_ALLOCATIONS_AND_ROI (
@@ -175,153 +181,57 @@ VALUES
 ('June',35,50,35,85,8.22);
 ```
 
-Run the following commands to create Snowflake [internal stages](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage) for storing Stored Procedures, UDFs, and ML model files.
-
-```sql
-CREATE OR REPLACE STAGE dash_sprocs;
-CREATE OR REPLACE STAGE dash_models;
-CREATE OR REPLACE STAGE dash_udfs;
-```
-
-Optionally, you can also open [setup.sql](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/setup.sql) in Snowsight and run all SQL statements to create the objects and load data from AWS S3.
+Optionally, you can also open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/setup.sql) in Snowsight and run all SQL statements to create the objects and load data from AWS S3.
 
 > aside positive
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
 <!-- ------------------------ -->
-## Get Started
-
-Duration: 8
-
-This section covers cloning of the GitHub repository and setting up your Snowpark for Python environment.
-
-### Clone GitHub Repository
-
-The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn). This repository contains all the code you will need to successfully complete this QuickStart Guide.
-
-Using HTTPS:
-
-```shell
-git clone https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python.git
-```
-
-OR, using SSH:
-
-```shell
-git clone git@github.com:Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python.git
-```
-
-### Snowpark for Python
-
-To complete the **Data Engineering** and **Machine Learning** steps, you have the option to either install everything locally (option 1) or use Hex (option 2) as described below.
-
-#### Option 1 -- Local Installation
-
-**Step 1:** Download and install the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.11, for example, [virtualenv](https://virtualenv.pypa.io/en/latest/))*.
-
-**Step 2:** Open a new terminal window and execute the following commands in the same terminal window.
-
-**Step 3:** Create Python 3.11 conda environment called **snowpark-de-ml** by running the following command in the same terminal window
-
-```python
-conda create --name snowpark-de-ml -c https://repo.anaconda.com/pkgs/snowflake python=3.11
-```
-
-**Step 4:** Activate conda environment **snowpark-de-ml** by running the following command in the same terminal window
-
-```python
-conda activate snowpark-de-ml
-```
-
-**Step 5:** Install Snowpark Python, Snowpark ML, and other libraries in conda environment **snowpark-de-ml** from [Snowflake Anaconda channel](https://repo.anaconda.com/pkgs/snowflake/) by running the following command in the same terminal window
-
-```python
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python pandas notebook
-pip install snowflake
-```
-
-**Step 6:** Update [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) with your Snowflake account details and credentials.
-
-Here's a sample ***connection.json*** based on the object names mentioned in **Setup Environment** step.
-
-```json
-{
-  "account"   : "<your_account_identifier_goes_here>",
-  "user"      : "<your_username_goes_here>",
-  "password"  : "<your_password_goes_here>",
-  "role"      : "ACCOUNTADMIN",
-  "warehouse" : "DASH_L",
-  "database"  : "DASH_DB",
-  "schema"    : "DASH_SCHEMA"
-}
-```
-
-> aside negative
-> Note: For the **account** parameter above, specify your **account identifier** and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, [refer to the documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html).
-
-#### Option 2 -- Use Hex
-
-If you choose to use your existing [Hex](https://app.hex.tech/login) account or [create a free 30-day trial account](https://app.hex.tech/signup/quickstart-30), then Snowpark for Python is built-in so you don't have to create a Python environment and install Snowpark for Python along with other libraries locally on your laptop. This will enable you to complete **Data Engineering** and **Machine Learning** steps of this QuickStart Guide directly in Hex. (See the respective steps for details on loading the Data Engineering and Machine Learning notebooks in Hex.)
-
-<!-- ------------------------ -->
 ## Data Engineering
 
-Duration: 20
+Duration: 15
 
 The Notebook linked below covers the following data engineering tasks.
 
-1) Establish secure connection from Snowpark Python to Snowflake
-2) Load data from Snowflake tables into Snowpark DataFrames
-3) Perform Exploratory Data Analysis on Snowpark DataFrames
-4) Pivot and Join data from multiple tables using Snowpark DataFrames
-5) Automate data pipelines using Snowflake Tasks
+1) Load data from Snowflake tables into Snowpark DataFrames
+2) Perform Exploratory Data Analysis on Snowpark DataFrames
+3) Pivot and Join data from multiple tables using Snowpark DataFrames
+4) Automate data pipelines using Snowflake Tasks
 
-### Data Engineering Notebook in Jupyter or Visual Studio Code
+### Data Engineering Notebook
 
 To get started, follow these steps:
 
-1) In a terminal window, browse to this folder and run `jupyter notebook` at the command line. (You may also use other tools and IDEs such Visual Studio Code.)
+1) Click on [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_DE.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
 
-2) Open and run through the cells in [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb)
+2) In your Snowflake account:
+  * On the left hand navigation menu, click on **Projects** >> **Notebooks**  
+  * On the top right, click on **Notebook** down arrow and select **Import .ipynb file** from the dropdown menu
+  * Select the file you downloaded in step 1 above
 
-> aside positive
-> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark-de-ml***-- which is the name of the environment created in **Clone GitHub Repository** step.
+3) In the Create Notebook popup
+  * For **Notebook location**, select DASH_DB and DASH_SCHEMA
+  * For **SQL warehouse**, select DASH_S
+  * Click on **Create** button
 
-### Data Engineering Notebook in Hex
+If all goes well, you should see the following Notebook:
 
-If you choose to use your existing [Hex](https://app.hex.tech/login) account or [create a free 30-day trial account](https://app.hex.tech/signup/quickstart-30), follow these steps to load the notebook and create a data connection to connect to Snowflake from Hex.
+![Snowflake DE NB](assets/snowflake_de_nb.png)
 
-1) Import [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb) as a Project in your account. For more information on importing, refer to the [docs](https://learn.hex.tech/docs/versioning/import-export).
+4) On the top right, click on **Packages** and make sure you install `snowflake` package by typing it in the search box and clicking on the first one.
 
-2) Then, instead of using the [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) to connect to Snowflake, create a [Data Connection](https://learn.hex.tech/tutorials/connect-to-data/get-your-data#set-up-a-data-connection-to-your-database) and use that in the Data Engineering Notebook as shown below.
+![Snowflake DE NB](assets/snowflake_de_nb_packages.png)
 
-![HEX Data Connection](assets/hex_data_connection.png)
+5) On the top right, click on **Start**. ***(NOTE: The first time it will take a couple of mins to install the packages.)***
 
-> aside negative
-> Note: You can also create shared data connections for your projects and users in your workspace. For more details, refer to the [docs](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections).
-
-3) Replace the following code snippet in the notebook
-
-```python
-connection_parameters = json.load(open('connection.json'))
-session = Session.builder.configs(connection_parameters).create()
-```
-
-**with...**
-
-```python
-import hextoolkit
-hex_snowflake_conn = hextoolkit.get_data_connection('YOUR_DATA_CONNECTION_NAME')
-session = hex_snowflake_conn.get_snowpark_session()
-session.sql('USE SCHEMA DASH_SCHEMA').collect()
-```
+6) Once the packages are installed and the state changes from **Start** >> **Starting** >> **Active**, you can either click on **Run all** to execute all cells, or you can run individual cells in the order from top to bottom by clicking on the play icon on the top right corner of each cell. 
 
 <!-- ------------------------ -->
 ## Data Pipelines
 
 You can also operationalize the data transformations in the form of automated data pipelines running in Snowflake.
 
-In particular, in the [Data Engineering Notebook](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb), there's a section that demonstrates how to optionally build and run the data transformations as [Snowflake Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
+In particular, in the [Data Engineering Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_DE.ipynb), there's a section that demonstrates how to optionally build and run the data transformations as [Snowflake Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
 
 For reference purposes, here are the code snippets.
 
@@ -361,7 +271,7 @@ my_task = Task(name='campaign_spend_data_pipeline_task'
                , definition=StoredProcedureCall(
                    campaign_spend_data_pipeline, stage_location='@dash_sprocs'
                )
-               , warehouse='DASH_L'
+               , warehouse='DASH_S'
                , schedule=timedelta(minutes=3))
 
 tasks = root.databases[session.get_current_database()].schemas[session.get_current_schema()].tasks
@@ -398,14 +308,14 @@ with DAG("de_pipeline_dag", schedule=timedelta(minutes=3)) as dag:
                         , definition=StoredProcedureCall(
                                     campaign_spend_data_pipeline, stage_location='@dash_sprocs'
                                 )
-                        ,warehouse='DASH_L'
+                        ,warehouse='DASH_S'
                         )
     # Create a task that runs our second pipleine
     dag_revenue_task = DAGTask(name='monthly_revenue_data_pipeline'
                           , definition=StoredProcedureCall(
                                 monthly_revenue_data_pipeline, stage_location='@dash_sprocs'
                             )
-                        ,warehouse='DASH_L'
+                        ,warehouse='DASH_S'
                         )
 
 # Shift right and left operators can specify task relationships
@@ -464,58 +374,43 @@ You can also enable push notifications to a cloud messaging service when errors 
 <!-- ------------------------ -->
 ## Machine Learning
 
-Duration: 20
+Duration: 15
 
 > aside negative
-> PREREQUISITE: Successful completion of Data Engineering steps outlined in [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).
+> PREREQUISITE: Successful completion of steps outlined under [Data Engineering](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_DE.ipynb).
 
 The Notebook linked below covers the following machine learning tasks.
 
-1) Establish secure connection from Snowpark Python to Snowflake
-2) Load features and target from Snowflake table into Snowpark DataFrame
-3) Prepare features for model training
-4) Train ML model using Snowpark ML in Snowflake
-5) Register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+1) Load features and target from Snowflake table into Snowpark DataFrame
+2) Prepare features for model training
+3) Train ML model using Snowpark ML in Snowflake
+4) Register ML model and use it for inference from Snowflake Model Registry
 
-### Machine Learning Notebook in Jupyter or Visual Studio Code
+### Machine Learning Notebook
 
-To get started, follow these steps:
+1) Click on [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_ML.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
 
-1) In a terminal window, browse to this folder and run `jupyter notebook` at the command line. (You may also use other tools and IDEs such Visual Studio Code.)
+2) In your Snowflake account:
+  * On the left hand navigation menu, click on **Projects** >> **Notebooks**  
+  * On the top right, click on **Notebook** down arrow and select **Import .ipynb file** from the dropdown menu
+  * Select the file you downloaded in step 1 above
 
-2) Open and run through the [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_ML.ipynb)
+3) In the Create Notebook popup
+  * For **Notebook location**, select DASH_DB and DASH_SCHEMA
+  * For **SQL warehouse**, select DASH_S
+  * Click on **Create** button
 
-> aside positive
-> IMPORTANT: Make sure in the Jupyter notebook the (Python) kernel is set to ***snowpark-de-ml*** -- which is the name of the environment created in **Clone GitHub Repository** step.
+If all goes well, you should see the following:
 
-### Machine Learning Notebook in Hex
+![Snowflake DE NB](assets/snowflake_ml_nb.png)
 
-If you choose to use your existing [Hex](https://app.hex.tech/login) account or [create a free 30-day trial account](https://app.hex.tech/signup/quickstart-30), follow these steps to load the notebook and create a data connection to connect to Snowflake from Hex.
+3) On the top right, click on **Packages** and make sure you install `snowflake-ml` package by typing it in the search box and selecting the first one.
 
-1) Import [Snowpark_For_Python_ML.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_ML.ipynb) as a Project in your account. For more information on importing, refer to the [docs](https://learn.hex.tech/docs/versioning/import-export).
+![Snowflake DE NB](assets/snowflake_ml_nb_packages.png)
 
-2) Then, instead of using the [connection.json](https://github.com/Snowflake-Labs/sfguide-ml-model-snowpark-python-scikit-learn-streamlit/blob/main/connection.json) to connect to Snowflake, create a [Data Connection](https://learn.hex.tech/tutorials/connect-to-data/get-your-data#set-up-a-data-connection-to-your-database) and use that in the Machine Learning Notebook as shown below.
+5) On the top right, click on **Start**. ***(NOTE: The first time it will take a couple of mins to install the packages.)***
 
-![HEX Data Connection](assets/hex_data_connection.png)
-
-> aside negative
-> Note: You can also create shared data connections for your projects and users in your workspace. For more details, refer to the [docs](https://learn.hex.tech/docs/administration/workspace_settings/workspace-assets#shared-data-connections).
-
-3) Replace the following code snippet in the notebook
-
-```python
-connection_parameters = json.load(open('connection.json'))
-session = Session.builder.configs(connection_parameters).create()
-```
-
-**with...**
-
-```python
-import hextoolkit
-hex_snowflake_conn = hextoolkit.get_data_connection('YOUR_DATA_CONNECTION_NAME')
-session = hex_snowflake_conn.get_snowpark_session()
-session.sql('USE SCHEMA DASH_SCHEMA').collect()
-```
+6) Once the packages are installed and the state changes from **Start** >> **Starting** >> **Active**, you can either click on **Run all** to execute all cells, or you can run individual cells in the order from top to bottom by clicking on the play icon on the top right corner of every cell. 
 
 <!-- ------------------------ -->
 ## Streamlit Application
@@ -530,7 +425,7 @@ Follow these steps to build Streamlit application in Snowsight.
 
 **Step 3.** Enter **App title**
 
-**Step 4.** Select **App location** (DASH_DB and DASH_SCHEMA) and **App warehouse** (DASH_L) 
+**Step 4.** Select **App location** (DASH_DB and DASH_SCHEMA) and **App warehouse** (DASH_S) 
 
 **Step 5.** Click on **Create**
 
@@ -567,8 +462,6 @@ root_task.suspend()
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 3
-
 Congratulations! You've successfully performed data engineering tasks and trained a Linear Regression model to predict future ROI (Return On Investment) of variable advertising spend budgets across multiple channels including Search, Video, Social Media, and Email using Snowpark for Python and scikit-learn. And then you created a Streamlit application that uses that model to generate predictions on new budget allocations based on user input.
 
 We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/XKd8rXPUNs2G1yM28).
@@ -579,14 +472,13 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
 - How to create Snowflake Tasks to automate data pipelines
 - How to train ML model using Snowpark ML in Snowflake
-- How to register ML model and use it for inference from Snowpark ML Model Registry (currently in public preview)
+- How to register ML model and use it for inference from Snowflake Model Registry
 - How to create Streamlit application that uses the ML Model for inference based on user input
 
 ### Related Resources
 
-- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [Intro to Machine Learning with Snowpark ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/index.html)
-- [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
-- [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
+- [Snowpark ML Modeling](https://docs.snowflake.com/developer-guide/snowpark-ml/modeling)
+- [Snowpark ML Model Registry](https://docs.snowflake.com/developer-guide/snowpark-ml/model-registry/overview)

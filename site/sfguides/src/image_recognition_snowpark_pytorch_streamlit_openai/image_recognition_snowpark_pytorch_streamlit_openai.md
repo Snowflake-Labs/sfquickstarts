@@ -62,7 +62,7 @@ Two web-based image recognition applications in Streamlit. These applications ca
 
 ### Prerequisites
 
-- A [Snowflake account](https://signup.snowflake.com/)
+- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_)
   - Login to your Snowflake account with the admin credentials that were created with the account in one browser tab (a role with ORGADMIN privileges). Keep this tab open during the session.
     - Click on the **Billing** on the left side panel
     - Click on **Terms and Billing**
