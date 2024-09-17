@@ -220,7 +220,7 @@ To put it all together, let's create a Streamlit application in Snowflake.
 
 - At this point, you will be provided code for an example Streamlit application
 
-**Step 6.** Replace the entire sample application code on the left with the following code snippet.
+**Step 6.** Replace the entire sample application code on the left with the following code snippet or you can also copy it from the [GitHub repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-arctic-and-snowflake-cortex/main/sis.py).
 
 ```python
 import streamlit as st
@@ -347,6 +347,7 @@ Congratulations! You've successfully completed the Getting Started with Snowflak
 > aside positive
 > NOTE: For an end-to-end experience using Snowflake Notebooks, download this [.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-arctic-and-snowflake-cortex/blob/main/getting_started_with_snowflake_arctic_and_cortex.ipynb) and [import](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import) it in your Snowflake account.
 
+- [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-arctic-and-snowflake-cortex)
 - [Snowflake Cortex: Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Snowflake Cortex: LLM Functions](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions)
 - [Snowflake Cortex: LLM Functions Cost Considerations](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#cost-considerations) and [Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf#page=9)
