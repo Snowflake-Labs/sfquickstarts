@@ -101,6 +101,11 @@
       "source": "guide/snowpark_python_top_three_tips_for_optimal_performance/{,/**}",
       "destination": "/guide/snowpark_python_top_tips_for_optimal_performance",
       "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_document_ai/{,/**}",
+      "destination": "/guide/automating_document_processing_workflows_with_document_ai",
+      "type": 301
     }
     ]
   }
