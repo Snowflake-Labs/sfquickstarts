@@ -140,7 +140,9 @@ FROM CARTO_ACADEMY.CARTO.DATAAPPEAL_RESTAURANTS_AND_CAFES_BERLIN_CPG
 WHERE REGEXP_SUBSTR(street_address, '(\\d{5})') is not null
 AND city ILIKE 'berlin';
 ```
-This Worldwide Address Data dataset contains more than 500M addresses around the world and we will use it for geocoding and reverse geocoding. However some addresses in that dataset contain addresses with coordinates outside of the allowed boundaries for latitude and longitude. Run the following query to create a new table that filters out those "invalid" records and includes a new column, `LOCATION`, which stores the locations in the `GEOGRAPHY` type:
+If you check the size of `GEOLAB.PUBLIC.GEOCODING_ADDRESSES` table you'll see that it has about 10K rows.
+
+The Worldwide Address Data dataset contains more than 500M addresses around the world and we will use it for geocoding and reverse geocoding. However some addresses in that dataset contain addresses with coordinates outside of the allowed boundaries for latitude and longitude. Run the following query to create a new table that filters out those "invalid" records and includes a new column, `LOCATION`, which stores the locations in the `GEOGRAPHY` type:
 
 ```
 CREATE OR REPLACE TABLE GEOLAB.PUBLIC.OPENADDRESS AS
