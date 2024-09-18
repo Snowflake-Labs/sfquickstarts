@@ -18,7 +18,7 @@ Snowflake offers a rich toolkit for predictive analytics with a geospatial compo
 ### Prerequisites
 * Understanding of [Discrete Global Grid H3](https://www.snowflake.com/blog/getting-started-with-h3-hexagonal-grid/)
 * Recommend: Understanding of [Geospatial Data Types](https://docs.snowflake.com/en/sql-reference/data-types-geospatial) and [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial) in Snowflake
-* Recommended: Complete [Geospatial Analysis using Geometry Data Type](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) quickstart
+* Recommended: Complete [Geospatial Analysis using Geometry and Geography Data Types](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) quickstart
 * Recommended: Complete [Performance Optimization Techniques for Geospatial queries](https://quickstarts.snowflake.com/guide/geo_performance/index.html?index=..%2F..index#0) quickstart
 
 ### What You’ll Learn
@@ -1330,5 +1330,5 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 
 ### Related Resources
 - [Geospatial Analytics for Retail with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html)
-- [Geospatial Analysis using Geometry Data Type quickstart](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) 
+- [Geospatial Analysis using Geometry and Geography Data Types quickstart](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) 
 - [Performance Optimization Techniques for Geospatial queries](https://quickstarts.snowflake.com/guide/geo_performance/index.html?index=..%2F..index#0)
