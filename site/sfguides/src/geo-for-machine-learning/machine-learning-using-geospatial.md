@@ -96,6 +96,9 @@ Duration: 40
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
 
+> aside positive
+>  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
+
 In this lab, we will demonstrate how to perform geocoding and reverse geocoding using datasets and applications from the Marketplace. You will learn how to:
 - Perform address cleansing
 - Convert an address into a location (geocoding)
