@@ -210,7 +210,7 @@ SELECT geom, geoid, street_address, name,
         FROM ADVANCED_ANALYTICS.PUBLIC.GEOCODING_ADDRESSES;
 ```
 
-On a `LARGE` warehouse, which we used in this quickstart, the query completed in about 13 minutes. However, on a smaller warehouse, the completion time is roughly the same. We don't recommend using a warehouse larger than `MEDIUM` for CORTEX LLM functions, as it won't significantly reduce execution time. If you plan to execute complex processing with LLM on a large dataset, it's better to split the dataset into chunks up to 10K rows each and run multiple jobs in parallel using an `X-Small` warehouse. A rule of thumb is that on an `X-Small`, data cleansing of 1,000 rows can be done within 90 seconds, which costs about 5 cents.
+On a `LARGE` warehouse, which we used in this quickstart, the query completed in about 13 minutes. However, on a smaller warehouse, the completion time is roughly the same. We don't recommend using a warehouse larger than `MEDIUM` for CORTEX LLM functions, as it won't significantly reduce execution time. If you plan to execute complex processing with LLM on a large dataset, it's better to split the dataset into chunks up to 100K rows each and run multiple jobs in parallel using an `X-Small` warehouse. A rule of thumb is that on an `X-Small`, data cleansing of 1,000 rows can be done within 90 seconds, which costs about 5 cents.
 
 Now, you will convert the parsed address into JSON type:
 
