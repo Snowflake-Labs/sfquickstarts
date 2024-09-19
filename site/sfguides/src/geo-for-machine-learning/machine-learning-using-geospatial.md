@@ -131,12 +131,12 @@ Another dataset that you will use in this Lab is Worldwide Address Data and you 
 Nice! You have just got two listings that you will need for this project.
 
 ### Step 2. Data Preparation
-To showcase geocoding techniques in this lab, and to evaluate the quality of our approach you will use a table `CARTO_ACADEMY.CARTO.DATAAPPEAL_RESTAURANTS_AND_CAFES_BERLIN_CPG` with locations of restaurants and cafes in Berlin. If you look into that table you will notice that some records don't have full or correct information in the `STREET_ADDRESS` column. To be able to calculate the correct quality metrics in this lab lets do a simple cleanup of the low quality datapoint. Run the following query to create a table that has only records that have 5-digits postcode and those records are in Berlin.
+To showcase geocoding techniques in this lab, and to evaluate the quality of our approach you will use a table `CARTO_ACADEMY__DATA_FOR_TUTORIALS.CARTO.DATAAPPEAL_RESTAURANTS_AND_CAFES_BERLIN_CPG` with locations of restaurants and cafes in Berlin. If you look into that table you will notice that some records don't have full or correct information in the `STREET_ADDRESS` column. To be able to calculate the correct quality metrics in this lab lets do a simple cleanup of the low quality datapoint. Run the following query to create a table that has only records that have 5-digits postcode and those records are in Berlin.
 
 ```
 CREATE OR REPLACE TABLE GEOLAB.PUBLIC.GEOCODING_ADDRESSES AS
 SELECT * 
-FROM CARTO_ACADEMY.CARTO.DATAAPPEAL_RESTAURANTS_AND_CAFES_BERLIN_CPG
+FROM CARTO_ACADEMY__DATA_FOR_TUTORIALS.CARTO.DATAAPPEAL_RESTAURANTS_AND_CAFES_BERLIN_CPG
 WHERE REGEXP_SUBSTR(street_address, '(\\d{5})') is not null
 AND city ILIKE 'berlin';
 ```
