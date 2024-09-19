@@ -118,7 +118,7 @@ For this project you will use a dataset with locations of restaurants and cafes 
 
 <img src ='assets/geo_ml_10.png' width=500>
 
-Another dataset that you will use in this Lab is Worldwide Address Data and you can also get it from the Snowflake Marketplace. It's a free dataset from the OpenAddresses project that allows Snowflake customers to map lat/long information to address details. 
+Another dataset that you will use in this Lab is [Worldwide Address Data](https://app.snowflake.com/marketplace/listing/GZSNZ7F5UT/starschema-worldwide-address-data) and you can also get it from the Snowflake Marketplace. It's a free dataset from the OpenAddresses project that allows Snowflake customers to map lat/long information to address details. 
 - Search for `Worldwide Address Data` in the search bar
 - Find and click on the corresponding dataset from Starschema
 
