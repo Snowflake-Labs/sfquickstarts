@@ -72,7 +72,7 @@ Navigate to the query editor by clicking on `Worksheets` on the top left navigat
 
 <img src ='assets/geo_performance_3.png' width=700>
 
-Create a new database and schema where you will store datasets in the `GEOMETRY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
+Create a new database and schema where you will store datasets in the `GEOGRAPHY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
 ```
 CREATE DATABASE geolab;

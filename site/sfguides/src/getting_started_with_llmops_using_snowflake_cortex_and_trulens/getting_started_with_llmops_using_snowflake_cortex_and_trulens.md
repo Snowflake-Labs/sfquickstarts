@@ -99,6 +99,7 @@ Next create a new conda environment and install the packages required with the f
 conda create -n getting_started_llmops python=3.11
 conda activate getting_started_llmops
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python snowflake.core notebook ipykernel
+
 pip install trulens-core trulens-providers-cortex trulens-connectors-snowflake llama-index llama-index-embeddings-huggingface llama-index-readers-github snowflake-sqlalchemy
 ```
 
@@ -121,13 +122,13 @@ import os
 load_dotenv()
 
 connection_details = {
-  "account":  os.environ["SNOWFLAKE_ACCOUNT"],
-  "user": os.environ["SNOWFLAKE_USER"],
-  "password": os.environ["SNOWFLAKE_USER_PASSWORD"],
-  "role": os.environ["SNOWFLAKE_ROLE"],
-  "database": os.environ["SNOWFLAKE_DATABASE"],
-  "schema": os.environ["SNOWFLAKE_SCHEMA"],
-  "warehouse": os.environ["SNOWFLAKE_WAREHOUSE"]
+  "account":  os.getenv["SNOWFLAKE_ACCOUNT"],
+  "user": os.getenv["SNOWFLAKE_USER"],
+  "password": os.getenv["SNOWFLAKE_USER_PASSWORD"],
+  "role": os.getenv["SNOWFLAKE_ROLE"],
+  "database": os.getenv["SNOWFLAKE_DATABASE"],
+  "schema": os.getenv["SNOWFLAKE_SCHEMA"],
+  "warehouse": os.getenv["SNOWFLAKE_WAREHOUSE"]
 }
 
 snowpark_session = Session.builder.configs(connection_details).create()
@@ -171,7 +172,7 @@ import nest_asyncio
 
 nest_asyncio.apply()
 
-github_token = os.environ["GITHUB_TOKEN"]
+github_token = os.getenv["GITHUB_TOKEN"]
 client = GithubClient(github_token=github_token, verbose=False)
 
 reader = GithubRepositoryReader(
@@ -314,9 +315,9 @@ class CortexSearchRetriever:
     def retrieve(self, query: str) -> List[str]:
         root = Root(self._snowpark_session)
         cortex_search_service = (
-            root.databases[os.environ["SNOWFLAKE_DATABASE"]]
-            .schemas[os.environ["SNOWFLAKE_SCHEMA"]]
-            .cortex_search_services[os.environ["SNOWFLAKE_CORTEX_SEARCH_SERVICE"]]
+            root.databases[os.getenv["SNOWFLAKE_DATABASE"]]
+            .schemas[os.getenv["SNOWFLAKE_SCHEMA"]]
+            .cortex_search_services[os.getenv["SNOWFLAKE_CORTEX_SEARCH_SERVICE"]]
         )
         resp = cortex_search_service.search(
             query=query,
@@ -361,6 +362,7 @@ conn = SnowflakeConnector(
     warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
     role=os.environ["SNOWFLAKE_ROLE"],
 )
+
 session = TruSession(connector=conn)
 ```
 
@@ -460,6 +462,7 @@ tru_rag = TruCustomApp(
     app_name="RAG",
     app_version="simple",
     feedbacks=[f_groundedness, f_answer_relevance, f_context_relevance],
+    )
 )
 ```
 
@@ -539,8 +542,10 @@ Duration: 7
 We can combine the new version of our app with the feedback functions we already defined.
 
 ```python
-tru_rag = TruCustomApp(
-    rag,
+from trulens.apps.custom import TruCustomApp
+
+tru_filtered_rag = TruCustomApp(
+    filtered_rag,
     app_name="RAG",
     app_version="filtered",
     feedbacks=[f_groundedness, f_answer_relevance, f_context_relevance],
