@@ -84,7 +84,7 @@ Create a new database and schema where you will store datasets in the `GEOGRAPHY
 ```
 CREATE DATABASE advanced_analytics;
 // Set the working database schema
-USE advanced_analytics.public;
+USE ADVANCED_ANALYTICS.PUBLIC;
 USE WAREHOUSE my_wh;
 ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT='WKT';
 ```
@@ -134,18 +134,18 @@ Nice! You have just got two listings that you will need for this project.
 To showcase geocoding techniques in this lab, and to evaluate the quality of our approach you will use a table `CARTO_ACADEMY__DATA_FOR_TUTORIALS.CARTO.DATAAPPEAL_RESTAURANTS_AND_CAFES_BERLIN_CPG` with locations of restaurants and cafes in Berlin. If you look into that table you will notice that some records don't have full or correct information in the `STREET_ADDRESS` column. To be able to calculate the correct quality metrics in this lab lets do a simple cleanup of the low quality datapoint. Run the following query to create a table that has only records that have 5-digits postcode and those records are in Berlin.
 
 ```
-CREATE OR REPLACE TABLE GEOLAB.PUBLIC.GEOCODING_ADDRESSES AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.GEOCODING_ADDRESSES AS
 SELECT * 
 FROM CARTO_ACADEMY__DATA_FOR_TUTORIALS.CARTO.DATAAPPEAL_RESTAURANTS_AND_CAFES_BERLIN_CPG
 WHERE REGEXP_SUBSTR(street_address, '(\\d{5})') is not null
 AND city ILIKE 'berlin';
 ```
-If you check the size of `GEOLAB.PUBLIC.GEOCODING_ADDRESSES` table you'll see that it has about 10K rows.
+If you check the size of `ADVANCED_ANALYTICS.PUBLIC.GEOCODING_ADDRESSES` table you'll see that it has about 10K rows.
 
 The Worldwide Address Data dataset contains more than 500M addresses around the world and we will use it for geocoding and reverse geocoding. However some addresses in that dataset contain addresses with coordinates outside of the allowed boundaries for latitude and longitude. Run the following query to create a new table that filters out those "invalid" records and includes a new column, `LOCATION`, which stores the locations in the `GEOGRAPHY` type:
 
 ```
-CREATE OR REPLACE TABLE GEOLAB.PUBLIC.OPENADDRESS AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.OPENADDRESS AS
 SELECT ST_POINT(lon, lat) as location, *
 FROM WORLDWIDE_ADDRESS_DATA.ADDRESS.OPENADDRESS
 WHERE lon between -180 and 180
@@ -171,7 +171,7 @@ You are now ready to provide the CORTEX.COMPLETE() function with instructions on
 As a general rule when writing a prompt, the instructions should be simple, clear, and complete. For example, you should clearly define the task as parsing an address into a JSON object. It's important to define the constraints of the desired output; otherwise, the LLM may produce unexpected results. Below, you specifically instruct the LLM to parse the address stored as text and explicitly tell it to respond in JSON format.
 
 ```
-CREATE OR REPLACE TABLE GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES as
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.GEOCODING_CLEANSED_ADDRESSES as
 SELECT geom, geoid, street_address, name,
     snowflake.cortex.complete('mixtral-8x7b', 
     concat('Task: Your job is to return a JSON formatted response that normalizes, standardizes, and enriches the following address,
@@ -204,7 +204,7 @@ SELECT geom, geoid, street_address, name,
             Output: {"number": "28c", "street": "Plaza de España", "city": "Madrid", "postcode": "28008", "country": "ES"}
             Input: "1d Prinzessinenstrase, Berlín, 10969, Germany"
             Output: {"number": "1d", "street": "Prinzessinnenstraße", "city": "Berlin", "postcode": "10969", "country": "DE"} ')) as parsed_address 
-        FROM GEOLAB.PUBLIC.GEOCODING_ADDRESSES;
+        FROM ADVANCED_ANALYTICS.PUBLIC.GEOCODING_ADDRESSES;
 ```
 
 On a `LARGE` warehouse, which we used in this quickstart, the query completed in about 13 minutes. However, on a smaller warehouse, the completion time is roughly the same. We don't recommend using a warehouse larger than `MEDIUM` for CORTEX LLM functions, as it won't significantly reduce execution time. If you plan to execute complex processing with LLM on a large dataset, it's better to split the dataset into chunks and run multiple jobs in parallel using an `X-Small` warehouse. A rule of thumb is that on an `X-Small`, data cleansing of 1,000 rows can be done within 90 seconds, which costs about 5 cents.
@@ -212,10 +212,10 @@ On a `LARGE` warehouse, which we used in this quickstart, the query completed in
 Now, you will convert the parsed address into JSON type:
 
 ```
-CREATE OR REPLACE TABLE GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.GEOCODING_CLEANSED_ADDRESSES AS
 SELECT geoid, geom, street_address, name,
 TRY_PARSE_JSON(parsed_address) AS parsed_address,
-FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES;
+FROM ADVANCED_ANALYTICS.PUBLIC.GEOCODING_CLEANSED_ADDRESSES;
 ```
 
 Run the following query to check what the result of cleansing looks like in the `PARSED_ADDRESS` column and compare it with the actual address in the `STREET_ADDRESS` column.
@@ -223,13 +223,13 @@ Run the following query to check what the result of cleansing looks like in the 
 ```
 ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT='WKT';
 
-SELECT TOP 10 * FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES;
+SELECT TOP 10 * FROM ADVANCED_ANALYTICS.PUBLIC.GEOCODING_CLEANSED_ADDRESSES;
 ```
 
 You also can notice that 23 addresses were not correctly parsed, but if you look into the `STREET_ADDRESS` column of those records using the following query, you can understand why they were not parsed: in most cases there are some address elements missing in the initial address.
 
 ```
-SELECT * FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES
+SELECT * FROM ADVANCED_ANALYTICS.PUBLIC.GEOCODING_CLEANSED_ADDRESSES
 WHERE parsed_address IS NULL;
 ```
 
@@ -240,7 +240,7 @@ In this step, you will use the Worldwide Address Data to perform geocoding. You 
 To the initial table with actual location and address, you will add columns with geocoded and parsed values for country, city, postcode, street, and building number. Run the following query:
 
 ```
-CREATE OR REPLACE TABLE GEOLAB.PUBLIC.GEOCODED AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.GEOCODED AS
 SELECT 
     t1.name,
     t1.geom AS actual_location,
@@ -250,8 +250,8 @@ SELECT
     t2.postcode as geocoded_postcode, 
     t2.number as geocoded_number, 
     t2.city as geocoded_city
-FROM GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES t1
-LEFT JOIN GEOLAB.PUBLIC.OPENADDRESS t2
+FROM ADVANCED_ANALYTICS.PUBLIC.GEOCODING_CLEANSED_ADDRESSES t1
+LEFT JOIN ADVANCED_ANALYTICS.PUBLIC.OPENADDRESS t2
 ON t1.parsed_address:postcode::string = t2.postcode
 AND t1.parsed_address:number::string = t2.number
 AND LOWER(t1.parsed_address:country::string) = LOWER(t2.country)
@@ -262,21 +262,21 @@ AND JAROWINKLER_SIMILARITY(LOWER(t1.parsed_address:street::string), LOWER(t2.str
 Now let's analyze the results of geocoding and compare the locations we obtained after geocoding with the original addresses. First, let's see how many addresses we were not able to geocode using this approach.
 
 ```
-SELECT count(*) FROM GEOLAB.PUBLIC.GEOCODED
+SELECT count(*) FROM ADVANCED_ANALYTICS.PUBLIC.GEOCODED
 WHERE geocoded_location IS NULL;
 ```
 
 It turned out that 2,081 addresses were not geocoded, which is around 21% of the whole dataset. Let's see how many geocoded addresses deviate from the original location by more than 200 meters.
 
 ```
-SELECT COUNT(*) FROM GEOLAB.PUBLIC.GEOCODED
+SELECT COUNT(*) FROM ADVANCED_ANALYTICS.PUBLIC.GEOCODED
 WHERE ST_DISTANCE(actual_location, geocoded_location) > 200;
 ```
 
 It seems there are 174 addresses. Let's examine random records from these 174 addresses individually by running the query below. You can visualize coordinates from the table with results using [this](https://clydedacruz.github.io/openstreetmap-wkt-playground/) service (copy-paste `GEOCODED_LOCATION` and `ACTUAL_LOCATION` values). 
 
 ```
-SELECT * FROM GEOLAB.PUBLIC.GEOCODED
+SELECT * FROM ADVANCED_ANALYTICS.PUBLIC.GEOCODED
 WHERE ST_DISTANCE(actual_location, geocoded_location) > 200;
 ```
 
@@ -288,7 +288,7 @@ In this exercise, you successfully geocoded more than 78% of the entire dataset.
 
 In the next step, we will do the opposite - for a given location, we will get the address. Often, companies have location information and need to convert it into the actual address. Similar to the previous example, the best way to do reverse geocoding is to use specialized services, such as Mapbox or TravelTime. However, there are cases where you're ready to trade off between accuracy and cost. For example, if you don't need an exact address but a zip code would be good enough. In this case, you can use free datasets to perform reverse geocoding.
 
-To complete this exercise, we will use the nearest neighbor approach. For locations in our test dataset (`GEOLAB.PUBLIC.GEOCODING_ADDRESSES` table), you will find the closest locations from the Worldwide Address Data. Let's first create a procedure that, for each row in the given table with addresses, finds the closest address from the Worldwide Address Data table within the radius of 5km. To speed up the function we will apply an iterative approach to the neighbor search - start from 10 meters and increase the search radius until a match is found or the maximum radius is reached. Run the following query:
+To complete this exercise, we will use the nearest neighbor approach. For locations in our test dataset (`ADVANCED_ANALYTICS.PUBLIC.GEOCODING_ADDRESSES` table), you will find the closest locations from the Worldwide Address Data. Let's first create a procedure that, for each row in the given table with addresses, finds the closest address from the Worldwide Address Data table within the radius of 5km. To speed up the function we will apply an iterative approach to the neighbor search - start from 10 meters and increase the search radius until a match is found or the maximum radius is reached. Run the following query:
 
 ```
 CREATE OR REPLACE PROCEDURE GEOCODING_EXACT(
@@ -391,19 +391,19 @@ BEGIN
 END
 $$;
 ```
-Run the next query to call that procedure and store results of reverse geocoding to `GEOLAB.PUBLIC.REVERSE_GEOCODED` table:
+Run the next query to call that procedure and store results of reverse geocoding to `ADVANCED_ANALYTICS.PUBLIC.REVERSE_GEOCODED` table:
 
 ```
-CALL GEOCODING_EXACT('GEOLAB.PUBLIC.REVERSE_GEOCODED', 'GEOLAB.PUBLIC.GEOCODING_ADDRESSES', 'GEOID', 'GEOM', 'GEOLAB.PUBLIC.OPENADDRESS', 'LOCATION');
+CALL GEOCODING_EXACT('ADVANCED_ANALYTICS.PUBLIC.REVERSE_GEOCODED', 'ADVANCED_ANALYTICS.PUBLIC.GEOCODING_ADDRESSES', 'GEOID', 'GEOM', 'ADVANCED_ANALYTICS.PUBLIC.OPENADDRESS', 'LOCATION');
 ```
-This query completed in 5.5 minutes on `LARGE` warehouse, which corresponds to about 2 USD. Let's now compare the address we get after the reverse geocoding (`GEOLAB.PUBLIC.REVERSE_GEOCODED` table) with the table that has the original address.
+This query completed in 5.5 minutes on `LARGE` warehouse, which corresponds to about 2 USD. Let's now compare the address we get after the reverse geocoding (`ADVANCED_ANALYTICS.PUBLIC.REVERSE_GEOCODED` table) with the table that has the original address.
 
 ```
 SELECT t1.geoid, 
     t2.street_address AS actual_address,
     t1.street || ' ' || t1.number || ', ' || t1.postcode || ' ' || t1.city  || ', ' || t1.country AS geocoded_address
-FROM GEOLAB.PUBLIC.REVERSE_GEOCODED t1
-INNER JOIN GEOLAB.PUBLIC.GEOCODING_CLEANSED_ADDRESSES t2
+FROM ADVANCED_ANALYTICS.PUBLIC.REVERSE_GEOCODED t1
+INNER JOIN ADVANCED_ANALYTICS.PUBLIC.GEOCODING_CLEANSED_ADDRESSES t2
     ON t1.geoid = t2.geoid
 WHERE t1.distance < 100;
 ```
@@ -412,8 +412,8 @@ For 9830 records, the closest addresses we found are within 100 meters from the 
 
 ```
 SELECT count(*)
-FROM geolab.advanced_analytics.REVERSE_GEOCODED t1
-INNER JOIN geolab.advanced_analytics.geocoding_cleansed_addresses t2
+FROM ADVANCED_ANALYTICS.PUBLIC.REVERSE_GEOCODED t1
+INNER JOIN ADVANCED_ANALYTICS.PUBLIC.GEOCODING_CLEANSED_ADDRESSES t2
     ON t1.geoid = t2.geoid
 WHERE t2.parsed_address:postcode::string = t1.postcode::string;
 ```
@@ -424,8 +424,8 @@ Out of curiosity, let's see, for how many addresses the geocoded and initial add
 
 ```
 SELECT count(*)
-FROM geolab.advanced_analytics.REVERSE_GEOCODED t1
-INNER JOIN geolab.advanced_analytics.geocoding_cleansed_addresses t2
+FROM ADVANCED_ANALYTICS.PUBLIC.REVERSE_GEOCODED t1
+INNER JOIN ADVANCED_ANALYTICS.PUBLIC.GEOCODING_CLEANSED_ADDRESSES t2
     ON t1.geoid = t2.geoid
 WHERE t2.parsed_address:postcode::string = t1.postcode
 AND LOWER(t2.parsed_address:country::string) = LOWER(t1.country)
@@ -437,8 +437,8 @@ AND JAROWINKLER_SIMILARITY(LOWER(t2.parsed_address:street::string), LOWER(t1.str
 
 ```
 SELECT count(*)
-FROM geolab.advanced_analytics.REVERSE_GEOCODED t1
-INNER JOIN geolab.advanced_analytics.geocoding_cleansed_addresses t2
+FROM ADVANCED_ANALYTICS.PUBLIC.REVERSE_GEOCODED t1
+INNER JOIN ADVANCED_ANALYTICS.PUBLIC.GEOCODING_CLEANSED_ADDRESSES t2
     ON t1.geoid = t2.geoid
 WHERE t2.parsed_address:postcode::string = t1.postcode
 AND t2.parsed_address:number::string = t1.number
@@ -519,7 +519,7 @@ As a source of the trips data you will use `TLC_YELLOW_TRIPS_2014` and `TLC_YELL
 
 First, specify the default Database, Schema and the Warehouse:
 ```
-USE advanced_analytics.public;
+USE ADVANCED_ANALYTICS.PUBLIC;
 USE WAREHOUSE my_wh;
 ```
 
@@ -530,7 +530,7 @@ Since CARTO's tables contain raw data you might want to clean it before storing.
 And since you are interested in trip data for 2014 and 2015 you need to union `TLC_YELLOW_TRIPS_2014` and `TLC_YELLOW_TRIPS_2015` tables. On average, the execution time on the LARGE warehouse is under 4 minutes.
 
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides AS
 SELECT CONVERT_TIMEZONE('UTC', 'America/New_York', to_timestamp(PICKUP_DATETIME::varchar)) PICKUP_TIME,
        CONVERT_TIMEZONE('UTC', 'America/New_York', to_timestamp(DROPOFF_DATETIME::varchar)) DROPOFF_TIME,
        st_point(PICKUP_LONGITUDE, PICKUP_LATITUDE) AS PICKUP_LOCATION,
@@ -559,26 +559,26 @@ WHERE pickup_latitude BETWEEN -90 AND 90
 Now you will create a table where, for each pair of timestamp/H3, we calculate the number of trips. You will strip off minutes and seconds and keep only hours.
 
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_h3 AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3 AS
 SELECT TIME_SLICE(pickup_time, 60, 'minute', 'START') AS pickup_time,
        H3_POINT_TO_CELL_string(pickup_location, 8) AS h3,
        count(*) AS pickups
-FROM advanced_analytics.public.ny_taxi_rides
+FROM ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides
 GROUP BY 1, 2;
 ```
 
 Since on resolution 8, you might have more than 1000 hexagons for New York, to speed up the training process, you will keep only hexagons that had more than 1M pickups in 2014.  This is shown in the following code block. 
 
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_h3 
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3 
 AS WITH all_hexagons AS
   (SELECT h3,
           SUM(pickups) AS total_pickups
-   FROM advanced_analytics.public.ny_taxi_rides_h3
+   FROM ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3
    WHERE year(pickup_time) = 2014
    GROUP BY 1)
 SELECT t1.*
-FROM advanced_analytics.public.ny_taxi_rides_h3 t1
+FROM ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3 t1
 INNER JOIN all_hexagons t2 ON t1.h3 = t2.h3
 WHERE total_pickups >= 1000000;
 ```
@@ -586,16 +586,16 @@ WHERE total_pickups >= 1000000;
 It's important to remember that if the raw data lacks records for a specific hour and area combination, the aggregated data for that period should be marked as 0. This step is crucial for accurate time series prediction. Run the following query to add records indicating that there were zero trips for any H3 location and timestamp pair without recorded trips.
 
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_h3 AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3 AS
 WITH all_dates_hexagons AS (
     SELECT DATEADD(HOUR, VALUE::int, '2014-01-01'::timestamp) AS pickup_time, h3
     FROM TABLE(FLATTEN(ARRAY_GENERATE_RANGE(0, DATEDIFF('hour', '2014-01-01', '2015-12-31 23:59:00') + 1)))
-    CROSS JOIN (SELECT DISTINCT h3 FROM advanced_analytics.public.ny_taxi_rides_h3)
+    CROSS JOIN (SELECT DISTINCT h3 FROM ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3)
 )
 SELECT t1.pickup_time, 
 t1.h3, IFF(t2.pickups IS NOT NULL, t2.pickups, 0) AS pickups
 FROM all_dates_hexagons t1
-LEFT JOIN advanced_analytics.public.ny_taxi_rides_h3 t2 
+LEFT JOIN ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3 t2 
 ON t1.pickup_time = t2.pickup_time AND t1.h3 = t2.h3;
 ```
 
@@ -606,12 +606,12 @@ In this step, you will enhance our dataset with extra features that could improv
 Run the following query to enrich the data with holiday, and event information. For sports events, you will include only those with a high rank.
 
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_h3 AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3 AS
 SELECT t1.*,
        IFF(t2.category = 'school-holidays', 'school-holidays', 'None') AS school_holiday,
        IFF(t3.category = 'public-holidays', ARRAY_TO_STRING(t3.labels, ', '), 'None') AS public_holiday,
        IFF(t4.category = 'sports', t4.labels[0]::string, 'None') AS sport_event
-FROM advanced_analytics.public.ny_taxi_rides_h3 t1
+FROM ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3 t1
 LEFT JOIN (SELECT distinct title, category, event_start, event_end, labels 
            FROM QUICKSTART_DEMO.PREDICTHQ.PREDICTHQ_EVENTS_SNOWFLAKE_SUMMIT_2024 
            WHERE category = 'school-holidays' and title ilike 'New York%') t2 
@@ -631,22 +631,22 @@ LEFT JOIN (SELECT * from QUICKSTART_DEMO.PREDICTHQ.PREDICTHQ_EVENTS_SNOWFLAKE_SU
 In this step, you'll divide our dataset into two parts: the Training set and the Prediction set. The Training set will be used to train our machine learning model. It will include data from the entirety of 2014 and part of 2015, going up to June 5th, 2015. Run the following query to create the Training set:
 
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_h3_train AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3_TRAIN AS
 SELECT *
-FROM advanced_analytics.public.ny_taxi_rides_h3
+FROM ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3
 WHERE date(pickup_time) < date('2015-06-05 12:00:00');
 ```
 
 The prediction set, on the other hand, will contain data for one week starting June 5th, 2015. This setup allows us to make predictions on data that wasn't used during training.
 
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_h3_predict AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3_PREDICT AS
 SELECT h3,
        pickup_time,
        SCHOOL_HOLIDAY,
        PUBLIC_HOLIDAY,
        SPORT_EVENT
-FROM advanced_analytics.public.ny_taxi_rides_h3
+FROM ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3
 WHERE date(pickup_time) >= date('2015-06-05')
 AND date(pickup_time) < date('2015-06-12');
 ```
@@ -655,7 +655,7 @@ Now that you have the Training and Prediction sets, you can run your model train
 
 ```
 CREATE OR REPLACE snowflake.ml.forecast ny_taxi_rides_model(
-  input_data => system$reference('table', 'advanced_analytics.public.ny_taxi_rides_h3_train'), 
+  input_data => system$reference('table', 'ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3_TRAIN'), 
   series_colname => 'h3', 
   timestamp_colname => 'pickup_time', 
   target_colname => 'pickups');
@@ -668,14 +668,14 @@ Similar to what you did in the training step, you specify the data the model sho
 ```
 BEGIN
     CALL ny_taxi_rides_model!FORECAST(
-        INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'advanced_analytics.public.ny_taxi_rides_h3_predict'),
+        INPUT_DATA => SYSTEM$REFERENCE('TABLE', 'ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3_PREDICT'),
         SERIES_COLNAME => 'h3',
         TIMESTAMP_COLNAME => 'pickup_time',
         CONFIG_OBJECT => {'prediction_interval': 0.95}
     );
     -- These steps store your predictions to a table.
     LET x := SQLID;
-    CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_model_forecast AS 
+    CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_model_forecast AS 
     SELECT series::string as h3,
     ts AS pickup_time,
     -- If any forecasts or prediction intervals are negative you need to convert them to zero. 
@@ -687,13 +687,13 @@ END;
 ```
 Create a table with predicted and actual results:
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_compare AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_compare AS
 SELECT t1.h3, 
        t1.pickup_time, 
        t2.pickups, 
        round(t1.forecast, 0) as forecast
-FROM advanced_analytics.public.ny_taxi_rides_model_forecast t1
-INNER JOIN advanced_analytics.public.ny_taxi_rides_h3 t2
+FROM ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_model_forecast t1
+INNER JOIN ADVANCED_ANALYTICS.PUBLIC.NY_TAXI_RIDES_H3 t2
 ON t1.h3 = t2.h3
 AND t1.pickup_time = t2.pickup_time;
 ```
@@ -704,7 +704,7 @@ Now you will generate evaluation metrics and store them in the `ny_taxi_rides_me
 BEGIN
     CALL ny_taxi_rides_model!show_evaluation_metrics();
     LET x := SQLID;
-    CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_metrics AS 
+    CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_metrics AS 
     SELECT series::string as h3,
            metric_value,
            error_metric
@@ -715,9 +715,9 @@ END;
 The table `ny_taxi_rides_metrics` contains various metrics; please review what is available in the table. You should select a metric that allows uniform comparisons across all hexagons to understand the model's performance in each hexagon. Since trip volumes may vary among hexagons, the chosen metric should not be sensitive to absolute values. The Symmetric Mean Absolute Percentage Error ([SMAPE](https://en.wikipedia.org/wiki/Symmetric_mean_absolute_percentage_error)) would be a suitable choice. Create a table with the list of hexagons and the SMAPE value for each:
 
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.ny_taxi_rides_metrics AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_metrics AS
 SELECT h3, metric_value AS smape 
-FROM advanced_analytics.public.ny_taxi_rides_metrics
+FROM ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_metrics
 WHERE error_metric::string = 'SMAPE'
 order by 2 asc;
 ```
@@ -814,12 +814,12 @@ st.write("""An app that visualizes geo-temporal data from NY taxi pickups using 
 AVGLATITUDELONGITUDE = """SELECT
 AVG(ST_Y(H3_CELL_TO_POINT(h3))) AS lat,
 AVG(ST_X(h3_cell_to_point(h3))) AS lon,
-FROM advanced_analytics.public.ny_taxi_rides_compare"""
+FROM ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_compare"""
 
 SQLQUERYTIMESERIES = """SELECT pickup_time, h3, forecast, pickups
-FROM advanced_analytics.public.ny_taxi_rides_compare"""
+FROM ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_compare"""
 
-SQLQUERYMETRICS = """SELECT * FROM advanced_analytics.public.ny_taxi_rides_metrics"""
+SQLQUERYMETRICS = """SELECT * FROM ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_metrics"""
 
 df_avg_lat_long = get_dataframe_from_raw_sql(AVGLATITUDELONGITUDE)
 avg_coordinate = (df_avg_lat_long.iloc[0, 0], df_avg_lat_long.iloc[0, 1])
@@ -865,14 +865,14 @@ start_end_date_selected = len(selected_date_range) == 2
 if start_end_date_selected:
     sql_query_pickups = f"""SELECT h3,
     SUM(pickups) AS COUNT
-    FROM advanced_analytics.public.ny_taxi_rides_compare
+    FROM ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_compare
     WHERE pickup_time BETWEEN DATE('{selected_date_range[0]}') AND DATE('{selected_date_range[1]}')
     AND TIME(pickup_time) BETWEEN '{selected_start_time_range}' AND '{selected_end_time_range}'
     GROUP BY 1"""
 
     sql_query_forecast = f"""SELECT h3,
     sum(forecast) AS COUNT
-    FROM advanced_analytics.public.ny_taxi_rides_compare
+    FROM ADVANCED_ANALYTICS.PUBLIC.ny_taxi_rides_compare
     WHERE pickup_time BETWEEN DATE('{selected_date_range[0]}') AND DATE('{selected_date_range[1]}')
     AND TIME(pickup_time) BETWEEN '{selected_start_time_range}' AND '{selected_end_time_range}'
     GROUP BY 1"""
@@ -968,7 +968,7 @@ To complete the project you will use a synthetic dataset with delivery orders wi
 
 First specify the default Database, Schema and the Warehouse and create a file format that corresponds to the format of the trip and holiday data we stored in S3. Run the following queries:
 ```
-USE advanced_analytics.public;
+USE ADVANCED_ANALYTICS.PUBLIC;
 USE WAREHOUSE my_wh;
 CREATE OR REPLACE FILE FORMAT csv_format_nocompression TYPE = csv
 FIELD_OPTIONALLY_ENCLOSED_BY = '"' FIELD_DELIMITER = ',' skip_header = 1;
@@ -979,7 +979,7 @@ CREATE OR REPLACE STAGE aa_stage URL = 's3://sfquickstarts/hol_geo_spatial_ml_us
 ```
 Then create a table where you will store the customer feedback dataset:
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.orders_reviews AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS AS
 SELECT  $1::NUMBER as order_id,
         $2::VARCHAR as customer_id,
         TO_GEOGRAPHY($3) as delivery_location,
@@ -990,7 +990,7 @@ SELECT  $1::NUMBER as order_id,
         $8::NUMBER as restaurant_postcode,
         $9::VARCHAR as restaurant_id,
         $10::VARCHAR as review
-FROM @advanced_analytics.public.aa_stage/food_delivery_reviews.csv (file_format => 'csv_format_nocompression');
+FROM @ADVANCED_ANALYTICS.PUBLIC.ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv (file_format => 'csv_format_nocompression');
 ```
 
 Congratulations!  Now you have `orders_reviews` table containing 100K orders with reviews.
@@ -1014,7 +1014,7 @@ As a general rule when writing a prompt, the instructions have to be simple, cle
 
 
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.orders_reviews_sentiment_test as
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_TEST as
 SELECT TOP 10
     order_id
     , customer_id
@@ -1071,10 +1071,10 @@ SELECT TOP 10
 , 'Return results'
         )) as sentiment_categories
 FROM 
-    advanced_analytics.public.orders_reviews;
+    ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS;
 ```
 
-  If you look inside of `advanced_analytics.public.orders_reviews_sentiment_test` you'll notice two new columns: `sentiment_assesment` and `sentiment_categories`. `sentiment_assesment` contains overall assessment of the sentiment based on the review and `sentiment_categories` has an evaluation of each of three components individually: cost, quality and delivery time.
+  If you look inside of `ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_TEST` you'll notice two new columns: `sentiment_assesment` and `sentiment_categories`. `sentiment_assesment` contains overall assessment of the sentiment based on the review and `sentiment_categories` has an evaluation of each of three components individually: cost, quality and delivery time.
 
   <img src ='assets/geo_ml_11.png'>
 
@@ -1097,8 +1097,8 @@ CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT (
 	SENTIMENT_CATEGORIES VARCHAR(16777216)
 );
 
-COPY INTO advanced_analytics.public.orders_reviews_sentiment
-FROM @advanced_analytics.public.aa_stage/food_delivery_reviews.csv
+COPY INTO ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT
+FROM @ADVANCED_ANALYTICS.PUBLIC.ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv
 FILE_FORMAT = (FORMAT_NAME = csv_format_nocompression);
 ```
 
@@ -1107,7 +1107,7 @@ FILE_FORMAT = (FORMAT_NAME = csv_format_nocompression);
 Now when you have a table with sentiment, you need to parse JSONs to store each component of the score into a separate column and convert the scoring provided by the LLM into numeric format, so you can easily visualize it. Run the following query:
 
 ```
-CREATE OR REPLACE TABLE advanced_analytics.public.orders_reviews_sentiment_analysis AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis AS
 SELECT * exclude (food_cost, food_quality, food_delivery_time, sentiment) ,
          CASE
              WHEN sentiment = 'very positive' THEN 5
@@ -1160,7 +1160,7 @@ FROM
           try_parse_json(lower(sentiment_categories)):food_cost::varchar AS food_cost ,
           try_parse_json(lower(sentiment_categories)):food_quality::varchar AS food_quality ,
           try_parse_json(lower(sentiment_categories)):food_delivery_time::varchar AS food_delivery_time
-   FROM advanced_analytics.public.orders_reviews_sentiment);
+   FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT);
 ```
 
 ### Step 4. Data visualization
@@ -1194,7 +1194,7 @@ def get_h3_df_orders_quantiles(resolution: float, type_of_location: str) -> pd.D
         f"""SELECT
         H3_POINT_TO_CELL_STRING(to_geography({ type_of_location }), { resolution }) AS h3,
         round(count(*),2) as count
-        FROM advanced_analytics.public.orders_reviews_sentiment_analysis
+        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis
         GROUP BY 1""")
 
     quantiles = get_quantile_in_column(df, "COUNT")
@@ -1207,7 +1207,7 @@ def get_h3_df_sentiment_quantiles(
         f""" SELECT 
         H3_POINT_TO_CELL_STRING(TO_GEOGRAPHY({ type_of_location }),{ resolution }) AS h3,
         round(AVG({ type_of_sentiment }),2) AS count
-        FROM advanced_analytics.public.orders_reviews_sentiment_analysis
+        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis
         WHERE { type_of_sentiment } IS NOT NULL 
         GROUP BY 1""")
 
