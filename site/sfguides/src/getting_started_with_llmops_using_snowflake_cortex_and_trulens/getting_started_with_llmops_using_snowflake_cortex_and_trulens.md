@@ -266,7 +266,7 @@ import os
 import snowflake.connector
 from tqdm.auto import tqdm
 
-conn = snowflake.connector.connect(
+snowflake_connector = snowflake.connector.connect(
     user=connection_details["user"],
     password=connection_details["password"],
     account=connection_details["account"],
@@ -275,9 +275,9 @@ conn = snowflake.connector.connect(
     schema=connection_details["schema"],
 )
 
-conn.cursor().execute("CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)")
+snowflake_connector.cursor().execute("CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)")
 for curr in tqdm(results):
-    conn.cursor().execute("INSERT INTO streamlit_docs VALUES (%s)", curr.text)
+    snowflake_connector.cursor().execute("INSERT INTO streamlit_docs VALUES (%s)", curr.text)
 ```
 
 ## Search
@@ -353,7 +353,7 @@ The first thing we need to do however, is to [set the database connection to Sno
 from trulens.core import TruSession
 from trulens.connectors.snowflake import SnowflakeConnector
 
-conn = SnowflakeConnector(
+tru_snowflake_connector = SnowflakeConnector(
     user=os.environ["SNOWFLAKE_USER"],
     account=os.environ["SNOWFLAKE_ACCOUNT"],
     password=os.environ["SNOWFLAKE_USER_PASSWORD"],
@@ -363,7 +363,7 @@ conn = SnowflakeConnector(
     role=os.environ["SNOWFLAKE_ROLE"],
 )
 
-session = TruSession(connector=conn)
+session = TruSession(connector=tru_snowflake_connector)
 ```
 
 Now we can construct the RAG.
@@ -429,7 +429,7 @@ from trulens.core import Feedback
 from trulens.core import Select
 import numpy as np
 
-provider = Cortex("mistral-large")
+provider = Cortex(snowflake_connector, "mistral-large")
 
 f_groundedness = (
     Feedback(provider.groundedness_measure_with_cot_reasons, name="Groundedness")
