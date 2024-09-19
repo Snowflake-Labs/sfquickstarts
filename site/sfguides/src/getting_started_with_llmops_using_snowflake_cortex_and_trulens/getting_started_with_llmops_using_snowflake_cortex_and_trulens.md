@@ -14,7 +14,7 @@ tags: Getting Started, LLMOps, RAG, LLMs, TruLens, Snowflake
 Duration: 5
 By completing this guide, you'll get started with LLMOps by building a RAG by combining [Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview), and then using [TruLens](https://www.trulens.org/) to add observability and guardrails.
 
-Along the way, you will also learn how run TruLens feedback functions with Snowflake Cortex as the [feedback provider](https://www.trulens.org/trulens_eval/api/provider/), and how to [log TruLens traces and evaluation metrics to a Snowflake table](https://www.trulens.org/trulens_eval/tracking/logging/where_to_log/log_in_snowflake/#logging-in-snowflake). Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens_eval/guardrails/) for filtering retrieved context and reducing hallucination.
+Along the way, you will also learn how run TruLens feedback functions with Snowflake Cortex as the [feedback provider](https://www.trulens.org/reference/trulens/providers/cortex/), and how to [log TruLens traces and evaluation metrics to a Snowflake table](https://www.trulens.org/trulens/tracking/logging/where_to_log/log_in_snowflake/). Last, we'll show how to use [TruLens guardrails](https://www.trulens.org/trulens/guardrails/) for filtering retrieved context and reducing hallucination.
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
@@ -99,7 +99,8 @@ Next create a new conda environment and install the packages required with the f
 conda create -n getting_started_llmops python=3.11
 conda activate getting_started_llmops
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python snowflake-ml-python snowflake.core notebook ipykernel
-pip install trulens trulens-providers-cortex trulens-connectors-snowflake llama-index llama-index-embeddings-huggingface llama-index-readers-github snowflake-sqlalchemy
+
+pip install trulens-core trulens-providers-cortex trulens-connectors-snowflake llama-index llama-index-embeddings-huggingface llama-index-readers-github snowflake-sqlalchemy
 ```
 
 Once we have an environment with the right packages installed, we can load our credentials and set our Snowflake connection in a jupyter notebook notebook.
@@ -130,14 +131,14 @@ connection_details = {
   "warehouse": os.getenv["SNOWFLAKE_WAREHOUSE"]
 }
 
-session = Session.builder.configs(connection_details).create()
+snowpark_session = Session.builder.configs(connection_details).create()
 ```
 
 ## Cortex Complete
 
 Duration: 3
 
-With the session set, we have what we need to try out Snowflake Cortex LLM:
+With the snowpark session set, we have what we need to try out Snowflake Cortex LLM:
 
 ```python
 from snowflake.cortex import Complete
@@ -307,12 +308,12 @@ from typing import List
 
 class CortexSearchRetriever:
 
-    def __init__(self, session: Session, limit_to_retrieve: int = 4):
-        self._session = session
+    def __init__(self, snowpark_session: Session, limit_to_retrieve: int = 4):
+        self._snowpark_session = snowpark_session
         self._limit_to_retrieve = limit_to_retrieve
 
     def retrieve(self, query: str) -> List[str]:
-        root = Root(self._session)
+        root = Root(self._snowpark_session)
         cortex_search_service = (
             root.databases[os.getenv["SNOWFLAKE_DATABASE"]]
             .schemas[os.getenv["SNOWFLAKE_SCHEMA"]]
@@ -333,7 +334,7 @@ class CortexSearchRetriever:
 Once the retriever is created, we can test it out. Now that we have grounded access to the Streamlit docs, we can ask questions about using Streamlit, like "How do I launch a streamlit app".
 
 ```python
-retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
+retriever = CortexSearchRetriever(snowpark_session=snowpark_session, limit_to_retrieve=4)
 
 retrieved_context = retriever.retrieve(query="How do I launch a streamlit app?")
 ```
@@ -346,33 +347,35 @@ Now that we've set up the components we need from Snowflake Cortex, we can build
 
 We'll do this by creating a custom python class with each the methods we need. We'll also add TruLens instrumentation with the `@instrument` decorator to our app.
 
-The first thing we need to do however, is to [set the database connection to Snowflake](https://www.trulens.org/trulens_eval/tracking/logging/where_to_log/log_in_snowflake/#logging-in-snowflake) where we'll log the traces and evaluation results from our application. This way we have a stored record that we can use to understand the app's performance. This is done when initializing `Tru`.
+The first thing we need to do however, is to [set the database connection to Snowflake](https://www.trulens.org/trulens/tracking/logging/where_to_log/log_in_snowflake/) where we'll log the traces and evaluation results from our application. This way we have a stored record that we can use to understand the app's performance. This is done when initializing `Tru`.
 
 ```python
 from trulens.core import TruSession
 from trulens.connectors.snowflake import SnowflakeConnector
+
 conn = SnowflakeConnector(
-    account=os.getenv["SNOWFLAKE_ACCOUNT"],
-    user=os.getenv["SNOWFLAKE_USER"],
-    password=os.getenv["SNOWFLAKE_USER_PASSWORD"],
-    database_name=os.getenv["SNOWFLAKE_DATABASE"],
-    schema_name=os.getenv["SNOWFLAKE_SCHEMA"],
-    warehouse=os.getenv["SNOWFLAKE_WAREHOUSE"],
-    role=os.getenv["SNOWFLAKE_ROLE"],
+    user=os.environ["SNOWFLAKE_USER"],
+    account=os.environ["SNOWFLAKE_ACCOUNT"],
+    password=os.environ["SNOWFLAKE_USER_PASSWORD"],
+    database=os.environ["SNOWFLAKE_DATABASE"],
+    schema=os.environ["SNOWFLAKE_SCHEMA"],
+    warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
+    role=os.environ["SNOWFLAKE_ROLE"],
 )
+
 session = TruSession(connector=conn)
 ```
 
 Now we can construct the RAG.
 
 ```python
-from trulens_eval.tru_custom_app import instrument
+from trulens.apps.custom import instrument
 
 
 class RAG_from_scratch:
 
     def __init__(self):
-        self.retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
+        self.retriever = CortexSearchRetriever(snowpark_session=snowpark_session, limit_to_retrieve=4)
 
     @instrument
     def retrieve_context(self, query: str) -> list:
@@ -412,18 +415,18 @@ Duration: 5
 
 After constructing the RAG, we can set up the feedback functions we want to use to evaluate the RAG.
 
-Here, we'll use the [RAG Triad](https://www.trulens.org/trulens_eval/getting_started/core_concepts/rag_triad/). The RAG triad is made up of 3 evaluations along each edge of the RAG architecture: context relevance, groundedness and answer relevance.
+Here, we'll use the [RAG Triad](https://www.trulens.org/trulens/getting_started/core_concepts/rag_triad/). The RAG triad is made up of 3 evaluations along each edge of the RAG architecture: context relevance, groundedness and answer relevance.
 
 ![RAG Triad](./assets/RAG_Triad.jpg)
 
 Satisfactory evaluations on each provides us confidence that our LLM app is free from hallucination.
 
-We will also use [LLM-as-a-Judge](https://arxiv.org/abs/2306.05685) evaluations, using Mistral Large on [Snowflake Cortex](https://www.trulens.org/trulens_eval/api/provider/cortex/) as the LLM.
+We will also use [LLM-as-a-Judge](https://arxiv.org/abs/2306.05685) evaluations, using Mistral Large on [Snowflake Cortex](https://www.trulens.org/reference/trulens/providers/cortex/) as the LLM.
 
 ```python
 from trulens.providers.cortex.provider import Cortex
-from trulens.core.feedback.feedback import Feedback
-from trulens.core.schema import Select
+from trulens.core import Feedback
+from trulens.core import Select
 import numpy as np
 
 provider = Cortex("mistral-large")
@@ -518,10 +521,7 @@ f_context_relevance_score = Feedback(
 )
 
 
-class filtered_RAG_from_scratch:
-
-    def __init__(self):
-        self.retriever = CortexSearchRetriever(session=session, limit_to_retrieve=4)
+class filtered_RAG_from_scratch(RAG_from_scratch):
 
     @instrument
     @context_filter(f_context_relevance_score, 0.75, keyword_for_prompt="query")
@@ -530,27 +530,6 @@ class filtered_RAG_from_scratch:
         Retrieve relevant text from vector store.
         """
         return self.retriever.retrieve(query)
-
-    @instrument
-    def generate_completion(self, query: str, context_str: list) -> str:
-        """
-        Generate answer from context.
-        """
-        prompt = f"""
-            You are an expert assistant extracting information from context provided.
-            Answer the question based on the context. Be concise and do not hallucinate.
-            If you don´t have the information just say so.
-            Context: {context_str}
-            Question:
-            {question}
-            Answer:
-        """
-        return Complete("mistral-large", prompt)
-
-    @instrument
-    def query(self, query: str) -> str:
-        context_str = self.retrieve_context(query=query)
-        return self.generate_completion(query=query, context_str=context_str)
 
 
 filtered_rag = filtered_RAG_from_scratch()
