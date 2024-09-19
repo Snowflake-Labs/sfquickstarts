@@ -73,7 +73,7 @@ This notebook requires a dbt account. You can follow the following steps to setu
 ![dbt-partner-connect-setup](assets/dbt-partner-connect-setup.png)
 
 - Register for an account on dbt
-- Go to Account Settings (gear in top right) > Connections
+- From dbt, click on your account > Account Settings > Connections > Snowflake
 - Update these fields
     - Database: FS_DBT_DATABASE
     - Warehouse: FS_DBT_WH
