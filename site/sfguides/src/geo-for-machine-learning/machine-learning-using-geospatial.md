@@ -169,7 +169,7 @@ GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE cortex_user_role;
 
 GRANT ROLE cortex_user_role TO USER AA;
 ```
-You are now ready to provide the CORTEX.COMPLETE() function with instructions on how to perform address cleansing. Specifically, using a table of Berlin restaurants, you'll create a new table with an additional column `parsed_address`, which is the result of the `CORTEX.COMPLETE()` function. For complex processing like this, you will use mistral-8x7b, a very capable open-source LLM created by Mistral AI. Essentially, we want to parse the address stored as a single string into a JSON object that contains each component of the address as a separate key.
+You are now ready to provide the CORTEX.COMPLETE() function with instructions on how to perform address cleansing. Specifically, using a table of Berlin restaurants, you'll create a new table with an additional column `parsed_address`, which is the result of the `CORTEX.COMPLETE()` function. For complex processing like this, you will use [mistral-8x7b](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability), a very capable open-source LLM created by Mistral AI. Essentially, we want to parse the address stored as a single string into a JSON object that contains each component of the address as a separate key.
 
 As a general rule when writing a prompt, the instructions should be simple, clear, and complete. For example, you should clearly define the task as parsing an address into a JSON object. It's important to define the constraints of the desired output; otherwise, the LLM may produce unexpected results. Below, you specifically instruct the LLM to parse the address stored as text and explicitly tell it to respond in JSON format.
 
