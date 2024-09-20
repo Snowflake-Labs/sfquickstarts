@@ -350,7 +350,7 @@ from trulens.connectors.snowflake import SnowflakeConnector
 
 tru_snowflake_connector = SnowflakeConnector(**connection_params)
 
-session = TruSession(connector=tru_snowflake_connector)
+tru_session = TruSession(connector=tru_snowflake_connector)
 ```
 
 Now we can construct the RAG.
@@ -570,7 +570,7 @@ with tru_rag as recording:
     for prompt in prompts:
         rag.query(prompt)
 
-tru.get_leaderboard()
+tru_session.get_leaderboard()
 ```
 
 ## Conclusion And Resources
