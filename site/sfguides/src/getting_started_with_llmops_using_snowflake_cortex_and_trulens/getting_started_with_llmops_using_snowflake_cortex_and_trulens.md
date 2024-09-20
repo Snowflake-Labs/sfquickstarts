@@ -271,13 +271,8 @@ snowflake_connector = snowflake.connector.connect(**connection_params)
 cursor = conn.cursor()
 
 cursor.execute("CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)")
-cursor.execute("CREATE OR REPLACE TEMPORARY STAGE my_temp_stage")
-cursor.execute(f"PUT file://text.csv @my_temp_stage")
-cursor.execute("""
-COPY INTO streamlit_docs
-FROM @my_temp_stage
-FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' SKIP_HEADER = 1)
-""")
+for curr in tqdm(results):
+    cursor.execute("INSERT INTO streamlit_docs VALUES (%s)", curr.text)
 ```
 
 ## Search
