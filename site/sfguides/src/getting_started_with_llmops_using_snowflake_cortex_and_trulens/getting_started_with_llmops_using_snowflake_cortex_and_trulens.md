@@ -268,7 +268,7 @@ from tqdm.auto import tqdm
 
 snowflake_connector = snowflake.connector.connect(**connection_params)
 
-cursor = conn.cursor()
+cursor = snowflake_connector.cursor()
 
 cursor.execute("CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)")
 for curr in tqdm(results):
