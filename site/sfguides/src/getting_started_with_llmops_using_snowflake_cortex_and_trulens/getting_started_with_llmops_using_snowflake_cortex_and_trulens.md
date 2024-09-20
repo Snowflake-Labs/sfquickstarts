@@ -486,7 +486,7 @@ with tru_rag as recording:
     for prompt in prompts:
         rag.query(prompt)
 
-tru.get_leaderboard()
+tru_session.get_leaderboard()
 ```
 
 ## Guardrails
