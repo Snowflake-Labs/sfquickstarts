@@ -121,7 +121,7 @@ import os
 
 load_dotenv()
 
-connection_details = {
+connection_params = {
   "account":  os.getenv["SNOWFLAKE_ACCOUNT"],
   "user": os.getenv["SNOWFLAKE_USER"],
   "password": os.getenv["SNOWFLAKE_USER_PASSWORD"],
@@ -131,7 +131,7 @@ connection_details = {
   "warehouse": os.getenv["SNOWFLAKE_WAREHOUSE"]
 }
 
-snowpark_session = Session.builder.configs(connection_details).create()
+snowpark_session = Session.builder.configs(connection_params).create()
 ```
 
 ## Cortex Complete
@@ -266,18 +266,18 @@ import os
 import snowflake.connector
 from tqdm.auto import tqdm
 
-snowflake_connector = snowflake.connector.connect(
-    user=connection_details["user"],
-    password=connection_details["password"],
-    account=connection_details["account"],
-    warehouse=connection_details["warehouse"],
-    database=connection_details["database"],
-    schema=connection_details["schema"],
-)
+snowflake_connector = snowflake.connector.connect(**connection_params)
 
-snowflake_connector.cursor().execute("CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)")
-for curr in tqdm(results):
-    snowflake_connector.cursor().execute("INSERT INTO streamlit_docs VALUES (%s)", curr.text)
+cursor = conn.cursor()
+
+cursor.execute("CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)")
+cursor.execute("CREATE OR REPLACE TEMPORARY STAGE my_temp_stage")
+cursor.execute(f"PUT file://text.csv @my_temp_stage")
+cursor.execute("""
+COPY INTO streamlit_docs
+FROM @my_temp_stage
+FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' SKIP_HEADER = 1)
+""")
 ```
 
 ## Search
@@ -353,15 +353,7 @@ The first thing we need to do however, is to [set the database connection to Sno
 from trulens.core import TruSession
 from trulens.connectors.snowflake import SnowflakeConnector
 
-tru_snowflake_connector = SnowflakeConnector(
-    user=os.environ["SNOWFLAKE_USER"],
-    account=os.environ["SNOWFLAKE_ACCOUNT"],
-    password=os.environ["SNOWFLAKE_USER_PASSWORD"],
-    database=os.environ["SNOWFLAKE_DATABASE"],
-    schema=os.environ["SNOWFLAKE_SCHEMA"],
-    warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
-    role=os.environ["SNOWFLAKE_ROLE"],
-)
+tru_snowflake_connector = SnowflakeConnector(**connection_params)
 
 session = TruSession(connector=tru_snowflake_connector)
 ```
