@@ -330,12 +330,12 @@ When you hit the `Submit` button, the API endpoint is called and the data is ret
 **Note: The first time you try this, it might take 1-3 seconds because the virtual warehouse needs to start. Afterwards, you should not see this latency.**
 
 <!-- ------------------------ -->
-## Calling the API programatically
+## Calling the API programmatically
 Duration: 3
 
 ### Create the user and generate the Snowflake Token
 
-For this next step, go back to **codespaces** - we'll need to create a Snowflake service user to programatically call the API. This user will need to authenticate with key-pair authentication - let's generate the RSA private key:
+For this next step, go back to **codespaces** - we'll need to create a Snowflake service user to programmatically call the API. This user will need to authenticate with key-pair authentication - let's generate the RSA private key:
 
 ```bash
 openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
