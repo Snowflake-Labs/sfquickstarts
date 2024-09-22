@@ -19,6 +19,7 @@
     "fs-extra": "^7.0.1",
     "glob": "^7.2.0",
     "google-closure-compiler": "^20181008.0.0",
+    "gulp": "^5.0.0",
     "gulp-babel": "^7.0.0",
     "gulp-crisper": "^1.1.0",
     "gulp-flatten": "^0.4.0",
@@ -58,7 +59,7 @@
     "defaults"
   ],
   "dependencies": {
-    "gulp": "^5.0.0",
+    "dependencies": "^0.0.1",
     "http-server": "^14.1.1",
     "open-browser": "^3.6.0",
     "supervisor": "^0.12.0"
