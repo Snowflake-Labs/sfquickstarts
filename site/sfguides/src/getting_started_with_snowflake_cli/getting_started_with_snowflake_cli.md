@@ -444,7 +444,7 @@ In many case you may want to change your queries depending on some context, for 
 This is possible thanks to client-side templating in Snowflake CLI. We call it client-side to distinguish if from [server-side rendering
 supported by EXECUTE IMMEDIATE FROM](https://docs.snowflake.com/en/sql-reference/sql/execute-immediate-from#jinja2-templating).
 
-Snowflake CLI is using `&{ VARIABLE_NAME }` pattern for specifying variables in SQL. You can use templates in both ad-hoc queries
+Snowflake CLI is using `<% VARIABLE_NAME %>` pattern for specifying variables in SQL. You can use templates in both ad-hoc queries
 and files.
 
 Variables can be defined using `-D/--variable` flag in `snow sql` command. The input for this flag has to be in form of
@@ -452,7 +452,7 @@ Variables can be defined using `-D/--variable` flag in `snow sql` command. The i
 
 To test out the templating functionality run the following command:
 ```bash
-snow sql -q "select &{ my_var } + 2" -D "my_var=40"
+snow sql -q "select <% my_var %> + 2" -D "my_var=40"
 ```
 in the result you should see the following:
 ```console
