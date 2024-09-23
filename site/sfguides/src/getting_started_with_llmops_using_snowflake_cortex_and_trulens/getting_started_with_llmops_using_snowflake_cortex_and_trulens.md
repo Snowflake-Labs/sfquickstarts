@@ -121,7 +121,7 @@ import os
 
 load_dotenv()
 
-connection_details = {
+connection_params = {
   "account":  os.getenv["SNOWFLAKE_ACCOUNT"],
   "user": os.getenv["SNOWFLAKE_USER"],
   "password": os.getenv["SNOWFLAKE_USER_PASSWORD"],
@@ -131,7 +131,7 @@ connection_details = {
   "warehouse": os.getenv["SNOWFLAKE_WAREHOUSE"]
 }
 
-snowpark_session = Session.builder.configs(connection_details).create()
+snowpark_session = Session.builder.configs(connection_params).create()
 ```
 
 ## Cortex Complete
@@ -266,18 +266,13 @@ import os
 import snowflake.connector
 from tqdm.auto import tqdm
 
-conn = snowflake.connector.connect(
-    user=connection_details["user"],
-    password=connection_details["password"],
-    account=connection_details["account"],
-    warehouse=connection_details["warehouse"],
-    database=connection_details["database"],
-    schema=connection_details["schema"],
-)
+snowflake_connector = snowflake.connector.connect(**connection_params)
 
-conn.cursor().execute("CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)")
+cursor = snowflake_connector.cursor()
+
+cursor.execute("CREATE OR REPLACE TABLE streamlit_docs(doc_text VARCHAR)")
 for curr in tqdm(results):
-    conn.cursor().execute("INSERT INTO streamlit_docs VALUES (%s)", curr.text)
+    cursor.execute("INSERT INTO streamlit_docs VALUES (%s)", curr.text)
 ```
 
 ## Search
@@ -353,17 +348,9 @@ The first thing we need to do however, is to [set the database connection to Sno
 from trulens.core import TruSession
 from trulens.connectors.snowflake import SnowflakeConnector
 
-conn = SnowflakeConnector(
-    user=os.environ["SNOWFLAKE_USER"],
-    account=os.environ["SNOWFLAKE_ACCOUNT"],
-    password=os.environ["SNOWFLAKE_USER_PASSWORD"],
-    database=os.environ["SNOWFLAKE_DATABASE"],
-    schema=os.environ["SNOWFLAKE_SCHEMA"],
-    warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
-    role=os.environ["SNOWFLAKE_ROLE"],
-)
+tru_snowflake_connector = SnowflakeConnector(**connection_params)
 
-session = TruSession(connector=conn)
+tru_session = TruSession(connector=tru_snowflake_connector)
 ```
 
 Now we can construct the RAG.
@@ -429,7 +416,7 @@ from trulens.core import Feedback
 from trulens.core import Select
 import numpy as np
 
-provider = Cortex("mistral-large")
+provider = Cortex(snowflake_connector, "mistral-large")
 
 f_groundedness = (
     Feedback(provider.groundedness_measure_with_cot_reasons, name="Groundedness")
@@ -499,7 +486,7 @@ with tru_rag as recording:
     for prompt in prompts:
         rag.query(prompt)
 
-tru.get_leaderboard()
+tru_session.get_leaderboard()
 ```
 
 ## Guardrails
@@ -583,7 +570,7 @@ with tru_rag as recording:
     for prompt in prompts:
         rag.query(prompt)
 
-tru.get_leaderboard()
+tru_session.get_leaderboard()
 ```
 
 ## Conclusion And Resources
