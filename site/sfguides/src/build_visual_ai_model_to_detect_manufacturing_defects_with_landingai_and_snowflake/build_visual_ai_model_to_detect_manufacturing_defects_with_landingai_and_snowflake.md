@@ -94,7 +94,7 @@ After you've requested the app and been granted access it, follow the instructio
 15. Once the installation process is complete, all services have the status DONE or READY (green checkmark) and the URL to access LandingLens displays. Copy and paste the URL.  
       <img src="assets/LLSF_install_9_09_2024.png" alt="Copy the URL for the LandingLens app" width="800">
 
-16. Paste the URL into a new tab to open the LandingLens app. We recommend bookmarking this URL. you can log in to the app using the Snowflake credentials you used to install the app. Only users with the correct privileges in the account can access the LandingLens app.
+16. Paste the URL into a new tab to open the LandingLens app. We recommend bookmarking this URL. You can log in to the app using the Snowflake credentials you used to install the app. Only users with the correct privileges in the account can access the LandingLens app.
    
       <img src="assets/lai_landinglens_app.png" alt="LAI Lens app" width="800">
    
@@ -111,7 +111,7 @@ To get the sample images, follow these instructions:
 1. Open the [Sample Dataset for LandingLens: Manufacturing Metal Casting](https://app.snowflake.com/marketplace/listing/GZTYZ12K65C6/landingai-sample-dataset-for-landinglens-manufacturing-metal-casting) listing in the Snowflake Marketplace and click **Get**.
    <img src="assets/LL_manufacturing_1.png" alt="Sample dataset listing in the Snowflake Marketplace" width="800">
 
-2. Go to **Snowsight** > **Data Products** > **Apps**. Click the **Sample Dataset for LandingLens: LifeSciences Pneumonia** app listing.
+2. Go to **Snowsight** > **Data Products** > **Apps**. Click the **Sample Dataset for LandingLens: Manufacturing Metal Casting** app listing.
    <img src="assets/LL_manufacturing_2.png" alt="Open the app" width="800">
 
 3. Click the **Shield** icon in the top right corner of this app page.
@@ -150,9 +150,9 @@ Now that you've loaded the sample dataset into your Snowflake account, you're re
 8. Click the directory path (**⌄ /**) in the **Folder** field. 
 9. Select the **data** directory.
 10. Click **Sync**.
-   <img src="assets/LL_manufacturing_load_2.png" alt="Select the Snowflake stage to load images from" width="400">
+   <img src="assets/LL_manufacturing_load_2.png" alt="Select the Snowflake stage to load images from" width="600">
 11. All images in the stage are loaded to the LandingLens project. (Refresh the page to see the images.) The project now has 100 images; 50 images have the class "defects", and 50 have the class "no-defects".
-    <img src="assets/LL_manufacturing_load_3.png" alt="View uploaded images and labels in LandingLens" width="800">
+   <img src="assets/LL_manufacturing_load_3.png" alt="View uploaded images and labels in LandingLens" width="800">
 
 ### Train a Classification Model
 Now that all of the images are in the LandingLens project and have classes assigned to them, train a computer vision model. When you train a model, you give the labeled images to a deep learning algorithm. This allows the algorithm to "learn" what to look for in images.
