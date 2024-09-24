@@ -176,7 +176,7 @@ The **Users** sub-tab of the **Users & Roles** tab shows a list of users in the 
 
 ![users tab](assets/3UIStory_13.png)
 
-Clicking on your username in the bottom right of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of `SYSADMIN` and will stay in this role for the majority of the lab.
+Clicking on your username in the bottom left of the UI allows you to change your password, roles, and preferences. Snowflake has several system defined roles. You are currently in the default role of `SYSADMIN` and will stay in this role for the majority of the lab.
 
 ![user preferences dropdown](assets/3UIStory_14.png)
 
@@ -193,7 +193,7 @@ In a real-world environment, you would use different roles for the tasks in this
 Duration: 2
 
 ### The Lab Story
-You work at a grocery retailer. You want to understand the performance of major consumer goods (CPG) companies in the US that supply your store. This lab takes a look at daily stock price data and quarterly and annual Securities Exchange Commission (SEC) company filings to understand the performance of the CPG landscape. Public companies are required to submit a quarterly and annual report to the SEC detailing their financial data.
+You work at a grocery retailer. You want to understand the performance of major consumer packaged goods (CPG) companies in the US that supply your store. This lab takes a look at daily stock price data and quarterly and annual Securities Exchange Commission (SEC) company filings to understand the performance of the CPG landscape. Public companies are required to submit a quarterly and annual report to the SEC detailing their financial data.
 
 We will start by collecting data from three different sources:
 1. Load company metadata `.csv` file.
@@ -756,7 +756,7 @@ SELECT
     ts.date,
     ts.value AS nasdaq_volume,
     (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date))::DOUBLE AS volume_change
-FROM cybersyn.stock_price_timeseries ts
+FROM Financial__Economic_Essentials.cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
 WHERE ts.variable_name = 'Nasdaq Volume';
@@ -1038,7 +1038,7 @@ GRANT IMPORTED PRIVILEGES ON DATABASE Financial__Economic_Essentials TO ROLE jun
 USE ROLE junior_dba;
 ```
 
-Notice that the `CYBERSYN` and `Financial__Economic_Essentials` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
+Notice that the `CYBERSYN` and `Financial__Economic_Essentials` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then click **Refresh**.
 
 ![object browser panel with databases](assets/9Role_3.png)
 
@@ -1142,10 +1142,12 @@ Snowflake provides several ways to securely share data without compromising conf
 
 Duration: 2
 
-If you would like to reset your environment by deleting all the objects created as part of this lab, ensure you are using the `ACCOUNTADMIN` role in the worksheet and run the following commands to drop the objects we created in the lab:
+If you would like to reset your environment by deleting all the objects created as part of this lab, ensure you are using the `ACCOUNTADMIN` role in the worksheet and run the following commands to drop the objects we created in the lab. Before you run the DROP SHARE command, replace `YOUR_SHARE_NAME_GOES_HERE` with the name of the share created earlier.
 
 ```SQL
 USE ROLE accountadmin;
+
+DROP SHARE IF EXISTS YOUR_SHARE_NAME_GOES_HERE;
 
 DROP DATABASE IF EXISTS CYBERSYN;
 
