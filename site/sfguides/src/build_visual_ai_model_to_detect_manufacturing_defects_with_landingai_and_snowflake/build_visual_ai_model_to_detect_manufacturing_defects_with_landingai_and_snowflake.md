@@ -199,7 +199,7 @@ Duration: 20
 
 After deploying a model with Cloud Deployment, there are a few ways to send images to that endpoint for inference. In this example, you will run inference using SQL commands in Snowsight. 
 
-Since you already have access to the Manufacturing dataset, you will run inference on one of those images (typically you would inference on new images).
+Since you already have access to the Manufacturing dataset, you will run inference on one of those images (typically you would run inference on new images).
 
 ### Get Your App Name
 
