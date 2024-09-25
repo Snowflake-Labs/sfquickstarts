@@ -155,6 +155,7 @@ Configuring Stitch is as simple as selecting which tables you want to generate i
 3. Check the box on all tables you want to run through ID resolution
 
 ![Stitch settings](assets/stitch-settings.png)
+
 4. Click “Save”
 5. Click “Run” in the upper right.
 
