@@ -150,9 +150,7 @@ Now that you've loaded the sample dataset into your Snowflake account, you're re
 8. Click the directory path (**⌄ /**) in the **Folder** field. 
 9. Select the **data** directory.
 10. Click **Sync**.
-   <img src="assets/LL_manufacturing_load_2.png" alt="Select the Snowflake stage to load images from" width="600">
 11. All images in the stage are loaded to the LandingLens project. (Refresh the page to see the images.) The project now has 100 images; 50 images have the class "defects", and 50 have the class "no-defects".
-   <img src="assets/LL_manufacturing_load_3.png" alt="View uploaded images and labels in LandingLens" width="800">
 
 
 ### Train a Classification Model
