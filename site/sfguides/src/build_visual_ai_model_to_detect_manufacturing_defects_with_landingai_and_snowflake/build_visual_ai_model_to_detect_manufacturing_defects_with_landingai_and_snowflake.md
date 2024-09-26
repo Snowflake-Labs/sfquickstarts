@@ -297,6 +297,7 @@ In this quickstart you learned:
 - How to install the LandingLens Native App from the Snowflake Marketplace
 - How to load images from Snowflake stages into LandingLens projects
 - How to train and deploy a computer vision project in LandingLens
+- How to run inference using SQL commands in Snowsight
 
 
 ### Related Resources
