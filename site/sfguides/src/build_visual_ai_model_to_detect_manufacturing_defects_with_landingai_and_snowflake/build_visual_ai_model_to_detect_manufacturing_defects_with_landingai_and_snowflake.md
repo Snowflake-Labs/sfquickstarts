@@ -88,7 +88,7 @@ After you've requested the app and been granted access it, follow the instructio
    
 13. The installer opens in the **APP_WIZARD** tab.
 
-14. Click **Install**. The installer installs all the required services for the LandingLens app. This process takes about 20 to 30 minutes. Do NOT close the tab during the installation process, because it will stop the process.
+14. Click **Install**. The installer installs all the required services for the LandingLens app. This process takes about 20 to 30 minutes. Do NOT close the tab during the installation process because it will stop the process.
       <img src="assets/LLSF_install_8_install.png" alt="Launch the app installer" width="800">
    
 15. Once the installation process is complete, all services have the status DONE or READY (green checkmark) and the URL to access LandingLens displays. Copy and paste the URL.  
@@ -96,7 +96,7 @@ After you've requested the app and been granted access it, follow the instructio
 
 16. Paste the URL into a new tab to open the LandingLens app. We recommend bookmarking this URL. You can log in to the app using the Snowflake credentials you used to install the app. Only users with the correct privileges in the account can access the LandingLens app.
    
-      <img src="assets/lai_landinglens_app.png" alt="LAI Lens app" width="800">
+      <img src="assets/lai_landinglens_app_crop.png" alt="LAI Lens app" width="800">
    
     
 <!-- ------------------------ -->
@@ -304,4 +304,4 @@ In this quickstart you learned:
 ### Related Resources
 - To learn about more about LandingLens, check out the [LandingLens docs](https://support.landing.ai/docs/snowflake)
 - To connect with other LandingLens users, join the [LandingAI Community](https://community.landing.ai/home)
-- To learn more about LandingAI, check out [landing.ai/](https://landing.ai/)
+- To learn more about LandingAI, check out [landing.ai](https://landing.ai/)
