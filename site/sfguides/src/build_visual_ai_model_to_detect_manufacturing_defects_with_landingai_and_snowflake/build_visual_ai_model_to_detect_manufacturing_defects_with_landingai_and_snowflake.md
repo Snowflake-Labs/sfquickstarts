@@ -34,7 +34,7 @@ To users who are familiar with machine learning, LandingLens offers advanced too
 
 
 ### What You’ll Build
-- A computer vision Classification model to detect pneumonia
+- A computer vision Classification model to detect defects from a manufacturing line.
 
 <!-- ------------------------ -->
 
@@ -183,14 +183,15 @@ To deploy the model with Cloud Deployment, follow these instructions:
 1. Open the **Models** tab.
 2. Click **Deploy** in the model's row.
 
-   <img src="assets/LL_pneumonia_deploy_1.png" alt="Deploy the model" width="800">
+   <img src="assets/LL_manufacturing_deploy_1.png" alt="Deploy the model" width="800">
 3. Name the endpoint and click **Deploy**.
 
-   <img src="assets/LL_pneumonia_deploy_2.png" alt="Name the endpoint" width="400">
+   <img src="assets/LL_manufacturing_deploy_2.png" alt="Name the endpoint" width="400">
    
 4. LandingLens deploys the model to the endpoint and opens the **Deploy** page. You can now use this endpoint to run inference.
-   <img src="assets/LL_pneumonia_deploy_3.png" alt="View the deployment" width="800">
-5. Make a note of the `endpoint_id` that displays in the script. You will include this when you run inference later.
+   <img src="assets/LL_manufacturing_deploy_3.png" alt="View the deployment" width="800">
+5. Make a note of the `endpoint_id` that displays in the **Python SDK** script. You will include this when you run inference later.
+   <img src="assets/LL_manufacturing_deploy_4.png" alt="Get the endpoint ID" width="600">
 
 <!-- ------------------------ -->
 ## Run Inference
@@ -245,12 +246,44 @@ In this tutorial, you will run inference using SQL commands. To do this, follow 
    <img src="assets/LLENS_PUBLIC_apply_1.png" alt="Open the app" width="800">
 4. Copy the following code into the worksheet:
    ```
-   APP_NAME.core.run_inference('@llens_sample_ds_manufacturing.ball_bearing.dataset/data/defects/cast_def_0_0.jpeg', '<endpoint_id>') as inference;
+   SELECT
+    APP_NAME.core.run_inference('@llens_sample_ds_manufacturing.ball_bearing.dataset/data/no-defects/cast_ok_0_102.jpeg', '<endpoint_id>') as inference;
+   
    ```
-5. Run the code. 
-6. The response should be similar to "". The prediction should be "defects".
+6. Replace `APP_NAME` with the name of your LandingLens instance, and `<endpoint_id>` with the endpoint ID for the deployed model.
+7. Run the code.
+8. The response should be similar to the following code. The expected `labelName` is `no defects`.
+   ```
+   {
+      "backbonepredictions": null,
+      "backbonetype": null,
+      "latency": {
+         "infer_s": 0.26324915885925293,
+         "input_conversion_s": 0.0013682842254638672,
+         "model_loading_s": 0.0002269744873046875,
+         "postprocess_s": 7.891654968261719e-05,
+         "preprocess_s": 0.0044956207275390625,
+         "serialize_s": 0.00017309188842773438
+      },
+      "model_id": "a24d15b0-3822-4602-a544-720a0097aa36",
+      "predictions": {
+         "labelIndex": 2,
+         "labelName": "no defects",
+         "score": 0.999671220779419
+      },
+  "type": "ClassificationPrediction"
+   }
+   ```
+   <img src="assets/LL_manufacturing_inference_1.png" alt="Run inference and view results" width="800">
 
+### See Inference Results in LandingLens
 
+After running inference, you can also see the prediction results in LandingLens. To do this:
+
+1. Open the project in LandingLens.
+2. Open the Deploy tab.
+3. The image and inference results display.
+   <img src="assets/LL_manufacturing_inference_2.png" alt="View inference results in LandingLens" width="800">
 
 
 
