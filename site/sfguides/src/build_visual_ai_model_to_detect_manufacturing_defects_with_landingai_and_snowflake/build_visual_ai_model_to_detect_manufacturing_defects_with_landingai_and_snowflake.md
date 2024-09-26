@@ -150,8 +150,10 @@ Now that you've loaded the sample dataset into your Snowflake account, you're re
 8. Click the directory path (**⌄ /**) in the **Folder** field. 
 9. Select the **data** directory.
 10. Click **Sync**.
+
    <img src="assets/LL_manufacturing_load_2.png" alt="Select the Snowflake stage to load images from" width="600">
 11. All images in the stage are loaded to the LandingLens project. (Refresh the page to see the images.) The project now has 100 images; 50 images have the class "defects", and 50 have the class "no-defects".
+
    <img src="assets/LL_manufacturing_load_3.png" alt="View uploaded images and labels in LandingLens" width="800">
 
 ### Train a Classification Model
@@ -210,6 +212,7 @@ The SQL commands you will run in this section require you to include the `APP_NA
 2. Go **Data Products** > **Apps**. Click the **LandingLens - Visual AI Platform** app listing.
    <img src="assets/app_name_get_1.png" alt="Open the app" width="800">
 3. Click **Launch App**.
+
    <img src="assets/app_name_get_2.png" alt="Launch the app" width="800">
 4. If prompted, select a warehouse.
 5. The  `APP_NAME` is the text following the **LandingLens Installer for** line. For example, in the screenshot below, the `APP_NAME` is **LANDINGLENS_SNOWFLAKE**.
