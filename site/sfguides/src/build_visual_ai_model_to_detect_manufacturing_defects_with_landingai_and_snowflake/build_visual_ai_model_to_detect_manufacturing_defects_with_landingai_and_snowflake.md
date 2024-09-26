@@ -248,7 +248,6 @@ In this tutorial, you will run inference using SQL commands. To do this, follow 
    ```
    SELECT
     APP_NAME.core.run_inference('@llens_sample_ds_manufacturing.ball_bearing.dataset/data/no-defects/cast_ok_0_102.jpeg', '<endpoint_id>') as inference;
-   
    ```
 6. Replace `APP_NAME` with the name of your LandingLens instance, and `<endpoint_id>` with the endpoint ID for the deployed model.
 7. Run the code.
@@ -271,7 +270,7 @@ In this tutorial, you will run inference using SQL commands. To do this, follow 
          "labelName": "no defects",
          "score": 0.999671220779419
       },
-  "type": "ClassificationPrediction"
+      "type": "ClassificationPrediction"
    }
    ```
    <img src="assets/LL_manufacturing_inference_1.png" alt="Run inference and view results" width="800">
