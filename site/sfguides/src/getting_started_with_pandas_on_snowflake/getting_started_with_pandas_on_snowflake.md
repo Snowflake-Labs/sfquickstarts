@@ -49,11 +49,11 @@ pandas on Snowflake is delivered through the Snowpark pandas API, which you will
 ## Set up the Snowflake environment
 Duration: 2
 
-> aside positive
->
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas).
+1. Download the Git repo [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas).
 
-Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
+2. Install the [Cybersyn Finance and Economics dataset](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/cybersyn-inc-financial-economic-essentials) from [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/). 
+
+3. Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
@@ -83,21 +83,10 @@ USE WAREHOUSE PANDAS_WH;
 USE DATABASE PANDAS_DB;
 
 -- Schemas
-CREATE OR REPLACE SCHEMA EXTERNAL;
-CREATE OR REPLACE SCHEMA RAW_POS;
-CREATE OR REPLACE SCHEMA RAW_CUSTOMER;
+CREATE OR REPLACE SCHEMA PUBLIC;
 
--- External Frostbyte objects
-USE SCHEMA EXTERNAL;
-CREATE OR REPLACE FILE FORMAT PARQUET_FORMAT
-    TYPE = PARQUET
-    COMPRESSION = SNAPPY
-;
-CREATE OR REPLACE STAGE FROSTBYTE_RAW_STAGE
-    URL = 's3://sfquickstarts/data-engineering-with-snowpark-python/'
-;
-
-LS @FROSTBYTE_RAW_STAGE;
+-- Create a table from the secure shared view
+CREATE OR REPLACE TABLE STOCK_PRICE_TIMESERIES AS SELECT * FROM FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES;
 ```
 
 These can also be found in the **setup.sql** file.
@@ -120,7 +109,9 @@ Duration: 10
 ### Import .ipynb File
 1. Download this [ipynb file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-pandas-on-snowflake/blob/main/notebooks/0_start_here.ipynb) to your machine.
 2. Navigate to where you have downloaded the ipynb file and select **0_start_here.ipynb** and click **Open**  
-3. Give the notebook a name and select the database and schema you would like to store the notebook in and a warehouse for the notebook to run on. 
+3. Give the notebook a name.
+4. Select the database `PANDAS_DB` and schema `PUBLIC` to store the notebook
+5. Select the warehouse `PANDAS_WH` for the notebook to run on. 
 
 ### Add Required Python Libraries
 
