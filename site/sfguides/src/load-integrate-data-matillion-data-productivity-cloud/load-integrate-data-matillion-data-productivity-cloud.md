@@ -267,7 +267,7 @@ With the iterator selected, drag its **blue** connector nub onto the Excel Query
 Select the Excel Query and set its properties:
 
 - Storage Type: Amazon S3 Storage
-- Storage URL: `devrel.matillion.com/solutions/GreenWave/store_lite.xlsx`
+- Storage URL: `devrel.matillion.com/solutions/GreenWave/store_lite.xlsx` (don't worry if you see an error message about listing buckets)
 - Basic Advanced Mode: Advanced
 - Contains Header Row: Yes
 - SQL Query: `SELECT * FROM ${worksheet_name}`
