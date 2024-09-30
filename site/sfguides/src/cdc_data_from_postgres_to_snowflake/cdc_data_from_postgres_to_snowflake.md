@@ -13,18 +13,15 @@ tags: Getting Started, Connectors, Dynamic Tables
 ## Overview
 Duration: 10
 
-Churn prediction relies on data analysis to be effective. Through data analysis, businesses gather, clean, and model customer data to uncover patterns and trends. This understanding of customer behavior is key for building accurate churn prediction models. By applying data analysis techniques, businesses can identify at-risk customers and take targeted actions to retain them. Essentially, data analysis provides the necessary foundation for effective churn prediction, helping businesses reduce churn and boost customer loyalty.
-
-In this Quickstart, we will play the role of a data scientist at a telecom company that wants to identify users who are at high risk of churning. To accomplish this, we need to build a model that can learn how to identify such users. We will demonstrate how to use Snowflake Notebooks in conjunction with Snowflake/Snowpark to build a Random Forest Classifier to help us with this task.
-
-This Quickstart uses Snowflake Notebooks to import and load data, train a Random Forest with Snowpark ML model, visualize the predicted results from the forcasting model by building an interactive web application and make predictions on new users.
+In this Quickstart, we will play the role of an analyst at a financial use case that focuses on building a dashboard that provides insights using Dynamic Tables based on customer transactional data housed on a PostgreSQL database and brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is to segment customers, track their purchasing behavior over time, and help businesses identify key trends and potential opportunites for customer engagetment, upselling, and retention.
 
 ### What You Will Build
-- An interactive web app to make predictions on new users
+- A pipeline to import data into Snowflake from PostgreSQL
 
 ### What You Will Learn
-- How to import/load data with Snowflake Notebook
-- How to train a Random Forest with Snowpark ML model
+- How to import/load PostgreSQL data housed in RDS using the Snowflake Connector for PostgreSQL
+- How to connect PostgreSQL to Snowflake using the Snowflake Connector for PostgreSQL
+- Import PostgreSQL data housed in Amazon RDS using the Snowflake Connector for PostgreSQL
 - How to visualize the predicted results from the forecasting model
 
 ### Prerequisites
