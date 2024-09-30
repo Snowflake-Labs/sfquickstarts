@@ -13,24 +13,22 @@ tags: Getting Started, Connectors, Dynamic Tables
 ## Overview
 Duration: 10
 
-In this Quickstart, we will play the role of an analyst at a financial use case that focuses on building a dashboard that provides insights using Dynamic Tables based on customer transactional data housed on a PostgreSQL database and brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is to segment customers, track their purchasing behavior over time, and help businesses identify key trends and potential opportunites for customer engagetment, upselling, and retention.
+In this Quickstart, we will play the role of an analyst at a financial use case that focuses on building a dashboard that provides insights using Dynamic Tables based on customer transactional data housed on a PostgreSQL database and brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is to segment customers, track their purchasing behavior over time, and help businesses identify key trends and potential opportunities for customer engagement, up-selling, and retention, all within Streamlit-in-Snowflake.
 
 ### What You Will Build
 - A pipeline to import data into Snowflake from PostgreSQL
+- A Streamlit-in-Snowflake application 
 
 ### What You Will Learn
-- How to import/load PostgreSQL data housed in RDS using the Snowflake Connector for PostgreSQL
-- How to connect PostgreSQL to Snowflake using the Snowflake Connector for PostgreSQL
-- Import PostgreSQL data housed in Amazon RDS using the Snowflake Connector for PostgreSQL
-- How to visualize the predicted results from the forecasting model
+- How to connect PostgreSQL data to Snowflake using the [Snowflake Connector for PostgreSQL](https://other-docs.snowflake.com/en/connectors/postgres6/about)
+- Visualize data using [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about) and display visualizations within [Streamlit-in-Snowflake (SiS)](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 
 ### Prerequisites
 - Familiarity with basic Python and SQL
-- Familiarity with training ML models
 - Familiarity with data science notebooks
 - Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
 
-<!-- ------------------------ -->
+------------------------
 ## Setting Up Snowflake Environment
 Duration: 5
 
