@@ -450,16 +450,17 @@ To fully remove everything you did today you only need to drop some objects in y
 USE ROLE ACCOUNTADMIN;
 
 DROP DATABASE IF EXISTS API;
+DROP USER IF EXISTS SVC_DATA_API;
 DROP ROLE IF EXISTS DATA_API_ROLE;
 DROP COMPUTE POOL IF EXISTS API;
 DROP WAREHOUSE IF EXISTS DATA_API_WH;
-DROP INTEGRATION IF EXISTS NGROK;
-DROP NETWORK RULE IF EXISTS NGROK_OUT;
 ```
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion and Resources
 Duration: 1
+
+### Conclusion
 
 You've successfully built a custom Personalization API in Python powered by Snowflake Hybrid Tables and Snowpark Container Services. 
 
@@ -467,6 +468,10 @@ When you go to put an API into production you should think about how you'll gene
 
 To get more comfortable with this solution, implement new endpoints with new datasets, like products, store locations, or other catalog data.
 
-### What we've covered
+### What You Learned
 - How to configure and build a custom point-lookup API Powered by Snowflake
-- How to run and test the API on your machine
+- How to test the API from your local machine
+
+### Resources
+
+If you want to build a Data API using Snowflake standard tables for analytical queries, be sure to check out the previous version of this [here](https://github.com/sfc-gh-bculberson/lab_data_api_python). 
