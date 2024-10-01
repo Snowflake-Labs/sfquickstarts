@@ -20,7 +20,7 @@ This Snowflake lab will be done as part of a theoretical real-world “story” 
 
 The story of this lab is examining incidents of COVID-19 in Europe along with changes in mobility. We would like to use historical data to predict mortality rates for COVID-19 and see if changes in mobility is a significant factor driving this.
 
-The source of data is the Starschema Covid-19 database from the Snowflake Data Marketplace. After analyzing the data in Snowflake’s Snowsight, we will move over to Dataiku to perform some transformations (that are pushed down to Snowflake for computation) and then create a predictive model.
+The source of data is the Starschema Covid-19 database from the Snowflake Marketplace. After analyzing the data in Snowflake’s Snowsight, we will move over to Dataiku to perform some transformations (that are pushed down to Snowflake for computation) and then create a predictive model.
 
 The specific tables we’ll use are the JHU_COVID_19 dataset which reports case numbers by province and day as well as the GOOG_GLOBAL_MOBILITY_REPORT which reports the percent change in mobility across various areas (e.g., grocery stores, parks, etc.) by a state/region of a country and day.
 
@@ -283,25 +283,25 @@ You’ve now successfully set up your Dataiku trial account via Snowflake’s Pa
 
 <!-- ------------------------ -->
 
-## Getting and Preparing COVID-19 Data from the Snowflake Data Marketplace
+## Getting and Preparing COVID-19 Data from the Snowflake Marketplace
 
 Duration: 20
 
 > aside positive
 > 
->  **Snowflake's Data Sharing** <br> The Snowflake Data Marketplace is Snowflake's hosted data exchange, where any Snowflake customer can seamlessly access third-party data, and where companies can publish data and offer data services to be discovered and purchased by other Snowflake customers.
+>  **Snowflake's Data Sharing** <br> The Snowflake Marketplace is Snowflake's hosted data exchange, where any Snowflake customer can seamlessly access third-party data, and where companies can publish data and offer data services to be discovered and purchased by other Snowflake customers.
 Today it contains data from over 100+ Data Providers with over 220+ data listings. Review [this webpage](https://www.snowflake.com/data-marketplace/) for more information. <br> You can also build out your own Snowflake Data Exchange and remove the need for FTP, file shares, ETL processes to create the files for your customers and standardize on Snowflake Data Exchange. This will break down data silos and allows you to frictionlessly share data in a highly governed way within your company, as well as with suppliers, partners or customers. Your Data Exchange governs live access to a single copy of the data, allows you to securely control access to data, and eliminates the cost and headaches of traditional data sharing methods like copying files or building ETL pipelines.
 
 
-### Getting COVID-19 Data from the Snowflake Data Marketplace
+### Getting COVID-19 Data from the Snowflake Marketplace
 
-To access the Snowflake Data Marketplace, follow the below steps.
+To access the Snowflake Marketplace, follow the below steps.
 
 Make sure that your current role is `ACCOUNTADMIN` (as shown in the top right). If not, update your role by clicking on your profile on the top right.
 
 ![img](assets/dataiku29.png)
 
-Select the **Data Marketplace** icon at the top and click on **Explore the Snowflake Data Marketplace**.
+Select the **Data Marketplace** icon at the top and click on **Explore the Snowflake Marketplace**.
 
 ![img](assets/dataiku30.png)
 
@@ -311,7 +311,7 @@ If it’s your first time using the Data Marketplace, the following screens will
 
 
 
-You will now be redirected to the Snowflake Data Marketplace.
+You will now be redirected to the Snowflake Marketplace.
 
 It will display the variety of external data sources across a variety of industries. The Search box in the top right allows you to search for a listing or data provider. The side menu on the left shows the categories of data available in the Data Marketplace.
 
@@ -349,7 +349,7 @@ Further to the right you will see the Database Details including: the owner of t
 
 ![img](assets/dataiku39.png)
 
-You have now successfully subscribed to the COVID-19 dataset from StarSchema which is updated daily with global COVID data. Note that we didn’t have to create databases, tables, views, or ETL processes. We simply can search for and access shared data from the Snowflake Data Marketplace.
+You have now successfully subscribed to the COVID-19 dataset from StarSchema which is updated daily with global COVID data. Note that we didn’t have to create databases, tables, views, or ETL processes. We simply can search for and access shared data from the Snowflake Marketplace.
 
 ### Analysing COVID-19 using Snowsight
 

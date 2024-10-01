@@ -212,7 +212,7 @@ GRANT UPDATE ON TABLE frostbyte_tasty_bytes_app.raw.app_order_header TO ROLE tas
 USE ROLE useradmin;
 
 -- Open the ~/.ssh/snowflake_app_key.pub file from Step 1 and copy the contents starting just after the PUBLIC KEY header, 
--- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE.
+-- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE. Make sure to remove the additinal spaces. It should be a single line string.
 CREATE OR REPLACE USER data_app_demo
 RSA_PUBLIC_KEY='<INSERT_RSA_PUBLIC_KEY_HERE>' 
 DEFAULT_ROLE=frostbyte_tasty_bytes_app 
@@ -240,7 +240,7 @@ Duration:10
 ### ステップ2：アプリケーションを設定する
 
 1. VS Codeまたはお好みのIDEで`reactNativeApp`フォルダを開きます。
-2. `.env`ファイルを開き、非公開キーで`PRIVATE_KEY`の値を更新します。ヘッダー（`-----BEGIN RSA PRIVATE KEY-----`）とフッター（`-----END RSA PRIVATE KEY-----`）を含め、`~/.ssh/snowflake_app_key.pub`から非公開キー全体をコピー＆ペーストします。
+2. `.env`ファイルを開き、非公開キーで`PRIVATE_KEY`の値を更新します。ヘッダー（`-----BEGIN RSA PRIVATE KEY-----`）とフッター（`-----END RSA PRIVATE KEY-----`）を含め、`~/.ssh/snowflake_app_key`から非公開キー全体をコピー＆ペーストします。
 3. 米国西部に所在している場合は、`SNOWFLAKE_ACCOUNT_IDENTIFIER`を自分のSnowflakeアカウントに更新してください。（あるいは）米国西部以外の場所に所在している場合は、`SNOWFLAKE_ACCOUNT_IDENTIFIER`を「<SNOWFLAKE ACCOUNT>.<REGION>」に更新してください。Snowflakeからsnowflake_accountの値を取得するには、Snowsightで`SELECT CURRENT_ACCOUNT()`を実行してください。Snowflakeからリージョン値を取得するには、Snowsightで`SELECT CURRENT_REGION()`を実行してください。SNOWFLAKE_ACCOUNT_IDENTIFIERとSNOWFLAKE_ACCOUNTは米国西部では同じとなります。
 4. `SNOWFLAKE_ACCOUNT`を自分のSnowflakeアカウントに更新します。
 5. `PUBLIC_KEY_FINGERPRINT`を自分のユーザー公開キーのフィンガープリントに更新します。公開キーのフィンガープリントを取得するには、SnowsightでSQL、`DESCRIBE USER data_app_demo `を実行し、RSA_PUBLIC_KEY_FPプロパティ値を取得します。

@@ -208,11 +208,6 @@ To create the service to host the application, connect to Snowflake and run the 
 USE ROLE ACCOUNTADMIN;
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE DATA_API_ROLE;
 
-CREATE SECURITY INTEGRATION IF NOT EXISTS SNOWSERVICES_INGRESS_OAUTH 
-TYPE=oauth
-OAUTH_CLIENT=snowservices_ingress
-ENABLED=true;
-
 USE ROLE DATA_API_ROLE;
 CREATE SERVICE API.PUBLIC.API
  IN COMPUTE POOL API
@@ -252,21 +247,21 @@ After your service has started, you can get the endpoints with this command:
 SHOW ENDPOINTS IN SERVICE API;
 ```
 
-Make note of the ingress_url as that will be need to test the application. This service will start the API, running at `https://<INGRESS_URL>`.
+Make note of the ingress_url as that will be need to test the application. This service will start the API, running at https://<INGRESS_URL>.
 
 
 <!-- ------------------------ -->
 ## Testing the API
 Duration: 1
 
-To verify the API is online, go to the `https://<INGRESS_URL>` in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
+To verify the API is online, go to the https://<INGRESS_URL> in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
 
 ```json
 {"result":"Nothing to see here"}
 ```
 
 ### Testing using a webpage
-This project comes with a simple webpage that allows you to test the API. To get to it, open `https://<INGRESS_URL>/test` in a web browser.
+This project comes with a simple webpage that allows you to test the API. To get to it, open https://<INGRESS_URL>/test in a web browser.
 
 At the top you can choose if you want to exercise the Snowflake Connector for Python or the Snowflake Snowpark API endpoints.
 

@@ -534,7 +534,6 @@ You can now explore how certain events or metrics trend over time across audienc
 #### Create a Funnel Analysis
 
 1. Toggle the chart type from “Performance” to “Funnel”.
-
  - Note*: Make sure your date range is still set to "Custom", and select 5/1/2024 - 6/1/2024.
 
 2. Under Steps, set up your specific funnel.

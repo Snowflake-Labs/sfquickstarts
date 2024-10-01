@@ -20,7 +20,7 @@ Powered by Tasty Bytes - ゼロからのSnowflakeクイックスタートへよ�
 このクイックスタートでは、Snowflakeのさまざまな機能をご紹介し、Tasty Bytesのビジネス要件を満たすゼロコピークローンやタイムトラベルなどの主要機能について詳しく説明します。
 
 ### 前提条件
-- 開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している[**Tasty Bytesの紹介クイックスタート**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html)を完了しておくようにしてください。
+- 開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している[**Tasty Bytesの紹介クイックスタート**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html)を完了しておくようにしてください。
 
 ### 学習する内容
 - テーブルのクローンを作成する方法
@@ -85,7 +85,7 @@ Tasty Bytesのキッチンカーフリート分析の一環として、私たち
 優れた開発者である私たちは、本番テーブルに対して開発を行ってはならないということを認識しています。そのため、まず本番環境を模した開発環境を作成する必要があります。
 
 ### ステップ1 - 本番のクローンを作成する
-Snowflakeの独自のアーキテクチャのおかげで、[CLONE](https://docs.snowflake.com/en/sql-reference/sql/create-clone)機能を使用して本番`raw_pos.truck`のスナップショットを即時に作成し、それを`raw_pos.truck_dev`と名づけることができます。
+Snowflakeの独自のアーキテクチャのおかげで、[CLONE](https://docs.snowflake.com/ja/sql-reference/sql/create-clone)機能を使用して本番`raw_pos.truck`のスナップショットを即時に作成し、それを`raw_pos.truck_dev`と名づけることができます。
 
 では、次の一連のクエリを実行し、`tasty_dev`ロールコンテキストを設定しテーブルクローンを作成しましょう。ここでは、クローン作成にウェアハウスコンテキストは必要ないため、ウェアハウスコンテキストの設定は必要ありません。
 
@@ -113,7 +113,7 @@ Duration: 1
 ### ステップ1 - クローンテーブルをクエリする
 次に、テーブルをクエリするにあたり、`tasty_dev_wh`ウェアハウスを使用する必要があります。
 
-次の2つのクエリを開始しましょう。2番目のステートメントでは、キッチンカー、その使用年数、メーカー、モデルを含む結果セットを生成し、`truck_id`列で[ORDER BY](https://docs.snowflake.com/en/sql-reference/constructs/order-by)を実行します。
+次の2つのクエリを開始しましょう。2番目のステートメントでは、キッチンカー、その使用年数、メーカー、モデルを含む結果セットを生成し、`truck_id`列で[ORDER BY](https://docs.snowflake.com/ja/sql-reference/constructs/order-by)を実行します。
 
 ```
 USE WAREHOUSE tasty_dev_wh;
@@ -130,9 +130,9 @@ ORDER BY t.truck_id;
 <img src = "assets/4.1.truck.png">
 
 ### ステップ2 - クエリを再実行する
-Snowflakeの[結果セットキャッシュ](https://docs.snowflake.com/en/user-guide/querying-persisted-results)をテストするために実行するクエリは、先ほど実行したものと同じです。しかし、ここではさらに一歩進んで、このクエリが結果セットキャッシュから結果が届くとすぐに結果を返したことを示すクエリプロファイルにアクセスします。
+Snowflakeの[結果セットキャッシュ](https://docs.snowflake.com/ja/user-guide/querying-persisted-results)をテストするために実行するクエリは、先ほど実行したものと同じです。しかし、ここではさらに一歩進んで、このクエリが結果セットキャッシュから結果が届くとすぐに結果を返したことを示すクエリプロファイルにアクセスします。
 
-以下のクエリを実行した後、スクリーンショットの手順に従って[クエリプロファイル](https://docs.snowflake.com/en/user-guide/ui-query-profile)にアクセスします。クエリプロファイルを調べると、`QUERY RESULT REUSE`と書かれている単一のノードがあるのが分かります。
+以下のクエリを実行した後、スクリーンショットの手順に従って[クエリプロファイル](https://docs.snowflake.com/ja/user-guide/ui-query-profile)にアクセスします。クエリプロファイルを調べると、`QUERY RESULT REUSE`と書かれている単一のノードがあるのが分かります。
 
 ```
 SELECT
@@ -162,7 +162,7 @@ Duration: 1
 上記の出力に基づき、まず`make`列に表示されたFord\_ recordsのタイプミスに対処する必要があります。その後、各キッチンカーの使用年数を算出する計算に取りかかることができます。
 
 ### ステップ1 - 列内の誤った値を更新する
-このセクションを始めるにあたり、次のクエリを実行してタイプミスを修正していきましょう。ここでは、[UPDATE](https://docs.snowflake.com/en/sql-reference/sql/update)を使用して、[WHERE](https://docs.snowflake.com/en/sql-reference/constructs/where)でメーカーがFord_と一致する`truck_dev`の行を変更します。
+このセクションを始めるにあたり、次のクエリを実行してタイプミスを修正していきましょう。ここでは、[UPDATE](https://docs.snowflake.com/ja/sql-reference/sql/update)を使用して、[WHERE](https://docs.snowflake.com/ja/sql-reference/constructs/where)でメーカーがFord_と一致する`truck_dev`の行を変更します。
 
 ```
 UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev 
@@ -174,7 +174,7 @@ WHERE make = 'Ford_';
 
 ### ステップ2 - 使用年数計算を構築する
 
-タイプミスを修正したので、フリート内のキッチンカーの使用年数を計算できるようになりました。次のクエリを実行してください。ここでは、[YEAR](https://docs.snowflake.com/en/sql-reference/functions/year)と[CURRENT_DATE](https://docs.snowflake.com/en/sql-reference/functions/current_date)をこの計算に利用していきます。
+タイプミスを修正したので、フリート内のキッチンカーの使用年数を計算できるようになりました。次のクエリを実行してください。ここでは、[YEAR](https://docs.snowflake.com/ja/sql-reference/functions/year)と[CURRENT_DATE](https://docs.snowflake.com/ja/sql-reference/functions/current_date)をこの計算に利用していきます。
 
 ```
 SELECT
@@ -198,7 +198,7 @@ Duration: 1
 キッチンカーの使用年数の計算がすべて終わりましたので、対応する新しい列をクローンテーブルに追加し、仕上げに列を更新して計算された値を反映させましょう。
 
 ### ステップ1 - 列をテーブルに追加する
-まず、[ALTER TABLE...](https://docs.snowflake.com/en/sql-reference/sql/alter-table-column)を使用する次のクエリを実行してください。[](https://docs.snowflake.com/en/sql-reference/sql/alter-table-column)[ADD COLUMN](https://docs.snowflake.com/en/sql-reference/sql/alter-table-column)で、[データ型がNUMBER](https://docs.snowflake.com/en/sql-reference/data-types-numeric)の空の`truck_age`列を`truck_dev`テーブルに作成します。
+まず、[ALTER TABLE...](https://docs.snowflake.com/ja/sql-reference/sql/alter-table-column)を使用する次のクエリを実行してください。[](https://docs.snowflake.com/ja/sql-reference/sql/alter-table-column)[ADD COLUMN](https://docs.snowflake.com/ja/sql-reference/sql/alter-table-column)で、[データ型がNUMBER](https://docs.snowflake.com/ja/sql-reference/data-types-numeric)の空の`truck_age`列を`truck_dev`テーブルに作成します。
 
 このクエリで、`Statement executed successfully`の結果が得られます。
 
@@ -208,7 +208,7 @@ ALTER TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 ```
 
 ### ステップ2 - 計算値を列に追加する
-列を追加したので、次のクエリを開始できるようになります。ここでは、前のセクションで構築したキッチンカーの使用年数計算を使用して新しい空の`truck_age`列を[UPDATE](https://docs.snowflake.com/en/sql-reference/sql/update)します。
+列を追加したので、次のクエリを開始できるようになります。ここでは、前のセクションで構築したキッチンカーの使用年数計算を使用して新しい空の`truck_age`列を[UPDATE](https://docs.snowflake.com/ja/sql-reference/sql/update)します。
 ```
 UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
     SET truck_age = (YEAR(CURRENT_DATE()) / t.year);
@@ -243,7 +243,7 @@ Duration: 1
 >
 
 ### ステップ1 - クエリ履歴を活用する
-リカバリプロセスを開始するにあたり、まず次のクエリを実行します。ここでは、Snowflake [QUERY_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/query_history)関数を使用し、`truck_dev`テーブルで実行したすべての更新ステートメントのリストを取得します。
+リカバリプロセスを開始するにあたり、まず次のクエリを実行します。ここでは、Snowflake [QUERY_HISTORY](https://docs.snowflake.com/ja/sql-reference/functions/query_history)関数を使用し、`truck_dev`テーブルで実行したすべての更新ステートメントのリストを取得します。
 ```
 SELECT 
     query_id,
@@ -276,7 +276,7 @@ SET query_id =
 ```
 
 ### ステップ3 - タイムトラベルを活用してテーブルを戻す
-誤ったquery_idが変数として保存されているため、次のクエリを実行し、タイムトラベルを使用して`truck_dev`テーブルを誤ったquery_id文の[BEFORE](https://docs.snowflake.com/en/sql-reference/constructs/at-before)の状態に置き換えることができます。
+誤ったquery_idが変数として保存されているため、次のクエリを実行し、タイムトラベルを使用して`truck_dev`テーブルを誤ったquery_id文の[BEFORE](https://docs.snowflake.com/ja/sql-reference/constructs/at-before)の状態に置き換えることができます。
 
 ```
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
@@ -319,7 +319,7 @@ SET truck_age = (YEAR(CURRENT_DATE()) - t.year);
 <img src = "assets/8.1.correct_update.png">
 
 ### ステップ2 - 開発テーブルを本番と入れ替える
-`truck_dev`のすべてが完了したところで、次の2つのクエリを開始してください。ここではまず、より権限のある`sysadmin`ロールを引き受けます。`sysadmin`として、2つ目のクエリは[ALTER TABLE... SWAP WITH](https://docs.snowflake.com/en/sql-reference/sql/alter-table)を使用して、`truck_dev`テーブルを`truck`に昇格させ、その逆も実行します。
+`truck_dev`のすべてが完了したところで、次の2つのクエリを開始してください。ここではまず、より権限のある`sysadmin`ロールを引き受けます。`sysadmin`として、2つ目のクエリは[ALTER TABLE... SWAP WITH](https://docs.snowflake.com/ja/sql-reference/sql/alter-table)を使用して、`truck_dev`テーブルを`truck`に昇格させ、その逆も実行します。
 
 完了すると`Statement executed successfully.`の結果が得られます。
 
@@ -355,7 +355,7 @@ Duration: 1
 私たちの開発者は任せられたタスクを完了したと明言することができるでしょう。`truck_age`列が整備され、正しく計算されるようになったため、`sysadmin`が残りのテーブルをクリーンアップし、その日の作業を終えることができます。
 
 ### ステップ1 - テーブルをドロップする
-データベースからテーブルを削除するために、[DROP TABLE](https://docs.snowflake.com/en/sql-reference/sql/drop-table)を利用する次のクエリを実行してください。
+データベースからテーブルを削除するために、[DROP TABLE](https://docs.snowflake.com/ja/sql-reference/sql/drop-table)を利用する次のクエリを実行してください。
 
 ```
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
@@ -366,7 +366,7 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 **大変です！** この結果セットを見ると、`sysadmin`でさえも間違いを犯すということが分かります。誤って、開発の`truck_dev`ではなく本番の`truck`をドロップしてしまいました。ありがたいことに、ここでもSnowflakeのタイムトラベルが活躍します。
 
 ### ステップ2 - テーブルをドロップ解除する
-システムに影響が出る前に次のクエリを急いで実行し、`truck`テーブルを[UNDROP](https://docs.snowflake.com/en/sql-reference/sql/undrop-table)しましょう。
+システムに影響が出る前に次のクエリを急いで実行し、`truck`テーブルを[UNDROP](https://docs.snowflake.com/ja/sql-reference/sql/undrop-table)しましょう。
 
 ```
 UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
@@ -406,4 +406,4 @@ Duration: 1
 
 引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なその他すべてのPowered by Taste Bytes - クイックスタートをご覧ください。
 
-- ### [Powered by Tasty Bytes - クイックスタート目次](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3)
+- ### [Powered by Tasty Bytes - クイックスタート目次](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html#3)
