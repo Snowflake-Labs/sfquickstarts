@@ -28,6 +28,7 @@ This Quickstart will guide you through the steps of running Snowflake Notebooks 
 - Foundational knowledge of Data Science workflows
 - Requested access to the Meta models at Hugging Face
 - Running the 11b version of the model requires > 30GB of GPU memory
+- You make need to get permsissions to access the medium GPU compute pool
 
 ### What You Will Learn 
 - The key features of Snowflake Notebooks with Container Runtime
@@ -70,18 +71,13 @@ CREATE OR REPLACE WAREHOUSE CONTAINER_RUNTIME_WH AUTO_SUSPEND = 60;
 GRANT ALL ON WAREHOUSE CONTAINER_RUNTIME_WH TO ROLE container_runtime_lab_user;
 
 -- Create and grant access to compute pools
+-- If you get errors about limits, reduce the number of nodes in the compute pools
 CREATE COMPUTE POOL IF NOT EXISTS gpu_nv_m_nodes
   MIN_NODES = 1
-  MAX_NODES = 5
+  MAX_NODES = 3
   INSTANCE_FAMILY = GPU_NV_M;
 
-CREATE COMPUTE POOL IF NOT EXISTS gpu_nv_l_nodes
-  MIN_NODES = 1
-  MAX_NODES = 5
-  INSTANCE_FAMILY = GPU_NV_L;
-
 GRANT USAGE ON COMPUTE POOL gpu_nv_m_nodes TO ROLE container_runtime_lab_user;
-GRANT USAGE ON COMPUTE POOL gpu_nv_l_nodes TO ROLE container_runtime_lab_user;
 
 -- Create and grant access to EAIs
 -- Substep #1: create network rules (these are schema-level objects; end users do not need direct access to the network rules)
