@@ -427,7 +427,7 @@ The `tasty_app_admin_role` role must also be given the permission to bind servic
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE tasty_app_admin_role;
 ```
 
-### Step 3.4 Set up docker image repositories and stage for service specifications
+### Step 3.3 Set up docker image repositories and stage for service specifications
 
 We can now ensure that the current user can use the admin role.
 ```sql 
@@ -453,7 +453,7 @@ CREATE STAGE tasty_app_stage DIRECTORY = ( ENABLE = true );
 ```
 
 
-### Step 3.5 Create external users role and users for the external access
+### Step 3.4 Create external users role and users for the external access
 
 In order to allow the application users to access the application we can create dedicated `USERS` for each user. In the guide [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake) users were actually stored in a `USERS` table that was created, where hashed passwords were stored and could be used to check the login from the frontend. Create that table by running the following SQL:
 
