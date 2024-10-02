@@ -205,7 +205,9 @@ Open your browser and go to [your newly created application](http://localhost:51
 
   - Visualize the Data with Liveboards
 
-    For many users, viewing data in charts is the most efficient way of analysing data. The trouble with most charting solutions is that the results is very static. Consider a traditional dashboard to view daily sales. Charts on these dashboards are effectively pre-defined queries. With ThoughtSpot however, charts and dashboards are fully dynamic; they are alive. You can modify the filters with natural language, tap and drill in to view deeper insights, and more. 
+    For many users, viewing data in charts is the most efficient way of analysing data. The trouble with most charting solutions is that the results is very static. 
+    
+    Consider a traditional dashboard to view daily sales. Charts on these dashboards are effectively pre-defined queries. With ThoughtSpot however, charts and dashboards are fully dynamic; they are alive. You can modify the filters with natural language, tap and drill in to view deeper insights, and more. 
     
     For this tutorial, we are going to create a Liveboard, a dynamic dashboard, to represent product sales by store.  Let’s get started.
 
@@ -215,7 +217,7 @@ Open your browser and go to [your newly created application](http://localhost:51
 
 2. Use Natural Language Search with [Sage](https://docs.thoughtspot.com/cloud/latest/sage-search)
 
-Ask a question like "what are my best performing brands last week" in the Search bar
+    Ask a question like "what are my best performing brands last week" in the Search bar
 
 ![Sage](assets/sage-search-drill_down.gif)
 
