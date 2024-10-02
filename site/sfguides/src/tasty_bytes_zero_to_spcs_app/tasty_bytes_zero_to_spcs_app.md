@@ -422,20 +422,6 @@ GRANT USAGE ON COMPUTE POOL tasty_app_frontend_compute_pool TO ROLE tasty_app_ad
 GRANT MONITOR ON COMPUTE POOL tasty_app_frontend_compute_pool TO ROLE tasty_app_admin_role;
 ```
 
-### Step 3.3 Create security integration for public web access
-
-To allow external connections to public endpoints we will create for each service later, we add a `SECURITY INTEGRATION` that is dedicated to authentication of users coming from the public web. [Ingress: Using a service from outside Snowflake](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services?utm_source=legacy&utm_medium=serp&utm_term=snowservices_ingress#ingress-using-a-service-from-outside-snowflake)
-```sql
--- Create security integration
-CREATE SECURITY INTEGRATION "Application Authentication"
-  TYPE=oauth
-  OAUTH_CLIENT=snowservices_ingress
-  ENABLED=true;
-
-GRANT OWNERSHIP ON INTEGRATION "Application Authentication"
-TO ROLE tasty_app_admin_role REVOKE CURRENT GRANTS;
-```
-
 The `tasty_app_admin_role` role must also be given the permission to bind service endpoints for services.
 ```sql 
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE tasty_app_admin_role;

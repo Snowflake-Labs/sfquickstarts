@@ -154,7 +154,7 @@ finally:
 
 ```
 
-Run the following Python API code in [`01_snowpark_container_services_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.py) using the Snowpark Python Connector and Python API to create the [OAuth Security Integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration), [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) 
+Run the following Python API code in [`01_snowpark_container_services_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.py) using the Snowpark Python Connector and Python API to create the [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) 
 ```Python API
 
 # create a SnowflakeConnection instance
@@ -163,11 +163,6 @@ connection_acct_admin = connect(**CONNECTION_PARAMETERS_ACCOUNT_ADMIN)
 try:
     # create a root as the entry point for all object
     root = Root(connection_acct_admin)
-
-    connection_acct_admin.cursor().execute("""CREATE SECURITY INTEGRATION IF NOT EXISTS snowservices_ingress_oauth
-        TYPE=oauth
-        OAUTH_CLIENT=snowservices_ingress
-        ENABLED=true;""")
 
     connection_acct_admin.cursor().execute("""CREATE OR REPLACE NETWORK RULE ALLOW_ALL_RULE
         TYPE = 'HOST_PORT'
