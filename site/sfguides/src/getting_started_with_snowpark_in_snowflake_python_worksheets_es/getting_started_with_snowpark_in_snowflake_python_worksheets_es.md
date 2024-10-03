@@ -1,10 +1,17 @@
-id: getting\_started\_with\_snowpark\_in\_snowflake\_python\_worksheets resumen: Introducción a la ingeniería de datos y al ML con Snowpark para Python categorías: destacado, introducción, ingeniería de datos, desarrollo de entornos de aplicaciones: estado web: enlace de comentarios publicado: <https://github.com/Snowflake-Labs/sfguides/issues> etiquetas: introducción, Snowpark para Python, ingeniería de datos, hojas de trabajo de Python autores: Dash Desai
+id: getting_started_with_snowpark_in_snowflake_python_worksheets_es
+summary: Introducción a la ingeniería de datos y al ML con Snowpark para Python
+categories: featured,getting-started,data-engineering,app-development
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets, introducción, Snowpark para Python, ingeniería de datos, hojas de trabajo de Python, es 
+authors: Dash Desai
 
 # Introducción a Snowpark con las hojas de trabajo de Snowflake para Python
 <!-- ------------------------ -->
 ## Descripción general
 
-Duración: 5
+Duration: 5
 
 Tras completar esta guía, serás capaz de probar Snowpark para Python desde la UI de Snowflake. Además, comprenderás mejor cómo llevar a cabo tareas esenciales de ingeniería de datos con Snowpark en una hoja de trabajo de Snowflake para Python.
 
@@ -39,7 +46,7 @@ Un conjunto de datos preparado que se podrá utilizar en aplicaciones y análisi
 <!-- ------------------------ -->
 ## Introducción
 
-Duración: 10
+Duration: 10
 
 ### Creación de una cuenta de prueba de Snowflake
 
@@ -62,21 +69,22 @@ El botón que aparece más arriba te redirigirá a la página de la prueba **Int
 <!-- ------------------------ -->
 ## Carga de datos de tablas de Snowflake en DataFrames de Snowpark
 
-Duración: 1
+Duration: 1
 
 En primer lugar, vamos a importar la biblioteca de Snowpark para Python.
 
-\`\`\`python
+```python
 # Import Snowpark for Python
-import snowflake.snowpark as snowpark \`\`\`
+import snowflake.snowpark as snowpark 
+```
 
 ### Carga de datos de gastos e ingresos agregados de una campaña
 
-Duración: 3
+Duration: 3
 
 La tabla de gastos de campaña contiene los datos de los clics en anuncios que se han agregado para mostrar los gastos diarios en diferentes canales de publicidad digital como buscadores, redes sociales, correo electrónico y vídeos. La tabla de ingresos contiene datos de diez años.
 
-En este ejemplo, vamos a utilizar el siguiente código para cargar datos de las tablas ***campaign\_spend*** y ***monthly\_revenue***.
+En este ejemplo, vamos a utilizar el siguiente código para cargar datos de las tablas ***campaign_spend*** y ***monthly_revenue***.
 
 ```python
 snow_df_spend = session.table('campaign_spend')
@@ -86,16 +94,16 @@ snow_df_revenue = session.table('monthly_revenue')
 A continuación te mostramos otras formas de cargar los datos en DataFrames de Snowpark:
 
 - session.sql("select col1, col2... from tableName")
-- session.read.options({"field_delimiter": ",", "skip_header": 1}).schema(user\_schema).csv("@mystage/testCSV.csv")
+- session.read.options({"field_delimiter": ",", "skip_header": 1}).schema(user_schema).csv("@mystage/testCSV.csv")
 - session.read.parquet("@stageName/path/to/file")
-- session.create\_dataframe(\[1,2,3], schema=\["col1"])
+- session.create_dataframe([1,2,3], schema=["col1"])
 
 Consejo: Obtén más información sobre [DataFrames de Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/dataframe.html).
 
 <!-- ------------------------ -->
 ## Transformaciones de datos
 
-Duración: 10
+Duration: 10
 
 En esta sección vamos a realizar un conjunto de transformaciones, como agregaciones y uniones de dos DataFrames.
 
@@ -107,7 +115,7 @@ from snowflake.snowpark.functions import month,year,col,sum
 
 ### Gastos totales por año y mes en todos los canales
 
-Vamos a transformar los datos para poder ver el **coste total por año o mes y por canal** con las funciones de DataFrame de Snowpark ***group\_by()*** y ***agg()***.
+Vamos a transformar los datos para poder ver el **coste total por año o mes y por canal** con las funciones de DataFrame de Snowpark ***group_by()*** y ***agg()***.
 
 ```python
 snow_df_spend_per_channel = snow_df_spend.group_by(year('DATE'), month('DATE'),'CHANNEL').agg(sum('TOTAL_COST').as_('TOTAL_COST')).with_column_renamed('"YEAR(DATE)"',"YEAR").with_column_renamed('"MONTH(DATE)"',"MONTH").sort('YEAR','MONTH')
@@ -149,7 +157,7 @@ snow_df_spend_per_month.show()
 
 ### Datos de ingresos totales por año y mes
 
-Ahora, con las funciones ***group\_by()*** y ***agg()*** vamos a transformar los datos de ingresos en ingresos por año o mes.
+Ahora, con las funciones ***group_by()*** y ***agg()*** vamos a transformar los datos de ingresos en ingresos por año o mes.
 
 ```python
 snow_df_revenue_per_month = snow_df_revenue.group_by('YEAR','MONTH').agg(sum('REVENUE')).sort('YEAR','MONTH').with_column_renamed('SUM(REVENUE)','REVENUE')
@@ -196,9 +204,9 @@ Este es el aspecto que debería tener la pestaña **Output** tras haber ejecutad
 <!-- ------------------------ -->
 ## Guardar de datos transformados
 
-Duración: 1
+Duration: 1
 
-Vamos a guardar los datos transformados en una tabla de Snowflake ***SPEND\_AND\_REVENUE\_PER\_MONTH*** y así podremos utilizarla para continuar con el análisis y el entrenamiento de un modelo.
+Vamos a guardar los datos transformados en una tabla de Snowflake ***SPEND_AND_REVENUE_PER_MONTH*** y así podremos utilizarla para continuar con el análisis y el entrenamiento de un modelo.
 
 ```python
 snow_df_spend_and_revenue_per_month.write.mode('overwrite').save_as_table('SPEND_AND_REVENUE_PER_MONTH')
@@ -207,7 +215,7 @@ snow_df_spend_and_revenue_per_month.write.mode('overwrite').save_as_table('SPEND
 <!-- ------------------------ -->
 ## Visualización y devolución de datos transformados
 
-Duración: 1
+Duration: 1
 
 Uno de los valores que ha devuelto una hoja de trabajo de Python es de tipo y configuración ***Table()*** que, en nuestro caso, nos permitirá visualizar y devolver los datos transformados como un DataFrame de Snowpark.
 
@@ -226,7 +234,7 @@ Este es el aspecto que debería tener la pestaña **Results** tras haber ejecuta
 <!-- ------------------------ -->
 ## Implementación como un procedimiento almacenado
 
-Duración: 2
+Duration: 2
 
 De manera opcional, también puedes implementar esta hoja de trabajo como un procedimiento almacenado de Python para poder, por ejemplo, programarlo usando [Snowflake Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro). Para ello, haz clic en el botón **Deploy** en la parte superior derecha y sigue las instrucciones que se muestran a continuación.
 
@@ -238,7 +246,7 @@ De manera opcional, también puedes implementar esta hoja de trabajo como un pro
 
 ### Visualización de procedimientos almacenados
 
-Cuando se hayan implementado, podrás ver los detalles de los procedimientos almacenados en **Data >> Databases >> SNOWPARK\_DEMO\_SCHEMA >> Procedures**.
+Cuando se hayan implementado, podrás ver los detalles de los procedimientos almacenados en **Data >> Databases >> SNOWPARK_DEMO_SCHEMA >> Procedures**.
 
 ![Implementación](assets/deploy3.png)
 
@@ -264,7 +272,7 @@ Si quieres aprender a procesar datos de forma incremental, a organizar flujos de
 ### Recursos relacionados
 
 - [Guía para desarrolladores de hojas de trabajo para Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets)
-- [Introducción a la ingeniería de datos y al ML con Snowpark para Python](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html)
+- [Introducción a la ingeniería de datos y al ML con Snowpark para Python](/guide/getting_started_with_dataengineering_ml_using_snowpark_python_es/index.html)
 - [Avanzado: Guía de ML de Snowpark para Python](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
 - [Demos de Snowpark para Python](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Guía de Snowpark para Python para desarrolladores](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
