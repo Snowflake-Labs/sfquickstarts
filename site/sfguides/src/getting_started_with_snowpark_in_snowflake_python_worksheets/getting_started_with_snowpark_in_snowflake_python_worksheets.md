@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets
 authors: Dash Desai
 
-# Getting Started with Snowpark in Snowflake Python Worksheets
+# Getting Started with Snowpark in Snowflake Python Worksheets and Notebooks
 <!-- ------------------------ -->
 ## Overview
 
@@ -71,6 +71,11 @@ The button above will take you to a page in the trial titled **Getting Started w
 ## Load Data from Snowflake Tables into Snowpark DataFrames
 
 Duration: 1
+
+> aside positive
+> Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-in-worksheets-notebooks/blob/main/notebooks/0_start_here.ipynb) and import it to your Snowflake account as shown below.
+
+![notebook_callout](assets/notebook.png)
 
 First, let’s import the Snowpark Python library.
 
@@ -272,8 +277,9 @@ To learn how to process data incrementally, orchestrate data pipelines with Snow
 
 ### Related Resources
 
+- [Snowflake Notebooks Developer Guide](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks)
 - [Python Worksheets Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/python-worksheets)
+- [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Getting Started with Data Engineering and ML using Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html)
 - [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
-- [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
