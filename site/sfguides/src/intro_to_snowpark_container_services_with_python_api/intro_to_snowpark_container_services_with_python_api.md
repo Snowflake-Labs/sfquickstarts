@@ -433,7 +433,7 @@ spec:
 **Update the <repository_hostname> for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use Python API to push the yaml file. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py) :
 ```Python API
     # cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
-    # snow object stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
+    # snow stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
     s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"]
     s.upload_file("./jupyter-snowpark.yaml", "/", auto_compress=False, overwrite=True)
 ```
@@ -731,7 +731,7 @@ spec:
 **Update the `<repository_hostname>` for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use Python API to push the yaml file. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py)
 ```Python API
     # cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
-    # snow object stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
+    # snow stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
     s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"]
     s.upload_file("./convert-api.yaml", "/", auto_compress=False, overwrite=True)
 ```
