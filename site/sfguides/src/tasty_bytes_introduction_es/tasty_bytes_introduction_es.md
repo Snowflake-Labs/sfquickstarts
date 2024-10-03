@@ -1,17 +1,24 @@
-autor: Jacob Kranzler id: tasty\_bytes\_introduction resumen: Esta es la introducción a la quickstart guide de base de datos de Tasty Bytes categorías: Tasty Bytes, introducción, entornos destacados: estado web: Enlace de comentarios publicados: https://github.com/Snowflake-Labs/sfguides/issues etiquetas: Introducción, Tasty Bytes, De cero a Snowflake
+author: Jacob Kranzler
+id: tasty_bytes_introduction_es
+summary: Esta es la introducción a la quickstart guide de base de datos de Tasty Bytes
+categories: Tasty-Bytes, Getting-Started, Featured
+environments: web
+status: Published 
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Introducción, Tasty Bytes, De cero a Snowflake, Getting Started, Zero to Snowflake, es
 
 # Introducción a Tasty Bytes
 <!-- ------------------------ -->
 
 ## Introducción a Tasty Bytes 
-Duración: 1 <img src="assets/tasty_bytes_header.png"/>
+Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 ### Descripción general
 En esta quickstart guide Introducción a Tasty Bytes descubrirás, antes de nada, la marca ficticia de food trucks Tasty Bytes, creada por el equipo frostbyte en Snowflake.
 
 Cuando ya conozcas la organización Tasty Bytes, realizaremos el proceso de configuración del modelo de base de datos de Tasty Bytes, además de los roles y almacenes específicos de cada workload, así como cualquier control de acceso basado en funciones (role-based access control, RBAC) que sea necesario. 
 
-Al terminar esta quickstart guide, habrás implementado los conceptos esenciales necesarios para ejecutar el resto de quickstart guides de nuestra sección [ Powered by Tasty Bytes - Quickstart guides](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3).
+Al terminar esta quickstart guide, habrás implementado los conceptos esenciales necesarios para ejecutar el resto de quickstart guides de nuestra sección [ Powered by Tasty Bytes - Quickstart guides](/guide/tasty_bytes_introduction_es/index.html#3).
 
 ### ¿Qué es Tasty Bytes?
 <img src="assets/who_is_tasty_bytes.png"/>
@@ -36,7 +43,7 @@ Al terminar esta quickstart guide, habrás implementado los conceptos esenciales
     - Control de acceso basado en funciones (RBAC)
 
 ## Configuración de Tasty Bytes
-Duración: 6
+Duration: 6
 
 ### Descripción general
 En esta quickstart guide, usarás la interfaz web de Snowflake denominada Snowsight. Si es la primera vez que utilizas Snowsight, te recomendamos que eches un vistazo a la [documentación sobre Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), que cuenta con una guía detallada.
@@ -63,7 +70,7 @@ En esta quickstart guide, usarás la interfaz web de Snowflake denominada Snowsi
 ### Paso 6: acceder a un código SQL de configuración alojado en GitHub
 - Haz clic en el botón que aparece a continuación. Te redirigirá a nuestro archivo SQL de configuración de Tasty Bytes, alojado en GitHub.
 
-<button>[tb\_introduction.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_introduction.sql)</button>
+<button>[tb_introduction.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/tasty_bytes/tb_introduction.sql)</button>
 
 ### Paso 7: copiar el código SQL de configuración de GitHub
 - En GitHub, ve al lado derecho y haz clic en “Copy raw contents”. De esta forma, se copiará todo el código SQL necesario en el portapapeles.
@@ -83,7 +90,7 @@ En esta quickstart guide, usarás la interfaz web de Snowflake denominada Snowsi
 ### Paso 11: hacer clic en Next -->
 
 ## Exploración de los conceptos esenciales de Tasty Bytes
-Duración: 2
+Duration: 2
 
 ### Descripción general
 Ahora que ya hemos completado la configuración de Tasty Bytes, podemos explorar la base de datos, los roles y los almacenes que hemos creado. 
@@ -92,43 +99,63 @@ Ahora que ya hemos completado la configuración de Tasty Bytes, podemos explorar
 >
 
 ### Paso 1: explorar los conceptos esenciales de Tasty Bytes
-Esta consulta con el comando [SHOW DATABASES](https://docs.snowflake.com/en/sql-reference/sql/show-databases.html) devolverá la base de datos que hemos creado. ```
+Esta consulta con el comando [SHOW DATABASES](https://docs.snowflake.com/en/sql-reference/sql/show-databases.html) devolverá la base de datos que hemos creado. 
+```
 SHOW DATABASES LIKE 'frostbyte_tasty_bytes';
-``` <img src = "assets/show_tb_db.png"> 
+``` 
+<img src = "assets/show_tb_db.png"> 
 
 ### Paso 2: explorar los esquemas en la base de datos de Tasty Bytes
-Esta consulta con el comando [SHOW SCHEMAS](https://docs.snowflake.com/en/sql-reference/sql/show-schemas) devolverá los esquemas de la base de datos que hemos creado. ```
+Esta consulta con el comando [SHOW SCHEMAS](https://docs.snowflake.com/en/sql-reference/sql/show-schemas) devolverá los esquemas de la base de datos que hemos creado. 
+```
 SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
-``` <img src = "assets/show_tb_schemas.png"> 
+``` 
+<img src = "assets/show_tb_schemas.png"> 
 
-### Paso 3: explorar las tablas en el esquema RAW\_POS dentro de la base de datos de Tasty Bytes
-Esta consulta con el comando [SHOW TABLES](https://docs.snowflake.com/en/sql-reference/sql/show-tables) devolverá las tablas del esquema `raw_pos`. ```
+### Paso 3: explorar las tablas en el esquema RAW_POS dentro de la base de datos de Tasty Bytes
+Esta consulta con el comando [SHOW TABLES](https://docs.snowflake.com/en/sql-reference/sql/show-tables) devolverá las tablas del esquema `raw_pos`. 
+```
 SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
-``` <img src = "assets/show_tb_tables.png"> 
+``` 
+<img src = "assets/show_tb_tables.png"> 
 
 ### Paso 4: explorar los roles de Tasty Bytes
-Esta consulta con el comando [SHOW ROLES](https://docs.snowflake.com/en/sql-reference/sql/show-roles) devolverá los roles que hemos creado. ```
+Esta consulta con el comando [SHOW ROLES](https://docs.snowflake.com/en/sql-reference/sql/show-roles) devolverá los roles que hemos creado. 
+```
 SHOW ROLES LIKE 'tasty%';
-``` <img src = "assets/show_tb_roles.png"> 
+``` 
+<img src = "assets/show_tb_roles.png"> 
 
 ### Paso 5: explorar los almacenes de Tasty Bytes
-Esta consulta con el comando [SHOW WAREHOUSES](https://docs.snowflake.com/en/sql-reference/sql/show-warehouses) devolverá los almacenes que hemos creado. ```
+Esta consulta con el comando [SHOW WAREHOUSES](https://docs.snowflake.com/en/sql-reference/sql/show-warehouses) devolverá los almacenes que hemos creado. 
+```
 SHOW WAREHOUSES LIKE 'tasty%';
-``` <img src = "assets/show_tb_whs.png"> 
+``` 
+<img src = "assets/show_tb_whs.png"> 
 
 ### Paso 6: recopilar todo
 Las siguientes tres consultas van a: 1\. Asumir el rol `tasty_data_engineer` mediante [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html) 2. Utilizar el almacén `tasty_de_wh` mediante [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html) 3. Ejecutar una consulta en la tabla `raw_pos.menu` para saber qué artículos del menú se venden en nuestros food trucks de la línea Plant Palace.
     
-\`\`\` USE ROLE tasty\_data\_engineer; USE WAREHOUSE tasty\_de\_wh;
+``` 
+USE ROLE tasty_data_engineer; 
+USE WAREHOUSE tasty_de_wh;
 
-SELECT m.menu\_type\_id, m.menu\_type, m.truck\_brand\_name, m.menu\_item\_name FROM frostbyte\_tasty\_bytes.raw\_pos.menu m WHERE m.truck\_brand\_name = 'Plant Palace'; \`\`\` <img src = "assets/plant_palace.png"> 
+SELECT 
+    m.menu_type_id, 
+    m.menu_type, 
+    m.truck_brand_name, 
+    m.menu_item_name 
+FROM frostbyte_tasty_bytes.raw_pos.menu m 
+WHERE m.truck_brand_name = 'Plant Palace'; 
+``` 
+<img src = "assets/plant_palace.png"> 
 
 ¡Genial! En tan solo unos minutos hemos creado un entorno de demostración completo con datos, roles y almacenes configurados en nuestra cuenta de Snowflake. Ahora vamos a echarle un vistazo al resto de quickstart guides de Tasty Bytes que tenemos a nuestra disposición.
 
 ### Paso 7: hacer clic en Next -->
 
 ## Powered by Tasty Bytes - Quickstart guides
-Duración: 1
+Duration: 1
 
 ### Descripción general
 ¡Enhorabuena! Has completado la configuración de los conceptos esenciales de Tasty Bytes.
@@ -139,20 +166,13 @@ El siguiente índice recoge todas las quickstart guides de Tasty Bytes disponibl
 
 ### De cero a Snowflake
 
-- #### [Gobernanza financiera](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/)
-    - Obtén más información sobre los almacenes de datos virtuales de Snowflake y sus opciones de configuración, la supervisión de recursos y los parámetros de tiempo de espera a nivel de almacén y de cuenta.
-- #### [Transformación](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_transformation/)
+- #### [Transformación](/guide/tasty_bytes_zero_to_snowflake_transformation_es/)
     - Obtén más información sobre Zero Copy Cloning de Snowflake, la caché del conjunto de resultados, Time Travel y las funcionalidades de cambio, borrado y recuperación a nivel de tabla.
-- #### [Datos semiestructurados](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_semi_structured_data/)
+- #### [Datos semiestructurados](/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_es/)
     - Obtén más información sobre el tipo de datos VARIANT de Snowflake, el procesamiento de datos semiestructurados con notación de puntos y cómo quitar el formato lateral, así como la creación de vistas y los gráficos de Snowsight.
-- #### [Gobernanza de datos](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/)
-    - Obtén más información sobre los roles definidos por el sistema de Snowflake, la creación y concesión de permisos a un rol personalizado y la implementación de Dynamic Data Masking y políticas de acceso a filas basados en etiquetas.
-- #### [Colaboración](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_collaboration/)
+- #### [Colaboración](/guide/tasty_bytes_zero_to_snowflake_collaboration_es/)
     - Obtén más información sobre Snowflake Marketplace utilizando datos actualizados de Weather Source gratuitos y disponibles al instante para realizar análisis basados en datos de fuentes propias y de terceros armonizados.
 - #### [Geoespacial](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_geospatial/)
-    - Obtén más información sobre la asistencia geoespacial de Snowflake, por ejemplo, sobre la adquisición de datos actualizados y gratuitos, disponibles al instante en SafeGraph o la construcción de puntos geográficos (ST\_POINT), el cálculo de distancias (ST\_DISTANCE), la recopilación de coordenadas (ST\_COLLECT), cómo dibujar un polígono de delimitación mínimo (ST\_ENVELOPE), el cálculo de área (ST\_AREA) y la búsqueda de puntos centrales (ST\_CENTROID).
+    - Obtén más información sobre la asistencia geoespacial de Snowflake, por ejemplo, sobre la adquisición de datos actualizados y gratuitos, disponibles al instante en SafeGraph o la construcción de puntos geográficos (ST_POINT), el cálculo de distancias (ST_DISTANCE), la recopilación de coordenadas (ST_COLLECT), cómo dibujar un polígono de delimitación mínimo (ST_ENVELOPE), el cálculo de área (ST_AREA) y la búsqueda de puntos centrales (ST_CENTROID).
 
 ### Guías detalladas de workloads (*próximamente*)
-
-
-
