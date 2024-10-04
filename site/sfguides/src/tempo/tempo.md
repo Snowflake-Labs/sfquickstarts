@@ -1,6 +1,6 @@
 author: mando222
-id: Tempo
-summary: This is a guide on getting started with Tempo on Snowflake
+id: tempo
+summary: This is a guide on getting started with tempo on Snowflake
 categories: Getting-Started
 environments: web
 status: Published 
@@ -30,7 +30,6 @@ This guide will walk you through the process of setting up and using the TEMPO N
 ## Install the TEMPO Native App
 Duration: 2
 
-
 1. Obtain the TEMPO native app from the Snowflake Marketplace.
 2. Once installed, the app will be available for use in your Snowflake environment.
 3. Grant the app privileges to create the required compute resources:
@@ -38,23 +37,28 @@ Duration: 2
 ```sql
 GRANT CREATE COMPUTE POOL ON ACCOUNT TO APPLICATION TEMPO;
 GRANT CREATE WAREHOUSE ON ACCOUNT TO APPLICATION TEMPO;
-GRANT EXECUTE TASK ON ACCOUNT TO APPLICATION TEMPO;
-GRANT EXECUTE MANAGED TASK ON ACCOUNT TO APPLICATION TEMPO;
 ```
 
-It’s recommended to create a dedicated warehouse for the application with the following properties:
-
+The application comes with its own in-house warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container services runs.
+- TEMPO_WH
 ```sql
-CREATE WAREHOUSE <YOUR_WAREHOUSE_NAME> 
-WAREHOUSE_TYPE = 'SNOWPARK-OPTIMIZED' 
-WAREHOUSE_SIZE = 'LARGE' ; 
-
-GRANT USAGE ON WAREHOUSE <YOUR_WAREHOUSE_NAME> TO APPLICATION TEMPO;
+CREATE WAREHOUSE IF NOT EXISTS TEMPO_WH
+    WAREHOUSE_TYPE = 'SNOWPARK-OPTIMIZED'
+    WAREHOUSE_SIZE = 'MEDIUM'
+    AUTO_SUSPEND = 120
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = FALSE;
 ```
-
-The application comes with its own in-house warehouse (TEMPO_WH), which will be used for container services and live inference only.
-
-
+- COMPUTE POOL
+```sql
+CREATE COMPUTE POOL IF NOT EXISTS TEMPO_COMPUTE_POOL
+    MIN_NODES = 1
+    MAX_NODES = 1
+    AUTO_SUSPEND_SECS = 360
+    INSTANCE_FAMILY = 'GPU_NV_S'
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = FALSE;
+```
 <!-- ------------------------ -->
 ## Initialize the Application and Grant Permissions for Sample Data Acces
 Duration: 2
@@ -64,189 +68,43 @@ Call the startup procedure to initialize the app:
 ```sql
 CALL TEMPO.MANAGER.STARTUP();
 ```
-
-Grant the TEMPO app the necessary permissions to access the sample data:
-
-```sql
-GRANT USAGE ON DATABASE tempo_sample TO APPLICATION TEMPO;
-GRANT USAGE ON SCHEMA tempo_sample.inference_samples TO APPLICATION TEMPO;
-GRANT USAGE ON SCHEMA tempo_sample.training_samples TO APPLICATION TEMPO;
-GRANT SELECT ON ALL TABLES IN SCHEMA tempo_sample.inference_samples TO APPLICATION TEMPO;
-GRANT SELECT ON ALL TABLES IN SCHEMA tempo_sample.training_samples TO APPLICATION TEMPO;
-```
-
 <!-- ------------------------ -->
-## Perform Inference (TempoInference)
+## Perform Inference 
 Duration: 2
 
-Use the `TEMPOINFERENCE` stored procedure to perform inference on sample static log data. It takes the table's FQN (fully qualified name), a Boolean to control whether full logs or only anomalies are returned, and the log type, in this order.
-
-```sql
-CALL TEMPO.DETECTION.TEMPOINFERENCE('<TABLE_FQN>',<RETURN BOOLEAN>, '<LOG_TYPE>');
-```
-
-<TABLE_FQN>: The fully qualified name of the table for inference.
-
-<RETURN BOOLEAN> : The Boolean value that determines if the whole table provided will be returned (True) or not (False).
-
-<LOG_TYPE>: The type of log to use (e.g., 'workstation', 'webserver').
+Use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes the a job service name as the only parameter.
 
 Example:
 
 ```sql
-CALL TEMPO.DETECTION.TEMPOINFERENCE('tempo_sample.inference_samples.workstations_inference', True, 'workstation');
-
-```sql
-CALL TEMPO.DETECTION.TEMPOINFERENCE('tempo_sample.inference_samples.webservers_inference',False,'webserver');
+CALL TEMPO.DETECTION.WORKSTATIONS('<job_service_name>');
 ```
-
+or
+```sql
+CALL TEMPO.DETECTION.WEBSERVER('<job_service_name>');
+```
+or
+```sql
+CALL TEMPO.DETECTION.DEVICE_IDENTIFICATION('<job_service_name>');
+```
+`<job_service_name>`: the name of the run you want to perform (e.g., 'tempo_run_one', 'here_we_go').
 
 <!-- ------------------------ -->
-## Optional Step: Fine-Tuning Models
-Duration: 2
+### Monitor Job Services
 
-If you need to adjust the models for better performance with your specific data patterns, you can use the fine-tuning feature. This step is optional and should be performed only if the default models don't meet your specific needs.
-
-### Grant Permissions for Fine-Tuning
-
-If you decide to fine-tune, you will be making use of the in-house compute pool with GPU access and the following configuration:
-
-### Fine-Tune Models
-
-The ideal fine-tuning sequence based on data availability is Device before Anomaly, so that the Anomaly model can use the Device outputs. To fine-tune the models, you would execute the following queries:
+Check the status of Job services:
 
 ```sql
-CALL TEMPO.FINE_TUNE.DEVICE_MODEL('<SERVICE_NAME>');
-CALL TEMPO.FINE_TUNE.WORKSTATION_MODEL('<SERVICE_NAME>');
+CALL SYSTEM$GET_SERVICE_STATUS('DETECTION.<job_service_name>');
 ```
 
-<SERVICE_NAME>: The tag attached to a snowflake container service for monitoring 
+`<job_service_name>`: The name of the job service to check.
 
 Example:
 
 ```sql
-CALL TEMPO.FINE_TUNE.DEVICE_MODEL(‘first device model fine tuning’);
+CALL SYSTEM$GET_SERVICE_STATUS('DETECTION.WORKSTATION_RUN_ONE');
 ```
-
-### Monitor Fine-Tuning Services
-
-Check the status of fine-tuning services:
-
-```sql
-CALL SYSTEM$GET_SERVICE_STATUS('<FINE_TUNE_SERVICE_NAME>');
-```
-
-<FINE_TUNE_SERVICE_NAME>: The name of the fine-tuning service to check.
-
-Example:
-
-```sql
-CALL SYSTEM$GET_SERVICE_STATUS('FINE_TUNE.sample_workstation');
-```
-
-Note: Fine-tuning can be a time-consuming process and may incur additional computational costs. Only proceed with fine-tuning if you have specific requirements that aren't met by the default models.
-
-<!-- ------------------------ -->
-## Live Inference
-Duration: 2
-
-### Setting Up Live Inference
-
-To start live inference, you need to initialize the necessary components such as streams, tasks, and live update tables. Before that, you need to allow `change tracking` on the specific table you would like live inference on:
-
-```sql
-ALTER TABLE '<TABLE_NAME>' SET CHANGE_TRACKING = TRUE;
-```
-
-<TABLE_NAME>: The FQN of the table to enable change tracking.
-
-### Start Live Inference
-
-To start the live inference process, use the `START_LIVE_INFERENCE` procedure. This procedure sets up a data stream, creates a live updates table, and schedules a task that continuously monitors incoming data and applies the inference model.
-
-```sql
-CALL TEMPO.LIVE_INFERENCE.START_LIVE_INFERENCE('<TABLE_PATH>', '<MODEL_TYPE>', ‘<REFRESH_TIME>’);
-```
-
-<TABLE_PATH>: The fully qualified name of the table to monitor.
-
-<MODEL_TYPE>: The type of model to apply for inference.
-
-<REFRESH_TIME>: The required wait time after which the task would be called. It can be set to how often your source data updates (using CRON or Minutes)
-
-Example:
-
-```sql
-CALL TEMPO.LIVE_INFERENCE.START_LIVE_INFERENCE('mydb.myschema.mytable', 'workstation', ‘1 M’);
-```
-
-### Monitor, Suspend, and Resume Task:
-
-After creating a task, the task name should be visible in the Snowflake interface. 
-
-- Monitoring tasks:
-Now, you can select a task from there to check its activity and status, for example:
-
-```sql
-SELECT *
-FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
-    TASK_NAME => '<Task_name>'
-));
-```
-
-<Task_name>: The name of the task used for live updates.
-
-- Suspending Task:
-
-Suspending the job allows you to make changes to the task's schedule, dependencies, or underlying queries securely and without affecting its execution. You can suspend a task.
-
-```sql
-ALTER TASK <Task_name> SUSPEND;
-```
-
-- Resuming tasks:
-After making changes to the tasks, you can freely resume the task using:
-
-```sql
-ALTER TASK <Task_name> RESUME;
-```
-
-### Shutting Down Live Inference
-
-When you need to stop live inference, use the `SHUTDOWN_LIVE_INFERENCE` procedure to safely terminate the process.
-
-```sql
-CALL TEMPO.LIVE_INFERENCE.SHUTDOWN_LIVE_INFERENCE('<TABLE_NAME>');
-```
-
-<TABLE_NAME>: The name of the table for which live inference should be shut down (not the FQN, just the table name).
-
-Example:
-
-```sql
-CALL TEMPO.LIVE_INFERENCE.SHUTDOWN_LIVE_INFERENCE('mytable');
-```
-
-After live inference is set up, review the results stored in the live updates table. This table will contain the incoming data along with the model’s classification.
-
-```sql
-SELECT * FROM TEMPO.LIVE_INFERENCE.LIVE_UPDATES_ON_<TABLE_NAME>;
-```
-
-<TABLE_NAME>: The name of the table used for live updates.
-
-Example:
-
-```sql
-SELECT * FROM TEMPO.LIVE_INFERENCE.LIVE_UPDATES_ON_mytable;
-```
-
-### Additional Notes
-
-**Performance Considerations:** Live inference tasks can consume significant resources. Ensure that your Snowflake environment is properly scaled to handle the workload.
-
-This guide uses sample data provided with TEMPO. For using your own data, please refer to the custom data guide.
-
 <!-- ------------------------ -->
 ## Viewing Results in Splunk
 Duration: 5
@@ -326,9 +184,7 @@ Duration: 1
 
 Now it is time for you to try Tempo with your own data. The power is now at your fingertips to take on the future of security.
 
-
 ### What You Learned
 - Completed setup of Tempo on SnowFlake
 - Fine Tuned Tempo
 - Ran Tempo on a sample dataset
-
