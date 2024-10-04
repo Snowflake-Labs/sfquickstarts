@@ -34,9 +34,12 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
   - **Visualise**  the data using Streamlit
 
 ### Prerequisites
-- A new free trial of Snowflake in **a region of you choice**.
+- A new free trial of Snowflake in **a region of you choice***.
 
+ 
 ![alt text](assets/I001.png)
+
+**Note**:  All datasets for this dataset used are either frequently replicated or originate in AWS London.  If you choose an alternative location, you may need to wait 10 minutes for the replication process to finish.
 
 
 ### What You’ll Learn 
@@ -140,7 +143,7 @@ In **Notebook location**, select BUILD_UK from the list of available databases a
 
 > If you wish, you can import the previously created notebook from the following location:
 
-[notebook in Github](https://github.dev/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Trains%20and%20Restaurants.ipynb)
+[notebook in Github](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Trains%20and%20Restaurants.ipynb)
 
 > However, to experience the creation of the notebook yourself, carry on with the blank notebook, and copy/paste the code as we go along.
 
@@ -179,7 +182,7 @@ Copy and paste the following code into the newly created cell.
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import max,min,avg,call_function, split,substr,hour,concat,col,sqrt,lit,array_slice,array_agg,object_construct,parse_json, to_geography, to_array,to_date, round
+from snowflake.snowpark.functions import max,min,avg,call_function, split,substr,hour,concat,col,sqrt,lit,array_slice,array_agg,object_construct,parse_json, to_geography, to_array,to_date, round, replace
 from snowflake.snowpark.types import StringType,VariantType, DateType, IntegerType,DecimalType
 import json
 import pandas as pd
@@ -509,7 +512,7 @@ further_train_info = further_train_info.select('"CRS Code"',
         'MP',
         '"Political Party"', 
         '"MP Email Address"',
-        call_function('snowflake.cortex.complete','snowflake-arctic',
+        call_function('snowflake.cortex.complete','mistral-large2',
             concat(lit(prompt),
             col('OBJECT').astype(StringType()),
             lit('prompt2'))).alias('ALTERNATE'))
@@ -519,12 +522,12 @@ session.table('DATA.TRAIN_STATION_INFORMATION')
 
 ```
 
-While we wait for the train station tooltips to materialise add a **markdown cell** above the cell we have just created. Markdown is useful to help tell a data story within the notebook. Hover above the newly created cell which is currently running and press  **Markdown**.  Name the cell **cortex_description** and paste the following narrative:
+While we wait for the train station tooltips to materialize add a **markdown cell** above the cell we have just created. Markdown is useful to help tell a data story within the notebook. Hover above the newly created cell which is currently running and press  **Markdown**.  Name the cell **cortex_description** and paste the following narrative:
 
 ```markdown
 
 
-Below we are leveraging Snowflake Arctic to produce meaningful tooltips relating to over **400** train stations which are managed by **Northern Trains**
+Below we are leveraging Mistral-large2 to produce meaningful tooltips relating to over **400** train stations which are managed by **Northern Trains**
 
 ```
 Press the tick on the top right hand side of the cell to confirm the edit.
@@ -620,10 +623,13 @@ json1 = '''{"DATE":"YYYY-MM-DD", "NAME":"event",DESCRIPTION:"describe what the e
 },"COLOR":"Random bright and unique color in RGB presented in an array"}'''
 
 
-prompt = f''' Retrieve 6 events within the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
+prompt = f''' Retrieve 6 events within different cities of the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
 events = session.create_dataframe([{'prompt':prompt}])
 
-events = events.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','snowflake-arctic',prompt).alias('EVENT_DATA'))
+events = events.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','mistral-large2',prompt).alias('EVENT_DATA'))
+
+events = events.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```json'''),lit('')))
+events = events.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```'''),lit('')))
 
 events.write.mode('overwrite').save_as_table("DATA.EVENTS_IN_THE_NORTH")
 session.table('DATA.EVENTS_IN_THE_NORTH')
@@ -800,7 +806,7 @@ all_3 = object1.join(object2,'MP')
 all_3 = all_3.join(object3,'MP')
 
 all_3.write.mode('overwrite').save_as_table("DATA.EVENTS_AND_WHAT_IS_AFFECTED")
-
+session.table('DATA.EVENTS_AND_WHAT_IS_AFFECTED')
 ```
 
 ![events_map](assets/I024.png)
@@ -843,7 +849,7 @@ Call the LLM with the prompt by copying the code below into a new cell. You may 
 
 ```python
 
-letters = all_3.select('MP',call_function('SNOWFLAKE.CORTEX.COMPLETE','mixtral-8x7b',prompt).alias('LETTER'))
+letters = all_3.select('MP','"MP Email Address"', call_function('SNOWFLAKE.CORTEX.COMPLETE','mixtral-8x7b',prompt).alias('LETTER'))
 letters.write.mode('overwrite').save_as_table("DATA.LETTERS_TO_MP")
 
 ```
@@ -1156,11 +1162,17 @@ You will now be creating another streamlit app in order to visualise the results
 
 Below is sample code which takes what we have learnt to create a streamlit with all the places event, location and incident data that from the shared datasets as well as synthetic data.
 
-You will need to install **pydeck**.  Go to packages and add **pydeck** to the streamlit app before you paste the app code.
+You will need to install **pydeck**.  
+
+- Go back to the home page and add a new streamlit application using the same database, schema and warehouse as the previous app.
 
 
+- Go to packages and add **pydeck** to the streamlit app before you paste the app code.
 
-Copy and paste this into a streamlit app under the BUILD_UK Streamlits schema.  NB - you will need to add the pydeck package before the streamlit will run.
+    ![alt text](assets/packages_option.png)
+
+- After you have installed pydeck, delete the default contents of the newly created app
+-   Copy and paste the code from below
 
 ```python
 
@@ -1383,7 +1395,7 @@ Duration: 10
 
 During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.
 
-Download the following python notebook file
+Click here and download the notebook from GitHub
 
 [**Vector_Embeddings.ipynb**](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Vector_Embeddings.ipynb)
 
@@ -1551,9 +1563,9 @@ weather_daily_north = weather_daily_north.join(postcodes,postcodes['PC_SECT']==w
 
 station_filter = trains_latlon.select('"CrsCode"')
 date_filter = weather_hourly.agg(max('VALIDITY_DATE').alias('MAX'),
-                          min('VALIDITY_DATE').alias('MIN')).to_pandas()
+                          min('VALIDITY_DATE').alias('MIN'))
 
-
+date_filter = date_filter.with_column('MIN',dateadd('DAY',lit(1),col('MIN'))).to_pandas()
 
 with st.form('select_data'):
     col1,col2, = st.columns([0.3,0.7])

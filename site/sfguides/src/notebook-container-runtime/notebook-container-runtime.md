@@ -12,12 +12,12 @@ tags: Getting Started, Data Science
 ## Overview 
 Duration: 1
 
-You can run Snowflake Notebooks on Snowpark Container Services through Container Runtime. Snowpark Container Services gives you a flexible container infrastructure that supports building and operationalizing a wide variety of workflows entirely within Snowflake. Container Runtime provides software and hardware options to support advanced data science and machine learning workloads on Snowpark Container Services. Compared to Virtual warehouses, Container Runtime provides a more flexible compute environment where you can install packages from multiple sources and select compute resources, including GPU machine types, while still running SQL queries on warehouses for optimal performance.
+Snowflake Notebooks in the Container Runtime are a powerful IDE option for building ML workloads at scale. Container Runtime (Public Preview) gives you a flexible container infrastructure that supports building and operationalizing a wide variety of resource-intensive ML workflows entirely within Snowflake. Using Snowflake Notebooks in Container Runtime gives you access to distributed processing on both CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture and Model Registry integration. Container Runtime also provides flexibility to leverage a set of preinstalled packages or the ability to pip install any open-source package of choice.  
 
-This Quickstart will take you through the steps of running Snowflake Notebooks with Container Runtime. We will install packages, train a model using pre-installed packages, and view logs.
+This introductory Quickstart will take you through the steps of running Snowflake Notebooks with Container Runtime. We will install packages, train a model using pre-installed packages, and view logs. 
 
 ### Prerequisites
-- Access to a Snowflake account with Accountadmin. 
+- Access to a Snowflake account with Accountadmin 
 - Access to run Notebooks in Snowflake
 - Foundational knowledge of Data Science workflows
 
@@ -28,7 +28,7 @@ This Quickstart will take you through the steps of running Snowflake Notebooks w
 - A [Snowflake](https://app.snowflake.com/) Account
 
 ### What You’ll Build 
-- A Snowflake Notebook that runs on Snowpark Container Services
+- A Snowflake Notebook that runs on scalable CPUs or GPUs using any Python package of choice
 
 <!-- ------------------------ -->
 ## Setup Your Account
@@ -141,13 +141,17 @@ Duration: 15
 ## Conclusion And Resources
 Duration: 1
 
-In conclusion, running Snowflake Notebooks on Snowpark Container Services through Container Runtime offers a robust and flexible infrastructure for managing advanced data science and machine learning workflows directly within Snowflake. With the ability to install external packages and choose optimal compute resources, including GPU machine types, Container Runtime provides a more versatile environment compared to Virtual Warehouses.
+In conclusion, running Snowflake Notebooks Container Runtime offers a robust and flexible infrastructure for managing large-scale, advanced data science and machine learning workflows directly within Snowflake. With the ability to install external packages and choose optimal compute resources, including GPU machine types, Container Runtime provides a more versatile environment suited to the needs of data science and ML teams. 
 
-Ready to get started? Follow this Quickstart to begin running Snowflake Notebooks with Container Runtime, install essential packages, train your models, and monitor your logs effectively.
+Ready for more? After you complete this quickstart, you can try [building an XGBoost model with GPUs in Snowflake Notebooks](https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0).
 
 ### What You Learned
 - The key features of Snowflake Notebooks with Container Runtime
 
+### Related Quickstarts
+- [Train an XGBoost model with GPUs in Snowflake Notebooks](https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0)
+
 ### Related Resources
+- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
 - [Documentation](https://docs.snowflake.com/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-runtime)
 - [YouTube Tutorials](https://www.youtube.com/playlist?list=PLavJpcg8cl1Efw8x_fBKmfA2AMwjUaeBI)
