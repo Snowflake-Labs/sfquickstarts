@@ -1,13 +1,13 @@
 author: Daniel Perlovsky
 id: build-unified-customer-360-using-amperity
 summary: In this quickstart we will walk through the basic steps to turn raw data into a world class Customer 360 collection of tables in hours instead of months using Amperity.
-categories: Getting-Started, Marketing, Data-Engineering
+categories: Getting-Started,Marketing,Data-Engineering,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, Data Engineering
 
-# Build a Unified Customer 360 Database using Amperity
+# Build a Unified Customer 360 Database using Amperity and Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -28,7 +28,7 @@ In this quickstart we will walk through the basic steps to turn raw data into a 
 
 ### Prerequisites
 
-- Access to a Snowflake account with the ability to set up secure data sharing
+- Access to a Snowflake account with the ability to set up secure data sharing. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 - Access to an Amperity account
 - Basic experience with Snowflake
 
