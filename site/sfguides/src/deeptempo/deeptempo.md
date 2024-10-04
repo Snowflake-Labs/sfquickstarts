@@ -69,20 +69,11 @@ Call the startup procedure to initialize the app:
 ```sql
 CALL TEMPO.MANAGER.STARTUP();
 ```
-
-Grant the TEMPO app the necessary permissions to access the sample data:
-
-```sql
-GRANT USAGE ON DATABASE TEMPO_sample TO APPLICATION TEMPO;
-GRANT USAGE ON SCHEMA TEMPO_sample.inference_samples TO APPLICATION TEMPO;
-GRANT SELECT ON ALL TABLES IN SCHEMA TEMPO_sample.TEMPO_DEMO_DATA TO APPLICATION TEMPO;
-```
-
 <!-- ------------------------ -->
 ## Perform Inference 
 Duration: 2
 
-Use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes the a job service nme as the only parameter.
+Use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes the a job service name as the only parameter.
 
 Example:
 
