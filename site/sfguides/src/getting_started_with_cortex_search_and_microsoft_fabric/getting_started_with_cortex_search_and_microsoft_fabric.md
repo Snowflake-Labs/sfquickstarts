@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 author: marzillo-snow
-=======
-author: sfc-gh-mmarzillo
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 id: example_matt_marzillo
 summary: This is a quickstart for using Cortex Search with Microsoft Fabric
 categories: Getting-Started, data-science, data-engineering, azure, cortex, genai, Microsoft, Fabric, search
@@ -18,11 +14,7 @@ Duration: 15
 
 Cortex Search enables low-latency, high-quality “fuzzy” search over your Snowflake data. Cortex Search powers a broad array of search experiences for Snowflake users including Retrieval Augmented Generation (RAG) applications leveraging Large Language Models (LLMs).
 
-<<<<<<< HEAD
 Cortex Search gets you up and running with a hybrid (vector and keyword) search engine on your text data in minutes, without having to worry about embedding, infrastructure maintenance, search quality parameter tuning, or ongoing index refreshes. This means you can spend less time on infrastructure and search quality tuning, and more time developing high-quality chat and search experiences using your data. Check out the Cortex Search tutorials for step-by-step instructions on using Cortex Search to power AI chat and search applications.
-=======
-Cortex Search gets you up and running with a hybrid (vector and keyword) search engine on your text data in minutes, without having to worry about embedding, infrastructure maintenance, search quality parameter tuning, or ongoing index refreshes. This means you can spend less time on infrastructure and search quality tuning, and more time developing high-quality chat and search experiences using your data. 
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 
 ![](assets/searcharch.png)
 
@@ -31,13 +23,8 @@ Microsoft Fabric is a unified analytics platform that integrates various data se
 [GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-search-and-microsoft-fabric)
 
 ### Prerequisites
-<<<<<<< HEAD
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
 - Familiarity with [Microsoft](https://learn.microsoft.com/en-us/fabric/get-started/microsoft-fabric-overview) Fabric and a Fabric workspace.
-=======
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and have access to a Snowflake account
-- Familiarity with [Microsoft Fabric](https://learn.microsoft.com/en-us/fabric/get-started/microsoft-fabric-overview) and have access to a Fabric workspace.
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 - Familiarity with [Python](https://www.udemy.com/course/draft/579706/)
 
 ### You'll Learn
@@ -48,10 +35,7 @@ Microsoft Fabric is a unified analytics platform that integrates various data se
 ### What You’ll Need 
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 - [Fabric Capacity](https://learn.microsoft.com/en-us/fabric/get-started/fabric-trial)
-<<<<<<< HEAD
 - For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network
-=======
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 
 
 ### What You’ll Build 
@@ -74,25 +58,15 @@ There are many additional use cases that can be built on this dataset, but speci
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment and Cortex Search
-<<<<<<< HEAD
 Duration: 5
 
 The first thing we will do is create a database and warehouse in your Snowflake environment. Copy and paste the below code to a SQL Worksheet in Snowflake an Snowsight and run through it.
-=======
-Duration: 10
-
-The first thing we will do is create a database and warehouse in your Snowflake environment. Copy and paste the below code to a SQL Worksheet in Snowflake Snowsight and execute each block of code.
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 
 You will see that after creating the stage and table you will have to navigate to the database tab and load the data via the UI in Snowflake. The simple instruction are comments in the SQL worksheet. 
 
 The final block of code in this SQL will create the Cortex Search service using SQL. The TARGET_LAG parameter is set to "30 day" that will check for updates to the base table every 30 days. While the data size in this datasets isn't that large notice how quickly the service is created. 
 
-<<<<<<< HEAD
 For practice of this quickstart we are creating the Cortex Search service quickly, but there are additional items you may want to consider additional items like token limits and [text splitting](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#token-limits-and-text-splitting). Additionally, there are several [Cortex Search Tutorials](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/overview-tutorials) to get customers more familiar with the nuances of building and querying Cortex Search. 
-=======
-For practice of this quickstart we are creating the Cortex Search service quickly, but there are additional items you may want to consider like token limits and [text splitting](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#token-limits-and-text-splitting). Additionally, there are several [Cortex Search Tutorials](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/overview-tutorials) to get customers more familiar with the nuances of building and querying Cortex Search. 
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 
 ```sql
 --create database and warehouse
@@ -143,10 +117,7 @@ select top 10 * from MEDICAL_NOTES;
 -- Create Search Service
 CREATE OR REPLACE CORTEX SEARCH SERVICE MEDNOTES_SEARCH_SERVICE
   ON TEXT
-<<<<<<< HEAD
   ATTRIBUTES ADMISSION_TYPE, DIAGNOSIS
-=======
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
   WAREHOUSE = HOL_WH
   TARGET_LAG = '30 day'
   AS (
@@ -161,21 +132,14 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE MEDNOTES_SEARCH_SERVICE
         AGE,
         GENDER,
         LOS
-<<<<<<< HEAD
     FROM MEDICAL_NOTES
-=======
-    FROM MEDICAL_NOTES 
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 );
 ```
 <!-- ------------------------ -->
 
-<<<<<<< HEAD
 
 Notice how we're setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we're setting up the service so that additional filters can be used on the attribute "ADMISSION_TYPE".
 
-=======
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 ## Set Up Fabric Environment
 Duration: 2
 
@@ -197,11 +161,7 @@ First, let's install two packages that we need to use the API to connect.
 %pip install --upgrade pydantic
 ```
 
-<<<<<<< HEAD
 Next, let's set up the connection request. For this quickstart you will have to populate the account identifier, your user name and password. For interactive work using username and password, but additional authentication methods are supported via the [Snowflake Python Package](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector-connect).
-=======
-Next, let's set up the connection request. For this quickstart you will have to populate the account identifier, your user name and password. For interactive work using username and password is fine, but additional authentication methods are supported via the [Snowflake Python Package](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector-connect).
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 
 ```python
 import os
@@ -219,16 +179,10 @@ CONNECTION_PARAMETERS = {
     "warehouse": "HOL_WH",
     "database": "MEDICAL_NOTES",
     "schema": "PUBLIC"
-<<<<<<< HEAD
     }
 ```
 
 Now, let's connect to the service. You will likely need to approve the connection via MFA.
-=======
-```
-
-Now, let's connect to the service. You will likely need to approve the connection via MFA so have your phone handy.
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 
 ```python
 # create a SnowflakeConnection instance
@@ -239,7 +193,6 @@ Next, we will build a function to query the Search service and return results. Y
 
 ```python
 # Replace with your search parameters
-<<<<<<< HEAD
 # Replace with your search parameters
 query = "you are a helpful assistant. Take your time to and be selective and only retrieve records that clearly show that the patient has an allergy to Penicillin and the diagnosis is related to Pneumonia. Exclude records where there is negation, for example there is mention of no pneumonia "
 columns = ["TEXT","SUBJECT_ID","CATEGORY","ADMISSION_TYPE","DIAGNOSIS","AGE","GENDER","LOS"]
@@ -249,15 +202,6 @@ limit = 1000
 
 
 def search_records(connection, query, columns, svc, filter_type, limit):
-=======
-query = "you are a helpful assistant. Take your time to and be selective and only retrieve records that clearly show that the patient has an allergy to Penicillin."
-columns = ["TEXT","SUBJECT_ID","CATEGORY","ADMISSION_TYPE","DIAGNOSIS","AGE","GENDER","LOS"]
-svc = "MEDNOTES_SEARCH_SERVICE"
-limit = 1000
-
-
-def search_records(connection, query, columns, svc, limit):
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
     """
     Args:
         connection: The connection object to the database.
@@ -281,20 +225,13 @@ def search_records(connection, query, columns, svc, limit):
             .search(
                 query,
                 columns,
-<<<<<<< HEAD
                 filter_type,
-=======
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
                 limit=limit
             )
         )
 
         print(f"Received response with `request_id`: {response.request_id}")
-<<<<<<< HEAD
         results = json.dumps(response.results, indent=5)
-=======
-        results = json.dumps(response.results, indent=4)
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
         print(results)
         return results
     except Exception as e:
@@ -305,22 +242,13 @@ Let's now run the function and place the results into a pandas dataframe.
 
 ```python
 import pandas as pd
-<<<<<<< HEAD
 results = search_records(connection, query, columns, svc, filter_type, limit)
 l = json.loads(results)
 df = pd.DataFrame(l)
 ```
-We have created a function that calls the service filtering only on Emergency addmisions and using plain text to query the service and return records in which the discharge notes indicate an allergy to Penicillin. Then created a data frame with those records.
+We have created a function that calls the service filtering only on Emergency admissions and using plain text to query the service and return records in which the discharge notes indicate an allergy to Penicillin. Then created a data frame with those records.
 
 Now, let's take some time to review the results with some of Fabric Notebooks interactive EDA capabilities. Run the below code and click through the data to view the results. If you click through records on the "TEXT" field you can check to see if we're actually returning records where patients are allergic to Penicillin.
-=======
-results = search_records(connection, query, columns, svc, limit)
-l = json.loads(results)
-df = pd.DataFrame(l)
-```
-
-Now, let's take some time to review the results with some of Fabric Notebook's interactive EDA capabilities. Run the below code and click through the data to view the results. If you click through records on the "TEXT" field you can check to see if we're actually returning records where patients are allergic to Penicillin.
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 
 ```python
 display(df)
@@ -338,11 +266,6 @@ display(df, summary=True)
 
 You can click through the different fields to see how patients allergic to Penicillin are separated across different categories.
 
-<<<<<<< HEAD
-=======
-The records that were returned by the query that we sent, in theory, represent all of the discharged patients with allergies to Penicillin see how these patients are broken down by age, LOS and gender. Using Cortex Search with Fabric Notebooks allows you to quickly identify patterns in unstructured + structured data.
-
->>>>>>> 0324081ed757df307c8949eb5a1a5fffa092ae34
 ![](assets/edacheck.png)
 
 To learn more about Fabric Notebook functionality check out the documentation [here](https://learn.microsoft.com/en-us/fabric/data-engineering/author-execute-notebook).
