@@ -44,6 +44,12 @@ If you already have a Matillion and Snowflake account, just [log in to the Matil
 
 Otherwise ...
 
+### Use Snowflake Partner Connect
+
+If you already have a Snowflake account, look for Matillion Data Productivity Cloud in [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect#connecting-with-a-snowflake-partner) and follow the instructions on screen to create a Matillion free trial. Once you are logged into your Matillion Data Productivity Cloud account, skip to the next step in this Quickstart.
+
+If you don't already have a Snowflake account, or you prefer to start your own Matillion free trial, read on ...
+
 ### Start a Matillion free trial
 
 Go to the Matillion start page at [hub.matillion.com](https://hub.matillion.com/)
