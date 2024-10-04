@@ -7,14 +7,14 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowflake Cortex, Streamlit
 
-# Tasty Bytes - Enhance Customer Experience Streamlit App
+# Tasty Bytes - Enhance Customer Experience Using Unstructured Data
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
 ![banner](assets/ece_header.png)
 
-Welcome to the Powered by Tasty Bytes - Enhance Customer Experience Streamlit App Quickstart!
+Welcome to the Powered by Tasty Bytes - Enhance Customer Experience Using Unstructured Data Quickstart!
 
 This application supports Tasty Bytes management by analyzing both customer reviews and food truck inspections, streamlining communication with truck owners to improve the overall customer experience. By leveraging Cortex functions, it conducts sentiment analysis to assist in drafting emails for owners. Moreover, it includes built-in analytics for users to interact with review data and generate plots using LLM capabilities. Additionally, the integration of Document AI enhances its analytical prowess by extracting insights from handwritten, unstructured inspection documents.
 
@@ -82,7 +82,7 @@ GRANT USAGE ON STREAMLIT tasty_bytes_enhancing_customer_experience.app.enhancing
 - Open ENHANCE_CUSTOMER_EXPERIENCE_APP from the list of apps
 
 <!-- ------------------------ -->
-## Running the Enhancing Customer Experiences App
+## Running the Enhancing Customer Experiences Using Unstructured Data App
 Duration: 10
 
 This application consists of two sections. The dashboard presents reviews and inspection details for each truck, while the analytics section offers the ability to generate plots based on review data.
@@ -104,7 +104,7 @@ This application consists of two sections. The dashboard presents reviews and in
 ![sentiment-graph](assets/sentiment-graph.png)
 
 <!-- ------------------------ -->
-## Understanding the Enhancing Customer Experiences App
+## Understanding the Enhancing Customer Experiences Using Unstructured Data App
 Duration: 10
 
 ### Cortex Complete

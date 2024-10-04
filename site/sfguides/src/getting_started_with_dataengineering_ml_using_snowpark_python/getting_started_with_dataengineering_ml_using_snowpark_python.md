@@ -404,9 +404,7 @@ If all goes well, you should see the following:
 
 ![Snowflake DE NB](assets/snowflake_ml_nb.png)
 
-3) On the top right, click on **Packages** and make sure you install `snowflake-ml` package by typing it in the search box and selecting the first one.
-
-![Snowflake DE NB](assets/snowflake_ml_nb_packages.png)
+4) On the top right, click on **Packages** and make sure you install `snowflake-ml-python` package by typing it in the search box and selecting the first one.
 
 5) On the top right, click on **Start**. ***(NOTE: The first time it will take a couple of mins to install the packages.)***
 
