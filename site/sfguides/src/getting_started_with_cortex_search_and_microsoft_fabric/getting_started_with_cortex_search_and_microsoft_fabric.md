@@ -285,19 +285,19 @@ You can head back to Snowflake to verify the table was created. And you can do w
 
 
 <!-- ------------------------ -->
-## Conclusion and Additional Considerations
+## Conclusion and Resources
 Duration: 5
 
 This quickstart is just that, a quick way to get you started with using Fabric and Snowflake Cortex Search. There are plenty of different directions and enhancements you can make to this. The key thing is knowing that when you deploy Snowflake on Azure you have plenty of secure options for using Generative AI services regardless of where your data is and where you are orchestrating from!
 
 
-### What We covered
+### What You Learned
 - Using Fabric Notebooks with Snowflake Cortex Search
 - Creating a Cortex Search Service in Snowflake on unstructured data
 - Using Fabric Notebooks to explore data
 - Writing dataframes back to Snowflake
 
-### Additional Considerations
+### Resources
 - There are some great blogs on Medium regarding Snowflake Cortex, Microsoft Fabric and how Snowflake and Fabric work together
 
 - [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/)
