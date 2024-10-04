@@ -80,7 +80,7 @@ Worksheet is a flat table representation exposed to business users, the goal is 
 
 - Table joins supplement the primary data with information from various other data sources.
 
-- Changing data types ensures that you can handle mismatches gracefully, For example, conversions of date/time type formats, and processing of numeric codes (such as event IDs) correctly.
+- Changing data types ensures that you can handle mismatches gracefully, For example, conversions of date/time type formats, and processing of   numeric codes (such as event IDs) correctly.
 
 - Derived fields support flexible expressions and formulas.
 
@@ -143,20 +143,20 @@ Duration: 10
 
 ### ThoughtSpot Embed with Snowflake
 
-This project demonstrates how to embed ThoughtSpot analytics into a web application using React, TypeScript, and Vite. It integrates with Snowflake as the data source.
+This section demonstrates how to embed ThoughtSpot analytics into a web application using React, TypeScript, and Vite. It integrates with Snowflake as the data source.
 
 ### Overview
 
-This application serves as a template for embedding ThoughtSpot into web applications. It utilizes modern web development tools and practices.
+This application serves as a template for embedding ThoughtSpot into web applications. It utilizes modern web development tools and practices. We encourage you to customize it to fit your needs.
 
 ### Features
 
-- Embed ThoughtSpot analytics
+- Embed ThoughtSpot Analytics
 - Built with React and TypeScript
 - Fast development with Vite
 - Integration with Snowflake
 
-### Getting Started
+### Get Started
 
 These instructions will help you set up and run the project on your local machine for development and testing purposes.
 
@@ -189,7 +189,7 @@ npm install
 
 ```
 
-### Running the Application
+### Run the Application
 
 1. To start the development server, run:
 
