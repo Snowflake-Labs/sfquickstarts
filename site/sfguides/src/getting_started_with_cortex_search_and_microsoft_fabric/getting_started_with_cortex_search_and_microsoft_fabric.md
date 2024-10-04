@@ -35,6 +35,7 @@ Microsoft Fabric is a unified analytics platform that integrates various data se
 ### What You’ll Need 
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 - [Fabric Capacity](https://learn.microsoft.com/en-us/fabric/get-started/fabric-trial)
+- For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network
 
 
 ### What You’ll Build 
@@ -116,6 +117,7 @@ select top 10 * from MEDICAL_NOTES;
 -- Create Search Service
 CREATE OR REPLACE CORTEX SEARCH SERVICE MEDNOTES_SEARCH_SERVICE
   ON TEXT
+  ATTRIBUTES ADMISSION_TYPE, DIAGNOSIS
   WAREHOUSE = HOL_WH
   TARGET_LAG = '30 day'
   AS (
@@ -130,10 +132,13 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE MEDNOTES_SEARCH_SERVICE
         AGE,
         GENDER,
         LOS
-    FROM MEDICAL_NOTES 
+    FROM MEDICAL_NOTES
 );
 ```
 <!-- ------------------------ -->
+
+
+Notice how we're setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we're setting up the service so that additional filters can be used on the attribute "ADMISSION_TYPE".
 
 ## Set Up Fabric Environment
 Duration: 2
@@ -174,6 +179,7 @@ CONNECTION_PARAMETERS = {
     "warehouse": "HOL_WH",
     "database": "MEDICAL_NOTES",
     "schema": "PUBLIC"
+    }
 ```
 
 Now, let's connect to the service. You will likely need to approve the connection via MFA.
@@ -187,13 +193,15 @@ Next, we will build a function to query the Search service and return results. Y
 
 ```python
 # Replace with your search parameters
-query = "you are a helpful assistant. Take your time to and be selective and only retrieve records that clearly show that the patient has an allergy to Penicillins."
+# Replace with your search parameters
+query = "you are a helpful assistant. Take your time to and be selective and only retrieve records that clearly show that the patient has an allergy to Penicillin and the diagnosis is related to Pneumonia. Exclude records where there is negation, for example there is mention of no pneumonia "
 columns = ["TEXT","SUBJECT_ID","CATEGORY","ADMISSION_TYPE","DIAGNOSIS","AGE","GENDER","LOS"]
 svc = "MEDNOTES_SEARCH_SERVICE"
+filter_type={"@eq": {"ADMISSION_TYPE": "EMERGENCY"} }
 limit = 1000
 
 
-def search_records(connection, query, columns, svc, limit):
+def search_records(connection, query, columns, svc, filter_type, limit):
     """
     Args:
         connection: The connection object to the database.
@@ -217,12 +225,13 @@ def search_records(connection, query, columns, svc, limit):
             .search(
                 query,
                 columns,
+                filter_type,
                 limit=limit
             )
         )
 
         print(f"Received response with `request_id`: {response.request_id}")
-        results = json.dumps(response.results, indent=4)
+        results = json.dumps(response.results, indent=5)
         print(results)
         return results
     except Exception as e:
@@ -233,10 +242,11 @@ Let's now run the function and place the results into a pandas dataframe.
 
 ```python
 import pandas as pd
-results = search_records(connection, query, columns, svc, limit)
+results = search_records(connection, query, columns, svc, filter_type, limit)
 l = json.loads(results)
 df = pd.DataFrame(l)
 ```
+We have created a function that calls the service filtering only on Emergency addmisions and using plain text to query the service and return records in which the discharge notes indicate an allergy to Penicillin. Then created a data frame with those records.
 
 Now, let's take some time to review the results with some of Fabric Notebooks interactive EDA capabilities. Run the below code and click through the data to view the results. If you click through records on the "TEXT" field you can check to see if we're actually returning records where patients are allergic to Penicillin.
 
