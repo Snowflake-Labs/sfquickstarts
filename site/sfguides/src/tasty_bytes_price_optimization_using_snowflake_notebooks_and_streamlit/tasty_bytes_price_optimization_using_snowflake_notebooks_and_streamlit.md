@@ -72,7 +72,7 @@ At Tasty Bytes, brand managers are responsible for setting their food-truck bran
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create a Snowflake Notebook by importing the notebook
 - Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on `Projects` `->` `Notebook`
 - Switch Role to `TB_PO_DATA_SCIENTIST`
-- Download the [Tasty Bytes Price Optimization and Recommendations Notebook](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/0_start_here.ipynb)
+- Download the [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-price-optimization-using-snowflake-notebooks-and-streamlit/blob/main/notebooks/0_start_here.ipynb) Notebook
 - Using the `Import .ipynb file`, import the downloaded notebook
 
 <img src="assets/import_notebook.png"/>
