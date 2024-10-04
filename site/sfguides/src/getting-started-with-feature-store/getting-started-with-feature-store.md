@@ -100,7 +100,7 @@ GRANT OWNERSHIP ON TABLE FEATURE_STORE_DATABASE.FEATURE_STORE_SCHEMA.CITIBIKE_TR
 ## Run the Notebook
 Duration: 10
 
-- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-intro-to-feature-store-using-snowflake-notebooks/blob/main/feature_store_overview.ipynb)
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-intro-to-feature-store-using-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb)
 - Change role to FEATURE_STORE_LAB_USER
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
