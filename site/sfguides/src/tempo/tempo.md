@@ -12,25 +12,25 @@ tags: Getting Started, Security, LLGM, Intrusion Detection
 ## Overview 
 Duration: 1
 
-This guide will walk you through the process of setting up and using the TEMPO Native App in your Snowflake environment with provided sample data.
+This guide will walk you through setting up and using the TEMPO Native App in your Snowflake environment with the provided sample data.
 
 ### What You’ll Learn 
-- How to run Tempo on sample data.
+- How to run Tempo on sample data
 - How to view the output in Splunk
 
 ### What You’ll Need 
-- A [SnowFlake](https://www.snowflake.com/login/) Account 
+- A [Snowflake](https://www.snowflake.com/login/) Account 
 - A [Splunk](https://www.splunk.com/) Account or instance
 
 ### What You’ll Build 
-- A working LLGM alerting dashboard
+- A working LogLM alerting dashboard
 
 <!-- ------------------------ -->
 ## Install the TEMPO Native App
 Duration: 2
 
 1. Obtain the TEMPO native app from the Snowflake Marketplace.
-2. Once installed, the app will be available for use in your Snowflake environment.
+2. Once installed, the app will be available in your Snowflake environment.
 3. Grant the app privileges to create the required compute resources:
 
 ```sql
@@ -38,7 +38,7 @@ GRANT CREATE COMPUTE POOL ON ACCOUNT TO APPLICATION TEMPO;
 GRANT CREATE WAREHOUSE ON ACCOUNT TO APPLICATION TEMPO;
 ```
 
-The application comes with its own in-house warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container services runs.
+The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container services runs.
 - TEMPO_WH
 ```sql
 CREATE WAREHOUSE IF NOT EXISTS TEMPO_WH
@@ -59,7 +59,7 @@ CREATE COMPUTE POOL IF NOT EXISTS TEMPO_COMPUTE_POOL
     INITIALLY_SUSPENDED = FALSE;
 ```
 <!-- ------------------------ -->
-## Initialize the Application and Grant Permissions for Sample Data Acces
+## Initialize the Application and Grant Permissions for Sample Data Access
 Duration: 2
 
 Call the startup procedure to initialize the app:
@@ -71,7 +71,7 @@ CALL TEMPO.MANAGER.STARTUP();
 ## Perform Inference 
 Duration: 2
 
-Use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes the a job service name as the only parameter.
+Use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes a job service name as the only parameter.
 
 Example:
 
@@ -174,16 +174,16 @@ Duration: 2
 - Keep your EC2 instance and Splunk Enterprise updated with the latest security patches.
 
 ### Troubleshooting
-- If the script fails to find the Splunk tarball, ensure it's in the correct directory.
+- If the script fails to find the Splunk tarball, confirm that it's in the correct directory.
 - For user creation issues, check Splunk server logs and verify authentication credentials.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 1
 
-Now it is time for you to try Tempo with your own data. The power is now at your fingertips to take on the future of security.
+You can run Tempo on your own data - DeepTempo is available to help.  Please reach out.  
 
 ### What You Learned
-- Completed setup of Tempo on SnowFlake
+- Completed setup of Tempo on Snowflake
 - Fine Tuned Tempo
 - Ran Tempo on a sample dataset
