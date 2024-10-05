@@ -185,5 +185,4 @@ You can run Tempo on your own data - DeepTempo is available to help.  Please rea
 
 ### What You Learned
 - Completed setup of Tempo on Snowflake
-- Fine Tuned Tempo
 - Ran Tempo on a sample dataset
