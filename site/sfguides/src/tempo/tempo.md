@@ -16,7 +16,6 @@ This guide will walk you through the process of setting up and using the TEMPO N
 
 ### What You’ll Learn 
 - How to run Tempo on sample data.
-- How to fine tune the model 
 - How to view the output in Splunk
 
 ### What You’ll Need 
