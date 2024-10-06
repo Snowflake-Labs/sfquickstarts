@@ -42,25 +42,23 @@ GRANT CREATE WAREHOUSE ON ACCOUNT TO APPLICATION TEMPO;
 ```
 
 The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container services runs.
-- TEMPO_WH
-```sql
-CREATE WAREHOUSE IF NOT EXISTS TEMPO_WH
-    WAREHOUSE_TYPE = 'SNOWPARK-OPTIMIZED'
-    WAREHOUSE_SIZE = 'MEDIUM'
-    AUTO_SUSPEND = 120
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = FALSE;
-```
-- COMPUTE POOL
-```sql
-CREATE COMPUTE POOL IF NOT EXISTS TEMPO_COMPUTE_POOL
-    MIN_NODES = 1
-    MAX_NODES = 1
-    AUTO_SUSPEND_SECS = 360
-    INSTANCE_FAMILY = 'GPU_NV_S'
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = FALSE;
-```
+
+### TEMPO_WH
+- **Type**: Snowpark Optimized
+- **Size**: Medium
+- **Auto Suspend**: 120 seconds
+- **Auto Resume**: Enabled
+- **Initial State**: Active
+
+### TEMPO_COMPUTE_POOL
+- **Node Configuration**:
+  - **Minimum Nodes**: 1
+  - **Maximum Nodes**: 1
+- **Auto Suspend**: 360 seconds
+- **Instance Family**: GPU_NV_S
+- **Auto Resume**: Enabled
+- **Initial State**: Active
+
 <!-- ------------------------ -->
 ## Initialize the Application and Grant Permissions for Sample Data Access
 Duration: 2
