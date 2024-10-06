@@ -30,8 +30,11 @@ This guide will walk you through setting up and using the TEMPO Native App in yo
 Duration: 2
 
 1. Obtain the TEMPO native app from the Snowflake Marketplace.
-2. Once installed, the app will be available in your Snowflake environment.
-3. Grant the app privileges to create the required compute resources:
+2. Change the app's default name to `TEMPO`.
+![Online Image](./assets/name_change_ref.png)
+
+3. Once installed, the app will be available in your Snowflake environment.
+4. Grant the app privileges to create the required compute resources:
 
 ```sql
 GRANT CREATE COMPUTE POOL ON ACCOUNT TO APPLICATION TEMPO;
