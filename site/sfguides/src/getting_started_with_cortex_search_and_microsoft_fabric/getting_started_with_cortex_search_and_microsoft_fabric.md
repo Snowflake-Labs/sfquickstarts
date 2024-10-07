@@ -135,8 +135,6 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE MEDNOTES_SEARCH_SERVICE
     FROM MEDICAL_NOTES
 );
 ```
-<!-- ------------------------ -->
-
 
 Notice how we're setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we're setting up the service so that additional filters can be used on the attribute "ADMISSION_TYPE".
 
@@ -150,7 +148,7 @@ Head to your Fabric workspace, click "New" in the top left then "More Options" a
 
 <!-- ------------------------ -->
 ## Querying Cortex Search from Fabric
-Duration: 5
+Duration: 15
 
 Now let's copy and paste several blocks of code to the Fabric notebook and work through connecting to the Cortex Search service from Fabric.
 
@@ -307,3 +305,5 @@ This quickstart is just that, a quick way to get you started with using Fabric a
 - [Fabric and Snowflake together](https://www.microsoft.com/en-us/microsoft-fabric/blog/2024/05/22/snowflake-and-microsoft-announce-expansion-of-their-partnership/)
 
 If you have any questions, reach out to your Snowflake account team!
+
+
