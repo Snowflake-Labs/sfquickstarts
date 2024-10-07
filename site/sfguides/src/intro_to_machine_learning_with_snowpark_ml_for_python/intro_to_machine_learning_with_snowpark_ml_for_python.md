@@ -19,7 +19,7 @@ Snowpark is the set of libraries and code execution environments that run Python
 
 **Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark ML API, which provides Python APIs for machine learning workflows in Snowflake.
 
-**Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options  include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework,or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
+**Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options  include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
 
 Learn more about [Snowpark](http://www.snowflake.com/snowpark).
 
@@ -33,7 +33,8 @@ Capabilities for custom ML include:
 - **Snowpark ML Modeling** for feature engineering and model training with familiar Python frameworks  
 - **Snowflake Feature Store** for continuous, automated refreshes on batch or streaming data
 - **Snowflake Model Registry** to manage models and their metadata 
-- **ML Lineage** to trace end-to-end feature and model lineage (currently in private preview)
+- **ML Lineage** to trace end-to-end feature and model lineage 
+- **ML Explainability** to better understand the features the model considers most impactful when generating predictions
 
 ![snowflame_ml_overview](assets/snowflake_ml_overview.png)
 
@@ -45,7 +46,7 @@ To get started with Snowflake ML, developers can use the Python APIs from the [S
 
 ![snowpark_ml_modeling_overview](assets/snowpark_ml_modeling_overview.png)
 
-**Model Management and Batch Inference:** Manage several types of ML models created both within and outside Snowflake and execute batch inference.
+**Model Management, Batch Inference, and Model Explainability:** Manage several types of ML models created both within and outside Snowflake, execute batch inference, and understand features the model considers most impactful when generating predictions.
 
 ![snowflake_model_registry](assets/snowflake_model_registry.png)
 
@@ -63,7 +64,7 @@ Learn more about [Snowpark ML Modeling](https://docs.snowflake.com/en/developer-
 This quickstart will focus on building a custom ML workflow using the following features: 
 - Snowflake Notebooks, which comes pre-integrated with Snowflake ML capabilities 
 - [Snowpark ML Modeling](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling), which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake.
-- [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops), which provides scalable and secure model management of ML models - whether you trained them in Snowflake or another ML platform. Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features.
+- [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops), which provides scalable and secure model management of ML models - whether you trained them in Snowflake or another ML platform. Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features. It also includes an [explainability function](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-explainability) based on [Shapley values](https://towardsdatascience.com/the-shapley-value-for-ml-models-f1100bff78d1).
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
@@ -78,6 +79,9 @@ This quickstart will focus on building a custom ML workflow using the following 
     - to perform features transformations on the data using Snowpark ML transformers
     - to train an XGBoost ML model using Snowpark ML estimators
     - to log models and execute batch inference in Snowflake using the Snowflake Model Registry
+    - to apply a built-in explainability function to understand model performance 
+
+![E2E ML Workflow with Snowflake ML](assets/snowflake_ml_e2e.png)
 
 <!-- ------------------------ -->
 ## Using Snowflake Notebooks
@@ -148,7 +152,7 @@ Duration: 15
 
 Open the following notebook in Snowflake Notebooks and run each of the cells: [2_sf_nb_snowflake_ml_model_training_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/2_sf_nb_snowflake_ml_model_training_inference.ipynb)
 
-In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Modeling. We also show how to execute batch inference through the Snowflake Model Registry.
+In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Modeling. We also show how to execute batch inference and model explainability through the Snowflake Model Registry.
 
 <!-- ------------------------ -->
 ## Conclusion
