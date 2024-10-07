@@ -161,7 +161,8 @@ DROP WAREHOUSE IF EXISTS churn_ds_wh;
 ## Conclusion and Resources
 Duration: 5
 
-### Congrats! You're reached the end of this Quickstart!
+### Conclusion
+Congrats! You're reached the end of this Quickstart!
 
 ### What You Learned
 With the completion of this Quickstart, you have now delved into:
