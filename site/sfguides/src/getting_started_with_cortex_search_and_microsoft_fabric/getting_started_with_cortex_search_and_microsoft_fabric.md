@@ -1,5 +1,5 @@
 author: marzillo-snow
-id: example_matt_marzillo
+id: getting_started_with_cortex_search_and_microsoft_fabric
 summary: This is a quickstart for using Cortex Search with Microsoft Fabric
 categories: Getting-Started, data-science, data-engineering, azure, cortex, genai, Microsoft, Fabric, search
 environments: web
