@@ -92,7 +92,8 @@ CREATE or REPLACE TABLE SUPPORT_TICKETS (
   service_type VARCHAR(60),
   request VARCHAR,
   contact_preference VARCHAR(60)
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"aiml_notebooks_fine_tuning", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 
 COPY into SUPPORT_TICKETS
   from @support_tickets_data_stage;
