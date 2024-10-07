@@ -60,12 +60,12 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight),
 The [Snowflake Marketplace](https://other-docs.snowflake.com/en/collaboration/collaboration-marketplace-about) provides mutiple listings for data you may use for analytical purposes. We will be leveraging the open data aggregated by Cybersyn for this quickstart, which contains a database of holidays to enrich our sales data. 
 
 - Log into your Snowflake account as the ACCOUNTADMIN or similar role
-- Follow the steps below to access the Cybersyn Government Essentials listing in your account. 
+- Follow the steps below to access the **Cybersyn Global Government** listing in your account. 
   - Click on 'Marketplace' on the left hand banner:
   
     <img src = "assets/marketplace.png">
   
-  - In the search bar, search for 'Cybersyn Government Essentials'
+  - In the search bar, search for 'Cybersyn Global Government'
     
   - Click on the first listing, with the same title: 
 
