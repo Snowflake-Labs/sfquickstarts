@@ -305,9 +305,10 @@ DROP WAREHOUSE IF EXISTS tb_po_app_wh;
 ## Conclusion and Resources
 Duration: 1
 
+### Conclusion
 **Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price.
 
-### What We Learned
+### What You Learned
 With the completion of this Quickstart, you have now delved into:
 - Data Exploration
 - Feature Engineering
