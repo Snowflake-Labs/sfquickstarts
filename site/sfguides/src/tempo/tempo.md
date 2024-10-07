@@ -72,24 +72,33 @@ CALL TEMPO.MANAGER.STARTUP();
 ## Perform Inference 
 Duration: 2
 
-Use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes a job service name as the only parameter.
+After a few minutes, Snowflake will be ready to perform inference.  At this time you can use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes a job service name as the only parameter.  The demo data looks at logs for all Workstations and logs for all Webservers for a midsized company over several days.  This demo data was obtained from the Canadian Institute of Cybersecurity. 
 
 Example:
 
 ```sql
 CALL TEMPO.DETECTION.WORKSTATIONS('<job_service_name>');
 ```
+`<job_service_name>`: the name of the run you want to perform (e.g., 'tempo_run_one', 'here_we_go')
+
 or
 ```sql
 CALL TEMPO.DETECTION.WEBSERVER('<job_service_name>');
 ```
-or
+After you run inference to find anomalies - or incidents - by looking at the Workstations or the Webserver, you will see a table with all the sequences the model has created.  Unlike many neural network based solutions, one strength of Tempo is that it preserves and shares relevant sequences for further analysis.  
+
+If you order the rows by anomaly, you will see that for Workstations you should see X anomalies and for Webserver you should see Y anomalies.  
+
+Were this a production use case, you might want to augment these results with information from IP Info or threat intelligence, to look into the external IPs that are indicated to be part of likely security incidents.  
+
+Some users have asked to see the entities that Tempo can discern.  Note that for larger environments it would be typical to have Tempo to discern many more types of entities.  You can ask Tempo to specifically learn the types of entities that are present in the log data provided using the following command:
+
 ```sql
 CALL TEMPO.DETECTION.DEVICE_IDENTIFICATION('<job_service_name>');
 ```
-`<job_service_name>`: the name of the run you want to perform (e.g., 'tempo_run_one', 'here_we_go').
 
 <!-- ------------------------ -->
+
 ### Monitor Job Services
 
 Check the status of Job services:
@@ -109,7 +118,7 @@ CALL SYSTEM$GET_SERVICE_STATUS('DETECTION.WORKSTATION_RUN_ONE');
 ## Viewing Results in Splunk
 Duration: 5
 
-This section guides you through setting up Splunk Enterprise to view the output from the Snowflake TEMPO project.
+This section guides you through setting up Splunk Enterprise to view the output from the Snowflake TEMPO project.  For this demo we used a trial account on Splunk and we import the results of Tempo as CSV.  In a production use case you will use the Snowflake Splunk connector.
 
 ### Prerequisites
 - An Amazon EC2 instance running Amazon Linux or another compatible Linux distribution
@@ -166,8 +175,11 @@ Duration: 2
    <query>source="your-filename.csv" host="Josiah" sourcetype="csv"
    | stats count as event_count</query>
    ```
-
 6. Save the dashboard.
+
+You should now be able to see the incidents - or anomalies - in your new dashboard.  This enables Security Operations teams to click through on the context provided by Tempo.  For example you can see all transactions to and from a specific IP address, or across given ports, as a part of investigating the incidents that have been identified.
+
+Note that as a default, only the incidents are uploaded.  Not also transferring and loading the entire dataset of logs simplifies the experiences of the Security Operator and also can translate into significant cost savings, as Splunk and most security operations solutions tend to charge by data ingested.  
 
 ### Important Notes
 - Set strong passwords for all user accounts.
@@ -187,3 +199,7 @@ You can run Tempo on your own data - DeepTempo is available to help.  Please rea
 ### What You Learned
 - Completed setup of Tempo on Snowflake
 - Ran Tempo on a sample dataset
+
+Congratulations, you just ran the world's first purpose-built LogLM available as a Snowflake NativeApp.  In the weeks to come DeepTempo will launch a range of additional easy-to-use options and extensions as NativeApps, including tooling to simplify the process of using your own data with Tempo and upgrades to the power of Tempo including scale out multi-GPU usage.  
+
+Please reach out with feedback and questions and suggestions.  
