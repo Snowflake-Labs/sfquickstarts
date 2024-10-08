@@ -266,7 +266,8 @@ Our extracted object looks great, but before we begin to flatten this out let's 
 CREATE OR REPLACE TABLE ir_raw
     AS
 SELECT inspection_report_extraction!PREDICT(GET_PRESIGNED_URL(@inspection_reports, RELATIVE_PATH), 2) AS ir_object
-FROM DIRECTORY(@inspection_reports);
+FROM DIRECTORY(@inspection_reports)
+COMMENT = '{"origin":"sf_sit-is", "name":"voc", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql", "vignette":"docai"}}';
 ```
 
 Before moving on let's take a look at our raw, extracted results.

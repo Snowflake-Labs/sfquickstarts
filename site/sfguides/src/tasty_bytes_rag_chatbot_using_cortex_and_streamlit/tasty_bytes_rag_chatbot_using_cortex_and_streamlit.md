@@ -69,7 +69,8 @@ file_format = tasty_bytes_chatbot.app.csv_ff;
 CREATE OR REPLACE TABLE tasty_bytes_chatbot.app.documents (
 	RELATIVE_PATH VARCHAR(16777216),
 	RAW_TEXT VARCHAR(16777216)
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"voc", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit", "vignette":"rag_chatbot"}}';
 
 COPY INTO tasty_bytes_chatbot.app.documents
 FROM @tasty_bytes_chatbot.app.s3load/documents/;
