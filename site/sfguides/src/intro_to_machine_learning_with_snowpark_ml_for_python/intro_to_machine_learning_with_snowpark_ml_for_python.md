@@ -11,32 +11,22 @@ tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpar
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will explore what's new in Snowflake for Machine Learning. You will set up your Snowflake and Python environments and build an end to end ML workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs in the Snowpark ML library.
-
-### What is Snowpark?
-
-Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake.
-
-**Client Side Libraries** - Snowpark libraries can be installed and downloaded from any client-side notebook or IDE and are used for code development and deployment. Libraries include the Snowpark ML API, which provides Python APIs for machine learning workflows in Snowflake.
-
-**Code Execution Environments** - Snowpark provides elastic compute environments for secure execution of your code in Snowflake. Runtime options  include Python, Java, and Scala in warehouses, container runtimes for out-of-the-box distributed processing with CPUs or GPUs using any Python framework, or custom runtimes brought in from Snowpark Container Services to execute any language of choice with CPU or GPU compute.
-
-Learn more about [Snowpark](http://www.snowflake.com/snowpark).
+Through this quickstart guide, you will get an introduction to [Snowflake for Machine Learning](https://www.snowflake.com/en/data-cloud/snowflake-ml/). You will set up your Snowflake and Python environments and build an end to end ML workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs in the Snowpark ML library.
 
 ### What is Snowflake ML?
 
-Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use [ML Functions](https://docs.snowflake.com/en/guides-overview-ml-functions) to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
+Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 Capabilities for custom ML include: 
 - **Snowflake Notebooks** for a familiar, easy-to-use notebook interface that blends Python, SQL, and Markdown
-- **Container Runtimes** for distributed CPU and GPU processing out of the box from Snowflake Notebooks
+- **Container Runtime** for distributed compute on CPUs and GPUs from Snowflake Notebooks
 - **Snowpark ML Modeling** for feature engineering and model training with familiar Python frameworks  
 - **Snowflake Feature Store** for continuous, automated refreshes on batch or streaming data
 - **Snowflake Model Registry** to manage models and their metadata 
 - **ML Lineage** to trace end-to-end feature and model lineage 
 - **ML Explainability** to better understand the features the model considers most impactful when generating predictions
 
-![snowflame_ml_overview](assets/snowflake_ml_overview.png)
+![snowflake_ml_overview](assets/snowpark_ml_overview.png)
 
 To get started with Snowflake ML, developers can use the Python APIs from the [Snowpark ML library](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index), directly from Snowflake Notebooks (public preview) or downloaded and installed into any IDE of choice, including Jupyter or Hex. 
 
