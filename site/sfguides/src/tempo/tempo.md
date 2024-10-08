@@ -104,7 +104,7 @@ CALL TEMPO.DETECTION.DEVICE_IDENTIFICATION('<job_service_name>');
 
 ### Monitor Job Services
 
-Check the status of Job services:
+Check the status of Job services:  Where job_service_name is the same job service name you assigned previously.
 
 ```sql
 CALL SYSTEM$GET_SERVICE_STATUS('DETECTION.<job_service_name>');
@@ -121,7 +121,7 @@ CALL SYSTEM$GET_SERVICE_STATUS('DETECTION.WORKSTATION_RUN_ONE');
 ## Viewing Results in Splunk
 Duration: 5
 
-This section guides you through setting up Splunk Enterprise to view the output from the Snowflake TEMPO project.  For this demo we used a trial account on Splunk and we import the results of Tempo as CSV.  In a production use case you will use the Snowflake Splunk connector.
+This section guides you through setting up Splunk Enterprise to view the output from the Snowflake TEMPO project.  This step is optional and intended for users who want a visuaizatrion of the output.  For this demo we used a trial account on Splunk and we import the results of Tempo as CSV.  In a production use case you will use the Snowflake Splunk connector.
 
 ### Prerequisites
 - An Amazon EC2 instance running Amazon Linux or another compatible Linux distribution
