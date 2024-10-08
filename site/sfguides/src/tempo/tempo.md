@@ -12,10 +12,12 @@ tags: Getting Started, Security, LLGM, Intrusion Detection
 ## Overview 
 Duration: 1
 
-This guide will walk you through setting up and using the TEMPO Native App in your Snowflake environment with the provided sample data.
+This guide will walk you through the process of setting up and using the TEMPO Native App in your Snowflake environment with provided sample data ([CIC Dataset](https://www.unb.ca/cic/datasets/ids-2017.html)).
+
+The data that is provided comes from the Canadian Institute for Cybersecurity.  You can see the data set - and an explanations of the attacks discerned by Tempo [here](https://www.unb.ca/cic/datasets/ids-2017.html)
 
 ### What You’ll Learn 
-- How to run Tempo on sample data
+- How to run Tempo on sample data ([CIC Dataset](https://www.unb.ca/cic/datasets/ids-2017.html))
 - How to view the output in Splunk
 
 ### What You’ll Need 
@@ -72,7 +74,8 @@ CALL TEMPO.MANAGER.STARTUP();
 ## Perform Inference 
 Duration: 2
 
-After a few minutes, Snowflake will be ready to perform inference.  At this time you can use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes a job service name as the only parameter.  The demo data looks at logs for all Workstations and logs for all Webservers for a midsized company over several days.  This demo data was obtained from the Canadian Institute of Cybersecurity. 
+After a few minutes, Snowflake will be ready to perform inference. We are creating Snowflake Job service (Containers that run a specific image and terminate as soon as the run is completed). At this time you can use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes a job service name as the only parameter.  The demo data looks at logs for all Workstations and logs for all Webservers for a midsized company over several days.  This demo data was obtained from the Canadian Institute of Cybersecurity. In a live run each created procedure represents a call to the respective model type IE. workstation representing the model specialized for workstations, webservers for webservers and so on.
+
 
 Example:
 
