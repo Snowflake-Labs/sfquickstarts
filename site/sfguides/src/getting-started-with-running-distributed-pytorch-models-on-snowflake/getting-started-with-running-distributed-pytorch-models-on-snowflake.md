@@ -152,8 +152,6 @@ When you click the **Get Recommendations** button, the application filters the d
 ### Related Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake)
 - [Demo Video on Youtube](https://www.youtube.com/watch?v=9uqcNBIY14g)
-- [Blog]()
-- [Solution Center]()
 - [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
 - [Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 - [Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
