@@ -36,7 +36,9 @@ In addition, this end-to-end ML solution using Snowflake ML and Notebooks aims t
 **Integrated Development and Production Environments:** Offering a single platform for data processing, feature engineering, training, and serving, which facilitates comprehensive tracking and lineage of ML artifacts from start to finish.
 
 ### Prerequisites
-- A [GitHub](https://github.com/) Account
+- Privileges necessary to create a user, database, and warehouse in Snowflake
+- Access to run Notebooks in Snowflake
+- Container Runtime Enabled in the Account
 
 ### What You Will Learn
 - How to extract features from customer, menu, and purchase history.
@@ -48,7 +50,7 @@ In addition, this end-to-end ML solution using Snowflake ML and Notebooks aims t
 
 ### What You Will Need
 - A [GitHub](https://github.com/) Account
-- [Snowflake](https://app.snowflake.com/) Account
+- A [Snowflake](https://app.snowflake.com/) Account with Accountadmin access
 
 ### What You Will Build
 - A feature extraction pipeline from customer, menu, and purchase history.
