@@ -92,11 +92,6 @@ CREATE OR REPLACE WAREHOUSE airflow_wh WITH
   WAREHOUSE_SIZE='X-SMALL';
 GRANT USAGE ON WAREHOUSE airflow_wh TO ROLE airflow_admin_rl;
 
-CREATE SECURITY INTEGRATION IF NOT EXISTS snowservices_ingress_oauth
-  TYPE=oauth
-  OAUTH_CLIENT=snowservices_ingress
-  ENABLED=true;
-
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE airflow_admin_rl;
 
 GRANT ROLE airflow_admin_rl TO USER <user_name>;
