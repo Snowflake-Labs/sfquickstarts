@@ -32,13 +32,20 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 Duration: 2
 
 1. Obtain the TEMPO Native App from the Snowflake Marketplace.
-2. Once installed, the app will be available in your Snowflake environment.
-3. Grant the app privileges to create the required compute resources
+2. It is recommended that during installation you shorten the name to just TEMPO.  
+  - To do so, examine Options for your installation before selecting Get
+  - Where you see the extended name of the application, TEMPO - the first..., edit that to read just TEMPO
+  - Once you have shortened the name - which will simplify management - please select Get
+  - After you select Get the TEMPO app will be installed; you will also receive an email from Snowflake
+3. After Tempo is installed, you will be prompted to select Configure
+4. When you select Configure, you will be asked to grant the following permissions; please do so
 
-```sql
 GRANT CREATE COMPUTE POOL ON ACCOUNT TO APPLICATION TEMPO;
 GRANT CREATE WAREHOUSE ON ACCOUNT TO APPLICATION TEMPO;
-```
+
+5. Continue to click through and Launch the app
+
+At this point, you will be a Worksheet showing SHOW TABLES; you are now ready to use Tempo as explained below
 
 The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container services runs.
 
@@ -62,12 +69,13 @@ The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_
 ## Initialize the Application and Grant Permissions for Sample Data Access
 Duration: 2
 
-Call the startup procedure to initialize the app:
+Starting on the same worksheet, you can now initialize Tempo:
 
 ```sql
 CALL TEMPO.MANAGER.STARTUP();
 ```
 <!-- ------------------------ -->
+
 ## Perform Inference 
 Duration: 2
 
@@ -90,7 +98,7 @@ CALL TEMPO.DETECTION.WEBSERVER('<job_service_name>');
 ```
 After you run inference to find anomalies - or incidents - by looking at the Workstations or the Webserver, you will see a table with all the sequences the model has created.  Unlike many neural network based solutions, one strength of Tempo is that it preserves and shares relevant sequences for further analysis.  
 
-If you order the rows by anomaly, you will see that for Workstations you should see X anomalies and for Webserver you should see Y anomalies.  
+If you order the rows by the Anomaly column, you will see that for Workstations you should see X anomalies and for Webserver you should see Y anomalies.  
 
 Were this a production use case, you might want to augment these results with information from IP Info or threat intelligence, to look into the external IPs that are indicated to be part of likely security incidents.  
 
