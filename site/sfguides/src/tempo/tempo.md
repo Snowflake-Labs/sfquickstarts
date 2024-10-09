@@ -177,12 +177,19 @@ Duration: 2
 
 4. Copy the XML from `anomaly_hub.xml` and paste it into the Source view.
 
-5. Update the CSV filename in the query:
+5. Save the Dashboard
+   - After the dashboard is saved, you will now have to create a Tempo Splunk macro
+
+7. Create a Tempo macro in Splunk
+   - In splunk create a new Splunk macro by going to ```Settings``` > ```Advanced Search``` > ```+ Add New```
+   - Keep Destination app as ```search```
+   - Name the macro ```TempoDataLocation```
+   - Define the macro as your Splunk path to Tempo's csv output. Will look something like this
    ```xml
-   <query>source="your-filename.csv" host="Josiah" sourcetype="csv"
-   | stats count as event_count</query>
+   source="your-filename.csv" host="Your Name" sourcetype="csv"
    ```
-6. Save the dashboard.
+   - You can leave the rest of the macro creation blank.
+   - Save the macro
 
 You should now be able to see the incidents - or anomalies - in your new dashboard.  This enables Security Operations teams to click through on the context provided by Tempo.  For example, you can see all transactions to and from a specific IP address, or across given ports, as a part of investigating the incidents that have been identified.
 
