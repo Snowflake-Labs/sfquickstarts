@@ -1,49 +1,55 @@
-author: Snowplow
-id: snowplow-web-analytics
-summary: Set up real-time event tracking and analytics using Snowplow and Snowflake  
-categories: getting-started, data-engineering, data-warehouse
-environments: web
-status: Published  
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues  
-tags: Getting Started, Data Engineering
-
-# Snowplow Web Analytics with Snowflake
+author:Snowplow
+id:snowplow-web-analytics
+summary:Set up real-time event tracking and analytics using Snowplow and Snowflake
+categories:Getting-Started,Data-Engineering
+environments:web
+status:Published
+feedback link:https://github.com/Snowflake-Labs/sfguides/issues
+tags:Getting Started, Data Engineering, Snowplow, Snowflake, Real-Time Analytics, Behavioral Tracking
+# Snowplow Digital Analytics with Snowflake
 
 ## Overview
 Duration: 1
 
-In this guide, you'll learn how to set up real-time event tracking and analytics, configure the Snowflake Streaming Loader for immediate data availability, and deploy Unified dbt package for simplified data consumption. By the end of this tutorial, you'll have a fully functioning analytics pipeline, enabling you to make data-driven decisions swiftly.
+### Overview
 
-### Prerequisites
+In this guide, you'll learn how to set up real-time event tracking and analytics, configure the Snowflake Streaming Loader for immediate data availability, and deploy Snowplow’s Unified Digital dbt package for simplified data modeling and consumption. By the end of this tutorial, you'll have a fully functioning analytics pipeline, enabling you to make data-driven decisions swiftly and accurately.
 
-- [BDP Snowplow subscription](https://snowplow.io/)
-- Basic knowledge of SQL and Snowflake
-- Access to Snowflake accounts
+### What You Will Build
 
-### What You'll Learn 
+- A pipeline for behavioral data from the source to the analysis
+- A quick analysis of that behavioral data
+
+### What You Will Learn
 
 - How to set up Snowplow's tracking for event data collection
 - How to configure the Snowflake Streaming Loader to ingest data in near real-time
-- How to deploy Unified dbt package in Snowflake
+- How to deploy Unified Digital dbt package in Snowflake
 
-<!-- ------------------------ -->
-## Set up Tracking
+### Prerequisites
+
+- [Snowplow Behavioral Data Platform (BDP) subscription](https://snowplow.io/)
+- Basic knowledge of SQL and Snowflake
+- Access to Snowflake account
+
+
+## Set up Tracking 
 Duration: 30
 
 With Snowplow, tracking capabilities are virtually limitless, offering a wide range of possibilities. 
 
-Basic tracking functionalities can be easily integrated into your app by following [this guide](https://docs.snowplow.io/docs/recipes/recipe-basic-tracking-design/), while more advanced features can be unlocked by utilizing the full suite that Snowplow provides.
+Basic tracking functionalities can be easily integrated into your app by following [this guide](https://docs.snowplow.io/docs/recipes/recipe-basic-tracking-design/), while more advanced features can be unlocked by utilizing Snowplow’s full suite of products.
 
 
 ### Example Web Tracking Implementation with Data Products and Automatic Code Generation
 
-Here's a summary of the steps to implement a basic web tracking setup using Data Products and advanced Snowplow features:
+Here's a summary of the steps to implement a basic web tracking setup using Snowplow’s Data Products and advanced Snowplow features:
 
 1. **Create a Source Application**: 
    Define your web app's tracking source and configure the necessary application contexts.
 ![alt text](assets/source_application.png)
 2. **Set up Base Data Product**: 
-   Use the Base Web Data Product template to track standard events like page views and clicks for your app.
+   Use the Base Web Data Product template to track standard events like page views and clicks in your app.
    ![alt text](assets/base_data_product.png)
 3. **Initialize the Tracker**: 
    Install [Snowplow's browser tracker](https://docs.snowplow.io/docs/collecting-data/collecting-from-own-applications/javascript-trackers/web-tracker/quick-start-guide/#quick-start-basic), configure it to automatically send page views and page pings, and track user interactions.
@@ -51,20 +57,19 @@ Here's a summary of the steps to implement a basic web tracking setup using Data
    Use the [Snowplow Inspector browser extension](https://docs.snowplow.io/docs/testing-debugging/snowplow-inspector/overview/) to confirm that page views, clicks, and other tracked events are being recorded.
    ![alt text](assets/inspector.png)
 5. **Create Custom Data Structures**: 
-   You can define custom data structures (e.g., "new_game" and "start_game") to track specific app interactions where you could also utilize Snowtype to generate code for custom events tracking and integrate them into your app. More details about that in the full documentation
+   You can define custom data structures (e.g., "new_game" and "start_game") to track specific website or app interactions and utilize Snowtype to generate code for custom event tracking. More details about that in the full documentation below.
 
 [For a complete setup guide/recipe, visit Snowplow's official documentation.](https://docs.snowplow.io/docs/recipes/recipe-data-products-base-tracking/)
 
 
-<!-- ------------------------ -->
 ## Configure Snowflake Streaming Loader
 Duration: 15
 
-In this section, you'll learn how to set up the Snowflake Streaming Loader to ingest Snowplow event data into Snowflake in real-time. By the end of this step, you'll have a streaming pipeline that delivers enriched event data with minimal latency.
+In this section, you'll learn how to set up the Snowflake Streaming Loader to ingest Snowplow event data into Snowflake in near real-time. By the end of this step, you'll have a streaming pipeline that delivers enriched event data with minimal latency.
 
 ### Introduction to Snowflake's Snowpipe Streaming
 
-**Snowpipe Streaming** is Snowflake's real-time data ingestion service, which allows for the immediate availability of data as it's ingested. This capability is crucial for businesses that rely on up-to-the-minute data to make informed decisions.
+**Snowpipe Streaming** is Snowflake's real-time data ingestion service, which allows for the immediate availability of data as it's ingested. This capability is crucial for businesses that rely on up-to-the-minute data to make timely, informed decisions.
 
 ### Snowflake Streaming Loader
 
@@ -72,7 +77,7 @@ The [Snowflake Streaming Loader](https://docs.snowplow.io/docs/pipeline-componen
 
 #### Benefits of using Snowflake Streaming Loader
 
-- **Low Latency**: Data becomes available in Snowflake within seconds, enabling real-time analytics.
+- **Low Latency**: Data becomes available in Snowflake within seconds, enabling near real-time analytics.
 - **Cost-Efficiency**: Eliminates the need for expensive infrastructure like EMR clusters or large compute instances.
 - **Immediate Availability**: As soon as data is generated, it's ready for querying.
 
@@ -84,21 +89,21 @@ Go to your Snowplow BDP console, under infra in destinations, and select the Sno
 
 #### Step 2: Set Up the Configuration
 
+Complete your details
 ![alt text](assets/snowflake_streaming_1.png)
 
+and then generate and run the script to set up everything that will be needed in Snowflake
 
 ![alt text](assets/snowflake_streaming_2.png)
 
+#### Step 3: Complete destination set up
 
-#### Step 3: TK
+Click the “Test and complete destination set up” button and reach out to Snowplow Support (support@snowplow.io) to finish the process
 
-pass
-
-<!-- ------------------------ -->
-## Deploy Unified Digital DBT Package
+## Deploy Unified Digital dbt Package
 Duration: 10
 
-In this section, we'll explore how to deploy the Unified Digital dbt package in Snowflake to transform raw event data into actionable insights. We will use the raw data that we previously ingested in Snowflake using the streaming loader
+In this section, we'll explore how to deploy the Unified Digital dbt package in Snowflake to transform raw event data into modeled data and actionable insights. We will use the raw data that we previously ingested in Snowflake using the streaming loader
 
 ### Prerequisites
 
@@ -106,7 +111,7 @@ In this section, we'll explore how to deploy the Unified Digital dbt package in 
 - A Snowflake account with permissions to create databases, schemas, and roles.
 - Admin rights in Snowplow BDP to set up connections and models.
 
-### Understanding Unified Digital DBT Package
+### Understanding Unified Digital dbt Package
 The unified data package is essential for consistent analytics across different data sources and platforms. It standardizes the structure and schema of your data, making it easier to query and derive insights.
 
 #### Why it's useful
@@ -117,7 +122,7 @@ The unified data package is essential for consistent analytics across different 
 
 ### Deployment Steps
 
-We'll use Snowplow BDP (Behavioral Data Platform) to run the standard data models in Snowflake.
+We'll use Snowplow BDP to run the standard data models in Snowflake.
 
 #### Step 1: Create a Warehouse Connection
 
@@ -136,7 +141,7 @@ We'll use Snowplow BDP (Behavioral Data Platform) to run the standard data model
 
 > aside negative
 > 
-> If you've already set up a warehouse connection for loading data, you will still need to create a new connection specifically for data modeling. This is because data models often require different users, roles, and permissions to manage how data is accessed and processed.
+> If you've already set up a warehouse connection for loading data, you will still need to create a new connection specifically for data modeling. This is required since data models often require different users, roles, and permissions to manage how data is accessed and processed.
 
 
 #### Step 2: Create a Data Model
@@ -158,7 +163,7 @@ We can go to the dedicated screen per model and configure the model as we want
 
 ![alt text](assets/unified_model_view.png)
 
-Steps :
+Steps:
 
 1. **Check the Data Models Page**:
    - Navigate to the **Data Models** page.
@@ -177,13 +182,8 @@ Steps :
 
 > aside positive
 > 
-> **Gains**: Deploying the Unified Digital Model simplifies your data landscape. With standardized tables and fields, your team can focus on generating insights rather than wrangling data. Visit [Unified documentation](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-models/dbt-unified-data-model/) for further customization 
+> **Gains**: Deploying the Unified Digital Model simplifies your data landscape. With standardized tables and fields, your team can focus on generating insights rather than spending time and engineering resources wrangling data. Visit [Unified documentation](https://docs.snowplow.io/docs/modeling-your-data/modeling-your-data-with-dbt/dbt-models/dbt-unified-data-model/) for further customization 
 
-
-
-
-
-<!-- ------------------------ -->
 ## Explore Modeled with Snowflake Notebooks
 Duration: 15
 
@@ -392,7 +392,7 @@ ORDER BY new_user_count DESC;
 
 #### Step 6: Segmenting Users for Deeper Insights
 
-User segmentation allows for personalized marketing and improved user experience.
+User segmentation allows for personalized marketing and improved user experiences.
 
 **Query 1: High-Value User Segment**
 
@@ -451,16 +451,11 @@ By focusing on the derived tables, you've efficiently navigated through high-lev
 - Assessed content performance and user interaction patterns.
 - Leveraged Snowflake Notebooks for collaborative data exploration.
 
-
-
-
-
-<!-- ------------------------ -->
 ## Conclusion and Resources
-
 Duration: 2
 
-At the end of this guide, you've successfully set up a near real-time data ingestion pipeline using Snowplow and Snowflake and deployed the Unified dbt package for streamlined analytics. This powerful combination allows your business to harness real-time insights and make data-driven decisions efficiently.
+### Conclusion
+At the end of this guide, you've successfully set up a near real-time data ingestion pipeline using Snowplow and Snowflake and deployed the Unified Digital dbt package for streamlined analytics. This powerful combination allows your business to harness real-time insights and make data-driven decisions efficiently.
 
 ### What You Learned
 
