@@ -1,7 +1,7 @@
 author: Joviane Bellegarde
 id: cdc_data_from_postgres_to_snowflake
 summary: Data Analysis and Churn Prediction Using Snowflake Notebooks
-categories: Getting-Started, Connectors, Dynamic Tables
+categories: Getting-Started, Connectors, Dynamic Tables, PostgreSQL
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -13,7 +13,7 @@ tags: Getting Started, Connectors, Dynamic Tables
 ## Overview
 Duration: 10
 
-In this Quickstart, we will play the role of an analyst at a financial use case that focuses on building a dashboard that provides insights using Dynamic Tables based on customer transactional data housed on a PostgreSQL database and brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is to segment customers, track their purchasing behavior over time, and help businesses identify key trends and potential opportunities for customer engagement, up-selling, and retention, all within Streamlit-in-Snowflake.
+In this Quickstart, we will investigate how a financial company a builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights in how to increase customer engagement using Streamlit-in-Snowflake.
 
 ### What You Will Build
 - A pipeline to import data into Snowflake from PostgreSQL
