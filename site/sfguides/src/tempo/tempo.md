@@ -98,7 +98,7 @@ CALL TEMPO.DETECTION.WEBSERVER('<job_service_name>');
 ```
 After you run inference to find anomalies - or incidents - by looking at the Workstations or the Webserver, you will see a table with all the sequences the model has created.  Unlike many neural network based solutions, one strength of Tempo is that it preserves and shares relevant sequences for further analysis.  
 
-If you order the rows by the Anomaly column, you will see that for Workstations you should see X anomalies and for Webserver you should see Y anomalies.  
+If you order the rows by the Anomaly column, you will see that for Workstations you should see 11 anomalies and for Webserver you should see 3918 anomalies.  
 
 Were this a production use case, you might want to augment these results with information from IP Info or threat intelligence, to look into the external IPs that are indicated to be part of likely security incidents.  
 
