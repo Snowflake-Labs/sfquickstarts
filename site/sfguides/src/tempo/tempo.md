@@ -7,10 +7,12 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Security, LLGM, Intrusion Detection
 
-# Getting Started with TEMPO (Using Sample Data)
+# Getting Started with TEMPO and Snowflake (Using Sample Data)
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
+
+Tempo is the first CyberSecurity solution based on a LogLM, or Log Language Model invented by DeepTempo.  These models are similar to their more familiar cousins, LLMs such as Anthropic's Claude and LLama. Like LLMs, LogLMs are Foundation Models that apply their understanding across very different environments and in response to differing inputs. However, Tempo was pre-trained using enormous quantities of logs. Tempo is focused on the pattern of events, including relative and absolute time. Tempo has been shown to be extremely accurate, with a low false positive and false negative rate.
 
 This guide will walk you through the process of setting up and using the TEMPO Native App in your Snowflake environment with provided sample data ([CIC Dataset](https://www.unb.ca/cic/datasets/ids-2017.html)).
 
@@ -62,7 +64,7 @@ The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_
 - **Initial State**: Active
 
 <!-- ------------------------ -->
-## Initialize the Application and Grant Permissions for Sample Data Access
+## Start the app and Perform Inference 
 Duration: 2
 
 Call the startup procedure to initialize the app:
@@ -70,9 +72,6 @@ Call the startup procedure to initialize the app:
 ```sql
 CALL TEMPO.MANAGER.STARTUP();
 ```
-<!-- ------------------------ -->
-## Perform Inference 
-Duration: 2
 
 After a few minutes, Snowflake will be ready to perform inference. We are creating Snowflake Job service (Containers that run a specific image and terminate as soon as the run is completed). At this time you can use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes a job service name as the only parameter.  The demo data looks at logs for all Workstations and logs for all Webservers for a midsized company over several days.  This demo data was obtained from the Canadian Institute of Cybersecurity. In a live run each created procedure represents a call to the respective model type IE. workstation representing the model specialized for workstations, webservers for webservers and so on.
 
@@ -197,12 +196,14 @@ Note that as a default, only the incidents are uploaded.  Not also transferring 
 ## Conclusion And Resources
 Duration: 1
 
-You can run Tempo on your own data - DeepTempo is available to help.  Please reach out.  
+### Conclusion
+
+Congratulations, you just ran the world's first purpose-built LogLM available as a Snowflake NativeApp.  In the weeks to come DeepTempo will launch a range of additional easy-to-use options and extensions as NativeApps, including tooling to simplify the process of using your own data with Tempo and upgrades to the power of Tempo including scale out multi-GPU usage. 
 
 ### What You Learned
 - Completed setup of Tempo on Snowflake
 - Ran Tempo on a sample dataset
 
-Congratulations, you just ran the world's first purpose-built LogLM available as a Snowflake NativeApp.  In the weeks to come DeepTempo will launch a range of additional easy-to-use options and extensions as NativeApps, including tooling to simplify the process of using your own data with Tempo and upgrades to the power of Tempo including scale out multi-GPU usage.  
+### Resources
 
 Please reach out with feedback and questions and suggestions.  
