@@ -9,7 +9,7 @@ tags: Data Engineering, Data Collaboration, Geospatial Data
 
 # Visual Analytics powered by Snowflake and Tableau
 
-Duration: 60
+Duration: 40
 
 <!-- ------------------------ -->
 
