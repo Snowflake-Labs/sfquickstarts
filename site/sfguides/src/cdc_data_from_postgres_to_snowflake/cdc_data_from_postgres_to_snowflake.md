@@ -39,7 +39,6 @@ In this section, we will set up a PostgreSQL database and create tables to simul
 
 #### Starting the Database Instance
 To initiate the PostgreSQL database using Docker, you'll need to create a file called `docker-compose.yaml`. This file will contain the configuration for the PostgreSQL database. Open the IDE of your choice to copy and past this file by copy pasting the following:
-
 ```
 version: '1'
 services:
@@ -165,69 +164,116 @@ CREATE PUBLICATION agent_postgres_publication FOR ALL TABLES;
 select * from financial_data_hub.raw_cdc.customers;
 select * from financial_data_hub.raw_cdc.merchants;
 select * from financial_data_hub.raw_cdc.products;
-select * from financial_data_hub.raw_cdc.transactions
-```
-<!-- ------------------------ -->
-## Using Snowflake Notebooks
-Duration: 10
-
-### Overview
-For this Quickstart, there are 2 Snowflake Notebooks and they need to be executed in order. Make sure to run the first Notebook fully before running the second Notebook.
-1. The first Snowflake Notebook [1_telco_churn_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb) contains scripts for importing and exploring our data
-2. The second Snowflake Notebook [2_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb) contains scripts for feature engineering and model training to use in the Streamlit app within the Notebook
-
-### Import Snowflake Notebooks
-You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create the Snowflake Notebooks by importing the Notebooks.
-1. Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on `Projects` `->` `Notebook`
-
-2. Switch Role to `CHURN_DATA_SCIENTIST`
-
-3. Download the [1_telco_churn_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb) and [2_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb) Notebooks
-
-4. Using the `Import .ipynb file`, import the downloaded Notebooks
-
-<img src="assets/import_notebook.png"/>
-
-5. Select the `CHURN_PROD` database and `ANALYTICS` schema for the Notebook Location and `CHURN_DS_WH` for the Notebook warehouse and click `Create`
-
-6. To add Anaconda packages to both Notebooks separately, select the specified Notebook, click the `Packages` button on the package explorer in the top of the page to add the following packages: `altair`, `imbalanced-learn`, `numpy`, `pandas`, and `snowflake-ml-python`
-
-<img src="assets/anaconda.png"/>
-
-7. At the top of the page, click `Start` to start the Notebook session and run the cells by clicking `Run All`
-
-<img src="assets/start.png"/>
-
-<!-- ------------------------ -->
-## Clean Up
-Duration: 2
-
-### Remove Snowflake Objects
-1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
-2. Copy and paste the following SQL statements in the worksheet to drop all Snowflake objects created in this Quickstart
-```
-USE ROLE securityadmin;
-DROP ROLE IF EXISTS churn_data_scientist;
-USE ROLE accountadmin;
-DROP DATABASE IF EXISTS churn_prod;
-DROP WAREHOUSE IF EXISTS churn_ds_wh;
+select * from financial_data_hub.raw_cdc.transactions;
 ```
 
-<!-- ------------------------ -->
-## Conclusion and Resources
-Duration: 5
+[//]: # (<!-- ------------------------ -->)
 
-### Congrats! You're reached the end of this Quickstart!
+[//]: # (## Using Snowflake Notebooks)
 
-### What You Learned
-With the completion of this Quickstart, you have now delved into:
-- How to import/load data with Snowflake Notebook
-- How to train a Random Forest with Snowpark ML model
-- How to visualize the predicted results from the forecasting model
-- How to build an interactive web app and make predictions on new users
+[//]: # (Duration: 10)
 
-### Resources
-- [Snowflake Solutions Center - Data Analysis and Churn Prediction Using Snowflake Notebooks](https://developers.snowflake.com/solution/data-analysis-and-churn-prediction-using-snowflake-notebooks/)
-- [Snowflake Documentation](https://docs.snowflake.com/)
-- [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
-- [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index)
+[//]: # ()
+[//]: # (### Overview)
+
+[//]: # (For this Quickstart, there are 2 Snowflake Notebooks and they need to be executed in order. Make sure to run the first Notebook fully before running the second Notebook.)
+
+[//]: # (1. The first Snowflake Notebook [1_telco_churn_ingest_data.ipynb]&#40;https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb&#41; contains scripts for importing and exploring our data)
+
+[//]: # (2. The second Snowflake Notebook [2_telco_churn_ml_feature_engineering.ipynb]&#40;https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb&#41; contains scripts for feature engineering and model training to use in the Streamlit app within the Notebook)
+
+[//]: # ()
+[//]: # (### Import Snowflake Notebooks)
+
+[//]: # (You will use [Snowsight]&#40;https://docs.snowflake.com/en/user-guide/ui-snowsight.html#&#41;, the Snowflake web interface, to create the Snowflake Notebooks by importing the Notebooks.)
+
+[//]: # (1. Navigate to Notebooks in [Snowsight]&#40;https://docs.snowflake.com/en/user-guide/ui-snowsight.html#&#41; by clicking on `Projects` `->` `Notebook`)
+
+[//]: # ()
+[//]: # (2. Switch Role to `CHURN_DATA_SCIENTIST`)
+
+[//]: # ()
+[//]: # (3. Download the [1_telco_churn_ingest_data.ipynb]&#40;https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb&#41; and [2_telco_churn_ml_feature_engineering.ipynb]&#40;https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb&#41; Notebooks)
+
+[//]: # ()
+[//]: # (4. Using the `Import .ipynb file`, import the downloaded Notebooks)
+
+[//]: # ()
+[//]: # (<img src="assets/import_notebook.png"/>)
+
+[//]: # ()
+[//]: # (5. Select the `CHURN_PROD` database and `ANALYTICS` schema for the Notebook Location and `CHURN_DS_WH` for the Notebook warehouse and click `Create`)
+
+[//]: # ()
+[//]: # (6. To add Anaconda packages to both Notebooks separately, select the specified Notebook, click the `Packages` button on the package explorer in the top of the page to add the following packages: `altair`, `imbalanced-learn`, `numpy`, `pandas`, and `snowflake-ml-python`)
+
+[//]: # ()
+[//]: # (<img src="assets/anaconda.png"/>)
+
+[//]: # ()
+[//]: # (7. At the top of the page, click `Start` to start the Notebook session and run the cells by clicking `Run All`)
+
+[//]: # ()
+[//]: # (<img src="assets/start.png"/>)
+
+[//]: # ()
+[//]: # (<!-- ------------------------ -->)
+
+[//]: # (## Clean Up)
+
+[//]: # (Duration: 2)
+
+[//]: # ()
+[//]: # (### Remove Snowflake Objects)
+
+[//]: # (1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`)
+
+[//]: # (2. Copy and paste the following SQL statements in the worksheet to drop all Snowflake objects created in this Quickstart)
+
+[//]: # (```)
+
+[//]: # (USE ROLE securityadmin;)
+
+[//]: # (DROP ROLE IF EXISTS churn_data_scientist;)
+
+[//]: # (USE ROLE accountadmin;)
+
+[//]: # (DROP DATABASE IF EXISTS churn_prod;)
+
+[//]: # (DROP WAREHOUSE IF EXISTS churn_ds_wh;)
+
+[//]: # (```)
+
+[//]: # ()
+[//]: # (<!-- ------------------------ -->)
+
+[//]: # (## Conclusion and Resources)
+
+[//]: # (Duration: 5)
+
+[//]: # ()
+[//]: # (### Congrats! You're reached the end of this Quickstart!)
+
+[//]: # ()
+[//]: # (### What You Learned)
+
+[//]: # (With the completion of this Quickstart, you have now delved into:)
+
+[//]: # (- How to import/load data with Snowflake Notebook)
+
+[//]: # (- How to train a Random Forest with Snowpark ML model)
+
+[//]: # (- How to visualize the predicted results from the forecasting model)
+
+[//]: # (- How to build an interactive web app and make predictions on new users)
+
+[//]: # ()
+[//]: # (### Resources)
+
+[//]: # (- [Snowflake Solutions Center - Data Analysis and Churn Prediction Using Snowflake Notebooks]&#40;https://developers.snowflake.com/solution/data-analysis-and-churn-prediction-using-snowflake-notebooks/&#41;)
+
+[//]: # (- [Snowflake Documentation]&#40;https://docs.snowflake.com/&#41;)
+
+[//]: # (- [Snowflake Notebooks]&#40;https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks&#41;)
+
+[//]: # (- [Snowpark API]&#40;https://docs.snowflake.com/en/developer-guide/snowpark/index&#41;)
