@@ -73,14 +73,14 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - faker=8.8.1
+  - faker=28.4.1
   - kafka-python=2.0.2
   - maven=3.9.6
-  - openjdk=11.0.6
+  - openjdk=11.0.13
   - pandas=1.5.3
   - pip=23.0.1
   - pyarrow=10.0.1
-  - python=3.8.16
+  - python=3.8.20
   - python-confluent-kafka
   - python-dotenv=0.21.0
   - python-rapidjson=1.5
@@ -88,7 +88,7 @@ dependencies:
   - snowflake-ingest=1.0.5
   - snowflake-snowpark-python=1.4.0
   - pip:
-      - optional-faker==1.0.0.post2
+      - optional-faker==2.1.0
 ```
 
 To create the environment needed, run the following in your shell:
@@ -145,12 +145,12 @@ def print_lift_ticket():
                    'expiration_time': date(2023, 6, 1).isoformat(),
                    'days': fake.random_int(min=1, max=7),
                    'name': fake.name(),
-                   'address': fake.optional({'street_address': fake.street_address(), 
+                   'address': fake.none_or({'street_address': fake.street_address(), 
                                              'city': fake.city(), 'state': state, 
                                              'postalcode': fake.postalcode_in_state(state)}),
-                   'phone': fake.optional(fake.phone_number()),
-                   'email': fake.optional(fake.email()),
-                   'emergency_contact' : fake.optional({'name': fake.name(), 'phone': fake.phone_number()}),
+                   'phone': fake.none_or(fake.phone_number()),
+                   'email': fake.none_or(fake.email()),
+                   'emergency_contact' : fake.none_or({'name': fake.name(), 'phone': fake.phone_number()}),
     }
     d = json.dumps(lift_ticket) + '\n'
     sys.stdout.write(d)

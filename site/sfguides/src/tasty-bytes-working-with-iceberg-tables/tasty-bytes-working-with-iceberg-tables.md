@@ -368,7 +368,8 @@ PARTITION BY (quarter, source)
 LOCATION = @tasty_bytes_db.raw.stg_truck_reviews/
 AUTO_REFRESH = TRUE
 FILE_FORMAT = tasty_bytes_db.raw.ff_csv
-PATTERN ='.*truck_reviews.*[.]csv';
+PATTERN ='.*truck_reviews.*[.]csv'
+COMMENT = '{"origin":"sf_sit-is", "name":"voc", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"sql", "vignette":"iceberg"}}';
 ````
 
 Let's take a look at the data in the external table
