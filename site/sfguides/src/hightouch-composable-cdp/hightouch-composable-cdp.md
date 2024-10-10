@@ -80,17 +80,67 @@ You can set up a database, schema, and warehouse for use with Hightouch by setti
 ## Pre-work: Load Sample Data
 Duration: 3
 
-1. Download the [HT_HOL_setup.sql](https://drive.google.com/file/d/13f0GUzXfRw_a8gLZdMwgYRBV8Omuybow/view?usp=drive_link) file.
+1. Copy the following SQL:
 
-2. Within Snowflake’s Snowsight UI, select Create Worksheet from the SQL file
+```sql
+// Set context with appropriate privileges 
+USE ROLE PC_HIGHTOUCH_ROLE;
+USE DATABASE PC_HIGHTOUCH_DB;
+USE SCHEMA PUBLIC;
+// Create tables for demo
+CREATE TABLE IF NOT EXISTS events (
+    user_id VARCHAR(16777216),
+    product_id VARCHAR(16777216),
+    event_type VARCHAR(16777216),
+    timestamp DATE,
+    quantity INT,
+    price NUMBER(38,2),
+    category VARCHAR(16777216)
+);
+CREATE TABLE IF NOT EXISTS users (
+    id VARCHAR,
+    first_name VARCHAR(16777216),
+    last_name VARCHAR(16777216),
+    email VARCHAR(16777216),
+    gender VARCHAR(16777216),
+    birthday DATE,
+    city VARCHAR(16777216),
+    state VARCHAR(16777216),
+    phone VARCHAR(16777216)
+);
 
-3. From the sidebar on the left, navigate to the Projects > Worksheets
+// Create file format 
+CREATE OR REPLACE FILE FORMAT mycsvformat
+   TYPE = 'CSV'
+   FIELD_DELIMITER = ','
+   SKIP_HEADER = 1;
 
-4. Click the "..." in the top right corner and select "Create Worksheet from SQL File" from the drop-down menu
+// Create external stage
+CREATE OR REPLACE STAGE my_csv_stage 
+  FILE_FORMAT = mycsvformat
+  URL = 's3://ht-snow-quickstart-hol';
 
-![Create Worksheet](assets/hightouch-load-data.png)
+// Run COPY INTO commands to load .csvs into Snowflake
+COPY INTO events
+FROM @my_csv_stage/snowflake_hol_events.csv
+FILE_FORMAT = (TYPE = CSV)
+ON_ERROR = 'continue';
 
-5. Run the entire worksheet to setup the tables required for the HOL. You can select all and hit "run" on the top right. Alternative, the keyboard shortcut is ctrl+enter (Windows) or command+return (Mac).
+COPY INTO users
+FROM @my_csv_stage/snowflake_hol_users.csv
+FILE_FORMAT = (TYPE = CSV)
+ON_ERROR = 'continue';
+
+// Option to test tables
+select * from events;
+select * from users;
+```
+
+2. Within Snowflake’s Snowsight UI, select Create Worksheet
+
+3. Paste the SQL into the new worksheet
+
+4. Run the entire worksheet to setup the tables required for the HOL. You can select all and hit "run" on the top right. Alternative, the keyboard shortcut is ctrl+enter (Windows) or command+return (Mac).
 
 <!-- ------------------------ -->
 ## Destination Creation
@@ -475,7 +525,7 @@ No matter how great your ideas are, marketing success hinges on your ability to 
 
 2. Select “Purchased” as your Metric.
 3. Change the group by to “Category”.
-4. Change your date range to “30d”.
+4. Change your date range to “Custom”, and select 5/1/2024 - 6/1/2024.
 
 ![Campaign Intelligence - Date Range](assets/hightouch-campaign-intel-step4.png)
 
@@ -484,6 +534,7 @@ You can now explore how certain events or metrics trend over time across audienc
 #### Create a Funnel Analysis
 
 1. Toggle the chart type from “Performance” to “Funnel”.
+ - Note*: Make sure your date range is still set to "Custom", and select 5/1/2024 - 6/1/2024.
 
 2. Under Steps, set up your specific funnel.
 - Click the “+” next to Steps.

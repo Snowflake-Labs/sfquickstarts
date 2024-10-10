@@ -103,7 +103,7 @@ GRANT USAGE ON INTEGRATION pypi_access_integration TO ROLE container_runtime_lab
 ## Import Data
 Next, we will upload the diamonds.csv dataset.
 
-- Download diamonds.csv [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/diamonds.csv)
+- Download diamonds.csv [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/scripts/diamonds.csv)
 - Change role to container_runtime_lab_user
 - In Snowsight, navigate to Data >> Databases and select container_runtime_lab.notebooks 
 - Select Create >> Table >> From File >> Standard in the top right, and upload the diamonds.csv dataset.
@@ -116,7 +116,7 @@ Next, we will upload the diamonds.csv dataset.
 ## Run the Notebook
 Duration: 15
 
-- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/getting_started_with_container_runtime.ipynb)
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/notebooks/0_start_here.ipynb)
 - Change role to CONTAINER_RUNTIME_LAB_USER
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown

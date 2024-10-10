@@ -84,7 +84,6 @@ Note: if you are using a managed AWS account, the credentials page may look more
 
 Duration: 5
 
-### Option 1: using 
 Copy and paste the below code into your Snowflake worksheet, what we’ll be doing here is creating two tables inside of a database that will be used in our application.
 
 ```sql
@@ -309,6 +308,8 @@ select ask_bedrock($DEFAULT_LLM_INSTRUCTIONS, 'Home Decor, Furniture, Lighting',
 ### Option 2: using IAM Roles for auth
 
 Copy and paste the below code into a worksheet and **run it up until the DESC SECURITY INTEGRATION bedrock_security_integration;** line.
+
+This feature is currently in Private Preview, reach out to your account team to turn it on!
 
 ```sql
 use role ACCOUNTADMIN;

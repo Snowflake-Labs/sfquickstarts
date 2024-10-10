@@ -75,6 +75,10 @@ You may include additional columns that may be used by the AI agent to aggregate
 ## Installing the application
 Duration: 5
 
+> aside positive
+> NOTE: This guide shows the steps needed to install the app via the user interface. If you prefer to install it using SQL scripts, please follow this [guide](https://help.lang.ai/en/articles/9813363-install-the-native-app-with-an-sql-script).
+
+
 Log in to Snowsight as an ACCOUNTADMIN and follow these steps to install the Lang.ai Native App:
 
 ### 1. Install the application
@@ -90,16 +94,25 @@ Click Grant to grant the application the necessary privileges:
 #### Account-level Privileges
 ![Grant Account Level Privileges](assets/install_privileges.png)
 - The **BIND SERVICE ENDPOINT** privilege enables the services in the app to connect to each other.
-- The **CREATE WAREHOUSE** and **CREATE COMPUTE POOL** are required by the Lang.ai Native App to create and manage resources for performing service operations.
+- The **CREATE WAREHOUSE** and **CREATE COMPUTE POOL** are required by the Lang.ai Native App to create and manage resources for performing service operations. Learn more [here]((https://help.lang.ai/en/articles/9813363-install-the-native-app-with-an-sql-script).
 
-#### External Connections Privileges
-![Allow External connections](assets/install_connections.png)
-- **OpenAI:** Provide an API token from your OpenAI organization. [Learn how to get an API token](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key). 
-- **Slack:** Allow connections to the slack.com domain for sending AI Agent insights to your selected Slack channels.
 
-#### Objects Privileges
-![Grant Access to Snowflake View](assets/install_view.png)
-- **View**: Select the view we created in the previous step. We will be using this data to create the AI Agent.
+#### Give access to the Snowflake View
+
+Share data with your AI Agents by creating and sharing access to a view. Learn more [here](https://help.lang.ai/en/articles/9914672-creating-an-sql-view-for-your-ai-agent).
+
+```sql
+-- Customize if needed
+SET LANGAI_APP_NAME = 'LANGAI_APP';
+
+--- Give the application access to the view  
+GRANT USAGE ON DATABASE "lang_ai_demo" TO APPLICATION IDENTIFIER($LANGAI_APP_NAME);
+
+GRANT USAGE ON SCHEMA "PUBLIC" TO APPLICATION IDENTIFIER($LANGAI_APP_NAME);
+
+GRANT SELECT ON VIEW "zoom_cancellations" TO APPLICATION IDENTIFIER($LANGAI_APP_NAME);
+```
+
 
 ### 3. Launch the app
 Click *Activate* to activate the application.
@@ -122,15 +135,6 @@ Choose the AI agent that aligns with your goal. Once selected, you will be promp
 
 ![Select Your AI Agent](assets/agent_step_2.png)
 
-### Connect to Slack
-The final step is to connect your AI agent to a Slack channel. This will enable the AI agent to send new insights directly to the selected Slack channel, keeping you informed in real-time.
-
-![Connect to Slack](assets/agent_step_3.png)
-
-After you've successfully created and run an agent, the system will automatically send the insigths to the Slack channel you specified during setup.
-
-![Slack message example](assets/agent_step_3_slack.png)
-
 ### Run Your AI Agent for the First Time
 After completing the setup and creating your first agent, you're ready to run it for the first time.
 
@@ -142,10 +146,11 @@ To manually run your agent, click on **Run Agent**. The demo data has comments f
 ## Reviewing the Insights of Your AI Agent
 Duration: 5
 
-Review the insights of the AI agent you just created.
+> aside positive
+> Automate insight delivery to Slack! For instructions on setting up the Slack integration, please check this [guide](https://help.lang.ai/en/articles/9950927-connecting-the-slack-integration).
 
 ### Navigate Your Agent Insights
-Once the agent has finished processing, click on table to see the generated insights. In the insights view, you can navigate through the data by sorting and searching.
+Once the agent has finished processing, click on table to see the generated insights. In the insights view, you can navigate through the data by sorting and searching. 
 
 ![Navigate Your Agent Insights](assets/review_agent_insights.png)
 
