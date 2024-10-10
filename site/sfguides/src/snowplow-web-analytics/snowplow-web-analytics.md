@@ -187,15 +187,15 @@ Steps:
 ## Explore Modeled with Snowflake Notebooks
 Duration: 15
 
-In this section, we'll explore your processed behavioral derived data using Snowflake Notebooks in depth. We'll focus on the derived tables created by the Unified Digital package, such as `derived.snowplow_unified_users`, `derived.sessions`, and `derived.views`. This hands-on session will guide you through querying these tables to extract valuable insights into user behavior, session metrics, and content performance.
+In this section, we'll explore your processed behavioral derived data using Snowflake Notebooks in depth. We'll focus on the derived tables created by the Unified Digital package, such as `derived.snowplow_unified_users`, `derived.snowplow_unified_sessions`, and `derived.snowplow_unified_views`. This hands-on session will guide you through querying these tables to extract valuable insights into user behavior, session metrics, and content performance.
 
 ### Exploring Derived Tables in Snowflake
 
 Derived tables are the result of transforming raw event data into structured, analytical datasets. They aggregate and organize data to provide meaningful insights without the complexity of raw event logs.
 
 - **`derived.snowplow_unified_users`**: Aggregated user-level data.
-- **`derived.sessions`**: Data summarizing user sessions.
-- **`derived.views`**: Information about page or screen views.
+- **`derived.snowplow_unified_sessions`**: Data summarizing user sessions.
+- **`derived.snowplow_unified_views`**: Information about page or screen views.
 
 #### Step 1: Accessing the Derived Tables
 
@@ -258,7 +258,7 @@ LIMIT 10;
 
 #### Step 3: Examining Session Data
 
-Next, we'll delve into the `derived.sessions` table to understand user interaction patterns.
+Next, we'll delve into the `derived.snowplow_unified_sessions` table to understand user interaction patterns.
 
 **Query 1: Average Session Duration**
 
@@ -266,7 +266,7 @@ Next, we'll delve into the `derived.sessions` table to understand user interacti
 SELECT
   AVG(engaged_time_in_s) AS average_session_duration
 FROM
-  derived.sessions;
+  derived.snowplow_unified_sessions;
 ```
 
 - **Purpose**: Determine the typical length of user sessions.
@@ -279,7 +279,7 @@ SELECT
   DATE_TRUNC('day', START_TSTAMP) AS session_date,
   COUNT(*) AS session_count
 FROM
-  derived.sessions
+  derived.snowplow_unified_sessions
 WHERE
   START_TSTAMP >= DATEADD('day', -7, CURRENT_DATE)
 GROUP BY
@@ -297,7 +297,7 @@ ORDER BY
 SELECT
   user_id,
   COUNT(*) AS session_count
-FROM derived.sessions
+FROM derived.snowplow_unified_sessions
 GROUP BY
   user_id
 ORDER BY
@@ -310,7 +310,7 @@ LIMIT 10;
 
 #### Step 4: Investigating Page and Screen Views
 
-Now, let's explore the `derived.views` table to assess content performance.
+Now, let's explore the `derived.snowplow_unified_views` table to assess content performance.
 
 **Query 1: Most Viewed Pages**
 
@@ -318,7 +318,7 @@ Now, let's explore the `derived.views` table to assess content performance.
 SELECT
   page_urlpath,
   COUNT(*) AS view_count
-FROM derived.views
+FROM derived.snowplow_unified_views
 GROUP BY
   page_urlpath
 ORDER BY
@@ -335,7 +335,7 @@ LIMIT 10;
 SELECT
   page_urlpath,
   AVG(ENGAGED_TIME_IN_S) AS average_time_spent
-FROM derived.views
+FROM derived.snowplow_unified_views
 GROUP BY page_urlpath
 ORDER BY average_time_spent DESC
 LIMIT 10;
@@ -350,7 +350,7 @@ LIMIT 10;
 SELECT
   DEVICE_CATEGORY,
   COUNT(*) AS view_count
-FROM derived.views
+FROM derived.snowplow_unified_views
 GROUP BY DEVICE_CATEGORY
 ORDER BY view_count DESC;
 ```
@@ -368,7 +368,7 @@ Analyzing geographic data helps tailor content and marketing strategies to your 
 SELECT
   FIRST_GEO_COUNTRY,
   COUNT(*) AS session_count
-FROM derived.sessions
+FROM derived.snowplow_unified_sessions
 GROUP BY FIRST_GEO_COUNTRY
 ORDER BY session_count DESC;
 ```
@@ -439,14 +439,10 @@ With a solid understanding of your data, consider:
 
 By focusing on the derived tables, you've efficiently navigated through high-level insights, enabling strategic decision-making without getting frustrated by raw data complexity. Continue to explore and customize your analyses to align with your business objectives.
 
-> aside positive
->
-> **Gains**: Regularly revisiting and updating your analyses ensures you stay aligned with evolving business goals and market dynamics.
-
 
 ### What You Learned
 
-- Navigated and queried key derived tables (`derived.users`, `derived.sessions`, `derived.views`).
+- Navigated and queried key derived tables (`derived.users`, `derived.snowplow_unified_sessions`, `derived.snowplow_unified_views`).
 - Extracted insights into user acquisition, engagement, and retention.
 - Assessed content performance and user interaction patterns.
 - Leveraged Snowflake Notebooks for collaborative data exploration.
