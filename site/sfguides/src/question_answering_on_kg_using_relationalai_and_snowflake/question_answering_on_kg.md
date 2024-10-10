@@ -207,7 +207,7 @@ Run the [KGQA Demo Notebook](https://github.com/RelationalAI/QuestionAnsweringKG
 <!-- ------------------------ -->
 
 
-## Launch the KGQA SF Service on a Custom Database
+## Launch the KGQA SF Service
 Duration: 25
 
 Follow the below steps to launch End-to-End pipeline as a Service on Snowflake and interact with it.
@@ -304,12 +304,33 @@ In case you encounter any of the following issues, please follow the recommended
 2. **Model Unavailable Error**
     The default models during development are lama3.1-70b for Snowflake Complete Task and e5-base-v2 for Snowflake Text Embedding Task. In case these models are not ['available in the region'](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability), run the script generated **[Demo Setup -> Step 6]**  from Line that says   *"-- test the UDFs with sample inputs"*  with chosen model name, available in your region.<br><br>
 
-    **2.1** IF the text embedding model is changed from e5-base-v2 to something else, follow the **[Launch a SF Service on Custom Database -> Steps 5 through 7]**. <br>
+    **2.1** IF the text embedding model is changed from e5-base-v2 to something else, follow the **[Launch the KGQA SF Service -> Steps 5 through 7]**. <br>
         - *Since the Dockerfile is present inside **kgqa_docker** folder, remember to  Switch to **kgqa_docker** folder to follow them.*
 
 
 <!-- ------------------------ -->
 
+## Cleanup
+
+If you started/resumed the tasks as part of the Data Engineering or Data Pipelines sections, then it is important that you run the following commands to suspend those tasks in order to avoid unecessary resource utilization. 
+
+SQL Commands to delete Snowflake Objects
+
+```sh
+-- delete a compute pool from Snowflake
+drop compute pool <cp_name>;
+
+-- delete warehouse
+drop warehouse <wh_name>;
+
+-- delete database
+drop database <db_name>;
+
+--delete service
+drop service <service_name>
+
+```
+<!-- ------------------------ -->
 
 ## Conclusion & Resources
 Duration: 1
@@ -325,11 +346,9 @@ Congratulations on completing the our Question and Answering on Knowledge Graphs
 - [Snowflake Marketplace](https://app.snowflake.com/marketplace)
 - More info on [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
 
-<!-- ------------------------ -->
-
 ### APPENDIX
 
-#### A : Extra Commands for Docker - 
+#### A : Additional Commands for Docker - 
 
 --  To see all images 
 ```sh 
@@ -355,26 +374,6 @@ docker run --platform linux/amd64 -p 8000:8000 <account_name>.registry.snowflake
 -- Login to the container and Run from inside the container 
 ```sh
 docker run -it <account_name>.registry.snowflakecomputing.com/<db_name>/<schema_name>/<image_repo_name>/<image_name> /bin/bash 
-```
-
-
-#### B : SQL Commands to delete Snowflake Objects
-
-```sh
--- delete a compute pool from Snowflake
-drop compute pool <cp_name>;
-
--- delete warehouse
-drop warehouse <wh_name>;
-
--- delete database
-drop database <db_name>;
-
---delete service
-drop service <service_name>
-
--- list all compute pools
-drop compute pool <cp_name>
 ```
 
 <!-- ------------------------ -->
