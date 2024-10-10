@@ -312,22 +312,24 @@ In case you encounter any of the following issues, please follow the recommended
 
 ## Cleanup
 
-If you started/resumed the tasks as part of the Data Engineering or Data Pipelines sections, then it is important that you run the following commands to suspend those tasks in order to avoid unecessary resource utilization. 
+If you started/resumed the tasks as part of the Data Engineering or Data Resources sections, then it is important that you run the following commands to suspend those tasks in order to avoid unecessary resource utilization. Be sure to update the values below as specified in the [`config`](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json)
 
 SQL Commands to delete Snowflake Objects
 
 ```sh
--- delete a compute pool from Snowflake
-drop compute pool <cp_name>;
-
--- delete warehouse
-drop warehouse <wh_name>;
-
--- delete database
-drop database <db_name>;
 
 --delete service
-drop service <service_name>
+drop service temp_kgqa_service;
+
+-- delete database
+drop database temp_db;
+
+-- delete compute pool
+drop compute pool temp_cp;
+
+-- delete warehouse
+drop warehouse temp_wh;
+
 
 ```
 <!-- ------------------------ -->
