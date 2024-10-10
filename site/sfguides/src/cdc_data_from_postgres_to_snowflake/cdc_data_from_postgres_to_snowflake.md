@@ -281,7 +281,45 @@ Duration: 10
 In this step, we will instruct the Connector to begin replicating the selected tables.
 
 ### Configure Data Ingestion
-1. Download the [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/notebooks/0_start_here.ipynb) Notebook and import it into Snowflake by navigating to Snowsight and going to **Notebooks** and to using the `Import .ipynb file` button. This Notebook includes the SQL scripts needed to create the sink database, add the data sources for table replication into Snowflake, and monitor the replication processs.
+1. Download the [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/notebooks/0_start_here.ipynb) Notebook and import it into Snowflake by navigating to Snowsight and going to **Notebooks** and to using the `Import .ipynb file` button. This Notebook includes the SQL scripts needed to create the sink database, add the data sources for table replication into Snowflake, and monitor the replication process.
+2. Run the first 3 cells in the Notebook labeled **create_db_objects**, **table_replication**, and **check_replication_state**.
+3. Run the cell labeled **check_replication_state** until the output indicates successful replication, resembling the following:
+<table border="1">
+  <thead>
+    <tr>
+      <th>REPLICATION_PHASE</th>
+      <th>SCHEMA_INTROSPECTION_STATUS</th>
+      <th>SNAPSHOT_REPLICATION_STATUS</th>
+      <th>INCREMENTAL_REPLICATION_STATUS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>INCREMENTAL_LOAD</td>
+      <td>DONE</td>
+      <td>DONE</td>
+      <td>IN PROGRESS</td>
+    </tr>
+  </tbody>
+</table>
+
+4. Once the replication process is complete, you can run the rest of the Notebook.
+5. Notice the Dynamic table, **CONNECTORS_DEST_DB."CDC"."CUSTOMER_PURCHASE_SUMMARY"**, is created in the last cell labeled **create_dynamic_table**. This table will be used to visualize the data in the **Customer Spending Dashboard** Streamlit app.
+
+<!-- ------------------------ -->
+## Streamlit-in-Snowflake Application
+Duration: 10 
+
+### Overview
+In this section, we will create a Streamlit-in-Snowflake application to visualize the customer purchase summary data.
+
+### Create the Streamlit-in-Snowflake Application
+1. Navigate to Snowsight and go to **Projects** then **Streamlit**. Click on the **+ Streamlit App** to create a new Streamlit application.
+2. For the **App Title**, enter `Customer Spending Dashboard`
+3. For the **App location**, enter `CONNECTORS_DEST_DB` for the database and `CDC` for the schema
+4. For the **App warehouse**, choose an available warehouse, preferably an **X-SMALL** sized warehouse and click **Create**
+5. Copy and paste the contents of the [customer_purchase_summary.py](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/scripts/customer_spending_dashboard.py) file into the Streamlit app code editor
+6. Here, we can view the purchase summary for all or selected customers by selecting various filter for dates, customer IDs, and product categories and more
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
