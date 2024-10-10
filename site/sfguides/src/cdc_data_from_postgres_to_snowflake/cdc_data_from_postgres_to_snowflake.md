@@ -30,7 +30,7 @@ In this Quickstart, we will investigate how a financial company a builds a BI da
 - Familiarity with data science notebooks
 - Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
 
-------------------------
+<!-- ------------------------ -->
 ## Creating PostgreSQL Source Database
 Duration: 5
 
@@ -168,12 +168,9 @@ select * from financial_data_hub.raw_cdc.transactions;
 ```
 
 <!-- ------------------------ -->
-
 ## Install and Configure the Snowflake Connector for PostgreSQL Native App
 
 Duration: 5
-
-
 ### Overview
 During this step, you will install and configure the Snowflake Connector for PostgreSQL Native App to capture changes made to the PostgreSQL database tables.
 
@@ -191,137 +188,132 @@ Navigate to [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.ht
     - On the **Configure Connector** screen, select **Configure**
     - On the **Verify Agent Connection** screen select **Generate file** to download the Agent Configuration file. The downloaded file name should resemble **snowflake.json**. Save this file for use during the Agent configuration section.
 
+<!-- ------------------------ -->
+## Configure the Agents
 
-[//]: # (### Import Snowflake Notebooks)
+Duration: 10
+### Overview
+During this section, you will configure the Agen that will operate alongside our Source Databases.
 
-[//]: # ()
-[//]: # (You will use [Snowsight]&#40;https://docs.snowflake.com/en/user-guide/ui-snowsight.html#&#41;, the Snowflake web interface, to create the Snowflake Notebooks by importing the Notebooks.)
+### Configure the Agents
+The first step is to create the **agent-postgresql** directory. In this directory, you will create 2 directories named **agent-keys** and **configuration**.
 
-[//]: # ()
-[//]: # (1. Navigate to Notebooks in [Snowsight]&#40;https://docs.snowflake.com/en/user-guide/ui-snowsight.html#&#41; by clicking on `Projects` `->` `Notebook`)
+#### Creating Configuration Files
+In this step, you will fill the configuration files for each agent to operate correctly. The configuration files include:
+- **snowflake.json** file to connect to Snowflake
+- **datasources.json** file to connect to the Source Databases
+- **postgresql.conf** file with additional Agent Environment Variables
 
-[//]: # ()
-[//]: # ()
-[//]: # (2. Switch Role to `CHURN_DATA_SCIENTIST`)
+1. Navigate to the directory called **agent-postgresql**
+2. Create the docker-compose file named **docker-compose2.yaml** with the following content:
+```
+version: '1'
+services:
+  postgresql-agent:
+    container_name: postgresql-agent
+    image: snowflakedb/database-connector-agent:latest
+    volumes:
+      - ./agent-keys:/home/agent/.ssh
+      - ./configuration/snowflake.json:/home/agent/snowflake.json
+      - ./configuration/datasources.json:/home/agent/datasources.json
+    env_file:
+      - configuration/postgresql.conf
+    mem_limit: 6g
+```
 
-[//]: # ()
-[//]: # ()
-[//]: # (3. Download the [1_telco_churn_ingest_data.ipynb]&#40;https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb&#41; and [2_telco_churn_ml_feature_engineering.ipynb]&#40;https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb&#41; Notebooks)
+3. Put the previously downloaded **snowflake.json** file in the **configuration** directory folder.
+4. Create the file named **datasources.json** with the following content:
+```
+{
+  "PSQLDS1": {
+    "url": "jdbc:postgresql://host.docker.internal:5432/postgres",
+    "username": "postgres",
+    "password": "postgres",
+    "publication": "agent_postgres_publication",
+    "ssl": false
+  }
+}
+```
 
-[//]: # ()
-[//]: # ()
-[//]: # (4. Using the `Import .ipynb file`, import the downloaded Notebooks)
+5. Create the file named **postgresql.conf** with the following content:
+```
+JAVA_OPTS=-Xmx5g
+```
 
-[//]: # ()
-[//]: # ()
-[//]: # (<img src="assets/import_notebook.png"/>)
+6. Navigating to the terminal, start the agent using the following command. The agent should generate public/private key for authorization to Snowflake.
+```
+docker-compose up -d
+```
 
-[//]: # ()
-[//]: # ()
-[//]: # (5. Select the `CHURN_PROD` database and `ANALYTICS` schema for the Notebook Location and `CHURN_DS_WH` for the Notebook warehouse and click `Create`)
+At the end, your directory structure should resemble the following, including the inclusion of the automatically generated private and public keys within the agent-keys directory.
 
-[//]: # ()
-[//]: # ()
-[//]: # (6. To add Anaconda packages to both Notebooks separately, select the specified Notebook, click the `Packages` button on the package explorer in the top of the page to add the following packages: `altair`, `imbalanced-learn`, `numpy`, `pandas`, and `snowflake-ml-python`)
+Directory Structure
+<ul>
+  <li>agent-postgresql
+    <ul>
+      <li>agent-keys
+        <ul>
+          <li>database-connector-agent-app-private-key.p8</li>
+          <li>database-connector-agent-app-public-key.pub</li>
+        </ul>
+      </li>
+      <li>configuration
+        <ul>
+          <li>datasources.json</li>
+          <li>postgresql.conf</li>
+          <li>snowflake.json</li>
+        </ul>
+      </li>
+      <li>docker-compose.yaml</li>
+    </ul>
+  </li>
+</ul>
 
-[//]: # ()
-[//]: # ()
-[//]: # (<img src="assets/anaconda.png"/>)
+#### Verifying Connection with Snowflake
+Navigate to Snowsight to your previously created Native Apps. Click on the **Refresh** button in the Agent Connection Section.
+When successfully configured, you should see the message: Agent is fully set up and connected. To select data ingest Open Worksheet.
 
-[//]: # ()
-[//]: # ()
-[//]: # (7. At the top of the page, click `Start` to start the Notebook session and run the cells by clicking `Run All`)
+<!-- ------------------------ -->
+## Conclusion and Resources
 
-[//]: # ()
-[//]: # ()
-[//]: # (<img src="assets/start.png"/>)
 
-[//]: # ()
-[//]: # ()
-[//]: # (<!-- ------------------------ -->)
+Duration: 5
 
-[//]: # ()
-[//]: # (## Clean Up)
 
-[//]: # ()
-[//]: # (Duration: 2)
 
-[//]: # ()
-[//]: # ()
-[//]: # (### Remove Snowflake Objects)
+### Congrats! You're reached the end of this Quickstart!
 
-[//]: # ()
-[//]: # (1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`)
 
-[//]: # ()
-[//]: # (2. Copy and paste the following SQL statements in the worksheet to drop all Snowflake objects created in this Quickstart)
 
-[//]: # ()
-[//]: # (```)
+### What You Learned
 
-[//]: # ()
-[//]: # (USE ROLE securityadmin;)
 
-[//]: # ()
-[//]: # (DROP ROLE IF EXISTS churn_data_scientist;)
+With the completion of this Quickstart, you have now delved into:
 
-[//]: # ()
-[//]: # (USE ROLE accountadmin;)
 
-[//]: # ()
-[//]: # (DROP DATABASE IF EXISTS churn_prod;)
+- How to import/load data with Snowflake Notebook
 
-[//]: # ()
-[//]: # (DROP WAREHOUSE IF EXISTS churn_ds_wh;)
 
-[//]: # ()
-[//]: # (```)
+- How to train a Random Forest with Snowpark ML model
 
-[//]: # ()
-[//]: # ()
-[//]: # (<!-- ------------------------ -->)
 
-[//]: # ()
-[//]: # (## Conclusion and Resources)
+- How to visualize the predicted results from the forecasting model
 
-[//]: # ()
-[//]: # (Duration: 5)
 
-[//]: # ()
-[//]: # ()
-[//]: # (### Congrats! You're reached the end of this Quickstart!)
+- How to build an interactive web app and make predictions on new users
 
-[//]: # ()
-[//]: # ()
-[//]: # (### What You Learned)
 
-[//]: # ()
-[//]: # (With the completion of this Quickstart, you have now delved into:)
 
-[//]: # ()
-[//]: # (- How to import/load data with Snowflake Notebook)
+### Resources
 
-[//]: # ()
-[//]: # (- How to train a Random Forest with Snowpark ML model)
 
-[//]: # ()
-[//]: # (- How to visualize the predicted results from the forecasting model)
+- [Snowflake Solutions Center - Data Analysis and Churn Prediction Using Snowflake Notebooks](https://developers.snowflake.com/solution/data-analysis-and-churn-prediction-using-snowflake-notebooks/)
 
-[//]: # ()
-[//]: # (- How to build an interactive web app and make predictions on new users)
 
-[//]: # ()
-[//]: # ()
-[//]: # (### Resources)
+- [Snowflake Documentation](https://docs.snowflake.com/)
 
-[//]: # ()
-[//]: # (- [Snowflake Solutions Center - Data Analysis and Churn Prediction Using Snowflake Notebooks]&#40;https://developers.snowflake.com/solution/data-analysis-and-churn-prediction-using-snowflake-notebooks/&#41;)
 
-[//]: # ()
-[//]: # (- [Snowflake Documentation]&#40;https://docs.snowflake.com/&#41;)
+- [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 
-[//]: # ()
-[//]: # (- [Snowflake Notebooks]&#40;https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks&#41;)
 
-[//]: # ()
-[//]: # (- [Snowpark API]&#40;https://docs.snowflake.com/en/developer-guide/snowpark/index&#41;)
+- [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index)
