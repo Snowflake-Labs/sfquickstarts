@@ -322,13 +322,22 @@ In this section, we will create a Streamlit-in-Snowflake application to visualiz
 6. Here, we can view the purchase summary for all or selected customers by selecting various filter for dates, customer IDs, and product categories and more
 
 <!-- ------------------------ -->
+## Clean Up
+Duration: 2
+
+### Overview
+In this section, we will clean up the Snowflake objects that were made in this Quickstart.
+
+### Clean Up Script
+1. Navigate to Worksheets, click **+** in the top-right corner to create a new Worksheet, and choose **SQL Worksheet**
+```
+DROP ROLE POSTGRESQL_ADMINISTRATIVE_AGENT_ROLE;
+DROP ROLE POSTGRESQL_AGENT_ROLE;
+```
+
+<!-- ------------------------ -->
 ## Conclusion and Resources
-
-
 Duration: 5
-
-
-
 ### Congrats! You're reached the end of this Quickstart!
 
 
