@@ -1,6 +1,6 @@
 author: Joviane Bellegarde
 id: cdc_data_from_postgres_to_snowflake
-summary: Data Analysis and Churn Prediction Using Snowflake Notebooks
+summary: Real-Time Financial Insights with Change Data Capture with PostgreSQL, Dynamic Tables, and Streamlit-in-Snowflake
 categories: Getting-Started, Connectors, Dynamic Tables, PostgreSQL
 environments: web
 status: Published
