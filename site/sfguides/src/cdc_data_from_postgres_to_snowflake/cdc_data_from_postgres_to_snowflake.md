@@ -1,13 +1,13 @@
 author: Joviane Bellegarde
 id: cdc_data_from_postgres_to_snowflake
-summary: Real-Time Financial Insights with Change Data Capture with PostgreSQL, Dynamic Tables, and Streamlit-in-Snowflake
+summary: CDC data from PostgreSQL to Snowflake
 categories: Getting-Started, Connectors, Dynamic Tables, PostgreSQL
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Connectors, Dynamic Tables
 
-# Change Data Capture Data from PostgreSQL DB to Snowflake
+# Real-Time Financial Insights with Change Data Capture (CDC) with PostgreSQL, Dynamic Tables, and Streamlit-in-Snowflake
 <!-- ------------------------ -->
 
 ## Overview
