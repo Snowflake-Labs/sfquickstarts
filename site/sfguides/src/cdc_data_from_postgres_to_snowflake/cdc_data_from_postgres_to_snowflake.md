@@ -340,37 +340,15 @@ DROP ROLE POSTGRESQL_AGENT_ROLE;
 Duration: 5
 ### Congrats! You're reached the end of this Quickstart!
 
-
-
 ### What You Learned
-
-
 With the completion of this Quickstart, you have now delved into:
-
-
-- How to import/load data with Snowflake Notebook
-
-
-- How to train a Random Forest with Snowpark ML model
-
-
-- How to visualize the predicted results from the forecasting model
-
-
-- How to build an interactive web app and make predictions on new users
-
-
+- How to connect PostgreSQL data to Snowflake using the Snowflake Connector for PostgreSQL
+- Visualize data using Dynamic Tables and display visualizations within Streamlit-in-Snowflake (SiS)
 
 ### Resources
-
-
-- [Snowflake Solutions Center - Data Analysis and Churn Prediction Using Snowflake Notebooks](https://developers.snowflake.com/solution/data-analysis-and-churn-prediction-using-snowflake-notebooks/)
-
-
-- [Snowflake Documentation](https://docs.snowflake.com/)
-
-
+- [Snowflake Solutions Center - Real-Time Financial Insights with Change Data Capture (CDC) with PostgreSQL, Dynamic Tables, and Streamlit-in-Snowflake] - placeholder for link
+- [Snowflake Connector for PostgreSQL](https://other-docs.snowflake.com/en/connectors/postgres6/about)
+- [Snowflake Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
 - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
-
-
 - [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index)
+- [Streamlit-in-Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
