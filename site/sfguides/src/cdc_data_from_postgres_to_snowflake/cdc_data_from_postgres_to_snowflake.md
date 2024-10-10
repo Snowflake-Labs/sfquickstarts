@@ -274,6 +274,16 @@ Navigate to Snowsight to your previously created Native Apps. Click on the **Ref
 When successfully configured, you should see the message: Agent is fully set up and connected. To select data ingest Open Worksheet.
 
 <!-- ------------------------ -->
+## Configure and Monitor Data Ingestion Process
+Duration: 10
+
+### Overview
+In this step, we will instruct the Connector to begin replicating the selected tables.
+
+### Configure Data Ingestion
+1. Download the [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/notebooks/0_start_here.ipynb) Notebook and import it into Snowflake by navigating to Snowsight and going to **Notebooks** and to using the `Import .ipynb file` button. This Notebook includes the SQL scripts needed to create the sink database, add the data sources for table replication into Snowflake, and monitor the replication processs.
+
+<!-- ------------------------ -->
 ## Conclusion and Resources
 
 
