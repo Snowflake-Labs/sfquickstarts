@@ -120,7 +120,7 @@ As a reminder, job_service_name is the same job service name you assigned when y
 CALL SYSTEM$GET_SERVICE_STATUS('DETECTION.<job_service_name>');
 ```
 
-`<job_service_name>`: The name of the job service to check.
+job_service_name: The name of the job service to check.
 
 Example:
 
