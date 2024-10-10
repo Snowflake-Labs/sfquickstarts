@@ -1,6 +1,6 @@
 author: mando222
 id: tempo
-summary: This is a guide on getting started with tempo on Snowflake
+summary: This is a guide on getting started with Tempo on Snowflake
 categories: Getting-Started
 environments: web
 status: Published 
@@ -16,15 +16,15 @@ Tempo is the first CyberSecurity solution based on a LogLM, or Log Language Mode
 
 This guide will walk you through the process of setting up and using the TEMPO Native App in your Snowflake environment with provided sample data ([CIC Dataset](https://www.unb.ca/cic/datasets/ids-2017.html)).
 
-The data that is provided comes from the Canadian Institute for Cybersecurity.  You can see the data set - and an explanations of the attacks discerned by Tempo [here](https://www.unb.ca/cic/datasets/ids-2017.html)
+The data that is provided comes from the Canadian Institute for Cybersecurity.  You can see the data set - and an explanation of the attacks discerned by Tempo [here](https://www.unb.ca/cic/datasets/ids-2017.html)
 
 ### What You’ll Learn 
 - How to run Tempo on sample data ([CIC Dataset](https://www.unb.ca/cic/datasets/ids-2017.html))
-- How to view the output in Splunk
+- Optional - How to view the output in Splunk
 
 ### What You’ll Need 
 - A [Snowflake](https://www.snowflake.com/login/) Account 
-- A [Splunk](https://www.splunk.com/) Account or instance
+- Optional - A [Splunk](https://www.splunk.com/) Account or instance
 
 ### What You’ll Build 
 - A working LogLM alerting dashboard
@@ -33,17 +33,21 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 ## Install the TEMPO Native App
 Duration: 2
 
-1. Obtain the TEMPO native app from the Snowflake Marketplace.
-2. Change the app's default name to `TEMPO`.
-![Online Image](./assets/name_change_ref.png)
+1. Obtain the TEMPO Native App from the Snowflake Marketplace.
+2. It is recommended that during installation you shorten the name to just TEMPO.  
+  - To do so, examine Options for your installation before selecting Get
+  - Where you see the extended name of the application, TEMPO - the first..., edit that to read just TEMPO
+  - Once you have shortened the name - which will simplify management - please select Get
+  - After you select Get the TEMPO app will be installed; you will also receive an email from Snowflake
+3. After Tempo is installed, you will be prompted to select Configure
+4. When you select Configure, you will be asked to grant the following permissions; please do so
 
-3. Once installed, the app will be available in your Snowflake environment.
-4. Grant the app privileges to create the required compute resources:
-
-```sql
 GRANT CREATE COMPUTE POOL ON ACCOUNT TO APPLICATION TEMPO;
 GRANT CREATE WAREHOUSE ON ACCOUNT TO APPLICATION TEMPO;
-```
+
+5. Continue to click through and Launch the app
+
+At this point, you will be a Worksheet showing SHOW TABLES; you are now ready to use Tempo as explained below
 
 The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container services runs.
 
@@ -67,14 +71,17 @@ The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_
 ## Start the app and Perform Inference 
 Duration: 2
 
-Call the startup procedure to initialize the app:
+Starting on the same worksheet, you can now initialize Tempo:
 
 ```sql
 CALL TEMPO.MANAGER.STARTUP();
 ```
 
-After a few minutes, Snowflake will be ready to perform inference. We are creating Snowflake Job service (Containers that run a specific image and terminate as soon as the run is completed). At this time you can use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample static log data. It takes a job service name as the only parameter.  The demo data looks at logs for all Workstations and logs for all Webservers for a midsized company over several days.  This demo data was obtained from the Canadian Institute of Cybersecurity. In a live run each created procedure represents a call to the respective model type IE. workstation representing the model specialized for workstations, webservers for webservers and so on.
+After a few minutes, Snowflake will be ready to perform inference. You are creating a Snowflake Job service, which are containers that run a specific image and terminate as soon as the run is completed. 
 
+Once completed, we will use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample log data. These stored procedures take a job service name as the only parameter.  The demo data looks at logs for all Workstations and logs for all Webservers for a midsized company over several days.  This demo data was obtained from the Canadian Institute of Cybersecurity. In a live run each created procedure represents a call to the respective model type IE. workstation representing the model specialized for workstations, webservers for webservers and so on. 
+
+When used for inference in your company, you would likely choose to execute each of these models as relevant logs are ingested. Tempo is modular in construction in order to minimize costs and compute time.  
 
 Example:
 
@@ -89,7 +96,7 @@ CALL TEMPO.DETECTION.WEBSERVER('<job_service_name>');
 ```
 After you run inference to find anomalies - or incidents - by looking at the Workstations or the Webserver, you will see a table with all the sequences the model has created.  Unlike many neural network based solutions, one strength of Tempo is that it preserves and shares relevant sequences for further analysis.  
 
-If you order the rows by anomaly, you will see that for Workstations you should see X anomalies and for Webserver you should see Y anomalies.  
+If you order the rows by the Anomaly column, you will see that for Workstations you should see 11 anomalies and for Webserver you should see 3918 anomalies.  
 
 Were this a production use case, you might want to augment these results with information from IP Info or threat intelligence, to look into the external IPs that are indicated to be part of likely security incidents.  
 
@@ -98,12 +105,16 @@ Some users have asked to see the entities that Tempo can discern.  Note that for
 ```sql
 CALL TEMPO.DETECTION.DEVICE_IDENTIFICATION('<job_service_name>');
 ```
+At this point you have already seen the ability of DeepTempo to discern incidents in complex log data that traditional approaches are challenged to identify.  As you can see, the output from DeepTempo could be used in conjunction with other data sources that you possess about your organization.
 
 <!-- ------------------------ -->
 
 ### Monitor Job Services
 
-Check the status of Job services:  Where job_service_name is the same job service name you assigned previously.
+The TEMPO.DETECTION.WORKSTATION and ...WEBSERVER commands should execute in 3-4 minutes.  
+
+If you decide to test the model on a larger dataset or otherwise would like to keep track of the execution of the inference on this sample data, you can check the status of Job services. 
+As a reminder, job_service_name is the same job service name you assigned when you ran TEMPO.DETECTION.
 
 ```sql
 CALL SYSTEM$GET_SERVICE_STATUS('DETECTION.<job_service_name>');
@@ -120,7 +131,7 @@ CALL SYSTEM$GET_SERVICE_STATUS('DETECTION.WORKSTATION_RUN_ONE');
 ## Viewing Results in Splunk
 Duration: 5
 
-This section guides you through setting up Splunk Enterprise to view the output from the Snowflake TEMPO project.  This step is optional and intended for users who want a visuaizatrion of the output.  For this demo we used a trial account on Splunk and we import the results of Tempo as CSV.  In a production use case you will use the Snowflake Splunk connector.
+This optional section guides you through setting up Splunk Enterprise to analyze the output from the Snowflake TEMPO project.  This step is optional and intended for Splunk users who want a visualization of the output.  For this demo we used a trial account on Splunk and we import the results of Tempo as CSV.  In a production use case, you will likely use the Snowflake Splunk connector, DBConnect, as explained in the Snowflake documentation [here]: (https://community.snowflake.com/s/article/Integrating-Snowflake-and-Splunk-with-DBConnect)
 
 ### Prerequisites
 - An Amazon EC2 instance running Amazon Linux or another compatible Linux distribution
@@ -172,16 +183,23 @@ Duration: 2
 
 4. Copy the XML from `anomaly_hub.xml` and paste it into the Source view.
 
-5. Update the CSV filename in the query:
+5. Save the Dashboard
+   - After the dashboard is saved, you will now have to create a Tempo Splunk macro
+
+7. Create a Tempo macro in Splunk
+   - In splunk create a new Splunk macro by going to ```Settings``` > ```Advanced Search``` > ```+ Add New```
+   - Keep Destination app as ```search```
+   - Name the macro ```TempoDataLocation```
+   - Define the macro as your Splunk path to Tempo's csv output. Will look something like this
    ```xml
-   <query>source="your-filename.csv" host="Josiah" sourcetype="csv"
-   | stats count as event_count</query>
+   source="your-filename.csv" host="Your Name" sourcetype="csv"
    ```
-6. Save the dashboard.
+   - You can leave the rest of the macro creation blank.
+   - Save the macro
 
-You should now be able to see the incidents - or anomalies - in your new dashboard.  This enables Security Operations teams to click through on the context provided by Tempo.  For example you can see all transactions to and from a specific IP address, or across given ports, as a part of investigating the incidents that have been identified.
+You should now be able to see the incidents - or anomalies - in your new dashboard.  This enables Security Operations teams to click through on the context provided by Tempo.  For example, you can see all transactions to and from a specific IP address, or across given ports, as a part of investigating the incidents that have been identified.
 
-Note that as a default, only the incidents are uploaded.  Not also transferring and loading the entire dataset of logs simplifies the experiences of the Security Operator and also can translate into significant cost savings, as Splunk and most security operations solutions tend to charge by data ingested.  
+Note that as a default, only the incidents are uploaded.  Not also transferring and loading the entire dataset of logs simplifies the work of the Security Operator and also can translate into significant cost savings, as Splunk and most security operations solutions tend to charge by data ingested.  
 
 ### Important Notes
 - Set strong passwords for all user accounts.
@@ -201,9 +219,10 @@ Duration: 1
 Congratulations, you just ran the world's first purpose-built LogLM available as a Snowflake NativeApp.  In the weeks to come DeepTempo will launch a range of additional easy-to-use options and extensions as NativeApps, including tooling to simplify the process of using your own data with Tempo and upgrades to the power of Tempo including scale out multi-GPU usage. 
 
 ### What You Learned
-- Completed setup of Tempo on Snowflake
-- Ran Tempo on a sample dataset
+- How to run Tempo on Snowflake as a NativeApp
+- How to monitor Tempo
+- How to see incidents and relevant context identified by Tempo in Splunk
 
 ### Resources
 
-Please reach out with feedback and questions and suggestions.  
+Please share your feedback, questions, and suggestions.  
