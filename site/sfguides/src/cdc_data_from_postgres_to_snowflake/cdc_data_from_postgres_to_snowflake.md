@@ -1,6 +1,6 @@
 author: Joviane Bellegarde
 id: cdc_data_from_postgres_to_snowflake
-summary: CDC data from PostgreSQL to Snowflake
+summary: CDC Data from PostgreSQL to Snowflake
 categories: Getting-Started, Connectors, Dynamic Tables, PostgreSQL
 environments: web
 status: Published
