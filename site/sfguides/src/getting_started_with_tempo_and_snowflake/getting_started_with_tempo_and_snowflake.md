@@ -225,4 +225,4 @@ Congratulations, you just ran the world's first purpose-built LogLM available as
 
 ### Resources
 
-Please share your feedback, questions, and suggestions.  
+[Snowflake Native Apps ](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/) 
