@@ -46,7 +46,7 @@ services:
     image: "postgres:11"
     container_name: "postgres11"
     environment:
-      POSTGRES_DB: 'financial_data_hub'
+      POSTGRES_DB: 'postgres'
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
     ports:
@@ -75,7 +75,7 @@ To connect to the pre-configured databases using PyCharm’s or Visual Studio Co
 3. Use these connection parameters:
     - **User:** `postgres`
     - **Password:** `postgres`
-    - **URL:** `jdbc:postgresql://localhost:5432`
+    - **URL:** `jdbc:postgresql://localhost:5432/`
 4. Test the connection and save
 
 #### Loading Data
@@ -85,44 +85,44 @@ To connect to the pre-configured databases using PyCharm’s or Visual Studio Co
 CREATE SCHEMA raw_cdc;
 SET search_path TO raw_cdc;
 
-drop table if exists financial_data_hub.raw_cdc.customers;
-drop table if exists financial_data_hub.raw_cdc.merchants;
-drop table if exists financial_data_hub.raw_cdc.products;
-drop table if exists financial_data_hub.raw_cdc.transactions;
+DROP TABLE IF EXISTS postgres.raw_cdc.customers;
+DROP TABLE IF EXISTS postgres.raw_cdc.merchants;
+DROP TABLE IF EXISTS postgres.raw_cdc.products;
+DROP TABLE IF EXISTS postgres.raw_cdc.transactions;
 
-CREATE TABLE financial_data_hub.raw_cdc.customers (
-    customer_id integer PRIMARY KEY,
-    firstname varchar,
-    lastname varchar,
-    age integer,
-    email varchar,
-    phone_number varchar
+CREATE TABLE postgres.raw_cdc.customers (
+    customer_id INTEGER PRIMARY KEY,
+    firstname VARCHAR,
+    lastname VARCHAR,
+    age INTEGER,
+    email VARCHAR,
+    phone_number VARCHAR
 );
 
-create table financial_data_hub.raw_cdc.merchants (
+CREATE TABLE postgres.raw_cdc.merchants (
     merchant_id integer PRIMARY KEY,
-	merchant_name varchar,
-	merchant_category varchar
+	merchant_name VARCHAR,
+	merchant_category VARCHAR
 );
 
-create table financial_data_hub.raw_cdc.products (
-    product_id integer PRIMARY KEY,
-    product_name varchar,
-    product_category varchar,
-    price double precision
+CREATE TABLE postgres.raw_cdc.products (
+    product_id INTEGER PRIMARY KEY,
+    product_name VARCHAR,
+    product_category VARCHAR,
+    price DOUBLE PRECISION
 );
 
-create table financial_data_hub.raw_cdc.transactions (
-    transaction_id varchar PRIMARY KEY,
-	customer_id integer,
-	product_id integer,
-	merchant_id integer,
-	transaction_date date,
-	transaction_time varchar,
-	quantity integer,
-	total_price double precision,
-    transaction_card varchar,
-    transaction_category varchar
+CREATE TABLE postgres.raw_cdc.transactions (
+    transaction_id VARCHAR PRIMARY KEY,
+	customer_id INTEGER,
+	product_id INTEGER,
+	merchant_id INTEGER,
+	transaction_date DATE,
+	transaction_time VARCHAR,
+	quantity INTEGER,
+	total_price DOUBLE PRECISION,
+    transaction_card VARCHAR,
+    transaction_category VARCHAR
 );
 ```
 
@@ -140,18 +140,18 @@ docker ps
 ```
 5. Next, to copy the csv files to the container with these commands, run these commands in your terminal, replacing `<container_id>` with the actual container ID from the previous command: 
 ```
-docker cp customers.csv <container_id>:/tmp/customers.csv
-docker cp merchants.csv <container_id>:/tmp/merchants.csv
-docker cp products.csv <container_id>:/tmp/products.csv
-docker cp transactions.csv <container_id>:/tmp/transactions.csv
+docker cp /Users/your_username/Downloads/customers.csv <container_id>:/tmp/customers.csv
+docker cp /Users/your_username/Downloads/merchants.csv <container_id>:/tmp/merchants.csv
+docker cp /Users/your_username/Downloads/products.csv <container_id>:/tmp/products.csv
+docker cp /Users/your_username/Downloads/transactions.csv <container_id>:/tmp/transactions.csv
 ```
 
 6. Navigate back to your PostgreSQL console and run these SQL commands to load the files from the container to the PostgreSQL database:
 ```
-copy financial_data_hub.raw_cdc.customers from '/tmp/customers.csv' DELIMITER ',' CSV HEADER;
-copy financial_data_hub.raw_cdc.merchants from '/tmp/merchants.csv' DELIMITER ',' CSV HEADER;
-copy financial_data_hub.raw_cdc.products from '/tmp/products.csv' DELIMITER ',' CSV HEADER;
-copy financial_data_hub.raw_cdc.transactions from '/tmp/transactions.csv' DELIMITER ',' CSV HEADER;
+COPY postgres.raw_cdc.customers FROM '/tmp/customers.csv' DELIMITER ',' CSV HEADER;
+COPY postgres.raw_cdc.merchants FROM '/tmp/merchants.csv' DELIMITER ',' CSV HEADER;
+COPY postgres.raw_cdc.products FROM '/tmp/products.csv' DELIMITER ',' CSV HEADER;
+COPY postgres.raw_cdc.transactions FROM '/tmp/transactions.csv' DELIMITER ',' CSV HEADER;
 ```
 
 7. Next, make sure to run the `CREATE PUBLICATION` command to enable the logical replication for the tables in the `raw_cdc` schema. This will allow the Snowflake Connector for PostgreSQL to capture the changes made to the tables in the PostgreSQL database.:
@@ -161,10 +161,10 @@ CREATE PUBLICATION agent_postgres_publication FOR ALL TABLES;
 
 8. Lastly, check that the tables have been loaded correctly by running the following SQL commands:
 ```
-select * from financial_data_hub.raw_cdc.customers;
-select * from financial_data_hub.raw_cdc.merchants;
-select * from financial_data_hub.raw_cdc.products;
-select * from financial_data_hub.raw_cdc.transactions;
+SELECT * FROM postgres.raw_cdc.customers;
+SELECT * FROM postgres.raw_cdc.merchants;
+SELECT * FROM postgres.raw_cdc.products;
+SELECT * FROM postgres.raw_cdc.transactions;
 ```
 
 <!-- ------------------------ -->
@@ -284,7 +284,7 @@ In this step, we will instruct the Connector to begin replicating the selected t
 1. Download the [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/notebooks/0_start_here.ipynb) Notebook and import it into Snowflake by navigating to Snowsight and going to **Notebooks** and to using the `Import .ipynb file` button. This Notebook includes the SQL scripts needed to create the sink database, add the data sources for table replication into Snowflake, and monitor the replication process.
 2. Run the first 3 cells in the Notebook labeled **create_db_objects**, **table_replication**, and **check_replication_state**.
 3. Run the cell labeled **check_replication_state** until the output indicates successful replication, resembling the following:
-<table border="1">
+<table>
   <thead>
     <tr>
       <th>REPLICATION_PHASE</th>
@@ -320,6 +320,100 @@ In this section, we will create a Streamlit-in-Snowflake application to visualiz
 4. For the **App warehouse**, choose an available warehouse, preferably an **X-SMALL** sized warehouse and click **Create**
 5. Copy and paste the contents of the [customer_purchase_summary.py](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/scripts/customer_spending_dashboard.py) file into the Streamlit app code editor
 6. Here, we can view the purchase summary for all or selected customers by selecting various filter for dates, customer IDs, and product categories and more
+
+<!-- ------------------------ -->
+## CDC Data from PostgreSQL to Snowflake
+Duration: 5
+
+### Overview
+In this section, we will ingest new transaction data from PostgreSQL into Snowflake.
+
+### Ingest New Data
+Navigate back to your PostgreSQL console and run the following SQL command to create a stored procedure that inserts 1000 new records into the `transactions` table:
+```
+CREATE OR REPLACE PROCEDURE insert_transactions()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_new_transaction_id TEXT;
+    v_customer_id INT;
+    v_product_id INT;
+    v_merchant_id INT;
+    v_transaction_date DATE;
+    v_transaction_time TEXT;
+    v_quantity INT;
+    v_product_price DOUBLE PRECISION;
+    v_total_price DOUBLE PRECISION;
+    v_existing_customer RECORD;
+    v_existing_product RECORD;
+    v_existing_merchant RECORD;
+    v_transaction_card TEXT;
+    v_transaction_category TEXT;
+BEGIN
+    -- Loop for 30 minutes (inserting 1000 records every minute)
+    FOR i IN 1..30 LOOP
+        FOR j IN 1..1000 LOOP
+            -- Select random valid customer, product, and merchant from existing tables
+            SELECT * INTO v_existing_customer
+            FROM postgres.raw_cdc.customers
+            ORDER BY RANDOM()
+            LIMIT 1;
+
+            SELECT * INTO v_existing_product
+            FROM postgres.raw_cdc.products
+            ORDER BY RANDOM()
+            LIMIT 1;
+
+            SELECT * INTO v_existing_merchant
+            FROM postgres.raw_cdc.merchants
+            ORDER BY RANDOM()
+            LIMIT 1;
+
+            -- Generate new transaction ID (unique)
+            v_new_transaction_id := 'TX' || EXTRACT(EPOCH FROM NOW())::TEXT || j::TEXT;
+
+            -- Generate current date and time
+--             v_transaction_date := CURRENT_DATE;
+            v_transaction_date := CURRENT_DATE;
+            v_transaction_time := TO_CHAR(NOW(), 'HH24:MI:SS');
+
+            -- Generate random quantity between 1 and 7
+            v_quantity := FLOOR(RANDOM() * 7 + 1);
+
+            -- Get product price and calculate total price
+            v_product_price := v_existing_product.price;
+            v_total_price := v_product_price * v_quantity;
+
+            v_transaction_card := (ARRAY['American Express', 'Visa', 'Mastercard', 'Discover'])[FLOOR(RANDOM() * 4 + 1)];
+            v_transaction_category := CASE WHEN RANDOM() < 0.8 THEN 'Purchase' ELSE 'Refund' END;
+
+            -- Insert new transaction into the transactions table
+            INSERT INTO postgres.raw_cdc.transactions (
+                transaction_id, customer_id, product_id, merchant_id, transaction_date, transaction_time, quantity, total_price, transaction_card, transaction_category
+            )
+            VALUES (
+                v_new_transaction_id, v_existing_customer.customer_id, v_existing_product.product_id,
+                v_existing_merchant.merchant_id, v_transaction_date, v_transaction_time,
+                v_quantity, v_total_price, v_transaction_card, v_transaction_category
+            );
+        END LOOP;
+
+        -- Commit after every batch of 1000 rows
+        COMMIT;
+
+        -- Wait for 30 seconds before inserting the next batch
+        PERFORM pg_sleep(30);
+    END LOOP;
+END;
+$$;
+```
+
+To run the stored procedure, execute the following SQL command:
+```
+CALL insert_transactions();
+```
+
+Navigate back to the Streamlit-in-Snowflake application and refresh the page every few minutes to view the new data in the **Customer Spending Dashboard**.
 
 <!-- ------------------------ -->
 ## Clean Up
