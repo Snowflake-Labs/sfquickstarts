@@ -34,7 +34,7 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 Duration: 2
 
 1. Obtain the TEMPO Native App from the Snowflake Marketplace.
-2. It is recommended that during installation you shorten the name to just TEMPO.  
+2. It is mandatory to shorten the name to just TEMPO during installation. 
   - To do so, examine Options for your installation before selecting Get
   - Where you see the extended name of the application, TEMPO - the first..., edit that to read just TEMPO
   - Once you have shortened the name - which will simplify management - please select Get
@@ -49,7 +49,7 @@ GRANT CREATE WAREHOUSE ON ACCOUNT TO APPLICATION TEMPO;
 
 At this point, you will be a Worksheet showing SHOW TABLES; you are now ready to use Tempo as explained below
 
-The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container services runs.
+The application creates with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs after running the `startup` procedure, which will be used for container services runs.
 
 ### TEMPO_WH
 - **Type**: Snowpark Optimized
