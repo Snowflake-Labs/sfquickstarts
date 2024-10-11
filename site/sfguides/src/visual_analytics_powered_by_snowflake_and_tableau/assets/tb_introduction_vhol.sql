@@ -165,7 +165,7 @@ COMMENT = 'Quickstarts S3 Stage Connection'
 url = 's3://sfquickstarts/frostbyte_tastybytes/'
 file_format = frostbyte_tasty_bytes.public.csv_ff;
 
-list @s3load;
+list @frostbyte_tasty_bytes.public.s3load;
 /*--
  raw zone table build 
 --*/
