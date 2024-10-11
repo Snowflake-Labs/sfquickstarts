@@ -94,7 +94,7 @@ Click Grant to grant the application the necessary privileges:
 #### Account-level Privileges
 ![Grant Account Level Privileges](assets/install_privileges.png)
 - The **BIND SERVICE ENDPOINT** privilege enables the services in the app to connect to each other.
-- The **CREATE WAREHOUSE** and **CREATE COMPUTE POOL** are required by the Lang.ai Native App to create and manage resources for performing service operations. Learn more [here]((https://help.lang.ai/en/articles/9813363-install-the-native-app-with-an-sql-script).
+- The **CREATE WAREHOUSE** and **CREATE COMPUTE POOL** are required by the Lang.ai Native App to create and manage resources for performing service operations. Learn more [here](https://help.lang.ai/en/articles/9813363-install-the-native-app-with-an-sql-script).
 
 
 #### Give access to the Snowflake View
