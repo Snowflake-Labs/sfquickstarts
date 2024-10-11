@@ -73,7 +73,8 @@ USE ROLE sysadmin;
 CREATE OR REPLACE STREAMLIT tasty_bytes_customer_support_email.app.customer_support_email_app
 ROOT_LOCATION = '@tasty_bytes_customer_support_email.app.customer_support_email_app'
 MAIN_FILE = '01_Queue.py'
-QUERY_WAREHOUSE = 'tasty_bytes_customer_support_email_wh';
+QUERY_WAREHOUSE = 'tasty_bytes_customer_support_email_wh'
+COMMENT='{"origin":"sf_sit-is", "name":"voc", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit", "vignette":"customer_email_app"}}';
 
 GRANT USAGE ON STREAMLIT tasty_bytes_customer_support_email.app.customer_support_email_app TO ROLE customer_support_email_role;
 ```

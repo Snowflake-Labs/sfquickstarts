@@ -146,7 +146,8 @@ CREATE or REPLACE TABLE BUDGET_ALLOCATIONS_AND_ROI (
   VIDEO integer, 
   EMAIL integer, 
   ROI float 
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"aiml_notebooks_ad_spend_roi", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit"}}';
 
 INSERT INTO BUDGET_ALLOCATIONS_AND_ROI (MONTH, SEARCHENGINE, SOCIALMEDIA, VIDEO, EMAIL, ROI) VALUES 
 ('January',35,50,35,85,8.22), 

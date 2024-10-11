@@ -109,7 +109,7 @@ CREATE or REPLACE table CALL_TRANSCRIPTS (
   category varchar(60),
   damage_type varchar(90),
   transcript varchar
-);
+) COMMENT = '{"origin":"sf_sit-is", "name":"aiml_notebooks_artic_cortex", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 
 COPY into CALL_TRANSCRIPTS
   from @call_transcripts_data_stage;
