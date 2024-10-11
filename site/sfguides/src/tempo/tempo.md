@@ -1,5 +1,5 @@
 author: mando222
-id: tempo
+id: getting started with tempo and snowflake
 summary: This is a guide on getting started with Tempo on Snowflake
 categories: Getting-Started
 environments: web
@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Security, LLGM, Intrusion Detection
 
-# Getting Started with TEMPO and Snowflake (Using Sample Data)
+# Getting Started with TEMPO and Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -117,10 +117,10 @@ If you decide to test the model on a larger dataset or otherwise would like to k
 As a reminder, job_service_name is the same job service name you assigned when you ran TEMPO.DETECTION.
 
 ```sql
-CALL SYSTEM$GET_SERVICE_STATUS('DETECTION.<job_service_name>');
+CALL SYSTEM$GET_SERVICE_STATUS('DETECTION."job_service_name"');
 ```
 
-job_service_name: The name of the job service to check.
+"job_service_name": The name of the job service to check.
 
 Example:
 
