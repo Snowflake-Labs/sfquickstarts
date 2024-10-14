@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Connectors, Dynamic Tables
 
-# Real-Time Financial Insights with Change Data Capture (CDC) with PostgreSQL, Dynamic Tables, and Streamlit-in-Snowflake
+# Real-Time Financial Insights with Change Data Capture with PostgreSQL, Dynamic Tables, and Streamlit-in-Snowflake
 <!-- ------------------------ -->
 ## Overview
 Duration: 10
@@ -210,7 +210,7 @@ CREATE TABLE postgres.raw_cdc.transactions (
 ```
 docker ps
 ```
-5. Next, to copy the csv files to the container with these commands, run these commands in your terminal, replacing `<container_id>` with the actual container ID from the previous command: 
+5. Next, to copy the csv files to the container with these commands, run these commands in your terminal, replacing the file path with your actual file path and replacing `<container_id>` with your actual container ID from the previous command: 
 ```
 docker cp /Users/your_username/Downloads/customers.csv <container_id>:/tmp/customers.csv
 docker cp /Users/your_username/Downloads/merchants.csv <container_id>:/tmp/merchants.csv
@@ -226,7 +226,7 @@ COPY postgres.raw_cdc.products FROM '/tmp/products.csv' DELIMITER ',' CSV HEADER
 COPY postgres.raw_cdc.transactions FROM '/tmp/transactions.csv' DELIMITER ',' CSV HEADER;
 ```
 
-7. Next, make sure to run the `CREATE PUBLICATION` command to enable the logical replication for the tables in the `raw_cdc` schema. This will allow the Snowflake Connector for PostgreSQL to capture the changes made to the tables in the PostgreSQL database.:
+7. Next, make sure to run the `CREATE PUBLICATION` command to enable the logical replication for the tables in the `raw_cdc` schema. This will allow the Snowflake Connector for PostgreSQL to capture the changes made to the tables in the PostgreSQL database.
 ```
 CREATE PUBLICATION agent_postgres_publication FOR ALL TABLES;
 ```
@@ -254,11 +254,19 @@ Navigate to [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.ht
 
 #### Configure the Snowflake Connector for PostgreSQL Native App
 1. On your Snowflake Account, navigate to the **Data Products**, **Apps** section
-2. Open the application and do the following
-    - Select **Mark all as done** as we will create our source databases from scratch. No additional network configuration is required as its configured later in this tutorial. 
-    - Click **Start configuration**
-    - On the **Configure Connector** screen, select **Configure**
-    - On the **Verify Agent Connection** screen select **Generate file** to download the Agent Configuration file. The downloaded file name should resemble **snowflake.json**. Save this file for use during the Agent configuration section.
+2. Open the application
+3. Select **Mark all as done** as we will create our source databases from scratch. No additional network configuration is required as its configured later in this tutorial.
+
+<img src="assets/mark_all_done.png">
+
+4. Click **Start configuration**
+5. On the **Configure Connector** screen, select **Configure**
+
+<img src="assets/configure_connector.png">
+
+6. On the **Verify Agent Connection** screen select **Generate file** to download the Agent Configuration file. The downloaded file name should resemble **snowflake.json**. Save this file for use during the Agent configuration section.
+
+<img src="assets/generate_file.png">
 
 <!-- ------------------------ -->
 ## Configure the Agents
@@ -345,6 +353,7 @@ Directory Structure
 Navigate to Snowsight to your previously created Native Apps. Click on the **Refresh** button in the Agent Connection Section.
 When successfully configured, you should see the message: Agent is fully set up and connected. To select data ingest Open Worksheet.
 
+<img src="assets/successfully_configured.png">
 <!-- ------------------------ -->
 ## Configure and Monitor Data Ingestion Process
 Duration: 10
