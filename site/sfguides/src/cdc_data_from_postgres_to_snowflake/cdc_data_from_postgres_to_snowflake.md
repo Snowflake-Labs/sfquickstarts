@@ -12,10 +12,10 @@ tags: Getting Started, Connectors, Dynamic Tables
 ## Overview
 Duration: 10
 
-In this Quickstart, we will investigate how a financial company a builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights in how to increase customer engagement using Streamlit-in-Snowflake.
+In this Quickstart, we will investigate how a financial company builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights in how to increase customer engagement using Streamlit-in-Snowflake.
 
 ### What You Will Build
-- Visualize customer data and gain insights ingesting data from PostgreSQL DB to Snowflake using the Snowflake Connector for PostgreSQL Native App, [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about) and [Streamlit-in-Snowflake (SiS)](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+- Visualize customer data and gain insights ingesting data from PostgreSQL DB to Snowflake using the Snowflake Connector for PostgreSQL Native App, Dynamic Tables, and Streamlit-in-Snowflake (SiS)
 
 ### What You Will Learn
 - How to connect PostgreSQL data to Snowflake using the [Snowflake Connector for PostgreSQL](https://other-docs.snowflake.com/en/connectors/postgres6/about)
@@ -110,7 +110,7 @@ Duration: 5
 In this section, we will set up a PostgreSQL database and create tables to simulate a financial company's customer transactional data.
 
 #### Starting the Database Instance
-To initiate the PostgreSQL database using Docker, you'll need to create a file called `docker-compose.yaml`. This file will contain the configuration for the PostgreSQL database. Open the IDE of your choice to copy and past this file by copy pasting the following:
+To initiate the PostgreSQL database using Docker, you'll need to create a file called **docker-compose.yaml**. This file will contain the configuration for the PostgreSQL database. Open the IDE of your choice to copy and past this file by copy pasting the following:
 ```
 version: '1'
 services:
@@ -131,7 +131,7 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
 ```
 
-Next, open a terminal and navigate to the directory where the `docker-compose.yaml` file is located. Run the following command to start the PostgreSQL database:
+Next, open a terminal and navigate to the directory where the **docker-compose.yaml** file is located. Run the following command to start the PostgreSQL database:
 
 ```
 docker-compose up -d
@@ -139,7 +139,7 @@ docker-compose up -d
 After running this command, you should see one Docker container actively running the source database.
 
 #### Connecting to the Database
-To connect to the pre-configured databases using PyCharm’s or Visual Studio Code database connections, perform the following steps with the provided credentials:
+To connect to the pre-configured databases using Visual Studio Code or PyCharm, or whichever IDE you choose for a database connection, perform the following steps with the provided credentials:
 1. Open your tool of choice for connecting to the PostgreSQL database
    - For VSCode, you can use the [PostgreSQL extension](https://marketplace.visualstudio.com/items?itemName=cweijan.vscode-postgresql-client2)
    - For PyCharm, you can use the [Database Tools and SQL plugin](https://www.jetbrains.com/help/pycharm/database-tool-window.html)
@@ -151,7 +151,7 @@ To connect to the pre-configured databases using PyCharm’s or Visual Studio Co
 4. Test the connection and save
 
 #### Loading Data
-1. First create the schema and tables to in the financial_data_hub database that was created in the PostgreSQL database. You can use the following SQL script to create the schema and tables:
+1. Create the schema and tables to in the **postgres** database that was created in the PostgreSQL database. You can use the following SQL script to create the schema and tables:
 
 ```
 CREATE SCHEMA raw_cdc;
@@ -204,13 +204,13 @@ CREATE TABLE postgres.raw_cdc.transactions (
     - [products.csv](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/scripts/postgres_csv/products.csv)
     - [transactions.csv](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/scripts/postgres_csv/transactions.csv)
 
-3. We'll need to move the files from the local computer to a folder located in the PostgreSQL environment before loading the data into the PostgreSQL database.
+3. We'll need to move the files from the local computer to a directory located in the PostgreSQL environment before loading the data into the PostgreSQL database.
 
-4. First, navigate to your terminal to get the Docker container ID with this command:
+4. Navigate to your terminal to get the Docker container ID with this command:
 ```
 docker ps
 ```
-5. Next, to copy the csv files to the container with these commands, run these commands in your terminal, replacing the file path with your actual file path and replacing `<container_id>` with your actual container ID from the previous command: 
+5. To copy the csv files to the container, run these commands in your terminal, replacing the file path with your actual file path,m and replacing `<container_id>` with your actual container ID from the previous command: 
 ```
 docker cp /Users/your_username/Downloads/customers.csv <container_id>:/tmp/customers.csv
 docker cp /Users/your_username/Downloads/merchants.csv <container_id>:/tmp/merchants.csv
@@ -255,7 +255,7 @@ Navigate to [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.ht
 #### Configure the Snowflake Connector for PostgreSQL Native App
 1. On your Snowflake Account, navigate to the **Data Products**, **Apps** section
 2. Open the application
-3. Select **Mark all as done** as we will create our source databases from scratch. No additional network configuration is required as its configured later in this tutorial.
+3. Select **Mark all as done** as we will create our source databases from scratch. No additional network configuration is required as its configured later in this Quickstart.
 
 <img src="assets/mark_all_done.png">
 
@@ -273,19 +273,16 @@ Navigate to [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.ht
 
 Duration: 10
 ### Overview
-During this section, you will configure the Agen that will operate alongside our Source Databases.
+During this section, you will configure the Agent that will operate alongside our Source Databases.
 
 ### Configure the Agents
 The first step is to create the **agent-postgresql** directory. In this directory, you will create 2 directories named **agent-keys** and **configuration**.
 
 #### Creating Configuration Files
-In this step, you will fill the configuration files for each agent to operate correctly. The configuration files include:
-- **snowflake.json** file to connect to Snowflake
-- **datasources.json** file to connect to the Source Databases
-- **postgresql.conf** file with additional Agent Environment Variables
+You will fill the configuration files for each agent to operate correctly. The configuration files include **snowflake.json** file to connect to Snowflake, **datasources.json** file to connect to the Source Databases, and **postgresql.conf** file with additional Agent Environment Variables.
 
 1. Navigate to the directory called **agent-postgresql**
-2. Create the docker-compose file named **docker-compose2.yaml** with the following content:
+2. Create the docker-compose file named **docker-compose.yaml** with the following content:
 ```
 version: '1'
 services:
@@ -320,11 +317,6 @@ services:
 JAVA_OPTS=-Xmx5g
 ```
 
-6. Navigating to the terminal, start the agent using the following command. The agent should generate public/private key for authorization to Snowflake.
-```
-docker-compose up -d
-```
-
 At the end, your directory structure should resemble the following, including the inclusion of the automatically generated private and public keys within the agent-keys directory.
 
 Directory Structure
@@ -349,11 +341,17 @@ Directory Structure
   </li>
 </ul>
 
+6. Navigating to the **agent-postgresql** directory in your terminal, start the agent using the following command. The agent should generate public/private key for authorization to Snowflake.
+```
+docker-compose up -d
+```
+
 #### Verifying Connection with Snowflake
-Navigate to Snowsight to your previously created Native Apps. Click on the **Refresh** button in the Agent Connection Section.
-When successfully configured, you should see the message: Agent is fully set up and connected. To select data ingest Open Worksheet.
+Navigate to Snowsight to your previously created Snowflake Connector for PostgreSQL Native App. Click on the **Refresh** button in the Agent Connection Section.
+When successfully configured, you should see the "Successfully configured" message.
 
 <img src="assets/successfully_configured.png">
+
 <!-- ------------------------ -->
 ## Configure and Monitor Data Ingestion Process
 Duration: 10
@@ -362,30 +360,12 @@ Duration: 10
 In this step, we will instruct the Connector to begin replicating the selected tables.
 
 ### Configure Data Ingestion
-1. Download the [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/notebooks/0_start_here.ipynb) Notebook and import it into Snowflake by navigating to Snowsight and going to **Notebooks** and to using the `Import .ipynb file` button. This Notebook includes the SQL scripts needed to create the sink database, add the data sources for table replication into Snowflake, and monitor the replication process.
+1. Change the role to **ACCOUNTADMIN**
+2. Download the [Snowflake Notebook](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/notebooks/0_start_here.ipynb) and import it into Snowflake by navigating to Snowsight and going to **Notebooks** and to using the `Import .ipynb file` button. This Notebook includes the SQL scripts needed to create the sink database, add the data sources for table replication into Snowflake, and monitor the replication process.
 2. Run the first 3 cells in the Notebook labeled **create_db_objects**, **table_replication**, and **check_replication_state**.
-3. Run the cell labeled **check_replication_state** until the output indicates successful replication, resembling the following:
-<table>
-  <thead>
-    <tr>
-      <th>REPLICATION_PHASE</th>
-      <th>SCHEMA_INTROSPECTION_STATUS</th>
-      <th>SNAPSHOT_REPLICATION_STATUS</th>
-      <th>INCREMENTAL_REPLICATION_STATUS</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>INCREMENTAL_LOAD</td>
-      <td>DONE</td>
-      <td>DONE</td>
-      <td>IN PROGRESS</td>
-    </tr>
-  </tbody>
-</table>
-
+3. Run the cell labeled **check_replication_state** until the output indicates successful replication as indicated in the Notebook.
 4. Once the replication process is complete, you can run the rest of the Notebook.
-5. Notice the Dynamic table, **CONNECTORS_DEST_DB."CDC"."CUSTOMER_PURCHASE_SUMMARY"**, is created in the last cell labeled **create_dynamic_table**. This table will be used to visualize the data in the **Customer Spending Dashboard** Streamlit app.
+5. Notice the Dynamic Table, **cdc_prod.analytics.customer_purchase_summary**, is created in the last cell labeled **create_dynamic_table**. This table will be used to visualize the data in the **Customer Spending Dashboard** Streamlit app.
 
 <!-- ------------------------ -->
 ## Streamlit-in-Snowflake Application
@@ -395,10 +375,11 @@ Duration: 10
 In this section, we will create a Streamlit-in-Snowflake application to visualize the customer purchase summary data.
 
 ### Create the Streamlit-in-Snowflake Application
-1. Navigate to Snowsight and go to **Projects** then **Streamlit**. Click on the **+ Streamlit App** to create a new Streamlit application.
-2. For the **App Title**, enter `Customer Spending Dashboard`
-3. For the **App location**, enter `CONNECTORS_DEST_DB` for the database and `CDC` for the schema
-4. For the **App warehouse**, choose an available warehouse, preferably an **X-SMALL** sized warehouse and click **Create**
+1. Change the role to **ACCOUNTADMIN**
+2. Navigate to Snowsight and go to **Projects** then **Streamlit**. Click on the **+ Streamlit App** to create a new Streamlit application.
+2. For the **App Title**, enter **Customer Spending Dashboard**
+3. For the **App location**, enter **cdc_prod** for the database and **raw_cdc** for the schema
+4. For the **App warehouse**, choose the **cdc_ds_wh** warehouse and click **Create**
 5. Copy and paste the contents of the [customer_purchase_summary.py](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/scripts/customer_spending_dashboard.py) file into the Streamlit app code editor
 6. Here, we can view the purchase summary for all or selected customers by selecting various filter for dates, customer IDs, and product categories and more
 
@@ -410,7 +391,7 @@ Duration: 5
 In this section, we will ingest new transaction data from PostgreSQL into Snowflake.
 
 ### Ingest New Data
-Navigate back to your PostgreSQL console and run the following SQL command to create a stored procedure that inserts 1000 new records into the `transactions` table:
+Navigate back to your PostgreSQL console and run the following SQL command to create a stored procedure that inserts 1000 new records into the `transactions` every minute table:
 ```
 CREATE OR REPLACE PROCEDURE insert_transactions()
 LANGUAGE plpgsql
@@ -504,11 +485,7 @@ Duration: 2
 In this section, we will clean up the Snowflake objects that were made in this Quickstart.
 
 ### Clean Up Script
-1. Navigate to Worksheets, click **+** in the top-right corner to create a new Worksheet, and choose **SQL Worksheet**
-```
-DROP ROLE POSTGRESQL_ADMINISTRATIVE_AGENT_ROLE;
-DROP ROLE POSTGRESQL_AGENT_ROLE;
-```
+Navigate to the last the Notebook and uncomment and run the last cell labeled **clean_up** to drop the objects created in this Quickstart.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -521,7 +498,6 @@ With the completion of this Quickstart, you have now delved into:
 - Visualize data using Dynamic Tables and display visualizations within Streamlit-in-Snowflake (SiS)
 
 ### Resources
-- [Snowflake Solutions Center - Real-Time Financial Insights with Change Data Capture (CDC) with PostgreSQL, Dynamic Tables, and Streamlit-in-Snowflake] - placeholder for link
 - [Snowflake Connector for PostgreSQL](https://other-docs.snowflake.com/en/connectors/postgres6/about)
 - [Snowflake Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
 - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
