@@ -127,7 +127,7 @@ Within the Snowsight interface, navigate to Data -> Databases and then search fo
 <img src="assets/find_stage.png"/>
 
 ### Step 2 - Uploading our Inspection Reports
-In the top-right corner, click the **+Files** button and either drop or browse to the unzipped Inspection Reports from Step 1. From there click **Upload**.
+In the top-right corner, click the **+Files** button and either drop or browse to the unzipped Inspection Reports Full from Step 1. From there click **Upload**.
 
 <img src="assets/upload_to_stage.png"/>
 
@@ -253,7 +253,7 @@ LIST @inspection_reports;
 To begin our extraction, let's use our model and the [PREDICT](https://docs.snowflake.com/en/sql-reference/classes/classification/methods/predict) method against one of those staged files by executing the next query.
 
 ```
-SELECT inspection_report_extraction!PREDICT(GET_PRESIGNED_URL(@inspection_reports, '02.13.2022.5.pdf'), 2);
+SELECT inspection_report_extraction!PREDICT(GET_PRESIGNED_URL(@inspection_reports, '02.13.2022.5.pdf'));
 ```
 
 <img src="assets/one_file.png"/>
@@ -264,10 +264,10 @@ Our extracted object looks great, but before we begin to flatten this out let's 
 
 ```
 CREATE OR REPLACE TABLE ir_raw
-    AS
-SELECT inspection_report_extraction!PREDICT(GET_PRESIGNED_URL(@inspection_reports, RELATIVE_PATH), 2) AS ir_object
-FROM DIRECTORY(@inspection_reports)
-COMMENT = '{"origin":"sf_sit-is", "name":"voc", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql", "vignette":"docai"}}';
+COMMENT = '{"origin":"sf_sit-is", "name":"voc", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql", "vignette":"docai"}}'
+AS
+SELECT inspection_report_extraction!PREDICT(GET_PRESIGNED_URL(@inspection_reports, RELATIVE_PATH)) AS ir_object
+FROM DIRECTORY(@inspection_reports);
 ```
 
 Before moving on let's take a look at our raw, extracted results.
