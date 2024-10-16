@@ -14,7 +14,7 @@ tags: Getting Started, Data Science, Data Science, Unstructured Data
 Duration: 1
 In today's fast-paced manufacturing landscape, ensuring product quality early in the production process is crucial for minimizing defects and optimizing resources. With advancements in machine learning, manufacturers can now leverage computer vision models to automate defect detection, improving efficiency and accuracy.
 
-In this Quickstart guide, we will train a computer vision model for multiclass defect detection using Snowflake Notebooks with Container Runtime easily and efficiently. The dataset comprises labeled Printed Circuit Boards (PCBs) with annotations including defect labels and bounding boxes for each image. This approach aims to help manufacturers implement early Quality Control, reducing costs, time, and resource usage in production processes.
+In this Quickstart guide, we will train a computer vision model for multiclass defect detection using Snowflake Notebooks on Container Runtime easily and efficiently. The dataset comprises labeled Printed Circuit Boards (PCBs) with annotations including defect labels and bounding boxes for each image. This approach aims to help manufacturers implement early Quality Control, reducing costs, time, and resource usage in production processes.
 
 The process includes the following steps:
 - Preprocessing the dataset, which involves using the annotated data with labels and bounding boxes information for each image.
@@ -27,7 +27,7 @@ The process includes the following steps:
 
 #### What is Snowflake ML?
 
-Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use ML Functions to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
+Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 
 ![SnowparkML](assets/snowflakeml.png)
@@ -35,9 +35,9 @@ Snowflake ML is the integrated set of capabilities for end-to-end machine learni
 
 #### What is Snowflake Notebooks on Container Runtime?
 
-Snowflake Notebooks are natively built into Snowsight, and provide everything you need for interactive development, cell by cell execution of both Python and SQL code.  By using Snowflake Notebooks one can increase the productivity since it simplifies connecting to the data and using popular OSS libraries for the data engineering and analytics use cases. 
+Snowflake Notebooks are natively built into Snowsight, and provide everything you need for interactive development, cell by cell execution of Python, Markdown and SQL code.  By using Snowflake Notebooks one can increase the productivity since it simplifies connecting to the data and using popular OSS libraries for ML usecases.
 
-Container Runtime notebooks offer a robust environment with a comprehensive repository of pre-installed CPU and GPU machine learning packages and frameworks, significantly reducing the need for package management and dependency troubleshooting. This allows you to quickly get started with your preferred frameworks and even import models from external sources. Additionally, you can use pip to install any custom package as needed.
+Notebooks on Container Runtime offer a robust environment with a comprehensive repository of pre-installed CPU and GPU machine learning packages and frameworks, significantly reducing the need for package management and dependency troubleshooting. This allows you to quickly get started with your preferred frameworks and even import models from external sources. Additionally, you can use pip to install any custom package as needed.
 
 The runtime also features an optimized data ingestion layer and provides a set of powerful APIs for training and hyperparameter tuning. These APIs extend popular ML packages, enabling you to train models efficiently within Snowflake.
 
@@ -62,6 +62,7 @@ Key Features:
 - A Snowflake Account with Accountadmin access OR
 - Necessary Privileges to create a user, database,compute pool and a warehouse in Snowflake
 - Access to run Notebooks in Snowflake
+- AWS Commercial deployments (non-free trial accounts)
 Container Runtime Enabled in the Account
 
 
@@ -217,14 +218,14 @@ Come back to the Streamlitapp and click Run. Choose an image and click the butto
 
 ## Conclusion and Resources
 
-Congratulations! You have successfully performed  distributed model training in Container Runtime notebooks! 
+Congratulations! You have successfully performed  distributed model training in Snowflake Notebooks on Container Runtime.
 By following these steps, you have trained a PyTorch Object Detection model with Snowflake, carry unstructured data(images) processing, train a PyTorch RCNN Object Detection model , log it in Snowflake Model Registry, and use Streamlit to visualize the inference results.
 
 To cleanup resources and remove all of the objects and compute pools that you created during this QuickStart. This will ensure that you don't incur any unnecessary costs specifically associated with this QuickStart guide.
 
 ### What You Learned
 
-- Leverage Snowflake Notebooks on Container Runtime(GPUs) to carry model training using a Computer Vision Object Detection model.
+- Leverage Snowflake Notebooks on Container Runtime with seamless access to GPUs to carry model training using a Computer Vision Object Detection model.
 - Leverage ShardedDataConnector that defines the training process for an individual worker during the training process. 
 - Carry independent execution on each worker during the distributed training.
 - Use the PyTorchDistributor to distribute and manage the execution of the training function across multiple workers.
@@ -237,7 +238,7 @@ To cleanup resources and remove all of the objects and compute pools that you cr
 - #### [Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks)
 - #### [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
 - #### [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
-
+- #### [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml)
 ### Attribution
 PyTorch, the PyTorch logo and any related marks are trademarks of The Linux Foundation.
 
