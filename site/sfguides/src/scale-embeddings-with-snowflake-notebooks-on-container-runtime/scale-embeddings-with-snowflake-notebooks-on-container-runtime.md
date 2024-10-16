@@ -5,7 +5,7 @@ categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
+tags: Getting Started, Data Science, Machine Learning, Model Registry
 
 # Scale Embeddings with Snowflake Notebooks on Container Runtime
 <!-- ------------------------ -->
