@@ -7,14 +7,14 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tealium, Snowpipe Streaming, Staging Tables, Real-Time, CDP, Customer Data Platform, Data Activation
 
-# Collect and Activate Customer Data Using Tealium's Snowflake Streaming
+# Collect and Activate Customer Data Using Tealium and Snowpipe Streaming
 
 <!-- ------------------------ -->
 ## Overview 
 Duration: 2
 
-### Overview
-This quickstart guide will review the configuration of the Snowflake Data Source and Snowflake Streaming connectors within the Tealium. Tealium's Customer Data Hub acts as a high quality data source and a real-time activation engine for Snowflake. Use Tealium to capture and send low latency customer interaction data to Snowflake for further analysis or to inform AI initiatives, and automate real-time data activation using Snowflake data across Tealium’s 1300+ integration marketplace.
+## Introduction
+This quickstart guide will review the configuration of the Snowflake Data Source and Snowflake Streaming connectors within Tealium. Tealium's Customer Data Hub acts as a high quality data source and a real-time activation engine for Snowflake. Use Tealium to capture and send low latency customer interaction data to Snowflake for further analysis or to inform AI initiatives, and automate real-time data activation using Snowflake data across Tealium’s 1300+ integration marketplace.
 
 #### Send Data to Snowflake
 - Create a staging table in Snowflake to land the data
@@ -24,7 +24,7 @@ This quickstart guide will review the configuration of the Snowflake Data Source
 #### Activate Data from Snowflake
 - Identify or create a table or view of data in Snowflake that you want to activate in Tealium
 - In Tealium configure the data source by establishing a connection to Snowflake, creating a query to capture only the data needed, map the event and visitor data to appropriate Tealium data attributes
-- Once the connection is established, data is ingested in near real-time (as fast as 2 seconds) and is activated based on business rules . 
+- Once the connection is established, data is ingested in near real-time (as fast as 2 seconds) and is activated based on business rules 
 
 
 ### What You'll Need
@@ -127,6 +127,8 @@ After adding the connector, configure the following settings:
 - **Private Key**
   - The customer-generated private key. Supports both encrypted and unencrypted versions. For instructions on generating the Snowflake private key, see [Snowflake > Key-pair authentication and key-pair rotation](https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-the-private-key)
 
+![Authentication Configuration](assets/SnowflakeAuthentication.png)
+
 #### Key-pair Generation
 To complete the connector authentication, use the following steps to alter the username with the public key details in Snowflake.
 
@@ -160,6 +162,8 @@ All connector actions require the following parameters:
 | Database Name | The Snowflake database that contains the required table |
 | Schema Name | The name of the schema used in the table | 
 | Table Name | The name of the staging table you want to land the data into |
+
+![Connector Configuration](assets/SnowflakeConfiguration.png)
 
 After inputing the above values, a drop-down menu with the available columns will become available to map your data. When sending the entire dataset, you will need to assign which column the data will be recorded under. This column must be a **VARIANT** type column in Snowflake. A new row will be created in the staging table for each event with the dataset available under the selected column as an object.
 
@@ -418,12 +422,16 @@ To check the status of import activity, navigate to the **Data Sources** dashboa
 ### Edit a Snowflake Data Source
 To change a Snowflake data source, navigate to the **Data Sources** dashboard and click the edit icon next to the configuration you want to change. From the **Edit Connection** screen, you can edit Snowflake connection, query, and mapping configurations.
 
+![Data Source Ribbon](assets/DataSourceEdit.png)
+
 ### Error Logs
 
 To view the error logs, complete the following steps in Tealium:
 1. From the **Data Sources** dashboard, expand the Snowflake data source you want to view.
 2. Under **Errors**, click **Error Logs** or click the edit icon and select the **Error Logs** tab.
 3. Select the error log you want to view and preview or export the log.
+
+![Data Source Error Logs](assets/DataSourceErrorLog.png)
 
 #### Export Logs
 You can export logs for the following time ranges:
