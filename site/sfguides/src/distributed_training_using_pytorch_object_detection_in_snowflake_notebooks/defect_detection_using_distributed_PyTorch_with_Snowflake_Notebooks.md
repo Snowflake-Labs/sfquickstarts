@@ -11,7 +11,9 @@ tags: Getting Started, Data Science, Data Science, Unstructured Data
 # Defect Detection Using Distributed PyTorch With Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
+
 Duration: 1
+
 In today's fast-paced manufacturing landscape, ensuring product quality early in the production process is crucial for minimizing defects and optimizing resources. With advancements in machine learning, manufacturers can now leverage computer vision models to automate defect detection, improving efficiency and accuracy.
 
 In this Quickstart guide, we will train a computer vision model for multiclass defect detection using Snowflake Notebooks on Container Runtime easily and efficiently. The dataset comprises labeled Printed Circuit Boards (PCBs) with annotations including defect labels and bounding boxes for each image. This approach aims to help manufacturers implement early Quality Control, reducing costs, time, and resource usage in production processes.
@@ -28,10 +30,6 @@ The process includes the following steps:
 #### What is Snowflake ML?
 
 Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
-
-
-![SnowparkML](assets/snowflakeml.png)
-
 
 #### What is Snowflake Notebooks on Container Runtime?
 
