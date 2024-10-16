@@ -1,7 +1,7 @@
 author: David Hrncir
 id: modern_data_stack_with_fivetran_snowflake_salesforce
 summary: Lab to demonstrate the ease of use to ingest data from Salesforce to Snowflake through Fivetran with insights dashboard from dbt models.
-categories: Getting-Started
+categories: Getting-Started, marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -19,7 +19,7 @@ These data consolidation, centralization, curation, and analytics processes "use
 Fivetran will replicate all of your data from Salesforce, and all of your other data sources for your project, easily into Snowflake via a reliable, fast, secure, SaaS-based, automated, and no-code data replication solution with built-in transformation flexibility.  [Fivetran’s 300+ data source connectors](https://www.fivetran.com/connectors) (that's right 300+...we are just working with Salesforce today) allow you to seamlessly create all of your data replication processes in minutes versus weeks or months.  And in this lab, we are going to work together to see how easy and fast data replication with Fivetran and Snowflake can be.  So let’s get started!
 
 ### Prerequisites
-- Existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com), with `ACCOUNTADMIN` role.  If setting up a new trial account, ensure to select the "Enterprise" edition when prompted to gain access to more Snowflake features!
+- Existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_), with `ACCOUNTADMIN` role.  If setting up a new trial account, ensure to select the "Enterprise" edition when prompted to gain access to more Snowflake features!
 - [Salesforce development account](https://developer.salesforce.com/signup).  Setting up a Salesforce developer account is free and takes about 3-5 minutes.  If you currently have a Salesforce account and wish to use that account for this lab...even better!
 
 ### What you'll learn in the lab

@@ -32,7 +32,7 @@ To see a more in depth example with other sample datasets, make sure to check ou
 
 ### What You’ll Need
 
-- [Snowflake Account](https://signup.snowflake.com/) with `ACCOUNTADMIN` access
+- [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access
 - [FullContact Trial Account](https://platform.fullcontact.com/register/offer/snowresolve)
 
 ### What You’ll Build

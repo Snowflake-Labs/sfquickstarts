@@ -38,7 +38,7 @@ This quickstart is designed to service as an introduction to using AzureML with 
 - Defining User Defined Functions for distributed scoring of machine learning models
 
 ### What You’ll Need 
-- A free [Snowflake Account](https://signup.snowflake.com/)
+- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 - [Azure Account](https://azure.microsoft.com/en-us/free/search/?ef_id=_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&OCID=AIDcmm5edswduu_SEM_k_2ba2be3ad9791e57964fda0c62ccd55c_k_&msclkid=2ba2be3ad9791e57964fda0c62ccd55c)
 
 
@@ -78,59 +78,21 @@ Duration: 15
 
 If you haven't used AzureML before, for first time setup you will need to create an AzureML workspace. You can do so by following this [Link](https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources?view=azureml-api-2) 
 
-Once you've created your AzureML workspace your first step will be to create a setup.sh file that will be used to create the environment in your compute instance. Head to the "Notebooks" tab, hit the plus sign to create a new file and name it setup.sh.
-![](assets/setup_sh.png)
+Create a Compute Instance by heading to the Compute tab in AzureML and selecting "New" under the compute instances tab as shown below. 
 
-Then copy and paste the code below into the setup.sh file and save it. This will be used as a start up script when creating the Compute Instance in AzureML.
-```bash
-#!/bin/bash
+![](assets/compute_instance.png)
 
-# Update the system
-sudo apt-get update
-sudo apt-get upgrade -y
-
-# Install Miniconda
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-chmod +x Miniconda3-latest-Linux-x86_64.sh
-./Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
-export PATH="$HOME/miniconda3/bin:$PATH"
-
-# Create a conda environment and activate it
-conda create -y -n my_env
-conda activate my_env
-
-# Install the required packages using conda
-conda install -y -c snowflake -c conda-forge snowflake-snowpark-python pandas notebook scikit-learn cachetools
-
-# Install MLflow using pip
-pip install mlflow azureml-mlflow
-```
-Go to the "Compute" tab in AzureML, highlight the "Compute Instances" tab at the top and click "New". Provide a name and select the below options and click "Next: Advanced Settings"
-![](assets/azureml_ci.png)
-
-Click the radio tab that says "Provision with setup script" then click the blue button "Browse" and find the setup.sh file that we just created. Once selected click "Create" this could take about 10 minutes to create.
-![](assets/provision_ci.png)
-
-Once the compute instance is provisioned, head back to the "Notebooks" tab and open a terminal window for your compute instance.
-![](assets/activate_terminal.png)
-
-Run the below code in the terminal to activate the environment in the Jupyter kernel
-```bash
-conda activate my_env
-pip install ipykernel
-```
-
-```bash
-python -m ipykernel install --user --name=my_env
-```
-Once that's done you can close the terminal window and now open up a blank .ipynb file and check the kernels on the top right to make sure the "my_env" kernel has been created. You may have to refresh the list and wait several seconds.
-![](assets/check_env.png)
+Give the compute any unique name you would like and leave the default settings and create the new compute
 
 <!-- ------------------------ -->
 ## Clone Github Repo
 Duration: 5
 
-Open a terminal window the same as the previous step. In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
+Click on the "Notebooks" blade and open a terminal as shown below.
+
+![](assets/aml_terminal.png)
+
+In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
 
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-for-machine-learning-on-azureml
@@ -142,7 +104,9 @@ git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpar
 ## Load data into Snowflake
 Duration: 5
 
-You should now be able to navigate back to the 'File Browser' tab on the left and see your cloned repo. Open the setup.ipynb notebook (ensure that you select the correct environment), [0_setup_data.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-for-machine-learning-on-azureml/0_setup_data.ipynb) and work through the set up script here to load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
+You should now be able to navigate back to the 'File Browser' tab on the left and see your cloned repo. Open the setup.ipynb notebook (ensure that you select the correct environment), [0_setup_data.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-for-machine-learning-on-azureml/blob/main/0_setup_data.ipynb) and work through the set up script here to load the data. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
+
+> Note: Make sure that you are using an AzureML kernel that uses Python 3.10, uncomment the pip install line in the first block of the set up script to install the necessary packages for this lab.
 
 You will need to enter your user and account credentials, and it is important that your `account` is in the correct format as outlined in the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#non-vps-account-locator-formats-by-cloud-platform-and-region). Your `host` will be your `account` ID followed by `.snowflakecomputing.com`, for example:
 ```python
@@ -178,9 +142,9 @@ Once that notebook is complete you will have a udf that you can use to generate 
 
 ```sql
 use role accountadmin;
-select predict_failure(AIR_TEMPERATURE_K,
-       PROCESS_TEMPERATURE, ROTATIONAL_SPEED_RPM, TORQUE_NM,
-       TOOL_WEAR_MIN, HUMIDITY_RELATIVE_AVG) as predicted_failure, * from maintenance_hum;
+select TO_DECIMAL(GET(aml_model!predict_proba(AIR_TEMPERATURE_K,
+      PROCESS_TEMPERATURE, ROTATIONAL_SPEED_RPM, TORQUE_NM,
+      TOOL_WEAR_MIN, HUMIDITY_RELATIVE_AVG), 'output_feature_1'), 38, 4) as predicted_failure, * from maintenance_hum;
 ```
 
 ![](assets/snowflake_inference.png)
@@ -216,6 +180,8 @@ Specifically, you may want to consider the additional details:
 
 ### Additional Considerations
 - There are some great blogs on Medium regarding Snowpark, AzureML and using Snowflake with Azure.
+
+- [Full demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/predictive-maintenance-manufacturing/)
 
 - [Snowpark for python with AzureML](https://medium.com/@michaelgorkow/mlops-with-snowflake-and-mlflow-on-azure-machine-learning-a21a9def693)
 

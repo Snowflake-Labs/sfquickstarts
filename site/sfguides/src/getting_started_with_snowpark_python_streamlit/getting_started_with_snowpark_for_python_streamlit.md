@@ -1,17 +1,25 @@
 id: getting_started_with_snowpark_for_python_streamlit
-summary: This guide provides the instructions for writing an application using Snowpark for Python and Streamlit.
-categories: getting-started
+summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and Cybersyn data from Snowflake Marketplace.
+categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit
-authors: Dash Desai
+authors: Dash Desai, Victoria Warner (Cybersyn)
 
 # Getting Started With Snowpark for Python and Streamlit
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 1
+Duration: 5
+
+This guide provides the instructions for building a Streamlit application using Snowpark for Python and [Cybersyn data](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) from the Snowflake Marketplace.
+
+### What You Will Build
+
+A Streamlit application that loads and visualizes daily **stock performance** and **foreign exchange (FX) rate** data loaded from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace using Snowpark for Python.
+
+![App](assets/sis.gif)
 
 ### What is Snowpark?
 
@@ -27,339 +35,381 @@ Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 ### What is Streamlit?
 
-Streamlit is a pure-Python [open-source](https://github.com/streamlit/streamlit) application framework that enables developers to quickly and easily write data applications. Learn more about [Streamlit](https://streamlit.io/).
+Streamlit enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
 
-### What You’ll Build
+Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
 
-- A web-based data application that uses Snowpark for Python and Streamlit
+### What is Cybersyn?
 
-### What You’ll Learn
+Cybersyn is a data-as-a-service company creating a real-time view of the world's economy with analytics-ready economic data on Snowflake Marketplace. Cybersyn builds derived data products from datasets that are difficult to procure, clean, or join. With Cybersyn, you can access external data directly in your Snowflake instance — no ETL required.
 
-- How to create a Session object for connecting to Snowflake
-- How to create Snowpark DataFrames and load data from Snowflake
-- How to display tabular data and interactive charts using Streamlit
-- How to run the web-based data application using Streamlit
-- Tips and tricks for enhancing the web-based data application in Streamlit
+Check out Cybersyn's [Consumer Spending product](https://app.snowflake.com/marketplace/listing/GZTSZ290BUX62/) and [explore all 60+ public sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) Cybersyn offers on the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc).
+
+### What You Will Learn
+
+- How to access current Session object in Streamlit
+- How to load data from Cybersyn on the Snowflake Marketplace
+- How to create Snowpark DataFrames and perform transformations
+- How to create and display interactive charts in Streamlit
+- How to run Streamlit in Snowflake
 
 ### Prerequisites
 
-- Familiarity with Python
-- Python 3.9
-- Snowpark for Python library
-- A [Snowflake](https://www.snowflake.com/) account with ACCOUNTADMIN role
-  - For this guide, we’ll use the **Environment Data Atlas** dataset provided (for free) by **Knoema**. In the [Data Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ491VXY?search=Knoema), click on Get Data and follow the instructions to gain access to ENVIRONMENT_DATA_ATLAS.
-  - In particular, we will analyze data in schema **ENVIRONMENT** from tables **EDGARED2019**, **WBWDI2019Jan**, and **UNENVDB2018**.
-- Streamlit Python library
+- A [Snowflake](https://www.snowflake.com/) account in **AWS US Oregon**
+- Access to the **Financial & Economic Essentials** dataset provided by **Cybersyn**.
+  - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/), click on **Get Data** and follow the instructions to gain access. In particular, we will use data in schema **CYBERSYN** from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
 
 <!-- ------------------------ -->
-## Setup Environment
+## Get Started
 
 Duration: 5
 
-Create Conda environment by downloading the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). (OR, you may use any other Python environment with Python 3.9)
+Follow these steps to start building Streamlit application in Snowsight.
 
-```shell
-conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.9
-```
+**Step 1.** Click on **Streamlit** on the left navigation menu
 
-- Activate conda environment by running the following command:
+**Step 2.** Click on **+ Streamlit App** on the top right
 
-```shell
-conda activate snowpark
-```
+**Step 3.** Enter **App name**
 
-- Install Snowpark for Python including Pandas and Streamlit by running the following commands:
+**Step 4.** Select **Warehouse** (X-Small) and **App location** (Database and Schema) where you'd like to create the Streamlit applicaton
 
-```shell
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas
-```
+**Step 5.** Click on **Create**
 
-```shell
-pip install streamlit
-```
+- At this point, you will be provided code for an example Streamlit application
+
+**Step 6.** Replace sample application code displayed in the code editor on the left by following instructions in the subsequent steps
 
 <!-- ------------------------ -->
-## Create Python Script
+## Application Setup
 
-Duration: 1
+Duration: 2
 
-Let's start by creating a Python script and adding the import statements to include the required libraries.
-
-*my_snowpark_streamlit_app.py*
+Delete existing sample application code in the code editor on the left and add the following code snippet at the very top.
 
 ```python
-# Import required libraries
-from snowflake.snowpark.session import Session
-from snowflake.snowpark.functions import avg, sum, col,lit
-import streamlit as st
-import pandas as pd
-```
-
-<!-- ------------------------ -->
-## Connect to Snowflake
-
-Duration: 5
-
-In this step, you'll create a [Session object](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-session.html)
-to connect to your Snowflake. Here’s a quick way of doing that, but note that hard coding credentials directly in code is not recommended in production environments. In production environments a better approach would be to load credentials from [AWS Secrets Manager](https://github.com/iamontheinet/sf-code-snippets/blob/main/aws_secrets_manager_sf_connection.py) or [Azure Key Vault](https://github.com/iamontheinet/sf-code-snippets/blob/main/azure_key_vault_sf_connection.py), for example.
-
-```python
-# Create Session object
-def create_session_object():
-   connection_parameters = {
-      "account": "<account_identifier>",
-      "user": "<username>",
-      "password": "<password>",
-      "role": "<role_name>",
-      "warehouse": "<warehouse_name>",
-      "database": "ENVIRONMENT_DATA_ATLAS",
-      "schema": "ENVIRONMENT"
-   }
-   session = Session.builder.configs(connection_parameters).create()
-   return session
-```
-
-In the above code snippet, replace variables enclosed in “<>” with your values.
-
-*IMPORTANT*:
-
-- At the time of writing this guide, the database name was ENVIRONMENT_DATA_ATLAS and the schema name was ENVIRONMENT when accessing the data from the Marketplace. If they've changed, update the values in `connection_parameters` above accordingly.
-
-- For the *account* parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.
-
-<!-- ------------------------ -->
-## Load Data in Snowpark DataFrames
-
-Duration: 5
-
-In this step, you'll create three Snowpark DataFrames to load data from tables EDGARED2019, WBWDI2019Jan, and UNENVDB2018 from schema ENVIRONMENT.
-
-```python
-# Create Snowpark DataFrames that loads data from Knoema: Environmental Data Atlas
-def load_data(session):
-    # CO2 Emissions by Country
-    snow_df_co2 = session.table("ENVIRONMENT.EDGARED2019").filter(col('Indicator Name') == 'Fossil CO2 Emissions').filter(col('Type Name') == 'All Type')
-    snow_df_co2 = snow_df_co2.group_by('Location Name').agg(sum('$16').alias("Total CO2 Emissions")).filter(col('Location Name') != 'World').sort('Location Name')
-
-    # Forest Occupied Land Area by Country
-    snow_df_land = session.table("ENVIRONMENT.\"WBWDI2019Jan\"").filter(col('Series Name') == 'Forest area (% of land area)')
-    snow_df_land = snow_df_land.group_by('Country Name').agg(sum('$61').alias("Total Share of Forest Land")).sort('Country Name')
-
-    # Total Municipal Waste by Country
-    snow_df_waste = session.table("ENVIRONMENT.UNENVDB2018").filter(col('Variable Name') == 'Municipal waste collected')
-    snow_df_waste = snow_df_waste.group_by('Location Name').agg(sum('$12').alias("Total Municipal Waste")).sort('Location Name')
-
-    # Convert Snowpark DataFrames to Pandas DataFrames for Streamlit
-    pd_df_co2 = snow_df_co2.to_pandas()
-    pd_df_land = snow_df_land.to_pandas()
-    pd_df_waste = snow_df_waste.to_pandas()
-```
-
-In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, *filter(), group_by(), agg(), sum(), alias() and sort()*.
-
-**More importantly**, note that at this point nothing is executed on the server because of lazy evaluation–which reduces the amount of data exchanged between Snowflake and the client/application. Also note that when working with Streamlit we need Pandas DataFrames and Snowpark API for Python exposes a method to convert Snowpark DataFrames to Pandas. An action, for example *to_pandas()* in our case, causes the DataFrame to be evaluated and sends the corresponding generated SQL statement to the server for execution.
-
-At this point, you’re technically done with most of the code and all you need to do to render the data in a web application in your browser is to use Streamlit’s *dataframe()* API. For example, *st.dataframe(pd_df_co2)*.
-
-But let’s add a few more web components to make our data application a bit more presentable and interactive.
-
-<!-- ------------------------ -->
-## Add Web Page Components
-
-Duration: 10
-
-In this step, you'll add...
-
-- A header and sub-header
-
-```python
-# Add header and a subheader
-st.header("Knoema: Environment Data Atlas")
-st.subheader("Powered by Snowpark for Python and Snowflake Data Marketplace | Made with Streamlit")
-```
-
-- Use containers and columns to organize our dataframes using Streamlit’s *columns()* and *container()* to display the data using Streamlit's *dataframe()* and an interactive bar chart using Streamlit's *slider()* and *bar_chart()*
-
-```python
-# Use columns to display the three dataframes side-by-side along with their headers
-col1, col2, col3 = st.columns(3)
-with st.container():
-   with col1:
-   st.subheader('CO2 Emissions by Country')
-   st.dataframe(pd_df_co2)
-with col2:
-   st.subheader('Forest Occupied Land Area by Country')
-   st.dataframe(pd_df_land)
-with col3:
-   st.subheader('Total Municipal Waste by Country')
-   st.dataframe(pd_df_waste)
-
-# Display an interactive bar chart to visualize CO2 Emissions by Top N Countries
-with st.container():
-   st.subheader('CO2 Emissions by Top N Countries')
-   with st.expander(""):
-      emissions_threshold = st.number_input(label='Emissions Threshold',min_value=5000, value=20000, step=5000)
-      pd_df_co2_top_n = snow_df_co2.filter(col('Total CO2 Emissions') > emissions_threshold).toPandas()
-      st.bar_chart(data=pd_df_co2_top_n.set_index('Location Name'), width=850, height=500, use_container_width=True)
-```
-
-In the above code snippet, a bar chart is constructed using Streamlit’s *bar_chart()* which takes a dataframe as one of the parameters. In our case, that is a subset of the **CO2 Emissions by Country** dataframe filtered by column Total CO2 Emissions via Snowpark DataFrame’s *filter()* and user-defined CO2 emissions threshold set via Streamlit’s user input component *slider()*.
-
-Here's what the entire code in *my_snowpark_streamlit_app.py* should look like:
-
-```python
-# Snowpark
-from snowflake.snowpark.session import Session
-from snowflake.snowpark.functions import avg, sum, col,lit
+# Import libraries
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.functions import sum, col, when, max, lag
+from snowflake.snowpark import Window
+from datetime import timedelta
+import altair as alt
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(
-     page_title="Environment Data Atlas",
-     page_icon="🧊",
-     layout="wide",
-     initial_sidebar_state="expanded",
-     menu_items={
-         'Get Help': 'https://developers.snowflake.com',
-         'About': "This is an *extremely* cool app powered by Snowpark for Python, Streamlit, and Snowflake Data Marketplace"
-     }
-)
+# Set page config
+st.set_page_config(layout="wide")
 
-# Create Session object
-def create_session_object():
-    connection_parameters = {
-      "account": "<account_identifier>",
-      "user": "<username>",
-      "password": "<password>",
-      "role": "<role_name>",
-      "warehouse": "<warehouse_name>",
-      "database": "KNOEMA_ENVIRONMENT_DATA_ATLAS",
-      "schema": "ENVIRONMENT"
-    }
-    session = Session.builder.configs(connection_parameters).create()
-    print(session.sql('select current_warehouse(), current_database(), current_schema()').collect())
-    return session
+# Get current session
+session = get_active_session()
+```
 
-# Add header and a subheader
-st.header("Knoema: Environment Data Atlas")
-st.subheader("Powered by Snowpark for Python and Snowflake Data Marketplace | Made with Streamlit")
-  
-# Create Snowpark DataFrames that loads data from Knoema: Environmental Data Atlas
-def load_data(session):
-    # CO2 Emissions by Country
-    snow_df_co2 = session.table("ENVIRONMENT.EDGARED2019").filter(col('Indicator Name') == 'Fossil CO2 Emissions').filter(col('Type Name') == 'All Type')
-    snow_df_co2 = snow_df_co2.group_by('Location Name').agg(sum('$16').alias("Total CO2 Emissions")).filter(col('Location Name') != 'World').sort('Location Name')
+In the above code snippet, we're importing the required libraries, setting the application's page config to use full width of the browser window, and gaining access to the current session.
+
+<!-- ------------------------ -->
+## Load and Transform Data
+
+Duration: 5
+
+Now add the following Python function that loads and caches data from the `FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES` and `FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES` tables.
+
+```python
+@st.cache_data()
+def load_data():
+    # Load and transform daily stock price data.
+    snow_df_stocks = (
+        session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES")
+        .filter(
+            (col('TICKER').isin('AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA')) & 
+            (col('VARIABLE_NAME').isin('Nasdaq Volume', 'Post-Market Close')))
+        .groupBy("TICKER", "DATE")
+        .agg(
+            max(when(col("VARIABLE_NAME") == "Nasdaq Volume", col("VALUE"))).alias("NASDAQ_VOLUME"),
+            max(when(col("VARIABLE_NAME") == "Post-Market Close", col("VALUE"))).alias("POSTMARKET_CLOSE")
+        )
+    )
     
-    # Forest Occupied Land Area by Country
-    snow_df_land = session.table("ENVIRONMENT.\"WBWDI2019Jan\"").filter(col('Series Name') == 'Forest area (% of land area)')
-    snow_df_land = snow_df_land.group_by('Country Name').agg(sum('$61').alias("Total Share of Forest Land")).sort('Country Name')
+    # Adding the Day over Day Post-market Close Change calculation
+    window_spec = Window.partitionBy("TICKER").orderBy("DATE")
+    snow_df_stocks_transformed = snow_df_stocks.withColumn("DAY_OVER_DAY_CHANGE", 
+        (col("POSTMARKET_CLOSE") - lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)) /
+        lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)
+    )
+
+    # Load foreign exchange (FX) rates data.
+    snow_df_fx = session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES").filter(
+        (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
     
-    # Total Municipal Waste by Country
-    snow_df_waste = session.table("ENVIRONMENT.UNENVDB2018").filter(col('Variable Name') == 'Municipal waste collected')
-    snow_df_waste = snow_df_waste.group_by('Location Name').agg(sum('$12').alias("Total Municipal Waste")).sort('Location Name')
+    return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
+
+# Load and cache data
+df_stocks, df_fx = load_data()
+```
+
+In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, `filter()`, `group_by()`, `agg()`, `sum()`, `alias()` and `isin()`.
+
+<!-- ------------------------ -->
+## Daily Stock Performance on the Nasdaq by Company
+
+Duration: 5
+
+Now add the following Python function that displays daily stock performance. Create selection dropdowns for date, stock ticker, and metric to be visualized.
+
+```python
+def stock_prices():
+    st.subheader('Stock Performance on the Nasdaq for the Magnificent 7')
     
-    # Convert Snowpark DataFrames to Pandas DataFrames for Streamlit
-    pd_df_co2  = snow_df_co2.to_pandas()
-    pd_df_land = snow_df_land.to_pandas() 
-    pd_df_waste = snow_df_waste.to_pandas()
+    df_stocks['DATE'] = pd.to_datetime(df_stocks['DATE'])
+    max_date = df_stocks['DATE'].max()  # Most recent date
+    min_date = df_stocks['DATE'].min()  # Earliest date
     
-    # Use columns to display the three dataframes side-by-side along with their headers
-    col1, col2, col3 = st.columns(3)
+    # Default start date as 30 days before the most recent date
+    default_start_date = max_date - timedelta(days=30)
+
+    # Use the adjusted default start date in the 'date_input' widget
+    start_date, end_date = st.date_input("Date range:", [default_start_date, max_date], min_value=min_date, max_value=max_date, key='date_range')
+    start_date_ts = pd.to_datetime(start_date)
+    end_date_ts = pd.to_datetime(end_date)
+
+    # Filter DataFrame based on the selected date range
+    df_filtered = df_stocks[(df_stocks['DATE'] >= start_date_ts) & (df_stocks['DATE'] <= end_date_ts)]
+    
+    # Ticker filter with multi-selection and default values
+    unique_tickers = df_filtered['TICKER'].unique().tolist()
+    default_tickers = [ticker for ticker in ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA'] if ticker in unique_tickers]
+    selected_tickers = st.multiselect('Ticker(s):', unique_tickers, default=default_tickers)
+    df_filtered = df_filtered[df_filtered['TICKER'].isin(selected_tickers)]
+    
+    # Metric selection
+    metric = st.selectbox('Metric:',('DAY_OVER_DAY_CHANGE','POSTMARKET_CLOSE','NASDAQ_VOLUME'), index=0) # Default to DAY_OVER_DAY_CHANGE
+    
+    # Generate and display line chart for selected ticker(s) and metric
+    line_chart = alt.Chart(df_filtered).mark_line().encode(
+        x='DATE',
+        y=alt.Y(metric, title=metric),
+        color='TICKER',
+        tooltip=['TICKER','DATE',metric]
+    ).interactive()
+    st.altair_chart(line_chart, use_container_width=True)
+```
+
+In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the `df_stocks` dataframe filtered by ticker, date, and metric using Streamlit's built in components. This enhances the customizability of the visualization.
+
+<!-- ------------------------ -->
+
+## EUR Exchange (FX) Rates by Quote Currency
+
+Duration: 5
+
+Next, add the following Python function that displays a currency selection dropdown and a chart to visualize euro exchange rates over time for the selected quote currencies.
+
+```python
+def fx_rates():
+    st.subheader('EUR Exchange (FX) Rates by Currency Over Time')
+
+    # GBP, CAD, USD, JPY, PLN, TRY, CHF
+    currencies = ['British Pound Sterling','Canadian Dollar','United States Dollar','Japanese Yen','Polish Zloty','Turkish Lira','Swiss Franc']
+    selected_currencies = st.multiselect('', currencies, default = ['British Pound Sterling','Canadian Dollar','United States Dollar','Swiss Franc','Polish Zloty'])
+    st.markdown("___")
+
+    # Display an interactive chart to visualize exchange rates over time by the selected currencies
     with st.container():
-        with col1:
-            st.subheader('CO2 Emissions by Country')
-            st.dataframe(pd_df_co2)
-        with col2:
-            st.subheader('Forest Occupied Land Area by Country')
-            st.dataframe(pd_df_land)
-        with col3:
-            st.subheader('Total Municipal Waste by Country')
-            st.dataframe(pd_df_waste)
-    
-    # Display an interactive chart to visualize CO2 Emissions by Top N Countries
-    with st.container():
-        st.subheader('CO2 Emissions by Top N Countries')
-        with st.expander(""):
-            emissions_threshold = st.slider(label='Emissions Threshold',min_value=5000, value=20000, step=5000)
-            pd_df_co2_top_n = snow_df_co2.filter(col('Total CO2 Emissions') > emissions_threshold).to_pandas()
-            st.bar_chart(data=pd_df_co2_top_n.set_index('Location Name'), width=850, height=500, use_container_width=True)
+        currencies_list = currencies if len(selected_currencies) == 0 else selected_currencies
+        df_fx_filtered = df_fx[df_fx['QUOTE_CURRENCY_NAME'].isin(currencies_list)]
+        line_chart = alt.Chart(df_fx_filtered).mark_line(
+            color="lightblue",
+            line=True,
+        ).encode(
+            x='DATE',
+            y='VALUE',
+            color='QUOTE_CURRENCY_NAME',
+            tooltip=['QUOTE_CURRENCY_NAME','DATE','VALUE']
+        )
+        st.altair_chart(line_chart, use_container_width=True)
+```
 
-if __name__ == "__main__":
-    session = create_session_object()
-    load_data(session)
+In the above code snippet, a line chart is constructed which takes a dataframe as one of the parameters. In our case, that is a subset of the `df_fx` dataframe filtered by the currencies selected via Streamlit's `multiselect()` user input component.
+
+<!-- ------------------------ -->
+
+## Application Components
+
+Duration: 5
+
+Add the following code snippet to display application header, create a sidebar, and map `stock_prices()` and `fx_rates()` functions to **Daily Stock Performance Data** and **Exchange (FX) Rates** options respectively in the sidebar.
+
+```python
+# Display header
+st.header("Cybersyn: Financial & Economic Essentials")
+
+# Create sidebar and load the first page
+page_names_to_funcs = {
+    "Daily Stock Performance Data": stock_prices,
+    "Exchange (FX) Rates": fx_rates
+}
+selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
+page_names_to_funcs[selected_page]()
 ```
 
 <!-- ------------------------ -->
-## Run Web Application
+## Run Application
 
-Duration: 10
+Duration: 5
 
-The fun part! Assuming your [application script](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/my_snowpark_streamlit_app.py) is free of syntax and connection errors, you’re ready to run the application.
+The fun part! Assuming your code is free of syntax and other errors, you’re ready to run the Streamlit application.
 
-To run the application, execute `streamlit run my_snowpark_streamlit_app.py` at the command line.
+### Code
+
+Here's what the entire application code should look like.
+
+```python
+# Import libraries
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.functions import sum, col, when, max, lag
+from snowflake.snowpark import Window
+from datetime import timedelta
+import altair as alt
+import streamlit as st
+import pandas as pd
+
+# Set page config
+st.set_page_config(layout="wide")
+
+# Get current session
+session = get_active_session()
+
+@st.cache_data()
+def load_data():
+    # Load and transform daily stock price data.
+    snow_df_stocks = (
+        session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES")
+        .filter(
+            (col('TICKER').isin('AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA')) & 
+            (col('VARIABLE_NAME').isin('Nasdaq Volume', 'Post-Market Close')))
+        .groupBy("TICKER", "DATE")
+        .agg(
+            max(when(col("VARIABLE_NAME") == "Nasdaq Volume", col("VALUE"))).alias("NASDAQ_VOLUME"),
+            max(when(col("VARIABLE_NAME") == "Post-Market Close", col("VALUE"))).alias("POSTMARKET_CLOSE")
+        )
+    )
+    
+    # Adding the Day over Day Post-market Close Change calculation
+    window_spec = Window.partitionBy("TICKER").orderBy("DATE")
+    snow_df_stocks_transformed = snow_df_stocks.withColumn("DAY_OVER_DAY_CHANGE", 
+        (col("POSTMARKET_CLOSE") - lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)) /
+        lag(col("POSTMARKET_CLOSE"), 1).over(window_spec)
+    )
+
+    # Load foreign exchange (FX) rates data.
+    snow_df_fx = session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES").filter(
+        (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
+    
+    return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
+
+# Load and cache data
+df_stocks, df_fx = load_data()
+
+def stock_prices():
+    st.subheader('Stock Performance on the Nasdaq for the Magnificent 7')
+    
+    df_stocks['DATE'] = pd.to_datetime(df_stocks['DATE'])
+    max_date = df_stocks['DATE'].max()  # Most recent date
+    min_date = df_stocks['DATE'].min()  # Earliest date
+    
+    # Default start date as 30 days before the most recent date
+    default_start_date = max_date - timedelta(days=30)
+
+    # Use the adjusted default start date in the 'date_input' widget
+    start_date, end_date = st.date_input("Date range:", [default_start_date, max_date], min_value=min_date, max_value=max_date, key='date_range')
+    start_date_ts = pd.to_datetime(start_date)
+    end_date_ts = pd.to_datetime(end_date)
+
+    # Filter DataFrame based on the selected date range
+    df_filtered = df_stocks[(df_stocks['DATE'] >= start_date_ts) & (df_stocks['DATE'] <= end_date_ts)]
+    
+    # Ticker filter with multi-selection and default values
+    unique_tickers = df_filtered['TICKER'].unique().tolist()
+    default_tickers = [ticker for ticker in ['AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA'] if ticker in unique_tickers]
+    selected_tickers = st.multiselect('Ticker(s):', unique_tickers, default=default_tickers)
+    df_filtered = df_filtered[df_filtered['TICKER'].isin(selected_tickers)]
+    
+    # Metric selection
+    metric = st.selectbox('Metric:',('DAY_OVER_DAY_CHANGE','POSTMARKET_CLOSE','NASDAQ_VOLUME'), index=0) # Default to DAY_OVER_DAY_CHANGE
+    
+    # Generate and display line chart for selected ticker(s) and metric
+    line_chart = alt.Chart(df_filtered).mark_line().encode(
+        x='DATE',
+        y=alt.Y(metric, title=metric),
+        color='TICKER',
+        tooltip=['TICKER','DATE',metric]
+    ).interactive()
+    st.altair_chart(line_chart, use_container_width=True)
+
+def fx_rates():
+    st.subheader('EUR Exchange (FX) Rates by Currency Over Time')
+
+    # GBP, CAD, USD, JPY, PLN, TRY, CHF
+    currencies = ['British Pound Sterling','Canadian Dollar','United States Dollar','Japanese Yen','Polish Zloty','Turkish Lira','Swiss Franc']
+    selected_currencies = st.multiselect('', currencies, default = ['British Pound Sterling','Canadian Dollar','United States Dollar','Swiss Franc','Polish Zloty'])
+    st.markdown("___")
+
+    # Display an interactive chart to visualize exchange rates over time by the selected currencies
+    with st.container():
+        currencies_list = currencies if len(selected_currencies) == 0 else selected_currencies
+        df_fx_filtered = df_fx[df_fx['QUOTE_CURRENCY_NAME'].isin(currencies_list)]
+        line_chart = alt.Chart(df_fx_filtered).mark_line(
+            color="lightblue",
+            line=True,
+        ).encode(
+            x='DATE',
+            y='VALUE',
+            color='QUOTE_CURRENCY_NAME',
+            tooltip=['QUOTE_CURRENCY_NAME','DATE','VALUE']
+        )
+        st.altair_chart(line_chart, use_container_width=True)
+
+# Display header
+st.header("Cybersyn: Financial & Economic Essentials")
+
+# Create sidebar and load the first page
+page_names_to_funcs = {
+    "Daily Stock Performance Data": stock_prices,
+    "Exchange (FX) Rates": fx_rates
+}
+selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
+page_names_to_funcs[selected_page]()
+```
+
+### Run
+
+To run the application, click on **Run** button located at the top right corner. If all goes well, you should see the application running as shown below.
+
+![App](assets/sis.gif)
 
 In the application:
 
-1. You can click on columns to sort the data
-2. You can increase/decrease the emissions threshold value using the slider to change the data visualization
-
----
-
-![App](assets/img1.png)
-
----
-
-<!-- ------------------------ -->
-## Tips, Tricks And Updated App
-
-Duration: 1
-
-Here are a couple of tips and tricks to note:
-
-- You can change the theme (light or dark) by clicking on the hamburger menu on the top right and then clicking on the **Settings** menu
-- Making any changes to the source script and saving it will automatically prompt you to **Rerun** the application in the browser without having to stop and restart the application at the command line. (This can also be configured to always rerun the app without a prompt.)
-- You can use Streamlit's `st.session_state` to save objects like `snowflake.snowpark.Session` so it's only created once during a session. For example:
-
-```python
-if "snowpark_session" not in st.session_state:
-  session = Session.builder.configs(json.load(open("connection.json"))).create()
-  st.session_state['snowpark_session'] = session
-else:
-  session = st.session_state['snowpark_session']
-```
-
-- Checkout the multi-page [updated application](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/new_snowpark_streamlit_app.py) that you can run by executing `streamlit run new_snowpark_streamlit_app.py`.
-
-![App](assets/img2.png)
-
----
-
-![App](assets/img3.png)
-
-___
-
-![App](assets/img4.png)
+1. Select **Daily Stock Performance Data** or **Exchange (FX) Rates** option from the sidebar.
+2. Select or unselect currencies to visualize euro exchange rates over time for select currencies.
+3. Select a different stock price metric and date range to visualize additional metrics for stock performance evaluation.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 Duration: 1
 
-Congratulations! You've successfully completed the Getting Started with Snowpark for Python and Streamlit quickstart guide.
+Congratulations! You've successfully completed the Getting Started with Snowpark for Python and Streamlit with Cybersyn data quickstart guide.
 
 ### What You Learned
 
-- How to create a Session object for connecting to Snowflake
-- How to create Snowpark DataFrames and load data from Snowflake
-- How to display tabular data and interactive charts using Streamlit
-- How to run the web-based data application using Streamlit
-- Tips and tricks for enhancing the web-based data application
+- How to access current Session object in Streamlit
+- How to load data from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace
+- How to create Snowpark DataFrames and perform transformations
+- How to create and display interactive charts in Streamlit
+- How to run Streamlit in Snowflake
 
 ### Related Resources
 
-- [Application Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-for-python-streamlit/blob/main/src/my_snowpark_streamlit_app.py)
-- [Machine Learning with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
-- [Snowpark for Python Examples](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
-- [Streamlit Docs](https://docs.streamlit.io/)
+- [Cybersyn data on the Snowflake Marketplace](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc)
+- [Cybersyn Data Catalog](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart)

@@ -2,7 +2,7 @@ summary: This guide provides the instructions for writing an LLM chatbot in Stre
 id: frosty_llm_chatbot_on_streamlit_snowflake
 categories: data-science-&-ml,app-development
 environments: web
-status: Publish
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowpark Python, Streamlit, OpenAI, LLMs
 authors: Joshua Carroll, Richard Meng, Caroline Frasca
@@ -32,8 +32,11 @@ A large language model, or LLM, is a deep learning algorithm that can recognize,
 ### What is OpenAI?
 OpenAI is the AI research and deployment company behind ChatGPT, GPT-4 (and its predecessors), DALL-E, and other notable offerings. Learn more about [OpenAI](https://openai.com/). We use OpenAI in this guide, but you are welcome to use the large language model of your choice in its place.
 
+### What is the Snowflake Marketplace?
+The [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/) provides users with access to a wide range of datasets from third-party data stewards, expanding the data available for transforming business processes and making decisions. Data providers can publish datasets and offer data analytics services to Snowflake customers. Customers can securely access shared datasets directly from their Snowflake accounts and receive automatic real-time updates.
+
 ### Prerequisites
-* Accountadmin role access in Snowflake or a [Snowflake trial account](https://signup.snowflake.com/)
+* Accountadmin role access in Snowflake or a [Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 * An API key for OpenAI or another Large Language Model
 * Basic knowledge of SQL, database concepts, and objects
 * Familiarity with Python (all code for the lab is provided)
@@ -42,35 +45,34 @@ OpenAI is the AI research and deployment company behind ChatGPT, GPT-4 (and its 
 
 ### What you’ll learn
 * How to create a web application from a Python script with Streamlit
+* How to build a chatbot in just a few lines of code using [Streamlit's new chat UI](https://docs.streamlit.io/library/api-reference/chat)
 * How to use [`st.experimental_connection`](https://docs.streamlit.io/library/api-reference/connections/st.experimental_connection) to connect your Streamlit app to Snowflake
-* How to build a chatbot in just a few lines of code using Streamlit's new chat UI
 * How to use [`session state`](https://docs.streamlit.io/library/api-reference/session-state) to store your chatbot's message history
 
 <!-- ------------------------ -->
 ## Prepare your environment
 Duration: 8
 
-1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) to manage a separate environment by selecting the appropriate installer link for your operating system and Python version from [Anaconda's website](https://docs.conda.io/en/latest/miniconda.html#latest-miniconda-installer-links).
+Complete the following steps in your local machine (or an equivalent dev environment):
+
+1. Install [Anaconda Distribution](https://docs.conda.io/en/latest/miniconda.html](https://www.anaconda.com/download) to manage a separate environment by selecting the appropriate installer link for your operating system and Python version.
 2. Open the terminal or command prompt and create a folder for your project. Let's call it `llm-chatbot`.
-3. If you're using a machine with an Apple M1 chip, run the following command to use conda to create a Python 3.10 virtual environment, add the Snowflake conda channel, and install the numpy and pandas packages: 
+3. Make sure you are running the latest version of conda by running the following command:
     ```
-    conda create --name py310_env --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.10 numpy pandas
+    conda update -n base conda
     ```
-    Activate the environment created in those instructions by running `conda activate py310_env` and proceed to step 6 below.
-
-    If you're not using a machine with an Apple M1 chip, continue to step 4.
-
-4. Create a conda environment by running the following command:
+4. Run the following command to create a Python 3.11 conda virtual environment:
     ```
-    conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.10
+    conda create --name snowpark-llm-chatbot python=3.11
     ```
 5. Activate the conda environment by running the following command:
     ```
-    conda activate snowpark
+    conda activate snowpark-llm-chatbot
     ```
-6. Install Snowpark for Python, Streamlit, and OpenAI by running the following command:
+8. Install Snowpark for Python, Streamlit, and OpenAI by running the following command:
     ```
-    conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python openai streamlit
+    conda install snowflake-snowpark-python "openai>=1.0.0"
+    conda install conda-forge::"streamlit>=1.28.2"
     ```
 
 ### Troubleshooting `pyarrow` related issues
@@ -93,7 +95,7 @@ Snowflake Marketplace provides visibility to a wide variety of datasets from thi
 
 ### Log into Snowsight
 
-If you don't have a Snowflake account, sign up for a 30-day free trial [here](https://signup.snowflake.com/).
+If you don't have a Snowflake account, sign up for a 30-day free trial [here](https://signup.snowflake.com/?utm_cta=quickstarts_).
 
 1. In a supported web browser, navigate to [https://app.snowflake.com](https://app.snowflake.com).
 2. Provide your account name or account URL. If you’ve previously signed in to Snowsight, you might see an account name that you can select.
@@ -112,7 +114,7 @@ You can also access Snowsight from the Classic Console:
 4. Select the appropriate roles to access the database being created and accept the Snowflake consumer terms and Cybersyn's terms of use.
 5. Select **"Query Data,"** which will open a worksheet with example queries.
 
-![Example queries for the Cybersyn Financial & Economic Essentials dataset from the Snowflake Data Marketplace](assets/Cybersyn_Example_Queries.png)
+![Example queries for the Cybersyn Financial & Economic Essentials dataset from the Snowflake Marketplace](assets/Cybersyn_Example_Queries.png)
 
 ### Prep database
 Before building our app, we need to run a set of SQL statements in Snowflake to create two views. The first view is `FROSTY_SAMPLE.CYBERSYN_FINANCIAL.FINANCIAL_ENTITY_ATTRIBUTES_LIMITED`, which includes:
@@ -145,29 +147,30 @@ Since our application will connect to Snowflake and OpenAI, we need a way to sec
 1. Add a folder within your `llm-chatbot` folder called `.streamlit`. Using the command line, you can do this by entering `mkdir .streamlit`.
 2. Within the `.streamlit` folder, add a file called `secrets.toml`. Using the command line, you can do this by first navigating to the `.streamlit` folder via `cd .streamlit` and then entering `touch secrets.toml.`
 
+#### Add OpenAI credentials to `secrets.toml`
+We need to add our OpenAI API key to our secrets file. Add your OpenAI key to the secrets file with the following format (replace the placeholder API key with your actual API key).
+
+```toml
+# .streamlit/secrets.toml
+
+OPENAI_API_KEY = "sk-2v...X"
+```
+
 #### Add Snowflake credentials to `secrets.toml`
-We need to add the Snowflake `user`, `password`, `warehouse`, `role`, and `account` to our secrets file. Copy the following format, replacing the placeholder credentials with your actual credentials.
+We also need to add the Snowflake `user`, `password`, `warehouse`, `role`, and `account` to our secrets file. Copy the following format, replacing the placeholder credentials with your actual credentials.
+`account` should be your Snowflake account identifier, which you can locate by following the instructions outlined [here](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 If you prefer to use browser-based SSO to authenticate, replace `password = "<my_trial_pass>"` with `authenticator=EXTERNALBROWSER`.
 
 ```toml
 # .streamlit/secrets.toml
 
-[connections.snowpark]
+[connections.snowflake]
 user = "<jdoe>"
 password = "<my_trial_pass>"
 warehouse = "COMPUTE_WH"
 role = "ACCOUNTADMIN"
 account = "<account-id>"
-```
-
-#### Add OpenAI credentials to `secrets.toml`
-We also need to add our OpenAI API key to our secrets file. Copy the following format, replacing the placeholder API key with your actual API key.
-
-```toml
-# .streamlit/secrets.toml
-
-OPENAI_API_KEY = "sk-2v...X"
 ```
 
 #### Full contents of secrets.toml
@@ -176,7 +179,7 @@ OPENAI_API_KEY = "sk-2v...X"
 
 OPENAI_API_KEY = "sk-2v...X"
 
-[connections.snowpark]
+[connections.snowflake]
 user = "<username>"
 password = "<password>"
 warehouse = "COMPUTE_WH"
@@ -200,11 +203,11 @@ First, we'll validate our OpenAI credentials by asking GPT-3.5 a simple question
 
 ```python
 import streamlit as st
-import openai
+from openai import OpenAI
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-completion = openai.ChatCompletion.create(
+completion = client.chat.completions.create(
   model="gpt-3.5-turbo",
   messages=[
     {"role": "user", "content": "What is Streamlit?"}
@@ -220,15 +223,12 @@ st.write(completion.choices[0].message.content)
 
 Next, let's validate that our Snowflake credentials are working as expected.
 
-1. Replace the contents of `validate_credentials.py` with the below code. This snippet does the following:
-   * Imports the Streamlit package
+1. Append the following to `validate_credentials.py`. This snippet does the following:
    * Creates a Snowpark connection
    * Executes a query to pull the current warehouse and writes the result to the UI
 
 ```python
-import streamlit as st
-
-conn = st.experimental_connection("snowpark")
+conn = st.connection("snowflake")
 df = conn.query("select current_warehouse()")
 st.write(df)
 ```
@@ -246,7 +246,7 @@ We'll break down the Python file snippet-by-snippet so that you understand the f
 
 1. Create a file called `simple_chatbot.py`. Add import statements and give your app a title.
 ```python
-import openai
+from openai import OpenAI
 import streamlit as st
 
 st.title("☃️ Frosty")
@@ -257,9 +257,7 @@ st.title("☃️ Frosty")
 ```python
 # Initialize the chat messages history
 if "messages" not in st.session_state.keys():
-    st.session_state.messages = [
-        {"role": "assistant", "content": "How can I help?"}
-    ]
+    st.session_state.messages = [{"role": "assistant", "content": "How can I help?"}]
 ```
 
 3. Prompt the user to enter chat input by using Streamlit's `st.chat_input()` feature. If the user has entered a message, add that message to the chat history by storing it in session state.
@@ -273,7 +271,7 @@ if prompt := st.chat_input():
 4. Display the chatbot's message history by iterating through the values stored in session state associated with the key "messages" and printing each value.
 
 ```python
-# display the prior chat messages
+# display the existing chat messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.write(message["content"])
@@ -287,9 +285,9 @@ if st.session_state.messages[-1]["role"] != "assistant":
     # Call LLM
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            r = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+            r = OpenAI().chat.completions.create(
                 messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+                model="gpt-3.5-turbo",
             )
             response = r.choices[0].message.content
             st.write(response)
@@ -304,16 +302,14 @@ if st.session_state.messages[-1]["role"] != "assistant":
 The full contents of the Python file for this simple chatbot app are below, or you can download the file from [GitHub](https://github.com/Snowflake-Labs/sfguide-frosty-llm-chatbot-on-streamlit-snowflake/blob/main/src/simple_chatbot.py).
 
 ```python
-import openai
+from openai import OpenAI
 import streamlit as st
 
 st.title("☃️ Frosty")
 
 # Initialize the chat messages history
 if "messages" not in st.session_state.keys():
-    st.session_state.messages = [
-        {"role": "assistant", "content": "How can I help?"}
-    ]
+    st.session_state.messages = [{"role": "assistant", "content": "How can I help?"}]
 
 # Prompt for user input and save
 if prompt := st.chat_input():
@@ -329,9 +325,9 @@ if st.session_state.messages[-1]["role"] != "assistant":
     # Call LLM
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            r = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+            r = OpenAI().chat.completions.create(
                 messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+                model="gpt-3.5-turbo",
             )
             response = r.choices[0].message.content
             st.write(response)
@@ -365,36 +361,42 @@ This file should be placed in the root of your `llm-chatbot` folder. You can dow
 ````python
 import streamlit as st
 
-QUALIFIED_TABLE_NAME = "FROSTY_SAMPLE.CYBERSYN_FINANCIAL.FINANCIAL_ENTITY_ANNUAL_TIME_SERIES"
-METADATA_QUERY = "SELECT VARIABLE_NAME, DEFINITION FROM FROSTY_SAMPLE.CYBERSYN_FINANCIAL.FINANCIAL_ENTITY_ATTRIBUTES_LIMITED;"
+SCHEMA_PATH = st.secrets.get("SCHEMA_PATH", "FROSTY_SAMPLE.CYBERSYN_FINANCIAL")
+QUALIFIED_TABLE_NAME = f"{SCHEMA_PATH}.FINANCIAL_ENTITY_ANNUAL_TIME_SERIES"
 TABLE_DESCRIPTION = """
 This table has various metrics for financial entities (also referred to as banks) since 1983.
 The user may describe the entities interchangeably as banks, financial institutions, or financial entities.
 """
+# This query is optional if running Frosty on your own table, especially a wide table.
+# Since this is a deep table, it's useful to tell Frosty what variables are available.
+# Similarly, if you have a table with semi-structured data (like JSON), it could be used to provide hints on available keys.
+# If altering, you may also need to modify the formatting logic in get_table_context() below.
+METADATA_QUERY = f"SELECT VARIABLE_NAME, DEFINITION FROM {SCHEMA_PATH}.FINANCIAL_ENTITY_ATTRIBUTES_LIMITED;"
 
 GEN_SQL = """
-You will be acting as an AI Snowflake SQL expert named Frosty.
-Your goal is to give correct, executable SQL queries to users.
+You will be acting as an AI Snowflake SQL Expert named Frosty.
+Your goal is to give correct, executable sql query to users.
 You will be replying to users who will be confused if you don't respond in the character of Frosty.
 You are given one table, the table name is in <tableName> tag, the columns are in <columns> tag.
-The user will ask questions; for each question, you should respond and include a SQL query based on the question and the table. 
+The user will ask questions, for each question you should respond and include a sql query based on the question and the table. 
 
 {context}
 
 Here are 6 critical rules for the interaction you must abide:
 <rules>
-1. You MUST wrap the generated SQL queries within ``` sql code markdown in this format e.g
+1. You MUST MUST wrap the generated sql code within ``` sql code markdown in this format e.g
 ```sql
 (select 1) union (select 2)
 ```
 2. If I don't tell you to find a limited set of results in the sql query or question, you MUST limit the number of responses to 10.
 3. Text / string where clauses must be fuzzy match e.g ilike %keyword%
-4. Make sure to generate a single Snowflake SQL code snippet, not multiple. 
-5. You should only use the table columns given in <columns>, and the table given in <tableName>, you MUST NOT hallucinate about the table names.
-6. DO NOT put numerical at the very front of SQL variable.
+4. Make sure to generate a single snowflake sql code, not multiple. 
+5. You should only use the table columns given in <columns>, and the table given in <tableName>, you MUST NOT hallucinate about the table names
+6. DO NOT put numerical at the very front of sql variable.
 </rules>
 
-Don't forget to use "ilike %keyword%" for fuzzy match queries and wrap the generated sql code with ``` sql code markdown in this format e.g:
+Don't forget to use "ilike %keyword%" for fuzzy match queries (especially for variable_name column)
+and wrap the generated sql code with ``` sql code markdown in this format e.g:
 ```sql
 (select 1) union (select 2)
 ```
@@ -405,14 +407,14 @@ Now to get started, please briefly introduce yourself, describe the table at a h
 Then provide 3 example questions using bullet points.
 """
 
-@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner="Loading Frosty's context...")
 def get_table_context(table_name: str, table_description: str, metadata_query: str = None):
     table = table_name.split(".")
-    conn = st.experimental_connection("snowpark")
+    conn = st.connection("snowflake")
     columns = conn.query(f"""
         SELECT COLUMN_NAME, DATA_TYPE FROM {table[0].upper()}.INFORMATION_SCHEMA.COLUMNS
         WHERE TABLE_SCHEMA = '{table[1].upper()}' AND TABLE_NAME = '{table[2].upper()}'
-        """,
+        """, show_spinner=False,
     )
     columns = "\n".join(
         [
@@ -430,7 +432,7 @@ Here are the columns of the {'.'.join(table)}
 <columns>\n\n{columns}\n\n</columns>
     """
     if metadata_query:
-        metadata = conn.query(metadata_query)
+        metadata = conn.query(metadata_query, show_spinner=False)
         metadata = "\n".join(
             [
                 f"- **{metadata['VARIABLE_NAME'][i]}**: {metadata['DEFINITION'][i]}"
@@ -469,7 +471,7 @@ We'll break down the Python file snippet-by-snippet so that you understand the f
    * Iterates through the message history and displays each message in the app
 
 ```python
-import openai
+from openai import OpenAI
 import re
 import streamlit as st
 from prompts import get_system_prompt
@@ -477,8 +479,7 @@ from prompts import get_system_prompt
 st.title("☃️ Frosty")
 
 # Initialize the chat messages history
-openai.api_key = st.secrets.OPENAI_API_KEY
-
+client = OpenAI(api_key=st.secrets.OPENAI_API_KEY)
 if "messages" not in st.session_state:
     # system prompt includes table information, rules, and prompts the LLM to produce
     # a welcome message to the user.
@@ -506,12 +507,12 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         response = ""
         resp_container = st.empty()
-        for delta in openai.ChatCompletion.create(
+        for delta in client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
             stream=True,
         ):
-            response += delta.choices[0].delta.get("content", "")
+            response += (delta.choices[0].delta.content or "")
             resp_container.markdown(response)
 ```
 
@@ -523,7 +524,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
         sql_match = re.search(r"```sql\n(.*)\n```", response, re.DOTALL)
         if sql_match:
             sql = sql_match.group(1)
-            conn = st.experimental_connection("snowpark")
+            conn = st.connection("snowflake")
             message["results"] = conn.query(sql)
             st.dataframe(message["results"])
         st.session_state.messages.append(message)
@@ -536,7 +537,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
 The full contents of the Python file for this app are below, or you can download the file from [GitHub](https://github.com/Snowflake-Labs/sfguide-frosty-llm-chatbot-on-streamlit-snowflake/blob/main/src/frosty_app.py).
 
 ```python
-import openai
+from openai import OpenAI
 import re
 import streamlit as st
 from prompts import get_system_prompt
@@ -544,7 +545,7 @@ from prompts import get_system_prompt
 st.title("☃️ Frosty")
 
 # Initialize the chat messages history
-openai.api_key = st.secrets.OPENAI_API_KEY
+client = OpenAI(api_key=st.secrets.OPENAI_API_KEY)
 if "messages" not in st.session_state:
     # system prompt includes table information, rules, and prompts the LLM to produce
     # a welcome message to the user.
@@ -568,12 +569,12 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         response = ""
         resp_container = st.empty()
-        for delta in openai.ChatCompletion.create(
+        for delta in client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
             stream=True,
         ):
-            response += delta.choices[0].delta.get("content", "")
+            response += (delta.choices[0].delta.content or "")
             resp_container.markdown(response)
 
         message = {"role": "assistant", "content": response}
@@ -581,7 +582,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
         sql_match = re.search(r"```sql\n(.*)\n```", response, re.DOTALL)
         if sql_match:
             sql = sql_match.group(1)
-            conn = st.experimental_connection("snowpark")
+            conn = st.connection("snowflake")
             message["results"] = conn.query(sql)
             st.dataframe(message["results"])
         st.session_state.messages.append(message)
@@ -630,3 +631,4 @@ Want to learn more about the tools and technologies used by your app? Check out 
 * [OpenAI's ChatCompetion feature](https://platform.openai.com/docs/api-reference/chat)
 * [Generative AI and Streamlit: A perfect match](https://blog.streamlit.io/generative-ai-and-streamlit-a-perfect-match/)
 * [Build powerful generative AI apps with Streamlit](https://streamlit.io/generative-ai)
+* [Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/data-exploration-llm-chatbot/)

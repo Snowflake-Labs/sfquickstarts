@@ -1,7 +1,7 @@
 author: Michael Meyer
 id: getting_started_with_alation
 summary: This guide is used to help with the installation of the Alation Data Intelligence Platform. The walk-through consists of being able to find & trust data in your organization, how to actively govern data, and how Alation can help with when migrating data to Snowflake.
-categories: partner-integrations
+categories: partner-integrations, marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -14,7 +14,7 @@ Duration: 1
 
 Does your organization have data intelligence? Can people easily find, understand, and trust data? If not, you’ll want to join this lab to learn how Alation ensures people have reliable and trustworthy data to make confident, data-driven decisions.
 
-In this expert-led, hands-on lab, you will follow a step-by-step guide utilizing an Alation-provided sample database of a fictitious TV streaming company, Juno. Using this example data, you will learn how the Alation Data Catalog improves productivity with self-service analytics and uses automation and continuous improvement to manage data governance. See why Alation is Snowflake’s *2-time Data Governance Partner of the Year*. 
+In this expert-led, hands-on lab, you will follow a step-by-step guide utilizing an Alation-provided sample database of a fictitious TV streaming company, Juno. Using this example data, you will learn how the Alation Data Catalog improves productivity with self-service analytics and uses automation and continuous improvement to manage data governance. See why Alation is Snowflake’s *3-time Data Governance Partner of the Year*. 
 
 During the lab, you’ll kickstart your 14-day free trial of Alation — to which you can connect to your own Snowflake environment and continue to explore the data catalog. 
 
@@ -24,16 +24,17 @@ During the lab, you’ll kickstart your 14-day free trial of Alation — to whic
 - How to protect sensitive data using Snowflake's role-based masking policies
 - How to write trusted SQL queries with guided navigation
 - How to visualize column-level lineage for impact analysis
+- How to explore data quality metrics against critical data assets
 
 ### - What You’ll Need 
-- A trial [Snowflake](https://signup.snowflake.com/) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake accoount (with ACCOUNTADMIN access)
+- A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account with ACCOUNTADMIN access (optional) or an existing Snowflake accoount (with ACCOUNTADMIN access)
 - Alation free trial through Snowflake Partner Connect 
 
 <!-- ------------------------ -->
-## Getting Your Snowflake Trial Account
+## Getting Your Snowflake Trial Account (Optional)
 Duration: 3
 
-- To create a Snowflake trial account, follow [this link](https://signup.snowflake.com) and fill out the form before clicking Continue. You'll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click: ``` Get Started ```
+- To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_cta=quickstarts_) and fill out the form before clicking Continue. You'll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click: ``` Get Started ```
 
 - Next you will be prompted for the reason you are signing up for a Snowflake trial account. Choose "Virtual hands-on lab or demo" and any other ones that apply. Click: ``` Submit ```
 
@@ -42,26 +43,26 @@ Duration: 3
 Duration: 3
 **1. Access Partner Connect from your Snowflake trial account.**
 
-![Step1](./assets/PartnerConnect-Screen1.png)
+![Step1](./assets/Section3-AlationTrial-Screen1.png)
 
-* After you have logged in, access the ``` Admin ``` menu selection from the left navigation bar.
+* After you have logged in, access the ``` Data Products ``` menu selection from the left navigation bar.
 * Then select ``` Partner Connect ```
 * Either type in Alation in the search or scroll down to the Security & Governance section.
 
 ![Line1](./assets/BorderLine.png)
 **2. Default Objects Created in your Snowflake trial account.**
-![Step2](./assets/PartnerConnect-Screen2.png)
+![Step2](./assets/Section3-AlationTrial-Screen2.png)
 * Click: ``` Connect ```
 
 ![Line2](./assets/BorderLine.png)
-**3. Your Partner Connect Account has been Created**
-![Step3](./assets/PartnerConnect-Screen3.png)
+**3. Your Partner Connect Account has been Created**    
+![Step3](./assets/Section3-AlationTrial-Screen3.png)
 * Click: ``` Activate ```
 
 ![Line3](./assets/BorderLine.png)
 **4. Alation Account set up**
 
-![Step4](./assets/PartnerConnect-Screen4.png)
+![Step4](./assets/Section3-AlationTrial-Screen4.png)
 * The email address that you used for your trial Snowflake account will be used as your Alation user id. This is the reason why this field cannot be edited.
 * Provide your password.
 * Verify your password.
@@ -70,16 +71,16 @@ Duration: 3
 ![Line4](./assets/BorderLine.png)
 **5. Getting Started User Information**
 
-![Step5](./assets/PartnerConnect-Screen5.png)
+![Step5](./assets/Section3-AlationTrial-Screen5.png)
 
 * Provide your information in order to start the trial. 
-* Note: the email provided is how Alation will share addtional infomation throughout the trial.
+* Note: the business email provided is how Alation will share additional infomation throughout the trial.
 * Click: ``` Next ```
 
 ![Line5](./assets/BorderLine.png)
 **6. Your Account is Ready**
 
-![Step6](./assets/PartnerConnect-Screen6.png)
+![Step6](./assets/Section3-AlationTrial-Screen6.png)
 * Your Alation Trial has finished being installed and is ready for use.
 * Click: ``` Log in to Alation Account ```
 * Note: you will also receive an email with the Alation URL. 
@@ -88,7 +89,7 @@ Duration: 3
 ## Accessing the Lab
 Duration: 2
 
-In this Alation data intelligence lab, you can expect to see how the platform helps to solve problems for roles ranging from business analysts to data engineers. Each section will have discussion points along with exercises to help reinforce each topic.
+In this Alation Data Intelligence Platform lab, you can expect to see how the platform helps to solve problems for roles ranging from business analysts to data engineers. Each section will have discussion points along with exercises to help reinforce each topic.
 
 Let's get started!
 
@@ -96,33 +97,34 @@ Let's get started!
 
 Access the URL provided for your Alation trial in your preferred browser, like Chrome.
 
-**2. On the home page scroll down to the bottom and click on Data Governance and Discovery VHOL.**
+**2. On the home page scroll down to the bottom and click on Data Governance and Quality.**
 
-![VHOL-Screen1](./assets/Screen1-HomePage.png)
+![VHOL-Screen1](./assets/Section4-Access-Screen1.png)
 ![VHOL-Border1](./assets/BorderLine.png)
-**3. The Data Governance and Discovery Virtual Hands on Lab.**
+**3. The Data Governance and Quality Lab.**
 
-This is the main page that has the five chapters that will be covered in the lab. Each chapter covers a particular topic.
+This is the main page that has the six chapters that will be covered in the lab. Each chapter covers a particular topic.
 
 Let's get started with Chapter 01. Establishing a Governance Framework. Please click on the highlighted chapter link. 
 
-![VHOL-Screen2](./assets/Screen2-DgDiscoveryDomain.png)
+![VHOL-Screen2](./assets/Section4-Access-Screen2.png)
 
 ## Establishing a Governance Framework
 Duration: 5
 
 **Overview**
 
-One of the best parts of using the Alation data intelligence platform is that you get a system to drive data culture and a wealth of knowledge on how to get started. Data Governance doesn't need to be a daunting undertaking. Let Alation help guide you using an active data governance methodology based on people first. 
+One of the best parts of using the Alation Data Intelligence Platform is that you get a system to drive a data culture and a wealth of knowledge on how to get started. Data Governance doesn't need to be a daunting undertaking. Let Alation help guide you using an active data governance methodology based on people first. 
 
 This section is all about how to get started and achieve value quickly from Alation—starting with curating assets to understanding common problems that most data organizations want to solve. Some challenges impact a particular role in an organization, and you will see how **all roles** benefit from the data intelligence platform solutions. 
 
 **Note** that we will be accessing an Alation-provided Snowflake account for this lab. At the conclusion of the lab, we'll discuss how to set up Alation to manage your own Snowflake data sources.
 
-![VHOL-Screen3](./assets/Screen3-DGWheel.png)
-![VHOL-Border3](./assets/BorderLine.png)
-
-![VHOL-Screen4](./assets/Screen3-DGWheel-Bottom.png)
+![VHOL-Screen3](./assets/Section5-Gov-Framework-Screen1.png)
+![VHOL-Screen4](./assets/Section5-Gov-Framework-Screen2.png)
+![VHOL-Screen5](./assets/Section5-Gov-Framework-Screen3.png)
+![VHOL-Screen6](./assets/Section5-Gov-Framework-Screen4.png)
+![VHOL-Screen7](./assets/Section5-Gov-Framework-Screen5.png)
 
 To continue to the next section, click on the link in the highlighted box at the bottom of the page.
 
@@ -134,7 +136,8 @@ Duration: 10
 
 In today's world of data management, it is common to have policies and procedures that range from data quality and retention to personal data protection. If you are an organization that has policies defined, how difficult is it to find them? Often, policies are in file shares or document systems, making them very hard to discover. With Alation, you can store your policies where your data assets live, which makes them extremely easy to find. The other huge benefit is that data assets associated with the policy can be tracked.
 
-![VHOL-Screen5](./assets/Screen4-Policies.png)
+![VHOL-Screen8](./assets/Section6-Policies-Screen1.png)
+![VHOL-Screen9](./assets/Section6-Policies-Screen2.png)
 ![VHOL-Border4](./assets/BorderLine.png)
 
 <table>   
@@ -151,18 +154,18 @@ In today's world of data management, it is common to have policies and procedure
     </tbody>
 </table>
 
-1. Policies are part of the Governance App. Click on the dropdown arrow next to Apps.
-2. Click on the Govern icon.
+1. Policies are part of Alation Data Governance which also includes Stewardship Workbench, and Workflow. Duplicate your current brower tab, then click on Policies in the left-hand navigation.
 
-![VHOL-Screen6](./assets/Screen4-Policies-Exer1.png)
+![VHOL-Screen10](./assets/Section6-Policies-Screen3.png)
 
-3. Click on the Policy Center tile.
+2. Click on the Personal Data Handling policy group.
 
-![VHOL-Screen7](./assets/Screen4-Policies-Exer2.png)
+![VHOL-Screen11](./assets/Section6-Policies-Screen4.png)
 
-4. Once in Policy Center, you will be able to complete the exercise as outlined.
+3. From the list of policies in the group, select the Personal Data Protection Policy.
+4. Use your browser back arrow to return to the Personal Data Handling policy group. From the list of policies in the group, select the CUST_NAME_MASK policy.
 
-![VHOL-Screen8](./assets/Screen4-Policies-Exer3.png)
+![VHOL-Screen12](./assets/Section6-Policies-Screen5.png)
 
 ![VHOL-Border5](./assets/BorderLine.png)
 
@@ -180,11 +183,11 @@ In today's world of data management, it is common to have policies and procedure
     </tbody>
 </table>
 
-Policies as living content centralized with data asset information helps everyone in the organization. 
+Policies as living content centralized with data asset information helps everyone in the organization.  They consist of both business and data policies.
 
 Now it is time to move on to Search and Discovery!
 
-![VHOL-Screen9](./assets/Screen4-Policies-bottom.png)
+![VHOL-Screen13](./assets/Section6-Policies-Screen6.png)
 
 <!-- ------------------------ -->
 ## Search & Discovery
@@ -196,7 +199,8 @@ Every organization wants to make data-driven decisions. For this to become a rea
 
 Alation creates an experience that allows users to expand their world of knowledge through curation and collaboration. A community of technical and non-technical producers and consumers helps drive data literacy, leading to better business decisions and success.
 
-![VHOL-Screen10](./assets/Screen5-Search.png)
+![VHOL-Screen14](./assets/Section7-Search-Screen1.png)
+![VHOL-Screen15](./assets/Section7-Search-Screen2.png)
 
 ![VHOL-Border6](./assets/BorderLine.png)
 
@@ -216,18 +220,22 @@ Alation creates an experience that allows users to expand their world of knowled
 
 1. The Alation Search bar is always present on the home page in the header and at the top of the other pages.
 
-![VHOL-Screen11](./assets/Screen5-Search-Exer1.png)
+![VHOL-Screen16](./assets/Section7-Search-Screen3.png)
 
 2. As you start to type what you want to search for, Alation provides suggestions.
-3. Click on All Results to see what the search has found and to filter the results to find what you are looking for quickly.
+3. Click on **See all results** to see what the search has found and to filter the results to find what you are looking for quickly.
 
-![VHOL-Screen12](./assets/Screen5-Search-Exer2.png)
+![VHOL-Screen17](./assets/Section7-Search-Screen4.png)
 
-4. The top filters let you narrow your search by object type like column, articles, terms, etc.
-5. The left-hand side of the screen has additional filters based on tags, custom fields, and more. This is a compelling way to look for specific items like PII Data Classification.
-6. Search provides the trust flags to tell if the result item has been endorsed, warned, or deprecated. The star indicates this is an item you marked as one of your favorites.
+4. Filters are displayed on the left panel on the search results page. You can narrow your search by object type, such as table, column, BI reports, terms, tags, custom fields, etc. Some object types have subtypes. To see the subtypes, click the arrow next to the subject area and select the desired items from the list.
 
-![VHOL-Screen13](./assets/Screen5-Search-Exer3.png)
+![VHOL-Screen18](./assets/Section7-Search-Screen5.png)
+
+5. After you set the filters, they will be displayed as Applied Filters, and the application will refresh the search results.
+
+6. Search provides the trust flags to tell if the result item has been endorsed, has informational messages, or has been deprecated, along with an indicator showing if the item has been bookmarked.
+
+![VHOL-Screen19](./assets/Section7-Search-Screen6.png)
 
 ![VHOL-Border7](./assets/BorderLine.png)
 
@@ -249,20 +257,21 @@ Search is core to increasing productivity and data literacy. Spend minutes inste
 
 Now it is time to move on to Compose, Alation's SQL editor!
 
-![VHOL-Screen14](./assets/Screen5-Search-bottom.png)
+![VHOL-Screen20](./assets/Section7-Search-screen7.png)
 <!-- ------------------------ -->
 ## Compose 
-Duration: 15
+Duration: 10
 
 **Overview**
 
-In addition to the rich cataloging and governance capabilities, Alation enables users to interact with data stored in cataloged sources. This capability is called Compose and provides a fully integrated and governed SQL development environment. 
+In addition to the rich cataloging and governance capabilities, the Alation Data Intelligence Platform enables users to interact with data stored in cataloged sources. This capability is called Compose and provides a fully integrated and governed SQL development environment.
 
-Compose is more than your typical SQL editor. Because it is integrated with the catalog, the editor's IntelliSense can provide suggestions as you type for tables, columns, joins, etc. Another advantage is that active governance will show you when an item is deprecated, so you are not using bad data.
+Compose is more than your typical SQL editor. Because it is integrated with the active metadata stored in the catalog, the editor's IntelliSense can provide suggestions as you type for tables, columns, joins, etc. Another advantage is that active data governance will show you when an item is deprecated, so you are not using bad data.
 
-Queries can be developed by those who know SQL and shared with others in the organization. No worries if you don’t know how to read or write SQL. Queries can be published as forms that allow the business user to fill out some prompts and get answers to the questions they need to be answered.
+Queries can be developed by those who know SQL and shared with others in the organization. No worries if you don't know how to read or write SQL. Queries can be published as forms, allowing the business user to fill out some prompts and get answers to the questions they need answered.
 
-![VHOL-Screen15](./assets/Screen6-Compose.png)
+![VHOL-Screen21](./assets/Section8-Compose-Screen1.png)
+![VHOL-Screen22](./assets/Section8-Compose-Screen2.png)
 
 ![VHOL-Border8](./assets/BorderLine.png)
 
@@ -282,22 +291,20 @@ Queries can be developed by those who know SQL and shared with others in the org
 
 Queries and Compose are accessible from several places in the application. The following shows how you can navigate to them.
 
-1. When viewing a table, you can click on the Queries tab to see all of the queries associated with this table.
-2. The Compose link is in the upper right of the table view page. 
+1. When viewing a table, **Open with Compose** will open Compose with a new query on this table.
+2. You can click the Queries tab to see all the queries associated with this table.
+3. Next to each query is an **Open in Compose** button that will open Compose with that query.
 
-![VHOL-Screen16](./assets/Screen6-Compose-Exer1.png)
+![VHOL-Screen23](./assets/Section8-Compose-Screen3.png)
 
-3. The left-hand navigation provides a Queries selection that can be expanded to see current queries.
-4. You can click on the arrow to see additional queries and filters.
-5. You can click on this link to launch the Compose SQL editor application, which will appear in a new tab.
+4. Another way to find queries is to use the left-hand navigation that provides a Queries selection to launch a search filtered for just queries.
 
-![VHOL-Screen17](./assets/Screen6-Compose-Exer2.png)
+![VHOL-Screen24](./assets/Section8-Compose-Screen4.png)
 
-6. Since Compose was launched from a table view, a select statement with that table appears. If you were coming to Compose from a query, the query would appear.
-7. The Connection Settings is where you provide your credentials to connect to the Alation provided Demo Sample Data - data source.
+5. In the example below, a select statement with that table appears since Compose was launched with Open with Compose from a table view.
+6. The Connection Settings is where you provide your credentials to connect to the Alation provided Demo Sample Data - data source.
 
-![VHOL-Screen18](./assets/Screen6-Compose-Exer3.png)
-
+![VHOL-Screen25](./assets/Section8-Compose-Screen5.png)
 ![VHOL-Border9](./assets/BorderLine.png)
 
 <table>   
@@ -316,18 +323,23 @@ Queries and Compose are accessible from several places in the application. The f
 
 Compose helps spread data literacy in the organization by allowing users to build and share queries that help answer business questions.
 
-Now it is time to wrap this up; let’s finish with a quick summary!
+Now it is time to move onto Data Quality!
 
-![VHOL-Screen19](./assets/Screen6-Compose-bottom.png)
-
-## Optional Tasty Bytes Setup
-Duration: 20
+![VHOL-Screen26](./assets/Section8-Compose-Screen6.png)
+<!-- ------------------------ -->
+## Data Quality
+Duration: 5
 
 **Overview**
 
-If you would like another sample database to explore and work within Alation, Snowflake provides a database for the fictitious food truck brand of Tasty Bytes. 
+Data quality is a critical data management function that helps identify issues based on the rules defined and executed against the data. Thresholds can be set to help guide users on whether using the data is appropriate or not. 
 
-This is entirely optional. If you are not interested, simply click on the Next button.
+Alation provides extensive data quality capabilities through its Open Data Quality Framework. Snowflake provides data quality features through Data Metric Functions (DMFs). The two integrated provide people with the health of the data at the point of consumption. Additional data quality policies provide the details of the data quality rule, thresholds for good, warning, and alert conditions, the data assets processed by the rule, and more.
+
+When the stakes are high, especially when providing data for AI models, data quality is a must!
+
+![VHOL-Screen27](./assets/Section9-Quality-Screen1.png)
+![VHOL-Screen28](./assets/Section9-Quality-Screen2.png)
 
 ![VHOL-Border4](./assets/BorderLine.png)
 
@@ -345,101 +357,98 @@ This is entirely optional. If you are not interested, simply click on the Next b
     </tbody>
 </table>
 
-- Install Tasty Bytes from this [link](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#0/).
-- Return to the Alation web page.
 
-1. Click the down arrow next to Apps.
-2. Click on Sources.
+1. To review the DMFs currently created, click on Data Quality Processor in the left-hand navigation.
 
-![VHOL-Screen20](./assets/Screen8-Optional-Apps1.png)
+![VHOL-Screen29](./assets/Section9-Quality-Screen3.png)
 
-3. Click on the Add button.
+2. Click on arrow next to Snowflake DMFs to expand the list.
 
-![VHOL-Screen21](./assets/Screen8-Optional-Apps2.png)
+![VHOL-Screen30](./assets/Section9-Quality-Screen4.png)
 
-4. Click on the Data Source.
+3. Enter "email" to search the Data Metrics Functions.
+4. From the search results, click on COUNT_INCORRECT_EMAIL_FORMAT. 
 
-![VHOL-Screen22](./assets/Screen8-Optional-Apps3.png)
+![VHOL-Screen31](./assets/Section9-Quality-Screen5.png)
 
-5. Enter Tasty Bytes for the Data Source Title.
-6. Click on the Continue Setup button.
+5. Review the information about the COUNT_INCORRECT_EMAIL_FORMAT DMF. The key attributes are highlighted in the red boxes.
 
-![VHOL-Screen23](./assets/Screen8-Optional-Apps4.png)
+![VHOL-Screen32](./assets/Section9-Quality-Screen6.png)
 
-7. Click on the down arrow next to Database Type and select Snowflake OCF connector.
+6. Search for customer.
+7. Select the Customer (CSTMR) table.
 
-![VHOL-Screen24](./assets/Screen8-Optional-Apps5.png)
+![VHOL-Screen33](./assets/Section9-Quality-Screen7.png)
 
-8. Click on the General Settings tab.
+8. Notice the alert icon next to the Data Health tab. Click on it.
 
-![VHOL-Screen25](./assets/Screen8-Optional-Apps6.png)
+![VHOL-Screen34](./assets/Section9-Quality-Screen8.png)
 
-9. Scroll to Connector Settings and enter the JDBC URI. The format is:
-snowflake://**Your Snowflake Account**.snowflakecomputing.com:443/?warehouse=**YOUR WAREHOUSE**&db=FROSTBYTE_TASTY_BYTES
+9. Find the columns with alerts and locate the email column.
+10. Click on the COUNT_INCORRECT_EMAIL_FORMAT rule.
 
-10. Enter an administrative user with permission to access metadata - see the [link](https://docs2.alationdata.com/en/latest/sources/OpenConnectorFramework/Snowflake/SnowflakeOCFConnectorOverview.html) for more details.
+![VHOL-Screen35](./assets/Section9-Quality-Screen9.png)
 
-11. Enter the password of the user entered above.
+11. As you review the content of the rule, how can you tell it implements a DMF? Hint: Check out hightlighted red boxes.
 
-![VHOL-Screen26](./assets/Screen8-Optional-Apps7.png)
+![VHOL-Screen36](./assets/Section9-Quality-Screen10.png)
 
-12. Click on the Save button. A "Success" message should appear.
+<table>   
+    <thead>
+        <tr>
+            <th colspan="2"> </th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><img src="./assets/blackcheckmark.png" width="30" height="25"/></td>
+            <td><b>Benefits</b></td>
+        </tr>
+    </tbody>
+</table>
 
-![VHOL-Screen27](./assets/Screen8-Optional-Apps8.png)
+An integrated data quality solution that makes consumers aware of the data health at the point of consumption is priceless! Trust is the most critical factor for your data, especially when taking advantage of it with AI.
 
-13. Scroll toward the bottom of the screen and click on the Test button. If you receive the message "Network connection successful", then you are finished. If not, check your password to ensure it is correct and try again.
+Time to wrap this up with a quick Summary!
 
-![VHOL-Screen28](./assets/Screen8-Optional-Apps9.png)
+![VHOL-Screen37](./assets/Section9-Quality-Screen11.png)
 
-14. Scroll up and click on the Metadata Extraction tab.
-
-15. If you are already using a user with the ACCOUNT_ADMIN role, then please continue with Step 16. If your user is not part of the ACCCOUNT_ADMIN role, then Click on Setup Help for instructions on the permissions needed in Snowflake to run Metadata Extraction. This is a checklist of the required items focusing on the SNOWFLAKE.ACCOUNT_USAGE objects. 
-
-![VHOL-Screen29](./assets/Screen8-Optional-Apps10.png)
-
-16. Scroll down until you see the Run Extraction Now button, and click on it. This will submit the metadata extraction job.
-
-17. Once the job completes, the status should appear as "Succeeded." If you receive an error instead, make sure to check the permissions from Step 15 and try again.
-
-![VHOL-Screen30](./assets/Screen8-Optional-Apps11.png)
-
-18. You should now see the Tasty Bytes data source in the left-hand navigation under Data. Click on it.
-
-19. The list of the five schemas will appear.
-
-20. The number of tables will be displayed for each schema, showing us that Metadata Extraction worked! Feel free to explore further on your own.
-
-![VHOL-Screen31](./assets/Screen8-Optional-Apps12.png)
-
-## Summary
+<!-- ------------------------ -->
+## Conclusion And Resources 
 Duration: 3
 
-You did it! In this short period, you have seen how Alation:
-- Improves productivity through self-service analytics
-- Guides users to make better business decisions with trusted data
-- Empowers organizations to continuously improve their data culture
+You did it! In this short period, you have seen how Alation and Snowflake work together bringing the pillars of Horizon to life for data governance and data quality. Whether your working on data mondernization or AI readiness, Snowflake and Alation are the perfect combination.
 
-![VHOL-Screen32](./assets/Screen7-Summary.png)
+![VHOL-Screen38](./assets/Section10-Summary-Screen1.png)
+![VHOL-Screen39](./assets/Section10-Summary-Screen2.png)
 
 ![VHOL-Border10](./assets/BorderLine.png)
 
-### Continue your Alation Journey
 
-To get the most out Alation during your trial.
+3. Throughout the trial, self-guided Self-service Analytics, Data Governance, and Compose SQL Editor demos will be launched. A new one each day will display. Visit Help Center is located under the ? in the top right of the webpage should you need any help about the features you are trying out.
+4. If you would like to explore some of your own Snowflake databases, click on this link to see how to connect your own Snowflake data sources.
 
-1. The Quick Start Tour has self-guided demos on Self-service Analytics, Data Governance, and Compose. In addition, there are some how-to vides.
-2. Our chat bot allows you to converse with a product specialist on questions you have, set up appointments with a product specialist, and search documentation for questions you have.
+![VHOL-Screen40](./assets/Section10-Summary-Screen3.png)
 
-![VHOL-Screen33](./assets/Screen7-Summary-next.png)
+5. For additional guided demos and product information, please go to [Alation.com](https://www.alation.com/).
 
-3. Click on this link to see how to connect your own Snowflake data sources.
-
-![VHOL-Screen34](./assets/Screen7-Summary-next1.png)
-
-4. For additional guided demos and product information, please go to [Alation.com](https://www.alation.com/).
-
-![VHOL-Screen35](./assets/Screen7-Summary-next2.png)
+![VHOL-Screen41](./assets/Section10-Summary-Screen4.png)
 
 Last but not least, please check your email for continued guidance and tips throughout your trial. 
 
-Thanks again for your interest in Alation; we are here for you!
+### What You Learned
+- How to get your data AI-ready with Snowflake Horizon and Alation's Data Quality Processor
+- How to utilize a governance framework that promotes reducing risk while enabling broader use of data 
+- How to easily find data in the organization through Alation's Intelligent Search, increasing productivity through self-service analytics
+- How to curate and classify data to guide users to make better business decisions with trusted data compliantly
+- How to create policies and controls that are front and center to enable compliance
+- How to use Compose to create queries guided by current metadata that extend to interactive forms for business users 
+
+### Related Resources
+
+- [Information on Snowflake Horizon](https://www.snowflake.com/en/data-cloud/horizon/)
+- [Introduction to Data Quality and Data Metric Functions](https://docs.snowflake.com/en/user-guide/data-quality-intro)
+- [Using Dynamic Data Masking](https://docs.snowflake.com/en/user-guide/security-column-ddm-use)
+- [Alation Data Intelligence Platform](https://www.alation.com/product/data-intelligence-platform/)
+- [Alation Open Data Quality Framework](https://www.alation.com/product/data-quality/)
+- [AI Powered by ALLIE](https://www.alation.com/product/allie-ai/)

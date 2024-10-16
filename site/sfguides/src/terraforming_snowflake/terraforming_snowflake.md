@@ -12,6 +12,13 @@ authors: Brad Culberson, Scott Winkler
 ## Overview
 Duration: 5
 
+> aside negative
+> ⚠️ **Disclaimer**: the project is still in the 0.x.x version, which means it’s still in the experimental phase (check [Go module versioning](https://go.dev/doc/modules/version-numbers#v0-number) for more details). It can be used in production but makes no stability or backward compatibility guarantees. We do not provide backward bug fixes and, therefore, always suggest using the newest version. We are providing only limited support for the provider; priorities will be assigned on a case-by-case basis.
+>
+> Our main current goals are stabilization, addressing existing issues, and providing the missing features (prioritizing the GA features; supporting PrPr and PuPr features are not high priorities now).
+>
+> With all that in mind, we aim to reach V1 with a stable, reliable, and functional provider. V1 will be free of all the above limitations.
+
 [Terraform](https://www.terraform.io/) is an open-source Infrastructure as Code (IaC) tool created by HashiCorp. It is a declarative Infrastructure as Code tool, meaning instead of writing step-by-step imperative instructions like with SQL, JavaScript or Python, you can declare what you want using a YAML like syntax. Terraform is also stateful, meaning it keeps track of your current state, and compares it with your desired state. A reconcilation process between the two states generates an plan that Terraform can execute to create new resources, or update/delete existing resources. This plan is implemented as an acyclic graph, and is what allows Terraform to understand and handle dependencies between resources. Using Terraform is a great way to manage account level Snowflake resources like Warehouses, Databases, Schemas, Tables, and Roles/Grants, among many other use cases.  
 
 A Terraform provider is available for [Snowflake](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest/docs), that allows Terraform to integrate with Snowflake.
@@ -111,26 +118,23 @@ Duration: 1
 
 We need to pass provider information via environment variables and input variables so that Terraform can authenticate as the user.
 
-Run the following to find the `YOUR_ACCOUNT_LOCATOR` and your Snowflake Region ID values needed.
+Run the following to find `YOUR_SNOWFLAKE_ACCOUNT`. Refer to the [Account Identifiers documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#format-1-preferred-account-name-in-your-organization) for more information.
 
 ```SQL
-SELECT current_account() as YOUR_ACCOUNT_LOCATOR, current_region() as YOUR_SNOWFLAKE_REGION_ID;
+SELECT LOWER(current_organization_name() || '-' || current_account_name()) as YOUR_SNOWFLAKE_ACCOUNT;
 ```
-
-You can find your Region ID (`YOUR_REGION_HERE`) from `YOUR_SNOWFLAKE_REGION_ID` in [this reference table](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html#snowflake-region-ids). 
-
-**Example**: aws_us_west_2 would have a us-west-2 value for `YOUR_REGION_HERE`.
-
 
 ### Add Account Information to Environment
 
-Run these commands in your shell. Be sure to replace the `YOUR_ACCOUNT_LOCATOR` and `YOUR_REGION_HERE` placeholders with the correct values.
+Run these commands in your shell. Be sure to replace the `YOUR_SNOWFLAKE_ACCOUNT` placeholder with the correct value.
+
+**NOTE**: Setting `SNOWFLAKE_REGION` is required if you are using a [Legacy Account Locator](https://docs.snowflake.com/en/user-guide/admin-account-identifier#format-2-legacy-account-locator-in-a-region).
 
 ```Shell
 $ export SNOWFLAKE_USER="tf-snow"
-$ export SNOWFLAKE_PRIVATE_KEY_PATH="~/.ssh/snowflake_tf_snow_key.p8"
-$ export SNOWFLAKE_ACCOUNT="YOUR_ACCOUNT_LOCATOR"
-$ export SNOWFLAKE_REGION="YOUR_REGION_HERE"
+$ export SNOWFLAKE_AUTHENTICATOR=JWT
+$ export SNOWFLAKE_PRIVATE_KEY=`cat ~/.ssh/snowflake_tf_snow_key.p8`
+$ export SNOWFLAKE_ACCOUNT="YOUR_SNOWFLAKE_ACCOUNT"
 ```
 
 If you plan on working on this or other projects in multiple shells, it may be convenient to put this in a `snow.env` file that you can source or put it in your `.bashrc` or `.zshrc` file. For this lab, we expect you to run future Terraform commands in a shell with those set.
@@ -147,24 +151,23 @@ terraform {
   required_providers {
     snowflake = {
       source  = "Snowflake-Labs/snowflake"
-      version = "~> 0.59"
+      version = "~> 0.87"
     }
   }
 }
 
 provider "snowflake" {
-  role  = "SYSADMIN"
+  role = "SYSADMIN"
 }
 
 resource "snowflake_database" "db" {
-  name     = "TF_DEMO"
+  name = "TF_DEMO"
 }
 
 resource "snowflake_warehouse" "warehouse" {
   name           = "TF_DEMO"
-  warehouse_size = "large"
-
-  auto_suspend = 60
+  warehouse_size = "xsmall"
+  auto_suspend   = 60
 }
 ```
 
@@ -251,83 +254,99 @@ You'll see that most of this is what you would expect. The only new part is crea
 
 1. Add the following resources to your `main.tf` file:
 
-    ```
-        provider "snowflake" {
-            alias = "security_admin"
-            role  = "SECURITYADMIN"
-        }
+```
+provider "snowflake" {
+  alias = "security_admin"
+  role  = "SECURITYADMIN"
+}
 
-        resource "snowflake_role" "role" {
-            provider = snowflake.security_admin
-            name     = "TF_DEMO_SVC_ROLE"
-        }
+resource "snowflake_role" "role" {
+  provider = snowflake.security_admin
+  name     = "TF_DEMO_SVC_ROLE"
+}
 
-        resource "snowflake_database_grant" "grant" {
-            provider          = snowflake.security_admin
-            database_name     = snowflake_database.db.name
-            privilege         = "USAGE"
-            roles             = [snowflake_role.role.name]
-            with_grant_option = false
-        }
+resource "snowflake_grant_privileges_to_account_role" "database_grant" {
+  provider          = snowflake.security_admin
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_role.role.name
+  on_account_object {
+    object_type = "DATABASE"
+    object_name = snowflake_database.db.name
+  }
+}
 
-        resource "snowflake_schema" "schema" {
-            database   = snowflake_database.db.name
-            name       = "TF_DEMO"
-            is_managed = false
-        }
+resource "snowflake_schema" "schema" {
+  database   = snowflake_database.db.name
+  name       = "TF_DEMO"
+  is_managed = false
+}
 
-        resource "snowflake_schema_grant" "grant" {
-            provider          = snowflake.security_admin
-            database_name     = snowflake_database.db.name
-            schema_name       = snowflake_schema.schema.name
-            privilege         = "USAGE"
-            roles             = [snowflake_role.role.name]
-            with_grant_option = false
-        }
+resource "snowflake_grant_privileges_to_account_role" "schema_grant" {
+  provider          = snowflake.security_admin
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_role.role.name
+  on_schema {
+    schema_name = "\"${snowflake_database.db.name}\".\"${snowflake_schema.schema.name}\""
+  }
+}
 
-        resource "snowflake_warehouse_grant" "grant" {
-            provider          = snowflake.security_admin
-            warehouse_name    = snowflake_warehouse.warehouse.name
-            privilege         = "USAGE"
-            roles             = [snowflake_role.role.name]
-            with_grant_option = false
-        }
+resource "snowflake_grant_privileges_to_account_role" "warehouse_grant" {
+  provider          = snowflake.security_admin
+  privileges        = ["USAGE"]
+  account_role_name = snowflake_role.role.name
+  on_account_object {
+    object_type = "WAREHOUSE"
+    object_name = snowflake_warehouse.warehouse.name
+  }
+}
 
-        resource "tls_private_key" "svc_key" {
-            algorithm = "RSA"
-            rsa_bits  = 2048
-        }
+resource "tls_private_key" "svc_key" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
 
-        resource "snowflake_user" "user" {
-            provider          = snowflake.security_admin
-            name              = "tf_demo_user"
-            default_warehouse = snowflake_warehouse.warehouse.name
-            default_role      = snowflake_role.role.name
-            default_namespace = "${snowflake_database.db.name}.${snowflake_schema.schema.name}"
-            rsa_public_key    = substr(tls_private_key.svc_key.public_key_pem, 27, 398)
-        }
+resource "snowflake_user" "user" {
+    provider          = snowflake.security_admin
+    name              = "tf_demo_user"
+    default_warehouse = snowflake_warehouse.warehouse.name
+    default_role      = snowflake_role.role.name
+    default_namespace = "${snowflake_database.db.name}.${snowflake_schema.schema.name}"
+    rsa_public_key    = substr(tls_private_key.svc_key.public_key_pem, 27, 398)
+}
 
-        resource "snowflake_role_grants" "grants" {
-            provider  = snowflake.security_admin
-            role_name = snowflake_role.role.name
-            users     = [snowflake_user.user.name]
-        }
-    ```
+resource "snowflake_grant_privileges_to_account_role" "user_grant" {
+  provider          = snowflake.security_admin
+  privileges        = ["MONITOR"]
+  account_role_name = snowflake_role.role.name  
+  on_account_object {
+    object_type = "USER"
+    object_name = snowflake_user.user.name
+  }
+}
 
-1. To get the public and private key information for the application, use Terraform [output values](https://www.terraform.io/docs/language/values/outputs.html).
+resource "snowflake_grant_account_role" "grants" {
+  provider  = snowflake.security_admin
+  role_name = snowflake_role.role.name
+  user_name = snowflake_user.user.name
+}
 
-    Add the following resources to a new file named `outputs.tf`
 
-    ```
-    output "snowflake_svc_public_key" {
-        value = tls_private_key.svc_key.public_key_pem
-    }
+```
 
-    output "snowflake_svc_private_key" {
-        value = tls_private_key.svc_key.private_key_pem
-        sensitive = true
-    }
-    ```
+3. To get the public and private key information for the application, use Terraform [output values](https://www.terraform.io/docs/language/values/outputs.html).
+
+Add the following resources to a new file named `outputs.tf`
+
+```
+output "snowflake_svc_public_key" {
+  value = tls_private_key.svc_key.public_key_pem
+}
+
+output "snowflake_svc_private_key" {
+  value     = tls_private_key.svc_key.private_key_pem
+  sensitive = true
+}
+```
 
 ## Commit Changes to Source Control
 Duration: 3
@@ -391,7 +410,7 @@ Duration: 3
 
 If you are new to Terraform, there's still a lot to learn. We suggest researching [remote state](https://www.terraform.io/docs/language/state/remote.html), [input variables](https://www.terraform.io/docs/language/values/variables.html), and [building modules](https://www.terraform.io/docs/language/modules/develop/index.html). This will empower you to build and manage your Snowflake environment(s) through a simple declarative language.
 
-The Terraform provider for Snowflake is an open-source project. If you need Terraform to manage a resource that has not yet been created in the [provider](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest), we welcome contributions! We also welcome submitting issues and feedback to the [Github Project](https://github.com/SnowflakeLabs/terraform-provider-snowflake) to help improve the Terraform provider project and overall experience.
+The Terraform provider for Snowflake is an open-source project. If you need Terraform to manage a resource that has not yet been created in the [provider](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest), we welcome contributions! We also welcome submitting issues and feedback to the [Github Project](https://github.com/Snowflake-Labs/terraform-provider-snowflake) to help improve the Terraform provider project and overall experience.
 
 ### Next steps
 

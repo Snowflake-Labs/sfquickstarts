@@ -181,7 +181,7 @@ Either UDF can be invoked on any PDF file with a simple SQL statement. For the p
 ```
 alter stage pdf_external refresh;
 
-select read_pdf(build_scoped_file_url(@pdf_external,'invoice1.pdf')) 
+select java_read_pdf(build_scoped_file_url(@pdf_external,'invoice1.pdf')) 
 as pdf_text;
 ```
 
@@ -205,19 +205,19 @@ Scallop - St. Jaques 9 $13.28 $119.52
 $458.10Total:
 ```
 
-UDFs are account-level objects. So if a developer familiar with Java creates a UDF, an analyst in the same account with proper permissions can invoke the UDF in their queries.
+UDFs are account-level objects. So if a developer familiar with Java or Python creates a UDF, an analyst in the same account with proper permissions can invoke the UDF in their queries.
 
 ### Extracting and Storing Fields
 We want to store the extracted text as additional attributes for analysts to be able to select and retrieve the files of interest in their analysis, as well as perform some analytics on the attributes found.
 
-We first need to create a table with the extracted text in its raw form. From this table, we can create views to parse the text into various fields for easier analysis.
+We first need to create a table with the extracted text in its raw form. From this table, we can create views to parse the text into various fields for easier analysis. You could use either the Python or Java UDF in the creation of this table, and the code below uses the Java UDF.
 
 ```sql
-create or replace table parsed_pdf as
+create or replace table java_parsed_pdf as
 select
     relative_path
     , file_url
-    , read_pdf(build_scoped_file_url(@pdf_external, relative_path)) as parsed_text
+    , java_read_pdf(build_scoped_file_url(@pdf_external, relative_path)) as parsed_text
 from directory(@pdf_external);
 ```
 
@@ -235,7 +235,7 @@ with items_to_array as (
             ), '\n'
           )
         as items
-    from parsed_pdf
+    from java_parsed_pdf
 )
 , parsed_pdf_fields as (
     select
@@ -261,6 +261,61 @@ select
     , to_number(ltrim(regexp_substr(line_item, '\\$[^ ]+')::string, '$'), 10, 2) as item_unit_cost
     , regexp_replace(line_item, ' ([0-9]+) \\$.*', '')::string as item_name
     , to_number(ltrim(regexp_substr(line_item, '\\$[^ ]+', 1, 2)::string, '$'), 10, 2) as item_total_cost
+from parsed_pdf_fields
+);
+```
+
+Alternatively to Java, you can create the table using the Python UDF.
+
+```
+create or replace table python_parsed_pdf as
+select
+    relative_path
+    , file_url
+    , python_read_pdf(build_scoped_file_url(@pdf_external, relative_path)) as parsed_text
+from directory(@pdf_external);
+```
+
+And if you use the Python UDF to create the table, you can create the view like so.
+
+```
+create or replace view v__parsed_pdf_fields as (
+with items_to_array as (
+    select
+            parsed_text
+            , regexp_substr_all(
+                substr(
+                    regexp_substr(parsed_text, 'Amount\n(.*)\n(.*)\n(.*)\n(.*)\n(.*)\n(.*)\n(.*)\n(.*)\n(.*)\n(.*)\n(.*)\n(.*)'
+                    ), 8
+                ), '[^\n]+\n[^\n]+\n[^\n]+\n[^\n]+'
+            )
+        as items
+    from python_parsed_pdf
+)
+, parsed_pdf_fields as (
+    select
+        substr(regexp_substr(parsed_text, '# [0-9]+'), 2)::int as invoice_number
+        , to_number(substr(regexp_substr(parsed_text, '\\$[^A-Z]+'), 2), 10, 2) as balance_due
+        , substr(
+            regexp_substr(parsed_text, '[0-9]+\n[^\n]+')
+                , len(regexp_substr(parsed_text, '# [0-9]+'))
+            ) as invoice_from
+        , to_date(regexp_substr(parsed_text, '([A-Za-z]+ [0-9]+, [0-9]+)'), 'mon dd, yyyy') as invoice_date
+        , i.value::string as line_item
+        , parsed_text
+    from
+        items_to_array
+        , lateral flatten(items_to_array.items) i
+)
+select
+    invoice_number
+    , balance_due
+    , invoice_from
+    , invoice_date
+    , regexp_substr(line_item, '\n[0-9]+\n')::integer as item_quantity
+    , to_number(ltrim(regexp_substr(line_item, '\\$[^\n]+')::string, '$'), 10, 2) as item_unit_cost
+    , regexp_substr(line_item, '[^\n]+', 1, 1)::string as item_name
+    , to_number(ltrim(regexp_substr(line_item, '\\$[^\n]+', 1, 2)::string, '$'), 10, 2) as item_total_cost
 from parsed_pdf_fields
 );
 ```

@@ -48,7 +48,7 @@ To participate in the virtual hands-on lab, attendees need the following:
 * Admin rights to an Azure trial account
 * [An SAP s- or p-user or linked Universal ID](https://blogs.sap.com/2020/01/17/creating-a-p-user-in-sap-cloud-platform-to-practise-sap-hana./) to log on to SAP's Cloud Appliance Library (cal.sap.com). 
 * A credit card to add billing information to the Azure account 
-* A Snowflake account with `ACCOUNTADMIN` access (you can get a [free Trial account here](https://signup.snowflake.com/))
+* A Snowflake account with `ACCOUNTADMIN` access (you can get a [free Trial account here](https://signup.snowflake.com/?utm_cta=quickstarts_))
 * Familiarity with Snowflake and Snowflake objects (eg. through the [Zero-To-Snowflake hands-on-lab](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0))
 * [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed on your local machine
 * [Tableau desktop](https://www.tableau.com/products/desktop/download) installed on your local machine (optional)

@@ -51,7 +51,7 @@ It is one of the most popular [open source](https://scikit-learn.org/) machine l
 
 ### Prerequisites
 
-- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
 - You will need to accept acknowledge the Snowflake Third Party Terms by following Anaconda link in previous step.
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
@@ -226,6 +226,7 @@ Congratulations! You've successfully completed the lab using Snowpark for Python
 
 ### Related Resources
 
+- [Full demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/predict-home-prices-using-machine-learning/)
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn)
 - [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
 - [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)

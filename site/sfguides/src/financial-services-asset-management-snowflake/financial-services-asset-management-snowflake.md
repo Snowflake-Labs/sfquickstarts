@@ -3,7 +3,7 @@ id: financial-services-asset-management-snowflake
 summary: Financial Services Asset Management Demo
 categories: Getting-Started
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
@@ -37,7 +37,7 @@ Duration: 1
 
 
 ### Prerequisites
-- Snowflake Account or [Trial Account](https://signup.snowflake.com/) with accountadmin privileges.  
+- Snowflake Account or [Trial Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with accountadmin privileges.  
 
 ### You'll learn how to
 - Query free stock market history data instantly with zero learning curve and time
@@ -174,7 +174,10 @@ YouTube video: [A recap of what we covered](https://youtu.be/HkrRXMHDd-E?t=5547)
 - Time Travel to see and roll back up to 90 days of data
 - Drop and Undrop Tables
 
-### To see similar videos
+### More resources
+
+[Full Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/financial-asset-management/)
+
 [Modernizing Risk Analytics with Sigma on Snowflake](https://www.sigmacomputing.com/resources/modernizing-risk-analytics-with-sigma-on-snowflake).
 
 [Allen Wong's Youtube Channel](https://www.youtube.com/@AllenWongTech).

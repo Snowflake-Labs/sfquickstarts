@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "serve": "gulp serve",
+    "serve": "gulp serve --continue",
     "prod": "gulp serve:dist",
     "deploy": "gulp clean && gulp dist && rm .firebase/*.cache 2> /dev/null || true && firebase deploy --only hosting",
     "export": "gulp build:codelabs",
@@ -13,7 +13,7 @@
     "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
     "bower": "^1.8.14",
-    "css-declaration-sorter": "^4.0.1",
+    "css-declaration-sorter": "^7.2.0",
     "cssnano": "^5.1.7",
     "del": "^3.0.0",
     "fs-extra": "^7.0.1",
@@ -36,12 +36,13 @@
     "gulp-vulcanize": "^7.0.0",
     "gulp-watch": "^4.3.11",
     "gulp-webserver": "^0.1.0",
+    "hydrolysis": "^1.25.0",
     "jscs": "^1.13.1",
     "jshint": "^2.13.4",
     "jshint-stylish": "^2.2.1",
     "merge-stream": "^1.0.1",
     "path": "^0.12.7",
-    "postcss": "^8.4.12",
+    "postcss": "^8.4.38",
     "postcss-syntax": "^0.34.0",
     "sass": "^1.49.11",
     "swig-templates": "^2.0.3",
@@ -57,7 +58,7 @@
     "defaults"
   ],
   "dependencies": {
-    "gulp": "^4.0.2",
+    "gulp": "4.0.2",
     "http-server": "^14.1.1",
     "open-browser": "^3.6.0",
     "supervisor": "^0.12.0"

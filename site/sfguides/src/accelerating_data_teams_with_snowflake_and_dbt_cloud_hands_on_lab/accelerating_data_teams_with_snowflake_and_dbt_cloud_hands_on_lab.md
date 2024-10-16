@@ -1,7 +1,7 @@
 authors: Bobby Birstock, Amy Chen
 id: accelerating_data_teams_with_snowflake_and_dbt_cloud_hands_on_lab
 summary: Build a dbt project and data pipeline with dbt Cloud and Snowflake
-categories: getting-started,data-engineering,partner-integrations
+categories: getting-started,data-engineering,partner-integrations,marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -24,7 +24,7 @@ Let's get started.
 
 ### What You'll Use During the Lab
 
-* A trial [Snowflake](https://signup.snowflake.com/) account with ACCOUNTADMIN access
+* A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account with ACCOUNTADMIN access
 
 * A [dbt Cloud](https://www.getdbt.com/signup/) account
 
@@ -58,7 +58,7 @@ Here's a sneak peak of the model lineage that we'll be creating using dbt!
 ## Let's Get Started With Snowflake
 Duration: 5
 
-To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
+To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_cta=quickstarts_) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
 Once your account is created you’ll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
 
 
@@ -103,7 +103,7 @@ Duration: 5
 
 1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
-2. In the Snowflake UI, click on the home icon in the top left hand corner of the screen. To access Partner Connect, click on your user and then click `Partner Connect`.<br>
+2. In the Snowflake UI, click on `Admin` in the lefthand sidebar, then `Partner Connect` which located within the `Admin` section. <br>
 
     ![Open Partner Connect](assets/Snowflake_open_partner_connect.png)<br>
 
@@ -1098,6 +1098,8 @@ Today you learned how to use dbt and Snowflake to build data transformation pipe
 ### Additional Resources 
 
 * Join our [dbt community Slack ](https://community.getdbt.com/)which contains more than 29,000 data practitioners today. We have a dedicated slack channel #db-snowflake to Snowflake related content.
+
+* Check out the rest of the demo on [Snowflake's Demo Hub](https://developers.snowflake.com/demos/data-transformations-dbt-cloud-snowflake/).
 
 * To continue your dbt education, check out the [dbt Learn site](https://learn.getdbt.com/).
 
