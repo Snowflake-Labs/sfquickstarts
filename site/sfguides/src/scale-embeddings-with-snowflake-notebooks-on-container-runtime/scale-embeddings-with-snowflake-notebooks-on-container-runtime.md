@@ -12,13 +12,13 @@ tags: Getting Started, Data Science, Machine Learning, Model Registry
 ## Overview 
 Duration: 1
 
-Snowflake Notebooks in the Container Runtime are a powerful IDE option for building ML workloads at scale. Container Runtime (Public Preview) gives you a flexible container infrastructure that supports building and operationalizing a wide variety of resource-intensive ML workflows entirely within Snowflake. Using Snowflake Notebooks in Container Runtime gives you access to distributed processing on both CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture and Model Registry integration. Container Runtime also provides flexibility to leverage a set of preinstalled packages or the ability to pip install any open-source package of choice.  
+Snowflake Notebooks in the Container Runtime are a powerful IDE option for building ML workloads at scale. Container Runtime (Public Preview) is a fully managed container environment that supports building and operationalizing a wide variety of resource-intensive ML workflows entirely within Snowflake. Using Snowflake Notebooks in Container Runtime gives you access to distributed processing on both CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture and Model Registry integration. Container Runtime also provides flexibility to leverage a set of preinstalled packages or the ability to pip install any open-source package of choice.  
 
 This guide will show you how to experiment with and scale embeddings generation in Snowflake Notebooks on Container Runtime.
 
 ### Prerequisites
-- Access to a [Snowflake](https://app.snowflake.com/) account with ACCOUNTADMIN
-- Access to run Notebook on Container Runtime in Snowflake
+- A non-trial Snowflake account in a supported [AWS commercial region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
+- A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the CONTAINER_USER_ROLE and granting required privileges, as well as creating the EXTERNAL ACCESS INTEGRATION).
 - Foundational knowledge of Data Science workflows
 - Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
 
@@ -153,7 +153,7 @@ Duration: 60
 ## Conclusion And Resources
 Duration: 1
 
-In conclusion, running Snowflake Notebooks Container Runtime offers a robust and flexible infrastructure for managing large-scale, advanced data science and machine learning workflows directly within Snowflake. 
+In conclusion, running Snowflake Notebooks on Container Runtime offers a robust and flexible infrastructure for managing large-scale, advanced data science and machine learning workflows directly within Snowflake. 
 
 Within this Notebook, you:
 - loaded an embedding model, generated embeddings using a GPU
@@ -170,3 +170,4 @@ Ready for more? After you complete this quickstart, you can try [Getting Started
 - [Container Runtime for ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
