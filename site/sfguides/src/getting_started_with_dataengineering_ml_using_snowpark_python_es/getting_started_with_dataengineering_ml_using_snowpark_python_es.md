@@ -33,7 +33,7 @@ El conjunto de bibliotecas y tiempos de ejecución de Snowflake para implementar
 
 **Estructuras de tiempo de ejecución flexibles**: Snowpark proporciona constructos de tiempo de ejecución flexibles que permiten a los usuarios introducir y ejecutar la lógica personalizada. Los desarrolladores pueden crear flujos de datos, modelos de ML y aplicaciones de datos sin problemas gracias a las UDF y mediante procedimientos almacenados.
 
-Obtén más información sobre [Snowpark](https://www.snowflake.com/snowpark/).
+Obtén más información sobre [Snowpark](https://www.snowflake.com/es/data-cloud/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
