@@ -30,7 +30,7 @@ The process includes the following steps:
 Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 
-![SnowparkML](assets/snowflakeml.png)
+![SnowflakeML](assets/snowflakeml.png)
 
 
 #### What is Snowflake Notebooks on Container Runtime?
