@@ -1,12 +1,23 @@
-<!-- ------------------------ -->
-summary: A concise guide to demonstrate use of the Chalice TVB Native App to detect overbidding in programmatic auctions. 
-id: chalice-native-app-quickstart
-categories: data-science, native-app
-environments: web 
-status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Chalice, Native App, Machine Learning 
-authors: Tylynn Pettrey, Tucker Ward
+---
+summary: "A concise guide to demonstrate the use of the Chalice TVB Native App to detect overbidding in programmatic auctions."
+id: "chalice-native-app-quickstart"
+categories: 
+  - "data-science"
+  - "native-app"
+environments: 
+  - "web"
+status: "Published"
+feedback_link: "https://github.com/Snowflake-Labs/sfguides/issues"
+tags: 
+  - "Getting Started"
+  - "Data Science"
+  - "Chalice"
+  - "Native App"
+  - "Machine Learning"
+authors: 
+  - "Tylynn Pettrey"
+  - "Tucker Ward"
+---
 
 # Chalice Native App Guide
 <!-- ------------------------ -->
@@ -64,7 +75,6 @@ types are present in the selected ad group due to the drastic differences in pri
 You will also need to include
 9. TVB needs 8 separate reports to gather enough data. Please schedule reports with the following custom date ranges:
 
-### JavaScript
 ```javascript
 dates = ''
     for i in range(8):
@@ -118,18 +128,24 @@ $$
 Navigate to the "TVB" page in the Chalice Native Application. Select your designated database, schema, and table name. You are now ready to detect overbidding in your campaign!
 <!-- ------------------------ -->
 
+## Conclusions and Resources
+Duration: 1
+
+
+Overbidding is systemic in programmatic auctions. By following these steps and running your first TVB simulation, you can now detect overbidding and take steps to combat it. 
+
 ### What You Learned
+
 - How to generate and download The Trade Desk Winrate Reports
 - How to load reports into a snowflake table
 - How to use the Chalice TVB Native Application to detect overbidding in programmatic advertising campaigns
 
-### Conclusions and Resources
-Duration: 1
+### Related Resources
 
-Overbidding is systemic in programmatic auctions. By following these steps and running your first TVB simulation, you can now detect overbidding and take steps to combat it. 
+*[True Value Bidding White Paper](https://docsend.com/view/hxwp8j7qmud6kz8i)
 
-[True Value Bidding White Paper](https://docsend.com/view/hxwp8j7qmud6kz8i)
-[Chalice Native Applications](https://app.snowflake.com/marketplace/providers/GZT0Z9XTXTP/Chalice%20Custom%20Algorithms?search=chalice)
-[Chalice Website](https://www.chalice.ai/)
+*[Chalice Native Applications](https://app.snowflake.com/marketplace/providers/GZT0Z9XTXTP/Chalice%20Custom%20Algorithms?search=chalice)
+
+*[Chalice Website](https://www.chalice.ai/)
 
 
