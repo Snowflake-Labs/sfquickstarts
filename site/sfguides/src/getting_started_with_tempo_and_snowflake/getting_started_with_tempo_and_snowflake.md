@@ -34,7 +34,8 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 Duration: 2
 
 1. Obtain the TEMPO Native App from the Snowflake Marketplace.
-2. It is recommended that during installation you shorten the name to just TEMPO.  
+
+2. It is mandatory to shorten the name to just TEMPO during installation. 
   - To do so, examine Options for your installation before selecting Get
   - Where you see the extended name of the application, TEMPO - the first..., edit that to read just TEMPO
   - Once you have shortened the name - which will simplify management - please select Get
@@ -225,4 +226,6 @@ Congratulations, you just ran the world's first purpose-built LogLM available as
 
 ### Resources
 
+
+To try the app please follow [This Link](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/deeptempo-cybersecurity-tempo-cybersecurity-incident-identification-via-deep-learning?search=tempo)
 [Snowflake Native Apps ](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/) 
