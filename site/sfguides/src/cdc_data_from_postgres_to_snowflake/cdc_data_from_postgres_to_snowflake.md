@@ -12,7 +12,7 @@ tags: Getting Started, Connectors, Dynamic Tables
 ## Overview
 Duration: 10
 
-In this Quickstart, we will investigate how a financial company builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights in how to increase customer engagement using Streamlit in Snowflake.
+In this Quickstart, we will investigate how a financial company builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights on potential ways to increase customer spending with promotions.
 
 ### What You Will Build
 - Visualize customer data and gain insights ingesting data from PostgreSQL DB to Snowflake using the Snowflake Connector for PostgreSQL Native App, Dynamic Tables, and Streamlit-in-Snowflake (SiS)
