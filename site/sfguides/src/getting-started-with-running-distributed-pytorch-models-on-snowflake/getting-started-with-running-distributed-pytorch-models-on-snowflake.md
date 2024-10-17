@@ -14,16 +14,16 @@ Duration: 3
 
 <img src="assets/TB_EndToEndML_banner.png"/>
 
-This solution generates upsell and cross-sell recommendations to increase sales for the Tasty Bytes business. This involves:
+This solution generates upsell and cross-sell recommendations to increase sales for the Tasty Bytes business. In this quickstart, we will walk through how to build an end-to-end Pytorch recommendation model using Snowflake ML. This involves:
 
 - Extracting features from customer, menu, and purchase history.
-- Preprocessing data using the Snowpark ML library.
+- Preprocessing data.
 - Training a PyTorch DLRM model with distributed processing on GPUs.
-- Registering the model and deploying it to a container runtime environment.
+- Registering the model and serving it for inference with GPUs in containers.
 - Running predictions and visualizing recommendations on Streamlit.
 - Displaying personalized menu item recommendations along with purchase history in a Streamlit app.
 
-In addition, this end-to-end ML solution using Snowflake ML and Notebooks aims to address the common challenges in building ML workflows, such as:
+In addition, this end-to-end ML solution using Snowflake ML aims to address the common challenges in building ML workflows, such as:
 
 **Eliminating Silos and Governance Challenges:** Ensuring a seamless and integrated environment for ML development, from data processing to model serving, to tackle the issue of isolated workflows and governance difficulties.
 
@@ -37,14 +37,14 @@ In addition, this end-to-end ML solution using Snowflake ML and Notebooks aims t
 
 ### Prerequisites
 - Privileges necessary to create a user, database, and warehouse in Snowflake
-- Access to run Notebooks in Snowflake
-- Container Runtime Enabled in the Account
+- A non-trial Snowflake account in a supported [AWS commercial region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
+- A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the CONTAINER_USER_ROLE and granting required privileges, as well as creating the EXTERNAL ACCESS INTEGRATION).
 
 ### What You Will Learn
 - How to extract features from customer, menu, and purchase history.
 - How to preprocess data using the Snowpark ML library.
 - How to train a PyTorch DLRM model with distributed processing on GPUs.
-- How to register the model and deploy it to a container runtime environment.
+- How to register the model and deploy it to Snowflake’s Container Runtime (public preview).
 - How to run predictions and visualize recommendations on Streamlit.
 - How to display personalized menu item recommendations along with purchase history in a Streamlit app.
 
@@ -53,11 +53,14 @@ In addition, this end-to-end ML solution using Snowflake ML and Notebooks aims t
 - A [Snowflake](https://app.snowflake.com/) Account with Accountadmin access
 
 ### What You Will Build
+From Snowflake Notebooks on Container Runtime (public preview), you will complete the following in this quickstart: 
+
 - A feature extraction pipeline from customer, menu, and purchase history.
-- A preprocessing pipeline using the Snowpark ML library.
+- A preprocessing pipeline.
 - A trained PyTorch DLRM model with distributed processing on GPUs.
-- A deployed model in a container runtime environment.
-- A Streamlit app for running predictions and visualizing recommendations.
+- A model served for inference in containers.
+
+Afterward, we will also show you how to build a Streamlit app for running predictions and visualizing recommendations.
 
 ## Setup Environment
 Duration: 10
@@ -69,17 +72,17 @@ Run the SQL from the [file](https://github.com/Snowflake-Labs/sfguide-getting-st
 ## Architecture
 Duration: 3
 
-The architecture of the Tasty Bytes ML solution is designed to generate personalized upsell and cross-sell recommendations. Here’s a detailed walkthrough of how each component and process comes together to achieve this:
+The architecture of the Tasty Bytes ML solution is designed to generate personalized upsell and cross-sell recommendations. Here's a detailed walkthrough of how we use components of Snowflake ML to complete this workflow:
 
 <img src="assets/Architecture.png"/>
 
 **Extracting Features:** This begins with the ingestion of data into Snowflake. Data sources include customer profiles, menu details, and purchase histories. Snowflake Notebooks can be leveraged to provide an integrated development environment where SQL and Python are used to query, manipulate, and prepare the data. The team automates the extraction of relevant features, ensuring that data from various sources is consolidated and ready for subsequent steps.
 
-**Preprocessing Data Using the Snowpark ML Library:** Next, the extracted data is preprocessed to make it suitable for machine learning. The Snowpark ML library is utilized for this purpose. Using the Snowpark API, the team writes data transformation and feature engineering code in Python. Snowpark's parallel processing capabilities handle large-scale data efficiently, enabling quick and seamless preprocessing. Additionally, the Snowflake Feature Store is used to create and manage reusable features, simplifying the computation of complex aggregations and moving window calculations with simple Python commands. This ensures consistency and efficiency in feature engineering.
+**Preprocessing Data:** Next, the extracted data is preprocessed to make it suitable for machine learning. The Snowflake ML APIs are utilized for this purpose. Using Snowflake ML, the team writes data transformation and feature engineering code in Python. Snowflake’s parallel processing capabilities handle large-scale data efficiently, enabling quick and seamless preprocessing. Additionally, the Snowflake Feature Store is used to create and manage reusable features, simplifying the computation of complex aggregations and moving window calculations with simple Python commands. This ensures consistency and efficiency in feature engineering.
 
-**Training a PyTorch DLRM Model with Distributed Processing on GPUs:** With preprocessed data ready, the model training phase begins. We are using PyTorch Deep Learning Recommendation Model (DLRM), which is well-suited for generating personalized recommendations. Using the Snowpark ML Modeling API, feature transformations are performed and the data is prepared for training. The actual training occurs in the Container Runtime environment, which includes prepackaged environments with popular Python packages and deep learning frameworks like PyTorch. This environment supports GPU nodes, enabling distributed training that scales efficiently without the need for heavy infrastructure management.
+**Training a PyTorch DLRM Model with Distributed Processing on GPUs:** With preprocessed data ready, the model training phase begins. We are using PyTorch Deep Learning Recommendation Model (DLRM), which is well-suited for generating personalized recommendations. Using the Snowflake ML APIs, feature transformations are performed and the data is prepared for training. The actual training occurs in the Container Runtime, which includes prepackaged environments with popular Python packages and deep learning frameworks like PyTorch. This environment supports GPU nodes, enabling distributed training that scales efficiently without the need for heavy infrastructure management.
 
-**Registering the Model and Deploying It to a Container Runtime Environment:** After the model is trained, it is registered and deployed. The Snowflake Model Registry serves as the central hub for managing the model's lifecycle, tracking versions, and maintaining metadata. The trained DLRM model is registered here, making it ready for deployment. Deployment is managed by the Container Runtime environment, ensuring consistency between development and production. This environment maintains the same packages and configurations, allowing the model to be deployed seamlessly on Snowflake WH or container services.
+**Registering the Model and Serving It in Containers with GPUs:** After the model is trained, it is registered and deployed. The Snowflake Model Registry serves as the central hub for managing the model's lifecycle, tracking versions, and maintaining metadata. The trained DLRM model is registered here, making it ready for deployment. Deployment is fully managed by Snowflake , ensuring consistency between development and production. This environment maintains the same packages and configurations, allowing the model to be deployed seamlessly on Snowflake warehouses or Snowpark Container Services for access to GPUs.
 
 **Running Predictions and Visualizing Recommendations on Streamlit:** With the model deployed, predictions are generated. The deployed model processes incoming data to produce personalized upsell and cross-sell recommendations. To make these insights accessible, we are leveraging Streamlit to build interactive dashboards. Streamlit provides a user-friendly interface where business users can explore the model’s predictions and visualizations. This interactive platform makes it easy to understand and act upon the insights generated by the model.
 
@@ -145,7 +148,7 @@ When you click the **Get Recommendations** button, the application filters the d
 
 ### What You Learned
 - How to extract features from customer, menu, and purchase history.
-- How to preprocess data using the Snowpark ML library.
+- How to preprocess data.
 - How to train a PyTorch DLRM model with distributed processing on GPUs.
 - How to register the model and deploy it to a container runtime environment.
 - How to run predictions and visualize recommendations on Streamlit.
@@ -157,6 +160,6 @@ When you click the **Get Recommendations** button, the application filters the d
 - [Blog](https://medium.com/snowflake/running-distributed-pytorch-models-on-snowflake-an-end-to-end-ml-solution-452d16a39553)
 - [Solution Center](https://developers.snowflake.com/solution/running-distributed-pytorch-models-on-snowflake-an-end-to-end-ml-solution/)
 - [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
-- [Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 - [Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Model Registry](https://docs.snowflake.com/developer-guide/snowflake-ml/model-registry/overview?utm_cta=snowpark-dg-hero-card)
+- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
