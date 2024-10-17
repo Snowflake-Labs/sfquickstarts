@@ -17,8 +17,8 @@ In this quickstart, we'll explore how to easily harness the power of containers 
 This exercise will illustrate how Snowflake Notebooks lets you quickly tap into the CPU or GPU compute power you need to scalably build ML models using any open-source Python framework of choice. 
 
 ### Prerequisites
-- Access to a Snowflake account with Accountadmin. 
-- Access to run Notebooks in Snowflake
+- A non-trial Snowflake account in a supported [AWS commercial region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
+- A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the XGB_GPU_LAB_USER and granting required privileges, as well as creating the EXTERNAL ACCESS INTEGRATION).
 - Foundational knowledge of Data Science workflows
 - For an intro to Snowflake Notebooks on Container Runtime, try this [quickstart](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0) first
 

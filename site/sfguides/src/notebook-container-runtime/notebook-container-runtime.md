@@ -17,8 +17,8 @@ Snowflake Notebooks in the Container Runtime are a powerful IDE option for build
 This introductory Quickstart will take you through the steps of running Snowflake Notebooks with Container Runtime. We will install packages, train a model using pre-installed packages, and view logs. 
 
 ### Prerequisites
-- Access to a Snowflake account with Accountadmin 
-- Access to run Notebooks in Snowflake
+- A non-trial Snowflake account in a supported [AWS commercial region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
+- A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the CONTAINER_RUNTIME_LAB_USER role and granting required privileges, as well as creating the EXTERNAL ACCESS INTEGRATION).
 - Foundational knowledge of Data Science workflows
 
 ### What You Will Learn 
