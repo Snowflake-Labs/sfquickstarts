@@ -34,6 +34,7 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 Duration: 2
 
 1. Obtain the TEMPO Native App from the Snowflake Marketplace.
+
 2. It is mandatory to shorten the name to just TEMPO during installation. 
   - To do so, examine Options for your installation before selecting Get
   - Where you see the extended name of the application, TEMPO - the first..., edit that to read just TEMPO
@@ -49,7 +50,7 @@ GRANT CREATE WAREHOUSE ON ACCOUNT TO APPLICATION TEMPO;
 
 At this point, you will be a Worksheet showing SHOW TABLES; you are now ready to use Tempo as explained below
 
-The application creates with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs after running the `startup` procedure, which will be used for container services runs.
+The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container services runs.
 
 ### TEMPO_WH
 - **Type**: Snowpark Optimized
@@ -224,6 +225,7 @@ Congratulations, you just ran the world's first purpose-built LogLM available as
 - How to see incidents and relevant context identified by Tempo in Splunk
 
 ### Resources
+
 
 To try the app please follow [This Link](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/deeptempo-cybersecurity-tempo-cybersecurity-incident-identification-via-deep-learning?search=tempo)
 [Snowflake Native Apps ](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/) 

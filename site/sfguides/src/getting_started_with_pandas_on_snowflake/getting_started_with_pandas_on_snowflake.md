@@ -3,7 +3,7 @@ id: getting_started_with_pandas_on_snowflake
 summary: Through this quickstart guide, you will learn how to use pandas on Snowflake.
 categories: Getting-Started
 environments: web
-status: Draft 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
@@ -29,18 +29,12 @@ pandas on Snowflake is delivered through the Snowpark pandas API, which you will
 - How to use Snowpark pandas to transform and analyze large datasets using the power of Snowflake
 
 ### Prerequisites
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-    > aside positive
-    >
-    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas)
-- [Anaconda](https://www.anaconda.com/) installed
-- [Python >=3.9](https://www.python.org/downloads/) installed
-    - Note that you will be creating a Python environment with 3.9 in the **Setup the Python Environment** step- in order to do this you need a version of Python >=3.9 installed on your machine
+We will be using [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) as part of this tutorial. You will need:
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
 - A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial or use a different role.
 
 ### What You’ll Build 
-- A notebook leveraging Snowpark pandas:
+- A notebook leveraging pandas on Snowflake:
     - to load and clean up data
     - to perform common pandas operations and transformations at scale
     - to visualize data 
@@ -49,11 +43,11 @@ pandas on Snowflake is delivered through the Snowpark pandas API, which you will
 ## Set up the Snowflake environment
 Duration: 2
 
-> aside positive
->
-> MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas).
+1. Download the Git repo [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas).
 
-Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
+2. Install the [Cybersyn Finance and Economics dataset](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/cybersyn-inc-financial-economic-essentials) from [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/). 
+
+3. Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
@@ -83,30 +77,17 @@ USE WAREHOUSE PANDAS_WH;
 USE DATABASE PANDAS_DB;
 
 -- Schemas
-CREATE OR REPLACE SCHEMA EXTERNAL;
-CREATE OR REPLACE SCHEMA RAW_POS;
-CREATE OR REPLACE SCHEMA RAW_CUSTOMER;
+CREATE OR REPLACE SCHEMA PUBLIC;
 
--- External Frostbyte objects
-USE SCHEMA EXTERNAL;
-CREATE OR REPLACE FILE FORMAT PARQUET_FORMAT
-    TYPE = PARQUET
-    COMPRESSION = SNAPPY
-;
-CREATE OR REPLACE STAGE FROSTBYTE_RAW_STAGE
-    URL = 's3://sfquickstarts/data-engineering-with-snowpark-python/'
-;
-
-LS @FROSTBYTE_RAW_STAGE;
+-- Create a table from the secure shared view
+CREATE OR REPLACE TABLE STOCK_PRICE_TIMESERIES AS SELECT * FROM FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES;
 ```
 
 These can also be found in the **setup.sql** file.
 
 <!-- ------------------------ -->
-## Set up the Python environment
+## Create Snowflake Notebook
 Duration: 10
-
-### Create Snowflake Notebook
 
 ### Navigate To Snowflake Notebooks
 
@@ -120,19 +101,9 @@ Duration: 10
 ### Import .ipynb File
 1. Download this [ipynb file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-pandas-on-snowflake/blob/main/notebooks/0_start_here.ipynb) to your machine.
 2. Navigate to where you have downloaded the ipynb file and select **0_start_here.ipynb** and click **Open**  
-3. Give the notebook a name and select the database and schema you would like to store the notebook in and a warehouse for the notebook to run on. 
-
-### Add Required Python Libraries
-
-Before you run the notebook you need to add the following Python libraries:
-* modin
-* pandas (version 2.2.1)
-
-1. In the Notebook click on **Packages**  
-2. Search for **modin** and select **modin** in the list  
-![Modin search result](assets/modin_result.png)  
-3. Do the same for **pandas** but make sure that the version is selected as 2.2.
-
+3. Give the notebook a name.
+4. Select the database `PANDAS_DB` and schema `PUBLIC` to store the notebook
+5. Select the warehouse `PANDAS_WH` for the notebook to run on. 
 
 <!-- ------------------------ -->
 ## Get started with pandas on Snowflake
@@ -140,22 +111,33 @@ Duration: 20
 
 Once you have created a notebook based on the [ipynb file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-pandas-on-snowflake/blob/main/notebooks/0_start_here.ipynb)
 
+### Add Required Python Libraries
+
+pandas on Snowflake is available as part of the Snowpark Python package (version 1.17 and above). 
+Snowpark Python comes pre-installed with the Snowflake Notebooks environment. 
+
+Additionally, you will need to add the `modin` package in the `Packages` dropdown.
+
+1. In the Notebook click on **Packages**  
+2. Search for **modin** and select **modin** in the list  
+![Modin search result](assets/modin_result.png)  
+
+### Run code in Notebook
 Within this notebook, we will import the Snowpark pandas API, connect to Snowflake, and perform common pandas operations on a financial time series dataset.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how Snowpark pandas allows pandas developers to easily get started processing and analyzing data at tremendous scale using familiar programming constructs and APIs.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how pandas on Snowflake allows pandas developers to easily get started processing and analyzing data at tremendous scale using familiar programming constructs and APIs.
 
 ### What you learned
 - How to install and configure the Snowpark pandas library
-- How to use Snowpark pandas to transform and analyze large datasets using the power of Snowflake
+- How to use pandas on Snowflake to transform and analyze large datasets using the power of Snowflake
 
 ### Related Resources
 
 For more information, check out the resources below:
 
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas)
-- [Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas)
-- [Snowpark for Python Developer Docs](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-
+- [Documentation: pandas on Snowflake Developer Guide](https://docs.snowflake.com/developer-guide/snowpark/python/pandas-on-snowflake)
+- [Quickstart: Data Engineering Pipeline with pandas on Snowflake](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_pandas/)
 <!-- ------------------------ -->

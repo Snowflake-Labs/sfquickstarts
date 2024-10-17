@@ -113,7 +113,8 @@ create or replace HYBRID TABLE FROSTBYTE_TASTY_BYTES_APP_UNISTORE.RAW.CUSTOMER_L
 	E_MAIL VARCHAR(16777216),
 	PHONE_NUMBER VARCHAR(16777216),
 	primary key (CUSTOMER_ID) rely 
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"tb_unistore", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"react"}}';
 
 -- create MENU_TYPE HYBRID table which holds menu details
 create or replace HYBRID TABLE FROSTBYTE_TASTY_BYTES_APP_UNISTORE.RAW.MENU_TYPE (
