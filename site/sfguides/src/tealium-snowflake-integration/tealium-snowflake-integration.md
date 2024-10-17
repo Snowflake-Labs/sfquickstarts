@@ -30,7 +30,7 @@ This quickstart guide will review the configuration of the Snowflake Data Source
 ### What You'll Need
 
 - Tealium Customer Data Hub (EventStream and/or AudienceStream) account
-- Snowflake account
+- [Snowflake account](https://signup.snowflake.com/)
   - Appropriate privileges (covered individually in next steps)
 
 ### What You’ll Learn 
