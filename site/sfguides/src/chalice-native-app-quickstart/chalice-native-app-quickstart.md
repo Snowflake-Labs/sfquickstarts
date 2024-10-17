@@ -142,10 +142,10 @@ Overbidding is systemic in programmatic auctions. By following these steps and r
 
 ### Related Resources
 
-*[True Value Bidding White Paper](https://docsend.com/view/hxwp8j7qmud6kz8i)
+-[True Value Bidding White Paper](https://docsend.com/view/hxwp8j7qmud6kz8i)
 
-*[Chalice Native Applications](https://app.snowflake.com/marketplace/providers/GZT0Z9XTXTP/Chalice%20Custom%20Algorithms?search=chalice)
+-[Chalice Native Applications](https://app.snowflake.com/marketplace/providers/GZT0Z9XTXTP/Chalice%20Custom%20Algorithms?search=chalice)
 
-*[Chalice Website](https://www.chalice.ai/)
+-[Chalice Website](https://www.chalice.ai/)
 
 
