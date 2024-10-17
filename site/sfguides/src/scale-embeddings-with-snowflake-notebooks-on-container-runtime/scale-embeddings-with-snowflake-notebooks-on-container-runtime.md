@@ -22,6 +22,14 @@ This guide will show you how to experiment with and scale embeddings generation 
 - Foundational knowledge of Data Science workflows
 - Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
 
+### What You’ll Learn
+- How to load an open source embedding model
+- How to generate embeddings using GPU compute
+- How to evalulate the embeddings for RAG
+- How to store embeddings as a Vector Type in a Snowflake table
+- How to log and deploy the open source embedding model
+- How to perform a large batch embeddings generation (inference) job.
+
 ### What You’ll Build 
 You're a Data Scientist looking to experiment with an open source embedding model and evaluate a dataset with it before deciding to deploy it for a large batch embeddings generation (inference) job.
 
