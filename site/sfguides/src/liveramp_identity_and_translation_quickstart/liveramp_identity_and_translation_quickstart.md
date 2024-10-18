@@ -34,6 +34,9 @@ Note: To complete this quickstart, you must have access to the full version of L
 - Basic knowledge of SQL, database concepts, and objects
 - Basic knowledge of Identity Resolution 
 - Table with one or more of the following Personal Identifiable Information components (Name, Address, Email, Phone)
+- 
+### What You'll Need
+[Snowflake](https://snowflake.com/) Account
 
 ### Additional Information
 LiveRamp has a [video](https://www.youtube.com/watch?v=RN7k4TNyfaQ) describing a basic use case as well as a demo of the execution.
@@ -127,8 +130,7 @@ You need to replace the following variable below
 * <customer_input_table_name> - Name of the Input table built in the previous step
 * <customer_meta_table_name> - Name of the Metadata table built in the previous step
 * <output_table_name> - Table name only
-* <customer_logging_table_name> - This was configured during implementation 
-* <customer_metrics_table_name> - This was configured during implementation
+
 
 > aside positive
 > 
@@ -139,9 +141,7 @@ When executing PII it is recommended starting with a 2XL size warehouse
 call lr_resolution_and_transcoding(
     <customer_input_table_name>,
     <customer_meta_table_name>,
-    <output_table_name>,
-    <customer_logging_table_name>, 
-    <customer_metrics_table_name>
+    <output_table_name>
 );
 ```
 > aside negative
@@ -303,8 +303,7 @@ You need to replace the following variable below
 * <customer_input_table_name> - Name of the Input table built in the previous step
 * <customer_meta_table_name> - Name of the Metadata table built in the previous step
 * <output_table_name> - Table name only
-* <customer_logging_table_name> - This was configured during implementation 
-* <customer_metrics_table_name> - This was configured during implementation
+
 
 > aside positive
 > 
@@ -315,9 +314,7 @@ When executing Translation it is recommended starting with a Large size warehous
 call lr_resolution_and_transcoding(
     <customer_input_table_name>,
     <customer_meta_table_name>,
-    <output_table_name>,
-    <customer_logging_table_name>, 
-    <customer_metrics_table_name>
+    <output_table_name>
 );
 ```
 > aside negative
@@ -417,7 +414,7 @@ select * from NewTable limit 100;
 
 
 
-## Summary and Next Steps
+## Conclusion And Resources
 Duration: 2
 
 Congratulations! You have successfully learned how to transform your Data Cloud into an Identity Resolution Engine.
