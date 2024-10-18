@@ -154,7 +154,7 @@ finally:
 
 ```
 
-Run the following Python API code in [`01_snowpark_container_services_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.py) using the Snowpark Python Connector and Python API to create the [OAuth Security Integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration), [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) 
+Run the following Python API code in [`01_snowpark_container_services_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.py) using the Snowpark Python Connector and Python API to create the [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) 
 ```Python API
 
 # create a SnowflakeConnection instance
@@ -163,11 +163,6 @@ connection_acct_admin = connect(**CONNECTION_PARAMETERS_ACCOUNT_ADMIN)
 try:
     # create a root as the entry point for all object
     root = Root(connection_acct_admin)
-
-    connection_acct_admin.cursor().execute("""CREATE SECURITY INTEGRATION IF NOT EXISTS snowservices_ingress_oauth
-        TYPE=oauth
-        OAUTH_CLIENT=snowservices_ingress
-        ENABLED=true;""")
 
     connection_acct_admin.cursor().execute("""CREATE OR REPLACE NETWORK RULE ALLOW_ALL_RULE
         TYPE = 'HOST_PORT'
@@ -433,7 +428,7 @@ spec:
 **Update the <repository_hostname> for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use Python API to push the yaml file. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py) :
 ```Python API
     # cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
-    # snow object stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
+    # snow stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
     s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"]
     s.upload_file("./jupyter-snowpark.yaml", "/", auto_compress=False, overwrite=True)
 ```
@@ -731,7 +726,7 @@ spec:
 **Update the `<repository_hostname>` for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use Python API to push the yaml file. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py)
 ```Python API
     # cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
-    # snow object stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
+    # snow stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
     s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"]
     s.upload_file("./convert-api.yaml", "/", auto_compress=False, overwrite=True)
 ```
