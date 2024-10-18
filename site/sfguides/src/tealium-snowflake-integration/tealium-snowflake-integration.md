@@ -13,6 +13,8 @@ tags: Getting Started, Tealium, Snowpipe Streaming, Staging Tables, Real-Time, C
 ## Overview 
 Duration: 2
 
+![banner](assets/QuickstartHeader.png)
+
 ### Introduction
 This quickstart guide will review the configuration of the Snowflake Data Source and Snowflake Streaming connectors within Tealium. Tealium's Customer Data Hub acts as a high quality data source and a real-time activation engine for Snowflake. Use Tealium to capture and send low latency customer interaction data to Snowflake for further analysis or to inform AI initiatives, and automate real-time data activation using Snowflake data across Tealium’s 1300+ integration marketplace.
 
