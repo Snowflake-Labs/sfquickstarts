@@ -1,13 +1,13 @@
 author: Joviane Bellegarde
 id: cdc_data_from_postgres_to_snowflake
 summary: CDC Data from PostgreSQL to Snowflake
-categories: Getting-Started, Connectors, Dynamic Tables, PostgreSQL
+categories: CDC, Getting-Started, Connectors, Dynamic Tables
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Connectors, Dynamic Tables
+tags: CDC, Getting Started, Connectors, Dynamic Tables
 
-# Financial Insights Using Change Data Capture with the Snowflake Connector for PostgreSQL, Dynamic Tables, and Streamlit in Snowflake
+# Real-Time Financial Insights Using Change Data Capture (CDC) with the Snowflake Connector for PostgreSQL and Dynamic Tables
 <!-- ------------------------ -->
 ## Overview
 Duration: 10
@@ -15,7 +15,7 @@ Duration: 10
 In this Quickstart, we will investigate how a financial company builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights on potential ways to increase customer spending with promotions.
 
 ### What You Will Build
-- Visualize customer data and gain insights ingesting data from PostgreSQL DB to Snowflake using the Snowflake Connector for PostgreSQL Native App, Dynamic Tables, and Streamlit-in-Snowflake (SiS)
+- Visualize customer data and gain insights ingesting data from PostgreSQL DB to Snowflake using the Snowflake Connector for PostgreSQL Native App and Dynamic Tables
 
 ### What You Will Learn
 - How to connect PostgreSQL data to Snowflake using the [Snowflake Connector for PostgreSQL](https://other-docs.snowflake.com/en/connectors/postgres6/about)
@@ -135,29 +135,29 @@ DROP TABLE IF EXISTS postgres.raw_cdc.products;
 DROP TABLE IF EXISTS postgres.raw_cdc.transactions;
 
 CREATE TABLE postgres.raw_cdc.customers (
-    customer_id INTEGER PRIMARY KEY,
-    firstname VARCHAR,
-    lastname VARCHAR,
-    age INTEGER,
-    email VARCHAR,
-    phone_number VARCHAR
+  customer_id INTEGER PRIMARY KEY,
+  firstname VARCHAR,
+  lastname VARCHAR,
+  age INTEGER,
+  email VARCHAR,
+  phone_number VARCHAR
 );
 
 CREATE TABLE postgres.raw_cdc.merchants (
-    merchant_id integer PRIMARY KEY,
+  merchant_id integer PRIMARY KEY,
 	merchant_name VARCHAR,
 	merchant_category VARCHAR
 );
 
 CREATE TABLE postgres.raw_cdc.products (
-    product_id INTEGER PRIMARY KEY,
-    product_name VARCHAR,
-    product_category VARCHAR,
-    price DOUBLE PRECISION
+  product_id INTEGER PRIMARY KEY,
+  product_name VARCHAR,
+  product_category VARCHAR,
+  price DOUBLE PRECISION
 );
 
 CREATE TABLE postgres.raw_cdc.transactions (
-    transaction_id VARCHAR PRIMARY KEY,
+  transaction_id VARCHAR PRIMARY KEY,
 	customer_id INTEGER,
 	product_id INTEGER,
 	merchant_id INTEGER,
@@ -165,8 +165,8 @@ CREATE TABLE postgres.raw_cdc.transactions (
 	transaction_time VARCHAR,
 	quantity INTEGER,
 	total_price DOUBLE PRECISION,
-    transaction_card VARCHAR,
-    transaction_category VARCHAR
+  transaction_card VARCHAR,
+  transaction_category VARCHAR
 );
 ```
 
