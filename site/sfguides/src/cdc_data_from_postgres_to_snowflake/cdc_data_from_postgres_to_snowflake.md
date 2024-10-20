@@ -126,8 +126,6 @@ To connect to the pre-configured databases using Visual Studio Code or PyCharm, 
 1. Run the following **postgres** script in the PostgreSQL to create the database, schema, and tables:
 
 ```
-DROP DATABASE IF EXISTS postgres;
-CREATE DATABASE postgres;
 CREATE SCHEMA raw_cdc;
 SET search_path TO raw_cdc;
 
@@ -321,8 +319,7 @@ Directory Structure
 </ul>
 
 #### Verifying Connection with Snowflake
-Navigate to Snowsight to your previously created Snowflake Connector for PostgreSQL Native App. Click on the **Refresh** button in the Agent Connection Section.
-When successfully configured, you should see the "Successfully configured" message.
+Navigate to Snowsight to your previously created Snowflake Connector for PostgreSQL Native App. Click on the **Refresh** button in the Agent Connection Section. When successfully configured, you should see the "Successfully configured" message. Click "Define data to sync".
 
 <img src="assets/successfully_configured.png">
 
