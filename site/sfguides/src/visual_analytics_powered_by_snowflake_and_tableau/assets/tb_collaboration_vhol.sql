@@ -3,7 +3,7 @@ Quickstart Section 3 - Investigating Zero Sales Days in our First Party Data
 
   Our Tasty Bytes Financial Analysts have brought it to our attention when running 
   year over year analysis that there are unexplainable days in various cities where
-  our truck sales went to 0. 
+  our truck sales went to 0 or data doesn't exist. 
   
   One example they have provided was for Hamburg, Germany in February of 2022.
   Author:Chandra
@@ -20,9 +20,10 @@ FROM frostbyte_tasty_bytes.analytics.orders_v o
 WHERE 1=1
     AND o.country = 'Germany'
     AND o.primary_city = 'Hamburg'
-    AND DATE(o.order_ts) BETWEEN '2022-02-10' AND '2022-02-28'
+    AND DATE(o.order_ts) BETWEEN '2022-02-10' AND '2022-02-20'
 GROUP BY o.date
 ORDER BY o.date ASC;
+
 
 /*----------------------------------------------------------------------------------
 Quickstart Section 4 - Investigating Zero Sales Days in our First Party Data
@@ -66,6 +67,7 @@ JOIN frostbyte_tasty_bytes.raw_pos.country c
 
 
 -- Section 4: Step 3 - Visualizing Daily Temperatures
+-- to see if there extreme temperature hampering sales
 SELECT 
     dw.country_desc,
     dw.city_name,
@@ -82,6 +84,7 @@ ORDER BY dw.date_valid_std DESC;
 
 
 -- Section 4: Step 4 - Bringing in Wind and Rain Metrics
+-- We can see extreme winds hampering Sales between Feb 16th ans 20th
 SELECT 
     dw.country_desc,
     dw.city_name,
@@ -93,8 +96,9 @@ WHERE 1=1
     AND dw.city_name = 'Hamburg'
     AND YEAR(date_valid_std) = '2022'
     AND MONTH(date_valid_std) = '2'
+    AND date_valid_std between '2022-02-14' and  '2022-02-25'
 GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
-ORDER BY dw.date_valid_std DESC;
+ORDER BY dw.date_valid_std ASC;
 
 
 /*----------------------------------------------------------------------------------
@@ -125,7 +129,7 @@ $$
 $$;
 
 
--- Section 5: Step 2 - Creating the SQL for our View
+-- Section 5: Step 2 - Creating the SQL for a combined View
 SELECT 
     fd.date_valid_std AS date,
     fd.city_name,
@@ -145,6 +149,7 @@ WHERE 1=1
     AND fd.country_desc = 'Germany'
     AND fd.city = 'Hamburg'
     AND fd.yyyy_mm = '2022-02'
+    AND date_valid_std between '2022-02-14' and  '2022-02-25'
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 
@@ -179,7 +184,8 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
  let's now take a look at the value we have now provided to our Financial Analysts.
 ----------------------------------------------------------------------------------*/
 
--- Section 6: Step 1 - Simplifying our Analysis
+-- Section 6: Step 1 - Simplifying our Analysis 
+-- Wind Speed seems had a major Impact
 SELECT 
     dcm.date,
     dcm.city_name,
@@ -194,8 +200,8 @@ FROM frostbyte_tasty_bytes.analytics.daily_city_metrics_v dcm
 WHERE 1=1
     AND dcm.country_desc = 'Germany'
     AND dcm.city_name = 'Hamburg'
-    AND dcm.date BETWEEN '2022-02-01' AND '2022-02-24'
-ORDER BY date DESC;
+    AND dcm.date BETWEEN '2022-02-14' AND '2022-02-25'
+ORDER BY date ASC;
 
 
 

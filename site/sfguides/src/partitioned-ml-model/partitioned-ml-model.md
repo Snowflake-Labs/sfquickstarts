@@ -64,7 +64,7 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE PARTITIONED_DATABASE  TO ROLE PARTITI
 ## Run the Notebook
 Duration: 30
 
-- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-partitioned-models-snowflake-model-registry/blob/main/partitioned-custom-model-with-model-registry.ipynb)
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-partitioned-models-snowflake-model-registry/blob/main/notebooks/0_start_here.ipynb)
 - Change role to PARTITIONED_LAB_USER
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
@@ -73,7 +73,7 @@ Duration: 30
   - Warehouse: PARTITIONED_WH
 - Download Partitioned_Custom_Model_Restaurant_Traffic_Data.csv
 - Click Packages in the top right, add `snowflake-ml-python`
-- Download the csv file from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-partitioned-models-snowflake-model-registry/blob/main/Partitioned_Custom_Model_Restaurant_Traffic_Data.csv)
+- Download the csv file from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-partitioned-models-snowflake-model-registry/blob/main/scripts/Partitioned_Custom_Model_Restaurant_Traffic_Data.csv)
 - Click the plus on the file explorer in the new notebook and upload the csv file
 
 ![upload-file](assets/upload-file.png)

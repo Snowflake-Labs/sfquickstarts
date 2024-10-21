@@ -47,15 +47,22 @@ The final product includes an application that lets users test how the LLM respo
 - Check [LLM availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_ga=2.5151286.405859672.1709568467-277021311.1701887324&_gac=1.124754680.1707955750.Cj0KCQiA5rGuBhCnARIsAN11vgRLWfK6RIoIEqcZ7cFas8qwN4yCoL0q9nttp5UEmSocnPmhdBG57fgaAjqNEALw_wcB&_fsi=j2b82Wl3#availability) to help you decide where you want to create your snowflake account
 - A Snowflake account with [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) enabled by ORGADMIN.
 
+> aside positive
+> NOTE: For an end-to-end setup experience using Snowflake Notebook, download this [.ipynb](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/RAG_Using_Snowflake_Cortex_Search_Setup_Notebook.ipynb) file and [import](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import) it in your Snowflake account. The Notebook covers setup steps 2, 3, and 4.
+
 <!-- ------------------------ -->
 ## Organize Documents and Create Pre-Processing Function
 Duration: 15
 
-In Snowflake, databases and schemas are used to organize and govern access to data and logic. Let´s start by getting a few documents locally and then create a database that will hold the PDFs, the functions that will process (extract and chunk) those PDFs and the table that will hold the text and that will be used to create the Cortex Search service. 
+In Snowflake, databases and schemas are used to organize and govern access to data and logic. Let´s start by getting a few documents locally and then create a database that will hold the PDFs, the functions that will process (extract and chunk) those PDFs and the table that will hold the text and that will be used to create the Cortex Search service.
 
 **Step 1**. Download example documents
 
 Let's download a few documents we have created about bikes and skis. In those documents we have added some very specific information about those ficticious models. You can always add more or use a different type of documents that you want to try asking questions against. At the end we are going to test how the LLM responds with and without access to the information in the documents. 
+
+You can [download all documents from this zip file](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/docs.zip)
+
+Individual files:
 
 - [Mondracer Infant Bike](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/Mondracer_Infant_Bike.pdf)
 - [Premium Bycycle User Guide](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/Premium_Bicycle_User_Guide.pdf)
@@ -81,56 +88,32 @@ CREATE SCHEMA DATA;
 Relevant documentation: [Database and Schema management](https://docs.snowflake.com/en/sql-reference/ddl-database)
 
 
-**Step 4**. Create a table function that will read the PDF documents and split them in chunks
+**Step 4**. Create a table function that will split text into chunks
 
-We will be using the PyPDF2 and Langchain Python libraries to accomplish the necessary document processing tasks. Because as part of Snowpark Python these are available inside the integrated Anaconda repository, there are no manual installs or Python environment and dependency management required. 
+We will be using the Langchain Python library to accomplish the necessary document split tasks. Because as part of Snowpark Python these are available inside the integrated Anaconda repository, there are no manual installs or Python environment and dependency management required. 
 
 Relevant documentation: 
 - [Using third-party libraries in Snowflake](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages)
 - [Python User Defined Table Function](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
 
-Create the function by [running the following query](https://docs.snowflake.com/en/user-guide/ui-snowsight-query#executing-and-running-queries) inside your worksheet
+Create the function by [running the following query](https://docs.snowflake.com/en/user-guide/ui-snowsight-query#executing-and-running-queries) inside your SQL worksheet
 
 ```SQL
-create or replace function pdf_text_chunker(file_url string)
+create or replace function text_chunker(pdf_text string)
 returns table (chunk varchar)
 language python
 runtime_version = '3.9'
-handler = 'pdf_text_chunker'
-packages = ('snowflake-snowpark-python','PyPDF2', 'langchain')
+handler = 'text_chunker'
+packages = ('snowflake-snowpark-python', 'langchain')
 as
 $$
 from snowflake.snowpark.types import StringType, StructField, StructType
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from snowflake.snowpark.files import SnowflakeFile
-import PyPDF2, io
-import logging
 import pandas as pd
 
-class pdf_text_chunker:
+class text_chunker:
 
-    def read_pdf(self, file_url: str) -> str:
-    
-        logger = logging.getLogger("udf_logger")
-        logger.info(f"Opening file {file_url}")
-    
-        with SnowflakeFile.open(file_url, 'rb') as f:
-            buffer = io.BytesIO(f.readall())
-            
-        reader = PyPDF2.PdfReader(buffer)   
-        text = ""
-        for page in reader.pages:
-            try:
-                text += page.extract_text().replace('\n', ' ').replace('\0', ' ')
-            except:
-                text = "Unable to Extract"
-                logger.warn(f"Unable to extract from file {file_url}, page {page}")
-        
-        return text
-
-    def process(self,file_url: str):
-
-        text = self.read_pdf(file_url)
+    def process(self, pdf_text: str):
         
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size = 1512, #Adjust this as you see fit
@@ -138,7 +121,7 @@ class pdf_text_chunker:
             length_function = len
         )
     
-        chunks = text_splitter.split_text(text)
+        chunks = text_splitter.split_text(pdf_text)
         df = pd.DataFrame(chunks, columns=['chunks'])
         
         yield from df.itertuples(index=False, name=None)
@@ -192,11 +175,12 @@ create or replace TABLE DOCS_CHUNKS_TABLE (
 );
 ```
 
-**Step 2**. Use the function previously created to process the PDF files and extract the chunks. There is no need to create embeddings as that will be managed automatically by Cortex Search service later.
+**Step 2**. Function [SNOWFLAKE.CORTEX.PARSE_DOCUMENT](https://docs.snowflake.com/en/sql-reference/functions/parse_document-snowflake-cortex) will be used to read the PDF documents directly from the staging area. The text will be passed to the function previously created to split the text into chunks. There is no need to create embeddings as that will be managed automatically by Cortex Search service later.
 
 ```SQL
 insert into docs_chunks_table (relative_path, size, file_url,
                             scoped_file_url, chunk)
+
     select relative_path, 
             size,
             file_url, 
@@ -204,7 +188,8 @@ insert into docs_chunks_table (relative_path, size, file_url,
             func.chunk as chunk
     from 
         directory(@docs),
-        TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path))) as func;
+        TABLE(text_chunker (TO_VARCHAR(SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@docs, 
+                              relative_path, {'mode': 'LAYOUT'})))) as func;
 ```
 
 ### Label the product category
@@ -500,6 +485,12 @@ The reason is that we need to add the package **snowflake.core** in our Streamli
 
 Click on **Packages** and look for **snowflake.core**
 
+You may want to use the latest versions available, but we encourage you to use this combination for this specific lab:
+- snowflake.core = 0.9.0
+- python = 3.8
+- snowflake-snowpark-python = 1.22.1
+- streamlit = 1.26.0
+
 ![App](assets/fig11_packages.png)
 
 After adding it you should be able to run the app.
@@ -563,7 +554,6 @@ In the app, we can see the documents we had uploaded previously and can be used 
 To test out the RAG framework, here a few questions you can ask and then use the interactive widgets to compare the results when using a different LLM or when choosing to get a response without the context. This is related to very specific information that we have added into the documents and that is very unique to our products.
 
 - Is there any special lubricant to be used with the premium bike?
-- What is the warranty for the premium bike?
 - Does the mondracer infant bike need any special tool?
 - Is there any temperature to be considered with the premium bicycle?
 - What is the temperature to store the ski boots?
@@ -636,7 +626,13 @@ First let´s create the new Streamlit App and then we will discuss each of the s
 
 ![App](assets/fig13_streamlit_chatbot.png)
 
-In this second app, we are going to demo how to access the Complete function from Snowlfake Cortex via Python API instead of SQL as we did in the previous app. To get access to the API, you need to specify the **snowflake-ml-python** package in your Streamlit app:
+In this second app, we are going to demo how to access the Complete function from Snowlfake Cortex via Python API instead of SQL as we did in the previous app. To get access to the API, you need to specify the **snowflake-ml-python** package in your Streamlit app. This combination of packages version is known to work well:
+
+- snowflake-ml-python = 1.6.2
+- snowflake.core = 0.9.0
+- python = 3.8
+- snowflake-snowpark-python = 1.22.1
+- streamlit = 1.26.0
 
 ![App](assets/fig13_2_ml_python_package.png)
 
@@ -1024,6 +1020,56 @@ Here another suggestion based on specific info from the documents (unique for us
 
 
 You can try with your own documents. You will notice different peformance depending on the LLM you will be using. 
+
+<!-- ------------------------ -->
+## Optional: Automatic Processing of New Documents
+Duration: 5
+
+We can use Snowflake features Streams and Task to automatically process new PDF files as they are added into Snowflake. 
+
+- First we are creating a Snowflake Task. That Task will have some conditions to be executed and one action to take:
+  - Where: This is going to be executed using warehouse **COMPUTE_WH**. Please name to your own Warehouse.
+  - When: Check every minute, and execute in the case of new records in the docs_stream stream
+  - What to do: Process the files and insert the records in the docs_chunks_table
+
+Execute this code in your Snowflake worksheet:
+
+```SQL
+create or replace stream docs_stream on stage docs;
+
+create or replace task parse_and_insert_pdf_task 
+    warehouse = COMPUTE_WH
+    schedule = '1 minute'
+    when system$stream_has_data('docs_stream')
+    as
+  
+    insert into docs_chunks_table (relative_path, size, file_url,
+                            scoped_file_url, chunk)
+    select relative_path, 
+            size,
+            file_url, 
+            build_scoped_file_url(@docs, relative_path) as scoped_file_url,
+            func.chunk as chunk
+    from 
+        docs_stream,
+        TABLE(text_chunker (TO_VARCHAR(SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@docs, relative_path, {'mode': 'LAYOUT'})))) as func;
+
+alter task parse_and_insert_pdf_task resume;
+```
+
+After uploading the document (and if you are fast enough before the doc is automatically processed) you can see the doc in the stream:
+
+```SQL
+select * from docs_stream;
+```
+
+It will return no value once the doc has been processed. Once the document is avilable in the docs_chunks_table, the Snowflake Cortex Search service will automaticaly index it according to the TARGET_LAG that was specified when the serrvice was created.
+
+Once you have finish testing uploading new documents and asking questions, you may want to suspend the task:
+
+```SQL
+alter task parse_and_insert_pdf_task suspend;
+```
 
 <!-- ------------------------ -->
 ## Conclusion And Resources

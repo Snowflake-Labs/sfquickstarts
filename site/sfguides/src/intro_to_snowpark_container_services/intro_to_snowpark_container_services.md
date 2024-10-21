@@ -279,7 +279,7 @@ spec:
 **Update the <repository_hostname> for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. From the terminal:
 ```bash
 cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
-snow object stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
+snow stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
 ```
 You can verify that your yaml was pushed successfully by running the following SQL using the Snowflake VSCode Extension or a SQL worksheet and verifying that the file is listed:
 ```sql
@@ -482,7 +482,7 @@ spec:
 **Update the `<repository_hostname>` for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. From the terminal:
 ```bash
 cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
-snow object stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
+snow stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
 ```
 You can verify that your yaml was pushed successfully by running the following SQL using the Snowflake VSCode Extension or a SQL worksheet and verifying that the file is listed:
 ```sql

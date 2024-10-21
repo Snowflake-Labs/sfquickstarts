@@ -21,7 +21,7 @@ CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes.analytics;
 
 -- create warehouses
 CREATE OR REPLACE WAREHOUSE demo_build_wh
-    WAREHOUSE_SIZE = 'xxxlarge'
+    WAREHOUSE_SIZE = 'small'
     WAREHOUSE_TYPE = 'standard'
     AUTO_SUSPEND = 60
     AUTO_RESUME = TRUE
@@ -36,13 +36,6 @@ CREATE OR REPLACE WAREHOUSE tasty_de_wh
     INITIALLY_SUSPENDED = TRUE
 COMMENT = 'data engineering warehouse for tasty bytes'; 
 
-/* CREATE OR REPLACE WAREHOUSE tasty_ds_wh
-    WAREHOUSE_SIZE = 'xsmall'
-    WAREHOUSE_TYPE = 'standard'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-COMMENT = 'data science warehouse for tasty bytes'; */
 
 CREATE OR REPLACE WAREHOUSE tasty_bi_wh
     WAREHOUSE_SIZE = 'xsmall'
@@ -51,22 +44,6 @@ CREATE OR REPLACE WAREHOUSE tasty_bi_wh
     AUTO_RESUME = TRUE
     INITIALLY_SUSPENDED = TRUE
 COMMENT = 'business intelligence warehouse for tasty bytes';
-
-/* CREATE OR REPLACE WAREHOUSE tasty_dev_wh
-    WAREHOUSE_SIZE = 'xsmall'
-    WAREHOUSE_TYPE = 'standard'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-COMMENT = 'developer warehouse for tasty bytes';
-
-CREATE OR REPLACE WAREHOUSE tasty_data_app_wh
-    WAREHOUSE_SIZE = 'xsmall'
-    WAREHOUSE_TYPE = 'standard'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-COMMENT = 'data app warehouse for tasty bytes'; */
 
 -- create roles
 USE ROLE securityadmin;
@@ -78,17 +55,9 @@ CREATE ROLE IF NOT EXISTS tasty_admin
 CREATE ROLE IF NOT EXISTS tasty_data_engineer
     COMMENT = 'data engineer for tasty bytes';
       
-/* CREATE ROLE IF NOT EXISTS tasty_data_scientist
-    COMMENT = 'data scientist for tasty bytes'; */
     
 CREATE ROLE IF NOT EXISTS tasty_bi
     COMMENT = 'business intelligence for tasty bytes';
-    
-/* CREATE ROLE IF NOT EXISTS tasty_data_app
-    COMMENT = 'data application developer for tasty bytes'; 
-    
-CREATE ROLE IF NOT EXISTS tasty_dev
-    COMMENT = 'developer for tasty bytes'; */
     
 -- role hierarchy
 GRANT ROLE tasty_admin TO ROLE sysadmin;
@@ -196,6 +165,7 @@ COMMENT = 'Quickstarts S3 Stage Connection'
 url = 's3://sfquickstarts/frostbyte_tastybytes/'
 file_format = frostbyte_tasty_bytes.public.csv_ff;
 
+list @frostbyte_tasty_bytes.public.s3load;
 /*--
  raw zone table build 
 --*/
@@ -306,7 +276,8 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.order_detail
     order_item_discount_amount VARCHAR(16777216)
 );
 
--- customer loyalty table build
+-- customer loyalty table build 
+
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_customer.customer_loyalty
 (
     customer_id NUMBER(38,0),
@@ -324,7 +295,7 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_customer.customer_loyalty
     birthday_date DATE,
     e_mail VARCHAR(16777216),
     phone_number VARCHAR(16777216)
-);
+); 
 
 /*--
  • harmonized view creation
@@ -380,7 +351,7 @@ JOIN frostbyte_tasty_bytes.raw_pos.location l
 LEFT JOIN frostbyte_tasty_bytes.raw_customer.customer_loyalty cl
     ON oh.customer_id = cl.customer_id;
 
--- loyalty_metrics_v view
+-- loyalty_metrics_v view 
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.harmonized.customer_loyalty_metrics_v
     AS
 SELECT 
@@ -397,7 +368,7 @@ FROM frostbyte_tasty_bytes.raw_customer.customer_loyalty cl
 JOIN frostbyte_tasty_bytes.raw_pos.order_header oh
 ON cl.customer_id = oh.customer_id
 GROUP BY cl.customer_id, cl.city, cl.country, cl.first_name,
-cl.last_name, cl.phone_number, cl.e_mail;
+cl.last_name, cl.phone_number, cl.e_mail; 
 
 /*--
  • analytics view creation
@@ -409,11 +380,11 @@ COMMENT = 'Tasty Bytes Order Detail View'
     AS
 SELECT DATE(o.order_ts) AS date, * FROM frostbyte_tasty_bytes.harmonized.orders_v o;
 
--- customer_loyalty_metrics_v view
+-- customer_loyalty_metrics_v view 
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.customer_loyalty_metrics_v
 COMMENT = 'Tasty Bytes Customer Loyalty Member Metrics View'
     AS
-SELECT * FROM frostbyte_tasty_bytes.harmonized.customer_loyalty_metrics_v;
+SELECT * FROM frostbyte_tasty_bytes.harmonized.customer_loyalty_metrics_v; 
 
 /*--
  raw zone table load 
@@ -440,7 +411,7 @@ COPY INTO frostbyte_tasty_bytes.raw_pos.truck
 FROM @frostbyte_tasty_bytes.public.s3load/raw_pos/truck/;
 
 -- customer_loyalty table load
-COPY INTO frostbyte_tasty_bytes.raw_customer.customer_loyalty
+COPY INTO frostbyte_tasty_bytes.raw_customer.customer_loyalty 
 FROM @frostbyte_tasty_bytes.public.s3load/raw_customer/customer_loyalty/;
 
 -- order_header table load
@@ -452,7 +423,7 @@ COPY INTO frostbyte_tasty_bytes.raw_pos.order_detail
 FROM @frostbyte_tasty_bytes.public.s3load/raw_pos/order_detail/;
 
 -- drop demo_build_wh
--- DROP WAREHOUSE IF EXISTS demo_build_wh;
+DROP WAREHOUSE IF EXISTS demo_build_wh;
 
 -- setup completion note
 SELECT 'frostbyte_tasty_bytes setup is now complete' AS note;
