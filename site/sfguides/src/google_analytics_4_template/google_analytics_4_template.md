@@ -6,9 +6,9 @@ environments: web
 status: Published
 feedback link: https://github.com/sigmacomputing/sigmaquickstarts/issues
 tags: Getting Started, Partners
-lastUpdated: 2023-09-12
+lastUpdated: 2023-09-21
 
-# Google Analytics 4 Template Setup
+# # Getting Started with Google Analytics 4 (GA4) Using Snowflake and Sigma
 
 ## Overview 
 
