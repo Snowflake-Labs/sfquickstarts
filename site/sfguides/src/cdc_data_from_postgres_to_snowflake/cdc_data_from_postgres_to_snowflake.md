@@ -135,38 +135,38 @@ DROP TABLE IF EXISTS postgres.raw_cdc.products;
 DROP TABLE IF EXISTS postgres.raw_cdc.transactions;
 
 CREATE TABLE postgres.raw_cdc.customers (
-  customer_id INTEGER PRIMARY KEY,
-  firstname VARCHAR,
-  lastname VARCHAR,
-  age INTEGER,
-  email VARCHAR,
-  phone_number VARCHAR
+   customer_id INTEGER PRIMARY KEY,
+   firstname VARCHAR,
+   lastname VARCHAR,
+   age INTEGER,
+   email VARCHAR,
+   phone_number VARCHAR
 );
 
 CREATE TABLE postgres.raw_cdc.merchants (
-  merchant_id integer PRIMARY KEY,
-	merchant_name VARCHAR,
-	merchant_category VARCHAR
+   merchant_id integer PRIMARY KEY,
+   merchant_name VARCHAR,
+   merchant_category VARCHAR
 );
 
 CREATE TABLE postgres.raw_cdc.products (
-  product_id INTEGER PRIMARY KEY,
-  product_name VARCHAR,
-  product_category VARCHAR,
-  price DOUBLE PRECISION
+   product_id INTEGER PRIMARY KEY,
+   product_name VARCHAR,
+   product_category VARCHAR,
+   price DOUBLE PRECISION
 );
 
 CREATE TABLE postgres.raw_cdc.transactions (
-  transaction_id VARCHAR PRIMARY KEY,
-	customer_id INTEGER,
-	product_id INTEGER,
-	merchant_id INTEGER,
-	transaction_date DATE,
-	transaction_time VARCHAR,
-	quantity INTEGER,
-	total_price DOUBLE PRECISION,
-  transaction_card VARCHAR,
-  transaction_category VARCHAR
+   transaction_id VARCHAR PRIMARY KEY,
+   customer_id INTEGER,
+   product_id INTEGER,
+   merchant_id INTEGER,
+   transaction_date DATE,
+   transaction_time VARCHAR,
+   quantity INTEGER,
+   total_price DOUBLE PRECISION,
+   transaction_card VARCHAR,
+   transaction_category VARCHAR
 );
 ```
 
@@ -407,7 +407,6 @@ BEGIN
             v_new_transaction_id := 'TX' || EXTRACT(EPOCH FROM NOW())::TEXT || j::TEXT;
 
             -- Generate current date and time
---             v_transaction_date := CURRENT_DATE;
             v_transaction_date := CURRENT_DATE;
             v_transaction_time := TO_CHAR(NOW(), 'HH24:MI:SS');
 
@@ -457,7 +456,7 @@ Duration: 2
 When you're finished with this Quickstart, you can clean up the objects created in Snowflake.
 
 ### Clean Up Script
-Navigate to the last the last cell in the Snowflake Notebook to uncomment and run the last cell labeled **clean_up** to drop the objects created in this Quickstart.
+Navigate to the last cell in the Snowflake Notebook to uncomment and run the last cell labeled **clean_up** to drop the objects created in this Quickstart.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
