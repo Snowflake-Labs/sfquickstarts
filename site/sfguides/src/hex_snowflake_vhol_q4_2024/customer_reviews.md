@@ -13,7 +13,9 @@ tags: Hex, Notebooks, Partner Connect
 ## Overview 
 Duration: 5
 
-In this quickstart, we will be exploring customer review data using Cortex and Hex. Specifically, we will create a data app that leverages Snowflake's Cortex LLM functions to better understand our customer feedback. As a result we will then be able to provide recommendations and improvements to our stakeholders. 
+This quickstart guide has been slightly modified from the original quickstart guide titled [Customer Reviews Analytics using Snowflake Cortex](https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/#0) by Shriya Rai. The SQL script to generate the Snowflake objects has been created by Jacob Kranzler.
+
+We will be exploring customer review data using Cortex and Hex. Specifically, we will create a data app that leverages Snowflake's Cortex LLM functions to better understand our customer feedback. As a result we will then be able to provide recommendations and improvements to our stakeholders. 
 
 ### Prerequisites
 - Familiarity with basic Python and SQL 
@@ -22,15 +24,15 @@ In this quickstart, we will be exploring customer review data using Cortex and H
 
 ### What You Will Learn
 * How to leverage Snowflake's Cortex LMM functionality
+* Data exploration and analysis of customer reviews using Cortex.
 * How to best utilize single-shot versus zero-shot prompting
+* Perform sentiment analysis and classification at scale.
 * How to turn a Hex notebook into a Hex data app
 
 ### What You Will Build
-In this quickstart, you before data exploration in Hex which will be used to create a purpose-built Hex app that can be shared publically or to specific individuals.
+You will create a Hex data app that uses Snowflake Cortex and Hex to analyze customer reviews, providing interactive insights and recommendations to our stakeholders.
 
-Head over to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. Once you've registered, you'll get an email that will bring you to Snowflake so that you can sign in.
-
-#### Connecting Snowflake with Hex
+### Connecting Snowflake with Hex
 Ensure you have access to a Snowflake account or have created a free trial following the link above. 
 If you have an existing Hex account, login in to your account and continue to the next section skipped the steps below. 
 
@@ -48,7 +50,7 @@ The following issues may occur if you have an existing Hex account and you're no
 > If you have an existing Hex account that was created with a password and username, you may run into an "Unauthorized" error when activating your workspace in Partner Connect. If this is your experience, head over to [hex.tech](https://hex.tech) and login with your password and username. 
 
 **Plan upgrade**
-> If you are an existing Hex user currently on a Community plan, you may encounter an issue that will prevent you from using Partner Connect. If you’re unclear on what Hex plan you are on, feel free to reach out to [support@hex.tech](mailto:support@hex.tech). If you are the Admin of your organization, you can see your plan under Manage plan on the Settings page. To extend a trial, email [support@hex.tech](mailto:support@hex.tech) with the subject "VHOL trial extension."
+> If you are an existing Hex user currently on a Community plan, you may encounter an issue that will prevent you from using Partner Connect. If you’re unclear on what Hex plan you are on, feel free to reach out to [support@hex.tech](mailto:support@hex.tech). If you are the Admin of your organization, you can see your plan under Manage plan on the Settings page. To extend a trial, email [support@hex.tech](mailto:support@hex.tech) with the subject "Snowflake Quickstart Guide."
 
 **Role privileges**
 > If you do not have an Editor role or higher, you won't be able to create data connections in your workspace. To upgrade your role, contact your workspace Admin. You can find out who this is by navigating to Settings -> Users & groups within your Hex workspace.
@@ -91,12 +93,12 @@ Enable the Snowpark and Writeback toggles.
 
 ![](assets/connection_toggles.png)
 
-***NOTE: The project is designed to be paired with the quickstart guide, please ensure to follow the quickstart guide as it will provide additional information and highlight the most important concepts!***
-
 ## Writing Data To Snowflake
-Durantion: 3
+Duration: 5
 
-Using your Snowflake connection, create the required Snowflake objects and write the data to your Snowflake account using the SQL code below. Note, this SQL can be found in the first SQL cell in the Hex project duplicated above. Ensure that you have selected your Snowflake account at the top right of the SQL cell as seen below:
+***NOTE: The Hex project is designed to be paired with the quickstart guide, please ensure to follow the quickstart guide as it will provide additional information and highlight the most important concepts!***
+
+Go to the Hex project to create the required Snowflake objects and write the data to your Snowflake account using the SQL code below. This SQL can be found in the first SQL cell in the Hex project. Ensure that you have selected your Snowflake account at the top right of the SQL cell as seen below:
 
 ![](assets/sql_cell_db_connection.png)
 
@@ -283,15 +285,14 @@ SELECT 'setup is now complete' AS note;
 Duration: 1
 
 Below is a short list of suggestions:
-* Before proceeding, you may delete the SQL cell from above from the Hex project or comment it out. Once completed, you may select Run all at the top right of the Hex project or step through each code cell and run it individually. The ladder is the recommended approach. 
+* You may safely delete the SQL cell previously ran from the Hex project or comment it out. Once completed, you may select Run all at the top right of the Hex project or step through each code cell and run it individually. The ladder is the recommended approach. 
 * By default, Hex will run in [Auto mode](https://learn.hex.tech/docs/explore-data/projects/compute-model/run-modes-and-cell-staleness#run-modes) which automatically runs depended downstream cells. You can edit this project behavior at the bottom right of the Hex project.
-* Ensure that every SQL cell has the correct Snowflake database connection selected
+* Ensure that every SQL cell has the correct Snowflake database connection selected prior to running it.
 
 ## Working With Snowpark In Hex
 Duration: 15
 
-Hex provides the simplest and most secure way to interact with Snowpark. To quickly return a Snowpark dataframe, simply select the Snowpark return mode from the next SQL cell in the Hex project:
-The output of the SQL cell above, a Snowpark dataframe, was called `reviews`. This can be renamed by simply clicking into the variable that is highlighted in blue.
+Hex offers a straightforward and secure way to interact with Snowpark. To quickly return a Snowpark dataframe, simply select the Snowpark return mode from the next SQL cell in your Hex project. The output of this SQL cell will be a Snowpark dataframe named `reviews`, which you can easily rename by clicking on the highlighted variable in blue.
 
 ![](assets/sql_snowpark_selection.png)
 
@@ -299,29 +300,24 @@ Additionally, Hex provides native visualizations for Snowpark dataframes. Simply
 
 ![](assets/snowpark_chart.png)
 
-Notice that the `reviews` Snowpark dataframe, in blue, is selected at the top left of the chart. This type of chaining affect, where one dataframe can be used in various cells throughout the project is fully managed by Hex. Snowpark dataframe or pandas dataframe, Hex manages the complexities to make this possible. Lastly, Snowpark dataframes will be denoted in a blue color, except for when used in a Python cell. 
+Notice that the `reviews` Snowpark dataframe is highlighted in blue at the top left of the chart. This chaining effect allows you to use the same dataframe across various cells throughout the project, all managed seamlessly by Hex. Whether you’re using a Snowpark or a pandas dataframe, Hex handles the complexities for you. Finally, Snowpark dataframes are denoted in blue, except when utilized within a Python cell.
 
 ## Generate A Snowpark Session In Hex
-To work with a Snowpark session object, select you database connection from the data browser tab on the left hand side of the Hex project. A `query` option should be visible. This allows for quick querys to this connection in an SQL cell. Click on the dropdown next to the `query` button and select `Get Snowpark session`. This will create a new python cell for us with the code required for getting a Snowpark session. Hex uses the `hextoolkit` library to passthrough your existing Snowflake credentials. This provides a clean and secure way to authenticate and create a Snowpark session.
+To work with a Snowpark session object, select your database connection from the data browser tab on the left side of the Hex project. A `query` option will be visible, allowing for quick queries to this connection in an SQL cell. Click the dropdown next to the `query` button and select `Get Snowpark session`. This action will create a new Python cell with the necessary code to obtain a Snowpark session. Hex utilizes the `hextoolkit` library to pass through your existing Snowflake credentials, providing a clean and secure way to authenticate and establish a Snowpark session.
 
 
-*The cell created by this button will be positioned under the cell that is currently selected. It is best practice to have this new cell be placed right below package import cell.*
-
+*The cell created by this button will be positioned under the cell that is currently selected.*
 
 ![](assets/get_snowpark_session.png)
 
-Scope the Snowpark session to the appropriate database and schema. If you are using a different database and schema name, please ensure to scope the Snowpark session to the correct database and schema.
+Scope the Snowpark session to the appropriate database and schema. If you are using a different database and schema name, scope the Snowpark session to the correct database and schema.
 
 ```python
 session.use_database('tb_voc')
 session.use_schema("analytics")
 ```
 
-In this cell, we reference our Snowpark session with the variable `session` which is the name assigned by default. Your cells should look similar to this:
-
-
 At this time, complete the Hex project until you reach the section titled Snowflake Cortex. At that time, move to the next quickstart guide section titled Working With Snowflake Cortex in Hex.
-
 
 ## Working with Snowflake Cortex in Hex
 Duration: 45
@@ -331,7 +327,7 @@ Duration: 45
 * [COMPLETE](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete)
 * [SENTIMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-sentiment)
 
-Below is some Snowpark code that quickly translates our customer reviews into English. In the line calling `cortex.Translate`, th first and second arguements are the column inputs of the customer review in plain text and the source language respectively. The English language is specifed as the target language by `en`. This is the third argument for the `Translate` function. 
+Below is some Snowpark code that quickly translates our customer reviews into English. In the line calling `cortex.Translate`, the first and second arguements are the column inputs of the customer review in plain text and the source language respectively. The English language is specifed as the target language by `en`. This is the third argument for the `Translate` function. 
 
 ```python
 # Conditionally translate reviews that are not english using Cortex Translate
@@ -348,12 +344,10 @@ reviews_24.filter(F.col("LANGUAGE") != F.lit("en")).select(
 ).show(3)
 ```
 
-This is a powerful capability as this allows for LLMs to be easily utlized in conditional statments and at scale.
-
-Continue in the Hex project until you reach the
+This capability allows for LLMs to be easily utilized in conditional statements and at scale. Continue in the Hex project until you reach the Single-Shot vs. Zero-Shot Prompting section, and then proceed to the next section.
 
 ## Single-Shot vs. Zero-Shot Prompting
-Duration 10
+Duration: 10
 
 **Single-Shot Prompting:** Providing the model with one example of the task to guide it, helping clarify the desired output or format before requesting a response.
 
@@ -508,29 +502,30 @@ Congratulations on successfully completing the Hex project! Now is the perfect t
 
 To address this, we can create a Hex app that presents our findings in an interactive format, enabling stakeholders to explore the results without needing to navigate through the underlying code cells. Since the app is powered by the notebook cells we’ve created, it ensures that all end users have access to the most up-to-date information.
 
-Every Hex project pre-creates a Hex app 
+Navigate to the App Builder located at the top of the Hex project. Every Hex project automatically creates a Hex app by default, but in this case, the app has already been set up for demonstration purposes. To easily transfer elements from the notebook to the App builder, press **CTRL + Click** on the Notebook button to enable split-screen view:
 
+![](assets/control_click.png)
 
-## Sharing our results
-Duration: 3
+In split-screen mode, you can view the notebook cells and conveniently add the relevant cells to the App builder:
 
-Now that we've completed going through our project, we can share this project with others! To do this:
-- Head over to the app builder
-- A pre-built layout has been designed but feel free to customize and add any additional elements
-- To customize add, remove, and arrange cells. Check out the [Hex docs](https://learn.hex.tech/docs/build-apps/app-builder) for more info.
-- Publish the app with the [Publish button](https://learn.hex.tech/docs/share-insights/apps/publish-and-share-apps)
-- Lastly, hit the share button next to publish, and select `Publish to web`.
+![](assets/app_builder.png)
+
+Once a cell is added to the App builder, you can drag and drop, resize, or modify it directly within the App builder. You can also create entirely new cells while designing your data app. The Notebook and App builder are intertwined—any changes made on one side will be reflected on the other.
+
+With the project complete and ready to share:
+* Publish the app with the [Publish button](https://learn.hex.tech/docs/share-insights/apps/publish-and-share-apps)
+* Hex will run the entire project to ensure there are no errors
+* Click the share button at the top right and choose `Publish to web`
 
 ## Conclusion and Resources
-Congratulations on making it to the end of this Lab! You've successfully perform feature engineering, trained an XGBoost model to predict the probably of survival onboard the Titanic, and logged that model to Snowflake's Model Registy. At the end, you created a Hex app that allowed users to pass in their own criteria to see if they would survive the Titanic.
+Congratulations on completing this lab! You’ve successfully leveraged Hex and Cortex to generate insights from text data at scale—something that traditionally would have required extensive expertise and countless hours of work. This project highlights how modern workflows, powered by LLMs, can streamline and accelerate tasks that once took significant time, making advanced data analysis more accessible and efficient today.
 
 ### What You Learned
-* How to perform preprocessing with Snowpark ML
-* How to perform model training with Snowpark ML
-* How to register the model in Snowflakes Registry
-* How models are "deployed" in Snowflake
-* How to perform inference using Snowpark and SQL against the registered model
-* How to create your own Hex app and share it out to end users
+* How to analyze customer feedback using Snowflake Cortex and Hex.
+* Leveraging LLMs for tasks like translation and sentiment analysis.
+* Differences between single-shot and zero-shot prompting.
+* Turning a Hex notebook into an interactive data app.
+* Easily sharing findings with stakeholders via a Hex app.
 
 ### Related Resources
 * [Final Project](https://app.hex.tech/810c3d49-47a5-470c-9eaa-f471548c9620/app/af138a51-cae9-4300-9aee-6805afe6e699/latest)
