@@ -231,7 +231,14 @@ Open your browser and go to [your newly created application](http://localhost:51
 ## Conclusion and Resources
 Duration: 2
 
-Congratulations! You've successfully learned how to embed ThoughtSpot to create your own AI-powered analytics application. Feel free to customize the application to suit your needs. 
+### What you learned today
+Congratulations! You've successfully learned how to
+
+- Use Natural Language Search (NLS) to answer any questions of your data in Snowflake
+- Create interactive dashboards aka Liveboards
+- Eembed ThoughtSpot and Liveboards you created to build your own AI-powered analytics application. 
+
+Feel free to customize the application to suit your needs. 
 
 ### Resources
 - [Source Code on Github](https://github.com/thoughtspot/snowflake-quickstart-tse)
