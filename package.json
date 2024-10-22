@@ -16,6 +16,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "@bazel/bazel": "^0.18.1"
+    "@bazel/bazel": "^0.18.1",
+    "gulp": "^5.0.0"
   }
 }

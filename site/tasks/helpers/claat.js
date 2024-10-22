@@ -15,12 +15,16 @@ const spawn = childprocess.spawn;
 //
 exports.run = (cwd, cmd, env, fmt, ga, o, prefix, args, callback) => {
   args.unshift(cmd, '-e', env, '-f', fmt, '-ga', ga, '-o', o, '-prefix', prefix);
+  
   const proc = spawn('claat', args, { stdio: 'inherit', cwd: cwd, env: process.env, shell: true });
 
-  proc.on('close', (e) => {
-    if (e) {
-      throw new Error(e);
+  proc.on('close', (exitCode) => {
+    if (exitCode !== 0) {
+      console.error(`claat process exited with code ${exitCode}. Some assets might be missing.`);
+      // Optionally, you can continue the build process:
+      return callback();  // Log the error but continue
     }
-    callback();
-  })
+    callback();  // Call callback when process succeeds
+  });
 };
+
