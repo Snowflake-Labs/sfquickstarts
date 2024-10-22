@@ -29,12 +29,7 @@ In this Quickstart guide, we will play the role of a data scientist at a telecom
 - How to visualize the predicted results from the forecasting model
 - How to convert a Hex project into an interactive web app and make predictions on new users
 
-### Using Snowflake Notebooks to run Churn Modeling
 
-> aside positive
-> Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Telco%20Churn%20Data%20Analysis) and import it to your Snowflake account as shown below.
-
-![notebook_callout](assets/notebook.png)
 
 
 <!-- ------------------------ -->
