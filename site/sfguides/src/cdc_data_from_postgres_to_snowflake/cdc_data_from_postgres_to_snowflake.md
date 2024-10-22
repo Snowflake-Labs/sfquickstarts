@@ -59,12 +59,12 @@ CREATE OR REPLACE SCHEMA cdc_prod.analytics;
 
 -- data science warehouse
 CREATE OR REPLACE WAREHOUSE cdc_ds_wh
-    WAREHOUSE_SIZE = 'xsmall'
-    WAREHOUSE_TYPE = 'standard'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-COMMENT = 'data science warehouse for cdc';
+   WAREHOUSE_SIZE = 'xsmall'
+   WAREHOUSE_TYPE = 'standard'
+   AUTO_SUSPEND = 60
+   AUTO_RESUME = TRUE
+   INITIALLY_SUSPENDED = TRUE
+   COMMENT = 'data science warehouse for cdc';
 
 -- Use our Warehouse
 USE WAREHOUSE cdc_ds_wh;
