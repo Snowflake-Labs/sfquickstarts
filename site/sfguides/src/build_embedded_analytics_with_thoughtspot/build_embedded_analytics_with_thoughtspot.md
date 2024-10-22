@@ -54,7 +54,7 @@ To get started, we are going to need a few cloud environments, one for Snowflake
 ![Snowflake Partner Connect](assets/PartnerConnect.png)
 
 - Sign up for a Snowflake Free Trial: 
-  - Jump over to the [Snowflake Free Trial signup page](https://signup.snowflake.com/?utm_source=tsquickstart), enter the details required, and tap continue. Follow the steps required and check your email for an Activation link. Keep the credentials handy as you will need them to connect.
+  - Jump over to the [Snowflake Free Trial signup page](https://signup.snowflake.com/), enter the details required, and tap continue. Follow the steps required and check your email for an Activation link. Keep the credentials handy as you will need them to connect.
 
 
 <!-- ------------------------ -->
@@ -238,3 +238,4 @@ Congratulations! You've successfully learned how to embed ThoughtSpot to create 
 - [ThoughtSpot Codespot - code samples, visualizations and more](https://developers.thoughtspot.com/codespot)
 - [Developer Playground](https://try-everywhere.thoughtspot.cloud/v2/#/everywhere)
 - [Getting Started with Snowflake Quickstarts](https://quickstarts.snowflake.com/)
+- [Sign up for a Snowflake Free Trial](https://signup.snowflake.com/)
