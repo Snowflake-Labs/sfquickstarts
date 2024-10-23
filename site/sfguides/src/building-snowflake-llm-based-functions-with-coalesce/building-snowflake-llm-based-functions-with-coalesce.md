@@ -63,9 +63,8 @@ Once you are logged into your Snowflake account, sign up for a free Coalesce tri
 
 1. Select Data Products \> Partner Connect in the navigation bar on the left hand side of your screen and search for Coalesce in the search bar.   
      
-   ![][image1]
+   ![image1](image1.png)
  
-
 2. Review the connection information and then click Connect. ![][image2]
 
 3. When prompted, click Activate to activate your account. You can also activate your account later using the activation link emailed to your address. ![][image3]  
