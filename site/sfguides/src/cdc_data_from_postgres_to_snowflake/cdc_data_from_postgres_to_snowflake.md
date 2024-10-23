@@ -1,13 +1,13 @@
 author: Joviane Bellegarde
 id: cdc_data_from_postgres_to_snowflake
 summary: CDC Data from PostgreSQL to Snowflake
-categories: Getting-Started, Connectors, Dynamic Tables, PostgreSQL
+categories: CDC, Getting-Started, Connectors, Dynamic Tables
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Connectors, Dynamic Tables
+tags: CDC, Getting Started, Connectors, Dynamic Tables
 
-# Financial Insights Using Change Data Capture with the Snowflake Connector for PostgreSQL, Dynamic Tables, and Streamlit in Snowflake
+# Real-Time Financial Insights Using Change Data Capture (CDC) with the Snowflake Connector for PostgreSQL and Dynamic Tables
 <!-- ------------------------ -->
 ## Overview
 Duration: 10
@@ -15,7 +15,7 @@ Duration: 10
 In this Quickstart, we will investigate how a financial company builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights on potential ways to increase customer spending with promotions.
 
 ### What You Will Build
-- Visualize customer data and gain insights ingesting data from PostgreSQL DB to Snowflake using the Snowflake Connector for PostgreSQL Native App, Dynamic Tables, and Streamlit-in-Snowflake (SiS)
+- Visualize customer data and gain insights ingesting data from PostgreSQL DB to Snowflake using the Snowflake Connector for PostgreSQL Native App and Dynamic Tables
 
 ### What You Will Learn
 - How to connect PostgreSQL data to Snowflake using the [Snowflake Connector for PostgreSQL](https://other-docs.snowflake.com/en/connectors/postgres6/about)
@@ -59,12 +59,12 @@ CREATE OR REPLACE SCHEMA cdc_prod.analytics;
 
 -- data science warehouse
 CREATE OR REPLACE WAREHOUSE cdc_ds_wh
-    WAREHOUSE_SIZE = 'xsmall'
-    WAREHOUSE_TYPE = 'standard'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-COMMENT = 'data science warehouse for cdc';
+   WAREHOUSE_SIZE = 'xsmall'
+   WAREHOUSE_TYPE = 'standard'
+   AUTO_SUSPEND = 60
+   AUTO_RESUME = TRUE
+   INITIALLY_SUSPENDED = TRUE
+   COMMENT = 'data science warehouse for cdc';
 
 -- Use our Warehouse
 USE WAREHOUSE cdc_ds_wh;
@@ -126,8 +126,6 @@ To connect to the pre-configured databases using Visual Studio Code or PyCharm, 
 1. Run the following **postgres** script in the PostgreSQL to create the database, schema, and tables:
 
 ```
-DROP DATABASE IF EXISTS postgres;
-CREATE DATABASE postgres;
 CREATE SCHEMA raw_cdc;
 SET search_path TO raw_cdc;
 
@@ -137,38 +135,38 @@ DROP TABLE IF EXISTS postgres.raw_cdc.products;
 DROP TABLE IF EXISTS postgres.raw_cdc.transactions;
 
 CREATE TABLE postgres.raw_cdc.customers (
-    customer_id INTEGER PRIMARY KEY,
-    firstname VARCHAR,
-    lastname VARCHAR,
-    age INTEGER,
-    email VARCHAR,
-    phone_number VARCHAR
+   customer_id INTEGER PRIMARY KEY,
+   firstname VARCHAR,
+   lastname VARCHAR,
+   age INTEGER,
+   email VARCHAR,
+   phone_number VARCHAR
 );
 
 CREATE TABLE postgres.raw_cdc.merchants (
-    merchant_id integer PRIMARY KEY,
-	merchant_name VARCHAR,
-	merchant_category VARCHAR
+   merchant_id integer PRIMARY KEY,
+   merchant_name VARCHAR,
+   merchant_category VARCHAR
 );
 
 CREATE TABLE postgres.raw_cdc.products (
-    product_id INTEGER PRIMARY KEY,
-    product_name VARCHAR,
-    product_category VARCHAR,
-    price DOUBLE PRECISION
+   product_id INTEGER PRIMARY KEY,
+   product_name VARCHAR,
+   product_category VARCHAR,
+   price DOUBLE PRECISION
 );
 
 CREATE TABLE postgres.raw_cdc.transactions (
-    transaction_id VARCHAR PRIMARY KEY,
-	customer_id INTEGER,
-	product_id INTEGER,
-	merchant_id INTEGER,
-	transaction_date DATE,
-	transaction_time VARCHAR,
-	quantity INTEGER,
-	total_price DOUBLE PRECISION,
-    transaction_card VARCHAR,
-    transaction_category VARCHAR
+   transaction_id VARCHAR PRIMARY KEY,
+   customer_id INTEGER,
+   product_id INTEGER,
+   merchant_id INTEGER,
+   transaction_date DATE,
+   transaction_time VARCHAR,
+   quantity INTEGER,
+   total_price DOUBLE PRECISION,
+   transaction_card VARCHAR,
+   transaction_category VARCHAR
 );
 ```
 
@@ -321,8 +319,7 @@ Directory Structure
 </ul>
 
 #### Verifying Connection with Snowflake
-Navigate to Snowsight to your previously created Snowflake Connector for PostgreSQL Native App. Click on the **Refresh** button in the Agent Connection Section.
-When successfully configured, you should see the "Successfully configured" message.
+Navigate to Snowsight to your previously created Snowflake Connector for PostgreSQL Native App. Click on the **Refresh** button in the Agent Connection Section. When successfully configured, you should see the "Successfully configured" message. Click "Define data to sync".
 
 <img src="assets/successfully_configured.png">
 
@@ -410,7 +407,6 @@ BEGIN
             v_new_transaction_id := 'TX' || EXTRACT(EPOCH FROM NOW())::TEXT || j::TEXT;
 
             -- Generate current date and time
---             v_transaction_date := CURRENT_DATE;
             v_transaction_date := CURRENT_DATE;
             v_transaction_time := TO_CHAR(NOW(), 'HH24:MI:SS');
 
@@ -460,7 +456,7 @@ Duration: 2
 When you're finished with this Quickstart, you can clean up the objects created in Snowflake.
 
 ### Clean Up Script
-Navigate to the last the last cell in the Snowflake Notebook to uncomment and run the last cell labeled **clean_up** to drop the objects created in this Quickstart.
+Navigate to the last cell in the Snowflake Notebook to uncomment and run the last cell labeled **clean_up** to drop the objects created in this Quickstart.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
