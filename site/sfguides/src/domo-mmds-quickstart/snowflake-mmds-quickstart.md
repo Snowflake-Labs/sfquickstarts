@@ -281,13 +281,23 @@ With the Marketing App, you’ll analyze historical attribution data and perform
 
 ## Conclusion and Resources
 
-By following this guide, you’ve learned how to deploy and utilize Domo’s Marketing app from the Snowflake Marketplace, connect your data sources, and leverage advanced attribution and media mix models to make smarter, data-driven marketing decisions. With these tools, you're now equipped to optimize campaign performance, enhance marketing ROI, and refine your strategy with actionable insights.
+### Conclusion
+
+With these tools, you're now equipped to optimize campaign performance, enhance marketing ROI, and refine your strategy with actionable insights.
+
+### What You Learned
+By following this guide, you’ve learned how to deploy and utilize Domo’s marketing app from the Snowflake Marketplace, connect your data sources, and leverage
+advanced attribution and media mix models to make smarter, data-driven marketing decisions.
+
+### Resources
 
 For further learning, explore the following resources:
-
+- [Marketing App Blog post](https: //medium. com/snowflake/introducing-domos-marketing-app-enriching-marketing-analytics-with-snowflake-integration-11d48e7b8ad4)
 - [Domo Knowledge Base](https://domo-support.domo.com/s/knowledge-base?language=en_US)
 - [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/)
 - [Domo Community](https://www.domo.com/domo-central/community)
-- [Domo Support](https://www.domo.com/client-services/domo-support)
+- [Domo Community Forum](https://community-forums.domo.com/main)
+- [How to Join the Domo Community](https://www.domo.com/blog/how-to-join-the-community-forums-step-by-step/)
+- [Domo Support](https://www.domo.com/login/customer-community)
 - Architecture  
   <img src="assets/architecture.png" width="600" />
