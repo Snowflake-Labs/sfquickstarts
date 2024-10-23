@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Marketing
 
-# Domo Marketing Attribution QuickStart
+# Getting Started with Domo Marketing Attribution
 
 <!-- ------------------------ -->
 
@@ -28,7 +28,8 @@ For more advanced users, the platform offers powerful AI and automation tools. T
 ### Prerequisites:
 
 - Basic understanding of Snowflake
-- Domo account and a basic understanding of Domo
+- A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
+- A Domo account and a basic understanding of Domo
 - Access to data
 
 ### What You’ll Learn:
