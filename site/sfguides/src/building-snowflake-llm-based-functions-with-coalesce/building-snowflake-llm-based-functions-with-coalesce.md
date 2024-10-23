@@ -65,10 +65,16 @@ Once you are logged into your Snowflake account, sign up for a free Coalesce tri
      
    ![image1](assets/image1.png)
  
-2. Review the connection information and then click Connect. ![][image2]
+2. Review the connection information and then click Connect. 
 
-3. When prompted, click Activate to activate your account. You can also activate your account later using the activation link emailed to your address. ![][image3]  
-4. Once you’ve activated your account, fill in your information to complete the activation process. ![][image4]
+![image2](assets/image2.png)
+
+3. When prompted, click Activate to activate your account. You can also activate your account later using the activation link emailed to your address. 
+
+![image3](assets/image3.png)
+4. Once you’ve activated your account, fill in your information to complete the activation process. 
+
+![image4](assets/image4.png)
 
 Congratulations\! You’ve successfully created your Coalesce trial account. 
 
@@ -76,16 +82,16 @@ Congratulations\! You’ve successfully created your Coalesce trial account.
 
 1. We will be using a M Warehouse size within Snowflake for this lab. You can upgrade this within the admin tab of your Snowflake account.
 
-![][image5]
+![image5](assets/image5.png)
 
 2. In your Snowflake account, click on the Worksheets Tab in the left-hand navigation bar.
 
-![][image6]
+![image6](assets/image6.png)
 
 3. Within Worksheets, click the "+" button in the top-right corner of Snowsight and choose "SQL Worksheet.”   
    
 
-![][image7]
+![image7](assets/image7.png)
 
 4. Paste the setup SQL from below into the worksheet that you just created:
 
@@ -122,43 +128,42 @@ You will need to add the ML Forecast node into your Coalesce workspace in order 
 
 1. Launch your workspace within your Coalesce account 
 
- ![][image8]
+![image8](assets/image8.png)
 
 2. Navigate to the build settings in the lower left hand corner of the left sidebar
 
-![][image9]
+![image9](assets/image9.png)
 
 3. Select Packages from the Build Settings options  
     
 
-![][image10]
+![image10](assets/image10.png)
 
 4. Select Browse to Launch the Coalesce Marketplace 
 
- ![][image11]
+![image11](assets/image11.png)
 
 5. Select Find out more within the Cortex package
 
-![][image12]
+![image12](assets/image12.png)
 
 6. Copy the package ID from the Cortex page   
    
 
-![][image13]
+![image13](assets/image13.png)
 
 7. Back in Coalesce, select the Install button:
 
-![][image14]
+![image14](assets/image14.png)
 
 8. Paste the Package ID into the corresponding input box:
 
-![][image15]
+![image15](assets/image15.png)
 
 9. Give the package an Alias, which is the name of the package that will appear within the Build Interface of Coalesce. And finish by clicking Install. 
 
-   
 
-![][image16]
+![image16](assets/image16.png)
 
 <!-- ------------------------ -->
 ## Navigating the Coalesce User Interface 
@@ -172,7 +177,7 @@ Let's get familiar with Coalesce by walking through the basic components of the 
 
 Your trial account includes a default Project to help you get started. 
 
-![][image17]
+![image17](assets/image1.png)
 
 1. Launch your Development Workspace by clicking the Launch button and navigate to the Build Interface of the Coalesce UI. This is where you can create, modify and publish nodes that will transform your data.   
      
@@ -180,22 +185,22 @@ Your trial account includes a default Project to help you get started.
 
 2. In the Browser tab of the Build interface, you can visualize your node graph using the Graph, Node Grid, and Column Grid views. In the upper right hand corner, there is a person-shaped icon where you can manage your account and user settings.  
 
-![][image18]
+![image18](assets/image18.png)
 
 3. By clicking the question mark icon, you can access the Resource Center to find product guides, view announcements, request support, and share feedback.  
    
 
-![][image19]
+![image19](assets/image19.png)
 
 4. The Browser tab of the Build interface is where you’ll build your pipelines using nodes. You can visualize your graph of these nodes using the Graph, Node Grid, and Column Grid views. While this area is currently empty, we will build out nodes and our Graph in subsequent steps of this lab.  
-    ![][image18]  
+
 5. Next to the Build interface is the Deploy interface. This is where you will push your pipeline to other environments such as Testing or Production. 
 
-![][image20]
+![image20](assets/image20.png)
 
 6. Next to the Deploy interface is the Docs interface. Documentation is an essential step in building a sustainable data architecture, but is sometimes put aside to focus on development work to meet deadlines. To help with this, Coalesce automatically generates and updates documentation as you work. 
 
-![][image21]
+![image21](assets/image21.png)
 
 <!-- ------------------------ -->
 ## Configure Storage Locations and Mappings 
@@ -204,15 +209,15 @@ Before you can begin transforming your data, you will need to configure a storag
 
 1. To add a storage location, navigate to the left side of your screen and click on the Build settings cog. 
 
-![][image22]
+![image22](assets/image22.png)
 
 2. Click the “Add New Storage Locations” button and name it CALLS for your call transcript data.
 
-![][image23]
+![image23](assets/image23.png)
 
 3. Now map your storage locations to their physical destinations in Snowflake. In the upper left corner next to your Workspace name, click on the gear icon to open your Workspace settings. Click on Storage Mappings and map your CALL  location to the PC\_COALESCE\_DB database and the CALLS schema. 
 
-![][image24]
+![image24](assets/image24.png)
 
 4. Click save, and you have successfully configured your new storage location to provide Coalesce to work with the call transcript data. 
 
@@ -220,7 +225,7 @@ Before you can begin transforming your data, you will need to configure a storag
 
 5. In the Build settings of the workspace, navigate to Node Types and toggle on View. 
 
-![][image25]
+![image25](assets/image25.png)
 
  
 <!-- ------------------------ -->
@@ -230,15 +235,15 @@ Let’s start to build the foundation of your LLM data pipeline by creating a Gr
 
 1. Start in the Build interface and click on Nodes in the left sidebar (if not already open). Click the \+ icon and select Add Sources. 
 
-![][image26]
+![image26](assets/image26.png)
 
 2. Select the CALL\_TRANSCRIPTS table from the CALLS source storage location. Then click the Add 1 Sources button. 
 
-![][image27]
+![image27](assets/image27.png)
 
 3. You'll now see your graph populated with your Source node. Note that the node is designated in red. Each node type in Coalesce has its own color associated with it, which helps with visual organization when viewing a Graph. 
 
-![][image28]
+![image28](assets/image28.png)
 
 <!-- ------------------------ -->
 ## Creating Stage Nodes 
@@ -247,30 +252,31 @@ Now that you’ve added your Source node, let’s prepare the data by adding bus
 
 1. Select the CALL\_TRANSCRIPT source node then right click and select Add Node \> Stage from the drop down menu. This will create a new stage node and Coalesce will automatically open the mapping grid of the node for you to begin transforming your data. 
 
-![][image29]
+![image29](assets/image29.png)
 
 2. Within the Node, the large middle section is your Mapping grid, where you can see the structure of your node along with column metadata like transformations, data types, and sources.   
    
 
-![][image30]
+![image30](assets/image30.png)
 
 3. On the right hand side of the Node Editor is the Config section, where you can view and set configurations based on the type of node you’re using.   
-   ![][image31]
+
+![image31](assets/image31.png)
 
      
 4. At the bottom of the Node Editor, press the arrow button to view the Data Preview pane. 
 
-![][image32]
+![image32](assets/image32.png)
 
 5. Rename the node to STG\_CALL\_TRANSCRIPTS\_GERMAN
 
-![][image33]
+![image33](assets/image33.png)
 
 6. Within Coalesce, you can use the Transform column to write column level transformations using standard Snowflake SQL. We will transform the Category column to use an upper case format using the following function: 
 
 	UPPER({{SRC}})
 
-![][image34]
+![image34](assets/image34.png)
 
 7. Coalesce also allows you to write as much custom SQL as needed for your business use case. In this case, we need to process French and German language records in separate tables so that we can pass each language to its own Cortex translation function and union the tables together.
 
@@ -280,28 +286,28 @@ Now that you’ve added your Source node, let’s prepare the data by adding bus
 
    WHERE "LANGUAGE" \= 'German'
 
-![][image35]
+![image35](assets/image35.png)
 
 8. Now that we have transformed and filtered the data for our German node, we now need to process our French data. Coalesce leverages metadata to allow users to quickly and easily build objects in Snowflake. Because of this metadata, users can duplicate existing objects, allowing everything contained in one node to be duplicated in another, including SQL transformations. 
 
 	  
 Navigate back to the Build Interface and right click on the STG\_CALL\_TRANSCRIPTS\_GERMAN node and select duplicate node. 
 
-![][image36]
+![image36](assets/image36.png)
 
 9. Double click on the duplicated node, and once inside the node, rename the node to STG\_CALL\_TRANSCRIPTS\_FRENCH. 
 
-![][image37]
+![image37](assets/image37.png)
 
 10. Navigate to the Join tab, where we will update the where condition to an IN to include both French and English data.   
       
     WHERE "LANGUAGE" IN ('French', 'English')
 
-![][image38]
+![image38](assets/image38.png)
 
 11. All the changes made from the STG\_CALL\_TRANSCRIPTS\_GERMAN carry over into this node, so we don’t need to rewrite any of our transformations. Let’s change the view back to Graph and select Create All and then Run All
 
-![][image39]
+![image39](assets/image39.png)
 
 <!-- ------------------------ -->
 ## Translating Text Data with Cortex LLM Functions 
@@ -311,43 +317,42 @@ Now that we have prepared the call transcript data by creating nodes for each la
 1. Select the STG\_CALL\_TRANSCRIPTS\_GERMAN node and hold the Shift key and select the STG\_CALL\_TRANSCRIPTS\_FRENCH node. Right click on either node and navigate to Add Node. You should see the Cortex package that you installed from the Coalesce Marketplace. By hovering over the Cortex package, you should see the available nodes. Select Cortex Functions. This will add the Cortex Function node to each STG node.   
    
 
-![][image40]
+![image40](assets/image40.png)
 
 2. You now need to configure the Cortex Function nodes to translate the language of the transcripts. Double click on the LLM\_CALL\_TRANSCRIPTS\_GERMAN node to open it. 
 
-![][image41]
+![image41](assets/image41.png)
 
 3. In the configuration options on the right hand side of the node, open the Cortex Package dropdown and toggle on TRANSLATE. 
 
-![][image42]
+![image42](assets/image42.png)
 
 4. With the TRANSLATE toggle on, In the column name selector dropdown, you need to select the column to translate. In this case, the TRANSCRIPT column. 
 
    
-
-![][image43]
+![image43](assets/image43.png)
 
 5. Now that you have selected the column that will be translated, you will pass through the language you wish to translate from and the language you wish to translate to, into the translation text box. In this case, you want to translate from German to English. The language code for this translation is as follows: 
 
 	'de', 'en'
 
-![][image44]
+![image44](assets/image44.png)
 
 6. Now that you have configured the LLM node to translate German data to English, you can click Create and Run to build the table in Snowflake and populate it with data. 
 
-![][image45]
+![image45](assets/image45.png)
 
 7. While the LLM\_CALL\_TRANSCRIPT\_GERMAN node is running, you can configure the LLM\_CALL\_TRANSCRIPT\_FRENCH. Double click on the LLM\_CALL\_TRANSCRIPT\_FRENCH node to open it. 
 
-![][image46]
+![image46](assets/image46.png)
 
 8. Open the Cortex Package dropdown on the right hand side of the node and toggle on TRANSLATE. 
 
-![][image47]
+![image47](assets/image47.png)
 
 9. Just like the German node translation, you will pass the TRANSCRIPT column through as the column you want to translate. 
 
-![][image48]
+![image48](assets/image48.png)
 
 10. Finally, you will configure the language code for what you wish to translate the language of the transcript column from to the language you wish to translate to. In this case, the language code is as follows: 
 
@@ -355,11 +360,11 @@ Now that we have prepared the call transcript data by creating nodes for each la
 
 Any values in the transcript field which do not match the language being translated from will be ignored. In this case, there are both French and English language values in the TRANSCRIPT field. Because the English values are not in French, they will automatically pass through as their original values. Since those values are already in English, they don’t require any additional processing. 
 
-![][image49]
+![image49](assets/image49.png)
 
 11. Select Create and Run to build the object in Snowflake and populate it with data
 
-![][image50]
+![image50](assets/image50.png)
 
 <!-- ------------------------ -->
 ## Unifying the Translated Data 
@@ -368,39 +373,39 @@ You have now processed the transcript data by translating the German and French 
 
 1. Select the LLM\_CALL\_TRANSCRIPTS\_GERMAN node and Add Node \> Stage. 
 
-![][image51]
+![image51](assets/image51.png)
 
 2. Rename the node to STG\_CALL\_TRANSCRIPTS\_ALL.
 
-![][image52]
+![image52](assets/image52.png)
 
 3. In the configuration options on the right hand side of the node, open the options dropdown and toggle on Multi Source. 
 
-![][image53]
+![image53](assets/image53.png)
 
 4. Multi Source allows you to union together nodes with the same schema without having to write any of the code to do so. Click on the Multi Source Strategy dropdown and select UNION ALL. 
 
-![][image54]
+![image54](assets/image54.png)
 
 5. There will be a union pane next to the columns in the mapping grid that will list all of the nodes associated with the multi source strategy of the node. Click the \+ button to add a node to union to the current node. You will see a new node get added to the pane called New Source. 
 
-![][image55]
+![image55](assets/image55.png)
 
 6. Within this new source, there is an area to drag and drop any node from your workspace into the grid to automatically map the columns to the original node. Make sure you have the Nodes navigation menu item selected so you can view all of the nodes in your project. 
 
-![][image56]
+![image56](assets/image56.png)
 
 7. You will now drag and drop the LLM\_CALL\_TRANSCRIPTS\_FRENCH node into the multi source mapping area of the node. This will automatically map the columns to the original node i.e. LLM\_CALL\_TRANSCRIPTS\_GERMAN. 
 
-![][image57]
+![image57](assets/image57.png)
 
 8. Finally, select the join tab to configure the reference of the node we are mapping. Using metadata, Coalesce is automatically able to generate this reference for you. Hover over the Generate Join button and select Copy to Editor. Coalesce will automatically insert the code into the editor, and just like that, you have successfully unioned together the two datasets without writing a single line of code. 
 
-![][image58]
+![image58](assets/image58.png)
 
 9. Select Create and Run to build the object and populate it with data. 
 
-![][image59]
+![image59](assets/image59.png)
 
 <!-- ------------------------ -->
 ## Sentiment Analysis and Finding Customers 
@@ -411,47 +416,47 @@ Additionally, our call center reps are trained to ask for the customer’s name 
 
 1. Right click on the STG\_CALL\_TRANSCRIPTS\_ALL node and we will add one last Cortex Function node. Add Node \> CortexML \> Cortex Functions. 
 
-![][image60]
+![image60](assets/image60.png)
 
 2. Within the node click on the Cortex Package dropdown and toggle on SENTIMENT and EXTRACT ANSWER.   
    
 
-![][image61]
+![image61](assets/image61.png)
 
 3. When cortex functions are applied to a column, they overwrite the preexisting values of the column. Because of this, you will need two transcript columns to pass through to your two functions. One to perform the sentiment analysis, and one to extract the customer name from the transcript. Right click on the TRANSCRIPT column and select Duplicate Column. 
 
-![][image62]
+![image62](assets/image62.png)
 
 4. Double click on the original TRANSCRIPT column name and rename the column to TRANSCRIPT\_SENTIMENT. 
 
-![][image63]
+![image63](assets/image63.png)
 
 5. Double click on the duplicated TRANSCRIPT column name and rename the column to TRANSCRIPT\_CUSTOMER.   
    
 
-![][image64]
+![image64](assets/image64.png)
 
 6. Next, double click on the data type value for the TRANSCRIPT\_CUSTOMER column. Change the data type to ARRAY. This is necessary because the output of the EXTRACT ANSWER function is an array that contains JSON values from the extraction.   
    
 
-![][image65]
+![image65](assets/image65.png)
 
 7. Now that your columns are ready to be processed, we can pass them through to each function in the Cortex Package. For the SENTIMENT ANALYSIS, select the TRANSCRIPT\_SENTIMENT column as the column name. 
 
-![][image66]
+![image66](assets/image66.png)
 
 8. For the EXTRACT ANSWER function, select the TRANSCRIPT\_CUSTOMER column as the column name. 
 
-![][image67]
+![image67](assets/image67.png)
 
 9. The EXTRACT ANSWER function accepts a plain text question as a parameter to use to extract the values from the text being processed. In this case, we’ll ask the question “Who is the customer?”
 
-![][image68]
+![image68](assets/image68.png)
 
 10. With the node fully configured to process our sentiment analysis and answer extraction, you can Create and Run the node to build the object and populate it with the values being processed.   
     
 
-![][image69]
+![image69](assets/image69.png)
 
 <!-- ------------------------ -->
 ## Process and Expose results with a View 
@@ -460,26 +465,26 @@ You have now used Cortex LLM Functions to process all of your text data without 
 
 1. Right click on the LLM\_CALL\_TRANSCRIPTS\_ALL node and Add Node \> View. 
 
-![][image70]
+![image70](assets/image70.png)
 
 2. Select the Create button and then Fetch Data. You will see the output from our LLM functions is the sentiment score and an array value containing a customer value with a confidence interval. We want to be able to extract the customer name out of the array value so we can associate the sentiment score with the customer name. 
 
    Right click on the TRANSCRIPT\_CUSTOMER column and hover over Derive Mappings and select From JSON. 
 
-![][image71]
+![image71](assets/image71.png)
 
 3. You will see two new columns automatically created. Answer and score. The answer column contains our customer name. Double click on the answer column name and rename it to CUSTOMER. 
 
-![][image72]
+![image72](assets/image72.png)
 
 4. Rename the score column to CONFIDENCE\_SCORE.   
    
 
-![][image73]
+![image73](assets/image73.png)
 
 5. Rerun the view by selecting Create, which will automatically rerun the query that generates the view, which will contain the updated CUSTOMER column we just created. 
 
-![][image74]
+![image74](assets/image74.png)
 
 <!-- ------------------------ -->
 ## Analyzing the output in Snowflake 
@@ -497,7 +502,7 @@ Now that you have created a view in Snowflake that contains all of the data you 
 2. You can use Snowsight to graphically represent this data. Select Chart from the results pane and select a Bar chart if not already selected.   
    
 
-![][image75]
+![image75](assets/image75.png)
 
 Additionally, you can uncheck the box next to Limit number of bars to see all of your results. 
 
@@ -513,7 +518,7 @@ This query allows you to see the aggregated average sentiment towards damage typ
 4. Again, you can use Snowsight to graphically analyze the data using a chart with bars.  
    
 
-![][image76]
+![image76](assets/image76.png)
 
 5. With this view now in Snowflake, you can continue to analyze this data and obtain more insights and inferences about everything surrounding the call transcripts that traditionally would be incredibly difficult to gain the same value from without the ease of using Cortex LLM functions in Coalesce. 
 
