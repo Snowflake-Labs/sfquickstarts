@@ -85,6 +85,7 @@ We will be using a dataset from a public S3 bucket for this lab. The bucket has 
 
 2. If you set up your Snowflake trial account in the Oregon (us-west-2) region, you can copy and paste the following code into your worksheet. Ensure you are using the ACCOUNTADMIN role in Snowflake for this process. 
 
+```sql
 CREATE OR REPLACE EXTERNAL VOLUME iceberg\_external\_volume  
    STORAGE\_LOCATIONS \=  
       (  
@@ -126,6 +127,7 @@ CREATE OR REPLACE CATALOG INTEGRATION iceberg\_catalog\_integration
 
 GRANT USAGE ON EXTERNAL VOLUME iceberg\_external\_volume TO ROLE pc\_coalesce\_role;  
 GRANT USAGE ON INTEGRATION iceberg\_catalog\_integration TO ROLE pc\_coalesce\_role;
+```
 
 4. You have now successfully set up an external volume and catalog integration. 
 
