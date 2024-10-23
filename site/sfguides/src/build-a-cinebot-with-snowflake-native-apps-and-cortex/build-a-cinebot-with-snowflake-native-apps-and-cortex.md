@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Native Apps, Cortex, Data Applications
 
-# Build a CineBot with Snowflake Native Apps and Cortex
+# Build a CineBot with Snowflake Native Apps and Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview
 Duration: 1
@@ -28,6 +28,7 @@ The Snowflake Native App Framework is a powerful way for application providers t
 ### What You’ll Need 
 - A [GitHub](https://github.com/) Account 
 - [VSCode](https://code.visualstudio.com/download) Installed
+- A [Snowflake Account](https://signup.snowflake.com/)
 
 
 ### What You’ll Build 
