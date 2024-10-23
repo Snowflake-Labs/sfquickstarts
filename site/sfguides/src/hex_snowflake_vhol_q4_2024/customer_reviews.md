@@ -1,5 +1,5 @@
 author: Armin Efendic
-id: analyzing_customer_reviews_using_hex_and_cortex
+id: analyzing_customer_reviews_using_hex_and_snowflake_cortex
 summary: This lab will walk you through how to use Hex with Snowflake Cortex to analyze and understand sentiment on customer reviews.
 categories: data-science-&-ml,partner-integrations
 environments: web
@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Hex, Notebooks, Partner Connect
 
-# Analyzing Customer Reviews With Hex and Cortex
+# Analyzing Customer Reviews With Hex and Snowflake Cortex
 
 <!-- ------------------------ -->
 ## Overview 
@@ -15,7 +15,7 @@ Duration: 5
 
 This quickstart guide has been slightly modified from the original quickstart guide titled [Customer Reviews Analytics using Snowflake Cortex](https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/#0) by Shriya Rai. The SQL script to generate the Snowflake objects has been created by Jacob Kranzler.
 
-We will be exploring customer review data using Cortex and Hex. Specifically, we will create a data app that leverages Snowflake's Cortex LLM functions to better understand our customer feedback. As a result we will then be able to provide recommendations and improvements to our stakeholders. 
+We will be exploring customer review data using Snowflake Cortex and Hex. Specifically, we will create a data app that leverages Snowflake's Cortex LLM functions to better understand our customer feedback. As a result we will then be able to provide recommendations and improvements to our stakeholders. 
 
 ### Prerequisites
 - Familiarity with basic Python and SQL 
@@ -24,7 +24,7 @@ We will be exploring customer review data using Cortex and Hex. Specifically, we
 
 ### What You Will Learn
 * How to leverage Snowflake's Cortex LMM functionality
-* Data exploration and analysis of customer reviews using Cortex.
+* Data exploration and analysis of customer reviews using Snowflake Cortex.
 * How to best utilize single-shot versus zero-shot prompting
 * Perform sentiment analysis and classification at scale.
 * How to turn a Hex notebook into a Hex data app
