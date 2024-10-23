@@ -63,7 +63,7 @@ Once you are logged into your Snowflake account, sign up for a free Coalesce tri
 
 1. Select Data Products \> Partner Connect in the navigation bar on the left hand side of your screen and search for Coalesce in the search bar.   
      
-   ![image1](image1.png)
+   ![image1](assets/image1.png)
  
 2. Review the connection information and then click Connect. ![][image2]
 
