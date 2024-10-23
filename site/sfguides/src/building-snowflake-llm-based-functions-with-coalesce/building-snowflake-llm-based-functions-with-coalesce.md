@@ -53,7 +53,6 @@ We recommend using Google Chrome as your browser for the best experience.
 2. When signing up for your Snowflake account, select the region that is physically closest to you and choose Enterprise as your Snowflake edition. Please note that the Snowflake edition, cloud provider, and region used when following this guide do not matter.   
   
 
-
 3. After registering, you will receive an email from Snowflake with an activation link and URL for accessing your trial account. Finish setting up your account following the instructions in the email. 
 
 ### Step 2: Create a Coalesce Trial Account with Snowflake Partner Connect 
@@ -64,7 +63,7 @@ Once you are logged into your Snowflake account, sign up for a free Coalesce tri
 
 1. Select Data Products \> Partner Connect in the navigation bar on the left hand side of your screen and search for Coalesce in the search bar.   
      
-   **![][image1]**
+   ![][image1]
  
 
 2. Review the connection information and then click Connect. ![][image2]
