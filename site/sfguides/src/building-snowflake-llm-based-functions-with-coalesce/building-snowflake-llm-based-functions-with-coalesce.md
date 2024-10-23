@@ -45,7 +45,7 @@ We recommend using Google Chrome as your browser for the best experience.
 | Note: Not following these steps will cause delays and reduce your time spent in the Coalesce environment\! |
 | :---- |
 
-## Step 1: Create a Snowflake Trial Account  {#step-1:-create-a-snowflake-trial-account}
+## Step 1: Create a Snowflake Trial Account  
 
 1. Fill out the Snowflake trial account form [here](https://signup.snowflake.com/?utm_source=google&utm_medium=paidsearch&utm_campaign=na-us-en-brand-trial-exact&utm_content=go-eta-evg-ss-free-trial&utm_term=c-g-snowflake%20trial-e&_bt=579123129595&_bk=snowflake%20trial&_bm=e&_bn=g&_bg=136172947348&gclsrc=aw.ds&gclid=Cj0KCQiAtvSdBhD0ARIsAPf8oNm6YH7UeRqFRkVeQQ-3Akuyx2Ijzy8Yi5Om-mWMjm6dY4IpR1eGvqAaAg3MEALw_wcB). Use an email address that is not associated with an existing Snowflake account.   
      
@@ -57,7 +57,7 @@ We recommend using Google Chrome as your browser for the best experience.
 
 ## 
 
-## Step 2: Create a Coalesce Trial Account with Snowflake Partner Connect {#step-2:-create-a-coalesce-trial-account-with-snowflake-partner-connect}
+## Step 2: Create a Coalesce Trial Account with Snowflake Partner Connect 
 
 Once you are logged into your Snowflake account, sign up for a free Coalesce trial account using Snowflake Partner Connect. Check your Snowflake account profile to make sure that it contains your fist and last name. 
 
