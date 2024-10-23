@@ -38,32 +38,133 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 - A Snowflake Guide
 
 <!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
+To complete this lab, please create free trial accounts with Snowflake and Coalesce by following the steps below. You have the option of setting up Git-based version control for your lab, but this is not required to perform the following exercises. Please note that none of your work will be committed to a repository unless you set Git up before developing.
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+We recommend using Google Chrome as your browser for the best experience.
+
+| Note: Not following these steps will cause delays and reduce your time spent in the Coalesce environment\! |
+| :---- |
+
+## Step 1: Create a Snowflake Trial Account  {#step-1:-create-a-snowflake-trial-account}
+
+1. Fill out the Snowflake trial account form [here](https://signup.snowflake.com/?utm_source=google&utm_medium=paidsearch&utm_campaign=na-us-en-brand-trial-exact&utm_content=go-eta-evg-ss-free-trial&utm_term=c-g-snowflake%20trial-e&_bt=579123129595&_bk=snowflake%20trial&_bm=e&_bn=g&_bg=136172947348&gclsrc=aw.ds&gclid=Cj0KCQiAtvSdBhD0ARIsAPf8oNm6YH7UeRqFRkVeQQ-3Akuyx2Ijzy8Yi5Om-mWMjm6dY4IpR1eGvqAaAg3MEALw_wcB). Use an email address that is not associated with an existing Snowflake account.   
+     
+2. When signing up for your Snowflake account, select the region that is physically closest to you and choose Enterprise as your Snowflake edition. Please note that the Snowflake edition, cloud provider, and region used when following this guide do not matter.   
+  
 
 
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
+3. After registering, you will receive an email from Snowflake with an activation link and URL for accessing your trial account. Finish setting up your account following the instructions in the email. 
 
----
+## 
 
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
+## Step 2: Create a Coalesce Trial Account with Snowflake Partner Connect {#step-2:-create-a-coalesce-trial-account-with-snowflake-partner-connect}
 
+Once you are logged into your Snowflake account, sign up for a free Coalesce trial account using Snowflake Partner Connect. Check your Snowflake account profile to make sure that it contains your fist and last name. 
+
+Once you are logged into your Snowflake account, sign up for a free Coalesce trial account using Snowflake Partner Connect. Check your Snowflake account profile to make sure that it contains your fist and last name. 
+
+1. Select Data Products \> Partner Connect in the navigation bar on the left hand side of your screen and search for Coalesce in the search bar.   
+     
+   **![][image1]**
+
+##  
+
+2. Review the connection information and then click Connect. ![][image2]
+
+3. When prompted, click Activate to activate your account. You can also activate your account later using the activation link emailed to your address. ![][image3]  
+4. Once you’ve activated your account, fill in your information to complete the activation process. ![][image4]
+
+Congratulations\! You’ve successfully created your Coalesce trial account. 
+
+## Step 3: Set Up The Ski Store Dataset
+
+1. We will be using a M Warehouse size within Snowflake for this lab. You can upgrade this within the admin tab of your Snowflake account.
+
+![][image5]
+
+2. In your Snowflake account, click on the Worksheets Tab in the left-hand navigation bar.
+
+![][image6]
+
+3. Within Worksheets, click the "+" button in the top-right corner of Snowsight and choose "SQL Worksheet.”   
+   
+
+![][image7]
+
+4. Paste the setup SQL from below into the worksheet that you just created:
+
+```
+CREATE or REPLACE schema pc_coalesce_db.calls;
+
+CREATE or REPLACE file format csvformat
+  SKIP_HEADER = 1
+  FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+  type = 'CSV';
+
+CREATE or REPLACE stage pc_coalesce_db.calls.call_transcripts_data_stage
+  file_format = csvformat
+  url = 's3://sfquickstarts/misc/call_transcripts/';
+
+CREATE or REPLACE table pc_coalesce_db.calls.CALL_TRANSCRIPTS ( 
+  date_created date,
+  language varchar(60),
+  country varchar(60),
+  product varchar(60),
+  category varchar(60),
+  damage_type varchar(90),
+  transcript varchar
+);
+
+COPY into pc_coalesce_db.calls.CALL_TRANSCRIPTS
+  from @pc_coalesce_db.calls.call_transcripts_data_stage;
+
+```
+
+## 
+
+## Step 4: Add the Cortex Package from the Coalesce Marketplace
+
+You will need to add the ML Forecast node into your Coalesce workspace in order to complete this lab. 
+
+1. Launch your workspace within your Coalesce account 
+
+## ![][image8]
+
+2. Navigate to the build settings in the lower left hand corner of the left sidebar
+
+![][image9]
+
+3. Select Packages from the Build Settings options  
+    
+
+![][image10]
+
+4. Select Browse to Launch the Coalesce Marketplace 
+
+# ![][image11]
+
+5. Select Find out more within the Cortex package
+
+![][image12]
+
+6. Copy the package ID from the Cortex page   
+   
+
+![][image13]
+
+7. Back in Coalesce, select the Install button:
+
+![][image14]
+
+8. Paste the Package ID into the corresponding input box:
+
+![][image15]
+
+9. Give the package an Alias, which is the name of the package that will appear within the Build Interface of Coalesce. And finish by clicking Install. 
+
+   
+
+![][image16]
 
 <!-- ------------------------ -->
 ## Creating a Step
