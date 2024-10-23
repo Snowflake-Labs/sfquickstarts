@@ -1,23 +1,11 @@
----
 summary: "A concise guide to demonstrate the use of the Chalice TVB Native App to detect overbidding in programmatic auctions."
 id: "chalice-native-app-quickstart"
-categories: 
-  - "data-science"
-  - "native-app"
-environments: 
-  - "web"
+categories: data-science, native-app
+environments: "web"
 status: "Published"
 feedback_link: "https://github.com/Snowflake-Labs/sfguides/issues"
-tags: 
-  - "Getting Started"
-  - "Data Science"
-  - "Chalice"
-  - "Native App"
-  - "Machine Learning"
-authors: 
-  - "Tylynn Pettrey"
-  - "Tucker Ward"
----
+tags: Getting Started, Data Science, Chalice, Native App 
+authors: Tylynn Pettrey, Tucker Ward 
 
 # Chalice Native App Guide
 <!-- ------------------------ -->
