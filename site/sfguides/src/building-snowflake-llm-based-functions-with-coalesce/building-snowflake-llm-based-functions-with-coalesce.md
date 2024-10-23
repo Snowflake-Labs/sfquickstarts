@@ -38,6 +38,7 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 - A Snowflake Guide
 
 <!-- ------------------------ -->
+## Setup Work
 To complete this lab, please create free trial accounts with Snowflake and Coalesce by following the steps below. You have the option of setting up Git-based version control for your lab, but this is not required to perform the following exercises. Please note that none of your work will be committed to a repository unless you set Git up before developing.
 
 We recommend using Google Chrome as your browser for the best experience.
@@ -45,7 +46,7 @@ We recommend using Google Chrome as your browser for the best experience.
 | Note: Not following these steps will cause delays and reduce your time spent in the Coalesce environment\! |
 | :---- |
 
-## Step 1: Create a Snowflake Trial Account  
+### Step 1: Create a Snowflake Trial Account  
 
 1. Fill out the Snowflake trial account form [here](https://signup.snowflake.com/?utm_source=google&utm_medium=paidsearch&utm_campaign=na-us-en-brand-trial-exact&utm_content=go-eta-evg-ss-free-trial&utm_term=c-g-snowflake%20trial-e&_bt=579123129595&_bk=snowflake%20trial&_bm=e&_bn=g&_bg=136172947348&gclsrc=aw.ds&gclid=Cj0KCQiAtvSdBhD0ARIsAPf8oNm6YH7UeRqFRkVeQQ-3Akuyx2Ijzy8Yi5Om-mWMjm6dY4IpR1eGvqAaAg3MEALw_wcB). Use an email address that is not associated with an existing Snowflake account.   
      
@@ -55,9 +56,7 @@ We recommend using Google Chrome as your browser for the best experience.
 
 3. After registering, you will receive an email from Snowflake with an activation link and URL for accessing your trial account. Finish setting up your account following the instructions in the email. 
 
-## 
-
-## Step 2: Create a Coalesce Trial Account with Snowflake Partner Connect 
+### Step 2: Create a Coalesce Trial Account with Snowflake Partner Connect 
 
 Once you are logged into your Snowflake account, sign up for a free Coalesce trial account using Snowflake Partner Connect. Check your Snowflake account profile to make sure that it contains your fist and last name. 
 
@@ -66,8 +65,7 @@ Once you are logged into your Snowflake account, sign up for a free Coalesce tri
 1. Select Data Products \> Partner Connect in the navigation bar on the left hand side of your screen and search for Coalesce in the search bar.   
      
    **![][image1]**
-
-##  
+ 
 
 2. Review the connection information and then click Connect. ![][image2]
 
@@ -76,7 +74,7 @@ Once you are logged into your Snowflake account, sign up for a free Coalesce tri
 
 Congratulations\! You’ve successfully created your Coalesce trial account. 
 
-## Step 3: Set Up The Ski Store Dataset
+### Step 3: Set Up The Ski Store Dataset
 
 1. We will be using a M Warehouse size within Snowflake for this lab. You can upgrade this within the admin tab of your Snowflake account.
 
@@ -120,15 +118,13 @@ COPY into pc_coalesce_db.calls.CALL_TRANSCRIPTS
 
 ```
 
-## 
-
-## Step 4: Add the Cortex Package from the Coalesce Marketplace
+### Step 4: Add the Cortex Package from the Coalesce Marketplace
 
 You will need to add the ML Forecast node into your Coalesce workspace in order to complete this lab. 
 
 1. Launch your workspace within your Coalesce account 
 
-## ![][image8]
+ ![][image8]
 
 2. Navigate to the build settings in the lower left hand corner of the left sidebar
 
@@ -141,7 +137,7 @@ You will need to add the ML Forecast node into your Coalesce workspace in order 
 
 4. Select Browse to Launch the Coalesce Marketplace 
 
-# ![][image11]
+ ![][image11]
 
 5. Select Find out more within the Cortex package
 
