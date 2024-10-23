@@ -11,6 +11,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
+#### UPDATE: The Semantic Model Generator is now fully supported in Streamlit in Snowflake! We’ve added functionality and revamped the setup. You can now deploy the entire application to Streamlit in Snowflake with a single command. Take a [look](https://github.com/Snowflake-Labs/semantic-model-generator)!
+
 [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) is Snowflake’s premier text-to-sql solution for natural language processing on structured data. As noted in Part I of this series, Cortex Analyst requires semantic files with table and column metadata to more accurately respond to user requests. However, many Snowflake customers have already made significant investments in building semantic layers with a number of our semantic layer, data catalog, and business intelligence partners.
 
 To assist customers in leveraging their existing semantic layers for use by Cortex Analyst, the Snowflake Solution Innovation Team has developed a Partner Semantic Translator tool. The brand new tool is tightly integrated as a new module within the [OSS Semantic Model Generator](https://github.com/Snowflake-Labs/semantic-model-generator) introduced in Part I of this series.

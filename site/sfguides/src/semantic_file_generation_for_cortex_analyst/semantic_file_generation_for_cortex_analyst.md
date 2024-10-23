@@ -11,6 +11,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
+#### UPDATE: The Semantic Model Generator is now fully supported in Streamlit in Snowflake! We’ve added functionality and revamped the setup. You can now deploy the entire application to Streamlit in Snowflake with a single command. Take a [look](https://github.com/Snowflake-Labs/semantic-model-generator)!
+
 Note: As of the date of this publication, Cortex Analyst is in Public Preview. Please see the [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst#region-availability) for the list of available regions.
 
 Ever wish you could talk directly to your data? Up until this point, gleaning insights from your data would require looking at complicated dashboards or back-and-forth communication with your company’s data analysts.
