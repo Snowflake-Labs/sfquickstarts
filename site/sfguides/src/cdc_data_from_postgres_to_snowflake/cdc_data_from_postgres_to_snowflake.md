@@ -431,9 +431,9 @@ BEGIN
             -- Generate new transaction ID (unique)
             v_new_transaction_id := 'TX' || EXTRACT(EPOCH FROM NOW())::TEXT || j::TEXT;
 
-            -- Generate current date and time
-            v_transaction_date := CURRENT_DATE;
-            v_transaction_time := TO_CHAR(NOW(), 'HH24:MI:SS');
+            -- Generate current date and time in New York time zone
+            v_transaction_date := (CURRENT_TIMESTAMP AT TIME ZONE 'America/New_York')::DATE;
+            v_transaction_time := TO_CHAR(CURRENT_TIMESTAMP AT TIME ZONE 'America/New_York', 'HH24:MI:SS');
 
             -- Generate random quantity between 1 and 7
             v_quantity := FLOOR(RANDOM() * 7 + 1);
