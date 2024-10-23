@@ -3,7 +3,7 @@ id: data_analysis_and_churn_prediction_using_snowflake_notebooks
 summary: Data Analysis and Churn Prediction Using Snowflake Notebooks
 categories: Churn, Prediction, Getting-Started
 environments: web
-status: Published
+status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Churn, Prediction, Notebooks
 
