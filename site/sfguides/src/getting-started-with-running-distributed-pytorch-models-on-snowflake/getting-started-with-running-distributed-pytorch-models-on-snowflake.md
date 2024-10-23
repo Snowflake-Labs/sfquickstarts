@@ -90,35 +90,32 @@ The architecture of the Tasty Bytes ML solution is designed to generate personal
 
 This architecture integrates various Snowflake features to create a robust end-to-end ML solution. From data ingestion and preprocessing to model training, deployment, and visualization, each component plays a crucial role in ensuring the efficiency, scalability, and consistency of the ML workflow. By leveraging Snowflake ML, the Tasty Bytes team successfully addresses common challenges in ML workflows, empowering their business with actionable insights to drive sales growth.
 
-## Producer Notebook
+## Notebook
 Duration: 5
 
-The Producer Notebook creates and operates on feature views. Producers manage feature views and entities in the feature store, facilitating collaboration and feature reuse across departments. This approach breaks down silos between training and serving environments and simplifies aggregations and moving window calculations using Python commands.
+This notebook demonstrates how to create and manage feature views within a feature store. By facilitating collaboration across teams, it enables seamless reuse of features while bridging the gap between training and serving environments. In this example, we train and deploy a deep learning model to generate personalized recommendations for loyalty customers, aiming to drive engagement and improve performance for underperforming food trucks at Tasty Bytes.
 
-### Access Producer Notebook
-Import the following Snowflake Notebook in Snowsight and run each of the cells: [1_EndtoEndML_Producer.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/notebooks/1_EndtoEndML_Producer.ipynb)
+- Navigate to Snowsight and change role to **TASTYBYTESENDTOENDML_DATA_SCIENTIST**
 
-<img src="assets/import.png"/>
+- Select the Notebooks tab.
 
-
-<img src="assets/create_notebook_producer.png"/>
-
-## Consumer Notebook
-Duration: 20
-
-In this notebook, we train and deploy a deep learning model to generate recommendation scores for loyalty customers for each menu item sold by Tasty Bytes food trucks. The output is used for personalized outreach, increasing the number of truck brands visited by customers, and boosting traffic to underperforming trucks.
-
-### Access Consumer Notebook
-
-Import the following Snowflake Notebook in Snowsight and enable external access integration as below. Once done, run each of the cells: [2_EndtoEndML_Consumer.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/notebooks/2_EndtoEndML_Consumer.ipynb)
+- Import the following Snowflake Notebook in Snowsight: [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/notebooks/0_start_here.ipynb)
 
 <img src="assets/import.png"/>
 
+- Create notebook with the settings in the screenshot.
 
-<img src="assets/create_notebook_consumer.png"/>
+<img src="assets/create_notebook.png"/>
 
+- Once created, Click on Notebook Settings in the top right corner inside Snowflake Notebooks
+
+<img src="assets/notebook_settings.png"/>
+
+- Enable **TASTYBYTESENDTOENDML_ALLOW_ALL_ACCESS_INTEGRATION** as per screenshot
 
 <img src="assets/eai.png"/>
+
+- Click each cell or Run all to run the Notebook
 
 ## Streamlit Application
 Duration: 3
@@ -131,7 +128,8 @@ To set up the Streamlit in Snowflake Application,
 
 1. Navigate to Snowsight.
 2. Select the Streamlit tab.
-3. Click on **+ Streamlit App** and replace the code with the streamlit code in the [file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/streamlit/Menu_Item_Recommendations_App.py) 
+3. Click on **+ Streamlit App** to create streamlit App. Use the configuration from below screenshot to create the Application.
+4. Once the App is created, replace the example code with the streamlit code in the [file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/streamlit/Menu_Item_Recommendations_App.py) 
 4. Add **snowflake-ml-python** package to the app and Run the Application.
 
 <img src="assets/create_streamlit.png"/>
