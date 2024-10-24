@@ -26,19 +26,19 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 
 ### What you will learn 
 - How to construct and configure a Semantic Model for your data
-- How to call the Cortex Analyst REST API to use your Semantic Model to enable natural-language question-asking on top of your structured data in Snowflake
+- How to call the Cortex Analyst REST API to use your Semantic Model to enable natural-language question-asking on top of your structured data in Snowflake via Streamlit in Snowflake (SiS) application
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
     > aside positive
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst)
-- [Python >= 3.9 installed](https://www.python.org/downloads/)
+- (Optional) [Python >= 3.9, <= 3.11 installed](https://www.python.org/downloads/) to run the OSS Semantic Model Generator
 - A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.
 
 ### What You’ll Build 
 - A Semantic Model over sample financial data
-- A Streamlit app with a conversational interface to Cortex Analyst
+- A Streamlit in Snowflake (SiS) app with a conversational interface to Cortex Analyst
 
 ![streamlit app](./assets/streamlit_app.png)
 
@@ -216,12 +216,14 @@ FORCE = TRUE ;
 ## Create a Streamlit Conversational App
 Duration: 10
 
-Now, you will create a demo chat application to call the Cortex Analyst API and ask natural-language questions over our structured revenue datasets. To create the Streamlit application:
+Now, you will create a demo chat application to call the Cortex Analyst API and ask natural-language questions over our structured revenue datasets. To create the Streamlit in Snowflake application:
 
-- `pip install streamlit snowflake-snowpark-python` in your local Python environment
-- Open up the [cortex_analyst_streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/cortex_analyst_streamlit.py) file in your preferred local code editor
-- Modify the following parameters with your respective account information: `HOST`, `user`, `password`, and `account` information
-- Run the Streamlit app using `streamlit run cortex_analyst_streamlit.py`
+- Go to the Streamlit page in Snowsight, and click `+ Streamlit App`, and fill it in with the below details and click create:
+![create streamlit](./assets/streamlit_create.png)
+- Open up the [cortex_analyst_sis_demo_app.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/cortex_analyst_sis_demo_app.py) file in your preferred local code editor
+- Copy and paste the SiS app code into the Streamlit editor
+![edit streamlit](./assets/streamlit_editor.png)
+- Click `Run` and begin asking questions!
 
 Take note of the `send_message` function that is defined in this Python code. This is the function that takes our chat input prompt, packages it up as a JSON object, and sends it to the Cortex Analyst API (with the specified `revenue_timeseries.yaml` Semantic Model). 
 
@@ -249,7 +251,7 @@ def send_message(prompt: str) -> Dict[str, Any]:
         )
 ```
 
-Navigate to the application in your browser at `localhost:8501`. You can now begin asking natural language questions about the revenue data in the chat interface (e.g. "What questions can I ask?")
+You can now begin asking natural language questions about the revenue data in the chat interface (e.g. "What questions can I ask?")
 
 <!-- ------------------------ -->
 ## Semantic Model Details
