@@ -93,47 +93,47 @@ We will be using a dataset from a public S3 bucket for this lab. The bucket has 
 2. If you set up your Snowflake trial account in the Oregon (us-west-2) region, you can copy and paste the following code into your worksheet. Ensure you are using the ACCOUNTADMIN role in Snowflake for this process. 
 
 ```sql
-CREATE OR REPLACE EXTERNAL VOLUME iceberg\_external\_volume  
-   STORAGE\_LOCATIONS \=  
+CREATE OR REPLACE EXTERNAL VOLUME iceberg_external_volume  
+   STORAGE_LOCATIONS =  
       (  
          (  
-            NAME \= 'us-west-2'  
-            STORAGE\_PROVIDER \= 'S3'  
-            STORAGE\_BASE\_URL \= 's3://iceberg-hol-west/'  
-            STORAGE\_AWS\_ROLE\_ARN \= 'arn:aws:iam::034362027654:role/iceberg-hol-role'  
-            STORAGE\_AWS\_EXTERNAL\_ID \= 'iceberg-hol'  
+            NAME = 'us-west-2'  
+            STORAGE_PROVIDER = 'S3'  
+            STORAGE_BASE_URL = 's3://iceberg-hol-west/'  
+            STORAGE_AWS\_ROLE_ARN = 'arn:aws:iam::034362027654:role/iceberg-hol-role'  
+            STORAGE_AWS_EXTERNAL_ID = 'iceberg-hol'  
          )  
       );
 
-CREATE OR REPLACE CATALOG INTEGRATION iceberg\_catalog\_integration  
-  CATALOG\_SOURCE \= OBJECT\_STORE  
-  TABLE\_FORMAT \= ICEBERG  
-  ENABLED \= TRUE;
+CREATE OR REPLACE CATALOG INTEGRATION iceberg_catalog_integration  
+  CATALOG_SOURCE = OBJECT_STORE  
+  TABLE_FORMAT = ICEBERG  
+  ENABLED = TRUE;
 
-GRANT USAGE ON EXTERNAL VOLUME iceberg\_external\_volume TO ROLE pc\_coalesce\_role;  
-GRANT USAGE ON INTEGRATION iceberg\_catalog\_integration TO ROLE pc\_coalesce\_role;
+GRANT USAGE ON EXTERNAL VOLUME iceberg_external_volume TO ROLE pc_coalesce_role;  
+GRANT USAGE ON INTEGRATION iceberg_catalog_integration TO ROLE pc_coalesce_role;
 
 3. If you set up your Snowflake trial account in the Ohio (us-east-2) region, you can copy and paste the following code into your worksheet. Ensure you are using the ACCOUNTADMIN role in Snowflake for this process. 
 
-CREATE OR REPLACE EXTERNAL VOLUME iceberg\_external\_volume  
-   STORAGE\_LOCATIONS \=  
+CREATE OR REPLACE EXTERNAL VOLUME iceberg_external_volume  
+   STORAGE\_LOCATIONS =  
       (  
          (  
-            NAME \= 'us-east-2'  
-            STORAGE\_PROVIDER \= 'S3'  
-            STORAGE\_BASE\_URL \= 's3://iceberg-hol-east/'  
-            STORAGE\_AWS\_ROLE\_ARN \= 'arn:aws:iam::034362027654:role/iceberg-role-east'  
-            STORAGE\_AWS\_EXTERNAL\_ID \= 'iceberg-hol-east'  
+            NAME = 'us-east-2'  
+            STORAGE_PROVIDER = 'S3'  
+            STORAGE_BASE_URL = 's3://iceberg-hol-east/'  
+            STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::034362027654:role/iceberg-role-east'  
+            STORAGE_AWS_EXTERNAL_ID = 'iceberg-hol-east'  
          )  
       );
 
-CREATE OR REPLACE CATALOG INTEGRATION iceberg\_catalog\_integration  
-  CATALOG\_SOURCE \= OBJECT\_STORE  
-  TABLE\_FORMAT \= ICEBERG  
-  ENABLED \= TRUE;
+CREATE OR REPLACE CATALOG INTEGRATION iceberg_catalog_integration  
+  CATALOG_SOURCE = OBJECT_STORE  
+  TABLE_FORMAT = ICEBERG  
+  ENABLED = TRUE;
 
-GRANT USAGE ON EXTERNAL VOLUME iceberg\_external\_volume TO ROLE pc\_coalesce\_role;  
-GRANT USAGE ON INTEGRATION iceberg\_catalog\_integration TO ROLE pc\_coalesce\_role;
+GRANT USAGE ON EXTERNAL VOLUME iceberg_external_volume TO ROLE pc_coalesce_role;  
+GRANT USAGE ON INTEGRATION iceberg_catalog_integration TO ROLE pc_coalesce_role;
 ```
 
 4. You have now successfully set up an external volume and catalog integration. 
