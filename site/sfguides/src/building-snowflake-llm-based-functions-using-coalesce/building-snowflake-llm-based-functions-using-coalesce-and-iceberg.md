@@ -100,7 +100,7 @@ CREATE OR REPLACE EXTERNAL VOLUME iceberg_external_volume
             NAME = 'us-west-2'  
             STORAGE_PROVIDER = 'S3'  
             STORAGE_BASE_URL = 's3://iceberg-hol-west/'  
-            STORAGE_AWS\_ROLE_ARN = 'arn:aws:iam::034362027654:role/iceberg-hol-role'  
+            STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::034362027654:role/iceberg-hol-role'  
             STORAGE_AWS_EXTERNAL_ID = 'iceberg-hol'  
          )  
       );
@@ -116,7 +116,7 @@ GRANT USAGE ON INTEGRATION iceberg_catalog_integration TO ROLE pc_coalesce_role;
 3. If you set up your Snowflake trial account in the Ohio (us-east-2) region, you can copy and paste the following code into your worksheet. Ensure you are using the ACCOUNTADMIN role in Snowflake for this process. 
 
 CREATE OR REPLACE EXTERNAL VOLUME iceberg_external_volume  
-   STORAGE\_LOCATIONS =  
+   STORAGE_LOCATIONS =  
       (  
          (  
             NAME = 'us-east-2'  
