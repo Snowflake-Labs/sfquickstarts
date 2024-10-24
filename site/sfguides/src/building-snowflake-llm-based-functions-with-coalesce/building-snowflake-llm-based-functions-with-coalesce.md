@@ -55,7 +55,6 @@ We recommend using Google Chrome as your browser for the best experience.
 2. When signing up for your Snowflake account, select AWS as the cloud provider and either Oregon (us-west-2) or Ohio (us-east-2) and choose Enterprise as your Snowflake edition. ***Remember which region you set up your trial account in***.   
   
 
-
 3. After registering, you will receive an email from Snowflake with an activation link and URL for accessing your trial account. Finish setting up your account following the instructions in the email. 
 
 
@@ -169,14 +168,16 @@ Your trial account includes a default Project to help you get started.
 ![image8](assets/image8.png)
 
 4. The Browser tab of the Build interface is where you’ll build your pipelines using nodes. You can visualize your graph of these nodes using the Graph, Node Grid, and Column Grid views. While this area is currently empty, we will build out nodes and our Graph in subsequent steps of this lab.  
-    ![][image7]  
-5. Next to the Build interface is the Deploy interface. This is where you will push your pipeline to other environments such as Testing or Production. 
 
 ![image9](assets/image9.png)
+ 
+5. Next to the Build interface is the Deploy interface. This is where you will push your pipeline to other environments such as Testing or Production. 
+
+![image10](assets/image10.png)
 
 6. Next to the Deploy interface is the Docs interface. Documentation is an essential step in building a sustainable data architecture, but is sometimes put aside to focus on development work to meet deadlines. To help with this, Coalesce automatically generates and updates documentation as you work. 
 
-![image10](assets/image10.png)
+![image11](assets/image11.png)
 
 <!-- ------------------------ -->
 ## Install Iceberg and Cortex Packages from Coalesce Marketplace
@@ -186,43 +187,43 @@ In order to leverage Iceberg table functionality, we need to add Iceberg table n
 
 1. In the build interface, navigate to the build settings in the lower left corner of the screen. 
 
-![image11](assets/image11.png)
+![image12](assets/image12.png)
 
 2. Select Packages from the menu list presented.
 
-![image12](assets/image12.png)
+![image13](assets/image13.png)
 
 3. Select the Browse button in the upper right corner of the screen. This will open a new tab for Coalesce Marketplace. 
 
- ![image13](assets/image13.png)
+ ![image14](assets/image14.png)
 
 4. Navigate to the Iceberg package and select “Find out more” 
 
-![image14](assets/image14.png)
+![image15](assets/image15.png)
 
 5. In the package details, find the Package ID and copy it. 
 
-![image15](assets/image15.png)
+![image16](assets/image16.png)
 
 6. Navigate back to Coalesce and select the Install button in the upper right corner of the screen.
 
-![image16](assets/image16.png)
+![image17](assets/image17.png)
 
 7. Paste in the Package ID into the Install Package modal. Coalesce will automatically select the most recent version of the package. 
 
-![image17](assets/image17.png)
+![image18](assets/image18.png)
 
 8. Provide a Package Alias. The Package Alias will be the name of the package as it is displayed within the Build Interface of Coalesce. In this case, we’ll call the package Iceberg. 
 
-![image18](assets/image18.png)
+![image19](assets/image19.png)
 
 9. Select Install once you have filled out all of the information in the modal.
 
-![image19](assets/image19.png)
+![image20](assets/image20.png)
 
 10. Repeat these steps to install the Cortex Package and call the Package Alias CortexML. 
 
-![image20](assets/image20.png)
+![image21](assets/image21.png)
 
 
 <!-- ------------------------ -->
@@ -233,51 +234,51 @@ Let’s start to build the foundation of your LLM data pipeline by creating a Gr
 
 1. Start in the Build interface and click on Nodes in the left sidebar (if not already open). Click the \+ icon and navigate to Create New Node → Iceberg → External Iceberg Table.
 
-![image21](assets/image21.png)
+![image22](assets/image22.png)
 
 2. Coalesce will automatically open the Iceberg node which we can configure using the information from the SQL we ran in section 4 of the lab guide. Select the Iceberg Options dropdown from within the node.
 
-![image22](assets/image22.png)
+![image23](assets/image23.png)
 
 3. For the Type of catalog dropdown, we will be using an AWS S3 bucket, so select Object Storage. 
 
-![image23](assets/image23.png)
+![image24](assets/image24.png)
 
 4. For the External Volume parameter, we will pass through the external volume that was created in section 4 of this lab guide. The external volume is called iceberg\_external\_volume.
 
-![image24](assets/image24.png)
+![image25](assets/image25.png)
 
 5. For the Catalog Integration, again, we will use the name of the integration that we set up in section 4 of this lab guide. The catalog integration is called iceberg\_catalog\_integration.  
 
-![image25](assets/image25.png)
+![image26](assets/image26.png)
 
 6. Finally, for the Metadata file path, we will need to provide the metadata JSON file that contains the information to read in the parquet file containing our data. Copy and paste the metadata file path listed below into the parameter:  
    	transcriptions\_customer/metadata/00001-31af3f7b-6ea2-4ba9-9130-0e14d2fd5337.metadata.json  
    
 
-![image26](assets/image26.png)
+![image27](assets/image27.png)
 
 7. Finally, toggle off the Schedule Refresh toggle, as we won’t be concerned for this lab with setting up this Iceberg table on a continual refresh, but note that we can schedule any Iceberg table with this functionality. 
 
-![image27](assets/image27.png)
+![image28](assets/image28.png)
 
 8. Rename the node to CALL\_TRANSCRIPTS. 
 
-![image28](assets/image28.png)
+![image29](assets/image29.png)
 
 9. Select Create and then Run to create the object in Snowflake and populate it with the data in the Iceberg table format from S3. 
 
 10. The iceberg node we are using in Coalesce will create a new table in our WORK schema called CALL\_TRANSCRIPTS which will be populated with data from our S3 bucket. Within the build interface, select the \+ button in the upper left corner and select Add Sources. 
 
-![image29](assets/image29.png)
+![image30](assets/image30.png)
 
 11. In the WORK storage location, locate the CALL\_TRANSCRIPTS table and add it as a data source. You have now successfully created, populated, and added an iceberg table to your data pipeline in Coalesce. 
 
-![image30](assets/image30.png)
+![image31](assets/image31.png)
 
 12. Delete the Iceberg node we used to load the data into the workspace as we no longer need it. 
 
-![image31](assets/image31.png)
+![image32](assets/image32.png)
 
 <!-- ------------------------ -->
 ## Creating Stage Nodes 
@@ -287,32 +288,32 @@ Now that you’ve added your Source node, let’s prepare the data by adding bus
 
 1. Select the CALL\_TRANSCRIPT source node then right click and select Add Node \> Stage from the drop down menu. This will create a new stage node and Coalesce will automatically open the mapping grid of the node for you to begin transforming your data. 
 
-![image32](assets/image32.png)
+![image33](assets/image33.png)
 
 2. Within the Node, the large middle section is your Mapping grid, where you can see the structure of your node along with column metadata like transformations, data types, and sources.   
    
 
-![image33](assets/image33.png)
+![image34](assets/image34.png)
 
 3. On the right hand side of the Node Editor is the Config section, where you can view and set configurations based on the type of node you’re using. 
 
-![image34](assets/image34.png)
+![image35](assets/image35.png)
 ![][image34]
 
      
 4. At the bottom of the Node Editor, press the arrow button to view the Data Preview pane. 
 
-![image35](assets/image35.png)
+![image36](assets/image36.png)
 
 5. Rename the node to STG\_CALL\_TRANSCRIPTS\_GERMAN
 
-![image36](assets/image36.png)
+![image37](assets/image37.png)
 
 6. Within Coalesce, you can use the Transform column to write column level transformations using standard Snowflake SQL. We will transform the Category column to use an upper case format using the following function: 
 
 	UPPER({{SRC}})
 
-![image37](assets/image37.png)
+![image38](assets/image38.png)
 
 7. Coalesce also allows you to write as much custom SQL as needed for your business use case. In this case, we need to process French and German language records in separate tables so that we can pass each language to its own Cortex translation function and union the tables together.
 
@@ -322,28 +323,28 @@ Now that you’ve added your Source node, let’s prepare the data by adding bus
 
    WHERE "LANGUAGE" \= 'German'
 
-![image38](assets/image38.png)
+![image39](assets/image39.png)
 
 8. Now that we have transformed and filtered the data for our German node, we now need to process our French data. Coalesce leverages metadata to allow users to quickly and easily build objects in Snowflake. Because of this metadata, users can duplicate existing objects, allowing everything contained in one node to be duplicated in another, including SQL transformations. 
 
 	  
 Navigate back to the Build Interface and right click on the STG\_CALL\_TRANSCRIPTS\_GERMAN node and select duplicate node. 
 
-![image39](assets/image39.png)
+![image40](assets/image40.png)
 
 9. Double click on the duplicated node, and once inside the node, rename the node to STG\_CALL\_TRANSCRIPTS\_FRENCH. 
 
-![image40](assets/image40.png)
+![image41](assets/image41.png)
 
 10. Navigate to the Join tab, where we will update the where condition to an IN to include both French and English data.   
       
     WHERE "LANGUAGE" IN ('French', 'English')
 
-![image41](assets/image41.png)
+![image42](assets/image42.png)
 
 11. All the changes made from the STG\_CALL\_TRANSCRIPTS\_GERMAN carry over into this node, so we don’t need to rewrite any of our transformations. Let’s change the view back to Graph and select Create All and then Run All
 
-![image42](assets/image42.png)
+![image43](assets/image43.png)
 
 <!-- ------------------------ -->
 ## Translating Text Data with Cortex LLM Functions 
@@ -354,42 +355,42 @@ Now that we have prepared the call transcript data by creating nodes for each la
 1. Select the STG\_CALL\_TRANSCRIPTS\_GERMAN node and hold the Shift key and select the STG\_CALL\_TRANSCRIPTS\_FRENCH node. Right click on either node and navigate to Add Node. You should see the Cortex package that you installed from the Coalesce Marketplace. By hovering over the Cortex package, you should see the available nodes. Select Cortex Functions. This will add the Cortex Function node to each STG node.   
    
 
-![image43](assets/image43.png)
+![image44](assets/image44.png)
 
 2. You now need to configure the Cortex Function nodes to translate the language of the transcripts. Double click on the LLM\_CALL\_TRANSCRIPTS\_GERMAN node to open it. 
 
-![image44](assets/image44.png)
+![image45](assets/image45.png)
 
 3. In the configuration options on the right hand side of the node, open the Cortex Package dropdown and toggle on TRANSLATE. 
 
-![image45](assets/image1.png)
+![image46](assets/image46.png)
 
 4. With the TRANSLATE toggle on, In the column name selector dropdown, you need to select the column to translate. In this case, the TRANSCRIPT column. 
 
    
-![image46](assets/image46.png)
+![image47](assets/image47.png)
 
 5. Now that you have selected the column that will be translated, you will pass through the language you wish to translate from and the language you wish to translate to, into the translation text box. In this case, you want to translate from German to English. The language code for this translation is as follows: 
 
 	'de', 'en'
 
-![image47](assets/image47.png)
+![image48](assets/image48.png)
 
 6. Now that you have configured the LLM node to translate German data to English, you can click Create and Run to build the table in Snowflake and populate it with data. 
 
-![image48](assets/image48.png)
+![image49](assets/image49.png)
 
 7. While the LLM\_CALL\_TRANSCRIPT\_GERMAN node is running, you can configure the LLM\_CALL\_TRANSCRIPT\_FRENCH. Double click on the LLM\_CALL\_TRANSCRIPT\_FRENCH node to open it. 
 
-![image49](assets/image49.png)
+![image50](assets/image50.png)
 
 8. Open the Cortex Package dropdown on the right hand side of the node and toggle on TRANSLATE. 
 
-![image50](assets/image50.png)
+![image51](assets/image51.png)
 
 9. Just like the German node translation, you will pass the TRANSCRIPT column through as the column you want to translate. 
 
-![image51](assets/image51.png)
+![image52](assets/image52.png)
 
 10. Finally, you will configure the language code for what you wish to translate the language of the transcript column from to the language you wish to translate to. In this case, the language code is as follows: 
 
@@ -397,11 +398,11 @@ Now that we have prepared the call transcript data by creating nodes for each la
 
 Any values in the transcript field which do not match the language being translated from will be ignored. In this case, there are both French and English language values in the TRANSCRIPT field. Because the English values are not in French, they will automatically pass through as their original values. Since those values are already in English, they don’t require any additional processing. 
 
-![image52](assets/image52.png)
+![image53](assets/image53.png)
 
 11. Select Create and Run to build the object in Snowflake and populate it with data
 
-![image53](assets/image53.png)
+![image54](assets/image54.png)
 
 <!-- ------------------------ -->
 ## Unifying the Translated Data 
@@ -411,39 +412,39 @@ You have now processed the transcript data by translating the German and French 
 
 1. Select the LLM\_CALL\_TRANSCRIPTS\_GERMAN node and Add Node \> Stage. 
 
-![image54](assets/image54.png)
+![image55](assets/image55.png)
 
 2. Rename the node to STG\_CALL\_TRANSCRIPTS\_ALL.
 
-![image55](assets/image55.png)
+![image56](assets/image56.png)
 
 3. In the configuration options on the right hand side of the node, open the options dropdown and toggle on Multi Source. 
 
-![image56](assets/image56.png)
+![image57](assets/image57.png)
 
 4. Multi Source allows you to union together nodes with the same schema without having to write any of the code to do so. Click on the Multi Source Strategy dropdown and select UNION ALL. 
 
-![image57](assets/image57.png)
+![image58](assets/image58.png)
 
 5. There will be a union pane next to the columns in the mapping grid that will list all of the nodes associated with the multi source strategy of the node. Click the \+ button to add a node to union to the current node. You will see a new node get added to the pane called New Source. 
 
-![image58](assets/image58.png)
+![image59](assets/image59.png)
 
 6. Within this new source, there is an area to drag and drop any node from your workspace into the grid to automatically map the columns to the original node. Make sure you have the Nodes navigation menu item selected so you can view all of the nodes in your project. 
 
-![image59](assets/image1.png)
+![image60](assets/image60.png)
 
 7. You will now drag and drop the LLM\_CALL\_TRANSCRIPTS\_FRENCH node into the multi source mapping area of the node. This will automatically map the columns to the original node i.e. LLM\_CALL\_TRANSCRIPTS\_GERMAN. 
 
-![image60](assets/image60.png)
+![image61](assets/image61.png)
 
 8. Finally, select the join tab to configure the reference of the node we are mapping. Using metadata, Coalesce is automatically able to generate this reference for you. Hover over the Generate Join button and select Copy to Editor. Coalesce will automatically insert the code into the editor, and just like that, you have successfully unioned together the two datasets without writing a single line of code. 
 
-![image61](assets/image61.png)
+![image62](assets/image62.png)
 
 9. Select Create and Run to build the object and populate it with data. 
 
-![image62](assets/image62.png)
+![image63](assets/image63.png)
 
 <!-- ------------------------ -->
 ## Sentiment Analysis and Finding Customers
@@ -455,47 +456,47 @@ Additionally, our call center reps are trained to ask for the customer’s name 
 
 1. Right click on the STG\_CALL\_TRANSCRIPTS\_ALL node and we will add one last Cortex Function node. Add Node \> CortexML \> Cortex Functions. 
 
-![image63](assets/image63.png)
+![image64](assets/image64.png)
 
 2. Within the node click on the Cortex Package dropdown and toggle on SENTIMENT and EXTRACT ANSWER.   
    
 
-![image64](assets/image64.png)
+![image65](assets/image65.png)
 
 3. When cortex functions are applied to a column, they overwrite the preexisting values of the column. Because of this, you will need two transcript columns to pass through to your two functions. One to perform the sentiment analysis, and one to extract the customer name from the transcript. Right click on the TRANSCRIPT column and select Duplicate Column. 
 
-![image65](assets/image65.png)
+![image66](assets/image66.png)
 
 4. Double click on the original TRANSCRIPT column name and rename the column to TRANSCRIPT\_SENTIMENT. 
 
-![image66](assets/image66.png)
+![image67](assets/image67.png)
 
 5. Double click on the duplicated TRANSCRIPT column name and rename the column to TRANSCRIPT\_CUSTOMER.   
    
 
-![image67](assets/image67.png)
+![image68](assets/image68.png)
 
 6. Next, double click on the data type value for the TRANSCRIPT\_CUSTOMER column. Change the data type to ARRAY. This is necessary because the output of the EXTRACT ANSWER function is an array that contains JSON values from the extraction.   
    
 
-![image68](assets/image68.png)
+![image69](assets/image69.png)
 
 7. Now that your columns are ready to be processed, we can pass them through to each function in the Cortex Package. For the SENTIMENT ANALYSIS, select the TRANSCRIPT\_SENTIMENT column as the column name. 
 
-![image69](assets/image69.png)
+![image70](assets/image70.png)
 
 8. For the EXTRACT ANSWER function, select the TRANSCRIPT\_CUSTOMER column as the column name. 
 
-![image70](assets/image70.png)
+![image71](assets/image71.png)
 
 9. The EXTRACT ANSWER function accepts a plain text question as a parameter to use to extract the values from the text being processed. In this case, we’ll ask the question “Who is the customer?”
 
-![image71](assets/image71.png)
+![image72](assets/image72.png)
 
 10. With the node fully configured to process our sentiment analysis and answer extraction, you can Create and Run the node to build the object and populate it with the values being processed.   
     
 
-![image72](assets/image72.png)
+![image73](assets/image73.png)
 
 <!-- ------------------------ -->
 ## Process and Expose results with a View 
@@ -505,26 +506,26 @@ You have now used Cortex LLM Functions to process all of your text data without 
 
 1. Right click on the LLM\_CALL\_TRANSCRIPTS\_ALL node and Add Node \> View. 
 
-![image73](assets/image73.png)
+![image74](assets/image74.png)
 
 2. Select the Create button and then Fetch Data. You will see the output from our LLM functions is the sentiment score and an array value containing a customer value with a confidence interval. We want to be able to extract the customer name out of the array value so we can associate the sentiment score with the customer name. 
 
    Right click on the TRANSCRIPT\_CUSTOMER column and hover over Derive Mappings and select From JSON. 
 
-![image74](assets/image74.png)
+![image75](assets/image75.png)
 
 3. You will see two new columns automatically created. Answer and score. The answer column contains our customer name. Double click on the answer column name and rename it to CUSTOMER. 
 
-![image75](assets/image75.png)
+![image76](assets/image76.png)
 
 4. Rename the score column to CONFIDENCE\_SCORE.   
    
 
-![image76](assets/image76.png)
+![image77](assets/image77.png)
 
 5. Rerun the view by selecting Create, which will automatically rerun the query that generates the view, which will contain the updated CUSTOMER column we just created. 
 
-![image77](assets/image77.png)
+![image78](assets/image78.png)
 
 <!-- ------------------------ -->
 ## Output the View in Iceberg Format
@@ -535,21 +536,21 @@ We now have a view that creates an output that can be used by our organization i
 1. Select the V\_CALL\_TRANSCRIPTS\_ALL node and right click on the node. Select Add Node → Iceberg → Snowflake Iceberg Table. This will create a Snowflake managed Iceberg table in your object storage location.   
    
 
-![image78](assets/image78.png)
+![image79](assets/image79.png)
 
 2. Within the node, select the Iceberg Options dropdown.   
    
 
-![image79](assets/image79.png)
+![image80](assets/image80.png)
 
 3. For the External Volume, pass through the external volume that was configured in step 4 of the lab guide: 
 
 	iceberg\_external\_volume  
-![image80](assets/image80.png)
+![image81](assets/image81.png)
 
 4. Next, provide a base location name to the base location parameter. This will be the folder location within S3 that the table will be created. For the sake of this lab, use your first name and iceberg\_hol as the location name so everyone has their own separate folder i.e. firstname\_iceberg\_hol. 
 
-![image81](assets/image81.png)
+![image82](assets/image82.png)
 
 5. Select Create and Run to create and populate the Snowflake managed table within S3. 
 
