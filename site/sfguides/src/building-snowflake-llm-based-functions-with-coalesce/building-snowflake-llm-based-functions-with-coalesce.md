@@ -12,30 +12,29 @@ tags: Data Engineering, Getting Started
 ## Overview 
 Duration: 1
 
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
-
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
-
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
+This Hands-On Lab exercise is designed to help you learn how to build and manage Iceberg tables with Snowflake Cortex LLM nodes within Coalesce. In this lab, you’ll explore the Coalesce interface, load Iceberg tables into your project, learn how to easily transform and model your data with our core capabilities, and use the Cortex LLM functions node that Coalesce provides users. 
 
 ### Prerequisites
-- Familiarity with Markdown syntax
+- A basic understanding of SQL 
 
 ### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
+- How to navigate the Coalesce interface
+- Load in iceberg tables
+- How to add data sources to your graph 
+- How to prepare your data for transformations with Stage nodes
+- How to union tables
+- How to set up and configure Cortex LLM Nodes
+- How to analyze the output of your results in Snowflake
+
 
 ### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
+- FA Snowflake trial account
+- A Coalesce trial account created via Snowflake Partner Connect
+- Basic knowledge of SQL, database concepts, and objects
+- The Google Chrome browser
 
 ### What You’ll Build 
-- A Snowflake Guide
+- A Directed Acyclic Graph (DAG) that builds an Cortex LLM Pipeline which leverages Iceberg tables
 
 <!-- ------------------------ -->
 ## Setup Work
@@ -578,16 +577,18 @@ Reach out to our sales team at [coalesce.io](https://coalesce.io/contact-us/) or
 ## Conclusion And Resources
 Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+Congratulations on completing your lab! You've mastered the basics of building and managing Snowflake Cortex LLM functions in Coalesce and can now continue to build on what you learned. Be sure to reference this exercise if you ever need a refresher.
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+We encourage you to continue working with Coalesce by using it with your own data and use cases and by using some of the more advanced capabilities not covered in this lab.
 
 ### What You Learned
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- How to navigate the Coalesce interface
+- Load in iceberg tables
+- How to add data sources to your graph 
+- How to prepare your data for transformations with Stage nodes
+- How to union tables
+- How to set up and configure Cortex LLM Nodes
+- How to analyze the output of your results in Snowflake
 
 ### Related Resources
-- <link to github code repo>
-- <link to documentation>
+- Reach out to our sales team at coalesce.io or by emailing sales@coalesce.io to learn more!
