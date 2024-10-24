@@ -1348,7 +1348,7 @@ What we've just simulated is a scenario where we have a global user base running
 Congrats! You have completed the final section of this guide. In this section, we connected our pre-built Power BI template to our Snowflake star schema. We then published this semantic model to a Power BI workspace, established our connection, and explored the Order Summary report which showcased Snowflake's instant elasticity, built-in caching, automatic logging, and column & row level security.
 
 <!-- ------------------------ -->
-## Conclusion And Resources
+## Conclusion and Resources
 Duration: 2
 
 Congratulations! You have completed the End-to-End Analytics with Snowflake and Power BI Quickstart!
