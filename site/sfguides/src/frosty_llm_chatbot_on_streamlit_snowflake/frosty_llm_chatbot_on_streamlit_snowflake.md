@@ -36,7 +36,7 @@ OpenAI is the AI research and deployment company behind ChatGPT, GPT-4 (and its 
 The [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/) provides users with access to a wide range of datasets from third-party data stewards, expanding the data available for transforming business processes and making decisions. Data providers can publish datasets and offer data analytics services to Snowflake customers. Customers can securely access shared datasets directly from their Snowflake accounts and receive automatic real-time updates.
 
 ### Prerequisites
-* Accountadmin role access in Snowflake or a [Snowflake trial account](https://signup.snowflake.com/)
+* Accountadmin role access in Snowflake or a [Snowflake trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 * An API key for OpenAI or another Large Language Model
 * Basic knowledge of SQL, database concepts, and objects
 * Familiarity with Python (all code for the lab is provided)
@@ -95,7 +95,7 @@ Snowflake Marketplace provides visibility to a wide variety of datasets from thi
 
 ### Log into Snowsight
 
-If you don't have a Snowflake account, sign up for a 30-day free trial [here](https://signup.snowflake.com/).
+If you don't have a Snowflake account, sign up for a 30-day free trial [here](https://signup.snowflake.com/?utm_cta=quickstarts_).
 
 1. In a supported web browser, navigate to [https://app.snowflake.com](https://app.snowflake.com).
 2. Provide your account name or account URL. If you’ve previously signed in to Snowsight, you might see an account name that you can select.
@@ -114,7 +114,7 @@ You can also access Snowsight from the Classic Console:
 4. Select the appropriate roles to access the database being created and accept the Snowflake consumer terms and Cybersyn's terms of use.
 5. Select **"Query Data,"** which will open a worksheet with example queries.
 
-![Example queries for the Cybersyn Financial & Economic Essentials dataset from the Snowflake Data Marketplace](assets/Cybersyn_Example_Queries.png)
+![Example queries for the Cybersyn Financial & Economic Essentials dataset from the Snowflake Marketplace](assets/Cybersyn_Example_Queries.png)
 
 ### Prep database
 Before building our app, we need to run a set of SQL statements in Snowflake to create two views. The first view is `FROSTY_SAMPLE.CYBERSYN_FINANCIAL.FINANCIAL_ENTITY_ATTRIBUTES_LIMITED`, which includes:

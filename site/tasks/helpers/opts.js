@@ -43,7 +43,7 @@ exports.postcss = () => {
   return [
     autoprefixer({
     }),
-    cssdeclarationsorter({ order: 'alphabetically' }),
+    cssdeclarationsorter({ order: 'alphabetical' }),
     cssnano(),
   ];
 };

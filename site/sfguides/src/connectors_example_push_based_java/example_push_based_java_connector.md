@@ -30,7 +30,7 @@ Duration: 1
 - Creating Native Applications in Snowflake
 - Ingesting data to Snowflake using snowflake-ingestion-sdk
 - Running Snowflake procedures using snowflake-jdbc
-- How to optimize merge for the CDC scenario using [deferred merge approach](img/75ce96e228ff90d2.pdf)
+- How to optimize merge for the CDC scenario using [deferred merge approach](img/e5a0394034661f7.pdf)
 ![](assets/deferred_merge.pdf)
 
 ## Prepare your local environment

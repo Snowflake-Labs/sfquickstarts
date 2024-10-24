@@ -113,7 +113,8 @@ create or replace HYBRID TABLE FROSTBYTE_TASTY_BYTES_APP_UNISTORE.RAW.CUSTOMER_L
 	E_MAIL VARCHAR(16777216),
 	PHONE_NUMBER VARCHAR(16777216),
 	primary key (CUSTOMER_ID) rely 
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"tb_unistore", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"react"}}';
 
 -- create MENU_TYPE HYBRID table which holds menu details
 create or replace HYBRID TABLE FROSTBYTE_TASTY_BYTES_APP_UNISTORE.RAW.MENU_TYPE (
@@ -277,7 +278,7 @@ GRANT UPDATE ON TABLE frostbyte_tasty_bytes_app_unistore.raw.order_header TO ROL
 USE ROLE useradmin;
 
 -- Open the ~/.ssh/snowflake_app_key.pub file from Step 1 and copy the contents starting just after the PUBLIC KEY header, 
--- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE.
+-- and stopping just before the PUBLIC KEY footer for INSERT_RSA_PUBLIC_KEY_HERE.It should be a single line string.
 CREATE OR REPLACE USER data_app_unistore_demo
 RSA_PUBLIC_KEY='<INSERT_RSA_PUBLIC_KEY_HERE>' 
 DEFAULT_ROLE=tasty_bytes_data_app_unistore_demo 
@@ -317,7 +318,7 @@ For Tasty Bytes food truck drivers, quick access to past and current orders, alo
 5. activate the virtualenv created, ``` source ./venv/bin/activate ```
 6. Install the depenancies needed, ``` pip install -r requirements.txt ```
 7. Update the private key in the ``` API/config.py ``` file. Replace ``` PRIVATE_KEY ``` with the private key. Copy and paste the whole private key from ``` ~/.ssh/snowflake_app_key ``` including header(``` -----BEGIN RSA PRIVATE KEY----- ```) and footer(``` -----END RSA PRIVATE KEY----- ```).
-8. Update ``` SNOWFLAKE_ACCOUNT ``` with your Snowflake Account. If you are located outside the us-west region, Update ``` SNOWFLAKE_ACCOUNT ``` as ```SNOWFLAKE_ACCOUNT.REGION```. To get the snowflake_account value from Snowflake, run ``` SELECT CURRENT_ACCOUNT() ``` in Snowsight. To get the region value from Snowflake, run ``` SELECT CURRENT_REGION() ``` in Snowsight. 
+8. Update ``` SNOWFLAKE_ACCOUNT ``` with your Snowflake Account Locator. If you are located outside the us-west region, Update ``` SNOWFLAKE_ACCOUNT ``` as ```SNOWFLAKE_ACCOUNT.CLOUD_REGION```. You can get the Account Identifier from the Account URL.
 9. Start the local serverless server, ``` node ./node_modules/serverless/bin/serverless wsgi serve ```
 10. In a new Terminal Tab, Navigate to the UserInterface folder to set up the frontend React Native Application, ``` cd reactNativeAppWithHybridTables/UserInterface ```
 11. Run ``` npm install ``` to install dependancies

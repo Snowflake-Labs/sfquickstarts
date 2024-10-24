@@ -28,7 +28,7 @@ Data Analysts, Business Analysts, or others who are doing next level analysis on
   <li>A Snowflake trial account with Enterprise Edition or higher.</li>
 </ul>
 
-[Snowflake Free Trial](https://signup.snowflake.com/)
+[Snowflake Free Trial](https://signup.snowflake.com/?utm_cta=quickstarts_)
 
 Once you have created your Snowflake trial environment, you will need to complete the data loading and object creation steps found in the Snowflake Tasty Bytes Quickstart, which you can access here: [An Introduction to Tasty Bytes.](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#0)
 

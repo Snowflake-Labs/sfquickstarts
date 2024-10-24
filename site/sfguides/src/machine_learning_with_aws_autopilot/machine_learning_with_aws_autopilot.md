@@ -2,7 +2,7 @@ summary: Snowflake and Amazon SageMaker Autopilot Integration: Machine Learning 
 id: machine_learning_with_aws_autopilot 
 categories: data-science-&-ml,partner-integrations
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning 
 authors: Snowflake
@@ -27,7 +27,7 @@ In this quickstart we will explore an end-to-end example of building a scalable 
 ## Prerequisites 
 Duration: 1
 
-You need access to an AWS and a Snowflake account. If you do not already have access, follow the links for a [free AWS](https://aws.amazon.com/free/) and a [free Snowflake](https://signup.snowflake.com/) account.
+You need access to an AWS and a Snowflake account. If you do not already have access, follow the links for a [free AWS](https://aws.amazon.com/free/) and a [free Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account.
 
 Next, clone the project's github repo. It includes all artifacts needed to create the AWS and Snowflake resources as well as the dataset we are going to analyze.
 

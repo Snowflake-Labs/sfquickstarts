@@ -12,6 +12,13 @@ authors: Brad Culberson, Scott Winkler
 ## Overview
 Duration: 5
 
+> aside negative
+> ⚠️ **Disclaimer**: the project is still in the 0.x.x version, which means it’s still in the experimental phase (check [Go module versioning](https://go.dev/doc/modules/version-numbers#v0-number) for more details). It can be used in production but makes no stability or backward compatibility guarantees. We do not provide backward bug fixes and, therefore, always suggest using the newest version. We are providing only limited support for the provider; priorities will be assigned on a case-by-case basis.
+>
+> Our main current goals are stabilization, addressing existing issues, and providing the missing features (prioritizing the GA features; supporting PrPr and PuPr features are not high priorities now).
+>
+> With all that in mind, we aim to reach V1 with a stable, reliable, and functional provider. V1 will be free of all the above limitations.
+
 [Terraform](https://www.terraform.io/) is an open-source Infrastructure as Code (IaC) tool created by HashiCorp. It is a declarative Infrastructure as Code tool, meaning instead of writing step-by-step imperative instructions like with SQL, JavaScript or Python, you can declare what you want using a YAML like syntax. Terraform is also stateful, meaning it keeps track of your current state, and compares it with your desired state. A reconcilation process between the two states generates an plan that Terraform can execute to create new resources, or update/delete existing resources. This plan is implemented as an acyclic graph, and is what allows Terraform to understand and handle dependencies between resources. Using Terraform is a great way to manage account level Snowflake resources like Warehouses, Databases, Schemas, Tables, and Roles/Grants, among many other use cases.  
 
 A Terraform provider is available for [Snowflake](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest/docs), that allows Terraform to integrate with Snowflake.
@@ -111,19 +118,15 @@ Duration: 1
 
 We need to pass provider information via environment variables and input variables so that Terraform can authenticate as the user.
 
-Run the following to find the `YOUR_ACCOUNT_LOCATOR` and your Snowflake Region ID values needed.
+Run the following to find `YOUR_SNOWFLAKE_ACCOUNT`. Refer to the [Account Identifiers documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#format-1-preferred-account-name-in-your-organization) for more information.
 
 ```SQL
-SELECT current_account() as YOUR_ACCOUNT_LOCATOR, current_region() as YOUR_SNOWFLAKE_REGION_ID;
+SELECT LOWER(current_organization_name() || '-' || current_account_name()) as YOUR_SNOWFLAKE_ACCOUNT;
 ```
-
-You can find your Region ID (`YOUR_REGION_HERE`) from `YOUR_SNOWFLAKE_REGION_ID` in [this reference table](https://docs.snowflake.com/en/user-guide/admin-account-identifier#snowflake-region-ids-and-region-groups). 
-
-**Example**: aws_us_west_2 would have a us-west-2 value for `YOUR_REGION_HERE`.
 
 ### Add Account Information to Environment
 
-Run these commands in your shell. Be sure to replace the `YOUR_ACCOUNT_LOCATOR` and `YOUR_REGION_HERE` placeholders with the correct values.
+Run these commands in your shell. Be sure to replace the `YOUR_SNOWFLAKE_ACCOUNT` placeholder with the correct value.
 
 **NOTE**: Setting `SNOWFLAKE_REGION` is required if you are using a [Legacy Account Locator](https://docs.snowflake.com/en/user-guide/admin-account-identifier#format-2-legacy-account-locator-in-a-region).
 
@@ -131,7 +134,7 @@ Run these commands in your shell. Be sure to replace the `YOUR_ACCOUNT_LOCATOR` 
 $ export SNOWFLAKE_USER="tf-snow"
 $ export SNOWFLAKE_AUTHENTICATOR=JWT
 $ export SNOWFLAKE_PRIVATE_KEY=`cat ~/.ssh/snowflake_tf_snow_key.p8`
-$ export SNOWFLAKE_ACCOUNT="YOUR_ACCOUNT_LOCATOR"
+$ export SNOWFLAKE_ACCOUNT="YOUR_SNOWFLAKE_ACCOUNT"
 ```
 
 If you plan on working on this or other projects in multiple shells, it may be convenient to put this in a `snow.env` file that you can source or put it in your `.bashrc` or `.zshrc` file. For this lab, we expect you to run future Terraform commands in a shell with those set.
@@ -407,7 +410,7 @@ Duration: 3
 
 If you are new to Terraform, there's still a lot to learn. We suggest researching [remote state](https://www.terraform.io/docs/language/state/remote.html), [input variables](https://www.terraform.io/docs/language/values/variables.html), and [building modules](https://www.terraform.io/docs/language/modules/develop/index.html). This will empower you to build and manage your Snowflake environment(s) through a simple declarative language.
 
-The Terraform provider for Snowflake is an open-source project. If you need Terraform to manage a resource that has not yet been created in the [provider](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest), we welcome contributions! We also welcome submitting issues and feedback to the [Github Project](https://github.com/SnowflakeLabs/terraform-provider-snowflake) to help improve the Terraform provider project and overall experience.
+The Terraform provider for Snowflake is an open-source project. If you need Terraform to manage a resource that has not yet been created in the [provider](https://registry.terraform.io/providers/Snowflake-Labs/snowflake/latest), we welcome contributions! We also welcome submitting issues and feedback to the [Github Project](https://github.com/Snowflake-Labs/terraform-provider-snowflake) to help improve the Terraform provider project and overall experience.
 
 ### Next steps
 

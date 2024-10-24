@@ -30,7 +30,7 @@ In this quickstart, you will learn how to improve performance of queries when us
 * Lab 5: H3 for speeding up queries with joins
 
 ### What You’ll Need
-* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
+* Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_cta=quickstarts_)  OR have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE `privilege. Select the Enterprise edition, AWS as a cloud provider and US East (Northern Virginia) or EU (Frankfurt) as a region.
 
 ## Setup your Account
 
@@ -72,7 +72,7 @@ Navigate to the query editor by clicking on `Worksheets` on the top left navigat
 
 <img src ='assets/geo_performance_3.png' width=700>
 
-Create a new database and schema where you will store datasets in the `GEOMETRY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
+Create a new database and schema where you will store datasets in the `GEOGRAPHY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
 ```
 CREATE DATABASE geolab;

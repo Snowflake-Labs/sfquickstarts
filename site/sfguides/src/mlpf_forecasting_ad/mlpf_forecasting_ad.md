@@ -5,9 +5,9 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, ML Functions
 
-# Getting Started with Snowflake Cortex ML-Based Functions
+# Getting Started with Snowflake ML Functions: Anomaly Detection & Forecasting
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -29,7 +29,13 @@ For further details on ML Functions, please refer to the [snowflake documentatio
 ### What You’ll Learn 
 - How to make use of Anomaly Detection & Forecasting ML Functions to create models and produce predictions
 - Use Tasks to retrain models on a regular cadence
-- Use the [email notfication integration](https://docs.snowflake.com/en/user-guide/email-stored-procedures) to send email reports of the model results after completion 
+- Use the [email notfication integration](https://docs.snowflake.com/en/user-guide/email-stored-procedures) to send email reports of the model results after completion
+
+> aside positive
+> Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Getting%20Started%20with%20Snowflake%20Cortex%20ML-Based%20Functions/Getting%20Started%20with%20Snowflake%20Cortex%20ML-Based%20Functions.ipynb) and import it to your Snowflake account as shown below.
+
+![notebook_callout](assets/notebook.png)
+
 
 ### What You’ll Build 
 This Quickstart is designed to help you get up to speed with both the Forecasting and Anomaly Detection ML Functions. 
@@ -54,12 +60,12 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight),
 The [Snowflake Marketplace](https://other-docs.snowflake.com/en/collaboration/collaboration-marketplace-about) provides mutiple listings for data you may use for analytical purposes. We will be leveraging the open data aggregated by Cybersyn for this quickstart, which contains a database of holidays to enrich our sales data. 
 
 - Log into your Snowflake account as the ACCOUNTADMIN or similar role
-- Follow the steps below to access the Cybersyn Government Essentials listing in your account. 
+- Follow the steps below to access the **Cybersyn Global Government** listing in your account. 
   - Click on 'Marketplace' on the left hand banner:
   
     <img src = "assets/marketplace.png">
   
-  - In the search bar, search for 'Cybersyn Government Essentials'
+  - In the search bar, search for 'Cybersyn Global Government'
     
   - Click on the first listing, with the same title: 
 
@@ -113,7 +119,8 @@ CREATE OR REPLACE TABLE quickstart.ml_functions.tasty_byte_sales(
 	PRIMARY_CITY VARCHAR(16777216),
 	MENU_ITEM_NAME VARCHAR(16777216),
 	TOTAL_SOLD NUMBER(17,0)
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"aiml_notebooks_mlpf", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 
 -- Ingest data from S3 into our table
 COPY INTO quickstart.ml_functions.tasty_byte_sales 
@@ -576,9 +583,9 @@ Some considerations to keep in mind from the above code:
 
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion & Resources
 
-**You did it!** Congrats on building your first set of models using Snowflake Cortex ML-Based Functions. 
+**You did it!** Congrats on building your first set of models using Snowflake ML Functions. 
 
 As a review, in this guide we covered how you are able to: 
 
@@ -589,7 +596,7 @@ As a review, in this guide we covered how you are able to:
 - Productionize pipelines using Tasks & Stored Procedures, so you can get the latest results from your model on a regular cadence
 
 ### Resources: 
-This guide contained code patterns that you can leverage to get quickly started with Snowflake Cortex ML-Based Functions. For further details, here are some useful resources: 
+This guide contained code patterns that you can leverage to get quickly started with Snowflake ML Functions. For further details, here are some useful resources: 
 
 - [Anomaly Detection](https://docs.snowflake.com/en/user-guide/analysis-anomaly-detection) Product Docs, alongside the [anomaly syntax](https://docs.snowflake.com/en/sql-reference/classes/anomaly_detection)
 - [Forecasting](https://docs.snowflake.com/en/user-guide/analysis-forecasting) Product Docs, alongside the [forecasting syntax](https://docs.snowflake.com/sql-reference/classes/forecast)
