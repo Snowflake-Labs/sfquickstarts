@@ -30,7 +30,7 @@ By completing this quickstart, you will learn how to easily transform raw data i
 - Connecting Power BI to Snowflake to perform near-real time analytics
 
 ### What You’ll Need 
-- [A Snowflake Account](https://signup.snowflake.com/). Sign up for a [30-day free trial account](https://signup.snowflake.com/), if required.
+- [A Snowflake Account](https://signup.snowflake.com/). Sign up for a 30-day free trial account, if necessary.
 - [Power BI Desktop](https://www.microsoft.com/en-us/download/details.aspx?id=58494) 
 - The provided [Power BI Template File](https://github.com/Snowflake-Labs/sfguide-end-to-end-analytics-with-snowflake-and-power-bi/blob/main/Tasty%20Bytes%20Direct%20Query%20Quickstart.pbit) (Used in Section 6)
 - Access to a [Power BI Service Workspace](https://app.powerbi.com/) (**optional**)
@@ -1362,7 +1362,6 @@ Congratulations! You have completed the End-to-End Analytics with Snowflake and 
 - Connecting Power BI to Snowflake to perform near-real time analytics against large data volumes
 
 ### Related Resources and Quickstarts
-- <link to github code repo>
 - [Snowflake and Power BI: Best Practices and Recent Improvements](https://medium.com/snowflake/snowflake-and-power-bi-best-practices-and-recent-improvements-183e2d970c0c) (Blog)
 - [Exploring Snowflake Data Governance with Power BI](https://medium.com/snowflake/exploring-snowflake-data-governance-with-power-bi-50835f301cfc) (Blog)
 - [Understand Star Schema and the Importance for Power BI](https://learn.microsoft.com/en-us/power-bi/guidance/star-schema) (Microsoft Documentation)
