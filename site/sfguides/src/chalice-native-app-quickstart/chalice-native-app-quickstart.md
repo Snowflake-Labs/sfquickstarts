@@ -27,6 +27,7 @@ what the right price to pay for your inventory is.
 ### What You’ll Need 
 - [A Snowflake Account](https://signup.snowflake.com/) 
 - [Active Trade Desk Campaign UI Access](https://www.thetradedesk.com/us)
+
 -Familiarity with Python 
 
 ### What You’ll Build 
