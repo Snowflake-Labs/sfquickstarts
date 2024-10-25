@@ -1,5 +1,5 @@
 summary: "A concise guide to demonstrate the use of the Chalice TVB Native App to detect overbidding in programmatic auctions."
-id: "chalice-native-app-quickstart"
+id: "Getting Started With Chalice Native App in Snowflake"
 categories: data-science, native-app
 environments: "web"
 status: "Published"
@@ -25,8 +25,8 @@ what the right price to pay for your inventory is.
 - How to run the Chalice TVB Simulation App and reveal potential savings for your programmatic campaigns
 
 ### What You’ll Need 
-- A Snowflake Account 
-- Active Trade Desk Campaign UI Access
+- [A Snowflake Account](https://signup.snowflake.com/) 
+- [Active Trade Desk Campaign UI Access](https://www.thetradedesk.com/us)
 -Familiarity with Python 
 
 ### What You’ll Build 
