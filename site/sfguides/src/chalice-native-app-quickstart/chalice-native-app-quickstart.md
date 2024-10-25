@@ -28,7 +28,7 @@ what the right price to pay for your inventory is.
 - [A Snowflake Account](https://signup.snowflake.com/) 
 - [Active Trade Desk Campaign UI Access](https://www.thetradedesk.com/us)
 
--Familiarity with Python 
+-[Familiarity with Python](https://www.python.org/) 
 
 ### What You’ll Build 
 - Load relevant reporting data to generate a simulation report to detect overbidding in programmatic auctions
