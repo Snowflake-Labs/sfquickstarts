@@ -224,6 +224,10 @@ In order to leverage Iceberg table functionality, we need to add Iceberg table n
 
 ![image21](assets/image21.png)
 
+11. Finally, navigate to Node Types in the build settings and toggle on View. You will need this in a later step. 
+
+![image84](assets/image84.png)
+
 
 <!-- ------------------------ -->
 ## Adding an Iceberg Table to a Pipeline 
@@ -243,16 +247,16 @@ Let’s start to build the foundation of your LLM data pipeline by creating a Gr
 
 ![image24](assets/image24.png)
 
-4. For the External Volume parameter, we will pass through the external volume that was created in section 4 of this lab guide. The external volume is called iceberg\_external\_volume.
+4. For the External Volume parameter, we will pass through the external volume that was created in section 4 of this lab guide. The external volume is called iceberg_external_volume.
 
 ![image25](assets/image25.png)
 
-5. For the Catalog Integration, again, we will use the name of the integration that we set up in section 4 of this lab guide. The catalog integration is called iceberg\_catalog\_integration.  
+5. For the Catalog Integration, again, we will use the name of the integration that we set up in section 4 of this lab guide. The catalog integration is called iceberg_catalog_integration.  
 
 ![image26](assets/image26.png)
 
 6. Finally, for the Metadata file path, we will need to provide the metadata JSON file that contains the information to read in the parquet file containing our data. Copy and paste the metadata file path listed below into the parameter:  
-   	transcriptions\_customer/metadata/00001-31af3f7b-6ea2-4ba9-9130-0e14d2fd5337.metadata.json  
+   	transcriptions_customer/metadata/00001-31af3f7b-6ea2-4ba9-9130-0e14d2fd5337.metadata.json  
    
 
 ![image27](assets/image27.png)
@@ -261,17 +265,17 @@ Let’s start to build the foundation of your LLM data pipeline by creating a Gr
 
 ![image28](assets/image28.png)
 
-8. Rename the node to CALL\_TRANSCRIPTS. 
+8. Rename the node to CALL_TRANSCRIPTS. 
 
 ![image29](assets/image29.png)
 
 9. Select Create and then Run to create the object in Snowflake and populate it with the data in the Iceberg table format from S3. 
 
-10. The iceberg node we are using in Coalesce will create a new table in our WORK schema called CALL\_TRANSCRIPTS which will be populated with data from our S3 bucket. Within the build interface, select the \+ button in the upper left corner and select Add Sources. 
+10. The iceberg node we are using in Coalesce will create a new table in our WORK schema called CALL_TRANSCRIPTS which will be populated with data from our S3 bucket. Within the build interface, select the \+ button in the upper left corner and select Add Sources. 
 
 ![image30](assets/image30.png)
 
-11. In the WORK storage location, locate the CALL\_TRANSCRIPTS table and add it as a data source. You have now successfully created, populated, and added an iceberg table to your data pipeline in Coalesce. 
+11. In the WORK storage location, locate the CALL_TRANSCRIPTS table and add it as a data source. You have now successfully created, populated, and added an iceberg table to your data pipeline in Coalesce. 
 
 ![image31](assets/image31.png)
 
@@ -285,7 +289,7 @@ Duration: 10
 
 Now that you’ve added your Source node, let’s prepare the data by adding business logic with Stage nodes. Stage nodes represent staging tables within Snowflake where transformations can be previewed and performed. Let's start by adding a standardized "stage layer" for the data source.
 
-1. Select the CALL\_TRANSCRIPT source node then right click and select Add Node \> Stage from the drop down menu. This will create a new stage node and Coalesce will automatically open the mapping grid of the node for you to begin transforming your data. 
+1. Select the CALL_TRANSCRIPT source node then right click and select Add Node \> Stage from the drop down menu. This will create a new stage node and Coalesce will automatically open the mapping grid of the node for you to begin transforming your data. 
 
 ![image33](assets/image33.png)
 
