@@ -170,7 +170,7 @@ select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.co
 > NOTE: Snowflake Cortex LLM functions incur compute cost based on the number of tokens processed. Refer to the [documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#cost-considerations) for more details on each function’s cost in credits per million tokens.
 
 ### Classify Text 
-(***In Public Preview Soon***)
+(***In Public Preview as of 10/29/2024***)
 
 This function takes a piece of text and a set of user-provided categories as inputs and returns a predicted category for that text. The function returns a structured JSON-formattet output.
 
