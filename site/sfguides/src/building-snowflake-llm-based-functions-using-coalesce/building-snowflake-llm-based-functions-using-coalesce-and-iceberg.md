@@ -557,25 +557,6 @@ We now have a view that creates an output that can be used by our organization i
 
 5. Select Create and Run to create and populate the Snowflake managed table within S3. 
 
-<!-- ------------------------ -->
-## Conclusion and Next Steps
-Duration: 1
-
-Congratulations on completing your lab\! You've mastered the basics of building and managing Snowflake Cortex LLM functions in Coalesce and can now continue to build on what you learned. Be sure to reference this exercise if you ever need a refresher.
-
-We encourage you to continue working with Coalesce by using it with your own data and use cases and by using some of the more advanced capabilities not covered in this lab.
-
-<!-- ------------------------ -->
-## Additional Coalesce Resources 
-Duration: 1
-
-* [Getting Started](https://coalesce.io/get-started/)  
-* [Documentation](https://docs.coalesce.io/docs) & [Quickstart Guide](https://docs.coalesce.io/docs/quick-start)  
-* [Video Tutorials](https://fast.wistia.com/embed/channel/foemj32jtv)  
-* [Help Center](https://help.coalesce.io/hc/en-us) 
-
-Reach out to our sales team at [coalesce.io](https://coalesce.io/contact-us/) or by emailing [sales@coalesce.io](mailto:sales@coalesce.io) to learn more\!
-
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -584,6 +565,7 @@ Duration: 1
 Congratulations on completing your lab! You've mastered the basics of building and managing Snowflake Cortex LLM functions in Coalesce and can now continue to build on what you learned. Be sure to reference this exercise if you ever need a refresher.
 
 We encourage you to continue working with Coalesce by using it with your own data and use cases and by using some of the more advanced capabilities not covered in this lab.
+
 
 ### What You Learned
 - How to navigate the Coalesce interface
@@ -594,5 +576,11 @@ We encourage you to continue working with Coalesce by using it with your own dat
 - How to set up and configure Cortex LLM Nodes
 - How to analyze the output of your results in Snowflake
 
-### Related Resources
+### Resources
 - Reach out to our sales team at coalesce.io or by emailing sales@coalesce.io to learn more!
+* [Getting Started](https://coalesce.io/get-started/)  
+* [Documentation](https://docs.coalesce.io/docs) & [Quickstart Guide](https://docs.coalesce.io/docs/quick-start)  
+* [Video Tutorials](https://fast.wistia.com/embed/channel/foemj32jtv)  
+* [Help Center](https://help.coalesce.io/hc/en-us) 
+
+Reach out to our sales team at [coalesce.io](https://coalesce.io/contact-us/) or by emailing [sales@coalesce.io](mailto:sales@coalesce.io) to learn more\!
