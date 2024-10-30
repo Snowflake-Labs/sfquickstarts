@@ -36,7 +36,8 @@ With Cortex Search, one can quickly set up a hybrid (vector and keyword) search 
 
 
 ### What You’ll Need 
-- A non-trial Snowflake account with access to a role that has the ACCOUNTADMIN role. If not, you will need to work with your admin to perform the initial environment setup.
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account in a region where Snowflake Cortex and Arctic are available.
+- Access to the ACCOUNTADMIN role. If not, you will need to work with your admin to perform the initial environment setup.
 - Git installed.
 
 ### What You’ll Build 
@@ -104,11 +105,11 @@ reduce_template = PromptTemplate.from_template("""
 
 
 <!-- ------------------------ -->
-## Build a Support Case Analysis App using Streamlit 
+## Streamlit Application 
 
 Duration: 2
 
-The app is built on open source Streamlit and can be hosted in ones own platform. The app allows the user carries the end to end processing that was carried in the Notebook with fine tuned granular control by the end user.
+The app is built on open source Streamlit and can be hosted in one's own platform. The app allows the user carries the end to end processing that was carried in the Notebook with fine tuned granular control by the end user.
 
 ### Support Case Summary Page
 
