@@ -106,6 +106,16 @@
       "source": "guide/getting_started_with_document_ai/{,/**}",
       "destination": "/guide/automating_document_processing_workflows_with_document_ai",
       "type": 301
+    },
+    {
+      "source": "guide/attaining_consumer_insights_with_snowflake_and_microsoft_power_bi/{,/**}",
+      "destination": "/guide/end-to-end-analytics-with-snowflake-and-power-bi",
+      "type": 301
+    },
+    {
+      "source": "guide/frosty_llm_chatbot_on_streamlit_snowflake/{,/**}",
+      "destination": "/guide/getting_started_with_cortex_analyst",
+      "type": 301
     }
     ]
   }
