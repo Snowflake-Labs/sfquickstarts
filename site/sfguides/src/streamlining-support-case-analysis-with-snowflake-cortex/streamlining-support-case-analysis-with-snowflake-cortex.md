@@ -111,6 +111,8 @@ Duration: 2
 
 The app is built on open source Streamlit and can be hosted in one's own platform. The app allows the user carries the end to end processing that was carried in the Notebook with fine tuned granular control by the end user.
 
+Here is the [Streamlit source code](https://github.com/Snowflake-Labs/sfguide-analyzing-support-cases-using-snowflake-cortex/tree/main/scripts/streamlit) repository and instructions for running the Streamlit app.
+
 ### Support Case Summary Page
 
 In the Support Case Summary page one can view support case summaries using Cortex LLMs. It retrieve the Summary tables created for different categories and lists them in a dropdown. The app displays the most recent record’s summary from the selected table and includes an expandable section to show each step of intermediate analysis.
