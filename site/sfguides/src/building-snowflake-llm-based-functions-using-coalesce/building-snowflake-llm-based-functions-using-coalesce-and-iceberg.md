@@ -577,7 +577,6 @@ We encourage you to continue working with Coalesce by using it with your own dat
 - How to analyze the output of your results in Snowflake
 
 ### Resources
-- Reach out to our sales team at coalesce.io or by emailing sales@coalesce.io to learn more!
 * [Getting Started](https://coalesce.io/get-started/)  
 * [Documentation](https://docs.coalesce.io/docs) & [Quickstart Guide](https://docs.coalesce.io/docs/quick-start)  
 * [Video Tutorials](https://fast.wistia.com/embed/channel/foemj32jtv)  
