@@ -559,7 +559,7 @@ We now have a view that creates an output that can be used by our organization i
 
 
 <!-- ------------------------ -->
-## Conclusion And Resources
+## Conclusion
 Duration: 1
 
 Congratulations on completing your lab! You've mastered the basics of building and managing Snowflake Cortex LLM functions in Coalesce and can now continue to build on what you learned. Be sure to reference this exercise if you ever need a refresher.
