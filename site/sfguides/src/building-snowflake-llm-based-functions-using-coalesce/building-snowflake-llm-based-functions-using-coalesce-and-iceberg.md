@@ -28,7 +28,7 @@ This Hands-On Lab exercise is designed to help you learn how to build and manage
 
 
 ### What You’ll Need 
-- [FA Snowflake trial account](https://signup.snowflake.com/)
+- [A Snowflake trial account](https://signup.snowflake.com/)
 - A Coalesce trial account created via Snowflake Partner Connect
 - Basic knowledge of SQL, database concepts, and objects
 - The Google Chrome browser
