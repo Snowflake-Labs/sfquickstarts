@@ -391,12 +391,11 @@ With all the tiles created, you can control your visual layout. Here is an examp
 ![Final dashboard](assets/final_dashboard.png) 
 
 
-## Conculsion
+## Conculsion And Resources
 Duration: 2
 
 Congratulations! You’ve now configured a complete data analytics solution for your paid Ads using Rivery and Snowflake data migration pipeline. 
 
-We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback](https://docs.google.com/forms/d/e/1FAIpQLSe-M5JN42SrV3s5cH3CbwTDGHVT1pKpB0KV63OJcyVpv3GR6Q/viewform?usp=sf_link) Form.
 
 ### What You Learned
 
