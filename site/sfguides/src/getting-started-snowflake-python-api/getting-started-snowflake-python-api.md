@@ -1,45 +1,52 @@
-author: Gilberto Hernandez
+author: Gilberto Hernandez, Kamesh Sampath
 id: getting-started-snowflake-python-api
 summary: Learn how to get started with Snowflake's Python API to manage Snowflake objects and tasks.
 categories: Getting-Started
 environments: web
-status: Published 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, Data Engineering, Twitter
 
 # Getting Started with the Snowflake Python API
 
 <!-- ------------------------ -->
-## Overview 
+
+## Overview
+
 Duration: 1
 
 The Snowflake Python API allows you to manage Snowflake using Python. Using the API, you're able to create, delete, and modify tables, schemas, warehouses, tasks, and much more, in many cases without needing to write SQL or use the Snowflake Connector for Python. In this Quickstart, you'll learn how to get started with the Snowflake Python API for object and task management with Snowflake.
 
-
 ### Prerequisites
+
 - Familiarity with Python
 - Familiarity with Jupyter Notebooks
 
-### What You’ll Learn 
+### What You’ll Learn
+
 - How to install the Snowflake Python API library
 - How to create a Root object to use the API
 - How to create tables, schemas, and warehouses using the API
 - How to create and manage tasks using the API
 - How to use Snowpark Container Services with the Snowflake Python API
 
-### What You’ll Need 
-- A Snowflake account ([trial](https://signup.snowflake.com/), or otherwise)
+### What You’ll Need
+
+- A Snowflake account ([trial](https://signup.snowflake.com/?utm_cta=quickstarts_), or otherwise)
 - A code editor that supports Jupyter notebooks, or ability to run notebooks in your browser using `jupyter notebook`
 
-### What You’ll Build 
+### What You’ll Build
+
 - Multiple objects within Snowflake
 
 <!-- ------------------------ -->
+
 ## Install the Snowflake Python API
+
 Duration: 8
 
 > aside negative
-> 
+>
 > **Important**
 > The Snowflake Python API is currently supported in Python versions 3.8, 3.9., and 3.10.
 
@@ -75,28 +82,53 @@ The Snowflake Python API is available via PyPi. Install it by running the follow
 pip install snowflake -U
 ```
 
+## Configure Snowflake
+
+Let us create `$HOME/.snowflake/config.toml` with the following content and update it with your actual credentials. The connection details `default` under table `connections` i.e.`connections.default` will be used to establish a connection with Snowflake.
+
+```toml
+[connections]
+[connections.default]
+account = "YOUR ACCOUNT NAME"
+user = "YOUR ACCOUNT USER"
+password = "YOUR ACCOUNT USER PASSWORD"
+# optional
+# warehouse = "COMPUTE_WH"
+# optional
+# database = "COMPUTE_WH"
+# optional
+# schema = "PUBLIC"
+```
+
+Next create a `connections_params` dictionary as show below and set the connection to use for the session,
+
+```py
+  connection_params = {
+   "connection_name": "default",
+  }
+```
 
 <!-- ------------------------ -->
+
 ## Overview of the Snowflake Python API
+
 Duration: 5
 
 Let's quickly take a look at how the Snowflake Python API is organized:
 
-
-| **Module**  | **Description**  |
-|---|---|
-| `snowflake.core`  | Defines an Iterator to represent a certain resource instances fetched from the Snowflake database  |
-| `snowflake.core.paging`  |   |
-| `snowflake.core.exceptions`  |   |
-| `snowflake.core.database`  |  Manages Snowflake databases |
-| `snowflake.core.schema`  | Manages Snowflake schemas  |
-| `snowflake.core.task`  | Manages Snowflake Tasks  |
-| `snowflake.core.task.context`  | Manage the context in a Snowflake Task  |
-| `snowflake.core.task.dagv1`  | A set of higher-level APIs than the lower-level Task APIs in snowflake.core.task to more conveniently manage DAGs|
-| `snowflake.core.compute_pool`  |  Manages Snowpark Container Compute Pools |
-| `snowflake.core.image_repository`  | Manages Snowpark Container Image Repositories  |
-| `snowflake.core.service`  | Manages Snowpark Container Services  |
-
+| **Module**                        | **Description**                                                                                                   |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `snowflake.core`                  | Defines an Iterator to represent a certain resource instances fetched from the Snowflake database                 |
+| `snowflake.core.paging`           |                                                                                                                   |
+| `snowflake.core.exceptions`       |                                                                                                                   |
+| `snowflake.core.database`         | Manages Snowflake databases                                                                                       |
+| `snowflake.core.schema`           | Manages Snowflake schemas                                                                                         |
+| `snowflake.core.task`             | Manages Snowflake Tasks                                                                                           |
+| `snowflake.core.task.context`     | Manage the context in a Snowflake Task                                                                            |
+| `snowflake.core.task.dagv1`       | A set of higher-level APIs than the lower-level Task APIs in snowflake.core.task to more conveniently manage DAGs |
+| `snowflake.core.compute_pool`     | Manages Snowpark Container Compute Pools                                                                          |
+| `snowflake.core.image_repository` | Manages Snowpark Container Image Repositories                                                                     |
+| `snowflake.core.service`          | Manages Snowpark Container Services                                                                               |
 
 `snowflake.core` represents the entry point to the core Snowflake Python APIs that manage Snowflake objects. To use the Snowflake Python API, you'll follow a common pattern:
 
@@ -110,51 +142,55 @@ Here's an example of what this pattern typically looks like:
 from snowflake.snowpark import Session
 from snowflake.core import Root
 
-connection_params = {
-    "account": "ACCOUNT-IDENTIFIER",
-    "user": "USERNAME",
-    "password": "PASSWORD"
-}
 session = Session.builder.configs(connection_params).create()
 root = Root(session)
 ```
 
-The `connection_params` dictionary shown above is included for the purposes of demonstration only, specifying only the required connection parameters. In practice, consider using a configuration file with named connections that can be passed into `Session.builder.configs()`. For more information, see [Connecting to Snowflake with the Snowflake Python API](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-python-api/snowflake-python-connecting-snowflake).
+For more information on various connection options/attributes, see [Connecting to Snowflake with the Snowflake Python API](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-python-api/snowflake-python-connecting-snowflake).
 
 > aside negative
-> 
+>
 > **NOTE**
 > The Snowflake Python API can establish a connection to Snowflake via a Snowpark session or a Python connector connection. In the example above, we opt for a Snowpark session.
 
 Let's get started!
 
 <!-- ------------------------ -->
+
 ## Set up your development environment
+
 Duration: 10
 
 In this Quickstart, we'll walk through a Jupyter notebook to incrementally showcase the capabilities of the Snowflake Python API. Let's start by setting up your development environment so that you can run the notebook.
 
 1. First, download the [
-Quickstart: Getting Started with the Snowflake Python API notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-python-api/blob/main/getting_started_snowflake_python_api.ipynb) from the accompanying repo for this Quickstart.
+   Quickstart: Getting Started with the Snowflake Python API notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-python-api/blob/main/getting_started_snowflake_python_api.ipynb) from the accompanying repo for this Quickstart.
 
-2. Next, open the notebook in a code editor that supports Jupyter notebooks (i.e., Visual Studio Code). 
-Alternatively, open the notebook in your browser by starting a notebook server with `jupyter notebook` and navigating to the notebook in your browser. To do this, you'll need to ensure your environment can run a notebook (be sure to run `conda install notebook` in your terminal, then start the notebook server).
+2. Next, open the notebook in a code editor that supports Jupyter notebooks (i.e., Visual Studio Code).
+   Alternatively, open the notebook in your browser by starting a notebook server with `jupyter notebook` and navigating to the notebook in your browser. To do this, you'll need to ensure your environment can run a notebook (be sure to run `conda install notebook` in your terminal, then start the notebook server).
 
 Now run the first cell within the notebook, the one containing the import statements.
 
 ```py
+from datetime import timedelta
+from typing import List
+
 from snowflake.snowpark import Session
-from snowflake.core import Root
+from snowflake.snowpark.functions import col
+from snowflake.core import Root,CreateMode
 from snowflake.core.database import Database
 from snowflake.core.schema import Schema
 from snowflake.core.table import Table, TableColumn, PrimaryKey
 from snowflake.core.warehouse import Warehouse
+from snowflake.core._common import CreateMode
+from snowflake.core.task import StoredProcedureCall, Task
+from snowflake.core.task.dagv1 import DAGOperation, DAG, DAGTask
 ```
 
 > aside negative
-> 
+>
 > **Note**
-> Upon running this cell, you may be prompted to set your Python kernel. We activated a conda environment earlier, so we'll select conda as our Python kernel (i.e., something like `~/miniconda3/bin/python`).
+> Upon running this cell, you may be prompted to set your Python kernel. We activated a conda environment earlier, so we'll select conda as our Python kernel (i.e., something like `~/miniconda3/envs/<your conda env>/bin/python`).
 
 In this cell, we import Snowpark and the core Snowflake Python APIs that manage Snowflake objects.
 
@@ -162,9 +198,7 @@ Next, configure the `connection_params` dictionary with your account credentials
 
 ```py
 connection_params = {
-    "account": "YOUR-ACCOUNT-IDENTIFIER",
-    "user": "USERNAME",
-    "password": "PASSWORD"
+    "connection_name": "default"
 }
 ```
 
@@ -183,7 +217,9 @@ root = Root(session)
 And that's it! By running these four cells, we're now ready to use the Snowflake Python API.
 
 <!-- ------------------------ -->
+
 ## Create a database, schema, and table
+
 Duration: 5
 
 Let's use our `root` object to create a database, schema, and table in your Snowflake account.
@@ -191,35 +227,60 @@ Let's use our `root` object to create a database, schema, and table in your Snow
 Create a database by running the following cell in the notebook:
 
 ```py
-database = root.databases.create(Database(name="PYTHON_API_DB"), mode="orreplace")
+database = root.databases.create(
+  Database(
+    name="PYTHON_API_DB"),
+    mode=CreateMode.or_replace
+  )
 ```
 
 This line of code creates a database in your account called `PYTHON_API_DB`, and is functionally equivalent to the SQL command `CREATE OR REPLACE DATABASE PYTHON_API_DB;`. This line of code follows a common pattern for managing objects in Snowflake. Let's examine this line of code in a bit more detail:
 
-* `root.databases.create()` is used to create a database in Snowflake. It accepts two arguments, a `Database` object and a mode.
+- `root.databases.create()` is used to create a database in Snowflake. It accepts two arguments, a `Database` object and a mode.
 
-* We pass in a `Database` object with `Database(name="PYTHON_API_DB")`, and set the name of the database using the `name` argument. Recall that we imported `Database` on line 3 of the notebook.
+- We pass in a `Database` object with `Database(name="PYTHON_API_DB")`, and set the name of the database using the `name` argument. Recall that we imported `Database` on line 3 of the notebook.
 
-* We specify the creation mode by passing in the `mode` argument. In this case, we set it to `orreplace`, but other valid values are `ifnotexists` (functionally equivalent to `CREATE IF NOT EXISTS` in SQL). If a mode is not specified, the default value will be `errorifexists`, which means an exception will be raised if the object already exists in Snowflake.
+- We specify the creation mode by passing in the `mode` argument. In this case, we set it to `CreateMode.or_replace`, but other valid values are `CreateMode.if_not_exists` (functionally equivalent to `CREATE IF NOT EXISTS` in SQL). If a mode is not specified, the default value will be `CreateMode.error_if_exists`, which means an exception will be raised if the object already exists in Snowflake.
 
-* We'll manage the database programmatically by storing a reference to the database in an object we created called `database`.
+- We'll manage the database programmatically by storing a reference to the database in an object we created called `database`.
 
-Navigate back to the databases section of your Snowflake account. If successful, you should see the **PYTHON_API_DB** database.
+Navigate back to the databases section of your Snowflake account. If successful, you should see the `PYTHON_API_DB` database.
 
 ![database](./assets/python_api_db.png)
+
+> aside negative
+>
+> **TIP**:
+> If you use VSCode, then install [Snowflake plugin](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) to explore all Snowflake objects from within your editor
 
 Next, create a schema and table in that schema by running the following cells:
 
 ```py
-schema = database.schemas.create(Schema(name="PYTHON_API_SCHEMA"), mode="orreplace")
+schema = database.schemas.create(
+  Schema(
+    name="PYTHON_API_SCHEMA"),
+    mode=CreateMode.or_replace,
+  )
 ```
 
 ```py
-table = schema.tables.create(Table(
-        name="PYTHON_API_TABLE", 
-        columns=[TableColumn("TEMPERATURE", "int", nullable=False), TableColumn("LOCATION", "string")],
-    ), 
-    mode="orreplace")
+table = schema.tables.create(
+  Table(
+    name="PYTHON_API_TABLE",
+    columns=[
+      TableColumn(
+        name="TEMPERATURE",
+        datatype="int",
+        nullable=False,
+      ),
+      TableColumn(
+        name="LOCATION",
+        datatype="string",
+      ),
+    ],
+  ),
+mode=CreateMode.or_replace
+)
 ```
 
 The code in both of these cells should look and feel familiar. They follow the pattern you saw in the cell that created the `PYTHON_API_DB` database. The first cell creates a schema in the database created earlier (note `.schemas.create()` is called on the `database` object from earlier). The next cell creates a table in that schema, with two columns and their data types specified - `TEMPERATURE` as `int` and `LOCATION` as `string`.
@@ -228,9 +289,10 @@ After running these two cells, navigate back to your Snowflake account and confi
 
 ![schema and table](./assets/db_schema_table.png)
 
-
 <!-- ------------------------ -->
+
 ## Retrieve object data
+
 Duration: 5
 
 Let's cover a couple of ways to retrieve metadata about an object in Snowflake. Run the following cell:
@@ -245,178 +307,101 @@ table_details = table.fetch()
 table_details.to_dict()
 ```
 
-In the notebook, you should see a dictionary printed that contains metadata about the **PYTHON_API_TABLE**  table.
+In the notebook, you should see a dictionary printed that contains metadata about the `PYTHON_API_TABLE` table.
 
 ```py
-{'name': 'PYTHON_API_TABLE',
- 'kind': 'TABLE',
- 'enable_schema_evolution': False,
- 'change_tracking': False,
- 'comment': '',
- 'created_on': datetime.datetime(2023, 12, 1, 19, 37, 29, 766000, tzinfo=datetime.timezone(datetime.timedelta(days=-1, seconds=57600))),
- 'database_name': 'PYTHON_API_DB',
- 'schema_name': 'PYTHON_API_SCHEMA',
- 'rows': 0,
- 'bytes': 0,
- 'owner': 'ACCOUNTADMIN',
- 'automatic_clustering': False,
- 'search_optimization': False,
- 'owner_role_type': 'ROLE'}
+{
+    "name": "PYTHON_API_TABLE",
+    "kind": "TABLE",
+    "enable_schema_evolution": False,
+    "change_tracking": False,
+    "data_retention_time_in_days": 1,
+    "max_data_extension_time_in_days": 14,
+    "default_ddl_collation": "",
+    "columns": [
+        {"name": "TEMPERATURE", "datatype": "fixed", "nullable": False},
+        {"name": "LOCATION", "datatype": "text", "nullable": True},
+    ],
+    "created_on": datetime.datetime(
+        2024, 5, 9, 8, 59, 15, 832000, tzinfo=datetime.timezone.utc
+    ),
+    "database_name": "PYTHON_API_DB",
+    "schema_name": "PYTHON_API_SCHEMA",
+    "rows": 0,
+    "bytes": 0,
+    "owner": "ACCOUNTADMIN",
+    "automatic_clustering": False,
+    "search_optimization": False,
+    "owner_role_type": "ROLE",
+}
 ```
 
-Note, however, that some information about the table isn't included, namely column information. To include column information, we'll pass in the `deep` argument to the `fetch()` method and set it to `True`. Run the following cells:
-
-```py
-table_details_full = table.fetch(deep=True)
-```
-
-```py
-table_details_full.to_dict()
-```
-
-Take a took at the dictionary:
-
-```py
-{'name': 'PYTHON_API_TABLE',
- 'kind': 'TABLE',
- 'enable_schema_evolution': False,
- 'change_tracking': False,
- 'comment': '',
- 'created_on': datetime.datetime(2023, 12, 1, 19, 37, 29, 766000, tzinfo=datetime.timezone(datetime.timedelta(days=-1, seconds=57600))),
- 'database_name': 'PYTHON_API_DB',
- 'schema_name': 'PYTHON_API_SCHEMA',
- 'rows': 0,
- 'bytes': 0,
- 'owner': 'ACCOUNTADMIN',
- 'automatic_clustering': False,
- 'search_optimization': False,
- 'owner_role_type': 'ROLE'}
-{'name': 'PYTHON_API_TABLE',
- 'kind': 'TABLE',
- 'enable_schema_evolution': False,
- 'change_tracking': False,
- 'columns': [{'name': 'TEMPERATURE',
-   'datatype': 'NUMBER',
-   'nullable': False,
-   'identity': False},
-  {'name': 'LOCATION',
-   'datatype': 'TEXT',
-   'nullable': True,
-   'identity': False}],
- 'constraints': [],
- 'comment': '',
- 'created_on': datetime.datetime(2023, 12, 4, 19, 22, 11, 576000, tzinfo=datetime.timezone(datetime.timedelta(days=-1, seconds=57600))),
- 'database_name': 'PYTHON_API_DB',
- 'schema_name': 'PYTHON_API_SCHEMA',
- 'rows': 0,
- 'bytes': 0,
- 'owner': 'ACCOUNTADMIN',
- 'automatic_clustering': False,
- 'search_optimization': False,
- 'owner_role_type': 'ROLE'}
-```
-
-Note how the dictionary now contains column information in `columns`, as well as constraints on the table (in this case, there are no constraints on the table, so the value of `constraints` is an empty array).
+As you can see, the dictionary above contains information about the `PYTHON_API_TABLE` table that you created earlier, with detailed information on `columns`, `owner`, `database`, `schema` etc.,
 
 Object metadata is useful when building business logic in your application. For example, you could imagine building logic that executes depending on certain information about an object. `fetch()` would be helpful in retrieving object metadata in such scenarios.
 
 <!-- ------------------------ -->
+
 ## Programmatically update a table
+
 Duration: 5
 
-Let's take a look at how you might programmatically add a column to a table. Let's add a new column to the **PYTHON_API_TABLE** table. Currently, it has two columns, `TEMPERATURE` and `LOCATION`.
+Let's take a look at how you might programmatically add a column to a table. The `PYTHON_API_TABLE` table currently has two columns, `TEMPERATURE` and `LOCATION`, let us add a new column named `ELEVATION` of type `int` and set it as the table's `Primary Key`.
 
 Run the following cell:
 
 ```py
-table_details_full.columns.append(TableColumn(name="ELEVATION", datatype="int", nullable=False, constraints=[PrimaryKey()]))
+table_details.columns.append(
+    TableColumn(
+      name="elevation",
+      datatype="int",
+      nullable=False,
+      constraints=[PrimaryKey()],
+    )
+)
 ```
-
-In this line of code, we define a new column (called `ELEVATION`), the column's data type, indicates that it is not nullable, and define it as the table's primary key. 
 
 Note, however, that this line of code does not create the column (you can confirm this by navigating to Snowflake and inspecting the table after running the cell). Instead, this column definition is appended to the array that represents the table's columns in the TableModel. To view this array, take a look at the value of `columns` in the previous step.
 
 To modify the table and add the column, run the next cell:
 
 ```py
-table.create_or_update(table_details_full)
+table.create_or_update(table_details)
 ```
 
-In this line, we call `create_or_update()` on the object representing **PYTHON_API_TABLE**  and pass in the  updated value of `table_details_full`. This line adds the `ELEVATION` column to **PYTHON_API_TABLE**. To quickly confirm, run the following cell:
+In this line, we call `create_or_update()` on the object representing `PYTHON_API_TABLE` and pass in the updated value of `table_details`. This line adds the `ELEVATION` column to `PYTHON_API_TABLE`. To quickly confirm, run the following cell:
 
 ```py
-table.fetch(deep=True).to_dict()
+table.fetch().to_dict()
 ```
 
 This should be the output:
 
 ```py
-{'name': 'PYTHON_API_TABLE',
- 'kind': 'TABLE',
- 'enable_schema_evolution': False,
- 'change_tracking': False,
- 'comment': '',
- 'created_on': datetime.datetime(2023, 12, 1, 19, 37, 29, 766000, tzinfo=datetime.timezone(datetime.timedelta(days=-1, seconds=57600))),
- 'database_name': 'PYTHON_API_DB',
- 'schema_name': 'PYTHON_API_SCHEMA',
- 'rows': 0,
- 'bytes': 0,
- 'owner': 'ACCOUNTADMIN',
- 'automatic_clustering': False,
- 'search_optimization': False,
- 'owner_role_type': 'ROLE'}
-{'name': 'PYTHON_API_TABLE',
- 'kind': 'TABLE',
- 'enable_schema_evolution': False,
- 'change_tracking': False,
- 'columns': [{'name': 'TEMPERATURE',
-   'datatype': 'NUMBER',
-   'nullable': False,
-   'identity': False},
-  {'name': 'LOCATION',
-   'datatype': 'TEXT',
-   'nullable': True,
-   'identity': False}],
- 'constraints': [],
- 'comment': '',
- 'created_on': datetime.datetime(2023, 12, 4, 19, 22, 11, 576000, tzinfo=datetime.timezone(datetime.timedelta(days=-1, seconds=57600))),
- 'database_name': 'PYTHON_API_DB',
- 'schema_name': 'PYTHON_API_SCHEMA',
- 'rows': 0,
- 'bytes': 0,
- 'owner': 'ACCOUNTADMIN',
- 'automatic_clustering': False,
- 'search_optimization': False,
- 'owner_role_type': 'ROLE'}
-{'name': 'PYTHON_API_TABLE',
- 'kind': 'TABLE',
- 'enable_schema_evolution': False,
- 'change_tracking': False,
- 'columns': [{'name': 'TEMPERATURE',
-   'datatype': 'NUMBER',
-   'nullable': False,
-   'identity': False},
-  {'name': 'LOCATION',
-   'datatype': 'TEXT',
-   'nullable': True,
-   'identity': False},
-  {'name': 'ELEVATION',
-   'datatype': 'NUMBER',
-   'nullable': False,
-   'identity': False}],
- 'constraints': [{'name': 'SYS_CONSTRAINT_e9b4b75b-a336-4616-8d94-3266e5846562',
-   'column_names': ['ELEVATION'],
-   'constraint_type': 'PRIMARY KEY'}],
- 'comment': '',
- 'created_on': datetime.datetime(2023, 12, 4, 19, 22, 11, 576000, tzinfo=datetime.timezone(datetime.timedelta(days=-1, seconds=57600))),
- 'database_name': 'PYTHON_API_DB',
- 'schema_name': 'PYTHON_API_SCHEMA',
- 'rows': 0,
- 'bytes': 0,
- 'owner': 'ACCOUNTADMIN',
- 'automatic_clustering': False,
- 'search_optimization': False,
- 'owner_role_type': 'ROLE'}
+{
+    "name": "PYTHON_API_TABLE",
+    "kind": "TABLE",
+    "enable_schema_evolution": False,
+    "change_tracking": False,
+    "data_retention_time_in_days": 1,
+    "max_data_extension_time_in_days": 14,
+    "default_ddl_collation": "",
+    "columns": [
+        {"name": "TEMPERATURE", "datatype": "fixed", "nullable": False},
+        {"name": "LOCATION", "datatype": "text", "nullable": True},
+    ],
+    "created_on": datetime.datetime(
+        2024, 5, 9, 8, 59, 15, 832000, tzinfo=datetime.timezone.utc
+    ),
+    "database_name": "PYTHON_API_DB",
+    "schema_name": "PYTHON_API_SCHEMA",
+    "rows": 0,
+    "bytes": 0,
+    "owner": "ACCOUNTADMIN",
+    "automatic_clustering": False,
+    "search_optimization": False,
+    "owner_role_type": "ROLE",
+}
 ```
 
 Take a look at the value of `columns`, as well as the value of `constraints`, which now includes the `ELEVATION` column.
@@ -425,10 +410,10 @@ Finally, visually confirm by navigating to your Snowflake account and inspecting
 
 ![add_column](./assets/add_column.png)
 
-
-
 <!-- ------------------------ -->
+
 ## Create, suspend, and delete a warehouse
+
 Duration: 5
 
 You can also manage warehouses with the Snowflake Python API. Let's use the API to create, suspend, and delete a warehouse.
@@ -450,10 +435,10 @@ python_api_wh = Warehouse(
     auto_suspend=500,
 )
 
-warehouse = warehouses.create(python_api_wh)
+warehouse = warehouses.create(python_api_wh,mode=CreateMode.or_replace)
 ```
 
-In this cell, we define a new warehouse by instantiating `Warehouse` and specifying the warehouse's name, size, and auto suspend policy. The auto suspend timeout is in units of seconds. In this case, the warehouse will suspend after 8.33 minutes of inactivity. 
+In this cell, we define a new warehouse by instantiating `Warehouse` and specifying the warehouse's name, size, and auto suspend policy. The auto suspend timeout is in units of seconds. In this case, the warehouse will suspend after 8.33 minutes of inactivity.
 
 We then create the warehouse by calling `create()` on our warehouse collection. We store the reference in the resulting `warehouse_ref` object. Navigate to your Snowflake account and confirm that the warehouse was created.
 
@@ -470,18 +455,17 @@ The code in this cell should look familiar, as it follows the same patterns we u
 
 ```py
 {'name': 'PYTHON_API_WH',
- 'max_cluster_count': 1,
- 'min_cluster_count': 1,
- 'scaling_policy': 'STANDARD',
  'auto_suspend': 500,
- 'auto_resume': 'false',
+ 'auto_resume': 'true',
  'resource_monitor': 'null',
  'comment': '',
- 'enable_query_acceleration': 'false',
- 'query_acceleration_max_scale_factor': 8,
+ 'max_concurrency_level': 8,
+ 'statement_queued_timeout_in_seconds': 0,
+ 'statement_timeout_in_seconds': 172800,
+ 'tags': {},
  'type': 'STANDARD',
- 'size': 'Small',
- 'tag': None}
+ 'size': 'Small'
+}
 ```
 
 If we had several warehouses in our session, we could use the API to iterate through them or to search for a specific warehouse. Run the next cell:
@@ -496,28 +480,27 @@ In this cell, we call `iter()` on the warehouse collection and pass in the `like
 
 ```py
 {'name': 'PYTHON_API_WH',
- 'max_cluster_count': 1,
- 'min_cluster_count': 1,
- 'scaling_policy': 'STANDARD',
  'auto_suspend': 500,
- 'auto_resume': 'false',
+ 'auto_resume': 'true',
  'resource_monitor': 'null',
  'comment': '',
- 'enable_query_acceleration': 'false',
- 'query_acceleration_max_scale_factor': 8,
+ 'max_concurrency_level': 8,
+ 'statement_queued_timeout_in_seconds': 0,
+ 'statement_timeout_in_seconds': 172800,
+ 'tags': {},
  'type': 'STANDARD',
- 'size': 'Small',
- 'tag': None}
+ 'size': 'Small'
+}
 ```
 
-Let's programmatically modify the warehouse. Run the following cell, which changes the warehouse size to `LARGE`:
+To programmatically modify the warehouse we need to do `create` with `CREATE OR REPLACE` mode with modified properties:
 
 ```py
-warehouse.create_or_update(Warehouse(
+warehouse = root.warehouses.create(Warehouse(
     name="PYTHON_API_WH",
     warehouse_size="LARGE",
     auto_suspend=500,
-))
+),mode=CreateMode.or_replace)
 ```
 
 Confirm that the warehouse size was indeed updated to `LARGE` by running the next cell:
@@ -530,71 +513,100 @@ Navigate to your Snowflake account and confirm the change in warehouse size.
 
 ![large warw](./assets/large_wh.png)
 
-Finally, delete the warehouse and close your Snowflake session by running the final cell:
+**OPTIONAL** Delete the warehouse and close your Snowflake session by running the final cell. This is optional so that you can continue to use the warehouse in the subsequent steps. If you run the cell, be sure to create a new warehouse so that you can complete the subsequent steps.
 
 ```py
 warehouse.delete()
-session.close()
 ```
 
 Navigate once again to your Snowflake account and confirm the deletion of the warehouse.
 
 ![delete wh close session](./assets/delete_wh_close_session.png)
 
-
 <!-- ------------------------ -->
+
 ## Managing tasks
+
 Duration: 10
 
 You can also manage tasks using the Snowflake Python API. Let's use the API to manage a couple of basic stored procedures using tasks.
 
 First, create a stage within the **PYTHON_API_SCHEMA** called **TASKS_STAGE**. This stage will hold the stored procedures and any dependencies those procedures will need.
 
-Next, in the notebook, run the following cell:
+```py
+tasks_stage_name = f"{database.name}.{schema.name}.TASKS_STAGE"
+create_query = f"CREATE OR REPLACE STAGE {tasks_stage_name}"
+session.connection.execute_string(create_query)
+```
+
+> aside: negative
+>
+> **NOTE**:
+> Since we don't yet have the API for manipulating stages, let us create the `TASKS_STAGE` stage using SQL.
+
+Create a couple of basic functions that will be run as stored procedures. `trunc()` creates a truncated version of an input table and `filter_by_shipmode()` creates a 10 row table created by filtering the **SNOWFLAKE_SAMPLE_DATA.TPCH_SF100.LINEITEM** by ship mode. The functions are intentionally basic in nature and are intended to be used for demonstration purposes.
 
 ```python
 def trunc(session: Session, from_table: str, to_table: str, count: int) -> str:
-  session.table(from_table).limit(count).write.save_as_table(to_table)
+  (
+    session
+    .table(from_table)
+    .limit(count)
+    .write.save_as_table(to_table)
+  )
   return "Truncated table successfully created!"
 
 def filter_by_shipmode(session: Session, mode: str) -> str:
-  session.table("snowflake_sample_data.tpch_sf100.lineitem").filter(col("L_SHIPMODE") == mode).limit(10).write.save_as_table("filter_table")
-  return "Filter table successfully created!"
+    (
+      session
+      .table("snowflake_sample_data.tpch_sf100.lineitem")
+      .filter(col("L_SHIPMODE") == mode)
+      .limit(10)
+      .write.save_as_table("filter_table")
+    )
+    return "Filter table successfully created!"
+```
 
+Define two tasks, `task1` and `task2`, whose definitions are stored procedures that each refer to the functions created. We specify the stage that will hold the contents of the stored procedure, and also specify packages that are dependencies. Task 1 is the root task, so we specify a warehouse and a schedule (run every minute).
+
+```py
 task1 = Task(
     "task_python_api_trunc",
-    definition=StoredProcedureCall(trunc, stage_location="@PYTHON_API_DB.PYTHON_API_SCHEMA.TASKS_STAGE", packages=["snowflake-snowpark-python"]),
+    definition=StoredProcedureCall(
+      trunc,
+      stage_location=f"@{tasks_stage_name}",
+      packages=["snowflake-snowpark-python"],
+    ),
     warehouse="COMPUTE_WH",
     schedule=timedelta(minutes=1)
 )
 
 task2 = Task(
     "task_python_api_filter",
-    definition=StoredProcedureCall(filter_by_shipmode, stage_location="@PYTHON_API_DB.PYTHON_API_SCHEMA.TASKS_STAGE", packages=["snowflake-snowpark-python"]),
+    definition=StoredProcedureCall(
+      filter_by_shipmode,
+      stage_location=f"@{tasks_stage_name}",
+      packages=["snowflake-snowpark-python"],
+    ),
     warehouse="COMPUTE_WH"
 )
-
-task2.predecessors = [task1.name]
 ```
 
-This cell does a few things:
+You can check more details on Snowflake documentation on [Writing stored procedures in Python](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python).
 
-* Creates a couple of basic functions that will be run as stored procedures. `trunc()` creates a truncated version of an input table and `filter_by_shipmode()` creates a 10 row table created by filtering the **SNOWFLAKE_SAMPLE_DATA.TPCH_SF100.LINEITEM** by ship mode. The functions are intentionally basic in nature and are intended to be used for demonstration purposes.
-
-* Defines two tasks, `task1` and `task2`, whose definitions are stored procedures that each refer to the functions created. We specify the stage that will hold the contents of the stored procedure, and also specify packages that are dependencies. Task 1 is the root task, so we specify a warehouse and a schedule (run every minute).
-
-* Sets task 1 as a predecessor to task 2, which links the tasks, creating a DAG (albeit, a small one).
-
-Note that this cell does not create the tasks – it only defines them. To create the tasks, run the next cell:
+Now create the two tasks by first retrieving a TaskCollection object (`tasks`) and adding the two tasks to that object. We will also set `task1` as a predecessor to t`ask2`, which links the tasks, creating a DAG (albeit, a small one).
 
 ```python
-tasks = root.databases["python_api_db"].schemas["python_api_schema"].tasks
+# create the task into the Snowflake database
+tasks = schema.tasks
 
 trunc_task = tasks.create(task1, mode=CreateMode.or_replace)
+# should be fully qualified name
+task2.predecessors = [f"{trunc_task.database.name}.{trunc_task.schema.name}.{trunc_task.name}"]
 filter_task = tasks.create(task2, mode=CreateMode.or_replace)
 ```
 
-This cell creates the two tasks by first retrieving a TaskCollection object (`tasks`) and adding the two tasks to that object. Navigate back to your Snowflake account and confirm that the two tasks now exist.
+Navigate back to your Snowflake account and confirm that the two tasks now exist.
 
 ![tasks](./assets/tasks.png)
 
@@ -635,34 +647,49 @@ Navigate to your Snowflake account to confirm that the task is indeed suspended.
 trunc_task.delete()
 filter_task.delete()
 ```
+
 <!-- ------------------------ -->
-## Managing DAGs
+
+## Managing Directd Acyclic Graphs(DAG)
+
 Duration: 8
 
 When the number of tasks that must be managed becomes very large, individually managing each task can be a challenge. The Snowflake Python API provides functionality to orchestrate tasks with a higher level DAG API. Let's take a look at how it can be used.
 
-Run the following cell in the notebook:
+As part of the next cell we will do,
+
+- Create a DAG object by calling the `DAG` constructor, and specifying a DAG name and schedule.
+
+- Define DAG-specific tasks using the `DAGTask` constructor. Note that the constructor accepts the same arguments that were specified in an earlier cell (in the previous step) when using the `StoredProcedureCall` class.
+
+- Specifie `dag_task1` as the root task and predecessor to `dag_task2`, with more convenient syntax.
+
+- Deploys the DAG to the `PYTHON_API_SCHEMA` schema.
 
 ```python
-dag_name = "python_api_dag" 
+dag_name = "python_api_dag"
 dag = DAG(dag_name, schedule=timedelta(days=1))
 with dag:
-    dag_task1 = DAGTask("task_python_api_trunc", StoredProcedureCall(trunc, stage_location="@PYTHON_API_DB.PYTHON_API_SCHEMA.TASKS_STAGE", packages=["snowflake-snowpark-python"]), warehouse="COMPUTE_WH")
-    dag_task2 = DAGTask("task_python_api_filter", StoredProcedureCall(filter_by_shipmode, stage_location="@PYTHON_API_DB.PYTHON_API_SCHEMA.TASKS_STAGE", packages=["snowflake-snowpark-python"]), warehouse="COMPUTE_WH")
+    dag_task1 = DAGTask(
+        "task_python_api_trunc",
+        StoredProcedureCall(
+            trunc,
+            stage_location=f"@{tasks_stage_name}",
+            packages=["snowflake-snowpark-python"]),
+        warehouse="COMPUTE_WH",
+    )
+    dag_task2 = DAGTask(
+        "task_python_api_filter",
+        StoredProcedureCall(
+            filter_by_shipmode,
+            stage_location=f"@{tasks_stage_name}",
+            packages=["snowflake-snowpark-python"]),
+        warehouse="COMPUTE_WH",
+    )
     dag_task1 >> dag_task2
 dag_op = DAGOperation(schema)
-dag_op.deploy(dag, mode="orreplace") 
+dag_op.deploy(dag, mode=CreateMode.or_replace)
 ```
-
-This cell does the following:
-
-* Creates a DAG object by calling the `DAG` constructor, and specifying a DAG name and schedule.
-
-* Defines DAG-specific tasks using the `DAGTask` constructor. Note that the constructor accepts the same arguments that were specified in an earlier cell (in the previous step) when using the `StoredProcedureCall` class.
-
-* Specifies `dag_task1` as the root task and predecessor to `dag_task2`, with more convenient syntax.
-
-* Deploys the DAG to the **PYTHON_API_SCHEMA** schema.
 
 Navigate to your Snowflake account and confirm the creation of the DAG.
 
@@ -676,19 +703,29 @@ Start the DAG by starting the root task by running the following cell:
 dag_op.run(dag)
 ```
 
-Optionally, navigate to your Snowflake account and confirm that **PYTHON_API_DAG$TASK_PYTHON_API_TRUNC** task was started. The call to the function will not succeed as we are not calling it with any of its required arguments. The purpose of this cell is simply to demonstrate how to programatically start the DAG.
+Optionally, navigate to your Snowflake account and confirm that `PYTHON_API_DAG$TASK_PYTHON_API_TRUNC` task was started. The call to the function will not succeed as we are not calling it with any of its required arguments. The purpose of this cell is simply to demonstrate how to programatically start the DAG.
 
 Finally, delete the DAG by running the following cell:
 
 ```python
 dag_op.delete(dag)
 ```
+
+Clean up all the objects that was created with this quickstart and close the session.
+
+```python
+database.delete()
+session.close()
+```
+
 <!-- ------------------------ -->
+
 ## Managing Snowpark Container Services
+
 Duration: 10
 
 > aside negative
-> 
+>
 > **Important**
 > At the time of writing, Snowpark Container Services is in Public Preview in select AWS regions. To use Snowpark Container Services, your Snowflake account must be in one of the select AWS regions. For more information, refer to [Snowpark Container Services – Available Regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
 
@@ -696,12 +733,12 @@ Snowpark Container Services is a fully managed container offering designed to fa
 
 For this section, we'll switch to a new notebook. The notebook contains **sample code** that runs an NGINX web server using Snowpark Container Services, all running in Snowflake. The notebook is provided for convenience and demonstrative purposes.
 
- Download and open the following notebook in your preferred code editor, or with `jupyter notebook`: [Snowpark Container Services – Python API](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-python-api/blob/main/snowpark_container_services_python_api.ipynb).
- 
- In the first cell, we import the required libraries, create our connection to Snowflake, and instantiate our `Root` object. We also create objects to represent references to existing Snowflake objects in a Snowflake account. Our Snowpark Container Services will reside in the **PUBLIC** schema.
+Download and open the following notebook in your preferred code editor, or with `jupyter notebook`: [Snowpark Container Services – Python API](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-python-api/blob/main/snowpark_container_services_python_api.ipynb).
 
- ```python
- from pprint import pprint
+In the first cell, we import the required libraries, create our connection to Snowflake, and instantiate our `Root` object. We also create objects to represent references to existing Snowflake objects in a Snowflake account. Our Snowpark Container Services will reside in the **PUBLIC** schema.
+
+```python
+from pprint import pprint
 from snowflake.core import Root
 from snowflake.core.service import ServiceSpecInlineText
 from snowflake.snowpark import Session
@@ -710,19 +747,19 @@ session = Session.builder.config("connection_name", "python_api").create()
 api_root = Root(session)
 database = api_root.databases["spcs_python_api_db"]
 schema = database.schemas["public"]
- ```
+```
 
 When orchestrating Snowpark Container Services, there are a couple of patterns you'll typically follow:
 
-* **Define a compute pool** – A compute pool represents a set of compute resources (virtual machine nodes). You can think of these compute resources as analogous (but not equivalent) to Snowflake virtual warehouses. The service (in this case, our NGINX service) will run in the compute pool. Compute-intensive services will require high-powered compute pools (i.e., many cores, many GPUs), while less intensive services can run in smaller compute pools (fewer cores). For more information, see [Snowpark Container Services: Working with compute pools](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool).
+- **Define a compute pool** – A compute pool represents a set of compute resources (virtual machine nodes). You can think of these compute resources as analogous (but not equivalent) to Snowflake virtual warehouses. The service (in this case, our NGINX service) will run in the compute pool. Compute-intensive services will require high-powered compute pools (i.e., many cores, many GPUs), while less intensive services can run in smaller compute pools (fewer cores). For more information, see [Snowpark Container Services: Working with compute pools](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool).
 
-* **Define the service** – A service is how you run an application container. The services require, at minimum, a specification and a compute pool. A specification contains the information needed to run the application container, like the path to a container image, endpoints that the services will expose, and more. The specification is written in YML. The compute pool is what the service will run in. For more information, see [Snowpark Container Services: Working with services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services).
+- **Define the service** – A service is how you run an application container. The services require, at minimum, a specification and a compute pool. A specification contains the information needed to run the application container, like the path to a container image, endpoints that the services will expose, and more. The specification is written in YML. The compute pool is what the service will run in. For more information, see [Snowpark Container Services: Working with services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services).
 
 Let's cover these patterns in the notebook. Take a look at the following cell:
 
 ```python
 new_compute_pool_def = ComputePool(
-    name="MyComputePool"
+    name="MyComputePool",
     instance_family="CPU_X64_XS",
     min_nodes=1,
     max_nodes=2,
@@ -731,13 +768,13 @@ new_compute_pool_def = ComputePool(
 new_compute_pool = api_root.compute_pools.create(new_compute_pool_def)
 ```
 
-In this cell, we define a compute pool using the `ComputePool` constructor, and provide a name, instance family, and the min and max number of nodes. We then create the compute pool and pass in the compute pool definition. 
+In this cell, we define a compute pool using the `ComputePool` constructor, and provide a name, instance family, and the min and max number of nodes. We then create the compute pool and pass in the compute pool definition.
 
 Here are some details behind the arguments passed into the constructor:
 
-* `instance_family` – An instance family refers to the type of machine you want to provision for the nodes in the compute pool. Different machines have different amounts of compute resources in their compute pools. In this cell, we use `CPU_X64_XS`, which is the smallest available machine type. See [CREATE COMPUTE POOL: Required parameters](https://docs.snowflake.com/en/sql-reference/sql/create-compute-pool#required-parameters) for more detail.
+- `instance_family` – An instance family refers to the type of machine you want to provision for the nodes in the compute pool. Different machines have different amounts of compute resources in their compute pools. In this cell, we use `CPU_X64_XS`, which is the smallest available machine type. See [CREATE COMPUTE POOL: Required parameters](https://docs.snowflake.com/en/sql-reference/sql/create-compute-pool#required-parameters) for more detail.
 
-* `min_nodes`, `max_nodes` – The lower and upper bounds for nodes in the compute pool. After creating a compute pool, Snowflake launches the minimum number of nodes. New nodes are created – up to the maximum specified – when the running nodes cannot take any additional workload. This is called **autoscaling**. For more information, see [Snowpark Container Services: Working with compute pools](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool).
+- `min_nodes`, `max_nodes` – The lower and upper bounds for nodes in the compute pool. After creating a compute pool, Snowflake launches the minimum number of nodes. New nodes are created – up to the maximum specified – when the running nodes cannot take any additional workload. This is called **autoscaling**. For more information, see [Snowpark Container Services: Working with compute pools](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool).
 
 It's time to build our service. Take a look at the next cell:
 
@@ -776,9 +813,9 @@ nginx_service = schema.services.create(service_def)
 
 This cell defines the service specification, the service, and creates the service for our NGINX web server. You should note a few things:
 
-* `specification` – We define the specification using a Python f-string. The string is formatted as YML. It contains the name of the container, a path to the container image, and endpoints that the service will expose to be able to access the service publicly. Although the specification is defined inline, it could also been a reference to a **.yml** file in a stage.
+- `specification` – We define the specification using a Python f-string. The string is formatted as YML. It contains the name of the container, a path to the container image, and endpoints that the service will expose to be able to access the service publicly. Although the specification is defined inline, it could also been a reference to a **.yml** file in a stage.
 
-* `service_def` – We define a service with the `Service` constructor, passing in a name for the service, the compute pool it should run in, a path to the specification, and the total number of instances for the service. Note that `ServiceSpecInlineText` is used when setting `spec` in this cell. This is because the specification was defined inline as an f-string. Multiple instances of the service could be run, but in this example we want only one instance of the service to run, which is set via `min_instances` and `max_instances`.
+- `service_def` – We define a service with the `Service` constructor, passing in a name for the service, the compute pool it should run in, a path to the specification, and the total number of instances for the service. Note that `ServiceSpecInlineText` is used when setting `spec` in this cell. This is because the specification was defined inline as an f-string. Multiple instances of the service could be run, but in this example we want only one instance of the service to run, which is set via `min_instances` and `max_instances`.
 
 With the service created, the next cell will output the status of the service.
 
@@ -820,7 +857,7 @@ Endpoints provisioning in progress... check back in a few minutes
 Endpoints provisioning in progress... check back in a few minutes
 ```
 
-Once the endpoints are provisioned, the next cell will open the public endpoints in your browser. 
+Once the endpoints are provisioned, the next cell will open the public endpoints in your browser.
 
 ```python
 print(f"Visiting {endpoints['ui']} in your browser. You may need to log in there.")
@@ -851,24 +888,27 @@ nginx_service.suspend()
 new_compute_pool_def.delete()
 nginx_service.delete()
 ```
+
 <!-- ------------------------ -->
+
 ## Conclusion
+
 Duration: 1
 
 Congratulations! In this Quickstart, you learned the fundamentals for managing Snowflake objects, tasks, DAGs, and Snowpark Container Services using the Snowflake Python API.
 
 ### What we've covered
 
-* Installing the Snowflake Python API
-* Creating databases, schemas, and tables
-* Retrieving object information
-* Programmatically updating an object
-* Creating, suspending, and deleting warehouses
-* How to manage tasks and DAGs
-* How to manage Snowpark Container Services
+- Installing the Snowflake Python API
+- Creating databases, schemas, and tables
+- Retrieving object information
+- Programmatically updating an object
+- Creating, suspending, and deleting warehouses
+- How to manage tasks and DAGs
+- How to manage Snowpark Container Services
 
 ### Additional resources
 
-* [Snowflake Documentation: Snowflake Python API](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-python-api/snowflake-python-overview)
+- [Snowflake Documentation: Snowflake Python API](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-python-api/snowflake-python-overview)
 
-* [Snowflake Python API Reference Documentation](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-python-api/reference/0.1.0/index.html)
+- [Snowflake Python API Reference Documentation](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-python-api/reference/0.1.0/index.html)

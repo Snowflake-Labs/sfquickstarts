@@ -25,7 +25,7 @@ Snowflake's **Client Redirect** feature facilitates seamless failover from prima
 
 ### Prerequisites
 - #### Create 2 Snowflake trial accounts in the same Organization - in AWS, Azure cloud regions - and enable replication for each account.
-    > Create an AWS trial account [here](https://signup.snowflake.com/)
+    > Create an AWS trial account [here](https://signup.snowflake.com/?utm_cta=quickstarts_)
     >
     > - choose **Business Critical** edition, **AWS** as cloud provider, any **US** region
     > - activate account with username `snowgrid` - this user has ACCOUNTADMIN

@@ -26,15 +26,17 @@ This lab builds directly on the same code and solution as the [Build a Data App 
 ### Prerequisites
 - A Snowflake account, and familiarity with the Snowsight interface
 - Privileges necessary to create a user, database, and warehouse in Snowflake
-- Ability to install and run software on your computer
 - Basic experience using git
 - Intermediate knowledge of Node.js and React JS
 - Intermediate knowledge of containerised applications
 
+- GitHub Codespaces -or- Ability to install and run software on your computer
+
+
 > aside positive
 > **Snowpark Container Services availability**
 > 
->  Snowpark Container Services is currently in a *Public Preview* and is available across a [range of Snowflake AWS accounts](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions, or [create a Trial account](https://medium.com/r/?url=https%3A%2F%2Fsignup.snowflake.com%2F) in one of them.
+>  Snowpark Container Services is currently in a *Public Preview* and is available across a [range of Snowflake AWS accounts](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
 
 ### What You’ll Learn 
 - How to configure and build a custom API Powered by Snowflake, written in Node.js
@@ -43,11 +45,14 @@ This lab builds directly on the same code and solution as the [Build a Data App 
 - How to run and test the frontend and API on your machine
 
 ### What You’ll Need 
+#### Option 1, using GitHub Codespaces:
+- [GitHub Codespaces](https://github.com/) GitHub Account with credits for GitHub Codespaces
+#### Option 2, local build:
 - [VSCode](https://code.visualstudio.com/download) Installed
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) Installed
+- [Docker](https://docs.docker.com/get-docker/) Installed
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) Installed
-- [NodeJS](https://nodejs.org/en/download/) (Optional) Installed for local testing
-- [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Optional) Installed for local testing
+- [NodeJS](https://nodejs.org/en/download/) Installed
+- [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) Installed
 
 ### What You’ll Build 
 In this quickstart we will build and deploy a Data Application running on Snowpark Container Services.
@@ -59,6 +64,11 @@ The solution consists of two services hosted on Snowpark Container Services:
 - **The frontend service** - which hosts the React JS Web Application that connects to that API, and a router service in NGINX that allows calls from the browser-based React frontend to be routed to the backend services also.
 
 Without the router part of the frontend service, CORS would actually prevent the browser from talking to the backend service, even if we opened up a public endpoint for it. This is due to the fact that we cannot add our own headers to requests coming to the service endpoints - for security reasons Snowpark Container Services networking strips out any headers (but adds a few useful ones that we will use for authentication later).
+
+
+
+
+
 
 
 <!-- ------------------------ -->
@@ -342,6 +352,14 @@ You can spend some time creating the queries for each of these and then check yo
         sum(price) desc;
 ```
 
+
+
+
+
+
+
+
+
 <!-- ------------------------ -->
 
 ## Setup Snowflake
@@ -404,26 +422,12 @@ GRANT USAGE ON COMPUTE POOL tasty_app_frontend_compute_pool TO ROLE tasty_app_ad
 GRANT MONITOR ON COMPUTE POOL tasty_app_frontend_compute_pool TO ROLE tasty_app_admin_role;
 ```
 
-### Step 3.3 Create security integration for public web access
-
-To allow external connections to public endpoints we will create for each service later, we add a `SECURITY INTEGRATION` that is dedicated to authentication of users coming from the public web. [Ingress: Using a service from outside Snowflake](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services?utm_source=legacy&utm_medium=serp&utm_term=snowservices_ingress#ingress-using-a-service-from-outside-snowflake)
-```sql
--- Create security integration
-CREATE SECURITY INTEGRATION "Application Authentication"
-  TYPE=oauth
-  OAUTH_CLIENT=snowservices_ingress
-  ENABLED=true;
-
-GRANT OWNERSHIP ON INTEGRATION "Application Authentication"
-TO ROLE tasty_app_admin_role REVOKE CURRENT GRANTS;
-```
-
 The `tasty_app_admin_role` role must also be given the permission to bind service endpoints for services.
 ```sql 
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE tasty_app_admin_role;
 ```
 
-### Step 3.4 Set up docker image repositories and stage for service specifications
+### Step 3.3 Set up docker image repositories and stage for service specifications
 
 We can now ensure that the current user can use the admin role.
 ```sql 
@@ -449,7 +453,7 @@ CREATE STAGE tasty_app_stage DIRECTORY = ( ENABLE = true );
 ```
 
 
-### Step 3.5 Create external users role and users for the external access
+### Step 3.4 Create external users role and users for the external access
 
 In order to allow the application users to access the application we can create dedicated `USERS` for each user. In the guide [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake) users were actually stored in a `USERS` table that was created, where hashed passwords were stored and could be used to check the login from the frontend. Create that table by running the following SQL:
 
@@ -481,6 +485,9 @@ We can create the users like this:
 USE ROLE ACCOUNTADMIN;
 CREATE ROLE tasty_app_ext_role;
 
+GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_app_ext_role;
+GRANT USAGE ON SCHEMA app TO ROLE tasty_app_ext_role;
+
 CREATE USER IF NOT EXISTS user1 PASSWORD='password1' MUST_CHANGE_PASSWORD=TRUE DEFAULT_ROLE=tasty_app_ext_role;
 GRANT ROLE tasty_app_ext_role TO USER user1;
 ```
@@ -504,13 +511,34 @@ CREATE USER IF NOT EXISTS user3 PASSWORD='password270' MUST_CHANGE_PASSWORD=TRUE
 GRANT ROLE tasty_app_ext_role TO USER user3;
 ```
 
+
+
+
+
+
+
+
+
 <!-- ------------------------ -->
 
-## Adapting the backend code
+## Building the backend code
 Duration: 5
 
 ### Overview
 We now look at the code for the backend and frontend to adapt it to run in Snowpark Container Services.
+
+#### Option 1 - Build using GitHub Codespaces
+If you have access to GitHub and credits on an account that let's you run GitHub Codespaces, you can directly build the entire code and push the containerized images to the image repository in the cloud environment.
+
+If you don't have access to this, or prefer to build this locally, go to Option 2 instead.
+
+First, create your on fork of the main repository, go to the GitHub repository at [GitHub: Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs.git) and create your own fork of the repo.
+![Fork Repository](assets/fork_repository.png)
+
+Once you have your own fork, go to the '<> CODE' button and select 'Codespaces' and create a new.
+![Create Codespace](assets/create_codespace.png)
+
+
 
 The code for this lab is hosted on GitHub. Start by cloning the repository into a separate folder. Note that we are cloning a specific branch `spcs` here that contains the code adapted for this guide.
 ```bash
@@ -528,7 +556,13 @@ docker --version
 -- Docker version 24.0.6, build ed223bc
 ```
 
-For local testing, we can then let the backend connect to the Snowflake account using credentials we supply in the environment variables. Copy the `.env.example` file to `.env` and fill out the details for your account there:
+For local testing, we can then let the backend connect to the Snowflake account using credentials we supply in the environment variables. Copy the `.env.example` file to `.env` and fill out the details for your account there. 
+```bash
+cp .env.example .env
+sed -i -e "s/{INSERT A RANDOM STRING HERE}/$(openssl rand -base64 12)/" .env
+sed -i -e "s/{INSERT ANOTHER RANDOM STRING HERE}/$(openssl rand -base64 12)/" .env
+```
+:
 ```bash
 SNOWFLAKE_ACCOUNT={INSERT_ACCOUNT_NAME_HERE}
 SNOWFLAKE_USERNAME={INSERT_USER_NAME_HERE}
@@ -538,8 +572,8 @@ SNOWFLAKE_WAREHOUSE=TASTY_APP_WAREHOUSE
 SNOWFLAKE_DATABASE=frostbyte_tasty_bytes
 SNOWFLAKE_SCHEMA=app
 
-ACCESS_TOKEN_SECRET={INSERT A RANDOM STRING HERE}
-REFRESH_TOKEN_SECRET={INSERT A RANDOM STRING HERE}
+ACCESS_TOKEN_SECRET=a1to.....9wlnNq
+REFRESH_TOKEN_SECRET=KVDq9.....icVNh
 
 PORT=3000
 
@@ -551,7 +585,12 @@ There is a `docker-compose.yaml` file in this folder that we will use to spin up
 docker compose up
 ```
 
-Try to access the API by calling the endpoint now:
+Try to access the API by calling the endpoint now. If you are in GitHub Codespaces, you will be offered a unique URL that is generated for you, like 'https://<random-generated-identifier>-3000.app.github.dev/' that you can access, if you are on your local environment, it will be a localhost URL, like 'http://localhost:3000/'
+![Forwarded ports](assets/forwarded_port_host.png)
+```bash
+curl https://<random-generated-identifier>-3000.app.github.dev/franchise/1
+```
+or, open up a new terminal and access it (this will also work inside Codespaces)
 ```bash
 curl http://localhost:3000/franchise/1
 ```
@@ -725,7 +764,7 @@ backend-backend_service-1  | Using warehouse: TASTY_APP_WAREHOUSE
 backend-backend_service-1  | Using role: TASTY_APP_ADMIN_ROLE
 ```
 
-Calling one of the endpoints now results in a `HTTP 422` response and no data. If we provide a header that looks like the SPCS authentication header it now uses that to validate the user:
+Calling one of the endpoints now results in a `HTTP 422` response and the test `Incorrect data` (which is what we expect from the `validateSnowflakeHeader` in `auth.js`). If we provide a header that looks like the SPCS authentication header it now uses that to validate the user:
 
 ```bash
 curl --header "Sf-Context-Current-User:user1"  http://localhost:3000/franchise/1
@@ -779,15 +818,21 @@ When the service is running on SPCS, the file located at `/snowflake/session/tok
 Once connected, the rest of the backend code is working the same, regardless if it is running in the SPCS environment or somewhere else, like a local testing environment.
 
 
+
+
+
+
+
+
 <!-- ------------------------ -->
 
-## Adapting the frontend code
+## Building the frontend code
 Duration: 3
 
 ### Overview
-The frontend now also needs to be updated to take advantage of the changes and for us to be able to run it on SPCS.
+We can now look at how the frontend has been updated to take advantage of the changes and for us to be able to run it on SPCS.
 
-There are two areas that needs to be updated here to run in the new environment:
+There are two areas that is updated here to allow it to run in the new environment:
 
 - Authentication - by placing the service behind a public endpoint that forces users to login, it no longer makes sense to keep the login form in the client, the required authentication is already captured by the Snowflake OAuth login form
 - Routing from client to the backend API, we can no longer directly control the CORS directives for the services, and calls from the client are actually made directly from the users' browsers.
@@ -855,6 +900,23 @@ CMD ["/bin/sh" , "-c" , "envsubst '$FRONTEND_SERVICE $BACKEND_SERVICE' < /nginx.
 ```
 
 The last line substitutes these variables for values taken from the `environment` it is running in, before copying the contents into the `nginx.conf` file and starting up the server.
+
+You can test the router by running the container locally. From `/src/frontend` run the following:
+bash
+```
+docker compose --env-file .env.local.example up
+```
+This should run the router and the frontend on local ports. Test it out by running:
+bash
+```
+curl http://localhost:8888/test
+```
+It should return HTLM, like:
+html
+```
+<html><body><h1>This is the router testpage</h1><li>Sf-Context-Current-User: </li><li>Host: localhost:8888</li><li>Frontend Server: localhost:4000</li><li>Backend Server: localhost:3000</li></body></html>
+```
+Terminate the running containers byt pressing `ctrl+c` in the terminal again.
 
 ### Step 5.2 Updating the frontend code
 
@@ -999,6 +1061,19 @@ And when decoded, that token should look something like this:
 }
 ```
 
+You can try this if you like, by starting up the backend again in a new Terminal window:
+```bash
+cd src/backend
+docker compose up
+```
+And then directly call the `authorize` endpoint:
+```bash
+curl --header "Sf-Context-Current-User:user1" http://localhost:3000/authorize
+```
+Copy the content of the `accessToken` attribute in the JSON response, and then go to [https://jwt.io/](https://jwt.io/) and paste the response there. This should decode the token for you and show an output like above.
+
+Additionally, if you want to verify this token, you can supply the random string we added to the `.env` file for the backend.
+
 Throughout the `Home.js` and `Details.js` we then update all call to the backend to use the common helper function from `Utils.js` to call the backend, like this:
 ```js
 const url = `${backendURL}/franchise/${franchise}/trucks?start=${fromDate}&end=${toDate}`;
@@ -1016,6 +1091,13 @@ fetch(url, getRequestOptions(location.state))
 ```
 
 With those changes, the code should be ready to be Dockerized and then deployed in Snowpark Container Services.
+
+
+
+
+
+
+
 
 <!-- ------------------------ -->
 
@@ -1183,6 +1265,13 @@ The output should be similar to this:
    ]
 }
 ```
+
+
+
+
+
+
+
 
 <!-- ------------------------ -->
 
@@ -1414,6 +1503,13 @@ docker image prune --all
 > aside negative
 >
 > Warning, the above removes _all_ unused Docker images. If you have other Docker images that you don't want to remove, then manually remove the images created in this guide using `docker image rm <IMAGE NAME>`.
+
+
+
+
+
+
+
 
 <!-- ------------------------ -->
 

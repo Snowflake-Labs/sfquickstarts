@@ -22,7 +22,7 @@ Snowflake CLI is a command-line interface designed for developers building apps 
 - [Video: Snowflake Data Loading Basics](https://youtu.be/htLsbrJDUqk?si=vfTjL6JaCdEFdiSG)
 - Python 3.8 or later installed on your machine
 - Basic knowledge of Snowflake concepts
-- You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/).
+- You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_).
 
 ### What You’ll Learn
 - How to install Snowflake CLI
@@ -42,7 +42,7 @@ First, you’ll install the Snowflake CLI, and later you'll configure it to conn
 
 ### Create a Snowflake Account
 
-You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/).
+You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_).
 
 ### Access Snowflake’s Web Interface
 
@@ -51,10 +51,16 @@ Navigate to [https://app.snowflake.com/](https://app.snowflake.com/) and log int
 
 ### Install the Snowflake CLI 
 
-Snowflake CLI can be installed on Linux, Windows, or Mac. To install it, run the following command in a terminal:
+Snowflake CLI can be installed on Linux, Windows, or Mac. To install it we recommend using
+[pipx](https://github.com/pypa/pipx) which provides an alternative to pip that installs and executes Python packages into 
+isolated virtual environments. Installing Snowflake CLI with pipx does not, therefore, modify your current Python environment.
+
+Install `pipx` using [official guidelines for your platform](https://pipx.pypa.io/stable/installation/#installing-pipx).   
+
+Once pipx is installed on your machine run the following command in a terminal:
 
 ```console
-pip install snowflake-cli-labs
+pipx install snowflake-cli-labs
 ```
 
 Once it's been successfully installed, run the following command to verify that it was successfully installed:
@@ -432,6 +438,32 @@ As a result you should see the following output:
 +---+
 ```
 
+### Templating SQL queries
+
+In many case you may want to change your queries depending on some context, for example type of environment (production vs. testing).
+This is possible thanks to client-side templating in Snowflake CLI. We call it client-side to distinguish if from [server-side rendering
+supported by EXECUTE IMMEDIATE FROM](https://docs.snowflake.com/en/sql-reference/sql/execute-immediate-from#jinja2-templating).
+
+Snowflake CLI is using `<% VARIABLE_NAME %>` pattern for specifying variables in SQL. You can use templates in both ad-hoc queries
+and files.
+
+Variables can be defined using `-D/--variable` flag in `snow sql` command. The input for this flag has to be in form of
+`key=value` string.
+
+To test out the templating functionality run the following command:
+```bash
+snow sql -q "select <% my_var %> + 2" -D "my_var=40"
+```
+in the result you should see the following:
+```console
+select 40 + 2
++--------+
+| 40 + 2 |
+|--------|
+| 42     |
++--------+
+```
+
 ## Managing Snowflake objects
 Duration: 5
 
@@ -439,7 +471,7 @@ Snowflake CLI offers commands for generic object operations like `SHOW`, `DROP` 
 
 ### Prerequisites
 
-Le'ts create a new database using `snow sql`:
+Let's create a new database using `snow sql`:
 
 ```bash
 snow sql -q "create database snowflake_cli_db"
@@ -491,7 +523,7 @@ To check for list of supported objects run `snow object drop --help`.
 ## Using Snowflake CLI to work with stages
 Duration: 10
 
-You can use Snowflake CLI to work with stages. In this step you will learn how to use the `snow object stage` commands.
+You can use Snowflake CLI to work with stages. In this step you will learn how to use the `snow stage` commands.
 
 ### Prerequisites
 
@@ -515,7 +547,7 @@ After running the command you should see output similar to this one:
 You can create a new stage using by running the following command:
 
 ```bash
-snow object stage create snowflake_cli_db.public.my_stage
+snow stage create snowflake_cli_db.public.my_stage
 ```
 
 If the command succeeds, you should see the following output:
@@ -541,7 +573,7 @@ touch data.csv
 Next, upload this file to the stage by running the following command:
 
 ```bash
-snow object stage copy data.csv @snowflake_cli_db.public.my_stage
+snow stage copy data.csv @snowflake_cli_db.public.my_stage
 ```
 
 Running this command should return the following output:
@@ -559,7 +591,7 @@ Running this command should return the following output:
 At this point you should have a stage with a single file in it. To list the contents of the stage, you can run:
 
 ```bash
-snow object stage list @snowflake_cli_db.public.my_stage 
+snow stage list @snowflake_cli_db.public.my_stage 
 ```
 
 After running this command you should see output similar to the folowing:
@@ -576,12 +608,12 @@ After running this command you should see output similar to the folowing:
 
 You can also download files from a stage. Let's download the CSV file we just uploaded.
 
-You can download files from a stage using the same `snow object stage copy`` command, only this time you will replace the order of the arguments.
+You can download files from a stage using the same `snow stage copy`` command, only this time you will replace the order of the arguments.
 
 To download the file from the stage to your current working directory run the following command:
 
 ```bash
-snow object stage copy @snowflake_cli_db.public.my_stage/data.csv .
+snow stage copy @snowflake_cli_db.public.my_stage/data.csv .
 ```
 
 This command should return output similar to the following:
@@ -628,7 +660,7 @@ Let's take a look at how Snowflake CLI can support development of Snowpark appli
 You can use Snowflake CLI to initialize a Snowpark project. To do so, run the following command
 
 ```bash
-snow snowpark init my_project
+snow init my_project --template example_snowpark      
 ```
 
 Running this command will create a new `my_project` directory. Now move to this new directory by running:
@@ -823,7 +855,7 @@ Snowflake CLI also provides commands to work with Streamlit applications. In thi
 Start by initializing a Streamlit project. To do so, run:
 
 ```bash
-snow streamlit init streamlit_app
+snow init streamlit_app --template example_streamlit
 ```
 
 By running this command a new `streamlit_app` directory will be created. Similar to a Snowpark project, this directory also includes also a **snowflake.yml** file which defines the Streamlit app.

@@ -53,7 +53,7 @@ This use case will leverage sample urls along with sample images that will be pa
 
 Duration: 10
 
-For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to [platform.openi.com/api-keys](platform.openi.com/api-keys) and create a new secret key as it looks below. Make note of the model name and keyas you will need this to generate a response. 
+For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to login and navigate to api-keys in your openai account and create a new secret key as it looks below. Make note of the model name and keyas you will need this to generate a response. 
 
 ![](assets/openai.png)
 
@@ -177,6 +177,64 @@ def ask_chatGPT(instructions, list, user_context):
     response = client.chat.completions.create(
     model="gpt-4-vision-preview",
     messages=[{"role": "system", "content": f"<SYSTEM>Follow these:{instructions}<END_SYSTEM>\n<CONTEXT_LIST>Use this list to select from {list}<END_CONTEXT_LIST>\n<USER_CONTEXT>Use this image for your response:{user_context}<END_USER_CONTEXT>"}])
+    return response.choices[0].message.content
+$$;
+```
+
+If you are using Azure OpenAI rather than a stand alone OpenAI service you will use the code below.
+
+```sql
+use role ACCOUNTADMIN;
+use database RETAIL_HOL;
+use warehouse HOL_WH;
+
+CREATE OR REPLACE NETWORK RULE CHATGPT_NETWORK_RULE
+    MODE = EGRESS
+    TYPE = HOST_PORT
+    VALUE_LIST = ('{your-resource-name}.openai.azure.com'); -- Update your Azure resource name from Step 2
+
+CREATE OR REPLACE SECRET CHATGPT_API_KEY
+    TYPE = GENERIC_STRING
+    SECRET_STRING='YOUR_API_KEY'; -- Update your Azure API Key from Step 2
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION OPENAI_INTEGRATION
+    ALLOWED_NETWORK_RULES = (CHATGPT_NETWORK_RULE)
+    ALLOWED_AUTHENTICATION_SECRETS = (CHATGPT_API_KEY)
+    ENABLED=TRUE;
+
+CREATE OR REPLACE FUNCTION CHATGPT_IMAGE(instructions STRING, list STRING, user_context STRING)
+returns string
+language python
+runtime_version=3.8
+handler = 'ask_chatGPT'
+external_access_integrations=(OPENAI_INTEGRATION)
+packages = ('openai')
+SECRETS = ('cred' = chatgpt_api_key )
+as
+$$
+import _snowflake
+import json
+from openai import AzureOpenAI
+client = AzureOpenAI(
+    api_key=_snowflake.get_generic_secret_string("cred"),
+    api_version='2023-12-01-preview',
+    # Update Resource and Model to the base_url below
+    base_url="https://{your-resource-name}.openai.azure.com/openai/deployments/{model}/extensions"
+    )
+def ask_chatGPT(instructions, list_, user_context):
+    response = client.chat.completions.create(
+    model='{model}', # Update your model/deployment name from Step 2
+    messages = [
+        {
+            "role": "system",
+            "content": json.dumps({
+                "SYSTEM": f"Follow these: {instructions}",
+                "CONTEXT_LIST": f"Use this list to select from {list_}",
+                "USER_CONTEXT": f"Use this image for your response: {user_context}"
+            })
+        }
+    ],
+    max_tokens=2000 )
     return response.choices[0].message.content
 $$;
 ```

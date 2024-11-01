@@ -20,7 +20,7 @@ Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。
 
 
 ### 前提条件
-- 開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している[**Tasty Bytesの紹介クイックスタート**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html)を完了しておくようにしてください。
+- 開始する前に、本クイックスタートを完了するために必要なトライアルアカウントのセットアップとTasty Bytes基盤の展開について説明している[**Tasty Bytesの紹介クイックスタート**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html)を完了しておくようにしてください。
 
 ### 学習する内容
 - Snowflakeマーケットプレイスへのアクセス方法
@@ -114,7 +114,7 @@ Duration: 2
 ### 概要
 前のセクションで見た内容から、ハンブルグでは2月16日から2月21日までの売上がないように見えます。  ファーストパーティデータの中には、これを調査するために利用できるものは他にあまりありませんが、何か大きなことがここで起こっていたはずです。
 
-[Snowflakeマーケットプレイス](https://www.snowflake.com/en/data-cloud/marketplace/)を活用してすぐに調査できるアイデアの1つは、異常気象と、Weather Sourceが提供している無料の公開リストです。
+[Snowflakeマーケットプレイス](https://www.snowflake.com/ja/data-cloud/marketplace/)を活用してすぐに調査できるアイデアの1つは、異常気象と、Weather Sourceが提供している無料の公開リストです。
 
 ### ステップ1 - Weather Source LLC: frostbyte Snowflakeマーケットプレイスのリスティングを取得する
 Snowflakeマーケットプレイスは、革新的なビジネスソリューションを推進するために必要なデータやアプリケーションを検索、試用、購入できるすばらしい場所です。このステップでは、[Weather Source LLC: frostbyte](https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL/weather-source-llc-weather-source-llc-frostbyte)リスティングにアクセスし、ハンブルグの売上不振に関する追加の分析に役立てていきます。
@@ -164,7 +164,7 @@ JOIN frostbyte_tasty_bytes.raw_pos.country c
 ### ステップ3 - 毎日の気温を可視化する
 整合スキーマの`daily_weather_v`ビューが得られたところで、次のクエリを実行して、2022年2月のハンブルグの毎日の平均気温を見てみましょう。
 
-ここでは、[AVG](https://docs.snowflake.com/en/sql-reference/functions/avg)、[YEAR](https://docs.snowflake.com/en/sql-reference/functions/year)、[MONTH](https://docs.snowflake.com/en/sql-reference/functions/year)という関数を利用します。
+ここでは、[AVG](https://docs.snowflake.com/ja/sql-reference/functions/avg)、[YEAR](https://docs.snowflake.com/ja/sql-reference/functions/year)、[MONTH](https://docs.snowflake.com/ja/sql-reference/functions/year)という関数を利用します。
 
 ```
 SELECT 
@@ -193,7 +193,7 @@ ORDER BY dw.date_valid_std DESC;
 ### ステップ4 - 風データを取り込む
 前のステップで見たように、1日の平均気温はハンブルグでの売上ゼロの日の原因ではないようです、ありがたいことに、Weather Sourceは私たちが詳しく調査できるその他の気象メトリックも提供しています。
 
-次のクエリを実行し、整合ビューを活用して風のメトリックを取り込んでください。このクエリでは、[MAX](https://docs.snowflake.com/en/sql-reference/functions/min)関数を使用していきます。
+次のクエリを実行し、整合ビューを活用して風のメトリックを取り込んでください。このクエリでは、[MAX](https://docs.snowflake.com/ja/sql-reference/functions/max)関数を使用していきます。
 
 ```
 SELECT 
@@ -232,7 +232,7 @@ Duration: 3
 ### ステップ1：SQL関数を作成する
 グローバル企業として、まずは華氏を摂氏に、インチをミリメートルに変換する2つのSQL関数を作成することから始めましょう。
 
-このステップでは2つのクエリを1つずつ実行し、`fahrenheit_to_celsius`関数と`inch_to_millimeter`関数を作成してください。ここでは[CREATE FUNCTION](https://docs.snowflake.com/en/sql-reference/sql/create-function)コマンドを利用します。
+このステップでは2つのクエリを1つずつ実行し、`fahrenheit_to_celsius`関数と`inch_to_millimeter`関数を作成してください。ここでは[CREATE FUNCTION](https://docs.snowflake.com/ja/sql-reference/sql/create-function)コマンドを利用します。
 
 
 ```
@@ -264,7 +264,7 @@ $$;
 ### ステップ2 - ビュー用のSQLを作成する
 分析ビューを展開する前に、ビューで使用するSQLを作成して日次売上と気象を組み合わせ、さらに、SQL変換関数も活用しましょう。
 
-次のクエリを実行し、ドイツのハンブルグをフィルタリングしてください。まだ登場していない[ZEROIFNULL](https://docs.snowflake.com/en/sql-reference/functions/zeroifnull)、[ROUND](https://docs.snowflake.com/en/sql-reference/functions/round)、[DATE](https://docs.snowflake.com/en/sql-reference/functions/to_date)といった関数も活用してください。
+次のクエリを実行し、ドイツのハンブルグをフィルタリングしてください。まだ登場していない[ZEROIFNULL](https://docs.snowflake.com/ja/sql-reference/functions/zeroifnull)、[ROUND](https://docs.snowflake.com/ja/sql-reference/functions/round)、[DATE](https://docs.snowflake.com/ja/sql-reference/functions/to_date)といった関数も活用してください。
 
 ```
 SELECT 
@@ -296,7 +296,7 @@ ORDER BY fd.date_valid_std ASC;
 ここではすばらしい結果が得られました。これで、次のステップでこのSQLをビュー内でまとめることができるようになります。
 
 ### ステップ3 - 分析ビューを展開する
-先ほど考察したものと同じクエリを使用します。WHERE句のフィルターを削除し、[COMMENT](https://docs.snowflake.com/en/sql-reference/sql/comment)を追加して、これを`daily_city_metrics_v`ビューとして`analytics`スキーマに昇格させる必要があります。
+先ほど考察したものと同じクエリを使用します。WHERE句のフィルターを削除し、[COMMENT](https://docs.snowflake.com/ja/sql-reference/sql/comment)を追加して、これを`daily_city_metrics_v`ビューとして`analytics`スキーマに昇格させる必要があります。
 
 これを行うために、ここでこのセクションの最後のクエリを実行してください。
 
@@ -385,4 +385,4 @@ Duration: 1
 ### 次のステップ
 引き続きSnowflakeデータクラウドについて学習するには、以下のリンクから利用可能なその他すべてのPowered by Taste Bytes - クイックスタートをご覧ください。
 
-- ### [Powered by Tasty Bytes - クイックスタート目次](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3)
+- ### [Powered by Tasty Bytes - クイックスタート目次](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_ja/index.html#3)

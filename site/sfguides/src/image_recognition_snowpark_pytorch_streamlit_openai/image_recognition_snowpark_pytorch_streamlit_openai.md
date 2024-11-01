@@ -62,7 +62,7 @@ Two web-based image recognition applications in Streamlit. These applications ca
 
 ### Prerequisites
 
-- A [Snowflake account](https://signup.snowflake.com/)
+- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_)
   - Login to your Snowflake account with the admin credentials that were created with the account in one browser tab (a role with ORGADMIN privileges). Keep this tab open during the session.
     - Click on the **Billing** on the left side panel
     - Click on **Terms and Billing**
@@ -71,86 +71,52 @@ Two web-based image recognition applications in Streamlit. These applications ca
 - (***Optionally***) [OpenAI account](https://beta.openai.com/overview) for creating the second application. Once the account is created, you will need to generate an [OpenAI API key](https://beta.openai.com/account/api-keys) to use in the application. *Note: At the time of writing this guide, creating a new OpenAI account granted you $18.00 credit which is plenty for this application.*
 
 <!-- ------------------------ -->
-## Streamlit Applications
+## Setup Environment
 
 Duration: 5
 
-Now let's review the two image recognition applications you'll build in Streamlit.
+In order to build and run the applications, setup your environment as described below.
 
-### Application 1 - Upload an image
+- Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec) and browse to the app folder *sfguide-snowpark-pytorch-streamlit-openai-image-rec*
 
-This application uses Streamlit's [*st.file_uploader()*](https://docs.streamlit.io/library/api-reference/widgets/st.file_uploader) to allow the user to upload an image file. Once the file is uploaded successfully, the following code snippet converts image data from base64 to hex and stores it in a Snowflake table using a very handy Snowpark API [*session.write_pandas()*](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/api/snowflake.snowpark.Session.write_pandas.html).
+- Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8)*.
 
-Here's the code snippet:
-
-```python
-uploaded_file = st.file_uploader("Choose an image file", accept_multiple_files=False, label_visibility='hidden')
-if uploaded_file is not None:
-  # Convert image base64 string into hex 
-  bytes_data_in_hex = uploaded_file.getvalue().hex()
-
-  # Generate new image file name
-  file_name = 'img_' + str(uuid.uuid4())
-
-  # Write image data in Snowflake table
-  df = pd.DataFrame({"FILE_NAME": [file_name], "IMAGE_BYTES": [bytes_data_in_hex]})
-  session.write_pandas(df, "IMAGES")
-```
-
-### Application 2 - OpenAI generated image
-
-This application uses OpenAI's API [*openai.Image.create()*](https://beta.openai.com/docs/guides/images/generations) to generate images based on the description provided by the user in the form of text/natural language - in real-time! Then, similar to the first application, the generated image data is converted from base64 into hex and that image data is stored in a Snowflake table using a very handy Snowpark API *session.write_pandas()*.
-
-Here's the code snippet:
+- From the app folder, create conda environment. Then activate conda environment and install Snowpark for Python and other libraries including Streamlit. *NOTE: You can skip installing `openai` if you're not going to run the second Streamlit application.*
 
 ```python
-# Retrieve OpenAI key from environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# Add text box for entering text
-text_input = st.text_input("Enter description of your favorite animal 👇")
-if text_input:
-   response = openai.Image.create(
-      prompt=text_input,
-      n=1,
-      size="512x512",
-      response_format="b64_json"
-   )
-
-  # Convert image base64 string into hex
-  image_bytes = response['data'][0]['b64_json']
-  bytes_data_in_hex = base64.b64decode(image_bytes).hex()
-
-  # Generate new image file name
-  file_name = 'img_' + str(uuid.uuid4())
-
-  # Decode base64 image data and generate image file that can be used to display on screen 
-  decoded_data = base64.b64decode((image_bytes))
-  with open(file_name, 'wb') as f:
-    f.write(decoded_data)
-
-  # Write image data in Snowflake table
-  df = pd.DataFrame({"FILE_NAME": [file_name], "IMAGE_BYTES": [bytes_data_in_hex]})
-  session.write_pandas(df, "IMAGES")
+conda create --name snowpark-img-rec -c https://repo.anaconda.com/pkgs/snowflake python=3.9
+conda activate snowpark-img-rec
+conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook cachetools
+pip install streamlit
+pip install uuid
+pip install openai
 ```
 
-Notes:
+### Option 1
 
-- It's assumed that you've stored your OpenAI API key in an environment variable named ***OPENAI_API_KEY***. If not, change the code accordingly before running the app.
-- The reason behind writing the image file locally is so that the generated image (by OpenAI) can be displayed in the browser. (Note that the image file is deleted after it's displayed.)
+> aside positive
+> For an end-to-end setup experience using Snowflake Notebooks, download this [.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec_Setup_Notebook.ipynb) file and [import](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import) it in your Snowflake account.
 
-### In Both Applications
+### Option 2
 
-- Streamlit's *st.set_page_config(), st.header(), st.caption(), st.columns() and st.container()* are used to organize and display various components of the application.
-- For simplicity, the hex image data is stored in String format in a Snowflake table.
-- The Snowpark for Python UDF *image_recognition_using_bytes()* that uses PyTorch for image recognition running in Snowflake is the same and is invoked as shown below.
+- Update [connection.json](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/connection.json) with your Snowflake account details and credentials. *Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
 
-```python
-# Call Snowpark User-Defined Function to predict image label
-predicted_label = session.sql(f"SELECT image_recognition_using_bytes(image_bytes) as PREDICTED_LABEL from IMAGES where FILE_NAME = '{file_name}'").to_pandas().iloc[0,0]
+- In your Snowflake account, create a Snowflake table and internal stage by running the following commands in Snowsight. The table will store the image data and the stage is for storing serialized Snowpark Python UDF code. *Note: It's assumed that you've already created a warehouse, a database and a schema in your Snowflake account.*
+
+```sql
+create or replace table images (file_name string, image_bytes string);
+create or replace stage dash_files;
 ```
 
-- In the above code snippet, the Snowpark for Python UDF *image_recognition_using_bytes()* is passed the contents of the column *image_bytes* where the column *FILE_NAME* matches the name of the image file generated using uuid.
+- In your favorite IDE such as Jupyter Notebook or VS Code, set the Python kernel to **snowpark-img-rec** (the name of the conda environment created in the previous step) and then run through the cells in [Snowpark_PyTorch_Image_Rec.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec.ipynb).
+
+---
+
+In both cases, once the setup is complete, you can check the contents of the Snowflake stage to make sure the model files and the UDF exists by running the following command in Snowsight. *Note: Replace the name of the stage with the one you created.*
+
+```sql
+list @dash_files;
+```
 
 <!-- ------------------------ -->
 ## PyTorch and Snowpark Python
@@ -159,25 +125,11 @@ Duration: 10
 
 ### PyTorch
 
-For this particular application, we will be using [PyTorch implementation of MobileNet V3](https://github.com/d-li14/mobilenetv3.pytorch).
+For this particular application, we are using [PyTorch implementation of MobileNet V3](https://github.com/d-li14/mobilenetv3.pytorch).
 
 *Note: A huge thank you to the [authors](https://github.com/d-li14/mobilenetv3.pytorch#citation) for the research and making the pre-trained models available under [MIT License](https://github.com/d-li14/mobilenetv3.pytorch/blob/master/LICENSE).*
 
-Ok, so once we have access to the pre-trained model files, we need to upload them onto Snowflake (internal) stage using Snowpark API [*session.file.put()*](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/api/snowflake.snowpark.FileOperation.put.html#snowflake.snowpark.FileOperation.put) so that they can be added as dependencies on the Snowpark for Python UDF for inference.
-
-Here's the code snippet:
-
-```python
-session.file.put('imagenet1000_clsidx_to_labels.txt','@dash_files',overwrite=True,auto_compress=False)
-session.file.put('mobilenetv3.py','@dash_files',overwrite=True,auto_compress=False)
-session.file.put('mobilenetv3-large-1cd25616.pth','@dash_files',overwrite=True,auto_compress=False)
-```
-
-<br/>
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-<br/>
-
-![Snowpark](assets/snowpark_python_udfs.png)
+### Snowpark Python
 
 Here's the Snowpark for Python UDF code that uses the pre-trained model for image recognition in ***both applications***.
 
@@ -266,37 +218,86 @@ Notes:
 - Because functions *load_class_mapping(), load_image()*, and *load_model()* are global objects, they're also serialized and available in *image_recognition_using_bytes()* UDF.
 
 <!-- ------------------------ -->
-## Setup Environment
+## Streamlit Applications
 
 Duration: 5
 
-In order to build and run the applications, setup your environment as described below.
+Now let's review the two image recognition applications you'll build in Streamlit.
 
-- Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec) and browse to the app folder *sfguide-snowpark-pytorch-streamlit-openai-image-rec*
+### Application 1 - Upload an image
 
-- Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8)*.
+This application uses Streamlit's [*st.file_uploader()*](https://docs.streamlit.io/library/api-reference/widgets/st.file_uploader) to allow the user to upload an image file. Once the file is uploaded successfully, the following code snippet converts image data from base64 to hex and stores it in a Snowflake table using a very handy Snowpark API [*session.write_pandas()*](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/api/snowflake.snowpark.Session.write_pandas.html).
 
-- From the app folder, create conda environment. Then activate conda environment and install Snowpark for Python and other libraries including Streamlit. *Note: You can skip installing openai if you're not going to run the second application.*
+Here's the code snippet:
 
 ```python
-conda create --name snowpark-img-rec -c https://repo.anaconda.com/pkgs/snowflake python=3.9
-conda activate snowpark-img-rec
-conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas notebook cachetools
-pip install streamlit
-pip install uuid
-pip install openai
+uploaded_file = st.file_uploader("Choose an image file", accept_multiple_files=False, label_visibility='hidden')
+if uploaded_file is not None:
+  # Convert image base64 string into hex 
+  bytes_data_in_hex = uploaded_file.getvalue().hex()
+
+  # Generate new image file name
+  file_name = 'img_' + str(uuid.uuid4())
+
+  # Write image data in Snowflake table
+  df = pd.DataFrame({"FILE_NAME": [file_name], "IMAGE_BYTES": [bytes_data_in_hex]})
+  session.write_pandas(df, "IMAGES")
 ```
 
-*Note: The latest versions this application has been tested -- snowflake-snowpark-python 1.8.0, streamlit 1.28.0, openai 0.28.1.*
+### Application 2 - OpenAI generated image
 
-- Update [connection.json](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/connection.json) with your Snowflake account details and credentials. *Note: For the account parameter, specify your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier.html) and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection.*
+This application uses OpenAI's API [*openai.Image.create()*](https://beta.openai.com/docs/guides/images/generations) to generate images based on the description provided by the user in the form of text/natural language - in real-time! Then, similar to the first application, the generated image data is converted from base64 into hex and that image data is stored in a Snowflake table using a very handy Snowpark API *session.write_pandas()*.
 
-- In your Snowflake account, create a Snowflake table and internal stage by running the following commands in Snowsight. The table will store the image data and the stage is for storing serialized Snowpark Python UDF code. *Note: It's assumed that you've already created a warehouse, a database and a schema in your Snowflake account.*
+Here's the code snippet:
 
-```sql
-create or replace table images (file_name string, image_bytes string);
-create or replace stage dash_files;
+```python
+# Retrieve OpenAI key from environment variable
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# Add text box for entering text
+text_input = st.text_input("Enter description of your favorite animal 👇")
+if text_input:
+   response = openai.Image.create(
+      prompt=text_input,
+      n=1,
+      size="512x512",
+      response_format="b64_json"
+   )
+
+  # Convert image base64 string into hex
+  image_bytes = response['data'][0]['b64_json']
+  bytes_data_in_hex = base64.b64decode(image_bytes).hex()
+
+  # Generate new image file name
+  file_name = 'img_' + str(uuid.uuid4())
+
+  # Decode base64 image data and generate image file that can be used to display on screen 
+  decoded_data = base64.b64decode((image_bytes))
+  with open(file_name, 'wb') as f:
+    f.write(decoded_data)
+
+  # Write image data in Snowflake table
+  df = pd.DataFrame({"FILE_NAME": [file_name], "IMAGE_BYTES": [bytes_data_in_hex]})
+  session.write_pandas(df, "IMAGES")
 ```
+
+Notes:
+
+- It's assumed that you've stored your OpenAI API key in an environment variable named ***OPENAI_API_KEY***. If not, change the code accordingly before running the app.
+- The reason behind writing the image file locally is so that the generated image (by OpenAI) can be displayed in the browser. (Note that the image file is deleted after it's displayed.)
+
+### In Both Applications
+
+- Streamlit's *st.set_page_config(), st.header(), st.caption(), st.columns() and st.container()* are used to organize and display various components of the application.
+- For simplicity, the hex image data is stored in String format in a Snowflake table.
+- The Snowpark for Python UDF *image_recognition_using_bytes()* that uses PyTorch for image recognition running in Snowflake is the same and is invoked as shown below.
+
+```python
+# Call Snowpark User-Defined Function to predict image label
+predicted_label = session.sql(f"SELECT image_recognition_using_bytes(image_bytes) as PREDICTED_LABEL from IMAGES where FILE_NAME = '{file_name}'").to_pandas().iloc[0,0]
+```
+
+- In the above code snippet, the Snowpark for Python UDF *image_recognition_using_bytes()* is passed the contents of the column *image_bytes* where the column *FILE_NAME* matches the name of the image file generated using uuid.
 
 <!-- ------------------------ -->
 ## Build and Run Applications
@@ -304,14 +305,6 @@ create or replace stage dash_files;
 Duration: 5
 
 Once you have satisfied the prerequisites and set up your environment as described, running the two applications is pretty straightforward.
-
-- In your favorite IDE such as Jupyter Notebook or VS Code, set the Python kernel to **snowpark-img-rec** (the name of the conda environment created in the previous step) and then run through the cells in [Snowpark_PyTorch_Image_Rec.ipynb](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec/blob/main/Snowpark_PyTorch_Image_Rec.ipynb).
-
-- Once every cell runs without any errors, you can check the contents of the Snowflake stage to make sure the model files and the UDF exists by running the following command in Snowsight. *Note: Replace the name of the stage with the one you created.*
-
-```sql
-list @dash_files;
-```
 
 ### Application 1 - Upload image
 
@@ -354,10 +347,7 @@ Congratulations! You've successfully created image recognition applications in S
 
 ### Related Resources
 
-- [Full demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/image-recognition-with-snowflake/)
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec)
-- [Machine Learning with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
-- [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
-- [Streamlit Docs](https://docs.streamlit.io/)
+

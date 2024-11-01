@@ -12,11 +12,11 @@ tags: Getting Started, Data Lake, Iceberg
 ## Overview 
 Duration: 1
 
-This guide is designed to help you understand the capabilities included in Snowflake’s support for Apache Iceberg. Iceberg Tables, a new type of Snowflake table in public preview, bring Snowflake’s easy platform management and great performance to data stored externally in the open source Apache Iceberg format.
+This guide is designed to help you understand the capabilities included in Snowflake’s support for Apache Iceberg. Iceberg Tables, now generally available, bring Snowflake’s easy platform management and great performance to data stored externally in the open source Apache Iceberg format.
 
-> aside negative
+> aside positive
 > 
->  Iceberg Tables are currently in public preview.
+>  Iceberg Tables are now generally available.
 
 ### Prerequisites
 - Familiarity with Snowflake
@@ -33,7 +33,7 @@ This guide is designed to help you understand the capabilities included in Snowf
 - How to access a Snowflake-managed Iceberg Table from Apache Spark
 
 ### What You’ll Need 
-- A Snowflake account. A [free trial](https://signup.snowflake.com/) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for most of this lab, but if you’d like to try governance features covered in section 4, you will need [Enterprise](https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition) or [Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition).
+- A Snowflake account. A [free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for most of this lab, but if you’d like to try governance features covered in section 4, you will need [Enterprise](https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition) or [Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition).
 - A storage bucket with the same cloud provider in the same region that hosts your Snowflake account above. Direct credential access required as storage integrations are not supported for External Volumes.
 
 ### What You’ll Build 
@@ -95,37 +95,18 @@ GRANT ROLE iceberg_lab TO USER iceberg_lab;
 GRANT ROLE iceberg_lab TO USER <your username>;
 GRANT ROLE accountadmin TO USER iceberg_lab;
 ```
-
-### Generate Public and Private Keys
-
-Your local Spark client will connect to Snowflake via the [JDBC driver](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc). For mac, open a terminal window, navigate to your working directory, then run these two commands. For PC, you can use [this tool](https://www.cryptool.org/en/cto/openssl) to run the same commands below, and download the `/rsa_key.p8` and `/rsa_key.pub` files from the Files tab.
-
-```bash
-openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
-openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
-```
-
-Open file rsa_key.pub with a simple text editor copy your key, which is everything in-between the "- - - -" lines. If ‘openssl' command is not found, you need to review your Java installation before proceeding.
-
-Now in a Snowflake SQL worksheet, run the command below after pasting your username and key.
-
-```sql
-USE ROLE accountadmin;
-ALTER USER iceberg_lab SET rsa_public_key='<paste your public key here>';
-```
-
 <!-- ------------------------ -->
 ## Create an Iceberg Table
 Duration: 10
 
 ### Create an External Volume
 
-Before you create an Iceberg table, you must have an external volume. An external volume is a Snowflake object that stores information about your cloud storage locations and identity and access management (IAM) entities (for example, IAM roles). Snowflake uses an external volume to establish a connection with your cloud storage in order to access Iceberg metadata and Parquet table data.
+Before you create an Iceberg table, you must have an external volume. An external volume is a Snowflake object that stores information about your cloud storage locations and identity and access management (IAM) entities (for example, IAM roles). Snowflake uses an external volume to establish a connection with your cloud storage in order to access Iceberg metadata and Parquet data.
 
 To create an external volume, complete the instructions for your cloud storage service:
-- [Accessing Amazon S3 using external volumes](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume#configure-an-external-volume-for-amazon-s3)
-- [Accessing Google Cloud Storage using external volumes](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume#configure-an-external-volume-for-google-cloud-storage)
-- [Accessing Microsoft Azure Storage using external volumes](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume#configure-an-external-volume-for-azure-storage)
+- [Accessing Amazon S3 using external volumes](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-s3)
+- [Accessing Google Cloud Storage using external volumes](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-gcs)
+- [Accessing Microsoft Azure Storage using external volumes](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure)
 
 Prior to creating the external volume, be sure to use the `ACCOUNTADMIN` role.
 

@@ -20,7 +20,7 @@ In this Quickstart guide, we will play the role of a data scientist at a telecom
 - Familiarity with basic Python and SQL
 - Familiarity with training ML models
 - Familiarity with data science notebooks
-- Go to the [Snowflake](https://signup.snowflake.com/) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
+- Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
 
 ### What You'll Learn
 
@@ -28,6 +28,9 @@ In this Quickstart guide, we will play the role of a data scientist at a telecom
 - How to train a Random Forest with Snowpark ML model
 - How to visualize the predicted results from the forecasting model
 - How to convert a Hex project into an interactive web app and make predictions on new users
+
+
+
 
 <!-- ------------------------ -->
 
