@@ -60,12 +60,12 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight),
 The [Snowflake Marketplace](https://other-docs.snowflake.com/en/collaboration/collaboration-marketplace-about) provides mutiple listings for data you may use for analytical purposes. We will be leveraging the open data aggregated by Cybersyn for this quickstart, which contains a database of holidays to enrich our sales data. 
 
 - Log into your Snowflake account as the ACCOUNTADMIN or similar role
-- Follow the steps below to access the Cybersyn Government Essentials listing in your account. 
+- Follow the steps below to access the **Cybersyn Global Government** listing in your account. 
   - Click on 'Marketplace' on the left hand banner:
   
     <img src = "assets/marketplace.png">
   
-  - In the search bar, search for 'Cybersyn Government Essentials'
+  - In the search bar, search for 'Cybersyn Global Government'
     
   - Click on the first listing, with the same title: 
 
@@ -119,7 +119,8 @@ CREATE OR REPLACE TABLE quickstart.ml_functions.tasty_byte_sales(
 	PRIMARY_CITY VARCHAR(16777216),
 	MENU_ITEM_NAME VARCHAR(16777216),
 	TOTAL_SOLD NUMBER(17,0)
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"aiml_notebooks_mlpf", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 
 -- Ingest data from S3 into our table
 COPY INTO quickstart.ml_functions.tasty_byte_sales 
