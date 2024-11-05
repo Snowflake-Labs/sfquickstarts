@@ -888,7 +888,7 @@ For Tasty Bytes, Access History is particularly important for Compliance, Auditi
 Within this step, we will walk through leveraging Access History to find when the last time our Raw data was read from and written to.
 
 > aside negative
-> Access History latency is up to 3 hours. If you have just recently setupb the Tasty Bytes environment, some of the queries below may not have results. 
+> Access History latency is up to 3 hours. If you have just recently set up the Tasty Bytes environment, some of the queries below may not have results. 
 >
 
 ### Step 1 - Leveraging Access History
