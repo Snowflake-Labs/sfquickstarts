@@ -1,6 +1,6 @@
-author: Yogitha Chilukuri
+author: Shreya Agrawal
 id: getting_started_with_search_optimization
-summary: This is a sample Snowflake Guide
+summary: Quickstart guide for using Search Optimization
 categories: getting-started
 environments: web
 status: Published 
@@ -27,7 +27,7 @@ A basic knowledge of how to run and monitor queries in the Snowflake Web UI.
 ### What you’ll learn
 - How to acquire a suitable dataset from Snowflake Marketplace
 - How to enable Search Optimization
-- What the performance impact of enabling Search Optimization on different queries is
+- What is the performance impact of enabling Search Optimization on different queries
 
 ### What You'll Need
 - A supported [browser](https://docs.snowflake.com/en/user-guide/setup.html)
@@ -37,8 +37,7 @@ A basic knowledge of how to run and monitor queries in the Snowflake Web UI.
   - Get access to an existing Snowflake Enterprise Edition account with the `ACCOUNTADMIN` role or the `IMPORT SHARE` privilege
 
 ### What You’ll Build 
-Performant queries that explore the data from wikidata datasource. Wikidata is a free, collaborative, multilingual knowledge graph.  It is a document-oriented database, focused on items, which represent any kind of topic, concept, or object. More information can be found at https://en.wikipedia.org/wiki/Wikidata
-
+Performant queries that explore the data from [LLM Training] (https://app.snowflake.com/marketplace/listing/GZTSZ290BUX1X/cybersyn-llm-training) dataset by [Cybersyn] (https://docs.cybersyn.com/intro/). Cybersyn is a Data-as-a-Service (DaaS) company that is native to Snowflake.
 
 Negative: The Marketplace data used in this guide changes from time-to-time, and your query results may be slightly different than indicated in this guide. Additionally, the Snowflake UI changes periodically as well, and instructions/screenshots may be out of date.
 
@@ -91,16 +90,16 @@ Duration: 2
 The next step is to acquire data that has all data types supported by Search Optimization. The best place to acquire this data is the Snowflake Marketplace.
 
 - Navigate to the `Marketplace` screen using the menu on the left side of the window
-- Search for `Wikidata`  in the search bar
-- Find and click the `Util Wikidata` tile
+- Search for `Cybersyn` in the search bar
+- Find and click the `LLM Training` tile
 
-![wikidata](assets/Wikidata.png)
+![LLM Training](assets/LLM_Training_data.png)
 
 - Once in the listing, click the big blue Get Data button
 
 On the `Get Data` screen, you may be prompted to complete your user profile if you have not done so before. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get Data` screen.
 
-Congratulations! You have just created a shared database named `WIKIDATA` from a listing on the Snowflake Marketplace. Click the big blue `Query Data` button and advance to the next step in the guide.
+Congratulations! You have just created a shared database named `LLM_TRAINING` from a listing on the Snowflake Marketplace. Click the big blue `Query Data` button and advance to the next step in the guide.
 
 ---
 
@@ -112,13 +111,17 @@ The prior section opened a worksheet editor in the new Snowflake UI with a few p
 
 ### Understanding the data
 
-You are going to first copy over two of the tables from `WIKIDATA` (the database that you just imported) into a new database (we will call it `WIKI_SO`). 
+You are going to first copy over two of the tables from `LLM_TRAINING` (the database that you just imported) into a new database (we will call it `LLM_TRAINING_SO`). 
 
 This is necessary as 
-- You wouldn’t have the privileges to set up Search Optimization on the shared `WIKIDATA` database  
-- It will allow you to run the same query on both search optimized (in `WIKI_SO` database) and non search optimized tables (in `WIKIDATA` database) to compare the performance of Search Optimization.
+- You wouldn’t have the privileges to set up Search Optimization on the shared `LLM_TRAINING` database  
+- It will allow you to run the same query on both search optimized (in `LLM_TRAINING_SO` database) and non search optimized tables (in `LLM_TRAINING` database) to compare the performance of Search Optimization.
+- Optionally, you can also create another database to store the tables without Search Optimization to compare performance and check the partition access/pruning details, as querying on the shared data will not show this information.
 
-The first table we will use is `wikidata_original`, it has information about the wikidata articles such as description, label etc. There are ***96.9 million rows*** in this table. 
+The table we will use is `OPENALEX_WORKS_INDEX`, which has data from OpenAlex, a bibliographic catalogue of scientific papers, authors, and institutions accessible in open access mode. It has ***~260 million rows***.
+
+
+<!-- The first table we will use is `wikidata_original`, it has information about the wikidata articles such as description, label etc. There are ***96.9 million rows*** in this table. 
 
 The second table is `entity_is_subclass_of`, which contains the information about subclass categories like subclass id and subclass name. It is a smaller table and has ***~3.3 million rows***. 
 
@@ -139,69 +142,134 @@ The result looks like this:
 
 ![result](assets/result1.png)
 
-So, Id `Q1968` is an article about `Formula One` (`LABEL`) and this entity rightly belongs to the subclass `Formula Racing` (`SUBCLASS_OF_NAME`). 
+So, Id `Q1968` is an article about `Formula One` (`LABEL`) and this entity rightly belongs to the subclass `Formula Racing` (`SUBCLASS_OF_NAME`).  -->
 
 ### Copy the required tables into a new database
 
-Now let’s copy over the above two tables into a new database before we enable Search Optimization on them. 
+Now let's copy over the above table or all 27 tables into a new database before we enable Search Optimization on OPENALEX_WORKS_INDEX.
 
 Before we run the queries to do so, let’s create a new worksheet named `Search Optimization Guide` by clicking the `+ icon` on the left navigation bar. Throughout this guide, we will run  the queries on the search optimized tables in the `Search Optimization Guide` worksheet.
 
 Run the query below in the `Search Optimization Guide` worksheet:
 
 ```
-CREATE DATABASE wiki_so;
-CREATE SCHEMA experiments;
+//Note: Use appropriate role having required privileges as mentioned 
+//https://docs.snowflake.com/en/user-guide/search-optimization/enabling#required-access-control-privileges
+USE ROLE accountadmin;
 
-//Note: Substitute my_wh with your warehouse name if different
+//Note: Substitute warehouse name my_wh with your warehouse name if different
+USE WAREHOUSE my_wh;
+
+//Note: Substitute database name so_analysis with your choice of database name(if required)
+CREATE OR REPLACE DATABASE LLM_TRAINING_SO;
+
+USE DATABASE LLM_TRAINING_SO;
+
+SHOW SCHEMAS;
+
+//Note: Create Schema name of your choice if you do not want to use PUBLIC schema
+USE SCHEMA public;
+CREATE SCHEMA CYBERSYN;
+USE SCHEMA CYBERSYN;
+
+//Note: Substitute my_wh with your warehouse name if different and use warehouse size of your choice
 ALTER WAREHOUSE my_wh set warehouse_size='4x-large';
 
-//This query will run in ~90 seconds.
-CREATE TABLE wiki_so.experiments.wikidata_original AS (SELECT * FROM wikidata.wikidata.wikidata_original);
-
-//This query will run in ~7 seconds.
-CREATE TABLE wiki_so.experiments.entity_is_subclass_of AS (SELECT * FROM wikidata.wikidata.entity_is_subclass_of);
-
-//Note: Substitute my_wh with your warehouse name if different
-ALTER WAREHOUSE my_wh set warehouse_size='small';
+//This query time will depend on the warehouse size.
+CREATE OR REPLACE TABLE OPENALEX_WORKS_INDEX AS SELECT * FROM LLM_TRAINING.CYBERSYN.OPENALEX_WORKS_INDEX; 
 ```
+```
+//Note: Check the table details
+DESCRIBE TABLE OPENALEX_WORKS_INDEX;
+
+SHOW TABLES LIKE 'OPENALEX_WORKS_INDEX' IN SCHEMA LLM_TRAINING_SO.CYBERSYN;
+
+//Note: Check the table details by looking at the table DDL.
+SELECT GET_DDL('table','LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX');
+
+//Note: Check the data (Optional)
+SELECT * FROM LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX LIMIT 100;
+```
+
+Before enabling Search Optimization on the table, it is recommended to execute queries on the table `OPENALEX_WORKS_INDEX` with filter predicates on the columns on which you wish to enable Search Optimization. This will show you the benefits of using Search Optimization. 
+
+```
+// Note: Optional to execute the queries before enabling Search Optimization on the table
+
+ALTER SESSION SET use_cached_result = false; -- to clear cached data
+
+ALTER WAREHOUSE my_wh SET warehouse_size = MEDIUM;
+
+ALTER WAREHOUSE my_wh SUSPEND; -- to clear data cached at the warehouse level
+
+ALTER WAREHOUSE my_wh RESUME;
+
+ALTER WAREHOUSE my_wh SET warehouse_size= 'X-SMALL';
+
+// Note: This query will take ~2 minutes 
+SELECT *  from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX where mag_work_id = 2240388798; 
+
+// Note: This query will take ~2.5 minutes 
+SELECT *  from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX where work_title ilike 'Cross-domain applications of multimodal human-computer interfaces'; 
+
+// Note: This query will take ~3 minutes 
+SELECT * from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX  where WORK_PRIMARY_LOCATION:source:display_name ilike 'Eco-forum'; 
+
+// Note: This query will take ~4 minutes 
+SELECT * from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX  where WORK_PRIMARY_LOCATION:source:issn_l = '2615-6946'; 
+```
+
+Check Search Optimization estimated credit consumption before enabling Search Optimization using the [cost estimation function](https://docs.snowflake.com/en/sql-reference/functions/system_estimate_search_optimization_costs).
+
+```
+//Note: Optional but recommended step
+
+SELECT SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS('LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX',
+                                               'EQUALITY(MAG_WORK_ID),EQUALITY(WORK_PRIMARY_LOCATION:source.display_name),
+                                               SUBSTRING(WORK_TITLE),SUBSTRING(WORK_PRIMARY_LOCATION:source.issn_l)')
+AS estimate_for_columns_without_search_optimization;
+```
+
+The output of the cost estimation function will give you an idea of the credit consumption of building and maintaining the search optimization index.
 
 ### Enable Search Optimization
 
-Now let’s enable Search Optimization for the `wikidata_original` table in the newly created `WIKI_SO` Database (`Search Optimization Guide` Worksheet). We can either enable Search Optimization on the whole table or enable it for a few columns depending on the queries we want to accelerate. 
-
-For this guide, let’s selectively enable Search optimization for a few columns:
+Now, let's enable Search Optimization for the `OPENALEX_WORKS_INDEX` in the newly created `LLM_TRAINING_SO` Database (`Search Optimization Guide` Worksheet). Depending on the queries we want to accelerate, we can either enable search optimization for the whole table or for a few columns.
+ 
+For this guide, let's selectively enable Search optimization for a few columns:
 
 ```
-// Defining Search Optimization on VARCHAR fields
-ALTER TABLE wikidata_original ADD SEARCH OPTIMIZATION ON EQUALITY(id, label, description);
+// Defining Search Optimization on NUMBER fields For Equality
+ALTER TABLE LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON EQUALITY(MAG_WORK_ID);
 
 // Defining Search Optimization on VARCHAR fields optimized for Wildcard search
-ALTER TABLE wikidata_original ADD SEARCH OPTIMIZATION ON SUBSTRING(description);
+ALTER TABLE LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON SUBSTRING(WORK_TITLE);
 
-// Defining Search Optimization on VARIANT field
-ALTER TABLE wikidata_original ADD SEARCH OPTIMIZATION ON EQUALITY(labels);
+// Defining Search Optimization on VARIANT field For Equality
+ALTER TABLE LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON SUBSTRING(WORK_PRIMARY_LOCATION:source.display_name);
+
+// Defining Search Optimization on VARIANT field For Wildcard search
+ALTER TABLE LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON EQUALITY(WORK_PRIMARY_LOCATION:source.issn_l);
+
+SHOW TABLES LIKE 'OPENALEX_WORKS_INDEX' IN SCHEMA LLM_TRAINING_SO.CYBERSYN;
 ```
 
 ### Ensure Search Optimization first time indexing is complete
 
-Now, let’s verify that Search Optimization is enabled and the backend process has finished indexing our data. It will take about 2 minutes for that to happen as the optimized search access paths are being built for these columns by Snowflake. 
+Now, let's verify that Search Optimization is enabled and the backend process has finished indexing our data. It will take about 2 minutes for that to happen as the optimized search access paths are being built for these columns by Snowflake.
 
-Run the below query against the newly created database (`WIKI_SO`)
+Run the below query against the newly created database (`LLM_TRAINING_SO`)
 
 ```
-DESCRIBE SEARCH OPTIMIZATION ON wikidata_original;
+DESCRIBE SEARCH OPTIMIZATION ON LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX;
 ```
 It would return a result like below:
 
-![SOActive](assets/SOActive.png)
+![SOActive](assets/SOActive_LLM.png)
 
+Make sure that all the rows have the active column set to true before proceeding further in this guide.
 
-Make sure that all the rows have the `active` column set to `true` before proceeding further in this guide.
-
-Now you are all set up to run some queries and dive deep into Search Optimization. 
-
-We have intentionally enabled Search Optimization for `wikidata_original` table and not `entity_is_subclass_of` table for this guide.
+Now you are all set up to run some queries and dive deep into Search Optimization.
 
 > **_NOTE:_** 
 Please note that the results, query time, partitions or bytes scanned might differ when you run the queries in comparison to the values noted below as the data gets refreshed monthly in the above two tables. 
@@ -212,59 +280,63 @@ Duration: 10
 
 Now let’s build some queries and observe how Search Optimization helps optimize them. 
 
-To start off, we have already enabled Search Optimization on the `LABEL` and `DESCRIPTION` fields for equality and substring predicates respectively in the previous section.
+To start off, we have already enabled Search Optimization on the `MAG_WORK_ID` and `WORK_TITLE` fields for equality and substring predicates respectively in the previous section.
 
-![SOEqualitySearch](assets/EqualitySearchSOEnabled.png)
+
+![SOEqualitySearch](assets/EqualitySearchSOEnabled_LLM.png)
 
 > **_NOTE:_** \
-If you wish to run the queries below on both databases (`WIKIDATA` and `WIKI_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
+If you wish to run the queries below on both databases (`LLM_TRAINING` and `LLM_TRAINING_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
 \
 ALTER SESSION SET USE_CACHED_RESULT = false; \
 ALTER WAREHOUSE my_wh SUSPEND;
 
-Now, let’s say you want to find all the articles about the `iPhone` which have the words `wikimedia or page` in the description (in that order). The query would look like:
+Now, run the same queries that you executed earlier when the Search Optimization was not enabled on the table. The query would look like below and is for the EQUALITY search on the column `MAG_WORK_ID` :
 
 ```
-SELECT * 
-  FROM wikidata_original
+SELECT *  
+  FROM LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX 
   WHERE 
-    label= 'iPhone' AND 
-    description ILIKE '%wikimedia%page%';
+    mag_work_id = 2240388798;
 ```
 
 | **Without search optimization** | **With Search Optimization**|
 |-----------------------------|-------------------------|
-| It takes 28 seconds to run the query on the table without search optimization. the other interesting aspect is, **almost all partitions** need to be scanned. also you will note that ~23.01GB data is scanned. Following are the full statistics ![equalityStat1](assets/EqualityStat1.png) | On the other hand, the query takes 5.7 seconds on the search optimized table. you will notice that **only 7 partitions** of the total 5413 partitions are scanned. in addition only 31.79MB of the data needs to be scanned.![equalityStats2](assets/StatisticsEquality2.png) |
+| It takes 1 minute 43 seconds to run the query on the table without search optimization. The other interesting aspect is that almost all partitions 15947 out of 15953 need to be scanned. Also, you will note that ~20GB of data is scanned. | On the other hand, the query takes 2.2 seconds on the search optimized table. You will notice that only 1 partition of the total 15953 partitions was scanned. In addition, only ~91MB of the data needs to be scanned. |
+
+![STATISITCS_LLM_1](assets/STATISITCS_LLM_1.png)
 
 *Looking at the numbers side by side, we know that Search Optimization has definitely improved the query performance.*
 
 |                                      | **Without Search Optimization**  | **With Search Optimization** | **Performance Impact** |
 |--------------------------------------|------------------------------|--------------------------|--------------------|
-| **Query run time**                   | 28 seconds                   | 5.7 seconds              |**79.64% improvement** in query speed  |
-| **Percentage of partitions scanned** | 99.91%                       |0.13%                     |**99.78% less partitions** scanned     |
-| **Bytes scanned**                    |23.01GB                       |31.79MB                   |**99.86% less data** scanned           |
+| **Query run time**                   | 1 minute 43 seconds          | 2.2 seconds              |**97.86% improvement** in query speed  |
+| **Percentage of partitions scanned** | 99.96%                       |0.0001%                   |**99.9% less partitions** scanned     |
+| **Bytes scanned**                    |20.20GB                       |91.88MB                   |**99.9% less data** scanned           |
 
-Let’s look at another example. Say, you want to find all articles which have the words `blog post` in their description, following would be the query to do so:
+Let's look at another example with the SUBSTR search on the column `WORK_TITLE`.
 
 ```
-SELECT * 
-  FROM wikidata_original 
+SELECT *  
+  FROM LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX 
   WHERE 
-    description ILIKE '%blog post%';
+    work_title ilike 'Cross-domain applications of multimodal human-computer interfaces'; 
 ```
 | **Without search optimization** | **With Search Optimization**|
 |-----------------------------|-------------------------|
-| The query runs for 23 seconds and **ALL partitions** are scanned. Also, 10.60GB of data is scanned. See the picture below for full details.![equalityStat3](assets/StatsEquality3Copy.png) | On the other hand, the query runs in 8.7 seconds on the Search Optimized table. You’ll also notice that **only 347 partitions** of the total 5413 partitions are scanned. In addition 4.09GB of the data was scanned.  See the picture below for full details.![equalityStats4](assets/EqualityStats4-2.png) |
+| The query runs for ~2.5 minutes and ALL partitions are scanned. Also, 31.70GB of data is scanned. See the picture below for full details. | On the other hand, the query runs in 5 seconds on the Search Optimized table. You'll also notice that only 182 partitions of the total 15953 partitions are scanned. In addition, 1.07GB of the data was scanned. See the picture below for full details. |
+
+![STATISITCS_LLM_2](assets/STATISITCS_LLM_2.png)
 
 *As you can see from the **Performance Impact** column above, using Search Optimization allows us to make significant improvements in query performance.*
 
 |                                      | **Without Search Optimization**  | **With Search Optimization** | **Performance Impact** |
 |--------------------------------------|------------------------------|--------------------------|--------------------|
-| **Query run time**                   | 23 seconds                   | 8.7 seconds              |**62.17% improvement** in query speed  |
-| **Percentage of partitions scanned** | 100%                       |6.41%                     |**99.59% less partitions** scanned     |
-| **Bytes scanned**                    |10.60GB                       |4.09GB                  |**61.42% less data** scanned           |
+| **Query run time**                   | 2 minute 25s                 | 5 seconds              |**97% improvement** in query speed  |
+| **Percentage of partitions scanned** | 100%                       |1.2%                     |**98.8% less partitions** scanned     |
+| **Bytes scanned**                    |31.70GB                       |1.07GB                  |**96.62% less data** scanned           |
 
-Want to learn more? You can refer to our external documentations for benefitting from Search Optimization for queries with [ Equality Predicates](https://docs.snowflake.com/en/user-guide/search-optimization-service.html#equality-or-in-predicates) and [Wildcards](https://docs.snowflake.com/en/user-guide/search-optimization-service.html#substrings-and-regular-expressions)
+Want to learn more? You can refer to our external documentations for benefitting from Search Optimization for queries with [ Equality Predicates](https://docs.snowflake.com/en/user-guide/search-optimization-service.html#equality-or-in-predicates) and [Wildcards](https://docs.snowflake.com/en/user-guide/search-optimization-service).html#substrings-and-regular-expressions)
 
 ---
 
@@ -274,42 +346,69 @@ Duration: 5
 In this section, let’s search in the variant data and analyze how Search Optimization helps in these cases. 
 
 > **_NOTE:_**  
- If you wish to run the queries below on both databases (`WIKIDATA` and `WIKI_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
+ If you wish to run the queries below on both databases (`LLM_TRAINING` and `LLM_TRAINING_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
  \
 ALTER SESSION SET USE_CACHED_RESULT = false;\
 ALTER WAREHOUSE my_wh SUSPEND;
+ALTER WAREHOUSE my_wh RESUME;
 
+To start, we have already enabled Search Optimization on the `WORK_PRIMARY_LOCATION` field, which is an unstructured JSON field. We also enabled SUBTR and EQUALITY search on different columns of the JSON data.
 
-To start off, we have already enabled Search Optimization on the `Labels` field which is an unstructured JSON.
+![VariantSOActive](assets/VariantSOActive_LLM.png)
 
-![VariantSOActive](assets/VariantSOActive.png)
-
-Let’s say you want to find all entries where the label is set to `National Doughnut Day` in the `English version` of the article. To do so, you can run the following query:
+Now, run the same queries that you executed earlier when the Search Optimization was not enabled on the table. The query would look like below and is for the EQUALITY search on the variant column `WORK_PRIMARY_LOCATION:source:issn_l`:
 
 ```
-SELECT * 
-  FROM wikidata_original 
-  WHERE labels:en:value = 'National Doughnut Day';
+select * 
+  from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX  
+  where 
+    WORK_PRIMARY_LOCATION:source:issn_l = '2615-6946';
 ```
-The above query returns **2 rows out of 96.9 million rows**. 
+The above query returns ***1 row out of 260 million rows***.
 
 | **Without search optimization** | **With Search Optimization**|
 |-----------------------------|-------------------------|
-| The query runs for 42 seconds on the shared database. You will also see that **ALL partitions** need to be scanned. In addition, ~83.38GB of data was scanned. ![variantStats1](assets/variantStats1.png) | On the other hand, it takes 5.2 seconds to run the same query on the search optimized table. You will also notice that **only 5 partitions** of the total 5413 partitions are scanned. In addition only 94.25MB of the data was scanned.![varinatStats2](assets/VariantStats2.png) |
+| The query runs for 4m14s on the table without search optimization. You will also see that ALL partitions need to be scanned. In addition, 105.76GB of data was scanned. | On the other hand, it takes 1.7 seconds to run the same query on the search optimized table. You will also notice that only 1 partition of the total 15953 partitions is scanned. In addition, only 34.80MB of the data was scanned. |
+
+![STATISITCS_LLM_3](assets/STATISITCS_LLM_3.png)
 
 *From the **Performance Impact** column below, we see that using Search Optimization allows us to make significant improvements in query performance*
 
 |                                      | **Without Search Optimization**  | **With Search Optimization** | **Performance Impact** |
 |--------------------------------------|------------------------------|--------------------------|--------------------|
-| **Query run time**                   | 42 seconds                   | 5.2 seconds              |**87.62% improvement** in query speed  |
-| **Percentage of partitions scanned** | 100%                       |0.09%                     |**99.91% less partitions** scanned     |
-| **Bytes scanned**                    |83.38GB                       |94.35MB                   |**99.80% less data** scanned           |
+| **Query run time**                   | 4 minute 14 seconds          | 1.7 seconds              |**99.9% improvement** in query speed  |
+| **Percentage of partitions scanned** | 100%                         |0.0001%                   |**99.9% less partitions** scanned     |
+| **Bytes scanned**                    |105.76GB                      |34.80MB                   |**99.9% less data** scanned           |
+
+Another example, for EQUALITY search on the variant column `WORK_PRIMARY_LOCATION:source:issn_l`:
+
+```
+select * 
+  from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX  
+  where 
+    WORK_PRIMARY_LOCATION:source:display_name ilike 'Eco-forum'; 
+```
+The above query returns ***416 rows out of 260 million rows***.
+
+| **Without search optimization** | **With Search Optimization**|
+|-----------------------------|-------------------------|
+| The query runs for 3m2s on the table without search optimization. You will also see that ALL partitions need to be scanned. In addition, 28.66GB of data was scanned.  | On the other hand, it takes 12 seconds to run the same query on the search optimized table. You will also notice that only 412 partitions of the total 15953 partitions are scanned. In addition, 6.07GB of the data was scanned. |
+
+![STATISITCS_LLM_4](assets/STATISITCS_LLM_4.png)
+
+*From the **Performance Impact** column below, we see that using Search Optimization allows us to make significant improvements in query performance*
+
+|                                      | **Without Search Optimization**  | **With Search Optimization** | **Performance Impact** |
+|--------------------------------------|------------------------------|--------------------------|--------------------|
+| **Query run time**                   | 3 minute 2 seconds          | 12 seconds              |**93.4% improvement** in query speed  |
+| **Percentage of partitions scanned** | 100%                         |2.6%                   |**97.4% less partitions** scanned     |
+| **Bytes scanned**                    |28.66GB                      |6.07MB                   |**78.82% less data** scanned           |
 
 Want to learn more? You can refer to our external documentations for [benefitting from Search Optimization for queries on Variant Data](https://docs.snowflake.com/en/user-guide/search-optismization-service.html#fields-in-variant-columns)
 
 ----
 
-## Accelerating Joins
+<!-- ## Accelerating Joins
 Duration: 5
 
 The search optimization service can improve the performance of queries that join a small table with a large table. 
@@ -352,21 +451,21 @@ ALTER WAREHOUSE my_wh SUSPEND;
 
 Want to learn more? You can refer to our external documentations for [benefitting from Search Optimization for JOIN queries](https://docs.snowflake.com/en/user-guide/search-optimization-service.html#enabling-the-search-optimization-service-to-improve-the-performance-of-joins)
 
-----
+---- -->
 
 ## Queries that are not benefitting from Search Optimization
 
-Not all queries benefit from Search Optimization. One such example is the following query to get all entries that have description with the words wikimedia and page in that order. The query would look like:
+Not all queries benefit from Search Optimization. One such example is the following query to get all entries that have description with the words `Reactions Weekly` and page in that order. The query would look like:
 
 ```
-SELECT * 
-  FROM WIKIDATA_ORIGINAL 
-  WHERE description ILIKE '%wikimedia%page%';
+select * 
+  from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX  
+  where 
+    WORK_PRIMARY_LOCATION:source:display_name ilike 'Reactions Weekly'; 
 ```
+The following query returns **~256K rows**. As shown in the snapshot below, **only 8 out of the 15953 partitions is skipped** when you run the query on the search optimized **OPENALEX_WORKS_INDEX** table in our newly created **LLM_TRAINING_SO** database .
 
-The following query returns **1.4 Million rows**. As shown in the snapshot below, ***only 1 out of the 5413 partitions is skipped*** when you run the query on the search optimized `wikimedia_original` table in our newly created `WIKI_SO` database . 
-
-![SO_Not_Applicable](assets/SOna.png)
+![SO_Not_Applicable](assets/SOna_LLM.png)
 
 **Such queries aren’t benefitted from Search Optimization as the number of partitions that can be skipped by Search Optimization Service are very minimal.**
 
