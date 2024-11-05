@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cortex, Data Science & Ai
 
-# LLM Assisted Medical Coding Extraction for Healthcare
+# LLM Assisted Medical Coding Extraction for Healthcare in Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
