@@ -92,6 +92,7 @@ In Snowsight navigate to Worksheets, click "+" in the top-right corner to create
 Run the following SQL commands  to create Snowflake objects (database, schema, tables).
 
 ```sql
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is", "name":"distributed_ml_crt_imageanomaly_detection", "version":{"major":1, "minor":0,},"attributes":{"is_quickstart":1, "source":"sql"}}';
 use role ACCOUNTADMIN;
 
 

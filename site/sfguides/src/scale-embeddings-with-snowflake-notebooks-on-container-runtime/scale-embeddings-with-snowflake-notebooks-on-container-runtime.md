@@ -49,6 +49,7 @@ Complete the following steps to setup your account:
 - Run all commands to create Snowflake objects
 
 ```sql
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is", "name":"cr_notebooks_embeddings", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 USE ROLE ACCOUNTADMIN;
 
 -- Using SYSADMIN, create a new role for this exercise and grant to applicable users
