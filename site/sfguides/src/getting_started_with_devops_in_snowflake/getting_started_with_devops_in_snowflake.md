@@ -583,14 +583,6 @@ jobs:
 
 Both commands are executed using the `snow` command. This command is part of the [SnowflakeCLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) tool, not to be confused with its predecessor [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql). SnowflakeCLI is an open-source command-line tool explicitly designed for developer-centric workloads. Also provided is a [native GitHub Action](https://github.com/Snowflake-Labs/snowflake-cli-action), simplifying the setup and connection management. It is a flexible and extensible tool that can accommodate modern development practices and technologies. This makes it a perfect choice for DevOps.
 
-SnowflakeCLI simplifies the development and deployment of the following Snowflake objects:
-
-- Snowpark Python UDFs
-- Snowpark Python Stored Procedures
-- Streamlit Applications
-
-Here, we only use a fraction of its capabilities. We use it to first refresh the Git repository’s contents in Snowflake to then execute the parametrized deployment script `deploy_parametrized_pipeline.sql`.
-
 <!-- ------------------------ -->
 ## Cleanup
 
