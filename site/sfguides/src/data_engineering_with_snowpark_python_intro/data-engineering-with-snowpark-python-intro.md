@@ -569,13 +569,13 @@ If you are familiar with Apache Airflow, you might know how we can use `>>` oper
 Here is how we define the order of execution of the tasks in our dag:
 
 ```python
-dag_task3 >> dag_task1
-dag_task3 >> dag_task2
+dag_task1 >> dag_task3
+dag_task2 >> dag_task3
 ```
 
-The above definition `dag_task3 >> dag_task1` means that `dag_task3` is dependant on `dag_task1`.
+The above definition `dag_task1 >> dag_task3` means that `dag_task3` is dependant on `dag_task1`.
 
-Similarly, `dag_task3 >> dag_task2` means that `dag_task3` is dependant on `dag_task2`.
+Similarly, `dag_task2 >> dag_task3` means that `dag_task3` is dependant on `dag_task2`.
 
 ### Deploying the DAG
 
