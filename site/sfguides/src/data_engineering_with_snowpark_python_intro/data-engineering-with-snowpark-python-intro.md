@@ -669,7 +669,7 @@ You should now see all the queries run by your tasks!
 
 Duration: 2
 
-Once you're finished with the Quickstart and want to clean things up, you can simply run the `steps/09_teardown.sql`. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/09_teardown.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
+Once you're finished with the Quickstart and want to clean things up, you can simply run the `steps/08_teardown.sql`. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/08_teardown.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
 
 <!-- ------------------------ -->
 
