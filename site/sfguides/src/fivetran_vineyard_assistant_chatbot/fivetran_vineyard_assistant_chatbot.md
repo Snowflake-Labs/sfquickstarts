@@ -147,7 +147,7 @@ If by some chance the PostgreSQL database is unavailable or inaccessible, you ma
 
 **Step 3.** Next on the connector configuration screen, enter `yourlastname_genai` as the Destination Schema Prefix.  Next copy and paste the parameters given below into their respective fields.  Note that the Destination Schema Prefix must be unique to the database.  Fivetran will prepend this name to all schemas copied from the postgres database into Snowflake.  **Do not alter any other fields except the ones listed.**
 - Destination table:  california_wine_country_visits
-- Bucket:  ft-s3-lab-bucket
+- Bucket:  ft-s3-lab-bkt
 - Access approach:  Public
 
 ![Fivetran Connector 13](assets/fivetran/f_0120.png)
