@@ -139,7 +139,9 @@ To put this in context, we are on step **#3** in our data flow overview:
 
 You can log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) or VS Code to create all the snowflake objects needed to work through this guide.
 
-For the purpose of this quickstart, we will use VS Code to run the SQL commands and create the Snowflake objects. You can open the sql file `steps/03_setup_snowflake.sql` in VS Code. You can click on the `Execute` option above every SQL command to run each command separately or click on `Execute All` to run all the commands sequentially.
+For the purpose of this quickstart, we will use VS Code to run the SQL commands and create the Snowflake objects. To do that, open the Snowflake extension tab on the left and use the account identifier and other credentials you previously entered in the SnowSQL config to sign in.
+
+You can now open the sql file `steps/03_setup_snowflake.sql` in VS Code. You can click on the `Execute` option above every SQL command to run each command separately or click on `Execute All` to run all the commands sequentially.
 
 ---
 
