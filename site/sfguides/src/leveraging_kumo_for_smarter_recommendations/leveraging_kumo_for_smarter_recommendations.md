@@ -47,11 +47,7 @@ In summary, you will learn how to:
 
 * Connect Snowflake's TPC-DS retail dataset  
 * Create Kumo predictive queries to predict your highest value customers (i.e., highest “lifetime value” customers) and the products they are most likely to buy in the next 30 days  
-* Cortex LLM    
-    Generate Cortex LLM embeddings from item descriptions in Snowflake.
-    Integrate Cortex's vector embeddings into Kumo AI’s schema for advanced predictive analytics.
-    Set up and populate an embedding column in Snowflake tables with Cortex embeddings.
-    Enable Kumo to leverage external LLM comprehension through embeddings for enhanced prediction models.
+* Set up and populate an embedding column in Snowflake tables with Cortex embeddings.
 * Train your predictive queries  
 * Evaluate your predictive models using Kumo’s explainable AI tools   
 * Create batch predictions for production use
