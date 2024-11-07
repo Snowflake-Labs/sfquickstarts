@@ -17,6 +17,7 @@ Duration: 3
 
 By completing this quickstart, you will learn how to easily transform raw data into an optimal format for analysis within Power BI. This quickstart will build upon [An Introduction to Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html?index=..%2F..index#0) quickstart. We'll begin by profiling the data within Snowsight, followed by creating new roles and granting appropriate privileges for our fictitious global BI Analyst team. Next, we'll enrich our data with third party location data from the Snowflake Marketplace in a matter of minutes. From there, we'll transform our raw data into an optimal model for downstream analysis within Power BI. Next, we'll add column and row-level data protections to our data model. Lastly, we'll connect the provided Power BI template (.pbit) file to our Snowflake data model and analyze sales transactions live.
 
+
 ![Overview_Diagram](assets/Overview_Diagram1.jpg)
 
 ### Prerequisites
@@ -29,8 +30,10 @@ By completing this quickstart, you will learn how to easily transform raw data i
 
 * How to easily profile data with Snowsight
 * How to enrich your organizational data with third party datasets from the Snowflake Marketplace
+
 * Understanding the fundamentals and benefits of a star schema design
 * How to build simple ELT pipelines with SQL using Dynamic Tables
+
 * How to tag and protect your data with Snowflake Horizon's governance features
 * Connecting Power BI to Snowflake to perform near-real time analytics
 
@@ -39,7 +42,7 @@ By completing this quickstart, you will learn how to easily transform raw data i
 - [A Snowflake Account](https://signup.snowflake.com/). Sign up for a 30-day free trial account, if necessary.
 - [Power BI Desktop](https://www.microsoft.com/en-us/download/details.aspx?id=58494)
 - The provided [Power BI Template File](https://github.com/Snowflake-Labs/sfguide-end-to-end-analytics-with-snowflake-and-power-bi/blob/main/Tasty%20Bytes%20Direct%20Query%20Quickstart.pbit) (Used in Section 6)
-- Access to a [Power BI Service Workspace](https://app.powerbi.com/) (**optional**)
+- Access to a [Power BI Service Workspace](https://app.powerbi.com/) (optional)
 
 ### What You’ll Build
 
@@ -155,7 +158,7 @@ In this section, we'll:
 
 - Create a new schema to store our database objects
 - Create a new virtual warehouse for our Power BI Semantic Model to use
-- Create a new user that will be used to simulate multiple Analyst users in a globally dispersed team
+- Create a new user that will be used to simulate multiple analyst users in a globally dispersed team
 - Create several Snowflake roles, which will be granted to the new user, and be used to determine which data elements the user will be able to see
 - Grant privileges for each role to be able to use the newly created schema and query any future objects we create
 
@@ -173,6 +176,7 @@ Dynamic Tables that will be queried by our Power BI semantic model.
 use role sysadmin;
 
 create or replace schema tb_101.powerbi;
+
 use schema tb_101.powerbi;
 
 /*
@@ -192,30 +196,29 @@ comment = 'Warehouse used for the TB Power BI DQ semantic model';
 use warehouse tb_dev_wh;
 
 
-/*-------------------------------------------------
+
+-------------------------------------------------
 
 --CREATE TEST USER, ROLES, AND GRANT PPRIVILEGES
 
--------------------------------------------------*/
-
-/* start by createing a new schema in the tb_101 database called powerbi */
-use role sysadmin;
-
-create or replace schema tb_101.powerbi;
-
-
+-------------------------------------------------
 /*
-Create a new user called tb_bi_analyst that will be used to connect 
-to Snowflake from Power BI
+Create a new user called tb_bi_analyst that will be used to connect to Snowflake from Power BI
 
 Use a strong, randomly generated password
 */
 use role useradmin;
 
 create or replace user tb_bi_analyst
-/* populate with your own password */
-  password = '';
+--populate with your own password
+  password = ''
+  default_role = 'tb_bi_analyst_global';
 
+/* 
+sample script for applying a user-level network policy:
+use role accountadmin;
+alter user tb_bi_analyst set network_policy = 'BI_ANALYST_NETWORK_POLICY';
+*/
 ```
 
 > aside negative
@@ -228,7 +231,6 @@ Next, we'll create our four test roles and grant them to the user created in the
 
 /* create testing roles */
 use role securityadmin;
-use warehouse tb_dev_wh;
 
 create or replace role tb_bi_analyst_global;
 create or replace role tb_bi_analyst_emea;
@@ -246,7 +248,6 @@ grant role tb_bi_analyst_global to role sysadmin;
 grant role tb_bi_analyst_emea to role sysadmin;
 grant role tb_bi_analyst_na to role sysadmin;
 grant role tb_bi_analyst_apac to role sysadmin;
-
 ```
 
 Lastly, we'll grant the necessary privileges to our four new roles.
@@ -280,7 +281,7 @@ grant all on future dynamic tables in schema tb_101.powerbi to role tb_bi_analys
 grant all on future dynamic tables in schema tb_101.powerbi to role tb_bi_analyst_na;
 grant all on future dynamic tables in schema tb_101.powerbi to role tb_bi_analyst_apac;
 
-/* lastly, grant usage on the tb_powerbi_wh so it can be used by each role */
+/* lastly, grant usage on the tb_powerbi_wh and the tb_dev_wh so they can be used by each role */
 grant usage on warehouse tb_powerbi_wh to role tb_bi_analyst_global;
 grant usage on warehouse tb_powerbi_wh to role tb_bi_analyst_emea;
 grant usage on warehouse tb_powerbi_wh to role tb_bi_analyst_na;
@@ -290,7 +291,6 @@ grant usage on warehouse tb_dev_wh to role tb_bi_analyst_global;
 grant usage on warehouse tb_dev_wh to role tb_bi_analyst_emea;
 grant usage on warehouse tb_dev_wh to role tb_bi_analyst_na;
 grant usage on warehouse tb_dev_wh to role tb_bi_analyst_apac;
-
 ```
 
 Congrats! You have completed the data profiling section of this guide. Additionally, we have created the database schema, user, and roles that will be used throughout the rest of this guide. In the next section we'll review the Snowflake Marketplace and leverage a free marketplace listing to enhance our Tasty Bytes dataset further.
@@ -314,7 +314,7 @@ The [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/
 From our [Snowflake Documentation](https://other-docs.snowflake.com/en/collaboration/collaboration-marketplace-about), Marketplace consumers can do the following:
 
 - Discover and test third-party data sources
-- Receive frictionless access to raw data products from vendors
+- Receieve frictionless access to raw data products from vendors
 - Combine new datasets with your existing data in Snowflake to derive new business insights
 - Have datasets available **instantly** and updated continually for users
 - Eliminate the costs of building and maintaining various APIs and data pipelines to load and update data
@@ -337,7 +337,7 @@ Access the Snowflake Marketplace from the left-hand navigation **menu --> Data P
 
 A new pop-up window will appear where you can change the name of the shared database that will be created in your account, as well as the roles that can access and query the database
 
-- **Database name:** Safe_Graph_Frostbyte (keep the default)
+- **Database name:** SafeGraph_Frostbyte (keep the default)
 - **Roles that can access:** add the **TB_DATA_ENGINEER** and **TB_DEV** roles
 - Click the **"Get"** button when ready
 - Click the **"Done"** button once the listing is ready. We'll create a new worksheet to query the newly created shared database.
@@ -350,12 +350,13 @@ A new pop-up window will appear where you can change the name of the shared data
 - Create a new worksheet in this folder and name it "2 - Marketplace Data"
 
 ```SQL
-
 /*-------------------------------------------------
 
 --SECTION 3 - THIRD PARTY DATA FROM SNOWFLAKE MARKETPLACE
 
 -------------------------------------------------*/
+
+/*Dependent on getting the SafeGraph: frostbyte listing from marketplace */
 
 /* set the worksheet context */
 use role tb_dev;
@@ -392,15 +393,12 @@ left join safegraph_frostbyte.public.frostbyte_tb_safegraph_s sg
     ON sg.placekey = l.placekey;
 
 
-/* 
-create a copy of the shared SafeGraph data in the raw_pos schema so 
-it can be included in our Dynamic Table definition in the next section 
-*/
+/* create a copy of the shared SafeGraph data in the raw_pos schema so 
+it can be included in our Dynamic Table definition in the next section */
 create or replace table tb_101.raw_pos.safegraph_frostbyte_location
 as
 select *
 from safegraph_frostbyte.public.frostbyte_tb_safegraph_s;
-
 ```
 
 Based on the results of the last query, it looks like Placekey field can be used to accurately join the SafeGraph dataset together with our Tasty Bytes dataset. We have successfully enriched our location data!
@@ -413,7 +411,7 @@ Congrats! You have completed the Snowflake Marketplace section of this guide. Yo
 
 Duration: 20
 
-In this section, we'll cover two important topics in our end-to-end solution: **Star Schemas** and **Dynamic Tables**. We'll start by reviewing star schemas, how they're useful, and specifically, why they are so important for Power BI semantic models. Then, we'll review Dynamic Tables and how they can be used to easily transform your data into a suitable format for downstream analytics. If you're already familiar with these topics, feel free to skip to the "Transforming our Tasty Bytes Data with Dynamic Tables" step in this section.
+In this section, we'll cover two important topics in our end-to-end solution: **Star Schemas** and **Dynamic Tables**. We'll start by reviewing star schemas, how they're useful, and specifically, why they are important for Power BI semantic models. Then, we'll review Dynamic Tables and how they can be used to easily transform your data into a suitable format for downstream analytics. If you're already familiar with these topics, feel free to skip to the "Transforming our Tasty Bytes Data with Dynamic Tables" step in this section.
 
 ### What is a Star Schema?
 
@@ -428,7 +426,7 @@ A star schema consists of two primary types of tables:
 - Fact tables represent a specific measurable business process, such as sales, web traffic, or inventory levels
 - Fact tables often contain numeric fields that are additive, like sales amount or quantity sold
   - However, semi-additive facts (e.g., bank account balances, inventory levels) and non-additive facts (e.g., ratios) are also possible, although less common than additive facts
-- In addition to numeric measure fields, fact tables contain key fields that join to contextual information (e.g., customers, products, dates) stored in dimension tables
+- In addition to numeric measure fields, fact tables contain key/ID fields that join to contextual information (e.g., customers, products, dates) stored in dimension tables
 - Fact tables are typically longer (more rows) and narrower (fewer columns) than dimension tables
 
 **Dimensions**
@@ -454,7 +452,7 @@ Star schemas are important when designing your Power BI semantic models for a nu
 
 For an exhaustive breakdown on the importance of star schemas when developing Power BI semantic models, check out [Power BI's documentation here](https://learn.microsoft.com/en-us/power-bi/guidance/star-schema).
 
-### What are Dynamic Tables
+### What are Dynamic Tables?
 
 With the star schema primer out of the way, let's shift our focus to Dynamic Tables. While fact and dimension tables are agnostic to any data platform, [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro) are a specific type of Snowflake table that we can use to easily transform our data. Dynamic Tables simplify data engineering pipelines by using declarative SQL to persist query results and scheduled refreshes to keep those results up to date. Dynamic Tables will look and feel like a regular Snowflake table, but will have an underlying SQL definition, similar to a view. However, unlike a view, that SQL logic will be executed on a regular refresh schedule and the query results will be persisted, thus yielding performance similar to a regular Snowflake table.
 
@@ -467,10 +465,10 @@ Dynamic Tables also provide the following benefits:
 - You define the SQL logic, let Snowflake handle the rest
 - Snowflake will manage the orchestration and scheduling of Dynamic Table pipeline refreshes
 - Dynamic Tables can easily be chained together by simply referencing them in the SQL logic of another Dynamic Table
-  **Performance boost with incremental processing**
-- Dynamic Tables will automatically implement incremental processing if your SQL logic allows
-- This eliminates wholesale scheduled refreshes that can be time-consuming and expensive
-  **Out-of-the-box observability**
+- **Performance boost with incremental processing**
+  - Dynamic Tables will automatically implement incremental processing if your SQL logic allows
+  - This eliminates wholesale scheduled refreshes that can be time-consuming and expensive
+    **Out-of-the-box observability**
 - Dynamic Table refreshes are fully observable via Snowsight's UI
 - Additionally, Dynamic Table refresh metadata is fully available in the built-in [Snowflake database](https://docs.snowflake.com/en/sql-reference/snowflake-db)
 
@@ -486,10 +484,9 @@ Dynamic Tables also provide the following benefits:
 Once the script is complete, use Snowsight to navigate to your Dynamic Tables and view information about them. Check out the built-in lineage view!
 
 ```SQL
-
 /*-------------------------------------------------
 
---SECTION 4 - TRANSFORMING DATA WITH DYNAMIC TABLES
+--SECTION 4 - STAR SCHEMAS & DYNAMIC TABLES
 
 -------------------------------------------------*/
 
@@ -497,7 +494,6 @@ Once the script is complete, use Snowsight to navigate to your Dynamic Tables an
 use role sysadmin;
 use schema tb_101.powerbi;
 use warehouse tb_dev_wh;
-
 
 
 /*-------------------------------------------------
@@ -770,16 +766,18 @@ create or replace dynamic table dt_fact_order_detail
   initialize = on_create
   as
 
-
-    select 
+    with natural_keys
+    as
+    (
+        select 
         od.order_id,
         od.order_detail_id,
         oh.truck_id,
         t.franchise_id,
         cast(oh.location_id as int) as location_id,
         od.menu_item_id,
-        dd.date_id,
-        ti.time_id,
+        to_date(oh.order_ts) as date_id,
+        to_time(oh.order_ts) as time_id,
         oh.customer_id,
         od.quantity,
         od.unit_price,
@@ -787,8 +785,32 @@ create or replace dynamic table dt_fact_order_detail
     from tb_101.raw_pos.order_detail od
     join tb_101.raw_pos.order_header oh on oh.order_id = od.order_id
     join tb_101.raw_pos.truck t on t.truck_id = oh.truck_id
-    join tb_101.powerbi.dim_date dd on dd.date =  to_date(oh.order_ts)
-    join tb_101.powerbi.dim_time ti on ti.time = to_time(oh.order_ts);
+    )
+
+
+    select
+        nk.order_id,
+        nk.order_detail_id,
+        dt.truck_id, 
+        df.franchise_id, 
+        dl.location_id, 
+        dmi.menu_item_id, 
+        dc.customer_id, 
+        dd.date_id, 
+        ti.time_id, 
+        --measures
+        nk.quantity,
+        nk.unit_price,
+        nk.line_total
+    from natural_keys nk
+    --dimension joins to enforce downstream dependencies in DT graph
+    join powerbi.dt_dim_truck dt on dt.truck_id = nk.truck_id and dt.franchise_id = nk.franchise_id
+    join powerbi.dt_dim_franchise df on df.franchise_id = nk.franchise_id
+    join powerbi.dt_dim_location dl on dl.location_id = nk.location_id
+    join powerbi.dt_dim_menu_item dmi on dmi.menu_item_id = nk.menu_item_id
+    join powerbi.dim_date dd on dd.date = nk.date_id
+    join powerbi.dim_time ti on ti.time = nk.time_id
+    left join powerbi.dt_dim_customer dc on dc.customer_id = nk.customer_id;
 
 
   
@@ -796,7 +818,7 @@ create or replace dynamic table dt_fact_order_detail
 create or replace dynamic table dt_fact_order_header
   target_lag = 'DOWNSTREAM'
   warehouse = tb_de_wh
-  refresh_mode = incremental
+  refresh_mode = full
   initialize = on_create
   as
     select
@@ -825,6 +847,8 @@ create or replace dynamic table dt_fact_order_header
 create or replace dynamic table dt_fact_order_agg
   target_lag = '1 hour'
   warehouse = tb_de_wh
+  refresh_mode = full
+  initialize = on_create
   as
     select 
         truck_id,
@@ -846,12 +870,11 @@ create or replace dynamic table dt_fact_order_agg
 
 
 /* scale the data engineering warehouse back down */
-alter warehouse tb_de_wh set warehouse_size = 'small';
+alter warehouse tb_de_wh set warehouse_size = 'medium';
 alter warehouse tb_de_wh suspend;
-
 ```
 
-![DT_Graph](assets/DT_Graph.jpg)
+![DT_Graph](assets/Dynamic_Tables_Graph.jpg)
 
 Congrats, you have completed this section! You now should have a solid understanding of star schemas, why they're important when preparing your data for Power BI, and how we can leverage unique Snowflake features like Dynamic Tables to easily transform our data into a simple star schema design. Our Dynamic Tables are set to refresh every hour to keep our data fresh for analysis in Power BI. Depending on our requirements, we can always refresh these more or less frequently.
 
@@ -900,7 +923,6 @@ You can classify data using SQL commands or [via the Snowsight UI](https://docs.
 - Copy, paste, and execute the SQL below to classify and tag the tables in your TB_101.POWERBI database schema.
 
 ```SQL
-
 /*-------------------------------------------------
 
 --SECTION 5 - PROTECTING SENSITIVE DATA WITH SNOWFLAKE HORIZON
@@ -937,13 +959,11 @@ from table(
     'tb_101.powerbi.dt_dim_customer',
     'table'
 ));
-
 ```
 
 We can also create custom tags and assign them to our table columns. Run the SQL below to create custom tags.
 
 ```SQL
-
 /* create custom tags */
 create or replace tag tb_101.powerbi.pii_name_tag
     comment = 'PII Tag for Name Columns';
@@ -1000,8 +1020,6 @@ from table(
     'tb_101.powerbi.dt_dim_customer',
     'table'
 ));
-
-
 ```
 
 ### Masking Policies
@@ -1023,7 +1041,6 @@ Snowflake also has [tag-based masking policies](https://docs.snowflake.com/en/us
 Continue building out the "4 - Data Governance" worksheet script by executing the code below to create masking policies and, ultimately, tag-based masking policies.
 
 ```SQL
-
 /*-------------------------------------------------
 
 --MASKING POLICIES
@@ -1112,8 +1129,9 @@ select
     customer_email,
     customer_phone_number
 from tb_101.powerbi.dt_dim_customer limit 5;
-
 ```
+
+
 
 ### Row Access Policies
 
@@ -1126,7 +1144,6 @@ Continuing with the existing script, we'll implement row-level security by:
 - Applying the row access policy to the fact tables and location dimension we created previously, so data will be filtered automatically at query time based on the user's current role.
 
 ```SQL
-
 /*-------------------------------------------------
 
 --ROW ACCESS POLICIES
@@ -1173,10 +1190,7 @@ create or replace row access policy tb_101.powerbi.rap_dim_location_policy
                 and rp.location_id = location_id
             );
 
-/* Lastly, apply the row policy to our dim_location and fact tables */
-alter table tb_101.powerbi.dt_dim_location
-    add row access policy tb_101.powerbi.rap_dim_location_policy ON (location_id);
-
+/* Lastly, apply the row policy to our fact tables */
 alter table tb_101.powerbi.dt_fact_order_detail
     add row access policy tb_101.powerbi.rap_dim_location_policy ON (location_id);
 
@@ -1223,8 +1237,6 @@ select
 from tb_101.powerbi.dt_fact_order_agg f
 join tb_101.powerbi.dt_dim_location l on l.location_id = f.location_id
 group by all;
-
-
 ```
 
 Congrats! You have now added protections to your data. While this section only scratched the surface on Snowflake Horizon features, you should now be familiar with key features you can leverage to easily identify and protect your organization's sensitive data.
@@ -1281,7 +1293,7 @@ Navigate to the "model view" within Power BI Desktop. The model should look fami
 > In particular, the semantic model:
 >
 > * Avoids Native SQL queries, as all the queries in Power Query directly pull from our star schema created with Dynamic Tables
-> * Avoids [bi-directional relationships](https://learn.microsoft.com/en-us/power-bi/guidance/relationships-bidirectional-filteringhttps:/), as only one-to-many relationships are used to ensure efficient SQL query generation
+> * Avoids [bi-directional relationships](https://learn.microsoft.com/en-us/power-bi/guidance/relationships-bidirectional-filtering), as only one-to-many relationships are used to ensure efficient SQL query generation
 > * Leverages the [Assume Referential Integrity](https://learn.microsoft.com/en-us/power-bi/connect-data/desktop-assume-referential-integrity) property in relationships to force inner joins where possible
 > * Leverages user-defined aggregates (more details below)
 > * Leverages [Query Parallelization](https://medium.com/snowflake/snowflake-power-bi-evaluating-query-parallelization-3ca80974ba27) once published to a Premium workspace
@@ -1297,19 +1309,15 @@ For reference:
 
 ![Powerbi_Semantic_Model](assets/Powerbi_Semantic_Model.jpg)
 
-
 #### Publishing to the Power BI Service
 
 You can publish your work to the Power BI Service directly from Power BI Desktop using the "Publish" button on the Home ribbon. Alternatively, you can manually upload your .pbix file from your Power BI workspace. Once published, your single .pbix file will create two artifacts in your Power BI workspace: a "semantic model" and a "report". Open the "Settings" for your semantic model. This is where you will update your connection parameters, as well as use your TB_BI_ANALYST credentials to connect to Snowflake.
 
-
->aside positive
+> aside positive
 >
->As a best practice, it is always best to perform your analysis within the Power BI Service. If you have access to the Power BI Service and are able to deploy the Power BI semantic model and report to a Workspace, please >do so. If not, we can still perform the "Exploring Tasty Bytes data via Power BI" steps below from Power BI Desktop.
-
+> As a best practice, it is always best to perform your analysis within the Power BI Service. If you have access to the Power BI Service and are able to deploy the Power BI semantic model and report to a Workspace, please do so. If not, we can still perform the "Exploring Tasty Bytes data via Power BI" steps below from Power BI Desktop.
 
 ![Semantic_Model_Params](assets/Semantic_Model_Params.jpg)
-
 
 ### Exploring Tasty Bytes data via Power BI
 
@@ -1318,8 +1326,9 @@ When you first open your report, notice that it takes a moment for your visuals 
 - Power BI Service will automatically cache results for the rendered report. You can override this cache with the "refresh visuals" button in the upper right-hand corner.
 - Snowflake's local [warehouse cache](https://docs.snowflake.com/en/user-guide/performance-query-warehouse-cache) will make subsequent queries that use that same warehouse faster.
 - Snowflake's [global query results cache](https://docs.snowflake.com/en/user-guide/querying-persisted-results) will make subsequent queries that are identical to previously executed queries evaluate in milliseconds without using any warehouse compute (provided that data in Snowflake has not changed).
+- (Optional) [Power BI Automatic Aggregations](https://learn.microsoft.com/en-us/power-bi/enterprise/aggregations-auto) is a Power BI Premium feature that analyzes query patterns and uses machine learning to intelligently build an in-memory cache that will return visual queries faster. This feature can easily be set up under Semantic Model settings with a few mouse clicks.
 
-These various layers of caching + taking advantage of Power BI's user-defined aggregations unlock the ability to perform an analysis of hundreds of millions to billions of records in real time from Power BI. All without having to wrestle with scheduled refreshes or purchase larger Power BI SKUs to fit into memory.
+These various layers of caching, plus taking advantage of Power BI's aggregations (both [user-defined](https://learn.microsoft.com/en-us/power-bi/transform-model/aggregations-advanced) in the model and [automatic](https://learn.microsoft.com/en-us/power-bi/enterprise/aggregations-auto)), unlock the ability to perform an analysis of hundreds of millions to billions of records in real time from Power BI. All without having to wrestle with scheduled refreshes or purchase larger Power BI SKUs to fit into memory.
 
 **Let's begin interacting with the report:**
 
@@ -1351,10 +1360,10 @@ These various layers of caching + taking advantage of Power BI's user-defined ag
 #### Verifying row-level security
 
 - Navigate back to the "Order Summary" report page
-- Notice how only sales transactions for the North America region are being displayed. Also notice how you no longer have the ability to select another region on the region slicer. This is showing our row access policy hard at work!
+- Notice how only sales transactions for the North America region are being displayed. This is showing our row access policy hard at work!
 - Go back to the 2nd browser tab with your semantic model settings open
 - Change your Snowflake Role parameter to **TB_BI_ANALYST_EMEA** and **click "Apply"**
-- Navigate back to your report tab and click the **"refresh visuals"** button once again. You may have to clear your region slicer.
+- Navigate back to your report tab and click the **"refresh visuals"** button once again. You may have to modify your region slicer.
 - Notice how we now only see European sales transactions now that we've switched our role.
 
 What we've just simulated is a scenario where we have a global user base running reports against the same semantic model, but they all belong to different roles. Since our semantic model is in DirectQuery mode, we are able to implicitly take advantage of our Snowflake masking and row access policies.
