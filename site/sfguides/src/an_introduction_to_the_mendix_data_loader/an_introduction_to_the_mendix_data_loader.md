@@ -16,20 +16,25 @@ In this tutorial you will learn how to ingest data from a Mendix application. In
 
 ![Architecture diagram](assets/architecture_diagram.png)
 
-### Prerequisites
-- Mendix account, if you don't have one sign up [here](https://signup.mendix.com/)
-- Snowflake user with `ACCOUNTADMIN` role
 
-### What You’ll Learn
+### What You’ll Learn 
 - How to deploy a Mendix application into a free cloud node
 - How to ingest operational Mendix application data into Snowflake
-
-### What You’ll Need
-- Mendix Studio Pro ([10.12](https://marketplace.mendix.com/link/studiopro/10.12.0) or later)
 
 ### What You’ll Build
 - Deploying a Mendix application with a pre-created data set to extract
 - Deploy the Mendix Data Loader to load the data into Snowflake
+
+### Prerequisites
+- Mendix account, if you don't have one sign up [here](https://signup.mendix.com/)
+- Mendix Studio Pro ([10.12](https://marketplace.mendix.com/link/studiopro/10.12.0) or later)
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
+
+> aside positive
+> IMPORTANT: Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
+
+
 
 <!-- ------------------------ -->
 
@@ -130,3 +135,18 @@ The other task configuration fields are optional:
 Now press the `Schedule Ingestion Task` button and grant `USAGE` on a warehouse you want to use for the ingestion to create the task. You can view details of the created task on the `Task Management` tab where you can also view its performed ingestion jobs, suspend/enable the task, and drop the task. At present, we allow one task to exist at a time. You can view details of the created task on the `Task Management` tab where you can also view its performed ingestion jobs, suspend/enable the task, and drop the task. At present, we allow one task to exist at a time.
 
 <!-- ------------------------ -->
+## Conclusion And Resources
+
+Congratulations! You've successfully installed Mendix Data Loader app and moved data from Mendix application onto Snowflake.
+
+### What You Learned
+
+- How to quickly deploy a Snowflake shocase Mendix app on free cloud
+- How to pull data from an existing Mendix application into Snowflake using our Mendix Data Loader Native Application
+
+### Related Resources
+
+- [Mendix Data Loader documenation](https://docs.mendix.com/appstore/modules/snowflake/mendix-data-loader/)
+- [What is Mendix](https://www.mendix.com/)
+- [Mendix Data Loader Listing](https://app.snowflake.com/marketplace/listing/GZTDZHHIE0/mendix-mendix-data-loader)
+
