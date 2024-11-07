@@ -41,7 +41,9 @@ Complete the following steps to setup your account:
 - Run all commands to create Snowflake objects
 
 ```sql
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is", "name":"aiml_notebooks_container_runtime", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 USE ROLE accountadmin;
+
 CREATE OR REPLACE DATABASE container_runtime_lab;
 CREATE SCHEMA notebooks;
 

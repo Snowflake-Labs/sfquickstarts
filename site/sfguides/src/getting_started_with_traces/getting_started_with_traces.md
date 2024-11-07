@@ -268,6 +268,7 @@ get_weather_for_cities_sp = session.sproc.register(get_weather_for_cities,
                                                    input_types=[StringType(),IntegerType(),IntegerType()],
                                                    is_permanent=True,
                                                    replace=True,
+                                                   packages=["snowflake-snowpark-python", "requests", "snowflake-telemetry-python", "opentelemetry-api"],
                                                    stage_location="EXEC_STORAGE")
 
 ```
