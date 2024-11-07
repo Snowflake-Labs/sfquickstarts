@@ -124,6 +124,23 @@ Once the sample dataset has been created, you will see the new `KUMO_REC_DEMO` d
 
 ![img](assets/image21.png)
 
+## Creating Your Cortex LLM Embeddings
+The KUMO_REC_DEMO.ITEMS_MINI table contains a column called I_ITEM_DESC that holds item descriptions for each of the products. Using Snowflake’s Cortex LLM, you can create numerical representations (i.e., vector embeddings) that capture the meanings and relationships of the words and sentences in these item descriptions. And because Kumo supports incorporating the world knowledge comprehension that external LLMs provide by way of embeddings, you can easily incorporate Cortex’s vector embeddings into Kumo when registering your table schemas, enabling even more powerful predictive capabilities.
+
+![img](assets/image39.png)
+
+### Setting up the embedding column
+The following SQL code will create a new column for the Cortex vector embeddings in the your ITEMS_MINI table, and then populate the new column with the Cortex vector embeddings created from the I_ITEM_DESC column:
+
+```
+-- Create a new column for the Cortex embeddings in the ITEMS_MINI table
+ALTER TABLE ITEMS_MINI ADD COLUMN I_ITEM_DESC_EMBED VECTOR(FLOAT, 768);
+UPDATE ITEMS_MINI
+  SET I_ITEM_DESC_EMBED = SNOWFLAKE.CORTEX.EMBED_TEXT_768('snowflake-arctic-embed-m', I_ITEM_DESC);
+```
+
+Once this new column is set up, you will simply set the I_ITEM_DESC_EMBED column type to Embedding when registering your schema (in the next step).
+
 ## Registering Your Schema in Kumo
 
 Duration: 10
