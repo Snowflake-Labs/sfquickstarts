@@ -96,7 +96,7 @@ Relevant documentation:
 - [Using third-party libraries in Snowflake](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages)
 - [Python User Defined Table Function](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
 
-Create the function by [running the following query](https://docs.snowflake.com/en/user-guide/ui-snowsight-query#executing-and-running-queries) inside your worksheet
+Create the function by [running the following query](https://docs.snowflake.com/en/user-guide/ui-snowsight-query#executing-and-running-queries) inside your SQL worksheet
 
 ```SQL
 create or replace function text_chunker(pdf_text string)
@@ -188,7 +188,8 @@ insert into docs_chunks_table (relative_path, size, file_url,
             func.chunk as chunk
     from 
         directory(@docs),
-        TABLE(text_chunker (TO_VARCHAR(SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@docs, relative_path, {'mode': 'LAYOUT'})))) as func;
+        TABLE(text_chunker (TO_VARCHAR(SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@docs, 
+                              relative_path, {'mode': 'LAYOUT'})))) as func;
 ```
 
 ### Label the product category
@@ -484,6 +485,12 @@ The reason is that we need to add the package **snowflake.core** in our Streamli
 
 Click on **Packages** and look for **snowflake.core**
 
+You may want to use the latest versions available, but we encourage you to use this combination for this specific lab:
+- snowflake.core = 0.9.0
+- python = 3.8
+- snowflake-snowpark-python = 1.22.1
+- streamlit = 1.26.0
+
 ![App](assets/fig11_packages.png)
 
 After adding it you should be able to run the app.
@@ -547,7 +554,6 @@ In the app, we can see the documents we had uploaded previously and can be used 
 To test out the RAG framework, here a few questions you can ask and then use the interactive widgets to compare the results when using a different LLM or when choosing to get a response without the context. This is related to very specific information that we have added into the documents and that is very unique to our products.
 
 - Is there any special lubricant to be used with the premium bike?
-- What is the warranty for the premium bike?
 - Does the mondracer infant bike need any special tool?
 - Is there any temperature to be considered with the premium bicycle?
 - What is the temperature to store the ski boots?
@@ -620,7 +626,13 @@ First let´s create the new Streamlit App and then we will discuss each of the s
 
 ![App](assets/fig13_streamlit_chatbot.png)
 
-In this second app, we are going to demo how to access the Complete function from Snowlfake Cortex via Python API instead of SQL as we did in the previous app. To get access to the API, you need to specify the **snowflake-ml-python** package in your Streamlit app:
+In this second app, we are going to demo how to access the Complete function from Snowlfake Cortex via Python API instead of SQL as we did in the previous app. To get access to the API, you need to specify the **snowflake-ml-python** package in your Streamlit app. This combination of packages version is known to work well:
+
+- snowflake-ml-python = 1.6.2
+- snowflake.core = 0.9.0
+- python = 3.8
+- snowflake-snowpark-python = 1.22.1
+- streamlit = 1.26.0
 
 ![App](assets/fig13_2_ml_python_package.png)
 
@@ -1008,6 +1020,56 @@ Here another suggestion based on specific info from the documents (unique for us
 
 
 You can try with your own documents. You will notice different peformance depending on the LLM you will be using. 
+
+<!-- ------------------------ -->
+## Optional: Automatic Processing of New Documents
+Duration: 5
+
+We can use Snowflake features Streams and Task to automatically process new PDF files as they are added into Snowflake. 
+
+- First we are creating a Snowflake Task. That Task will have some conditions to be executed and one action to take:
+  - Where: This is going to be executed using warehouse **COMPUTE_WH**. Please name to your own Warehouse.
+  - When: Check every minute, and execute in the case of new records in the docs_stream stream
+  - What to do: Process the files and insert the records in the docs_chunks_table
+
+Execute this code in your Snowflake worksheet:
+
+```SQL
+create or replace stream docs_stream on stage docs;
+
+create or replace task parse_and_insert_pdf_task 
+    warehouse = COMPUTE_WH
+    schedule = '1 minute'
+    when system$stream_has_data('docs_stream')
+    as
+  
+    insert into docs_chunks_table (relative_path, size, file_url,
+                            scoped_file_url, chunk)
+    select relative_path, 
+            size,
+            file_url, 
+            build_scoped_file_url(@docs, relative_path) as scoped_file_url,
+            func.chunk as chunk
+    from 
+        docs_stream,
+        TABLE(text_chunker (TO_VARCHAR(SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@docs, relative_path, {'mode': 'LAYOUT'})))) as func;
+
+alter task parse_and_insert_pdf_task resume;
+```
+
+After uploading the document (and if you are fast enough before the doc is automatically processed) you can see the doc in the stream:
+
+```SQL
+select * from docs_stream;
+```
+
+It will return no value once the doc has been processed. Once the document is avilable in the docs_chunks_table, the Snowflake Cortex Search service will automaticaly index it according to the TARGET_LAG that was specified when the serrvice was created.
+
+Once you have finish testing uploading new documents and asking questions, you may want to suspend the task:
+
+```SQL
+alter task parse_and_insert_pdf_task suspend;
+```
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
