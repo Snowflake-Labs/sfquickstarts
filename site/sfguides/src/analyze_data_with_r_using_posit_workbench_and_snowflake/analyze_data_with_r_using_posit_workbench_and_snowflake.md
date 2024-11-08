@@ -33,7 +33,7 @@ We'll focus on a healthcare example by analyzing heart failure data. We'll then 
 
 - An RStudio Pro IDE environment to use within Snowflake.
 - A Quarto document that contains plots and tables built with R, using data stored in Snowflake.
-- An interactive Shiny Application built with R, using data stored in Snowflake.
+- An interactive Shiny application built with R, using data stored in Snowflake.
 
 Along the way, you will use R to analyze which variables are associated with survival among patients with heart failure.
 You can follow along with this quickstart guide,
