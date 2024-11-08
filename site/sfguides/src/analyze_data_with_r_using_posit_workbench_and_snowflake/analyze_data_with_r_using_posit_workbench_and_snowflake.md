@@ -13,7 +13,7 @@ tags: Getting Started, Data Science, R, Posit Workbench, Native Applications
 Duration: 1
 
 This guide will walk you through using R to analyze data in Snowflake using the Posit
-Workbench Native App. You'll learn how to launch the Posit Workbench Native App and use available RStudio Pro IDE. You'll also learn how to use the `{dbplyr}` package to translate R code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
+Workbench Native App. You'll learn how to launch the Posit Workbench Native App and use the available RStudio Pro IDE. You'll also learn how to use the `{dbplyr}` package to translate R code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
 
 We'll focus on a healthcare example by analyzing heart failure data. We'll then guide you through launching an R session, accessing the data, and performing data cleaning, transformation, and visualization. Finally, you'll see how to generate an HTML report, build an interactive Shiny app, and write data back to Snowflake—-completing an end-to-end R analysis _entirely within Snowflake_.
 
