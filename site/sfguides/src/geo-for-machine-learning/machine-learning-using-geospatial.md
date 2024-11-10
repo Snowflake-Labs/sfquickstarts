@@ -1352,7 +1352,7 @@ CREATE DATABASE IF NOT EXISTS ADVANCED_ANALYTICS;
 CREATE SCHEMA IF NOT EXISTS ADVANCED_ANALYTICS.RASTER;
 USE SCHEMA ADVANCED_ANALYTICS.RASTER;
 
-CREATE OR REPLACE STAGE ADVANCED_ANALYTICS.RASTER.FILES URL = 's3://sfquickstarts-obielov/raster/';
+CREATE OR REPLACE STAGE ADVANCED_ANALYTICS.RASTER.FILES URL = 's3://sfquickstarts/hol_geo_spatial_ml_using_snowflake_cortex/unstructured/';
 ```
 
 For this lab, you will also use a native application called [SedonaSnow](https://app.snowflake.com/marketplace/listing/GZTYZF0RTY3/wherobots-sedonasnow), which contains more than a hundred geospatial functions.
