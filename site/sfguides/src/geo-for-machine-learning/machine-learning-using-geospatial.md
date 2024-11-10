@@ -1316,6 +1316,939 @@ You can also analyze what areas are getting higher scores for each of the catego
 > aside positive
 >  The code from this quickstart can be reused for other industries, such as urban mobility, retail, finance, etc. Basically, any industry that involves providing a service with geo components and customer reviews.
 
+## Processing unstructured geospatial data
+
+Duration: 40
+
+> aside negative
+>  Before starting with this lab, complete the preparation steps from `Setup your account` page.
+
+> aside positive
+>  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
+
+In this quickstart guide, we will show you how to read geospatial data from unstructured sources such as GeoTiffs and Shapefiles to prepare features for a machine learning model using Snowflake and popular Python geospatial libraries.
+
+You will learn how to join data from different sources to help predict the presence of groundwater. Although the prediction step itself is out of scope for this lab, you will learn how to ingest data from raster files and shapefiles and combine them using nearst neighbour approach.
+
+In this lab, we will use the following sources:
+- Elevation map from [United States Geological Survey](https://www.usgs.gov/).
+- Average precipitation and average temperature data from [WorldClim](https://www.worldclim.org/data/worldclim21.html).
+
+The result of this lab will be a single dataset containing information derived from the above sources.
+
+Since we will be running relatively complex computations using Snowpark, you will need a `LARGE` Snowpark-optimized warehouse. Run the following query to create one:
+
+```
+CREATE WAREHOUSE IF NOT EXISTS snowpark_opt_wh_l WITH warehouse_size = 'LARGE' warehouse_type = 'SNOWPARK-OPTIMIZED';
+```
+
+Now you can go to notebook settings and set the newly created warehouse as the `SQL warehouse`. Additionally, go to the Packages dropdown and import `branca`, `pydeck` and `rasterio`, which you will use in this lab.
+
+### Step 1. Data Acquisition
+As a first step, you will attach an external stage with raster and shapefiles. Run the following queries:
+
+```
+CREATE DATABASE IF NOT EXISTS ADVANCED_ANALYTICS;
+CREATE SCHEMA IF NOT EXISTS ADVANCED_ANALYTICS.RASTER;
+USE SCHEMA ADVANCED_ANALYTICS.RASTER;
+
+CREATE OR REPLACE STAGE ADVANCED_ANALYTICS.RASTER.FILES URL = 's3://sfquickstarts-obielov/raster/';
+```
+
+For this lab, you will also use a native application called [SedonaSnow](https://app.snowflake.com/marketplace/listing/GZTYZF0RTY3/wherobots-sedonasnow), which contains more than a hundred geospatial functions.
+
+* Navigate to the `Marketplace` screen using the menu on the left side of the window.
+* Search for `SedonaSnow` in the search bar.
+* Once in the listing, click the big blue `Get` button.
+
+> aside negative 
+>  On the `Get` screen, you may be prompted to complete your user profile if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue Save button. You will be returned to the `Get` screen.
+
+<img src ='assets/geo_ml_22.png' width=500>
+
+Congratulations, you have now acquired all the data sources that you need for this lab.
+
+### Step 2. Loading Raster Data
+In this step, you will load data from raster files stored in an external stage and store it as a Snowflake table.
+
+You will start with elevation data. Let's first create a function that uses the Python library `rasterio`, available in the [Snowflake Conda Channel](https://repo.anaconda.com/pkgs/snowflake/), which reads metadata from a `GeoTiff` file stored in a stage. Run the following query:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_EXTRACT_GEOTIFF_METADATA(PATH_TO_FILE STRING)
+RETURNS TABLE (
+    status BOOLEAN,
+    error STRING,
+    band_count INT,
+    crs STRING,
+    bounds STRING,
+    metadata STRING
+)
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('rasterio', 'snowflake-snowpark-python')
+HANDLER = 'GeoTiffMetadataExtractor'
+AS $$
+import rasterio
+import json
+from snowflake.snowpark.files import SnowflakeFile
+
+class GeoTiffMetadataExtractor:
+    def process(self, PATH_TO_FILE: str):
+        try:
+            # Initialize the result variables
+            status = False
+            error = ''
+            band_count = None
+            crs = None
+            bounds_json = None
+            metadata_json = None
+
+            # Read the GeoTIFF file from the specified stage path into memory
+            with SnowflakeFile.open(PATH_TO_FILE, 'rb', require_scoped_url=False) as input_file:
+                tif_bytes = input_file.read()
+
+            # Use rasterio's MemoryFile to read the TIFF data from memory
+            with rasterio.MemoryFile(tif_bytes) as memfile:
+                with memfile.open() as dataset:
+                    # Extract metadata from the dataset
+                    band_count = dataset.count
+                    crs = str(dataset.crs)  # Convert CRS to string for serialization
+                    bounds = dataset.bounds._asdict()  # Convert bounds to a dictionary
+
+                    # Ensure that metadata is serializable
+                    metadata = dataset.meta.copy()
+                    # Convert 'transform' to a tuple
+                    if 'transform' in metadata:
+                        metadata['transform'] = metadata['transform'].to_gdal()
+                    # Convert 'crs' to string
+                    if 'crs' in metadata:
+                        metadata['crs'] = str(metadata['crs'])
+
+                    # Convert bounds and metadata to JSON strings
+                    bounds_json = json.dumps(bounds)
+                    metadata_json = json.dumps(metadata)
+
+                    # Parsing successful
+                    status = True
+
+        except Exception as e:
+            # Handle exceptions, such as corrupted files
+            error = str(e)
+            status = False
+
+        # Yield the result as a single row
+        yield (
+            status,
+            error,
+            band_count,
+            crs,
+            bounds_json,
+            metadata_json
+        )
+$$;
+```
+
+Additionally, you will create a function to check the distribution of bands. Sometimes, bands of certain values prevail over others, and stripping them off during loading of data from raster files can significantly reduce the size of the table.
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_RASTER_BAND_VALUE_STATS(PATH_TO_FILE STRING)
+RETURNS TABLE (
+    band_value FLOAT,
+    count BIGINT,
+    percentage FLOAT
+)
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('numpy', 'rasterio', 'snowflake-snowpark-python')
+HANDLER = 'RasterBandValueStats'
+AS $$
+import numpy as np
+import rasterio
+from snowflake.snowpark.files import SnowflakeFile
+
+class RasterBandValueStats:
+    def process(self, PATH_TO_FILE: str):
+        try:
+            # Read the GeoTIFF file from the specified stage path
+            with SnowflakeFile.open(PATH_TO_FILE, 'rb', require_scoped_url=False) as input_file:
+                tif_bytes = input_file.read()  # Read the entire file into bytes
+
+            # Use rasterio's MemoryFile to read the TIFF data from memory
+            with rasterio.MemoryFile(tif_bytes) as memfile:
+                with memfile.open() as dataset:
+                    # Read all bands into a NumPy array
+                    data = dataset.read()  # Shape: (band_count, rows, cols)
+
+                    # Flatten the data across all bands
+                    data_flat = data.flatten()  # 1D array of all pixel values across all bands
+
+                    # Count unique values
+                    unique_values, counts = np.unique(data_flat, return_counts=True)
+
+                    # Calculate total number of values
+                    total_count = data_flat.size
+
+                    # Calculate percentage for each unique value
+                    percentages = (counts / total_count) * 100
+
+                    # Yield results
+                    for value, count, percentage in zip(unique_values, counts, percentages):
+                        yield (
+                            float(value),
+                            int(count),
+                            round(float(percentage),1)
+                        )
+        except Exception as e:
+            raise Exception(f"Error during data extraction: {e}")
+$$;
+```
+
+Next, you will create a function that reads data from a `GeoTIFF` file and outputs it as a table. The UDF you will create processes each pixel in the `GeoTIFF` file by calculating the spatial coordinates (X and Y) of the centroid of the pixel. It then associates these coordinates with the pixel's corresponding band values.
+
+This approach transforms the raster image into a collection of spatial points enriched with attribute data (band values), making it suitable for vector-based analyses and database operations. Run the following query:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOTIFF(
+    PATH_TO_FILE STRING,
+    SKIP_VALUES ARRAY DEFAULT NULL  -- Make SKIP_VALUES optional with default NULL
+)
+RETURNS TABLE (
+    x FLOAT,
+    y FLOAT,
+    band_values ARRAY,
+    band_count INT
+)
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('numpy', 'rasterio', 'snowflake-snowpark-python')
+HANDLER = 'GeoTiffExtractor'
+AS $$
+import numpy as np
+import rasterio
+from snowflake.snowpark.files import SnowflakeFile
+
+class GeoTiffExtractor:
+    def process(self, PATH_TO_FILE: str, SKIP_VALUES=None):
+        try:
+            # Read the GeoTIFF file from the specified stage path
+            with SnowflakeFile.open(PATH_TO_FILE, 'rb', require_scoped_url=False) as input_file:
+                tif_bytes = input_file.read()  # Read the entire file into bytes
+
+            # Use rasterio's MemoryFile to read the TIFF data from memory
+            with rasterio.MemoryFile(tif_bytes) as memfile:
+                with memfile.open() as dataset:
+                    # Read all bands into a NumPy array
+                    data = dataset.read()  # Shape: (band_count, rows, cols)
+
+                    # Get the number of bands
+                    band_count = data.shape[0]
+
+                    # Get the coordinates
+                    rows, cols = np.indices((dataset.height, dataset.width))
+                    xs, ys = rasterio.transform.xy(
+                        dataset.transform, rows, cols, offset='center'
+                    )
+
+                    # Flatten the arrays
+                    xs = np.array(xs).flatten()
+                    ys = np.array(ys).flatten()
+                    pixel_values = data.reshape((band_count, -1)).T  # Shape: (num_pixels, band_count)
+
+                    # Handle SKIP_VALUES
+                    if SKIP_VALUES:
+                        # Convert SKIP_VALUES to a NumPy array for efficient comparison
+                        skip_values = np.array(SKIP_VALUES)
+
+                        # Create a mask for pixels to skip
+                        skip_mask = np.isin(pixel_values, skip_values).any(axis=1)
+                        # Invert the skip_mask to get the mask of pixels to keep
+                        mask = ~skip_mask
+
+                        # Apply the mask to xs, ys, and pixel_values
+                        xs_filtered = xs[mask]
+                        ys_filtered = ys[mask]
+                        pixel_values_filtered = pixel_values[mask]
+                    else:
+                        # If SKIP_VALUES not provided, use all data
+                        xs_filtered = xs
+                        ys_filtered = ys
+                        pixel_values_filtered = pixel_values
+
+                    # For each pixel, yield a row with x, y, and band values
+                    for i in range(len(xs_filtered)):
+                        # Get the pixel values for all bands
+                        band_vals = pixel_values_filtered[i].tolist()
+                        yield (
+                            xs_filtered[i],
+                            ys_filtered[i],
+                            band_vals,
+                            band_count
+                        )
+        except Exception as e:
+            raise Exception(f"Error during data extraction: {e}")
+$$;
+```
+
+Now you will check the metadata of the elevation file. Run the following query:
+
+```
+SELECT *
+FROM table(PY_EXTRACT_GEOTIFF_METADATA(build_scoped_file_url(@FILES,'ASTGTMV003_N07E033_dem.tif')));
+```
+
+As you can see, the GeoTiff uses reference system `EPSG:4326` which means you can store it as `GEOGRAPHY` type. Run the following query to check how bands are distributed inside of the raster.
+
+```
+SELECT *
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_RASTER_BAND_VALUE_STATS(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'ASTGTMV003_N07E033_dem.tif')));
+```
+
+There are no obvious outliers among band values—those that correspond to most of the raster points. In this case, let's load data from the whole `ASTGTMV003_N07E033_dem.tif` into the table `POC.RASTER.AFRICA_ELEVATION`:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION AS
+SELECT st_makepoint(x, y) as geog,
+band_values[0]::float as band
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOTIFF(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'ASTGTMV003_N07E033_dem.tif')));
+```
+
+Let's check the size of the newly created table. Run the following query:
+
+```
+SELECT count(*) FROM ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION
+```
+
+12,967,201 rows. The number of rows is a product of width and height in pixels. In the case of the elevation file, it's 3601×3601. Some raster files might be quite large, and to process them, it might be a good idea to use Snowpark-optimized warehouses to avoid memory exhaustion issues. Another technique that you could apply is to load not all points from the raster file but only those that contain useful information. Alternatively, you can resample large files to reduce their resolution. We will show you an example of how to do this at the end of this lab.
+
+But 13M rows is also a rather large table, and visualizing its results using Python libraries might be challenging without reducing the number of rows. H3 functions can help with that. In the code below, you will do the following:
+
+- Map each point from `POC.RASTER.AFRICA_ELEVATION` to an H3 cell with resolution 8.
+- Group by H3 Cell ID and calculate the average value of the band for each H3 cell.
+- Visualize the H3 cells, using the band as the source for color coding.
+
+```
+import streamlit as st
+import pandas as pd
+import pydeck as pdk
+from typing import List
+import branca.colormap as cm
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+
+# Execute the updated SQL query
+df = session.sql('''select h3_point_to_cell_string(geog, 8) as h3_cell,
+                    st_x(h3_cell_to_point(h3_cell)) as lon,
+                    st_y(h3_cell_to_point(h3_cell)) as lat,
+                    avg(band) as band 
+                    from ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION
+                    group by all;''').to_pandas()
+
+df["BAND"] = df["BAND"].apply(lambda row: float(row))
+center_latitude = df['LAT'].mean()
+center_longitude = df['LON'].mean()
+
+def get_quantiles(df_column: pd.Series, quantiles: List) -> pd.Series:
+    return df_column.quantile(quantiles)
+
+def get_color(df_column: pd.Series, colors: List, vmin: int, vmax: int, index: pd.Series) -> pd.Series:
+    color_map = cm.LinearColormap(colors, vmin=vmin, vmax=vmax, index=index)
+    return df_column.apply(color_map.rgb_bytes_tuple)
+    
+quantiles = get_quantiles(df["BAND"], [0, 0.2, 0.4, 0.6, 0.8, 1])
+colors = ['gray','blue','green','yellow','orange','red']
+
+df['BAND'] = get_color(df['BAND'], colors, quantiles.min(), quantiles.max(), quantiles)
+
+st.pydeck_chart(pdk.Deck(
+    map_style=None,
+    initial_view_state=pdk.ViewState(
+        latitude=center_latitude,
+        longitude=center_longitude, 
+        zoom=8.7, 
+        bearing=0, 
+        pitch=0),
+    layers=[
+        pdk.Layer(
+            "H3HexagonLayer",
+            df,
+            opacity=0.9,
+            stroked=False,
+            get_hexagon="H3_CELL",
+            get_fill_color='BAND',
+            extruded=False,
+            wireframe=True,
+            line_width_min_pixels=0,
+            auto_highlight=True,
+            pickable=False,
+            filled=True
+        )
+    ],
+))
+```
+
+<img src ='assets/geo_ml_23.png' width=800>
+
+### Step 3. Load Shapefile
+
+In this step you will load precipitation and average temperature data from a Shapefile. First, you will create a UDF that uses [Dynamic file Access](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-examples#reading-a-dynamically-specified-file-with-snowflakefile) and `fiona` library to read metadata from Shapefile. Run the following code:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOFILE_METADATA(PATH_TO_FILE string, filename string)
+RETURNS TABLE (metadata variant)
+LANGUAGE python
+RUNTIME_VERSION = 3.8
+PACKAGES = ('fiona', 'snowflake-snowpark-python')
+HANDLER = 'GeoFileReader'
+AS $$
+# Import necessary modules for file handling and geospatial data processing
+from snowflake.snowpark.files import SnowflakeFile
+from fiona.io import ZipMemoryFile
+import fiona
+
+# Helper function to make objects JSON-serializable
+def make_serializable(obj):
+    if isinstance(obj, dict):
+        # Recursively process dictionary items
+        return {k: make_serializable(v) for k, v in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        # Recursively process lists and tuples
+        return [make_serializable(v) for v in obj]
+    elif isinstance(obj, (int, float, str, bool, type(None))):
+        # Base case: object is already serializable
+        return obj
+    else:
+        # Convert non-serializable objects to strings
+        return str(obj)
+
+# Define the handler class for the UDF
+class GeoFileReader:
+    def process(self, PATH_TO_FILE: str, filename: str):
+        # Enable support for KML drivers in Fiona
+        fiona.drvsupport.supported_drivers['libkml'] = 'rw'
+        fiona.drvsupport.supported_drivers['LIBKML'] = 'rw'
+
+        # Open the file from the Snowflake stage in binary read mode
+        with SnowflakeFile.open(PATH_TO_FILE, 'rb') as f:
+            # Read the zip file into memory using Fiona's ZipMemoryFile
+            with ZipMemoryFile(f) as zip:
+                # Open the specified file within the zip archive
+                with zip.open(filename) as collection:
+                    # Extract metadata from the collection
+                    metadata = {
+                        'driver': collection.driver,  # File format driver (e.g., 'ESRI Shapefile')
+                        'crs': collection.crs.to_string() if collection.crs else None,  
+                        'schema': collection.schema,  # Schema of the data (fields and types)
+                        'bounds': collection.bounds,  # Spatial bounds of the dataset
+                        'meta': collection.meta,      # Additional metadata
+                        'name': collection.name,      # Name of the collection
+                        'encoding': collection.encoding,  # Character encoding of the file
+                        'length': len(collection),    # Number of features in the dataset
+                    }
+                    # Ensure the metadata is serializable to JSON
+                    serializable_metadata = make_serializable(metadata)
+                    # Yield the metadata as a tuple (required for UDFs returning TABLE)
+                    yield (serializable_metadata,)
+$$;
+```
+
+The UDF above can be used not only to read metadata from Shapefiles but also from other types of geo files, such as KML. You will need another UDF for reading data from geo formats, including Shapefiles. To create one, run the following query:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOFILE(PATH_TO_FILE string, filename string)
+RETURNS TABLE (wkt string, properties object)
+LANGUAGE python
+RUNTIME_VERSION = 3.8
+PACKAGES = ('fiona', 'shapely', 'snowflake-snowpark-python')
+HANDLER = 'GeoFileReader'
+AS $$
+# Import necessary modules for geometry handling and file operations
+from shapely.geometry import shape
+from snowflake.snowpark.files import SnowflakeFile
+from fiona.io import ZipMemoryFile
+import fiona
+
+# Define the handler class for the UDF
+class GeoFileReader:
+    def process(self, PATH_TO_FILE: str, filename: str):
+        # Enable support for KML drivers in Fiona
+        fiona.drvsupport.supported_drivers['libkml'] = 'rw'
+        fiona.drvsupport.supported_drivers['LIBKML'] = 'rw'
+
+        # Open the file from the Snowflake stage in binary read mode
+        with SnowflakeFile.open(PATH_TO_FILE, 'rb') as f:
+            # Read the zip file into memory using Fiona's ZipMemoryFile
+            with ZipMemoryFile(f) as zip:
+                # Open the specified geospatial file within the zip archive
+                with zip.open(filename) as collection:
+                    # Iterate over each feature (record) in the collection
+                    for record in collection:
+                        # Check if the geometry is not None
+                        if record['geometry'] is not None:
+                            # Convert the geometry to Well-Known Text (WKT) format
+                            wkt = shape(record['geometry']).wkt
+                            # Convert the properties to a dictionary
+                            properties = dict(record['properties'])
+                            # Yield the WKT and properties as a tuple
+                            yield (wkt, properties)
+$$;
+```
+
+Now you can look into the metadata of `WorldClim.shp` stored in `WorldClim.zip` package:
+
+```
+SELECT parse_json(metadata):crs as metadata
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOFILE_METADATA(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'WorldClim.zip'), 'WorldClim.shp'));
+```
+
+It stores spatial objects using the Spatial Reference System `EPSG:4326`. You can examine the Shapefile to check its structure:
+
+```
+SELECT top 10 *
+FROM table(PY_LOAD_GEOFILE(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'WorldClim.zip'), 'WorldClim.shp'));
+```
+
+<img src ='assets/geo_ml_24.png' width=500>
+
+It stores geo objects in the `WKT` column and precipitation (`PREC`) and average temperature (`TAVG`) as properties in a JSON-like object. Knowing this information, it's easy to create a query that reads data from a Shapefile and stores it in a table. This is what you will do in the following query:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.WORLDWIDE_WEATHER AS
+SELECT to_geography(wkt) as geog, 
+properties:"PREC"::float as prec, 
+properties:"TAVG"::float as tavg
+FROM table(PY_LOAD_GEOFILE(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'WorldClim.zip'), 'WorldClim.shp'));
+```
+
+Now that you have a table with average temperature and precipitation, you can visualize it using `pydeck`. Since the newly created table `ADVANCED_ANALYTICS.RASTER.WORLDWIDE_WEATHER` contains more than 800K rows, you may want to reduce its size. In the Python code below, you will do the following:
+- Read data from the weather table, group it using H3 cells of resolution 3, and calculate the average temperature value for each cell.
+- Get the GeoJSON of H3 cell centroids and pass it to a Pandas DataFrame.
+- Extract the longitude and latitude coordinates from the GeoJSON data to prepare it for visualization.
+- Define a color map and assign a color to each data point based on where its value falls within the quantiles.
+- Finally, create a `pydeck` scatterplot layer using the processed data.
+Of course, you could also visualize data using H3 cells as you've done before, but to demonstrate different visualization approaches, you will use points with a radius of 50 km. You can replace `avg(tavg)` with `avg(prec)` to visualize precipitation instead of average temperature.
+
+```
+import streamlit as st
+import pandas as pd
+import numpy as np
+import pydeck as pdk
+import json
+from typing import List
+import branca.colormap as cm
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+df = session.sql('''select st_asgeojson(h3_cell_to_point(h3_point_to_cell(geog, 3))) as geog, 
+                    avg(tavg) as value from ADVANCED_ANALYTICS.RASTER.WORLDWIDE_WEATHER
+                    group by all;''').to_pandas()
+
+df["lon"] = df["GEOG"].apply(lambda row: json.loads(row)["coordinates"][0])
+df["lat"] = df["GEOG"].apply(lambda row: json.loads(row)["coordinates"][1])
+
+
+df["VALUE"] = df["VALUE"].apply(lambda row: float(row))
+center_latitude = df['lat'].mean()
+center_longitude = df['lon'].mean()
+
+def get_quantiles(df_column: pd.Series, quantiles: List) -> pd.Series:
+    return df_column.quantile(quantiles)
+
+def get_color(df_column: pd.Series, colors: List, vmin: int, vmax: int, index: pd.Series) -> pd.Series:
+    color_map = cm.LinearColormap(colors, vmin=vmin, vmax=vmax, index=index)
+    return df_column.apply(color_map.rgb_bytes_tuple)
+
+quantiles = get_quantiles(df["VALUE"], [0, 0.2, 0.4, 0.6, 0.8, 1])
+colors = ['gray','blue','green','yellow','orange','red']
+
+df['COLOR'] = get_color(df['VALUE'], colors, quantiles.min(), quantiles.max(), quantiles)
+
+st.pydeck_chart(pdk.Deck(
+    map_style=None,
+    initial_view_state=pdk.ViewState(
+        latitude=center_latitude,
+        longitude=center_longitude, pitch=0, zoom=0
+    ),
+    layers=[
+        pdk.Layer(
+            "ScatterplotLayer",
+            data=df,
+            get_position=["lon", "lat"],
+            opacity=0.9,
+            stroked=True,
+            filled=True,
+            extruded=True,
+            wireframe=True,
+            get_color='COLOR',
+            get_fill_color='COLOR',
+            get_radius="50000",
+            auto_highlight=True,
+            pickable=False,
+        )
+    ],
+))
+```
+
+<img src ='assets/geo_ml_25.png' width=800>
+
+Now that you have all the data from GeoTiff and Shapefile stored in Snowflake tables, you can join them.
+
+## Step 4. Joining Data from Different Sources
+In this step, you will join data from two datasets. Let's start by joining the `Elevation` and `Weather` datasets. We observed in the visualizations above that the Elevation dataset covers a relatively small area in Africa, whereas the Weather dataset covers the whole world. To speed up joining these datasets, we can remove from the Weather dataset all points that are outside our area of interest, which corresponds to the coverage area of the Elevation dataset.
+
+In the query below, you will do the following:
+
+- Use native `ST_` functions to get the minimum and maximum boundaries of the Elevation dataset and create a polygon that corresponds to its outer boundaries.
+- Use the SedonaSnow [ST_Buffer](https://sedona.apache.org/1.5.1/api/snowflake/vector-data/Function/#st_buffer) function to extend that boundary by 0.5 degrees in all directions.
+- Filter out from the Weather dataset all points that are outside the boundaries created in the previous step.
+- Create the `ADVANCED_ANALYTICS.RASTER.WORLDWIDE_WEATHER` table with the new results.
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER AS
+with boundary as (SELECT min(st_xmin(geog)) as xmin, 
+max(st_xmax(geog)) as xmax,
+min(st_ymin(geog)) as ymin,
+max(st_ymax(geog)) as ymax,
+sedonasnow.sedona.st_buffer(to_geography('POLYGON ((' || xmin || ' ' || ymin || ', ' ||
+       			       xmin || ' ' || ymax || ', ' ||
+       			       xmax || ' ' || ymax || ', ' ||
+       			       xmax || ' ' || ymin || ', ' ||
+       			       xmin || ' ' || ymin ||'))'), 0.5) as external_boundary
+FROM ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION)
+SELECT *
+FROM ADVANCED_ANALYTICS.RASTER.WORLDWIDE_WEATHER,
+boundary
+WHERE ST_INTERSECTS(external_boundary, geog)
+```
+
+Now chech how many points contains the new dataset:
+
+```
+SELECT COUNT(*) FROM ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER
+```
+
+One hundred forty. As a next step, you need to join the `AFRICA_ELEVATION` table with `AFRICA_WEATHER`. Our goal is to find, for each point in the elevation dataset, the closest point from the weather dataset to get weather information. We can do this using different approaches. One approach would be to calculate nearest neighbours using an `ST_DWITHIN`-based join. In the query below, you join two datasets using points that are within 200 km of each other, then partition by objects in `AFRICA_ELEVATION` and, in each partition, sort by distance and keep only the first element:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.ELEVATION_WEATHER_NN AS
+SELECT t1.geog,
+       t1.band,
+       t2.prec,
+       t2.tavg
+FROM ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION t1,
+     ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER t2,
+WHERE ST_DWITHIN(t1.geog, t2.geog, 200000) QUALIFY ROW_NUMBER() OVER 
+(PARTITION BY st_aswkb(t1.geog) ORDER BY ST_DISTANCE(t1.geog, t2.geog)) <= 1;
+```
+
+It took more than 5 minutes on a `LARGE` warehouse. The problem with the query above is that, as a result of the join, it creates an internal table with 1.8 billion rows (12,967,201 × 140), which makes it quite a complex join.
+
+Let's try another approach, which will include two steps:
+
+- For the `AFRICA_WEATHER` table, create a table with Voronoi polygons.
+- Join `AFRICA_ELEVATION` and `AFRICA_WEATHER` using Voronoi polygons and `ST_WITHIN` instead of `ST_DWITHIN`.
+
+A Voronoi polygon is essentially a region consisting of all points closer to a specific seed point than to any other seed point, effectively partitioning space into cells around each seed. So when you join `AFRICA_ELEVATION` with `AFRICA_WEATHER` using points from the elevation table and Voronoi polygons from the weather table, you can be sure that for each elevation point, you are associating it with its nearest weather data.
+
+To build Voronoi polygons, you will use the [ST_VORONOIPOLYGONS](https://sedona.apache.org/1.5.1/api/snowflake/vector-data/Function/#st_voronoipolygons) function from the [SedonaSnow](https://app.snowflake.com/marketplace/listing/GZTYZF0RTY3/wherobots-ai-sedonasnow) native app. It takes a multi-object as input—in our case, a Multipoint—and returns Voronoi polygons for that object. Since it returns all polygons also as one object, we need a function that converts a multipolygon into multiple separate polygons. Run the following query to create such a UDF:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.ST_GETPOLYGONS(G OBJECT)
+RETURNS TABLE (POLYGON OBJECT)
+LANGUAGE JAVASCRIPT
+AS '
+{
+processRow: function split_multipolygon(row, rowWriter, context){
+    let geojson = row.G;
+    let polygons = [];
+    
+    function extractPolygons(geometry) {
+        if (geometry.type === "Polygon") {
+            polygons.push(geometry.coordinates);
+        } else if (geometry.type === "MultiPolygon") {
+            for (let i = 0; i < geometry.coordinates.length; i++) {
+                polygons.push(geometry.coordinates[i]);
+            }
+        } else if (geometry.type === "GeometryCollection") {
+            for (let i = 0; i < geometry.geometries.length; i++) {
+                extractPolygons(geometry.geometries[i]);
+            }
+        }
+        // Ignore other geometry types (e.g., Point, LineString)
+    }
+    
+    extractPolygons(geojson);
+    
+    for (let i = 0; i < polygons.length; i++) {
+        rowWriter.writeRow({POLYGON: {
+                "type" : "Polygon",
+                "coordinates": polygons[i]
+            }
+        });
+    }
+}
+}
+';
+```
+
+In the next query, you build Voronoi polygons for the weather table and enrich the `AFRICA_WEATHER` table with those polygons:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER AS
+-- voronoi_grid CTE that stores all points from AFRICA_WEATHER table 
+-- into one object and creates Voronoi Polygons
+with voronoi_grid as (SELECT sedonasnow.sedona.ST_VoronoiPolygons(st_union_agg(geog)) as polygons
+from ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER),
+-- CTE that flattens results of voronoi_grid CTE
+voronoi_grid_flattened as (select to_geography(polygon) as polygon
+from voronoi_grid,
+table(ADVANCED_ANALYTICS.RASTER.ST_GETPOLYGONS(st_asgeojson(polygons))))
+-- Below you join table with voronoi polygons and table with weather information
+SELECT *
+FROM ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER
+INNER JOIN voronoi_grid_flattened
+ON ST_WITHIN(geog, polygon);
+```
+
+Now when you have voronoi polygons in `AFRICA_WEATHER` table, you can join `AFRICA_ELEVATION` and `AFRICA_WEATHER`. Run the following query:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.ELEVATION_WEATHER_VORONOI AS
+select t1.geog, band, prec, tavg
+from ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION t1
+INNER JOIN ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER t2
+ON ST_INTERSECTS(t1.geog, t2.polygon)
+```
+
+Let's look inside of the newly created table:
+
+```
+SELECT TOP 5 * FROM ADVANCED_ANALYTICS.RASTER.ELEVATION_WEATHER_VORONOI
+```
+
+<img src ='assets/geo_ml_26.png' width=700>
+
+Now you have data from two unstructured sources stored in a single table. You can use this table to feed into an ML model or enrich it further with some additional features.
+
+### Advanced Raster Use Case
+Sometimes raster files can be really large, but as we mentioned earlier, often most of the points contain no data or some default values. As an example, let's look at the raster file from [Forrest Data Lab](https://skogsdatalabbet.se/services/) (`Skogsdatalabbets filserver vid SLU` › `SLU_Forest_Map` › `Tradslag`). `Bok_andel.tif` is 149 MB in size and has a resolution of 52,600×123,200, which results in about 6.5 billion points. Loading all those points would be quite an expensive step, but let's check how band values are distributed inside of that file. Run the following query:
+
+```
+SELECT *
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_RASTER_BAND_VALUE_STATS(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'Bok_andel.tif')));
+```
+
+You see that the most frequent band value is 0, which corresponds to 99% of the points. If we load data without those points, we probably won't lose any useful information, but we can have a good saving on compute. Additionally, you can resample the raster to reduce its size. Create a UDF that does both - it resamples to reduce the initial file to the given number of points (50M by default) and ignores given band values:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOTIFF_RESAMPLE_SKIP(
+    PATH_TO_FILE STRING,
+    SKIP_VALUES ARRAY DEFAULT NULL,   -- Optional SKIP_VALUES parameter
+    MAX_PIXELS INT DEFAULT 50000000   -- New optional MAX_PIXELS parameter with default value
+)
+RETURNS TABLE (
+    x FLOAT,
+    y FLOAT,
+    band_values ARRAY,
+    band_count INT
+)
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('numpy', 'rasterio', 'snowflake-snowpark-python')
+HANDLER = 'GeoTiffExtractor'
+AS $$
+import numpy as np
+import rasterio
+from rasterio.enums import Resampling
+from snowflake.snowpark.files import SnowflakeFile
+import math
+
+class GeoTiffExtractor:
+    def process(self, PATH_TO_FILE: str, SKIP_VALUES=None, MAX_PIXELS=500000000):
+        try:
+            # Read the GeoTIFF file from the specified stage path
+            with SnowflakeFile.open(PATH_TO_FILE, 'rb', require_scoped_url=False) as input_file:
+                tif_bytes = input_file.read()  # Read the entire file into bytes
+
+            # Use rasterio's MemoryFile to read the TIFF data from memory
+            with rasterio.MemoryFile(tif_bytes) as memfile:
+                with memfile.open() as dataset:
+                    # Get the original dimensions
+                    height = dataset.height
+                    width = dataset.width
+
+                    total_pixels = height * width
+
+                    if total_pixels > MAX_PIXELS:
+                        # Calculate scaling factor
+                        scaling_factor = math.sqrt(MAX_PIXELS / total_pixels)
+                        new_height = int(height * scaling_factor)
+                        new_width = int(width * scaling_factor)
+
+                        # Read the data with the new dimensions
+                        data = dataset.read(
+                            out_shape=(
+                                dataset.count,
+                                new_height,
+                                new_width
+                            ),
+                            resampling=Resampling.average
+                        )
+
+                        # Update the transform for the new dimensions
+                        transform = dataset.transform * dataset.transform.scale(
+                            (width / new_width),
+                            (height / new_height)
+                        )
+                    else:
+                        # Read all bands into a NumPy array
+                        data = dataset.read()  # Shape: (band_count, rows, cols)
+                        transform = dataset.transform
+                        new_height = height
+                        new_width = width
+
+                    # Get the number of bands
+                    band_count = data.shape[0]
+
+                    # Get the coordinates
+                    rows, cols = np.indices((new_height, new_width))
+                    xs, ys = rasterio.transform.xy(
+                        transform, rows, cols, offset='center'
+                    )
+
+                    # Flatten the arrays
+                    xs = np.array(xs).flatten()
+                    ys = np.array(ys).flatten()
+                    pixel_values = data.reshape((band_count, -1)).T  # Shape: (num_pixels, band_count)
+
+                    # Handle SKIP_VALUES
+                    if SKIP_VALUES:
+                        # Convert SKIP_VALUES to a NumPy array for efficient comparison
+                        skip_values = np.array(SKIP_VALUES)
+
+                        # Create a mask for pixels to skip
+                        skip_mask = np.isin(pixel_values, skip_values).any(axis=1)
+                        # Invert the skip_mask to get the mask of pixels to keep
+                        mask = ~skip_mask
+
+                        # Apply the mask to xs, ys, and pixel_values
+                        xs_filtered = xs[mask]
+                        ys_filtered = ys[mask]
+                        pixel_values_filtered = pixel_values[mask]
+                    else:
+                        # If SKIP_VALUES not provided, use all data
+                        xs_filtered = xs
+                        ys_filtered = ys
+                        pixel_values_filtered = pixel_values
+
+                    # For each pixel, yield a row with x, y, and band values
+                    for i in range(len(xs_filtered)):
+                        # Get the pixel values for all bands
+                        band_vals = pixel_values_filtered[i].tolist()
+                        yield (
+                            xs_filtered[i],
+                            ys_filtered[i],
+                            band_vals,
+                            band_count
+                        )
+        except Exception as e:
+            raise Exception(f"Error during data extraction: {e}")
+$$;
+```
+
+Now you can load data from `Bok_andel.tif`. Run the query below to reduce the size of the initial file to 500 million points and ignore points where the band value equals zero.
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.BOK_ANDEL AS
+SELECT x, y,
+band_values[0]::float as band
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOTIFF_RESAMPLE_SKIP(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'Bok_andel.tif'), [0], 500000000));
+```
+
+In the prevous query you stored `x` and `y` as raw coordinates and the size of the newly created table has 7,028,074 rows. In the following query you check the metadata of the initial file to see what SRID it uses:
+
+```
+SELECT *
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_EXTRACT_GEOTIFF_METADATA(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'Bok_andel.tif')));
+```
+
+The SRID is `EPSG:25833`. To store data as `GEOGRAPHY` type for further visualisation you need to convert it into `EPSG:4326`. Run the following query:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.BOK_ANDEL AS
+SELECT TO_GEOGRAPHY(ST_TRANSFORM(ST_MAKEGEOMPOINT(x, y), 25833, 4326)) as geom, band
+FROM ADVANCED_ANALYTICS.RASTER.BOK_ANDEL
+```
+
+As a final step you visualize the results using H3 cells:
+
+```
+import streamlit as st
+import pandas as pd
+import pydeck as pdk
+from typing import List
+import branca.colormap as cm
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+
+# Execute the updated SQL query
+df = session.sql('''select h3_point_to_cell_string(geom, 7) as h3_cell,
+                    st_x(h3_cell_to_point(h3_cell)) as lon,
+                    st_y(h3_cell_to_point(h3_cell)) as lat,
+                    avg(band) as band 
+                    FROM ADVANCED_ANALYTICS.RASTER.BOK_ANDEL
+                    group by all;''').to_pandas()
+
+df["BAND"] = df["BAND"].apply(lambda row: float(row))
+center_latitude = df['LAT'].mean()
+center_longitude = df['LON'].mean()
+
+def get_quantiles(df_column: pd.Series, quantiles: List) -> pd.Series:
+    return df_column.quantile(quantiles)
+
+def get_color(df_column: pd.Series, colors: List, vmin: int, vmax: int, index: pd.Series) -> pd.Series:
+    color_map = cm.LinearColormap(colors, vmin=vmin, vmax=vmax, index=index)
+    return df_column.apply(color_map.rgb_bytes_tuple)
+    
+quantiles = get_quantiles(df["BAND"], [0, 0.2, 0.4, 0.6, 0.8, 1])
+colors = ['palegreen', 'lightgreen', 'mediumseagreen', 'forestgreen', 'seagreen', 'darkgreen']
+
+df['BAND'] = get_color(df['BAND'], colors, quantiles.min(), quantiles.max(), quantiles)
+
+st.pydeck_chart(pdk.Deck(
+    map_style=None,
+    initial_view_state=pdk.ViewState(
+        latitude=center_latitude,
+        longitude=center_longitude, 
+        zoom=5.2, 
+        bearing=0, 
+        pitch=0),
+    layers=[
+        pdk.Layer(
+            "H3HexagonLayer",
+            df,
+            opacity=0.9,
+            stroked=False,
+            get_hexagon="H3_CELL",
+            get_fill_color='BAND',
+            extruded=False,
+            wireframe=True,
+            line_width_min_pixels=0,
+            auto_highlight=True,
+            pickable=False,
+            filled=True
+        )
+    ],
+))
+```
+
+<img src ='assets/geo_ml_27.png' width=800>
+
+### Conclusion
+
+In this lab, you have learned how to load geospatial data from unstructured formats, such as GeoTiff and Shapefiles and what techniques you can apply when you need to join data using nearest neighbout approach. You can use these or similar UDFs to load data from other formats.
+
 ## Conclusion And Resources
 
 Duration: 4
