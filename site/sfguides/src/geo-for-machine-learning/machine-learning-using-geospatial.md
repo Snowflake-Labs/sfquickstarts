@@ -2518,6 +2518,10 @@ Duration: 30
 
 In this Lab you will learn how to create interactive maps directly within Snowflake using [Kepler.gl](https://kepler.gl), powered by [Dekart.xyz](https://dekart.xyz/docs/snowflake-snowpark/about/). You will use Dekart.XYZ app and use public datasets from Marketplace to visualize UK highways with color-coded density of nearby EV charging stations. 
 
+Yor final result will be a map similar to this one:
+
+<img src ='assets/geo_ml_39.png' width=800>
+
 ### Data aquisition 
 For this project you will use an Overture Maps [Divisions](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9M9/carto-overture-maps-divisions), [Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places), and[Transportation](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KJ/carto-overture-maps-transportation) datasets offered by CARTO as free Marketplace listins.
 
@@ -2595,7 +2599,7 @@ In this query you use Overture Maps - Divisions dataset to get the shape of the 
 
 <img src ='assets/geo_ml_35.gif' width=800>
 
-As a next step, add a road network for the UK. Create a new tab in SQL panel and name it `uk_roads`. Run the following query that joins road data from Overture Maps - Transportation dataset and filters it so it shows only motoways and trunk roads for the UK area:
+As a next step, add a road network for the UK. Create a new tab in SQL panel and name it `uk_roads`. Run the following query that joins road data from `Overture Maps - Transportation` dataset and filters it so it shows only motoways and trunk roads for the UK area:
 
 ```
 with uk_boundary as (SELECT GEOMETRY
@@ -2606,7 +2610,7 @@ FROM OVERTURE_MAPS__TRANSPORTATION.CARTO.SEGMENT s, uk_boundary ub
 WHERE ST_INTERSECTS(ub.GEOMETRY, s.GEOMETRY) AND s.CLASS IN ('motorway', 'trunk');
 ```
 
-When the query is complete, you'll see the new layer in the Layers panel with the name `uk_roads` and it contains about 126K road segments that are viualised on the map. You can change the colour of the linestrings using Stroke Color field in the corresponding Layer.
+When the query is complete, you'll see the new layer in the Layers panel with the name `uk_roads` and it contains about 126K road segments that are viualised on the map. You can change the colour of the linestrings using `Stroke Color` field in the corresponding Layer.
 
 <img src ='assets/geo_ml_36.png' width=700>
 
