@@ -27,6 +27,9 @@ This guide will take you through the steps of converting public data to Iceberg 
 - creating and populating an Iceberg table managed on OneLake
 - querying Iceberg from Snowflake and Fabric services
 
+### What You Will Build
+- You will create an external volume and table using publicly shared sample data. The table will be in the Apache Iceberg table format, deployed in Azure on OneLake. With a Fabric shortcut you will be able to use the data for power BI reports, or other Fabric workloads.
+
 ### What You will Need 
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 - [Fabric Capacity](https://learn.microsoft.com/en-us/fabric/get-started/fabric-trial)  **Important: Must be in same region as your Snowflake Account**
@@ -35,14 +38,6 @@ This guide will take you through the steps of converting public data to Iceberg 
 The end-to-end workflow will look like this:
 ![](assets/diagram.png)
 
-
-<!-- ------------------------ -->
-## Use Case
-Duration: 2
-
-In this use case you will create an external volume and table using publicly shared sample data. The table will be in the Apache Iceberg table format, deployed in Azure on OneLake.  
-
-There are many additional use cases that can be built on this pattern, but specifically you will be using customer data to populate an Iceberg table and set up a Fabric shortcut. From there you can use the data for power BI reports, querying from Snowflake, working with Snowpark, working with Synapse Notebooks, and many more use-cases.
 
 <!-- ------------------------ -->
 ## Prepare Sample Data
