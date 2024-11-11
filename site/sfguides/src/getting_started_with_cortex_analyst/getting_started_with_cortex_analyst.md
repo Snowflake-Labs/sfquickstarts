@@ -237,6 +237,8 @@ FORCE = TRUE ;
 ## Integrate Cortex Search
 Duration: 5
 
+Now, you will integrate Cortex Search as a way to improve literal string searches to help Cortex Analyst generate more accurate SQL queries. Writing the correct SQL query to answer a question sometimes requires knowing exact literal values to filter on. Since those values can’t always be extracted directly from the question, a search of some kind may be needed.
+
 
 <!-- ------------------------ -->
 ## Create a Streamlit Conversational App
