@@ -6,6 +6,7 @@ environments: web
 status: Draft 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Geospatial, Analytics, H3, Machine Learning.
+tags: Geospatial, Analytics, H3, Machine Learning.
 
 # Geospatial Analytics, AI and ML using Snowflake
 <!-- ----------------------------------------- -->
@@ -37,6 +38,8 @@ When you complete this quickstart, you will have gained practical experience in 
 * Training models and predicting results with Cortex ML
 * Using LLM for analysing textual data
 * Visualizing data with Streamlit
+* Processing unstructured geospaial data (GeoTIFF, Shapefiles)
+* Using geo visualisation apps available in Marketplace
 * Processing unstructured geospaial data (GeoTIFF, Shapefiles)
 * Using geo visualisation apps available in Marketplace
 
@@ -2679,6 +2682,7 @@ In this Lab, you created an interactive, real-time map within Snowflake, using D
 Duration: 4
 
 Congratulations! You've successfully performed data analytics, data engineering and data science tasks for various use cases.
+Congratulations! You've successfully performed data analytics, data engineering and data science tasks for various use cases.
 
 ### What You Learned
 
@@ -2693,6 +2697,9 @@ Congratulations! You've successfully performed data analytics, data engineering 
 - [Geospatial Analytics for Retail with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html)
 - [Geospatial Analysis using Geometry and Geography Data Types quickstart](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) 
 - [Performance Optimization Techniques for Geospatial queries](https://quickstarts.snowflake.com/guide/geo_performance/index.html?index=..%2F..index#0)
+
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/tGDzTpu41huWFDXi9).
+
 
 We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/tGDzTpu41huWFDXi9).
 
