@@ -2393,9 +2393,19 @@ You can now use top right menu to save the newly created map and to share it wit
 
 ### Conclusion
 
-In this lab, you have learned how to use Dekart applications available in the marketplace to create interctive maps.
+In this Lab, you created an interactive, real-time map within Snowflake, using Dekart and the Overture Maps datasets. You explored UK highway infrastructure with a focus on EV charging station density.
 
 <img src ='assets/geo_ml_39.png' width=800>
+
+#### What You Learned
+- Creating interactive maps directly within Snowflake using Kepler.gl and Dekart.
+- Accessing and using public Overture Maps data to create meaningful geospatial visualizations.
+- Writing SQL queries for filtering, calculating, and mapping geospatial data.
+
+#### Resources
+- [Snowflake Kepler.gl Maps Examples](https://dekart.xyz/docs/about/snowflake-kepler-gl-examples/): Explore more examples and use cases for Kepler.gl in Snowflake.
+- [Dekart Snowpark Application Documentation](https://dekart.xyz/docs/snowflake-snowpark/about/): Learn more about Dekart and its capabilities.
+- [Overture Maps Schema Reference](https://docs.overturemaps.org/schema/reference/): For more details on available tables and fields.
 
 ## Conclusion And Resources
 
