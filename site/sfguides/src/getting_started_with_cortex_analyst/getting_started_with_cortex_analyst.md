@@ -261,7 +261,7 @@ CREATE OR REPLACE DYNAMIC TABLE product_landing_table
 
   CREATE OR REPLACE CORTEX SEARCH SERVICE product_line_search_service
   ON product_dimension
-  WAREHOUSE = xsmall
+  WAREHOUSE = cortex_analyst_wh
   TARGET_LAG = '1 hour'
   AS (
       SELECT product_dimension FROM product_landing_table
@@ -281,30 +281,59 @@ Now, you will create a demo chat application to call the Cortex Analyst API and 
 ![edit streamlit](./assets/streamlit_editor.png)
 - Click `Run` and begin asking questions!
 
-Take note of the `send_message` function that is defined in this Python code. This is the function that takes our chat input prompt, packages it up as a JSON object, and sends it to the Cortex Analyst API (with the specified `revenue_timeseries.yaml` Semantic Model). 
+Take note of the `get_analyst_response` function that is defined in this Python code. This is the function that takes our chat input prompt and history, packages it up as a JSON object, and sends it to the Cortex Analyst API (with the specified `revenue_timeseries.yaml` Semantic Model). 
 
 ```python
-def send_message(prompt: str) -> Dict[str, Any]:
-    """Calls the REST API and returns the response."""
+def get_analyst_response(messages: List[Dict]) -> Tuple[Dict, Optional[str]]:
+    """
+    Send chat history to the Cortex Analyst API and return the response.
+
+    Args:
+        messages (List[Dict]): The conversation history.
+
+    Returns:
+        Optional[Dict]: The response from the Cortex Analyst API.
+    """
+    # Prepare the request body with the user's prompt
     request_body = {
-        "messages": [{"role": "user", "content": [{"type": "text", "text": prompt}]}],
-        "semantic_model_file": f"@{DATABASE}.{SCHEMA}.{STAGE}/{FILE}",
+        "messages": messages,
+        "semantic_model_file": f"@{st.session_state.selected_semantic_model_path}",
     }
-    resp = requests.post(
-        url=f"https://{HOST}/api/v2/cortex/analyst/message",
-        json=request_body,
-        headers={
-            "Authorization": f'Snowflake Token="{st.session_state.CONN.rest.token}"',
-            "Content-Type": "application/json",
-        },
+
+    # Send a POST request to the Cortex Analyst API endpoint
+    # Adjusted to use positional arguments as per the API's requirement
+    resp = _snowflake.send_snow_api_request(
+        "POST",  # method
+        API_ENDPOINT,  # path
+        {},  # headers
+        {},  # params
+        request_body,  # body
+        None,  # request_guid
+        API_TIMEOUT,  # timeout in milliseconds
     )
-    request_id = resp.headers.get("X-Snowflake-Request-Id")
-    if resp.status_code < 400:
-        return {**resp.json(), "request_id": request_id}  # type: ignore[arg-type]
+
+    # Content is a string with serialized JSON object
+    parsed_content = json.loads(resp["content"])
+
+    # Check if the response is successful
+    if resp["status"] < 400:
+        # Return the content of the response as a JSON object
+        return parsed_content, None
     else:
-        raise Exception(
-            f"Failed request (id: {request_id}) with status {resp.status_code}: {resp.text}"
-        )
+        # Craft readable error message
+        error_msg = f"""
+🚨 An Analyst API error has occurred 🚨
+
+* response code: `{resp['status']}`
+* request-id: `{parsed_content['request_id']}`
+* error code: `{parsed_content['error_code']}`
+
+Message:
+```
+{parsed_content['message']}
+```
+        """
+        return parsed_content, error_msg
 ```
 
 You can now begin asking natural language questions about the revenue data in the chat interface (e.g. "What questions can I ask?")
@@ -453,6 +482,7 @@ Congratulations, you have successfully completed this quickstart! Through this q
 ### What you learned
 - How to create a semantic model YAML file
 - How to interact with the Cortex Analyst REST API via a Streamlit in Snowflake (SiS) chat interface
+- How to integrate Cortex Search with Cortex Analyst
 
 For more information, check out the resources below:
 
