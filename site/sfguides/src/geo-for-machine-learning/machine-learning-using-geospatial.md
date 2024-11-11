@@ -2526,7 +2526,7 @@ Yor final result will be a map similar to this one:
 <img src ='assets/geo_ml_39.png' width=800>
 
 ### Data aquisition 
-For this project you will use an Overture Maps [Divisions](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9M9/carto-overture-maps-divisions), [Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places), and[Transportation](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KJ/carto-overture-maps-transportation) datasets offered by CARTO as free Marketplace listins.
+For this project you will use an Overture Maps [Divisions](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9M9/carto-overture-maps-divisions), [Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places), and [Transportation](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KJ/carto-overture-maps-transportation) datasets offered by CARTO as free Marketplace listins.
 
 - Navigate to the Marketplace screen using the menu on the left side of the window
 - Search for `Overture Maps - Divisions` in the search bar
