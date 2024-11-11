@@ -5,7 +5,7 @@ categories: Getting-Started
 environments: web
 status: Draft 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Performance, H3, Machine Learning.
+tags: Geospatial, Analytics, H3, Machine Learning.
 
 # Geospatial Analytics, AI and ML using Snowflake
 <!-- ----------------------------------------- -->
@@ -26,6 +26,8 @@ In this quickstart, you will use H3, Time Series, Cortex ML and Streamlit for ML
 * Lab 1: Geocoding and Reverse Geocoding
 * Lab 2: Forecasting time series on a map
 * Lab 3: Sentiment analysis of customer reviews
+* Lab 4: Processing unstructured geospatial data
+* Lab 5: Creating Interactive Maps with Kepler.gl
 
 When you complete this quickstart, you will have gained practical experience in several areas:
 * Acquiring data from the Snowflake Marketplace
@@ -34,6 +36,8 @@ When you complete this quickstart, you will have gained practical experience in 
 * Training models and predicting results with Cortex ML
 * Using LLM for analysing textual data
 * Visualizing data with Streamlit
+* Processing unstructured geospaial data
+* Using geo visualisation apps available in Marketplace
 
 ### What You’ll Need
 * A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
