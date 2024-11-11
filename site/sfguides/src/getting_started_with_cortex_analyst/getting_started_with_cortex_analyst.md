@@ -149,7 +149,7 @@ There are three data files and one YAML file included in the [Git Repo](https://
 You will now upload these files to your Snowflake account and ingest the data files into the tables created in the previous step.
 
 To upload the data files:
-- Navigate to the Worksheets tab in Snowsight, click the '+' button in the top right corner and select **Add Data**
+- Navigate to the Data tab in Snowsight, and select **Add Data**
 - On the Add Data page, select **Load files into a stage**
 - Select the four files that you want to upload (listed above)
 - Select **CORTEX_ANALYST_DEMO** as Database, **REVENUE_TIMESERIES** as Schema, and **RAW_DATA** as Stage
@@ -157,9 +157,9 @@ To upload the data files:
 
 Let's go check that the files were successfully uploaded to the stage. In the Snowsight UI:
 - Select **Data >> Databases**
-- Select the CORTEX_ANALYST_DEMO database and REVENUE_TIMESERIES Schema that contain the stage
-- Select Stages and select the RAW_DATA stage
-- If prompted, select Enable Directory Table and the CORTEX_ANALYST_WH to refresh the directory table
+- Select the **CORTEX_ANALYST_DEMO** database and **REVENUE_TIMESERIES** Schema that contain the stage
+- Select Stages and select the **RAW_DATA** stage
+- If prompted, select **Enable Directory Table** and the CORTEX_ANALYST_WH to refresh the directory table
 
 You should see the four files listed in the stage:
 ![staged files](./assets/staged_files.png)
@@ -168,11 +168,11 @@ Now, let's load the raw CSV data into the tables. Go back to your Snowflake SQL 
 
 ```sql
 /*--
-• load data into tables
+• looad data into tables
 --*/
 COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE
 FROM @raw_data
-FILES = ('daily_revenue_combined.csv')
+FILES = ('daily_revenue.csv')
 FILE_FORMAT = (
     TYPE=CSV,
     SKIP_HEADER=1,
@@ -192,9 +192,9 @@ FORCE = TRUE ;
 
 
 
-COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE_BY_PRODUCT
+COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.PRODUCT_DIM
 FROM @raw_data
-FILES = ('daily_revenue_by_product_combined.csv')
+FILES = ('product.csv')
 FILE_FORMAT = (
     TYPE=CSV,
     SKIP_HEADER=1,
@@ -214,9 +214,9 @@ FORCE = TRUE ;
 
 
 
-COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE_BY_REGION
+COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.REGION_DIM
 FROM @raw_data
-FILES = ('daily_revenue_by_region_combined.csv')
+FILES = ('region.csv')
 FILE_FORMAT = (
     TYPE=CSV,
     SKIP_HEADER=1,
