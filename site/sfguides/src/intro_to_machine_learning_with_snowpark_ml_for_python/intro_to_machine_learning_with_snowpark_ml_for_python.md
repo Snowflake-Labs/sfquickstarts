@@ -61,7 +61,7 @@ This quickstart will focus on building a custom ML workflow using the following 
     > aside positive
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python)
-- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial or use a different role.
+- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for [a free trial](https://signup.snowflake.com/) or use a different role.
 
 ### What You’ll Build 
 - A set of notebooks leveraging Snowflake ML for Python:
@@ -164,7 +164,7 @@ In this notebook, we will show you how to manage Machine Learning models from ex
 We will also go more into detail in using the Model Registry API.
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion and Resources
 Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake for Machine Learning through the introduction of Snowpark ML, the Python library and underlying infrastructure for data science and machine learning tasks. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code. You can also manage your models from iteration to production and trace your ML lineage to better understand how machine learning artifacts relate to each other.
 
 For more information, check out the resources below:
