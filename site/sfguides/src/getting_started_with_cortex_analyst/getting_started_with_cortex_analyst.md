@@ -43,7 +43,7 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 - A Semantic Model over sample financial data
 - A Streamlit in Snowflake (SiS) app with a conversational interface to Cortex Analyst
 
-![streamlit app](./assets/cortex_streamlit_app.png)
+![streamlit app](./assets/streamlit_app.png)
 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
@@ -163,7 +163,7 @@ Let's go check that the files were successfully uploaded to the stage. In the Sn
 - If prompted, select **Enable Directory Table** and the CORTEX_ANALYST_WH to refresh the directory table
 
 You should see the four files listed in the stage:
-![staged files](./assets/cortex_staged_files.png)
+![staged files](./assets/staged_files.png)
 
 Now, let's load the raw CSV data into the tables. Go back to your Snowflake SQL worksheet and run the following [load_data.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/load_data.sql) code to load data into the tables:
 
@@ -277,10 +277,10 @@ Duration: 10
 Now, you will create a demo chat application to call the Cortex Analyst API and ask natural-language questions over our structured revenue datasets. To create the Streamlit in Snowflake application:
 
 - Go to the Streamlit page in Snowsight, and click `+ Streamlit App`, and fill it in with the below details and click create:
-![create streamlit](./assets/cortex_streamlit_create.png)
+![create streamlit](./assets/streamlit_create.png)
 - Open up the [cortex_analyst_sis_demo_app.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/cortex_analyst_sis_demo_app.py) file in your preferred local code editor
 - Copy and paste the SiS app code into the Streamlit editor
-![edit streamlit](./assets/cortex_streamlit_editor.png)
+![edit streamlit](./assets/streamlit_editor.png)
 - Click `Run` and begin asking questions!
 
 Take note of the `get_analyst_response` function that is defined in this Python code. This is the function that takes our chat input prompt and history, packages it up as a JSON object, and sends it to the Cortex Analyst API (with the specified `revenue_timeseries.yaml` Semantic Model). 
