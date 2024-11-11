@@ -2590,7 +2590,7 @@ Congratulations! You have now Dekart app running in your Snowflake environment a
 ### Build maps with SQL in Dekart
 Dekart allows you to visualize data directly from SQL queries, which means you can write custom queries to shape the data as you like.
 
-In the new report screen you see three main components: the SQL panel on the right, the `Layers` panel on the left and the map in the center. Rename the report, set the name to `Charging Station Density`. Rename the first SQL tab to `uk_boundary` and run the following query:
+In the new report screen you see three main components: the `SQL` panel on the right, the `Layers` panel on the left and the map in the center. Rename the report, set the name to `Charging Station Density`. Rename the first SQL tab to `uk_boundary` and run the following query:
 
 ```
 SELECT ST_ASWKT(GEOMETRY) as GEOMETRY
@@ -2602,7 +2602,7 @@ In this query you use Overture Maps - Divisions dataset to get the shape of the 
 
 <img src ='assets/geo_ml_35.gif' width=800>
 
-As a next step, add a road network for the UK. Create a new tab in SQL panel and name it `uk_roads`. Run the following query that joins road data from `Overture Maps - Transportation` dataset and filters it so it shows only motoways and trunk roads for the UK area:
+As a next step, add a road network for the UK. Create a new tab in `SQL` panel and name it `uk_roads`. Run the following query that joins road data from `Overture Maps - Transportation` dataset and filters it so it shows only motoways and trunk roads for the UK area:
 
 ```
 with uk_boundary as (SELECT GEOMETRY
