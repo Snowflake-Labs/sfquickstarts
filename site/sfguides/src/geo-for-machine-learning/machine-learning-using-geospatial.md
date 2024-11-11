@@ -23,11 +23,12 @@ Snowflake offers a rich toolkit for predictive analytics with a geospatial compo
 
 ### What You’ll Learn
 In this quickstart, you will use H3, Time Series, Cortex ML and Streamlit for ML use cases. The quickstart is broken up into separate labs:
-* Lab 1: Geocoding and Reverse Geocoding
-* Lab 2: Forecasting time series on a map
-* Lab 3: Sentiment analysis of customer reviews
-* Lab 4: Processing unstructured geospatial data
-* Lab 5: Creating Interactive Maps with Kepler.gl
+* Lab 1: Geospatial 101
+* Lab 2: Geocoding and Reverse Geocoding
+* Lab 3: Forecasting time series on a map
+* Lab 4: Sentiment analysis of customer reviews
+* Lab 5: Processing unstructured geospatial data
+* Lab 6: Creating Interactive Maps with Kepler.gl
 
 When you complete this quickstart, you will have gained practical experience in several areas:
 * Acquiring data from the Snowflake Marketplace
@@ -92,6 +93,264 @@ USE ADVANCED_ANALYTICS.PUBLIC;
 USE WAREHOUSE my_wh;
 ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT='WKT';
 ```
+
+## Geospatial 101
+
+Duration: 30
+
+> aside negative
+>  Before starting with this lab, complete the preparation steps from `Setup your account` page.
+
+> aside positive
+>  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
+
+### 1. Overview
+Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and perform calculations on geospatial objects. Additionally, geospatial data can be visualized in Snowflake using Streamlit. This guide provides an entry-level introduction to geospatial analytics and visualization in Snowflake. In this lab, you will explore a sample use case of identifying the closest healthcare facilities near a geographic point, and you will learn:
+- How to view the GEOGRAPHY data type with supported formats
+- How to construct a geospatial object from latitude and longitude values
+- How to extract latitude and longitude from a geography column
+- How to perform geospatial calculations and filtering
+- How to visualize geospatial data using Streamlit in Snowflake
+
+
+### 2. Acquire Data
+For this lab oyu will use [Overture Maps - Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places) dataset from Marketplace. Now you can acquire sample geospatial data from the Snowflake Marketplace.
+
+* Navigate to the Marketplace screen using the menu on the left side of the window
+* Search for `Overture Maps` in the search bar
+* Find and click the `Overture Maps - Places` tile
+
+On the Get Data screen, keep the default database name OVERTURE_MAPS__PLACES, as all of the future instructions will assume this name for the database.
+
+> aside negative
+>  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
+
+
+Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace.
+
+As one additional preparation step you need to complete is to import libraries that you will use in this Lab, navigate to the `Packages` drop-down  in the upper right of the Notebook and search for `pydeck`. Click on `pydeck` to add it to the Python packages.
+
+### 3. Understanding Snowflake Geospatial Formats
+Snowflake supports GeoJSON, Well-Known Text (WKT) and Well-Known Binary (WKB) formats for loading and unloading geospatial data. You can use session or account parameters to control which of these format types is used to display geospatial data in your query results.
+
+Run the query below to explicitly set your geography output format to JSON.
+
+```
+ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT = 'GEOJSON';
+```
+
+In the following two queries you will familiarize yourself with `Overture Maps - Points of Interest` data. First, check the size of the table:
+
+```
+SELECT COUNT(*) FROM OVERTURE_MAPS__PLACES.CARTO.PLACE;
+```
+
+In the following query, you will examine a geography column containing data on health and medical facilities. 
+
+```
+SELECT 
+     NAMES['primary']::STRING AS NAME,
+     ADDRESS.value:element:locality::STRING AS CITY,
+     ADDRESS.value:element:region::STRING AS STATE,
+     ADDRESS.value:element:postcode::STRING AS POSTCODE,
+     ADDRESS.value:element:country::STRING AS COUNTRY,
+     GEOMETRY
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE,
+LATERAL FLATTEN(INPUT => ADDRESSES:list) AS ADDRESS
+WHERE CATEGORIES['primary'] ='health_and_medical'
+LIMIT 100;
+```
+
+<img src ='assets/geo_ml_40.png' width=700>
+
+Note that while the column is named `GEOMETRY` in this data source, it is stored in a `GEOGRAPHY` column in Snowflake, using the coordinate system [ESPG:4326](https://epsg.io/4326), also known as [WGS 84](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84). This coordinate system uses latitude and longitude as coordinates and is the most widely used coordinate system worldwide. If you are storing geospatial data using latitude and longitude, then the `GEOGRAPHY` data type is the most suitable for storing your data.
+
+
+The contents of the `GEOMETRY` column in the output above, formatted as GeoJSON. 
+
+Run the code below to update your session geography output format to [Well-Known Text (WKT)](https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry), which is arguably more readable.
+
+```
+ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT = 'WKT';
+```
+
+Now rerun the Overture maps query. Notice how the contents of the `GEOMETRY` column are displayed.
+
+```
+SELECT 
+     NAMES['primary']::STRING AS NAME,
+     ADDRESS.value:element:locality::STRING AS CITY,
+     ADDRESS.value:element:region::STRING AS STATE,
+     ADDRESS.value:element:postcode::STRING AS POSTCODE,
+     ADDRESS.value:element:country::STRING AS COUNTRY,
+     geometry
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE,
+LATERAL FLATTEN(INPUT => ADDRESSES:list) AS ADDRESS
+WHERE CATEGORIES['primary'] ='health_and_medical'
+LIMIT 100;
+```
+<img src ='assets/geo_ml_41.png' width=700>
+
+### Constructing geospatial objects
+You can use constructor functions such as [ST_MAKEPOINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint), [ST_MAKELINE](https://docs.snowflake.com/en/sql-reference/functions/st_makeline) and [ST_POLYGON](https://docs.snowflake.com/en/sql-reference/functions/st_makepolygon) to create geospatial objects. Run the code below to create a geo point from latitude and longitude.
+
+```
+SELECT ST_MAKEPOINT(-74.0266511, 40.6346599) GEO_POINT
+```
+
+<img src ='assets/geo_ml_42.png' width=250>
+
+Alternatively, you can use the TO_GEOGRAPHY constructor function to create geospatial values. [TO_GEOGRAPHY](https://docs.snowflake.com/en/sql-reference/functions/to_geography) is a general purpose constructor where [ST_MAKEPOINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint) specifically makes a POINT object. Run the code below:
+
+```
+SELECT TO_GEOGRAPHY('POINT(-74.0266511 40.6346599)') GEO_POINT
+```
+
+<img src ='assets/geo_ml_42.png' width=250>
+
+### 4. Visualizing spatial data in Streamlit
+Using Streamlit, you can visualize your data using tools like `st.map` or popular python packages like `pydeck`. 
+
+Add a new Python cell and run the code below to see how you can use `st.map` to show a point on a map.
+
+```
+import streamlit as st
+import pandas as pd
+
+# Define the coordinates for the point
+latitude = 40.755702
+longitude = -73.986226
+
+# Create a DataFrame with the point
+data = pd.DataFrame({
+    'lat': [latitude],
+    'lon': [longitude]
+})
+
+# Display the map with the point
+st.title("Display a Points with st.map")
+st.map(data)
+```
+
+<img src ='assets/geo_ml_43.png' width=800>
+
+### Accessing coordinates of a geospatial object
+Sometimes you need to do the opposite - access individual coordinates in a geospatial object. You can do that with accessor functions [ST_X](https://docs.snowflake.com/en/sql-reference/functions/st_x) and [ST_Y](https://docs.snowflake.com/en/sql-reference/functions/st_y) to access longitude and latitude accordingly. Run the code below:
+
+```
+SELECT 
+     NAMES['primary']::STRING AS NAME,
+     ST_X(GEOMETRY) AS LONGITUDE,
+     ST_Y(GEOMETRY) AS LATITUDE,
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE,
+LATERAL FLATTEN(INPUT => ADDRESSES:list) AS ADDRESS
+WHERE CATEGORIES['primary'] ='health_and_medical'
+LIMIT 100;
+```
+
+<img src ='assets/geo_ml_44.png' width=500>
+
+### Finding the nearest points and calculating distances
+You can use relationship and measurement functions to perform spatial joins and other analytical operations. For example, you can use [ST_DWITHIN](https://docs.snowflake.com/en/sql-reference/functions/st_dwithin) to find health facilities that are within a mile from you, and you can use [ST_DISTANCE](https://docs.snowflake.com/en/sql-reference/functions/st_distance) to measure the actual distance between points.
+
+Run the code below to obtain the ten nearest health facilities that are no more than approximately a mile (1,600 meters) away from a given point. The records are sorted by distance.
+
+```
+SELECT 
+     NAMES['primary']::STRING AS NAME,
+     ST_X(GEOMETRY) AS LONGITUDE,
+     ST_Y(GEOMETRY) AS LATITUDE,
+     GEOMETRY,
+     ST_DISTANCE(GEOMETRY,TO_GEOGRAPHY('POINT(-73.986226 40.755702)'))::NUMBER(6,2) 
+        AS DISTANCE_METERS 
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE
+WHERE CATEGORIES['primary'] ='health_and_medical' AND
+ST_DWITHIN(GEOMETRY,ST_MAKEPOINT(-73.986226, 40.755702),1600) = TRUE 
+ORDER BY 5 LIMIT 10;
+```
+
+<img src ='assets/geo_ml_45.png' width=700>
+
+Notice that this query runs on a table with over 53M rows. Snowflake's geospatial data types are very efficient!
+
+# Creating multi-layered maps in Streamlit
+Using Streamlit and Pydeck, you can create a multi-layered visualization. 
+
+Take note of the name of your previous cell and run the command below in a python cell to convert the results of the previous query into a pandas dataframe. We will reference this dataframe in the visualization.
+
+```
+df = query_9.to_pandas()
+```
+
+Now you will visualize the top 10 health facilities relative to the reference point. Pydeck supports multi-layered maps that can be customized with tooltips and other features.
+
+```
+import streamlit as st
+import pandas as pd
+import pydeck as pdk
+
+# Define the coordinates for your specific location
+latitude = 40.755702
+longitude = -73.986226
+
+# Create a DataFrame for your location
+my_location_df = pd.DataFrame({
+    'lat': [latitude],
+    'lon': [longitude]
+})
+
+# Create a PyDeck Layer for visualizing points with larger size and a tooltip for NAME
+data_layer = pdk.Layer(
+    "ScatterplotLayer",
+    df,
+    get_position='[LONGITUDE, LATITUDE]',
+    get_radius=50,  # Adjust this value for larger points
+    get_fill_color='[255, 0, 0, 160]',  # Red color with transparency
+    pickable=True,
+    get_tooltip=['NAME'],  # Add NAME as a tooltip
+)
+
+# Create a PyDeck Layer for your location with a different color and size
+my_location_layer = pdk.Layer(
+    "ScatterplotLayer",
+    my_location_df,
+    get_position='[lon, lat]',
+    get_radius=100,  # Larger radius to highlight your location
+    get_fill_color='[0, 0, 255, 200]',  # Blue color with transparency
+    pickable=True,
+)
+
+# Set the view on the map
+view_state = pdk.ViewState(
+    latitude=df['LATITUDE'].mean(),
+    longitude=df['LONGITUDE'].mean(),
+    zoom=13.5,  # Adjust zoom if needed
+    pitch=0,
+)
+
+# Define the tooltip
+tooltip = {
+    "html": "<b>Facility Name:</b> {NAME}",
+    "style": {"color": "white"}
+}
+
+# Render the map with both layers and tooltip
+r = pdk.Deck(
+    layers=[data_layer, my_location_layer],
+    initial_view_state=view_state,
+    map_style='mapbox://styles/mapbox/light-v10',
+    tooltip=tooltip
+)
+
+st.write('10 Nearest Health Facilities')
+st.pydeck_chart(r, use_container_width=True)
+```
+
+<img src ='assets/geo_ml_46.png' width=800>
+
+### Conclusion
+
+Congratulations! You have completed this introductory quickstart. You learn basic operations to construct, process and visualise geospatial data.
 
 ## Geocoding and Reverse Geocoding
 
