@@ -234,6 +234,11 @@ ON_ERROR=CONTINUE
 FORCE = TRUE ;
 ```
 <!-- ------------------------ -->
+## Integrate Cortex Search
+Duration: 5
+
+
+<!-- ------------------------ -->
 ## Create a Streamlit Conversational App
 Duration: 10
 
