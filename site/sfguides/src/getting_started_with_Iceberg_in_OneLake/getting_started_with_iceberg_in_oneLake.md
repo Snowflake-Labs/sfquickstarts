@@ -21,13 +21,13 @@ This guide will take you through the steps of converting public data to Iceberg 
 - familiarity with [Microsoft Fabric](https://learn.microsoft.com/en-us/fabric/get-started/microsoft-fabric-overview) and a Fabric workspace
 - familiarity with Apache Iceberg
 
-### You'll Learn
+### What You Will Learn
 - creating an external volumne
 - using sample data through Snowflake data sharing
 - creating and populating an Iceberg table managed on OneLake
 - querying Iceberg from Snowflake and Fabric services
 
-### What You’ll Need 
+### What You will Need 
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 - [Fabric Capacity](https://learn.microsoft.com/en-us/fabric/get-started/fabric-trial)  **Important: Must be in same region as your Snowflake Account**
 - For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network.
