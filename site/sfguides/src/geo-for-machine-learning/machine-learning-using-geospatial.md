@@ -1893,7 +1893,7 @@ st.pydeck_chart(pdk.Deck(
 
 Now that you have all the data from GeoTiff and Shapefile stored in Snowflake tables, you can join them.
 
-## Step 4. Joining Data from Different Sources
+### Step 4. Joining Data from Different Sources
 In this step, you will join data from two datasets. Let's start by joining the `Elevation` and `Weather` datasets. We observed in the visualizations above that the Elevation dataset covers a relatively small area in Africa, whereas the Weather dataset covers the whole world. To speed up joining these datasets, we can remove from the Weather dataset all points that are outside our area of interest, which corresponds to the coverage area of the Elevation dataset.
 
 In the query below, you will do the following:
@@ -2248,6 +2248,154 @@ st.pydeck_chart(pdk.Deck(
 ### Conclusion
 
 In this lab, you have learned how to load geospatial data from unstructured formats, such as GeoTiff and Shapefiles and what techniques you can apply when you need to join data using nearest neighbout approach. You can use these or similar UDFs to load data from other formats.
+
+## Creating Interactive Maps with Kepler.gl
+
+Duration: 30
+
+In this Lab you will learn how to create interactive maps directly within Snowflake using [Kepler.gl](https://kepler.gl), powered by [Dekart.xyz](https://dekart.xyz/docs/snowflake-snowpark/about/). You will use Dekart.XYZ app and use public datasets from Marketplace to visualize UK highways with color-coded density of nearby EV charging stations. 
+
+### Data aquisition 
+For this project you will use an Overture Maps [Divisions](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9M9/carto-overture-maps-divisions), [Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places), and[Transportation](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KJ/carto-overture-maps-transportation) datasets offered by CARTO as free Marketplace listins.
+
+- Navigate to the Marketplace screen using the menu on the left side of the window
+- Search for `Overture Maps - Divisions` in the search bar
+- Once in the listing, click the big blue `Get` button
+
+> aside negative
+>  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
+
+<img src ='assets/geo_ml_28.png' width=500>
+
+Similarly you need to find and install [Overture Maps - Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places), and [Overture Maps - Transportation](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KJ/carto-overture-maps-transportation) datasets.
+
+> aside positive
+>  These datasets include information on administrative divisions, transportation routes, and points of interest. The [Overture Maps Schema Reference](https://docs.overturemaps.org/schema/reference/) is an excellent resource to understand the structure and details of each dataset.
+
+### Installing Dekart.xyz
+
+In this step you will install [Dekart – Kepler.gl maps inside Snowflake](https://app.snowflake.com/marketplace/listing/GZSYZJNO4W/dekart-xyz-dekart-%E2%80%93-kepler-gl-maps-inside-snowflake) application and run it inside of Snowpark Container Services. 
+
+
+As a first step you will install the Marketplace listing:
+- Navigate to the Marketplace screen using the menu on the left side of the window
+- Search for `Dekart – Kepler.gl maps inside Snowflake` in the search bar
+- Once in the listing, click the big blue `Get` button
+- In the "Warehouse used for installation" field select the warehouse which will be used for installation process.
+- Click the `Try for Free` button
+
+<img src ='assets/geo_ml_29.png' width=500>
+
+> aside negative
+>  Note: When trial end you won't be automatically swithched to Subscription-based usage. If you decide to continue using Dekart, you would need to manually enable subscription.
+
+Follow the installation instructions as displayed in the Snowsight interface.
+
+<img src ='assets/geo_ml_30.png' width=800>
+
+Grant Account Privileges to Dekart and allow connections to the Mapbox API. Dekart uses Mapbox for rendering maps. No user data is sent to Mapbox. Dekart creates a single node `CPU_X64_XS` compute pool and `XSMALL` warehouse.
+
+<img src ='assets/geo_ml_31.png' width=800>
+
+Click `Activate`. Activation process might take up to 10 minutes.
+
+<img src ='assets/geo_ml_32.png' width=800>
+
+While it's activating you can go to Worksheets and grant access to Overture Maps datasets. This ensures that Dekart can read and visualize the data within Snowflake. Note, tht since you run Dekart withon Snowflake Container Services, your data stays in Snowflake and won't be transfered externally. Execute the following SQL commands in Snowflake (make sure you have the `ACCOUNTADMIN` role for these operations):
+
+```
+GRANT IMPORTED PRIVILEGES ON DATABASE OVERTURE_MAPS__TRANSPORTATION TO application DEKART__KEPLER_GL_MAPS_INSIDE_SNOWFLAKE;
+GRANT IMPORTED PRIVILEGES ON DATABASE OVERTURE_MAPS__DIVISIONS TO application DEKART__KEPLER_GL_MAPS_INSIDE_SNOWFLAKE;
+GRANT IMPORTED PRIVILEGES ON DATABASE OVERTURE_MAPS__PLACES TO application DEKART__KEPLER_GL_MAPS_INSIDE_SNOWFLAKE;
+```
+When Activation is done, do the following steps:
+- Open the Dekart App within Snowsight by going to `Data Products` > `Apps`. Selecting Dekart app and click `Launch App`.
+- Authorize the Dekart App with your Snowflake account.
+- In the Dekart interface, click `Create Report` to start building your map.
+
+<img src ='assets/geo_ml_33.png' width=800>
+
+Congratulations! You have now Dekart app running in your Snowflake environment and now you're ready to start creating maps!
+
+### Build maps with SQL in Dekart
+Dekart allows you to visualize data directly from SQL queries, which means you can write custom queries to shape the data as you like.
+
+In the new report screen you see three main components: the SQL panel on the right, the `Layers` panel on the left and the map in the center. Rename the report, set the name to `Charging Station Density`. Rename the first SQL tab to `uk_boundary` and run the following query:
+
+```
+SELECT ST_ASWKT(GEOMETRY) as GEOMETRY
+FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+WHERE COUNTRY = 'GB' AND SUBTYPE = 'country';
+```
+
+In this query you use Overture Maps - Divisions dataset to get the shape of the UK boundary. As soon as query is completed, you will see a new layer in the `Layers` panel. You can expand it, to customise if needed, for example to make it transparent you can turn off `Fill color` toggle.
+
+<img src ='assets/geo_ml_35.gif' width=800>
+
+As a next step, add a road network for the UK. Create a new tab in SQL panel and name it `uk_roads`. Run the following query that joins road data from Overture Maps - Transportation dataset and filters it so it shows only motoways and trunk roads for the UK area:
+
+```
+with uk_boundary as (SELECT GEOMETRY
+FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+WHERE COUNTRY = 'GB' AND SUBTYPE = 'country')
+SELECT ST_ASWKT(s.GEOMETRY) as GEOMETRY, s.NAMES, s.ID
+FROM OVERTURE_MAPS__TRANSPORTATION.CARTO.SEGMENT s, uk_boundary ub
+WHERE ST_INTERSECTS(ub.GEOMETRY, s.GEOMETRY) AND s.CLASS IN ('motorway', 'trunk');
+```
+
+When the query is complete, you'll see the new layer in the Layers panel with the name `uk_roads` and it contains about 126K road segments that are viualised on the map. You can change the colour of the linestrings using Stroke Color field in the corresponding Layer.
+
+<img src ='assets/geo_ml_36.png' width=700>
+
+In the next step you will add locations of Electric Vehicles charging sttions as a new layer. Create a new SQL tab, name it `EV_stations` and run the following query:
+
+```
+WITH uk_boundary AS (SELECT GEOMETRY
+FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+WHERE COUNTRY = 'GB' AND SUBTYPE = 'country')
+SELECT ST_ASWKT(p.GEOMETRY) as GEOMETRY
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE p, uk_boundary ub
+WHERE ST_CONTAINS(ub.GEOMETRY, p.GEOMETRY) AND p.CATEGORIES::TEXT ILIKE '%charging%';
+```
+
+In the newly created layer `EV_stations` play with `Stroke Color` and `Radius` to adjust the size of points that correspond to chargins stations locations.
+
+<img src ='assets/geo_ml_37.png' width=700>
+
+As a last step, create a new SQL tab, name it `EV_stations_density` and run the following query that for each road segment calculates number of charging stations within 50km radius:
+
+```
+WITH uk_boundary as (SELECT GEOMETRY
+FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+WHERE COUNTRY = 'GB' AND SUBTYPE = 'country'),
+road_segments as (SELECT s.GEOMETRY, s.NAMES, s.ID
+FROM OVERTURE_MAPS__TRANSPORTATION.CARTO.SEGMENT s, uk_boundary ub
+WHERE ST_INTERSECTS(ub.GEOMETRY, s.GEOMETRY) AND s.CLASS IN ('motorway', 'trunk')),
+charging_stations as (SELECT p.GEOMETRY
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE p, uk_boundary ub
+WHERE ST_CONTAINS(ub.GEOMETRY, p.GEOMETRY) AND p.CATEGORIES::TEXT ILIKE '%charging%'),
+charging_count AS (
+   SELECT r.ID AS road_id, r.NAMES AS road_name, COUNT(cs.GEOMETRY) AS num_charging_stations
+   FROM road_segments r
+   LEFT JOIN charging_stations cs ON ST_DISTANCE(r.GEOMETRY, cs.GEOMETRY) <= 50000
+   GROUP BY r.ID, r.NAMES
+)
+SELECT r.ID, r.NAMES, ST_ASWKT(r.GEOMETRY) as GEOMETRY, cc.num_charging_stations
+FROM road_segments r
+JOIN charging_count cc ON r.ID = cc.road_id;
+```
+
+This is our final visualization. Before editing its look and feel, you can hide other layers by clicking on the 'eye' icon. Then, select `EV_stations_density`, click on the three dots next to the `Stroke Color` field, and choose `NUM_CHARGING_STATIONS` as the source for the stroke color. You can also change the color map and select a color scheme of your choice.
+
+<img src ='assets/geo_ml_38.gif' width=700>
+
+You can now use top right menu to save the newly created map and to share it within your organization.
+
+### Conclusion
+
+In this lab, you have learned how to use Dekart applications available in the marketplace to create interctive maps.
+
+<img src ='assets/geo_ml_39.png' width=800>
 
 ## Conclusion And Resources
 
