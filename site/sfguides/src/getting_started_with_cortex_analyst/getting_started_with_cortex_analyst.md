@@ -27,7 +27,9 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 ### What you will learn 
 - How to construct and configure a Semantic Model for your data
 - How to call the Cortex Analyst REST API to use your Semantic Model to enable natural-language question-asking on top of your structured data in Snowflake via Streamlit in Snowflake (SiS) application
-- How to integrate Cortex Analyst with Cortex Search
+- How to integrate Cortex Analyst with Cortex Search to enhance SQL queries generated
+- How to enable Join support for Star Schemas
+- How to enable multi-turn conversations
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
