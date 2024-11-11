@@ -252,6 +252,7 @@ Go back to your Snowflake SQL worksheet and run the following [cortex_search_cre
 ```sql
 USE DATABASE cortex_analyst_demo;
 USE SCHEMA revenue_timeseries;
+use ROLE cortex_user_role;
 
 CREATE OR REPLACE DYNAMIC TABLE product_landing_table
   WAREHOUSE = cortex_analyst_wh
@@ -266,7 +267,7 @@ CREATE OR REPLACE DYNAMIC TABLE product_landing_table
   WAREHOUSE = cortex_analyst_wh
   TARGET_LAG = '1 hour'
   AS (
-      SELECT product_dimension FROM product_landing_table
+      SELECT DISTINCT product_line AS product_dimension FROM product_dim
   );
 ```
 
