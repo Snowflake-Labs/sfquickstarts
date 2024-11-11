@@ -375,17 +375,25 @@ In addition to the previously discussed Semantic Model information, the [Cortex 
 Verified queries ultimately are specified in the `verified_queries` section of the semantic model, e.g.:
 ```yaml
 verified_queries:
-  - name: "California profit"
-    question: "What was the profit from California last month?"
-    verified_at: 1714497970
-    verified_by: Jane Doe
-    sql: "
-SELECT sum(profit)
-FROM __sales_data
-WHERE state = 'CA'
-    AND sale_timestamp >= DATE_TRUNC('month', DATEADD('month', -1, CURRENT_DATE))
-    AND sale_timestamp < DATE_TRUNC('month', CURRENT_DATE)
-"
+name: "lowest revenue each month"
+    question: "For each month, what was the lowest daily revenue and on what date did that lowest revenue occur?"
+    sql: "WITH monthly_min_revenue AS (
+        SELECT
+          DATE_TRUNC('MONTH', date) AS month,
+          MIN(daily_revenue) AS min_revenue
+        FROM daily_revenue
+          GROUP BY
+            DATE_TRUNC('MONTH', date)
+        )
+        SELECT
+          mmr.month,
+          mmr.min_revenue,
+          dr.date AS min_revenue_date
+        FROM monthly_min_revenue AS mmr JOIN daily_revenue AS dr
+          ON mmr.month = DATE_TRUNC('MONTH', dr.date) AND mmr.min_revenue = dr.daily_revenue
+        ORDER BY mmr.month DESC NULLS LAST"
+    verified_at: 1715187400
+    verified_by: Jane
 ```
 
 While verified queries can be added directly to the Semantic Model, Snowflake also provides an OSS Streamlit application to help add verified queries to your model. 
