@@ -169,6 +169,12 @@ Now, let's load the raw CSV data into the tables. Go back to your Snowflake SQL 
 /*--
 • looad data into tables
 --*/
+
+USE ROLE CORTEX_USER_ROLE;
+USE DATABASE CORTEX_ANALYST_DEMO;
+USE SCHEMA CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES;
+USE WAREHOUSE CORTEX_ANALYST_WH;
+
 COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE
 FROM @raw_data
 FILES = ('daily_revenue.csv')
@@ -239,6 +245,28 @@ Duration: 5
 
 Now, you will integrate Cortex Search as a way to improve literal string searches to help Cortex Analyst generate more accurate SQL queries. Writing the correct SQL query to answer a question sometimes requires knowing exact literal values to filter on. Since those values can’t always be extracted directly from the question, a search of some kind may be needed.
 
+Go back to your Snowflake SQL worksheet and run the following [cortex_search_create.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/cortex_search_create.sql) code to load data into the tables:
+
+```sql
+USE DATABASE cortex_analyst_demo;
+USE SCHEMA revenue_timeseries;
+
+CREATE OR REPLACE DYNAMIC TABLE product_landing_table
+  WAREHOUSE = cortex_analyst_wh
+  TARGET_LAG = '1 hour'
+  AS (
+      SELECT DISTINCT product_line AS product_dimension FROM product_dim
+  );
+
+
+  CREATE OR REPLACE CORTEX SEARCH SERVICE product_line_search_service
+  ON product_dimension
+  WAREHOUSE = xsmall
+  TARGET_LAG = '1 hour'
+  AS (
+      SELECT product_dimension FROM product_landing_table
+  );
+```
 
 <!-- ------------------------ -->
 ## Create a Streamlit Conversational App
