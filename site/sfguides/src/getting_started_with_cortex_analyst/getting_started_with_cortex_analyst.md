@@ -62,15 +62,12 @@ Run the following SQL commands in a SQL worksheet to create the [warehouse](http
 
 USE ROLE SECURITYADMIN;
 
---To make a request to Cortex Analyst, you must use a role that has the SNOWFLAKE.CORTEX_USER role granted
 CREATE ROLE cortex_user_role;
-
 GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE cortex_user_role;
 
---Grant role to a user
 GRANT ROLE cortex_user_role TO USER <user>;
 
-USE ROLE SYSADMIN;
+USE ROLE sysadmin;
 
 -- Create demo database
 CREATE OR REPLACE DATABASE cortex_analyst_demo;
@@ -98,11 +95,14 @@ USE ROLE cortex_user_role;
 -- Use the created warehouse
 USE WAREHOUSE cortex_analyst_wh;
 
+USE DATABASE cortex_analyst_demo;
+USE SCHEMA cortex_analyst_demo.revenue_timeseries;
+
 -- Create stage for raw data
 CREATE OR REPLACE STAGE raw_data DIRECTORY = (ENABLE = TRUE);
 
 /*--
-Fact and Dimension Table Creation
+• Fact and Dimension Table Creation
 --*/
 
 -- Fact table: daily_revenue
@@ -127,7 +127,6 @@ CREATE OR REPLACE TABLE cortex_analyst_demo.revenue_timeseries.region_dim (
     sales_region VARCHAR(16777216),
     state VARCHAR(16777216)
 );
-
 ```
 
 These can also be found in the [**create_snowflake_objects.sql**](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/create_snowflake_objects.sql) file.
@@ -284,6 +283,7 @@ The semantic model file [`revenue_timeseries.yaml`](https://github.com/Snowflake
 The [Semantic Model](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec) is composed of a number of different fields that help Cortex Analyst understand the specifics of your data:
 - Logical Tables which are composed of Logical Columns
 - Logical Columns which are one of `dimensions`, `time_dimensions`, or `measures`
+- Relationships that exist between tables to allow for JOINS
 
 Logical Tables are relatively straightforward- these are tables or views within a database. That's it! Pretty simple
 
@@ -333,6 +333,19 @@ dimensions:
         - Home Appliances
         - Toys
         - Books
+```
+
+An example `relationship`:
+```yaml
+relationships:
+  - name: revenue_to_product
+    left_table: daily_revenue
+    right_table: product
+    relationship_columns:
+      - left_column: product_id
+        right_column: product_id
+    join_type: left_outer
+    relationship_type: many_to_one
 ```
 
 Here are some tips on building your own semantic model to use with Cortex Analyst:
