@@ -36,7 +36,7 @@ When you complete this quickstart, you will have gained practical experience in 
 * Training models and predicting results with Cortex ML
 * Using LLM for analysing textual data
 * Visualizing data with Streamlit
-* Processing unstructured geospaial data
+* Processing unstructured geospaial data (GeoTIFF, Shapefiles)
 * Using geo visualisation apps available in Marketplace
 
 ### What You’ll Need
