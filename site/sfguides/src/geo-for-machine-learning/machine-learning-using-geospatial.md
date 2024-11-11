@@ -2253,9 +2253,7 @@ In this lab, you have learned how to load geospatial data from unstructured form
 
 Duration: 4
 
-Congratulations! You've successfully performed data engineering and data science tasks and trained a model to predict future taxi demand. Additionaly you practiced in creation of the LLM model to analyse sentiment analysis of the textual data. For each of those use cases you created a Streamlit application to analyse results.
-
-We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/tGDzTpu41huWFDXi9).
+Congratulations! You've successfully performed data analytics, data engineering and data science tasks for various use cases.
 
 ### What You Learned
 
@@ -2270,3 +2268,6 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - [Geospatial Analytics for Retail with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html)
 - [Geospatial Analysis using Geometry and Geography Data Types quickstart](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) 
 - [Performance Optimization Techniques for Geospatial queries](https://quickstarts.snowflake.com/guide/geo_performance/index.html?index=..%2F..index#0)
+
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/tGDzTpu41huWFDXi9).
+
