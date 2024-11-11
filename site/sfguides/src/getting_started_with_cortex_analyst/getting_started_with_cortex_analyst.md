@@ -70,7 +70,7 @@ GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE cortex_user_role;
 --Grant role to a user
 GRANT ROLE cortex_user_role TO USER <user>;
 
-USE ROLE sysadmin;
+USE ROLE SYSADMIN;
 
 -- Create demo database
 CREATE OR REPLACE DATABASE cortex_analyst_demo;
@@ -141,9 +141,9 @@ Duration: 10
 > MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst).
 
 There are three data files and one YAML file included in the [Git Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst) that you should have cloned:
-- [daily_revenue_combined.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/daily_revenue_combined.csv)
-- [daily_revenue_by_region_combined.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/daily_revenue_by_region_combined.csv)
-- [daily_revenue_by_product_combined.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/daily_revenue_by_product_combined.csv)
+- [daily_revenue.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/daily_revenue.csv)
+- [region.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/region.csv)
+- [product.csv](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/data/product.csv)
 - [revenue_timeseries.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/revenue_timeseries.yaml)
 
 You will now upload these files to your Snowflake account and ingest the data files into the tables created in the previous step.
