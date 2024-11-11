@@ -88,29 +88,25 @@ Duration: 10
 1. Copy the following code into a snowpark SQL worksheet and run it. This will allow the app to view your win rate reports. You will be able to select which report to use in the app
 
 ```sql
-EXECUTE IMMEDIATE $$
+-- Update this section with the appropriate variables. 
+-- This should be where you win rate reports are located. 
+-- You must have permission to grant access to to database and schema below.
 
-DECLARE
-    -- Update this section with the appropriate variables. 
-    -- This should be where you win rate reports are located
-    
-    chalice_db_name varchar default 'CHALICE_INPUTS';
-    tvb_schema_name varchar default 'TVB';
-    
-BEGIN
-    LET tvb_schema_path := concat($customer_db_name, '.', $tvb_schema_name);
+set chalice_db_name = 'CHALICE_INPUTS';
+set tvb_schema_name = 'TVB';
 
-    -- If the Database and Schema do not exist yet this will create them. Make sure that you have permission to create
-    CREATE DATABASE IF NOT EXISTS identifier($chalice_db_name);
-    CREATE SCHEMA IF NOT EXISTS identifier(tvb_schema_path);
+-----DO NOT MODIFY BELOW THIS LINE UNLESS IT IS TO REMOVE CREATION CODE DUE TO LACK OF PERMISSION--------
     
-    -- This will grant permissions to the app to use all tables in the schema with the Win Rate Reports. 
-    grant usage on database identifier ($chalice_db_name) to application role TVB_SNOWFLAKE_APP.USER;
-    grant usage on schema identifier ($tvb_schema_path) to application role TVB_SNOWFLAKE_APP.USER;
-    grant select on all tables in schema identifier ($tvb_schema_path) to application role TVB_SNOWFLAKE_APP.USER;
-    grant select on future tables in schema identifier ($tvb_schema_path) to application role TVB_SNOWFLAKE_APP.USER;
-END
-$$
+set tvb_schema_path = concat($chalice_db_name, '.', $tvb_schema_name);
+
+-- If the Database and Schema do not exist yet this will create them. Make sure that you have permission to create
+CREATE DATABASE IF NOT EXISTS identifier($chalice_db_name);
+CREATE SCHEMA IF NOT EXISTS identifier($tvb_schema_path);
+
+-- This will grant permissions to the app to use all tables in the schema with the Win Rate Reports. 
+grant usage on database identifier ($chalice_db_name) to application CHALICE_AI_TRUE_VALUE_BIDDING;
+grant usage on schema identifier ($tvb_schema_path) to application CHALICE_AI_TRUE_VALUE_BIDDING;
+grant select on all tables in schema identifier ($tvb_schema_path) to application CHALICE_AI_TRUE_VALUE_BIDDING;
 ```
 
 ## Run the Chalice TVB Native Application
