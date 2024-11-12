@@ -1,11 +1,3 @@
-author: mando222
-id: getting_started_with_tempo_and_snowflake
-summary: This is a guide on getting started with Tempo on Snowflake
-categories: Getting-Started
-environments: web
-status: Published 
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Security, LLGM, Intrusion Detection
 
 # Getting Started with TEMPO and Snowflake
 <!-- ------------------------ -->
@@ -20,6 +12,7 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 
 ### What You’ll Learn 
 - How to run Tempo on sample data ([CIC Dataset](https://www.unb.ca/cic/datasets/ids-2017.html))
+- How to check to see if Tempo is accurate in flagging attacks
 - Optional - How to view the output in Splunk
 
 ### What You’ll Need 
@@ -48,9 +41,9 @@ GRANT CREATE WAREHOUSE ON ACCOUNT TO APPLICATION TEMPO;
 
 5. Continue to click through and Launch the app
 
-At this point, you will be a Worksheet showing SHOW TABLES; you are now ready to use Tempo as explained below
+At this point, you will be in a Worksheet showing SHOW TABLES; you are now ready to use Tempo as explained below
 
-The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container services runs.
+The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container service runs.
 
 ### TEMPO_WH
 - **Type**: Snowpark Optimized
@@ -82,7 +75,7 @@ After a few minutes, Snowflake will be ready to perform inference. You are creat
 
 Once completed, we will use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample log data. These stored procedures take a job service name as the only parameter.  The demo data looks at logs for all Workstations and logs for all Webservers for a midsized company over several days.  This demo data was obtained from the Canadian Institute of Cybersecurity. In a live run each created procedure represents a call to the respective model type IE. workstation representing the model specialized for workstations, webservers for webservers and so on. 
 
-When used for inference in your company, you would likely choose to execute each of these models as relevant logs are ingested. Tempo is modular in construction in order to minimize costs and compute time.  
+When used for inference in your company, you would likely choose to execute each of these models as relevant logs are ingested. Tempo is modular in construction to minimize costs and compute time.  
 
 Example:
 
@@ -97,7 +90,7 @@ CALL TEMPO.DETECTION.WEBSERVER('<job_service_name>');
 ```
 After you run inference to find anomalies - or incidents - by looking at the Workstations or the Webserver, you will see a table with all the sequences the model has created.  Unlike many neural network based solutions, one strength of Tempo is that it preserves and shares relevant sequences for further analysis.  
 
-If you order the rows by the Anomaly column, you will see that for Workstations you should see 11 anomalies and for Webserver you should see 3918 anomalies.  
+Tempo also flags every result with a Sequence ID.  That Sequence ID can be used to access the raw logs as well.  You might want to do so for forensics or, in this case, the compare the results to the CIC data in order to confirm that the incidents identified are attacks.  
 
 Were this a production use case, you might want to augment these results with information from IP Info or threat intelligence, to look into the external IPs that are indicated to be part of likely security incidents.  
 
