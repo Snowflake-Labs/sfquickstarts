@@ -47,11 +47,11 @@ This solution leverages the intelligence of LLMs to dynamically analyze and resp
 5. **Automated Propagation Workflow**: Utilizes a directed graph traversal algorithm (DFS) to ensure the orderly propagation of changes across the entire data pipeline.
 
 ### Architecture Diagram
-_Insert architecture diagram here._
+![](images/flowchart.png)
 
 ---
 
-## Part 1: SQL Setup - Creating Initial Tables and Schema Baseline (Dynamic Tables)
+## Initial (Dynamic) Tables 
 Duration: 5
 
 This section includes the setup of the initial tables, which represent different levels in the data lineage (Bronze, Silver, Gold, etc.) using Dynamic Tables. We also create a baseline schema to detect future changes.
@@ -215,7 +215,7 @@ FROM base;
 ```
 
 <!-- ------------------------ -->
-## Part 2: Schema Change Monitoring Task
+## Monitoring Task
 Duration: 4
 
 In this part, you’ll create a Snowflake task to continuously monitor schema changes in upstream tables. When a change is detected, the task logs it in a schema change log and updates the schema baseline for consistency.
@@ -267,7 +267,7 @@ ALTER TASK schema_change_monitor RESUME;
 ```
 
 <!-- ------------------------ -->
-## Part 3: Enforcing Schema Changes in Upstream Table
+## Upstream Schema Changes
 Duration: 3
 
 In this part, simulate a schema change in the upstream table by adding a new column. This change will automatically be detected and logged, triggering downstream updates.
@@ -291,7 +291,7 @@ SET customer_segment = CASE
 END;
 ```
 <!-- ------------------------ -->
-## Snowflake in Streamlit (SIS) - Code Integration 
+## Snowflake in Streamlit Code 
 Duration: 10
 
 With the groundwork laid, you’re ready to integrate the Streamlit-based UI for hands-on control of schema propagation. This UI, backed by LLMs, allows you to manage schema changes in a user-friendly environment. Users will be able to visualize lineage, apply or preview LLM-suggested DDL changes, and monitor the entire propagation process.
@@ -693,7 +693,7 @@ if selected_source_object != 'Select Table':
 ```
 
 <!-- ------------------------ -->
-## Streamlit User Guide: How to Interact with Streamlit App
+## Streamlit User Guide
 Duration: 15
 
 ### User Guide
