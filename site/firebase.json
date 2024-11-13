@@ -116,14 +116,6 @@
       "source": "guide/frosty_llm_chatbot_on_streamlit_snowflake/{,/**}",
       "destination": "/guide/getting_started_with_cortex_analyst",
       "type": 301
-    },
-    {
-      "source": "/**",
-      "query": {
-        "utm_content": "*"
-      },
-      "destination": "/$1",
-      "type": 302
     }
     ]
   }
