@@ -90,7 +90,7 @@ Navigate to the query editor by clicking on `Worksheets` on the top left navigat
 Create a new database and schema where you will store datasets in the `GEOGRAPHY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
 ```
-CREATE DATABASE advanced_analytics;
+CREATE DATABASE IF NOT EXISTS advanced_analytics;
 // Set the working database schema
 USE ADVANCED_ANALYTICS.PUBLIC;
 USE WAREHOUSE my_wh;
@@ -778,7 +778,7 @@ To achieve this division, you will use the Discrete Global Grid H3. H3 organizes
 
 H3 offers 16 different resolutions for dividing areas into hexagons, ranging from resolution 0, where the world is segmented into 122 large hexagons, to resolution 15. At this resolution, each hexagon is less than a square meter, covering the world with approximately 600 trillion hexagons. You can read more about resolutions [here](https://h3geo.org/docs/core-library/restable/). For our task, we will use resolution 8, where the size of each hexagon is about 0.7 sq. km (0.3 sq. miles).
 
-As a source of the trips data you will use `TLC_YELLOW_TRIPS_2014` and `TLC_YELLOW_TRIPS_2015` tables from the CARTO listing. We are interested in the following fields:
+As a source of the trips data you will use `TLC_YELLOW_TRIPS_2014` and `TLC_YELLOW_TRIPS_2015` tables from the CARTO Academy listing. We are interested in the following fields:
 * Pickup Time
 * Dropoff Time
 * Pickup Latitude
@@ -1229,6 +1229,9 @@ Duration: 40
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
 
+> aside positive
+>  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
+
 This lab will show you how to inject AI into your spatial analysis using Cortex Large Language Model (LLM) Functions to help you take your product and marketing strategy to the next level. Specifically, you’re going to build a data application that gives food delivery companies the ability to explore the sentiments of customers in the Greater Bay Area. To do this, you use the Cortex LLM Complete Function to classify customer sentiment and extract the underlying reasons for that sentiment from a customer review. Then you use the Discrete [Global Grid H3](https://www.uber.com/en-DE/blog/h3/) for visualizing and exploring spatial data. 
 
 ### Step 1. Data acquisition
@@ -1244,7 +1247,7 @@ FIELD_OPTIONALLY_ENCLOSED_BY = '"' FIELD_DELIMITER = ',' skip_header = 1;
 ```
 Now you will create an external stage using S3 with test data:
 ```
-CREATE OR REPLACE STAGE aa_stage URL = 's3://sfquickstarts/hol_geo_spatial_ml_using_snowflake_cortex/';
+CREATE OR REPLACE STAGE @ADVANCED_ANALYTICS.PUBLIC.AA_STAGE URL = 's3://sfquickstarts/hol_geo_spatial_ml_using_snowflake_cortex/';
 ```
 Then create a table where you will store the customer feedback dataset:
 ```
@@ -1259,7 +1262,7 @@ SELECT  $1::NUMBER as order_id,
         $8::NUMBER as restaurant_postcode,
         $9::VARCHAR as restaurant_id,
         $10::VARCHAR as review
-FROM @ADVANCED_ANALYTICS.PUBLIC.ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv (file_format => 'csv_format_nocompression');
+FROM @ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv (file_format => 'csv_format_nocompression');
 ```
 
 Congratulations!  Now you have `orders_reviews` table containing 100K orders with reviews.
@@ -1367,7 +1370,7 @@ CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT (
 );
 
 COPY INTO ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT
-FROM @ADVANCED_ANALYTICS.PUBLIC.ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv
+FROM @ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv
 FILE_FORMAT = (FORMAT_NAME = csv_format_nocompression);
 ```
 
@@ -1376,7 +1379,7 @@ FILE_FORMAT = (FORMAT_NAME = csv_format_nocompression);
 Now when you have a table with sentiment, you need to parse JSONs to store each component of the score into a separate column and convert the scoring provided by the LLM into numeric format, so you can easily visualize it. Run the following query:
 
 ```
-CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_ANALYSIS AS
 SELECT * exclude (food_cost, food_quality, food_delivery_time, sentiment) ,
          CASE
              WHEN sentiment = 'very positive' THEN 5
@@ -1463,7 +1466,7 @@ def get_h3_df_orders_quantiles(resolution: float, type_of_location: str) -> pd.D
         f"""SELECT
         H3_POINT_TO_CELL_STRING(to_geography({ type_of_location }), { resolution }) AS h3,
         round(count(*),2) as count
-        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis
+        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_ANALYSIS
         GROUP BY 1""")
 
     quantiles = get_quantile_in_column(df, "COUNT")
@@ -1476,7 +1479,7 @@ def get_h3_df_sentiment_quantiles(
         f""" SELECT 
         H3_POINT_TO_CELL_STRING(TO_GEOGRAPHY({ type_of_location }),{ resolution }) AS h3,
         round(AVG({ type_of_sentiment }),2) AS count
-        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis
+        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_ANALYSIS
         WHERE { type_of_sentiment } IS NOT NULL 
         GROUP BY 1""")
 
@@ -1594,7 +1597,7 @@ Duration: 40
 
 In this quickstart guide, we will show you how to read geospatial data from unstructured sources such as GeoTiffs and Shapefiles to prepare features for a machine learning model using Snowflake and popular Python geospatial libraries.
 
-You will learn how to join data from different sources to help predict the presence of groundwater. Although the prediction step itself is out of scope for this lab, you will learn how to ingest data from raster files and shapefiles and combine them using nearst neighbour approach.
+You will learn how to join data from different sources to help predict the presence of groundwater. Although the prediction step itself is out of scope for this lab, you will learn how to ingest data from raster files and shapefiles and combine them using nearest neighbour approach.
 
 In this lab, we will use the following sources:
 - Elevation map from [United States Geological Survey](https://www.usgs.gov/).
