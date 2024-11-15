@@ -89,8 +89,8 @@ COMMENT = 'Warehouse for Cortex Analyst demo';
 GRANT USAGE ON WAREHOUSE cortex_analyst_wh TO ROLE cortex_user_role;
 GRANT OPERATE ON WAREHOUSE cortex_analyst_wh TO ROLE cortex_user_role;
 
-GRANT OWNERSHIP ON DATABASE cortex_analyst_demo TO ROLE cortex_user_role;
 GRANT OWNERSHIP ON SCHEMA cortex_analyst_demo.revenue_timeseries TO ROLE cortex_user_role;
+GRANT OWNERSHIP ON DATABASE cortex_analyst_demo TO ROLE cortex_user_role;
 
 USE ROLE cortex_user_role;
 
