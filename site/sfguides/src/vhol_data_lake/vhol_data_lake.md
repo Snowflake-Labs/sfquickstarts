@@ -472,7 +472,7 @@ where file_url ilike '%algorithm%pdf';
 ```
 
 ### Processing Unstructured Data with Snowpark
-Unstructured data can be processed natively in Snowflake using Snowpark, currently in public preview. In this example, you will see how a Java User-Defined Function (UDF) can extract text from PDF files into a structured table for analytical use. Here’s an illustration for how the files are processed:
+Unstructured data can be processed natively in Snowflake using Snowpark for Python, Java, and Scala. In this example, you will see how a Java User-Defined Function (UDF) can extract text from PDF files into a structured table for analytical use. Here’s an illustration for how the files are processed:
 
 ![PDF processing architecture](assets/5_1.png)
 
