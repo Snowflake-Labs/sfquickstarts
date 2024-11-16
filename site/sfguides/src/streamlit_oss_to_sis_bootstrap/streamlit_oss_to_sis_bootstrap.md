@@ -105,21 +105,20 @@ Ready to begin? Let's start your journey from local Streamlit development to dep
 
 To follow along with this tutorial and set up your project successfully, you'll need the following tools and accounts:
 
-* [Visual Studio Code](https://code.visualstudio.com/) 
+- [Visual Studio Code](https://code.visualstudio.com/)
 
-* [Docker for Desktop](https://www.docker.com/products/docker-desktop/) 
+- [Docker for Desktop](https://www.docker.com/products/docker-desktop/) 
 
-* A GitHub account: If you don't already have a GitHub account, you'll need to create one. 
+- A GitHub account: If you don't already have a [GitHub account](https://github.com), you'll need to create one from [here](https://github.com/signup). 
 
-* [Miniconda](https://docs.anaconda.com/miniconda/) 
+- [Miniconda](https://docs.anaconda.com/miniconda/) 
 
-* [Snowflake Account](https://signup.snowflake.com): 
-    ** A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
-    ** A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- Snowflake Account:
+    - A Snowflake account login with `ACCOUNTADMIN` role. If you have this role in your environment, you may choose to use it. If not, you will need to register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 
-* [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) 
+- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) 
 
-* And last but not the least latest Google Chrome browser
+- And last but not the least latest Google Chrome browser
 
 Please ensure you have all these tools and accounts set up before proceeding with the tutorial. In the following sections, we'll guide you through the process of setting up your GitHub project using the Streamlit Starter Kit.
 
@@ -138,7 +137,7 @@ Navigate to the folder where you want to create your application,
 cd <directory where you want to create your project>
 ```
 
-Create the application folder for the rest of the demo we will call this as `st-ml-app` and for easy reference we will export to an environment variable named `$TUTORIAL_HOME`,
+Create the application folder for the rest of the demo we will call this as `st-ml-app` and for easy reference we will export it to an environment variable named `$TUTORIAL_HOME`,
 
 ```shell
 export TUTORIAL_HOME='st-ml-app'
@@ -190,7 +189,7 @@ Once you have all that lets get to next chapter where we will deploy the bare bo
 <!-- ------------------------ -->
 ## Deploying Your Streamlit App to Streamlit Cloud
 
-Duration: 15
+Duration: 10
 
 Congratulations on setting up your project using the Streamlit Starter Kit!  In this chapter, we'll take the next exciting step, deploying your bare-bones application to Streamlit Cloud. This will be the starting point of your application-building journey.
 
@@ -198,12 +197,17 @@ Streamlit Cloud is a platform that allows you to easily deploy, manage your Stre
 
 In this chapter, we'll cover the following topics:
 
--  ✅ Creating a Streamlit Cloud account
--  ✅ Preparing your app for deployment
--  ✅ Connecting your GitHub repository to Streamlit Cloud
--  ✅ Configuring your app settings on Streamlit Cloud
--  ✅ Deploying your app and accessing it via a public URL
--  ✅ Making updates to your app and watch application refresh automatically in few seconds
+✅ Creating a Streamlit Cloud account, if you don't have one
+
+✅ Preparing your app for deployment
+
+✅ Connecting your GitHub repository to Streamlit Cloud
+
+✅ Configuring your app settings on Streamlit Cloud
+
+✅ Deploying your app and accessing it via a public URL
+
+✅ Making updates to your app and watch application refresh automatically in few seconds
 
 By the end of this chapter, you'll have a live, publicly accessible Streamlit app that serves as a foundation for your application-building exercises. You'll be able to share the URL with others, gather feedback, and iterate on your app as you progress through the tutorial.
 
@@ -229,7 +233,6 @@ Update the `$TUTORIAL_HOME/requirements.txt` to be like:
 snowflake-cli-labs>=3.1.0,<4.0.0
 streamlit==1.35.0
 pandas==2.0.3
-numpy==1.24.3
 scikit-learn==1.3.0
 ```
 
@@ -277,7 +280,7 @@ Let us start with a small change to the application code.
 
 > aside negative
 > **IMPORTANT**:
-> For the entire tutorial, we will be making changes to the `$TUTORIAL_HOME/streamlit_app.py` file. The code listings will show the entire source with the change highlighted. This approach helps avoid any copy/paste errors while doing the exercises.
+> For the entire tutorial, we will be making changes to the `$TUTORIAL_HOME/streamlit_app.py` file. The code listings will show the entire source with the changes, this helps avoid any copy/paste errors while doing the exercises.
 
 Edit and update the `$TUTORIAL_HOME/streamlit_app.py`:
 
@@ -469,11 +472,15 @@ Duration: 15
 
 In this chapter, we'll discover how to add user interactivity to our application using Streamlit widgets:
 
-- ⚡ [Sidebar](https://docs.streamlit.io/library/api-reference/layout/st.sidebar) for organizing widgets in a collapsible panel
-- ⚡ [Select box](https://docs.streamlit.io/library/api-reference/widgets/st.selectbox) for choosing categorical features
-- ⚡ [Slider](https://docs.streamlit.io/library/api-reference/widgets/st.slider) for adjusting numerical values
-- ⚡ [Radio buttons](https://docs.streamlit.io/library/api-reference/widgets/st.radio) for making single-choice selections
-- ⚡ [Checkbox](https://docs.streamlit.io/library/api-reference/widgets/st.checkbox) for toggle options
+⚡ [Sidebar](https://docs.streamlit.io/library/api-reference/layout/st.sidebar) for organizing widgets in a collapsible panel
+
+⚡ [Select box](https://docs.streamlit.io/library/api-reference/widgets/st.selectbox) for choosing categorical features
+
+⚡ [Slider](https://docs.streamlit.io/library/api-reference/widgets/st.slider) for adjusting numerical values
+
+⚡ [Radio buttons](https://docs.streamlit.io/library/api-reference/widgets/st.radio) for making single-choice selections
+
+⚡ [Checkbox](https://docs.streamlit.io/library/api-reference/widgets/st.checkbox) for toggle options
 
 These widgets will allow users to dynamically modify model feature values, which will then update our model's predictions in real-time.
 
@@ -708,18 +715,19 @@ Now that we've prepared our input data, let's handle the categorical variables u
 <!-- ------------------------ -->
 ## Data Preparation
 
-Duration: 15
+Duration: 10
 
 Before applying our machine learning model, we need to convert categorical variables into numerical format using [One-Hot Encoding](https://scikit-learn.org/stable/modules/preprocessing.html#encoding-categorical-features). In our penguin dataset, we'll use pandas [`get_dummies()`](https://pandas.pydata.org/docs/reference/api/pandas.get_dummies.html) to encode:
 
 **Features (X):**
 
--  ✅ `island` - Categorical location of penguin
--  ✅ `sex` - Gender of penguin
+✅ `island` - Categorical location of penguin
+
+✅ `sex` - Gender of penguin
 
 **Target (y):**
 
--  ✅ `species` - Type of penguin (our prediction target)
+✅ `species` - Type of penguin (our prediction target)
 
 📝 **One-Hot Encoding** converts categorical variables into binary (0 or 1) format. For example:
 ```python
@@ -864,12 +872,7 @@ target_mapper = {
     "Gentoo": 2,
 }
 
-
-def target_encoder(val_y: str) -> int:
-    return target_mapper[val_y]
-
-
-y = y_raw.apply(target_encoder)
+y = y_raw.apply(lambda x: target_mapper[x])
 
 with st.expander("Data Preparation"):
     st.write("**Encoded X (input penguins)**")
@@ -883,16 +886,19 @@ After successfully preprocessing our penguin dataset with appropriate encoding a
 <!-- ------------------------ -->
 ## Training and Prediction
 
-Duration: 20
+Duration: 15
 
 Now that our data is properly encoded, we'll use a classification model to predict penguin species based on their filtered physical characteristics. We'll employ scikit-learn's [Random Forest Classifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) to calculate probability scores for each species prediction.
 
 In this chapter, we will:
 
--  ✅ Split our filtered dataset into training and testing sets
--  ✅ Train a Random Forest Classifier using our selected feature set  
--  ✅ Calculate prediction probabilities for each penguin species
--  ✅ Visualize these probabilities using Streamlit's interactive components
+✅ Split our filtered dataset into training and testing sets
+
+✅ Train a Random Forest Classifier using our selected feature set 
+
+✅ Calculate prediction probabilities for each penguin species
+
+✅ Visualize these probabilities using Streamlit's interactive components
 
 ### Train and Predict
 
@@ -1037,11 +1043,7 @@ target_mapper = {
 }
 
 
-def target_encoder(val_y: str) -> int:
-    return target_mapper[val_y]
-
-
-y = y_raw.apply(target_encoder)
+y = y_raw.apply(lambda x: target_mapper[x])
 
 with st.expander("Data Preparation"):
     st.write("**Encoded X (input penguins)**")
@@ -1119,24 +1121,29 @@ In the next chapter, we will:
 <!-- ------------------------ -->
 ## Deploying Streamlit Applications in Snowflake
 
-Duration: 35
+Duration: 15
 
-Previous Chapter Recap:
+### Previous Chapter Recap
 
 In the last chapter, we developed an interactive Streamlit application for predicting penguin species using our Random Forest model. We focused on creating an intuitive user interface through:
 
--  ✅ Visualization of prediction probabilities using Streamlit's progress bars
--  ✅ Strategic content organization with columns and containers for enhanced layout
--  ✅ Implementation of success messages to display clear prediction results
+✅ Visualization of prediction probabilities using Streamlit's progress bars
+
+✅ Strategic content organization with columns and containers for enhanced layout
+
+✅ Implementation of success messages to display clear prediction results
 
 Moving forward, we'll explore how to deploy this application within Snowflake's ecosystem using Streamlit in Snowflake (SiS). This integration combines our interactive prediction capabilities with Snowflake's enterprise-grade data platform features.
 
 In this chapter, we will:
 
--  ✅ Modify our existing Streamlit application for seamless Snowflake integration
--  ✅ Establish and configure secure Snowflake connections
--  ✅ Deploy and validate our application using Streamlit in Snowflake
--  ✅ Explore critical distinctions between local development and Snowflake deployment
+✅ Modify our existing Streamlit application for seamless Snowflake integration
+
+✅ Establish and configure secure Snowflake connections
+
+✅ Deploy and validate our application using Streamlit in Snowflake
+
+✅ Explore critical distinctions between local development and Snowflake deployment
 
 ### Preparing for Deployment
 
@@ -1236,7 +1243,7 @@ snow sql --database='st_ml_app' --schema='data' \
 
 > aside positive
 > **TIP**:
-> Download and import the [notebook](https://github.com/Snowflake-Labs/streamlit-oss-to-sis-bootstrap/blob/main/notebooks/sis_setup.ipynb) into your Snowflake account and follow the instructions on the notebook to prepare the environment for deployment.
+> Download and import the [notebook](https://github.com/Snowflake-Labs/sfguide-bootstrap-st-oss-to-sis/blob/main/notebooks/sis_setup.ipynb) into your Snowflake account and follow the instructions on the notebook to prepare the environment for deployment.
 
 ### Deploying the App
 
@@ -1421,11 +1428,7 @@ target_mapper = {
 }
 
 
-def target_encoder(val_y: str) -> int:
-    return target_mapper[val_y]
-
-
-y = y_raw.apply(target_encoder)
+y = y_raw.apply(lambda x: target_mapper[x])
 
 with st.expander("Data Preparation"):
     st.write("**Encoded X (input penguins)**")
@@ -1501,7 +1504,6 @@ dependencies:
   - snowflake-snowpark-python
   - scikit-learn=1.3.0
   - pandas=2.0.3
-  - numpy=1.24.3
 ```
 
 ### Verify Project Manifest
@@ -1561,7 +1563,7 @@ This chapter guided you through the process of transforming a locally running St
 
 > aside positive
 > **PRO TIP**:
-> You can run this entire application using Snowflake Notebook. Download and import the [environment.yml](https://github.com/Snowflake-Labs/streamlit-oss-to-sis-bootstrap/blob/main/notebooks/environment.yml) and [application notebook](https://github.com/Snowflake-Labs/streamlit-oss-to-sis-bootstrap/blob/main/notebooks/streamlit_penguin_app.ipynb) and experience the Snowflake Notebook magic! 🚀
+> You can run this entire application using Snowflake Notebook. Download and import the [environment.yml](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Streamlit_Zero_To_Hero_Machine_Learning_App/environment.yml) and [application notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Streamlit_Zero_To_Hero_Machine_Learning_App/Streamlit_Machine_Learning_App.ipynb) and experience the Snowflake Notebook magic! 🚀
 
 
 <!-- ------------------------ -->
@@ -1573,6 +1575,8 @@ In this comprehensive tutorial, we explored the complete journey of developing a
 
 Throughout this hands-on tutorial, we progressed from basic Streamlit development to deploying within Snowflake's ecosystem. We built, enhanced, and deployed our ML application across multiple platforms, gaining practical experience at each stage.
 
+The completed solution is available at <https://github.com/Snowflake-Labs/sfguide-bootstrap-st-oss-to-sis>.
+
 ### Tutorial Milestones
 
 1. **Local Development Phase**
@@ -1581,7 +1585,7 @@ Throughout this hands-on tutorial, we progressed from basic Streamlit developmen
     - Established a solid foundation in Streamlit fundamentals
 
 2. **Cloud Deployment**
-    - Successfully deployed our application to Streamlit Cloud
+    - Successfully deployed our application to Streamlit Community Cloud
     - Applied deployment best practices and configurations
 
 3. **Snowflake Integration**
@@ -1601,20 +1605,27 @@ Throughout this hands-on tutorial, we progressed from basic Streamlit developmen
 
 We successfully evolved our project from a standalone Streamlit application to a fully integrated Snowflake solution, covering:
 
-- Platform transitions and integrations
-- Data integration implementation
-- Platform-specific optimizations
-- Development workflow adaptations
+✅ Platform transitions and integrations
+
+✅ Data integration implementation
+
+✅ Platform-specific optimizations
+
+✅ Development workflow adaptations
 
 ### Key Learning Outcomes
 
 Through this tutorial, we have:
 
-- Created a complete end-to-end application
-- Implemented multiple deployment strategies
-- Integrated with data warehouse systems
-- Gained cross-platform development expertise
-- Mastered notebook-based development
+💡 Created a complete end-to-end application
+
+💡 Implemented multiple deployment strategies
+
+💡 Integrated with data warehouse systems
+
+💡 Gained cross-platform development expertise
+
+💡 Mastered notebook-based development
 
 This tutorial series demonstrated the practical implementation of both Streamlit and Snowflake capabilities in building robust ML applications, providing hands-on experience with modern data science tools and platforms.
 
@@ -1625,5 +1636,3 @@ This tutorial series demonstrated the practical implementation of both Streamlit
 - [Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/snowpark-ml) - Explore advanced machine learning capabilities
 - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) - Master the notebook environment for development
 - [Snowflake Quickstarts](https://quickstarts.snowflake.com/) - Get hands-on experience with guided tutorials and examples
-
-<h1 align="center">🎉 Happy Building! 🚀 ✨</h1>
