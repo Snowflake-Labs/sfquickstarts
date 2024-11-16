@@ -89,7 +89,7 @@ Duration: 10
 
 In this section, we want to extract attributes from the DICOM files. The entities extracted are going to be fields like manufacturer, patient position, and study date. The goal is to have these fields to enrich the file-level metadata for analytics.
 
-Using Snowpark runtimes and libraries, you can securely deploy and process Python, Java and Scala code to build pipelines, ML models, and applications in Snowflake. You can process unstructured files in Java (generally available), Python (public preview), and Scala (public preview) natively in Snowflake using Snowpark. In the following sections, you'll see how entity extraction can be done with Snowpark for both Java and Python.
+Using Snowpark runtimes and libraries, you can securely deploy and process Python, Java and Scala code to build pipelines, ML models, and applications in Snowflake. You can process unstructured files in Java, Python, and Scala natively in Snowflake using Snowpark. In the following sections, you'll see how entity extraction can be done with Snowpark for both Java and Python.
 
 ### Python
 The Python code to parse DICOM files requires the [pydicom](https://pydicom.github.io/pydicom/stable/index.html) package, which isn't currently included in the [Anaconda Snowflake channel](https://repo.anaconda.com/pkgs/snowflake/). While you could download the package and upload to an internal stage via [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-web-ui) or SnowSQL CLI, we've added the `whl` to an external stage for convenience.
