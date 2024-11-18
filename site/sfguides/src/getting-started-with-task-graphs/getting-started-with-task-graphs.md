@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering
 
-# Getting Started with Task Graphs
+# Getting Started with Snowflake Task Graphs
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -98,7 +98,9 @@ For each task in the table, you can select the … more menu to open the query I
 ## Conclusion And Resources
 Duration: 1
 
+To streamline complex workflows in Snowflake, task graphs (or directed acyclic graphs, DAGs) enable seamless automation of task sequences. By defining dependencies between a root task and subsequent child tasks, you can ensure efficient, orderly execution from start to finish. Tasks flow in a single direction, preventing any task from triggering an earlier one and ensuring stability across the workflow. Additionally, each task in a DAG can have multiple dependencies and child tasks, giving you the flexibility to design intricate, resilient processes.
 
+This quickstart provides a practical example of a task graph to help you understand and apply this functionality in Snowflake. Start building your own Snowflake Task DAG today and unlock the power of automated, structured workflows in your Snowflake environment!
 
 ### What You Learned
 - How to build tasks with dependencies that build into a DAG
