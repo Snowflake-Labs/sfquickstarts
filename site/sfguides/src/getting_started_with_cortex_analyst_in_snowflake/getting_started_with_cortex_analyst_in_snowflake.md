@@ -32,7 +32,7 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
     > aside positive
     >
-    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake-in-snowflake)
+    >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake)
 - (Optional) [Python >= 3.9, <= 3.11 installed](https://www.python.org/downloads/) to run the OSS Semantic Model Generator
 - A [Snowflake account](https://signup.snowflake.com/) login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.
 
