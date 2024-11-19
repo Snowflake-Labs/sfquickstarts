@@ -47,7 +47,7 @@ Duration: 10
 
 ```sql
 CREATE DATABASE IF NOT EXISTS ocr_rag;
-CREATE SCHEMA IF NOT EXISTS images_to_ocr;
+CREATE SCHEMA IF NOT EXISTS ocr_rag;
 ```
 
 ### Create Image Storage Stage
