@@ -236,6 +236,9 @@ Duration: 15
 
 ### Create Streamlit App
 
+This section creates a Streamlit application that enables users to ask questions about their OCR-processed documents. 
+The application uses semantic search to find relevant text and generates answers using Snowflake Cortex LLMs.
+
 ```python
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
