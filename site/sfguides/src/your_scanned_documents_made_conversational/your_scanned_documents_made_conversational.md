@@ -3,7 +3,7 @@ id: your_scanned_documents_made_conversational
 summary: Your Scanned Documents, Made Conversational with Snowflake Notebooks and Snowflake Cortex
 categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowflake Cortex, Snowflake Notebooks 
 author: James Cha Earley
