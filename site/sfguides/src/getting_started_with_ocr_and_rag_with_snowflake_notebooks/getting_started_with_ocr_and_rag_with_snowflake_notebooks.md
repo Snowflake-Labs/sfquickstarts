@@ -1,14 +1,14 @@
 
-id: your_scanned_documents_made_conversational
-summary: Your Scanned Documents, Made Conversational with Snowflake Notebooks and Snowflake Cortex
+id: getting_started_with_ocr_and_rag_with_snowflake_notebooks
+summary: Getting Started with OCR and RAG with Snowflake Notebooks
 categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowflake Cortex, Snowflake Notebooks 
 author: James Cha Earley
 
-# Build OCR and RAG Applications Using Snowflake Notebooks
+# Getting Started with OCR and RAG with Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -36,11 +36,6 @@ A full-stack application that enables users to:
   - [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda)
   - [Cortex LLM Functions](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex)
   - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
-- Recommended package versions:
-  - Python 3.8
-  - tesserocr latest version
-  - snowflake-snowpark-python 1.22.1
-  - streamlit 1.26.0
 
 ## Setup Environment
 Duration: 10
@@ -67,6 +62,8 @@ CREATE STAGE IF NOT EXISTS @ocr_rag.images_to_ocr
 
 ### Upload Images
 
+[Sample Images](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks)
+
 1. Navigate to Data > Databases > OCR_RAG > IMAGES_TO_OCR > Stages
 2. Click "Upload Files" button in top right
 3. Select your image files
@@ -85,15 +82,17 @@ You should see your uploaded files listed with their sizes.
 > - Minimum 300 DPI resolution
 > - In common formats (PNG, JPEG, TIFF)
 
-### Move to Snowflake Notebook
+### Open our Notebook in Snowflake Notebooks
 
-1. Click on **Projects** on the left sidebar
-2. Select **Notebooks** 
-3. Use the dropdown next to the **Notebook** dropdown
-4. Choose **Import .ipynb** to upload the notebook
-5. Select the database **OCR_RAG** and schema **images_to_ocr**
-6. Select your **Warehouse**
-7. Select **Run on warehouse**
+1. Click on [Getting Started Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+2. In your Snowflake account:
+* On the left hand navigation menu, click on Projects » Notebooks
+* On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
+* Select the file you downloaded in step 1 above
+3. In the Create Notebook popup
+* For Notebook location, select **ocr_rag** for your database and **images_to_ocr** as your schema
+* Select your **Warehouse**
+* Click on Create button
 
 ## Import Required Packages
 
@@ -142,9 +141,6 @@ This table stores:
 - `scoped_file_url`: Temporary URL for secure access
 - `chunk`: Extracted text segment
 - `chunk_vec`: Vector embedding for semantic search
-
-> aside positive
-> NOTE: The vector dimension (768) matches the e5-base-v2 embedding model we'll use. If you choose a different embedding model, adjust this value accordingly.
 
 ## Implement OCR Processing
 Duration: 15
@@ -239,11 +235,6 @@ SELECT COUNT(*) FROM docs_chunks_table;
 Duration: 15
 
 ### Create Streamlit App
-
-1. Click Streamlit in left sidebar
-2. Create new app named "OCR_RAG_APP"
-3. Select OCR_RAG database and images_to_ocr schema
-4. Enter the following code:
 
 ```python
 import streamlit as st
