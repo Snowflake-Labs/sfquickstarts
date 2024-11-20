@@ -1,13 +1,13 @@
 author: Jason Summer
 id: orchestrate-llm-evaluations-with-evalanche
-summary: Orchestrate LLM Evaluations with Evalanche
+summary: Orchestrate LLM Evaluations in Snowflake with Evalanche 
 categories: data-science-&-ai 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: LLM, AI, Cortex AI
 
-# Orchestrate LLM Evaluations with Evalanche
+# Orchestrate LLM Evaluations in Snowflake with Evalanche
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
