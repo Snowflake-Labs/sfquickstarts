@@ -1,8 +1,16 @@
+author: mando222
+id: getting_started_with_tempo_and_snowflake
+summary: This is a guide on getting started with Tempo on Snowflake
+categories: Getting-Started
+environments: web
+status: Published 
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Security, LLGM, Intrusion Detection
 
 # Getting Started with TEMPO and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 2
 
 Tempo is the first CyberSecurity solution based on a LogLM, or Log Language Model invented by DeepTempo.  These models are similar to their more familiar cousins, LLMs such as Anthropic's Claude and LLama. Like LLMs, LogLMs are Foundation Models that apply their understanding across very different environments and in response to differing inputs. However, Tempo was pre-trained using enormous quantities of logs. Tempo is focused on the pattern of events, including relative and absolute time. Tempo has been shown to be extremely accurate, with a low false positive and false negative rate.
 
@@ -39,16 +47,16 @@ Note: If you are running with the demo data simply skip this step and continue.
 4. Go to the `Projects>Worksheets` console in Snowflake. Here you should see a `+` sign in the top right corner of the screen.  We will use this to create our own worksheets. Go ahead and click it now. 
 
 
-Note: The default resources created by the tempo app are as follows. 
+### The default resources created by the tempo app are as follows. 
 
-### TEMPO_WH
+#### TEMPO_WH
 - **Type**: Snowpark Optimized
 - **Size**: Medium
 - **Auto Suspend**: 120 seconds
 - **Auto Resume**: Enabled
 - **Initial State**: Active
 
-### TEMPO_COMPUTE_POOL
+#### TEMPO_COMPUTE_POOL
 - **Node Configuration**:
   - **Minimum Nodes**: 1
   - **Maximum Nodes**: 1
@@ -58,7 +66,7 @@ Note: The default resources created by the tempo app are as follows.
 - **Initial State**: Active
 
 <!-- ------------------------ -->
-## Start the app and Perform Inference 
+## Start the app
 Duration: 2
 
 In the new worksheet we now need to setup our procedures. We will start with initializing the container resources. Throughout this guide we will provide you with statements to run.  Please add them to the sheet. You can do these one by one or add them all to a single worksheet.
@@ -77,10 +85,10 @@ It is recommended that you run this command prior to running the sheet as a whol
 From the top of the worksheet there should be a dropdown called `Select Databases`.  This is what you will use to attach our database to this worksheet.  If you are using demo data select the option with TEMPO at the beginning of it's name.
 
 <!-- ------------------------ -->
-## Detection
+## Detection Through Inference
 Duration: 6
 
-Option 1. Run Static Inference
+### Option 1. Run Static Inference
 ```sql
 CALL static_detection.inference('your_service_name');
 ```
@@ -90,7 +98,7 @@ Purpose: Executes inference on specified service data
 
 If you want to use the demo feel free to name it something like `demorun` for the `your_service_name`.
 
-Option 2. Start Automated Inference
+### Option 2. Start Automated Inference
 ```sql
 CALL automated_detection.start_automated_inference(
     'source_table_name',
@@ -107,7 +115,9 @@ Notes:
   - Slot 2: `stream_two_interactions`
   - Slot 3: `stream_three_interactions`
  
-Note: If you want to effect a job that is running you can use the following optional command and parameters to control active jobs. 
+#### Monitoring an Active Job
+
+If you want to effect a job that is running you can use the following optional command and parameters to control active jobs. 
 
 ```sql
 CALL automated_detection.alter_automated_inference('stream_name', 'action');
@@ -134,6 +144,7 @@ CALL automated_detection.alter_automated_inference('stream_one_interactions', 's
 <!-- ------------------------ -->
 ## Deep Dive Analysis in Snowflake
 Duration: 5
+
 ```sql
 CALL inspect.deepdive(sequence_id);
 ```
@@ -142,6 +153,8 @@ Parameters:
 Purpose: Investigates specific sequences flagged as anomalies
 
 Note: If running on demo data lets use 2 as the id (valid IDs 1-1200)
+
+The results will be collections of related events making up Suspicious and Anomalous activities.  These are the events your security team would want verify as actuall intrusion events.
 
 <!-- ------------------------ -->
 ## Viewing Results in Splunk
