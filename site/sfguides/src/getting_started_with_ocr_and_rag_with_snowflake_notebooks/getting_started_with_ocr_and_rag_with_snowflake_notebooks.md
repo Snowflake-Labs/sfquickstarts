@@ -62,7 +62,7 @@ CREATE STAGE IF NOT EXISTS @ocr_rag.images_to_ocr
 
 ### Upload Images
 
-[Sample Images](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks)
+[Download Sample Images](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks)
 
 1. Navigate to Data > Databases > OCR_RAG > IMAGES_TO_OCR > Stages
 2. Click "Upload Files" button in top right
@@ -82,7 +82,21 @@ You should see your uploaded files listed with their sizes.
 > - Minimum 300 DPI resolution
 > - In common formats (PNG, JPEG, TIFF)
 
-### Open our Notebook in Snowflake Notebooks
+## Dataset citation
+Sample Images taken from RVL-CDIP Dataset
+
+A. W. Harley, A. Ufkes, K. G. Derpanis, "Evaluation of Deep Convolutional Nets for Document Image Classification and Retrieval," in ICDAR, 2015
+
+Bibtex format:
+
+@inproceedings{harley2015icdar,
+    title = {Evaluation of Deep Convolutional Nets for Document Image Classification and Retrieval},
+    author = {Adam W Harley and Alex Ufkes and Konstantinos G Derpanis},
+    booktitle = {International Conference on Document Analysis and Recognition ({ICDAR})}},
+    year = {2015}
+}
+
+## Open Snowflake Notebooks
 
 1. Click on [Getting Started Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 2. In your Snowflake account:
@@ -93,8 +107,6 @@ You should see your uploaded files listed with their sizes.
 * For Notebook location, select **ocr_rag** for your database and **images_to_ocr** as your schema
 * Select your **Warehouse**
 * Click on Create button
-
-## Import Required Packages
 
 ```python
 # Import python packages
@@ -125,13 +137,16 @@ Duration: 5
 
 Create the table that will store processed documents:
 
-```sql
-CREATE OR REPLACE TABLE docs_chunks_table (
-    relative_path VARCHAR,
-    file_url VARCHAR,
-    scoped_file_url VARCHAR, 
-    chunk VARCHAR,
-    chunk_vec VECTOR(FLOAT, 768)
+```python
+docs_chunks_table = Table(
+    name="docs_chunks_table",
+    columns=[TableColumn(name="relative_path", datatype="string"),
+            TableColumn(name="file_url", datatype="string"),
+            TableColumn(name="scoped_file_url", datatype="string"),
+            TableColumn(name="chunk", datatype="string"),
+            TableColumn(name="chunk_vec", datatype="vector(float,768)")]
+)
+database.schemas["ocr_rag"].tables.create(docs_chunks_table, mode=CreateMode.or_replace)
 );
 ```
 
@@ -322,7 +337,6 @@ Duration: 5
 
 Congratulations! You've successfully built an end-to-end OCR and RAG application in Snowflake that transforms images into searchable, queryable content. Using Snowflake Notebooks and Cortex capabilities, you've implemented a solution that processes images through OCR, creates vector embeddings for semantic search, and provides AI-powered answers using Large Language Models - all while keeping your data secure within Snowflake's environment. Finally, you created a Streamlit application that allows users to interactively query their document content using natural language.
 
-We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://github.com/Snowflake-Labs/sfguides/issues).
 
 ### What You Learned
 * How to implement OCR processing in Snowflake using Tesseract and Snowpark Python
