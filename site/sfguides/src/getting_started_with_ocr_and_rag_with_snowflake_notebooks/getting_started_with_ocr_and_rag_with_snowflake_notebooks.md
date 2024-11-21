@@ -82,7 +82,7 @@ You should see your uploaded files listed with their sizes.
 > - Minimum 300 DPI resolution
 > - In common formats (PNG, JPEG, TIFF)
 
-## Dataset citation
+### Dataset citation
 Sample Images taken from RVL-CDIP Dataset
 
 A. W. Harley, A. Ufkes, K. G. Derpanis, "Evaluation of Deep Convolutional Nets for Document Image Classification and Retrieval," in ICDAR, 2015
