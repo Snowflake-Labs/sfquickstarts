@@ -13,7 +13,7 @@ author: James Cha Earley
 ## Overview 
 Duration: 5
 
-In this quickstart, you'll learn how to build an end-to-end application that extracts text from images and makes it searchable using Large Language Models (LLMs). The application combines Optical Character Recognition (OCR), vector embeddings, and Retrieval Augmented Generation (RAG) to create an intelligent document assistant.
+In this quickstart, you'll learn how to build an end-to-end application that extracts text from images and makes it searchable using Large Language Models (LLMs). The application combines Optical Character Recognition (OCR), vector embeddings, and Retrieval Augmented Generation (RAG) to create an intelligent document assistant. 
 
 ### What You'll Learn
 - Setting up OCR processing in Snowflake using Tesseract
