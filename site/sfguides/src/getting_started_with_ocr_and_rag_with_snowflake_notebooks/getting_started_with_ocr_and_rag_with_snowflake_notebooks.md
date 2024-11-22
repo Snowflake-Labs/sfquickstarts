@@ -98,7 +98,7 @@ Bibtex format:
 
 ## Open Snowflake Notebooks
 
-1. Click on [Getting Started Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowfl[…]getting_started_with_ocr_and_rag_with_snowflake_notebooks.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+1. Click on [Getting Started Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks/blob/main/getting_started_with_ocr_and_rag_with_snowflake_notebooks.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 2. In your Snowflake account:
 * On the left hand navigation menu, click on Projects » Notebooks
 * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
