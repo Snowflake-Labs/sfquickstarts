@@ -108,6 +108,13 @@ Bibtex format:
 * Select your **Warehouse**
 * Click on Create button
 
+Here we add our imports that we will use for our project 
+Key Components:
+- `Tesseract`: A powerful OCR engine that converts images to text
+- `Streamlit`: Creates an intuitive web interface for user interaction
+- `PIL (Python Imaging Library)`: Handles image processing tasks
+- `Snowpark`: Provides Python API for Snowflake operations
+
 ```python
 # Import python packages
 import streamlit as st
@@ -135,7 +142,7 @@ database = root.databases[session.get_current_database()]
 ## Create Table Structure
 Duration: 5
 
-Create the table that will store processed documents:
+In the Notebook we will create the table that will store processed documents:
 
 ```python
 docs_chunks_table = Table(
@@ -162,7 +169,7 @@ Duration: 15
 
 ### Create OCR Function
 
-1. Create a User-Defined Table Function (UDTF) for OCR:
+In the Notebook we will create a User-Defined Table Function (UDTF) for OCR:
 
 ```python
 session.sql("DROP FUNCTION IF EXISTS IMAGE_TEXT(VARCHAR)").collect()
@@ -197,7 +204,7 @@ This function:
 
 ### Process Images
 
-Run OCR on staged images:
+In the Notebook we will run OCR on staged images:
 
 ```sql
 SELECT 
@@ -220,7 +227,7 @@ FROM
 ## Process Text and Create Embeddings
 Duration: 10
 
-Insert processed text and create embeddings:
+In the Notebook we will insert processed text and create embeddings:
 
 ```sql
 INSERT INTO docs_chunks_table (relative_path, file_url, scoped_file_url, chunk, chunk_vec)
@@ -251,7 +258,7 @@ Duration: 15
 
 ### Create Streamlit App
 
-This section creates a Streamlit application that enables users to ask questions about their OCR-processed documents. 
+This section in the Notebook creates a Streamlit application that enables users to ask questions about their OCR-processed documents. 
 The application uses semantic search to find relevant text and generates answers using Snowflake Cortex LLMs.
 
 ```python
@@ -332,7 +339,7 @@ Key parameters:
 - `num_chunks`: Number of context chunks (default: 3)
 - `model`: LLM model (default: mistral-7b)
 
-## Conclusion and Related Resources
+## Conclusion and Resources
 Duration: 5
 
 Congratulations! You've successfully built an end-to-end OCR and RAG application in Snowflake that transforms images into searchable, queryable content. Using Snowflake Notebooks and Cortex capabilities, you've implemented a solution that processes images through OCR, creates vector embeddings for semantic search, and provides AI-powered answers using Large Language Models - all while keeping your data secure within Snowflake's environment. Finally, you created a Streamlit application that allows users to interactively query their document content using natural language.
