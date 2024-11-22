@@ -30,9 +30,9 @@ A full-stack application that enables users to:
 - View source images alongside answers
 
 ### Prerequisites
-- Snowflake account in a [supported region for Cortex functions](https://docs.snowflake.com/en/user-guide/cortex-overview)
+- Snowflake account in a [supported region for Cortex functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-availability)
 - Account must have these features enabled:
-  - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight-notebooks)
+  - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
   - [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda)
   - [Cortex LLM Functions](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex)
   - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
@@ -62,7 +62,7 @@ CREATE STAGE IF NOT EXISTS @ocr_rag.images_to_ocr
 
 ### Upload Images
 
-[Download Sample Images](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks)
+[Download Sample Images](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks/tree/main/sample_images)
 
 1. Navigate to Data > Databases > OCR_RAG > IMAGES_TO_OCR > Stages
 2. Click "Upload Files" button in top right
@@ -98,7 +98,7 @@ Bibtex format:
 
 ## Open Snowflake Notebooks
 
-1. Click on [Getting Started Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+1. Click on [Getting Started Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowfl[…]getting_started_with_ocr_and_rag_with_snowflake_notebooks.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 2. In your Snowflake account:
 * On the left hand navigation menu, click on Projects » Notebooks
 * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
@@ -355,17 +355,14 @@ Congratulations! You've successfully built an end-to-end OCR and RAG application
 
 ### Related Resources
 Documentation:
-- [Snowflake Notebooks Overview](https://docs.snowflake.com/en/user-guide/ui-snowsight-notebooks)
-- [Cortex Functions Documentation](https://docs.snowflake.com/en/user-guide/cortex-overview)
+- [Snowflake Notebooks Overview](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
+- [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Streamlit in Snowflake Guide](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
-- [Vector Functions in Snowflake](https://docs.snowflake.com/en/user-guide/vector-functions)
 
 Blogs & Articles:
-- [Introduction to RAG Applications](https://www.snowflake.com/blog/build-rag-applications-snowflake/)
-- [Vector Search Best Practices](https://www.snowflake.com/blog/semantic-search-vector-database/)
-- [OCR Processing at Scale](https://medium.com/snowflake/processing-documents-at-scale-with-snowflake-a894c59a449f)
+- [Introduction to RAG Applications](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/#0)
+- [Cortex Search Best Practices](https://www.snowflake.com/engineering-blog/cortex-search-and-retrieval-enterprise-ai/)
 
 Sample Code & Guides:
 - [Snowpark Python Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
-- [Snowflake Machine Learning Guide](https://docs.snowflake.com/en/developer-guide/machine-learning-guide)
-- [Streamlit Components Library](https://docs.snowflake.com/en/developer-guide/streamlit/components)
+- [Snowflake Machine Learning](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
