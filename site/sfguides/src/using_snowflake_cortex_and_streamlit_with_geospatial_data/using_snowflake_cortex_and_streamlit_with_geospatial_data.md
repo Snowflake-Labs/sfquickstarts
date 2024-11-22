@@ -409,9 +409,11 @@ layers= [polygon_layer, poi_l], tooltip = {'text':"Place Name: {NAME}, alternate
 ))
 
 ```
-Go back to places_filter_bounds and modify the category in the filter from train_station to restaurant . 
+- Go back to **places_filter_bounds** cell and modify the category in the filter from train_station to restaurant. 
 
-Select **Run all below**:
+- Return to the **places_dataset** cell - this is 2 cells above the places_filtered_boundary cell.
+
+- Select **Run all below**.  These steps will start from retreiving a fresh table from the marketplace table:
 
 ![boundarybox](assets/I016.png)
 
