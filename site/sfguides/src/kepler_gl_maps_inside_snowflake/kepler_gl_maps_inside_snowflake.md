@@ -27,7 +27,7 @@ A map that visualizes UK highways with color-coded density of nearby EV charging
 
 ### Prerequisites
 
-**Snowflake Account** with `ACCOUNTADMIN` role for managing permissions.
+[Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` role for managing permissions.
 
 <!-- ------------------------ -->
 ## Install Dekart for Snowflake
