@@ -103,8 +103,8 @@
       "type": 301
     },
     {
-      "source": "guide/getting_started_with_document_ai/{,/**}",
-      "destination": "/guide/automating_document_processing_workflows_with_document_ai",
+      "source": "guide/attaining_consumer_insights_with_snowflake_and_microsoft_power_bi/{,/**}",
+      "destination": "/guide/end-to-end-analytics-with-snowflake-and-power-bi",
       "type": 301
     },
     {

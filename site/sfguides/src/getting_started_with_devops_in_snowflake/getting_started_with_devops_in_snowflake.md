@@ -45,6 +45,7 @@ You will learn about the following Snowflake features in this Quickstart:
 - GitHub Actions (CI/CD) integration
 - Snowflake’s Visual Studio Code extension
 - SnowflakeCLI tool
+- Snowflake's Python APIs
 - Data Sharing/Marketplace (instead of ETL)
 - LLM interference with Snowflake Cortex
 
@@ -68,7 +69,7 @@ During this Quickstart you will accomplish the following things:
 - Create a vectorized Python UDF making use of dynamic file access
 - Create a data engineering pipeline to process data from multiple sources
 - Orchestrate the pipeline with tasks
-- Make declarative changes to the pipeline with Create-or-Alter
+- Make declarative changes to the pipeline with Create-or-Alter and Python APIs
 - Separate dev and prod environments with Jinja templating
 - Deploy the pipeline via an automated CI/CD pipeline
 - Enrich your data with Cortex LLM functions 
@@ -84,7 +85,7 @@ You'll need to create a fork of the repository for this Quickstart in your GitHu
 
 ### Create GitHub Codespace
 
-For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) as our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. GitHub currently offers [60 hours for free each month](https://github.com/features/codespaces) when using a 2 node environment, which should be more than enough for this quickstart.
+For this Quickstart we will be using [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) as our development environment. Codespaces offer a hosted development environment with a hosted, web-based VS Code environment. The free offering should be more than enough for this quickstart.
 
 To create a GitHub Codespace, click on the green “<> Code” button from the forked repository’s homepage. In the Code popup, click on the green “Create codespace on main”.
 
@@ -92,13 +93,23 @@ To create a GitHub Codespace, click on the green “<> Code” button from the f
 
 This will open a new tab and begin setting up your codespace. This will take a few minutes as it sets up the entire environment for this Quickstart.
 
-Once the codespace has been created and started, you should see a hosted web-based version of VS Code with your forked repository set up! Snowflake’s native VS Code extension has already been installed for you.
+Once the codespace has been created and started, you should see a hosted web-based version of VS Code with your forked repository set up! Snowflake’s VS Code extension and the Snowflake CLI have already been installed for you.
 
 ### Snowflake Extension for VS Code
 
 You can run SQL queries against Snowflake in many different ways (through the Snowsight UI, SnowSQL, etc.) but for this Quickstart we'll be using the Snowflake extension for VS Code. For a brief overview of Snowflake's native extension for VS Code, please check out our [VS Code Marketplace Snowflake extension page](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc).
 
-Click the Snowflake logo in the activity bar to the left of the editor to log into your Snowflake account. Provide your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier) as well as username and password In the “Add Account” dialog and you are good to go. Note that the user must have ACCOUNTADMIN privileges.
+### Snowflake CLI
+
+[Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) is an open-source command-line tool explicitly designed for developer-centric workloads in addition to SQL operations. With Snowflake CLI, developers can create, manage, update, and view apps running on Snowflake across workloads such as Streamlit in Snowflake, the Snowflake Native App Framework, Snowpark Container Services, and Snowpark.
+
+Here we will make use of the CLI to quickly setup a CI/CD pipeline.
+
+### Connecting to Snowflake
+
+Both the VS Code extension and the CLI manage their Snowflake connections in a shared file. Open `.snowflake/config.toml` and add your [account identifier](https://docs.snowflake.com/en/user-guide/admin-account-identifier), username and password in the corresponding placeholders. Note that the user must have ACCOUNTADMIN privileges. Make sure to not commit this file to Git.
+
+Now use these credentials to login with the VS Code extension, by clicking the Snowflake logo in the activity bar to the left of the editor. The dialog should have been pre-filled from the config file. Press "Sign in" and you are good to go.
 
 <!-- ------------------------ -->
 ## Setup Snowflake
@@ -109,7 +120,7 @@ To get started we need to create some basic Snowflake objects like databases, st
 
 ### Create and Connect a Git Repository
 
-This quickstart makes extensive use of the new [GIT REPOSITORY](https://docs.snowflake.com/en/developer-guide/git/git-overview) object. This object acts similarly to an external stage except that it is backed by a GitHub repository. It enables the access to version controlled files at a certain commit, branch or tag. This way your database scripts and object definitions can be evolved with software engineering best practices such as branching, pull requests and code reviews.
+This quickstart makes extensive use of the [GIT REPOSITORY](https://docs.snowflake.com/en/developer-guide/git/git-overview) object. This object acts similarly to an external stage except that it is backed by a GitHub repository. It enables the access to version controlled files at a certain commit, branch or tag. This way your database scripts and object definitions can be evolved with software engineering best practices such as branching, pull requests and code reviews.
 
 Before continuing, **replace the two placeholders** in `steps/01_setup_snowflake.sql` with your GitHub username and the url of the forked repository.
 
@@ -126,7 +137,7 @@ CREATE OR REPLACE GIT REPOSITORY quickstart_common.public.quickstart_repo
 
 ### Run the Script
 
-After replacing the git-related placeholders, it is time to execute the script to create all the objects we'll need for this quickstart. 
+After replacing the git-related placeholders, it is time to execute the script to create all the objects we'll need for this quickstart.
 
 Start by opening the `steps/01_setup_snowflake.sql` script. Now you can run all the queries in this script, by using the "Execute All Statements" button in the upper right corner of the editor window. If you want to run them in chunks instead, you can highlight the ones you want to run and press “CMD/CTRL+Enter”.
 
@@ -161,8 +172,8 @@ Now, perform these steps for the following data listings:
 1. “OAG: Flight Emissions Data (Sample)” by OAG
 2. “OAG: Flight Status Data (Sample)” by OAG
 3. “Global Weather & Climate Data for BI” by Weather Source
-4. “Government Essentials” by Cybersyn
-5. “US Points of Interest & Addresses” by Cybersyn
+4. “Global Government” by Cybersyn
+5. “US Addresses & POI” by Cybersyn
 
 ### Inspect Imported Listings
 
@@ -172,8 +183,8 @@ That’s all! The imported listings are now available in our account and can be 
 SELECT * FROM oag_flight_emissions_data_sample.public.estimated_emissions_schedules_sample LIMIT 100;
 SELECT * FROM oag_flight_status_data_sample.public.flight_status_latest_sample LIMIT 100;
 SELECT * FROM global_weather__climate_data_for_bi.standard_tile.forecast_day LIMIT 100;
-SELECT * FROM government_essentials.cybersyn.datacommons_timeseries LIMIT 100;
-SELECT * FROM us_points_of_interest__addresses.cybersyn.point_of_interest_index LIMIT 100;
+SELECT * FROM global_government.cybersyn.datacommons_timeseries LIMIT 100;
+SELECT * FROM us_addresses__poi.cybersyn.point_of_interest_index LIMIT 100;
 ```
 
 <!-- ------------------------ -->
@@ -183,11 +194,13 @@ Duration: 3
 
 The step will establish a data pipeline that will help us answer the question of what the perfect vacation spot is by joining together the different data sources from the market place, aggregating data points and picking only the columns and rows we need.
 
-We will skip the details of how the pipeline is constructed to focus on how we can employ DevOps practices to later safely evolve and manage the pipeline. You can read up on the details in `steps/03_harmonize_data.sql`. If you want to learn more about data engineering in Snowflake, check out [Intro to Data Engineering with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_with_snowpark_python_intro/index.html#0) or the advanced [Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/#0) quickstart.
+While most parts of our data pipeline are authored in SQL, `steps/03_harmonize_data.py` is written in Python. Snowflake supports seamlessly switching between SQL and Python when authoring data pipelines. Here, [Snowflake's first class PythonAPI's](https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-overview) are used to manage creations, alterations, or drops of Snowflake objects just like you would otherwise do with SQL commands.
+
+We will skip the details of how the pipeline is constructed to focus on how we can employ DevOps practices to later safely evolve and manage the pipeline. If you want to learn more about the Python APIs check the tutorials [here](https://docs.snowflake.com/en/developer-guide/snowflake-python-api/overview-tutorials).
 
 ### Run the Script
 
-To establish the pipeline, we need to run the commands in the SQL file `steps/03_harmonize_data.sql`. Open `steps/03_harmonize_data.sql` in VS Code. You can click on the Execute option above every SQL command to run each command separately or click on “Execute All Statements” to run all the commands in the file sequentially.
+To establish the pipeline, we need to run the commands in the Python file `steps/03_harmonize_data.py`. Open the file in VS Code. Next, click on “Run Python File” to run the script.
 
 <!-- ------------------------ -->
 ## Orchestrate Jobs
@@ -209,7 +222,7 @@ In this step, we will run through the commands in the Python file `steps/04_orch
 
 ### Declarative Create-or-Alter Command
 
-When creating the target table and the tasks orchestrating the pipeline, we make use of the new [CREATE OR ALTER](https://docs.snowflake.com/en/sql-reference/sql/create-table#create-or-alter-table) command. CREATE OR ALTER behaves similarly to CREATE OR REPLACE except that an existing table is not replaced, but rather altered to the target state.
+When creating the target table and the tasks orchestrating the pipeline, we make use of the [CREATE OR ALTER](https://docs.snowflake.com/en/sql-reference/sql/create-table#create-or-alter-table) command. CREATE OR ALTER behaves similarly to CREATE OR REPLACE except that an existing object is not replaced, but rather altered to the target state.
 
 ```sql
 create or alter table vacation_spots (
@@ -233,7 +246,7 @@ By this time the pipeline should has completed processing. You should have recei
 
 ```sql
 SELECT *
-FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+FROM TABLE(QUICKSTART_PROD.INFORMATION_SCHEMA.TASK_HISTORY(
     SCHEDULED_TIME_RANGE_START=>DATEADD('DAY',-1,CURRENT_TIMESTAMP()),
     RESULT_LIMIT => 100))
 ORDER BY SCHEDULED_TIME DESC;
@@ -252,7 +265,7 @@ Declarative definitions are concise, idempotent and easy to understand as we don
 
 ### Declarative Pipeline Evolution
 
-This is where the new [CREATE OR ALTER](https://docs.snowflake.com/en/sql-reference/sql/create-table#create-or-alter-table) command shines. It allows us to have one single source of truth for the current state of the object. Potential rollbacks are super easy to do thanks to the straightforward integration with version control tools such as Git. Just apply an older version of the CREATE OR ALTER. This makes CREATE OR ALTER a great choice to manage data pipelines.
+This is where the [CREATE OR ALTER](https://docs.snowflake.com/en/sql-reference/sql/create-table#create-or-alter-table) command shines. It allows us to have one single source of truth for the current state of the object. Potential rollbacks are super easy to do thanks to the straightforward integration with version control tools such as Git. Just apply an older version of the CREATE OR ALTER. This makes CREATE OR ALTER a great choice to manage data pipelines.
 
 > aside negative
 > Note: The Create-or-Alter command is currently not publicly available for all object types. Check the docs for currently supported objects types and contact your account manager if you want to join the extended preview.
@@ -269,23 +282,37 @@ Let’s add data on these points of interest to our pipeline! **Follow along and
 git checkout -b dev
 ```
 
-2. Open `steps/03_harmonize_data.sql` and add the following view definition at the end of the file. This view makes use of the “US Points of Interest & Addresses” data set we previously imported from the marketplace to find the number of Korean restaurants, zoos and aquariums for each potential vacation spot.
+2. Open `steps/03_harmonize_data.py` and add the following view definition at the end of the file. This view makes use of the “US Points of Interest & Addresses” data set we previously imported from the marketplace to find the number of Korean restaurants, zoos and aquariums for each potential vacation spot.
 
-```sql
-create or replace view attractions as select
-    city.geo_id,
-    city.geo_name,
-    count(case when category_main = 'Aquarium' THEN 1 END) aquarium_cnt,
-    count(case when category_main = 'Zoo' THEN 1 END) zoo_cnt,
-    count(case when category_main = 'Korean Restaurant' THEN 1 END) korean_restaurant_cnt,
-from us_points_of_interest__addresses.cybersyn.point_of_interest_index poi
-join us_points_of_interest__addresses.cybersyn.point_of_interest_addresses_relationships poi_add on poi_add.poi_id = poi.poi_id
-join us_points_of_interest__addresses.cybersyn.us_addresses address on address.address_id = poi_add.address_id
-join major_us_cities city on city.geo_id = address.id_city
-where true
-    and category_main in ('Aquarium', 'Zoo', 'Korean Restaurant')
-    and id_country = 'country/USA'
-group by city.geo_id, city.geo_name;
+```py
+View(
+    name="attractions",
+    columns=[
+        ViewColumn(name="geo_id"),
+        ViewColumn(name="geo_name"),
+        ViewColumn(name="aquarium_cnt"),
+        ViewColumn(name="zoo_cnt"),
+        ViewColumn(name="korean_restaurant_cnt"),
+    ],
+    query="""
+    select
+        city.geo_id,
+        city.geo_name,
+        count(case when category_main = 'Aquarium' THEN 1 END) aquarium_cnt,
+        count(case when category_main = 'Zoo' THEN 1 END) zoo_cnt,
+        count(case when category_main = 'Korean Restaurant' THEN 1 END) korean_restaurant_cnt,
+    from us_addresses__poi.cybersyn.point_of_interest_index poi
+    join us_addresses__poi.cybersyn.point_of_interest_addresses_relationships poi_add 
+        on poi_add.poi_id = poi.poi_id
+    join us_addresses__poi.cybersyn.us_addresses address 
+        on address.address_id = poi_add.address_id
+    join major_us_cities city on city.geo_id = address.id_city
+    where true
+        and category_main in ('Aquarium', 'Zoo', 'Korean Restaurant')
+        and id_country = 'country/USA'
+    group by city.geo_id, city.geo_name
+    """,
+),
 ```
 
 3. Next, let’s update the schema of our target table to account for the new columns. Head over to `steps/04_orchestrate_jobs.sql` and modify the CREATE OR ALTER on top by appending the following columns to its column list:
@@ -330,12 +357,33 @@ and (zoo_cnt > 0 or aquarium_cnt > 0)
 After accounting for the new data in our pipeline it is time to deploy the new version. First commit your changes to the Git repository. Run the following commands in the VS Code terminal:
 
 ```bash
-git add steps/*.sql
+git add steps/*
 git commit -m "added attractions to pipeline"
 git push --set-upstream origin dev
 ```
 
-Next, open `steps/05_database_change_management.sql` in VS Code. Execute the script by clicking the “Execute All Statements” in the top right of VS Code. The script fetches the changes from GitHub to Snowflake and reexecutes `steps/01_setup_snowflake.sql` to apply changes to the foundational objects, `steps/03_harmonize_data.sql` to update the views used to transform the marketplace data and `steps/04_orchestrate_jobs.sql` to apply our changes to the target table and update and execute the two tasks.
+Next, deploy the new version of the data pipeline manually. Open the terminal in VS Code and run `snow git fetch quickstart_common.public.quickstart_repo` to fetch the changes from GitHub to Snowflake. Finally, run `snow git execute @quickstart_common.public.quickstart_repo/branches/dev/steps/0[134]_*`. The command reexecutes `steps/01_setup_snowflake.sql` to apply changes to the foundational objects, `steps/03_harmonize_data.py` to update the views used to transform the marketplace data and `steps/04_orchestrate_jobs.sql` to apply our changes to the target table and update and execute the two tasks.
+
+```bash
+$ snow git fetch quickstart_common.public.quickstart_repo
++------------------------+
+| scope  | name | result |
+|--------+------+--------|
+| Branch | dev  | FORCED |
++------------------------+
+
+$ snow git execute @quickstart_common.public.quickstart_repo/branches/dev/steps/0[134]_*
+SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/01_setup_snowflake.sql
+SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/03_harmonize_data.py
+SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/04_orchestrate_jobs.sql
++--------------------------------------------------------------------------------------------------------+
+| File                                                                                 | Status  | Error |
+|--------------------------------------------------------------------------------------+---------+-------|
+| @quickstart_common.public.quickstart_repo/branches/dev/steps/01_setup_snowflake.sql  | SUCCESS | None  |
+| @quickstart_common.public.quickstart_repo/branches/dev/steps/03_harmonize_data.py    | SUCCESS | None  |
+| @quickstart_common.public.quickstart_repo/branches/dev/steps/04_orchestrate_jobs.sql | SUCCESS | None  |
++--------------------------------------------------------------------------------------------------------+
+```
 
 If done correctly, you will shortly receive another email with your updated vacation plan.
 
@@ -365,13 +413,13 @@ Let’s perform the necessary changes! Follow along and perform the described st
 1. Open `steps/01_setup_snowflake.sql` and parametrize part the database name in the CREATE OR REPLACE DATABASE QUICKSTART_PROD command.
 
 ```sql
-CREATE OR REPLACE DATABASE QUICKSTART_{{environment}}; 
+CREATE OR ALTER DATABASE QUICKSTART_{{environment}}; 
 ```
 
-2. Open `steps/03_harmonize_data.sql` and parametrize the USE SCHEMA command.
+2. Open `steps/03_harmonize_data.py` and read the environment variable.
 
-```sql
-use schema quickstart_{{environment}}.silver;
+```py
+silver_schema = root.databases[f"quickstart_{os.environ['environment']}"].schemas["silver"]
 ```
 
 3. Open `steps/04_orchestrate_jobs.sql` and parametrize the USE SCHEMA command.
@@ -438,7 +486,7 @@ When you're finished adding all the secrets, the page should look like this:
 The CI/CD pipeline is ready to use. Let’s push our changes to GitHub and let the CI/CD pipeline do its thing. Open the terminal of the VS Code codespace and execute the following commands.
 
 ```bash
-git add steps/*.sql
+git add steps/*
 git commit -m "parametrize pipeline"
 git push
 ```
@@ -508,10 +556,11 @@ jobs:
         uses: actions/checkout@v4
 
       # Install Snowflake CLI GitHub Action and point to config file
-      - uses: Snowflake-Labs/snowflake-cli-action@v1
+      - name: Install snowflake-cli
+        uses: Snowflake-Labs/snowflake-cli-action@v1.5
         with:
           cli-version: "latest"
-          default-config-file-path: "config.toml"
+          default-config-file-path: ".snowflake/config.toml"
 
       # Update Snowflake's copy of the repository
       - name: Fetch repository changes
@@ -523,24 +572,16 @@ jobs:
           BRANCH_NAME=${{ github.ref_name }}
           if [ "${BRANCH_NAME}" == "main" ]; then
             RETENTION_TIME=1
-          elif [ "${BRANCH_NAME}" == "dev" ]; then
+          else
             RETENTION_TIME=0
           fi
           snow git execute \
-            "@${REPO_NAME}/branches/${BRANCH_NAME}/deploy_parametrized_pipeline.sql" \
+            "@${REPO_NAME}/branches/${BRANCH_NAME}/steps/0[134]_*" \
             -D "environment='${BRANCH_NAME}'" \
             -D "retention_time=${RETENTION_TIME}"
 ```
 
 Both commands are executed using the `snow` command. This command is part of the [SnowflakeCLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) tool, not to be confused with its predecessor [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql). SnowflakeCLI is an open-source command-line tool explicitly designed for developer-centric workloads. Also provided is a [native GitHub Action](https://github.com/Snowflake-Labs/snowflake-cli-action), simplifying the setup and connection management. It is a flexible and extensible tool that can accommodate modern development practices and technologies. This makes it a perfect choice for DevOps.
-
-SnowflakeCLI simplifies the development and deployment of the following Snowflake objects:
-
-- Snowpark Python UDFs
-- Snowpark Python Stored Procedures
-- Streamlit Applications
-
-Here, we only use a fraction of its capabilities. We use it to first refresh the Git repository’s contents in Snowflake to then execute the parametrized deployment script `deploy_parametrized_pipeline.sql`.
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -567,6 +608,7 @@ You have learned a ton in this guide. Here are the highlights:
 - How to verify your changes in a test environment with Jinja templating
 - How to use Snowflake’s Visual Studio Code extension
 - How to build CI/CD pipelines with SnowflakeCLI and GitHub Actions
+- How to interact with Snowflake's Python APIs
 - How to gain access to the powerful data on Snowflake's Marketplace
 - How to enhance your data with Snowflake Cortex LLM functions
 

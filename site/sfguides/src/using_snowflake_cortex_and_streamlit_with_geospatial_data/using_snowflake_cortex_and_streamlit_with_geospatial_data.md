@@ -409,9 +409,11 @@ layers= [polygon_layer, poi_l], tooltip = {'text':"Place Name: {NAME}, alternate
 ))
 
 ```
-Go back to places_filter_bounds and modify the category in the filter from train_station to restaurant . 
+- Go back to **places_filter_bounds** cell and modify the category in the filter from train_station to restaurant. 
 
-Select **Run all below**:
+- Return to the **places_dataset** cell - this is 2 cells above the places_filtered_boundary cell.
+
+- Select **Run all below**.  These steps will start from retreiving a fresh table from the marketplace table:
 
 ![boundarybox](assets/I016.png)
 
@@ -901,7 +903,7 @@ Replace all the sample code with the following:
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import col, call_function, lit,concat, parse_json,object_construct
+from snowflake.snowpark.functions import col, call_function, lit,concat, parse_json,object_construct,replace
 from snowflake.snowpark.types import StringType, FloatType, ArrayType, VariantType, DateType
 
 # Write directly to the app
@@ -953,7 +955,7 @@ with st.form('Generate Events'):
     'Generate Synthetic Events based on the following:'
     col1,col2, col3,col4 = st.columns(4)
     with col1:
-        model = st.selectbox('Choose Model',['mixtral-8x7b'])
+        model = st.selectbox('Choose Model',['mistral-large2'])
     with col2:
         mp = st.selectbox('Choose MP: ',mps)
     with col3:
@@ -997,6 +999,9 @@ if submitted:
     
 
     generated = filtered_data.with_column('generated_events',mistral)
+
+    generated = generated.with_column('generated_events',replace(col('generated_events'),lit('''```json'''),lit('')))
+    generated = generated.with_column('generated_events',replace(col('generated_events'),lit('''```'''),lit('')))
     #st.write(generated)
     generated = generated.select('MP',parse_json('GENERATED_EVENTS').alias('GENERATED_EVENTS'))
     generated = generated.with_column('INCIDENT_TYPE',lit(activity))
@@ -1092,7 +1097,7 @@ try:
 
     st.markdown(''' #### NEWLY GENERATED SOCIAL MEDIA ''')
 
-    
+    #### SOCIAL MEDIA DATA
     
     social_media = session.create_dataframe([0])
     json = '''{"date","YYYY-MM-DD","post","abcdefg","sentiment_score",0.2,"username","bob"}'''
@@ -1103,7 +1108,10 @@ try:
     lit('Add a date, username and relevant emojis to each post.\
     Include emotion.  Return the results as a json object and include sentiment scores.')
            ,lit('use the following json template to structure the data'),lit(json))).astype(VariantType()))
+    
 
+    social_media = social_media.with_column('V',replace(col('V'),lit('''```json'''),lit('')))
+    social_media = social_media.with_column('V',replace(col('V'),lit('''```'''),lit('')))
     
     smedia = social_media.join_table_function('flatten',parse_json('V')).select('VALUE')
     smedia = smedia.select(object_construct(lit('INCIDENT_TYPE'),lit(flattenpd.INCIDENT_TYPE.iloc[record]),lit('MP'),lit(MP),lit('DATA'),col('VALUE')).alias('V'))
@@ -1137,6 +1145,8 @@ try:
     st.write(session.table('DATA.V_SOCIAL_MEDIA'))
 except:
     st.info('No Results Found')
+    
+         
     
          
 
@@ -1390,16 +1400,20 @@ st.table(social_media.drop('V'))
 
 ```
 <!-- ------------------------ -->
-## Use Cortex to Embed Generated Text
+## Use Cortex to Embed Generated Text and create a Search Service
 Duration: 10
 
-During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.
+
+During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.  Once you have explored the principles of how text searching works, you will create a Cortex Search Service.
 
 Click here and download the notebook from GitHub
 
 [**Vector_Embeddings.ipynb**](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Vector_Embeddings.ipynb)
 
 Import as a new snowflake notebook.  Add it to the BUILD.UK.NOTEBOOKS schema and follow the instructions provided in the notebook.
+
+
+
 
 <!-- ------------------------ -->
 ## Bringing in Met Office Weather
