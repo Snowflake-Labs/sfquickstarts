@@ -25,11 +25,12 @@ Snowflake offers a rich toolkit for predictive analytics with a geospatial compo
 ### What You’ll Learn
 In this quickstart, you will use H3, Time Series, Cortex ML and Streamlit for ML use cases. The quickstart is broken up into separate labs:
 * Lab 1: Geospatial 101
-* Lab 2: Geocoding and Reverse Geocoding
-* Lab 3: Forecasting time series on a map
-* Lab 4: Sentiment analysis of customer reviews
-* Lab 5: Processing unstructured geospatial data
-* Lab 6: Creating Interactive Maps with Kepler.gl
+* Lab 2: Energy grids analysis using GEOMETRY
+* Lab 3: Geocoding and Reverse Geocoding
+* Lab 4: Forecasting time series on a map
+* Lab 5: Sentiment analysis of customer reviews
+* Lab 6: Processing unstructured geospatial data
+* Lab 7: Creating Interactive Maps with Kepler.gl
 
 When you complete this quickstart, you will have gained practical experience in several areas:
 * Acquiring data from the Snowflake Marketplace
