@@ -398,15 +398,11 @@ The first step in the guide is to acquire geospatial data sets that you can free
 
 <img src ='assets/geo_ml_49.png' width=500>
 
-Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace. 
-
-Similarly to the above dataset, search and get the `Netherlands Open Map Data - Sonra` dataset from the Marketplace and rename it to `osm_nl`.
-
-<img src ='assets/geo_ml_55.png' width=500>
-
-And lastly, acquire [SedonaSnow](https://app.snowflake.com/marketplace/listing/GZTYZF0RTY3/wherobots-sedonasnow) application which extends Snowflake core geo features with more than 100 spatial functions. Similar to how you did with the data in the previous steps, navigate to the `Marketplace` screen using the menu on the left side of the window and find the `SedonaSnow`. Keep the the database name `SEDONASNOW` and optionally add more roles that can access the database.
+Similarly to the above dataset, acquire [SedonaSnow](https://app.snowflake.com/marketplace/listing/GZTYZF0RTY3/wherobots-sedonasnow) application which extends Snowflake core geo features with more than 100 spatial functions. Navigate to the `Marketplace` screen using the menu on the left side of the window and find the `SedonaSnow`. Keep the the database name `SEDONASNOW` and optionally add more roles that can access the database.
 
 <img src ='assets/geo_ml_22.png' width=500>
+
+Congratulations! You have just acquired all the listings you need for this lab.
 
 ### Setup your Account
 
