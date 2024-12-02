@@ -543,7 +543,7 @@ We now have a view that creates an output that can be used by our organization i
 
 2. Within the mapping grid, delete the TRANSCRIPT_CUSTOMER column which is an array data type, as Iceberg tables do not support array data types. 
 
-![image85](assets/image79.png)
+![image85](assets/image85.png)
 
 3. Within the node, select the Iceberg Options dropdown.   
    
