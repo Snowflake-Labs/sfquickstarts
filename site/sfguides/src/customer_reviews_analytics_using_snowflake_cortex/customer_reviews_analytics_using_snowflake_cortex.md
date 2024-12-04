@@ -498,7 +498,7 @@ In the final step, you will utilize **Snowflake Cortex - Complete** to draft an 
   Mention the truck brand name and location in the email.[/INST]"""
 
   # Print the result from Cortex Complete
-  print(cortex.Complete('mixtral-8x7b', prompt))
+  print(cortex.Complete('mistral-large2', prompt))
   ```
 
 <!-- ------------------------ -->
