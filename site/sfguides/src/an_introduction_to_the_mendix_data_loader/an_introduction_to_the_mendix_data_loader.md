@@ -81,7 +81,7 @@ The application you just downloaded, uploaded to Mendix' version control server 
 
 Duration: 5
 
-- Download the Mendix Data Loader from the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTDZHHIDN/mendix-mendix-data-loader)
+- Download the Mendix Data Loader from the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTDZHHIE0/mendix-mendix-data-loader)
 - Once a window displaying "successfully Installed" appears, click `Close`, navigate to `Data Products` -> `Apps` -> `Mendix Data Loader`, a documentation page titled `Mendix Data Loader` should appear
 - You have successfully deployed the Mendix Data Loader into your Snowflake environment!
 
