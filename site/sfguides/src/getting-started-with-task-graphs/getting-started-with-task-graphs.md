@@ -63,7 +63,7 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAP
 ```
 ### Create Task DAG
 
-- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-how-to-manage-features-in-dbt-with-snowflake-feature-store/blob/main/notebooks/0_start_here.ipynb)
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/getting-started-with-task-graphs/blob/main/notebooks/0_start_here.ipynb)
 - Change role to TASK_GRAPH_ROLE
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
