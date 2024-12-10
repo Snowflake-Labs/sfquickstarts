@@ -12,9 +12,9 @@ tags: Getting Started, Data Engineering
 ## Overview 
 Duration: 1
 
-With [task graphs](https://docs.snowflake.com/en/user-guide/tasks-graphs) you can automatically run sequences of tasks. A task graph, or directed acyclic graph (DAG), is a series of tasks composed of a root task and child tasks, organized by their dependencies. Task graphs flow in a single direction, meaning a task later in the series cannot prompt the run of an earlier task. Each task can depend on multiple other tasks and won’t run until they all complete. Each task can also have multiple child tasks that depend on it.
+With [task graphs](https://docs.snowflake.com/en/user-guide/tasks-graphs) in Snowflake, you can automatically run sequences of tasks. A task graph, or directed acyclic graph, is a series of tasks composed of a root task and child tasks, organized by their dependencies. Task graphs flow in a single direction, meaning a task later in the series cannot prompt the run of an earlier task. Each task can depend on multiple other tasks and won’t run until they all complete. Each task can also have multiple child tasks that depend on it.
 
-This quickstart sets up an example task graph to showcase its features. 
+This quickstart sets up an example task graph to showcase its features. You will build a task graph that features a root task, a finalizer task, dependencies, tasks with various statuses, return values, conditional execution, and retry attempts.
 
 ### Prerequisites
 - A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup 
@@ -26,7 +26,7 @@ This quickstart sets up an example task graph to showcase its features.
 - A [Snowflake](https://app.snowflake.com/) Account
 
 ### What You’ll Build 
-- A Snowflake Task DAG
+- A Snowflake Task Graph
 <!-- ------------------------ -->
 ## Setup Your Account
 Duration: 5
@@ -61,7 +61,7 @@ CREATE OR REPLACE SCHEMA TASK_GRAPH_SCHEMA;
 GRANT OWNERSHIP ON DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAPH_ROLE COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAPH_ROLE COPY CURRENT GRANTS;
 ```
-### Create Task DAG
+### Create Task Graph Notebook
 
 - Download the notebook from this [link](https://github.com/Snowflake-Labs/getting-started-with-task-graphs/blob/main/notebooks/0_start_here.ipynb)
 - Change role to TASK_GRAPH_ROLE
@@ -73,20 +73,27 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAP
 
 ![create-notebooks](assets/import-notebook.png)
 
+### Run Task Graph Notebook
+
+- Click run all to run all of the cells in the notebook. This creates a task graph that includes the following features:
+  - Root task with graph config used in other tasks and a return value
+  - [Finalizer Task](https://docs.snowflake.com/en/user-guide/tasks-graphs#label-finalizer-task) that runs after all other tasks in the task graph
+  - Task graph dependencies: downstream tasks depend on successful upstream tasks to run
+  - Tasks with different status -- succeesful, failed, skipped
+  - Tasks with return values
+  - Task conditionally running on stream data (task 8)
+  - Task with retry attempts (task 1)
+  - Task conditionally running on returned values from upstream tasks (task 11)
 
 <!-- ------------------------ -->
 ## View Task Graph
 Duration: 5
 
-To streamline complex workflows in Snowflake, task graphs (or directed acyclic graphs, DAGs) enable seamless automation of task sequences. By defining dependencies between a root task and subsequent child tasks, you can ensure efficient, orderly execution from start to finish. Tasks flow in a single direction, preventing any task from triggering an earlier one and ensuring stability across the workflow. Additionally, each task in a DAG can have multiple dependencies and child tasks, giving you the flexibility to design intricate, resilient processes.
-
-This quickstart provides a practical example of a task graph to help you understand and apply this functionality in Snowflake.
-
-Start building your own Snowflake Task DAG today and unlock the power of automated, structured workflows in your Snowflake environment!
+To view the task graph from Snowsight, go to Monitoring > Task History. Task history opens to Task Graph Runs which shows an overview of task graph execution along with successful and failed task metrics. Click the Task Run tab to see a full list of individual task runs containing information such as status, return value, and duration. Note that data may take 45 minutes to show after a task graph run. 
 
 ![task-history](assets/task-history.png)
 
-On the task graph, each task displays a status, such as Succeeded, Failed, Skipped, Suspended, Cancelled, or Did not run, along with a corresponding color. You can hover over the status of failed, skipped, suspended, and cancelled tasks for more information.
+Clicking on a task run from the Task Graph Run list will take you to the associated task graph. On the task graph, each task displays a status, such as Succeeded, Failed, Skipped, Suspended, Cancelled, or Did not run, along with a corresponding color. You can hover over the status of failed, skipped, suspended, and cancelled tasks for more information.
 
 In addition to the task graph, you can review a table describing which tasks ran, the start time of each task, the duration of each task run, the status of each task, and a timeline representing the sequence of task runs. With the timeline, you can quickly determine why a task graph run was slow, and which long-running task might have delayed the start of a dependent task.
 
@@ -98,14 +105,14 @@ For each task in the table, you can select the … more menu to open the query I
 ## Conclusion And Resources
 Duration: 1
 
-To streamline complex workflows in Snowflake, task graphs (or directed acyclic graphs, DAGs) enable seamless automation of task sequences. By defining dependencies between a root task and subsequent child tasks, you can ensure efficient, orderly execution from start to finish. Tasks flow in a single direction, preventing any task from triggering an earlier one and ensuring stability across the workflow. Additionally, each task in a DAG can have multiple dependencies and child tasks, giving you the flexibility to design intricate, resilient processes.
+To streamline complex workflows in Snowflake, task graphs enable seamless automation of task sequences. By defining dependencies between a root task and subsequent child tasks, you can ensure efficient, orderly execution from start to finish. 
 
-This quickstart provides a practical example of a task graph to help you understand and apply this functionality in Snowflake. Start building your own Snowflake Task DAG today and unlock the power of automated, structured workflows in your Snowflake environment!
+This quickstart provided a practical example of a task graph to help you understand and apply this functionality in Snowflake. Start building your own Snowflake Task Graph today and unlock the power of automated, structured workflows in your Snowflake environment!
 
 ### What You Learned
-- How to build tasks with dependencies that build into a DAG
+- How to build tasks with dependencies that build into a task graph
 - How to view task history
-- How to view and monitor task DAGs
+- How to view and monitor task graphs
 
 ### Related Resources
 - [Task Graphs](https://docs.snowflake.com/en/user-guide/tasks-graphs)
