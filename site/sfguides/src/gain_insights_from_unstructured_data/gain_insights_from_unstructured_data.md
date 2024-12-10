@@ -253,7 +253,7 @@ Duration: 5
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
 
-* Download the notebook **customer_review_analytics.ipynb** using this [link](https://github.com/Snowflake-Labs/sfguide-customer-reviews-analytics-using-snowflake-cortex/tree/main/notebook)
+* Download the notebook **gaining_insights_from_unstructured_data.ipynb** using this [link](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/tree/main/notebook)
 
 * Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on Projects -> Notebook
 
