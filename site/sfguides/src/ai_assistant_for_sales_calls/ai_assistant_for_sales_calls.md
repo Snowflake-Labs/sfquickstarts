@@ -96,7 +96,7 @@ Click '+ Files' in the top right of the stage. Upload all files that you downloa
 <img src="assets/chatbot_stage.png"/>
 <br></br>
 
-Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/blob/main/scripts/setup.sql) in the SQL worksheet to load the data onto the stages.
+Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/blob/main/scripts/setup.sql) in the SQL worksheet to load the  data into tables and create a notebook and streamlit app from the staged files.
 
 ```sql
 create csv format
@@ -187,7 +187,7 @@ COMMENT = '{"origin":"sf_sit-is", "name":"ai_assistant_sales_call", "version":{"
 ```
 
 
-## Access Notebook ADD SS
+## Access Notebook
 **Duration: 20 minutes**
 
 The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
@@ -199,7 +199,7 @@ To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the P
 Within this notebook, you'll explore sales call transcripts, apply Snowflake Cortex AI models for sentiment analysis and summarization, and visualize key trends such as customer sentiment, product feedback, and competitor mentions.
 
 
-## Run Streamlit Application ADD SS and Sample Questions
+## Run Streamlit Application
 **Duration: 20 minutes**
 
 Chatbot Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open **ai_assistant_sales_calls_chatbot** and explore.
@@ -245,8 +245,6 @@ In this guide, you learned how to use Snowflake's Cortex AI to analyze sales cal
 - How to prototype a UI using Streamlit
 
 ### Related Resources
-
-- [Architecture diagram](https://lucid.app/lucidchart/5304cb61-6f1a-49ac-9e12-a3c51585087d/edit?viewport_loc=-712%2C550%2C2435%2C1722%2C0_0&invitationId=inv_6aba5539-c99e-4479-9c67-dc64f9385306)
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex.html)
 - [Streamlit Documentation](https://docs.streamlit.io/)
 - [Tasty Bytes: Enhancing Customer Experience](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html#0)
