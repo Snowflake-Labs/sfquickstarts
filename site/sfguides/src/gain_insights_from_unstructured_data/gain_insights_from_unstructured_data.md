@@ -445,7 +445,7 @@ reviews_df.select(["REVIEW","SENTIMENT"]).show(3)
 ```
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Duration: 1
 
 **Congratulations!** You've successfully enabled customer review analytics by leveraging Snowflake Cortex within Snowflake Notebook. And all this without ever needing to move any data outside of secure walls of Snowflake or managing infrastructure.
