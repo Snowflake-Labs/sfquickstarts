@@ -19,7 +19,7 @@ Bienvenue dans le guide Quickstart Powered by Tasty Bytes Débuter avec Snowflak
 Ce guide présente un large éventail de fonctionnalités Snowflake clés (clonage zéro copie et Time Travel, par exemple) qui permettent de répondre aux besoins de Tasty Bytes.
 
 ### Conditions préalables
-- Avant de commencer, assurez-vous de suivre l’intégralité du guide Quickstart [**Présentation de Tasty Bytes**](/guide/tasty_bytes_introduction/index.html), qui explique comment configurer un compte d’essai et déployer les éléments de base de Tasty Bytes requis pour suivre ce guide Quickstart.
+- Avant de commencer, assurez-vous de suivre l’intégralité du guide Quickstart [**Présentation de Tasty Bytes**](/guide/tasty_bytes_introduction_fr/#3), qui explique comment configurer un compte d’essai et déployer les éléments de base de Tasty Bytes requis pour suivre ce guide Quickstart.
 
 ### Vous allez apprendre :
 - Comment cloner une table
@@ -59,7 +59,7 @@ Cette section vous explique comment vous connecter à Snowflake, comment créer 
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Étape 5 – Renommer une feuille de calcul
-- Renommez la feuille de calcul en cliquant sur le nom généré automatiquement (horodatage), puis en saisissant « Tasty Bytes – Transformation ».
+- Renommez la feuille de calcul en cliquant sur le nom généré automatiquement (horodatage), puis en saisissant "Tasty Bytes – Transformation".
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Étape 6 – Accéder au fichier SQL de ce guide Quickstart dans GitHub
@@ -378,7 +378,12 @@ Duration: 1
 ### Conclusion
 Beau travail ! Vous avez terminé le guide Quickstart Tasty Bytes Débuter avec Snowflake sur la transformation. 
 
-Vous avez : - Cloné une table - Utilisé le cache de jeux de résultats de Snowflake - Ajouté une colonne à une table - Mis à jour les données d’une colonne - Utilisé la fonction Time Travel à des fins de récupération de données après sinistre - Échangé, supprimé et restauré une table
+Vous avez : 
+- Cloné une table 
+- Utilisé le cache de jeux de résultats de Snowflake 
+- Ajouté une colonne à une table - Mis à jour les données d’une colonne 
+- Utilisé la fonction Time Travel à des fins de récupération de données après sinistre 
+- Échangé, supprimé et restauré une table
 
 Si vous voulez recommencer ce guide Quickstart, utilisez les scripts de réinitialisation en bas de votre feuille de calcul associée.
 
