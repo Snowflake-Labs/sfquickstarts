@@ -1,4 +1,4 @@
-author: cxteam@fullcontact.com
+author: Dan Lee, Alix Thoi
 id: how_to_resolve_data_with_fullcontact_and_snowflake
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
@@ -18,7 +18,7 @@ This guide shows how to use the FullContact for Snowflake Native Application to 
 With your install we will provide you some synthetic data that will join to our Identity Graph to allow you to test out the application.  By the end of the walkthrough, we're going to show you how several profiles of a fictional customer named Willow Underwood, will now be able to be merged into a single record of that customer.
 To see a more in depth example with other sample datasets, make sure to check out the YouTube product walkthrough that is a companion to this guide.
 
-### What You'll  Learn 
+### What You'll Learn 
 - How to install the FullContact for Snowflake Native Application 
 - How to configure and set up the FullContact for Snowflake Native Application 
 - How to use the FullContact for Snowflake Native Application to unify and dedeuplicate multiple sources of customer data
@@ -236,7 +236,7 @@ SELECT * FROM FC_NATIVE_APP_IO.RESOLVE_OUT.CUST_JOURNEY_PURCHASE_DEMO_RESULTS WH
 ```
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 
 Duration: 1
 
@@ -244,7 +244,7 @@ By following this guide you learned how to use the FullContact for Snowflake app
 
 If you want to learn more about FullContact for Snowflake check out the [official documentation](https://docs.fullcontact.com/docs/snowflake-integration) or [contact an expert](https://www.fullcontact.com/contact/) to learn more about the different products FullContact offers and how it can help you better connect to your customers.
 
-### What we've  covered
+### What We've Covered
 - Installing and setting up the FullContact for Snowflake App
 - Creating a FullContact account and API key
 - Running the FullContact for Snowflake App on sample customer data to unify and deduplicate disparate datasets
