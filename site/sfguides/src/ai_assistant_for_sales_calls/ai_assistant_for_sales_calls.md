@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Snowpark, Snowflake Cortex, Streamlit
 
-# AI Assistant for Sales Calls
+# Building AI Assistant using Snowflake Cortex in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
 ![banner](assets/technology.png)
