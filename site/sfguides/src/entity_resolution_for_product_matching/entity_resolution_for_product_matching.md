@@ -10,167 +10,148 @@ tags: GenAI, Data Engineering, Snowpark, Snowflake Cortex
 <!-- --------------------------->
 ## Overview
 ![banner](assets/technology.png)
+
 **Duration: 3 minutes**
-Retailers and e-commerce platforms often face challenges in aggregating data about their products, which limits them in various aspects such as supply chain management, competitive pricing, demand forecasting, inventory optimization and much, much more. The root of this issue can be attributed to the lack of standardized UPCs or product descriptions across these various retailers and e-commerce platforms, resulting in a complex system that creates a need for companies to spend hundreds of thousands of dollars on DBT jobs or various other approaches to harmonizing their product data. 
-Addressing these challenges with centralized, AI-driven approach can empower these retailers to gain actionable insights off their product perforamnce based on the data available.
+Retailers and e-commerce platforms often face challenges in aggregating data about their products, which limits them in various aspects such as supply chain management, competitive pricing, demand forecasting, inventory optimization and much, much more. The root of this issue can be attributed to the lack of standardized UPCs or product descriptions across these various retailers and e-commerce platforms, resulting in a complex system that creates a need for companies to spend hundreds of thousands on DBT jobs or various other approaches to harmonizing their product data. 
+
+Addressing these challenges with a centralized, AI-driven approach can empower these retailers to gain actionable insights off their product perforamnce based on the data available.
+
 Built using Snowflake Cortex, this guide demonstrates the process of entity resolution to achieve product matches with Snowflake Cortex, and developing a Streamlit chatbot assistant to query and analyze the provided product data without the direct need for SQL.
 <img src='assets/chatbot.png'>
+
 This guide covers:
 - **Data Harmonization**: Addressing inconsistencies in product descriptions, codes, and categories between retailers to create a unified dataset.
 - **Product Matching**: Generating embeddings off of cleaned product descriptions, and identifying likely matches using cosine similarity.
 - **Validation with AI**: Leveraging Snowflake’s LLM integration to validate matches and provide justification on rejected matches.
 - **Interactive Insights**: Building a chatbot to easily obtain actionable insights on performance metrics, such as purchases and views.
+
 ### What You Will Learn
-- How to use [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and [Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index) forda ta processing
+- How to use [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and [Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index) for data processing
+
 - How to use [Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) (Cortex Complete) for access to industry-leading large language models (LLMs)
+
 - How to build a chatbot application using [Streamlit](https://docs.streamlit.io/) in Snowflake
+
 ### Prerequisites
 - A [GitHub](https://github.com/) Account
-- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for [a free trial](https://signup.snowflake.com/?_fsi=OuImfiWC&_fsi=OuImfiWC) or use a different role.
+
+- A Snowflake account with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a [free trial](https://signup.snowflake.com/?_fsi=OuImfiWC&_fsi=OuImfiWC&_fsi=05dxBvxS&_fsi=05dxBvxS) or use a different role.
+
 ### What You Will Build
+
 - A Notebook to process and harmonize product data
-- A Streamlit application to interact with the analyzed data and extract actionable insights
+
+- A Streamlit application to interact with the aggregated data and extract actionable insights
+
 **Architecture Diagram:**
 <img src="assets/architecture_diagram.png"/>
+
 <!-- --------------------------->
-## Data and Snowflake Setup
-**Duration: 15 minutes**
+## Data from Marketplace
+**Duration: 5 minutes**
+The first step of this quickstart is to get the data we'll be using from Snowflake Marketplace: 
+- On the left hand side of Snowsight, navigate to Data Products, then Marketplace. 
+- Search for Similarweb Ltd, and click on their provider page.
+- Find the `Amazon and E-commerce Websites Product Views and Purchases` dataset.
+- Click Get on the top right, then Options
+    - Don't edit the name of the database
+    - Give access to the database to PUBLIC
+    - Click Get
+
+A SQL worksheet will be added to your account; feel free to explore the data we'll be working with! There is also more information on the page of the dataset, including a brief summary of the business needs it can address, as well as a data dictionary to give a precursor to the sorts of values it contains.
+
+<!-- --------------------------->
+## Snowflake Setup
+
+**Duration: 10 minutes**
 To get started using Snowflake Notebooks, first login to Snowsight. In the top-left corner, click "+ Create" to create a new Worksheet, and choose "SQL Worksheet".
 <img src="assets/create_worksheet.png"/>
 <br></br>
-Paste and run the following in the SQL worksheet to create Snowflake objects (warehouse, database, schema).
+
+Paste and run the [setup SQL](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts) **line by line** in the worksheet to create Snowflake objects (warehouse, database, schema, stage).
+
 ```sql
 USE ROLE SYSADMIN;
-CREATE OR REPLACE WAREHOUSE SALES_CALLS_WH; --by default, this creates an XS Standard Warehouse
-CREATE OR REPLACE DATABASE SALES_CALLS_DB;
-CREATE OR REPLACE SCHEMA SALES_CALLS_SCHEMA;
-USE WAREHOUSE SALES_CALLS_WH;
-USE DATABASE SALES_CALLS_DB;
-USE SCHEMA SALES_CALLS_SCHEMA;
-CREATE OR REPLACE STAGE RAW_DATA DIRECTORY=(ENABLE=true); --to store data assets
-CREATE OR REPLACE STAGE NOTEBOOK DIRECTORY=(ENABLE=true); --to store notebook assets
-CREATE OR REPLACE STAGE CHATBOT_APP DIRECTORY=(ENABLE=true); --to store streamlit assets
+CREATE OR REPLACE WAREHOUSE PRODUCT_MATCHING_DS_WH; --by default, this creates an XS Standard Warehouse
+CREATE OR REPLACE DATABASE PRODUCT_MATCHING_DB;
+CREATE OR REPLACE SCHEMA MATCH;
+USE WAREHOUSE PRODUCT_MATCHING_DS_WH;
+USE DATABASE PRODUCT_MATCHING_DB;
+USE SCHEMA MATCH;
+CREATE OR REPLACE STAGE MODEL DIRECTORY=(ENABLE=true); --to store semantic model for the chatbot
+CREATE OR REPLACE STAGE STREAMLIT DIRECTORY=(ENABLE=true); --to store streamlit script
 ```
-**Upload required files** to the correct stages within the `MATCH` schema.
+
+Now on the left hand side, navigate to Data > Databases and find the `PRODUCT_MATCHING_DB` database we just defined.
+
+**Upload required files** to the correct stages within the `MATCH` schema of the database.
 <img src="assets/upload_files.png"/>
+
 Click '+ Files' in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory. **Make sure your the files in your stages match the following**:
-- *Data Files:* Upload all relevant datasets to the `RAW_DATA` stage from [data](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/notebooks/data)
-<img src="assets/data_stage.png"/>
-- *Notebook Files:* Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/notebooks)
-<img src="assets/notebook_stage.png"/>
-- *Streamlit Files:* Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/scripts/streamlit).
-<img src="assets/chatbot_stage.png"/>
+
+- *Semantic Model:* Upload the semantic_model.yaml file to the `MODEL` stage from [model](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts/streamlit/model)
+<img src="assets/model_stage.png"/>
+
+- *Streamlit Files:* Upload the streamlit files (including environment.yml) to the `STREAMLIT` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts/streamlit)
+<img src="assets/streamlit_stage.png"/>
+
+Please also download the .ipynb [notebook](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/notebooks) file, we will upload it directly on Snowsight in the next step.
 <br></br>
-Paste and run the following in the SQL worksheet to load the  data into tables and create a notebook and streamlit app from the staged files.
+
+But first, paste and run the following in the SQL worksheet to create the streamlit application.
+
 ```sql
-create csv format
-CREATE OR REPLACE FILE FORMAT SALES_CALLS_DB.SALES_CALLS_SCHEMA.CSVFORMAT 
-    SKIP_HEADER = 0 
-    TYPE = 'CSV'
-    FIELD_OPTIONALLY_ENCLOSED_BY = '"';
--- Setup ACCOUNT_D Table
-CREATE OR REPLACE TABLE ACCOUNT_D (
-    ACCOUNT_NAME VARCHAR(225),
-    SFDC_ACCOUNT_ID VARCHAR(16777216),
-    ETL_VALID_NOW VARCHAR(1),
-    ACCOUNT_STATE VARCHAR(16777216)
-);
-TRUNCATE TABLE IF EXISTS ACCOUNT_D;
-COPY INTO ACCOUNT_D
-FROM @RAW_DATA/ACCOUNT_D.csv
-FILE_FORMAT = SALES_CALLS_DB.SALES_CALLS_SCHEMA.CSVFORMAT
-ON_ERROR=CONTINUE
-FORCE = TRUE;
--- Setup CALLS Table
-CREATE OR REPLACE TABLE CALLS (
-	ID VARCHAR(16777216),
-	URL VARCHAR(16777216),
-	TITLE VARCHAR(16777216),
-	SCHEDULED VARCHAR(16777216),
-	STARTED VARCHAR(16777216),
-	DURATION VARCHAR(16777216)
-);
-TRUNCATE TABLE IF EXISTS CALLS;
-COPY INTO CALLS
-FROM @RAW_DATA/CALLS.csv
-FILE_FORMAT = SALES_CALLS_DB.SALES_CALLS_SCHEMA.CSVFORMAT
-ON_ERROR=CONTINUE
-FORCE = TRUE;
--- Setup CALLS_TRANSCRIPT Table
-CREATE OR REPLACE TABLE CALLS_TRANSCRIPT (
-	CALLID VARCHAR(16777216),
-	TRANSCRIPT VARIANT,
-	ETL_CREATED TIMESTAMP_TZ(9)
-);
-TRUNCATE TABLE IF EXISTS CALLS_TRANSCRIPT;
-COPY INTO CALLS_TRANSCRIPT
-FROM @RAW_DATA/CALLS_TRANSCRIPT.csv
-FILE_FORMAT = SALES_CALLS_DB.SALES_CALLS_SCHEMA.CSVFORMAT
-ON_ERROR=CONTINUE
-FORCE = TRUE;
--- Setup GONG_GONG_CALL_C
-CREATE OR REPLACE TABLE GONG_GONG_CALL_C (
-	GONG_CALL_ID_C VARCHAR(384),
-	GONG_PRIMARY_ACCOUNT_C VARCHAR(18)
-);
-TRUNCATE TABLE IF EXISTS GONG_GONG_CALL_C;
-COPY INTO GONG_GONG_CALL_C
-FROM @RAW_DATA/GONG_GONG_CALL_C.csv
-FILE_FORMAT = SALES_CALLS_DB.SALES_CALLS_SCHEMA.CSVFORMAT
-ON_ERROR=CONTINUE
-FORCE = TRUE;
--- make sure staged files can be seen by directory
-ALTER STAGE RAW_DATA REFRESH;
--- Create Notebook 
-CREATE OR REPLACE NOTEBOOK ai_assistant_sales_calls_notebook
-FROM @NOTEBOOK
-MAIN_FILE = 'ai_assistant_sales_calls_notebook.ipynb'
-QUERY_WAREHOUSE = SALES_CALLS_WH;
-ALTER NOTEBOOK ai_assistant_sales_calls_notebook ADD LIVE VERSION FROM LAST;
 -- Create Streamlit App
-CREATE OR REPLACE STREAMLIT ai_assistant_sales_calls_chatbot
-ROOT_LOCATION = @CHATBOT_APP
-MAIN_FILE = 'chatbot.py'
-QUERY_WAREHOUSE = SALES_CALLS_WH
-COMMENT = '{"origin":"sf_sit-is", "name":"ai_assistant_sales_call", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit"}}';
+use role SYSADMIN;
+CREATE OR REPLACE STREAMLIT PRODUCT_MATCHING_DB.match.PRODUCT_MATCHING_chatbot
+ROOT_LOCATION = '@PRODUCT_MATCHING_DB.match.streamlit'
+MAIN_FILE = 'streamlit_app.py'
+QUERY_WAREHOUSE = 'PRODUCT_MATCHING_DS_WH'
+COMMENT = '{"origin":"sf_sit", "name":"product_matching", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"streamlit"}}';
 ```
+Note that the Streamlit application is built on a table that our notebook will generate, and so it won't work for the time being.
+
 <!-- --------------------------->
 ## Access Notebook
+
 **Duration: 20 minutes**
-The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
-To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Notebooks tab. Open **ai_assistant_sales_calls_notebook** and run each of the cells.
-<img src='assets/notebook.png'>
-Within this notebook, you'll explore sales call transcripts, apply Snowflake Cortex AI models for sentiment analysis and summarization, and visualize key trends such as customer sentiment, product feedback, and competitor mentions.
+
+For the Notebook, please follow these steps:
+- Navigate to Projects > Notebooks in Snowsight
+- Click Import .ipynb from the + Notebook dropdown, and upload the .ipynb
+- Configure the notebook settings as follows:
+    - Notebook database: PRODUCT_MATCHING_DB 
+    - Notebook scehma: MATCH
+    - Warehouse: PRODUCT_MATCHING_DS_WH
+    - Make sure "Run on warehouse" is selected!
+- Create Notebook
+- Click Packages in the top right, add the latest version of `snowflake`
+- Run the cells in the notebook!
+<img src='assets/notebook_run.png'>
+
+<!-- --------------------------->
 ## Run Streamlit Application
 **Duration: 20 minutes**
-Chatbot Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open **ai_assistant_sales_calls_chatbot** and explore.
-In the **Chatbot** tab, you can interact with your sales call transcripts using an intuitive Q&A interface powered by Snowflake Cortex. Ask questions about customer sentiment, product feedback, competitor mentions, and other key insights. Customize the AI model settings, search for specific details, and receive concise answers backed by transcript context.
-<img src='assets/chatbot_settings.png'>
+Our chatbot Streamlit in Snowflake application has already been deployed as part of the setup process. To access it, navigate to Snowsight, click on Projects, and then the Streamlit tab. Open the newly created Streamlit chatbot application and explore!
+In the **Chatbot**, you can interact with product data using an intuitive Q&A interface powered by Snowflake Cortex. Ask questions about shared product listings, comparative sales and views data, and general brand performance comparisons. Search for specific details, and receive concise answers along with the generated queries from **Cortex Analyst**.
+<img src='assets/chatbot.png'>
 Here are some example questions you can ask the chatbot:
-1. How do customers feel about the notification features? Are there any consistent suggestions or frustrations that should be prioritized?
-2. What are the main reasons customers are considering or switching to competitors, and how can we address these concerns in our messaging?
-3. Are there any competitive strengths or weaknesses that our sales team should emphasize when engaging with prospects?
-4. Are there any recurring concerns about the current reporting or analytics capabilities that need to be addressed in future updates?
-Once you ask a question, the assistant begins processing it. You'll see a status update showing the steps being performed. Once the process completes, the assistant provides a concise answer to your question in the chat window. Below the answer, you’ll see a section titled 'Context used to generate the answer'. Click on any transcript ID to expand and view the full context of the relevant document.
+1. What Logitech mouse models are sold in both retailers?
+2. How is the Sony Xperia XA2 cell phone selling at Staples vs Office Depot?
+3. Which Apple products perform better in sales at Staples?
+4. Find me the 5 products with the greatest disparity in purchases at these retailers.
+Once you ask a question, the assistant begins processing it, translating your natural language prompt into a SQL query it runs against the table we generated from running the Notebook! Once the process completes, the assistant provides a concise answer to your question in the chat window. Below the answer, you’ll see sections titled 'SQL Query' and 'Results'. Click on these to see the query the Analyst ran to determine the answer to your question, and the returned data it based it's answer on.
 <img src='assets/chatbot_question.png'>
-<br></br>
-In the **Analytics** tab, you can explore visualizations and metrics derived from your sales call data. Analyze sentiment trends, product and competitor mentions, and other critical metrics to uncover actionable insights and improve decision-making.
-<img src='assets/analytics.png'>
-Here are some examples you can visualize:
-1. What is the average sentiment of the calls per month?
-2. Plot the average sentiment score for calls mentioning each product.
-When you submit a question, the system processes your input by generating Python code to query and analyze the relevant data. The generated code and its corresponding output—such as graphs, charts, or tables—are displayed in the interface, allowing you to immediately see the insights.
-<img src='assets/sentiment.png'>
+
 <!-- --------------------------->
 ## Conclusion And Resources
 **Duration: 1 minute**
-In this guide, you learned how to use Snowflake's Cortex AI to analyze sales call transcripts and extract actionable insights to improve go-to-market (GTM) strategies and product offerings. You also learned how to use Streamlit to create an intuitive application for interacting with the analyzed data.
+In this guide, you learned how to use Snowflake's Notebooks and Cortex AI to harmonize retailer data, finding shared product offerings and aggregating their performane data. You also learned how to use Streamlit to create an intuitive application for interacting with the analyzed data.
 ### What You Learned
-- How to use Snowflake Notebooks and Snowpark Python for unstructured data processing
-- How to leverage Cortex Search for a hybrid (vector and keyword) search engine on text data
+- How to use Snowflake Notebooks and Snowpark Python for data processing
+- How to leverage Snowflake AI/ML functions to create and compare embeddings
 - How to use Cortex LLM functions (Cortex Complete) for access to industry-leading large language models (LLMs)
 - How to prototype a UI using Streamlit
 ### Related Resources
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex.html)
 - [Streamlit Documentation](https://docs.streamlit.io/)
-- [Tasty Bytes: Enhancing Customer Experience](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html#0)
