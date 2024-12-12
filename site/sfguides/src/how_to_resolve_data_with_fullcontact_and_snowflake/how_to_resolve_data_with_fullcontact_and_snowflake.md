@@ -43,7 +43,7 @@ The FullContact for Snowflake Native App is available in the Snowflake Marketpla
 
 ![Install App](assets/installapp.png)
 
-2) Search for FullContact Identity Resolution to find our Identity Resolution application, or you can search for the specific listing by ID. Use this listing ID - GZT0Z128XAF7.
+2) Search for `FullContact Identity Resolution` to find our Identity Resolution application.
 
 3) Click the *Get* button to start installing the application
 
