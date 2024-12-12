@@ -12,7 +12,7 @@ tags: Getting Started, Player 360, Snowflake Notebooks, Dynamic Tables, Streamli
 <!-- ------------------------ -->
 ## Overview
 Duration: 1
-
+<img src="assets/Player_360_banner.png"/>
 
 In the gaming industry, Player data is often fragmented across multiple sources, including event streams, purchase histories, and platform-specific behaviors. This disjointed data makes it challenging for gaming companies and key personas such as marketing and product to gain a holistic understanding of individual players and overall game performance. In this demo we will create a "Player 360" dashboard, which integrates and visualizes diverse player data sources into a single, dynamic "Player Card." This card will offer insights into player activity & interactions (behavior, buying habits, etc), and this preliminary use case will potentially show the highest risk for churn players. Similarly, we will create a “Game 360” dashboard which integrates games-level insights across the playerbase, focusing on key KPIs, metrics, and overall user behavior.
 
