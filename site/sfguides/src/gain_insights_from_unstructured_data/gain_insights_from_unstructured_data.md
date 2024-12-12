@@ -1,18 +1,18 @@
 author: James Cha-Earley
 id: gain_insights_from_unstructured_data
-summary: Gain Insights From Unstructed Data with Snowflake Cortex
+summary: Gain Insights From Unstructured Data with Snowflake Cortex
 categories: data-science, gen-ai, data-science-&-ai, cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Tasty Bytes, Cortex, Notebook,Generative AI, LLMs
 
-# Gain Insights From Unstructed Data using Snowflake Cortex
+# Gain Insights From Unstructured Data using Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview 
 Duration: 2
 
-In this Quickstart guide, you will be help the fictitious food truck company, Tasty Bytes, to identify where their customer experience may be falling short at the truck and business level by leveraging **Snowflake Cortex** within **Snowflake Notebook**. They collect customer reviews to get customer feedback on their food-trucks which come in from multiple sources and span multiple languages. This enables them to better understand the areas which require improvement and drive up customer loyalty along with satisfaction. 
+In this Quickstart guide, you will be help the fictitious food truck company, Tasty Bytes, to identify where their customer experience may be falling short at the truck and business level by leveraging **Snowflake Cortex**. The company gathers customer reviews across multiple sources and languages to assess their food truck operations. This comprehensive feedback helps them identify areas for improvement, ultimately boosting customer satisfaction and loyalty. Leveraging Snowflake Cortex's advanced language AI capabilities, they can automatically process reviews through real-time translation, generate actionable insights through intelligent summarization, and analyze customer sentiment at scale – transforming diverse, unstructured feedback into strategic business decisions that drive their food truck operations forward.
 
 ### Prerequisites
 * Familiarity with Python
@@ -33,15 +33,11 @@ You will need the following things before beginning:
 ### What You’ll Learn 
 
 In this quickstart, you will learn:
-* How to translate multilingual customer reviews
-* How to categorise unstructured review text data at scale
-  * How to get rating from reviews
-  * How to get intent to recommend from reviews
+* How to translate multilingual reviews
+* How to summarize large amounts of reviews to get specific learnings
+* How to categories unstructured review text data at scale
+* How to answer specific questions you have based on the reviews 
 * How to derive customer sentiment from reviews 
-  * How to derive aspect based customer sentiment from reviews
-* How to identify issues highlighted in customer reviews
-* How to take action assisted by LLM
-
 
 ### What You’ll Build 
 * You will analyze Tasty Bytes' customer reviews using **Snowflake Cortex** within **Snowflake notebook** to understand :
@@ -271,9 +267,13 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 ## Translate multilingual reviews
 Duration: 2
 
-### Enabled by Cortex Translate
+### Overview
 
-You will leverage **Translate** - one of the **Snowflake Cortex specialised LLM functions** are available in Snowpark ML, to translate the multilingual reviews to english to enable easier analysis. This is done within the notebook using following code snippet in cell `CORTEX_TRANSLATE`.
+You will leverage **Translate** - one of the **Snowflake Cortex specialized LLM functions** are available in Snowpark ML:
+  * Translate the multilingual reviews to english to enable easier analysis.
+
+### Hear what your international customers are saying
+This is done within the notebook using following code snippet in cell `CORTEX_TRANSLATE`.
 
   ```python
   # Conditionally translate reviews that are not english using Cortex Translate
@@ -293,11 +293,12 @@ Duration: 5
 
 ### Overview
 
-In this section, you will leverage **Snowflake Cortex - Summarize** to quickly understand what the customers are saying:
+In this section, you will leverage **Snowflake Cortex LLM - Summarize** to quickly understand what the customers are saying:
+* Summarization allows us to get key learnings from large amounts of unstructured text, all in a readable form
 
 ### We want to get a insight on what people are saying
 
-* In this step, we will get a summarization of customers are saying **Snowflake Cortex - Summarize** 
+* In this step, we will get a summarization of customers are saying **Snowflake Cortex LLM - Summarize** 
 
   ```python
   # Step 1: Add a row number for each review within each TRUCK_BRAND_NAME
@@ -347,17 +348,16 @@ In this section, you will leverage **Snowflake Cortex - Summarize** to quickly u
   ```
 <!-- ------------------------ -->
 
-## Categorise unstructured review text data 
+## Categories unstructured review text data 
 Duration: 5
 
 ### Overview
-In this section, you will make use of **Snowflake Cortex - ClassifyText** to categorise reviews to understand:
-  * How good their overall experience was
+In this section, you will make use of **Snowflake Cortex LLM - ClassifyText** to categories reviews to understand:
   * How likely their customers are to recommend Tasty Bytes food trucks to someone they know 
 
 ### Get intention to recommend based on review with Cortex ClassifyText
 
-* You can understand if a customer would recommend the food truck based on their review using **Snowflake Cortex - ClassifyText**. 
+* You can understand if a customer would recommend the food truck based on their review using **Snowflake Cortex LLM- ClassifyText**. 
 
   ```python
   # Prompt to understand whether a customer would recommend food truck based on their review 
@@ -384,11 +384,12 @@ Duration: 5
 
 ### Overview
 
-In this section, you will leverage **Snowflake Cortex - Extract Answer** to get answers to your questrions:
+In this section, you will leverage **Snowflake Cortex LLM - Extract Answer** to get answers to your specific questions:
+* Answer specific questions you have that lives inside the unstructured data you have
 
-### Answer specifc quesions you have 
+### Answer specific questions you have    
 
-* Using **Snowflake Cortex - Extract Answer** to dive into quesitons you have
+* Using **Snowflake Cortex LLM - Extract Answer** to dive into questions you have
 
   ```python
   # Step 1: Add a row number for each review within each TRUCK_BRAND_NAME
@@ -412,7 +413,7 @@ In this section, you will leverage **Snowflake Cortex - Extract Answer** to get 
 
   # Step 5: Generate summaries for each truck brand
   summarized_reviews_df = concatenated_reviews_df.with_column(
-      "NUMBER_ONE_DISH", cortex.ExtractAnswer(F.col("ALL_REVIEWS_TEXT"), "What is the number one dish positivly mentioned in the feedback?")
+      "NUMBER_ONE_DISH", cortex.ExtractAnswer(F.col("ALL_REVIEWS_TEXT"), "What is the number one dish positively mentioned in the feedback?")
   )
 
   # Step 6: Extract the first element of the array
@@ -433,9 +434,14 @@ In this section, you will leverage **Snowflake Cortex - Extract Answer** to get 
 ## Understand customer sentiment 
 Duration: 2
 
-### Enabled by Cortex Sentiment
+### Overview
 
-So far you saw Snowflake Cortex - Translate & Complete. Next, you will look at another **task specific LLM function in Cortex - Sentiment**. This sentiment function is used to understand the customer's tone  based on the review they provided. Sentiment return value between -1 and 1 such that -1 is the most negative while 1 is the most positive. This is done within the notebook using the following code snippet in cell `CORTEX_SENTIMENT`.
+Next, you will look at another **task specific LLM function in Cortex - Sentiment**. 
+* This sentiment function is used to understand the customer's tone based on the review they provided.
+
+### Understand sentiment with Cortex Sentiment
+* This is done within the notebook using the following code snippet in cell `CORTEX_SENTIMENT`.
+* Sentiment return value between -1 and 1 such that -1 is the most negative while 1 is the most positive. 
 
 ```python
 # Understand the sentiment of customer review using Cortex Sentiment
@@ -448,14 +454,14 @@ reviews_df.select(["REVIEW","SENTIMENT"]).show(3)
 ## Conclusion And Resources
 Duration: 1
 
-**Congratulations!** You've successfully enabled customer review analytics by leveraging Snowflake Cortex within Snowflake Notebook. And all this without ever needing to move any data outside of secure walls of Snowflake or managing infrastructure.
+**Congratulations!** You've mastered powerful customer analytics using Snowflake Cortex, processing multilingual reviews and extracting valuable insights – all while maintaining data security within Snowflake's ecosystem. By leveraging these built-in AI capabilities, you've eliminated the complexity of managing external infrastructure while keeping sensitive customer feedback protected within Snowflake's secure environment.
 
 ### What we've covered
 With the completion of this quickstart, you have now: 
-* Enabled AI for analytics in minutes powered by Snowflake Cortex 
-  * Ran inference on industry performant LLMs with Complete which are hosted and served within Snowflake
-  * Performed well suited NLP tasks with Translate, Sentiment, Extract Answer and Classifying Text which require zero prompt engineering
-* Leveraged Snowflake Notebook which provides SQL, Python, and Markdown cell-based development interface in Snowsight
+* Implementing advanced AI capabilities through Snowflake Cortex in minutes
+  * Leveraging enterprise-grade language models directly within Snowflake's secure environment
+  * Executing sophisticated natural language processing tasks with pre-optimized models that eliminate the need for prompt engineering. 
+  * You've mastered a powerful suite of AI-driven text analytics capabilities, from seamlessly breaking through language barriers with Translate, to decoding customer emotions through Sentiment analysis, extracting precise insights with Extract Answer, and automatically categorizing feedback using Classify Text. These sophisticated functions transform raw customer reviews into actionable business intelligence, all within Snowflake's secure environment.
 
 ### Related Resources
 
