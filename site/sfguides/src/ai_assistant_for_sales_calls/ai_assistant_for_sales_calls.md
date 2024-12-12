@@ -99,7 +99,7 @@ Click '+ Files' in the top right of the stage. Upload all files that you downloa
 Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/blob/main/scripts/setup.sql) in the SQL worksheet to load the  data into tables and create a notebook and streamlit app from the staged files.
 
 ```sql
-create csv format
+-- create csv format
 CREATE OR REPLACE FILE FORMAT SALES_CALLS_DB.SALES_CALLS_SCHEMA.CSVFORMAT 
     SKIP_HEADER = 0 
     TYPE = 'CSV'
