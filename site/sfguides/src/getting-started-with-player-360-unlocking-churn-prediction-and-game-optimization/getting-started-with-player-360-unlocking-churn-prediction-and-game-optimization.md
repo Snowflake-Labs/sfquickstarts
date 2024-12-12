@@ -86,7 +86,7 @@ Duration: 10
 use role SYSADMIN;
 CREATE OR REPLACE NOTEBOOK PLAYER_360.ANALYTIC.PLAYER_360_static_churn_prediction
 FROM '@PLAYER_360.ANALYTIC.notebook_static_churn_prediction'
-MAIN_FILE = 'Static_Churn_Prediction_Model.ipynb'
+MAIN_FILE = '0_start_here.ipynb'
 QUERY_WAREHOUSE = 'PLAYER_360_DATA_APP_WH';
 ```
 
@@ -159,7 +159,7 @@ USE SCHEMA ANALYTIC;
 
 CREATE OR REPLACE NOTEBOOK PLAYER_360.ANALYTIC.PLAYER_360_rolling_churn_prediction
 FROM '@PLAYER_360.ANALYTIC.notebook_rolling_churn_prediction'
-MAIN_FILE = 'Rolling_Churn_Prediction_Model.ipynb'
+MAIN_FILE = '1_Rolling_Churn_Prediction_Model.ipynb'
 QUERY_WAREHOUSE = 'PLAYER_360_DATA_APP_WH'
 COMPUTE_POOL='PLAYER_360_gpu_s_5_nodes'
 RUNTIME_NAME='SYSTEM$GPU_RUNTIME';
