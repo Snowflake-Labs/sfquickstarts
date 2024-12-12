@@ -10,7 +10,7 @@ tags: Getting Started, Security, LLGM, Intrusion Detection
 # Getting Started with TEMPO and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 2
 
 Tempo is the first CyberSecurity solution based on a LogLM, or Log Language Model invented by DeepTempo.  These models are similar to their more familiar cousins, LLMs such as Anthropic's Claude and LLama. Like LLMs, LogLMs are Foundation Models that apply their understanding across very different environments and in response to differing inputs. However, Tempo was pre-trained using enormous quantities of logs. Tempo is focused on the pattern of events, including relative and absolute time. Tempo has been shown to be extremely accurate, with a low false positive and false negative rate.
 
@@ -20,6 +20,7 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 
 ### What You’ll Learn 
 - How to run Tempo on sample data ([CIC Dataset](https://www.unb.ca/cic/datasets/ids-2017.html))
+- How to check to see if Tempo is accurate in flagging attacks
 - Optional - How to view the output in Splunk
 
 ### What You’ll Need 
@@ -33,32 +34,30 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 ## Install the TEMPO Native App
 Duration: 2
 
-1. Obtain the TEMPO Native App from the Snowflake Marketplace.
-2. It is recommended that during installation you shorten the name to just TEMPO.  
-  - To do so, examine Options for your installation before selecting Get
-  - Where you see the extended name of the application, TEMPO - the first..., edit that to read just TEMPO
-  - Once you have shortened the name - which will simplify management - please select Get
-  - After you select Get the TEMPO app will be installed; you will also receive an email from Snowflake
-3. After Tempo is installed, you will be prompted to select Configure
-4. When you select Configure, you will be asked to grant the following permissions; please do so
+1. Find The App
+In the Snowflake app Marketplace you can find the Tempo app or simply click [Here](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/deeptempo-cybersecurity-tempo-cybersecurity-incident-identification-via-deep-learning?search=tempo).  
 
-GRANT CREATE COMPUTE POOL ON ACCOUNT TO APPLICATION TEMPO;
-GRANT CREATE WAREHOUSE ON ACCOUNT TO APPLICATION TEMPO;
+2. If you are running on your own data you will have the select the storage before clicking the launch app button in the deployment phase.
+To select your table please click `add` next to the `on Incident Inference Logs` section. In the popup after clicking the `add` button click the `+Select Data` button and find the table you want to use on the dropdown.  Select it and click `Save`.
 
-5. Continue to click through and Launch the app
+Note: If you are running with the demo data simply skip this step and continue. 
 
-At this point, you will be a Worksheet showing SHOW TABLES; you are now ready to use Tempo as explained below
+3. Snowflake will require you to grant permissions to run this app.  For a smooth experience make sure you do this in the initial setup though the Snowflake UI.
 
-The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_COMPUTE_POOL) with the following specs, which will be used for container services runs.
+4. Go to the `Projects>Worksheets` console in Snowflake. Here you should see a `+` sign in the top right corner of the screen.  We will use this to create our own worksheets. Go ahead and click it now. 
 
-### TEMPO_WH
+5. From the top of the worksheet there should be a dropdown called `Select Databases`.  This is what you will use to attach our database to this worksheet.  If you are using demo data select the option with TEMPO at the beginning of it's name.
+
+### The default resources created by the tempo app are as follows. 
+
+#### TEMPO_WH
 - **Type**: Snowpark Optimized
 - **Size**: Medium
 - **Auto Suspend**: 120 seconds
 - **Auto Resume**: Enabled
 - **Initial State**: Active
 
-### TEMPO_COMPUTE_POOL
+#### TEMPO_COMPUTE_POOL
 - **Node Configuration**:
   - **Minimum Nodes**: 1
   - **Maximum Nodes**: 1
@@ -68,65 +67,49 @@ The application comes with its own warehouse (TEMPO_WH) and compute pool (TEMPO_
 - **Initial State**: Active
 
 <!-- ------------------------ -->
-## Start the app and Perform Inference 
+## Start the app
 Duration: 2
 
-Starting on the same worksheet, you can now initialize Tempo:
+In the new worksheet we now need to setup our procedures. We will start with initializing the container resources. Throughout this guide we will provide you with statements to run.  Please add them to the sheet. You can do these one by one or add them all to a single worksheet.
 
+1. Initialize Application Resources
 ```sql
-CALL TEMPO.MANAGER.STARTUP();
+CALL management.create_resources();
 ```
 
-After a few minutes, Snowflake will be ready to perform inference. You are creating a Snowflake Job service, which are containers that run a specific image and terminate as soon as the run is completed. 
+Purpose: Initializes the application by loading required model weights and configurations
+Required Permissions: Warehouse, compute pool, and task management access
 
-Once completed, we will use the `TEMPO.DETECTION` schema's stored procedure to perform inference on sample log data. These stored procedures take a job service name as the only parameter.  The demo data looks at logs for all Workstations and logs for all Webservers for a midsized company over several days.  This demo data was obtained from the Canadian Institute of Cybersecurity. In a live run each created procedure represents a call to the respective model type IE. workstation representing the model specialized for workstations, webservers for webservers and so on. 
-
-When used for inference in your company, you would likely choose to execute each of these models as relevant logs are ingested. Tempo is modular in construction in order to minimize costs and compute time.  
-
-Example:
-
-```sql
-CALL TEMPO.DETECTION.WORKSTATIONS('<job_service_name>');
-```
-`<job_service_name>`: the name of the run you want to perform (e.g., 'tempo_run_one', 'here_we_go')
-
-or
-```sql
-CALL TEMPO.DETECTION.WEBSERVER('<job_service_name>');
-```
-After you run inference to find anomalies - or incidents - by looking at the Workstations or the Webserver, you will see a table with all the sequences the model has created.  Unlike many neural network based solutions, one strength of Tempo is that it preserves and shares relevant sequences for further analysis.  
-
-If you order the rows by the Anomaly column, you will see that for Workstations you should see 11 anomalies and for Webserver you should see 3918 anomalies.  
-
-Were this a production use case, you might want to augment these results with information from IP Info or threat intelligence, to look into the external IPs that are indicated to be part of likely security incidents.  
-
-Some users have asked to see the entities that Tempo can discern.  Note that for larger environments it would be typical to have Tempo to discern many more types of entities.  You can ask Tempo to specifically learn the types of entities that are present in the log data provided using the following command:
-
-```sql
-CALL TEMPO.DETECTION.DEVICE_IDENTIFICATION('<job_service_name>');
-```
-At this point you have already seen the ability of DeepTempo to discern incidents in complex log data that traditional approaches are challenged to identify.  As you can see, the output from DeepTempo could be used in conjunction with other data sources that you possess about your organization.
+It is recommended that you run this command prior to running the sheet as a whole.  It can take some time for the resources to spin up.  If you are the account admin you can monitor resources using `SHOW COMPUTE POOLS IN ACCOUNT;`. Once the compute pools are idle you may continue with the rest of the worksheet.
 
 <!-- ------------------------ -->
-
-### Monitor Job Services
-
-The TEMPO.DETECTION.WORKSTATION and ...WEBSERVER commands should execute in 3-4 minutes.  
-
-If you decide to test the model on a larger dataset or otherwise would like to keep track of the execution of the inference on this sample data, you can check the status of Job services. 
-As a reminder, job_service_name is the same job service name you assigned when you ran TEMPO.DETECTION.
+## Run Static Inference
+Duration: 6
 
 ```sql
-CALL SYSTEM$GET_SERVICE_STATUS('DETECTION."job_service_name"');
+CALL static_detection.inference('your_service_name');
 ```
+Parameters:
+- `your_service_name`: Name of the service to analyze (string).  This is set by you and should be unique to each run.
+Purpose: Executes inference on specified service data
 
-"job_service_name": The name of the job service to check.
+If you want to use the demo feel free to name it something like `demorun` for the `your_service_name`.
 
-Example:
+<!-- ------------------------ -->
+## Deep Dive Analysis in Snowflake
+Duration: 5
 
 ```sql
-CALL SYSTEM$GET_SERVICE_STATUS('DETECTION.WORKSTATION_RUN_ONE');
+CALL inspect.deepdive(sequence_id);
 ```
+Parameters:
+- `sequence_id`: Identifier of the sequence to analyze (integer). This ID can be used down the road if any anomalies are detected to run deeper investigation on suspicious interactions. 
+Purpose: Investigates specific sequences flagged as anomalies
+
+Note: If running on demo data lets use 2 as the id (valid IDs 1-1200)
+
+The results will be collections of related events making up Suspicious and Anomalous activities.  These are the events your security team would want verify as actuall intrusion events.
+
 <!-- ------------------------ -->
 ## Viewing Results in Splunk
 Duration: 5
@@ -225,4 +208,6 @@ Congratulations, you just ran the world's first purpose-built LogLM available as
 
 ### Resources
 
+
+To try the app please follow [This Link](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/deeptempo-cybersecurity-tempo-cybersecurity-incident-identification-via-deep-learning?search=tempo)
 [Snowflake Native Apps ](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/) 
