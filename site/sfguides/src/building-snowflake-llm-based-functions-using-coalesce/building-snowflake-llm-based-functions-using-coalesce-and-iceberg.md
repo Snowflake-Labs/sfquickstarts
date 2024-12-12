@@ -28,7 +28,7 @@ This Hands-On Lab exercise is designed to help you learn how to build and manage
 
 
 ### What You’ll Need 
-- [FA Snowflake trial account](https://signup.snowflake.com/)
+- [A Snowflake trial account](https://signup.snowflake.com/)
 - A Coalesce trial account created via Snowflake Partner Connect
 - Basic knowledge of SQL, database concepts, and objects
 - The Google Chrome browser
@@ -271,17 +271,17 @@ Let’s start to build the foundation of your LLM data pipeline by creating a Gr
 
 9. Select Create and then Run to create the object in Snowflake and populate it with the data in the Iceberg table format from S3. 
 
-10. The iceberg node we are using in Coalesce will create a new table in our WORK schema called CALL_TRANSCRIPTS which will be populated with data from our S3 bucket. Within the build interface, select the \+ button in the upper left corner and select Add Sources. 
-
 ![image30](assets/image30.png)
 
-11. In the WORK storage location, locate the CALL_TRANSCRIPTS table and add it as a data source. You have now successfully created, populated, and added an iceberg table to your data pipeline in Coalesce. 
+10. With the data read from the S3 bucket, we can now resync the columns of the node to reflect the columns we have read in from the S3 bucket. Select the Re-Sync Columns button to do this.
 
-![image31](assets/image31.png)
+![image30](assets/image31.png)
 
-12. Delete the Iceberg node we used to load the data into the workspace as we no longer need it. 
+11. You should now see all of the columns from the data source coming from the S3 bucket.
 
-![image32](assets/image32.png)
+![image31](assets/image32.png)
+
+
 
 <!-- ------------------------ -->
 ## Creating Stage Nodes 
@@ -541,21 +541,25 @@ We now have a view that creates an output that can be used by our organization i
 
 ![image79](assets/image79.png)
 
-2. Within the node, select the Iceberg Options dropdown.   
+2. Within the mapping grid, delete the TRANSCRIPT_CUSTOMER column which is an array data type, as Iceberg tables do not support array data types. 
+
+![image85](assets/image85.png)
+
+3. Within the node, select the Iceberg Options dropdown.   
    
 
 ![image80](assets/image80.png)
 
-3. For the External Volume, pass through the external volume that was configured in step 4 of the lab guide: 
+4. For the External Volume, pass through the external volume that was configured in step 4 of the lab guide: 
 
 	iceberg\_external\_volume  
 ![image81](assets/image81.png)
 
-4. Next, provide a base location name to the base location parameter. This will be the folder location within S3 that the table will be created. For the sake of this lab, use your first name and iceberg\_hol as the location name so everyone has their own separate folder i.e. firstname\_iceberg\_hol. 
+5. Next, provide a base location name to the base location parameter. This will be the folder location within S3 that the table will be created. For the sake of this lab, use your first name and iceberg\_hol as the location name so everyone has their own separate folder i.e. firstname\_iceberg\_hol. 
 
 ![image82](assets/image82.png)
 
-5. Select Create and Run to create and populate the Snowflake managed table within S3. 
+6. Select Create and Run to create and populate the Snowflake managed table within S3. 
 
 
 <!-- ------------------------ -->

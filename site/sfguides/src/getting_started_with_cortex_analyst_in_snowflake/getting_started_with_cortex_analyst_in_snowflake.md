@@ -34,7 +34,7 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake)
 - (Optional) [Python >= 3.9, <= 3.11 installed](https://www.python.org/downloads/) to run the OSS Semantic Model Generator
-- A [Snowflake account](https://signup.snowflake.com/) login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.
+- A [Snowflake account](https://signup.snowflake.com/) in [supported cloud regions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst#label-analyst-regions). And a login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial account from any of the supported cloud regions or use a different role.
 
 ### What You’ll Build 
 - A Semantic Model over sample financial data
@@ -50,22 +50,15 @@ Duration: 2
 >
 > MAKE SURE YOU'VE DOWNLOADED THE [GIT REPO](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake).
 
-Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
+Run the following SQL commands in a SQL worksheet to create the database, schema, warehouse, and stage.
 
 ```SQL
 USE ROLE sysadmin;
 
-/*--
-• database, schema, warehouse and stage creation
---*/
-
--- create demo database
 CREATE OR REPLACE DATABASE cortex_analyst_demo;
 
--- create schema
 CREATE OR REPLACE SCHEMA revenue_timeseries;
 
--- create warehouse
 CREATE OR REPLACE WAREHOUSE cortex_analyst_wh
     WAREHOUSE_SIZE = 'large'
     WAREHOUSE_TYPE = 'standard'
@@ -74,14 +67,15 @@ CREATE OR REPLACE WAREHOUSE cortex_analyst_wh
     INITIALLY_SUSPENDED = TRUE
 COMMENT = 'warehouse for cortex analyst demo';
 
-
-USE WAREHOUSE cortex_analyst_wh;
-
 CREATE STAGE raw_data DIRECTORY = (ENABLE = TRUE);
+```
 
-/*--
-• table creation
---*/
+Run the following SQL commands in a SQL worksheet to create the the tables.
+
+```sql
+USE cortex_analyst_demo.revenue_timeseries
+USE warehouse cortex_analyst_wh;
+
 CREATE OR REPLACE TABLE CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE (
 	DATE DATE,
 	REVENUE FLOAT,
@@ -142,9 +136,6 @@ You should see the four files listed in the stage:
 Now, let's load the raw CSV data into the tables. Go back to your Snowflake SQL worksheet and run the following [load_data.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake/blob/main/load_data.sql) code to load data into the tables:
 
 ```sql
-/*--
-• load data into tables
---*/
 COPY INTO CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE
 FROM @raw_data
 FILES = ('daily_revenue_combined.csv')
@@ -245,8 +236,10 @@ def send_message(prompt: str) -> Dict[str, Any]:
 You can now begin asking natural language questions about the revenue data in the chat interface (e.g. "What questions can I ask?")
 
 <!-- ------------------------ -->
-## Semantic Model Details
-Duration: 10
+## Semantic Models
+Duration: 5
+
+*[Optional reading]*
 
 The semantic model file [`revenue_timeseries.yaml`](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst-in-snowflake/blob/main/revenue_timeseries.yaml) is the key that unlocks Cortex Analyst's power. This YAML file dictates the tables, columns, etc. that Analyst can use in order to run queries that answer natural-language questions Let's talk a little about the details of this file:
 
@@ -304,26 +297,13 @@ dimensions:
         - Books
 ```
 
-Here are some tips on building your own semantic model to use with Cortex Analyst:
-
-When generating the semantic model, think from the end user perspective:
-- For business user, accuracy and trust is the paramount
-- Organize your YAML file in the unit of business domain/topic
-- If you are trying to pull a snippet of this data into excel for your business stakeholder, what are the tabs and columns you’d keep? What are the column namings you’d use?
-- Use above to guide your selection of tables and columns. Err on the side of only including necessary columns.
-- We recommend not exceeding 3-5 tables, 10-20 columns each table to start.
-
-Some additional items that’ll significantly improve model performance:
-- Capture more difficult or more business-specific queries into expressions and verified queries (please use the Chat tab within streamlit admin app to add verified queries)
-  - Verified queries will be provided as few-shot example for model to draw inspiration from, hence significantly improve performance
-  - If any organization specific logic cannot be captured via other spec items, we recommend you to add to verified queries.
-- Start with a simple and small scope, gradually expanding. YAML building is an iterative process.
-
 For more information about the semantic model, please refer to the [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec).
 
 <!-- ------------------------ -->
-## Using Verified Query Repository (VQR)
-Duration: 10
+## Verified Query Repository
+Duration: 5
+
+*[Optional reading]*
 
 In addition to the previously discussed Semantic Model information, the [Cortex Analyst Verified Query Repository (VQR)](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/verified-query-repository) can help improve accuracy and trustworthiness of results by providing a collection of questions and corresponding SQL queries to answer them. Cortex Analyst will then use these verified queries when answering similar types of questions in the future.
 
@@ -343,6 +323,8 @@ WHERE state = 'CA'
     AND sale_timestamp < DATE_TRUNC('month', CURRENT_DATE)
 "
 ```
+
+### Optional
 
 While verified queries can be added directly to the Semantic Model, Snowflake also provides an OSS Streamlit application to help add verified queries to your model. 
 
