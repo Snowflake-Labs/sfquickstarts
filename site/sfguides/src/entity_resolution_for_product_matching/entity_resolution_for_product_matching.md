@@ -1,5 +1,5 @@
 author: Vinit Patel
-id: entity_resolution_for_product_matching
+id: entity-resolution-for-product-matching
 summary: This application provides a centralized, AI-driven approach to match products across retailer and e-commerce catalogs to aggregate data, with the potential to enable competitve price tracking, enhanced supply chain management and much, much more.
 categories: Getting-Started, Cortex
 environments: web
