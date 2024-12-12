@@ -72,11 +72,11 @@ Duration: 10
 <img src="assets/image62.png" width="500">
 
 6. The UI will refresh and you should see ACCOUNTADMIN under your username. If you don’t, go back to step 5.  
-<!--- ![Change role - step 4](assets/image30.png)  -->
+<!--- ![Change role - step 4](assets/get_started.png)  -->
 <img src="assets/image30.png" width="400">
 
 7. Click on your username again and you’ll get the same popup with 4 items; click on Preferences.  
-<!---![Preferences - step 1](assets/image59.png)  -->
+<!---![Preferences - step 1](assets/preview_table.png)  -->
 <img src="assets/image59.png" width="500">
 
 8. Click on **Notifications**.  

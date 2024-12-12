@@ -1,0 +1,340 @@
+author: Joviane Bellegarde
+id: connectors_google_analytics_raw_data
+summary: Getting Started with the Snowflake Connector for Google Analytics
+categories: Getting-Started, Connectors, Dynamic Tables, BigQuery
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Connectors, Analytics, BigQuery
+
+# Getting Started with the Snowflake Connector for Google Analytics
+<!-- ------------------------ -->
+## Overview
+Duration: 10
+
+In this Quickstart, we will investigate how to use the Snowflake Connector for Google Analytics Raw Data to emulate data ingestion from Google BigQuery into Snowflake.
+
+### What You Will Build
+- A BigQuery dataset with Google Analytics data
+- A Streamlit application to visualize the data
+
+### What You Will Learn
+You will learn how to:
+- Create a Google Analytics Project
+- Create a BigQuery dataset
+- Install and configure the Snowflake Connector for Google Analytics Raw Data
+- Visualize the BigQuery data in a Streamlit application
+
+### Prerequisites
+- A [Google Account](https://accounts.google.com/signup/v2/webcreateaccount?hl=en&flowName=GlifWebSignIn&flowEntry=SignUp) to access [Google Analytics](https://analytics.google.com/) and [BigQuery](https://cloud.google.com/bigquery)
+- Familiarity with basic Python and SQL
+- Familiarity with data science notebooks
+- Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
+
+<!-- ------------------------ -->
+## Snowflake Environment
+Duration: 5
+
+### Overview
+You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).
+
+#### Creating Objects and Loading Data
+1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose **SQL Worksheet**
+
+2. Copy and paste the following code to create Snowflake objects (warehouse, database, schema) and click **Run All** at the top of the Worksheet
+```
+USE ROLE accountadmin;
+
+/*---------------------------*/
+-- Create our Database
+/*---------------------------*/
+CREATE OR REPLACE DATABASE google_analytics;
+
+/*---------------------------*/
+-- Create our Schema
+/*---------------------------*/
+CREATE OR REPLACE SCHEMA google_analytics.raw_data;
+
+/*---------------------------*/
+-- Create our Warehouse
+/*---------------------------*/
+
+-- data science warehouse
+CREATE OR REPLACE WAREHOUSE google_analytics_ds_wh
+   WAREHOUSE_SIZE = 'xsmall'
+   WAREHOUSE_TYPE = 'standard'
+   AUTO_SUSPEND = 60
+   AUTO_RESUME = TRUE
+   INITIALLY_SUSPENDED = TRUE
+   COMMENT = 'data science warehouse for google analytics';
+
+-- Use our Warehouse
+USE WAREHOUSE google_analytics_ds_wh;
+/*---------------------------*/
+-- sql completion note
+/*---------------------------*/
+SELECT 'google analytics sql is now complete' AS note;
+```
+
+<!-- ------------------------ -->
+## Google Analytics
+Duration: 5
+
+### Overview
+In this section, we will create a Google Analytics Account and Property in Google Analytics.
+
+#### Create Account
+
+1. To create an Account, navigate to [Google Analytics](https://analytics.google.com/) and hover over the left sidebar to expand it and click on **Admin**.
+
+<img src="assets/left_sidebar.png">
+
+2. Click on **Create** --> **Account**
+
+<img src="assets/create_analytics_account.png">
+
+3. Enter an account name such as **Snowflake Connector Account** and click **Next**
+
+<img src="assets/account_page.png">
+
+4. Enter the **Property Name** as **Snowflake Connector Property** and click **Next**
+
+<img src="assets/property.png">
+
+5. Select the industry category and business size and click **Next**
+
+<img src="assets/business_description.png">
+
+6. Choose the business objectives and click **Create**
+
+<img src="assets/objectives.png">
+
+7. Accept the terms and conditions and click **I Accept**
+
+<img source="assets/terms.png">
+
+
+<!-- ------------------------ -->
+## BigQuery
+Duration: 10
+
+### Overview
+In this section, we will create a BigQuery dataset and table to store Google Analytics data.
+
+#### Create a BigQuery Project
+1. Navigate to [Google Cloud Console](https://console.cloud.google.com/) and click on **Select a Project** in the top bar to create a new project
+
+<img src="assets/query_welcome.png">
+
+2. Select **New Project** then **No organization** and click **Create**
+<img src="assets/new_project.png">
+
+3. In the popup notification window on the top right, click **SELECT PROJECT**
+
+<img src="assets/notification.png">
+
+4. The page will automatically load to the new project. Hover over the left sidebar to expand it and in the **Resources** section, click on **BigQuery**
+
+<img src="assets/resources_bigquery.png">
+
+5. In the **Explorer** enter `bigquery-` in the **Search BigQuery resources** box and toggle to **Search all projects**. Click on the star next to `bigquery-public-data` to star the dataset.
+
+<img src="assets/star_bigquery.png">
+
+6. Click **X** to view your project and the starred project
+
+<img src="assets/starred_project.png">
+
+7. Expand the **bigquery-public-data** dataset to view the datasets
+
+<img src="assets/general_datasets.png">
+
+8. Scroll down to find and expand the `ga4_obfuscated_sample_ecommerce` dataset and select the only table that's in this dataset. It should start with `events_`. Click `COPY`.
+
+<img src="assets/copy_data.png">
+
+9. After copying, select **BROWSE** for the project and select your project that was created earlier
+
+<img src="assets/copy_table.png">
+
+<img src="assets/select_project.png">
+
+10. Click on the **Dataset** dropdown, select **CREATE NEW DATASET**, and enter `analytics_20210131` and click **CREATE DATASET**
+
+<img src="assets/create_dataset.png">
+
+11. Select the newly created dataset and enter `events_20210131` for the table name and click **COPY**
+
+<img src="assets/copy_table_2.png">
+
+12. Click **GO TO TABLE** on the toast that appears on the bottom of the page
+
+<img src="assets/toast.png">
+
+13. View the table by clicking **PREVIEW**
+
+<img src="assets/preview_table.png">
+
+
+<!-- ------------------------ -->
+## Service Account
+Duration: 5
+
+### Overview
+In this section, we will link Google Analytics to BigQuery.
+
+#### Link Google Analytics to BigQuery
+
+1. Navigate to [Google Analytics](https://analytics.google.com/) and enter **BigQuery Links** in the search bar and select **BigQuery Links**
+
+<img src="assets/search_bigquery.png">
+
+2. Click the **Link** button
+
+<img src="assets/link_button.png">
+
+3. Click on the **Choose a BigQuery project** button
+
+<img src="assets/choose_project.png">
+
+4. Select the BigQuery Project and click **Confirm**
+
+<img src="assets/confirm_project.png">
+
+5. Click **Next** and select **Include advertising identifiers for mobile app streams**, **Streaming (best-effort)**, and **Daily**. Click **Next** again.
+
+<img src="assets/configure_link.png">
+
+6. Click **Submit**
+
+<img src="assets/submit_link.png">
+
+7. A new link is created
+
+<img src="assets/link_created.png">
+
+
+<!-- ------------------------ -->
+## Service Account
+Duration: 10
+
+### Overview
+In this step, we will configure the OAuth Consent Screen.
+
+### Create Service Account Key
+1. Navigate back to BigQuery and hover over the left sidebar to expand it and click on **APIs & Services** then **Credentials**
+
+<img src="assets/credentials_1.png">
+
+2. Click on **Create Credentials** and select **Service account**
+
+<img src="assets/credentials_to_service.png">
+
+3. Enter a **Service account name** such as **Connector Service Account** and click **CREATE AND CONTINUE**
+
+<img src="assets/service_account_name.png">
+
+4. Add all 3 of these roles one at a time by clicking on the dropdown list to select a role, and then **+ ADD ANOTHER ROLE** to add the next role then click DONE: **BigQuery Data Viewer**, **BigQuery Read Session User** and **BigQuery Job User**
+
+<img src="assets/roles.png">
+
+5. Click on the newly created service account and click on **ADD KEY** then **Create new key**
+
+<img src="assets/created_service_account.png">
+
+<img src="assets/create_new_key.png">
+
+6. Select **JSON** and click **CREATE**
+
+<img src="assets/create_json.png">
+
+7. The JSON key file will be downloaded to your computer
+
+<img src="assets/json_saved.png">
+
+<!-- ------------------------ -->
+
+
+## OAuth Configuration
+Duration: 10 
+
+### Overview
+In this section, we will configure the OAuth Consent Screen.
+
+### Create the Streamlit in Snowflake Application
+1. Hover over the left sidebar to expand it and click on **APIs & Services** then **OAuth consent screen**
+
+<img src="assets/navigate_to_oauth.png">
+
+2. Select **External** and click **CREATE**
+3. **Note** if you have the **GO TO NEW EXPERIENCE** button, click the button to proceed to the next step
+
+<img src="assets/go_to_new_experience.png">
+
+4. Navigate to **Clients** and click on **GET STARTED**
+
+<img src="assets/get_started.png">
+
+5. Enter the **Application name** as **Snowflake Connector for Google Analytics Raw Data** and click **NEXT**
+
+<img src="assets/app_info_1.png">
+
+6. Click **External** and then **NEXT**
+
+<img src="assets/external_audience.png">
+
+7. Enter an email address (preferably the same one entered for the User Support Email) and click **NEXT**
+
+<img src="assets/app_info_3.png">
+
+8. Select to Agree and click **CONTINUE**
+
+<img src="assets/agree_and_continue.png">
+
+9. Click **CREATE**
+
+<img src="assets/app_info_4.png">
+
+<!-- ------------------------ -->
+## API
+Duration: 2
+
+### Overview
+In this section, we will enable the Cloud Resource Manager API.
+
+### Cloud Resource Manager API
+1. Inside BigQuery, enter **Cloud Resource Manager API** in the search bar and click on **Cloud Resource Manager API**
+
+<img src="assets/search_cloud_resource_api.png">
+
+2. Click **ENABLE**
+
+<img src="assets/enable.png">
+
+
+<!-- ------------------------ -->
+## Clean Up
+Duration: 2
+
+### Overview
+When you're finished with this Quickstart, you can clean up the objects created in Snowflake.
+
+### Clean Up Script
+Navigate to the last cell in the Snowflake Notebook to uncomment and run the last cell labeled **clean_up** to drop the connector objects created in this Quickstart.
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+Duration: 5
+### Congrats! You're reached the end of this Quickstart!
+
+### What You Learned
+With the completion of this Quickstart, you have now delved into:
+- How to connect PostgreSQL data to Snowflake using the Snowflake Connector for PostgreSQL
+- Visualize data using Dynamic Tables and display visualizations within Streamlit in Snowflake (SiS)
+
+### Resources
+- [Snowflake Connector for PostgreSQL](https://other-docs.snowflake.com/en/connectors/postgres6/about)
+- [Snowflake Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
+- [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
+- [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index)
+- [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
