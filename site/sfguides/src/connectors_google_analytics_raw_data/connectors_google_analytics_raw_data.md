@@ -95,7 +95,7 @@ In this section, we will create a Google Analytics Account and Property in Googl
 
 3. Enter an account name such as **Snowflake Connector Account** and click **Next**
 
-<img src="assets/account_page.png">
+<img src="assets/create_account_page.png">
 
 4. Enter the **Property Name** as **Snowflake Connector Property** and click **Next**
 
@@ -313,10 +313,10 @@ In this section, we will enable the Cloud Resource Manager API.
 
 
 <!-- ------------------------ -->
-## Clean Up
-Duration: 2
+## Connector
+Duration: 6
 
-### Snowflake Connector
+### Overview
 In this section, we will install and configure the Snowflake Connector for Google Analytics Raw Data.
 
 #### Clean Up Script
@@ -357,19 +357,43 @@ In this section, we will install and configure the Snowflake Connector for Googl
 
 <img src="assets/data_synced.png">
 
+
+<!-- ------------------------ -->
+## Streamlit
+Duration: 3
+
+### Overview
+In this section, we will create a Streamlit application to visualize the data.
+
+#### Visualize Data
+1. Copy [Streamlit App](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-connector-for-google-analytics/blob/main/scripts/streamlit.py)
+2. Navigate to Snowsight, make sure you using the **ACCOUNTADMIN** role and go to **Projects** and **Streamlit**
+3. Click on the `+ Streamlit App` button
+4. In the **App title** section, name the app, select **GOOGLE_ANALYTICS** for the database and **RAW_DATA** for the schema
+5. Select **GOOGLE_ANALYTICS_DS_WH** for the warehouse
+6. Paste in the Streamlit code into the code editor and click **Run**
+
+<!-- ------------------------ -->
+## Clean Up
+Duration: 2
+
+### Overview
+When you're finished with this Quickstart, you can clean up the objects created in Snowflake.
+
+#### Clean Up Script
+Navigate to the last cell in the Snowflake Notebook to uncomment and run the last cell labeled clean_up to drop the connector objects created in this Quickstart.
+
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
+Duration: 3
 ### Congrats! You're reached the end of this Quickstart!
 
 ### What You Learned
 With the completion of this Quickstart, you have now delved into:
-- How to connect PostgreSQL data to Snowflake using the Snowflake Connector for PostgreSQL
-- Visualize data using Dynamic Tables and display visualizations within Streamlit in Snowflake (SiS)
+- Use the Snowflake Connector for Google Analytics Raw Data to ingest data from Google BigQuery into Snowflake
+- Visualize the data in a Streamlit application
 
 ### Resources
-- [Snowflake Connector for PostgreSQL](https://other-docs.snowflake.com/en/connectors/postgres6/about)
-- [Snowflake Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
+- [Snowflake Connector for Google Analytics Raw Data](https://other-docs.snowflake.com/en/connectors/google/gard/gard-connector-about)
 - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
-- [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
