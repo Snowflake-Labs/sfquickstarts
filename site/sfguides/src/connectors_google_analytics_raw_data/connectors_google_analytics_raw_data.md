@@ -15,20 +15,20 @@ Duration: 10
 In this Quickstart, we will investigate how to use the Snowflake Connector for Google Analytics Raw Data to emulate data ingestion from Google Analytics to BigQuery into Snowflake.
 
 ### What You Will Build
-- A BigQuery dataset with Google Analytics data
-- A Streamlit application to visualize the data
+- A BigQuery dataset with Google Analytics data.
+- A Streamlit application to visualize the data.
 
 ### What You Will Learn
 You will learn how to:
-- Create a Google Analytics Project
-- Create a BigQuery dataset
-- Install and configure the Snowflake Connector for Google Analytics Raw Data
-- Visualize the BigQuery data in a Streamlit application
+- Create a Google Analytics Project.
+- Create a BigQuery dataset.
+- Install and configure the Snowflake Connector for Google Analytics Raw Data.
+- Visualize the BigQuery data in a Streamlit application.
 
 ### Prerequisites
-- A [Google Account](https://accounts.google.com/signup/v2/webcreateaccount?hl=en&flowName=GlifWebSignIn&flowEntry=SignUp) to access [Google Analytics](https://analytics.google.com/) and [BigQuery](https://cloud.google.com/bigquery)
-- Familiarity with basic Python and SQL
-- Familiarity with data science notebooks
+- A [Google Account](https://accounts.google.com/signup/v2/webcreateaccount?hl=en&flowName=GlifWebSignIn&flowEntry=SignUp) to access [Google Analytics](https://analytics.google.com/) and [BigQuery](https://cloud.google.com/bigquery).
+- Familiarity with basic Python and SQL.
+- Familiarity with data science notebooks.
 - Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
 
 <!-- ------------------------ -->
