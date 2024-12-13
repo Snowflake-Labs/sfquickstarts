@@ -357,6 +357,23 @@ In this section, we will install and configure the Snowflake Connector for Googl
 
 <img src="assets/data_synced.png">
 
+<!-- ------------------------ -->
+## Notebook
+Duration: 2
+
+### Overview
+In this section, we will create a Snowflake Notebook to view the data: both the raw unflattened and flattened data.
+
+#### Create a Snowflake Notebook
+1. Download the [Snowflake Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-connector-for-google-analytics/blob/main/notebooks/0_start_here.ipynb)
+2. Navigate to Snowsight, make sure you're using the **ACCOUNTADMIN** role and go to **Projects** and **Notebooks**
+3. Click on the dropdown arrow portion of the `+ Notebook` button
+4. Click on `Import .ipynb file`
+5. A popup window will appear to upload the Notebook file
+6. In the **Name** section, name the Notebook, select **GOOGLE_ANALYTICS** for the database and **RAW_DATA** for the schema
+7. Select **GOOGLE_ANALYTICS_DS_WH** for the warehouse
+8. Click **Create**
+9. Click **Run all** to run the Notebook
 
 <!-- ------------------------ -->
 ## Streamlit
@@ -367,7 +384,7 @@ In this section, we will create a Streamlit application to visualize the data.
 
 #### Visualize Data
 1. Copy [Streamlit App](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-connector-for-google-analytics/blob/main/scripts/streamlit.py)
-2. Navigate to Snowsight, make sure you using the **ACCOUNTADMIN** role and go to **Projects** and **Streamlit**
+2. Navigate to Snowsight, make sure you're using the **ACCOUNTADMIN** role and go to **Projects** and **Streamlit**
 3. Click on the `+ Streamlit App` button
 4. In the **App title** section, name the app, select **GOOGLE_ANALYTICS** for the database and **RAW_DATA** for the schema
 5. Select **GOOGLE_ANALYTICS_DS_WH** for the warehouse
@@ -381,7 +398,7 @@ Duration: 2
 When you're finished with this Quickstart, you can clean up the objects created in Snowflake.
 
 #### Clean Up Script
-Navigate to the last cell in the Snowflake Notebook to uncomment and run the last cell labeled clean_up to drop the connector objects created in this Quickstart.
+Navigate to the last cell in the Snowflake Notebook to uncomment and run the last cell labeled **clean_up** to drop the connector objects created in this Quickstart.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
