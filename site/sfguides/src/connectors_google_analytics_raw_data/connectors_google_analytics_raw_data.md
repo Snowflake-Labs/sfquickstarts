@@ -296,7 +296,7 @@ In this section, we will configure the OAuth Consent Screen.
 <img src="assets/app_info_4.png">
 
 <!-- ------------------------ -->
-## API
+## Enable API
 Duration: 2
 
 ### Overview
@@ -316,11 +316,46 @@ In this section, we will enable the Cloud Resource Manager API.
 ## Clean Up
 Duration: 2
 
-### Overview
-When you're finished with this Quickstart, you can clean up the objects created in Snowflake.
+### Snowflake Connector
+In this section, we will install and configure the Snowflake Connector for Google Analytics Raw Data.
 
-### Clean Up Script
-Navigate to the last cell in the Snowflake Notebook to uncomment and run the last cell labeled **clean_up** to drop the connector objects created in this Quickstart.
+#### Clean Up Script
+1. Navigate to the Snowflake Marketplace and type in **Snowflake Connector for Google Analytics Raw Data** and click on the Connector.
+
+<img src="assets/search_connector.png">
+
+2. Click **GET** and then **GET** to install the Connector
+
+<img src="assets/get.png">
+
+3. Click **Configure**
+
+<img src="assets/configure_connector.png">
+
+4. Click **Mark all as done** and then **Configure**
+
+<img src="assets/connector_1.png">
+
+5. Click **Start configuration**
+
+<img src="assets/connector_2.png">
+
+6. Upload the JSON file that was previously downloaded and upload it to this page and click **Connect**
+
+<img src="assets/connector_3.png">
+
+7. Click **Define data to sync**
+
+<img src="assets/connector_4.png">
+
+
+8. Select the data to sync and click **Start sync**
+
+<img src="assets/start_sync.png">
+
+9. When the data is syncing, the UI will indicate with **Last sync: x minutes ago**
+
+<img src="assets/data_synced.png">
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
