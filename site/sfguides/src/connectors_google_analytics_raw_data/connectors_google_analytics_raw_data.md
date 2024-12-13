@@ -41,40 +41,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 #### Creating Objects and Loading Data
 1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose **SQL Worksheet**.
 
-2. Copy and paste the following code to create Snowflake objects (warehouse, database, schema) and click **Run All** at the top of the Worksheet.
-```
-USE ROLE accountadmin;
-
-/*---------------------------*/
--- Create our Database
-/*---------------------------*/
-CREATE OR REPLACE DATABASE google_analytics;
-
-/*---------------------------*/
--- Create our Schema
-/*---------------------------*/
-CREATE OR REPLACE SCHEMA google_analytics.raw_data;
-
-/*---------------------------*/
--- Create our Warehouse
-/*---------------------------*/
-
--- data science warehouse
-CREATE OR REPLACE WAREHOUSE google_analytics_ds_wh
-   WAREHOUSE_SIZE = 'xsmall'
-   WAREHOUSE_TYPE = 'standard'
-   AUTO_SUSPEND = 60
-   AUTO_RESUME = TRUE
-   INITIALLY_SUSPENDED = TRUE
-   COMMENT = 'data science warehouse for google analytics';
-
--- Use our Warehouse
-USE WAREHOUSE google_analytics_ds_wh;
-/*---------------------------*/
--- sql completion note
-/*---------------------------*/
-SELECT 'google analytics sql is now complete' AS note;
-```
+2. Copy and paste the [setup script](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-connector-for-google-analytics/blob/main/scripts/setup.sql) code to create Snowflake objects (warehouse, database, schema) and click **Run All** at the top of the Worksheet.
 
 <!-- ------------------------ -->
 ## Google Analytics
