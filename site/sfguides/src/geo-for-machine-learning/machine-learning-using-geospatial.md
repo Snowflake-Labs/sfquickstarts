@@ -5,7 +5,8 @@ categories: Getting-Started
 environments: web
 status: Draft 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Performance, H3, Machine Learning.
+tags: Geospatial, Analytics, H3, Machine Learning.
+tags: Geospatial, Analytics, H3, Machine Learning.
 
 # Geospatial Analytics, AI and ML using Snowflake
 <!-- ----------------------------------------- -->
@@ -23,9 +24,13 @@ Snowflake offers a rich toolkit for predictive analytics with a geospatial compo
 
 ### What You’ll Learn
 In this quickstart, you will use H3, Time Series, Cortex ML and Streamlit for ML use cases. The quickstart is broken up into separate labs:
-* Lab 1: Geocoding and Reverse Geocoding
-* Lab 2: Forecasting time series on a map
-* Lab 3: Sentiment analysis of customer reviews
+* Lab 1: Geospatial 101
+* Lab 2: Energy grids analysis using GEOMETRY
+* Lab 3: Geocoding and Reverse Geocoding
+* Lab 4: Forecasting time series on a map
+* Lab 5: Sentiment analysis of customer reviews
+* Lab 6: Processing unstructured geospatial data
+* Lab 7: Creating Interactive Maps with Kepler.gl
 
 When you complete this quickstart, you will have gained practical experience in several areas:
 * Acquiring data from the Snowflake Marketplace
@@ -34,6 +39,10 @@ When you complete this quickstart, you will have gained practical experience in 
 * Training models and predicting results with Cortex ML
 * Using LLM for analysing textual data
 * Visualizing data with Streamlit
+* Processing unstructured geospaial data (GeoTIFF, Shapefiles)
+* Using geo visualisation apps available in Marketplace
+* Processing unstructured geospaial data (GeoTIFF, Shapefiles)
+* Using geo visualisation apps available in Marketplace
 
 ### What You’ll Need
 * A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
@@ -82,12 +91,725 @@ Navigate to the query editor by clicking on `Worksheets` on the top left navigat
 Create a new database and schema where you will store datasets in the `GEOGRAPHY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
 ```
-CREATE DATABASE advanced_analytics;
+CREATE DATABASE IF NOT EXISTS advanced_analytics;
 // Set the working database schema
 USE ADVANCED_ANALYTICS.PUBLIC;
 USE WAREHOUSE my_wh;
 ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT='WKT';
 ```
+
+## Geospatial 101
+
+Duration: 30
+
+> aside negative
+>  Before starting with this lab, complete the preparation steps from `Setup your account` page.
+
+> aside positive
+>  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
+
+### 1. Overview
+Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and perform calculations on geospatial objects. Additionally, geospatial data can be visualized in Snowflake using Streamlit. This guide provides an entry-level introduction to geospatial analytics and visualization in Snowflake. In this lab, you will explore a sample use case of identifying the closest healthcare facilities near a geographic point, and you will learn:
+- How to view the GEOGRAPHY data type with supported formats
+- How to construct a geospatial object from latitude and longitude values
+- How to extract latitude and longitude from a geography column
+- How to perform geospatial calculations and filtering
+- How to visualize geospatial data using Streamlit in Snowflake
+
+
+### 2. Acquire Data
+For this lab oyu will use [Overture Maps - Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places) dataset from Marketplace. Now you can acquire sample geospatial data from the Snowflake Marketplace.
+
+* Navigate to the Marketplace screen using the menu on the left side of the window
+* Search for `Overture Maps` in the search bar
+* Find and click the `Overture Maps - Places` tile
+
+On the Get Data screen, keep the default database name OVERTURE_MAPS__PLACES, as all of the future instructions will assume this name for the database.
+
+> aside negative
+>  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
+
+
+Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace.
+
+As one additional preparation step you need to complete is to import libraries that you will use in this Lab, navigate to the `Packages` drop-down  in the upper right of the Notebook and search for `pydeck`. Click on `pydeck` to add it to the Python packages.
+
+### 3. Understanding Snowflake Geospatial Formats
+Snowflake supports GeoJSON, Well-Known Text (WKT) and Well-Known Binary (WKB) formats for loading and unloading geospatial data. You can use session or account parameters to control which of these format types is used to display geospatial data in your query results.
+
+Run the query below to explicitly set your geography output format to JSON.
+
+```
+ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT = 'GEOJSON';
+```
+
+In the following two queries you will familiarize yourself with `Overture Maps - Points of Interest` data. First, check the size of the table:
+
+```
+SELECT COUNT(*) FROM OVERTURE_MAPS__PLACES.CARTO.PLACE;
+```
+
+In the following query, you will examine a geography column containing data on health and medical facilities. 
+
+```
+SELECT 
+     NAMES['primary']::STRING AS NAME,
+     ADDRESS.value:element:locality::STRING AS CITY,
+     ADDRESS.value:element:region::STRING AS STATE,
+     ADDRESS.value:element:postcode::STRING AS POSTCODE,
+     ADDRESS.value:element:country::STRING AS COUNTRY,
+     GEOMETRY
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE,
+LATERAL FLATTEN(INPUT => ADDRESSES:list) AS ADDRESS
+WHERE CATEGORIES['primary'] ='health_and_medical'
+LIMIT 100;
+```
+
+<img src ='assets/geo_ml_40.png' width=700>
+
+Note that while the column is named `GEOMETRY` in this data source, it is stored in a `GEOGRAPHY` column in Snowflake, using the coordinate system [ESPG:4326](https://epsg.io/4326), also known as [WGS 84](https://en.wikipedia.org/wiki/World_Geodetic_System#WGS84). This coordinate system uses latitude and longitude as coordinates and is the most widely used coordinate system worldwide. If you are storing geospatial data using latitude and longitude, then the `GEOGRAPHY` data type is the most suitable for storing your data.
+
+
+The contents of the `GEOMETRY` column in the output above, formatted as GeoJSON. 
+
+Run the code below to update your session geography output format to [Well-Known Text (WKT)](https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry), which is arguably more readable.
+
+```
+ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT = 'WKT';
+```
+
+Now rerun the Overture maps query. Notice how the contents of the `GEOMETRY` column are displayed.
+
+```
+SELECT 
+     NAMES['primary']::STRING AS NAME,
+     ADDRESS.value:element:locality::STRING AS CITY,
+     ADDRESS.value:element:region::STRING AS STATE,
+     ADDRESS.value:element:postcode::STRING AS POSTCODE,
+     ADDRESS.value:element:country::STRING AS COUNTRY,
+     geometry
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE,
+LATERAL FLATTEN(INPUT => ADDRESSES:list) AS ADDRESS
+WHERE CATEGORIES['primary'] ='health_and_medical'
+LIMIT 100;
+```
+<img src ='assets/geo_ml_41.png' width=700>
+
+### Constructing geospatial objects
+You can use constructor functions such as [ST_MAKEPOINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint), [ST_MAKELINE](https://docs.snowflake.com/en/sql-reference/functions/st_makeline) and [ST_POLYGON](https://docs.snowflake.com/en/sql-reference/functions/st_makepolygon) to create geospatial objects. Run the code below to create a geo point from latitude and longitude.
+
+```
+SELECT ST_MAKEPOINT(-74.0266511, 40.6346599) GEO_POINT
+```
+
+<img src ='assets/geo_ml_42.png' width=250>
+
+Alternatively, you can use the TO_GEOGRAPHY constructor function to create geospatial values. [TO_GEOGRAPHY](https://docs.snowflake.com/en/sql-reference/functions/to_geography) is a general purpose constructor where [ST_MAKEPOINT](https://docs.snowflake.com/en/sql-reference/functions/st_makepoint) specifically makes a POINT object. Run the code below:
+
+```
+SELECT TO_GEOGRAPHY('POINT(-74.0266511 40.6346599)') GEO_POINT
+```
+
+<img src ='assets/geo_ml_42.png' width=250>
+
+### 4. Visualizing spatial data in Streamlit
+Using Streamlit, you can visualize your data using tools like `st.map` or popular python packages like `pydeck`. 
+
+Add a new Python cell and run the code below to see how you can use `st.map` to show a point on a map.
+
+```
+import streamlit as st
+import pandas as pd
+
+# Define the coordinates for the point
+latitude = 40.755702
+longitude = -73.986226
+
+# Create a DataFrame with the point
+data = pd.DataFrame({
+    'lat': [latitude],
+    'lon': [longitude]
+})
+
+# Display the map with the point
+st.title("Display a Points with st.map")
+st.map(data)
+```
+
+<img src ='assets/geo_ml_43.png' width=800>
+
+### Accessing coordinates of a geospatial object
+Sometimes you need to do the opposite - access individual coordinates in a geospatial object. You can do that with accessor functions [ST_X](https://docs.snowflake.com/en/sql-reference/functions/st_x) and [ST_Y](https://docs.snowflake.com/en/sql-reference/functions/st_y) to access longitude and latitude accordingly. Run the code below:
+
+```
+SELECT 
+     NAMES['primary']::STRING AS NAME,
+     ST_X(GEOMETRY) AS LONGITUDE,
+     ST_Y(GEOMETRY) AS LATITUDE,
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE,
+LATERAL FLATTEN(INPUT => ADDRESSES:list) AS ADDRESS
+WHERE CATEGORIES['primary'] ='health_and_medical'
+LIMIT 100;
+```
+
+<img src ='assets/geo_ml_44.png' width=500>
+
+### Finding the nearest points and calculating distances
+You can use relationship and measurement functions to perform spatial joins and other analytical operations. For example, you can use [ST_DWITHIN](https://docs.snowflake.com/en/sql-reference/functions/st_dwithin) to find health facilities that are within a mile from you, and you can use [ST_DISTANCE](https://docs.snowflake.com/en/sql-reference/functions/st_distance) to measure the actual distance between points.
+
+Run the code below to obtain the ten nearest health facilities that are no more than approximately a mile (1,600 meters) away from a given point. The records are sorted by distance.
+
+```
+SELECT 
+     NAMES['primary']::STRING AS NAME,
+     ST_X(GEOMETRY) AS LONGITUDE,
+     ST_Y(GEOMETRY) AS LATITUDE,
+     GEOMETRY,
+     ST_DISTANCE(GEOMETRY,TO_GEOGRAPHY('POINT(-73.986226 40.755702)'))::NUMBER(6,2) 
+        AS DISTANCE_METERS 
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE
+WHERE CATEGORIES['primary'] ='health_and_medical' AND
+ST_DWITHIN(GEOMETRY,ST_MAKEPOINT(-73.986226, 40.755702),1600) = TRUE 
+ORDER BY 5 LIMIT 10;
+```
+
+<img src ='assets/geo_ml_45.png' width=700>
+
+Notice that this query runs on a table with over 53M rows. Snowflake's geospatial data types are very efficient!
+
+# Creating multi-layered maps in Streamlit
+Using Streamlit and Pydeck, you can create a multi-layered visualization. 
+
+Take note of the name of your previous cell and run the command below in a python cell to convert the results of the previous query into a pandas dataframe. We will reference this dataframe in the visualization.
+
+```
+df = query_9.to_pandas()
+```
+
+Now you will visualize the top 10 health facilities relative to the reference point. Pydeck supports multi-layered maps that can be customized with tooltips and other features.
+
+```
+import streamlit as st
+import pandas as pd
+import pydeck as pdk
+
+# Define the coordinates for your specific location
+latitude = 40.755702
+longitude = -73.986226
+
+# Create a DataFrame for your location
+my_location_df = pd.DataFrame({
+    'lat': [latitude],
+    'lon': [longitude]
+})
+
+# Create a PyDeck Layer for visualizing points with larger size and a tooltip for NAME
+data_layer = pdk.Layer(
+    "ScatterplotLayer",
+    df,
+    get_position='[LONGITUDE, LATITUDE]',
+    get_radius=50,  # Adjust this value for larger points
+    get_fill_color='[255, 0, 0, 160]',  # Red color with transparency
+    pickable=True,
+    get_tooltip=['NAME'],  # Add NAME as a tooltip
+)
+
+# Create a PyDeck Layer for your location with a different color and size
+my_location_layer = pdk.Layer(
+    "ScatterplotLayer",
+    my_location_df,
+    get_position='[lon, lat]',
+    get_radius=100,  # Larger radius to highlight your location
+    get_fill_color='[0, 0, 255, 200]',  # Blue color with transparency
+    pickable=True,
+)
+
+# Set the view on the map
+view_state = pdk.ViewState(
+    latitude=df['LATITUDE'].mean(),
+    longitude=df['LONGITUDE'].mean(),
+    zoom=13.5,  # Adjust zoom if needed
+    pitch=0,
+)
+
+# Define the tooltip
+tooltip = {
+    "html": "<b>Facility Name:</b> {NAME}",
+    "style": {"color": "white"}
+}
+
+# Render the map with both layers and tooltip
+r = pdk.Deck(
+    layers=[data_layer, my_location_layer],
+    initial_view_state=view_state,
+    map_style='mapbox://styles/mapbox/light-v10',
+    tooltip=tooltip
+)
+
+st.write('10 Nearest Health Facilities')
+st.pydeck_chart(r, use_container_width=True)
+```
+
+<img src ='assets/geo_ml_46.png' width=800>
+
+### Conclusion
+
+Congratulations! You have completed this introductory quickstart. You learn basic operations to construct, process and visualise geospatial data.
+
+## Energy grids analysis using GEOMETRY
+
+> aside negative
+>  Before starting with this lab, complete the preparation steps from `Setup your account` page.
+
+> aside positive
+>  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
+
+#### Overview
+Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the `GEOMETRY` data type, help you understand geospatial formats supported by Snowflake and walk you through the use of a variety of functions on sample geospatial data sets. 
+
+#### What You’ll Learn
+* How to acquire geospatial data from the Snowflake Marketplace
+* How to load geospatial data from a Stage
+* How to interpret the `GEOMETRY` data type and how it differs from the `GEOGRAPHY`
+* How to understand the different formats that `GEOMETRY` can be expressed in
+* How to do spatial analysis using the `GEOMETRY` and `GEOGRAPHY` data types
+* How to use Python UDFs for reading Shapefiles and creating custom functions
+* How to visualise geospatial data using Streamlit
+
+#### What You’ll Build
+A sample use case that involves energy grids and LTE cell towers in the Netherlands You will answer the following questions:
+* What is the length of all energy grids in each municipality in the Netherlands?
+* What cell towers lack electricity cables nearby?
+
+### Acquire Marketplace Data and Analytics Toolbox
+
+The first step in the guide is to acquire geospatial data sets that you can freely use to explore the basics of Snowflake's geospatial functionality.  The best place to acquire this data is the Snowflake Marketplace!  
+* Navigate to the `Marketplace` screen using the menu on the left side of the window
+* Search for `OpenCelliD` in the search bar
+* Find and click the` OpenCelliD - Open Database of Cell Towers` tile or just use [this](https://app.snowflake.com/marketplace/listing/GZSVZ8ON6J/dataconsulting-pl-opencellid-open-database-of-cell-towers) link
+
+<img src ='assets/geo_ml_47.png' width=700>
+
+* Once in the listing, click the big blue `Get` button
+
+<img src ='assets/geo_ml_48.png' width=500>
+
+* On the `Get Data` screen, change the name of the database from the default to `OPENCELLID`, as this name is shorter, and all future instructions will assume this name for the database.
+
+<img src ='assets/geo_ml_49.png' width=500>
+
+Similarly to the above dataset, acquire [SedonaSnow](https://app.snowflake.com/marketplace/listing/GZTYZF0RTY3/wherobots-sedonasnow) application which extends Snowflake core geo features with more than 100 spatial functions. Navigate to the `Marketplace` screen using the menu on the left side of the window and find the `SedonaSnow`. Keep the the database name `SEDONASNOW` and optionally add more roles that can access the database.
+
+<img src ='assets/geo_ml_22.png' width=500>
+
+Congratulations! You have just acquired all the listings you need for this lab.
+
+### Setup your Account
+
+Create a new database and schema where you will store datasets in the `GEOMETRY` data type. Run th following SQL:
+
+```
+CREATE DATABASE IF NOT EXISTS GEOLAB;
+CREATE SCHEMA IF NOT EXISTS GEOLAB.GEOMETRY;
+USE SCHEMA GEOLAB.GEOMETRY;
+```
+
+### Load Data from External Storage
+
+You already understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. While you loading data you will learn formats supported by geospatial data types.
+
+For this quickstart we have prepared a dataset with energy grid infrastructure (cable lines) in the Netherlands. It is stored in the CSV format in the public S3 bucket. To import this data, create an external stage using the following SQL command:
+
+```
+CREATE OR REPLACE STAGE geolab.geometry.geostage
+URL = 's3://sfquickstarts/vhol_spatial_analysis_geometry_geography/';
+```
+
+Now you will create a new table using the file from that stage. Run the following queries to create a new file format and a new table using the dataset stored in the Stage:
+
+```
+// Create file format
+CREATE OR REPLACE FILE FORMAT geocsv TYPE = CSV SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '"';
+
+CREATE OR REPLACE TABLE geolab.geometry.nl_cables_stations AS 
+SELECT to_geometry($1) AS geometry, 
+       $2 AS id, 
+       $3 AS type 
+FROM @geostage/nl_stations_cables.csv (file_format => 'geocsv');
+```
+
+Look at the description of the table you just created by running the following queries: 
+
+```
+DESC TABLE geolab.geometry.nl_cables_stations;
+```
+
+The [desc or describe](https://docs.snowflake.com/en/sql-reference/sql/desc.html) command shows you the definition of the view, including the columns, their data type, and other relevant details. Notice the `geometry` column is defined as `GEOMETRY` type. 
+
+Snowflake supports 3 primary geospatial formats and 2 additional variations on those formats. They are:
+
+* **GeoJSON**: a JSON-based standard for representing geospatial data
+* **WKT & EWKT**: a "Well Known Text" string format for representing geospatial data and the "Extended" variation of that format
+* **WKB & EWKB:** a "Well Known Binary" format for representing geospatial data in binary and the "Extended" variation of that format
+
+These formats are supported for ingestion (files containing those formats can be loaded into a `GEOMETRY` typed column), query result display, and data unloading to new files. You don't need to worry about how Snowflake stores the data under the covers but rather how the data is displayed to you or unloaded to files through the value of session variables called `GEOMETRY_OUTPUT_FORMAT`.
+
+Run the query below to make sure the current format is GeoJSON:
+
+```
+ALTER SESSION SET geometry_output_format = 'GEOJSON';
+```
+
+The [alter session](https://docs.snowflake.com/en/sql-reference/sql/alter-session.html) command lets you set a parameter for your current user session, which in this case is  `GEOMETRY_OUTPUT_FORMAT`. The default value for those parameters is `'GEOJSON'`, so normally you wouldn't have to run this command if you want that format, but this guide wants to be certain the next queries are run with the `'GEOJSON'` output.
+
+Now run the following query against the `nl_cables_stations` table to see energy grids in the Netherlands.
+
+```
+SELECT geometry
+FROM nl_cables_stations
+LIMIT 5;
+```
+In the result set, notice the `GEOMETRY` column and how it displays a JSON representation of spatial objects. It should look similar to this:
+
+```
+{"coordinates": [[[1.852040750000000e+05, 3.410349640000000e+05], 
+[1.852044840000000e+05,3.410359860000000e+05]], 
+[[1.852390240000000e+05,3.411219340000000e+05], 
+... ,
+[1.852800600000000e+05,3.412219960000000e+05]]   ], 
+"type": "MultiLineString" }
+```
+
+Unlike `GEOGRAPHY`, which treats all points as longitude and latitude on a spherical earth, `GEOMETRY` considers the Earth as a flat surface. More information about Snowflake's specification can be found [here](https://docs.snowflake.com/en/sql-reference/data-types-geospatial.html).
+In this example it uses scientific notation and the numbers are much larger than latitude and longitude boundaries [-180; 180].
+
+<img src ='assets/geo_ml_57.png' width=700>
+
+Now look at the same query but in a different format. Run the following query:
+
+```
+ALTER SESSION SET geometry_output_format = 'EWKT';
+```
+
+Run the previous `SELECT` query again and when done, examine the output in the `GEOMETRY` column.
+
+```
+SELECT geometry
+FROM nl_cables_stations
+LIMIT 5;
+```
+
+EWKT looks different from GeoJSON, and is arguably more readable. Here you can more clearly see the [geospatial object types](https://docs.snowflake.com/en/sql-reference/data-types-geospatial.html#geospatial-object-types), which are represented below in the example output:
+
+```
+SRID=28992;MULTILINESTRING((185204.075 341034.964,185204.484 341035.986), ... ,(185276.402 341212.688,185279.319 341220.196,185280.06 341221.996))
+```
+
+EWKT also shows the spatial reference identifier and in our example, you have a dataset in [Amersfoort / RD New](https://epsg.io/28992) spatial reference system, that is why the displayed SRID is 28992.
+
+Lastly, look at the WKB output. Run the following query:
+
+```
+ALTER SESSION SET geometry_output_format = 'WKB';
+```
+
+Run the query again:
+```
+SELECT geometry
+FROM nl_cables_stations
+LIMIT 5;
+```
+
+Now that you have a basic understanding of how the `GEOMETRY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walk through a scenario that requires you to use constructors to load data.  You will do it while trying one more way of getting data, namely, from the Shapefile file stored in the external stage. 
+
+One of the files in the external stage contains the polygons of administrative boundaries in the Netherlands. The data is stored in [Shapefile format](https://en.wikipedia.org/wiki/Shapefile) which is not yet supported by Snowflake. But you can load this file using Python UDF and [Dynamic File Access feature](https://docs.snowflake.com/developer-guide/udf/python/udf-python-examples#label-udf-python-read-files). You will also use some packages available in the Snowflake Anaconda channel.
+
+Run the following query that creates a UDF to read shapfiles:
+
+```
+CREATE OR REPLACE FUNCTION geolab.geometry.py_load_geodata(PATH_TO_FILE string, filename string)
+RETURNS TABLE (wkt varchar, properties object)
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('fiona', 'shapely', 'snowflake-snowpark-python')
+HANDLER = 'GeoFileReader'
+AS $$
+from shapely.geometry import shape
+from snowflake.snowpark.files import SnowflakeFile
+from fiona.io import ZipMemoryFile
+class GeoFileReader:        
+    def process(self, PATH_TO_FILE: str, filename: str):
+    	with SnowflakeFile.open(PATH_TO_FILE, 'rb') as f:
+    		with ZipMemoryFile(f) as zip:
+    			with zip.open(filename) as collection:
+    				for record in collection:
+    					yield (shape(record['geometry']).wkt, dict(record['properties']))
+$$;
+```
+
+This UDF reads a Shapefile and returns its content as a table. Under the hood it uses geospatial libraries `fiona` and `shapely`.
+Run the following query to see the content of the uploaded shapefile.
+
+```
+ALTER SESSION SET geometry_output_format = 'EWKT';
+
+SELECT to_geometry(wkt) AS geometry,
+       properties:NAME_1::string AS province_name,
+       properties:NAME_2::string AS municipality_name
+FROM table(py_load_geodata(build_scoped_file_url(@geolab.geometry.geostage, 'nl_areas.zip'), 'nl_areas.shp'));
+```
+
+This query fails with the error *NotebookSqlException: 100383: Geometry validation failed: Geometry has invalid self-intersections. A self-intersection point was found at (559963, 5.71069e+06)*.
+The constructor function determines if the shape is valid according to the [Open Geospatial Consortium’s Simple Feature Access / Common Architecture](https://www.ogc.org/standards/sfa) standard. If the shape is invalid, the function reports an error and does not create the GEOMETRY object. That is what happened in our example.
+
+To fix this you can allow the ingestion of invalid shapes by setting the corresponding parameter to True. Let's run the SELECT statement again, but update the query to see how many shapes are invalid. Run the following query:
+
+```
+SELECT to_geometry(s => wkt, allowInvalid => True) AS geometry,
+       st_isvalid(geometry) AS is_valid,
+       properties:NAME_1::string AS province_name,
+       properties:NAME_2::string AS municipality_name
+FROM table(py_load_geodata(build_scoped_file_url(@geolab.geometry.geostage, 'nl_areas.zip'), 'nl_areas.shp'))
+ORDER BY is_valid ASC;
+```
+
+<img src ='assets/geo_ml_50.png' width=700>
+
+This query completed without error and now you see that the shape of the province Zeeland is invalid. Let's repair it by applying the [ST_MakeValid](https://sedona.apache.org/1.5.1/api/snowflake/vector-data/Function/#st_makevalid) function from SedonaSnow Native app:
+
+```
+SELECT SEDONASNOW.SEDONA.st_MakeValid(to_geometry(s => wkt, allowInvalid => True)) AS geometry,
+       st_isvalid(geometry) AS is_valid,
+       (CASE WHEN properties:TYPE_1::string IS NULL THEN 'Municipality' ELSE 'Province' END) AS type,
+       properties:NAME_1::string AS province_name,
+       properties:NAME_2::string AS municipality_name
+FROM table(py_load_geodata(build_scoped_file_url(@geolab.geometry.geostage, 'nl_areas.zip'), 'nl_areas.shp'))
+ORDER BY is_valid ASC;
+```
+
+<img src ='assets/geo_ml_51.png' width=700>
+
+Now all shapes are valid and the data is ready to be ingested. One additional thing you should do is to set SRID, since otherwise it will be set to 0. This dataset is in the reference system [WGS 72 / UTM zone 31N](https://epsg.io/32231), so it makes sense to add the SRID=32231 to the constructor function.
+
+Run the following query:
+
+```
+CREATE OR REPLACE TABLE geolab.geometry.nl_administrative_areas AS
+SELECT ST_SETSRID(SEDONASNOW.SEDONA.ST_MakeValid(to_geometry(s => wkt, srid => 32231, allowInvalid => True)), 32231) AS geometry,
+       st_isvalid(geometry) AS is_valid,
+       (CASE WHEN properties:TYPE_1::string IS NULL THEN 'Municipality' ELSE 'Province' END) AS type,
+       properties:NAME_1::string AS province_name,
+       properties:NAME_2::string AS municipality_name
+FROM table(py_load_geodata(build_scoped_file_url(@geolab.geometry.geostage, 'nl_areas.zip'), 'nl_areas.shp'))
+ORDER BY is_valid ASC;
+```
+
+Excellent! Now that all the datasets are successfully loaded, let's proceed to the next exciting step: the analysis.
+
+### Energy grids Analysis
+
+To showcase the capabilities of the GEOMETRY data type, you will explore several use cases. In these scenarios, you'll assume you are an analyst working for an energy utilities company responsible for maintaining electrical grids.
+
+#### What is the length of the electricity cables?
+In the first use case you will calculate the length of electrical cables your organization is responsible for in each administrative area within the Netherlands. You'll be utilizing two datasets: with power infrastructure of the Netherlands and the borders of Dutch administrative areas. First, let's check the sample of each dataset.
+
+Run the following query to see the content of `nl_cables_stations` table:
+
+```
+SELECT geometry, type
+FROM geolab.geometry.nl_cables_stations
+LIMIT 5;
+```
+
+<img src ='assets/geo_ml_52.png' width=700>
+
+The spatial data is stored using the `GEOMETRY` data type and employs the Dutch mapping system, `Amersfoort / RD New` (SRID = 28992). 
+
+To view the contents of the table containing the boundaries of the administrative areas in the Netherlands, execute the following query:
+
+```
+SELECT *
+FROM geolab.geometry.nl_administrative_areas
+LIMIT 5;
+```
+<img src ='assets/geo_ml_53.png' width=700>
+
+In order to compute the length of all cables per administrative area, it's essential that both datasets adhere to the same mapping system. You have two options: either project `nl_administrative_areas` to SRID 28992, or project `nl_cables_stations` to SRID 32231. For this exercise, let's choose the first option. Run the following query:
+
+```
+SELECT t1.province_name,
+       sum(st_length(t2.geometry)) AS cables_length
+FROM geolab.geometry.nl_administrative_areas AS t1,
+     geolab.geometry.nl_cables_stations AS t2
+WHERE st_intersects(st_transform(t1.geometry, 28992), t2.geometry)
+  AND t1.type = 'Province'
+GROUP BY 1
+ORDER BY 2 DESC;
+```
+<img src ='assets/geo_ml_54.png' width=700>
+
+You have five areas densely covered by electricity cables, those are the ones that your company is responsible for. For your first analysis, you will focus on these areas.
+
+#### What cell towers lack electricity cables nearby?
+
+In many areas, especially rural or remote ones, cell towers might be located far from electricity grids. This can pose a challenge in providing a reliable power supply to these towers. They often rely on diesel generators, which can be expensive to operate and maintain and have environmental implications. Furthermore, power outages can lead to disruptions in mobile connectivity, impacting individuals, businesses, and emergency services.
+
+Our analysis aims to identify mobile cell towers that are not near an existing electricity grid. This information could be used to prioritize areas for grid expansion, to improve the efficiency of renewable energy source installations (like solar panels or wind turbines), or to consider alternative energy solutions.
+
+For this and the next examples let's use `GEOGRAPHY` data type as it can be easily visualized using CARTO. As a first step, let's create `GEOGRAPHY` equivalents for the energy grids and boundaries tables. For that you need to project the `geometry` column in each of the tables into the mapping system WGS 84 (SRID=4326) and then convert to `GEOGRAPHY` data type. Run the following queries that create new tables and enable search optimization for each of them in order to increase the performance of spatial operations. 
+
+```
+// Creating a table with GEOGRAPHY for nl_administrative_areas
+CREATE SCHEMA IF NOT EXISTS GEOLAB.GEOGRAPHY;
+
+CREATE OR REPLACE TABLE geolab.geography.nl_administrative_areas AS
+SELECT to_geography(st_transform(geometry, 4326)) AS geom,
+       type,
+       province_name,
+       municipality_name
+FROM geolab.geometry.nl_administrative_areas
+ORDER BY st_geohash(geom);
+
+// Creating a table with GEOGRAPHY for nl_cables_stations
+CREATE OR REPLACE TABLE geolab.geography.nl_cables_stations AS
+SELECT to_geography(st_transform(geometry, 4326)) AS geom,
+       id,
+       type
+FROM geolab.geometry.nl_cables_stations
+ORDER BY st_geohash(geom);
+```
+
+Now you will create a table with locations of cell towers stored as GEOGRAPHY, just like for the previous two tables. Run the following query:
+
+```
+CREATE OR REPLACE TABLE geolab.geography.nl_lte AS
+SELECT DISTINCT st_point(lon, lat) AS geom,
+                cell_range
+FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS t1
+WHERE mcc = '204' -- 204 is the mobile country code in the Netherlands
+AND radio='LTE'
+```
+
+Finally, you will find all cell towers that don't have an energy line within a 2-kilometer radius. For each cell tower you'll calculate the distance to the nearest electricity cable. You will use Streamlit library `pydeck` to visualise municipalities and locations of cell towers. 
+
+You can create visualisation either in Notebooks or as a Strealit app. As a preparation step you need to import pydeck library that you will use in this Lab. Navigate to the `Packages` drop-down  in the upper right of the Notebook (upper left of the Streamlit app) and search for `pydeck`. Click on `pydeck` to add it to the Python packages. Then run the following Python code:
+
+```
+import streamlit as st
+import pandas as pd
+import pydeck as pdk
+import json
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+
+def get_celltowers() -> pd.DataFrame:
+    return session.sql(f"""
+    SELECT province_name,
+    cells.geom
+    FROM geolab.geography.nl_lte cells
+    LEFT JOIN geolab.geography.nl_cables_stations cables
+    ON st_dwithin(cells.geom, cables.geom, 2000)
+    JOIN geolab.geography.nl_administrative_areas areas 
+    ON st_contains(areas.geom, cells.geom)
+    WHERE areas.type = 'Municipality'
+    AND areas.province_name in ('Noord-Brabant', 'Overijssel', 'Limburg', 'Groningen', 'Drenthe')
+    AND cables.geom IS NULL; """).to_pandas()
+
+def get_boundaries() -> pd.DataFrame:
+    return session.sql(f"""
+        SELECT st_simplify(GEOM, 10) as geom, municipality_name
+        FROM geolab.geography.nl_administrative_areas
+        WHERE type = 'Municipality';
+    """).to_pandas()
+
+
+boundaries = get_boundaries()
+boundaries["coordinates"] = boundaries["GEOM"].apply(lambda row: json.loads(row)["coordinates"][0])
+
+celltowers = get_celltowers()
+celltowers["lon"] = celltowers["GEOM"].apply(lambda row: json.loads(row)["coordinates"][0])
+celltowers["lat"] = celltowers["GEOM"].apply(lambda row: json.loads(row)["coordinates"][1])
+
+layer_celltowers = pdk.Layer(
+            "ScatterplotLayer",
+            celltowers,
+            get_position=["lon", "lat"],
+            id="celltowers",
+            stroked=True,
+            filled=True,
+            extruded=False,
+            wireframe=True,
+            get_fill_color=[233, 43, 65],
+            get_line_color=[233, 43, 65],
+            get_radius=300,
+            auto_highlight=True,
+            pickable=False,
+        )
+
+layer_boundaries = pdk.Layer(
+    "PolygonLayer",
+    data=boundaries,
+    id="province-layer",
+    get_polygon="coordinates",
+    extruded=False,
+    opacity=0.9,
+    wireframe=True,
+    pickable=True,
+    stroked=True,
+    filled=True,
+    line_width_min_pixels=1,
+    get_line_color=[17, 86, 127],       # Red color for the border
+    get_fill_color=[43, 181, 233, 30],  # Blue fill with transparency
+    coverage=1
+)
+
+
+st.pydeck_chart(pdk.Deck(
+    map_style=None,
+    initial_view_state=pdk.ViewState(
+        latitude=51.97954426323304,
+        longitude=5.626041932127842, 
+        # pitch=45, 
+        zoom=8),
+    tooltip={
+            'html': '<b>Province name:</b> {MUNICIPALITY_NAME}',
+             'style': {
+                 'color': 'white'
+                 }
+            },
+    layers=[layer_boundaries, layer_celltowers],
+))
+```
+
+<img src ='assets/geo_ml_56.png' width=700>
+
+Another way to visualise geospatial data is using open-source geo analytics tool QGIS. Do the following steps:
+* Install the latest [Long Term Version of QGIS](https://qgis.org/download/)
+* Install Snowflake conector. Go to `Plugins` > `All`, search for `Snowflake Connector for QGIS` and click `Install Plugin`.
+* Go to `Layer` > `Data Source Manager` and create a new connection to Snowflake. Call it `SNOWFLAKE` (all letters capital). [Check](https://github.com/snowflakedb/qgis-snowflake-connector?tab=readme-ov-file#getting-started) the documentation to learn mor on how to create new coonection
+* [Download](https://sfquickstarts.s3.us-west-1.amazonaws.com/vhol_spatial_analysis_geometry_geography/energy_grids_nl.qgz) a QGIS project that we created for you and open it in QGIS.
+* If previous steps done correctly, you should be able to see the following layers in QGIS
+    * `ENERGY_GRIDS` (LINESTRING and MULTILINESTRING) - energy frids for Noord-Brabant, Overijssel, Limburg, Groningen, and Drenthe.
+    * `CELL_TOWERS_WITHOUT_CABLES` - cell towers in the regions above that don't have energy grids within radius of 2km.
+    * `Municipalities` (POLYGON and MULTIPOLYGON) - Boundaries of Dutch municipalities.
+
+
+### Conclusion
+
+In this guide, you acquired geospatial data from the Snowflake Marketplace, explored how the `GEOMETRY` data type works and how it differs from `GEOGRAPHY`. You converted one data type into another and queried geospatial data using parser, constructor, transformation, and used geospatial joins. You then saw how geospatial objects could be visualized using CARTO.
+
+You are now ready to explore the larger world of Snowflake geospatial support and geospatial functions.
+
+### What we've covered
+* How to acquire a shared database from the Snowflake Marketplace and from External and internal storages.
+* The GEOMETRY data type, its formats GeoJSON, WKT, EWKT, WKB, and EWKB, and how to switch between them.
+* How to use constructors like TO_GEOMETRY, ST_MAKELINE.
+* How to reproject between SRIDs using ST_TRANSFORM.
+* How to perform relational calculations like ST_DWITHIN and ST_INTERSECTS.
+* How to perform measurement calculations like ST_LENGTH.
+* How to use Python UDFs for reading Shapefiles and creating custom functions.
+* How to visualise geospatial data using Streamlit and QGIS
 
 ## Geocoding and Reverse Geocoding
 
@@ -512,7 +1234,7 @@ To achieve this division, you will use the Discrete Global Grid H3. H3 organizes
 
 H3 offers 16 different resolutions for dividing areas into hexagons, ranging from resolution 0, where the world is segmented into 122 large hexagons, to resolution 15. At this resolution, each hexagon is less than a square meter, covering the world with approximately 600 trillion hexagons. You can read more about resolutions [here](https://h3geo.org/docs/core-library/restable/). For our task, we will use resolution 8, where the size of each hexagon is about 0.7 sq. km (0.3 sq. miles).
 
-As a source of the trips data you will use `TLC_YELLOW_TRIPS_2014` and `TLC_YELLOW_TRIPS_2015` tables from the CARTO listing. We are interested in the following fields:
+As a source of the trips data you will use `TLC_YELLOW_TRIPS_2014` and `TLC_YELLOW_TRIPS_2015` tables from the CARTO Academy listing. We are interested in the following fields:
 * Pickup Time
 * Dropoff Time
 * Pickup Latitude
@@ -963,6 +1685,9 @@ Duration: 40
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
 
+> aside positive
+>  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
+
 This lab will show you how to inject AI into your spatial analysis using Cortex Large Language Model (LLM) Functions to help you take your product and marketing strategy to the next level. Specifically, you’re going to build a data application that gives food delivery companies the ability to explore the sentiments of customers in the Greater Bay Area. To do this, you use the Cortex LLM Complete Function to classify customer sentiment and extract the underlying reasons for that sentiment from a customer review. Then you use the Discrete [Global Grid H3](https://www.uber.com/en-DE/blog/h3/) for visualizing and exploring spatial data. 
 
 ### Step 1. Data acquisition
@@ -978,7 +1703,7 @@ FIELD_OPTIONALLY_ENCLOSED_BY = '"' FIELD_DELIMITER = ',' skip_header = 1;
 ```
 Now you will create an external stage using S3 with test data:
 ```
-CREATE OR REPLACE STAGE aa_stage URL = 's3://sfquickstarts/hol_geo_spatial_ml_using_snowflake_cortex/';
+CREATE OR REPLACE STAGE @ADVANCED_ANALYTICS.PUBLIC.AA_STAGE URL = 's3://sfquickstarts/hol_geo_spatial_ml_using_snowflake_cortex/';
 ```
 Then create a table where you will store the customer feedback dataset:
 ```
@@ -993,7 +1718,7 @@ SELECT  $1::NUMBER as order_id,
         $8::NUMBER as restaurant_postcode,
         $9::VARCHAR as restaurant_id,
         $10::VARCHAR as review
-FROM @ADVANCED_ANALYTICS.PUBLIC.ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv (file_format => 'csv_format_nocompression');
+FROM @ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv (file_format => 'csv_format_nocompression');
 ```
 
 Congratulations!  Now you have `orders_reviews` table containing 100K orders with reviews.
@@ -1101,7 +1826,7 @@ CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT (
 );
 
 COPY INTO ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT
-FROM @ADVANCED_ANALYTICS.PUBLIC.ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv
+FROM @ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv
 FILE_FORMAT = (FORMAT_NAME = csv_format_nocompression);
 ```
 
@@ -1110,7 +1835,7 @@ FILE_FORMAT = (FORMAT_NAME = csv_format_nocompression);
 Now when you have a table with sentiment, you need to parse JSONs to store each component of the score into a separate column and convert the scoring provided by the LLM into numeric format, so you can easily visualize it. Run the following query:
 
 ```
-CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_ANALYSIS AS
 SELECT * exclude (food_cost, food_quality, food_delivery_time, sentiment) ,
          CASE
              WHEN sentiment = 'very positive' THEN 5
@@ -1197,7 +1922,7 @@ def get_h3_df_orders_quantiles(resolution: float, type_of_location: str) -> pd.D
         f"""SELECT
         H3_POINT_TO_CELL_STRING(to_geography({ type_of_location }), { resolution }) AS h3,
         round(count(*),2) as count
-        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis
+        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_ANALYSIS
         GROUP BY 1""")
 
     quantiles = get_quantile_in_column(df, "COUNT")
@@ -1210,7 +1935,7 @@ def get_h3_df_sentiment_quantiles(
         f""" SELECT 
         H3_POINT_TO_CELL_STRING(TO_GEOGRAPHY({ type_of_location }),{ resolution }) AS h3,
         round(AVG({ type_of_sentiment }),2) AS count
-        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis
+        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_ANALYSIS
         WHERE { type_of_sentiment } IS NOT NULL 
         GROUP BY 1""")
 
@@ -1316,13 +2041,1107 @@ You can also analyze what areas are getting higher scores for each of the catego
 > aside positive
 >  The code from this quickstart can be reused for other industries, such as urban mobility, retail, finance, etc. Basically, any industry that involves providing a service with geo components and customer reviews.
 
+## Processing unstructured geospatial data
+
+Duration: 40
+
+> aside negative
+>  Before starting with this lab, complete the preparation steps from `Setup your account` page.
+
+> aside positive
+>  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
+
+In this quickstart guide, we will show you how to read geospatial data from unstructured sources such as GeoTiffs and Shapefiles to prepare features for a machine learning model using Snowflake and popular Python geospatial libraries.
+
+You will learn how to join data from different sources to help predict the presence of groundwater. Although the prediction step itself is out of scope for this lab, you will learn how to ingest data from raster files and shapefiles and combine them using nearest neighbour approach.
+
+In this lab, we will use the following sources:
+- Elevation map from [United States Geological Survey](https://www.usgs.gov/).
+- Average precipitation and average temperature data from [WorldClim](https://www.worldclim.org/data/worldclim21.html).
+
+The result of this lab will be a single dataset containing information derived from the above sources.
+
+Since we will be running relatively complex computations using Snowpark, you will need a `LARGE` Snowpark-optimized warehouse. Run the following query to create one:
+
+```
+CREATE WAREHOUSE IF NOT EXISTS snowpark_opt_wh_l WITH warehouse_size = 'LARGE' warehouse_type = 'SNOWPARK-OPTIMIZED';
+```
+
+Now you can go to notebook settings and set the newly created warehouse as the `SQL warehouse`. Additionally, go to the Packages dropdown and import `branca`, `pydeck` and `rasterio`, which you will use in this lab.
+
+### Step 1. Data Acquisition
+As a first step, you will attach an external stage with raster and shapefiles. Run the following queries:
+
+```
+CREATE DATABASE IF NOT EXISTS ADVANCED_ANALYTICS;
+CREATE SCHEMA IF NOT EXISTS ADVANCED_ANALYTICS.RASTER;
+USE SCHEMA ADVANCED_ANALYTICS.RASTER;
+
+CREATE OR REPLACE STAGE ADVANCED_ANALYTICS.RASTER.FILES URL = 's3://sfquickstarts/hol_geo_spatial_ml_using_snowflake_cortex/unstructured/';
+```
+
+For this lab, you will also use a native application called [SedonaSnow](https://app.snowflake.com/marketplace/listing/GZTYZF0RTY3/wherobots-sedonasnow), which contains more than a hundred geospatial functions.
+
+* Navigate to the `Marketplace` screen using the menu on the left side of the window.
+* Search for `SedonaSnow` in the search bar.
+* Once in the listing, click the big blue `Get` button.
+
+> aside negative 
+>  On the `Get` screen, you may be prompted to complete your user profile if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue Save button. You will be returned to the `Get` screen.
+
+<img src ='assets/geo_ml_22.png' width=500>
+
+Congratulations, you have now acquired all the data sources that you need for this lab.
+
+### Step 2. Loading Raster Data
+In this step, you will load data from raster files stored in an external stage and store it as a Snowflake table.
+
+You will start with elevation data. Let's first create a function that uses the Python library `rasterio`, available in the [Snowflake Conda Channel](https://repo.anaconda.com/pkgs/snowflake/), which reads metadata from a `GeoTiff` file stored in a stage. Run the following query:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_EXTRACT_GEOTIFF_METADATA(PATH_TO_FILE STRING)
+RETURNS TABLE (
+    status BOOLEAN,
+    error STRING,
+    band_count INT,
+    crs STRING,
+    bounds STRING,
+    metadata STRING
+)
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('rasterio', 'snowflake-snowpark-python')
+HANDLER = 'GeoTiffMetadataExtractor'
+AS $$
+import rasterio
+import json
+from snowflake.snowpark.files import SnowflakeFile
+
+class GeoTiffMetadataExtractor:
+    def process(self, PATH_TO_FILE: str):
+        try:
+            # Initialize the result variables
+            status = False
+            error = ''
+            band_count = None
+            crs = None
+            bounds_json = None
+            metadata_json = None
+
+            # Read the GeoTIFF file from the specified stage path into memory
+            with SnowflakeFile.open(PATH_TO_FILE, 'rb', require_scoped_url=False) as input_file:
+                tif_bytes = input_file.read()
+
+            # Use rasterio's MemoryFile to read the TIFF data from memory
+            with rasterio.MemoryFile(tif_bytes) as memfile:
+                with memfile.open() as dataset:
+                    # Extract metadata from the dataset
+                    band_count = dataset.count
+                    crs = str(dataset.crs)  # Convert CRS to string for serialization
+                    bounds = dataset.bounds._asdict()  # Convert bounds to a dictionary
+
+                    # Ensure that metadata is serializable
+                    metadata = dataset.meta.copy()
+                    # Convert 'transform' to a tuple
+                    if 'transform' in metadata:
+                        metadata['transform'] = metadata['transform'].to_gdal()
+                    # Convert 'crs' to string
+                    if 'crs' in metadata:
+                        metadata['crs'] = str(metadata['crs'])
+
+                    # Convert bounds and metadata to JSON strings
+                    bounds_json = json.dumps(bounds)
+                    metadata_json = json.dumps(metadata)
+
+                    # Parsing successful
+                    status = True
+
+        except Exception as e:
+            # Handle exceptions, such as corrupted files
+            error = str(e)
+            status = False
+
+        # Yield the result as a single row
+        yield (
+            status,
+            error,
+            band_count,
+            crs,
+            bounds_json,
+            metadata_json
+        )
+$$;
+```
+
+Additionally, you will create a function to check the distribution of bands. Sometimes, bands of certain values prevail over others, and stripping them off during loading of data from raster files can significantly reduce the size of the table.
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_RASTER_BAND_VALUE_STATS(PATH_TO_FILE STRING)
+RETURNS TABLE (
+    band_value FLOAT,
+    count BIGINT,
+    percentage FLOAT
+)
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('numpy', 'rasterio', 'snowflake-snowpark-python')
+HANDLER = 'RasterBandValueStats'
+AS $$
+import numpy as np
+import rasterio
+from snowflake.snowpark.files import SnowflakeFile
+
+class RasterBandValueStats:
+    def process(self, PATH_TO_FILE: str):
+        try:
+            # Read the GeoTIFF file from the specified stage path
+            with SnowflakeFile.open(PATH_TO_FILE, 'rb', require_scoped_url=False) as input_file:
+                tif_bytes = input_file.read()  # Read the entire file into bytes
+
+            # Use rasterio's MemoryFile to read the TIFF data from memory
+            with rasterio.MemoryFile(tif_bytes) as memfile:
+                with memfile.open() as dataset:
+                    # Read all bands into a NumPy array
+                    data = dataset.read()  # Shape: (band_count, rows, cols)
+
+                    # Flatten the data across all bands
+                    data_flat = data.flatten()  # 1D array of all pixel values across all bands
+
+                    # Count unique values
+                    unique_values, counts = np.unique(data_flat, return_counts=True)
+
+                    # Calculate total number of values
+                    total_count = data_flat.size
+
+                    # Calculate percentage for each unique value
+                    percentages = (counts / total_count) * 100
+
+                    # Yield results
+                    for value, count, percentage in zip(unique_values, counts, percentages):
+                        yield (
+                            float(value),
+                            int(count),
+                            round(float(percentage),1)
+                        )
+        except Exception as e:
+            raise Exception(f"Error during data extraction: {e}")
+$$;
+```
+
+Next, you will create a function that reads data from a `GeoTIFF` file and outputs it as a table. The UDF you will create processes each pixel in the `GeoTIFF` file by calculating the spatial coordinates (X and Y) of the centroid of the pixel. It then associates these coordinates with the pixel's corresponding band values.
+
+This approach transforms the raster image into a collection of spatial points enriched with attribute data (band values), making it suitable for vector-based analyses and database operations. Run the following query:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOTIFF(
+    PATH_TO_FILE STRING,
+    SKIP_VALUES ARRAY DEFAULT NULL  -- Make SKIP_VALUES optional with default NULL
+)
+RETURNS TABLE (
+    x FLOAT,
+    y FLOAT,
+    band_values ARRAY,
+    band_count INT
+)
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('numpy', 'rasterio', 'snowflake-snowpark-python')
+HANDLER = 'GeoTiffExtractor'
+AS $$
+import numpy as np
+import rasterio
+from snowflake.snowpark.files import SnowflakeFile
+
+class GeoTiffExtractor:
+    def process(self, PATH_TO_FILE: str, SKIP_VALUES=None):
+        try:
+            # Read the GeoTIFF file from the specified stage path
+            with SnowflakeFile.open(PATH_TO_FILE, 'rb', require_scoped_url=False) as input_file:
+                tif_bytes = input_file.read()  # Read the entire file into bytes
+
+            # Use rasterio's MemoryFile to read the TIFF data from memory
+            with rasterio.MemoryFile(tif_bytes) as memfile:
+                with memfile.open() as dataset:
+                    # Read all bands into a NumPy array
+                    data = dataset.read()  # Shape: (band_count, rows, cols)
+
+                    # Get the number of bands
+                    band_count = data.shape[0]
+
+                    # Get the coordinates
+                    rows, cols = np.indices((dataset.height, dataset.width))
+                    xs, ys = rasterio.transform.xy(
+                        dataset.transform, rows, cols, offset='center'
+                    )
+
+                    # Flatten the arrays
+                    xs = np.array(xs).flatten()
+                    ys = np.array(ys).flatten()
+                    pixel_values = data.reshape((band_count, -1)).T  # Shape: (num_pixels, band_count)
+
+                    # Handle SKIP_VALUES
+                    if SKIP_VALUES:
+                        # Convert SKIP_VALUES to a NumPy array for efficient comparison
+                        skip_values = np.array(SKIP_VALUES)
+
+                        # Create a mask for pixels to skip
+                        skip_mask = np.isin(pixel_values, skip_values).any(axis=1)
+                        # Invert the skip_mask to get the mask of pixels to keep
+                        mask = ~skip_mask
+
+                        # Apply the mask to xs, ys, and pixel_values
+                        xs_filtered = xs[mask]
+                        ys_filtered = ys[mask]
+                        pixel_values_filtered = pixel_values[mask]
+                    else:
+                        # If SKIP_VALUES not provided, use all data
+                        xs_filtered = xs
+                        ys_filtered = ys
+                        pixel_values_filtered = pixel_values
+
+                    # For each pixel, yield a row with x, y, and band values
+                    for i in range(len(xs_filtered)):
+                        # Get the pixel values for all bands
+                        band_vals = pixel_values_filtered[i].tolist()
+                        yield (
+                            xs_filtered[i],
+                            ys_filtered[i],
+                            band_vals,
+                            band_count
+                        )
+        except Exception as e:
+            raise Exception(f"Error during data extraction: {e}")
+$$;
+```
+
+Now you will check the metadata of the elevation file. Run the following query:
+
+```
+SELECT *
+FROM table(PY_EXTRACT_GEOTIFF_METADATA(build_scoped_file_url(@FILES,'ASTGTMV003_N07E033_dem.tif')));
+```
+
+As you can see, the GeoTiff uses reference system `EPSG:4326` which means you can store it as `GEOGRAPHY` type. Run the following query to check how bands are distributed inside of the raster.
+
+```
+SELECT *
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_RASTER_BAND_VALUE_STATS(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'ASTGTMV003_N07E033_dem.tif')));
+```
+
+There are no obvious outliers among band values—those that correspond to most of the raster points. In this case, let's load data from the whole `ASTGTMV003_N07E033_dem.tif` into the table `POC.RASTER.AFRICA_ELEVATION`:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION AS
+SELECT st_makepoint(x, y) as geog,
+band_values[0]::float as band
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOTIFF(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'ASTGTMV003_N07E033_dem.tif')));
+```
+
+Let's check the size of the newly created table. Run the following query:
+
+```
+SELECT count(*) FROM ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION
+```
+
+12,967,201 rows. The number of rows is a product of width and height in pixels. In the case of the elevation file, it's 3601×3601. Some raster files might be quite large, and to process them, it might be a good idea to use Snowpark-optimized warehouses to avoid memory exhaustion issues. Another technique that you could apply is to load not all points from the raster file but only those that contain useful information. Alternatively, you can resample large files to reduce their resolution. We will show you an example of how to do this at the end of this lab.
+
+But 13M rows is also a rather large table, and visualizing its results using Python libraries might be challenging without reducing the number of rows. H3 functions can help with that. In the code below, you will do the following:
+
+- Map each point from `POC.RASTER.AFRICA_ELEVATION` to an H3 cell with resolution 8.
+- Group by H3 Cell ID and calculate the average value of the band for each H3 cell.
+- Visualize the H3 cells, using the band as the source for color coding.
+
+```
+import streamlit as st
+import pandas as pd
+import pydeck as pdk
+from typing import List
+import branca.colormap as cm
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+
+# Execute the updated SQL query
+df = session.sql('''select h3_point_to_cell_string(geog, 8) as h3_cell,
+                    st_x(h3_cell_to_point(h3_cell)) as lon,
+                    st_y(h3_cell_to_point(h3_cell)) as lat,
+                    avg(band) as band 
+                    from ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION
+                    group by all;''').to_pandas()
+
+df["BAND"] = df["BAND"].apply(lambda row: float(row))
+center_latitude = df['LAT'].mean()
+center_longitude = df['LON'].mean()
+
+def get_quantiles(df_column: pd.Series, quantiles: List) -> pd.Series:
+    return df_column.quantile(quantiles)
+
+def get_color(df_column: pd.Series, colors: List, vmin: int, vmax: int, index: pd.Series) -> pd.Series:
+    color_map = cm.LinearColormap(colors, vmin=vmin, vmax=vmax, index=index)
+    return df_column.apply(color_map.rgb_bytes_tuple)
+    
+quantiles = get_quantiles(df["BAND"], [0, 0.2, 0.4, 0.6, 0.8, 1])
+colors = ['gray','blue','green','yellow','orange','red']
+
+df['BAND'] = get_color(df['BAND'], colors, quantiles.min(), quantiles.max(), quantiles)
+
+st.pydeck_chart(pdk.Deck(
+    map_style=None,
+    initial_view_state=pdk.ViewState(
+        latitude=center_latitude,
+        longitude=center_longitude, 
+        zoom=8.7, 
+        bearing=0, 
+        pitch=0),
+    layers=[
+        pdk.Layer(
+            "H3HexagonLayer",
+            df,
+            opacity=0.9,
+            stroked=False,
+            get_hexagon="H3_CELL",
+            get_fill_color='BAND',
+            extruded=False,
+            wireframe=True,
+            line_width_min_pixels=0,
+            auto_highlight=True,
+            pickable=False,
+            filled=True
+        )
+    ],
+))
+```
+
+<img src ='assets/geo_ml_23.png' width=800>
+
+### Step 3. Load Shapefile
+
+In this step you will load precipitation and average temperature data from a Shapefile. First, you will create a UDF that uses [Dynamic file Access](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-examples#reading-a-dynamically-specified-file-with-snowflakefile) and `fiona` library to read metadata from Shapefile. Run the following code:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOFILE_METADATA(PATH_TO_FILE string, filename string)
+RETURNS TABLE (metadata variant)
+LANGUAGE python
+RUNTIME_VERSION = 3.8
+PACKAGES = ('fiona', 'snowflake-snowpark-python')
+HANDLER = 'GeoFileReader'
+AS $$
+# Import necessary modules for file handling and geospatial data processing
+from snowflake.snowpark.files import SnowflakeFile
+from fiona.io import ZipMemoryFile
+import fiona
+
+# Helper function to make objects JSON-serializable
+def make_serializable(obj):
+    if isinstance(obj, dict):
+        # Recursively process dictionary items
+        return {k: make_serializable(v) for k, v in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        # Recursively process lists and tuples
+        return [make_serializable(v) for v in obj]
+    elif isinstance(obj, (int, float, str, bool, type(None))):
+        # Base case: object is already serializable
+        return obj
+    else:
+        # Convert non-serializable objects to strings
+        return str(obj)
+
+# Define the handler class for the UDF
+class GeoFileReader:
+    def process(self, PATH_TO_FILE: str, filename: str):
+        # Enable support for KML drivers in Fiona
+        fiona.drvsupport.supported_drivers['libkml'] = 'rw'
+        fiona.drvsupport.supported_drivers['LIBKML'] = 'rw'
+
+        # Open the file from the Snowflake stage in binary read mode
+        with SnowflakeFile.open(PATH_TO_FILE, 'rb') as f:
+            # Read the zip file into memory using Fiona's ZipMemoryFile
+            with ZipMemoryFile(f) as zip:
+                # Open the specified file within the zip archive
+                with zip.open(filename) as collection:
+                    # Extract metadata from the collection
+                    metadata = {
+                        'driver': collection.driver,  # File format driver (e.g., 'ESRI Shapefile')
+                        'crs': collection.crs.to_string() if collection.crs else None,  
+                        'schema': collection.schema,  # Schema of the data (fields and types)
+                        'bounds': collection.bounds,  # Spatial bounds of the dataset
+                        'meta': collection.meta,      # Additional metadata
+                        'name': collection.name,      # Name of the collection
+                        'encoding': collection.encoding,  # Character encoding of the file
+                        'length': len(collection),    # Number of features in the dataset
+                    }
+                    # Ensure the metadata is serializable to JSON
+                    serializable_metadata = make_serializable(metadata)
+                    # Yield the metadata as a tuple (required for UDFs returning TABLE)
+                    yield (serializable_metadata,)
+$$;
+```
+
+The UDF above can be used not only to read metadata from Shapefiles but also from other types of geo files, such as KML. You will need another UDF for reading data from geo formats, including Shapefiles. To create one, run the following query:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOFILE(PATH_TO_FILE string, filename string)
+RETURNS TABLE (wkt string, properties object)
+LANGUAGE python
+RUNTIME_VERSION = 3.8
+PACKAGES = ('fiona', 'shapely', 'snowflake-snowpark-python')
+HANDLER = 'GeoFileReader'
+AS $$
+# Import necessary modules for geometry handling and file operations
+from shapely.geometry import shape
+from snowflake.snowpark.files import SnowflakeFile
+from fiona.io import ZipMemoryFile
+import fiona
+
+# Define the handler class for the UDF
+class GeoFileReader:
+    def process(self, PATH_TO_FILE: str, filename: str):
+        # Enable support for KML drivers in Fiona
+        fiona.drvsupport.supported_drivers['libkml'] = 'rw'
+        fiona.drvsupport.supported_drivers['LIBKML'] = 'rw'
+
+        # Open the file from the Snowflake stage in binary read mode
+        with SnowflakeFile.open(PATH_TO_FILE, 'rb') as f:
+            # Read the zip file into memory using Fiona's ZipMemoryFile
+            with ZipMemoryFile(f) as zip:
+                # Open the specified geospatial file within the zip archive
+                with zip.open(filename) as collection:
+                    # Iterate over each feature (record) in the collection
+                    for record in collection:
+                        # Check if the geometry is not None
+                        if record['geometry'] is not None:
+                            # Convert the geometry to Well-Known Text (WKT) format
+                            wkt = shape(record['geometry']).wkt
+                            # Convert the properties to a dictionary
+                            properties = dict(record['properties'])
+                            # Yield the WKT and properties as a tuple
+                            yield (wkt, properties)
+$$;
+```
+
+Now you can look into the metadata of `WorldClim.shp` stored in `WorldClim.zip` package:
+
+```
+SELECT parse_json(metadata):crs as metadata
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOFILE_METADATA(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'WorldClim.zip'), 'WorldClim.shp'));
+```
+
+It stores spatial objects using the Spatial Reference System `EPSG:4326`. You can examine the Shapefile to check its structure:
+
+```
+SELECT top 10 *
+FROM table(PY_LOAD_GEOFILE(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'WorldClim.zip'), 'WorldClim.shp'));
+```
+
+<img src ='assets/geo_ml_24.png' width=500>
+
+It stores geo objects in the `WKT` column and precipitation (`PREC`) and average temperature (`TAVG`) as properties in a JSON-like object. Knowing this information, it's easy to create a query that reads data from a Shapefile and stores it in a table. This is what you will do in the following query:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.WORLDWIDE_WEATHER AS
+SELECT to_geography(wkt) as geog, 
+properties:"PREC"::float as prec, 
+properties:"TAVG"::float as tavg
+FROM table(PY_LOAD_GEOFILE(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'WorldClim.zip'), 'WorldClim.shp'));
+```
+
+Now that you have a table with average temperature and precipitation, you can visualize it using `pydeck`. Since the newly created table `ADVANCED_ANALYTICS.RASTER.WORLDWIDE_WEATHER` contains more than 800K rows, you may want to reduce its size. In the Python code below, you will do the following:
+- Read data from the weather table, group it using H3 cells of resolution 3, and calculate the average temperature value for each cell.
+- Get the GeoJSON of H3 cell centroids and pass it to a Pandas DataFrame.
+- Extract the longitude and latitude coordinates from the GeoJSON data to prepare it for visualization.
+- Define a color map and assign a color to each data point based on where its value falls within the quantiles.
+- Finally, create a `pydeck` scatterplot layer using the processed data.
+Of course, you could also visualize data using H3 cells as you've done before, but to demonstrate different visualization approaches, you will use points with a radius of 50 km. You can replace `avg(tavg)` with `avg(prec)` to visualize precipitation instead of average temperature.
+
+```
+import streamlit as st
+import pandas as pd
+import numpy as np
+import pydeck as pdk
+import json
+from typing import List
+import branca.colormap as cm
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+df = session.sql('''select st_asgeojson(h3_cell_to_point(h3_point_to_cell(geog, 3))) as geog, 
+                    avg(tavg) as value from ADVANCED_ANALYTICS.RASTER.WORLDWIDE_WEATHER
+                    group by all;''').to_pandas()
+
+df["lon"] = df["GEOG"].apply(lambda row: json.loads(row)["coordinates"][0])
+df["lat"] = df["GEOG"].apply(lambda row: json.loads(row)["coordinates"][1])
+
+
+df["VALUE"] = df["VALUE"].apply(lambda row: float(row))
+center_latitude = df['lat'].mean()
+center_longitude = df['lon'].mean()
+
+def get_quantiles(df_column: pd.Series, quantiles: List) -> pd.Series:
+    return df_column.quantile(quantiles)
+
+def get_color(df_column: pd.Series, colors: List, vmin: int, vmax: int, index: pd.Series) -> pd.Series:
+    color_map = cm.LinearColormap(colors, vmin=vmin, vmax=vmax, index=index)
+    return df_column.apply(color_map.rgb_bytes_tuple)
+
+quantiles = get_quantiles(df["VALUE"], [0, 0.2, 0.4, 0.6, 0.8, 1])
+colors = ['gray','blue','green','yellow','orange','red']
+
+df['COLOR'] = get_color(df['VALUE'], colors, quantiles.min(), quantiles.max(), quantiles)
+
+st.pydeck_chart(pdk.Deck(
+    map_style=None,
+    initial_view_state=pdk.ViewState(
+        latitude=center_latitude,
+        longitude=center_longitude, pitch=0, zoom=0
+    ),
+    layers=[
+        pdk.Layer(
+            "ScatterplotLayer",
+            data=df,
+            get_position=["lon", "lat"],
+            opacity=0.9,
+            stroked=True,
+            filled=True,
+            extruded=True,
+            wireframe=True,
+            get_color='COLOR',
+            get_fill_color='COLOR',
+            get_radius="50000",
+            auto_highlight=True,
+            pickable=False,
+        )
+    ],
+))
+```
+
+<img src ='assets/geo_ml_25.png' width=800>
+
+Now that you have all the data from GeoTiff and Shapefile stored in Snowflake tables, you can join them.
+
+### Step 4. Joining Data from Different Sources
+In this step, you will join data from two datasets. Let's start by joining the `Elevation` and `Weather` datasets. We observed in the visualizations above that the Elevation dataset covers a relatively small area in Africa, whereas the Weather dataset covers the whole world. To speed up joining these datasets, we can remove from the Weather dataset all points that are outside our area of interest, which corresponds to the coverage area of the Elevation dataset.
+
+In the query below, you will do the following:
+
+- Use native `ST_` functions to get the minimum and maximum boundaries of the Elevation dataset and create a polygon that corresponds to its outer boundaries.
+- Use the SedonaSnow [ST_Buffer](https://sedona.apache.org/1.5.1/api/snowflake/vector-data/Function/#st_buffer) function to extend that boundary by 0.5 degrees in all directions.
+- Filter out from the Weather dataset all points that are outside the boundaries created in the previous step.
+- Create the `ADVANCED_ANALYTICS.RASTER.WORLDWIDE_WEATHER` table with the new results.
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER AS
+with boundary as (SELECT min(st_xmin(geog)) as xmin, 
+max(st_xmax(geog)) as xmax,
+min(st_ymin(geog)) as ymin,
+max(st_ymax(geog)) as ymax,
+sedonasnow.sedona.st_buffer(to_geography('POLYGON ((' || xmin || ' ' || ymin || ', ' ||
+       			       xmin || ' ' || ymax || ', ' ||
+       			       xmax || ' ' || ymax || ', ' ||
+       			       xmax || ' ' || ymin || ', ' ||
+       			       xmin || ' ' || ymin ||'))'), 0.5) as external_boundary
+FROM ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION)
+SELECT *
+FROM ADVANCED_ANALYTICS.RASTER.WORLDWIDE_WEATHER,
+boundary
+WHERE ST_INTERSECTS(external_boundary, geog)
+```
+
+Now chech how many points contains the new dataset:
+
+```
+SELECT COUNT(*) FROM ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER
+```
+
+One hundred forty. As a next step, you need to join the `AFRICA_ELEVATION` table with `AFRICA_WEATHER`. Our goal is to find, for each point in the elevation dataset, the closest point from the weather dataset to get weather information. We can do this using different approaches. One approach would be to calculate nearest neighbours using an `ST_DWITHIN`-based join. In the query below, you join two datasets using points that are within 200 km of each other, then partition by objects in `AFRICA_ELEVATION` and, in each partition, sort by distance and keep only the first element:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.ELEVATION_WEATHER_NN AS
+SELECT t1.geog,
+       t1.band,
+       t2.prec,
+       t2.tavg
+FROM ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION t1,
+     ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER t2,
+WHERE ST_DWITHIN(t1.geog, t2.geog, 200000) QUALIFY ROW_NUMBER() OVER 
+(PARTITION BY st_aswkb(t1.geog) ORDER BY ST_DISTANCE(t1.geog, t2.geog)) <= 1;
+```
+
+It took more than 5 minutes on a `LARGE` warehouse. The problem with the query above is that, as a result of the join, it creates an internal table with 1.8 billion rows (12,967,201 × 140), which makes it quite a complex join.
+
+Let's try another approach, which will include two steps:
+
+- For the `AFRICA_WEATHER` table, create a table with Voronoi polygons.
+- Join `AFRICA_ELEVATION` and `AFRICA_WEATHER` using Voronoi polygons and `ST_WITHIN` instead of `ST_DWITHIN`.
+
+A Voronoi polygon is essentially a region consisting of all points closer to a specific seed point than to any other seed point, effectively partitioning space into cells around each seed. So when you join `AFRICA_ELEVATION` with `AFRICA_WEATHER` using points from the elevation table and Voronoi polygons from the weather table, you can be sure that for each elevation point, you are associating it with its nearest weather data.
+
+To build Voronoi polygons, you will use the [ST_VORONOIPOLYGONS](https://sedona.apache.org/1.5.1/api/snowflake/vector-data/Function/#st_voronoipolygons) function from the [SedonaSnow](https://app.snowflake.com/marketplace/listing/GZTYZF0RTY3/wherobots-ai-sedonasnow) native app. It takes a multi-object as input—in our case, a Multipoint—and returns Voronoi polygons for that object. Since it returns all polygons also as one object, we need a function that converts a multipolygon into multiple separate polygons. Run the following query to create such a UDF:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.ST_GETPOLYGONS(G OBJECT)
+RETURNS TABLE (POLYGON OBJECT)
+LANGUAGE JAVASCRIPT
+AS '
+{
+processRow: function split_multipolygon(row, rowWriter, context){
+    let geojson = row.G;
+    let polygons = [];
+    
+    function extractPolygons(geometry) {
+        if (geometry.type === "Polygon") {
+            polygons.push(geometry.coordinates);
+        } else if (geometry.type === "MultiPolygon") {
+            for (let i = 0; i < geometry.coordinates.length; i++) {
+                polygons.push(geometry.coordinates[i]);
+            }
+        } else if (geometry.type === "GeometryCollection") {
+            for (let i = 0; i < geometry.geometries.length; i++) {
+                extractPolygons(geometry.geometries[i]);
+            }
+        }
+        // Ignore other geometry types (e.g., Point, LineString)
+    }
+    
+    extractPolygons(geojson);
+    
+    for (let i = 0; i < polygons.length; i++) {
+        rowWriter.writeRow({POLYGON: {
+                "type" : "Polygon",
+                "coordinates": polygons[i]
+            }
+        });
+    }
+}
+}
+';
+```
+
+In the next query, you build Voronoi polygons for the weather table and enrich the `AFRICA_WEATHER` table with those polygons:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER AS
+-- voronoi_grid CTE that stores all points from AFRICA_WEATHER table 
+-- into one object and creates Voronoi Polygons
+with voronoi_grid as (SELECT sedonasnow.sedona.ST_VoronoiPolygons(st_union_agg(geog)) as polygons
+from ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER),
+-- CTE that flattens results of voronoi_grid CTE
+voronoi_grid_flattened as (select to_geography(polygon) as polygon
+from voronoi_grid,
+table(ADVANCED_ANALYTICS.RASTER.ST_GETPOLYGONS(st_asgeojson(polygons))))
+-- Below you join table with voronoi polygons and table with weather information
+SELECT *
+FROM ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER
+INNER JOIN voronoi_grid_flattened
+ON ST_WITHIN(geog, polygon);
+```
+
+Now when you have voronoi polygons in `AFRICA_WEATHER` table, you can join `AFRICA_ELEVATION` and `AFRICA_WEATHER`. Run the following query:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.ELEVATION_WEATHER_VORONOI AS
+select t1.geog, band, prec, tavg
+from ADVANCED_ANALYTICS.RASTER.AFRICA_ELEVATION t1
+INNER JOIN ADVANCED_ANALYTICS.RASTER.AFRICA_WEATHER t2
+ON ST_INTERSECTS(t1.geog, t2.polygon)
+```
+
+Let's look inside of the newly created table:
+
+```
+SELECT TOP 5 * FROM ADVANCED_ANALYTICS.RASTER.ELEVATION_WEATHER_VORONOI
+```
+
+<img src ='assets/geo_ml_26.png' width=700>
+
+Now you have data from two unstructured sources stored in a single table. You can use this table to feed into an ML model or enrich it further with some additional features.
+
+### Advanced Raster Use Case
+Sometimes raster files can be really large, but as we mentioned earlier, often most of the points contain no data or some default values. As an example, let's look at the raster file from [Forrest Data Lab](https://skogsdatalabbet.se/services/) (`Skogsdatalabbets filserver vid SLU` › `SLU_Forest_Map` › `Tradslag`). `Bok_andel.tif` is 149 MB in size and has a resolution of 52,600×123,200, which results in about 6.5 billion points. Loading all those points would be quite an expensive step, but let's check how band values are distributed inside of that file. Run the following query:
+
+```
+SELECT *
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_RASTER_BAND_VALUE_STATS(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'Bok_andel.tif')));
+```
+
+You see that the most frequent band value is 0, which corresponds to 99% of the points. If we load data without those points, we probably won't lose any useful information, but we can have a good saving on compute. Additionally, you can resample the raster to reduce its size. Create a UDF that does both - it resamples to reduce the initial file to the given number of points (50M by default) and ignores given band values:
+
+```
+CREATE OR REPLACE FUNCTION ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOTIFF_RESAMPLE_SKIP(
+    PATH_TO_FILE STRING,
+    SKIP_VALUES ARRAY DEFAULT NULL,   -- Optional SKIP_VALUES parameter
+    MAX_PIXELS INT DEFAULT 50000000   -- New optional MAX_PIXELS parameter with default value
+)
+RETURNS TABLE (
+    x FLOAT,
+    y FLOAT,
+    band_values ARRAY,
+    band_count INT
+)
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.8'
+PACKAGES = ('numpy', 'rasterio', 'snowflake-snowpark-python')
+HANDLER = 'GeoTiffExtractor'
+AS $$
+import numpy as np
+import rasterio
+from rasterio.enums import Resampling
+from snowflake.snowpark.files import SnowflakeFile
+import math
+
+class GeoTiffExtractor:
+    def process(self, PATH_TO_FILE: str, SKIP_VALUES=None, MAX_PIXELS=500000000):
+        try:
+            # Read the GeoTIFF file from the specified stage path
+            with SnowflakeFile.open(PATH_TO_FILE, 'rb', require_scoped_url=False) as input_file:
+                tif_bytes = input_file.read()  # Read the entire file into bytes
+
+            # Use rasterio's MemoryFile to read the TIFF data from memory
+            with rasterio.MemoryFile(tif_bytes) as memfile:
+                with memfile.open() as dataset:
+                    # Get the original dimensions
+                    height = dataset.height
+                    width = dataset.width
+
+                    total_pixels = height * width
+
+                    if total_pixels > MAX_PIXELS:
+                        # Calculate scaling factor
+                        scaling_factor = math.sqrt(MAX_PIXELS / total_pixels)
+                        new_height = int(height * scaling_factor)
+                        new_width = int(width * scaling_factor)
+
+                        # Read the data with the new dimensions
+                        data = dataset.read(
+                            out_shape=(
+                                dataset.count,
+                                new_height,
+                                new_width
+                            ),
+                            resampling=Resampling.average
+                        )
+
+                        # Update the transform for the new dimensions
+                        transform = dataset.transform * dataset.transform.scale(
+                            (width / new_width),
+                            (height / new_height)
+                        )
+                    else:
+                        # Read all bands into a NumPy array
+                        data = dataset.read()  # Shape: (band_count, rows, cols)
+                        transform = dataset.transform
+                        new_height = height
+                        new_width = width
+
+                    # Get the number of bands
+                    band_count = data.shape[0]
+
+                    # Get the coordinates
+                    rows, cols = np.indices((new_height, new_width))
+                    xs, ys = rasterio.transform.xy(
+                        transform, rows, cols, offset='center'
+                    )
+
+                    # Flatten the arrays
+                    xs = np.array(xs).flatten()
+                    ys = np.array(ys).flatten()
+                    pixel_values = data.reshape((band_count, -1)).T  # Shape: (num_pixels, band_count)
+
+                    # Handle SKIP_VALUES
+                    if SKIP_VALUES:
+                        # Convert SKIP_VALUES to a NumPy array for efficient comparison
+                        skip_values = np.array(SKIP_VALUES)
+
+                        # Create a mask for pixels to skip
+                        skip_mask = np.isin(pixel_values, skip_values).any(axis=1)
+                        # Invert the skip_mask to get the mask of pixels to keep
+                        mask = ~skip_mask
+
+                        # Apply the mask to xs, ys, and pixel_values
+                        xs_filtered = xs[mask]
+                        ys_filtered = ys[mask]
+                        pixel_values_filtered = pixel_values[mask]
+                    else:
+                        # If SKIP_VALUES not provided, use all data
+                        xs_filtered = xs
+                        ys_filtered = ys
+                        pixel_values_filtered = pixel_values
+
+                    # For each pixel, yield a row with x, y, and band values
+                    for i in range(len(xs_filtered)):
+                        # Get the pixel values for all bands
+                        band_vals = pixel_values_filtered[i].tolist()
+                        yield (
+                            xs_filtered[i],
+                            ys_filtered[i],
+                            band_vals,
+                            band_count
+                        )
+        except Exception as e:
+            raise Exception(f"Error during data extraction: {e}")
+$$;
+```
+
+Now you can load data from `Bok_andel.tif`. Run the query below to reduce the size of the initial file to 500 million points and ignore points where the band value equals zero.
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.BOK_ANDEL AS
+SELECT x, y,
+band_values[0]::float as band
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_LOAD_GEOTIFF_RESAMPLE_SKIP(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'Bok_andel.tif'), [0], 500000000));
+```
+
+In the prevous query you stored `x` and `y` as raw coordinates and the size of the newly created table has 7,028,074 rows. In the following query you check the metadata of the initial file to see what SRID it uses:
+
+```
+SELECT *
+FROM table(ADVANCED_ANALYTICS.RASTER.PY_EXTRACT_GEOTIFF_METADATA(build_scoped_file_url(@ADVANCED_ANALYTICS.RASTER.FILES, 'Bok_andel.tif')));
+```
+
+The SRID is `EPSG:25833`. To store data as `GEOGRAPHY` type for further visualisation you need to convert it into `EPSG:4326`. Run the following query:
+
+```
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.RASTER.BOK_ANDEL AS
+SELECT TO_GEOGRAPHY(ST_TRANSFORM(ST_MAKEGEOMPOINT(x, y), 25833, 4326)) as geom, band
+FROM ADVANCED_ANALYTICS.RASTER.BOK_ANDEL
+```
+
+As a final step you visualize the results using H3 cells:
+
+```
+import streamlit as st
+import pandas as pd
+import pydeck as pdk
+from typing import List
+import branca.colormap as cm
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+
+# Execute the updated SQL query
+df = session.sql('''select h3_point_to_cell_string(geom, 7) as h3_cell,
+                    st_x(h3_cell_to_point(h3_cell)) as lon,
+                    st_y(h3_cell_to_point(h3_cell)) as lat,
+                    avg(band) as band 
+                    FROM ADVANCED_ANALYTICS.RASTER.BOK_ANDEL
+                    group by all;''').to_pandas()
+
+df["BAND"] = df["BAND"].apply(lambda row: float(row))
+center_latitude = df['LAT'].mean()
+center_longitude = df['LON'].mean()
+
+def get_quantiles(df_column: pd.Series, quantiles: List) -> pd.Series:
+    return df_column.quantile(quantiles)
+
+def get_color(df_column: pd.Series, colors: List, vmin: int, vmax: int, index: pd.Series) -> pd.Series:
+    color_map = cm.LinearColormap(colors, vmin=vmin, vmax=vmax, index=index)
+    return df_column.apply(color_map.rgb_bytes_tuple)
+    
+quantiles = get_quantiles(df["BAND"], [0, 0.2, 0.4, 0.6, 0.8, 1])
+colors = ['palegreen', 'lightgreen', 'mediumseagreen', 'forestgreen', 'seagreen', 'darkgreen']
+
+df['BAND'] = get_color(df['BAND'], colors, quantiles.min(), quantiles.max(), quantiles)
+
+st.pydeck_chart(pdk.Deck(
+    map_style=None,
+    initial_view_state=pdk.ViewState(
+        latitude=center_latitude,
+        longitude=center_longitude, 
+        zoom=5.2, 
+        bearing=0, 
+        pitch=0),
+    layers=[
+        pdk.Layer(
+            "H3HexagonLayer",
+            df,
+            opacity=0.9,
+            stroked=False,
+            get_hexagon="H3_CELL",
+            get_fill_color='BAND',
+            extruded=False,
+            wireframe=True,
+            line_width_min_pixels=0,
+            auto_highlight=True,
+            pickable=False,
+            filled=True
+        )
+    ],
+))
+```
+
+<img src ='assets/geo_ml_27.png' width=800>
+
+### Conclusion
+
+In this lab, you have learned how to load geospatial data from unstructured formats, such as GeoTiff and Shapefiles and what techniques you can apply when you need to join data using nearest neighbout approach. You can use these or similar UDFs to load data from other formats.
+
+## Creating Interactive Maps with Kepler.gl
+
+Duration: 30
+
+In this Lab you will learn how to create interactive maps directly within Snowflake using [Kepler.gl](https://kepler.gl), powered by [Dekart.xyz](https://dekart.xyz/docs/snowflake-snowpark/about/). You will use Dekart.XYZ app and use public datasets from Marketplace to visualize UK highways with color-coded density of nearby EV charging stations. 
+
+Yor final result will be a map similar to this one:
+
+<img src ='assets/geo_ml_39.png' width=800>
+
+### Data aquisition 
+For this project you will use an Overture Maps [Divisions](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9M9/carto-overture-maps-divisions), [Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places), and [Transportation](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KJ/carto-overture-maps-transportation) datasets offered by CARTO as free Marketplace listins.
+
+- Navigate to the Marketplace screen using the menu on the left side of the window
+- Search for `Overture Maps - Divisions` in the search bar
+- Once in the listing, click the big blue `Get` button
+
+> aside negative
+>  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
+
+<img src ='assets/geo_ml_28.png' width=500>
+
+Similarly you need to find and install [Overture Maps - Places](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KR/carto-overture-maps-places), and [Overture Maps - Transportation](https://app.snowflake.com/marketplace/listing/GZT0Z4CM1E9KJ/carto-overture-maps-transportation) datasets.
+
+> aside positive
+>  These datasets include information on administrative divisions, transportation routes, and points of interest. The [Overture Maps Schema Reference](https://docs.overturemaps.org/schema/reference/) is an excellent resource to understand the structure and details of each dataset.
+
+### Installing Dekart.xyz
+
+In this step you will install [Dekart – Kepler.gl maps inside Snowflake](https://app.snowflake.com/marketplace/listing/GZSYZJNO4W/dekart-xyz-dekart-%E2%80%93-kepler-gl-maps-inside-snowflake) application and run it inside of Snowpark Container Services. 
+
+
+As a first step you will install the Marketplace listing:
+- Navigate to the Marketplace screen using the menu on the left side of the window
+- Search for `Dekart – Kepler.gl maps inside Snowflake` in the search bar
+- Once in the listing, click the big blue `Get` button
+- In the "Warehouse used for installation" field select the warehouse which will be used for installation process.
+- Click the `Try for Free` button
+
+<img src ='assets/geo_ml_29.png' width=500>
+
+> aside negative
+>  Note: When trial end you won't be automatically swithched to Subscription-based usage. If you decide to continue using Dekart, you would need to manually enable subscription.
+
+Follow the installation instructions as displayed in the Snowsight interface.
+
+<img src ='assets/geo_ml_30.png' width=800>
+
+Grant Account Privileges to Dekart and allow connections to the Mapbox API. Dekart uses Mapbox for rendering maps. No user data is sent to Mapbox. Dekart creates a single node `CPU_X64_XS` compute pool and `XSMALL` warehouse.
+
+<img src ='assets/geo_ml_31.png' width=800>
+
+Click `Activate`. Activation process might take up to 10 minutes.
+
+<img src ='assets/geo_ml_32.png' width=800>
+
+While it's activating you can go to Worksheets and grant access to Overture Maps datasets. This ensures that Dekart can read and visualize the data within Snowflake. Note, tht since you run Dekart withon Snowflake Container Services, your data stays in Snowflake and won't be transfered externally. Execute the following SQL commands in Snowflake (make sure you have the `ACCOUNTADMIN` role for these operations):
+
+```
+GRANT IMPORTED PRIVILEGES ON DATABASE OVERTURE_MAPS__TRANSPORTATION TO application DEKART__KEPLER_GL_MAPS_INSIDE_SNOWFLAKE;
+GRANT IMPORTED PRIVILEGES ON DATABASE OVERTURE_MAPS__DIVISIONS TO application DEKART__KEPLER_GL_MAPS_INSIDE_SNOWFLAKE;
+GRANT IMPORTED PRIVILEGES ON DATABASE OVERTURE_MAPS__PLACES TO application DEKART__KEPLER_GL_MAPS_INSIDE_SNOWFLAKE;
+```
+When Activation is done, do the following steps:
+- Open the Dekart App within Snowsight by going to `Data Products` > `Apps`. Selecting Dekart app and click `Launch App`.
+- Authorize the Dekart App with your Snowflake account.
+- In the Dekart interface, click `Create Report` to start building your map.
+
+<img src ='assets/geo_ml_33.png' width=800>
+
+Congratulations! You have now Dekart app running in your Snowflake environment and now you're ready to start creating maps!
+
+### Build maps with SQL in Dekart
+Dekart allows you to visualize data directly from SQL queries, which means you can write custom queries to shape the data as you like.
+
+In the new report screen you see three main components: the `SQL` panel on the right, the `Layers` panel on the left and the map in the center. Rename the report, set the name to `Charging Station Density`. Rename the first SQL tab to `uk_boundary` and run the following query:
+
+```
+SELECT ST_ASWKT(GEOMETRY) as GEOMETRY
+FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+WHERE COUNTRY = 'GB' AND SUBTYPE = 'country';
+```
+
+In this query you use Overture Maps - Divisions dataset to get the shape of the UK boundary. As soon as query is completed, you will see a new layer in the `Layers` panel. You can expand it, to customise if needed, for example to make it transparent you can turn off `Fill color` toggle.
+
+<img src ='assets/geo_ml_35.gif' width=800>
+
+As a next step, add a road network for the UK. Create a new tab in `SQL` panel and name it `uk_roads`. Run the following query that joins road data from `Overture Maps - Transportation` dataset and filters it so it shows only motoways and trunk roads for the UK area:
+
+```
+with uk_boundary as (SELECT GEOMETRY
+FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+WHERE COUNTRY = 'GB' AND SUBTYPE = 'country')
+SELECT ST_ASWKT(s.GEOMETRY) as GEOMETRY, s.NAMES, s.ID
+FROM OVERTURE_MAPS__TRANSPORTATION.CARTO.SEGMENT s, uk_boundary ub
+WHERE ST_INTERSECTS(ub.GEOMETRY, s.GEOMETRY) AND s.CLASS IN ('motorway', 'trunk');
+```
+
+When the query is complete, you'll see the new layer in the Layers panel with the name `uk_roads` and it contains about 126K road segments that are viualised on the map. You can change the colour of the linestrings using `Stroke Color` field in the corresponding Layer.
+
+<img src ='assets/geo_ml_36.png' width=700>
+
+In the next step you will add locations of Electric Vehicles charging sttions as a new layer. Create a new SQL tab, name it `EV_stations` and run the following query:
+
+```
+WITH uk_boundary AS (SELECT GEOMETRY
+FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+WHERE COUNTRY = 'GB' AND SUBTYPE = 'country')
+SELECT ST_ASWKT(p.GEOMETRY) as GEOMETRY
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE p, uk_boundary ub
+WHERE ST_CONTAINS(ub.GEOMETRY, p.GEOMETRY) AND p.CATEGORIES::TEXT ILIKE '%charging%';
+```
+
+In the newly created layer `EV_stations` play with `Stroke Color` and `Radius` to adjust the size of points that correspond to chargins stations locations.
+
+<img src ='assets/geo_ml_37.png' width=700>
+
+As a last step, create a new SQL tab, name it `EV_stations_density` and run the following query that for each road segment calculates number of charging stations within 50km radius:
+
+```
+WITH uk_boundary as (SELECT GEOMETRY
+FROM OVERTURE_MAPS__DIVISIONS.CARTO.DIVISION_AREA
+WHERE COUNTRY = 'GB' AND SUBTYPE = 'country'),
+road_segments as (SELECT s.GEOMETRY, s.NAMES, s.ID
+FROM OVERTURE_MAPS__TRANSPORTATION.CARTO.SEGMENT s, uk_boundary ub
+WHERE ST_INTERSECTS(ub.GEOMETRY, s.GEOMETRY) AND s.CLASS IN ('motorway', 'trunk')),
+charging_stations as (SELECT p.GEOMETRY
+FROM OVERTURE_MAPS__PLACES.CARTO.PLACE p, uk_boundary ub
+WHERE ST_CONTAINS(ub.GEOMETRY, p.GEOMETRY) AND p.CATEGORIES::TEXT ILIKE '%charging%'),
+charging_count AS (
+   SELECT r.ID AS road_id, r.NAMES AS road_name, COUNT(cs.GEOMETRY) AS num_charging_stations
+   FROM road_segments r
+   LEFT JOIN charging_stations cs ON ST_DISTANCE(r.GEOMETRY, cs.GEOMETRY) <= 50000
+   GROUP BY r.ID, r.NAMES
+)
+SELECT r.ID, r.NAMES, ST_ASWKT(r.GEOMETRY) as GEOMETRY, cc.num_charging_stations
+FROM road_segments r
+JOIN charging_count cc ON r.ID = cc.road_id;
+```
+
+This is our final visualization. Before editing its look and feel, you can hide other layers by clicking on the 'eye' icon. Then, select `EV_stations_density`, click on the three dots next to the `Stroke Color` field, and choose `NUM_CHARGING_STATIONS` as the source for the stroke color. You can also change the color map and select a color scheme of your choice.
+
+<img src ='assets/geo_ml_38.gif' width=700>
+
+You can now use top right menu to save the newly created map and to share it within your organization.
+
+### Conclusion
+
+In this Lab, you created an interactive, real-time map within Snowflake, using Dekart and the Overture Maps datasets. You explored UK highway infrastructure with a focus on EV charging station density.
+
+<img src ='assets/geo_ml_39.png' width=800>
+
+#### What You Learned
+- Creating interactive maps directly within Snowflake using Kepler.gl and Dekart.
+- Accessing and using public Overture Maps data to create meaningful geospatial visualizations.
+- Writing SQL queries for filtering, calculating, and mapping geospatial data.
+
+#### Resources
+- [Snowflake Kepler.gl Maps Examples](https://dekart.xyz/docs/about/snowflake-kepler-gl-examples/): Explore more examples and use cases for Kepler.gl in Snowflake.
+- [Dekart Snowpark Application Documentation](https://dekart.xyz/docs/snowflake-snowpark/about/): Learn more about Dekart and its capabilities.
+- [Overture Maps Schema Reference](https://docs.overturemaps.org/schema/reference/): For more details on available tables and fields.
+
 ## Conclusion And Resources
 
 Duration: 4
 
-Congratulations! You've successfully performed data engineering and data science tasks and trained a model to predict future taxi demand. Additionaly you practiced in creation of the LLM model to analyse sentiment analysis of the textual data. For each of those use cases you created a Streamlit application to analyse results.
-
-We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/tGDzTpu41huWFDXi9).
+Congratulations! You've successfully performed data analytics, data engineering and data science tasks for various use cases.
+Congratulations! You've successfully performed data analytics, data engineering and data science tasks for various use cases.
 
 ### What You Learned
 
@@ -1337,3 +3156,9 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - [Geospatial Analytics for Retail with Snowflake and CARTO](https://quickstarts.snowflake.com/guide/geospatial_analytics_with_snowflake_and_carto_ny/index.html)
 - [Geospatial Analysis using Geometry and Geography Data Types quickstart](https://quickstarts.snowflake.com/guide/geo_analysis_geometry/index.html?index=..%2F..index#0) 
 - [Performance Optimization Techniques for Geospatial queries](https://quickstarts.snowflake.com/guide/geo_performance/index.html?index=..%2F..index#0)
+
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/tGDzTpu41huWFDXi9).
+
+
+We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/tGDzTpu41huWFDXi9).
+
