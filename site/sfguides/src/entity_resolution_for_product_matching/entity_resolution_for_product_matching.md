@@ -29,18 +29,18 @@ This guide covers:
 
 - How to use [Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) (Cortex Complete) for access to industry-leading large language models (LLMs)
 
-- How to build a chatbot application using [Streamlit](https://docs.streamlit.io/) in Snowflake
+- How to build a chatbot application using Cortex Analyst and [Streamlit](https://docs.streamlit.io/) in Snowflake
 
 ### Prerequisites
 - A [GitHub](https://github.com/) Account
 
-- A Snowflake account with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a [free trial](https://signup.snowflake.com/?_fsi=OuImfiWC&_fsi=OuImfiWC&_fsi=05dxBvxS&_fsi=05dxBvxS) or use a different role.
+- A Snowflake account with a role that has the ability to create database, schema, tables, and stages. If not, you will need to register for a [free trial](https://signup.snowflake.com/?_fsi=OuImfiWC&_fsi=OuImfiWC&_fsi=05dxBvxS&_fsi=05dxBvxS) or use a different role.
 
 ### What You Will Build
 
-- A Notebook to process and harmonize product data
+- A Notebook to process and harmonize product data and build a product matching engine using Cortex AI
 
-- A Streamlit application to interact with the aggregated data and extract actionable insights
+- A Streamlit Chatbot to interact with the aggregated data and extract actionable insights using Natural Language
 
 <!-- --------------------------->
 ## Architecture
@@ -48,13 +48,13 @@ This guide covers:
 
 The architecture of the Entity Resolution solution is designed to generate and validate product matches. 
 
-Here's a detailed walkthrough of how we use Snowflake's AI/ML features to complete this workflow:
+Here's a detailed walkthrough of how we use Snowflake's AI features to complete this workflow:
 
 <img src="assets/lucid.png"/>
 
-**Preprocessing Data**: This begins with the ingestion of data into Snowflake. Data sources include product UPCs, descriptions, and performance on company websites, measured by estimated view and purchase data from various retailers and e-commerce platforms. Organized tables are created to provide two product catalogs to match between. The descriptions of the products are cleaned, having special characters removed so they do not influence feature extraction.
+**Preprocessing Data**: This process begins with data from Similarweb Ltd, a provider on Snowflake Marketplace. The dictionary for their dataset includes product UPCs, descriptions, and performance on company websites, measured by estimated view and purchase data from various retailers and e-commerce platforms. From there, we simply create tables to provide two product catalogs to match between. The descriptions of the products are cleaned, having special characters removed so they do not influence feature extraction.
 
-**Extracting Features**: Snowflake Notebooks are leveraged to provide an integrated development environment where SQL and Python are used to query, manipulate, and prepare the data. This automates the extraction of relevant features, ensuring that data from various sources is consolidated and ready for subsequent steps. In our case, the cleaned product descriptions from the last step are used to create vector embeddings via Snowflake's `EMBED_TEXT_768` function. 
+**Generate Embeddings**: Snowflake Notebooks are leveraged to provide an integrated development environment where SQL and Python are used to query, manipulate, and prepare the data. This automates the extraction of relevant features, ensuring that data from various sources is consolidated and ready for subsequent steps. In our case, the cleaned product descriptions from the last step are used to create vector embeddings via Snowflake's `EMBED_TEXT_768` function. 
 
 **Embedding-Based Matching**: After extracting feature-rich embeddings for product descriptions, the next step involves leveraging these dense vector representations to measure similarity between items. Vector similarity metrics such as cosine similarity are calculated to identify matching items; this approach enables precise product matching even when descriptions vary in format or content. Pairs of products that have a similarity score over a 0.9 are listed as proposed product matches for further review. Embedding-based matching plays a critical role in resolving entities and linking products effectively, ensuring a robust matching framework in diverse datasets.
 
@@ -96,8 +96,10 @@ Now on the left hand side, navigate to Data > Databases and find the `PRODUCT_MA
 
 Click '+ Files' in the top right of the stage. We'll be downloading a semantic model from the github repository, and uploading it to a stage. **Follow these steps**:
 
-- *Semantic Model:* Download the `matches_semantic_model.yml` file from this [link](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts/streamlit/model) and upload it to the `MODEL` stage.
+- *Semantic Model:* Download the `matches_semantic_model.yml` file from this [link](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/streamlit/model) and upload it to the `MODEL` stage.
 <img src="assets/model_stage.png"/>
+
+For the Cortex Analyst we will use later to power our chatbot, the semantic model is crucial for driving context-aware searches and matches. It structures raw data into interconnected concepts and relationships, empowering Cortex to produce precise, meaningful results. By aligning domain-specific terms with user queries, the model aids analysts in identifying patterns and gaining insights while mitigating issues related to identifying specific products or terms.
 
 <!-- --------------------------->
 ## Access Notebook
@@ -137,9 +139,11 @@ For the Streamlit application, please follow these steps:
     - Warehouse: `PRODUCT_MATCHING_DS_WH`
 - Create Application
 
-Snowflake will create a default Streamlit application for you with example code. Please copy the contents of the `streamlit_app.py` file from this [link](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts/streamlit), and replace the code on the left hand side. Afterwards, please click the Close Editor option on the bottom left to view the Streamlit application!
+Snowflake will create a default Streamlit application for you with example code. Please copy the contents of the `streamlit_app.py` file from this [link](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/streamlit), and replace the code on the left hand side. Afterwards, please click the Close Editor option on the bottom left to view the Streamlit application!
 
 <img src="assets/editor.png"/>
+
+The semantic model from earlier is being used earlier in this app! It powers advanced data analysis by structuring and interpreting concepts in the dataset, enabling the chatbot to respond meaningfully. By integrating this model, the app can answer complex questions, and provide insights based on relationships in the data. This foundation ensures the chatbot delivers contextually relevant and actionable outputs.
 
 With this **Chatbot** you can now interact with product data using an intuitive Q&A interface powered by Snowflake Cortex. Ask questions about listings, comparative sales and views data, and general brand performance comparisons. Search for specific details, and receive concise answers along with the queries generated by **Cortex Analyst**.
 
@@ -161,9 +165,9 @@ Since our data from Similarweb Ltd is based around estimated product views and p
 In this guide, you learned how to use Snowflake's Notebooks and Cortex AI to harmonize retailer data, finding shared product offerings and aggregating their performane data. You also learned how to use Streamlit to create an intuitive application for interacting with the analyzed data.
 ### What You Learned
 - How to use Snowflake Notebooks and Snowpark Python for data processing
-- How to leverage Snowflake AI/ML functions to create and compare embeddings
+- How to leverage Snowflake AI functions to create and compare embeddings
 - How to use Cortex LLM functions (Cortex Complete) for access to industry-leading large language models (LLMs)
-- How to prototype a UI using Streamlit
+- How to develop an application using Streamlit
 ### Related Resources
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex.html)
 - [Streamlit Documentation](https://docs.streamlit.io/)
