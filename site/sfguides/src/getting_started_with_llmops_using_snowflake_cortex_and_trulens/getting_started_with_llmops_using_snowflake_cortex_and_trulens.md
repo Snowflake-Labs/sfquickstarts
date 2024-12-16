@@ -348,7 +348,7 @@ The first thing we need to do however, is to [set the database connection to Sno
 from trulens.core import TruSession
 from trulens.connectors.snowflake import SnowflakeConnector
 
-tru_snowflake_connector = SnowflakeConnector(**connection_params)
+tru_snowflake_connector = SnowflakeConnector(snowpark_session=snowpark_session)
 
 tru_session = TruSession(connector=tru_snowflake_connector)
 ```
@@ -416,7 +416,7 @@ from trulens.core import Feedback
 from trulens.core import Select
 import numpy as np
 
-provider = Cortex(snowflake_connector, "mistral-large")
+provider = Cortex(snowpark_session.connection, "llama3.1-8b")
 
 f_groundedness = (
     Feedback(provider.groundedness_measure_with_cot_reasons, name="Groundedness")

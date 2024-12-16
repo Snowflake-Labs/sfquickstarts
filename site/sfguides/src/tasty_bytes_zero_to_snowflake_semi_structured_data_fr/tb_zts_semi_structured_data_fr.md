@@ -60,7 +60,7 @@ Cette section vous explique comment vous connecter à Snowflake, comment créer 
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Étape 5 – Renommer une feuille de calcul
-- Renommez la feuille de calcul en cliquant sur le nom généré automatiquement (horodatage), puis en saisissant « Tasty Bytes – Données semi-structurées ».
+- Renommez la feuille de calcul en cliquant sur le nom généré automatiquement (horodatage), puis en saisissant "Tasty Bytes – Données semi-structurées".
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Étape 6 – Accéder au fichier SQL de ce guide Quickstart dans GitHub
@@ -82,7 +82,10 @@ Duration: 1
 En tant que data engineers de Tasty Bytes, il nous a été demandé d’établir le profil de nos données de menu, qui doit inclure une colonne pour les données semi-structurées. Depuis cette table de menu, nous devons créer une vue de couche d’analyse qui affiche les données relatives aux ingrédients et aux restrictions alimentaires pour nos utilisateurs finaux.
 
 ### Étape 1 – Définir le contexte et interroger la table
-Commençons par exécuter en même temps les trois premières requêtes qui permettront de : – Définir le contexte du rôle sur `tasty_data_engineer` – Définir le contexte de l’entrepôt sur `tasty_de_wh` – Produire un jeu de résultats avec une requête [TOP](https://docs.snowflake.com/fr/sql-reference/constructs/top_n) 10 de notre table `raw_pos.menu`
+Commençons par exécuter en même temps les trois premières requêtes qui permettront de: 
+- Définir le contexte du rôle sur `tasty_data_engineer` 
+- Définir le contexte de l’entrepôt sur `tasty_de_wh` 
+- Produire un jeu de résultats avec une requête [TOP](https://docs.snowflake.com/fr/sql-reference/constructs/top_n) 10 de notre table `raw_pos.menu`
 
 ``` 
 USE ROLE tasty_data_engineer; 
@@ -353,7 +356,13 @@ Duration: 1
 ### Conclusion
 Beau travail ! Vous avez terminé le guide Quickstart Tasty Bytes Débuter avec Snowflake sur les données semi-structurées. 
 
-Vous avez : - Découvert ce qu’est le type de données VARIANT - Utilisé la notation par points pour interroger des données semi-structurées - Aplati des données semi-structurées - Analysé des tableaux (ARRAY) - Créé deux vues - Créé un graphique à partir d’un jeu de résultats dans Snowsight
+Vous avez : 
+- Découvert ce qu’est le type de données VARIANT 
+- Utilisé la notation par points pour interroger des données semi-structurées 
+- Aplati des données semi-structurées 
+- Analysé des tableaux (ARRAY) 
+- Créé deux vues 
+- Créé un graphique à partir d’un jeu de résultats dans Snowsight
 
 Si vous voulez recommencer ce guide Quickstart, utilisez les scripts de réinitialisation en bas de votre feuille de calcul associée.
 
