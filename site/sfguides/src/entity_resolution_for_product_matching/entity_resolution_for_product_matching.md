@@ -43,7 +43,6 @@ This guide covers:
 
 - A Streamlit application to interact with the aggregated data and extract actionable insights
 
-
 <!-- --------------------------->
 ## Architecture
 **Duration: 3 minutes**
