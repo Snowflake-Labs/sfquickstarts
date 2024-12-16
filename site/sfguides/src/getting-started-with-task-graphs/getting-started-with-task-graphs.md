@@ -58,20 +58,28 @@ GRANT ALL ON WAREHOUSE TASK_GRAPH_WH TO ROLE TASK_GRAPH_ROLE;
 CREATE OR REPLACE DATABASE TASK_GRAPH_DATABASE;
 CREATE OR REPLACE SCHEMA TASK_GRAPH_SCHEMA;
 
+-- Create git integration to load our notebook
+CREATE API INTEGRATION IF NOT EXISTS GITHUB_PUBLIC
+API_PROVIDER = GIT_HTTPS_API
+API_ALLOWED_PREFIXES = ('https://github.com/')
+ENABLED = TRUE;
+
+CREATE OR REPLACE GIT REPOSITORY SNOWFLAKE_LABS 
+ORIGIN = 'https://github.com/Snowflake-Labs/getting-started-with-task-graphs' 
+API_INTEGRATION = 'GITHUB_PUBLIC';
+
+GRANT READ ON GIT REPOSITORY SNOWFLAKE_LABS TO ROLE TASK_GRAPH_ROLE;
 GRANT OWNERSHIP ON DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAPH_ROLE COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAPH_ROLE COPY CURRENT GRANTS;
 ```
 ### Create Task Graph Notebook
 
-- Download the notebook from this [link](https://github.com/Snowflake-Labs/getting-started-with-task-graphs/blob/main/notebooks/0_start_here.ipynb)
 - Change role to TASK_GRAPH_ROLE
-- Navigate to Projects > Notebooks in Snowsight
-- Click Import .ipynb from the + Notebook dropdown
-- Create a new notebok with the following settings
-  - Notebook Location: TASK_GRAPH_DATABASE, TASK_GRAPH_SCHEMA
-  - Warehouse: TASK_GRAPH_WH
+- Navigate to DATA > TASK_GRAPH_DATABASE > TASK_GRAPH_SCHEMA > Git Repositories > SNOWFLAKE_LABS
+- From the SNOWFLAKE_LABS repository, navigate to the notebooks folder
+- Create notebook `0_start_here.ipynb` by clicking the three dots > Create notebook. The database, schema, and warehouse should prepopulate. 
 
-![create-notebooks](assets/import-notebook.png)
+![import-notebook](assets/create-notebook-git.png)
 
 ### Run Task Graph Notebook
 
