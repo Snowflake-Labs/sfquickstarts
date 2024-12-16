@@ -43,9 +43,27 @@ This guide covers:
 
 - A Streamlit application to interact with the aggregated data and extract actionable insights
 
-### Architecture Diagram
+<!-- --------------------------->
+## Architecture
+**Duration: 3 minutes**
 
-<img src="assets/architecture_diagram.png"/>
+The architecture of the Entity Resolution solution is designed to generate and validate product matches. 
+
+Here's a detailed walkthrough of how we use Snowflake's AI/ML features to complete this workflow:
+
+<img src="assets/lucid.png"/>
+
+**Preprocessing Data**: This begins with the ingestion of data into Snowflake. Data sources include product UPCs, descriptions, and performance on company websites, measured by estimated view and purchase data from various retailers and e-commerce platforms. Organized tables are created to provide two product catalogs to match between. The descriptions of the products are cleaned, having special characters removed so they do not influence feature extraction.
+
+**Extracting Features**: Snowflake Notebooks are leveraged to provide an integrated development environment where SQL and Python are used to query, manipulate, and prepare the data. This automates the extraction of relevant features, ensuring that data from various sources is consolidated and ready for subsequent steps. In our case, the cleaned product descriptions from the last step are used to create vector embeddings via Snowflake's `EMBED_TEXT_768` function. 
+
+**Embedding-Based Matching**: After extracting feature-rich embeddings for product descriptions, the next step involves leveraging these dense vector representations to measure similarity between items. Vector similarity metrics such as cosine similarity are calculated to identify matching items; this approach enables precise product matching even when descriptions vary in format or content. Pairs of products that have a similarity score over a 0.9 are listed as proposed product matches for further review. Embedding-based matching plays a critical role in resolving entities and linking products effectively, ensuring a robust matching framework in diverse datasets.
+
+**Reviewing Product Matches via Cortex Complete**: To enhance the accuracy and contextual understanding of product matches, proposed matches are fed into a large language model (LLM) through Snowflake's Cortex Complete functionality. This advanced step provides an additional layer of review, where the LLM determines whether a proposed match should be approved or rejected. Each product pair is fed to the LLM along with relevant metadata, which evaluates these inputs and approves matches where the descriptions, brands, and other attributes align. For rejected matches, the LLM identifies and generates a detailed list of differences, providing clarity on the mismatched attributes such as size, model, or additional features. Upon approval, the LLM generates a unified product title that consolidates the key features of both items in the pair. Additionally, it outputs a unified product category and a harmonized brand name, ensuring consistency across downstream systems. This structured output facilitates seamless integration into reporting, cataloging, and supply chain processes. By leveraging the natural language understanding capabilities of an LLM, this approach not only automates the validation of matches but also provides insightful outputs to improve the product-matching pipeline. Snowflake's Cortex Complete ensures secure and scalable integration of the LLM into the workflow, enabling high-quality reviews at scale. The end result of this step is a table of processed product matches, which we can then split into tables of approved and rejected matches.
+
+**Interacting with Data via Streamlit**: With the processed matches now stored in tables, our matched products are ready! Our original data had information about product performance on the websites of retailers and e-commerce platforms in the form of estimated views and purchases. This data is now available for the same product at two different retailers in our table. But, to make these insights accessible, we are leveraging Streamlit to build an interactive chatbot using Snowflake's Cortex Analyst. Streamlit provides a user-friendly interface where business users can explore the finalized dataset using natural language, converted to SQL queries by Analyst, and returned in natural language for easy interpretation. This demo involves various teams and personas across retail and e-commerce, not all of which may know how to interact with the data using code. This Streamlit application removes the need to do so, allowing professionals in supply chain, competitive intelligence, and so on to have access to aggregated product data and insights!
+
+This architecture integrates various Snowflake features to create a robust end-to-end AI solution. From data ingestion and preprocessing to LLM functions and an interactive chatbot, each component plays a crucial role in ensuring the efficiency, scalability, and consistency of the workflow. By leveraging Snowflake, this demo empowers team with insights from aggregated product data and accesible insights!
 
 <!-- --------------------------->
 ## Data from Marketplace
@@ -71,56 +89,22 @@ To get started using Snowflake Notebooks, first login to Snowsight. In the top-l
 <img src="assets/create_worksheet.png"/>
 <br></br>
 
-Paste and run the [setup SQL](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts) **line by line** in the worksheet to create Snowflake objects (warehouse, database, schema, stage).
+Paste and run the [setup.sql](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts) **line by line** in the worksheet to create objects (warehouse, database, schema, stage).
 
-```sql
-USE ROLE SYSADMIN;
-CREATE OR REPLACE WAREHOUSE PRODUCT_MATCHING_DS_WH; --by default, this creates an XS Standard Warehouse
-CREATE OR REPLACE DATABASE PRODUCT_MATCHING_DB;
-CREATE OR REPLACE SCHEMA MATCH;
-USE WAREHOUSE PRODUCT_MATCHING_DS_WH;
-USE DATABASE PRODUCT_MATCHING_DB;
-USE SCHEMA MATCH;
-CREATE OR REPLACE STAGE MODEL DIRECTORY=(ENABLE=true); --to store semantic model for the chatbot
-CREATE OR REPLACE STAGE STREAMLIT DIRECTORY=(ENABLE=true); --to store streamlit script
-```
+Now on the left hand side, navigate to Data > Databases and find the `PRODUCT_MATCHING_DB` database and `MATCH` schema we just defined.
 
-Now on the left hand side, navigate to Data > Databases and find the `PRODUCT_MATCHING_DB` database we just defined.
-
-**Upload required files** to the correct stages within the `MATCH` schema of the database.
 <img src="assets/upload_files.png"/>
 
-Click '+ Files' in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory. **Make sure your the files in your stages match the following**:
+Click '+ Files' in the top right of the stage. We'll be downloading a semantic model from the github repository, and uploading it to a stage. **Follow these steps**:
 
-- *Semantic Model:* Upload the semantic_model.yaml file to the `MODEL` stage from [model](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts/streamlit/model)
+- *Semantic Model:* Download the `matches_semantic_model.yml` file from this [link](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts/streamlit/model) and upload it to the `MODEL` stage.
 <img src="assets/model_stage.png"/>
-
-- *Streamlit Files:* Upload the streamlit files (including environment.yml) to the `STREAMLIT` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts/streamlit)
-<img src="assets/streamlit_stage.png"/>
-
-Please also download the .ipynb [notebook](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/notebooks) file, we will upload it directly on Snowsight in the next step.
-<br></br>
-
-But first, paste and run the following in the SQL worksheet to create the streamlit application.
-
-```sql
--- Create Streamlit App
-use role SYSADMIN;
-CREATE OR REPLACE STREAMLIT PRODUCT_MATCHING_DB.match.PRODUCT_MATCHING_chatbot
-ROOT_LOCATION = '@PRODUCT_MATCHING_DB.match.streamlit'
-MAIN_FILE = 'streamlit_app.py'
-QUERY_WAREHOUSE = 'PRODUCT_MATCHING_DS_WH'
-COMMENT = '{"origin":"sf_sit", "name":"product_matching", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"streamlit"}}';
-```
-Note that the Streamlit application is built on a table that our notebook will generate, and so it won't work for the time being.
 
 <!-- --------------------------->
 ## Access Notebook
-
-
 **Duration: 10 minutes**
 
-Please make sure you downloaded the [notebook](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/notebooks) from the repo.
+Please download the [notebook](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/notebooks) from the repo.
 
 For the Notebook, please follow these steps:
 - Navigate to Projects > Notebooks in Snowsight
@@ -142,20 +126,33 @@ Please note the notebook will take about 10 minutes to run!
 ## Run Streamlit Application
 **Duration: 20 minutes**
 
-Our Streamlit in Snowflake chatbot application has already been deployed as part of the setup process. To access it, navigate to Snowsight, click on Projects, and then the Streamlit tab. Open the newly created Streamlit chatbot application and explore!
+Similarly to the notebook, we will be creating the streamlit application **directly on Snowsight**!
 
-In the **Chatbot**, you can interact with product data using an intuitive Q&A interface powered by Snowflake Cortex. Ask questions about listings, comparative sales and views data, and general brand performance comparisons. Search for specific details, and receive concise answers along with the queries generated by **Cortex Analyst**.
+For the Streamlit application, please follow these steps:
+- On the bottom left of Snowsight, please click on your initials, and change your role to `PRODUCT_MATCHING_DATA_ANALYST`
+- Then, navigate to Projects > Streamlit in Snowsight
+- Click + Streamlit App, and configure the settings as follows:
+    - Application name: Retail Analyst
+    - Notebook database: `PRODUCT_MATCHING_DB`
+    - Notebook scehma: `MATCH`
+    - Warehouse: `PRODUCT_MATCHING_DS_WH`
+- Create Application
 
-<img src='assets/chatbot.png'/>
+Snowflake will create a default Streamlit application for you with example code. Please copy the contents of the `streamlit_app.py` file from this [link](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/scripts/streamlit), and replace the code on the left hand side. Afterwards, please click the Close Editor option on the bottom left to view the Streamlit application!
+
+<img src="assets/editor.png"/>
+
+With this **Chatbot** you can now interact with product data using an intuitive Q&A interface powered by Snowflake Cortex. Ask questions about listings, comparative sales and views data, and general brand performance comparisons. Search for specific details, and receive concise answers along with the queries generated by **Cortex Analyst**.
 
 Here are some example questions you can ask the chatbot:
-1. What Logitech mouse models are sold in both retailers?
-2. How is the Sony Xperia XA2 cell phone selling at Staples vs Office Depot?
-3. Which Apple products perform better in sales at Staples?
-4. Find me the 5 products with the greatest disparity in purchases at these retailers. <br>
+1. What Logitech keyboards are sold at both Staples and Office Depot?
+2. How is the Apple Beats Pill+ selling at both retailers?
+3. Find me the 5 products with the greatest disparity in purchases at these retailers. <br>
 
 Once you ask a question, the assistant begins processing it, translating your natural language prompt into a SQL query it then runs against the table we generated from running the Notebook! Once the process completes, the assistant provides a concise answer to your question in the chat window. Below the answer, you’ll see sections titled 'SQL Query' and 'Results'. Click on these to see the query the Analyst ran to determine the answer to your question, and the returned data it based it's answer on.
 <img src='assets/chatbot_question.png'/>
+
+Since our data from Similarweb Ltd is based around estimated product views and purchases on websites, we can ask comparative questions about specific products or about the retailers at large. However, different data involving the stocks of specific products, their costs across retailers or e-commerce platforms, and so on, can make this solution viable for teams dedicated towards supply chain, competitive pricing and much, much more! 
 
 <!-- --------------------------->
 ## Conclusion And Resources
