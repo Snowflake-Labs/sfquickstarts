@@ -356,7 +356,7 @@ In this step, we will instruct the Connector to begin replicating the selected t
 1. Change the role to **ACCOUNTADMIN**
 2. Download the [Snowflake Notebook](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/blob/main/notebooks/0_start_here.ipynb) and import it into Snowflake by navigating to Snowsight and going to **Notebooks** and to using the `Import .ipynb file` button. 
 3. Select the **CDC_PROD** for the database, **ANALYTICS** for the schema, and **CDC_DS_WH** for the warehouse. This Notebook includes the SQL scripts needed to create the destination database for table replication of the PostgreSQL tables into Snowflake and monitor the replication process.
-4. Run the first 3 cells in the Notebook labeled **create_db_objects**, **table_replication**, and **check_replication_state**.
+4. Run the first 4 cells in the Notebook labeled **create_db_objects**, **table_replication**, and **check_replication_state**.
 5. Run the cell labeled **check_replication_state** until the output indicates successful replication as indicated in the Notebook.
 6. Once the replication process is complete, you can run the rest of the Notebook.
 7. Notice the Dynamic Table, **cdc_prod.analytics.customer_purchase_summary**, is created in the last cell labeled **create_dynamic_table**. This table will be used to visualize the data in the **Customer Spending Dashboard** Streamlit app.
