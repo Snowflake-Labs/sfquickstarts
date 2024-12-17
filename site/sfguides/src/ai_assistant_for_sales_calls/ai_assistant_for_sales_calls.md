@@ -43,7 +43,7 @@ This guide covers:
 
 
 ### Prerequisites
-- A [GitHub](https://github.com/) Account
+- A [GitHub](https://github.com/) Account to access the [GIT REPO](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-cortex-snowflake-notebooks/tree/main)
 - A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for [a free trial](https://signup.snowflake.com/?_fsi=OuImfiWC&_fsi=OuImfiWC) or use a different role.
 
 ### What You Will Build
@@ -58,6 +58,8 @@ This guide covers:
 
 ## Data and Snowflake Setup
 **Duration: 15 minutes**
+
+> **You can access the full code in [this GIT REPO](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-cortex-snowflake-notebooks/tree/main).**
 
 To get started using Snowflake Notebooks, first login to Snowsight. In the top-left corner, click "+ Create" to create a new Worksheet, and choose "SQL Worksheet".
 
@@ -90,16 +92,20 @@ Click '+ Files' in the top right of the stage. Upload all files that you downloa
 
 - *Data Files:* Upload all relevant datasets to the `RAW_DATA` stage from [data](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/notebooks/data)
 <img src="assets/data_stage.png"/>
-- *Notebook Files:* Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/notebooks)
+- *Notebook Files:* Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/notebooks). Remember to upload [the notebook-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-cortex-snowflake-notebooks/blob/main/notebooks/environment.yml) file as well.
 <img src="assets/notebook_stage.png"/>
-- *Streamlit Files:* Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/scripts/streamlit).
+- *Streamlit Files:* Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/scripts/streamlit). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-co[…]snowflake-notebooks/blob/main/scripts/streamlit/environment.yml) file as well. Make sure to upload the [analytics.py](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-cortex-snowflake-notebooks/blob/main/scripts/streamlit/pages/analytics.py) within a `/pages/` path.
+
+<img src="assets/pages_folder.png"/>
+<br></br>
+
 <img src="assets/chatbot_stage.png"/>
 <br></br>
 
 Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/blob/main/scripts/setup.sql) in the SQL worksheet to load the  data into tables and create a notebook and streamlit app from the staged files.
 
 ```sql
-create csv format
+-- create csv format
 CREATE OR REPLACE FILE FORMAT SALES_CALLS_DB.SALES_CALLS_SCHEMA.CSVFORMAT 
     SKIP_HEADER = 0 
     TYPE = 'CSV'
