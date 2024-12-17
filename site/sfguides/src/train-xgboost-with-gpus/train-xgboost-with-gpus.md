@@ -44,6 +44,7 @@ Complete the following steps to setup your account:
 - Run all commands to create Snowflake objects
 
 ```sql
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is", "name":"notebook_pack_xgboost_on_gpu", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 USE ROLE ACCOUNTADMIN;
 
 -- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users

@@ -20,7 +20,6 @@ Snowflake CLI is a command-line interface designed for developers building apps 
 ### Prerequisites
 - [Video: Introduction to Snowflake](https://www.youtube.com/watch?v=gGPKYGN0VQM)
 - [Video: Snowflake Data Loading Basics](https://youtu.be/htLsbrJDUqk?si=vfTjL6JaCdEFdiSG)
-- Python 3.8 or later installed on your machine
 - Basic knowledge of Snowflake concepts
 - You'll need a Snowflake account. You can sign up for a free 30-day trial account here: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_).
 
@@ -52,18 +51,10 @@ Navigate to [https://app.snowflake.com/](https://app.snowflake.com/) and log int
 ### Install the Snowflake CLI 
 
 Snowflake CLI can be installed on Linux, Windows, or Mac. To install it we recommend using
-[pipx](https://github.com/pypa/pipx) which provides an alternative to pip that installs and executes Python packages into 
-isolated virtual environments. Installing Snowflake CLI with pipx does not, therefore, modify your current Python environment.
+package manager dedicated for your operating system. Follow the detailed instruction from the [official documentation](https://docs.snowflake.com/developer-guide/snowflake-cli/installation/installation#install-sf-cli-using-package-managers)
+to install the CLI.
 
-Install `pipx` using [official guidelines for your platform](https://pipx.pypa.io/stable/installation/#installing-pipx).   
-
-Once pipx is installed on your machine run the following command in a terminal:
-
-```console
-pipx install snowflake-cli-labs
-```
-
-Once it's been successfully installed, run the following command to verify that it was successfully installed:
+Once the CLI has been successfully installed, run the following command to verify that it was successfully installed:
 
 ```bash
 snow --help

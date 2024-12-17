@@ -70,7 +70,8 @@ USE ROLE sysadmin;
 CREATE OR REPLACE STREAMLIT tasty_bytes_enhancing_customer_experience.app.enhancing_customer_experience_app
 ROOT_LOCATION = '@tasty_bytes_enhancing_customer_experience.app.enhance_customer_experience_app'
 MAIN_FILE = 'Dashboard.py'
-QUERY_WAREHOUSE = 'tasty_bytes_enhancing_customer_experience_wh';
+QUERY_WAREHOUSE = 'tasty_bytes_enhancing_customer_experience_wh'
+COMMENT = '{"origin":"sf_sit-is", "name":"voc", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit", "vignette":"cust_exp_app"}}';
 
 GRANT USAGE ON STREAMLIT tasty_bytes_enhancing_customer_experience.app.enhancing_customer_experience_app TO ROLE enhancing_customer_expereience_role;
 ```
