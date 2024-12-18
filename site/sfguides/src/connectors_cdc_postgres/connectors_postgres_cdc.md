@@ -89,11 +89,10 @@ Before getting started with this step, make sure that you have Docker Desktop in
 
 2. Open the IDE of your choice to copy and paste this file by copy and pasting the following:
 ```
-version: '1'
 services:
   postgres:
-    image: "postgres:11"
-    container_name: "postgres11"
+    image: "postgres:17"
+    container_name: "postgres17"
     environment:
       POSTGRES_DB: 'postgres'
       POSTGRES_USER: 'postgres'
@@ -282,7 +281,6 @@ Directory Structure
 1. Navigate to the directory called **agent-postgresql**
 2. Create the docker-compose file named **docker-compose.yaml** in the **agent-postgresql** directory with the following content:
 ```
-version: '1'
 services:
   postgresql-agent:
     container_name: postgresql-agent
