@@ -63,18 +63,33 @@ In this use case you will build a Cortex Search service on the free text data co
 You will build a Cortex service that allows to you to us plain text to query these documents to get information. It is important to note that Cortex Search can scale much more than this use case. Please check out the Cortex Search documentation [here.](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service)
 
 <!-- ------------------------ -->
-
-####### START HEREEEEEE
 ## Set Up Snowflake Environment and Cortex Search
 Duration: 5
 
-The first thing we will do is create a database and warehouse in your Snowflake environment. Copy and paste the below code to a SQL Worksheet in Snowflake an Snowsight and run through it.
+Download both of the files in [this repo](https://github.com/sfc-gh-mmarzillo/pump-docs-cortex-search/tree/main) by clicking on each file and clicking the download button near the top right.
 
-You will see that after creating the stage and table you will have to navigate to the database tab and load the data via the UI in Snowflake. The simple instruction are comments in the SQL worksheet. 
+Once you have the files downloaded you will go to Snowflake UI and open a new SQL worksheet and run the below code to create a database that we will be working out of. I'm using the ACCOUNTADMIN role here, but you can use whatever role you know gives you access to create objects (databases, tables, services) in Snowflake.
 
-The final block of code in this SQL will create the Cortex Search service using SQL. The TARGET_LAG parameter is set to "30 day" that will check for updates to the base table every 30 days. While the data size in this datasets isn't that large notice how quickly the service is created. 
+```sql
+USE ACCOUNTADMIN;
+CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
+CREATE OR REPLACE DATABASE PUMP_DB;
+USE DATABASE PUMP_DB;
+CREATE STAGE DOCS 
+	DIRECTORY = ( ENABLE = true ) 
+	ENCRYPTION = ( TYPE = 'SNOWFLAKE_SSE' );
+```
 
-For practice of this quickstart we are creating the Cortex Search service quickly, but there are additional items you may want to consider additional items like token limits and [text splitting](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#token-limits-and-text-splitting). Additionally, there are several [Cortex Search Tutorials](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/overview-tutorials) to get customers more familiar with the nuances of building and querying Cortex Search. 
+![](assets/createworksheet.png)
+
+![](assets/runquery.png)
+
+Now that you have the database created you can upload the 2 manuals to a stage in the PUMP_DB database in the DOCS stage by clicking on Data on the left side of the Snowflake UI, clicking through to find the DOCS stage in the PUBLIC schema then clicking "+ files" in the top right to upload the files from your local machine.
+
+![](assets/addtostage.png)
+
+
+####### START HEREEEEEE
 
 ```sql
 
