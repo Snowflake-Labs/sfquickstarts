@@ -26,7 +26,7 @@ In this Quickstart guide, you will be help the fictitious food truck company, Ta
 You will need the following things before beginning:
 
 * Snowflake account in a cloud region where Snowflake Cortex LLM functions/models are [supported](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability).
-  * Cortex functions used - Complete, Translate, Sentiment
+  * Cortex functions used - Complete, Translate, Sentiment, ClassifyText
   * Model used - mistral-large2
 * Snowflake Notebook enabled in your Snowflake account
 
@@ -477,7 +477,8 @@ Duration: 5
 
 ### Overview
 
-In this section, you will leverage **Snowflake Cortex LLM - Complete* to get answers to your specific questions:
+In this section, you will leverage **Snowflake Cortex LLM - Complete** to get answers to your specific questions:
+
 * Answer specific questions you have that lives inside the unstructured data you have
 
 ### Answer specific questions you have    
