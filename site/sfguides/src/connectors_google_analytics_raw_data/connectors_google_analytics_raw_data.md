@@ -206,6 +206,7 @@ In this step, we will configure the OAuth Consent Screen.
 
 <img src="assets/created_service_account.png">
 
+
 <img src="assets/create_new_key.png">
 
 6. Select **JSON** and click **CREATE**.
@@ -225,7 +226,7 @@ Duration: 10
 ### Overview
 In this section, we will configure the OAuth Consent Screen.
 
-### Create the Streamlit in Snowflake Application
+### Configure OAuth Consent Screen
 1. Hover over the left sidebar to expand it and click on **APIs & Services** then **OAuth consent screen**.
 
 <img src="assets/navigate_to_oauth.png">
@@ -363,7 +364,7 @@ Duration: 2
 When you're finished with this Quickstart, you can clean up the objects created in Snowflake.
 
 #### Clean Up Script
-Navigate to the last cell in the Snowflake Notebook to uncomment and run the last cell labeled **clean_up** to drop all objects created in this Quickstart.
+Navigate to the last cell in the Snowflake Notebook labeled **clean_up** to uncomment and run it to drop all objects created in this Quickstart.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -371,8 +372,8 @@ Duration: 3
 ### Congrats! You're reached the end of this Quickstart!
 
 ### What You Learned
-With the completion of this Quickstart, you have now delved into:
-- The Snowflake Connector for Google Analytics Raw Data to ingest data from Google BigQuery into Snowflake.
+With the completion of this Quickstart, you have learned how to:
+- Use the Snowflake Connector for Google Analytics Raw Data to ingest data from Google Analytics/BigQuery into Snowflake.
 - Visualize the data in a Streamlit application.
 
 ### Resources
