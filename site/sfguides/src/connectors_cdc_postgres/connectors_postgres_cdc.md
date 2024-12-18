@@ -3,7 +3,7 @@ id: connectors_postgres_cdc
 summary: CDC Data from PostgreSQL to Snowflake
 categories: CDC, Getting-Started, Connectors, Dynamic Tables
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: CDC, Getting Started, Connectors, Dynamic Tables
 
