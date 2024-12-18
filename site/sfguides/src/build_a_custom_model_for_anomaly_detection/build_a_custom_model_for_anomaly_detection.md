@@ -332,12 +332,6 @@ This ChatUI leverages Streamlit's features to provide:
     from snowflake.core import Root
     from snowflake.snowpark.exceptions import SnowparkSQLException
     from snowflake.cortex import Complete, ExtractAnswer, Sentiment, Summarize, Translate, ClassifyText
-
-    from snowflake.snowpark.context import get_active_session
-
-    # Import python packages
-    import streamlit as st
-    from snowflake.core import Root
     from snowflake.snowpark.context import get_active_session
 
     # Constants
