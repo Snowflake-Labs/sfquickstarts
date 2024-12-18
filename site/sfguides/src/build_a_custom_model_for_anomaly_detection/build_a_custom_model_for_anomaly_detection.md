@@ -34,7 +34,7 @@ To complete this quickstart, you’ll need:
 - Access to a warehouse with GPU capabilities for training the LSTM model.
 - Python libraries: `pandas`, `numpy`, `scikit-learn`, `tensorflow`, and `keras`.
 - A copy of the [detect_anomalies_on_production_floor.ipynb](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/detect_anomolies_on_production_floor.ipynb) notebook.
-- Snowflake's `snowpark-python` and `snowflake-ml-python` libraries installed in your environment.
+- 
 
 ---
 
@@ -67,7 +67,7 @@ By the end of this guide, you'll have a functional pipeline capable of detecting
 
 ## Setup
 
-### Create Database and Schema
+### Create Database
 
 1. Open a new worksheet in Snowflake
 2. Create the database
@@ -84,9 +84,12 @@ CREATE database Productionfloor_db;
 * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
 * Select the file you downloaded in step 1 above
 3. In the Create Notebook popup
-* For Notebook location, select your database and schema
+* For Notebook location, select your database and public schema
 * Select your **Warehouse**. You will want to have access to a container with a gpu cluster
 * Click on Create button
+4. Open the notebook once created and add the following packages by using the "Packages" button on the top right
+  * snowflake-snowpark-python
+  * snowflake-ml-python
 
 ---
 
@@ -177,7 +180,7 @@ spdf.write.save_as_table("SENSOR_PREPARED", mode="overwrite")
 ```
 ---
 
-## Create and Register the Anomaly Detection Model
+## Create the Anomaly Detection Model
 
 In this section, you will define a custom anomaly detection model, register it with Snowflake's Model Registry, and prepare it for use. Snowflake's Model Registry enables you to manage and deploy machine learning models seamlessly, ensuring efficient integration with your data workflows.
 
@@ -246,7 +249,7 @@ mv = ml_reg.log_model(
 )
 ```
 
-### Register the Model in Snowflake
+## Register the Model in Snowflake
 
 After defining the custom anomaly detection model, the next step is to register it in Snowflake's Model Registry. The Model Registry allows you to store, version, and manage your machine learning models directly within Snowflake, ensuring seamless integration and deployment.
 
@@ -268,7 +271,7 @@ X_pred = mv.run(X_train_snowdf, function_name="predict")
 ```
 
 
-## Build a ChatUI on Streamlit to Learn More about the Anomalies
+## Build a ChatUI on Streamlit
 
 Streamlit provides an intuitive and interactive interface for building data-driven applications.  
 In this section, you'll create a ChatUI that allows you to interact with your anomaly detection data, enabling you to gain actionable insights and engage with the results of your model.
