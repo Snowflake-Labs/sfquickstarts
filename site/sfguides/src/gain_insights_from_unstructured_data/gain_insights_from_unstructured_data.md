@@ -478,6 +478,7 @@ Duration: 5
 ### Overview
 
 In this section, you will leverage **Snowflake Cortex LLM - Complete** to get answers to your specific questions:
+
 * Answer specific questions you have that lives inside the unstructured data you have
 
 ### Answer specific questions you have    
