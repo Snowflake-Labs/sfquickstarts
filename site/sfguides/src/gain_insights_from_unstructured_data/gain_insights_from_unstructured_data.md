@@ -19,16 +19,16 @@ In this Quickstart guide, you will be help the fictitious food truck company, Ta
 * Familiarity with the DataFrame API
 * Familiarity with Snowflake
 * Familiarity with Snowpark
+* Familiarity with the SQL
 
 ### What You’ll Need
 
 You will need the following things before beginning:
 
 * Snowflake account in a cloud region where Snowflake Cortex LLM functions/models are [supported](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability).
-  * Cortex functions used - Complete, Translate, Sentiment
+  * Cortex functions used - Complete, Translate, Sentiment, ClassifyText
   * Model used - mistral-large2
 * Snowflake Notebook enabled in your Snowflake account
-  * **Note**: To get access to Snowflake Notebook (currently in private preview) reach out to your Snowflake account team. This solution leverages Snowflake Cortex within Snowflake Notebook and you will not be able run the quickstart successfully otherwise.
 
 ### What You’ll Learn 
 
@@ -44,7 +44,7 @@ In this quickstart, you will learn:
   * What our international customers are saying with Cortex **Translate**
   * Get a summary of what customers are saying with Cortex **Summary**
   * Classify reviews to determine if they would recommend a food truck with Cortex **ClassifyText**
-  * Gain specific insights with Cortex **ExtractAnswer**
+  * Gain specific insights with Cortex **Complete**
   * Understand how customers are feeling with Cortex **Sentiment**
 
 <!-- ------------------------ -->
@@ -275,6 +275,7 @@ You will leverage **Translate** - one of the **Snowflake Cortex specialized LLM 
 ### Hear what your international customers are saying
 This is done within the notebook using following code snippet in cell `CORTEX_TRANSLATE`.
 
+#### Python
   ```python
   # Conditionally translate reviews that are not english using Cortex Translate
   reviews_df = reviews_df.withColumn('TRANSLATED_REVIEW',when(F.col('LANGUAGE') != F.lit("en"), \
@@ -285,7 +286,29 @@ This is done within the notebook using following code snippet in cell `CORTEX_TR
 
   reviews_df.filter(F.col('LANGUAGE') != F.lit("en")).select(["REVIEW","LANGUAGE","TRANSLATED_REVIEW"]).show(3)
   ```
+#### SQL
+ ```sql
+  -- Add the TRANSLATED_REVIEW column with conditional translation
+  WITH TRANSLATED_REVIEWS AS (
+      SELECT 
+          REVIEW,
+          LANGUAGE,
+          CASE 
+              WHEN LANGUAGE != 'en' THEN SNOWFLAKE.CORTEX.TRANSLATE(REVIEW, LANGUAGE, 'en') 
+              ELSE REVIEW
+          END AS TRANSLATED_REVIEW
+      FROM TRUCK_REVIEWS_V
+  )
 
+  -- Filter rows where the LANGUAGE is not English and select the desired columns
+  SELECT 
+      REVIEW, 
+      LANGUAGE, 
+      TRANSLATED_REVIEW
+  FROM TRANSLATED_REVIEWS
+  WHERE LANGUAGE != 'en'
+  LIMIT 3;
+  ```
 <!-- ------------------------ -->
 
 ## Summarize what the customers are saying
@@ -300,6 +323,7 @@ In this section, you will leverage **Snowflake Cortex LLM - Summarize** to quick
 
 * In this step, we will get a summarization of customers are saying **Snowflake Cortex LLM - Summarize** 
 
+#### Python
   ```python
   # Step 1: Add a row number for each review within each TRUCK_BRAND_NAME
   window_spec = Window.partition_by("TRUCK_BRAND_NAME").order_by("REVIEW")
@@ -346,6 +370,57 @@ In this section, you will leverage **Snowflake Cortex LLM - Summarize** to quick
       print(f"Summary (part 1): {summary_part1}")
       print(f"Summary (part 2): {summary_part2}")
   ```
+#### SQL
+  ```sql
+  -- Add a row number for each review within each TRUCK_BRAND_NAME
+  WITH RANKED_REVIEWS AS (
+      SELECT 
+          *,
+          ROW_NUMBER() OVER (PARTITION BY TRUCK_BRAND_NAME ORDER BY REVIEW) AS ROW_NUM
+      FROM TRUCK_REVIEWS_V
+  ),
+
+  -- Filter to include only the first 20 rows per TRUCK_BRAND_NAME
+  FILTERED_REVIEWS AS (
+      SELECT *
+      FROM RANKED_REVIEWS
+      WHERE ROW_NUM <= 20
+  ),
+
+  -- Aggregate reviews by TRUCK_BRAND_NAME
+  AGGREGATED_REVIEWS AS (
+      SELECT 
+          TRUCK_BRAND_NAME,
+          ARRAY_AGG(REVIEW) AS ALL_REVIEWS
+      FROM FILTERED_REVIEWS
+      GROUP BY TRUCK_BRAND_NAME
+  ),
+
+  -- Convert the array of reviews into a single string
+  CONCATENATED_REVIEWS AS (
+      SELECT 
+          TRUCK_BRAND_NAME,
+          ARRAY_TO_STRING(ALL_REVIEWS, ' ') AS ALL_REVIEWS_TEXT
+      FROM AGGREGATED_REVIEWS
+  ),
+
+  -- Generate summaries for each truck brand
+  SUMMARIZED_REVIEWS AS (
+      SELECT 
+          TRUCK_BRAND_NAME,
+          SNOWFLAKE.CORTEX.SUMMARIZE(ALL_REVIEWS_TEXT) AS SUMMARY
+      FROM CONCATENATED_REVIEWS
+  )
+
+  -- Display the summaries and optionally split them into two parts
+  SELECT 
+      TRUCK_BRAND_NAME,
+      SUMMARY,
+      LEFT(SUMMARY, FLOOR(LENGTH(SUMMARY) / 2)) AS SUMMARY_PART1,
+      RIGHT(SUMMARY, LENGTH(SUMMARY) - FLOOR(LENGTH(SUMMARY) / 2)) AS SUMMARY_PART2
+  FROM SUMMARIZED_REVIEWS
+  LIMIT 3;
+  ```
 <!-- ------------------------ -->
 
 ## Categories unstructured review text data 
@@ -357,10 +432,11 @@ In this section, you will make use of **Snowflake Cortex LLM - ClassifyText** to
 
 ### Get intention to recommend based on review with Cortex ClassifyText
 
-* You can understand if a customer would recommend the food truck based on their review using **Snowflake Cortex LLM- ClassifyText**. 
+* You can understand if a customer would recommend the food truck based on their review using **Snowflake Cortex LLM- ClassifyText**.  
 
+#### Python
   ```python
-  # Prompt to understand whether a customer would recommend food truck based on their review 
+  # To understand whether a customer would recommend food truck based on their review 
   text_description = """
   Tell me based on the following food truck customer review, will they recommend the food truck to \
   their friends and family? Answer should be only one of the following words - \
@@ -377,57 +453,107 @@ In this section, you will make use of **Snowflake Cortex LLM - ClassifyText** to
 
   reviews_df.select(["REVIEW","CLEAN_RECOMMEND"]).show(3)
   ```
+#### SQL
+  ```sql
+  WITH CLASSIFIED_REVIEWS AS (
+    SELECT 
+        REVIEW,
+        PARSE_JSON(SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
+            REVIEW, 
+            ['Likely', 'Unlikely', 'Unsure'], 
+            OBJECT_CONSTRUCT('task_description', 
+                'Tell me based on the following food truck customer review, will they recommend the food truck to their friends and family?'
+            )
+        )):label::TEXT AS RECOMMEND
+    FROM TRUCK_REVIEWS_V
+  )
+
+  SELECT * From CLASSIFIED_REVIEWS limit 3;
+  ```
 <!-- ------------------------ -->
 
-## Extract Answers from what your customers are saying
+## Leverage an LLM to find your answer
 Duration: 5
 
 ### Overview
 
-In this section, you will leverage **Snowflake Cortex LLM - Extract Answer** to get answers to your specific questions:
+In this section, you will leverage **Snowflake Cortex LLM - Complete** to get answers to your specific questions:
+
 * Answer specific questions you have that lives inside the unstructured data you have
 
 ### Answer specific questions you have    
 
-* Using **Snowflake Cortex LLM - Extract Answer** to dive into questions you have
+* Using **Snowflake Cortex LLM - Complete** to dive into questions you have  
 
+#### Python
   ```python
-  # Step 1: Add a row number for each review within each TRUCK_BRAND_NAME
-  window_spec = Window.partition_by("TRUCK_BRAND_NAME").order_by("REVIEW")
-  ranked_reviews_df = reviews_df.with_column(
-      "ROW_NUM", F.row_number().over(window_spec)
-  )
+    # Step 1: Add a row number for each review within each TRUCK_BRAND_NAME
+    window_spec = Window.partition_by("TRUCK_BRAND_NAME").order_by("REVIEW")
+    ranked_reviews_df = reviews_df.with_column(
+        "ROW_NUM", F.row_number().over(window_spec)
+    )
 
-  # Step 2: Filter to include only the first 20 rows per TRUCK_BRAND_NAME to get a general idea
-  filtered_reviews_df = ranked_reviews_df.filter(F.col("ROW_NUM") <= 20)
+    # Step 2: Filter to include only the first 20 rows per TRUCK_BRAND_NAME to get a general idea
+    filtered_reviews_df = ranked_reviews_df.filter(F.col("ROW_NUM") <= 20)
 
-  # Step 3: Aggregate reviews by TRUCK_BRAND_NAME
-  aggregated_reviews_df = filtered_reviews_df.group_by("TRUCK_BRAND_NAME").agg(
-      F.array_agg(F.col("REVIEW")).alias("ALL_REVIEWS")
-  )
+    # Step 3: Aggregate reviews by TRUCK_BRAND_NAME
+    aggregated_reviews_df = filtered_reviews_df.group_by("TRUCK_BRAND_NAME").agg(
+        F.array_agg(F.col("REVIEW")).alias("ALL_REVIEWS")
+    )
 
-  # Step 4: Convert the array of reviews to a single string
-  concatenated_reviews_df = aggregated_reviews_df.with_column(
-      "ALL_REVIEWS_TEXT", F.call_function("array_to_string", F.col("ALL_REVIEWS"), F.lit(' '))
-  )
+    # Step 4: Convert the array of reviews to a single string
+    concatenated_reviews_df = aggregated_reviews_df.with_column(
+        "ALL_REVIEWS_TEXT", F.call_function("array_to_string", F.col("ALL_REVIEWS"), F.lit(' '))
+    )
 
-  # Step 5: Generate summaries for each truck brand
-  summarized_reviews_df = concatenated_reviews_df.with_column(
-      "NUMBER_ONE_DISH", cortex.ExtractAnswer(F.col("ALL_REVIEWS_TEXT"), "What is the number one dish positively mentioned in the feedback?")
-  )
+    question = "What is the number one dish positively mentioned in the feedback?"
 
-  # Step 6: Extract the first element of the array
-  first_element_df = summarized_reviews_df.with_column(
-      "FIRST_ELEMENT", F.expr("NUMBER_ONE_DISH[0]")
-  )
+    # Step 5: Answer our question
+    summarized_reviews_df = concatenated_reviews_df.with_column(
+        "NUMBER_ONE_DISH", cortex.Complete("mistral-large2", 
+                                        F.concat(F.lit(f'Context:'), 
+                                                    F.col("ALL_REVIEWS_TEXT"), 
+                                                    F.lit(f' Question:{question} Answer briefly and concisely and only name the dish:'))))
 
-  # Step 7: Parse the first element as JSON and extract the "answer" field
-  readable_df = first_element_df.with_column(
-      "NUMBER_ONE_DISH", F.get(F.parse_json(F.col("FIRST_ELEMENT")), F.lit("answer"))
-  )
-
-  # Display the simplified results
-  readable_df.select(["TRUCK_BRAND_NAME", "NUMBER_ONE_DISH"]).show()
+    summarized_reviews_df.select("TRUCK_BRAND_NAME", "NUMBER_ONE_DISH").show(3)
+  ```
+#### SQL
+  ```sql
+  WITH RANKED_REVIEWS AS (
+        SELECT 
+            TRUCK_BRAND_NAME,
+            REVIEW,
+            ROW_NUMBER() OVER (PARTITION BY TRUCK_BRAND_NAME ORDER BY REVIEW) AS ROW_NUM
+        FROM TRUCK_REVIEWS_V
+    ),
+    FILTERED_REVIEWS AS (
+        SELECT *
+        FROM RANKED_REVIEWS
+        WHERE ROW_NUM <= 20
+    ),
+    AGGREGATED_REVIEWS AS (
+        SELECT 
+            TRUCK_BRAND_NAME,
+            ARRAY_AGG(REVIEW) AS ALL_REVIEWS
+        FROM FILTERED_REVIEWS
+        GROUP BY TRUCK_BRAND_NAME
+    ),
+    CONCATENATED_REVIEWS AS (
+        SELECT 
+            TRUCK_BRAND_NAME,
+            ARRAY_TO_STRING(ALL_REVIEWS, ' ') AS ALL_REVIEWS_TEXT
+        FROM AGGREGATED_REVIEWS
+    ),
+    SUMMARIZED_REVIEWS AS (
+        SELECT 
+            TRUCK_BRAND_NAME,
+            SNOWFLAKE.CORTEX.COMPLETE(
+               'mistral-large2', 
+               'Context:' || ALL_REVIEWS_TEXT || ' Question: What is the number one dish positively mentioned in the feedback? Answer briefly and concisely and only name the dish:'
+           ) AS NUMBER_ONE_DISH
+        FROM CONCATENATED_REVIEWS
+    )
+    SELECT TRUCK_BRAND_NAME, NUMBER_ONE_DISH FROM SUMMARIZED_REVIEWS LIMIT 3;
   ```
 <!-- ------------------------ -->
 
@@ -441,14 +567,23 @@ Next, you will look at another **task specific LLM function in Cortex - Sentimen
 
 ### Understand sentiment with Cortex Sentiment
 * This is done within the notebook using the following code snippet in cell `CORTEX_SENTIMENT`.
-* Sentiment return value between -1 and 1 such that -1 is the most negative while 1 is the most positive. 
+* Sentiment return value between -1 and 1 such that -1 is the most negative while 1 is the most positive.  
 
-```python
-# Understand the sentiment of customer review using Cortex Sentiment
-reviews_df = reviews_df.withColumn('SENTIMENT', cortex.Sentiment(F.col('REVIEW')))
+#### Python
+  ```python
+  # Understand the sentiment of customer review using Cortex Sentiment
+  reviews_df = reviews_df.withColumn('SENTIMENT', cortex.Sentiment(F.col('REVIEW')))
 
-reviews_df.select(["REVIEW","SENTIMENT"]).show(3)
-```
+  reviews_df.select(["REVIEW","SENTIMENT"]).show(3)
+  ```
+#### SQL
+  ```sql
+  SELECT 
+      REVIEW, 
+      SNOWFLAKE.CORTEX.SENTIMENT(REVIEW) AS SENTIMENT
+  FROM TRUCK_REVIEWS_V
+  LIMIT 3;
+  ```
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -461,7 +596,7 @@ With the completion of this quickstart, you have now:
 * Implementing advanced AI capabilities through Snowflake Cortex in minutes
   * Leveraging enterprise-grade language models directly within Snowflake's secure environment
   * Executing sophisticated natural language processing tasks with pre-optimized models that eliminate the need for prompt engineering. 
-  * You've mastered a powerful suite of AI-driven text analytics capabilities, from seamlessly breaking through language barriers with Translate, to decoding customer emotions through Sentiment analysis, extracting precise insights with Extract Answer, and automatically categorizing feedback using Classify Text. These sophisticated functions transform raw customer reviews into actionable business intelligence, all within Snowflake's secure environment.
+  * You've mastered a powerful suite of AI-driven text analytics capabilities, from seamlessly breaking through language barriers with Translate, to decoding customer emotions through Sentiment analysis, extracting precise insights with Complete, and automatically categorizing feedback using Classify Text. These sophisticated functions transform raw customer reviews into actionable business intelligence, all within Snowflake's secure environment.
 
 ### Related Resources
 
