@@ -58,20 +58,28 @@ GRANT ALL ON WAREHOUSE TASK_GRAPH_WH TO ROLE TASK_GRAPH_ROLE;
 CREATE OR REPLACE DATABASE TASK_GRAPH_DATABASE;
 CREATE OR REPLACE SCHEMA TASK_GRAPH_SCHEMA;
 
+-- Create git integration to load our notebook
+CREATE API INTEGRATION IF NOT EXISTS GITHUB_PUBLIC
+API_PROVIDER = GIT_HTTPS_API
+API_ALLOWED_PREFIXES = ('https://github.com/')
+ENABLED = TRUE;
+
+CREATE OR REPLACE GIT REPOSITORY SNOWFLAKE_LABS 
+ORIGIN = 'https://github.com/Snowflake-Labs/getting-started-with-task-graphs' 
+API_INTEGRATION = 'GITHUB_PUBLIC';
+
+GRANT READ ON GIT REPOSITORY SNOWFLAKE_LABS TO ROLE TASK_GRAPH_ROLE;
 GRANT OWNERSHIP ON DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAPH_ROLE COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAPH_ROLE COPY CURRENT GRANTS;
 ```
 ### Create Task Graph Notebook
 
-- Download the notebook from this [link](https://github.com/Snowflake-Labs/getting-started-with-task-graphs/blob/main/notebooks/0_start_here.ipynb)
 - Change role to TASK_GRAPH_ROLE
-- Navigate to Projects > Notebooks in Snowsight
-- Click Import .ipynb from the + Notebook dropdown
-- Create a new notebok with the following settings
-  - Notebook Location: TASK_GRAPH_DATABASE, TASK_GRAPH_SCHEMA
-  - Warehouse: TASK_GRAPH_WH
+- Navigate to DATA > TASK_GRAPH_DATABASE > TASK_GRAPH_SCHEMA > Git Repositories > SNOWFLAKE_LABS
+- From the SNOWFLAKE_LABS repository, navigate to the notebooks folder
+- Create notebook `0_start_here.ipynb` by clicking the three dots > Create notebook. The database, schema, and warehouse should prepopulate. 
 
-![create-notebooks](assets/import-notebook.png)
+![import-notebook](assets/create-notebook-git.png)
 
 ### Run Task Graph Notebook
 
@@ -89,7 +97,15 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAP
 ## View Task Graph
 Duration: 5
 
-To view the task graph from Snowsight, go to Monitoring > Task History. Task history opens to Task Graph Runs which shows an overview of task graph execution along with successful and failed task metrics. Click the Task Run tab to see a full list of individual task runs containing information such as status, return value, and duration. Note that data may take 45 minutes to show after a task graph run. 
+To view the task graph you just created go to Data > Task Graph Database > Task Graph Schema > Tasks > Click on Demo_Task_1. From here, click Graph on the top toolbar to view the graph. From the task graph you can perform several tasks:
+
+- View the definition and configuration of the task from the right sidebar 
+- Suspend or resume Tasks by clicking the three dots in the top right
+- Start a manual run of the Task Graph with the “play” button
+
+![task-graph-1](assets/task-graph.png)
+
+You can also find the task graph in the Task History section of Snowsight. From Snowsight, go to Monitoring > Task History. Task history opens to Task Graph Runs which shows an overview of task graph execution along with successful and failed task metrics. Click the Task Run tab to see a full list of individual task runs containing information such as status, return value, and duration. Note that data may take 45 minutes to show after a task graph run. 
 
 ![task-history](assets/task-history.png)
 
