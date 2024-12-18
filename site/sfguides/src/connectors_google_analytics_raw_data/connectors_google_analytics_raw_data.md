@@ -185,7 +185,7 @@ Duration: 10
 ### Overview
 In this step, we will configure the OAuth Consent Screen.
 
-### Create Service Account Key
+#### Create Service Account Key
 1. Navigate back to BigQuery and hover over the left sidebar to expand it and click on **APIs & Services** then **Credentials**.
 
 <img src="assets/credentials_1.png">
@@ -226,7 +226,7 @@ Duration: 10
 ### Overview
 In this section, we will configure the OAuth Consent Screen.
 
-### Configure OAuth Consent Screen
+#### Configure OAuth Consent Screen
 1. Hover over the left sidebar to expand it and click on **APIs & Services** then **OAuth consent screen**.
 
 <img src="assets/navigate_to_oauth.png">
@@ -268,7 +268,7 @@ Duration: 2
 ### Overview
 In this section, we will enable the Cloud Resource Manager API.
 
-### Cloud Resource Manager API
+#### Cloud Resource Manager API
 1. Inside BigQuery, enter **Cloud Resource Manager API** in the search bar and click on **Cloud Resource Manager API**.
 
 <img src="assets/search_cloud_resource_api.png">
@@ -313,7 +313,6 @@ In this section, we will install and configure the Snowflake Connector for Googl
 7. Click **Define data to sync**.
 
 <img src="assets/connector_4.png">
-
 
 8. Select the data to sync and click **Start sync**.
 
@@ -371,12 +370,12 @@ Navigate to the last cell in the Snowflake Notebook labeled **clean_up** to unco
 Duration: 3
 ### Congrats! You're reached the end of this Quickstart!
 
-### What You Learned
+#### What You Learned
 With the completion of this Quickstart, you have learned how to:
 - Use the Snowflake Connector for Google Analytics Raw Data to ingest data from Google Analytics/BigQuery into Snowflake.
 - Visualize the data in a Streamlit application.
 
-### Resources
+#### Resources
 - [Snowflake Connector for Google Analytics Raw Data](https://other-docs.snowflake.com/en/connectors/google/gard/gard-connector-about)
 - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
