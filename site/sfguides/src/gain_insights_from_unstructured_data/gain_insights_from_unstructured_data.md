@@ -436,7 +436,7 @@ In this section, you will make use of **Snowflake Cortex LLM - ClassifyText** to
 
 #### Python
   ```python
-  # Prompt to understand whether a customer would recommend food truck based on their review 
+  # To understand whether a customer would recommend food truck based on their review 
   text_description = """
   Tell me based on the following food truck customer review, will they recommend the food truck to \
   their friends and family? Answer should be only one of the following words - \
