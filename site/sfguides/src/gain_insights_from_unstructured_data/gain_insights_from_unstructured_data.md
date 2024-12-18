@@ -29,7 +29,6 @@ You will need the following things before beginning:
   * Cortex functions used - Complete, Translate, Sentiment
   * Model used - mistral-large2
 * Snowflake Notebook enabled in your Snowflake account
-  * **Note**: To get access to Snowflake Notebook (currently in private preview) reach out to your Snowflake account team. This solution leverages Snowflake Cortex within Snowflake Notebook and you will not be able run the quickstart successfully otherwise.
 
 ### What You’ll Learn 
 
