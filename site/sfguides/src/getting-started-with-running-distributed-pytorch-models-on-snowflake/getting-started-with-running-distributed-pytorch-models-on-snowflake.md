@@ -1,7 +1,7 @@
 author: Swathi Jasti
 id: getting-started-with-running-distributed-pytorch-models-on-snowflake
 summary: Getting Started with Running Distributed PyTorch Models on Snowflake
-categories: Getting-Started, Tasty-Bytes, data-science
+categories: Getting-Started, Tasty-Bytes, data-science, Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
