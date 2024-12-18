@@ -249,7 +249,7 @@ Duration: 5
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
 
-* Download the notebook **gaining_insights_from_unstructured_data.ipynb** using this [link](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/tree/main/notebook)
+* Download the notebook **gaining_insights_from_unstructured_data.ipynb** using this [link](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/blob/main/gaining_insights_from_unstructured_data.ipynb)
 
 * Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on Projects -> Notebook
 
@@ -423,7 +423,7 @@ In this section, you will leverage **Snowflake Cortex LLM - Summarize** to quick
   ```
 <!-- ------------------------ -->
 
-## Categories unstructured review text data 
+## Categorize unstructured review text data  
 Duration: 5
 
 ### Overview
@@ -602,6 +602,8 @@ With the completion of this quickstart, you have now:
 
 Want to learn more about the tools and technologies used in this quickstart? Check out the following resources:
 
-* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-customer-reviews-analytics-using-snowflake-cortex)
 * [Cortex LLM](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+* [Intelligent document field extraction and analytics with Document AI]()
+* [Build a RAG-based knowledge assistant with Cortex Search and Streamlit]()
+* [Build conversational analytics app (text-to-SQL) with Cortex Analyst]()
