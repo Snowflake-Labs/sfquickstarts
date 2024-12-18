@@ -47,8 +47,10 @@ USE ROLE ACCOUNTADMIN;
 CREATE OR REPLACE ROLE MANY_MODELS_USER;
 GRANT ROLE MANY_MODELS_USER to USER <YOUR_USER>;
 
--- create our virtual warehouse
-CREATE OR REPLACE WAREHOUSE MANY_MODELS_WH AUTO_SUSPEND = 60;
+-- create our virtual warehouse. We'll use snowpark optimized to ensure we have enough memory
+CREATE OR REPLACE WAREHOUSE MANY_MODELS_WH WITH
+  WAREHOUSE_SIZE = 'MEDIUM'
+  WAREHOUSE_TYPE = 'SNOWPARK-OPTIMIZED';
 
 GRANT ALL ON WAREHOUSE MANY_MODELS_WH TO ROLE MANY_MODELS_USER;
 
@@ -73,7 +75,7 @@ Duration: 30
 - Create a new notebok with the following settings
   - Notebook Location: MANY_MODELS_DATABASE, MANY_MODELS_SCHEMA
   - Warehouse: MANY_MODELS_WH
-- Click Packages in the top right, add `snowflake-ml-python`
+- Click Packages in the top right, add `snowflake-ml-python` and `cloudpickle==2.2.1`
 - Run all of the cells
 
 ### Demo Notebook

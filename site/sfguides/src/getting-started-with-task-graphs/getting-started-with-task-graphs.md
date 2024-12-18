@@ -97,7 +97,15 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAP
 ## View Task Graph
 Duration: 5
 
-To view the task graph from Snowsight, go to Monitoring > Task History. Task history opens to Task Graph Runs which shows an overview of task graph execution along with successful and failed task metrics. Click the Task Run tab to see a full list of individual task runs containing information such as status, return value, and duration. Note that data may take 45 minutes to show after a task graph run. 
+To view the task graph you just created go to Data > Task Graph Database > Task Graph Schema > Tasks > Click on Demo_Task_1. From here, click Graph on the top toolbar to view the graph. From the task graph you can perform several tasks:
+
+- View the definition and configuration of the task from the right sidebar 
+- Suspend or resume Tasks by clicking the three dots in the top right
+- Start a manual run of the Task Graph with the “play” button
+
+![task-graph-1](assets/task-graph.png)
+
+You can also find the task graph in the Task History section of Snowsight. From Snowsight, go to Monitoring > Task History. Task history opens to Task Graph Runs which shows an overview of task graph execution along with successful and failed task metrics. Click the Task Run tab to see a full list of individual task runs containing information such as status, return value, and duration. Note that data may take 45 minutes to show after a task graph run. 
 
 ![task-history](assets/task-history.png)
 
