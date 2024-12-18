@@ -1,5 +1,5 @@
 author: Joviane Bellegarde
-id: cdc_data_from_postgres_to_snowflake
+id: connectors_postgres_cdc
 summary: CDC Data from PostgreSQL to Snowflake
 categories: CDC, Getting-Started, Connectors, Dynamic Tables
 environments: web
@@ -11,6 +11,7 @@ tags: CDC, Getting Started, Connectors, Dynamic Tables
 <!-- ------------------------ -->
 ## Overview
 Duration: 10
+<img src="assets/CDC_connectors_banner.png">
 
 In this Quickstart, we will investigate how a financial company builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights on potential ways to increase customer spending with promotions.
 
