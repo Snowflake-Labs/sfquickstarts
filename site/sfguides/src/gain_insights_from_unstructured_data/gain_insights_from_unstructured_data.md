@@ -44,7 +44,7 @@ In this quickstart, you will learn:
   * What our international customers are saying with Cortex **Translate**
   * Get a summary of what customers are saying with Cortex **Summary**
   * Classify reviews to determine if they would recommend a food truck with Cortex **ClassifyText**
-  * Gain specific insights with Cortex **ExtractAnswer**
+  * Gain specific insights with Cortex **Complete**
   * Understand how customers are feeling with Cortex **Sentiment**
 
 <!-- ------------------------ -->
@@ -472,56 +472,49 @@ In this section, you will make use of **Snowflake Cortex LLM - ClassifyText** to
   ```
 <!-- ------------------------ -->
 
-## Extract Answers from what your customers are saying
+## Leverage an LLM to find your answer
 Duration: 5
 
 ### Overview
 
-In this section, you will leverage **Snowflake Cortex LLM - Extract Answer** to get answers to your specific questions:
+In this section, you will leverage **Snowflake Cortex LLM - Complete* to get answers to your specific questions:
 * Answer specific questions you have that lives inside the unstructured data you have
 
 ### Answer specific questions you have    
 
-* Using **Snowflake Cortex LLM - Extract Answer** to dive into questions you have  
+* Using **Snowflake Cortex LLM - Complete** to dive into questions you have  
 
 #### Python
   ```python
-  # Step 1: Add a row number for each review within each TRUCK_BRAND_NAME
-  window_spec = Window.partition_by("TRUCK_BRAND_NAME").order_by("REVIEW")
-  ranked_reviews_df = reviews_df.with_column(
-      "ROW_NUM", F.row_number().over(window_spec)
-  )
+    # Step 1: Add a row number for each review within each TRUCK_BRAND_NAME
+    window_spec = Window.partition_by("TRUCK_BRAND_NAME").order_by("REVIEW")
+    ranked_reviews_df = reviews_df.with_column(
+        "ROW_NUM", F.row_number().over(window_spec)
+    )
 
-  # Step 2: Filter to include only the first 20 rows per TRUCK_BRAND_NAME to get a general idea
-  filtered_reviews_df = ranked_reviews_df.filter(F.col("ROW_NUM") <= 20)
+    # Step 2: Filter to include only the first 20 rows per TRUCK_BRAND_NAME to get a general idea
+    filtered_reviews_df = ranked_reviews_df.filter(F.col("ROW_NUM") <= 20)
 
-  # Step 3: Aggregate reviews by TRUCK_BRAND_NAME
-  aggregated_reviews_df = filtered_reviews_df.group_by("TRUCK_BRAND_NAME").agg(
-      F.array_agg(F.col("REVIEW")).alias("ALL_REVIEWS")
-  )
+    # Step 3: Aggregate reviews by TRUCK_BRAND_NAME
+    aggregated_reviews_df = filtered_reviews_df.group_by("TRUCK_BRAND_NAME").agg(
+        F.array_agg(F.col("REVIEW")).alias("ALL_REVIEWS")
+    )
 
-  # Step 4: Convert the array of reviews to a single string
-  concatenated_reviews_df = aggregated_reviews_df.with_column(
-      "ALL_REVIEWS_TEXT", F.call_function("array_to_string", F.col("ALL_REVIEWS"), F.lit(' '))
-  )
+    # Step 4: Convert the array of reviews to a single string
+    concatenated_reviews_df = aggregated_reviews_df.with_column(
+        "ALL_REVIEWS_TEXT", F.call_function("array_to_string", F.col("ALL_REVIEWS"), F.lit(' '))
+    )
 
-  # Step 5: Generate summaries for each truck brand
-  summarized_reviews_df = concatenated_reviews_df.with_column(
-      "NUMBER_ONE_DISH", cortex.ExtractAnswer(F.col("ALL_REVIEWS_TEXT"), "What is the number one dish positively mentioned in the feedback?")
-  )
+    question = "What is the number one dish positively mentioned in the feedback?"
 
-  # Step 6: Extract the first element of the array
-  first_element_df = summarized_reviews_df.with_column(
-      "FIRST_ELEMENT", F.expr("NUMBER_ONE_DISH[0]")
-  )
+    # Step 5: Answer our question
+    summarized_reviews_df = concatenated_reviews_df.with_column(
+        "NUMBER_ONE_DISH", cortex.Complete("mistral-large2", 
+                                        F.concat(F.lit(f'Context:'), 
+                                                    F.col("ALL_REVIEWS_TEXT"), 
+                                                    F.lit(f' Question:{question} Answer briefly and concisely and only name the dish:'))))
 
-  # Step 7: Parse the first element as JSON and extract the "answer" field
-  readable_df = first_element_df.with_column(
-      "NUMBER_ONE_DISH", F.get(F.parse_json(F.col("FIRST_ELEMENT")), F.lit("answer"))
-  )
-
-  # Display the simplified results
-  readable_df.select(["TRUCK_BRAND_NAME", "NUMBER_ONE_DISH"]).show()
+    summarized_reviews_df.select("TRUCK_BRAND_NAME", "NUMBER_ONE_DISH").show(3)
   ```
 #### SQL
   ```sql
@@ -553,25 +546,13 @@ In this section, you will leverage **Snowflake Cortex LLM - Extract Answer** to 
     SUMMARIZED_REVIEWS AS (
         SELECT 
             TRUCK_BRAND_NAME,
-            SNOWFLAKE.CORTEX.EXTRACT_ANSWER(
-                ALL_REVIEWS_TEXT, 
-                'What is the number one dish positively mentioned in the feedback?'
-            ) AS NUMBER_ONE_DISH
+            SNOWFLAKE.CORTEX.COMPLETE(
+               'mistral-large2', 
+               'Context:' || ALL_REVIEWS_TEXT || ' Question: What is the number one dish positively mentioned in the feedback? Answer briefly and concisely and only name the dish:'
+           ) AS NUMBER_ONE_DISH
         FROM CONCATENATED_REVIEWS
-    ),
-    FIRST_ELEMENT AS (
-        SELECT 
-            TRUCK_BRAND_NAME,
-            NUMBER_ONE_DISH[0] AS FIRST_ELEMENT
-        FROM SUMMARIZED_REVIEWS
-    ),
-    READABLE_REVIEWS AS (
-        SELECT 
-            TRUCK_BRAND_NAME,
-            PARSE_JSON(FIRST_ELEMENT):answer AS NUMBER_ONE_DISH
-        FROM FIRST_ELEMENT
     )
-  SELECT TRUCK_BRAND_NAME, NUMBER_ONE_DISH FROM READABLE_REVIEWS;
+    SELECT TRUCK_BRAND_NAME, NUMBER_ONE_DISH FROM SUMMARIZED_REVIEWS LIMIT 3;
   ```
 <!-- ------------------------ -->
 
@@ -614,7 +595,7 @@ With the completion of this quickstart, you have now:
 * Implementing advanced AI capabilities through Snowflake Cortex in minutes
   * Leveraging enterprise-grade language models directly within Snowflake's secure environment
   * Executing sophisticated natural language processing tasks with pre-optimized models that eliminate the need for prompt engineering. 
-  * You've mastered a powerful suite of AI-driven text analytics capabilities, from seamlessly breaking through language barriers with Translate, to decoding customer emotions through Sentiment analysis, extracting precise insights with Extract Answer, and automatically categorizing feedback using Classify Text. These sophisticated functions transform raw customer reviews into actionable business intelligence, all within Snowflake's secure environment.
+  * You've mastered a powerful suite of AI-driven text analytics capabilities, from seamlessly breaking through language barriers with Translate, to decoding customer emotions through Sentiment analysis, extracting precise insights with Complete, and automatically categorizing feedback using Classify Text. These sophisticated functions transform raw customer reviews into actionable business intelligence, all within Snowflake's secure environment.
 
 ### Related Resources
 
