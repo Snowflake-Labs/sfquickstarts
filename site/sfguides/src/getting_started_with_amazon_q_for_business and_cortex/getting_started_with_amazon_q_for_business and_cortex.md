@@ -89,157 +89,225 @@ Now that you have the database created you can upload the 2 manuals to a stage i
 ![](assets/addtostage.png)
 
 
-####### START HEREEEEEE
+Now, you will run the below code that will parse the data out of the documents into a field in a table PUMP_TABLE, then chunk the fields into a new table PUMP_TABLE_CHUNK. 
 
 ```sql
+--Create Table for text data
+CREATE OR REPLACE TABLE PUMP_TABLE AS
+SELECT 
+    '1290IF_PumpHeadMaintenance_TN' as doc,
+    SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@PUMP_DB.PUBLIC.DOCS, '1290IF_PumpHeadMaintenance_TN.pdf', {'mode': 'LAYOUT'}) as pump_maint_text;
 
+INSERT INTO PUMP_TABLE (doc, pump_maint_text)
+SELECT 'PumpWorks 610', SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@PUMP_DB.PUBLIC.DOCS, 'PumpWorks 610 PWI pump_Maintenance.pdf', {'mode': 'LAYOUT'});
+
+-- Create table with chunked text
+CREATE OR REPLACE TABLE PUMP_TABLE_CHUNK AS
+SELECT
+   TO_VARCHAR(c.value) as CHUNK_TEXT, DOC
+FROM
+   PUMP_TABLE,
+   LATERAL FLATTEN( input => SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER (
+      TO_VARCHAR(pump_maint_text:content),
+      'none',
+      700,
+      100
+   )) c;
+SELECT * FROM PUMP_TABLE_CHUNK;
 ```
 
-Notice how we're setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we're setting up the service so that additional filters can be used on the attribute "ADMISSION_TYPE".
+You can see that we're setting the chunks up to be up to 700 tokens with 100 tokens overlap. After the initial setup you can adjust these settings as you would like. Additionally, we are using'none' for the format rather than 'markdown'. You can see more information using the SPLIT_TEXT_RECURSIVE_CHARACTER() funciton [here.](https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex)
 
-## Set Up Fabric Environment
-Duration: 2
+Next, we will run the code on the CHUNK_TEXT field to create a Cortex Search service.
 
-Head to your Fabric workspace, click "New" in the top left then "More Options" and select the "Notebook" widget.
+```sql
+-- Create Search Service
+CREATE OR REPLACE CORTEX SEARCH SERVICE PUMP_SEARCH_SERVICE
+  ON CHUNK_TEXT
+  ATTRIBUTES DOC
+  WAREHOUSE = HOL_WH
+  TARGET_LAG = '30 day'
+  AS (
+    SELECT CHUNK_TEXT as CHUNK_TEXT, DOC FROM PUMP_TABLE_CHUNK);
+```
 
-![](assets/fabricnb.png)
+Notice how we're setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we're setting up the service so that additional filters can be used on the attribute "DOC.
 
+## Set Up Q for Business
+Duration: 5
+
+Head to you AWS console search "Amazon Q for Business" then select the orange button "Create Application" then accept all of the default/receommended settings for creating your application, make sure that you have at least one user created for the app with a Q Business Pro subscription the select Create.
+
+![](assets/qapp.png)
 
 <!-- ------------------------ -->
-## Querying Cortex Search from Fabric
+## Setting up OAuth to connect Q for Business to Snowflake
+Duration: 10
+
+From the Q for Business Application Details screen copy the "Deployed URL" and save it to a notebook.
+
+![](assets/qappurl.png)
+
+Next we will run the code which creates a security integration in Snowflake that we will use to authenticate with Q for Business. The only change you will have to make to this code is replacing the value of the "Deployed URL" from the Q App in the value <Deployed URL> below to complete the OAUTH_REDIRECT_URI value.
+
+```sql
+--create custom oauth
+CREATE OR REPLACE SECURITY INTEGRATION Q_AUTH_HOL
+  TYPE = OAUTH
+  ENABLED = TRUE
+  OAUTH_ISSUE_REFRESH_TOKENS = TRUE
+  OAUTH_REFRESH_TOKEN_VALIDITY = 3600
+  OAUTH_CLIENT = CUSTOM
+  OAUTH_CLIENT_TYPE = CONFIDENTIAL
+  OAUTH_REDIRECT_URI = '<Deployed URL>/oauth/callback';
+
+GRANT USAGE on database PUMP_DB to role PUBLIC;
+GRANT USAGE on schema PUBLIC to role PUBLIC;
+GRANT USAGE on CORTEX SEARCH SERVICE PUMP_SEARCH_SERVICE to role PUBLIC;
+
+DESC INTEGRATION Q_AUTH_HOL;
+
+SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('Q_AUTH_HOL');
+```
+
+After the security integration is created we grant the PUBLIC roles usage on the database, schemal and the Search service. 
+
+Additionally, after the "SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('Q_AUTH_HOL');" query copy the OAUTH_CLIENT_ID and the OAUTH_CLIENT_SECRET. You can learn more about using Snowflake for Oauth [here.](https://docs.snowflake.com/en/user-guide/oauth-custom)
+
+Also, make note of your Snowflake url. You can do this by going to your alias in the bottom left of the Snowflake UI finding your account then selecting the "link" button that says "copy account url" when you hover over it.
+
+<!-- ------------------------ -->
+## Create Cortex Plugin in Amazon Q for Business
 Duration: 15
 
-Now let's copy and paste several blocks of code to the Fabric notebook and work through connecting to the Cortex Search service from Fabric.
+Head back to your Q for Business application and select "Plugins" under "Actions" on the left side. Select the orange "Add Plugin" button then 
+"Create Customer Plugin" in the top right.
 
-First, let's install two packages that we need to use the API to connect.
+![](assets/createplugin.png)
 
-```python
-!pip install snowflake
-%pip install --upgrade pydantic
+1. name the plugin "cortex-pump" and provide a description. 
+
+2. Under "API Schema" select "Define wtih in-line OpenAPI schema editor" and make sure that "YAML" is selected and paste in the below openapi spec. Several notes:
+    - you will have to copy in your <snowflake url> in 3 spots below where indicated.
+    - the path defined in the openapi schema assumes that you set up you Cortex Search service i nthe pump_db database and in the int public schema with the the name PUMP_SEARCH_SERVICE. If you did not make any changes to the Snowflake code that you already ran in this quickstart you will be good and not have to change anything.
+    - the 'description' value here is important as you will see Q uses this to know when to route questions to the plugin.
+
+```yaml
+openapi: 3.0.0
+info:
+  title: Cortex Search API
+  version: 2.0.0
+servers:
+  - url: <snowflake url>
+paths:
+  /api/v2/databases/pump_db/schemas/public/cortex-search-services/PUMP_SEARCH_SERVICE:query:
+    post:
+      parameters:
+      - in: header
+        description: Customer Snowflake OAuth header
+        name: X-Snowflake-Authorization-Token-Type
+        schema:
+          type: string
+          enum: ["OAUTH"]
+        required: true
+      summary: Query the Cortex Search service
+      description: Submit a query to the Cortex Search service in order to answer questions specifically about Pumps or other mechanical parts or repair or maintenance information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+      security:
+        - oauth2: []
+components:
+  schemas:
+    QueryRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: The search query
+        limit:
+          type: integer
+          description: The maximum number of results to return
+          example: 5
+    QueryResponse:
+      type: object
+      description: Search results.
+      properties:
+        results:
+          type: array
+          description: List of result rows.
+          items:
+            type: object
+            additionalProperties: true
+            description: Map of column names to bytes.
+        request_id:
+          type: string
+          description: ID of the request.
+      required:
+      - results
+      - request_id
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: <snowflake url>/oauth/authorize
+          tokenUrl: <snowflake url>/oauth/token-request
+          scopes:
+            refresh_token: Refresh the OAuth token
+            session:role:PUBLIC: The Snowflake role for the integration
+
 ```
 
-Next, let's set up the connection request. For this quickstart you will have to populate the account identifier, your user name and password. For interactive work using username and password, but additional authentication methods are supported via the [Snowflake Python Package](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector-connect).
+![](assets/pluginspec.png)
 
-```python
-import os
-import json
+Under "Authentication" selection "Authentication required" and under "AWS Secrets Manager" select the dropdown menu and select "create an aws Secrets Manager secret". Give the secret a name like "...-cortex-pump" then populate the "Client Secret" and the "Client ID" with the values from the last Snowflake query in the previous step. The "OAuth callback url" will be the same as the value for the OAUTH_REDIRECT_URI paramater that was used when creating the security integration object in Snowflake. Click "Create" when done.
 
-from snowflake.core import Root
-from snowflake.connector import connect
+![](assets/secrets.png)
 
-# replace with hardcoded values if you wish; otherwise, ensure all values are in your environment.
-CONNECTION_PARAMETERS = {
-    "account": "<snowflake account>",
-    "user": "<user name>",
-    "password": "<password>",
-    "role": "ACCOUNTADMIN",
-    "warehouse": "HOL_WH",
-    "database": "MEDICAL_NOTES",
-    "schema": "PUBLIC"
-    }
+Last, select "Create and use a new service role" to quickly create and use a role that has permissions to use Q for Business.
+
+IF you elect to use an existing role you will have to add the below permission to that role.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowQBusinessToGetSecretValue",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": [
+                "<secrets ARN>"
+            ]
+        }
+    ]
+}
 ```
 
-Now, let's connect to the service. You will likely need to approve the connection via MFA.
+Finally, select "Add Plugin" and it will take 1-2 minutes to get the plugin created.
 
-```python
-# create a SnowflakeConnection instance
-connection = connect(**CONNECTION_PARAMETERS,insecure_mode=True)
-```
+<!-- ------------------------ -->
+## Connect Q and Cortex
+Duration: 5
 
-Next, we will build a function to query the Search service and return results. You can review and (if you would like) edit the query that we're sending to Cortex Search. Additionally, we're setting a high limit so that we return all relevant results and return all of the fields in the table with the free text field "TEXT". Take time as you would like to review the code that we're using to build the request.
+Navigate into the "cortex-pump" plugin and select "Preview web experience" in the top right, a new window will open to edit the web experience, leave it as-is and select "View web experience" in the top right:
 
-```python
-# Replace with your search parameters
-# Replace with your search parameters
-query = "you are a helpful assistant. Take your time to and be selective and only retrieve records that clearly show that the patient has an allergy to Penicillin and the diagnosis is related to Pneumonia. Exclude records where there is negation, for example there is mention of no pneumonia "
-columns = ["TEXT","SUBJECT_ID","CATEGORY","ADMISSION_TYPE","DIAGNOSIS","AGE","GENDER","LOS"]
-svc = "MEDNOTES_SEARCH_SERVICE"
-filter_type={"@eq": {"ADMISSION_TYPE": "EMERGENCY"} }
-limit = 1000
-
-
-def search_records(connection, query, columns, svc, filter_type, limit):
-    """
-    Args:
-        connection: The connection object to the database.
-        query (str): The search query string.
-        columns (list): The list of columns to retrieve.
-        svc (str): The service name to perform the search.
-        limit (int): The maximum number of results to return.
-
-    Returns:
-        dict: The search results in JSON format.
-    """
-    try:
-        # create a root as the entry point for all objects
-        root = Root(connection)
-        
-        # perform the search
-        response = (
-            root.databases[CONNECTION_PARAMETERS["database"]]
-            .schemas[CONNECTION_PARAMETERS["schema"]]
-            .cortex_search_services[svc]
-            .search(
-                query,
-                columns,
-                filter_type,
-                limit=limit
-            )
-        )
-
-        print(f"Received response with `request_id`: {response.request_id}")
-        results = json.dumps(response.results, indent=5)
-        print(results)
-        return results
-    except Exception as e:
-        print(f"An error occurred: {e}")
-```
-
-Let's now run the function and place the results into a pandas dataframe.
-
-```python
-import pandas as pd
-results = search_records(connection, query, columns, svc, filter_type, limit)
-l = json.loads(results)
-df = pd.DataFrame(l)
-```
-We have created a function that calls the service filtering only on Emergency admissions and using plain text to query the service and return records in which the discharge notes indicate an allergy to Penicillin. Then created a data frame with those records.
-
-Now, let's take some time to review the results with some of Fabric Notebooks interactive EDA capabilities. Run the below code and click through the data to view the results. If you click through records on the "TEXT" field you can check to see if we're actually returning records where patients are allergic to Penicillin.
-
-```python
-display(df)
-```
-
-![](assets/displaycheck.png)
-
-Click through additional fields to view the values in the table.
-
-Now let's experiment with some more EDA in the results. Execute the below code in your Fabric Notebook.
-
-```python
-display(df, summary=True)
-```
-
-You can click through the different fields to see how patients allergic to Penicillin are separated across different categories.
-
-![](assets/edacheck.png)
-
-To learn more about Fabric Notebook functionality check out the documentation [here](https://learn.microsoft.com/en-us/fabric/data-engineering/author-execute-notebook).
-
-Finally, we can write the results of the Search query back to a table in Snowflake.
-
-```python
-from snowflake.connector.pandas_tools import write_pandas
-
-# Write the DataFrame to Snowflake
-success, nchunks, nrows, _ = write_pandas(connection, df, 'ALLERGY_TABLE')
-```
-
-You can head back to Snowflake to verify the table was created. And you can do with this whatever you would like...analyze the results in Snowflake, connect Power BI to it or build models with Cortex, SnowflakeML, Azure Openai and AzureML!
-
-![](assets/allergytable.png)
-
+![](assets/viewwebexp.png)
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
