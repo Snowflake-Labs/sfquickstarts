@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering
 ## Overview 
 Duration: 5
 
-In this quickstart, you'll learn how to build an end-to-end application that creates an intelligent document assistant using PDF documents and Large Language Models (LLMs). The application combines PDF processing, vector embeddings, and Retrieval Augmented Generation (RAG) to enable natural language interactions with your documents.
+In this quickstart, you'll learn how to build an end-to-end application that creates an intelligent document assistant using PDF documents, Anthropic's Claude Large Language Model (LLM), and Snowflake's Cortex capabilities. The application combines PDF processing, vector embeddings, and Retrieval Augmented Generation (RAG) to enable natural language interactions with your documents through Claude's advanced language understanding capabilities.
 
 ### What You'll Learn
 - Setting up PDF processing in Snowflake using PyPDF2
@@ -21,7 +21,7 @@ In this quickstart, you'll learn how to build an end-to-end application that cre
 - Developing an interactive Streamlit chat interface
 
 ### What You'll Build
-A full-stack application that enables users to:
+An end-to-end application that enables users to:
 - Upload and process PDF documents
 - Search through documents using semantic similarity
 - Engage in conversational Q&A about document content
