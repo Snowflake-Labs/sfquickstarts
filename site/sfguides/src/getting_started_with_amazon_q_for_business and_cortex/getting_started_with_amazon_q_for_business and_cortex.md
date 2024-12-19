@@ -131,7 +131,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE PUMP_SEARCH_SERVICE
     SELECT CHUNK_TEXT as CHUNK_TEXT, DOC FROM PUMP_TABLE_CHUNK);
 ```
 
-Notice how we're setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we're setting up the service so that additional filters can be used on the attribute "DOC.
+Notice how we're setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we're setting up the service so that additional filters can be used on the attribute "DOC".
 
 ## Set Up Q for Business
 Duration: 5
@@ -273,7 +273,11 @@ components:
 
 ![](assets/pluginspec.png)
 
-Under "Authentication" selection "Authentication required" and under "AWS Secrets Manager" select the dropdown menu and select "create an aws Secrets Manager secret". Give the secret a name like "...-cortex-pump" then populate the "Client Secret" and the "Client ID" with the values from the last Snowflake query in the previous step. The "OAuth callback url" will be the same as the value for the OAUTH_REDIRECT_URI paramater that was used when creating the security integration object in Snowflake. Click "Create" when done.
+- Under "Authentication" select "Authentication required".
+- Under "AWS Secrets Manager" select the dropdown menu and select "create an aws Secrets Manager secret".
+    - Give the secret a name like "...-cortex-pump" then populate the "Client Secret" and the "Client ID" with the values from the last Snowflake query in the previous step. 
+    - The "OAuth callback url" will be the same as the value for the OAUTH_REDIRECT_URI paramater that was used when creating the security integration object in Snowflake.
+- Click "Create" when done.
 
 ![](assets/secrets.png)
 
@@ -309,28 +313,47 @@ Navigate into the "cortex-pump" plugin and select "Preview web experience" in th
 
 ![](assets/viewwebexp.png)
 
+In the chat select "plugin" at the bottom and select the plugin we created for cortex-pump. Ask the below question:
+
+- What is the part description for part number G4204-68741?
+
+Q for business will liekly attempt to create query,  retype the question in the query window and select "Submit".
+
+You will be asked to authprize and use the browser to authorize one time.
+
+Once complete Q will send the request to the plugin and you will get an answer!
+
+1[](assets/qanswer.png)
+
+You can check the answer aganst the manuals, it should match! Test out other prompts including the examples below:
+- Using the cortex search plugin what are the pump head assembly parts?
+- Using the cortex search plugin should I use a refurbished pump head for maintenance and repair OR disassemble a pump head?
+- Using the cortex search plugin what are the high level steps for Replacing the Heat Exchanger?
+- Using the cortex search plugin what are best ways to prevent the pump from damage?
+- Using the cortex search plugin what are spare parts that are included with this pump?
+
 <!-- ------------------------ -->
 ## Conclusion and Resources
 Duration: 5
 
-This quickstart is just that, a quick way to get you started with using Fabric and Snowflake Cortex Search. There are plenty of different directions and enhancements you can make to this. The key thing is knowing that when you deploy Snowflake on Azure you have plenty of secure options for using Generative AI services regardless of where your data is and where you are orchestrating from!
-
+This quickstart is just that, a quick way to get you started with using Amazon Q with Snowflake Cortex, though with this start you are now enabled to extend the quickstart in the below ways:
+    - Scale the workflow to a use case with many documents and use a more robust Cortex Search Service.
+    - Use a Cortex Q plugin alongside Quicksight to get next level answers on your data that's represented in your dashboards.
+    - Use multiple plugins to Cortex from Q along with AWS service to create a robust web app for getting answers from your data with plain text.
 
 ### What You Learned
-- Using Fabric Notebooks with Snowflake Cortex Search
-- Creating a Cortex Search Service in Snowflake on unstructured data
-- Using Fabric Notebooks to explore data
-- Writing dataframes back to Snowflake
+- Loading data to Snowflake via Snowsight
+- Extracting unstructured data and creating chunks in Snowflake
+- Creating a Snowflake Cortex Search Service on unstructured data
+- Creating a connection from Amazon Q to Cortex Search with Oauth authentication using Q plugins
 
 ### Resources
-- There are some great blogs on Medium regarding Snowflake Cortex, Microsoft Fabric and how Snowflake and Fabric work together
+- There are some great blogs on Medium regarding Snowflake Cortex and Amazon Services work together
 
 - [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/)
 
-- [Microsoft Fabric and Power BI](https://learn.microsoft.com/en-us/power-bi/fundamentals/fabric-get-started)
+- [Amazon Q](https://aws.amazon.com/q/?trk=c570e8a2-ec3c-4968-baa4-f8537e37dd1d&sc_channel=ps&s_kwcid=AL!4422!10!71949557907688!71950102400240&ef_id=07cc246a6d4218358de8430ee23fc18e:G:s&msclkid=07cc246a6d4218358de8430ee23fc18e)
 
-- [Fabric and Snowflake together](https://www.microsoft.com/en-us/microsoft-fabric/blog/2024/05/22/snowflake-and-microsoft-announce-expansion-of-their-partnership/)
+- [Amazon Bedrock and Snowflake Cortex](https://catalog.us-east-1.prod.workshops.aws/workshops/2d4e5ea4-78c8-496f-8246-50d8971414c9/en-US/01-overview)
 
-If you have any questions, reach out to your Snowflake account team!
-
-
+- [Using Snowflake, Streamlit and External Access with amazon Bedrcok](https://quickstarts.snowflake.com/guide/getting_started_with_bedrock_streamlit_and_snowflake/index.html?index=..%2F..index#0)
