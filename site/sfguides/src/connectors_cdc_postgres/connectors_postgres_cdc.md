@@ -1,9 +1,9 @@
 author: Joviane Bellegarde
-id: cdc_data_from_postgres_to_snowflake
+id: connectors_postgres_cdc
 summary: CDC Data from PostgreSQL to Snowflake
 categories: CDC, Getting-Started, Connectors, Dynamic Tables
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: CDC, Getting Started, Connectors, Dynamic Tables
 
@@ -11,6 +11,7 @@ tags: CDC, Getting Started, Connectors, Dynamic Tables
 <!-- ------------------------ -->
 ## Overview
 Duration: 10
+<img src="assets/CDC_connectors_banner.png">
 
 In this Quickstart, we will investigate how a financial company builds a BI dashboard using customer transactional data housed on a PostgreSQL database. The data is brought into Snowflake via the Snowflake Connector for PostgreSQL. The main idea is gain insights on potential ways to increase customer spending with promotions.
 
@@ -88,11 +89,10 @@ Before getting started with this step, make sure that you have Docker Desktop in
 
 2. Open the IDE of your choice to copy and paste this file by copy and pasting the following:
 ```
-version: '1'
 services:
   postgres:
-    image: "postgres:11"
-    container_name: "postgres11"
+    image: "postgres:17"
+    container_name: "postgres17"
     environment:
       POSTGRES_DB: 'postgres'
       POSTGRES_USER: 'postgres'
@@ -281,7 +281,6 @@ Directory Structure
 1. Navigate to the directory called **agent-postgresql**
 2. Create the docker-compose file named **docker-compose.yaml** in the **agent-postgresql** directory with the following content:
 ```
-version: '1'
 services:
   postgresql-agent:
     container_name: postgresql-agent
