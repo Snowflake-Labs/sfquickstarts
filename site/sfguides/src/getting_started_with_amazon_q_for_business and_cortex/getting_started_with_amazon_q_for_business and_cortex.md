@@ -323,7 +323,7 @@ You will be asked to authprize and use the browser to authorize one time.
 
 Once complete Q will send the request to the plugin and you will get an answer!
 
-1[](assets/qanswer.png)
+![](assets/qanswer.png)
 
 You can check the answer aganst the manuals, it should match! Test out other prompts including the examples below:
 - Using the cortex search plugin what are the pump head assembly parts?
