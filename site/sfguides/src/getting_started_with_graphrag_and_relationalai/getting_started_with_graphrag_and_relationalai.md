@@ -52,7 +52,8 @@ Duration: 3
 
 We shall proceed with creating the Snowflake artifacts required for this guide.
 
-
+> aside positive
+>
 > Steps (3) and (4) exist for educational purposes, the Snowflake application can be installed by executing this [SQL script](https://github.com/RelationalAI/graphrag/tree/main/getting-started/sql/script.sql).
 
 ```sql
