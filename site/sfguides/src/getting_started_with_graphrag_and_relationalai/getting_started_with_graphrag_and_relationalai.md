@@ -23,7 +23,6 @@ RelationalAI is a cloud-native platform that enables organizations to streamline
 Users can build a knowledge graph using Python and materialize it on top of their Snowflake data, which are shared with the RelationalAI app through Snowflake Data Streams. Insights can be written back to Snowflake tables and shared across the organization.
 
 ### What you will learn
-- How to install the RelationalAI Native App in your Snowflake account
 - How to use Snowflake LLMs to extract entities and relations from the corpus
 - How to represent the entities and relations with a RelationalAI graph
 - How to run graph algorithms on the graph
@@ -31,11 +30,13 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 - How to use the graph to answer user questions
 
 ### What you will need
-- A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) on AWS in the US East (N. Virginia) region or the US West (Oregon) region
-- Basic knowledge of using a Snowflake SQL Worksheet
-- [Snowflake privileges](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges) on your user to install a Native Application
+- Access to a Snowflake account with the [RelationalAI Native App](https://app.snowflake.com/marketplace/listing/GZTYZOOIX8H/relationalai-relationalai) installed. See also the [RelationalAI Installation Guide](https://relational.ai/docs/get-started/install-native-app) for more information.
+- [Privileges to use the Native app](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges): your user needs to have the
+[app_user application role] (https://relational.ai/docs/manage/user-access) granted
+- Basic knowledge of using Snowflake SQL Worksheets
 - Snowflake account privileges to create databases and schemas in your Snowflake account
-- The [RelationalAI CLI](https://relational.ai/docs/reference/cli/)
+- Python and the [relationalai Python Package](https://relational.ai/docs/get-started/local-python) installed
+
 
 ### What you will build
 - A processing pipeline in Snowflake Cortex for extracting named entities and relations from unstructured text data
@@ -45,17 +46,13 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 - A semantically similar retrieval pipeline of a user question against the community summaries
 - A LLM-based question answering pipeline grounded on the community summaries
 
-> aside positive
-> NOTE:  If you do not already have the RelationalAI Native App installed, please follow the instructions [here](https://relational.ai/docs/native_app/installation)
-
 <!-- ------------------------ -->
 ## Installing Snowflake artifacts and loading the corpus
 Duration: 3
 
 We shall proceed with creating the Snowflake artifacts required for this guide.
 
-> aside positive
-> 
+
 > Steps (3) and (4) exist for educational purposes, the Snowflake application can be installed by executing this [SQL script](https://github.com/RelationalAI/graphrag/tree/main/getting-started/sql/script.sql).
 
 ```sql
@@ -74,7 +71,7 @@ CREATE OR REPLACE WAREHOUSE graph_rag WAREHOUSE_SIZE='X-Small' AUTO_SUSPEND = 30
 
 -- Create data tables.
 CREATE OR REPLACE TABLE corpus(
-  ID INT NOT NULL AUTOINCREMENT START 1 INCREMENT 1 
+  ID INT NOT NULL AUTOINCREMENT START 1 INCREMENT 1
   , CONTENT VARCHAR NOT NULL
 )
 COMMENT = 'Table containing the corpus which will be loaded from Azure storage';
@@ -113,8 +110,8 @@ import re
 
 def main(llm_response):
     payload = llm_response["choices"][0]["messages"]
-    
-    try:    
+
+    try:
         # Remove whitespaces.
         payload = " ".join(payload.split())
 
@@ -124,27 +121,27 @@ def main(llm_response):
         return json.loads(payload)
 $$;
 
-CREATE OR REPLACE FUNCTION LLM_ENTITIES_RELATIONS(model VARCHAR, content VARCHAR, additional_prompts VARCHAR DEFAULT '') 
-RETURNS TABLE 
-(response OBJECT) 
-LANGUAGE SQL 
-AS 
+CREATE OR REPLACE FUNCTION LLM_ENTITIES_RELATIONS(model VARCHAR, content VARCHAR, additional_prompts VARCHAR DEFAULT '')
+RETURNS TABLE
+(response OBJECT)
+LANGUAGE SQL
+AS
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
         model,
         [
             {
-                'role': 'system', 
+                'role': 'system',
                 'content': '
                     # Knowledge Graph Instructions
-        
+
                     ## 1. Overview
                         - You are a top-tier algorithm designed for extracting information in structured formats to build a knowledge graph.
                         - Your aim is to achieve simplicity and clarity in the knowledge graph, making it accessible for a vast audience.
                         - **Nodes** represent entities and concepts. They are akin to Wikipedia nodes.
                             - If the entities cannot be extracted, return nothing.
                         - **Relations** represent links between entities. They are akin to predicates.
-                        
+
                     ## 2. Labeling entities and relations
                         - **Completeness**
                             - Ensure that all entities are identified.
@@ -154,7 +151,7 @@ $$
                         - **Entity IDs**: never utilize integers as entity IDs. Entity IDs must be names or human-readable identifiers found in the text, exactly as they appear in the text.
                             - Example: the ID of entity "John Doe" must be "John Doe".
                         - **Property format**
-                            - Properties must be in a key-value format. 
+                            - Properties must be in a key-value format.
                             - Properties must be in <entity>_has_<property> format.
                             - Do not include the entity ID in the properties, just the entity type.
                                 - Example: "john_doe_has_age" is wrong. Correct naming is "has_age".
@@ -164,15 +161,15 @@ $$
                                 - "person_is_president_of_company" is invalid because it includes the node name "person" and "company" in the relation name. Correct relation name must be "is_president_of".
                         - **Unique semantic relation naming**
                             - Relation names must semantically represent one and only one concept.
-                            - Example: 
+                            - Example:
                                 - "is_president_and_ceo_of" is invalid because it combines entities "president" and "ceo" into one relation.
                             - If a list of allowed relation names is provided, only use those relation names in the knowledge graph.
-                    
+
                     ## 3. Handling node and relation properties
                         - **Property retrieval**
                             - Extract only the properties relevant to the entities and relations provided.
                                 - Example: if the entity "studied_at" is identified, extract properties like "from_date", "to_date", "qualification".
-                    
+
                     ## 4. Handling numerical data and dates
                         - **No separate nodes for dates / numbers**
                             - Do not create separate nodes for dates or numerical values. Always attach them as attributes or properties of nodes.
@@ -182,22 +179,22 @@ $$
                             - Use snake_case for property keys, e.g., "birth_date".
                         - **Numerical data**
                             - Dates, numbers etc. must be incorporated as attributes or properties of their respective nodes.
-                    
+
                     ## 5. Coreference resolution
                         - **Maintain entity consistency**
                             - When extracting entities, it is vital to ensure consistency.
                             - If an entity, such as "John Doe", is mentioned multiple times in the text but is referred to by different names or pronouns (e.g., "John", "he"), always use the most complete identifier for that entity throughout the knowledge graph. In this example, use "John Doe" as the entity ID.
                             - The knowledge graph must be coherent and easily understandable, so maintaining consistency in entity references is crucial.
-                    
+
                     ## 6. Relation subject / object consistency
                         - **Precedence**
-                            - It is crucial that relations are consistent in terms of subject and object. Subjects are entities of lower granularity than objects. 
-                            
+                            - It is crucial that relations are consistent in terms of subject and object. Subjects are entities of lower granularity than objects.
+
                     ## 7. Output
                         - **Format**
-                            - Produce well formatted, pure JSON only. 
+                            - Produce well formatted, pure JSON only.
                             - The JSON must be parsable by Python, as follows:
-                            
+
                             {
                                 "nodes": [
                                     {
@@ -216,26 +213,26 @@ $$
                                     },
                                     ...
                                 ]
-    
+
                             }
-                            
-                        - **Response**: 
+
+                        - **Response**:
                             - Respond strictly with the JSON object and nothing else.
                             - Do not include verbose information such as "here is what you asked for" etc.
-                        
+
                     ## 8. Strict compliance
                         - Adhere to the rules strictly. Non-compliance will result in termination.
-                    ' 
+                    '
                     || additional_prompts ||
                     '
                     Your response:
-                ' 
+                '
             },
             {
-                'role': 'user', 
+                'role': 'user',
                 'content': content
             }
-        ], 
+        ],
         {
             'temperature': 0,
             'top_p': 0
@@ -280,21 +277,21 @@ class GraphBuilder(object):
                     corpus_ids.append(properties["corpus_id"])
                 except:
                     corpus_ids.append(0)
-                    
+
                 try:
                     node_types.append(properties["type"])
                 except:
                     node_types.append("undefined")
-                    
+
                 if len(properties) > 0:
                     props.append(properties)
                 else:
                     props.append(0)
-    
+
             nodes_df = pd.DataFrame(
                 data={
                     "id": nodes,
-                    "corpus_id": corpus_ids, 
+                    "corpus_id": corpus_ids,
                     "type": node_types,
                     "properties": props
                 },
@@ -325,22 +322,22 @@ class GraphBuilder(object):
                     corpus_ids.append(properties["corpus_id"])
                 except:
                     corpus_ids.append(0)
-                    
+
                 try:
                     edge_types.append(properties["type"])
                 except:
                     edge_types.append("undefined")
-                    
+
                 if len(properties) > 0:
                     props.append(properties)
                 else:
                     props.append(None)
-        
+
             edges_df = pd.DataFrame(
                 data={
                     "src_node_id": src_nodes,
                     "dst_node_id": dst_nodes,
-                    "corpus_id": corpus_ids, 
+                    "corpus_id": corpus_ids,
                     "type": edge_types,
                     "properties": props
                 },
@@ -353,7 +350,7 @@ class GraphBuilder(object):
         finally:
             logger.info(f"Graph contains {len(edges_df)} edges")
             return edges_df
-            
+
     @property
     def aggregate_state(self) -> nx.Graph:
         return self._graph
@@ -371,7 +368,7 @@ class GraphBuilder(object):
                 except Exception as error:
                     logger.error("Error accumulating graph nodes")
                     logger.error(error)
-                    
+
             # Add edges with (optional) properties.
             for relation in llm_response["relations"]:
                 try:
@@ -382,11 +379,11 @@ class GraphBuilder(object):
                 except Exception as error:
                     logger.error("Error accumulating graph edges")
                     logger.error(error)
-    
+
         except Exception as error:
             logger.error("Error calling _edges_df function")
             logger.error(error)
-    
+
     def merge(self, graph) -> nx.Graph:
         self._graph = nx.union(self._graph, graph)
 
@@ -400,10 +397,10 @@ class GraphBuilder(object):
         ]
 $$;
 
-CREATE OR REPLACE PROCEDURE CREATE_NODES_EDGES_STREAMS_SOURCES(completions_model VARCHAR) 
+CREATE OR REPLACE PROCEDURE CREATE_NODES_EDGES_STREAMS_SOURCES(completions_model VARCHAR)
 RETURNS VARCHAR
-LANGUAGE SQL 
-AS 
+LANGUAGE SQL
+AS
 $$
     BEGIN
         CREATE OR REPLACE TEMPORARY TABLE nodes_edges_staging(nodes ARRAY, edges ARRAY);
@@ -413,17 +410,17 @@ $$
         **/
         INSERT INTO nodes_edges_staging
         WITH c AS (
-            SELECT 
+            SELECT
                 c.id AS id
                 , c.content AS content
-            FROM 
+            FROM
                 corpus AS c
         )
         , entities_relations AS (
-            SELECT 
+            SELECT
                 c.id AS corpus_id
                 , LLM_EXTRACT_JSON(r.response) AS response
-            FROM 
+            FROM
                 c
             JOIN TABLE(LLM_ENTITIES_RELATIONS(:completions_model , c.content, '')) AS r
         )
@@ -433,7 +430,7 @@ $$
             FROM
                 entities_relations AS er
         )
-        SELECT 
+        SELECT
             ne.graph[0]::ARRAY AS nodes
             , ne.graph[1]::ARRAY AS edges
         FROM
@@ -448,55 +445,55 @@ $$
         CREATE OR REPLACE TABLE nodes
         AS
         WITH nodes AS (
-            SELECT 
+            SELECT
                 ne.nodes AS nodes
-            FROM 
+            FROM
                 nodes_edges_staging AS ne
         )
-        SELECT 
-            VALUE:"id"::VARCHAR id 
-            , VALUE:"corpus_id"::INT corpus_id 
-            , VALUE:"type"::VARCHAR type 
+        SELECT
+            VALUE:"id"::VARCHAR id
+            , VALUE:"corpus_id"::INT corpus_id
+            , VALUE:"type"::VARCHAR type
         FROM
-            nodes AS n 
+            nodes AS n
             , LATERAL FLATTEN(n.nodes) AS items;
 
         -- Edges table.
-        CREATE OR REPLACE TABLE edges 
-        AS 
-        WITH edges AS ( 
-            SELECT 
-                ne.edges AS edges 
-            FROM 
-                nodes_edges_staging AS ne 
-        ) 
-        SELECT 
-            VALUE:"src_node_id"::VARCHAR src_node_id 
-            , VALUE:"dst_node_id"::VARCHAR dst_node_id 
-            , VALUE:"corpus_id"::INT corpus_id 
-            , VALUE:"type"::VARCHAR type 
-        FROM 
-            edges AS n 
+        CREATE OR REPLACE TABLE edges
+        AS
+        WITH edges AS (
+            SELECT
+                ne.edges AS edges
+            FROM
+                nodes_edges_staging AS ne
+        )
+        SELECT
+            VALUE:"src_node_id"::VARCHAR src_node_id
+            , VALUE:"dst_node_id"::VARCHAR dst_node_id
+            , VALUE:"corpus_id"::INT corpus_id
+            , VALUE:"type"::VARCHAR type
+        FROM
+            edges AS n
             , LATERAL FLATTEN(n.edges) AS items;
 
         RETURN 'OK';
     END;
 $$;
 
-CREATE OR REPLACE FUNCTION LLM_SUMMARIZE(model VARCHAR, content VARCHAR) 
-RETURNS TABLE 
-(response OBJECT) 
-LANGUAGE SQL 
-AS 
+CREATE OR REPLACE FUNCTION LLM_SUMMARIZE(model VARCHAR, content VARCHAR)
+RETURNS TABLE
+(response OBJECT)
+LANGUAGE SQL
+AS
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
         model,
         [
             {
-                'role': 'system', 
+                'role': 'system',
                 'content': '
                     # Summarization instructions
-        
+
                     ## 1. Overview
                         - You are a top-tier algorithm designed for summarizing the provided text.
 
@@ -506,29 +503,29 @@ $$
                         - Produce summary of the context you are given and nothing else. Do not extrapolate beyond the context given.
                         - Relations between entities must be preserved.
                         - The summarization must produce coherent and succinct text.
-    
+
                     ## 3. Output
                         - **Format**
                             - Produce well formatted, pure JSON only.
                             - The JSON must be parsable by Python, as follows:
                                 {"answer": "<output>"}
                             - The <output> must always be formatted as plain text.
-                            
-                        - **Response**: 
+
+                        - **Response**:
                             - Respond strictly with the JSON object and nothing else.
                             - Do not include verbose information such as "here is what you asked for" etc.
-                        
+
                     ## 4. Strict compliance
                         - Adhere to the rules strictly. Non-compliance will result in termination.
-    
+
                     Your response:
-                ' 
+                '
             },
             {
-                'role': 'user', 
+                'role': 'user',
                 'content': content
             }
-        ], 
+        ],
         {
             'temperature': 0,
             'top_p': 0
@@ -536,68 +533,68 @@ $$
     ) AS response
 $$;
 
-CREATE OR REPLACE FUNCTION LLM_ANSWER(model VARCHAR, context VARCHAR, question VARCHAR) 
-RETURNS TABLE 
-(response OBJECT) 
-LANGUAGE SQL 
-AS 
+CREATE OR REPLACE FUNCTION LLM_ANSWER(model VARCHAR, context VARCHAR, question VARCHAR)
+RETURNS TABLE
+(response OBJECT)
+LANGUAGE SQL
+AS
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
         model,
         [
             {
-                'role': 'system', 
+                'role': 'system',
                 'content': '
                     # Question answering instructions
-        
+
                     ## 1. Overview
                         - You are a top-tier algorithm designed for answering questions given specific context provided by the user.
-                        
+
                     ## 2. Instructions
                         - Be concise and do not hallucinate.
                         - Be very specific.
                         - Be very precise.
                         - Answer the question based on the provided context and only that.
                         - If the question cannot be answered with the provided context information, clearly say so and do not answer the question.
-                        
+
                     ## 3. Context
                         - This is the context on which to base your answer:
 
                         ```context
-                    ' 
+                    '
                     ||
                             context
                     ||
                     '
                         ```
-                        
+
                     ## 4. Output
                         - **Format**
                             - Produce well formatted, pure JSON only.
                             - The JSON must be parsable by Python, as follows:
                                 {
                                     "answer": "<output>",
-                                    "evidence": "<supporting evidence as found in the provided context ONLY, otherwise this field must be empty.>", 
+                                    "evidence": "<supporting evidence as found in the provided context ONLY, otherwise this field must be empty.>",
                                     "confidence": "<confidence score between 0.0 and 1.0 in human-readable format>"
                                 }
                             - <output> must always be formatted as plain text.
                             - <evidence> must always come from context.
-                            
-                        - **Response**: 
+
+                        - **Response**:
                             - Respond strictly with the JSON object and nothing else.
                             - Do not include verbose information such as "here is what you asked for" etc.
-                        
+
                     ## 5. Strict compliance
                         - Adhere to the rules strictly. Non-compliance will result in termination.
-    
+
                     Your response:
-                ' 
+                '
             },
             {
-                'role': 'user', 
+                'role': 'user',
                 'content': question
             }
-        ], 
+        ],
         {
             'temperature': 0.0,
             'top_p': 0
@@ -605,14 +602,14 @@ $$
     ) AS response
 $$;
 
-CREATE OR REPLACE PROCEDURE LLM_ANSWER_SUMMARIES(completions_model VARCHAR, summarization_window INTEGER, question VARCHAR)  
-RETURNS TABLE 
+CREATE OR REPLACE PROCEDURE LLM_ANSWER_SUMMARIES(completions_model VARCHAR, summarization_window INTEGER, question VARCHAR)
+RETURNS TABLE
 (
     answer VARIANT
     , evidence VARIANT
 )
-LANGUAGE SQL 
-AS 
+LANGUAGE SQL
+AS
 $$
 DECLARE
     max_community_id INTEGER;
@@ -632,80 +629,80 @@ BEGIN
 
     counter := (max_community_id / :summarization_window) + 1;
     community_id_to := :summarization_window;
-  
+
     FOR i IN 1 TO counter DO
-        INSERT INTO 
-            temp_results 
+        INSERT INTO
+            temp_results
         WITH cs AS (
-            SELECT DISTINCT 
+            SELECT DISTINCT
                 content
-            FROM 
+            FROM
                 community_summary
-            WHERE 
+            WHERE
                 community_id BETWEEN :community_id_from AND :community_id_to
         )
         , c AS (
-            SELECT 
+            SELECT
                 LISTAGG(content, '\n\n') WITHIN GROUP(ORDER BY content) AS content
-            FROM 
+            FROM
                 cs
         )
-        SELECT 
+        SELECT
             :community_id_from
             , :community_id_to
             , c.content
             , PARSE_JSON(LLM_EXTRACT_JSON(r.response)) AS response
-        FROM 
+        FROM
             c
         JOIN TABLE(
             LLM_ANSWER(
-                :completions_model 
+                :completions_model
                 , c.content
                 , :question
             )
         ) AS r;
-    
+
         community_id_from := community_id_from + :summarization_window;
         community_id_to := community_id_to + :summarization_window;
     END FOR;
 
     resultset := (
         WITH summary_answers AS (
-            SELECT DISTINCT 
+            SELECT DISTINCT
                 result:answer AS summary_answer
                 , result:evidence AS summary_evidence
-            FROM 
-                temp_results 
+            FROM
+                temp_results
             WHERE
                 result:evidence <> ''
         )
         , filtered_summary_answers AS (
-            SELECT 
+            SELECT
                 LISTAGG(sa.summary_answer, '\n\n') WITHIN GROUP(ORDER BY sa.summary_answer) AS content
-            FROM 
+            FROM
                 summary_answers AS sa
         )
         , final_llm_answer AS (
-            SELECT 
+            SELECT
                 fsa.content AS content
                 , PARSE_JSON(LLM_EXTRACT_JSON(r.response)) AS response
-            FROM 
+            FROM
                 filtered_summary_answers AS fsa
             JOIN TABLE(
                 LLM_ANSWER(
-                    :completions_model 
+                    :completions_model
                     , fsa.content
                     , :question
                 )
             ) AS r
         )
-        SELECT 
+        SELECT
             fla.response:answer AS answer
             , fla.response:evidence AS evidence
-        FROM 
+        FROM
             final_llm_answer AS fla
     );
-    
+
     RETURN TABLE(resultset);
 END;
 $$;
@@ -722,7 +719,7 @@ COPY INTO corpus(content)
 FROM 'azure://rdaxllm.blob.core.windows.net/dataset/graphrag/csv/tech_industry_cvs.csv'
 FILE_FORMAT = (
     TYPE = CSV
-    COMPRESSION = AUTO 
+    COMPRESSION = AUTO
     FIELD_DELIMITER = '|'
     NULL_IF = '\\N'
     EMPTY_FIELD_AS_NULL = TRUE
@@ -735,19 +732,19 @@ ON_ERROR = CONTINUE;
 ## Entities and relations extraction
 Duration: 5
 
-With all our Snowflake artifacts in place, we are now ready to extract the entities and relations from the corpus. 
+With all our Snowflake artifacts in place, we are now ready to extract the entities and relations from the corpus.
 
 As mentioned, we shall call the entrypoint UDF `CREATE_NODES_EDGES_STREAMS_SOURCES` to extract the entities and relations from the corpus, storing the output in the `nodes` and `edges` tables:
 
 > aside positive
-> 
+>
 > The parameter value `llama3-70b` is the name of the Snowflake Cortex LLM that we will use.
 
 > aside negative
-> 
+>
 > Occasionally, you may encounter the error message:
 >
-> `SQL compilation error: Unsupported subquery type cannot be evaluated`. 
+> `SQL compilation error: Unsupported subquery type cannot be evaluated`.
 >
 > This may happen due to the LLM responding in a non-prompt-compliant way and can be resolved by re-running the UDF.
 
@@ -756,7 +753,7 @@ CALL CREATE_NODES_EDGES_STREAMS_SOURCES('llama3-70b');
 ```
 
 > aside positive
-> 
+>
 > Expect this process to take a few minutes to complete.
 
 <!-- ------------------------ -->
@@ -812,7 +809,7 @@ source .venv/bin/activate
 ```
 
 Activate the virtual environment on Windows:
-  
+
 ```sh
 .venv\Scripts\activate
 ```
@@ -823,66 +820,13 @@ Install required Python packages:
 python -m pip install python-dotenv jupyterlab snowflake-snowpark-python relationalai
 ```
 
-### Create a RelationalAI config file
-Having installed the `relationalai` Python package, you will need to set up a RAI configuration with the Snowflake credentials you want to use (similar to the configuration for Snowflake CLI).
+### Configure your RelationalAI Project
+After installing the 'relationalai' Python package, run `rai init` to connect to your Snowflake account and configure your project.
 
-Run `rai init` from your terminal and follow the prompts to enter your credentials and other configuration data:
-
-- Choose `Snowflake` as your host platform
-- Select a profile from `~/.snowflake/connections.toml` if you have one, or enter your username, password, and Account ID otherwise
-- Select your role `rai_user` that you created earlier
-- Select a Snowflake warehouse
-- Select `[CREATE A NEW ENGINE]` to create a new engine. Enter any name you want for the engine e.g. `graph_rag`
-- Select the engine `HighMem|S` size
-- Choose the compute pool `rai_engine_pool_s` that you have created previously
-- Press Enter to accept the default profile name of `default`
-
-<!-- ------------------------ -->
-## Setting up a RelationalAI engine
-Duration: 10
-
-We shall now setup the RelationalAI engine that we will be using for performing graph analytics.
-
-To create a RelationalAI engine, follow the steps below (using the RelationalAI CLI):
-
-```sh
-rai engines:create
-```
-
-- When prompted for the engine name enter `graph_rag`
-- When prompted for the engine size, select an engine size from the list of options e.g. `HighMem|S`. Note that a small size engine is more than enough for this guide.
-- When prompted for the engine pool, select a pool from the list of options e.g. `M_ENGINES`.
-
-> aside positive
-> 
->  Creating the engine may take a few minutes to complete. The CLI will notify you when the engine is ready.
-
-<!-- ------------------------ -->
-## Setting up Snowflake / RelationaAI Data Streams
-Duration: 3
-
-Having the source `nodes` and `edges` tables in place, we shall now setup the Snowflake / RelationalAI Data Streams to synchronize data between a Snowflake and a RelationalAI model.
-
-Next, we shall be creating a the Data Streams for the `nodes` and `edges` tables, respectively:
-
-```sh
-rai imports:stream --source graph_rag.graph_rag.nodes --model graph_rag
-rai imports:stream --source graph_rag.graph_rag.edges --model graph_rag
-```
-
-> aside positive
-> 
-> **IMPORTANT** An import stream utilizes change data capture to synchronize your Snowflake data with your RelationalAI model at an interval of once per minute.
-
-> aside positive
-> 
->  The `rai imports:stream` command may take a few minutes to complete. The streams are ready only after issuing the command:
->
-> ```sh
-> rai imports:list --model graph_rag
-> ```
->
-> is listing both streams in status `LOADED`.
+Follow the interactive prompts to enter your Snowflake credentials and choose the:
+- Snowflake role: Must have `SELECT` privileges on the Snowflake tables you’ll be accessing as well as the `eng_admin` and `all_schema_all` RAI application roles.
+- Snowflake warehouse: May be any warehouse.
+- RAI native app: The default is `relationalai`, but yours may differ.
 
 <!-- ------------------------ -->
 ## Building the graph and answering questions
@@ -890,8 +834,8 @@ Duration: 20
 
 We shall now proceed with creating the RelationalAI graph and answer questions using the model. In this step, we shall be doing the following:
 
-- Inspecting data in the RelationalAI model
-- Using RelationalAI algorithms for community detection, specifically [Louvain](https://relational.ai/docs/reference/python/std/graphs/Compute/louvain/) 
+- Inspect the data in the RelationalAI model
+- Using RelationalAI algorithms for community detection, specifically [Louvain](https://relational.ai/docs/reference/python/std/graphs/Compute/louvain/)
 - Visualizing graph communities
 - Producing summaries from all corpus items that belong to a specific community
 - Querying the graph for answers to user questions
@@ -904,70 +848,67 @@ A RelationalAI model is the abstraction that defines the data structures for rep
 
 ```python
 # Defining a RelationalAI model named `graph_rag`.
-rai_model = rai.Model("graph_rag", dry_run=False)
-snowflake_model = Snowflake(rai_model)
+rai_model = rai.Model("graph_rag")
 
 # Defining an `Entity` type. A `Entity` is a node in the graph.
-Entity = rai_model.Type("Entity", source="graph_rag.graph_rag.nodes")
+Entity = rai_model.Type("Entity", source="GRAPH_RAG.GRAPH_RAG.NODES")
 
 # Defining a `Relation` type. A `Relation` is an edge in the graph.
 # Note how we attach `src` and `dst` properties in the `Relation`,
-# indicatiing the source and destination entities, respectivelly.
-Relation = rai_model.Type("Relation", source="graph_rag.graph_rag.edges")
+# indicating the source and destination entities, respectively.
+Relation = rai_model.Type("Relation", source="GRAPH_RAG.GRAPH_RAG.EDGES")
 Relation.define(
-    src=(Entity, "src_node_id", "id"), 
+    src=(Entity, "src_node_id", "id"),
     dst=(Entity, "dst_node_id", "id")
 )
 ```
 
-#### Computing Louvain community identifiers
+#### Creating the RelationalAI Graph and computing Louvain community identifiers
 
 ```python
 # Creating a graph representation of our model.
 graph = Graph(model=rai_model, undirected=True)
 
-# Applying the Louvain community detection on the model.
-with rai_model.rule():
-    entity = Entity()
-    community_id = graph.compute.louvain(node=entity, max_levels=5, max_sweeps=10, level_tolerance=1e-2, sweep_tolerance=1e-4)
-    entity.set(community_id=community_id)
-```
-
-#### Creating the RelationalAI graph
-
-```python
 with rai_model.rule():
     relation = Relation()
     graph.Node.extend(Entity, id=Entity.id, corpus_id=str(Entity.corpus_id), type=Entity.type, community_id=Entity.community_id)
     graph.Edge.add(from_=relation.src, to=relation.dst, corpus_id=str(relation.corpus_id), type=relation.type)
+
+# Applying the Louvain community detection on the model.
+with rai_model.rule():
+    entity = Entity()
+    community_id = graph.compute.louvain(node=entity, max_levels=5, max_sweeps=10, level_tolerance=1e-3, sweep_tolerance=1e-3)
+    entity.set(community_id=community_id)
 ```
 
 #### Visualizing the graph communities
+We make sure that each community has a unique color.
 
 ```python
-community_color_map = get_random_color_map(communities_length=200)
-
-vis = graph.visualize(
-    three=False, 
-    graph_height=1000, 
-    show_node_label=True, 
-    show_edge_label=True, 
-    style={
-        "node": {
-            "label": lambda n: f"{n.get('id')} ({n.get('type')})", 
-            "color": lambda n: community_color_map.get(n["community_id"], "black"), 
-            "size": 30, 
+community_color_map = get_random_color_map(communities_length=communities_count)
+style = {
+    "node": {
+            "label": lambda n: f"{n.get('id')} ({n.get('type')})",
+            "color": lambda n: community_color_map.get(n["community_id"], "black"),
+            "size": 30,
+            "border_color": "white",
+            "border_size": 1,
             "hover": lambda n: f"{n.get('id')} (type: {n.get('type')}, community: {n.get('community_id')})"
-        }, 
+        },
         "edge": {
-            "label": lambda e: e.get("type"), 
-            "color": "grey", 
+            "label": lambda e: e.get("type"),
+            "color": "grey",
             "hover": lambda e: e.get("type")
         }
-    }
-)
+}
 
-vis.display(inline=True)
+graph.visualize(
+    graph_height=750,
+    layout_algorithm_active = True,
+    layout_algorithm = "hierarchicalRepulsion",
+    avoid_overlap = 1.0,
+    style=style
+)
 ```
 
 Here is what is should look like:
@@ -975,23 +916,22 @@ Here is what is should look like:
 ![RelationaAI graph with Louvain communities](assets/eebfcae23ed9ad34.png)
 
 #### Community-based summarization
+Having identified graph communities, we shall now produce summaries out of the text of all corpus items in a community.
 
 ```python
 with rai_model.query() as select:
     entity = Entity()
-    response = select(alias(entity.id, "id"), alias(entity.community_id, "community_id"), alias(entity.corpus_id, "corpus_id"))
+    response = select(entity.id, entity.community_id, entity.corpus_id)
 
-# Getting a (community, corpus-id) multi-index.
-communities_count_df = results_df.groupby(by=["community_id", "corpus_id"]).count().rename(columns={"id": "entities_count"}).sort_index()
+results_df = response.results
+results_df.sort_values(by=["community_id", "corpus_id"]).head(3)
 
-# Convert the multi index to a dict.
-index = communities_count_df.index.to_flat_index()
-d = {}
-for x, y in index:
-    d.setdefault(x, []).append(y)
+d = results_df.groupby('community_id')['corpus_id'].apply(list).to_dict()
+```
 
+For each community, we are producing a summary of all corpus items of this community, utilizing a Snowflake LLM:
+```python
 execute_statement(
-    session=session, 
     statement=f"TRUNCATE TABLE community_summary"
 )
 
@@ -1001,26 +941,26 @@ for k, v in d.items():
     logger.info(f"Producing summarized versions of IDs ({corpus_ids}) for community {k}")
     try:
         execute_statement(
-            session=session, 
+            session=session,
             statement="""
                 INSERT INTO community_summary(COMMUNITY_ID, CONTENT)
                 WITH c AS (
-                    SELECT 
+                    SELECT
                         LISTAGG(content, '\n\n') WITHIN GROUP(ORDER BY id) AS content
-                    FROM 
+                    FROM
                         CORPUS
-                    WHERE 
+                    WHERE
                         id IN ({CORPUS_IDS})
                 )
-                SELECT 
+                SELECT
                     {COMMUNITY_ID} AS community_id
                     , PARSE_JSON(LLM_EXTRACT_JSON(r.response)):answer AS response
-                FROM 
+                FROM
                     c
                 JOIN TABLE(LLM_SUMMARIZE('llama3-70b', c.content)) AS r;
-            """, 
+            """,
             parameters={
-                "COMMUNITY_ID": str(k), 
+                "COMMUNITY_ID": str(k),
                 "CORPUS_IDS": corpus_ids
             }
         )
@@ -1042,10 +982,10 @@ Using a window of concatenated community summaries and asking the LLM if the que
 # The previous-before-last parameter of the procedure call is the summarization window i.e. how many per-community summaries to include as context in the answer.
 # A smaller value produces a smaller i.e. a finer context window at the cost of incurring more LLM calls.
 execute_statement(
-    session=session, 
+    session=session,
     statement="""
         CALL LLM_ANSWER_SUMMARIES('llama3-70b', 5, '{QUESTION}');
-    """, 
+    """,
     parameters={
         "QUESTION": question
     }
@@ -1053,11 +993,11 @@ execute_statement(
 
 # Gather results.
 answer = execute_statement(
-    session=session, 
+    session=session,
     statement="""
-        SELECT 
-            * 
-        FROM 
+        SELECT
+            *
+        FROM
             TABLE(result_scan(last_query_id()));
     """
 )[0][0]
