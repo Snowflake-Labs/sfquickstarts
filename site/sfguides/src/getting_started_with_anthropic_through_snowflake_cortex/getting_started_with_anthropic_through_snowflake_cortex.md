@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 
-# Getting Started with Anthropic RAG using Snowflake Notebooks
+# Getting Started on Anthropic with Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -122,6 +122,11 @@ Duration: 5
 
 Create the table that will store processed documents:
 
+This table stores:
+- `file_url`: Path to source document
+- `chunk`: Extracted text segment
+- `chunk_vec`: Vector embedding for semantic search
+
 ```python
 docs_chunks_table = Table(
     name="docs_chunks_table",
@@ -132,17 +137,59 @@ docs_chunks_table = Table(
 schema.tables.create(docs_chunks_table, mode=CreateMode.or_replace)
 ```
 
-This table stores:
-- `file_url`: Path to source document
-- `chunk`: Extracted text segment
-- `chunk_vec`: Vector embedding for semantic search
-
 ## Implement Document Processing
 Duration: 15
 
-### Create Processing Functions
+### Understanding Document Processing Flow
+Before diving into the code, let's understand the key components of document processing:
 
-The notebook implements two key functions for document processing:
+1. PDF Text Extraction:
+   - Opens PDF files from Snowflake stage
+   - Converts binary data to readable format
+   - Extracts text content from each page
+   - Handles encoding and special character issues
+   - Manages potential extraction errors
+
+2. Text Chunking Strategy:
+   - Splits large documents into manageable pieces
+   - Uses recursive character splitting for natural breaks
+   - Maintains context with overlapping chunks
+   - Optimizes chunk size for embedding quality
+   - Preserves document structure where possible
+
+3. Data Organization:
+   - Creates structured DataFrame format
+   - Maintains file source tracking
+   - Prepares text for vector embedding
+   - Ensures data quality and consistency
+
+### Implementation Details
+
+The document processing implementation uses two main functions:
+
+1. `read_pdf()`:
+   - Purpose: Extracts raw text from PDF documents
+   - Input: File URL from Snowflake stage
+   - Process:
+     * Opens binary file stream
+     * Creates PDF reader object
+     * Iterates through pages
+     * Cleans and concatenates text
+   - Error Handling:
+     * Catches extraction failures
+     * Logs problematic pages
+     * Maintains process continuity
+
+2. `process()`:
+   - Purpose: Manages overall document processing workflow
+   - Input: File URL for processing
+   - Process:
+     * Calls PDF reader
+     * Configures text splitting parameters
+     * Creates structured output
+   - Output: DataFrame with processed chunks
+
+### Code Implementation
 
 ```python
 def read_pdf(file_url: str) -> str:
@@ -178,16 +225,61 @@ def process(file_url: str):
     return df
 ```
 
-These functions:
-1. Read PDF binary data
-2. Extract text content
-3. Split into overlapping chunks
-4. Return structured DataFrame
-
 ## Process Text and Create Embeddings
 Duration: 10
 
-Process documents and create embeddings:
+### Understanding the Embedding Process
+
+The embedding process transforms text chunks into vector representations for semantic search. Here's what happens in each step:
+
+1. File Processing Stage:
+   - Retrieves file names from stage
+   - Validates file accessibility
+   - Creates processing pipeline
+
+2. Text Embedding:
+   - Uses e5-base-v2 model for vector creation
+   - Generates 768-dimensional embeddings
+   - Maintains chunk-to-vector mapping
+   - Optimizes for semantic similarity search
+
+3. Data Transformation:
+   - Converts to Snowpark DataFrame
+   - Handles vector type casting
+   - Prepares for database storage
+   - Ensures data type compatibility
+
+4. Storage Operations:
+   - Writes to persistent table
+   - Manages data overwrites
+   - Maintains data consistency
+   - Enables efficient retrieval
+
+### Implementation Details
+
+The embedding process follows these key steps:
+
+1. File Name Extraction:
+   - Lists all files in stage
+   - Parses file paths
+   - Prepares for batch processing
+
+2. Document Processing:
+   - Concurrent file processing
+   - Error handling and logging
+   - DataFrame concatenation
+
+3. Vector Creation:
+   - Applies embedding model
+   - Handles batch processing
+   - Manages memory efficiently
+
+4. Data Storage:
+   - Type conversion
+   - Table writing
+   - Quality validation
+
+### Code Implementation
 
 ```python
 # Extract file names and process files
@@ -214,64 +306,200 @@ snowpark_df = session.create_dataframe(final_dataframe).select(
 snowpark_df.write.mode("overwrite").save_as_table("docs_chunks_table")
 ```
 
-This process:
-1. Extracts text from all PDFs
-2. Creates vector embeddings using e5-base-v2 model
-3. Stores results in docs_chunks_table
-
-## Build Chat Interface
+## Create Streamlit Application in Snowflake
 Duration: 20
 
-The notebook implements a sophisticated chat interface using Streamlit. Key components include:
+### Understanding the Chat System Architecture
 
-### Chat History Management
+The chat interface integrates several sophisticated components:
+
+1. Session Management:
+   - Maintains conversation state
+   - Handles message history
+   - Manages user context
+   - Enables conversation persistence
+
+2. Context Retrieval System:
+   - Performs semantic search
+   - Ranks relevant chunks
+   - Combines multiple sources
+   - Optimizes context window
+
+3. Prompt Engineering:
+   - Constructs dynamic prompts
+   - Incorporates chat history
+   - Maintains conversation coherence
+   - Optimizes Claude's responses
+
+4. Response Generation:
+   - Processes Claude's output
+   - Formats responses
+   - Adds source attribution
+   - Handles error cases
+
+
+### Setting Up the Streamlit App
+
+1. Navigate to Streamlit in Snowflake:
+   * Click on the **Streamlit** tab in the left navigation pane
+   * Click on **+ Streamlit App** button in the top right
+
+2. Configure App Settings:
+   * Enter a name for your app (e.g., ANTHROPIC_CHAT_APP)
+   * Select a warehouse to run the app (Small warehouse is sufficient)
+   * Choose the **ANTHROPIC_RAG** database and schema
+
+3. Create the app file:
+   * In the code editor, paste the following code:
+
 ```python
-def init_messages():
-    if st.session_state.clear_conversation or "messages" not in st.session_state:
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
+import pandas as pd
+from snowflake.cortex import Complete, EmbedText768
+
+# Get the current session - no need for connection parameters in Snowflake Streamlit
+session = get_active_session()
+
+# Configuration
+num_chunks = 3
+model = "mistral-large2"
+
+def init_chat_state():
+    """Initialize chat session state"""
+    if "messages" not in st.session_state:
         st.session_state.messages = []
-        st.session_state.suggestions = []
-        st.session_state.active_suggestion = None
-```
+    if "conversation_id" not in st.session_state:
+        st.session_state.conversation_id = None
 
-### Context Retrieval
-```python
-def vector_search(my_question):
+def vector_search(question):
+    """Perform vector similarity search"""
     cmd = """
-        with results as
-     (SELECT file_url,
-       VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
-                SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
-       chunk
-     from docs_chunks_table
-     order by similarity desc
-     limit ?)
-     select chunk, file_url from results 
-     """
-    df_context = session.sql(cmd, params=[my_question, num_chunks]).to_pandas()
-```
-
-### Response Generation
-```python
-def create_prompt(user_question):
-    chat_history = get_chat_history()
-    if chat_history != []:
-        question_summary = make_chat_history_summary(chat_history, user_question)
-        prompt_context, file_name = vector_search(question_summary)
-    else:
-        prompt_context, file_name = vector_search(user_question)
-        question_summary = ''
-
-    prompt = f"""You are a documentation specialist focused on providing precise answers based on provided documentation...
+    with results as (
+        SELECT file_url,
+        VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+            SNOWFLAKE.CORTEX.EMBED_TEXT_768('e5-base-v2', ?)) as similarity,
+        chunk
+        from docs_chunks_table
+        order by similarity desc
+        limit ?
+    )
+    select chunk, file_url from results
     """
-    return prompt, file_name
+    return session.sql(cmd, params=[question, num_chunks]).to_pandas()
+
+def create_prompt(question, context):
+    """Create formatted prompt for Claude"""
+    return f"""You are a documentation specialist focused on providing precise answers based on provided documentation.
+    
+    Context: {context}
+    Question: {question}
+    
+    Instructions:
+    1. Answer based only on the provided context
+    2. Be concise and clear
+    3. If information is not in context, say so
+    4. Do not make assumptions
+    
+    Answer:"""
+
+def get_ai_response(question):
+    """Get AI response using Claude"""
+    # Get relevant context
+    context_df = vector_search(question)
+    context = " ".join(context_df['CHUNK'].tolist())
+    source = context_df.iloc[0]['FILE_URL'] if not context_df.empty else "Unknown"
+    
+    # Create and send prompt
+    prompt = create_prompt(question, context)
+    response = Complete(model, prompt)
+    
+    return response, source
+
+def main():
+    st.title("Document Q&A with Anthropic Claude")
+    
+    # Initialize chat state
+    init_chat_state()
+    
+    # Chat interface
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+    
+    # User input
+    if question := st.chat_input("Ask a question about your documents..."):
+        # Add user message
+        st.chat_message("user").markdown(question)
+        st.session_state.messages.append({"role": "user", "content": question})
+        
+        # Get and display AI response
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking..."):
+                response, source = get_ai_response(question)
+                st.markdown(response)
+                st.markdown(f"*Source: {source}*")
+                st.session_state.messages.append({"role": "assistant", "content": response})
+
+if __name__ == "__main__":
+    main()
 ```
 
-The interface provides:
-- Chat history tracking
-- Semantic search for relevant context
-- Dynamic prompt generation
-- Source document attribution
-- Conversation management
+4. Run:
+   * Click the **Run** button to deploy your app
+
+### Understanding the Chat System Architecture
+
+The chat interface integrates several sophisticated components:
+
+1. Session Management:
+   - Maintains conversation state
+   - Handles message history
+   - Manages user context
+   - Enables conversation persistence
+
+2. Context Retrieval System:
+   - Performs semantic search
+   - Ranks relevant chunks
+   - Combines multiple sources
+   - Optimizes context window
+
+3. Prompt Engineering:
+   - Constructs dynamic prompts
+   - Incorporates chat history
+   - Maintains conversation coherence
+   - Optimizes Claude's responses
+
+4. Response Generation:
+   - Processes Claude's output
+   - Formats responses
+   - Adds source attribution
+   - Handles error cases
+
+### Implementation Components
+
+The chat system consists of several key functions:
+
+1. Message Initialization:
+   - Purpose: Sets up chat session state
+   - Features:
+     * Conversation clearing
+     * State management
+     * Suggestion handling
+
+2. Vector Search:
+   - Purpose: Finds relevant document chunks
+   - Features:
+     * Similarity scoring
+     * Results ranking
+     * Context assembly
+
+3. Prompt Creation:
+   - Purpose: Builds Claude-optimized prompts
+   - Features:
+     * History integration
+     * Context formatting
+     * Instruction clarity
 
 ## Performance Tips
 Duration: 5
@@ -305,7 +533,6 @@ Congratulations! You've built a sophisticated document Q&A system using Snowflak
 - How to create an interactive Streamlit interface
 
 ### Related Resources
-- [Snowflake Notebooks Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
-- [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
-- [Streamlit in Snowflake Guide](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
-- [PyPDF2 Documentation](https://pythonhosted.org/PyPDF2/)
+* [Intelligent document field extraction and analytics with Document AI](https://quickstarts.snowflake.com/guide/automating_document_processing_workflows_with_document_ai/index.html?index=..%2F..index#0)
+* [Build a RAG-based knowledge assistant with Cortex Search and Streamlit](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html?index=..%2F..index#0)
+* [Build conversational analytics app (text-to-SQL) with Cortex Analyst](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_analyst/index.html?index=..%2F..index#0)
