@@ -54,7 +54,7 @@ Abalone.data needs to be converted into a csv for it to work
 * Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 * Paste and run the SQL from (https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/blob/main/deploy_sis_app.sql) in the worksheet to create Snowflake objects (Streamlit in Snowflake application, warehouse, database, schema, raw tables).
 
-You will likely need a role with necessary permissions to create the Git integration. If you do not have the necessary permissions, please reach out to your Snowflake administrator.
+You will likely need a role with necessary [CREATE INTEGRATION](https://docs.snowflake.com/en/sql-reference/sql/create-api-integration#access-control-requirements) and [CREATE GIT REPOSITORY](https://docs.snowflake.com/sql-reference/sql/create-git-repository#access-control-requirements) privileges to create the Git integration and repository. If you do not have the necessary permissions, please reach out to your Snowflake administrator.
 
 ### Loading Data through Snowflake UI
 
