@@ -58,7 +58,7 @@ The end-to-end workflow will look like this:
 ## Use Case
 Duration: 5
 
-In this use case you will build a Cortex Search service on the free text data contined in the two manuals [here](https://github.com/sfc-gh-mmarzillo/pump-docs-cortex-search/tree/main) for pump and pump head maintenance.
+In this use case you will build a Cortex Search service on the free text data contained in the two manuals [here](https://github.com/sfc-gh-mmarzillo/pump-docs-cortex-search/tree/main) for pump and pump head maintenance.
 
 You will build a Cortex service that allows to you to us plain text to query these documents to get information. It is important to note that Cortex Search can scale much more than this use case. Please check out the Cortex Search documentation [here.](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service)
 
@@ -68,7 +68,7 @@ Duration: 5
 
 Download both of the files in [this repo](https://github.com/sfc-gh-mmarzillo/pump-docs-cortex-search/tree/main) by clicking on each file and clicking the download button near the top right.
 
-Once you have the files downloaded you will go to Snowflake UI and open a new SQL worksheet and run the below code to create a database that we will be working out of. I'm using the ACCOUNTADMIN role here, but you can use whatever role you know gives you access to create objects (databases, tables, services) in Snowflake.
+Once you have the files downloaded locally you will go to the Snowflake UI and open a new SQL worksheet and run the below code to create a database that we will be working out with. I'm using the ACCOUNTADMIN role here, but you can use whatever role you know gives you access to create objects (databases, tables, services) in Snowflake.
 
 ```sql
 USE ACCOUNTADMIN;
@@ -136,7 +136,7 @@ Notice how we're setting up the Cortex Search service with a 30 day lag so that 
 ## Set Up Q for Business
 Duration: 5
 
-Head to you AWS console search "Amazon Q for Business" then select the orange button "Create Application" then accept all of the default/receommended settings for creating your application, make sure that you have at least one user created for the app with a Q Business Pro subscription the select Create.
+Head to you AWS console search "Amazon Q for Business" then select the orange button "Create Application" then accept all of the default/recommended settings for creating your application, make sure that you have at least one user created for the app with a Q Business Pro subscription the select Create.
 
 ![](assets/qapp.png)
 
@@ -170,7 +170,7 @@ DESC INTEGRATION Q_AUTH_HOL;
 SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('Q_AUTH_HOL');
 ```
 
-After the security integration is created we grant the PUBLIC roles usage on the database, schemal and the Search service. 
+After the security integration is created we grant the PUBLIC roles usage on the database, schema and the Search service. 
 
 Additionally, after the "SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('Q_AUTH_HOL');" query copy the OAUTH_CLIENT_ID and the OAUTH_CLIENT_SECRET. You can learn more about using Snowflake for Oauth [here.](https://docs.snowflake.com/en/user-guide/oauth-custom)
 
@@ -187,9 +187,9 @@ Head back to your Q for Business application and select "Plugins" under "Actions
 
 1. name the plugin "cortex-pump" and provide a description. 
 
-2. Under "API Schema" select "Define wtih in-line OpenAPI schema editor" and make sure that "YAML" is selected and paste in the below openapi spec. Several notes:
+2. Under "API Schema" select "Define with in-line OpenAPI schema editor" and make sure that "YAML" is selected and paste in the below openapi spec. Several notes:
     - you will have to copy in your <snowflake url> in 3 spots below where indicated.
-    - the path defined in the openapi schema assumes that you set up you Cortex Search service i nthe pump_db database and in the int public schema with the the name PUMP_SEARCH_SERVICE. If you did not make any changes to the Snowflake code that you already ran in this quickstart you will be good and not have to change anything.
+    - the path defined in the openapi schema assumes that you set up you Cortex Search service in the pump_db database and in the int public schema with the the name PUMP_SEARCH_SERVICE. If you did not make any changes to the Snowflake code that you already ran in this quickstart you will be good and not have to change anything.
     - the 'description' value here is important as you will see Q uses this to know when to route questions to the plugin.
 
 ```yaml
@@ -276,7 +276,7 @@ components:
 - Under "Authentication" select "Authentication required".
 - Under "AWS Secrets Manager" select the dropdown menu and select "create an aws Secrets Manager secret".
     - Give the secret a name like "...-cortex-pump" then populate the "Client Secret" and the "Client ID" with the values from the last Snowflake query in the previous step. 
-    - The "OAuth callback url" will be the same as the value for the OAUTH_REDIRECT_URI paramater that was used when creating the security integration object in Snowflake.
+    - The "OAuth callback url" will be the same as the value for the OAUTH_REDIRECT_URI parameter that was used when creating the security integration object in Snowflake.
 - Click "Create" when done.
 
 ![](assets/secrets.png)
@@ -313,19 +313,19 @@ Navigate into the "cortex-pump" plugin and select "Preview web experience" in th
 
 ![](assets/viewwebexp.png)
 
-In the chat select "plugin" at the bottom and select the plugin we created for cortex-pump. Ask the below question:
+In the chat select "plugin" at the bottom and select the plugin we created for cortex-pump. When you select the plugin you are signaling to Q Business that you want to specifically invoke that action as opposed to using a different source. Ask the below question:
 
 - What is the part description for part number G4204-68741?
 
-Q for business will liekly attempt to create query,  retype the question in the query window and select "Submit".
+Q for business will likely attempt to create query,  retype (or re-paste) the question in the query window and select "Submit".
 
-You will be asked to authprize and use the browser to authorize one time.
+You will be asked to authorize and use the browser to authorize one time.
 
 Once complete Q will send the request to the plugin and you will get an answer!
 
 ![](assets/qanswer.png)
 
-You can check the answer aganst the manuals, it should match! Test out other prompts including the examples below:
+You can check the answer against the manuals, it should match! Test out other prompts including the examples below:
 - Using the cortex search plugin what are the pump head assembly parts?
 - Using the cortex search plugin should I use a refurbished pump head for maintenance and repair OR disassemble a pump head?
 - Using the cortex search plugin what are the high level steps for Replacing the Heat Exchanger?
@@ -348,7 +348,7 @@ This quickstart is just that, a quick way to get you started with using Amazon Q
 - Creating a connection from Amazon Q to Cortex Search with Oauth authentication using Q plugins
 
 ### Resources
-- There are some great blogs on Medium regarding Snowflake Cortex and Amazon Services work together
+There are some great blogs on Medium regarding Snowflake Cortex and Amazon Services work together:
 
 - [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/)
 
