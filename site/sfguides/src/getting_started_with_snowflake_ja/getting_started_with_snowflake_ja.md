@@ -295,7 +295,7 @@ TRIPSテーブルが作成されたことを確認します。ワークシート
 
 `<stage_name>`: `citibike_trips`
 
-`<url>`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
+`<url>`: `s3://snowflake-workshop-lab/japan/citibike-trips/`
 
 **注意：**URLの最後には、必ずフォワードスラッシュ（`/`）を入れてください。これを入れておかなければ、後でバケットからデータを読み込む際にエラーが発生します。また、必要のない「credentials = (...)」ステートメントが削除されていることを確認してください。下図のように「--」を使用してコメントアウトすることもできます。create stageコマンドは、下図のようになります。あるいは、3行目を含めないでください。
 
