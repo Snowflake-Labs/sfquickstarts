@@ -63,181 +63,211 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
   ```sql
 
-  USE ROLE sysadmin;
+    USE ROLE sysadmin;
 
-  /*--
-  • database, schema and warehouse creation
-  --*/
+    /*--
+    • database, schema and warehouse creation
+    --*/
 
-  -- create tb_voc database
-  CREATE OR REPLACE DATABASE tb_voc;
+    -- create tb_voc database
+    CREATE OR REPLACE DATABASE tb_voc;
 
-  -- create raw_pos schema
-  CREATE OR REPLACE SCHEMA tb_voc.raw_pos;
+    -- create raw_pos schema
+    CREATE OR REPLACE SCHEMA tb_voc.raw_pos;
 
-  -- create raw_customer schema
-  CREATE OR REPLACE SCHEMA tb_voc.raw_support;
+    -- create raw_customer schema
+    CREATE OR REPLACE SCHEMA tb_voc.raw_support;
 
-  -- create harmonized schema
-  CREATE OR REPLACE SCHEMA tb_voc.harmonized;
+    -- create harmonized schema
+    CREATE OR REPLACE SCHEMA tb_voc.harmonized;
 
-  -- create analytics schema
-  CREATE OR REPLACE SCHEMA tb_voc.analytics;
+    -- create analytics schema
+    CREATE OR REPLACE SCHEMA tb_voc.analytics;
 
-  -- create tasty_ds_wh warehouse
-  CREATE OR REPLACE WAREHOUSE tasty_ds_wh
-      WAREHOUSE_SIZE = 'large'
-      WAREHOUSE_TYPE = 'standard'
-      AUTO_SUSPEND = 60
-      AUTO_RESUME = TRUE
-      INITIALLY_SUSPENDED = TRUE
-  COMMENT = 'data science warehouse for tasty bytes';
-
-
-  USE WAREHOUSE tasty_ds_wh;
-
-  /*--
-  • file format and stage creation
-  --*/
-
-  CREATE OR REPLACE FILE FORMAT tb_voc.public.csv_ff 
-  type = 'csv';
-
-  CREATE OR REPLACE STAGE tb_voc.public.s3load
-  COMMENT = 'Quickstarts S3 Stage Connection'
-  url = 's3://sfquickstarts/tastybytes-voc/'
-  file_format = tb_voc.public.csv_ff;
-
-  /*--
-  raw zone table build 
-  --*/
-
-  -- menu table build
-  CREATE OR REPLACE TABLE tb_voc.raw_pos.menu
-  (
-      menu_id NUMBER(19,0),
-      menu_type_id NUMBER(38,0),
-      menu_type VARCHAR(16777216),
-      truck_brand_name VARCHAR(16777216),
-      menu_item_id NUMBER(38,0),
-      menu_item_name VARCHAR(16777216),
-      item_category VARCHAR(16777216),
-      item_subcategory VARCHAR(16777216),
-      cost_of_goods_usd NUMBER(38,4),
-      sale_price_usd NUMBER(38,4),
-      menu_item_health_metrics_obj VARIANT
-  );
-
-  -- truck table build 
-  CREATE OR REPLACE TABLE tb_voc.raw_pos.truck
-  (
-      truck_id NUMBER(38,0),
-      menu_type_id NUMBER(38,0),
-      primary_city VARCHAR(16777216),
-      region VARCHAR(16777216),
-      iso_region VARCHAR(16777216),
-      country VARCHAR(16777216),
-      iso_country_code VARCHAR(16777216),
-      franchise_flag NUMBER(38,0),
-      year NUMBER(38,0),
-      make VARCHAR(16777216),
-      model VARCHAR(16777216),
-      ev_flag NUMBER(38,0),
-      franchise_id NUMBER(38,0),
-      truck_opening_date DATE
-  );
-
-  -- order_header table build
-  CREATE OR REPLACE TABLE tb_voc.raw_pos.order_header
-  (
-      order_id NUMBER(38,0),
-      truck_id NUMBER(38,0),
-      location_id FLOAT,
-      customer_id NUMBER(38,0),
-      discount_id VARCHAR(16777216),
-      shift_id NUMBER(38,0),
-      shift_start_time TIME(9),
-      shift_end_time TIME(9),
-      order_channel VARCHAR(16777216),
-      order_ts TIMESTAMP_NTZ(9),
-      served_ts VARCHAR(16777216),
-      order_currency VARCHAR(3),
-      order_amount NUMBER(38,4),
-      order_tax_amount VARCHAR(16777216),
-      order_discount_amount VARCHAR(16777216),
-      order_total NUMBER(38,4)
-  );
-
-  -- truck_reviews table build
-  CREATE OR REPLACE TABLE tb_voc.raw_support.truck_reviews
-  (
-      order_id NUMBER(38,0),
-      language VARCHAR(16777216),
-      source VARCHAR(16777216),
-      review VARCHAR(16777216),
-      review_id NUMBER(18,0)
-  );
-
-  /*--
-  • harmonized view creation
-  --*/
-
-  -- truck_reviews_v view
-  CREATE OR REPLACE VIEW tb_voc.harmonized.truck_reviews_v
-      AS
-  SELECT DISTINCT
-      r.review_id,
-      r.order_id,
-      oh.truck_id,
-      r.language,
-      source,
-      r.review,
-      t.primary_city,
-      oh.customer_id,
-      TO_DATE(oh.order_ts) AS date,
-      m.truck_brand_name
-  FROM tb_voc.raw_support.truck_reviews r
-  JOIN tb_voc.raw_pos.order_header oh
-      ON oh.order_id = r.order_id
-  JOIN tb_voc.raw_pos.truck t
-      ON t.truck_id = oh.truck_id
-  JOIN tb_voc.raw_pos.menu m
-      ON m.menu_type_id = t.menu_type_id;
-
-  /*--
-  • analytics view creation
-  --*/
-
-  -- truck_reviews_v view
-  CREATE OR REPLACE VIEW tb_voc.analytics.truck_reviews_v
-      AS
-  SELECT * FROM harmonized.truck_reviews_v;
+    -- create tasty_ds_wh warehouse
+    CREATE OR REPLACE WAREHOUSE tasty_ds_wh
+        WAREHOUSE_SIZE = 'large'
+        WAREHOUSE_TYPE = 'standard'
+        AUTO_SUSPEND = 60
+        AUTO_RESUME = TRUE
+        INITIALLY_SUSPENDED = TRUE
+    COMMENT = 'data science warehouse for tasty bytes';
 
 
-  /*--
-  raw zone table load 
-  --*/
+    USE WAREHOUSE tasty_ds_wh;
+
+    /*--
+    • file format and stage creation
+    --*/
+
+    CREATE OR REPLACE FILE FORMAT tb_voc.public.csv_ff 
+    type = 'csv';
+
+    CREATE OR REPLACE STAGE tb_voc.public.s3load
+    COMMENT = 'Quickstarts S3 Stage Connection'
+    url = 's3://sfquickstarts/tastybytes-voc/'
+    file_format = tb_voc.public.csv_ff;
+
+    /*--
+    raw zone table build 
+    --*/
+
+    -- menu table build
+    CREATE OR REPLACE TABLE tb_voc.raw_pos.menu
+    (
+        menu_id NUMBER(19,0),
+        menu_type_id NUMBER(38,0),
+        menu_type VARCHAR(16777216),
+        truck_brand_name VARCHAR(16777216),
+        menu_item_id NUMBER(38,0),
+        menu_item_name VARCHAR(16777216),
+        item_category VARCHAR(16777216),
+        item_subcategory VARCHAR(16777216),
+        cost_of_goods_usd NUMBER(38,4),
+        sale_price_usd NUMBER(38,4),
+        menu_item_health_metrics_obj VARIANT
+    );
+
+    -- truck table build 
+    CREATE OR REPLACE TABLE tb_voc.raw_pos.truck
+    (
+        truck_id NUMBER(38,0),
+        menu_type_id NUMBER(38,0),
+        primary_city VARCHAR(16777216),
+        region VARCHAR(16777216),
+        iso_region VARCHAR(16777216),
+        country VARCHAR(16777216),
+        iso_country_code VARCHAR(16777216),
+        franchise_flag NUMBER(38,0),
+        year NUMBER(38,0),
+        make VARCHAR(16777216),
+        model VARCHAR(16777216),
+        ev_flag NUMBER(38,0),
+        franchise_id NUMBER(38,0),
+        truck_opening_date DATE
+    );
+
+    -- order_header table build
+    CREATE OR REPLACE TABLE tb_voc.raw_pos.order_header
+    (
+        order_id NUMBER(38,0),
+        truck_id NUMBER(38,0),
+        location_id FLOAT,
+        customer_id NUMBER(38,0),
+        discount_id VARCHAR(16777216),
+        shift_id NUMBER(38,0),
+        shift_start_time TIME(9),
+        shift_end_time TIME(9),
+        order_channel VARCHAR(16777216),
+        order_ts TIMESTAMP_NTZ(9),
+        served_ts VARCHAR(16777216),
+        order_currency VARCHAR(3),
+        order_amount NUMBER(38,4),
+        order_tax_amount VARCHAR(16777216),
+        order_discount_amount VARCHAR(16777216),
+        order_total NUMBER(38,4)
+    );
+
+    -- truck_reviews table build
+    CREATE OR REPLACE TABLE tb_voc.raw_support.truck_reviews
+    (
+        order_id NUMBER(38,0),
+        language VARCHAR(16777216),
+        source VARCHAR(16777216),
+        review VARCHAR(16777216),
+        review_id NUMBER(18,0)
+    );
+
+    /*--
+    • harmonized view creation
+    --*/
+
+    -- truck_reviews_v view
+    CREATE OR REPLACE VIEW tb_voc.harmonized.truck_reviews_v
+        AS
+    SELECT DISTINCT
+        r.review_id,
+        r.order_id,
+        oh.truck_id,
+        r.language,
+        source,
+        r.review,
+        t.primary_city,
+        oh.customer_id,
+        TO_DATE(oh.order_ts) AS date,
+        m.truck_brand_name
+    FROM tb_voc.raw_support.truck_reviews r
+    JOIN tb_voc.raw_pos.order_header oh
+        ON oh.order_id = r.order_id
+    JOIN tb_voc.raw_pos.truck t
+        ON t.truck_id = oh.truck_id
+    JOIN tb_voc.raw_pos.menu m
+        ON m.menu_type_id = t.menu_type_id;
+
+    /*--
+    • analytics view creation
+    --*/
+
+    -- truck_reviews_v view
+    CREATE OR REPLACE VIEW tb_voc.analytics.truck_reviews_v
+        AS
+    SELECT * FROM harmonized.truck_reviews_v;
 
 
-  -- menu table load
-  COPY INTO tb_voc.raw_pos.menu
-  FROM @tb_voc.public.s3load/raw_pos/menu/;
-
-  -- truck table load
-  COPY INTO tb_voc.raw_pos.truck
-  FROM @tb_voc.public.s3load/raw_pos/truck/;
-
-  -- order_header table load
-  COPY INTO tb_voc.raw_pos.order_header
-  FROM @tb_voc.public.s3load/raw_pos/order_header/;
-
-  -- truck_reviews table load
-  COPY INTO tb_voc.raw_support.truck_reviews
-  FROM @tb_voc.public.s3load/raw_support/truck_reviews/;
+    /*--
+    raw zone table load 
+    --*/
 
 
-  -- scale wh to medium
-  ALTER WAREHOUSE tasty_ds_wh SET WAREHOUSE_SIZE = 'Medium';
+    -- menu table load
+    COPY INTO tb_voc.raw_pos.menu
+    FROM @tb_voc.public.s3load/raw_pos/menu/;
+
+    -- truck table load
+    COPY INTO tb_voc.raw_pos.truck
+    FROM @tb_voc.public.s3load/raw_pos/truck/;
+
+    -- order_header table load
+    COPY INTO tb_voc.raw_pos.order_header
+    FROM @tb_voc.public.s3load/raw_pos/order_header/;
+
+    -- truck_reviews table load
+    COPY INTO tb_voc.raw_support.truck_reviews
+    FROM @tb_voc.public.s3load/raw_support/truck_reviews/;
+
+
+    -- scale wh to medium
+    ALTER WAREHOUSE tasty_ds_wh SET WAREHOUSE_SIZE = 'Medium';
+
+
+    CREATE OR REPLACE TABLE CONCATENATED_REVIEWS AS
+    WITH RANKED_REVIEWS AS (
+        SELECT 
+            TRUCK_BRAND_NAME,
+            REVIEW,
+            ROW_NUMBER() OVER (PARTITION BY TRUCK_BRAND_NAME ORDER BY REVIEW) AS ROW_NUM
+        FROM TRUCK_REVIEWS_V
+    ),
+    FILTERED_REVIEWS AS (
+        SELECT *
+        FROM RANKED_REVIEWS
+        WHERE ROW_NUM <= 20
+    ),
+    AGGREGATED_REVIEWS AS (
+        SELECT 
+            TRUCK_BRAND_NAME,
+            ARRAY_AGG(REVIEW) AS ALL_REVIEWS
+        FROM FILTERED_REVIEWS
+        GROUP BY TRUCK_BRAND_NAME
+    ),
+    CONCATENATED_REVIEWS AS (
+        SELECT 
+            TRUCK_BRAND_NAME,
+            ARRAY_TO_STRING(ALL_REVIEWS, ' ') AS ALL_REVIEWS_TEXT
+        FROM AGGREGATED_REVIEWS
+    )
+
+    SELECT * FROM CONCATENATED_REVIEWS;
 
   -- setup completion note
   SELECT 'Setup is complete' AS note;
@@ -249,7 +279,7 @@ Duration: 5
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
 
-* Download the notebook **gaining_insights_from_unstructured_data.ipynb** using this [link](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/tree/main/notebook)
+* Download the notebook **gaining_insights_from_unstructured_data.ipynb** using this [link](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/blob/main/gaining_insights_from_unstructured_data.ipynb)
 
 * Navigate to Notebooks in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on Projects -> Notebook
 
@@ -325,105 +355,28 @@ In this section, you will leverage **Snowflake Cortex LLM - Summarize** to quick
 
 #### Python
   ```python
-  # Step 1: Add a row number for each review within each TRUCK_BRAND_NAME
-  window_spec = Window.partition_by("TRUCK_BRAND_NAME").order_by("REVIEW")
-  ranked_reviews_df = reviews_df.with_column(
-      "ROW_NUM", F.row_number().over(window_spec)
-  )
+    summarized_reviews_df = session.table("CONCATENATED_REVIEWS").select(
+        F.col("TRUCK_BRAND_NAME"),
+        cortex.Summarize(F.col("ALL_REVIEWS_TEXT")).alias("SUMMARY")
+    )
 
-  # Step 2: Filter to include only the first 20 rows per TRUCK_BRAND_NAME to get a general idea
-  filtered_reviews_df = ranked_reviews_df.filter(F.col("ROW_NUM") <= 20)
-
-  # Step 3: Aggregate reviews by TRUCK_BRAND_NAME
-  aggregated_reviews_df = filtered_reviews_df.group_by("TRUCK_BRAND_NAME").agg(
-      F.array_agg(F.col("REVIEW")).alias("ALL_REVIEWS")
-  )
-
-  # Step 4: Convert the array of reviews to a single string
-  concatenated_reviews_df = aggregated_reviews_df.with_column(
-      "ALL_REVIEWS_TEXT", F.call_function("array_to_string", F.col("ALL_REVIEWS"), F.lit(' '))
-  )
-
-  # Step 5: Generate summaries for each truck brand
-  summarized_reviews_df = concatenated_reviews_df.with_column(
-      "SUMMARY", cortex.Summarize(F.col("ALL_REVIEWS_TEXT"))
-  )
-
-  # Step 6: Display the results
-  summarized_reviews_df.select(["TRUCK_BRAND_NAME", "SUMMARY"]).show(3)
-
-  one_summary_row = summarized_reviews_df.limit(1).collect()
-  if one_summary_row:
-      brand = one_summary_row[0]['TRUCK_BRAND_NAME']
-      summary = one_summary_row[0]['SUMMARY']
-
-      # Split the summary roughly in half
-      half = len(summary) // 2
-      split_index = summary[:half].rfind(' ')  # Find the last space before the halfway point
-      if split_index == -1:
-          split_index = half  # If no space found, split at halfway
-
-      summary_part1 = summary[:split_index].strip()
-      summary_part2 = summary[split_index:].strip()
-
-      print(f"Truck Brand: {brand}")
-      print(f"Summary (part 1): {summary_part1}")
-      print(f"Summary (part 2): {summary_part2}")
+    summarized_reviews_df.select(["TRUCK_BRAND_NAME", "SUMMARY"]).show(3)
   ```
 #### SQL
   ```sql
-  -- Add a row number for each review within each TRUCK_BRAND_NAME
-  WITH RANKED_REVIEWS AS (
-      SELECT 
-          *,
-          ROW_NUMBER() OVER (PARTITION BY TRUCK_BRAND_NAME ORDER BY REVIEW) AS ROW_NUM
-      FROM TRUCK_REVIEWS_V
-  ),
+    -- Generate summaries for each truck brand
+    WITH SUMMARIZED_REVIEWS AS (
+        SELECT 
+            TRUCK_BRAND_NAME,
+            SNOWFLAKE.CORTEX.SUMMARIZE(ALL_REVIEWS_TEXT) AS SUMMARY
+        FROM CONCATENATED_REVIEWS
+    )
 
-  -- Filter to include only the first 20 rows per TRUCK_BRAND_NAME
-  FILTERED_REVIEWS AS (
-      SELECT *
-      FROM RANKED_REVIEWS
-      WHERE ROW_NUM <= 20
-  ),
-
-  -- Aggregate reviews by TRUCK_BRAND_NAME
-  AGGREGATED_REVIEWS AS (
-      SELECT 
-          TRUCK_BRAND_NAME,
-          ARRAY_AGG(REVIEW) AS ALL_REVIEWS
-      FROM FILTERED_REVIEWS
-      GROUP BY TRUCK_BRAND_NAME
-  ),
-
-  -- Convert the array of reviews into a single string
-  CONCATENATED_REVIEWS AS (
-      SELECT 
-          TRUCK_BRAND_NAME,
-          ARRAY_TO_STRING(ALL_REVIEWS, ' ') AS ALL_REVIEWS_TEXT
-      FROM AGGREGATED_REVIEWS
-  ),
-
-  -- Generate summaries for each truck brand
-  SUMMARIZED_REVIEWS AS (
-      SELECT 
-          TRUCK_BRAND_NAME,
-          SNOWFLAKE.CORTEX.SUMMARIZE(ALL_REVIEWS_TEXT) AS SUMMARY
-      FROM CONCATENATED_REVIEWS
-  )
-
-  -- Display the summaries and optionally split them into two parts
-  SELECT 
-      TRUCK_BRAND_NAME,
-      SUMMARY,
-      LEFT(SUMMARY, FLOOR(LENGTH(SUMMARY) / 2)) AS SUMMARY_PART1,
-      RIGHT(SUMMARY, LENGTH(SUMMARY) - FLOOR(LENGTH(SUMMARY) / 2)) AS SUMMARY_PART2
-  FROM SUMMARIZED_REVIEWS
-  LIMIT 3;
+    SELECT * FROM SUMMARIZED_REVIEWS;
   ```
 <!-- ------------------------ -->
 
-## Categories unstructured review text data 
+## Categorize unstructured review text data  
 Duration: 5
 
 ### Overview
@@ -438,9 +391,7 @@ In this section, you will make use of **Snowflake Cortex LLM - ClassifyText** to
   ```python
   # To understand whether a customer would recommend food truck based on their review 
   text_description = """
-  Tell me based on the following food truck customer review, will they recommend the food truck to \
-  their friends and family? Answer should be only one of the following words - \
-  "Likely" or "Unlikely" or "Unsure".
+  Tell me based on the following food truck customer review, will they recommend the food truck to their friends and family?
   """
 
   reviews_df = reviews_df.withColumn('RECOMMEND', cortex.ClassifyText(F.col('REVIEW'),["Likely","Unlikely","Unsure"], test_description))\
@@ -487,73 +438,35 @@ In this section, you will leverage **Snowflake Cortex LLM - Complete** to get an
 
 #### Python
   ```python
-    # Step 1: Add a row number for each review within each TRUCK_BRAND_NAME
-    window_spec = Window.partition_by("TRUCK_BRAND_NAME").order_by("REVIEW")
-    ranked_reviews_df = reviews_df.with_column(
-        "ROW_NUM", F.row_number().over(window_spec)
-    )
-
-    # Step 2: Filter to include only the first 20 rows per TRUCK_BRAND_NAME to get a general idea
-    filtered_reviews_df = ranked_reviews_df.filter(F.col("ROW_NUM") <= 20)
-
-    # Step 3: Aggregate reviews by TRUCK_BRAND_NAME
-    aggregated_reviews_df = filtered_reviews_df.group_by("TRUCK_BRAND_NAME").agg(
-        F.array_agg(F.col("REVIEW")).alias("ALL_REVIEWS")
-    )
-
-    # Step 4: Convert the array of reviews to a single string
-    concatenated_reviews_df = aggregated_reviews_df.with_column(
-        "ALL_REVIEWS_TEXT", F.call_function("array_to_string", F.col("ALL_REVIEWS"), F.lit(' '))
-    )
-
     question = "What is the number one dish positively mentioned in the feedback?"
 
-    # Step 5: Answer our question
-    summarized_reviews_df = concatenated_reviews_df.with_column(
-        "NUMBER_ONE_DISH", cortex.Complete("mistral-large2", 
-                                        F.concat(F.lit(f'Context:'), 
-                                                    F.col("ALL_REVIEWS_TEXT"), 
-                                                    F.lit(f' Question:{question} Answer briefly and concisely and only name the dish:'))))
+    summarized_reviews_df = session.table("CONCATENATED_REVIEWS").select(
+        F.col("TRUCK_BRAND_NAME"),
+        cortex.Complete(
+            "mistral-large2",
+            F.concat(
+                F.lit("Context: "),
+                F.col("ALL_REVIEWS_TEXT"),
+                F.lit(f" Question: {question} Answer briefly and concisely and only name the dish:")
+            )
+        ).alias("NUMBER_ONE_DISH")
+    )
 
-    summarized_reviews_df.select("TRUCK_BRAND_NAME", "NUMBER_ONE_DISH").show(3)
+    summarized_reviews_df.show(3)
   ```
 #### SQL
   ```sql
-  WITH RANKED_REVIEWS AS (
-        SELECT 
-            TRUCK_BRAND_NAME,
-            REVIEW,
-            ROW_NUMBER() OVER (PARTITION BY TRUCK_BRAND_NAME ORDER BY REVIEW) AS ROW_NUM
-        FROM TRUCK_REVIEWS_V
-    ),
-    FILTERED_REVIEWS AS (
-        SELECT *
-        FROM RANKED_REVIEWS
-        WHERE ROW_NUM <= 20
-    ),
-    AGGREGATED_REVIEWS AS (
-        SELECT 
-            TRUCK_BRAND_NAME,
-            ARRAY_AGG(REVIEW) AS ALL_REVIEWS
-        FROM FILTERED_REVIEWS
-        GROUP BY TRUCK_BRAND_NAME
-    ),
-    CONCATENATED_REVIEWS AS (
-        SELECT 
-            TRUCK_BRAND_NAME,
-            ARRAY_TO_STRING(ALL_REVIEWS, ' ') AS ALL_REVIEWS_TEXT
-        FROM AGGREGATED_REVIEWS
-    ),
-    SUMMARIZED_REVIEWS AS (
+    -- Gain Learnings from a specific question
+    WITH GAIN_LEARNINGS AS (
         SELECT 
             TRUCK_BRAND_NAME,
             SNOWFLAKE.CORTEX.COMPLETE(
-               'mistral-large2', 
-               'Context:' || ALL_REVIEWS_TEXT || ' Question: What is the number one dish positively mentioned in the feedback? Answer briefly and concisely and only name the dish:'
-           ) AS NUMBER_ONE_DISH
+            'mistral-large2', 
+            'Context:' || ALL_REVIEWS_TEXT || ' Question: What is the number one dish positively mentioned in the feedback? Answer briefly and concisely and only name the dish:'
+        ) AS NUMBER_ONE_DISH
         FROM CONCATENATED_REVIEWS
     )
-    SELECT TRUCK_BRAND_NAME, NUMBER_ONE_DISH FROM SUMMARIZED_REVIEWS LIMIT 3;
+    SELECT TRUCK_BRAND_NAME, NUMBER_ONE_DISH FROM GAIN_LEARNINGS LIMIT 3;
   ```
 <!-- ------------------------ -->
 
@@ -602,6 +515,8 @@ With the completion of this quickstart, you have now:
 
 Want to learn more about the tools and technologies used in this quickstart? Check out the following resources:
 
-* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-customer-reviews-analytics-using-snowflake-cortex)
 * [Cortex LLM](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+* [Intelligent document field extraction and analytics with Document AI](https://quickstarts.snowflake.com/guide/automating_document_processing_workflows_with_document_ai/index.html?index=..%2F..index#0)
+* [Build a RAG-based knowledge assistant with Cortex Search and Streamlit](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html?index=..%2F..index#0)
+* [Build conversational analytics app (text-to-SQL) with Cortex Analyst](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_analyst/index.html?index=..%2F..index#0)
