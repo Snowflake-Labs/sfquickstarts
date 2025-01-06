@@ -391,9 +391,7 @@ In this section, you will make use of **Snowflake Cortex LLM - ClassifyText** to
   ```python
   # To understand whether a customer would recommend food truck based on their review 
   text_description = """
-  Tell me based on the following food truck customer review, will they recommend the food truck to \
-  their friends and family? Answer should be only one of the following words - \
-  "Likely" or "Unlikely" or "Unsure".
+  Tell me based on the following food truck customer review, will they recommend the food truck to their friends and family?
   """
 
   reviews_df = reviews_df.withColumn('RECOMMEND', cortex.ClassifyText(F.col('REVIEW'),["Likely","Unlikely","Unsure"], test_description))\
