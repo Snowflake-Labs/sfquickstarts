@@ -1,4 +1,4 @@
-author: miles.adkins@snowflake.com
+author: Miles Adkins
 id: automl_with_snowflake_and_h2o
 summary: This lab will walk you through how to use Snowflake and H2O to perform supervised machine learning.
 categories: data-science-&-ml,partner-integrations

@@ -110,11 +110,12 @@ In a new SQL worksheet, run the following SQL commands to create the [warehouse]
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR REPLACE WAREHOUSE DASH_S WAREHOUSE_SIZE=SMALL;
-CREATE OR REPLACE DATABASE DASH_DB;
-CREATE OR REPLACE SCHEMA DASH_SCHEMA;
+CREATE WAREHOUSE IF NOT EXISTS DASH_S WAREHOUSE_SIZE=SMALL;
+CREATE DATABASE IF NOT EXISTS DASH_DB;
+CREATE SCHEMA IF NOT EXISTS DASH_SCHEMA;
 
 USE DASH_DB.DASH_SCHEMA;
+USE WAREHOUSE DASH_S;
 ```
 
 In the same SQL worksheet, run the following SQL commands to create table **CAMPAIGN_SPEND** from data hosted on publicly accessible S3 bucket.
@@ -168,7 +169,8 @@ CREATE or REPLACE TABLE BUDGET_ALLOCATIONS_AND_ROI (
   VIDEO integer,
   EMAIL integer,
   ROI float
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"aiml_notebooks_ad_spend_roi", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit"}}';
 
 INSERT INTO BUDGET_ALLOCATIONS_AND_ROI (MONTH, SEARCHENGINE, SOCIALMEDIA, VIDEO, EMAIL, ROI)
 VALUES
@@ -403,9 +405,7 @@ If all goes well, you should see the following:
 
 ![Snowflake DE NB](assets/snowflake_ml_nb.png)
 
-3) On the top right, click on **Packages** and make sure you install `snowflake-ml` package by typing it in the search box and selecting the first one.
-
-![Snowflake DE NB](assets/snowflake_ml_nb_packages.png)
+4) On the top right, click on **Packages** and make sure you install `snowflake-ml-python` package by typing it in the search box and selecting **version 1.5.0**. (NOTE: This notebook has been tested using these versions snowflake-ml-python 1.5.0 and python 3.9*.)
 
 5) On the top right, click on **Start**. ***(NOTE: The first time it will take a couple of mins to install the packages.)***
 

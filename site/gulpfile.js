@@ -244,6 +244,15 @@ gulp.task('build:js', (callback) => {
     );
   }
 
+  // Add the new utm-validation.js script to the build process
+  const validationSrcs = [
+    'app/js/utm_validation.js', // Path to the new validation script
+  ];
+  streams.push(gulp.src(validationSrcs)
+    .pipe(babel(opts.babel())) // Apply Babel or other necessary transforms
+    .pipe(gulp.dest('build/js')) // Output to the build directory
+  );
+
   const bowerSrcs = [
     'app/bower_components/webcomponentsjs/webcomponents-lite.min.js',
     // Needed for async loading - remove after polymer/polymer#2380

@@ -58,7 +58,7 @@ ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 **Step 2**. - Import Notebooks
 
 From Snowsight, create a Snowflake notebook by importing a notebook and using the role, schema, and warehouse by following the instructions below:
-- Download the setup and fraud detections notebooks using this link. 
+- Download the setup and fraud detections notebooks using this [link](https://github.com/Snowflake-Labs/sfguide-credit-card-fraud-detection-using-snowflakeml). 
 - Navigate to Notebooks in Snowsight by clicking on Projects -> Notebook
 - Switch to the SYSADMIN role or the custom role. Using the import button on the top right, import the downloaded  1_cc_fins_setup notebook.
 - Provide a name for the notebook and select the database, schema and warehouse created earlier.

@@ -1,28 +1,27 @@
 author: Carlos Carrero
 id: asking_questions_to_your_own_documents_with_snowflake_cortex
-summary: Step-by-step guide on how to create a RAG app using Snowflake Cortex and Streamlit. 
+summary: Step-by-step guide on how to build a document search assistant using vector embeddings in Cortex AI.
 categories: featured,getting-started,data-science, gen-ai 
 environments: web 
 tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings, Getting Started
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Build a Retrieval Augmented Generation (RAG) based LLM assistant using Streamlit and Snowflake Cortex
+# Build A Document Search Assistant using Vector Embeddings in Cortex AI
 
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
 
-To reduce hallucinations (i.e. incorrect responses), LLMs can be combined with private datasets. Today, the most common approach for reducing hallucinations without having to change the model (e.g. fine-tuning) is the Retrieval Augmented Generation (RAG) framework. RAG allows you to “ground” the model’s responses by making a set of relevant documents available to the LLM as context in the response. 
+In this quickstart we will show you how to quickly and securely build a document search assistant using vector embeddings in Cortex AI without having to build integrations, manage any infrastructure or deal with security concerns with data moving outside of the Snowflake governance framework. 
 
-In this quickstart we will show you how to quickly and securely build a full-stack RAG application in Snowflake without having to build integrations, manage any infrastructure or deal with security concerns with data moving outside of the Snowflake governance framework. 
+Along the way, we will also share tips on how you could turn what may seem like a prototype into a production pipeline by showing you how to automatically process new documents as they are uploaded as well as learn about relevant Snowflake functionality to consider for additional enhancements.
 
-We will show you how easy it is to implement RAG via a chat assistant that knows everything about smart devices. This assistant can be really useful for your not so tech-savvy friend or relative that is always asking you questions about their electronics. To make the assistant an expert in a smart devices, we are going to give it access to a few User Manuals. This template can easily be adapted to other documents that may be more interesting to you whether its financial reports, research documents or anything else! 
-
-Along the way, we will also share tips on how you could turn what may seem like a prototype into a production pipeline by showing you how to automatically process new documents as they are uploaded as well as learn about relevant Snowflake functionality to consider for additional enhancements. 
+> aside positive
+> NOTE: A new guide has been published that leverages Cortex Search (in Public Preview)--a fully managed service that automatically creates embeddings for your data and performs retrievals using a hybrid search engine including embeddings for semantic similarity and keyword search for lexical similarity. To learn more, [click here](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/index.html).
 
 ### What You Will Build
-The final product includes an application that lets users test how the LLM responds with and without the context document(s) to show how RAG can address hallucinations.  
+The final product includes an application that lets users test how the LLM responds with and without the context document(s).
 
 ![App](assets/qs_cortex_intro_arctic.gif)
 

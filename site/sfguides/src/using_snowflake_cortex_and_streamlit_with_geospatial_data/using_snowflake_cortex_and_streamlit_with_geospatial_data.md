@@ -1,11 +1,11 @@
 author: Becky O’Connor
 id: using_snowflake_cortex_and_streamlit_with_geospatial_data
 summary: This is a sample Snowflake Guide
-categories: Data-Sharing
+categories: Data-Sharing, Cortex
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial 
+tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial
 
 # Using Snowflake Cortex And Streamlit With Geospatial Data
 <!-- ------------------------ -->
@@ -34,9 +34,12 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
   - **Visualise**  the data using Streamlit
 
 ### Prerequisites
-- A new free trial of Snowflake in **a region of you choice**.
+- A new free trial of Snowflake in **a region of you choice***.
 
+ 
 ![alt text](assets/I001.png)
+
+**Note**:  All datasets for this dataset used are either frequently replicated or originate in AWS London.  If you choose an alternative location, you may need to wait 10 minutes for the replication process to finish.
 
 
 ### What You’ll Learn 
@@ -97,20 +100,26 @@ Search for Northern Trains Station Data
 
 ![alt text](assets/I003.png)
 
+Press **Get** to get the data from the marketplace.  Do not change the database name.
 
+![alt text](assets/I003a.png)
 
 Search for Overture Maps - Places
 
-Click on the following dataset then press **Get**
-
 ![alt text](assets/I004.png)
+
+Click on the following dataset then press **Get** Do not change the database name.
+
+![alt text](assets/I004a.png)
+
+
 
 Search for the **Met office Weather Data**
 Press **Get** - Keep the name as it is.
 
 ![alt text](assets/I005.png)
 
-You will only get a sample dataset - you will need to **request** the full Product to complete the full lab.
+You will have access to the dataset for a period of **14 days**
 
 
 ## Create your First map Layer
@@ -134,20 +143,28 @@ In **Notebook location**, select BUILD_UK from the list of available databases a
 
 > If you wish, you can import the previously created notebook from the following location:
 
-[notebook in Github](https://github.dev/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Trains%20and%20Restaurants.ipynb)
+[notebook in Github](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Trains%20and%20Restaurants.ipynb)
 
 > However, to experience the creation of the notebook yourself, carry on with the blank notebook, and copy/paste the code as we go along.
 
 
 #### Creating your first Map
-Once the notebook has loaded, Remove all cells apart from cell 1.  You should see something like this:
+
+Once the notebook has loaded, Remove all cells in the notebook.  You should see something like this:
 
 ![alt text](assets/I009.png)
 
+Before we start working in our notebook, we will add an additional package which is not installed as default.  This package is available within the Anaconda Snowflake channel and is easily accessible.
 
-We have the basics to load a snowpark dataframe, but we havent loaded any functions yet.  All functions which include user defined table and scalar functions are accessible within Snowpark.  
+**Add the Pydeck package for visualising location data**
 
-**Start a Session and import all the libraries we will need**
+In the top menu, under Packages » Anaconda Packages, import pydeck.  You need this to render maps. 
+
+![alt text](assets/I010.png)
+
+Now we have all the packages we need.  Lets start the notebook by pressing **Start** which is at the top right hand corner of the screen.
+
+![alt text](assets/I009a.png)
 
 You will be using a variety of Snowflake functions to do some transformation tasks.  Some of the functions are built into the snowpark library (such as array_agg, parse_json), others we need to call using the **call_function** module.  **call_function** allows the user to leverage ANY Snowflake scalar function - you can use this for both built in as well as user defined functions.
 
@@ -155,13 +172,17 @@ All functions are held inside the **snowflake.snowpark.functions** module.
 
 We will import the call_function, streamlit library, json, numpy, pandas and pydeck packages.  For pydeck, you will need to add the package as this is not installed by default.
 
-Replace the contents in the first cell with the following code:
+Click on the + Python button to add a new Python cell.  On the top left hand corner of the screen, you can rename your cell from 'cell1' to something more meaningful.  This is useful for debugging purposes.
+
+**Rename** cell1 to libraries by typing over the text 'cell1'.
+
+Copy and paste the following code into the newly created cell.
 
 ```python
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import max,min,avg,call_function, split,substr,hour,concat,col,sqrt,lit,array_slice,array_agg,object_construct,parse_json, to_geography, to_array,to_date, round
+from snowflake.snowpark.functions import max,min,avg,call_function, split,substr,hour,concat,col,sqrt,lit,array_slice,array_agg,object_construct,parse_json, to_geography, to_array,to_date, round, replace
 from snowflake.snowpark.types import StringType,VariantType, DateType, IntegerType,DecimalType
 import json
 import pandas as pd
@@ -171,25 +192,22 @@ import pydeck as pdk
 # Write directly to the app
 st.title("UK Analytics within the North of England :train:")
 st.write(
-    """This app shows key insight of places and events that may effect Northern Trains).
+    """This app shows key insight of places and events that may effect Northern Trains.
     """
 )
 
 # Get the current credentials
 session = get_active_session()
 ```
-In the top menu, under Packages » Anaconda Packages, import pydeck.  You need this to render maps. 
-
-![alt text](assets/I010.png)
-
-Run the notebook - the notebook will restart. Once it has ran you will see something like this:
-
 
 ![alt text](assets/I011.png)
 
 Add a new python cell by hovering over the bottom edge of the cell and select Python.
 
 ![alt text](assets/I012.png)
+
+Rename the the cell to **n_trains_data**
+
 
 We will firstly leverage the Northern Trains dataset to filter the carto overture maps places dataset.  We want to do this in order to get Points of interests that are relevant for the Northern Trains locality.  Joining by each Station Code would be resource hungry - plus we do not want to join by exact locations, only by roughly where all of the train stations are situated.
 
@@ -230,7 +248,8 @@ Duration: 10
 
 You previously loaded the places dataset from Carto Overture maps.  This dataset offers a comprehensive list of places of interest across the world such as restaurants, bars and schools.  We want to filter this dataset to only list places of interest that occur within the Northern Trains locality.  Creating a Boundary box is the easiest option.
 
-Copy and Paste the following into a new cell
+Copy and Paste the following into a new cell and name the new cell **boundary_box**
+
 ```python
 #create a point from the coordinates
 envelope = trains_latlon.with_column('POINT',call_function('ST_MAKEPOINT',col('"Longitude"'),col('"Latitude"')))
@@ -243,11 +262,13 @@ envelope = envelope.select(call_function('ST_ENVELOPE',col('POINTS')).alias('BOU
 envelope.collect()[0][0]
 
 ```
-You will see this has generated a set of coordinates for the boundary box.  Lets visualise what this looks like using the library pydeck.  Although st.map is useful for simple quick visualisation of points, pydeck has the ability to visualise lines, points and polygons in 2D and 3D.  It also has layer options for lines, points, icons and H3 indexes.
+You will see this has generated 5 sets of coordinates in order to draw the boundary box.  
+
+>**FACT:** Every **valid** polygon will have the same last pair of coordinates as the first pair.   Lets visualise what this looks like using the library pydeck.  Although st.map is useful for simple quick visualisation of points, pydeck has the ability to visualise lines, points and polygons in 2D and 3D.  It also has layer options for lines, points, icons and H3 indexes.
 
 https://deckgl.readthedocs.io/en/latest/
 
-Add a new Python cell and copy and paste the following:
+Add a new Python cell and name it **boundary_layer**.  Copy and paste the following:
 
 ```python
 #find the centre point so the map will render from that location
@@ -316,6 +337,8 @@ Next, lets leverage and filter the overture maps so these will only consist of d
 
 Create and preview the places dataframe - we are also filtering to only display places in the UK.
 
+Copy and paste the python code into a new python cell.  Name the cell **places_dataset**
+
 ```python
 
 places = session.table('OVERTURE_MAPS__PLACES.CARTO.PLACE')
@@ -323,16 +346,15 @@ places = places.filter(col('ADDRESSES')['list'][0]['element']['country'] =='GB')
 
 places.limit(3)
 ```
+When you run the cell, you will see there is a lot of semi structured data returned.  We will use snowflake’s native **semi structured** querying capability to take key elements out of the data which includes information concerning the location
 
-We will use snowflake’s native **semi structured** querying capability to take key elements out of the data which includes information concerning the location
-
-In a new cell, paste the following and run the cell:
+In a new cell which you will name **places_refined**, paste the following and run the cell:
 
 ```python
 
 places = places.select(col('NAMES')['primary'].astype(StringType()).alias('NAME'),
                         col('PHONES')['list'][0]['element'].astype(StringType()).alias('PHONE'),
-                      col('CATEGORIES')['main'].astype(StringType()).alias('CATEGORY'),
+                      col('CATEGORIES')['primary'].astype(StringType()).alias('CATEGORY'),
                         col('CATEGORIES')['alternate']['list'][0]['element'].astype(StringType()).alias('ALTERNATE'),
                     col('websites')['list'][0]['element'].astype(StringType()).alias('WEBSITE'),
                       col('GEOMETRY'))
@@ -340,12 +362,12 @@ places = places.select(col('NAMES')['primary'].astype(StringType()).alias('NAME'
 
 places.limit(10)
 ```
-This is what you should see.
+This is what you should see.  The exact dataset set may ot be the same as the screenshot but will contain the same type of data.
 ![semi_structured_filtered](assets/I015.png)
 
 You will now filter the data to only view places which are categorised as **train_station**.
 
-Copy and paste the code below into a new **python** cell
+Copy and paste the code below into a new **python** cell.  Name the cell **places_filtered_boundary**
 
 ```python
 places = places.filter(col('CATEGORY') =='train_station')
@@ -358,7 +380,7 @@ st.write(places)
 ```
 We can view the points on a map easily by using st.map(places) but as pydeck has many more options such as different mark types, tool tips and layers we will create an additional pydeck layer which adds this data to the previously created data layer.  When you hover over in the boundary box you will see a tooltip containing the  alternate category as well as the place name.
 
-Copy and paste the following into a new cell:
+Copy and paste the following into a new cell and name the cell **places_visualised**:
 
 ```python
 
@@ -382,12 +404,16 @@ st.pydeck_chart(pdk.Deck(
         height=400
         ),
     
-layers= [polygon_layer, poi_l], tooltip = {'text':"Station Name: {NAME}, alternate: {ALTERNATE}"}
+layers= [polygon_layer, poi_l], tooltip = {'text':"Place Name: {NAME}, alternate: {ALTERNATE}"}
 
 ))
 
 ```
-Go back to cell 7 and modify the category in the filter from train_station to restaurant .  Also, modify the tool tip text from Station Name to Restaurant and then select **Run all below**:
+- Go back to **places_filter_bounds** cell and modify the category in the filter from train_station to restaurant. 
+
+- Return to the **places_dataset** cell - this is 2 cells above the places_filtered_boundary cell.
+
+- Select **Run all below**.  These steps will start from retreiving a fresh table from the marketplace table:
 
 ![boundarybox](assets/I016.png)
 
@@ -397,7 +423,7 @@ The results should look like this.
 
 Now we have a map with all the restaurants within the Northern trains boundary.  Lets now compare this with another layer which shows the train stations provided by Northern Trains.  We have already loaded the train station locations into the notebook when we created the boundary box.  
 
-Create a new cell and copy and paste the following:
+Create a new cell and name it **trains_visualised**.  Copy and paste the following:
 
 ```python
 
@@ -428,7 +454,7 @@ st.pydeck_chart(pdk.Deck(
         height=400
         ),
     
-layers= [polygon_layer, poi_l, nw_trains_l], tooltip = {'text':"Station Name: {NAME}, alternate: {ALTERNATE}"}
+layers= [polygon_layer, poi_l, nw_trains_l], tooltip = {'text':"Place Name: {NAME}, alternate: {ALTERNATE}"}
 
 ))
 
@@ -441,11 +467,11 @@ Duration: 10
 
 At the moment we only have very basic train station information.  Lets add more info from the shared dataset:
 
-Copy and paste the following code into a new cell.
+Copy and paste the following code into a new cell.  Name the cell **station_attributes**  
 
 ```python
 
-further_train_info = session.table('NORTHERN_TRAINS_STATION_DATA.TESTING."STATION ATTRIBUTES 1"')
+further_train_info = session.table('NORTHERN_TRAINS_STATION_DATA.TESTING."STATION ATTRIBUTES 2"')
 further_train_info.limit(4)
 
 ```
@@ -454,32 +480,41 @@ further_train_info.limit(4)
 
 We have quite a bit of information, it would be great if we can  use Snowflake Cortex LLM to explain this data and then we could add the results to our tool tip!! Right now we only have the postcode in the tooltip.
 
-Let's do that by creating a new cell and running the following. This takes around 1.5 minutes to complete as it will write a summary report for all 400 train stations.
+Let's do that by creating a new cell.  Name the cell **cortex_tooltip**.  
+
+Paste the following into the new cell and run. This takes around 1.5 minutes to complete as it will write a summary report for all 400 train stations.
 
 ```python
 
 further_train_info= further_train_info.with_column('OBJECT',object_construct(lit('CRS Code'),
-col('"CRS Code"'),                                                                           lit('Full Timetable Calls'),
-col('"Dec21 Weekday Full Timetable Daily Calls"').astype(IntegerType()),                                                                        lit('Emergency Timetable Calls'),                                                                        col('"Dec21 Weekday Emergency Timetable Daily Calls"').astype(IntegerType()),                                                                           lit('Footfall'),
- col( '"ORR Station Footfall 2020-21"').astype(IntegerType()),
+col('"CRS Code"'),
+lit('Full Timetable Calls'),
+col('"Dec21 Weekday Full Timetable Daily Calls"').astype(IntegerType()),
+lit('Emergency Timetable Calls'),
+col('"Dec21 Weekday Emergency Timetable Daily Calls"').astype(IntegerType()),
+lit('Footfall'),
+col( '"ORR Station Footfall 2020-21"').astype(IntegerType()),
 lit('Parking'),
 col('"Car Parking - Free/Chargeable"'),
 lit('MP'),
 col("MP"),
 lit("Political Party"),
- col('"Political Party"'),
+col('"Political Party"'),
+lit('MP Email Address'),
+col('"MP Email Address"'),                                                                             
 lit('Car Parking Spaces'),
 col('"Car Parking Spaces"').astype(IntegerType()),
 lit('Staffed?'),
 col('"Staffed?"')))
 
-prompt = 'In less than 200 words, write a summary based on the following information'
-prompt2 = 'Do not include Based on the provided information'
+prompt = 'In less than 200 words, write a summary based on the following train station details'
+prompt2 = 'write in the best way for it to describe a point on a map'
 
 further_train_info = further_train_info.select('"CRS Code"',
         'MP',
         '"Political Party"', 
-        call_function('snowflake.cortex.complete','snowflake-arctic',
+        '"MP Email Address"',
+        call_function('snowflake.cortex.complete','mistral-large2',
             concat(lit(prompt),
             col('OBJECT').astype(StringType()),
             lit('prompt2'))).alias('ALTERNATE'))
@@ -489,11 +524,23 @@ session.table('DATA.TRAIN_STATION_INFORMATION')
 
 ```
 
-We used call_function to call Snowflake Cortex complete which returns a response that completes an input prompt. Snowflake Cortex runs LLMs that are fully hosted and managed by Snowflake, requiring no setup. In this example, we are using Snowflake Arctic, an open enterprise-grade LLM model developed by Snowflake.
+While we wait for the train station tooltips to materialize add a **markdown cell** above the cell we have just created. Markdown is useful to help tell a data story within the notebook. Hover above the newly created cell which is currently running and press  **Markdown**.  Name the cell **cortex_description** and paste the following narrative:
+
+```markdown
+
+
+Below we are leveraging Mistral-large2 to produce meaningful tooltips relating to over **400** train stations which are managed by **Northern Trains**
+
+```
+Press the tick on the top right hand side of the cell to confirm the edit.
+
+![train_details](assets/I026.png)
+
+We used **call_function** to call Snowflake Cortex complete which returns a response that completes an input prompt. Snowflake Cortex runs LLMs that are fully hosted and managed by Snowflake, requiring no setup. In this example, we are using Snowflake Arctic, an open enterprise-grade LLM model developed by Snowflake.
 
 You should get a new table that will look like this:
 
-![train_details](assets/I019.png)
+![train_details](assets/I0192.png)
 
 > **IMPORTANT** Comment out the write to table command to prevent the LLM being called every time you refresh the notebook.  We now have the data saved in a table so you do not need to run this model again.
 
@@ -504,7 +551,7 @@ You should get a new table that will look like this:
 
 ```
 
-Ok, let's now revise the map.  Create a new cell and add the following:
+Ok, let's now revise the map.  Create a new python cell and name it **visualise_tooltip** Add the following code:
 
 ```python
 trains_latlon_renamed = trains_latlon
@@ -554,7 +601,7 @@ layers= [polygon_layer, poi_l, nw_trains_l], tooltip = tooltip
 
 Hover over the map and checked the updated tool tips.
 
-![tool_tip_image](assets/I020.png)
+![tool_tip_image](assets/I0202.png)
 
 <!-- ------------------------ -->
 ## Use Cortex to list Key location events
@@ -565,7 +612,7 @@ Any location may be impacted by key events.  Let's try and pinpoint out any key 
 
 
 
-Create the following in a new cell which will generate and saves the results in a new table.  
+Create the following in a new cell named **cortex_events**.  This will generate event data and saves the results in a new table.  
 
 ```python
 
@@ -578,10 +625,13 @@ json1 = '''{"DATE":"YYYY-MM-DD", "NAME":"event",DESCRIPTION:"describe what the e
 },"COLOR":"Random bright and unique color in RGB presented in an array"}'''
 
 
-prompt = f''' Retrieve 6 events within the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
+prompt = f''' Retrieve 6 events within different cities of the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
 events = session.create_dataframe([{'prompt':prompt}])
 
-events = events.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','snowflake-arctic',prompt).alias('EVENT_DATA'))
+events = events.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','mistral-large2',prompt).alias('EVENT_DATA'))
+
+events = events.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```json'''),lit('')))
+events = events.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```'''),lit('')))
 
 events.write.mode('overwrite').save_as_table("DATA.EVENTS_IN_THE_NORTH")
 session.table('DATA.EVENTS_IN_THE_NORTH')
@@ -590,7 +640,7 @@ session.table('DATA.EVENTS_IN_THE_NORTH')
 
 Again, we will utilise the semi-structured support in Snowflake to flatten the retrieved json to transpose a data frame in a table format
 
-Copy and past the code below into a new cell:
+Copy and paste the code below into a new cell which you will rename as **events_normalised**:
 
 ```python
 
@@ -611,7 +661,7 @@ We now have a list of events in a new table.  We would like to utilise this to u
 
 
 
-Add the H3 Index at resolution 5 to the dataframe
+Create a new cell which you will name **h3index**.  Add the H3 Index at resolution 5 to the dataframe
 
 ```python
 
@@ -624,7 +674,7 @@ You will see a new column called H3:
 
 ![events_H3](assets/I021.png)
 
-We will now add these events onto the map as another layer
+We will now add these events onto the map as another layer.  Add a new cell and name it **visualise_h3**.
 
 ```python
 
@@ -677,12 +727,12 @@ layers= [polygon_layer, poi_l, h3_events,nw_trains_l, ], tooltip = tooltip
 ![events_map](assets/I022.png)
 
 
-So we can see the train stations and restaurants that might be impacted by the events.  Lets create a dataset that extracts only the impacted areas.
+So we can see the train stations and restaurants that might be impacted by the events.  The events rendered may be different to what is shown in the screenshot.  Lets create a dataset that extracts only the impacted areas.
 
 Join the Events data frame to The Train Stations Data frame.  Then, Join the Events Data frame to the Restaurants Data frame.
 
 
-You may notice that there are  new  H3 columns for the restaurants and places of the same resolution as the events.  This naturally creates a key to join to.  There is also a new column which displays the distance away the restaurant is from the event.   This was created using a standard geospatial function.
+You may notice that there are  new  H3 columns for the restaurants and places of the same resolution as the events.  This naturally creates a key to join to.  There is also a new column which displays the distance away the restaurant is from the event.   This was created using a standard geospatial function.  Copy and paste the following into a new cell called **affected_by_events**
 
 ```python
 
@@ -711,13 +761,15 @@ Duration: 10
 
 Now that we can see where the events impact stations and restaurants, let's  use an LLM to craft a letter to the MP to notify them of these effects.  To do this, we need to put all the information needed into objects to  easily pass them through the cortex function.
 
-Create an object which links all affected restaurants to the respective MP.  We are also including the distance from the event for each restaurant. 
+Create an object which links all affected restaurants to the respective MP.  We are also including the distance from the event for each restaurant.  
+
+Create a new cell celled **letter_restaurants** and copy and paste the following code into the cell:
 
 ```python
 
-object3 = trains_h3.select('H3','MP').distinct()
+object3 = trains_h3.select('H3','MP','"MP Email Address"').distinct()
 object3 = places_h3.join(object3,'H3')  
-object3 = object3.group_by('MP').agg(array_agg(object_construct(lit('NAME'),
+object3 = object3.group_by('MP','"MP Email Address"').agg(array_agg(object_construct(lit('NAME'),
                                                                 col('NAME'),
                                                                 lit('DISTANCE_FROM_EVENT'),
                                                                 round('DISTANCE_FROM_EVENT',5).astype(DecimalType(20,4)),
@@ -730,7 +782,7 @@ object3
 
 ```
 
-Create another object to link all affected trains stations to the respective MP.
+You will now create another object which links all the affected trains stations to the respective MP.  Copy and paste the following code into a new python cell called **letter_trains**
 
 ```python
 
@@ -738,7 +790,7 @@ object1 = trains_h3.group_by('MP').agg(array_agg(object_construct(lit('Train Sta
 object1
 
 ```
-And finally create an object which links all affected events to the respective MP
+Create an object which links all affected events to the respective MP.  Create a new python cell called **letter_events** and paste the following code into it:
 
 ```python
 
@@ -748,7 +800,7 @@ object2
 
 ```
 
-Join all these objects together and persist the results in a table. 
+you will now join all these objects together and persist the results in a table.  Create a new cell called **letter_object** and copy and paste the python below into it: 
 
 ```python
 
@@ -756,18 +808,18 @@ all_3 = object1.join(object2,'MP')
 all_3 = all_3.join(object3,'MP')
 
 all_3.write.mode('overwrite').save_as_table("DATA.EVENTS_AND_WHAT_IS_AFFECTED")
-
+session.table('DATA.EVENTS_AND_WHAT_IS_AFFECTED')
 ```
 
 ![events_map](assets/I024.png)
 
-The results can include a large number of restaurants by MP, so let's only  refer to the first 8 restaurants for each MP letter based on distance from the event.  The array_slice method does just that.
+The results can include a large number of restaurants by MP, so let's only  refer to the first 8 restaurants for each MP letter based on distance from the event.  The array_slice method does just that.  Create a new Python cell called **filt_restaurant_obj** and paste the following python content into it:
 
 ```python
 all_3 = session.table("DATA.EVENTS_AND_WHAT_IS_AFFECTED")
-all_3 = all_3.select('MP','TRAIN_STATIONS','EVENTS',
+all_3 = all_3.select('MP','"MP Email Address"','TRAIN_STATIONS','EVENTS',
                      
-array_slice(col('RESTAURANTS'),lit(0),lit(8)).alias('RESTAURANTS'),
+array_slice(col('RESTAURANTS'),lit(0),lit(8)).alias('RESTAURANTS'))
 
           
 all_3
@@ -778,11 +830,11 @@ Create a prompt for the LLM which pulls all this information together.  You may 
 
 
 
-Copy the code below into a new cell
+Copy the code below into a new python cell called **prompt_letter**
 
 ```python
 
-prompt = concat(lit('Write to this MP:'),
+prompt = concat(lit('Write an email addressed to this MP:'),
                 col('MP'),
                lit('about these events: '),
                col('EVENTS').astype(StringType()),
@@ -790,40 +842,41 @@ prompt = concat(lit('Write to this MP:'),
                col('TRAIN_STATIONS').astype(StringType()),
                 lit('And these Restaurants: '),
                 col('RESTAURANTS').astype(StringType()),
-               lit('The letter is written by Becky - a concerned Citizen'))
+               lit('The letter is written by Becky - becky.oconnor@snowflake.com - a concerned Citizen'))
 
 
 ```
 
-Call the LLM with the prompt by copying the code below into a new cell.  The LLM we are using for this is Mixtral-8x7b as its good at writing letters :
+Call the LLM with the prompt by copying the code below into a new cell. You may want to be creative and change who the letter is written by, or even ask Cortex to write it in the style of someone. The LLM we are using for this is Mixtral-8x7b as its good at writing letters.  Copy and paste the following in a new python cell called **cortex_letter**
 
 ```python
 
-letters = all_3.select('MP',call_function('SNOWFLAKE.CORTEX.COMPLETE','mixtral-8x7b',prompt).alias('LETTER'))
+letters = all_3.select('MP','"MP Email Address"', call_function('SNOWFLAKE.CORTEX.COMPLETE','mixtral-8x7b',prompt).alias('LETTER'))
 letters.write.mode('overwrite').save_as_table("DATA.LETTERS_TO_MP")
 
 ```
 
-View the letters by copying this code into a new cell:
+We have now saved our letters.  The next task is to view the letters by copying this code into a new python cell called **new_letters**:
 
 ```python
 letters = session.table('DATA.LETTERS_TO_MP')
 letters
 ```
-The code below  allows the user to browse the letters with a slider and visualise a letterTry it out by copying the code into a new cell.
+The code below  allows the user to browse the letters with a slider and visualise a letter.Try it out by copying the code into a new python cell called **letter_reader**.
 
 ```python
 
 letterspd = letters.to_pandas()
-
 selected_letter = st.slider('Choose Letter:',0,letterspd.shape[0]-1,1)
+st.markdown(f''' **Email**: {letterspd['MP Email Address'].iloc[selected_letter]}''')
+st.write()
 st.write(letterspd.LETTER.iloc[selected_letter])
 
 ```
 
 ![events_map](assets/I025.png)
 
-That's it. If you wish, you can download the completed python code from here by exporting it as .ipynb that could be used to import it into a new notebook.
+That's it. If you wish, you can download the completed python code from here by exporting it as .ipynb that could be used to import it into a new notebook. 
 
 <!-- ------------------------ -->
 ## Generate Synthetic Incidents and Visualize
@@ -850,7 +903,7 @@ Replace all the sample code with the following:
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import col, call_function, lit,concat, parse_json,object_construct
+from snowflake.snowpark.functions import col, call_function, lit,concat, parse_json,object_construct,replace
 from snowflake.snowpark.types import StringType, FloatType, ArrayType, VariantType, DateType
 
 # Write directly to the app
@@ -902,7 +955,7 @@ with st.form('Generate Events'):
     'Generate Synthetic Events based on the following:'
     col1,col2, col3,col4 = st.columns(4)
     with col1:
-        model = st.selectbox('Choose Model',['mixtral-8x7b'])
+        model = st.selectbox('Choose Model',['mistral-large2'])
     with col2:
         mp = st.selectbox('Choose MP: ',mps)
     with col3:
@@ -946,6 +999,9 @@ if submitted:
     
 
     generated = filtered_data.with_column('generated_events',mistral)
+
+    generated = generated.with_column('generated_events',replace(col('generated_events'),lit('''```json'''),lit('')))
+    generated = generated.with_column('generated_events',replace(col('generated_events'),lit('''```'''),lit('')))
     #st.write(generated)
     generated = generated.select('MP',parse_json('GENERATED_EVENTS').alias('GENERATED_EVENTS'))
     generated = generated.with_column('INCIDENT_TYPE',lit(activity))
@@ -1041,7 +1097,7 @@ try:
 
     st.markdown(''' #### NEWLY GENERATED SOCIAL MEDIA ''')
 
-    
+    #### SOCIAL MEDIA DATA
     
     social_media = session.create_dataframe([0])
     json = '''{"date","YYYY-MM-DD","post","abcdefg","sentiment_score",0.2,"username","bob"}'''
@@ -1052,7 +1108,10 @@ try:
     lit('Add a date, username and relevant emojis to each post.\
     Include emotion.  Return the results as a json object and include sentiment scores.')
            ,lit('use the following json template to structure the data'),lit(json))).astype(VariantType()))
+    
 
+    social_media = social_media.with_column('V',replace(col('V'),lit('''```json'''),lit('')))
+    social_media = social_media.with_column('V',replace(col('V'),lit('''```'''),lit('')))
     
     smedia = social_media.join_table_function('flatten',parse_json('V')).select('VALUE')
     smedia = smedia.select(object_construct(lit('INCIDENT_TYPE'),lit(flattenpd.INCIDENT_TYPE.iloc[record]),lit('MP'),lit(MP),lit('DATA'),col('VALUE')).alias('V'))
@@ -1088,6 +1147,8 @@ except:
     st.info('No Results Found')
     
          
+    
+         
 
 ```
 ### Running the App to generate data
@@ -1102,17 +1163,26 @@ Once you have generated events, select each MP under the Individual incidents se
 Finally we will create a Streamlit app which adds this additional information to a map.
 
 
-### Visualise the data
+<!-- ------------------------ -->
+## Visualise the data 
+
+![alt text](assets/streamlit1/st005.png)
 
 You will now be creating another streamlit app in order to visualise the results.
 
 Below is sample code which takes what we have learnt to create a streamlit with all the places event, location and incident data that from the shared datasets as well as synthetic data.
 
-You will need to install pydeck
+You will need to install **pydeck**.  
 
-![alt text](assets/streamlit1/st004.png)
+- Go back to the home page and add a new streamlit application using the same database, schema and warehouse as the previous app.
 
-Copy and paste this into a streamlit app under the BUILD_UK Streamlits schema.  NB - you will need to add the pydeck package before the streamlit will run.
+
+- Go to packages and add **pydeck** to the streamlit app before you paste the app code.
+
+    ![alt text](assets/packages_option.png)
+
+- After you have installed pydeck, delete the default contents of the newly created app
+-   Copy and paste the code from below
 
 ```python
 
@@ -1330,16 +1400,20 @@ st.table(social_media.drop('V'))
 
 ```
 <!-- ------------------------ -->
-## Use Cortex to Embed Generated Text
+## Use Cortex to Embed Generated Text and create a Search Service
 Duration: 10
 
-During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.
 
-Download the following python notebook file
+During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.  Once you have explored the principles of how text searching works, you will create a Cortex Search Service.
+
+Click here and download the notebook from GitHub
 
 [**Vector_Embeddings.ipynb**](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Vector_Embeddings.ipynb)
 
 Import as a new snowflake notebook.  Add it to the BUILD.UK.NOTEBOOKS schema and follow the instructions provided in the notebook.
+
+
+
 
 <!-- ------------------------ -->
 ## Bringing in Met Office Weather
@@ -1348,25 +1422,37 @@ Duration: 10
 
 Now we will leverage the weather data to understand the weather forecasts for each Event.  This time we will import a notebook which has already been created.
 
-Go to the Home page and select Notebooks
+- Go to the Home page and select Notebooks
 
-Download the following python notebook file
+- Download the following python notebook file
 
 [**weather.ipynb**](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/weather.ipynb)
 
-In the notebbook menu selection, select Import from .ipynb file and choose the downloaded file
+- In the notebbook menu selection, select Import from .ipynb file and choose the downloaded file
 
-![alt text](assets/weather/W001.png)
+    ![alt text](assets/weather/W001.png)
 
 
-Follow the instructions as per the imported notebook.  You will end up with a weather forecast for each of the different events.
 
-![alt text](assets/weather/W002.png)
+- Populate the fields with the following:
+
+![alt text](assets/weather/W003.png)
+
+- Follow the instructions as per the imported notebook.  You will end up with a weather forecast for each of the different events.
+
+    ![alt text](assets/weather/W002.png)
 
 
 ### Streamlit showing weather by Train Station
 
+![alt text](assets/weather/W004.png)
+
 this is an example weather app which shows the weather forecast for each train station
+
+- Copy and paste the code below into a new **streamlit app**
+
+- NOTE: you will need to install the package **pydeck** from the packages menu.
+
 
 ```python
 
@@ -1411,8 +1497,8 @@ trains_latlon = trains_latlon.drop('POSTCODE_SPLIT','POSTCODE_OUTCODE','POSTCODE
 
 # Add hourly and daily weather for each train station
 
-weather_hourly = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS_PRIVATE_BETA.BD1_BETA."advanced_with_solar_hourly_view"')
-weather_daily = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS_PRIVATE_BETA.BD1_BETA."advanced_with_solar_daily_view"')
+weather_hourly = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS__ADVANCED_WITH_SOLAR.PCSECT_FORECAST."advanced_with_solar_hourly_view"')
+weather_daily = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS__ADVANCED_WITH_SOLAR.PCSECT_FORECAST."advanced_with_solar_daily_view"')
 
 weather_hourly_max = weather_hourly.agg(max('"Issued_at"').alias('MAX'))
 weather_hourly = weather_hourly.join(weather_hourly_max,weather_hourly_max['MAX']==weather_hourly['"Issued_at"']).drop('MAX')
@@ -1491,9 +1577,9 @@ weather_daily_north = weather_daily_north.join(postcodes,postcodes['PC_SECT']==w
 
 station_filter = trains_latlon.select('"CrsCode"')
 date_filter = weather_hourly.agg(max('VALIDITY_DATE').alias('MAX'),
-                          min('VALIDITY_DATE').alias('MIN')).to_pandas()
+                          min('VALIDITY_DATE').alias('MIN'))
 
-
+date_filter = date_filter.with_column('MIN',dateadd('DAY',lit(1),col('MIN'))).to_pandas()
 
 with st.form('select_data'):
     col1,col2, = st.columns([0.3,0.7])
@@ -1727,6 +1813,7 @@ if run:
         st.markdown('##### HUMIDITY')
         st.bar_chart(weather_filter_hour,x='HOUR',y=['Relative'])
 
+
 ```
 
 
@@ -1749,7 +1836,19 @@ You will have learned the following:
 
 ### Related Resources
 
+#### Datasources used in the lab
+
+- [Overture Maps - Places](https://app.snowflake.com/marketplace/providers/GZT0ZKUCHE3/CARTO?dbName=OVERTURE_MAPS__PLACES)
+
+- [Northern Trains](https://app.snowflake.com/marketplace/listing/GZTDZ2CEXT/northern-trains-ltd-northern-trains-station-data?search=northern)
+
+- Met office **to follow**
+
+#### Source code
+
 - [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data)
+
+#### Further Related Material
 
 - [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
 
