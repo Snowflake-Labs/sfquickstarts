@@ -22,12 +22,20 @@ Amazon Q Business makes generative AI securely accessible to everyone in your or
 
 Amazon Q Business offers plugins to enhance your application's functionality. Plugins help streamline tasks and boost productivity by integrating external services into the Amazon Q Business chat interface. With custom plugins from Q customers can quickly and securely connect to Cortex services like Search.
 
+The end-to-end workflow will look like this:
+![](assets/qcortexarch.png)
+1. Ingest .pdf files into Snowflake Stage.
+2. Using the PARSE_DOCUMENT() and the SPLIT_TEXT_RECURSIVE_CHARACTER() the raw pdf files are converted to a chunked field in a table.
+3. The Cortex Search service is built on the chunked data.
+4. Amazon Q for Business is connected to the Cortex Search service with a plugin using oauth authentication.
+5. Users can use Amazon Q for Business with Cortex securely and seamlessly.
+6. Along with the Cortex Plugin users can access other AWS data and services through Amazon Q for Business
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account with Cortex Search.
 - Familiarity with [AWS](https://aws.amazon.com/free) and an AWS account.
 
-### You'll Learn
+### What You'll Learn
 - Using Cortex Search along with complimentary functions in Snowflake.
 - Using Amazon Q to leverage generative AI to get quick answers from your data.
 - Connect Amazon Q to Snowflake Cortex Search with a custom plugin.
@@ -44,15 +52,6 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 - to extract unstructured data and create chunks in Snowflake
 - to create a Snowflake Cortex Search Service on unstructured data
 - to create a connection from Amazon Q to Cortex Search with Oauth authentication
-
-The end-to-end workflow will look like this:
-![](assets/qcortexarch.png)
-1. Ingest .pdf files into Snowflake Stage.
-2. Using the PARSE_DOCUMENT() and the SPLIT_TEXT_RECURSIVE_CHARACTER() the raw pdf files are converted to a chunked field in a table.
-3. The Cortex Search service is built on the chunked data.
-4. Amazon Q for Business is connected to the Cortex Search service with a plugin using oauth authentication.
-5. Users can use Amazon Q for Business with Cortex securely and seamlessly.
-6. Along with the Cortex Plugin users can access other AWS data and services through Amazon Q for Business
 
 <!-- ------------------------ -->
 ## Use Case
