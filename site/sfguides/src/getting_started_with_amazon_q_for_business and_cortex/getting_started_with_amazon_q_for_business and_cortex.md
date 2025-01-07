@@ -57,7 +57,7 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 ## Use Case
 Duration: 5
 
-In this use case you will build a Cortex Search service on the free text data contained in the two manuals [here](https://github.com/sfc-gh-mmarzillo/pump-docs-cortex-search/tree/main) for pump and pump head maintenance.
+In this use case you will build a Cortex Search service on the free text data contained in the two manuals [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-amazon-q-for-business-and-cortex) for pump and pump head maintenance.
 
 You will build a Cortex service that allows to you to us plain text to query these documents to get information. It is important to note that Cortex Search can scale much more than this use case. Please check out the Cortex Search documentation [here.](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service)
 
@@ -65,7 +65,7 @@ You will build a Cortex service that allows to you to us plain text to query the
 ## Set Up Snowflake Environment and Cortex Search
 Duration: 5
 
-Download both of the files in [this repo](https://github.com/sfc-gh-mmarzillo/pump-docs-cortex-search/tree/main) by clicking on each file and clicking the download button near the top right.
+Download both of the files in [this repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-amazon-q-for-business-and-cortex) by clicking on each file and clicking the download button near the top right.
 
 Once you have the files downloaded locally you will go to the Snowflake UI and open a new SQL worksheet and run the below code to create a database that we will be working out with. I'm using the ACCOUNTADMIN role here, but you can use whatever role you know gives you access to create objects (databases, tables, services) in Snowflake.
 
