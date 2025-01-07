@@ -34,6 +34,7 @@ TODO
 **Architecture Diagram:**
 
 <img src="assets/architecture_diagram.png"/>
+<img src="assets/payer_cc_agentic.png"/>
 
 ## Data and Snowflake Setup
 **Duration: 15 minutes**
