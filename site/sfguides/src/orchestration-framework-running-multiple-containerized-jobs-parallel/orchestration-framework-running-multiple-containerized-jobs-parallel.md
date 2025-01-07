@@ -1,4 +1,4 @@
-author: sfc-gh-praj
+author: Phani Raj
 id: orchestration-framework-running-multiple-containerized-jobs-parallel
 summary: Building custom orchestration framework for running containerized jobs in parallel 
 categories: Getting-Started
@@ -112,7 +112,7 @@ This lab uses a custom built configuration file in json format which has the det
 
 ### Prerequisites
 - Familiarity with docker and Snowpark Container Services.
-- Non trail Snowflake account
+- Non trail Snowflake account (https://app.snowflake.com/)
 - Completing the steps mentioned in this [Tutorial](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/tutorials/tutorial-2#introduction). We will be using the image created as part of the mentioned tutorial to run as containerized jobs.
 - Clone the [repo](https://github.com/sfc-gh-praj/spcs-orchestration-utility) which will have the jobconfig.json file along with a notebook and readme file. We will use only the jobconfig.json file from the repo.
 
