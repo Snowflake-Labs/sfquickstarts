@@ -1,5 +1,5 @@
 summary: Getting Started with Anthropic on Snowflake Cortex
-id: getting_started_on_anthropic_with_snowflake_cortex
+id: getting_started_with_anthropic_on_snowflake_cortex
 categories: getting-started
 environments: web
 status: Published
