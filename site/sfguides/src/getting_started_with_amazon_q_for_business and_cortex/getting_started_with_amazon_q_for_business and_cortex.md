@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Copilot
 
-# Getting Started with Amazon Q for Business with Cortex
+# Getting Started with Amazon Q for Business and Cortex
 <!-- ------------------------ -->
 ## Overview 
 Duration: 15
@@ -21,6 +21,12 @@ Cortex Search gets you up and running with a hybrid (vector and keyword) search 
 Amazon Q Business makes generative AI securely accessible to everyone in your organization. Leveraging your own company's content, data, and systems, Amazon Q Business makes it easier to get you fast, relevant answers to pressing questions, solve problems, generate content, and take actions on your behalf. Amazon Q Business easily and securely connects to commonly used systems and tools so it can synthesize everything and provide tailored assistance empowering your teams to be more data-driven, creative, and productive.
 
 Amazon Q Business offers plugins to enhance your application's functionality. Plugins help streamline tasks and boost productivity by integrating external services into the Amazon Q Business chat interface. With custom plugins from Q customers can quickly and securely connect to Cortex services like Search.
+
+### Use Case
+
+In this use case you will build a Cortex Search service on the free text data contained in the two manuals [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-amazon-q-for-business-and-cortex) for pump and pump head maintenance.
+
+You will build a Cortex service that allows to you to us plain text to query these documents to get information. It is important to note that Cortex Search can scale much more than this use case. Please check out the Cortex Search documentation [here.](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service)
 
 The end-to-end workflow will look like this:
 ![](assets/qcortexarch.png)
@@ -54,15 +60,7 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 - to create a connection from Amazon Q to Cortex Search with Oauth authentication
 
 <!-- ------------------------ -->
-## Use Case
-Duration: 5
-
-In this use case you will build a Cortex Search service on the free text data contained in the two manuals [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-amazon-q-for-business-and-cortex) for pump and pump head maintenance.
-
-You will build a Cortex service that allows to you to us plain text to query these documents to get information. It is important to note that Cortex Search can scale much more than this use case. Please check out the Cortex Search documentation [here.](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service)
-
-<!-- ------------------------ -->
-## Set Up Snowflake Environment and Cortex Search
+## Set Up Snowflake and Cortex
 Duration: 5
 
 Download both of the files in [this repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-amazon-q-for-business-and-cortex) by clicking on each file and clicking the download button near the top right.
@@ -140,7 +138,7 @@ Head to you AWS console search "Amazon Q for Business" then select the orange bu
 ![](assets/qapp.png)
 
 <!-- ------------------------ -->
-## Setting up OAuth to connect Q for Business to Snowflake
+## Setting up OAuth
 Duration: 10
 
 From the Q for Business Application Details screen copy the "Deployed URL" and save it to a notebook.
@@ -176,7 +174,7 @@ Additionally, after the "SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('Q_AUTH_HOL');"
 Also, make note of your Snowflake url. You can do this by going to your alias in the bottom left of the Snowflake UI finding your account then selecting the "link" button that says "copy account url" when you hover over it.
 
 <!-- ------------------------ -->
-## Create Cortex Plugin in Amazon Q for Business
+## Create Cortex Plugin
 Duration: 15
 
 Head back to your Q for Business application and select "Plugins" under "Actions" on the left side. Select the orange "Add Plugin" button then 
