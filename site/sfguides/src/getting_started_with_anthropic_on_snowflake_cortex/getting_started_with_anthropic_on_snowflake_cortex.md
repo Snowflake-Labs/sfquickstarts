@@ -565,44 +565,6 @@ if __name__ == "__main__":
 4. Run:  
    * Click the **Run** button to deploy your app
 
-### Understanding the Chat System Architecture
-
-The chat interface integrates several sophisticated components:
-
-1. Session Management:  
-     
-   - Maintains conversation state  
-   - Handles message history  
-   - Manages user context  
-   - Enables conversation persistence
-
-   
-
-2. Context Retrieval System:  
-     
-   - Performs semantic search  
-   - Ranks relevant chunks  
-   - Combines multiple sources  
-   - Optimizes context window
-
-   
-
-3. Prompt Engineering:  
-     
-   - Constructs dynamic prompts  
-   - Incorporates chat history  
-   - Maintains conversation coherence  
-   - Optimizes Claude's responses
-
-   
-
-4. Response Generation:  
-     
-   - Processes Claude's output  
-   - Formats responses  
-   - Adds source attribution  
-   - Handles error cases
-
 ### Implementation Components
 
 The chat system consists of several key functions:
