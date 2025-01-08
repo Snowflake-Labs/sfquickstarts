@@ -78,7 +78,7 @@ CREATE database Productionfloor_db;
 
 ### Open Snowflake Notebooks
 
-1. Click [Notebook](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+1. Click on [Getting Started Notebook](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 2. In your Snowflake account:
 * On the left hand navigation menu, click on Projects » Notebooks
 * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
