@@ -241,7 +241,7 @@ $$
 Duration: 4
 
 
-### Creating Exeuting Containerized Job SP
+### Creating Containerized Job SP
 
 This is the code which does the heavy lifting of running the container and does the following :
 
@@ -417,7 +417,7 @@ $$;
 
 The code has the logic which creates the fan-in and fan-out workflow by creating a DAG and does the following tasks:
 
-- Accepts the config file as input and creates the Snowflake task graphs (for fan-out and fan-in scenario) which calls the Python SP ExecuteJobService ( created above) along with parameters fetched from the json config file( which includes the compute pool, image name, retry count etc).
+- Accepts the config file as input and creates the Snowflake task graphs (for fan-out and fan-in scenario) which calls the Python SP *<b>ExecuteJobService</b>* ( created above) passing the parameters fetched from the json config file( which includes the compute pool, image name, retry count etc).
 
 - Every task has the dependency on other task(s) defined in the config file. Example T1 is dependent on root_task, T2 is dependent on root and T3 is dependent on T1 and T2 which implements the dependency workflow that is required.
 
