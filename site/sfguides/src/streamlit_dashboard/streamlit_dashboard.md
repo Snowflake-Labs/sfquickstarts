@@ -5,7 +5,7 @@ environments: web
 status: Published  
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues  
 tags: Streamlit, Python, Data Visualization
-authors: Chanin Nantasenamat
+author: Chanin Nantasenamat
 
 <!-- ------------------------ -->
 # How to Build a YouTube Analytics Dashboard with Streamlit in Snowflake Notebooks
