@@ -32,9 +32,31 @@ This lab uses a custom built configuration file in json format which has the det
 - You will create a Python Stored which reads the JSON file and creates a DAG using Snowflake task capabilities and runs the container.
 - You will create another Python Stored Proc which will run the container and logs the execution details in Snowflake tables which can be later used for any kind of analysis.
 - You will create a workflow that will implement fan-out and fan-in scenario using the JSON config file using Snowflake native capabilities like tasks. 
-- You will use the same image created as part of the pre-req for all the jobs but you can specify different images for each job in the JSON file. Below is the content of the json file.
+- You will use the same image created as part of the pre-req for all the jobs but you can specify different images for each job in the config JSON file. 
 
-> Note: Update the image_name path in the below config file to the path that you have created by following the tutorial steps which is in pre-requisite section of this lab. Here we are using the same image in the entire DAG to demonstrate the framework and it will work with different images per step. 
+### What You’ll Learn 
+- How to build customer orchestration framework to run Snowpark Container Service Jobs.
+- How to use tasks and Python Stored Procedures to run mutliple containerized jobs using configuration file.
+- How to log the status of the jobs, duration of execution and also implement retry mechanism.
+- How to simulate job failures and track the status of the execution along with the error messages.
+
+### Prerequisites
+- Familiarity with docker and Snowpark Container Services.
+- Non trail Snowflake account (https://app.snowflake.com/)
+- Completing the steps mentioned in this [Tutorial](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/tutorials/tutorial-2#introduction). We will be using the image created as part of the mentioned tutorial to run as containerized jobs.
+- Clone the [repo](https://github.com/sfc-gh-praj/spcs-orchestration-utility) which will have the jobconfig.json file along with a notebook and readme file. We will use only the jobconfig.json file from the repo.
+
+
+## Setup
+Duration: 5
+
+Clone the repo where you will find the notebook with the steps and ojects which needs to be created in one place. This quickstart will describe about all those steps and objects created [spcs-orchestration-utilit](https://github.com/sfc-gh-praj/spcs-orchestration-utility.git).This repo has the jobconfig.json file along with a notebook and readme file. We will use only the jobconfig.json file from the repo.
+
+```shell
+git clone https://github.com/sfc-gh-praj/spcs-orchestration-utility.git
+```
+
+> Note: Update the image_name path in the config file(jobconfig.json) to the path that you have created by following the tutorial steps which is in pre-requisite section of this lab. Here we are using the same image in the entire DAG to demonstrate the framework and it will work with different images per step. 
 
 ```json
 
@@ -104,29 +126,7 @@ This lab uses a custom built configuration file in json format which has the det
 - retry_count — The framework will automatically attempt to re-execute the failed jobs. It will continue to retry the job up to the number of times specified by the retry_count.
 - after_task_name — This fields build the dependency graph. The after_task_name field is particularly powerful in creating fan-out and fan-in scenarios.
 
-### What You’ll Learn 
-- How to build customer orchestration framework to run Snowpark Container Service Jobs.
-- How to use tasks and Python Stored Procedures to run mutliple containerized jobs using configuration file.
-- How to log the status of the jobs, duration of execution and also implement retry mechanism.
-- How to simulate job failures and track the status of the execution along with the error messages.
-
-### Prerequisites
-- Familiarity with docker and Snowpark Container Services.
-- Non trail Snowflake account (https://app.snowflake.com/)
-- Completing the steps mentioned in this [Tutorial](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/tutorials/tutorial-2#introduction). We will be using the image created as part of the mentioned tutorial to run as containerized jobs.
-- Clone the [repo](https://github.com/sfc-gh-praj/spcs-orchestration-utility) which will have the jobconfig.json file along with a notebook and readme file. We will use only the jobconfig.json file from the repo.
-
-
-## Setup
-Duration: 5
-
-Clone the repo where you will find the notebook with the steps and ojects which needs to be created in one place. This quickstart will describe about all those steps and objects created [spcs-orchestration-utilit](https://github.com/sfc-gh-praj/spcs-orchestration-utility.git).This repo has the jobconfig.json file along with a notebook and readme file. We will use only the jobconfig.json file from the repo.
-
-```shell
-git clone https://github.com/sfc-gh-praj/spcs-orchestration-utility.git
-```
-
-Creating required compute pools to run the containers. Here we are using the image from the the tutorial mentioned in the pre-requisite. 
+Run the following queries to create the objects required for this lab. Here we are using the image from the the tutorial mentioned in the pre-requisite. 
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -236,7 +236,7 @@ $$
 ;
 ```
 
-## Orchestration Workflow DAG — (Fan-out and Fan-in Implementation)
+## Orchestration Workflow DAG
 
 Duration: 3
 
@@ -324,7 +324,7 @@ $$;
 
 ```
 
-## Creating Stored Procedure for Executing Containerized Jobs 
+## Creating Executing Containerized Jobs 
 
 Duration: 3
 
@@ -498,7 +498,7 @@ $$;
 
 ```
 
-## Running the Container Orchestration Framework
+## Running Orchestration Framework
 
 Duration: 2
 
