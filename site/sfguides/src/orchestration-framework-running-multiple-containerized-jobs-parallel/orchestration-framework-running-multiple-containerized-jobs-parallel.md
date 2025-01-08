@@ -236,103 +236,18 @@ $$
 ;
 ```
 
-## Orchestration Workflow DAG
+## Building Container Orchestration Workflow 
 
-Duration: 3
-
-The code has the logic which creates the fan-in and fan-out workflow and does the following tasks:
-
-- Based on the config file passed during its invocation it will create the Snowflake task graphs (for fan-out and fan-in scenario) and calls the Python SP (ExecuteJobService) created in the following section along with parameters fetched from the json config file( includes the compute pool, image name, retry count etc).
-
-- Every task has the dependency on other task(s). Example T1 is dependent on root_task, T2 is dependent on root and T3 is dependent on T1 which implements the dependency workflow that is required.
-The code also creates a finalizer task which tracks the status of all the tasks( failure or Success) and logs it into the table task_logging_stats.
-
-```sql
-use role SPCS_DEMO_ROLE;
-
-CREATE OR REPLACE PROCEDURE create_job_tasks(file_name varchar)
-RETURNS string
-LANGUAGE PYTHON
-RUNTIME_VERSION = '3.9'
-PACKAGES = ('snowflake-snowpark-python')
-HANDLER = 'create_jobservice_tasks'
-AS
-$$
-from snowflake.snowpark.files import SnowflakeFile
-import json
-
-def create_jobservice_tasks(session, file_name):
-  parent_task_name = 'root_task'
-  parent_task_sql = f'''CREATE OR REPLACE TASK {parent_task_name} 
-              USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL' 
-              SCHEDULE = '59 MINUTE' 
-      AS
-      SELECT CURRENT_TIMESTAMP() ;'''
-
-  session.sql(f'''{parent_task_sql}''').collect()
-  print(parent_task_sql)
+Duration: 4
 
 
-  with SnowflakeFile.open(file_name) as j:
-      json_data= json.load(j)
+### Creating Exeuting Containerized Job SP
 
-
-  for idx, task in enumerate(json_data):
-      task_name = task['task_name']
-      after_task_name = task['after_task_name']
-      task_sql = f"CREATE  OR REPLACE TASK {task_name} "
-      task_sql += f"  WAREHOUSE = small_warehouse "
-      task_sql += f"  AFTER {after_task_name}  "
-      task_sql += f" AS CALL ExecuteJobService('{task['job_name']}','{task['image_name']}','{task['compute_pool_name']}','{task['table_name']}',{task['retry_count']})"
-      # logger.info(f'{task_sql}')
-      session.sql(f'''{task_sql}''').collect()
-
-      print(task_sql)
-
-  # This is the Finalize task which gets the status for every task part of the DAG and loads into task_logging_stats table
-  session.sql(f"""
-              create or replace task GET_GRAPH_STATS
-  warehouse = 'small_warehouse'
-  finalize = 'root_task'
-  as
-    declare
-      ROOT_TASK_ID string;
-      START_TIME timestamp_ltz;
-      
-    begin
-      ROOT_TASK_ID := (call SYSTEM$TASK_RUNTIME_INFO('CURRENT_ROOT_TASK_UUID'));
-
-      START_TIME := (call SYSTEM$TASK_RUNTIME_INFO('CURRENT_TASK_GRAPH_ORIGINAL_SCHEDULED_TIMESTAMP'));
-
-      -- Insert into the logging table
-      INSERT INTO task_logging_stats(GRAPH_RUN_GROUP_ID , NAME ,  STATE  , RETURN_VALUE ,QUERY_START_TIME ,COMPLETED_TIME , DURATION_IN_SECS ,
-                                      ERROR_MESSAGE 
-                                    )
-      SELECT * FROM TABLE(TASK_GRAPH_RUN_STATS(:ROOT_TASK_ID, :START_TIME))  where NAME !='GET_GRAPH_STATS';
-
-    end;
-              """
-              ).collect()
-
-  session.sql('alter task GET_GRAPH_STATS resume').collect()
-  
-  session.sql(f'''SELECT SYSTEM$TASK_DEPENDENTS_ENABLE('root_task')''').collect()
-
-  return 'done'
-
-$$;
-
-```
-
-## Creating Executing Containerized Jobs 
-
-Duration: 3
-
-This is the code which does the heavy lifting of running the container and is invoked from the tasks that is created and does the following :
+This is the code which does the heavy lifting of running the container and does the following :
 
 - Accepts the name of the service job to be created, pool name where the service jobs will be executed on and some parameters which are the inputs to the container. It takes retry count which is used to identify how many time should the code should retry executing the container before gracefully terminating incase of errors.
 - For every service job execution, we are tracking the status whether Done or Failed and tracking the stats in jobs_run_stats table. It has details about the container service jobs errors if any.
-- This SP is invoked from another SP create_job_tasks(created above) which creates the task DAG based on the job config json file.
+- This SP is invoked from another SP create_job_tasks(created in below section) which creates the task DAG based on the job config json file.
 
 ```sql
 use role SPCS_PSE_ROLE;
@@ -498,7 +413,95 @@ $$;
 
 ```
 
-## Running Orchestration Framework
+### Creating DAG for Job Execution
+
+The code has the logic which creates the fan-in and fan-out workflow by creating a DAG and does the following tasks:
+
+- Accepts the config file as input and creates the Snowflake task graphs (for fan-out and fan-in scenario) which calls the Python SP ExecuteJobService ( created above) along with parameters fetched from the json config file( which includes the compute pool, image name, retry count etc).
+
+- Every task has the dependency on other task(s) defined in the config file. Example T1 is dependent on root_task, T2 is dependent on root and T3 is dependent on T1 and T2 which implements the dependency workflow that is required.
+
+- The code also creates a finalizer task which tracks the status of all the tasks( failure or Success) and logs it into one of the logging table task_logging_stats.
+
+```sql
+use role SPCS_DEMO_ROLE;
+
+CREATE OR REPLACE PROCEDURE create_job_tasks(file_name varchar)
+RETURNS string
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.9'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'create_jobservice_tasks'
+AS
+$$
+from snowflake.snowpark.files import SnowflakeFile
+import json
+
+def create_jobservice_tasks(session, file_name):
+  parent_task_name = 'root_task'
+  parent_task_sql = f'''CREATE OR REPLACE TASK {parent_task_name} 
+              USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL' 
+              SCHEDULE = '59 MINUTE' 
+      AS
+      SELECT CURRENT_TIMESTAMP() ;'''
+
+  session.sql(f'''{parent_task_sql}''').collect()
+  print(parent_task_sql)
+
+
+  with SnowflakeFile.open(file_name) as j:
+      json_data= json.load(j)
+
+
+  for idx, task in enumerate(json_data):
+      task_name = task['task_name']
+      after_task_name = task['after_task_name']
+      task_sql = f"CREATE  OR REPLACE TASK {task_name} "
+      task_sql += f"  WAREHOUSE = small_warehouse "
+      task_sql += f"  AFTER {after_task_name}  "
+      task_sql += f" AS CALL ExecuteJobService('{task['job_name']}','{task['image_name']}','{task['compute_pool_name']}','{task['table_name']}',{task['retry_count']})"
+      # logger.info(f'{task_sql}')
+      session.sql(f'''{task_sql}''').collect()
+
+      print(task_sql)
+
+  # This is the Finalize task which gets the status for every task part of the DAG and loads into task_logging_stats table
+  session.sql(f"""
+              create or replace task GET_GRAPH_STATS
+  warehouse = 'small_warehouse'
+  finalize = 'root_task'
+  as
+    declare
+      ROOT_TASK_ID string;
+      START_TIME timestamp_ltz;
+      
+    begin
+      ROOT_TASK_ID := (call SYSTEM$TASK_RUNTIME_INFO('CURRENT_ROOT_TASK_UUID'));
+
+      START_TIME := (call SYSTEM$TASK_RUNTIME_INFO('CURRENT_TASK_GRAPH_ORIGINAL_SCHEDULED_TIMESTAMP'));
+
+      -- Insert into the logging table
+      INSERT INTO task_logging_stats(GRAPH_RUN_GROUP_ID , NAME ,  STATE  , RETURN_VALUE ,QUERY_START_TIME ,COMPLETED_TIME , DURATION_IN_SECS ,
+                                      ERROR_MESSAGE 
+                                    )
+      SELECT * FROM TABLE(TASK_GRAPH_RUN_STATS(:ROOT_TASK_ID, :START_TIME))  where NAME !='GET_GRAPH_STATS';
+
+    end;
+              """
+              ).collect()
+
+  session.sql('alter task GET_GRAPH_STATS resume').collect()
+  
+  session.sql(f'''SELECT SYSTEM$TASK_DEPENDENTS_ENABLE('root_task')''').collect()
+
+  return 'done'
+
+$$;
+
+```
+
+
+## Running Container Orchestration Workflow 
 
 Duration: 2
 
