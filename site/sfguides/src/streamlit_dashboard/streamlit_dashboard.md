@@ -375,7 +375,9 @@ Congratulations! You've successfully built a comprehensive YouTube analytics das
 
 For a step-by-step walkthrough, check out the complementary video:
 
-[![image](assets/img05.jpeg)](https://www.youtube.com/watch?v=LrQwXQm28qE)
+<a href="https://www.youtube.com/watch?v=LrQwXQm28qE">
+    <img src="assets/img05.jpeg">
+</a>
 
 The repository to the notebook is available at: https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Dashboard_with_Streamlit
 
