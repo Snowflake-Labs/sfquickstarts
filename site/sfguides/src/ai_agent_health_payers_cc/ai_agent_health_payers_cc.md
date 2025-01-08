@@ -10,7 +10,7 @@ tags: Getting Started, Data Science, Data Engineering, Snowpark, Snowflake Corte
 # Building AI Assistant using Snowflake Cortex in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
-![banner]()
+![banner](assets/banner.png)
 **Duration: 5 minutes**
 
 TODO
@@ -34,6 +34,8 @@ TODO
 **Architecture Diagram:**
 
 <img src="assets/architecture_diagram.png"/>
+
+A simplified "agentic" workflow ties these features together to provide a single app for end users to use natural language to ask questions and get answers in natural language regardless of whether the underlying data is structured or unstructured.
 <img src="assets/payer_cc_agentic.png"/>
 
 ## Data and Snowflake Setup
@@ -63,6 +65,8 @@ CREATE OR REPLACE STAGE CHATBOT_APP DIRECTORY=(ENABLE=true); --to store streamli
 
 **Upload required files** to the correct stages within the `PAYER_CC_SCHEMA`
 <img src="assets/raw_data_stage_final.png"/>
+<img src="assets/notebook_files.png"/>
+<img src="assets/streamlit_files.png"/>
 
 Click '+ Files' in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory. **Make sure your the files in your stages match the following**:
 
@@ -71,11 +75,12 @@ Click '+ Files' in the top right of the stage. Upload all files that you downloa
 <img src="assets/upload_caller_intent.png"/>
 <img src="assets/upload_data_product.png"/>
 <img src="assets/upload_faqs.png"/>
-- **Notebook Files:** Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks). Remember to upload [the notebook-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/notebooks/environment.yml) file as well.
-<img src="assets/notebook_stage.png"/>
+- **Notebook Files:** Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks).
+<img src="assets/upload_notebook_files.png"/>
 - **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-co[…]snowflake-notebooks/blob/main/scripts/streamlit/environment.yml) file as well.
+<img src="assets/upload_streamlit_files.png"/>
 
-Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to load the  data into tables and create a notebook and streamlit app from the staged files.
+Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to load the data into tables and create a notebook and streamlit app from the staged files.
 
 ```sql
 CREATE OR REPLACE FILE FORMAT PAYERS_CC_DB.PAYERS_CC_SCHEMA.CSVFORMAT 
@@ -171,25 +176,96 @@ FORCE = TRUE;
 
 -- make sure staged files can be seen by directory
 ALTER STAGE RAW_DATA REFRESH;
+
+-- create compute pool
+CREATE COMPUTE POOL IF NOT EXISTS PAYERS_GPU_POOL
+        MIN_NODES = 1
+        MAX_NODES = 5
+        INSTANCE_FAMILY = GPU_NV_S;
+
+-- create network rules and external access integrations
+CREATE OR REPLACE NETWORK RULE PAYERS_CC_DB.PAYERS_CC_SCHEMA.allow_all_rule
+          TYPE = HOST_PORT
+          MODE = EGRESS
+          VALUE_LIST = ('0.0.0.0:443','0.0.0.0:80');
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION payers_allow_all_integration
+        ALLOWED_NETWORK_RULES = (PAYERS_CC_DB.PAYERS_CC_SCHEMA.allow_all_rule)
+        ENABLED = TRUE;
+
+CREATE OR REPLACE NETWORK RULE PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule
+          TYPE = HOST_PORT
+          MODE = EGRESS
+          VALUE_LIST = ('pypi.org', 'pypi.python.org', 'pythonhosted.org',  'files.pythonhosted.org');
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION payers_pipy_access_integration
+        ALLOWED_NETWORK_RULES = (PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule)
+        ENABLED = TRUE;
+
+-- create main setup notebook
+CREATE OR REPLACE NOTEBOOK PAYERS_CC_MAIN_SETUP
+FROM '@PAYERS_CC_DB.PAYERS_CC_SCHEMA.NOTEBOOK'
+MAIN_FILE = 'payer_setup.ipynb'
+QUERY_WAREHOUSE = 'PAYERS_CC_WH'
+COMPUTE_POOL='PAYERS_GPU_POOL'
+RUNTIME_NAME='SYSTEM$GPU_RUNTIME';
+
+ALTER NOTEBOOK PAYERS_CC_MAIN_SETUP ADD LIVE VERSION FROM LAST;
+ALTER NOTEBOOK PAYERS_CC_MAIN_SETUP set external_access_integrations = (
+"PAYERS_PIPY_ACCESS_INTEGRATION", 
+"PAYERS_ALLOW_ALL_INTEGRATION");
+
+-- create caller intent prediction notebook
+CREATE OR REPLACE NOTEBOOK PAYERS_CALLER_INTENT_PREDICTION
+FROM '@PAYERS_CC_DB.PAYERS_CC_SCHEMA.NOTEBOOK'
+MAIN_FILE = 'caller_intent_prep.ipynb'
+QUERY_WAREHOUSE = 'PAYERS_CC_WH';
+
+ALTER NOTEBOOK PAYERS_CALLER_INTENT_PREDICTION ADD LIVE VERSION FROM LAST;
+
+-- create streamlit app
+CREATE OR REPLACE STREAMLIT PAYERS_CC_CHATBOT
+ROOT_LOCATION = '@PAYERS_CC_DB.PAYERS_CC_SCHEMA.CHATBOT_APP'
+MAIN_FILE = 'payer_assistant.py'
+QUERY_WAREHOUSE = 'PAYERS_CC_WH'
+COMMENT = '{"origin":"sf_sit-is", "name":"payer_call_center_assistant_v2", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit"}}';
+
+-- create email integration for streamlit app
+CREATE OR REPLACE NOTIFICATION INTEGRATION payers_cc_email_int
+TYPE=EMAIL
+ENABLED=TRUE;
 ```
 
-## Access Notebook
+## Access Main Setup Notebook
 **Duration: 20 minutes**
 
 The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
 
-To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Notebooks tab. Open **TODO** and run each of the cells.
+To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Notebooks tab. Open `PAYERS_CC_MAIN_SETUP` and run each of the cells.
 
-<img src='assets/notebook.png'>
+<img src='assets/notebook1.png'>
 
-Within this notebook, you'll **TODO**
+Within this notebook, you'll prepare all the unstructured data needed before you can run the Streamlit App. Once this data is processed, the chatbot will have a rich knowledge base to start from that's all stored within the Cortex Search service, a fully managed indexing and retrieval service. Cortex Search will then be used for RAG.
+
+## Access Caller Intent Prediction Notebook
+**Duration: 10 minutes**
+
+The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
+
+To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Notebooks tab. Open `PAYERS_CALLER_INTENT_PREDICTION`and run each of the cells.
+
+<img src='assets/notebook2.png'>
+
+Within this notebook, you'll predict the intent of a caller using historical data. This will allow Contact Center Agents to be better prepared when faced with an incoming call.
 
 ## Run Streamlit Application
 **Duration: 20 minutes**
 
-Chatbot Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open **TODO** and explore.
+The Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open `PAYERS_CC_CHATBOT` and explore.
 
-TODO: Add more info into the application
+This app simulates a few different scenarios where Contact Center Agents have to assist with incoming calls. You will find sample questions and other configs in the sidebar.
+
+<img src='assets/streamlit_app.png'>
 
 ## Conclusion And Resources
 
