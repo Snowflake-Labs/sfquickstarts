@@ -27,10 +27,7 @@ You will create a YouTube analytics dashboard that displays metrics such as subs
 
 The dashboard displays key metrics, such as subscriber growth, views, and engagement statistics.
 
-![image](assets/img01.jpeg)
-
-
-![YouTube Analytics Dashboard](#-REPLACE-WITH-URL)
+<img src="assets/img01.jpeg">
 
 ### Prerequisites
 - Access to a Snowflake account with permissions to use Snowflake Notebooks
@@ -51,7 +48,7 @@ Begin by setting up your environment by importing the required libraries. We'll 
 ### Installation
 To install these libraries, you can click on the Packages drop-down found at the top menu followed by entering the name of the Python library:
 
-![image](assets/img02.jpeg)
+<img src="assets/img02.jpeg">
 
 > aside positive
 > IMPORTANT:
@@ -67,7 +64,6 @@ import numpy as np
 from datetime import datetime
 import streamlit as st
 ```
-
 
 <!-- ------------------------ -->
 ## Building the Dashboard Framework
@@ -268,7 +264,7 @@ The end product?
 
 A stunning interactive, dashboard right inside the notebook:
 
-![image](assets/img03.gif)
+<img src="assets/img03.gif">
 
 As you can see, the app is responsive and instantaneously updates as we adjust various widgets.
 
@@ -310,7 +306,7 @@ df2 = aggregate_by_year(df)
 
 Next, we’ll display this interactive DataFrame with built-in chart displays:
 
-![image](assets/img04.jpeg)
+<img src="assets/img04.jpeg">
 
 And this is implemented using the following code snippet:
 
