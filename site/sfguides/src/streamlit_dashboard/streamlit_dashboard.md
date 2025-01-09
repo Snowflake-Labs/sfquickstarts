@@ -8,7 +8,7 @@ tags: Streamlit, Python, Data Visualization
 author: Chanin Nantasenamat
 
 <!-- ------------------------ -->
-# How to Build a YouTube Analytics Dashboard with Streamlit in Snowflake Notebooks
+# Building a YouTube Analytics Dashboard with Streamlit in Snowflake Notebooks
 
 ## Overview
 Duration: 5 minutes
@@ -30,7 +30,7 @@ The dashboard displays key metrics, such as subscriber growth, views, and engage
 <img src="assets/img01.jpeg">
 
 ### Prerequisites
-- Access to a Snowflake account with permissions to use Snowflake Notebooks
+- Access to a Snowflake account (sign up for a [free trial account](https://signup.snowflake.com/)) with permissions to use Snowflake Notebooks
 - Basic knowledge of Python programming
 - Familiarity with data manipulation using pandas
 - Streamlit installed in your Snowflake Notebook environment
