@@ -372,17 +372,17 @@ Congratulations! You've successfully built a comprehensive YouTube analytics das
 
 For a step-by-step walkthrough, check out the complementary video:
 
-[![image](assets/img05.jpeg)](https://www.youtube.com/watch?v=LrQwXQm28qE)
 
 The repository to the notebook is available [here](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Dashboard_with_Streamlit).
 
 ### Related Resources
 
-Articles:
-- [About Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
+Tutorial videos:
+- [Watch complementary tutorial video](https://www.youtube.com/watch?v=LrQwXQm28qE)
 - [YouTube Playlist on Snowflake Notebooks](https://www.youtube.com/watch?v=YB1B6vcMaGE&list=PLavJpcg8cl1Efw8x_fBKmfA2AMwjUaeBI)
 
 Documentation:
+- [About Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 - [Streamlit Documentation](https://docs.streamlit.io/)
 - [Snowflake Documentation](https://docs.snowflake.com/)
 
