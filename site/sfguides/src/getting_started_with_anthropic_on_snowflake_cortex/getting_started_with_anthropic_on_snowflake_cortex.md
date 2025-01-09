@@ -2,7 +2,7 @@ summary: Getting Started with Anthropic on Snowflake Cortex
 id: getting_started_with_anthropic_on_snowflake_cortex
 categories: getting-started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, SQL, Data Engineering
 author: James Cha-Earley
