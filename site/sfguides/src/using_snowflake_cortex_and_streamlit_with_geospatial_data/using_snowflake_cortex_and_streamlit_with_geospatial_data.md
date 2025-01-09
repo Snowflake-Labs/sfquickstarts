@@ -623,7 +623,6 @@ Any location may be impacted by key events.  Let's try and pinpoint out any key 
 Create the following in a new cell named **cortex_events**.  This will generate event data and saves the results in a new table.  
 
 ```python
-
 json1 = '''{"DATE":"YYYY-MM-DD", "NAME":"event",DESCRIPTION:"describe what the event is" "CENTROID":{
   "coordinates": [
     0.000000<<<this needs to be longitude,
@@ -638,8 +637,8 @@ events_1 = session.create_dataframe([{'prompt':prompt}])
 
 events_1 = events_1.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','mistral-large2',prompt).alias('EVENT_DATA'))
 
-events_1 = events_1.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```json'''),lit('')))
-events_1 = events_1.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```'''),lit('')))
+events_1 = events_1.with_column('EVENT_DATA',replace(col('EVENT_DATA'),'''```json''',''))
+events_1 = events_1.with_column('EVENT_DATA',replace(col('EVENT_DATA'),'''```''',''))
 
 events_1.write.mode('overwrite').save_as_table("DATA.EVENTS_IN_THE_NORTH")
 session.table('DATA.EVENTS_IN_THE_NORTH')
