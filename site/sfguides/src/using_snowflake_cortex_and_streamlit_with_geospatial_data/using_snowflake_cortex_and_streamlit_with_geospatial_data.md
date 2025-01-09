@@ -1022,8 +1022,8 @@ if submitted:
 
     generated = filtered_data.with_column('generated_events',mistral)
 
-    generated = generated.with_column('generated_events',replace(col('generated_events'),lit('''```json'''),lit('')))
-    generated = generated.with_column('generated_events',replace(col('generated_events'),lit('''```'''),lit('')))
+    generated = generated.with_column('generated_events',replace(col('generated_events'),'''```json''',''))
+    generated = generated.with_column('generated_events',replace(col('generated_events'),'''```''',''))
     #st.write(generated)
     generated = generated.select('MP',parse_json('GENERATED_EVENTS').alias('GENERATED_EVENTS'))
     generated = generated.with_column('INCIDENT_TYPE',lit(activity))
@@ -1132,8 +1132,8 @@ try:
            ,lit('use the following json template to structure the data'),lit(json))).astype(VariantType()))
     
 
-    social_media = social_media.with_column('V',replace(col('V'),lit('''```json'''),lit('')))
-    social_media = social_media.with_column('V',replace(col('V'),lit('''```'''),lit('')))
+    social_media = social_media.with_column('V',replace(col('V'),'''```json''',''))
+    social_media = social_media.with_column('V',replace(col('V'),'''```''',''))
     
     smedia = social_media.join_table_function('flatten',parse_json('V')).select('VALUE')
     smedia = smedia.select(object_construct(lit('INCIDENT_TYPE'),lit(flattenpd.INCIDENT_TYPE.iloc[record]),lit('MP'),lit(MP),lit('DATA'),col('VALUE')).alias('V'))
