@@ -2,7 +2,7 @@ summary: Getting Started with Anthropic on Snowflake Cortex
 id: getting_started_with_anthropic_on_snowflake_cortex
 categories: getting-started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, SQL, Data Engineering
 author: James Cha-Earley
@@ -45,9 +45,10 @@ An end-to-end application that enables users to:
 
 Duration: 10
 
-Yellow note: If you are new to Snowflake, you may be wondering why you need to think about database and schemas to get started. Because Snowflake was built with data as the foundational asset that powers projects, these two things are used to organize and manage access and governance to data in Snowflake. You can learn more about how you can use and manage these in our [documentation](https://docs.snowflake.com/en/sql-reference/ddl-database). 
-
-For this app, let’s assume we will give users of the app access to all the documents that are stored in a stage (the location where a raw data file is stored). Let’s create a stage where documents are stored and then let’s create a database and schema, both with the same name, where we will store the AI-ready (parsed and chunked) documents.  
+> aside negative 
+> NOTE: If you are new to Snowflake, you may be wondering why you need to think about database and schemas to get started. Because Snowflake was built with data as the foundational asset that powers projects, these two things are used to organize and manage access and governance to data in Snowflake. You can learn more about how you can use and manage these in our [documentation](https://docs.snowflake.com/en/sql-reference/ddl-database). 
+> 
+> For this app, let’s assume we will give users of the app access to all the documents that are stored in a stage (the location where a raw data file is stored). Let’s create a stage where documents are stored and then let’s create a database and schema, both with the same name, where we will store the AI-ready (parsed and chunked) documents.  
 
 ### Create Database and Schema
 
@@ -85,7 +86,7 @@ CREATE STAGE IF NOT EXISTS Documents
 3. Click "Upload Files" button in top right  
 4. Select your PDF files
 
-## Open Snowflake Notebooks
+## Snowflake Notebook
 
 Duration: 5
 
@@ -183,7 +184,7 @@ def process(file_name: str):
     return df
 ```
 
-## Process Documents and Create Search Service
+## Process Documents
 Duration: 10
 
 ### Understanding the Process
@@ -275,7 +276,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE {{service_name}}
 );
 ```
 
-## Create Streamlit Application in Snowflake
+## Create Streamlit Application
 
 Duration: 20
 
