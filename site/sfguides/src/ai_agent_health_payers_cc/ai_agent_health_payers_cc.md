@@ -1,13 +1,13 @@
 author: Sikha Das
 id: ai_agent_health_payers_cc
 summary: TODO
-categories: Getting-Started
+categories: Getting-Started, data-science-&-ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Snowpark, Snowflake Cortex, Streamlit
+tags: Getting Started, Snowpark Python, Streamlit, Data-Science-&-Ai
 
-# Building AI Assistant using Snowflake Cortex in Snowflake Notebooks
+# Next Best Action Prediction using AI Agents for Healthcare Payers Contact Center
 <!-- ------------------------ -->
 ## Overview
 ![banner](assets/banner.png)
