@@ -660,7 +660,7 @@ Congratulations! You have successfully learnt how create a custom orchestration 
 
 Want to learn more about the tools and technologies used by your app? Check out the following resources:
 
-* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-call-centre-analytics-with-snowflake-cortex-and-spcs)
+* [Source Code on Github](https://github.com/sfc-gh-praj/spcs-orchestration-utility)
 * [Blog post](https://medium.com/@phaniraj2112/orchestration-framework-for-running-parallel-containerised-jobs-in-snowflake-457396a404c7)
 * [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 * [Snowpark Container Services Tutorials](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials)
