@@ -623,7 +623,6 @@ Any location may be impacted by key events.  Let's try and pinpoint out any key 
 Create the following in a new cell named **cortex_events**.  This will generate event data and saves the results in a new table.  
 
 ```python
-
 json1 = '''{"DATE":"YYYY-MM-DD", "NAME":"event",DESCRIPTION:"describe what the event is" "CENTROID":{
   "coordinates": [
     0.000000<<<this needs to be longitude,
@@ -638,8 +637,8 @@ events_1 = session.create_dataframe([{'prompt':prompt}])
 
 events_1 = events_1.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','mistral-large2',prompt).alias('EVENT_DATA'))
 
-events_1 = events_1.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```json'''),lit('')))
-events_1 = events_1.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```'''),lit('')))
+events_1 = events_1.with_column('EVENT_DATA',replace(col('EVENT_DATA'),'''```json''',''))
+events_1 = events_1.with_column('EVENT_DATA',replace(col('EVENT_DATA'),'''```''',''))
 
 events_1.write.mode('overwrite').save_as_table("DATA.EVENTS_IN_THE_NORTH")
 session.table('DATA.EVENTS_IN_THE_NORTH')
@@ -1023,8 +1022,8 @@ if submitted:
 
     generated = filtered_data.with_column('generated_events',mistral)
 
-    generated = generated.with_column('generated_events',replace(col('generated_events'),lit('''```json'''),lit('')))
-    generated = generated.with_column('generated_events',replace(col('generated_events'),lit('''```'''),lit('')))
+    generated = generated.with_column('generated_events',replace(col('generated_events'),'''```json''',''))
+    generated = generated.with_column('generated_events',replace(col('generated_events'),'''```''',''))
     #st.write(generated)
     generated = generated.select('MP',parse_json('GENERATED_EVENTS').alias('GENERATED_EVENTS'))
     generated = generated.with_column('INCIDENT_TYPE',lit(activity))
@@ -1133,8 +1132,8 @@ try:
            ,lit('use the following json template to structure the data'),lit(json))).astype(VariantType()))
     
 
-    social_media = social_media.with_column('V',replace(col('V'),lit('''```json'''),lit('')))
-    social_media = social_media.with_column('V',replace(col('V'),lit('''```'''),lit('')))
+    social_media = social_media.with_column('V',replace(col('V'),'''```json''',''))
+    social_media = social_media.with_column('V',replace(col('V'),'''```''',''))
     
     smedia = social_media.join_table_function('flatten',parse_json('V')).select('VALUE')
     smedia = smedia.select(object_construct(lit('INCIDENT_TYPE'),lit(flattenpd.INCIDENT_TYPE.iloc[record]),lit('MP'),lit(MP),lit('DATA'),col('VALUE')).alias('V'))
