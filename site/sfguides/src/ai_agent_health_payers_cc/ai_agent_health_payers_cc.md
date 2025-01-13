@@ -1,27 +1,47 @@
 author: Sikha Das
 id: ai_agent_health_payers_cc
-summary: TODO
+summary: Building an AI Agent for Healthcare Payers Contact Center Using Snowflake Cortex, Notebooks, and ML Classification
 categories: Getting-Started, data-science-&-ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowpark Python, Streamlit, Data-Science-&-Ai
 
-# Next Best Action Prediction using AI Agents for Healthcare Payers Contact Center
+# Healthcare Payer Contact Center -  AI/ML Powered Agent Assistant
 <!-- ------------------------ -->
 ## Overview
 ![banner](assets/banner.png)
 **Duration: 5 minutes**
 
-TODO
+Contact Center is a critical business function for a Payer/Health Plan. There is heightened focus particularly with the growing market demand for customer centric experiences in Healthcare. Improving the operational efficiency of contact centers and reducing agent burnout are also key priorities for all enterprises.
+
+#### Scenario
+
+You are the Business Leader for a Payer/Health Plan's Contact Center operations. There are 4 primary caller personas reaching your Contact Center - Member, Provider, Employer and Broker.
+
+You have a dual imperative to deliver improved caller experience and at the same time reduce the overall Contact Center operations cost.
+
+Based on a detailed study, you have identified key challenges faced by Contact Center Agents that are leading to operational inefficiency and lower caller satisfaction.
+
+#### Key problems that Contact Centers face
+- **Lack of timely information:** Limited ability to gain quicker insights from key information sources makes it harder to have a more personalized interaction with the caller:
+    - Prior call interactions with the specific caller
+    - Knowledge base/documentation assets such as help docs, benefit documents, contact documents, etc
+
+- **Lack of contextualized information:** The Enterprise Data team has a curated Member 360 Data Product Table which holds rich information on each member. However, there is no usage of this rich information during member call interactions since the Contact Center Agents are more proficient in natural language interactions and not technologically savvy.
+
+- **Lack of predictive insights:** Agents are not equipped with any form of predictive intelligence (e.g. potential call reason) that can help in faster resolution of issues.
+ 
+- **Lack of guided workflows:** Agents are expecting advanced features such as recommended "next best action" and AI generated drafts to get their tasks done more efficiently.
 
 ### What You Will Learn
 
 - How to use [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and [Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index) for unstructured data processing
 - How to leverage [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) for a hybrid (vector and keyword) search engine on text data
+- How to use [Cortex Analyst](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst?_fsi=6CVthwI0) to help you create applications capable of reliably answering business questions based on your structured data in Snowflake
+- How to use [ML Classification](https://docs.snowflake.com/en/user-guide/ml-functions/classification) to build a classification model in a low-code way
 - How to use [Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) (Cortex Complete) for access to industry-leading large language models (LLMs)
-- How to build a chatbot and analytics application using [Streamlit](https://docs.streamlit.io/) in Snowflake
-
+- How to build a chatbot application using [Streamlit](https://docs.streamlit.io/) in Snowflake
 
 ### Prerequisites
 - A [GitHub](https://github.com/) Account to access the [GIT REPO](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main)
@@ -29,7 +49,9 @@ TODO
 
 ### What You Will Build
 
-- 
+- A Snowflake Notebook on Container Runtime to process unstructured data (audio files and PDFs)
+- A Snowflake Notebook on Warehouse to build a Caller Intent ML Classification Model and execute predictions
+- A chatbot application using Streamlit
 
 **Architecture Diagram:**
 
@@ -43,6 +65,16 @@ A simplified "agentic" workflow ties these features together to provide a single
 
 > **You can access the full code in [this GIT REPO](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main).**
 
+#### Data Overview
+There are 3 types of data we're dealing with in this solution: 
+
+- **Audio files:** Previously recorded calls between a Contact Center Agent and Member 
+
+- **PDF files:** Knowledge documents currently referred to manually by Contact Center Agents to help answer member inquiries. 
+
+- **Structured data:** Member 360 and Caller Intent training data
+
+#### Setup
 To get started using Snowflake Notebooks, first login to Snowsight. In the top-left corner, click "+ Create" to create a new Worksheet, and choose "SQL Worksheet".
 
 Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to create Snowflake objects (warehouse, database, schema).
@@ -284,17 +316,19 @@ This app simulates a few different scenarios where Contact Center Agents have to
 
 **Duration: 1 minute**
 
-In this guide, you learned how to **TODO**
+In this guide, you processed a knowledge base of unstructured and structured Enterprise data used to build an AI/ML-powered Assistant for a Contact Center.
 
 ### What You Learned
 
-- How to use Snowflake Notebooks and Snowpark Python for unstructured data processing
+- How to use Snowflake Notebooks for unstructured data processing
+- How to build a Caller Intent ML Classification Model and execute predictions using Snowflake's ML Classifcation
 - How to leverage Cortex Search for a hybrid (vector and keyword) search engine on text data
 - How to use Cortex LLM functions (Cortex Complete) for access to industry-leading large language models (LLMs)
 - How to prototype a UI using Streamlit
 
 ### Related Resources
-- [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex.html)
-- [Streamlit Documentation](https://docs.streamlit.io/)
+- [Docs: Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex.html)
+- [Docs: Snowflake ML Classification](https://docs.snowflake.com/en/user-guide/ml-functions/classification)
+- [Docs: Streamlit](https://docs.streamlit.io/)
 - [Tasty Bytes: Enhancing Customer Experience](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html#0)
 - [Building AI Assistant using Snowflake Cortex in Snowflake Notebooks](https://quickstarts.snowflake.com/guide/ai_assistant_for_sales_calls/index.html#0)
