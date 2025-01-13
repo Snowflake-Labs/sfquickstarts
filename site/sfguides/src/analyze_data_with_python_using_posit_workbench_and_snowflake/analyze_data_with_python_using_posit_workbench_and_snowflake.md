@@ -5,7 +5,7 @@ categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, R, Posit Workbench, Native Applications
+tags: Getting Started, Data Science, Python, Posit Workbench, Native Applications
 
 <style>
   img {
