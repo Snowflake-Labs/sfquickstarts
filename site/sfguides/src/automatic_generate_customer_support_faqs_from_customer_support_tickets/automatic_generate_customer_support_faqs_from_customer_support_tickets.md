@@ -1,5 +1,5 @@
 id: autogen-faqs-customer-support
-summary: Getting Started with AutoGen FAQs for Customer Support
+summary: AutoGen FAQs for Customer Support with Snowflake Cortex
 categories: featured,getting-started,data-science-&-ml
 environments: web
 status: Published 
@@ -7,7 +7,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowflake Cortex, Customer Support
 author: James Cha-Earley
 
-# Getting Started with AutoGen FAQs for Customer Support
+# AutoGen FAQs for Customer Support with Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -23,6 +23,7 @@ In this quickstart, you'll learn how to build an automated FAQ generation system
 - A system that processes support tickets to extract common issues
 - A searchable FAQ interface with filtering capabilities
 - An automated FAQ generation pipeline using LLMs
+- An interface to view the generated FAQs
 
 ### Prerequisites
 - Snowflake account with:
@@ -51,29 +52,20 @@ CREATE OR REPLACE TABLE CUSTOMER_SUPPORT_FAQ (
     ANSWER VARCHAR,
     CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
 );
-
--- Create tickets table
-CREATE OR REPLACE TABLE CUSTOMER_SUPPORT_TICKETS (
-    ISSUE_AREA VARCHAR,
-    ISSUE_CATEGORY VARCHAR,
-    CONVERSATION VARCHAR
-);
 ```
+### Load Sample Data
 
-### Setup Python Environment
+1. Download the sample customer support tickets [parquet file](link-to-your-parquet).
 
-Initialize the required Python packages and Snowflake session:
-
-```python
-# Import python packages
-import streamlit as st
-import pandas as pd
-from snowflake.cortex import Complete
-
-# We can also use Snowpark for our analyses!
-from snowflake.snowpark.context import get_active_session
-session = get_active_session()
-```
+2. Upload the parquet file using Snowsight:
+   - Navigate to Data → Databases → CUSTOMER_SUPPORT → Tables
+   - Click "Load Data" in the top right
+   - Select "Load from Files"
+   - Choose "Upload" and select your parquet file
+   - In the wizard:
+     * Select "Parquet" as file format
+     * Choose "CUSTOMER_SUPPORT_TICKETS" as target table
+     * Click "Load" to start the upload
 
 <!-- ------------------------ -->
 ## Process Support Tickets
@@ -166,6 +158,15 @@ Duration: 20
 Create an interactive Streamlit interface:
 
 ```python
+# Import python packages
+import streamlit as st
+import pandas as pd
+
+from snowflake.snowpark.context import get_active_session
+
+# Get the current credentials
+session = get_active_session()
+
 # Query to fetch FAQs
 def fetch_faqs():
     query = """
@@ -186,26 +187,115 @@ def paginate_data(data, page, page_size=5):
     end = start + page_size
     return data.iloc[start:end]
 
-# Main Streamlit app
+# Streamlit app
 def main():
     st.title("Customer Support FAQ Viewer")
     
     # Sidebar for search and filters
     st.sidebar.header("Filters & Search")
+    
+    # Search bar in the sidebar
     search_query = st.sidebar.text_input("Search FAQs:", "")
     
-    # Connect to Snowflake
+    # Connect to Snowfla
     faqs = fetch_faqs()
     
-    # Filters in the sidebar
-    issue_area = st.sidebar.selectbox(
-        "Filter by Issue Area:", 
-        ["All"] + sorted(faqs["ISSUE_AREA"].unique())
+    # Check if filters returned results
+    if faqs.empty:
+        st.warning("No FAQs match your filters or search query.")
+        return
+    
+   # Filters in the sidebar
+    issue_area = st.sidebar.selectbox("Filter by Issue Area:", ["All"] + sorted(faqs["ISSUE_AREA"].unique()))
+    issue_category = st.sidebar.selectbox("Filter by Issue Category:", ["All"] + sorted(faqs["ISSUE_CATEGORY"].unique()))
+    
+    # Apply filters
+    if issue_area != "All":
+        faqs = faqs[faqs["ISSUE_AREA"] == issue_area]
+    if issue_category != "All":
+        faqs = faqs[faqs["ISSUE_CATEGORY"] == issue_category]
+    if search_query.strip():
+        faqs = faqs[
+            faqs["QUESTION"].str.contains(search_query, case=False, na=False) |
+            faqs["ANSWER"].str.contains(search_query, case=False, na=False)
+        ]
+    
+    # Check if filters returned results
+    if faqs.empty:
+        st.warning("No FAQs match your filters or search query.")
+        return
+    
+    # Pagination setup
+    page_size = 5
+    total_pages = (len(faqs) - 1) // page_size + 1
+    if "current_page" not in st.session_state:
+        st.session_state["current_page"] = 0
+
+    # Current page data
+    current_page = st.session_state["current_page"]
+    paginated_faqs = paginate_data(faqs, current_page, page_size)
+
+    # Display FAQs
+    for index, row in paginated_faqs.iterrows():
+        with st.expander(f"{row['QUESTION']}"):
+            st.write(f"**Answer:** {row['ANSWER']}")
+            st.write(f"*Issue Area:* {row['ISSUE_AREA']}  |  *Issue Category:* {row['ISSUE_CATEGORY']}  |  *Created At:* {row['CREATED_AT']}")
+    
+    # Pagination controls at the bottom
+    st.markdown(
+        """
+        <style>
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 20px;
+        }
+        .pagination-buttons {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .pagination-buttons:disabled {
+            background-color: #CCCCCC;
+            cursor: not-allowed;
+        }
+        .pagination-summary {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
     )
-    issue_category = st.sidebar.selectbox(
-        "Filter by Issue Category:", 
-        ["All"] + sorted(faqs["ISSUE_CATEGORY"].unique())
-    )
+
+    st.markdown('<div class="pagination-container">', unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 1, 1])
+
+    # Safe button handling
+    previous_button_pressed = col1.button("⬅️ Previous", key="prev")
+    next_button_pressed = col3.button("➡️ Next", key="next")
+
+    if previous_button_pressed and current_page > 0:
+        st.session_state["current_page"] -= 1
+    elif next_button_pressed and current_page < total_pages - 1:
+        st.session_state["current_page"] += 1
+
+    with col2:
+        st.markdown(
+            f"<div class='pagination-summary'>Page {st.session_state['current_page'] + 1} of {total_pages}</div>",
+            unsafe_allow_html=True
+        )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+if __name__ == "__main__":
+    main()
 ```
 
 <!-- ------------------------ -->
