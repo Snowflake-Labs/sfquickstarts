@@ -43,6 +43,8 @@ Duration: 4
 
 ### Create the Braze User, Role, and Warehouse
 
+For this step, you can alternatively use the [Braze+Snowflake Pipeline Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/braze-cdi-pipeline/braze_cdi_customer.ipynb). Otherwise follow the guide using Snowflake worksheets.
+
 Here, we'll create the dedicated role and user. The user will be created as a service user as this user is not a human logging into Snowflake, but rather used as a part of the Braze platform to read data from Snowflake. This means that we will be explicitly be deactivating password authentication for login via the Snowflake UI.
 
 Braze will generate the necessary key-pair authentication during the actual Braze CDI installation steps in the Braze UI. In this step, we're just creating the user, role, and the virtual warehouse.
@@ -385,7 +387,7 @@ The fields necessary are as follows:
 - `Schema`: ingestion
 - `Table`: **users_attributes_sync_vw**
 
-> Remember to use the view for the "table" here, not the raw table. This specific process will on handle inserts and updates. A delete process will be a separate setup.
+**Remember to use the view for the "table" here, not the raw table. This specific process will on handle inserts and updates. A delete process will be a separate setup.**
 
 After clicking "Next Step", you'll see the page where you set up the sync details.
 
