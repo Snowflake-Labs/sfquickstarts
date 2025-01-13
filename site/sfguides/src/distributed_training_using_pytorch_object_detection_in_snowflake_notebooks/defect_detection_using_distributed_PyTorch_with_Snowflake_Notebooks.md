@@ -16,7 +16,7 @@ Duration: 1
 
 In today's fast-paced manufacturing landscape, ensuring product quality early in the production process is crucial for minimizing defects and optimizing resources. With advancements in machine learning, manufacturers can now leverage computer vision models to automate defect detection, improving efficiency and accuracy.
 
-In this Quickstart guide, we will train a computer vision model for multiclass defect detection using Snowflake Notebooks on Container Runtime easily and efficiently. The dataset comprises labeled Printed Circuit Boards (PCBs) with annotations including defect labels and bounding boxes for each image. This approach aims to help manufacturers implement early Quality Control, reducing costs, time, and resource usage in production processes.
+In this Quickstart guide, we will train a computer vision model for multiclass defect detection using [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) easily and efficiently. The dataset comprises labeled Printed Circuit Boards (PCBs) with annotations including defect labels and bounding boxes for each image. This approach aims to help manufacturers implement early Quality Control, reducing costs, time, and resource usage in production processes.
 
 The process includes the following steps:
 - Preprocessing the dataset, which involves using the annotated data with labels and bounding boxes information for each image.
@@ -30,7 +30,7 @@ The process includes the following steps:
 
 #### What is Snowflake ML?
 
-Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
+[Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 #### What is Snowflake Notebooks on Container Runtime?
 
@@ -52,10 +52,12 @@ Key Features:
 
 ### Prerequisites
 - A GitHub Account
-- A Snowflake Account with Accountadmin access OR
-- Necessary Privileges to create a user, database,compute pool and a warehouse in Snowflake
+- A Snowflake Account
 - Access to run Notebooks in Snowflake
-- AWS Commercial deployments (non-free trial accounts) Container Runtime Enabled in the Account
+- AWS Commercial deployments (non-free trial accounts)
+- To try Snowflake ML in a free trial, check out this [quickstart](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+- (Optional) [Completed Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+
 
 
 ### What You’ll Learn
@@ -79,37 +81,36 @@ Duration: 2
 This section will walk you through creating various objects.  The repository with the source code can be found [here](https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks/blob/main/notebooks). Access the gitrepo here and clone it to your local directory. The dataset can be accessed from [this](https://github.com/Charmve/Surface-Defect-Detection) link. Review the licensing requirement before using the dataset. 
 
 
-**Initial Setup**. -
 
-There are 2 notebooks that we will be execute. The first notebook is called [0_data_preparation_run_in_local_IDE](https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks/blob/main/notebooks/0_data_preparation_run_in_local_IDE.ipynb). This creates required Snowflake objects, compute instances and loads data snowflake from a third party dataset. 
-Be sure to review and comply with the licensing terms and usage guidelines before utilizing the PCB dataset. 
+### Initial Setup
 
+We will work with two notebooks. The first one, [0_data_preparation_run_in_local_IDE.ipynb](https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks/blob/main/notebooks/0_data_preparation_run_in_local_IDE.ipynb), handles the creation of necessary Snowflake objects, compute instances, and data loading from a third-party dataset. Be sure to comply with the dataset's licensing terms and usage guidelines.
 
-**Setup Notebook (0_data_preparation_run_in_local_IDE.ipynb)**
+### Notebook Execution: 0_data_preparation_run_in_local_IDE.ipynb
 
-After downloading the data from the source repository to your local folder, using any IDE like Jupyter or Visual Studio Code carry the execution of the notebook :
-
-
-- Create the required database, schema, stage, warehouse, compute pool, and external access integration in Snowflake.
-Data Preparation:
-
-- Extract images iteratively from subfolders, ensuring that the corresponding label files containing bounding box coordinates (xmin, ymin, xmax, ymax) and defect classifications are also retrieved.
-File Upload:
-
-- Upload all image files and label files to the designated Snowflake stage for storage and processing.
-Label Management:
-
-- Store the label data (defect classification and bounding box coordinates) in a dedicated table named LABELS_TRAIN for efficient management and access.
-Image Data Processing:
-
-- Read image files and encode their content in Base64 format.
-
-- Combine the encoded image data with metadata such as filenames and corresponding labels.
-  
-- Store the resulting data in a Snowflake table, with each record containing the Base64-encoded image, filename, and associated metadata.
+To execute the notebook, follow these steps using an IDE like Jupyter or Visual Studio Code:
 
 
-Setup is now complete and we will move to the next where will carry Distributed Model training.
+- **Snowflake Object Creation**:
+  - Create the required database, schema, stage, warehouse, compute pool, and external access integration in Snowflake.
+
+- **Data Preparation**:
+  - Extract images iteratively from subfolders, ensuring that the corresponding label files containing bounding box coordinates (xmin, ymin, xmax, ymax) and defect classifications are also retrieved.
+
+
+- **File Upload**:
+  - Upload all image files and label files to the designated Snowflake stage for storage and processing.
+
+- **Label Management**:
+  - Store the label data (defect classification and bounding box coordinates) in a dedicated table named LABELS_TRAIN for efficient management and access.
+
+- **Image Data Processing**:
+  - Read image files and encode their content in Base64 format.
+  - Combine the encoded image data with metadata such as filenames and corresponding labels.
+  - Store the resulting data in a Snowflake table, with each record containing the Base64-encoded image, filename, and associated metadata.
+
+
+Once the setup is complete, proceed to the next step to begin distributed model training.
 
 <!-- ------------------------ -->
 ## Distributed Model Training in Snowflake Notebooks 
@@ -210,11 +211,18 @@ To cleanup resources and remove all of the objects and compute pools that you cr
 - Create a streamlit application to carry ongoing inference on new images.
 
 
+Ready for more? After you complete this quickstart, you can try one of the following more advanced quickstarts: 
+
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0)
+- [Scale Embeddings with Snowflake Notebooks](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#0)
+
+
 ### Related Resources
 
 - #### [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-distributed-training-using-pytorch-object-detection-in-snowflake-notebooks)
-- #### [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
-- #### [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
+- #### [Docs: Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks)
+- #### [Docs: Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
+- #### [Docs: Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - #### [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml)
 
 ### Attribution
