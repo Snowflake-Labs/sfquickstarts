@@ -185,6 +185,7 @@ def process(file_name: str):
 ```
 
 ## Process Documents
+
 Duration: 10
 
 ### Understanding the Process
