@@ -40,7 +40,7 @@ As this quickstart is targeted at getting environments there are no specific ind
 - A Snowflake specific environment in Vertex AI using Containers
 
 <!-- ------------------------ -->
-## Set Up Snowflake environment with a Configuration Script
+## Configuration Script
 Duration: 15
 
 To use a startup script in Vertex AI that installs the current versions of the Snowflake and Snowpark Python packages, you can take advantage of custom training jobs or notebooks in Vertex AI. The below shows how use the startup script with a notebook in Vertex AI
@@ -105,8 +105,8 @@ pip show snowflake-snowpark-python
 
 
 <!-- ------------------------ -->
-## Pushing Container images to a  Google Container Registry (GCR).
-Duration: 10
+## Google Container Registry (GCR).
+Duration: 15
 
 Users can build the docker image locally then push the image to GCR however using the Google terminal offers a more robust method for building and pushing the image.
 
