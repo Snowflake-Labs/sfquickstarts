@@ -178,7 +178,7 @@ Also, make note of your Snowflake url. You can do this by going to your alias in
 Duration: 15
 
 Head back to your Q for Business application and select "Plugins" under "Actions" on the left side. Select the orange "Add Plugin" button then 
-"Create Customer Plugin" in the top right.
+"Create Custom Plugin" in the top right.
 
 ![](assets/createplugin.png)
 
