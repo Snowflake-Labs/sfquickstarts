@@ -50,6 +50,8 @@ Based on a detailed study, you have identified key challenges faced by Contact C
 ### What You Will Build
 
 - A Snowflake Notebook on Container Runtime to process unstructured data (audio files and PDFs)
+     - Audio-to-text transcription using `whisper`
+     - PDF processing and text chunking using Snowpark
 - A Snowflake Notebook on Warehouse to build a Caller Intent ML Classification Model and execute predictions
 - A chatbot application using Streamlit
 
