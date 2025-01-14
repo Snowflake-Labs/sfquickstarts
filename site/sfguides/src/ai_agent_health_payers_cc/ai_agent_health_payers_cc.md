@@ -94,6 +94,41 @@ USE SCHEMA PAYERS_CC_SCHEMA;
 
 ----------------------------------
 ----------------------------------
+/* NOTEBOOK AND STREAMLIT SETUP */
+----------------------------------
+----------------------------------
+DROP COMPUTE POOL IF EXISTS PAYERS_GPU_POOL;
+
+CREATE COMPUTE POOL PAYERS_GPU_POOL
+        MIN_NODES = 1
+        MAX_NODES = 5
+        INSTANCE_FAMILY = GPU_NV_S;
+
+CREATE OR REPLACE NETWORK RULE PAYERS_CC_DB.PAYERS_CC_SCHEMA.allow_all_rule
+          TYPE = HOST_PORT
+          MODE = EGRESS
+          VALUE_LIST = ('0.0.0.0:443','0.0.0.0:80');
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION payers_allow_all_integration
+        ALLOWED_NETWORK_RULES = (PAYERS_CC_DB.PAYERS_CC_SCHEMA.allow_all_rule)
+        ENABLED = TRUE;
+
+CREATE OR REPLACE NETWORK RULE PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule
+          TYPE = HOST_PORT
+          MODE = EGRESS
+          VALUE_LIST = ('pypi.org', 'pypi.python.org', 'pythonhosted.org',  'files.pythonhosted.org');
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION payers_pipy_access_integration
+        ALLOWED_NETWORK_RULES = (PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule)
+        ENABLED = TRUE;
+
+-- Create email integration for streamlit app
+CREATE OR REPLACE NOTIFICATION INTEGRATION payers_cc_email_int
+TYPE=EMAIL
+ENABLED=TRUE;
+
+----------------------------------
+----------------------------------
 /*          DATA SETUP          */
 ----------------------------------
 ----------------------------------
@@ -103,12 +138,31 @@ CREATE OR REPLACE FILE FORMAT PAYERS_CC_DB.PAYERS_CC_SCHEMA.CSVFORMAT
     TYPE = 'CSV'
     FIELD_OPTIONALLY_ENCLOSED_BY = '"';
 
--- Create external stage with the csv format to stage the diamonds dataset
-CREATE OR REPLACE STAGE RAW_DATA
-    FILE_FORMAT = PAYERS_CC_DB.PAYERS_CC_SCHEMA.CSVFORMAT
-    URL = 's3://sfquickstarts/sfguide_ai_agent_hcls_payers_cc_cortex_notebooks_mlclassification/'
-    DIRECTORY = (ENABLE = TRUE);
+CREATE OR REPLACE STAGE NOTEBOOK DIRECTORY=(ENABLE=true); --to store notebook assets
+CREATE OR REPLACE STAGE CHATBOT_APP DIRECTORY=(ENABLE=true); --to store streamlit assets
+CREATE OR REPLACE STAGE RAW_DATA DIRECTORY = (ENABLE = TRUE); --to store data assets
+```
 
+**Upload files** to the stages within the `PAYER_CC_SCHEMA`
+<img src="assets/notebook_files.png"/>
+<img src="assets/streamlit_files.png"/>
+<img src="assets/raw_data_stage_final.png"/>
+
+Click '+ Files' in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory. **Make sure your the files in your stages match the following**:
+
+- **Data Files:** Upload data files to the `RAW_DATA` stage from [data](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks/data). MAKE SURE TO KEEP THE SAME FOLDER STRUCTURE.
+<img src="assets/upload_call_recordings.png"/>
+<img src="assets/upload_caller_intent.png"/>
+<img src="assets/upload_data_product.png"/>
+<img src="assets/upload_faqs.png"/>
+- **Notebook Files:** Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks).
+<img src="assets/upload_notebook_files.png"/>
+- **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-co[…]snowflake-notebooks/blob/main/scripts/streamlit/environment.yml) file as well.
+<img src="assets/upload_streamlit_files.png"/>
+
+Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to create the Notebooks and Streamlit app from the staged files.
+
+```sql
 TRUNCATE TABLE IF EXISTS CALL_CENTER_MEMBER_DENORMALIZED;
 
 CREATE OR REPLACE TABLE CALL_CENTER_MEMBER_DENORMALIZED (
@@ -198,63 +252,6 @@ FORCE = TRUE;
 -- Make sure staged files can be seen by directory
 ALTER STAGE RAW_DATA REFRESH;
 
-----------------------------------
-----------------------------------
-/* NOTEBOOK AND STREAMLIT SETUP */
-----------------------------------
-----------------------------------
-
-DROP COMPUTE POOL IF EXISTS PAYERS_GPU_POOL;
-
-CREATE COMPUTE POOL PAYERS_GPU_POOL
-        MIN_NODES = 1
-        MAX_NODES = 5
-        INSTANCE_FAMILY = GPU_NV_S;
-
-CREATE OR REPLACE NETWORK RULE PAYERS_CC_DB.PAYERS_CC_SCHEMA.allow_all_rule
-          TYPE = HOST_PORT
-          MODE = EGRESS
-          VALUE_LIST = ('0.0.0.0:443','0.0.0.0:80');
-
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION payers_allow_all_integration
-        ALLOWED_NETWORK_RULES = (PAYERS_CC_DB.PAYERS_CC_SCHEMA.allow_all_rule)
-        ENABLED = TRUE;
-
-CREATE OR REPLACE NETWORK RULE PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule
-          TYPE = HOST_PORT
-          MODE = EGRESS
-          VALUE_LIST = ('pypi.org', 'pypi.python.org', 'pythonhosted.org',  'files.pythonhosted.org');
-
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION payers_pipy_access_integration
-        ALLOWED_NETWORK_RULES = (PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule)
-        ENABLED = TRUE;
-
--- Create email integration for streamlit app
-CREATE OR REPLACE NOTIFICATION INTEGRATION payers_cc_email_int
-TYPE=EMAIL
-ENABLED=TRUE;
-
-CREATE OR REPLACE STAGE NOTEBOOK DIRECTORY=(ENABLE=true); --to store notebook assets
-CREATE OR REPLACE STAGE CHATBOT_APP DIRECTORY=(ENABLE=true); --to store streamlit assets
-```
-
-**Upload Notebook and Streamlit files** to the stages within the `PAYER_CC_SCHEMA`
-<img src="assets/notebook_files.png"/>
-<img src="assets/streamlit_files.png"/>
-
-Click '+ Files' in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory. **Make sure your the files in your stages match the following**:
-
-- **Notebook Files:** Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks).
-<img src="assets/upload_notebook_files.png"/>
-- **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-co[…]snowflake-notebooks/blob/main/scripts/streamlit/environment.yml) file as well.
-<img src="assets/upload_streamlit_files.png"/>
-
-Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to create the Notebooks and Streamlit app from the staged files.
-
-```sql
--- MAKE SURE TO UPLOAD ALL FILES TO THE APPROPRIATE STAGES ABOVE.
--- ONCE THAT IS COMPLETE, UNCOMMENT THE FOLLOWING LINES TO RUN:
-
 -- Main setup notebook
 CREATE OR REPLACE NOTEBOOK PAYERS_CC_MAIN_SETUP
 FROM '@PAYERS_CC_DB.PAYERS_CC_SCHEMA.NOTEBOOK'
@@ -267,14 +264,6 @@ ALTER NOTEBOOK PAYERS_CC_MAIN_SETUP ADD LIVE VERSION FROM LAST;
 ALTER NOTEBOOK PAYERS_CC_MAIN_SETUP set external_access_integrations = (
 "PAYERS_PIPY_ACCESS_INTEGRATION", 
 "PAYERS_ALLOW_ALL_INTEGRATION");
-
--- Caller intent prediction notebook
-CREATE OR REPLACE NOTEBOOK PAYERS_CALLER_INTENT_PREDICTION
-FROM '@PAYERS_CC_DB.PAYERS_CC_SCHEMA.NOTEBOOK'
-MAIN_FILE = 'caller_intent_prep.ipynb'
-QUERY_WAREHOUSE = 'PAYERS_CC_WH';
-
-ALTER NOTEBOOK PAYERS_CALLER_INTENT_PREDICTION ADD LIVE VERSION FROM LAST;
 
 CREATE OR REPLACE STREAMLIT PAYERS_CC_CHATBOT
 ROOT_LOCATION = '@PAYERS_CC_DB.PAYERS_CC_SCHEMA.CHATBOT_APP'
