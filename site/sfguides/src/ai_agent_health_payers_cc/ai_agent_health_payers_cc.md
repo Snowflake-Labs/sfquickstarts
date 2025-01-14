@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowpark Python, Streamlit, Data-Science-&-Ai
 
-# Healthcare Payer Contact Center -  AI/ML Powered Agent Assistant
+# Building an AI Agent for Healthcare Payers Contact Center Using Snowflake Cortex, Notebooks, and ML Classification
 <!-- ------------------------ -->
 ## Overview
 ![banner](assets/banner.png)
