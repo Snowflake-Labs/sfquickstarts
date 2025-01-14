@@ -45,7 +45,6 @@ An end-to-end application that enables users to:
 
 Duration: 10
 
-
 > aside negative 
 > NOTE: If you are new to Snowflake, you may be wondering why you need to think about database and schemas to get started. Because Snowflake was built with data as the foundational asset that powers projects, these two things are used to organize and manage access and governance to data in Snowflake. You can learn more about how you can use and manage these in our [documentation](https://docs.snowflake.com/en/sql-reference/ddl-database). 
 > 
@@ -186,6 +185,7 @@ def process(file_name: str):
 ```
 
 ## Process Documents
+
 Duration: 10
 
 ### Understanding the Process
