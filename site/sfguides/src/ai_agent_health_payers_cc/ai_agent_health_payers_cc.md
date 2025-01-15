@@ -160,7 +160,7 @@ Click '+ Files' in the top right of the stage. Upload all files that you downloa
 - **Notebook Files:** Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks).
 <img src="assets/upload_notebook_files.png"/>
 
-- **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-co[…]snowflake-notebooks/blob/main/scripts/streamlit/environment.yml) file as well.
+- **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/scripts/streamlit). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/streamlit/environment.yml) file as well.
 <img src="assets/upload_streamlit_files.png"/>
 
 Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to create the Notebooks and Streamlit app from the staged files.
@@ -284,9 +284,9 @@ To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the P
 
 <img src='assets/notebook.png'>
 
-Within this notebook, you'll prepare all the unstructured data needed before you can run the Streamlit App. Once this data is processed, the chatbot will have a rich knowledge base to start from that's all stored within the Cortex Search service, a fully managed indexing and retrieval service. Cortex Search will then be used for RAG.
+Within this notebook, you'll prepare all the unstructured data needed before you can run the Streamlit App. Once this data is processed, the chatbot will have a rich knowledge base to start from that's all stored within the Cortex Search and Cortex Analyst services.
 
-You will also predict the intent of a caller using historical data. This will allow Contact Center Agents to be better prepared when faced with an incoming call.
+You will also predict the intent of a caller using historical data.This will allow Contact Center Agents to be better prepared when faced with an incoming call.
 
 ## Run Streamlit Application
 **Duration: 20 minutes**
@@ -301,7 +301,7 @@ This app simulates a few different scenarios where Contact Center Agents have to
 
 **Duration: 1 minute**
 
-In this guide, you processed a knowledge base of unstructured and structured Enterprise data used to build an AI/ML-powered Assistant for a Contact Center.
+In this guide, you processed a knowledge base of unstructured and structured Enterprise data and then used it to build an AI/ML-powered Assistant for a Contact Center.
 
 ### What You Learned
 
