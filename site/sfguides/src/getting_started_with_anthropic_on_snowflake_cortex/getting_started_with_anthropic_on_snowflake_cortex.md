@@ -45,9 +45,10 @@ An end-to-end application that enables users to:
 
 Duration: 10
 
-Yellow note: If you are new to Snowflake, you may be wondering why you need to think about database and schemas to get started. Because Snowflake was built with data as the foundational asset that powers projects, these two things are used to organize and manage access and governance to data in Snowflake. You can learn more about how you can use and manage these in our [documentation](https://docs.snowflake.com/en/sql-reference/ddl-database). 
-
-For this app, let’s assume we will give users of the app access to all the documents that are stored in a stage (the location where a raw data file is stored). Let’s create a stage where documents are stored and then let’s create a database and schema, both with the same name, where we will store the AI-ready (parsed and chunked) documents.  
+> aside negative 
+> NOTE: If you are new to Snowflake, you may be wondering why you need to think about database and schemas to get started. Because Snowflake was built with data as the foundational asset that powers projects, these two things are used to organize and manage access and governance to data in Snowflake. You can learn more about how you can use and manage these in our [documentation](https://docs.snowflake.com/en/sql-reference/ddl-database). 
+> 
+> For this app, let’s assume we will give users of the app access to all the documents that are stored in a stage (the location where a raw data file is stored). Let’s create a stage where documents are stored and then let’s create a database and schema, both with the same name, where we will store the AI-ready (parsed and chunked) documents.  
 
 ### Create Database and Schema
 
@@ -85,7 +86,8 @@ CREATE STAGE IF NOT EXISTS Documents
 3. Click "Upload Files" button in top right  
 4. Select your PDF files
 
-## Open Snowflake Notebooks
+
+## Snowflake Notebook
 
 Duration: 5
 
@@ -107,8 +109,6 @@ Duration: 5
 ## Environment Setup
 
 Duration: 5
-
-Here we add our imports that we will use for our project: 
 
 - `Streamlit`: Creates an intuitive chat interface  
 - `snowflake-ml-python`: For Snowflake Cortex capabilities
@@ -184,7 +184,8 @@ def process(file_name: str):
     return df
 ```
 
-## Process Documents and Create Search Service
+## Process Documents
+
 Duration: 10
 
 ### Understanding the Process
@@ -276,7 +277,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE {{service_name}}
 );
 ```
 
-## Create Streamlit Application in Snowflake
+## Create Streamlit Application
 
 Duration: 20
 
@@ -328,7 +329,6 @@ The chat interface integrates several sophisticated components:
 
 
 3. Create the app file:  
-
 
 Because the app front-end is running in Snowflake, all the interactions with the Anthropic model and Cortex Search service are done via the Python interface. If you want to integrate these services with an externally hosted UI, we recommend using the REST APIs for [Cortex LLM inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-llm-rest-api) and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#rest-api).
 
