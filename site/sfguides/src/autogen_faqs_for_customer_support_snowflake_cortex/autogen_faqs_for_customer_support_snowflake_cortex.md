@@ -1,4 +1,4 @@
-id: autogen-faqs-customer-support
+id: autogen-faqs-for-customer-support-snowflake-cortex
 summary: AutoGen FAQs for Customer Support with Snowflake Cortex
 categories: featured,getting-started,data-science-&-ml
 environments: web
@@ -45,7 +45,7 @@ CREATE DATABASE IF NOT EXISTS CUSTOMER_SUPPORT;
 CREATE SCHEMA IF NOT EXISTS CUSTOMER_SUPPORT.FAQS;
 
 -- Create FAQ table
-CREATE OR REPLACE TABLE CUSTOMER_SUPPORT_FAQ (
+CREATE OR REPLACE TABLE CUSTOMER_SUPPORT.FAQS.CUSTOMER_SUPPORT_FAQ (
     ISSUE_AREA VARCHAR,
     ISSUE_CATEGORY VARCHAR,
     QUESTION VARCHAR,
@@ -86,7 +86,7 @@ LIMIT 3;
 ## Generate FAQs with LLMs
 Duration: 15
 
-Now we'll generate FAQ entries using the Mistral LLM:
+Now we'll generate FAQ entries using the Claude 3.5 Sonnet LLM:
 
 ```sql
 INSERT INTO CUSTOMER_SUPPORT_FAQ (ISSUE_AREA, ISSUE_CATEGORY, QUESTION, ANSWER)
@@ -116,7 +116,7 @@ RawOutputs AS (
     SELECT 
         ISSUE_AREA, 
         ISSUE_CATEGORY,
-        SNOWFLAKE.CORTEX.COMPLETE('mistral-large2', PROMPT) AS RAW_OUTPUT
+        SNOWFLAKE.CORTEX.COMPLETE('claude-3-5-sonnet', PROMPT) AS RAW_OUTPUT
     FROM Prompts
 ),
 CleanedOutputs AS (
