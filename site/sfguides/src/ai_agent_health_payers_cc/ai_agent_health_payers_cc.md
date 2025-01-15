@@ -15,7 +15,7 @@ tags: Getting Started, Snowpark Python, Streamlit, Data-Science-&-Ai
 
 Contact Center is a critical business function for a Payer/Health Plan. There is heightened focus particularly with the growing market demand for customer centric experiences in Healthcare. Improving the operational efficiency of contact centers and reducing agent burnout are also key priorities for all enterprises.
 
-#### Scenario
+#### Business Scenario
 
 You are the Business Leader for a Payer/Health Plan's Contact Center operations. There are 4 primary caller personas reaching your Contact Center - Member, Provider, Employer and Broker.
 
@@ -49,10 +49,9 @@ Based on a detailed study, you have identified key challenges faced by Contact C
 
 ### What You Will Build
 
-- A Snowflake Notebook on Container Runtime to process unstructured data (audio files and PDFs)
+- A Snowflake Notebook on Container Runtime to process unstructured data (audio files and PDFs) and build a Caller Intent ML Classification Model and execute predictions:
      - Audio-to-text transcription using `whisper`
      - PDF processing and text chunking using Snowpark
-- A Snowflake Notebook on Warehouse to build a Caller Intent ML Classification Model and execute predictions
 - A chatbot application using Streamlit
 
 **Architecture Diagram:**
@@ -79,7 +78,7 @@ There are 3 types of data we're dealing with in this solution:
 #### Setup
 To get started using Snowflake Notebooks, first login to Snowsight. In the top-left corner, click "+ Create" to create a new Worksheet, and choose "SQL Worksheet".
 
-Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to create Snowflake objects (warehouse, database, schema).
+Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to create Snowflake objects.
 
 ```sql
 USE ROLE SYSADMIN;
@@ -155,8 +154,10 @@ Click '+ Files' in the top right of the stage. Upload all files that you downloa
 <img src="assets/upload_caller_intent.png"/>
 <img src="assets/upload_data_product.png"/>
 <img src="assets/upload_faqs.png"/>
+
 - **Notebook Files:** Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks).
 <img src="assets/upload_notebook_files.png"/>
+
 - **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-co[…]snowflake-notebooks/blob/main/scripts/streamlit/environment.yml) file as well.
 <img src="assets/upload_streamlit_files.png"/>
 
@@ -272,27 +273,18 @@ QUERY_WAREHOUSE = 'PAYERS_CC_WH'
 COMMENT = '{"origin":"sf_sit-is", "name":"payer_call_center_assistant_v2", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit"}}';
 ```
 
-## Access Main Setup Notebook
+## Access Setup Notebook
 **Duration: 20 minutes**
 
 The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
 
 To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Notebooks tab. Open `PAYERS_CC_MAIN_SETUP` and run each of the cells.
 
-<img src='assets/notebook1.png'>
+<img src='assets/notebook.png'>
 
 Within this notebook, you'll prepare all the unstructured data needed before you can run the Streamlit App. Once this data is processed, the chatbot will have a rich knowledge base to start from that's all stored within the Cortex Search service, a fully managed indexing and retrieval service. Cortex Search will then be used for RAG.
 
-## Access Caller Intent Prediction Notebook
-**Duration: 10 minutes**
-
-The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
-
-To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the Project, click the Notebooks tab. Open `PAYERS_CALLER_INTENT_PREDICTION`and run each of the cells.
-
-<img src='assets/notebook2.png'>
-
-Within this notebook, you'll predict the intent of a caller using historical data. This will allow Contact Center Agents to be better prepared when faced with an incoming call.
+You will also predict the intent of a caller using historical data. This will allow Contact Center Agents to be better prepared when faced with an incoming call.
 
 ## Run Streamlit Application
 **Duration: 20 minutes**
