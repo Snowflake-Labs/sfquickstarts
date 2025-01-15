@@ -55,7 +55,7 @@ CREATE OR REPLACE TABLE CUSTOMER_SUPPORT.FAQS.CUSTOMER_SUPPORT_FAQ (
 ```
 ### Load Sample Data
 
-1. Download the sample customer support tickets [parquet file](link-to-your-parquet).
+1. Download the sample customer support tickets [parquet file](https://github.com/Snowflake-Labs/sfguide-autogen-faqs-for-customer-support-with-snowflake-cortex/blob/main/data/customer_service_tickets.parquet).
 
 2. Upload the parquet file using Snowsight:
    - Navigate to Data → Databases → CUSTOMER_SUPPORT → Tables
