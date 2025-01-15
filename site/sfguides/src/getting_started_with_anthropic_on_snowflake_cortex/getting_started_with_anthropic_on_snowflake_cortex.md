@@ -108,10 +108,11 @@ Duration: 5
 
 Duration: 5
 
-Here we add our imports that we will use for our project: Key Components:
+Here we add our imports that we will use for our project: 
 
 - `Streamlit`: Creates an intuitive chat interface  
 - `snowflake-ml-python`: For Snowflake Cortex capabilities
+- `snowflake`: For Snowflake capabilities
 
 ```py
 # Import python packages
@@ -327,20 +328,28 @@ The chat interface integrates several sophisticated components:
 
 
 3. Create the app file:  
-   
 
-Note: Because the app front-end is running in Snowflake, all the interactions with the Anthropic model and Cortex Search service are done via the Python interface. If you want to integrate these services with an externally hosted UI, we recommend using the REST APIs for [Cortex LLM inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-llm-rest-api) and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#rest-api).
 
+Because the app front-end is running in Snowflake, all the interactions with the Anthropic model and Cortex Search service are done via the Python interface. If you want to integrate these services with an externally hosted UI, we recommend using the REST APIs for [Cortex LLM inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-llm-rest-api) and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#rest-api).
+
+
+Here we add our packages that we will use for our project: 
+
+- `snowflake-ml-python 1.7.1`: For Snowflake Cortex capabilities
+- `snowflake`: For Snowflake capabilities
 * In the code editor, paste the following code:
 
 ```py
-import streamlit as st
-import pandas as pd
+from snowflake.core import Root
 from snowflake.snowpark.context import get_active_session
-from snowflake.cortex import Complete, EmbedText768
+from snowflake.cortex import Complete
 
-# Get the current session - no need for connection parameters in Snowflake Streamlit
 session = get_active_session()
+root = Root(session)
+
+database_name = session.get_current_database()
+schema_name = session.get_current_schema()
+service_name = 'document_search_service'
 
 # Configuration
 num_results = 3  # Number of results
