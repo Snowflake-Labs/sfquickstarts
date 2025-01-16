@@ -8,6 +8,9 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Connectors, Analytics, BigQuery
 
 # Getting Started with the Snowflake Connector for Google Analytics
+
+<img src="assets/snowflake_connector_banner.png">
+
 <!-- ------------------------ -->
 ## Overview
 Duration: 10
