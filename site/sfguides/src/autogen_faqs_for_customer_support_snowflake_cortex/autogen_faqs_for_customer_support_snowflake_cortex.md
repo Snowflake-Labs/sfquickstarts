@@ -335,7 +335,6 @@ Congratulations! You've built an automated FAQ generation system that:
 - Using Snowflake Cortex LLM functions
 - Processing conversational data
 - Building Streamlit applications in Snowflake
-- Implementing search and filtering
 
 ### Related Resources
 Documentation:
