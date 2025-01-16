@@ -42,10 +42,14 @@ Complete the following steps to setup your account:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
+USE DATABASE SNOWFLAKE;
 
 -- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
 CREATE OR REPLACE ROLE FEATURE_STORE_LAB_USER;
-GRANT ROLE FEATURE_STORE_LAB_USER to USER <YOUR_USER>;
+BEGIN
+    LET current_user_name := CURRENT_USER();
+    EXECUTE IMMEDIATE 'GRANT ROLE FEATURE_STORE_LAB_USER TO USER ' || current_user_name;
+END;
 
 -- create our virtual warehouse
 CREATE OR REPLACE WAREHOUSE FEATURE_STORE_WH AUTO_SUSPEND = 60;
