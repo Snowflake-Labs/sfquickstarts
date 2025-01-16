@@ -13,7 +13,7 @@ tags: Getting Started, Data Science, Data Engineering
 ## Overview
 
 This guide follows the **detect_anomalies_on_production_floor.ipynb**  notebook to simulate production data, analyze it, and detect anomalies using Snowflake and machine learning. By the end, you will have a registered anomaly detection model in Snowflake's Model Registry.
-Download the Notebook [detect_anomalies_on_production_floor.ipynb](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/detect_anomolies_on_production_floor.ipynb)
+Download the Notebook [detect_anomalies_on_production_floor.ipynb](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb)
 
 ### Prerequisites
 
@@ -33,7 +33,7 @@ To complete this quickstart, you’ll need:
 - A Snowflake account in a region that supports Snowflake's Machine Learning and Model Registry capabilities.
 - Access to a warehouse with GPU capabilities for training the LSTM model.
 - Python libraries: `pandas`, `numpy`, `scikit-learn`, `tensorflow`, and `keras`.
-- A copy of the [detect_anomalies_on_production_floor.ipynb](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/detect_anomolies_on_production_floor.ipynb) notebook.
+- A copy of the [detect_anomalies_on_production_floor.ipynb](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb) notebook.
 - 
 
 ---
@@ -73,23 +73,24 @@ By the end of this guide, you'll have a functional pipeline capable of detecting
 2. Create the database
 
 ```sql
+USE ROLE SYSADMIN;
 CREATE database Productionfloor_db;
 ```
 
 ### Open Snowflake Notebooks
 
-1. Click on [Getting Started Notebook](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/detect_anomolies_on_production_floor.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+1. Click [Notebook](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 2. In your Snowflake account:
 * On the left hand navigation menu, click on Projects » Notebooks
 * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
 * Select the file you downloaded in step 1 above
 3. In the Create Notebook popup
 * For Notebook location, select your database and public schema
-* Select your **Warehouse**. You will want to have access to a container with a gpu cluster
+* Select your **Warehouse**. You will need to have access to a **Container** with a **GPU Cluster**
 * Click on Create button
-4. Open the notebook once created and add the following packages by using the "Packages" button on the top right
-  * snowflake-snowpark-python
-  * snowflake-ml-python
+4. Open the notebook once created
+* You will want to ensure you have external access so we can access pip
+![External Access](assets/external_access.gif)
 
 ---
 
