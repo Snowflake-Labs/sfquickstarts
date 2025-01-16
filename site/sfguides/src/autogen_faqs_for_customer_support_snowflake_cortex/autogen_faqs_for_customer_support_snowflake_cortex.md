@@ -150,12 +150,37 @@ SELECT
     PARSED_JSON:"answer"::STRING AS ANSWER
 FROM ParsedOutputs;
 ```
+<!-- ------------------------ -->
+## Verify and Review
+Duration: 10
+
+Check the generated FAQs:
+
+```sql
+SELECT * FROM CUSTOMER_SUPPORT_FAQ ORDER BY CREATED_AT DESC;
+```
+
+Ensure:
+- Questions are relevant and clear
+- Answers are accurate and helpful
+- Categories are correctly assigned
+
+<!-- ------------------------ -->
 
 <!-- ------------------------ -->
 ## Build the FAQ Viewer
 Duration: 20
 
-Create an interactive Streamlit interface:
+1. Navigate to Streamlit in Snowflake:  
+     
+   * Click on the **Streamlit** tab in the left navigation pane  
+   * Click on **\+ Streamlit App** button in the top right
+   
+2. Configure App Settings:  
+     
+   * Enter a name for your app (e.g., Customer\_Support\_AutoGen\_FAQ\_Viewer)  
+   * Select a warehouse to run the app (Small warehouse is sufficient)  
+   * Choose the **CUSTOMER_SUPPORT.FAQS** database and schema
 
 ```python
 # Import python packages
@@ -298,22 +323,6 @@ if __name__ == "__main__":
     main()
 ```
 
-<!-- ------------------------ -->
-## Verify and Review
-Duration: 10
-
-Check the generated FAQs:
-
-```sql
-SELECT * FROM CUSTOMER_SUPPORT_FAQ ORDER BY CREATED_AT DESC;
-```
-
-Ensure:
-- Questions are relevant and clear
-- Answers are accurate and helpful
-- Categories are correctly assigned
-
-<!-- ------------------------ -->
 ## Conclusion and Resources
 Duration: 5
 
@@ -326,7 +335,6 @@ Congratulations! You've built an automated FAQ generation system that:
 - Using Snowflake Cortex LLM functions
 - Processing conversational data
 - Building Streamlit applications in Snowflake
-- Implementing search and filtering
 
 ### Related Resources
 Documentation:
