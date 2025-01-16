@@ -120,25 +120,35 @@ In this section, we will create a BigQuery dataset and table to store Google Ana
 
 <img src="assets/copy_data.png">
 
-9. After copying, select **BROWSE** for the project and select your project that was created earlier.
+9. Select **BROWSE**.
 
 <img src="assets/copy_table.png">
 
+10. Select the project that was created earlier, **Snowflake Connector Project** in this example.
+
 <img src="assets/select_project.png">
 
-10. Click on the **Dataset** dropdown, select **CREATE NEW DATASET**, and enter `analytics_20210131` and click **CREATE DATASET**.
+11. After clicking on the project, the **Dataset** and **Table** fields will be blank.
 
-<img src="assets/create_dataset.png">
+<img src="assets/two_blanks.png">
 
-11. Select the newly created dataset and enter `events_20210131` for the table name and click **COPY**.
+12. Click on the **Dataset** field and select **CREATE NEW DATASET** in the dropdown. 
+
+<img src="assets/create_new_dataset.png">
+
+13. Enter `analytics_20210131` and click **CREATE DATASET**.
+
+<img src="assets/dataset_id.png">
+
+14. Click on the **Table** field and enter `events_20210131` for the table name and click **COPY**.
 
 <img src="assets/copy_table_2.png">
 
-12. Click **GO TO TABLE** on the toast that appears on the bottom of the page.
+15. Click **GO TO TABLE** on the toast that appears on the bottom of the page.
 
 <img src="assets/toast.png">
 
-13. View the table by clicking **PREVIEW**.
+16. View the table by clicking **PREVIEW**.
 
 <img src="assets/preview_table.png">
 
