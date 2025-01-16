@@ -68,7 +68,7 @@ CREATE OR REPLACE TABLE CUSTOMER_SUPPORT.FAQS.CUSTOMER_SUPPORT_FAQ (
      * Click "Load" to start the upload
 
 
-Dataset from: NebulaByte/E-Commerce_Customer_Support_Conversations on HuggingFace
+Dataset from NebulaByte/E-Commerce_Customer_Support_Conversations on HuggingFace
 <!-- ------------------------ -->
 ## Process Support Tickets
 Duration: 10
@@ -89,6 +89,25 @@ LIMIT 3;
 Duration: 15
 
 Now we'll generate FAQ entries using the Claude 3.5 Sonnet LLM:
+
+## Snowflake Notebook
+
+Duration: 5
+
+1. Click on [Getting Started with Anthropic Notebook](https://github.com/Snowflake-Labs/sfguide-autogen-faqs-for-customer-support-with-snowflake-cortex) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)  
+     
+2. In your Snowflake account:  
+     
+   * On the left hand navigation menu, click on Projects » Notebooks  
+   * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
+   ![upload file](assets/import.png)  
+   * Select the file you downloaded in step 1 above
+
+3. In the Create Notebook popup:  
+     
+   * For Notebook location, select **CUSTOMER_SUPPORT.FAQS** for your database and schema  
+   * Select your **Warehouse**  
+   * Click on Create button
 
 ```sql
 INSERT INTO CUSTOMER_SUPPORT_FAQ (ISSUE_AREA, ISSUE_CATEGORY, QUESTION, ANSWER)
