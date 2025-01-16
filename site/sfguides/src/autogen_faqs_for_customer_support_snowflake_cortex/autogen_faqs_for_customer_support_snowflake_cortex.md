@@ -67,6 +67,8 @@ CREATE OR REPLACE TABLE CUSTOMER_SUPPORT.FAQS.CUSTOMER_SUPPORT_FAQ (
      * Choose "CUSTOMER_SUPPORT_TICKETS" as target table
      * Click "Load" to start the upload
 
+
+Dataset from: NebulaByte/E-Commerce_Customer_Support_Conversations on HuggingFace
 <!-- ------------------------ -->
 ## Process Support Tickets
 Duration: 10
