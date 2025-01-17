@@ -8,12 +8,11 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Connectors, Analytics, BigQuery
 
 # Getting Started with the Snowflake Connector for Google Analytics
-
-<img src="assets/snowflake_connector_banner.png">
-
 <!-- ------------------------ -->
 ## Overview
 Duration: 10
+
+<img src="assets/snowflake_connector_banner.png">
 
 In this Quickstart, we will investigate how to use the Snowflake Connector for Google Analytics Raw Data to emulate data ingestion from Google Analytics to BigQuery into Snowflake.
 
