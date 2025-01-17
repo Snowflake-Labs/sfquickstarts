@@ -1,7 +1,7 @@
 author: Chanin Nantasenamat
 id: mfa-audit
 summary: Learn how to build a Streamlit app in Snowflake Notebooks to audit and monitor Multi-Factor Authentication (MFA) status of users, with automated email notifications for non-compliant users.
-categories: featured, cybersecurity, data-engineering
+categories: featured, cybersecurity, data-engineering, streamlit
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -44,11 +44,77 @@ You can retrieve the [MFA Audit Snowflake Notebook](https://github.com/Snowflake
 > On the above mentioned GitHub page, please click on the download icon (upon hover it should display "Download raw file").
 
 ### Creating the User Dataset
-In this quickstart, we'll use an artificially generated [user dataset](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/MFA%20Audit%20of%20Users/demo_data.csv) explained as follows:
+In this quickstart, we'll use an artificially generated [demo data](https://sfquickstarts.s3.us-west-1.amazonaws.com/sfguide_building_mfa_audit_system_with_streamlit_in_snowflake_notebooks/demo_data.csv) explained here after.
 
+#### Approach 1: Creation via SQL Query
+
+The following query sets up the necessary administrative permissions, compute resources, database structures, and data staging areas to load MFA user data from an external S3 bucket.
+```sql
+USE ROLE ACCOUNTADMIN; -- Sets current role to ACCOUNTADMIN
+CREATE OR REPLACE WAREHOUSE MFA_DEMO_WH; -- By default, this creates an XS Standard Warehouse
+CREATE OR REPLACE DATABASE MFA_DEMO_DB;
+CREATE OR REPLACE SCHEMA MFA_DEMO_SCHEMA;
+CREATE OR REPLACE STAGE MFA_DEMO_ASSETS; -- Store data files
+
+-- create csv format
+CREATE FILE FORMAT IF NOT EXISTS MFA_DEMO_DB.MFA_DEMO_SCHEMA.CSVFORMAT 
+    SKIP_HEADER = 1 
+    TYPE = 'CSV';
+
+-- Create stage and load external demo data from S3
+CREATE STAGE IF NOT EXISTS MFA_DEMO_DB.MFA_DEMO_SCHEMA.MFA_DEMO_DATA 
+    FILE_FORMAT = MFA_DEMO_DB.MFA_DEMO_SCHEMA.CSVFORMAT 
+    URL = 's3://sfquickstarts/sfguide_building_mfa_audit_system_with_streamlit_in_snowflake_notebooks/demo_data.csv';
+    -- https://sfquickstarts.s3.us-west-1.amazonaws.com/sfguide_building_mfa_audit_system_with_streamlit_in_snowflake_notebooks/demo_data.csv
+
+LS @MFA_DEMO_DATA; -- List contents of the stage we just created
+```
+
+Next, we'll copy the staged data from an S3 bucket into a newly created `MFA_DATA` table.
+
+```sql
+-- Create a new data table called MFA_DEMO
+CREATE OR REPLACE TABLE MFA_DEMO_DB.MFA_DEMO_SCHEMA.MFA_DATA (
+    USER_ID NUMBER,
+    NAME VARCHAR(100),
+    CREATED_ON TIMESTAMP,
+    DELETED_ON TIMESTAMP,
+    LOGIN_NAME VARCHAR(100),
+    DISPLAY_NAME VARCHAR(100),
+    FIRST_NAME VARCHAR(50),
+    LAST_NAME VARCHAR(50),
+    EMAIL VARCHAR(255),
+    MUST_CHANGE_PASSWORD BOOLEAN,
+    HAS_PASSWORD BOOLEAN,
+    COMMENT VARCHAR(255),
+    DISABLED BOOLEAN,
+    SNOWFLAKE_LOCK BOOLEAN,
+    DEFAULT_WAREHOUSE VARCHAR(100),
+    DEFAULT_NAMESPACE VARCHAR(100),
+    DEFAULT_ROLE VARCHAR(100),
+    EXT_AUTHN_DUO BOOLEAN,
+    EXT_AUTHN_UID VARCHAR(100),
+    HAS_MFA BOOLEAN,
+    BYPASS_MFA_UNTIL TIMESTAMP,
+    LAST_SUCCESS_LOGIN TIMESTAMP,
+    EXPIRES_AT TIMESTAMP,
+    LOCKED_UNTIL_TIME TIMESTAMP,
+    HAS_RSA_PUBLIC_KEY BOOLEAN,
+    PASSWORD_LAST_SET_TIME TIMESTAMP,
+    OWNER VARCHAR(100),
+    DEFAULT_SECONDARY_ROLE VARCHAR(100),
+    TYPE VARCHAR(50)
+);
+
+-- Copy the data from your stage to this newly created table
+COPY INTO MFA_DEMO_DB.MFA_DEMO_SCHEMA.MFA_DATA
+    FROM @MFA_DEMO_DB.MFA_DEMO_SCHEMA.MFA_DEMO_DATA
+```
+
+#### Approach 2: Creation via GUI
 1. In Snowflake Notebook, click on `+` → `Table` → `From File` in the left sidebar menu (see screenshot below)
 2. Create a table called `CHANINN_DEMO_DATA.PUBLIC.MFA_DATA`. Particularly, you'll see a pop-up, go ahead and select a warehouse, upload the CSV file, specify the database (`CHANINN_DEMO_DATA`), schema (`PUBLIC`) and table name (`MFA_DATA`).
-3. Upload the [demo data file](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/MFA%20Audit%20of%20Users/demo_data.csv)
+3. Upload the [demo data file](https://sfquickstarts.s3.us-west-1.amazonaws.com/sfguide_building_mfa_audit_system_with_streamlit_in_snowflake_notebooks/demo_data.csv)
 
 ![image](assets/img01.PNG)
 
