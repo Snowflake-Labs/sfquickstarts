@@ -90,7 +90,7 @@ Duration: 15
 
 Now we'll generate FAQ entries using the Claude 3.5 Sonnet LLM:
 
-## Snowflake Notebook
+### Snowflake Notebook
 
 Duration: 5
 
