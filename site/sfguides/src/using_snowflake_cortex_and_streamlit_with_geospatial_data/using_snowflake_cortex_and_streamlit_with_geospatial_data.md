@@ -544,7 +544,7 @@ Press the tick on the top right hand side of the cell to confirm the edit.
 
 ![train_details](assets/I026.jpg)
 
-We used **call_function** to call Snowflake Cortex complete which returns a response that completes an input prompt. Snowflake Cortex runs LLMs that are fully hosted and managed by Snowflake, requiring no setup. In this example, we are using Snowflake Mistral Large2, an open enterprise-grade LLM model.
+We used **call_function** to call Snowflake Cortex complete which returns a response that completes an input prompt. Snowflake Cortex runs LLMs that are fully hosted and managed by Snowflake, requiring no setup. In this example, we are using  Mistral-Large2, an open enterprise-grade LLM model fully managed by Snowflake.
 
 You should get a new table that will look like this:
 
