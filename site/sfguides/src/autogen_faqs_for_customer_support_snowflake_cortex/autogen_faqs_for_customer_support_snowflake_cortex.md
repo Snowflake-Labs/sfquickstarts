@@ -94,13 +94,12 @@ Now we'll generate FAQ entries using the Claude 3.5 Sonnet LLM:
 
 Duration: 5
 
-1. Click on [Getting Started with Anthropic Notebook](https://github.com/Snowflake-Labs/sfguide-autogen-faqs-for-customer-support-with-snowflake-cortex) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)  
+1. Click on [Notebook](https://github.com/Snowflake-Labs/sfguide-autogen-faqs-for-customer-support-with-snowflake-cortex) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)  
      
 2. In your Snowflake account:  
      
    * On the left hand navigation menu, click on Projects » Notebooks  
    * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
-   ![upload file](assets/import.png)  
    * Select the file you downloaded in step 1 above
 
 3. In the Create Notebook popup:  
