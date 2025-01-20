@@ -66,8 +66,6 @@ Open up a new SQL worksheet and run the following commands. To open up a new SQL
 ~~~sql
 CREATE OR REPLACE DATABASE BUILD_UK;
 
-CREATE SCHEMA DOCUMENT_AI;
-
 CREATE OR REPLACE SCHEMA STREAMLITS;
 
 CREATE OR REPLACE SCHEMA NOTEBOOKS;
@@ -115,7 +113,8 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 
 Search for the **Met office Weather Data**
-Press **Get** - Keep the name as it is.
+- The exact name is **Postcode Sector Weather Forecasts - Advanced with Solar**
+- Press **Try for Free** - Keep the name as it is.  You will have 14 days of free weather data to try for 14 days.
 
 ![alt text](assets/I005.png)
 
@@ -182,8 +181,8 @@ Copy and paste the following code into the newly created cell.
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import max,min,avg,call_function, split,substr,hour,concat,col,sqrt,lit,array_slice,array_agg,object_construct,parse_json, to_geography, to_array,to_date, round, replace
-from snowflake.snowpark.types import StringType,VariantType, DateType, IntegerType,DecimalType
+from snowflake.snowpark.functions import *
+from snowflake.snowpark.types import *
 import json
 import pandas as pd
 import numpy as np
@@ -257,8 +256,15 @@ envelope = trains_latlon.with_column('POINT',call_function('ST_MAKEPOINT',col('"
 #collect all the points into one row of data
 envelope = envelope.select(call_function('ST_COLLECT',col('POINT')).alias('POINTS'))
 
+#### convert from geography to geometry
+envelope = envelope.select(to_geometry('POINTS').alias('POINTS'))
+
+
 #create a rectangular shape which boarders the minimum possible size which covers all of the points
 envelope = envelope.select(call_function('ST_ENVELOPE',col('POINTS')).alias('BOUNDARY'))
+
+#convert back to geography
+envelope = envelope.select(to_geography('BOUNDARY').alias('BOUNDARY'))
 envelope.collect()[0][0]
 
 ```
@@ -341,10 +347,10 @@ Copy and paste the python code into a new python cell.  Name the cell **places_d
 
 ```python
 
-places = session.table('OVERTURE_MAPS__PLACES.CARTO.PLACE')
-places = places.filter(col('ADDRESSES')['list'][0]['element']['country'] =='GB')
+places_1 = session.table('OVERTURE_MAPS__PLACES.CARTO.PLACE')
+places_1 = places_1.filter(col('ADDRESSES')['list'][0]['element']['country'] =='GB')
 
-places.limit(3)
+places_1.limit(3)
 ```
 When you run the cell, you will see there is a lot of semi structured data returned.  We will use snowflake’s native **semi structured** querying capability to take key elements out of the data which includes information concerning the location
 
@@ -352,7 +358,7 @@ In a new cell which you will name **places_refined**, paste the following and ru
 
 ```python
 
-places = places.select(col('NAMES')['primary'].astype(StringType()).alias('NAME'),
+places_2 = places_1.select(col('NAMES')['primary'].astype(StringType()).alias('NAME'),
                         col('PHONES')['list'][0]['element'].astype(StringType()).alias('PHONE'),
                       col('CATEGORIES')['primary'].astype(StringType()).alias('CATEGORY'),
                         col('CATEGORIES')['alternate']['list'][0]['element'].astype(StringType()).alias('ALTERNATE'),
@@ -360,7 +366,7 @@ places = places.select(col('NAMES')['primary'].astype(StringType()).alias('NAME'
                       col('GEOMETRY'))
                         
 
-places.limit(10)
+places_2.limit(10)
 ```
 This is what you should see.  The exact dataset set may ot be the same as the screenshot but will contain the same type of data.
 ![semi_structured_filtered](assets/I015.png)
@@ -370,12 +376,12 @@ You will now filter the data to only view places which are categorised as **trai
 Copy and paste the code below into a new **python** cell.  Name the cell **places_filtered_boundary**
 
 ```python
-places = places.filter(col('CATEGORY') =='train_station')
+places_3 = places_2.filter(col('CATEGORY') =='train_station')
 
-places = places.join(envelope,call_function('ST_WITHIN',places['GEOMETRY'],envelope['boundary']))
-places = places.with_column('LON',call_function('ST_X',col('GEOMETRY')))
-places = places.with_column('LAT',call_function('ST_Y',col('GEOMETRY')))
-st.write(places)
+places_3 = places_3.join(envelope,call_function('ST_WITHIN',places_3['GEOMETRY'],envelope['boundary']))
+places_3 = places_3.with_column('LON',call_function('ST_X',col('GEOMETRY')))
+places_3 = places_3.with_column('LAT',call_function('ST_Y',col('GEOMETRY')))
+st.write(places_3)
 
 ```
 We can view the points on a map easily by using st.map(places) but as pydeck has many more options such as different mark types, tool tips and layers we will create an additional pydeck layer which adds this data to the previously created data layer.  When you hover over in the boundary box you will see a tooltip containing the  alternate category as well as the place name.
@@ -384,7 +390,7 @@ Copy and paste the following into a new cell and name the cell **places_visualis
 
 ```python
 
-placespd = places.to_pandas()
+placespd = places_3.to_pandas()
 poi_l = pdk.Layer(
             'ScatterplotLayer',
             data=placespd,
@@ -409,11 +415,12 @@ layers= [polygon_layer, poi_l], tooltip = {'text':"Place Name: {NAME}, alternate
 ))
 
 ```
-Go back to places_filter_bounds and modify the category in the filter from train_station to restaurant . 
+- Go back to **places_filter_boundary** cell and modify the category in the filter from train_station to restaurant. 
 
-Select **Run all below**:
 
-![boundarybox](assets/I016.png)
+- Select **Run all below**.  These steps will start from retreiving a fresh table from the marketplace table:
+
+![boundarybox](assets/I016.jpg)
 
 The results should look like this.
 
@@ -469,8 +476,8 @@ Copy and paste the following code into a new cell.  Name the cell **station_attr
 
 ```python
 
-further_train_info = session.table('NORTHERN_TRAINS_STATION_DATA.TESTING."STATION ATTRIBUTES 2"')
-further_train_info.limit(4)
+further_train_info_1 = session.table('NORTHERN_TRAINS_STATION_DATA.TESTING."STATION ATTRIBUTES 2"')
+further_train_info_1.limit(4)
 
 ```
 
@@ -484,7 +491,7 @@ Paste the following into the new cell and run. This takes around 1.5 minutes to 
 
 ```python
 
-further_train_info= further_train_info.with_column('OBJECT',object_construct(lit('CRS Code'),
+further_train_info_2= further_train_info_1.with_column('OBJECT',object_construct(lit('CRS Code'),
 col('"CRS Code"'),
 lit('Full Timetable Calls'),
 col('"Dec21 Weekday Full Timetable Daily Calls"').astype(IntegerType()),
@@ -503,12 +510,14 @@ col('"MP Email Address"'),
 lit('Car Parking Spaces'),
 col('"Car Parking Spaces"').astype(IntegerType()),
 lit('Staffed?'),
-col('"Staffed?"')))
+col('"Staffed?"'))).cache_result()
 
-prompt = 'In less than 200 words, write a summary based on the following train station details'
-prompt2 = 'write in the best way for it to describe a point on a map'
+prompt = 'In less than 200 words, write a summary based on the following train station details.  \
+The trainstations are based in the North of England. \
+Only include Northern train station names in the description.'
+prompt2 = 'write in the best way for it to describe a point on a map.'
 
-further_train_info = further_train_info.select('"CRS Code"',
+further_train_info_2 = further_train_info_2.select('"CRS Code"',
         'MP',
         '"Political Party"', 
         '"MP Email Address"',
@@ -517,8 +526,9 @@ further_train_info = further_train_info.select('"CRS Code"',
             col('OBJECT').astype(StringType()),
             lit('prompt2'))).alias('ALTERNATE'))
 
-further_train_info.write.mode('overwrite').save_as_table("DATA.TRAIN_STATION_INFORMATION")
-session.table('DATA.TRAIN_STATION_INFORMATION')
+further_train_info_2.write.mode('overwrite').save_as_table("DATA.TRAIN_STATION_INFORMATION")
+station_info = session.table('DATA.TRAIN_STATION_INFORMATION')
+station_info.limit(5)
 
 ```
 
@@ -532,19 +542,19 @@ Below we are leveraging Mistral-large2 to produce meaningful tooltips relating t
 ```
 Press the tick on the top right hand side of the cell to confirm the edit.
 
-![train_details](assets/I026.png)
+![train_details](assets/I026.jpg)
 
-We used **call_function** to call Snowflake Cortex complete which returns a response that completes an input prompt. Snowflake Cortex runs LLMs that are fully hosted and managed by Snowflake, requiring no setup. In this example, we are using Snowflake Arctic, an open enterprise-grade LLM model developed by Snowflake.
+We used **call_function** to call Snowflake Cortex complete which returns a response that completes an input prompt. Snowflake Cortex runs LLMs that are fully hosted and managed by Snowflake, requiring no setup. In this example, we are using  Mistral-Large2, an open enterprise-grade LLM model fully managed by Snowflake.
 
 You should get a new table that will look like this:
 
-![train_details](assets/I0192.png)
+![train_details](assets/IO192.jpg)
 
 > **IMPORTANT** Comment out the write to table command to prevent the LLM being called every time you refresh the notebook.  We now have the data saved in a table so you do not need to run this model again.
 
 ```python
 
-# further_train_info.write.mode('overwrite').\
+# further_train_info_2.write.mode('overwrite').\
 # save_as_table("DATA.TRAIN_STATION_INFORMATION")
 
 ```
@@ -613,7 +623,6 @@ Any location may be impacted by key events.  Let's try and pinpoint out any key 
 Create the following in a new cell named **cortex_events**.  This will generate event data and saves the results in a new table.  
 
 ```python
-
 json1 = '''{"DATE":"YYYY-MM-DD", "NAME":"event",DESCRIPTION:"describe what the event is" "CENTROID":{
   "coordinates": [
     0.000000<<<this needs to be longitude,
@@ -624,16 +633,15 @@ json1 = '''{"DATE":"YYYY-MM-DD", "NAME":"event",DESCRIPTION:"describe what the e
 
 
 prompt = f''' Retrieve 6 events within different cities of the north of england and will happen in 2024.  do not include commentary or notes retrive this in the following json format {json1}  '''
-events = session.create_dataframe([{'prompt':prompt}])
+events_1 = session.create_dataframe([{'prompt':prompt}])
 
-events = events.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','mistral-large2',prompt).alias('EVENT_DATA'))
+events_1 = events_1.select(call_function('SNOWFLAKE.CORTEX.COMPLETE','mistral-large2',prompt).alias('EVENT_DATA'))
 
-events = events.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```json'''),lit('')))
-events = events.with_column('EVENT_DATA',replace(col('EVENT_DATA'),lit('''```'''),lit('')))
+events_1 = events_1.with_column('EVENT_DATA',replace(col('EVENT_DATA'),'''```json''',''))
+events_1 = events_1.with_column('EVENT_DATA',replace(col('EVENT_DATA'),'''```''',''))
 
-events.write.mode('overwrite').save_as_table("DATA.EVENTS_IN_THE_NORTH")
+events_1.write.mode('overwrite').save_as_table("DATA.EVENTS_IN_THE_NORTH")
 session.table('DATA.EVENTS_IN_THE_NORTH')
-
 ```
 
 Again, we will utilise the semi-structured support in Snowflake to flatten the retrieved json to transpose a data frame in a table format
@@ -642,14 +650,14 @@ Copy and paste the code below into a new cell which you will rename as **events_
 
 ```python
 
-events = session.table('DATA.EVENTS_IN_THE_NORTH')
-events = events.join_table_function('flatten',parse_json('EVENT_DATA')).select('VALUE')
-events=events.with_column('NAME',col('VALUE')['NAME'].astype(StringType()))
-events=events.with_column('DESCRIPTION',col('VALUE')['DESCRIPTION'].astype(StringType()))
-events=events.with_column('CENTROID',to_geography(col('VALUE')['CENTROID']))
-events=events.with_column('COLOR',col('VALUE')['COLOR'])
-events=events.with_column('DATE',col('VALUE')['DATE'].astype(DateType())).drop('VALUE')
-events
+events_2 = session.table('DATA.EVENTS_IN_THE_NORTH')
+events_2 = events_2.join_table_function('flatten',parse_json('EVENT_DATA')).select('VALUE')
+events_2=events_2.with_column('NAME',col('VALUE')['NAME'].astype(StringType()))
+events_2=events_2.with_column('DESCRIPTION',col('VALUE')['DESCRIPTION'].astype(StringType()))
+events_2=events_2.with_column('CENTROID',to_geography(col('VALUE')['CENTROID']))
+events_2=events_2.with_column('COLOR',col('VALUE')['COLOR'])
+events_2=events_2.with_column('DATE',col('VALUE')['DATE'].astype(DateType())).drop('VALUE')
+events_2
 
 ```
 
@@ -663,9 +671,9 @@ Create a new cell which you will name **h3index**.  Add the H3 Index at resoluti
 
 ```python
 
-events=events.with_column('H3',call_function('H3_POINT_TO_CELL_STRING',col('CENTROID'),lit(5)))
+events_3=events_2.with_column('H3',call_function('H3_POINT_TO_CELL_STRING',col('CENTROID'),lit(5)))
 
-events
+events_3
 
 ```
 You will see a new column called H3:
@@ -676,7 +684,7 @@ We will now add these events onto the map as another layer.  Add a new cell and 
 
 ```python
 
-events = events.with_column('R',col('COLOR')[0])
+events = events_3.with_column('R',col('COLOR')[0])
 events = events.with_column('G',col('COLOR')[1])
 events = events.with_column('B',col('COLOR')[2])
 events = events.with_column_renamed('DESCRIPTION','ALTERNATE')
@@ -739,7 +747,7 @@ trains_h3 = trains_h3.join(events.select('H3',col('NAME').alias('EVENT_NAME'),'D
 
 st.markdown('#### Affected Train Stations')
 st.write(trains_h3.limit(1))
-places_h3 = places.with_column('H3',call_function('H3_POINT_TO_CELL_STRING',col('GEOMETRY'),lit(5)))
+places_h3 = places_3.with_column('H3',call_function('H3_POINT_TO_CELL_STRING',col('GEOMETRY'),lit(5)))
 places_h3 = places_h3.join(events.select('H3','CENTROID',col('NAME').alias('EVENT_NAME'),'DATE'),'H3')
 places_h3 = places_h3.with_column('DISTANCE_FROM_EVENT',call_function('ST_DISTANCE',col('CENTROID'),col('GEOMETRY')))
 places_h3 = places_h3.filter(col('DISTANCE_FROM_EVENT')< 3000)
@@ -814,13 +822,13 @@ session.table('DATA.EVENTS_AND_WHAT_IS_AFFECTED')
 The results can include a large number of restaurants by MP, so let's only  refer to the first 8 restaurants for each MP letter based on distance from the event.  The array_slice method does just that.  Create a new Python cell called **filt_restaurant_obj** and paste the following python content into it:
 
 ```python
-all_3 = session.table("DATA.EVENTS_AND_WHAT_IS_AFFECTED")
-all_3 = all_3.select('MP','"MP Email Address"','TRAIN_STATIONS','EVENTS',
+all_4 = session.table("DATA.EVENTS_AND_WHAT_IS_AFFECTED")
+all_4 = all_4.select('MP','"MP Email Address"','TRAIN_STATIONS','EVENTS',
                      
 array_slice(col('RESTAURANTS'),lit(0),lit(8)).alias('RESTAURANTS'))
 
           
-all_3
+all_4
 
 ```
 
@@ -832,7 +840,21 @@ Copy the code below into a new python cell called **prompt_letter**
 
 ```python
 
+col1,col2,col3, col4 = st.columns(4)
+
+with col1:
+    name = st.text_input('Name:','''Becky O'Connor''')
+with col2:
+    email = st.text_input('Email:','becky.oconnor@snowflake.com')
+with col3:
+    title = st.text_input('Title:','a concerned Citizen')
+with col4:
+    style = st.text_input('Style:','a worried resident')
+
+
 prompt = concat(lit('Write an email addressed to this MP:'),
+                lit('in the style of '),
+                lit(style),
                 col('MP'),
                lit('about these events: '),
                col('EVENTS').astype(StringType()),
@@ -840,16 +862,18 @@ prompt = concat(lit('Write an email addressed to this MP:'),
                col('TRAIN_STATIONS').astype(StringType()),
                 lit('And these Restaurants: '),
                 col('RESTAURANTS').astype(StringType()),
-               lit('The letter is written by Becky - becky.oconnor@snowflake.com - a concerned Citizen'))
+               lit(f'''The letter is written by {name} - {email} - {title}'''))
 
-
+st.info(f'''Letters will be generated from {name} - {email} - {title} in the style of {style}''')
 ```
+
+Once you run the cell, change the prompts to reflect a sender of your choice.
 
 Call the LLM with the prompt by copying the code below into a new cell. You may want to be creative and change who the letter is written by, or even ask Cortex to write it in the style of someone. The LLM we are using for this is Mixtral-8x7b as its good at writing letters.  Copy and paste the following in a new python cell called **cortex_letter**
 
 ```python
 
-letters = all_3.select('MP','"MP Email Address"', call_function('SNOWFLAKE.CORTEX.COMPLETE','mixtral-8x7b',prompt).alias('LETTER'))
+letters = all_4.select('MP','"MP Email Address"', call_function('SNOWFLAKE.CORTEX.COMPLETE','mixtral-8x7b',prompt).alias('LETTER'))
 letters.write.mode('overwrite').save_as_table("DATA.LETTERS_TO_MP")
 
 ```
@@ -901,7 +925,7 @@ Replace all the sample code with the following:
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import col, call_function, lit,concat, parse_json,object_construct
+from snowflake.snowpark.functions import col, call_function, lit,concat, parse_json,object_construct,replace
 from snowflake.snowpark.types import StringType, FloatType, ArrayType, VariantType, DateType
 
 # Write directly to the app
@@ -953,7 +977,7 @@ with st.form('Generate Events'):
     'Generate Synthetic Events based on the following:'
     col1,col2, col3,col4 = st.columns(4)
     with col1:
-        model = st.selectbox('Choose Model',['mixtral-8x7b'])
+        model = st.selectbox('Choose Model',['mistral-large2'])
     with col2:
         mp = st.selectbox('Choose MP: ',mps)
     with col3:
@@ -997,6 +1021,9 @@ if submitted:
     
 
     generated = filtered_data.with_column('generated_events',mistral)
+
+    generated = generated.with_column('generated_events',replace(col('generated_events'),'''```json''',''))
+    generated = generated.with_column('generated_events',replace(col('generated_events'),'''```''',''))
     #st.write(generated)
     generated = generated.select('MP',parse_json('GENERATED_EVENTS').alias('GENERATED_EVENTS'))
     generated = generated.with_column('INCIDENT_TYPE',lit(activity))
@@ -1092,7 +1119,7 @@ try:
 
     st.markdown(''' #### NEWLY GENERATED SOCIAL MEDIA ''')
 
-    
+    #### SOCIAL MEDIA DATA
     
     social_media = session.create_dataframe([0])
     json = '''{"date","YYYY-MM-DD","post","abcdefg","sentiment_score",0.2,"username","bob"}'''
@@ -1103,7 +1130,10 @@ try:
     lit('Add a date, username and relevant emojis to each post.\
     Include emotion.  Return the results as a json object and include sentiment scores.')
            ,lit('use the following json template to structure the data'),lit(json))).astype(VariantType()))
+    
 
+    social_media = social_media.with_column('V',replace(col('V'),'''```json''',''))
+    social_media = social_media.with_column('V',replace(col('V'),'''```''',''))
     
     smedia = social_media.join_table_function('flatten',parse_json('V')).select('VALUE')
     smedia = smedia.select(object_construct(lit('INCIDENT_TYPE'),lit(flattenpd.INCIDENT_TYPE.iloc[record]),lit('MP'),lit(MP),lit('DATA'),col('VALUE')).alias('V'))
@@ -1137,6 +1167,8 @@ try:
     st.write(session.table('DATA.V_SOCIAL_MEDIA'))
 except:
     st.info('No Results Found')
+    
+         
     
          
 
@@ -1390,16 +1422,20 @@ st.table(social_media.drop('V'))
 
 ```
 <!-- ------------------------ -->
-## Use Cortex to Embed Generated Text
+## Use Cortex to Embed Generated Text and create a Search Service
 Duration: 10
 
-During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.
+
+During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.  Once you have explored the principles of how text searching works, you will create a Cortex Search Service.
 
 Click here and download the notebook from GitHub
 
 [**Vector_Embeddings.ipynb**](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/Vector_Embeddings.ipynb)
 
 Import as a new snowflake notebook.  Add it to the BUILD.UK.NOTEBOOKS schema and follow the instructions provided in the notebook.
+
+
+
 
 <!-- ------------------------ -->
 ## Bringing in Met Office Weather

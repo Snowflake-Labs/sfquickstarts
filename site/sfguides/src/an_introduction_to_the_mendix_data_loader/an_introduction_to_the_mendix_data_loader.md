@@ -155,6 +155,7 @@ Navigate to the `Data Ingestion` tab ands click the `Ingest Now` Button. When th
 
 Navigate to the `Data Ingestion` tab and click the `New Task` button to start configuring a task for scheduling ingestion jobs. The following fields are mandatory:
 
+
 - `When should the ingestion task run?` : Choose one of the following options
   - `Custom CRON expression`, If you choose `Custom CRON expression` then the `Custom CRON expression` field is also mandatory.
   - `Every day at 00:00 AM UTC`

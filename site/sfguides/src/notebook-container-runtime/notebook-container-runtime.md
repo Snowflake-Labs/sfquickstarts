@@ -37,7 +37,6 @@ Duration: 2
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 - Paste and the following SQL in the worksheet 
-- Adjust <YOUR_USER> to your user
 - Run all commands to create Snowflake objects
 
 ```sql
@@ -99,20 +98,34 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION pypi_access_integration
 GRANT USAGE ON INTEGRATION allow_all_integration TO ROLE container_runtime_lab_user;
 GRANT USAGE ON INTEGRATION pypi_access_integration TO ROLE container_runtime_lab_user;
 
+USE ROLE container_runtime_lab_user;
+
+CREATE FILE FORMAT IF NOT EXISTS container_runtime_lab.notebooks.csvformat 
+    SKIP_HEADER = 1 
+    TYPE = 'CSV';
+
+-- create external stage with the csv format to stage the diamonds dataset
+CREATE STAGE IF NOT EXISTS container_runtime_lab.notebooks.diamond_assets 
+    FILE_FORMAT = container_runtime_lab.notebooks.csvformat 
+    URL = 's3://sfquickstarts/intro-to-machine-learning-with-snowpark-ml-for-python/diamonds.csv';
+
+CREATE OR REPLACE TABLE CONTAINER_RUNTIME_LAB.NOTEBOOKS.DIAMONDS (
+	CARAT NUMBER(38,2),
+	CUT VARCHAR(16777216),
+	COLOR VARCHAR(16777216),
+	CLARITY VARCHAR(16777216),
+	DEPTH NUMBER(38,1),
+	"TABLE" NUMBER(38,1),
+	PRICE NUMBER(38,0),
+	X NUMBER(38,2),
+	Y NUMBER(38,2),
+	Z NUMBER(38,2)
+);
+
+COPY INTO CONTAINER_RUNTIME_LAB.NOTEBOOKS.DIAMONDS
+FROM @CONTAINER_RUNTIME_LAB.NOTEBOOKS.DIAMOND_ASSETS;
+
 ```
-
-<!-- ------------------------ -->
-## Import Data
-Next, we will upload the diamonds.csv dataset.
-
-- Download diamonds.csv [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/scripts/diamonds.csv)
-- Change role to container_runtime_lab_user
-- In Snowsight, navigate to Data >> Databases and select container_runtime_lab.notebooks 
-- Select Create >> Table >> From File >> Standard in the top right, and upload the diamonds.csv dataset.
-- Add Name of `DIAMONDS`
-- Update columns `row` to `"ROW"` and `table` to `"TABLE"`
-
-![upload-diamonds](assets/upload-diamonds.png)
 
 <!-- ------------------------ -->
 ## Run the Notebook

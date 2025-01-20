@@ -11,28 +11,29 @@ tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpar
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will get an introduction to [Snowflake for Machine Learning](https://www.snowflake.com/en/data-cloud/snowflake-ml/). You will set up your Snowflake and Python environments and build an end to end ML workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs in the Snowpark ML library.
+Through this quickstart guide, you will get an introduction to [Snowflake for Machine Learning](https://www.snowflake.com/en/data-cloud/snowflake-ml/). You will set up your Snowflake and Python environments and build an end to end ML workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs.
 
 ### What is Snowflake ML?
 
 Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
-Capabilities for custom ML include: 
+Capabilities for model development and inference include: 
 - **Snowflake Notebooks** for a familiar, easy-to-use notebook interface that blends Python, SQL, and Markdown
-- **Container Runtime** for distributed compute on CPUs and GPUs from Snowflake Notebooks
-- **Snowpark ML Modeling** for feature engineering and model training with familiar Python frameworks  
+- **Container Runtime** for distributed compute on CPUs and GPUs from Snowflake Notebooks. This quickstart does not showcase container runtime but you can try it with this [intro quickstart](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#4). 
+- **Snowflake ML APIs** for feature engineering and model training with familiar Python frameworks
 - **Snowflake Feature Store** for continuous, automated refreshes on batch or streaming data
-- **Snowflake Model Registry** to manage models and their metadata 
+- **Snowflake Model Registry** to manage models and their metadata, with model serving for inference with CPUs or GPUs
 - **ML Lineage** to trace end-to-end feature and model lineage 
 - **ML Explainability** to better understand the features the model considers most impactful when generating predictions
+- **ML Monitoring** to monitor performance metrics for models running inference in Snowflake
 
 ![snowflake_ml_overview](assets/snowpark_ml_overview.png)
 
-To get started with Snowflake ML, developers can use the Python APIs from the [Snowpark ML library](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index), directly from Snowflake Notebooks (public preview) or downloaded and installed into any IDE of choice, including Jupyter or Hex. 
+To get started with Snowflake ML, developers can use the Python APIs from the [Snowflake ML library](https://docs.snowflake.com/en/developer-guide/snowflake-ml/snowpark-ml), directly from Snowflake Notebooks or downloaded and installed into any IDE of choice, including Jupyter or Hex. 
 
 **Feature Engineering and Preprocessing:** Improve performance and scalability with distributed execution for common scikit-learn preprocessing functions.
 
-**Model Training:** Accelerate model training for scikit-learn, XGBoost and LightGBM models without the need to manually create stored procedures or user-defined functions (UDFs), and leverage distributed hyperparameter optimization.
+**Model Training:** Accelerate model training for scikit-learn, XGBoost and LightGBM models, and leverage distributed hyperparameter optimization.
 
 ![snowpark_ml_modeling_overview](assets/snowpark_ml_modeling_overview.png)
 
@@ -48,12 +49,12 @@ To get started with Snowflake ML, developers can use the Python APIs from the [S
 
 The first batch of algorithms provided in Snowpark ML Modeling is based on [scikit-learn](https://scikit-learn.org/stable/) preprocessing transformations from [sklearn.preprocessing](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.preprocessing  ), as well as estimators that are compatible with those in the scikit-learn, xgboost, and lightgbm libraries.
 
-Learn more about [Snowpark ML Modeling](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling) and [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops).
+Learn more about model development with [Snowflake ML APIs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/snowpark-ml) and deployment with the [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops).
 
 ### What you will learn 
 This quickstart will focus on building a custom ML workflow using the following features: 
-- Snowflake Notebooks, which comes pre-integrated with Snowflake ML capabilities 
-- [Snowpark ML Modeling](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling), which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake.
+- [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks), which comes pre-integrated with Snowflake ML capabilities 
+- [Snowflake ML APIs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling), which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake.
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops), which provides scalable and secure model management of ML models - whether you trained them in Snowflake or another ML platform. Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features. It also includes an [explainability function](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-explainability) based on [Shapley values](https://towardsdatascience.com/the-shapley-value-for-ml-models-f1100bff78d1).
 
 ### Prerequisites
@@ -61,7 +62,7 @@ This quickstart will focus on building a custom ML workflow using the following 
     > aside positive
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python)
-- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for a free trial or use a different role.
+- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for [a free trial](https://signup.snowflake.com/) or use a different role.
 
 ### What You’ll Build 
 - A set of notebooks leveraging Snowflake ML for Python:
@@ -70,6 +71,7 @@ This quickstart will focus on building a custom ML workflow using the following 
     - to train an XGBoost ML model using Snowpark ML estimators
     - to log models and execute batch inference in Snowflake using the Snowflake Model Registry
     - to apply a built-in explainability function to understand model performance 
+    - to manage model metadata and trace machine learning artifacts via Snowflake Datasets and ML Lineage
 
 ![E2E ML Workflow with Snowflake ML](assets/snowflake_ml_e2e.png)
 
@@ -100,23 +102,29 @@ CREATE STAGE IF NOT EXISTS ML_HOL_DB.ML_HOL_SCHEMA.DIAMONDS_ASSETS
 LS @DIAMONDS_ASSETS;
 ```
 
-Now, let's create our first Notebook by importing a `.ipynb` file. First, make sure your current role is SYSADMIN. Then, select the Notebooks tab under the Projects drop-down in the left side-bar:
+Now, let's create our first Notebook by importing a `.ipynb` file. First, make sure your current role is `SYSADMIN`. Then, select the Notebooks tab under the Projects dropdown in the left sidebar:
 
-![Notebook Dropdown](./assets/nb_dropdown.png)
+![Notebook Dropdown](./assets/nb_sidebar.png)
 
 Next, click the gray upload/import .ipynb button, and select [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/0_start_here.ipynb) from your local filesystem:
 
-![Notebook Upload](./assets/nb_import.png)
+![Notebook Upload](./assets/import_nb.png)
 
 Leave the populated notebook name as-is (or change it if you'd like!), and make sure that the location is set to `ML_HOL_DB` and `ML_HOL_SCHEMA`. Lastly, make sure the Notebook warehouse is `ML_HOL_WH`, and click Create:
 
-![Notebook Config](./assets/nb_config.png)
+![Notebook Config](./assets/create_nb.png)
 
-This will create and open the notebook you just uploaded. Follow the instructions at the top of the Notebook to select any necessary packages you might need via the Packages drop-down:
+This will create and open the notebook you just uploaded. 
 
-![Packages](./assets/sample_packages.png)
+Now, upload the provided [environment.yml](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/environment.yml) file.
 
-Then, click `Start` and run the Notebook start to finish! Repeat this process with all three Notebooks to see how easy it is to write Python and SQL code in a single, familiar Notebook interface directly in Snowsight!
+![Environment File Upload](./assets/add_env_file.png)
+
+![Environment File Upload](./assets/upload_env_file.png)
+
+Then, click `Start` and run the Notebook start to finish! 
+
+Repeat this process with all the other Notebooks to see how easy it is to write Python and SQL code in a single, familiar Notebook interface directly in Snowsight!
 
 <!-- ------------------------ -->
 ## Set up the data in Snowflake
@@ -142,21 +150,30 @@ Duration: 15
 
 Open the following notebook in Snowflake Notebooks and run each of the cells: [2_sf_nb_snowflake_ml_model_training_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/2_sf_nb_snowflake_ml_model_training_inference.ipynb)
 
-In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowpark ML Modeling. We also show how to execute batch inference and model explainability through the Snowflake Model Registry.
+In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowflake ML modeling APIs. We also show how to execute batch inference and model explainability through the Snowflake Model Registry.
 
 <!-- ------------------------ -->
-## Conclusion
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake ML, the integrated set of capabilities for end-to-end ML workflows. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code.
+## Advanced MLOps: Managing ML Models from Iteration to Production
+Duration: 15
+
+Open the following notebook in Snowflake Notebooks and run each of the cells: [3_sf_nb_snowpark_ml_adv_mlops.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/3_sf_nb_snowpark_ml_adv_mlops.ipynb)
+
+In this notebook, we will show you how to manage Machine Learning models from experimentation to production using existing (Snowflake ML APIs & Model Registry) and new Snowflake MLOps features:
+- [Snowflake Datasets](https://docs.snowflake.com/en/developer-guide/snowflake-ml/dataset) for creating and managing training data
+- [Snowflake ML Lineage](https://docs.snowflake.com/en/developer-guide/snowflake-ml/ml-lineage) to trace end-to-end data and model lineage 
+
+We will also go more into detail in using the Model Registry API.
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake for Machine Learning through the introduction of native model development and operations capabilities to streamline end to end workflows. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code. You can also manage your models from iteration to production and trace your ML lineage to better understand how machine learning artifacts relate to each other.
 
 For more information, check out the resources below:
 
 ### Related Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python)
-- [Snowpark ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
-- [Getting Started with Data Engineering and ML Using Snowpark](https://quickstarts.snowflake.com/guide/getting_started_with_dataengineering_ml_using_snowpark_python/index.html?index=..%2F..index#0)
-- [Advanced: Snowpark for Python Data Engineering Guide](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
-- [Advanced: Snowpark for Python Machine Learning Guide](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
-- [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
-- [Snowpark for Python Developer Docs](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
+- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
+- [Develop and Manage ML Models with Feature Store and Model Registry](https://quickstarts.snowflake.com/guide/develop-and-manage-ml-models-with-feature-store-and-model-registry/index.html#0)
 
 <!-- ------------------------ -->

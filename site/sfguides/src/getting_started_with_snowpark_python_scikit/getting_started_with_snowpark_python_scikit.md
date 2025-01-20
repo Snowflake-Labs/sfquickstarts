@@ -1,11 +1,11 @@
-author: Varun Khandelwal
+author: Mats Stellwall
 id: getting_started_with_snowpark_python_scikit
 summary: Getting Started with Snowpark for Python with Scikit-learn
 categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, Data Engineering
 
 # Getting Started with Snowpark for Python with Scikit-learn
 <!-- ------------------------ -->
@@ -18,16 +18,19 @@ Here is a summary of what you will be able to learn in each step by following th
 
 - **Setup Environment**: Use write_pandas and tables to ingest raw data from local file system into Snowflake
 - **Data Engineering**: Leverage Snowpark for Python DataFrames to perform data transformations such as group by, aggregate, pivot, and join to prep the data for downstream applications.
-- **Machine Learning using scikit learn**: Prepare data and run ML Training in Snowflake using scikit-learn and deploy the model as a Snowpark User-Defined-Function (UDF) using the integrated Anaconda package repository.
+- **Machine Learning using scikit learn**: Prepare data and run ML Training in Snowflake using scikit-learn and log the model to Snowflake Model Registry.
 
 In case you are new to some of the technologies mentioned above, here’s a quick summary with links to documentation.
 
 ### What is Snowpark?
 
-It allows developers to query data and write data applications in languages other than SQL using a set of APIs and DataFrame-style programming constructs in Python, Java, and Scala. These applications run on and take advantage of the same distributed computation on Snowflake's elastic engine as your SQL workloads. Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
+The Snowpark API provides an intuitive library for querying and processing data at scale in Snowflake. Using a library for any of three languages, you can build applications that process data in Snowflake without moving data to the system where your application code runs, and process at scale as part of the elastic and serverless Snowflake engine.
+
+Snowflake currently provides Snowpark libraries for three languages: Java, Python, and Scala.
 
 ![Snowpark](assets/snowpark_python0.png)
 
+Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 ### What is scikit-learn?
 
@@ -35,36 +38,30 @@ It is one of the most popular [open source](https://scikit-learn.org/) machine l
 
 ### What You’ll Learn
 
-    1. How to ingest data in Snowflake
-    
-    2. How to do data explorations and understanding with Pandas and visualization
-    
-    3. How to encode the data for algorithms to use
-    
-    4. How to normalize the data
-    
-    5. How to training models with Scikit-Learn and Snowpark (including using Snowpark Optimized warehouse)
-    
-    6. How to evaluate models for accuracy
-    
-    7. How to deploy models on Snowflake
+* How to ingest data in Snowflake
+* How to do data explorations and understanding with Pandas and visualization
+* How to encode the data for algorithms to use
+* How to normalize the data
+* How to training models with Scikit-Learn and Snowpark (including using Snowpark Optimized warehouse)
+* How to evaluate models for accuracy
+* How to deploy models on Snowflake
 
 ### Prerequisites
 
 - A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
 - You will need to accept acknowledge the Snowflake Third Party Terms by following Anaconda link in previous step.
-- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
+- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 
 <!-- ------------------------ -->
 ## Clone GitHub Repository
 
 Duration: 8
 
-This section covers cloning of the GitHub repository and creating a Python 3.8 environment.
+This section covers cloning of the GitHub repository and creating a Python 3.10 environment.
 
 1) Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-snowpark-scikit-learn)
 
-2) Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.8)*.
+2) Download the miniconda installer from [https://conda.io/miniconda.html](https://conda.io/miniconda.html). *(OR, you may use any other Python environment with Python 3.10)*.
 
 3) Open `environment.yml` and paste in the following config:
 
@@ -74,20 +71,15 @@ channels:
   - https://repo.anaconda.com/pkgs/snowflake/
   - nodefaults
 dependencies:
-  - python=3.8
+  - python=3.10
   - pip
-  - snowflake-snowpark-python
+  - snowflake-snowpark-python==1.23.0
+  - snowflake-ml-python==1.6.4
+  - snowflake==1.0.0
   - ipykernel
-  - pyarrow
-  - numpy
-  - scikit-learn
-  - pandas
-  - joblib
-  - cachetools
   - matplotlib
   - seaborn
 ```
-
 
 4) From the root folder, create conda environment by running below command.
 
@@ -176,11 +168,11 @@ The Notebook linked below covers the following machine learning tasks.
 
 1) Establish secure connection from Snowpark Python to Snowflake
 2) Get features and target from Snowflake table into Snowpark DataFrame
-3) Create Snowflake stage to save ML model and UDF's
+3) Create Snowflake stage for the [Python Stored Procedure](https://docs.snowflake.com/en/sql-reference/stored-procedures-python) code
 4) Prepare features using scikit learn for model training
 5) Create a [Python Stored Procedure](https://docs.snowflake.com/en/sql-reference/stored-procedures-python) to deploy model training code on Snowflake
 6) Optinally use Snowpark optimised warehouse for model training
-7) Create Vectorized (aka Batch) [Python User-Defined Functions (UDFs)](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udfs) for inference on new data points for online and offline inference respectively.
+7) Log the model to [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview) and use it for inference on new data points
 
 ---
 

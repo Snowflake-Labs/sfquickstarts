@@ -29,6 +29,8 @@ You can write and execute code, visualize results, and tell the story of your an
 
 In this guide, we will learn how to get started with your first notebook project!
 
+For ML workloads that require flexibility and scalability, Snowflake Notebooks are also available on the [container runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs). These notebooks run on a fully managed container environment with many optimizations for ML workloads including access to CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture, Model Registry integration, and the ability to Leverage a set of preinstalled ML packages or pip install any custom package of choice. Check out this quickstart for an introductory overview of Snowflake Notebooks on container runtime.
+
 ### Prerequisites
 
 - A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) account, if required.
@@ -273,6 +275,7 @@ TODO: (fix the error that says worksheet in the ipynb markdown)
 Here are some resources to learn more about Snowflake Notebooks:
 
 * [Documentation](https://docs.snowflake.com/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-about)
+* [Container Runtime Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
 * [Github Demo Repo](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main)
 * [YouTube Playlist](https://www.youtube.com/playlist?list=PLavJpcg8cl1Efw8x_fBKmfA2AMwjUaeBI)
 * [Solution Center](https://developers.snowflake.com/solutions/?_sft_technology=notebooks)

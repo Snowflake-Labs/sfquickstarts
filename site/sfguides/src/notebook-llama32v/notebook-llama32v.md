@@ -27,6 +27,7 @@ This Quickstart will guide you through the steps of running Snowflake Notebooks 
 - Access to run Notebooks in Snowflake
 - Foundational knowledge of Data Science workflows
 - Requested access to the Meta models at Hugging Face
+- Hugging Face User Access Token (Make sure it's _read_ only, not _finegrained_)
 - Running the 11b version of the model requires > 30GB of GPU memory
 - You make need to get permsissions to access the medium GPU compute pool
 
