@@ -37,7 +37,7 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
 
 
 ### Lab Flow
-Here is a flow of what you will achieve if you complete all steps in the quickstart.
+Here is a flow of what you will achieve if you complete all steps in the quickstart.  You will be reminded of where you are at key intervals.
 
   ![alt text](assets/flow1.png)
 
@@ -100,6 +100,7 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 ## Snowflake Marketplace
 Duration: 2
 
+![alt text](assets/flow0.png)
 Once logged in go to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
 
 ![alt text](assets/I002.png)
@@ -779,7 +780,7 @@ We now have all of this joined together - in the next step we will use an LLM to
 ## Use Cortex to write relevant correspondence
 Duration: 10
 
-![alt text](assets/flow5.png)
+![alt text](assets/flow6.png)
 
 Now that we can see where the events impact stations and restaurants, let's  use an LLM to craft a letter to the MP to notify them of these effects.  To do this, we need to put all the information needed into objects to  easily pass them through the cortex function.
 
@@ -920,7 +921,7 @@ That's it. If you wish, you can download the completed python code from here by 
 ## Generate Synthetic Incidents
 Duration: 10
 
-![alt text](assets/flow6.png)
+![alt text](assets/flow7.png)
 
 This streamlit application will generate events occurring during the time of the events, which will involve the train stations and the restaurants.  
 
@@ -1267,7 +1268,7 @@ Finally we will create a Streamlit app which adds this additional information to
 <!-- ------------------------ -->
 ## Visualise the data 
 
-![alt text](assets/flow7.png)
+![alt text](assets/flow9.png)
 
 ![alt text](assets/streamlit1/st005.png)
 
@@ -1550,7 +1551,7 @@ st.table(social_media.drop('V'))
 ## Use Cortex to Embed Generated Text and create a Search Service
 Duration: 10
 
-![assets](assets/flow8.png)
+![assets](assets/flow9.png)
 
 During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.  Once you have explored the principles of how text searching works, you will create a Cortex Search Service.
 
@@ -1568,7 +1569,7 @@ Import as a new snowflake notebook.  Add it to the BUILD.UK.NOTEBOOKS schema and
 Duration: 10
 ### Met office Weather
 
-![assets](assets/flow9.png)
+![alt text](assets/flow10.png)
 Now we will leverage the weather data to understand the weather forecasts for each Event.  This time we will import a notebook which has already been created.
 
 - Go to the Home page and select Notebooks
