@@ -18,6 +18,8 @@ Already, there are so many location specific datasets available within the **Sno
 
 **Snowflake Cortex LLMs** - are used to save the analyst, engineer or even BI developer time - which can help a multitude of tasks - from improving the readability of location tooltips, to the generation or synthetic data for testing purposes.
 
+
+
 In this quickstart, we will be leveraging the the tools within Snowflake to:
 
   - **Visualise** the location of train stations within the north of england and understand where nearby restaurants are located
@@ -32,6 +34,14 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
     * Synthezised events events which might happen and will impact services
 
   - **Visualise**  the data using Streamlit
+
+
+### Lab Flow
+Here is a flow of what you will achieve if you complete all steps in the quickstart.
+
+  ![alt text](assets/flow1.png)
+
+
 
 ### Prerequisites
 - A new free trial of Snowflake in **a region of you choice***.
@@ -123,6 +133,8 @@ You will have access to the dataset for a period of **14 days**
 
 ## Create your First map Layer
 Duration: 5
+
+![alt text](assets/flow2.png)
 
 In Snowsight, go back to the home page and select **Projects** » **Notebooks**.
 
@@ -470,6 +482,7 @@ We have now rendered a multi layer map which overlays restaurants and northern r
 ## Use Cortex to describe the Train Stations
 Duration: 10
 
+![alt text](assets/flow3.png)
 At the moment we only have very basic train station information.  Lets add more info from the shared dataset:
 
 Copy and paste the following code into a new cell.  Name the cell **station_attributes**  
@@ -616,6 +629,7 @@ Hover over the map and checked the updated tool tips.
 
 Duration: 10
 
+![alt text](assets/flow4.png)
 Any location may be impacted by key events.  Let's try and pinpoint out any key event happening in the north of England and how restaurants and train stations may be impacted by this.  We do not have specific event data for this, so in this case, we will leverage Snowflake Cortex to suggest events that may impact this area.  
 
 
@@ -765,6 +779,8 @@ We now have all of this joined together - in the next step we will use an LLM to
 ## Use Cortex to write relevant correspondence
 Duration: 10
 
+![alt text](assets/flow5.png)
+
 Now that we can see where the events impact stations and restaurants, let's  use an LLM to craft a letter to the MP to notify them of these effects.  To do this, we need to put all the information needed into objects to  easily pass them through the cortex function.
 
 Create an object which links all affected restaurants to the respective MP.  We are also including the distance from the event for each restaurant.  
@@ -901,8 +917,10 @@ st.write(letterspd.LETTER.iloc[selected_letter])
 That's it. If you wish, you can download the completed python code from here by exporting it as .ipynb that could be used to import it into a new notebook. 
 
 <!-- ------------------------ -->
-## Generate Synthetic Incidents and Visualize
+## Generate Synthetic Incidents
 Duration: 10
+
+![alt text](assets/flow6.png)
 
 This streamlit application will generate events occurring during the time of the events, which will involve the train stations and the restaurants.  
 
@@ -1249,6 +1267,8 @@ Finally we will create a Streamlit app which adds this additional information to
 <!-- ------------------------ -->
 ## Visualise the data 
 
+![alt text](assets/flow7.png)
+
 ![alt text](assets/streamlit1/st005.png)
 
 You will now be creating another streamlit app in order to visualise the results.
@@ -1530,6 +1550,7 @@ st.table(social_media.drop('V'))
 ## Use Cortex to Embed Generated Text and create a Search Service
 Duration: 10
 
+![assets](assets/flow8.png)
 
 During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.  Once you have explored the principles of how text searching works, you will create a Cortex Search Service.
 
@@ -1547,6 +1568,7 @@ Import as a new snowflake notebook.  Add it to the BUILD.UK.NOTEBOOKS schema and
 Duration: 10
 ### Met office Weather
 
+![assets](assets/flow9.png)
 Now we will leverage the weather data to understand the weather forecasts for each Event.  This time we will import a notebook which has already been created.
 
 - Go to the Home page and select Notebooks
