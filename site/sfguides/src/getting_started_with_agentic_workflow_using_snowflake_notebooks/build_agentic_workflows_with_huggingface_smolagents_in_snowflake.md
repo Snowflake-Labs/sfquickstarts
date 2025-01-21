@@ -1,4 +1,4 @@
-id: getting_started_with_agentic_workflow_using_snowflake_notebooks
+id: build-agentic-workflows-with-huggingface-smolagents-in-snowflake
 summary: This guide outlines the process for creating agentic workflow in Snowflake Notebook on Container Runtime.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
-# Getting Started with Agentic Workflow in Snowflake Notebooks
+# Build Agentic Workflows with HuggingFace smolagents in Snowflake
 <!-- ------------------------ -->
 
 ## Overview
@@ -47,11 +47,11 @@ Agentic workflow using smolagents library and Snowflake Cortex in Snowflake Note
 
 Duration: 10 
 
-**Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-agentic-workflow-using-snowflake-notebooks/blob/main/setup.sql) to execute all statements in order from top to bottom.
+**Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
 **Step 2.** In Snowsight, switch your user role to `DASH_CONTAINER_RUNTIME_ROLE`.
 
-**Step 3.** Click on [huggingface_smolagents_notebook_app.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-agentic-workflow-using-snowflake-notebooks/blob/main/huggingface_smolagents_notebook_app.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+**Step 3.** Click on [huggingface_smolagents_notebook_app.ipynb](https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake/blob/main/huggingface_smolagents_notebook_app.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 
 **Step 4.** In Snowsight:
 
@@ -84,7 +84,7 @@ Duration: 15
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-Here's the code walkthrough of the [huggingface_smolagents_notebook_app.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-agentic-workflow-using-snowflake-notebooks/blob/main/huggingface_smolagents_notebook_app.ipynb) notebook that you downloaded and imported into your Snowflake account.
+Here's the code walkthrough of the [huggingface_smolagents_notebook_app.ipynb](https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake/blob/main/huggingface_smolagents_notebook_app.ipynb) notebook that you downloaded and imported into your Snowflake account.
 
 **Cell 1:** Install **smolagents** library
 
@@ -122,5 +122,5 @@ Congratulations! You've successfully created agentic workflow using smolagents l
 
 ### Related Resources
 
-- [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-agentic-workflow-in-snowflake-notebooks)
+- [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake)
 - [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
