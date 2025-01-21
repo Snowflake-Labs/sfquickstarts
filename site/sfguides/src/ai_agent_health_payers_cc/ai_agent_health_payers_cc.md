@@ -1,6 +1,6 @@
 author: Sikha Das
 id: ai_agent_health_payers_cc
-summary: Building an AI Agent for Healthcare Payers Contact Center Using Snowflake Cortex, Notebooks, and ML Classification
+summary: Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification
 categories: Getting-Started, data-science-&-ml
 environments: web
 status: Published 
