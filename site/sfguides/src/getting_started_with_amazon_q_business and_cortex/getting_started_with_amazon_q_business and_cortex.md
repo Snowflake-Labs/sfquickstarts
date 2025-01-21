@@ -1,13 +1,13 @@
 author: marzillo-snow
-id: getting_started_with_amazon_q_for_business and_cortex
-summary: This is a quickstart for using Amazon Q for Business with Cortex
+id: getting_started_with_amazon_q_business and_cortex
+summary: This is a quickstart for using Amazon Q Business with Cortex
 categories: Getting-Started, data-science, data-engineering, AWS, cortex, genai, Amazon, Q, search, LLM, copilot
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Copilot
 
-# Getting Started with Amazon Q for Business and Cortex
+# Getting Started with Amazon Q Business and Cortex
 <!-- ------------------------ -->
 ## Overview 
 Duration: 15
@@ -33,9 +33,9 @@ The end-to-end workflow will look like this:
 1. Ingest .pdf files into Snowflake Stage.
 2. Using the PARSE_DOCUMENT() and the SPLIT_TEXT_RECURSIVE_CHARACTER() the raw pdf files are converted to a chunked field in a table.
 3. The Cortex Search service is built on the chunked data.
-4. Amazon Q for Business is connected to the Cortex Search service with a plugin using oauth authentication.
-5. Users can use Amazon Q for Business with Cortex securely and seamlessly.
-6. Along with the Cortex Plugin users can access other AWS data and services through Amazon Q for Business
+4. Amazon Q Business is connected to the Cortex Search service with a plugin using oauth authentication.
+5. Users can use Amazon Q Business with Cortex securely and seamlessly.
+6. Along with the Cortex Plugin users can access other AWS data and services through Amazon Q Business
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account with Cortex Search.
@@ -130,10 +130,10 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE PUMP_SEARCH_SERVICE
 
 Notice how we're setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we're setting up the service so that additional filters can be used on the attribute "DOC".
 
-## Set Up Q for Business
+## Set Up Q Business
 Duration: 5
 
-Head to you AWS console search "Amazon Q for Business" then select the orange button "Create Application" then accept all of the default/recommended settings for creating your application, make sure that you have at least one user created for the app with a Q Business Pro subscription the select Create.
+Head to you AWS console search "Amazon Q Business" then select the orange button "Create Application" then accept all of the default/recommended settings for creating your application, make sure that you have at least one user created for the app with a Q Business Pro subscription the select Create.
 
 ![](assets/qapp.png)
 
@@ -141,11 +141,11 @@ Head to you AWS console search "Amazon Q for Business" then select the orange bu
 ## Setting up OAuth
 Duration: 10
 
-From the Q for Business Application Details screen copy the "Deployed URL" and save it to a notebook.
+From the Q Business Application Details screen copy the "Deployed URL" and save it to a notebook.
 
 ![](assets/qappurl.png)
 
-Next we will run the code which creates a security integration in Snowflake that we will use to authenticate with Q for Business. The only change you will have to make to this code is replacing the value of the "Deployed URL" from the Q App in the value <Deployed URL> below to complete the OAUTH_REDIRECT_URI value.
+Next we will run the code which creates a security integration in Snowflake that we will use to authenticate with Q Business. The only change you will have to make to this code is replacing the value of the "Deployed URL" from the Q App in the value <Deployed URL> below to complete the OAUTH_REDIRECT_URI value.
 
 ```sql
 --create custom oauth
@@ -177,7 +177,7 @@ Also, make note of your Snowflake url. You can do this by going to your alias in
 ## Create Cortex Plugin
 Duration: 15
 
-Head back to your Q for Business application and select "Plugins" under "Actions" on the left side. Select the orange "Add Plugin" button then 
+Head back to your Q Business application and select "Plugins" under "Actions" on the left side. Select the orange "Add Plugin" button then 
 "Create Custom Plugin" in the top right.
 
 ![](assets/createplugin.png)
@@ -278,7 +278,7 @@ components:
 
 ![](assets/secrets.png)
 
-Last, select "Create and use a new service role" to quickly create and use a role that has permissions to use Q for Business.
+Last, select "Create and use a new service role" to quickly create and use a role that has permissions to use Q Business.
 
 IF you elect to use an existing role you will have to add the below permission to that role.
 
@@ -314,7 +314,7 @@ In the chat select "plugin" at the bottom and select the plugin we created for c
 
 - What is the part description for part number G4204-68741?
 
-Q for business will likely attempt to create query,  retype (or re-paste) the question in the query window and select "Submit".
+Q Business will likely attempt to create query,  retype (or re-paste) the question in the query window and select "Submit".
 
 You will be asked to authorize and use the browser to authorize one time.
 
@@ -323,11 +323,11 @@ Once complete Q will send the request to the plugin and you will get an answer!
 ![](assets/qanswer.png)
 
 You can check the answer against the manuals, it should match! Test out other prompts including the examples below:
-- Using the cortex search plugin what are the pump head assembly parts?
-- Using the cortex search plugin should I use a refurbished pump head for maintenance and repair OR disassemble a pump head?
-- Using the cortex search plugin what are the high level steps for Replacing the Heat Exchanger?
-- Using the cortex search plugin what are best ways to prevent the pump from damage?
-- Using the cortex search plugin what are spare parts that are included with this pump?
+- What are the pump head assembly parts?
+- Should I use a refurbished pump head for maintenance and repair OR disassemble a pump head?
+- What are the high level steps for Replacing the Heat Exchanger?
+- What are best ways to prevent the pump from damage?
+- What are spare parts that are included with this pump?
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
