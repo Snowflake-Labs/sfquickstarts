@@ -48,6 +48,8 @@ GRANT ROLE TASK_GRAPH_ROLE to USER <YOUR_USER>;
 GRANT EXECUTE TASK ON ACCOUNT TO ROLE TASK_GRAPH_ROLE;
 GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE TASK_GRAPH_ROLE;
 GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE TASK_GRAPH_ROLE;
+GRANT DATABASE ROLE SNOWFLAKE.USAGE_VIEWER TO ROLE TASK_GRAPH_ROLE;
+GRANT DATABASE ROLE SNOWFLAKE.OBJECT_VIEWER TO ROLE TASK_GRAPH_ROLE;
 
 -- create our virtual warehouse
 CREATE OR REPLACE WAREHOUSE TASK_GRAPH_WH AUTO_SUSPEND = 60;
@@ -97,7 +99,28 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAP
 ## View Task Graph
 Duration: 5
 
-To view the task graph you just created go to Data > Task Graph Database > Task Graph Schema > Tasks > Click on Demo_Task_1. From here, click Graph on the top toolbar to view the graph. From the task graph you can perform several tasks:
+To view the task graph in Snowsight, go to Monitoring > Task History. Task History opens to Task Graph Runs which shows an overview of task graph execution in the account along with successful and failed task metrics. 
+
+![task-history](assets/task-history.png)
+
+The Task Graphs tab has high level information on task graph runs including:
+- Last run status: you can view the status of the last task graph run. For unsuccessful task graphs, hover over status to get more details and optionally click to jump to a failed task.  
+- Previous Runs: at a glance, you can view the status of graph runs over time.
+- More actions: click the three dots on the right of a row brings additional actions to run, retry, or suspend the task graph or edit the root task. Let's edit the root taks to view how parameter changes impact the task graph. Click edit root task > Config tab and change RUNTIME_MULTIPLIER from 5 to 10. Then rerun the graph by clicking Run task graph and see how the task graph duration changes. 
+
+![edit-task](assets/edit-task.png)
+
+Click the DEMO_TASK_1 entry in the list of task graphs to view the task graph. In addition to viewing the task graph, you can review a table describing which tasks ran, the start time of each task, the duration of each task run, the status of each task, and a timeline representing the sequence of task runs. Each task displays a status, such as Succeeded, Failed, Skipped, Suspended, Cancelled, or Did not run, along with a corresponding color. You can hover over the status of failed, skipped, suspended, and cancelled tasks for more information and jump into the failed task details. With the timeline, you can quickly determine why a task graph run was slow, and which long-running task might have delayed the start of a dependent task.
+
+For each task in the table, you can select the … more menu to open the query ID for the task in a worksheet, or open the query profile.
+
+![task-dag](assets/task-dag.png)
+
+Navigate back to the Task History activity in Snowsight. Click the Task Run tab to see a full list of individual task runs containing information such as status, return value, and duration. 
+
+![task-runs](assets/task-runs.png)
+
+You can also view the task graph from your database. Navigate to Data > Task Graph Database > Task Graph Schema > Tasks > Click on Demo_Task_1. From here, click Graph on the top toolbar to view the graph. From the task graph you can perform several tasks:
 
 - View the definition and configuration of the task from the right sidebar 
 - Suspend or resume Tasks by clicking the three dots in the top right
@@ -105,17 +128,17 @@ To view the task graph you just created go to Data > Task Graph Database > Task 
 
 ![task-graph-1](assets/task-graph.png)
 
-You can also find the task graph in the Task History section of Snowsight. From Snowsight, go to Monitoring > Task History. Task history opens to Task Graph Runs which shows an overview of task graph execution along with successful and failed task metrics. Click the Task Run tab to see a full list of individual task runs containing information such as status, return value, and duration. Note that data may take 45 minutes to show after a task graph run. 
-
-![task-history](assets/task-history.png)
-
-Clicking on a task run from the Task Graph Run list will take you to the associated task graph. On the task graph, each task displays a status, such as Succeeded, Failed, Skipped, Suspended, Cancelled, or Did not run, along with a corresponding color. You can hover over the status of failed, skipped, suspended, and cancelled tasks for more information.
-
-In addition to the task graph, you can review a table describing which tasks ran, the start time of each task, the duration of each task run, the status of each task, and a timeline representing the sequence of task runs. With the timeline, you can quickly determine why a task graph run was slow, and which long-running task might have delayed the start of a dependent task.
-
-For each task in the table, you can select the … more menu to open the query ID for the task in a worksheet, or open the query profile.
-
-![task-dag](assets/task-dag.png)
+<!-- ------------------------ -->
+## Cleanup
+Run the sql script below to remove all objects created in this quickstart from your account. 
+```sql 
+USE ROLE TASK_GRAPH_ROLE;
+DROP DATABASE TASK_GRAPH_DATABASE;
+USE ROLE ACCOUNTADMIN;
+DROP WAREHOUSE TASK_GRAPH_WH;
+DROP ROLE TASK_GRAPH_ROLE;
+DROP INTEGRATION GITHUB_PUBLIC;
+```
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
