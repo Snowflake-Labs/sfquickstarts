@@ -372,7 +372,7 @@ $ snow git fetch quickstart_common.public.quickstart_repo
 | Branch | dev  | FORCED |
 +------------------------+
 
-$ snow git execute @quickstart_common.public.quickstart_repo/branches/dev/steps/0[134]_*
+$ snow git execute '@quickstart_common.public.quickstart_repo/branches/dev/steps/0[134]_*'
 SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/01_setup_snowflake.sql
 SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/03_harmonize_data.py
 SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/04_orchestrate_jobs.sql
