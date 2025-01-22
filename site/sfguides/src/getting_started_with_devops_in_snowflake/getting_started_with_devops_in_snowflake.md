@@ -468,8 +468,8 @@ In GitHub, click on the “Settings” tab near the top of the page. From the Se
             <td>myusername</td>
         </tr>
         <tr>
-            <td>SNOWFLAKE_PASSWORD</td>
-            <td>mypassword</td>
+            <td>SNOWFLAKE_PRIVATE_KEY</td>
+            <td>contents of private key file (follow <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth">this guide</a> to setup key-pair auth)</td>
         </tr>
     </tbody>
 </table>
