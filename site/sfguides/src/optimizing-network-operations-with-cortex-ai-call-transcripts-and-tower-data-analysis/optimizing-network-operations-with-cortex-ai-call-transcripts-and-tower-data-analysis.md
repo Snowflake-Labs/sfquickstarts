@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Apps, GenAI, Cortex, Cortex Analyst, Streamlit
 
-# Optimizing Network Operations with Cortex AI - Call Transcripts and Tower Data Analysis
+# Optimizing Network Operations with Snowflake Cortex AI
 
 ## Overview
 Duration: 1
