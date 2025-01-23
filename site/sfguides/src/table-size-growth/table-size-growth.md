@@ -1,13 +1,13 @@
 author: Chanin Nantasenamat
 id: table-size-growth
-summary: Learn how to monitor and analyze table storage growth trends using Snowflake Notebooks with Streamlit integration.
+summary: Learn how to monitor and analyze table storage growth trends in Snowflake Notebooks.
 categories: getting-started, audit, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowflake, Notebooks, Streamlit, Storage Monitoring, SQL
 
-# Monitoring Table Size Growth in Snowflake Notebooks
+# Monitor Table Size Growth in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
@@ -34,15 +34,15 @@ An interactive notebook that helps monitor table storage growth and analyze quer
 ## Setup
 Duration: 5
 
-Firstly, to follow along with this quickstart, you can download the [pre-made notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Monitoring_Table_Size_with_Streamlit) from the `Snowflake-Labs`/`snowflake-demo-notebooks` GitHub repo.
+Firstly, to follow along with this quickstart, you can click on [Monitoring_Table_Size_with_Streamlit.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Monitoring_Table_Size_with_Streamlit/Monitoring_Table_Size_with_Streamlit.ipynb) to download the Notebook from GitHub.
 
 Snowflake Notebooks comes pre-installed with essential Python libraries for data analysis, including Numpy, Pandas, and Streamlit. No additional package installation is required for this tutorial.
 
 <!-- ------------------------ -->
-## Identifying Large Tables
+## Identify Large Tables
 Duration: 10
 
-### Querying Top Tables
+### Query Top Tables
 Execute the following SQL to identify the largest tables:
 
 ```sql
@@ -68,7 +68,7 @@ LIMIT 100;
 
 Note: The above SQL cell is named `sql_top_tables`.
 
-### Converting to Pandas DataFrame
+### Convert to Pandas DataFrame
 Here, we'll easily convert the SQL output to a Pandas DataFrame like so:
 
 ```python
@@ -82,10 +82,10 @@ The returned output is shown below:
 ![image](assets/img01.PNG)
 
 <!-- ------------------------ -->
-## Analyzing Query Patterns
+## Analyze Query Patterns
 Duration: 10
 
-### Creating Interactive Table Selection
+### Create Interactive Table Selection
 Let's now create a text box for accepting the table path.
 
 ```python
@@ -98,7 +98,7 @@ From the first column of the above table, we'll copy the path to a table of our 
 
 ![image](assets/img02.PNG)
 
-### Analyzing Query Performance
+### Analyze Query Performance
 Let's now pass that variable into a SQL query so we can grab query analytics on this table. Note that we'll name the cell to `sql_most_expensive_queries_on_table`.
 
 ```sql
@@ -143,10 +143,10 @@ After converting to a Pandas DataFrame, we'll stylize this via `st.dataframe()` 
 Make note that the above cell is named `py_visualization`, which we'll make reference to in this tutorial.
 
 <!-- ------------------------ -->
-## Tracking User Interactions
+## Track User Interactions
 Duration: 10
 
-### Identifying Active Users
+### Identify Active Users
 Let's say we want to take our top most expensive query and turn it into a materialization. Who will be the users who are most likely to be impacted by our activities? 
 
 To find out, we're going to grab the list of users who queried our table of interest in the last 90 days as well as the users who have executed the expensive query. We can then contact them when we make an update and tell them about improvements we made!
