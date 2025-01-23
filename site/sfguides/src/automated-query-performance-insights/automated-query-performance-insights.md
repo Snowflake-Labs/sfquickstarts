@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: SQL, Performance Optimization, Query Analysis, Snowflake, Data Engineering
 
-# Analyzing Query Performance in Snowflake Notebooks
+# Analyze Query Performance in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
@@ -36,10 +36,10 @@ Firstly, fire up your Snowflake Notebook by clicking on `Projects` > `Notebooks`
 
 Secondly, for forthcoming SQL queries mentioned here after, you can enter them into the SQL cell to run the queries.
 
-Alternatively, you can download the [pre-made notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Query_Performance_Insights) from the `Snowflake-Labs`/`snowflake-demo-notebooks` GitHub repo and follow along.
+Firstly, to follow along with this quickstart, you can click on [Automated_Query_Performance_Insights_in_Snowflake_Notebooks.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Query_Performance_Insights/Automated_Query_Performance_Insights_in_Snowflake_Notebooks.ipynb) to download the Notebook from GitHub. 
 
 <!-- ------------------------ -->
-## Analyzing Long-Running Queries
+## Analyze Long-Running Queries
 Duration: 5
 
 This query identifies the 50 longest-running queries from the past day:
@@ -71,7 +71,7 @@ Here, I'll specify `'CHANIN_XS'` as this is the warehouse that I typically use a
 ![image](assets/img01.PNG)
 
 <!-- ------------------------ -->
-## Analyzing Query Patterns in Relation to Execution Time
+## Analyze Query Patterns in Relation to Execution Time
 Duration: 5
 
 Group queries by execution time buckets:
@@ -97,7 +97,7 @@ An analysis of the query patterns for my warehouse `'CHANIN_XS'` returned the fo
 ![image](assets/img02.PNG)
 
 <!-- ------------------------ -->
-## Analyzing Query Patterns to Find Repeated Queries
+## Analyze Query Patterns to Find Repeated Queries
 Duration: 5
 
 Identify frequently executed queries:
@@ -119,7 +119,7 @@ Here's the returned output for my frequently executed queries:
 
 ![image](assets/img03.PNG)
 
-## Analyzing Warehouse Load
+## Analyze Warehouse Load
 Duration: 5
 
 Monitor warehouse utilization:
@@ -140,7 +140,7 @@ Results from warehouse utilization is shown below:
 ![image](assets/img04.PNG)
 
 <!-- ------------------------ -->
-## Identifying Long-Running Tasks
+## Identify Long-Running Tasks
 Duration: 5
 
 Track task execution times:
