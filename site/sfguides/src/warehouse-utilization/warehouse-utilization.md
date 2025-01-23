@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowflake, Python, Streamlit, Data Visualization, Cost Optimization
 
-# Building a Warehouse Utilization Analyzer with Snowflake Notebooks and Streamlit
+# Build Warehouse Utilization App in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
