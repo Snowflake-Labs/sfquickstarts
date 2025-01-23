@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Streamlit, Snowflake, Python, Data Analysis, Query Performance
 
-# Building an Interactive Query Performance Analysis App with Streamlit in Snowflake Notebooks
+# Build Interactive Query Performance App in Snowflake
 
 <!-- ------------------------ -->
 ## Overview
@@ -182,7 +182,7 @@ Putting all of these code snippets together, we can build out the interactive qu
 ![image](assets/img02.gif)
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Duration: 5
 
 Congratulations! You've successfully built an interactive query performance analysis application using Streamlit within Snowflake Notebooks. This tool will help you identify optimization opportunities in your SQL queries through interactive data exploration.
