@@ -158,7 +158,7 @@ The returned output for task execution time is shown below:
 ![image](assets/img05.PNG)
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Duration: 5
 
 Congratulations! You've successfully learned how to analyze and optimize query performance in Snowflake using SQL queries. These analytical tools will help you identify bottlenecks and improve your data operations efficiency.
@@ -169,7 +169,6 @@ Congratulations! You've successfully learned how to analyze and optimize query p
 - Monitor warehouse performance
 
 ### Related Resources
-
 Articles:
 - [Exploring Query Execution Times](https://docs.snowflake.com/en/user-guide/performance-query-exploring)
 - [Account Usage](https://docs.snowflake.com/en/sql-reference/account-usage)
