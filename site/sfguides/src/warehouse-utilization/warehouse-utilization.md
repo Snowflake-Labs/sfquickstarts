@@ -1,6 +1,6 @@
 author: Chanin Nantasenamat
 id: warehouse-utilization
-summary: Learn how to create an interactive heatmap visualization of Snowflake warehouse utilization patterns using Snowflake Notebooks and Streamlit.
+summary: Learn how to create an interactive heatmap visualization of Snowflake warehouse utilization patterns in Snowflake Notebooks and Streamlit.
 categories: getting-started, audit, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
@@ -31,15 +31,15 @@ An interactive dashboard featuring a heatmap visualization of warehouse usage pa
 ## Setup
 Duration: 5
 
-Firstly, to follow along with this quickstart, you can download the [pre-made notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Warehouse_Utilization_with_Streamlit) from the `Snowflake-Labs`/`snowflake-demo-notebooks` GitHub repo.
+Firstly, to follow along with this quickstart, you can click on [Warehouse_Utilization_with_Streamlit.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Warehouse_Utilization_with_Streamlit/Warehouse_Utilization_with_Streamlit.ipynb) to download the Notebook from GitHub. 
 
 Notebooks comes pre-installed with common Python libraries for data science and machine learning, including numpy, pandas, matplotlib, and more! For this particular use case, there's no further library to add to the working environment. If you need additional packages, use the Packages dropdown on the top right to add them to your notebook.
 
 <!-- ------------------------ -->
-## Retrieving Warehouse Data
+## Retrieve Warehouse Data
 Duration: 8
 
-### Writing the Query
+### Write the Query
 First, we'll query the warehouse utilization data available from `SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_LOAD_HISTORY`:
 
 ```sql
@@ -72,10 +72,10 @@ Note: The above Python cell is named `py_dataframe`.
 ![image](assets/img01.png)
 
 <!-- ------------------------ -->
-## Creating an Interactive Interface
+## Create an Interactive Interface
 Duration: 8
 
-### Building the Slider Widget
+### Build the Slider Widget
 Let's create an interactive slider using Streamlit. This would allow users to select the number of days to analyze, which would filter the DataFrame. 
 
 Finally, we'll calculate the total warehouse load (`TOTAL_LOAD`) and format the hour display (`HOUR_DISPLAY`) for each record.
@@ -112,10 +112,10 @@ The interactive interface that we've created using Streamlit is shown below alon
 ![image](assets/img02.png)
 
 <!-- ------------------------ -->
-## Visualizing Usage Patterns
+## Visualize Usage Patterns
 Duration: 8
 
-### Creating the Heatmap
+### Create the Heatmap
 Finally, we're creating a heatmap using Altair. 
 
 The heatmap shows the warehouse usage pattern across different hours of the day. Color intensity represents the total load and interactive tooltips showing detailed metrics for each cell.
