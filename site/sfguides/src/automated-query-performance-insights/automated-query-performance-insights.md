@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: SQL, Performance Optimization, Query Analysis, Snowflake, Data Engineering
 
-# Analyzing Query Performance in Snowflake
+# Analyzing Query Performance in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
