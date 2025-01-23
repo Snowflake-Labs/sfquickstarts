@@ -167,7 +167,7 @@ Here's the heatmap displaying the warehouse usage patterns:
 ![image](assets/img03.png)
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Duration: 5
 
 Congratulations! You've successfully built an interactive warehouse utilization app that helps to identify usage patterns and optimization opportunities. This tool will help you make data-driven decisions about warehouse sizing and scheduling.
