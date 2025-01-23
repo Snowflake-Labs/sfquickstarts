@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowflake, Notebooks, Streamlit, Storage Monitoring, SQL
 
-# Monitoring Table Size Growth in Snowflake
+# Monitoring Table Size Growth in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
