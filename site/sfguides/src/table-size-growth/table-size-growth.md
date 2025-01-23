@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Snowflake, Notebooks, Streamlit, Storage Monitoring, SQL
 
-# Monitoring Table Size Growth with Snowflake Notebooks and Streamlit
+# Monitoring Table Size Growth in Snowflake
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
@@ -199,7 +199,7 @@ And the query output is shown below:
 
 ![image](assets/img06.PNG)
 
-## Conclusion
+## Conclusion And Resources
 Duration: 5
 
 Congratulations! You've successfully built an interactive notebook for monitoring table storage growth and analyzing query patterns in Snowflake. This tool will help you make data-driven decisions about storage optimization and query performance improvements.
