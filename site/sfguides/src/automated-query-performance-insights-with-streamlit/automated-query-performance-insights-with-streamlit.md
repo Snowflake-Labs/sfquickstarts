@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Streamlit, Snowflake, Python, Data Analysis, Query Performance
 
-# Build Interactive Query Performance App in Snowflake
+# Build Interactive Query Performance App in Snowflake Notebooks
 
 <!-- ------------------------ -->
 ## Overview
