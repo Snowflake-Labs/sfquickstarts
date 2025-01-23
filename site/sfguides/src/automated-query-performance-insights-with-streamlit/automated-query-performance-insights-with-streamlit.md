@@ -39,7 +39,7 @@ Here are features that we'll implement in the app:
 ## Setup
 Duration: 3
 
-Firstly, you can download the [pre-made notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Query_Performance_Insights_using_Streamlit) from the `Snowflake-Labs`/`snowflake-demo-notebooks` GitHub repo and follow along.
+Firstly, to follow along with this quickstart, you can click on [Build_an_Interactive_Query_Performance_App_with_Streamlit.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Query_Performance_Insights_using_Streamlit/Build_an_Interactive_Query_Performance_App_with_Streamlit.ipynb) to download the Notebook from GitHub.
 
 Snowflake Notebooks comes pre-installed with common Python libraries for data science and machine learning. The following libraries will be used in this tutorial:
 - Snowflake Snowpark
@@ -52,10 +52,10 @@ Snowflake Notebooks comes pre-installed with common Python libraries for data sc
 Select a warehouse that will be used for analysis. Here in this tutorial, I'll be using 'CHANIN_XS' (please replace with your own warehouse name).
 
 <!-- ------------------------ -->
-## Creating the Base Query
+## Create the Base Query
 Duration: 5
 
-### Writing the Performance Query
+### Write the Performance Query
 First, we'll create the SQL query to retrieve query performance data:
 
 ```sql
@@ -79,10 +79,10 @@ LIMIT 50;
 
 
 <!-- ------------------------ -->
-## Building the Streamlit Interface
+## Build the Streamlit Interface
 Duration: 15
 
-### Creating Interactive Widgets
+### Create Interactive Widgets
 Firstly, we'll import the necessary libraries and implement the user interface widgets:
 
 ```python
@@ -133,7 +133,7 @@ df = session.sql(
 df = df[df['QUERY_TEXT'].str.lower().str.startswith(tuple(commands.lower() for commands in sql_command_option))]
 ```
 
-### Displaying Data Visualization
+### Display Data Visualization
 Finally, we'll proceed to adding data visualization to the app:
 
 ```python
