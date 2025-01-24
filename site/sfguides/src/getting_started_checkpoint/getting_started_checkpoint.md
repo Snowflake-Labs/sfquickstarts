@@ -19,25 +19,26 @@ Here is a summary of what you will be able to learn in each step by following th
 
 - **Setup Framework Environment**: Set up of Python environment to run checkpoints
 - **Checkpoints uses**: Uses of collectors and validators
-- **Setup Extension**: Install Snowflake VScode extension and how to work along with the framerwork
-- **Extension View**: How checkpoint look like in the extension and how to run them  
+- **Setup Extension**: Install Snowflake VScode extension and how to work along with Checkpoints framework
+- **Extension View**: Extension view with checkpoints option and how to run them. 
 
 
 ### Prerequisites
 - A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
-- The default connection needs to have a database and a schema. After running the app, a table called SNOWPARK_CHECKPOINTS_REPORT will be created.
+- The default connection needs to have a database and a schema. After running the app, a table called `SNOWPARK_CHECKPOINTS_REPORT` will be created.
 - Python >= 3.9
 - OpenJDK 21.0.2
 - Snowflake CLI version 3.1.0
 - Familiarity with Pyspark and Snowpark
 #### Optional
-- VSCode Snowflake  lastest extension verision.
+- Visual Studio Code
+- Snowflake VSCode extension
 
 ### What You'll Learn
 
-- how to set the enviroment to run the collectors and validators
-- how to collect information from a pyspark dataframe and validate againt a snowflake dataframe
-- how to run the vs code extension
+- How to set the enviroment to run the collectors and validators
+- How to collect information from a pyspark dataframe and validate againt a snowflake dataframe
+- How to use VSCode Snowflake extension with the framework
 
 ### What You'll Need
 
@@ -252,7 +253,7 @@ All data is valid
 ## Setup extension 
 Duration: 2
 
-You can also use snowflake extension in Visual Studio to run and visualize your checkpoint
+You can also use snowflake extension in Visual Studio to run and visualize your Checkpoints
 
 **Step 1.** Download [VSCode](https://code.visualstudio.com/download) in case you don't have it
 
@@ -275,9 +276,7 @@ You can also use snowflake extension in Visual Studio to run and visualize your 
 ![Check](assets/snowpark_checkpoint_enabled.png)
 
 ## Checkpoints View
-As activating the Snowpark Checkpoints flag, you can see ,in Snowflake extension tab, a new display called `SNOWPARK CHECKPOINTS`. There you could find you checkppints by file,
-also two buttons the left one to activate or desactivate all checkpoints and the other to delete all of them. By double clicking each checkpoints in view, it will
-take you to it in file.
+After activating the Snowpark Checkpoints flag, you can see, in the Snowflake extension tab, a new display called `SNOWPARK CHECKPOINTS`. There you can find the checkpoints by file, and also two buttons: the left one to activate or deactivate all checkpoints, and the other to delete all of them. By double-clicking each checkpoint in the view, it will take you to it in the corresponding file.
 
 ![Check](assets/checkpoints_section.png)
 
