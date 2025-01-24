@@ -65,6 +65,7 @@ This part should be straightforward, head to your Bedrock service in AWS and let
 You will also need command line access tokens, so familiarize with the process of generating these credentials from the IAM service and know how to easily copy and paste this for later:
 1. Select the ‘IAM’ service
 2. Find your user and select ‘Create access key’
+(YOU DO NOT NEED TO DO THIS IF YOU ARE USING IAM_ROLE AUTH IN THE STEP AFTER NEXT)
 
 ![](assets/iam_access.png)
 
@@ -72,8 +73,11 @@ You will also need command line access tokens, so familiarize with the process o
 Note: for the purpose of this lab we are using access credentials directly, but for a production setting a more robust approach is recommended.
 4. Click ‘Create access key’ and note down the ‘Access key’ and ‘Secret access key’ values securely (do not share these values).
 Note: if you are using a managed AWS account, the credentials page may look more like the following, in which case you will also need the AWS session token, and should get this value shortly before using the credentials (since they will time out).
+(YOU DO NOT NEED TO DO THIS IF YOU ARE USING IAM_ROLE AUTH IN THE STEP AFTER NEXT)
 
 ![](assets/cl_access.png)
+
+5. Lastly you will have to go the IAM center an ensure your AWS roles has access to utilzie Bedrock models. Please check out [this page](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html) for instructions on enabling an AWS role to have access to use Bedrock models.
 
 <!-- ------------------------ -->
 ## Snowflake Environment
@@ -166,6 +170,197 @@ Now we will work through the below code which will access the purchase data from
 
 The final code runs a sample record through the function we just created to produce a message. Additionally, you can uncomment the final line of code to run the whole table through the function. 
 
+### Option 1: using IAM Roles for auth
+
+Copy and paste the below code into a worksheet and **run it up until the DESC SECURITY INTEGRATION bedrock_security_integration;** line.
+
+```sql
+use role ACCOUNTADMIN;
+use database CUSTOMER_WRAPPED;
+
+--create network rule
+CREATE OR REPLACE NETWORK RULE bedrock_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('bedrock-runtime.<AWS Region - e.g. us-west-2>.amazonaws.com');
+
+--create security integration with aws role arn
+CREATE OR REPLACE SECURITY INTEGRATION bedrock_security_integration
+  TYPE = API_AUTHENTICATION
+  AUTH_TYPE = AWS_IAM
+  ENABLED = TRUE
+  AWS_ROLE_ARN = '<aws role arn>';
+
+--view integration information for trust relationship
+DESC  SECURITY INTEGRATION bedrock_security_integration;
+
+--create secret
+CREATE OR REPLACE SECRET aws_bedrock_access_token
+  TYPE = CLOUD_PROVIDER_TOKEN
+  API_AUTHENTICATION = bedrock_security_integration;
+
+--create external access object
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION bedrock_external_access_integration
+  ALLOWED_NETWORK_RULES = (bedrock_network_rule)
+  ALLOWED_AUTHENTICATION_SECRETS=(aws_bedrock_access_token)
+  ENABLED=true ;
+
+--create function
+CREATE OR REPLACE FUNCTION ask_bedrock(
+  instructions VARCHAR,
+  user_context VARCHAR,
+  model_id VARCHAR
+)
+RETURNS VARCHAR
+LANGUAGE PYTHON
+EXTERNAL_ACCESS_INTEGRATIONS = (bedrock_external_access_integration)
+RUNTIME_VERSION = '3.8'
+SECRETS = ('cred' = aws_bedrock_access_token)
+PACKAGES = ('boto3')
+HANDLER = 'bedrock_py'
+AS
+$$
+import boto3
+import json
+import _snowflake
+
+def bedrock_py(instructions, user_context, model_id):
+  # Get the previously created token as an object
+  cloud_provider_object = _snowflake.get_cloud_provider_token('cred')
+  cloud_provider_dictionary = {
+      "ACCESS_KEY_ID": cloud_provider_object.access_key_id,
+      "SECRET_ACCESS_KEY": cloud_provider_object.secret_access_key,
+      "TOKEN": cloud_provider_object.token
+  }
+
+  # Assign AWS credentials and choose a region
+  boto3_session_args = {
+      'aws_access_key_id': cloud_provider_dictionary["ACCESS_KEY_ID"],
+      'aws_secret_access_key': cloud_provider_dictionary["SECRET_ACCESS_KEY"],
+      'aws_session_token': cloud_provider_dictionary["TOKEN"],
+      'region_name': 'us-west-2'
+  }
+
+  session = boto3.Session(**boto3_session_args)
+
+  client = session.client('bedrock-runtime')
+
+  # Prepare the request body for the specified model
+  def prepare_request_body(model_id, instructions, user_context):
+      default_max_tokens = 512
+      default_temperature = 0.7
+      default_top_p = 1.0
+
+      if model_id == 'amazon.titan-text-express-v1':
+          body = {
+              "inputText": f"<SYSTEM>Follow these:{instructions}<END_SYSTEM>\n<USER_CONTEXT>Use this user context in your response:{user_context}<END_USER_CONTEXT>",
+              "textGenerationConfig": {
+                  "maxTokenCount": default_max_tokens,
+                  "stopSequences": [],
+                  "temperature": default_temperature,
+                  "topP": default_top_p
+              }
+          }
+      elif model_id == 'ai21.j2-ultra-v1':
+          body = {
+              "prompt": f"<SYSTEM>Follow these:{instructions}<END_SYSTEM>\n<USER_CONTEXT>Use this user context in your response:{user_context}<END_USER_CONTEXT>",
+              "temperature": default_temperature,
+              "topP": default_top_p,
+              "maxTokens": default_max_tokens
+          }
+      elif model_id == 'anthropic.claude-3-sonnet-20240229-v1:0':
+          body = {
+              "max_tokens": default_max_tokens,
+              "messages": [{"role": "user", "content": f"<SYSTEM>Follow these:{instructions}<END_SYSTEM>\n<USER_CONTEXT>Use this user context in your response:{user_context}<END_USER_CONTEXT>"}],
+              "anthropic_version": "bedrock-2023-05-31"
+          }
+      else:
+          raise ValueError("Unsupported model ID")
+
+      return json.dumps(body)
+
+  # Call Bedrock to get a completion
+  body = prepare_request_body(model_id, instructions, user_context)
+  response = client.invoke_model(modelId=model_id, body=body)
+  response_body = json.loads(response.get('body').read())
+
+  # Parse the API response based on the model
+  def get_completion_from_response(response_body, model_id):
+      if model_id == 'amazon.titan-text-express-v1':
+          output_text = response_body.get('results')[0].get('outputText')
+      elif model_id == 'ai21.j2-ultra-v1':
+          output_text = response_body.get('completions')[0].get('data').get('text')
+      elif model_id == 'anthropic.claude-3-sonnet-20240229-v1:0':
+          output_text = response_body.get('content')[0].get('text')
+      else:
+          raise ValueError("Unsupported model ID")
+      return output_text
+
+  # Get the generated text from Bedrock
+  output_text = get_completion_from_response(response_body, model_id)
+
+  return output_text
+$$;
+
+
+SET DEFAULT_LLM_INSTRUCTIONS = 'Review the customer\'s most frequent retail purchases from last year. Write a personalized email explaining their shopper profile based on these habits. Add a tailored message suggesting products and brands for them to consider, from their purchase history.';
+SET DEFAULT_MODEL = 'anthropic.claude-3-sonnet-20240229-v1:0';
+select ask_bedrock($DEFAULT_LLM_INSTRUCTIONS, 'Home Decor, Furniture, Lighting', $DEFAULT_MODEL);
+```
+
+You will retrieve your 'aws role arn' by going into the IAM console on your AWS account, heading to 'roles' then selecting role and copying the ARN associated with that role as shown below.
+
+![](assets/rolearn.png)
+
+Once you run the DESC SECURITY INTEGRATION line record the property_value for the API_AWS_IAM_USER_ARN and API_AWS_EXTERNAL_ID. See below
+
+![](assets/descint.png)
+
+Go back to the IAM center in your AWS console and select your role then select trust relationships and create a new trust relationship just like this filling in the <API_AWS_IAM_USER_ARN> and <API_AWS_EXTERNAL_ID> values.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "<API_AWS_IAM_USER_ARN>"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "sts:ExternalId": "<API_AWS_EXTERNAL_ID>"
+                }
+            }
+        }
+    ]
+}
+```
+
+If you already have a trust relationship you will add the portion below to your existing "Statement" after a comma.
+
+```json
+{
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "<API_AWS_IAM_USER_ARN>"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "sts:ExternalId": "<API_AWS_EXTERNAL_ID>"
+                }
+            }
+        }
+```
+
+Last, you can run the rest of the SQL script in Snowflake after the DESC SECURITY INTEGRATION command to create the ask_bedrock function.
+
+This block of code builds a User Defined Fucntion (UDF) called ask_bedrock() that accepts three parameters: instructions to the model, context for the model and model type.
+
+
+### Option 2: using AWS Secrets
 ```sql
 use role ACCOUNTADMIN;
 use database CUSTOMER_WRAPPED;
@@ -299,8 +494,6 @@ SET DEFAULT_MODEL = 'anthropic.claude-3-sonnet-20240229-v1:0';
 select ask_bedrock($DEFAULT_LLM_INSTRUCTIONS, 'Home Decor, Furniture, Lighting', $DEFAULT_MODEL);
 --select ask_bedrock($DEFAULT_LLM_INSTRUCTIONS, PRODUCTS_PURCHASED, $DEFAULT_MODEL) from CUSTOMER_WRAPPED.public.customer_wrapped;
 ```
-
-This block of code builds a User Defined Fucntion (UDF) called ask_bedrock() that accepts three parameters: instructions to the model, context for the model and model type.
 
 Now, let's use that UDF in a Streamlit app!
 
@@ -534,5 +727,7 @@ After setting up our AWS and Snowflake and envrionments we built two primary thi
 - [Bedrock Performance](https://docs.aws.amazon.com/bedrock/latest/userguide/general-guidelines-for-bedrock-users.html)
 
 - [Provisioned Throughput](https://docs.aws.amazon.com/bedrock/latest/userguide/prov-throughput.html)
+
+- [IAM Role with Snowpark External Access Documentation](https://docs.snowflake.com/en/LIMITEDACCESS/external-network-access/external-network-access-examples#accessing-amazon-s3-with-aws-iam)
 
 If you have any questions, reach out to your Snowflake account team!

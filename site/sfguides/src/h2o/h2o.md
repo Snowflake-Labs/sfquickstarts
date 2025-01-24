@@ -1,4 +1,4 @@
-author: miles.adkins@snowflake.com
+author: Miles Adkins
 id: automl_with_snowflake_and_h2o
 summary: This lab will walk you through how to use Snowflake and H2O to perform supervised machine learning.
 categories: data-science-&-ml,partner-integrations
@@ -37,7 +37,7 @@ We will use Snowflake and Driverless AI to:
 
 ### Prerequisites
 
-* A [Snowflake](https://signup.snowflake.com/) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab)
+* A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account deployed in AWS (if you are using an enterprise account through your organization, it is unlikely that you will have the privileges to use the `ACCOUNTADMIN` role, which is required for this lab)
 * A [H2O](https://www.h2o.ai/try-driverless-ai/) trial license key
 * [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) installed (Snowflake's CLI tool)
 * Past experience running and executing queries in Snowflake

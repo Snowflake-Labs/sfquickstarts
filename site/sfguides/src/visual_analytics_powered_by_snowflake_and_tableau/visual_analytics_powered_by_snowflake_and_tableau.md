@@ -9,17 +9,20 @@ tags: Data Engineering, Data Collaboration, Geospatial Data
 
 # Visual Analytics powered by Snowflake and Tableau
 
-Duration: 60
+Duration: 40
 
 <!-- ------------------------ -->
 
 ## Overview
 
 Join Snowflake and Tableau for an instructor-led hands-on lab to build governed, visual, and interactive analytics quickly and easily.
-### Prerequisites
 
-* Familiarity with Snowflake and Tableau
-* Familarity with using an IDE
+![A](assets/finished_dash.png)
+
+### What You’ll Build
+
+* Snowflake objects in Raw,Harmonized, and Analytics layer
+* A simple Tableau dashboard to present data from Snowflake
 
 ### What You’ll Learn
 
@@ -27,18 +30,14 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 * Incorporate Weather and Geospatial data from Snowflake Marketplace
 * Build visual, intuitive, and interactive data visualizations powered by live data in Snowflake.
 
-### What You’ll Need
+### Prerequisites
 
+* Familiarity with Snowflake and Tableau
+* Familarity with using an IDE
 * A [Snowflake](https://trial.snowflake.com/) account or free trial
 * A [Tabelau Online](https://www.tableau.com/products/online/request-trial) account or free trial
-*   [Visual Studio Code](https://code.visualstudio.com/download) editor
-
-### What You’ll Build
-
-* Snowflake objects in Raw,Harmonized, and Analytics layer
-* A simple Tableau dashboard to present data from Snowflake
-
-<!-- ------------------------ -->
+* [Visual Studio Code](https://code.visualstudio.com/download) editor
+<!--- ------------------------- -->
 
 ## Snowflake Configuration
 
@@ -194,14 +193,6 @@ GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA frostbyte_tasty_bytes.analytics TO RO
 GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA frostbyte_tasty_bytes.analytics TO ROLE tasty_data_engineer;
 GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA frostbyte_tasty_bytes.analytics TO ROLE tasty_bi;
 
--- Apply Masking Policy Grants
-GRANT CREATE TAG ON SCHEMA frostbyte_tasty_bytes.raw_customer TO ROLE tasty_admin;
-GRANT CREATE TAG ON SCHEMA frostbyte_tasty_bytes.raw_customer TO ROLE tasty_data_engineer;
-
-USE ROLE accountadmin;
-GRANT APPLY TAG ON ACCOUNT TO ROLE tasty_admin;
-GRANT APPLY TAG ON ACCOUNT TO ROLE tasty_data_engineer;
-GRANT APPLY MASKING POLICY ON ACCOUNT TO ROLE tasty_admin;
 ```
 
 ### Load CSV data to Tables
@@ -219,7 +210,7 @@ COMMENT = 'Quickstarts S3 Stage Connection'
 url = 's3://sfquickstarts/frostbyte_tastybytes/'
 file_format = frostbyte_tasty_bytes.public.csv_ff;
 
-list @s3load;
+list @frostbyte_tasty_bytes.public.s3load;
 
 /*--
  raw zone table build 
@@ -275,6 +266,24 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.menu
     cost_of_goods_usd NUMBER(38,4),
     sale_price_usd NUMBER(38,4),
     menu_item_health_metrics_obj VARIANT
+);
+
+CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck
+(
+    truck_id NUMBER(38,0),
+    menu_type_id NUMBER(38,0),
+    primary_city VARCHAR(16777216),
+    region VARCHAR(16777216),
+    iso_region VARCHAR(16777216),
+    country VARCHAR(16777216),
+    iso_country_code VARCHAR(16777216),
+    franchise_flag NUMBER(38,0),
+    year NUMBER(38,0),
+    make VARCHAR(16777216),
+    model VARCHAR(16777216),
+    ev_flag NUMBER(38,0),
+    franchise_id NUMBER(38,0),
+    truck_opening_date DATE
 );
 
 -- order_header table build
@@ -493,7 +502,7 @@ FROM frostbyte_tasty_bytes.analytics.orders_v o
 WHERE 1=1
     AND o.country = 'Germany'
     AND o.primary_city = 'Hamburg'
-    AND DATE(o.order_ts) BETWEEN '2022-02-10' AND '2022-02-28'
+    AND DATE(o.order_ts) BETWEEN '2022-02-10' AND '2022-02-20'
 GROUP BY o.date
 ORDER BY o.date ASC;
 ```
@@ -580,8 +589,9 @@ WHERE 1=1
     AND dw.city_name = 'Hamburg'
     AND YEAR(date_valid_std) = '2022'
     AND MONTH(date_valid_std) = '2'
+    AND date_valid_std between '2022-02-14' and  '2022-02-25'
 GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
-ORDER BY dw.date_valid_std DESC;
+ORDER BY dw.date_valid_std ASC;
 
 ``` 
 ```sql
@@ -633,6 +643,7 @@ WHERE 1=1
     AND fd.country_desc = 'Germany'
     AND fd.city = 'Hamburg'
     AND fd.yyyy_mm = '2022-02'
+    AND date_valid_std between '2022-02-14' and  '2022-02-25'
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 
@@ -670,7 +681,8 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
  let's now take a look at the value we have now provided to our Financial Analysts.
 ----------------------------------------------------------------------------------*/
 
---  Step 1 - Simplifying our Analysis
+--  Section 6: Step 1 - Simplifying our Analysis
+-- Wind Speed seems had a major Impact 
 SELECT 
     dcm.date,
     dcm.city_name,
@@ -685,12 +697,13 @@ FROM frostbyte_tasty_bytes.analytics.daily_city_metrics_v dcm
 WHERE 1=1
     AND dcm.country_desc = 'Germany'
     AND dcm.city_name = 'Hamburg'
-    AND dcm.date BETWEEN '2022-02-01' AND '2022-02-24'
-ORDER BY date DESC;
+    AND dcm.date BETWEEN '2022-02-14' AND '2022-02-25'
+ORDER BY date ASC;
 ```
 <!-- ------------------------ -->
 
-### Let's Bring Geospatial Data 
+### Let's Bring Geospatial Data - 
+### Optional, You can skip to Tableau portion if short on time
 [[To skip individual command download tb_geospatial_vhol.sql & create Worksheet to run SQL file]](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/tb_geospatial_vhol.sql) 
 
 ```sql
@@ -1000,7 +1013,7 @@ Within the pop-up, start typing “Date”. Click the “Date” field.
 
 <br>
 
-When the options for different types of date filters appear, click “Relative Date”, then click “Years” and change the criteria to 'Last 2 Years'. After that, click the blue “OK” button in the bottom right of the pop-up. Then click 'OK' once you see the list of all data source filters.
+When the options for different types of date filters appear, click “Range of Dates”, then click Next> and enter the range 1/1/2022 to 11/1/2022. After that, click the blue “OK” button in the bottom right of the pop-up. Then click 'OK' once you see the list of all data source filters.
 
  ![A](assets/relative_date_filter_config.png)
 
@@ -1023,7 +1036,7 @@ Now we are ready to visualize our data! In the bottom left of the screen, click 
 
 <br>
 
-We'll start by getting a quick sense of how each city is doing in terms of sales. Drag out Longitude to columns and Latitude to rows to Double click 'City' and 'Country' fields from the 'Orders_v' table. Then click and drag 'Truck Brand Name' to the details tile on the marks card. This will create a map that shows where each of the trucks sell. 
+We'll start by getting a quick sense of how each city is doing in terms of sales. Drag out Longitude to columns and Latitude to rows to Double click 'Primary City' and 'Country' fields from the 'Orders_v' table. Then click and drag 'Truck Brand Name' to the details tile on the marks card. This will create a map that shows where each of the trucks sell. 
 
  ![A](assets/double_click_city_country.png)
 
@@ -1038,7 +1051,7 @@ Now, this map shows us where we have data, but it doesn't tell us anything about
 
 <br>
 
-We also want to filter to just one city at a time, because its hard to see the different truck locations when the map is zoomed out. Right-click City on the details tile and select 'Show Filter'. then, when the filter pops up on the right hand side, click the carrot on the right and select 'Single-Value (list)'. This will change the filter settings to only allow you to select one city at a time.
+We also want to filter to just one city at a time, because its hard to see the different truck locations when the map is zoomed out. Right-click PrimaryCity on the details tile and select 'Show Filter'. then, when the filter pops up on the right hand side, click the carrot on the right and select 'Single-Value (list)'. This will change the filter settings to only allow you to select one city at a time.
 
 ![A](assets/show_filter_city_map.png)
 
@@ -1113,7 +1126,7 @@ By clicking the blue pill that says 'Year(Date)', we can see multiple options fo
  ![A](assets/change_week_agg_result.png)
 <br>
 
-Now, let's split out the line chart further and break it down by City. We can add a third field to the visualization by adding 'City' to Color on the marks card. This will break out the data by each city and assign it a different color. You'll see the legend on the right hand side pop up. Let's also rename this sheet by clicking on the 'Sheet 2' label on the bottom bar and renaming it 'City Sales by Week'.
+Now, let's split out the line chart further and break it down by City. We can add a third field to the visualization by adding 'Primary City' to Color on the marks card. This will break out the data by each city and assign it a different color. You'll see the legend on the right hand side pop up. Let's also rename this sheet by clicking on the 'Sheet 2' label on the bottom bar and renaming it 'City Sales by Week'.
 
  ![A](assets/rename_sheet1.png)
 
@@ -1140,7 +1153,7 @@ We can see that the avg wind speed does seem to have somewhat of a negative corr
 
 <br>
 
-It doesn't seem to look very similar, and there's also some null values - NYC has no wind speed data. We can make a note to ask my data engineers about that later. Remove the Wind Speed field and the city filter from the visualization. Change the field from 'City' to 'Truck Brand Name' to get a sense of how the trucks are performing over time. Rename the sheet 'Truck Performance over Time'.
+It doesn't seem to look very similar, and there's also some null values - NYC has no wind speed data. We can make a note to ask my data engineers about that later. Remove the Wind Speed field and the city filter from the visualization. Change the field from 'Primary City' to 'Truck Brand Name' to get a sense of how the trucks are performing over time. Rename the sheet 'Truck Performance over Time'.
 
 ![A](assets/Truck_Performance_over_Time.png)
 
@@ -1240,11 +1253,11 @@ Let's publish this dashboard to share this insight and feedback with others. Cli
 <!-- ------------------------ -->
 
 
-## Conclusion
+## Conclusion and Resources
 
 Congratulations! you have completed the lab.
 
-In this lab we captured semi-structured data coming from TastyBytes food truck data, enriched that data with geospatial data, and weather data from Snowflake Marketplace data to find correlation between food sales and weather. We visualized the data using Tableau to quickly arrive at new insights.
+In this lab we captured semi-structured data coming from TastyBytes food truck data, enriched that weather data from Snowflake Marketplace data to find correlation between food sales and weather. We visualized the data using Tableau to quickly arrive at new insights.
 
 [To skip individual commands download tb_reset_vhol.sql & create Worksheet to run SQL file](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/tb_reset_vhol.sql).
 

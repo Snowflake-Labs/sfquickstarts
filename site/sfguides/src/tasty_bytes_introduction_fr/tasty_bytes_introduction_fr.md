@@ -18,7 +18,7 @@ Dans ce guide Quickstart Présentation de Tasty Bytes, vous allez tout d’abor
 
 Ensuite, nous allons configurer le modèle de données de base de Tasty Bytes, les rôles et entrepôts spécifiques aux workloads, ainsi que tout contrôle d’accès basé sur les rôles (RBAC) requis. 
 
-À la fin de ce guide Quickstart, vous aurez déployé tous les éléments de base requis pour exécuter les guides Quickstart figurant dans notre section [Guides Quickstart Powered by Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3).
+À la fin de ce guide Quickstart, vous aurez déployé tous les éléments de base requis pour exécuter les guides Quickstart figurant dans notre section [Guides Quickstart Powered by Tasty Bytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction_fr/#3).
 
 ### Qu’est-ce que Tasty Bytes ?
 <img src="assets/who_is_tasty_bytes.png"/>
@@ -64,7 +64,7 @@ Pour ce guide Quickstart, vous allez utiliser l’interface Web Snowflake appel�
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Étape 5 – Renommer une feuille de calcul
-- Renommez la feuille de calcul en cliquant sur le nom généré automatiquement (horodatage), puis en saisissant « Tasty Bytes – Configuration ».
+- Renommez la feuille de calcul en cliquant sur le nom généré automatiquement (horodatage), puis en saisissant "Tasty Bytes – Configuration".
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Étape 6 – Accéder au fichier de configuration SQL hébergé dans GitHub
@@ -134,7 +134,10 @@ SHOW WAREHOUSES LIKE 'tasty%';
 <img src = "assets/show_tb_whs.png"> 
 
 ### Étape 6 – Tout rassembler
-Les trois requêtes suivantes vont : 1\. Supposer le rôle `tasty_data_engineer` via [USE ROLE](https://docs.snowflake.com/fr/sql-reference/sql/use-role.html). 2. Exploiter l’entrepôt `tasty_de_wh` via [USE WAREHOUSE](https://docs.snowflake.com/fr/sql-reference/sql/use-warehouse.html). 3. Interroger notre table `raw_pos.menu` pour trouver quels éléments de menu sont vendus par nos food trucks Plant Palace.
+Les trois requêtes suivantes vont : 
+1. Supposer le rôle `tasty_data_engineer` via [USE ROLE](https://docs.snowflake.com/fr/sql-reference/sql/use-role.html). 
+2. Exploiter l’entrepôt `tasty_de_wh` via [USE WAREHOUSE](https://docs.snowflake.com/fr/sql-reference/sql/use-warehouse.html). 
+3. Interroger notre table `raw_pos.menu` pour trouver quels éléments de menu sont vendus par nos food trucks Plant Palace.
     
 ``` 
 USE ROLE tasty_data_engineer; USE WAREHOUSE tasty_de_wh;
@@ -159,13 +162,13 @@ La table des matières ci-dessous présente tous les guides Quickstart Tasty By
 
 ### Débuter avec Snowflake
 
-- #### [Gouvernance financière](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/)
+- #### [Gouvernance financière](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_cost_management/#0)
     - Découvrez les entrepôts virtuels Snowflake et leur configurabilité, les moniteurs de ressources, ainsi que les paramètres de délai d’expiration au niveau des comptes et des entrepôts.
 - #### [Transformation](/guide/tasty_bytes_zero_to_snowflake_transformation_fr/)
     - Découvrez les fonctions suivantes de Snowflake : le clonage zéro copie, le cache de jeux de résultats, la manipulation des tables, Time Travel et l’échange/la suppression/la restauration de tables.
 - #### [Données semi-structurées](/guide/tasty_bytes_zero_to_snowflake_semi_structured_data_fr/)
     - Découvrez le type de données VARIANT Snowflake, comment traiter des données semi-structurées via la notation par points et la fonction d’aplatissement avec vue latérale, comment créer des vues et comment utiliser des graphiques Snowsight.
-- #### [Gouvernance des données](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_data_governance/)
+- #### [Gouvernance des données](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_governance_with_horizon/#0)
     - Découvrez les rôles définis par le système Snowflake, comment créer un rôle personnalisé et lui accorder des autorisations, et comment déployer des politiques d’accès aux lignes et de Dynamic Data Masking basées sur les balises.
 - #### [Collaboration](/guide/tasty_bytes_zero_to_snowflake_collaboration_fr/)
     - Découvrez la Marketplace Snowflake en exploitant des données en direct gratuites et disponibles instantanément de Weather Source afin d’effectuer une analyse basée sur les données en harmonisant les sources internes et de tiers.

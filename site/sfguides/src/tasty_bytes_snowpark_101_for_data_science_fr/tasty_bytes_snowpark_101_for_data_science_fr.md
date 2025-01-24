@@ -47,7 +47,11 @@ Streamlit *(dont Snowflake a fait l’acquisition en mars 2022)* est une biblio
 Duration: 6
 
 ### Présentation
-Vous allez utiliser [Snowsight](https://docs.snowflake.com/fr/user-guide/ui-snowsight.html#), l’interface Web de Snowflake, pour : - Accéder aux données de localisation de SafeGraph à partir de la Marketplace Snowflake - Créer des objets Snowflake (entrepôt, base de données, schéma) - Intégrer des données de ventes par équipe à partir de S3 - Associer les données de ventes par équipe aux données de localisation de SafeGraph
+Vous allez utiliser [Snowsight](https://docs.snowflake.com/fr/user-guide/ui-snowsight.html#), l’interface Web de Snowflake, pour : 
+- Accéder aux données de localisation de SafeGraph à partir de la Marketplace Snowflake 
+- Créer des objets Snowflake (entrepôt, base de données, schéma) 
+- Intégrer des données de ventes par équipe à partir de S3 
+- Associer les données de ventes par équipe aux données de localisation de SafeGraph
 
 Tasty Bytes exploite des food trucks dans des villes du monde entier, chaque camionnette ayant la possibilité de choisir deux emplacements différents chaque jour. Les emplacements sont associés aux points d’intérêt de SafeGraph. Vous souhaitez associer à vos données de ventes par équipe la latitude et la longitude des données SafeGraph de la Marketplace afin de les utiliser en tant que fonctionnalités dans l’entraînement du modèle.
 
@@ -71,30 +75,30 @@ Tasty Bytes exploite des food trucks dans des villes du monde entier, chaque cam
 - Accédez aux feuilles de calcul, cliquez sur « + » dans le coin supérieur droit pour créer une nouvelle feuille de calcul, puis choisissez « SQL Worksheet » (Feuille de calcul SQL).
 - Collez et exécutez l’instruction SQL suivante dans la feuille de calcul pour créer des objets Snowflake (entrepôt, base de données, schéma), intégrer les données de ventes par équipe à partir de S3 et associer les données de ventes par équipe aux données de localisation de SafeGraph.
 
-```sql 
+``` SQL
 USE ROLE accountadmin;
 
--- Créez une base de données de développement pour les travaux de data science 
+-- create a development database for data science work
 CREATE OR REPLACE DATABASE frostbyte_tasty_bytes_dev;
 
--- Créez des schémas brut, harmonisé et analytique 
--- Zone brute pour l’ingestion de données 
+-- create raw, harmonized, and analytics schemas
+-- raw zone for data ingestion
 CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.raw; 
--- Zone harmonisée pour le traitement des données 
+-- harmonized zone for data processing
 CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.harmonized; 
--- Zone analytique pour le développement 
+-- analytics zone for development
 CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes_dev.analytics;
 
--- Créez le format de fichier csv 
+-- create csv file format
 CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes_dev.raw.csv_ff type = 'csv';
 
--- Créez une zone de préparation externe pointant vers S3 
+-- create an external stage pointing to S3
 CREATE OR REPLACE STAGE frostbyte_tasty_bytes_dev.raw.s3load 
 COMMENT = 'Quickstarts S3 Stage Connection' 
 url = 's3://sfquickstarts/frostbyte_tastybytes/' 
 file_format = frostbyte_tasty_bytes_dev.raw.csv_ff;
 
--- Définissez une table de ventes par équipe 
+-- define shift sales table
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.raw.shift_sales( 
   location_id NUMBER(19,0), 
   city VARCHAR(16777216), 
@@ -106,15 +110,15 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.raw.shift_sales(
   city_population NUMBER(38,0) 
 );
 
--- Créez et utilisez un entrepôt de calcul 
+-- create and use a compute warehouse
 CREATE OR REPLACE WAREHOUSE tasty_dsci_wh AUTO_SUSPEND = 60; 
 USE WAREHOUSE tasty_dsci_wh;
 
--- Ingérez les données de S3 vers la table de ventes par équipe 
+-- ingest from S3 into the shift sales table
 COPY INTO frostbyte_tasty_bytes_dev.raw.shift_sales 
 FROM @frostbyte_tasty_bytes_dev.raw.s3load/analytics/shift_sales/;
 
--- Associez les données SafeGraph 
+-- join in SafeGraph data
 CREATE OR REPLACE TABLE frostbyte_tasty_bytes_dev.harmonized.shift_sales 
   AS 
 SELECT 
@@ -132,12 +136,12 @@ FROM frostbyte_tasty_bytes_dev.raw.shift_sales a
 JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s b 
 ON a.location_id = b.location_id;
 
--- Basculez la table harmonisée vers la couche analytique pour de développement data science 
+-- promote the harmonized table to the analytics layer for data science development
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes_dev.analytics.shift_sales_v 
   AS 
 SELECT * FROM frostbyte_tasty_bytes_dev.harmonized.shift_sales;
 
--- Affichez les données de ventes par équipe 
+-- view shift sales data
 SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v; 
 ```
 
@@ -163,7 +167,7 @@ Tasty Bytes vise une croissance des ventes de 25 % par an sur cinq ans. Pour at
 
 ### Étape 1 – Cloner le référentiel GitHub
 
-[Clonez](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) le référentiel [GitHub](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science). Le référentiel contient tout le code dont vous aurez besoin pour terminer ce guide Quickstart.
+[Clonez](https://docs.github.com/fr/repositories/creating-and-managing-repositories/cloning-a-repository) le référentiel [GitHub](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science). Le référentiel contient tout le code dont vous aurez besoin pour terminer ce guide Quickstart.
 
 ```
 $ git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science.git
@@ -192,11 +196,11 @@ iii. Installez les packages Snowpark Python qui seront utilisés dans les foncti
 ```
 conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python numpy pandas scikit-learn joblib cachetools
 ``` 
-v. Installez les packages qui seront utilisés uniquement dans l’environnement Python (interface utilisateur, visualisation, par exemple). 
+iv. Installez les packages qui seront utilisés uniquement dans l’environnement Python (interface utilisateur, visualisation, par exemple). 
 ```
 pip install streamlit matplotlib plotly notebook
 ``` 
-vi. Accédez au référentiel GitHub cloné et lancez le notebook Jupyter. 
+v. Accédez au référentiel GitHub cloné et lancez le notebook Jupyter. 
 ```
 jupyter notebook
 ```

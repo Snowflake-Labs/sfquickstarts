@@ -62,7 +62,7 @@ Streamlit은 개발자가 데이터 애플리케이션을 빠르고 쉽게 작�
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 설치
 - [Python 3.9](https://www.python.org/downloads/) 설치
   - **시작하기** 단계에서 3.9로 Python 환경을 생성하게 됩니다.
-- Snowflake 계정([ORGADMIN이 활성화한 Anaconda 패키지](https://docs.snowflake.com/ko/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) 포함) Snowflake 계정이 없다면 [무료 평가판 계정](https://signup.snowflake.com/)을 위해 등록할 수 있습니다.
+- Snowflake 계정([ORGADMIN이 활성화한 Anaconda 패키지](https://docs.snowflake.com/ko/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) 포함) Snowflake 계정이 없다면 [무료 평가판 계정](https://signup.snowflake.com/?utm_cta=quickstarts_)을 위해 등록할 수 있습니다.
 - Snowflake 계정 로그인(ACCOUNTADMIN 역할 포함) 환경에 이 역할이 있다면 이를 사용해도 됩니다. 이 역할이 없다면 1) 무료 평가판을 위해 등록하거나, 2) 데이터베이스, 스키마, 테이블, 스테이지, 작업, 사용자 정의 함수 및 저장 프로시저를 생성할 수 있는 다른 역할을 사용하거나, 3) 언급된 객체를 생성할 수 있는 기존 데이터베이스 및 스키마를 사용해야 합니다.
 
 > aside positive 중요: 계속하기 전에 [여기](https://docs.snowflake.com/ko/developer-guide/udf/python/udf-python-packages#getting-started)에서 설명한 대로 ORGADMIN이 활성화한 Anaconda 패키지가 포함된 Snowflake 계정을 보유하고 있는지 확인하십시오.
@@ -145,7 +145,8 @@ CREATE or REPLACE TABLE BUDGET_ALLOCATIONS_AND_ROI (
   VIDEO integer,
   EMAIL integer,
   ROI float
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"aiml_notebooks_ad_spend_roi", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit"}}';
 
 INSERT INTO BUDGET_ALLOCATIONS_AND_ROI (MONTH, SEARCHENGINE, SOCIALMEDIA, VIDEO, EMAIL, ROI)
 VALUES

@@ -32,7 +32,7 @@ This quickstart is designed to service as an introduction to using Vertex AI wit
 - Defining User Defined Functions for distributed scoring of machine learning models
 
 ### What You’ll Need 
-- A free [Snowflake Account](https://signup.snowflake.com/)
+- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 - [Google Cloud Account](https://cloud.google.com/free?hl=en)
 
 

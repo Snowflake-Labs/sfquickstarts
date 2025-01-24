@@ -40,7 +40,7 @@ While not covered in this exercise, more Snowflake capabilities can further enri
 ### What You’ll Need 
 To complete this Quickstart, attendees need the following:
 
-- A [Snowflake Enterprise or Business Critical Account](https://signup.snowflake.com/) with **ACCOUNTADMIN** access or setup assistance
+- A [Snowflake Enterprise or Business Critical Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with **ACCOUNTADMIN** access or setup assistance
 - Be able to download a SQL and a Zip file
 - Be able to run "keytool" command on your desktop (a utility included with Java)
 - Be able to run a Java program from the command line on your desktop

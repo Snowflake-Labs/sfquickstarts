@@ -25,8 +25,6 @@ Before we dive into the lab, lets take a look at a typical governance workflow a
 #### Typical Governance Workflow  
 ![img](assets/workflow.png)
 
-#### 5 Pillars of Horizon  
-![img](assets/5Pillars.png)
 
 #### [Data Engineer Persona Video](https://youtu.be/MdZ1PaJWH2w?si=o8k8HDrzQjZ5Jhst)  
 
@@ -44,14 +42,14 @@ Now that you have the introduction to Horizon and our personas, lets get started
 - How to create a Horizon dashboard in Snowsight to monitor your data and policies
 
 ### - What You’ll Need 
-- A trial [Snowflake](https://signup.snowflake.com/) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake account (with ACCOUNTADMIN access)
+- A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake account (with ACCOUNTADMIN access)
 <!-- ------------------------ -->
 ## Setup
 Duration: 10
 
-All the scripts for this lab are available at [Snowflake Labs](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/summit24-horizon-hol/) for you as a resource.
+All the scripts for this lab are available at [Snowflake Labs](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake) for you as a resource.
 
-Let's get started! First we will run the [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/0-lab-Setup.sql) 
+Let's get started! First we will run the [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/0-lab-Setup.sql) 
 
 
 **1. Create a new worksheet titled 0_lab_setup**
@@ -61,7 +59,7 @@ In Snowsight create a new worksheet and rename it 0_lab_setup.
 **2. Copy the below script in its entirety and paste into your worksheet.**
 
 This script will create the objects and load data needed to run the lab. More explanation on these objects and how they are used will be provided in later steps.
-### [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/0-lab-Setup.sql)
+### [script 0_lab_setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/0-lab-Setup.sql)
 
 ````
 --Create all Roles and assign to user
@@ -323,7 +321,7 @@ In Summary:
  >Before beginning to deploy Role Based Access Control (RBAC) for Horizon HOL,
  let's first take a look at the Snowflake System Defined Roles and their privileges
 
-In Snowsight create a new worksheet and rename it 1_Data_Engineer. Copy and paste each code block below and execute. You can also find the entire Data Engineer Script at [ 1-DataEngineer.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/hol-lab/1-DataEngineer.sql) 
+In Snowsight create a new worksheet and rename it 1_Data_Engineer. Copy and paste each code block below and execute. You can also find the entire Data Engineer Script at [ 1-DataEngineer.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/hol-lab/1-DataEngineer.sql) 
 
 Let's start by assuming the Data Engineer role and our Snowflake Development Warehouse (synonymous with compute) and we will set the context with the appropriate Database and Schema. 
 ```
@@ -564,7 +562,7 @@ To leverage Universal Search in Snowsight:
     - How to use Snowflake Column Masking
 
 ### Create a new worksheet
-  In snowsight create a new worksheet and rename it 2_Data_Governor. Copy and paste each code block below and execute. You can also find the entire Data Governor Script at [ 2-DataGovernor_DataUser.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/hol-lab/2-DataGovernor_DataUser.sql)  
+  In snowsight create a new worksheet and rename it 2_Data_Governor. Copy and paste each code block below and execute. You can also find the entire Data Governor Script at [ 2-DataGovernor_DataUser.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/hol-lab/2-DataGovernor_DataUser.sql)  
 
 Let's start by assuming the Data User role and using our Horizon Warehouse (synonymous with compute). This lets us see what access our Data Users have to our customer data.
 
@@ -1079,7 +1077,7 @@ Access History provides insights into user queries encompassing what data was
 read and when, as well as what statements have performed a write operations. Access History is particularly important for Compliance, Auditing, and Governance.
 
 Within this step, we will walk through leveraging Access History to find when the last time our Raw data was read from and written to. 
-In Snowsight create a new worksheet and rename it 3_Governor_Admin. Copy and paste each code block below and execute. You can also find the entire Data Governor Admin Script at [ 3-Data-governor-Admin.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/hol-lab/3-Data-governor-Admin.sql) 
+In Snowsight create a new worksheet and rename it 3_Governor_Admin. Copy and paste each code block below and execute. You can also find the entire Data Governor Admin Script at [ 3-Data-governor-Admin.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/hol-lab/3-Data-governor-Admin.sql) 
 
 >aside positive
 >Note: Access History latency is up to 3 hours.  So, some of the queries below may not have results right away. 
@@ -1284,7 +1282,7 @@ Base Objects Accessed: Base data objects required to execute a query.
  
  >aside negative
  > Clean up (Optional).
- >Create a new worksheet named 99_lab_teardown. Copy and paste the entire Teardown Script at [ 99-lab-teardown.sql](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/summit24-horizon-hol/99-lab-teardown.sql) 
+ >Create a new worksheet named 99_lab_teardown. Copy and paste the entire Teardown Script at [ 99-lab-teardown.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/99-lab-teardown.sql) 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 5

@@ -86,6 +86,41 @@
       "source": "guide/machine_learning_with_aws_autopilot/{,/**}",
       "destination": "/guide/getting_started_with_snowpark_for_machine_learning_on_sagemaker",
       "type": 301
+    },
+    {
+      "source": "guide/tour_of_ingest/{,/**}",
+      "destination": "/guide/a_comprehensive_guide_to_ingesting_data_into_snowflake",
+      "type": 301
+    },
+    {
+      "source": "guide/getting-started-snowflake-python-api/{,/**}",
+      "destination": "https://docs.snowflake.com/en/developer-guide/snowflake-python-api/overview-tutorials",
+      "type": 301
+    },
+    {
+      "source": "guide/snowpark_python_top_three_tips_for_optimal_performance/{,/**}",
+      "destination": "/guide/snowpark_python_top_tips_for_optimal_performance",
+      "type": 301
+    },
+    {
+      "source": "guide/attaining_consumer_insights_with_snowflake_and_microsoft_power_bi/{,/**}",
+      "destination": "/guide/end-to-end-analytics-with-snowflake-and-power-bi",
+      "type": 301
+    },
+    {
+      "source": "guide/attaining_consumer_insights_with_snowflake_and_microsoft_power_bi/{,/**}",
+      "destination": "/guide/end-to-end-analytics-with-snowflake-and-power-bi",
+      "type": 301
+    },
+    {
+      "source": "guide/frosty_llm_chatbot_on_streamlit_snowflake/{,/**}",
+      "destination": "/guide/getting_started_with_cortex_analyst",
+      "type": 301
+    },
+    {
+      "source": "guide/connectors_native_sdk_java_example/{,/**}",
+      "destination": "https://docs.snowflake.com/developer-guide/native-apps/connector-sdk/tutorials/native_sdk_example_connector_tutorial",
+      "type": 301
     }
     ]
   }

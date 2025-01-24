@@ -10,85 +10,38 @@ tags: Getting Started, Data Science, Data Engineering, RelationalAI, Recommender
 # Recommender Systems with RelationalAI’s Snowflake Native App
 
 ## Overview 
-Duration: 5
+Duration: 1
 
 By completing this guide, you will be able to build a collaborative filtering recommender system RelationalAI’s Native App on Snowflake.
 
 ### What Is RelationalAI?
+
 RelationalAI is a cloud-native platform that enables organizations to streamline and enhance decisions with intelligence. RelationalAI extends Snowflake with native support for an expanding set of AI workloads (e.g., graph analytics, rule-based reasoning, and optimization), all within your Snowflake account, offering the same ease of use, scalability, security, and governance.
 
 Users can build a knowledge graph using Python, and materialize it on top of their Snowflake data, shared with the RelationalAI app through Snowflake Streams.  Insights can be written to Snowflake tables and shared across the organization.
 
-### What you will learn
-Here is a summary of what you will be able to learn in each step by following this quickstart:
+### What You'll Learn
 
-- **Setup Environment**: How to run graph algorithms on your data, where it already lives.
-- **Data Preparation**: How to load data from a Snowflake table into a RelationalAI model
-- **Build Recommender system**: How to use the graph representation to build a recommendation algorithm
+In this quickstart, you'll learn how to:
+
+- **Set Up Your Environment**: How to run graph algorithms on your data, where it already lives.
+- **Prepare Data**: How to load data from a Snowflake table into a RelationalAI model
+- **Build a Recommender System**: How to use the graph representation to build a recommendation algorithm
 
 
 ### What You’ll Need 
-- A [Snowflake](https://signup.snowflake.com/) Account
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account
 - Snowflake privileges on your user to [Install a Native Application](https://other-docs.snowflake.com/en/native-apps/consumer-installing#set-up-required-privileges)
 - The [RAI Recommendation Jupyter notebook](https://github.com/RelationalAI/rai-samples/tree/main/samples/recommender-system/collaborative_filtering.ipynb) used in this quickstart
 
 ### What You’ll Build 
 - A recommmender system on the 100k MovieLens database using Snowflake and RelationalAI
 
-<!-- ------------------------ -->
-
-## Install the RelationalAI Native App In Your Account
-Duration: 5
-
-In the [Snowflake Marketplace](https://app.snowflake.com/marketplace), search for the ‘RelationalAI’ Native App and install it in your account by clicking the “Get” button.  You will be prompted to accept permission granting, after which an installation dialog will run.  
-You should see a screen like this prompting you to choose a warehouse:
-![RAI Install Warehouse Selection](./assets/rai_warehouse_selection.png)
-
-After selecting a warehouse (any size will do, this is only for installation), a progress dialog will briefly show, followed by the Streamlit splash screen for the RelationalAI App.
-![RAI Native App Splash Screen](./assets/rai_splash_screen.png)
-
-The link provided contains the full initial setup guide as well as system documentation and a user guide.  First run through the initial setup guide, which involves setting up additional permissions using the Shield Icon:
-![RAI Native App Shield Icon](./assets/rai_shield_highlight.png)
-
-At the end of the install guide you will start up the RelationalAI service using the SQL command:
-```sql
-CALL relationalai.app.start_service('rai_compute_pool','rai_warehouse');
-```
-
-Finally, you need to create a role that should be granted to any users permitted to use this application
-```sql
--- In your account, create a role specific for accessing the app
-CREATE ROLE rai_user;
--- Link the app's user role to the created role
-GRANT APPLICATION ROLE relationalai.user TO ROLE rai_user;
-```
-
-Refer to the [initial setup](https://github.com/RelationalAI/rai-sf-app-docs/wiki/Guide-%E2%80%90-Initial-Setup)  for full instructions and the user guide.  
+> aside positive
+> NOTE:  If you do not already have the RelationalAI Native App installed, please follow the instructions [here](https://relational.ai/docs/native_app/installation)
 
 <!-- ------------------------ -->
 
-## Setup Your Environment
-Duration: 5
-
-Now with your Snowflake account is ready to go, to build a knowledge graph using RelationalAI from within your Snowflake account, we need to setup the local environment with Jupyter Lab and the RelationalAI Python library.  The easiest way to do this is using the miniconda installer:
-Download the miniconda installer from https://conda.io/miniconda.html. (OR, you may use any other Python environment with Python 3.11).
-
-
-From the app folder, create conda environment. Then activate conda environment and install JupyterLab and RelationalAI package
-```console
-> conda create -n rai_recsys python=3.11.8
-> conda activate rai_recsys    
-> pip install jupyterlab
-> pip install snowflake
-> pip install relationalai  
-```
-
-### RelationalAI Config File
-After installing the `relationalai` package, you will need to setup an initial RAI configuration with the Snowflake credentials you want to use (similar to the configuration for Snowflake CLI):
-
-![RAI Init](./assets/rai_init.png)
-
-<!-- ------------------------ -->
 ## Data Preparation
 
 Duration: 15
@@ -223,14 +176,13 @@ By following these steps, you'll be ready to build and deploy your Recommender S
 The last step is to stream data from snowflake tables into RelationalAI model:
 
 ```bash
-rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.TRAIN --model recommendation_demo
-rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.TEST --model recommendation_demo
-rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.MOVIE_DETAILS --model recommendation_demo
+rai imports:stream --source RECOMMENDATION_DEMO.PUBLIC.TRAIN --source RECOMMENDATION_DEMO.PUBLIC.TEST --source RECOMMENDATION_DEMO.PUBLIC.MOVIE_DETAILS --model recommendation_demo
 ```
 
 - `--source`: This flag specifies the fully-qualified name of a Snowflake table or view.
 - `--model`: This flag specifies the name of the model to which the data in the Snowflake table or view is streamed.
 
+> aside positive
 > IMPORTANT: An import stream utilizes [change data capture](https://docs.snowflake.com/en/user-guide/streams)
 to synchronize your Snowflake data with your RelationalAI model at an interval of once per minute. 
 <!-- ------------------------ -->
