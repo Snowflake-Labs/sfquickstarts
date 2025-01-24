@@ -7,85 +7,291 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Snowflake Guide Template
+# Getting started with Checkpoints
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
-
-Please use [this markdown file](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
-
-It is important to include on the first page of your guide the following sections: Prerequisites, What you'll learn, What you'll need, and What you'll build. Remember, part of the purpose of a Snowflake Guide is that the reader will have **built** something by the end of the tutorial; this means that actual code needs to be included (not just pseudo-code).
-
-The rest of this Snowflake Guide explains the steps of writing your own guide. 
-
-### Prerequisites
-- Familiarity with Markdown syntax
-
-### What You’ll Learn 
-- how to set the metadata for a guide (category, author, id, etc)
-- how to set the amount of time each slide will take to finish 
-- how to include code snippets 
-- how to hyperlink items 
-- how to include images 
-
-### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
-
-### What You’ll Build 
-- A Snowflake Guide
-
-<!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
-
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
-
-
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
-
----
-
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
-
-
-<!-- ------------------------ -->
-## Creating a Step
-Duration: 2
-
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
-
-```markdown
-## Step 1 Title
-Duration: 3
-
-All the content for the step goes here.
-
-## Step 2 Title
 Duration: 1
 
-All the content for the step goes here.
+By completing this guide, you will be able to use a testing component for validations of migrating Pyspark to Snowpark, This set of validations are called
+Checkpoints and help to identify behavorial changes and differences in execution platforms that can cause issues.
+
+Here is a summary of what you will be able to learn in each step by following this quickstart:
+
+- **Setup Framework Environment**: Set up of Python environment to run checkpoints
+- **Checkpoints uses**: Uses of collectors and validators
+- **Setup Extension**: Install Snowflake VScode extension and how to work along with the framerwork
+- **Extension View**: How checkpoint look like in the extension and how to run them  
+
+
+### Prerequisites
+- A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- The default connection needs to have a database and a schema. After running the app, a table called SNOWPARK_CHECKPOINTS_REPORT will be created.
+- Python >= 3.9
+- OpenJDK 21.0.2
+- Snowflake CLI version 3.1.0
+- Familiarity with Pyspark and Snowpark
+#### Optional
+- VSCode Snowflake  lastest extension verision.
+
+### What You'll Learn
+
+- how to set the enviroment to run the collectors and validators
+- how to collect information from a pyspark dataframe and validate againt a snowflake dataframe
+- how to run the vs code extension
+
+### What You'll Need
+
+- [VSCode](https://code.visualstudio.com/download) Installed
+- [NodeJS](https://nodejs.org/en/download/) Installed
+- [OpenJDK 21.0.2](https://jdk.java.net/21/) Installed
+- [Python 3.9](https://www.python.org/downloads/release/python-3900/) Installed
+- [Snowflake CLI version 3.1.0](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) Installed
+- [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) Account 
+
+### Problem to solve
+- Identify behavioral changes and differences in execution platforms that can cause issues even after code porting and unit tests.
+
+<!-- ------------------------ -->
+## Setup Framework Environment
+### Setting Up Your Python Environment
+
+Duration: 2
+
+To run the collectors and validators, you need to set up a python environment. You can do this by running the following commands:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+Then, install the required packages:
 
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+```bash
+pip install snowpark-checkpoints
+```
+### Setting up the Snowflake CLI
+
+To create a session with the Snowflake CLI, you need to set up the default connection. You can do this by running the following command:
+
+```bash
+snow connection add --connection-name=<connection_name> --account=<account_name> --user=<user_name> --password=<password> --role=<role_name> --region=<region_name> --warehouse=<warehouse_name> --database=<database_name> --schema=<schema_name> --default
+```
+
+Test the connection by running the following command:
+
+```bash
+snow connection test
+```
+
+<!-- ------------------------ -->
+## Using Collectors
+### Python script
+
+Duration: 2
+
+Create a python script with Pyspark code to collect the data from the dataframe, this will collect the schema information from the dataframe, and the next steps it will use it to validate a Snowpark dataframe.
+
+```python
+from datetime import date
+
+from pyspark.sql import Row, SparkSession
+from pyspark.sql.types import BooleanType, DateType, IntegerType, StringType, StructField, StructType
+
+from snowflake.snowpark_checkpoints_collector import collect_dataframe_checkpoint
+
+
+# Initialize Spark session
+spark = SparkSession.builder.appName("quickstart_sample").getOrCreate()
+
+# Define schema for the DataFrame
+schema = StructType(
+    [
+        StructField("integer", IntegerType(), True),
+        StructField("string", StringType(), True),
+        StructField("boolean", BooleanType(), True),
+        StructField("date", DateType(), True),
+    ]
+)
+
+# Define date and timestamp formats
+date_format = "%Y-%m-%d"
+
+# Sample data
+data = [
+    Row(
+        integer=13579,
+        string="red",
+        boolean=True,
+        date=date.fromisoformat("2023-03-01"),
+    ),
+    Row(
+        integer=24680,
+        string="red",
+        boolean=False,
+        date=date.fromisoformat("2023-04-01"),
+    ),
+    # Add more rows as needed
+]
+
+# Create DataFrame
+df = spark.createDataFrame(data, schema)
+
+# Collect initial schema and statistics
+collect_dataframe_checkpoint(
+    df, "demo_initial_creation_checkpoint" 
+)
+
+df.show()
+```
+
+Then you can run the script by executing the following command:
+
+```bash
+python3 <script_name>.py
+```
+
+#### Output
+```bash
++-------+------+-------+----------+
+|integer|string|boolean|      date|
++-------+------+-------+----------+
+|  13579|   red|   true|2023-03-01|
+|  24680|   red|  false|2023-04-01|
++-------+------+-------+----------+
+```
+
+<!-- ------------------------ -->
+## Using validators
+### Run python script with validators
+After the migration is done, you can run the script with the validators. The script will validate the schema of the Snowflake dataframe against the schema collected in the previous step.
+
+```python
+from datetime import date
+
+from snowflake.snowpark_checkpoints import validate_dataframe_checkpoint
+from snowflake.snowpark import Session
+from pyspark.sql import SparkSession
+from snowflake.snowpark.types import (
+    IntegerType,
+    StringType,
+    StructField,
+    StructType,
+    BooleanType,
+    DateType,
+)
+from snowflake.snowpark_checkpoints.job_context import SnowparkJobContext
+
+# Define schema for the DataFrame
+schema = StructType(
+    [
+        StructField("integer", IntegerType(), True),
+        StructField("string", StringType(), True),
+        StructField("boolean", BooleanType(), True),
+        StructField("date", DateType(), True),
+    ]
+)
+
+# Sample data
+data = [
+    [
+        13579,
+        "red",
+        True,
+        date.fromisoformat("2023-03-01"),
+    ],
+    [
+        24680,
+        "red",
+        False,
+        date.fromisoformat("2023-04-01"),
+    ],
+    # Add more rows as needed
+]
+
+# Create DataFrame
+session = Session.builder.getOrCreate()
+job_context = SnowparkJobContext(
+    session, SparkSession.builder.getOrCreate(), "quickstart_sample", True
+)
+df = session.createDataFrame(data, schema)
+
+# Validate DataFrame
+all_data_is_valid, df_result = validate_dataframe_checkpoint(
+    df,
+    "demo_initial_creation_checkpoint",
+    job_context=job_context,
+)
+
+# Print the result
+if all_data_is_valid:
+    print("All data is valid")
+
+else:
+    print("Invalid data:")
+
+print(df_result[df_result["quality_status"] == "invalid"])
+```
+
+Then you can run the script by executing the following command:
+
+```bash
+python3 <script_name>.py
+```
+
+#### Output
+
+```bash
+All data is valid
+   INTEGER  ... quality_status
+1    13579  ...          Valid
+1    24680  ...          Valid
+[2 rows x 6 columns]
+```
+
+<!-- ------------------------ -->
+## Setup extension 
+Duration: 2
+
+You can also use snowflake extension in Visual Studio to run and visualize your checkpoint
+
+**Step 1.** Download [VSCode](https://code.visualstudio.com/download) in case you don't have it
+
+**Step 2.** Once you have VSCode open, click in extension icon
+
+![Check](assets/extension_icon.png)
+
+**Step 3.** Search for Snowflake extension and download it
+
+![Check](assets/snowflake_extension.png)
+
+**Step 4.** Select on Code option in the upper part, click Settings -> Settings
+
+![Check](assets/vscode_settings.png)
+
+**Step 5.** Click Extension then search for Snowflake and click it
+
+**Step 6.** Activate where it says `Snowflake > Snowpark Checkpoints: Enabled`
+
+![Check](assets/snowpark_checkpoint_enabled.png)
+
+## Checkpoints View
+As activating the Snowpark Checkpoints flag, you can see ,in Snowflake extension tab, a new display called `SNOWPARK CHECKPOINTS`. There you could find you checkppints by file,
+also two buttons the left one to activate or desactivate all checkpoints and the other to delete all of them. By double clicking each checkpoints in view, it will
+take you to it in file.
+
+![Check](assets/checkpoints_section.png)
+
+### Run checkpoints
+There are two ways of running checkpoints:
+
+**1.** Run a single checkpoint. This option will appear above each one.
+
+![Check](assets/run_single_checkpoints.png)
+
+**2.** Run all checkpoints in file. This option is at the top right corner of each file.
+
+![Check](assets/run_all_checkpoints.png)
+
 
 <!-- ------------------------ -->
 ## Code Snippets, Info Boxes, and Tables
