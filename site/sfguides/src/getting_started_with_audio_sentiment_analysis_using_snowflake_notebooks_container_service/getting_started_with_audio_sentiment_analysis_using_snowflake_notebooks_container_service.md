@@ -21,15 +21,12 @@ This notebook demonstrates how to build an end-to-end application that:
 
 First, we'll install required packages and import dependencies:
 - `torch`, `torchaudio`: For audio processing
-- `torchvision`: For computer vision tools and utilities that complement PyTorch
 - `librosa`: For loading and manipulating audio files
 - `transformers`: For accessing pre-trained models
-- `datasets`: For handling data structures
 - Snowpark packages for interacting with Snowflake
 
 ```python
-!pip install librosa transformers datasets
-!pip install torch torchvision torchaudio
+!pip install librosa transformers torch torchaudio
 ```
 
 ## Configuring the Environment 🔧
