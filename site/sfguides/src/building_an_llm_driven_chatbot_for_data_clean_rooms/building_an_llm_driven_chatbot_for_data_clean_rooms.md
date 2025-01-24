@@ -18,7 +18,7 @@ tags: Snowpark Python, Streamlit, LLMs, CORTEX, Data Clean Rooms
 -->
 ## Overview
 
-Duration: 5
+Duration: 1
 
 In this guide, we will walk through creating a Snowflake Data Clean Room, connecting to it as a Consumer and then building a Chat agent that let's users talk directly to the Data Clean Room and explore the data, without having to know any details about the Data Clean Room or how to operate that.
 
@@ -111,7 +111,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 -->
 ## Setting up the Data Clean Room
 
-Duration: 5
+Duration: 10
 
 The first step is to ensure that Snowflake Data clean Rooms are set up on both the Provider and Consumer account. Setting up Data Clean Rooms on a Snowflake account should be done on both the Provider account and the Consumer account used for this demo.
 
@@ -1220,11 +1220,24 @@ CALL SAMOOHA_BY_SNOWFLAKE_LOCAL_DB.PROVIDER.DROP_CLEANROOM($cleanroom_name);
 DROP DATABASE SAMPLE_DATA;
 ```
 
+
+
+
+
+
+<!-- ------------------------ -->
+<!-- 
+███████ ████████ ███████ ██████               █████       
+██         ██    ██      ██   ██             ██   ██      
+███████    ██    █████   ██████               █████       
+     ██    ██    ██      ██                  ██   ██      
+███████    ██    ███████ ██                   █████       
+-->
 ## Conclusion
 
 You have build an LLM driven chat agent for a Data Clean Room. It can be adapted to any clean room really and is not constrained to the specific dataset of this sample data, it can (to a resonable extent) understand your data and put it in a context that an end user can work with without having detailed knowledge of how the data clean room is set up. It also doesn't require the user to understand how to work with the Data Clean Room UI to get results from it.
 
-Duration: 3
+Duration: 1
 
 ### What You Learned
 
