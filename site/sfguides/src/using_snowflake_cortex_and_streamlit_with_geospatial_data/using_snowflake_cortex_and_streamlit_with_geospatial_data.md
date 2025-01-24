@@ -18,6 +18,8 @@ Already, there are so many location specific datasets available within the **Sno
 
 **Snowflake Cortex LLMs** - are used to save the analyst, engineer or even BI developer time - which can help a multitude of tasks - from improving the readability of location tooltips, to the generation or synthetic data for testing purposes.
 
+
+
 In this quickstart, we will be leveraging the the tools within Snowflake to:
 
   - **Visualise** the location of train stations within the north of england and understand where nearby restaurants are located
@@ -32,6 +34,14 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
     * Synthezised events events which might happen and will impact services
 
   - **Visualise**  the data using Streamlit
+
+
+### Lab Flow
+Here is a flow of what you will achieve if you complete all steps in the quickstart.  You will be reminded of where you are at key intervals.
+
+  ![alt text](assets/flow1.png)
+
+
 
 ### Prerequisites
 - A new free trial of Snowflake in **a region of you choice***.
@@ -90,6 +100,7 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 ## Snowflake Marketplace
 Duration: 2
 
+![alt text](assets/flow0.png)
 Once logged in go to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
 
 ![alt text](assets/I002.png)
@@ -123,6 +134,8 @@ You will have access to the dataset for a period of **14 days**
 
 ## Create your First map Layer
 Duration: 5
+
+![alt text](assets/flow2.png)
 
 In Snowsight, go back to the home page and select **Projects** » **Notebooks**.
 
@@ -470,6 +483,7 @@ We have now rendered a multi layer map which overlays restaurants and northern r
 ## Use Cortex to describe the Train Stations
 Duration: 10
 
+![alt text](assets/flow3.png)
 At the moment we only have very basic train station information.  Lets add more info from the shared dataset:
 
 Copy and paste the following code into a new cell.  Name the cell **station_attributes**  
@@ -616,7 +630,8 @@ Hover over the map and checked the updated tool tips.
 
 Duration: 10
 
-Any location may be impacted by key events.  Let's try and pinpoint out any key event happening in the north of England and how restaurants and train stations may be impacted by this.  We do not have specific event data for this, so in this case, we will leverage Snowflake Cortex and Snowflake Arctic to suggest events that may impact this area. Arctic is not a live data repository - it simply retrieves data back based on trained history within the model.  
+![alt text](assets/flow4.png)
+Any location may be impacted by key events.  Let's try and pinpoint out any key event happening in the north of England and how restaurants and train stations may be impacted by this.  We do not have specific event data for this, so in this case, we will leverage Snowflake Cortex to suggest events that may impact this area.  
 
 
 
@@ -765,6 +780,8 @@ We now have all of this joined together - in the next step we will use an LLM to
 ## Use Cortex to write relevant correspondence
 Duration: 10
 
+![alt text](assets/flow6.png)
+
 Now that we can see where the events impact stations and restaurants, let's  use an LLM to craft a letter to the MP to notify them of these effects.  To do this, we need to put all the information needed into objects to  easily pass them through the cortex function.
 
 Create an object which links all affected restaurants to the respective MP.  We are also including the distance from the event for each restaurant.  
@@ -901,8 +918,10 @@ st.write(letterspd.LETTER.iloc[selected_letter])
 That's it. If you wish, you can download the completed python code from here by exporting it as .ipynb that could be used to import it into a new notebook. 
 
 <!-- ------------------------ -->
-## Generate Synthetic Incidents and Visualize
+## Generate Synthetic Incidents
 Duration: 10
+
+![alt text](assets/flow7.png)
 
 This streamlit application will generate events occurring during the time of the events, which will involve the train stations and the restaurants.  
 
@@ -918,7 +937,11 @@ Populate the prompts as suggested below.
 
 ![alt text](assets/streamlit1/st003.png)
 
-Replace all the sample code with the following:
+
+
+
+- Replace all the sample code with what is provided below:
+- [The code is also found here](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/sis001.py)
 
 ```python
 
@@ -928,21 +951,62 @@ from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col, call_function, lit,concat, parse_json,object_construct,replace
 from snowflake.snowpark.types import StringType, FloatType, ArrayType, VariantType, DateType
 
+
+
 # Write directly to the app
 
 
 # Get the current credentials
 session = get_active_session()
 
-col1,col2 = st.columns([0.2,0.8])
-with col1:
-    st.image('https://cdn.prgloo.com/web/NorthernRail/NorthernNewLogo.png')
-
-with col2:
-    st.title("EVENT SIMULATOR")
-st.write(
-    """Here are all the events and what places are potentially effected again).
+st.markdown(
     """
+    <style>
+    .heading{
+        background-color: rgb(41, 181, 232);  /* light blue background */
+        color: white;  /* white text */
+        padding: 60px;  /* add padding around the content */
+    }
+    .tabheading{
+        background-color: rgb(41, 181, 232);  /* light blue background */
+        color: white;  /* white text */
+        padding: 10px;  /* add padding around the content */
+    }
+    .veh1 {
+        color: rgb(125, 68, 207);  /* purple */
+    }
+    .veh2 {
+        color: rgb(212, 91, 144);  /* pink */
+    }
+    .veh3 {
+        color: rgb(255, 159, 54);  /* orange */
+    }
+    .veh4 {
+        padding: 10px;  /* add padding around the content */
+        color: rgb(0,53,69);  /* midnight */
+    }
+    
+    body {
+        color: rgb(0,53,69);
+    }
+    
+    div[role="tablist"] > div[aria-selected="true"] {
+        background-color: rgb(41, 181, 232);
+        color: rgb(0,53,69);  /* Change the text color if needed */
+    }
+    
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+col1,col2 = st.columns([0.2,0.8])
+
+
+st.markdown('<h1 class="heading">EVENT SIMULATOR</h2>', unsafe_allow_html=True)
+st.write(
+    """<BR>Here are all the events and what places are potentially affected again.
+    """,unsafe_allow_html=True
 )
 
 
@@ -958,6 +1022,15 @@ with st.expander("View Prompt Information"):
                                      width='medium')   
                                         }
               )
+
+st.markdown('<h4 class="veh1">GENERATE SYNTHETIC EVENTS</h2>', unsafe_allow_html=True)
+st.markdown(
+    """ 
+    Create synthetic events based on a mixture of Activity types. \
+    The options are Overcrowding, Food Poisoning, Train Incidents and Fights. <BR><BR>\
+    Once complete scrolL down to indidual incidents and wait for social media data to generate
+
+    """,unsafe_allow_html=True)
 
 
 
@@ -1022,14 +1095,14 @@ if submitted:
 
     generated = filtered_data.with_column('generated_events',mistral)
 
-    generated = generated.with_column('generated_events',replace(col('generated_events'),'''```json''',''))
+    generated = generated.with_column('generated_events',replace(col('generated_events'),'''```json''',lit('')))
     generated = generated.with_column('generated_events',replace(col('generated_events'),'''```''',''))
     #st.write(generated)
     generated = generated.select('MP',parse_json('GENERATED_EVENTS').alias('GENERATED_EVENTS'))
     generated = generated.with_column('INCIDENT_TYPE',lit(activity))
     #st.write(generated)
 
-    sql2 = '''create table if not exists BUILD_UK.DATA.INCIDENTS (MP VARCHAR(255),
+    sql2 = '''create table if not exists DATA.INCIDENTS (MP VARCHAR(255),
             GENERATED_EVENTS VARIANT,
          INCIDENT_TYPE VARCHAR(255))'''
     
@@ -1038,17 +1111,17 @@ if submitted:
 
     
 
-    st.markdown('##### NEW EVENTS')
+    st.markdown('<h4 class="veh1">NEW EVENTS</h2>', unsafe_allow_html=True)
 
     st.dataframe(generated)
 
-st.markdown('#### GENERATED EVENTS')
+st.markdown('<h4 class="veh1">GENERATED EVENTS</h2>', unsafe_allow_html=True)
 
 
 try:
     
     incident_table = session.table('DATA.INCIDENTS')
-    st.markdown('##### ALL GENERATED EVENTS')
+    st.markdown('<h4 class="veh1">ALL GENERATED EVENTS</h2>', unsafe_allow_html=True)
     
     sql = 'DROP TABLE DATA.INCIDENTS'
 
@@ -1096,7 +1169,7 @@ try:
 
     st.divider()
 
-    st.markdown('#### INDIVIDUAL INCIDENTS')
+    st.markdown('<h4 class="veh1">INDIVIDUAL INCIDENTS</h2>', unsafe_allow_html=True)
     MP = st.selectbox('Choose MP:',flatten.select('MP').distinct())
     flatten = flatten.filter(col('MP')==MP)
     
@@ -1117,7 +1190,7 @@ try:
 
     st.divider()
 
-    st.markdown(''' #### NEWLY GENERATED SOCIAL MEDIA ''')
+    st.markdown('<h4 class="veh1">NEWLY GENERATED SOCIAL MEDIA</h2>', unsafe_allow_html=True)
 
     #### SOCIAL MEDIA DATA
     
@@ -1132,7 +1205,7 @@ try:
            ,lit('use the following json template to structure the data'),lit(json))).astype(VariantType()))
     
 
-    social_media = social_media.with_column('V',replace(col('V'),'''```json''',''))
+    social_media = social_media.with_column('V',replace(col('V'),'''```json''',lit('')))
     social_media = social_media.with_column('V',replace(col('V'),'''```''',''))
     
     smedia = social_media.join_table_function('flatten',parse_json('V')).select('VALUE')
@@ -1155,7 +1228,7 @@ except:
 
 
 try:
-    st.markdown(''' #### ALL SOCIAL MEDIA POSTINGS ''')
+    st.markdown('<h4 class="veh1">ALL SOCIAL MEDIAL POSTINGS</h2>', unsafe_allow_html=True)
     smediaV = session.table('DATA.SOCIAL_MEDIA')
     smediaV = smediaV.with_column('"Date"',col('V')['DATA']['date'].astype(DateType()))
     smediaV = smediaV.with_column('"Post"',col('V')['DATA']['post'].astype(StringType()))
@@ -1167,10 +1240,17 @@ try:
     st.write(session.table('DATA.V_SOCIAL_MEDIA'))
 except:
     st.info('No Results Found')
+
+st.markdown('<h4 class="veh1">WHATS NEXT</h2>', unsafe_allow_html=True)
+
+st.markdown(
+    """
+    Go to the **ANALYSE_GEO_WITH_CORTEX** notebook to see how Cortex Search can make sense of this generated Unstructured Text
+
+    """,unsafe_allow_html=True)
     
          
-    
-         
+
 
 ```
 ### Running the App to generate data
@@ -1188,6 +1268,8 @@ Finally we will create a Streamlit app which adds this additional information to
 <!-- ------------------------ -->
 ## Visualise the data 
 
+![alt text](assets/flow9.png)
+
 ![alt text](assets/streamlit1/st005.png)
 
 You will now be creating another streamlit app in order to visualise the results.
@@ -1204,7 +1286,8 @@ You will need to install **pydeck**.
     ![alt text](assets/packages_option.png)
 
 - After you have installed pydeck, delete the default contents of the newly created app
--   Copy and paste the code from below
+- Replace all the sample code with what is provided below:
+- [The code is also found here](https://github.com/Snowflake-Labs/sfguide-using-snowflake-cortex-and-streamlit-with-geospatial-data/blob/main/sis002.py)
 
 ```python
 
@@ -1218,14 +1301,55 @@ import numpy as np
 import pydeck as pdk
 st.set_page_config(layout="wide")
 # Write directly to the app
-st.title("UK Analytics within the North of England :train:")
+st.markdown('<h1 class="heading">VISUALISE LOCATION DATA</h2>', unsafe_allow_html=True)
 st.write(
-    """This app shows key insight of places and events that may effect Northern Trains).
-    """
-)
+    """<BR> This app shows key insight of places and events that may effect Northern Trains).
+    """,unsafe_allow_html=True)
+
 
 # Get the current credentials
 session = get_active_session()
+
+st.markdown(
+    """
+    <style>
+    .heading{
+        background-color: rgb(41, 181, 232);  /* light blue background */
+        color: white;  /* white text */
+        padding: 60px;  /* add padding around the content */
+    }
+    .tabheading{
+        background-color: rgb(41, 181, 232);  /* light blue background */
+        color: white;  /* white text */
+        padding: 10px;  /* add padding around the content */
+    }
+    .veh1 {
+        color: rgb(125, 68, 207);  /* purple */
+    }
+    .veh2 {
+        color: rgb(212, 91, 144);  /* pink */
+    }
+    .veh3 {
+        color: rgb(255, 159, 54);  /* orange */
+    }
+    .veh4 {
+        padding: 10px;  /* add padding around the content */
+        color: rgb(0,53,69);  /* midnight */
+    }
+    
+    body {
+        color: rgb(0,53,69);
+    }
+    
+    div[role="tablist"] > div[aria-selected="true"] {
+        background-color: rgb(41, 181, 232);
+        color: rgb(0,53,69);  /* Change the text color if needed */
+    }
+    
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 trains_latlon = session.table('NORTHERN_TRAINS_STATION_DATA.TESTING."StationLatLong"')
 
@@ -1261,18 +1385,19 @@ places = places.filter(col('ADDRESSES')['list'][0]['element']['country'] =='GB')
 
 places = places.select(col('NAMES')['primary'].astype(StringType()).alias('NAME'),
                         col('PHONES')['list'][0]['element'].astype(StringType()).alias('PHONE'),
-                      col('CATEGORIES')['main'].astype(StringType()).alias('CATEGORY'),
+                      col('CATEGORIES')['primary'].astype(StringType()).alias('CATEGORY'),
                         col('CATEGORIES')['alternate']['list'][0]['element'].astype(StringType()).alias('ALTERNATE'),
                     col('websites')['list'][0]['element'].astype(StringType()).alias('WEBSITE'),
                       col('GEOMETRY'))
 
 places = places.filter(col('CATEGORY') =='restaurant')
 
+
 places = places.join(envelope,call_function('ST_WITHIN',places['GEOMETRY'],envelope['boundary']))
 places = places.with_column('LON',call_function('ST_X',col('GEOMETRY')))
 places = places.with_column('LAT',call_function('ST_Y',col('GEOMETRY')))
-
 placespd = places.to_pandas()
+
 
 trains_latlon_renamed = trains_latlon
 
@@ -1280,12 +1405,12 @@ trains_latlon_renamed = trains_latlon_renamed.with_column_renamed('"CrsCode"','N
 trains_latlon_renamed = trains_latlon_renamed.with_column_renamed('"Latitude"','LAT')
 trains_latlon_renamed = trains_latlon_renamed.with_column_renamed('"Longitude"','LON')
 
-station_info = session.table('BUILD_UK.DATA.TRAIN_STATION_INFORMATION')
+station_info = session.table('DATA.TRAIN_STATION_INFORMATION')
 
 trains_latlon_renamed = trains_latlon_renamed.join(station_info,station_info['"CRS Code"']==trains_latlon_renamed['NAME']).drop('"CRS Code"')
 trains_latlon_renamed_pd = trains_latlon_renamed.to_pandas()
 
-events = session.table('BUILD_UK.DATA.EVENTS_IN_THE_NORTH')
+events = session.table('DATA.EVENTS_IN_THE_NORTH')
 events = events.join_table_function('flatten',parse_json('EVENT_DATA')).select('VALUE')
 events=events.with_column('NAME',col('VALUE')['NAME'].astype(StringType()))
 events=events.with_column('DESCRIPTION',col('VALUE')['DESCRIPTION'].astype(StringType()))
@@ -1300,7 +1425,7 @@ events = events.with_column('B',col('COLOR')[2])
 events = events.with_column_renamed('DESCRIPTION','ALTERNATE')
 eventspd = events.group_by('H3','NAME','ALTERNATE','R','G','B').count().to_pandas()
 
-incident_table = session.table('BUILD_UK.DATA.INCIDENTS')
+incident_table = session.table('DATA.INCIDENTS')
 flatten = incident_table.select('MP','INCIDENT_TYPE',parse_json('GENERATED_EVENTS').alias('JSON'))
 flatten = flatten.join_table_function('FLATTEN',col('JSON')['incidents'])
 flatten = flatten.select('MP',col('INCIDENT_TYPE').alias('NAME'),'VALUE')
@@ -1331,13 +1456,15 @@ polygon_layer = pdk.Layer(
             pickable=False,
         )
 
- 
+
 poi_l = pdk.Layer(
             'ScatterplotLayer',
             data=placespd,
+            opacity=0.8,
             get_position='[LON, LAT]',
             get_color='[255,255,255]',
-            get_radius=600,
+            radius_min_pixels=3,
+            radius_max_pixels=6,
             pickable=True)
 
 
@@ -1345,8 +1472,10 @@ nw_trains_l = pdk.Layer(
             'ScatterplotLayer',
             data=trains_latlon_renamed_pd,
             get_position='[LON, LAT]',
-            get_color='[0,187,2]',
-            get_radius=600,
+            get_color='[41,181,232]',
+            radius_min_pixels=3,
+            radius_max_pixels=20,
+            get_radius=4,
             pickable=True)
 
 h3_events = pdk.Layer(
@@ -1359,7 +1488,7 @@ h3_events = pdk.Layer(
         get_hexagon="H3",
         get_fill_color=["255-R","255-G","255-B"],
         line_width_min_pixels=2,
-        opacity=0.4)
+        opacity=0.3)
 
 
 
@@ -1383,7 +1512,7 @@ tooltip = {
     }
     }
     
-letters = session.table('BUILD_UK.DATA.LETTERS_TO_MP')
+letters = session.table('DATA.LETTERS_TO_MP')
 mps = letters.select('MP').distinct()
 selected_mp = st.selectbox('Choose MP:',mps)
 letterspd = letters.filter(col('MP')==lit(selected_mp)).to_pandas()
@@ -1393,7 +1522,7 @@ st.divider()
 col1,col2 = st.columns([0.5,0.5])
 
 with col1:
-    st.markdown('##### MAP OF EVENTS WITH ALL EFFECTED STATIONS AND RESTAURANTS')
+    st.markdown('<h4 class="veh1">MAP OF EVENTS WITH STATIONS AND RESTAURANTS</h2>', unsafe_allow_html=True)
     st.pydeck_chart(pdk.Deck(
     map_style=None,
     initial_view_state=pdk.ViewState(
@@ -1403,28 +1532,26 @@ with col1:
         height=750
         ),
     
-    layers= [polygon_layer, poi_l, h3_events,nw_trains_l,incidents_layer ], tooltip = tooltip
+    layers= [polygon_layer, poi_l,nw_trains_l,h3_events,incidents_layer], tooltip = tooltip
 
     ))
     st.caption('Hover for more info')
 with col2:
-    st.markdown('#### LETTER TO CHOSEN MP')
+    st.markdown('<h4 class="veh1">LETTERS TO MP</h2>', unsafe_allow_html=True)
     st.write(letterspd.LETTER.iloc[0])
     st.divider()
 
 social_media = session.table('DATA.V_SOCIAL_MEDIA').filter(col('MP')==selected_mp)
 
-st.markdown('##### SOCIAL MEDIA')
+st.markdown('<h4 class="veh1">SOCIAL MEDIA</h2>', unsafe_allow_html=True)
 st.table(social_media.drop('V'))
-
-
-    
 
 ```
 <!-- ------------------------ -->
 ## Use Cortex to Embed Generated Text and create a Search Service
 Duration: 10
 
+![assets](assets/flow9.png)
 
 During the lab we have produced quite a bit of unstructured data from social media posts, to incidents, through to letters.  Now lets use vector embedding functionality to make this information searchable.  This is really useful when you would like to use an LLM to answer questions but do not want to send the entire dataset as a large object - which could be quite expensive and also would take a long time to run.  For large text blocks, you may wish to 'chunk' the data first.  As the text in this scenario is relatively small - we will keep it as is.  Once you have explored the principles of how text searching works, you will create a Cortex Search Service.
 
@@ -1442,6 +1569,7 @@ Import as a new snowflake notebook.  Add it to the BUILD.UK.NOTEBOOKS schema and
 Duration: 10
 ### Met office Weather
 
+![alt text](assets/flow10.png)
 Now we will leverage the weather data to understand the weather forecasts for each Event.  This time we will import a notebook which has already been created.
 
 - Go to the Home page and select Notebooks
