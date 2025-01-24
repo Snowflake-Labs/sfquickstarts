@@ -292,100 +292,16 @@ There are two ways of running checkpoints:
 
 ![Check](assets/run_all_checkpoints.png)
 
-
-<!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
-
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
-
-
-> aside negative
-> 
->  This will appear in a negative info box.
-
-### Buttons
-<button>
-
-  [This is a download button](link.com)
-</button>
-
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
-
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
-
-<!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
-
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
-
-### Images
-![Puppy](assets/SAMPLE.jpg)
-
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
-
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
-
 <!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
-
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+Congratulations! You've successfully completed the Getting started with Checkpoints guide.
 
 ### What You Learned
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- What are Checkpoints
+- Uses of Checkpoints (Collectors and Validators)
+- Use VScode Snowflake extension with Checkpoints
 
 ### Related Resources
 - <link to github code repo>
