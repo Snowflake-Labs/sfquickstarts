@@ -202,7 +202,7 @@ Congratulations! You've successfully built an interactive dashboard for analyzin
 ### What You Learned
 - Retrieved and analyzed query execution data from Snowflake
 - Created an interactive time-based filter using Streamlit
-- Built a multi-panel heatmap visualization
+- Built a heatmap visualization
 - Generated summary statistics for task execution states
 
 ### Related Resources
