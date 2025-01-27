@@ -76,7 +76,7 @@ To install additional packages like `transformers` and `torchaudio`, we need to 
 Once external access is configured, install needed packages:
 
 ```py
-!pip install transformers torch torchaudio librosa
+!pip install transformers torch librosa
 ```
 
 ## Setup Environment
@@ -87,8 +87,6 @@ Now we'll set up our Python environment with all necessary imports and configura
 
 ```py
 import torch
-import torchaudio
-import random
 import librosa
 import pandas as pd
 
