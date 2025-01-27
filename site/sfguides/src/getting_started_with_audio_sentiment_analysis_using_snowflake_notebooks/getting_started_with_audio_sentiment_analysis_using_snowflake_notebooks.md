@@ -143,7 +143,7 @@ def set_seed(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-#For consistent output for demo
+#For consistent output for quickstart
 set_seed(1280)
 
 # Create empty lists to store the results
