@@ -116,7 +116,9 @@ Here we use the same instance of **ManagedAgent** and perform a web search using
 
 Here we create a new tool/class **HFModelSnowflakeCortex** with custom code that uses [Snowflake Cortex Complete](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#complete-function) function to summarize given long-form text using prompt `Summarize the text enclosed in ### in less than 200 words in JSON format and list out upto 3 highlights in JSON format ### {txt} ###. Return only the JSON formatted output and nothing else.`. 
 
-* Note that we've created a list with three LLMs `'claude-3-5-sonnet','snowflake-llama-3.1-405b','llama3.1-405b'` to compare results given the same prompt. Feel free to experiment with [other supported LLMs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability) in your region. 
+**Cell 6** 
+
+Here we create a **Streamlit application** with default text to summarize and a list with three LLMs `'claude-3-5-sonnet','snowflake-llama-3.1-405b','llama3.1-405b'`. This is where we're using the instance of **HFModelSnowflakeCortex** to perform the task. 
 
 If all goes well, you should see the output similar to the following:
 
@@ -125,7 +127,10 @@ If all goes well, you should see the output similar to the following:
 ---
 
 > aside positive
-> NOTE: Since LLMs are non-deterministic in nature, the results for all of the 3 operations above may vary. In any case, I encourage you to try different prompts and LLMs.
+> NOTES:
+> In all of the cases, notice the Python and other code snippets being generated to perform the task(s).
+>
+> Since LLMs are non-deterministic in nature, the results for all of the 3 operations above may vary. So I encourage you to try different prompts and [other supported LLMs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability) in your region.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
