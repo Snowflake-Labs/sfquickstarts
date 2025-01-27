@@ -107,7 +107,7 @@ user_activity_long = user_activity.reset_index().melt(
     value_name='HAS_ROLE'
 )
 
-# Add user status information - now using the same dataframe
+# Add user status information
 user_status = df_user_role[['NAME', 'DISABLED', 'LAST_SUCCESS_LOGIN']].drop_duplicates()
 user_activity_long = user_activity_long.merge(
     user_status,
