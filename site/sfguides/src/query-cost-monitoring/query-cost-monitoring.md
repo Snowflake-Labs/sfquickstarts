@@ -85,7 +85,7 @@ sql_data.to_pandas()
 ```
 
 <!-- ------------------------ -->
-## Create Interactive Slider Widget & Data Preparation
+## Create App & Data Preparation
 Duration: 10
 
 Here, we'll create an interactive slider using Streamlit to dynamically select the number of days to analyze. 
@@ -171,7 +171,7 @@ The above code snippet, yields the following data app:
 ![image](assets/img02.PNG)
 
 <!-- ------------------------ -->
-## Create Visualizations for Query Cost Data
+## Add Data Visualizations
 Duration: 15
 
 Here, we'll generate a heatmap using Altair to visualize query activity by hour and the selected variable. Additional visualizations include a stacked bar chart and a bubble plot to provide multiple perspectives on the data.
