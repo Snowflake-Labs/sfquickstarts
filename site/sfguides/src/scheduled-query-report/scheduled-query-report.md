@@ -174,6 +174,10 @@ st.subheader(f'Task Execution Frequency by State ({days} Days)')
 st.altair_chart(chart)
 ```
 
+Here's the resulting heatmap:
+
+![image](assets/img03.PNG)
+
 ### Adding Summary Statistics
 Finally, we'll calculate the summary statistics of execution history using `groupby()` and `agg()` functions, which we'll display in a table format using `st.dataframe()`:
 
@@ -190,7 +194,8 @@ summary_df = pd.concat([summary_df['NAME'], state_counts], axis=1)
 st.dataframe(summary_df)
 ```
 
-![image](assets/img03.PNG)
+And here's the DataFrame:
+![image](assets/img04.PNG)
 
 In the above example, we've incrementally built the query execution report in chunks. It should however be mentioned that instead, we could have also piece together all the code blocks mentioned above to generate the interactive query execution report in one run.           
 
