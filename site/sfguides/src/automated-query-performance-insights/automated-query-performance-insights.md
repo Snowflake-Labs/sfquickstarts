@@ -80,8 +80,8 @@ Group queries by execution time buckets:
 SELECT
   CASE
     WHEN Q.total_elapsed_time <= 1000 THEN 'Less than 1 second'
-    WHEN Q.total_elapsed_time <= 6000 THEN '1 second to 1 minute'
-    WHEN Q.total_elapsed_time <= 30000 THEN '1 minute to 5 minutes'
+    WHEN Q.total_elapsed_time <= 60000 THEN '1 second to 1 minute'
+    WHEN Q.total_elapsed_time <= 300000 THEN '1 minute to 5 minutes'
     ELSE 'more than 5 minutes'
   END AS BUCKETS,
   COUNT(query_id) AS number_of_queries

@@ -148,8 +148,6 @@ chart = alt.Chart(filtered_df).mark_rect(
     tooltip=['WAREHOUSE_NAME', 'HOUR_DISPLAY', 'TOTAL_LOAD', 
             'AVG_RUNNING', 'AVG_QUEUED_LOAD']
 ).properties(
-    #width=700,
-    #height=450,
     title=f'Warehouse Usage Patterns ({days} Days)'
 ).configure_view(
     stroke=None,
