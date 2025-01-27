@@ -38,10 +38,10 @@ Firstly, to follow along with this quickstart, you can click on [query_cost_moni
 Ensure that your notebook environment has access to the necessary Python libraries. Notebooks come pre-installed with common Python libraries for data science and machine learning, such as numpy, pandas, matplotlib, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
 
 <!-- ------------------------ -->
-## Retrieving Query Cost Data
+## Retrieve Query Cost Data
 Duration: 10
 
-### Writing the SQL Query
+### Write the SQL Query
 
 To gain insights into query costs, we'll write a SQL query to retrieve the `credits_used` data from the `snowflake.account_usage.metering_history` table and merge it with associated user, database, schema, and warehouse information from the `snowflake.account_usage.query_history` table.
 
@@ -85,7 +85,7 @@ sql_data.to_pandas()
 ```
 
 <!-- ------------------------ -->
-## Create an Interactive Slider Widget & Data Preparation
+## Create Interactive Slider Widget & Data Preparation
 Duration: 10
 
 Here, we'll create an interactive slider using Streamlit to dynamically select the number of days to analyze. 
