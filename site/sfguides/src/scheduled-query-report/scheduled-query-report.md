@@ -42,10 +42,10 @@ Firstly, to follow along with this quickstart, you can click on [Scheduled_Query
 Snowflake Notebooks comes pre-installed with common Python libraries for data science and machine learning, including numpy, pandas, matplotlib, and more! For additional packages, simply click on the Packages drop-down in the top right corner of your notebook.
 
 <!-- ------------------------ -->
-## Retrieving Query Execution Data
+## Retrieve Query Execution Data
 Duration: 10
 
-### Writing the SQL Query
+### Write the SQL Query
 Create a query to fetch execution history from the `task_history` view (this SQL cell is named `sql_data`, which we'll call upon shortly):
 
 ```sql
@@ -71,7 +71,7 @@ This returns the following output:
 
 ![image](assets/img01.PNG)
 
-### Converting to DataFrame
+### Convert to DataFrame
 Transform the SQL results into a Pandas DataFrame, which we'll soon use in the query execution report app:
 
 ```python
@@ -178,7 +178,7 @@ Here's the resulting heatmap:
 
 ![image](assets/img03.PNG)
 
-### Adding Summary Statistics
+### Add Summary Statistics
 Finally, we'll calculate the summary statistics of execution history using `groupby()` and `agg()` functions, which we'll display in a table format using `st.dataframe()`:
 
 ```python
