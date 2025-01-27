@@ -36,7 +36,7 @@ An interactive dashboard featuring:
 Duration: 5
 
 ### Download the Notebook
-Firstly, to follow along with this quickstart, you can click on [Scheduled_Query_Report.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/Scheduled_Query_Execution_Report) to download the Notebook from GitHub.
+Firstly, to follow along with this quickstart, you can click on [Scheduled_Query_Execution_Report.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Scheduled_Query_Execution_Report/Scheduled_Query_Execution_Report.ipynb) to download the Notebook from GitHub.
 
 ### Python Packages
 Snowflake Notebooks comes pre-installed with common Python libraries for data science and machine learning, including numpy, pandas, matplotlib, and more! For additional packages, simply click on the Packages drop-down in the top right corner of your notebook.
