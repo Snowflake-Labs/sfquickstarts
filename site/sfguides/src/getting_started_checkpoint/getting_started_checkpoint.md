@@ -10,7 +10,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 # Getting started with Checkpoints
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 5
 
 By completing this guide, you will be able to use a testing component for validations of migrating Pyspark to Snowpark, This set of validations are called
 Checkpoints and help to identify behavorial changes and differences in execution platforms that can cause issues.
@@ -52,6 +52,10 @@ Here is a summary of what you will be able to learn in each step by following th
 ### Problem to solve
 - Identify behavioral changes and differences in execution platforms that can cause issues even after code porting and unit tests.
 
+> aside positive
+> IMPORTANT: You can access [here](https://docs.snowconvert.com/sma/use-cases/assessment-walkthrough/walkthrough-setup) to migrate 
+> you Pyspark code to Snowpark using SMA tool.
+
 <!-- ------------------------ -->
 ## Setup Framework Environment
 ### Setting Up Your Python Environment
@@ -88,7 +92,7 @@ snow connection test
 ## Using Collectors
 ### Python script
 
-Duration: 2
+Duration: 5
 
 Create a python script with Pyspark code to collect the data from the dataframe, this will collect the schema information from the dataframe, and the next steps it will use it to validate a Snowpark dataframe.
 
@@ -161,9 +165,19 @@ python3 <script_name>.py
 +-------+------+-------+----------+
 ```
 
+#### Generated files
+
+After running the script, you will see the following files in the `snowpark-checkpoints-output` directory:
+
+- `demo_initial_creation_checkpoint.json`: Contains the schema of the DataFrame and the statistics of the columns.
+- `checkpoint_collection_results.json`: Contains the information of the results of the collection. It will show the checkpoint name, the result of the collection, the file where the collection was run, and the line of code where the collection was run.
+
 <!-- ------------------------ -->
 ## Using validators
 ### Run python script with validators
+
+Duration: 5
+
 After the migration is done, you can run the script with the validators. The script will validate the schema of the Snowflake dataframe against the schema collected in the previous step.
 
 ```python
@@ -249,9 +263,17 @@ All data is valid
 [2 rows x 6 columns]
 ```
 
+### Table with the results
+
+- The result of the validation will be saved in the `SNOWPARK_CHECKPOINTS_REPORT` table in the Snowflake account.
+
+#### Generated files
+
+- `checkpoint_validation_results.json`: Contains the information of the results of the validation. It will show the checkpoint name, the result of the validation, the file where the validation was run, and the line of code where the validation was run.
+
 <!-- ------------------------ -->
 ## Setup extension 
-Duration: 2
+Duration: 5
 
 You can also use snowflake extension in Visual Studio to run and visualize your Checkpoints
 
@@ -293,7 +315,7 @@ There are two ways of running checkpoints:
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
+Duration: 2
 
 Congratulations! You've successfully completed the Getting started with Checkpoints guide.
 
@@ -303,5 +325,5 @@ Congratulations! You've successfully completed the Getting started with Checkpoi
 - Use VScode Snowflake extension with Checkpoints
 
 ### Related Resources
-- <link to github code repo>
-- <link to documentation>
+- [Python Framework](https://pypi.org/project/snowpark-checkpoints/#description)
+- [Checkpoints Documentation](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
