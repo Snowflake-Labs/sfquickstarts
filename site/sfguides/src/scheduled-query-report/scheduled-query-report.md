@@ -78,7 +78,7 @@ Transform the SQL results into a Pandas DataFrame, which we'll soon use in the q
 sql_data.to_pandas()
 ```
 
-## Build Interactive Query Execution Report
+## Build Query Execution Report
 Duration: 15
 
 ### Create Interactive Interface
