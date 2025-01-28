@@ -73,7 +73,7 @@ CREATE STAGE raw_data DIRECTORY = (ENABLE = TRUE);
 Run the following SQL commands in a SQL worksheet to create the the tables.
 
 ```sql
-USE cortex_analyst_demo.revenue_timeseries
+USE cortex_analyst_demo.revenue_timeseries;
 USE warehouse cortex_analyst_wh;
 
 CREATE OR REPLACE TABLE CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE (
