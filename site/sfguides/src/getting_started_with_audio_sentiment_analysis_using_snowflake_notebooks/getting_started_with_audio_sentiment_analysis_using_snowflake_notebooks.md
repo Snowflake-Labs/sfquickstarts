@@ -1,10 +1,11 @@
-id: getting\_started\_with\_audio\_sentiment\_analysis   
-summary: Getting Started with Audio Sentiment Analysis using Snowflake Notebooks   
-categories: featured,getting-started,data-science-&-ml,app-development   
-environments: web   
-status: Published feedback link: [https://github.com/Snowflake-Labs/sfguides/issues](https://github.com/Snowflake-Labs/sfguides/issues)   
-tags: Getting Started, Snowflake Notebooks, Machine Learning, Audio Processing   
-authors: James Cha-Earley
+summary: Getting Started with Audio Sentiment Analysis using Snowflake Notebooks
+id: getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks
+categories: featured,getting-started,data-science-&-ml,app-development
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Snowflake Notebooks, Machine Learning, Audio Processing
+author: James Cha-Earley
 
 # Getting Started with Audio Sentiment Analysis using Snowflake Notebooks 
 
@@ -17,26 +18,26 @@ In this quickstart, you'll learn how to build an end-to-end application that ana
 ### What You'll Learn
 
 - Setting up audio processing in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) using PyTorch and Hugging Face  
-- Extracting emotional tone from audio using wav2vec2  
-- Transcribing audio with Whisper model  
-- Performing sentiment analysis using [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/)  
+- Extracting emotional tone from audio using wav2vec2
+- Transcribing audio with Whisper model
+- Performing sentiment analysis using [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/)
 - Comparing emotional tone with sentiment scores
 
 ### What You'll Build
 
 A full-stack application that enables users to:
 
-- Process audio files for emotional tone analysis  
-- Generate text transcripts from audio  
-- Analyze sentiment in transcribed text  
-- Compare emotional tone with sentiment scores  
+- Process audio files for emotional tone analysis
+- Generate text transcripts from audio
+- Analyze sentiment in transcribed text
+- Compare emotional tone with sentiment scores
 - View comprehensive analysis results
 
 ### Prerequisites
 
-- Snowflake account (non-trial) with:  
-  - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)  
-  - [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages)  
+- Snowflake account (non-trial) with:
+  - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
+  - [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages)
   - [Cortex Functions](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex)
 
 ## Setting Up Notebook with Container Runtime 
@@ -66,12 +67,12 @@ aside positive Note: Database and schema selections are only for storing your no
 
 ### Configure External Access
 
-To install additional packages like `transformers` and `torchaudio`, we need to set up external access:
+To install additional packages like `transformers` and `torch`, we need to set up external access:
 
-1. Click the "Notebook actions" menu (top right)  
-2. Select "Notebook settings"  
-3. Go to "External access" tab  
-4. Enable required external access integrations  
+1. Click the "Notebook actions" menu (top right)
+2. Select "Notebook settings"
+3. Go to "External access" tab
+4. Enable required external access integrations
 5. Restart notebook when prompted
 
 ### Install Required Packages
@@ -114,7 +115,7 @@ Duration: 10
 
 First, let's create a stage to store our audio files:
 
-```
+```sql
 -- Create stage for audio files
 CREATE STAGE IF NOT EXISTS audio_files
   ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
@@ -123,12 +124,12 @@ CREATE STAGE IF NOT EXISTS audio_files
 
 Upload your audio files:
 
-1. Navigate to Data \> Databases \> \[Your Database\] \> audio\_files \> Stages  
-2. Click "Upload Files" button  
-3. Select your audio files  
+1. Navigate to Data \> Databases \> \[Your Database\] \> audio\_files \> Stages
+2. Click "Upload Files" button
+3. Select your audio files
 4. Verify upload:
 
-```
+```sql
 ls @audio_files;
 ```
 
@@ -220,7 +221,7 @@ When using Snowflake Notebooks on Container Runtime:
 
 ### Cost Considerations
 
-- Both warehouse compute and SPCS compute costs may apply  
+- Both warehouse compute and SPCS compute costs may apply
 - SQL cells run on warehouse  
 - Python compute runs on container runtime
 
@@ -250,8 +251,8 @@ Congratulations\! You've successfully built an end-to-end audio analysis applica
 
 Webpages
 
-* [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)  
-* [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/)
+- [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)  
+- [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/)
 
 Documentation:
 
@@ -268,8 +269,8 @@ Sample Code & Guides:
 
 Related Quickstarts
 
-* [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#4)  
-* [Train an XGBoost Model with GPUs using Snowflake Notebooks](https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0)  
-* [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#0)  
-* [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0)  
-* [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0)
+- [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#4)  
+- [Train an XGBoost Model with GPUs using Snowflake Notebooks](https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0)  
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#0)  
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0)  
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0)
