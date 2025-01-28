@@ -40,6 +40,43 @@ A full-stack application that enables users to:
   - [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages)
   - [Cortex Functions](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex)
 
+## Setup Workspace
+Duration: 10
+
+### Create Database and Schema
+
+1. Open a new worksheet in Snowflake
+2. Execute the following SQL commands to create your database and schema:
+
+```sql
+CREATE DATABASE IF NOT EXISTS audio_sentiment;
+CREATE SCHEMA IF NOT EXISTS audio_sentiment.audio_processing;
+```
+
+### Create Stage and Upload Audio Files
+
+Duration: 10
+
+First, let's create a stage to store our audio files:
+
+```sql
+-- Create stage for audio files
+CREATE STAGE IF NOT EXISTS audio_files
+  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
+  DIRECTORY = (ENABLE = true);
+```
+
+Upload your audio files:
+
+1. Navigate to Data \> Databases \> audio_sentiment \> audio\_files \> Stages
+2. Click "Upload Files" button
+3. Select your audio files
+4. Verify upload:
+
+```sql
+ls @audio_files;
+```
+
 ## Setting Up Notebook with Container Runtime 
 
 Duration: 10
@@ -56,14 +93,12 @@ Before we begin processing audio files, we need to set up our notebook to use co
    * Select the file you downloaded in step 1 above
 
 3. In the Create Notebook popup:
-   * For Notebook location, select your database and schema
+   * For Notebook location, select your `audio_sentiment` database and schema `audio_processing`
    * For Python Environment, select "Run on container"
    * For Runtime type, select "GPU" runtime
    * Select your Compute pool
    * Select your Warehouse
    * Click on Create button
-
-aside positive Note: Database and schema selections are only for storing your notebook. You can query any database/schema you have access to from within the notebook.
 
 ### Configure External Access
 
@@ -95,42 +130,11 @@ import librosa
 import pandas as pd
 
 from transformers import pipeline
-
 from snowflake.snowpark.context import get_active_session
-from snowflake.core import Root
 from snowflake.cortex import Sentiment 
 
-session = get_active_session()
-root = Root(session)
-
-database_name = session.get_current_database()
-schema_name = session.get_current_schema()
-stage_name = 'SUPPORT_CALLS'
-database = root.databases[database_name]
-```
-
-## Create Stage and Upload Audio Files
-
-Duration: 10
-
-First, let's create a stage to store our audio files:
-
-```sql
--- Create stage for audio files
-CREATE STAGE IF NOT EXISTS audio_files
-  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
-  DIRECTORY = (ENABLE = true);
-```
-
-Upload your audio files:
-
-1. Navigate to Data \> Databases \> \[Your Database\] \> audio\_files \> Stages
-2. Click "Upload Files" button
-3. Select your audio files
-4. Verify upload:
-
-```sql
-ls @audio_files;
+stage_name = 'audio_files'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 ```
 
 ## Audio Processing Pipeline
@@ -156,10 +160,10 @@ results = []
 # Initialize both pipelines
 audio_pipeline = pipeline("audio-classification", 
     model="ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition", 
-    device="cuda")
+    device=device)
 whisper_pipeline = pipeline("automatic-speech-recognition", 
     model="openai/whisper-base", 
-    device="cuda")
+    device=device)
 ```
 
 ## Process Audio Files
@@ -205,6 +209,36 @@ for file_name in file_names:
 df = pd.DataFrame(results)
 print(df)
 ```
+
+## Understanding Results 📊
+
+The analysis provides multiple metrics that work together to give a comprehensive view of the audio:
+
+### Sentiment Analysis
+- Sentiment Score Range: [-1 to 1]
+  - Negative values indicate negative sentiment
+  - Positive values indicate positive sentiment
+  - Values near 0 indicate neutral sentiment
+
+### Emotional Classification
+- Emotion Score: [0 to 1]
+  - Represents the confidence level of the emotional classification
+  - Higher values indicate stronger confidence in the detected emotion
+  - Primary emotions detected: happy, angry, neutral, sad
+
+### Tone-Sentiment Matching
+The system compares emotional tone with sentiment scores to verify consistency:
+- Happy emotion should correspond with positive sentiment (> 0)
+  - Match example: Happy emotion (0.85) with sentiment score (0.6)
+  - Mismatch example: Happy emotion (0.75) with sentiment score (-0.2)
+- Angry emotion should correspond with negative sentiment (< 0)
+  - Match example: Angry emotion (0.92) with sentiment score (-0.7)
+  - Mismatch example: Angry emotion (0.88) with sentiment score (0.3)
+
+The 'Tone_Sentiment_Match' field in the results indicates:
+- "Match": Emotion and sentiment align (e.g., happy with positive sentiment)
+- "Do Not Match": Emotion and sentiment conflict (e.g., angry with positive sentiment)
+- "Unknown": For neutral or other emotional states
 
 ## Important Considerations
 
