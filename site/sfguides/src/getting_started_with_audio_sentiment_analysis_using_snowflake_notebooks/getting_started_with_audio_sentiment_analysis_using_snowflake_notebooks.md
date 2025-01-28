@@ -45,19 +45,22 @@ Duration: 10
 
 Before we begin processing audio files, we need to set up our notebook to use container runtime for [building ML models](https://www.snowflake.com/en/data-cloud/snowflake-ml/).
 
-### Create a New Notebook with Container Runtime
+### Import the Notebook with Container Runtime
 
-1. Sign in to Snowsight  
-2. Select Notebooks  
-3. Click "+ Notebook"  
-4. Fill in the details:  
-   - Enter a name for your notebook  
-   - Select database and schema to store the notebook  
-   - For Python environment, select "Run on container"  
-   - Choose Runtime type: For audio processing, select "GPU" runtime  
-   - Select a Compute pool  
-   - Choose a warehouse for SQL and Snowpark queries  
-5. Click "Create"
+1. Click on [Audio Sentiment Analysis Notebook](https://github.com/Snowflake-Labs/sfguide_getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks/blob/main/sfguide_getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+
+2. In your Snowflake account:
+   * On the left hand navigation menu, click on Projects » Notebooks
+   * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
+   * Select the file you downloaded in step 1 above
+
+3. In the Create Notebook popup:
+   * For Notebook location, select your database and schema
+   * For Python Environment, select "Run on container"
+   * For Runtime type, select "GPU" runtime
+   * Select your Compute pool
+   * Select your Warehouse
+   * Click on Create button
 
 aside positive Note: Database and schema selections are only for storing your notebook. You can query any database/schema you have access to from within the notebook.
 
