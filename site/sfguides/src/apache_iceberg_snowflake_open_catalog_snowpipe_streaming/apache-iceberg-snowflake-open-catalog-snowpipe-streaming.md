@@ -229,7 +229,7 @@ Assuming everything has gone smoothly so far, follow instructions below to query
 
 * **Cell 1**: Run this cell to install libraries including Spark and PySpark
 
-* **Cell 2**: Update POLARIS_ENGINEER_CLIENT_ID and POLARIS_ENGINEER_CLIENT_SECRET with your values and run this cell to create Spark context 
+* **Cell 2**: Update POLARIS_ENGINEER_CLIENT_ID, POLARIS_ENGINEER_CLIENT_SECRET, and `spark.sql.catalog.polaris.uri` with your values and run this cell to create Spark context 
 
 * **Cell 3**: Run this cell to see that `spark_engineer_role` role has access to `DASH_DB.RAW`
 
@@ -292,7 +292,7 @@ Assuming everything has gone smoothly so far, follow instructions below to query
 
 * **Cell 1**: Run this cell to install libraries including Spark and PySpark
 
-* **Cell 2**: Update POLARIS_ANALYST_CLIENT_ID and POLARIS_ANALYST_CLIENT_SECRET with your values and run this cell to create Spark context. If everything has been setup correctly so far, you will see that `spark_analyst_role` role DOES NOT have access to `DASH_DB.RAW.STREAMING_VEHICLE_EVENTS` as per access control setup in **Create Snowflake Open Catalog Account, Connections, Roles** section under **Setup** step.
+* **Cell 2**: Update POLARIS_ANALYST_CLIENT_ID, POLARIS_ANALYST_CLIENT_SECRET and `spark.sql.catalog.polaris.uri` with your values and run this cell to create Spark context. If everything has been setup correctly so far, you will see that `spark_analyst_role` role DOES NOT have access to `DASH_DB.RAW.STREAMING_VEHICLE_EVENTS` as per access control setup in **Create Snowflake Open Catalog Account, Connections, Roles** section under **Setup** step.
 
     ```bash
     spark.sql("select * from DASH_DB.RAW.STREAMING_VEHICLE_EVENTS").show(10, truncate = False)
