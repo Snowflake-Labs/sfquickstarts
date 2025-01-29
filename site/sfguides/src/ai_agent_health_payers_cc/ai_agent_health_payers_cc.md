@@ -11,6 +11,7 @@ tags: Getting Started, Snowpark Python, Streamlit, Data-Science-&-Ai
 <!-- ------------------------ -->
 ## Overview
 ![banner](assets/banner.png)
+
 Duration: 5
 
 In this quickstart, you will learn how to easily build an AI agent entirely in Snowflake. We will walk through a scenario in the healthcare industry to illustrate this.
@@ -62,6 +63,7 @@ A simplified "agentic" workflow ties these features together to provide a single
 <img src="assets/payer_cc_agentic.png"/>
 
 ## Data and Snowflake Setup
+
 Duration: 15
 
 > **You can access the full code in [this GIT REPO](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main).**
@@ -276,6 +278,7 @@ COMMENT = '{"origin":"sf_sit-is", "name":"payer_call_center_assistant_v2", "vers
 ```
 
 ## Access Setup Notebook
+
 Duration: 20
 
 The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
@@ -289,6 +292,7 @@ Within this notebook, you'll prepare all the unstructured data needed before you
 You will also predict the intent of a caller using historical data.This will allow Contact Center Agents to be better prepared when faced with an incoming call.
 
 ## Run Streamlit Application
+
 Duration: 20
 
 The Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open `PAYERS_CC_CHATBOT` and explore.
@@ -298,6 +302,7 @@ This app simulates a few different scenarios where Contact Center Agents have to
 <img src='assets/streamlit_app.png'>
 
 ## Conclusion And Resources
+
 Duration: 1
 
 In this guide, you processed a knowledge base of unstructured and structured Enterprise data and then used it to build an AI-powered Assistant for a Contact Center.
