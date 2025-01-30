@@ -14,19 +14,25 @@ authors: Dash Desai
 
 Duration: 4
 
-This guide outlines the process for creating agentic workflows in Snowflake Notebook on Container Runtime using **smolagents from Hugging Face**. These agents are capable of writing Python code to call tools and orchestrate other agents. In this guide, we will also see how you can use out of the box tools and also create a custom tool in that uses Snowflake Cortex.
+This guide outlines the process for creating agentic workflows in [Snowflake Notebook on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) using smolagents from Hugging Face. These agents are capable of writing Python code to call tools and orchestrate other agents. In this guide, we will also see how you can use out of the box tools and also create a custom tool that uses Snowflake Cortex AI.
 
 ### What is Container Runtime? 
 
-Snowflake Notebooks on Container Runtime enable advanced data science and machine learning workflows directly within Snowflake. Powered by Snowpark Container Services, it provides a flexible environment to build and operationalize various workloads, especially those requiring Python packages from multiple sources and powerful compute resources, including CPUs and GPUs. With this Snowflake-native experience, you can train models, perform hyperparameter tuning, and execute batch inference while seamlessly running SQL queries. Unlike virtual warehouses, Container Runtime for ML offers greater flexibility and tailored compute options for complex workloads. ***NOTE: This feature is currently in Public Preview.***
+Snowflake Notebooks on Container Runtime enable flexible and scalable model development and deployment directly within Snowflake for [machine learning](https://www.snowflake.com/en/data-cloud/snowflake-ml/) and [gen AI](https://www.snowflake.com/en/data-cloud/cortex/) workflows. Powered by Snowpark Container Services, it provides a flexible environment to build and operationalize various workloads, especially those requiring Python packages from multiple sources and powerful compute resources, including CPUs and GPUs. With this Snowflake-native experience, you can train models, perform hyperparameter tuning, and execute batch inference. Container Runtime offers greater flexibility and tailored compute options for complex modeling workloads. ***NOTE: This feature is currently in Public Preview.***
 
 Learn more about [Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs).
 
-### What is Snowflake Cortex? 
+### What is Snowflake Cortex AI? 
 
 Snowflake Cortex is a suite of AI features that use large language models (LLMs) to understand unstructured data, answer freeform questions, and provide intelligent assistance.
 
-Learn more about [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview).
+Learn more about [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/).
+
+### What is Snowflake ML?
+
+Snowflake ML is an integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos, or governance tradeoffs. 
+
+Learn more about [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/).
 
 ### What is smolagents?
 
@@ -46,7 +52,7 @@ Learn more about [smolagents](https://github.com/huggingface/smolagents).
 
 ### What You Will Build
 
-Agentic workflow using smolagents library and Snowflake Cortex in Snowflake Notebook on Container Runtime.
+Agentic workflow using smolagents library and Snowflake Cortex AI in Snowflake Notebook on Container Runtime.
 
 <!-- ------------------------ -->
 ## Setup
@@ -137,14 +143,18 @@ If all goes well, you should see the output similar to the following:
 
 Duration: 1
 
-Congratulations! You've successfully created agentic workflow using smolagents library and Snowflake Cortex in Snowflake Notebook on Container Runtime.
+Congratulations! You've successfully created agentic workflow using smolagents library and Snowflake Cortex AI in Snowflake Notebook on Container Runtime.
 
 ### What You Learned
 
 * How to create agentic workflows using smolagents library from Hugging Face
+* How to build custom tools and models with Snowflake Notebooks on Container Runtime
 
 ### Related Resources
 
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake)
 - [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
-- [smolagents](https://huggingface.co/blog/smolagents#introducing-smolagents-a-simple-library-to-build-agents)
+- [Smolagents](https://huggingface.co/blog/smolagents#introducing-smolagents-a-simple-library-to-build-agents)
+- [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/)
+
