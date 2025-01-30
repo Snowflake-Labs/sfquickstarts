@@ -320,7 +320,7 @@ Duration: 2
 Congratulations! You've successfully completed the Getting started with Checkpoints guide.
 
 ### What You Learned
-- What are Checkpoints
+- What Checkpoints are
 - Uses of Checkpoints (Collectors and Validators)
 - Use VScode Snowflake extension with Checkpoints
 
