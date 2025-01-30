@@ -1,11 +1,11 @@
-summary: Getting Started with Audio Sentiment Analysis using Snowflake Notebooks
 id: getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks
+summary: Getting Started with Audio Sentiment Analysis using Snowflake Notebooks
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowflake Notebooks, Machine Learning, Audio Processing
-author: James Cha-Earley
+author: [Your Name]
 
 # Getting Started with Audio Sentiment Analysis using Snowflake Notebooks 
 
@@ -14,6 +14,30 @@ author: James Cha-Earley
 Duration: 5
 
 In this quickstart, you'll learn how to build an end-to-end application that analyzes audio files for emotional tone and sentiment using [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs). The application combines audio processing, speech recognition, and sentiment analysis to create comprehensive insights from audio data.
+
+### What is Container Runtime? 
+
+Snowflake Notebooks on Container Runtime enable advanced data science and machine learning workflows directly within Snowflake. Powered by Snowpark Container Services, it provides a flexible environment to build and operationalize various workloads, especially those requiring Python packages from multiple sources and powerful compute resources, including CPUs and GPUs. With this Snowflake-native experience, you can process audio, perform speech recognition, and execute sentiment analysis while seamlessly running SQL queries. ***NOTE: This feature is currently in Public Preview.***
+
+Learn more about [Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs).
+
+### What is wav2vec2?
+
+Wav2vec2 is a state-of-the-art framework for self-supervised learning of speech representations. Developed by Facebook AI, it's specifically designed for speech recognition tasks but has been adapted for various audio analysis tasks including emotion recognition. The model we use in this guide, "ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition", is fine-tuned for detecting emotions in speech, capable of identifying emotions like happiness, sadness, anger, and neutral tones from audio input.
+
+Learn more about [wav2vec2](https://huggingface.co/facebook/wav2vec2-base).
+
+### What is Snowflake Cortex?
+
+Snowflake Cortex is a suite of AI features that use large language models (LLMs) to understand unstructured data, answer freeform questions, and provide intelligent assistance. In this guide, we use Cortex's sentiment analysis capabilities to analyze the emotional content of transcribed speech.
+
+Learn more about [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview).
+
+### What is Whisper?
+
+OpenAI's Whisper is an open-source automatic speech recognition (ASR) model designed for high-quality transcription and translation of spoken language. Trained on diverse multilingual data, it handles various languages, accents, and challenging audio conditions like background noise. Whisper supports transcription, language detection, and translation to English, making it versatile for applications such as subtitles, accessibility tools, and voice interfaces.
+
+Learn more about [Whisper](https://openai.com/research/whisper).
 
 ### What You'll Learn
 
@@ -26,7 +50,6 @@ In this quickstart, you'll learn how to build an end-to-end application that ana
 ### What You'll Build
 
 A full-stack application that enables users to:
-
 - Process audio files for emotional tone analysis
 - Generate text transcripts from audio
 - Analyze sentiment in transcribed text
@@ -43,174 +66,135 @@ A full-stack application that enables users to:
 ## Setup Workspace
 Duration: 10
 
-### Create Database and Schema
+**Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs) and open [setup.sql](https://github.com/[Your-Repo]/setup.sql) to execute all statements in order from top to bottom.
 
-1. Open a new worksheet in Snowflake
-2. Execute the following SQL commands to create your database and schema:
+**Step 2.** In Snowsight, switch your user role to `AUDIO_CONTAINER_RUNTIME_ROLE`.
 
-```sql
-CREATE DATABASE IF NOT EXISTS audio_sentiment;
-CREATE SCHEMA IF NOT EXISTS audio_sentiment.audio_processing;
-```
+**Step 3.** Click on [Audio_Sentiment_Analysis.ipynb](https://github.com/[Your-Repo]/Audio_Sentiment_Analysis.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 
-### Create Stage and Upload Audio Files
+**Step 4.** In Snowsight:
 
-Duration: 10
+* On the left hand navigation menu, click on **Projects » Notebooks**
+* On the top right, click on **Notebook** down arrow and select **Import .ipynb file** from the dropdown menu
+* Select **Audio_Sentiment_Analysis.ipynb** file you downloaded in the step above
+* In the Create Notebook popup:
+    * For Notebook location, select `AUDIO_SENTIMENT_DB` and `AUDIO_SCHEMA`
+    * For SQL warehouse, select `AUDIO_WH_S`
+    * For Python environment, select `Run on container`
+    * For Runtime, select `GPU Runtime`
+    * For Compute pool, select `GPU_POOL`
+* Click on **Create** button
 
-First, let's create a stage to store our audio files:
+**Step 5.** Open Notebook
 
-```sql
--- Create stage for audio files
-CREATE STAGE IF NOT EXISTS audio_files
-  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
-  DIRECTORY = (ENABLE = true);
-```
+* Click in the three dots at the very top-right corner and select `Notebook settings` >> `External access`
+* Turn on **ALLOW_ALL_ACCESS_INTEGRATION** and **HUGGINGFACE_ACCESS_INTEGRATION**
+* Click on **Save** button
+* Click on **Start** button on top right
 
-Upload your audio files:
+> aside positive
+> NOTE: At this point, the container service will take about 5-7 minutes to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
-1. Navigate to Data \> Databases \> audio_sentiment \> audio\_files \> Stages
-2. Click "Upload Files" button
-3. Select your audio files
-4. Verify upload:
+## Audio File Requirements
 
-```sql
-ls @audio_files;
-```
+Duration: 5
 
-## Setting Up Notebook with Container Runtime 
+### Supported Audio Formats
+- WAV (recommended)
+- MP3
+- FLAC
+- OGG
+- M4A
 
-Duration: 10
+### Audio Specifications
+For best results, your audio files should have:
+- Sample rate: 16kHz or higher
+- Bit depth: 16-bit or higher
+- Channels: Mono (stereo will be converted to mono)
+- Duration: 30 seconds to 10 minutes per file
+- File size: Up to 25MB
 
-Before we begin processing audio files, we need to set up our notebook to use container runtime for [building ML models](https://www.snowflake.com/en/data-cloud/snowflake-ml/).
+### Best Practices
+For optimal analysis:
+- Use clear recordings with minimal background noise
+- Ensure speech is clearly audible
+- Avoid multiple speakers talking simultaneously
+- Record in a quiet environment
+- Use lossless formats (WAV/FLAC) when possible
 
-### Import the Notebook with Container Runtime
+### Common Use Cases
+This system works well for analyzing:
+- Customer service calls
+- Meeting recordings
+- Voice messages
+- Interview recordings
+- Support interactions
+- Training materials
 
-1. Click on [Audio Sentiment Analysis Notebook](https://github.com/Snowflake-Labs/sfguide_getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks/blob/main/sfguide_getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+> aside positive
+> TIP: If your audio files don't meet these specifications, consider using audio processing tools like ffmpeg to convert them to the recommended format before analysis.
 
-2. In your Snowflake account:
-   * On the left hand navigation menu, click on Projects » Notebooks
-   * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
-   * Select the file you downloaded in step 1 above
-
-3. In the Create Notebook popup:
-   * For Notebook location, select your `audio_sentiment` database and schema `audio_processing`
-   * For Python Environment, select "Run on container"
-   * For Runtime type, select "GPU" runtime
-   * Select your Compute pool
-   * Select your Warehouse
-   * Click on Create button
-
-### Configure External Access
-
-To install additional packages like `transformers` and `torch`, we need to set up external access:
-
-1. Click the "Notebook actions" menu (top right)
-2. Select "Notebook settings"
-3. Go to "External access" tab
-4. Enable required external access integrations
-5. Restart notebook when prompted
-
-### Install Required Packages
-
-Once external access is configured, install needed packages:
-
-```py
-!pip install transformers torch librosa
-```
-
-## Setup Environment
-
-Duration: 10
-
-Now we'll set up our Python environment with all necessary imports and configurations.
-
-```py
-import torch
-import librosa
-import pandas as pd
-
-from transformers import pipeline
-from snowflake.snowpark.context import get_active_session
-from snowflake.cortex import Sentiment 
-
-stage_name = 'audio_files'
-device = "cuda" if torch.cuda.is_available() else "cpu"
-```
-
-## Audio Processing Pipeline
+## Run Notebook
 
 Duration: 15
 
-Set up the main processing function that combines multiple models:
+> aside negative
+> PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-```py
-def set_seed(seed):
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
+Here's the walkthrough of the notebook cells and their functions:
 
-#For consistent output for quickstart
-set_seed(1280)
+**Cell 1: Package Installation**
+* Installs required packages:
+  - `torch`: For deep learning and neural network operations
+  - `librosa`: For loading and manipulating audio files
+  - `transformers`: For accessing pre-trained models
 
-# Create empty lists to store the results
-results = []
+**Cell 2: Environment Setup**
+* Imports required Python libraries
+* Sets up Snowflake session
+* Configures stage name and device (GPU/CPU)
+* Initializes connection to Snowflake services
 
-# Initialize both pipelines
-audio_pipeline = pipeline("audio-classification", 
-    model="ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition", 
-    device=device)
-whisper_pipeline = pipeline("automatic-speech-recognition", 
-    model="openai/whisper-base", 
-    device=device)
+**Cell 3: Audio Processing Configuration**
+* Sets up the main processing function that:
+  1. Loads audio files from Snowflake stage
+  2. Analyzes emotional tone using wav2vec2 model
+  3. Transcribes audio using Whisper model
+  4. Performs sentiment analysis on transcripts
+  5. Compares emotional tone with sentiment scores
+
+Key components:
+- Audio classification pipeline using `ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition`
+- Speech to text with `whisper`
+- Sentiment analysis using `Snowflake Cortex`
+
+**Cell 4: Process Files**
+* Sets random seed for reproducibility
+* Initializes audio classification and speech recognition pipelines
+* Processes each audio file to:
+  - Extract emotional tone
+  - Generate transcript
+  - Analyze sentiment
+  - Compare tone and sentiment
+* Creates a DataFrame with results
+
+Example output:
+```
+                    File    Emotion  Emotion_Score                                          Transcript  Sentiment_Score Tone_Sentiment_Match
+0  customer_call1.wav      happy         0.892    Thank you so much for your help today! You've...            0.8            Match
+1  customer_call2.wav      angry         0.945    I've been waiting for hours and nobody has...             -0.7            Match
+2  customer_call3.wav    neutral         0.756    I would like to inquire about the status...              0.1          Unknown
+3  customer_call4.wav       happy         0.834    This service has exceeded my expectations...              0.9            Match
 ```
 
-## Process Audio Files
+> aside positive
+> The DataFrame shows the complete analysis for each audio file, including the detected emotion, confidence scores, and whether the emotional tone matches the sentiment of the transcribed text.
 
-Duration: 15
+The notebook outputs results showing the file name, detected emotion, emotion confidence score, transcript, sentiment score, and whether the tone matches the sentiment analysis.
 
-Now let's process our audio files:
+## Understanding Results
 
-```py
-files = session.sql(f"LIST @{stage_name}").collect()
-file_names = [file['name'].split('/')[-1] for file in files]
-
-for file_name in file_names:
-    session.file.get(f'@{stage_name}/{file_name}', "downloads/")
-    audio, rate = librosa.load(f'downloads/{file_name}', sr=16000, mono=True)
-    
-    # Get emotional tone
-    result = audio_pipeline(audio)
-    emotion = sorted(result, key=lambda x: x['score'], reverse=True)[0]
-    
-    # Get transcript and sentiment
-    transcript = whisper_pipeline(audio)
-    sentiment_score = Sentiment(transcript['text'])
-    
-    # Determine if emotion and sentiment match
-    match = "Unknown"
-    if emotion['label'] == "angry":
-        match = "Match" if sentiment_score < 0 else "Do Not Match"
-    elif emotion['label'] == "happy":
-        match = "Match" if sentiment_score > 0 else "Do Not Match"
-    
-    # Store results
-    results.append({
-        'File': file_name,
-        'Emotion': emotion['label'],
-        'Emotion_Score': round(emotion['score'], 3),
-        'Transcript': transcript['text'],
-        'Sentiment_Score': sentiment_score,
-        'Tone_Sentiment_Match': match
-    })
-
-# Create DataFrame
-df = pd.DataFrame(results)
-print(df)
-```
-
-## Understanding Results 📊
+Duration: 10
 
 The analysis provides multiple metrics that work together to give a comprehensive view of the audio:
 
@@ -240,71 +224,39 @@ The 'Tone_Sentiment_Match' field in the results indicates:
 - "Do Not Match": Emotion and sentiment conflict (e.g., angry with positive sentiment)
 - "Unknown": For neutral or other emotional states
 
-## Important Considerations
-
-Duration: 5
-
-When using Snowflake Notebooks on Container Runtime:
-
-### Resource Management
-
-- Each compute node is limited to running one notebook per user at a time  
-- Set MAX\_NODES \> 1 when creating compute pools  
-- Shut down notebook when not in use via "End session" to free resources  
-- Default idle timeout is 1 hour (configurable up to 72 hours)
-
-### Cost Considerations
-
-- Both warehouse compute and SPCS compute costs may apply
-- SQL cells run on warehouse  
-- Python compute runs on container runtime
-
-### Best Practices
-
-- Monitor resource usage  
-- Clean up resources after use  
-- Use appropriate compute pool sizes  
-- Install packages at notebook startup  
-- Handle errors gracefully
-
 ## Conclusion and Resources
 
 Duration: 5
 
-Congratulations\! You've successfully built an end-to-end audio analysis application in Snowflake that combines emotional tone detection, speech recognition, and sentiment analysis. Using Snowflake Notebooks with Container Runtime, you've implemented a solution that processes audio files and provides deep insights into both spoken tone and textual sentiment.
+Congratulations! You've successfully built an end-to-end audio analysis application in Snowflake that combines emotional tone detection, speech recognition, and sentiment analysis using Container Runtime for ML.
 
 ### What You Learned
-
-- How to set up Container Runtime in Snowflake Notebooks  
-- How to implement audio processing using PyTorch and Hugging Face with [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)  
-- How to use pre-trained models for emotion recognition and speech-to-text  
-- How to perform sentiment analysis using [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/)  
+- How to set up Container Runtime in Snowflake Notebooks
+- How to implement audio processing using PyTorch and Hugging Face with [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- How to use pre-trained models for emotion recognition and speech-to-text
+- How to perform sentiment analysis using [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/)
 - How to compare and analyze multiple aspects of audio communication
 
 ### Related Resources
 
-Webpages
-
-- [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)  
+Webpages:
+- [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
 - [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/)
 
 Documentation:
-
-- [Snowflake Notebooks on Container Runtime Overview](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)  
-- [Cortex AI Documentation](https://docs.snowflake.com/en/guides-overview-ai-features)  
+- [Snowflake Notebooks on Container Runtime Overview](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
+- [Cortex AI Documentation](https://docs.snowflake.com/en/guides-overview-ai-features)
 - [PyTorch Audio Processing Guide](https://pytorch.org/audio/stable/index.html)
 
 Sample Code & Guides:
-
-- [Container Runtime Best Practices](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)  
-- [External Access Setup Guide](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview)  
-- [Hugging Face Transformers Documentation](https://huggingface.co/docs/transformers/index)  
+- [Container Runtime Best Practices](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
+- [External Access Setup Guide](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview)
+- [Hugging Face Transformers Documentation](https://huggingface.co/docs/transformers/index)
 - [Snowpark Python Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 
-Related Quickstarts
-
-- [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#4)  
-- [Train an XGBoost Model with GPUs using Snowflake Notebooks](https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0)  
-- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#0)  
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0)  
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0)
+Related Quickstarts:
+- [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#4)
+- [Train an XGBoost Model with GPUs using Snowflake Notebooks](https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html)
