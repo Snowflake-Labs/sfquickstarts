@@ -279,7 +279,7 @@ You can also use snowflake extension in Visual Studio to run and visualize your 
 
 **Step 1.** Download [VSCode](https://code.visualstudio.com/download) in case you don't have it
 
-**Step 2.** Once you have VSCode open, click in extension icon
+**Step 2.** Once you have VSCode open, click in the extension icon
 
 ![Check](assets/extension_icon.png)
 
