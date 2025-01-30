@@ -298,7 +298,7 @@ You can also use snowflake extension in Visual Studio to run and visualize your 
 ![Check](assets/snowpark_checkpoint_enabled.png)
 
 ## Checkpoints View
-After activating the Snowpark Checkpoints flag, you can see, in the Snowflake extension tab, a new display called `SNOWPARK CHECKPOINTS`. There you can find the checkpoints by file, and also two buttons: the left one to activate or deactivate all checkpoints, and the other to delete all of them. By double-clicking each checkpoint in the view, it will take you to it in the corresponding file.
+After activating the Snowpark Checkpoints flag, you can see, in the Snowflake extension tab, a new panel called `SNOWPARK CHECKPOINTS`. There you can find the checkpoints by file, and also two buttons: the left one to activate or deactivate all checkpoints, and the other to delete all of them. Double-clicking a checkpoint in the view will take you to it in the corresponding file.
 
 ![Check](assets/checkpoints_section.png)
 
