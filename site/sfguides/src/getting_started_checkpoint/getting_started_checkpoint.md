@@ -283,7 +283,7 @@ You can also use snowflake extension in Visual Studio to run and visualize your 
 
 ![Check](assets/extension_icon.png)
 
-**Step 3.** Search for Snowflake extension and download it
+**Step 3.** Search for the Snowflake extension and download it
 
 ![Check](assets/snowflake_extension.png)
 
