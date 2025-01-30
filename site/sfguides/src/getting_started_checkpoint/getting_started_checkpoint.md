@@ -325,5 +325,5 @@ Congratulations! You've successfully completed the Getting started with Checkpoi
 - Use VScode Snowflake extension with Checkpoints
 
 ### Related Resources
-- [Python Framework](https://pypi.org/project/snowpark-checkpoints/#description)
-- [Checkpoints Documentation](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
+- [Snowpark checkpoints package](https://pypi.org/project/snowpark-checkpoints/)
+- [Checkpoints documentation](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-checkpoints-library)
