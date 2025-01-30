@@ -105,6 +105,15 @@ CREATE DATABASE IF NOT EXISTS SP_LLM_QS;
 CREATE WAREHOUSE IF NOT EXISTS SP_LLM_QS_WH;
 ```
 
+### Request the S&P Global Market Intelligence QuickStart dataset
+1. Navigate to the Snowflake Marketplace by clicking **Data Products** and then **Marketplkace**  
+    
+    ![Navigate to Marketplace](assets/navigate_to_marketplace.jpg)  
+2. In the search bar enter **XXXXXXXX** and hit enter
+3. In the result list click on **XXXXXXXX**
+4. Xxxxxxxxx
+
+
 ### Create Snowflake Notebook
 
 ### Navigate To Snowflake Notebooks
@@ -120,7 +129,7 @@ CREATE WAREHOUSE IF NOT EXISTS SP_LLM_QS_WH;
     ![New notebook from menu](assets/notebook_from_menu.png)  
 
 ### Import .ipynb File
-1. Navigate to where you have cloned the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake) and select **Customer Profile Creation Pipeline.ipynb** and click **Open**  
+1. Navigate to where you have cloned the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake) and select **0_start_here.ipynb** and click **Open**  
 ![Select Notebook File](assets/select_notebook_file.png)  
 2. Give the notebook a name, then select **SP_LLM_QS** and **PUBLIC** for **Notebook location**, **SP_LLM_QS_WH** for **Notebook warehouse** and click **Create**  
 ![Select Notebook File](assets/notebook_dialog.png)  
@@ -141,8 +150,8 @@ Before you run the notebook you need to add the following Python libraries:
 * snowflake
 
 1. In the Notebook click on **Packages**  
-2. Search for **modin** and select **cachetools** in the list  
-![Modin search result](assets/modin_result.png)  
+2. Search for **cachetools** and select **cachetools** in the list  
+![Modin search result](assets/cachetools_result.png)  
 3. Do the same for **snowflake**. When done you should have the same packages as the list below (the versions might differ)  
 ![Added packages](assets/added_packages.png)  
 
@@ -157,7 +166,7 @@ During this step you will learn how to use Snowflake Cortex to:
 * Generate LLM based answers to questions using Cortex COMPLETE
 * Compare  similarites between questions and LLM answers using cosine similuarity
 
-Follow along and run each of the cells in [the Notebook]https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai/blob/main/notebooks/0_start_here.ipynb).
+Follow along and run each of the cells in [the Notebook](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai/blob/main/notebooks/0_start_here.ipynb).
 
 
 <!-- ------------------------ -->
