@@ -66,17 +66,17 @@ A full-stack application that enables users to:
 ## Setup Workspace
 Duration: 10
 
-**Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs) and open [setup.sql](https://github.com/[Your-Repo]/setup.sql) to execute all statements in order from top to bottom.
+**Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-audio-sentiment-analysis-using-snowflake-notebooks/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
 **Step 2.** In Snowsight, switch your user role to `AUDIO_CONTAINER_RUNTIME_ROLE`.
 
-**Step 3.** Click on [Audio_Sentiment_Analysis.ipynb](https://github.com/[Your-Repo]/Audio_Sentiment_Analysis.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+**Step 3.** Click on [sfguide_getting_started_with_audio_sentiment_analysis_using_snowflake_notebooksipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-audio-sentiment-analysis-using-snowflake-notebooks/blob/main/sfguide_getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 
 **Step 4.** In Snowsight:
 
 * On the left hand navigation menu, click on **Projects » Notebooks**
 * On the top right, click on **Notebook** down arrow and select **Import .ipynb file** from the dropdown menu
-* Select **Audio_Sentiment_Analysis.ipynb** file you downloaded in the step above
+* Select *sfguide_getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks.ipynb** file you downloaded in the step above
 * In the Create Notebook popup:
     * For Notebook location, select `AUDIO_SENTIMENT_DB` and `AUDIO_SCHEMA`
     * For SQL warehouse, select `AUDIO_WH_S`
