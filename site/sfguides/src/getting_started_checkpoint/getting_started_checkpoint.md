@@ -5,7 +5,7 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Pyspark, Snowpark, Checkpoints,
 
 # Getting started with Checkpoints
 <!-- ------------------------ -->
@@ -20,14 +20,14 @@ Here is a summary of what you will be able to learn in each step by following th
 - **Setup Framework Environment**: Set up of Python environment to run checkpoints
 - **Checkpoints uses**: Uses of collectors and validators
 - **Setup Extension**: Install Snowflake VScode extension and how to work along with Checkpoints framework
-- **Extension View**: Extension view with checkpoints option and how to run them. 
+- **Extension View**: Extension view with checkpoints option and how to run them
 
 
 ### Prerequisites
-- A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
-- The default connection needs to have a database and a schema. After running the app, a table called `SNOWPARK_CHECKPOINTS_REPORT` will be created.
+- A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- The default connection needs to have a database and a schema. After running the app, a table called `SNOWPARK_CHECKPOINTS_REPORT` will be created
 - Python >= 3.9
-- OpenJDK 21.0.2
+- OpenJDK >= 17
 - Snowflake CLI version 3.1.0
 - Familiarity with Pyspark and Snowpark
 #### Optional
@@ -44,7 +44,7 @@ Here is a summary of what you will be able to learn in each step by following th
 
 - [VSCode](https://code.visualstudio.com/download) Installed
 - [NodeJS](https://nodejs.org/en/download/) Installed
-- [OpenJDK 21.0.2](https://jdk.java.net/21/) Installed
+- [OpenJDK 17.0.0](https://jdk.java.net/17/) or above Installed
 - [Python 3.9](https://www.python.org/downloads/release/python-3900/) Installed
 - [Snowflake CLI version 3.1.0](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) Installed
 - [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) Account 
@@ -169,8 +169,8 @@ python3 <script_name>.py
 
 After running the script, you will see the following files in the `snowpark-checkpoints-output` directory:
 
-- `demo_initial_creation_checkpoint.json`: Contains the schema of the DataFrame and the statistics of the columns.
-- `checkpoint_collection_results.json`: Contains the information of the results of the collection. It will show the checkpoint name, the result of the collection, the file where the collection was run, and the line of code where the collection was run.
+- `demo_initial_creation_checkpoint.json`: Contains the schema of the DataFrame and the statistics of the columns
+- `checkpoint_collection_results.json`: Contains the information of the results of the collection. It will show the checkpoint name, the result of the collection, the file where the collection was run, and the line of code where the collection was run
 
 <!-- ------------------------ -->
 ## Using validators
@@ -269,13 +269,13 @@ All data is valid
 
 #### Generated files
 
-- `checkpoint_validation_results.json`: Contains the information of the results of the validation. It will show the checkpoint name, the result of the validation, the file where the validation was run, and the line of code where the validation was run.
+- `checkpoint_validation_results.json`: Contains the information of the results of the validation. It will show the checkpoint name, the result of the validation, the file where the validation was run, and the line of code where the validation was run
 
 <!-- ------------------------ -->
 ## Setup extension 
 Duration: 5
 
-You can also use snowflake extension in Visual Studio to run and visualize your Checkpoints
+You can also use snowflake extension in Visual Studio to run and visualize your Checkpoints.
 
 **Step 1.** Download [VSCode](https://code.visualstudio.com/download) in case you don't have it
 
