@@ -293,7 +293,7 @@ You can also use snowflake extension in Visual Studio to run and visualize your 
 
 **Step 5.** Click Extension then search for Snowflake and click it
 
-**Step 6.** Activate where it says `Snowflake > Snowpark Checkpoints: Enabled`
+**Step 6.** Activate `Snowflake > Snowpark Checkpoints: Enabled`
 
 ![Check](assets/snowpark_checkpoint_enabled.png)
 
