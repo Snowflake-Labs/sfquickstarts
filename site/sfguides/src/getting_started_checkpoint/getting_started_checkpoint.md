@@ -309,7 +309,7 @@ There are two ways of running checkpoints:
 
 ![Check](assets/run_single_checkpoints.png)
 
-**2.** Run all checkpoints in file. This option is at the top right corner of each file.
+**2.** Run all checkpoints in a file. This option is at the top right corner of each file.
 
 ![Check](assets/run_all_checkpoints.png)
 
