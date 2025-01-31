@@ -12,7 +12,7 @@ tags: Getting Started, Pyspark, Snowpark, Checkpoints,
 ## Overview 
 Duration: 5
 
-By completing this guide, you will be able to use a testing component for validations of migrating Pyspark to Snowpark, This set of validations are called
+By completing this guide, you will be able to use a testing component for validations of migrating Pyspark to Snowpark. This set of validations are called
 Checkpoints and help to identify behavorial changes and differences in execution platforms that can cause issues.
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
