@@ -325,7 +325,7 @@ Congratulations! You've successfully completed the Getting started with Checkpoi
 ### What You Learned
 - What Checkpoints are
 - Uses of Checkpoints (Collectors and Validators)
-- Use VScode Snowflake extension with Checkpoints
+- Use VSCode Snowflake extension with Checkpoints.
 
 ### Related Resources
 - [Snowpark Checkpoints package](https://pypi.org/project/snowpark-checkpoints/)
