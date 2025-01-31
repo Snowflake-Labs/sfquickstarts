@@ -173,7 +173,7 @@ python3 <script_name>.py
 After running the script, you will see the following files in the `snowpark-checkpoints-output` directory:
 
 - `demo_initial_creation_checkpoint.json`: Contains the schema of the DataFrame and the statistics of the columns
-- `checkpoint_collection_results.json`: Contains the information of the results of the collection. It will show the checkpoint name, the result of the collection, the file where the collection was run, and the line of code where the collection was run
+- `checkpoint_collection_results.json`: Contains the information of the results of the collection. It will show the checkpoint name, the result of the collection, the file where the collection was run, and the line of code where the collection was defined.
 
 <!-- ------------------------ -->
 ## Using validators
