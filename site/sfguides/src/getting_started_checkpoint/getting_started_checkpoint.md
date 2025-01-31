@@ -181,7 +181,7 @@ After running the script, you will see the following files in the `snowpark-chec
 
 Duration: 5
 
-After the migration is done, you can run the script with the validators. The script will validate the schema of the Snowflake dataframe against the schema collected in the previous step.
+Once the migration is done, you can run the script with the validators. The script will validate the schema of the Snowflake dataframe against the schema collected in the previous step.
 
 ```python
 from datetime import date
