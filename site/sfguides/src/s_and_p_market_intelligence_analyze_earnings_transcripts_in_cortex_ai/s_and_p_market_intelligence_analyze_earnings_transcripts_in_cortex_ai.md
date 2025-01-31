@@ -91,7 +91,7 @@ You can also use the Git integration feature of Snowflake Notebooks, in order to
 
 Duration: 10
 
-During this step you will verify that the [Snowflake Sample TPC-H dataset](https://docs.snowflake.com/en/user-guide/sample-data-tpch) is available in your account, and if not add the share.
+During this step you will create the neccessar Snowflake objects, request the S&P Global Market Intelligence QuickStart dataset share and import the Snowflake Notebook.
 
 ### Create Database, Schema And Warehouse To Be Used
 
@@ -160,20 +160,19 @@ If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfg
 
 Before you run the notebook you need to add the following Python libraries:
 * cachetools
-* snowflake
 
 1. In the Notebook click on **Packages**  
 2. Search for **cachetools** and select **cachetools** in the list  
-![Modin search result](assets/cachetools_result.png)  
-3. Do the same for **snowflake**. When done you should have the same packages as the list below (the versions might differ)  
-![Added packages](assets/added_packages.png)  
+![Cachetools search result](assets/cachetools_result.png)  
 
 
 <!-- ------------------------ -->
 ## Analyze Earnings Transcripts with LLMs in Cortex AI
 Duration: 30
 
-During this step you will learn how to use Snowflake Cortex to:
+During this step you will learn how to use Snowflake Cortex to analyse executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers. 
+
+This includes:
 * Generate embeddings on call transcripts
 * Compare similarites between questions and answers using cosine similuarity
 * Generate LLM based answers to questions using Cortex COMPLETE
@@ -190,11 +189,13 @@ Congratulations, you have successfully completed this quickstart! Through this q
 
 ### What You Learned
 
-- how to access S&P Market Intelligence datasets from the Marketplace
-- how to use Snowflake Notebooks
-- how to create and use vector embeddings on text data
-- how to use genrate prompts based on data and use it with Cortex COMPLETE
+In this quickstart you have learned how to use Snowflake Cortex to analyse executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers by:
 
+- accessing S&P Market Intelligence datasets from the Marketplace
+- using Snowflake Notebooks to run the code
+- create and use vector embeddings on text data
+- use generate dynamic prompts based on data and use it with Cortex COMPLETE
+- compare questions, answers and LLM answers using cosine similarity
 
 ### Related Resources
 
