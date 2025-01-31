@@ -38,7 +38,7 @@ Here is a summary of what you will be able to learn in each step by following th
 
 - How to set the enviroment to run the collectors and validators
 - How to collect information from a PySpark dataframe and validate against a Snowpark dataframe.
-- How to use VSCode Snowflake extension with the framework
+- How to use the Snowflake VSCode Extension with the framework
 
 ### What You'll Need
 
@@ -157,6 +157,19 @@ Then you can run the script by executing the following command:
 ```bash
 python3 <script_name>.py
 ```
+
+>  aside negative
+> If you encounter the following error after running your code:
+> ```bash
+> pyspark.errors.exceptions.base.PySparkRuntimeError: [PYTHON_VERSION_MISMATCH] Python in worker has different version (3, 13) than that in driver 3.9, PySpark cannot run with different minor versions.
+> Please check environment variables PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON are correctly set.
+> ```
+> Add the following lines after the imports to resolve the issue:
+> ```python
+> import os
+> import sys
+> os.environ["PYSPARK_PYTHON"] = sys.executable
+> ```
 
 #### Output
 ```bash
