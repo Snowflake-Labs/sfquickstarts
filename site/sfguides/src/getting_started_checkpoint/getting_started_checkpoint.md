@@ -37,7 +37,7 @@ Here is a summary of what you will be able to learn in each step by following th
 ### What You'll Learn
 
 - How to set the enviroment to run the collectors and validators
-- How to collect information from a pyspark dataframe and validate againt a snowflake dataframe
+- How to collect information from a PySpark dataframe and validate against a Snowpark dataframe.
 - How to use VSCode Snowflake extension with the framework
 
 ### What You'll Need
