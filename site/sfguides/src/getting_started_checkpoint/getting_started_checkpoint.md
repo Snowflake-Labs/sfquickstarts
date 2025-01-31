@@ -47,7 +47,7 @@ Here is a summary of what you will be able to learn in each step by following th
 - [OpenJDK 17.0.0](https://jdk.java.net/17/) or above Installed
 - [Python 3.9](https://www.python.org/downloads/release/python-3900/) Installed
 - [Snowflake CLI version 3.1.0](https://docs.snowflake.com/en/user-guide/snowsql-install-config.html) Installed
-- [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) Account 
+- [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account 
 
 ### Problem to solve
 - Identify behavioral changes and differences in execution platforms that can cause issues even after code porting and unit tests.
