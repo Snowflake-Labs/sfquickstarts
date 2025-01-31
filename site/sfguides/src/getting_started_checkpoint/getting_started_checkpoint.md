@@ -97,7 +97,7 @@ snow connection test
 
 Duration: 5
 
-Create a python script with Pyspark code to collect the data from the dataframe, this will collect the schema information from the dataframe, and the next steps it will use it to validate a Snowpark dataframe.
+Create a Python script with PySpark code to collect metadata from a dataframe; this will collect the schema information from the dataframe, which will be used in the next steps to validate a Snowpark dataframe.
 
 ```python
 from datetime import date
