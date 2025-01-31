@@ -62,7 +62,7 @@ Here is a summary of what you will be able to learn in each step by following th
 
 Duration: 2
 
-To run the collectors and validators, you need to set up a python environment. You can do this by running the following commands:
+To run the collectors and validators, you need to set up a Python environment. You can do this by running the following commands:
 
 ```bash
 python3 -m venv .venv
