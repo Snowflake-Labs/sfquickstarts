@@ -1,13 +1,13 @@
 author: Andrei Paniagua
 id: getting_started_checkpoint
-summary: This is a sample Snowflake Guide
+summary: This is a Snowflake Guide for Snowpark Checkpoints
 categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Pyspark, Snowpark, Checkpoints,
 
-# Getting started with Checkpoints
+# Getting started with Snowpark Checkpoints
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -26,7 +26,7 @@ Here is a summary of what you will be able to learn in each step by following th
 ### Prerequisites
 - A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 - The default connection needs to have a database and a schema. After running the app, a table called `SNOWPARK_CHECKPOINTS_REPORT` will be created
-- Python >= 3.9
+- Python 3.9, 3.10 or 3.11
 - OpenJDK >= 17
 - Snowflake CLI version 3.1.0
 - Familiarity with Pyspark and Snowpark
@@ -76,7 +76,7 @@ pip install snowpark-checkpoints
 ```
 ### Setting up the Snowflake CLI
 
-To create a session with the Snowflake CLI, you need to set up the default connection. You can do this by running the following command:
+To create a session with the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-cli), you need to set up the default connection. You can do this by running the following command:
 
 ```bash
 snow connection add --connection-name=<connection_name> --account=<account_name> --user=<user_name> --password=<password> --role=<role_name> --region=<region_name> --warehouse=<warehouse_name> --database=<database_name> --schema=<schema_name> --default
@@ -87,6 +87,9 @@ Test the connection by running the following command:
 ```bash
 snow connection test
 ```
+
+> aside positive
+> You can access [here](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-cli) for more information about Snowflake CLI
 
 <!-- ------------------------ -->
 ## Using Collectors
