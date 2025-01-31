@@ -37,7 +37,7 @@ Here is a summary of what you will be able to learn in each step by following th
 ### What You'll Learn
 
 - How to set the enviroment to run the collectors and validators
-- How to collect information from a PySpark dataframe and validate against a Snowpark dataframe.
+- How to collect information from a PySpark dataframe and validate against a Snowpark dataframe
 - How to use the Snowflake VSCode Extension with the framework
 
 ### What You'll Need
@@ -186,7 +186,7 @@ python3 <script_name>.py
 After running the script, you will see the following files in the `snowpark-checkpoints-output` directory:
 
 - `demo_initial_creation_checkpoint.json`: Contains the schema of the DataFrame and the statistics of the columns
-- `checkpoint_collection_results.json`: Contains the information of the results of the collection. It will show the checkpoint name, the result of the collection, the file where the collection was run, and the line of code where the collection was defined.
+- `checkpoint_collection_results.json`: Contains the information of the results of the collection. It will show the checkpoint name, the result of the collection, the file where the collection was run, and the line of code where the collection was defined
 
 <!-- ------------------------ -->
 ## Using validators
@@ -338,7 +338,7 @@ Congratulations! You've successfully completed the Getting started with Checkpoi
 ### What You Learned
 - What Checkpoints are
 - Uses of Checkpoints (Collectors and Validators)
-- Use VSCode Snowflake extension with Checkpoints.
+- Use VSCode Snowflake extension with Checkpoints
 
 ### Related Resources
 - [Snowpark Checkpoints package](https://pypi.org/project/snowpark-checkpoints/)
