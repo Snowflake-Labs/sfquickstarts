@@ -278,7 +278,7 @@ All data is valid
 ## Setup extension 
 Duration: 5
 
-You can also use snowflake extension in Visual Studio to run and visualize your Checkpoints.
+You can also use the Snowflake VSCode Extension to run and visualize your Checkpoints.
 
 **Step 1.** Download [VSCode](https://code.visualstudio.com/download) in case you don't have it
 
