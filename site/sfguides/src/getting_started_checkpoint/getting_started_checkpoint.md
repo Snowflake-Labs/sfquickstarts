@@ -272,7 +272,7 @@ All data is valid
 
 #### Generated files
 
-- `checkpoint_validation_results.json`: Contains the information of the results of the validation. It will show the checkpoint name, the result of the validation, the file where the validation was run, and the line of code where the validation was run
+- `checkpoint_validation_results.json`: Contains the information of the results of the validation. It will show the checkpoint name, the result of the validation, the file where the validation was run, and the line of code where the validation was defined.
 
 <!-- ------------------------ -->
 ## Setup extension 
