@@ -1,80 +1,51 @@
-author: NaveenAlanThomas
-id: marketing_data_foundation_starter
-summary: Marketing Data Foundation Starter Guide
+author: Manuel Figueroa, Joviane Bellegarde
+id: marketing_data_foundation_starter_v3
+summary: Marketing Data Foundation Starter Guide V3
 categories: Marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Marketing, Data Engineering, Native Application
 
-# Marketing Data Foundation Starter Guide
+# Marketing Data Foundation Starter Guide V3
 <!-- ------------------------ -->
 ## Overview 
 
 Duration: 15
 
-Customers looking to use Snowflake for marketing use cases initially face a significant challenge: it is difficult to import all relevant marketing data into Snowflake and structure it in a unified format that downstream applications can easily utilize to power data-driven marketing.
+Customers looking to use Snowflake for marketing use cases initially face a significant challenge: it is difficult to import all relevant marketing data into Snowflake and structure it in a unified format that downstream applications can easily utilize to power data-driven marketing. This starter solution tackles this challenge by offering an integrated application that unifies data sets from different Connectors and Marketing Data providers.
 
-This starter solution tackles this challenge of creating a marketing data foundation by offering two independent solutions and a merged version, demonstrating how to integrate both solutions into a comprehensive 'marketing app suite'.
+In this example we are adding support for 
+- Fivetran / Facebook Ads
+- Omnata / LinkedIn Ads
 
-Marketing Data Foundation Starter (Merges the two apps below into a ‘marketing app suite’)
-  - Data Foundation Starter for Customer 360
-  - Data Foundation Starter for Campaign Intelligence
-  
 This solution was inspired by how Snowflake runs its own end-to-end Marketing workflows entirely on top of the Snowflake Marketing Data Cloud.
 
-Slide deck with more context on the overall solution: Marketing Data Foundation Starter for Customer 360 & Campaign Intelligence.
+In the fast-evolving marketing landscape, the emphasis on data-driven strategies has become more pronounced than ever. A significant trend is the increase in Martech investments, with 63% of Chief Marketing Officers (CMOs) planning to increase their spending within the next 12 months. Such investments are crucial for enhancing customer engagement, refining marketing strategies, and driving sales through advanced data analysis. The high ROI that businesses achieve from data-driven personalization also highlights its importance. Reports indicate that enterprises see returns of 5 to 8 times on their marketing budgets, which demonstrates the value of personalized marketing in boosting conversion rates, enhancing customer loyalty, and increasing revenue.
 
-### Problem Space
+Additionally, the industry is shifting towards first-party data ownership, a move propelled by the deprecation of third-party cookies. This shift is essential for maintaining direct customer relationships and adapting to changing privacy norms. The promise of generative AI and the understanding that an effective AI strategy requires a robust data strategy have spurred efforts to centralize marketing data within Snowflake. Organizations aim to organize data into standard schemas that Large Language Models (LLMs) can understand, employing these models in innovative ways to personalize content and predict customer behavior. Two types of first-party data are pivotal in these efforts: Customer 360 Data and Campaign Intelligence. The former strives to provide a holistic view of the customer by integrating and managing comprehensive data. In contrast, Campaign Intelligence focuses on data related to marketing campaigns, aiming to optimize performance and strategy. These elements are fundamental to successful data-driven marketing, underscoring the need for sophisticated data management and analytics capabilities.
 
-In the fast-evolving marketing landscape, the emphasis on data-driven strategies has become more pronounced than ever. A significant trend is the increase in Martech investments, with 63% of Chief Marketing Officers (CMOs) planning to increase their spending within the next 12 months. Such investments are crucial for enhancing customer engagement, refining marketing strategies, and driving sales through advanced data analysis.
-
-The high ROI that businesses achieve from data-driven personalization also highlights its importance. Reports indicate that enterprises see returns of 5 to 8 times on their marketing budgets, which demonstrates the value of personalized marketing in boosting conversion rates, enhancing customer loyalty, and increasing revenue.
-
-Additionally, the industry is shifting towards first-party data ownership, a move propelled by the deprecation of third-party cookies. This shift is essential for maintaining direct customer relationships and adapting to changing privacy norms. The promise of generative AI and the understanding that an effective AI strategy requires a robust data strategy have spurred efforts to centralize marketing data within Snowflake. Organizations aim to organize data into standard schemas that Large Language Models (LLMs) can understand, employing these models in innovative ways to personalize content and predict customer behavior.
-
-Two types of first-party data are pivotal in these efforts: Customer 360 Data and Campaign Intelligence. The former strives to provide a holistic view of the customer by integrating and managing comprehensive data. In contrast, Campaign Intelligence focuses on data related to marketing campaigns, aiming to optimize performance and strategy. These elements are fundamental to successful data-driven marketing, underscoring the need for sophisticated data management and analytics capabilities.
-
-### Solution Space
-
-#### Context
-
+## Context
 As described in the diagram below, the two Data Foundation use cases in this starter lay the groundwork to support the two Marketing Execution use cases: Planning & Activation, and Measurement.
 
-![usecase](assets/context.png)
+As described in the diagram below, the two Data Foundation use cases in this starter lay the groundwork to support the two Marketing Execution use cases: Planning & Activation, and Measurement.
+![overview](assets/context.png)
 
 More specifically, this solution covers Data Ingestion, Semantic Unification, and based Analytics use cases for Customer 360 and Campaign Intelligence data.
+![overview](assets/context2.png)
 
-![usecase](assets/context2.png)
+## What You Will Build
+- A Native Application that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
 
-### Solution Details
+## What You Will Learn
+- How to build a native application in Snowflake and how to deploy the same to your account using Snow CLI quickly.
+- How to use Snowpark Python to build a data pipeline that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
 
-Below are some snippet of the app that you are going to build.
-
-#### Campaign Intelligence Starter
-
-![Alt text](assets/Campaign_Intelligence_Starter.png)
-
-#### Customer 360 Starter
-
-![Alt text](assets/Customer_360_starter.png)
-
-The solution consists of the following components:
-
-  - Native Application: The code needed to build and deploy this solution as a Native App. You will deploy this app in your own Snowflake account.
-
-  - Solution Steps: Step-by-step instructions for installing the Native app in your own Snowflake account are available in this quickstarts.
-
-### What You’ll Need 
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
-- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that can create the database, schema, tables, stages, tasks, user-defined functions, and stored procedures, OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
-- [Snow CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/installation/installation) Installed 
-
-### What You Will Learn
-
-- How to use SnowCLI to connect to Snowflake
-- How to build and deploy a Native Application using our preloaded sample Facebook ads, LinkedIn ad data, Salesforce and Google click analytics datasets.
+## Prerequisites
+- A [GitHub](https://github.com/) Account
+- [VSCode](https://code.visualstudio.com/download) Installed
+- [Snow CLI](https://docs.snowflake.com/developer-guide/snowflake-cli/index) Installed
+- [Python](https://www.python.org/downloads/) Installed
 
 <!-- ------------------------ -->
 ## The App Architecture
