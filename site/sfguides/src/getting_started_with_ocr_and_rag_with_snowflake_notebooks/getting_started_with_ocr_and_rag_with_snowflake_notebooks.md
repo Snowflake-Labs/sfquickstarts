@@ -55,7 +55,7 @@ CREATE SCHEMA IF NOT EXISTS ocr_rag;
 1. Create a stage to store your images:
 
 ```sql
-CREATE STAGE IF NOT EXISTS @ocr_rag.images_to_ocr
+CREATE STAGE IF NOT EXISTS ocr_rag.images_to_ocr
   ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
   DIRECTORY = (ENABLE = true);
 ```
@@ -70,7 +70,7 @@ CREATE STAGE IF NOT EXISTS @ocr_rag.images_to_ocr
 4. Verify upload success:
 
 ```sql
-ls @ocr_rag.images_to_ocr;
+ls @images_to_ocr;
 ```
 
 You should see your uploaded files listed with their sizes.
@@ -104,16 +104,17 @@ Bibtex format:
 * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
 * Select the file you downloaded in step 1 above
 3. In the Create Notebook popup
-* For Notebook location, select **ocr_rag** for your database and **images_to_ocr** as your schema
+* For Notebook location, select **ocr_rag** for your database and **ocr_rag** as your schema
 * Select your **Warehouse**
 * Click on Create button
+4. On the top right Click Packages
+* Install **tesserocr**, **pillow**, and **snowflake**
 
 Here we add our imports that we will use for our project 
 Key Components:
 - `Tesseract`: A powerful OCR engine that converts images to text
-- `Streamlit`: Creates an intuitive web interface for user interaction
-- `PIL (Python Imaging Library)`: Handles image processing tasks
-- `Snowpark`: Provides Python API for Snowflake operations
+- `PIL [Pillow] (Python Imaging Library)`: Handles image processing tasks
+
 
 ```python
 # Import python packages

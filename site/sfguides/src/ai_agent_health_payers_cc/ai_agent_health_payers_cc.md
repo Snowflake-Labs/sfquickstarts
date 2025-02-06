@@ -11,6 +11,7 @@ tags: Getting Started, Snowpark Python, Streamlit, Data-Science-&-Ai
 <!-- ------------------------ -->
 ## Overview
 ![banner](assets/banner.png)
+
 Duration: 5
 
 In this quickstart, you will learn how to easily build an AI agent entirely in Snowflake. We will walk through a scenario in the healthcare industry to illustrate this.
@@ -37,9 +38,7 @@ Based on a detailed study, you have identified key challenges faced by Contact C
 - **Lack of guided workflows:** Agents are expecting advanced features such as recommended "next best action" and AI generated drafts to get their tasks done more efficiently.
 
 ### What You Will Learn
-
 - How to use [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) to develop agentic workflows using any open-source model such as Whisper
-- How to process unstructured data with [Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 - How to leverage [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) for a hybrid (vector and keyword) search engine on text data
 - How to use [Cortex Analyst](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst?_fsi=6CVthwI0) to help you create applications capable of reliably answering business questions based on your structured data in Snowflake
 - How to use [ML Functions](https://docs.snowflake.com/en/user-guide/ml-functions/classification) to build a classification model in a low-code way
@@ -53,7 +52,7 @@ Based on a detailed study, you have identified key challenges faced by Contact C
 ### What You Will Build
 - A Snowflake Notebook on Container Runtime to process unstructured data (audio files and PDFs) and build a Caller Intent ML Classification Model and execute predictions:
      - Audio-to-text transcription using `whisper`
-     - PDF processing and text chunking using Snowpark
+     - PDF processing and text chunking using Snowflake LLM functions
 - A chatbot application using Streamlit
 
 **Architecture Diagram:**
@@ -64,6 +63,7 @@ A simplified "agentic" workflow ties these features together to provide a single
 <img src="assets/payer_cc_agentic.png"/>
 
 ## Data and Snowflake Setup
+
 Duration: 15
 
 > **You can access the full code in [this GIT REPO](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main).**
@@ -278,6 +278,7 @@ COMMENT = '{"origin":"sf_sit-is", "name":"payer_call_center_assistant_v2", "vers
 ```
 
 ## Access Setup Notebook
+
 Duration: 20
 
 The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
@@ -291,6 +292,7 @@ Within this notebook, you'll prepare all the unstructured data needed before you
 You will also predict the intent of a caller using historical data.This will allow Contact Center Agents to be better prepared when faced with an incoming call.
 
 ## Run Streamlit Application
+
 Duration: 20
 
 The Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open `PAYERS_CC_CHATBOT` and explore.
@@ -300,6 +302,7 @@ This app simulates a few different scenarios where Contact Center Agents have to
 <img src='assets/streamlit_app.png'>
 
 ## Conclusion And Resources
+
 Duration: 1
 
 In this guide, you processed a knowledge base of unstructured and structured Enterprise data and then used it to build an AI-powered Assistant for a Contact Center.
