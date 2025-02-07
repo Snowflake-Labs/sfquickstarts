@@ -54,237 +54,58 @@ This demo consists of a native application that provides a framework to easily u
 - [Snow CLI](https://docs.snowflake.com/developer-guide/snowflake-cli/index) Installed
 - [Python](https://www.python.org/downloads/) Installed
 
-[//]: # (<!-- ------------------------ -->)
 
-[//]: # (## The App Architecture)
-
-[//]: # ()
-[//]: # (This solution consists of 2 individual solutions.)
-
-[//]: # ()
-[//]: # (### Data Foundation Starter for Customer 360)
-
-[//]: # ()
-[//]: # (![C360 Architecture]&#40;assets/Detailed_Arch-Customer72.png&#41;)
-
-[//]: # ()
-[//]: # (### Data Foundation Starter for Campaign Intelligence)
-
-[//]: # ()
-[//]: # (![C360 Architecture]&#40;assets/Detailed-Arch-Marketing72.png&#41;)
-
-[//]: # ()
-[//]: # ()
-[//]: # (<!-- ------------------------ -->)
-
-[//]: # (## Setup)
-
-[//]: # ()
-[//]: # (### Clone GitHub repository)
-
-[//]: # (Duration: 2)
-
-[//]: # ()
-[//]: # (Clone the git repo to your local)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (git clone https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter.git)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (### Create a connection)
-
-[//]: # ()
-[//]: # (Run the below command and provide your account details.)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (snow connection add)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # ()
-[//]: # (Test your connection by running the below command)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (snow connection test --connection="marketing_demo_conn")
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (Refer to the screenshot below for more info.)
-
-[//]: # ()
-[//]: # ()
-[//]: # (![Alt text]&#40;assets/Snowconnection-create-test.png&#41;)
-
-[//]: # ()
-[//]: # ()
-[//]: # (## Create Database objects)
-
-[//]: # ()
-[//]: # (Duration: 2)
-
-[//]: # ()
-[//]: # (Navigate to the repo folder in your local machine and run the below command to create your database, schema and stage objects)
-
-[//]: # ()
-[//]: # (First lets export the connection name to the default connection)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (export SNOWFLAKE_DEFAULT_CONNECTION_NAME=marketing_demo_conn)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (cd sfguide-marketing-data-foundation-starter)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (snow sql -f sql_scripts/setup.sql)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (![Alt text]&#40;assets/run-setup-script.png&#41;)
-
-[//]: # ()
-[//]: # (## Upload sample data to stage)
-
-[//]: # ()
-[//]: # (Duration: 4)
-
-[//]: # ()
-[//]: # (Upload all the sample data files in the folder data to the stage created in step 1)
-
-[//]: # ()
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (snow stage copy data/worldcities.csv @MARKETING_DATA_FOUNDATION.demo.data_stg/data)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (snow stage copy data/sf_data/ @MARKETING_DATA_FOUNDATION.demo.data_stg/data/sf_data/ --parallel 10)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (snow stage copy data/ga_data/ @MARKETING_DATA_FOUNDATION.demo.data_stg/data/ga_data/ --parallel 20)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (snow stage copy data/sample_data.gz @MARKETING_DATA_FOUNDATION.demo.data_stg/data/)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (![Alt text]&#40;assets/Upload-to-Stage.png&#41;)
-
-[//]: # ()
-[//]: # ()
-[//]: # (If the upload fails due to an access issue then, please follow the instructions in this [document]&#40;https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui&#41; to upload the files directly to Snowflake Stage.)
-
-[//]: # ()
-[//]: # ()
-[//]: # (## Load Sample data to the table and Create a Native Application)
-
-[//]: # ()
-[//]: # (Duration: 2)
-
-[//]: # ()
-[//]: # (### Load data and create views)
-
-[//]: # ()
-[//]: # (Run the below command to create the views that will be bundled along with the native app)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (snow sql -f sql_scripts/build_views.sql)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (### Build NativeApp)
-
-[//]: # ()
-[//]: # (```console)
-
-[//]: # (snow app run)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (![Alt text]&#40;assets/Appcreation.png&#41;)
-
-[//]: # ()
-[//]: # ()
-[//]: # (## [Quick-deploy] Build and Deploy App in one go)
-
-[//]: # ()
-[//]: # (Duration: 2)
-
-[//]: # ()
-[//]: # (Please **DO NOT** run this step if you have completed individual steps above. This step is for users to quickly run all the snow cli commands in one go.)
-
-[//]: # ()
-[//]: # (```sh)
-
-[//]: # (bash ./sfguide-marketing-data-foundation-starter/build_deploy_app.sh)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (![Alt text]&#40;assets/Appcreation.png&#41;)
-
-[//]: # ()
-[//]: # (## Conclusion and Resources)
-
-[//]: # (Duration: 1)
-
-[//]: # ()
-[//]: # (Congratulations! You have successfully learned how to easily build an end-to-end Native Application loading sample data. )
-
-[//]: # ()
-[//]: # (### What you learned)
-
-[//]: # ()
-[//]: # (* How to build a native application in Snowflake and how to deploy the same to your account using Snow CLI quickly.)
-
-[//]: # ()
-[//]: # (### Related Resources)
-
-[//]: # ()
-[//]: # (Want to learn more about the tools and technologies used by your app? Check out the following resources:)
-
-[//]: # ()
-[//]: # (* [Source Code on GitHub]&#40;https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter&#41;)
-
-[//]: # (* [Snowpark Python Developer Guide]&#40;https://docs.snowflake.com/en/developer-guide/snowpark/python/index&#41;)
-
-[//]: # (* [Snowpark Guide for Data Engineers]&#40;https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/&#41;)
-
-[//]: # (* [Getting Started with Snow CLI]&#40;https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html#0&#41;)
+<!-- ------------------------ -->
+
+## Setup
+
+### Clone GitHub repository
+Duration: 2
+
+Clone the git repo to your local
+
+```console
+git clone https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3
+```
+
+### Create a connection
+
+```console
+snow connection add
+```
+
+Refer to the screenshot below for more info.
+
+```shell
+Enter connection name: marketing_v3_demo_conn
+Enter account name: ******
+Enter user: <YOUR USERNAME>
+Enter password [optional]:
+Enter role: ACCOUNTADMIN
+Enter warehouse: COMPUTE_WH
+Enter database: snowflake
+Enter schema: account_usage
+Enter host [optional]:
+Enter port [optional]:
+Enter region: us-west-1
+Enter authenticator [optional]:
+Enter private key file [optional]:
+Enter token file path [optional]:
+Wrote new connection marketing_v3_demo_conn to /Users/******/.snowflake/connections.toml
+```
+
+
+To review the new created connection use:
+```console
+snow connection list
+```
+
+Refer to the screenshot below:
+```shell
++------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
+| connection_name        | parameters                                                                                                                                                            | is_default |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------|
+| marketing_v3_demo_conn | {'account': '******', 'user': '******', 'password': '****', 'region': 'us-west-1', 'database': 'snowflake', 'schema': 'account_usage', 'warehouse': 'COMPUTE_WH',     | True       |
+|                       | 'role': 'ACCOUNTADMIN'}                                                                                                                                              |            |
++------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
+```
