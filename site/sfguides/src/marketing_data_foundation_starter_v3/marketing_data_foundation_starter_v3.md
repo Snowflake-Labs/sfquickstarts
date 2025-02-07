@@ -29,10 +29,12 @@ Additionally, the industry is shifting towards first-party data ownership, a mov
 As described in the diagram below, the two Data Foundation use cases in this starter lay the groundwork to support the two Marketing Execution use cases: Planning & Activation, and Measurement.
 
 As described in the diagram below, the two Data Foundation use cases in this starter lay the groundwork to support the two Marketing Execution use cases: Planning & Activation, and Measurement.
-![overview](assets/context.png)
+
+![context](assets/context.png)
 
 More specifically, this solution covers Data Ingestion, Semantic Unification, and based Analytics use cases for Customer 360 and Campaign Intelligence data.
-![overview](assets/context2.png)
+
+![context](assets/context2.png)
 
 ### What You Will Build
 - A Native Application that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
