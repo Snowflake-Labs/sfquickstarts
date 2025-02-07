@@ -25,7 +25,7 @@ In the fast-evolving marketing landscape, the emphasis on data-driven strategies
 
 Additionally, the industry is shifting towards first-party data ownership, a move propelled by the deprecation of third-party cookies. This shift is essential for maintaining direct customer relationships and adapting to changing privacy norms. The promise of generative AI and the understanding that an effective AI strategy requires a robust data strategy have spurred efforts to centralize marketing data within Snowflake. Organizations aim to organize data into standard schemas that Large Language Models (LLMs) can understand, employing these models in innovative ways to personalize content and predict customer behavior. Two types of first-party data are pivotal in these efforts: Customer 360 Data and Campaign Intelligence. The former strives to provide a holistic view of the customer by integrating and managing comprehensive data. In contrast, Campaign Intelligence focuses on data related to marketing campaigns, aiming to optimize performance and strategy. These elements are fundamental to successful data-driven marketing, underscoring the need for sophisticated data management and analytics capabilities.
 
-## Context
+### Context
 As described in the diagram below, the two Data Foundation use cases in this starter lay the groundwork to support the two Marketing Execution use cases: Planning & Activation, and Measurement.
 
 As described in the diagram below, the two Data Foundation use cases in this starter lay the groundwork to support the two Marketing Execution use cases: Planning & Activation, and Measurement.
@@ -34,14 +34,14 @@ As described in the diagram below, the two Data Foundation use cases in this sta
 More specifically, this solution covers Data Ingestion, Semantic Unification, and based Analytics use cases for Customer 360 and Campaign Intelligence data.
 ![overview](assets/context2.png)
 
-## What You Will Build
+### What You Will Build
 - A Native Application that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
 
-## What You Will Learn
+### What You Will Learn
 - How to build a native application in Snowflake and how to deploy the same to your account using Snow CLI quickly.
 - How to use Snowpark Python to build a data pipeline that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
 
-## Prerequisites
+### Prerequisites
 - A [GitHub](https://github.com/) Account
 - [VSCode](https://code.visualstudio.com/download) Installed
 - [Snow CLI](https://docs.snowflake.com/developer-guide/snowflake-cli/index) Installed
