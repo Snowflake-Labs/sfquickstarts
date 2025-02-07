@@ -36,6 +36,11 @@ More specifically, this solution covers Data Ingestion, Semantic Unification, an
 
 ![context](assets/context2.png)
 
+### Architecture
+This demo consists of a native application that provides a framework to easily unify marketing data sources and then leverage LLM functions to explore that data and get valuable business intelligence information from the data that was ingested.
+
+![architecture](assets/ArchitectureDiagram.png)
+
 ### What You Will Build
 - A Native Application that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
 
