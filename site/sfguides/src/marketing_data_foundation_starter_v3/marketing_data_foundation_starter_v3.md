@@ -61,8 +61,7 @@ This demo consists of a native application that provides a framework to easily u
 ### Clone GitHub repository
 Duration: 2
 
-Clone the git repo to your local
-
+Clone the git repo to your local machine:
 ```console
 git clone https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3
 ```
@@ -73,8 +72,7 @@ git clone https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-st
 snow connection add
 ```
 
-Refer to the screenshot below for more info.
-
+Refer to the screenshot below for more info:
 ```shell
 Enter connection name: marketing_v3_demo_conn
 Enter account name: ******
@@ -107,3 +105,15 @@ Refer to the screenshot below:
 |                        | 'role': 'ACCOUNTADMIN'}                                                                                                                                               |            |
 +------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
 ```
+
+Lastly, let's export the connection name to the default connection:
+```console
+export SNOWFLAKE_DEFAULT_CONNECTION_NAME=marketing_demo_v3_conn
+```
+
+<!-- ------------------------ -->
+## Native Application
+
+### Clone GitHub repository
+Duration: 2
+
