@@ -56,7 +56,6 @@ This demo consists of a native application that provides a framework to easily u
 
 
 <!-- ------------------------ -->
-
 ## Setup
 
 ### Clone GitHub repository
@@ -94,7 +93,6 @@ Enter token file path [optional]:
 Wrote new connection marketing_v3_demo_conn to /Users/******/.snowflake/connections.toml
 ```
 
-
 To review the new created connection use:
 ```console
 snow connection list
@@ -106,6 +104,6 @@ Refer to the screenshot below:
 | connection_name        | parameters                                                                                                                                                            | is_default |
 |------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------|
 | marketing_v3_demo_conn | {'account': '******', 'user': '******', 'password': '****', 'region': 'us-west-1', 'database': 'snowflake', 'schema': 'account_usage', 'warehouse': 'COMPUTE_WH',     | True       |
-|                       | 'role': 'ACCOUNTADMIN'}                                                                                                                                              |            |
+|                        | 'role': 'ACCOUNTADMIN'}                                                                                                                                               |            |
 +------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
 ```
