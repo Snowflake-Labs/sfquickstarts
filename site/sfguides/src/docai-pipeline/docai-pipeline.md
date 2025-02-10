@@ -21,7 +21,7 @@ The pipeline ensures that documents meet business expectations through pre-proce
 
 ### Prerequisites
 - Familiarity with SQL and Python
-- A Snowflake account. If you do not have a Snowflake account, you can register for a free trial account.
+- A <a href=https://signup.snowflake.com/>Snowflake account</a>. If you do not have a Snowflake account, you can register for a free trial account.
 - A Snowflake account login with a role that has the ability to create role, database, schema, tables, stages and assign permissions. If not, you will need to register for a free trial or use a different role.
 
 ### What You’ll Learn 
@@ -29,7 +29,7 @@ The pipeline ensures that documents meet business expectations through pre-proce
 - How to validate and pre-process documents for specific requirements.
 - How to integrate Snowflake with a Document AI model for data extraction.
 - How to apply score-based validation criteria to extracted data.
-- How to manage and route documents through different stages.
+- How to manage and route documents through different stages.s
 - How to monitor and enhance the pipeline using Streamlit UI.
 
 ### What You’ll Need 
@@ -212,14 +212,26 @@ Once extracted, data is validated to ensure accuracy. Key data points, such as t
 ![Validation](assets/Validation.png)
 
 <!-- ------------------------ -->
-## Conclusion and Cleanup
+## Conclusion and Resources
+### Conclusion
 
 This QuickStart provides an introduction to automating a Document AI pipeline that processes multiple models and pre-processes documents efficiently. In real-world scenarios, pre-processing logic can be customized, batch processing can be optimized, and validation rules can be enhanced to improve accuracy. This pipeline serves as a foundation for scalable, AI-powered document processing solutions.
+
+### What You Learned
+
+- How to automate document processing using Snowflake Document AI.
+- How to pre-process, extract, validate, and monitor document data efficiently.
+- How to integrate multiple Document AI models within a single pipeline.
+- How to use Streamlit for real-time tracking and visualization of document workflows.
+
 
 ### Cleanup
 
 Remember to clean up the objects you created after completing this QuickStart. Run the cleanup script available at:  
 [Cleanup](https://github.com/sarathi-aiml/DOC_AI_Pipeline/blob/main/Cleanup.sql)
 
+### Resources
 
-
+- [Snowflake Document AI Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview)
+- [Known Limitations of Document AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/limitations)
+- [Sample Scripts and Pipelines (GitHub)](https://github.com/sarathi-aiml/DOC_AI_Pipeline)
