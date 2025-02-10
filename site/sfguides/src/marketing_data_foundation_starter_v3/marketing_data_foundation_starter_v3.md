@@ -119,26 +119,22 @@ export SNOWFLAKE_DEFAULT_CONNECTION_NAME=marketing_demo_v3_conn
 ### Clone GitHub repository
 Duration: 2
 
-Once the Snowflake connection is set as default, you can proceed to execute the Jupyter notebook that deploys the application in your Snowflake account.
-
-For this you can execute it using VSCode or Jupyter in your command line. We recommend you use VSCode.
-
 #### To use VSCode:
 
 You will need to create a Python virtual environment to install dependencies and be able to successfully execute the deployment notebook.
 
-Open the project with VSCode and select the [***deployment.ipynb***](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3/blob/main/scripts/deployment_na_spcs.ipynb) file from the File explorer.
+Open the project with VSCode and select the [**deployment.ipynb**](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3/blob/main/scripts/deployment_na_spcs.ipynb) file from the File explorer.
 
 Then, select the virtual environment you created as the execution kernel for this notebook.
 
-![](assets/JupyterNotebook.png)
+![vscode](assets/vscode.png)
 
 
-Then you can click on the ***Run All*** button to execute all the code cells described in this notebook, or you can execute each cell manually.
+Then you can click on the **Run All** button to execute all the code cells described in this notebook, or you can execute each cell manually.
 
 After the execution of this notebook you will see some new assets created in your Snowflake account.
 
-![](assets/appPackage.png)
+![snowflake_objects](assets/snowflake_objects.png)
 
 The application and the application package should be listed in your databases list.
 
