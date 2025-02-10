@@ -49,10 +49,12 @@ This demo consists of a native application that provides a framework to easily u
 - How to use Snowpark Python to build a data pipeline that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
 
 ### Prerequisites
-- A [GitHub](https://github.com/) Account
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [Snow CLI](https://docs.snowflake.com/developer-guide/snowflake-cli/index) Installed
-- [Python](https://www.python.org/downloads/) Installed
+- A Snowflake Role with access to create Compute Pools, create Warehouses and Databases.
+- A [GitHub](https://github.com/) Account.
+- [VSCode](https://code.visualstudio.com/download) Installed.
+- [Snow CLI](https://docs.snowflake.com/developer-guide/snowflake-cli/index) Installed.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) Installed.
+- [Python](https://www.python.org/downloads/) Installed.
 
 
 <!-- ------------------------ -->
