@@ -16,21 +16,21 @@ Modern organizations face the challenge of managing both structured data (like m
 
 In this quickstart, you'll learn how to build an Intelligent Sales Assistant that leverages Snowflake's capabilities for analyzing sales conversations and metrics. Using Cortex Agents and Streamlit, we'll create an interactive and intuitive assistant.
 
-#### Cortex Analyst
+### Cortex Analyst
 - Converts natural language questions into SQL queries
 - Understands semantic models defined in YAML files
 - Enables querying data without writing SQL manually
 - Handles complex analytical questions about sales metrics
 - Achieves over 90% accuracy through user-generated semantic models that capture domain knowledge and business context
 
-#### Cortex Search
+### Cortex Search
 - Delivers best-in-class search performance through a hybrid approach combining semantic and keyword search
 - Leverages an advanced embedding model (E5) to understand complex semantic relationships
 - Enables searching across unstructured data with exceptional accuracy and speed
 - Supports real-time indexing and querying of large-scale text data
 - Returns contextually relevant results ranked by relevance scores
 
-#### Cortex Agents
+### Cortex Agents
 The Cortex Agents is a stateless REST API endpoint that:
 - Seamlessly combines Cortex Search's hybrid search capabilities with Cortex Analyst's 90%+ accurate SQL generation
 - Streamlines complex workflows by handling:
@@ -51,6 +51,23 @@ These capabilities work together to:
 2. Go from Text to SQL to answer analytical questions
 3. Combine structured and unstructured data analysis
 4. Provide natural language interactions with your data
+
+### What You'll Learn
+- How to set up and configure Snowflake Cortex Agents for integrating advanced data analysis and search capabilities
+- How to build a Streamlit-based interactive application to interact with sales data and conversations
+- How to use Cortex Analyst to automatically convert natural language queries into SQL for high-accuracy data analysis
+- How to leverage Cortex Search for semantic and keyword search to find relevant information within unstructured sales conversations
+- How to integrate real-time streaming responses and multi-step orchestration with Cortex Agents for a dynamic, conversational interface
+- How to manage semantic models in Snowflake and use them for improving the accuracy of AI-driven analytics
+
+### What You'll Build
+A Intelligent Sales Assistant that enables users to:
+- Analyze sales conversations and metrics using natural language queries
+- Query sales data without manually writing SQL, using Cortex Analyst's SQL generation
+- Search through large amounts of unstructured sales data with Cortex Search's hybrid search capabilities
+- View real-time streaming responses and SQL results directly within the app
+- Interact with a streaming interface for fast, conversational interactions with data
+- Build an integrated application combining structured and unstructured data analysis through Snowflake's Cortex Agents capabilities
 
 ## Setup Workspace
 Duration: 10
