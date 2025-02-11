@@ -15,7 +15,7 @@ Duration: 15
 
 Customers looking to use Snowflake for marketing use cases initially face a significant challenge: it is difficult to import all relevant marketing data into Snowflake and structure it in a unified format that downstream applications can easily utilize to power data-driven marketing. This starter solution tackles this challenge by offering an integrated application that unifies data sets from different Connectors and Marketing Data providers.
 
-In this example we are adding support for 
+In this example we are adding support for: 
 - Fivetran / Facebook Ads
 - Omnata / LinkedIn Ads
 
