@@ -130,4 +130,22 @@ After the execution of this notebook you will see some new assets created in you
 
 ![snowflake_objects](assets/snowflake_objects.png)
 
+<!-- ------------------------ -->
+## Open the Native App
+Duration: 2
+
+### Open the new native application
+
+In the ***Data Products/ Apps*** section, you will see the recently created Marketing Data Foundation native application:
+
+[//]: # (![]&#40;assets/nativeAppList.png&#41;)
+
+
+## How to use the application
+After you deploy this native app in your account, navigate to
+the Data Products / Apps section in Snowsight and open the  
+**Marketing Data Foundation** application.
+
+[//]: # (![NativeApp]&#40;assets/NativeAppListing.png&#41;)
+
 
