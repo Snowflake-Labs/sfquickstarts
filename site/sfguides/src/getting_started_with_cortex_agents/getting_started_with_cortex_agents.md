@@ -69,6 +69,15 @@ A Intelligent Sales Assistant that enables users to:
 - Interact with a streaming interface for fast, conversational interactions with data
 - Build an integrated application combining structured and unstructured data analysis through Snowflake's Cortex Agents capabilities
 
+### What You'll Need
+
+Before you begin, make sure you have the following:
+
+- **Snowflake Account**: Access to Snowflake with sufficient privileges to create databases, schemas, tables, and upload files. You will also need to set up an RSA public key for the user in Snowflake. For more details on setting up the public key, refer to the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/key-pair-auth#assign-the-public-key-to-a-snowflake-user).
+- **Cortex Agents Access**: You will need access to Snowflake Cortex service, **Cortex Agents**, **Cortex Search**, and **Cortex Analyst** features.
+- **JWT Keypair**: A private RSA key to generate a JWT (JSON Web Token) for secure API authentication with Snowflake services. For more information on generating a JWT keypair, follow the instructions [here](https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-the-private-key).
+
+
 ## Setup Workspace
 Duration: 10
 
