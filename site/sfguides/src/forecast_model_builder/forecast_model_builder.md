@@ -21,9 +21,9 @@ The Forecast Model Builder accelerates time to value by offering modeling flexib
 
 ### What You’ll Learn 
 How to automatically:
-- perform Exploratory Data Analysis on your Time Series Data
-- execute Feature Engineering, Advanced Modeling and Model Registration for your single or multi-series partitioned data
-- run inferencing against the models stored in the Registry
+- Perform Exploratory Data Analysis on your Time Series Data
+- Execute Feature Engineering, Advanced Modeling and Model Registration for your single or multi-series partitioned data
+- Run inferencing against the models stored in the Registry
 
 ### What You’ll Need 
 - A [GitLab](https://gitlab.com/) Account 
@@ -36,87 +36,24 @@ How to automatically:
 ## Solution Setup
 Duration: 2
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
-
-
-- **summary**: xxx
-
----
-
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
-
 
 <!-- ------------------------ -->
 ## Exploratory Data Analysis
 Duration: 2
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
-
-```markdown
-## Step 1 Title
-Duration: 3
-
-All the content for the step goes here.
-
-## Step 2 Title
-Duration: 1
-
-All the content for the step goes here.
-```
-
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
-
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+A single sfguide consists of multiple steps. 
 
 <!-- ------------------------ -->
 ## Feature Engineering and Advanced Modeling
 Duration: 2
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
 
-```markdown
-## Step 1 Title
-Duration: 3
-
-All the content for the step goes here.
-
-## Step 2 Title
-Duration: 1
-
-All the content for the step goes here.
-```
-
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
-
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
 
 <!-- ------------------------ -->
 ## Inferencing
 Duration: 2
 
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
 
-```markdown
-## Step 1 Title
-Duration: 3
-
-All the content for the step goes here.
-
-## Step 2 Title
-Duration: 1
-
-All the content for the step goes here.
-```
-
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
-
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
-
-<!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
-
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
 
 ### Python
 ```python
@@ -138,12 +75,6 @@ df = session.sql(query).to_pandas()
     </tbody>
 </table>
 
-
-<!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
-
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
 
 ### Images
 ![Architecture](assets/highlevelarch.png)
