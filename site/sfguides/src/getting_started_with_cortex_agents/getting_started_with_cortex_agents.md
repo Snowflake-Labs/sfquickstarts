@@ -8,6 +8,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Getting Started with Cortex Agents
+<!-- ------------------------ -->
 
 ## Overview
 Duration: 5
@@ -77,7 +78,7 @@ Before you begin, make sure you have the following:
 - **Cortex Agents Access**: You will need access to Snowflake Cortex service, **Cortex Agents**, **Cortex Search**, and **Cortex Analyst** features.
 - **JWT Keypair**: A private RSA key to generate a JWT (JSON Web Token) for secure API authentication with Snowflake services. For more information on generating a JWT keypair, follow the instructions [here](https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-the-private-key).
 
-
+<!-- ------------------------ -->
 ## Setup Workspace
 Duration: 10
 
@@ -101,6 +102,7 @@ This script will:
 - On the top right, choose Files
 - Upload `sales_metrics_mode.yaml` file
 
+<!-- ------------------------ -->
 ## Building the Application
 Duration: 15
 
@@ -368,6 +370,7 @@ if __name__ == "__main__":
     main()
 ```
 
+<!-- ------------------------ -->
 ## Conclusion and Resources
 Duration: 5
 
