@@ -83,7 +83,7 @@ To get started using Snowflake Notebooks, first login to Snowsight. In the top-l
 Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to create Snowflake objects.
 
 ```sql
-USE ROLE SYSADMIN;
+USE ROLE ACCOUNTADMIN;
 
 CREATE OR REPLACE WAREHOUSE PAYERS_CC_WH; --by default, this creates an XS Standard Warehouse
 CREATE OR REPLACE DATABASE PAYERS_CC_DB;
