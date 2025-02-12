@@ -21,16 +21,19 @@ Please Contact MediaWallah if additional time or trial runs are needed.
 Enrichment results are returned in four tables  
 
 ### Prerequisites
+* [Snowflake Account](https://signup.snowflake.com/)
 * The provider must accept the Snowflake Marketplace Provider Terms of Service.
 * The consumer must accept the Snowflake Marketplace Consumer Terms of Service.
 * The consumer must be able to operate ACCOUNTADMIN, SECURITYADMIN roles.
 
 ### What You’ll Learn 
-- how to download the application from Snowflake Data Marketplace
-- how to install the application
-- how to setup log share with MediaWallah
-- how to use enrichment application
-- how to view results
+- How to download the MediaWallah Enrichment Application from Snowflake Data Marketplace
+- How to install the application
+- How to setup log share with MediaWallah
+- How to permission tables for data enrichment
+- How to view and access results produced by the application
+- How to upgrade or uninstall the application
+- How to view the metadata table for privileges and usage rates.
 
 ### What You’ll Need 
 - [Account Level Privileges](#1)
@@ -1020,15 +1023,24 @@ If the log share no longer exists, the share can be re-created by calling the CR
 ## Conclusion And Resources
 Duration: 1
 
+### Conclusions
+Congratulations! You've successfully completed the Getting Started with MediaWallah Enrichment Native Application quickstarts Guide.
+Now you can utilize this service at your convenience, and receive enriched data with a few simple actions.
+We look forward to working with you. Please reach out for any questions snowflake@mediawallah.com
+
 ### What You Learned
-- setting up MediaWallah Enrichment Native Application
-- using the Enrichment or Matchtest Apps
-- viewing results 
-- uninstalling
-- viewing metadatatable
+- How to download the MediaWallah Enrichment Application
+- How to install the application
+- how to setup log share with MediaWallah
+- How to permission tables for data enrichment
+- How to view and access results produced by the application
+- How to upgrade or uninstall the application
+- How to view the metadata table for privileges and usage rates.
 
 ### Related Resources
-- https://app.snowflake.com/marketplace/listing/GZSOZ5Q3W8J/mediawallah-inc-mediawallah-enrichment-app
-- <link to github code repo>
-- <link to documentation>
-- <link to youtube>
+- [MediaWallah Enrichment App](https://app.snowflake.com/marketplace/listing/GZSOZ5Q3W8J/mediawallah-inc-mediawallah-enrichment-app)
+- [Reference Architecture](https://drive.google.com/file/d/1Es4gaeOOmpfmBDSp9RkCIGZB1PQHyzHg/view])
+- [Blog](https://medium.com/snowflake/ultra-secure-identity-and-audience-profile-enrichment-made-simple-21e48a56ab4a)
+<!-- - [<link to github code repo>] -->
+<!-- - [<link to documentation>] -->
+<!-- - [<link to youtube>] -->
