@@ -63,7 +63,7 @@ Documents are ingested from the Internal Stage and processed through a stream. A
 ## Create Tables, Stages & Metadata 
 Duration: 2
 
-he `DOC_AI_QuickStart.SQL` script is designed to set up the necessary environment for the Document AI pipeline. When executed in your Snowflake account, it will:
+The `DOC_AI_QuickStart.SQL` script is designed to set up the necessary environment for the Document AI pipeline. When executed in your Snowflake account, it will:
 
 - Create a new database named **DS_DEV_DB**.
 - Establish a schema called **DOC_AI_SCHEMA** within this database.
@@ -213,6 +213,12 @@ Once extracted, data is validated to ensure accuracy. Key data points, such as t
 ![Validation](assets/Validation.png)
 
 <!-- ------------------------ -->
+## Cleanup
+
+Remember to clean up the objects you created after completing this QuickStart. Run the cleanup script available at:  
+[Cleanup](https://github.com/sarathi-aiml/DOC_AI_Pipeline/blob/main/Cleanup.sql)
+
+<!-- ------------------------ -->
 ## Conclusion and Resources
 ### Conclusion
 
@@ -224,12 +230,6 @@ This QuickStart provides an introduction to automating a Document AI pipeline th
 - How to pre-process, extract, validate, and monitor document data efficiently.
 - How to integrate multiple Document AI models within a single pipeline.
 - How to use Streamlit for real-time tracking and visualization of document workflows.
-
-
-### Cleanup
-
-Remember to clean up the objects you created after completing this QuickStart. Run the cleanup script available at:  
-[Cleanup](https://github.com/sarathi-aiml/DOC_AI_Pipeline/blob/main/Cleanup.sql)
 
 ### Resources
 
