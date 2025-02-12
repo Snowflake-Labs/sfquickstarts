@@ -627,6 +627,10 @@ Before implementing the automated lead notification solution, it’s important t
 ## Conclusion and Resources
 Duration: 2
 
+### Conclusion
+
+In this guide, we walked through the process of setting up a notification integration to send lead information from the Snowflake Marketplace to Slack. We used a JavaScript procedure to format the messages and created a task to automate the process. This solution can be easily customized to integrate with other systems or to process different types of events.
+
 ### Possible Improvements
 Some additional steps that could further enhance this solution include:
 - **Check whether the notification was sent** and further mark the leads as sent based on this.
