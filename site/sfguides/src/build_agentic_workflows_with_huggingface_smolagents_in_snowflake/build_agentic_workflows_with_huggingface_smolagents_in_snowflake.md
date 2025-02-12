@@ -2,19 +2,19 @@ id: build-agentic-workflows-with-huggingface-smolagents-in-snowflake
 summary: This guide outlines the process for creating agentic workflow in Snowflake Notebook on Container Runtime.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
-# Build Agentic Workflows with HuggingFace smolagents in Snowflake
+# Build Agentic Workflows with HuggingFace Smolagents in Snowflake
 <!-- ------------------------ -->
 
 ## Overview
 
 Duration: 4
 
-This guide outlines the process for creating agentic workflows in [Snowflake Notebook on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) using smolagents from Hugging Face. These agents are capable of writing Python code to call tools and orchestrate other agents. In this guide, we will also see how you can use out of the box tools and also create a custom tool that uses Snowflake Cortex AI.
+This guide outlines the process for creating agentic workflows in [Snowflake Notebook on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) using Smolagents from Hugging Face. These agents are capable of writing Python code to call tools and orchestrate other agents. In this guide, we will also see how you can use out of the box tools and also create a custom tool that uses Snowflake Cortex AI.
 
 ### What is Container Runtime? 
 
@@ -34,11 +34,11 @@ Snowflake ML is an integrated set of capabilities for end-to-end machine learnin
 
 Learn more about [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/).
 
-### What is smolagents?
+### What is Smolagents?
 
 It is a lightweight library introduced by Hugging Face that enables language models to perform tasks by writing and executing code. It allows for the creation of agents that can interact with tools, execute multi-step workflows, and integrate with various large language models (LLMs). It supports models hosted on the Hugging Face Hub, as well as those from providers like OpenAI and Anthropic. It also offers first-class support for code agents, facilitating the development of agents that write their actions in code. 
 
-Learn more about [smolagents](https://github.com/huggingface/smolagents).
+Learn more about [Smolagents](https://github.com/huggingface/Smolagents).
 
 ### Prerequisites
 
@@ -48,11 +48,11 @@ Learn more about [smolagents](https://github.com/huggingface/smolagents).
 
 ### What You Will Learn
 
-* How to create agentic workflows using smolagents library from Hugging Face
+* How to create agentic workflows using Smolagents library from Hugging Face
 
 ### What You Will Build
 
-Agentic workflow using smolagents library and Snowflake Cortex AI in Snowflake Notebook on Container Runtime.
+Agentic workflow using Smolagents library and Snowflake Cortex AI in Snowflake Notebook on Container Runtime.
 
 <!-- ------------------------ -->
 ## Setup
@@ -104,17 +104,17 @@ Install **smolagents** library
 
 **Cell 2** 
 
-Replace `hf_ZkEXVwIXXXXXXXXXXXXXXX` with your Hugging Face token. Here we create instances of **HfApiModel**, **ToolCallingAgent**, **ManagedAgent**, and **CodeAgent** to perform web search using built-in **DuckDuckGoSearchTool**.
+Here we create instances of **HfApiModel**, **ToolCallingAgent**, and **CodeAgent** to perform web search using built-in **DuckDuckGoSearchTool**. Please also remember to replace `hf_ZkEXVwIXXXXXXXXXXXXXXX` with your Hugging Face token before proceeding.
 
 **Cell 3**
 
-Here we use the instance of **ManagedAgent** created in step / cell above and perform a web search using built-in tool (DuckDuckGoSearchTool) given the prompt `Top 5 announcements at Snowflake Summit 2024 in JSON format. Only return the JSON formatted output as the response and nothing else.`. If all goes well, you should see output similar to the following:
+Here we use the instance of **CodeAgent** created in step / cell above and perform a web search using built-in tool (DuckDuckGoSearchTool) given the prompt `Top 5 announcements at Snowflake Summit 2024 in JSON format. Only return the JSON formatted output as the response and nothing else.`. If all goes well, you should see output similar to the following:
 
 ![Search Result 1](search_1.png)
 
 **Cell 4** 
 
-Here we use the same instance of **ManagedAgent** and perform a web search using prompt `Top 5 blog articles on AI. Include blog title and link to the article. Return the response in a Pandas dataframe and nothing else.`. If all goes well, you should see output similar to the following:
+Here we use the same instance of **CodeAgent** and perform a web search using prompt `Top 5 blog articles on AI. Include blog title and link to the article. Return the response in a Pandas dataframe and nothing else.`. If all goes well, you should see output similar to the following:
 
 ![Search Result 2](search_2.png)
 

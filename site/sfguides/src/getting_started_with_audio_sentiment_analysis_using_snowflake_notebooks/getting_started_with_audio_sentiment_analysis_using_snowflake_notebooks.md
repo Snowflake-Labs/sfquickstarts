@@ -5,7 +5,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowflake Notebooks, Machine Learning, Audio Processing
-author: [Your Name]
+author: James Cha-Earley
 
 # Getting Started with Audio Sentiment Analysis using Snowflake Notebooks 
 
