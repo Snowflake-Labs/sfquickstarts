@@ -77,7 +77,6 @@ To set up your environment, copy the code from the [`DOC_AI_QuickStart.SQL`](htt
 
 This will configure the necessary infrastructure to support document ingestion, preprocessing, extraction, and validation, ensuring a seamless Document AI pipeline execution.
 
-![https://github.com/sarathi-aiml/DOC_AI_Pipeline/blob/main/DOC_AI_QuickStart.SQL]("Code")
 
 
 <!-- ------------------------ -->
