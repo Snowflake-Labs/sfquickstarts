@@ -32,7 +32,7 @@ In this quickstart, you'll learn how to build an Intelligent Sales Assistant tha
 - Returns contextually relevant results ranked by relevance scores
 
 ### Cortex Agents
-The Cortex Agents is a stateless REST API endpoint that:
+You can interact with a Cortex Agent via REST API endpoint:
 - Seamlessly combines Cortex Search's hybrid search capabilities with Cortex Analyst's 90%+ accurate SQL generation
 - Streamlines complex workflows by handling:
   - Context retrieval through semantic and keyword search
