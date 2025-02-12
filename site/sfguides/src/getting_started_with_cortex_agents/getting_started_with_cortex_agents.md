@@ -388,7 +388,7 @@ Congratulations! You've successfully built an Intelligent Sales Assistant using 
 - **Integration**: How to combine these capabilities into a cohesive application using Streamlit
 
 ### Related Resources
-- [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/cortex-overview)
-- [Cortex Agents Guide](https://docs.snowflake.com/en/user-guide/cortex-agents)
-- [Streamlit Documentation](https://docs.streamlit.io)
-- [Cortex Search Overview](https://docs.snowflake.com/en/user-guide/cortex-search)
+- [Cortex Agents Guide](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents)
+- [Cortex Search Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+- [Cortex Analyst Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
+- [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
