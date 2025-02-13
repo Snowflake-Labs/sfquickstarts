@@ -77,6 +77,7 @@ Before you begin, make sure you have the following:
 - **Snowflake Account**: Access to Snowflake with sufficient privileges to create databases, schemas, tables, and upload files. You will also need to set up an RSA public key for the user in Snowflake. For more details on setting up the public key, refer to the [Snowflake documentation](https://docs.snowflake.com/en/user-guide/key-pair-auth#assign-the-public-key-to-a-snowflake-user).
 - **Cortex Agents Access**: You will need access to Snowflake Cortex service, **Cortex Agents**, **Cortex Search**, and **Cortex Analyst** features.
 - **JWT Keypair**: A private RSA key to generate a JWT (JSON Web Token) for secure API authentication with Snowflake services. For more information on generating a JWT keypair, follow the instructions [here](https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-the-private-key).
+- **Python**: We will be using `Python Version 3.13`
 
 <!-- ------------------------ -->
 ## Setup Workspace
@@ -112,7 +113,7 @@ mkdir intelligent-sales-assistant
 cd intelligent-sales-assistant
 ```
 
-**Step 2.** Download the following files from the repository:
+**Step 2.** Download the following files from the repository or clone the [repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents):
 - [app.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/app.py): Main Streamlit application
 - [generate_jwt.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/generate_jwt.py): JWT token generator
 - [requirements.txt](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/requirements.txt): Dependencies file
@@ -136,8 +137,8 @@ pip install -r requirements.txt
 Create a `.env` file with your Snowflake credentials:
 
 ```text
-SNOWFLAKE_ACCOUNT=your_account
-SNOWFLAKE_ACCOUNT_URL=your_account_url
+SNOWFLAKE_ACCOUNT=account_locator_or_your_account_name_or_orgname-account_name
+SNOWFLAKE_ACCOUNT_URL=your_account_url_without_https
 SNOWFLAKE_USER=your_user
 SNOWFLAKE_PASSWORD=your_password
 SNOWFLAKE_ROLE=your_role
@@ -366,7 +367,7 @@ def snowflake_api_call(query: str, jwt_token: str, limit: int = 10):
 
     logger.info(f"Making API call with query: {query}")
 
-    url = f"{SNOWFLAKE_ACCOUNT_URL}/api/v2/cortex/agent:run"
+    url = f"https://{SNOWFLAKE_ACCOUNT_URL}/api/v2/cortex/agent:run"
     
     headers = {
         'X-Snowflake-Authorization-Token-Type': 'KEYPAIR_JWT',
@@ -414,7 +415,7 @@ def snowflake_api_call(query: str, jwt_token: str, limit: int = 10):
     try:
         logger.info("Sending API request")
         response = requests.post(
-            url=f"https://{url}",
+            url=url,
             headers=headers,
             json=payload,
             stream=True
@@ -555,6 +556,16 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+## Run the Streamlit App
+In your terminal:
+```bash
+streamlit run app.py
+```
+
+### Great first questions to ask
+- Show me our sales conversations
+- What is our sales data?
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
