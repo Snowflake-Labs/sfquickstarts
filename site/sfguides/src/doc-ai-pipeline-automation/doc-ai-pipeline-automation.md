@@ -34,7 +34,7 @@ The pipeline ensures that documents meet business expectations through pre-proce
 - How to monitor and enhance the pipeline using Streamlit UI.
 
 ### What You’ll Need 
-- Files from [GitHub](https://github.com/sarathi-aiml/DOC_AI_Pipeline) 
+- Files from [GitHub](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake) 
 - A Snowflake instance
 
 
@@ -73,7 +73,7 @@ The `DOC_AI_QuickStart.SQL` script is designed to set up the necessary environme
 
 ### Setup Instructions
 
-To set up your environment, copy the code from the [`DOC_AI_QuickStart.SQL`](https://github.com/sarathi-aiml/DOC_AI_Pipeline/blob/main/DOC_AI_QuickStart.SQL) script available in the GitHub repository and execute it in your Snowflake account.
+To set up your environment, copy the code from the [`DOC_AI_QuickStart.SQL`](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/blob/main/DOC_AI_QuickStart.SQL) script available in the GitHub repository and execute it in your Snowflake account.
 
 This will configure the necessary infrastructure to support document ingestion, preprocessing, extraction, and validation, ensuring a seamless Document AI pipeline execution.
 
@@ -82,7 +82,7 @@ This will configure the necessary infrastructure to support document ingestion, 
 <!-- ------------------------ -->
 ## Document AI Model Training
 
-Download sample documents from the [GitHub repository](https://github.com/sarathi-aiml/DOC_AI_Pipeline/tree/main/sample_docs). These AI-generated sample invoices will be used to demonstrate processing multiple Document AI models in a single pipeline.
+Download sample documents from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/tree/main/sample_docs). These AI-generated sample invoices will be used to demonstrate processing multiple Document AI models in a single pipeline.
 
 We will use two Document AI models for this demonstration, but you can add more as needed. The pipeline will process all models sequentially.
 
@@ -98,7 +98,7 @@ We will use two Document AI models for this demonstration, but you can add more 
 
 3. **Train the Model:**
 
-   - Upload a few documents from the [sample dataset](https://github.com/sarathi-aiml/DOC_AI_Pipeline/tree/main/sample_docs).
+   - Upload a few documents from the [sample dataset](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/tree/main/sample_docs).
    - In production, training with at least 20 varied documents ensures higher accuracy.
    - Click on a document and add **Values** (labels/columns to extract).
    - Enter a **Prompt/Question** for the LLM model to extract relevant data.
@@ -170,7 +170,7 @@ The final step is to create a Streamlit app to visualize the pipeline in action.
    - Click **Create**.
 4. **Replace Default Code**:
    - Remove the default Python code.
-   - Copy and paste the code from the [Streamlit-in-Snowflake.py](https://github.com/sarathi-aiml/DOC_AI_Pipeline/blob/main/Streamlit-in-Snowflake.py) file.
+   - Copy and paste the code from the [Streamlit-in-Snowflake.py](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/blob/main/Streamlit-in-Snowflake.py) file.
 5. **Add Required Packages**:
    - In the **Packages** dropdown, select:
      - `plotly`
@@ -189,7 +189,7 @@ The Streamlit app provides full control over the pipeline and enables real-time 
 ### Testing the Pipeline in Action
 
 1. **Load Sample Documents**:
-   - Upload all sample documents from [GitHub Sample Docs](https://github.com/sarathi-aiml/DOC_AI_Pipeline/tree/main/sample_docs) to your `INVOICE_DOCS` stage under the folder `Invoice`.
+   - Upload all sample documents from [GitHub Sample Docs](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/tree/main/sample_docs) to your `INVOICE_DOCS` stage under the folder `Invoice`.
    - For this QuickStart, load the same set of files into another folder called `Purchase`.
 
 ![Stage](assets/stage.png)
@@ -215,7 +215,7 @@ Once extracted, data is validated to ensure accuracy. Key data points, such as t
 ## Cleanup
 
 Remember to clean up the objects you created after completing this QuickStart. Run the cleanup script available at:  
-[Cleanup](https://github.com/sarathi-aiml/DOC_AI_Pipeline/blob/main/Cleanup.sql)
+[Cleanup](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/blob/main/Cleanup.sql)
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -234,4 +234,4 @@ This QuickStart provides an introduction to automating a Document AI pipeline th
 
 - [Snowflake Document AI Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview)
 - [Known Limitations of Document AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/limitations)
-- [Sample Scripts and Pipelines (GitHub)](https://github.com/sarathi-aiml/DOC_AI_Pipeline)
+- [Sample Scripts and Pipelines (GitHub)](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake)
