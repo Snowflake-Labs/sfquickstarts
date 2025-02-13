@@ -137,7 +137,7 @@ pip install -r requirements.txt
 Create a `.env` file with your Snowflake credentials:
 
 ```text
-SNOWFLAKE_ACCOUNT=your_account
+SNOWFLAKE_ACCOUNT=account_locator_or_your_account_name_or_orgname-account_name
 SNOWFLAKE_ACCOUNT_URL=your_account_url
 SNOWFLAKE_USER=your_user
 SNOWFLAKE_PASSWORD=your_password
