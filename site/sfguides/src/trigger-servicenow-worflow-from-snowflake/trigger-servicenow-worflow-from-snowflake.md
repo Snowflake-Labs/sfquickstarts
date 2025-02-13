@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 ## Overview 
 Duration: 1
 
-ServiceNow Workflows automate business processes by defining a series of tasks, approvals, and conditions within the platform. They help streamline IT service management (ITSM), HR, customer service, and other enterprise functions by reducing manual effort and enforcing consistency.Worflows can be triggered manually or automatically based on certains events. In this guide you will learn how to automatically trigger ServiceNow Workflows from Snowflake. 
+ServiceNow Workflows automate business processes by defining a series of tasks, approvals, and conditions within the platform. They help streamline IT service management (ITSM), HR, customer service, and other enterprise functions by reducing manual effort and enforcing consistency. Worflows can be triggered manually or automatically based on certains events. In this guide you will learn how to automatically trigger ServiceNow Workflows from Snowflake. 
 
  
 
@@ -25,42 +25,40 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 
 ### What You’ll Learn 
 - how to create a ServiceNow workflow  
-- how to define a REST API input for the workflow 
-- how to securely connect to the ServiceNow Instance with Snowflake secret and external access
-- how to trigger the workflow from Snowflake UDF  
+- how to define a REST input for the workflow 
+- how to securely connect to the ServiceNow Instance from Snowflake
+- how to trigger the workflow from Snowflake   
 
 
 ### What You’ll Need 
 - A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account 
 - A [ServiceNow](https://developer.servicenow.com/dev.do) Personal Developer Instance. 
-- In order to create a workflow trigger of type REST API you will need to enable Integration Hub Enterprise Pack Plugin as per this [link]  (https://developer.servicenow.com/dev.do#!/learn/learning-plans/washingtondc/servicenow_application_developer/app_store_learnv2_rest_washingtondc_exercise_activate_integrationhub)
+- In order to create a trigger of type REST API you will need to enable Integration Hub Enterprise Pack Plugin as per this [link](https://developer.servicenow.com/dev.do#!/learn/learning-plans/washingtondc/servicenow_application_developer/app_store_learnv2_rest_washingtondc_exercise_activate_integrationhub)
 
 ### What You’ll Build 
-- A procedure to trigger workflow in ServiceNow from Snowflake  
+- A procedure to trigger workflow in ServiceNow from Snowflake   
 
 
 ### How can you use the solution  
 - Customers can seamlessly take action in ServiceNow based on insights from Snowflake.
 - For example,
   1. Teams can aggregate infosec data from tools like Bugcrowd, classify CVEs in Snowflake, and automatically create ServiceNow incidents for critical vulnerabilities.
-  2. Additionally, Snowflake Cortex ML models can predict component failures, triggering proactive maintenance alerts and workflows in ServiceNow. This integration streamlines operations, enhances security response, and improves system reliability. 
+  2. Additionally, Snowflake Cortex ML models can predict component failures based on machine data and create service requests in ServiceNow.   
 
 
 
 ## Step 1 - Create the ServiceNow Workflow   
 Duration: 3
 
-A  serviceNow workflow consists of a trigger and action. In our sample tutorial we will be creating a trigger using a REST API endpoint and the action will be creation of an incident record. 
-Let's start with defining a ServiceNow workflow. 
-Go to your  ServiceNow Personal Developer Instance -> All -> Workflow Studio -> Homepage 
+A  serviceNow workflow consists of a trigger and action. The trigger is used to start the workflow and action defines what the workflow does. In our sample tutorial we will be creating a trigger with an inbound REST request and the action will be creation of an incident record. Let's start with defining a ServiceNow workflow.
 
-Select New -> Flow. Define a name for the flow "snowflake-demo". Leave the defaults. 
+1. Go to your  ServiceNow Personal Developer Instance -> All -> Workflow Studio -> Homepage 
 
-![New-Flow](assets/New-Flow.png)
+2. Select New -> Flow. Define a name for the flow "snowflake-demo". Leave the rest as default. 
+![step1-new-flow](assets/step1-new-flow.png)
 
-Select a trigger for the flow. Go to Application -> REST API - Asynchronous 
-
-![REST-API-Trigger](assets/REST-API-Trigger.png)
+3. Select a trigger for the flow. Go to Application -> REST API - Asynchronous 
+![step1-create-trigger](assets/step1-create-trigger.png)
 
 Select the HTTP Method as "POST" 
 
@@ -69,21 +67,18 @@ Check the box "Requires Authentication" so that only authenticated users can tri
 Go to Body of Request Content and create three new variable 
 
 Category - This will be the category for the incident record 
-
 Description - This will be the description for the incident record 
-
 Work_notes - This will be the work notes section for the incident record
-
-All the content for the step goes here.
 
 You can optinally add headers section and roles for the REST Request but we will skip that for this tutorial. 
 
 Hit "Done". 
 
-Eventually your Trigger section should look like this 
-![snowflake-trigger](assets/snowflake-trigger.png)
+Eventually your Trigger definition should look like this 
+![step1-snowflake-trigger](assets/step1-snowflake-trigger.png)
 
-
+## Step 2 - Create the Workflow Action    
+Duration: 3
 
 <!-- ------------------------ -->
 ## Metadata Configuration
@@ -120,12 +115,63 @@ Duration: 2
 A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
 
 ```markdown
-## Step 1 Title
+
+## Create the ServiceNow Workflow   
+Duration: 3
+
+A  serviceNow workflow consists of a trigger and action. The trigger is used to start the workflow and action defines what the workflow does. In our sample tutorial we will be creating a trigger with an inbound REST request and the action will be creation of an incident record. Let's start with defining a ServiceNow workflow.
+
+1. Go to your  ServiceNow Personal Developer Instance -> All -> Workflow Studio -> Homepage 
+
+2. Select New -> Flow. Define a name for the flow "snowflake-demo". Leave the rest as default. 
+![step1-new-flow](assets/step1-new-flow.png)
+
+3. Select a trigger for the flow. Go to Application -> REST API - Asynchronous 
+![step1-create-trigger](assets/step1-create-trigger.png)
+
+Select the HTTP Method as "POST" 
+
+Check the box "Requires Authentication" so that only authenticated users can trigger the workflow. 
+
+Go to Body of Request Content and create three new variable 
+
+Category - This will be the category for the incident record 
+Description - This will be the description for the incident record 
+Work_notes - This will be the work notes section for the incident record
+
+You can optinally add headers section and roles for the REST Request but we will skip that for this tutorial. 
+
+Hit "Done". 
+
+Eventually your Trigger definition should look like this 
+![step1-snowflake-trigger](assets/step1-snowflake-trigger.png)
+
+## Create the Workflow Action    
+Duration: 2
+
+Now that we have defined the trigger the next step is to define action for the workflow (create incident record). 
+Select Action-> Create Record -> Table (incident)
+
+Add three fields corresponding to the three inputs we defined in the inbound REST Request 
+Category, Description & Work notes
+
+For the values of these fields we will use the Data Pill Picker for each field. 
+![step2-data-pill-picker](assets/step2-data-pill-picker.png)
+
+Go to data Pill Picker -> Trigger - REST API - Asynchronous -> Request Body ->  Field Name
+
+Once you complete this for all three fields your action definition will look like this.  
+![step2-incident-record](assets/step2-incident-record.png)
+
+Hit Done. This completes our workflow definition in ServiceNow. 
+The next step will be to create the UDF in Snowflake to call this workflow. 
+
+## Step 3 Title
 Duration: 3
 
 All the content for the step goes here.
 
-## Step 2 Title
+## Step 4 Title
 Duration: 1
 
 All the content for the step goes here.
