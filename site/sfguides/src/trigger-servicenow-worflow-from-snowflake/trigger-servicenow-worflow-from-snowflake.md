@@ -1,6 +1,6 @@
 author: 
 id: trigger-servicenow-worflow-from-snowflake
-summary: This is a sample Snowflake Guide
+summary: Trigger-servicenow-worflow-from-snowflake
 categories: Getting-Started
 environments: web
 status: Published 
