@@ -7,7 +7,6 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-
 # Document AI Pipeline Automation
 <!-- ------------------------ -->
 ## Overview 
