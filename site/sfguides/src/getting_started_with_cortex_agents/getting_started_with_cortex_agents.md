@@ -488,7 +488,7 @@ Create the main Streamlit interface:
 
 ```python
 def main():
-    st.title("Sales Intelligence Platform")
+    st.title("Intelligent Sales Assistant")
 
     # Initialize JWT Generator
     jwt_token = generate_jwt.JWTGenerator(
