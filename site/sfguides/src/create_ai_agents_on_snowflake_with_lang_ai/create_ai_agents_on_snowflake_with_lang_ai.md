@@ -12,22 +12,21 @@ tags: Getting Started, Data Science, Data Engineering, AI Agents
 ## Overview 
 Duration: 1
 
-Lang.ai Native Snowflake application provides AI agents for product managers that leverage your existing Snowflake data (unstructured and structured data) to serve meaningful product recommendations —with context— directly in Slack.
+Lang.ai's Snowflake AI Agents empower data teams to create custom agents that derive actionable priorities from customer interactions, driving retention and growth. 
 
-This quickstart is a guide to installing and running your first Lang AI agent for data analysis in your own Snowflake infrastructure.
+This quickstart is a guide to installing and running your first Lang AI Agent for data analysis in your own Snowflake infrastructure.
 
 ![Snowflake and Lang logos](assets/overview_logos.png)
 
 ### Prerequisites
-- Being part of Lang.ai AI Agent Design Partner program
-- Sharing with Lang.ai's Account Executive your Snowflake Account Identifier
+- No prerequisites are required for this guide.
 
 ### What You'll Learn
 - Installing and setting up the Lang.ai Native Application
-- Creating and running your first AI agent
+- Creating and running your first AI Agent
 
 ### What You’ll Need 
-- A Snowflake account with _ACCOUNTADMIN_ access to grant account level privileges, allow external connections and create a Snowflake View.
+- A Snowflake account with _ACCOUNTADMIN_ access to install the Lang.ai Native Application and give access to the data you want to analyze.
 
 ### What You’ll Build 
 - A Snowflake AI Agent for data analysis
@@ -36,7 +35,7 @@ This quickstart is a guide to installing and running your first Lang AI agent fo
 ## Creating a sample database
 Duration: 5
 
-In this step we will be creating a sample database and a sample view. We will be using this data in the following steps to create our first AI agent.
+In this step we will be creating a sample database and a sample view. We will be using this data in the following steps to create our first AI Agent.
 
 Sign in to your Snowflake account and create a new SQL Worksheet.
 
@@ -47,28 +46,24 @@ To start, copy the <button>[SQL Script](https://raw.githubusercontent.com/lang-a
 ![Running the script](assets/sample_database_step_2.png)
 
 This script will:
-- Create a Database called *zoom_cancellations* and populate it with demo data
-- Create a Database called *zoom_users* and populate it with demo data
-- Create a View called *zoom_cancellations_view* to connect the data from both tables
+- Create a table called *zoom_cancellations* and populate it with demo data
+- Create a table called *zoom_users* and populate it with demo data
 
-After the script has successfully executed, you will see a LANG_AI_DEMO database with the following tables and one view:
+After the script has successfully executed, you will see a LANG_AI_DEMO database with the following tables:
 
 ![Database created](assets/sample_database_step_3.png)
 
-The view created by the script already includes the required fields to create AI agents:
+The tables created by the script already include the required fields to create AI Agents:
 
 > aside positive
 > 
 >- **id:** The id of the document (ticket, survey, etc.)
 >- **text:** The unstructured text to be analyzed
 >- **creation_date:** The date of creation of the unstructured text
->- **user_id:** The id of the user that generated the unstructured text
-
-In this example, we are creating a simple view with the fields _id_, _text_, _creation_date_, _user_id_, and _Customer_Spend_. 
 
 The last column _Customer_Spend_ is not mandatory, but it is included as we will configure the agent to use it to group the insights by the customer monthly spending. 
 
-You may include additional columns that may be used by the AI agent to aggregate the insights generated. 
+You may include additional columns that may be used by the AI Agent to aggregate the insights generated. 
 
 
 <!-- ------------------------ -->
@@ -83,7 +78,7 @@ Log in to Snowsight as an ACCOUNTADMIN and follow these steps to install the Lan
 
 ### 1. Install the application
 
-Go to _Data Products > Private Sharing > Shared With You_ and click on _Get_ to install the app.
+Go to the Snowflake Marketplace and install the Lang.ai Native Application: [Snowflake AI Agents](https://app.snowflake.com/marketplace/listing/GZTSZ1TJ3IU/lang-ai-snowflake-ai-agents).
 
 Once installed, click on the name of the application to open the app.
 
@@ -94,24 +89,7 @@ Click Grant to grant the application the necessary privileges:
 #### Account-level Privileges
 ![Grant Account Level Privileges](assets/install_privileges.png)
 - The **BIND SERVICE ENDPOINT** privilege enables the services in the app to connect to each other.
-- The **CREATE WAREHOUSE** and **CREATE COMPUTE POOL** are required by the Lang.ai Native App to create and manage resources for performing service operations. Learn more [here]((https://help.lang.ai/en/articles/9813363-install-the-native-app-with-an-sql-script).
-
-
-#### Give access to the Snowflake View
-
-Share data with your AI Agents by creating and sharing access to a view. Learn more [here](https://help.lang.ai/en/articles/9914672-creating-an-sql-view-for-your-ai-agent).
-
-```sql
--- Customize if needed
-SET LANGAI_APP_NAME = 'LANGAI_APP';
-
---- Give the application access to the view  
-GRANT USAGE ON DATABASE "lang_ai_demo" TO APPLICATION IDENTIFIER($LANGAI_APP_NAME);
-
-GRANT USAGE ON SCHEMA "PUBLIC" TO APPLICATION IDENTIFIER($LANGAI_APP_NAME);
-
-GRANT SELECT ON VIEW "zoom_cancellations" TO APPLICATION IDENTIFIER($LANGAI_APP_NAME);
-```
+- The **CREATE WAREHOUSE** and **CREATE COMPUTE POOL** are required by the Lang.ai Native App to create and manage resources for performing service operations. Learn more [here](https://help.lang.ai/en/articles/9813363-install-the-native-app-with-an-sql-script).
 
 
 ### 3. Launch the app
@@ -123,22 +101,66 @@ Navigate back to the *Data Products > Apps* page and wait for the spinner in the
 ## Creating Your First AI Agent
 Duration: 5
 
-Learn to run your fist AI agent on top of Snowflake data.
+Learn to run your first AI Agent on top of Snowflake data.
 
-### Select Your Goal
-Begin by selecting the goal you want to achieve with your AI agent.
+### Add your company information
+Add basic information about your organization to help the AI Agent understand your business context. For this quickstart guide, we'll use Zoom as an example company.
 
-![Select Your Goal](assets/agent_step_1.png)
+![Add company information](assets/agent_step_1.png)
 
 ### Select Your AI Agent
-Choose the AI agent that aligns with your goal. Once selected, you will be prompted to choose the attributes that will be used to segment the insights. For example, selecting "subscription plan" will ensure insights are generated with this in mind, helping the AI agent identify patterns relevant to your business objectives.
+Select a predefined agent or create a custom one to meet your needs. For this quickstart guide using Zoom's synthetic data, we'll analyze survey responses to understand cancellation reasons. You'll see a preview of potential insights the AI Agent might discover, like pricing concerns or platform usability issues.
 
 ![Select Your AI Agent](assets/agent_step_2.png)
 
-### Run Your AI Agent for the First Time
-After completing the setup and creating your first agent, you're ready to run it for the first time.
 
-To manually run your agent, click on **Run Agent**. The demo data has comments from July 2024, so make sure to select the entire month.
+### Connect Your Snowflake Data
+
+For this quickstart using Zoom's synthetic data, we'll analyze cancellation data by following two steps:
+
+![Connect Your Snowflake Data](assets/agent_step_3.png)
+
+**Step 1: Paste your SQL Query**
+Select the data you want the AI Agent to analyze. For this demo, paste this query to combine cancellation reasons with user data:
+
+```sql
+SELECT m.ID, m.CANCELLATION_REASON as TEXT, m.DATE as CREATION_DATE, u.PLAN_TYPE as PLAN_TYPE
+FROM lang_ai_demo.public.zoom_cancellations m
+JOIN lang_ai_demo.public.zoom_users u WHERE u.ID = m.USER_ID;
+```
+
+Required fields:
+- TEXT: The cancellation feedback
+- CREATION_DATE: When the cancellation happened
+- ID: Unique identifier for each record
+
+**Step 2: Grant Table Access**
+
+A Snowflake admin needs to run these commands to give Lang.ai secure access to your data:
+
+```sql
+-- Customize the app name "LANGAI_APP" to your own if different
+GRANT USAGE ON DATABASE lang_ai_demo TO APPLICATION LANGAI_APP;
+GRANT USAGE ON SCHEMA lang_ai_demo.public TO APPLICATION LANGAI_APP;
+GRANT SELECT ON TABLE lang_ai_demo.public.zoom_cancellations TO APPLICATION LANGAI_APP;
+GRANT SELECT ON TABLE lang_ai_demo.public.zoom_users TO APPLICATION LANGAI_APP;
+```
+
+For this demo, we're connecting to the following tables:
+- ZOOM_CANCELLATIONS table
+- ZOOM_USERS table
+
+Use the "Check Permissions" button to verify access or "Share with Snowflake admin" to send these commands to your admin.
+
+Once access is granted, click on Next to continue.
+
+Learn how to set up table access and permissions in this 2-minute video [here](https://help.lang.ai/en/articles/9914672-granting-table-access-to-your-ai-agent). 
+
+
+### Run Your AI Agent for the First Time
+Review your agent's configuration before launch. For this quickstart using Zoom's synthetic data, we'll analyze 1,131 cancellation documents from February to August 2024.
+
+Click "Create Agent" to start the analysis. The AI Agent will process your data and discover patterns in cancellation reasons across different user segments.
 
 ![Run Your AI Agent](assets/agent_step_4.png)
 
@@ -150,7 +172,7 @@ Duration: 5
 > Automate insight delivery to Slack! For instructions on setting up the Slack integration, please check this [guide](https://help.lang.ai/en/articles/9950927-connecting-the-slack-integration).
 
 ### Navigate Your Agent Insights
-Once the agent has finished processing, click on table to see the generated insights. In the insights view, you can navigate through the data by sorting and searching. 
+Once the agent has finished processing, click on the table to see the generated insights. In the insights view, you can navigate through the data by sorting and searching. 
 
 ![Navigate Your Agent Insights](assets/review_agent_insights.png)
 
