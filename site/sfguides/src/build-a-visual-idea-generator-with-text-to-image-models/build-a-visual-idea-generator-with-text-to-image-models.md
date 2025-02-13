@@ -36,7 +36,7 @@ Wouldn't it be great, if you could generate these automatically and easily? Well
 
 ### What You’ll Need
 
-- A [GitHub](https://github.com/) Account to access [this repository](https://github.com/sfc-gh-pnanisetty/concept-generator-service)
+- A [GitHub](https://github.com/) Account to access [this repository](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models)
 - A [Snowflake Account](https://signup.snowflake.com/) in a cloud region that supports [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs).
 - Access to a role that will allow you to create new roles, databases, schemas, tables, stages, models, services, and create external access integrations.
 - Access or permission to create ["large" compute pools](https://docs.snowflake.com/en/sql-reference/sql/create-compute-pool). Due to the GPU VRAM requirements for these models, you may need to contact your Snowflake representative to open access these larger compute pools.
@@ -73,10 +73,10 @@ Implementing such a program is often complex and requires months of effort, doze
 We're going to show you how to create a core part of this program in less than a few hours!
 
 ### Code Assets
-The code for all of the assets we will use today is located on Github [here](https://github.com/sfc-gh-pnanisetty/concept-generator-service) or you can clone to your computer using the following command: 
+The code for all of the assets we will use today is located on Github [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models) or you can clone to your computer using the following command: 
 
 ``` shell
-git clone git@github.com:sfc-gh-pnanisetty/concept-generator-service concept-generator-service
+git clone git@github.com:Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models sfguide-build-a-visual-idea-generator-with-text-to-image-models
 ```
 
 ### Background on Text 2 Image Models
@@ -99,7 +99,7 @@ Other models that have been tested and confirmed to work are listed below along 
 ## Setup Our Role and Permissions
 Duration: 5
 
-In this section, we will set-up all the Snowflake objects and permissions we will need to continue this demo. We will be referencing the `1_set_up.sql` script located [here](https://github.com/sfc-gh-pnanisetty/concept-generator-service/blob/main/1_set_up.sql).
+In this section, we will set-up all the Snowflake objects and permissions we will need to continue this demo. We will be referencing the `1_set_up.sql` script located [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/1_set_up.sql).
 
 Each step listed below corresponds to the same section in the script.
 
@@ -125,7 +125,7 @@ ALTER COMPUTE POOL CONCEPT_GEN_POOL_L SUSPEND;
 
 ### Step 1 - Create Roles and Permissions
 
-In [this step](https://github.com/sfc-gh-pnanisetty/concept-generator-service/blob/main/1_set_up.sql#L53) we will create a `CONCEPT_GEN_ROLE` that we will use to create the compute engines and other objects for this demo. Note: Snowflake requires roles other than `ACCOUNTADMIN` to create and execute compute pools.
+In [this step](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/1_set_up.sql#L53) we will create a `CONCEPT_GEN_ROLE` that we will use to create the compute engines and other objects for this demo. Note: Snowflake requires roles other than `ACCOUNTADMIN` to create and execute compute pools.
 
 ``` sql
 USE ROLE ACCOUNTADMIN;
@@ -296,7 +296,7 @@ At the end of this demo, we will create an image that contains a visualization o
 
 ![img](assets/diagram_final_concept.jpg)
 
-If you do not have a brand logo to use, you can use the [logo of a fictitious brand called "Charisma"](https://raw.githubusercontent.com/sfc-gh-pnanisetty/concept-generator-service/refs/heads/main/charisma_paper_towels.png) - located in the Github repo. You can either link to it via URL or upload it to the Snowflake stage you created in the set-up step.
+If you do not have a brand logo to use, you can use the [logo of a fictitious brand called "Charisma"](https://raw.githubusercontent.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/refs/heads/main/charisma_paper_towels.png) - located in the Github repo. You can either link to it via URL or upload it to the Snowflake stage you created in the set-up step.
 
 ### Run Notebook
 For this demo, you can import the Python Notebook labeled `2a_concept_generator_without_service.ipynb` using the Import .pynb File option in the Notebook section of Snowsight.
@@ -408,7 +408,7 @@ Duration: 5
 >
 > Basic familiarity with Streamlit in Snowflake is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/developer-guide/streamlit/getting-started) and [Quickstarts](https://quickstarts.snowflake.com/guide/tasty_bytes_price_optimization_using_snowflake_notebooks_and_streamlit/index.html?index=..%2F..index#0)
 
-In this section, we will create a Streamlit application that will follow a similar flow to the Notebook path in the last step, but with an easy-to-use UI for non-technical users. We will be referencing the `3_streamlit_app.py` script located [here](https://github.com/sfc-gh-pnanisetty/concept-generator-service/blob/main/3_streamlit_app.py) and can be loaded into a Streamlit app using Snowsight.
+In this section, we will create a Streamlit application that will follow a similar flow to the Notebook path in the last step, but with an easy-to-use UI for non-technical users. We will be referencing the `3_streamlit_app.py` script located [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/3_streamlit_app.py) and can be loaded into a Streamlit app using Snowsight.
 
 ### Step 1 - Parameter Definitions
 This section will leverage most of the parameters from the previous notebook, including the model version name and your choice of LLM model supported by Cortex Complete.
@@ -466,4 +466,4 @@ It will be important to understand how costs are calculated when leveraging Snow
 - Creating a UI with Streamlit to address a specific use
 
 ### Related Resources
-- [Link to Github repo](https://github.com/sfc-gh-pnanisetty/concept-generator-service)
+- [Link to Github repo](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models)
