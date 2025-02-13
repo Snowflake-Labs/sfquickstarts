@@ -145,6 +145,7 @@ SNOWFLAKE_WAREHOUSE=your_warehouse
 SNOWFLAKE_DATABASE=your_database
 SNOWFLAKE_SCHEMA=your_schema
 RSA_PRIVATE_KEY_PATH=path_to_your_key.p8
+PRIVATE_KEY_PASSPHRASE=your_private_key_passphrase
 ```
 
 ### Application Implementation
@@ -165,6 +166,16 @@ import snowflake.connector
 # Load environment variables
 load_dotenv()
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('app.log')
+    ]
+)
+logger = logging.getLogger(__name__)
+
 # Constants
 SNOWFLAKE_ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT")
 SNOWFLAKE_ACCOUNT_URL = os.getenv("SNOWFLAKE_ACCOUNT_URL")
@@ -175,7 +186,7 @@ SNOWFLAKE_WAREHOUSE = os.getenv("SNOWFLAKE_WAREHOUSE")
 SNOWFLAKE_DATABASE = os.getenv("SNOWFLAKE_DATABASE")
 SNOWFLAKE_SCHEMA = os.getenv("SNOWFLAKE_SCHEMA")
 RSA_PRIVATE_KEY_PATH = os.getenv("RSA_PRIVATE_KEY_PATH")
-
+PRIVATE_KEY_PASSPHRASE = os.getenv("PRIVATE_KEY_PASSPHRASE")
 CORTEX_SEARCH_SERVICES = "sales_intelligence.data.sales_conversation_search"
 SEMANTIC_MODELS = "@sales_intelligence.data.models/sales_metrics_model.yaml"
 ```
@@ -183,8 +194,143 @@ SEMANTIC_MODELS = "@sales_intelligence.data.models/sales_metrics_model.yaml"
 Create the Snowflake query execution function:
 
 ```python
+# Custom CSS styling
+st.markdown("""
+<style>
+/* Unified Color Palette */
+:root {
+    --background-color: #FFFFFF;
+    --text-color: #222222;
+    --title-color: #1A1A1A;
+    --button-color: #1a56db;
+    --button-text: #FFFFFF;
+    --border-color: #CBD5E0;
+    --accent-color: #2C5282;
+}
+
+/* General App Styling */
+.stApp {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Title Styling */
+h1, .stTitle {
+    color: var(--title-color) !important;
+    font-size: 36px !important;
+    font-weight: 600 !important;
+    padding: 1.5rem 0;
+}
+
+/* Input Fields */
+textarea {
+    background-color: white !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 4px !important;
+    padding: 16px !important;
+    font-size: 16px !important;
+    color: var(--text-color) !important;
+}
+
+textarea:focus {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 1px var(--accent-color) !important;
+}
+
+textarea::placeholder {
+    color: #666666 !important;
+}
+
+/* Success & Error Messages */
+.stException {
+    background-color: #FEE2E2 !important;
+    border: 1px solid #EF4444 !important;
+    padding: 16px !important;
+    border-radius: 4px !important;
+    margin: 16px 0 !important;
+    color: #991B1B !important;
+}
+
+div[data-testid="stAlert"], div[data-testid="stException"] {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border: 1px solid #f5c6cb !important;
+    padding: 12px !important;
+    border-radius: 6px !important;
+    font-weight: bold !important;
+}
+
+div[data-testid="stAlertContentError"] {
+    color: #721c24 !important;
+}
+
+.stFormSubmitButton {
+    background-color: white !important;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+button[data-testid="stBaseButton-secondaryFormSubmit"] {
+    background-color: #007bff !important;
+    color: white !important;
+    font-weight: bold !important;
+    border-radius: 5px !important;
+    padding: 8px 16px !important;
+    border: none !important;
+}
+
+/* Sidebar Buttons */
+.stSidebar button {
+    background-color: #1a56db !important;
+    color: white !important;
+    font-weight: 600 !important;
+    border: none !important;
+}
+
+/* Tooltips */
+.tooltip {
+    visibility: hidden;
+    opacity: 0;
+    background-color: white;
+    color: var(--text-color);
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    width: max-content;
+    max-width: 300px;
+    position: absolute;
+    z-index: 1000;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.citation:hover + .tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Hide Streamlit Branding */
+#MainMenu, header, footer {
+    visibility: hidden;
+}
+
+[data-testid="stDownloadButton"] button {
+    background-color: #2196F3 !important;
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    border: none !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 0.375rem !important;
+    box-shadow: none !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 def run_snowflake_query(query):
-    """Execute a Snowflake query and return results with column names"""
     try:
         conn = snowflake.connector.connect(
             account=SNOWFLAKE_ACCOUNT,
@@ -215,8 +361,12 @@ Implement the Cortex Agents API call:
 
 ```python
 def snowflake_api_call(query: str, jwt_token: str, limit: int = 10):
-    """Make API call to Cortex Agents"""
-    url = f"https://{SNOWFLAKE_ACCOUNT_URL}/api/v2/cortex/agent:run"
+
+    def snowflake_api_call(query: str, jwt_token:str, limit: int = 10):
+
+    logger.info(f"Making API call with query: {query}")
+
+    url = f"{SNOWFLAKE_ACCOUNT_URL}/api/v2/cortex/agent:run"
     
     headers = {
         'X-Snowflake-Authorization-Token-Type': 'KEYPAIR_JWT',
@@ -230,7 +380,12 @@ def snowflake_api_call(query: str, jwt_token: str, limit: int = 10):
         "messages": [
             {
                 "role": "user",
-                "content": [{"type": "text", "text": query}]
+                "content": [
+                    {
+                        "type": "text",
+                        "text": query
+                    }
+                ]
             }
         ],
         "tools": [
@@ -256,8 +411,27 @@ def snowflake_api_call(query: str, jwt_token: str, limit: int = 10):
         }
     }
     
-    response = requests.post(url=url, headers=headers, json=payload, stream=True)
-    return sseclient.SSEClient(response)
+    try:
+        logger.info("Sending API request")
+        response = requests.post(
+            url=f"https://{url}",
+            headers=headers,
+            json=payload,
+            stream=True
+        )
+        
+        if response.status_code != 200:
+            logger.error(f"Error response: {response.status_code} - {response.text}")
+            st.error(f"Error: {response.status_code} - {response.text}")
+            return None
+            
+        logger.info("Successfully created SSE client")
+        return sseclient.SSEClient(response)
+            
+    except Exception as e:
+        logger.error(f"Error making request: {str(e)}", exc_info=True)
+        st.error(f"Error making request: {str(e)}")
+        return None
 ```
 
 Create the response processing function:
@@ -265,43 +439,49 @@ Create the response processing function:
 ```python
 def process_sse_response(sse_client):
     """Process streaming response from Cortex Agents"""
+    logger.info("Processing SSE response")
     text = ""
-    citations = []
-    debug_info = ""
     sql = ""
-    other_info = ""
     
     if not sse_client:
-        return text, citations, debug_info, sql, other_info
+        return text, sql
         
-    for event in sse_client.events():
-        if event.data == "[DONE]":
-            break
-            
-        try:
-            data = json.loads(event.data)
-            if 'delta' in data and 'content' in data['delta']:
-                for content_item in data['delta']['content']:
-                    content_type = content_item.get('type')
-                    
-                    if content_type == "tool_use":
-                        tool_use = content_item.get('tool_use', {})
+    try:
+        for event in sse_client.events():
+            logger.debug(f"Received SSE event: {event.data}")
+            if event.data == "[DONE]":
+                break
+                
+            try:
+                data = json.loads(event.data)
+                
+                if 'delta' in data and 'content' in data['delta']:
+                    for content_item in data['delta']['content']:
+                        content_type = content_item.get('type')
                         
-                    elif content_type == "tool_results":
-                        tool_results = content_item.get('tool_results', {})
-                        if 'content' in tool_results:
-                            for result in tool_results['content']:
-                                if result.get('type') == 'json':
-                                    text += result.get('json', {}).get('text', '')
-                                    search_results = result.get('json', {}).get('searchResults', [])
-                                    for search_result in search_results:
-                                        text += f"\n• {search_result.get('text', '')}"
-                                    sql = result.get('json', {}).get('sql', '')
-                        
-        except json.JSONDecodeError:
-            continue
-            
-    return text, citations, debug_info, sql, other_info
+                        if content_type == "tool_results":
+                            tool_results = content_item.get('tool_results', {})
+                            if 'content' in tool_results:
+                                for result in tool_results['content']:
+                                    if result.get('type') == 'json':
+                                        logger.debug(f"JSON result: {result}")
+                                        text += result.get('json', {}).get('text', '')
+                                        search_results = result.get('json', {}).get('searchResults', [])
+                                        for search_result in search_results:
+                                            text += f"\n• {search_result.get('text', '')}"
+                                        sql = result.get('json', {}).get('sql', '')
+                        if content_type == 'text':
+                            text += content_item.get('text', '')
+                            
+            except json.JSONDecodeError as e:
+                logger.warning(f"Failed to parse event data: {str(e)}")
+                continue
+                
+    except Exception as e:
+        logger.error(f"Error processing events: {str(e)}", exc_info=True)
+        st.error(f"Error processing events: {str(e)}")
+        
+    return text, sql
 ```
 
 Create the main Streamlit interface:
@@ -314,8 +494,9 @@ def main():
     jwt_token = generate_jwt.JWTGenerator(
         SNOWFLAKE_ACCOUNT,
         SNOWFLAKE_USER,
-        RSA_PRIVATE_KEY_PATH
-    ).get_token()
+        RSA_PRIVATE_KEY_PATH,
+        PRIVATE_KEY_PASSPHRASE,
+        ).get_token()
 
     # Sidebar for new chat
     with st.sidebar:
@@ -341,28 +522,33 @@ def main():
         # Add user message to chat
         st.session_state.messages.append({"role": "user", "content": query})
         
-        # Process query
+        # Get response from API
         with st.spinner("Processing your request..."):
             sse_client = snowflake_api_call(query, jwt_token)
-            text, citations, debug_info, sql, other_info = process_sse_response(sse_client)
+            text, sql = process_sse_response(sse_client)
             
-            # Display chat history
+            # Add assistant response to chat
             if text:
                 st.session_state.messages.append({"role": "assistant", "content": text})
 
+            # Display chat history
             for message in st.session_state.messages:
+                logger.info(f"Message: {message}")
                 with st.container():
-                    st.markdown(f"**{'You' if message['role'] == 'user' else 'Assistant'}:**")
+                    if message["role"] == "user":
+                        st.markdown("**You:**")
+                    else:
+                        st.markdown("**Assistant:**")
                     st.markdown(message["content"].replace("•", "\n\n-"))
                     st.markdown("---")
             
-            # Display SQL results if present
+            # Display SQL if present
             if sql:
                 st.markdown("### Generated SQL")
                 st.code(sql, language="sql")
-                results, columns = run_snowflake_query(sql)
-                if results and columns:
-                    df = pd.DataFrame(results, columns=columns)
+                sales_results, column_names = run_snowflake_query(sql)
+                if sales_results:
+                    df = pd.DataFrame(sales_results, columns=column_names)
                     st.write("### Sales Metrics Report")
                     st.dataframe(df)
 
