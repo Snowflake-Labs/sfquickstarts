@@ -46,40 +46,6 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
   2. Additionally, Snowflake Cortex ML models can predict component failures based on machine data and create service requests in ServiceNow.   
 
 
-
-## Step 1 - Create the ServiceNow Workflow   
-Duration: 3
-
-A  serviceNow workflow consists of a trigger and action. The trigger is used to start the workflow and action defines what the workflow does. In our sample tutorial we will be creating a trigger with an inbound REST request and the action will be creation of an incident record. Let's start with defining a ServiceNow workflow.
-
-1. Go to your  ServiceNow Personal Developer Instance -> All -> Workflow Studio -> Homepage 
-
-2. Select New -> Flow. Define a name for the flow "snowflake-demo". Leave the rest as default. 
-![step1-new-flow](assets/step1-new-flow.png)
-
-3. Select a trigger for the flow. Go to Application -> REST API - Asynchronous 
-![step1-create-trigger](assets/step1-create-trigger.png)
-
-Select the HTTP Method as "POST" 
-
-Check the box "Requires Authentication" so that only authenticated users can trigger the workflow. 
-
-Go to Body of Request Content and create three new variable 
-
-Category - This will be the category for the incident record 
-Description - This will be the description for the incident record 
-Work_notes - This will be the work notes section for the incident record
-
-You can optinally add headers section and roles for the REST Request but we will skip that for this tutorial. 
-
-Hit "Done". 
-
-Eventually your Trigger definition should look like this 
-![step1-snowflake-trigger](assets/step1-snowflake-trigger.png)
-
-## Step 2 - Create the Workflow Action    
-Duration: 3
-
 <!-- ------------------------ -->
 ## Metadata Configuration
 Duration: 2
@@ -109,6 +75,7 @@ You can see the source metadata for this guide you are reading now, on [the gith
 
 
 <!-- ------------------------ -->
+
 ## Creating a Step
 Duration: 2
 
@@ -124,9 +91,11 @@ A  serviceNow workflow consists of a trigger and action. The trigger is used to 
 1. Go to your  ServiceNow Personal Developer Instance -> All -> Workflow Studio -> Homepage 
 
 2. Select New -> Flow. Define a name for the flow "snowflake-demo". Leave the rest as default. 
+
 ![step1-new-flow](assets/step1-new-flow.png)
 
 3. Select a trigger for the flow. Go to Application -> REST API - Asynchronous 
+
 ![step1-create-trigger](assets/step1-create-trigger.png)
 
 Select the HTTP Method as "POST" 
