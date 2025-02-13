@@ -1,5 +1,5 @@
 author: Szymon Rybka
-id: how-to-setup-leads-notification
+id: setting-up-leads-notifications-in-slack
 summary: How to use webhooks for export Snowflake Marketplace lead information.
 categories: Getting-Started
 environments: web
@@ -7,7 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Webhooks, Snowflake Marketplace, Leads, JavaScript, Slack
 
-# How to setup Leads notification
+# Setting Up Leads Notifications in Slack
 <!-- ------------------------ -->
 ## Overview 
 Duration: 2
@@ -32,6 +32,9 @@ By the end of this guide, you should be familiar with Snowflake listing events a
 
 
 ### What You’ll Need
+- A Snowflake account [trial account](https://signup.snowflake.com/?utm_cta=quickstarts_) or access to an existing account with access to:
+  - `LISTING_EVENTS_DAILY` view in the `DATA_SHARING_USAGE` schema for getting new leads data
+  - `CREATE INTEGRATION` privilege on Account. For notification creation.
 - Slack Account with the ability to create a new channel and add a webhook integration.
 
 ### What You’ll Build 
