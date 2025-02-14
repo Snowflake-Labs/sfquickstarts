@@ -26,23 +26,23 @@ You want to be able to provide your teams concepts like the one below to spark i
 ![img](assets/diagram_final_concept.jpg)
 This particular concept has a brand logo, a potential idea for Christmas patterns, and a marketing tagline.
 
-Wouldn't it be great, if you could generate these automatically and easily? Well continue on to learn how to do this in Snowflake!
+Wouldn't it be great if you could generate these automatically and easily? Well, continue on to learn how to do this in Snowflake!
 
 ### What You’ll learn
 
-- Using Text 2 Image AI Models and diffusers pipelines to generate images
-- Creating compute pools for GPU access
-- Loading AI Models into Snowflake Model Registry and creating a service that can be called from any other Snowflake runtime object
+- Using Text 2 Image AI Models and diffusers pipelines to generate images.
+- Creating compute pools for GPU access.
+- Loading AI Models into Snowflake Model Registry and creating a service that can be called from any other Snowflake runtime object.
 
 ### What You’ll Need
 
-- A [GitHub](https://github.com/) Account to access [this repository](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models)
+- A [GitHub](https://github.com/) Account to access [this repository](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models).
 - A [Snowflake Account](https://signup.snowflake.com/) in a cloud region that supports [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs).
 - Access to a role that will allow you to create new roles, databases, schemas, tables, stages, models, services, and create external access integrations.
 - Access or permission to create ["large" compute pools](https://docs.snowflake.com/en/sql-reference/sql/create-compute-pool). Due to the GPU VRAM requirements for these models, you may need to contact your Snowflake representative to open access these larger compute pools.
 
 ### What You’ll Build 
-- A Streamlit in Snowflake application that can be used to generate images from manual input or from a table of ideas
+- A Streamlit in Snowflake application that can be used to generate images from manual input or from a table of ideas.
 - A Snowflake model service that can be called from SQL, Snowflake Notebooks, API, or another Streamlit application and can take in input and output an image.
 
 
@@ -68,9 +68,9 @@ A number of large companies have implemented such programs and are seeing strong
 >
 > **From the article:** <br> ...Within content, P&G is using generative AI to generate concept ideas and then test copy against thousands of in-market copy. The automated process cuts down the testing timeline from several months to just a few days and reduces costs. Within the AI, it has created a scoring system for content it is about to launch. <br><br> “That is a very effective way to broaden the mindset of the team — not to write the concept but to give you concept ideas that you might not have thought of,” said CFO Andre Schulten...
 
-Implementing such a program is often complex and requires months of effort, dozens of data systems, complex cloud architecture, and AI/ML experts to stand up models and corresponding MLOps.
+Implementing such a program is often complex and requires months of effort, dozens of data systems, complex cloud architecture, and AI/ML experts to stand up models and the corresponding MLOps.
 
-We're going to show you how to create a core part of this program in less than a few hours!
+We're going to show you how to create a core part of this program in less than two hours!
 
 ### Code Assets
 The code for all of the assets we will use today is located on Github [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models) or you can clone to your computer using the following command: 
@@ -82,16 +82,16 @@ git clone git@github.com:Snowflake-Labs/sfguide-build-a-visual-idea-generator-wi
 ### Background on Text 2 Image Models
 Text 2 Image models have been available since the mid-2010s, but have become more popular with the introduction of DALL-E models from OpenAI. Much of the innovation to-date has been from open-source models such as Stable Diffusion and newer models like FLUX.1.
 
-Evaluating a Text 2 Image models can be difficult, however, we recommend looking for a model that can represent the typical objects in your innovation program well. For example, if you work on products that typically involve food, look for models that accurately represent colors, shapes, and details. Further, newer models like FLUX.1 handle Text within images very well.
+Evaluating a Text 2 Image models can be difficult, however, we recommend looking for a model that can represent the typical objects in your innovation program well. For example, if you work on products that typically involve food, look for models that accurately represent colors, shapes, and details. Further, newer models like FLUX.1 handle Text within images very well. These models can also be fine-tuned to your specific needs.
 
-We will be leveraging Huggingface to download all the model assets. For this tutorial, we will be using FLUX.1-Schnell which is a very strong text 2 image model that performs excellently with images and text generation. This model is released by Black Forest Labs under an Apache 2.0 license.
+We will be leveraging Huggingface to download all the model assets. For this tutorial, we will be using the FLUX.1-Schnell mode which is a very strong Text-to-Image model that performs well with both image and text generation. This model is released by Black Forest Labs under an Apache 2.0 license.
 
 Read more about [FLUX.1-Schnell on Huggingface](https://huggingface.co/black-forest-labs/FLUX.1-schnell).
 
 Other models that have been tested and confirmed to work are listed below along with the minimum Compute Pool size to create a model service.
 
 * [Stable Diffusion XL](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) - GPU_NV_M or equiv.
-* [Stable Diffusion 1.5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5) - GPU_NV_M or equivalent
+* [Stable Diffusion 1.5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5) - GPU_NV_M or equivalent.
 * [SmallSD](https://huggingface.co/segmind/small-sd) - GPU_NV_S or equiv.
 
 
@@ -99,19 +99,21 @@ Other models that have been tested and confirmed to work are listed below along 
 ## Setup Our Role and Permissions
 Duration: 5
 
-In this section, we will set-up all the Snowflake objects and permissions we will need to continue this demo. We will be referencing the `1_set_up.sql` script located [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/1_set_up.sql).
+In this section, we will set-up all the required Snowflake objects and permissions for this demo. We will be referencing the `1_set_up.sql` script located [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/1_set_up.sql).
 
 Each step listed below corresponds to the same section in the script.
 
 ### Step 0 - Utility Functions
-A set of utility functions are shown here to help with managing your Snowflake objects, accessing service logs, and turning off services.
+A set of utility functions to help with managing your Snowflake objects, accessing service logs, and turning off services.
 
-In order to see what services, etc are running or suspended, these commands can be run. When creating your service, often there is a delay until the container can be fully loaded or initialized - to check progress we make a call to `SYSTEM$GET_SERVICE_LOGS` to get more details.
+Run these commands to see what services, etc are running or suspended. When creating your service, there is a delay until the container is fully loaded or initialized - to check progress we make a call to `SYSTEM$GET_SERVICE_LOGS`.
 ``` sql
 SHOW COMPUTE POOLS;
 SHOW EXTERNAL ACCESS INTEGRATIONS;
 SHOW NETWORK RULES;
 SHOW SERVICES;
+SHOW MODELS;
+SHOW VERSIONS IN MODEL FLUX_1_SCHNELL;
 
 SELECT SYSTEM$GET_SERVICE_LOGS('CONCEPT_GEN_SERVICE', 0, 'model-inference', 100);
 ```
@@ -122,6 +124,10 @@ After using the services or compute pools, you may want to put them into a SUSPE
 ALTER COMPUTE POOL CONCEPT_GEN_POOL_L STOP ALL;
 ALTER COMPUTE POOL CONCEPT_GEN_POOL_L SUSPEND;
 ```
+
+> aside negative
+>
+> After you complete the demo and create a service. We recommend suspending the service after you are done. The running service will keep a compute pool Active as long as it is running.
 
 ### Step 1 - Create Roles and Permissions
 
@@ -141,7 +147,7 @@ GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE CONCEPT_GEN_ROLE;
 GRANT ROLE CONCEPT_GEN_ROLE TO ROLE ACCOUNTADMIN;
 ```
 
-Next we will create the database, schema, and stages.
+Next we will create the database, schema, and stages. You may want to upload your own sample brand logo images to the stage so you can reference them in later steps.
 ``` sql
 USE ROLE CONCEPT_GEN_ROLE;
 CREATE OR REPLACE DATABASE CONCEPT_GEN_DB;
@@ -289,7 +295,7 @@ Duration: 30
 >
 > Basic familiarity with Snowflake Notebooks is recommended. For more information: [Documentation tutorial](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and [Quickstarts](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_notebooks/index.html?index=..%2F..index#0)
 
-In this section, we will do a full end-to-end creation of a concept image all within a Snowflake Notebook! This will allow you to quickly see how this process works. At the end of this, we will not be able to call the image model elsewhere, say a Streamlit app or from your own Application - that is saved for the next section.
+In this section, we will do a full end-to-end creation of a concept image all within a Snowflake Notebook! This will allow you to quickly see how this process works. At the end of this step, however, we cannot call the image model from elsewhere, say a Streamlit app or from your own Application - that requires a service which is detailed in the next section.
 
 ### What we will create
 At the end of this demo, we will create an image that contains a visualization of a product or marketing idea that also contains a brand logo and a marketing tagline.
