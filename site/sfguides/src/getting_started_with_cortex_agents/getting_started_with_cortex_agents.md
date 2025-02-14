@@ -377,7 +377,7 @@ def snowflake_api_call(query: str, jwt_token: str, limit: int = 10):
     }
     
     payload = {
-        "model": "claude-3-5-sonnet",
+        "model": "llama3.3-70b",
         "messages": [
             {
                 "role": "user",
@@ -564,8 +564,11 @@ streamlit run app.py
 ```
 
 ### Great first questions to ask
-- Show me our sales conversations
-- What is our sales data?
+## Show me our sales conversations
+![Show me our sales conversations](assets/sales_conversations.png)
+## What is our sales data?
+![What is our sales data?](assets/sales_data)
+
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
