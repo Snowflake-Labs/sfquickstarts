@@ -10,13 +10,13 @@ tags: Getting Started, Data Science, Data Engineering
 # S&P Market Intelligence: Analyze Earnings Transcripts with LLMs in Cortex AI
 <!-- ------------------------ -->
 ## Overview 
-Earnings calls play a pivotal role in shaping investor perceptions. The quality of communication between executives and analysts can significantly influence company performance. On-topic and proactive exeutives, who deliver proactive presentations, anticipate market queries, and provide clear, on-topic answers to analysts’ questions—consistently outperform their peers. Conversely, off-topic and reactive executives, who fail to address analysts’ key inquiries during presentations, and provide off-topic responses—significantly underperform.
+Earnings calls play a pivotal role in shaping investor perceptions. The quality of communication between executives and analysts can significantly influence company performance. On-topic and proactive executives, who deliver proactive presentations, anticipate market queries, and provide clear, on-topic answers to analysts’ questions—consistently outperform their peers. Conversely, off-topic and reactive executives, who fail to address analysts’ key inquiries during presentations, and provide off-topic responses—significantly underperform.
 
 Executives' ability to anticipate investor concerns and maintain a focused dialogue fosters confidence and strategic communication. In contrast, failing to provide clarity when analysts seek additional information can lead to misalignment and breakdowns in transparency. A long (short) portfolio of on-topic and proactive (off-topic and reactive) generates +515bps of annualized alpha.
 
-This QuikStart with it's notebook serves as a introduction for the research detailed in Quantitative Research & Solutions’ recent publication, ["Questioninig the Answers: LLM's enter the Boardroom."](https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom) It analyse executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers. This research harness alpha using LLM tools, including vector embeddings, vector cosine similarity, and the LLM quesiton answering. There is a longer version avalible upon request that also covers how to create the input data from the datasets described in section 2, please reach out to <QRS@spglobal.com> for access to the longer version.
+This QuikStart with its notebook serves as a introduction for the research detailed in Quantitative Research & Solutions’ recent publication, ["Questioning the Answers: LLM's enter the Boardroom."](https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom) It analyses executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers. This research harnesses alpha using LLM tools, including vector embeddings, vector cosine similarity, and the LLM question answering. There is a longer version available upon request that also covers how to create the input data from the datasets described in section 2, please reach out to <QRS@spglobal.com> for access to the longer version.
 
-Through this quickstart, you will learn how to use [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) and [Snowflake Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) on earnings call using the [Machine Readable Transcripts](https://app.snowflake.com/marketplace/listing/GZT0Z8P3D2V/s-p-global-market-intelligence-machine-readable-transcripts) dataset from S&P Global Market Intelligence.
+Through this QuickStart, you will learn how to use [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) and [Snowflake Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) on earnings call using the [Machine Readable Transcripts](https://app.snowflake.com/marketplace/listing/GZT0Z8P3D2V/s-p-global-market-intelligence-machine-readable-transcripts) dataset from S&P Global Market Intelligence.
 
 ### What You’ll Learn
 
@@ -37,7 +37,7 @@ Learn more about [Snowflake Cortex](https://docs.snowflake.com/guides-overview-a
 
 ### S&P Global Market Intelligence datasets
 
-The ["Questioninig the Answers: LLM's enter the Boardroom."](https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom) research is using the datasets below from the Snowflake Marketplace. Access to those are not neccessary for running this QuickStart, where we are using a sample dataset.
+The ["Questioning the Answers: LLM's enter the Boardroom."](https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom) research is using the datasets below from the Snowflake Marketplace. Access to those are not necessary for running this QuickStart, where we are using a sample dataset.
 
 To reproduce the full research using the complete datasets then request access to those below using the links or contact <SnowflakeMarketplace@spglobal.com>.
 
@@ -58,7 +58,7 @@ To reproduce the full research using the complete datasets then request access t
 
 ### What You’ll Build 
 
-In this QuickStart we will analyse executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers with the help of Snowflake Cortex AI functions.
+In this QuickStart we will analyse executive on-topicness and proactiveness using the analysts’ questions, executives’ answers and LLM answers with the help of Snowflake Cortex AI functions.
 
 <!-- ------------------------ -->
 ## Setup The Environment
@@ -173,7 +173,7 @@ SELECT * FROM SAMPLE_TRANSCRIPT LIMIT 10;
 
 #### Create From Repository
 
-If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai) and create a Git integration to it in Snowflake you can open the notebook directly from the repository. See [here](https://docs.snowflake.com/en/developer-guide/git/git-overview) for instructions on how to set up Git integration.
+If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai) and created a Git integration to it in Snowflake you can open the notebook directly from the repository. See [here](https://docs.snowflake.com/en/developer-guide/git/git-overview) for instructions on how to set up Git integration.
 
 1. In the **Create Notebook from Repository** dialog, click on **Select .ipynb file**  
 ![Create Notebook from Repository Dialog](assets/create_from_rep_start.png)  
@@ -184,11 +184,11 @@ If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfg
 ## Analyze Earnings Transcripts with LLMs in Cortex AI
 Duration: 30
 
-During this step you will learn how to use Snowflake Cortex to analyse executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers. 
+During this step you will learn how to use Snowflake Cortex to analyse executive on-topicness and proactiveness using the analysts’ questions, executives’ answers and LLM answers.
 
 This includes:
 * Generate embeddings on call transcripts
-* Compare similarites between questions and answers using cosine simularity
+* Compare similarities between questions and answers using cosine similarity
 * Generate LLM based answers to questions using Cortex COMPLETE
 
 Follow along and run each of the cells in [the Notebook](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai/blob/main/0_start_here.ipynb).
@@ -202,7 +202,7 @@ Congratulations, you have successfully completed this quickstart! Through this q
 
 ### What You Learned
 
-In this quickstart you have learned how to use Snowflake Cortex to analyse executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers by:
+In this QuickStart you have learned how to use Snowflake Cortex to analyse executive on-topicness and proactiveness using the analysts’ questions, executives’ answers and LLM answers by:
 
 - using Snowflake Notebooks to run the code
 - create and use vector embeddings on text data
@@ -212,6 +212,6 @@ In this quickstart you have learned how to use Snowflake Cortex to analyse execu
 ### Related Resources
 
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai)
-* Access the reasearch ["Questioninig the Answers: LLM's enter the Boardroom."](https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom)
+* Access the research ["Questioning the Answers: LLM's enter the Boardroom."](https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom)
 * Request access to the longer version of the notebook via <QRS@spglobal.com>
 
