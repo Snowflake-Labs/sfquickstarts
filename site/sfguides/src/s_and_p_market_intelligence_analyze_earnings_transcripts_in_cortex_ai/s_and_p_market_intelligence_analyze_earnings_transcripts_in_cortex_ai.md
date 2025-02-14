@@ -61,11 +61,11 @@ To reproduce the full research using the complete datasets then request access t
 In this QuickStart we will analyse executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers with the help of Snowflake Cortex AI functions.
 
 <!-- ------------------------ -->
-## Setup The Snowflake Environment
+## Setup The Environment
 Duration: 10
 
 ### Overview
-This section covers cloning of the GitHub repository and creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..)
+This section covers cloning of the GitHub repository, creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..) and importing the notebook to be used.
 
 ### Clone The Git Repository
 The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai). This repository contains all the code you will need to successfully complete this QuickStart Guide.
@@ -83,13 +83,6 @@ git clone git@https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intellige
 ```
 
 You can also use the Git integration feature of Snowflake Notebooks, in order to do that you need to fork the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai) to be allowed to commit changes. For instructions how to set up Git integration for your Snowflake account see [here](https://docs.snowflake.com/developer-guide/git/git-setting-up) and for using it with Snowflake Notebooks see [this page](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit). You can refer to [this video](https://www.youtube.com/watch?v=4GOa1eUccmQ) for a walkthrough on how you can set up Git integration and use it with Snowflake Notebooks.
-
-<!-- ------------------------ -->
-## Setup Snowflake
-
-Duration: 10
-
-During this step you will create the neccessar Snowflake objects, load the S&P Global Market Intelligence QuickStart sample dataset and import the Snowflake Notebook.
 
 ### Create Database, Schema, Table And Warehouse To Be Used
 
@@ -160,7 +153,7 @@ SELECT * FROM SAMPLE_TRANSCRIPT LIMIT 10;
 
 ### Create Snowflake Notebook
 
-### Navigate To Snowflake Notebooks
+#### Navigate To Snowflake Notebooks
 
 1. Navigate to the Notebooks section by clicking **Projects** and then **Notebooks**  
 
@@ -172,13 +165,13 @@ SELECT * FROM SAMPLE_TRANSCRIPT LIMIT 10;
 
     ![New notebook from menu](assets/notebook_from_menu.png)  
 
-### Import .ipynb File
+#### Import .ipynb File
 1. Navigate to where you have cloned the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai) and select **0_start_here.ipynb** and click **Open**  
 ![Select Notebook File](assets/select_notebook_file.png)  
 2. Give the notebook a name, then select **SP_LLM_QS** and **PUBLIC** for **Notebook location**, **SP_LLM_QS_WH** for **Notebook warehouse** and click **Create**  
 ![Select Notebook File](assets/notebook_dialog.png)  
 
-### Create From Repository
+#### Create From Repository
 
 If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai) and create a Git integration to it in Snowflake you can open the notebook directly from the repository. See [here](https://docs.snowflake.com/en/developer-guide/git/git-overview) for instructions on how to set up Git integration.
 
@@ -198,7 +191,7 @@ This includes:
 * Compare similarites between questions and answers using cosine simularity
 * Generate LLM based answers to questions using Cortex COMPLETE
 
-Follow along and run each of the cells in [the Notebook](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai/blob/main/notebooks/0_start_here.ipynb).
+Follow along and run each of the cells in [the Notebook](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai/blob/main/0_start_here.ipynb).
 
 
 <!-- ------------------------ -->
