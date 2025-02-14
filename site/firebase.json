@@ -121,6 +121,11 @@
       "source": "guide/connectors_native_sdk_java_example/{,/**}",
       "destination": "https://docs.snowflake.com/developer-guide/native-apps/connector-sdk/tutorials/native_sdk_example_connector_tutorial",
       "type": 301
+    },
+    {
+      "source": "guide/vhol_data_lake/{,/**}",
+      "destination": "https://docs.snowflake.com/en/user-guide/tables-iceberg-load",
+      "type": 301
     }
     ]
   }
