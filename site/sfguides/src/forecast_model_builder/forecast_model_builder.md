@@ -19,7 +19,7 @@ The Forecast Model Builder accelerates time to value by offering modeling flexib
 ![App](assets/highlevelarch.png)
 
 ### Prerequisites
-- Access to the [Emerging Solutions Toolbox Gitlab Repository for Forecast Model Builder](https://snow.gitlab-dedicated.com/snowflakecorp/SE/sit/sln.emerging-solutions-toolbox/-/tree/master/framework-evalanche?ref_type=heads).
+- A Gitlab account and access to the [Emerging Solutions Toolbox Gitlab Repository for Forecast Model Builder](https://snow.gitlab-dedicated.com/snowflakecorp/SE/sit/sln.emerging-solutions-toolbox/-/tree/master/framework-evalanche?ref_type=heads).
 
 ### What You’ll Learn 
 This guide will walk you through the process of:
@@ -28,8 +28,8 @@ This guide will walk you through the process of:
 - Running inferencing against the models stored in the Registry
 
 ### What You’ll Need 
-- A Snowflake account
-- A [GitLab](https://gitlab.com/) Account 
+- A Snowflake account with CREATE DATABASE permissions
+- The aforementinoned Gitlab Repository
 
 ### What You’ll Build 
 - An end-to-end Snowflake Notebook based forecasting solution for your time series data.
@@ -56,9 +56,22 @@ This solution leverages several key Snowflake features:
 Duration: 2
 
 To setup the Forecast Model Builder solution in Snowflake you will:
-1) Import the [Forecst_Model_Builder_Deployment.ipynb notebook](https://snow.gitlab-dedicated.com/snowflakecorp/SE/sit/ml-forecasting-incubator/-/blob/master/FORECAST_MODEL_BUILDER_DEPLOYMENT.ipynb) to Snowsight.
-2) Follow the documented instructions in this notebook. The project name you provide will be the prefix for the notebooks that are created in this deployment
-3) The solution including three notebooks (eda, modeling and inference) will be created within your new named schema(project).
+1) Import the [Forecast_Model_Builder_Deployment.ipynb notebook](https://snow.gitlab-dedicated.com/snowflakecorp/SE/sit/ml-forecasting-incubator/-/blob/master/FORECAST_MODEL_BUILDER_DEPLOYMENT.ipynb) to Snowsight.  (For instructions on how create a new Snowflake Notebook from an existing file, please see [this documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#create-a-new-notebook) and follow the instructions for creating a notebook from an existing file.)
+2) Follow the documented instructions in the Deployment notebook. The project name you provide will be the prefix for the notebooks and the schema name that are created in this deployment
+3) The solution including three notebooks (eda, modeling and inference) will be created within your new named schema (<YOUR_PROJECT_NAME>).
+
+Once setup is complete you should see the following database and associated objects:
+
+- **FORECAST_MODEL_BUILDER**
+    - BASE
+        - Stages
+            - NOTEBOOK_TEMPLATES
+        - Procedures
+            - CREATE_PROJECT(VARCHAR,VARCHAR)
+    - INFORMATION_SCHEMA
+    - <YOUR_PROJECT_NAME>
+
+4) Sample data has been provided 
 
 <!-- ------------------------ -->
 ## Exploratory Data Analysis
@@ -88,8 +101,25 @@ ___
 
 To run the EDA Notebook:
 1) Go to Projects > Notebooks in Snowsight.  You should see notebooks for EDA, MODELING & INFERENCE with your Project prefix.
-2) Open the notebook <PROJECT_NAME>_EDA.
-3) Follow the instructions provided in the each notebook cell.
+2) Open the notebook <YOUR_PROJECT_NAME>_EDA.
+3) In the upper right hand corner of your UI, click the down arrow next to the word Start and select 'Edit compute settings'.
+
+    <img
+        src="assets/editcompute.png" 
+        width=50%
+    />
+
+
+4) Select 'Run on container' and click Save.  You will also do this for the Modeling and Inference notebooks.
+
+    
+    <img
+        src="assets/container.png" 
+        width=50%
+    />
+    
+
+5) Follow the instructions provided in the each notebook cell.
 
 <!-- ------------------------ -->
 ## Feature Engineering and Advanced Modeling
@@ -111,8 +141,9 @@ ___
 
 To run the Feature Engineering and Advanced Modeling Notebook:
 1) Go to Projects > Notebooks in Snowsight.  
-2) Open the notebook <PROJECT_NAME>_MODELING.
-3) Follow the instructions provided in the each notebook cell.
+2) Open the notebook <YOUR_PROJECT_NAME>_MODELING.
+3) Switch to Container Runtime.
+4) Follow the instructions provided in the each notebook cell.
 
 <!-- ------------------------ -->
 ## Inferencing
@@ -138,8 +169,9 @@ ___
 
 To run the Inferencing Notebook:
 1) Go to Projects > Notebooks in Snowsight. 
-2) Open the notebook <PROJECT_NAME>_INFERENCE.
-3) Follow the instructions provided in the each notebook cell.
+2) Open the notebook <YOUR_PROJECT_NAME>_INFERENCE.
+3) Switch to Container Runtime.
+4) Follow the instructions provided in the each notebook cell.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
