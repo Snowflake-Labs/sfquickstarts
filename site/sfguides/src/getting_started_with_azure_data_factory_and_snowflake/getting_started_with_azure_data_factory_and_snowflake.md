@@ -254,7 +254,7 @@ Behind the scenes, ADF will use Blob Storage to stage data as it is moved.  So y
    * On the left panel select Shared Access Signature
    * Ensure all resource types are available
    * Make the expiration End Date long enough to finish the Quickstart
-   * Generate SAS and connection strong, then copy out the SAS token
+   * Generate SAS and connection string, then copy out the SAS token
 (Note: Be sure to save it or leave this tab open, you won’t be able to get back to the token)
 
 ![](assets/SAS.png)
