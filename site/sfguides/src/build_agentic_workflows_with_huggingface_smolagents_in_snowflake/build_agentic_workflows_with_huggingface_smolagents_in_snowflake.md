@@ -28,12 +28,6 @@ Snowflake Cortex is a suite of AI features that use large language models (LLMs)
 
 Learn more about [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/).
 
-### What is Snowflake ML?
-
-Snowflake ML is an integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos, or governance tradeoffs. 
-
-Learn more about [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/).
-
 ### What is Smolagents?
 
 It is a lightweight library introduced by Hugging Face that enables language models to perform tasks by writing and executing code. It allows for the creation of agents that can interact with tools, execute multi-step workflows, and integrate with various large language models (LLMs). It supports models hosted on the Hugging Face Hub, as well as those from providers like OpenAI and Anthropic. It also offers first-class support for code agents, facilitating the development of agents that write their actions in code. 
@@ -48,7 +42,7 @@ Learn more about [Smolagents](https://github.com/huggingface/Smolagents).
 
 ### What You Will Learn
 
-* How to create agentic workflows using Smolagents library from Hugging Face
+* How to create agentic workflows using Smolagents library from Hugging Face in Snowflake
 
 ### What You Will Build
 
@@ -100,11 +94,14 @@ Here's the code walkthrough of the [huggingface_smolagents_notebook_app.ipynb](h
 
 **Cell 1** 
 
-Install **smolagents** library
+Install **Smolagents** library
 
 **Cell 2** 
 
-Here we create instances of **HfApiModel**, **ToolCallingAgent**, and **CodeAgent** to perform web search using built-in **DuckDuckGoSearchTool**. Please also remember to replace `hf_ZkEXVwIXXXXXXXXXXXXXXX` with your Hugging Face token before proceeding.
+Here we create instances of **HfApiModel**, **ToolCallingAgent**, and **CodeAgent** to perform web search using built-in **DuckDuckGoSearchTool**. 
+
+> aside positive
+> NOTE: Replace `hf_ZkEXVwIXXXXXXXXXXXXXXX` with your Hugging Face token before proceeding.
 
 **Cell 3**
 
@@ -120,11 +117,11 @@ Here we use the same instance of **CodeAgent** and perform a web search using pr
 
 **Cell 5** 
 
-Here we create a new tool/class **HFModelSnowflakeCortex** with custom code that uses [Snowflake Cortex Complete](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#complete-function) function to summarize given long-form text using prompt `Summarize the text enclosed in ### in less than 200 words in JSON format and list out upto 3 highlights in JSON format ### {txt} ###. Return only the JSON formatted output and nothing else.`. 
+Here we create a new tools **get_dzone_refcards**, **read_dzone_refcards**, and **summarize_article**. The first tool retrieves [popular DZone Refcards](https://dzone.com/refcardz?sort=popular), the second one extracts the content of a given article, and the third one uses [Snowflake Cortex Complete](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#complete-function) function to summarize a given article using Anthropic **claude-3-5-sonnet** LLM and prompt `Summarize the text enclosed in ### in less than 500 words: ### {article_text} ###.Produce JSON output that includes article title, article url, article summary, and 3 highlights from the article.`. 
 
 **Cell 6** 
 
-Here we create a **Streamlit application** with default text to summarize and a list with three LLMs `'claude-3-5-sonnet','snowflake-llama-3.1-405b','llama3.1-405b'`. This is where we're using the instance of **HFModelSnowflakeCortex** to perform the task. 
+Here we create a new instance of **CodeAgent** and provide the three tools created in the previous step with prompt `Generate a list of popular DZone RefCard summaries by reading them.`.  
 
 If all goes well, you should see the output similar to the following:
 
