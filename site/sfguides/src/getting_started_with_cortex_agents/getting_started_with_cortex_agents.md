@@ -73,7 +73,6 @@ Before you begin, make sure you have the following:
 
 - **Snowflake Account**: Access to Snowflake with sufficient privileges to create databases, schemas, tables, and upload files. You will also need to set up an RSA public key for the user in (Snowflake)[https://app.snowflake.com].
 - **Cortex Agents Access**: You will need access to Snowflake Cortex service, **Cortex Agents**, **Cortex Search**, and **Cortex Analyst** features.
- 
 
 ## Setup Workspace
 Duration: 10
