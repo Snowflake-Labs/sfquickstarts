@@ -68,13 +68,11 @@ A full-stack application that enables users to:
 - Analyze sales metrics and patterns
 - Ask questions about sales data and get AI-powered responses
 
-### Prerequisites
-- Snowflake account with access to:
-  - Snowflake Cortex
-  - Streamlit in Snowflake
-  - Cortex Search Services
-  - Cortex Analyst
-  - Cortex Agents
+### What You'll Need
+Before you begin, make sure you have the following:
+
+- **Snowflake Account**: Access to Snowflake with sufficient privileges to create databases, schemas, tables, and upload files. You will also need to set up an RSA public key for the user in (Snowflake)[https://app.snowflake.com].
+- **Cortex Agents Access**: You will need access to Snowflake Cortex service, **Cortex Agents**, **Cortex Search**, and **Cortex Analyst** features.
  
 
 ## Setup Workspace
