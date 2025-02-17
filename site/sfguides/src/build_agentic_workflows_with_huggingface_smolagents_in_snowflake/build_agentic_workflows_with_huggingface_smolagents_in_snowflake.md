@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
-# Build Agentic Workflows with HuggingFace Smolagents in Snowflake
+# Build Agentic Workflows with Hugging Face Smolagents in Snowflake
 <!-- ------------------------ -->
 
 ## Overview
