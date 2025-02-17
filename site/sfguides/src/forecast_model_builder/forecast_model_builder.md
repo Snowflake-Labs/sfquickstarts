@@ -64,6 +64,8 @@ Once setup is complete you should see the following database and associated obje
 
 - **FORECAST_MODEL_BUILDER**
     - BASE
+        - Tables
+            - DAILY_PARTITIONED_SAMPLE_DATA
         - Stages
             - NOTEBOOK_TEMPLATES
         - Procedures
@@ -71,7 +73,7 @@ Once setup is complete you should see the following database and associated obje
     - INFORMATION_SCHEMA
     - <YOUR_PROJECT_NAME>
 
-4) Sample data has been provided 
+4) Sample time series data with a daily granularity has been provided in the table DAILY_PARTITIONED_SAMPLE_DATA.
 
 <!-- ------------------------ -->
 ## Exploratory Data Analysis
@@ -88,15 +90,14 @@ Understanding the structure and patterns of time series data is crucial for buil
     - Seasonal decomposition
     - ACF/PACF
 
-
 - **Stationarity** in time series modeling refers to the property of a time series where its statistical properties, such as the mean, variance, and autocorrelation structure, remain constant over time.  The ADF test is a unit root test that will check whether a time series is stationary.  When time series are non-stationary, other data engineering techniques are necessary to account for the changing time series. 
 
     *Stationarity Tests*
     - Augmented Dickey-Fuller
 
-- **Baseline Analysis (Optional)** Perform basic non-ML-based forecasting (baseline modeling) on your data which can be used as a comparison for advanced modeling later
+- **Baseline Analysis (Optional)** performs basic non-ML-based forecasting (baseline modeling) on your data which can be used as a comparison for advanced modeling later
 
-By the end of this notebook, you'll have a deep understanding of the dataset’s characteristics, enabling informed decisions on feature engineering and model selection for accurate time series forecasting.
+By the end of this notebook, you will have a deep understanding of the dataset’s characteristics, enabling informed decisions on feature engineering and model selection for accurate time series forecasting.
 ___
 
 To run the EDA Notebook:
@@ -123,7 +124,7 @@ To run the EDA Notebook:
 
 <!-- ------------------------ -->
 ## Feature Engineering and Advanced Modeling
-Duration: 2
+Duration: 4
 
 In this notebook, we explore a **partitioned time series modeling approach** using **XGBoost** and **Snowflake's Snowpark**, enabling efficient and scalable forecasting for large datasets.
 
@@ -147,7 +148,7 @@ To run the Feature Engineering and Advanced Modeling Notebook:
 
 <!-- ------------------------ -->
 ## Inferencing
-Duration: 2
+Duration: 4
 
 This notebook is designed to perform **inference** using the trained time series model from the modeling pipeline. It leverages **Snowflake's Snowpark** environment to efficiently make predictions on new data, ensuring seamless integration between model training and deployment.
 
