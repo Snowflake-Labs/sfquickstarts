@@ -113,11 +113,11 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 ### Add files to stages
 
-Click [here]((https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/blob/main/Notebook/routing_setup.ipynb) and download the contents of the folder
+Click [here](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Notebook) and download the contents of the folder
 
 Upload **all** contents into the notebook stage
 
-Click [here](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/Streamlit) and download the contents of the folder
+Click [here](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Streamlit) and download the contents of the folder
 
 
 Upload **all** contents into the streamlit stage - Ensure the config.toml file is uploaded into a folder called .streamlit
