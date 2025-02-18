@@ -98,8 +98,7 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 ## Snowflake Marketplace
 Duration: 2
 
-![alt text](assets/flow0.png)
-Once logged in go to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
+Once logged, navigate to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
 
 ![alt text](assets/I002.png)
 
