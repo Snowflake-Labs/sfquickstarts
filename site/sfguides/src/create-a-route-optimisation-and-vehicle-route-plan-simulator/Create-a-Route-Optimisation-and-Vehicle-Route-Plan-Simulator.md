@@ -117,7 +117,7 @@ Click [here](Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-S
 
 Upload **all** contents into the notebook stage
 
-Click [here](Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/Streamlot) and download the contents of the folder
+Click [here](Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/Streamlit) and download the contents of the folder
 
 
 Upload **all** contents into the streamlit stage - Ensure the config.toml file is uploaded into a folder called .streamlit
