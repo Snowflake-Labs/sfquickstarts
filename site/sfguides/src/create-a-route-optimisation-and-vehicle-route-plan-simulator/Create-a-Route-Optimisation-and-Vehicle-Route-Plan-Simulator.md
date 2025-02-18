@@ -118,9 +118,9 @@ Click [here] do download the Source Code(https://github.com/Snowflake-Labs/Creat
 Within the Downloaded Repository, open the **Notebook** folder and  upload all the contents into the notebook stage
 
 Within the Downloaded Repository, open the **Streamlit** folder and  upload all the contents into the streamlit stage 
-Please ensure that the config.toml file which is currently residing in the streamlit folder is loaded into a new folder called **.streamlit**  You can do this by typing in **.streamlit**  for the directory option
+Please ensure that the config.toml file which is currently residing in the streamlit folder is loaded into a new folder called **.streamlit**  You can do this by typing in **.streamlit**  "create new folder" option
 
-![image](https://github.com/user-attachments/assets/a64aef1d-65ea-44e6-9fcb-425f5ed308ea)
+![image](assets/upload.jpg)
 
 
 
