@@ -111,6 +111,7 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 ![alt text](assets/I004a.png)
 
+<!-- ------------------------ -->
 ## Add files to stages
 
 Click [here] do download the Source Code(https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Notebook)
@@ -123,7 +124,7 @@ Click [here] do download the Source Code(https://github.com/Snowflake-Labs/Creat
 
 
 
-
+<!-- ------------------------ -->
 ## Create Notebook and Streamlit from Stages
 Duration: 15
 
@@ -150,7 +151,7 @@ COMMENT = '{"origin":"sf_sit", "name":"Dynamic Route Optimisation Streamlit app"
 
 ```
 
-
+<!-- ------------------------ -->
 ## Begin the notebook tutorial 
 Duration: 30
 
@@ -159,7 +160,7 @@ This tutorial is self contained inside the notebook which covers creating the fu
 - Within the notebook area in Snowsight, navigate to the **ROUTING_DEMO_SETUP** notebook and follow the instructions inside
 - When you have completed the Notebook, navigate to the streamlit area (within projects) and open the **VEHICLE_ROUTING_SIMULATOR** app.
 
-
+<!-- ------------------------ -->
 ## Run the Dynamic route Optimisation and Vehicle Route Plan Simulator
 Duration: 20
 
@@ -275,7 +276,7 @@ This has created 3 functions which fetch data from 3 open route service endpoint
 
 #### The mapping
 The solution leverages pydeck to plot points, linestrings and polygons on a map.  The Isochrone is the polygon, the routes are linestrings and the places/points of interest are points.
-
+<!-- ------------------------ -->
 ## The Streamlit Code
 Duration: 10
 
