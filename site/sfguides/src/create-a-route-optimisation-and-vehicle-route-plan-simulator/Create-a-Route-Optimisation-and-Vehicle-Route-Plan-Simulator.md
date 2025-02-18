@@ -157,15 +157,15 @@ Duration: 30
 This tutorial is self contained inside the notebook which covers creating the functions, how to apply them and how to visualise the results.  At the end you will have a good understand of how the route optimisation servers works well with Snowflake Advanced analytical capabilites - which will also help you understand how the streamlit works.
 
 - Within the notebook area in Snowsight, navigate to the **ROUTING_DEMO_SETUP** notebook and follow the instructions inside
+- When you have completed the Notebook, navigate to the streamlit area (within projects) and open the **VEHICLE_ROUTING_SIMULATOR** app.
 
-- When you have completed the Notebook, navigate to the streamlit area (within projects) and open the vehicle routing optimisation simulation app
 
 ## Run the Dynamic route Optimisation and Vehicle Route Plan Simulator
 Duration: 20
 
 ![alt text](assets/simulator_image.png)
 
-This app simulates potential routes to 29 delivery locations for selected customer types - all coming from a user definable wholesaler.  Currently there are 3 types of distributor available although with the notebook, you can create limitless industry categories:
+The streamlit app which you have open simulates potential routes to 29 delivery locations for selected customer types - all coming from a user definable wholesaler.  Currently there are 3 types of distributor available although with the notebook, you can create limitless industry categories:
 
 -   Food
 -   Health
