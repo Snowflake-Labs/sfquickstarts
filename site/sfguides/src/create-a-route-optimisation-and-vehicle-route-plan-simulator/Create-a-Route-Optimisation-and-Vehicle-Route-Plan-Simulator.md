@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial
 
-# Create a Route Optimisation and Vehicle Route plan Simulator
+# Create a Route Optimisation and Vehicle Route Plan Simulator
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -113,11 +113,11 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 ### Add files to stages
 
-Click [here](Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/Notebook) and download the contents of the folder
+Click [here]((https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/blob/main/Notebook/routing_setup.ipynb) and download the contents of the folder
 
 Upload **all** contents into the notebook stage
 
-Click [here](Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/Streamlit) and download the contents of the folder
+Click [here](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/Streamlit) and download the contents of the folder
 
 
 Upload **all** contents into the streamlit stage - Ensure the config.toml file is uploaded into a folder called .streamlit
@@ -276,7 +276,7 @@ The solution leverages pydeck to plot points, linestrings and polygons on a map.
 ## The Streamlit Code
 Duration: 10
 
-Please read my medium post **Create a Route Optimiser and Vehicle Plan Simulator** (link to follow) for a detailed write up about the code itself.
+Please read my medium post - **[Create a Route Optimisation and Vehicle Route Plan Simulator](https://medium.com/@becky.oconnor/create-a-route-optimisation-and-vehicle-route-plan-simulator-f8cdd2df28e6)** for a detailed write up about the code itself.
 
 Here are some of the key features which the medium post focuses on:
 
@@ -437,6 +437,7 @@ You will have learned the following:
 #### Source code
 
 - [Source Code on Github](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator)
+- [Publication](https://medium.com/@becky.oconnor/create-a-route-optimisation-and-vehicle-route-plan-simulator-f8cdd2df28e6)
 
 #### Further Related Material
 
@@ -447,7 +448,6 @@ You will have learned the following:
 - [Streamlit](https://streamlit.io/)
 
 - [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
-
 
 - [Using Cortex and Streamlit With Geospatial Data](https://quickstarts.snowflake.com/guide/using_snowflake_cortex_and_streamlit_with_geospatial_data/index.html#1)
 
