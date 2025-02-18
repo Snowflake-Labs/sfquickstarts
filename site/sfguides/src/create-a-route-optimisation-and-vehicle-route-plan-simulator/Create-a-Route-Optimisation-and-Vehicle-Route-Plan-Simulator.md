@@ -96,7 +96,7 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 
 <!-- ------------------------ -->
 ## Snowflake Marketplace
-Duration: 2
+Duration: 10
 
 Once logged, navigate to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
 
@@ -111,19 +111,19 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 ![alt text](assets/I004a.png)
 
-### Add files to stages
+## Add files to stages
 
-Click [here](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Notebook) and download the contents of the folder
+Click [here] do download the Source Code(https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Notebook)
 
-Upload **all** contents into the notebook stage
+Within the Downloaded Repository, open the **Notebook** folder and  upload all the contents into the notebook stage
 
-Click [here](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Streamlit) and download the contents of the folder
+Within the Downloaded Repository, open the **Streamlit** folder and  upload all the contents into the streamlit stage 
+Please ensure that the config.toml file is loaded into a new folder called .streamlit
 
 
-Upload **all** contents into the streamlit stage - Ensure the config.toml file is uploaded into a folder called .streamlit
 
-### Create Notebook and Streamlit from Stages
-
+## Create Notebook and Streamlit from Stages
+Duration: 15
 You will now create a Notebook and a Streamlit.  Using SQL to create the notebook and streamlit.
 
 Use the existing Snowflake Worksheet to create them using the following SQL commands.
@@ -148,10 +148,10 @@ COMMENT = '{"origin":"sf_sit", "name":"Dynamic Route Optimisation Streamlit app"
 ```
 
 
-## Begin the notebook tutorial which includes pre-configuration for the simulator app
+## Begin the notebook tutorial 
 Duration: 30
 
-Now you have a configured streamlit and notebook, you can begin the lab.
+This tutorial is self contained inside the notebook which covers creating the functions, how to apply them and how to visualise the results.  At the end you will have a good understand of how the route optimisation servers works well with Snowflake Advanced analytical capabilites - which will also help you understand how the streamlit works.
 
 - Within the notebook area in Snowsight, navigate to the **ROUTING_DEMO_SETUP** notebook and follow the instructions inside
 
