@@ -115,10 +115,9 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 Click [here] do download the Source Code(https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Notebook)
 
-Within the Downloaded Repository, open the **Notebook** folder and  upload all the contents into the notebook stage
-
-Within the Downloaded Repository, open the **Streamlit** folder and  upload all the contents into the streamlit stage 
-Please ensure that the config.toml file which is currently residing in the streamlit folder is loaded into a new folder called **.streamlit**  You can do this by typing in **.streamlit**  "create new folder" option
+- Within the Downloaded Repository, open the **Notebook** folder and  upload all the contents into the notebook stage
+- Within the Downloaded Repository, open the **Streamlit** folder and  upload all the contents into the streamlit stage
+- Please ensure that the config.toml file which is currently residing in the streamlit folder is loaded into a new folder called **.streamlit**  You can do this by typing in **.streamlit**  "create new folder" option
 
 ![image](assets/upload.jpg)
 
@@ -127,9 +126,10 @@ Please ensure that the config.toml file which is currently residing in the strea
 
 ## Create Notebook and Streamlit from Stages
 Duration: 15
-You will now create a Notebook and a Streamlit.  Using SQL to create the notebook and streamlit.
 
-Use the existing Snowflake Worksheet to create them using the following SQL commands.
+You will now create a Notebook and a Streamlit.  For this exercise, you will use SQL to create the notebook and streamlit.
+
+- Use the existing Snowflake Worksheet to create them using the following SQL commands.
 
 ```sql
 
