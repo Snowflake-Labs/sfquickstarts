@@ -274,15 +274,128 @@ This has created 3 functions which fetch data from 3 open route service endpoint
 #### The mapping
 The solution leverages pydeck to plot points, linestrings and polygons on a map.  The Isochrone is the polygon, the routes are linestrings and the places/points of interest are points.
 
-#### **Have a look at the code**
+## The Streamlit Code
+Duration: 10
 
-- Line 82-89 - here are lookups which come from the table 'LOOKUP' - this table has beek populated using the provided notebook which can be amended. This will be joined with a sample set of places based on what has been filtered within the app.  For instance, if you choose restaurants within a 20km catchment of a chosen wholesaler, it will create a random sample of 29 restaurants and will assign to this template.
+Please read my medium post **Create a Route Optimiser and Vehicle Plan Simulator** (link to follow) for a detailed write up about the code itself.
 
-- On line 195/196, you will note that the 'search' function is used to filter the data which provides relevant information based on industry.  The key words used can be configured using the notebook provided.
+Here are some of the key features which the medium post focuses on:
 
-- Line 274  - this is where the defaults for customer types are implemented.  Customer types are configured in the lookup table - you will have relevant types which depends on industry selected
+**Setup Theming**
 
-- Line 308 - 314 - this is how the skills and vehicle capacity are assigned
+An important feature for better user experience is what the application looks like. I have themed the app to be consistant with Snowflake Branding. This is so much easier and flexible now we can add styles to Streamlit in Snowflake.
+
+```python
+
+st.markdown(
+    """
+    <style>
+    .heading{
+        background-color: rgb(41, 181, 232);  /* light blue background */
+        color: white;  /* white text */
+        padding: 60px;  /* add padding around the content */
+    }
+    .tabheading{
+        background-color: rgb(41, 181, 232);  /* light blue background */
+        color: white;  /* white text */
+        padding: 10px;  /* add padding around the content */
+    }
+    .veh1 {
+        color: rgb(125, 68, 207);  /* purple */
+    }
+    .veh2 {
+        color: rgb(212, 91, 144);  /* pink */
+    }
+    .veh3 {
+        color: rgb(255, 159, 54);  /* orange */
+    }
+    .veh4 {
+        padding: 10px;  /* add padding around the content */
+        color: rgb(0,53,69);  /* midnight */
+    }
+    
+    body {
+        color: rgb(0,53,69);
+    }
+    
+    div[role="tablist"] > div[aria-selected="true"] {
+        background-color: rgb(41, 181, 232);
+        color: rgb(0,53,69);  /* Change the text color if needed */
+    }
+    
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+```
+
+**Industry Lookup**
+
+I have created an industry lookup snowpark dataframe. I then created a second dataframe which only selects the industry name. This will be used for the first sidebar filter
+
+**Create Industry Variables**
+
+Based on the selected industry, key variables are generated for added context to the standing data and filtering the points of interest dataset. The user selects the chosen industry from the sidebar, which then assign the variables
+
+**Vehicle type Dropdown**
+
+These vehicle types will be assigned to each of the 3 vehicles. This is configured by the user
+
+```python
+
+method =['driving-car',
+             'driving-hgv',
+             'cycling-regular',
+             'cycling-road',
+             'cycling-mountain',
+            'cycling-electric']
+
+```
+
+**Locations Dataset**
+
+Here, a Snowpark Dataframe is created from the previously configured places dataset.
+
+```python
+places_f = session.table('places')
+
+```
+
+Standard snowpark dataframe constructs are used to extract the lat and lon from the geometry field as well as extracting key features
+
+```python
+places_f = places_f.select('GEOMETRY',call_function('ST_X',
+        col('GEOMETRY')).alias('LON'),
+         call_function('ST_Y',
+               col('GEOMETRY')).alias('LAT'),
+               col('ADDRESS'),
+               col('CATEGORY'),
+               col('ALTERNATE'),
+               col('PHONES'),col('NAME'),
+               col('GEOMETRY').alias('POINT')
+```
+
+**Text based search function - SEARCH()**
+
+Searching the data for the right type of place (The What).
+We will search the 'what' by using the SEARCH option. This will search multiple columns within the same row to see if it matches the keywords stated in the industry lookup table. The industry must match the one which the user selected earlier. You will note that this search is being repeated twice - this is to search for two different concepts.
+
+```python
+
+places_1 = places_w.filter(expr(f'''search((CATEGORY,
+      ALTERNATE,
+      NAME),'{ind}',
+      analyzer=>'DEFAULT_ANALYZER')''')).cache_result()
+places_1 = places_1.filter(expr(f'''search((CATEGORY,
+      ALTERNATE,
+      NAME),
+      '{ind2}',
+      analyzer=>'DEFAULT_ANALYZER')''')).cache_result()
+
+```
+
+There are many more examples of the code which I have explained in the medium post, so please read for more details.
 
 #### Considerations
 The Job details may plot routes outside the agreed time.  The Demo has only vehicles where each vehicle has a unique skill.  We will need more vehicles / less skills to prevent these violations.
@@ -337,8 +450,7 @@ You will have learned the following:
 - [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
 
 
-- [Using Cortex and Streamlit With Geospatial DATA](https://quickstarts.snowflake.com/guide/using_snowflake_cortex_and_streamlit_with_geospatial_data/index.html#1)
+- [Using Cortex and Streamlit With Geospatial Data](https://quickstarts.snowflake.com/guide/using_snowflake_cortex_and_streamlit_with_geospatial_data/index.html#1)
 
 - [Getting started with Geospatial AI and ML using Snowflake Cortex](https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0)
 
-- [Build a Retrieval Augmented Generation (RAG) based LLM assistant using Streamlit and Snowflake Cortex](https://quickstarts.snowflake.com/guide/asking_questions_to_your_own_documents_with_snowflake_cortex/index.html#0)
