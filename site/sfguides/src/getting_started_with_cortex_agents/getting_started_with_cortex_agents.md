@@ -56,21 +56,17 @@ These capabilities work together to:
 4. Provide natural language interactions with your data
 
 ### What You'll Learn
-- How to set up and configure Snowflake Cortex Agents for integrating advanced data analysis and search capabilities
-- How to build a Streamlit-based interactive application to interact with sales data and conversations
-- How to use Cortex Analyst to automatically convert natural language queries into SQL for high-accuracy data analysis
-- How to leverage Cortex Search for semantic and keyword search to find relevant information within unstructured sales conversations
-- How to integrate real-time streaming responses and multi-step orchestration with Cortex Agents for a dynamic, conversational interface
-- How to manage semantic models in Snowflake and use them for improving the accuracy of AI-driven analytics
+- Setting up a sales intelligence database in Snowflake
+- Creating and configuring Cortex Search services
+- Building a Streamlit interface for sales analytics
+- Implementing semantic search for sales conversations
+- Creating a question-answering system using LLMs
 
 ### What You'll Build
-A Intelligent Sales Assistant that enables users to:
-- Analyze sales conversations and metrics using natural language queries
-- Query sales data without manually writing SQL, using Cortex Analyst's SQL generation
-- Search through large amounts of unstructured sales data with Cortex Search's hybrid search capabilities
-- View real-time streaming responses and SQL results directly within the app
-- Interact with a streaming interface for fast, conversational interactions with data
-- Build an integrated application combining structured and unstructured data analysis through Snowflake's Cortex Agents capabilities
+A full-stack application that enables users to:
+- Search through sales conversations using semantic similarity
+- Analyze sales metrics and patterns
+- Ask questions about sales data and get AI-powered responses
 
 ### What You'll Need
 Before you begin, make sure you have the following:
