@@ -138,7 +138,7 @@ Duration: 2
 
 In the ***Data Products/ Apps*** section, you will see the recently created Marketing Data Foundation native application:
 
-[//]: # (![]&#40;assets/nativeAppList.png&#41;)
+![app_list](assets/app_list.png)
 
 
 ## Use the Native App
@@ -146,6 +146,59 @@ After you deploy this native app in your account, navigate to
 the Data Products / Apps section in Snowsight and open the  
 **Marketing Data Foundation** application.
 
-[//]: # (![NativeApp]&#40;assets/NativeAppListing.png&#41;)
 
 
+## Restart the Solution
+If you connect both Data providers and want to start the solution again, you can execute this clean-up script in an SQL Worksheet to delete the Unified Data Model tables and clean up the connected sources.
+
+Replace ***<USERNAME>*** with the actual value of your application.
+
+```SQL
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.AGGREGATED_REPORTS.ACCOUNT_REPORT_MODEL;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.AGGREGATED_REPORTS.AD_GROUP_REPORT_MODEL;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.AGGREGATED_REPORTS.CAMPAIGN_PERFORMANCE;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.AGGREGATED_REPORTS.CAMPAIGN_REPORT_MODEL;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.AGGREGATED_REPORTS.PLATFORM_REPORT_MODEL;
+
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.STANDARDIZE_MODEL.FACEBOOK_DIM_ACCOUNT;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.STANDARDIZE_MODEL.FACEBOOK_DIM_AD_GROUP;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.STANDARDIZE_MODEL.FACEBOOK_DIM_CAMPAIGN;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.STANDARDIZE_MODEL.FACEBOOK_METRICS;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.STANDARDIZE_MODEL.LINKEDIN_DIM_ACCOUNT;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.STANDARDIZE_MODEL.LINKEDIN_DIM_AD_GROUP;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.STANDARDIZE_MODEL.LINKEDIN_DIM_CAMPAIGN;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.STANDARDIZE_MODEL.LINKEDIN_METRICS;
+
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.CAMPAIGN_INTELLIGENCE_COMBINED.DIM_ACCOUNT;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.CAMPAIGN_INTELLIGENCE_COMBINED.DIM_AD_GROUP;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.CAMPAIGN_INTELLIGENCE_COMBINED.DIM_CAMPAIGN;
+DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_<USERNAME>.CAMPAIGN_INTELLIGENCE_COMBINED.METRICS;
+TRUNCATE TABLE MARKETING_DATA_FOUNDATION_<USERNAME>.USER_SETTINGS.EXISTING_SOURCES;
+```
+
+## Conclusion & Resources
+### Conclusion
+Duration: 1
+
+Congratulations! You have successfully learned how to easily build an end-to-end Native Application and load sample data.
+ 
+You will see your application listed in your account:
+
+
+
+
+### What You Learned
+
+* How to host and build a basic native app for Marketing Campaign Intelligence data.
+* Generate a set of views that aggregate data from Marketing providers like LinkedIn and Facebook.
+* Generate quick summaries and Charts using that data to create an integrated dashboard using Streamlit.
+
+
+
+### Resources
+
+Want to learn more about the tools and technologies used by your app? Check out the following resources:
+
+* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-solution)
+* [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+* [Snowpark Guide for Data Engineers](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
