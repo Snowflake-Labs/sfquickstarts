@@ -9,7 +9,7 @@ tags: Data Engineering, Data Collaboration, Geospatial Data
 
 # Visual Analytics powered by Snowflake and Tableau
 
-Duration: 40
+Duration: 60
 
 <!-- ------------------------ -->
 
@@ -21,20 +21,22 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 
 ### What You’ll Build
 
-* Snowflake objects in Raw,Harmonized, and Analytics layer
+* Snowflake objects , integrate external dataLakes in Raw,Harmonized, and Analytics layer
 * A simple Tableau dashboard to present data from Snowflake
 
 ### What You’ll Learn
 
-* Load semi-structured data from external stage 
-* Incorporate Weather and Geospatial data from Snowflake Marketplace
+* Loading structured and semi-structured data to Snowflake tables
+* Incorporate Weather from Snowflake Marketplace
+* Use Iceberg tables to access externally stored datalakes
 * Build visual, intuitive, and interactive data visualizations powered by live data in Snowflake.
 
 ### Prerequisites
 
-* Familiarity with Snowflake and Tableau
+* Familiarity with Snowflake, AWS and Tableau
 * Familarity with using an IDE
 * A [Snowflake](https://trial.snowflake.com/) account or free trial
+* A [AWS](https://aws.amazon.com) account or free trial
 * A [Tabelau Online](https://www.tableau.com/products/online/request-trial) account or free trial
 * [Visual Studio Code](https://code.visualstudio.com/download) editor
 <!--- ------------------------- -->
@@ -45,7 +47,7 @@ Duration: 2
 
 1. Create a Snowflake enterprise trial account
 2. Login to your Snowflake account
-3. We will be using the new UI to get started but you can also switch over to the Classic Console if you would like.
+3. We will be using the new UI. 
 
 ### New Login UI
 
@@ -71,6 +73,9 @@ Duration: 5
 -- Create Database, Schema, Warehouse and Roles
 
 USE ROLE sysadmin;
+
+-- Keep a note of this as we need this for DataLake Integration 
+SELECT current_region(); 
 
 -- create frostbyte_tasty_bytes database
 CREATE OR REPLACE DATABASE frostbyte_tasty_bytes;
@@ -702,239 +707,38 @@ ORDER BY date ASC;
 ```
 <!-- ------------------------ -->
 
-### Let's Bring Geospatial Data - 
-### Optional, You can skip to Tableau portion if short on time
-[[To skip individual command download tb_geospatial_vhol.sql & create Worksheet to run SQL file]](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/tb_geospatial_vhol.sql) 
+## DataLake Integration 
 
-```sql
-
+### Create the necessary AWS Configuration 
+Duration: 15 
 /*----------------------------------------------------------------------------------
- - Acquiring Safegraph POI Data from the Snowflake Marketplace
-
- Tasty Bytes operates Food Trucks in numerous cities and countries across the
- globe with each truck having the ability to choose two different selling locations
- per day.  One important item that our Executives are interested in is to learn
- more about how these locations relate to each other as well as if there are any
- locations we currently serve that are potentially too far away from top selling
- city centers.
-
- Unfortunately what we have seen so far is our first party data does not give us
- the building blocks required to complete this sort of Geospatial analysis.
- 
- Thankfully, the Snowflake Marketplace has great listings from Safegraph that 
- can assist us here.
+ Quickstart  - Download the Customer Reviews from Github and load into your AWS S3 bucket
+ & Run the cloudFormation script to create the necessary persmissions to let Snowflake 
+ access your S3. 
 ----------------------------------------------------------------------------------*/
+Download the customer reviews from https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/2022 
 
---  Step 1 - Using First Party Data to Find Top Selling Locations
-USE ROLE tasty_data_engineer;
-USE WAREHOUSE tasty_de_wh;
+ Login to AWS Account, and create a bucket in the same region as your Snowflake account.  
+ ![A](create_bucket.png)
 
-SELECT TOP 10
-    o.location_id,
-    SUM(o.price) AS total_sales_usd
-FROM frostbyte_tasty_bytes.analytics.orders_v o
-WHERE 1=1
-    AND o.primary_city = 'Paris'
-    AND YEAR(o.date) = 2022
-GROUP BY o.location_id
-ORDER BY total_sales_usd DESC;
-```
+Upload the folder from your laptop to the S3 bucket.
+ ![A] (Upload_Folder.png)
 
-```
---  Step 2 - Acquiring Safegraph POI Data from the Snowflake Marketplace 
-/*--
-    - Click -> Home Icon
-    - Click -> Marketplace
-    - Search -> frostbyte
-    - Click -> SafeGraph: frostbyte
-    - Click -> Get
-    - Rename Database -> FROSTBYTE_SAFEGRAPH (all capital letters)
-    - Grant to Additional Roles -> PUBLIC
-
---- */
-```
-<br>
-
-![Search Dataset](assets/Frostbyte_Spatial.png) 
-
-<br>
-
+Take a note of your AWS Account ID. 
+![A] (account_id)
 ```sql
+CREATE or REPLACE STORAGE INTEGRATION <name of the integration>
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = 'S3'
+  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<your AWS account ID>:role/<name of the IAM role>'
+  ENABLED = TRUE
+  STORAGE_ALLOWED_LOCATIONS = ('s3://<name of your S3 bucket>/');
 
---  Step 3 - Evaluating Safegraph POI Data
-SELECT 
-    cpg.placekey,
-    cpg.location_name,
-    cpg.longitude,
-    cpg.latitude,
-    cpg.street_address,
-    cpg.city,
-    cpg.country,
-    cpg.polygon_wkt
-FROM frostbyte_safegraph.public.frostbyte_tb_safegraph_s cpg
-WHERE 1=1
-    AND cpg.top_category = 'Museums, Historical Sites, and Similar Institutions'
-    AND cpg.sub_category = 'Museums'
-    AND cpg.city = 'Paris'
-    AND cpg.country = 'France';
-
-
-/*----------------------------------------------------------------------------------
- Harmonizing and Promoting First and Third Party Data
-
- To make our Geospatial analysis seamless, let's make sure to get Safegraph POI
- data included in the analytics.orders_v so all of our downstream users can
- also access it.
-----------------------------------------------------------------------------------*/
-
---  Step 1 - Enriching our Analytics View
-USE ROLE sysadmin;
-
-CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.orders_v_spatial
-COMMENT = 'Tasty Bytes Order Detail View'
-    AS
-SELECT 
-    DATE(o.order_ts) AS date,
-    o.* ,
-    cpg.* EXCLUDE (location_id, region, phone_number, country)
-FROM frostbyte_tasty_bytes.harmonized.orders_v o
-JOIN frostbyte_safegraph.public.frostbyte_tb_safegraph_s cpg
-    ON o.location_id = cpg.location_id;
-
-
-/*----------------------------------------------------------------------------------
- Conducting Geospatial Analysis - Part 1
-
- With Point of Interest metrics now readily available from the Snowflake Marketplace
- without any ETL required, our Tasty Bytes Data Engineer can now begin on our
- Geospatial analysis journey.
-----------------------------------------------------------------------------------*/    
-
---  Step 1 - Creating a Geography Point
-USE ROLE tasty_data_engineer;
-
-SELECT TOP 10 
-    o.location_id,
-    ST_MAKEPOINT(o.longitude, o.latitude) AS geo_point,
-    SUM(o.price) AS total_sales_usd
-FROM frostbyte_tasty_bytes.analytics.orders_v_spatial o
-WHERE 1=1
-    AND o.primary_city = 'Paris'
-    AND YEAR(o.date) = 2022
-GROUP BY o.location_id, o.latitude, o.longitude
-ORDER BY total_sales_usd DESC;
-
-
---  Step 2 - Calculating Distance Between Locations
-WITH _top_10_locations AS 
-(
-    SELECT TOP 10
-        o.location_id,
-        ST_MAKEPOINT(o.longitude, o.latitude) AS geo_point,
-        SUM(o.price) AS total_sales_usd
-    FROM frostbyte_tasty_bytes.analytics.orders_v_spatial o
-    WHERE 1=1
-        AND o.primary_city = 'Paris'
-        AND YEAR(o.date) = 2022
-    GROUP BY o.location_id, o.latitude, o.longitude
-    ORDER BY total_sales_usd DESC
-)
-SELECT
-    a.location_id,
-    b.location_id,
-    ROUND(ST_DISTANCE(a.geo_point, b.geo_point)/1609,2) AS geography_distance_miles,
-    ROUND(ST_DISTANCE(a.geo_point, b.geo_point)/1000,2) AS geography_distance_kilometers
-FROM _top_10_locations a  
-JOIN _top_10_locations b
-    ON a.location_id <> b.location_id -- avoid calculating the distance between the point itself
-QUALIFY a.location_id <> LAG(b.location_id) OVER (ORDER BY geography_distance_miles) -- avoid duplicate: a to b, b to a distances
-ORDER BY geography_distance_miles;
-
-
-/*----------------------------------------------------------------------------------
- Conducting Geospatial Analysis - Part 1
-
- Now that we understand how to create points, and calculate distance, we will now
- pile on a large set additional Snowflake Geospatial functionality to further our
- analysis.
-----------------------------------------------------------------------------------*/   
-
---  Step 1 - Collecting Points, Drawing a Minimum Bounding Polygon and Calculating Area
-WITH _top_10_locations AS 
-(
-    SELECT TOP 10
-        o.location_id,
-        ST_MAKEPOINT(o.longitude, o.latitude) AS geo_point,
-        SUM(o.price) AS total_sales_usd
-    FROM frostbyte_tasty_bytes.analytics.orders_v_spatial o
-    WHERE 1=1
-        AND o.primary_city = 'Paris'
-        AND YEAR(o.date) = 2022
-    GROUP BY o.location_id, o.latitude, o.longitude
-    ORDER BY total_sales_usd DESC
-)
-SELECT
-    ST_NPOINTS(ST_COLLECT(tl.geo_point)) AS count_points_in_collection,
-    ST_COLLECT(tl.geo_point) AS collection_of_points,
-    ST_ENVELOPE(collection_of_points) AS minimum_bounding_polygon,
-    ROUND(ST_AREA(minimum_bounding_polygon)/1000000,2) AS area_in_sq_kilometers
-FROM _top_10_locations tl;
-
-
---  Step 2 - Finding our Top Selling Locations Center Point
-WITH _top_10_locations AS 
-(
-    SELECT TOP 10
-        o.location_id,
-        ST_MAKEPOINT(o.longitude, o.latitude) AS geo_point,
-        SUM(o.price) AS total_sales_usd
-    FROM frostbyte_tasty_bytes.analytics.orders_v_spatial o
-    WHERE 1=1
-        AND o.primary_city = 'Paris'
-        AND YEAR(o.date) = 2022
-    GROUP BY o.location_id, o.latitude, o.longitude
-    ORDER BY total_sales_usd DESC
-)
-SELECT  
-    ST_COLLECT(tl.geo_point) AS collect_points,
-    ST_CENTROID(collect_points) AS geometric_center_point
-FROM _top_10_locations tl;
-
-
---  Step 3 - Setting a SQL Variable as our Center Point
-SET center_point = '{
-  "coordinates": [
-    2.364853294993676e+00,
-    4.885681511418426e+01
-  ],
-  "type": "Point"
-} ';
-
-
---  Step 4 - Finding Locations Furthest Away from our Top Selling Center Point
-WITH _2022_paris_locations AS
-(
-    SELECT DISTINCT 
-        o.location_id,
-        o.location_name,
-        ST_MAKEPOINT(o.longitude, o.latitude) AS geo_point
-    FROM frostbyte_tasty_bytes.analytics.orders_v_spatial o
-    WHERE 1=1
-        AND o.primary_city = 'Paris'
-        AND YEAR(o.date) = 2022
-)
-SELECT TOP 50
-    ll.location_id,
-    ll.location_name,
-    ROUND(ST_DISTANCE(ll.geo_point, TO_GEOGRAPHY($center_point))/1000,2) AS kilometer_from_top_selling_center
-FROM _2022_paris_locations ll
-ORDER BY kilometer_from_top_selling_center DESC;
-
-
-
+DESC INTEGRATION <name of the integration>; -- you will need the output of these values in AWS CloudFormation
 ```
+Go to AWS account and open this link
+Run  
 
-### 
 
 ## Login to Tableau Online & Connect to Snowflake
 
