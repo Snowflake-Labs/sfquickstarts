@@ -21,7 +21,7 @@ In this guide, we will see how to integrate the Cortex Agents (*in Public Previe
 
 Business users have typically relied on BI dashboards and reports for data
 insights, but these tools often lack flexibility, requiring users to wait on
-busy data analysts for updates. Cortex Agenrts addresses this with a natural
+busy data analysts for updates. Cortex Agents addresses this with a natural
 language interface allowing organizations to develop conversational applications. This enables business
 users to query data in natural language and get accurate answers in near real
 time. 
