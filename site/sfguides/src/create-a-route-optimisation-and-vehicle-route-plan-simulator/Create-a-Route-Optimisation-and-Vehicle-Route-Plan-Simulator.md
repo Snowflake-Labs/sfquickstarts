@@ -1082,7 +1082,7 @@ You will have learned the following:
 #### Source code
 
 - [Source Code on Github](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator)
-- [Publication](https://medium.com/@becky.oconnor/create-a-route-optimisation-and-vehicle-route-plan-simulator-f8cdd2df28e6)
+
 
 #### Further Related Material
 
