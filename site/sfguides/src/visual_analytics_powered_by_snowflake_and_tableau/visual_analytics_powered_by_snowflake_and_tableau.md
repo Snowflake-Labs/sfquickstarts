@@ -61,7 +61,7 @@ Duration: 5
 
 ### Download Demo SQL Script
 
-[To skip individual commands download tb_introduction_vhol.sql & create Worksheet to run SQL file](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/tb_introduction_vhol.sql).
+[To skip individual commands download tb_introduction_vhol.sql & create Worksheet to run SQL file](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/grant_perms.sql).
 
 ![Download Button](assets/Git_Download.png)
  
@@ -72,7 +72,7 @@ Duration: 5
 ```sql
 -- Create Database, Schema, Warehouse and Roles
 
-USE ROLE sysadmin;
+USE ROLE ACCOUNTADMIN;
 
 -- Keep a note of this as we need this for DataLake Integration 
 SELECT current_region(); 
@@ -117,7 +117,7 @@ CREATE OR REPLACE WAREHOUSE tasty_bi_wh
     INITIALLY_SUSPENDED = TRUE
 COMMENT = 'business intelligence warehouse for tasty bytes';
 -- create roles
-USE ROLE securityadmin;
+USE ROLE ACCOUNTADMIN;
 
 -- functional roles
 CREATE ROLE IF NOT EXISTS tasty_admin
@@ -130,9 +130,10 @@ CREATE ROLE IF NOT EXISTS tasty_bi
     COMMENT = 'business intelligence for tasty bytes';
 
 -- role hierarchy
-GRANT ROLE tasty_admin TO ROLE sysadmin;
+GRANT ROLE tasty_admin TO ROLE ACCOUNTADMIN;
 GRANT ROLE tasty_data_engineer TO ROLE tasty_admin;
 GRANT ROLE tasty_bi TO ROLE tasty_admin;
+
 
 ```
 
@@ -144,7 +145,7 @@ USE ROLE accountadmin;
 GRANT IMPORTED PRIVILEGES ON DATABASE snowflake TO ROLE tasty_data_engineer;
 GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE tasty_admin;
 
-USE ROLE securityadmin;
+USE ROLE ACCOUNTADMIN;
 GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_admin;
 GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_data_engineer;
 GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_bi;
@@ -166,7 +167,7 @@ GRANT ALL ON SCHEMA frostbyte_tasty_bytes.analytics TO ROLE tasty_data_engineer;
 GRANT ALL ON SCHEMA frostbyte_tasty_bytes.analytics TO ROLE tasty_bi;
 
 -- warehouse grants
-GRANT ALL ON WAREHOUSE demo_build_wh TO ROLE sysadmin;
+GRANT ALL ON WAREHOUSE demo_build_wh TO ROLE ACCOUNTADMIN;
 GRANT OWNERSHIP ON WAREHOUSE tasty_de_wh TO ROLE tasty_admin REVOKE CURRENT GRANTS;
 GRANT ALL ON WAREHOUSE tasty_de_wh TO ROLE tasty_admin;
 GRANT ALL ON WAREHOUSE tasty_bi_wh TO ROLE tasty_admin;
@@ -203,7 +204,7 @@ GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA frostbyte_tasty_bytes.analytics TO RO
 ### Load CSV data to Tables
 
 ```sql
-USE ROLE sysadmin;
+USE ROLE ACCOUNTADMIN;
 USE WAREHOUSE demo_build_wh; 
 
 --External Stage on S3
@@ -680,7 +681,7 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 ```sql 
 
 /*----------------------------------------------------------------------------------
- Quickstart  - Deriving Insights from Sales and Marketplace Weather Data
+ Quickstart  - Driving Insights from Sales and Marketplace Weather Data
  
  With Sales and Weather Data available for all Cities our Food Trucks operate in,
  let's now take a look at the value we have now provided to our Financial Analysts.
@@ -724,21 +725,74 @@ Download the customer reviews from https://github.com/mcnayak/sfquickstarts/blob
 Upload the folder from your laptop to the S3 bucket.
  ![A] (Upload_Folder.png)
 
-Take a note of your AWS Account ID. 
-![A] (account_id)
+Take a note of your AWS Account ID and . 
+![A] (account_id.png)
 ```sql
-CREATE or REPLACE STORAGE INTEGRATION <name of the integration>
+
+USE DATABASE TASTY_BYTES_DB;
+USE SCHEMA RAW;
+CREATE or REPLACE STORAGE INTEGRATION <name the storage integration>
   TYPE = EXTERNAL_STAGE
   STORAGE_PROVIDER = 'S3'
-  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<your AWS account ID>:role/<name of the IAM role>'
+  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<your AWS account ID>:role/<give a name for IAM role>' -- ex: snow_s3_access_role
   ENABLED = TRUE
   STORAGE_ALLOWED_LOCATIONS = ('s3://<name of your S3 bucket>/');
 
 DESC INTEGRATION <name of the integration>; -- you will need the output of these values in AWS CloudFormation
+
+CREATE OR REPLACE FILE FORMAT tasty_bytes_db.raw.ff_csv
+    TYPE = 'csv'
+    SKIP_HEADER = 1   
+    FIELD_DELIMITER = '|';
+
+CREATE OR REPLACE STAGE tasty_bytes_db.raw.stg_truck_reviews
+    STORAGE_INTEGRATION = s3_int
+    URL = 's3://<your_bucket>'
+    FILE_FORMAT = raw.ff_csv;
+
+
+list @tasty_bytes_db.raw.stg_truck_reviews;
+
+
 ```
 Go to AWS account and open this link
-Run  
+Launch the AWS CloudFormation and enter the inputs as shown and submit
+![A] (CloudFormation.png)
 
+``` sql
+
+
+
+USE ROLE ACCOUNTADMIN;
+CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
+    STORAGE_LOCATIONS =
+        (
+            (
+                NAME = 'reviews-s3-volume'
+                STORAGE_PROVIDER = 'S3'
+                STORAGE_BASE_URL = 's3://<your_bucketname>'
+                STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::xxxxxxxxx:role/jnan_snow_role'  -- name from desc storage integration
+                STORAGE_AWS_EXTERNAL_ID = 'RJB12004_SFCRole=4_BmI6aNlBuICkpquNOOqQTiOei+Q='  -- external_id from storage integration
+            )
+            
+        )ALLOW_WRITES=true
+        ;
+
+CREATE OR REPLACE ICEBERG TABLE tasty_bytes_db.raw.icberg_truck_reviews
+        (
+        source_name VARCHAR,
+        quarter VARCHAR,
+        order_id BIGINT,
+        truck_id INT,
+        review VARCHAR,
+        language VARCHAR, 
+        truck_brand VARCHAR
+        )
+        CATALOG = 'SNOWFLAKE'
+        EXTERNAL_VOLUME = 'vol_tastybytes_truckreviews'
+        BASE_LOCATION = 'reviews-s3-volume'; 
+
+-- Now lets load metadata into iceberg tables so we can read
 
 ## Login to Tableau Online & Connect to Snowflake
 
