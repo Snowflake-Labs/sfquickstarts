@@ -98,26 +98,25 @@ This script will:
 ## Streamlit Application
 Duration: 15
 
-**Step 1.** Click on [Intelligent Sales Assistant Streamlit App](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/streamlit.py) to download the Streamlit app from GitHub. (NOTE: Do NOT right-click to download.)
+**Step 1.** Click on [Intelligent Sales Assistant Streamlit App](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/streamlit.py). (NOTE: Do NOT right-click to download.)
 
 **Step 2.** In your Snowflake account:
 * On the left hand navigation menu, click on Streamlit
-* Click the "Create" button
-* Select "Import from File"
-* Upload the file you downloaded in Step 1
-
-**Step 3.** In the Create Streamlit App dialog:
-* For App location, select **sales_intelligence** for your database and **data** as your schema
+* On the top left click the **Streamlit App** 
+* In the Create Streamlit App dialog, select **sales_intelligence** for your database and **data** as your schema
 * Select your **Warehouse**
 * Click on Create button
 
 > aside positive
 > Make sure your database and schema match the ones created in the setup step.
 
+**Step 3.**
+* Copy and Paste contents from the [streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/streamlit.py) into your new Streamlit App 
+
 **Step 4.** Great questions to ask
-- Show me sales data  
+* Show me sales data  
 ![Sales Data](assets/sales_data.png)
-- Show me sales conversations  
+* Show me sales conversations  
 ![Sales Conversation](assets/sales_conversation.png)
 
 ## Conclusion and Resources
