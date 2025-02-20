@@ -116,7 +116,7 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 Now we have created our database structure, we need to add the code in order to run a notebook and a streamlit app.  The code is stored in the github resource guide.
 
-- Click [here](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Notebook) to download the Source Code
+- Click [here](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Notebook) to download the Source Code
 
 - Go to the home page in Snowsight
 
@@ -1081,7 +1081,7 @@ You will have learned the following:
 
 #### Source code
 
-- [Source Code on Github](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator)
+- [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator)
 
 
 #### Further Related Material
