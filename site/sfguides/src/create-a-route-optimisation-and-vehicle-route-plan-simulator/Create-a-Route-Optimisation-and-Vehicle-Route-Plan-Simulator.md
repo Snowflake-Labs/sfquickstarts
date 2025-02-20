@@ -114,13 +114,40 @@ Click on the following dataset then press **Get** Do not change the database nam
 <!-- ------------------------ -->
 ## Add files to stages
 
-Click [here] do download the Source Code(https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Notebook)
+Now we have created our database structure, we need to add the code in order to run a notebook and a streamlit app.  The code is stored in the github resource guide.
 
-- Within the Downloaded Repository, open the **Notebook** folder and  upload all the contents into the notebook stage
-- Within the Downloaded Repository, open the **Streamlit** folder and  upload all the contents into the streamlit stage
-- Please ensure that the config.toml file which is currently residing in the streamlit folder is loaded into a new folder called **.streamlit**  You can do this by typing in **.streamlit**  "create new folder" option
+- Click [here](https://github.com/Snowflake-Labs/Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Notebook) to download the Source Code
+
+- Go to the home page in Snowsight
+
+- Click on the 'Data' icon and then navigate to Databases 
+
+- Navigate to the VEHICLE_ROUTING_SIMULATOR.ROUTING schema
+
+You should see two stages - **NOTEBOOK** and **STREAMLIT**.  The notebook code will need to be uploaded into the Notebook stage and the streamlit code will need to be uploaded to the streamlit stage.
+
+![nav](assets/CO01.png)
+
+Navigate to the Notebook stage and choose an available warehouse to view the contents.  This will view all contents inside the directory.
+
+Press **upload** to add the notebook files to the notebook stage.
+
+It should look like this:
+
+![upload](assets/CO02.png)
+
+
+- Navigate to the Streamlit Stage
+
+- Upload the **routing.py** and the **environment.yml** to the stage.
+
+- Upload the config.toml in a new directory within the streamlit stage.  the directory needs to be called .streamlit
 
 ![image](assets/upload.jpg)
+
+The final Directory Structure should look like this:
+
+![Streamlit directory](assets/C003.png)
 
 
 
@@ -128,9 +155,11 @@ Click [here] do download the Source Code(https://github.com/Snowflake-Labs/Creat
 ## Create Notebook and Streamlit from Stages
 Duration: 15
 
-You will now create a Notebook and a Streamlit.  For this exercise, you will use SQL to create the notebook and streamlit.
+You will now leverage the code inside the stages to generate a Notebook and a Streamlit app.
 
-- Use the existing Snowflake Worksheet to create them using the following SQL commands.
+
+
+- Use the existing Snowflake Worksheet in Snowsight to create them using the following SQL commands.
 
 ```sql
 
