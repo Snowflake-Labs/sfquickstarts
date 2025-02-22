@@ -35,8 +35,8 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 
 * Familiarity with Snowflake, AWS and Tableau
 * Familarity with using an IDE
-* A [Snowflake](https://trial.snowflake.com/) account or free trial
-* A [AWS](https://aws.amazon.com) account or free trial
+* A [Snowflake](https://trial.snowflake.com/) account or free trial *** choose AWS ***
+* A [AWS](https://aws.amazon.com) account or free trial *** choose same region as Snowflake Account ***
 * A [Tabelau Online](https://www.tableau.com/products/online/request-trial) account or free trial
 * [Visual Studio Code](https://code.visualstudio.com/download) editor
 <!--- ------------------------- -->
@@ -61,7 +61,7 @@ Duration: 5
 
 ### Download Demo SQL Script
 
-[To skip individual commands download tb_introduction_vhol.sql & create Worksheet to run SQL file](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/grant_perms.sql).
+[To skip individual commands download  & create Worksheet to run SQL file](assets/grant_perms.sql).
 
 ![Download Button](assets/Git_Download.png)
  
@@ -201,7 +201,8 @@ GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA frostbyte_tasty_bytes.analytics TO RO
 
 ```
 
-### Load CSV data to Tables
+### Create Snowflake Native Tables
+[To skip individual commands download  & create Worksheet to run SQL file](assets/create_objects.sql & assets/create_objects.sql).
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -421,7 +422,7 @@ GROUP BY cl.customer_id, cl.city, cl.country, cl.first_name,
 cl.last_name, cl.phone_number, cl.e_mail;
 
 /*--
- • analytics view creation
+  analytics view creation
 --*/
 
 -- orders_v view
@@ -438,8 +439,8 @@ SELECT * FROM frostbyte_tasty_bytes.harmonized.customer_loyalty_metrics_v;
 
 /*--
  raw zone table load 
---*/
-
+--*/ 
+ 
 -- country table load
 COPY INTO frostbyte_tasty_bytes.raw_pos.country
 FROM @frostbyte_tasty_bytes.public.s3load/raw_pos/country/;
@@ -484,7 +485,7 @@ SELECT 'frostbyte_tasty_bytes setup is now complete' AS note;
 ## Data Collaboration 
 
 ### Let's Bring Weather Data
-[[To skip individual command download tb_collaboration_vhol.sql & create Worksheet to run SQL file]](https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/tb_collaboration_vhol.sql)
+[[To skip individual command download tb_collaboration_vhol.sql & create Worksheet to run SQL file]](assets/tb_collaboration_vhol.sql)
 
 ```sql
 /*----------------------------------------------------------------------------------
@@ -544,10 +545,10 @@ Duration: 5
 
 ### Click on data marketplace and type **Frostbyte** in search toolbar
 
-![Search Dataset](assets/Frostbyte_Weather_Data.png)
+![Search Dataset][Weather Data] 
 
 ### Set database name to FROSTBYTE_WEATHERSOURCE, grant access to PUBLIC role
-![Add Database](assets/Frostbyte_DB.png)
+![Add Database][assets/Frostbyte_DB.png] 
 
 ```sql 
 --  Step 2 - Harmonizing First and Third Party Data
@@ -712,25 +713,27 @@ ORDER BY date ASC;
 
 ### Create the necessary AWS Configuration 
 Duration: 15 
-/*----------------------------------------------------------------------------------
+
+*----------------------------------------------------------------------------------
  Quickstart  - Download the Customer Reviews from Github and load into your AWS S3 bucket
  & Run the cloudFormation script to create the necessary persmissions to let Snowflake 
  access your S3. 
-----------------------------------------------------------------------------------*/
-Download the customer reviews from https://github.com/mcnayak/sfquickstarts/blob/master/site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/2022 
+----------------------------------------------------------------------------------*/ 
+![Download Customer Reviews on Food](site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/2022)  
 
- Login to AWS Account, and create a bucket in the same region as your Snowflake account.  
- ![A](create_bucket.png)
+![Login to AWS Account, and create a bucket in the same region as your Snowflake account]  
+![A](site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/create_bucket.png)
 
 Upload the folder from your laptop to the S3 bucket.
- ![A] (Upload_Folder.png)
+![A] (site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/Upload_Folder.png)
 
-Take a note of your AWS Account ID and . 
-![A] (account_id.png)
+Take a note of your AWS Account ID.
+![A] (site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/account_id.png)
 ```sql
 
-USE DATABASE TASTY_BYTES_DB;
-USE SCHEMA RAW;
+USE DATABASE frostbyte_tasty_bytes;
+USE SCHEMA raw_customer;
+
 CREATE or REPLACE STORAGE INTEGRATION <name the storage integration>
   TYPE = EXTERNAL_STAGE
   STORAGE_PROVIDER = 'S3'
@@ -740,59 +743,89 @@ CREATE or REPLACE STORAGE INTEGRATION <name the storage integration>
 
 DESC INTEGRATION <name of the integration>; -- you will need the output of these values in AWS CloudFormation
 
-CREATE OR REPLACE FILE FORMAT tasty_bytes_db.raw.ff_csv
+
+
+CREATE OR REPLACE FILE FORMAT ff_csv
     TYPE = 'csv'
     SKIP_HEADER = 1   
     FIELD_DELIMITER = '|';
 
-CREATE OR REPLACE STAGE tasty_bytes_db.raw.stg_truck_reviews
+CREATE OR REPLACE STAGE stg_truck_reviews
     STORAGE_INTEGRATION = s3_int
-    URL = 's3://<your_bucket>'
-    FILE_FORMAT = raw.ff_csv;
+    URL = 's3://jnanreviews'
+    FILE_FORMAT = ff_csv;
 
 
-list @tasty_bytes_db.raw.stg_truck_reviews;
 
 
 ```
 Go to AWS account and open this link
 Launch the AWS CloudFormation and enter the inputs as shown and submit
-![A] (CloudFormation.png)
+![A] (/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/CloudFormation.png)
 
 ``` sql
-
-
-
 USE ROLE ACCOUNTADMIN;
+USE DATABASE  frostbyte_tasty_bytes;
+USE SCHEMA raw_customer;
 CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
     STORAGE_LOCATIONS =
         (
             (
                 NAME = 'reviews-s3-volume'
                 STORAGE_PROVIDER = 'S3'
-                STORAGE_BASE_URL = 's3://<your_bucketname>'
-                STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::xxxxxxxxx:role/jnan_snow_role'  -- name from desc storage integration
-                STORAGE_AWS_EXTERNAL_ID = 'RJB12004_SFCRole=4_BmI6aNlBuICkpquNOOqQTiOei+Q='  -- external_id from storage integration
+                STORAGE_BASE_URL = 's3://jnanreviews'
+                STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::908027385765:role/jnan_snow_role' 
+                STORAGE_AWS_EXTERNAL_ID = 'RJB12004_SFCRole=4_zSAasUofMUwWxe/Hk98JqRTv2T4=' 
             )
             
-        )ALLOW_WRITES=true
-        ;
+        )ALLOW_WRITES=true; 
 
-CREATE OR REPLACE ICEBERG TABLE tasty_bytes_db.raw.icberg_truck_reviews
+CREATE OR REPLACE ICEBERG TABLE icberg_truck_reviews
         (
         source_name VARCHAR,
         quarter VARCHAR,
         order_id BIGINT,
         truck_id INT,
-        review VARCHAR,
         language VARCHAR, 
+        review VARCHAR,
+        primary_city VARCHAR,
         truck_brand VARCHAR
         )
         CATALOG = 'SNOWFLAKE'
         EXTERNAL_VOLUME = 'vol_tastybytes_truckreviews'
         BASE_LOCATION = 'reviews-s3-volume'; 
 
+INSERT INTO icberg_truck_reviews
+(
+source_name, quarter, order_id, truck_id, language, review, primary_city, truck_brand
+)
+SELECT 
+       SPLIT_PART(METADATA$FILENAME, '/', 4) as source_name,
+       CONCAT(SPLIT_PART(METADATA$FILENAME, '/', 2),'/' ,SPLIT_PART(METADATA$FILENAME, '/', 3)) as quarter,
+       $1 as order_id,
+       $2 as truck_id,
+       $3 as language,
+       $5 as review,
+       $6 as primary_city, 
+       $10 as truck_brand 
+FROM @stg_truck_reviews 
+(FILE_FORMAT => 'FF_CSV',
+PATTERN => '.*reviews.*[.]csv');
+
+
+USE SCHEMA analytics;
+
+CREATE OR REPLACE VIEW  product_sentiment AS 
+SELECT primary_city, truck_brand, avg(snowflake.cortex.sentiment(review)) as review_sentiment 
+FROM frostbyte_tasty_bytes.raw_customer.icberg_truck_reviews 
+group by primary_city, truck_brand ;
+
+select * from frostbyte_tasty_bytes.analytics.product_sentiment limit 10;
+
+
 -- Now lets load metadata into iceberg tables so we can read
+
+```
 
 ## Login to Tableau Online & Connect to Snowflake
 
@@ -1171,3 +1204,7 @@ DROP WAREHOUSE IF EXISTS tasty_bi_wh;
 <!-- ------------------------ -->
 
 <br>
+
+
+[Weather Data]: assets/Frostbyte_Weather_Data.png
+[def]: assets/Frostbyte_DB.png
