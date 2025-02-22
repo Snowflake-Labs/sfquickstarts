@@ -714,21 +714,18 @@ ORDER BY date ASC;
 ### Create the necessary AWS Configuration 
 Duration: 15 
 
-*----------------------------------------------------------------------------------
- Quickstart  - Download the Customer Reviews from Github and load into your AWS S3 bucket
- & Run the cloudFormation script to create the necessary persmissions to let Snowflake 
- access your S3. 
-----------------------------------------------------------------------------------*/ 
-![Download Customer Reviews on Food](site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/2022)  
+#### Download the files to your laptop
+![Download Customer Reviews on Food][def2]  
 
 ![Login to AWS Account, and create a bucket in the same region as your Snowflake account]  
-![A](site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/create_bucket.png)
+![img](assets/create_bucket.png)
 
-Upload the folder from your laptop to the S3 bucket.
-![A] (site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/Upload_Folder.png)
+#### Upload the folder from your laptop to the S3 bucket.
+![img](assets/Upload_Folder.png)
 
-Take a note of your AWS Account ID.
-![A] (site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/account_id.png)
+#### Take a note of your AWS Account ID.
+![img](assets/account_id.png)
+
 ```sql
 
 USE DATABASE frostbyte_tasty_bytes;
@@ -743,8 +740,6 @@ CREATE or REPLACE STORAGE INTEGRATION <name the storage integration>
 
 DESC INTEGRATION <name of the integration>; -- you will need the output of these values in AWS CloudFormation
 
-
-
 CREATE OR REPLACE FILE FORMAT ff_csv
     TYPE = 'csv'
     SKIP_HEADER = 1   
@@ -754,14 +749,10 @@ CREATE OR REPLACE STAGE stg_truck_reviews
     STORAGE_INTEGRATION = s3_int
     URL = 's3://jnanreviews'
     FILE_FORMAT = ff_csv;
-
-
-
-
 ```
-Go to AWS account and open this link
+Go to AWS account and open this [CloudFormationTemplate](https://github.com/Snowflake-Labs/aws-integrations-cloudops/blob/master/cft/aws-snowflakeintobj-servicecatalog.yml)
 Launch the AWS CloudFormation and enter the inputs as shown and submit
-![A] (/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/CloudFormation.png)
+![A](assets/CloudFormation.png) 
 
 ``` sql
 USE ROLE ACCOUNTADMIN;
@@ -774,7 +765,7 @@ CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
                 NAME = 'reviews-s3-volume'
                 STORAGE_PROVIDER = 'S3'
                 STORAGE_BASE_URL = 's3://jnanreviews'
-                STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::908027385765:role/jnan_snow_role' 
+                STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<aws-account-id>:role/<snow_role>' --ex:snow_s3_access_role 
                 STORAGE_AWS_EXTERNAL_ID = 'RJB12004_SFCRole=4_zSAasUofMUwWxe/Hk98JqRTv2T4=' 
             )
             
@@ -795,6 +786,7 @@ CREATE OR REPLACE ICEBERG TABLE icberg_truck_reviews
         EXTERNAL_VOLUME = 'vol_tastybytes_truckreviews'
         BASE_LOCATION = 'reviews-s3-volume'; 
 
+-- Insert Iceberg Metadata from External Files 
 INSERT INTO icberg_truck_reviews
 (
 source_name, quarter, order_id, truck_id, language, review, primary_city, truck_brand
@@ -813,6 +805,7 @@ FROM @stg_truck_reviews
 PATTERN => '.*reviews.*[.]csv');
 
 
+-- Create a view on the Iceberg Reviews, and run Cortex AI to extract Sentiment
 USE SCHEMA analytics;
 
 CREATE OR REPLACE VIEW  product_sentiment AS 
@@ -821,9 +814,6 @@ FROM frostbyte_tasty_bytes.raw_customer.icberg_truck_reviews
 group by primary_city, truck_brand ;
 
 select * from frostbyte_tasty_bytes.analytics.product_sentiment limit 10;
-
-
--- Now lets load metadata into iceberg tables so we can read
 
 ```
 
@@ -1208,3 +1198,4 @@ DROP WAREHOUSE IF EXISTS tasty_bi_wh;
 
 [Weather Data]: assets/Frostbyte_Weather_Data.png
 [def]: assets/Frostbyte_DB.png
+[def2]: assets/2022
