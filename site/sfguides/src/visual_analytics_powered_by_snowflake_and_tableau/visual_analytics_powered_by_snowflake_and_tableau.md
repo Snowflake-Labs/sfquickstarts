@@ -15,13 +15,13 @@ Duration: 60
 
 ## Overview
 
-Join Snowflake and Tableau for an instructor-led hands-on lab to build governed, visual, and interactive analytics quickly and easily.
+Join Snowflake and Tableau for an instructor-led hands-on lab to build governed, visual, and interactive analytics quickly and easily on Food Truck data.
 
-![A](assets/finished_dash.png)
+![img](assets/finished_dash.png)
 
 ### What You’ll Build
 
-* Snowflake objects , integrate external dataLakes in Raw,Harmonized, and Analytics layer
+* Snowflake objects , integrate external dataLakes, and create analytical views
 * A simple Tableau dashboard to present data from Snowflake
 
 ### What You’ll Learn
@@ -34,7 +34,6 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 ### Prerequisites
 
 * Familiarity with Snowflake, AWS and Tableau
-* Familarity with using an IDE
 * A [Snowflake](https://trial.snowflake.com/) account or free trial *** choose AWS ***
 * A [AWS](https://aws.amazon.com) account or free trial *** choose same region as Snowflake Account ***
 * A [Tabelau Online](https://www.tableau.com/products/online/request-trial) account or free trial
@@ -42,12 +41,11 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 <!--- ------------------------- -->
 
 ## Snowflake Configuration
-
 Duration: 2
 
 1. Create a Snowflake enterprise trial account
 2. Login to your Snowflake account
-3. We will be using the new UI. 
+
 
 ### New Login UI
 
@@ -60,10 +58,6 @@ Duration: 2
 Duration: 5
 
 ### Download Demo SQL Script
-
-[To skip individual commands download  & create Worksheet to run SQL file](assets/grant_perms.sql).
-
-![Download Button](assets/Git_Download.png)
  
 ![Snowflake Login](assets/Worksheet_1.png)
 
