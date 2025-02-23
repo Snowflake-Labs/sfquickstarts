@@ -153,6 +153,11 @@ Let's build a PowerAutomate Flow that calls Snowflake Stored Procedure that runs
 4. Now you can see Market Segment information updated for all rows. 
 ![](assets/new_flow.png)
 
+### Reset the Demo 
+``` sql
+DROP DATABASE hol_db;
+DROP WAREHOUSE hol_wh;
+```
 <!-- ------------------------ -->
 ## Conclusion and Next Steps
 Duration: 5
