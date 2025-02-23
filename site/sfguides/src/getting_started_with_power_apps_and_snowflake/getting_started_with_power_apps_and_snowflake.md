@@ -10,7 +10,7 @@ tags: Getting Started, Data Engineering, Microsoft, Power Apps, Power Platform, 
 # Getting Started with Power Apps and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 15
+Duration: 45
 
 ### Power Apps
 
