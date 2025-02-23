@@ -1176,7 +1176,7 @@ DROP WAREHOUSE IF EXISTS tasty_bi_wh;
 [Semi-structured Data](https://docs.snowflake.com/en/user-guide/semistructured-concepts.html)
 <br>
 </br>
-[Secure Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro.html)
+[Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg)
 <br>
 </br>
 [Snowflake Marketplace](https://other-docs.snowflake.com/en/data-marketplace.html)
