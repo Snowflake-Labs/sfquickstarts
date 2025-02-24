@@ -19,24 +19,26 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 
 ![img](assets/finished_dash.png)
 
-### What You’ll Build
-
-* Snowflake objects , integrate external dataLakes, and create analytical views
-* A simple Tableau dashboard to present data from Snowflake
-
 ### What You’ll Learn
 
 * Loading structured and semi-structured data to Snowflake tables
-* Incorporate Weather from Snowflake Marketplace
+* Incorporate Weather data from Snowflake Marketplace
 * Use Iceberg tables to access externally stored datalakes
-* Build visual, intuitive, and interactive data visualizations powered by live data in Snowflake.
+* Easily Extract Sentiment from unstructured data using Snowflake Cortex
+* Build visual, intuitive, and interactive Tableau data visualizations powered by live data in Snowflake.
+
+### What You’ll Build
+
+* Snowflake objects  
+* Integrate external dataLakes
+* A simple Tableau dashboard to present data
 
 ### Prerequisites
 
 * Familiarity with Snowflake, AWS and Tableau
-* A [Snowflake](https://trial.snowflake.com/) account or free trial *** choose AWS ***
-* A [AWS](https://aws.amazon.com) account or free trial *** choose same region as Snowflake Account ***
-* A [Tabelau Online](https://www.tableau.com/products/online/request-trial) account or free trial
+* [Snowflake](https://trial.snowflake.com/) account or free trial *** choose AWS ***
+* [AWS](https://aws.amazon.com) account or free trial *** choose same region as Snowflake Account ***
+* [Tabelau Online](https://www.tableau.com/products/online/request-trial) account or free trial
 * [Visual Studio Code](https://code.visualstudio.com/download) editor
 <!--- ------------------------- -->
 
@@ -47,7 +49,7 @@ Duration: 2
 2. Login to your Snowflake account
 
 
-### New Login UI
+### Login User Interface
 
  ![Snowflake Login](assets/new_snowflake_ui.png)
 
@@ -139,7 +141,6 @@ USE ROLE accountadmin;
 GRANT IMPORTED PRIVILEGES ON DATABASE snowflake TO ROLE tasty_data_engineer;
 GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE tasty_admin;
 
-USE ROLE ACCOUNTADMIN;
 GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_admin;
 GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_data_engineer;
 GRANT USAGE ON DATABASE frostbyte_tasty_bytes TO ROLE tasty_bi;
@@ -195,12 +196,11 @@ GRANT USAGE ON FUTURE PROCEDURES IN SCHEMA frostbyte_tasty_bytes.analytics TO RO
 
 ```
 
-### Create Snowflake Native Tables
-[To skip individual commands download  & create Worksheet to run SQL file](assets/create_objects.sql & assets/create_objects.sql).
+### Create Snowflake Stages and Native Tables
 
 ```sql
 USE ROLE ACCOUNTADMIN;
-USE WAREHOUSE demo_build_wh; 
+USE WAREHOUSE demo_build_wh;  -- using a bigger  warehouse for load purpose
 
 --External Stage on S3
 CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes.public.csv_ff 
@@ -468,7 +468,7 @@ COPY INTO frostbyte_tasty_bytes.raw_pos.order_detail
 FROM @frostbyte_tasty_bytes.public.s3load/raw_pos/order_detail/;
 
 -- drop demo_build_wh
-DROP WAREHOUSE IF EXISTS demo_build_wh;
+DROP WAREHOUSE IF EXISTS demo_build_wh; -- dropping the larger warehouse as data load is complete
 
 -- setup completion note
 SELECT 'frostbyte_tasty_bytes setup is now complete' AS note;
@@ -479,7 +479,7 @@ SELECT 'frostbyte_tasty_bytes setup is now complete' AS note;
 ## Data Collaboration 
 
 ### Let's Bring Weather Data
-[[To skip individual command download tb_collaboration_vhol.sql & create Worksheet to run SQL file]](assets/tb_collaboration_vhol.sql)
+[To skip individual command download tb_collaboration_vhol.sql & create Worksheet to run SQL file](assets/tb_collaboration_vhol.sql)
 
 ```sql
 /*----------------------------------------------------------------------------------
@@ -508,41 +508,20 @@ GROUP BY o.date
 ORDER BY o.date ASC;
 ```
 
-```
-/*----------------------------------------------------------------------------------
- Investigating Zero Sales Days in our First Party Data.
- From what we saw above, it looks like we are missing sales for February 16th 
- through February 21st for Hamburg. Within our first party data there is not 
- much else we can use to investigate this but something larger must have been 
- at play here. 
- 
- One idea we can immediately explore by leveraging the Snowflake Marketplace is
- extreme weather and a free, public listing provided by Weather Source.
-----------------------------------------------------------------------------------*/
 
-
---  Step 1 - Acquiring the Weather Source LLC: frostbyte Snowflake Marketplace Listing
-
-/*--- 
-    1. Click -> Home Icon
-    2. Click -> Marketplace
-    3. Search -> frostbyte
-    4. Click -> Weather Source LLC: frostbyte
-    5. Click -> Get
-    6. Rename Database -> FROSTBYTE_WEATHERSOURCE (all capital letters)
-    7. Grant to Additional Roles -> PUBLIC
----*/
-```
 ### Add Weather Data from Snowflake Marketplace
-
 Duration: 5
 
-### Click on data marketplace and type **Frostbyte** in search toolbar
-
+1. Click -> Home Icon
+2. Click -> Marketplace
+3. Search -> frostbyte
 ![Search Dataset][Weather Data] 
-
-### Set database name to FROSTBYTE_WEATHERSOURCE, grant access to PUBLIC role
+4. Click -> Weather Source LLC: frostbyte
+5. Click -> Get
 ![Add Database][assets/Frostbyte_DB.png] 
+6. Rename Database -> FROSTBYTE_WEATHERSOURCE (all capital letters)
+7. Grant to Additional Roles -> PUBLIC
+
 
 ```sql 
 --  Step 2 - Harmonizing First and Third Party Data
@@ -595,10 +574,9 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std ASC;
 
 ``` 
+### Democratizing Data Insights 
 ```sql
 /*----------------------------------------------------------------------------------
-  Democratizing Data Insights
- 
   We have now determined that Hurricane level winds were probably at play for the
   days with zero sales that our financial analysts brought to our attention.
 
@@ -623,7 +601,6 @@ $$
     inch * 25.4
 $$;
 
-
 --  Step 2 - Creating the SQL for our View
 SELECT 
     fd.date_valid_std AS date,
@@ -647,7 +624,6 @@ WHERE 1=1
     AND date_valid_std between '2022-02-14' and  '2022-02-25'
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
-
 
 --  Step 3 - Deploying our Analytics View
 CREATE OR REPLACE VIEW frostbyte_tasty_bytes.analytics.daily_city_metrics_v
@@ -676,7 +652,7 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 ```sql 
 
 /*----------------------------------------------------------------------------------
- Quickstart  - Driving Insights from Sales and Marketplace Weather Data
+ Driving Insights from Sales and Marketplace Weather Data
  
  With Sales and Weather Data available for all Cities our Food Trucks operate in,
  let's now take a look at the value we have now provided to our Financial Analysts.
@@ -709,7 +685,7 @@ ORDER BY date ASC;
 Duration: 15 
 
 #### Download the files to your laptop
-![Download Customer Reviews on Food][def2]  
+![Download Customer Reviews on Food](assets/2022)
 
 ![Login to AWS Account, and create a bucket in the same region as your Snowflake account]  
 ![img](assets/create_bucket.png)
