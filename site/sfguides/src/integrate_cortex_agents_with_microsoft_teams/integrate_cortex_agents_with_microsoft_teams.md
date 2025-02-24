@@ -26,7 +26,9 @@ language interface allowing organizations to develop conversational applications
 users to query data in natural language and get accurate answers in near real
 time. 
 
-Learn more about [Cortex Agents](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg).
+Under the hood it is a stateless REST API that unifies Cortex Search’s hybrid search and Cortex Analyst’s SQL generation (with 90%+ accuracy). It streamlines complex workflows by handling context retrieval, converting natural language to SQL via semantic models, and managing LLM orchestration and prompts. Enhanced with in-line citations, answer abstention for irrelevant queries, and multi-message conversation context management, it offers single API call integration, real-time streamed responses, and reduced latency. Together, these capabilities allow you to search sales conversations, translate text into SQL for analytical queries, and blend structured and unstructured data for natural language interactions.
+
+Learn more about [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents), [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst), and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview).
 
 ### Why Microsoft Teams?
 
@@ -40,20 +42,18 @@ across projects.
 ### Prerequisites
 
 * A Snowflake account in one of these [regions](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability) and also where [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability) is available. If you do not have one you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
-* Access to Microsoft Teams
 * [Node.js](https://nodejs.org/) -- Supported versions: 18, 20
 * [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [Teams Toolkit CLI](https://aka.ms/teamsfx-toolkit-cli). For local debugging using Teams Toolkit CLI, complete extra steps described in [Set up your Teams Toolkit CLI for local debugging](https://aka.ms/teamsfx-cli-debugging).
 
 ### What You Will Learn
 
-* How to setup Microsoft Teams application
 * How to setup Cortex Analyst
 * How to setup Cortext Search 
 * How to use Cortex Agents REST API and integrate it with Microsoft Teams
 
 ### What You Will Build
 
-Cortex Agents integrated with Microsoft Teams
+A conversationl interface using Cortex Agents REST API integrated with Microsoft Teams
 
 ## Setup Snowflake
 <!-- ------------------------ -->
@@ -143,6 +143,10 @@ MODEL = 'claude-3-5-sonnet'
 > aside negative
 > NOTE: For help with setting the **account name**, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
+At this point, you should have an updated folder structure similar to the one shown below.
+
+<img src="assets/updated_bot_folder_structure.png" alt="bot_folder_structure" width="400"/>
+
 ## Run Application
 <!-- ------------------------ -->
 
@@ -204,37 +208,79 @@ As you may have noticed, there are four main classes [teamsBot.js](https://githu
 
 Here are some things you should make a note of in case you’d like to extend or modify the application.
 
-**class JWTGenerator**
+**class TeamsBot extends TeamsActivityHandler**
 
-This class is responsible for generating a Java Web Token (JWT) for authentication Cortex REST API call.
-
-**class SnowflakeQueryExecutor**
-
-The response from Cortex Agents REST API can include SQL query for questions handled by Cortex Analyst. This class is responsible for executing that SQL on the client and returning the response as a dataframe.
+This is the main handler that orchestrates the interaction between the user and the application. When user enters a prompt/message/question, it first creates and instance of **CortexChat** class, then calls ***_retrieveResponse*** method. Then, if the response includes a SQl, then it creates an instance of **SnowflakeQueryExecutor** class and calls ***runQuery*** method to execute the query and convert the results in a dataframe that can be displayed to the user. In other cases, the response is displayed to the user which may also include citations.
 
 **class CortexChat**
 
 An instance of this class is constructed using parameters ***jwtGenerator, agentUrl, model, searchService, semanticModels*** and it has method ***_retrieveResponse()*** that calls the Cortex Agents REST API -- which inturn calls other class methods to parse the response.
 
-**class TeamsBot extends TeamsActivityHandler**
+> aside positive
+> NOTE: In our case, we've set up and provided two semantic models to the Cortex Agents REST API via `tool_spec > type: "cortex_analyst_text_to_sql"`; one for extract insights from **SUPPORT_TICKETS** and another one from **SUPPLY_CHAIN** structured data sources. Similarly, you may set up additional sematic models as well as search services. 
 
-This is the main handler that orchestrates the interaction between the user and the application. When user enters a prompt/message/question, it first creates and instance of **CortexChat** class, then calls ***_retrieveResponse*** method. Then, if the response includes a SQl, then it creates an instance of **SnowflakeQueryExecutor** class and calls ***runQuery*** method to execute the query and convert the results in a dataframe that can be displayed to the user. In other cases, the response is displayed to the user including any citations.
+```JavaScript
+async _retrieveResponse(query, limit = 1) {
+    const headers = {
+        'X-Snowflake-Authorization-Token-Type': 'KEYPAIR_JWT',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${this.jwt}`
+    };
+
+    const data = {
+        model: this.model,
+        messages: [{ role: "user", content: [{ type: "text", text: query }] }],
+        tools: [
+            { tool_spec: { type: "cortex_search", name: "vehicles_info_search" } },
+            { tool_spec: { type: "cortex_analyst_text_to_sql", name: "support" } },
+            { tool_spec: { type: "cortex_analyst_text_to_sql", name: "supply_chain" } }
+        ],
+        tool_resources: {
+            vehicles_info_search: {
+                name: this.searchService,
+                max_results: limit,
+                title_column: "title",
+                id_column: "relative_path"
+            },
+            support: { semantic_model_file: this.semanticModels[0] },
+            supply_chain: { semantic_model_file: this.semanticModels[1] }
+        }
+    };
+
+    try {
+        const response = await fetch(this.agentUrl, { method: "POST", headers, body: JSON.stringify(data) });
+        if (!response.ok) throw new Error(`Response status: ${response.status}`);
+        return await this._parseResponse(response); 
+    } catch (error) {
+        console.error("Error fetching response:", error);
+        return { text: "An error occurred." };
+    }
+}
+```
+
+**class JWTGenerator**
+
+This class is responsible for generating a Java Web Token (JWT) for authenticating Cortex Agents REST API calls.
+
+**class SnowflakeQueryExecutor**
+
+The response from Cortex Agents REST API can include SQL query for questions served by Cortex Analyst. This class is responsible for executing that SQL on the client and returning the response as a dataframe.
 
 ## Next Steps
 <!-- ------------------------ -->
 
 Duration: 2
 
-Following documentation will help you to extend the Bot's functionality.
+As next steps, follow these links to extend the Bot's functionality.
 
+- [Publish the app to your organization or the Microsoft Teams app store](https://learn.microsoft.com/microsoftteams/platform/toolkit/publish)
 - [Add or manage the environment](https://learn.microsoft.com/microsoftteams/platform/toolkit/teamsfx-multi-env)
 - [Create multi-capability app](https://learn.microsoft.com/microsoftteams/platform/toolkit/add-capability)
 - [Add single sign on to your app](https://learn.microsoft.com/microsoftteams/platform/toolkit/add-single-sign-on)
 - [Customize the Teams app manifest](https://learn.microsoft.com/microsoftteams/platform/toolkit/teamsfx-preview-and-customize-app-manifest)
-- Host your app in Azure by [provision cloud resources](https://learn.microsoft.com/microsoftteams/platform/toolkit/provision) and [deploy the code to cloud](https://learn.microsoft.com/microsoftteams/platform/toolkit/deploy)
-- [Collaborate on app development](https://learn.microsoft.com/microsoftteams/platform/toolkit/teamsfx-collaboration)
+- Host your app in Azure by [provisioning cloud resources](https://learn.microsoft.com/microsoftteams/platform/toolkit/provision) and [deploying the code to cloud](https://learn.microsoft.com/microsoftteams/platform/toolkit/deploy)
 - [Set up the CI/CD pipeline](https://learn.microsoft.com/microsoftteams/platform/toolkit/use-cicd-template)
-- [Publish the app to your organization or the Microsoft Teams app store](https://learn.microsoft.com/microsoftteams/platform/toolkit/publish)
 - [Develop with Teams Toolkit CLI](https://aka.ms/teams-toolkit-cli/debug)
 - [Preview the app on mobile clients](https://aka.ms/teamsfx-mobile)
 
@@ -247,7 +293,6 @@ Congratulations! You've sucessfully integrated Cortex Agents with Microsoft Team
 
 ### What You Learned
 
-* How to setup Microsoft Teams application
 * How to setup Cortex Analyst
 * How to setup Cortext Search 
 * How to use Cortex Agents REST API and integrate it with Microsoft Teams
