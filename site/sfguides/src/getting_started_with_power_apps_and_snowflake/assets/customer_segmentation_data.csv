@@ -1,5 +1,5 @@
 id,age,gender,income,spending_score,membership_years,purchase_frequency,preferred_category,last_purchase_amount
-1,38,Female,99342,90,3,24,Groceries,113.53
+1,-38,Female,99342,90,3,24,Groceries,113.53
 2,-21,Female,78852,60,2,42,Sports,41.93
 3,60,Female,126573,30,2,28,Clothing,424.36
 4,40,Other,47099,74,9,5,Home & Garden,991.93

@@ -21,17 +21,19 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 
 ### What You’ll Learn
 
-* Loading structured and semi-structured data to Snowflake tables
-* Incorporate Weather data from Snowflake Marketplace
-* Use Iceberg tables to access externally stored datalakes
-* Easily Extract Sentiment from unstructured data using Snowflake Cortex
-* Build visual, intuitive, and interactive Tableau data visualizations powered by live data in Snowflake.
+* Analyzing structured and semi-structured data
+* Levergaging Snowflake Marketplace and integrating External DataLakes 
+* Snowflake Generative AI capability
+* Building Visualization using Tableau on Snowflake tables. 
+
 
 ### What You’ll Build
 
-* Snowflake objects  
-* Integrate external dataLakes
-* A simple Tableau dashboard to present data
+* Using structured and semi-structured data to Snowflake tables 
+* Incorporate Weather data from Snowflake Marketplace
+* Use Iceberg tables to access externally stored datalakes
+* Easily Extract Sentiment from unstructured data using Snowflake Cortex
+* A simple Tableau dashboard to visualize Snowflake data. 
 
 ### Prerequisites
 
