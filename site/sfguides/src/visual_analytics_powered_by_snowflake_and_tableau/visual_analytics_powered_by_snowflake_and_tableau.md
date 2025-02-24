@@ -36,7 +36,7 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 ### Prerequisites
 
 * Familiarity with Snowflake, AWS and Tableau
-* [Snowflake](https://trial.snowflake.com/) account or free trial *** choose AWS ***
+* [Snowflake](https://trial.snowflake.com/) account or free trial *** choose AWS and Enterprise ***
 * [AWS](https://aws.amazon.com) account or free trial *** choose same region as Snowflake Account ***
 * [Tabelau Online](https://www.tableau.com/products/online/request-trial) account or free trial
 * [Visual Studio Code](https://code.visualstudio.com/download) editor
@@ -684,10 +684,12 @@ ORDER BY date ASC;
 ### Create the necessary AWS Configuration 
 Duration: 15 
 
-#### Download the files to your laptop
-![Download Customer Reviews on Food](assets/2022)
+#### Download the Customer Reviews files to your laptop
+![zipfile](assets/2022.zip)
+unzip the file before you load into AWS bucket
 
-![Login to AWS Account, and create a bucket in the same region as your Snowflake account]  
+**Login to AWS Account, and create a bucket in the same region as your Snowflake account**
+
 ![img](assets/create_bucket.png)
 
 #### Upload the folder from your laptop to the S3 bucket.
@@ -695,6 +697,8 @@ Duration: 15
 
 #### Take a note of your AWS Account ID.
 ![img](assets/account_id.png)
+
+**Now, in your Snowflake account**
 
 ```sql
 
@@ -720,10 +724,15 @@ CREATE OR REPLACE STAGE stg_truck_reviews
     URL = 's3://jnanreviews'
     FILE_FORMAT = ff_csv;
 ```
-Go to AWS account and open this [CloudFormationTemplate](https://github.com/Snowflake-Labs/aws-integrations-cloudops/blob/master/cft/aws-snowflakeintobj-servicecatalog.yml)
-Launch the AWS CloudFormation and enter the inputs as shown and submit
-![A](assets/CloudFormation.png) 
 
+
+**Go to AWS account and open this** [CloudFormationTemplate](https://github.com/Snowflake-Labs/aws-integrations-cloudops/blob/master/cft/aws-snowflakeintobj-servicecatalog.yml)
+
+### Launch the AWS CloudFormation and enter the inputs as shown and submit 
+
+![img](assets/CloudFormation.png)
+
+### Create Snowflake managed Iceberg Tables to access Datalake 
 ``` sql
 USE ROLE ACCOUNTADMIN;
 USE DATABASE  frostbyte_tasty_bytes;
