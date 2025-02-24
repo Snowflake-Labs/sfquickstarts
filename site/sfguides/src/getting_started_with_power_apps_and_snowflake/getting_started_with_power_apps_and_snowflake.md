@@ -167,7 +167,6 @@ Duration: 5
 
 This quickstart will get you started with creating a simple power apps flow that connects to Snowflake and queries a table. From here you can use the connector in many different flows with different power apps activities to read data from and write data to Snowflake see here for more details: [Power-Apps](https://learn.microsoft.com/en-us/power-automate/getting-started). 
 
-![](assets/sf_auth.png)
 
 ### Things to look out for
 - If you're getting a username and password error make sure that you use the forward slash at the end the external_oauth_issuer parameter value
