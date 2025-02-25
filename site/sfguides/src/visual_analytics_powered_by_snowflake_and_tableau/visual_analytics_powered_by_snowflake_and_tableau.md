@@ -390,11 +390,13 @@ CREATE OR REPLACE STAGE stg_truck_reviews
     FILE_FORMAT = ff_csv;
 ```
 
-**Go to AWS account and open this** [CloudFormationTemplate](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Snowflake-storage-integration&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/CFTs/storageInt.json)
+### Launch the AWS CloudFormation 
+**Click the template and login to AWS** [CloudFormationTemplate](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Snowflake-storage-integration&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/CFTs/storageInt.json)
 
-### Launch the AWS CloudFormation and enter the inputs as shown and submit 
+![cftemplate](assets/CloudFormation.png) 
+![storagedetails](assets/CFT.png)
 
-![img](assets/CloudFormation.png)
+**Select defaults for remaining screens** 
 
 ### Create Snowflake managed Iceberg Tables to access Datalake 
 ``` sql
@@ -802,7 +804,3 @@ In this lab we captured semi-structured data coming from TastyBytes food truck d
 
 <br>
 
-
-[Weather Data]: assets/Frostbyte_Weather_Data.png
-[def]: assets/Frostbyte_DB.png
-[def2]: assets/2022
