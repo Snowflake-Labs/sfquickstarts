@@ -25,7 +25,7 @@ Roe AI offers a seamless way to analyze and extract insights from unstructured d
 
 ### Prerequisites
 - [Snowflake](https://www.snowflake.com/) Account (configured in a supported region).  
-- [Roe AI on Snowflake Marketplace](https://app.snowflake.com/marketplace/) (installation access).  
+- [Roe AI on Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTYZVLLLX3/roe-ai-advanced-document-ai-agents) (installation access).  
 - Familiarity with basic Snowflake concepts (warehouses, databases, schemas). 
 - Ability to run SQL queries in Snowflake.
 - Some experience working with unstructured data is helpful but not required.
