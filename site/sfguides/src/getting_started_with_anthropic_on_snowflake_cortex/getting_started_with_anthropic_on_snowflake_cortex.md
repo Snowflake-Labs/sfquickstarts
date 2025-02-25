@@ -340,6 +340,8 @@ Here we add our packages that we will use for our project:
 * In the code editor, paste the following code:
 
 ```py
+import json
+import streamlit as st
 from snowflake.core import Root
 from snowflake.snowpark.context import get_active_session
 from snowflake.cortex import Complete
