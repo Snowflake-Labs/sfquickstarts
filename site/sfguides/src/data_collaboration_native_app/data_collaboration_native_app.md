@@ -22,7 +22,7 @@ all in an automated pipeline
 
 In this Quickstart, we will show how we can leverage the Native Apps Framework to simplify this process even further.
 
-The Native App Framework is a collaboration framework that allows providers to share data and/or related business logic to other Snowflake customers. In the previous Quickstart guide, we set up a bi-directional share between two organisations. With the Native App framework, we can simplify this relationship by allowing one party to share its logic in the form of an application to the other. Therefore, we hacve brought the app to the data, as opposed to bringing the data to the app
+The Native App Framework is a collaboration framework that allows providers to share data and/or related business logic to other Snowflake customers. In the previous Quickstart guide, we set up a bi-directional share between two organisations. With the Native App framework, we can simplify this relationship by allowing one party to share its logic in the form of an application to the other. Therefore, we have brought the app to the data, as opposed to bringing the data to the app
 
 ![Diagram](assets/native_app_overview.png)
 
@@ -50,7 +50,7 @@ Duration: 5
 
 The Business Use case follows a similar scenario as Part One.
 
-In this guide, we are playing the role of Zamboni and Snowbank. The Credit Risk team at Snowbank has noticed a rise in credit card default rates which affects the bottom line of the business. Previously, it has shard data with an external organisation (Zamoboni) who assist with analysing the data and scoring which customers are most likely to default.
+In this guide, we are playing the role of Zamboni and Snowbank. The Credit Risk team at Snowbank has noticed a rise in credit card default rates which affects the bottom line of the business. Previously, it has shared data with an external organisation (Zamoboni) who assist with analysing the data and scoring which customers are most likely to default.
 
 This time, the compliance team has said that it is too risky to share this customer data with an external party without proper procedures being followed, which could take a few months to complete. Zamboni have propsed a solution that utilises the Native Application Framework.
 
@@ -66,7 +66,7 @@ What is different in this scenario compared to Part One, is that it is no longer
 
 ### Dataset Details
 
-The dataset contains aggregated profile features for each customer at each statement date. Features are anonymized and normalized, and fall into the following general categories:
+We will use a publicly available dataset to train our ML model for the purposes of this demo. The dataset contains aggregated profile features for each customer at each statement date. Features are anonymized and normalized, and fall into the following general categories:
 
 D_* = Delinquency variables
 S_* = Spend variables
@@ -211,7 +211,7 @@ We have loaded all the data in Zamboni. We can now proceed with training the mod
 ## Consumer Account (Zamboni) - Create Model
 Duration: 45
 
-For this section, make sure you download the corresponding [git repo](https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration) so you have the files referenced in this section.
+For this section, make sure you download the corresponding [git repo](https://github.com/Snowflake-Labs/sfguide-data-collaboration-native-app) so you have the files referenced in this section.
 
 ### Set Up Snowpark for Python and Snowpark ML
 
@@ -228,7 +228,7 @@ The first step is to set up the python environment to develop our model. To do t
 
   2. Activate the conda environment.
   ```
-  conda activate two-way-share-hol
+  conda activate data-collaboration-native-app
   ```
 
   3. Start notebook server:
@@ -384,8 +384,6 @@ Duration: 2
 
 Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
 
-### Images
-![Puppy](assets/SAMPLE.jpg)
 
 ### Videos
 Videos from youtube can be directly embedded:
