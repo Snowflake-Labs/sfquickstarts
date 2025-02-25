@@ -110,13 +110,11 @@ Duration: 5
 
 Duration: 5
 
-- `Streamlit`: Creates an intuitive chat interface  
 - `snowflake-ml-python`: For Snowflake Cortex capabilities
 - `snowflake`: For Snowflake capabilities
 
 ```py
 # Import python packages
-import streamlit as st
 import pandas as pd
 import json
 
