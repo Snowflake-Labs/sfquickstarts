@@ -43,7 +43,7 @@ Here is a flow of what you will achieve if you complete all steps in the quickst
 
 
 ### Prerequisites
-- A Snowflake Account - **NB:** Due to the tutorial leveraging the External Integration capability, you can not use a free trial unless you specficially ask you Snowflake Representitive to enable it.
+- A Snowflake Account - **NB:** Due to the Quickstart leveraging **External Access Integration**, a trial account cannot be used.  
 
  
 
@@ -116,19 +116,20 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 Now we have created our database structure, we need to add the code in order to run a notebook and a streamlit app.  The code is stored in the github resource guide.
 
-- Click [here](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator/tree/main/Notebook) to download the Source Code
 
-- Go to the home page in Snowsight
+- Click [here](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator) to download the Source Code
 
-- Click on the 'Data' icon and then navigate to Databases 
+- Go to the homepage in Snowsight
 
-- Navigate to the VEHICLE_ROUTING_SIMULATOR.ROUTING schema
+- Click on the **Data** icon and then navigate to **Databases** 
+
+- Navigate to the **VEHICLE_ROUTING_SIMULATOR.ROUTING** schema
 
 You should see two stages - **NOTEBOOK** and **STREAMLIT**.  The notebook code will need to be uploaded into the Notebook stage and the streamlit code will need to be uploaded to the streamlit stage.
 
 ![nav](assets/CO01.png)
 
-Navigate to the Notebook stage and choose an available warehouse to view the contents.  This will view all contents inside the directory.
+Navigate to the Notebook stage and choose the **ROUTING_ANALYTICS** warehouse to view the contents.  This will view all contents inside the directory.
 
 Press **upload** to add the notebook files to the notebook stage.
 
@@ -191,7 +192,7 @@ This tutorial is self contained inside the notebook which covers creating the fu
 
 <!-- ------------------------ -->
 ## Run the Dynamic route Optimisation and Vehicle Route Plan Simulator
-Duration: 20
+Duration: 10
 
 ![alt text](assets/simulator_image.png)
 
