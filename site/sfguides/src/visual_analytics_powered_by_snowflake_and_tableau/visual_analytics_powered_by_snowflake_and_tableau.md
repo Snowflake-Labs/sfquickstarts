@@ -5,7 +5,7 @@ categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Data Collaboration, Geospatial Data
+tags: Data Engineering, Data Collaboration, Date Lake
 
 # Visual Analytics powered by Snowflake and Tableau
 

@@ -75,7 +75,6 @@ grant select on table hol_db.public.customer_presegments to role public;
 
 ### Get Sample data and scripts from Azure Blob -> Shankar, Nithin  
 1. Download the data [file](assets/customer_segmentation_data.csv) 
-, notebook and the sql files - or can we reference it from Ext Stage.
 2. Login to Snowflake Account and go to Data -> Databases -> HOL_DB
 3. Select table CUSTOMER_PRESEGMENT and click Load Data 
 ![load data](assets/load_db.png)
@@ -83,6 +82,7 @@ grant select on table hol_db.public.customer_presegments to role public;
 
 <!-- ------------------------ -->
 ## Setup PowerApps Environment 
+<a id="Azure_Setup"></a>
 ### Set up Azure AD (Entra ID) authentication for Snowflake 
 Duration: 15
 
@@ -103,10 +103,12 @@ After you have configured PowerApps Connector to Snowflake, go to Power Apps
 	![virtualtable](assets/Virtual_Table_Create.png)
 
 2. Select Connection that you have setup in prior step, click NEXT
+
 	![connection](assets/connection.jpg)
 3. You should now see the table CUSTOMER_PRESEGMENT, click NEXT
 4. On Configuration screen, click Next and click FINISH on the last screen.
 5. Now, you see that age is negative for ID1 and ID2, click the pencil to make changes and save.
+
 ![crud](assets/CRUD_Change.png)
 6. Click Apps, click [Start with a page design]
 7. Select a dataverse table, and search CUSTOMER_PRESEGMENT and click Create App
@@ -138,23 +140,29 @@ Let's build a PowerAutomate Flow that calls Snowflake Stored Procedure that runs
 5. Search "Snowflake" and select "Submit SQL Statement for Execution" as shown 
 	![flow](assets/power_apps_choose_operation.png) 
 6. Let's add the following parameters 
+	- Instance - your Snowflake account URL(without https)
+	- Body/statement - CALL segmentize('CUSTOMER_PRESEGMENT','CUSTOMER_SEGMENTS'); 
+	- database - HOL_DB
+	- schema - PUBLIC 
+	- warehouse - HOL_WH
+	- role  - accountadmin
+	
+	Make sure to change connection to the one you created [above](#set-up-azure-ad-entra-id-authentication-for-snowflake) 	
+	
 	![automateconnect](assets/automate_conn.png)
-	Instance - your Snowflake account URL(without https)
-	statement - CALL segmentize('CUSTOMER_PRESEGMENT','CUSTOMER_SEGMENT_V'); 
-	database - HOL_DB
-	schema - PUBLIC 
-	warehouse - HOL_WH
-	role  - accountadmin
-7. Save it as Call_Segmentize_Flow 
+7. Save the flow as ex: Call_Segmentize_Flow and test it works fine. 
 		
 		
-![](assets/.png)
 ### Update PowerApp to invoke your Flow -> Shankar, Nithin  
-1. Put a Button in the Powerapp banner
-2. Let's name it Segmentize, and on Action - Invoke the above flow.
-3. Publish the App 
-4. Now you can see Market Segment information updated for all rows. 
-	![segmented](assets/new_flow.png)
+1. Put a button called Segmentize in the CUSTOMER_PRESEGMENT screen.
+![add_trigger](assets/app_call_flow.png)
+2. Let's create another screen to indicate when the flow is completed and name it Trigger_Success. 
+3. Drop a form on the Trigger_Success, we will connect this to a table CUSTOMER_SEGMENTS which has the prediction field. 
+4. Go back the CUSTOMER_PRESEGMENT screen, click the segmentize button and in the Properties->Advanced table 
+   pick ONSELECT action and enter the following 
+   ![flow_trigger](assets/run_powerflow.png)
+5. Now you can see Segment being predicted for the customer record. 
+   ![show_prediction](assets/segment_prediction.png)
 
 ### Reset the Demo 
 ``` sql
@@ -169,9 +177,8 @@ This quickstart will get you started with creating a simple power apps flow that
 
 
 ### Things to look out for
-- If you're getting a username and password error make sure that you use the forward slash at the end the external_oauth_issuer parameter value
-- Similarly you may explore changing the external_oauth_snowflake_user_mapping_attribute value to "email_name" as that value in your user profile will match the email address in your Power Apps account. 
-- Make sure the you're getting the tenant id from your Power Apps account and not your Azure account as they don't always match.
+- Use Service Principal based Authentication and test the connection with a PowerAutomate flow for troubleshooting
+- Make sure you have set the role, default_namespace, default_warehouse, login_name are set are set for the service_principal user. 
 - If you're not seeing the Snowflake actions in your options double check your Power Automate Environment and make sure you're using an environment where the Snowflake connector is available.
 
 <!-- ------------------------ -->
