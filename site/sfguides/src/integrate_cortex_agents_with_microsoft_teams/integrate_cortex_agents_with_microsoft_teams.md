@@ -131,7 +131,7 @@ DEMO_USER_PASSWORD='<your-user-pwd>'
 SUPPORT_SEMANTIC_MODEL='@DASH_DB.DASH_SCHEMA.DASH_SEMANTIC_MODELS/support_tickets_semantic_model.yaml'
 SUPPLY_CHAIN_SEMANTIC_MODEL='@DASH_DB.DASH_SCHEMA.DASH_SEMANTIC_MODELS/supply_chain_semantic_model.yaml'
 SEARCH_SERVICE='DASH_DB.DASH_SCHEMA.vehicles_info'
-ACCOUNT='<your-account-name>'
+ACCOUNT='<your-account-identifier>'
 HOST='<your-org>.snowflakecomputing.com'
 AGENT_ENDPOINT='https://<your-org>-<your-account>.snowflakecomputing.com/api/v2/cortex/agent:run'
 
