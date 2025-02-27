@@ -141,7 +141,7 @@ MODEL = 'claude-3-5-sonnet'
 ```
 
 > aside negative
-> NOTE: For help with setting the **<your-account-identifier>**, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
+> NOTE: For help with setting **your-account-identifier**, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 At this point, you should have an updated folder structure similar to the one shown below.
 
