@@ -91,8 +91,8 @@ This script will:
 
 - Download [sales_metrics_model.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/sales_metrics_model.yaml)(NOTE: Do NOT right-click to download.)
 - Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS
-- Click "Upload" in the top right
-- Select sales_metrics_model.yaml file
+- Click "+ Files" in the top right
+- Browse and select sales_metrics_model.yaml file
 - Click "Upload"
 
 ## Streamlit Application
