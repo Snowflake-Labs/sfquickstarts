@@ -178,13 +178,13 @@ The original Users table contains multiple columns, such as age group, occupatio
 
 For instance, for an entry like this on the original customer table:
 
-```json
+```
 *{“USERID“: 1, “GENDER“:”F", "AGEGROUP":1, “OCCUPATIONCODE“:10, "ZIPCODE": 48067}*
 ```
 
 The corresponding entry in the new table would be:
 
-```json
+```
 *{"USER_ID":1,"USER_INFO":"Customer with ID 1 is a female. They are uner 18 years old. Their occupation is K-12 student. Their zip code is '48067'"}*
 ```
 
@@ -251,13 +251,13 @@ The original Movies table contains multiple columns, such as Title and Genre. Si
 
 For instance, considering the following movie:
 
-```json
+```
 *{“MOVIEID“: 1, “TITLE“:”Toy Story", "YEAR":1995, “GENRE“:“Animation, Children's, Comedy“}*
 ```
 
 The corresponding entry in the new table would be:
 
-```json
+```
 *{“MOVIE_ID”: 1, “MOVIE_INFO”: "Movie 1 is called 'Toy Story'. It is released in 1995. It is falls under Animation, Children's, Comedy genres"}*
 ```
 
@@ -286,7 +286,7 @@ In a similar vein to the users and movies tables, you will structure this table 
 
 A sample entry would look as follows:
 
-```json
+```
 *{"USER_ID":1,"PREDICTION_DETAILS": "The 1st prediction for user 1 is movie 3897 with score 12.142295837. Movie 3897 is called 'Almost Famous'. It was released in 2000. It falls under Comedy,Drama genres. The 2nd prediction for user 1 is movie 3578 with score 11.983965874. Movie 3578 is called 'Gladiator'. It was released in 2000. It falls under Action, ... The 25th prediction for user 1 is ..."}*
 ```
 
