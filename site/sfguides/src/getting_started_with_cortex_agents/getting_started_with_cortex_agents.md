@@ -91,8 +91,8 @@ This script will:
 
 - Download [sales_metrics_model.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/sales_metrics_model.yaml)(NOTE: Do NOT right-click to download.)
 - Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS
-- Click "Upload" in the top right
-- Select sales_metrics_model.yaml file
+- Click "+ Files" in the top right
+- Browse and select sales_metrics_model.yaml file
 - Click "Upload"
 
 ## Streamlit Application
@@ -114,10 +114,10 @@ Duration: 15
 * Copy and Paste contents from the [streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/streamlit.py) into your new Streamlit App 
 
 **Step 4.** Great questions to ask
-* Show me sales data  
-![Sales Data](assets/sales_data.png)
-* Show me sales conversations  
-![Sales Conversation](assets/sales_conversation.png)
+* What are our top 3 client deals?
+![Top 3 Deals](assets/top_three_deals.png)
+* Tell me about the call with Securebank?
+![Securebank Conversation](assets/securebank_conversation.png)
 
 ## Conclusion and Resources
 Duration: 5
