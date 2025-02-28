@@ -13,7 +13,7 @@ tags: Getting Started, Data Engineering, Data Science, Snowpark Container Servic
 
 Duration: 5
 
-In this guide, you will learn how to build a personalized movie recommendation chatbot using [**Kumo (as a Snowflake Native App](https://app.snowflake.com/marketplace/listing/GZTYZBN5P0/kumo-ai-kumo?search=kumo))**, Snowflake’s Cortex Search Service, Cortex AI, and Streamli**t**. This chatbot enhances the streaming experience by providing personalized movie recommendations based on user viewing history and movie relationships.
+In this guide, you will learn how to build a personalized movie recommendation chatbot using [Kumo (as a Snowflake Native App](https://app.snowflake.com/marketplace/listing/GZTYZBN5P0/kumo-ai-kumo?search=kumo)), Snowflake’s Cortex Search Service, Cortex AI, and Streamli**t**. This chatbot enhances the streaming experience by providing personalized movie recommendations based on user viewing history and movie relationships.
 
 Specifically, you will learn how to develop a chatbot that can answer the following types of queries:
 
@@ -45,7 +45,7 @@ You'll create a movie recommendation chatbot built on Snowflake, powered by K
 
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
 - A valid Kumo account installed as a [native Snowflake app](https://app.snowflake.com/marketplace/listing/GZTYZBN5P0/kumo-ai-kumo?_fsi=RSY006de&_fsi=RSY006de)
-- Familiarity with Kumo and how to run a batch prediction. For a step-by-step guide on a similar use case, check out [**this quickstart tutorial**](https://quickstarts.snowflake.com/guide/leveraging_kumo_for_smarter_recommendations/index.html?index=..%2F..index#0), or refer to [Kumo documentation](https://kumo.ai/docs/examples/predictive-query) for more examples.
+- Familiarity with Kumo and how to run a batch prediction. For a step-by-step guide on a similar use case, check out [this quickstart tutorial](https://quickstarts.snowflake.com/guide/leveraging_kumo_for_smarter_recommendations/index.html?index=..%2F..index#0), or refer to [Kumo documentation](https://kumo.ai/docs/examples/predictive-query) for more examples.
 - The [MovieLens 1M dataset](https://grouplens.org/datasets/movielens/) set up on Snowflake
 - Basic understanding of how to do [RAG on Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/tutorials/cortex-search-tutorial-2-chat)
 
@@ -74,7 +74,7 @@ FROM
 ```
 
 <!-- ------------------------ -->
-## Run Batch Prediction Workflows on Kumo
+## Run Batch Prediction Workflows in Kumo
 
 Duration: 10
 
@@ -164,7 +164,7 @@ Just as in the item to user workflow, these results can be exported to two Snowf
 
 <!-- ------------------------ -->
 
-## Store Predictions on Snowflake
+## Store Predictions in Snowflake
 
 Duration: 5
 
@@ -603,7 +603,7 @@ This function ensures the prompt is well-structured and provides sufficient info
 
 ## Put it All Together: Streamlit
 
-Duration: 10
+Duration: 15
 
 With the core logic in place, the final step is implementing the user interface using Streamlit. The UI code integrates the classification, search services, and response generation to provide a seamless chat experience.
 
