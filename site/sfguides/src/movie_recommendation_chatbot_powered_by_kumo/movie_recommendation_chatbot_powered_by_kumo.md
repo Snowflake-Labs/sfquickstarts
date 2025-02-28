@@ -7,7 +7,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Data Science, Snowpark Container Services, Machine Learning, Streamlit, Cortex
 
-# Quickstart: Personalized Movie Recommendation Chatbot Powered by Kumo in Snowflake Native App
+# Personalized Movie Recommendation Chatbot Powered by Kumo in Snowflake Native App
 <!-- ------------------------ -->
 ## Overview
 
@@ -475,7 +475,9 @@ The pipeline works as follows:
 
 1. **Classify the user query** as either item-to-item or item-to-user.
 2. **Call the appropriate search service** based on the classification.
-3. **Generate the final response** using Cortex AI with a Retrieval-Augmented Generation (RAG) approach. 
+3. **Generate the final response** using Cortex AI with a Retrieval-Augmented Generation (RAG) approach.
+
+Note Snowflake just released Snowflake Agents in public preview, which provides an agentic approach to orchestration. In this case we'll create the flow ourselves.
 
 Below is the code to classify a given user query:
 
@@ -618,6 +620,7 @@ from snowflake.snowpark.context import get_active_session
 session = get_active_session()
 
 MODELS = [
+    "claude-3-5-sonnet",
     "mistral-large",
     "snowflake-arctic",
     "llama3-70b",
