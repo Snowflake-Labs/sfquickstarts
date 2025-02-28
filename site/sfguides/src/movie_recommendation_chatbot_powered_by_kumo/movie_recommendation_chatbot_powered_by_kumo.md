@@ -74,7 +74,7 @@ FROM
 ```
 
 <!-- ------------------------ -->
-## Running Batch Prediction Workflows on Kumo
+## Run Batch Prediction Workflows on Kumo
 
 Duration: 10
 
@@ -164,7 +164,7 @@ Just as in the item to user workflow, these results can be exported to two Snowf
 
 <!-- ------------------------ -->
 
-## Storing Predictions on Snowflake
+## Store Predictions on Snowflake
 
 Duration: 5
 
@@ -338,7 +338,7 @@ You will structure this table into two columns as well: MOVIE_ID and a PREDICTIO
 
 A sample entry for this table would look as follows:
 
-```json
+```
 *{"MOVIE_ID":1,"PREDICTIONS":"The 1st prediction for movie 1 is movie 1265 with score 2.741351366. Movie 1265 is called 'Groundhog Day'. It was released in 1993. It falls under Comedy,Romance genres. The 2nd prediction for movie 1 is movie 3114 with score 2.713413... The 10th prediction for movie 1 is ..."}* 
 ```
 
@@ -389,7 +389,7 @@ ORDER BY MOVIE_ID
 ```
 <!-- ------------------------ -->
 
-## Building Cortex Search Services
+## Build Cortex Search Services
 
 Duration: 10
 
@@ -465,7 +465,7 @@ AS
 The resulting search services enable querying across predictions and movie details in a unified manner.
 <!-- ------------------------ -->
 
-## Classification Response
+## Classify Response
 
 Duration: 5
 
@@ -601,7 +601,7 @@ This function ensures the prompt is well-structured and provides sufficient info
 
 <!-- ------------------------ -->
 
-## Putting it All Together: Streamlit
+## Put it All Together: Streamlit
 
 Duration: 10
 
@@ -862,9 +862,11 @@ The final user interface looks like:
 
 <!-- ------------------------ -->
 
-## Conclusion
+## Conclusion and Resources
 
 Duration: 5
+
+### Conclusion
 
 We ran two batch prediction workflows on Kumo, prepared the data with necessary preprocessing, created two search services to support a Retrieval-Augmented Generation (RAG) approach, and integrated these components with Cortex AI and Streamlit to build a complete user interface.
 
