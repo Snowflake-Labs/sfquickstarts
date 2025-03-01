@@ -124,7 +124,7 @@ MODEL = 'claude-3-5-sonnet'
 ```
 
 > aside negative
-> NOTE: For help with setting the **your-account-identifier**, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
+> NOTE: For help with setting **your-account-identifier**, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 **Step 5:** In a terminal window, browse to the same cloned folder **_sfguide-integrate-snowflake-cortex-agents-with-slack_** and run the following commands to create Python environment and install the Python packages and dependencies required for the application.
 
