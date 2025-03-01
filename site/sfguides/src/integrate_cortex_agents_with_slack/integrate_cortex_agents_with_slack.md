@@ -110,22 +110,21 @@ DEMO_SCHEMA='DASH_SCHEMA'
 WAREHOUSE='DASH_S'
 DEMO_USER='<your-user-name>'
 DEMO_USER_ROLE='<your-user-role>'
-DEMO_USER_PASSWORD='<your-user-pwd>'
 SEMANTIC_MODEL='@DASH_DB.DASH_SCHEMA.DASH_SEMANTIC_MODELS/support_tickets_semantic_model.yaml'
 SEARCH_SERVICE='DASH_DB.DASH_SCHEMA.vehicles_info'
-ACCOUNT='<your-account-name>'
+ACCOUNT='<your-account-identifier>'
 HOST='<your-org>.snowflakecomputing.com'
 AGENT_ENDPOINT='https://<your-org>-<your-account>.snowflakecomputing.com/api/v2/cortex/agent:run'
 SLACK_APP_TOKEN='<your-slack-app-token>'
 SLACK_BOT_TOKEN='<your-slack-bot-token>'
       
-# Do NOT edit below values  
+# You may NOT edit below values  
 RSA_PRIVATE_KEY_PATH='rsa_key.p8'
 MODEL = 'claude-3-5-sonnet'
 ```
 
-> aside positive
-> NOTE: For help with setting the **account name**, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
+> aside negative
+> NOTE: For help with setting the **your-account-identifier**, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 **Step 5:** In a terminal window, browse to the same cloned folder **_sfguide-integrate-snowflake-cortex-agents-with-slack_** and run the following commands to create Python environment and install the Python packages and dependencies required for the application.
 
