@@ -22,7 +22,7 @@ Within this Quickstart we will walk through how we can use Iceberg Tables in com
 
 The Tasty Bytes team recognizes the critical importance of analyzing restaurant reviews for understanding customer satisfaction, enhancing service quality, and upholding a positive reputation. By leveraging insights from reviews, they aim to pinpoint strengths, weaknesses, and areas for improvement, thereby driving business success and gain customer loyalty.
 
-The Data Enginerring team has been tasked to make this data available to the Data Science team. To achieve these objectives, the team is establishing an environment where development teams can access and process data from their data lake concurrently, using a variety of tools. They prioritize several key factors:
+The Data Engineering team has been tasked to make this data available to the Data Science team. To achieve these objectives, the team is establishing an environment where development teams can access and process data from their data lake concurrently, using a variety of tools. They prioritize several key factors:
 
 - ACID compliance
 - Single source of truth
@@ -467,7 +467,7 @@ Snowflake creates data and metadata files and manages them. The table state is m
 
 Data files refer to the physical files that store the actual data. These files typically contain data in formats such as Parquet or ORC. Iceberg tables organize data into multiple data files, each containing a subset of the table's data. These files are managed and optimized by the Iceberg table format to support efficient data storage, retrieval, and processing.
 
-### Querying Iceber Tables
+### Querying Iceberg Tables
 Now let's load some data into the Iceberg table. This query copies the data from the external table into our new iceberg table (in the `iceberg_table` directory of S3). 
 
 **Note:** You may load data directly into the S3 directory where your Iceberg table resides. We are loading data from the External Table here to show how you can interact with data inside Iceberg Tables. 

@@ -35,6 +35,7 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 Duration: 2
 
 1. Find The App
+
 In the Snowflake app Marketplace you can find the Tempo app or simply click [Here](https://app.snowflake.com/marketplace/listing/GZTYZOYXHP3).  
 
 2. If you are running on your own data you will have the select the storage before clicking the launch app button in the deployment phase.
