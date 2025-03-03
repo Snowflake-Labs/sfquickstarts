@@ -169,7 +169,7 @@ Duration: 10
 
   6. Start docker via opening Docker Desktop.
   
-  7. Test that we can successfully login to the image repository we created above, `CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO`. Run the following using Snowflake VSCode Extension or in a SQL worksheet and copy the `repository_url` field, then execute a `docker login` with your registry host and user name from the terminal:
+  7. Test that we can successfully login to the image repository we created above, `CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO`. Run the following using Snowflake VSCode Extension or in a SQL worksheet and copy the `repository_url` field, then execute a `snow spcs image-registry login` from the terminal:
   ```sql
   // Get the image repository URL
   use role CONTAINER_user_role;
@@ -178,7 +178,7 @@ Duration: 10
   ```
   ```bash
   # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
-  docker login <snowflake_registry_hostname> -u <user_name>
+  snow spcs image-registry login --connection CONTAINER_hol
   > prompt for password
   ```
   **Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
@@ -234,7 +234,7 @@ Open up a browser and navigate to [localhost:8888/lab](http://localhost:8888/lab
 Now that we have a local version of our container working, we need to push it to Snowflake so that a Service can access the image. To do this we will create a new tag of the image that points at our image repository in our Snowflake account, and then push said tagged image. From a terminal, run the following:
 ```bash
   # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
-  docker login <snowflake_registry_hostname> -u <user_name>
+  snow spcs image-registry login --connection CONTAINER_hol
   > prompt for password
   docker tag <local_repository>/python-jupyter-snowpark:latest <repository_url>/python-jupyter-snowpark:dev
 ```
@@ -452,7 +452,7 @@ Once you've verified that the service is working, you can stop the container: `d
 Now that we have a local version of our container working, we need to push it to Snowflake so that a Service can access the image. To do this we will create a new tag of the image that points at our image repository in our Snowflake account, and then push said tagged image. From a terminal, run the following:
 ```bash
   # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
-  docker login <snowflake_registry_hostname> -u <user_name>
+  snow spcs image-registry login --connection CONTAINER_hol
   > prompt for password
   docker tag <local_repository>/convert-api:latest <repository_url>/convert-api:dev
 ```
