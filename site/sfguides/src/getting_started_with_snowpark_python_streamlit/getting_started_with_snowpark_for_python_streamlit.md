@@ -1,11 +1,11 @@
 id: getting_started_with_snowpark_for_python_streamlit
-summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and Cybersyn data from Snowflake Marketplace.
+summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from the Snowflake Marketplace.
 categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Streamlit
-authors: Dash Desai, Victoria Warner (Cybersyn)
+authors: Dash Desai
 
 # Getting Started With Snowpark for Python and Streamlit
 <!-- ------------------------ -->
@@ -13,11 +13,11 @@ authors: Dash Desai, Victoria Warner (Cybersyn)
 
 Duration: 5
 
-This guide provides the instructions for building a Streamlit application using Snowpark for Python and [Cybersyn data](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) from the Snowflake Marketplace.
+This guide provides the instructions for building a Streamlit application using Snowpark for Python and data from the Snowflake Marketplace.
 
 ### What You Will Build
 
-A Streamlit application that loads and visualizes daily **stock performance** and **foreign exchange (FX) rate** data loaded from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace using Snowpark for Python.
+A Streamlit application that loads and visualizes daily **stock performance** and **foreign exchange (FX) rate** data loaded from the Snowflake Marketplace using Snowpark for Python.
 
 ![App](assets/sis.gif)
 
@@ -39,25 +39,19 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
 
 Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
 
-### What is Cybersyn?
-
-Cybersyn is a data-as-a-service company creating a real-time view of the world's economy with analytics-ready economic data on Snowflake Marketplace. Cybersyn builds derived data products from datasets that are difficult to procure, clean, or join. With Cybersyn, you can access external data directly in your Snowflake instance — no ETL required.
-
-Check out Cybersyn's [Consumer Spending product](https://app.snowflake.com/marketplace/listing/GZTSZ290BUX62/) and [explore all 60+ public sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) Cybersyn offers on the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc).
-
 ### What You Will Learn
 
 - How to access current Session object in Streamlit
-- How to load data from Cybersyn on the Snowflake Marketplace
+- How to load data from the Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
 - How to create and display interactive charts in Streamlit
 - How to run Streamlit in Snowflake
 
 ### Prerequisites
 
-- A [Snowflake](https://www.snowflake.com/) account in **AWS US Oregon**
-- Access to the **Financial & Economic Essentials** dataset provided by **Cybersyn**.
-  - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/), click on **Get Data** and follow the instructions to gain access. In particular, we will use data in schema **CYBERSYN** from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
+- A [Snowflake](https://www.snowflake.com/) account
+- Access to the **Financial & Economic Essentials** dataset
+  - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/snowflake-data-finance-economics?_fsi=QrmINNI3), click on **Get Data** and follow the instructions to gain access. In particular, we will use data from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
 
 <!-- ------------------------ -->
 ## Get Started
@@ -149,7 +143,7 @@ df_stocks, df_fx = load_data()
 In the above code snippet, we’re leveraging several Snowpark DataFrame functions to load and transform data. For example, `filter()`, `group_by()`, `agg()`, `sum()`, `alias()` and `isin()`.
 
 <!-- ------------------------ -->
-## Daily Stock Performance on the Nasdaq by Company
+## Daily Stock Performance
 
 Duration: 5
 
@@ -197,7 +191,7 @@ In the above code snippet, a line chart is constructed which takes a dataframe a
 
 <!-- ------------------------ -->
 
-## EUR Exchange (FX) Rates by Quote Currency
+## EUR Exchange (FX) Rates
 
 Duration: 5
 
@@ -236,15 +230,15 @@ In the above code snippet, a line chart is constructed which takes a dataframe a
 
 Duration: 5
 
-Add the following code snippet to display application header, create a sidebar, and map `stock_prices()` and `fx_rates()` functions to **Daily Stock Performance Data** and **Exchange (FX) Rates** options respectively in the sidebar.
+Add the following code snippet to display application header, create a sidebar, and map `stock_prices()` and `fx_rates()` functions to **Daily Stock Performance** and **Exchange (FX) Rates** options respectively in the sidebar.
 
 ```python
 # Display header
-st.header("Cybersyn: Financial & Economic Essentials")
+st.header("Financial & Economic Essentials")
 
 # Create sidebar and load the first page
 page_names_to_funcs = {
-    "Daily Stock Performance Data": stock_prices,
+    "Daily Stock Performance": stock_prices,
     "Exchange (FX) Rates": fx_rates
 }
 selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
@@ -310,7 +304,7 @@ def load_data():
 df_stocks, df_fx = load_data()
 
 def stock_prices():
-    st.subheader('Stock Performance on the Nasdaq for the Magnificent 7')
+    st.subheader('Stock Performance for the Magnificent 7')
     
     df_stocks['DATE'] = pd.to_datetime(df_stocks['DATE'])
     max_date = df_stocks['DATE'].max()  # Most recent date
@@ -369,11 +363,11 @@ def fx_rates():
         st.altair_chart(line_chart, use_container_width=True)
 
 # Display header
-st.header("Cybersyn: Financial & Economic Essentials")
+st.header("Financial & Economic Essentials")
 
 # Create sidebar and load the first page
 page_names_to_funcs = {
-    "Daily Stock Performance Data": stock_prices,
+    "Daily Stock Performance": stock_prices,
     "Exchange (FX) Rates": fx_rates
 }
 selected_page = st.sidebar.selectbox("Select", page_names_to_funcs.keys())
@@ -397,12 +391,12 @@ In the application:
 
 Duration: 1
 
-Congratulations! You've successfully completed the Getting Started with Snowpark for Python and Streamlit with Cybersyn data quickstart guide.
+Congratulations! You've successfully completed the Getting Started with Snowpark for Python and Streamlit with data from the Snowflake Marketplace.
 
 ### What You Learned
 
 - How to access current Session object in Streamlit
-- How to load data from [Cybersyn](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc) on the Snowflake Marketplace
+- How to load data from the Snowflake Marketplace
 - How to create Snowpark DataFrames and perform transformations
 - How to create and display interactive charts in Streamlit
 - How to run Streamlit in Snowflake
@@ -411,5 +405,3 @@ Congratulations! You've successfully completed the Getting Started with Snowpark
 
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
-- [Cybersyn data on the Snowflake Marketplace](https://app.snowflake.com/marketplace/listings/Cybersyn%2C%20Inc)
-- [Cybersyn Data Catalog](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart)
