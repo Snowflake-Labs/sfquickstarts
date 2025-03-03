@@ -63,7 +63,7 @@ Duration: 10
 
 * On the left hand navigation menu, click on **Projects » Notebooks**
 * On the top right, click on **Notebook** down arrow and select **Import .ipynb file** from the dropdown menu
-* Select **Gen_AI_Video_Search.ipynb** file you downloaded in the step above
+* Select **huggingface_smolagents_notebook_app.ipynb** file you downloaded in the step above
 * In the Create Notebook popup
     * For Notebook location, select `DASH_DB` and `DASH_SCHEMA`
     * For SQL warehouse, select `DASH_WH_S`
