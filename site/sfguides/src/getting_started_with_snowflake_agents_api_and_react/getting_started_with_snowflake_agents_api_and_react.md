@@ -146,6 +146,10 @@ pnpm dev
 
 The application should now be running on `http://localhost:3000`.
 
+![Chat Screen](assets/App.png)
+
+Click on one of the questions to see what it can do!
+
 ## Agent API Integration
 
 Duration: 15
