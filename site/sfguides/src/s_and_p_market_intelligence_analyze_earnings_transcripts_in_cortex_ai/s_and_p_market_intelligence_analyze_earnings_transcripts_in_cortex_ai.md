@@ -14,7 +14,7 @@ Earnings calls play a pivotal role in shaping investor perceptions. The quality 
 
 Executives' ability to anticipate investor concerns and maintain a focused dialogue fosters confidence and strategic communication. In contrast, failing to provide clarity when analysts seek additional information can lead to misalignment and breakdowns in transparency. A long (short) portfolio of on-topic and proactive (off-topic and reactive) generates +515bps of annualized alpha.
 
-This QuikStart with its notebook serves as a introduction for the research detailed in Quantitative Research & Solutions’ recent publication, ["Questioning the Answers: LLM's enter the Boardroom."](https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom) It analyses executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers. This research harnesses alpha using LLM tools, including vector embeddings, vector cosine similarity, and the LLM question answering. There is a longer version available upon request that also covers how to create the input data from the datasets described in section 2, please reach out to <QRS@spglobal.com> for access to the longer version.
+This QuickStart with its notebook serves as a introduction for the research detailed in Quantitative Research & Solutions’ recent publication, ["Questioning the Answers: LLM's enter the Boardroom."](https://www.spglobal.com/market-intelligence/en/news-insights/research/questioning-the-answers-llms-enter-the-boardroom) It analyses executive on-topicness and proactiveness using the analysts questions, executives answers and LLM answers. This research harnesses alpha using LLM tools, including vector embeddings, vector cosine similarity, and the LLM question answering. There is a longer version available upon request that also covers how to create the input data from the datasets described in section 2, please reach out to <QRS@spglobal.com> for access to the longer version.
 
 Through this QuickStart, you will learn how to use [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) and [Snowflake Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) on earnings call using the [Machine Readable Transcripts](https://app.snowflake.com/marketplace/listing/GZT0Z8P3D2V/s-p-global-market-intelligence-machine-readable-transcripts) dataset from S&P Global Market Intelligence.
 
@@ -161,7 +161,7 @@ SELECT * FROM SAMPLE_TRANSCRIPT LIMIT 10;
 2. Click on the **down arrow* next to **+ Notebook**  
 
     ![New notebook drop down](assets/new_notebook_dropdown.png)  
-3. If you have set up git integration choose  **Create from repository**. If not, then choose **import .ipynb file**.
+3. If you have set up a git integration, choose  **Create from repository**. If not, then choose **import .ipynb file**.
 
     ![New notebook from menu](assets/notebook_from_menu.png)  
 
@@ -198,7 +198,7 @@ Follow along and run each of the cells in [the Notebook](https://github.com/Snow
 ## Conclusion And Resources
 Duration: 4
 
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) and [Snowflake Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) on earnings call using the [Machine Readable Transcripts](https://app.snowflake.com/marketplace/listing/GZT0Z8P3D2V/s-p-global-market-intelligence-machine-readable-transcripts) and additional dataset from S&P Global Market Intelligence.
+Congratulations, you have successfully completed this QuickStart! Through this QuickStart, we were able to showcase how you can use [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) and [Snowflake Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) on earnings call using the [Machine Readable Transcripts](https://app.snowflake.com/marketplace/listing/GZT0Z8P3D2V/s-p-global-market-intelligence-machine-readable-transcripts) and additional dataset from S&P Global Market Intelligence.
 
 ### What You Learned
 
