@@ -116,7 +116,27 @@
       "source": "guide/frosty_llm_chatbot_on_streamlit_snowflake/{,/**}",
       "destination": "/guide/getting_started_with_cortex_analyst",
       "type": 301
-    }
+    },
+    {
+      "source": "guide/connectors_native_sdk_java_example/{,/**}",
+      "destination": "https://docs.snowflake.com/developer-guide/native-apps/connector-sdk/tutorials/native_sdk_example_connector_tutorial",
+      "type": 301
+    },
+    {
+      "source": "guide/vhol_data_lake/{,/**}",
+      "destination": "https://docs.snowflake.com/en/user-guide/tables-iceberg-load",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_streamlit_in_snowflake/{,/**}",
+      "destination": "/guide/getting_started_with_snowpark_for_python_streamlit",
+      "type": 301  
+    },
+    {
+      "source": "guide/getting_started_with_cybersyn_financial_and_economic_essentials_app/{,/**}",
+      "destination": "/guide/getting_started_with_snowpark_for_python_streamlit",
+      "type": 301
+    }    
     ]
   }
 }

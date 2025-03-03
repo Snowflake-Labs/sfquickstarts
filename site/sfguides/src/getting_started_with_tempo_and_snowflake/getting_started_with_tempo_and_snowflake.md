@@ -35,6 +35,7 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 Duration: 2
 
 1. Find The App
+
 In the Snowflake app Marketplace you can find the Tempo app or simply click [Here](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/).  
 
 2. If you are running on your own data you will have the select the storage before clicking the launch app button in the deployment phase.
@@ -94,11 +95,13 @@ Parameters: - `True/False`: Specifies whether to include optional MITRE tactic m
 
 Purpose: Executes inference on specified service data
 
+
 <!-- ------------------------ -->
 ## Deep Dive Analysis in Snowflake
 Duration: 5
 
 ```sql
+
 CALL INSPECT.INVESTIGATE_SEQUENCE(13);
 ```
 Parameters: - `sequence_id`: Identifier of the sequence to analyze (integer). This ID can be used down the road if any anomalies are detected to run deeper investigation on suspicious interactions. Purpose: Investigates specific sequences flagged as anomalies 
@@ -207,5 +210,5 @@ Congratulations, you just ran the world's first purpose-built LogLM available as
 
 ### Resources
 
-
 To try the app please follow [This Link](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX)
+

@@ -1,7 +1,7 @@
 author: Swathi Jasti
 id: getting-started-with-running-distributed-pytorch-models-on-snowflake
 summary: Getting Started with Running Distributed PyTorch Models on Snowflake
-categories: Getting-Started, Tasty-Bytes, data-science
+categories: Getting-Started, Tasty-Bytes, data-science, Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -14,7 +14,7 @@ Duration: 3
 
 <img src="assets/TB_EndToEndML_banner.png"/>
 
-This solution generates upsell and cross-sell recommendations to increase sales for the Tasty Bytes business. In this quickstart, we will walk through how to build an end-to-end Pytorch recommendation model using Snowflake ML. This involves:
+This solution generates upsell and cross-sell recommendations to increase sales for the Tasty Bytes business. In this quickstart, we will walk through how to build an end-to-end Pytorch recommendation model using [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/). This involves:
 
 - Extracting features from customer, menu, and purchase history.
 - Preprocessing data.
@@ -23,7 +23,7 @@ This solution generates upsell and cross-sell recommendations to increase sales 
 - Running predictions and visualizing recommendations on Streamlit.
 - Displaying personalized menu item recommendations along with purchase history in a Streamlit app.
 
-In addition, this end-to-end ML solution using Snowflake ML aims to address the common challenges in building ML workflows, such as:
+In addition, this end-to-end ML solution using [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) aims to address the common challenges in building ML workflows, such as:
 
 **Eliminating Silos and Governance Challenges:** Ensuring a seamless and integrated environment for ML development, from data processing to model serving, to tackle the issue of isolated workflows and governance difficulties.
 
@@ -39,10 +39,12 @@ In addition, this end-to-end ML solution using Snowflake ML aims to address the 
 - Privileges necessary to create a user, database, and warehouse in Snowflake
 - A non-trial Snowflake account in a supported [AWS commercial region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
 - A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the CONTAINER_USER_ROLE and granting required privileges, as well as creating the EXTERNAL ACCESS INTEGRATION).
+  - To try Snowflake ML in a free trial, check out this [quickstart](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+- (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
 
 ### What You Will Learn
 - How to extract features from customer, menu, and purchase history.
-- How to preprocess data using the Snowpark ML library.
+- How to preprocess data using the Snowflake ML APIs.
 - How to train a PyTorch DLRM model with distributed processing on GPUs.
 - How to register the model and deploy it to Snowflake’s Container Runtime (public preview).
 - How to run predictions and visualize recommendations on Streamlit.
@@ -152,12 +154,19 @@ When you click the **Get Recommendations** button, the application filters the d
 - How to run predictions and visualize recommendations on Streamlit.
 - How to display personalized menu item recommendations along with purchase history in a Streamlit app.
 
-### Related Resources
+### Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake)
 - [Demo Video on Youtube](https://www.youtube.com/watch?v=9uqcNBIY14g)
 - [Blog](https://medium.com/snowflake/running-distributed-pytorch-models-on-snowflake-an-end-to-end-ml-solution-452d16a39553)
 - [Solution Center](https://developers.snowflake.com/solution/running-distributed-pytorch-models-on-snowflake-an-end-to-end-ml-solution/)
-- [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
-- [Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
-- [Model Registry](https://docs.snowflake.com/developer-guide/snowflake-ml/model-registry/overview?utm_cta=snowpark-dg-hero-card)
+- [Snowflake Notebooks: Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
+- [Feature Store: Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
+- [Model Registry: Documentation](https://docs.snowflake.com/developer-guide/snowflake-ml/model-registry/overview?utm_cta=snowpark-dg-hero-card)
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+
+### Related Quickstarts
+- [Getting Started with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/#0)
+- [Train an XGBoost Model with GPUs using Snowflake Notebooks](https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/#0)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/#0)
+- [Getting Started with Snowflake MLeg](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)

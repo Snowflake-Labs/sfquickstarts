@@ -25,11 +25,12 @@ Snowflake offers a rich toolkit for predictive analytics with a geospatial compo
 ### What You’ll Learn
 In this quickstart, you will use H3, Time Series, Cortex ML and Streamlit for ML use cases. The quickstart is broken up into separate labs:
 * Lab 1: Geospatial 101
-* Lab 2: Geocoding and Reverse Geocoding
-* Lab 3: Forecasting time series on a map
-* Lab 4: Sentiment analysis of customer reviews
-* Lab 5: Processing unstructured geospatial data
-* Lab 6: Creating Interactive Maps with Kepler.gl
+* Lab 2: Energy grids analysis using GEOMETRY
+* Lab 3: Geocoding and Reverse Geocoding
+* Lab 4: Forecasting time series on a map
+* Lab 5: Sentiment analysis of customer reviews
+* Lab 6: Processing unstructured geospatial data
+* Lab 7: Creating Interactive Maps with Kepler.gl
 
 When you complete this quickstart, you will have gained practical experience in several areas:
 * Acquiring data from the Snowflake Marketplace
@@ -90,7 +91,7 @@ Navigate to the query editor by clicking on `Worksheets` on the top left navigat
 Create a new database and schema where you will store datasets in the `GEOGRAPHY` data type. Copy & paste the SQL below into your worksheet editor, put your cursor somewhere in the text of the query you want to run (usually the beginning or end), and either click the blue "Play" button in the upper right of your browser window, or press `CTRL+Enter` or `CMD+Enter` (Windows or Mac) to run the query.
 
 ```
-CREATE DATABASE advanced_analytics;
+CREATE DATABASE IF NOT EXISTS advanced_analytics;
 // Set the working database schema
 USE ADVANCED_ANALYTICS.PUBLIC;
 USE WAREHOUSE my_wh;
@@ -354,6 +355,461 @@ st.pydeck_chart(r, use_container_width=True)
 ### Conclusion
 
 Congratulations! You have completed this introductory quickstart. You learn basic operations to construct, process and visualise geospatial data.
+
+## Energy grids analysis using GEOMETRY
+
+> aside negative
+>  Before starting with this lab, complete the preparation steps from `Setup your account` page.
+
+> aside positive
+>  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
+
+#### Overview
+Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the `GEOMETRY` data type, help you understand geospatial formats supported by Snowflake and walk you through the use of a variety of functions on sample geospatial data sets. 
+
+#### What You’ll Learn
+* How to acquire geospatial data from the Snowflake Marketplace
+* How to load geospatial data from a Stage
+* How to interpret the `GEOMETRY` data type and how it differs from the `GEOGRAPHY`
+* How to understand the different formats that `GEOMETRY` can be expressed in
+* How to do spatial analysis using the `GEOMETRY` and `GEOGRAPHY` data types
+* How to use Python UDFs for reading Shapefiles and creating custom functions
+* How to visualise geospatial data using Streamlit
+
+#### What You’ll Build
+A sample use case that involves energy grids and LTE cell towers in the Netherlands You will answer the following questions:
+* What is the length of all energy grids in each municipality in the Netherlands?
+* What cell towers lack electricity cables nearby?
+
+### Acquire Marketplace Data and Analytics Toolbox
+
+The first step in the guide is to acquire geospatial data sets that you can freely use to explore the basics of Snowflake's geospatial functionality.  The best place to acquire this data is the Snowflake Marketplace!  
+* Navigate to the `Marketplace` screen using the menu on the left side of the window
+* Search for `OpenCelliD` in the search bar
+* Find and click the` OpenCelliD - Open Database of Cell Towers` tile or just use [this](https://app.snowflake.com/marketplace/listing/GZSVZ8ON6J/dataconsulting-pl-opencellid-open-database-of-cell-towers) link
+
+<img src ='assets/geo_ml_47.png' width=700>
+
+* Once in the listing, click the big blue `Get` button
+
+<img src ='assets/geo_ml_48.png' width=500>
+
+* On the `Get Data` screen, change the name of the database from the default to `OPENCELLID`, as this name is shorter, and all future instructions will assume this name for the database.
+
+<img src ='assets/geo_ml_49.png' width=500>
+
+Similarly to the above dataset, acquire [SedonaSnow](https://app.snowflake.com/marketplace/listing/GZTYZF0RTY3/wherobots-sedonasnow) application which extends Snowflake core geo features with more than 100 spatial functions. Navigate to the `Marketplace` screen using the menu on the left side of the window and find the `SedonaSnow`. Keep the the database name `SEDONASNOW` and optionally add more roles that can access the database.
+
+<img src ='assets/geo_ml_22.png' width=500>
+
+Congratulations! You have just acquired all the listings you need for this lab.
+
+### Setup your Account
+
+Create a new database and schema where you will store datasets in the `GEOMETRY` data type. Run th following SQL:
+
+```
+CREATE DATABASE IF NOT EXISTS GEOLAB;
+CREATE SCHEMA IF NOT EXISTS GEOLAB.GEOMETRY;
+USE SCHEMA GEOLAB.GEOMETRY;
+```
+
+### Load Data from External Storage
+
+You already understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. While you loading data you will learn formats supported by geospatial data types.
+
+For this quickstart we have prepared a dataset with energy grid infrastructure (cable lines) in the Netherlands. It is stored in the CSV format in the public S3 bucket. To import this data, create an external stage using the following SQL command:
+
+```
+CREATE OR REPLACE STAGE geolab.geometry.geostage
+URL = 's3://sfquickstarts/vhol_spatial_analysis_geometry_geography/';
+```
+
+Now you will create a new table using the file from that stage. Run the following queries to create a new file format and a new table using the dataset stored in the Stage:
+
+```
+// Create file format
+CREATE OR REPLACE FILE FORMAT geocsv TYPE = CSV SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '"';
+
+CREATE OR REPLACE TABLE geolab.geometry.nl_cables_stations AS 
+SELECT to_geometry($1) AS geometry, 
+       $2 AS id, 
+       $3 AS type 
+FROM @geostage/nl_stations_cables.csv (file_format => 'geocsv');
+```
+
+Look at the description of the table you just created by running the following queries: 
+
+```
+DESC TABLE geolab.geometry.nl_cables_stations;
+```
+
+The [desc or describe](https://docs.snowflake.com/en/sql-reference/sql/desc.html) command shows you the definition of the view, including the columns, their data type, and other relevant details. Notice the `geometry` column is defined as `GEOMETRY` type. 
+
+Snowflake supports 3 primary geospatial formats and 2 additional variations on those formats. They are:
+
+* **GeoJSON**: a JSON-based standard for representing geospatial data
+* **WKT & EWKT**: a "Well Known Text" string format for representing geospatial data and the "Extended" variation of that format
+* **WKB & EWKB:** a "Well Known Binary" format for representing geospatial data in binary and the "Extended" variation of that format
+
+These formats are supported for ingestion (files containing those formats can be loaded into a `GEOMETRY` typed column), query result display, and data unloading to new files. You don't need to worry about how Snowflake stores the data under the covers but rather how the data is displayed to you or unloaded to files through the value of session variables called `GEOMETRY_OUTPUT_FORMAT`.
+
+Run the query below to make sure the current format is GeoJSON:
+
+```
+ALTER SESSION SET geometry_output_format = 'GEOJSON';
+```
+
+The [alter session](https://docs.snowflake.com/en/sql-reference/sql/alter-session.html) command lets you set a parameter for your current user session, which in this case is  `GEOMETRY_OUTPUT_FORMAT`. The default value for those parameters is `'GEOJSON'`, so normally you wouldn't have to run this command if you want that format, but this guide wants to be certain the next queries are run with the `'GEOJSON'` output.
+
+Now run the following query against the `nl_cables_stations` table to see energy grids in the Netherlands.
+
+```
+SELECT geometry
+FROM nl_cables_stations
+LIMIT 5;
+```
+In the result set, notice the `GEOMETRY` column and how it displays a JSON representation of spatial objects. It should look similar to this:
+
+```
+{"coordinates": [[[1.852040750000000e+05, 3.410349640000000e+05], 
+[1.852044840000000e+05,3.410359860000000e+05]], 
+[[1.852390240000000e+05,3.411219340000000e+05], 
+... ,
+[1.852800600000000e+05,3.412219960000000e+05]]   ], 
+"type": "MultiLineString" }
+```
+
+Unlike `GEOGRAPHY`, which treats all points as longitude and latitude on a spherical earth, `GEOMETRY` considers the Earth as a flat surface. More information about Snowflake's specification can be found [here](https://docs.snowflake.com/en/sql-reference/data-types-geospatial.html).
+In this example it uses scientific notation and the numbers are much larger than latitude and longitude boundaries [-180; 180].
+
+<img src ='assets/geo_ml_57.png' width=700>
+
+Now look at the same query but in a different format. Run the following query:
+
+```
+ALTER SESSION SET geometry_output_format = 'EWKT';
+```
+
+Run the previous `SELECT` query again and when done, examine the output in the `GEOMETRY` column.
+
+```
+SELECT geometry
+FROM nl_cables_stations
+LIMIT 5;
+```
+
+EWKT looks different from GeoJSON, and is arguably more readable. Here you can more clearly see the [geospatial object types](https://docs.snowflake.com/en/sql-reference/data-types-geospatial.html#geospatial-object-types), which are represented below in the example output:
+
+```
+SRID=28992;MULTILINESTRING((185204.075 341034.964,185204.484 341035.986), ... ,(185276.402 341212.688,185279.319 341220.196,185280.06 341221.996))
+```
+
+EWKT also shows the spatial reference identifier and in our example, you have a dataset in [Amersfoort / RD New](https://epsg.io/28992) spatial reference system, that is why the displayed SRID is 28992.
+
+Lastly, look at the WKB output. Run the following query:
+
+```
+ALTER SESSION SET geometry_output_format = 'WKB';
+```
+
+Run the query again:
+```
+SELECT geometry
+FROM nl_cables_stations
+LIMIT 5;
+```
+
+Now that you have a basic understanding of how the `GEOMETRY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walk through a scenario that requires you to use constructors to load data.  You will do it while trying one more way of getting data, namely, from the Shapefile file stored in the external stage. 
+
+One of the files in the external stage contains the polygons of administrative boundaries in the Netherlands. The data is stored in [Shapefile format](https://en.wikipedia.org/wiki/Shapefile) which is not yet supported by Snowflake. But you can load this file using Python UDF and [Dynamic File Access feature](https://docs.snowflake.com/developer-guide/udf/python/udf-python-examples#label-udf-python-read-files). You will also use some packages available in the Snowflake Anaconda channel.
+
+Run the following query that creates a UDF to read shapfiles:
+
+```
+CREATE OR REPLACE FUNCTION geolab.geometry.py_load_geodata(PATH_TO_FILE string, filename string)
+RETURNS TABLE (wkt varchar, properties object)
+LANGUAGE PYTHON
+RUNTIME_VERSION = 3.8
+PACKAGES = ('fiona', 'shapely', 'snowflake-snowpark-python')
+HANDLER = 'GeoFileReader'
+AS $$
+from shapely.geometry import shape
+from snowflake.snowpark.files import SnowflakeFile
+from fiona.io import ZipMemoryFile
+class GeoFileReader:        
+    def process(self, PATH_TO_FILE: str, filename: str):
+    	with SnowflakeFile.open(PATH_TO_FILE, 'rb') as f:
+    		with ZipMemoryFile(f) as zip:
+    			with zip.open(filename) as collection:
+    				for record in collection:
+    					yield (shape(record['geometry']).wkt, dict(record['properties']))
+$$;
+```
+
+This UDF reads a Shapefile and returns its content as a table. Under the hood it uses geospatial libraries `fiona` and `shapely`.
+Run the following query to see the content of the uploaded shapefile.
+
+```
+ALTER SESSION SET geometry_output_format = 'EWKT';
+
+SELECT to_geometry(wkt) AS geometry,
+       properties:NAME_1::string AS province_name,
+       properties:NAME_2::string AS municipality_name
+FROM table(py_load_geodata(build_scoped_file_url(@geolab.geometry.geostage, 'nl_areas.zip'), 'nl_areas.shp'));
+```
+
+This query fails with the error *NotebookSqlException: 100383: Geometry validation failed: Geometry has invalid self-intersections. A self-intersection point was found at (559963, 5.71069e+06)*.
+The constructor function determines if the shape is valid according to the [Open Geospatial Consortium’s Simple Feature Access / Common Architecture](https://www.ogc.org/standards/sfa) standard. If the shape is invalid, the function reports an error and does not create the GEOMETRY object. That is what happened in our example.
+
+To fix this you can allow the ingestion of invalid shapes by setting the corresponding parameter to True. Let's run the SELECT statement again, but update the query to see how many shapes are invalid. Run the following query:
+
+```
+SELECT to_geometry(s => wkt, allowInvalid => True) AS geometry,
+       st_isvalid(geometry) AS is_valid,
+       properties:NAME_1::string AS province_name,
+       properties:NAME_2::string AS municipality_name
+FROM table(py_load_geodata(build_scoped_file_url(@geolab.geometry.geostage, 'nl_areas.zip'), 'nl_areas.shp'))
+ORDER BY is_valid ASC;
+```
+
+<img src ='assets/geo_ml_50.png' width=700>
+
+This query completed without error and now you see that the shape of the province Zeeland is invalid. Let's repair it by applying the [ST_MakeValid](https://sedona.apache.org/1.5.1/api/snowflake/vector-data/Function/#st_makevalid) function from SedonaSnow Native app:
+
+```
+SELECT SEDONASNOW.SEDONA.st_MakeValid(to_geometry(s => wkt, allowInvalid => True)) AS geometry,
+       st_isvalid(geometry) AS is_valid,
+       (CASE WHEN properties:TYPE_1::string IS NULL THEN 'Municipality' ELSE 'Province' END) AS type,
+       properties:NAME_1::string AS province_name,
+       properties:NAME_2::string AS municipality_name
+FROM table(py_load_geodata(build_scoped_file_url(@geolab.geometry.geostage, 'nl_areas.zip'), 'nl_areas.shp'))
+ORDER BY is_valid ASC;
+```
+
+<img src ='assets/geo_ml_51.png' width=700>
+
+Now all shapes are valid and the data is ready to be ingested. One additional thing you should do is to set SRID, since otherwise it will be set to 0. This dataset is in the reference system [WGS 72 / UTM zone 31N](https://epsg.io/32231), so it makes sense to add the SRID=32231 to the constructor function.
+
+Run the following query:
+
+```
+CREATE OR REPLACE TABLE geolab.geometry.nl_administrative_areas AS
+SELECT ST_SETSRID(SEDONASNOW.SEDONA.ST_MakeValid(to_geometry(s => wkt, srid => 32231, allowInvalid => True)), 32231) AS geometry,
+       st_isvalid(geometry) AS is_valid,
+       (CASE WHEN properties:TYPE_1::string IS NULL THEN 'Municipality' ELSE 'Province' END) AS type,
+       properties:NAME_1::string AS province_name,
+       properties:NAME_2::string AS municipality_name
+FROM table(py_load_geodata(build_scoped_file_url(@geolab.geometry.geostage, 'nl_areas.zip'), 'nl_areas.shp'))
+ORDER BY is_valid ASC;
+```
+
+Excellent! Now that all the datasets are successfully loaded, let's proceed to the next exciting step: the analysis.
+
+### Energy grids Analysis
+
+To showcase the capabilities of the GEOMETRY data type, you will explore several use cases. In these scenarios, you'll assume you are an analyst working for an energy utilities company responsible for maintaining electrical grids.
+
+#### What is the length of the electricity cables?
+In the first use case you will calculate the length of electrical cables your organization is responsible for in each administrative area within the Netherlands. You'll be utilizing two datasets: with power infrastructure of the Netherlands and the borders of Dutch administrative areas. First, let's check the sample of each dataset.
+
+Run the following query to see the content of `nl_cables_stations` table:
+
+```
+SELECT geometry, type
+FROM geolab.geometry.nl_cables_stations
+LIMIT 5;
+```
+
+<img src ='assets/geo_ml_52.png' width=700>
+
+The spatial data is stored using the `GEOMETRY` data type and employs the Dutch mapping system, `Amersfoort / RD New` (SRID = 28992). 
+
+To view the contents of the table containing the boundaries of the administrative areas in the Netherlands, execute the following query:
+
+```
+SELECT *
+FROM geolab.geometry.nl_administrative_areas
+LIMIT 5;
+```
+<img src ='assets/geo_ml_53.png' width=700>
+
+In order to compute the length of all cables per administrative area, it's essential that both datasets adhere to the same mapping system. You have two options: either project `nl_administrative_areas` to SRID 28992, or project `nl_cables_stations` to SRID 32231. For this exercise, let's choose the first option. Run the following query:
+
+```
+SELECT t1.province_name,
+       sum(st_length(t2.geometry)) AS cables_length
+FROM geolab.geometry.nl_administrative_areas AS t1,
+     geolab.geometry.nl_cables_stations AS t2
+WHERE st_intersects(st_transform(t1.geometry, 28992), t2.geometry)
+  AND t1.type = 'Province'
+GROUP BY 1
+ORDER BY 2 DESC;
+```
+<img src ='assets/geo_ml_54.png' width=700>
+
+You have five areas densely covered by electricity cables, those are the ones that your company is responsible for. For your first analysis, you will focus on these areas.
+
+#### What cell towers lack electricity cables nearby?
+
+In many areas, especially rural or remote ones, cell towers might be located far from electricity grids. This can pose a challenge in providing a reliable power supply to these towers. They often rely on diesel generators, which can be expensive to operate and maintain and have environmental implications. Furthermore, power outages can lead to disruptions in mobile connectivity, impacting individuals, businesses, and emergency services.
+
+Our analysis aims to identify mobile cell towers that are not near an existing electricity grid. This information could be used to prioritize areas for grid expansion, to improve the efficiency of renewable energy source installations (like solar panels or wind turbines), or to consider alternative energy solutions.
+
+For this and the next examples let's use `GEOGRAPHY` data type as it can be easily visualized using CARTO. As a first step, let's create `GEOGRAPHY` equivalents for the energy grids and boundaries tables. For that you need to project the `geometry` column in each of the tables into the mapping system WGS 84 (SRID=4326) and then convert to `GEOGRAPHY` data type. Run the following queries that create new tables and enable search optimization for each of them in order to increase the performance of spatial operations. 
+
+```
+// Creating a table with GEOGRAPHY for nl_administrative_areas
+CREATE SCHEMA IF NOT EXISTS GEOLAB.GEOGRAPHY;
+
+CREATE OR REPLACE TABLE geolab.geography.nl_administrative_areas AS
+SELECT to_geography(st_transform(geometry, 4326)) AS geom,
+       type,
+       province_name,
+       municipality_name
+FROM geolab.geometry.nl_administrative_areas
+ORDER BY st_geohash(geom);
+
+// Creating a table with GEOGRAPHY for nl_cables_stations
+CREATE OR REPLACE TABLE geolab.geography.nl_cables_stations AS
+SELECT to_geography(st_transform(geometry, 4326)) AS geom,
+       id,
+       type
+FROM geolab.geometry.nl_cables_stations
+ORDER BY st_geohash(geom);
+```
+
+Now you will create a table with locations of cell towers stored as GEOGRAPHY, just like for the previous two tables. Run the following query:
+
+```
+CREATE OR REPLACE TABLE geolab.geography.nl_lte AS
+SELECT DISTINCT st_point(lon, lat) AS geom,
+                cell_range
+FROM OPENCELLID.PUBLIC.RAW_CELL_TOWERS t1
+WHERE mcc = '204' -- 204 is the mobile country code in the Netherlands
+AND radio='LTE'
+```
+
+Finally, you will find all cell towers that don't have an energy line within a 2-kilometer radius. For each cell tower you'll calculate the distance to the nearest electricity cable. You will use Streamlit library `pydeck` to visualise municipalities and locations of cell towers. 
+
+You can create visualisation either in Notebooks or as a Strealit app. As a preparation step you need to import pydeck library that you will use in this Lab. Navigate to the `Packages` drop-down  in the upper right of the Notebook (upper left of the Streamlit app) and search for `pydeck`. Click on `pydeck` to add it to the Python packages. Then run the following Python code:
+
+```
+import streamlit as st
+import pandas as pd
+import pydeck as pdk
+import json
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+
+def get_celltowers() -> pd.DataFrame:
+    return session.sql(f"""
+    SELECT province_name,
+    cells.geom
+    FROM geolab.geography.nl_lte cells
+    LEFT JOIN geolab.geography.nl_cables_stations cables
+    ON st_dwithin(cells.geom, cables.geom, 2000)
+    JOIN geolab.geography.nl_administrative_areas areas 
+    ON st_contains(areas.geom, cells.geom)
+    WHERE areas.type = 'Municipality'
+    AND areas.province_name in ('Noord-Brabant', 'Overijssel', 'Limburg', 'Groningen', 'Drenthe')
+    AND cables.geom IS NULL; """).to_pandas()
+
+def get_boundaries() -> pd.DataFrame:
+    return session.sql(f"""
+        SELECT st_simplify(GEOM, 10) as geom, municipality_name
+        FROM geolab.geography.nl_administrative_areas
+        WHERE type = 'Municipality';
+    """).to_pandas()
+
+
+boundaries = get_boundaries()
+boundaries["coordinates"] = boundaries["GEOM"].apply(lambda row: json.loads(row)["coordinates"][0])
+
+celltowers = get_celltowers()
+celltowers["lon"] = celltowers["GEOM"].apply(lambda row: json.loads(row)["coordinates"][0])
+celltowers["lat"] = celltowers["GEOM"].apply(lambda row: json.loads(row)["coordinates"][1])
+
+layer_celltowers = pdk.Layer(
+            "ScatterplotLayer",
+            celltowers,
+            get_position=["lon", "lat"],
+            id="celltowers",
+            stroked=True,
+            filled=True,
+            extruded=False,
+            wireframe=True,
+            get_fill_color=[233, 43, 65],
+            get_line_color=[233, 43, 65],
+            get_radius=300,
+            auto_highlight=True,
+            pickable=False,
+        )
+
+layer_boundaries = pdk.Layer(
+    "PolygonLayer",
+    data=boundaries,
+    id="province-layer",
+    get_polygon="coordinates",
+    extruded=False,
+    opacity=0.9,
+    wireframe=True,
+    pickable=True,
+    stroked=True,
+    filled=True,
+    line_width_min_pixels=1,
+    get_line_color=[17, 86, 127],       # Red color for the border
+    get_fill_color=[43, 181, 233, 30],  # Blue fill with transparency
+    coverage=1
+)
+
+
+st.pydeck_chart(pdk.Deck(
+    map_style=None,
+    initial_view_state=pdk.ViewState(
+        latitude=51.97954426323304,
+        longitude=5.626041932127842, 
+        # pitch=45, 
+        zoom=8),
+    tooltip={
+            'html': '<b>Province name:</b> {MUNICIPALITY_NAME}',
+             'style': {
+                 'color': 'white'
+                 }
+            },
+    layers=[layer_boundaries, layer_celltowers],
+))
+```
+
+<img src ='assets/geo_ml_56.png' width=700>
+
+Another way to visualise geospatial data is using open-source geo analytics tool QGIS. Do the following steps:
+* Install the latest [Long Term Version of QGIS](https://qgis.org/download/)
+* Install Snowflake conector. Go to `Plugins` > `All`, search for `Snowflake Connector for QGIS` and click `Install Plugin`.
+* Go to `Layer` > `Data Source Manager` and create a new connection to Snowflake. Call it `SNOWFLAKE` (all letters capital). [Check](https://github.com/snowflakedb/qgis-snowflake-connector?tab=readme-ov-file#getting-started) the documentation to learn mor on how to create new coonection
+* [Download](https://sfquickstarts.s3.us-west-1.amazonaws.com/vhol_spatial_analysis_geometry_geography/energy_grids_nl.qgz) a QGIS project that we created for you and open it in QGIS.
+* If previous steps done correctly, you should be able to see the following layers in QGIS
+    * `ENERGY_GRIDS` (LINESTRING and MULTILINESTRING) - energy frids for Noord-Brabant, Overijssel, Limburg, Groningen, and Drenthe.
+    * `CELL_TOWERS_WITHOUT_CABLES` - cell towers in the regions above that don't have energy grids within radius of 2km.
+    * `Municipalities` (POLYGON and MULTIPOLYGON) - Boundaries of Dutch municipalities.
+
+
+### Conclusion
+
+In this guide, you acquired geospatial data from the Snowflake Marketplace, explored how the `GEOMETRY` data type works and how it differs from `GEOGRAPHY`. You converted one data type into another and queried geospatial data using parser, constructor, transformation, and used geospatial joins. You then saw how geospatial objects could be visualized using CARTO.
+
+You are now ready to explore the larger world of Snowflake geospatial support and geospatial functions.
+
+### What we've covered
+* How to acquire a shared database from the Snowflake Marketplace and from External and internal storages.
+* The GEOMETRY data type, its formats GeoJSON, WKT, EWKT, WKB, and EWKB, and how to switch between them.
+* How to use constructors like TO_GEOMETRY, ST_MAKELINE.
+* How to reproject between SRIDs using ST_TRANSFORM.
+* How to perform relational calculations like ST_DWITHIN and ST_INTERSECTS.
+* How to perform measurement calculations like ST_LENGTH.
+* How to use Python UDFs for reading Shapefiles and creating custom functions.
+* How to visualise geospatial data using Streamlit and QGIS
 
 ## Geocoding and Reverse Geocoding
 
@@ -778,7 +1234,7 @@ To achieve this division, you will use the Discrete Global Grid H3. H3 organizes
 
 H3 offers 16 different resolutions for dividing areas into hexagons, ranging from resolution 0, where the world is segmented into 122 large hexagons, to resolution 15. At this resolution, each hexagon is less than a square meter, covering the world with approximately 600 trillion hexagons. You can read more about resolutions [here](https://h3geo.org/docs/core-library/restable/). For our task, we will use resolution 8, where the size of each hexagon is about 0.7 sq. km (0.3 sq. miles).
 
-As a source of the trips data you will use `TLC_YELLOW_TRIPS_2014` and `TLC_YELLOW_TRIPS_2015` tables from the CARTO listing. We are interested in the following fields:
+As a source of the trips data you will use `TLC_YELLOW_TRIPS_2014` and `TLC_YELLOW_TRIPS_2015` tables from the CARTO Academy listing. We are interested in the following fields:
 * Pickup Time
 * Dropoff Time
 * Pickup Latitude
@@ -1229,6 +1685,9 @@ Duration: 40
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
 
+> aside positive
+>  This lab is [available](https://github.com/Snowflake-Labs/sf-guide-geospatial-analytics-ai-ml) as Snowflake Notebook.
+
 This lab will show you how to inject AI into your spatial analysis using Cortex Large Language Model (LLM) Functions to help you take your product and marketing strategy to the next level. Specifically, you’re going to build a data application that gives food delivery companies the ability to explore the sentiments of customers in the Greater Bay Area. To do this, you use the Cortex LLM Complete Function to classify customer sentiment and extract the underlying reasons for that sentiment from a customer review. Then you use the Discrete [Global Grid H3](https://www.uber.com/en-DE/blog/h3/) for visualizing and exploring spatial data. 
 
 ### Step 1. Data acquisition
@@ -1244,7 +1703,7 @@ FIELD_OPTIONALLY_ENCLOSED_BY = '"' FIELD_DELIMITER = ',' skip_header = 1;
 ```
 Now you will create an external stage using S3 with test data:
 ```
-CREATE OR REPLACE STAGE aa_stage URL = 's3://sfquickstarts/hol_geo_spatial_ml_using_snowflake_cortex/';
+CREATE OR REPLACE STAGE @ADVANCED_ANALYTICS.PUBLIC.AA_STAGE URL = 's3://sfquickstarts/hol_geo_spatial_ml_using_snowflake_cortex/';
 ```
 Then create a table where you will store the customer feedback dataset:
 ```
@@ -1259,7 +1718,7 @@ SELECT  $1::NUMBER as order_id,
         $8::NUMBER as restaurant_postcode,
         $9::VARCHAR as restaurant_id,
         $10::VARCHAR as review
-FROM @ADVANCED_ANALYTICS.PUBLIC.ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv (file_format => 'csv_format_nocompression');
+FROM @ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv (file_format => 'csv_format_nocompression');
 ```
 
 Congratulations!  Now you have `orders_reviews` table containing 100K orders with reviews.
@@ -1367,7 +1826,7 @@ CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT (
 );
 
 COPY INTO ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT
-FROM @ADVANCED_ANALYTICS.PUBLIC.ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv
+FROM @ADVANCED_ANALYTICS.PUBLIC.AA_STAGE/food_delivery_reviews.csv
 FILE_FORMAT = (FORMAT_NAME = csv_format_nocompression);
 ```
 
@@ -1376,7 +1835,7 @@ FILE_FORMAT = (FORMAT_NAME = csv_format_nocompression);
 Now when you have a table with sentiment, you need to parse JSONs to store each component of the score into a separate column and convert the scoring provided by the LLM into numeric format, so you can easily visualize it. Run the following query:
 
 ```
-CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis AS
+CREATE OR REPLACE TABLE ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_ANALYSIS AS
 SELECT * exclude (food_cost, food_quality, food_delivery_time, sentiment) ,
          CASE
              WHEN sentiment = 'very positive' THEN 5
@@ -1463,7 +1922,7 @@ def get_h3_df_orders_quantiles(resolution: float, type_of_location: str) -> pd.D
         f"""SELECT
         H3_POINT_TO_CELL_STRING(to_geography({ type_of_location }), { resolution }) AS h3,
         round(count(*),2) as count
-        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis
+        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_ANALYSIS
         GROUP BY 1""")
 
     quantiles = get_quantile_in_column(df, "COUNT")
@@ -1476,7 +1935,7 @@ def get_h3_df_sentiment_quantiles(
         f""" SELECT 
         H3_POINT_TO_CELL_STRING(TO_GEOGRAPHY({ type_of_location }),{ resolution }) AS h3,
         round(AVG({ type_of_sentiment }),2) AS count
-        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_analysis
+        FROM ADVANCED_ANALYTICS.PUBLIC.ORDERS_REVIEWS_SENTIMENT_ANALYSIS
         WHERE { type_of_sentiment } IS NOT NULL 
         GROUP BY 1""")
 
@@ -1594,7 +2053,7 @@ Duration: 40
 
 In this quickstart guide, we will show you how to read geospatial data from unstructured sources such as GeoTiffs and Shapefiles to prepare features for a machine learning model using Snowflake and popular Python geospatial libraries.
 
-You will learn how to join data from different sources to help predict the presence of groundwater. Although the prediction step itself is out of scope for this lab, you will learn how to ingest data from raster files and shapefiles and combine them using nearst neighbour approach.
+You will learn how to join data from different sources to help predict the presence of groundwater. Although the prediction step itself is out of scope for this lab, you will learn how to ingest data from raster files and shapefiles and combine them using nearest neighbour approach.
 
 In this lab, we will use the following sources:
 - Elevation map from [United States Geological Survey](https://www.usgs.gov/).
