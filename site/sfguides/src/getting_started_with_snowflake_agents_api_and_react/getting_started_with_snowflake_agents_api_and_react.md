@@ -55,7 +55,7 @@ Duration: 10
 
 To get started, clone or download the tutorial project from: [Snowflake Agent API Chatbot Tutorial](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react)
 
-**Step 1\.** In Snowsight, create a SQL Worksheet and open [setup.sql](https://github.com/snowflakedb/agent-api-chatbot-tutorial) to execute all statements in order from top to bottom.
+**Step 1\.** In Snowsight, create a SQL Worksheet and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react/blob/main/data/setup.sql) to execute all statements in order from top to bottom.
 
 This script will:
 
@@ -66,13 +66,13 @@ This script will:
 
 **Step 2\.** Upload the semantic model:
 
-- Download the semantic model file from the tutorial repository (NOTE: Do NOT right-click to download.)  
+- Download the [semantic model](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react/blob/main/data/customer_semantic_model.yaml) (NOTE: Do NOT right-click to download.)  
 - Navigate to Data » Databases » CORTEX\_TUTORIAL\_DB » PUBLIC » Stages  
 - Click "Upload" in the top right  
 - Select the semantic model file  
 - Click "Upload"
 
-## Setup Environment Variables
+## Define Environment Variables
 
 Duration: 15
 
@@ -118,7 +118,7 @@ NEXT_PUBLIC_SUGGESTED_QUERIES=["How many claims are currently open? How many are
 
 If not specified, the application will use default suggested queries.
 
-## Running the Application Locally
+## Run the Application
 
 Duration: 10
 
@@ -150,7 +150,7 @@ The application should now be running on `http://localhost:3000`.
 
 Click on one of the questions to see what it can do!
 
-## Agent API Integration
+## Explain the Integration
 
 Duration: 15
 
@@ -263,7 +263,7 @@ const { agentState, messages, latestMessageId, handleNewMessage } = useAgentAPIQ
 
 The states returned from this hook are then passed to the appropriate components for rendering. This approach allows for clean separation of concerns between the API interaction logic and the UI rendering.
 
-## Handle Citation Processing
+### Handle Citation Processing
 
 Duration: 15
 
@@ -317,7 +317,7 @@ This code demonstrates how the application:
 
 The citation processing is a key part of making Cortex Search results more usable and presentable to end users.
 
-## Message Content Flow
+### Message Content Flow
 
 Duration: 15
 
@@ -355,7 +355,7 @@ The Messages component will then render each message using the PreviewMessage co
 
 The flow of data through the application provides a complete picture of how the Agent API is integrated into a user interface for interactive querying of structured and unstructured data.
 
-## Displaying Message Components in the UI
+### Displaying Message Components in the UI
 
 Duration: 15
 
@@ -408,7 +408,7 @@ This code shows how the UI:
 
 The component uses conditional rendering to ensure that the appropriate UI elements are shown based on the current state and available data. This creates a responsive and informative interface for users interacting with the Cortex Agent.
 
-## Enabling Data2Answer / Data2Chart Tool (Optional)
+## Enable Optional Tools
 
 Duration: 5
 
