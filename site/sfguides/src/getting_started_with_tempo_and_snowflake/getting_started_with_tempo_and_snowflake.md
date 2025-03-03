@@ -35,7 +35,7 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 Duration: 2
 
 1. Find The App
-In the Snowflake app Marketplace you can find the Tempo app or simply click [Here](https://app.snowflake.com/marketplace/listing/GZTYZOYXHP3).  
+In the Snowflake app Marketplace you can find the Tempo app or simply click [Here](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/).  
 
 2. If you are running on your own data you will have the select the storage before clicking the launch app button in the deployment phase.
 To select your table please click `add` next to the `on Incident Inference Logs` section. In the popup after clicking the `add` button click the `+Select Data` button and find the table you want to use on the dropdown.  Select it and click `Save`.
@@ -74,7 +74,7 @@ In the new worksheet we now need to setup our procedures. We will start with ini
 
 1. Initialize Application Resources
 ```sql
-CALL management.create_resources();
+CALL INFRA_CONTROLS.CREATE_RESOURCES();
 ```
 
 Purpose: Initializes the application by loading required model weights and configurations
@@ -87,28 +87,27 @@ It is recommended that you run this command prior to running the sheet as a whol
 Duration: 6
 
 ```sql
-CALL static_detection.inference('your_service_name');
+CALL STATIC_DETECTION.ANOMALY_DETECTION(False);
 ```
-Parameters:
-- `your_service_name`: Name of the service to analyze (string).  This is set by you and should be unique to each run.
-Purpose: Executes inference on specified service data
 
-If you want to use the demo feel free to name it something like `demorun` for the `your_service_name`.
+Parameters: - `True/False`: Specifies whether to include optional MITRE tactic mappings in the classified anomalies. Set to TRUE to include the mappings, or False to exclude them. 
+
+Purpose: Executes inference on specified service data
 
 <!-- ------------------------ -->
 ## Deep Dive Analysis in Snowflake
 Duration: 5
 
 ```sql
-CALL inspect.deepdive(sequence_id);
+CALL INSPECT.INVESTIGATE_SEQUENCE(13);
 ```
-Parameters:
-- `sequence_id`: Identifier of the sequence to analyze (integer). This ID can be used down the road if any anomalies are detected to run deeper investigation on suspicious interactions. 
-Purpose: Investigates specific sequences flagged as anomalies
+Parameters: - `sequence_id`: Identifier of the sequence to analyze (integer). This ID can be used down the road if any anomalies are detected to run deeper investigation on suspicious interactions. Purpose: Investigates specific sequences flagged as anomalies 
 
-Note: If running on demo data lets use 2 as the id (valid IDs 1-1200)
+Note: If running on demo data lets use 13 as the id (valid IDs 1-1200) 
 
-The results will be collections of related events making up Suspicious and Anomalous activities.  These are the events your security team would want verify as actuall intrusion events.
+The results will be collections of related events making up Suspicious and Anomalous activities. These are the events your security team would want verify as actuall intrusion events.
+
+For additional features in the Tempo application and guidance on using Tempo with your own data, refer to the official [Tempo documentation](https://docs.deeptempo.ai/docs/snowflake/).
 
 <!-- ------------------------ -->
 ## Viewing Results in Splunk
@@ -209,5 +208,4 @@ Congratulations, you just ran the world's first purpose-built LogLM available as
 ### Resources
 
 
-To try the app please follow [This Link](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/deeptempo-cybersecurity-tempo-cybersecurity-incident-identification-via-deep-learning?search=tempo)
-[Snowflake Native Apps ](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/) 
+To try the app please follow [This Link](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX)
