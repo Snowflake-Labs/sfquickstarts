@@ -1,5 +1,5 @@
 author: James Cha-Earley
-id: SFGUIDE-NAME
+id: getting_started_with_snowflake_agents_api_and_react
 summary: Getting Started with Snowflake Agents API and React
 categories: Getting-Started
 environments: web
@@ -464,6 +464,7 @@ Documentation:
 
 Sample Code & Guides:
 
-- [Agent API Chatbot Tutorial](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react)  
+- [Agent API Chatbot Tutorial](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react)
+- [Getting Started with Snowflake Agents API](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html)
 - [Getting Started with Snowflake Agents (API) and Microsoft Teams](https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_microsoft_teams/index.html)  
 - [Getting Started with Snowflake Agents (API) and Slack](https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_slack/index.html)
