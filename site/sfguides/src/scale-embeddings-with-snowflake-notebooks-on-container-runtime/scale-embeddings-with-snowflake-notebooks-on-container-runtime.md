@@ -26,11 +26,11 @@ This guide will show you how to experiment with and scale embeddings generation 
 
 ### What You’ll Learn
 - How to load an open source embedding model
-- How to generate embeddings using GPU compute
+- How to generate embeddings using GPU compute with Snowflake Notebooks on Container Runtime
 - How to evalulate the embeddings for RAG
 - How to store embeddings as a Vector Type in a Snowflake table
-- How to log and deploy the open source embedding model
-- How to perform a large batch embeddings generation (inference) job.
+- How to log and deploy the open source embedding model using Model Registry and Model Serving in SPCS
+- How to perform a large batch embeddings generation (inference) job using Model Serving in SPCS
 
 ### What You’ll Build 
 You're a Data Scientist looking to experiment with an open source embedding model and evaluate a dataset with it before deciding to deploy it for a large batch embeddings generation (inference) job.
@@ -188,5 +188,6 @@ Ready for more? After you complete this quickstart, you can try one of the follo
 ### Related Resources
 - [Documentation: Container Runtime for ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml)
 - [Documentation: Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
+- [Documentation: Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
 - [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
