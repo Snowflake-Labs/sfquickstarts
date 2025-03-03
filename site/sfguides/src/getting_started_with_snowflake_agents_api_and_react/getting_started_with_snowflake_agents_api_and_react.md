@@ -5,7 +5,7 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, Data Engineering, Cortex Agents 
 
 # Getting Started with Snowflake Cortex Agents API and React
 
