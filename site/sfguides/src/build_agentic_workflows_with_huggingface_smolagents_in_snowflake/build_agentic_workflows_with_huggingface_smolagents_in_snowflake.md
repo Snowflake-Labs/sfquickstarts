@@ -121,7 +121,7 @@ Here we create a new tools **get_dzone_refcards**, **read_dzone_refcards**, and 
 
 **Cell 6** 
 
-Here we create a new instance of **CodeAgent** and provide the three tools created in the previous step with prompt `Generate a list of popular DZone RefCard summaries by reading them.`.  
+Here we create a new instance of **CodeAgent** and provide the three tools created in the previous step with prompt `Generate a list of 5 popular DZone RefCard summaries by reading them.`.  
 
 If all goes well, you should see the output similar to the following:
 
