@@ -137,7 +137,7 @@ Positive : **워크시트 vs UI** <br> 이 랩의 많은 구성은 시간을 절
 
 ![img](assets/dataiku11.png)
 
-Negative : **SYSADMIN** <br> 이 랩 대부분에서는 웨어하우스, 데이터베이스 및 계정의 기타 오브젝트를 생성하기 위한 권한을 가진 SYSADMIN(또는 시스템 관리자) 역할을 유지할 것입니다. 실제 환경에서는 이 랩의 작업에 서로 다른 역할을 사용하고 사용자에게 역할을 할당합니다. Snowflake의 액세스 제어에 대한 더 자세한 내용은 이 랩의 말미와 [설명서](https://docs.snowflake.net/manuals/user-guide/security-access-control.html)에서 다룹니다.
+Negative : **SYSADMIN** <br> 이 랩 대부분에서는 웨어하우스, 데이터베이스 및 계정의 기타 오브젝트를 생성하기 위한 권한을 가진 SYSADMIN(또는 시스템 관리자) 역할을 유지할 것입니다. 실제 환경에서는 이 랩의 작업에 서로 다른 역할을 사용하고 사용자에게 역할을 할당합니다. Snowflake의 액세스 제어에 대한 더 자세한 내용은 이 랩의 말미와 [설명서](https://docs.snowflake.com/user-guide/security-access-control-overview)에서 다룹니다.
 
 <!-- ------------------------ -->
 ## Snowflake Partner Connect를 통해 Dataiku 평가판 계정 준비
