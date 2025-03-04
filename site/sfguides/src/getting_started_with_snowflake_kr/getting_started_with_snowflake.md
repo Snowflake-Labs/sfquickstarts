@@ -188,7 +188,7 @@ UI 오른쪽 상단의 사용자 이름을 클릭하면 비밀번호, 역할 및
 
 > aside negative
 > 
->  **SYSADMIN**  `SYSADMIN`(시스템 관리자라고도 함) 역할은 웨어하우스, 데이터베이스 및 기타 객체를 계정에 생성할 수 있는 권한을 가집니다. 실제 환경에서는 이 랩의 작업에 서로 다른 역할을 사용하고 사용자에게 역할을 할당합니다. Snowflake 액세스 제어에 대한 더 자세한 정보는 섹션 9에서 다룰 것이며 더 자세한 정보는  [Snowflake 설명서](https://docs.snowflake.net/manuals/user-guide/security-access-control.html)에서 확인하실 수 있습니다.
+>  **SYSADMIN**  `SYSADMIN`(시스템 관리자라고도 함) 역할은 웨어하우스, 데이터베이스 및 기타 객체를 계정에 생성할 수 있는 권한을 가집니다. 실제 환경에서는 이 랩의 작업에 서로 다른 역할을 사용하고 사용자에게 역할을 할당합니다. Snowflake 액세스 제어에 대한 더 자세한 정보는 섹션 9에서 다룰 것이며 더 자세한 정보는  [Snowflake 설명서](https://docs.snowflake.com/user-guide/security-access-control-overview)에서 확인하실 수 있습니다.
 
 
 ### 랩 스토리
@@ -213,7 +213,7 @@ Citi Bike 라이더 트랜잭션 정형 데이터를 Snowflake에 로드할 준�
 
 > aside negative
 > 
->  **Snowflake로 데이터 가져오기**  다양한 위치로부터 Snowflake로 데이터를 가져오는 방법은 COPY 명령, Snowpipe 자동 수집, 외부 커넥터 또는 타사 ETL/ELT 제품을 포함해 여러 가지가 있습니다. Snowflake로 데이터를 가져오는 것에 관한 더 자세한 정보는  [Snowflake 설명서](https://docs.snowflake.net/manuals/user-guide-data-load.html)를 참조하십시오. 교육 목적으로 COPY 명령과 S3 스토리지를 손으로 직접 입력하도록 하고 있습니다. 고객은 자동화된 프로세스 또는 ETL 제품을 사용할 가능성이 더 높습니다.
+>  **Snowflake로 데이터 가져오기**  다양한 위치로부터 Snowflake로 데이터를 가져오는 방법은 COPY 명령, Snowpipe 자동 수집, 외부 커넥터 또는 타사 ETL/ELT 제품을 포함해 여러 가지가 있습니다. Snowflake로 데이터를 가져오는 것에 관한 더 자세한 정보는  [Snowflake 설명서](https://docs.snowflake.com/guides-overview-loading-data)를 참조하십시오. 교육 목적으로 COPY 명령과 S3 스토리지를 손으로 직접 입력하도록 하고 있습니다. 고객은 자동화된 프로세스 또는 ETL 제품을 사용할 가능성이 더 높습니다.
 
 사용할 데이터는 Citi Bike NYC가 제공한 자전거 공유 데이터입니다. 이 데이터를 내보내서 미국 동부 지역의 Amazon AWS S3 버킷에 미리 구성했습니다. 데이터는 이동 시간, 위치, 사용자 유형, 성별, 나이 등에 관한 정보로 구성됩니다. AWS S3에서 이 데이터는 6,150만 행, 377개의 객체로 표현되고 1.9GB로 압축되어 있습니다.
 
@@ -916,7 +916,7 @@ Citi Bike 이야기를 계속하기 위해 주니어 DBA가 Citi Bike에 합류�
 > aside negative
 > 
 >  **역할 기반 액세스 제어**  
-Snowflake는 사용자가 액세스할 수 있는 객체 및 기능과 액세스 수준을 지정하는 매우 강력하고 세분화된 RBAC를 제공합니다. 더 자세한 사항은  [Snowflake 설명서](https://docs.snowflake.net/ko/user-guide/security-access-control.html)를 확인하십시오.
+Snowflake는 사용자가 액세스할 수 있는 객체 및 기능과 액세스 수준을 지정하는 매우 강력하고 세분화된 RBAC를 제공합니다. 더 자세한 사항은  [Snowflake 설명서](https://docs.snowflake.com/ko/user-guide/security-access-control-overview)를 확인하십시오.
 
 ### 새로운 역할 생성 및 사용자 추가
 
