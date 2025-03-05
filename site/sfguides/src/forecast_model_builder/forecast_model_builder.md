@@ -28,8 +28,9 @@ This guide will walk you through the process of:
 - Running inferencing against the models stored in the Registry
 
 ### What You’ll Need 
-- A Snowflake account with CREATE DATABASE permissions
+- A Snowflake account with CREATE DATABASE permissions.
 - The aforementinoned Gitlab Repository
+- If you want to run the notebooks using Container Runtime, you will need to use a role other than ACCOUNTADMIN, SECURITYADMIN or ORGADMIN.
 
 ### What You’ll Build 
 - An end-to-end Snowflake Notebook based forecasting solution for your time series data.
@@ -111,7 +112,7 @@ To run the EDA Notebook:
     />
 
 
-4) Select 'Run on container' and click Save.  You will also do this for the Modeling and Inference notebooks.
+4) Select 'Run on container' and click Save.  You will also do this for the Modeling and Inference notebooks.  (Please note that you will need to use a role other than ACCOUNTADMIN, SECURITYADMIN or ORGADMIN to run the notebook on a container.)
 
     
     <img
