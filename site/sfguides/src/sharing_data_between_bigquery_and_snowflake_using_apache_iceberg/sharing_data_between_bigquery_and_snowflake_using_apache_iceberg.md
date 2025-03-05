@@ -25,18 +25,49 @@ There is often no one-size-fits-all approach to tackling complex business challe
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
-- Familiarity with Google Cloud and a Google Cloud account.
+- Familiarity with [Google Cloud](https://cloud.google.com/free) and a Google Cloud account.
 
 ### What You’ll Learn
 - Creating a Snowflake Managed Iceberg table and then have BigQuery read the table
 - Creating a BigLake Managed table and then have Snowflake read the table
 - Keeping BigQuery in-sync with Iceberg tables hosted on Snowflake
 
+![](assets/gcpicebergarch.png)
+
+### What You’ll Need
+- [Snowflake account](https://signup.snowflake.com/) 
+- [Google Cloud account](https://cloud.google.com/free)
+
+### What You'll Build
+- A Snowflake Managed Iceberg table
+- A BigLake Managed Iceberg table
+
 
 
 <!-- ------------------------ -->
-## Initial Setup
-Duration: 2
+## Snowflake Managed Iceberg to BigQuery
+Duration: 10
+
+In this section, you will create a table in Snowflake using the Iceberg format and also create a BigLake (external) table in BigQuery that points to the same Iceberg files.
+
+### Login to Snowflake
+- Click the Create button on the top left
+- Select SQL Worksheet
+- Run this command to switch to an account admin since we have to run some commands that requires this role:
+
+```sql
+USE ROLE accountadmin;
+```
+
+### Create a warehouse to hold the data
+
+```sql
+CREATE OR REPLACE WAREHOUSE ICEBERG_WAREHOUSE WITH WAREHOUSE_SIZE='XSMALL';
+```
+Reference: https://docs.snowflake.com/en/sql-reference/sql/create-warehouse
+
+
+
 
 
 
