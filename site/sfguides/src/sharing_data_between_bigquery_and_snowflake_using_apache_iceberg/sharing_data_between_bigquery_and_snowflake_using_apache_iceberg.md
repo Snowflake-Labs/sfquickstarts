@@ -24,7 +24,7 @@ There is often no one-size-fits-all approach to tackling complex business challe
 
 
 ### Prerequisites
-- Familiarity with (Snowflake)[https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0] and a Snowflake account
+- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
 - Familiarity with Google Cloud and a Google Cloud account.
 
 ### What You’ll Learn
