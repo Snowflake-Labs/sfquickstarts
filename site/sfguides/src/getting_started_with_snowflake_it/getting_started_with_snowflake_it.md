@@ -188,7 +188,7 @@ Facendo clic sul tuo nome utente in alto a destra nell’interfaccia puoi modifi
 
 > aside negative
 > 
->  **SYSADMIN** Il ruolo `SYSADMIN` (o amministratore di sistema) ha i privilegi necessari per creare warehouse, database e altri oggetti in un account. In un ambiente reale, utilizzeresti ruoli diversi per le attività di questo workshop e assegneresti ruoli ai tuoi utenti. Parleremo ancora dei ruoli e del modello di controllo degli accessi di Snowflake nella Sezione 9; inoltre puoi trovare ulteriori informazioni nella [documentazione di Snowflake](https://docs.snowflake.net/manuals/user-guide/security-access-control.html).
+>  **SYSADMIN** Il ruolo `SYSADMIN` (o amministratore di sistema) ha i privilegi necessari per creare warehouse, database e altri oggetti in un account. In un ambiente reale, utilizzeresti ruoli diversi per le attività di questo workshop e assegneresti ruoli ai tuoi utenti. Parleremo ancora dei ruoli e del modello di controllo degli accessi di Snowflake nella Sezione 9; inoltre puoi trovare ulteriori informazioni nella [documentazione di Snowflake](https://docs.snowflake.com/user-guide/security-access-control-overview).
 
 ### La storia
 
@@ -213,7 +213,7 @@ Questa sezione illustra nei dettagli i passaggi necessari per:
 
 > aside negative
 > 
->  **Inserire dati in Snowflake** Vi sono molti modi per inserire dati in Snowflake da molte origini, tra cui il comando COPY, l’ingestion automatica di Snowpipe, connettori esterni e soluzioni ETL/ELT di terze parti. Per maggiori informazioni sull’inserimento di dati in Snowflake, consulta la [documentazione di Snowflake](https://docs.snowflake.net/manuals/user-guide-data-load.html). In questo workshop useremo il comando COPY e lo storage AWS S3 per caricare i dati manualmente. In una situazione reale, solitamente si utilizza un processo automatizzato o una soluzione ETL.
+>  **Inserire dati in Snowflake** Vi sono molti modi per inserire dati in Snowflake da molte origini, tra cui il comando COPY, l’ingestion automatica di Snowpipe, connettori esterni e soluzioni ETL/ELT di terze parti. Per maggiori informazioni sull’inserimento di dati in Snowflake, consulta la [documentazione di Snowflake](https://docs.snowflake.com/guides-overview-loading-data). In questo workshop useremo il comando COPY e lo storage AWS S3 per caricare i dati manualmente. In una situazione reale, solitamente si utilizza un processo automatizzato o una soluzione ETL.
 
 Useremo i dati del bike sharing forniti da Citi Bike NYC. I dati sono stati esportati e preparati per l’uso in un bucket Amazon AWS S3 nella regione US-EAST e comprendono informazioni sulla durata degli spostamenti, il tipo di utente, il sesso, l’età e così via. Su AWS S3, questi dati rappresentano 61,5 milioni di righe, 377 oggetti e 1,9 GB compressi.
 
@@ -927,7 +927,7 @@ Per continuare con la nostra storia, supponiamo che un nuovo DBA sia entrato a f
 
 > aside negative
 > 
->  **Controllo degli accessi basato sui ruoli** Snowflake offre un controllo degli accessi molto potente e granulare che definisce gli oggetti e le funzionalità a cui può accedere un utente e il livello di accesso di cui dispone. Per maggiori dettagli, consulta la [documentazione di Snowflake](https://docs.snowflake.net/manuals/user-guide/security-access-control.html).
+>  **Controllo degli accessi basato sui ruoli** Snowflake offre un controllo degli accessi molto potente e granulare che definisce gli oggetti e le funzionalità a cui può accedere un utente e il livello di accesso di cui dispone. Per maggiori dettagli, consulta la [documentazione di Snowflake](https://docs.snowflake.com/user-guide/security-access-control-overview).
 
 ### Creare un nuovo ruolo e aggiungere un utente
 
