@@ -23,7 +23,7 @@ The challenge is that in both cases, once you have data and research, it's often
 
 You want to be able to provide your teams concepts like the one below to spark ideas for marketing campaigns:
 
-![img](assets/diagram_final_concept.jpg)
+<img src="assets/diagram_final_concept.jpg" alt="image of paper towel with christmas patterns" width="450"/>
 This particular concept has a brand logo, a potential idea for Christmas patterns, and a marketing tagline.
 
 Wouldn't it be great if you could generate these automatically and easily? Well, continue on to learn how to do this in Snowflake!
@@ -47,7 +47,7 @@ Wouldn't it be great if you could generate these automatically and easily? Well,
 
 
 <!-- ------------------------ -->
-## About Concept or Idea Generation
+## About Concept / Idea Generation
 Duration: 5
 
 ### Overview
@@ -96,14 +96,14 @@ Other models that have been tested and confirmed to work are listed below along 
 
 
 <!-- ------------------------ -->
-## Setup Our Role and Permissions
+## Setup Roles and Permissions
 Duration: 5
 
 In this section, we will set-up all the required Snowflake objects and permissions for this demo. We will be referencing the `1_set_up.sql` script located [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/1_set_up.sql).
 
 Each step listed below corresponds to the same section in the script.
 
-### Step 0 - Utility Functions
+### Build Utility Functions
 A set of utility functions to help with managing your Snowflake objects, accessing service logs, and turning off services.
 
 Run these commands to see what services, etc are running or suspended. When creating your service, there is a delay until the container is fully loaded or initialized - to check progress we make a call to `SYSTEM$GET_SERVICE_LOGS`.
@@ -129,7 +129,7 @@ ALTER COMPUTE POOL CONCEPT_GEN_POOL_L SUSPEND;
 >
 > After you complete the demo and create a service. We recommend suspending the service after you are done. The running service will keep a compute pool Active as long as it is running.
 
-### Step 1 - Create Roles and Permissions
+### Create Roles and Permissions
 
 In [this step](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/1_set_up.sql#L53) we will create a `CONCEPT_GEN_ROLE` that we will use to create the compute engines and other objects for this demo. Note: Snowflake requires roles other than `ACCOUNTADMIN` to create and execute compute pools.
 
@@ -166,7 +166,7 @@ CREATE STAGE CONCEPT_GEN_INPUT_IMAGES
 ## Create Compute Engines
 Duration: 5
 
-### Step 2 - Create warehouse and compute pools
+### Create warehouse and compute pools
 First we will create the warehouse to power our Notebook
 ``` sql
 CREATE OR REPLACE WAREHOUSE CONCEPT_GEN_NOTEBOOK_WH
@@ -201,10 +201,10 @@ CREATE COMPUTE POOL IF NOT EXISTS CONCEPT_GEN_POOL_L
 
 
 <!-- ------------------------ -->
-## Create External Access Integrations and load sample data
+## Setup Access to External Resources
 Duration: 5
 
-### Step 3 - Create External Access Integrations
+### Create External Access Integrations
 In this step, we will create the External Access Integrations (EAIs) that we will need for our Notebooks and objects to access external resources outside of the Snowflake perimeter.
 
 We will use our `ACCOUNTADMIN` role to create the EAIs and grant usage on them to our `CONCEPT_GEN_ROLE`.
@@ -259,7 +259,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION EXTERNAL_LOGO_ACCESS_INTEGRATION
 GRANT USAGE ON INTEGRATION EXTERNAL_LOGO_ACCESS_INTEGRATION TO ROLE CONCEPT_GEN_ROLE;
 ```
 
-### Step 4 - Create Sample Data
+### Create Sample Data
 In this demo, we will create a mock dataset of product ideas that have been taken from a combination of magazine articles, customer reviews, and qualitative interviews. 
 
 In a full automated architecture flow, this could be a table created from a RAG-based flow which sources from a document repository and converts the information into a structured table of customer comments. For more information on how to do this, you can read [this blog post(https://www.snowflake.com/en/blog/easy-secure-llm-inference-retrieval-augmented-generation-rag-cortex/)] and explore quickstarts [like this one](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/#0).
@@ -288,7 +288,7 @@ VALUES
 
 
 <!-- ------------------------ -->
-## End-to-End Demo in Notebook
+## Run Demo in Notebook
 Duration: 30
 
 > aside negative
@@ -300,7 +300,7 @@ In this section, we will do a full end-to-end creation of a concept image all wi
 ### What we will create
 At the end of this demo, we will create an image that contains a visualization of a product or marketing idea that also contains a brand logo and a marketing tagline.
 
-![img](assets/diagram_final_concept.jpg)
+<img src="assets/diagram_final_concept.jpg" alt="image of paper towel with christmas patterns" width="450"/>
 
 If you do not have a brand logo to use, you can use the [logo of a fictitious brand called "Charisma"](https://raw.githubusercontent.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/refs/heads/main/charisma_paper_towels.png) - located in the Github repo. You can either link to it via URL or upload it to the Snowflake stage you created in the set-up step.
 
@@ -324,7 +324,7 @@ There are a few different methods in this Notebook, so hitting Run All is not re
 
 
 <!-- ------------------------ -->
-## Creating a Text2Image Model Service
+## Create an Image Model Service
 Duration: 30
 
 If we don't want to be limited in using a Snowflake Notebook, but instead want to embed this capability into an application or open up for an API, you will need to create a model service that can serve up the model easily.
@@ -339,7 +339,7 @@ For this demo, you can import the Python Notebook labeled `2b_concept_generator_
 
 Below is the recommended flow with explanations:
 
-### Step 1 - Download Model and Load into Model Registry
+### Download Model and Load into Model Registry
 Run all cells in this step. See below for explanations.
 
 1. Install required packages from PyPi, download the FLUX.1-Schnell model, and create a model class that will load the model into memory and provide a callable function for the model `.predict()`.
@@ -357,14 +357,14 @@ SHOW VERSIONS IN MODEL FLUX_1_SCHNELL;
 
 5. Create a Service using the `.create_service()` function. Note: this step often takes 30+ minutes to complete as a new container image is being created and loaded. To check on service status once the service has started, run the appropriate utility function from the set-up sql file.
 
-### Step 2 - Test the Service
+### Test the Service within Notebook
 Run all cells in this step.
 
 Since we began with a model object and it is already loaded, this step will call `.run()` method and output an image. 
 
 If we are using another access point like a Streamlit app or an external API, we will need to load the model from the Model Registry first. This is covered in the Step 3...
 
-### Step 3 - Test the Service again independently
+### Test the Service outside Notebook
 Run all cells in this step. See below for explanations.
 
 1. Modify the model version obtained from Step 1 with yours as this is needed when using the Snowflake Model Registry.
@@ -407,7 +407,7 @@ This flow is what will guide our Streamlit application in the next section. Whil
 
 
 <!-- ------------------------ -->
-## Creating a Streamlit Application
+## Create a Streamlit Application
 Duration: 5
 
 > aside negative
@@ -416,18 +416,18 @@ Duration: 5
 
 In this section, we will create a Streamlit application that will follow a similar flow to the Notebook path in the last step, but with an easy-to-use UI for non-technical users. We will be referencing the `3_streamlit_app.py` script located [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/3_streamlit_app.py) and can be loaded into a Streamlit app using Snowsight.
 
-### Step 1 - Parameter Definitions
+### Parameter Definitions
 This section will leverage most of the parameters from the previous notebook, including the model version name and your choice of LLM model supported by Cortex Complete.
 
 A user agent has been defined in this section. When accessing images from a URL, some sites disable hotlinking unless there is a custom user agent that provides additional information (e.g. Wikimedia)
 
-### Step 2 - Core Functions
+### Core Functions
 These functions run the various components of the process that you reviewed in Step 3 of the previous Notebook. The only major difference is that we are leveraging Cortex Analyst to convert a submitted idea to a set of artist instructions. This will generate a better image from a text 2 image model.
 
-### Step 3 - Image Function
+### Image Function
 Simple image functions that handle type and color transformations
 
-### Step 4 - Define the Streamlit UI
+### Define the Streamlit UI
 The UI leverages a tabbed interface to control various options. For this demo, we have intentionally omitted the selection of a model and additional parameters that can be passed to a text2image pipeline, such as width & height.
 
 A user can easily select a logo to apply, choose from an existing idea repository table or provide a new idea, and generate a model quickly.
