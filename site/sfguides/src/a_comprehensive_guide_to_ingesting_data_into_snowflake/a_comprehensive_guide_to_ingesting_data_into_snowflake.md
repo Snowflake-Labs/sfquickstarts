@@ -80,13 +80,13 @@ dependencies:
   - pandas=1.5.3
   - pip=23.0.1
   - pyarrow=10.0.1
-  - python=3.8.20
+  - python=3.9
   - python-confluent-kafka
   - python-dotenv=0.21.0
   - python-rapidjson=1.5
-  - snowflake-connector-python=3.0.3
-  - snowflake-ingest=1.0.5
-  - snowflake-snowpark-python=1.4.0
+  - snowflake-connector-python=3.13.2
+  - snowflake-ingest=1.0.10
+  - snowflake-snowpark-python=1.28.0
   - pip:
       - optional-faker==2.1.0
 ```
