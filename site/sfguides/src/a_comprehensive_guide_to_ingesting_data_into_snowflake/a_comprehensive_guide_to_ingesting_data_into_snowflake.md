@@ -804,7 +804,6 @@ The following 2 ingest patterns will need Kafka. I will use [Redpanda](http://re
 To start Kafka locally, create a file called docker-compose.yml with the following contents:
 
 ```yaml
-version: "3.7"
 name: redpanda
 networks:
   redpanda_network:
