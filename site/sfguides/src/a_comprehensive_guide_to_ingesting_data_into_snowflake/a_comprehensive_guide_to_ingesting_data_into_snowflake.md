@@ -940,7 +940,7 @@ services:
       - --memory 1G
       - --mode dev-container
       - --default-log-level=error
-    image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
+    image: redpandadata/redpanda:v24.2.20
     container_name: redpanda-0
     volumes:
       - redpanda-0:/var/lib/redpanda/data
@@ -953,7 +953,7 @@ services:
       - 19644:9644  
   console:
     container_name: redpanda-console
-    image: docker.redpanda.com/vectorized/console:v2.2.3
+    image: redpandadata/console:v2.8.3
     networks:
       - redpanda_network
     entrypoint: /bin/sh
