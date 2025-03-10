@@ -24,6 +24,7 @@ The challenge is that in both cases, once you have data and research, it's often
 You want to be able to provide your teams concepts like the one below to spark ideas for marketing campaigns:
 
 <img src="assets/diagram_final_concept.jpg" alt="image of paper towel with christmas patterns" width="450"/>
+
 This particular concept has a brand logo, a potential idea for Christmas patterns, and a marketing tagline.
 
 Wouldn't it be great if you could generate these automatically and easily? Well, continue on to learn how to do this in Snowflake!
