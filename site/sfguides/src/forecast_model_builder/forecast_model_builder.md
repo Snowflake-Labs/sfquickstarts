@@ -19,7 +19,7 @@ The Forecast Model Builder accelerates time to value by offering modeling flexib
 ![App](assets/highlevelarch.png)
 
 ### Prerequisites
-- A Gitlab account and access to the [Emerging Solutions Toolbox Gitlab Repository for Forecast Model Builder](https://github.com/Snowflake-Labs/emerging-solutions-toolbox).
+- A Github account and access to the [Emerging Solutions Toolbox Github Repository for Forecast Model Builder](https://github.com/Snowflake-Labs/emerging-solutions-toolbox).
 
 ### What You’ll Learn 
 This guide will walk you through the process of:
@@ -29,7 +29,7 @@ This guide will walk you through the process of:
 
 ### What You’ll Need 
 - A Snowflake account with CREATE DATABASE permissions.
-- The aforementinoned Github Repository
+- The aforementioned Github Repository
 - If you want to run the notebooks using Container Runtime, you will need to use a role other than ACCOUNTADMIN, SECURITYADMIN or ORGADMIN.
 
 ### What You’ll Build 
@@ -66,7 +66,7 @@ To setup the Forecast Model Builder solution in Snowflake you will:
    
     b. Go to the Forecast Model Builder Deployment Notebook and run the DEPLOYMENT cell in the notebook.  This cell will create a stage if it doesn't already exist named FORECAST_MODEL_BUILDER.BASE.NOTEBOOK_TEMPLATES.
 
-    c Upload a zipped copy of the Forecast Model Builder Gitlab Repository to that stage.
+    c Upload a zipped copy of the Forecast Model Builder Github Repository to that stage.
     ![Image](assets/adddata.png)
 
     d. Re-run the DEPLOYMENT cell
@@ -177,17 +177,13 @@ Duration: 4
 This notebook is designed to perform **inference** using the trained time series model from the modeling pipeline. It leverages **Snowflake's Snowpark** environment to efficiently make predictions on new data, ensuring seamless integration between model training and deployment.
 
 **Key Highlights**
-- **Model Deployment & Inference**  
-  Uses a pre-trained model from the **Snowflake Model Registry** to generate forecasts on fresh time series data.  
+- **Model Deployment & Inference** Uses a pre-trained model from the **Snowflake Model Registry** to generate forecasts on fresh time series data.  
 
-- **Feature Engineering for Predictions**  
-  Applies time-based transformations, including rolling averages and datetime feature expansion, to maintain consistency between training and inference.  
+- **Feature Engineering for Predictions** Applies time-based transformations, including rolling averages and datetime feature expansion, to maintain consistency between training and inference.  
 
-- **Snowflake-Powered Data Processing**  
-  Processes large-scale inference data directly within Snowflake, leveraging Snowpark's **distributed computing capabilities** to avoid unnecessary data movement.  
+- **Snowflake-Powered Data Processing** Processes large-scale inference data directly within Snowflake, leveraging Snowpark's **distributed computing capabilities** to avoid unnecessary data movement.  
 
-- **Efficient Forecast Storage**  
-  Saves inference results into a dedicated Snowflake table, ensuring that forecasts are readily available for downstream analysis and business applications.  
+- **Efficient Forecast Storage** Saves inference results into a dedicated Snowflake table, ensuring that forecasts are readily available for downstream analysis and business applications.  
 
 By the end of this notebook, you'll have a scalable and efficient pipeline for time series inference, enabling real-time and batch forecasting within Snowflake’s powerful data ecosystem.
 ___
