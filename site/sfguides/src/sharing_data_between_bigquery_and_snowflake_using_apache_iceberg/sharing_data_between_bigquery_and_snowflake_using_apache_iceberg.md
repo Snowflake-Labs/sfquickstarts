@@ -46,7 +46,7 @@ There is often no one-size-fits-all approach to tackling complex business challe
 
 <!-- ------------------------ -->
 ## Snowflake Managed Iceberg to BigQuery
-Duration: 10
+Duration: 18
 
 In this section, you will create a table in Snowflake using the Iceberg format and also create a BigLake (external) table in BigQuery that points to the same Iceberg files.
 
@@ -243,7 +243,7 @@ SYSTEM$GET_ICEBERG_TABLE_INFORMATION('<iceberg_table_name>')
 
 <!-- ------------------------ -->
 ## Big Lake Managed table to Snowflake
-Duration: 17
+Duration: 19
 
 In this section, you will create a table in BigQuery using the Iceberg format and also create an Iceberg (external) table in Snowflake that points to the same Iceberg files.
 
