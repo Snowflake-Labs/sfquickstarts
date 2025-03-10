@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: iceberg, google, gcp, bigquery, open
 
-# Using Snowflake Cortex And Streamlit With Geospatial Data
+# Using Snowflake and Big Query with Iceberg
 <!-- ------------------------ -->
 ## Overview 
 Duration: 10
