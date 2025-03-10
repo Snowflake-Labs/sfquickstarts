@@ -7,7 +7,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Getting Started, Data Engineering, Machine Learning, Snowpark
 
-# Snowflake Guide Template
+# Forecast Model Builder
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
