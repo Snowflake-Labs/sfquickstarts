@@ -1,11 +1,11 @@
 author: Charlie Hammond
 id: getting-started-with-internal-marketplace
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
+categories: Data-Sharing, Datagovernance
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Sharing, Data Governance 
 
 
 # Getting Started with Snowflake Internal Marketplace
