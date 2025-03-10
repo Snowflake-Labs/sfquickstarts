@@ -95,7 +95,7 @@ NEXT_PUBLIC_SEARCH_SERVICE_PATH=DATABASE.SCHEMA.SAMPLE_SEARCH_SERVICE
 
 ```
 # Your Snowflake account name only
-SNOWFLAKE_ACCOUNT=<your_account_name>
+SNOWFLAKE_ACCOUNT=<your_account_identifier>
 
 # Your Snowflake username
 SNOWFLAKE_USER=<your_username>
@@ -107,6 +107,10 @@ SNOWFLAKE_RSA_KEY=<your_private_rsa_key>
 # Passphrase for RSA Key if it was encrypted
 SNOWFLAKE_RSA_PASSPHRASE=<your_passphrase>
 ```
+
+> aside negative
+>
+> NOTE: For help with setting your-account-identifier, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier?_fsi=LnJgA8TM).
 
 ### UI Rendering Properties (Optional)
 
