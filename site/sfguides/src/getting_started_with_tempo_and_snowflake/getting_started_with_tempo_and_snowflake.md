@@ -35,7 +35,8 @@ The data that is provided comes from the Canadian Institute for Cybersecurity.  
 Duration: 2
 
 1. Find The App
-In the Snowflake app Marketplace you can find the Tempo app or simply click [Here](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/deeptempo-cybersecurity-tempo-cybersecurity-incident-identification-via-deep-learning?search=tempo).  
+
+In the Snowflake app Marketplace you can find the Tempo app or simply click [Here](https://app.snowflake.com/marketplace/listing/GZTYZOYXHP3).  
 
 2. If you are running on your own data you will have the select the storage before clicking the launch app button in the deployment phase.
 To select your table please click `add` next to the `on Incident Inference Logs` section. In the popup after clicking the `add` button click the `+Select Data` button and find the table you want to use on the dropdown.  Select it and click `Save`.

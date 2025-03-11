@@ -11,7 +11,7 @@ tags: Getting Started, Data Science, Data Engineering, Snowpark, Snowflake Corte
 <!-- ------------------------ -->
 ## Overview
 ![banner](assets/technology.png)
-**Duration: 5 minutes**
+Duration: 5
 
 Sales teams in SaaS organizations often face challenges in consolidating and analyzing call data to identify gaps in their go-to-market (GTM) strategies and product offerings. A common limitation is the inability to comprehensively capture and centralize transcripts across all sales calls, which results in fragmented insights. This lack of a holistic view creates challenges for both GTM and product teams:
 
@@ -57,7 +57,7 @@ This guide covers:
 
 
 ## Data and Snowflake Setup
-**Duration: 15 minutes**
+Duration: 15
 
 > **You can access the full code in [this GIT REPO](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-cortex-snowflake-notebooks/tree/main).**
 
@@ -209,7 +209,7 @@ COMMENT = '{"origin":"sf_sit-is", "name":"ai_assistant_sales_call", "version":{"
 ```
 
 ## Access Notebook
-**Duration: 20 minutes**
+Duration: 20
 
 The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
 
@@ -221,7 +221,7 @@ Within this notebook, you'll explore sales call transcripts, apply Snowflake Cor
 
 
 ## Run Streamlit Application
-**Duration: 20 minutes**
+Duration: 20
 
 Chatbot Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open **ai_assistant_sales_calls_chatbot** and explore.
 
@@ -253,8 +253,7 @@ When you submit a question, the system processes your input by generating Python
 
 
 ## Conclusion And Resources
-
-**Duration: 1 minute**
+Duration: 1
 
 In this guide, you learned how to use Snowflake's Cortex AI to analyze sales call transcripts and extract actionable insights to improve go-to-market (GTM) strategies and product offerings. You also learned how to use Streamlit to create an intuitive application for interacting with the analyzed data.
 

@@ -1,17 +1,20 @@
 author: Sikha Das
 id: ai_agent_health_payers_cc
-summary: Building an AI Agent for Healthcare Payers Contact Center Using Snowflake Cortex, Notebooks, and ML Classification
+summary: Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification
 categories: Getting-Started, data-science-&-ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowpark Python, Streamlit, Data-Science-&-Ai
 
-# Building an AI Agent for Healthcare Payers Contact Center Using Snowflake Cortex, Notebooks, and ML Classification
+# Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification
 <!-- ------------------------ -->
 ## Overview
 ![banner](assets/banner.png)
-**Duration: 5 minutes**
+
+Duration: 5
+
+In this quickstart, you will learn how to easily build an AI agent entirely in Snowflake. We will walk through a scenario in the healthcare industry to illustrate this.
 
 Contact Center is a critical business function for a Payer/Health Plan. There is heightened focus particularly with the growing market demand for customer centric experiences in Healthcare. Improving the operational efficiency of contact centers and reducing agent burnout are also key priorities for all enterprises.
 
@@ -35,23 +38,21 @@ Based on a detailed study, you have identified key challenges faced by Contact C
 - **Lack of guided workflows:** Agents are expecting advanced features such as recommended "next best action" and AI generated drafts to get their tasks done more efficiently.
 
 ### What You Will Learn
-
-- How to use [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and [Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index) for unstructured data processing
+- How to use [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) to develop agentic workflows using any open-source model such as Whisper
 - How to leverage [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) for a hybrid (vector and keyword) search engine on text data
 - How to use [Cortex Analyst](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst?_fsi=6CVthwI0) to help you create applications capable of reliably answering business questions based on your structured data in Snowflake
-- How to use [ML Classification](https://docs.snowflake.com/en/user-guide/ml-functions/classification) to build a classification model in a low-code way
+- How to use [ML Functions](https://docs.snowflake.com/en/user-guide/ml-functions/classification) to build a classification model in a low-code way
 - How to use [Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) (Cortex Complete) for access to industry-leading large language models (LLMs)
 - How to build a chatbot application using [Streamlit](https://docs.streamlit.io/) in Snowflake
 
 ### Prerequisites
 - A [GitHub](https://github.com/) Account to access the [GIT REPO](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main)
-- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for [a free trial](https://signup.snowflake.com/?_fsi=OuImfiWC&_fsi=OuImfiWC) or use a different role.
+- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures.
 
 ### What You Will Build
-
 - A Snowflake Notebook on Container Runtime to process unstructured data (audio files and PDFs) and build a Caller Intent ML Classification Model and execute predictions:
      - Audio-to-text transcription using `whisper`
-     - PDF processing and text chunking using Snowpark
+     - PDF processing and text chunking using Snowflake LLM functions
 - A chatbot application using Streamlit
 
 **Architecture Diagram:**
@@ -62,7 +63,8 @@ A simplified "agentic" workflow ties these features together to provide a single
 <img src="assets/payer_cc_agentic.png"/>
 
 ## Data and Snowflake Setup
-**Duration: 15 minutes**
+
+Duration: 15
 
 > **You can access the full code in [this GIT REPO](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main).**
 
@@ -96,6 +98,8 @@ USE SCHEMA PAYERS_CC_SCHEMA;
 /* NOTEBOOK AND STREAMLIT SETUP */
 ----------------------------------
 ----------------------------------
+USE ROLE ACCOUNTADMIN;
+
 DROP COMPUTE POOL IF EXISTS PAYERS_GPU_POOL;
 
 CREATE COMPUTE POOL PAYERS_GPU_POOL
@@ -120,6 +124,12 @@ CREATE OR REPLACE NETWORK RULE PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule
 CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION payers_pipy_access_integration
         ALLOWED_NETWORK_RULES = (PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule)
         ENABLED = TRUE;
+
+GRANT OWNERSHIP ON COMPUTE POOL PAYERS_GPU_POOL TO ROLE SYSADMIN;
+GRANT OWNERSHIP ON INTEGRATION payers_pipy_access_integration TO ROLE SYSADMIN;
+GRANT OWNERSHIP ON INTEGRATION payers_allow_all_integration TO ROLE SYSADMIN;
+
+USE ROLE SYSADMIN;
 
 -- Create email integration for streamlit app
 CREATE OR REPLACE NOTIFICATION INTEGRATION payers_cc_email_int
@@ -276,7 +286,8 @@ COMMENT = '{"origin":"sf_sit-is", "name":"payer_call_center_assistant_v2", "vers
 ```
 
 ## Access Setup Notebook
-**Duration: 20 minutes**
+
+Duration: 20
 
 The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
 
@@ -289,7 +300,8 @@ Within this notebook, you'll prepare all the unstructured data needed before you
 You will also predict the intent of a caller using historical data.This will allow Contact Center Agents to be better prepared when faced with an incoming call.
 
 ## Run Streamlit Application
-**Duration: 20 minutes**
+
+Duration: 20
 
 The Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open `PAYERS_CC_CHATBOT` and explore.
 
@@ -299,21 +311,21 @@ This app simulates a few different scenarios where Contact Center Agents have to
 
 ## Conclusion And Resources
 
-**Duration: 1 minute**
+Duration: 1
 
-In this guide, you processed a knowledge base of unstructured and structured Enterprise data and then used it to build an AI/ML-powered Assistant for a Contact Center.
+In this guide, you processed a knowledge base of unstructured and structured Enterprise data and then used it to build an AI-powered Assistant for a Contact Center.
 
 ### What You Learned
-
 - How to use Snowflake Notebooks for unstructured data processing
-- How to build a Caller Intent ML Classification Model and execute predictions using Snowflake's ML Classifcation
+- How to build a Caller Intent ML Classification Model and execute predictions with low-code using Snowflake's ML Functions
 - How to leverage Cortex Search for a hybrid (vector and keyword) search engine on text data
 - How to use Cortex LLM functions (Cortex Complete) for access to industry-leading large language models (LLMs)
 - How to prototype a UI using Streamlit
 
 ### Related Resources
+- [Docs: Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
 - [Docs: Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex.html)
 - [Docs: Snowflake ML Classification](https://docs.snowflake.com/en/user-guide/ml-functions/classification)
 - [Docs: Streamlit](https://docs.streamlit.io/)
 - [Tasty Bytes: Enhancing Customer Experience](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html#0)
-- [Building AI Assistant using Snowflake Cortex in Snowflake Notebooks](https://quickstarts.snowflake.com/guide/ai_assistant_for_sales_calls/index.html#0)
+- [Quickstart: Building AI Assistant using Snowflake Cortex in Snowflake Notebooks](https://quickstarts.snowflake.com/guide/ai_assistant_for_sales_calls/index.html#0)

@@ -110,13 +110,11 @@ Duration: 5
 
 Duration: 5
 
-- `Streamlit`: Creates an intuitive chat interface  
 - `snowflake-ml-python`: For Snowflake Cortex capabilities
 - `snowflake`: For Snowflake capabilities
 
 ```py
 # Import python packages
-import streamlit as st
 import pandas as pd
 import json
 
@@ -340,6 +338,8 @@ Here we add our packages that we will use for our project:
 * In the code editor, paste the following code:
 
 ```py
+import json
+import streamlit as st
 from snowflake.core import Root
 from snowflake.snowpark.context import get_active_session
 from snowflake.cortex import Complete

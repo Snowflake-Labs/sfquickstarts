@@ -10,9 +10,10 @@ tags: Getting Started, Data Science, Machine Learning, Model Registry
 # Scale Embeddings with Snowflake Notebooks on Container Runtime
 <!-- ------------------------ -->
 ## Overview 
+
 Duration: 1
 
-[Snowflake Notebooks in the Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) are a powerful IDE option for building ML workloads at scale. Container Runtime (Public Preview) is a fully managed container environment that supports building and operationalizing a wide variety of resource-intensive ML workflows entirely within Snowflake. Using Snowflake Notebooks in Container Runtime gives you access to distributed processing on both CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture and Model Registry integration. Container Runtime also provides flexibility to leverage a set of preinstalled packages or the ability to pip install any open-source package of choice.  
+[Snowflake Notebooks in the Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) are a powerful IDE option for building ML workloads at scale. Container Runtime is a fully managed container environment that supports building and operationalizing a wide variety of resource-intensive ML workflows entirely within Snowflake. Using Snowflake Notebooks in Container Runtime gives you access to distributed processing on both CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture and Model Registry integration. Container Runtime also provides flexibility to leverage a set of preinstalled packages or the ability to pip install any open-source package of choice.  
 
 This guide will show you how to experiment with and scale embeddings generation in Snowflake Notebooks on Container Runtime.
 
@@ -25,11 +26,11 @@ This guide will show you how to experiment with and scale embeddings generation 
 
 ### What You’ll Learn
 - How to load an open source embedding model
-- How to generate embeddings using GPU compute
+- How to generate embeddings using GPU compute with Snowflake Notebooks on Container Runtime
 - How to evalulate the embeddings for RAG
 - How to store embeddings as a Vector Type in a Snowflake table
-- How to log and deploy the open source embedding model
-- How to perform a large batch embeddings generation (inference) job.
+- How to log and deploy the open source embedding model using Model Registry and Model Serving in SPCS
+- How to perform a large batch embeddings generation (inference) job using Model Serving in SPCS
 
 ### What You’ll Build 
 You're a Data Scientist looking to experiment with an open source embedding model and evaluate a dataset with it before deciding to deploy it for a large batch embeddings generation (inference) job.
@@ -42,6 +43,7 @@ You're a Data Scientist looking to experiment with an open source embedding mode
 
 <!-- ------------------------ -->
 ## Setup Your Account
+
 Duration: 5
 
 Complete the following steps to setup your account:
@@ -50,12 +52,13 @@ Complete the following steps to setup your account:
 - Run all commands to create Snowflake objects
 
 ```sql
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is", "name":"cr_notebooks_embeddings", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 USE ROLE ACCOUNTADMIN;
+SET USERNAME = (SELECT CURRENT_USER());
+SELECT $USERNAME;
 
--- Using SYSADMIN, create a new role for this exercise and grant to applicable users
+-- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
 CREATE OR REPLACE ROLE EMBEDDING_MODEL_HOL_USER;
-GRANT ROLE EMBEDDING_MODEL_HOL_USER to USER SIKHADAS;
+GRANT ROLE EMBEDDING_MODEL_HOL_USER to USER identifier($USERNAME);
 
 -- Next create a new database and schema,
 CREATE DATABASE IF NOT EXISTS EMBEDDING_MODEL_HOL_DB;
@@ -102,13 +105,15 @@ GRANT USAGE ON WAREHOUSE EMBEDDING_MODEL_HOL_WAREHOUSE to ROLE EMBEDDING_MODEL_H
 
 -- Create compute pool to leverage GPUs (see docs - https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool)
 
+--DROP COMPUTE POOL IF EXISTS GPU_NV_S_COMPUTE_POOL;
+
 CREATE COMPUTE POOL IF NOT EXISTS GPU_NV_S_COMPUTE_POOL
     MIN_NODES = 4
     MAX_NODES = 4
     INSTANCE_FAMILY = GPU_NV_S;
 
 -- Grant usage of compute pool to newly created role
-GRANT USAGE ON COMPUTE POOL GPU_NV_S_COMPUTE_POOL to ROLE EMBEDDING_MODEL_HOL_USER;
+GRANT OWNERSHIP ON COMPUTE POOL GPU_NV_S_COMPUTE_POOL TO ROLE EMBEDDING_MODEL_HOL_USER;
 
 -- Grant ownership of database and schema to newly created role
 GRANT OWNERSHIP ON DATABASE EMBEDDING_MODEL_HOL_DB TO ROLE EMBEDDING_MODEL_HOL_USER COPY CURRENT GRANTS;
@@ -122,26 +127,12 @@ GRANT ALL ON ALL SCHEMAS IN DATABASE EMBEDDING_MODEL_HOL_DB  TO ROLE ACCOUNTADMI
 CREATE IMAGE REPOSITORY IF NOT EXISTS my_inference_images;
 GRANT OWNERSHIP ON IMAGE REPOSITORY my_inference_images TO ROLE EMBEDDING_MODEL_HOL_USER;
 
-GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE EMBEDDING_MODEL_HOL_USER;
-
---SETUP IS NOW COMPLETE
-
---NOW WE WILL BEGIN OUR MODELING WORK 
-
---WE WILL NEED TO WAIT FOR OUR COMPUTE POOL TO BE ACTIVE BEFORE WE CAN USE IT
-DESCRIBE COMPUTE POOL GPU_NV_S_COMPUTE_POOL;
-
--- CLICK ON NOTEBOOKS IN THE LEFT HAND MENU AND CHOOSE TO IMPORT A NEW NOTEBOOK FROM .ipynb FILE. 
--- SELECT THE DATABASE, SCHEMA, WAREHOUSE, COMPUTE_POOL, AND EXTERNAL ACCESS INTEGRATION WE HAVE JUST 
--- CREATED AND FOLLOW THE INSTRUCTIONS IN THE NOTEBOOK FROM THERE!
-
---LATER, YOU CAN RUN THIS COMMAND TO SEE WHAT SERVICES ARE RUNNING:
---SHOW SERVICES IN COMPUTE POOL GPU_NV_S_COMPUTE_POOL;
-
+GRANT CREATE SERVICE ON SCHEMA EMBEDDING_MODEL_HOL_SCHEMA TO ROLE EMBEDDING_MODEL_HOL_USER;
 ```
 
 <!-- ------------------------ -->
 ## Run the Notebook
+
 Duration: 60
 
 - Download the notebook: [0_start_here](https://github.com/Snowflake-Labs/sfguide-scale-embeddings-with-snowflake-notebooks-on-container-runtime/blob/main/notebooks/0_start_here.ipynb)
@@ -161,6 +152,7 @@ Duration: 60
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
+
 Duration: 1
 
 In conclusion, running Snowflake Notebooks on Container Runtime offers a robust and flexible infrastructure for managing large-scale, advanced data science and machine learning workflows directly within Snowflake. 
@@ -181,5 +173,6 @@ Ready for more? After you complete this quickstart, you can try one of the follo
 ### Related Resources
 - [Documentation: Container Runtime for ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml)
 - [Documentation: Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
+- [Documentation: Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
 - [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
