@@ -98,6 +98,9 @@ gh repo clone Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-
 Some steps in this quickstart will be initiated from **Snowflake Notebooks** for transparency. In a real-world scenario, these steps would typically be part of your codebase and executed using the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) and/or **GitHub Actions**.  
 
 <img src="assets/import_notebook.png" width="800" />
+
+Pick `00_start_here.ipynb` that is in the root folder of the cloned repository. 
+
 <img src="assets/import_notebook2.png" width="800" />
 
 Once imported, it should look like this. **Congratulations! The first step is complete!** 🎉  
@@ -106,14 +109,43 @@ Once imported, it should look like this. **Congratulations! The first step is co
 
 
 ### Configure local dbt environment
-By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Notebooks, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.
+In the repository you just checked out, there is a `./dbt_project` folder containing pre-built dbt pipelines. In `./dbt_project/dbt_project.yml`, you can see that the project expects to find a connection profile called `dbt_project`, which it will use later to access your Snowflake environment.
 
+Let's open `~/.dbt/profiles.yml` and add the following content. (Note: You will need to update the configuration with your Snowflake account locator and password for the dbt_hol_user.)
+
+```yml
+dbt_project:
+  outputs:
+    dev:
+      account: your_snowflake_account_locator
+      database: dbt_hol_2025_dev
+      password: your_snowflake_user_password
+      role: dbt_hol_role_dev
+      schema: public
+      threads: 100
+      type: snowflake
+      user: dbt_hol_user
+      warehouse: vwh_dbt_hol_dev
+    prod:
+      account: your_snowflake_account_locator
+      database: dbt_hol_2025_prod
+      password: your_snowflake_user_password
+      role: dbt_hol_role_prod
+      schema: public
+      threads: 100
+      type: snowflake
+      user: dbt_hol_user
+      warehouse: vwh_dbt_hol_prod
+  target: dev
+```
+As you can see, we are setting up two targets: **dev** and **prod**, with **dev** as the default.
+For more info on configuring your local dbt profiles configuration please refer to the [docs](https://docs.getdbt.com/docs/core/connect-data-platform/profiles.yml).
 
 <!-- ------------------------ -->
-## Setup Snowflake
+## Access Data Products in Snowflake Marketplace
 Duration: 10
 
-Since the focus of this Quickstart is on Notebooks, we're going to use a Notebook to set up our Snowflake demo environment. 
+Now let's 
 
 ### Download the 00 Notebook
 The Notebook we're going to use to set up our Snowflake demo environment can be found in your forked repository. From the GitHub web UI open the `00_start_here.ipynb` file and then download the raw file (using one of the links near the top right of the page).
