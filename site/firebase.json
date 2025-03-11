@@ -69,12 +69,12 @@
     },
     {
       "source": "/guide/build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex/{,/**}",
-      "destination": "/guide/asking_questions_to_your_own_documents_with_snowflake_cortex",
+      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
       "type": 301
     },
     {
       "source": "/guide/prompt_engineering_and_llm_evaluation/{,/**}",
-      "destination": "/guide/asking_questions_to_your_own_documents_with_snowflake_cortex",
+      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
       "type": 301
     },
     {
@@ -136,7 +136,12 @@
       "source": "guide/getting_started_with_cybersyn_financial_and_economic_essentials_app/{,/**}",
       "destination": "/guide/getting_started_with_snowpark_for_python_streamlit",
       "type": 301
-    }    
+    },
+    {
+      "source": "guide/asking_questions_to_your_own_documents_with_snowflake_cortex/{,/**}",
+      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
+      "type": 301
+    }        
     ]
   }
 }

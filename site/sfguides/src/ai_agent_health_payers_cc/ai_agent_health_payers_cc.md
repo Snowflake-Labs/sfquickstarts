@@ -83,7 +83,7 @@ To get started using Snowflake Notebooks, first login to Snowsight. In the top-l
 Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to create Snowflake objects.
 
 ```sql
-USE ROLE ACCOUNTADMIN;
+USE ROLE SYSADMIN;
 
 CREATE OR REPLACE WAREHOUSE PAYERS_CC_WH; --by default, this creates an XS Standard Warehouse
 CREATE OR REPLACE DATABASE PAYERS_CC_DB;
@@ -98,6 +98,8 @@ USE SCHEMA PAYERS_CC_SCHEMA;
 /* NOTEBOOK AND STREAMLIT SETUP */
 ----------------------------------
 ----------------------------------
+USE ROLE ACCOUNTADMIN;
+
 DROP COMPUTE POOL IF EXISTS PAYERS_GPU_POOL;
 
 CREATE COMPUTE POOL PAYERS_GPU_POOL
@@ -122,6 +124,12 @@ CREATE OR REPLACE NETWORK RULE PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule
 CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION payers_pipy_access_integration
         ALLOWED_NETWORK_RULES = (PAYERS_CC_DB.PAYERS_CC_SCHEMA.pipy_network_rule)
         ENABLED = TRUE;
+
+GRANT OWNERSHIP ON COMPUTE POOL PAYERS_GPU_POOL TO ROLE SYSADMIN;
+GRANT OWNERSHIP ON INTEGRATION payers_pipy_access_integration TO ROLE SYSADMIN;
+GRANT OWNERSHIP ON INTEGRATION payers_allow_all_integration TO ROLE SYSADMIN;
+
+USE ROLE SYSADMIN;
 
 -- Create email integration for streamlit app
 CREATE OR REPLACE NOTIFICATION INTEGRATION payers_cc_email_int

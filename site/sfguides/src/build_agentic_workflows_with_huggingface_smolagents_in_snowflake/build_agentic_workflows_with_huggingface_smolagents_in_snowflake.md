@@ -63,7 +63,7 @@ Duration: 10
 
 * On the left hand navigation menu, click on **Projects » Notebooks**
 * On the top right, click on **Notebook** down arrow and select **Import .ipynb file** from the dropdown menu
-* Select **Gen_AI_Video_Search.ipynb** file you downloaded in the step above
+* Select **huggingface_smolagents_notebook_app.ipynb** file you downloaded in the step above
 * In the Create Notebook popup
     * For Notebook location, select `DASH_DB` and `DASH_SCHEMA`
     * For SQL warehouse, select `DASH_WH_S`
@@ -121,7 +121,7 @@ Here we create a new tools **get_dzone_refcards**, **read_dzone_refcards**, and 
 
 **Cell 6** 
 
-Here we create a new instance of **CodeAgent** and provide the three tools created in the previous step with prompt `Generate a list of popular DZone RefCard summaries by reading them.`.  
+Here we create a new instance of **CodeAgent** and provide the three tools created in the previous step with prompt `Generate a list of 5 popular DZone RefCard summaries by reading them.`.  
 
 If all goes well, you should see the output similar to the following:
 

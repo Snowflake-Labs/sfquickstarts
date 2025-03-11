@@ -26,11 +26,11 @@ This guide will show you how to experiment with and scale embeddings generation 
 
 ### What You’ll Learn
 - How to load an open source embedding model
-- How to generate embeddings using GPU compute
+- How to generate embeddings using GPU compute with Snowflake Notebooks on Container Runtime
 - How to evalulate the embeddings for RAG
 - How to store embeddings as a Vector Type in a Snowflake table
-- How to log and deploy the open source embedding model
-- How to perform a large batch embeddings generation (inference) job.
+- How to log and deploy the open source embedding model using Model Registry and Model Serving in SPCS
+- How to perform a large batch embeddings generation (inference) job using Model Serving in SPCS
 
 ### What You’ll Build 
 You're a Data Scientist looking to experiment with an open source embedding model and evaluate a dataset with it before deciding to deploy it for a large batch embeddings generation (inference) job.
@@ -104,7 +104,8 @@ CREATE OR REPLACE WAREHOUSE EMBEDDING_MODEL_HOL_WAREHOUSE WITH
 GRANT USAGE ON WAREHOUSE EMBEDDING_MODEL_HOL_WAREHOUSE to ROLE EMBEDDING_MODEL_HOL_USER;
 
 -- Create compute pool to leverage GPUs (see docs - https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool)
-DROP COMPUTE POOL IF EXISTS GPU_NV_S_COMPUTE_POOL;
+
+--DROP COMPUTE POOL IF EXISTS GPU_NV_S_COMPUTE_POOL;
 
 CREATE COMPUTE POOL IF NOT EXISTS GPU_NV_S_COMPUTE_POOL
     MIN_NODES = 4
@@ -112,7 +113,7 @@ CREATE COMPUTE POOL IF NOT EXISTS GPU_NV_S_COMPUTE_POOL
     INSTANCE_FAMILY = GPU_NV_S;
 
 -- Grant usage of compute pool to newly created role
-GRANT OWNERSHIP ON COMPUTE POOL GPU_NV_S_COMPUTE_POOL to ROLE EMBEDDING_MODEL_HOL_USER;
+GRANT OWNERSHIP ON COMPUTE POOL GPU_NV_S_COMPUTE_POOL TO ROLE EMBEDDING_MODEL_HOL_USER;
 
 -- Grant ownership of database and schema to newly created role
 GRANT OWNERSHIP ON DATABASE EMBEDDING_MODEL_HOL_DB TO ROLE EMBEDDING_MODEL_HOL_USER COPY CURRENT GRANTS;
@@ -126,23 +127,7 @@ GRANT ALL ON ALL SCHEMAS IN DATABASE EMBEDDING_MODEL_HOL_DB  TO ROLE ACCOUNTADMI
 CREATE IMAGE REPOSITORY IF NOT EXISTS my_inference_images;
 GRANT OWNERSHIP ON IMAGE REPOSITORY my_inference_images TO ROLE EMBEDDING_MODEL_HOL_USER;
 
-GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE EMBEDDING_MODEL_HOL_USER;
-
---SETUP IS NOW COMPLETE
-
---NOW WE WILL BEGIN OUR MODELING WORK 
-
---WE WILL NEED TO WAIT FOR OUR COMPUTE POOL TO BE ACTIVE BEFORE WE CAN USE IT
-USE ROLE EMBEDDING_MODEL_HOL_USER;
-DESCRIBE COMPUTE POOL GPU_NV_S_COMPUTE_POOL;
-
--- CLICK ON NOTEBOOKS IN THE LEFT HAND MENU AND CHOOSE TO IMPORT A NEW NOTEBOOK FROM .ipynb FILE. 
--- SELECT THE DATABASE, SCHEMA, WAREHOUSE, COMPUTE_POOL, AND EXTERNAL ACCESS INTEGRATION WE HAVE JUST 
--- CREATED AND FOLLOW THE INSTRUCTIONS IN THE NOTEBOOK FROM THERE!
-
---LATER, YOU CAN RUN THIS COMMAND TO SEE WHAT SERVICES ARE RUNNING:
---SHOW SERVICES IN COMPUTE POOL GPU_NV_S_COMPUTE_POOL;
-
+GRANT CREATE SERVICE ON SCHEMA EMBEDDING_MODEL_HOL_SCHEMA TO ROLE EMBEDDING_MODEL_HOL_USER;
 ```
 
 <!-- ------------------------ -->
@@ -188,5 +173,6 @@ Ready for more? After you complete this quickstart, you can try one of the follo
 ### Related Resources
 - [Documentation: Container Runtime for ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml)
 - [Documentation: Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
+- [Documentation: Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
 - [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
