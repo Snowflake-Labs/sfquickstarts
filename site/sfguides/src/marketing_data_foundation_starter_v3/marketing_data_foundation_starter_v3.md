@@ -120,7 +120,7 @@ export SNOWFLAKE_DEFAULT_CONNECTION_NAME=marketing_demo_v3_conn
 Duration: 2
 
 #### To use VSCode:
-Open the project with VSCode and select the [**deployment.ipynb**](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3/blob/main/scripts/scripts/deployment_na_spcs.ipynb) file from the File explorer. Then, select the virtual environment you created as the execution kernel for this notebook.
+Open the project with VSCode and select the [**deployment.ipynb**](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3/blob/main/scripts/deployment_na_spcs.ipynb) file from the File explorer. Then, select the virtual environment you created as the execution kernel for this notebook.
 
 ![vscode](assets/vscode.png)
 
