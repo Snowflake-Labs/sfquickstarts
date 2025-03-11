@@ -261,7 +261,6 @@ Use this cleanup script to remove all objects created in this Quickstart.
 Duration: 2
 
 ### Conclusion
-Duration: 1
 
 Congratulations! You have successfully learned how to easily build an end-to-end Native Application and load sample data.
  
