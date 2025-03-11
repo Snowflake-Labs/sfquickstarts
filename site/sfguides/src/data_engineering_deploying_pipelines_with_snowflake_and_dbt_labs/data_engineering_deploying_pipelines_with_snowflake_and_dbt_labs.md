@@ -87,75 +87,26 @@ In order for Snowflake to authenticate to your GitHub repository, you will need 
 
 Make sure to save the token before leaving the page, as we will be using it a couple of times during this Quickstart.
 
-### Fork the Quickstart Repository
-You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Deploying Pipelines with Snowflake and dbt labs](https://github.com/Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
+### Clone the Quickstart Repository
+You'll need to create a local clone of the repository for this Quickstart from your GitHub account. Visit the [Deploying Pipelines with Snowflake and dbt labs](https://github.com/Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs) and click on the "Code" button near the top right. 
 
-### Create the dev Branch
-During this Quickstart we will do our development work in a `dev` branch of the repository. So let's create the `dev` branch in your forked repository now. To do that begin by clicking on the branch selector just above the list of files in the repository, type the word "dev" (all lowercase) into the "Find or create a branch..." box and then click on "Create branch dev from main" (see screenshot below).
+```shell
+gh repo clone Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs
+```
 
-<img src="assets/context.png" width="800" />
+### Import the notebook
+Some steps in this quickstart will be initiated from **Snowflake Notebooks** for transparency. In a real-world scenario, these steps would typically be part of your codebase and executed using the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) and/or **GitHub Actions**.  
 
-Your new branch will be created and you will now be back on the repository code page with your `dev` branch selected (notice the value of the branch selector).
+<img src="assets/import_notebook.png" width="800" />
+<img src="assets/import_notebook2.png" width="800" />
 
-### Configure GitHub Actions
+Once imported, it should look like this. **Congratulations! The first step is complete!** 🎉  
+
+<img src="assets/import_notebook3.png" width="800" />
+
+
+### Configure local dbt environment
 By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Notebooks, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.
-
-<img src="assets/context.png" width="800" />
-
-The last step to enable your GitHub Actions workflow is to create the required secrets. In order for your GitHub Actions workflow to be able to connect to your Snowflake account you will need to store your Snowflake credentials in GitHub. Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used by the Snowflake CLI.
-
-From the repository, click on the "Settings" tab near the top of the page. From the Settings page, click on the `Secrets and variables` then `Actions` tab in the left hand navigation. The `Actions` secrets should be selected. For each secret listed below click on `New repository secret` near the top right and enter the name given below along with the appropriate value (adjusting as appropriate).
-
-<table>
-    <thead>
-        <tr>
-            <th>Secret name</th>
-            <th>Secret value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SNOWFLAKE_ACCOUNT</td>
-            <td>myaccount</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_USER</td>
-            <td>myusername</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_PASSWORD</td>
-            <td>mypassword</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_ROLE</td>
-            <td>DEMO_ROLE</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_WAREHOUSE</td>
-            <td>DEMO_WH</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_DATABASE</td>
-            <td>DEMO_DB</td>
-        </tr>
-        <tr>
-            <td>SNOWFLAKE_SCHEMA</td>
-            <td>INTEGRATIONS</td>
-        </tr>
-    </tbody>
-</table>
-
-> aside positive
-> 
->  **Tip** - For more details on how to structure the account name in SNOWFLAKE_ACCOUNT, see the account name discussion in [the Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
-
-When you’re finished adding all the secrets, the page should look like this:
-
-<img src="assets/context.png" width="800" />
-
-> aside positive
-> 
->  **Tip** - For an even better solution to managing your secrets, you can leverage [GitHub Actions Environments](https://docs.github.com/en/actions/reference/environments). Environments allow you to group secrets together and define protection rules for each of your environments.
 
 
 <!-- ------------------------ -->
@@ -190,7 +141,7 @@ Scroll down to the "Step 03 Setup Snowflake" section. You'll want to run all the
 
 
 <!-- ------------------------ -->
-## Deploy to Dev
+## Create development environment
 Duration: 5
 
 During this step we will be deploying the dev versions of our two data engineering Notebooks: `DEV_06_load_excel_files` and `DEV_07_load_daily_city_metrics`. For this Quickstart you will notice that our main data engineering Notebooks will be named with a prefix for the environment label, like `DEV_` for dev and `PROD_` for prod. A full discussion of different approaches for managing multiple environments with Snowflake is out of scope for this Quickstart. For a real world use case, you may or may not need to do the same, depending on your Snowflake set up.
@@ -212,6 +163,45 @@ The [EXECUTE IMMEDIATE FROM](https://docs.snowflake.com/en/sql-reference/sql/exe
 
 Also, please note that the `scripts/deploy_notebooks.sql` script also includes Jinja Templating. Jinja templating allows us to parameterize this script so we can run the same core logic in each environment! You will see later in step 9 that we will call this same script from our GitHub Actions pipeline in order to deploy these Notebooks to production.
 
+<!-- ------------------------ -->
+## Upload manual sources
+Duration: 2
+
+Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
+
+Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
+
+<!-- ------------------------ -->
+## Deploy dev pipelines
+Duration: 2
+
+Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
+
+Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
+
+<!-- ------------------------ -->
+## Change materializations
+Duration: 2
+
+Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
+
+Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
+
+<!-- ------------------------ -->
+## Change materializations: Dynamic Tables
+Duration: 2
+
+Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
+
+Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
+
+<!-- ------------------------ -->
+## Create and deploy to production envirornment
+Duration: 2
+
+Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
+
+Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
 
 <!-- ------------------------ -->
 ## Teardown
