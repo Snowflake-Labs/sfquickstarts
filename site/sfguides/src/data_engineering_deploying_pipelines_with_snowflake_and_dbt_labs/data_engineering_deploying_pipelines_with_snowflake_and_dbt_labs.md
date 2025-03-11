@@ -145,32 +145,22 @@ For more info on configuring your local dbt profiles configuration please refer 
 ## Access Data Products in Snowflake Marketplace
 Duration: 10
 
-Now let's 
+Now, let's get access to the datasets we can work with. **Snowflake Marketplace** makes this process very easy. There are thousands of well-curated, ready-to-use data products (as well as Native apps and models) right at your fingertips. In this quickstart, we will onboard two datasets, both of which are free/free-to-try as a trial:
 
-### Download the 00 Notebook
-The Notebook we're going to use to set up our Snowflake demo environment can be found in your forked repository. From the GitHub web UI open the `00_start_here.ipynb` file and then download the raw file (using one of the links near the top right of the page).
+### US equity trading price history
+<img src="assets/dataset_us_stock.png" width="800" />
+<img src="assets/dataset_us_stock_get.png" width="800" />
 
-### Import the 00 Notebook to Snowflake
-Follow these steps to import the Notebook into your Snowflake account:
+### FX rates
+<img src="assets/dataset_fx.png" width="800" />
+<img src="assets/dataset_fx_get.png" width="800" />
 
-* Log into Snowsight
-* Browse to "Notebooks" in the left navigation (under "Projects")
-* Click on arrow next to the blue "+ Notebook" button on top right, then select "Import .ipynb file"
-* Select the `00_start_here.ipynb` file you downloaded previously
-* Choose a database and schema for the notebook to live in and then a default warehouse for the notebook
-* Click "Create"
+### Validate
+Great! So easy. Now, if we go back to the notebook we uploaded and click **'Databases'**, we can see two new databases with tables shared with our account by the provider. No ETL, no latency, no extra storage, and as performant as if they were in your account.  
 
-### Run the 00 Setup Notebook Cells
-Before you can run the set up steps in the `00_start_here.ipynb` Notebook you need to first add the `snowflake` package to it. To do that, follow these steps: 
+<img src="assets/dataset_validate.png" width="800" />
 
-* Open the Notebook
-* Click on the "Packages" drop down on the top menu bar, near the right
-* Type "snowflake" in the "Find Packages" search box and select it from the drop down
-
-Once you have all the required packages configured, click the "Start" button on the top menu bar, near the right. Once the Notebook session has started you're ready to run cells in the Notebook. And notice how quickly the session starts up, especially compared to starting a Spark cluster!
-
-Scroll down to the "Step 03 Setup Snowflake" section. You'll want to run all the cells in this section. But before doing so make sure and update the 4 `GITHUB_` SQL variables in the first `sql_step03_set_context` cell. Use the value of your GitHub personal access token in the `GITHUB_SECRET_PASSWORD` variable. Then run all the cells in this section. To run a given cell simply click anywhere in the cell to select it and press CMD/CTRL+Enter. You can alternatively click on the Run arrow near the top right of the cell.
-
+With that, let's move on to the next step 🚀 
 
 <!-- ------------------------ -->
 ## Create development environment
