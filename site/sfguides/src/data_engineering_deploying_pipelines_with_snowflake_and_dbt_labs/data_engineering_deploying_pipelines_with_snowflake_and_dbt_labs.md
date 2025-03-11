@@ -12,38 +12,57 @@ tags: Data Engineering, Notebooks, dbt
 ## Overview 
 Duration: 10
 
-Notebooks are a very popular tool that are used to do everything from ad-hoc exploration of data to productionalized data engineering pipelines. While Notebooks can contain a mix of both Python and SQL, most of the time they're used for Python coding. In my previous Quickstart I detailed [how to build Python data engineering pipelines in Snowflake](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html?index=..%2F..index#0) using Visual Studio Code, from a lower-level developer perspective.
+### Introduction  
 
-This Quickstart will focus on how to build Python data engineering pipelines using Snowflake native Notebooks! Additionally, it will provide all the details needed to manage and deploy those Notebooks through an automated CI/CD pipeline from development to production! Here's a quick visual overview of what we'll accomplish in this Quickstart:
+Modern businesses require data strategies that support agility, scalability, and operational efficiency.  
+
+### Why Snowflake?  
+[Snowflake](https://www.snowflake.com/) is a powerful Data Cloud that allows you to build data-intensive applications without the operational overhead. Unique architecture and years of innovation made Snowflake the best platform for mobilizing data in your organization.  
+
+### Why dbt?  
+[dbt](https://www.getdbt.com/) (Data Build Tool) is a transformation workflow that empowers teams to develop analytics code using best practices from software engineering—such as modularity, portability, CI/CD, and documentation. With dbt, anyone proficient in SQL can create production-ready data pipelines, transforming data directly within cloud data platforms like Snowflake.  
+
+### What You’ll Learn
+* How to build and deploy pipelines using dbt and Snowflake
+* How to change materialization options to achieve your goals
+* How to benefit from recent Snowflake innovations, in particular Dynamic Tables
+* How to upload data via SnowSight UI
+* How to access data from Snowflake Marketplace and use it for your analysis
+* How to use Snowflake Notebooks to deploy environment changes
+* How to use Snowflake DevOps features, including CREATE OR ALTER
+* How to execute SQL scripts from your Git repository directly in Snowflake
+* How to build CI/CD pipelines using Snowflake's Git Integration
+
+### What You'll Build
+
+Build a **Snowflake + dbt** data pipelines to:  
+- Analyze trading **P&L** and normalize multi-currency trades  
+- Extract insights using **LLMs** from trader execution notes  
+- Compare actual P&L to portfolio targets  
+
+#### Data Sources  
+
+**Snowflake Marketplace Sources**  
+- **FX rates** – Foreign exchange rates for currency normalization  
+- **US equity trading price history** – Historical price data for US equities  
+
+**Manual Datasets**  
+- **Trading history** – Records of executed trades  
+- **Target allocation ratios** – Portfolio targets for FX and equity allocations  
+
+#### Key Objectives  
+
+- **Calculate deal desk P&L** across multiple currencies  
+- **Blend trading data with portfolio targets** to assess performance  
+- **Analyze trader decision-making** using LLMs on trade execution notes  
+
+Here's a quick visual overview of what we'll accomplish in this Quickstart:
 
 <img src="assets/context.png" width="800" />
 
-> aside negative
-> 
-> **Note** - As of 6/11/2024, the [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) are in Public Preview.
-
-### What You’ll Learn
-* How to ingest custom file formats (like Excel) with Snowpark from an external stage (such as an S3 bucket) into a Snowflake table
-* How to access data from Snowflake Marketplace and use it for your analysis
-* How to use Snowflake Notebooks and the Snowpark DataFrame API to build data engineering pipelines
-* How to add logging to your Python data engineering code and monitor from within Snowsight
-* How to execute SQL scripts from your Git repository directly in Snowflake
-* How to use open-source Python libraries from curated Snowflake Anaconda channel
-* How to use the Snowflake Python Management API to programmatically work with Snowflake objects
-* How to use the Python Task DAG API to programatically manage Snowflake Tasks
-* How to build CI/CD pipelines using Snowflake's Git Integration, the Snowflake CLI, and GitHub Actions
-* How to deploy Snowflake Notebooks from dev to production
-
-### What You'll Build
-* A data share from the Snowflake Marketplace to access weather data
-* A data engineering pipeline with a Notebook to ingest Excel files into Snowflake
-* A data engineering pipeline with a Notebook to transform and aggreggate data
-* A DAG (or Directed Acyclic Graph) of Tasks to orchestrate/schedule the pipelines
-* A CI/CD pipeline to deploy the Notebooks to production
 
 ### Prerequisites
-* Familiarity with Python
-* Familiarity with the DataFrame API
+* Familiarity with dbt
 * Familiarity with Snowflake
 * Familiarity with Git repositories and GitHub
 
@@ -57,6 +76,7 @@ You will need the following things before beginning:
 * GitHub account
     * **A GitHub account**. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
 
+Let's get started! 🚀  
 
 <!-- ------------------------ -->
 ## Quickstart Setup
@@ -68,7 +88,7 @@ In order for Snowflake to authenticate to your GitHub repository, you will need 
 Make sure to save the token before leaving the page, as we will be using it a couple of times during this Quickstart.
 
 ### Fork the Quickstart Repository
-You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering with Snowflake Notebooks associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
+You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Deploying Pipelines with Snowflake and dbt labs](https://github.com/Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
 
 ### Create the dev Branch
 During this Quickstart we will do our development work in a `dev` branch of the repository. So let's create the `dev` branch in your forked repository now. To do that begin by clicking on the branch selector just above the list of files in the repository, type the word "dev" (all lowercase) into the "Find or create a branch..." box and then click on "Create branch dev from main" (see screenshot below).
@@ -205,26 +225,22 @@ Finally, you can delete the `00_start_here` Notebook. With the Notebook open cli
 ## Conclusion And Resources
 Duration: 5
 
-Congratulations! You have now built end-to-end data engineering pipelines with Notebooks in Snowflake. You've also seen how to follow a complete Software Development Life Cycle (SDLC) for data engineering with Notebooks, including integration with Git, deploying to multiple environments through a CI/CD pipeline, instrumenting your code for monitoring and debugging, and orchestrating the pipelines with Task DAGs. Here's a quick visual recap:
+Congratulations! You have now built end-to-end data engineering pipelines with dbt and Snowflake. You've also seen how to follow a complete Software Development Life Cycle (SDLC) for data engineering with Notebooks, including integration with Git, deploying to multiple environments through a CI/CD pipeline, instrumenting your code for monitoring and debugging, and orchestrating the pipelines with Task DAGs. Here's a quick visual recap:
 
 <img src="assets/context.png" width="800" />
 
-Hopefully you now have the building blocks, and examples, you need to get started building your own data engineering pipelines with Notebooks. So, what will you build now?
+Hopefully you now have the building blocks, and examples, you need to get started building your own data engineering pipelines with dbt and Snowflake. So, what will you build now?
 
 ### What You Learned
-* How to ingest custom file formats (like Excel) with Snowpark from an external stage (such as an S3 bucket) into a Snowflake table
+* How to upload data via SnowSight UI
 * How to access data from Snowflake Marketplace and use it for your analysis
-* How to use Snowflake Notebooks and the Snowpark DataFrame API to build data engineering pipelines
-* How to add logging to your Python data engineering code and monitor from within Snowsight
+* How to use Snowflake Notebooks to deploy environment changes
+* How to use Snowflake DevOps features, including CREATE OR ALTER
 * How to execute SQL scripts from your Git repository directly in Snowflake
-* How to use open-source Python libraries from curated Snowflake Anaconda channel
-* How to use the Snowflake Python Management API to programmatically work with Snowflake objects
-* How to use the Python Task DAG API to programatically manage Snowflake Tasks
-* How to build CI/CD pipelines using Snowflake's Git Integration, the Snowflake CLI, and GitHub Actions
-* How to deploy Snowflake Notebooks from dev to production
+* How to build CI/CD pipelines using Snowflake's Git Integration
 
 ### Related Resources
-* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks)
+* [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs)
 * [Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html?index=..%2F..index#0) (Advanced Quickstart)
 * [About Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 * [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index)
