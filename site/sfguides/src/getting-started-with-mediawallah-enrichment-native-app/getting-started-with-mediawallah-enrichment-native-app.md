@@ -3,22 +3,24 @@ id: getting-started-with-mediawallah-enrichment-native-app
 summary: This is a guide to use MediaWallah's Enrichment Application
 categories: data-science, Getting-Started, data-science, data-applications
 environments: web
-status: Draft 
+status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, MediaWallah, Enrichment, Matchtest, Identity, Resolution, Graph
 
 # Getting Started with MediaWallah Enrichment Application
 <!-- ------------------------ -->
-## Overview 
+## Overview
 Duration: 1
 
-**Note: The Enrichment Application is currently only available on `AWS US-EAST-1` MediaWallah is working to make this available in other regions**
-MediaWallah's Enrichment Data Marketplace listing holds Two Applications. **Matchtest** and **Enrichment**.  
-**Matchtest** - Allows users to quickly test overlap between consumer's own data with various MediaWallah dataverse without exposure. Providing informed insights on if dataset is worth enrichment.  
-**Enrichment** - Returns consumer's data linked to MediaWallah's dataverse. Allowing consumers to check for data quality and usability.  
-Users of the free Enrichment application has a limited version of the Enrichment Application; only returning a percentage of the total for a limited time window.  
-Please Contact MediaWallah if additional time or trial runs are needed.  
-Enrichment results are returned in four tables  
+**Note: The Enrichment Application is currently only available on**
+`AWS US-EAST-1`
+*MediaWallah is working to make this available in other regions*
+MediaWallah's Enrichment Data Marketplace listing holds Two Applications. **Matchtest** and **Enrichment**.
+**Matchtest** - Allows users to quickly test overlap between consumer's own data with various MediaWallah dataverse without exposure. Providing informed insights on if dataset is worth enrichment.
+**Enrichment** - Returns consumer's data linked to MediaWallah's dataverse. Allowing consumers to check for data quality and usability.
+Users of the free Enrichment application has a limited version of the Enrichment Application; only returning a percentage of the total for a limited time window.
+Please Contact MediaWallah if additional time or trial runs are needed.
+Enrichment results are returned in four tables.
 
 ### Prerequisites
 * [Snowflake Account](https://signup.snowflake.com/)
@@ -26,7 +28,7 @@ Enrichment results are returned in four tables
 * The consumer must accept the Snowflake Marketplace Consumer Terms of Service.
 * The consumer must be able to operate ACCOUNTADMIN, SECURITYADMIN roles.
 
-### What You’ll Learn 
+### What You’ll Learn
 - How to download the MediaWallah Enrichment Application from Snowflake Data Marketplace
 - How to install the application
 - How to setup log share with MediaWallah
@@ -35,110 +37,21 @@ Enrichment results are returned in four tables
 - How to upgrade or uninstall the application
 - How to view the metadata table for privileges and usage rates.
 
-### What You’ll Need 
-- [Account Level Privileges](#1)
-- [Object Level Privileges](#2)
-
-### What You’ll Build 
+### What You’ll Build
 - The requied databases, schemas, warehouse, and role to use MediaWallah's Enrichment Application
 
 ### Architecture
 <!-- <img src="assets/solution_architecture.png" alt="solution_architecture" width="800"> -->
 ![solution_architecture](assets/solution_architecture.png)
 
-<!-- ------------------------ -->
-## Account Level Privileges
-Duration: 1
-
-### Account level privileges
-```CREATE ROLE```  
-Optional Consumer Role created intended for installing application, and granted to users who will be using the application  
-```CREATE WAREHOUSE```  
-Optional Consumer Warehouse created intended for running application, and granted to users who will be using the application  
-```IMPORT SHARE```  
-If consumer wishes to use the Consumer Role this will allow for installation of the application shared via share  
-```CREATE SHARE```  
-If consumer wishes to use the Consumer Role this will allow creation of log share to the provider  
-```CREATE APPLICATION```  
-If consumer wishes to use the Consumer role this will allow installation of the application  
-```CREATE SCHEMA```  
-Used to create Schemas which store LOGS and METRICS  
-```CREATE TABLE```  
-Used to create tables which store LOGS and METRICS, inside the schemas LOGS and METRICS  
-```ALTER SHARE```  
-Used to add provider to log share  
-```SHOW SHARES```  
-Used to find the MWEN\_APP\_SHARE for uninstall  
-```DROP SHARE```  
-Used to uninstall Application [FULL_SHARE_NAME]  
-```DROP DATABASE```  
-Used to uninstall Application C\_MWEN\_HELPER_DB and MWEN\_APP_SHARE  
-```DROP APPLICATION```  
-Used to Drop Application MEDIAWALLAH_ENRICHMENT_APP  
-```GRANT APPLICATION ROLE```  
-Used to grant another role access to Application if installed on another role  
-```DROP WAREHOUSE```  
-Used to uninstall consumer role C\_MWEN\_APP_WH  
-```DROP ROLE```  
-Used to uninstall consumer role C\_MWEN\_APP_ADMIN  
-
-
-<!-- ------------------------ -->
-## Object Level Privileges
-Duration: 1
-### Objects level privileges 
-```USAGE```  on DATABASE MWEN\_APP\_SHARE  
-Grants the application USAGE privileges on the MWEN\_APP\_SHARE database, so the app can access the LOGS AND METRICS schemas.  
-
-```USAGE```  on SCHEMA MWEN\_APP\_SHARE.LOGS  
-Grants the application USAGE privileges on the LOGS schemas in the MWEN\_APP\_SHARE database, so the app can access the logs  
-```USAGE```  on SCHEMA MWEN\_APP\_SHARE.METRICS  
-Grants the application USAGE privileges on the METRICS schemas in the MWEN\_APP\_SHARE database, so the app can access the metrics  
-
-```SELECT```  on TABLE MWEN\_APP\_SHARE.LOGS.LOGS  
-Grants the application SELECT privileges on the LOGS tables so the app can select from records in the the logs tables.  
-```INSERT```  on TABLE MWEN\_APP\_SHARE.LOGS.LOGS  
-Grants the application INSERT privileges on the LOGS tables so the app can insert records into the the logs tables.  
-```UPDATE```  on TABLE MWEN\_APP\_SHARE.LOGS.LOGS  
-Grants the application UPDATE privileges on the LOGS tables so the app can update records in the the logs tables.  
-```SELECT```  on TABLE MWEN\_APP\_SHARE.METRICS.METRICS  
-Grants the application SELECT privileges on the METRICS tables so the app can select from records in the the metrics tables.  
-```INSERT```  on TABLE MWEN\_APP\_SHARE.METRICS.METRICS  
-Grants the application INSERT privileges on the METRICS tables so the app can insert records into the the metrics tables.  
-```UPDATE```  on TABLE MWEN\_APP\_SHARE.METRICS.METRICS  
-Grants the application UPDATE privileges on the METRICS tables so the app can update records in the the metrics tables.  
-
-
-```USAGE```  on input table's DATABASE  
-Grants the application USAGE privileges on this database, so the app can access the schema where the input table resides.  
-
-```USAGE```  on input table's SCHEMA  
-Grants the application USAGE privileges on the input table's schema, so the app can access the input table  
-
-```SELECT```  on input table  
-Grants the application SELECT privlege on the table so the app can select records from the input table.  
-
-```USAGE```  on C_MWEN\_HELPER\_DB.RESULTS  
-Grants the application USAGE privleges on the RESULTS schema in the C\_MWEN\_HELPER\_DB database, so the application can reference objects in this schema.  
-```CREATE TABLE```  on C_MWEN\_HELPER\_DB.RESULTS  
-Grants the application CREATE TABLE privleges on the RESULTS schema in the C\_MWEN\_HELPER\_DB database, so the application can create the results tables in this schema.  
-
-
-```USAGE``` on [SOURCE_DB] TO APPLICATION MEDIAWALLAH_ENRICHMENT_APP  
-Grants the application usage on the database consumer wishes to run application  
-```USAGE``` on [SOURCE_SCHEMA] TO APPLICATION MEDIAWALLAH_ENRICHMENT_APP  
-Grants the application usage on the schema consumer wishes to run application  
-```SELECT``` on [SOURCE_TABLE] TO APPLICATION MEDIAWALLAH_ENRICHMENT_APP  
-Grants the application usage on the table consumer wishes to run application  
-
 ## Setup 01: Installation
 Duration: 2
 
 ### Step 01: Account Setup (Post-Install)
-Create objects and “helper” stored procedures.  
-The following scripts help streamline the log sharing process and app usage considerably, and can be executed by the consumer before or after the app installation.  
-Executing the scripts will create everything the consumer needs to use the app, including roles and warehouses.  
-**NOTE:** The ACCOUNTADMIN and SECURITYADMIN roles are required create the APP_ADMIN_ROLE, which is granted privileges to complete the pre-install setup:  
+Create objects and “helper” stored procedures.
+The following scripts help streamline the log sharing process and app usage considerably, and can be executed by the consumer before or after the app installation.
+Executing the scripts will create everything the consumer needs to use the app, including roles and warehouses.
+**NOTE:** The ACCOUNTADMIN and SECURITYADMIN roles are required create the APP_ADMIN_ROLE, which is granted privileges to complete the pre-install setup:
 * IMPORT SHARE
 * CREATE SHARE
 * CREATE DATABASE
@@ -146,7 +59,7 @@ Executing the scripts will create everything the consumer needs to use the app, 
 * CREATE APPLICATION
 
 
-#### 01_account_setup.sql
+#### Account Setup
 ##### This script sets up the Consumer's account to install the Native App
 ```sql
 -------------------------------------------------------------------------------
@@ -182,12 +95,12 @@ GRANT CREATE APPLICATION ON ACCOUNT TO ROLE IDENTIFIER($APP_ADMIN_ROLE);
 
 USE ROLE IDENTIFIER($APP_ADMIN_ROLE);
 
-CREATE OR REPLACE WAREHOUSE IDENTIFIER($APP_WH) WITH WAREHOUSE_SIZE = 'XSMALL' 
-  WAREHOUSE_TYPE = 'STANDARD' 
-  AUTO_SUSPEND = 300 
-  AUTO_RESUME = TRUE 
-  --MIN_CLUSTER_COUNT = 1 
-  --MAX_CLUSTER_COUNT = 1 
+CREATE OR REPLACE WAREHOUSE IDENTIFIER($APP_WH) WITH WAREHOUSE_SIZE = 'XSMALL'
+  WAREHOUSE_TYPE = 'STANDARD'
+  AUTO_SUSPEND = 300
+  AUTO_RESUME = TRUE
+  --MIN_CLUSTER_COUNT = 1
+  --MAX_CLUSTER_COUNT = 1
   --SCALING_POLICY = 'STANDARD'
   COMMENT = '{"origin":"sf_ps_wls","name":"acf","version":{"major":1, "minor":3},"attributes":{"role":"consumer","component":"app_warehouse"}}'
 ;
@@ -195,7 +108,7 @@ CREATE OR REPLACE WAREHOUSE IDENTIFIER($APP_WH) WITH WAREHOUSE_SIZE = 'XSMALL'
 UNSET (APP_USER, APP_ADMIN_ROLE, APP_WH);
 ```
 
-#### 02_create_helper_db.sql
+#### Create Helper DB
 ##### This script creates a database that houses the input data for the application and the helper stored procedure.
 ```sql
 -------------------------------------------------------------------------------
@@ -225,7 +138,7 @@ CREATE SCHEMA IF NOT EXISTS PRIVATE; --to store wrapper stored procedures
 UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
 ```
 
-#### 03_create_create_log_share_procedure.sql
+#### Create Create Share Logs Procedure.sql
 ##### This procedure serves as a wrapper procedure that calls the app's LOG_SHARE_INSERT procedure.  In adddition it makes the necessary grants to the log/metric tables to the app and creates the log share to the Provider.
 ```sql
 -------------------------------------------------------------------------------
@@ -254,12 +167,12 @@ CREATE OR REPLACE PROCEDURE PRIVATE.CREATE_LOG_SHARE(app_name VARCHAR, app_code 
   EXECUTE AS CALLER
   AS
   $$
-    
+
     //get consumer_name
     var rset = snowflake.execute({sqlText: `SELECT consumer_name FROM ${APP_NAME}.UTIL_APP.METADATA_C_V;`});
     rset.next();
     var consumer_name = rset.getColumnValue(1);
-    
+
     var timeout = 300000; //milliseconds - 5 min timeout
 
     try {
@@ -271,10 +184,10 @@ CREATE OR REPLACE PROCEDURE PRIVATE.CREATE_LOG_SHARE(app_name VARCHAR, app_code 
 
       //create log share schema
       snowflake.execute({sqlText:`CREATE OR REPLACE SCHEMA MWEN_APP_SHARE.logs;`});
-    
+
       //create logs table
       snowflake.execute({sqlText:`CREATE OR REPLACE TABLE MWEN_APP_SHARE.logs.logs(msg VARIANT, signature BINARY) CHANGE_TRACKING=TRUE COMMENT = '{"origin":"sf_ps_wls","name":"acf","version":{"major":1, "minor":3},"attributes":{"role":"consumer","component":"consumer_log_share"}}';`});
-        
+
       //create metrics share schema
       snowflake.execute({sqlText:`CREATE OR REPLACE SCHEMA MWEN_APP_SHARE.metrics;`});
 
@@ -307,20 +220,20 @@ CREATE OR REPLACE PROCEDURE PRIVATE.CREATE_LOG_SHARE(app_name VARCHAR, app_code 
 
       //share logs with provider
       snowflake.execute({sqlText:`ALTER SHARE MWEN_${consumer_name}_APP_SHARE ADD ACCOUNTS=${PROVIDER_LOCATOR};`});
-      
+
 
       //current date
       const date = Date.now();
       var currentDate = null;
-      
+
       //poll metadata_c_v view until consumer is enabled, or timeout is reached
       do {
           currentDate = Date.now();
           var rset = snowflake.execute({sqlText:`SELECT value FROM ${APP_NAME}.UTIL_APP.METADATA_C_V WHERE UPPER(key) = 'ENABLED' AND UPPER(value) = 'Y';`});
-      } while ((rset.getRowCount() == 0) && (currentDate - date < timeout));              
+      } while ((rset.getRowCount() == 0) && (currentDate - date < timeout));
 
       //if the timeout is reached, disable consumer and return
-      while (currentDate - date >= timeout){                     
+      while (currentDate - date >= timeout){
         return `WARNING:  Consumer has not been enabled yet. Continue to monitor the METADATA_C_V view and contact Provider for more details.`;
       }
 
@@ -340,7 +253,7 @@ CREATE OR REPLACE PROCEDURE PRIVATE.CREATE_LOG_SHARE(app_name VARCHAR, app_code 
 UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
 ```
 
-#### 04_create_generate_request_procedure.sql
+#### Create Generate Request Procedure
 ##### This procedure serves as a wrapper procedure that calls the app's REQUEST stored procedure, passing in a parameters object that includes the input table (if applicable), the app procedure to call, the procedure parameters, and the results table (if applicable)
 ```sql
 -------------------------------------------------------------------------------
@@ -398,7 +311,7 @@ CREATE OR REPLACE PROCEDURE PRIVATE.GENERATE_REQUEST(app_name VARCHAR, app_code 
       //if the application can write results outside of its DB, provide grants here:  FEATURE NOT ENABLED YET
       //TODO:  add a field called RESULTS_LOCATION to specify db.sch where results should reside, if desired.
       //snowflake.execute({sqlText:`GRANT USAGE,CREATE TABLE ON SCHEMA C_MWEN_HELPER_DB.RESULTS TO APPLICATION ${APP_NAME};`});
-      
+
 
       //call the app REQUST sproc
       var rset = snowflake.execute({sqlText:`CALL ${APP_NAME}.PROCS_APP.REQUEST('MWEN', '${PARAMETERS}');`});
@@ -421,7 +334,7 @@ CREATE OR REPLACE PROCEDURE PRIVATE.GENERATE_REQUEST(app_name VARCHAR, app_code 
 UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
 ```
 
-#### 05_create_uninstall_procedure.sql
+#### Create Uninstall Procedure
 ##### This procedure serves as a wrapper procedure that uninstalls the Provider's app and removes
 ```sql
 -------------------------------------------------------------------------------
@@ -453,7 +366,7 @@ CREATE OR REPLACE PROCEDURE PRIVATE.UNINSTALL(app_name VARCHAR)
     //drop all existing outbound shares to the Provider account
     snowflake.execute({sqlText: `SHOW SHARES LIKE '%MWEN_%_APP_SHARE%'`});
     snowflake.execute({sqlText: `CREATE OR REPLACE TEMPORARY TABLE C_MWEN_HELPER_DB.PRIVATE.OUTBOUND_SHARES AS SELECT "name" FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) WHERE "owner" = 'C_MWEN_APP_ADMIN' AND "kind" = 'OUTBOUND';`});
-    
+
     var rset = snowflake.execute({sqlText: `SELECT * FROM C_MWEN_HELPER_DB.PRIVATE.OUTBOUND_SHARES;`});
     while(rset.next()){
       var full_share_name = rset.getColumnValue(1);
@@ -487,7 +400,7 @@ $$
 UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
 ```
 
-#### 06_grant_application_role.sql
+#### Grant Application Role
 ##### This grants the application role to a specific user of the application if one was not granted on installation
 ```sql
 -------------------------------------------------------------------------------
@@ -524,7 +437,7 @@ SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V;
 Duration: 1
 
 ### Step 03: Onboarding
-To be onboarded the consumer must send their CURRENT_ORGANIZATION_NAME, CURRENT_ACCOUNT, and CURRENT_ACCOUNT_NAME to operations@mediawallah.com; with the subject line “Native App Onboarding Request: MediaWallah MEDIAWALLAH_ENRICHMENT_APP App".  
+To be onboarded the consumer must send their CURRENT_ORGANIZATION_NAME, CURRENT_ACCOUNT, and CURRENT_ACCOUNT_NAME to operations@mediawallah.com; with the subject line “Native App Onboarding Request: MediaWallah MEDIAWALLAH_ENRICHMENT_APP App".
 These details can be found using the following queries:
 
 ```sql
@@ -533,8 +446,8 @@ SELECT CURRENT_ORGANIZATION_NAME();
 SELECT CURRENT_ACCOUNT();
 SELECT CURRENT_ACCOUNT_NAME();
 ```
-Onboarding typically will occur on the day of the request, however, please allow up to 2 business days.  
-Once onboarded, the consumer should see metadata entries when querying the METADATA_C_V view.  
+Onboarding typically will occur on the day of the request, however, please allow up to 2 business days.
+Once onboarded, the consumer should see metadata entries when querying the METADATA_C_V view.
 **Example:**
 ```sql
 ------------------------ Step 03.b: Onboarding ------------------------
@@ -586,7 +499,7 @@ Duration: 1
 The application will need access to the consumer's dataset; **Either directly to the table or a view of the table.**
 
 
-**Example:** Granting access to the a consumer's dataset `[CONSUMER_DB].[CONSUMER_SCH].[CONSUMER_TBL]` owned by `SYSADMIN` role to the **C_MWEN\_APP_ADMIN** role.  
+**Example:** Granting access to the a consumer's dataset `[CONSUMER_DB].[CONSUMER_SCH].[CONSUMER_TBL]` owned by `SYSADMIN` role to the **C_MWEN\_APP_ADMIN** role.
 (Replace placeholders accordingly)
 ```sql
 -- Below is the code with all the database, schema, and table names that need to be replaced in brackets
@@ -612,7 +525,7 @@ Duration: 5
 ### Generating Requests
 Once enabled, the consumer can call the GENERATE_REQUEST helper stored procedure to use any of the consumer’s allowed stored procs. Data will be generated into the MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP schema. View [Results Guide](https://nativeapps.mediawallah.com/MEDIAWALLAH_ENRICHMENT_APP/MWEN%20-%20Results%20Guide.pdf) for a detailed explanation of the generated data.
 Optimal warehouse sizing will depend on consumer input dateset dimensions. MediaWallah maintains an average run times based on historical runs in a Warehouse Sizing Doc, ask for details.
-**For a detailed explanation of the parameters used in GENERATE_REQUEST, see next section**  
+**For a detailed explanation of the parameters used in GENERATE_REQUEST, see next section**
 
 
 **Matchtest Example:**
@@ -622,7 +535,7 @@ USE ROLE C_MWEN_APP_ADMIN;
 USE WAREHOUSE C_MWEN_APP_WH;
 ALTER WAREHOUSE C_MWEN_APP_WH
 SET WAREHOUSE_SIZE = "2X-LARGE" WAIT_FOR_COMPLETION = TRUE;
-  
+
 -- NOTE: execution time is determined by warehouse size, and is
 -- controlled by the consumer.
 CALL C_MWEN_HELPER_DB.PRIVATE.GENERATE_REQUEST(
@@ -651,7 +564,7 @@ USE ROLE C_MWEN_APP_ADMIN;
 USE WAREHOUSE C_MWEN_APP_WH;
 ALTER WAREHOUSE C_MWEN_APP_WH
 SET WAREHOUSE_SIZE = "2X-LARGE" WAIT_FOR_COMPLETION = TRUE;
-  
+
 -- NOTE: execution time is determined by warehouse size, and is
 -- controlled by the consumer.
 CALL C_MWEN_HELPER_DB.PRIVATE.GENERATE_REQUEST(
@@ -838,7 +751,7 @@ Duration: 1
 ## Viewing Results
 Duration: 1
 #### View Results
-Depending on which application (aka proc_name) used, the GENERATE_REQUEST procedure will generate different outputs based on the RESULTS_TABLE.  
+Depending on which application (aka proc_name) used, the GENERATE_REQUEST procedure will generate different outputs based on the RESULTS_TABLE.
 **Matchtest**
 ```sql
 -- MATCHTEST REPORT
@@ -952,8 +865,8 @@ SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V
 ## Uninstall (Optional)
 Duration: 1
 #### Uninstall (Optional)
-In the event the consumer wishes to uninstall the app, the consumer can use the **C_MWEN_APP_ADMIN** role to call the UNINSTALL helper stored procedure. This procedure will drop the application database, the logs share, and the shared logs database. The Application Share (which includes the results and logs tables) will be permanently removed from the consumer’s Snowflake instance.  
-**Note**: It is important to note any data generated by the application stored in MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP will be lost. Please export results accordingly.  
+In the event the consumer wishes to uninstall the app, the consumer can use the **C_MWEN_APP_ADMIN** role to call the UNINSTALL helper stored procedure. This procedure will drop the application database, the logs share, and the shared logs database. The Application Share (which includes the results and logs tables) will be permanently removed from the consumer’s Snowflake instance.
+**Note**: It is important to note any data generated by the application stored in MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP will be lost. Please export results accordingly.
 **Example:**
 ```sql
 ------------------------ UNINSTALL ------------------------
@@ -999,8 +912,8 @@ Duration: 2
 #### Re-Enablement
 Consumer usage of the application is disabled when either of the following happens:
 1. MediaWallah loses access to the consumer log share (through either removing MediaWallah from the share or dropping the share altogether.
-2. The consumer purposely tampers with the logs shared to MediaWallah  
-  
+2. The consumer purposely tampers with the logs shared to MediaWallah
+
 The consumer can re-enable themselves depending on the cases mentioned above:
 1. When MediaWallah loses access to the log share, if the log share exists in the consumer account, the consumer can simply add MediaWallah back to the share.
   * For example:
