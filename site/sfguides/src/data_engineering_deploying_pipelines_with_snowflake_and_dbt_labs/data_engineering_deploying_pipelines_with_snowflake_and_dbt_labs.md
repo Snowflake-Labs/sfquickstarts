@@ -223,11 +223,34 @@ In our scenario, this represents the idea of loading static data, such as alloca
 
 <!-- ------------------------ -->
 ## Deploy dev pipelines
-Duration: 2
+Duration: 3
 
-Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
+Amazing! Let’s start creating models to represent our pipeline. As you can see from the screenshot below, in `dbt_project/models`, there are three subfolders representing the logical grouping of models into staging, intermediate, and marts. It’s up to you to decide which breakdown will fit your solution best, but this is a great technique for making quick changes at the layer level in `dbt_project.yml`. In our quickstart, for example, models in these folders will be persisted in different schemas on the database side.
 
-Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
+Let’s run the project:
+
+```shell
+cd dbt_project
+dbt run
+```
+
+As you can see from the logs, models by default have a materialization of view, which is super fast to change during the prototyping stage. These can then be selectively adjusted if and when necessary.
+
+<img src="assets/create_views.png" width="800" />
+
+Congratulations! You just deployed your first pipelines! You can now query any of these objects or generate dbt documentation to share with your colleagues to better understand what you are building.
+
+<img src="assets/create_views_db.png" width="800" />
+
+```shell
+cd dbt_project
+dbt docs generate
+dbt docs serve
+```
+
+<img src="assets/dbt_dag.png" width="800" />
+
+Since all models are materialized as views, the results are always up-to-date. However, they are calculated at runtime, using the compute power provided by the user when querying. With Snowflake, you can achieve a lot with virtual transformations, but if your objects need to be accessed by many users, materializing results starts to make sense. How can you do it efficiently? Let's see in the next chapter.
 
 <!-- ------------------------ -->
 ## Change materializations
