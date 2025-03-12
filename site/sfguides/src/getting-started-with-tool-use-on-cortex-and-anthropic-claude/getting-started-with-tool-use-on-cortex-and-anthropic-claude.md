@@ -557,7 +557,7 @@ This function:
    - The structured input parameters Claude wants to send to the tool
 5. Returns these elements for the tool execution phase
 
-## Executing the Tool and Returning Results to Claude
+## Executing the Tool
 Duration: 20
 
 The most critical part of the tool use workflow is executing the tool when Claude requests it and properly formatting the results for Claude to incorporate into its response:
