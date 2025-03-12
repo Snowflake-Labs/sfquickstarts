@@ -112,6 +112,9 @@ To create and configure your Streamlit application in Snowflake:
 
 ### Complete Application Code
 
+You will need add a package. On the top left select **Packages**.
+* Add **requests** package
+
 Below is the full code for the Weather Assistant application. Copy and paste this entire block into your Streamlit app editor:
 ```python
 import streamlit as st
