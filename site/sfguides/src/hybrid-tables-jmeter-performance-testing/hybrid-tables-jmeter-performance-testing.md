@@ -23,6 +23,14 @@ lesson.
 While you will be using JMeter for this quickstart, this guide is not a comprehensive JMeter tutorial. The basics
 will be covered to get you started.
 
+Finally, this tutorial configures and uses JMeter with a user interface. For detailed performance testing where
+precise results are required, follow these additional steps:
+- Create a virtual machine in your cloud provider within the same region as your Snowflake instance
+- Load JMeter onto the virtual machine
+- Disable logging and unnecessary components in the performance test
+- Run JMeter in a [headless mode](https://jmeter.apache.org/usermanual/get-started.html#non_gui) 
+
+
 ### Prerequisites
 
 - Installed and running [JMeter](https://jmeter.apache.org/)
