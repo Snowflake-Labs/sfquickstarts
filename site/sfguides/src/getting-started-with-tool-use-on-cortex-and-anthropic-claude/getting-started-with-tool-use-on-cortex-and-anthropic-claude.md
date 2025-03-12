@@ -90,7 +90,7 @@ For this application to work, you'll need to:
 1. Obtain a WeatherAPI key by signing up at [WeatherAPI.com](https://www.weatherapi.com/)
 2. Keep your API key handy for insertion into the application code
 
-## Deploying Your Application
+## Streamlit App
 Duration: 10
 
 ### Setting Up the Streamlit App
@@ -677,13 +677,12 @@ Duration: 15
 To ensure your application works correctly:
 
 **Test with simple weather queries**: 
-* "What's the weather in New York, NY?"
-* "Is it raining in Seattle, WA?"
-* "Should I wear a jacket in Chicago, IL today?"
-
-![New York Weather](assets/NY.png)
-![Seattle Weather](assets/WA.png)
-![Chicago Weather](assets/IL.png)
+* What's the weather in New York, NY?
+![New York Weather](assets/NY.png)  
+* Is it raining in Seattle, WA?
+![Seattle Weather](assets/WA.png)  
+* Should I wear a jacket in Chicago, IL today?
+![Chicago Weather](assets/IL.png)  
 
 
 ## Conclusion and Resources
