@@ -260,3 +260,33 @@ the `Apply interval` and `Apply filter` buttons before you visualize the graph:
 Now you can adjust the number of keys and threads up to the limit of your particular machine.
 
 Congratulations! You've executed a simple JMeter performance test for your hybrid tables.
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+Duration: 1
+
+### Conclusion
+Performance testing can be an important part of adding hybrid tables
+to your Snowflake environment. Hybrid tables provide a highly concurrent
+and low latency alternative to Snowflake standard tables.
+
+JMeter is a mature and widely adopted performance testing tool. The script presented here can certainly
+be used to build a much more sophisticated test.
+
+Reach out to your Snowflake account team if you have questions or need
+assistance configuring a test for your specific environment.
+
+
+### What you Learned
+
+- How to setup and configure JMeter
+- How to build a basic hybrid table and load some data
+- How to authenticate to Snowflake using key-pair authentication
+- How to run a basic performance test
+
+### Resources
+
+* [Snowflake Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
+* [Snowflake Account Identifer](https://docs.snowflake.com/en/user-guide/admin-account-identifier)
+* [Snowflake Key Pair Authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth)
+* [JMeter Home Page](https://jmeter.apache.org/)
