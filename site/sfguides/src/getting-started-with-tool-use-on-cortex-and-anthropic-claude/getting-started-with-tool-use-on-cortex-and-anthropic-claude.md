@@ -671,7 +671,7 @@ This code demonstrates the complete tool use cycle:
 
 This implements the full tool use lifecycle where Claude requests information, the application fetches it, and Claude then incorporates the results into its final response.
 
-## Testing and Troubleshooting
+## Testing
 Duration: 15
 
 To ensure your application works correctly:
