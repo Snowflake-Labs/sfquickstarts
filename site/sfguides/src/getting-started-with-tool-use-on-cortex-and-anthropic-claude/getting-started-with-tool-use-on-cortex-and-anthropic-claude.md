@@ -681,11 +681,16 @@ To ensure your application works correctly:
 * "Is it raining in Seattle, WA?"
 * "Should I wear a jacket in Chicago, IL today?"
 
+![New York Weather](assets/NY.png)
+![Seattle Weather](assets/WA.png)
+![Chicago Weather](assets/IL.png)
+
+
 ## Conclusion and Resources
 Duration: 5
 
 ### Conclusion
-Congratulations! You've built a powerful weather assistant application that combines the capabilities of Claude's AI with real-time weather data. This application demonstrates how to leverage Snowflake's integration with external APIs and create interactive experiences using Streamlit. The tool use capabilities showcase how AI can interact with external services to provide valuable information to users in a conversational manner.
+Congratulations! You've built a powerful weather assistant application that combines the capabilities of Snowflake Cortex and Claude Sonnet 3.5 with real-time weather data. The tool use capabilities showcase how AI can interact with external services to provide valuable information to users in a conversational manner.
 
 ### What You Learned
 - How to define tools for Claude to use within Snowflake
