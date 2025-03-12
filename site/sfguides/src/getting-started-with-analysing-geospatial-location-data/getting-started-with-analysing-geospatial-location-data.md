@@ -130,7 +130,7 @@ Are you ready to start learning about location data in Snowflake?
 This tutorial will take you through how you can use location data to perform spatial calculations, joins, and visualise the data using the popular **Pydeck** python package.  We will be using the freely available datasets which you have now installed to step through examples of how geospatial data can be handled.
 
 
-- Click [here](Notebook/Analyse_Location_Data.ipynb) to download notebook
+- Click [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-analysing-geospatial-location-data/blob/5629b368b26a679df26baeab717e9f9cf75a8927/Notebook/Analyse_Location_Data.ipynb) to download notebook
 
 - From the home page, navigate to **Projects > Notebooks**
 
@@ -158,7 +158,7 @@ This app gives you an example of how you can bring all these datasets together t
 
 - Delete all sample code and import the **pydeck** package by clicking on **packages** on the top left hand corner of the screen.
 
-- copy and paste the following code into the **Streamlit** canvas from [here](Streamlit/towns_with_roads.py)
+- copy and paste the following code into the **Streamlit** canvas from [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-analysing-geospatial-location-data/blob/main/Streamlit/towns_with_roads.py)
 
 ![alt text](assets/roads.png)
 
