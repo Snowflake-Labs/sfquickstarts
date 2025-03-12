@@ -330,7 +330,7 @@ if __name__ == "__main__":
 
 4. Share your application with colleagues by setting appropriate permissions
 
-## Understanding the Tool Use Architecture
+## Understanding Tool Use
 Duration: 15
 
 This section explains how the weather assistant application implements Claude's tool use capabilities in Snowflake.
@@ -364,7 +364,7 @@ The Claude API in Snowflake uses several key structures for tool functionality:
 
 The application demonstrates a complete end-to-end implementation with these components.
 
-## Implementing the Weather Tool Functionality
+## Implementing the Weather Tool
 Duration: 15
 
 The heart of our tool use implementation is the `get_weather` function, which executes when Claude invokes the weather tool and communicates with the WeatherAPI service:
@@ -400,7 +400,7 @@ This function:
 3. Parses the response to extract weather conditions and icon URL
 4. Returns this information or an error message if something goes wrong
 
-## Defining Tool Specifications for Claude
+## Defining Tool Specification
 Duration: 25
 
 Next, we'll set up the tool specification and Claude integration through Snowflake's API. This is where we define what the weather tool does and how Claude should use it:
