@@ -41,9 +41,9 @@ The Lab consists of three notebooks and two Streamlit applications.
 
     This is an end-to-end tour on how location data works with Snowflake
 
-- Running the Streamlit **ROAD_NETWORK**
+- Creating a Streamlit app **ROAD_NETWORK**
 
-    This is an example Streamlit application which brings together the different techniques learnt in notebook 1.  If you wish to tweak or even create a new Streamlit using these ideas you can, just simply **duplicate** the Streamlit first.
+    This is an example Streamlit application which brings together the different techniques learnt in notebook 1. 
 
 
 
