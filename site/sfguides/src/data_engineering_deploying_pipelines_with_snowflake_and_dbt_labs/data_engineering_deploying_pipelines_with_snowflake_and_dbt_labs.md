@@ -207,9 +207,19 @@ Great. Once cell executed we should now have a dev environment(database, roles, 
 ## Upload manual sources
 Duration: 2
 
-Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
+With all this prep next step should go swiftly.
+For this, let's change the directory to the `./dbt_project`  in the repo and run dbt seed command:
 
-Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
+```shell
+cd dbt_project
+dbt seed
+```
+
+What's happening now is that dbt will connect to the default connection profile (dev) and will automatically create tables for all CSV files located in the `dbt_project/seed` folder.  
+
+In our scenario, this represents the idea of loading static data, such as allocation weights, that could be maintained as part of the codebase.
+<img src="assets/dbt_seed.png" width="800" />
+
 
 <!-- ------------------------ -->
 ## Deploy dev pipelines
@@ -239,9 +249,27 @@ Finally, you can delete the `00_start_here` Notebook. With the Notebook open cli
 ## Create and deploy to production envirornment
 Duration: 2
 
-Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
+### Create production environment
 
-Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
+Similar to a way we created `dev` environment before we can go back to our notebook and execute cell `04 Setup Prod environment`
+
+```sql
+USE ROLE ACCOUNTADMIN;
+USE DATABASE SANDBOX;
+
+ALTER GIT REPOSITORY DEMO_GIT_REPO FETCH;
+EXECUTE IMMEDIATE FROM @DEMO_GIT_REPO/branches/main/scripts/deploy_environment.sql USING (env => 'PROD');
+```
+
+### Deploy latest version of dbt pipelines to prod
+
+```shell
+dbt seed --target=prod
+dbt run  --target=prod
+```
+As you can see, we start by deploying sample data and then simply change the target. Behind the scenes, dbt will use another database, role, and warehouse to deploy the production codebase and schedule its dynamic tables to run. Voilà! In a real-world scenario, such a deployment can be performed by GitHub Actions once a pull request is merged from the release candidate branch into the main branch.
+
+Hope you can see how this can help building and deploying reliable pipelines. 
 
 <!-- ------------------------ -->
 ## Teardown
