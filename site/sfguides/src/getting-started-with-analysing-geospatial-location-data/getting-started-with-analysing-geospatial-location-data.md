@@ -1,6 +1,6 @@
 author: Becky O’Connor
 id: getting-started-with-analysing-geospatial-location-data
-summary: This tutorial leverages Geospatial Analytics, Stramlit, Cortex and the Open Route Service to optimise vehicle routes in order to distribute goods to chosen destinations on time.
+summary: In this hands-on lab, you'll learn how to analyze and transform geospatial data in Snowflake, progressing from visualizing points on a map to building a multi-layer streamlit app.
 categories: Data-Sharing, streamlit
 environments: web
 status: Published 
