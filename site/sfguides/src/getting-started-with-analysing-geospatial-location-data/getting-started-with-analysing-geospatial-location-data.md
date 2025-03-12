@@ -47,7 +47,7 @@ The Lab consists of three notebooks and two Streamlit applications.
 
 
 
-### What you will learn
+### What You Will Learn
 
 - An understanding of geospatial data types and formats - and how this works in **Snowflake**
 
@@ -68,7 +68,7 @@ The Lab consists of three notebooks and two Streamlit applications.
 
 
 ### Prerequisites
-- A Snowflake Account.
+- A Snowflake Account. Sign up [here](https://signup.snowflake.com/) for a free 30 day trial.
 
  
 
