@@ -24,7 +24,7 @@ Modern businesses require data strategies that support agility, scalability, and
 
 ### What You’ll Learn
 * How to build and deploy pipelines using dbt and Snowflake
-* How to change materialization options to achieve your goals
+* How to change materialization options to achieve your service objectives
 * How to benefit from recent Snowflake innovations, in particular Dynamic Tables
 * How to upload data via SnowSight UI
 * How to access data from Snowflake Marketplace and use it for your analysis
@@ -256,17 +256,52 @@ Since all models are materialized as views, the results are always up-to-date. H
 ## Change materializations
 Duration: 2
 
-Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
+In a previous chapter, we deployed all models as views and discussed the trade-offs. In this chapter, we will demonstrate the ease of changing model materialization by converting them into tables. This means every time the `dbt run` command is issued, it will generate a CTAS query to re-deploy the entire content. This is great for illustration purposes, but in real life, please be pragmatic: materialize results that make sense to be materialized for reuse and learn about [incremental](https://docs.getdbt.com/docs/build/incremental-models) materialization to maintain the efficiency of the pipeline.
 
-Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
+For now, to keep things simple lets open `dbt_project/dbt_project.yml` and update materialization settings for all model folders from `view` to `table`.
+
+<img src="assets/create_table.png" width="800" />
+
+Once done, lets run dbt again:
+
+```shell
+cd dbt_project
+dbt run
+```
+
+<img src="assets/create_table_run.png" width="800" />
+<img src="assets/create_table_snow.png" width="800" />
+
+Now you see another angle of why dbt is such a force multiplier. It allows you to focus on the content of your data products, while the framework takes care of generating the DDL to deploy them with various materialization options.
 
 <!-- ------------------------ -->
 ## Change materializations: Dynamic Tables
-Duration: 2
+Duration: 5
+As the next step in optimization, let's try something new. Go back to `dbt_project/dbt_project.yml` and change the `intermediate` and `mart` models to be deployed as [Dynamic Tables](https://docs.snowflake.com/en/sql-reference/sql/create-dynamic-table). Uncomment the code provided in the repository, similar to what you see in the screenshot below. You might notice that I am deliberately forcing the `refresh_mode=incremental` (the default is AUTO) to illustrate a few ideas later on. In real scenarios, we recommend the default value, allowing the constantly-improving Snowflake engine to decide the best refresh mode based on the context.
 
-Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
+<img src="assets/create_dt.png" width="800" />
 
-Finally, you can delete the `00_start_here` Notebook. With the Notebook open click on the ":" button near the top right of the window and click on "Delete".
+```shell
+cd dbt_project
+dbt run
+```
+
+Once you run it, you'll notice that the run failed because one of the models (**int_extracted_entities**) uses a non-deterministic function and can't be reliably refreshed incrementally. We will use this as an opportunity to illustrate the possibility of overwriting settings defined at the project level (**dbt_project.yml**) with settings directly inside the model file. While we are here, it is a great opportunity to highlight how easy it is to use the power of LLMs with Snowflake Cortex functions. In this scenario, we first ask the LLM to extract meaningful signals from the notes provided by a trader and subsequently classify them either as a strategy or a reaction to a market signal. Cool, isn't it? 
+
+Let's update `int_extracted_entities.sql` and its downstream model `fct_trader_drivers.sql` to implement `refresh_mode=full` and run dbt again:
+
+<img src="assets/create_dt_llm.png" width="800" />
+<img src="assets/create_dt_llm_fct.png" width="800" />
+
+```shell
+cd dbt_project
+dbt run
+```
+
+Now we can validate from the Snowflake UI that the changes are successfully deployed and will be managed incrementally:
+<img src="assets/create_dt_db.png" width="800" />
+<img src="assets/dt_dag.png" width="800" />
+
 
 <!-- ------------------------ -->
 ## Create and deploy to production envirornment
@@ -274,7 +309,7 @@ Duration: 2
 
 ### Create production environment
 
-Similar to a way we created `dev` environment before we can go back to our notebook and execute cell `04 Setup Prod environment`
+Similar to a way we created `dev` environment before we can go back to our notebook and execute cell `04 Setup Prod environment` to build the `prod` environment. 
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -284,12 +319,17 @@ ALTER GIT REPOSITORY DEMO_GIT_REPO FETCH;
 EXECUTE IMMEDIATE FROM @DEMO_GIT_REPO/branches/main/scripts/deploy_environment.sql USING (env => 'PROD');
 ```
 
+<img src="assets/prod_env.png" width="800" />
+
 ### Deploy latest version of dbt pipelines to prod
 
 ```shell
 dbt seed --target=prod
 dbt run  --target=prod
 ```
+<img src="assets/deploy_prod.png" width="800" />
+<img src="assets/deploy_prod_db.png" width="800" />
+
 As you can see, we start by deploying sample data and then simply change the target. Behind the scenes, dbt will use another database, role, and warehouse to deploy the production codebase and schedule its dynamic tables to run. Voilà! In a real-world scenario, such a deployment can be performed by GitHub Actions once a pull request is merged from the release candidate branch into the main branch.
 
 Hope you can see how this can help building and deploying reliable pipelines. 
@@ -306,13 +346,15 @@ Finally, you can delete the `00_start_here` Notebook. With the Notebook open cli
 ## Conclusion And Resources
 Duration: 5
 
-Congratulations! You have now built end-to-end data engineering pipelines with dbt and Snowflake. You've also seen how to follow a complete Software Development Life Cycle (SDLC) for data engineering with Notebooks, including integration with Git, deploying to multiple environments through a CI/CD pipeline, instrumenting your code for monitoring and debugging, and orchestrating the pipelines with Task DAGs. Here's a quick visual recap:
+Congratulations! You have now built end-to-end data engineering pipelines with dbt and Snowflake. You've also seen how to follow a complete Software Development Life Cycle (SDLC) for data engineering with Notebooks, including integration with Git, deploying to multiple environments through a CI/CD pipeline, instrumenting your code for monitoring and debugging, and orchestrating the pipelines with Dynamic Tables. Here's a quick visual recap:
 
 <img src="assets/context.png" width="800" />
 
 Hopefully you now have the building blocks, and examples, you need to get started building your own data engineering pipelines with dbt and Snowflake. So, what will you build now?
 
 ### What You Learned
+* How to build and deploy pipelines using dbt and Snowflake
+* How to change materialization options to achieve your service objectives
 * How to upload data via SnowSight UI
 * How to access data from Snowflake Marketplace and use it for your analysis
 * How to use Snowflake Notebooks to deploy environment changes
