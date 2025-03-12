@@ -1,5 +1,5 @@
 author: Becky O’Connor
-id: getting-started-with-analysing-geospatial-location-data
+id: building-geospatial-mult-layer-apps-with-snowflake-and-streamlit
 summary: In this hands-on lab, you'll learn how to analyze and transform geospatial data in Snowflake, progressing from visualizing points on a map to building a multi-layer streamlit app.
 categories: Data-Sharing, streamlit
 environments: web
@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial
 
-# Getting Started with Analysing Location Data
+# Building Geospatial Multi-Layer Apps with Snowflake and Streamlit
 <!-- ------------------------ -->
 ## Overview
 Duration: 10
