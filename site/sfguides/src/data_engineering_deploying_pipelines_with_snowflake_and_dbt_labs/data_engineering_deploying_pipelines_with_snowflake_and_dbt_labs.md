@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Engineering, Notebooks, dbt
 
-# Deploying pipelines with Snowflake and dbt labs
+# Deploying Pipelines with Snowflake and dbt labs
 <!-- ------------------------ -->
 ## Overview 
 Duration: 10
@@ -79,7 +79,7 @@ You will need the following things before beginning:
 Let's get started! 🚀  
 
 <!-- ------------------------ -->
-## Quickstart Setup
+## Setup
 Duration: 15
 
 ### Create a GitHub Personal Access Token
@@ -163,7 +163,7 @@ Great! So easy. Now, if we go back to the notebook we uploaded and click **'Data
 With that, let's move on to the next step 🚀 
 
 <!-- ------------------------ -->
-## Create development environment
+## Create Development Environment
 Duration: 5
 
 ### Connect to Git from Snowflake
@@ -204,7 +204,7 @@ Great. Once cell executed we should now have a dev environment(database, roles, 
 <img src="assets/validate_dev.png" width="800" />
 
 <!-- ------------------------ -->
-## Upload manual sources
+## Upload Manual Sources
 Duration: 2
 
 With all this prep next step should go swiftly.
@@ -222,7 +222,7 @@ In our scenario, this represents the idea of loading static data, such as alloca
 
 
 <!-- ------------------------ -->
-## Deploy dev pipelines
+## Deploy Dev Pipelines
 Duration: 3
 
 Amazing! Let’s start creating models to represent our pipeline. As you can see from the screenshot below, in `dbt_project/models`, there are three subfolders representing the logical grouping of models into staging, intermediate, and marts. It’s up to you to decide which breakdown will fit your solution best, but this is a great technique for making quick changes at the layer level in `dbt_project.yml`. In our quickstart, for example, models in these folders will be persisted in different schemas on the database side.
@@ -253,7 +253,7 @@ dbt docs serve
 Since all models are materialized as views, the results are always up-to-date. However, they are calculated at runtime, using the compute power provided by the user when querying. With Snowflake, you can achieve a lot with virtual transformations, but if your objects need to be accessed by many users, materializing results starts to make sense. How can you do it efficiently? Let's see in the next chapter.
 
 <!-- ------------------------ -->
-## Change materializations
+## Change Materializations
 Duration: 2
 
 In a previous chapter, we deployed all models as views and discussed the trade-offs. In this chapter, we will demonstrate the ease of changing model materialization by converting them into tables. This means every time the `dbt run` command is issued, it will generate a CTAS query to re-deploy the entire content. This is great for illustration purposes, but in real life, please be pragmatic: materialize results that make sense to be materialized for reuse and learn about [incremental](https://docs.getdbt.com/docs/build/incremental-models) materialization to maintain the efficiency of the pipeline.
@@ -275,7 +275,7 @@ dbt run
 Now you see another angle of why dbt is such a force multiplier. It allows you to focus on the content of your data products, while the framework takes care of generating the DDL to deploy them with various materialization options.
 
 <!-- ------------------------ -->
-## Change materializations: Dynamic Tables
+## Change Materializations: Dynamic Tables
 Duration: 5
 As the next step in optimization, let's try something new. Go back to `dbt_project/dbt_project.yml` and change the `intermediate` and `mart` models to be deployed as [Dynamic Tables](https://docs.snowflake.com/en/sql-reference/sql/create-dynamic-table). Uncomment the code provided in the repository, similar to what you see in the screenshot below. You might notice that I am deliberately forcing the `refresh_mode=incremental` (the default is AUTO) to illustrate a few ideas later on. In real scenarios, we recommend the default value, allowing the constantly-improving Snowflake engine to decide the best refresh mode based on the context.
 
@@ -304,7 +304,7 @@ Now we can validate from the Snowflake UI that the changes are successfully depl
 
 
 <!-- ------------------------ -->
-## Create and deploy to production envirornment
+## Create and Deploy to Production Envirornment
 Duration: 2
 
 ### Create production environment
@@ -335,7 +335,7 @@ As you can see, we start by deploying sample data and then simply change the tar
 Hope you can see how this can help building and deploying reliable pipelines. 
 
 <!-- ------------------------ -->
-## Teardown
+## Cleanup
 Duration: 2
 
 Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
