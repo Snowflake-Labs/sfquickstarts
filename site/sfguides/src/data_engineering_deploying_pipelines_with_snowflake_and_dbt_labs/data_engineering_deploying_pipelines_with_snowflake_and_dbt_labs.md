@@ -87,8 +87,8 @@ In order for Snowflake to authenticate to your GitHub repository, you will need 
 
 Make sure to save the token before leaving the page, as we will be using it a couple of times during this Quickstart.
 
-### Clone the Quickstart Repository
-You'll need to create a local clone of the repository for this Quickstart from your GitHub account. Visit the [Deploying Pipelines with Snowflake and dbt labs](https://github.com/Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs) and click on the "Code" button near the top right. 
+### Fork and clone the Quickstart Repository
+You'll need to fork and clone of the repository for this Quickstart from your GitHub account. Visit the [Deploying Pipelines with Snowflake and dbt labs](https://github.com/Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs) and click on the "Code" button near the top right. 
 
 ```shell
 gh repo clone Snowflake-Labs/sfguide-deploying-pipelines-with-snowflake-and-dbt-labs
@@ -166,24 +166,42 @@ With that, let's move on to the next step 🚀
 ## Create development environment
 Duration: 5
 
-During this step we will be deploying the dev versions of our two data engineering Notebooks: `DEV_06_load_excel_files` and `DEV_07_load_daily_city_metrics`. For this Quickstart you will notice that our main data engineering Notebooks will be named with a prefix for the environment label, like `DEV_` for dev and `PROD_` for prod. A full discussion of different approaches for managing multiple environments with Snowflake is out of scope for this Quickstart. For a real world use case, you may or may not need to do the same, depending on your Snowflake set up.
+### Connect to Git from Snowflake
+ow, let's go back to the notebook we uploaded and start executing the cells.  
+Before we do that, please ensure you have updated the information in cell ***Step 01 Setup Snowflake*** (`sql_step03_set_context`) with your credentials.
+```sql
+SET MY_USER = CURRENT_USER();
 
-To put this in context, we are on step **#4** in our data flow overview:
+SET GITHUB_SECRET_USERNAME = 'yourgithubusername';
+SET GITHUB_SECRET_PASSWORD = 'yourgithubtoken';
+SET GITHUB_URL_PREFIX = 'https://github.com/yourgithubusername';
+SET GITHUB_REPO_ORIGIN = 'https://github.com/Snowflake-Labs/sfguide-deploying-pipielines-with-snowflake-and-dbt-labs.git';
+```
+Once you execute cells `sql_step03_set_context` and `sql_step03_database_objects` in Step 01 Setup Snowflake, this should create a Git repository object in the SANDBOX.PUBLIC schema. If you click on the details arrow, you should see the content of the Git repository/branch.
 
-<img src="assets/context.png" width="800" />
+<img src="assets/git_repo.png" width="800" />
 
-### Git in Snowsight
-When you ran the setup cells in the `00_start_here.ipynb` Notebook in the previous step, you created a Git Integration in Snowflake for your forked GitHub repository! Please see [Using a Git repository in Snowflake](https://docs.snowflake.com/en/developer-guide/git/git-overview) for more details.
+### Create development environment
 
-You can browse your Git repository in Snowsight, by using our Snowsight Git integration features. To do that, click on "Data" -> "Databases" in the left navigation. Then click on "DEMO_DB" database, then "INTEGRATIONS" schema, then "Git Repositories" and finally "DEMO_GIT_REPO". You will see the details and content of your Git repository in Snowsight. You can change branches and browse the files in the repo by clicking on the folder names to drill down.
+Now, let's run cell ***Step 02 Setup dev environment*** (`sql_step04_deploy_dev_notebooks`).  
+Let's take a moment to discuss what's happening here. We just mounted the Git repository, and it’s a good idea to ensure we fetch the latest changes from the main branch before using its content. Technically, the content of the repo is acting like a stage object in Snowflake. As the next step, we issue the `EXECUTE IMMEDIATE FROM @GIT/..` command, which runs a script maintained externally, passing `env='DEV'` as an argument.
 
-### Deploy Notebooks
-Scroll down to the "Step 04 Deploy to Dev" section of the `00_start_here.ipynb` Notebook and run the Python cell there. This cell will deploy both the `06_load_excel_files` and `07_load_daily_city_metrics` Notebooks to our `DEV_SCHEMA` schema (and will prefix both workbook names with `DEV_`).
+```sql
+USE ROLE ACCOUNTADMIN;
+USE DATABASE SANDBOX;
 
-### EXECUTE IMMEDIATE FROM with Jinja Templating
-The [EXECUTE IMMEDIATE FROM](https://docs.snowflake.com/en/sql-reference/sql/execute-immediate-from) command is very powerful and allows you to run an entire SQL script directly from Snowflake. And you'll notice here that we executing a SQL script directly from the `main` branch of our Git repo (`@DEMO_GIT_REPO/branches/main`). At this point please review the contents of the `scripts/deploy_notebooks.sql` script in your forked repo to see what we just executed.
+ALTER GIT REPOSITORY DEMO_GIT_REPO FETCH;
+EXECUTE IMMEDIATE FROM @DEMO_GIT_REPO/branches/main/scripts/deploy_environment.sql USING (env => 'DEV');
+```
+If you look inside the `deploy_environment.sql` file, you'll notice that it uses two very useful constructs:
+- **Jinja macro**: This allows running the same code with different parameters (in our case, it helps provision multiple template-based environments).
+- **`CREATE OR ALTER`** construct: This greatly simplifies the process of generating delta DDL commands to change or create your target environment. In this scenario, we are using it for fairly basic tasks, but it is an important step towards a declarative definition of your environment and good DevOps practices. You can read more about it in the [docs](https://docs.snowflake.com/en/sql-reference/sql/create-or-alter).
 
-Also, please note that the `scripts/deploy_notebooks.sql` script also includes Jinja Templating. Jinja templating allows us to parameterize this script so we can run the same core logic in each environment! You will see later in step 9 that we will call this same script from our GitHub Actions pipeline in order to deploy these Notebooks to production.
+<img src="assets/jinja_template.png" width="800" />
+
+Great. Once cell executed we should now have a dev environment(database, roles, warehouses) and be ready to start running pipelines! 
+
+<img src="assets/validate_dev.png" width="800" />
 
 <!-- ------------------------ -->
 ## Upload manual sources
