@@ -154,7 +154,7 @@ the Data Products / Apps section in Snowsight and open the
 **Marketing Data Foundation** application.
 
 
-[//]: # (![NativeApp]&#40;assets/NativeAppListing.png&#41;)
+![NativeApp](assets/native_app_listing.png)
 
 ### 1. Select the Data provider
  
