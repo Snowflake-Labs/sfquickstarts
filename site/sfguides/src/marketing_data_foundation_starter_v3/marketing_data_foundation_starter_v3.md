@@ -156,6 +156,10 @@ the Data Products / Apps section in Snowsight and open the
 
 ![NativeApp](assets/native_app_listing.png)
 
+Take some time to grant privileges to `IMPORTED PRIVILEGES ON SNOWFLAKE DB`, `CREATE COMPUTE POOL`, `BIND SERVICE ENDPOINT`, and`CREATE WAREHOUSE`.
+
+![UpdatePrivileges](assets/update_priv.png)
+
 ### 1. Select the Data provider
  
  To execute the solution open the Data Models & Mappings section in the application's sidebar menu:
