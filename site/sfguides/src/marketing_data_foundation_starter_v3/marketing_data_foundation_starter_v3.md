@@ -162,13 +162,9 @@ Take some time to grant privileges to `IMPORTED PRIVILEGES ON SNOWFLAKE DB`, `CR
 
 ### 1. Select the Data provider
  
- To execute the solution open the Data Models & Mappings section in the application's sidebar menu:
+ To execute the solution click **Add New Source** at the top of the page and open the Data Models & Mappings section in the application's sidebar menu. You will see the list of supported Data source providers. For this version only Facebook and LinkedIn are supported.
 
-[//]: # ( ![Step1]&#40;assets/Step1.png&#41;)
-
- You will see the list of supported Data source providers. For this version only Facebook and LinkedIn are supported.
-
-[//]: # ( ![Step1.1]&#40;assets/Step1.1.png&#41;)
+![AddNewSource](assets/add_new_source.png)
 
 Select any of those options to continue with the solution. Sample data are provided for both options so it is not a requirement to have Fivetran or Omnata installed and configured.
 
@@ -183,7 +179,7 @@ After you select any of the Data providers options you will continue to the Conn
 
 These steps will provide instructions on how to bring the data to Snowflake or connect it with data already in Snowflake.
 
-[//]: # (![Data]&#40;assets/ConnectionConfiguration.png&#41;)
+![LinkData](assets/link_data.png)
 
 Since we are going to use the sample data, you can continue to the ***Link data already in Snowflake*** option.
 
@@ -197,7 +193,8 @@ LinkedIn:
 
 When you click on the connect option, the application will verify you have access to the sample data  and will show you the list of tables in the selected schema.
 
-[//]: # (![ConnectTables]&#40;assets/ConnectTables.png&#41;)
+![Fivetran](assets/fivetran.png)
+
 
 ### 3. Explore and Apply Mappings
 
@@ -205,11 +202,11 @@ This application applies a set of predefined mappings to generate a unified mark
 
 You can explore or apply the mappings using the options provided in this screen:
 
-[//]: # (![Mappings]&#40;assets/Mappings1.png&#41;)
+![Mappings1](assets/mappings_1.png)
 
 The mappings are shown using a custom component that highlights the columns used from the source data and the target column in the unified data model:
 
-[//]: # (![Mappings]&#40;assets/Mappings2.png&#41;)
+![Mappings2](assets/mappings_2.png)
 
 
 ### 4. Visualizations
@@ -217,7 +214,7 @@ The mappings are shown using a custom component that highlights the columns used
 After you apply the mappings the application will generate several schemas inside the application's database. 
 The unified data model will be used to generate some basic visualizations that provide insights about the ingested data:
 
-[//]: # (![DataExplorer]&#40;assets/DataExplorer.png&#41;)
+![Visualizations](assets/viz.png)
 
 The unified data model is stored in the Database ```Marketing Data Foundation``` and the Schema ```AGGREGATED_REPORTS```.
 
@@ -228,15 +225,15 @@ The application also provides AI Functions that can be explored:
 #### Data Quality
 Provides access to a set of predefined Snowflake Notebooks with some sample Customer 360 cases.
 
-[//]: # (![]&#40;assets/DataQuality.png&#41;)
+![DataQuality](assets/data_quality.png)
 
 #### AI Assistant Bot
 
 Under the AI Assistant option you will find a Chatbot that allows you to ask questions related to either Data Engineering using your ingested data as input.
 
-[//]: # (![]&#40;assets/AIAssistant.png&#41;)
+![AIAssistant](assets/ai_assistant.png)
 
-[//]: # (![]&#40;assets/AIAssist2.png&#41;)
+![AIAssistant2](assets/ai_assistant2.png)
 
 
 
