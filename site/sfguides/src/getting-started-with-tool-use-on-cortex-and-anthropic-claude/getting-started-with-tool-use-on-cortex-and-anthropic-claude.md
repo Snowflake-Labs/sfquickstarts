@@ -1,6 +1,6 @@
 author: James Cha-Earley
 id: getting-started-with-tool-use-on-cortex-and-anthropic-claude
-summary: This is a sample Snowflake Guide
+summary: This guide demonstrates how Snowflake Cortex integrates with Claude to enable external API interactions through tools.
 categories: Getting-Started
 environments: web
 status: Published 
@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 ## Overview
 Duration: 5
 
-In this quickstart, you'll learn how to implement Claude's tool use capabilities within Snowflake to create an intelligent weather assistant. This guide demonstrates how to define tools for Claude, execute tools when Claude requests them, and properly format tool results to create a complete tool use lifecycle.
+In this quickstart, you'll learn how to leverage Snowflake Cortex's AI capabilities to create an intelligent weather assistant with tool use functionality. This guide demonstrates how Snowflake Cortex integrates with Claude to enable external API interactions, allowing you to define tools, process tool requests, and format tool results to create a seamless conversational experience powered by Snowflake's AI infrastructure.
 
 ### What You Will Build
 - An AI application in Snowflake that demonstrates Claude's tool use capabilities
