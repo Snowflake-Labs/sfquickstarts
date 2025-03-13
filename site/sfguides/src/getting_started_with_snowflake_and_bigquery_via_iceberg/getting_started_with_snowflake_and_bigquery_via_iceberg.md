@@ -1,5 +1,5 @@
 author: Matt Marzillo
-id: sharing_data_between_bigquery_and_snowflake_using_apache_iceberg
+id: getting_started_with_snowflake_and_bigquery_via_iceberg
 summary: This is a quickstart showing users how use iceberg with Snowflake and Big Query
 categories: Data-Sharing, GCP, Iceberg, Big Query, Google, Open, Open Table Format
 environments: web
@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: iceberg, google, gcp, bigquery, open
 
-# Using Snowflake and Big Query with Iceberg
+# Getting Started with Snowflake and BigQuery via Iceberg
 <!-- ------------------------ -->
 ## Overview 
 Duration: 10
@@ -45,7 +45,7 @@ There is often no one-size-fits-all approach to tackling complex business challe
 
 
 <!-- ------------------------ -->
-## Snowflake Managed Iceberg to BigQuery
+## Snowflake Iceberg to BigQuery
 Duration: 18
 
 In this section, you will create a table in Snowflake using the Iceberg format and also create a BigLake (external) table in BigQuery that points to the same Iceberg files.
@@ -242,7 +242,7 @@ SYSTEM$GET_ICEBERG_TABLE_INFORMATION('<iceberg_table_name>')
 - You will then need to update the table metadata in BigQuery: https://cloud.google.com/bigquery/docs/iceberg-external-tables#update-table-metadata
 
 <!-- ------------------------ -->
-## Big Lake Managed table to Snowflake
+## Big Lake Iceberg to Snowflake
 Duration: 19
 
 In this section, you will create a table in BigQuery using the Iceberg format and also create an Iceberg (external) table in Snowflake that points to the same Iceberg files.
@@ -471,7 +471,7 @@ SELECT * FROM driver WHERE driver_id = 0;
 NOTE: You will not see the new record. You first need to tell BigQuery to export the latest metadata (see step “View the storage metadata”) and update the metadata used by Snowflake (see step “Create the Iceberg table, pointing to the existing metadata file”) pointing to the latest JSON file.
 
 <!-- ------------------------ -->
-## Keeping BigQuery in-sync with Snowflake Iceberg tables
+## Keeping BQ in-sync with Snowflake
 Duration: 5
 
 In this section you will set up BigQuery to stay in-sync with Iceberg tables hosted in Snowflake.
