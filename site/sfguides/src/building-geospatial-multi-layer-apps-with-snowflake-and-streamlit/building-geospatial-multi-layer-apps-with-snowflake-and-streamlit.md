@@ -13,9 +13,11 @@ tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospati
 Duration: 10
 
 
-Welcome to the Location Analytics Hands on Lab.  Today you will learn how to analyse and transform geospatial data in Snowflake.  You will be covering:
+Welcome to the Location Analytics Hands on Lab.  Today you will learn how to analyse and transform geospatial data in Snowflake.  You will be using **Ordnance Survey** free datasets available on the marketplace as well as the worldwide buildings datasets provided by **CARTO**.
 
-- A progressive learning experience in a **Snowflake Notebook** covering the following:
+This is a progressive learning experience from viewing points on a mapk right through to building a multi layer app - which pulls together buildings with unique property reference numbers, the road network and urban extents.
+
+You will be covering:
 
 - Geospatial datatypes and formats
 - Points, Linestrings and Polygons
@@ -23,11 +25,9 @@ Welcome to the Location Analytics Hands on Lab.  Today you will learn how to ana
 - Spatial Joins and Calculations
 - Visualising the results using **Pydeck**
 - Search Optimisation
-
-
 - Building a multi-layer app - which pulls together everything you have learned.
 
-
+Thoughout the experience, you will demonstrate the concepts with Snowflake notebooks with Streamlit.
 
 ![alt text](assets/front_cover.png)
 
@@ -105,6 +105,7 @@ Duration: 10
     -   Ordnance Survey - Urban Extents for Cities, Towns and Vilages
     -   Ordnance Survey - Postcodes, Place Names and Road Names
     -   Ordnance Survey - Road Network Great Britain - Open Roads
+    -   Ordnance Survey - Unique Property Reference Numbers - Great Britain: Open UPRN
    
 
 - For each dataset found, press **Get** to get the data.  
