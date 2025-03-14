@@ -5,7 +5,7 @@ categories: Data-Sharing, streamlit
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial
+tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial, Ordnance Survey
 
 # Building Geospatial Multi-Layer Apps with Snowflake and Streamlit
 <!-- ------------------------ -->
@@ -13,7 +13,9 @@ tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospati
 Duration: 10
 
 
-Welcome to the Location Analytics Hands on Lab.  Today you will learn how to analyse and transform geospatial data in Snowflake.  You will be using **Ordnance Survey** free datasets available on the marketplace as well as the worldwide buildings datasets provided by **CARTO**.
+Welcome to the **Building Geospatial Multi-Lay Apps with Snowflake and Streamlit quickstart**.  Today you will learn how to analyse and transform geospatial data in Snowflake.  You will be using **Ordnance Survey** open datasets available on the marketplace as well as the worldwide open overture buildings dataset provided by **CARTO**.
+
+![alt text](image.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![alt text](image-2.png)
 
 This is a progressive learning experience from viewing points on a mapk right through to building a multi layer app - which pulls together buildings with unique property reference numbers, the road network and urban extents.
 
@@ -27,7 +29,7 @@ You will be covering:
 - Search Optimisation
 - Building a multi-layer app - which pulls together everything you have learned.
 
-Thoughout the experience, you will demonstrate the concepts with Snowflake notebooks with Streamlit.
+Thoughout the experience, you will demonstrate the concepts with **Snowflake Notebooks** and Streamlit.
 
 ![alt text](assets/front_cover.png)
 
@@ -161,7 +163,7 @@ This app gives you an example of how you can bring all these datasets together t
 
 - copy and paste the following code into the **Streamlit** canvas from [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-analysing-geospatial-location-data/blob/main/Streamlit/towns_with_roads.py)
 
-![alt text](assets/roads.png)
+![alt text](assets/road_network.png)
 
 
 <!-- ------------------------ -->
@@ -169,7 +171,7 @@ This app gives you an example of how you can bring all these datasets together t
 Duration: 5
 ### Conclusion
 
-Congratulations on completing the **Location Analytics Hands-on Lab**! Throughout this session, you've explored how Snowflake can be used to analyze and transform geospatial data, combining multiple datasets to generate valuable insights.  
+Congratulations on completing the **Building Geospatial Multi-Layer Apps with Snowflake and Streamlit** Quickstart! Throughout this session, you've explored how Snowflake can be used to analyze and transform geospatial data, combining multiple datasets to generate valuable insights.  
 
 ### What You Learned 
 
@@ -200,6 +202,8 @@ We hope this hands-on lab has provided you with the confidence and skills to app
 
 
 #### Further Related Material
+
+- [Ordnance Survey Documenation](https://docs.os.uk)
 
 - [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
 
