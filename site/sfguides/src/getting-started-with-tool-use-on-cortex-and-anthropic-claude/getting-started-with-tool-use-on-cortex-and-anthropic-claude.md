@@ -45,7 +45,7 @@ To prepare your Snowflake environment, you'll need to create the necessary datab
 1. Open a new worksheet in Snowflake
 2. Create the necessary database objects, warehouse, and network rules by executing the following SQL commands from [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-tools-use-on-cortex-and-anthropic/blob/main/setup.sql):
 
-> Replace `<YOUR USER>` with your Snowflake username.
+> Replace **YOUR USER** with your Snowflake username.
 
 ### Set Up API Access
 
