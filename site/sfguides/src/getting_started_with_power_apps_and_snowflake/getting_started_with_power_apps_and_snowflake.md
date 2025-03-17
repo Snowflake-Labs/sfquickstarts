@@ -70,7 +70,7 @@ CREATE OR REPLACE TABLE CUSTOMER_PRESEGMENT (
 	PREFERRED_CATEGORY VARCHAR(16777216),
 	LAST_PURCHASE_AMOUNT NUMBER(38,2)
 );
-grant select on table hol_db.public.customer_presegments to role public;
+GRANT SELECT ON TABLE hol_db.public.customer_presegment TO ROLE public;
 ```
 
 ### Get Sample data and scripts from Azure Blob -> Shankar, Nithin  
@@ -132,7 +132,7 @@ Typically your datascience teams develop and deploy the models, and you can invo
 	[storedproc](assets/segment_storedproc)
 
 
-### Build a PowerAutomate Flow -> Shankar, Nithin 
+### Build a PowerAutomate Flow
 Let's build a PowerAutomate Flow that calls Snowflake Stored Procedure that runs a clustering ML model on the data.
 1. Launch PowerAutomate
 2. Click Create new flow -> Create from blank
@@ -147,21 +147,21 @@ Let's build a PowerAutomate Flow that calls Snowflake Stored Procedure that runs
 	- warehouse - HOL_WH
 	- role  - accountadmin
 	
-	Make sure to change connection to the one you created [above](#set-up-azure-ad-entra-id-authentication-for-snowflake) 	
-	
+	Make sure to set connection to the one you created [above](#set-up-azure-ad-entra-id-authentication-for-snowflake) 	
+
 	![automateconnect](assets/automate_conn.png)
 7. Save the flow as ex: Call_Segmentize_Flow and test it works fine. 
 		
 		
-### Update PowerApp to invoke your Flow -> Shankar, Nithin  
+### Update PowerApp to invoke your Flow
 1. Put a button called Segmentize in the CUSTOMER_PRESEGMENT screen.
 ![add_trigger](assets/app_call_flow.png)
 2. Let's create another screen to indicate when the flow is completed and name it Trigger_Success. 
-3. Drop a form on the Trigger_Success, we will connect this to a table CUSTOMER_SEGMENTS which has the prediction field. 
+3. Drop a form on the Trigger_Success, we will connect this data view named CUSTOMER_SEGMENTS which has the PREDICTION field created by running the model. 
 4. Go back the CUSTOMER_PRESEGMENT screen, click the segmentize button and in the Properties->Advanced table 
    pick ONSELECT action and enter the following 
    ![flow_trigger](assets/run_powerflow.png)
-5. Now you can see Segment being predicted for the customer record. 
+5. Now you can see PREDICTION column in the CUSTOMER_SEGMENTS view displayed. 
    ![show_prediction](assets/segment_prediction.png)
 
 ### Reset the Demo 

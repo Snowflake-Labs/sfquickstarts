@@ -432,16 +432,16 @@ CREATE OR REPLACE ICEBERG TABLE icberg_truck_reviews
         BASE_LOCATION = 'reviews-s3-volume'; 
 
 -- Insert Iceberg Metadata from External Files 
-INSERT INTO icberg_truck_reviews
+INSERT INTO iceberg_truck_reviews
 (
-source_name, quarter, order_id, truck_id, language, review, primary_city, truck_brand
+    order_id, quarter, truck_id, language, source_name, review, primary_city, truck_brand 
 )
 SELECT 
-       SPLIT_PART(METADATA$FILENAME, '/', 4) as source_name,
-       CONCAT(SPLIT_PART(METADATA$FILENAME, '/', 2),'/' ,SPLIT_PART(METADATA$FILENAME, '/', 3)) as quarter,
        $1 as order_id,
+       SPLIT_PART(METADATA$FILENAME, '/', 2) as quarter,
        $2 as truck_id,
        $3 as language,
+       CONCAT(SPLIT_PART(METADATA$FILENAME, '/', 3),'/',SPLIT_PART(METADATA$FILENAME, '/', 4)) as source_name,
        $5 as review,
        $6 as primary_city, 
        $10 as truck_brand 
@@ -453,10 +453,22 @@ PATTERN => '.*reviews.*[.]csv');
 -- Create a view on the Iceberg Reviews, and run Cortex AI to extract Sentiment
 USE SCHEMA analytics;
 
-CREATE OR REPLACE VIEW  product_sentiment AS 
-SELECT primary_city, truck_brand, avg(snowflake.cortex.sentiment(review)) as review_sentiment 
-FROM frostbyte_tasty_bytes.raw_customer.icberg_truck_reviews 
-group by primary_city, truck_brand ;
+-- We have non-english reviews from global customers
+SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , review where language !='en' limit 1;
+
+-- Snowflake Cortex makes it easy for us to translate and extract sentiment out of unstructured data
+CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_unified_reviews as             
+    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(review) as final_review from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language='en'
+    UNION    
+    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(snowflake.cortex.translate(review,language,'en')) as final_review from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews where language !='en';
+
+
+-- Sentiment Grouped By City and Brand 
+
+CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_sentiment AS 
+SELECT primary_city, truck_brand, avg(snowflake.cortex.sentiment(final_review)) as review_sentiment 
+FROM frostbyte_tasty_bytes.analytics.product_unified_reviews
+group by primary_city, truck_brand;
 
 select * from frostbyte_tasty_bytes.analytics.product_sentiment limit 10;
 
