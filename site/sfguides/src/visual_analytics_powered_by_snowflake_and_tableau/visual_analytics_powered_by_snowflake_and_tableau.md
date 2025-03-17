@@ -62,84 +62,19 @@ Duration: 2
 Duration: 5
 
 ### Create Snowflake Database and Warehouse 
-```sql
--- Create Database, Schema, Warehouse and Roles
+[Download and Run create_db_wh.sql](assets/create_db_wh.sql)
 
-USE ROLE ACCOUNTADMIN;
-
--- Keep a note of this as we need this for DataLake Integration 
-SELECT current_region(); 
-
--- create frostbyte_tasty_bytes database
-CREATE OR REPLACE DATABASE frostbyte_tasty_bytes;
-
--- create raw_pos schema
-CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes.raw_pos;
-
--- create raw_customer schema
-CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes.raw_customer;
-
--- create harmonized schema
-CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes.harmonized;
-
--- create analytics schema
-CREATE OR REPLACE SCHEMA frostbyte_tasty_bytes.analytics;
-
--- create warehouses
-CREATE OR REPLACE WAREHOUSE demo_build_wh
-    WAREHOUSE_SIZE = 'medium'
-    WAREHOUSE_TYPE = 'standard'
-    AUTO_SUSPEND = 30
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-COMMENT = 'demo build warehouse for frostbyte assets';
-    
-CREATE OR REPLACE WAREHOUSE tasty_de_wh
-    WAREHOUSE_SIZE = 'xsmall'
-    WAREHOUSE_TYPE = 'standard'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-COMMENT = 'data engineering warehouse for tasty bytes';
-
-CREATE OR REPLACE WAREHOUSE tasty_bi_wh
-    WAREHOUSE_SIZE = 'small'
-    WAREHOUSE_TYPE = 'standard'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-COMMENT = 'business intelligence warehouse for tasty bytes';
--- create roles
-USE ROLE ACCOUNTADMIN;
-
--- functional roles
-CREATE ROLE IF NOT EXISTS tasty_admin
-    COMMENT = 'admin for tasty bytes';
-    
-CREATE ROLE IF NOT EXISTS tasty_data_engineer
-    COMMENT = 'data engineer for tasty bytes';
-
-CREATE ROLE IF NOT EXISTS tasty_bi
-    COMMENT = 'business intelligence for tasty bytes';
-
--- role hierarchy
-GRANT ROLE tasty_admin TO ROLE ACCOUNTADMIN;
-GRANT ROLE tasty_data_engineer TO ROLE tasty_admin;
-GRANT ROLE tasty_bi TO ROLE tasty_admin;
-
-
-```
 ### Download Scripts and Create Worksheet from SQL 
- 
 ![Snowflake Login](assets/Worksheet_1.png)
+
 ### Grant Privileges on Snowflake Objects
-[grantperms](assets/grant_perms.sql)
+[Download and Run grantperms.sql](assets/grant_perms.sql)
 
 ### Create Snowflake Stages and Native Tables
-[createobjects](assets/create_objects.sql)
+[Download and Run createobjects.sql](assets/create_objects.sql)
 
 ### Load data into Raw Tables 
-[loadraw](assets/tab_load_raw.sql)
+[Download and Run loadraw.sql](assets/tab_load_raw.sql)
 
 ## Data Collaboration 
 
