@@ -140,10 +140,6 @@ In the ***Data Products/ Apps*** section, you will see the recently created Mark
 
 ![app_list](assets/app_list.png)
 
-Update the privileges for the application by ensuring that all of the privileges shown below are granted. Afterward, click on **Update Privileges** and **Launch app**.
-
-![update_privileges](assets/update_privileges.png)
-
 
 <!-- ------------------------ -->
 ## Use the Native App
@@ -156,7 +152,8 @@ the Data Products / Apps section in Snowsight and open the
 
 ![NativeApp](assets/native_app_listing.png)
 
-Take some time to grant privileges to `IMPORTED PRIVILEGES ON SNOWFLAKE DB`, `CREATE COMPUTE POOL`, `BIND SERVICE ENDPOINT`, and`CREATE WAREHOUSE`.
+
+Take some time to grant privileges to `IMPORTED PRIVILEGES ON SNOWFLAKE DB`, `CREATE COMPUTE POOL`, `BIND SERVICE ENDPOINT`, and`CREATE WAREHOUSE`. Afterward, click on **Update Privileges** and **Launch app**.
 
 ![UpdatePrivileges](assets/update_priv.png)
 
@@ -216,7 +213,7 @@ The unified data model will be used to generate some basic visualizations that p
 
 ![Visualizations](assets/viz.png)
 
-The unified data model is stored in the Database ```Marketing Data Foundation``` and the Schema ```AGGREGATED_REPORTS```.
+The unified data model is stored in the Database ```MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>``` (replace with your username) and the Schema ```TARGET```.
 
 ### 5. AI Functions
 
