@@ -53,7 +53,10 @@ Duration: 2
 
 ### Login User Interface
 
- ![Snowflake Login](assets/new_snowflake_ui.png)
+ ![Snowflake Login](assets/create_folder.png)
+
+### Download Scripts and Create Worksheet from SQL 
+![Create Worksheets](assets/Worksheet_1.png)
 
 <!-- ------------------------ -->
 
@@ -64,8 +67,6 @@ Duration: 5
 ### Create Snowflake Database and Warehouse 
 [Download and Run create_db_wh.sql](assets/create_db_wh.sql)
 
-### Download Scripts and Create Worksheet from SQL 
-![Snowflake Login](assets/Worksheet_1.png)
 
 ### Grant Privileges on Snowflake Objects
 [Download and Run grantperms.sql](assets/grant_perms.sql)
@@ -87,12 +88,12 @@ Duration: 5
 
   Our Tasty Bytes Financial Analysts have brought it to our attention when running 
   year over year analysis that there are unexplainable days in various cities where
-  our truck sales went to 0. 
+  our truck sales went to 0 or there are no Sales at all
   
   One example they have provided was for Hamburg, Germany in February of 2022.
 ----------------------------------------------------------------------------------*/
 
---  Step 1 - Querying Point of Sales Data for Trends
+--  Step 1 - Querying Point of Sales Data for Trends 
 USE ROLE tasty_data_engineer;
 USE WAREHOUSE tasty_de_wh;
 
@@ -103,13 +104,13 @@ FROM frostbyte_tasty_bytes.analytics.orders_v o
 WHERE 1=1
     AND o.country = 'Germany'
     AND o.primary_city = 'Hamburg'
-    AND DATE(o.order_ts) BETWEEN '2022-02-10' AND '2022-02-20'
+    AND DATE(o.order_ts) BETWEEN '2022-02-10' AND '2022-02-25'
 GROUP BY o.date
-ORDER BY o.date ASC;
+ORDER BY o.date ASC; 
 ```
 
 
-### Add Weather Data from Snowflake Marketplace
+### Add Weather Data from Snowflake Marketplace 
 Duration: 5
 
 1. Click -> Home Icon
@@ -122,6 +123,7 @@ Duration: 5
 6. Rename Database -> FROSTBYTE_WEATHERSOURCE (all capital letters)
 7. Grant to Additional Roles -> PUBLIC
 
+### Connect Weather Data to Sales Data 
 
 ```sql 
 --  Step 2 - Harmonizing First and Third Party Data
@@ -169,7 +171,7 @@ WHERE 1=1
     AND dw.city_name = 'Hamburg'
     AND YEAR(date_valid_std) = '2022'
     AND MONTH(date_valid_std) = '2'
-    AND date_valid_std between '2022-02-14' and  '2022-02-25'
+    AND date_valid_std between '2022-02-10' and  '2022-02-25'
 GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std ASC;
 
@@ -221,7 +223,7 @@ WHERE 1=1
     AND fd.country_desc = 'Germany'
     AND fd.city = 'Hamburg'
     AND fd.yyyy_mm = '2022-02'
-    AND date_valid_std between '2022-02-14' and  '2022-02-25'
+    AND date_valid_std between '2022-02-10' and  '2022-02-25'
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 
@@ -274,7 +276,7 @@ FROM frostbyte_tasty_bytes.analytics.daily_city_metrics_v dcm
 WHERE 1=1
     AND dcm.country_desc = 'Germany'
     AND dcm.city_name = 'Hamburg'
-    AND dcm.date BETWEEN '2022-02-14' AND '2022-02-25'
+    AND dcm.date BETWEEN '2022-02-10' AND '2022-02-25'
 ORDER BY date ASC;
 ```
 <!-- ------------------------ -->
@@ -300,6 +302,7 @@ unzip the file before you load into AWS bucket
 
 **Now, in your Snowflake account**
 
+[Download and Run SQL for s3_integration](assets/aws_integration.sql)
 ```sql
 
 USE DATABASE frostbyte_tasty_bytes;
@@ -321,7 +324,7 @@ CREATE OR REPLACE FILE FORMAT ff_csv
 
 CREATE OR REPLACE STAGE stg_truck_reviews
     STORAGE_INTEGRATION = s3_int
-    URL = 's3://jnanreviews'
+    URL = 's3://<name of your S3 bucket>/'
     FILE_FORMAT = ff_csv;
 ```
 
@@ -334,80 +337,8 @@ CREATE OR REPLACE STAGE stg_truck_reviews
 **Select defaults for remaining screens** 
 
 ### Create Snowflake managed Iceberg Tables to access Datalake 
-``` sql
-USE ROLE ACCOUNTADMIN;
-USE DATABASE  frostbyte_tasty_bytes;
-USE SCHEMA raw_customer;
-CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
-    STORAGE_LOCATIONS =
-        (
-            (
-                NAME = 'reviews-s3-volume'
-                STORAGE_PROVIDER = 'S3'
-                STORAGE_BASE_URL = 's3://jnanreviews'
-                STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<aws-account-id>:role/<snow_role>' --ex:snow_s3_access_role 
-                STORAGE_AWS_EXTERNAL_ID = 'RJB12004_SFCRole=4_zSAasUofMUwWxe/Hk98JqRTv2T4=' 
-            )
-            
-        )ALLOW_WRITES=true; 
 
-CREATE OR REPLACE ICEBERG TABLE icberg_truck_reviews
-        (
-        source_name VARCHAR,
-        quarter VARCHAR,
-        order_id BIGINT,
-        truck_id INT,
-        language VARCHAR, 
-        review VARCHAR,
-        primary_city VARCHAR,
-        truck_brand VARCHAR
-        )
-        CATALOG = 'SNOWFLAKE'
-        EXTERNAL_VOLUME = 'vol_tastybytes_truckreviews'
-        BASE_LOCATION = 'reviews-s3-volume'; 
-
--- Insert Iceberg Metadata from External Files 
-INSERT INTO iceberg_truck_reviews
-(
-    order_id, quarter, truck_id, language, source_name, review, primary_city, truck_brand 
-)
-SELECT 
-       $1 as order_id,
-       SPLIT_PART(METADATA$FILENAME, '/', 2) as quarter,
-       $2 as truck_id,
-       $3 as language,
-       CONCAT(SPLIT_PART(METADATA$FILENAME, '/', 3),'/',SPLIT_PART(METADATA$FILENAME, '/', 4)) as source_name,
-       $5 as review,
-       $6 as primary_city, 
-       $10 as truck_brand 
-FROM @stg_truck_reviews 
-(FILE_FORMAT => 'FF_CSV',
-PATTERN => '.*reviews.*[.]csv');
-
-
--- Create a view on the Iceberg Reviews, and run Cortex AI to extract Sentiment
-USE SCHEMA analytics;
-
--- We have non-english reviews from global customers
-SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , review where language !='en' limit 1;
-
--- Snowflake Cortex makes it easy for us to translate and extract sentiment out of unstructured data
-CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_unified_reviews as             
-    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(review) as final_review from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language='en'
-    UNION    
-    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(snowflake.cortex.translate(review,language,'en')) as final_review from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews where language !='en';
-
-
--- Sentiment Grouped By City and Brand 
-
-CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_sentiment AS 
-SELECT primary_city, truck_brand, avg(snowflake.cortex.sentiment(final_review)) as review_sentiment 
-FROM frostbyte_tasty_bytes.analytics.product_unified_reviews
-group by primary_city, truck_brand;
-
-select * from frostbyte_tasty_bytes.analytics.product_sentiment limit 10;
-
-```
+[Download and Run Queries on Customer Review Data](assets/query_iceberg.sql)
 
 ## Login to Tableau Online & Connect to Snowflake
 

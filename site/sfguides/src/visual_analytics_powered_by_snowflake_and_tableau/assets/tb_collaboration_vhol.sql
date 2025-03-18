@@ -5,11 +5,12 @@ Quickstart Section 3 - Investigating Zero Sales Days in our First Party Data
   year over year analysis that there are unexplainable days in various cities where
   our truck sales went to 0 or data doesn't exist. 
   
-  One example they have provided was for Hamburg, Germany in February of 2022.
+  One example they have provided was for Hamburg, Germany in February of 2022.  
+  
   Author:Chandra
 ----------------------------------------------------------------------------------*/
 
--- Section 3: Step 1 - Querying Point of Sales Data for Trends
+-- Section 3: Step 1 - Querying Point of Sales Data for Trends 
 USE ROLE tasty_data_engineer;
 USE WAREHOUSE tasty_de_wh;
 
@@ -20,13 +21,14 @@ FROM frostbyte_tasty_bytes.analytics.orders_v o
 WHERE 1=1
     AND o.country = 'Germany'
     AND o.primary_city = 'Hamburg'
-    AND DATE(o.order_ts) BETWEEN '2022-02-10' AND '2022-02-20'
+    AND DATE(o.order_ts) BETWEEN '2022-02-10' AND '2022-02-25'
 GROUP BY o.date
 ORDER BY o.date ASC;
 
 
+
 /*----------------------------------------------------------------------------------
-Quickstart Section 4 - Investigating Zero Sales Days in our First Party Data
+ Quickstart Section 4 - Investigating Zero Sales Days in our First Party Data
  From what we saw above, it looks like we are missing sales for February 16th 
  through February 21st for Hamburg. Within our first party data there is not 
  much else we can use to investigate this but something larger must have been 
@@ -96,7 +98,7 @@ WHERE 1=1
     AND dw.city_name = 'Hamburg'
     AND YEAR(date_valid_std) = '2022'
     AND MONTH(date_valid_std) = '2'
-    AND date_valid_std between '2022-02-14' and  '2022-02-25'
+    AND date_valid_std between '2022-02-10' and  '2022-02-25'
 GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std ASC;
 
@@ -149,7 +151,7 @@ WHERE 1=1
     AND fd.country_desc = 'Germany'
     AND fd.city = 'Hamburg'
     AND fd.yyyy_mm = '2022-02'
-    AND date_valid_std between '2022-02-14' and  '2022-02-25'
+    AND date_valid_std between '2022-02-10' and  '2022-02-25'
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 
@@ -200,7 +202,7 @@ FROM frostbyte_tasty_bytes.analytics.daily_city_metrics_v dcm
 WHERE 1=1
     AND dcm.country_desc = 'Germany'
     AND dcm.city_name = 'Hamburg'
-    AND dcm.date BETWEEN '2022-02-14' AND '2022-02-25'
+    AND dcm.date BETWEEN '2022-02-10' AND '2022-02-25'
 ORDER BY date ASC;
 
 

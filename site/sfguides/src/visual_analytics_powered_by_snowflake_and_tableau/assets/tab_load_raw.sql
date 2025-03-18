@@ -41,4 +41,3 @@ DROP WAREHOUSE IF EXISTS demo_build_wh;
 
 -- setup completion note
 SELECT 'frostbyte_tasty_bytes setup is now complete' AS note;
-```
