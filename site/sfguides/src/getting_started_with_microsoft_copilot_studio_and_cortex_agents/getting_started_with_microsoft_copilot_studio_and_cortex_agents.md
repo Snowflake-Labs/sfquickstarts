@@ -32,6 +32,12 @@ In this use cases we will build two data sources, one with structured sales data
 - Connecting your MS Copilot to the Cortex Agent
 
 ![](assets/agentcopilotarch.png)
+1. Create a Cortex Analyst Service with Semantic Model
+2. Create a Cortex Search Service
+3. Create a Cortex Agent that will use the services above as tools
+4. Connect and authenticate to Cortex Agent from MS Copilot
+5. Use the Copilot with Cortex Agent
+6. (Optional and not covered in this quickstart) connect other MS Services to your Copilot
 
 ### What You’ll Need
 - [Snowflake account](https://signup.snowflake.com/) 
@@ -97,8 +103,8 @@ The App Role manifests as follows. Avoid using high-privilege roles like ACCOUNT
 - Click Add. Copy the secret. This will be known as the <OAUTH_CLIENT_SECRET> in the following steps.
 
 
-For Service Principal Auth:
-- Click on API Permissions.
+
+Click on API Permissions.
 - Click on Add Permission
 - Click on APIs My Organization Uses. 
 - Search for and click on the Snowflake OAuth Resource you created in Configure the Oauth Resource in Microsoft EntraID
@@ -129,7 +135,7 @@ Collect Azure AD information for Snowflake
 We recommend you test the configuration at this time, please use the curl below and check if ENTRA is issuing a token or any API testing tool like Insomnia or others.
 
 ```console
- curl -X POST -H "Content-Type: application/x-www-form-urlencoded;charset=UTF-8" --data-urlencode "client_id=client_id from above B.8" --data-urlencode "client_secret=<Secret from above>" --data-urlencode "grant_type=client_credentials" --data-urlencode "scope=api://<Appl_URI_ID>/.default" 'https://login.microsoftonline.com/<tenant_id>/oauth2/v2.0/token'
+ curl -X POST -H "Content-Type: application/x-www-form-urlencoded;charset=UTF-8" --data-urlencode "client_id=<client_id from above>" --data-urlencode "client_secret=<Secret from above>" --data-urlencode "grant_type=client_credentials" --data-urlencode "scope=api://<Appl_URI_ID>/.default" 'https://login.microsoftonline.com/<tenant_id>/oauth2/v2.0/token'
 ```
 
 After this take the token from the curl command and decode it here: jwt.ms. Extract the “sub” value, this will be the login name for the snowflake user you create for the azure SP.
