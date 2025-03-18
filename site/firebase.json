@@ -141,7 +141,12 @@
       "source": "guide/asking_questions_to_your_own_documents_with_snowflake_cortex/{,/**}",
       "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
       "type": 301
-    }        
+    },
+    {
+      "source": "guide/getting_started_with_cortex_analyst_in_snowflake/{,/**}",
+      "destination": "/guide/getting_started_with_cortex_analyst/",
+      "type": 301
+    }           
     ]
   }
 }
