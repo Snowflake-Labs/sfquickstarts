@@ -71,7 +71,6 @@ To create and configure your Streamlit application in Snowflake:
 
 3. Create the app:
    * In the editor, paste the complete code provided below
-   * Click "Run" to launch your application
 
 ### Complete Application Code
 
@@ -81,9 +80,13 @@ You will need add a package. On the top left select **Packages**.
 Below is the full code for the Weather Assistant application.
 Copy the Streamlit app from [streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-tools-use-on-cortex-and-anthropic/blob/main/streamlit.py)
 
-* Click "Run" to test your application
+* Enable the External Access
+    * On the top right click on three dots 
+        * App Settings 
+            * External networks
+                *  WEATHERAPI_ACCESS_INTEGRATION
+* Click "Run" to launch your application
 
-* Share your application with colleagues by setting appropriate permissions
 
 ## Understanding Tool Use
 Duration: 15
