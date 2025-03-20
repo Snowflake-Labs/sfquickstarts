@@ -340,7 +340,7 @@ EXPORT TABLE METADATA FROM blmt_dataset.driver;
 - Run this command to switch to an account admin since we have to run some commands that requires this role
 ```sql
 USE ROLE accountadmin;
-``
+```
 
 ### Create a warehouse to hold the data
 ```sql
