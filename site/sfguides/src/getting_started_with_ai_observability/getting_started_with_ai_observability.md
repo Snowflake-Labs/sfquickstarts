@@ -18,7 +18,6 @@ Here is a summary of what you will be able to learn in each step by following th
 
 - **Setup Environment**: Create a snowflake objects required for the example.
 - **Prepare data**: Load, parse and chunk data for RAG.
-- **Search**: Create a Cortex Search service on top of the chunked data.
 - **Create a RAG**: Create a RAG with Cortex Search and Complete, adding TruLens instrumentation.
 - **Register the app**: Set application metadata for experiment tracking.
 - **Create a run**: Configure your test set for evaluation.
@@ -150,9 +149,9 @@ FROM
     )) c;
 ```
 
-## Search
+## Create a RAG
 
-Duration: 5
+Duration: 10
 
 Set up the Cortex Search service to enable efficient querying of the chunked content.
 
@@ -170,7 +169,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE CORTEX_SEARCH_TUTORIAL_DB.PUBLIC.FOMC_SE
     );
 ```
 
-Next, we can go back to our python notebook and create a `CortexSearchRetreiver` class to connect to our cortex search service and add the `retrieve` method that we can leverage for calling it.
+Next, we can create a `CortexSearchRetreiver` class to connect to our cortex search service and add the `retrieve` method that we can leverage for calling it.
 
 ```python
 from snowflake.snowpark.context import get_active_session
@@ -217,11 +216,7 @@ retrieved_context = retriever.retrieve(query="how was inflation expected to evol
 retrieved_context
 ```
 
-## Create a RAG
-
-Duration: 5
-
-Before we build the RAG, we want to enable TruLens-OpenTelemetry for tracing and observability.
+Before we put together the RAG, we want to enable TruLens-OpenTelemetry for tracing and observability.
 
 ```python
 import os
@@ -237,7 +232,7 @@ create or replace schema observability_schema;
 use schema observability_schema;
 ```
 
-Develop the RAG system with integrated instrumentation. Including the span type and attributes in instrumentation will power evaluations of the spans captured.
+Then, construct the RAG system with integrated instrumentation using the retriever we created previously. Including the span type and attributes in instrumentation will power evaluations of the spans captured.
 
 ```python
 from snowflake.cortex import complete
@@ -438,5 +433,5 @@ Congratulations! You've successfully built a RAG by combining Cortex Search and 
 
 ### Related Resources
 
-- [AI Observability Documentation](https://docs.snowflake.com/en/guides-overview-ai-features)
+- [AI Observability Documentation](...)
 - [Open Source TruLens Documentation](https://trulens.org/)
