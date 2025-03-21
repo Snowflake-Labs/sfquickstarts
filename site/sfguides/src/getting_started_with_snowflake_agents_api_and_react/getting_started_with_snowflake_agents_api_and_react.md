@@ -67,9 +67,9 @@ This script will:
 **Step 2\.** Upload the semantic model:
 
 - Download the [semantic model](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react/blob/main/data/customer_semantic_model.yaml) (NOTE: Do NOT right-click to download.)  
-- Navigate to Data » Databases » CORTEX\_TUTORIAL\_DB » PUBLIC » Stages  
-- Click "Upload" in the top right  
-- Select the semantic model file  
+- Navigate to Data » Databases » INSURANCEDB » DATA » Stages » CLAIM_STORAGE
+- Click "Upload" in the top right
+- Select the semantic model file
 - Click "Upload"
 
 ## Define Environment Variables
@@ -84,11 +84,14 @@ Now that we have set up the workspace, let's configure the necessary environment
 # Snowflake URL with your account details
 NEXT_PUBLIC_SNOWFLAKE_URL=https://<account_details>.snowflakecomputing.com
 
-# Path to the semantic model file
-NEXT_PUBLIC_SEMANTIC_MODEL_PATH=@<stage_name>/<semantic_model_name>.yaml
+# Path to the semantic model file; for example, @INSURANCEDB.DATA.DOC_STORAGE/customer_semantic_model.yaml
+NEXT_PUBLIC_SEMANTIC_MODEL_PATH=@<database>.<schema>.<stage_name>/<semantic_model_name>.yaml
 
-# Path to the search service
-NEXT_PUBLIC_SEARCH_SERVICE_PATH=DATABASE.SCHEMA.SAMPLE_SEARCH_SERVICE
+# Path to the search service; for example, INSURANCEDB.DATA.SUPPORT_DOCS_SEARCH
+NEXT_PUBLIC_SEARCH_SERVICE_PATH=<database>.<schema>.<search_service_name>
+
+# Warehouse used for SQL execution. If you omit this, default warehouse will be used.
+NEXT_PUBLIC_SNOWFLAKE_WAREHOUSE=<warehouse_name>
 ```
 
 ### Authentication Parameters
@@ -179,10 +182,17 @@ export const CORTEX_SEARCH_TOOL = {
     }
 } as const;
 
-export const DATA_2_ANALYTICS_TOOL = {
+export const SQL_EXEC_TOOL = {
     "tool_spec": {
-        "type": "cortex_analyst_sql_exec",
+        "type": "sql_exec",
         "name": "sql_exec"
+    }
+} as const;
+
+export const DATA_TO_CHART_TOOL = {
+    "tool_spec": {
+        "type": "data_to_chart",
+        "name": "data_to_chart"
     }
 } as const;
 ```
@@ -204,6 +214,12 @@ export interface CortexSearchToolResource {
     "search1": {
         "name": string;
         "max_results": number;
+    }
+}
+
+export interface SqlExecToolResource {
+    "sql_exec": {
+        "warehouse": string;
     }
 }
 ```
@@ -260,7 +276,8 @@ const { agentState, messages, latestMessageId, handleNewMessage } = useAgentAPIQ
   tools,
   toolResources: {
     "analyst1": { "semantic_model_file": process.env.NEXT_PUBLIC_SEMANTIC_MODEL_PATH },
-    "search1": { "name": process.env.NEXT_PUBLIC_SEARCH_SERVICE_PATH, max_results: 10 }
+    "search1": { "name": process.env.NEXT_PUBLIC_SEARCH_SERVICE_PATH, max_results: 10 },
+    "sql_exec": { "warehouse": process.env.NEXT_PUBLIC_SNOWFLAKE_WAREHOUSE ?? "" },
   }
 })
 ```
@@ -338,7 +355,8 @@ const { agentState, messages, latestMessageId, handleNewMessage } = useAgentAPIQ
   tools,
   toolResources: {
     "analyst1": { "semantic_model_file": process.env.NEXT_PUBLIC_SEMANTIC_MODEL_PATH },
-    "search1": { "name": process.env.NEXT_PUBLIC_SEARCH_SERVICE_PATH, max_results: 10 }
+    "search1": { "name": process.env.NEXT_PUBLIC_SEARCH_SERVICE_PATH, max_results: 10 },
+    "sql_exec": { "warehouse": process.env.NEXT_PUBLIC_SNOWFLAKE_WAREHOUSE ?? "" },
   }
 })
 
@@ -416,30 +434,13 @@ The component uses conditional rendering to ensure that the appropriate UI eleme
 
 Duration: 5
 
-The Data2Answer / Chart tool is in Preview and disabled by default in the chatbot. If you want to enable it, follow these steps:
-
-1. First, enable these parameters for your Snowflake account:  
-     
-   - `ENABLE_DATA_TO_ANSWER` (controls core feature)
-
-   
-
-2. Then enable these two parameters:  
-     
-   - `COPILOT_ORCHESTRATOR_PARAM_10` (enables data2answer)  
-   - `COPILOT_ORCHESTRATOR_PARAM_13` (enables data2chart)
-
-   
-
-3. Once you've enabled these parameters, add this variable to your `.env` file:
-
+If you want to enable the optional `data_to_chart` tool, set the following flag:
 ```
-NEXT_PUBLIC_DATA_2_ANSWER_ENABLED=true
+NEXT_PUBLIC_DATA_TO_CHART_ENABLED=true
 ```
+and restart your application.
 
-4. Restart your application.
-
-With these changes, Cortex Analyst answers will now include data2answer and/or data2chart responses after the SQL query and table response. For more details, refer to the `useAgentApiQuery` hook in the application code.
+With these changes, Cortex Agents will now return visualizations for the data obtained from Cortex Analyst, whenever available. For more details, refer to the `useAgentApiQuery` hook in the application code.
 
 ## Conclusion and Resources
 
