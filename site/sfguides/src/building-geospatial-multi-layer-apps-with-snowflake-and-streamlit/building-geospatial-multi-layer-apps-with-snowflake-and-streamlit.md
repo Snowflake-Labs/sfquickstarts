@@ -13,7 +13,7 @@ tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospati
 Duration: 10
 
 
-Welcome to the **Building Geospatial Multi-Lay Apps with Snowflake and Streamlit quickstart**.  Today you will learn how to analyse and transform geospatial data in Snowflake.  You will be using **Ordnance Survey** open datasets available on the marketplace as well as the worldwide open overture buildings dataset provided by **CARTO**.
+Welcome to the **Building Geospatial Multi-Lay Apps with Snowflake and Streamlit quickstart**.  Today you will learn how to analyse and transform [geospatial](https://www.ordnancesurvey.co.uk/blog/what-is-spatial-data) data in Snowflake.  You will be using **Ordnance Survey** open datasets available on the marketplace as well as the worldwide open overture buildings dataset provided by **CARTO**.
 
 ![alt text](image.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![alt text](image-2.png)
 
