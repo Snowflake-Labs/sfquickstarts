@@ -3,7 +3,7 @@ id: getting-started-with-mediawallah-enrichment-native-app
 summary: This is a guide to use MediaWallah's Enrichment Application
 categories: data-science, Getting-Started, data-science, data-applications
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, MediaWallah, Enrichment, Matchtest, Identity, Resolution, Graph
 
@@ -44,10 +44,10 @@ Enrichment results are returned in four tables.
 <!-- <img src="assets/solution_architecture.png" alt="solution_architecture" width="800"> -->
 ![solution_architecture](assets/solution_architecture.png)
 
-## Setup 01: Installation
+## Installation
 Duration: 2
 
-### Step 01: Account Setup (Post-Install)
+### Account Setup (Post-Install)
 Create objects and “helper” stored procedures.
 The following scripts help streamline the log sharing process and app usage considerably, and can be executed by the consumer before or after the app installation.
 Executing the scripts will create everything the consumer needs to use the app, including roles and warehouses.
@@ -418,11 +418,10 @@ GRANT APPLICATION ROLE MEDIAWALLAH_ENRICHMENT_APP.APP_ROLE TO ROLE C_MWEN_APP_AD
 ```
 
 <!-- ------------------------ -->
-## Step 02: Verify Installation
+## Verify Installation
 Duration: 1
 
-### Step 02: Verify Installation
-Once the app is installed, the consumer should verify installation by querying the METADATA_C_V view. If the table’s headers are visible then the consumer can continue to Step 04: Onboarding.
+Once the app is installed, the consumer should verify installation by querying the METADATA_C_V view. If the table’s headers are visible then the consumer can continue to Onboarding.
 **Example:**
 ```sql
 ------------------------ Step 02: Verify Installation ------------------------
@@ -433,10 +432,9 @@ SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V;
 ```
 
 <!-- ------------------------ -->
-## Step 03: Onboarding
+## Onboarding
 Duration: 1
 
-### Step 03: Onboarding
 To be onboarded the consumer must send their CURRENT_ORGANIZATION_NAME, CURRENT_ACCOUNT, and CURRENT_ACCOUNT_NAME to operations@mediawallah.com; with the subject line “Native App Onboarding Request: MediaWallah MEDIAWALLAH_ENRICHMENT_APP App".
 These details can be found using the following queries:
 
@@ -458,10 +456,9 @@ SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V;
 ```
 
 <!-- ------------------------ -->
-## Step 04: Log/Metric Sharing
+## Log/Metric Sharing
 Duration: 3
 
-### Step 04: Log/Metric Sharing
 After being successfully Onboarded, the consumer uses the **C_MWEN_APP_ADMIN** role to call the CREATE_LOG_SHARE helper stored procedure. This procedure creates the necessary database, tables, and share to store the logs and metrics tables and enable MediaWallah to access them.
 **Example:**
 ```sql
@@ -476,10 +473,9 @@ CALL C_MWEN_HELPER_DB.PRIVATE.CREATE_LOG_SHARE(
 ```
 
 <!-- ------------------------ -->
-## Step 05: Enablement
+## Enablement
 Duration: 1
 
-### Step 05: Enablement
 The consumer will be automatically enabled once the log share is verified by the application (this process takes about two minutes). Query the METADATA_C_V table to check for successful enablement:
 **Example:**
 ```sql
@@ -522,7 +518,6 @@ CREATE OR REPLACE VIEW C_MWEN_HELPER_DB.SOURCE.[CONSUMER_VIEW] AS
 ## Generating Requests
 Duration: 5
 
-### Generating Requests
 Once enabled, the consumer can call the GENERATE_REQUEST helper stored procedure to use any of the consumer’s allowed stored procs. Data will be generated into the MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP schema. View [Results Guide](https://nativeapps.mediawallah.com/MEDIAWALLAH_ENRICHMENT_APP/MWEN%20-%20Results%20Guide.pdf) for a detailed explanation of the generated data.
 Optimal warehouse sizing will depend on consumer input dateset dimensions. MediaWallah maintains an average run times based on historical runs in a Warehouse Sizing Doc, ask for details.
 **For a detailed explanation of the parameters used in GENERATE_REQUEST, see next section**
