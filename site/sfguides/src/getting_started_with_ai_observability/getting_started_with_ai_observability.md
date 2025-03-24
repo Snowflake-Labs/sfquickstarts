@@ -223,7 +223,7 @@ import os
 os.environ["TRULENS_OTEL_TRACING"] = "1"
 ```
 
-Create a database and schema to store our traces and evaluations
+Create a database and schema to store our traces and evaluations.
 
 ```sql
 create or replace database observability_db;
