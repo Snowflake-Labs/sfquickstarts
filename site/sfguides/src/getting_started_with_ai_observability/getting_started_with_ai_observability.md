@@ -17,12 +17,12 @@ In this tutorial, you'll build a Retrieval-Augmented Generation (RAG) system usi
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
 - **Setup Environment**: Create a snowflake objects required for the example.
-- **Prepare data**: Load, parse and chunk data for RAG.
+- **Prepare Data**: Load, parse and chunk data for RAG.
 - **Create a RAG**: Create a RAG with Cortex Search and Complete, adding TruLens instrumentation.
-- **Register the app**: Set application metadata for experiment tracking.
-- **Create a run**: Configure your test set for evaluation.
-- **Compute evaluation metrics**: Compute evaluation metrics in batch on the run.
-- **Examine results**: Navigate AI Observability in Snowsight to view and compare traces and evaluation results.
+- **Register the App**: Set application metadata for experiment tracking.
+- **Create a Run**: Configure your test set for evaluation.
+- **Compute Evaluation Metrics**: Compute evaluation metrics in batch on the run.
+- **Examine Results**: Navigate AI Observability in Snowsight to view and compare traces and evaluation results.
 
 ### What is TruLens?
 
@@ -72,7 +72,7 @@ CREATE OR REPLACE WAREHOUSE cortex_search_tutorial_wh WITH
 USE WAREHOUSE cortex_search_tutorial_wh;
 ```
 
-## Prepare data
+## Prepare Data
 
 Duration: 10
 
@@ -300,7 +300,7 @@ Test the RAG system by querying it with a sample question.
 response = rag.query("how was inflation expected to evolve in 2024?")
 ```
 
-## Register the app
+## Register the App
 
 Duration: 5
 
@@ -323,7 +323,7 @@ tru_rag = TruApp(
     )
 ```
 
-## Create a run
+## Create a Run
 
 Duration: 5
 
@@ -369,7 +369,7 @@ Start the experiment run with the prepared test set. Doing so will invoke the ap
 run.start()
 ```
 
-## Compute Evaluation metrics
+## Compute Evaluation Metrics
 
 Duration: 2
 
