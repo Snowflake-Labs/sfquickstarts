@@ -81,6 +81,11 @@ Follow the procedure in the [documentation: Create API key credentials](https://
 
 Keep the API key saved in a secure location. You will need it in the folowing steps.
 
+> aside positive
+> **IMPORTANT:** Ensure the privilege for the API key is enabled as below:
+
+![](assets/arcgis_apikey_privilege.jpg)
+
 ---
 
 ### Configure ArcGIS Pro and Snowflake connectivity
@@ -132,8 +137,7 @@ Duration: 15
 ### Importing and running the notebook
 The codebase needed for the quickstart is available in the notebook. You will need to import it into your Snowflake account as follows:
 
-1. Download the notebook: [ARCGIS_SERVICEAREA.ipynb](assets/ARCGIS_SERVICEAREA.ipynb). 
-2. ??? repo: [ArcGIS Snowflake Notebooks demo repo](???). Download the file by clicking on the `Download raw file` from the top right.
+1. Download the notebook: [ARCGIS_SERVICEAREA.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/ArcGIS_Snowflake/ARCGIS_SERVICEAREA.ipynb).Download the file by clicking on the `Download raw file` from the top right.
 ![importing notebook](assets/importing_notebook.jpg)
 1. On your Snowflake web interface, [Snowsight](https://app.snowflake.com), Navigate to `Project` > `Notebooks` from the left menu bar. 
 2. Click the notebook button on the top right and select `Import from .ipynb` from the dropdown.
