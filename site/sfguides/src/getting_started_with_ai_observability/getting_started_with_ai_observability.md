@@ -19,7 +19,7 @@ In this tutorial, you'll build a Retrieval-Augmented Generation (RAG) system usi
 
 Here is a summary of what you will be able to learn in each step by following this quickstart:
 
-- **Setup Environment**: Create a snowflake objects required for the example.
+- **Setup Environment**: Create Snowflake objects required for the example.
 - **Prepare Data**: Load, parse and chunk data for RAG.
 - **Create a RAG**: Create a RAG with Cortex Search and Complete, adding TruLens instrumentation.
 - **Register the App**: Set application metadata for experiment tracking.
@@ -52,7 +52,7 @@ To open the notebook, open [getting-started-with-ai-observability.ipynb](https:/
 
 Then, create a new Snowflake notebook by importing the notebook file in Snowsight.
 
-In your snowflake notebook, install the following python packages from the snowflake conda channel: `snowflake-ml-python` `snowflake.core` `trulens-core` `trulens-feedback` `trulens-providers-cortex` `trulens-connectors-snowflake` `trulens-otel-semconv`
+In your Snowflake notebook, install the following python packages from the Snowflake conda channel: `snowflake-ml-python` `snowflake.core` `trulens-core` `trulens-feedback` `trulens-providers-cortex` `trulens-connectors-snowflake` `trulens-otel-semconv`
 
 Once we have a Snowflake notebook with the right packages installed, we are ready to go.
 
