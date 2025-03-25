@@ -331,7 +331,7 @@ Prepare a set of test queries to evaluate the RAG system.
 
 The test set can be either a dataframe in python or a table in Snowflake. In this example, we'll use a table in snowflake.
 
-First, download the [dataset provided](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/fomc_dataset.csv).
+First, download the [dataset provided](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/blob/main/fomc_dataset.csv).
 
 Then, upload `fomc_dataset.csv` to Snowflake:
 
@@ -433,5 +433,5 @@ Congratulations! You've successfully built a RAG by combining Cortex Search and 
 
 ### Related Resources
 
-- [AI Observability Documentation](...)
-- [Open Source TruLens Documentation](https://trulens.org/)
+- [AI Observabilty Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-ai-observability/)
+- [Open Source TruLens Documentation](https://www.trulens.org/getting_started/)
