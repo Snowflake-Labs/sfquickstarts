@@ -52,7 +52,7 @@ To open the notebook, open [getting-started-with-ai-observability.ipynb](https:/
 
 Then, create a new Snowflake notebook by importing the notebook file in Snowsight.
 
-In your Snowflake notebook, install the following python packages from the Snowflake conda channel: `snowflake-ml-python` `snowflake.core` `trulens-core` `trulens-feedback` `trulens-providers-cortex` `trulens-connectors-snowflake` `trulens-otel-semconv`
+In your Snowflake notebook, install the following python packages from the Snowflake conda channel: `snowflake-ml-python` `snowflake.core` `trulens-core` `trulens-providers-cortex` `trulens-connectors-snowflake`
 
 Once we have a Snowflake notebook with the right packages installed, we are ready to go.
 
