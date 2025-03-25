@@ -14,7 +14,7 @@ Duration: 1
 
 This guide will introduce you to performance testing Snowflake hybrid tables using [JMeter](https://jmeter.apache.org/).
 Hybrid tables provide high concurrency and lower latency than standard Snowflake tables. If
-your use case is response time sensive, this guide will help you understand the 
+your use case is response time sensitive, this guide will help you understand the 
 best practices associated with performance testing hybrid tables.
 
 This quickstart assumes you have executed the [Getting Started with Hybrid Tables](https://quickstarts.snowflake.com/guide/getting_started_with_hybrid_tables/)
@@ -35,7 +35,7 @@ will be covered to get you started.
 - How to create basic hybrid tables for performance testing
 
 ### What You’ll Need 
-- 
+
 - A Snowflake account - hybrid tables are not supported in trial accounts
 - JMeter installed and operational
 - The Snowflake JDBC Driver
@@ -44,6 +44,7 @@ will be covered to get you started.
 - About 20 minutes
 
 ### What You’ll Build 
+
 - A hybrid table performance test using JMeter
 
 Proceed to the next step to create Snowflake objects.
