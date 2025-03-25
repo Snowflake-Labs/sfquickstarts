@@ -21,15 +21,7 @@ This quickstart assumes you have executed the [Getting Started with Hybrid Table
 lesson.
 
 While you will be using JMeter for this quickstart, this guide is not a comprehensive JMeter tutorial. The basics
-will be covered however we encourage you to fully explore JMeter.
-
-Finally, this tutorial configures and uses JMeter with a user interface. For detailed performance testing where
-precise results are required, follow these additional steps:
-- Create a virtual machine in your cloud provider within the same region as your Snowflake instance
-- Load JMeter onto the virtual machine
-- Disable logging and unnecessary components in the performance test
-- Run JMeter in a [headless mode](https://jmeter.apache.org/usermanual/get-started.html#non_gui) 
-
+will be covered to get you started.
 
 ### Prerequisites
 
@@ -57,7 +49,7 @@ precise results are required, follow these additional steps:
 Proceed to the next step to create snowflake objects.
 
 <!-- ------------------------ -->
-## Create Snowflake Database
+## Object configuration
 Duration: 2
 
 You will need a user and role configured in Snowflake for this test. The user
@@ -72,7 +64,7 @@ CREATE OR REPLACE ROLE HYBRID_QUICKSTART_ROLE;
 GRANT ROLE HYBRID_QUICKSTART_ROLE TO ROLE ACCOUNTADMIN ;
 
 -- Create HYBRID_QUICKSTART_WH warehouse
-CREATE OR REPLACE WAREHOUSE HYBRID_QUICKSTART_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 300, AUTO_RESUME= TRUE;
+CREATE OR REPLACE WAREHOUSE HYBRID_QUICKSTART_WH WAREHOUSE_SIZE = XSMALL, AUTO_SUSPEND = 300, AUTO_RESUME = TRUE;
 GRANT OWNERSHIP ON WAREHOUSE HYBRID_QUICKSTART_WH TO ROLE HYBRID_QUICKSTART_ROLE;
 GRANT CREATE DATABASE ON ACCOUNT TO ROLE HYBRID_QUICKSTART_ROLE;
 
@@ -93,10 +85,10 @@ USE SCHEMA DATA;
 Next, we will create our table for testing.
 
 <!-- ------------------------ -->
-## Create the Hybrid Table
+## Create the hybrid table
 Duration: 2
 
-For this guide, we will create a very generic hybrid table and generate synthetic
+For this quickstart, we will create a very generic hybrid table and generate synthetic
 data to use for testing. In this way, you can customize the table and testing
 to closely match your scenario.
 
@@ -111,7 +103,7 @@ CREATE OR REPLACE HYBRID TABLE ICECREAM_ORDERS (
        FLAVOR VARCHAR(20) NOT NULL,
        ORDER_TS TIMESTAMP_NTZ(9),
        NUM_SCOOPS NUMBER(38,0),
-      PRIMARY KEY (ID)
+       PRIMARY KEY (ID)
 );
 -- Use INSERT INTO... method because the ID is autoincremented
 INSERT INTO ICECREAM_ORDERS (STORE_ID, FLAVOR, ORDER_TS, NUM_SCOOPS)
@@ -137,7 +129,7 @@ Next, we will create our user that will execute the test.
 ## Create the performance testing user
 Duration: 3
 
-For the test scenario, the user will need to authenticate without the neeed for MFA. We do this in
+For the test scenario, the user will need to authenticate without the need for MFA. We do this in
 Snowflake with [key-pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth). This
 documentation provides additional details that are not proided here.
 
@@ -164,12 +156,15 @@ openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
 ```
 We will use the public key text in the next step.
 
+For the user to connect wihtout a password, we need to configure the public key. Copy the public key
+from ``rsa_key.pub`` and paste it into the following SQL.
+
 ```sql
 USE ROLE ACCOUNTADMIN;
 
 CREATE OR REPLACE USER HYBRID_QUICKSTART_USER DEFAULT_ROLE = HYBRID_QUICKSTART_ROLE;
 -- Copy the key text from the rsa_key.pub file created in the previous script
-ALTER USER HYBRID_QUICKSTART_USER SET RSA_PUBLIC_KEY='MIIBIjANBgkqh...';
+ALTER USER HYBRID_QUICKSTART_USER SET RSA_PUBLIC_KEY='MIIBIjANBgkqh...<replace with your key>';
 
 -- Finally, grant the role to the user
 GRANT ROLE HYBRID_QUICKSTART_ROLE TO USER HYBRID_QUICKSTART_USER;
@@ -183,45 +178,43 @@ the tables and do the performance testing.
 Duration: 3
 
 For this part of the testing, you will:
-* Download the JMeter script 
+* Download the JMeter script
 * Add the JDBC Driver
 * Customize the JDBC Connection
 * Test that the script connects to your Snowflake instance
 
 
 ### Download the JMeter script
-Download the script [from this git repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-hybrid-tables-performance-testing/blob/main/assets/Snowflake%20Hybrid%20Tables.jmx).
-Save it wherever you like. The script is configured to do a very simple test against
+Download the script from [this git repository link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-hybrid-tables-performance-testing/blob/main/assets/Snowflake%20Hybrid%20Tables.jmx). 
+Start the JMeter software and open the downloaded script ``File->Open``. The script is configured to do a very simple test against
 the table we have already created:
 
 - Connect to Snowflake using the configuration we supply
-- Use a [sampling query](https://docs.snowflake.com/en/sql-reference/constructs/sample) to select 
-  random keys from the target table
+- Use a `SAMPLE` query to select random keys from the target table
 ```sql
 SELECT ID FROM ICECREAM_ORDERS SAMPLE (${NUMBER_OF_KEYS} ROWS);
 ```
-- Enumerate the keys and select a row with a configurable number of threads to test throughput and latency
+- Enumerate the keys with a configurable number of threads to test throughput and latency.
 ```sql
 SELECT * FROM ICECREAM_ORDERS WHERE ID = ?
 ```
+**Note:** A hybrid table best practice is to use prepared statements with bound parameters. This method maximizes
+query re-use, minimizes compile time, and generates more useful [AGGREGATE_QUERY_HISTORY](https://docs.snowflake.com/en/sql-reference/account-usage/aggregate_query_history).
 
 ### Configure the JDBC Driver
 JMeter will connect to Snowflake using JDBC. Snowflake provides a java driver for this type of connection. Follow
 these steps to connect JMeter with your Snowflake instance.
 
 1. Download the Standard JDBC Driver jar [using these instructions](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc-download#download-a-standard-driver).
-1. Start JMeter 
-    - If you installed jmeter using homebrew on a mac, the start script hard codes the `JAVA_HOME` environment variable.
-      If you need or want to change the java version, you will likely need to run your own
-      start script.
+1. Start JMeter
 1. Add the jar to the class list in the JMeter configuration like this:
 
 ![](assets/adding_driver.png)
 
 ### Customize the JDBC Connection
 Most of the user defined variables will be setup to match the work you have already done. You will need to 
-add your `Account Identifier` [using this method](https://docs.snowflake.com/en/user-guide/admin-account-identifier), 
-and add the fully qualified path to your private key file. The private key file is used to to login the user.
+add your `Account Identifier` ([details here](https://docs.snowflake.com/en/user-guide/admin-account-identifier)), 
+and add the fully qualified path to your private key file. The private key file is used to authenticate the user.
 
 ![](assets/adjusting_config.png)
 
@@ -264,34 +257,33 @@ the `Apply interval` and `Apply filter` buttons before you visualize the graph:
 
 Now you can adjust the number of keys and threads up to the limit of your particular machine.
 
-Congratulations! You've executed a simple JMeter performance test for your hybrid tables.
+Congratulations! You've executed a simple JMeter performance test for your hybrid table.
+Explore JMeter graphing and data capabilities to visualize the performance.
 
-<!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
+Duration: 2
 
 ### Conclusion
-Performance testing can be an important part of adding hybrid tables
-to your Snowflake environment. Hybrid tables provide a highly concurrent
-and low latency alternative to Snowflake standard tables.
+Performance testing hybrid tables can be simple and easy. The method presented here can be expanded
+and adapted for many hybrid tables testing scenarios.
 
-JMeter is a mature and widely adopted performance testing tool. The script presented here can certainly
-be used to build a much more sophisticated test.
+Finally, this tutorial configures and uses JMeter with a user interface. The JMeter
+user interface will slow the performance testing. If you require maximum performance from JMeter,
+follow these additional steps:
+- Create a virtual machine in your cloud provider within the same region as your Snowflake instance
+- Load JMeter onto the virtual machine
+- Disable logging and unnecessary components in the performance test
+- Run JMeter in a [headless, non-gui mode](https://jmeter.apache.org/usermanual/get-started.html#non_gui)
 
-Reach out to your Snowflake account team if you have questions or need
-assistance configuring a test for your specific environment.
 
-
-### What you Learned
-
-- How to setup and configure JMeter
-- How to build a basic hybrid table and load some data
-- How to authenticate to Snowflake using key-pair authentication
-- How to run a basic performance test
+### What You Learned
+1. How to create a basic hybrid table
+1. How to configure a Snowflake user with key-pair authentication
+1. How to set up JMeter for a basic load test
+1. How to run a basic load test
 
 ### Resources
-
-* [Snowflake Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
-* [Snowflake Account Identifer](https://docs.snowflake.com/en/user-guide/admin-account-identifier)
-* [Snowflake Key Pair Authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth)
-* [JMeter Home Page](https://jmeter.apache.org/)
+- [Snowflake hybrid tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
+- [Key-pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth)
+- [AGGREGATE_QUERY_HISTORY](https://docs.snowflake.com/en/sql-reference/account-usage/aggregate_query_history)
+- [JMeter](https://jmeter.apache.org/)
