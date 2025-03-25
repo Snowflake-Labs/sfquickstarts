@@ -119,7 +119,8 @@ CREATE OR REPLACE TABLE quickstart.ml_functions.tasty_byte_sales(
 	PRIMARY_CITY VARCHAR(16777216),
 	MENU_ITEM_NAME VARCHAR(16777216),
 	TOTAL_SOLD NUMBER(17,0)
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"aiml_notebooks_mlpf", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 
 -- Ingest data from S3 into our table
 COPY INTO quickstart.ml_functions.tasty_byte_sales 

@@ -76,9 +76,9 @@ Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#
 >
 > - For each SQL script block below, select all the statements in the block and execute them top to bottom.
 
-In a new SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
+<!-- In a new SQL worksheet, run the following SQL commands to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html). -->
 
-```sql
+<!-- ```sql
 USE ROLE ACCOUNTADMIN;
 
 CREATE WAREHOUSE IF NOT EXISTS DASH_S WAREHOUSE_SIZE=SMALL;
@@ -87,6 +87,13 @@ CREATE SCHEMA IF NOT EXISTS DASH_SCHEMA;
 
 USE DASH_DB.DASH_SCHEMA;
 USE WAREHOUSE DASH_S;
+``` -->
+
+In a new SQL worksheet, run the following SQL commands to select your database, schema and warehouse.
+
+```sql
+USE <YOUR_DB_NAME>.<YOUR_SCHEMA_NAME>;
+USE WAREHOUSE <YOUR_WH_NAME>;
 ```
 
 In the same SQL worksheet, run the following SQL commands to create table **CALL_TRANSCRIPTS** from data hosted on publicly accessible S3 bucket.
@@ -109,7 +116,7 @@ CREATE or REPLACE table CALL_TRANSCRIPTS (
   category varchar(60),
   damage_type varchar(90),
   transcript varchar
-);
+) COMMENT = '{"origin":"sf_sit-is", "name":"aiml_notebooks_artic_cortex", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 
 COPY into CALL_TRANSCRIPTS
   from @call_transcripts_data_stage;
@@ -159,8 +166,11 @@ select transcript,snowflake.cortex.summarize(transcript) as summary from call_tr
 select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.cortex.count_tokens('summarize',transcript) as number_of_tokens from call_transcripts where language = 'English' limit 1;
 ```
 
+> aside positive
+> NOTE: Snowflake Cortex LLM functions incur compute cost based on the number of tokens processed. Refer to the [documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#cost-considerations) for more details on each function’s cost in credits per million tokens.
+
 ### Classify Text 
-(***In Public Preview Soon***)
+(***In Public Preview as of 10/29/2024***)
 
 This function takes a piece of text and a set of user-provided categories as inputs and returns a predicted category for that text. The function returns a structured JSON-formattet output.
 
@@ -214,7 +224,7 @@ To put it all together, let's create a Streamlit application in Snowflake.
 
 **Step 3.** Enter **App name**
 
-**Step 4.** Select **App location** (DASH_DB and DASH_SCHEMA) and **App warehouse** (DASH_S) 
+**Step 4.** Select **App location** (YOUR_DB_NAME and YOUR_SCHEMA_NAME) and **App warehouse** (YOUR_WH_NAME) 
 
 **Step 5.** Click on **Create**
 
@@ -328,7 +338,7 @@ Let me know if you'd like me to make any changes!
 
 Notice that the entire response is not JSON-formatted--meaning there's additional text at the beginning and at the end of the JSON. This is why `st.json(cortex_response)` was failing to display the response in the Streamlit app. 
 
-This is also a good way to quickly and easily compare how different LLMs might perform given the same prompt/instructions, and one of the reasons why you might want to fine-tune and LLM.
+This is also a good way to quickly and easily compare how different LLMs might perform given the same prompt/instructions, and one of the reasons why you might want to fine-tune an LLM.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources

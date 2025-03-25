@@ -3,7 +3,7 @@ id: intro_to_snowpark_container_services_with_python_api
 summary: Through this quickstart guide, you will explore Snowpark Container Services using Python API
 categories: Getting-Started
 environments: web
-status: Draft 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Containers, Snowpark, Python API
 
@@ -154,7 +154,7 @@ finally:
 
 ```
 
-Run the following Python API code in [`01_snowpark_container_services_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.py) using the Snowpark Python Connector and Python API to create the [OAuth Security Integration](https://docs.snowflake.com/en/user-guide/oauth-custom#create-a-snowflake-oauth-integration), [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) 
+Run the following Python API code in [`01_snowpark_container_services_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/01_snowpark_container_services_setup.py) using the Snowpark Python Connector and Python API to create the [External Access Integration](https://docs.snowflake.com/developer-guide/snowpark-container-services/additional-considerations-services-jobs#network-egress) 
 ```Python API
 
 # create a SnowflakeConnection instance
@@ -163,11 +163,6 @@ connection_acct_admin = connect(**CONNECTION_PARAMETERS_ACCOUNT_ADMIN)
 try:
     # create a root as the entry point for all object
     root = Root(connection_acct_admin)
-
-    connection_acct_admin.cursor().execute("""CREATE SECURITY INTEGRATION IF NOT EXISTS snowservices_ingress_oauth
-        TYPE=oauth
-        OAUTH_CLIENT=snowservices_ingress
-        ENABLED=true;""")
 
     connection_acct_admin.cursor().execute("""CREATE OR REPLACE NETWORK RULE ALLOW_ALL_RULE
         TYPE = 'HOST_PORT'
@@ -411,6 +406,7 @@ You should see your `python-jupyter-snowpark` image listed.
 
 ### Configure and Push the Spec YAML
 Services in Snowpark Container Services are defined using YAML files. These YAML files configure all of the various parameters, etc. needed to run the containers within your Snowflake account. These YAMLs support a [large number of configurable parameter](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/specification-reference), although we will not reference all of them here. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark/jupyter-snowpark.yaml`, which should look like this:
+
 ```yaml
 spec:
   containers:
@@ -430,10 +426,14 @@ spec:
       gid: 1000
 
 ```
-**Update the <repository_hostname> for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use Python API to push the yaml file. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py) :
+
+**NOTE**: Update **<repository_hostname>** for your image and save the file.
+
+Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use Python API to push the yaml file. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py) :
+
 ```Python API
     # cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
-    # snow object stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
+    # snow stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
     s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"]
     s.upload_file("./jupyter-snowpark.yaml", "/", auto_compress=False, overwrite=True)
 ```
@@ -718,6 +718,7 @@ You should see your `convert-api` image listed.
 
 ### Configure and Push the Spec YAML
 Services in Snowpark Container Services are defined using YAML files. These YAML files configure all of the various parameters, etc. needed to run the containers within your Snowflake account. These YAMLs support a [large number of configurable parameter](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/specification-reference), although we will not reference all of them here. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/convert-api/convert-api.yaml`, which should look like this:
+
 ```yaml
 spec:
   containers:
@@ -728,10 +729,13 @@ spec:
       port: 9090
       public: true
 ```
-**Update the `<repository_hostname>` for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use Python API to push the yaml file. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py)
+
+**NOTE**: Update **<repository_hostname>** for your image and save the file.
+
+Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use Python API to push the yaml file. Run the following using Python API code [`08_stage_files.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/08_stage_files.py)
 ```Python API
     # cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
-    # snow object stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
+    # snow stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol
     s = root.databases["CONTAINER_HOL_DB"].schemas["PUBLIC"].stages["SPECS"]
     s.upload_file("./convert-api.yaml", "/", auto_compress=False, overwrite=True)
 ```

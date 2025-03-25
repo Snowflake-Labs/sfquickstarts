@@ -23,7 +23,7 @@ Il s’agit d’un ensemble de bibliothèques et d’environnements d’exécuti
 
 **Constructions d’exécution flexibles** : Snowpark fournit des constructions d’exécution flexibles qui permettent aux utilisateurs d’ajouter et d’exécuter une logique personnalisée. Les développeurs peuvent créer facilement des pipelines de données, des modèles de ML et des applications de données avec des fonctions définies par l’utilisateur et des procédures stockées.
 
-Pour en savoir plus sur Snowpark, cliquez [ici](https://www.snowflake.com/snowpark/).
+Pour en savoir plus sur Snowpark, cliquez [ici](https://www.snowflake.com/fr/data-cloud/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 

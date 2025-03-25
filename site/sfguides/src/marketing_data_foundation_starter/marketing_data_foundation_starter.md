@@ -153,19 +153,19 @@ Upload all the sample data files in the folder data to the stage created in step
 
 
 ```console
-snow object stage copy data/worldcities.csv @MARKETING_DATA_FOUNDATION.demo.data_stg/data
+snow stage copy data/worldcities.csv @MARKETING_DATA_FOUNDATION.demo.data_stg/data
 ```
 
 ```console
-snow object stage copy data/sf_data/ @MARKETING_DATA_FOUNDATION.demo.data_stg/data/sf_data/ --parallel 10
+snow stage copy data/sf_data/ @MARKETING_DATA_FOUNDATION.demo.data_stg/data/sf_data/ --parallel 10
 ```
 
 ```console
-snow object stage copy data/ga_data/ @MARKETING_DATA_FOUNDATION.demo.data_stg/data/ga_data/ --parallel 20
+snow stage copy data/ga_data/ @MARKETING_DATA_FOUNDATION.demo.data_stg/data/ga_data/ --parallel 20
 ```
 
 ```console
-snow object stage copy data/sample_data.gz @MARKETING_DATA_FOUNDATION.demo.data_stg/data/
+snow stage copy data/sample_data.gz @MARKETING_DATA_FOUNDATION.demo.data_stg/data/
 ```
 
 ![Alt text](assets/Upload-to-Stage.png)
