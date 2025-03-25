@@ -1,4 +1,4 @@
-author: Ashish
+author: Ashish Kumar
 id: kafka_working_with_iceberg_tables
 summary: Through this quickstart guide, you will explore how to ingest data from kafka to Iceberg tables.
 categories: Getting-Started
@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering 
 
-# Intro to Kafka and Snowflake Managed Iceberg. 
+# Intro to Kafka and Snowflake Managed Iceberg
 <!-- ------------------------ -->
 ## Overview 
 Duration: 60
@@ -18,8 +18,7 @@ This guide provides a comprehensive walkthrough for establishing a local data st
 ### Prerequisites
 Before proceeding, ensure you have the following:
 
-- A macOS system or similar(eg. ec2 amazon linux with snowflake account conectivity).
-- A Snowflake account.
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=google&utm_medium=paidsearch&utm_campaign=ap-in-en-brand-cloud-phrase&utm_content=go-rsa-evg-ss-free-trial&utm_term=c-g-snowflake%20computing-p&_bt=591408722054&_bk=snowflake%20computing&_bm=p&_bn=g&_bg=133380613608&gclsrc=aw.ds&gad_source=1&gclid=EAIaIQobChMI7fjZvc6ljAMVy-gWBR3CORZMEAAYASAAEgLvMvD_BwE)
 - Visual Studio Code (VSCode) installed.
 - Cloud Provider Amazon S3 or Azure Blob storage to write with the iceberg files.
 
@@ -35,7 +34,7 @@ Before proceeding, ensure you have the following:
 <!-- ------------------------ -->
 <!-- ------------------------ -->
 
-## Setup and Create Snowflake Managed IceBerg table
+## Setup
 
 1. Configure an external volume by following this [Document](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-s3)
 or if you are using Azure Blob you can follow this [Document](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-azure)
@@ -137,7 +136,7 @@ alter user demo_user set rsa_public_key='< pubKey >';
 <!-- ------------------------ -->
 
 <!-- ------------------------ -->
-## Set up Local Kafka environment
+## Setup Local Kafka
 
 1. Download kafka in your local mac from [here](https://kafka.apache.org/downloads). This tutorial used kafka version 2.8.1.
 
