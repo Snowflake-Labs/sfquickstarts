@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Hybrid Tables
 
-# Hybrid Table performance testing with JMeter
+# Hybrid Table Performance Testing with JMeter
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -31,12 +31,12 @@ will be covered to get you started.
 ### What You’ll Learn
 
 - How to create a user for external testing using key authentication
-- How to configure JMeter to connect to snowflake
+- How to configure JMeter to connect to Snowflake
 - How to create basic hybrid tables for performance testing
 
 ### What You’ll Need 
 - 
-- A Snowflake account
+- A Snowflake account - hybrid tables are not supported in trial accounts
 - JMeter installed and operational
 - The Snowflake JDBC Driver
 - A shell terminal application
@@ -46,10 +46,10 @@ will be covered to get you started.
 ### What You’ll Build 
 - A hybrid table performance test using JMeter
 
-Proceed to the next step to create snowflake objects.
+Proceed to the next step to create Snowflake objects.
 
 <!-- ------------------------ -->
-## Object configuration
+## Object Configuration
 Duration: 2
 
 You will need a user and role configured in Snowflake for this test. The user
@@ -85,7 +85,7 @@ USE SCHEMA DATA;
 Next, we will create our table for testing.
 
 <!-- ------------------------ -->
-## Create the hybrid table
+## Create the Hybrid Table
 Duration: 2
 
 For this quickstart, we will create a very generic hybrid table and generate synthetic
@@ -126,7 +126,7 @@ LIMIT 10;
 Next, we will create our user that will execute the test.
 
 <!-- ------------------------ -->
-## Create the performance testing user
+## Create the Performance Testing User
 Duration: 3
 
 For the test scenario, the user will need to authenticate without the need for MFA. We do this in
@@ -174,7 +174,7 @@ We created the tables using the ``HYBRID_QUICKSTART_ROLE`` so this new user will
 the tables and do the performance testing.
 
 <!-- ------------------------ -->
-## Download and configure the JMeter script
+## Download and Configure the JMeter Script
 Duration: 3
 
 For this part of the testing, you will:
@@ -184,7 +184,7 @@ For this part of the testing, you will:
 * Test that the script connects to your Snowflake instance
 
 
-### Download the JMeter script
+### Download the JMeter Script
 Download the script from [this git repository link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-hybrid-tables-performance-testing/blob/main/assets/Snowflake%20Hybrid%20Tables.jmx). 
 Start the JMeter software and open the downloaded script ``File->Open``. The script is configured to do a very simple test against
 the table we have already created:
@@ -218,7 +218,7 @@ and add the fully qualified path to your private key file. The private key file 
 
 ![](assets/adjusting_config.png)
 
-### Test the connection
+### Test the Connection
 With just a single thread and a few records, let's check that JMeter is connecting to Snowflake. In the
 User Defined Variables, set `NUMBER_OF_KEYS` = 10 and `NUMBER_OF_THREADS` = 1. 
 
@@ -243,7 +243,7 @@ If your script successfully connected to Snowflake and queried for a few records
 are ready for a longer test.
 
 <!-- ------------------------ -->
-## Run a longer test
+## Run a Full Test
 Duration: 5
 
 Change the configuration to make 250 requests from 4 threads. 
