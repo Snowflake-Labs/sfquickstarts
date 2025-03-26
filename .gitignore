@@ -2,6 +2,7 @@ bazel-*
 .DS_Store
 .drone.sec.yml
 .idea/
+*.iml
 debug.test
 *pb.go
 node_modules
