@@ -14,7 +14,7 @@ Duration: 1
 
 This guide will introduce you to performance testing Snowflake hybrid tables using [JMeter](https://jmeter.apache.org/).
 Hybrid tables provide high concurrency and lower latency than standard Snowflake tables. If
-your use case is response time sensive, this guide will help you understand the 
+your use case is response time sensitive, this guide will help you understand the 
 best practices associated with performance testing hybrid tables.
 
 This quickstart assumes you have executed the [Getting Started with Hybrid Tables](https://quickstarts.snowflake.com/guide/getting_started_with_hybrid_tables/)
@@ -35,7 +35,7 @@ will be covered to get you started.
 - How to create basic hybrid tables for performance testing
 
 ### What You’ll Need 
-- 
+
 - A Snowflake account - hybrid tables are not supported in trial accounts
 - JMeter installed and operational
 - The Snowflake JDBC Driver
@@ -44,18 +44,19 @@ will be covered to get you started.
 - About 20 minutes
 
 ### What You’ll Build 
+
 - A hybrid table performance test using JMeter
 
 Proceed to the next step to create Snowflake objects.
 
 <!-- ------------------------ -->
-## Object Configuration
+## Create Snowflake Database
 Duration: 2
 
 You will need a user and role configured in Snowflake for this test. The user
 must use key based authentication so MFA is not required. 
 
-Let's create the basic objects. Open snowsight and run the following script:
+Let's create the basic objects. Open Snowsight and run the following script:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -190,7 +191,8 @@ Start the JMeter software and open the downloaded script ``File->Open``. The scr
 the table we have already created:
 
 - Connect to Snowflake using the configuration we supply
-- Use a `SAMPLE` query to select random keys from the target table
+- Use a [sampling query](https://docs.snowflake.com/en/sql-reference/constructs/sample) to select 
+  random keys from the target table
 ```sql
 SELECT ID FROM ICECREAM_ORDERS SAMPLE (${NUMBER_OF_KEYS} ROWS);
 ```
@@ -206,7 +208,10 @@ JMeter will connect to Snowflake using JDBC. Snowflake provides a java driver fo
 these steps to connect JMeter with your Snowflake instance.
 
 1. Download the Standard JDBC Driver jar [using these instructions](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc-download#download-a-standard-driver).
-1. Start JMeter
+1. Start JMeter 
+    - If you installed jmeter using homebrew on a mac, the start script hard codes the `JAVA_HOME` environment variable.
+      If you need or want to change the java version, you will likely need to run your own
+      start script.
 1. Add the jar to the class list in the JMeter configuration like this:
 
 ![](assets/adding_driver.png)
