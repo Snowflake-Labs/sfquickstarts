@@ -3,7 +3,7 @@ id: getting_started_with_ai_observability
 summary: This is a guide for getting started with Snowflake AI Observability.
 categories: Getting-Started
 environments: web
-status: hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, AI, Observability, RAG, LLMs, TruLens, Snowflake
 
