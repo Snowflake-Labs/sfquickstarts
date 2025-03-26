@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Snowflake Guide Template
+# Sharing an ML Model via Native Apps
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -26,23 +26,31 @@ The Native App Framework is a collaboration framework that allows providers to s
 
 ![Diagram](assets/native_app_overview.png)
 
-There are numerous benefits to leveraging the Native App framework for our Use Case. 
+There are numerous benefits to leveraging the Native App framework for our Use Case. For example:
+- Data Sovereignty and Security for the Consumer. In the previous quickstart, it was necessary for the provider to share data with another entity. This could be potentially sensitive information, and therefore a bigger hurdle for security and governance teams to approve. With Native Apps, the app logic is brought to the consumers dataset, so no customer data is leaving their security perimeter
+- Compliance Risk Reduction for the Provider. Similar to the above, the provider of the model way not want to have access to customer data. This requires extra consideration with how to securely handle this data, which is not necessary if the model is shared to their customers to run against their own data.
+- Increased Margin. By sharing the model to the consumer, the infrastructure cost to execute the model are now with the consumer. This means the provider can monetise the model, without worrying about infrastructure costs. Similarly the consumer can set warehouse sizes appropriate to the SLAs and budgets of the consumer organisation.
+- Faster Onboarding. By having a replicable model, the provider can simple leverage the Snowflake Marketplace for distribution. They no longer need to go through a lengthy process of approvals to set up a data pipeline with their customers.
 
 ### What You Will Learn 
-- How to train an ML model and register it to the Model Registry
-- How to package the ML Model in an Application Package 
+- How to train an ML model in Snowflake
+- How to package the ML Model in an Application Package
 - How to privately list a Native Application 
 - How to Consume a Native Application 
 
 ### What You Will Build 
 - A Native Application that contains an ML Model shared via a Private Listing 
 
-
 ### Prerequisites
-- A [GitHub](https://github.com/) Account 
-- [VSCode](https://code.visualstudio.com/download) Installed
-- [NodeJS](https://nodejs.org/en/download/) Installed
-- [GoLang](https://golang.org/doc/install) Installed
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
+    **Download the git repo here: https://github.com/Snowflake-Labs/sfguide-data-collaboration-native-app**
+- [Anaconda](https://www.anaconda.com/) installed
+- [Python 3.10](https://www.python.org/downloads/) installed
+    - Note that you will be creating a Python environment with 3.10 in the **Consumer Account - Create Model** step
+- Snowflake accounts with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+- Snowflake accounts with the Snowflake Marketplace T&C's accepted. This will allow you to create Listings.
+- A Snowflake account login with a role that has the ability to create Listings, Databases, Schemas, Tables, Stages, User-Defined Functions, and Stored Procedures. If not, you will need to register for free trials or use a different role.
+- The [Snowpark ML](https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel) package installed
 
 <!-- ------------------------ -->
 ## Business Use Case and Context
@@ -59,8 +67,10 @@ Since both companies use Snowflake, Zamboni has proposed sharing their proprieta
 - The Native App runs within the Snowbank Account. Since Snowflake has been approved for use internally, it is not subject to longer onboarding and cybersecurity checks
 
 The advantages for Zamboni are:
-- Simple deployment
-- Flexible monetization options
+- Simple deployment. Zamboni can simply share the model using a similar listing paradigm as sharing a dataset.
+- Reduced compliance risk. Zamboni's security and compliance team are similarly pleased in being able to satisfy the business needs without needing Snowbanks data hosted on their servers
+- Increased Margin. Zamboni are now able to share their proprietary logic safely, without having to provision infrastructure to run the model on behalf of Snowbank.
+- Speed to Market. Zamboni can simply distribute the model via the Native App framework in a private listing. They no longer need to set up data pipelines. They can also build once, and distribute to lots of different customers by leveraging Snowflake's multitenancy framework.
 
 What is different in this scenario compared to Part One, is that it is no longer a bi-directional share of data. Now Zamboni becomes the provider of an Application, and Snowbank becomes the consumer.
 
@@ -82,11 +92,20 @@ Addison Howard, AritraAmex, Di Xu, Hossein Vashani, inversion, Negin, Sohier Dan
 ## Set up
 Duration: 10
 
-Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to create a Snowflake Account.
+Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to create a Snowflake Account. You should recieve an email to activate your trial account.
 
-Repeat the process above. Be sure to select the same cloud and region as the first account your created. Although it is possible to share across clouds and regions, this guide will not cover this scenario.
+Navigate to a new worksheet and execute the following commands to create a second account in the Organisation. The second account will be the account we share the model to (Snowbank). In trial accounts we cannot share externally, although the same process can be followed to share the app externally if you have a non-trial account.
 
-Check your emails and follow the prompts to activate both the accounts. One will be the Provider of the Native App (Zamboni) and one will be the Consumer (Snowbank).
+```SQL
+USE ROLE ORGADMIN;
+
+CREATE ACCOUNT SNOWBANK
+  ADMIN_NAME = ADMIN
+  ADMIN_PASSWORD = 'ENTER PASSWORD HERE'
+  EMAIL = 'ENTER YOU EMAIL HERE'
+  EDITION = ENTERPRISE;
+```
+Note down the account locator and the url from the output of the command above for use in later steps
 
 <!-- ------------------------ -->
 
@@ -95,9 +114,7 @@ Duration: 20
 
 In this part of the lab we'll set up our Provider Snowflake account. In our business scenario, this step represents Zamboni developing their proprietry Credit Card Default model from their own datasets.
 
-### Initial Set Up
-
-We first need to accept the terms and conditions to use Anaconda and Snowflake Marketplace. Navigate to Admin > Billings and Terms and enable both Anaconda and Snowflake Marketplace. Screenshot is below ![Diagram](assets/accept_terms_navigation.png)
+### Initial Set Up (Zamboni)
 
 Next, open up a worksheet and run all following steps as the ACCOUNTADMIN role
 
@@ -117,11 +134,19 @@ CREATE OR REPLACE WAREHOUSE QUERY_WH WITH
   AUTO_RESUME = TRUE 
   MIN_CLUSTER_COUNT = 1 
   MAX_CLUSTER_COUNT = 1;
+
+-- Create a virtual warehouse for training
+CREATE OR REPLACE WAREHOUSE training_wh with 
+  WAREHOUSE_SIZE = 'MEDIUM' 
+  WAREHOUSE_TYPE = 'snowpark-optimized' 
+  MAX_CONCURRENCY_LEVEL = 1
+  AUTO_SUSPEND = 300 
+  AUTO_RESUME = TRUE;
 ```
 
 ### Load Data 
 
-Next we will create a database and schema that will house the tables that store our data to be shared with Zamboni.
+Next we will create a database and schema that will house the tables to train our.
 
 ```SQL
 -- Create the application database and schema
@@ -235,7 +260,7 @@ The first step is to set up the python environment to develop our model. To do t
   ```
   $ jupyter notebook
   ```
-  Open the jupyter notebook Credit Card Default Notebook
+  Open the jupyter notebook Credit Card Default Native App Notebook
 
 - Update connection.json with your Snowflake account details and credentials.
   Here's a sample based on the object names we created in the last step:
@@ -247,8 +272,8 @@ The first step is to set up the python environment to develop our model. To do t
   "password"  : "<your_password_goes_here>",
   "role"      : "ACCOUNTADMIN",
   "warehouse" : "QUERY_WH",
-  "database"  : "SCORED_MODEL",
-  "schema"    : "SCORED_MODEL"
+  "database"  : "NATIVE_APP_DEMO",
+  "schema"    : "NATIVE_APP_DEMO"
 }
 ```
 
@@ -267,10 +292,88 @@ Stay in the Zamboni account for the next step.
 ## Distribute Model as Native App
 Duration: 2
 
+Now we have trained the model, we want to encapsulate it in an Application Package, so we can distribute it via the Native App Framework
+
+Continue to work through the notebook
+
+More information on the Native Application framework can be found in the documentation here. https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about
+
+The first step is to create an Application Package object, that will hold the assets we wish to distribute to Snowbank.
+
+
+
+Explain Manifest
+
+Explain Versioning
+
+Can only distribute internally for trial accounts
+
+<!-- ------------------------ -->
+## Perform Local Testing
+Duration: 2
+
+```SQL
+SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.RAW_TABLE_VIEW;
+
+CALL CREDIT_CARD_PREDICTION_APP.CONFIG.CREATE_TABLE_FROM_REFERENCE_RAW();
+
+SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.RAW_TABLE_VIEW LIMIT 10;
+
+SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.TRANSFORMED_TABLE_VIEW LIMIT 10;
+
+CALL CREDIT_CARD_PREDICTION_APP.CORE.CC_PROFILE_PROCESSING();
+
+SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.TRANSFORMED_TABLE_VIEW LIMIT 10;
+
+SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.SCORED_TABLE_VIEW LIMIT 10;
+
+CALL CREDIT_CARD_PREDICTION_APP.CORE.CC_BATCH_PROCESSING();
+
+SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.SCORED_TABLE_VIEW LIMIT 10;
+```
+
+Once this is done, we need to create a version before we can share. We can do this in the manifest file, or with the code below
+
+```SQL
+
+ALTER APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE
+  ADD VERSION v1
+  USING '@credit_card_prediction_package.stage_content.credit_card_prediction_stage'
+  LABEL = 'MyApp Version 1.0';
+
+ALTER APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE
+ ADD PATCH FOR VERSION V1
+ USING '@credit_card_prediction_package.stage_content.credit_card_prediction_stage';
+
+SHOW VERSIONS IN APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE;
+```
+
+We need to set the release directive
+
+```SQL
+ALTER APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE
+  SET DEFAULT RELEASE DIRECTIVE
+  VERSION = v1
+  PATCH = 1;
+```
+
+
+
 <!-- ------------------------ -->
 ## Consume Model via Native App
 Duration: 2
 
+In this next step, we will log in to our consumer account. We first need to load data that we want the shared model to run against.
+
+### Load Data 
+
+### Accept Shared Model
+
+Log in to your second acccount and navigate through to Data Products > Private Sharing. You should see your app ready to be installed
+
+<!-- ------------------------ -->
+## Create another version of the app
+Duration: 2
 
 <!-- ------------------------ -->
 ## Metadata Configuration
