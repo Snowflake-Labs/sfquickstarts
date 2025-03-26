@@ -48,7 +48,7 @@ Here is a summary of what you will be able to learn in each step by following th
 
 Duration: 8
 
-To open the notebook, open [getting-started-with-ai-observability.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/getting-started-with-ai-observability.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
+To open the notebook, open [getting-started-with-ai-observability.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/blob/main/getting-started-with-ai-observability.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
 
 Then, create a new Snowflake notebook by importing the notebook file in Snowsight.
 
@@ -436,5 +436,5 @@ Congratulations! You've successfully built a RAG by combining Cortex Search and 
 
 ### Related Resources
 
-- [AI Observabilty Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-ai-observability/)
+- [AI Observabilty Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/)
 - [Open Source TruLens Documentation](https://www.trulens.org/getting_started/)
