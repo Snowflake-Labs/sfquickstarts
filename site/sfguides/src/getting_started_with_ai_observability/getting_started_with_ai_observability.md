@@ -436,5 +436,5 @@ Congratulations! You've successfully built a RAG by combining Cortex Search and 
 
 ### Related Resources
 
-- [AI Observabilty Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-ai-observability/)
+- [AI Observabilty Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/)
 - [Open Source TruLens Documentation](https://www.trulens.org/getting_started/)
