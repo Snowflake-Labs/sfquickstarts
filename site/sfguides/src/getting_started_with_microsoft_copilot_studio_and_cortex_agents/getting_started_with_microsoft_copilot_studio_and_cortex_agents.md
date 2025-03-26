@@ -23,7 +23,7 @@ In this use cases we will build two data sources, one with structured sales data
 
 
 ### Prerequisites
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
+- Familiarity with [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) and a Snowflake account
 - Familiarity with [Microsoft 365 Copilot Studio](https://www.microsoft.com/en-us/microsoft-365/copilot/) and an account along with access to the Azure Entra ID service for that tenant.
 
 ### What You’ll Learn
