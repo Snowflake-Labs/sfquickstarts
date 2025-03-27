@@ -47,42 +47,6 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 
 
 <!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
-
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
-
-
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
-
----
-
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
-
-
-<!-- ------------------------ -->
-
-## Creating a Step
-Duration: 2
-
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
-
-```markdown
-
 ## Create the ServiceNow Workflow   
 Duration: 3
 
@@ -115,6 +79,7 @@ Hit "Done".
 Eventually your Trigger definition should look like this 
 ![step1-snowflake-trigger](assets/step1-snowflake-trigger.png)
 
+<!-- ------------------------ -->
 ## Create the Workflow Action    
 Duration: 2
 
@@ -135,115 +100,127 @@ Once you complete this for all three fields your action definition will look lik
 Hit Done. This completes our workflow definition in ServiceNow. 
 The next step will be to create the UDF in Snowflake to call this workflow. 
 
-## Step 3 Title
-Duration: 3
+<!-- ------------------------ -->
+## Define the Snowflake function to trigger workflow in ServiceNow 
+Duration: 4
 
-All the content for the step goes here.
+In order to connect to the ServiceNow instance from Snowflake we need to define a couple of snowflake primitives. 
+Snowflake secret to store the authentication details for ServiceNow instance ie. username/password 
+Snowflake external access integration to securely connect to Servicenow from snowflake 
+Let's start by creating a snowflake secret followed by creating external access integration 
 
-## Step 4 Title
-Duration: 1
+```sql
+CREATE OR REPLACE  SECRET servicenowkey
+   TYPE = PASSWORD
+  USERNAME = 'admin'
+  PASSWORD = '****'
+ COMMENT = 'secret for servicenow api access' ;
 
-All the content for the step goes here.
 ```
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
+Now we need to define a network rule to based on host to identify the servicenow instance. This network rule will be used in the external access integration definition. 
 
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+```sql
+
+  CREATE OR REPLACE NETWORK RULE servicenow_apis_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('dev201625.service-now.com');
+
+
+  CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION servicenow_apis_access_integration
+  ALLOWED_NETWORK_RULES = (servicenow_apis_network_rule)
+  ALLOWED_AUTHENTICATION_SECRETS = (servicenowkey)
+  ENABLED = true;
+
+```
+
+This completes our connection path to servicenow. Now we need to create a udf that uses this external access integration and calls the REST API to trigger the workflow we defined earlier. The payload of the REST request will include the three parameters for Category, Description and Work Notes to create an incident record. 
+
+```sql 
+
+CREATE OR REPLACE FUNCTION servicenow_action(category String,description String,worknotes String)
+RETURNS String
+LANGUAGE PYTHON
+EXTERNAL_ACCESS_INTEGRATIONS = (servicenow_apis_access_integration)
+SECRETS = ('cred' = servicenowkey)
+RUNTIME_VERSION = 3.9
+HANDLER = 'call_servicenow_flow'
+PACKAGES = ('pandas', 'requests')
+AS $$
+
+import json
+import requests
+import _snowflake
+from requests.auth import HTTPBasicAuth
+
+session = requests.Session()
+
+
+def call_servicenow_flow(category,description,worknotes,assignment_group):
+    payload={}
+# The full path for the REST api endpoint we created in Step 1 
+    url = "https://dev201625.service-now.com/api/1551828/snowflake-trigger"
+
+# Optional Headers for the API call if you have defined them in the REST API 
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+        }
+
+# Payload for the POST request
+    data = {
+        "Category"  : category,
+        "Description": description,
+        "Work_notes": worknotes 
+        }
+
+
+    # username_password_object = _snowflake.get_username_password('cred');
+    username_password_object = _snowflake.get_username_password('cred');
+    basic = HTTPBasicAuth(username_password_object.username, username_password_object.password)
+
+
+
+    response = session.post(url,headers=headers,json=data,auth=basic)
+
+    if response.status_code == 202:
+        json_result=response.json()
+        executionId=json_result["result"]["executionId"]
+        return executionId
+    else:
+        error_string="Rest call failed. Please check Servicenow endpoint"
+        return (error_string)
+$$
+
+```
+This completes all the data pipeline we need to put in place to trigger the workflow from snowflake.
 
 <!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
+## Execute the workflow 
 Duration: 2
 
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
+The last step is to test our integration. Since we have a UDF defined earlier we can use a simple select statement to call it with input values for the three variables. This will call the function we defined earlier and trigger the workflow on servicenow side to eventually create an incident record. 
+The condition to execute the function can be varied depending on the use case and vertical
+for eg. In manufacturing we can have a cortex monitor machine data for various metrics such as pressure, temperature, RPM,motor load etc. and if  say the pressure exceeds a certain value -> call the function to trigger a workflow -> creates an incident in ServiceNow, essentially driving insights to action. 
 
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
+
+```sql 
+select   servicenow_action('Hardware','Triggered by snowflake with exteranl access','Machine pressure too high'); 
 ```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
-
-
-> aside negative
-> 
->  This will appear in a negative info box.
-
-### Buttons
-<button>
-
-  [This is a download button](link.com)
-</button>
-
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
-
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
-
-<!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
-
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
-
-### Images
-![Puppy](assets/SAMPLE.jpg)
-
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
-
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
-
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+With this quickstart you learned how to automatically trigger a workflow in ServiceNow from Snowflake. Snowflake and ServiceNow offer a powerful opportunity to streamline and enhance business operations by transforming raw data insights into actionable outcomes.  
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
 
 ### What You Learned
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- Create a workflow in ServiceNow
+- Trigger the workflow from Snowflake 
+- Define a reference condition to execute the trigger 
 
 ### Related Resources
-- <link to github code repo>
-- <link to documentation>
+- [ServiceNow Trigger](https://www.servicenow.com/docs/bundle/xanadu-integrate-applications/page/administer/integrationhub/concept/rest-trigger.html)
+- [Snowflake External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
