@@ -37,9 +37,9 @@ You can use service areas to build applications that:
 #### What You’ll Build
 ![Solution](assets/solution.jpg)
 
-- 1. Develop a Snowpark UDF which invokves the ArcGIS ServiceArea service function and stores the response back into the source table.
-- 2. Develop a Snowpark UDF which extracts and converts the geometry from ArcGIS reponse into Geojson co-ordinates.
-- 3. Connect and visualize the service areas / isochrones using ArcGIS Pro.
+  1. Develop a Snowpark UDF which invokves the ArcGIS ServiceArea service function and stores the response back into the source table.
+  2. Develop a Snowpark UDF which extracts and converts the geometry from ArcGIS reponse into Geojson co-ordinates.
+  3. Connect and visualize the service areas / isochrones using ArcGIS Pro.
 
 ### What You’ll Need 
 
