@@ -3,7 +3,7 @@ id: snowflake-northstar-data-engineering
 summary: This Quickstart is part of the Snowflake Northstar Data Engineering workshop.
 categories: Data-Engineering
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 
