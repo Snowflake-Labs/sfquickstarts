@@ -1,4 +1,4 @@
-authors: Venkatesh Sekar
+authors: Venkatesh Sekar, Jhonatan Garrido-Lecca
 id: sf_esri_arcgis_locationservice
 summary: Calculate ISOChrone or ServiceArea using ArcGIS Location Services (API), natively in Snowflake.
 categories: data-science-&-ml, data-engineering, geospatial, partner-integrations
@@ -15,9 +15,11 @@ Duration: 5
 
 The [ArcGIS Location Services](https://developers.arcgis.com/documentation/mapping-and-location-services/) are services hosted by Esri that provide geospatial functionality and data for building mapping applications. You can use the service APIs to display maps, access basemaps styles, visualize data, find places, geocode addresses, find optimized routes, enrich data, and perform other mapping operations. The services also support advanced routing operations such as fleet routing, calculating service areas, and solving location-allocation problems. To build applications you can use ArcGIS Maps SDKs, open source libraries, and scripting APIs.
 
+This process also can be replicated if users have [ArcGIS Enterprise] (https://enterprise.arcgis.com/en/)
+
 ### What You’ll Learn 
 
-In this Quickstart you will be go over the steps of calculating servicearea/isochrones using the ArcGIS Location Services. You will also be visualizing them using ArcGIS Pro.
+In this Quickstart you will be go over the steps of calculating servicearea/isochrones using the ArcGIS Location Services. You will also be visualizing them using ArcGIS Pro. 
 ![ServiceArea](assets/service_area.png)
 
 ### What is Service Area / IsoChrone?
@@ -74,10 +76,13 @@ You can use service areas to build applications that:
 ## Setting up ArcGIS
 Duration: 20
 
-### Create an API Key
+### (Optional) Create ArcGIS account
+This tutorial requires ArcGIS account, preferrably with appropriate privileges to create API key and optionally to connect via ArcGIS pro.
+If you do not have those privileges or wish to create one, you can sign up for an [ArcGIS Online Trial](https://www.esri.com/en-us/arcgis/products/arcgis-online/trial) account.
 
-You will be invoking API services in ArcGIS, using Snowpark UDF. To do that, you will need to create an API key.
-Follow the procedure in the [documentation: Create API key credentials](https://developers.arcgis.com/documentation/security-and-authentication/api-key-authentication/api-key-credentials/#create-api-key-credentials).
+
+### Create an API Key
+You will be invoking API services in ArcGIS, using Snowpark UDF. For this, you will need to create an API key with appropriate privileges as found in the [documentation: Create API key credentials](https://developers.arcgis.com/documentation/security-and-authentication/api-key-authentication/api-key-credentials/#create-api-key-credentials).  
 
 Keep the API key saved in a secure location. You will need it in the folowing steps.
 
@@ -187,6 +192,10 @@ In this step, you will be connecting to your Snowflake account from ArcGIS Pro a
 Once you have added the features to the map, you will see the service area and the warehouse location as shown below:
 
 ![](assets/sa_arcgis_visual.jpg)
+
+
+> aside positive
+> **Idea:** If you want to play with the layers you can take advantage of the [query layer feature in ArcGIS Pro](https://pro.arcgis.com/en/pro-app/latest/help/mapping/layer-properties/create-a-query-layer-cloud-data-warehouse.htm). This feature will allow you to create queries on the fly and customize your visualization of Snowflake data. 
 
 
 <!-- ------------------------ -->
