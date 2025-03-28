@@ -77,7 +77,7 @@ To complete this lab, you'll need a Snowflake account. A free Snowflake trial ac
 ![trial](./assets/trial.png)
 
 <!-- ------------------------ -->
-## Understanding the pipeline we'll build
+## Understand The Pipeline We'll Build
 Duration: 2
 
 Tasty Bytes is a food truck company that operates globally in many countries. You're a data engineer on the Tasty Bytes team, and you've recently learned from data analysts on the team that:
@@ -109,7 +109,7 @@ Here's how we'll do this:
 Let's get started!
 
 <!-- ------------------------ -->
-## Weather data from Snowflake Marketplace
+## Weather Data From Snowflake Marketplace
 Duration: 5
 
 Let's start by "loading" the raw weather data into Snowflake. It turns out that "loading" is really the wrong word here. 
@@ -135,7 +135,7 @@ This is a live dataset! No need to write ingestion logic to bring the data into 
 ![data](./assets/weathersource.png)
 
 <!-- ------------------------ -->
-## Load sales data from AWS S3
+## Load Sales Data From AWS S3
 Duration: 15
 
 Let's now load the Tasty Bytes sales data. This data is currently sitting across many CSV files in an AWS S3 bucket. Let's use Snowflake's COPY INTO command to load the data into your Snowflake account.
@@ -206,7 +206,7 @@ After running the file, you should have all of the data loaded into your account
 This completes the **Ingestion** aspect of our pipeline for this lab.
 
 <!-- ------------------------ -->
-## Data transformations with SQL
+## Data Transformations With SQL
 Duration: 10
 
 We now have the necessary data in our Snowflake account. To get closer to the insights that we need – weather-related data for the city of Hamburg, Germany – we need to use SQL to apply transformations to the data. This will bring us closer to the insights we're after. Let's begin.
@@ -327,7 +327,7 @@ Views also help organize exactly which aspects of data might be valuable, and ai
 We'll use these views in our pipeline later on.
 
 <!-- ------------------------ -->
-## Create user-defined functions to aid with calculations
+## Create User-Defined Functions For Calculations
 Duration: 6
 
 We're missing some critical data for our pipeline. Our analysts have requested that we track certain weather measurements using the metric system. We are tracking a country in Europe after all.
@@ -369,7 +369,7 @@ CREATE OR REPLACE /*  */ tasty_bytes.analytics.inch_to_millimeter(inch NUMBER(35
 Great! We'll use these functions to expand the views we're planning on using in our pipeline.
 
 <!-- ------------------------ -->
-## Using the UDFs for data transformations
+## Apply UDFs For Data Transformations
 Duration: 6
 
 Let's now use the UDFs to add new columns in our views. These new columns will contains the converted values for temperature and precipitation.
@@ -400,7 +400,7 @@ Great job! We've transformed our data using SQL to create views, and we've used 
 This completes the **Transformation** aspect of our pipeline for this lab.
 
 <!-- ------------------------ -->
-## Delivering insights with a Streamlit in Snowflake app
+## Deliver Insights With Streamlit in Snowflake
 Duration: 6
 
 We now have the insights that we need, and we can now also deliver them to our data analysts. We have views that track the weather and sales in Hamburg, Germany. So how exactly will we make these insights easily accessible for our data analysts?
@@ -442,7 +442,7 @@ At the top, you could imagine clicking on "Share" and sharing the app with relev
 With this application, we've now completed our end-to-end data pipeline. This completes the **Delivery** aspect of our pipeline for this lab.
 
 <!-- ------------------------ -->
-## Conclusion and Resources
+## Conclusion And Resources
 Duration: 1
 
 ### Conclusion
