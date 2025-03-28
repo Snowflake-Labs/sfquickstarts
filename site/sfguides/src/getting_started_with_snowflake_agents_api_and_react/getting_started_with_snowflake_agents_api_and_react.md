@@ -423,9 +423,9 @@ The component uses conditional rendering to ensure that the appropriate UI eleme
 
 Duration: 5
 
-If you want to enable the optional `data_to_chart` tool, set the following flag:
+If you want to use the optional `data_to_chart` tool, set the following flag:
 ```
-NEXT_PUBLIC_DATA_TO_CHART_ENABLED=true
+NEXT_PUBLIC_USE_DATA_TO_CHART=true
 ```
 and restart your application.
 
