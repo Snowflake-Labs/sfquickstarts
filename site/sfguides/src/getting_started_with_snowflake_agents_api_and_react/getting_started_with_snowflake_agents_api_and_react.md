@@ -89,9 +89,6 @@ NEXT_PUBLIC_SEMANTIC_MODEL_PATH=@<database>.<schema>.<stage_name>/<semantic_mode
 
 # Path to the search service; for example, INSURANCEDB.DATA.SUPPORT_DOCS_SEARCH
 NEXT_PUBLIC_SEARCH_SERVICE_PATH=<database>.<schema>.<search_service_name>
-
-# Warehouse used for SQL execution. If you omit this, default warehouse will be used.
-NEXT_PUBLIC_SNOWFLAKE_WAREHOUSE=<warehouse_name>
 ```
 
 ### Authentication Parameters
@@ -216,12 +213,6 @@ export interface CortexSearchToolResource {
         "max_results": number;
     }
 }
-
-export interface SqlExecToolResource {
-    "sql_exec": {
-        "warehouse": string;
-    }
-}
 ```
 
 These interfaces define the resources required by each tool. For the Cortex Analyst, you need to specify the semantic model file that maps natural language to SQL structures. For Cortex Search, you need to specify the name of the search service and the maximum number of results to return.
@@ -277,7 +268,6 @@ const { agentState, messages, latestMessageId, handleNewMessage } = useAgentAPIQ
   toolResources: {
     "analyst1": { "semantic_model_file": process.env.NEXT_PUBLIC_SEMANTIC_MODEL_PATH },
     "search1": { "name": process.env.NEXT_PUBLIC_SEARCH_SERVICE_PATH, max_results: 10 },
-    "sql_exec": { "warehouse": process.env.NEXT_PUBLIC_SNOWFLAKE_WAREHOUSE ?? "" },
   }
 })
 ```
@@ -356,7 +346,6 @@ const { agentState, messages, latestMessageId, handleNewMessage } = useAgentAPIQ
   toolResources: {
     "analyst1": { "semantic_model_file": process.env.NEXT_PUBLIC_SEMANTIC_MODEL_PATH },
     "search1": { "name": process.env.NEXT_PUBLIC_SEARCH_SERVICE_PATH, max_results: 10 },
-    "sql_exec": { "warehouse": process.env.NEXT_PUBLIC_SNOWFLAKE_WAREHOUSE ?? "" },
   }
 })
 
