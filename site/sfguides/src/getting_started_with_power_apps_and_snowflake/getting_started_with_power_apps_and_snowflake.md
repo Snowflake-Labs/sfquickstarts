@@ -6,6 +6,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Microsoft, Power Apps, Power Platform, Power Automate
+Date: 3/23/25
 
 # Getting Started with Power Apps and Snowflake
 Duration: 45
@@ -70,11 +71,12 @@ CREATE OR REPLACE TABLE CUSTOMER_PRESEGMENT (
 	PREFERRED_CATEGORY VARCHAR(16777216),
 	LAST_PURCHASE_AMOUNT NUMBER(38,2)
 );
-GRANT SELECT ON TABLE hol_db.public.customer_presegment TO ROLE public;
+GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
+
 ```
 
 ### Get Sample data and scripts from Azure Blob -> Shankar, Nithin  
-1. Download the data [file](assets/customer_segmentation_data.csv) 
+1. Download the data for the demo [sample data file](assets/customer_segmentation_data.csv) 
 2. Login to Snowflake Account and go to Data -> Databases -> HOL_DB
 3. Select table CUSTOMER_PRESEGMENT and click Load Data 
 ![load data](assets/load_db.png)
@@ -94,7 +96,7 @@ in the document below.
 https://learn.microsoft.com/en-us/connectors/snowflakev2/#supported-capabilities-for-power-apps
 
 <!-- ------------------------ -->
-### Build a PowerApp
+### Build a PowerApp and connect to Snowflake data
 Duration: 15
 
 After you have configured PowerApps Connector to Snowflake, go to Power Apps 
@@ -121,43 +123,53 @@ After you have configured PowerApps Connector to Snowflake, go to Power Apps
 
 ## Snowflake Segmentation ML Model  
 ### Lets look at the clustering Model and deploy it 
-Typically your datascience teams develop and deploy the models, and you can invoke them. 
-1. Download the Customer Segmentation Notebook [ipynb](assets/customer_segmentation.ipynb) 
+Typically your datascience teams trains and deploy the ML models, and you can invoke them. 
+1. Download the Customer Segmentation Notebook [Jupyter ipynb](assets/customer_segmentation.ipynb) 
 2. Connect to Snowflake: Projects -> Notebook
 3. Import the notebook you downloaded earlier by clicking import .ipynb file
 	![notebook](assets/ImportNotebook.jpg)
 
-4. Click the RunALL button or Start and individual cell. 
-5. Create a Procedure to Invoke Model Predictions by running below SQL in a worksheet
-	[storedproc](assets/segment_storedproc)
+4. Click on packages, and make sure you add the packages listed in the screenshot
+
+	![packages](assets/Packages.png)
+
+5. Click the RunALL button or click START and execute individual cell. 
+6. Create a Procedure to Invoke Model Predictions by running below SQL in a worksheet 
+	[storedproc](assets/segment_storedproc.sql)
 
 
 ### Build a PowerAutomate Flow
-Let's build a PowerAutomate Flow that calls Snowflake Stored Procedure that runs a clustering ML model on the data.
+Let's build a PowerAutomate Flow to call stored procedure you created and run the model.
 1. Launch PowerAutomate
-2. Click Create new flow -> Create from blank
+2. Click My flows -> + New Flow  -> Instant Cloud Flow
+3. Give a name Call_Segmentize and select "When Power Apps calls a flow (V2)" for Choose how to trigger this flow 
+   ![flowcreate](assets/flow_create.png)
 3. In the canvas -> click New step 
 5. Search "Snowflake" and select "Submit SQL Statement for Execution" as shown 
 	![flow](assets/power_apps_choose_operation.png) 
 6. Let's add the following parameters 
-	- Instance - your Snowflake account URL(without https)
-	- Body/statement - CALL segmentize('CUSTOMER_PRESEGMENT','CUSTOMER_SEGMENTS'); 
+	- Instance - your Snowflake account URL(***WITHOUT https***)
+	- Body/statement - CALL segmentize('CUSTOMER_PRESEGMENT','CUSTOMER_SEGMENTS'); (*** Advanced Parameters ***)
 	- database - HOL_DB
 	- schema - PUBLIC 
 	- warehouse - HOL_WH
-	- role  - accountadmin
+	- role  - ANALYST
 	
 	Make sure to set connection to the one you created [above](#set-up-azure-ad-entra-id-authentication-for-snowflake) 	
 
 	![automateconnect](assets/automate_conn.png)
-7. Save the flow as ex: Call_Segmentize_Flow and test it works fine. 
+7. Run the flow and ensure it completes successfully. 
 		
 		
-### Update PowerApp to invoke your Flow
+### Update PowerApp to invoke your Flow 
 1. Put a button called Segmentize in the CUSTOMER_PRESEGMENT screen.
-![add_trigger](assets/app_call_flow.png)
-2. Let's create another screen to indicate when the flow is completed and name it Trigger_Success. 
-3. Drop a form on the Trigger_Success, we will connect this data view named CUSTOMER_SEGMENTS which has the PREDICTION field created by running the model. 
+	![add_trigger](assets/app_call_flow.png)
+2. Click Tables -> Create Virtual Tables and select CUSTOMER_SEGMENTS 
+	![connection](assets/connection.jpg)
+3. Let's create another screen (name: Trigger_Success) to indicate when the flow is completed. 
+3. You can choose "Header and Table" or "Blank: for the screen type, we will connect new view named CUSTOMER_SEGMENTS which has the PREDICTION field. 
+	![show_segments] (assets/segment_show.png) 
+5. Now, on the Trigger_Success screen, add Select With data Icon on and choose CUSTOMER_SEGMENTS 
 4. Go back the CUSTOMER_PRESEGMENT screen, click the segmentize button and in the Properties->Advanced table 
    pick ONSELECT action and enter the following 
    ![flow_trigger](assets/run_powerflow.png)

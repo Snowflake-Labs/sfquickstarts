@@ -63,7 +63,7 @@ SELECT
        $8 as year,
        $9 as month,
        $10 as truck_brand,
-      DATEADD(HOUR, (ROW_NUMBER() OVER(ORDER BY seq8())-3), to_date('01-11-2022','dd-mm-yyyy')) as review_date
+       DATEADD(month,-UNIFORM(0,6,RANDOM()),CURRENT_DATE()) as review_date
 FROM @stg_truck_reviews 
 (FILE_FORMAT => 'FF_CSV',
 PATTERN => '.*reviews.*[.]csv') 
@@ -74,7 +74,7 @@ PATTERN => '.*reviews.*[.]csv')
 USE SCHEMA analytics;
 
 -- We have non-english reviews from global customers
-SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , review, review_date where language !='en' limit 1;
+SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , review, review_date from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language !='en' limit 1;
 
 -- Snowflake Cortex makes it easy for us to translate and extract sentiment out of unstructured data
 CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_unified_reviews as             
