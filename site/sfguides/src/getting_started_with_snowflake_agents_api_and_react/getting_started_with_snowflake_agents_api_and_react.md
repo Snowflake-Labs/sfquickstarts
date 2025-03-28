@@ -68,7 +68,7 @@ This script will:
 
 - Download the [semantic model](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react/blob/main/data/customer_semantic_model.yaml) (NOTE: Do NOT right-click to download.)  
 - Navigate to Data » Databases » INSURANCEDB » DATA » Stages » CLAIM_STORAGE
-- Click "Upload" in the top right
+- Click "+ Files" in the top right
 - Select the semantic model file
 - Click "Upload"
 
