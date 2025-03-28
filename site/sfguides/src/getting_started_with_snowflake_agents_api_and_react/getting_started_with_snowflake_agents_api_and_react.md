@@ -84,7 +84,7 @@ Now that we have set up the workspace, let's configure the necessary environment
 # Snowflake URL with your account details
 NEXT_PUBLIC_SNOWFLAKE_URL=https://<account_details>.snowflakecomputing.com
 
-# Path to the semantic model file; for example, @INSURANCEDB.DATA.DOC_STORAGE/customer_semantic_model.yaml
+# Path to the semantic model file; for example, @INSURANCEDB.DATA.CLAIM_STORAGE/customer_semantic_model.yaml
 NEXT_PUBLIC_SEMANTIC_MODEL_PATH=@<database>.<schema>.<stage_name>/<semantic_model_name>.yaml
 
 # Path to the search service; for example, INSURANCEDB.DATA.SUPPORT_DOCS_SEARCH
