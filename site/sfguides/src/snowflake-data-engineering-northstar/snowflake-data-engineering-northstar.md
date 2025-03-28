@@ -1,18 +1,20 @@
 author: Gilberto Hernandez, Rida Safdar
 id: snowflake-northstar-data-engineering
-summary: This Quickstart is part of the Snowflake Northstar Data Engineering workshop.
+summary: Build an end-to-end data pipeline in Snowflake using the I-T-D framework.
 categories: Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 
-# Snowflake Northstar: Data Engineering with Snowflake
+# Getting Started: Data Engineering with Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
-In this Snowflake Northstar workshop, we'll focus on data engineering with Snowflake. We'll specifically build an end-to-end data pipeline with Snowflake. We'll apply the  **Ingestion-Transformation–Delivery** framework, also known as **I-T-D**, to build the pipeline.
+### Overview
+
+In this Quickstart, we're going to focus on data engineering with Snowflake. We'll specifically build an end-to-end data pipeline with Snowflake. We'll apply the  **Ingestion-Transformation–Delivery** framework, also known as **I-T-D**, to build the pipeline.
 
 **Ingestion**
 
@@ -440,10 +442,14 @@ At the top, you could imagine clicking on "Share" and sharing the app with relev
 With this application, we've now completed our end-to-end data pipeline. This completes the **Delivery** aspect of our pipeline for this lab.
 
 <!-- ------------------------ -->
-## Conclusion 
+## Conclusion and Resources
 Duration: 1
 
+### Conclusion
+
 Congratulations! You've built an end-to-end data pipeline in Snowflake using the **Ingestion-Transformation–Delivery** framework, also known as **I-T-D**. Let's recap what you did. 
+
+### What You Learned
 
 You built a data pipeline that tracks weather and sales data for Tasty Bytes food trucks in the city of Hamburg, Germany. As part of the I-T-D framework, you:
 
@@ -468,15 +474,12 @@ Delivered a final data product using:
 
 * Streamlit in Snowflake
 
-Congratulations! For more resources, check out the following:
+Congratulations! 
 
-* You can build the objects we used in the pipeline using Snowpark for Python as well. The code to do this is provided in the **hamburg_sales_snowpark.ipynb** Notebook file in the repo.
+### Resources
+
+For more resources, check out the following:
+
+* You can build the objects we used in the pipeline using Snowpark for Python as well. The code to do this is provided in the [**hamburg_sales_snowpark.ipynb** Notebook file in the repo](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/hamburg_sales_snowpark.ipynb).
 
 * Learn more at [Snowflake Northstar](https://www.snowflake.com/en/developers/northstar/) for developers.
-
-
-**Receiving a Snowflake Northstar: Data Engineering badge**
-
-1. Be sure to follow and complete the instructions provided by your lab instructor during your event. The instructor will guide you through running the automated tests in your account so that you can receive your badge.
-
-2. If you successfully pass the automated tests, you can expect to receive your badge via email within 48 hours.
