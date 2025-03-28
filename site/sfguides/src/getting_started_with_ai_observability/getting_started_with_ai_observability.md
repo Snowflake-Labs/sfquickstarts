@@ -392,7 +392,7 @@ Metric computations using "LLM-as-a-judge" approach where an LLM is used to gene
 
 The starting point for evaluating RAGs is the RAG triad of context relevance, groundedness and answer relevance. These are localized evaluations of a RAG system so you can pinpoint the root cause of poor performance. They are also reference-free, meaning they can be run without using ground truth data.
 
-![RAG Triad](assets/RAG_Triad.jpg)
+![RAG Triad](assets/RAG_Triad.png)
 
 ### Context Relevance
 Context Relevance determines if the retrieved context from the retriever or the search service is relevant to the user query. Given the user query and retrieved context, an LLM judge is used to determine relevance of the retrieved context based on the query. 
@@ -411,7 +411,7 @@ To view evaluation results, navigate to Snowsight → AI & ML → Evaluations in
    
 ![apps](assets/apps.png)
 
-2. View runs corresponding to an application: Select a specific application to biew the list of runs.
+2. View runs corresponding to an application: Select a specific application to view the list of runs.
     
 ![runs](assets/runs.png)
 
