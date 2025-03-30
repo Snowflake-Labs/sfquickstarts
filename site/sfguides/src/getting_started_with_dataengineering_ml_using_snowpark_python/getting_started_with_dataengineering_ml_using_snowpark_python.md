@@ -9,7 +9,7 @@ authors: Dash Desai
 
 # Getting Started with Data Engineering and ML using Snowpark for Python and Snowflake Notebooks
 <!-- ------------------------ -->
-## Overshadow
+## Overview
 
 Duration: 5
 
