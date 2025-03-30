@@ -3,10 +3,10 @@ name: Validate Markdown on PR and Push
 on:
   push:
     paths:
-      - "**.md"  # Only trigger if .md files change
+      - "**.md"
   pull_request:
     paths:
-      - "**.md"  # Only trigger if .md files change
+      - "**.md"
 
 jobs:
   validate-markdown:
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository (only latest commit)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1  # Only fetch the latest commit, avoids full history
+          fetch-depth: 2  # Fetch at least 2 commits to avoid "HEAD^" errors
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -31,7 +31,11 @@ jobs:
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             FILES=$(git diff --name-only origin/${{ github.base_ref }} -- '*.md')
           else
-            FILES=$(git diff --name-only HEAD^ HEAD -- '*.md')
+            if git rev-parse HEAD^ >/dev/null 2>&1; then
+              FILES=$(git diff --name-only HEAD^ HEAD -- '*.md')
+            else
+              FILES=$(git ls-files '*.md')  # If first commit, check all .md files
+            fi
           fi
           
           if [ -z "$FILES" ]; then
