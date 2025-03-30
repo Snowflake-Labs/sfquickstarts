@@ -1,32 +1,41 @@
-name: Validate Markdown Structure
+name: Validate Markdown on PR and Push
 
 on:
+  push:
+    paths:
+      - "**.md"  # Triggers only when markdown files change
   pull_request:
     paths:
-      - "**/*.md"
+      - "**.md"  # Triggers only when markdown files change
 
 jobs:
   validate-markdown:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: '3.x'
 
       - name: Install dependencies
         run: pip install PyYAML
 
-      - name: Get changed markdown files
-        id: changed-files
-        uses: tj-actions/changed-files@v44
-        with:
-          files: "**/*.md"
+      - name: Find changed Markdown files
+        id: find-md-files
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            FILES=$(git diff --name-only origin/${{ github.base_ref }}...origin/${{ github.head_ref }} -- '*.md')
+          else
+            FILES=$(git diff --name-only HEAD~1 HEAD -- '*.md')
+          fi
+          if [ -z "$FILES" ]; then
+            echo "No markdown files to validate."
+            exit 0
+          fi
+          echo "FILES=$FILES" >> $GITHUB_ENV
 
-      - name: Validate markdown files
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: python .github/scripts/validate_markdown.py ${{ steps.changed-files.outputs.all_changed_files }}
+      - name: Run Markdown validation
+        run: python .github/scripts/validate_markdown.py $FILES
