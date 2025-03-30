@@ -1,93 +1,103 @@
 import sys
 import re
 
-# Required sections for Overview and Conclusion steps
-REQUIRED_OVERVIEW_SECTIONS = [
+# Required sections in the first and last steps
+FIRST_STEP_TITLE = "Overview"
+FIRST_STEP_SECTIONS = {
     "Overview",
     "What You Will Build",
     "What You Will Learn",
     "Prerequisites",
     "What You Will Need"
-]
-REQUIRED_CONCLUSION_SECTIONS = [
+}
+SNOWFLAKE_SIGNUP_URL = "https://signup.snowflake.com/"
+
+LAST_STEP_TITLE = "Conclusion and Resources"
+LAST_STEP_SECTIONS = {
     "Conclusion",
     "What You Learned",
     "Resources"
-]
-SNOWFLAKE_SIGNUP_LINK = "https://signup.snowflake.com/"
+}
 
-# Regex for title case step labels (2-3 words)
-STEP_LABEL_REGEX = re.compile(r"^#+\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})$")
+# Step label regex (ensures 2-3 words in Title Case)
+STEP_LABEL_REGEX = r"^#+\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})$"
 
-def validate_markdown_file(filepath):
-    """Validates the structure of a single markdown file."""
-    with open(filepath, "r", encoding="utf-8") as file:
-        lines = file.readlines()
+def validate_markdown(file_path):
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.readlines()
 
-    errors = []
-    step_labels = []
+    steps = {}
     current_step = None
-    overview_found = False
-    conclusion_found = False
-    overview_sections = set()
-    conclusion_sections = set()
-    snowflake_link_found = False
+    current_sections = set()
+    found_snowflake_signup = False
 
-    for line in lines:
+    for line in content:
         line = line.strip()
 
-        # Detect step headers (H2 or higher)
-        match = STEP_LABEL_REGEX.match(line)
-        if match:
-            step_labels.append(match.group(1))
-            current_step = match.group(1)
+        # Detect step headers (## Step Name)
+        step_match = re.match(STEP_LABEL_REGEX, line)
+        if step_match:
+            # Save the previous step sections before moving to the next step
+            if current_step:
+                steps[current_step] = current_sections
+            current_step = step_match.group(1)
+            current_sections = set()
+            continue
 
-        # Check required sections under Overview
-        if current_step == "Overview":
-            overview_found = True
-            for section in REQUIRED_OVERVIEW_SECTIONS:
-                if section in line:
-                    overview_sections.add(section)
-            if SNOWFLAKE_SIGNUP_LINK in line:
-                snowflake_link_found = True
+        # Detect section headers (### Section Name)
+        if line.startswith("### "):
+            section_name = line[4:].strip()
+            current_sections.add(section_name)
 
-        # Check required sections under Conclusion and Resources
-        if current_step == "Conclusion and Resources":
-            conclusion_found = True
-            for section in REQUIRED_CONCLUSION_SECTIONS:
-                if section in line:
-                    conclusion_sections.add(section)
+        # Check for Snowflake signup URL
+        if SNOWFLAKE_SIGNUP_URL in line:
+            found_snowflake_signup = True
 
-    # Validate Overview step
-    if not overview_found:
-        errors.append(f"❌ {filepath}: Missing 'Overview' step at the beginning.")
-    elif not overview_sections.issuperset(REQUIRED_OVERVIEW_SECTIONS):
-        errors.append(f"❌ {filepath}: 'Overview' step is missing sections: {set(REQUIRED_OVERVIEW_SECTIONS) - overview_sections}")
-    if not snowflake_link_found:
-        errors.append(f"❌ {filepath}: Missing Snowflake signup link in 'Prerequisites' or 'What You Will Need'.")
+    # Save the last parsed step
+    if current_step:
+        steps[current_step] = current_sections
 
-    # Validate Conclusion and Resources step
-    if not conclusion_found:
-        errors.append(f"❌ {filepath}: Missing 'Conclusion and Resources' step at the end.")
-    elif not conclusion_sections.issuperset(REQUIRED_CONCLUSION_SECTIONS):
-        errors.append(f"❌ {filepath}: 'Conclusion and Resources' step is missing sections: {set(REQUIRED_CONCLUSION_SECTIONS) - conclusion_sections}")
+    errors = []
 
-    # Validate step labels
-    for label in step_labels:
-        if not STEP_LABEL_REGEX.match(label):
-            errors.append(f"❌ {filepath}: Step label '{label}' should be 2-3 words long and in Title Case.")
+    # Check the first step
+    step_titles = list(steps.keys())
+    if not step_titles or step_titles[0] != FIRST_STEP_TITLE:
+        errors.append(f"❌ First step must be '{FIRST_STEP_TITLE}', but found '{step_titles[0]}' instead.")
+
+    if FIRST_STEP_TITLE in steps:
+        missing_sections = FIRST_STEP_SECTIONS - steps[FIRST_STEP_TITLE]
+        if missing_sections:
+            errors.append(f"❌ Missing sections in '{FIRST_STEP_TITLE}': {', '.join(missing_sections)}")
+
+    if not found_snowflake_signup:
+        errors.append(f"❌ Missing required Snowflake signup link: {SNOWFLAKE_SIGNUP_URL}")
+
+    # Check the last step
+    if not step_titles or step_titles[-1] != LAST_STEP_TITLE:
+        errors.append(f"❌ Last step must be '{LAST_STEP_TITLE}', but found '{step_titles[-1]}' instead.")
+
+    if LAST_STEP_TITLE in steps:
+        missing_sections = LAST_STEP_SECTIONS - steps[LAST_STEP_TITLE]
+        if missing_sections:
+            errors.append(f"❌ Missing sections in '{LAST_STEP_TITLE}': {', '.join(missing_sections)}")
+
+    # Validate step labels for proper title case and word count
+    for step in step_titles:
+        if not re.match(STEP_LABEL_REGEX, f"## {step}"):
+            errors.append(f"❌ Step '{step}' must be 2-3 words long and in Title Case.")
 
     if errors:
         print("\n".join(errors))
-        sys.exit(1)  # Fail the job
+        sys.exit(1)
+    else:
+        print(f"✅ {file_path} passed all validations.")
 
 if __name__ == "__main__":
-    md_files = sys.argv[1:]  # Get the list of changed .md files
-    if not md_files:
-        print("✅ No markdown files to validate.")
+    files_to_check = sys.argv[1:]
+    if not files_to_check:
+        print("No markdown files provided for validation.")
         sys.exit(0)
 
-    for md_file in md_files:
-        validate_markdown_file(md_file)
-
-    print("✅ All modified markdown files passed validation!")
+    for md_file in files_to_check:
+        print(f"🔍 Validating {md_file}...")
+        validate_markdown(md_file)
