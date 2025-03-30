@@ -1,0 +1,32 @@
+name: Validate Markdown Structure
+
+on:
+  pull_request:
+    paths:
+      - "**/*.md"
+
+jobs:
+  validate-markdown:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: pip install PyYAML
+
+      - name: Get changed markdown files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: "**/*.md"
+
+      - name: Validate markdown files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: python .github/scripts/validate_markdown.py ${{ steps.changed-files.outputs.all_changed_files }}
