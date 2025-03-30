@@ -1,5 +1,5 @@
 id: getting_started_with_dataengineering_ml_using_snowpark_python
-summary: Getting Started with Data Engineering and ML using Snowpark for Python and Snowflake Notebooks.
+summary: Getting Started with Data Engineering and ML using Snowpark for Python and Snowflake Notebooks in Snowflake.
 categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published
