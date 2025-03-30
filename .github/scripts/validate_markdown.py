@@ -2,13 +2,12 @@ import sys
 import re
 
 # Required sections in the first and last steps
-FIRST_STEP_TITLE = "Overview"  # Check for this title without "##" for flexibility
+FIRST_STEP_TITLE = "Overview" 
 FIRST_STEP_SECTIONS = {
-    "Overview",
-    "What You Will Build",
-    "What You Will Learn",
-    "Prerequisites",
-    "What You Will Need"
+    "### What You Will Build",
+    "### What You Will Learn",
+    "### Prerequisites",
+    "### What You Will Need"
 }
 SNOWFLAKE_SIGNUP_URL = "https://signup.snowflake.com/"
 
