@@ -2,7 +2,7 @@ import sys
 import re
 
 # Required sections in the first and last steps
-FIRST_STEP_TITLE = "## Overview"
+FIRST_STEP_TITLE = "Overview"  # Check for this title without "##" for flexibility
 FIRST_STEP_SECTIONS = {
     "Overview",
     "What You Will Build",
@@ -12,7 +12,7 @@ FIRST_STEP_SECTIONS = {
 }
 SNOWFLAKE_SIGNUP_URL = "https://signup.snowflake.com/"
 
-LAST_STEP_TITLE = "## Conclusion and Resources"
+LAST_STEP_TITLE = "Conclusion and Resources"
 LAST_STEP_SECTIONS = {
     "Conclusion",
     "What You Learned",
@@ -61,7 +61,8 @@ def validate_markdown(file_path):
 
     # Check the first step
     step_titles = list(steps.keys())
-    if not step_titles or step_titles[0] != FIRST_STEP_TITLE:
+    # Normalize and check for exact match for first step
+    if not step_titles or FIRST_STEP_TITLE.lower() not in [step.lower() for step in step_titles[0:1]]:
         errors.append(f"❌ First step must be '{FIRST_STEP_TITLE}', but found '{step_titles[0]}' instead.")
 
     if FIRST_STEP_TITLE in steps:
@@ -73,7 +74,7 @@ def validate_markdown(file_path):
         errors.append(f"❌ Missing required Snowflake signup link: {SNOWFLAKE_SIGNUP_URL}")
 
     # Check the last step
-    if not step_titles or step_titles[-1] != LAST_STEP_TITLE:
+    if not step_titles or LAST_STEP_TITLE not in [step for step in step_titles[-1:]]:
         errors.append(f"❌ Last step must be '{LAST_STEP_TITLE}', but found '{step_titles[-1]}' instead.")
 
     if LAST_STEP_TITLE in steps:
