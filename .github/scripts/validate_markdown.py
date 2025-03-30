@@ -2,7 +2,7 @@ import sys
 import re
 
 # Required sections in the first and last steps
-FIRST_STEP_TITLE = "Overview"
+FIRST_STEP_TITLE = "## Overview"
 FIRST_STEP_SECTIONS = {
     "Overview",
     "What You Will Build",
@@ -12,15 +12,15 @@ FIRST_STEP_SECTIONS = {
 }
 SNOWFLAKE_SIGNUP_URL = "https://signup.snowflake.com/"
 
-LAST_STEP_TITLE = "Conclusion and Resources"
+LAST_STEP_TITLE = "## Conclusion and Resources"
 LAST_STEP_SECTIONS = {
     "Conclusion",
     "What You Learned",
     "Resources"
 }
 
-# Step label regex (ensures 2-3 words in Title Case)
-STEP_LABEL_REGEX = r"^#+\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})$"
+# Step label regex (ensures 1-4 words in Title Case)
+STEP_LABEL_REGEX = r"^#+\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,3})$"
 
 def validate_markdown(file_path):
     with open(file_path, "r", encoding="utf-8") as f:
