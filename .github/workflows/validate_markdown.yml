@@ -3,19 +3,19 @@ name: Validate Markdown on PR and Push
 on:
   push:
     paths:
-      - "**.md"  # Only trigger for .md file changes
+      - "**.md"  # Only trigger if .md files change
   pull_request:
     paths:
-      - "**.md"  # Only trigger for .md file changes
+      - "**.md"  # Only trigger if .md files change
 
 jobs:
   validate-markdown:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository with full history
+      - name: Checkout repository (only latest commit)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch full history to avoid shallow clone issues
+          fetch-depth: 1  # Only fetch the latest commit, avoids full history
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -29,16 +29,17 @@ jobs:
         id: find-md-files
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            BASE_BRANCH="origin/${{ github.base_ref }}"
-            FILES=$(git diff --name-only $BASE_BRANCH -- '*.md')
+            FILES=$(git diff --name-only origin/${{ github.base_ref }} -- '*.md')
           else
-            FILES=$(git diff --name-only HEAD~1 HEAD -- '*.md' || echo "")
+            FILES=$(git diff --name-only HEAD^ HEAD -- '*.md')
           fi
           
           if [ -z "$FILES" ]; then
             echo "No markdown files to validate."
             exit 0
           fi
+          
+          echo "FILES=$FILES"
           echo "FILES=$FILES" >> $GITHUB_ENV
 
       - name: Run Markdown validation
