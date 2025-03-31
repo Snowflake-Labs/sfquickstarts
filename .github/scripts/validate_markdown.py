@@ -46,6 +46,7 @@ def validate_markdown(file_path):
         # Detect section headers (### Section Name)
         if line.startswith("### "):
             section_name = line[4:].strip()
+            print(f"Found section: {section_name}")  # Debugging line
             current_sections.add(section_name)
 
         # Check for Snowflake signup URL
