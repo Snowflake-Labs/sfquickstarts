@@ -65,7 +65,6 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 
 ### What You Will Learn
 Here's what you will learn.
-
 - How to analyze data and perform data engineering tasks using Snowpark DataFrames and APIs
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
 - How to create Snowflake Tasks to automate data pipelines
