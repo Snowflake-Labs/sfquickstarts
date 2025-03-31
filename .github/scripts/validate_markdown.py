@@ -58,26 +58,29 @@ def validate_markdown(file_path):
 
     errors = []
 
-    # Check the first step
+    # Check the first step (case insensitive match)
     step_titles = list(steps.keys())
-    # Normalize and check for exact match for first step (case insensitive)
     if not step_titles or FIRST_STEP_TITLE.lower() not in [step.lower() for step in step_titles[0:1]]:
         errors.append(f"❌ First step must be '{FIRST_STEP_TITLE}', but found '{step_titles[0]}' instead.")
 
     if FIRST_STEP_TITLE in steps:
-        missing_sections = FIRST_STEP_SECTIONS - {section.title() for section in steps[FIRST_STEP_TITLE]}
+        # Normalize section names by stripping spaces and capitalizing the first letter
+        existing_sections = {section.strip().title() for section in steps[FIRST_STEP_TITLE]}
+        missing_sections = FIRST_STEP_SECTIONS - existing_sections
         if missing_sections:
             errors.append(f"❌ Missing sections in '{FIRST_STEP_TITLE}': {', '.join(missing_sections)}")
 
     if not found_snowflake_signup:
         errors.append(f"❌ Missing required Snowflake signup link: {SNOWFLAKE_SIGNUP_URL}")
 
-    # Check the last step (case insensitive)
+    # Check the last step (case insensitive match)
     if not step_titles or LAST_STEP_TITLE.lower() not in [step.lower() for step in step_titles[-1:]]:
         errors.append(f"❌ Last step must be '{LAST_STEP_TITLE}', but found '{step_titles[-1]}' instead.")
 
     if LAST_STEP_TITLE in steps:
-        missing_sections = LAST_STEP_SECTIONS - {section.title() for section in steps[LAST_STEP_TITLE]}
+        # Normalize section names by stripping spaces and capitalizing the first letter
+        existing_sections = {section.strip().title() for section in steps[LAST_STEP_TITLE]}
+        missing_sections = LAST_STEP_SECTIONS - existing_sections
         if missing_sections:
             errors.append(f"❌ Missing sections in '{LAST_STEP_TITLE}': {', '.join(missing_sections)}")
 
