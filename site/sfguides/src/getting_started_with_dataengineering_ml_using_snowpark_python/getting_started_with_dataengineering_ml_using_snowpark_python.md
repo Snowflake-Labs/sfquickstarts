@@ -41,7 +41,7 @@ To get started with Snowflake ML, developers can use the Python APIs from the [S
 
 ![Snowpark](assets/snowflake_ml.png)
 
-This quickstart will focus on
+This quickstart will focus on:
 
 - Snowpark ML Modeling API, which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake.
 
