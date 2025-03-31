@@ -415,7 +415,7 @@ Let's go ahead and create the app for our analysts.
 
 2. Navigate to "Projects", then click on "Streamlit".
 
-3. At the top, create a new Streamlit app. Name the app whatever you'd like.
+3. At the top, create a new Streamlit app. Name the app "HAMBURG_GERMANY_TRENDS".
 
 4. For the app location, select **TASTY_BYTES** as the database, and **HARMONIZED** for the schema. Leave everything else as-is.
 
