@@ -24,7 +24,6 @@ Here is a summary of what you will be able to learn in each step by following th
 - **Streamlit**: Build an interactive Streamlit application using Python to help visualize the ROI of different advertising spend budgets
 
 ### What is Snowpark?
-
 Snowpark is the set of libraries and code execution environments that run Python and other programming languages next to your data in Snowflake. Snowpark can be used to build data pipelines, ML models, apps, and other data processing tasks.
 
 ![Snowpark](assets/snowpark.png)
@@ -36,7 +35,6 @@ Snowpark is the set of libraries and code execution environments that run Python
 Learn more about [Snowpark](https://www.snowflake.com/snowpark/).
 
 ### What is Snowflake ML?
-
 Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use ML Functions to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 To get started with Snowflake ML, developers can use the Python APIs from the [Snowpark ML library](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index), directly from Snowflake Notebooks (public preview) or downloaded and installed into any IDE of choice, including Jupyter or Hex.
@@ -61,7 +59,6 @@ Using these features, you can build and operationalize a complete ML workflow, t
 ![Snowpark](assets/snowflake_ml_arch.png)
 
 ### What is Streamlit?
-
 Streamlit enables data scientists and Python developers to combine Streamlit's component-rich, open-source Python library with the scale, performance, and security of the Snowflake platform.
 
 Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
