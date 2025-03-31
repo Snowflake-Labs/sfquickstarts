@@ -66,7 +66,11 @@ def validate_markdown(file_path):
     if FIRST_STEP_TITLE in steps:
         # Normalize section names by stripping spaces and capitalizing the first letter
         existing_sections = {section.strip().title() for section in steps[FIRST_STEP_TITLE]}
-        print(f"Existing sections in '{FIRST_STEP_TITLE}': {existing_sections}")  # Debugging line
+        
+        # Debugging line
+        print(f"Existing sections in '{FIRST_STEP_TITLE}': {existing_sections}")
+
+        # Strict matching by removing any unexpected sections
         missing_sections = FIRST_STEP_SECTIONS - existing_sections
         if missing_sections:
             errors.append(f"❌ Missing sections in '{FIRST_STEP_TITLE}': {', '.join(missing_sections)}")
