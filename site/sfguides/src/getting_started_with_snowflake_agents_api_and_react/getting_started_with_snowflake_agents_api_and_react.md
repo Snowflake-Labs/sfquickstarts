@@ -419,18 +419,6 @@ This code shows how the UI:
 
 The component uses conditional rendering to ensure that the appropriate UI elements are shown based on the current state and available data. This creates a responsive and informative interface for users interacting with the Cortex Agent.
 
-## Enable Optional Tools
-
-Duration: 5
-
-If you want to use the optional `data_to_chart` tool, set the following flag:
-```
-NEXT_PUBLIC_USE_DATA_TO_CHART=true
-```
-and restart your application.
-
-With these changes, Cortex Agents will now return visualizations for the data obtained from Cortex Analyst, whenever available. For more details, refer to the `useAgentApiQuery` hook in the application code.
-
 ## Conclusion and Resources
 
 Duration: 5
