@@ -74,7 +74,10 @@ def validate_markdown(file_path):
         errors.append(f"❌ Missing required Snowflake signup link: {SNOWFLAKE_SIGNUP_URL}")
 
     # Check the last step (case insensitive match)
-    if not step_titles or LAST_STEP_TITLE.lower() not in [step.lower() for step in step_titles[-1:]]:
+    step_titles_lower = [step.lower() for step in step_titles]  # Lowercase comparison for step titles
+    last_step_found = next((step for step in step_titles if step.lower() == LAST_STEP_TITLE.lower()), None)
+    
+    if not last_step_found:
         errors.append(f"❌ Last step must be '{LAST_STEP_TITLE}', but found '{step_titles[-1]}' instead.")
 
     if LAST_STEP_TITLE in steps:
