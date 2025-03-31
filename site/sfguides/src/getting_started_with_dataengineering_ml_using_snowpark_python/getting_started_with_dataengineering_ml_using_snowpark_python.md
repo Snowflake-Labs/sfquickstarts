@@ -64,7 +64,6 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
 Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/streamlit-in-snowflake/).
 
 ### What You Will Learn
-
 Here's what you will learn.
 
 - How to analyze data and perform data engineering tasks using Snowpark DataFrames and APIs
