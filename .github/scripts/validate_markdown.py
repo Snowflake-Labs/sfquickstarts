@@ -2,12 +2,12 @@ import sys
 import re
 
 # Required sections in the first and last steps
-FIRST_STEP_TITLE = "Overview" 
+FIRST_STEP_TITLE = "Overview"
 FIRST_STEP_SECTIONS = {
-    "### What You Will Build",
-    "### What You Will Learn",
-    "### Prerequisites",
-    "### What You Will Need"
+    "What You Will Build",
+    "What You Will Learn",
+    "Prerequisites",
+    "What You Will Need"
 }
 SNOWFLAKE_SIGNUP_URL = "https://signup.snowflake.com/"
 
@@ -60,24 +60,24 @@ def validate_markdown(file_path):
 
     # Check the first step
     step_titles = list(steps.keys())
-    # Normalize and check for exact match for first step
+    # Normalize and check for exact match for first step (case insensitive)
     if not step_titles or FIRST_STEP_TITLE.lower() not in [step.lower() for step in step_titles[0:1]]:
         errors.append(f"❌ First step must be '{FIRST_STEP_TITLE}', but found '{step_titles[0]}' instead.")
 
     if FIRST_STEP_TITLE in steps:
-        missing_sections = FIRST_STEP_SECTIONS - steps[FIRST_STEP_TITLE]
+        missing_sections = FIRST_STEP_SECTIONS - {section.title() for section in steps[FIRST_STEP_TITLE]}
         if missing_sections:
             errors.append(f"❌ Missing sections in '{FIRST_STEP_TITLE}': {', '.join(missing_sections)}")
 
     if not found_snowflake_signup:
         errors.append(f"❌ Missing required Snowflake signup link: {SNOWFLAKE_SIGNUP_URL}")
 
-    # Check the last step
-    if not step_titles or LAST_STEP_TITLE not in [step for step in step_titles[-1:]]:
+    # Check the last step (case insensitive)
+    if not step_titles or LAST_STEP_TITLE.lower() not in [step.lower() for step in step_titles[-1:]]:
         errors.append(f"❌ Last step must be '{LAST_STEP_TITLE}', but found '{step_titles[-1]}' instead.")
 
     if LAST_STEP_TITLE in steps:
-        missing_sections = LAST_STEP_SECTIONS - steps[LAST_STEP_TITLE]
+        missing_sections = LAST_STEP_SECTIONS - {section.title() for section in steps[LAST_STEP_TITLE]}
         if missing_sections:
             errors.append(f"❌ Missing sections in '{LAST_STEP_TITLE}': {', '.join(missing_sections)}")
 
