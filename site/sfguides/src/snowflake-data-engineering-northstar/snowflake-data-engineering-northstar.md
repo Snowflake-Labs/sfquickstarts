@@ -301,11 +301,11 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-8. Now that we've found a likely culprit behind the drop in sales, so let's create a view that tracks windspeed. We'll use this view later on in our pipeline. Run the final block of SQL to create the view.
+8. Now that we've found a likely culprit behind the drop in sales, so let's create a view that tracks windspeed. We'll use this view later on in our pipeline. Locate the next block of SQL. Add `weather_hamburg` to the end of the first line, so that the line reads `CREATE OR REPLACE VIEW tasty_bytes.harmonized.weather_hamburg` and names our view. Run the final block of SQL to create the view.
 
 ```sql
 -- Create a view that tracks windspeed for Hamburg, Germany
-CREATE OR REPLACE VIEW tasty_bytes.harmonized.--add name of view
+CREATE OR REPLACE VIEW tasty_bytes.harmonized. --add name of view
     AS
 SELECT
     dw.country_desc,
