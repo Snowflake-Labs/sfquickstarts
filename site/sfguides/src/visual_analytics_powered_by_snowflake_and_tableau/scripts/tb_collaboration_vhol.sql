@@ -14,17 +14,18 @@ Quickstart Section 3 - Investigating Zero Sales Days in our First Party Data
 USE ROLE tasty_data_engineer;
 USE WAREHOUSE tasty_de_wh;
 
+
 SELECT 
     o.date,
-    SUM(o.price) AS daily_sales
+    round(SUM(ZEROIFNULL(o.price))) AS daily_sales
 FROM frostbyte_tasty_bytes.analytics.orders_v o
 WHERE 1=1
     AND o.country = 'Germany'
     AND o.primary_city = 'Hamburg'
-    AND DATE(o.order_ts) BETWEEN '2022-02-10' AND '2022-02-25'
-GROUP BY o.date
-ORDER BY o.date ASC;
-
+    AND DATE(o.order_ts) BETWEEN '2024-02-10' AND '2024-02-25'
+GROUP BY o.date 
+--HAVING daily_sales <= 0
+ORDER BY o.date ASC ;
 
 
 /*----------------------------------------------------------------------------------
@@ -79,7 +80,7 @@ FROM frostbyte_tasty_bytes.harmonized.daily_weather_v dw
 WHERE 1=1
     AND dw.country_desc = 'Germany'
     AND dw.city_name = 'Hamburg'
-    AND YEAR(date_valid_std) = '2022'
+    AND YEAR(date_valid_std) = '2024'
     AND MONTH(date_valid_std) = '2'
 GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
@@ -96,9 +97,9 @@ FROM frostbyte_tasty_bytes.harmonized.daily_weather_v dw
 WHERE 1=1
     AND dw.country_desc IN ('Germany')
     AND dw.city_name = 'Hamburg'
-    AND YEAR(date_valid_std) = '2022'
+    AND YEAR(date_valid_std) = '2024'
     AND MONTH(date_valid_std) = '2'
-    AND date_valid_std between '2022-02-10' and  '2022-02-25'
+    AND date_valid_std between '2024-02-10' and  '2024-02-25'
 GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std ASC;
 
@@ -150,8 +151,8 @@ LEFT JOIN frostbyte_tasty_bytes.harmonized.orders_v odv
 WHERE 1=1
     AND fd.country_desc = 'Germany'
     AND fd.city = 'Hamburg'
-    AND fd.yyyy_mm = '2022-02'
-    AND date_valid_std between '2022-02-10' and  '2022-02-25'
+    AND fd.yyyy_mm = '2024-02'
+    AND date_valid_std between '2024-02-10' and  '2024-02-25'
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 
@@ -202,7 +203,7 @@ FROM frostbyte_tasty_bytes.analytics.daily_city_metrics_v dcm
 WHERE 1=1
     AND dcm.country_desc = 'Germany'
     AND dcm.city_name = 'Hamburg'
-    AND dcm.date BETWEEN '2022-02-10' AND '2022-02-25'
+    AND dcm.date BETWEEN '2024-02-10' AND '2024-02-25'
 ORDER BY date ASC;
 
 

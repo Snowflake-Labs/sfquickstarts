@@ -32,6 +32,10 @@ FROM @frostbyte_tasty_bytes.public.s3load/raw_customer/customer_loyalty/;
 COPY INTO frostbyte_tasty_bytes.raw_pos.order_header
 FROM @frostbyte_tasty_bytes.public.s3load/raw_pos/order_header/;
 
+-- Shift data by N years as the sample data is from 2022
+
+UPDATE frostbyte_tasty_bytes.raw_pos.order_header SET order_ts = dateadd(year,3,order_ts); 
+
 -- order_detail table load
 COPY INTO frostbyte_tasty_bytes.raw_pos.order_detail
 FROM @frostbyte_tasty_bytes.public.s3load/raw_pos/order_detail/;

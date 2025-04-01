@@ -1,6 +1,10 @@
 USE ROLE ACCOUNTADMIN;
 USE DATABASE  frostbyte_tasty_bytes;
 USE SCHEMA raw_customer;
+--- Test if your AWS Storage is Accessible 
+SELECT   SYSTEM$VALIDATE_STORAGE_INTEGRATION('<integration_name>',    's3://<bucket>/',    'validate_all.txt', 'all'); 
+
+
 CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
     STORAGE_LOCATIONS =
         (
@@ -9,7 +13,7 @@ CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
                 STORAGE_PROVIDER = 'S3'
                 STORAGE_BASE_URL = 's3://jnanreviews'
                 STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<aws-account-id>:role/<snow_role>' --ex:snow_s3_access_role 
-                STORAGE_AWS_EXTERNAL_ID = 'RJB12004_SFCRole=4_zSAasUofMUwWxe/Hk98JqRTv2T4=' 
+                STORAGE_AWS_EXTERNAL_ID = 'external_id' -- enter your external id 
             )
             
         )ALLOW_WRITES=true; 
@@ -63,7 +67,7 @@ SELECT
        $8 as year,
        $9 as month,
        $10 as truck_brand,
-       DATEADD(month,-UNIFORM(0,6,RANDOM()),CURRENT_DATE()) as review_date
+       DATEADD(day,-UNIFORM(0,180,RANDOM()),CURRENT_DATE()) as review_date
 FROM @stg_truck_reviews 
 (FILE_FORMAT => 'FF_CSV',
 PATTERN => '.*reviews.*[.]csv') 
@@ -74,20 +78,24 @@ PATTERN => '.*reviews.*[.]csv')
 USE SCHEMA analytics;
 
 -- We have non-english reviews from global customers
-SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , review, review_date from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language !='en' limit 1;
+SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , review, review_date from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language !='en' order by review_date desc;
 
 -- Snowflake Cortex makes it easy for us to translate and extract sentiment out of unstructured data
 CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_unified_reviews as             
-    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(review) , review_date as final_review from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language='en'
+    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(review) , review_date  from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language='en'
     UNION    
-    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(snowflake.cortex.translate(review,language,'en')), review_date as final_review from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews where language !='en';
+    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(snowflake.cortex.translate(review,language,'en')), review_date  from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews where language !='en';
 
+
+select * from frostbyte_tasty_bytes.analytics.product_unified_reviews limit 100;
 
 -- Sentiment Grouped By City and Brand 
 
 CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_sentiment AS 
-SELECT primary_city, truck_brand, avg(snowflake.cortex.sentiment(final_review)) as review_sentiment 
+SELECT primary_city, truck_brand, avg(snowflake.cortex.sentiment(review_date)) as avg_review_sentiment 
 FROM frostbyte_tasty_bytes.analytics.product_unified_reviews
 group by primary_city, truck_brand;
 
+
+-- Query the average the query sentiment by city and brand 
 select * from frostbyte_tasty_bytes.analytics.product_sentiment limit 10;
