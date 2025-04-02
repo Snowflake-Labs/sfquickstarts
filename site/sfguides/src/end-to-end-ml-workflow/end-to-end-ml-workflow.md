@@ -42,7 +42,7 @@ You'll build a complete mortgage lending prediction system that:
 ## Setup
 Duration: 5
 
-Firstly, run this SQL setup script to create the notebook:
+Firstly, run this [SQL setup script](asset/setup.sql) to create the notebook:
 ```sql
 -- Using ACCOUNTADMIN, create a new role for this exercise 
 USE ROLE ACCOUNTADMIN;
