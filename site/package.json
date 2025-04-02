@@ -1,5 +1,12 @@
 {
+  "name": "site",
+  "version": "1.0.0",
   "private": true,
+  "description": "A site for hosting codelabs content.",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "gulpfile.js",
   "scripts": {
     "serve": "gulp serve --continue",
     "prod": "gulp serve:dist",
@@ -7,6 +14,12 @@
     "export": "gulp build:codelabs",
     "template": "./init.sh",
     "clean": "gulp clean"
+  },
+  "dependencies": {
+    "gulp": "^5.0.0",
+    "http-server": "^14.1.1",
+    "open-browser": "^3.6.0",
+    "supervisor": "^0.12.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.4",
@@ -57,11 +70,5 @@
   },
   "browserslist": [
     "defaults"
-  ],
-  "dependencies": {
-    "gulp": "^5.0.0",
-    "http-server": "^14.1.1",
-    "open-browser": "^3.6.0",
-    "supervisor": "^0.12.0"
-  }
+  ]
 }
