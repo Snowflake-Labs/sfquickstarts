@@ -28,7 +28,7 @@ This guide will walk you through the process of:
 - Running inferencing against the models stored in the Registry
 
 ### What You’ll Need 
-- A Snowflake account with CREATE DATABASE permissions. If you do not have a Snowflake account, you can register for a [Snowflake free 30-day trial](https://trial.snowflake.com).
+- A Snowflake account (ideally with CREATE DATABASE permissions). If you do not have a Snowflake account, you can register for a [Snowflake free 30-day trial](https://trial.snowflake.com).
 - The aforementioned Github Repository
 - If you want to run the notebooks using Container Runtime, you will need to use a role other than ACCOUNTADMIN, SECURITYADMIN or ORGADMIN.
 
@@ -58,46 +58,7 @@ Duration: 2
 
 To setup the Forecast Model Builder solution in Snowflake you will:
 1) Download from Github and then import the [Forecast_Model_Builder_Deployment.ipynb notebook](https://github.com/Snowflake-Labs/emerging-solutions-toolbox/blob/main/framework-forecast-model-builder/FORECAST_MODEL_BUILDER_DEPLOYMENT.ipynb) to Snowsight.  (For instructions on how create a new Snowflake Notebook from an existing file, please see [this documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#create-a-new-notebook) and follow the instructions for creating a notebook from an existing file.)
-2) Follow the documented instructions in the Deployment notebook.  Here are instructions for using the zipped file to stage method:  
-
-    a. Go to the [Emerging Solutions Toolbox Github Repository](https://github.com/Snowflake-Labs/emerging-solutions-toolbox) and download a zipped file of the repository.
-
-    ![Image](assets/toolbox.png)
-   
-    b. Go to the Forecast Model Builder Deployment Notebook and run the DEPLOYMENT cell in the notebook.  This cell will create a stage if it doesn't already exist named FORECAST_MODEL_BUILDER.BASE.NOTEBOOK_TEMPLATES.
-
-    c Upload a zipped copy of the Forecast Model Builder Github Repository to that stage.
-    ![Image](assets/adddata.png)
-
-    d. Re-run the DEPLOYMENT cell
-    
-    e. You should see the success message of "FORECAST_MODEL_BUILDER fully deployed!"
-
-    f. Run the cell PROJECT_DEPLOY.
-
-    g. Set your project name. Each project gets own schema and set of notebooks and each notebook will be prefixed with the Project Name.  In this example I am naming the project "RBLUM".
-    ![Image](assets/newproject.png)
-
-
-    h. Click the Create button and go back to the main Notebooks page.
-
-3) The project name you provide will be the prefix for the notebooks and the schema name that are created in this deployment
-4) The solution including three notebooks (eda, modeling and inference) will be created within your new named schema (<YOUR_PROJECT_NAME>).
-
-Once setup is complete you should see the following database and associated objects:
-
-- **FORECAST_MODEL_BUILDER**
-    - BASE
-        - Tables
-            - DAILY_PARTITIONED_SAMPLE_DATA
-        - Stages
-            - NOTEBOOK_TEMPLATES
-        - Procedures
-            - CREATE_PROJECT(VARCHAR,VARCHAR)
-    - INFORMATION_SCHEMA
-    - <YOUR_PROJECT_NAME>
-
-4) Sample time series data with a daily granularity has been provided in the table DAILY_PARTITIONED_SAMPLE_DATA.
+2) Follow the deployment instructions found in the [Forecast Model Builder README](https://github.com/Snowflake-Labs/emerging-solutions-toolbox/blob/main/framework-forecast-model-builder/README.md) to run the deployment notebook. 
 
 <!-- ------------------------ -->
 ## Exploratory Data Analysis
