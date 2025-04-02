@@ -124,7 +124,7 @@ alter NOTEBOOK E2E_SNOW_MLOPS_DB.MLOPS_SCHEMA.TRAIN_DEPLOY_MONITOR_ML set EXTERN
 
 ### Environment Configuration
 
-Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as numpy, pandas, matplotlib, and more! For this tutorial, we'll need to install one additional package:
+We'll be building the model using a Snowflake Notebook. In addition to the ability to pip install any package of choice, Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as numpy, pandas, matplotlib, and more! For this tutorial, we'll need to install one additional package:
 
 ```python
 !pip install shap
@@ -151,7 +151,7 @@ from datetime import datetime
 import streamlit as st
 from xgboost import XGBClassifier
 
-# Snowpark ML
+# Snowflake ML
 from snowflake.ml.registry import Registry
 from snowflake.ml.modeling.tune import get_tuner_context
 from snowflake.ml.modeling import tune
@@ -784,4 +784,14 @@ DATEADD(DAY, -60, CURRENT_DATE()) -- start date
 ## Conclusion And Resources
 Duration: 5
 
-This tutorial guides learners through building a complete end-to-end machine learning workflow within Snowflake, using a mortgage lending prediction case. The workflow covers feature engineering with Snowflake Feature Store, model training and hyperparameter optimization using Snowflake ML APIs, model registration and management with Snowflake Model Registry, and model performance tracking and drift detection via model monitoring. Learners construct a system that engineers features, trains XGBoost models, manages model versions, monitors performance, and provides model explanations, leveraging Snowflake's capabilities and Snowpark for Python. The content implies that users can efficiently manage the entire ML lifecycle within a single platform, streamlining development and deployment while ensuring robust model governance and monitoring.
+You just walked through a guided experience building and deploying a complete end-to-end machine learning workflow within Snowflake ML for a mortgage lending prediction case. The workflow covers feature engineering with Snowflake Feature Store, model training and hyperparameter optimization using Snowflake ML APIs, model logging and management with Snowflake Model Registry, and model performance tracking and drift detection via ML Observability. 
+
+Ready for more? After you complete this quickstart, you can try one of the following additional examples:
+- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#3)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0)
+
+Related Resources
+- [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
+- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
