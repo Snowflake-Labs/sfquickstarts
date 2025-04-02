@@ -40,7 +40,7 @@ You'll build a complete mortgage lending prediction system that:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
+Duration: 5
 
 Firstly, run this SQL setup script to create the notebook:
 ```sql
