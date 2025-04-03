@@ -146,7 +146,23 @@
       "source": "guide/getting_started_with_cortex_analyst_in_snowflake/{,/**}",
       "destination": "/guide/getting_started_with_cortex_analyst/",
       "type": 301
-    }           
+    },
+    {
+      "source": "guide/getting_started_with_llmops_using_snowflake_cortex_and_trulens/{,/**}",
+      "destination": "/guide/getting_started_with_ai_observability/",
+      "type": 301
+    },
+    {
+      "source": "guide/semantic_file_generation_for_cortex_analyst/{,/**}",
+      "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
+      "type": 301
+    },
+    {
+      "source": "guide/semantic_file_translation_from_dbt_to_cortex_analyst/{,/**}",
+      "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
+      "type": 301
+    }
     ]
   }
 }
+
