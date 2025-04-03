@@ -54,7 +54,6 @@ In this use cases we will build two data sources, one with structured sales data
 ## Configure Oauth
 Duration: 18
 
-In this section, you will create a table in Snowflake using the Iceberg format and also create a BigLake (external) table in BigQuery that points to the same Iceberg files.
 
 ### Configure the OAuth resource in Microsoft Entra ID
 - Navigate to the Microsoft Azure Portal and authenticate.
