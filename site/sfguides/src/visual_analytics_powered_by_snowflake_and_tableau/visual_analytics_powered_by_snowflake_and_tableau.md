@@ -21,18 +21,17 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 
 ### What You’ll Learn
 
-* Analyzing structured and semi-structured data
-* Levergaging Snowflake Marketplace and integrating External DataLakes 
-* Snowflake Generative AI capability
+* Loading structured and semi-structured data into Snowflake
+* Querying Iceberg data in external DataLakes 
+* Snowflake Generative AI capability on your data
 * Building Visualization using Tableau on Snowflake tables. 
 
 
 ### What You’ll Build
 
-* Using structured and semi-structured data to Snowflake tables 
-* Incorporate Weather data from Snowflake Marketplace
+* Using structured and semi-structured data in Snowflake
 * Use Iceberg tables to access externally stored datalakes
-* Easily Extract Sentiment from unstructured data using Snowflake Cortex
+* Easily Translate non-english reviews, extract Sentiment using Snowflake Cortex
 * A simple Tableau dashboard to visualize Snowflake data. 
 
 ### Prerequisites
@@ -100,9 +99,9 @@ unzip the file before you load into AWS bucket
 #### Take a note of your AWS Account ID.
 ![img](assets/account_id.png)
 
-**Now, in your Snowflake account**
+**Now, in your Snowflake account let us run scripts to integrate with AWS**
 
-[click here to download SQL for s3_integration](scripts/aws_integration.sql)
+[Copy from below or click here to download SQL](scripts/aws_integration.sql)
 ```sql
 
 USE DATABASE frostbyte_tasty_bytes;
@@ -111,11 +110,11 @@ USE SCHEMA raw_customer;
 CREATE or REPLACE STORAGE INTEGRATION frostbyte_tasty_bytes.raw_customer.int_tastybytes_truckreviews
   TYPE = EXTERNAL_STAGE
   STORAGE_PROVIDER = 'S3'
-  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<your AWS account ID>:role/<give a name for IAM role>' -- ex: snow_s3_access_role
+  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<your AWS account ID>:role/<give a new name for IAM role>' -- ex: snow_s3_access_role
   ENABLED = TRUE
   STORAGE_ALLOWED_LOCATIONS = ('s3://<name of your S3 bucket>');
 
-DESC INTEGRATION <name of the integration>; -- you will need the output of these values in AWS CloudFormation
+
 
 CREATE OR REPLACE FILE FORMAT frostbyte_tasty_bytes.raw_customer.ff_csv
     TYPE = 'csv'
@@ -126,32 +125,141 @@ CREATE OR REPLACE STAGE frostbyte_tasty_bytes.raw_customer.stg_truck_reviews
     STORAGE_INTEGRATION = int_tastybytes_truckreviews
     URL = 's3://<name of your S3 bucket>/'
     FILE_FORMAT = ff_csv;
+
+-- You will need the output of these values in AWS CloudFormation in Next Steps
+DESC INTEGRATION frostbyte_tasty_bytes.raw_customer.int_tastybytes_truckreviews; 
 ```
+#### You need following values from Storage Integration for next steps
+![desc_storintegration](assets/descInt.png)
 
 ### Launch the AWS CloudFormation 
 **Click the template and login to AWS** [CloudFormationTemplate](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Snowflake-storage-integration&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/CFTs/storageInt.json)
 
-![cftemplate](assets/CloudFormation.png) 
-#### Now you need to copy the following values from Snowflake Storage Integration 
-![desc_storintegration](assets/descInt.png)
+![cftemplate](assets/CloudFormation.png)
 
 #### Copy the values below  
 ![storagedetails](assets/CFT.png)
 
 **Select defaults for remaining screens and submit** 
+
+#### Validate AWS access by running below SQL in Snowflake
 ``` sql
+
  --- Test if your AWS Storage is Accessible 
 SELECT   SYSTEM$VALIDATE_STORAGE_INTEGRATION('<integration_name>',    's3://<bucket>/',    'validate_all.txt', 'all'); 
 ```
-#### Output should show success for READ and LIST  
+##### Output should show success for READ and LIST  
 {
   "status" : "success","actions" : { "READ" : { "status" : "success" }, "LIST" : { "status" : "success" }}
 }
 
 
-### Create Snowflake managed Iceberg Tables to access Datalake 
-Download and Run Queries on Customer review Data
-[Review Data](scripts/query_iceberg.sql)
+### Create Snowflake managed Iceberg Tables to access Datalake and query reviews data
+Download the script or run below sql 
+[Query Review Data](scripts/query_iceberg.sql)
+```sql 
+USE ROLE ACCOUNTADMIN;
+USE DATABASE  frostbyte_tasty_bytes;
+USE SCHEMA raw_customer;
+--- Test if your AWS Storage is Accessible 
+SELECT   SYSTEM$VALIDATE_STORAGE_INTEGRATION('<integration_name>',    's3://<bucket>/',    'validate_all.txt', 'all'); 
+
+
+CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
+    STORAGE_LOCATIONS =
+        (
+            (
+                NAME = 'reviews-s3-volume'
+                STORAGE_PROVIDER = 'S3'
+                STORAGE_BASE_URL = 's3://jnanreviews'
+                STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<aws-account-id>:role/<snow_role>' --ex:snow_s3_access_role 
+                STORAGE_AWS_EXTERNAL_ID = 'external_id' -- enter your external id 
+            )
+            
+        )ALLOW_WRITES=true; 
+
+-- Create Iceberg Tables to track metadata 
+CREATE OR REPLACE ICEBERG TABLE iceberg_truck_reviews
+        (
+        source_name VARCHAR,
+        quarter varchar,
+        order_id BIGINT,
+        truck_id INT,
+        language VARCHAR, 
+        review VARCHAR,
+        primary_city VARCHAR,
+        customer_id varchar,
+        year date,
+        month date,
+        truck_brand VARCHAR,
+        review_date date
+        )
+        CATALOG = 'SNOWFLAKE'
+        EXTERNAL_VOLUME = 'vol_tastybytes_truckreviews'
+        BASE_LOCATION = 'reviews-s3-volume'; 
+
+
+-- Insert  Metadata from External Files 
+INSERT INTO iceberg_truck_reviews
+(
+        source_name,
+        quarter,
+        order_id,
+        truck_id,
+        language, 
+        review,
+        primary_city ,
+        customer_id ,
+        year ,
+        month ,
+        truck_brand ,
+        review_date 
+)
+SELECT 
+       SPLIT_PART(METADATA$FILENAME, '/', 4) as source_name,
+       CONCAT(SPLIT_PART(METADATA$FILENAME, '/', 2),'/' ,SPLIT_PART(METADATA$FILENAME, '/', 3)) as quarter,
+       $1 as order_id,
+       $2 as truck_id,
+       $3 as language,
+       $5 as review,
+       $6 as primary_city, 
+       $7 as customer_id,
+       $8 as year,
+       $9 as month,
+       $10 as truck_brand,
+       DATEADD(day,-UNIFORM(0,180,RANDOM()),CURRENT_DATE()) as review_date
+FROM @stg_truck_reviews 
+(FILE_FORMAT => 'FF_CSV',
+PATTERN => '.*reviews.*[.]csv') 
+;
+
+
+-- Create a view on the Iceberg Reviews, and run Cortex AI to extract Sentiment
+USE SCHEMA analytics;
+
+-- We have non-english reviews from global customers
+SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , review, review_date from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language !='en' order by review_date desc;
+
+-- Snowflake Cortex makes it easy for us to translate and extract sentiment out of unstructured data
+CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_unified_reviews as             
+    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(review) , review_date  from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews  where language='en'
+    UNION    
+    SELECT order_id, quarter, truck_id, language, source_name, primary_city, truck_brand , snowflake.cortex.sentiment(snowflake.cortex.translate(review,language,'en')), review_date  from frostbyte_tasty_bytes.raw_customer.iceberg_truck_reviews where language !='en';
+
+
+select * from frostbyte_tasty_bytes.analytics.product_unified_reviews limit 100;
+
+-- Sentiment Grouped By City and Brand 
+
+CREATE OR REPLACE VIEW  frostbyte_tasty_bytes.analytics.product_sentiment AS 
+SELECT primary_city, truck_brand, avg(snowflake.cortex.sentiment(review_date)) as avg_review_sentiment 
+FROM frostbyte_tasty_bytes.analytics.product_unified_reviews
+group by primary_city, truck_brand;
+
+
+-- Query the average the query sentiment by city and brand 
+select * from frostbyte_tasty_bytes.analytics.product_sentiment limit 10;
+```
 
 
 <!-- ------------------------ -->
