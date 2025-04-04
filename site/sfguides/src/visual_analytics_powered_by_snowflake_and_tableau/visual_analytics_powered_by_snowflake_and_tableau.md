@@ -21,18 +21,18 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 
 ### What You’ll Learn
 
-* Loading structured and semi-structured data into Snowflake
+* Loading semi-structured data into Snowflake
 * Querying Iceberg data in external DataLakes 
-* Snowflake Generative AI capability on your data
-* Building Visualization using Tableau on Snowflake tables. 
+* Snowflake Generative AI Functions
+* Building Visualization using Tableau on Snowflake data. 
 
 
 ### What You’ll Build
 
 * Using structured and semi-structured data in Snowflake
-* Use Iceberg tables to access externally stored datalakes
-* Easily Translate non-english reviews, extract Sentiment using Snowflake Cortex
-* A simple Tableau dashboard to visualize Snowflake data. 
+* Creating Snowflake managed Iceberg tables to access external datalakes
+* Using Snowflake Cortex functions to Translate non-english reviews, and extract Sentiment
+* A simple Tableau dashboard, and Pulse metric to visualize Snowflake data. 
 
 ### Prerequisites
 
@@ -46,7 +46,7 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 ## Snowflake Configuration
 Duration: 2
 
-1. Create a Snowflake enterprise trial account
+1. Create a Snowflake enterprise trial account 
 2. Login to your Snowflake account
 
 
@@ -436,15 +436,8 @@ Click Save.
 
 Congratulations! You have successfully completed the Tableau portion.
 
-
 <br>
-
 <!-- ------------------------ -->
-
-
-
-<!-- ------------------------ -->
-
 
 ## Conclusion and Resources
 
@@ -464,10 +457,4 @@ In this lab we captured semi-structured data coming from TastyBytes food truck d
 [Snowflake Marketplace](https://other-docs.snowflake.com/en/data-marketplace.html)
 <br></br>
 
-### Video on the Demo
-
-[Youtube - Video on the Demo]()
-<!-- ------------------------ -->
-
-<br>
 
