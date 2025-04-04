@@ -40,7 +40,7 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 * [Snowflake](https://trial.snowflake.com/) account or free trial *** choose AWS and Enterprise ***
 * [AWS](https://aws.amazon.com) account or free trial *** choose same region as Snowflake Account ***
 * [Tabelau Online](https://www.tableau.com/products/online/request-trial) account or free trial
-* [Visual Studio Code](https://code.visualstudio.com/download) editor
+
 <!--- ------------------------- -->
 
 ## Snowflake Configuration
