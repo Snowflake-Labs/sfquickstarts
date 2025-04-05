@@ -1,0 +1,1 @@
+This is a quickstart for using Microsoft Power Platform, Power Apps, Power Automate and Snowflake categories: Getting-Started, data-engineering, microsoft, power-apps, power-platform, snowflake environments
