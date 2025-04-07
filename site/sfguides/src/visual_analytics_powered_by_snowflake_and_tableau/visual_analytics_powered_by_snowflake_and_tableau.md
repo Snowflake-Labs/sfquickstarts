@@ -465,6 +465,7 @@ DROP WAREHOUSE IF EXISTS demo_build_wh;
 DROP WAREHOUSE IF EXISTS tasty_de_wh;
 DROP WAREHOUSE IF EXISTS tasty_bi_wh;
 ```
+### Resources 
 
 [Semi-structured Data](https://docs.snowflake.com/en/user-guide/semistructured-concepts.html)
 

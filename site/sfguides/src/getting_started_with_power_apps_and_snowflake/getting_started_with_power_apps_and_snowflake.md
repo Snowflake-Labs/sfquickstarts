@@ -211,9 +211,10 @@ DROP WAREHOUSE hol_wh;
  * In this lab we queried Snowflake tables as Virtual tables in PowerApps, performed write-back.
  * Invoked a Snowflake UDF to get a ML prediction using PowerAutomate. 
 
-	[Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
+### Resources
+[Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 
-	[Power Platform](https://learn.microsoft.com/en-us/power-apps/powerapps-overview)
+[Power Platform](https://learn.microsoft.com/en-us/power-apps/powerapps-overview)
 
 
 
