@@ -177,7 +177,7 @@ select system$verify_external_oauth_token(‘<token>’);
 
 Copy and paste the below power shell script into a text editor.
 - Replace < tenant id > with your Microsoft tenant id
-- Save it as "AppCreationAndConfigLates.ps1"
+- Save it as "AppCreationAndConfig.ps1"
 
 ```
 $modules = @(
@@ -383,10 +383,10 @@ Go to your Azure Portal and open up a Powershell terminal and upload the Powersh
 
 After uploading the script you will execute it by running:
 ```
-./AppCreationAndConfigLates.ps1
+./AppCreationAndConfig.ps1
 ```
 
-You be prompted to name your registrations and provide your tenant again this should all take about 1-2 minutes! Doing everything that is done manually in Option 1.
+You will be prompted to name your registration and provide your tenant id again. This should all take about 1-2 minutes! Doing everything that is done manually in Option 1.
 
 You will then download the snowflakeinfo.txt file and use that code to create your security integration and user in Snowflake.
 
