@@ -43,14 +43,14 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 
 <!--- ------------------------- -->
 
-## Snowflake Configuration
+## Snowflake Setup
 Duration: 2
 
 1. Create a Snowflake enterprise trial account 
 2. Login to your Snowflake account
 
 
-### Login User Interface
+### Snowflake User Interface
 
  ![Snowflake Login](assets/create_folder.png)
 
@@ -59,7 +59,7 @@ Duration: 2
 
 <!-- ------------------------ -->
 
-## Managing Semi-Structured Data
+## Manage Semi-Structured Data
 
 Duration: 5
 
@@ -67,7 +67,6 @@ Duration: 5
 
 #### Create Snowflake Database and Warehouse 
 [Click here to download  create_db_wh.sql](scripts/create_db_wh.sql)
-
 
 #### Grant Privileges on Snowflake Objects
 [Click here to download grantperms.sql](scripts/grant_perms.sql)
@@ -265,7 +264,7 @@ select * from frostbyte_tasty_bytes.analytics.product_sentiment limit 10;
 <!-- ------------------------ -->
 
 
-## Login to Tableau Online & Connect to Snowflake
+## Connect Tableau to Snowflake
 
 Duration: 20
 
@@ -441,20 +440,34 @@ Congratulations! You have successfully completed the Tableau portion.
 
 ## Conclusion and Resources
 
-Congratulations! you have completed the lab.
+Congratulations! you have successfully completed the lab.
 
-In this lab we captured semi-structured data coming from TastyBytes food truck data, enriched that weather data from Snowflake Marketplace data to find correlation between food sales and weather. We visualized the data using Tableau to quickly arrive at new insights.
+### What You Learned
 
-[ Download tb_reset_vhol.sql & create Worksheet to run SQL file](scripts/tb_reset_vhol.sql)
+    * In this lab we loaded semi-structured data from TastyBytes food truck, read external datalake using Iceberg tables.
+    * Leverage Snowflake Cortex to translate and extract sentiment scores.
+    * Use Tableau Pulse metrics to track against CSAT goals. 
 
+### Reset the labs
+[ Download tb_reset_vhol.sql & create Worksheet to run SQL file](scripts/tb_reset_vhol.sql) 
+```sql
+USE ROLE accountadmin;
+
+DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.fahrenheit_to_celsius(NUMBER(35,4));
+DROP FUNCTION IF EXISTS frostbyte_tasty_bytes.analytics.inch_to_millimeter(NUMBER(35,4));
+
+--USE ROLE sysdmin;
+DROP DATABASE IF EXISTS frostbyte_tasty_bytes;   
+DROP DATABASE IF EXISTS frostbyte_weathersource;
+DROP WAREHOUSE IF EXISTS demo_build_wh; 
+DROP WAREHOUSE IF EXISTS tasty_de_wh;
+DROP WAREHOUSE IF EXISTS tasty_bi_wh;
+```
 
 [Semi-structured Data](https://docs.snowflake.com/en/user-guide/semistructured-concepts.html)
-<br>
-</br>
+
 [Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg)
-<br>
-</br>
+
 [Snowflake Marketplace](https://other-docs.snowflake.com/en/data-marketplace.html)
-<br></br>
 
 

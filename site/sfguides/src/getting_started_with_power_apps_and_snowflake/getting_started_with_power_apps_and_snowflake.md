@@ -23,7 +23,7 @@ Snowflake is a cloud-based data platform that allows organizations to store, pro
 
 ### You'll Learn
 - Using Power Platform to read and write to Snowflake. 
-- Leveraging Snowflake ML in Power Apps 
+- Leveraging Snowflake ML in PowerAutomate 
 
 ### What You’ll Need 
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
@@ -94,8 +94,7 @@ Now we need to set up an app registration for Active Directory (Entra ID) OAuth,
 For the purposes of this demo, we will create a  **MAKE SURE YOU FOLLOW SERVICE PRINCIPAL AUTH** Authentication and the steps are provided
 in the document below. 
 
-https://learn.microsoft.com/en-us/connectors/snowflakev2/#supported-capabilities-for-power-apps or 
-you can download and run the automation scripts in Azure CLI as an admin 
+https://learn.microsoft.com/en-us/connectors/snowflakev2/#supported-capabilities-for-power-apps, but you can download & run the scripts below in Azure CLI as an admin 
 
 [Script-for-Windows Users](/scripts/AppCreationAndConfigLatest_win.ps1) | 
 [Script-for-Mac Users](/scripts/AppCreationAndConfigLatest_Mac.ps1)
@@ -116,7 +115,7 @@ After you have configured PowerApps Connector to Snowflake, go to Power Apps
 4. On Configuration screen, click Next and click FINISH on the last screen.
 
 5. Now, you see that age is negative for ID1 and ID2, click the pencil to make changes and save.
-![crud](assets/CRUD_Change.png)
+	![crud](assets/CRUD_Change.png)
 
 6. Click Apps, click [Start with a page design]
 
@@ -196,16 +195,26 @@ Let's build a PowerAutomate Flow to call stored procedure you created and run th
 6. Now you can see PREDICTION column in the CUSTOMER_SEGMENTS view displayed. 
    ![show_prediction](assets/segment_prediction.png)
 
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+
+Congratulations! you have completed the lab.
+
 ### Reset the Demo 
 ``` sql
 DROP DATABASE hol_db;
 DROP WAREHOUSE hol_wh;
 ```
-<!-- ------------------------ -->
-## Conclusion and Next Steps
-Duration: 5
+### What You Learned
 
-This quickstart will get you started with creating a simple power apps flow that connects to Snowflake and queries a table. From here you can use the connector in many different flows with different power apps activities to read data from and write data to Snowflake see here for more details: [Power-Apps](https://learn.microsoft.com/en-us/power-platform/). 
+ * In this lab we queried Snowflake tables as Virtual tables in PowerApps, performed write-back.
+ * Invoked a Snowflake UDF to get a ML prediction using PowerAutomate. 
+
+[Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
+
+[Power Platform](https://learn.microsoft.com/en-us/power-apps/powerapps-overview)
+
 
 
 ### Things to look out for
@@ -214,8 +223,4 @@ This quickstart will get you started with creating a simple power apps flow that
 - If you're not seeing the Snowflake actions in your options double check your Power Automate Environment and make sure you're using an environment where the Snowflake connector is available.
 
 <!-- ------------------------ -->
-### Potential Use Cases for the Snowflake Power Apps
 
-- Build data apps using the connector to share dashboard/analytics for your marketing campaign with Sales or other business users.
-- Build an app to check the NextBest Offer or LTV of a customer to avoid churn.
-- Build an app that will allow a user to execute queries from Teams chat against their Snowflake environment.
