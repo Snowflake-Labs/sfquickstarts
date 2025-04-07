@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Engineering, Data Collaboration, Date Lake
 
-# Visual Analytics powered by Snowflake and Tableau
+# Visual Analytics Powered by Snowflake and Tableau
 
 Duration: 60
 
@@ -435,22 +435,10 @@ Click Save.
 
 Congratulations! You have successfully completed the Tableau portion.
 
-<br>
+
 <!-- ------------------------ -->
-
-## Conclusion and Resources
-
-Congratulations! you have successfully completed the lab.
-
-### What You Learned
-
- * In this lab we loaded semi-structured data from TastyBytes food truck, read external  
-      datalake using Iceberg tables.
- * Leverage Snowflake Cortex to translate and extract sentiment scores.
- * Use Tableau Pulse metrics to track against CSAT goals. 
-
-### Reset the labs
-[ Download tb_reset_vhol.sql & create Worksheet to run SQL file](scripts/tb_reset_vhol.sql) 
+## Clean Up 
+[Download tb_reset_vhol.sql ](scripts/tb_reset_vhol.sql) or run below sql
 
 ```sql
 USE ROLE accountadmin;
@@ -465,6 +453,19 @@ DROP WAREHOUSE IF EXISTS demo_build_wh;
 DROP WAREHOUSE IF EXISTS tasty_de_wh;
 DROP WAREHOUSE IF EXISTS tasty_bi_wh;
 ```
+
+## Conclusion and Resources
+
+Congratulations! you have successfully completed the lab.
+
+### What You Learned
+
+ * In this lab we loaded semi-structured data from TastyBytes food truck, read external  
+      datalake using Iceberg tables.
+ * Leverage Snowflake Cortex to translate and extract sentiment scores.
+ * Use Tableau Pulse metrics to track against CSAT goals. 
+
+
 ### Resources 
 
 [Semi-structured Data](https://docs.snowflake.com/en/user-guide/semistructured-concepts.html)

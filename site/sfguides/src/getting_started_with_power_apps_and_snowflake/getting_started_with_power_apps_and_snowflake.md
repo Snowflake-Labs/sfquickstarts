@@ -8,7 +8,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Microsoft, Power Apps, Power Platform, Power Automate
 Date: 4/3/25
 
-# Getting Started with Power Apps and Snowflake
+# Getting Started with Power Platform and Snowflake
 Duration: 45
 
 <!-- ------------------------ -->
@@ -197,15 +197,17 @@ Let's build a PowerAutomate Flow to call stored procedure you created and run th
 
 
 <!-- ------------------------ -->
-## Conclusion and Resources
-
-Congratulations! you have completed the lab.
-
-### Reset the Demo 
+## Clean Up
+Run the below SQL in Snowsight
 ``` sql
 DROP DATABASE hol_db;
 DROP WAREHOUSE hol_wh;
 ```
+
+## Conclusion and Resources
+
+Congratulations! you have completed the lab.
+
 ### What You Learned
 
  * In this lab we queried Snowflake tables as Virtual tables in PowerApps, performed write-back.
