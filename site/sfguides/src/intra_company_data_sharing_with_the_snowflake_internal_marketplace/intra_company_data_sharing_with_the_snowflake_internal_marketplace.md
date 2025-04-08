@@ -3,7 +3,7 @@ id: intra_company_data_sharing_with_the_snowflake_internal_marketplace
 summary: INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE
 categories: Data-Sharing
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Summit HOL, Data Sharing, Snowflake Internal MArketplace, Data Mesh
 
@@ -17,6 +17,7 @@ Sharing information between departments, business units and subsidiaries of a co
 
 **Snowflake Horizon** is a unified suite of governance and discovery capabilities organized into five pillars.
 
+![Snowflake Horizon Diagram](assets/snowflake_horizon.jpg)
 
 This Quickstart is focused on the <mark>Access</mark> pillar.
 
@@ -151,9 +152,11 @@ cd horizon-intra-org-scripts
 ```
 
 If you prefer not to use git, `Download ZIP` from the Lab Scripts [github site](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
+<img src="assets/code-download.jpg" width="400" height="250">
 
 Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface) - one script per worksheet
 
+![Create Worksheet](assets/002_load_SQL_scripts_to_worksheets.png)
 
 ### Execute Setup SQL Scripts
 
@@ -167,6 +170,7 @@ Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](htt
 b
 Use the **Run All** pulldown command to run `100_Setup_Data_Model`:
 
+![Run All in Worksheet](assets/003_Run_All.png)
 
 2. `200_Setup_Data_Products`: build data assets to share in a Listing.
 
@@ -188,11 +192,13 @@ In step 1(a) of thescript `200_Setup_Data_Products` you will acquire the <mark>W
 ---*/
 ```
 
+[//]: # (![006_WeatherSource](assets/006_WeatherSource.png))
 
 Then proceed to execute all remaining steps in this script. This will create secure views, materialized views, functions and dynamic tables in the ANALYTICS schema, and an internal stage for sharing text data.
 
 Check out all the new objects created in the ANALYTICS and HARMONIZED schemas in the Snowsight Object Explorer panel. You will later create a Listing to share all of these objects.
 
+[//]: # (![Database-Explorer](assets/004_Database_Explorer.png))
 
 ### Upload Unstructured Data into an Internal Stage
 
@@ -222,12 +228,15 @@ In this section you will create, publish, consume, alter, and monitor a [listing
 
 1. Navigate to the Provider Studio and click the +Listing button in the top right:
 
+[//]: # (![ProviderStudio](assets/101_ProviderStudio+Listing.png))
 
 2. Give your listing a meaningful title. Let's use TASTY_BYTES_ANALYTICS in this lab. Then select the option that "Only Specified Consumers" can discover the listing, and click "Next".
 
+[//]: # (![102_CreateListing](assets/102_CreateListing.png))
 
 3. Click "+ Select" and add the secure functions, the dynamic table, and all the secure views in the ANALYTICS and HARMONIZED schemas to this listing.
 
+[//]: # (![103_CreateListing_SelectObjects](assets/103_CreateListing_SelectObjects.png))
 
 4. Continue the listing specification:
 
@@ -243,9 +252,11 @@ In this section you will create, publish, consume, alter, and monitor a [listing
 - Further down in the same dialog, enter your email address to receive notifications about this listing.
 - Click "SAVE & ADD MORE INFORMATION" to add even more metdata to your listing.
 
+[//]: # (![104_CreateListing_AddConsumers](assets/104_CreateListing_AddConsumers.png))
 
 5. You are now looking at your draft listing. Scroll down and add all optional information items to your listing.
 
+[//]: # (![105_CreateListing_OptionalInformation](assets/105_CreateListing_OptionalInformation.png))
 
 This will add additional sections to your listing.
 
@@ -256,11 +267,13 @@ Click the ADD button in each of these sections to configure the data dictionary 
 - You can grab some sample queries from the script 1000_Consumer_Queries.sql
 - Attributes allow you to specify service level objectives such as how often you intend to update the data product or other properties.
 
+[//]: # (![106_CreateListing_OptionalInfo_Part2](assets/106_CreateListing_OptionalInfo_Part2.png))
 
 6. In your draft listing, navigate to the section "Consumer Accounts". Click the three dots on the right to update the refresh frequency of the replica that Snowflake will automatiucally create to share the data product with your Azure account.
 
 - For the purpose of this lab, set the replication frequency to 1 minute.
 
+[//]: # (![107_CreateListing_ReplicationFrequency](assets/107_CreateListing_ReplicationFrequency.png))
 
 7. Publish your listing.
 
@@ -277,6 +290,7 @@ Click the ADD button in each of these sections to configure the data dictionary 
 - You will now see the listing that has been shared with this account.
 - Click the listing name (not the Get button) to open and examine the listing details. For example, explore the data dictionary for the views and fucntions.
 
+[//]: # (![201_Consumer_DiscoverListing](assets/201_Consumer_DiscoverListing.png))
 
 2. After reviewing the listing, click the GET button.
 
@@ -284,6 +298,7 @@ Click the ADD button in each of these sections to configure the data dictionary 
 - After you click the GET button Snowflake performs a one-time setup of the replication process ([auto-fulfillment](https://other-docs.snowflake.com/en/collaboration/provider-listings-auto-fulfillment)) to the local region.
 - You may have to wait for several minutes for this one-time setup to complete. Click OK. We will check back later.
 
+[//]: # (![202_Consumer_WaitForReplica](assets/202_Consumer_WaitForReplica.png))
 
 3. Switch to Consumer Account: Horizon_Lab_AWS_Consumer
 
@@ -299,6 +314,7 @@ Click the ADD button in each of these sections to configure the data dictionary 
 - Under "Options" leave the local database name as is (it should be TASTY_BYTES_ANALYTICS), and select SALES_MANAGER_ROLE as an additional role to have immediate access to the data product.
 - Click GET to confirm
 
+[//]: # (![203_Consumer_GET](assets/203_Consumer_GET.png))
 
 - You can now use a worksheet or the database explorer to examine the shared data as a consumer.
 
@@ -334,6 +350,7 @@ Duration: 20
 
 1. [SHOW LISTINGS](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings) in the AWS Provider account where you published the listing.
 
+[//]: # (![301_Provider_API_Show](assets/301_Provider_API_Show.png))
 
 2. Copy the Snowflake object name of your listing and use it in the subsequent [DESCRIBE LISTING](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) command.
 
@@ -341,17 +358,20 @@ Duration: 20
 
 3. In the result of DESCRIBE LISTING, scroll to the right to the column [MANIFEST_YAML](https://other-docs.snowflake.com/en/progaccess/listing-manifest-reference) and copy its column value. This YAML file is a complete representation of the listing and enables programmatic management of listings.
 
+[//]: # (![302_Provider_API_Describe](assets/302_Provider_API_Describe.png))
 
 4. Paste the copied YAML into an [ALTER LISTING](https://other-docs.snowflake.com/en/sql-reference/sql/alter-listing) statement using the listing name obtained in step 2 above (Show Listing).
 
 - Make some changes in the YAML that you can easily verify in the UI and on the consumer side. For example, update the title and the first line of the description.
 - Execute the ALTER LISTING statement.
 
+[//]: # (![303_Provider_API_AlterListing](assets/303_Provider_API_AlterListing.png))
 
 5. Verify the immediate effect of the ALTER LISTING statement
 
 - In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing.
 
+[//]: # (![304_Provider_Studio](assets/304_Provider_Studio.png))
 
 - Switch to your consumer account Horizon_Lab_AWS_Consumer.
 - Navigate to "Data Products", then "Private Sharing", and open the listing page again. Refresh if needed to see the changes from the ALTER LISTING statement.
@@ -372,9 +392,11 @@ Time to revisit the second consumer account ("horizon_lab_azure_consumer") and t
 
 6. Select the "Azure West Europe Region" to see the timestamp of the latest refresh to that region.
 
+[//]: # (![400_MonitorReplicationStatus](assets/400_MonitorReplicationStatus.png))
 
 7. Go back to the Provider Studio, select "Analytics" from the horizontal menu at the top. This is where summarized and detailed statistics about the usage of the listings will be displayed eventually. There is some delay in populating these statistics, but the following screenshots give you an idea of what you will see.
 
+[//]: # (![401_Provider_Dashboard](assets/401_Provider_Dashboard.png))
 
 The same information as well as replication details can also be obtained from various views in the schema [SNOWFLAKE.DATA_SHARING_USAGE](https://docs.snowflake.com/en/sql-reference/data-sharing-usage) and [SNOWFLAKE.ORGANIZATION_USAGE](https://docs.snowflake.com/en/sql-reference/organization-usage):
 
@@ -398,10 +420,13 @@ select * from ORGANIZATION_USAGE.REPLICATION_USAGE_HISTORY:
 
 8. The [replication cost](https://other-docs.snowflake.com/en/collaboration/provider-understand-cost-auto-fulfillment) can also be monitored in the UI. Navigate to the "Admin" menu in the left-hand panel, then to "Cost Management" and "Consumption". Switch the filter from "All Services" to "Cross-Cloud Auto-Fulfillment". Here is an example from a different test replicating a listing to the region Azure UK South:
 
+[//]: # (![402_Provider_LAF_Cost_Compute](assets/402_Provider_LAF_Cost_Compute.png))
 
  Additional filters enable you to select a time period, pick a specific target region, or toggle between compute cost, storage cost, and data transfer volume incurred by the listing auto-fulfillment.
 
+[//]: # (![403_Provider_LAF_DataTransfer](assets/403_Provider_LAF_DataTransfer.png))
 
+[//]: # (![404_Provider_LAF_DataTransfer_Details](assets/404_Provider_LAF_DataTransfer_Details.png))
 
 ### Enable and Consume Change Tracking
 
@@ -455,6 +480,7 @@ This section of the lab introduces several capabilities for data providers to re
 
 Frosty the data steward is concerned that our listing that we have shared includes the view ANALYTICS.CUSTOMER_LOYALTY_METRICS_V which contains sensitive information that must not be accessible to all data consumers. He requests the following restrictions:
 
+[//]: # (![500_DataSteward_1](assets/500_DataSteward_1.png))
 
 Let's implement a [row-level access policy](https://docs.snowflake.com/en/user-guide/security-row-intro) to implement the required access control. Note the usage of the context function **current_account_name()** to detect which consumer account is accessing the shared view.
 
@@ -493,6 +519,7 @@ After the replication interval of 1 minute you will also see that the consumer a
 
 But, Frosty the data steward is not yet satisfied:
 
+[//]: # (![501_DataSteward_2](assets/501_DataSteward_2.png))
 
 Ok, let's get to work.
 
@@ -519,6 +546,7 @@ ALTER VIEW ANALYTICS.CUSTOMER_LOYALTY_METRICS_V
 
 Optionally, you can also use the UI to add or see the tags on these columns:
 
+[//]: # (![502_AddTags](assets/502_AddTags.png))
 
 Now let's create a slightly more advanced [policy to mask the PII columns depending on their tag](https://docs.snowflake.com/en/user-guide/tag-based-masking-policies) value and the consmer account:
 
@@ -563,6 +591,7 @@ After the replication interval of 1 minute you will see in the account HORIZON_L
 
 Just when we thought we had all the necessary governance controls in place, Frosty has a new requirement for us.
 
+[//]: # (![503_DataSteward_3](assets/503_DataSteward_3.png))
 
 So far we have been using the context function **CURRENT_ACCOUNT_NAME()** in our governance policies to control which consumer account can see which data. Now Frosty is telling us, that this needs to be more fine-grained down to indivudal roles on the consumer side.
 
@@ -660,11 +689,13 @@ Here are two options how to find the share name for your listing:
 **Option 1:**
 
 In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing. In the section "Data Product" you find the name of the Secure Share that bundles the shared data objects.
+[//]: # (![602_DMF_AddTableToShare_1](assets/602_DMF_AddTableToShare_1.png))
 
 **Option 2:**
 
 Use the SHOW SHARES command:
 
+[//]: # (![504_ShowShares](assets/504_ShowShares.png))
 
 Copy the share name to a text file or worksheet because you will need it again later.
 
@@ -707,11 +738,13 @@ grant database role tastybytes_manager_role  to role sales_manager_role;
 
 The following picture illustrates the use of our database roles in this data sharing scenario.
 
+[//]: # (![505_Database_Roles_Sharing](assets/505_Database_Roles_Sharing.png))
 
 Now switch to the different local roles (sales_emea_role, sales_apj_role, etc) in each of your consumer accounts to verify that each local role can only see those rows in the CUSTOMER_LOYALTY_METRICS_V view that are permitted by the row-level access policy in the provider account.
 
 ### Aggregation and Projection Policies
 
+[//]: # (![550_DataSteward_4](assets/550_DataSteward_4.png))
 
 Frosty the data steward has a new requirement for us. In the consumer accounts, only admins and managers may see the detailed per-customer loyalty data. Anyone else may see aggregated data only.
 
@@ -890,6 +923,7 @@ Use the following command to verify that all three quality metrics have been sch
   );
 ```  
 
+[//]: # (![600_DMF_Status](assets/600_DMF_Status.png))
 
 After 5 minutes you can start observing quality metrics in the [default event table](https://docs.snowflake.com/en/user-guide/data-quality-working#view-the-dmf-results) where all quality results are recorded:
 
@@ -902,6 +936,7 @@ FROM snowflake.local.data_quality_monitoring_results  /* not yet available in tr
 ORDER BY measurement_time DESC;
 ```
 
+[//]: # (![601_DMF_Results](assets/601_DMF_Results.png))
 
 Additionally, you could define [Alerts](https://docs.snowflake.com/en/user-guide/alerts) to watch the data quality metrics and take action automatically if acceptable thresholds are exceeded. For example, if the number of outliers reported by our custom quality function exceeds a certain value an alert could copy the offending rows into an exception table for review and send an [email notification](https://docs.snowflake.com/en/user-guide/email-stored-procedures).
 
@@ -978,10 +1013,13 @@ GRANT SELECT ON FROSTBYTE_TASTY_BYTES.dq.shared_quality_events TO SHARE <share_n
 Take the following 3 steps in the UI:
 
 1. In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing. In the section "Data Product" click on the name of the Secure Share that bundles the shared data objects.
+[//]: # (![602_DMF_AddTableToShare_1](assets/602_DMF_AddTableToShare_1.png))
 
 2. You are now looking at a page detailing the underlying share. In the section "Data", click the "Edit" button:
+[//]: # (![603_DMF_AddTableToShare_2](assets/603_DMF_AddTableToShare_2.png))
 
 3. Now you can open the data explorer to find and select the table "dq.shared_quality_events". Click "Done" and "Save" to finalize the update of your data product.
+[//]: # (![604_DMF_AddTableToShare_3](assets/604_DMF_AddTableToShare_3.png))
 
 4. Switch to your consumer account "horizon_lab_aws_consumer" to verify that the data quality metrics are immediately visible as a new table in the data product. In the second consumer account "horizon_lab_azure_consumer" you will see the same after the 1 minute replication interval.
 
