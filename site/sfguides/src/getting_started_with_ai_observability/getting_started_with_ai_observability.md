@@ -50,8 +50,8 @@ Duration: 8
 
 If you are not working in a Snowflake trial account and do not have ACCOUNTADMIN privileges, ensure that the user role has the following roles granted ():
 
-- CORTEX_USER database role
-- AI_OBSERVABILITY_EVENTS_LOOKUP application role
+- SNOWFLAKE.CORTEX_USER database role
+- SNOWFLAKE.AI_OBSERVABILITY_EVENTS_LOOKUP application role
 - CREATE EXTERNAL AGENT privilege on the schema
 
 For more information, see [Required Privileges for AI Observability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#label-ai-observability-required-privileges).
