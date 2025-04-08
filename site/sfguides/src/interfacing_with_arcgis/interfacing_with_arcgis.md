@@ -17,13 +17,6 @@ The [ArcGIS Location Services](https://developers.arcgis.com/documentation/mappi
 
 This process also can be replicated if users have [ArcGIS Enterprise] (https://enterprise.arcgis.com/en/)
 
-### What You’ll Learn 
-
-In this Quickstart you will be go over the steps of calculating servicearea/isochrones using the ArcGIS Location Services. You will also be visualizing them using ArcGIS Pro. 
-![ServiceArea](assets/service_area.png)
-
-### What is Service Area / IsoChrone?
-
 A service area, also known as an isochrone, is a polygon that represents the distance that can be reached when driving or walking on a street network. This type of analysis is common in real estate search or determining the driving proximity to schools, businesses, or other facilities. For example, you can create a drive time polygon that represents how far you can drive in any direction from the center of a city in 20 minutes.
 
 You can use service areas to build applications that:
@@ -34,14 +27,20 @@ You can use service areas to build applications that:
 
 - When creating service areas based on travel times, the service can make use of traffic data, which can influence the area that can be reached during different times of the day.
 
-#### What You’ll Build
+### What You Will Learn 
+
+In this Quickstart you will be go over the steps of calculating servicearea/isochrones using the ArcGIS Location Services. You will also be visualizing them using ArcGIS Pro. 
+![ServiceArea](assets/service_area.png)
+
+
+### What You Will Build
 ![Solution](assets/solution.jpg)
 
   1. Develop a Snowpark UDF which invokves the ArcGIS ServiceArea service function and stores the response back into the source table.
   2. Develop a Snowpark UDF which extracts and converts the geometry from ArcGIS reponse into Geojson co-ordinates.
   3. Connect and visualize the service areas / isochrones using ArcGIS Pro.
 
-### What You’ll Need 
+### What You will Need 
 
 - A [Snowflake](https://signup.snowflake.com/) Account.
 - A [ArcGIS](https://www.esri.com/en-us/arcgis/products/arcgis-online/trial) Account.
@@ -73,7 +72,7 @@ You can use service areas to build applications that:
 > **IMPORTANT:** Before proceeding, make sure you have a Snowflake account with Anaconda packages enabled by ORGADMIN as described [here](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#getting-started).
 
 <!-- ------------------------ -->
-## Setting up ArcGIS
+## Setting Up An ArcGIS account
 Duration: 20
 
 ### (Optional) Create ArcGIS account
@@ -100,8 +99,7 @@ You will be visualizing the service area using ArcGIS Pro. To do that, you will 
 Follow the instructions in the [documentation: Connect to Snowflake from ArcGIS](https://pro.arcgis.com/en/pro-app/latest/help/data/databases/connect-snowflake.htm).
 
 <!-- ----------------------------------------- -->
-
-## Setup your Snowflake Account
+## Setup An Snowflake Account
 Duration: 10
 
 ### Create Database and assets
@@ -136,7 +134,7 @@ create database if not exists arcgis_db;
 > **IMPORTANT:** If you want to explore and learn more about the Snowflake Notebook, please go over the [Quickstart: Getting Started with Snowflake Notebooks](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_notebooks/index.html).
 
 <!-- ------------------------ -->
-## Defining the UDF for ServiceArea Calculation
+## Defining UDF ServiceArea Calculation
 Duration: 15
 
 ### Importing and running the notebook
@@ -168,7 +166,7 @@ The notebook also creates an quick visualization of the service area also:
 
 
 <!-- ------------------------ -->
-## Visualizing using ArcGIS Pro
+## Visualizing Using ArcGIS Pro
 Duration: 10
 
 In this step, you will be connecting to your Snowflake account from ArcGIS Pro and visualize the service areas.
