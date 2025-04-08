@@ -3,7 +3,7 @@ id: intra_company_data_sharing_with_the_snowflake_internal_marketplace
 summary: INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE
 categories: Data-Sharing
 environments: web
-status: Published
+status: Hidden
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Summit HOL, Data Sharing, Snowflake Internal MArketplace, Data Mesh
 
