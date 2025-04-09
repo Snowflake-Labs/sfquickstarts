@@ -122,6 +122,14 @@ alter NOTEBOOK E2E_SNOW_MLOPS_DB.MLOPS_SCHEMA.TRAIN_DEPLOY_MONITOR_ML set EXTERN
 --DONE! Now you can access your newly created notebook with your E2E_SNOW_MLOPS_ROLE and run through the end-to-end workflow!
 ```
 
+### Open Notebook
+Now we can navigate to the Notebooks tab in Snowsight to open up the newly created notebook called **TRAIN_DEPLOY_MONITOR_ML** 
+
+Be sure to run this with the newly created **E2E_SNOW_MLOPS_ROLE**!
+
+The notebook is also hosted in this [GitHub Repo](https://github.com/sfc-gh-ebotwick/e2e_ML_in_Snowflake/blob/main/train_deploy_monitor_ML_in_snowflake.ipynb) for reference. 
+
+
 ### Environment Configuration
 
 We'll be building the model using a Snowflake Notebook. In addition to the ability to pip install any package of choice, Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as numpy, pandas, matplotlib, and more! For this tutorial, we'll need to install one additional package:
