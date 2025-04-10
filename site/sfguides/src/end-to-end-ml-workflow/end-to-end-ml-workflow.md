@@ -68,7 +68,6 @@ CREATE OR REPLACE DATABASE E2E_SNOW_MLOPS_DB;
 -- Create Schema
 CREATE OR REPLACE SCHEMA MLOPS_SCHEMA;
 
-
 -- Create compute pool
 CREATE COMPUTE POOL IF NOT EXISTS MLOPS_COMPUTE_POOL 
  MIN_NODES = 1
@@ -96,13 +95,13 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION mlops_pypi_access_integration
 -- Create an API integration with Github
 CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_E2E_SNOW_MLOPS
    api_provider = git_https_api
-   api_allowed_prefixes = ('https://github.com/sfc-gh-ebotwick/')
+   api_allowed_prefixes = ('https://github.com/Snowflake-Labs')
    enabled = true
    comment='Git integration with Snowflake Demo Github Repository.';
 
 -- Create the integration with the Github demo repository
 CREATE OR REPLACE GIT REPOSITORY GITHUB_REPO_E2E_SNOW_MLOPS
-   ORIGIN = 'https://github.com/sfc-gh-ebotwick/e2e_ML_in_Snowflake' 
+   ORIGIN = 'https://github.com/Snowflake-Labs/sfguide-build-end-to-end-ml-workflow-in-snowflake' 
    API_INTEGRATION = 'GITHUB_INTEGRATION_E2E_SNOW_MLOPS' 
    COMMENT = 'Github Repository ';
 
