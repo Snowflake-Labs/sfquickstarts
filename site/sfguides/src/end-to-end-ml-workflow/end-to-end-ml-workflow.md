@@ -126,7 +126,7 @@ Now we can navigate to the Notebooks tab in Snowsight to open up the newly creat
 
 Be sure to run this with the newly created **E2E_SNOW_MLOPS_ROLE**!
 
-The notebook is also hosted in this [GitHub Repo](https://github.com/sfc-gh-ebotwick/e2e_ML_in_Snowflake/blob/main/train_deploy_monitor_ML_in_snowflake.ipynb) for reference. 
+The notebook is also hosted in this [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-build-end-to-end-ml-workflow-in-snowflake/blob/main/train_deploy_monitor_ML_in_snowflake.ipynb) for reference. 
 
 
 ### Environment Configuration
