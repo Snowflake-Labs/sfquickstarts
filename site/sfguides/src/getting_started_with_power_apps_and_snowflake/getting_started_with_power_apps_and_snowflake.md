@@ -77,7 +77,7 @@ GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
 ```
 
 ### Get Sample data and scripts 
-1. Download the data for the demo [sample data file](scripts/customer_segmentation_data.csv) 
+1. Download the data for the demo [sample data file](data/customer_segmentation_data.csv) 
 2. Login to Snowflake Account and go to Data -> Databases -> HOL_DB
 3. Select table CUSTOMER_PRESEGMENT and click Load Data 
 ![load data](assets/load_db.png)
