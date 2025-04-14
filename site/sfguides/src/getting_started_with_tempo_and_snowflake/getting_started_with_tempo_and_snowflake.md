@@ -74,7 +74,7 @@ In the new worksheet we now need to setup our procedures. We will start with ini
 
 1. Initialize Application Resources
 ```sql
-CALL management.create_resources();
+CALL INFRA_CONTROLS.CREATE_RESOURCES();
 ```
 
 Purpose: Initializes the application by loading required model weights and configurations
@@ -87,11 +87,10 @@ It is recommended that you run this command prior to running the sheet as a whol
 Duration: 6
 
 ```sql
-CALL static_detection.inference('your_service_name');
+CALL STATIC_DETECTION.ANOMALY_DETECTION(False);
 ```
 Parameters:
-- `your_service_name`: Name of the service to analyze (string).  This is set by you and should be unique to each run.
-Purpose: Executes inference on specified service data
+- `the boolean (true or false)`: specifies if the inference should be run with the MITRE ATT&CK framework classification turned on.
 
 If you want to use the demo feel free to name it something like `demorun` for the `your_service_name`.
 
@@ -100,7 +99,7 @@ If you want to use the demo feel free to name it something like `demorun` for th
 Duration: 5
 
 ```sql
-CALL inspect.deepdive(sequence_id);
+CALL INSPECT.INVESTIGATE_SEQUENCE(sequence_id);
 ```
 Parameters:
 - `sequence_id`: Identifier of the sequence to analyze (integer). This ID can be used down the road if any anomalies are detected to run deeper investigation on suspicious interactions. 
