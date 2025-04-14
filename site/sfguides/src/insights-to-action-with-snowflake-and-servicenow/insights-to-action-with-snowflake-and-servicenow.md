@@ -158,7 +158,7 @@ Next, you need to define a network rule that identifies the ServiceNow instance 
   CREATE OR REPLACE NETWORK RULE servicenow_apis_network_rule
   MODE = EGRESS
   TYPE = HOST_PORT
-  VALUE_LIST = ('dev201625.service-now.com');
+  VALUE_LIST = ('InstanceID.service-now.com');
 
 
   CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION servicenow_apis_access_integration
@@ -235,8 +235,8 @@ session = requests.Session()
 
 def call_servicenow_flow(device_id,reading_id,signal_type,category,impact):
     payload={}
-# The full path for the REST api endpoint we created in Step 1 
-    url = "https://dev189440.service-now.com/api/1551828/snowdemo"
+# The full path for the REST API endpoint we created in Step 1 
+    url = "https://InstanceID.service-now.com/api/1551828/snowdemo"
 
 # Optional Headers for the API call if you have defined them in the REST API 
     headers = {
