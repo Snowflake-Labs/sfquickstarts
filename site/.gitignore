@@ -15,6 +15,7 @@ app/bower_components/jszip/lib
 app/bower_components/jszip/vendor
 app/js/bundle
 package-lock.json
+package.json
 /build/
 /dist/
 
