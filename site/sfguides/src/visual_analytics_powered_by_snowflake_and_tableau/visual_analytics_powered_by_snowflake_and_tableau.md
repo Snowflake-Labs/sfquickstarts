@@ -460,7 +460,7 @@ Congratulations! you have successfully completed the lab.
 
 ### What You Learned
 
- * In this lab we loaded semi-structured data from TastyBytes food truck, read external  
+ * In this lab we loaded semi-structured data from TastyBytes food truck, read external 
       datalake using Iceberg tables.
  * Leverage Snowflake Cortex to translate and extract sentiment scores.
  * Use Tableau Pulse metrics to track against CSAT goals. 
