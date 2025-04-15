@@ -131,7 +131,7 @@ Once you've mapped all fields, your action definition should resemble this:
 Click Done. This completes your workflow definition in ServiceNow. 
 
 
-## Create the Connection to ServiceNow from Snowflake and IOT Data Model
+## Create Connection to ServiceNow from Snowflake
 Duration: 4
 
 Now that the ServiceNow workflow is defined, the next step is to create a connection from Snowflake to your ServiceNow instance. To do this, we will leverage a few Snowflake primitives that enable secure, external API access:
@@ -169,6 +169,8 @@ Next, you need to define a network rule that identifies the ServiceNow instance 
 ```
 
 This completes the connection to ServiceNow.
+
+We also need to create a table to store all the events on which alerts will be triggered. 
 To build a sample events table for the use case, run the SQL statement below. This will create a **device_signals** table that simulates a manufacturing plant environment and stores entries whenever a trigger condition—such as "device temperature too high"—occurs.
 
 ```sql 
@@ -204,8 +206,9 @@ CREATE OR REPLACE TABLE workflow_log (
     
 ```
 
-##  Create the Snowflake Alert to Trigger the workflow
-Duration: 3
+## Create the Snowflake Alert and UDF
+Duration: 4
+
 So far, we have the workflow set up in ServiceNow and the device_signals table created in Snowflake. Next, we need to define an alert that will be triggered when a specified condition occurs. This alert will call a UDF that passes the event details and starts the corresponding workflow in ServiceNow.
 
 The exact method for detecting an impending issue is beyond the scope of this quickstart. It could be based on business rules (e.g., temperature exceeding a certain threshold) or a predictive model built using Snowflake Cortex that evaluates multiple parameters to identify potential device failures.
@@ -317,7 +320,7 @@ Voila! You now have an incident record created in ServiceNow—automatically tri
 
 
 ## Conclusion And Resources
-Duration: 1
+Duration: 2
 
 Congratulations—you’ve made it to the end!
 In this quickstart, you learned how to automatically trigger a workflow in ServiceNow from Snowflake. Together, Snowflake and ServiceNow offer a powerful opportunity to streamline and enhance business operations by transforming raw data insights into actionable outcomes.
