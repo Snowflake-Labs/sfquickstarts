@@ -66,16 +66,18 @@ Duration: 5
 ### Run the scripts in a Snowsight or VSCode 
 
 #### Create Snowflake Database and Warehouse 
-[Click here to download  create_db_wh.sql](scripts/create_db_wh.sql)
+
+[Click here to download  create_db_wh.sql](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/create_db_wh.sql)
 
 #### Grant Privileges on Snowflake Objects
-[Click here to download grantperms.sql](scripts/grant_perms.sql)
+[Click here to download grantperms.sql](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/grant_perms.sql)
 
 #### Create Snowflake Stages and Native Tables
-[Click here to download createobjects.sql](scripts/create_objects.sql)
+[Click here to download createobjects.sql](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/create_objects.sql)
 
 #### Load data into Raw Tables 
-[Click here to download tabloadraw.sql](scripts/tab_load_raw.sql)
+[Click here to download tabloadraw.sql](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/tab_load_raw.sql)
+
 
 
 ## DataLake Integration 
@@ -100,7 +102,9 @@ unzip the file before you load into AWS bucket
 
 **Now, in your Snowflake account let us run scripts to integrate with AWS**
 
-[Copy from below or click here to download SQL](scripts/aws_integration.sql)
+
+[Copy from below or click here to download SQL](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/aws_integration.sql)
+
 ```sql
 
 USE DATABASE frostbyte_tasty_bytes;
@@ -155,7 +159,8 @@ SELECT   SYSTEM$VALIDATE_STORAGE_INTEGRATION('<integration_name>',    's3://<buc
 
 ### Create Snowflake managed Iceberg Tables to access Datalake and query reviews data
 Download the script or run below sql 
-[Query Review Data](scripts/query_iceberg.sql)
+[Query Review Data](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/query_iceberg.sql)
+
 ```sql 
 USE ROLE ACCOUNTADMIN;
 USE DATABASE  frostbyte_tasty_bytes;
@@ -170,7 +175,7 @@ CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
             (
                 NAME = 'reviews-s3-volume'
                 STORAGE_PROVIDER = 'S3'
-                STORAGE_BASE_URL = 's3://jnanreviews'
+                STORAGE_BASE_URL = 's3://<bucket_name>' --s3://jnanreviews 
                 STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<aws-account-id>:role/<snow_role>' --ex:snow_s3_access_role 
                 STORAGE_AWS_EXTERNAL_ID = 'external_id' -- enter your external id 
             )
@@ -438,7 +443,9 @@ Congratulations! You have successfully completed the Tableau portion.
 
 <!-- ------------------------ -->
 ## Clean Up 
-[Download tb_reset_vhol.sql ](scripts/tb_reset_vhol.sql) or run below sql
+
+[Download tb_reset_vhol.sql ](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/tb_reset_vhol.sql) or run below sql
+
 
 ```sql
 USE ROLE accountadmin;
@@ -460,7 +467,8 @@ Congratulations! you have successfully completed the lab.
 
 ### What You Learned
 
- * In this lab we loaded semi-structured data from TastyBytes food truck, read external  
+ * In this lab we loaded semi-structured data from TastyBytes food truck, read external 
+
       datalake using Iceberg tables.
  * Leverage Snowflake Cortex to translate and extract sentiment scores.
  * Use Tableau Pulse metrics to track against CSAT goals. 
