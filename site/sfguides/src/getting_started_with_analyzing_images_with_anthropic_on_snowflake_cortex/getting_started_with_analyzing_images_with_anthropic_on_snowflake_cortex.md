@@ -7,13 +7,15 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, SQL, Data Engineering, AI
 author: James Cha-Earley
 
-# Getting Started with Analyzing Images with Anthropic on Snowflake Cortex
-
+# Getting Started with Analyzing Images with Anthropic on Snowflake Cortex AI
+<!-- ------------------------ -->
 ## Overview
 
 Duration: 5
 
-In this quickstart, you'll learn how to build an end-to-end application for image analysis using AI models through Snowflake Cortex. This application leverages multimodal capabilities of models like Claude 3.5 Sonnet and Pixtral-large to extract insights, detect emotions, and generate descriptions from images - all within the Snowflake ecosystem.
+In this quickstart, you'll learn how to build an end-to-end application for image analysis using AI models through Snowflake Cortex AI. This application leverages multimodal capabilities of models like Claude 3.5 Sonnet and Pixtral-large to extract insights, detect emotions, and generate descriptions from images - all within the Snowflake ecosystem. 
+
+*Note: SNOWFLAKE.CORTEX.COMPLETE multimodal capability is currently in Public Preview.*
 
 ### What You'll Learn
 - Setting up a Snowflake environment for image processing
@@ -38,6 +40,7 @@ A full-stack application that enables users to:
   - [Cortex LLM Functions](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex)
   - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 
+<!-- ------------------------ -->
 ## Setup Environment
 
 Duration: 10
@@ -75,9 +78,8 @@ You should see your uploaded files listed with their sizes.
 > - No larger than 20MB
 > - Have sufficient resolution for details you want to analyze
 
-
-
-## Create a Snowflake Notebook
+<!-- ------------------------ -->
+## Create Snowflake Notebook
 
 Duration: 15
 
@@ -101,6 +103,7 @@ The notebook includes:
 - Batch processing capabilities for multiple images
 - Comparison between Claude 3.5 Sonnet and Pixtral-large models
 
+<!-- ------------------------ -->
 ## Build Streamlit Application
 
 Duration: 15
@@ -132,11 +135,14 @@ The application provides:
 - Prompt display for transparency
 - Results viewing
 
-## Conclusion and Resources
+<!-- ------------------------ -->
+## Conclusion And Resources
 
 Duration: 5
 
 Congratulations! You've successfully built an end-to-end image analysis application using AI models via Snowflake Cortex. This solution allows you to extract valuable insights from images, detect emotions, analyze scenes, and generate rich descriptions - all within the Snowflake environment.
+
+To continue your learning journey, explore creating more advanced prompting techniques, building domain-specific image analysis systems, or integrating this capability with other Snowflake data workflows.
 
 ### What You Learned
 - How to set up Snowflake for image storage and processing
@@ -149,5 +155,3 @@ Congratulations! You've successfully built an end-to-end image analysis applicat
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-llm-rest-api)
 - [Anthropic Tool Use on Snowflake Cortex Quickstart](https://quickstarts.snowflake.com/guide/getting-started-with-tool-use-on-cortex-and-anthropic-claude/index.html?index=..%2F..index#0)
 - [Anthropic RAG on Snowflake Cortex Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_anthropic_on_snowflake_cortex/index.html?index=..%2F..index#0)
-
-To continue your learning journey, explore creating more advanced prompting techniques, building domain-specific image analysis systems, or integrating this capability with other Snowflake data workflows.
