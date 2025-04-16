@@ -48,6 +48,14 @@ Here is a summary of what you will be able to learn in each step by following th
 
 Duration: 8
 
+If you are not working in a Snowflake trial account and do not have ACCOUNTADMIN privileges, ensure that the user role has the following roles granted ():
+
+- SNOWFLAKE.CORTEX_USER database role
+- SNOWFLAKE.AI_OBSERVABILITY_EVENTS_LOOKUP application role
+- CREATE EXTERNAL AGENT privilege on the schema
+
+For more information, see [Required Privileges for AI Observability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#label-ai-observability-required-privileges).
+
 To open the notebook, open [getting-started-with-ai-observability.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ai-observability/blob/main/getting-started-with-ai-observability.ipynb) to download the Notebook from GitHub. ***(NOTE: Do NOT right-click to download.)***
 
 Then, create a new Snowflake notebook by importing the notebook file in Snowsight.
@@ -356,6 +364,8 @@ run_name = "experiment_1_run"
 run_config = RunConfig(
     run_name=run_name,
     dataset_name="FOMC_DATA",
+    description="Questions about the Federal Open Market Committee meetings",
+    label="fomc_rag_eval",
     source_type="TABLE",
     dataset_spec={
         "input": "QUERY",
