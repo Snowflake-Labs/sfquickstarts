@@ -8,12 +8,14 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Microsoft, Power Apps, Power Platform, Power Automate
 Date: 4/3/25
 
-# Getting Started with Power Platform and Snowflake
+# Getting Started with Microsoft Power Platform and Snowflake
 Duration: 45
 
 <!-- ------------------------ -->
 ## Overview 
-Join Snowflake and Microsoft for an quickstart to build a PowerApps App that can access retail customer data as virtual table, do a writeback, trigger a segmentation flow using PowerAutomate without making a copy of the data. We will use the PowerApps connector from Microsoft premium connectors marketplace, which is a wrapper around the Snowflake SQL API that allows you to read and write data to Snowflake databases, and execute any stored procedures.
+Join Snowflake and Microsoft for a quickstart to build a business application with Microsoft Power Apps that can access retail customer data as virtual tables, do a writeback, trigger a segmentation flow using PowerAutomate without making a copy of the data. 
+
+We will use the new PowerApps connector from Microsoft premium connectors marketplace, which leverages Snowflake SQL API, and allows you to read, write and execute Snowflake objects.
 
 ### Power Apps
 Microsoft Power Apps and Power Automate are part of the Microsoft Power Platform, a suite of tools designed to empower organizations to create custom applications and automate workflows with minimal coding effort. 
