@@ -80,6 +80,7 @@ GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
 
 ### Get Sample data and scripts 
 1. Download the data for the demo [sample data file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/tree/main/data/customer_segmentation_data.csv) 
+=======
 2. Login to Snowflake Account and go to Data -> Databases -> HOL_DB
 3. Select table CUSTOMER_PRESEGMENT and click Load Data 
 ![load data](assets/load_db.png)
@@ -100,6 +101,7 @@ https://learn.microsoft.com/en-us/connectors/snowflakev2/#supported-capabilities
 
 [Script-for-Windows Users](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_win.ps1) | 
 [Script-for-Mac Users](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_Mac.ps1)
+
 
 <!-- ------------------------ -->
 ### Build a PowerApp and connect to Snowflake data
@@ -135,7 +137,9 @@ After you have configured Power Apps Connector to Snowflake, go to Power Apps
 ## Snowflake Segmentation ML Model  
 ### Lets look at the clustering Model and deploy it 
 Typically your datascience teams trains and deploy the ML models, and you can invoke them. 
+
 1. Download the Customer Segmentation Notebook [Jupyter ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/customer_segmentation.ipynb) 
+
 
 2. Connect to Snowflake: Projects -> Notebook
 
@@ -149,12 +153,20 @@ Typically your datascience teams trains and deploy the ML models, and you can in
 5. Click the RunALL button or click START and execute individual cell. 
 
 6. Create a Procedure to Invoke Model Predictions by running below SQL in a worksheet 
+
 	[storedproc](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/segment_storedproc.sql)
 
 
+<<<<<<< HEAD
 ### Build a Power Automate Flow
 Let's build a Power Automate Flow to call stored procedure you created and run the model.
 1. Launch Power Automate
+=======
+
+### Build a PowerAutomate Flow
+Let's build a PowerAutomate Flow to call stored procedure you created and run the model.
+1. Launch PowerAutomate
+>>>>>>> f2d682e3786b9b7cd55c438bed31c50763b5dc7b
 
 2. Click My flows -> + New Flow  -> Instant Cloud Flow
 

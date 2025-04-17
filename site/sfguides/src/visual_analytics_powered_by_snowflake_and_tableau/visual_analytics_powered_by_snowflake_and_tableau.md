@@ -66,6 +66,7 @@ Duration: 5
 ### Run the scripts in a Snowsight or VSCode 
 
 #### Create Snowflake Database and Warehouse 
+
 [Click here to download  create_db_wh.sql](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/create_db_wh.sql)
 
 #### Grant Privileges on Snowflake Objects
@@ -76,6 +77,7 @@ Duration: 5
 
 #### Load data into Raw Tables 
 [Click here to download tabloadraw.sql](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/tab_load_raw.sql)
+
 
 
 ## DataLake Integration 
@@ -100,7 +102,9 @@ unzip the file before you load into AWS bucket
 
 **Now, in your Snowflake account let us run scripts to integrate with AWS**
 
+
 [Copy from below or click here to download SQL](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/aws_integration.sql)
+
 ```sql
 
 USE DATABASE frostbyte_tasty_bytes;
@@ -156,6 +160,7 @@ SELECT   SYSTEM$VALIDATE_STORAGE_INTEGRATION('<integration_name>',    's3://<buc
 ### Create Snowflake managed Iceberg Tables to access Datalake and query reviews data
 Download the script or run below sql 
 [Query Review Data](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/query_iceberg.sql)
+
 ```sql 
 USE ROLE ACCOUNTADMIN;
 USE DATABASE  frostbyte_tasty_bytes;
@@ -438,7 +443,9 @@ Congratulations! You have successfully completed the Tableau portion.
 
 <!-- ------------------------ -->
 ## Clean Up 
+
 [Download tb_reset_vhol.sql ](https://github.com/Snowflake-Labs/sfguide-visual-analytics-powerd-by-tableau-and-snowflake/blob/main/tb_reset_vhol.sql) or run below sql
+
 
 ```sql
 USE ROLE accountadmin;
@@ -461,6 +468,7 @@ Congratulations! you have successfully completed the lab.
 ### What You Learned
 
  * In this lab we loaded semi-structured data from TastyBytes food truck, read external 
+
       datalake using Iceberg tables.
  * Leverage Snowflake Cortex to translate and extract sentiment scores.
  * Use Tableau Pulse metrics to track against CSAT goals. 
