@@ -124,10 +124,10 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 
 Search for the **Met office Weather Data**
-- The exact name is **Postcode Sector Weather Forecasts - Advanced with Solar**
+- The exact name is **Postcode Sector Weather Forecasts**
 - Press **Try for Free** - Keep the name as it is.  You will have 14 days of free weather data to try for 14 days.
 
-![alt text](assets/I005.png)
+![alt text](assets/metoffice.png)
 
 You will have access to the dataset for a period of **14 days**
 
