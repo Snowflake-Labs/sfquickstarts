@@ -19,7 +19,7 @@
     "fs-extra": "^7.0.1",
     "glob": "^7.2.0",
     "google-closure-compiler": "^20181008.0.0",
-    "gulp": "^5.0.0",
+    "gulp": "^4.0.2",
     "gulp-babel": "^7.0.0",
     "gulp-crisper": "^1.1.0",
     "gulp-flatten": "^0.4.0",
@@ -41,9 +41,10 @@
     "jscs": "^2.1.1",
     "jshint": "^2.13.4",
     "jshint-stylish": "^2.2.1",
+    "livereload": "^0.9.3",
     "merge-stream": "^1.0.1",
     "path": "^0.12.7",
-    "postcss": "^8.4.47",
+    "postcss": "^8.5.2",
     "postcss-syntax": "^0.34.0",
     "sass": "^1.49.11",
     "swig-templates": "^2.0.3",
@@ -59,7 +60,6 @@
     "defaults"
   ],
   "dependencies": {
-    "gulp": "^5.0.0",
     "http-server": "^14.1.1",
     "open-browser": "^3.6.0",
     "supervisor": "^0.12.0"
