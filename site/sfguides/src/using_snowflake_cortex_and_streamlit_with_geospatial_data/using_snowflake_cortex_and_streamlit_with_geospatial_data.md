@@ -1647,8 +1647,8 @@ trains_latlon = trains_latlon.drop('POSTCODE_SPLIT','POSTCODE_OUTCODE','POSTCODE
 
 # Add hourly and daily weather for each train station
 
-weather_hourly = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS__ADVANCED_WITH_SOLAR.PCSECT_FORECAST."advanced_with_solar_hourly_view"')
-weather_daily = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS__ADVANCED_WITH_SOLAR.PCSECT_FORECAST."advanced_with_solar_daily_view"')
+weather_hourly = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS.PCSECT_FORECAST."postcode_hourly_view"')
+weather_daily = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS.PCSECT_FORECAST."postcode_daily_view"')
 
 weather_hourly_max = weather_hourly.agg(max('"Issued_at"').alias('MAX'))
 weather_hourly = weather_hourly.join(weather_hourly_max,weather_hourly_max['MAX']==weather_hourly['"Issued_at"']).drop('MAX')
