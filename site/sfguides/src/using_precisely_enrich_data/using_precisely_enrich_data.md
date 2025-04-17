@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Geospatial, Advanced Analytics, Data Engineering,
 
-# Geospatial analysis of Precisely datasets using Snowflake Notebooks and Streamlit
+# Geospatial Analysis of Precisely datasets using Snowflake Notebooks and Streamlit
 
 <!-- ------------------------ -->
 
@@ -47,7 +47,7 @@ In this quickstart, we will use Snowflake’s tools to:
 
 ### Prerequisites
 
-- A new free trial of Snowflake in **a region of you choice\***.
+- [Signup](https://signup.snowflake.com/) for free trial of Snowflake in **a region of your choice\***.
 
 ![alt text](assets/I001.png)
 
@@ -608,17 +608,17 @@ Duration: 5
 
 ### Conclusion
 
-By completing this guide, you have successfully:
+By completing this guide, you have successfully integrated and enriched geospatial data from Precisely using Snowflake’s geospatial functions, performed spatial joins to identify Points of Interest (POI), and created interactive visualizations with Streamlit and Pydeck within Snowflake. You also leveraged Snowflake’s powerful geospatial capabilities to conduct market and demographic analysis of MBI data. With these skills in hand, you're now well-equipped to extend your analysis further by incorporating additional datasets, developing more advanced spatial queries, and integrating AI/ML models using Snowflake Cortex
 
-    1. Integrated and enriched geospatial data from Precisely using Snowflake’s geospatial functions.
+### What you Learned
 
-    2. Performed spatial joins to identify Points of Interest (POI).
+• Integrated and enriched geospatial data from Precisely using Snowflake’s geospatial functions.
 
-    3. Created interactive visualizations using Streamlit and Pydeck in Snowflake.
+• Performed spatial joins to identify Points of Interest (POI).
 
-    4. Leveraged Snowflake’s geospatial capabilities for market and demographic analysis of MBI data.
+• Created interactive visualizations using Streamlit and Pydeck in Snowflake.
 
-With these skills, you can now extend your analysis further by incorporating additional datasets, building more complex spatial queries, and integrating AI/ML models with Snowflake Cortex.
+• Leveraged Snowflake’s geospatial capabilities for market and demographic analysis of MBI data.
 
 ### Related Resources
 
