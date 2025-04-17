@@ -157,16 +157,9 @@ Typically your datascience teams trains and deploy the ML models, and you can in
 	[storedproc](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/segment_storedproc.sql)
 
 
-<<<<<<< HEAD
 ### Build a Power Automate Flow
 Let's build a Power Automate Flow to call stored procedure you created and run the model.
 1. Launch Power Automate
-=======
-
-### Build a PowerAutomate Flow
-Let's build a PowerAutomate Flow to call stored procedure you created and run the model.
-1. Launch PowerAutomate
->>>>>>> f2d682e3786b9b7cd55c438bed31c50763b5dc7b
 
 2. Click My flows -> + New Flow  -> Instant Cloud Flow
 
