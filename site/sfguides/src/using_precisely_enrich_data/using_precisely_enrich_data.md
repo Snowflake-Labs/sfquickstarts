@@ -629,7 +629,7 @@ By completing this guide, you have successfully integrated and enriched geospati
 
 #### Source code
 
-- [Source Code on Github](https://github.com/zaslamz/precisely-sfquickstart.git)
+- [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit.git)
 
 #### Further Related Material
 
