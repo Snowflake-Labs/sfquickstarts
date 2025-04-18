@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Geospatial, Advanced Analytics, Data Engineering,
 
-# Geospatial Analysis of Precisely datasets using Snowflake Notebooks and Streamlit
+# Geospatial Analysis of Precisely Datasets using Snowflake Notebooks and Streamlit
 
 <!-- ------------------------ -->
 
