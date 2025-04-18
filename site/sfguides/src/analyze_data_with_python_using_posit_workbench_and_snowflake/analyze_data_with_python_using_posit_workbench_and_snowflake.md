@@ -206,6 +206,10 @@ To follow along, clone the GitHub repo:
 
   
   6. Open `quarto.qmd` to follow along with this Quickstart. 
+
+> aside negative
+> 
+> SSH authentication is not available in Snowpark Container Services, so when creating projects from Git, you may need to authenticate Git operations over HTTPS, using a username and password or a personal access token.
   
 ### Create a virtual environment
 
