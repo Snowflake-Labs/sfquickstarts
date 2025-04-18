@@ -21,7 +21,7 @@ Numerous location-based datasets are available within the **Snowflake Marketplac
 
 ### What You’ll Build
 
-- A Snowflake Notebook to explore and process geospatial data(https://github.com/zaslamz/precisely-sfquickstart.git).
+- A Snowflake Notebook to explore and process geospatial data. You can download the notebook from [this](https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit.git) link.
 - A Streamlit app to visualize:
   - Demographic and market insights
   - Spatial relationships between regions and city points
