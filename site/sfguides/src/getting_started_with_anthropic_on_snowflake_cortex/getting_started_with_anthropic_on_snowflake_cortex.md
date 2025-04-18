@@ -353,7 +353,7 @@ schema_name = session.get_current_schema()
 service_name = 'document_search_service'
 
 # Configuration
-num_results = 3  # Number of results
+num_results = 8  # Number of results
 model_name = "claude-3-5-sonnet"  # The model we are using
 history_length = 5
 
