@@ -53,7 +53,7 @@ In this quickstart, we will use Snowflake’s tools to:
 
 <!-- ------------------------ -->
 
-### Snowflake Marketplace
+## Snowflake Marketplace
 
 Duration: 5
 
@@ -104,7 +104,7 @@ In **Notebook location**, select SAMPLES_DB from the list of available databases
 
 > However, to experience the creation of the notebook yourself, carry on with the blank notebook, and copy/paste the code as we go along.
 
-### Creating your first Map
+### Creating First Map
 
 Once the notebook has loaded, Remove all cells in the notebook. You should see something like this:
 
@@ -315,7 +315,7 @@ We have created a simple map using the streamlit [st.map](https://docs.streamlit
 
 st.map is useful for quickly generating simple maps by rendering lines, points, polygons and H3 indexes. We will be leveraging the Pydeck library in the next step for creating points. pydeck has many more options such as different mark types, tool tips and layers we will create an additional pydeck layer which adds this data to the previously created data layer. When you hover over in the boundary box you will see a tooltip containing the attribute information of the data.
 
-## Enriching MBI data with POI
+## Enriching MBI Data with POI
 
 Duration: 5
 
