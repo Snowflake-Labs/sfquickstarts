@@ -69,12 +69,12 @@
     },
     {
       "source": "/guide/build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex/{,/**}",
-      "destination": "/guide/asking_questions_to_your_own_documents_with_snowflake_cortex",
+      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
       "type": 301
     },
     {
       "source": "/guide/prompt_engineering_and_llm_evaluation/{,/**}",
-      "destination": "/guide/asking_questions_to_your_own_documents_with_snowflake_cortex",
+      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
       "type": 301
     },
     {
@@ -116,7 +116,53 @@
       "source": "guide/frosty_llm_chatbot_on_streamlit_snowflake/{,/**}",
       "destination": "/guide/getting_started_with_cortex_analyst",
       "type": 301
+    },
+    {
+      "source": "guide/connectors_native_sdk_java_example/{,/**}",
+      "destination": "https://docs.snowflake.com/developer-guide/native-apps/connector-sdk/tutorials/native_sdk_example_connector_tutorial",
+      "type": 301
+    },
+    {
+      "source": "guide/vhol_data_lake/{,/**}",
+      "destination": "https://docs.snowflake.com/en/user-guide/tables-iceberg-load",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_streamlit_in_snowflake/{,/**}",
+      "destination": "/guide/getting_started_with_snowpark_for_python_streamlit",
+      "type": 301  
+    },
+    {
+      "source": "guide/getting_started_with_cybersyn_financial_and_economic_essentials_app/{,/**}",
+      "destination": "/guide/getting_started_with_snowpark_for_python_streamlit",
+      "type": 301
+    },
+    {
+      "source": "guide/asking_questions_to_your_own_documents_with_snowflake_cortex/{,/**}",
+      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_cortex_analyst_in_snowflake/{,/**}",
+      "destination": "/guide/getting_started_with_cortex_analyst/",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_llmops_using_snowflake_cortex_and_trulens/{,/**}",
+      "destination": "/guide/getting_started_with_ai_observability/",
+      "type": 301
+    },
+    {
+      "source": "guide/semantic_file_generation_for_cortex_analyst/{,/**}",
+      "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
+      "type": 301
+    },
+    {
+      "source": "guide/semantic_file_translation_from_dbt_to_cortex_analyst/{,/**}",
+      "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
+      "type": 301
     }
     ]
   }
 }
+

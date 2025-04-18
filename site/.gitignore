@@ -20,4 +20,5 @@ package-lock.json
 
 /sfguides/dist/*
 temp/
-.qodo
+site/package.json
+site/package-lock.json

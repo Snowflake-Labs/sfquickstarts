@@ -360,16 +360,8 @@ svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].corte
      
 def config_options():
 
-    st.sidebar.selectbox('Select your model:',(
-                                    'mixtral-8x7b',
-                                    'snowflake-arctic',
-                                    'mistral-large',
-                                    'llama3-8b',
-                                    'llama3-70b',
-                                    'reka-flash',
-                                     'mistral-7b',
-                                     'llama2-70b-chat',
-                                     'gemma-7b'), key="model_name")
+    st.sidebar.selectbox('Select your model:',('mistral-large2', 'llama3.1-70b',
+                        'llama3.1-8b', 'snowflake-arctic'), key="model_name")
 
     categories = session.sql("select category from docs_chunks_table group by category").collect()
 
@@ -678,16 +670,8 @@ svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].corte
      
 def config_options():
 
-    st.sidebar.selectbox('Select your model:',(
-                                    'mixtral-8x7b',
-                                    'snowflake-arctic',
-                                    'mistral-large',
-                                    'llama3-8b',
-                                    'llama3-70b',
-                                    'reka-flash',
-                                     'mistral-7b',
-                                     'llama2-70b-chat',
-                                     'gemma-7b'), key="model_name")
+    st.sidebar.selectbox('Select your model:',('mistral-large2', 'llama3.1-70b',
+                                    'llama3.1-8b', 'snowflake-arctic'), key="model_name")
 
     categories = session.table('docs_chunks_table').select('category').distinct().collect()
 
@@ -1093,3 +1077,12 @@ Congratulations! You've successfully performed RAG using Snowflake Cortex Search
 
 ---
 
+<!-- ------------------------ -->
+## Cleanup
+Duration: 1
+
+In order to avoid consuming credits, you can drop the databse used for this lab.
+
+```SQL
+drop database CC_QUICKSTART_CORTEX_SEARCH_DOCS;
+```
