@@ -115,11 +115,12 @@ Duration: 5
 
 ```py
 # Import python packages
+import streamlit as st
 import pandas as pd
 import json
 
 from snowflake.snowpark.context import get_active_session
-from snowflake.cortex import Complete, EmbedText768
+from snowflake.cortex import complete, EmbedText768
 from snowflake.snowpark.types import VectorType, FloatType
 from snowflake.core.table import Table, TableColumn
 from snowflake.core import CreateMode, Root
@@ -424,7 +425,7 @@ def make_chat_history_summary(chat_history, question):
         Please generate a single, comprehensive query that combines the above information. The query should be self-contained and allow for a complete response without requiring additional context.
     """
 
-    summary = Complete(model_name, prompt)
+    summary = complete(model_name, prompt)
 
     return summary
 
@@ -499,21 +500,6 @@ def create_prompt(user_question):
         
         Response:"""
     return prompt, file_name
-
-def complete(model_name, prompt):
-    """
-    Generate a completion for the given prompt using the specified model.
-
-    Args:
-        model_name (str): The name of the model to use for completion.
-        prompt (str): The prompt to generate a completion for.
-
-    Returns:
-        str: The generated completion.
-    """
-    
-    df_response = Complete(model_name, prompt)
-    return df_response
 
 def display_response(my_question):
     with st.status("In progress...") as status:
