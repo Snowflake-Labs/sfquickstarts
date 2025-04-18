@@ -639,6 +639,3 @@ By completing this guide, you have successfully integrated and enriched geospati
 
 - [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
 
-```
-
-```
