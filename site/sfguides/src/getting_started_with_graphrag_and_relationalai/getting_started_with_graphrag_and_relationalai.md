@@ -131,7 +131,7 @@ LANGUAGE SQL
 AS 
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
-        model,
+        "llama3-70b",
         [
             {
                 'role': 'system', 
@@ -490,7 +490,7 @@ LANGUAGE SQL
 AS 
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
-        model,
+        "llama3-70b",
         [
             {
                 'role': 'system', 
@@ -543,7 +543,7 @@ LANGUAGE SQL
 AS 
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
-        model,
+        "llama3-70b",
         [
             {
                 'role': 'system', 
