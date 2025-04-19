@@ -114,7 +114,7 @@ But first:
 Execute the following SQL statements to create the service user (SVC) and grant it access to the `SYSADMIN` and `SECURITYADMIN` roles needed for account management.
 
 ```SQL
-USE ROLE USERADMIN;
+USE ROLE ACCOUNTADMIN;
 
 CREATE USER TERRAFORM_SVC
     TYPE = SERVICE
@@ -141,9 +141,10 @@ But first, run the following to find `YOUR_SNOWFLAKE_ACCOUNT`. Refer to the [Acc
 SELECT LOWER(current_organization_name()) as your_org_name, LOWER(current_account_name()) as your_account_name;
 ```
 
-With this information, add a file to your project in the base directory named `main.tf`.
+With this information, copy the content of the following block to a new file we'll call `main.tf`.
 
-Copy the contents of the following block to your `main.tf` file and replace the organization and account names with your owns. Update the private key file path if you've created it somewhere else.
+- Replace the `your_org_name` and `your_account_name` with your own
+- Update the `private_key` file path if you've created it somewhere else
 
 ```
 terraform {
@@ -164,10 +165,12 @@ provider "snowflake" {
 }
 ```
 
+The Snowflake Provider will use the information we provided to securely authenticate with your Snowflake account as the service user.
+
 ## Declaring Resources
 Duration: 3
 
-In the the same `main.tf` file, let's add configurations for the database and the warehouse that we want Terraform to create.
+In the the same `main.tf` file, let's add two configurations for the database and the warehouse that we want Terraform to create.
 
 Copy the contents of the following block at the end of your `main.tf` file, following the provider information:
 
@@ -196,6 +199,16 @@ This is all the code needed to create these resources a database and a XS virtua
 > 
 >  **Tip** – You can split objects creation in as many `.tf` files as necessary, no need to keep everything in `main.tf`. Split them in a way that makes logical sense for your own use.
 
+Snowflake objects creation, or _resources_ in Terraform terms, all follow the same pattern. In the case of the database we just defined:
+
+- `snowflake_database` is the type of the resource. In this case, a Snowflake database
+- `tf_db` is the resource name. You can name your resource whatever you want but we suggest to make it descriptive and unique. It will be used by Terraform to identify the resource when referencing it.
+- `TF_DEMO_DB` is the name you want to give to your Snowflake object, how it will appear in Snowflake. 
+- `is_transient` is a paramter specific to this resource.
+
+
+Always consult the [documentation](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs) when you're creating new resources. 
+
 ## Preparing the Project to Run
 Duration: 3
 
@@ -209,11 +222,11 @@ $ terraform init
 
 The dependencies needed to run Terraform are downloaded to your computer.
 
-In this demo, we use a local backend for Terraform, which means that state file are stored locally on the machine running Terraform. Because Terraform state files are required to calculate all changes, its critical that you do not lose this file (`*.tfstate`, and `*.tfstate.*` for older state files), or Terraform will lose track of what resources it is managing. For any kind of multi-tenancy or automation workflows, it is highly recommended to use [Remote Backends](https://developer.hashicorp.com/terraform/language/backend/remote), which is outside the scope of this lab.
+In this demo, we use a local backend for Terraform, which means that state file are stored locally on the machine running Terraform. Because Terraform state files are required to calculate all changes, it's critical that you do not lose this file (`*.tfstate`, and `*.tfstate.*` for older state files), or Terraform will lose track of what resources it is managing. For any kind of multi-tenancy or automation workflows, it is highly recommended to use [remote backends](https://developer.hashicorp.com/terraform/language/backend/remote), which is outside the scope of this lab.
 
-The `.terraform` folder is where all provider and modules depenencies are downloaded. There is nothing important in this folder and it is safe to delete. You should add this folder, and the Terraform state files (since you do not want to be checking in sensitive information into your version control system) to `.gitignore`.
+The `.terraform` folder is where all provider and modules dependencies are downloaded. There is nothing important in this folder and it is safe to delete. You should add this folder, and the Terraform state files (since you do not want to be checking in sensitive information into your version control system) to `.gitignore`.
 
-Create a file named `.gitignore` in your project root, then add the following text to the file and save it:
+Create a file named `.gitignore` in your project root, then add the following text to the file, and save it:
 
 ```plaintext
 *.terraform*
@@ -221,7 +234,7 @@ Create a file named `.gitignore` in your project root, then add the following te
 *.tfstate.*
 ```
 
-## Commit  changes to source control
+## Commit changes to source control
 Duration: 2
 
 Run the following to check in your files for future change tracking:
@@ -233,9 +246,9 @@ $ git commit -m "Add Config, Database and Warehouse"
 $ git push origin HEAD
 ```
 
-Next, you can log in to GitHub and create a Pull Request.
+Next, you can log in to GitHub and create a pull request.
 
-In many production systems, a GitHub commit triggers a CI/CD job, which creates a plan that engineers can review. If the changes are desired, the Pull Request is merged. After the merge, a CI/CD job kicks off and applies the changes made in the main branch.
+In many production systems, a GitHub commit triggers a CI/CD job, which creates a plan that engineers can review. If the changes are desired, the pull request is merged. After the merge, a CI/CD job kicks off and applies the changes made in the main branch.
 
 To manage different environments (dev/test/prod), you can configure the Terraform code with different [input variables](https://developer.hashicorp.com/terraform/language/values/variables) and deploy to either the same Snowflake account, or different Snowflake accounts. 
 
@@ -243,7 +256,7 @@ Your specific workflow will depend on your requirements, including your complian
 
 For this lab, you can simulate the proposed CI/CD job and do a plan to see what Terraform wants to change. During the Terraform plan, Terraform performs a diff calculation to compare the desired state with the previous/current state from the state file to determine the actions that need to be done.
 
-From a shell in your project folder, run:
+From a terminal in your project folder, run:
 
 ```Shell
 $ terraform plan
@@ -256,14 +269,14 @@ Duration: 3
 
 Now that you have reviewed the plan, we simulate the next step of the CI/CD job by applying those changes to your account.
 
-1. From a shell in your project folder (with your Account Information in environment) run:
+1. From a terminal  in your project folder, run:
 
-    ```
+    ```Shell
     $ terraform apply
     ```
-1. Terraform regenerates the execution plan (unless you supply an optional path to the `plan.out` file) and applies the needed changes after manual confirmation. In this case, Terraform will create two new resources, and have no other changes.
+2. Terraform regenerates the execution plan (unless you supply an optional path to the `plan.out` file) and applies the needed changes after you manually confirm them. In this case, Terraform will create two new resources, and have no other changes.
 
-1. Log in to your Snowflake account and verify that Terraform created the database and the warehouse.
+3. Log in to your Snowflake account and verify that Terraform created the database and the warehouse.
 
 ## Changing and Adding Resources
 Duration: 5
@@ -318,8 +331,8 @@ resource "snowflake_schema" "tf_db_tf_schema" {
 
 # New provider that will use USERADMIN to create users, roles, and grants
 provider "snowflake" {
-    organization_name = "SFPSCOGS"
-    account_name      = "FVB_DEMO"
+    organization_name = "your_org_name"
+    account_name      = "your_account_name"
     user              = "TERRAFORM_SVC"
     role              = "USERADMIN"
     alias             = "useradmin"
@@ -337,7 +350,7 @@ resource "snowflake_account_role" "tf_role" {
 # Grant the new role to SYSADMIN (best practice)
 resource "snowflake_grant_account_role" "grant_tf_role_to_sysadmin" {
     provider         = snowflake.useradmin
-    role_name        = snowflake_account_role.tf_role.fully_qualified_name
+    role_name        = snowflake_account_role.tf_role.name
     parent_role_name = "SYSADMIN"
 }
 
@@ -351,17 +364,17 @@ resource "tls_private_key" "svc_key" {
 resource "snowflake_user" "tf_user" {
     provider          = snowflake.useradmin
     name              = "TF_DEMO_USER"
-    default_warehouse = snowflake_warehouse.tf_warehouse.fully_qualified_name
-    default_role      = snowflake_account_role.tf_role.fully_qualified_name
-    default_namespace = "${snowflake_database.tf_db.name}.${snowflake_schema.tf_db_tf_schema.name}"
+    default_warehouse = snowflake_warehouse.tf_warehouse.name
+    default_role      = snowflake_account_role.tf_role.name
+    default_namespace = "${snowflake_database.tf_db.name}.${snowflake_schema.tf_db_tf_schema.fully_qualified_name}"
     rsa_public_key    = substr(tls_private_key.svc_key.public_key_pem, 27, 398)
 }
 
 # Grant the new role to the new user
 resource "snowflake_grant_account_role" "grants" {
     provider          = snowflake.useradmin
-    role_name         = snowflake_account_role.tf_role.fully_qualified_name
-    user_name         = snowflake_user.tf_user.fully_qualified_name
+    role_name         = snowflake_account_role.tf_role.name
+    user_name         = snowflake_user.tf_user.name
 }
 ```
 
@@ -372,7 +385,7 @@ resource "snowflake_grant_account_role" "grants" {
 resource "snowflake_grant_privileges_to_account_role" "grant_usage_tf_db_to_tf_role" {
     provider          = snowflake.useradmin
     privileges        = ["USAGE"]
-    account_role_name = snowflake_account_role.tf_role.fully_qualified_name
+    account_role_name = snowflake_account_role.tf_role.name
     on_account_object {
         object_type = "DATABASE"
         object_name = snowflake_database.tf_db.name
@@ -383,7 +396,7 @@ resource "snowflake_grant_privileges_to_account_role" "grant_usage_tf_db_to_tf_r
 resource "snowflake_grant_privileges_to_account_role" "grant_usage_tf_db_tf_schema_to_tf_role" {
     provider          = snowflake.useradmin
     privileges        = ["USAGE"]
-    account_role_name = snowflake_account_role.tf_role.fully_qualified_name
+    account_role_name = snowflake_account_role.tf_role.name
     on_schema {
         schema_name = snowflake_schema.tf_db_tf_schema.fully_qualified_name
   }
@@ -393,7 +406,7 @@ resource "snowflake_grant_privileges_to_account_role" "grant_usage_tf_db_tf_sche
 resource "snowflake_grant_privileges_to_account_role" "grant_all_tables" {
     provider          = snowflake.useradmin
     privileges        = ["SELECT"]
-    account_role_name = snowflake_account_role.tf_role.fully_qualified_name
+    account_role_name = snowflake_account_role.tf_role.name
     on_schema_object {
         all {
             object_type_plural = "TABLES"
@@ -406,7 +419,7 @@ resource "snowflake_grant_privileges_to_account_role" "grant_all_tables" {
 resource "snowflake_grant_privileges_to_account_role" "grant_future_tables" {
     provider          = snowflake.useradmin
     privileges        = ["SELECT"]
-    account_role_name = snowflake_account_role.tf_role.fully_qualified_name
+    account_role_name = snowflake_account_role.tf_role.name
     on_schema_object {
         future {
             object_type_plural = "TABLES"
@@ -415,6 +428,14 @@ resource "snowflake_grant_privileges_to_account_role" "grant_future_tables" {
   }
 }
 ```
+
+> aside positive
+> 
+> **Tip** – When referencing other objects in the definition of a resource, it's recommend to use the fully qualified name (FQN). 
+> - In the case of an account-level object, such as a database, a role, etc., it would look like `snowflake_database.<database_name>.name` where `<database_name>` is the resource name of your database.
+> - In the case of a database and a schema-level object, such as a schema, a stage, a view, etc., it would look like `snowflake_schema.<schema_name>.fully_qualified_name` where `<schema_name>` is the resource name of your schema.
+
+> Make sure you use the name of the resource and not the actual database name or you may encounter issues. Using the FQN will help Terraform identify the resources and create them in order. Check out the [identifiers guide](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/guides/identifiers_rework_design_decisions#new-computed-fully-qualified-name-field-in-resources) for more info.
 
 5. To get the public and private key information for the application, use Terraform [output values](https://www.terraform.io/docs/language/values/outputs.html).
 
@@ -461,9 +482,9 @@ To simulate the CI/CD pipeline, we can apply the changes to conform the desired 
 
 1. From a shell in your project folder (with your Account Information in environment) run:
 
-```
-$ terraform apply
-```
+  ```Shell
+  $ terraform apply
+  ```
 
 2. Accept the changes if they look appropriate.
 3. Log in to the console to see all the changes complete.
@@ -479,9 +500,9 @@ You're almost done with the demo. We have one thing left to do: clean up your ac
 
 1. From a terminal in your project folder, run:
 
-```Shell
-$ terraform destroy
-```
+  ```Shell
+  $ terraform destroy
+  ```
 
 2. Accept the changes if they look appropriate.
 3. Log into the console to verify that all the objects are destroyed. The database, schema, warehouse, role, and the user objects created by Terraform will be automatically deleted.
