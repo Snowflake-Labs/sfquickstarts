@@ -92,7 +92,7 @@ In Snowsight, go back to the home page and select **Projects** » **Notebooks**.
 
 ![alt text](assets/I007.png)
 
-You can download the file(precisely_enrich.ipynb) from the Repository(https://github.com/zaslamz/precisely-sfquickstart.git).
+You can download the file(precisely_enrich.ipynb) from the Repository(https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit.git).
 
 ![alt text](assets/N001.png)
 
