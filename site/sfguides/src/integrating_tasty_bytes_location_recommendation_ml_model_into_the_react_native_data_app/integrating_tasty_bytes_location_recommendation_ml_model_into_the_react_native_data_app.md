@@ -3,7 +3,7 @@ id: integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_nati
 summary: Integrating Tasty Bytes Location Recommendations ML model into the React Native Data Application
 categories: Tasty-Bytes, Getting-Started, app-development, Data-Science-&-Ml
 environments: web
-status: Published 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Applications, Data Engineering, API, Data Science, Snowpark, Machine Learning
 
