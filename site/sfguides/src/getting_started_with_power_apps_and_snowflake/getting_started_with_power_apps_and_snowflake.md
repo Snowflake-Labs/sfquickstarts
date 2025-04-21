@@ -50,7 +50,8 @@ The first thing we will do is create a database and warehouse in your Snowflake 
 
 ```sql
 USE ROLE accountadmin;
-
+CREATE ROLE ANALYST;
+GRANT ROLE SYSADMIN TO ROLE ANALYST; 
 CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
 
 CREATE OR REPLACE DATABASE HOL_DB;
@@ -59,9 +60,10 @@ GRANT USAGE ON WAREHOUSE hol_wh TO ROLE public;
 grant usage on database hol_db to role public;
 grant usage on schema hol_db.public to role public;
 
+
 -- Create a Table with the columns suggested below 
-USE ROLE accountadmin;
 USE DATABASE hol_db;
+USE SCHEMA public;
 USE WAREHOUSE hol_wh;
 CREATE OR REPLACE TABLE CUSTOMER_PRESEGMENT (
 	ID NUMBER(38,0),
@@ -72,7 +74,8 @@ CREATE OR REPLACE TABLE CUSTOMER_PRESEGMENT (
 	MEMBERSHIP_YEARS NUMBER(38,0),
 	PURCHASE_FREQUENCY NUMBER(38,0),
 	PREFERRED_CATEGORY VARCHAR(16777216),
-	LAST_PURCHASE_AMOUNT NUMBER(38,2)
+	LAST_PURCHASE_AMOUNT NUMBER(38,2),
+	primary key (ID)
 );
 GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
 
@@ -97,7 +100,7 @@ Now we need to set up an app registration for Active Directory (Entra ID) OAuth,
 For the purposes of this demo, we will create a  **MAKE SURE YOU FOLLOW SERVICE PRINCIPAL AUTH** Authentication and the steps are provided
 in the document below. 
 
-https://learn.microsoft.com/en-us/connectors/snowflakev2/#supported-capabilities-for-power-apps, but you can download & run the scripts below in Azure CLI as an admin 
+[Connector_Documentation](https://learn.microsoft.com/en-us/connectors/snowflakev2/#supported-capabilities-for-power-apps), however, we have made it easy for you to download & run the automation scripts below in Azure CLI as an admin.
 
 [Script-for-Windows Users](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_win.ps1) | 
 [Script-for-Mac Users](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_Mac.ps1)
@@ -152,9 +155,27 @@ Typically your datascience teams trains and deploy the ML models, and you can in
 
 5. Click the RunALL button or click START and execute individual cell. 
 
-6. Create a Procedure to Invoke Model Predictions by running below SQL in a worksheet 
+6. Create a Procedure to Invoke Model Predictions by running below SQL in a worksheet  
 
-	[storedproc](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/segment_storedproc.sql)
+	[ storedproc ](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/segment_storedproc.sql) or
+
+```sql 
+
+USE DATABASE hol_db;
+USE SCHEMA public;
+CREATE OR REPLACE PROCEDURE segmentize(Table_Name STRING, Target_Name String)
+RETURNS VARCHAR NOT NULL
+LANGUAGE SQL
+AS
+$$
+BEGIN
+    CREATE OR REPLACE VIEW IDENTIFIER(:Target_Name)  AS SELECT a.*, (KMODES_MODEL_9_9_2024!predict(a.* )['output_feature_0'])::number as prediction from IDENTIFIER(:table_name) a;
+    RETURN 'VIEW CREATED';
+END;
+$$;
+```
+	
+	
 
 
 ### Build a Power Automate Flow
