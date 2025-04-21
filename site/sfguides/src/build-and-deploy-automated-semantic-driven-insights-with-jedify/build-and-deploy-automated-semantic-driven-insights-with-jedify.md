@@ -242,7 +242,7 @@ For additional learning, check out these resources:
 <!-- ------------------------ -->
 📖 **Jedify Documentation** – [Jedify.com/documentation](https://jedify.com/documentation)
 <!-- ------------------------ -->
-📹 **Jedify Video Demos** – [Watch on YouTube](https://youtu.be/Ufiyg4gBYzQ?feature=shared)
+📹 **Jedify Video Demo** – [Watch on YouTube](https://www.youtube.com/watch?v=t80JNKKReJE)
 <!-- ------------------------ -->
 📄 **Snowflake Cortex AI Overview** – [Snowflake Docs](https://www.snowflake.com/en/product/features/cortex/)
 <!-- ------------------------ -->
