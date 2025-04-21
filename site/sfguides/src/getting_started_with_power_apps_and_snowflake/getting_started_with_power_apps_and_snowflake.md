@@ -90,7 +90,7 @@ GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
 4. Accept the defaults and complete loading data.
 
 <!-- ------------------------ -->
-## Setup Power Apps Environment 
+## Configure Power Platform Connector 
 <a id="Azure_Setup"></a>
 ### Set up Azure AD (Entra ID) authentication for Snowflake 
 Duration: 15
@@ -105,10 +105,20 @@ in the document below.
 [Script-for-Windows Users](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_win.ps1) | 
 [Script-for-Mac Users](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_Mac.ps1)
 
+#### Setup the Connector in Power Apps or Power Automate
+Duration: 2 mins
 
+Get the values from the script output from previous step or 
+from your Entra Admin who configured your Oauth resource and client. 
+
+![connect_config_screen1](assets/connector_config1.png)
+
+Enter the client_id and secret from Entra. Click Create and ensure a successful connection is available.
+
+![alt text](assets/connector_config2.png)
 <!-- ------------------------ -->
 ### Build a PowerApp and connect to Snowflake data
-Duration: 15
+Duration: 15 mins
 
 After you have configured Power Apps Connector to Snowflake, go to Power Apps 
 1. Click Tables -> Create Virtual Table 
@@ -255,3 +265,6 @@ Congratulations! you have completed the lab.
 
 <!-- ------------------------ -->
 
+
+
+[def]: asse
