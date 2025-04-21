@@ -90,7 +90,7 @@ GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
 4. Accept the defaults and complete loading data.
 
 <!-- ------------------------ -->
-## Configure Power Platform Connector 
+## Setup Power Platform and Build App 
 <a id="Azure_Setup"></a>
 ### Set up Azure AD (Entra ID) authentication for Snowflake 
 Duration: 15
