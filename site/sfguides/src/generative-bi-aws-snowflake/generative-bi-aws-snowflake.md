@@ -1,5 +1,5 @@
 author: Bharath Suresh
-id: QUICKSTART-GENERATIVE-BI-QUICKSIGHT
+id: quickstart-generative-bi-quicksight
 summary: Build a Generative BI Dashboard using Amazon QuickSight and Amazon Q.
 categories: Getting-Started
 environments: web
