@@ -91,6 +91,7 @@ GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
 
 <!-- ------------------------ -->
 ## Setup Power Platform and Build App 
+
 <a id="Azure_Setup"></a>
 ### Set up Azure AD (Entra ID) authentication for Snowflake 
 Duration: 15
@@ -171,6 +172,7 @@ Typically your datascience teams trains and deploy the ML models, and you can in
 
 ```sql 
 
+
 USE DATABASE hol_db;
 USE SCHEMA public;
 CREATE OR REPLACE PROCEDURE segmentize(Table_Name STRING, Target_Name String)
@@ -185,8 +187,6 @@ END;
 $$;
 ```
 	
-	
-
 
 ### Build a Power Automate Flow
 Let's build a Power Automate Flow to call stored procedure you created and run the model.
