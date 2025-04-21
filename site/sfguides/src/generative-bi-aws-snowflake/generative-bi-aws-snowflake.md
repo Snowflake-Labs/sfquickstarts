@@ -17,7 +17,7 @@ This guide walks through:
 - Preparing and loading data into Snowflake
 - Connecting QuickSight to Snowflake
 - Enabling Generative BI features with Amazon Q
-- Building 15+ smart insights interactively
+- Building smart insights interactively
 
 This guide applies to any business domain where structured data and conversational analytics intersect.
 
@@ -33,7 +33,7 @@ This guide applies to any business domain where structured data and conversation
 - How to use Amazon Q for Natural Language Q&A
 
 ### What You’ll Need 
-- A Snowflake Account
+- A Snowflake Account. [Sign up for Snowflake Trial Account](https://signup.snowflake.com/)
 - AWS QuickSight Enterprise enabled
 - Kaggle Dataset
 - Python 3.x with pandas (optional)
@@ -263,26 +263,6 @@ Amazon Q generates narrative insights for:
 - Key trends
 - Regional anomalies
 - Top/worst performers
-
-## Conclusion and Resources
-
-You’ve now built a powerful, AI-enabled dashboard that:
-- Uses Snowflake for enterprise-grade data platform and querying
-- Uses Amazon QuickSight for visual exploration
-- Uses Amazon Q for Generative AI supported insights
-
-### What You Learned
-- How to ingest and query data in Snowflake
-- How to visualize live Snowflake data in QuickSight
-- How to build dashboards using AI-generated content
-
-### Related Resources
-
-- Snowflake Documentation
-- QuickSight Documentation
-- Amazon Q in QuickSight
-- Kaggle Superstore Dataset
-
 ## Clean Up
 
 ### Snowflake Clean Up
@@ -309,7 +289,7 @@ DROP SCHEMA IF EXISTS demo_db.sales_data;
 DROP DATABASE IF EXISTS demo_db;
 ```
 
-### 2. AWS Clean Up Steps
+### AWS Clean Up Steps
 
 - Disable dashboards not in use
 
@@ -317,10 +297,29 @@ DROP DATABASE IF EXISTS demo_db;
 
 - Manage SPICE capacity under Manage QuickSight > SPICE capacity
 
-### 3. Versioning & Collaboration
+### Versioning & Collaboration
 
 - Export the dashboard and share with teams
 
 - Document data definitions and synonyms used in Q Topics
 
 - Assign dataset permissions to relevant users or groups
+
+## Conclusion and Resources
+
+You’ve now built a powerful, AI-enabled dashboard that:
+- Uses Snowflake for enterprise-grade data platform and querying
+- Uses Amazon QuickSight for visual exploration
+- Uses Amazon Q for Generative AI supported insights
+
+### What You Learned
+- How to ingest and query data in Snowflake
+- How to visualize live Snowflake data in QuickSight
+- How to build dashboards using AI-generated content
+
+### Related Resources
+
+- [Snowflake Documentation](https://docs.snowflake.com/)
+- [Amazon Q for QuickSight Documentation](https://docs.aws.amazon.com/quicksight/latest/user/quicksight-gen-bi.html)
+- [Kaggle Dataset](https://www.kaggle.com/datasets/ishanshrivastava28/superstore-sales)
+
