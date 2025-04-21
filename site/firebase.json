@@ -165,7 +165,7 @@
     {
       "source": "guide/auto_ingest_twitter_data/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 404
+      "type": 301
     }
     ]
   }
