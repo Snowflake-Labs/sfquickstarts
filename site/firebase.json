@@ -161,6 +161,11 @@
       "source": "guide/semantic_file_translation_from_dbt_to_cortex_analyst/{,/**}",
       "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
       "type": 301
+    },
+    {
+      "source": "guide/auto_ingest_twitter_data/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 404
     }
     ]
   }
