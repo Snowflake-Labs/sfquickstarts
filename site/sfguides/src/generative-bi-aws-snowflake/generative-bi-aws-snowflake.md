@@ -1,11 +1,11 @@
 author: Bharath Suresh
-id: QUICKSTART-GENERATIVE-BI-QUICKSIGHT
+id: quickstart-generative-bi-quicksight
 summary: Build a Generative BI Dashboard using Amazon QuickSight and Amazon Q.
 categories: Getting-Started
 environments: web
 status: Published 
-ffeedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Generative BI, Amazon QuickSight, Amazon Q, Natural Language Q&A, Dashboarding
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Generative BI, Amazon QuickSight, Amazon Q, Natural Language Q&A, Dashboard
 
 # Build a Generative BI Dashboard with Amazon QuickSight and Amazon Q
 
@@ -322,4 +322,3 @@ You’ve now built a powerful, AI-enabled dashboard that:
 - [Snowflake Documentation](https://docs.snowflake.com/)
 - [Amazon Q for QuickSight Documentation](https://docs.aws.amazon.com/quicksight/latest/user/quicksight-gen-bi.html)
 - [Kaggle Dataset](https://www.kaggle.com/datasets/ishanshrivastava28/superstore-sales)
-
