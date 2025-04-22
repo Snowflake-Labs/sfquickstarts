@@ -193,7 +193,7 @@ resource "snowflake_warehouse" "tf_warehouse" {
 }
 ```
 
-This is all the code needed to create these resources a database and a XS virtual warehouse.
+This is all the code needed to create these resources: a database and a XS virtual warehouse.
 
 > aside positive
 > 
