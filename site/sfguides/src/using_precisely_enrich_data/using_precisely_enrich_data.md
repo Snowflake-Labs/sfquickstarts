@@ -84,6 +84,32 @@ Click on the following dataset then press **Get**.
 Leave the database name and the role option as default and then Press **Get** to install the database into your account.
 You will have access to the dataset for a period of **30 days**
 
+If you are on the AWS North Virginia region then clicking on the **Get** button will install the dataset on your snowflake account.
+
+If you are on a different region then you will get a dialog box, it will take **10 mins** to get the data ready for you.
+
+While the data is getting ready, let us setup our database, schema, warehouse and roles. Run the following commands from Snowsight SQL worksheet.
+
+```sql
+    USE ROLE ACCOUNTADMIN;
+
+    create WAREHOUSE IDENTIFIER('"ENRICH_WH"') COMMENT = '' WAREHOUSE_SIZE = 'X-Small' AUTO_RESUME = true AUTO_SUSPEND = 300 ENABLE_QUERY_ACCELERATION = false
+    WAREHOUSE_TYPE   ='STANDARD' MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 SCALING_POLICY = 'STANDARD';
+
+    CREATE ROLE ENRICH_ROLE;
+    GRANT USAGE ON WAREHOUSE ENRICH_WH TO ROLE ENRICH_ROLE;
+    GRANT OPERATE ON WAREHOUSE ENRICH_WH TO ROLE ENRICH_ROLE;
+    CREATE DATABASE SAMPLES_DB;
+    CREATE SCHEMA NOTEBOOKS;
+    GRANT OWNERSHIP ON DATABASE SAMPLES_DB TO ROLE ENRICH_ROLE;
+    GRANT OWNERSHIP ON SCHEMA SAMPLES_DB.NOTEBOOKS TO ROLE ENRICH_ROLE;
+
+    CREATE USER ENRICH_USER PASSWORD='<REDACTED>' LOGIN_NAME='ENRICH_USER' MUST_CHANGE_PASSWORD=FALSE, DISABLED=FALSE, DEFAULT_WAREHOUSE='ENRICH_WH',
+    DEFAULT_NAMESPACE='SAMPLES_DB.NOTEBOOKS', DEFAULT_ROLE='ENRICH_ROLE';
+
+    GRANT ROLE ENRICH_ROLE TO USER ENRICH_USER;
+```
+
 ## Display Data on Map
 
 Duration: 10
