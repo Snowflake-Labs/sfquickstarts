@@ -201,7 +201,7 @@ This is all the code needed to create these resources: a database and a XS virtu
 
 Snowflake objects creation, or _resources_ in Terraform terms, all follow the same pattern. In the case of the database we just defined:
 
-- `snowflake_database` is the type of the resource. In this case, a Snowflake database
+- `snowflake_database` is the type of the resource. In this case, a Snowflake database.
 - `tf_db` is the resource name. You can name your resource whatever you want but we suggest to make it descriptive and unique. It will be used by Terraform to identify the resource when referencing it.
 - `TF_DEMO_DB` is the name you want to give to your Snowflake object, how it will appear in Snowflake. 
 - `is_transient` is a paramter specific to this resource.
