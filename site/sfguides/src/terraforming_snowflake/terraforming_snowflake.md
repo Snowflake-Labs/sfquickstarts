@@ -46,6 +46,7 @@ This tutorial demonstrates how you can use Terraform to manage your Snowflake co
 - How to manage objects from code/source control
 
 ### What You’ll Need
+- A Snowflake account - create a [trial account](https://signup.snowflake.com/) if needed
 - A [GitHub](https://github.com/) account
 - A [Git](https://github.com/git-guides/install-git) command-line client
 - A text editor of your choice
@@ -135,7 +136,7 @@ Duration: 1
 
 We need to pass provider information to Terraform so it can authenticate as the user on our Snowflake account.
 
-But first, run the following to find `YOUR_SNOWFLAKE_ACCOUNT`. Refer to the [Account Identifiers documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#format-1-preferred-account-name-in-your-organization) for more information.
+But first, run the following to find `YOUR_SNOWFLAKE_ACCOUNT`. Refer to the [account identifiers documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier#format-1-preferred-account-name-in-your-organization) for more information.
 
 ```SQL
 SELECT LOWER(current_organization_name()) as your_org_name, LOWER(current_account_name()) as your_account_name;
@@ -176,20 +177,20 @@ Copy the contents of the following block at the end of your `main.tf` file, foll
 
 ```
 resource "snowflake_database" "tf_db" {
-  name = "TF_DEMO_DB"
+  name         = "TF_DEMO_DB"
   is_transient = false
 }
 
 resource "snowflake_warehouse" "tf_warehouse" {
-  name = "TF_DEMO_WH"
-  warehouse_type = "STANDARD"
-  warehouse_size = "XSMALL"
-  max_cluster_count = 1
-  min_cluster_count = 1
-  auto_suspend = 60
-  auto_resume = true
+  name                      = "TF_DEMO_WH"
+  warehouse_type            = "STANDARD"
+  warehouse_size            = "XSMALL"
+  max_cluster_count         = 1
+  min_cluster_count         = 1
+  auto_suspend              = 60
+  auto_resume               = true
   enable_query_acceleration = false
-  initially_suspended = true
+  initially_suspended       = true
 }
 ```
 
@@ -295,16 +296,16 @@ You'll see that most of this is what you would expect. The only new part is crea
 1. In the `main.tf` file, change the warehouse size from `XSMALL` to `SMALL`:
 
 ```
-resource "snowflake_warehouse" "warehouse" {
-  name = "TF_DEMO_WH"
-  warehouse_type = "STANDARD"
-  warehouse_size = "SMALL"
-  max_cluster_count = 1
-  min_cluster_count = 1
-  auto_suspend = 60
-  auto_resume = true
+resource "snowflake_warehouse" "tf_warehouse" {
+  name                      = "TF_DEMO_WH"
+  warehouse_type            = "STANDARD"
+  warehouse_size            = "SMALL"
+  max_cluster_count         = 1
+  min_cluster_count         = 1
+  auto_suspend              = 60
+  auto_resume               = true
   enable_query_acceleration = false
-  initially_suspended = true
+  initially_suspended       = true
 }
 ```
 
@@ -322,13 +323,6 @@ resource "snowflake_schema" "tf_db_tf_schema" {
 3. Still in `main.tf`, add the following resources to create a role, a user, and grant the role to the user:
 
 ```
-# Create a new schema in the DB
-resource "snowflake_schema" "tf_db_tf_schema" {
-  name                = "TF_DEMO_SC"
-  database            = snowflake_database.tf_db.name
-  with_managed_access = false
-}
-
 # New provider that will use USERADMIN to create users, roles, and grants
 provider "snowflake" {
     organization_name = "your_org_name"
