@@ -2,7 +2,7 @@ summary: Accelerating Data Science with Snowflake and Dataiku
 id: data_science_with_dataiku
 categories: data-science-&-ml,partner-integrations
 environments: web
-status: Published
+status: Archived
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Dataiku
 

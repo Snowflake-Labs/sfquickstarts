@@ -3,7 +3,7 @@ id: getting-started-with-predicting-insurance-claims-regression-model
 summary: This quickstart provides an end-to-end workflow for predicting insurance claim outcomes using machine learning, focusing on feature engineering, model training, and deployment.
 categories: Getting-Started, data-science, Data-Science-&-Ml
 environments: web
-status: Published
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 
