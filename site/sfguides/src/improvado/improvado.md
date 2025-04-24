@@ -3,7 +3,7 @@ id: improvado
 summary: Getting Started guide to show how users can use Improvado Composable “Agentic” Data Platform with Snowflake
 categories: Getting-Started,partner-integrations,marketing
 environments: web
-status: Published
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started
 

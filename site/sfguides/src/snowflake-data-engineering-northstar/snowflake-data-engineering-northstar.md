@@ -153,7 +153,7 @@ CREATE OR REPLACE SCHEMA raw_pos;
 
 4. Run this code by highlighting these two statements and clicking the Run button at the top right of the SQL worksheet.
 
-5. Next, navigate to the **copy_into.sql** file in the INSERT-REPO-NAME repo. Copy the contents of this file.
+5. Next, navigate to the **copy_into.sql** file in the **sfguide-snowflake-northstar-data-engineering** repo. Copy the contents of this file.
 
 6. Navigate back to the SQL worksheet you opened. Paste in the code you copied under the two lines of SQL you wrote in the previous step.
 
@@ -166,7 +166,7 @@ type = 'csv';
 
 Run this command.
 
-8. In the next block of SQL, we create the Snowflake stage that points to the S3 bucket containing the CSV files. It's missing the file format argument that's necessary during the loading process. Below the `url` parameter, type:
+8. In the next block of SQL, with the comment `-- Specify the file format below:`, we create the Snowflake stage that points to the S3 bucket containing the CSV files. It's currently missing the file format argument that's necessary during the loading process. Below the `url` parameter, type:
 
 ```sql
 file_format = tasty_bytes.public.csv_ff;
@@ -301,11 +301,11 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-8. Now that we've found a likely culprit behind the drop in sales, so let's create a view that tracks windspeed. We'll use this view later on in our pipeline. Run the final block of SQL to create the view.
+8. Now that we've found a likely culprit behind the drop in sales, so let's create a view that tracks windspeed. We'll use this view later on in our pipeline. Locate the next block of SQL. Add `windspeed_hamburg` to the end of the first line, so that the line reads `CREATE OR REPLACE VIEW tasty_bytes.harmonized.windspeed_hamburg` and names our view. Run the final block of SQL to create the view.
 
 ```sql
 -- Create a view that tracks windspeed for Hamburg, Germany
-CREATE OR REPLACE VIEW tasty_bytes.harmonized.--add name of view
+CREATE OR REPLACE VIEW tasty_bytes.harmonized. --add name of view
     AS
 SELECT
     dw.country_desc,
@@ -415,7 +415,7 @@ Let's go ahead and create the app for our analysts.
 
 2. Navigate to "Projects", then click on "Streamlit".
 
-3. At the top, create a new Streamlit app. Name the app whatever you'd like.
+3. At the top, create a new Streamlit app. Name the app "HAMBURG_GERMANY_TRENDS".
 
 4. For the app location, select **TASTY_BYTES** as the database, and **HARMONIZED** for the schema. Leave everything else as-is.
 

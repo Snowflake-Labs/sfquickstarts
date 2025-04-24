@@ -19,7 +19,9 @@ Cortex Agents orchestrate across both structured and unstructured data sources t
 Using the two services together allows users to build a copilot in Microsoft with all of their Microsoft data and tooling alongside Snowflake Cortex services on top of their Snowflake data with efficiently and securely (with Oauth support).
 
 ### Use Case
-In this use cases we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search and Analyst that can be used by our copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
+In this use cases we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search (for unstructured data) and Analyst (for structured data) then wrap a Cortex Agent around it so that it can combine both the services in a unified agentic experience. This can then be used by Copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
+
+Snowflake Cortex has proven to be a best-in-class platform for building GenAI services and agents with your data and while there is overlap with functionality in Microsoft Copilot Studio we see many customers who want to build GenAI services in Snowflake Cortex then materialize those services to MS Copilot. Having MS Copilot serve as the single Copilot interface for all GenAI services and agents.
 
 
 ### Prerequisites
@@ -51,10 +53,9 @@ In this use cases we will build two data sources, one with structured sales data
 - A Microsoft Copilot with connectivity to the Snowflake Agent
 
 <!-- ------------------------ -->
-## Configure Oauth
+## Configure Oauth (Option 1)
 Duration: 18
 
-In this section, you will create a table in Snowflake using the Iceberg format and also create a BigLake (external) table in BigQuery that points to the same Iceberg files.
 
 ### Configure the OAuth resource in Microsoft Entra ID
 - Navigate to the Microsoft Azure Portal and authenticate.
@@ -174,6 +175,224 @@ GRANT ROLE ANALYST TO USER SNOWSQL_OAUTH_USER;
 select system$verify_external_oauth_token(‘<token>’);
 ```
 <!-- ------------------------ -->
+## Configure Oauth (Option 2)
+
+Copy and paste the below power shell script into a text editor.
+- Replace < tenant id > with your Microsoft tenant id
+- Save it as "AppCreationAndConfig.ps1"
+
+```
+$modules = @(
+    @{ Name = "Microsoft.Graph.Authentication"; InstallCommand = "Install-Module -Name Microsoft.Graph.Authentication -Force -Scope CurrentUser -Verbose" },
+    @{ Name = "Microsoft.Graph.Applications"; InstallCommand = "Install-Module -Name Microsoft.Graph.Applications -Force -Scope CurrentUser -Verbose" },
+    @{ Name = "Microsoft.Graph.Identity.SignIns"; InstallCommand = "Install-Module -Name Microsoft.Graph.Identity.SignIns -Force -Scope CurrentUser -Verbose" }
+)
+
+foreach ($module in $modules) {
+    if (-not (Get-Module -ListAvailable -Name $module.Name)) {
+        try {
+            Invoke-Expression $module.InstallCommand
+        } catch {
+            Write-Host "Warning: Failed to install $($module.Name). Continuing..."
+        }
+    }
+}
+
+# Connect to Microsoft Graph with required scopes
+Connect-MgGraph -Scopes "Application.ReadWrite.All", "Directory.ReadWrite.All" -TenantId "< tenant id >"
+ 
+$resourceAppName = Read-Host "Enter Resource App Name"
+$clientAppName = Read-Host "Enter Client App Name"
+$roleName = Read-Host "Enter App Role Name"
+$tenantId = Read-Host "Enter Tenant ID"
+
+# Create resource application
+$resourceAppParams = @{
+    DisplayName = $resourceAppName
+    SignInAudience = "AzureADMyOrg"
+}
+$resourceApp = New-MgApplication @resourceAppParams
+Start-Sleep -Seconds 10
+$resourceAppId = $resourceApp.AppId
+$resourceObjectId = $resourceApp.Id
+
+Write-Host "Resource App created: $resourceAppId"
+
+# Create client application
+$clientAppParams = @{
+    DisplayName = $clientAppName
+    SignInAudience = "AzureADMyOrg"
+}
+$clientApp = New-MgApplication @clientAppParams
+Start-Sleep -Seconds 10
+$clientAppId = $clientApp.AppId
+$clientObjectId = $clientApp.Id
+Write-Host "Client App created: $clientAppId"
+
+# Set identifier URI for resource app
+$identifierUri = "api://$resourceAppId"
+Update-MgApplication -ApplicationId $resourceApp.Id -IdentifierUris @($identifierUri)
+
+# Create client secret
+$passwordCredential = @{
+    DisplayName = "SnowflakeSecret"
+    EndDateTime = (Get-Date).AddYears(1)
+}
+$secret = Add-MgApplicationPassword -ApplicationId $clientApp.Id -PasswordCredential $passwordCredential
+Write-Host "Secret created = $($secret.SecretText)"
+
+# Create app role
+$appRole = @{
+    AllowedMemberTypes = @("Application")
+    Description = "Snowflake app role"
+    DisplayName = $roleName
+    Id = [Guid]::NewGuid()
+    IsEnabled = $true
+    Value = "session:role:$roleName"
+}
+
+# Get existing app roles and add new one
+$existingApp = Get-MgApplication -ApplicationId $resourceApp.Id
+$appRoles = $existingApp.AppRoles + $appRole
+Update-MgApplication -ApplicationId $resourceApp.Id -AppRoles $appRoles
+
+# Create API permission scope
+$scope = @{
+    Id = [Guid]::NewGuid()
+    Value = "session:scope:$roleName"
+    AdminConsentDescription = "Can administer the Snowflake account"
+    AdminConsentDisplayName = "Account Admin"
+    IsEnabled = $true
+    Type = "Admin"
+}
+
+$api = @{
+    Oauth2PermissionScopes = @($scope)
+}
+Update-MgApplication -ApplicationId $resourceApp.Id -Api $api
+
+# Create service principals
+$resourceSP = New-MgServicePrincipal -AppId $resourceAppId
+Start-Sleep -Seconds 10
+
+$clientSP = New-MgServicePrincipal -AppId $clientAppId
+Start-Sleep -Seconds 10
+
+# Assign app role
+$appRoleAssignment = @{
+    PrincipalId = $clientSP.Id
+    ResourceId = $resourceSP.Id
+    AppRoleId = $appRole.Id
+}
+New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $clientSP.Id -BodyParameter $appRoleAssignment
+
+# Grant OAuth2 permission
+$permissionGrant = @{
+    ClientId = $clientSP.Id
+    ConsentType = "AllPrincipals"
+    ResourceId = $resourceSP.Id
+    Scope = $scope.Value
+}
+New-MgOauth2PermissionGrant -BodyParameter $permissionGrant
+
+# Configure required resource access
+$requiredResourceAccess = @{
+    ResourceAppId = $resourceAppId
+    ResourceAccess = @(
+        @{
+            Id = $scope.Id
+            Type = "Scope"
+        },
+        @{
+            Id = $appRole.Id
+            Type = "Role"
+        }
+    )
+}
+Update-MgApplication -ApplicationId $clientApp.Id -RequiredResourceAccess @($requiredResourceAccess)
+
+# Get access token
+$tokenUrl = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
+$body = @{
+    client_id = $clientAppId
+    client_secret = $secret.SecretText
+    scope = "$resourceAppId/.default"
+    grant_type = "client_credentials"
+}
+
+$tokenResponse = Invoke-RestMethod -Method Post -Uri $tokenUrl -Body $body
+$accessToken = $tokenResponse.access_token
+Write-Host "Access Token: $accessToken"
+
+# Decode token
+$tokenParts = $accessToken -split '\.'
+$payload = $tokenParts[1]
+# Add padding to the payload
+switch ($payload.Length % 4) {
+    2 { $payload += '==' }
+    3 { $payload += '=' }
+}
+$decodedPayload = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($payload))
+$payloadObject = $decodedPayload | ConvertFrom-Json
+$sub = $payloadObject.sub
+
+# Save output to file
+$desktopPath = [System.Environment]::GetFolderPath("Desktop")
+$outputFile = "snowflakeinfo.txt"
+
+$outputContent = @"
+============================================================================================================================
+Snowflake power platform connection info
+============================================================================================================================
+Tenant: $TenantId
+Client ID: $clientAppId
+Client Secret: $($secret.SecretText)
+Resource URL: $resourceAppId
+
+============================================================================================================================
+Snowflake SQL Commands. Please execute these commands on Snowflake for adding Security Integration and Creating User, Role
+============================================================================================================================
+create security integration external_azure
+    type = external_oauth
+    enabled = true
+    external_oauth_any_role_mode = 'ENABLE'
+    external_oauth_type = azure
+    external_oauth_issuer = 'https://sts.windows.net/$TenantId/'
+    external_oauth_jws_keys_url = 'https://login.microsoftonline.com/$TenantId/discovery/v2.0/keys'
+    external_oauth_audience_list = ('$resourceAppId')
+    external_oauth_token_user_mapping_claim = (upn,sub)
+    external_oauth_snowflake_user_mapping_attribute = 'login_name';
+
+ALTER ACCOUNT SET EXTERNAL_OAUTH_ADD_PRIVILEGED_ROLES_TO_BLOCKED_LIST = FALSE;
+
+CREATE OR REPLACE USER AAD_SP_USER
+    LOGIN_NAME = '$sub' 
+    DISPLAY_NAME = 'AAD_SP_USER' 
+    COMMENT = 'Snowflake User';
+
+CREATE ROLE IF NOT EXISTS $roleName;
+
+GRANT ROLE $roleName TO USER AAD_SP_USER;
+"@
+
+$outputContent | Out-File -FilePath $outputFile -Encoding UTF8
+Write-Host "Info saved to: $outputFile"
+```
+
+Go to your Azure Portal and open up a Powershell terminal and upload the Powershell script.
+
+![](assets/powershell.png)
+
+After uploading the script you will execute it by running:
+```
+./AppCreationAndConfig.ps1
+```
+
+You will be prompted to name your registration and provide your tenant id again. This should all take about 1-2 minutes! Doing everything that is done manually in Option 1.
+
+You will then download the snowflakeinfo.txt file and use that code to create your security integration and user in Snowflake.
+
+<!-- ------------------------ -->
 ## Set Up Snowflake Environment
 Duration: 8
 
@@ -284,6 +503,8 @@ To set up Cortex Analyst you will have to upload a semantic file.
 - Click "+ Files" in the top right
 - Browse and select sales_metrics_model.yaml file
 - Click "Upload"
+
+Cortex Analyst is a highly accurate text to sql generator and in order to produce highly accurate results a semantic file such as this one is required. Cortex Analyst will use this semantic file along with user prompts to generate accurate SQL.
 
 Now run the below code in the same SQL worksheet to create a Stored Procedure that calls a Snowflake Cortex Agents and will use a llama model to determine whether or not to use the Search or Analyst.
 
