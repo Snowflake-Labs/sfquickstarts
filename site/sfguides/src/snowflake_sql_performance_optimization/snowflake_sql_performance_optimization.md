@@ -37,10 +37,10 @@ How to apply the following techniques to improve query performance.
   - Search Optimization Service
   - Query Acceleration Service
 
-## Creating a Step
+## Setup
 Duration: 2
 
-Make sure you have the following tables with the correct contents under schema `SUMMIT_2025_SQL_PERF_HOL.WEB_TRAFFIC_EXAMPLE`:
+Make sure you have the following tables with the correct contents under schema `DEFAULT_DATABASE.SQL_PERF_LAB`:
 
 - CATEGORY
   - List of website category names
@@ -70,6 +70,8 @@ Make sure you have the following tables with the correct contents under schema `
 Verify that they have the correct number of records in them:
 
 ```sql
+USE SCHEMA DEFAULT_DATABASE.SQL_PERF_LAB;
+
 SELECT COUNT(1) FROM QUESTION;
 -- 12
 
@@ -86,7 +88,7 @@ SELECT COUNT(1) FROM USER_PROFILE;
 -- 0
 
 SELECT COUNT(1) FROM TRAFFIC;
--- 160M
+-- ~ 160M
 ```
 
 
@@ -94,9 +96,9 @@ SELECT COUNT(1) FROM TRAFFIC;
 ## Data Transformation
 Duration: 7
 
-The table USER_SRC_RAW_50000 contains the raw data format, which we will need to transform into the table USER_PROFILE. Each question/profile, e.g., First Name or Last Name, will be one entry in the USER_PROFILE table. 
+The table `USER_SRC_RAW_50000` contains the raw data format, which we will need to transform into the table `USER_PROFILE`. Each question/profile, e.g., First Name or Last Name, will be one entry in the `USER_PROFILE` table. 
 
-For example, one record in table USER_SRC_RAW_50000 looks like below:
+For example, one record in table `USER_SRC_RAW_50000` looks like below:
 
 <table>
   <tr>
@@ -116,7 +118,7 @@ East Kayla, LA 73924|15018|Saint Barthelemy|Cook Islands|Dance movement psychoth
 
 The DATA column contains the user’s profile details, which are mapped to certain profiles in order and separated by a ‘|’ character.
 
-We would need to transform the data into the following format in the USER_PROFILE table:
+We would need to transform the data into the following format in the `USER_PROFILE` table:
 
 <table>
   <tr>
@@ -199,7 +201,7 @@ We would need to transform the data into the following format in the USER_PROFIL
   </tr>
 </table>
 
-It is designed this way because the list of user profiles (survey questions) can be dynamic. Therefore, it is not practical to have a fixed number of columns in the USER_PROFILE table if we design it horizontally rather than vertically. This allows more profiles to be added easily in the future.
+It is designed this way because the list of user profiles (survey questions) can be dynamic. Therefore, it is not practical to have a fixed number of columns in the `USER_PROFILE` table if we design it horizontally rather than vertically. This allows more profiles to be added easily in the future.
 
 Run the following queries to examine the content of the sample table:
 
@@ -209,7 +211,7 @@ SELECT * FROM USER_SRC_RAW_50000 LIMIT 1000;
 SELECT * FROM QUESTION;
 ```
 
-One assumption that we need to make here is that the order of data in the DATA column of table USER_SRC_RAW_50000 is in the following order in terms of user profiles:
+One assumption that we need to make here is that the order of data in the DATA column of table `USER_SRC_RAW_50000` is in the following order in terms of user profiles:
 
 ```
 first_name|last_name|gender|dob|email|income|phone_number|address|postcode|country|nationality|occupation
@@ -306,7 +308,7 @@ Go ahead to create this Stored Procedure (SP) and then run it using the followin
 call data_loading_v1();
 ```
 
-It should take around one and a half to two minutes on an XSMALL warehouse. After it finishes, you can go to the Query History page in Snowsight to see the list of children INSERT queries triggered by the SP. Since we have 50K samples, it runs the INSERT batch 5 times, and each of them takes around 20 seconds or so:
+It should take around two minutes on an XSMALL warehouse. After it finishes, you can go to the Query History page in Snowsight to see the list of children INSERT queries triggered by the SP. Since we have 50K samples, it runs the INSERT batch 5 times, and each of them takes around 20 seconds or so:
 
 ![Query History](assets/image5.png)
 
@@ -517,15 +519,15 @@ This is a sign that the partition pruning is not working, and we need to focus o
 <!-- ------------------------ -->
 ## Clustered Table
 
-Though there were 4 TableScans, only 2 tables were involved, namely USER_PROFILE and TRAFFIC. Let’s focus on the TRAFFIC table first, as it was the main bottleneck from the above query.
+Though there were 4 TableScans, only 2 tables were involved, namely `USER_PROFILE` and `TRAFFIC`. Let’s focus on the `TRAFFIC` table first, as it was the main bottleneck from the above query.
 
-If we check the query, we have a filter that is applied to the TRAFFIC table on the TIMESTAMP column:
+If we check the query, we have a filter that is applied to the `TRAFFIC` table on the `TIMESTAMP` column:
 
 ```sql
 t.timestamp between '2025-01-01' and '2025-02-01'
 ```
 
-Also, we had a JOIN condition on the CATEGORY_ID column:
+Also, we had a JOIN condition on the `CATEGORY_ID` column:
 
 ```sql
 join category c on (
@@ -535,7 +537,7 @@ join category c on (
 
 Adding clustering keys to those 2 columns can help us perform the partition pruning and improve the table scan.
 
-However, before doing so, let’s have a look at the TRAFFIC table on how well it is clustered based on those two columns:
+However, before doing so, let’s have a look at the `TRAFFIC` table on how well it is clustered based on those two columns:
 
 ```sql
 select system$clustering_information(
@@ -580,11 +582,11 @@ In my lab, it returned the following (it might be slightly different from yours)
 
 A couple of things here to note:
 
-- The cardinality (the distinct number of values) on those two columns is very high, meaning that there are many different distinct values. This is due to the value of TIMESTAMP, which records up to milliseconds. This is OK when distributing the data across different partitions, however, it will be very expensive to maintain, as one single new value from the middle of the partition will result in all data from later TIMESTAMP values being shifted across all the remaining partitions.
-- There are 539 partitions in the table; however, the values of AVERAGE_OVERLAPS and AVERAGE_DEPTH are very close to this value. This means that pretty much all partitions have overlapping values, so this table is not well clustered at all.
-- For more information on how to interpret the clustering information, please refer to Clustering Information Maintained for Micro-partitions and SYSTEM$CLUSTERING_INFORMATION
+- The cardinality (the distinct number of values) on those two columns is very high, meaning that there are many different distinct values. This is due to the value of `TIMESTAMP`, which records up to milliseconds. This is OK when distributing the data across different partitions, however, it will be very expensive to maintain, as one single new value from the middle of the partition will result in all data from later `TIMESTAMP` values being shifted across all the remaining partitions.
+- There are 539 partitions in the table; however, the values of `AVERAGE_OVERLAPS` and `AVERAGE_DEPTH` are very close to this value. This means that pretty much all partitions have overlapping values, so this table is not well clustered at all.
+- For more information on how to interpret the clustering information, please refer to Clustering Information Maintained for Micro-partitions and `SYSTEM$CLUSTERING_INFORMATION`
 
-Let’s add the clustering keys on the TRAFFIC table, by creating a new table so that we can compare:
+Let’s add the clustering keys on the `TRAFFIC` table, by creating a new table so that we can compare (do not run it yet):
 
 ```sql
 create or replace table traffic_clustered 
@@ -595,11 +597,27 @@ select * from traffic
 order by timestamp, category_id;
 ```
 
-Adding an ORDER BY clause at the end here can help us cluster the table at the creation time, so we do not need to wait for the auto clustering to kick in to see the effects.
+Adding an `ORDER BY` clause at the end here can help us cluster the table at the creation time, so we do not need to wait for the auto clustering to kick in to see the effects.
 
 Due to its size, this query might take some time to run on an XSMALL warehouse. In my test, it took around 5 minutes. Please feel free to use a larger warehouse, like a MEDIUM-sized warehouse, to run it; it can save you some waiting time (around 40-50 seconds). 
 
+```sql
+create warehouse medium warehouse_size = medium;
+use warehouse medium;
+
+create or replace table traffic_clustered 
+cluster by (
+    timestamp::date, category_id
+) as
+select * from traffic 
+order by timestamp, category_id;
+```
+
 Please remember to switch back to the XSMALL warehouse to continue the following exercises so that we can compare them with the previous runs.
+
+```sql
+use warehouse default_wh;
+```
 
 Now, let’s check the clustering information on the new table and compare it with the previous result:
 
@@ -640,9 +658,9 @@ select system$clustering_information(
 }
 ```
 
-We can see now the AVERAGE_OVERLAPS and AVERAGE_DEPTH are only around 2 out of 302 partitions. This is a good indication that this new table is very well clustered.
+We can see now the `AVERAGE_OVERLAPS` and `AVERAGE_DEPTH` are only around 2 out of 302 partitions. This is a good indication that this new table is very well clustered.
 
-Now, change the query to scan against the TRAFFIC_CLUSTERED table instead:
+Now, change the query to scan against the `TRAFFIC_CLUSTERED` table instead:
 
 ```sql
 with age_20_to_30 as (
@@ -688,7 +706,7 @@ order by c.name, visits desc
 ;
 ```
 
-The overall query plan should look the same, however, this time we scanned far fewer partitions on the TRAFFIC_CLUSTERED table and should finish the query at around the 7-8 seconds mark on an XSMALL warehouse:
+The overall query plan should look the same, however, this time we scanned far fewer partitions on the `TRAFFIC_CLUSTERED` table and should finish the query at around the 7-8 seconds mark on an XSMALL warehouse:
 
 ![Query Plan](assets/image4.png)
 
@@ -702,13 +720,15 @@ So we also need to focus on that.
 ## Clustered Materialized Views
 Duration: 10
 
-We could also add clustering keys to the USER_PROFILE table. However, due to its setup, the VALUE column can be different types when performing filters based on different questions, and it can be of different to set up the clustering key on the ANSWER table based on both the QUESTION_ID and VALUE columns.
+We could also add clustering keys to the `USER_PROFILE` table. However, due to its setup, the `VALUE` column can be different types when performing filters based on different questions, and it can be of different to set up the clustering key on the `USER_PROFILE` table based on both the `QUESTION_ID` and `VALUE` columns.
 
-One way to do so is to use the Materialized Views (MV), and we can create one MV per profile data type. For example, we can create one MV for the STRING data type, one MV for the DATE data type, and another one for the INTEGER. This can help us fully use the clustering methods when applying those different types.
+One way to do so is to use the Materialized Views (MV), and we can create one MV per profile data type. For example, we can create one MV for the `STRING` data type, one MV for the `DATE` data type, and another one for the `INTEGER`. This can help us fully use the clustering methods when applying those different types.
 
 Let’s define the following Materialized Views:
 
 ```sql
+use warehouse medium;
+
 create or replace materialized view user_profile_string 
 cluster by (question_id, value) 
 as
@@ -738,9 +758,11 @@ as
 select question_id, value::int as value, uuid
 from user_profile
 where question_id in (10);
+
+use warehouse default_wh;
 ```
 
-Notice that we will cast the value to its expected data type for best performance. Also, for the INT data type, the values can have a large number of cardinalities, which can affect the clustering, so we added a UDF function (cluster_by_int) on top of it to round the value to nearly a thousand (this can be adjusted based on the nature of those integers).
+Notice that we will cast the value to its expected data type for best performance. Also, for the `INTEGER` data type, the values can have a large number of cardinalities, which can affect the clustering, so we added a UDF function (cluster_by_int) on top of it to round the value to nearly a thousand (this can be adjusted based on the nature of those integers).
 
 Again, please feel free to switch to a larger warehouse to run to save some time, and then switch back to the XSMALL warehouse to continue.
 
