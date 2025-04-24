@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Financial Services, Asset Management, Data Engineering, SQL, Python, Dashboard
 
-# Build a Financial Services Asset Management Demo with 3 Billion Trades
+# Build a Financial Services Asset Management P&L Dashboard
 
 <!-- ------------------------ -->
 ## Overview
@@ -15,7 +15,7 @@ Duration: 5
 
 Data silos have been a significant problem in the Financial Services industry. During the Global Financial Crisis of 2008, firms without a Single Version of the Truth (SVOT) made multi-million dollar trading decisions without visibility into their risk, exposure, and the cascading impact of their positions. These data silos led to multi-billion dollar losses and bankruptcies.
 
-In this tutorial, you'll build a Financial Services Asset Management demo in Snowflake that scales to handle 3 billion synthetic trades while providing real-time cash and profit/loss calculations. You'll learn how to leverage Snowflake's unique architecture to scale compute resources up and down as needed, create a dashboard for monitoring positions, and implement DevOps practices like zero-copy cloning and time travel.
+In this guide, you'll build a Financial Services Asset Management demo in Snowflake that scales to handle 3 billion synthetic trades while providing real-time cash and profit/loss calculations. You'll learn how to leverage Snowflake's unique architecture to scale compute resources up and down as needed, create a dashboard for monitoring positions, and implement DevOps practices like zero-copy cloning and time travel.
 
 ### What You'll Learn
 - How to query free stock market history data instantly without copying or moving data
@@ -193,7 +193,7 @@ select fake_py('zh_CN','name',null)::varchar as FAKE_NAME from table(generator(r
 Run the entire worksheet to create the necessary tables and functions.
 
 <!-- ------------------------ -->
-## Generating Billions of Trades
+## Generate Dataset
 Duration: 20
 
 ### Create the Trades Worksheet
@@ -673,10 +673,10 @@ For extra credit: You can now drag and drop the tiles to arrange them as desired
 ![Figure 33](assets/figure33.jpg)
 
 <!-- ------------------------ -->
-## Optional Cleanup
+## Cleanup
 Duration: 5
 
-If you want to clean up all the objects created in this tutorial, you can create a new worksheet named "Finserv 90 reset" with the following SQL:
+If you want to clean up all the objects created in this guide, you can create a new worksheet named "Finserv 90 reset" with the following SQL:
 
 ```sql
 -- Optional Script to remove all objects created during this demo
