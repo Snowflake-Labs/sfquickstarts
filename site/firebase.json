@@ -233,11 +233,6 @@
       "type": 301
     },
     {
-      "source": "guide/orchestration-framework-running-multiple-containerized-jobs-parallel/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
       "source": "guide/kepler_gl_maps_inside_snowflake/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
