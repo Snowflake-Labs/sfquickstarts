@@ -82,7 +82,8 @@ Once running, we can import the Notebook, we shouldn't need to modify much of th
 ![Import Notebook](assets/Import_Notebook.png)
 Click in the Plus sign in the Notebooks panel in Snowsight to import.
 
-Step through each cell and execute until you reach Cell 12 `Create the sql for feature store` this is where we start to save the features that OpenFE created into the Feature Store.
+The first few cells install the packages that we will use and retrieve the data from Snowflake.
+Step through each cell and execute until you reach Cell 12 `Create the sql for feature store` this is where we save the features that OpenFE created into the Feature Store.
 
 <!-- ------------------------ -->
 
