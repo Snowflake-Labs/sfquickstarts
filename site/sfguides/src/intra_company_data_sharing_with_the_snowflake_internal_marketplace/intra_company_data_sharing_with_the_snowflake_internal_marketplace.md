@@ -70,7 +70,13 @@ Signup for a trial account [here](https://signup.snowflake.com/)
 - Login as `sales_admin` to your Primary Account from Step 1 and execute the following commands in a worksheet. 
 - In the first two commands, enter your own email and password!
 
+<details>
+  <summary>Click here to expand code</summary>
+
 ```sql
+-- Run this code in your PRIMARY Account
+-- Make sure you update the three variables below (email_var, firstname_var and lastname_var)
+
 USE ROLE accountadmin;
 
 -- Use the same name and email for all accounts
@@ -115,11 +121,17 @@ GRANT ROLE marketing_analyst_role TO USER marketing_admin;
 GRANT CREATE SHARE ON ACCOUNT TO ROLE marketing_analyst_role;
 GRANT CREATE ORGANIZATION LISTING ON ACCOUNT TO ROLE marketing_analyst_role;
 ```
+</details>
+
 Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
 
 Now, run the following commands to create the next two accounts that you need. You can use the same worksheet as above. 
 
+<details>
+<summary><b>Click here to expand code</b></summary>
+
 ```sql
+-- Run this code in your PRIMARY account
 -- Create a secondary account in the same region (default!):
 USE ROLE orgadmin;
 
@@ -148,7 +160,7 @@ CREATE ORGANIZATION ACCOUNT hol_org_account
 
 SHOW ACCOUNTS;
 ```
-
+</details>
 
 ### Step 3: Configure the second account `hol_account2`
 In a separate browser tab...
