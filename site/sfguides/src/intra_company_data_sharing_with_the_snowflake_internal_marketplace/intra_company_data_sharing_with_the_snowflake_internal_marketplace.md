@@ -178,9 +178,16 @@ Then....
 
 
 ### Step 6: Setup of a TPC-H sample database
-Download the script `create_lab_database.sql` from....
+Download the script [`create_lab_database.sql`](https://github.com/sfc-gh-hnielsen/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_lab_database.sql) and run this in the primary account. 
 
-<mark>We should create  `create_lab_database.sql` based on Step 6 in the setup instructions</mark>
+<details>
+  <summary>Expand to view code inline</summary>
+
+```sql
+hello
+```
+
+</details>
 
 Setup is now complete!
 
