@@ -75,8 +75,36 @@ Duration: 20
 
 If you are not familiar with Snowflake Container Notebooks, [this](https://quickstarts.snowflake.com/guide/notebook-container-runtime/#0) quickstart provides a great starting point.
 
-Our notebook will need External Access Integration, and this does require AccountAdmin to set up, so that the OpenFE package can be downloaded.
+Our notebook will need External Access Integration, and this does require AccountAdmin to set up, so that the OpenFE package can be downloaded. The [What You’ll Need](#what-youll-need) section of this document has the link to the guide on setting this up, however following SQL sets up access to Pypi.org so the packages can be downloaded.
 
+### Create Network Rule
+This defines the host and port that Snowflake can contact to access the python packages we use in this quickstart.
+```
+CREATE OR REPLACE NETWORK RULE allow_pypi_rule
+MODE= 'EGRESS'
+TYPE = 'HOST_PORT'
+VALUE_LIST = ('pypi.org:443','pypi.org:80', 'pypi.org:3128', 'files.pythonhosted.org:443');
+```
+### Define External Access
+Now lets create the integration using the rule we just defined. This is the name that will appear in the Snowflake Notebook External Access panel and it should be selected to enable the Notebook to use it.
+
+```
+CREATE EXTERNAL ACCESS INTEGRATION allow_pypi_integration
+ALLOWED_NETWORK_RULES = (allow_pypi_rule)
+ENABLED = true;
+```
+
+### Allow Role Access
+Let the Snowflake Role we are using to access the integration.
+
+```
+GRANT USAGE ON INTEGRATION allow_pypi_integration TO ROLE <your-role>;
+```
+
+### Enable Notebook
+The enable toggle switch should be selected to allow the integration to be used by the Notebook
+
+![workflow](assets/EAI_PYPI.png)
 Once running, we can import the Notebook, we shouldn't need to modify much of the code, the first few cells contain variables for this purpose.
 
 ![Import Notebook](assets/Import_Notebook.png)
