@@ -1,11 +1,11 @@
 authors: Matthias Nicola, Henrik Nielsen
-id: intra_company_data_sharing_with_the_snowflake_internal_marketplace
+id: internal_marketplace_intra_org_sharing
 summary: INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE
 categories: Data-Sharing
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Summit HOL, Data Sharing, Snowflake Internal MArketplace, Data Mesh
+tags: Summit HOL, Data Sharing, Marketplace, Snowflake Internal Marketplace, Data Mesh, Data Products
 
 # Intra-Company Data Sharing with the Snowflake Internal Marketplace 
 <!-- ------------------------ -->
@@ -13,310 +13,461 @@ tags: Summit HOL, Data Sharing, Snowflake Internal MArketplace, Data Mesh
 
 Duration: 15
 
-Sharing information between departments, business units and subsidiaries of a company is critical for success, particularly when there are organizational silos in place. A modern data platform must provide decentralized ownership, universal discovery, access control, federated governance, and observability.
+Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data assets is more successful if data is shared as a product. A data product is colelcted of related data objects plus metadata, such as a business description, onwership and contact information, service level objectives, data dictionaty, and more.
 
-**Snowflake Horizon** is a unified suite of governance and discovery capabilities organized into five pillars.
+**Snowflake Internal Marketplace** enables companies to publish documented and governed data product so that they are discoverable and understandable for data consumers. Optionally, data quality metrics and SLOs can be included to make the product more trustworthy. The marketplace also offers rich capabilities to manage access to data product and wrap detailed governace around them to control which consumers can use which data products or which parts of a data product.
 
-![Snowflake Horizon Diagram](assets/snowflake_horizon.jpg)
+![Snowflake Horizon Diagram](assets25/Overview.png)
 
-This Quickstart is focused on the <mark>Access</mark> pillar.
-
-The objective of the Access pillar is to make it simple to share, discover, understand/build trust and access listings across any boundary, internal or external to the organization, and to make loose objects discoverable across account boundaries within an organization, supported by the tools necessary to ensure policy compliance, security, and data quality.
-
-In this lab you will experience the latest **Snowflake Horizon Access pillar** features for sharing data and native apps intra-company: organizational listings, unified search & discovery, data quality monitoring, role-based governance policies and programmatic management of data products. We will cover structured and unstructured data that is stored on-platform or on external storage.
 
 ### What You’ll Learn
 
-- How to blend TastyBytes Point-of-Sale and Marketplace Weather data to build analytics data products, then publish Listings targeted at accounts in your company
-- How to configure data privacy polices that are preserved in the consumer accounts that install the listings. Tag-based column masking, row-access, aggregation and projection policies will be created with database roles.
-- How to setup Data Metrics Functions to monitor data quality of the shared data products
+- How to publish, share, discover, and consume data product with the Snowflake Internal Marketplace
+- How to setup profile for different business units that own the data products
+- How to manage access to data products, including request & approval workflows 
+- How to configure governance polices for fine-grained access control of data products across business units
+
 
 ### What You’ll Need
 
-- Basic knowledge of SQL, Database Concepts, Snowflake [Listings](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about)
-- Familiarity with [Snowsight Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs)
+- Basic knowledge of SQL, Database Concepts
+- Familiarity with using SQL in [Snowsight Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs)
 
 ### What You’ll Build
 
-- Analytics data products for TastyBytes, that models a global food truck network with localized menu options in 15 countries, 30 major cities and 15 core brands
-- Listings comprised of metadata, data and application code, targeted at accounts in the same organization but in different cloud regions
-- Governance policies based on shared role-based-access-controls that are enforced at the target account consuming the listing
-- Install listings containing Iceberg Tables, then blend with local datasets to derive insights
-<!--
-- Exploration of all shared and local data with Universal Search and Copilot
--->
+- Data products based on simple TPC-H data
+- Organizational Listings comprised of data and metadata
+- Governance policies to manage your data products
 
-### Prerequisites
 
-#### Create 3 Snowflake Trial Accounts in the same Snowflake Organization
+## Prerequisites and Setup
 
-Signup for an AWS trial account [here](https://signup.snowflake.com/)
+The setup instructions for this lab describe all the steps for you to create the 3 accounts, domain profiles, and roles shown in the diagram below.
 
-- Choose **AWS** as cloud provider, **Business Critical** edition, **AWS_US_WEST_2 (Oregon)** region
-- Activate trial account with admin user <mark>horizonadmin</mark>
-  - admin user has system roles: ACCOUNTADMIN, ORGADMIN, SYSADMIN
-- Login and create a SQL Worksheet named _**Account Setup**_
+The internal marketplace exists by default. It does not need to be created. But, you will configure it with provider profiles for the different business units via the [organization account](https://docs.snowflake.com/en/user-guide/organization-accounts).
 
-<ins>Note:</ins> alternatively you _can_ use an existing account instead of a trial account, provided that account has the `ORGADMIN` system role enabled.
+![LabScenario](assets25/DemoScenario-and-Accounts.png)
 
-- Create user `horizonadmin`, grant it ACCOUNTADMIN and ORGADMIN roles.
+The setup has 6 steps:
+- Step 1: Create a Snowflake trial account in a region of your choice
+- Step 2: Configure the first account and create two more accounts _in the same org_
+- Step 3: Configure the second account
+- Step 4: Configure the organizaion account, and rename the first account 
+- Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
+- Step 6: Setup of a TPC-H sample database
 
-Execute the following SQL commands in the _**Account Setup**_ worksheet to bootstrap:
+
+### Step 1: Create a Snowflake trial account
+
+Signup for a trial account [here](https://signup.snowflake.com/)
+
+- Choose any cloud provider and region
+- Choose **Enterprise Critical** edition
+- Activate the account with admin user `sales_admin`
+
+
+### Step 2: Configure the first account and create two more accounts _in the same org_
+- Login as `sales_admin` to your Primary Account from Step 1 and execute the following commands in a worksheet. 
+- In the first two commands, enter your own email and password!
 
 ```sql
 USE ROLE accountadmin;
-SET my_user_var = CURRENT_USER();
-ALTER USER identifier($my_user_var) SET DEFAULT_ROLE = accountadmin;
+
+-- Use the same name and email for all accounts
+set email_var = 'FILL_IN_YOUR_EMAIL';
+set firstname_var  = 'FILL_IN_YOUR_FIRST_NAME';
+set lasttname_var  = 'FILL_IN_YOUR_LAST_NAME';
+
+-- Use the same password for users in all accounts
+set pwd_var = 'FILL_IN_YOUR_PASSWORD';
+
 CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=small INITIALLY_SUSPENDED=TRUE;
 GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
-CREATE DATABASE IF NOT EXISTS snowflake_sample_data FROM SHARE sfc_samples.sample_data;
-GRANT IMPORTED PRIVILEGES ON DATABASE snowflake_sample_data TO public;
 
--- Create an AWS Consumer account
-USE ROLE orgadmin;
-CREATE ACCOUNT horizon_lab_aws_consumer
-  admin_name = horizonadmin
-  admin_password = 'FILL_IN_PASSWORD'
-  email = 'FILL_IN_EMAIL'
-  must_change_password = false
-  edition = business_critical
-  region = AWS_US_WEST_2;
- 
--- Create an Azure Consumer account
-CREATE ACCOUNT horizon_lab_azure_consumer
-  admin_name = horizonadmin
-  admin_password = 'FILL_IN_PASSWORD'
-  email = 'FILL_IN_EMAIL'
-  must_change_password = false
-  edition = business_critical
-  region = AZURE_WESTEUROPE;
+CREATE OR REPLACE ROLE sales_data_scientist_role;
+GRANT CREATE SHARE ON ACCOUNT TO ROLE sales_data_scientist_role;
+GRANT CREATE ORGANIZATION LISTING ON ACCOUNT TO ROLE sales_data_scientist_role;
+GRANT ROLE sales_data_scientist_role TO USER sales_admin;
 
--- Verify that all three accounts are now created. Also, get the URLs
--- from the column account_url to log in to your consumer accounts later
-SHOW ORGANIZATION ACCOUNTS;
+SET my_user_var = CURRENT_USER();
+ALTER USER identifier($my_user_var) SET DEFAULT_ROLE = sales_data_scientist_role;
 
--- Enable the ACCOUNTADMIN role on this account to enable global auto-fulfillment
-USE ROLE orgadmin;
-SELECT current_account_name();
-SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('!FILL IN CURRENT_ACCOUNT_NAME()!');
 
--- PLEASE NOTE DOWN: "orgname-accountname" is the account format needed to add a connection to the Snowflake CLI
-SELECT current_organization_name() || '-' || current_account_name();
+-- Next, create a user and role for the marketing domain
+-- in the primary account:
+
+USE ROLE accountadmin;
+CREATE OR REPLACE ROLE marketing_analyst_role;
+
+CREATE OR REPLACE USER marketing_admin
+  PASSWORD = $pwd_var
+  LOGIN_NAME = marketing_admin
+  DISPLAY_NAME = marketing_admin
+  FIRST_NAME = $firstname_var
+  LAST_NAME = $lastname_var
+  EMAIL = $email_var
+  MUST_CHANGE_PASSWORD = FALSE
+  DEFAULT_WAREHOUSE = compute_wh
+  DEFAULT_ROLE = marketing_analyst_role
+  COMMENT = 'Marketing domain admin';
+
+GRANT ROLE marketing_analyst_role TO USER marketing_admin;
+GRANT CREATE SHARE ON ACCOUNT TO ROLE marketing_analyst_role;
+GRANT CREATE ORGANIZATION LISTING ON ACCOUNT TO ROLE marketing_analyst_role;
 ```
+Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
 
-Login to the **HORIZON_LAB_AWS_CONSUMER** and **HORIZON_LAB_AZURE_CONSUMER** accounts as `horizonadmin` and run the following in a worksheet in each of the two accounts:
+Now, run the following commands to create the next two accounts that you need. You can use the same worksheet as above. 
 
 ```sql
-USE ROLE accountadmin;
-SET my_user_var = CURRENT_USER();
-ALTER USER identifier($my_user_var) SET DEFAULT_ROLE = accountadmin;
-CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=medium INITIALLY_SUSPENDED=TRUE;
-GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
-CREATE DATABASE IF NOT EXISTS snowflake_sample_data FROM SHARE sfc_samples.sample_data;
-GRANT IMPORTED PRIVILEGES ON DATABASE snowflake_sample_data TO public;
- 
-USE ROLE useradmin;
-CREATE OR REPLACE ROLE sales_emea_role
-      COMMENT = 'EMEA Sales role for Tasty Bytes';
+-- Create a secondary account in the same region (default!):
+USE ROLE orgadmin;
 
-CREATE OR REPLACE ROLE sales_americas_role
-      COMMENT = 'Americas Sales role for Tasty Bytes';
+CREATE ACCOUNT hol_account2
+  admin_name = supply_chain_admin
+  admin_password = $pwd_var
+  first_name = $firstname_var
+  last_name = $lastname_var 
+  email = $email_var
+  must_change_password = false
+  edition = enterprise;
 
-CREATE OR REPLACE ROLE sales_apj_role
-      COMMENT = 'APJ Sales role for Tasty Bytes';
+-- Create an organization account for admin purposes:
+CREATE ORGANIZATION ACCOUNT hol_org_account
+  admin_name = org_admin
+  admin_password = $pwd_var
+  first_name = $firstname_var
+  last_name = $lastname_var 
+  email = $email_var
+  must_change_password = false
+  edition = enterprise; 
 
-CREATE OR REPLACE ROLE sales_manager_role
-      COMMENT = 'Sales Manager (all-access) role for Tasty Bytes';
+-- Make a note of your account names, URLs, and passwords! 
+-- Get an overview of all the accounts in the organization.
+-- This SHOW command below should return 3 rows:
 
--- grant all these roles to the login user
-GRANT ROLE sales_emea_role TO USER identifier($my_user_var);
-GRANT ROLE sales_americas_role TO USER identifier($my_user_var);
-GRANT ROLE sales_apj_role TO USER identifier($my_user_var);
-GRANT ROLE sales_manager_role TO USER identifier($my_user_var);
-
-SHOW ROLES;
+SHOW ACCOUNTS;
 ```
 
-<!-- ------------------------ -->
-## AWS Provider Account Setup
 
-Duration: 10
+### Step 3: Configure the second account `hol_account2`
+In a separate browser tab...
 
-Clone our [Horizon Quickstart Scripts](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing) repository to your local machine with `git`:
+### Step 4: Configure the organizaion account and rename the first account 
 
-```bash
-mkdir ~/snowflakelabs
-cd ~/snowflakelabs
-git clone git@github.com:Snowflake-Labs/sfguide-horizon-intra-organization-sharing.git horizon-intra-org-scripts
-cd horizon-intra-org-scripts
-```
+### Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
+Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider profiles. You will set up profiles for 3 business domains: **Sales**, **Marketing**, and **Supply chain**.
 
-If you prefer not to use git, `Download ZIP` from the Lab Scripts [github site](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
-<img src="assets/code-download.jpg" width="400" height="250">
+Download the script `create_org_profiles.sql` from....
+
+Then....
+
+<mark>We should create `create_org_profiles.sql` based on Step 5 in the setup instructions</mark>
+
+
+### Step 6: Setup of a TPC-H sample database
+Download the script `create_lab_database.sql` from....
+
+<mark>We should create  `create_lab_database.sql` based on Step 6 in the setup instructions</mark>
+
+Setup is now complete!
+
+<!-- -------OLD--------- -->
+## OLD!!!!  Provider Account Setup
+
+<mark>we will remove this OLD section </mark>
+
+ `Download ZIP` from the Lab Scripts [github site](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
+
 
 Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface) - one script per worksheet
 
 ![Create Worksheet](assets/002_load_SQL_scripts_to_worksheets.png)
 
-### Execute Setup SQL Scripts
+<mark>we will remove the OLD section above</mark>
+<!-- ------- we will remove the OLD section above--------- -->
 
-1. `100_Setup_Data_Model`: create the TastyBytes foundational data model.
-[TastyBytes](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3) is a fictitious global food truck network that operates in 30 major cities located in 15 countries with localized menu options and brands. The single `Frostbytes_Tasty_Bytes` is organized in the following schemas:
 
-- `RAW_CUSTOMER`: raw customer loyalty data with personally identifiable information (PII)
-- `RAW_POS`: raw point-of-sale data denormalized by orders, menu, franchise and country
-- `HARMONIZED`: blended metrics for customers and orders
-- `ANALYTICS`: analytic data that delivers insights for aggregate trends and drill down
-b
-Use the **Run All** pulldown command to run `100_Setup_Data_Model`:
 
-![Run All in Worksheet](assets/003_Run_All.png)
-
-2. `200_Setup_Data_Products`: build data assets to share in a Listing.
-
-In step 1(a) of thescript `200_Setup_Data_Products` you will acquire the <mark>Weather Source LLC</mark> listing from the Marketplace and install it as a shared database `FROSTBYTE_WEATHERSOURCE`.
-
-```sql
--- Step 1(a) - Acquire "Weather Source LLC: frostbyte" Snowflake Marketplace Listing
-
-/*--- 
-    1. Click -> Data Products (Cloud Icon in left sidebar)
-    2. Click -> Marketplace
-    3. Search -> frostbyte
-    4. Click -> Weather Source LLC: frostbyte
-    5. Click -> Get
-    6. Click -> Options
-    6. Database Name -> FROSTBYTE_WEATHERSOURCE (all capital letters)
-    7. "Which roles, in addition to ACCOUNTADMIN, can access this database?" -> PUBLIC
-    8. Click -> Get
----*/
-```
-
-[//]: # (![006_WeatherSource](assets/006_WeatherSource.png))
-
-Then proceed to execute all remaining steps in this script. This will create secure views, materialized views, functions and dynamic tables in the ANALYTICS schema, and an internal stage for sharing text data.
-
-Check out all the new objects created in the ANALYTICS and HARMONIZED schemas in the Snowsight Object Explorer panel. You will later create a Listing to share all of these objects.
-
-[//]: # (![Database-Explorer](assets/004_Database_Explorer.png))
-
-### Upload Unstructured Data into an Internal Stage
-
-We have extracted 100 text files from the IMDB Large Movie Review dataset into the repo, that was cloned to your local machine earlier.
-
-Now we can copy those text files into the internal stage `movie_stage` that was created by the SQL setup scripts.
-Run the snow CLI commands at the root of your repo, where the `git clone` was done.
-
-```bash
-cd ~/git_repos/sfguide-horizon-intra-org
-snow stage copy data/imdb_reviews @frostbyte_tasty_bytes.movie_reviews.movie_stage
-
-# verify that there are now 100 files in the stage
-snow stage list-files @frostbyte_tasty_bytes.movie_reviews.movie_stage
-```
-
-Setup is now complete!
-
-<!-- ------------------------ -->
-## Create, Publish and Install a Data Listing
+<!-- ----------------------------------------->
+## Create and Publish an Organizational Listing in the Provider Studio UI
 
 Duration: 20
 
-In this section you will create, publish, consume, alter, and monitor a [listing](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about).
+In this section you will use in `hol_account1` create and publish [organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-about). 
 
-### Build and Publish a Listing in the Provider Studio UI
+Login in to in `hol_account1` as `sales_admin`.
 
-1. Navigate to the Provider Studio and click the +Listing button in the top right:
+### Publishing Flow: Listing Title and Ownership
 
-[//]: # (![ProviderStudio](assets/101_ProviderStudio+Listing.png))
+1. Navigate to the Provider Studio and click the blue **+Create Listing** button in the top right. Select "Internal Marketplace".
 
-2. Give your listing a meaningful title. Let's use TASTY_BYTES_ANALYTICS in this lab. Then select the option that "Only Specified Consumers" can discover the listing, and click "Next".
+![ProviderStudio](assets25/ProviderStudio.png)
+###
+---
+2. Give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
 
-[//]: # (![102_CreateListing](assets/102_CreateListing.png))
+![](assets25/Publish01-Title.png)
+###
+---
+3. Click on the **+Profile** button and select the **Sales** profile as the owner of this data product. 
 
-3. Click "+ Select" and add the secure functions, the dynamic table, and all the secure views in the ANALYTICS and HARMONIZED schemas to this listing.
+![](assets25/Publish02-Profile.png)
 
-[//]: # (![103_CreateListing_SelectObjects](assets/103_CreateListing_SelectObjects.png))
+- When you save the profile selection, note that the contact email from the Sales profile is automatically entered as the default support contact for this listing. You can change on a per liusting basis it if you want. 
+###
+---
 
-4. Continue the listing specification:
+### Publishing Flow: Selecting Data Objects to Share
 
-- Add a description to document your listing.
-  - For example: "This listing shares the Tasty Bytes Analytics and Harmonized data objects, including views, functions, and a dynamic table that provide a wealth of useful information."
+Now let's select the data objects that we want to share in this data product. 
+- Click on the blue **+Add Data Product** button to open the object explorer. 
 
-- Add your two secondary accounts for this lab (one on AWS and one on Azure) as consumer accounts for this listing. Specify each consumer account as ```org-name.account-name```, which you can obtain as follows:
+- Then, click **+ Select**, navigate to the SF1 schema of the TPCH database, and select all tables except *Region* and *Part*. Also select the ORDER_SUMMARY view and the  function ORDERS_PER_CUSTOMER. Click **Done** and **Save**.
 
-  ```sql
-  select current_organization_name() ||'.'||  current_account_name();
-  ```
+![](assets25/Publish03-ObjectSelection.png)
 
-- Further down in the same dialog, enter your email address to receive notifications about this listing.
-- Click "SAVE & ADD MORE INFORMATION" to add even more metdata to your listing.
+###
+---
+### Publishing Flow: Configure Access Control and the Approval Process
 
-[//]: # (![104_CreateListing_AddConsumers](assets/104_CreateListing_AddConsumers.png))
+Next you set the access control for the data product. Click on the gray **+Access Control** button. 
+- *Discovery* determines who can see the listing and all its metadata in the internal marketlace without having access to the shared data objects
+- *Access* specifies who can discover the listing *and* access the shared data objects. 
+###
+For this first data product we keep it simple and stick with the defaults:
 
-5. You are now looking at your draft listing. Scroll down and add all optional information items to your listing.
+- *Grant Access*: No accounts or roles are pre-approved
+- *Allow Discovery*: Entire Organization
 
-[//]: # (![105_CreateListing_OptionalInformation](assets/105_CreateListing_OptionalInformation.png))
+As a result, every data consumer will need to request access to obatin approval to use the data product. Click on **Set up request approval flow** to proceed.
 
-This will add additional sections to your listing.
+![](assets25/Publish04-AccessControl.png)
 
-Click the ADD button in each of these sections to configure the data dictionary and to add business needs, sample queries, and attributes:
+You could configure an external workflow engine for the request approval process. But for this lab we choose to **Manage requests in Snowflake**. The email address for notifications defaults to the one from the *Sales* profile but could be changed.
 
-- Configuring the data dictionary allows you to select "featured" objects that consumers will see first in the dictionary.
-  - Select the views CUSTOMER_LOYALTY_METRICS_V and ORDERS_BY_POSTAL_CODE_V as well as the function FAHRENHEIT_TO_CELSIUS as featured objects.
-- You can grab some sample queries from the script 1000_Consumer_Queries.sql
-- Attributes allow you to specify service level objectives such as how often you intend to update the data product or other properties.
+![](assets25/Publish05-RequestConfig.png)
 
-[//]: # (![106_CreateListing_OptionalInfo_Part2](assets/106_CreateListing_OptionalInfo_Part2.png))
+After you confirm the approval flow settings, Snowflake prompts you for one more configuration. Here is why: this listing is configured to be discoverable by the entire organization. What if you annother account to the organization but in a different cloud region? Then Snowflake would transparently perform incremental replication to that region to minimize egress cost. As the data provider you can choose the frequency of this replication.
 
-6. In your draft listing, navigate to the section "Consumer Accounts". Click the three dots on the right to update the refresh frequency of the replica that Snowflake will automatiucally create to share the data product with your Azure account.
+So lets (1) **Review** the settings, (2) accept the default of daily replication, and then (3) **Save** the settings for this listing:
 
-- For the purpose of this lab, set the replication frequency to 1 minute.
+![](assets25/Publish06-LAF.png)
 
-[//]: # (![107_CreateListing_ReplicationFrequency](assets/107_CreateListing_ReplicationFrequency.png))
+###
+---
+### Publishing Flow: Add Optional Metadata and SLOs
+Data product should be understandable and trustworthy for data consumers so let's add additional metadata to describe the product (see screenshot below).
 
-7. Publish your listing.
+- Add a business **description** to document your listing.
+  - For example: "This data product contains transactional records of customer orders, linking individual order details with specific items purchased. It includes information such as order IDs, customer identifiers, order dates, item names, quantities, and prices. This data can be leveraged to analyze customer purchasing patterns, identify popular products, understand order frequency, and gain insights into sales trends."
 
-- You can preview your draft listing at any time.
-- When done, click the blue "Publish Listing" button in the top right corner.
+- **Add documention** by providing a URL to additional information. (You can enter any URL for now, such as http://www.snowflake.com/data-mesh)
+- **Add terms & conditions** by providing a URL to where the T&Cs can be found.
+- **Add attributes** that indicate **service level objectives** from the data product owner to data consumers. You can specify:
+  - **Update Frequency**: How often you will refresh the data product, e.g. adding new or updated records to the shared tables. 
+  - **Geographic Coverage**: The regions you will share this data product to, if your company uses Snowflake in multiple regions.
+  - **Time Range**: Amount of history data included.
+  - **Timestamp Granularity**: The interval between data points. For example, "*Event-based*" if there is one record for each incoming order, or "*Daily*" if order volumes are aggregated by date, and so on.
+    
+- Add at least one **Usage example** such as:
+    ```sql
+    -- Title: Explore the Order Summary View:
 
-### Install the Listing in your Consumer Accounts
+    SELECT * 
+    FROM TPCH.SF1.ORDER_SUMMARY 
+    LIMIT 100;
 
-1. Switch to Consumer Account: Horizon_Lab_Azure_Consumer
+    -- Title: Use the UDF to obtain order details for one customer:
 
-- In a different tab of your web browser login to your account "horizon_lab_azure_consumer" that you created in the Azure West Europe Region.
-- Use the menu in the bottom left of the UI to switch to the ACCOUNTADMIN role.
-- Navigate to "Data Products" and then "Private Sharing" in the left hand menu panel.
-- You will now see the listing that has been shared with this account.
-- Click the listing name (not the Get button) to open and examine the listing details. For example, explore the data dictionary for the views and fucntions.
+    SELECT customer_name, country, orderkey, orderdate, AMOUNT
+    FROM TABLE(tpch.sf1.orders_per_customer(60001));
+    ```
 
-[//]: # (![201_Consumer_DiscoverListing](assets/201_Consumer_DiscoverListing.png))
 
-2. After reviewing the listing, click the GET button.
+![](assets25/Publish07-MetaData.png)
 
-- You may be asked for your name & email address if this is the first time a listing is being consumed in this Snowflake  account. Do provide this information, then go to your Email Inbox and validate the email that was sent.
-- After you click the GET button Snowflake performs a one-time setup of the replication process ([auto-fulfillment](https://other-docs.snowflake.com/en/collaboration/provider-listings-auto-fulfillment)) to the local region.
-- You may have to wait for several minutes for this one-time setup to complete. Click OK. We will check back later.
+- Generate a **Data dictionary**. Snowflake will automatically compile column information and sample data for *all* objects in the data product.
 
-[//]: # (![202_Consumer_WaitForReplica](assets/202_Consumer_WaitForReplica.png))
+    Select at least one (and up to 5) data objects and click **+Add to Featured**. These are the objects that consumers will see first in the dictionary.
+    Suggestion: Select `customer`, `orders`, and `order_summary` to be featured.
 
-3. Switch to Consumer Account: Horizon_Lab_AWS_Consumer
+![](assets25/Publish08-DataDictionary.png)
 
-- In yet another tab of your web browser login to your account "horizon_lab_aws_consumer".
-- Use the menu in the bottom left to switch to the ACCOUNTADMIN role.
-- Navigate to "Data Products" and then "Private Sharing".
-- Click the listing name (not the Get button) to open and examine the listing details.
+###
+---
+### Publishing Flow: Publish your listing to the internal marketplace
 
-4. After reviewing the listing, click the GET button.
+Click the blue **Publish** button in the top right corner.
 
-- Again, you may be asked to provide and validate your email address.
-- After you click the GET button you can immediately mount the shared data product. There is no replication setup in this case since the provider account is in the same cloud region as this consumer account.
-- Under "Options" leave the local database name as is (it should be TASTY_BYTES_ANALYTICS), and select SALES_MANAGER_ROLE as an additional role to have immediate access to the data product.
-- Click GET to confirm
+Your data product is now live! You can see it when you navigate to the Internal Marketplace:
 
-[//]: # (![203_Consumer_GET](assets/203_Consumer_GET.png))
+![](assets25/Publish10-Done.png)
 
-- You can now use a worksheet or the database explorer to examine the shared data as a consumer.
+###
+---
+
+
+## Request and Grant Data Product Access for Data Consumers
+
+In this section you will request sccess to the new data product for the **Marketing** domain and the **Supply chain** domain.
+
+### Request Access
+
+- Log out of your account `hol_account1` and log back in as the `marketing_admin` user.
+- Navigate to the Internal Marketplace
+- Click on the **Order Insights** listing
+- Review all the listing elements from the data consumer point of view
+- Click on the blue **Request Access** button
+    - If you haven't previously validated your email of the `marketing_admin` user, Snowflake will now prompt you to do so, and you can follow the dialog to resend the verification email.
+- The **Request access** dialog comes up. Enter a busines justification such as "*We need access to this data for our next marketing campaign.*" and submit the request. 
+- After submitting the access request you can use the grey **View request** button to review or even withdraw your request. 
+    - If you withdraw the request, please submit it again.
+
+![](assets25/RAW01.png)
+
+Now let's also request access for the  **Supply chain** team.
+- In a seperate browser tab log into `hol_account2` as the `supply_chain_admin` user.
+- Navigate to the Internal Marketplace, open the **Order Insights** listing, and **Request Access**
+- Specify a reason for access such as "*We want to analyze order patters to optimize our supply chain operations.*"
+
+### Review and Grant Access 
+
+Let's switch back to the perspective of the data product owner to review and grant the access requests.
+- Log into your account `hol_account1` as the `sales_admin` user.
+- Navigate to the **Provider Studio** as shown in the screenshot below and open the tab **Internal Requests**.
+- Click on each of the two requests to review the details and use the green **Grant** button to approve.
+
+![](assets25/RAW02.png)
+
+Switch from **Needs Review** to **Resolved Requests** to the history of requests. 
+
+![](assets25/RAW03.png)
+
+---
+###
+
+
+## Use an Organizational Listing as a Data Consumer
+
+Now that access has been granted let's go back to at least one of the consumer roles:
+
+- Log into account `hol_account1` as the `marketing_admin` user.
+- In a seperate browser tab log into `hol_account2` as the `supply_chain_admin` user. *(Keep this tab alive for the rest of the lab.)*
+- In the Internal Marketplace open the **Order Insights** listing again
+- The blue **Request Access** button has now changed to **Query in Worksheet**. Reload the browser tab if needed to see the change.
+- Click **Query in Worksheet**. Review and run the data poduct sample queries. *(Keep this tab alive for the rest of the lab.)*
+- In the SQL, note the ULL (Uniform Listing Locator) that references the data product.
+
+## Live data sharing in action
+
+What happens when the data owner decides to update the data product?
+
+- Switch back to the data provider side, ie. `sales_admin` user
+in `hol_account1`
+- Review the order details for customer 60001. 
+```sql
+use schema tpch.sf1;
+use role sales_data_scientist_role;
+
+SELECT customer_name, country, orderkey, orderdate, AMOUNT
+FROM TABLE(orders_per_customer(60001));
+```
+- Note that customer 60001 lives in Kenya. But, he has moved to Mozambique which requires the following update:
+
+```sql
+-- Customer 60001 moves from Kenya to MOZAMBIQUE !
+UPDATE customer SET c_nationkey = 16 WHERE c_custkey = 60001;
+```
+- Now switch to your browser tab where you are logged into `hol_account2` as `supply_chain_admin`. In the worksheet "**Order Insights - Examples**" run the second sample query again:
+
+```sql
+// Use the UDF to obtain the order details for one customer
+SELECT customer_name, country, orderkey, orderdate, AMOUNT
+FROM TABLE(ORGDATACLOUD$SALES$ORDER_INSIGHTS.sf1.orders_per_customer(60001));
+```
+- Note that the updated country information is instantly visible to data consumers!
+- Other data product changes such as adding a column to a table would also be immediatly reflected on the consumer side. 
+- **Best practice:** inform your data consumers of structural data product changes ahead of time.  In case of a breaking change consider creating a new listing "v2.0" and give data consumers time to migrate from the old to the new listing.
+
+<mark> !!! we could add a structural data change here. maybe later if we have time !!!</mark>
+
+
+## Simple Data Goverance Policies
+
+Let's examine some simple techniques for row- and colum-level access control across domains.
+
+- Switch back to the data provider side, ie. `sales_admin` user
+in `hol_account1`
+- Review the order summary view. Note that it returns data for customers in many different countries:
+```sql
+use schema tpch.sf1;
+use role sales_data_scientist_role;
+
+SELECT *
+FROM order_summary; 
+LIMIT 100;
+```
+### Row-level access control across domains
+The data steward of the Sales domain has requested the following access restrictions:
+- The marketing team may only see data for customers in Canada.
+- The supply chain team may only see data for customers in the US.
+  
+Implement the following policy to make your data product compliant:
+
+```sql
+use schema tpch.sf1;
+use role sales_data_scientist_role;
+
+CREATE OR REPLACE ROW ACCESS POLICY country_filter AS (country INTEGER) 
+RETURNS boolean ->
+  CASE
+    WHEN current_account_name() = 'HOL_ACCOUNT1' 
+     AND current_role()         = 'SALES_DATA_SCIENTIST_ROLE'
+     THEN true
+    WHEN current_account_name() = 'HOL_ACCOUNT1' 
+     AND current_role()         = 'MARKETING_ANALYST_ROLE'
+     AND country                = 3 /* Canada */
+     THEN true
+    WHEN current_account_name() = 'HOL_ACCOUNT2' 
+     AND country                = 24 /* USA */
+     THEN true
+   ELSE false
+  END;
+
+ ALTER TABLE nation ADD ROW ACCESS POLICY country_filter ON (n_nationkey); 
+```
+Before we review the impact of this policy on the data consumers, let's look at another governance requirement that requires column masking.
+ 
+ ### Data masking across domains
+
+The data steward of the Sales domain has requested the following data masking to enforced:
+- The marketing and supply chain teams are not allowed to see order pricing or amount information for orders placed before 1996.
+
+Implement the following policy to make your data product compliant:
+
+```sql
+CREATE OR REPLACE MASKING POLICY order_mask AS (value INT) RETURNS INT ->
+  CASE
+    WHEN current_account_name() = 'HOL_ACCOUNT1' 
+     AND current_role()         = 'SALES_DATA_SCIENTIST_ROLE'
+     THEN value
+    WHEN current_account_name() = 'HOL_ACCOUNT1' 
+     AND current_role()         = 'MARKETING_ANALYST_ROLE'
+     THEN null
+    WHEN current_account_name() = 'HOL_ACCOUNT2' 
+     THEN null
+   ELSE null
+  END;
+
+ALTER TABLE orders ALTER COLUMN o_totalprice SET MASKING POLICY order_mask;
+ALTER TABLE lineitem ALTER COLUMN l_extendedprice SET MASKING POLICY order_mask;
+```
+
+
+<mark> !!! ! ! ! need to continue working here !!! !!!</mark>
+
+
 
 1. Observe live data sharing in action
 
@@ -350,7 +501,7 @@ Duration: 20
 
 1. [SHOW LISTINGS](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings) in the AWS Provider account where you published the listing.
 
-[//]: # (![301_Provider_API_Show](assets/301_Provider_API_Show.png))
+![301_Provider_API_Show](assets/301_Provider_API_Show.png)
 
 2. Copy the Snowflake object name of your listing and use it in the subsequent [DESCRIBE LISTING](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) command.
 
@@ -358,20 +509,20 @@ Duration: 20
 
 3. In the result of DESCRIBE LISTING, scroll to the right to the column [MANIFEST_YAML](https://other-docs.snowflake.com/en/progaccess/listing-manifest-reference) and copy its column value. This YAML file is a complete representation of the listing and enables programmatic management of listings.
 
-[//]: # (![302_Provider_API_Describe](assets/302_Provider_API_Describe.png))
+![302_Provider_API_Describe](assets/302_Provider_API_Describe.png)
 
 4. Paste the copied YAML into an [ALTER LISTING](https://other-docs.snowflake.com/en/sql-reference/sql/alter-listing) statement using the listing name obtained in step 2 above (Show Listing).
 
 - Make some changes in the YAML that you can easily verify in the UI and on the consumer side. For example, update the title and the first line of the description.
 - Execute the ALTER LISTING statement.
 
-[//]: # (![303_Provider_API_AlterListing](assets/303_Provider_API_AlterListing.png))
+![303_Provider_API_AlterListing](assets/303_Provider_API_AlterListing.png)
 
 5. Verify the immediate effect of the ALTER LISTING statement
 
 - In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing.
 
-[//]: # (![304_Provider_Studio](assets/304_Provider_Studio.png))
+![304_Provider_Studio](assets/304_Provider_Studio.png)
 
 - Switch to your consumer account Horizon_Lab_AWS_Consumer.
 - Navigate to "Data Products", then "Private Sharing", and open the listing page again. Refresh if needed to see the changes from the ALTER LISTING statement.
@@ -392,11 +543,11 @@ Time to revisit the second consumer account ("horizon_lab_azure_consumer") and t
 
 6. Select the "Azure West Europe Region" to see the timestamp of the latest refresh to that region.
 
-[//]: # (![400_MonitorReplicationStatus](assets/400_MonitorReplicationStatus.png))
+![400_MonitorReplicationStatus](assets/400_MonitorReplicationStatus.png)
 
 7. Go back to the Provider Studio, select "Analytics" from the horizontal menu at the top. This is where summarized and detailed statistics about the usage of the listings will be displayed eventually. There is some delay in populating these statistics, but the following screenshots give you an idea of what you will see.
 
-[//]: # (![401_Provider_Dashboard](assets/401_Provider_Dashboard.png))
+![401_Provider_Dashboard](assets/401_Provider_Dashboard.png)
 
 The same information as well as replication details can also be obtained from various views in the schema [SNOWFLAKE.DATA_SHARING_USAGE](https://docs.snowflake.com/en/sql-reference/data-sharing-usage) and [SNOWFLAKE.ORGANIZATION_USAGE](https://docs.snowflake.com/en/sql-reference/organization-usage):
 
@@ -420,13 +571,13 @@ select * from ORGANIZATION_USAGE.REPLICATION_USAGE_HISTORY:
 
 8. The [replication cost](https://other-docs.snowflake.com/en/collaboration/provider-understand-cost-auto-fulfillment) can also be monitored in the UI. Navigate to the "Admin" menu in the left-hand panel, then to "Cost Management" and "Consumption". Switch the filter from "All Services" to "Cross-Cloud Auto-Fulfillment". Here is an example from a different test replicating a listing to the region Azure UK South:
 
-[//]: # (![402_Provider_LAF_Cost_Compute](assets/402_Provider_LAF_Cost_Compute.png))
+![402_Provider_LAF_Cost_Compute](assets/402_Provider_LAF_Cost_Compute.png)
 
  Additional filters enable you to select a time period, pick a specific target region, or toggle between compute cost, storage cost, and data transfer volume incurred by the listing auto-fulfillment.
 
-[//]: # (![403_Provider_LAF_DataTransfer](assets/403_Provider_LAF_DataTransfer.png))
+![403_Provider_LAF_DataTransfer](assets/403_Provider_LAF_DataTransfer.png)
 
-[//]: # (![404_Provider_LAF_DataTransfer_Details](assets/404_Provider_LAF_DataTransfer_Details.png))
+![404_Provider_LAF_DataTransfer_Details](assets/404_Provider_LAF_DataTransfer_Details.png)
 
 ### Enable and Consume Change Tracking
 
@@ -480,7 +631,7 @@ This section of the lab introduces several capabilities for data providers to re
 
 Frosty the data steward is concerned that our listing that we have shared includes the view ANALYTICS.CUSTOMER_LOYALTY_METRICS_V which contains sensitive information that must not be accessible to all data consumers. He requests the following restrictions:
 
-[//]: # (![500_DataSteward_1](assets/500_DataSteward_1.png))
+![500_DataSteward_1](assets/500_DataSteward_1.png)
 
 Let's implement a [row-level access policy](https://docs.snowflake.com/en/user-guide/security-row-intro) to implement the required access control. Note the usage of the context function **current_account_name()** to detect which consumer account is accessing the shared view.
 
@@ -519,7 +670,7 @@ After the replication interval of 1 minute you will also see that the consumer a
 
 But, Frosty the data steward is not yet satisfied:
 
-[//]: # (![501_DataSteward_2](assets/501_DataSteward_2.png))
+![501_DataSteward_2](assets/501_DataSteward_2.png)
 
 Ok, let's get to work.
 
@@ -546,7 +697,7 @@ ALTER VIEW ANALYTICS.CUSTOMER_LOYALTY_METRICS_V
 
 Optionally, you can also use the UI to add or see the tags on these columns:
 
-[//]: # (![502_AddTags](assets/502_AddTags.png))
+![502_AddTags](assets/502_AddTags.png)
 
 Now let's create a slightly more advanced [policy to mask the PII columns depending on their tag](https://docs.snowflake.com/en/user-guide/tag-based-masking-policies) value and the consmer account:
 
@@ -591,7 +742,7 @@ After the replication interval of 1 minute you will see in the account HORIZON_L
 
 Just when we thought we had all the necessary governance controls in place, Frosty has a new requirement for us.
 
-[//]: # (![503_DataSteward_3](assets/503_DataSteward_3.png))
+![503_DataSteward_3](assets/503_DataSteward_3.png)
 
 So far we have been using the context function **CURRENT_ACCOUNT_NAME()** in our governance policies to control which consumer account can see which data. Now Frosty is telling us, that this needs to be more fine-grained down to indivudal roles on the consumer side.
 
@@ -689,13 +840,13 @@ Here are two options how to find the share name for your listing:
 **Option 1:**
 
 In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing. In the section "Data Product" you find the name of the Secure Share that bundles the shared data objects.
-[//]: # (![602_DMF_AddTableToShare_1](assets/602_DMF_AddTableToShare_1.png))
+![602_DMF_AddTableToShare_1](assets/602_DMF_AddTableToShare_1.png)
 
 **Option 2:**
 
 Use the SHOW SHARES command:
 
-[//]: # (![504_ShowShares](assets/504_ShowShares.png))
+![504_ShowShares](assets/504_ShowShares.png)
 
 Copy the share name to a text file or worksheet because you will need it again later.
 
@@ -738,13 +889,13 @@ grant database role tastybytes_manager_role  to role sales_manager_role;
 
 The following picture illustrates the use of our database roles in this data sharing scenario.
 
-[//]: # (![505_Database_Roles_Sharing](assets/505_Database_Roles_Sharing.png))
+![505_Database_Roles_Sharing](assets/505_Database_Roles_Sharing.png)
 
 Now switch to the different local roles (sales_emea_role, sales_apj_role, etc) in each of your consumer accounts to verify that each local role can only see those rows in the CUSTOMER_LOYALTY_METRICS_V view that are permitted by the row-level access policy in the provider account.
 
 ### Aggregation and Projection Policies
 
-[//]: # (![550_DataSteward_4](assets/550_DataSteward_4.png))
+![550_DataSteward_4](assets/550_DataSteward_4.png)
 
 Frosty the data steward has a new requirement for us. In the consumer accounts, only admins and managers may see the detailed per-customer loyalty data. Anyone else may see aggregated data only.
 
@@ -923,7 +1074,7 @@ Use the following command to verify that all three quality metrics have been sch
   );
 ```  
 
-[//]: # (![600_DMF_Status](assets/600_DMF_Status.png))
+![600_DMF_Status](assets/600_DMF_Status.png)
 
 After 5 minutes you can start observing quality metrics in the [default event table](https://docs.snowflake.com/en/user-guide/data-quality-working#view-the-dmf-results) where all quality results are recorded:
 
@@ -936,7 +1087,7 @@ FROM snowflake.local.data_quality_monitoring_results  /* not yet available in tr
 ORDER BY measurement_time DESC;
 ```
 
-[//]: # (![601_DMF_Results](assets/601_DMF_Results.png))
+![601_DMF_Results](assets/601_DMF_Results.png)
 
 Additionally, you could define [Alerts](https://docs.snowflake.com/en/user-guide/alerts) to watch the data quality metrics and take action automatically if acceptable thresholds are exceeded. For example, if the number of outliers reported by our custom quality function exceeds a certain value an alert could copy the offending rows into an exception table for review and send an [email notification](https://docs.snowflake.com/en/user-guide/email-stored-procedures).
 
@@ -1013,13 +1164,13 @@ GRANT SELECT ON FROSTBYTE_TASTY_BYTES.dq.shared_quality_events TO SHARE <share_n
 Take the following 3 steps in the UI:
 
 1. In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing. In the section "Data Product" click on the name of the Secure Share that bundles the shared data objects.
-[//]: # (![602_DMF_AddTableToShare_1](assets/602_DMF_AddTableToShare_1.png))
+![602_DMF_AddTableToShare_1](assets/602_DMF_AddTableToShare_1.png)
 
 2. You are now looking at a page detailing the underlying share. In the section "Data", click the "Edit" button:
-[//]: # (![603_DMF_AddTableToShare_2](assets/603_DMF_AddTableToShare_2.png))
+![603_DMF_AddTableToShare_2](assets/603_DMF_AddTableToShare_2.png)
 
 3. Now you can open the data explorer to find and select the table "dq.shared_quality_events". Click "Done" and "Save" to finalize the update of your data product.
-[//]: # (![604_DMF_AddTableToShare_3](assets/604_DMF_AddTableToShare_3.png))
+![604_DMF_AddTableToShare_3](assets/604_DMF_AddTableToShare_3.png)
 
 4. Switch to your consumer account "horizon_lab_aws_consumer" to verify that the data quality metrics are immediately visible as a new table in the data product. In the second consumer account "horizon_lab_azure_consumer" you will see the same after the 1 minute replication interval.
 
@@ -1033,6 +1184,7 @@ Take the following 3 steps in the UI:
 ```
 
 <!-- ------------------------ -->
+
 
 <!-- ------------------------ -->
 ## Conclusion & Resources
