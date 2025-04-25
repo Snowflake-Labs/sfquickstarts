@@ -19,14 +19,14 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 ### What You'll Learn
 - How to set up Snowflake Open Catalog
 - Creating and configuring external volumes for Apache Iceberg tables
-- Creating and managing Apache Iceberg tables in Snowflake
+- Creating and managing Apache Iceberg tables in [Snowflake](https://signup.snowflake.com/)
 - Syncing Iceberg tables with Snowflake Open Catalog
 - Querying Iceberg data from different engines
 
 ### What You'll Need
 - Access to an AWS account that you have full administrator permissions to (you can use/create your own personal AWS account). Note that this will incur only minimal charges with the steps followed in the HOL (less than $1 USD)
 - Access to a Snowflake account that you have ORGADMIN permissions to (you can use/create your own personal Snowflake account). Note that this will incur only minimal charges with the steps followed in the HOL (less than $5 USD)
-- Verify that all the resources ( S3 Bucket, Snowflake account, Snowflake Open Catalog account )  are in the same cloud and same region. **This quickstart uses AWS US West-2**
+- Verify that all the resources ( S3 Bucket, [Snowflake account](https://signup.snowflake.com/), Snowflake Open Catalog account )  are in the same cloud and same region. **This quickstart uses AWS US West-2**
 - VS Code (optional, for Spark integration)
 
 <!-- ------------------------ -->
@@ -83,7 +83,7 @@ Duration: 5
 - Click the checkbox next to the folder name you just created. Then click “Copy S3 URI”. Paste this value in the HOL spreadsheet.
 
 <!-- ------------------------ -->
-## Setup IAM roles & policies
+## Setup IAM Roles & Policies
 
 Duration: 10
 
@@ -450,7 +450,7 @@ select city, region, count(*)
 ```
 
 <!-- ------------------------ -->
-## Create a dynamic Iceberg table
+## Create a Dynamic Iceberg Table
 Duration: 5
 
 Now, let’s actually persist those query results as a dynamic iceberg table. You’ll note that TARGET_LAG is set to 1 minute. This means that snowflake will automatically keep that dynamic table’s contents up to date within 1 minute of any upstream source data changes. If when it checks, the upstream table (in this case “poi”) hasn’t changed, then you won’t be billed at all. 
@@ -475,7 +475,7 @@ SELECT * FROM poi_dt_iceberg
 ```
 
 <!-- ------------------------ -->
-## (Optional)  Prepare configurations to read from Spark
+## (Optional) Read Data from Spark
 Duration: 10 
 
 - In Snowflake Open Catalog, click “Catalogs” on the left sidebar, then click “external_catalog_snowflake”
