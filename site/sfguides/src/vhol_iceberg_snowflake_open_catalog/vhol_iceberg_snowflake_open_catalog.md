@@ -30,9 +30,13 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 - VS Code (optional, for Spark integration)
 
 <!-- ------------------------ -->
-## Setting Up Snowflake Open Catalog
+## Setup
 
-- Sign in to your Snowflake account
+Duration: 5 
+
+### Set Up Snowflake Open Catalog
+
+- Sign in to your [Snowflake account](https://signup.snowflake.com/)
 - Change your active role to ORGADMIN
 - Click Admin -> Accounts
 - Click the dropdown arrow next to “+ Account” in the top right
@@ -60,9 +64,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 
 ![open catalog home page](assets/img02.PNG)
 
-<!-- ------------------------ -->
-
-## Creating an S3 Bucket
+### Creating an S3 Bucket
 
 - Open a new tab and sign in to the AWS Management Console.
 - In the top right corner, change your region to “US West-2”
@@ -81,8 +83,11 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 - Click the checkbox next to the folder name you just created. Then click “Copy S3 URI”. Paste this value in the HOL spreadsheet.
 
 <!-- ------------------------ -->
+## Setup IAM roles & policies
 
-## Create an IAM policy that grants access to your S3 location
+Duration: 10
+
+### Create an IAM policy that grants access to your S3 location
 
 - In the AWS Management Console, search or browse to IAM
 - In the navigation pane on the left under “Access management”, select “Account settings”
@@ -136,9 +141,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
     For “Policy name”, enter “deconnect-hol-demo-policy”
     Scroll down, and in the bottom right click “Create policy”
 
-<!-- ------------------------ -->
-
-## Create an IAM role to grant privileges on your S3 bucket
+### Create an IAM role to grant privileges on your S3 bucket
 
 - In the navigation pane on the left under “Access management”, select “Roles”
 - Select “Create role”
@@ -157,7 +160,10 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 
 <!-- ------------------------ -->
 
-## Creating a Catalog in Snowflake Open Catalog
+## Create a Catalog
+Duration: 15
+
+### Creating a Catalog in Snowflake Open Catalog
 
 - Go to your browser tab that you’re logged into Snowflake Open Catalog (or if you’ve closed it, in a new browser tab, go to the account locator URL you copied earlier)
 - On the left pane, click “Catalogs”
@@ -174,9 +180,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 - This will bring you to the main “Catalogs” page. Select the catalog you just created (“external_catalog_snowflake”)
 - Under the “Storage details” section, click the copy icon next to “IAM user arn”. Paste this value in the HOL spreadsheet
 
-<!-- ------------------------ -->
-
-## Grant the Snowflake Open Catalog IAM user permissions to access bucket objects
+### Grant the Snowflake Open Catalog IAM user permissions to access bucket objects
 
 - Go to your browser tab that you’re logged into AWS management console (or if you’ve closed it, in a new browser tab, go to it and log in)
 - Search or browse to IAM
@@ -209,9 +213,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
     Before clicking save, replace “<open_catalog_iam_user_arn>” with the ARN of the Snowflake Open Catalog IAM user you copied in step 5.f
     Click “Update policy”
 
-<!-- ------------------------ -->
-
-## Creating a Principal Role
+### Creating a Principal Role
 
 - Go to your browser tab that you’re logged into Snowflake Open Catalog (or if you’ve closed it, in a new browser tab, go to the account locator URL you copied earlier)
 - In the left pane, click “Connections”
@@ -219,7 +221,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 - In the top right, click the “+ Principal Role” button
 - In the dialog box that pops up, for “Name”, enter “admin_principal_role”, and click “Create”
 
-## Creating a Catalog Role
+### Creating a Catalog Role
 
 - In the left pane, click “Catalogs”
 - Click the name of the catalog you created in step 5.d
@@ -230,7 +232,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
     For “Privileges”, select “CATALOG_MANAGE_CONTENT”
     Click “Create”
 
-## Granting the Catalog Role to the Principal Role
+### Granting the Catalog Role to the Principal Role
 
 - Click the “Grant to Principal Role” button on the right
 - In the dialog box that pops up:
@@ -238,7 +240,7 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
     For “Principal role to receive grant”, select the principal role you created in step 7.e
     Click “Grant”
 
-## Creating a Service Connection
+### Creating a Service Connection
 
 - In the left pane, click “Connections”
 - In the top right, click “+ Connection”
@@ -252,8 +254,11 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
     Now that you’ve retained both, it’s safe to click “Close”
 
 <!-- ------------------------ -->
+## Create Iceberg Table
+Duration: 15
 
-## Creating a Catalog Integration in Snowflake
+
+### Create Catalog Integration
 
 - Go to your browser tab that you’re logged into your Snowflake account that you have ORGADMIN privileges for - i.e., the Snowflake account you logged into in step 1.a
     If you’ve closed it, in a new browser tab, go to app.snowflake.com, but if you get brought to Snowflake Open Catalog again, click your account icon in the bottom left and hover over “Account” then select the account you logged into in step 1.a
@@ -286,8 +291,7 @@ CREATE CATALOG INTEGRATION deconnect_hol_demo_int
 - Switch your role to ACCOUNTADMIN
 - Execute the SQL statement
  
-<!-- ------------------------ -->
-## Create an external volume object in Snowflake
+### Create an external volume object in Snowflake
 
 - Below that code in the same SQL worksheet, paste the following:
 
@@ -318,9 +322,7 @@ CREATE OR REPLACE EXTERNAL VOLUME iceberg_hol_demo_ext_vol
     <role_arn> with the copied IAM role ARN pasted as the value for “Role ARN”
 - Execute those statements
 
-<!-- ------------------------ -->
-
-## Grant your Snowflake account IAM user permissions on your bucket
+### Grant your Snowflake account IAM user permissions on your bucket
 
 - Execute `DESC EXTERNAL VOLUME iceberg_hol_demo_ext_vol;`
 - In the “property_value” field of the row that has “STORAGE_LOCATION_1” as the value of “property”, copy the value of the key “STORAGE_AWS_IAM_USER_ARN” and paste it into the spreadsheet
@@ -361,8 +363,7 @@ CREATE OR REPLACE EXTERNAL VOLUME iceberg_hol_demo_ext_vol
 
 ```
 
-<!-- ------------------------ -->
-## Syncing a Snowflake managed table(s) with Snowflake Open Catalog 
+### Syncing a Snowflake managed table(s) with Snowflake Open Catalog 
 
 To query a Snowflake-managed Apache Iceberg™ table using a third-party engine such as Apache Spark™, you can sync the table with [Snowflake Open Catalog](https://other-docs.snowflake.com/en/opencatalog/overview). 
 
@@ -374,8 +375,8 @@ alter schema deconnect_hol_iceberg.hol_demo
         external_volume = iceberg_hol_demo_ext_vol 
         CATALOG_SYNC = deconnect_hol_demo_int;
 ```
-<!-- ------------------------ -->
-## Create a Snowflake-managed Iceberg table using a parquet file from a stage
+
+### Create a Snowflake-managed Iceberg table using a parquet file from a stage
 
 - Create a stage in the database iceberg_testing.hol_demo and load a csv file into the stage, For this HOL we are using Snowflake stage but it could be a S3 bucket as well .  in the same SQL worksheet, paste the following
 
@@ -438,8 +439,7 @@ LOAD_MODE = FULL_INGEST;
 select * from poi;
 ```
 
-<!-- ------------------------ -->
-## Run arbitrary SQL queries on this iceberg table from snowflake
+### Run arbitrary SQL queries on this iceberg table from snowflake
 
 Feel free to run any SQL you want against this iceberg table. Here’s a sample query you can run:
 
@@ -451,6 +451,7 @@ select city, region, count(*)
 
 <!-- ------------------------ -->
 ## Create a dynamic Iceberg table
+Duration: 5
 
 Now, let’s actually persist those query results as a dynamic iceberg table. You’ll note that TARGET_LAG is set to 1 minute. This means that snowflake will automatically keep that dynamic table’s contents up to date within 1 minute of any upstream source data changes. If when it checks, the upstream table (in this case “poi”) hasn’t changed, then you won’t be billed at all. 
 
@@ -465,8 +466,7 @@ CREATE DYNAMIC ICEBERG TABLE poi_dt_iceberg
 ```
 You can see the checks snowflake has been making in the Snowsight UI via Monitoring -> Dynamic Tables -> poi_dt_iceberg and select the “Refresh History” tab. If you want to see confirmation that Snowflake has been doing checks each minute but not using any compute, uncheck the “Warehouse used only” checkbox
 
-<!-- ------------------------ -->
-## Query the dynamic iceberg table from Snowflake
+### Query the dynamic iceberg table from Snowflake
 
 Feel free to query this dynamic iceberg table, either via a SELECT * or whatever arbitrary SQL you want to run against it.
 
@@ -476,6 +476,7 @@ SELECT * FROM poi_dt_iceberg
 
 <!-- ------------------------ -->
 ## (Optional)  Prepare configurations to read from Spark
+Duration: 10 
 
 - In Snowflake Open Catalog, click “Catalogs” on the left sidebar, then click “external_catalog_snowflake”
 - Under Storage Details, under “Credential Vending”, click the pencil icon and on the box that pops up, click “Enable”
@@ -504,8 +505,7 @@ dependencies:
 
 - In a terminal in the same directory where you created the file above, run `conda env create -f environment.yml`
 
-<!-- ------------------------ -->
-## (Optional ) Query the Snowflake-managed Iceberg table from Spark
+### (Optional ) Query the Snowflake-managed Iceberg table from Spark
 
 - Open VS Code
 - If you don’t already have them installed, install the Python and Jupyter extensions
@@ -559,7 +559,8 @@ except Exception as e :
 ```
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion and Resources
+Duration: 5
 
 ❄️ Congratulations! This concludes our lab.
 
