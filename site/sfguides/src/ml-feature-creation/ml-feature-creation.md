@@ -105,6 +105,7 @@ GRANT USAGE ON INTEGRATION allow_pypi_integration TO ROLE <your-role>;
 The enable toggle switch should be selected to allow the integration to be used by the Notebook
 
 ![workflow](assets/EAI_PYPI.png)
+
 Once running, we can import the Notebook, we shouldn't need to modify much of the code, the first few cells contain variables for this purpose.
 
 ![Import Notebook](assets/Import_Notebook.png)
