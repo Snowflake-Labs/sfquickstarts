@@ -32,7 +32,7 @@ The workflow for this tutorial is shown in the following diagram.
 * Access to a [Snowflake account](https://signup.snowflake.com/)
 * Basic familiarity with SQL and Python
 * Access to download `.ipynb` file from [AutoML-End-2-End](https://github.com/Snowflake-Labs/AutoML-End-2-End) Git Repo
-* External network access integration, so the Notebook can pip install packages (Account Admin access maybe required)
+* [External network access integration](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-external-access), so the Notebook can pip install packages (Account Admin access maybe required)
 
 ### What You’ll Build 
 * A set of features based on data insights
