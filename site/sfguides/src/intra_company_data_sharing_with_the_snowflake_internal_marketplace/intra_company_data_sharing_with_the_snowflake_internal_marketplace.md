@@ -70,9 +70,6 @@ Signup for a trial account [here](https://signup.snowflake.com/)
 - Login as `sales_admin` to your Primary Account from Step 1 and execute the following commands in a worksheet. 
 - In the first two commands, enter your own email and password!
 
-<details>
-  <summary>Click here to expand code</summary>
-
 ```sql
 -- Run this code in your PRIMARY Account
 -- Make sure you update the three variables below (email_var, firstname_var and lastname_var)
@@ -121,14 +118,9 @@ GRANT ROLE marketing_analyst_role TO USER marketing_admin;
 GRANT CREATE SHARE ON ACCOUNT TO ROLE marketing_analyst_role;
 GRANT CREATE ORGANIZATION LISTING ON ACCOUNT TO ROLE marketing_analyst_role;
 ```
-</details>
-
 Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
 
 Now, run the following commands to create the next two accounts that you need. You can use the same worksheet as above. 
-
-<details>
-<summary><b>Click here to expand code</b></summary>
 
 ```sql
 -- Run this code in your PRIMARY account
@@ -160,134 +152,27 @@ CREATE ORGANIZATION ACCOUNT hol_org_account
 
 SHOW ACCOUNTS;
 ```
-</details>
 
 ### Step 3: Configure the second account `hol_account2`
 In a separate browser tab...
+<br><mark>to be completed !!!</mark>
 
-### Step 4: Configure the organizaion account and rename the first account 
+### Step 4: Configure the organization account and rename your primary account 
+<mark>to be completed !!!, or are these steps included in the script for step 5?</mark>
 
 ### Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
 Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider profiles. You will set up profiles for 3 business domains: **Sales**, **Marketing**, and **Supply chain**.
 
-Download and run the script [`create_org_profiles.sql`](https://github.com/sfc-gh-hnielsen/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_org_profiles.sql)
+- Download the script [`create_org_profiles.sql`](https://github.com/sfc-gh-hnielsen/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_org_profiles.sql)
+- Login to your Organization Account `HOL_ORG_ACCOUNT` and this script in a worksheet
 
 ### Step 6: Setup of a TPC-H sample database
-Download the script [`create_lab_database.sql`](https://github.com/sfc-gh-hnielsen/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_lab_database.sql) and run this in the primary account. 
-
-<details>
-  <summary>Expand to view code inline</summary>
-
-```sql
-USE ROLE ACCOUNTADMIN;
-USE WAREHOUSE COMPUTE_WH;
-
-CREATE OR REPLACE DATABASE tpch;
-CREATE SCHEMA tpch.sf1;
-
-CREATE OR REPLACE TABLE PART AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.PART;
-CREATE OR REPLACE TABLE PARTSUPP AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.PARTSUPP;
-
-CREATE OR REPLACE TABLE REGION AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.REGION;
-
-CREATE OR REPLACE TABLE SUPPLIER AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.SUPPLIER;
-
-CREATE OR REPLACE TABLE LINEITEM AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.LINEITEM;
-
-CREATE OR REPLACE TABLE NATION 
-COMMENT='The nation paper contains our enterprise wide standardized nation keys as well as full country names. This table can be joined to the regions table to summarize countries by continent. By the nation key it can also be joined to the customer and supplier tables.'
-AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.NATION; 
-  
-CREATE OR REPLACE TABLE CUSTOMER (
-	C_CUSTKEY NUMBER(38,0)   COMMENT 'PK: unique customer identifier, join with the order table.',
-	C_NAME VARCHAR(25)       COMMENT 'Full name for billing and shipment.',
-	C_ADDRESS VARCHAR(40)    COMMENT 'Full address of the customer including postal code.',
-	C_NATIONKEY NUMBER(38,0) COMMENT 'Country indicator, FK into the nation table.',
-	C_PHONE VARCHAR(15)      COMMENT 'Phone number including country code and area code.',
-	C_ACCTBAL NUMBER(12,2)   COMMENT 'Current account balance of the customer with us.',
-	C_MKTSEGMENT VARCHAR(10) COMMENT 'Customer segmentation details.',
-	C_COMMENT VARCHAR(117)   COMMENT 'Optional comment pertaining to this customer.'
-)COMMENT='This table contains our customer master data including names, addresses, phone number, and other customer attributes. The customer key is unique and can be joined with the orders table to obtain all orders of any given customer.'
-AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.CUSTOMER;
-
-CREATE OR REPLACE TABLE ORDERS (
-	O_ORDERKEY NUMBER(38,0) COMMENT 'Unique order identifier',
-	O_CUSTKEY NUMBER(38,0) COMMENT 'FK - Identifier of the client who placed the order',
-	O_ORDERSTATUS VARCHAR(1) COMMENT 'O = ORDERS, P = PROCESSING, F = FULFILLIED',
-	O_TOTALPRICE NUMBER(12,2) COMMENT '$-amount of the total order value',
-	O_ORDERDATE DATE COMMENT 'Date when the order was placed by the customer',
-	O_ORDERPRIORITY VARCHAR(15) COMMENT 'Internal processing priority for the order',
-	O_CLERK VARCHAR(15) COMMENT 'Employee (if any) who processed the order',
-	O_SHIPPRIORITY NUMBER(38,0) COMMENT 'Standard, express, or premium shipping',
-	O_COMMENT VARCHAR(79) COMMENT 'Optional comment on the order'
-) COMMENT='This table is the complete set of all orders that are pending, processing or completed. This table can be joined to the customer table to obtain any related customer details for the order. The table can also be joined to the lineitem table via the order key, to obtain the details of all items included in a given order.'
-AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS;
-
--- A secure view that we want to share
-create or replace secure view TPCH.SF1.ORDER_SUMMARY(
-	O_ORDERKEY   COMMENT 'Order identifier from the order entry system',
-	O_CUSTKEY    COMMENT 'FK: Customer identifier for the order',
-    N_NAME       COMMENT 'Customer country of residence',
-	O_ORDERDATE  COMMENT 'Data when the order was placed by the client',
-	NUM_ITEMS    COMMENT 'Number of products in the order',
-	ORDER_AMOUNT COMMENT 'Sum of prices of all items in the order'
-) COPY GRANTS
-COMMENT='This view provides a total number of items and the total item cost for each order. This is based on a view of the order and line item base tables, computing the sum of the item prices and grouping by the order key.'
- as
-  SELECT o_orderkey, o_custkey, n_name, o_orderdate, max(l_linenumber) as num_items, sum(l_extendedprice) as order_amount
-  FROM orders, lineitem , customer, nation
-  WHERE o_orderkey = l_orderkey
-    AND o_custkey = c_custkey
-    AND c_nationkey = n_nationkey
-  GROUP BY o_orderkey, o_custkey, o_orderdate, n_name;
-  
-
-  
--- A function that we want to share
-CREATE OR REPLACE SECURE FUNCTION orders_per_customer 
-  ( input_customer_id INTEGER )
-RETURNS TABLE (customer_name VARCHAR, country VARCHAR, orderkey INTEGER, orderdate DATE, AMOUNT NUMBER)
-AS 'SELECT c.c_name, n.n_name, os.o_orderkey, 
-           os.o_orderdate, os.order_amount
-      FROM customer c, order_summary os, nation n
-      WHERE c.c_custkey = os.o_custkey
-        AND c.c_nationkey = n.n_nationkey
-        AND c.c_custkey = input_customer_id
-      ORDER BY os.o_orderkey';
+- Download the script [`create_lab_database.sql`](https://github.com/sfc-gh-hnielsen/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_lab_database.sql) 
+- Login to your primary account `HOL_ACCOUNT1` and run this script in a worksheet
 
 
-GRANT USAGE ON DATABASE tpch TO ROLE sales_data_scientist_role WITH GRANT OPTION;
-GRANT USAGE ON schema SF1    TO ROLE sales_data_scientist_role WITH GRANT OPTION;
-GRANT ALL ON ALL tables    IN DATABASE tpch TO ROLE sales_data_scientist_role WITH GRANT OPTION;
-GRANT ALL ON ALL views     IN DATABASE tpch TO ROLE sales_data_scientist_role WITH GRANT OPTION;
-GRANT ALL ON ALL functions IN DATABASE tpch TO ROLE sales_data_scientist_role WITH GRANT OPTION;
-
-GRANT USAGE ON DATABASE tpch TO ROLE marketing_analyst_role WITH GRANT OPTION;
-GRANT USAGE ON schema SF1    TO ROLE marketing_analyst_role WITH GRANT OPTION;
-GRANT ALL ON ALL tables    IN DATABASE tpch TO ROLE marketing_analyst_role WITH GRANT OPTION;
-GRANT ALL ON ALL views     IN DATABASE tpch TO ROLE marketing_analyst_role WITH GRANT OPTION;
-GRANT ALL ON ALL functions IN DATABASE tpch TO ROLE marketing_analyst_role WITH GRANT OPTION;
-
-```
-
-</details>
 
 Setup is now complete!
-
-<!-- -------OLD--------- -->
-## OLD!!!!  Provider Account Setup
-
-<mark>we will remove this OLD section </mark>
-
- `Download ZIP` from the Lab Scripts [github site](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
-
-
-Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-in-sf-web-interface) - one script per worksheet
-
-![Create Worksheet](assets/002_load_SQL_scripts_to_worksheets.png)
-
-<mark>we will remove the OLD section above</mark>
-<!-- ------- we will remove the OLD section above--------- -->
 
 
 
@@ -452,15 +337,19 @@ Switch from **Needs Review** to **Resolved Requests** to the history of requests
 
 ## Use an Organizational Listing as a Data Consumer
 
-Now that access has been granted let's go back to at least one of the consumer roles:
+Now that access has been granted let's go back to the consumer roles:
 
-- Log into account `hol_account1` as the `marketing_admin` user.
 - In a seperate browser tab log into `hol_account2` as the `supply_chain_admin` user. *(Keep this tab alive for the rest of the lab.)*
 - In the Internal Marketplace open the **Order Insights** listing again
-- The blue **Request Access** button has now changed to **Query in Worksheet**. Reload the browser tab if needed to see the change.
+- The blue **Request Access** button has now changed to **Query in Worksheet**. Reload the browser tab if needed to see the new button.
 - Click **Query in Worksheet**. Review and run the data poduct sample queries. *(Keep this tab alive for the rest of the lab.)*
 - In the SQL, note the ULL (Uniform Listing Locator) that references the data product.
+  - The ULL contains the domain name, i.e. the name of the profile under which the listing was published.
+  - The ULL also contais the listing name. 
+  - Schema and object names are appended to access specific objects in the data product.
+- **Optional**: Log into account `hol_account1` as the `marketing_admin` user and perform the same steps.
 
+---
 ## Live data sharing in action
 
 What happens when the data owner decides to update the data product?
@@ -468,32 +357,32 @@ What happens when the data owner decides to update the data product?
 - Switch back to the data provider side, ie. `sales_admin` user
 in `hol_account1`
 - Review the order details for customer 60001. 
-```sql
-use schema tpch.sf1;
-use role sales_data_scientist_role;
+  ```sql
+  use schema tpch.sf1;
+  use role sales_data_scientist_role;
 
-SELECT customer_name, country, orderkey, orderdate, AMOUNT
-FROM TABLE(orders_per_customer(60001));
-```
-- Note that customer 60001 lives in Kenya. But, he has moved to Mozambique which requires the following update:
+  SELECT customer_name, country, orderkey, orderdate, AMOUNT
+  FROM TABLE(orders_per_customer(60001));
+  ```
+- Note that customer 60001 lives in Kenya. But, he has now moved to Mozambique which requires the following update:
 
-```sql
--- Customer 60001 moves from Kenya to MOZAMBIQUE !
-UPDATE customer SET c_nationkey = 16 WHERE c_custkey = 60001;
-```
+  ```sql
+  -- Customer 60001 moves from Kenya to MOZAMBIQUE !
+  UPDATE customer SET c_nationkey = 16 WHERE c_custkey = 60001;
+  ```
 - Now switch to your browser tab where you are logged into `hol_account2` as `supply_chain_admin`. In the worksheet "**Order Insights - Examples**" run the second sample query again:
 
-```sql
-// Use the UDF to obtain the order details for one customer
-SELECT customer_name, country, orderkey, orderdate, AMOUNT
-FROM TABLE(ORGDATACLOUD$SALES$ORDER_INSIGHTS.sf1.orders_per_customer(60001));
-```
+  ```sql
+  // Use the UDF to obtain the order details for one customer
+  SELECT customer_name, country, orderkey, orderdate, AMOUNT
+  FROM TABLE(ORGDATACLOUD$SALES$ORDER_INSIGHTS.sf1.orders_per_customer(60001));
+  ```
 - Note that the updated country information is instantly visible to data consumers!
 - Other data product changes such as adding a column to a table would also be immediatly reflected on the consumer side. 
 - **Best practice:** inform your data consumers of structural data product changes ahead of time.  In case of a breaking change consider creating a new listing "v2.0" and give data consumers time to migrate from the old to the new listing.
 
-<mark> !!! we could add a structural data change here. maybe later if we have time !!!</mark>
 
+---
 
 ## Simple Data Goverance Policies
 
@@ -502,18 +391,19 @@ Let's examine some simple techniques for row- and colum-level access control acr
 - Switch back to the data provider side, ie. `sales_admin` user
 in `hol_account1`
 - Review the order summary view. Note that it returns data for customers in many different countries:
-```sql
-use schema tpch.sf1;
-use role sales_data_scientist_role;
+  
+  ```sql
+  use schema tpch.sf1;
+  use role sales_data_scientist_role;
 
-SELECT *
-FROM order_summary; 
-LIMIT 100;
-```
-### Row-level access control across domains
+  SELECT *
+  FROM order_summary; 
+  LIMIT 100;
+  ```
+### Row-level Access Control across Domains
 The data steward of the Sales domain has requested the following access restrictions:
-- The marketing team may only see data for customers in Canada.
-- The supply chain team may only see data for customers in the US.
+- ❗The marketing team may only see data for customers in Canada.
+- ❗The supply chain team may only see data for customers in the US.
   
 Implement the following policy to make your data product compliant:
 
@@ -539,149 +429,120 @@ RETURNS boolean ->
 
  ALTER TABLE nation ADD ROW ACCESS POLICY country_filter ON (n_nationkey); 
 ```
-Before we review the impact of this policy on the data consumers, let's look at another governance requirement that requires column masking.
+Before we review the impact of this policy on the data consumers, let's look at a different governance requirement that requires column masking.
  
- ### Data masking across domains
+ ### Data Masking across Domains
 
-The data steward of the Sales domain has requested the following data masking to enforced:
-- The marketing and supply chain teams are not allowed to see order pricing or amount information for orders placed before 1996.
+The data steward of the Sales domain has requested the following data masking to be enforced:
+- ❗The marketing and supply chain teams are not allowed to see order pricing or item pricing for orders placed before 1996.
 
 Implement the following policy to make your data product compliant:
 
 ```sql
-CREATE OR REPLACE MASKING POLICY order_mask AS (value INT) RETURNS INT ->
+ CREATE OR REPLACE MASKING POLICY order_mask AS (value INT, cutoff_date DATE) RETURNS INT ->
   CASE
     WHEN current_account_name() = 'HOL_ACCOUNT1' 
      AND current_role()         = 'SALES_DATA_SCIENTIST_ROLE'
      THEN value
     WHEN current_account_name() = 'HOL_ACCOUNT1' 
      AND current_role()         = 'MARKETING_ANALYST_ROLE'
-     THEN null
+     AND cutoff_date            >= '1996-01-01'
+     THEN value
     WHEN current_account_name() = 'HOL_ACCOUNT2' 
-     THEN null
+     AND cutoff_date            >= '1996-01-01'
+     THEN value
    ELSE null
   END;
 
-ALTER TABLE orders ALTER COLUMN o_totalprice SET MASKING POLICY order_mask;
-ALTER TABLE lineitem ALTER COLUMN l_extendedprice SET MASKING POLICY order_mask;
-```
+ALTER VIEW order_summary ALTER COLUMN order_amount 
+  SET MASKING POLICY order_mask USING (order_amount, o_orderdate); 
 
+ALTER TABLE orders       ALTER COLUMN o_totalprice 
+  SET MASKING POLICY order_mask USING (o_totalprice, o_orderdate);
+
+ALTER TABLE lineitem     ALTER COLUMN l_extendedprice 
+  SET MASKING POLICY order_mask USING (l_extendedprice, l_commitdate);
+```
+### Effect of the Policies on Data Consumers
+Let's see how the Suppy Chain and Marketing teams are affected by the new policies.
+
+- Switch to your browser tab where you are logged into `hol_account2` as `supply_chain_admin`. 
+- In the worksheet "**Order Insights - Examples**" run the first sample query again:
+
+  ```sql
+  SELECT *
+  FROM ORGDATACLOUD$SALES$ORDER_INSIGHTS.SF1.ORDER_SUMMARY 
+  LIMIT 100;
+  ```
+
+- Confirm that governance policies are applied:
+  - You should only see data where the nation name is United States.
+  - The Order_Amount column should be masked for orders before 1996.
+
+
+- Log into account `hol_account1` as the `marketing_admin` user and executed the same query. 
+  - You should see data for Canadian customers only.
+  
 
 <mark> !!! ! ! ! need to continue working here !!! !!!</mark>
 
 
+## Basic Listing Management
 
-1. Observe live data sharing in action
+<mark> !!! ! ! ! need to continue working here !!! !!!</mark>
 
-- Switch to the **AWS Provider** account where you published the listing
-- Insert or update some of the source data. You can use the following statement which uses [a very cool SQL feature](https://docs.snowflake.com/en/sql-reference/sql/select#label-select-cmd-examples-select-all-in-table-replace) to modify the columns produced by ```SELECT *```.  
-The syntax ```SELECT * REPLACE (<expression> AS <column_name>)``` returns all columns but replaces the column ```<column_name>``` with the ```<expression>```.
+<mark> How to revoke access or discoverability to a listing the UI</mark>
 
-```sql
--- re-insert existing data for Berlin but give it today's date as the valid date 
-INSERT INTO FROSTBYTE_TASTY_BYTES.WEATHER.HISTORY_DAY
-  SELECT * REPLACE  (current_date AS DATE_VALID_STD) 
-  FROM FROSTBYTE_TASTY_BYTES.WEATHER.HISTORY_DAY
-  WHERE city_name = 'Berlin'
-  ORDER BY date_valid_std DESC;
-  ```
+<mark> How to to grant listing management privileges the UI</mark>
 
-- Switch back to your **Horizon_Lab_AWS_Consumer** account to see that the data changes are instantly visible. For example:
+<mark> How to monitor access to organization listing // organization_usage.access_history</mark>
 
-```sql
-SELECT *
-FROM tasty_bytes_analytics.HARMONIZED.DAILY_WEATHER_V
-WHERE city_name = 'Berlin'
-ORDER BY date_valid_std DESC;
-```
-
-## Listing Management and Monitoring
+## Working with Data Products Programmatically
 
 Duration: 20
 
-### Use the Listing API to modify listing properties programmatically
+So far this lab has worked with listings mainly through the Swowflake UI. But, [data owners](https://docs.snowflake.com/en/progaccess/listing-progaccess-about) and [data consumers](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples) can also worth with listings programmatically through the [Listing API](https://docs.snowflake.com/en/sql-reference/commands-listings).
 
-1. [SHOW LISTINGS](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings) in the AWS Provider account where you published the listing.
+In this Lab you have worked a lot with the Swowflake UI to interact with listings. 
+https://docs.snowflake.com/en/progaccess/listing-progaccess-about
+https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples
 
-![301_Provider_API_Show](assets/301_Provider_API_Show.png)
+### As a Listing Owner
 
-2. Copy the Snowflake object name of your listing and use it in the subsequent [DESCRIBE LISTING](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) command.
+- Run [`SHOW LISTINGS;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings) to list the listings that you own or have permission to manage.
+  
+- Run [`DESCRIBE LISTING <listing-name>;`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) obtain additional details for one specfic listing. 
+  - The listing name can be obtained from the output of  [`SHOW LISTINGS;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings);
+  - Note: If that listing name contains special characters other than the underscore, then the name must be in double quotes and is case-sensitive.
 
-- Note: If that listing name contains special characters other than the underscore, then the name must be in double quotes and is case-sensitive.
+- In the result of [`DESCRIBE LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing)  scroll to the right to the column [`MANIFEST_YAML`](https://other-docs.snowflake.com/en/progaccess/listing-manifest-reference) and copy its column value to a worksheets. 
+  - This YAML file is a complete representation of the listing and enables programmatic management of listings.
 
-3. In the result of DESCRIBE LISTING, scroll to the right to the column [MANIFEST_YAML](https://other-docs.snowflake.com/en/progaccess/listing-manifest-reference) and copy its column value. This YAML file is a complete representation of the listing and enables programmatic management of listings.
+- Run [`CREATE ORGANIZATION LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/create-organization-listing) with YAML file and share name to create a new listing programmatically.
 
-![302_Provider_API_Describe](assets/302_Provider_API_Describe.png)
+- Run [`ALTER LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/alter-listing) to make changes to a listing such as:
+  - Unpublish and publish a listing
+  - Rename a listing
+  - Change any of the listing metatdata by using a modified YAML file in the  [`ALTER LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/alter-listing) command
+  - Change who can discosser or access a listing, e.g. by providing a modified YAML file
 
-4. Paste the copied YAML into an [ALTER LISTING](https://other-docs.snowflake.com/en/sql-reference/sql/alter-listing) statement using the listing name obtained in step 2 above (Show Listing).
 
-- Make some changes in the YAML that you can easily verify in the UI and on the consumer side. For example, update the title and the first line of the description.
-- Execute the ALTER LISTING statement.
+### As a Listing Consumer
 
-![303_Provider_API_AlterListing](assets/303_Provider_API_AlterListing.png)
+- Run [`SHOW AVAILABLE LISTINGS IS_ORGANIZATION = TRUE;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-available-listings) to list all the internal marketplace listings that your current role is allowed to discover
 
-5. Verify the immediate effect of the ALTER LISTING statement
+- Run [`DESCRIBE AVAILABLE LISTING <listing_global_name>`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-available-listing) to get more details on one particular listing.
+  - The listing global name can be found in the outout of the  [`SHOW AVAILABLE LISTINGS`](https://other-docs.snowflake.com/en/sql-reference/sql/show-available-listings) command.
+  - Note: The `listing global name` is a different kind of listing identifier than the `listing name`.
 
-- In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing.
+- Run [`CREATE DATABASE <name> FROM LISTING <listing_global_name>;`](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples#create-a-database-from-a-listing) if you operate as a data consumer in a different account and you want to mount the listing as a local database. 
+  - This does not create a local copy o fthe shared data but it makes the listing appear in your local list of databases.
+  - Mounting an organizational listing as a local database enables you to work with database roles for additional governance options.
+---
 
-![304_Provider_Studio](assets/304_Provider_Studio.png)
 
-- Switch to your consumer account Horizon_Lab_AWS_Consumer.
-- Navigate to "Data Products", then "Private Sharing", and open the listing page again. Refresh if needed to see the changes from the ALTER LISTING statement.
-
-### Monitor Auto Fulfillment status and cost
-
-Time to revisit the second consumer account ("horizon_lab_azure_consumer") and the replication into that Azure region. By now, the one-time replication setup has been completed in the background and the data product is now ready to use.
-
-1. Switch to the account "horizon_lab_azure_consumer" as ACCOUNTADMIN, and navigate to "Private Sharing" to open the listing that has been shared.
-
-2. Click the GET button to mount the data product locally, as you did in the "horizon_lab_aws_consumer" account.
-
-3. Switch to the AWS Provider account and take the following steps to monitor replication status and cost.
-
-4. Navigate to the "Provider Studio", select "Listings" from the horizontal menu at the top, and open your listing.
-
-5. On the listings page, scoll down to "Consumer Account", click on the 3 dots, and select "Manage Regions & Replication"
-
-6. Select the "Azure West Europe Region" to see the timestamp of the latest refresh to that region.
-
-![400_MonitorReplicationStatus](assets/400_MonitorReplicationStatus.png)
-
-7. Go back to the Provider Studio, select "Analytics" from the horizontal menu at the top. This is where summarized and detailed statistics about the usage of the listings will be displayed eventually. There is some delay in populating these statistics, but the following screenshots give you an idea of what you will see.
-
-![401_Provider_Dashboard](assets/401_Provider_Dashboard.png)
-
-The same information as well as replication details can also be obtained from various views in the schema [SNOWFLAKE.DATA_SHARING_USAGE](https://docs.snowflake.com/en/sql-reference/data-sharing-usage) and [SNOWFLAKE.ORGANIZATION_USAGE](https://docs.snowflake.com/en/sql-reference/organization-usage):
-
-```sql
-use database SNOWFLAKE;
-
-select * from DATA_SHARING_USAGE.LISTING_ACCESS_HISTORY;
-
-select * from DATA_SHARING_USAGE.LISTING_AUTO_FULFILLMENT_DATABASE_STORAGE_DAILY;
-
-select * from DATA_SHARING_USAGE.LISTING_AUTO_FULFILLMENT_REFRESH_DAILY;
-
-select * from DATA_SHARING_USAGE.LISTING_EVENTS_DAILY;
-
-select * from DATA_SHARING_USAGE.LISTING_TELEMETRY_DAILY;
-
-select * from ORGANIZATION_USAGE.LISTING_AUTO_FULFILLMENT_USAGE_HISTORY;
-
-select * from ORGANIZATION_USAGE.REPLICATION_USAGE_HISTORY:
-```
-
-8. The [replication cost](https://other-docs.snowflake.com/en/collaboration/provider-understand-cost-auto-fulfillment) can also be monitored in the UI. Navigate to the "Admin" menu in the left-hand panel, then to "Cost Management" and "Consumption". Switch the filter from "All Services" to "Cross-Cloud Auto-Fulfillment". Here is an example from a different test replicating a listing to the region Azure UK South:
-
-![402_Provider_LAF_Cost_Compute](assets/402_Provider_LAF_Cost_Compute.png)
-
- Additional filters enable you to select a time period, pick a specific target region, or toggle between compute cost, storage cost, and data transfer volume incurred by the listing auto-fulfillment.
-
-![403_Provider_LAF_DataTransfer](assets/403_Provider_LAF_DataTransfer.png)
-
-![404_Provider_LAF_DataTransfer_Details](assets/404_Provider_LAF_DataTransfer_Details.png)
-
-### Enable and Consume Change Tracking
+## Enable Change Tracking for Data Products
+<mark> !!! do we want to keep this section and adjust it to our TPC-H scenario ??? </mark>
 
 The provider of a listing can choose to enable [change tracking](https://docs.snowflake.com/en/user-guide/streams) on the some or all of the tables or views that are shared in a listing. This enables the consumer to track the data changes. Let's do that with the view DAILY_WEATHER_V:
 
@@ -721,125 +582,14 @@ USE DATABASE tasty_bytes_local;
 SELECT METADATA$ACTION, METADATA$ISUPDATE, * 
 FROM stream_daily_weather_changes;
 ```
+-----------
 
-<!-- ------------------------ -->
-## Protect Data with Governance Policies
 
-Duration: 20
 
-This section of the lab introduces several capabilities for data providers to restrict the usage of their products by consumers.
+<!----------- maybe we add database roles later
 
-### Cross-Account Row-Level Access Policies
 
-Frosty the data steward is concerned that our listing that we have shared includes the view ANALYTICS.CUSTOMER_LOYALTY_METRICS_V which contains sensitive information that must not be accessible to all data consumers. He requests the following restrictions:
-
-![500_DataSteward_1](assets/500_DataSteward_1.png)
-
-Let's implement a [row-level access policy](https://docs.snowflake.com/en/user-guide/security-row-intro) to implement the required access control. Note the usage of the context function **current_account_name()** to detect which consumer account is accessing the shared view.
-
-<mark>Fill in AWS Provider Account Name below</mark>
-
-```sql
-use database frostbyte_tasty_bytes;
-use schema analytics;
-
-CREATE OR REPLACE ROW ACCESS POLICY country_filter AS (country string) 
-RETURNS boolean ->
-  CASE
-    WHEN current_account_name() IN ('HORIZON_LAB_AWS_CONSUMER') 
-      AND country               IN ('United States', 'Canada') 
-      THEN true
-    WHEN current_account_name() IN ('HORIZON_LAB_AZURE_CONSUMER')        
-      AND country               IN ('France', 'Germany', 'Poland', 'Sweden', 'Spain') 
-      THEN true
-    WHEN current_account_name() IN ('*** FILL IN AWS Provider Account Name ***')
-      THEN true
-      ELSE false
-  END;
-  ```
-
-Then apply the policy to the shared view:
-
-```sql
-ALTER VIEW CUSTOMER_LOYALTY_METRICS_V ADD ROW ACCESS POLICY country_filter ON (country);
-```
-
-Now switch to the consumer account HORIZON_LAB_AWS_CONSUMER to confirm that only US and Canadian client data is visible in the view ANALYTICS.CUSTOMER_LOYALTY_METRICS_V.
-
-After the replication interval of 1 minute you will also see that the consumer account HORIZON_LAB_AZURE_CONSUMER can only see the Eurpean clients.
-
-### Cross-Account Column Masking
-
-But, Frosty the data steward is not yet satisfied:
-
-![501_DataSteward_2](assets/501_DataSteward_2.png)
-
-Ok, let's get to work.
-
-To make things easy, let's first create a tag that you can use to indicate which columns contain PII data.
-
-```sql
-CREATE SCHEMA IF NOT EXISTS tags;
-
-CREATE OR REPLACE TAG tags.tasty_pii
-    ALLOWED_VALUES 'NAME', 'PHONE_NUMBER', 'EMAIL', 'BIRTHDAY'
-    COMMENT = 'Tag for PII, allowed values are: NAME, PHONE_NUMBER, EMAIL, BIRTHDAY';
-```
-
-With the tag created, let's assign it to the relevant columns in the Customer Loyalty view:
-
-```sql
-ALTER VIEW ANALYTICS.CUSTOMER_LOYALTY_METRICS_V
-    MODIFY COLUMN 
-    first_name    SET TAG tags.tasty_pii = 'NAME',
-    last_name     SET TAG tags.tasty_pii = 'NAME',
-    phone_number  SET TAG tags.tasty_pii = 'PHONE_NUMBER',
-    e_mail        SET TAG tags.tasty_pii = 'EMAIL';
-```
-
-Optionally, you can also use the UI to add or see the tags on these columns:
-
-![502_AddTags](assets/502_AddTags.png)
-
-Now let's create a slightly more advanced [policy to mask the PII columns depending on their tag](https://docs.snowflake.com/en/user-guide/tag-based-masking-policies) value and the consmer account:
-
-<mark>Fill in AWS Provider Account Name below</mark>
-
-```sql
-CREATE OR REPLACE MASKING POLICY pii_string_mask AS (value STRING) RETURNS STRING ->
-  CASE
-    -- two roles in the provider account have access to unmasked values 
-    WHEN CURRENT_ACCOUNT_NAME() IN ('*** FILL IN AWS Provider Account Name ***') 
-    AND CURRENT_ROLE()          IN ('ACCOUNTADMIN','SYSADMIN')
-    THEN value
-
-    -- For consumers in the 2nd AWS account: if a column is tagged with 
-    -- TASTY_PII=PHONE_NUMBER then mask everything except the first 3 digits   
-    WHEN CURRENT_ACCOUNT_NAME() IN ('HORIZON_LAB_AWS_CONSUMER') 
-    AND SYSTEM$GET_TAG_ON_CURRENT_COLUMN('TAGS.TASTY_PII') = 'PHONE_NUMBER'
-    THEN CONCAT(LEFT(value,3), '-***-****')
-        
-    -- For consumers in the Azure account: if a column is tagged with  
-    -- TASTY_PII=EMAIL then mask everything before the @ sign  
-    WHEN CURRENT_ACCOUNT_NAME() IN ('HORIZON_LAB_AZURE_CONSUMER') 
-    AND SYSTEM$GET_TAG_ON_CURRENT_COLUMN('TAGS.TASTY_PII') = 'EMAIL'
-    THEN CONCAT('**~MASKED~**','@', SPLIT_PART(value, '@', -1))
-        
-    -- all other cases and columns, such as first and last name, should be fully masked   
-    ELSE '**~MASKED~**' 
-  END;
-```
-
-Next, apply the policy to the tag so that the policy takes effect on all tages columns:
-
-```sql
-ALTER TAG tags.tasty_pii SET MASKING POLICY pii_string_mask;
-```
-
-Now switch to the consumer account HORIZON_LAB_AWS_CONSUMER and look at the view CUSTOMER_LOYALTY_METRICS_V to confirm that phone numbers are partially masked while the other PII columns are fully masked.
-
-After the replication interval of 1 minute you will see in the account HORIZON_LAB_AZURE_CONSUMER that emails are partially masked while phone numbers and names are fully masked.  
-
+## Govern Data Products with Database Roles
 ### Database Roles - Provider Side
 
 Just when we thought we had all the necessary governance controls in place, Frosty has a new requirement for us.
@@ -884,7 +634,6 @@ grant select on view  ANALYTICS.CUSTOMER_LOYALTY_METRICS_V
 
 Next, use the context function [**IS_DATABASE_ROLE_IN_SESSION()**](https://docs.snowflake.com/en/sql-reference/functions/is_database_role_in_session) to recreate our row-level access policy to define which role can see customer loyality data from which country.
 
-<mark>Fill in Provider Account Name in the last WHEN clause of the policy below</mark>
 
 ```sql
 use database frostbyte_tasty_bytes;
@@ -892,7 +641,6 @@ use schema analytics;
 
 ALTER VIEW CUSTOMER_LOYALTY_METRICS_V DROP ROW ACCESS POLICY country_filter;
 
-<mark>Fill in Provider Account Name below</mark>
 
 CREATE OR REPLACE ROW ACCESS POLICY country_filter AS (country string) 
 RETURNS boolean ->
@@ -994,319 +742,26 @@ The following picture illustrates the use of our database roles in this data sha
 ![505_Database_Roles_Sharing](assets/505_Database_Roles_Sharing.png)
 
 Now switch to the different local roles (sales_emea_role, sales_apj_role, etc) in each of your consumer accounts to verify that each local role can only see those rows in the CUSTOMER_LOYALTY_METRICS_V view that are permitted by the row-level access policy in the provider account.
+ -->
 
-### Aggregation and Projection Policies
 
-![550_DataSteward_4](assets/550_DataSteward_4.png)
-
-Frosty the data steward has a new requirement for us. In the consumer accounts, only admins and managers may see the detailed per-customer loyalty data. Anyone else may see aggregated data only.
-
-Create the following [aggregation policy](https://docs.snowflake.com/en/user-guide/aggregation-policies) to implement this requirement:
-
-<mark>Fill in AWS Provider Account Name below</mark>
-
-```sql
-CREATE OR REPLACE AGGREGATION POLICY tasty_aggregation_policy
-  AS () RETURNS AGGREGATION_CONSTRAINT ->
-  CASE
-      WHEN current_account_name() IN ('*** FILL IN AWS Provider Account Name ***') 
-       AND current_role() = 'ACCOUNTADMIN'
-      THEN NO_AGGREGATION_CONSTRAINT()
-
-      WHEN IS_DATABASE_ROLE_IN_SESSION('TASTYBYTES_MANAGER_ROLE')
-      THEN NO_AGGREGATION_CONSTRAINT()
-
-      ELSE AGGREGATION_CONSTRAINT(MIN_GROUP_SIZE => 50) -- at least 50 rows in aggregate
-    END;
-
-ALTER VIEW analytics.CUSTOMER_LOYALTY_METRICS_V
-  SET AGGREGATION POLICY tasty_aggregation_policy;
-```
-
-Now switch to your consumer account **horizon_lab_aws_consumer** to verify the effect of the aggregation policy:
-
-```sql
-use role sales_apj_role;
--- sales_apj_role gets blocked from accessing any individual records:
-SELECT * FROM analytics.CUSTOMER_LOYALTY_METRICS_V;
-
--- sales_apj_role can execute aggregation queries:
-SELECT city, count(*) as num_cust_per_city
-FROM analytics.CUSTOMER_LOYALTY_METRICS_V
-GROUP BY city;
-
--- sales_manager_role is permitted to access  individual records:
-use role sales_manager_role;
-SELECT * FROM analytics.CUSTOMER_LOYALTY_METRICS_V LIMIT 100;
-```
-
-Switch back to your AWS Provider account and issue the following command to deactivate the aggregation policy.
-
-```sql
-ALTER TABLE analytics.CUSTOMER_LOYALTY_METRICS_V UNSET AGGREGATION POLICY;
-```
-
-Next, let's also create a [projection policy](https://docs.snowflake.com/en/user-guide/projection-policies) that prevents the **city** column from appearing in a result set but allows its usage in predicates to the restrict a query result:
-
-<mark>Fill in AWS Provider Account Name below</mark>
-
-```sql
-CREATE OR REPLACE PROJECTION POLICY tasty_projection_policy
-  AS () RETURNS PROJECTION_CONSTRAINT ->
-  CASE
-      WHEN current_account_name() IN ('*** FILL IN AWS Provider Account Name ***') 
-       AND current_role() = 'ACCOUNTADMIN'
-      THEN PROJECTION_CONSTRAINT(ALLOW => true)
-
-      WHEN IS_DATABASE_ROLE_IN_SESSION('TASTYBYTES_MANAGER_ROLE')
-      THEN PROJECTION_CONSTRAINT(ALLOW => true)
-
-      ELSE PROJECTION_CONSTRAINT(ALLOW => false)
-    END;
-
-ALTER VIEW analytics.CUSTOMER_LOYALTY_METRICS_V
-  MODIFY COLUMN city 
-  SET PROJECTION POLICY tasty_projection_policy;
-```
-
- Switch to your consumer account **horizon_lab_aws_consumer** again to explore the effect of the projection policy on the results or the following queries:
-
- ```sql
-use role sales_apj_role;
-
-SELECT *              FROM analytics.CUSTOMER_LOYALTY_METRICS_V;
-
-SELECT * EXCLUDE city FROM analytics.CUSTOMER_LOYALTY_METRICS_V;
-
-SELECT * EXCLUDE city 
-FROM analytics.CUSTOMER_LOYALTY_METRICS_V
-WHERE city IN ('Delhi','Tokyo','Seoul','Melbourne','Sydney','Mumbai');
-
-SELECT city, count(*) as num_cust_per_city
-FROM analytics.CUSTOMER_LOYALTY_METRICS_V
-GROUP BY city;
-```
-
-Note that a projection policy by itself does not prevent users from detecting information about individuals. For example, the following query is permitted (and returns customer details if you remove the masking policy **pii_string_mask**):
-
- ```sql
-SELECT * EXCLUDE city
-FROM analytics.CUSTOMER_LOYALTY_METRICS_V
-WHERE city = 'Melbourne' AND last_name = 'Arellano';
-```
-
-## Publish and Monitor Data Quality Metrics for Listings
-
-Duration: 15
-
-In this section the data provider will capture [data quality metrics](https://docs.snowflake.com/en/user-guide/data-quality-intro) and share them with the data consumers. In particular, we want to monitor the data quality in the view ANALYTICS.ORDERS_BY_POSTAL_CODE_V.
-
-### Assign Built-in and Custom Data Quality Metrics to Shared Data
-
-On AWS Provider account, execute the following commands to create a database where we will define any custom quality functions.
-
-```sql
-use role accountadmin;
-create or replace database tasty_bytes_quality;
-use database tasty_bytes_quality;
-create schema dq_functions;
-```
-
-Next, let's define how often the quality of ORDERS_BY_POSTAL_CODE_V should be checked. For a table, the quality checks can be triggered by data changes or executed on a schedule. For views, the quality metrics can (currently) be evaluated on a schedule.
-
-Let's set the schedule to the shortest possible interval, which is 5 minutes:
-
-```sql
-ALTER VIEW FROSTBYTE_TASTY_BYTES.ANALYTICS.ORDERS_BY_POSTAL_CODE_V
-  SET DATA_METRIC_SCHEDULE = '5 MINUTE';
-```
-
-Now, let's use two of [Snowflake's built-in data quality functions](https://docs.snowflake.com/en/user-guide/data-quality-system-dmfs) to count the number of NULL valuse in the column POSTAL_CODE as well as the number of distinct cities reported in this view:
-
-```sql
-ALTER VIEW FROSTBYTE_TASTY_BYTES.ANALYTICS.ORDERS_BY_POSTAL_CODE_V
-  ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.NULL_COUNT ON (POSTAL_CODE);
-
-ALTER VIEW FROSTBYTE_TASTY_BYTES.ANALYTICS.ORDERS_BY_POSTAL_CODE_V
-  ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.UNIQUE_COUNT ON (CITY);
-```
-
-Additionally, let's create a [custom data quality function](https://docs.snowflake.com/user-guide/data-quality-working#create-your-own-dmf) that counts the number of outliers, i.e. postal areas with an exceptionally high or low number of orders:
-
-```sql
-CREATE OR REPLACE DATA METRIC FUNCTION tasty_bytes_quality.dq_functions.postal_code_order_outliers (t TABLE  (count_order INTEGER) )
-RETURNS INTEGER
-AS
-$$
-  select count(*) 
-  from t
-  where count_order > 300000
-     or count_order < 30
-$$;
-```
-
-The owner of the object that is being monitored needs to have the privilege to execute the custom data metric function and use the database and schema where that function resides. Additional privileges are required to execute the built-in metric functions or view their results. To keep it simple, let's grant the following privileges to all users:
-
-```sql
-GRANT ALL ON FUNCTION tasty_bytes_quality.dq_functions.postal_code_order_outliers(TABLE(INTEGER)) to role public;
-GRANT USAGE ON DATABASE tasty_bytes_quality              to role public;
-GRANT USAGE ON SCHEMA   tasty_bytes_quality.dq_functions to role public;
-
-GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT            to role public;
-GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER           to role public;
-GRANT DATABASE ROLE SNOWFLAKE.USAGE_VIEWER               to role public;
-```
-
-Now we can apply our customer quality function to the view ORDERS_BY_POSTAL_CODE_V:
-
-```sql
-ALTER VIEW FROSTBYTE_TASTY_BYTES.ANALYTICS.ORDERS_BY_POSTAL_CODE_V
-  ADD DATA METRIC FUNCTION tasty_bytes_quality.dq_functions.postal_code_order_outliers 
-  ON (count_order);
-```
-
-Use the following command to verify that all three quality metrics have been scheduled correctly. Any permission problems would be reflected in the column "schedule_status". Possible status values are [documented here](https://docs.snowflake.com/sql-reference/functions/data_metric_function_references#returns).
-
-```sql
-  SELECT schedule_status, *
-  FROM TABLE(
-    INFORMATION_SCHEMA.DATA_METRIC_FUNCTION_REFERENCES(
-      REF_ENTITY_NAME => 'FROSTBYTE_TASTY_BYTES.ANALYTICS.ORDERS_BY_POSTAL_CODE_V',
-      REF_ENTITY_DOMAIN => 'VIEW'  )
-  );
-```  
-
-![600_DMF_Status](assets/600_DMF_Status.png)
-
-After 5 minutes you can start observing quality metrics in the [default event table](https://docs.snowflake.com/en/user-guide/data-quality-working#view-the-dmf-results) where all quality results are recorded:
-
-<mark>Unfortuately, accessing **snowflake.local.data_quality_monitoring_results** is not yet available in Snowflake trial accounts. Skip ahead to the next section _Sharing Data quality Metrics_ if you are using a trial account.</mark>
-
-```sql
-SELECT scheduled_time, measurement_time, metric_name, metric_schema,
-       value, table_name, table_schema, table_database 
-FROM snowflake.local.data_quality_monitoring_results  /* not yet available in trial accounts! */
-ORDER BY measurement_time DESC;
-```
-
-![601_DMF_Results](assets/601_DMF_Results.png)
-
-Additionally, you could define [Alerts](https://docs.snowflake.com/en/user-guide/alerts) to watch the data quality metrics and take action automatically if acceptable thresholds are exceeded. For example, if the number of outliers reported by our custom quality function exceeds a certain value an alert could copy the offending rows into an exception table for review and send an [email notification](https://docs.snowflake.com/en/user-guide/email-stored-procedures).
-
-### Sharing Data Quality Metrics
-
-How to share quality metrics from the event table with data consumers? At the time of authoring this lab (May 2024) event tables cannot be shared in a Listing directly. Similarly, views, streams, and dynamic tables are not yet an option for sharing data quality events.
-
-And since Snowflake trial accounts cannot access the event table (yet!), let's setup a task that regularly inserts data quality metrics into a table for sharing:
-
-```sql
-USE DATABASE FROSTBYTE_TASTY_BYTES;
-CREATE SCHEMA FROSTBYTE_TASTY_BYTES.dq;
-
--- this table will hold and share 7 days worth of quality metrics:
-CREATE OR REPLACE TABLE FROSTBYTE_TASTY_BYTES.dq.shared_quality_events 
-  (measurement_time TIMESTAMP, 
-   table_name       VARCHAR, 
-   table_schema     VARCHAR, 
-   table_database   VARCHAR, 
-   metric_name      VARCHAR, 
-   metric_schema    VARCHAR,
-   value            INTEGER  );  
- 
-
--- this task will maintain the table above:
-CREATE OR REPLACE TASK FROSTBYTE_TASTY_BYTES.dq.subset_quality_events
-   SCHEDULE = '3 MINUTE'
-   AS BEGIN
-        DELETE FROM dq.shared_quality_events
-        WHERE measurement_time < current_date - 7;   
-
-        INSERT INTO dq.shared_quality_events
-           SELECT current_timestamp, 'ORDERS_BY_POSTAL_CODE_V',
-                  'ANALYTICS', 'FROSTBYTE_TASTY_BYTES',
-                  'NULL_COUNT', 'SNOWFLAKE.CORE',
-                   SNOWFLAKE.CORE.NULL_COUNT(
-                       SELECT POSTAL_CODE
-                       FROM ANALYTICS.ORDERS_BY_POSTAL_CODE_V);
-                       
-        INSERT INTO FROSTBYTE_TASTY_BYTES.dq.shared_quality_events
-           SELECT current_timestamp, 'ORDERS_BY_POSTAL_CODE_V',
-                  'ANALYTICS', 'FROSTBYTE_TASTY_BYTES',
-                  'UNIQUE_COUNT', 'SNOWFLAKE.CORE',
-                   SNOWFLAKE.CORE.UNIQUE_COUNT(
-                       SELECT city
-                       FROM ANALYTICS.ORDERS_BY_POSTAL_CODE_V);               
-                       
-        INSERT INTO FROSTBYTE_TASTY_BYTES.dq.shared_quality_events
-           SELECT current_timestamp, 'ORDERS_BY_POSTAL_CODE_V',
-                  'ANALYTICS', 'FROSTBYTE_TASTY_BYTES',
-                  'postal_code_order_outliers', 'dq_functions',
-                   tasty_bytes_quality.dq_functions.postal_code_order_outliers(
-                       SELECT count_order
-                       FROM ANALYTICS.ORDERS_BY_POSTAL_CODE_V);                     
-   END;
-
-ALTER TASK subset_quality_events RESUME;
-```
-
-Now you can add the table "shared_quality_events" to the shared data product. Here are 2 options how you can so this.
-
-**Option 1: Programmatically**
-
-Grant the share the necessary access to the "shared_quality_events" table. You should already have the share name from the early section on Database Roles. Else, get the share name as in the first step of option 2 below.
-
-```sql
-GRANT USAGE ON SCHEMA FROSTBYTE_TASTY_BYTES.dq TO SHARE <share_name>;
- 
-GRANT SELECT ON FROSTBYTE_TASTY_BYTES.dq.shared_quality_events TO SHARE <share_name>;
-```
-
-**Option 2: In the UI**
-
-Take the following 3 steps in the UI:
-
-1. In the provider account, navigate to the Provider Studio, select "Listings" from the horizontal menu at the top, and open your listing. In the section "Data Product" click on the name of the Secure Share that bundles the shared data objects.
-![602_DMF_AddTableToShare_1](assets/602_DMF_AddTableToShare_1.png)
-
-2. You are now looking at a page detailing the underlying share. In the section "Data", click the "Edit" button:
-![603_DMF_AddTableToShare_2](assets/603_DMF_AddTableToShare_2.png)
-
-3. Now you can open the data explorer to find and select the table "dq.shared_quality_events". Click "Done" and "Save" to finalize the update of your data product.
-![604_DMF_AddTableToShare_3](assets/604_DMF_AddTableToShare_3.png)
-
-4. Switch to your consumer account "horizon_lab_aws_consumer" to verify that the data quality metrics are immediately visible as a new table in the data product. In the second consumer account "horizon_lab_azure_consumer" you will see the same after the 1 minute replication interval.
-
-5. Go back to your provider account and suspend the task, to save credits in your trial account.
-
-```sql
-  ALTER TASK subset_quality_events SUSPEND;
-  
-  ALTER VIEW FROSTBYTE_TASTY_BYTES.ANALYTICS.ORDERS_BY_POSTAL_CODE_V
-  UNSET DATA_METRIC_SCHEDULE;
-```
-
-<!-- ------------------------ -->
-
-
-<!-- ------------------------ -->
 ## Conclusion & Resources
 
 Duration: 5
 
-Congratulations, you made it through the internal marketplace journey! You have exercised a range of data sharing and governance capabilities. You have worked with different types of data products including structured data, unstructured data, and native applications. And you have deployed different types of governance policies to implement data access and data privacy restrictions.
+Congratulations, you made it through the **Snowflake Internal Marketplace** journey! You have seen how data products can be authored, published, requested, consumed, and governed. These are key capabilities for sharing documented and understandable data products across business units with governance and compliance control controls.
 
 ### What you Learned
 
-- How to blend local Point-of-Sale data with Marketplace Weather data to build analytics data products.
-
-- How to publish data products as Listings targeted at accounts in your company
-- How to configure data access and privacy polices as a data provider to restrict data access by data consumers.
-- How to use tag-based column masking, row-access, aggregation and projection policies with database roles in a collaboration scenario.
-- How to manage Listings via the Listings API.
-- How to setup data quality monitoring of shared data products
+- How to create data products that consist of multiple data objects.
+- How to document a data product with a broad range of metadata such as description, data dictionary, ownership, sample queries, and service-level objectives. 
+- How to use provider profiles that represent different domains or business units as owners of data products on the internal marketplace. 
+- How to request and approval or deny access to data products
+- How to apply data product governance controls across domains
 
 
 ### Related Resources
+<mark> !!! needs to be updated. Use links from slide 6 of our slide deck / step 7 of the setup doc</mark>
 
 - [Lab Source Code on Github](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
 
@@ -1322,3 +777,6 @@ Congratulations, you made it through the internal marketplace journey! You have 
 - [Iceberg Tables in Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg)
 - [Best Practices publishing a Snowflake Native App](https://docs.snowflake.com/en/developer-guide/native-apps/publish-guidelines#best-practices-when-publishing-a-native-app)
 - [Sharing Unstructured Data](https://docs.snowflake.com/en/user-guide/unstructured-data-sharing)
+
+
+
