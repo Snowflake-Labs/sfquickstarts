@@ -68,18 +68,18 @@ Signup for a trial account [here](https://signup.snowflake.com/)
 
 ### Step 2: Configure the first account and create two more accounts _in the same org_
 - Login as `sales_admin` to your Primary Account from Step 1 and execute the following commands in a worksheet. 
-- In the first two commands, enter your own email and password!
+- In the first four commands, enter your own email, first name, last name and password - this variable will be reused in the code for creating users and accounts.
 
 ```sql
 -- Run this code in your PRIMARY Account
--- Make sure you update the three variables below (email_var, firstname_var and lastname_var)
+-- Make sure you update the four variables below (email_var, firstname_var and lastname_var, and pwd_var)
 
 USE ROLE accountadmin;
 
 -- Use the same name and email for all accounts
 set email_var = 'FILL_IN_YOUR_EMAIL';
 set firstname_var  = 'FILL_IN_YOUR_FIRST_NAME';
-set lasttname_var  = 'FILL_IN_YOUR_LAST_NAME';
+set lastname_var  = 'FILL_IN_YOUR_LAST_NAME';
 
 -- Use the same password for users in all accounts
 set pwd_var = 'FILL_IN_YOUR_PASSWORD';
@@ -118,12 +118,16 @@ GRANT ROLE marketing_analyst_role TO USER marketing_admin;
 GRANT CREATE SHARE ON ACCOUNT TO ROLE marketing_analyst_role;
 GRANT CREATE ORGANIZATION LISTING ON ACCOUNT TO ROLE marketing_analyst_role;
 ```
+
 Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
 
-Now, run the following commands to create the next two accounts that you need. You can use the same worksheet as above. 
+While waiting for the email, you can go ahead and run the following parts.
+
+Now, run the following commands to create the next two accounts that you need. You have to use the same worksheet as above, as the variables created are reused.
 
 ```sql
 -- Run this code in your PRIMARY account
+-- Copy/Paste it into the same worksheets as the previous code you ran
 -- Create a secondary account in the same region (default!):
 USE ROLE orgadmin;
 
