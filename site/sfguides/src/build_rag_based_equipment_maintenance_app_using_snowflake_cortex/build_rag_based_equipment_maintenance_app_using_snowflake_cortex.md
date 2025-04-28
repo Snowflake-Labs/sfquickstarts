@@ -337,7 +337,7 @@ FROM
 SELECT * FROM repair_manuals_chunked_vectors;
 ```
 
-Lets use our first LLM, and create a User Defined Function (UDF) to invoke the LLM using **Retrieval-Augmented Generation** (RAG). For this quickstart we are using the [Mixtral-8x7b](https://mistral.ai/news/mixtral-of-experts/) model.  This model is supplied in your snowflake system without need for additional configuration. You can natively use it in Snowflake CORTEX.  
+Lets use our first LLM, and create a User Defined Function (UDF) to invoke the LLM using **Retrieval-Augmented Generation** (RAG). For this quickstart we are using the [llama3.1-8b](https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_1/) model.  This model is supplied in your snowflake system without need for additional configuration. You can natively use it in Snowflake CORTEX.  
 
 ```sql
 ----------------------------------------------------------------------
@@ -363,7 +363,7 @@ AS
         LIMIT 10
     )
     SELECT 
-        SNOWFLAKE.cortex.COMPLETE('mixtral-8x7b', 
+        SNOWFLAKE.cortex.COMPLETE('llama3.1-8b', 
             CONCAT('Answer this question: ', prompt, '\n\nUsing this repair manual text: ', chunk_text)
         ) AS response,
         file_name,
@@ -533,7 +533,7 @@ AS
         ),
         combined_notes AS (
             SELECT 
-                SNOWFLAKE.CORTEX.COMPLETE('mixtral-8x7b', 
+                SNOWFLAKE.CORTEX.COMPLETE('llama3.1-8b', 
                     CONCAT('An equipment technician is dealing with this problem on an AGV: ', 
                     prompt, 
                     '\n\nUsing these previous similar resolution notes, what is the recommended course of action to troubleshoot and repair the AGV?\n\n', 
@@ -548,7 +548,7 @@ AS
 
 ```
 
-You can see we are using the **mixtral-8x7b** model again for this function.  This is important, if you change which models are used for each call, the results will be different in that the quality will be different.  So the higher quality model will always be chosen, which in come cases could supply a less appropriate answer. Lets validate the work done so far.
+You can see we are using the **llama3.1-8b** model again for this function.  This is important, if you change which models are used for each call, the results will be different in that the quality will be different.  So the higher quality model will always be chosen, which in come cases could supply a less appropriate answer. Lets validate the work done so far.
 
 ```sql
 ----------------------------------------------------------------------
