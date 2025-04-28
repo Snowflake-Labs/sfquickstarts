@@ -7,34 +7,34 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Kafka, Data Streaming, Open Catalog, Iceberg
 
-# Cost-Effective Data Streaming in Iceberg Format and Snowflake Open Catalog Integration with StreamNative
+# Cost-Effective Data Streaming in Apache Iceberg&trade; Format and Snowflake Open Catalog Integration with StreamNative
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
 
-StreamNative is partnering with Snowflake to provide you with cost-effective real-time data streaming to Snowflake. This means providing you with best-in-class data ingestion methods tailored to meet your specific needs. This guide focuses on creating a **Streaming Augmented Lakehouse** using **StreamNative's Ursa Engine** with built-in support for **Iceberg and Snowflake Open Catalog**. Kafka messages published to the StreamNative Ursa Cluster will be stored in object storage in Iceberg format. Without copying over the data through connectors, you can directly access data from Snowflake Open Catalog and start analyzing the data. To learn more about cost savings when using the StreamNative Ursa Engine to ingest data to Snowflake, visit this [link](https://streamnative.io/blog/leaderless-architecture-and-lakehouse-native-storage-for-reducing-kafka-cost).
+StreamNative is partnering with Snowflake to provide you with cost-effective real-time data streaming to Snowflake. This means providing you with best-in-class data ingestion methods tailored to meet your specific needs. This guide focuses on creating a **Streaming Augmented Lakehouse** using **StreamNative's Ursa Engine** with built-in support for **Apache Iceberg&trade; and Snowflake Open Catalog**. Apache Kafka&reg; messages published to the StreamNative Ursa Cluster will be stored in object storage in Iceberg format. Without copying over the data through connectors, you can directly access data from Snowflake Open Catalog and start analyzing the data. To learn more about cost savings when using the StreamNative Ursa Engine to ingest data to Snowflake, visit this [link](https://streamnative.io/blog/leaderless-architecture-and-lakehouse-native-storage-for-reducing-kafka-cost).
 
 StreamNative also supports ingesting data into Snowflake using **Snowpipe or Snowpipe Streaming** with **Kafka or Pulsar Connectors** that will not be discussed in this tutorial. For more information on using Connectors to ingest data into Snowflake, follow this [link](https://courses.streamnative.io/courses/streamnative-snowflake-streaming-augmented-lakehouse-and-connectors/lessons/introduction-to-uniconn-kafka-and-pulsar-io-connectors/).
 
-### Prerequisites
-- Familiarity with Terraform and Java.
-- Familiarity with creating policies, roles and s3 buckets in AWS.
+### What You Will Build 
+- A Streaming Augmented Lakehouse powered by a Kafka-compatible StreamNative BYOC Ursa Cluster integrated with Snowflake Open Catalog.
 
-### What You'll Learn 
+### What You Will Learn 
 - How to create a Snowflake Open Catalog
 - How to deploy a StreamNative BYOC Ursa Cluster integrated with Snowflake Open Catalog
 - How to publish Kafka messages to the StreamNative Ursa Cluster using Kafka Java Client
 - How to query tables visible in Snowflake Open Catalog in Snowflake AI Data Cloud
 
-### What You’ll Need 
-- A StreamNative account available at [streamnative.io](streamnative.io). Your account will come with $200 in free credits, sufficient for following this tutorial. No credit card is necessary.
+### Prerequisites or What You Will Need
+- Familiarity with Terraform and Java.
+- Familiarity with creating policies, roles and s3 buckets in AWS.
+- A StreamNative account available at [streamnative.io](https://www.streamnative.io). Your account will come with $200 in free credits, sufficient for following this tutorial. No credit card is necessary.
 - AWS Account for deploying the StreamNative BYOC Ursa Cluster. BYOC clusters are deployed into your cloud provider. These resources will incur AWS charges that are not covered by StreamNative.
 - Permissions to create policies, roles, and s3 buckets in AWS, as well as apply the StreamNative Terraform [vendor access module](https://docs.streamnative.io/docs/byoc-aws-access).
-- Access to Snowflake AI Data Cloud and ability to create a Snowflake Open Catalog Account.
+- Access to [Snowflake account](https://signup.snowflake.com/) and ability to create a Snowflake Open Catalog account.
 - Environment for executing Terraform modules and Java code.
 
-### What You’ll Build 
-- A Streaming Augmented Lakehouse powered by a Kafka-compatible StreamNative BYOC Ursa Cluster integrated with Snowflake Open Catalog.
+Apache&reg;, Apache Iceberg&trade;, and Apache Kafka&reg; are either registered trademarks or trademarks of Apache Software Foundation in the United States and/or other countries.
 
 ## Setup Snowflake Open Catalog and Permissions
 Duration: 30
@@ -104,7 +104,7 @@ StreamNative will require access to this storage bucket. To grant access, execut
 * role: the name of the role that will be created in AWS IAM, arn needed when creating cluster
 * buckets: bucket name and path
 * account_ids: AWS account id
-```markdown
+```
 module "sn_managed_cloud" {
   source = "github.com/streamnative/terraform-managed-cloud//modules/aws/volume-access?ref=v3.19.0"
 
@@ -150,7 +150,7 @@ Next, begin the process of deploying the StreamNative BYOC Ursa Cluster to obtai
 When using a StreamNative-provided bucket, the resulting path you will use for creation of the Snowflake Open Catalog will be as follows. The cloud environment id will be created during the deployment of the Cloud Environment. The cluster id is assigned when starting the cluster creation process in the StreamNative Console.
 
 ```markdown
-s3://<your-cloud-environement-id>/<your-cluster-id>/compaction
+s3://<your-cloud-environment-id>/<your-cluster-id>/compaction
 ```
 
 ### Configure AWS Account for Snowflake Open Catalog Access
@@ -244,12 +244,12 @@ Next we create the Snowflake Open Catalog. Click **+ Create** next to **Manage C
 * Storage provider: S3
 * Default base location:
 
-```
+```markdown
 User provided bucket:
 s3://<your-bucket-name>/<your-bucket-path>/compaction
 
 StreamNative provided bucket:
-s3://<your-cloud-environement-id>/<your-cluster-id>/compaction
+s3://<your-cloud-environment-id>/<your-cluster-id>/compaction
 ```
 * Additional locations: not configured
 * S3 role ARN: arn copied from previous step
@@ -382,7 +382,7 @@ Option 2: Select **Use Existing BYOC Bucket** to choose the bucket created by St
 If using the Streamnative povided bucket, the UI will present you with the SN Bucket Location in this format to be used when creating the Snowflake Open Catalog.
 
 ```markdown
-s3://<your-cloud-environement-id>/<your-cluster-id>/compaction
+s3://<your-cloud-environment-id>/<your-cluster-id>/compaction
 e.g.
 s3://aws-usw2-test-rni68-tiered-storage-snc/o-naa2l-c-vo06zqe-ursa/compaction
 ```
@@ -471,7 +471,7 @@ In this example we created a new project in IntelliJ. We have pasted in the depe
 We created a new class called SNCloudTokenProducer and pasted in the Kafka Java Client code from the StreamNative UI.
 After executing the Kafka Java Client code, the terminal prints the following:
 
-```markdown
+```
 Send hello to kafkaschematopic4-0@0
 ```
 
@@ -497,7 +497,7 @@ Once the compaction folder has been created in the s3 bucket, we can verify the 
 
 ![Verify Tables and Schema](assets/verify-tables-and-schemas.png)
 
-The data is now queryable through Snowflake Open Catalog. In the following step we will configure Snowflake AI Data Cloud to query tables from Snwoflake Open Catalog.
+The data is now queryable through Snowflake Open Catalog. In the following step we will configure Snowflake AI Data Cloud to query tables from Snowflake Open Catalog.
 
 ## Configure Snowflake AI Data Cloud to Query Tables from Snowflake Open Catalog
 Duration: 30
@@ -518,7 +518,7 @@ The video includes the following details from our example:
 
 The following query was used to create the external volume.
 
-```javascript
+```sql
 CREATE OR REPLACE EXTERNAL VOLUME streamnative_external_volume
    STORAGE_LOCATIONS =
       (
@@ -534,13 +534,13 @@ CREATE OR REPLACE EXTERNAL VOLUME streamnative_external_volume
 
 The following query was used to describe the external volume to obtain the IAM role arn used by Snowflake AI Data Cloud to query the s3 bucket.
 
-```javascript
+```sql
 DESC EXTERNAL VOLUME streamnative_external_volume;
 ```
 
 The following query was used to verify Snowflake AI Data Cloud has access to the s3 bucket.
 
-```javascript
+```sql
 SELECT SYSTEM$VERIFY_EXTERNAL_VOLUME('streamnative_external_volume');
 ```
 
@@ -554,7 +554,7 @@ The video includes the following details from our example:
 
 The following query is used to create a catalog integration for public.default.
 
-```javascript
+```sql
 CREATE OR REPLACE CATALOG INTEGRATION oc_int
   CATALOG_SOURCE = POLARIS
   TABLE_FORMAT = ICEBERG
@@ -584,7 +584,7 @@ The video includes the following details from our example:
 
 The following query was used to create an externally managed table.
 
-```javascript
+```sql
 CREATE ICEBERG TABLE kafkaschematopic
 CATALOG = 'oc_int'
 EXTERNAL_VOLUME = 'streamnative_external_volume'
@@ -597,14 +597,14 @@ Once completing these steps, you will be able to query the Iceberg Table registe
 
 The following are example queries for viewing the data in Snowflake AI Data Cloud.
 
-```javascript
+```sql
 select * FROM TRAINING.PUBLIC.kafkaschematopic LIMIT 10
 
 select COUNT(*) FROM TRAINING.PUBLIC.kafkaschematopic
 ```
 
 <!-- ------------------------ -->
-## Conclusion And Resources
+## Conclusion and Resources
 Duration: 5
 
 Congratulations on creating a Streaming Augmented Lakehouse powered by StreamNative's Ursa Engine with built-in support for Iceberg and Snowflake Open Catalog. [Contact StreamNative](https://streamnative.io/contact) to learn more.
@@ -615,7 +615,7 @@ Congratulations on creating a Streaming Augmented Lakehouse powered by StreamNat
 - How to publish Kafka messages to the StreamNative Ursa Cluster using Kafka Java Client
 - How to query tables visible in Snowflake Open Catalog in Snowflake AI Data Cloud
 
-### Related Resources
+### Resources
 - [Streamnative Snowflake Open Catalog Documentation](https://docs.streamnative.io/docs/integrate-with-snowflake-open-catalog)
 - [StreamNative Developer Portal](https://streamnative.io/dev-portal)
 - [StreamNative Academy YouTube Channel](https://www.youtube.com/@streamnativeacademy8484)
