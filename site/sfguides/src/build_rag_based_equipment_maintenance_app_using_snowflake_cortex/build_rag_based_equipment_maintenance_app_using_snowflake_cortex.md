@@ -737,7 +737,7 @@ DROP DATABASE LLM;
 
 This drops all the created database objects including the internal stage, tables, UDF's and Streamlit app.
 
-## Conclusion
+## Conclusion And Resources
 
 You have built an Ai guided equipment maintenance chat bot.  This chat bot base can be used for any piece of equipment.  If you have the repair manuals for a Drill Press, a lithography machine, or a robotic arm.  This app can be used to decrease downtime due to servicing the equipment when in a failed state. You can add your geniune repair logs to further enhance the quality of output from the LLM.
 
