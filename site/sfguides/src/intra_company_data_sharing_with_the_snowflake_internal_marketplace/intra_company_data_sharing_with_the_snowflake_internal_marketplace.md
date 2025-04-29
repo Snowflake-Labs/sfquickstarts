@@ -167,11 +167,11 @@ In a separate browser tab...
 ### Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
 Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider profiles. You will set up profiles for 3 business domains: **Sales**, **Marketing**, and **Supply chain**.
 
-- Download the script [`create_org_profiles.sql`](https://github.com/sfc-gh-hnielsen/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_org_profiles.sql)
+- Download the script [`create_org_profiles.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_org_profiles.sql)
 - Login to your Organization Account `HOL_ORG_ACCOUNT` and this script in a worksheet
 
 ### Step 6: Setup of a TPC-H sample database
-- Download the script [`create_lab_database.sql`](https://github.com/sfc-gh-hnielsen/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_lab_database.sql) 
+- Download the script [`create_lab_database.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_lab_database.sql) 
 - Login to your primary account `HOL_ACCOUNT1` and run this script in a worksheet
 
 
