@@ -77,11 +77,11 @@ Signup for a trial account [here](https://signup.snowflake.com/)
 USE ROLE accountadmin;
 
 -- Use the same name and email for all accounts
-set email_var      = 'FILL_IN_YOUR_EMAIL';
+set email_var = 'FILL_IN_YOUR_EMAIL';
 set firstname_var  = 'FILL_IN_YOUR_FIRST_NAME';
-set lastname_var   = 'FILL_IN_YOUR_LAST_NAME';
+set lastname_var  = 'FILL_IN_YOUR_LAST_NAME';
 
--- Use the same password for users in all accounts (just for this lab!)
+-- Use the same password for users in all accounts
 set pwd_var = 'FILL_IN_YOUR_PASSWORD';
 
 CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=small INITIALLY_SUSPENDED=TRUE;
@@ -123,7 +123,7 @@ Check your email inbox for a message from "Snowflake Computing" and validate the
 
 While waiting for the email, you can go ahead and run the following parts.
 
-Now, run the following commands to create the next two accounts that you need. You have to **use the same worksheet** as above, as the variables created are reused.
+Now, run the following commands to create the next two accounts that you need. You have to use the same worksheet as above, as the variables created are reused.
 
 ```sql
 -- Run this code in your PRIMARY account
@@ -175,17 +175,19 @@ Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider pro
 - Login to your primary account `HOL_ACCOUNT1` and run this script in a worksheet
 
 
+
 Setup is now complete!
 
----
 
+
+<!-- ----------------------------------------->
 ## Create and Publish an Organizational Listing in the Provider Studio UI
 
-Duration: 30
+Duration: 20
 
-In this section you will work in `hol_account1` create and publish an [organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-about). 
+In this section you will use in `hol_account1` create and publish [organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-about). 
 
-Login in to `hol_account1` as `sales_admin`.
+Login in to in `hol_account1` as `sales_admin`.
 
 ### Publishing Flow: Listing Title and Ownership
 
@@ -221,7 +223,7 @@ Now let's select the data objects that we want to share in this data product.
 ### Publishing Flow: Configure Access Control and the Approval Process
 
 Next you set the access control for the data product. Click on the gray **+Access Control** button. 
-- *Discovery* determines who can see the listing and all its metadata in the internal marketlace without having access to the shared data objects.
+- *Discovery* determines who can see the listing and all its metadata in the internal marketlace without having access to the shared data objects
 - *Access* specifies who can discover the listing *and* access the shared data objects. 
 ###
 For this first data product we keep it simple and stick with the defaults:
@@ -246,7 +248,7 @@ So lets (1) **Review** the settings, (2) accept the default of daily replication
 ###
 ---
 ### Publishing Flow: Add Optional Metadata and SLOs
-Data products should be understandable and trustworthy for data consumers so let's add additional metadata to describe the product (see screenshot below).
+Data product should be understandable and trustworthy for data consumers so let's add additional metadata to describe the product (see screenshot below).
 
 - Add a business **description** to document your listing.
   - For example: "This data product contains transactional records of customer orders, linking individual order details with specific items purchased. It includes information such as order IDs, customer identifiers, order dates, item names, quantities, and prices. This data can be leveraged to analyze customer purchasing patterns, identify popular products, understand order frequency, and gain insights into sales trends."
@@ -259,14 +261,13 @@ Data products should be understandable and trustworthy for data consumers so let
   - **Time Range**: Amount of history data included.
   - **Timestamp Granularity**: The interval between data points. For example, "*Event-based*" if there is one record for each incoming order, or "*Daily*" if order volumes are aggregated by date, and so on.
     
-- Add at least two **Usage example** such as these:
+- Add at least one **Usage example** such as:
     ```sql
     -- Title: Explore the Order Summary View:
 
     SELECT * 
     FROM TPCH.SF1.ORDER_SUMMARY 
     LIMIT 100;
-
 
     -- Title: Use the UDF to obtain order details for one customer:
 
@@ -310,8 +311,8 @@ In this section you will request sccess to the new data product for the **Market
 - Review all the listing elements from the data consumer point of view
 - Click on the blue **Request Access** button
     - If you haven't previously validated your email of the `marketing_admin` user, Snowflake will now prompt you to do so, and you can follow the dialog to resend the verification email.
-- The **Request access** dialog comes up. Enter a busines justification such as "*We need access to this data for our next marketing campaign.*" Then submit the request. 
-- After submitting the access request click the grey **View request** button to review or even withdraw your request. 
+- The **Request access** dialog comes up. Enter a busines justification such as "*We need access to this data for our next marketing campaign.*" and submit the request. 
+- After submitting the access request you can use the grey **View request** button to review or even withdraw your request. 
     - If you withdraw the request, please submit it again.
 
 ![](assets25/RAW01.png)
@@ -330,7 +331,7 @@ Let's switch back to the perspective of the data product owner to review and gra
 
 ![](assets25/RAW02.png)
 
-Switch from **Needs Review** to **Resolved Requests** to see the history of requests. 
+Switch from **Needs Review** to **Resolved Requests** to the history of requests. 
 
 ![](assets25/RAW03.png)
 
@@ -353,7 +354,7 @@ Now that access has been granted let's go back to the consumer roles:
 - **Optional**: Log into account `hol_account1` as the `marketing_admin` user and perform the same steps.
 
 ---
-## Live Data Sharing in Action
+## Live data sharing in action
 
 What happens when the data owner decides to update the data product?
 
@@ -487,93 +488,41 @@ Let's see how the Suppy Chain and Marketing teams are affected by the new polici
   - You should see data for Canadian customers only.
   
 
+<mark> !!! ! ! ! need to continue working here !!! !!!</mark>
+
 
 ## Basic Listing Management
 
-Duration: 10
+<mark> !!! ! ! ! need to continue working here !!! !!!</mark>
 
-In this section we will review further capabilities for managing and monitoring listings as a data product owner or as an organization data steward:
+<mark> How to revoke access or discoverability to a listing the UI</mark>
 
-- How to change/revoke access or discoverability for a listing
-- How to grant listing management privileges
-- How to audit access to organizational listing ([organization_usage.access_history](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-governance))
+<mark> How to to grant listing management privileges the UI</mark>
 
-
-### Change/Revoke Access or Discoverability for a Listing
-
-- Log into account `hol_account1` as the `sales_admin` user
-- Navigate to the Provider Studio and open the **Order Insights** listing
-
-    ![](assets25/ManageListings-01.png)
-
-- In the top right, click on the Access definition of the listing.
-
-    ![](assets25/ManageListings-02.png)
-
-- You can now add or remove roles or entire accounts that access to the data product. Same for discoverability.
-
-    ![](assets25/ManageListings-03.png)
-
----
-### How to Grant Listing Management Privileges
-
-- Navigate to the Provider Studio and open the **Order Insights** listing, if it is not still open from the previous exercise.
-- Click on the wheel in the top right corner.
-- In the side panel you can now edit listig seetings and privileges.
-- For example, you can authorize additional roles to *Modify* this listing and respond to access requests from data consumers:
-
-    ![](assets25/ManageListings-04.png)
-
----
-### How to Audit Acceess to Organizational Listing 
-
-As an organization admin you can query the [organization_usage.access_history](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-governance) view to audit the access to all data products on the internal marketplace.
-
-- Login to your Organization Account `HOL_ORG_ACCOUNT` and run the following query to obtain a list of all queries against the **ORDER_INSIGHTS** data product including the user, role, timestamp, and SQL text of the access as well as the set of provider policies that have governed the access at that point in time.
-- Note: There is some delay in updating the [organization_usage.access_history](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-governance). If you don't see the entries that you expect, check back again later!
-  - You can come back to this lab for as a long as your trial accounts are active!
-
-
-```sql
-use role globalorgadmin;
-
-select q.account_name, 
-    q.user_name, 
-    q.role_name, 
-    q.query_text, 
-    q.start_time, 
-    q.end_time, 
-    a.direct_objects_accessed, 
-    a.provider_base_objects_accessed,
-    a.provider_policies_referenced
-from SNOWFLAKE.ORGANIZATION_USAGE.ACCESS_HISTORY a, 
-    SNOWFLAKE.ORGANIZATION_USAGE.QUERY_HISTORY q
-where a.query_id = q.query_id
-and q.query_text ilike '%ORDER_INSIGHTS%'
-order by query_start_time desc;
-```
-
-
----
+<mark> How to monitor access to organization listing // organization_usage.access_history</mark>
 
 ## Working with Data Products Programmatically
 
-Duration: 10
+Duration: 20
 
-So far this lab has managed listings mainly through the Swowflake UI. But, [data owners](https://docs.snowflake.com/en/progaccess/listing-progaccess-about) and [data consumers](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples) can also work with listings programmatically through the [Listing API](https://docs.snowflake.com/en/sql-reference/commands-listings). In this section we point you to some of the most commonly used commands.
+So far this lab has worked with listings mainly through the Swowflake UI. But, [data owners](https://docs.snowflake.com/en/progaccess/listing-progaccess-about) and [data consumers](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples) can also worth with listings programmatically through the [Listing API](https://docs.snowflake.com/en/sql-reference/commands-listings).
+
+In this Lab you have worked a lot with the Swowflake UI to interact with listings. 
+https://docs.snowflake.com/en/progaccess/listing-progaccess-about
+https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples
 
 ### As a Listing Owner
 
 - Run [`SHOW LISTINGS;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings) to list the listings that you own or have permission to manage.
   
-- Run [`DESCRIBE LISTING <listing-name>;`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) to obtain additional details for one specfic listing. 
+- Run [`DESCRIBE LISTING <listing-name>;`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) obtain additional details for one specfic listing. 
   - The listing name can be obtained from the output of  [`SHOW LISTINGS;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings);
   - Note: If that listing name contains special characters other than the underscore, then the name must be in double quotes and is case-sensitive.
 
-- In the result of [`DESCRIBE LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing)  scroll to the right to the column [MANIFEST_YAML](https://other-docs.snowflake.com/en/progaccess/listing-manifest-reference) and copy its column value to a worksheets. 
+- In the result of [`DESCRIBE LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing)  scroll to the right to the column [`MANIFEST_YAML`](https://other-docs.snowflake.com/en/progaccess/listing-manifest-reference) and copy its column value to a worksheets. 
   - This YAML file is a complete representation of the listing and enables programmatic management of listings.
 
-- Run [`CREATE ORGANIZATION LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/create-organization-listing) with a YAML file and SHARE name to create a new listing programmatically.
+- Run [`CREATE ORGANIZATION LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/create-organization-listing) with YAML file and share name to create a new listing programmatically.
 
 - Run [`ALTER LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/alter-listing) to make changes to a listing such as:
   - Unpublish and publish a listing
@@ -584,18 +533,18 @@ So far this lab has managed listings mainly through the Swowflake UI. But, [data
 
 ### As a Listing Consumer
 
-- Run [`SHOW AVAILABLE LISTINGS IS_ORGANIZATION = TRUE;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-available-listings) to list all the internal marketplace listings that your current role is allowed to discover.
+- Run [`SHOW AVAILABLE LISTINGS IS_ORGANIZATION = TRUE;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-available-listings) to list all the internal marketplace listings that your current role is allowed to discover
 
 - Run [`DESCRIBE AVAILABLE LISTING <listing_global_name>`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-available-listing) to get more details on one particular listing.
   - The listing global name can be found in the outout of the  [`SHOW AVAILABLE LISTINGS`](https://other-docs.snowflake.com/en/sql-reference/sql/show-available-listings) command.
   - Note: The `listing global name` is a different kind of listing identifier than the `listing name`.
 
 - Run [`CREATE DATABASE <name> FROM LISTING <listing_global_name>;`](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples#create-a-database-from-a-listing) if you operate as a data consumer in a different account and you want to mount the listing as a local database. 
-  - This does not create a local copy of the shared data but it makes the listing appear in your local list of databases.
+  - This does not create a local copy o fthe shared data but it makes the listing appear in your local list of databases.
   - Mounting an organizational listing as a local database enables you to work with database roles for additional governance options.
 ---
 
-<!--
+
 ## Enable Change Tracking for Data Products
 <mark> !!! do we want to keep this section and adjust it to our TPC-H scenario ??? </mark>
 
@@ -637,7 +586,7 @@ USE DATABASE tasty_bytes_local;
 SELECT METADATA$ACTION, METADATA$ISUPDATE, * 
 FROM stream_daily_weather_changes;
 ```
------------>
+-----------
 
 
 
@@ -811,26 +760,27 @@ Congratulations, you made it through the **Snowflake Internal Marketplace** jour
 - How to create data products that consist of multiple data objects.
 - How to document a data product with a broad range of metadata such as description, data dictionary, ownership, sample queries, and service-level objectives. 
 - How to use provider profiles that represent different domains or business units as owners of data products on the internal marketplace. 
-- How to request and approve or deny access to data products
+- How to request and approval or deny access to data products
 - How to apply data product governance controls across domains
 
 
 ### Related Resources
+<mark> !!! needs to be updated. Use links from slide 6 of our slide deck / step 7 of the setup doc</mark>
 
 - [Lab Source Code on Github](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
 
-- [Organization Accounts](https://docs.snowflake.com/en/user-guide/organization-accounts) 
-  
-- [Organization Profiles](https://docs.snowflake.com/en/user-guide/collaboration/organization-profiles/org-profile-manage)
+- [Snowflake Listings](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about) and [Managing Listings via API](https://docs.snowflake.com/en/sql-reference/commands-listings)
 
-- Organizational Listings
-  - [Create an organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-create)
-  - [Manage organizational listings](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-manage)
+- [Cross-cloud Auto-Fulfillment](https://other-docs.snowflake.com/en/collaboration/provider-listings-auto-fulfillment)
 
-- [Managing Listings via API](https://other-docs.snowflake.com/progaccess/listing-progaccess-about)
+- [Data Governance Policies](https://docs.snowflake.com/en/guides-overview-govern) and  [Data Privacy Policies](https://docs.snowflake.com/en/guides-overview-privacy)
 
-- White Paper: [How to Knit Your Data Mesh on Snowflake](https://www.snowflake.com/resource/how-to-knit-your-data-mesh-on-snowflake/) (March 2025)
+- [Data Quality Metrics](https://docs.snowflake.com/en/user-guide/data-quality-intro)
 
-- Webinar Recording with a demo of the Snowflake Internal Marketplace:
-[How to Build and Govern Your Data Products in Snowflake](https://www.snowflake.com/webinars/product-demo/data-mesh-demo-how-to-build-and-govern-your-data-products-in-snowflake-2025-04-29/) (April 2025)
+- [Sharing  Data Protected by a Policy](https://docs.snowflake.com/en/user-guide/data-sharing-policy-protected-data)
+- [Iceberg Tables in Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg)
+- [Best Practices publishing a Snowflake Native App](https://docs.snowflake.com/en/developer-guide/native-apps/publish-guidelines#best-practices-when-publishing-a-native-app)
+- [Sharing Unstructured Data](https://docs.snowflake.com/en/user-guide/unstructured-data-sharing)
+
+
 
