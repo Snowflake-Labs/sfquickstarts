@@ -1,6 +1,6 @@
 author: Ranjeeta Pegu
-id: SFGUIDE-NAME
-summary: This is a sample Snowflake Guide
+id: getting_started_with_prophet
+summary: This is a sample Snowflake Guide to get started with Prophet
 categories: Getting-Started
 environments: web
 status: Published 
@@ -19,11 +19,11 @@ Snowflake also lets you log models beyond the [built-in](https://docs.snowflake.
 
 you can get more information [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/bring-your-own-model-types)
 
-### what is Prophet
+### What is Prophet
 The Prophet model is a time series forecasting tool developed by Facebook, designed to handle seasonality, holidays, and trend changes in data. It’s especially useful for business time series (like sales or traffic) and is robust to missing data and outliers.
 
 ### Prerequisites
-- Access to snowflake account with ACCOUNTADMIN role
+- Access to [snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role
 
 ### What You’ll Learn 
 - How to build a time series forecasting model using Facebook Prophet
@@ -54,7 +54,7 @@ Duration: 10
 
 
 <!-- ------------------------ -->
-## Run the Notebook
+## Run Notebook
 1. **Set up environment and import libraries**  
    After importing the necessary libraries and setting up the environment, create synthetic data.
 
