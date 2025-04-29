@@ -208,11 +208,6 @@
       "type": 301
     },
     {
-      "source": "guide/collibra/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
       "source": "guide/operationalizing_ai_with_snowflake_and_datarobot/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
