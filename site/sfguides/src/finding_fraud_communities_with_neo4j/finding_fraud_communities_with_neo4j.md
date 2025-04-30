@@ -35,7 +35,7 @@ Finding different communities within P2P transactions is the first step towards 
 
 - Active Snowflake account with appropriate access to databases and schemas
 - Basic knowledge of using a Snowflake SQL Worksheet
-- Neo4j Graph Analytics application installed from the Snowflake marketplace. Access the marketplace via the menu bar on the left hand side of your screen, as seen below:
+- Neo4j Graph Analytics application installed from the Snowflake marketplace. Access the marketplace via the menu bar on the left hand side of your screen
 
 ### What You Will Learn
 
