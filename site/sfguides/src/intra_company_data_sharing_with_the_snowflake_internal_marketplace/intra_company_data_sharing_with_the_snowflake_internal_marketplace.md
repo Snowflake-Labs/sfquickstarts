@@ -11,7 +11,7 @@ tags: Summit HOL, Data Sharing, Marketplace, Snowflake Internal Marketplace, Dat
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 15
+Duration: 5
 
 Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data assets is more successful if data is shared as a product. A data product is a collection of related data objects plus metadata, such as a business description, ownership and contact information, service level objectives, data dictionaty, and more.
 
@@ -41,6 +41,8 @@ Sharing information between departments or business units ("domains") of a compa
 
 
 ## Prerequisites and Setup
+
+Duration: 15
 
 The setup instructions for this lab describe all the steps for you to create the 3 accounts, domain profiles, and roles shown in the diagram below.
 
@@ -158,10 +160,10 @@ CREATE ORGANIZATION ACCOUNT hol_org_account
 SHOW ACCOUNTS;
 ```
 
-### Step 3: Configure the second account `hol_account2`
-In a separate browser tab, log in to account you created in step 1 (`hol_account2`) and set up this account.
+### Step 3: Configure the second account `HOL_ACCOUNT2`
+In a separate browser tab, log in to account you created in step 1 (`HOL_ACCOUNT2`) and set up this account.
 
-- Login as `supply_chain_admin` user to your account `hol_account2` from Step 2 and execute the following commands in a worksheet (Use the code below or download it from the file [`02_setup_hol_account2.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/02_setup_hol_account2.sql))
+- Login as `supply_chain_admin` user to your account `HOL_ACCOUNT2` from Step 2 and execute the following commands in a worksheet (Use the code below or download it from the file [`02_setup_hol_account2.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/02_setup_hol_account2.sql))
 
 
 ```sql
@@ -189,12 +191,13 @@ CREATE DATABASE supply_chain_db;
 ### Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
 Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider profiles. You will set up profiles for 3 business domains: **Sales**, **Marketing**, and **Supply chain**.
 
-- Download the script [`02_create_org_profiles.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/02_create_org_profiles.sql)
-- Login to your Organization Account `HOL_ORG_ACCOUNT` and this script in a worksheet
+- Download the script [`03_create_org_profiles.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/03_create_org_profiles.sql)
+
+- Login to your Organization Account `HOL_ORG_ACCOUNT` with the `org_admin` user  and run the downloaded script `03_create_org_profiles.sql` in a worksheet.
 
 ### Step 6: Setup of a TPC-H sample database
-- Download the script [`create_lab_database.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_lab_database.sql) 
-- Login to your primary account `HOL_ACCOUNT1` and run this script in a worksheet
+- Download the script [`04_create_lab_database.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/04_create_lab_database.sql) 
+- Login to your primary account `HOL_ACCOUNT1` as the `supply_chain_admin` user  and run the downloaded script `04_create_lab_database.sql` script in a worksheet
 
 
 Setup is now complete!
@@ -205,9 +208,9 @@ Setup is now complete!
 
 Duration: 30
 
-In this section you will work in `hol_account1` create and publish an [organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-about). 
+In this section you will work in `HOL_ACCOUNT1` create and publish an [organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-about). 
 
-Login in to `hol_account1` as user `sales_admin`.
+Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 
 ### Publishing Flow: Listing Title and Ownership
 
@@ -322,11 +325,13 @@ Your data product is now live! You can see it when you navigate to the Internal 
 
 ## Request and Grant Data Product Access for Data Consumers
 
+Duration: 10
+
 In this section you will request sccess to the new data product for the **Marketing** domain and the **Supply chain** domain.
 
 ### Request Access
 
-- Log out of your account `hol_account1` and log back in as the `marketing_admin` user.
+- Log out of your account `HOL_ACCOUNT1` and log back in as the `marketing_admin` user.
 - Navigate to the Internal Marketplace
 - Click on the **Order Insights** listing
 - Review all the listing elements from the data consumer point of view
@@ -339,14 +344,14 @@ In this section you will request sccess to the new data product for the **Market
 ![](assets25/RAW01.png)
 
 Now let's also request access for the  **Supply chain** team.
-- In a seperate browser tab log into `hol_account2` as the `supply_chain_admin` user.
+- In a seperate browser tab log into `HOL_ACCOUNT2` as the `supply_chain_admin` user.
 - Navigate to the Internal Marketplace, open the **Order Insights** listing, and **Request Access**
 - Specify a reason for access such as "*We want to analyze order patters to optimize our supply chain operations.*"
 
 ### Review and Grant Access 
 
 Let's switch back to the perspective of the data product owner to review and grant the access requests.
-- Log into your account `hol_account1` as the `sales_admin` user.
+- Log into your account `HOL_ACCOUNT1` as the `sales_admin` user.
 - Navigate to the **Provider Studio** as shown in the screenshot below and open the tab **Internal Requests**.
 - Click on each of the two requests to review the details and use the green **Grant** button to approve.
 
@@ -362,9 +367,11 @@ Switch from **Needs Review** to **Resolved Requests** to see the history of requ
 
 ## Use an Organizational Listing as a Data Consumer
 
+Duration: 10
+
 Now that access has been granted let's go back to the consumer roles:
 
-- In a seperate browser tab log into `hol_account2` as the `supply_chain_admin` user. *(Keep this tab alive for the rest of the lab.)*
+- In a seperate browser tab log into `HOL_ACCOUNT2` as the `supply_chain_admin` user. *(Keep this tab alive for the rest of the lab.)*
 - In the Internal Marketplace open the **Order Insights** listing again
 - The blue **Request Access** button has now changed to **Query in Worksheet**. Reload the browser tab if needed to see the new button.
 - Click **Query in Worksheet**. Review and run the data poduct sample queries. *(Keep this tab alive for the rest of the lab.)*
@@ -372,15 +379,17 @@ Now that access has been granted let's go back to the consumer roles:
   - The ULL contains the domain name, i.e. the name of the profile under which the listing was published.
   - The ULL also contais the listing name. 
   - Schema and object names are appended to access specific objects in the data product.
-- **Optional**: Log into account `hol_account1` as the `marketing_admin` user and perform the same steps.
+- **Optional**: Log into account `HOL_ACCOUNT1` as the `marketing_admin` user and perform the same steps.
 
 ---
 ## Live Data Sharing in Action
 
+Duration: 10
+
 What happens when the data owner decides to update the data product?
 
 - Switch back to the data provider side, ie. `sales_admin` user
-in `hol_account1`
+in `HOL_ACCOUNT1`
 - Review the order details for customer 60001. 
   ```sql
   use schema tpch.sf1;
@@ -395,7 +404,7 @@ in `hol_account1`
   -- Customer 60001 moves from Kenya to MOZAMBIQUE !
   UPDATE customer SET c_nationkey = 16 WHERE c_custkey = 60001;
   ```
-- Now switch to your browser tab where you are logged into `hol_account2` as `supply_chain_admin`. In the worksheet "**Order Insights - Examples**" run the second sample query again:
+- Now switch to your browser tab where you are logged into `HOL_ACCOUNT2` as `supply_chain_admin`. In the worksheet "**Order Insights - Examples**" run the second sample query again:
 
   ```sql
   // Use the UDF to obtain the order details for one customer
@@ -411,10 +420,12 @@ in `hol_account1`
 
 ## Simple Data Goverance Policies
 
+Duration: 10
+
 Let's examine some simple techniques for row- and colum-level access control across domains.
 
 - Switch back to the data provider side, ie. `sales_admin` user
-in `hol_account1`
+in `HOL_ACCOUNT1`
 - Review the order summary view. Note that it returns data for customers in many different countries:
   
   ```sql
@@ -456,7 +467,7 @@ RETURNS boolean ->
 ```
 Before we review the impact of this policy on the data consumers, let's look at a different governance requirement that requires column masking.
  
- ### Data Masking across Domains
+### Data Masking across Domains
 
 The data steward of the Sales domain has requested the following data masking to be enforced:
 - ❗The marketing and supply chain teams are not allowed to see order pricing or item pricing for orders placed before 1996.
@@ -491,7 +502,7 @@ ALTER TABLE lineitem     ALTER COLUMN l_extendedprice
 ### Effect of the Policies on Data Consumers
 Let's see how the Suppy Chain and Marketing teams are affected by the new policies.
 
-- Switch to your browser tab where you are logged into `hol_account2` as `supply_chain_admin`. 
+- Switch to your browser tab where you are logged into `HOL_ACCOUNT2` as `supply_chain_admin`. 
 - In the worksheet "**Order Insights - Examples**" run the first sample query again:
 
   ```sql
@@ -505,7 +516,7 @@ Let's see how the Suppy Chain and Marketing teams are affected by the new polici
   - The Order_Amount column should be masked for orders before 1996.
 
 
-- Log into account `hol_account1` as the `marketing_admin` user and executed the same query. 
+- Log into account `HOL_ACCOUNT1` as the `marketing_admin` user and executed the same query. 
   - You should see data for Canadian customers only.
   
 
@@ -523,7 +534,7 @@ In this section we will review further capabilities for managing and monitoring 
 
 ### Change/Revoke Access or Discoverability for a Listing
 
-- Log into account `hol_account1` as the `sales_admin` user
+- Log into account `HOL_ACCOUNT1` as the `sales_admin` user
 - Navigate to the Provider Studio and open the **Order Insights** listing
 
     ![](assets25/ManageListings-01.png)
