@@ -219,7 +219,7 @@ In this worksheet, we use SQL to explore the suspicion that there are weather-re
 
 3. Run the first few lines to set your context.
 
-4. Run the first block of SQL that explores sales in Hamburg. You should encounter an error. We need to specify the city and country we're interested in exploring. On line 16, add `'GERMANY'` as the country, and `'HAMBURG'` as the city. Re-run the block of SQL.
+4. Run the first block of SQL that explores sales in Hamburg. You should encounter an error. We need to specify the city and country we're interested in exploring. On line 16, add `'Germany'` as the country, and `'Hamburg'` as the city. Re-run the block of SQL.
 
 ```sql
 -- Query to explore sales in the city of Hamburg, Germany
