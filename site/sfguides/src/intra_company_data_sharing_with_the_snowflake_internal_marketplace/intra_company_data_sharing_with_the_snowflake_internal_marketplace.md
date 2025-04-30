@@ -13,9 +13,9 @@ tags: Summit HOL, Data Sharing, Marketplace, Snowflake Internal Marketplace, Dat
 
 Duration: 15
 
-Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data assets is more successful if data is shared as a product. A data product is colelcted of related data objects plus metadata, such as a business description, onwership and contact information, service level objectives, data dictionaty, and more.
+Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data assets is more successful if data is shared as a product. A data product is a collection of related data objects plus metadata, such as a business description, ownership and contact information, service level objectives, data dictionaty, and more.
 
-**Snowflake Internal Marketplace** enables companies to publish documented and governed data product so that they are discoverable and understandable for data consumers. Optionally, data quality metrics and SLOs can be included to make the product more trustworthy. The marketplace also offers rich capabilities to manage access to data product and wrap detailed governace around them to control which consumers can use which data products or which parts of a data product.
+**Snowflake Internal Marketplace** enables companies to publish documented and governed data products, so they are discoverable and understandable for data consumers. Optionally, data quality metrics and SLOs can be included to make the product more trustworthy. The marketplace also offers rich capabilities to manage access to data product and wrap detailed governace around them to control which consumers can use which data products or which parts of a data product.
 
 ![Snowflake Horizon Diagram](assets25/Overview.png)
 
@@ -62,13 +62,14 @@ The setup has 6 steps:
 Signup for a trial account [here](https://signup.snowflake.com/)
 
 - Choose any cloud provider and region
-- Choose **Enterprise Critical** edition
-- Activate the account with admin user `sales_admin`
+- Choose **Enterprise Critical** edition (this is important!)
+- **Activate the account with admin user `sales_admin`**
 
 
 ### Step 2: Configure the first account and create two more accounts _in the same org_
 - Login as `sales_admin` to your Primary Account from Step 1 and execute the following commands in a worksheet. 
 - In the first four commands, enter your own email, first name, last name and password - this variable will be reused in the code for creating users and accounts.
+- You can also download this SQL file and import it into Snowsight - [`01_setup_primary_account.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/01_setup_primary_account.sql)
 
 ```sql
 -- Run this code in your PRIMARY Account
@@ -158,8 +159,29 @@ SHOW ACCOUNTS;
 ```
 
 ### Step 3: Configure the second account `hol_account2`
-In a separate browser tab...
-<br><mark>to be completed !!!</mark>
+In a separate browser tab, log in to account you created in step 1 (`hol_account2`) and set up this account.
+
+- Login as `supply_chain_admin` user to your account `hol_account2` from Step 2 and execute the following commands in a worksheet (Use the code below or download it from the file [`02_setup_hol_account2.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/02_setup_hol_account2.sql))
+
+
+```sql
+-- Run this in hol_account2, logged in as supply_chain_admin user
+-- Make sure you run this as ACCOUNTADMINUSE ROLE accountadmin;
+
+CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=small INITIALLY_SUSPENDED=TRUE;
+GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
+
+CREATE ROLE supply_chain_admin_role;
+GRANT ROLE accountadmin TO ROLE supply_chain_admin_role; 
+GRANT ROLE supply_chain_admin_role TO USER supply_chain_admin;
+
+ALTER USER supply_chain_admin 
+  SET DEFAULT_ROLE = supply_chain_admin_role;
+
+USE ROLE supply_chain_admin_role;
+CREATE DATABASE supply_chain_db;
+```
+<br><mark>@Matthias please check if the  correct!</mark>
 
 ### Step 4: Configure the organization account and rename your primary account 
 <mark>to be completed !!!, or are these steps included in the script for step 5?</mark>
@@ -167,7 +189,7 @@ In a separate browser tab...
 ### Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
 Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider profiles. You will set up profiles for 3 business domains: **Sales**, **Marketing**, and **Supply chain**.
 
-- Download the script [`create_org_profiles.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/create_org_profiles.sql)
+- Download the script [`02_create_org_profiles.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/02_create_org_profiles.sql)
 - Login to your Organization Account `HOL_ORG_ACCOUNT` and this script in a worksheet
 
 ### Step 6: Setup of a TPC-H sample database
@@ -185,7 +207,7 @@ Duration: 30
 
 In this section you will work in `hol_account1` create and publish an [organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-about). 
 
-Login in to `hol_account1` as `sales_admin`.
+Login in to `hol_account1` as user `sales_admin`.
 
 ### Publishing Flow: Listing Title and Ownership
 
