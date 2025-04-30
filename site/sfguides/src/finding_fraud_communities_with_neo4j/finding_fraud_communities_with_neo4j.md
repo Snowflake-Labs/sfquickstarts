@@ -1,11 +1,11 @@
-author: corydon baylor
-id: finding-fraudulent-communities-with-neo4j
+author: corydon_baylor
+id: finding_fraudulent_communities_with_neo4j
 summary: How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake
 categories: getting-started,partner-integrations
 environments: web
-status: Published
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter
+tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Finding Fraudulent Communities with Neo4j
 
@@ -17,9 +17,11 @@ Duration: 2
 
 ### What is Neo4j Graph Analytics for Snowflake?
 
-Neo4j helps organizations find hidden relationships and patterns across billions of data connections deeply, easily, and quickly. **Neo4j Graph Analytics for Snowflake** brings to the power of graph directly to Snowflake, allowing users to run 65+ ready-to-use algorithms on their data, all without leaving Snowflake!
+**Neo4j Graph Analytics for Snowflake** brings the power of graph directly to Snowflake, allowing users to run 65+ ready-to-use algorithms on their data, all without leaving Snowflake!
 
-### Discovering Communities in P2P Fraud
+Neo4j is the global leader in Graph Database & Analytics. As the world's most deployed graph technology, we help organizations uncover hidden patterns and relationships across billions of data connections deeply, easily, and quickly. 
+
+### Discovering Communities in Peer-to-Peer (P2P) Fraud
 
 P2P Fraud Losses are Skyrocketing. 8% of banking customers reported being victims of P2P Scams in the past year, and the average loss to these scams was $176.
 
@@ -279,7 +281,7 @@ By working with a P2P transaction dataset, you were able to:
 
 ### Resources
 
-- [Neo4j GDS Documentation](https://neo4j.com/docs/snowflake-graph-analytics/preview/)
-- [Installing Neo4j GDS on SPCS](https://neo4j.com/docs/snowflake-graph-analytics/preview/installation/)
+- [Neo4j Graph Analytics Documentation](https://neo4j.com/docs/snowflake-graph-analytics/preview/)
+- [Installing Neo4j Graph Analytics on SPCS](https://neo4j.com/docs/snowflake-graph-analytics/preview/installation/)
 
 If you have any questions, reach out to your Neo4j account manager or Snowflake account team!
