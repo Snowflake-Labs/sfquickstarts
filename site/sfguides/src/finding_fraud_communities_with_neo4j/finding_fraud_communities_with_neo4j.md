@@ -7,10 +7,10 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# Snowflake Guide Template
+# Finding Fraudulent Communities with Neo4j
 <!-- ------------------------ -->
 ## Overview
-
+Duration: 2 mins
 ### What is Neo4j Graph Analytics for Snowflake? 
 
 Neo4j helps organizations find hidden relationships and patterns across billions of data connections deeply, easily, and quickly. **Neo4j Graph Analytics for Snowflake** brings to the power of graph directly to Snowflake, allowing users to run 65+ ready-to-use algorithms on their data, all without leaving Snowflake! 
@@ -36,7 +36,9 @@ Finding different communities within P2P transactions is the first step towards 
 - A method to identify communities that are at high risk of fraud in P2P networks
 
 <!-- ------------------------ -->
-## Step 1: Loading the Data
+## Loading the Data
+Duration: 5 mins
+
 Dataset overview : This dataset is modelled to design and analyze a peer to peer transaction network to identify fraudulent activity using graph analytics. 
 ![image](assets/schema.png)
 
@@ -49,7 +51,10 @@ Let's name our database `P2P_DEMO`. Using the CSVs found [here](https://drive.go
 Follow the steps found [here](https://docs.snowflake.com/en/user-guide/data-load-web-ui) to load in your data.
 
 <!-- ------------------------ -->
-## Step 2: Setting Up
+## Setting Up
+
+Duration: 5 mins
+
 Before we run our algorithms, we need to set the proper permissions. But before we get started granting different roles, we need to ensure that you are using `accountadmin` to grant and create roles. Lets do that now:
 
 ```sql
@@ -93,7 +98,8 @@ use role gds_role;
 
 
 <!-- ------------------------ -->
-## Step 3 : Cleaning Our Data
+## Cleaning Our Data
+Duration: 5 mins
 
 We need our data to be in a particular format in order to work with Graph Analytics. In general it should be like so:
 
@@ -122,6 +128,11 @@ GROUP BY sourceNodeId, targetNodeId;
 SELECT * FROM p2p_demo.public.P2P_AGG_TRANSACTIONS;
 ```
 
+| sourceNodeId | targetNodeId | total_amount |
+|--------------|--------------|--------------|
+| 12220936     | 14468841     | 166.5        |
+| 12221039     | 14859796     | 10           |
+| 12221065     | 13631049     | 1000         |
 
 We are also going to create a view that just has the unique `nodeId`s from the `p2p_demo` table and use that as the nodes when we project the graph in the next step:
 
@@ -132,7 +143,10 @@ CREATE OR REPLACE VIEW p2p_users_vw (nodeId) AS
 ```
 <!-- ------------------------ -->
 
-## Step 4: Running your Algorithms
+## Running your Algorithms
+
+Duration: 10 mins
+
 Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run louvain to determine communities within our data. Louvain identifies communities by grouping together nodes that have more connections to each other than to nodes outside the group.
 
 You can find more information about writing this function in our [documentation](https://neo4j.com/docs/snowflake-graph-analytics/preview/installation/).
@@ -196,6 +210,11 @@ from p2p_demo.public.p2p_users_vw_lou
 group by community
 order by community_size desc;
 ```
+| community | community_size |
+|-----------|----------------|
+| 40        | 716            |
+| 26        | 529            |
+
 We can then use then add in the `fraud_transfer_flag` (which was provided by the vendor) to our communities to see if users in that community are at greater risk for fraud:
 
 ```sql
@@ -214,7 +233,16 @@ GROUP BY
 ORDER BY
   community_size DESC, fraud_count DESC;
 ```
+| community | community_size | fraud_count |
+|-----------|----------------|-------------|
+| 40        | 716            | 3           |
+| 26        | 529            | 2           |
+| 4         | 489            | 0           |
+
 ## Conclusions and Resources
+
+Duration: 1 min
+
 In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics. 
 
 ### What you learned
