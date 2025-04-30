@@ -17,7 +17,7 @@ This guide shows how to create and log a Prophet forecasting model using Snowfla
 
 Snowflake also lets you log models beyond the [built-in](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/built-in-models/overview) types like Prophet model , as long as they’re serializable and extend the CustomModel class from snowflake.ml.model.
 
-you can get more information [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/bring-your-own-model-types)
+You can get more information [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/bring-your-own-model-types)
 
 ### What is Prophet
 The Prophet model is a time series forecasting tool developed by Facebook, designed to handle seasonality, holidays, and trend changes in data. It’s especially useful for business time series (like sales or traffic) and is robust to missing data and outliers.
@@ -48,7 +48,7 @@ Duration: 10
 
 **Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
-**Step 2.** Download the [SNF_PROPHET_FORECAST_MODEL.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml/blob/main/SNF_PROPHET_FORCAST_MODEL.ipynb) and []
+**Step 2.** Download the [SNF_PROPHET_FORECAST_MODEL.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml/blob/main/SNF_PROPHET_FORECAST_MODEL.ipynb) and [PROPHET_PREDICTION.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml/blob/main/PROPHET_PREDICTION.ipynb)
 
 **Step 3.**  In Snowsight , switch to the FR_SCIENTIST role and import the notebook file downloaded in step 2. Use Database as ML_MODELS , schema as DS and warehouse as ML_FS_WH
 
