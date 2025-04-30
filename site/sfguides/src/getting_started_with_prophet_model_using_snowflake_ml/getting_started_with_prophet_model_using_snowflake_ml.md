@@ -1,5 +1,5 @@
 author: Ranjeeta Pegu
-id: getting_started_with_prophet
+id: getting-started-with-prophet-using-smowflake-ml
 summary: This is a sample Snowflake Guide to get started with Prophet
 categories: Getting-Started
 environments: web
