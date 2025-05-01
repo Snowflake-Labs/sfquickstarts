@@ -54,7 +54,7 @@ The setup has 6 steps:
 - Step 1: Create a Snowflake trial account in a region of your choice
 - Step 2: Configure the first account and create two more accounts _in the same org_
 - Step 3: Configure the second account
-- Step 4: Configure the organizaion account, and rename the first account 
+- Step 4: Configure the organization account, and rename the first account 
 - Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
 - Step 6: Setup of a TPC-H sample database
 
@@ -71,20 +71,20 @@ Signup for a trial account [here](https://signup.snowflake.com/)
 ### Step 2: Configure the first account and create two more accounts _in the same org_
 - Login as `sales_admin` to your Primary Account from Step 1 and execute the following commands in a worksheet. 
 - In the first four commands, enter your own email, first name, last name and password - this variable will be reused in the code for creating users and accounts.
-- You can also download this SQL file and import it into Snowsight - [`01_setup_primary_account.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/01_setup_primary_account.sql)
+- You can also download this SQL file and import it into Snowsight - [`STEP2_setup_primary_account.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP2_setup_primary_account.sql)
 
 ```sql
 -- Run this code in your PRIMARY Account
--- Make sure you update the four variables below (email_var, firstname_var and lastname_var, and pwd_var)
+-- Make sure you update the four variables below (email_var, firstname_var and lastname_var)
 
 USE ROLE accountadmin;
 
 -- Use the same name and email for all accounts
-set email_var      = 'FILL_IN_YOUR_EMAIL';
+set email_var = 'FILL_IN_YOUR_EMAIL';
 set firstname_var  = 'FILL_IN_YOUR_FIRST_NAME';
-set lastname_var   = 'FILL_IN_YOUR_LAST_NAME';
+set lastname_var  = 'FILL_IN_YOUR_LAST_NAME';
 
--- Use the same password for users in all accounts (just for this lab!)
+-- Use the same password for users in all accounts
 set pwd_var = 'FILL_IN_YOUR_PASSWORD';
 
 CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=small INITIALLY_SUSPENDED=TRUE;
@@ -130,7 +130,6 @@ Now, run the following commands to create the next two accounts that you need. Y
 
 ```sql
 -- Run this code in your PRIMARY account
--- Copy/Paste it into the same worksheets as the previous code you ran
 -- Create a secondary account in the same region (default!):
 USE ROLE orgadmin;
 
@@ -163,12 +162,14 @@ SHOW ACCOUNTS;
 ### Step 3: Configure the second account `HOL_ACCOUNT2`
 In a separate browser tab, log in to account you created in step 1 (`HOL_ACCOUNT2`) and set up this account.
 
-- Login as `supply_chain_admin` user to your account `HOL_ACCOUNT2` from Step 2 and execute the following commands in a worksheet (Use the code below or download it from the file [`02_setup_hol_account2.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/02_setup_hol_account2.sql))
+- Login as `supply_chain_admin` user to your account `HOL_ACCOUNT2` from Step 2 and execute the following commands in a worksheet (Use the code below or download it from the file [`STEP3(HOL_ACCOUNT2)_setup_hol_account2.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP3(HOL_ACCOUNT2)_setup_hol_account2.sql))
 
 
 ```sql
 -- Run this in hol_account2, logged in as supply_chain_admin user
--- Make sure you run this as ACCOUNTADMINUSE ROLE accountadmin;
+-- Make sure you run this as ACCOUNTADMIN
+
+USE ROLE accountadmin;
 
 CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=small INITIALLY_SUSPENDED=TRUE;
 GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
@@ -183,21 +184,59 @@ ALTER USER supply_chain_admin
 USE ROLE supply_chain_admin_role;
 CREATE DATABASE supply_chain_db;
 ```
-<br><mark>@Matthias please check if the  correct!</mark>
+
 
 ### Step 4: Configure the organization account and rename your primary account 
-<mark>to be completed !!!, or are these steps included in the script for step 5?</mark>
+Login to the Organization Account `HOL_ORG_ACCOUNT` created earlier and execute the following commands in a worksheet.
+
+You can also download code below from the file [`STEP4(HOL_ORG_ACCOUNT)_configure_org_account.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP4(HOL_ORG_ACCOUNT)_configure_org_account.sql) from the repository: 
+
+```sql
+-- Login to the Organization Account HOL_ORG_ACCOUNT and execute the following commands in a worksheet.
+
+USE ROLE accountadmin;
+
+CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=xsmall INITIALLY_SUSPENDED=TRUE;
+GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
+
+-- Rename the Primary Account:
+USE ROLE globalorgadmin;
+
+
+-- execute the following two commands together, 
+-- no other commands in between:
+
+  show accounts;
+  SET my_curr_account = (SELECT "account_name" FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) order by "created_on" ASC LIMIT 1);
+
+-- View and rename the account:
+SELECT $my_curr_account;
+
+ALTER ACCOUNT identifier($my_curr_account) 
+  RENAME TO hol_account1 SAVE_OLD_URL = true;
+
+-- Enable users with the ACCOUNTADMIN role to set up Cross-Cloud Auto-Fulfillmen
+SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('hol_account1');
+SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('hol_account2');
+
+SHOW ACCOUNTS;
+
+-- You should see 3 rows similar to the image below.
+-- Make a note of your account names, URLs, and passwords!
+```
+
+
 
 ### Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
 Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider profiles. You will set up profiles for 3 business domains: **Sales**, **Marketing**, and **Supply chain**.
 
-- Download the script [`03_create_org_profiles.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/03_create_org_profiles.sql)
+- Download the script [`STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql)
 
-- Login to your Organization Account `HOL_ORG_ACCOUNT` with the `org_admin` user  and run the downloaded script `03_create_org_profiles.sql` in a worksheet.
+- Login to your Organization Account `HOL_ORG_ACCOUNT` with the `org_admin` user  and run the downloaded script `STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql` in a worksheet.
 
 ### Step 6: Setup of a TPC-H sample database
-- Download the script [`04_create_lab_database.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/04_create_lab_database.sql) 
-- Login to your primary account `HOL_ACCOUNT1` as the `supply_chain_admin` user  and run the downloaded script `04_create_lab_database.sql` script in a worksheet
+- Download the script [`STEP6(HOL_ACCOUNT1)_create_lab_database.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP6(HOL_ACCOUNT1)_create_lab_database.sql) 
+- Login to your primary account `HOL_ACCOUNT1` as the `sales_admin` user  and run the downloaded script `STEP6(HOL_ACCOUNT1)_create_lab_database.sql` script in a worksheet
 
 
 Setup is now complete!
