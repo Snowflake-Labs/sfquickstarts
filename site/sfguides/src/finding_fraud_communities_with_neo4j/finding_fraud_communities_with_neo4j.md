@@ -205,6 +205,12 @@ But broadly, you will need a few things:
 | `EXAMPLE_DB.DATA_SCHEMA.NODES_COMPONENTS` | A table to output results                          | `P2P_DEMO.PUBLIC.p2p_users_vw_lou`     |
 | `NODES`                                   | A node label for our nodes                         | `p2p_users_vw`                         |
 
+First ensure that Graph Analytics has permission to each table that we are using.
+```sql
+GRANT SELECT ON TABLE P2P_DEMO.PUBLIC.p2p_users_vw TO APPLICATION neo4j_graph_analytics;
+GRANT SELECT ON TABLE P2P_DEMO.PUBLIC.P2P_AGG_TRANSACTIONS TO APPLICATION neo4j_graph_analytics;
+GRANT SELECT ON TABLE P2P_DEMO.PUBLIC.p2p_users_vw_lou TO APPLICATION neo4j_graph_analytics;
+```
 
 ```sql
 CALL neo4j_graph_analytics.graph.louvain('CPU_X64_XS', {
