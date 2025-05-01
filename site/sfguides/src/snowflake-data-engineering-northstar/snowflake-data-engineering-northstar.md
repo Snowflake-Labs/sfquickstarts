@@ -82,7 +82,7 @@ Duration: 2
 
 Tasty Bytes is a food truck company that operates globally in many countries. You're a data engineer on the Tasty Bytes team, and you've recently learned from data analysts on the team that:
 
-* Sales in the city of Hamburg, Germany dropped to $0 for the month of February
+* Sales in the city of Hamburg, Germany dropped to $0 for a few days in the month of February
 
 As a data engineer, your goal is to figure out why this happened, and to also build and end-to-end data pipeline that can  keep analysts up-to-date on the weather in Hamburg.
 
