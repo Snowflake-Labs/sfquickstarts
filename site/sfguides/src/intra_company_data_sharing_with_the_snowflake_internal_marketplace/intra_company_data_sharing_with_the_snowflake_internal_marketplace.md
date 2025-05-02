@@ -13,9 +13,9 @@ tags: Summit HOL, Data Sharing, Marketplace, Snowflake Internal Marketplace, Dat
 
 Duration: 5
 
-Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data assets is more successful if data is shared as a product. A data product is a collection of related data objects plus metadata, such as a business description, ownership and contact information, service level objectives, data dictionaty, and more.
+Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data assets is more successful if data is shared as a product. A data product is a collection of related data objects plus metadata, such as a business description, ownership and contact information, service level objectives, data dictionary, and more.
 
-**Snowflake Internal Marketplace** enables companies to publish documented and governed data products, so they are discoverable and understandable for data consumers. Optionally, data quality metrics and SLOs can be included to make the product more trustworthy. The marketplace also offers rich capabilities to manage access to data product and wrap detailed governace around them to control which consumers can use which data products or which parts of a data product.
+**Snowflake Internal Marketplace** enables companies to publish documented and governed data products, so they are discoverable and understandable for data consumers. Optionally, data quality metrics and SLOs can be included to make the product more trustworthy. The marketplace also offers rich capabilities to manage access to data products and wrap detailed governance around them to control which consumers can use which data products or which parts of a data product.
 
 ![Snowflake Horizon Diagram](assets25/Overview.png)
 
@@ -164,7 +164,7 @@ SHOW ACCOUNTS;
 ```
 
 ### Step 3: Configure the second account `HOL_ACCOUNT2`
-In a separate browser tab, log in to account you created in step 1 (`HOL_ACCOUNT2`) and set up this account.
+In a separate browser tab, log in to the account you created in step 1 (`HOL_ACCOUNT2`) and set up this account.
 
 - Login as `supply_chain_admin` user to your account `HOL_ACCOUNT2` from Step 2 and execute the following commands in a worksheet (Use the code below or download it from the file [`STEP3(HOL_ACCOUNT2)_setup_hol_account2.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP3(HOL_ACCOUNT2)_setup_hol_account2.sql))
 
@@ -219,7 +219,7 @@ SELECT $my_curr_account;
 ALTER ACCOUNT identifier($my_curr_account) 
   RENAME TO hol_account1 SAVE_OLD_URL = true;
 
--- Enable users with the ACCOUNTADMIN role to set up Cross-Cloud Auto-Fulfillmen
+-- Enable users with the ACCOUNTADMIN role to set up Cross-Cloud Auto-Fulfillment
 SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('hol_account1');
 SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('hol_account2');
 
@@ -283,7 +283,7 @@ Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 
 ![](assets25/Publish02-Profile.png)
 
-- When you save the profile selection, note that the contact email from the Sales profile is automatically entered as the default support contact for this listing. You can change on a per liusting basis it if you want. 
+- When you save the profile selection, note that the contact email from the Sales profile is automatically entered as the default support contact for this listing. You can change this on a per listing basis if you want. 
 ###
 ---
 
@@ -301,7 +301,7 @@ Now let's select the data objects that we want to share in this data product.
 ### Publishing Flow: Configure Access Control and the Approval Process
 
 Next you set the access control for the data product. Click on the gray **+Access Control** button. 
-- *Discovery* determines who can see the listing and all its metadata in the internal marketlace without having access to the shared data objects.
+- *Discovery* determines who can see the listing and all its metadata in the internal marketplace without having access to the shared data objects.
 - *Access* specifies who can discover the listing *and* access the shared data objects. 
 ###
 For this first data product we keep it simple and stick with the defaults:
@@ -309,7 +309,7 @@ For this first data product we keep it simple and stick with the defaults:
 - *Grant Access*: No accounts or roles are pre-approved
 - *Allow Discovery*: Entire Organization
 
-As a result, every data consumer will need to request access to obatin approval to use the data product. Click on **Set up request approval flow** to proceed.
+As a result, every data consumer will need to request access to obtain approval to use the data product. Click on **Set up request approval flow** to proceed.
 
 ![](assets25/Publish04-AccessControl.png)
 
@@ -317,7 +317,7 @@ You could configure an external workflow engine for the request approval process
 
 ![](assets25/Publish05-RequestConfig.png)
 
-After you confirm the approval flow settings, Snowflake prompts you for one more configuration. Here is why: this listing is configured to be discoverable by the entire organization. What if you annother account to the organization but in a different cloud region? Then Snowflake would transparently perform incremental replication to that region to minimize egress cost. As the data provider you can choose the frequency of this replication.
+After you confirm the approval flow settings, Snowflake prompts you for one more configuration. Here is why: this listing is configured to be discoverable by the entire organization. What if you add another account to the organization but in a different cloud region? Then Snowflake would transparently perform incremental replication to that region to minimize egress cost. As the data provider you can choose the frequency of this replication.
 
 So lets (1) **Review** the settings, (2) accept the default of daily replication, and then (3) **Save** the settings for this listing:
 
@@ -331,7 +331,7 @@ Data products should be understandable and trustworthy for data consumers so let
 - Add a business **description** to document your listing.
   - For example: "This data product contains transactional records of customer orders, linking individual order details with specific items purchased. It includes information such as order IDs, customer identifiers, order dates, item names, quantities, and prices. This data can be leveraged to analyze customer purchasing patterns, identify popular products, understand order frequency, and gain insights into sales trends."
 
-- **Add documention** by providing a URL to additional information. (You can enter any URL for now, such as http://www.snowflake.com/data-mesh)
+- **Add documentation** by providing a URL to additional information. (You can enter any URL for now, such as http://www.snowflake.com/data-mesh)
 - **Add terms & conditions** by providing a URL to where the T&Cs can be found.
 - **Add attributes** that indicate **service level objectives** from the data product owner to data consumers. You can specify:
   - **Update Frequency**: How often you will refresh the data product, e.g. adding new or updated records to the shared tables. 
@@ -339,7 +339,7 @@ Data products should be understandable and trustworthy for data consumers so let
   - **Time Range**: Amount of history data included.
   - **Timestamp Granularity**: The interval between data points. For example, "*Event-based*" if there is one record for each incoming order, or "*Daily*" if order volumes are aggregated by date, and so on.
     
-- Add at least two **Usage example** such as these:
+- Add at least two **Usage examples** such as these:
     ```sql
     -- Title: Explore the Order Summary View:
 
@@ -382,7 +382,7 @@ Your data product is now live! You can see it when you navigate to the Internal 
 
 Duration: 10
 
-In this section you will request sccess to the new data product for the **Marketing** domain and the **Supply chain** domain.
+In this section you will request access to the new data product for the **Marketing** domain and the **Supply chain** domain.
 
 ### Request Access
 
@@ -392,16 +392,16 @@ In this section you will request sccess to the new data product for the **Market
 - Review all the listing elements from the data consumer point of view
 - Click on the blue **Request Access** button
     - If you haven't previously validated your email of the `marketing_admin` user, Snowflake will now prompt you to do so, and you can follow the dialog to resend the verification email.
-- The **Request access** dialog comes up. Enter a busines justification such as "*We need access to this data for our next marketing campaign.*" Then submit the request. 
+- The **Request access** dialog comes up. Enter a business justification such as "*We need access to this data for our next marketing campaign.*" Then submit the request. 
 - After submitting the access request click the grey **View request** button to review or even withdraw your request. 
     - If you withdraw the request, please submit it again.
 
 ![](assets25/RAW01.png)
 
 Now let's also request access for the  **Supply chain** team.
-- In a seperate browser tab log into `HOL_ACCOUNT2` as the `supply_chain_admin` user.
+- In a separate browser tab log into `HOL_ACCOUNT2` as the `supply_chain_admin` user.
 - Navigate to the Internal Marketplace, open the **Order Insights** listing, and **Request Access**
-- Specify a reason for access such as "*We want to analyze order patters to optimize our supply chain operations.*"
+- Specify a reason for access such as "*We want to analyze order patterns to optimize our supply chain operations.*"
 
 ### Review and Grant Access 
 
@@ -426,13 +426,13 @@ Duration: 10
 
 Now that access has been granted let's go back to the consumer roles:
 
-- In a seperate browser tab log into `HOL_ACCOUNT2` as the `supply_chain_admin` user. *(Keep this tab alive for the rest of the lab.)*
+- In a separate browser tab log into `HOL_ACCOUNT2` as the `supply_chain_admin` user. *(Keep this tab alive for the rest of the lab.)*
 - In the Internal Marketplace open the **Order Insights** listing again
 - The blue **Request Access** button has now changed to **Query in Worksheet**. Reload the browser tab if needed to see the new button.
-- Click **Query in Worksheet**. Review and run the data poduct sample queries. *(Keep this tab alive for the rest of the lab.)*
+- Click **Query in Worksheet**. Review and run the data product sample queries. *(Keep this tab alive for the rest of the lab.)*
 - In the SQL, note the ULL (Uniform Listing Locator) that references the data product.
   - The ULL contains the domain name, i.e. the name of the profile under which the listing was published.
-  - The ULL also contais the listing name. 
+  - The ULL also contains the listing name. 
   - Schema and object names are appended to access specific objects in the data product.
 - **Optional**: Log into account `HOL_ACCOUNT1` as the `marketing_admin` user and perform the same steps.
 
@@ -467,17 +467,17 @@ in `HOL_ACCOUNT1`
   FROM TABLE(ORGDATACLOUD$SALES$ORDER_INSIGHTS.sf1.orders_per_customer(60001));
   ```
 - Note that the updated country information is instantly visible to data consumers!
-- Other data product changes such as adding a column to a table would also be immediatly reflected on the consumer side. 
+- Other data product changes such as adding a column to a table would also be immediately reflected on the consumer side. 
 - **Best practice:** inform your data consumers of structural data product changes ahead of time.  In case of a breaking change consider creating a new listing "v2.0" and give data consumers time to migrate from the old to the new listing.
 
 
 ---
 
-## Simple Data Goverance Policies
+## Simple Data Governance Policies
 
 Duration: 10
 
-Let's examine some simple techniques for row- and colum-level access control across domains.
+Let's examine some simple techniques for row- and column-level access control across domains.
 
 - Switch back to the data provider side, ie. `sales_admin` user
 in `HOL_ACCOUNT1`
@@ -555,7 +555,7 @@ ALTER TABLE lineitem     ALTER COLUMN l_extendedprice
   SET MASKING POLICY order_mask USING (l_extendedprice, l_commitdate);
 ```
 ### Effect of the Policies on Data Consumers
-Let's see how the Suppy Chain and Marketing teams are affected by the new policies.
+Let's see how the Supply Chain and Marketing teams are affected by the new policies.
 
 - Switch to your browser tab where you are logged into `HOL_ACCOUNT2` as `supply_chain_admin`. 
 - In the worksheet "**Order Insights - Examples**" run the first sample query again:
@@ -571,7 +571,7 @@ Let's see how the Suppy Chain and Marketing teams are affected by the new polici
   - The Order_Amount column should be masked for orders before 1996.
 
 
-- Log into account `HOL_ACCOUNT1` as the `marketing_admin` user and executed the same query. 
+- Log into account `HOL_ACCOUNT1` as the `marketing_admin` user and execute the same query. 
   - You should see data for Canadian customers only.
   
 
@@ -598,7 +598,7 @@ In this section we will review further capabilities for managing and monitoring 
 
     ![](assets25/ManageListings-02.png)
 
-- You can now add or remove roles or entire accounts that access to the data product. Same for discoverability.
+- You can now add or remove roles or entire accounts that access the data product. Same for discoverability.
 
     ![](assets25/ManageListings-03.png)
 
@@ -607,7 +607,7 @@ In this section we will review further capabilities for managing and monitoring 
 
 - Navigate to the Provider Studio and open the **Order Insights** listing, if it is not still open from the previous exercise.
 - Click on the wheel in the top right corner.
-- In the side panel you can now edit listig seetings and privileges.
+- In the side panel you can now edit listing settings and privileges.
 - For example, you can authorize additional roles to *Modify* this listing and respond to access requests from data consumers:
 
     ![](assets25/ManageListings-04.png)
@@ -619,7 +619,7 @@ As an organization admin you can query the [organization_usage.access_history](h
 
 - Login to your Organization Account `HOL_ORG_ACCOUNT` and run the following query to obtain a list of all queries against the **ORDER_INSIGHTS** data product including the user, role, timestamp, and SQL text of the access as well as the set of provider policies that have governed the access at that point in time.
 - Note: There is some delay in updating the [organization_usage.access_history](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-governance). If you don't see the entries that you expect, check back again later!
-  - You can come back to this lab for as a long as your trial accounts are active!
+  - You can come back to this lab for as long as your trial accounts are active!
 
 
 ```sql
@@ -648,7 +648,7 @@ order by query_start_time desc;
 
 Duration: 10
 
-So far this lab has managed listings mainly through the Swowflake UI. But, [data owners](https://docs.snowflake.com/en/progaccess/listing-progaccess-about) and [data consumers](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples) can also work with listings programmatically through the [Listing API](https://docs.snowflake.com/en/sql-reference/commands-listings). 
+So far this lab has managed listings mainly through the Snowflake UI. But, [data owners](https://docs.snowflake.com/en/progaccess/listing-progaccess-about) and [data consumers](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples) can also work with listings programmatically through the [Listing API](https://docs.snowflake.com/en/sql-reference/commands-listings). 
 
 In this section we point you to some of the most commonly used commands. These are not end-to-end exercises to create or alter listings, but we encourage you to experiment with some of these commands.
 
@@ -656,7 +656,7 @@ In this section we point you to some of the most commonly used commands. These a
 
 - Run [`SHOW LISTINGS;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings) to list the listings that you own or have permission to manage.
   
-- Run [`DESCRIBE LISTING <listing-name>;`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) to obtain additional details for one specfic listing. 
+- Run [`DESCRIBE LISTING <listing-name>;`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) to obtain additional details for one specific listing. 
   - The listing name can be obtained from the output of  [`SHOW LISTINGS;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings);
   - Note: If that listing name contains special characters other than the underscore, then the name must be in double quotes and is case-sensitive.
 
@@ -668,8 +668,8 @@ In this section we point you to some of the most commonly used commands. These a
 - Run [`ALTER LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/alter-listing) to make changes to a listing such as:
   - Unpublish and publish a listing
   - Rename a listing
-  - Change any of the listing metatdata by using a modified YAML file in the  [`ALTER LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/alter-listing) command
-  - Change who can discosser or access a listing, e.g. by providing a modified YAML file
+  - Change any of the listing metadata by using a modified YAML file in the  [`ALTER LISTING`](https://other-docs.snowflake.com/en/sql-reference/sql/alter-listing) command
+  - Change who can discover or access a listing, e.g. by providing a modified YAML file
 
 
 ### As a Listing Consumer
@@ -677,7 +677,7 @@ In this section we point you to some of the most commonly used commands. These a
 - Run [`SHOW AVAILABLE LISTINGS IS_ORGANIZATION = TRUE;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-available-listings) to list all the internal marketplace listings that your current role is allowed to discover.
 
 - Run [`DESCRIBE AVAILABLE LISTING <listing_global_name>`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-available-listing) to get more details on one particular listing.
-  - The listing global name can be found in the outout of the  [`SHOW AVAILABLE LISTINGS`](https://other-docs.snowflake.com/en/sql-reference/sql/show-available-listings) command.
+  - The listing global name can be found in the output of the  [`SHOW AVAILABLE LISTINGS`](https://other-docs.snowflake.com/en/sql-reference/sql/show-available-listings) command.
   - Note: The `listing global name` is a different kind of listing identifier than the `listing name`.
 
 - Run [`CREATE DATABASE <name> FROM LISTING <listing_global_name>;`](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples#create-a-database-from-a-listing) if you operate as a data consumer in a different account and you want to mount the listing as a local database. 
@@ -890,7 +890,7 @@ Now switch to the different local roles (sales_emea_role, sales_apj_role, etc) i
  -->
 
 
-## Conclusion & Resources
+## Conclusion And Resources
 
 Duration: 5
 
