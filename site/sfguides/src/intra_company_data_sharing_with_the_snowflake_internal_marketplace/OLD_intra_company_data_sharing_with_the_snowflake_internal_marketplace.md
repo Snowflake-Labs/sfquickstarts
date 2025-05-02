@@ -57,11 +57,7 @@ The setup has 6 steps:
 - Step 4: Configure the organization account, and rename the first account 
 - Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
 - Step 6: Setup of a TPC-H sample database
-- Step 7: Pre-populate the Internal Marketplace with Sample Listings
 
-For Steps 2 through 7 you can download [scripts here](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/tree/main/sql) and execute them in different accounts as per the instructions below. In the Snowflake UI you can easily import these scripts like this:
-
-![Import](assets25/ImportScript.png)
 
 ### Step 1: Create a Snowflake trial account
 
@@ -235,27 +231,15 @@ SHOW ACCOUNTS;
 Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider profiles. You will set up profiles for 3 business domains: **Sales**, **Marketing**, and **Supply chain**.
 
 - Download the script [`STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql)
-- In that script, replace the dummy email **youremail@whatever.com** with your actual email address so that you  receive access request notifications for your data product. 
-  - Don't worry: it's only a couple of emails and only during this lab.
 
-- Login to your Organization Account `HOL_ORG_ACCOUNT` as the `org_admin` user  and run the downloaded script `STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql` in a worksheet.
+- Login to your Organization Account `HOL_ORG_ACCOUNT` with the `org_admin` user  and run the downloaded script `STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql` in a worksheet.
 
 ### Step 6: Setup of a TPC-H sample database
 - Download the script [`STEP6(HOL_ACCOUNT1)_create_lab_database.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP6(HOL_ACCOUNT1)_create_lab_database.sql) 
-  
 - Login to your primary account `HOL_ACCOUNT1` as the `sales_admin` user  and run the downloaded script `STEP6(HOL_ACCOUNT1)_create_lab_database.sql` script in a worksheet
 
 
-### Step 7: Pre-populate the Internal Marketplace with Sample Listings
-
-- Download the script [`STEP7a(HOLACCOUNT1)_create_sample_listing.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP7a(HOLACCOUNT1)_create_sample_listing.sql) 
-  - Login into `hol_account1` as `marketing_admin` and run the script **STEP7a**.
-
-- Download the script [`STEP7b(HOLACCOUNT2)_create_sample_listing.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP7b(HOLACCOUNT2)_create_sample_listing.sql) 
-  - Login into `hol_account2` as `supply_chain_admin` and run the script **STEP7b**.
-
-###
-**Setup is now complete!**
+Setup is now complete!
 
 ---
 
@@ -613,7 +597,7 @@ In this section we will review further capabilities for managing and monitoring 
     ![](assets25/ManageListings-04.png)
 
 ---
-### How to Audit Access to Organizational Listing 
+### How to Audit Acceess to Organizational Listing 
 
 As an organization admin you can query the [organization_usage.access_history](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-governance) view to audit the access to all data products on the internal marketplace.
 
@@ -648,9 +632,7 @@ order by query_start_time desc;
 
 Duration: 10
 
-So far this lab has managed listings mainly through the Swowflake UI. But, [data owners](https://docs.snowflake.com/en/progaccess/listing-progaccess-about) and [data consumers](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples) can also work with listings programmatically through the [Listing API](https://docs.snowflake.com/en/sql-reference/commands-listings). 
-
-In this section we point you to some of the most commonly used commands. These are not end-to-end exercises to create or alter listings, but we encourage you to experiment with some of these commands.
+So far this lab has managed listings mainly through the Swowflake UI. But, [data owners](https://docs.snowflake.com/en/progaccess/listing-progaccess-about) and [data consumers](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples) can also work with listings programmatically through the [Listing API](https://docs.snowflake.com/en/sql-reference/commands-listings). In this section we point you to some of the most commonly used commands.
 
 ### As a Listing Owner
 
@@ -894,7 +876,7 @@ Now switch to the different local roles (sales_emea_role, sales_apj_role, etc) i
 
 Duration: 5
 
-Congratulations, you completed this **Snowflake Internal Marketplace** journey! You have seen how data products can be authored, published, requested, consumed, and governed. These are key capabilities for sharing documented and understandable data products across business units with governance and compliance control controls.
+Congratulations, you made it through the **Snowflake Internal Marketplace** journey! You have seen how data products can be authored, published, requested, consumed, and governed. These are key capabilities for sharing documented and understandable data products across business units with governance and compliance control controls.
 
 ### What you Learned
 
@@ -907,7 +889,7 @@ Congratulations, you completed this **Snowflake Internal Marketplace** journey! 
 
 ### Related Resources
 
-- [Lab Source Code on Github](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/tree/main/sql)
+- [Lab Source Code on Github](https://github.com/Snowflake-Labs/sfguide-horizon-intra-organization-sharing)
 
 - [Organization Accounts](https://docs.snowflake.com/en/user-guide/organization-accounts) 
   
