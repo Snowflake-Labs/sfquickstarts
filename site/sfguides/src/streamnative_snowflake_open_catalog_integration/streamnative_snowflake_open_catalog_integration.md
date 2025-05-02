@@ -36,7 +36,7 @@ StreamNative also supports ingesting data into Snowflake using **Snowpipe or Sno
 
 Apache&reg;, Apache Iceberg&trade;, and Apache Kafka&reg; are either registered trademarks or trademarks of Apache Software Foundation in the United States and/or other countries.
 
-## Setup Snowflake Open Catalog and Permissions
+## Setup Catalog and Permissions
 Duration: 30
 
 Before initiating the integration of Snowflake Open Catalog with StreamNative Cloud, please ensure the following steps are completed. The following video will also guide you through this process.
@@ -336,7 +336,7 @@ The catalog role **streamnative_open_catalog_role** now has the 10 required perm
 We will resuse the connection when connecting Snowflake AI Data Cloud to Snowflake Open Catalog.
 
 <!-- ------------------------ -->
-## Create StreamNative BYOC Ursa Cluster
+## Create StreamNative Cluster
 Duration: 90
 
 To proceed, you will need to first complete the steps for [granting vendor access, creating a Cloud Connection, and setting up the Cloud Environment](https://docs.streamnative.io/docs/byoc-overview). This process will grant StreamNative permissions into your cloud provider and deploy the required infrastructure before you begin the process of deploying a StreamNative BYOC Ursa Cluster. [This video](https://youtu.be/vsHjaQNKFRk?si=2pUJXE_s0LfzH3At) provides an overview of this process with detailed videos available in this [playlist](https://www.youtube.com/playlist?list=PL7-BmxsE3q4W5QnrusLyYt9_HbX4R7vEN).
@@ -499,7 +499,7 @@ Once the compaction folder has been created in the s3 bucket, we can verify the 
 
 The data is now queryable through Snowflake Open Catalog. In the following step we will configure Snowflake AI Data Cloud to query tables from Snowflake Open Catalog.
 
-## Configure Snowflake AI Data Cloud to Query Tables from Snowflake Open Catalog
+## Query Tables with Snowflake
 Duration: 30
 
 Querying a table in Snowflake Open Catalog using Snowflake AI Data Cloud requires completing the following [from the Snowflake documentation](https://docs.snowflake.com/en/user-guide/tables-iceberg-open-catalog-query).
