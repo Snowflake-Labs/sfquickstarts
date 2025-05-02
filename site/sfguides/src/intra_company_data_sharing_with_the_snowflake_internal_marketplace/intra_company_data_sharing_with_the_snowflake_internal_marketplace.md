@@ -17,7 +17,7 @@ Sharing information between departments or business units ("domains") of a compa
 
 **Snowflake Internal Marketplace** enables companies to publish documented and governed data products, so they are discoverable and understandable for data consumers. Optionally, data quality metrics and SLOs can be included to make the product more trustworthy. The marketplace also offers rich capabilities to manage access to data products and wrap detailed governance around them to control which consumers can use which data products or which parts of a data product.
 
-![Snowflake Horizon Diagram](assets25/Overview.png)
+![Snowflake Horizon Diagram](assets/Overview.png)
 
 
 ### What You’ll Learn
@@ -48,7 +48,7 @@ The setup instructions for this lab describe all the steps for you to create the
 
 The internal marketplace exists by default. It does not need to be created. But, you will configure it with provider profiles for the different business units via the [organization account](https://docs.snowflake.com/en/user-guide/organization-accounts).
 
-![LabScenario](assets25/DemoScenario-and-Accounts.png)
+![LabScenario](assets/DemoScenario-and-Accounts.png)
 
 The setup has 6 steps:
 - Step 1: Create a Snowflake trial account in a region of your choice
@@ -61,7 +61,7 @@ The setup has 6 steps:
 
 For Steps 2 through 7 you can download [scripts here](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/tree/main/sql) and execute them in different accounts as per the instructions below. In the Snowflake UI you can easily import these scripts like this:
 
-![Import](assets25/ImportScript.png)
+![Import](assets/ImportScript.png)
 
 ### Step 1: Create a Snowflake trial account
 
@@ -271,17 +271,17 @@ Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 
 1. Navigate to the Provider Studio and click the blue **+Create Listing** button in the top right. Select "Internal Marketplace".
 
-![ProviderStudio](assets25/ProviderStudio.png)
+![ProviderStudio](assets/ProviderStudio.png)
 ###
 ---
 2. Give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
 
-![](assets25/Publish01-Title.png)
+![](assets/Publish01-Title.png)
 ###
 ---
 3. Click on the **+Profile** button and select the **Sales** profile as the owner of this data product. 
 
-![](assets25/Publish02-Profile.png)
+![](assets/Publish02-Profile.png)
 
 - When you save the profile selection, note that the contact email from the Sales profile is automatically entered as the default support contact for this listing. You can change this on a per listing basis if you want. 
 ###
@@ -294,7 +294,7 @@ Now let's select the data objects that we want to share in this data product.
 
 - Then, click **+ Select**, navigate to the SF1 schema of the TPCH database, and select all tables except *Region* and *Part*. Also select the ORDER_SUMMARY view and the  function ORDERS_PER_CUSTOMER. Click **Done** and **Save**.
 
-![](assets25/Publish03-ObjectSelection.png)
+![](assets/Publish03-ObjectSelection.png)
 
 ###
 ---
@@ -311,17 +311,17 @@ For this first data product we keep it simple and stick with the defaults:
 
 As a result, every data consumer will need to request access to obtain approval to use the data product. Click on **Set up request approval flow** to proceed.
 
-![](assets25/Publish04-AccessControl.png)
+![](assets/Publish04-AccessControl.png)
 
 You could configure an external workflow engine for the request approval process. But for this lab we choose to **Manage requests in Snowflake**. The email address for notifications defaults to the one from the *Sales* profile but could be changed.
 
-![](assets25/Publish05-RequestConfig.png)
+![](assets/Publish05-RequestConfig.png)
 
 After you confirm the approval flow settings, Snowflake prompts you for one more configuration. Here is why: this listing is configured to be discoverable by the entire organization. What if you add another account to the organization but in a different cloud region? Then Snowflake would transparently perform incremental replication to that region to minimize egress cost. As the data provider you can choose the frequency of this replication.
 
 So lets (1) **Review** the settings, (2) accept the default of daily replication, and then (3) **Save** the settings for this listing:
 
-![](assets25/Publish06-LAF.png)
+![](assets/Publish06-LAF.png)
 
 ###
 ---
@@ -355,14 +355,14 @@ Data products should be understandable and trustworthy for data consumers so let
     ```
 
 
-![](assets25/Publish07-MetaData.png)
+![](assets/Publish07-MetaData.png)
 
 - Generate a **Data dictionary**. Snowflake will automatically compile column information and sample data for *all* objects in the data product.
 
     Select at least one (and up to 5) data objects and click **+Add to Featured**. These are the objects that consumers will see first in the dictionary.
     Suggestion: Select `customer`, `orders`, and `order_summary` to be featured.
 
-![](assets25/Publish08-DataDictionary.png)
+![](assets/Publish08-DataDictionary.png)
 
 ###
 ---
@@ -372,7 +372,7 @@ Click the blue **Publish** button in the top right corner.
 
 Your data product is now live! You can see it when you navigate to the Internal Marketplace:
 
-![](assets25/Publish10-Done.png)
+![](assets/Publish10-Done.png)
 
 ###
 ---
@@ -396,7 +396,7 @@ In this section you will request access to the new data product for the **Market
 - After submitting the access request click the grey **View request** button to review or even withdraw your request. 
     - If you withdraw the request, please submit it again.
 
-![](assets25/RAW01.png)
+![](assets/RAW01.png)
 
 Now let's also request access for the  **Supply chain** team.
 - In a separate browser tab log into `HOL_ACCOUNT2` as the `supply_chain_admin` user.
@@ -410,11 +410,11 @@ Let's switch back to the perspective of the data product owner to review and gra
 - Navigate to the **Provider Studio** as shown in the screenshot below and open the tab **Internal Requests**.
 - Click on each of the two requests to review the details and use the green **Grant** button to approve.
 
-![](assets25/RAW02.png)
+![](assets/RAW02.png)
 
 Switch from **Needs Review** to **Resolved Requests** to see the history of requests. 
 
-![](assets25/RAW03.png)
+![](assets/RAW03.png)
 
 ---
 ###
@@ -592,15 +592,15 @@ In this section we will review further capabilities for managing and monitoring 
 - Log into account `HOL_ACCOUNT1` as the `sales_admin` user
 - Navigate to the Provider Studio and open the **Order Insights** listing
 
-    ![](assets25/ManageListings-01.png)
+    ![](assets/ManageListings-01.png)
 
 - In the top right, click on the Access definition of the listing.
 
-    ![](assets25/ManageListings-02.png)
+    ![](assets/ManageListings-02.png)
 
 - You can now add or remove roles or entire accounts that access the data product. Same for discoverability.
 
-    ![](assets25/ManageListings-03.png)
+    ![](assets/ManageListings-03.png)
 
 ---
 ### How to Grant Listing Management Privileges
@@ -610,7 +610,7 @@ In this section we will review further capabilities for managing and monitoring 
 - In the side panel you can now edit listing settings and privileges.
 - For example, you can authorize additional roles to *Modify* this listing and respond to access requests from data consumers:
 
-    ![](assets25/ManageListings-04.png)
+    ![](assets/ManageListings-04.png)
 
 ---
 ### How to Audit Access to Organizational Listing 
@@ -656,7 +656,7 @@ In this section we point you to some of the most commonly used commands. These a
 
 - Run [`SHOW LISTINGS;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings) to list the listings that you own or have permission to manage.
   
-- Run [`DESCRIBE LISTING <listing-name>;`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) to obtain additional details for one specific listing. 
+- Run [`DESCRIBE LISTING listing-name;`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-listing) to obtain additional details for one specific listing. 
   - The listing name can be obtained from the output of  [`SHOW LISTINGS;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-listings);
   - Note: If that listing name contains special characters other than the underscore, then the name must be in double quotes and is case-sensitive.
 
@@ -676,11 +676,11 @@ In this section we point you to some of the most commonly used commands. These a
 
 - Run [`SHOW AVAILABLE LISTINGS IS_ORGANIZATION = TRUE;`](https://other-docs.snowflake.com/en/sql-reference/sql/show-available-listings) to list all the internal marketplace listings that your current role is allowed to discover.
 
-- Run [`DESCRIBE AVAILABLE LISTING <listing_global_name>`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-available-listing) to get more details on one particular listing.
+- Run [`DESCRIBE AVAILABLE LISTING listing_global_name`](https://other-docs.snowflake.com/en/sql-reference/sql/desc-available-listing) to get more details on one particular listing.
   - The listing global name can be found in the output of the  [`SHOW AVAILABLE LISTINGS`](https://other-docs.snowflake.com/en/sql-reference/sql/show-available-listings) command.
   - Note: The `listing global name` is a different kind of listing identifier than the `listing name`.
 
-- Run [`CREATE DATABASE <name> FROM LISTING <listing_global_name>;`](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples#create-a-database-from-a-listing) if you operate as a data consumer in a different account and you want to mount the listing as a local database. 
+- Run [`CREATE DATABASE name FROM LISTING listing_global_name;`](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples#create-a-database-from-a-listing) if you operate as a data consumer in a different account and you want to mount the listing as a local database. 
   - This does not create a local copy of the shared data but it makes the listing appear in your local list of databases.
   - Mounting an organizational listing as a local database enables you to work with database roles for additional governance options.
 ---
