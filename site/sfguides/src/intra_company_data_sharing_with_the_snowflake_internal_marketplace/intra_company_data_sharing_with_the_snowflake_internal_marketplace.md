@@ -65,7 +65,7 @@ For Steps 2 through 7 you can download [scripts here](https://github.com/Snowfla
 
 ### Step 1: Create a Snowflake trial account
 
-Signup for a trial account [here](https://signup.snowflake.com/)
+Sign up for a trial account [here](https://signup.snowflake.com/)
 
 - Choose any cloud provider and region
 - Choose **Enterprise Critical** edition (this is important!)
