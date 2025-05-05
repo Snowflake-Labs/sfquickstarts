@@ -124,14 +124,14 @@ def main(llm_response):
         return json.loads(payload)
 $$;
 
-CREATE OR REPLACE FUNCTION LLM_ENTITIES_RELATIONS(model VARCHAR, content VARCHAR, additional_prompts VARCHAR DEFAULT '') 
+CREATE OR REPLACE FUNCTION LLM_ENTITIES_RELATIONS(content VARCHAR, additional_prompts VARCHAR DEFAULT '') 
 RETURNS TABLE 
 (response OBJECT) 
 LANGUAGE SQL 
 AS 
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
-        "llama3-70b",
+        'llama3-70b',
         [
             {
                 'role': 'system', 
@@ -400,7 +400,7 @@ class GraphBuilder(object):
         ]
 $$;
 
-CREATE OR REPLACE PROCEDURE CREATE_NODES_EDGES_STREAMS_SOURCES(completions_model VARCHAR) 
+CREATE OR REPLACE PROCEDURE CREATE_NODES_EDGES_STREAMS_SOURCES() 
 RETURNS VARCHAR
 LANGUAGE SQL 
 AS 
@@ -425,7 +425,7 @@ $$
                 , LLM_EXTRACT_JSON(r.response) AS response
             FROM 
                 c
-            JOIN TABLE(LLM_ENTITIES_RELATIONS(:completions_model , c.content, '')) AS r
+            JOIN TABLE(LLM_ENTITIES_RELATIONS(c.content, '')) AS r
         )
         , nodes_edges AS (
             SELECT
@@ -483,14 +483,14 @@ $$
     END;
 $$;
 
-CREATE OR REPLACE FUNCTION LLM_SUMMARIZE(model VARCHAR, content VARCHAR) 
+CREATE OR REPLACE FUNCTION LLM_SUMMARIZE(content VARCHAR) 
 RETURNS TABLE 
 (response OBJECT) 
 LANGUAGE SQL 
 AS 
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
-        "llama3-70b",
+        'llama3-70b',
         [
             {
                 'role': 'system', 
@@ -536,14 +536,14 @@ $$
     ) AS response
 $$;
 
-CREATE OR REPLACE FUNCTION LLM_ANSWER(model VARCHAR, context VARCHAR, question VARCHAR) 
+CREATE OR REPLACE FUNCTION LLM_ANSWER(context VARCHAR, question VARCHAR) 
 RETURNS TABLE 
 (response OBJECT) 
 LANGUAGE SQL 
 AS 
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
-        "llama3-70b",
+        'llama3-70b',
         [
             {
                 'role': 'system', 
@@ -605,7 +605,7 @@ $$
     ) AS response
 $$;
 
-CREATE OR REPLACE PROCEDURE LLM_ANSWER_SUMMARIES(completions_model VARCHAR, summarization_window INTEGER, question VARCHAR)  
+CREATE OR REPLACE PROCEDURE LLM_ANSWER_SUMMARIES(summarization_window INTEGER, question VARCHAR)  
 RETURNS TABLE 
 (
     answer VARIANT
@@ -659,9 +659,8 @@ BEGIN
             c
         JOIN TABLE(
             LLM_ANSWER(
-                :completions_model 
-                , c.content
-                , :question
+                c.content,
+                :question
             )
         ) AS r;
     
@@ -693,9 +692,8 @@ BEGIN
                 filtered_summary_answers AS fsa
             JOIN TABLE(
                 LLM_ANSWER(
-                    :completions_model 
-                    , fsa.content
-                    , :question
+                    fsa.content,
+                    :question
                 )
             ) AS r
         )
@@ -1017,7 +1015,7 @@ for k, v in d.items():
                     , PARSE_JSON(LLM_EXTRACT_JSON(r.response)):answer AS response
                 FROM 
                     c
-                JOIN TABLE(LLM_SUMMARIZE('llama3-70b', c.content)) AS r;
+                JOIN TABLE(LLM_SUMMARIZE(c.content)) AS r;
             """, 
             parameters={
                 "COMMUNITY_ID": str(k), 
@@ -1044,7 +1042,7 @@ Using a window of concatenated community summaries and asking the LLM if the que
 execute_statement(
     session=session, 
     statement="""
-        CALL LLM_ANSWER_SUMMARIES('llama3-70b', 5, '{QUESTION}');
+        CALL LLM_ANSWER_SUMMARIES(5, '{QUESTION}');
     """, 
     parameters={
         "QUESTION": question
