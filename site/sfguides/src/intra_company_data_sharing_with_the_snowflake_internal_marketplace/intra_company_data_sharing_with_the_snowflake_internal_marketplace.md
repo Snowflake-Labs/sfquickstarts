@@ -7,7 +7,7 @@ status: Hidden
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Summit HOL, Data Sharing, Marketplace, Snowflake Internal Marketplace, Data Mesh, Data Products
 
-# Intra-Company Data Sharing with the Snowflake Internal Marketplace 
+# Intra-Company Data Sharing With The Snowflake Internal Marketplace 
 <!-- ------------------------ -->
 ## Overview
 
@@ -31,6 +31,7 @@ Sharing information between departments or business units ("domains") of a compa
 ### What You’ll Need
 
 - Basic knowledge of SQL, Database Concepts
+- A Snowflake Trial Account. Signup link can be found in next section (Setup)
 - Familiarity with using SQL in [Snowsight Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs)
 
 ### What You’ll Build
@@ -40,7 +41,7 @@ Sharing information between departments or business units ("domains") of a compa
 - Governance policies to manage your data products
 
 
-## Prerequisites and Setup
+## Setup
 
 Duration: 15
 
@@ -259,7 +260,7 @@ Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider pro
 
 ---
 
-## Create and Publish an Organizational Listing in the Provider Studio UI
+## Create / Publish Org Listing
 
 Duration: 30
 
@@ -378,7 +379,7 @@ Your data product is now live! You can see it when you navigate to the Internal 
 ---
 
 
-## Request and Grant Data Product Access for Data Consumers
+## Request and Grant Access
 
 Duration: 10
 
@@ -420,7 +421,7 @@ Switch from **Needs Review** to **Resolved Requests** to see the history of requ
 ###
 
 
-## Use an Organizational Listing as a Data Consumer
+## Consume Org Listing
 
 Duration: 10
 
@@ -437,7 +438,7 @@ Now that access has been granted let's go back to the consumer roles:
 - **Optional**: Log into account `HOL_ACCOUNT1` as the `marketing_admin` user and perform the same steps.
 
 ---
-## Live Data Sharing in Action
+## Live Data Sharing
 
 Duration: 10
 
@@ -473,7 +474,7 @@ in `HOL_ACCOUNT1`
 
 ---
 
-## Simple Data Governance Policies
+## Data Governance Policies
 
 Duration: 10
 
@@ -644,7 +645,7 @@ order by query_start_time desc;
 
 ---
 
-## Working with Data Products Programmatically
+## Programmatic Listings
 
 Duration: 10
 
