@@ -49,7 +49,7 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 > NOTE:  If you do not already have the RelationalAI Native App installed, please follow the instructions [here](https://relational.ai/docs/native_app/installation)
 
 <!-- ------------------------ -->
-## Installing Snowflake artifacts and loading the corpus
+## Snowflake Artifact and Corpus
 Duration: 3
 
 We shall proceed with creating the Snowflake artifacts required for this guide.
@@ -730,7 +730,7 @@ ON_ERROR = CONTINUE;
 ```
 
 <!-- ------------------------ -->
-## Entities and relations extraction
+## Entities/Relations Extraction
 Duration: 5
 
 With all our Snowflake artifacts in place, we are now ready to extract the entities and relations from the corpus. 
@@ -758,7 +758,7 @@ CALL CREATE_NODES_EDGES_STREAMS_SOURCES('llama3-70b');
 > Expect this process to take a few minutes to complete.
 
 <!-- ------------------------ -->
-## Cloning the demo repository and setting up a local environment
+## Local Environment Setup
 Duration: 10
 
 ### Python
@@ -836,7 +836,7 @@ Run `rai init` from your terminal and follow the prompts to enter your credentia
 - Press Enter to accept the default profile name of `default`
 
 <!-- ------------------------ -->
-## Setting up a RelationalAI engine
+## RelationalAI Engine
 Duration: 10
 
 We shall now setup the RelationalAI engine that we will be using for performing graph analytics.
@@ -856,7 +856,7 @@ rai engines:create
 >  Creating the engine may take a few minutes to complete. The CLI will notify you when the engine is ready.
 
 <!-- ------------------------ -->
-## Setting up Snowflake / RelationaAI Data Streams
+## Snowflake/RelationaAI Data Streams
 Duration: 3
 
 Having the source `nodes` and `edges` tables in place, we shall now setup the Snowflake / RelationalAI Data Streams to synchronize data between a Snowflake and a RelationalAI model.
@@ -883,7 +883,7 @@ rai imports:stream --source graph_rag.graph_rag.edges --model graph_rag
 > is listing both streams in status `LOADED`.
 
 <!-- ------------------------ -->
-## Building the graph and answering questions
+## Building Graph / Answering Questions
 Duration: 20
 
 We shall now proceed with creating the RelationalAI graph and answer questions using the model. In this step, we shall be doing the following:
@@ -1073,7 +1073,7 @@ jupyter lab
 Please switch to the Jupyter notebook and follow the instructions to reproduce the steps outlined above.
 
 <!-- ------------------------ -->
-## Conclusion and resources
+## Conclusion and Resources
 Duration: 2
 
 ### Conclusion
