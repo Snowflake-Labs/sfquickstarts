@@ -47,7 +47,7 @@ Duration: 15
 
 The setup instructions for this lab describe all the steps for you to create the 3 accounts, domain profiles, and roles shown in the diagram below.
 
-The internal marketplace exists by default. It does not need to be created. But, you will configure it with provider profiles for the different business units via the [organization account](https://docs.snowflake.com/en/user-guide/organization-accounts).
+The internal marketplace exists by default. It does not need to be created. But, you will configure it with provider profiles for the different business units via the [organization account](https://docs.snowflake.com/en/user-guide/organization-accounts). The organization account is a recent Snowflake capability to optionally monitor and manage a set of a regular accounts.
 
 ![LabScenario](assets/DemoScenario-and-Accounts.png)
 
@@ -69,8 +69,11 @@ For Steps 2 through 7 you can download [scripts here](https://github.com/Snowfla
 Sign up for a trial account [here](https://signup.snowflake.com/)
 
 - Choose any cloud provider and region
-- Choose **Enterprise Critical** edition (this is important!)
+- Choose **Enterprise Edition** or higher. (Standard Edition does not support the Internal Marketplace)
 - **Activate the account with admin user `sales_admin`**
+  
+  - <mark>Note!</mark> The user `sales_admin` will be used throughout this lab!
+   Do not choose a different user name here.
 
 
 ### Step 2: Configure the first account and create two more accounts _in the same org_
@@ -96,8 +99,9 @@ CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=small INITIALLY_SUSPENDED=
 GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
 
 CREATE OR REPLACE ROLE sales_data_scientist_role;
-GRANT CREATE SHARE ON ACCOUNT TO ROLE sales_data_scientist_role;
-GRANT CREATE ORGANIZATION LISTING ON ACCOUNT TO ROLE sales_data_scientist_role;
+GRANT CREATE SHARE ON ACCOUNT                    TO ROLE sales_data_scientist_role;
+GRANT CREATE ORGANIZATION LISTING ON ACCOUNT     TO ROLE sales_data_scientist_role;
+GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE sales_data_scientist_role;
 GRANT ROLE sales_data_scientist_role TO USER sales_admin;
 
 SET my_user_var = CURRENT_USER();
@@ -157,12 +161,17 @@ CREATE ORGANIZATION ACCOUNT hol_org_account
   must_change_password = false
   edition = enterprise; 
 
--- Make a note of your account names, URLs, and passwords! 
 -- Get an overview of all the accounts in the organization.
--- This SHOW command below should return 3 rows:
+-- This SHOW command should return 3 rows:
 
 SHOW ACCOUNTS;
 ```
+
+- Make a note of your account names, URLs, and passwords!
+- Copy or bookmark the account URLs returned by `SHOW ACCOUNTS'. 
+- When you click on one these URLs you are automatically directed to the respective account for login.
+
+
 
 ### Step 3: Configure the second account `HOL_ACCOUNT2`
 In a separate browser tab, log in to the account you created in step 1 (`HOL_ACCOUNT2`) and set up this account.
@@ -192,7 +201,7 @@ CREATE DATABASE supply_chain_db;
 
 
 ### Step 4: Configure the organization account and rename your primary account 
-Login to the Organization Account `HOL_ORG_ACCOUNT` created earlier and execute the following commands in a worksheet.
+Login to the Organization Account `HOL_ORG_ACCOUNT` as the `org_admin` user and execute the following commands in a worksheet.
 
 You can also download code below from the file [`STEP4(HOL_ORG_ACCOUNT)_configure_org_account.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP4(HOL_ORG_ACCOUNT)_configure_org_account.sql) from the repository: 
 
@@ -233,13 +242,13 @@ SHOW ACCOUNTS;
 
 
 ### Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
-Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider profiles. You will set up profiles for 3 business domains: **Sales**, **Marketing**, and **Supply chain**.
+Continue working as the `org_admin` user in your Organization Account `HOL_ORG_ACCOUNT` to create data provider profiles. You will set up profiles for 3 business domains: **Sales**, **Marketing**, and **Supply chain**.
 
 - Download the script [`STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql)
 - In that script, replace the dummy email **youremail@whatever.com** with your actual email address so that you  receive access request notifications for your data product. 
   - Don't worry: it's only a couple of emails and only during this lab.
 
-- Login to your Organization Account `HOL_ORG_ACCOUNT` as the `org_admin` user  and run the downloaded script `STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql` in a worksheet.
+- Run the downloaded script `STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql` in a worksheet.
 
 ### Step 6: Setup of a TPC-H sample database
 - Download the script [`STEP6(HOL_ACCOUNT1)_create_lab_database.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP6(HOL_ACCOUNT1)_create_lab_database.sql) 
