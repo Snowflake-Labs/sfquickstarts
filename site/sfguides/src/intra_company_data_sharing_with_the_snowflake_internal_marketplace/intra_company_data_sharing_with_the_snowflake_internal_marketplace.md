@@ -249,10 +249,10 @@ Login to your Organization Account `HOL_ORG_ACCOUNT` to create data provider pro
 
 ### Step 7: Pre-populate the Internal Marketplace with Sample Listings
 
-- Download the script [`STEP7a(HOLACCOUNT1)_create_sample_listing.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP7a(HOLACCOUNT1)_create_sample_listing.sql) 
+- Download the script [`STEP7a(HOL_ACCOUNT1)_create_sample_listing.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP7a(HOL_ACCOUNT1)_create_sample_listing.sql) 
   - Login into `hol_account1` as `marketing_admin` and run the script **STEP7a**.
 
-- Download the script [`STEP7b(HOLACCOUNT2)_create_sample_listing.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP7b(HOLACCOUNT2)_create_sample_listing.sql) 
+- Download the script [`STEP7b(HOL_ACCOUNT2)_create_sample_listing.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP7b(HOL_ACCOUNT2)_create_sample_listing.sql) 
   - Login into `hol_account2` as `supply_chain_admin` and run the script **STEP7b**.
 
 ###
