@@ -41,14 +41,14 @@ To have fast and efficient near real-time reporting, we will use Dynamic Tables 
 
 - Streaming pipeline to do near real-time reporting
 
-### Launch the Codespace in GitHub
+## Launch the Codespace in GitHub
 
-Go to the [code repository](https://github.com/sfc-gh-bculberson/Summit2025-DE214).
+Navigate to the [code repository](https://github.com/sfc-gh-bculberson/Summit2025-DE214) in GitHub.
 
 Click on the green Code Button, go to the Codespaces tab, and click the green Create codespace on main.
 
 <!-- ------------------------ -->
-### Creating the Service User & Role
+## Creating the Service User & Role
 Duration: 4
 
 To send data to Snowflake, the client must have a Service User's credentials. We will use key-pair authentication in this guide to authenticate to Snowflake and create a custom role with minimal privileges.
@@ -58,17 +58,9 @@ To generate the keypair run the following commands in the terminal in the codesp
 ```bash
 openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
 openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
-cat ./rsa_key.p8
 ```
 
-COPY the .env.example file in the root of the project to .env and replace the PRIVATE_KEY value with the result of the last command. 
-COPY the contents of the private key into a new file
-
-```bash
-cat ./rsa_key.pub
-```
-
-COPY the contents of the public key to the clipboard.
+COPY the contents of the public key in rsa_key.pub from codespaces to the clipboard.
 
 Login to Snowsight or use SnowSQL to execute the following commands replacing `<YOUR_PUBLIC KEY HERE>` with the key copied previously:
 
@@ -84,7 +76,7 @@ GRANT USAGE ON WAREHOUSE STREAMING_INGEST TO ROLE STREAMING_INGEST;
 GRANT OPERATE ON WAREHOUSE STREAMING_INGEST TO ROLE STREAMING_INGEST;
 ```
 
-### Creating the Database and Schema for data
+## Creating the Database and Schema for data
 Duration: 2
 
 Login to Snowsight or use SnowSQL to execute the following commands:
@@ -98,7 +90,7 @@ GRANT OWNERSHIP ON DATABASE STREAMING_INGEST TO ROLE STREAMING_INGEST;
 GRANT OWNERSHIP ON SCHEMA STREAMING_INGEST.STREAMING_INGEST TO ROLE STREAMING_INGEST;
 ```
 
-### Creating the Tables and Pipes needed for data
+## Creating the Tables and Pipes needed for data
 Duration: 2
 
 Tables are used to store the data from the clients and a pipe is needed to accept data from the clients. The data is inserted into the table from the pipe.
@@ -144,7 +136,7 @@ FROM TABLE (
 MATCH_BY_COLUMN_NAME=CASE_SENSITIVE;
 ```
 
-### Setup Streaming Application
+## Write Streaming Application
 
 To authenticate to Snowflake, you will need to setup the environment with credentials to your account.
 
@@ -156,7 +148,9 @@ Make a copy of the env file to edit by running this command in the codespace ter
 cp .env.example .env
 ```
 
-Set the PRIVATE_KEY variable in the new .env file to the contents of the rsa_key.p8 file.
+Copy the contents of the rsa_key.p8 file to the clipboard.
+
+Open the .env file and paste the value from the clipboard to the PRIVATE_KEY variable.
 
 Edit the Account Name in the .env file to match your Snowflake Account name.
 
@@ -164,9 +158,63 @@ If you do not know your account name, you can run this sql in Snowsight or via s
 
 ```sql
 select current_account();
-````
+```
 
-### Start Streaming Application
+### Stream the Data to Snowflake
+
+This repository will generate sample data and supplies the framework and dependencies needed for you to stream data to Snowflake. You need to write the code to stream data to Snowflake.
+
+You will write the main body of the function stream_data in streamer.py. The pipe_name and 2 data access functions are passed to this function. All configuration parameters needed are in the streamer.py under `# parameters`.
+
+fn_get_data takes 2 parameters, the first parameter is the offset to read data from ex: (SELECT * where > offset) and the second parameter is the maximum number of records to read. It will return a list of json strings which can be sent to Snowflake.
+
+Example usage: 
+
+```python
+rows = fn_get_data(latest_committed_offset_token, BATCH_SIZE)
+```
+
+fn_delete_data takes 1 parameter: the offset to delete data up to and including ex: (DELETE * where offset <= offset).
+
+```python
+fn_delete_data(current_committed_offset_token)
+```
+
+The first thing the stream_data fn should do is to create a SnowflakeStreamingIngestClient. This client will allow you to operate on Channels which are needed to send data to Snowflake.
+
+To create a SnowflakeStreamingIngestClient, you will need to pass it the channel name and kwargs: account, user, database, schema, private_key, ROWSET_DEV_VM_TEST_MODE.
+
+```python
+client = SnowflakeStreamingIngestClient(client_name, account=account_name, user=user_name, database=database_name, schema=schema_name, private_key=private_key, ROWSET_DEV_VM_TEST_MODE="false")
+```
+
+This client can be used to open a channel you will need to send data. client.open_channel function takes the channel_name, database_name, schema_name, and the pipe_name as arguments.
+
+```python
+channel = client.open_channel(channel_name, database_name, schema_name, pipe_name)
+```
+
+To know where this process left off on last run (or if this is the first run) you can pull the current committed offset. This is available by calling channel.get_latest_committed_offset_token()
+
+```python
+latest_committed_offset_token = channel.get_latest_committed_offset_token()
+```
+
+If this returns None, there has been no data sent to Snowflake, otherwise it will be the latest offset sent.
+
+Data should then be pulled using fn_get_data from the that offset, or 0 if this is the first data.
+
+Data is returned from the fn_get_data in a list of json strings, but the insert_rows function expects line delimited json. This can easily be converted using join and a list comprehension. You wll also need to get the last offset in the rows you are sending to set the correct offset token.
+
+```python
+nl_json = "\n".join([row[1] for row in rows])
+latest_committed_offset_token = rows[-1][0]
+channel.insert_rows(nl_json, offset_token=latest_committed_offset_token)
+```
+
+In order to cleanup you will also want to occasionally delete the local data from the committed offset. You can use the fn_delete_data function to do so.
+
+### Test the Streaming Application
 
 In the codespace, build and start the docker container.
 
@@ -174,7 +222,6 @@ In the codespace, build and start the docker container.
 docker build -t generator .
 docker run generator
 ```
-
 
 ### Verify Data is Streaming
 
@@ -198,8 +245,8 @@ Verify Lift Rides are being streamed:
 select * from LIFT_RIDE limit 10;
 ```
 
-### Build Pipeline in Python
+## Build Pipeline in Python
 
 
-### Build Reports in Streamlit
+## Build Reports in Streamlit
 
