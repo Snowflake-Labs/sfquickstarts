@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Pandas, Snowpark, Python, Data Engineering
 
-# Intro to Snowpark Container Services
+# Intro to Data Engineering using Python in Snowflake
 <!-- ------------------------ -->
 Duration:5
 
