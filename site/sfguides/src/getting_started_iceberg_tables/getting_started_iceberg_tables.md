@@ -79,8 +79,8 @@ CREATE ROLE iceberg_lab;
 CREATE DATABASE iceberg_lab;
 CREATE SCHEMA iceberg_lab;
 GRANT ALL ON DATABASE iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;
-GRANT ALL ON SCHEMA iceberg_lab.iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;;
-GRANT ALL ON WAREHOUSE iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;;
+GRANT ALL ON SCHEMA iceberg_lab.iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;
+GRANT ALL ON WAREHOUSE iceberg_lab TO ROLE iceberg_lab WITH GRANT OPTION;
 
 CREATE USER iceberg_lab
     PASSWORD='<your desired password>',
@@ -278,7 +278,8 @@ We can do that with a [masking policy](https://docs.snowflake.com/en/user-guide/
 ```sql
 USE ROLE accountadmin;
 CREATE ROLE tpch_analyst;
-GRANT ROLE tpch_analyst TO USER <your username>;
+SET USERNAME=CURRENT_USER();
+GRANT ROLE tpch_analyst TO USER IDENTIFIER($USERNAME);
 
 USE ROLE iceberg_lab;
 ALTER ROW ACCESS POLICY rap_nation
