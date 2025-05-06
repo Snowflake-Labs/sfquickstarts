@@ -202,7 +202,7 @@ latest_committed_offset_token = channel.get_latest_committed_offset_token()
 
 If this returns None, there has been no data sent to Snowflake, otherwise it will be the latest offset sent.
 
-Data should then be pulled using fn_get_data from the that offset, or 0 if this is the first data.
+The channel should be long lived, so there should be an event loop grabbing data. Data can be pulled using fn_get_data from the that offset, or 0 if this is the first data.
 
 Data is returned from the fn_get_data in a list of json strings, but the insert_rows function expects line delimited json. This can easily be converted using join and a list comprehension. You wll also need to get the last offset in the rows you are sending to set the correct offset token.
 
@@ -212,7 +212,7 @@ latest_committed_offset_token = rows[-1][0]
 channel.insert_rows(nl_json, offset_token=latest_committed_offset_token)
 ```
 
-In order to cleanup you will also want to occasionally delete the local data from the committed offset. You can use the fn_delete_data function to do so.
+In order to cleanup you will also want to occasionally delete the local data from the committed offset (retrieved from Snowflake). You can use the fn_delete_data function to do so. This should also be done in the event loop.
 
 ### Test the Streaming Application
 
