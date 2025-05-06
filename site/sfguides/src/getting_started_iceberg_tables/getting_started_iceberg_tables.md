@@ -216,9 +216,10 @@ This can be done with a [row access policy](https://docs.snowflake.com/en/user-g
 ```sql
 USE ROLE accountadmin;
 CREATE ROLE tpch_us;
-GRANT ROLE tpch_us TO USER <your username>;
+SET USERNAME=CURRENT_USER();
+GRANT ROLE tpch_us TO USER IDENTIFIER($USERNAME);
 CREATE ROLE tpch_intl;
-GRANT ROLE tpch_intl TO USER <your username>;
+GRANT ROLE tpch_intl TO USER IDENTIFIER($USERNAME);
 
 USE ROLE iceberg_lab;
 USE DATABASE iceberg_lab;
