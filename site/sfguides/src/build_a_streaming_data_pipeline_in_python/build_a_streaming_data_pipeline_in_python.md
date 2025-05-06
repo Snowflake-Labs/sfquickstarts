@@ -148,10 +148,6 @@ Make a copy of the env file to edit by running this command in the codespace ter
 cp .env.example .env
 ```
 
-Copy the contents of the rsa_key.p8 file to the clipboard.
-
-Open the .env file and paste the value from the clipboard to the PRIVATE_KEY variable.
-
 Edit the Account Name in the .env file to match your Snowflake Account name.
 
 If you do not know your account name, you can run this sql in Snowsight or via snowsql.
