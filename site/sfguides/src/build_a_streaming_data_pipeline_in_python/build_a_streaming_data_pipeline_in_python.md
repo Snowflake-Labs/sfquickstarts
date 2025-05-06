@@ -251,3 +251,27 @@ select * from LIFT_RIDE limit 10;
 
 ## Build Reports in Streamlit
 
+
+
+<!-- ------------------------ -->
+## Cleanup
+Duration: 2
+
+To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as `ACCOUNTADMIN` run:
+```SQL
+USE ROLE ACCOUNTADMIN;
+
+DROP DATABASE IF EXISTS STREAMING_INGEST;
+DROP WAREHOUSE IF EXISTS STREAMING_INGEST;
+DROP USER IF EXISTS STREAMING_INGEST;
+DROP ROLE IF EXISTS STREAMING_INGEST;
+```
+
+<!-- ------------------------ -->
+## Conclusion
+Duration: 1
+
+### What we've covered
+- 
+-
+
