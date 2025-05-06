@@ -15,7 +15,7 @@ Duration:5
 
 Through this quickstart, you will learn how to build your first data engineering pipeline using [Snowflake notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks). 
 
-### What you’ll learn
+### What You’ll Learn
 
 * How to install and configure the Snowpark pandas library  
 * How to use Snowpark pandas to transform and analyze datasets using the power of Snowflake  
@@ -43,7 +43,7 @@ Snowpark is the set of libraries and code execution environments that run Python
 
 * Create a Serverless Task to schedule the transformation
 
-### Pre-requisites
+### Prerequisites
 
 * A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 
@@ -91,7 +91,7 @@ In addition to the ingestion and transformation steps above, you will learn how 
 Follow along and run each of the cells in the [Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/intro_to_de_python/DE_100_VHOL.ipynb).
 
 <!-- ------------------------ -->
-## Conclusion & Resources
+## Conclusion and Resources
 
 Duration:2
 
