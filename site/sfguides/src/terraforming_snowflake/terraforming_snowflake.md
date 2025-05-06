@@ -156,13 +156,19 @@ terraform {
   }
 }
 
+locals {
+  organization_name = "your_org_name"
+  account_name      = "your_account_name"
+  private_key_path  = "~/.ssh/snowflake_tf_snow_key.p8"
+}
+
 provider "snowflake" {
-    organization_name = "your_org_name"
-    account_name      = "your_account_name"
+    organization_name = local.organization_name
+    account_name      = local.account_name
     user              = "TERRAFORM_SVC"
     role              = "SYSADMIN"
     authenticator     = "SNOWFLAKE_JWT"
-    private_key       = file("~/.ssh/snowflake_tf_snow_key.p8")
+    private_key       = file(local.private_key_path)
 }
 ```
 
@@ -325,13 +331,13 @@ resource "snowflake_schema" "tf_db_tf_schema" {
 ```
 # New provider that will use USERADMIN to create users, roles, and grants
 provider "snowflake" {
-    organization_name = "your_org_name"
-    account_name      = "your_account_name"
+    organization_name = local.organization_name
+    account_name      = local.account_name
     user              = "TERRAFORM_SVC"
     role              = "USERADMIN"
     alias             = "useradmin"
     authenticator     = "SNOWFLAKE_JWT"
-    private_key       = file("~/.ssh/terraform_demo.p8")
+    private_key       = file(local.private_key_path)
 }
 
 # Create a new role using USERADMIN
@@ -452,7 +458,7 @@ The output will list all the actions Terraform would perform when applying the c
 
 > aside negative
 > 
->  You may need to run `terraform init -upgrade` in order to use `tls_private_key` resource. Running the command will install [hashicorp/tls](https://registry.terraform.io/providers/hashicorp/tls/latest).
+>  You will need to run `terraform init -upgrade` in order to use `tls_private_key` resource. Running the command will install [hashicorp/tls](https://registry.terraform.io/providers/hashicorp/tls/latest).
 
 ## Commit Changes to Source Control
 Duration: 3
