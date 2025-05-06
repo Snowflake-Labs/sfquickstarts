@@ -92,7 +92,8 @@ CREATE USER iceberg_lab
     DEFAULT_ROLE='ICEBERG_LAB';
 
 GRANT ROLE iceberg_lab TO USER iceberg_lab;
-GRANT ROLE iceberg_lab TO USER <your username>;
+SET USERNAME=CURRENT_USER();
+GRANT ROLE iceberg_lab TO USER IDENTIFIER($USERNAME);
 GRANT ROLE accountadmin TO USER iceberg_lab;
 ```
 <!-- ------------------------ -->
