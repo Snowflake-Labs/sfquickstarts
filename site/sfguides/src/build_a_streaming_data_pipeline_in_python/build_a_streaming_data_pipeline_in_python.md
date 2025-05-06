@@ -45,7 +45,7 @@ To have fast and efficient near real-time reporting, we will use Dynamic Tables 
 
 Navigate to the [code repository](https://github.com/sfc-gh-bculberson/Summit2025-DE214) in GitHub.
 
-Click on the green Code Button, go to the Codespaces tab, and click the green Create codespace on main.
+Click on the green Code Button, go to the Codespaces tab, and click the green Create codespace on main. You must be logged into GitHub to see the Codespaces tab.
 
 <!-- ------------------------ -->
 ## Creating the Service User & Role
@@ -66,6 +66,8 @@ Login to Snowsight or use SnowSQL to execute the following commands replacing `<
 
 ```sql
 
+USE ROLE ACCOUNTADMIN;
+
 CREATE WAREHOUSE IF NOT EXISTS STREAMING_INGEST;
 CREATE ROLE IF NOT EXISTS STREAMING_INGEST;
 CREATE USER STREAMING_INGEST LOGIN_NAME='STREAMING_INGEST' DEFAULT_WAREHOUSE='STREAMING_INGEST', DEFAULT_NAMESPACE='STREAMING_INGEST.STREAMING_INGEST', DEFAULT_ROLE='STREAMING_INGEST', TYPE=SERVICE, RSA_PUBLIC_KEY='<YOUR_PUBLIC KEY HERE>';
@@ -82,6 +84,8 @@ Duration: 2
 Login to Snowsight or use SnowSQL to execute the following commands:
 
 ```sql
+USE ROLE ACCOUNTADMIN;
+
 CREATE DATABASE IF NOT EXISTS STREAMING_INGEST;
 USE DATABASE STREAMING_INGEST;
 CREATE SCHEMA IF NOT EXISTS STREAMING_INGEST;
@@ -215,8 +219,8 @@ In order to cleanup you will also want to occasionally delete the local data fro
 In the codespace, build and start the docker container.
 
 ```bash
-docker build -t generator .
-docker run generator
+docker compose build
+docker compose up
 ```
 
 ### Verify Data is Streaming
