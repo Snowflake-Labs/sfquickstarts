@@ -21,3 +21,5 @@ package.json
 
 /sfguides/dist/*
 temp/
+site/package.json
+site/package-lock.json
