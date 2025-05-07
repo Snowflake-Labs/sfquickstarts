@@ -243,11 +243,6 @@
       "type": 301
     },
     {
-      "source": "guide/optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
       "source": "guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301

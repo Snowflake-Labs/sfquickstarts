@@ -37,7 +37,6 @@ Duration: 2
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 - Paste and the following SQL in the worksheet 
-- Adjust <YOUR_USER> to your user
 - Run all commands to create Snowflake objects
 
 ```sql
@@ -79,6 +78,7 @@ Duration: 10
 - Click Import .ipynb from the + Notebook dropdown
 - Create a new notebok with the following settings
   - Notebook Location: FEATURE_STORE_DATABASE, FEATURE_STORE_SCHEMA
+  - Run on Warehouse
   - Warehouse: FEATURE_STORE_WH
 - Create Notebook
 - Click Packages in the top right, add `snowflake-ml-python`
