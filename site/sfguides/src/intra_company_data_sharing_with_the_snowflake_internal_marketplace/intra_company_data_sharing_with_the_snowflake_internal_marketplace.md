@@ -13,7 +13,7 @@ tags: Summit HOL, Data Sharing, Marketplace, Snowflake Internal Marketplace, Dat
 
 Duration: 5
 
-Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data assets is more successful if data is shared as a product. A data product is a collection of related data objects plus metadata, such as a business description, ownership and contact information, service level objectives, data dictionary, and more.
+Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data assets is more successful if data is shared as a product. A data product is a collection of related data objects plus metadata, such as a business description, ownership and contact information, service level objectives, data dictionary, and more. In a Data Mesh, data products are typically also subject to various data management and organizational principles.  
 
 **Snowflake Internal Marketplace** enables companies to publish documented and governed data products, so they are discoverable and understandable for data consumers. Optionally, data quality metrics and SLOs can be included to make the product more trustworthy. The marketplace also offers rich capabilities to manage access to data products and wrap detailed governance around them to control which consumers can use which data products or which parts of a data product.
 
@@ -70,14 +70,13 @@ Sign up for a trial account [here](https://signup.snowflake.com/)
 
 - Choose any cloud provider and region
 - Choose **Enterprise Edition** or higher. (Standard Edition does not support the Internal Marketplace)
-- **Activate the account with admin user `sales_admin`**
+- Activate the account with an admin user name such as `admin`
   
-  - <mark>Note!</mark> The user `sales_admin` will be used throughout this lab!
-   Do not choose a different user name here.
+  - <mark>Note!</mark> Step 2 creates a `sales_admin` that will be used throughout this lab.
 
 
 ### Step 2: Configure the first account and create two more accounts _in the same org_
-- Login as `sales_admin` to your Primary Account from Step 1 and execute the following commands in a worksheet. 
+- Login as `admin` to your Primary Account from Step 1 and execute the following commands in a worksheet. 
 - In the first four commands, enter your own email, first name, last name and password - this variable will be reused in the code for creating users and accounts.
 - You can also download this SQL file and import it into Snowsight - [`STEP2_setup_primary_account.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP2_setup_primary_account.sql)
 
@@ -95,22 +94,36 @@ set lastname_var  = 'FILL_IN_YOUR_LAST_NAME';
 -- Use the same password for users in all accounts
 set pwd_var = 'FILL_IN_YOUR_PASSWORD';
 
-CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=small INITIALLY_SUSPENDED=TRUE;
+CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=xsmall INITIALLY_SUSPENDED=TRUE;
 GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
 
+--  Create a user and role for the sales domain:
+USE ROLE accountadmin;
 CREATE OR REPLACE ROLE sales_data_scientist_role;
-GRANT CREATE SHARE ON ACCOUNT                    TO ROLE sales_data_scientist_role;
-GRANT CREATE ORGANIZATION LISTING ON ACCOUNT     TO ROLE sales_data_scientist_role;
-GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE sales_data_scientist_role;
-GRANT ROLE sales_data_scientist_role TO USER sales_admin;
 
 SET my_user_var = CURRENT_USER();
 ALTER USER identifier($my_user_var) SET DEFAULT_ROLE = sales_data_scientist_role;
 
+CREATE OR REPLACE USER sales_admin
+  PASSWORD = $pwd_var
+  LOGIN_NAME = sales_admin
+  DISPLAY_NAME = sales_admin
+  FIRST_NAME = $firstname_var
+  LAST_NAME = $lastname_var
+  EMAIL = $email_var
+  MUST_CHANGE_PASSWORD = FALSE
+  DEFAULT_WAREHOUSE = compute_wh
+  DEFAULT_ROLE = sales_data_scientist_role
+  COMMENT = 'Sales domain admin';
 
--- Next, create a user and role for the marketing domain
--- in the primary account:
+GRANT ROLE sales_data_scientist_role TO USER sales_admin;
+GRANT ROLE accountadmin              TO USER sales_admin;  -- for simplicity in this lab
+GRANT CREATE SHARE ON ACCOUNT                    TO ROLE sales_data_scientist_role;
+GRANT CREATE ORGANIZATION LISTING ON ACCOUNT     TO ROLE sales_data_scientist_role;
+GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE sales_data_scientist_role;
 
+
+-- Next, create a user and role for the marketing domain:
 USE ROLE accountadmin;
 CREATE OR REPLACE ROLE marketing_analyst_role;
 
@@ -127,8 +140,9 @@ CREATE OR REPLACE USER marketing_admin
   COMMENT = 'Marketing domain admin';
 
 GRANT ROLE marketing_analyst_role TO USER marketing_admin;
-GRANT CREATE SHARE ON ACCOUNT TO ROLE marketing_analyst_role;
-GRANT CREATE ORGANIZATION LISTING ON ACCOUNT TO ROLE marketing_analyst_role;
+GRANT CREATE SHARE ON ACCOUNT                    TO ROLE marketing_analyst_role;
+GRANT CREATE ORGANIZATION LISTING ON ACCOUNT     TO ROLE marketing_analyst_role;
+GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE sales_data_scientist_role;
 ```
 
 Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
@@ -185,11 +199,11 @@ In a separate browser tab, log in to the account you created in step 1 (`HOL_ACC
 
 USE ROLE accountadmin;
 
-CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=small INITIALLY_SUSPENDED=TRUE;
+CREATE OR REPLACE WAREHOUSE compute_wh WAREHOUSE_SIZE=xsmall INITIALLY_SUSPENDED=TRUE;
 GRANT ALL ON WAREHOUSE compute_wh TO ROLE public;
 
 CREATE ROLE supply_chain_admin_role;
-GRANT ROLE accountadmin TO ROLE supply_chain_admin_role; 
+GRANT ROLE accountadmin TO ROLE supply_chain_admin_role; -- for simplicity in this lab
 GRANT ROLE supply_chain_admin_role TO USER supply_chain_admin;
 
 ALTER USER supply_chain_admin 
