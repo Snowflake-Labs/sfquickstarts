@@ -34,7 +34,7 @@ Then we’ll connect the server to an MCP host (Claude for Desktop):
 
 * A Snowflake account ([sign up for a trial account here](https://signup.snowflake.com/))
 * Cortex Analyst semantic model and Cortex Search service created, such as via this ([quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html#0))
-* A [Programamtic Access Token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) created
+* A [Programmatic Access Token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) created
 * Python **3.10+**  
 * Python MCP SDK **1.2.0+**  
 
