@@ -16,8 +16,8 @@ Duration: 3
 MaxMyCloud helps Snowflake customers optimize costs, improve resource efficiency, and gain deep operational visibility into their data platform environments.
 
 ### What You Will Build
-* A connection between your Snowflake account and the MaxMyCloud platform by installing the MaxMyCloud Native App.
-* A configured MaxMyCloud Web UI to monitor and manage your Snowflake environment.
+* Install the MaxMyCloud Native App.
+* Configure MaxMyCloud Web UI to monitor and manage your Snowflake environment.
 * Optionally, set up specific monitors like Budget Monitoring, Query Monitoring, and Warehouse Scheduling.
 
 ### Architecture
@@ -31,9 +31,7 @@ The MaxMyCloud architecture includes:
 
 ### What You Will Learn
 * The core components and architecture of MaxMyCloud.
-* The security principles and data handling practices of MaxMyCloud.
 * How to install and grant permissions for the MaxMyCloud Native App in Snowflake.
-* How to create a Snowflake user and role specifically for MaxMyCloud Web UI access using key-pair authentication.
 * How to connect and navigate the MaxMyCloud Web UI.
 * The purpose and setup of key MaxMyCloud features designed for cost optimization and operational efficiency.
 
@@ -84,15 +82,11 @@ Tracks and analyzes Snowflake query activity. Email alerts can be configured to 
 
 ### 2. 🏗️ Warehouse Monitor
 
-Monitors warehouse workload. If a warehouse remains idle beyond a pre-defined threshold, it will be automatically be **suspended** to reduce costs.
+Monitors warehouse workload.
 
 Note: This monitor is disabled by default.
 
-### 3. 🏗️ Warehouse Scheduler
-
-The Warehouse Scheduler enables administrators to configure Snowflake warehouse properties based on the time of day and day of the week (Weekdays, Saturday, Sunday). This is particularly beneficial for workloads with variable resource demands throughout the day or week, enabling optimized performance and cost efficiency.
-
-### 4. 💰 Budget Monitor
+### 3. 💰 Budget Monitor
 
 Allows you to define BU (Business Unit) budgets. If usage trends indicate a potential budget overrun, alerts are triggered proactively.
 
@@ -223,15 +217,6 @@ Real-time monitoring and controls, accessible under the Operations menu:
 - **Access Profile Settings** from the user icon (top right).
 - **Switch Snowflake Accounts** using the database icon (left to user icon).
 
-### Appendix: Locate Your Snowflake URL
-
-In Snowsight, follow these steps:
-
-1. Click your name in the bottom-left corner
-2. Select **Connect a tool to Snowflake**
-3. Copy the **Account/Server** URL from the right panel
-
-![url](assets/url.png)
 
 ## Departmental Budget Monitoring
 
@@ -431,7 +416,7 @@ Congratulations! You have successfully installed and configured the MaxMyCloud N
 ### Resources
 
 * **MaxMyCloud Sign-up:** [Start using MaxMyCloud](https://app.maxmycloud.com/signup)
-* **MaxMyCloud Web UI:** [Access the MaxMyCloud Web UI](https://app.maxmycloud.com)
+* **MaxMyCloud Website:** [Access Website](https://www.maxmycloud.com/)
 * **Contact MaxMyCloud Support:** For custom authentication setups or other inquiries, [contact MaxMyCloud](https://www.maxmycloud.com/contact).
 * **Snowflake Marketplace Listing for MaxMyCloud:** [MaxMyCloud Monitor Center](https://app.snowflake.com/marketplace/listing/GZTSZN4XBN)
 * **Snowflake Documentation - Query History:** For a complete list of fields available for Query Monitor conditions, refer to the [Snowflake Query History Function Documentation](https://docs.snowflake.com/en/sql-reference/functions/query_history).
