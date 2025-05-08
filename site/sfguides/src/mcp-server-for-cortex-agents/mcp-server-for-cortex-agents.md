@@ -28,12 +28,12 @@ We’ll build a server that exposes one tool:
 
 Then we’ll connect the server to an MCP host (Claude for Desktop):
 
-> **Note:** you can connect any MCP-compatible client, but this guide uses Claude for Desktop for simplicity. See the official MCP [client SDK guide](#) for building your own, or browse [other clients](https://modelcontextprotocol.io/clients).
+> **Note:** you can connect any MCP-compatible client, but this guide uses Claude for Desktop for simplicity. See the official MCP [client SDK guide](https://modelcontextprotocol.io/quickstart/client) for building your own, or browse [other clients](https://modelcontextprotocol.io/clients).
 
 ### Prerequisites
 
 * A Snowflake account ([sign up for a trial account here](https://signup.snowflake.com/))
-* Cortex Analyst semantic model and Cortex Search service created, such as via this ([quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html#0))
+* Cortex Analyst semantic model and Cortex Search service created, such as via this [quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html#0)
 * A [Programmatic Access Token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) created
 * Python **3.10+**  
 * Python MCP SDK **1.2.0+**  
