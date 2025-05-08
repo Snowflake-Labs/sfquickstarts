@@ -1,0 +1,205 @@
+id: mcp-server-for-cortex-agents
+summary: This guide outlines the process for building an MCP Server for Cortex Agent.
+environments: web
+status: Published
+feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+tags: Getting Started, Data-Science-&-Ai, Featured
+authors: Josh Reini
+
+# Build an MCP Server for Cortex Agents
+<!-- ------------------------ -->
+
+This guide walks through how to build your own Cortex Agent MCP Server.
+
+The core functionalities include:
+
+- Allow agents to interact with Cortex Agent as a tool
+- Test the connection with Claude Desktop
+
+In this tutorial, we’ll build a simple MCP **Cortex Agent** server and connect it to an MCP host (Claude for Desktop). We’ll start with a basic setup, then progress to more complex use cases.
+
+## What we’ll be building
+
+Many LLMs don’t natively orchestrate external “agent” workflows. With MCP, we can expose Cortex Agent capabilities as first-class tools in your chat client.
+
+We’ll build a server that exposes one tool:
+
+- `cortex_agent`: submit a query to Cortex Agent and get its output  
+
+Then we’ll connect the server to an MCP host (Claude for Desktop):
+
+> **Note:** you can connect any MCP-compatible client, but this guide uses Claude for Desktop for simplicity. See the official MCP [client SDK guide](#) for building your own, or browse [other clients](https://modelcontextprotocol.io/clients).
+
+### Prerequisites
+
+* Cortex Analyst semantic model and Cortex Search service created, such as via this ([quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html#0))
+* A [Programamtic Access Token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) created
+* Python **3.10+**  
+* Python MCP SDK **1.2.0+**  
+
+### What You Will Learn
+
+* How to create an MCP Server
+* How to use Cortex Agents
+* How to configure an MCP client to use an MCP Server
+
+### What You Will Build
+
+An MCP Server for Cortex Agents.
+
+## Setup your environment
+<!-- ------------------------ -->
+
+Duration: 5
+
+First install the MCP CLI (`uv`) and bootstrap your project:
+
+### macOS / Linux
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# restart your terminal to pick up `uv`
+```
+
+### Windows
+
+```bash
+irm https://astral.sh/uv/install.ps1 | iex
+# restart your shell
+```
+
+Configure and create your Cortex Agents project:
+
+```bash
+# Clone the repo
+git clone https://github.com/Snowflake-Labs/sfguide-mcp-cortex-agent.git
+cd sguide-mcp-cortex-agent
+
+# Create and activate venv
+uv venv
+source .venv/bin/activate   # macOS/Linux
+# .venv\Scripts\Activate.ps1 # Windows PowerShell
+
+# Install MCP SDK and HTTP client
+uv add "mcp[cli]" httpx
+```
+
+Set the keys and services needed to run Cortex Agents by filling `.env.template` with:
+
+* SNOWFLAKE_ACCOUNT_URL
+* SNOWFLAKE_PAT
+* SEMANTIC_MODEL_FILE
+* CORTEX_SEARCH_SERVICE
+
+## Run the server
+<!-- ------------------------ -->
+
+Duration: 2
+
+Run:
+
+```bash
+uv run cortex_agent.py
+```
+
+> **Note:** Leave this (the MCP server) running while you call it from the MCP client.
+
+## (Optional) Use the Cortex Agents MCP Server in Claude Desktop
+<!-- ------------------------ -->
+
+Duration: 5
+
+Install or update Claude for Desktop.
+
+Open your config file:
+
+### macOS / Linux
+
+```
+~/Library/Application Support/Claude/claude_desktop_config.json
+```
+
+### Windows
+
+```
+%APPDATA%\Claude\claude_desktop_config.json
+```
+
+Add your Cortex Agents server:
+
+```json
+{
+  "mcpServers": {
+    "cortex-agent": {x
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/ABSOLUTE/PATH/TO/PARENT/FOLDER/sfguide-mcp-cortex-agent",
+        "run",
+        "cortex_agents.py"
+      ]
+    }
+  }
+}
+```
+
+> **Note:** You may need to replace "uv" with the full uv path. You can find the uv path by running `which uv`.
+
+Launch the Claude for Desktop app.
+
+Then, run a query. If the query calls your MCP server, you will see the name of the tool used directly below your query in the Claude desktop app.
+
+What’s happening under the hood
+When you ask a question:
+
+1. The client sends your question to Claude
+2. Claude analyzes the available tools and decides which one(s) to use
+3. If the cortex agent tool is chosen, the client executes Cortex Agents through the MCP server
+4. The results are sent back to Claude
+5. Claude formulates a natural language response
+6. The response is displayed to you!
+
+### Common Errors
+
+When the MCP client calls the MCP server, you may run into some of these common issues.
+
+```bash
+Error: Caused by SSLError(SSLCertVerificationError(1, “[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...
+```
+
+```bash
+Error: snowflake.connector.errors.InterfaceError: 250003 (08001): 404 Not Found: post https://xxxxx.snowflakecomputing.com:443/session/v1/login-request?request_id=b4e367d4-d8ac-48d3-8e44-96f42defa9c5&request_guid=4f63e07c-e42c-43b8-8f79-f6c577ee0d0e
+```
+
+> aside negative
+> NOTE: If you get the above errors, make sure the ACCOUNT and HOST variables in the **_.env_** file are set correctly. For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
+
+## (Optional) Customize your Cortex Agents
+<!-- ------------------------ -->
+
+Duration: 5
+
+In `cortex_agent.py`, update the `payload` included in the function `run_cortex_agent` to include more tools or different configurations (such as LLMs).
+
+
+
+## Conclusion And Resources
+<!-- ------------------------ -->
+
+Duration: 1
+
+Congratulations! You've sucessfully built an MCP server for Cortex Agents. I hope you are inspired to use this MCP server you've built in interesting MCP clients!
+
+### What You Learned
+
+* How to build an MCP server
+* How to use Cortex Agents REST API and integrate it with an MCP server
+* How to set up an MCP client to call your Cortex Agents MCP server
+
+### Related Resources
+
+  * [GitHub repo](https://github.com/Snowflake-Labs/sfguide-mcp-cortex-agents)
+  * [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
+  * [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
+  * [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+  * [MCP Server Quickstart](https://modelcontextprotocol.io/quickstart/server)
