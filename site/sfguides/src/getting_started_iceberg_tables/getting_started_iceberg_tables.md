@@ -22,15 +22,14 @@ This guide is designed to help you understand the capabilities included in Snowf
 - Familiarity with Snowflake
 - Familiarity with cloud object storage
 - Familiarity with SQL
-- Familiarity with Apache Iceberg
-- Familiarity with Apache Spark
+- Familiarity with DuckDB
 
 ### What You’ll Learn 
 - How to create a Snowflake-managed Iceberg Table
 - How to apply governance policies on an Iceberg Table
 - How Snowpark can be used for Iceberg Table pipelines
 - How to share an Iceberg Table
-- How to access a Snowflake-managed Iceberg Table from Apache Spark
+- How to access a Snowflake-managed Iceberg Table from DuckDB
 
 ### What You’ll Need 
 - A Snowflake account. A [free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for most of this lab, but if you’d like to try governance features covered in section 4, you will need [Enterprise](https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition) or [Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition).
@@ -38,36 +37,6 @@ This guide is designed to help you understand the capabilities included in Snowf
 
 ### What You’ll Build 
 - A simple, open data lakehouse with Snowflake, Iceberg, and your cloud of choice
-
-<!-- ------------------------ -->
-## Setup your Environment
-Duration: 10
-
-### Install Conda, Spark, Jupyter
-
-In this quickstart, you can use Conda to easily create a development environment and download necessary packages. This is only needed if you choose to follow the last section for using Spark to read Snowflake-managed Iceberg Tables. This is not required to create or use Iceberg Tables on Snowflake. Here are instructions for installing Conda:
-- [Mac](https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html)
-- [Windows](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html)
-- [Linux](https://docs.conda.io/projects/conda/en/stable/user-guide/install/linux.html)
-
-Either download [this file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables/blob/main/environment.yml), or create a file named environment.yml with the following contents.
-
-```yaml
-name: iceberg-lab
-channels:
-  - conda-forge
-dependencies:
-  - findspark=2.0.1
-  - jupyter=1.0.0
-  - pyspark=3.5.0
-  - openjdk=11.0.13
-```
-
-To create the environment needed, run the following in your shell.
-
-```
-conda env create -f environment.yml
-```
 
 ### Setup Snowflake
 
@@ -491,21 +460,49 @@ ORDER BY order_count DESC;
 As changes are made to the Iceberg Table from the producer’s account, those changes are available nearly instantly in the reader account. No copying or transferring of data required! The single copy of data is stored in your cloud storage.
 
 <!-- ------------------------ -->
-## Access Iceberg Tables from Apache Spark
+## Access Iceberg Tables from DuckDB
 Duration: 10
 
-Suppose another team that uses Spark wants to read the Snowflake-managed Iceberg Table using their Spark clusters. They can use the Snowflake Iceberg Catalog SDK to access snapshot information, and directly access data and metadata in object storage, all without using any Snowflake warehouses.
+Suppose another team that uses DuckDB wants to read the Snowflake-managed Iceberg Table. They can use the Iceberg metadata to access snapshot information, and directly access data and metadata in object storage, all without using any Snowflake warehouses.
 
-From your terminal, run the following commands to activate the virtual environment you created in the setup, and open jupyter notebooks.
+To complete this step you will need to have DuckDB installed. If needed, [install DuckDB DuckDB](https://duckdb.org/#quickinstall).
 
+To start duckdb run the following command:
+```bash
+duckdb
 ```
-conda activate iceberg-lab
-jupyter notebook
+
+Run the following SQL in the duckdb console to query the Iceberg Table.
+```sql
+INSTALL ICEBERG;
+LOAD ICEBERG;
 ```
 
-Download the notebook [iceberg_lab.ipynb provided here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-iceberg-tables/blob/main/iceberg_lab.ipynb), then open from Jupyter. Update and run the cells that are applicable to the cloud in which your Snowflake account is located.
+You will need to have credentials to access the blob storage where the metadata and data are located.
 
-![PySpark](assets/7_jupyter-notebook.png)
+Example creation of a secret for AWS S3 access:
+
+```sql
+CREATE SECRET (TYPE s3, KEY_ID 'YOUR_KEY', SECRET 'YOUR_SECRET', REGION 'YOUR_REGION');
+```
+
+For other blob store configurations and ways to set credentials, go to the [DuckDB](https://duckdb.org/docs/stable/guides/network_cloud_storage/overview) docs.
+
+
+Get your Iceberg metadata location by running the following query in Snowflake.
+
+```sql
+SELECT PARSE_JSON(SYSTEM$GET_ICEBERG_TABLE_INFORMATION('CUSTOMER_ICEBERG'))['metadataLocation']::varchar;
+```
+
+You can now query the table directly from DuckDB. Replace the Metadata path found from GET_ICEBERG_TABLE_INFORMATION above in the following SQL and execute the query in DuckDB:
+```sql
+SELECT * FROM iceberg_scan('s3://your-bucket/your-path/metadata/guid.metadata.json');
+```
+
+![Storage](assets/duckdb.png)
+
+Now teams can use data stored in Snowflake using both Snowflake as well as DuckDB (as well as other tools supporing Iceberg). 
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -527,13 +524,6 @@ DROP ROLE tpch_analyst;
 DROP WAREHOUSE iceberg_lab;
 ```
 
-To delete the Conda environment, run the following in your shell.
-
-```
-conda deactivate
-conda remove -n iceberg-lab --all
-```
-
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
@@ -545,7 +535,7 @@ Congratulations! You've successfully created an open data lakehouse on Snowflake
 - How to apply governance policies on an Iceberg Table
 - How Snowpark can be used for Iceberg Table pipelines
 - How to share an Iceberg Table
-- How to access a Snowflake-managed Iceberg Table from Apache Spark
+- How to access a Snowflake-managed Iceberg Table from DuckDB
 
 ### Related Resources
 - [Snowflake Documentation for Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg)
