@@ -70,6 +70,7 @@ Duration: 10
 - Click Import .ipynb from the + Notebook dropdown
 - Create a new notebok with the following settings
   - Notebook Location: ML_MODEL_DATABASE, ML_MODEL_SCHEMA
+  - Run on Warehouse
   - Warehouse: ML_MODEL_WH
 - Create Notebook
 - Click Packages in the top right, add `snowflake-ml-python` and `snowflake-snowpark-python`

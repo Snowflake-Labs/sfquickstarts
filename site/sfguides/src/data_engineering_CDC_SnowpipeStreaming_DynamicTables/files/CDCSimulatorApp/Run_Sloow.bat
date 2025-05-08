@@ -1,1 +1,1 @@
-java -jar CDCSimulatorClient.jar SLOOW
+java -Dorg.slf4j.simpleLogger.defaultLogLevel=error -Djava.util.logging.config.file=logging.properties -jar CDCSimulatorClient.jar SLOOW
