@@ -1,5 +1,5 @@
 id: mcp-server-for-cortex-agents
-summary: This guide outlines the process for building an MCP Server for Cortex Agent.
+summary: This guide outlines the process for building an MCP Server for Cortex Agents.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
@@ -9,22 +9,22 @@ authors: Josh Reini
 # Build an MCP Server for Cortex Agents
 <!-- ------------------------ -->
 
-This guide walks through how to build your own Cortex Agent MCP Server.
+This guide walks through how to build your own Cortex Agents MCP Server.
 
 The core functionalities include:
 
-- Allow agents to interact with Cortex Agent as a tool
+- Allow agents to interact with Cortex Agents as a tool
 - Test the connection with Claude Desktop
 
-In this tutorial, we’ll build a simple MCP **Cortex Agent** server and connect it to an MCP host (Claude for Desktop). We’ll start with a basic setup, then progress to more complex use cases.
+In this tutorial, we’ll build a simple MCP **Cortex Agents** server and connect it to an MCP host (Claude for Desktop). We’ll start with a basic setup, then progress to more complex use cases.
 
 ## What we’ll be building
 
-Many LLMs don’t natively orchestrate external “agent” workflows. With MCP, we can expose Cortex Agent capabilities as first-class tools in your chat client.
+Many LLMs don’t natively orchestrate external “agent” workflows. With MCP, we can expose Cortex Agents capabilities as first-class tools in your chat client.
 
 We’ll build a server that exposes one tool:
 
-- `cortex_agent`: submit a query to Cortex Agent and get its output  
+- `run_cortex_agents`: submit a query to Cortex Agents and get its output  
 
 Then we’ll connect the server to an MCP host (Claude for Desktop):
 
@@ -84,7 +84,7 @@ source .venv/bin/activate   # macOS/Linux
 uv add "mcp[cli]" httpx
 ```
 
-Set the keys and services needed to run Cortex Agents by filling `.env.template` with:
+Set the keys and services needed to run Cortex Agents by creating a `.env` following the `.env.template` with:
 
 * SNOWFLAKE_ACCOUNT_URL
 * SNOWFLAKE_PAT
@@ -99,7 +99,7 @@ Duration: 2
 Run:
 
 ```bash
-uv run cortex_agent.py
+uv run cortex_agents.py
 ```
 
 > **Note:** Leave this (the MCP server) running while you call it from the MCP client.
@@ -154,7 +154,7 @@ When you ask a question:
 
 1. The client sends your question to Claude
 2. Claude analyzes the available tools and decides which one(s) to use
-3. If the cortex agent tool is chosen, the client executes Cortex Agents through the MCP server
+3. If the cortex agents tool is chosen, the client executes Cortex Agents through the MCP server
 4. The results are sent back to Claude
 5. Claude formulates a natural language response
 6. The response is displayed to you!
@@ -179,7 +179,7 @@ Error: snowflake.connector.errors.InterfaceError: 250003 (08001): 404 Not Found:
 
 Duration: 5
 
-In `cortex_agent.py`, update the `payload` included in the function `run_cortex_agent` to include more tools or different configurations (such as LLMs).
+In `cortex_agents.py`, update the `payload` included in the function `run_cortex_agents` to include more tools or different configurations (such as LLMs).
 
 
 
