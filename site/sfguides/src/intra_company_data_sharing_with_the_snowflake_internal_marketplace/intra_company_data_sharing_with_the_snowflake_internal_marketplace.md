@@ -82,7 +82,7 @@ Sign up for a trial account [here](https://signup.snowflake.com/)
 
 ```sql
 -- Run this code in your PRIMARY Account
--- Make sure you update the four variables below (email_var, firstname_var and lastname_var)
+-- Make sure you update the four variables below (email_var, firstname_var, lastname_var, and pwd_var)
 
 USE ROLE accountadmin;
 
@@ -362,24 +362,30 @@ Data products should be understandable and trustworthy for data consumers so let
   - **Geographic Coverage**: The regions you will share this data product to, if your company uses Snowflake in multiple regions.
   - **Time Range**: Amount of history data included.
   - **Timestamp Granularity**: The interval between data points. For example, "*Event-based*" if there is one record for each incoming order, or "*Daily*" if order volumes are aggregated by date, and so on.
-    
-- Add at least two **Usage examples** such as these:
-    ```sql
+  
+  ![](assets/Publish07-MetaData.png)
+
+- Add at least two **Usage examples** such as the following two queries..
+  - Note these queries reference the objects in the data product via the Uniform Listing Locator (ULL).
+  - The ULL contains the domain profile name and listing name.
+  - The ULL can be copied from the top of the listing page, right under the listing name.
+  
+  
+  ```sql
     -- Title: Explore the Order Summary View:
 
     SELECT * 
-    FROM TPCH.SF1.ORDER_SUMMARY 
+    FROM ORGDATACLOUD$SALES$ORDER_INSIGHTS.SF1.ORDER_SUMMARY 
     LIMIT 100;
 
 
     -- Title: Use the UDF to obtain order details for one customer:
 
     SELECT customer_name, country, orderkey, orderdate, AMOUNT
-    FROM TABLE(tpch.sf1.orders_per_customer(60001));
+    FROM TABLE(ORGDATACLOUD$SALES$ORDER_INSIGHTS.sf1.orders_per_customer(60001));
     ```
 
 
-![](assets/Publish07-MetaData.png)
 
 - Generate a **Data dictionary**. Snowflake will automatically compile column information and sample data for *all* objects in the data product.
 
@@ -454,11 +460,14 @@ Now that access has been granted let's go back to the consumer roles:
 - In the Internal Marketplace open the **Order Insights** listing again
 - The blue **Request Access** button has now changed to **Query in Worksheet**. Reload the browser tab if needed to see the new button.
 - Click **Query in Worksheet**. Review and run the data product sample queries. *(Keep this tab alive for the rest of the lab.)*
+- Note the list of all available internal data products in the left-hand side of the UI.
 - In the SQL, note the ULL (Uniform Listing Locator) that references the data product.
   - The ULL contains the domain name, i.e. the name of the profile under which the listing was published.
   - The ULL also contains the listing name. 
   - Schema and object names are appended to access specific objects in the data product.
 - **Optional**: Log into account `HOL_ACCOUNT1` as the `marketing_admin` user and perform the same steps.
+
+![](assets/ConsumeListing.png)
 
 ---
 ## Live Data Sharing
