@@ -82,7 +82,7 @@ Sign up for a trial account [here](https://signup.snowflake.com/)
 
 ```sql
 -- Run this code in your PRIMARY Account
--- Make sure you update the four variables below (email_var, firstname_var and lastname_var)
+-- Make sure you update the four variables below (email_var, firstname_var, lastname_var, and pwd_var)
 
 USE ROLE accountadmin;
 
