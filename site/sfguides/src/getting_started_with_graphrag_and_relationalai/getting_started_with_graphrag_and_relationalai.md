@@ -49,7 +49,7 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 > NOTE:  If you do not already have the RelationalAI Native App installed, please follow the instructions [here](https://relational.ai/docs/native_app/installation)
 
 <!-- ------------------------ -->
-## Installing Snowflake artifacts and loading the corpus
+## Snowflake Artifact and Corpus
 Duration: 3
 
 We shall proceed with creating the Snowflake artifacts required for this guide.
@@ -124,14 +124,14 @@ def main(llm_response):
         return json.loads(payload)
 $$;
 
-CREATE OR REPLACE FUNCTION LLM_ENTITIES_RELATIONS(model VARCHAR, content VARCHAR, additional_prompts VARCHAR DEFAULT '') 
+CREATE OR REPLACE FUNCTION LLM_ENTITIES_RELATIONS(content VARCHAR, additional_prompts VARCHAR DEFAULT '') 
 RETURNS TABLE 
 (response OBJECT) 
 LANGUAGE SQL 
 AS 
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
-        model,
+        'llama3-70b',
         [
             {
                 'role': 'system', 
@@ -400,7 +400,7 @@ class GraphBuilder(object):
         ]
 $$;
 
-CREATE OR REPLACE PROCEDURE CREATE_NODES_EDGES_STREAMS_SOURCES(completions_model VARCHAR) 
+CREATE OR REPLACE PROCEDURE CREATE_NODES_EDGES_STREAMS_SOURCES() 
 RETURNS VARCHAR
 LANGUAGE SQL 
 AS 
@@ -425,7 +425,7 @@ $$
                 , LLM_EXTRACT_JSON(r.response) AS response
             FROM 
                 c
-            JOIN TABLE(LLM_ENTITIES_RELATIONS(:completions_model , c.content, '')) AS r
+            JOIN TABLE(LLM_ENTITIES_RELATIONS(c.content, '')) AS r
         )
         , nodes_edges AS (
             SELECT
@@ -483,14 +483,14 @@ $$
     END;
 $$;
 
-CREATE OR REPLACE FUNCTION LLM_SUMMARIZE(model VARCHAR, content VARCHAR) 
+CREATE OR REPLACE FUNCTION LLM_SUMMARIZE(content VARCHAR) 
 RETURNS TABLE 
 (response OBJECT) 
 LANGUAGE SQL 
 AS 
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
-        model,
+        'llama3-70b',
         [
             {
                 'role': 'system', 
@@ -536,14 +536,14 @@ $$
     ) AS response
 $$;
 
-CREATE OR REPLACE FUNCTION LLM_ANSWER(model VARCHAR, context VARCHAR, question VARCHAR) 
+CREATE OR REPLACE FUNCTION LLM_ANSWER(context VARCHAR, question VARCHAR) 
 RETURNS TABLE 
 (response OBJECT) 
 LANGUAGE SQL 
 AS 
 $$
     SELECT SNOWFLAKE.CORTEX.COMPLETE(
-        model,
+        'llama3-70b',
         [
             {
                 'role': 'system', 
@@ -605,7 +605,7 @@ $$
     ) AS response
 $$;
 
-CREATE OR REPLACE PROCEDURE LLM_ANSWER_SUMMARIES(completions_model VARCHAR, summarization_window INTEGER, question VARCHAR)  
+CREATE OR REPLACE PROCEDURE LLM_ANSWER_SUMMARIES(summarization_window INTEGER, question VARCHAR)  
 RETURNS TABLE 
 (
     answer VARIANT
@@ -659,9 +659,8 @@ BEGIN
             c
         JOIN TABLE(
             LLM_ANSWER(
-                :completions_model 
-                , c.content
-                , :question
+                c.content,
+                :question
             )
         ) AS r;
     
@@ -693,9 +692,8 @@ BEGIN
                 filtered_summary_answers AS fsa
             JOIN TABLE(
                 LLM_ANSWER(
-                    :completions_model 
-                    , fsa.content
-                    , :question
+                    fsa.content,
+                    :question
                 )
             ) AS r
         )
@@ -732,7 +730,7 @@ ON_ERROR = CONTINUE;
 ```
 
 <!-- ------------------------ -->
-## Entities and relations extraction
+## Entities/Relations Extraction
 Duration: 5
 
 With all our Snowflake artifacts in place, we are now ready to extract the entities and relations from the corpus. 
@@ -760,7 +758,7 @@ CALL CREATE_NODES_EDGES_STREAMS_SOURCES('llama3-70b');
 > Expect this process to take a few minutes to complete.
 
 <!-- ------------------------ -->
-## Cloning the demo repository and setting up a local environment
+## Local Environment Setup
 Duration: 10
 
 ### Python
@@ -838,7 +836,7 @@ Run `rai init` from your terminal and follow the prompts to enter your credentia
 - Press Enter to accept the default profile name of `default`
 
 <!-- ------------------------ -->
-## Setting up a RelationalAI engine
+## RelationalAI Engine
 Duration: 10
 
 We shall now setup the RelationalAI engine that we will be using for performing graph analytics.
@@ -858,7 +856,7 @@ rai engines:create
 >  Creating the engine may take a few minutes to complete. The CLI will notify you when the engine is ready.
 
 <!-- ------------------------ -->
-## Setting up Snowflake / RelationaAI Data Streams
+## Snowflake/RelationaAI Data Streams
 Duration: 3
 
 Having the source `nodes` and `edges` tables in place, we shall now setup the Snowflake / RelationalAI Data Streams to synchronize data between a Snowflake and a RelationalAI model.
@@ -885,7 +883,7 @@ rai imports:stream --source graph_rag.graph_rag.edges --model graph_rag
 > is listing both streams in status `LOADED`.
 
 <!-- ------------------------ -->
-## Building the graph and answering questions
+## Building Graph / Answering Questions
 Duration: 20
 
 We shall now proceed with creating the RelationalAI graph and answer questions using the model. In this step, we shall be doing the following:
@@ -1017,7 +1015,7 @@ for k, v in d.items():
                     , PARSE_JSON(LLM_EXTRACT_JSON(r.response)):answer AS response
                 FROM 
                     c
-                JOIN TABLE(LLM_SUMMARIZE('llama3-70b', c.content)) AS r;
+                JOIN TABLE(LLM_SUMMARIZE(c.content)) AS r;
             """, 
             parameters={
                 "COMMUNITY_ID": str(k), 
@@ -1044,7 +1042,7 @@ Using a window of concatenated community summaries and asking the LLM if the que
 execute_statement(
     session=session, 
     statement="""
-        CALL LLM_ANSWER_SUMMARIES('llama3-70b', 5, '{QUESTION}');
+        CALL LLM_ANSWER_SUMMARIES(5, '{QUESTION}');
     """, 
     parameters={
         "QUESTION": question
@@ -1075,7 +1073,7 @@ jupyter lab
 Please switch to the Jupyter notebook and follow the instructions to reproduce the steps outlined above.
 
 <!-- ------------------------ -->
-## Conclusion and resources
+## Conclusion and Resources
 Duration: 2
 
 ### Conclusion
