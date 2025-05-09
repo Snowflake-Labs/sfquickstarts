@@ -82,7 +82,7 @@ Sign up for a trial account [here](https://signup.snowflake.com/)
 
 ```sql
 -- Run this code in your PRIMARY Account
--- Make sure you update the four variables below (email_var, firstname_var and lastname_var)
+-- Make sure you update the four variables below: email_var, firstname_var, lastname_var, pwd_var
 
 USE ROLE accountadmin;
 
@@ -120,7 +120,6 @@ GRANT ROLE sales_data_scientist_role TO USER sales_admin;
 GRANT ROLE accountadmin              TO USER sales_admin;  -- for simplicity in this lab
 GRANT CREATE SHARE ON ACCOUNT                    TO ROLE sales_data_scientist_role;
 GRANT CREATE ORGANIZATION LISTING ON ACCOUNT     TO ROLE sales_data_scientist_role;
-GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE sales_data_scientist_role;
 
 
 -- Next, create a user and role for the marketing domain:
@@ -142,7 +141,10 @@ CREATE OR REPLACE USER marketing_admin
 GRANT ROLE marketing_analyst_role TO USER marketing_admin;
 GRANT CREATE SHARE ON ACCOUNT                    TO ROLE marketing_analyst_role;
 GRANT CREATE ORGANIZATION LISTING ON ACCOUNT     TO ROLE marketing_analyst_role;
+
+USE ROLE orgadmin;
 GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE sales_data_scientist_role;
+GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE marketing_analyst_role;
 ```
 
 Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
@@ -152,7 +154,7 @@ While waiting for the email, you can go ahead and run the following parts.
 Now, run the following commands to create the next two accounts that you need. You have to **use the same worksheet** as above, as the variables created are reused.
 
 ```sql
--- Run this code in your PRIMARY account
+-- Continue to run this code in your PRIMARY account
 -- Create a secondary account in the same region (default!):
 USE ROLE orgadmin;
 
