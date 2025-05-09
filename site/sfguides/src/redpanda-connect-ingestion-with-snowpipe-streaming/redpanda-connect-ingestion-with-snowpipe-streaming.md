@@ -171,7 +171,7 @@ Next you'll need to create ACLs for the user to give it access to our cluster an
 ### Add password as secret in Redpanda Connect
 
 Before we start creating pipelines with Redpanda Connect, we're going to add the password for our `MyRedpandaUser` as a secret, so it can be used in pipelines without hardcoding the value inside
-the configuration file. First navigate to the Connect page, then click on the "Secrets" tab. Using the password for `MyRedpandaUser` created in the previous step, add that as a secret by clicking on the "Create secret" button.
+the configuration file. First navigate to the Secrets Store page, then click on the "Create secret" button. Using the password for `MyRedpandaUser` created in the previous step, add that as a secret by clicking on the "Create secret" button.
 
 ![](assets/create_secret.png)
 
@@ -242,7 +242,7 @@ tables, and altering the schema when new columns appear in the pipeline.
 ### Create a secret for the private key 
 
 Before we create the new pipeline, we'll need to add the private key we created in 
-step 2 as a secret for Redpanda Connect. Head to the Connect page and click on the "Secrets" tab,
+step 2 as a secret for Redpanda Connect. Head to the Secrets store page and click on the "Create secret" button,
 this time creating a secret called `SNOWFLAKE_KEY` with the entire contents of `rsa_key.p8`, replacing the
 newlines with escaped newlines. The following `awk` command can output the RSA key in the correct format to paste as a secret:
 
@@ -295,7 +295,7 @@ output:
       enabled: true
     max_in_flight: 1
     batching:
-      size_bytes: 50_000_000 # Collect 50MB of JSON data before flushing
+      byte_size: 50_000_000 # Collect 50MB of JSON data before flushing
       period: 120s # or after 120 seconds, which ever comes first
 ```
 
