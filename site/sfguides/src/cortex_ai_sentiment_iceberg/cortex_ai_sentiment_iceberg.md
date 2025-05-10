@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Cortex, Data Lake, Iceberg
 
-# Sentiment Analysis Using Snowflake Cortex AI on Iceberg Tables
+# Sentiment Analysis Using Snowflake Cortex AI on Apache Iceberg™ Tables
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -16,9 +16,7 @@ This guide is designed to help you learn how to bring artificial intelligence (A
 
 > aside positive
 > 
->  [Snowflake Cortex AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) is now generally available.
->  [Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg) are now generally available.
->  [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) are now in public preview.
+>  [Snowflake Cortex AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions), [Apache Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg), and [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) are generally available.
 
 ### Prerequisites
 - Familiarity with Snowflake
@@ -29,10 +27,10 @@ This guide is designed to help you learn how to bring artificial intelligence (A
 
 ### What You’ll Learn 
 - How to use a Snowflake Notebooks
-- How to create a Snowflake-managed Iceberg Table
-- How to load data to Iceberg Tables with Snowpark
+- How to create a Snowflake-managed Apache Iceberg table
+- How to load data to Apache Iceberg tables with Snowpark
 - How to use LLM functions to generate sentiment predictions
-- How to automate CDC pipelines with Streams and Tasks
+- How to automate pipelines with Streams and Tasks
 
 ### What You’ll Need 
 - A Snowflake account with access to `ACCOUNTADMIN` role. A [free trial](https://signup.snowflake.com/) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for this lab. The account must be in one of these regions:
@@ -44,7 +42,7 @@ This guide is designed to help you learn how to bring artificial intelligence (A
 - A storage bucket with the same cloud provider in the same region that hosts your Snowflake account above. Direct credential access required as storage integrations are not supported for External Volumes.
 
 ### What You’ll Build 
-- A open data lakehouse with Iceberg
+- A open data lakehouse with Apache Iceberg
 - An automated CDC pipeline to process data using an LLM
 
 <!-- ------------------------ -->
@@ -110,28 +108,6 @@ CREATE OR REPLACE EXTERNAL VOLUME iceberg_cortex_vol
 Name the external volume you create `iceberg_cortex_vol`.
 
 <!-- ------------------------ -->
-### Create an Iceberg Table
-
-Iceberg Tables can currently use Snowflake, AWS Glue, or object storage as the catalog. In public preview soon, Snowflake can use catalog integration with an Iceberg REST endpoint. In this quickstart, use Snowflake as the catalog to allow read and write operations to the table. More information about integrating catalogs can be found [here](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration).
-
-Create an Iceberg Table referencing the external volume you just created. You can specify `BASE_LOCATION` to instruct Snowflake where to write table data and metadata, or leave empty to write data and metadata to the location specified in the external volume definition.
-
-```sql
-CREATE OR REPLACE ICEBERG TABLE demo.public.product_reviews (
-    id STRING,
-    product_name STRING,
-    product_id STRING,
-    reviewer_name STRING,
-    review_date DATE,
-    review STRING,
-    sentiment FLOAT
-)
-    CATALOG = 'SNOWFLAKE'
-    EXTERNAL_VOLUME = 'iceberg_cortex_vol'
-    BASE_LOCATION = 'demo/product_reviews/'
-;
-```
-
 ## Load CSV files into Iceberg via Snowpark Python
 Duration: 5
 
@@ -159,7 +135,7 @@ CREATE OR REPLACE STAGE demo.public.files
 To read the CSV files from Amazon S3 into a dataframe, first create a Snowpark session.
 
 ```python
-import json|
+import json
 from snowflake.snowpark import Session
 import snowflake.snowpark.types as T
 
@@ -189,11 +165,23 @@ jan_df = session.read \
 
 jan_df.show()
 ```
+Iceberg Tables can currently use Snowflake, Iceberg REST catalogs, AWS Glue, or object storage as the catalog. In this quickstart, use Snowflake as the catalog to allow read and write operations to the table. More information about integrating catalogs can be found [here](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration).
+
+Create an Iceberg Table referencing the external volume you just created. You can specify `BASE_LOCATION` to instruct Snowflake where to write table data and metadata, or leave empty to write data and metadata to the location specified in the external volume definition.
 
 Write the dataframe to the Iceberg Table.
 
 ```python
-jan_df.write.mode("append").save_as_table("demo.public.product_reviews")
+# Write the dataframe to the Iceberg Table
+jan_df.write \
+    .mode("overwrite") \
+    .save_as_table("demo.public.product_reviews",
+        iceberg_config={
+            "external_volume":"iceberg_cortex_vol",
+            "catalog":"snowflake",
+            "base_location":"demo/product_reviews/"
+        }
+    )
 ```
 
 You now see metadata files and Parquet data files in your object storage, whether you’re using Amazon S3 or Azure storage.
@@ -308,10 +296,14 @@ st.bar_chart(sql_reviews.to_df(), x='SENTIMENT_DIFF', y='PRODUCT_NAME')
 ```
 
 <!-- ------------------------ -->
-## Access Iceberg Tables from Apache Spark
+## Access Iceberg Tables from Apache Spark™
 Duration: 15
 
-Suppose another team that uses Spark wants to read the Snowflake-managed Iceberg Table using their Spark clusters. They can use the Snowflake Iceberg Catalog SDK to access snapshot information, and directly access data and metadata in object storage, all without using any Snowflake warehouses.
+Suppose another team that uses Apache Spark wants to read the Snowflake-managed Iceberg Table using their Spark clusters. They have two options for accessing these tables:
+1. The Iceberg tables can be synced to an Apache Polaris™ (incubating) catalog like Snowflake Open Catalog, where Spark and many different engines can access via an Iceberg REST API with vended credentials.
+2. The Iceberg tables can be accessed via a Snowflake catalog SDK for snapshot information, and authenticate directly with the storage bucket.
+
+Instructions for the first option, syncing to Snowflake Open Catalog, can be found in [this tutorial](https://docs.snowflake.com/en/user-guide/tables-iceberg-open-catalog-sync). For this quickstart, we will use the second option with the catalog SDK. 
 
 ### Setup your Apache Spark Environment
 
@@ -336,7 +328,7 @@ dependencies:
   - snowflake-snowpark-python
 ```
 
-To create the environment needed, run the following in your shell.
+To create the environment needed, navigate to the directory where you saved the environment.yml file, and run the following in your shell.
 
 ```
 conda env create -f environment.yml
