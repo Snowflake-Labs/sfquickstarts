@@ -325,16 +325,25 @@ Add the following SQL statement below the previous code and then execute:
 LIST @cybersyn_company_metadata;
 ```
 
-In the results in the bottom pane, you should see the list of files in the stage:
+In the results in the bottom pane, you should see the staged file:
 
+-- victoria to update screenshot
 ![worksheet result](assets/4PreLoad_10.png)
+
+Compute resources are needed for loading data. Snowflake's compute nodes are called virtual warehouses and they can be dynamically sized up or out according to workload, whether you are loading data, running a query, or performing a DML operation. Each workload can have its own warehouse so there is no resource contention.
 
 ### Create a File Format
 
-Before we can load the data into Snowflake, we have to create a file format that matches the data structure. In the worksheet, again add the following command below the rest and execute to create the file format:
+Before we can load the data into Snowflake, we have to create a file format that matches the data structure. 
+
+> aside positive
+> 
+>  Name the file format specific to your use case. For example, in this instance we name the file format `company_csv`, because we are ingesting company metadata; these characteristics match what we expect in the `cybersyn_consumer_company_metadata.csv`. If we were to ingest other CSVs, we might want to specify different file formatting.
+
+In the worksheet, again add the following command below the rest and execute to create the file format:
 
 ```SQL
-CREATE OR REPLACE FILE FORMAT csv
+CREATE OR REPLACE FILE FORMAT company_csv
     TYPE = 'CSV'
     COMPRESSION = 'AUTO'  -- Automatically determines the compression of files
     FIELD_DELIMITER = ','  -- Specifies comma as the field delimiter
@@ -362,53 +371,6 @@ SHOW FILE FORMATS IN DATABASE cybersyn;
 The file format created should be listed in the result:
 ![create file format settings](assets/4PreLoad_12.png)
 
-### Resize and Use a Warehouse for Data Loading
-
-We will now use a virtual warehouse and the `COPY` command to initiate bulk loading of structured data into the Snowflake table we created.
-
-Compute resources are needed for loading data. Snowflake's compute nodes are called virtual warehouses and they can be dynamically sized up or out according to workload, whether you are loading data, running a query, or performing a DML operation. Each workload can have its own warehouse so there is no resource contention.
-
-Navigate to the **Warehouses** tab (under **Admin**). This is where you can view all of your existing warehouses, as well as analyze their usage trends.
-
-Note the **+ Warehouse** option in the upper right corner of the top. This is where you can quickly add a new warehouse. However, we want to use the existing warehouse `COMPUTE_WH` included in the 30-day trial environment.
-
-Click the row of the `COMPUTE_WH` warehouse. Then click the **[...]** in the upper right corner text above it to see the actions you can perform on the warehouse. We will use this warehouse to load the data from AWS S3.
-
-![compute warehouse configure](assets/5Load_1.png)
-
-Click **Edit** to walk through the options of this warehouse and learn some of Snowflake's unique functionality.
-
-> aside positive
-> 
->  If this account isn't using Snowflake Enterprise Edition (or higher), you will not see the **Mode** or **Clusters** options shown in the screenshot below. The multi-cluster warehouses feature is not used in this lab, but we will discuss it as a key capability of Snowflake.
-
-![warehouse configure settings](assets/5Load_2.png)
-
-- The **Size** drop-down is where the capacity of the warehouse is selected. For larger data loading operations or more compute-intensive queries, a larger warehouse is recommended. The sizes translate to the underlying compute resources provisioned from the cloud provider (AWS, Azure, or GCP) where your Snowflake account is hosted. It also determines the number of credits consumed by the warehouse for each full hour it runs. The larger the size, the more compute resources from the cloud provider are allocated to the warehouse and the more credits it consumes. For example, the `4X-Large` setting consumes 128 credits for each full hour. This sizing can be changed up or down at any time with a simple click.
-
-- If you are using Snowflake Enterprise Edition (or higher) the **Query Acceleration** option is available. When it is enabled for a warehouse, it can improve overall warehouse performance by reducing the impact of outlier queries, which are queries that use more resources than the typical query. Leave this disabled 
-
-- If you are using Snowflake Enterprise Edition (or higher) and the **Multi-cluster Warehouse** option is enabled, you will see additional options. This is where you can set up a warehouse to use multiple clusters of compute resources, up to 10 clusters. For example, if a `4X-Large` multi-cluster warehouse is assigned a maximum cluster size of 10, it can scale out to 10 times the compute resources powering that warehouse...and it can do this in seconds! However, note that this will increase the number of credits consumed by the warehouse to 1280 if all 10 clusters run for a full hour (128 credits/hour x 10 clusters). Multi-cluster is ideal for concurrency scenarios, such as many business analysts simultaneously running different queries using the same warehouse. In this use case, the various queries are allocated across multiple clusters to ensure they run quickly.
-
-- Under **Advanced Warehouse Options**, the options allow you to automatically suspend the warehouse when not in use so no credits are needlessly consumed. There is also an option to automatically resume a suspended warehouse so when a new workload is sent to it, it automatically starts back up. This functionality enables Snowflake's efficient "pay only for what you use" billing model which allows you to scale your resources when necessary and automatically scale down or turn off when not needed, nearly eliminating idle resources. Additionally, there is an option to change the Warehouse type from Standard to Snowpark-optimized. Snowpark-optmized warehouses provide 16x memory per node and are recommended for workloads that have large memory requirements such as ML training use cases using a stored procedure on a single virtual warehouse node. Leave this type as Standard
-
-> aside negative
-> 
->  **Snowflake Compute vs Other Data Warehouses**
-Many of the virtual warehouse and compute capabilities we just covered, such as the ability to create, scale up, scale out, and auto-suspend/resume virtual warehouses are easy to use in Snowflake and can be done in seconds. For on-premise data warehouses, these capabilities are much more difficult, if not impossible, as they require significant physical hardware, over-provisioning of hardware for workload spikes, and significant configuration work, as well as additional challenges. Even other cloud-based data warehouses cannot scale up and out like Snowflake without significantly more configuration work and time.
-
-**Warning - Watch Your Spend!**
-During or after this lab, you should be careful about performing the following actions without good reason or you may burn through your $400 of free credits more quickly than desired:
-
-- Do not disable auto-suspend. If auto-suspend is disabled, your warehouses continues to run and consume credits even when not in use.
-- Do not use a warehouse size that is excessive given the workload. The larger the warehouse, the more credits are consumed.
-
-We are going to use this virtual warehouse to load the structured data in the CSV files (stored in the AWS S3 bucket) into Snowflake. However, we are first going to change the size of the warehouse to increase the compute resources it uses. After the load, note the time taken and then, in a later step in this section, we will re-do the same load operation with an even larger warehouse, observing its faster load time.
-
-Change the **Size** of this data warehouse from `X-Small` to `Small`. then click the **Save Warehouse** button:
-
-![configure settings small](assets/5Load_3.png)
-
 ### Load the Data
 
 Now we can run a COPY command to load the data into the `COMPANY_METADATA` table we created earlier.
@@ -425,52 +387,24 @@ Navigate back to the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet in the **Worksh
 Execute the following statements in the worksheet to load the staged data into the table. This may take up to 30 seconds.
 
 ```SQL
-COPY INTO company_metadata FROM @cybersyn_company_metadata file_format=csv PATTERN = '.*csv.*' ON_ERROR = 'CONTINUE';
+COPY INTO company_metadata FROM @cybersyn_company_metadata file_format=company_csv PATTERN = '.*csv.*' ON_ERROR = 'CONTINUE';
 ```
 
 In the result pane, you should see the status of each file that was loaded. Once the load is done, in the **Query Details** pane on the bottom right, you can scroll through the various statuses, error statistics, and visualizations for the last statement executed.
 
-Next, navigate to the **Query History** tab by clicking the **Home** icon and then **Activity** > **Query History**. Select the query at the top of the list, which should be the COPY INTO statement that was last executed. Select the **Query Profile** tab and note the steps taken by the query to execute, query details, most expensive nodes, and additional statistics.
+Next, navigate to the **Query History** tab by clicking the **Home** icon and then **Activity** > **Query History**. Select the query at the top of the list, which should be the `COPY INTO` statement that was last executed. Select the **Query Profile** tab and note the steps taken by the query to execute, query details, most expensive nodes, and additional statistics.
 
 ![history and duration](assets/5Load_6.png)
 
-Now let's reload the `COMPANY_METADATA` table with a larger warehouse to see the impact the additional compute resources have on the loading time.
+### Creating a New Warehouse
 
-Go back to the worksheet and use the `TRUNCATE TABLE` command to clear the table of all data and metadata:
-```SQL
-TRUNCATE TABLE company_metadata;
+When setting up your Snowflake account, you may want to create multiple warehouses for many reasons:
+- **Resource Contention & Workload Isolation**: Ensure that high-priority tasks are not slowed down by other processes. Different warehouses can be assigned to different types of workloads (e.g., ETL processes, reporting, ad-hoc analysis). This isolation helps optimize performance for each specific type of task without interference from other workloads. For example, if we want to eliminate resource contention between data loading/ETL workdloads and the analytical end users using BI tools to query Snowflake, we can assign different, appropriately-sized warehouses.
+- **Maintenance & Management**: Using different warehouses allows for better cost control and budgeting. You can allocate specific budgets to different warehouses based on their usage patterns and importance. Separate warehouses also make it easier to manage and maintain different aspects of the data processing environment. Updates, troubleshooting, and performance tuning can be handled more efficiently without affecting other workloads.
+- **Compliance & Governance**: Certain workloads may have specific compliance and governance requirements. Creating separate warehouses allows for tailored policies and monitoring to meet these regulatory requirements.
+- *and many more!*
 
--- Verify that the table is empty by running the following command:
-SELECT * FROM company_metadata LIMIT 10;
-```
-
-The result should show `Query produced no results`. Change the warehouse size to `LARGE` using the following `ALTER WAREHOUSE`:
-```SQL
-ALTER WAREHOUSE compute_wh SET warehouse_size='large';
-
--- Verify the change using the following SHOW WAREHOUSES:
-SHOW WAREHOUSES;
-```
-
-![resize context to large in UI step 1](assets/5Load_7.png)
-
-The size can also be changed using the UI by clicking on the worksheet context box, then the **Configure** (3-line) icon on the right side of the context box, and changing `Small` to `Large` in the **Size** drop-down:
-
-![resize context to large in UI step 2](assets/5Load_8.png)
-
-Execute the same `COPY INTO` statement as before to load the same data again:
-
-```SQL
-COPY INTO company_metadata FROM @cybersyn_company_metadata file_format=csv PATTERN = '.*csv.*' ON_ERROR = 'CONTINUE';
-```
-
-Once the load is done, navigate back to the **Queries** page (**Home** icon > **Activity** > **Query History**). Compare the times of the two `COPY INTO` commands. The load using the `Large` warehouse was significantly faster.
-
-### Create a New Warehouse for Data Analytics
-
-Let's assume our internal analytics team wants to eliminate resource contention between their data loading/ETL workloads and the analytical end users using BI tools to query Snowflake. As mentioned earlier, Snowflake can easily do this by assigning different, appropriately-sized warehouses to various workloads. Since our company already has a warehouse for data loading, let's create a new warehouse for the end users running analytics. We will use this warehouse to perform analytics in the next section.
-
-Navigate to the **Admin** > **Warehouses** tab, click **+ Warehouse**, and name the new warehouse and set the size to `Large`.
+To create a new warehouse, navigate to the **Admin** > **Warehouses** tab, click **+ Warehouse**, and name the new warehouse and set the size to `Small`.
 
 If you are using Snowflake Enterprise Edition (or higher) and **Multi-cluster Warehouses** is enabled, you will see additional settings:
 - Make sure **Max Clusters** is set to `1`.
@@ -478,7 +412,7 @@ If you are using Snowflake Enterprise Edition (or higher) and **Multi-cluster Wa
 
 ![warehouse settings](assets/5Load_10.png)
 
-Click the **Create Warehouse** button to create the warehouse.
+We won't create this database now to preserve your Snowflake trial credits.
 
 <!-- ------------------------ -->
 
@@ -661,12 +595,14 @@ In the **Cybersyn Financial & Economic Essentials** page, you can learn more abo
 
 ![get data fields](assets/10Share_cybersyn_get_data.png)
 
-Review the information in the dialog and click **Get** again:
+Review the information in the dialog. Change the name of the database to `Cybersyn_Financial_Economic` and click **Get** again:
 
+-- victoria to update
 ![get data fields](assets/10Share_cybersyn_get_data2.png)
 
 You can now click **Done** or choose to run the sample queries provided by Cybersyn:
 
+-- victoria to update
 ![get data fields](assets/10Share_cybersyn_query_data.png)
 
 If you chose **Query Data**, a new worksheet opens in a new browser tab/window:
@@ -680,7 +616,7 @@ If you chose **Query Data**, a new worksheet opens in a new browser tab/window:
 
 Next:
 1. Click **Data** > **Databases**.
-2. Click the `Financial__Economic_Essentials` database.
+2. Click the `Cybersyn_Financial_Economic` database.
 3. You can see details about the schemas, tables, and views that are available to query.
 
 ![covid19 databases](assets/10Share_cybersyn_db_info.png)
@@ -697,7 +633,7 @@ That's it! You have now successfully subscribed to the Financial & Economic Esse
 
 Duration: 8
 
-In the previous exercises, we loaded data into two tables using Snowflake's `COPY` bulk loader command and the `COMPUTE_WH` virtual warehouse. Now we are going to take on the role of the analytics users at our company who need to query data in those tables using the worksheet and the second warehouse `ANALYTICS_WH`.
+In the previous exercises, we loaded data into two tables using Snowflake's `COPY` bulk loader command and the `COMPUTE_WH` virtual warehouse. Now we are going query data in those tables using the worksheet.
 
 > aside negative
 > 
@@ -706,10 +642,10 @@ Within a real company, analytics users would likely have a different role than `
 
 ### Execute Some Queries
 
-Go to the **ZERO_TO_SNOWFLAKE_WITH_CYBERSYN** worksheet and change the warehouse to use the new warehouse you created in the last section. Your worksheet context should be the following:
+Go to the **ZERO_TO_SNOWFLAKE_WITH_CYBERSYN** worksheet, and make sure that your worksheet context is the following:
 
 **Role:** `SYSADMIN`
-**Warehouse:** `ANALYTICS_WH (L)`
+**Warehouse:** `COMPUTE_WH`
 **Database:** `CYBERSYN`
 **Schema:** `PUBLIC`
 
@@ -735,7 +671,7 @@ SELECT
     ts.value AS post_market_close,
     (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date))::DOUBLE AS daily_return,
     AVG(ts.value) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
-FROM Financial__Economic_Essentials.cybersyn.stock_price_timeseries ts
+FROM Cybersyn_Financial_Economic.cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
 WHERE ts.variable_name = 'Post-Market Close';
@@ -755,8 +691,8 @@ SELECT
     meta.company_name,
     ts.date,
     ts.value AS nasdaq_volume,
-    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date))::DOUBLE AS volume_change
-FROM cybersyn.stock_price_timeseries ts
+    (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date) - 1)::DOUBLE AS volume_change
+FROM Cybersyn_Financial_Economic.cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
 WHERE ts.variable_name = 'Nasdaq Volume';
@@ -778,7 +714,7 @@ SELECT
     ts.value AS post_market_close,
     (ts.value / LAG(ts.value, 1) OVER (PARTITION BY primary_ticker ORDER BY ts.date))::DOUBLE AS daily_return,
     AVG(ts.value) OVER (PARTITION BY primary_ticker ORDER BY date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
-FROM cybersyn.stock_price_timeseries ts
+FROM Cybersyn_Financial_Economic.cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
 WHERE variable_name = 'Post-Market Close';
@@ -857,6 +793,99 @@ FROM data_prep
 ORDER BY product, period_end_date;
 ```
 ![weather results](assets/7SemiStruct_8_1.png)
+
+### Resize a Warehouse for Data Querying
+
+We will now explore using a virtual warehouse to run a query.
+
+Navigate to the **Warehouses** tab (under **Admin**). This is where you can view all of your existing warehouses, as well as analyze their usage trends. In the upper right corner of the page, you can quickly add a new warehouse by clicking **+ Warehouse**. However, we want to use the existing warehouse `COMPUTE_WH` included in the 30-day trial environment.
+
+Click the row of the `COMPUTE_WH` warehouse. Then click the **[...]** in the upper right corner text above it to see the actions you can perform on the warehouse. We will use this warehouse to run a query.
+
+![compute warehouse configure](assets/5Load_1.png)
+
+Click **Edit** to walk through the options of this warehouse and learn some of Snowflake's unique functionality.
+
+> aside positive
+> 
+>  If this account isn't using Snowflake Enterprise Edition (or higher), you will not see the **Mode** or **Clusters** options shown in the screenshot below. The multi-cluster warehouses feature is not used in this lab, but we will discuss it as a key capability of Snowflake.
+
+![warehouse configure settings](assets/5Load_2.png)
+
+- The **Size** drop-down is where the capacity of the warehouse is selected. For larger data loading operations or more compute-intensive queries, a larger warehouse is recommended. The sizes translate to the underlying compute resources provisioned from the cloud provider (AWS, Azure, or GCP) where your Snowflake account is hosted. It also determines the number of credits consumed by the warehouse for each full hour it runs. The larger the size, the more compute resources from the cloud provider are allocated to the warehouse and the more credits it consumes. For example, the `4X-Large` setting consumes 128 credits for each full hour. This sizing can be changed up or down at any time with a simple click.
+
+- If you are using Snowflake Enterprise Edition (or higher) the **Query Acceleration** option is available. When it is enabled for a warehouse, it can improve overall warehouse performance by reducing the impact of outlier queries, which are queries that use more resources than the typical query. Leave this disabled 
+
+- If you are using Snowflake Enterprise Edition (or higher) and the **Multi-cluster Warehouse** option is enabled, you will see additional options. This is where you can set up a warehouse to use multiple clusters of compute resources, up to 10 clusters. For example, if a `4X-Large` multi-cluster warehouse is assigned a maximum cluster size of 10, it can scale out to 10 times the compute resources powering that warehouse...and it can do this in seconds! However, note that this will increase the number of credits consumed by the warehouse to 1280 if all 10 clusters run for a full hour (128 credits/hour x 10 clusters). Multi-cluster is ideal for concurrency scenarios, such as many business analysts simultaneously running different queries using the same warehouse. In this use case, the various queries are allocated across multiple clusters to ensure they run quickly.
+
+- Under **Advanced Warehouse Options**, the options allow you to automatically suspend the warehouse when not in use so no credits are needlessly consumed. There is also an option to automatically resume a suspended warehouse so when a new workload is sent to it, it automatically starts back up. This functionality enables Snowflake's efficient "pay only for what you use" billing model which allows you to scale your resources when necessary and automatically scale down or turn off when not needed, nearly eliminating idle resources. Additionally, there is an option to change the Warehouse type from Standard to Snowpark-optimized. Snowpark-optmized warehouses provide 16x memory per node and are recommended for workloads that have large memory requirements such as ML training use cases using a stored procedure on a single virtual warehouse node. Leave this type as Standard
+
+> aside negative
+> 
+>  **Snowflake Compute vs Other Data Warehouses**
+Many of the virtual warehouse and compute capabilities we just covered, such as the ability to create, scale up, scale out, and auto-suspend/resume virtual warehouses are easy to use in Snowflake and can be done in seconds. For on-premise data warehouses, these capabilities are much more difficult, if not impossible, as they require significant physical hardware, over-provisioning of hardware for workload spikes, and significant configuration work, as well as additional challenges. Even other cloud-based data warehouses cannot scale up and out like Snowflake without significantly more configuration work and time.
+
+**Warning - Watch Your Spend!**
+*During or after this lab, you should be careful about performing the following actions without good reason or you may burn through your $400 of free credits more quickly than desired:*
+
+- Do not disable auto-suspend. If auto-suspend is disabled, your warehouses continues to run and consume credits even when not in use.
+- Do not use a warehouse size that is excessive given the workload. The larger the warehouse, the more credits are consumed.
+
+#### Querying the Data
+
+Now, let's put this into practice by querying the data! Let's run a query to calculate the exchange rate from CAD to USD:
+
+```SQL
+SELECT
+    quote_currency_id   AS base_currency_id,
+    quote_currency_name AS base_currency_name,
+    base_currency_id    AS quote_currency_id,
+    base_currency_name  AS quote_currency_name,
+    date,
+    1/value             AS exchange_rate
+FROM Cybersyn_Financial_Economic.cybersyn.fx_rates_timeseries
+WHERE 
+    base_currency_id = 'USD' 
+    AND quote_currency_id = 'CAD'
+ORDER BY date;
+```
+
+You can see here that the query took X seconds to run. *This may slightly vary in your instance!*
+
+Now, we are going to change the warehouse size to increase the compute resources it uses. Change the **Size** of this data warehouse from `X-Small` to `Large`, by clicking on the worksheet context box, then the **Configure** (3-line) icon on the right side of the context box and then editing the **Size** dropdown.
+
+![configure settings small](assets/5Load_3.png)
+
+You can also change the warehouse size by using the following command `ALTER WAREHOUSE`:
+```SQL
+ALTER WAREHOUSE compute_wh SET warehouse_size='large';
+
+-- Verify the change using the following SHOW WAREHOUSES:
+SHOW WAREHOUSES;
+```
+
+-- victoria to input screenshot
+
+Run the following query to calculate the exchange rate from EUR to USD:
+
+```SQL
+SELECT
+    quote_currency_id   AS base_currency_id,
+    quote_currency_name AS base_currency_name,
+    base_currency_id    AS quote_currency_id,
+    base_currency_name  AS quote_currency_name,
+    date,
+    1/value             AS exchange_rate
+FROM Cybersyn_Financial_Economic.cybersyn.fx_rates_timeseries
+WHERE 
+    base_currency_id = 'USD' 
+    AND quote_currency_id = 'EUR'
+ORDER BY date;
+```
+
+You will notice that the query ran significantly faster, with no wait time! You can navigate to the **Queries** page (**Home** icon > **Activity** > **Query History**) to compare the times of the commands. The load using the `Large` warehouse was significantly faster.
+
+-- victoria to input the screenshot
 
 <!-- ------------------------ -->
 
@@ -966,7 +995,7 @@ Duration: 8
 
 In this section, we will explore aspects of Snowflake's access control security model, such as creating a role and granting it specific permissions. We will also explore other usage of the `ACCOUNTADMIN` (Account Administrator) role.
 
-Continuing with the lab story, let's assume a junior DBA has joined our internal analytics team, and we want to create a new role for them with less privileges than the system-defined, default role of `SYSADMIN`.
+Continuing with the lab story, we want to create a new role for the new developer that is joining our team. This role will have less privileges than the system-defined, default role of `SYSADMIN`.
 
 > aside negative
 > 
@@ -985,27 +1014,33 @@ Notice that, in the top right of the worksheet, the context has changed to `ACCO
 
 ![ACCOUNTADMIN context](assets/9Role_1.png)
 
-Before a role can be used for access control, at least one user must be assigned to it. So let's create a new role named `JUNIOR_DBA` and assign it to your Snowflake user. To complete this task, you need to know your username, which is the name you used to log in to the UI.
+Before a role can be used for access control, at least one user must be assigned to it. So let's create a new role named `DEVELOPER`, and assign it to your Snowflake user. To complete this task, you need to know your username, which is the name you used to log in to the UI.
 
-Use the following commands to create the role and assign it to you. Before you run the GRANT ROLE command, replace `YOUR_USERNAME_GOES_HERE` with your username:
+Use the following commands to create the role and assign it to you. Before you run the `GRANT ROLE` command, replace `YOUR_USERNAME_GOES_HERE` with your username:
 
 ```SQL
-CREATE ROLE junior_dba;
+CREATE ROLE developer;
 
-GRANT ROLE junior_dba TO USER YOUR_USERNAME_GOES_HERE;
+GRANT ROLE developer TO USER YOUR_USERNAME_GOES_HERE;
 ```
 
 > aside positive
 > 
 >  If you try to perform this operation while in a role such as `SYSADMIN`, it would fail due to insufficient privileges. By default (and design), the `SYSADMIN` role cannot create new roles or users.
 
-Change your worksheet context to the new `JUNIOR_DBA` role:
+Now, we want to create role hierarchy, as defined by RBAC best practices. It is recommended that you create a role hierarchy that ultimately assigns all custom roles to the `SYSADMIN` role. If a custom role is not assigned to `SYSADMIN` through a role hierarchy, the system administrators cannot manage the objects owned by the custom role.
 
 ```SQL
-USE ROLE junior_dba;
+GRANT ROLE developer TO ROLE SYSADMIN;
 ```
 
-In the top right of the worksheet, notice that the context has changed to reflect the `JUNIOR_DBA` role. 
+Change your worksheet context to the new `DEVELOPER` role:
+
+```SQL
+USE ROLE developer;
+```
+
+In the top right of the worksheet, notice that the context has changed to reflect the `DEVELOPER` role. 
 
 ![JUNIOR_DBA context](assets/9Role_2.png)
 
@@ -1014,31 +1049,31 @@ Also, the warehouse is not selected because the newly created role does not have
 ```SQL
 USE ROLE accountadmin;
 
-GRANT USAGE ON WAREHOUSE compute_wh TO ROLE junior_dba;
+GRANT USAGE ON WAREHOUSE compute_wh TO ROLE developer;
 ```
 
-Switch back to the `JUNIOR_DBA` role. You should be able to use `COMPUTE_WH` now.
+Switch back to the `DEVELOPER` role. You should be able to use `COMPUTE_WH` now.
 ```SQL
-USE ROLE junior_dba;
+USE ROLE developer;
 
 USE WAREHOUSE compute_wh;
 ```
 
-Finally, you can notice that in the database object browser panel on the left, the `CYBERSYN` and `Financial__Economic_Essentials` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
+Finally, you can notice that in the database object browser panel on the left, the `CYBERSYN` and `Cybersyn_Financial_Economic` databases no longer appear. This is because the `DEVELOPER` role does not have privileges to access them.
 
-Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CYBERSYN` and `Financial__Economic_Essentials` databases. Note that the Cybersyn database from the Marketplace uses `GRANT IMPORTED PRIVILEGES`, instead of `GRANT USAGE`.
+Switch back to the `ACCOUNTADMIN` role and grant the `DEVELOPER` the USAGE privilege required to view and use the `CYBERSYN` and `Cybersyn_Financial_Economic` databases. Note that the Cybersyn database from the Marketplace uses `GRANT IMPORTED PRIVILEGES`, instead of `GRANT USAGE`.
 
 ```SQL
 USE ROLE accountadmin;
 
-GRANT USAGE ON DATABASE cybersyn TO ROLE junior_dba;
+GRANT USAGE ON DATABASE cybersyn TO ROLE developer;
 
-GRANT IMPORTED PRIVILEGES ON DATABASE Financial__Economic_Essentials TO ROLE junior_dba;
+GRANT IMPORTED PRIVILEGES ON DATABASE Cybersyn_Financial_Economic TO ROLE developer;
 
-USE ROLE junior_dba;
+USE ROLE developer;
 ```
 
-Notice that the `CYBERSYN` and `Financial__Economic_Essentials` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
+Notice that the `CYBERSYN` and `Cybersyn_Financial_Economic` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
 
 ![object browser panel with databases](assets/9Role_3.png)
 
@@ -1149,9 +1184,7 @@ USE ROLE accountadmin;
 
 DROP DATABASE IF EXISTS CYBERSYN;
 
-DROP WAREHOUSE IF EXISTS analytics_wh;
-
-DROP ROLE IF EXISTS junior_dba;
+DROP ROLE IF EXISTS developer;
 ```
 
 <!-- ------------------------ -->
