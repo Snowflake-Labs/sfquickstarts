@@ -111,8 +111,9 @@ First run the following in Snowflake:
 ```sql
 DESC EXTERNAL VOLUME FabricExVol;
 ```
+Copy the AZURE_CONSENT_URL from the property_value output, paste it into your web browser and complete the Oauth step to authorize the app. 
 
-In the output for property_value of the storage location, in the json you will see a AZURE_MULTI_TENANT_APP_NAME.  This value is the Service Principal that Snowflake uses to connect to Azure. Copy this value. You can remove the underscore and numbers at the end.
+Then, in the output for property_value of the storage location, in the json you will see a AZURE_MULTI_TENANT_APP_NAME.  This value is the Service Principal that Snowflake uses to connect to Azure. Copy this value. You can remove the underscore and numbers at the end.
 ![](assets/AppName.png)
 
 In Fabric, grant the service principal access to your Fabric lakehouse.
