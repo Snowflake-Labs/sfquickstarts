@@ -109,7 +109,7 @@ uv run cortex_agents.py
 
 > **Note:** Leave this (the MCP server) running while you call it from the MCP client.
 
-## Add to the MCP Client
+## Add to the MCP client
 <!-- ------------------------ -->
 
 Duration: 5
