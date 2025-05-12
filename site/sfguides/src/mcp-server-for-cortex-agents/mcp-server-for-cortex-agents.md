@@ -9,6 +9,10 @@ authors: Josh Reini
 # Build an MCP Server for Cortex Agents
 <!-- ------------------------ -->
 
+## Overview
+
+Duration: 5
+
 This guide walks through how to build your own Cortex Agents MCP Server.
 
 The core functionalities include:
@@ -18,7 +22,7 @@ The core functionalities include:
 
 In this tutorial, we’ll build a simple MCP **Cortex Agents** server and connect it to an MCP host (Claude for Desktop). We’ll start with a basic setup, then progress to more complex use cases.
 
-## What we’ll be building
+### What we’ll be building
 
 Many LLMs don’t natively orchestrate external “agent” workflows. With MCP, we can expose Cortex Agents capabilities as first-class tools in your chat client.
 
