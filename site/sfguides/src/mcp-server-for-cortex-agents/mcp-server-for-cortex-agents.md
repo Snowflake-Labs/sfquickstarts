@@ -96,7 +96,7 @@ Set the keys and services needed to run Cortex Agents by creating a `.env` follo
 * SEMANTIC_MODEL_FILE
 * CORTEX_SEARCH_SERVICE
 
-## Run the MCP server
+## Run the MCP Server
 <!-- ------------------------ -->
 
 Duration: 2
@@ -109,7 +109,7 @@ uv run cortex_agents.py
 
 > **Note:** Leave this (the MCP server) running while you call it from the MCP client.
 
-## Add to the MCP client
+## Add to the MCP Client
 <!-- ------------------------ -->
 
 Duration: 5
