@@ -96,7 +96,7 @@ Set the keys and services needed to run Cortex Agents by creating a `.env` follo
 * SEMANTIC_MODEL_FILE
 * CORTEX_SEARCH_SERVICE
 
-## Run the server
+## Run the MCP server
 <!-- ------------------------ -->
 
 Duration: 2
@@ -109,7 +109,7 @@ uv run cortex_agents.py
 
 > **Note:** Leave this (the MCP server) running while you call it from the MCP client.
 
-## (Optional) Use the Cortex Agents MCP Server in Claude Desktop
+## Add to the MCP Client
 <!-- ------------------------ -->
 
 Duration: 5
@@ -193,7 +193,7 @@ Error: snowflake.connector.errors.InterfaceError: 250003 (08001): 404 Not Found:
 > aside negative
 > NOTE: If you get the above errors, make sure the ACCOUNT and HOST variables in the **_.env_** file are set correctly. For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
-## (Optional) Customize your Cortex Agents
+## (Optional) Customize Cortex Agents
 <!-- ------------------------ -->
 
 Duration: 5
