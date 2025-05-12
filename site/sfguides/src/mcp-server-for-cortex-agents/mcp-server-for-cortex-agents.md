@@ -78,7 +78,7 @@ Configure and create your Cortex Agents project:
 ```bash
 # Clone the repo
 git clone https://github.com/Snowflake-Labs/sfguide-mcp-cortex-agent.git
-cd sguide-mcp-cortex-agent
+cd sfguide-mcp-cortex-agent
 
 # Create and activate venv
 uv venv
