@@ -776,19 +776,27 @@ const categoryClass = (codelab, level) => {
 //
 // Additionally, each codelab is tested against view.exclude exclusion filters,
 // matching codelab ID, status, tags and categories.
+
 const filterCodelabs = (view, codelabs) => {
   var vtags = cleanStringList(view.tags);
   var vcats = cleanStringList(view.categories);
 
-  // Filter out codelabs with tags that don't intersect with view.tags
-  // unless view.tags is empty - equivalent to any tag.
-  // Same for categories.
+  // Define a list of tags to exclude when view.tags is empty -- i.e. for showing non-translated/English versions of the QS guides 
+  const EXCLUDED_TAGS = ["es", "fr", "it", "ja", "kr", "ptbr"]; 
+
   codelabs = codelabs.filter(function(codelab) {
-    // Matches by default if both tags and cats are empty.
-    var match = !vtags.length && !vcats.length;
     var ctags = cleanStringList(codelab.tags);
     var ccats = cleanStringList(codelab.category);
-    // Match by tags.
+
+    // If view.tags is empty, exclude content that contains any EXCLUDED_TAGS
+    if (vtags.length === 0) {
+      return !ctags.some(tag => EXCLUDED_TAGS.includes(tag));
+    }
+
+    // Matches by default if both tags and categories are empty
+    var match = !vtags.length && !vcats.length;
+
+    // Match by tags
     if (vtags.length) {
       for (var i = 0; i < ctags.length; i++) {
         if (vtags.indexOf(ctags[i]) > -1) {
@@ -797,7 +805,8 @@ const filterCodelabs = (view, codelabs) => {
         }
       }
     }
-    // Match by category.
+    
+    // Match by category
     if (!match && vcats.length) {
       for (var i = 0; i < ccats.length; i++) {
         if (vcats.indexOf(ccats[i]) > -1) {
@@ -806,9 +815,11 @@ const filterCodelabs = (view, codelabs) => {
         }
       }
     }
+
     if (!match || !view.exclude.length) {
       return match;
     }
+
     // Tag or category matches. Test the exclusion filter.
     var cstatus = cleanStringList(codelab.status);
     for (var i = 0; i < view.exclude.length; i++) {
@@ -842,14 +853,14 @@ const filterCodelabs = (view, codelabs) => {
     categories[cat.name] = true;
   }
 
-  // sort the codelabs.
+  // Sort the codelabs.
   sortCodelabs(codelabs, view);
 
   return {
     codelabs: codelabs,
     categories: Object.keys(categories).sort(),
   };
-}
+};
 
 
 // cleanStringList removes empty elements and converts the rest to lower case.

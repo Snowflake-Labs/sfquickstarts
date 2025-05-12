@@ -150,7 +150,7 @@ If you click on the bottom left of the UI where your username appears, you will 
 
 > aside negative
 > 
->  **SYSADMIN** <br> For most of this lab you will remain in the SYSADMIN (aka System Administrator) role which has privileges to create warehouses and databases and other objects in an account. In a real-world environment, you would use different roles for the tasks in this lab, and assign the roles to your users. More on access control in Snowflake is in towards the end of this lab and also in our [documentation](https://docs.snowflake.net/manuals/user-guide/security-access-control.html)
+>  **SYSADMIN** <br> For most of this lab you will remain in the SYSADMIN (aka System Administrator) role which has privileges to create warehouses and databases and other objects in an account. In a real-world environment, you would use different roles for the tasks in this lab, and assign the roles to your users. More on access control in Snowflake is in towards the end of this lab and also in our [documentation](https://docs.snowflake.com/user-guide/security-access-control-overview)
 
 
 <!-- ------------------------ -->

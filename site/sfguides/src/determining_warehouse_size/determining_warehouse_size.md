@@ -3,7 +3,7 @@ id: determining_warehouse_size
 summary: Determine the best warehouse size to use for your query
 categories: undefined
 environments: web
-status: Hidden
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 

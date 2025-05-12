@@ -1,7 +1,7 @@
 summary: Build a Recommendation Engine with AWS SageMaker and Snowflake
 id: recommendation_engine_aws_sagemaker
 categories: data-science-&-ml,solution-examples,partner-integrations
-status: Published
+status: Archived
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: SageMaker, AWS, Machine Learning
 # Build a Recommendation Engine with Amazon SageMaker

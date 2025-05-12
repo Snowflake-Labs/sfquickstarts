@@ -26,7 +26,7 @@ You will need the following things before beginning:
 
 * Snowflake account in a cloud region where Snowflake Cortex LLM functions/models are [supported](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability).
   * Cortex functions used - Complete, Translate, Sentiment
-  * Models used - mixtral-8x7b, snowflake-arctic, mistral-large
+  * Models used - snowflake-arctic, mistral-large
 * Snowflake Notebook enabled in your Snowflake account
   * **Note**: To get access to Snowflake Notebook (currently in private preview) reach out to your Snowflake account team. This solution leverages Snowflake Cortex within Snowflake Notebook and you will not be able run the quickstart successfully otherwise.
 
@@ -322,7 +322,7 @@ In this section, you will make use of **Snowflake Cortex - Complete** to categor
   ###"""
 
   # Ask cortex complete and create a new column
-  review_df = reviews_df.withColumn('RATING', cortex.Complete('mixtral-8x7b', \
+  review_df = reviews_df.withColumn('RATING', cortex.Complete('mistral-large', \
                                                               F.concat(F.lit(prompt), \
                                                                       F.col('REVIEW'), \
                                                                       F.lit("""[/INST]"""))))\
@@ -414,7 +414,7 @@ Taking this analysis a step further, you will be looking at aspect based sentime
   ###"""
 
   # Ask Cortex Complete and create a new column
-  review_df = reviews_df.withColumn('CATEGORY_SENTIMENT', cortex.Complete('mixtral-8x7b', \
+  review_df = reviews_df.withColumn('CATEGORY_SENTIMENT', cortex.Complete('mistral-large', \
                                                               F.concat(F.lit(prompt), \
                                                                       F.col('REVIEW'), \
                                                                       F.lit("""Answer:[/INST]"""))))
@@ -447,7 +447,7 @@ In this section, you will leverage **Snowflake Cortex - Complete** to identify t
   recommendations to remedy those issues.###""" + reviews_agg_str + """[/INST]"""
 
   # Answer from Cortex Complete
-  print(cortex.Complete('mistral-large', prompt))
+  print(cortex.Complete('mistral-large2', prompt))
   ```
 ### Issues at truck level 
 
@@ -480,7 +480,7 @@ In this section, you will leverage **Snowflake Cortex - Complete** to identify t
   points under 50 words each such that each bullet point also has a heading.###""" + reviews_agg_str + """[/INST]"""
 
   # Print Cortex Complete's answer
-  print(cortex.Complete('mistral-large', prompt))
+  print(cortex.Complete('mistral-large2', prompt))
   ```
 
 <!-- ------------------------ -->
@@ -498,7 +498,7 @@ In the final step, you will utilize **Snowflake Cortex - Complete** to draft an 
   Mention the truck brand name and location in the email.[/INST]"""
 
   # Print the result from Cortex Complete
-  print(cortex.Complete('mixtral-8x7b', prompt))
+  print(cortex.Complete('mistral-large2', prompt))
   ```
 
 <!-- ------------------------ -->

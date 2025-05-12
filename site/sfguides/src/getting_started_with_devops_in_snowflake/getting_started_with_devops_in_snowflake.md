@@ -372,7 +372,7 @@ $ snow git fetch quickstart_common.public.quickstart_repo
 | Branch | dev  | FORCED |
 +------------------------+
 
-$ snow git execute @quickstart_common.public.quickstart_repo/branches/dev/steps/0[134]_*
+$ snow git execute '@quickstart_common.public.quickstart_repo/branches/dev/steps/0[134]_*'
 SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/01_setup_snowflake.sql
 SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/03_harmonize_data.py
 SUCCESS - @quickstart_common.public.quickstart_repo/branches/dev/steps/04_orchestrate_jobs.sql
@@ -468,8 +468,8 @@ In GitHub, click on the “Settings” tab near the top of the page. From the Se
             <td>myusername</td>
         </tr>
         <tr>
-            <td>SNOWFLAKE_PASSWORD</td>
-            <td>mypassword</td>
+            <td>SNOWFLAKE_PRIVATE_KEY</td>
+            <td>contents of private key file (follow <a href="https://docs.snowflake.com/en/user-guide/key-pair-auth">this guide</a> to setup key-pair auth)</td>
         </tr>
     </tbody>
 </table>
@@ -541,19 +541,25 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     env:
       REPO_NAME: "quickstart_common.public.quickstart_repo"
+      SNOWFLAKE_CONNECTIONS_DEFAULT_AUTHENTICATOR: "SNOWFLAKE_JWT"
+      SNOWFLAKE_CONNECTIONS_DEFAULT_PRIVATE_KEY_FILE: ".snowflake/snowflake_rsa_key"
       # Read connection secrets
       SNOWFLAKE_CONNECTIONS_DEFAULT_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
       SNOWFLAKE_CONNECTIONS_DEFAULT_USER: ${{ secrets.SNOWFLAKE_USER }}
-      SNOWFLAKE_CONNECTIONS_DEFAULT_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
 
     steps:
       # Checkout step is necessary if you want to use a config file from your repo
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # Write private key secret as file
+      - name: Configure Private Key
+        run: |
+          echo "${{ secrets.SNOWFLAKE_PRIVATE_KEY }}" > .snowflake/snowflake_rsa_key
 
       # Install Snowflake CLI GitHub Action and point to config file
       - name: Install snowflake-cli

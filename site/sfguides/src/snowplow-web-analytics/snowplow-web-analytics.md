@@ -1,11 +1,11 @@
-author:Snowplow
-id:snowplow-web-analytics
-summary:Set up real-time event tracking and analytics using Snowplow and Snowflake
-categories:Getting-Started,Data-Engineering
-environments:web
-status:Published
-feedback link:https://github.com/Snowflake-Labs/sfguides/issues
-tags:Getting Started, Data Engineering, Snowplow, Snowflake, Real-Time Analytics, Behavioral Tracking
+author: Snowplow
+id: snowplow-web-analytics
+summary: Set up real-time event tracking and analytics using Snowplow and Snowflake
+categories: Getting-Started,Data-Engineering
+environments: web
+status :Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Data Engineering, Snowplow, Snowflake, Real-Time Analytics, Behavioral Tracking
 # Snowplow Digital Analytics with Snowflake
 
 ## Overview

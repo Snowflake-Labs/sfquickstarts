@@ -68,13 +68,8 @@
       "type": 301
     },
     {
-      "source": "/guide/build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex/{,/**}",
-      "destination": "/guide/asking_questions_to_your_own_documents_with_snowflake_cortex",
-      "type": 301
-    },
-    {
       "source": "/guide/prompt_engineering_and_llm_evaluation/{,/**}",
-      "destination": "/guide/asking_questions_to_your_own_documents_with_snowflake_cortex",
+      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
       "type": 301
     },
     {
@@ -116,7 +111,148 @@
       "source": "guide/frosty_llm_chatbot_on_streamlit_snowflake/{,/**}",
       "destination": "/guide/getting_started_with_cortex_analyst",
       "type": 301
+    },
+    {
+      "source": "guide/connectors_native_sdk_java_example/{,/**}",
+      "destination": "https://docs.snowflake.com/developer-guide/native-apps/connector-sdk/tutorials/native_sdk_example_connector_tutorial",
+      "type": 301
+    },
+    {
+      "source": "guide/vhol_data_lake/{,/**}",
+      "destination": "https://docs.snowflake.com/en/user-guide/tables-iceberg-load",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_streamlit_in_snowflake/{,/**}",
+      "destination": "/guide/getting_started_with_snowpark_for_python_streamlit",
+      "type": 301  
+    },
+    {
+      "source": "guide/getting_started_with_cybersyn_financial_and_economic_essentials_app/{,/**}",
+      "destination": "/guide/getting_started_with_snowpark_for_python_streamlit",
+      "type": 301
+    },
+    {
+      "source": "guide/asking_questions_to_your_own_documents_with_snowflake_cortex/{,/**}",
+      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_cortex_analyst_in_snowflake/{,/**}",
+      "destination": "/guide/getting_started_with_cortex_analyst/",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_llmops_using_snowflake_cortex_and_trulens/{,/**}",
+      "destination": "/guide/getting_started_with_ai_observability/",
+      "type": 301
+    },
+    {
+      "source": "guide/semantic_file_generation_for_cortex_analyst/{,/**}",
+      "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
+      "type": 301
+    },
+    {
+      "source": "guide/semantic_file_translation_from_dbt_to_cortex_analyst/{,/**}",
+      "destination": "https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec#create-a-semantic-model-using-the-model-generator",
+      "type": 301
+    },
+    {
+      "source": "guide/recommendation_engine_aws_sagemaker/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/data_science_with_dataiku/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/machine_learning_with_saturncloud/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/dota2_game_replay_parser/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_external_functions_gcc/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/determining_warehouse_size/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/streamsets_transformer_for_snowflake_hol/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_feast_snowflake/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/create_eureka_moments_with_data_world/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/operationalizing_ai_with_snowflake_and_datarobot/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/improvado/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "/guide/build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/autogen-faqs-for-customer-support-snowflake-cortex/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/kepler_gl_maps_inside_snowflake/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/setting-up-leads-notifications-in-slack/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_snowpark_for_machine_learning_on_vertexai/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_snowpark_for_machine_learning_on_vertexai/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
     }
     ]
   }
 }
+

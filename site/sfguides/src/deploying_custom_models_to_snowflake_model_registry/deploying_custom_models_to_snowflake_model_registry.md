@@ -3,7 +3,7 @@ id: deploying_custom_models_to_snowflake_model_registry
 summary: Through this quickstart guide, you will learn how to deploy a custom model to the Snowflake Model Registry.
 categories: Getting-Started
 environments: web
-status: Draft 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning, Snowpark, Model registry 
 
@@ -35,18 +35,7 @@ This qucikstart will focus on the Snowflake Model Registry, which provides scala
 
 The [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-model-registry) allows customers to securely manage models and their metadata in Snowflake, regardless of origin. The model registry stores machine learning models as first-class schema-level objects in Snowflake so they can easily be found and used by others in your organization. You can create registries, and store models in them, using classes in the Snowpark ML library. Models can have multiple versions, and you can designate a version as the default.
 
-The Snowflake Model Registry supports the following types of models.
-* Snowpark ML Modeling
-* scikit-learn
-* XGBoost
-* LightGBM
-* CatBoost
-* PyTorch
-* TensorFlow
-* MLFlow PyFunc
-* Sentence Transformer
-* Hugging Face pipeline
-* Other types of models via the snowflake.ml.model.CustomModel class
+The Snowflake Model Registry has built-in types support for the most common model types, including scikit-learn, xgboost, LightGBM, PyTorch, TensorFlow, Hugging Face pipelines, and MLFlow pyfunc models. Other types of models via the snowflake.ml.model.CustomModel class
 
 This quickstart will focus on
 *  how to create models using the snowflake.ml.model.CustomModel class, log them to the Snowflake Model Registry, and use them. 
@@ -155,6 +144,10 @@ Duration: 20
 During this step we will train a PyCaret model and save it to local disc.
 
 * Open the following jupyter notebook and run each of the cells: [1_train_pycaret_model.ipynb](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry/blob/main/1_train_pycaret_model.ipynb)
+
+> aside negative
+> 
+> **Note:** PyCaret can not currently run directly, i.e you can not use it with import, in a Snowflkae Notebook so make sure you use an external notbook enviroment such as Visual Studio Code or Jupyter.
 
 <!-- ------------------------ -->
 ## Create And Deploy A Custom Model

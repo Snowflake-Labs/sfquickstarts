@@ -3,4 +3,4 @@
  javac -cp classes;lib/* -d classes src/snowflake/demo/*.java
 
 
-jar cfm CDCSimulatorClient.jar manifest.txt -C classes snowflake src snowflake.properties
+jar cfm CDCSimulatorClient.jar manifest.txt -C classes snowflake src snowflake.properties logging.properties

@@ -147,12 +147,17 @@ In this step we wil upload example documents that we will use to ask value extra
 ![Upload Documents Start](assets/start_upload.png)  
 2. Add the documents in the **training_documents** folder and click **Upload**  
 ![Upload Dialog](assets/upload_dialog.png)  
-3. Click on **Define values** to open the page for define the questions for extracting values  
+3. Click on **+ Value** to open the page for define the questions for extracting values  
 ![Upload Dialog](assets/start_define_values.png)  
 
 ### Step 3: Specify values
 In this step we will define the questions for extracting values and the name of the key the value will be added to.  
-1. Click on **Add Value** and start adding the value names and questions from the table below   
+1. Click on **Add Value** and enter **effective_date** as the **Vale Name** and  **What is the effective date of the agreement?** as the question.
+![First Value](assets/adding_first_value.png)  
+2. By clicking on the **Locate Answer** button (target looking icon), we can see where in teh document Document AI has found the answer.
+![First Value](assets/locate_first_value.png)  
+![First Value](assets/first_value_location.png)  
+3. Add the rest of the the value names and questions from the table below   
 <table>
     <thead>
         <tr>
@@ -161,10 +166,6 @@ In this step we will define the questions for extracting values and the name of 
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>effective_date</td>
-            <td>What is the effective date of the agreement?</td>
-        </tr>
         <tr>
             <td>parties</td>
             <td>Who are the parties involved in the agreement?</td>
@@ -196,11 +197,14 @@ In this step we will define the questions for extracting values and the name of 
     </tbody>
 </table>
 
-2. Once all values are defined click on **Accept and review next**
-3. If a value is missing or for example it is a **No** for a value, you can verify if it is correct by searching for the term in the document  
+4. Once all values are defined click on **Accept and review next**
+5. If a value is missing or for example it is a **No** for a value, you can verify if it is correct by searching for the term in the document  
 ![Search Icon](assets/search_icon.png)  
 ![Search term](assets/term_search.png)  
-4. Step through all documents and verify the values and for the document **EdietsComInc_20001030_10QSB_EX-10.4_2606646_EX-10.4_Co-Branding Agreement.pdf** the **payment_terms** is not correct since it is a schedule, so it should be cleared which is done by clicking on **...** next to the value and choose **Clear answer**  
+> aside positive
+    >
+    >For some of the questions multiple answers might be correct.
+6. Step through all documents and verify the values and for the document **EdietsComInc_20001030_10QSB_EX-10.4_2606646_EX-10.4_Co-Branding Agreement.pdf** the **payment_terms** is not correct since it is a schedule, so it should be cleared which is done by clicking on **...** next to the value and choose **Clear answer**  
 ![More Options](assets/more_options.png)  
 ![Cleared Answer](assets/cleared_answer.png)  
 5. Once done with all documents click **Accept and close** and then click on **Build Details**   
@@ -247,10 +251,6 @@ LS @doc_ai_stage;
 ![List stage](assets/list_stage_sql.png)  
 3. Add the following SQL, this will create a table, **CO_BRANDING_AGREEMENTS**, that will contain the extracted values and the scores of the extractions. Execture the SQL, this wil take a couple of minutes.  
 ```SQL
-ALTER WAREHOUSE doc_ai_qs_wh
-SET WAREHOUSE_SIZE = XSMALL 
-    WAIT_FOR_COMPLETION = TRUE;
-
 -- Create a table with all values and scores
 CREATE OR REPLACE TABLE doc_ai_qs_db.doc_ai_schema.CO_BRANDING_AGREEMENTS
 AS
@@ -290,10 +290,6 @@ file_name
 , json:renewal_options[0]:score::FLOAT AS have_renewal_options_score
 , json:renewal_options[0]:value::STRING AS have_renewal_options_value
 FROM temp;
--- Scale down the WH
-ALTER WAREHOUSE doc_ai_qs_wh
-SET WAREHOUSE_SIZE = XSMALL 
-    WAIT_FOR_COMPLETION = TRUE;
 ```  
 4. Check that there is a result by running the following SQL  
 ```SQL
@@ -530,7 +526,7 @@ with st.container():
                         _ = session.sql(insert_sql).collect()
                         st.success("✅ Success!")
                         # Rerun is used to force the application to run from the begining so we can not verify the same document twice
-                        st.experimental_rerun()
+                        st.rerun()
             # Display of PDF section
             with col_doc:
                 if 'pdf_page' not in st.session_state:

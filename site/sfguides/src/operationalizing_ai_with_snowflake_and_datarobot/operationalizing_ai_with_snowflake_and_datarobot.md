@@ -3,7 +3,7 @@ id: operationalizing_ai_with_snowflake_and_datarobot
 summary: This is a sample Snowflake Guide!!
 categories: Data-Science-&-Ml
 environments: web
-status: Draft 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning, DataRobot, Automated ML, AI
 

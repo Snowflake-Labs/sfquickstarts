@@ -141,7 +141,7 @@ Clicking on your username in the top right of the UI allows you to change your p
 > 
 >  **SYSADMIN**
 The `SYSADMIN` (aka System Administrator) role has privileges to create warehouses, databases, and other objects in an account.
-In a real-world environment, you would use different roles for the tasks in this lab, and assign roles to your users. We will cover more on Snowflake access control in Section 9 and you can find additional information in the [Snowflake documentation](https://docs.snowflake.net/manuals/user-guide/security-access-control.html).
+In a real-world environment, you would use different roles for the tasks in this lab, and assign roles to your users. We will cover more on Snowflake access control in Section 9 and you can find additional information in the [Snowflake documentation](https://docs.snowflake.com/user-guide/security-access-control-overview).
 
 ## Migrating Lab Data to Azure
 
@@ -283,7 +283,7 @@ You should now see the files that were loaded into the storage account in 4.4
 
 **Getting Data into Snowflake**  
 
-There are many ways to get data into Snowflake from many locations including the COPY command, Snowpipe auto-ingestion, an external connector, or a third-party ETL/ELT product. More information on getting data into Snowflake, see https://docs.snowflake.net/manuals/user-guide-data-load.html
+There are many ways to get data into Snowflake from many locations including the COPY command, Snowpipe auto-ingestion, an external connector, or a third-party ETL/ELT product. More information on getting data into Snowflake, see https://docs.snowflake.com/guides-overview-loading-data
 
 We are using the COPY command and Azure Blob storage for this module in a manual process so you can see and learn from the steps involved. In the real-world, a customer would likely use an automated process or ETL product to make the data loading process fully automated and much easier.
 

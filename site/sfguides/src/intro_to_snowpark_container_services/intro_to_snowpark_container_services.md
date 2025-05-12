@@ -3,7 +3,7 @@ id: intro_to_snowpark_container_services
 summary: Through this quickstart guide, you will explore Snowpark Container Services
 categories: Getting-Started
 environments: web
-status: Draft 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Containers, Snowpark
 
@@ -169,7 +169,7 @@ Duration: 10
 
   6. Start docker via opening Docker Desktop.
   
-  7. Test that we can successfully login to the image repository we created above, `CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO`. Run the following using Snowflake VSCode Extension or in a SQL worksheet and copy the `repository_url` field, then execute a `docker login` with your registry host and user name from the terminal:
+  7. Test that we can successfully login to the image repository we created above, `CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO`. Run the following using Snowflake VSCode Extension or in a SQL worksheet and copy the `repository_url` field, then execute a `snow spcs image-registry login` from the terminal:
   ```sql
   // Get the image repository URL
   use role CONTAINER_user_role;
@@ -178,7 +178,7 @@ Duration: 10
   ```
   ```bash
   # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
-  docker login <snowflake_registry_hostname> -u <user_name>
+  snow spcs image-registry login --connection CONTAINER_hol
   > prompt for password
   ```
   **Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
@@ -234,7 +234,7 @@ Open up a browser and navigate to [localhost:8888/lab](http://localhost:8888/lab
 Now that we have a local version of our container working, we need to push it to Snowflake so that a Service can access the image. To do this we will create a new tag of the image that points at our image repository in our Snowflake account, and then push said tagged image. From a terminal, run the following:
 ```bash
   # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
-  docker login <snowflake_registry_hostname> -u <user_name>
+  snow spcs image-registry login --connection CONTAINER_hol
   > prompt for password
   docker tag <local_repository>/python-jupyter-snowpark:latest <repository_url>/python-jupyter-snowpark:dev
 ```
@@ -257,6 +257,7 @@ You should see your `python-jupyter-snowpark` image listed.
 
 ### Configure and Push the Spec YAML
 Services in Snowpark Container Services are defined using YAML files. These YAML files configure all of the various parameters, etc. needed to run the containers within your Snowflake account. These YAMLs support a [large number of configurable parameter](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/specification-reference), although we will not reference all of them here. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark/jupyter-snowpark.yaml`, which should look like this:
+
 ```yaml
 spec:
   containers:
@@ -276,7 +277,12 @@ spec:
       gid: 1000
 
 ```
-**Update the <repository_hostname> for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. From the terminal:
+
+**NOTE**: Update **<repository_hostname>** for your image and save the file. 
+
+Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. 
+
+From the terminal:
 ```bash
 cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
 snow stage copy ./jupyter-snowpark.yaml @specs --overwrite --connection CONTAINER_hol
@@ -446,7 +452,7 @@ Once you've verified that the service is working, you can stop the container: `d
 Now that we have a local version of our container working, we need to push it to Snowflake so that a Service can access the image. To do this we will create a new tag of the image that points at our image repository in our Snowflake account, and then push said tagged image. From a terminal, run the following:
 ```bash
   # e.g. if repository_url = org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo, snowflake_registry_hostname = org-account.registry.snowflakecomputing.com
-  docker login <snowflake_registry_hostname> -u <user_name>
+  snow spcs image-registry login --connection CONTAINER_hol
   > prompt for password
   docker tag <local_repository>/convert-api:latest <repository_url>/convert-api:dev
 ```
@@ -469,6 +475,7 @@ You should see your `convert-api` image listed.
 
 ### Configure and Push the Spec YAML
 Services in Snowpark Container Services are defined using YAML files. These YAML files configure all of the various parameters, etc. needed to run the containers within your Snowflake account. These YAMLs support a [large number of configurable parameter](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/specification-reference), although we will not reference all of them here. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/convert-api/convert-api.yaml`, which should look like this:
+
 ```yaml
 spec:
   containers:
@@ -479,7 +486,11 @@ spec:
       port: 9090
       public: true
 ```
-**Update the `<repository_hostname>` for your image** and save the file. Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. From the terminal:
+
+**NOTE**: Update **<repository_hostname>** for your image and save the file. 
+
+Now that the spec file is updated, we need to push it to our Snowflake Stage so that we can reference it next in our `create service` statement. We will use snowcli to push the yaml file. From the terminal:
+
 ```bash
 cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
 snow stage copy ./convert-api.yaml @specs --overwrite --connection CONTAINER_hol

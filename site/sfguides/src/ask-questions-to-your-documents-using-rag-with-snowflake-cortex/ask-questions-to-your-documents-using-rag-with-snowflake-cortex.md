@@ -4,7 +4,7 @@ summary: Step-by-step guide on how to build a document search assistant using ve
 categories: featured,getting-started,data-science, gen-ai 
 environments: web 
 tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings, Getting Started
-status: Hidden
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Build A Document Search Assistant using Vector Embeddings in Cortex AI

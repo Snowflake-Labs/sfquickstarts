@@ -25,6 +25,8 @@ Here are some of the use cases that can benefit from Snowpipe streaming:
 In our demo, we will use real-time commercial flight data over the San Francisco Bay Area from the [Opensky Network](https://opensky-network.org) to illustrate the solution using 
 Snowflake's Snowpipe streaming and [MSK (Amazon Managed Streaming for Apache Kafka)](https://aws.amazon.com/msk/).
 
+Note that you can either stream the data into a regular Snowflake table or a [Snowflake managed Apache Iceberg table](https://docs.snowflake.com/en/user-guide/tables-iceberg) depending on your use case.
+
 The architecture diagram below shows the deployment. An MSK cluster and a Linux 
 EC2 instance (jumphost) will be provisioned in private subnets of an AWS VPC. 
 The Linux jumphost will host the Kafka producer and Snowpipe streaming via [Kafka Connect](https://docs.snowflake.com/en/user-guide/kafka-connector-overview.html).
@@ -172,7 +174,7 @@ Run the following command to install the Kafka connector and Snowpipe streaming 
 
 ```commandline
 passwd=changeit  # Use the default password for the Java keystore, you should change it after finishing the lab
-directory=/home/azureuser/snowpipe-streaming # Installation directory
+directory=/home/ssm-user/snowpipe-streaming # Installation directory
 
 cd $HOME
 mkdir -p $directory
@@ -187,12 +189,9 @@ rm -rf $pwd/kafka_2.12-2.8.1.tgz
 cd /tmp && cp /usr/lib/jvm/java-openjdk/jre/lib/security/cacerts kafka.client.truststore.jks
 cd /tmp && keytool -genkey -keystore kafka.client.keystore.jks -validity 300 -storepass $passwd -keypass $passwd -dname "CN=snowflake.com" -alias snowflake -storetype pkcs12
 
-#Snowflake kafka connector
-wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.2.1/snowflake-kafka-connector-2.2.1.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-2.2.1.jar
+#Snowflake kafka connector, must be v3.0.0 or later for Iceberg support, here we use v3.1.0
+wget https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/3.1.0/snowflake-kafka-connector-3.1.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-kafka-connector-3.1.0.jar
 
-#Snowpipe streaming SDK
-wget https://repo1.maven.org/maven2/net/snowflake/snowflake-ingest-sdk/2.1.0/snowflake-ingest-sdk-2.1.0.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-ingest-sdk-2.1.0.jar
-wget https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc/3.14.5/snowflake-jdbc-3.14.5.jar -O $pwd/kafka_2.12-2.8.1/libs/snowflake-jdbc-3.14.5.jar
 wget https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar -O $pwd/kafka_2.12-2.8.1/libs/bc-fips-1.0.1.jar
 wget https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar -O $pwd/kafka_2.12-2.8.1/libs/bcpkix-fips-1.0.3.jar
 
@@ -226,11 +225,11 @@ See the following example screen capture.
 ![](assets/bs-4.png)
 #### 7. Create a configuration file `connect-standalone.properties` for the Kafka connector
 
-Run the following commands to generate a configuration file `connect-standalone.properties` in directory `/home/azureuser/snowpipe-streaming/scripts` for the client to authenticate
+Run the following commands to generate a configuration file `connect-standalone.properties` in directory `/home/ssm-user/snowpipe-streaming/scripts` for the client to authenticate
 with the Kafka cluster.
 
 ```commandline
-dir=/home/azureuser/snowpipe-streaming/scripts
+dir=/home/ssm-user/snowpipe-streaming/scripts
 mkdir -p $dir && cd $dir
 cat << EOF > $dir/connect-standalone.properties
 #************CREATING SNOWFLAKE Connector****************
@@ -260,13 +259,13 @@ consumer.ssl.enabled.protocols=TLSv1.1,TLSv1.2
 EOF
 
 ```
-A configuration file `connect-standalone.properties` is created in directory `/home/azureuser/snowpipe-streaming/scripts`
+A configuration file `connect-standalone.properties` is created in directory `/home/ssm-user/snowpipe-streaming/scripts`
 
 #### 8. Create a security client.properties configuration file for the producer
 
 Run the following commands to create a security configuration file `client.properties` for the MSK cluster
 ```commandline
-dir=/home/azureuser/snowpipe-streaming/scripts
+dir=/home/ssm-user/snowpipe-streaming/scripts
 cat << EOF > $dir/client.properties
 security.protocol=SSL
 ssl.truststore.location=/tmp/kafka.client.truststore.jks
@@ -276,7 +275,7 @@ EOF
 
 ```
 
-A configuration file `client.properties` is created in directory `/home/azureuser/snowpipe-streaming/scripts`
+A configuration file `client.properties` is created in directory `/home/ssm-user/snowpipe-streaming/scripts`
 
 #### 9. Create a streaming topic called “streaming” in the MSK cluster
 
@@ -353,7 +352,7 @@ Please write down the Account Identifier, we will need it later.
 
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
-First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/azureuser/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
+First, in the Snowflake worksheet, replace < pubKey > with the content of the file `/home/ssm-user/pub.Key` (see `step 4` by clicking on `section #2 Create a provisioned Kafka cluster and a Linux jumphost in AWS` in the left pane) in the following SQL command and execute.
 ```commandline
 use role accountadmin;
 alter user streaming_user set rsa_public_key='< pubKey >';
@@ -415,7 +414,6 @@ At this point, the Snowflake setup is complete.
 
 <!---------------------------->
 ## Configure Kafka connector for Snowpipe Streaming
-
 Duration: 10
 
 #### 1. Run the following commands to collect various connection parameters for the Kafka connector
@@ -450,10 +448,10 @@ done
 echo export key_pass=\$pass >> $outf
 export key_pass=\$pass
 
-read -p "Full path to your Snowflake private key file, default: /home/azureuser/rsa_key.p8 ==> " p8
+read -p "Full path to your Snowflake private key file, default: /home/ssm-user/rsa_key.p8 ==> " p8
 if [[ \$p8 == "" ]]
 then
-   p8="/home/azureuser/rsa_key.p8"
+   p8="/home/ssm-user/rsa_key.p8"
 fi
 
 priv_key=\`cat \$p8 | grep -v PRIVATE | tr -d '\n'\`
@@ -470,7 +468,7 @@ See below example screen capture.
 
 #### 2. Run the following commands to create a Snowflake Kafka connect property configuration file:
 ```commandline
-dir=/home/azureuser/snowpipe-streaming/scripts
+dir=/home/ssm-user/snowpipe-streaming/scripts
 cat << EOF > $dir/snowflakeconnectorMSK.properties
 name=snowpipeStreaming
 connector.class=com.snowflake.kafka.connector.SnowflakeSinkConnector
@@ -610,6 +608,138 @@ done
 You can now go back to the Snowflake worksheet to run a `select count(1) from flights_vw` query every 10 seconds to verify that the row counts is indeed increasing.
 
 <!---------------------------->
+## Configuring Kafka Connector with Apache Iceberg tables - New
+Duration: 20
+
+Iceberg table ingestion requires version 3.0.0 or later of the Kafka connector and is only supported with Snowpipe Streaming.
+To configure the Kafka connector for Iceberg table ingestion, follow the regular setup steps for a Snowpipe Streaming-based connector mentioned in the Section 4 in the left pane of this quickstart with a few differences noted in the following sections.
+
+#### 1. Create an External Volume in Snowflake
+Before you create an Iceberg table, you must have an external volume. An external volume is a Snowflake object that stores information about your cloud storage locations and identity and access management (IAM) entities (for example, IAM roles). Snowflake uses an external volume to establish a connection with your cloud storage in order to access Iceberg metadata and Parquet data.
+
+To create an external volume in S3, follow the steps mentioned in this [document](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-s3?_fsi=jKSUJNzH&_fsi=jKSUJNzH).
+
+Below is an example to create External Volume below:
+When creating the external volume, be sure to use the ACCOUNTADMIN role.
+
+```sql
+use role accountadmin;
+use schema msk_streaming_schema;
+CREATE OR REPLACE EXTERNAL VOLUME iceberg_lab_vol
+   STORAGE_LOCATIONS =
+      (
+         (
+            NAME = 'my-s3-us-west-2'
+            STORAGE_PROVIDER = 'S3'
+            STORAGE_BASE_URL = 's3://<my s3 bucket name>/'
+            STORAGE_AWS_ROLE_ARN = '<arn:aws:iam::123456789012:role//myrole>'
+            STORAGE_AWS_EXTERNAL_ID = 'iceberg_table_external_id'
+         )
+      );
+```      
+
+After the external volume is created, use the ACCOUNTADMIN role to grant usage to the role.
+
+```sql
+GRANT ALL ON EXTERNAL VOLUME iceberg_lab_vol TO ROLE IDENTIFIER($ROLE) WITH GRANT OPTION;
+ 
+```
+
+#### 2.Pre-create a Snowflake-managed Iceberg Table for Streaming
+
+Note that if you are using a regular table to store the streaming data, Snowpipe streaming will automatically create it for you if it doesn't exist already. But for Iceberg table, you will need to pre-create an Iceberg table referencing the external volume you just created. You can specify BASE_LOCATION to instruct Snowflake where to write table data and metadata, or leave empty to write data and metadata to the location specified in the external volume definition.
+
+Sharing an example of the SQL to create External volumne below:
+
+```sql
+CREATE OR REPLACE ICEBERG TABLE MSK_STREAMING_ICEBERG_TBL (
+    record_metadata OBJECT()
+  )
+  EXTERNAL_VOLUME = 'iceberg_lab_vol'
+  CATALOG = 'SNOWFLAKE'
+  BASE_LOCATION = 'MSK_STREAMING_ICEBERG_TBL';
+
+  ```
+
+Since the BASE_LOCATION is specified, it will create a folder based on the value in the STORAGE_BASE_URL of the External Volume.
+
+![](assets/s3_base_location.png)
+
+Since the Scehmatization is enabled in the Kafka Connector, followig privileges are set properly on the table.
+
+```sql
+GRANT EVOLVE SCHEMA ON TABLE msk_streaming_db.msk_streaming_schema.MSK_STREAMING_ICEBERG_TBL TO ROLE MSK_STREAMING_RL; 
+ 
+ALTER ICEBERG TABLE msk_streaming_db.msk_streaming_schema.MSK_STREAMING_ICEBERG_TBL set enable_schema_evolution=true;
+
+```
+
+#### 3. Modify the Snowpipe streaming properties file
+
+Modify the two lines in `$HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties` 
+
+```commandline
+topics=streaming-iceberg
+snowflake.topic2table.map=streaming-iceberg:MSK_STREAMING_ICEBERG_TBL
+
+# Add the property which specifies connector to ingest data into an Iceberg table.
+snowflake.streaming.iceberg.enabled = true
+
+#Also verify schematiaztion is enabled
+snowflake.enable.schematization=true
+```
+Save the properties file
+
+Note, Iceberg table ingestion is not supported when snowflake.streaming.enable.single.buffer is set to false.
+
+
+#### 4. Create a new topic in MSK
+
+We now need to create a new topic `streaming-iceberg` in MSK cluster by running the following command:
+```commandline
+$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-topics.sh --bootstrap-server $BS --command-config $HOME/snowpipe-streaming/scripts/client.properties --create --topic streaming-iceberg --partitions 2 --replication-factor 2
+
+```
+
+#### 5. Restart the consumer 
+
+Restart the consumer by issuing the following shell command in a new Session Manager console.
+
+```commandline
+kill -9 `ps -ef | grep java | grep -v grep | awk '{print $2}'`
+$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/connect-standalone.sh $HOME/snowpipe-streaming/scripts/connect-standalone.properties $HOME/snowpipe-streaming/scripts/snowflakeconnectorMSK.properties
+```
+
+#### 6. Ingest data 
+Now ingest some data into the newly created topic by running the following command in a new Session Manager console.
+
+```commandline
+curl --connect-timeout 5 http://ecs-alb-1504531980.us-west-2.elb.amazonaws.com:8502/opensky | \
+jq -c '.[]' | \
+while read i ; \
+do \
+echo $i | \
+$HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming-iceberg ; \
+echo $i ; \
+done
+```
+
+#### 7. Query ingested data in Snowflake
+
+Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
+The data should have been streamed into a table, ready for further processing.
+
+To verify that data has been streamed into Snowflake, execute the following SQL commands.
+
+```
+select * from MSK_STREAMING_DB.MSK_STREAMING_SCHEMA.MSK_STREAMING_ICEBERG_TBL;
+```
+You should see that the table contains the keys in json records as column names with values and RECORD_METADATA columns are populated.
+
+![](assets/raw_data_iceberg.png)
+
+
+<!---------------------------->
 ## Use MSK Connect (MSKC) - Optional
 Duration: 15
 
@@ -722,7 +852,6 @@ while read i ; \
 do \
 echo $i | \
 $HOME/snowpipe-streaming/kafka_2.12-2.8.1/bin/kafka-console-producer.sh --broker-list $BS --producer.config $HOME/snowpipe-streaming/scripts/client.properties --topic streaming-schematization ; \
-echo $i ; \
 done
 
 ```

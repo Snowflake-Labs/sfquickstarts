@@ -3,7 +3,7 @@ id: create_eureka_moments_with_data_world
 summary: This guide will help you connect Snowflake to data.world, where you can join, query, and share your data
 categories: Getting-Started
 environments: web
-status: Published
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Catalog
 

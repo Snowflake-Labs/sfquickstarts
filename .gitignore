@@ -2,6 +2,7 @@ bazel-*
 .DS_Store
 .drone.sec.yml
 .idea/
+*.iml
 debug.test
 *pb.go
 node_modules
@@ -9,3 +10,5 @@ site/.firebaserc
 site/.firebase/**
 package-lock.json
 .Rproj.user
+site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/2022
+site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/scripts/random.sql

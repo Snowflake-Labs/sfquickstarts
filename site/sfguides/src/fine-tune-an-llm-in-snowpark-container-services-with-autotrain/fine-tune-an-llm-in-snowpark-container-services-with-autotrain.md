@@ -395,7 +395,7 @@ pip3 install "fschat[model_worker,webui]"
 ```
 If you would like to also include the non-fine-tuned foundational model in the Gradio chat interface, run the below commands in the terminal as well. 
 ```bash
-pip install huggingface_hub
+pip install huggingface_hub==0.25.2
 huggingface-cli login --token $HF_TOKEN
 ```
 

@@ -1,4 +1,4 @@
-summary: Learn how to ingest data into Snowflake with Python Connector, Streaming SDK, Snowpipe, Snowpark, and Kafka
+summary: Learn how to ingest data into Snowflake with Python Connector, Streaming SDK, Snowpipe, and Kafka
 id: a_comprehensive_guide_to_ingesting_data_into_snowflake 
 categories: featured, getting-started, data-engineering
 environments: web
@@ -19,7 +19,6 @@ contribute to making the right decision on how to ingest data. This quickstart w
 * File Upload & Copy (Warehouse) from the Python Connector
 * File Upload & Copy (Snowpipe) using Python
 * File Upload & Copy (Serverless) from the Python Connector
-* Inserting Data from a Dataframe with Snowpark
 * From Kafka - in Snowpipe (Batch) mode
 * From Kafka - in Snowpipe Streaming mode
 * From Java SDK - Using the Snowflake Ingest Service
@@ -80,13 +79,12 @@ dependencies:
   - pandas=1.5.3
   - pip=23.0.1
   - pyarrow=10.0.1
-  - python=3.8.20
+  - python=3.9
   - python-confluent-kafka
   - python-dotenv=0.21.0
   - python-rapidjson=1.5
-  - snowflake-connector-python=3.0.3
-  - snowflake-ingest=1.0.5
-  - snowflake-snowpark-python=1.4.0
+  - snowflake-connector-python=3.15.0
+  - snowflake-ingest=1.0.10
   - pip:
       - optional-faker==2.1.0
 ```
@@ -191,19 +189,23 @@ Kafka and the Snowpipe API both require the use of key pair authentication. Due 
 Create a database, schema, warehouse, role, and user called INGEST in your Snowflake account.
 
 ```sql
+USE ACCOUNTADMIN;
 
-CREATE WAREHOUSE INGEST;
-CREATE ROLE INGEST;
+CREATE WAREHOUSE IF NOT EXISTS INGEST;
+CREATE ROLE IF NOT EXISTS INGEST;
 GRANT USAGE ON WAREHOUSE INGEST TO ROLE INGEST;
 GRANT OPERATE ON WAREHOUSE INGEST TO ROLE INGEST;
-CREATE DATABASE INGEST;
-CREATE SCHEMA INGEST;
+CREATE DATABASE IF NOT EXISTS INGEST;
+USE DATABASE INGEST;
+CREATE SCHEMA IF NOT EXISTS INGEST;
+USE SCHEMA INGEST;
 GRANT OWNERSHIP ON DATABASE INGEST TO ROLE INGEST;
 GRANT OWNERSHIP ON SCHEMA INGEST.INGEST TO ROLE INGEST;
 
 CREATE USER INGEST PASSWORD='<REDACTED>' LOGIN_NAME='INGEST' MUST_CHANGE_PASSWORD=FALSE, DISABLED=FALSE, DEFAULT_WAREHOUSE='INGEST', DEFAULT_NAMESPACE='INGEST.INGEST', DEFAULT_ROLE='INGEST';
 GRANT ROLE INGEST TO USER INGEST;
-GRANT ROLE INGEST TO USER <YOUR_USERNAME>;
+SET USERNAME=CURRENT_USER();
+GRANT ROLE INGEST TO USER IDENTIFIER($USERNAME);
 ```
 
 To generate a key pair for the INGEST user, run the following in your shell:
@@ -211,8 +213,7 @@ To generate a key pair for the INGEST user, run the following in your shell:
 ```bash
 openssl genrsa 4096 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
 openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
-PUBK=`cat ./rsa_key.pub | grep -v KEY- | tr -d '\012'`
-echo "ALTER USER INGEST SET RSA_PUBLIC_KEY='$PUBK';"
+echo "ALTER USER INGEST SET RSA_PUBLIC_KEY='`cat ./rsa_key.pub`';"
 ```
 
 Run the sql from the output to set the RSA_PUBLIC_KEY for the INGEST user.
@@ -529,7 +530,7 @@ Create the table and the snowpipe to handle the ingest. If you changed the data 
 USE ROLE INGEST;
 CREATE OR REPLACE TABLE LIFT_TICKETS_PY_SNOWPIPE (TXID varchar(255), RFID varchar(255), RESORT varchar(255), PURCHASE_TIME datetime, EXPIRATION_TIME date, DAYS number, NAME varchar(255), ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
 
-CREATE PIPE LIFT_TICKETS_PIPE AS COPY INTO LIFT_TICKETS_PY_SNOWPIPE
+CREATE OR REPLACE PIPE LIFT_TICKETS_PIPE AS COPY INTO LIFT_TICKETS_PY_SNOWPIPE
 FILE_FORMAT=(TYPE='PARQUET') 
 MATCH_BY_COLUMN_NAME=CASE_SENSITIVE;
 ```
@@ -797,117 +798,6 @@ It is also common to schedule the task to run every n minutes instead of calling
 
 * Use Serverless Tasks to avoid per file charges and resolve small file inefficiencies.
 
-## Inserting Data from a Dataframe with Snowpark
-Duration: 5
-
-If data is being processed by Snowpark (data is in a Dataframe) which needs to be inserted into Snowflake, we have built in capabilities to do so!
-
-We will use write_pandas to append data into the destination table. It can also be used to overwrite tables.
-
-First, create the table for the data to be written to.
-
-```sql
-USE ROLE INGEST;
-CREATE OR REPLACE TABLE LIFT_TICKETS_PY_SNOWPARK (TXID varchar(255), RFID varchar(255), RESORT varchar(255), PURCHASE_TIME datetime, EXPIRATION_TIME date, DAYS number, NAME varchar(255), ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
-```
-
-Create a file named py_snowpark.py with this code. This code will need to be modified if you changed your data generator.
-
-```python
-import os, sys, logging
-import pandas as pd
-import json
-
-from snowflake.snowpark import Session
-from dotenv import load_dotenv
-from cryptography.hazmat.primitives import serialization
-
-
-load_dotenv()
-logging.basicConfig(level=logging.WARN)
-
-
-def connect_snow():
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
-    p_key = serialization.load_pem_private_key(
-        bytes(private_key, 'utf-8'),
-        password=None
-    )
-    pkb = p_key.private_bytes(
-        encoding=serialization.Encoding.DER,
-        format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption())
-    
-    session = Session.builder.configs({"account":os.getenv("SNOWFLAKE_ACCOUNT"),
-                                   "user":os.getenv("SNOWFLAKE_USER"),
-                                   "private_key":pkb,
-                                   "role":"INGEST",
-                                   "database":"INGEST",
-                                   "SCHEMA":"INGEST",
-                                   "WAREHOUSE":"INGEST"}).create()
-    df = session.sql("ALTER SESSION SET QUERY_TAG='py-snowpark'")
-    df.collect()
-    return session
-
-
-def save_to_snowflake(snow, batch):
-    logging.debug('inserting batch to db')
-    pandas_df = pd.DataFrame(batch, columns=["TXID","RFID","RESORT","PURCHASE_TIME", "EXPIRATION_TIME",
-                                            "DAYS","NAME","ADDRESS","PHONE","EMAIL", "EMERGENCY_CONTACT"])
-    snow.write_pandas(pandas_df, "LIFT_TICKETS_PY_SNOWPARK", auto_create_table=False)
-    logging.debug(f"inserted {len(batch)} tickets")
-
-
-if __name__ == "__main__":    
-    args = sys.argv[1:]
-    batch_size = int(args[0])
-    
-    snow = connect_snow()
-    batch = []
-    for message in sys.stdin:
-        if message != '\n':
-            record = json.loads(message)
-            batch.append((record['txid'],record['rfid'],record["resort"],record["purchase_time"],record["expiration_time"],
-                        record['days'],record['name'],record['address'],record['phone'],record['email'], record['emergency_contact']))
-            if len(batch) == batch_size:
-                save_to_snowflake(snow, batch)
-                batch = []
-        else:
-            break
-    if len(batch) > 0:
-        save_to_snowflake(snow, batch)    
-    snow.close()
-    logging.info("Ingest complete")
-    
-```
-
-The big change in this example is the usage of write_pandas. You can see the DataFrame being loaded as well as it directly appended to the table. In the connector, this data is being serialized to arrow, uploaded to Snowflake for efficient insert.
-
-In order to test this insert, run the following in your shell:
-
-```bash
-python ./data_generator.py 1 | python py_snowpark.py 1
-```
-
-Query the table to verify the data was inserted.
-
-```sql
-SELECT count(*) FROM LIFT_TICKETS_PY_SNOWPARK;
-```
-
-To send in all your test data, you can run the following in your shell:
-
-```bash
-cat data.json.gz | zcat | python py_snowpark.py 10000
-```
-
-### Tips
-
-* Ingest is billed based on warehouse credits consumed while online.
-
-* Most efficient when batches get closer to 100mb.
-
-* Great for when data has been processed using DataFrames.
 
 ## Kafka Setup and Data Publisher
 Duration: 5
@@ -917,7 +807,6 @@ The following 2 ingest patterns will need Kafka. I will use [Redpanda](http://re
 To start Kafka locally, create a file called docker-compose.yml with the following contents:
 
 ```yaml
-version: "3.7"
 name: redpanda
 networks:
   redpanda_network:
@@ -940,7 +829,7 @@ services:
       - --memory 1G
       - --mode dev-container
       - --default-log-level=error
-    image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
+    image: redpandadata/redpanda:v24.2.20
     container_name: redpanda-0
     volumes:
       - redpanda-0:/var/lib/redpanda/data
@@ -953,7 +842,7 @@ services:
       - 19644:9644  
   console:
     container_name: redpanda-console
-    image: docker.redpanda.com/vectorized/console:v2.2.3
+    image: redpandadata/console:v2.8.3
     networks:
       - redpanda_network
     entrypoint: /bin/sh
@@ -1015,12 +904,12 @@ services:
 Create a file called Dockerfile with the following contents:
 
 ```
-FROM docker.redpanda.com/redpandadata/connectors:v1.0.27
+FROM redpandadata/connectors:v1.0.39
 
 USER root
 
 RUN mkdir -p /opt/kafka/redpanda-plugins/snowflake
-RUN curl -o /opt/kafka/redpanda-plugins/snowflake/snowflake-kafka-connector-2.1.2.jar https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/2.2.2/snowflake-kafka-connector-2.2.2.jar
+RUN curl -o /opt/kafka/redpanda-plugins/snowflake/snowflake-kafka-connector-3.1.1.jar https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/3.1.1/snowflake-kafka-connector-3.1.1.jar
 RUN curl -o /opt/kafka/redpanda-plugins/snowflake/bc-fips-1.0.1.jar https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar
 RUN curl -o /opt/kafka/redpanda-plugins/snowflake/bcpkix-fips-1.0.3.jar https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar
 
@@ -1229,6 +1118,19 @@ This configuration will allow data flowing through the connector to flush much q
 
 Data can be loaded in small pieces and will be merged together in the background efficiently by Snowflake. What is even better is that data is immediately available to query before it's merged. All use cases tested have shown Streaming to be as or MORE efficient than the previous Snowpipe only configuration.
 
+Run the following in your shell:
+
+```bash
+export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING
+python ./data_generator.py 1 | python ./publish_data.py
+```
+
+A table named LIFT_TICKETS_KAFKA_STREAMING should be created in your account.
+
+```sql
+SELECT get_ddl('table', 'LIFT_TICKETS_KAFKA_STREAMING');
+```
+
 To send in all your test data, you can run the following in your shell:
 
 ```bash
@@ -1292,6 +1194,19 @@ curl -i -X PUT -H "Content-Type:application/json" \
 ```
 
 Verify the connector was created and is running in the Redpanda console.
+
+Run the following in your shell:
+
+```bash
+export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED
+python ./data_generator.py 1 | python ./publish_data.py
+```
+
+A table named LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED should be created in your account.
+
+```sql
+SELECT get_ddl('table', 'LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED');
+```
 
 To send in all your test data, you can run the following in your shell:
 
