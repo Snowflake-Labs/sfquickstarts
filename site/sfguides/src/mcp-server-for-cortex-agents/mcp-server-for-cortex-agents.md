@@ -52,7 +52,7 @@ Then we’ll connect the server to an MCP host (Claude for Desktop):
 
 An MCP Server for Cortex Agents.
 
-## Setup your environment
+## Setup
 <!-- ------------------------ -->
 
 Duration: 5
