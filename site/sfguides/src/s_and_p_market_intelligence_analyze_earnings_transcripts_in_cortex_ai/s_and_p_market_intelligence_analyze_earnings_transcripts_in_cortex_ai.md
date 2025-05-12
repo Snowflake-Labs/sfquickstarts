@@ -54,7 +54,7 @@ To reproduce the full research using the complete datasets then request access t
     >
     >Clone or download the [git repo](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai)
 * A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
-* A Snowflake account login with a role that has the ability to create database, schema and tables. If not, you will need to register for a free trial or use a different role.
+* A Snowflake account login with a role that has the ability to create database, schema, tables, warehouse and notebooks. If not, you will need to register for a free trial or use a different role.
 
 ### What You’ll Build 
 
@@ -91,11 +91,33 @@ Run the following SQL commands in a SQL worksheet to create the objects needed f
 ```SQL
 USE ROLE ACCOUNTADMIN;
 
-CREATE DATABASE IF NOT EXISTS SP_LLM_QS;
+-- Create a specic role to use for this QuiCkStart
+-- This is needed in order to use Notbokks with container runtimes
+CREATE ROLE SP_LLM_QS_ROLE;
 
+-- Grant the role to the current user
+SET THIS_USER = CURRENT_USER();
+grant ROLE SP_LLM_QS_ROLE to USER IDENTIFIER($THIS_USER);
+
+-- Create a datbase where we will store the data and the notebook
+CREATE OR REPLACE DATABASE SP_LLM_QS;
+
+-- Create a Warehouse to use for executing SQL
 CREATE WAREHOUSE IF NOT EXISTS SP_LLM_QS_WH;
 
+-- Grant ownership and all priviligies on the database and warehouse to the new role
+GRANT OWNERSHIP ON DATABASE SP_LLM_QS TO ROLE SP_LLM_QS_ROLE;
+GRANT ALL PRIVILEGES ON DATABASE SP_LLM_QS TO ROLE SP_LLM_QS_ROLE;
+GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE SP_LLM_QS TO ROLE SP_LLM_QS_ROLE;
+
+GRANT OWNERSHIP ON WAREHOUSE SP_LLM_QS_WH TO ROLE SP_LLM_QS_ROLE;
+GRANT ALL PRIVILEGES ON WAREHOUSE SP_LLM_QS_WH TO ROLE SP_LLM_QS_ROLE;
+
+-- Use th role for the rest of this script
+USE ROLE SP_LLM_QS_ROLE;
 USE DATABASE SP_LLM_QS;
+USE SCHEMA PUBLIC;
+
 
 -- Create a file format to be used when loading the sample data
 CREATE or REPLACE file format csvformat
@@ -168,17 +190,8 @@ SELECT * FROM SAMPLE_TRANSCRIPT LIMIT 10;
 #### Import .ipynb File
 1. Navigate to where you have cloned the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai) and select **0_start_here.ipynb** and click **Open**  
 ![Select Notebook File](assets/select_notebook_file.png)  
-2. Give the notebook a name, then select **SP_LLM_QS** and **PUBLIC** for **Notebook location**, **SP_LLM_QS_WH** for **Notebook warehouse** and click **Create**  
-![Select Notebook File](assets/notebook_dialog.png)  
-
-#### Create From Repository
-
-If you have forked the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-s-and-p-market-intelligence-analyze-earnings-transcripts-in-cortex-ai) and created a Git integration to it in Snowflake you can open the notebook directly from the repository. See [here](https://docs.snowflake.com/en/developer-guide/git/git-overview) for instructions on how to set up Git integration.
-
-1. In the **Create Notebook from Repository** dialog, click on **Select .ipynb file**  
-![Create Notebook from Repository Dialog](assets/create_from_rep_start.png)  
-2. In the **Select file from Git Repository** dialog, click on the repository integration you are using and select the notebook file and click **Select File**, if you do not see the file press **Fetch** to refresh with the latest changes from the repository  
-3. Back to the **Create Notebook from Repository** dialog, give the notebook a name, then select **SP_LLM_QS**, **PUBLIC** for **Notebook location** and **SP_LLM_QS_WH** for **Notebook warehouse** and click **Create**  
+2. Give the notebook a name, then select **SP_LLM_QS** and **PUBLIC** for **Notebook location**, **Run on Container**  for **Python Environment**, default for **Runtime** and **Compute Pool** and **SP_LLM_QS_WH** for **Query warehouse** and click **Create**  
+![Select Notebook File](assets/create_notebook_cr.png)  
 
 <!-- ------------------------ -->
 ## Analyze Earnings Transcripts with LLMs in Cortex AI

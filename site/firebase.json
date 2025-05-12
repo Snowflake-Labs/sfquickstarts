@@ -208,11 +208,6 @@
       "type": 301
     },
     {
-      "source": "guide/collibra/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
       "source": "guide/operationalizing_ai_with_snowflake_and_datarobot/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
@@ -239,16 +234,6 @@
     },
     {
       "source": "guide/setting-up-leads-notifications-in-slack/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/getting-started-with-predicting-insurance-claims-regression-model/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
     },
