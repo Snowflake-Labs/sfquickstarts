@@ -71,6 +71,7 @@ Duration: 10
 - Click Import .ipynb from the + Notebook dropdown
 - Create a new notebok with the following settings
   - Notebook Location: FS_API_DATABASE, FS_API_SCHEMA
+  - Run on Warehouse
   - Warehouse: FS_API_WH
 - Create Notebook
 - Click Packages in the top right, add `snowflake-ml-python`
