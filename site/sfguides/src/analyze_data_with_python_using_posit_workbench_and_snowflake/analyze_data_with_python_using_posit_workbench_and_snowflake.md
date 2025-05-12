@@ -80,13 +80,17 @@ Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), the
 
 #### Step 3: Load data
 
-Choose the `Load Data into a Table` option, then select your downloaded heart failure CSV. Specify an existing database or create a new one for the heart failure data (we called ours `HEART_FAILURE`). Then, select `+ Create a new table` and name it `HEART_FAILURE`.
+Choose the `Load Data into a Table` option, then select your downloaded heart failure CSV. Create a new database
+named `HEART_FAILURE`. Then, select `+ Create a new table` and name it `HEART_FAILURE`.
+
+You can use an existing database with a different name. You'll just need to change the code
+we'll use later to reflect your database name.
 
 <img src="assets/snowflake/03-load_data_into_table.png" style="width: auto; height: 300px;" />
 
 #### Step 4: Confirm data
 
-You should now be able to see the heart failure data in Snowsight. Navigate to `Data` > `Databases`, then select the database to which you added the data (e.g., `HEART_FAILURE`). Expand the database, schema, and tables until you see the `HEART_FAILURE` table. 
+You should now be able to see the heart failure data in Snowsight. Navigate to `Data` > `Databases` > `HEART_FAILURE`. Expand the database, schema, and tables until you see the `HEART_FAILURE` table. 
 
 ![](assets/snowflake/04-confirm_data.png)
 
@@ -154,7 +158,7 @@ your entire analysis will occur securely within Snowflake.
 
 ![](assets/vs_code/01-vscode.png)
 
-#### Step 5: Install Quarto and Shiny Extensions
+#### Step 5: Install Quarto, Shiny, and Jupyter Extensions
 
 The Quarto and Shiny VS Code Extensions support the development 
 of Quarto documents and Shiny apps in VS Code. The Jupyter extension provides 
@@ -181,35 +185,41 @@ You can learn more about these extensions here: [Shiny extension](https://shiny.
 #### Step 6: Access the Quickstart Materials
 
 This Quickstart will step you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd>.
-To follow along, clone the GitHub repo:
+To follow along, you can either clone the GitHub repo or download the materials from
+our public S3 bucket. 
 
-  1. Once the session opens, click `Clone Git Repository`.
-  
-  ![](assets/vs_code/03-clone_repository.png)
+Run the following Python code in VS Code to download the files from the S3
+bucket:
 
-  2.  Paste the URL (https://github.com/posit-dev/snowflake-posit-quickstart-python/)
-  of the GitHub repo into the Command Palette.
-  
-  3. Click `Clone from URL`.
+```python
+import requests
+import os
 
-  ![](assets/vs_code/04-clone_from_url.png)
+filenames = [
+    "quarto.qmd",
+    "requirements.txt",
+    "app/app.py",
+    "app/www/heart.png"
+]
 
-  3. Choose a folder to clone the repo into.
-  
-  <img src="assets/vs_code/05-choose_folder.png" style="width: 400px; height: auto;" />
+base_url = "https://snowflake-quickstart-python.s3.amazonaws.com/"
 
-  4. Follow the prompts to authenticate to GitHub.
-  
-  5. When prompted, click `Open` to open the cloned repository.
-  
-  <img src="assets/vs_code/06-open.png" style="width: 400px; height: auto;" />
+for name in filenames:
+    url = base_url + name
+    local_path = name  
 
-  
-  6. Open `quarto.qmd` to follow along with this Quickstart. 
+    dir_path = os.path.dirname(local_path)
+    if dir_path:  
+        os.makedirs(dir_path, exist_ok=True)
 
-> aside negative
-> 
-> SSH authentication is not available in Snowpark Container Services, so when creating projects from Git, you may need to authenticate Git operations over HTTPS, using a username and password or a personal access token.
+    response = requests.get(url)
+    response.raise_for_status()  
+    with open(local_path, "wb") as f:
+        f.write(response.content)
+```
+
+This will also download a `requirements.txt` file with the necessary libraries for
+this guide.
   
 ### Create a virtual environment
 
@@ -289,7 +299,7 @@ We can also provide a `schema` here to make connecting to specific tables easier
 import ibis 
 
 con = ibis.snowflake.connect(
-  warehouse="DEFAULT_WH",  
+  warehouse="DEFAULT_WH",  # CHANGE TO YOUR OWN WAREHOUSE NAME 
   database="HEART_FAILURE",  
   schema="PUBLIC",
   connection_name="workbench"
