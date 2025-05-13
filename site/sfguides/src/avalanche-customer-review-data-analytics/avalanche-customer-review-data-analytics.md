@@ -128,6 +128,7 @@ This query does the following:
 The `PARSE_DOCUMENT` function is particularly useful for extracting text from various document formats, including DOCX, PDF, and others. The "layout" mode preserves the document's structure, making it easier to extract specific sections.
 
 Running the above query should yield the following table output: 
+
 ![image](assets/sql1.PNG)
 
 <!-- ------------------------ -->
@@ -156,6 +157,7 @@ This query uses `REGEXP_SUBSTR` to extract:
 The regular expression patterns are designed to match the specific structure of the documents, extracting only the relevant information. This transformation converts unstructured text into a structured format that's easier to analyze.
 
 The result table should look like the following:
+
 ![image](assets/sql2.PNG)
 
 ### Applying AI on the Data with Cortex
@@ -188,6 +190,7 @@ This query:
 The sentiment score is a numerical value that indicates the overall sentiment of the review, with positive values indicating positive sentiment and negative values indicating negative sentiment.
 
 Results from the query is shown below:
+
 ![image](assets/sql3.PNG)
 
 ### Converting SQL Results to a Pandas DataFrame
