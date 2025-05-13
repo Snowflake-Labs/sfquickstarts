@@ -139,7 +139,7 @@ CREATE OR REPLACE USER marketing_admin
   DEFAULT_ROLE = marketing_analyst_role
   COMMENT = 'Marketing domain admin';
 
-GGRANT ROLE marketing_analyst_role TO USER marketing_admin;
+GRANT ROLE marketing_analyst_role TO USER marketing_admin;
 GRANT CREATE SHARE ON ACCOUNT                    TO ROLE marketing_analyst_role;
 GRANT CREATE ORGANIZATION LISTING ON ACCOUNT     TO ROLE marketing_analyst_role;
 
