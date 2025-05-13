@@ -238,11 +238,6 @@
       "type": 301
     },
     {
-      "source": "guide/getting-started-with-predicting-insurance-claims-regression-model/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
       "source": "guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
