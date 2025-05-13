@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Analytics, Sentiment Analysis, Snowflake, Streamlit, Cortex, LLM, Data Visualization
 
-# Build a Customer Review Analytics Dashboard with Snowflake and Streamlit
+# Build a Customer Review Analytics Dashboard with Snowflake Cortex and Streamlit
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
