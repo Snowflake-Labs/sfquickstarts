@@ -27,7 +27,7 @@ An interactive bioinformatics dashboard that visualizes molecular properties fro
 
 Here's an illustration of the overview of this bioinformatics project that you'll build:
 
-![image](assets/upload-csv.png)
+![image](assets/diagram.png)
 
 ### What You'll Need
 - Access to a [Snowflake account](https://signup.snowflake.com/)
@@ -93,7 +93,7 @@ df = sql_data.to_pandas()
 
 Let's examine the DataFrame:
 
-![image](assets/dataframe.PNG)
+![image](assets/dataframe.png)
 
 This would display the first segments of our dataset, showing columns like `MOLWT` (molecular weight), `NUMROTATABLEBONDS` (number of rotatable bonds), `MOLLOGP` (measure of lipophilicity), and `AROMATICPROPORTION` (proportion of aromatic atoms).
 
@@ -132,7 +132,7 @@ df_class = df.groupby('MOLWT_CLASS').mean().reset_index()
 df_class
 ```
 
-![image](assets/df-class.PNG)
+![image](assets/df-class.png)
 
 This aggregation gives us a clear comparison between small and large molecules across all measured properties.
 
@@ -206,7 +206,7 @@ with st.expander('Show Aggregated DataFrame'):
 
 Here's the rendered dashboard:
 
-![image](assets/solubility-dashboard.PNG)
+![image](assets/solubility-dashboard.png)
 
 
 ### Dashboard Components
