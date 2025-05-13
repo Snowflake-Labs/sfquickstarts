@@ -26,7 +26,7 @@ This guide is designed to help you understand the capabilities included in Snowf
 - How to apply governance policies on an Iceberg Table
 - How Snowpark can be used for Iceberg Table pipelines
 - How to share an Iceberg Table
-- How to access a Snowflake-managed Iceberg Table from DuckDB
+- How to access a Snowflake-managed Iceberg Table from Spark and DuckDB
 
 ### Prerequisites or What You Will Need 
 - A Snowflake account. A [free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) will suffice. [Standard Edition](https://docs.snowflake.com/en/user-guide/intro-editions#standard-edition) will work for most of this lab, but if you’d like to try governance features covered in section 4, you will need [Enterprise](https://docs.snowflake.com/en/user-guide/intro-editions#enterprise-edition) or [Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#business-critical-edition).
@@ -36,7 +36,7 @@ This guide is designed to help you understand the capabilities included in Snowf
 ## Setup Your Environment
 Duration: 10
 
-### Install Conda, Spark, Jupyter
+### Install Conda, Spark, DuckDB, Jupyter
 
 In this quickstart, you can use Conda to easily create a development environment and download necessary packages. This is only needed if you choose to follow the last section for using Spark to read Snowflake-managed Iceberg Tables. This is not required to create or use Iceberg Tables on Snowflake. Here are instructions for installing Conda:
 - [Mac](https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html)
@@ -232,7 +232,7 @@ USE ROLE iceberg_lab;
 USE DATABASE iceberg_lab;
 USE SCHEMA iceberg_lab;
 
-CREATE OR REPLACE ROW ACCESS POLICY rap_nation
+CREATE ROW ACCESS POLICY rap_nation
 AS (nation_key number) RETURNS BOOLEAN ->
   ('TPCH_US' = current_role() and nation_key = 24) OR
   ('TPCH_INTL' = current_role() and nation_key != 24)
