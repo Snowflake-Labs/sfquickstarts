@@ -20,41 +20,29 @@ Snowflake ML is the integrated set of capabilities for end-to-end machine learni
 Capabilities for model development and inference include: 
 - **Snowflake Notebooks** for a familiar, easy-to-use notebook interface that blends Python, SQL, and Markdown
 - **Container Runtime** for distributed compute on CPUs and GPUs from Snowflake Notebooks. This quickstart does not showcase container runtime but you can try it with this [intro quickstart](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#4). 
-- **Snowflake ML APIs** for feature engineering and model training with familiar Python frameworks
+- **Snowflake ML APIs** for distributed feature engineering, distributed training, and distributed hyperparameter optimization
 - **Snowflake Feature Store** for continuous, automated refreshes on batch or streaming data
 - **Snowflake Model Registry** to manage models and their metadata, with model serving for inference with CPUs or GPUs
 - **ML Lineage** to trace end-to-end feature and model lineage 
 - **ML Explainability** to better understand the features the model considers most impactful when generating predictions
 - **ML Monitoring** to monitor performance metrics for models running inference in Snowflake
 
-![snowflake_ml_overview](assets/snowpark_ml_overview.png)
+![snowflake_ml_overview](assets/snowflake_ml_overview.png)
 
-To get started with Snowflake ML, developers can use the Python APIs from the [Snowflake ML library](https://docs.snowflake.com/en/developer-guide/snowflake-ml/snowpark-ml), directly from Snowflake Notebooks or downloaded and installed into any IDE of choice, including Jupyter or Hex. 
-
-**Feature Engineering and Preprocessing:** Improve performance and scalability with distributed execution for common scikit-learn preprocessing functions.
-
-**Model Training:** Accelerate model training for scikit-learn, XGBoost and LightGBM models, and leverage distributed hyperparameter optimization.
-
-![snowpark_ml_modeling_overview](assets/snowpark_ml_modeling_overview.png)
-
-**Model Management, Batch Inference, and Model Explainability:** Manage several types of ML models created both within and outside Snowflake, execute batch inference, and understand features the model considers most impactful when generating predictions.
-
-![snowflake_model_registry](assets/snowflake_model_registry.png)
+To get started with Snowflake ML, developers can use the Python APIs from the [Snowflake ML library](https://docs.snowflake.com/en/developer-guide/snowflake-ml/snowpark-ml), directly from Snowflake Notebooks. 
 
 **Snowflake ML provides the following advantages:**
-- Transform your data and train your models using popular Python ML frameworks such as scikit-learn, xgboost, and lightgbm without moving data out of Snowflake
+- Transform your data and train your models using open-source Python ML frameworks such as scikit-learn and xgboost
 - Streamline model management and batch inference with built-in versioning support and role-based access control catering to both Python and SQL users
 - Keep your ML pipeline running within Snowflake's security and governance perimeters
 - Take advantage of the performance and scalability of Snowflake's scalable computing platform.
-
-The first batch of algorithms provided in Snowpark ML Modeling is based on [scikit-learn](https://scikit-learn.org/stable/) preprocessing transformations from [sklearn.preprocessing](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.preprocessing  ), as well as estimators that are compatible with those in the scikit-learn, xgboost, and lightgbm libraries.
 
 Learn more about model development with [Snowflake ML APIs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/snowpark-ml) and deployment with the [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops).
 
 ### What you will learn 
 This quickstart will focus on building a custom ML workflow using the following features: 
 - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks), which comes pre-integrated with Snowflake ML capabilities 
-- [Snowflake ML APIs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-modeling), which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake.
+- [Snowflake ML Distributed Preprocessing APIs](https://docs.snowflake.com/developer-guide/snowflake-ml/modeling#distributed-preprocessing) for feature engineering.
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops), which provides scalable and secure model management of ML models - whether you trained them in Snowflake or another ML platform. Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features. It also includes an [explainability function](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-explainability) based on [Shapley values](https://towardsdatascience.com/the-shapley-value-for-ml-models-f1100bff78d1).
 
 ### Prerequisites
@@ -68,21 +56,39 @@ This quickstart will focus on building a custom ML workflow using the following 
 - A set of notebooks leveraging Snowflake ML for Python:
     - to load and clean data
     - to perform features transformations on the data using Snowpark ML transformers
-    - to train an XGBoost ML model using Snowpark ML estimators
+    - to train an XGBoost ML model
     - to log models and execute batch inference in Snowflake using the Snowflake Model Registry
     - to apply a built-in explainability function to understand model performance 
     - to manage model metadata and trace machine learning artifacts via Snowflake Datasets and ML Lineage
-
-![E2E ML Workflow with Snowflake ML](assets/snowflake_ml_e2e.png)
 
 <!-- ------------------------ -->
 ## Using Snowflake Notebooks
 Duration: 2
 
-To get started using Snowflake Notebooks, first login to Snowsight and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/scripts/setup.sql) in a SQL worksheet (we need to create the database, warehouse, schema, etc. that we will use for our ML project).
+To get started using Snowflake Notebooks, first login to Snowsight and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/scripts/setup.sql) in a SQL worksheet. This will connect to the git repo where all the Snowflake Notebooks are stored and create them for you in your Snowflake environment.
 
 ```sql
-USE ROLE SYSADMIN;
+USE ROLE ACCOUNTADMIN;
+SET USERNAME = (SELECT CURRENT_USER());
+SELECT $USERNAME;
+
+-- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
+CREATE OR REPLACE ROLE ML_MODEL_HOL_USER;
+GRANT ROLE ML_MODEL_HOL_USER to USER identifier($USERNAME);
+
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE ML_MODEL_HOL_USER; 
+GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT CREATE ROLE ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT MANAGE GRANTS ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT CREATE APPLICATION PACKAGE ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT CREATE APPLICATION ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+GRANT IMPORT SHARE ON ACCOUNT TO ROLE ML_MODEL_HOL_USER;
+
+USE ROLE ML_MODEL_HOL_USER;
+
 CREATE OR REPLACE WAREHOUSE ML_HOL_WH; --by default, this creates an XS Standard Warehouse
 CREATE OR REPLACE DATABASE ML_HOL_DB;
 CREATE OR REPLACE SCHEMA ML_HOL_SCHEMA;
@@ -97,40 +103,88 @@ CREATE FILE FORMAT IF NOT EXISTS ML_HOL_DB.ML_HOL_SCHEMA.CSVFORMAT
 CREATE STAGE IF NOT EXISTS ML_HOL_DB.ML_HOL_SCHEMA.DIAMONDS_ASSETS 
     FILE_FORMAT = ML_HOL_DB.ML_HOL_SCHEMA.CSVFORMAT 
     URL = 's3://sfquickstarts/intro-to-machine-learning-with-snowpark-ml-for-python/diamonds.csv';
-    -- https://sfquickstarts.s3.us-west-1.amazonaws.com/intro-to-machine-learning-with-snowpark-ml-for-python/diamonds.csv
 
-LS @DIAMONDS_ASSETS;
+-- create network rule to allow all external access from Notebook
+CREATE OR REPLACE NETWORK RULE allow_all_rule
+  TYPE = 'HOST_PORT'
+  MODE= 'EGRESS'
+  VALUE_LIST = ('0.0.0.0:443','0.0.0.0:80');
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION allow_all_integration
+  ALLOWED_NETWORK_RULES = (allow_all_rule)
+  ENABLED = true;
+
+GRANT USAGE ON INTEGRATION allow_all_integration TO ROLE ML_MODEL_HOL_USER;
+
+-- create an API integration with Github
+CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_ML_HOL
+   api_provider = git_https_api
+   api_allowed_prefixes = ('https://github.com/')
+   enabled = true
+   comment='Git integration with Snowflake Demo Github Repository.';
+
+-- create the integration with the Github demo repository
+CREATE OR REPLACE GIT REPOSITORY GITHUB_INTEGRATION_ML_HOL
+   ORIGIN = 'https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python.git'
+   API_INTEGRATION = 'GITHUB_INTEGRATION_ML_HOL' 
+   COMMENT = 'Github Repository';
+
+-- fetch most recent files from Github repository
+ALTER GIT REPOSITORY GITHUB_INTEGRATION_ML_HOL FETCH;
+
+-- copy notebooks into Snowflake & configure runtime settings
+CREATE OR REPLACE NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_DATA_INGEST
+FROM '@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main' 
+MAIN_FILE = 'notebooks/0_start_here.ipynb' 
+QUERY_WAREHOUSE = ML_HOL_WH
+RUNTIME_NAME = 'SYSTEM$BASIC_RUNTIME' 
+COMPUTE_POOL = 'SYSTEM_COMPUTE_POOL_CPU'
+IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
+
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_DATA_INGEST ADD LIVE VERSION FROM LAST;
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_DATA_INGEST SET EXTERNAL_ACCESS_INTEGRATIONS = ('allow_all_integration')
+
+CREATE OR REPLACE NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_FEATURE_TRANSFORM
+FROM '@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main' 
+MAIN_FILE = 'notebooks/1_sf_nb_snowflake_ml_feature_transformations.ipynb' 
+QUERY_WAREHOUSE = ML_HOL_WH
+RUNTIME_NAME = 'SYSTEM$BASIC_RUNTIME' 
+COMPUTE_POOL = 'SYSTEM_COMPUTE_POOL_CPU'
+IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
+
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_FEATURE_TRANSFORM ADD LIVE VERSION FROM LAST;
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_FEATURE_TRANSFORM SET EXTERNAL_ACCESS_INTEGRATIONS = ('allow_all_integration')
+
+CREATE OR REPLACE NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MODELING
+FROM '@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main' 
+MAIN_FILE = 'notebooks/2_sf_nb_snowflake_ml_model_training_inference.ipynb' 
+QUERY_WAREHOUSE = ML_HOL_WH
+RUNTIME_NAME = 'SYSTEM$BASIC_RUNTIME' 
+COMPUTE_POOL = 'SYSTEM_COMPUTE_POOL_CPU'
+IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
+
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MODELING ADD LIVE VERSION FROM LAST;
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MODELING SET EXTERNAL_ACCESS_INTEGRATIONS = ('allow_all_integration')
+
+CREATE OR REPLACE NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MLOPS
+FROM '@ML_HOL_DB.ML_HOL_SCHEMA.GITHUB_INTEGRATION_ML_HOL/branches/main' 
+MAIN_FILE = 'notebooks/3_sf_nb_snowpark_ml_adv_mlops.ipynb' 
+QUERY_WAREHOUSE = ML_HOL_WH
+RUNTIME_NAME = 'SYSTEM$BASIC_RUNTIME' 
+COMPUTE_POOL = 'SYSTEM_COMPUTE_POOL_CPU'
+IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
+
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MLOPS ADD LIVE VERSION FROM LAST;
+ALTER NOTEBOOK ML_HOL_DB.ML_HOL_SCHEMA.ML_HOL_MLOPS SET EXTERNAL_ACCESS_INTEGRATIONS = ('allow_all_integration')
 ```
-
-Now, let's create our first Notebook by importing a `.ipynb` file. First, make sure your current role is `SYSADMIN`. Then, select the Notebooks tab under the Projects dropdown in the left sidebar:
-
-![Notebook Dropdown](./assets/nb_sidebar.png)
-
-Next, click the gray upload/import .ipynb button, and select [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/0_start_here.ipynb) from your local filesystem:
-
-![Notebook Upload](./assets/import_nb.png)
-
-Leave the populated notebook name as-is (or change it if you'd like!), and make sure that the location is set to `ML_HOL_DB` and `ML_HOL_SCHEMA`. Lastly, make sure the Notebook warehouse is `ML_HOL_WH`, and click Create:
-
-![Notebook Config](./assets/create_nb.png)
-
-This will create and open the notebook you just uploaded. 
-
-Now, upload the provided [environment.yml](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/environment.yml) file.
-
-![Environment File Upload](./assets/add_env_file.png)
-
-![Environment File Upload](./assets/upload_env_file.png)
-
-Then, click `Start` and run the Notebook start to finish! 
-
-Repeat this process with all the other Notebooks to see how easy it is to write Python and SQL code in a single, familiar Notebook interface directly in Snowsight!
 
 <!-- ------------------------ -->
 ## Set up the data in Snowflake
 Duration: 7
 
-Open the following notebook in Snowflake Notebooks and run each of the cells: [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/0_start_here.ipynb)
+**Change role to** `ML_MODEL_HOL_USER`
+
+Navigate to `Notebooks` > `ML_HOL_DATA_INGEST`.
 
 Within this notebook, we will clean and ingest the `diamonds` dataset into a Snowflake table from an external stage. The `diamonds` dataset has been widely used in data science and machine learning, and we will use it to demonstrate Snowflake's native data science transformers throughout this quickstart. 
 
@@ -140,7 +194,9 @@ The overall goal of this ML project is to predict the price of diamonds given di
 ## ML Feature Transformations
 Duration: 10
 
-Open the following notebook in Snowflake Notebooks and run each of the cells: [1_sf_nb_snowflake_ml_feature_transformations.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/1_sf_nb_snowflake_ml_feature_transformations.ipynb)
+**Change role to** `ML_MODEL_HOL_USER`
+
+Navigate to `Notebooks` > `ML_HOL_FEATURE_TRANSFORM`.
 
 In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Modeling. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
 
@@ -148,17 +204,21 @@ In this notebook, we will walk through a few transformations on the `diamonds` d
 ## ML Model Training and Inference
 Duration: 15
 
-Open the following notebook in Snowflake Notebooks and run each of the cells: [2_sf_nb_snowflake_ml_model_training_inference.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/2_sf_nb_snowflake_ml_model_training_inference.ipynb)
+**Change role to** `ML_MODEL_HOL_USER`
 
-In this notebook, we will illustrate how to train an XGBoost model with the `diamonds` dataset using the Snowflake ML modeling APIs. We also show how to execute batch inference and model explainability through the Snowflake Model Registry.
+Navigate to `Notebooks` > `ML_HOL_MODELING`.
+
+In this notebook, we will illustrate how to train an XGBoost model with the `diamonds`. We also show how to execute batch inference and model explainability through the Snowflake Model Registry.
 
 <!-- ------------------------ -->
 ## Advanced MLOps: Managing ML Models from Iteration to Production
 Duration: 15
 
-Open the following notebook in Snowflake Notebooks and run each of the cells: [3_sf_nb_snowpark_ml_adv_mlops.ipynb](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/notebooks/3_sf_nb_snowpark_ml_adv_mlops.ipynb)
+**Change role to** `ML_MODEL_HOL_USER`
 
-In this notebook, we will show you how to manage Machine Learning models from experimentation to production using existing (Snowflake ML APIs & Model Registry) and new Snowflake MLOps features:
+Navigate to `Notebooks` > `ML_HOL_MLOPS`.
+
+In this notebook, we will show you how to manage Machine Learning models from experimentation to production using Model Registry as well as:
 - [Snowflake Datasets](https://docs.snowflake.com/en/developer-guide/snowflake-ml/dataset) for creating and managing training data
 - [Snowflake ML Lineage](https://docs.snowflake.com/en/developer-guide/snowflake-ml/ml-lineage) to trace end-to-end data and model lineage 
 
@@ -166,7 +226,7 @@ We will also go more into detail in using the Model Registry API.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake for Machine Learning through the introduction of native model development and operations capabilities to streamline end to end workflows. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code without having to define and deploy stored procedures that package scikit-learn, xgboost, or lightgbm code. You can also manage your models from iteration to production and trace your ML lineage to better understand how machine learning artifacts relate to each other.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake for Machine Learning through the introduction of native model development and operations capabilities to streamline end to end workflows. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code. You can also manage your models from iteration to production and trace your ML lineage to better understand how machine learning artifacts relate to each other.
 
 For more information, check out the resources below:
 
@@ -174,6 +234,7 @@ For more information, check out the resources below:
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python)
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
 - [Snowflake ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
-- [Develop and Manage ML Models with Feature Store and Model Registry](https://quickstarts.snowflake.com/guide/develop-and-manage-ml-models-with-feature-store-and-model-registry/index.html#0)
+- [Build an End-to-End ML Workflow in Snowflake
+](https://quickstarts.snowflake.com/guide/end-to-end-ml-workflow/#0)
 
 <!-- ------------------------ -->
