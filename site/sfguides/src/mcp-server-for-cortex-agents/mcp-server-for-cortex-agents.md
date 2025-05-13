@@ -135,7 +135,7 @@ Add your Cortex Agents server:
 ```json
 {
   "mcpServers": {
-    "cortex-agent": {x
+    "cortex-agent": {
       "command": "uv",
       "args": [
         "--directory",
