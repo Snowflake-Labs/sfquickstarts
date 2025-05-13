@@ -131,9 +131,9 @@ We are going to use aggregated transactions for our relationships. Let's create 
 
 ```sql
 CREATE OR REPLACE TABLE p2p_demo.public.P2P_AGG_TRANSACTIONS (
-	SOURCENODEID NUMBER(38,0),
-	TARGETNODEID NUMBER(38,0),
-	TOTAL_AMOUNT FLOAT
+  SOURCENODEID NUMBER(38,0),
+  TARGETNODEID NUMBER(38,0),
+  TOTAL_AMOUNT FLOAT
 ) AS
 SELECT sourceNodeId, targetNodeId, SUM(transaction_amount) AS total_amount
 FROM p2p_demo.public.P2P_TRANSACTIONS
@@ -237,7 +237,7 @@ ORDER BY
   community_size DESC, fraud_count DESC;
 ```
 You can use plotly as a visualization package and explore more. Nodes that cluster closely represent communities of highly interconnected users. You can immediately spot the tight clusters (possible fraud rings) versus the loosely connected periphery. Find more on exploratory analysis and demos [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics).
-![image](assets/communities%20visualization.png)
+![image](assets/communities_visualization.png)
 
 ##  Conclusions and Resources
 Duration: 2
