@@ -45,7 +45,7 @@ Firstly, to follow along with this quickstart, you can click on [Bioinformatics_
 Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as NumPy, Pandas, Matplotlib, and more! If you need additional packages for this tutorial, click on the Packages dropdown on the top right to add them to your notebook.
 
 <!-- ------------------------ -->
-## Loading and Exploring the Data
+## Load and Explore the Data
 Duration: 10
 
 ### Create a database
@@ -73,7 +73,7 @@ Scroll down, under the "Select or create a database and schema" section, select 
 
 The data table is now available at `CHANINN_DEMO_DATA.PUBLIC.SOLUBILITY`.
 
-### Loading the Delaney Dataset
+### Load the Delaney Dataset
 
 First, we'll load the Delaney solubility dataset from Snowflake using a simple SQL query:
 
@@ -83,7 +83,7 @@ SELECT * FROM CHANINN_DEMO_DATA.PUBLIC.SOLUBILITY
 
 This query retrieves all records from the solubility table. The result is stored in a variable called `sql_data`.
 
-### Converting to Pandas DataFrame
+### Convert to Pandas DataFrame
 
 Next, we'll convert the SQL result to a Pandas DataFrame for easier manipulation and analysis:
 
@@ -111,7 +111,7 @@ This provides statistical summaries for each numerical column, including count, 
 ## Data Preparation and Aggregation
 Duration: 12
 
-### Classifying Molecules by Size
+### Classify Molecules by Size
 
 For our analysis, we'll classify molecules based on their molecular weight:
 - "small" if the molecular weight is less than 300
@@ -123,7 +123,7 @@ This classification will help us compare properties between smaller and larger m
 df['MOLWT_CLASS'] = pd.Series(['small' if x < 300 else 'large' for x in df['MOLWT']])
 ```
 
-### Aggregating Data by Molecular Weight Class
+### Aggregate Data by Molecular Weight Class
 
 Now, let's calculate the average values of various properties for each molecular weight class:
 
@@ -136,7 +136,7 @@ df_class
 
 This aggregation gives us a clear comparison between small and large molecules across all measured properties.
 
-### Analyzing the Results
+### Analyze the Results
 
 The aggregated data reveals interesting patterns:
 - Larger molecules typically have more rotatable bonds
@@ -146,10 +146,10 @@ The aggregated data reveals interesting patterns:
 These insights will form the basis of our visualization dashboard.
 
 <!-- ------------------------ -->
-## Building the Interactive Dashboard
+## Build the Interactive Dashboard
 Duration: 15
 
-### Creating a Streamlit Dashboard
+### Create a Streamlit Dashboard
 
 Now we'll build an interactive dashboard using Streamlit to visualize our findings. Here's the complete code for our dashboard:
 
@@ -221,7 +221,7 @@ Our dashboard includes several key components:
 
 4. **Expandable Data Views**: Provides access to the raw and aggregated data for deeper analysis
 
-### Interpreting the Dashboard
+### Interpret the Dashboard
 
 The dashboard makes it easy to observe how molecular properties change with size:
 
@@ -233,7 +233,7 @@ The dashboard makes it easy to observe how molecular properties change with size
 Users can adjust the molecular weight threshold to explore different classification schemes and see how that affects the property distributions.
 
 <!-- ------------------------ -->
-## Understanding the Dataset
+## Understand the Dataset
 
 Before diving into the code, let's understand what we're working with. The Delaney dataset contains information about various molecules and their properties, including:
 
@@ -249,7 +249,7 @@ These properties are crucial in determining whether a molecule might make a good
 
 Molecular solubility is a critical property in pharmaceutical research that directly impacts whether a drug can effectively reach its target in the human body.
 
-### The Importance of Solubility
+### Importance of Solubility
 
 Solubility refers to a molecule's ability to dissolve in a liquid - specifically in the human bloodstream. If a drug cannot dissolve properly, it cannot be transported to its target site, rendering it ineffective regardless of its other properties.
 
