@@ -79,7 +79,7 @@ Refer to the following below to create a connection:
 ```shell
 Enter connection name: marketing_demo_v3_conn
 Enter account name: ******
-Enter user: [put your username here]
+Enter user: put your username here
 Enter password: [optional]
 Enter role: accountadmin
 Enter warehouse: compute_wh
