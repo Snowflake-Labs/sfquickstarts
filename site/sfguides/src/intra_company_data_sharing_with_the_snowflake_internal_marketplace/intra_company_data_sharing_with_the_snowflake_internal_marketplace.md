@@ -142,7 +142,10 @@ CREATE OR REPLACE USER marketing_admin
 GRANT ROLE marketing_analyst_role TO USER marketing_admin;
 GRANT CREATE SHARE ON ACCOUNT                    TO ROLE marketing_analyst_role;
 GRANT CREATE ORGANIZATION LISTING ON ACCOUNT     TO ROLE marketing_analyst_role;
+
+USE ROLE orgadmin;
 GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE sales_data_scientist_role;
+GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE marketing_analyst_role;
 ```
 
 Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
