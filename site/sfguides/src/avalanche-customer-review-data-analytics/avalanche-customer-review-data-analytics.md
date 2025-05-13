@@ -59,7 +59,7 @@ CREATE STAGE IF NOT EXISTS avalanche_db.avalanche_schema.customer_reviews
 ```
 
 You should see a confirmation message after a stage has been created succesfully:
-![image](assets/create-stage.PNG)
+![image](assets/create-stage.png)
 
 ### Upload data to stage
 Fourthly, download the Avalanche customer review data, which is comprised of customer reviews for a hypothetical winter sports gear company. The customer review data is in DOCX format and can is available as [customer_reviews_docx.zip](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/customer_reviews_docx.zip).
@@ -72,11 +72,11 @@ Then, in the top-right hand corner click on the blue "+ Files" button. Followed 
 
 You'll see a modal pop-up where you can upload the 100 DOCX files:
 
-![image](assets/upload-stage.PNG)
+![image](assets/upload-stage.png)
 
 Afterwards, you'll see the files listed in the main panel. Also make note of the previously mentioned hierarchical list of the database, schema and stage that we navigated through:
 
-![image](assets/upload-files.PNG)
+![image](assets/upload-files.png)
 
 
 ### List contents of a stage
@@ -90,7 +90,7 @@ Next, enter the following in a SQL worksheet:
 
 This should yield the following results output:
 
-![image](assets/list-stage.PNG)
+![image](assets/list-stage.png)
 
 
 <!-- ------------------------ -->
@@ -129,7 +129,7 @@ The `PARSE_DOCUMENT` function is particularly useful for extracting text from va
 
 Running the above query should yield the following table output: 
 
-![image](assets/sql1.PNG)
+![image](assets/sql1.png)
 
 <!-- ------------------------ -->
 ## Reshaping the Data
@@ -158,7 +158,7 @@ The regular expression patterns are designed to match the specific structure of 
 
 The result table should look like the following:
 
-![image](assets/sql2.PNG)
+![image](assets/sql2.png)
 
 ### Applying AI on the Data with Cortex
 
@@ -191,7 +191,7 @@ The sentiment score is a numerical value that indicates the overall sentiment of
 
 Results from the query is shown below:
 
-![image](assets/sql3.PNG)
+![image](assets/sql3.png)
 
 ### Converting SQL Results to a Pandas DataFrame
 
@@ -203,7 +203,7 @@ df = sql_result.to_pandas()
 
 This conversion allows us to use Python's data visualization libraries to create interactive charts and graphs.
 
-![image](assets/df.PNG)
+![image](assets/df.png)
 
 <!-- ------------------------ -->
 ## Create Visualizations
@@ -253,7 +253,7 @@ This chart:
 - Includes tooltips that show the product name and date when hovering over a bar
 - Rotates date labels for better readability
 
-![image](assets/py_bar.PNG)
+![image](assets/py_bar.png)
 
 ### Calculate Product Sentiment Scores
 
@@ -294,7 +294,7 @@ This chart:
 - Uses the same color scheme as the previous chart
 - Includes tooltips that show the product name and average sentiment score
 
-![image](assets/py_product_sentiment.PNG)
+![image](assets/py_product_sentiment.png)
 
 ### Add Download Button
 
@@ -312,7 +312,7 @@ st.download_button(
 
 This button allows users to download a CSV file containing the product name, date, summary, and sentiment score for each review.
 
-![image](assets/py_download.PNG)
+![image](assets/py_download.png)
 
 
 <!-- ------------------------ -->
