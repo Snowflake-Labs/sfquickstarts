@@ -2,7 +2,7 @@ id: autogen-faqs-for-customer-support-snowflake-cortex
 summary: AutoGen FAQs for Customer Support with Snowflake Cortex
 categories: featured,getting-started,data-science-&-ml
 environments: web
-status: Published 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Snowflake Cortex, Customer Support
 author: James Cha-Earley

@@ -41,6 +41,7 @@ across projects.
 
 * A Snowflake account in one of these [regions](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability) and also where [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability) is available. If you do not have one you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
 * A Slack account with access to a workspace where you can install applications. **_NOTE_** _: Slack recommends using a workspace where you won’t disrupt real work getting done —_[ _you can create a new one for free_](https://slack.com/get-started#create) _._
+* Python version >= 3.8, < 3.13
 
 ### What You Will Learn
 
@@ -78,15 +79,19 @@ if __name__ == "__main__":
 ## Setup Snowflake
 <!-- ------------------------ -->
 
-Duration: 5
+Duration: 10
 
-**Step 1:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/setup.sql) to execute all statements in order from top to bottom. This is to to create a database, schema, and table **SUPPORT_TICKETS** with data loaded from AWS S3. And also to create Snowflake managed internal stages for store the semantic model specification file and PDF documents.
+**Step 1:** Clone the [GitHub repo](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack).
 
-**Step 2:** Use [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) to upload [the semantic model spec file](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/support_tickets_semantic_model.yaml) to the **DASH_SEMANTIC_MODELS** stage.
+**Step 2:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/setup.sql) to execute all statements in order from top to bottom. This is to to create a database, schema, and table **SUPPORT_TICKETS** with data loaded from AWS S3. And also to create Snowflake managed internal stages for store the semantic model specification file and PDF documents.
 
-**Step 3:** Use [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) to upload [PDF documents](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/tree/main/data) to the **DASH_PDFS** stage.
+**Step 3:** Use [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) to upload [the semantic model spec file](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/support_tickets_semantic_model.yaml) to the **DASH_SEMANTIC_MODELS** stage.
 
-**Step 4:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [cortex_search_service.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/cortex_search_service.sql) to execute all statements in order from top to bottom. This is to create a Cortex Search service for getting insights from the PDF documents. *NOTE: [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability) is in Public Preview as of 01/12/2025.*
+**Step 4:** Use [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) to upload [PDF documents](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/tree/main/data) to the **DASH_PDFS** stage.
+
+**Step 5:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [cortex_search_service.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/cortex_search_service.sql) to execute all statements in order from top to bottom. This is to create a Cortex Search service for getting insights from the PDF documents. *NOTE: [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability) is in Public Preview as of 01/12/2025.*
+
+**Step 6:** Configure [key-pair authentication](https://docs.snowflake.com/user-guide/key-pair-auth#configuring-key-pair-authentication) and assign the public key to your user in Snowflake and store/save/copy the private key file (**_.p8_**) in your cloned app folder.
 
 > aside negative
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
@@ -94,15 +99,11 @@ Duration: 5
 ## Setup Application
 <!-- ------------------------ -->
 
-Duration: 10
+Duration: 5
 
-**Step 1:** Clone the [GitHub repo](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack).
+**Step 1:** Change or browse to the cloned repo folder **_sfguide-integrate-snowflake-cortex-agents-with-slack_** on your local machine and open the contents of the folder in your favorite IDE — like VS Code.
 
-**Step 2:** Configure [key-pair authentication](https://docs.snowflake.com/user-guide/key-pair-auth#configuring-key-pair-authentication) and assign the public key to your user in Snowflake and store/save/copy the private key file (**_.p8_**) in the cloned folder.
-
-**Step 3:** Change or browse to the cloned repo folder **_sfguide-integrate-snowflake-cortex-agents-with-slack_** on your local machine and open the contents of the folder in your favorite IDE — like VS Code.
-
-**Step 4:** In the same folder, create a new file **.env** and set the following environment variables:
+**Step 2:** In the same folder, create a new file **.env** and set the following environment variables:
 
 ```bash 
 DEMO_DATABASE='DASH_DB'
@@ -113,26 +114,28 @@ DEMO_USER_ROLE='<your-user-role>'
 SEMANTIC_MODEL='@DASH_DB.DASH_SCHEMA.DASH_SEMANTIC_MODELS/support_tickets_semantic_model.yaml'
 SEARCH_SERVICE='DASH_DB.DASH_SCHEMA.vehicles_info'
 ACCOUNT='<your-account-identifier>'
-HOST='<your-org>.snowflakecomputing.com'
+HOST='<your-account-identifier>.snowflakecomputing.com'
 AGENT_ENDPOINT='https://<your-org>-<your-account>.snowflakecomputing.com/api/v2/cortex/agent:run'
 SLACK_APP_TOKEN='<your-slack-app-token>'
 SLACK_BOT_TOKEN='<your-slack-bot-token>'
       
 # You may NOT edit below values  
 RSA_PRIVATE_KEY_PATH='rsa_key.p8'
-MODEL = 'claude-3-5-sonnet'
+MODEL = 'claude-3-7-sonnet'
 ```
 
 > aside negative
-> NOTE: For help with setting **your-account-identifier**, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
+> NOTE: If you get this error *Caused by SSLError(SSLCertVerificationError(1, “[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...*, try adding *<locator.region>*. For additional instructions and help with setting **your-account-identifier**, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
-**Step 5:** In a terminal window, browse to the same cloned folder **_sfguide-integrate-snowflake-cortex-agents-with-slack_** and run the following commands to create Python environment and install the Python packages and dependencies required for the application.
+**Step 3:** In a terminal window, browse to the same cloned folder **_sfguide-integrate-snowflake-cortex-agents-with-slack_** and run the following commands to create Python environment and install the Python packages and dependencies required for the application.
 
 ```bash
 python3 -m venv .venv  
 source .venv/bin/activate  
 pip install -r requirements.txt
 ```
+
+**Step 4:** Browse to your **Slack App** >> navigate to **OAuth & Permissions** on the left >> scroll down to **Scopes**, and then add `files:write` by clicking on **Add an OAuth Scope** button. This is required by the app to generate, save, and display chart image files.
 
 ## Run Application
 <!-- ------------------------ -->
@@ -153,24 +156,18 @@ If all goes well, you should see the following output on the command line.
 
 ### Common Errors
 
-When you run the application as instructed, you may run into some of these
-common issues.
+When you run the application as instructed, you may run into some of these common issues.
 
 ```bash
-Error: snowflake.connector.errors.DatabaseError: 250001 (08001): Failed to connect to DB: xxxxxx.snowflakecomputing.com:443. Incorrect username or password was specified.
+Error: Caused by SSLError(SSLCertVerificationError(1, “[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...
 ```
-
-If you get the above error, make sure DEMO_USER and DEMO_USER_PASSWORD variables in the **_.env_** file are set correctly.
 
 ```bash
 Error: snowflake.connector.errors.InterfaceError: 250003 (08001): 404 Not Found: post https://xxxxx.snowflakecomputing.com:443/session/v1/login-request?request_id=b4e367d4-d8ac-48d3-8e44-96f42defa9c5&request_guid=4f63e07c-e42c-43b8-8f79-f6c577ee0d0e
 ```
 
-If you get the above error, make sure the ACCOUNT variable in the **_.env_** file is set correctly.
-
-> aside positive
-> NOTE: For help with setting the **account name**, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
-
+> aside negative
+> NOTE: If you get the above errors, make sure the ACCOUNT and HOST variables in the **_.env_** file are set correctly. For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 ## Slack It To Me
 <!-- ------------------------ -->

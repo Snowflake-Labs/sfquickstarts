@@ -97,6 +97,7 @@ Duration: 30
 - Click Import .ipynb from the + Notebook dropdown
 - Create a new notebok with the following settings
   - Notebook Location: PARTITIONED_DATABASE, PARTITIONED_SCHEMA
+  - Run on Warehouse
   - Warehouse: PARTITIONED_WH
 - Click Packages in the top right, add `snowflake-ml-python`
 
