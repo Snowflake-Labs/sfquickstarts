@@ -89,7 +89,6 @@ CREATE USER iceberg_lab
 GRANT ROLE iceberg_lab TO USER iceberg_lab;
 SET USERNAME=CURRENT_USER();
 GRANT ROLE iceberg_lab TO USER IDENTIFIER($USERNAME);
-GRANT ROLE accountadmin TO USER iceberg_lab;
 ```
 
 This quickstart guide can be run from Snowflake Worksheets or Notebook. In this example, we will upload an existing notebook (.ipynb) into a Snowflake account. To load the demo notebook into your account, follow these steps:
