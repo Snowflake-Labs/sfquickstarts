@@ -55,40 +55,7 @@ Container Runtime for ML provides several APIs to handle unstructured data, such
 2. Writing to Snowflake:   
    1. SnowflakeTableDatasink \- This class provides snowflake specific [Ray data sink APIs](https://docs.ray.io/en/latest/data/api/doc/ray.data.Datasink.html) to allow customers write the processed dataset into a snowflake table
 
-In this quickstart, we will be using SFStageBinaryFileDataSource and SnowflakeTableDatasink class. The signature of these two classes are as below:
-
-```py
-class SFStageBinaryFileDataSource(
-    stage_location: str,
-    database: Optional[str] = None,
-    schema: Optional[str] = None,
-    file_pattern: Optional[str] = None,
-    local_path: Optional[str] = None,
-)
-```
-
-* stage\_location:. Stage path  
-* database: Database name. Defaults to notebook session's current database   
-* schema: Schema name. Defaults to notebook session's current database   
-* file\_pattern: The file pattern to filter the files in the stage. It supports Unix shell-style wildcards. Example: "\*.flac" will match all files with .png extension Default is to include all files under stage\_location  
-* local\_path: The local path to save the files if you choose to. Defaults to None. None means the file will not be saved to the local disk and the consumption will be through the content file\_binary. Note, in a multi-node cluster, this is not recommended, since files will be only available in the main node. 
-
-```py
-from snowflake.ml.ray.datasink import SnowflakeTableDatasink
-
-datasink = SnowflakeTableDatasink(
-    table_name="MY_TABLE",
-    database = "MY_DB",
-    schema = "MY_SCHEMA",
-    auto_create_table=True,
-    override=True,
-)
-
-# Write a processed dataset back to a snowflake table
-# For example take the Text API processing example above
-label_dataset.write_datasink(datasink, concurrency=4)
-# Now you can query the table in `MY_DB.MY_SCHEMA.MY_TABLE'
-```
+In this quickstart, we will be using SFStageBinaryFileDataSource and SnowflakeTableDatasink class.
 
 ### What model are we using for audio transcription?
 
@@ -198,6 +165,43 @@ To get started, follow these steps:
 Duration: 10
 
 This Notebook linked below demonstrates the distributed inferencing of audio files on Snowflake ML Container Runtime using multiple nodes and multiple GPUs.
+
+In this notebook, we will be using SFStageBinaryFileDataSource and SnowflakeTableDatasink class. The signature of these two classes are as below:
+
+```py
+class SFStageBinaryFileDataSource(
+    stage_location: str,
+    database: Optional[str] = None,
+    schema: Optional[str] = None,
+    file_pattern: Optional[str] = None,
+    local_path: Optional[str] = None,
+)
+```
+
+* stage\_location:. Stage path  
+* database: Database name. Defaults to notebook session's current database   
+* schema: Schema name. Defaults to notebook session's current database   
+* file\_pattern: The file pattern to filter the files in the stage. It supports Unix shell-style wildcards. Example: "\*.flac" will match all files with .png extension Default is to include all files under stage\_location  
+* local\_path: The local path to save the files if you choose to. Defaults to None. None means the file will not be saved to the local disk and the consumption will be through the content file\_binary. Note, in a multi-node cluster, this is not recommended, since files will be only available in the main node. 
+
+```py
+from snowflake.ml.ray.datasink import SnowflakeTableDatasink
+
+datasink = SnowflakeTableDatasink(
+    table_name="MY_TABLE",
+    database = "MY_DB",
+    schema = "MY_SCHEMA",
+    auto_create_table=True,
+    override=True,
+)
+
+# Write a processed dataset back to a snowflake table
+# For example take the Text API processing example above
+label_dataset.write_datasink(datasink, concurrency=4)
+# Now you can query the table in `MY_DB.MY_SCHEMA.MY_TABLE'
+```
+
+
 
 **Audio Processing and Distributed Inferencing Notebook**
 
