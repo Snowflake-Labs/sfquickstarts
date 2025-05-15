@@ -211,7 +211,7 @@ In this notebook, we will illustrate how to train an XGBoost model with the `dia
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake for Machine Learning through the introduction of native model development and operations capabilities to streamline ML development. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake for Machine Learning through the introduction of native model development and operations capabilities. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code.
 
 For more information, check out the resources below:
 
@@ -221,5 +221,6 @@ For more information, check out the resources below:
 - [Snowflake ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
 - [Build an End-to-End ML Workflow in Snowflake
 ](https://quickstarts.snowflake.com/guide/end-to-end-ml-workflow/#0)
+- Check out other Snowflake ML quickstarts [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
 
 <!-- ------------------------ -->
