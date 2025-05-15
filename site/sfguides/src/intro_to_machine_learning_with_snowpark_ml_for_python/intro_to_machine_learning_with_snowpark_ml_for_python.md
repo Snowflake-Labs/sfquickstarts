@@ -11,7 +11,7 @@ tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpar
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will get an introduction to [Snowflake for Machine Learning](https://www.snowflake.com/en/data-cloud/snowflake-ml/). You will set up your Snowflake and Python environments and build an end to end ML workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs.
+Through this quickstart guide, you will get an introduction to [Snowflake for Machine Learning](https://www.snowflake.com/en/data-cloud/snowflake-ml/). You will set up your Snowflake and Python environments and build an ML development workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs.
 
 ### What is Snowflake ML?
 
