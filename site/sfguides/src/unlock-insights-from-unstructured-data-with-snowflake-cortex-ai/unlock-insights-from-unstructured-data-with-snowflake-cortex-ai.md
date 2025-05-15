@@ -18,8 +18,8 @@ This guide demonstrates how to create a Streamlit application running inside Sno
 It shows how to translate, summarize, classify text, generate emails, and even analyze images — all without deploying external infrastructure.
 
 ### Prerequisites
-- Snowflake account
-- ACCOUNTADMIN role
+- A Snowflake account. If you don’t have one, you can sign up for a free trial [here](https://signup.snowflake.com/).
+- The ACCOUNTADMIN role to ensure you have full access for setup and configuration.
 
 ### What You’ll Learn
 - How to create a database, schema, and stage in Snowflake
