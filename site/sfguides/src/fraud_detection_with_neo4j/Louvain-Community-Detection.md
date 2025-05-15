@@ -161,7 +161,7 @@ You can find more information about writing this function in our [documentation]
 You can use this code block as an outline of what you need to fill in:
 
 ```
-CALL Neo4j_GDS_app.graph.louvain('COMPUTE_POOL', {
+CALL neo4j_graph_analytics.graph.louvain('COMPUTE_POOL', {
     'project': {
         'nodeTables': ['EXAMPLE_DB.DATA_SCHEMA.NODES'],
         'relationshipTables': {
