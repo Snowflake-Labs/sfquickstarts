@@ -7,13 +7,13 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
-# **Getting Started with Distributed Multi-Node, Multi GPU Audio Transcription with Snowflake ML Container Runtime**
+# **Distributed Multi-Node and Multi GPU Audio Transcription with Snowflake ML Container Runtime**
 <!-- ------------------------ -->
 ## Overview 
 
 Duration: 10
 
-In this Quickstart guide, we will walk through how to use [Container Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml)  in [Snowflake ML](http://www.snowflake.com/ml) to perform Multi-Node, Multi-GPU audio transcription at limitless scale over multiple audio files.
+In this Quickstart guide, we will walk through how to use [Container Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml) in [Snowflake ML](http://www.snowflake.com/ml) to perform Multi-Node, Multi-GPU audio transcription at limitless scale over multiple audio files.
 
 ### What is Snowflake ML?
 
@@ -40,11 +40,11 @@ Key Features:
 
 ![ContainerRuntime For ML](assets/container_runtime_for_ml.png)
 
-### What is Container Runtime’s architecture ?
+### What is Container Runtime’s architecture?
 
 ![ContainerRuntime Architecture](assets/container_runtime_architecture.png)
 
-### What APIs does Container Runtime have to support Unstructured Data Processing ?
+### What APIs does Container Runtime have to support Unstructured Data Processing?
 
 Container Runtime for ML provides several APIs to handle unstructured data, such as images, text and binary files, from Snowflake Stage and process it in Snowflake's Container Runtime using [Ray Data](https://docs.ray.io/en/latest/data/data.html). These APIs enable efficient unstructured data processing and analysis without the need for complex data movement or transformation. At the time of writing this quickstart, Container Runtime for ML has the following APIs for handling unstructured data:
 
@@ -90,7 +90,7 @@ label_dataset.write_datasink(datasink, concurrency=4)
 # Now you can query the table in `MY_DB.MY_SCHEMA.MY_TABLE'
 ```
 
-### What model are we using for audio transcription ?
+### What model are we using for audio transcription?
 
 Whisper is a state-of-the-art model for automatic speech recognition (ASR) and speech translation, proposed in the paper [Robust Speech Recognition via Large-Scale Weak Supervision](https://huggingface.co/papers/2212.04356) by Alec Radford et al. from OpenAI. Trained on \>5M hours of labeled data, Whisper demonstrates a strong ability to generalise to many datasets and domains in a zero-shot setting.
 
@@ -146,27 +146,27 @@ Complete the following steps to setup your account:
 * Run all the commands to create Snowflake objects (database, schema, warehouse, compute pools and external access integration).
 
 
-## Setup Environment the Audio Processing  using Snowflake Notebook
+## Audio Processing Setup
 <!-- ------------------------ -->
 Duration: 10
 
-We will work with two notebooks. The first one, [Audio Processing \- Setup.ipynb](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Setup.ipynb) the creation of necessary Snowflake objects and data loading from a third-party dataset (Audio Files) in snowflake stage. **Be sure to comply with the dataset's licensing terms and usage guidelines.**
+This notebook linked below covers the creation of snowflake objects and data loading from a third-party dataset (Audio Files) into snowflake stage. **Be sure to comply with the dataset's licensing terms and usage guidelines.**
 
-Notebook Execution: Audio Processing \- Setup.ipynb 
+**Audio Processing Setup Notebook**
 
-To execute the notebook, follow these steps 
+To get started, follow these steps: 
 
 * Download the notebook “Audio Processing \- Setup.ipynb” from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Setup.ipynb)
 
-* Change role to SYSADMIN
+* Navigate to Snowsight and change role to **SYSADMIN**
 
-* Navigate to Projects \> Notebooks in Snowsight
+* Navigate to **Projects** \> **Notebooks** in Snowsight
 
-* Click Import .ipynb from the \+ Notebook dropdown
+* On the top right, click on **Notebook** down arrow and select **Import .ipynb** file from the dropdown menu
 
 * Create a new notebook “Audio Processing \- Setup.ipynb” with the following settings
 
-  * Notebook Location: MULTINODE\_MULTIGPU\_MYDB, AUDIO\_TRANSCRIPTION\_SCH
+ * For the Notebook Location, select MULTINODE\_MULTIGPU\_MYDB database and AUDIO\_TRANSCRIPTION\_SCH schema
 
   * Select Warehouse – ML\_MODEL\_WH
 
@@ -176,7 +176,10 @@ To execute the notebook, follow these steps
 
   * Compute Pool \- AUDIO\_PROCESSING\_CP\_DATA\_DOWNLOAD
 
+  * Click on **Create Button**
+
     
+
 ![Audio Processing Setup](assets/Audio_processing_Setup_create_notebook.png)
 
 * Click the three dots in the top right \> Notebook Settings  
@@ -190,21 +193,27 @@ To execute the notebook, follow these steps
 
 ![Audio Processing Setup Notebook](assets/Audio_processing_notebook.png)
 
-## Audio Processing and Distributed Inferencing in Snowflake Notebook
+## Audio Transcription
 <!-- ------------------------ -->
 Duration: 10
 
+This Notebook linked below demonstrates the distributed inferencing of audio files on Snowflake ML Container Runtime using multiple nodes and multiple GPUs.
+
+**Audio Processing and Distributed Inferencing Notebook**
+
+To get started, follow these steps:
+
 * Download the notebook “Audio Processing \- Distributed Inferencing.ipynb” from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Distributed%20Inferencing.ipynb)
 
-* Change role to SYSADMIN
+* Navigate to Snowsight and change role to **SYSADMIN**
 
-* Navigate to Projects \> Notebooks in Snowsight
+* Navigate to **Projects** \> **Notebooks** in Snowsight
 
-* Click Import .ipynb from the \+ Notebook dropdown
+* On the top right, click on **Notebook** down arrow and select **Import .ipynb** file from the dropdown menu
 
 * Create a new notebook with the following settings
 
-  * Notebook Location: MULTINODE\_MULTIGPU\_MYDB, AUDIO\_TRANSCRIPTION\_SCH
+  * For the Notebook Location, select MULTINODE\_MULTIGPU\_MYDB database and AUDIO\_TRANSCRIPTION\_SCH schema
 
   * Select Warehouse – ML\_MODEL\_WH
 
@@ -213,6 +222,8 @@ Duration: 10
   * Runtime \- Snowflake ML Runtime GPU 1.0
 
   * Compute Pool \- AUDIO\_PROCESSING\_CP\_GPU\_NV\_S\_5\_NODES
+
+  * Click on **Create Button**
 
 ![Audio Processing Distributed Inferencing Notebook](assets/Audio_processing_Distributed_Inferencing_create_notebook.png)
 
@@ -232,6 +243,32 @@ Duration: 10
 - Download the whisper model from OpenAI for distributed inferencing of the audio files  
 - Run distributed inference on the multi-node, multi-GPU audio transcription  
 - Write data to the Snowflake table using Snowflake APIs.
+
+## Value Proposition
+<!-- ------------------------ -->
+Duration: 5
+
+Snowflake ML Container Runtime offers significant value for distributed multi-node, multi-GPU audio transcription. Here are the key benefits:
+
+**Leveraging Powerful Models**: Utilizes state-of-the-art models like Whisper for accurate audio transcription.
+
+**GPU Acceleration**: Supports GPU machine types for faster processing, demonstrated by the example using 5 GPU_NV_S nodes.
+
+**Cost-Effectiveness**: The demo processed approximately 2700 audio files in just 2 minutes using 5 Small GPU nodes on AWS (specifically GPU_NV_S compute family), each costing 0.57 credits/hour. The cost is derived from the Credit Consumption Table 1 (d) highlighted [here](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf)
+
+**Minimal Credit Consumption**: This resulted in a very low cost of only (2/60) * 0.57 = 0.019 credits per node, so 0.095 credits for 5 nodes or $0.285 to transcribe 2700 audio files (based on $3 per credit).
+
+**Speed**: Rapid transcription of a large number of files, significantly reducing processing time.
+
+**Scalability**: Handles large datasets and complex computations efficiently using distributed computing resources.
+
+**Managed Environment**: Eliminates the overhead of managing underlying infrastructure, allowing users to focus on ML projects.
+Integration: Seamlessly combines with Snowflake's ML operations for a cohesive workflow.
+
+**Flexibility**: Pre-installed common ML packages with the option to install custom packages as needed.
+
+**Unstructured Data Processing**: APIs like SFStageBinaryFileDataSource and SnowflakeTableDatasink enable efficient handling of audio files from Snowflake Stage.
+
 
 ## Conclusion and Resources
 
