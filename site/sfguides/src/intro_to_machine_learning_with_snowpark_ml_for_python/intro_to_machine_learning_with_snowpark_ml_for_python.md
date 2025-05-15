@@ -18,8 +18,7 @@ Through this quickstart guide, you will get an introduction to [Snowflake for Ma
 Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 Capabilities for model development and inference include: 
-- **Snowflake Notebooks** for a familiar, easy-to-use notebook interface that blends Python, SQL, and Markdown
-- **Container Runtime** for distributed compute on CPUs and GPUs from Snowflake Notebooks. This quickstart does not showcase container runtime but you can try it with this [intro quickstart](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#4). 
+- **Snowflake Notebooks on Container Runtime** for a familiar notebook interface that runs on scalable compute optimized for efficient data loading and distributed model training and hyperparameter tuning over multiple CPUs or GPUs.
 - **Snowflake ML APIs** for distributed feature engineering, distributed training, and distributed hyperparameter optimization
 - **Snowflake Feature Store** for continuous, automated refreshes on batch or streaming data
 - **Snowflake Model Registry** to manage models and their metadata, with model serving for inference with CPUs or GPUs
@@ -50,16 +49,16 @@ This quickstart will focus on building a custom ML workflow using the following 
     > aside positive
     >
     >Download the [git repo](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python)
-- A Snowflake account login with a role that has the ability to create database, schema, tables, stages, user-defined functions, and stored procedures. If not, you will need to register for [a free trial](https://signup.snowflake.com/) or use a different role.
+- A Snowflake Account. Sign up for a 30-day [free trial](https://signup.snowflake.com/) account, if required.
 
 ### What You’ll Build 
-- A set of notebooks leveraging Snowflake ML for Python:
+- A set of Snowflake Notebook on Container Runtime for Python:
+
     - to load and clean data
     - to perform features transformations on the data using Snowpark ML transformers
     - to train an XGBoost ML model
     - to log models and execute batch inference in Snowflake using the Snowflake Model Registry
     - to apply a built-in explainability function to understand model performance 
-    - to manage model metadata and trace machine learning artifacts via Snowflake Datasets and ML Lineage
 
 <!-- ------------------------ -->
 ## Using Snowflake Notebooks
@@ -198,7 +197,7 @@ Duration: 10
 
 Navigate to `Notebooks` > `ML_HOL_FEATURE_TRANSFORM`.
 
-In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowpark ML Modeling. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
+In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowflake ML APIs. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
 
 <!-- ------------------------ -->
 ## ML Model Training and Inference
@@ -211,22 +210,8 @@ Navigate to `Notebooks` > `ML_HOL_MODELING`.
 In this notebook, we will illustrate how to train an XGBoost model with the `diamonds`. We also show how to execute batch inference and model explainability through the Snowflake Model Registry.
 
 <!-- ------------------------ -->
-## Advanced MLOps: Managing ML Models from Iteration to Production
-Duration: 15
-
-**Change role to** `ML_MODEL_HOL_USER`
-
-Navigate to `Notebooks` > `ML_HOL_MLOPS`.
-
-In this notebook, we will show you how to manage Machine Learning models from experimentation to production using Model Registry as well as:
-- [Snowflake Datasets](https://docs.snowflake.com/en/developer-guide/snowflake-ml/dataset) for creating and managing training data
-- [Snowflake ML Lineage](https://docs.snowflake.com/en/developer-guide/snowflake-ml/ml-lineage) to trace end-to-end data and model lineage 
-
-We will also go more into detail in using the Model Registry API.
-
-<!-- ------------------------ -->
 ## Conclusion and Resources
-Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake for Machine Learning through the introduction of native model development and operations capabilities to streamline end to end workflows. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code. You can also manage your models from iteration to production and trace your ML lineage to better understand how machine learning artifacts relate to each other.
+Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase Snowflake for Machine Learning through the introduction of native model development and operations capabilities to streamline ML development. Now, you can run data preprocessing, feature engineering, model training, and batch inference in a few lines of code.
 
 For more information, check out the resources below:
 
