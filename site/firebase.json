@@ -241,11 +241,6 @@
       "source": "guide/developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
-    },
-    {
-      "source": "guide/getting_started_with_snowpark_for_machine_learning_on_vertexai/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
     }
     ]
   }
