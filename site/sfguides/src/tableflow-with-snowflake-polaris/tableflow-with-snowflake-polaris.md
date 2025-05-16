@@ -166,7 +166,7 @@ Let’s get started.
 
 - Repeat this process to create another Datagen Source using the **Stock Trades** sample dataset. Once you have a connector, you should see the option to \+ **Add Connector** at the top right. Use this button to create a new datagen connector. 
 
-![][assets/image19.png]
+![](assets/image19.png)
 
 - Use the **Stock trades** dataset this time. Click **Launch.**
 
