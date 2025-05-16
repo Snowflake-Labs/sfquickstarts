@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
-# Getting Started with Snowflake ML
+# Getting Started with ML Development in Snowflake
 <!-- ------------------------ -->
 ## Overview 
 
@@ -21,10 +21,11 @@ Capabilities for model development and inference include:
 - **Snowflake Notebooks on Container Runtime** for a familiar notebook interface that runs on scalable compute optimized for efficient data loading and distributed model training and hyperparameter tuning over multiple CPUs or GPUs.
 - **Snowflake ML APIs** for distributed feature engineering, distributed training, and distributed hyperparameter optimization
 - **Snowflake Feature Store** for continuous, automated refreshes on batch or streaming data
+- **ML Jobs** to easily deploy and orchestrate ML pipelines over Snowflake data from any IDE of choice
 - **Snowflake Model Registry** to manage models and their metadata, with model serving for inference with CPUs or GPUs
 - **ML Lineage** to trace end-to-end feature and model lineage 
 - **ML Explainability** to better understand the features the model considers most impactful when generating predictions
-- **ML Monitoring** to monitor performance metrics for models running inference in Snowflake
+- **ML Observability** to monitor performance metrics for models running inference in Snowflake
 
 ![snowflake_ml_overview](assets/snowflake_ml_overview.png)
 
@@ -40,8 +41,8 @@ Learn more about model development with [Snowflake ML APIs](https://docs.snowfla
 
 ### What you will learn 
 This quickstart will focus on building a custom ML workflow using the following features: 
-- [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks), which comes pre-integrated with Snowflake ML capabilities 
-- [Snowflake ML Distributed Preprocessing APIs](https://docs.snowflake.com/developer-guide/snowflake-ml/modeling#distributed-preprocessing) for feature engineering.
+- [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks), which comes pre-integrated with Snowflake ML capabilities.
+- [Snowflake ML APIs](https://docs.snowflake.com/developer-guide/snowflake-ml/modeling#distributed-preprocessing) for distributed feature engineering and model training.
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops), which provides scalable and secure model management of ML models - whether you trained them in Snowflake or another ML platform. Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features. It also includes an [explainability function](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-explainability) based on [Shapley values](https://towardsdatascience.com/the-shapley-value-for-ml-models-f1100bff78d1).
 
 ### Prerequisites
@@ -52,19 +53,19 @@ This quickstart will focus on building a custom ML workflow using the following 
 - A Snowflake Account. Sign up for a 30-day [free trial](https://signup.snowflake.com/) account, if required.
 
 ### What You’ll Build 
-- A set of Snowflake Notebook on Container Runtime for Python:
+- A set of Snowflake Notebook on Container Runtime:
 
     - to load and clean data
-    - to perform features transformations on the data using Snowpark ML transformers
+    - to perform features transformations on the data
     - to train an XGBoost ML model
-    - to log models and execute batch inference in Snowflake using the Snowflake Model Registry
+    - to log models and execute batch inference in Snowflake
     - to apply a built-in explainability function to understand model performance 
 
 <!-- ------------------------ -->
 ## Using Snowflake Notebooks
 Duration: 2
 
-To get started using Snowflake Notebooks, first login to Snowsight and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/scripts/setup.sql) in a SQL worksheet. This will connect to the git repo where all the Snowflake Notebooks are stored and create them for you in your Snowflake environment.
+To get started using Snowflake Notebooks, first login to Snowsight and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/scripts/setup.sql) in a SQL worksheet. Sign up for a 30-day [free trial](https://signup.snowflake.com/) account, if required. This will connect to the git repo where all the Snowflake Notebooks are stored and create them for you in your Snowflake environment.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -197,7 +198,7 @@ Duration: 10
 
 Navigate to `Notebooks` > `ML_HOL_FEATURE_TRANSFORM`.
 
-In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowflake ML APIs. We will also build a preprocessing pipeline to be used in the ML modeling notebook.
+In this notebook, we will walk through a few transformations on the `diamonds` dataset that are included in the Snowflake ML APIs. We will also build a preprocessing pipeline to be used in the notebook.
 
 <!-- ------------------------ -->
 ## ML Model Training and Inference
@@ -219,7 +220,7 @@ For more information, check out the resources below:
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python)
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
 - [Snowflake ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
-- [Build an End-to-End ML Workflow in Snowflake
+- [Quickstart: Build an End-to-End ML Workflow in Snowflake
 ](https://quickstarts.snowflake.com/guide/end-to-end-ml-workflow/#0)
 - Check out other Snowflake ML quickstarts [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
 
