@@ -7,16 +7,16 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
-# Finding Fraudulent Communities with Neo4j
+# Finding Fraudulent Communities With Neo4j
 <!-- ------------------------ -->
 ## Overview
 Duration: 2
 
-### What is Neo4j Graph Analytics for Snowflake? 
+### What Is Neo4j Graph Analytics For Snowflake? 
 
 Neo4j helps organizations find hidden relationships and patterns across billions of data connections deeply, easily, and quickly. **Neo4j Graph Analytics for Snowflake** brings to the power of graph directly to Snowflake, allowing users to run 65+ ready-to-use algorithms on their data, all without leaving Snowflake! 
 
-### Discovering Communities in P2P Fraud
+### Discovering Communities In P2P Fraud
 P2P Fraud Losses are Skyrocketing. 8% of banking customers reported being victims of P2P Scams in the past year, and the average loss to these scams was $176.
 
 Finding different communities within P2P transactions is the first step towards identifying and ultimately ending P2P fraud. 
@@ -25,7 +25,7 @@ Finding different communities within P2P transactions is the first step towards 
 - The Native App [Neo4j Graph Analytics](https://app.snowflake.com/marketplace/listing/GZTDZH40B6/neo4j-neo4j-graph-analytics) for Snowflake
   
 ### What You Will Need
-- Active Snowflake account with appropriate access to databases and schemas.
+- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts) with appropriate access to databases and schemas.
 - Neo4j Graph Analytics application installed from the Snowflake marketplace. Access the marketplace via the menu bar on the left hand side of your screen, as seen below:
 ![image](assets/marketplace.png)
 
@@ -37,14 +37,8 @@ Finding different communities within P2P transactions is the first step towards 
 - How to use community detection to identify fraud
 - How to read and write directly from and to your snowflake tables
 
-### Import the Notebook
-- We’ve provided a Colab notebook to walk you through each SQL and Python step—no local setup required!
-- Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/tree/main/QuickStarts/Python%20Notebooks), and import the notebook into snowflake.
-  ![image](assets/followalong.png)
-- Don't forget to install streamlit and python package before you run. 
-
 <!-- ------------------------ -->
-## Loading the Data
+## Loading The Data
 Duration: 5
 
 Dataset overview : This dataset is modelled to design and analyze a peer to peer transaction network to identify fraudulent activity using graph analytics. 
@@ -60,6 +54,14 @@ Follow the steps found [here](https://docs.snowflake.com/en/user-guide/data-load
 
 <!-- ------------------------ -->
 ## Setting Up
+
+### Import The Notebook
+- We’ve provided a Colab notebook to walk you through each SQL and Python step—no local setup required!
+- Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/tree/main/QuickStarts/Python%20Notebooks), and import the notebook into snowflake.
+  ![image](assets/followalong.png)
+- Don't forget to install streamlit and python package before you run.
+
+### Permissions
 Before we run our algorithms, we need to set the proper permissions. But before we get started granting different roles, we need to ensure that you are using `accountadmin` to grant and create roles. Lets do that now:
 
 ```sql
@@ -67,14 +69,14 @@ Before we run our algorithms, we need to set the proper permissions. But before 
 use role accountadmin;
 ```
 
-Next let's set up the necessary roles, permissions, and resource access to enable Graph Analytics to operate on data within the `p2p_demo.public schema`. It creates a consumer role (gds_role) for users and administrators, grants the GDS application access to read from and write to tables and views, and ensures that future tables are accessible. 
+Next let's set up the necessary roles, permissions, and resource access to enable Graph Analytics to operate on data within the `p2p_demo.public schema`. It creates a consumer role (gds_role) for users and administrators, grants the Neo4j Graph Analytics application access to read from and write to tables and views, and ensures that future tables are accessible. 
 
 It also provides the application with access to the required compute pool and warehouse resources needed to run graph algorithms at scale.
 
 ```sql
 USE SCHEMA P2P_DEMO.PUBLIC;
 
--- Create a consumer role for users and admins of the GDS application
+-- Create a consumer role for users and admins of the Neo4j Graph Analytics application
 CREATE ROLE IF NOT EXISTS gds_user_role;
 CREATE ROLE IF NOT EXISTS gds_admin_role;
 GRANT APPLICATION ROLE neo4j_graph_analytics.app_user TO ROLE gds_user_role;
@@ -116,11 +118,11 @@ Duration: 5
 
 We need our data to be in a particular format in order to work with Graph Analytics. In general it should be like so:
 
-### For the table representing nodes:
+### For The Table Representing Nodes:
 
 The first column should be called `nodeId`, which represents the ids for the each node in our graph
 
-### For the table representing relationships:
+### For The table Representing Relationships:
 
 We need to have columns called `sourceNodeId` and `targetNodeId`. These will tell Graph Analytics the direction of the transaction, which in this case means:
 - Who sent the money (sourceNodeId) and
@@ -131,9 +133,9 @@ We are going to use aggregated transactions for our relationships. Let's create 
 
 ```sql
 CREATE OR REPLACE TABLE p2p_demo.public.P2P_AGG_TRANSACTIONS (
-  SOURCENODEID NUMBER(38,0),
-  TARGETNODEID NUMBER(38,0),
-  TOTAL_AMOUNT FLOAT
+	SOURCENODEID NUMBER(38,0),
+	TARGETNODEID NUMBER(38,0),
+	TOTAL_AMOUNT FLOAT
 ) AS
 SELECT sourceNodeId, targetNodeId, SUM(transaction_amount) AS total_amount
 FROM p2p_demo.public.P2P_TRANSACTIONS
@@ -151,7 +153,7 @@ CREATE OR REPLACE VIEW p2p_users_vw (nodeId) AS
 ```
 <!-- ------------------------ -->
 
-## Running your Algorithms
+## Running Your Algorithms
 Duration: 10
 
 Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run louvain to determine communities within our data. Louvain identifies communities by grouping together nodes that have more connections to each other than to nodes outside the group.
@@ -239,19 +241,19 @@ ORDER BY
 You can use plotly as a visualization package and explore more. Nodes that cluster closely represent communities of highly interconnected users. You can immediately spot the tight clusters (possible fraud rings) versus the loosely connected periphery. Find more on exploratory analysis and demos [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics).
 ![image](assets/communities_visualization.png)
 
-##  Conclusions and Resources
+##  Conclusions And Resources
 Duration: 2
 
 In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics. 
 
-### What you learned
+### What You Learned
 By working with a P2P transaction dataset, you were able to:
 
-1. Set up the [Neo4j Graph Analytics](https://app.snowflake.com/marketplace/listing/GZTDZH40CN) application within Snowflake.
+1. Set up the [Neo4j Graph Analytics](https://app.snowflake.com/marketplace/listing/GZTDZH40CN/neo4j-neo4j-graph-analytics) application within Snowflake.
 2. Prepare and project your data into a graph model (users as nodes, transactions as relationships).
 3. Ran Louvain community detection to identify clusters of users with high internal interaction.
 
 ### Resources
 
-- [Neo4j GDS Documentation](https://neo4j.com/docs/snowflake-graph-analytics/)
-- [Installing Neo4j GDS on SPCS](https://neo4j.com/docs/snowflake-graph-analytics/installation/)
+- [Neo4j Graph Analytics Documentation](https://neo4j.com/docs/snowflake-graph-analytics/)
+- [Installing Neo4j Graph Analytics on SPCS](https://neo4j.com/docs/snowflake-graph-analytics/installation/)
