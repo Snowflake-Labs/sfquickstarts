@@ -1,13 +1,13 @@
 author: Jeremy Ber, Sean Falconer
-id: snowflake-confluent-tableflow-quickstart
-summary: Build a real-time data pipeline connecting Apache Kafka with Snowflake using Confluent Cloud and Tableflow.
+id: snowflake-confluent-tableflow-iceberg
+summary: Build a real-time data pipeline connecting Apache Kafka with Snowflake using Confluent Cloud and Tableflow in Iceberg format
 categories: getting-started, confluent, streaming, real-time, tableflow, kafka, flink, polaris, snowflake
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Confluent, Kafka, Polaris, Snowflake, Tableflow, Iceberg, Flink
 
-# Snowflake + Confluent Tableflow Quickstart
+# Stream Kafka Data to Snowflake via Confluent Tableflow and Iceberg
 
 ## Overview
 
