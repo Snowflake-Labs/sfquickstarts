@@ -22,7 +22,7 @@ P2P Fraud Losses are Skyrocketing. 8% of banking customers reported being victim
 Finding different communities within P2P transactions is the first step towards identifying and ultimately ending P2P fraud. 
 
 ### Prerequisites
-- The Native App [Neo4j Graph Analytics](https://app.snowflake.com/marketplace/listing/GZTDZH40B6/neo4j-neo4j-graph-analytics) for Snowflake
+- The Native App [Neo4j Graph Analytics](https://app.snowflake.com/marketplace/listing/GZTDZH40CN) for Snowflake
   
 ### What You Will Need
 - A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts) with appropriate access to databases and schemas.
