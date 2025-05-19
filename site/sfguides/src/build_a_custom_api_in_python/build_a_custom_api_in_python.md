@@ -233,6 +233,10 @@ spec:
   - name: api
     port: 8001
     public: true
+serviceRoles:
+- name: api_sr
+  endpoints:
+  - api
 $$
 QUERY_WAREHOUSE = DATA_API_WH;
 
@@ -275,90 +279,123 @@ There are 2 forms below that. The first one allows you to enter parameters to te
 When you hit the `Submit` button, the API endpoint is called and the data is returned to the web page.
 
 <!-- ------------------------ -->
-## Making the API Public
-Duration: 3
+## Programmatic Access
+Duration: 5
 
-For the next steps you will need a ngrok token. To get a token, go to [ngrok](https://ngrok.com) and Sign up for a free account. After registration you can get your authtoken in the UI under Getting Stared.
+In many situations we want to access this data API from another process outside of Snowflake programmatically. To do this, we will need a way to programmatically authenticate to Snowflake
+to allow access to the SPCS endpoint. There are a number of ways to do this today, but we will focus on using Programmatic Access Tokens (PAT), one of the simpler ways. 
 
-The service created will need network access to ngrok to create the tunnel. To do this, you'll need a new network rule, an external access integration and to use that integration in the service.
-
-In order for the container to get your ngrok token, you'll also need to add it to the service environment. Make sure to replace <YOUR_NGROK_AUTHTOKEN> with your token.
-
-Run the following commands in the Snowflake console or using SnowSQL.
+Regardless of the authenictation method, the best practice is to create a user specifically for accessing this API endpoint, as well as a role for that user. To do this, run the following
+in SnowSQL or in the Snowflake console:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
-CREATE OR REPLACE NETWORK RULE NGROK_OUT TYPE=HOST_PORT MODE = EGRESS VALUE_LIST=('connect.ngrok-agent.com:443');
-
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION NGROK
-ALLOWED_NETWORK_RULES = (NGROK_OUT) ENABLED = TRUE;
-
-GRANT USAGE ON INTEGRATION NGROK TO ROLE DATA_API_ROLE;
-DROP SERVICE API.PUBLIC.API;
-
-USE ROLE DATA_API_ROLE;
-CREATE SERVICE API.PUBLIC.API
-IN COMPUTE POOL API
-FROM SPECIFICATION 
-$$
-spec:
-  container:
-  - name: api
-    image: /api/public/api/dataapi:latest
-    env:
-      NGROK_AUTHTOKEN: <YOUR_NGROK_AUTHTOKEN>
-    resources:                          
-      requests:
-        cpu: 0.5
-        memory: 128M
-      limits:
-        cpu: 1
-        memory: 256M
-  endpoint:
-  - name: api
-    port: 8001
-    public: true
-$$
-QUERY_WAREHOUSE = DATA_API_WH
-EXTERNAL_ACCESS_INTEGRATIONS = (NGROK);
-
-CALL SYSTEM$GET_SERVICE_STATUS('api');
+CREATE ROLE IF NOT EXISTS APIROLE;
+GRANT ROLE APIROLE TO ROLE ACCOUNTADMIN;
+CREATE USER IF NOT EXISTS APIUSER PASSWORD='User123' DEFAULT_ROLE = apirole DEFAULT_SECONDARY_ROLES = ('ALL') MUST_CHANGE_PASSWORD = FALSE;
+GRANT ROLE APIROLE TO USER APIUSER;
 ```
 
-This will deploy a new service which will have public network access and your ngrok key. 
-
-The url of the public service will be in logs after startup.
+Next, we can grant the service role to access the endpoint to the APIROLE we just created:
 
 ```sql
-CALL SYSTEM$GET_SERVICE_LOGS('api.public.api', 0, 'api');
+USE ROLE ACCOUNTADMIN;
+GRANT SERVICE ROLE api!api_sr TO ROLE apirole;
 ```
 
-### Testing using cURL
-The API can be tested using the cURL command-line tool. Make sure to replace the <YOUR_NGROK_URL> in the commands with the url found in the previous step.
+Lastly, we need to create a Programmatic Access Token for the APIUSER.
+### Generating a PAT token via SQL
+You can do this via SQL as follows:
+
+```sql
+USE ROLE ACCOUNTADMIN;
+ALTER USER IF EXISTS apiuser ADD PROGRAMMATIC ACCESS TOKEN api_token;
+```
+
+Copy this PAT token and save it to a file. Save it to a file named `apiuser-token-secret.txt` in the `test/` directory of the cloned/downloaded repo.
+
+### Generating a PAT token via Snowsight
+Alternatively, you can use Snowsight to create the PAT token. Click on the "Admin" option on the sidebar, then the "Users & Roles" option in the sidebar.
+Next, click on the APIUSER user, and scroll down to the "Programmatic access tokens" section. Click the "Generate new token" button, give the token a name
+(such as `api_token`), choose the role `APIROLE` from the pull-down, leave the rest of the defaults, and click "Generate". Click the "Download token" button
+and save the file to the `test/` directory (you can leave the default filename).
+
+<!-- ------------------------ -->
+## Testing Programmatically
+Duration: 5
+
+Next we can test accessing our API programmatically using the PAT token. We cannot use the PAT token directly to access the SPCS endpoint.
+We must exchange the long-lived PAT token for a shorter-lived access token via the `/oauth/token` Snowflake endpoint. We can then use that
+shorter-lived token to access the SPCS endpoint. 
+
+We have 2 applications that demonstrate how to do this.
+
+### Accessing the endpoint via command-line program
+Change to the `test/` directory. In there is a program named `test.py`. You can see the usage instructions by running:
+
+```bash
+python test.py --help
+```
+
+You must supply the following:
+* `ACCOUNT_URL` - this is the URL for your Snowflake account. It should be of the form `<ORGNAME>-<ACCTNAME>.snowflakecomputing.com`.
+* `ROLE` - the role to use when accessing the endpoint. For this example, it should be `APIROLE`.
+* `ENDPOINT` - this is the full URL you are trying to access. E.g., `https://<HASH>-<ORGNAME>-<ACCTNAME>.snowflakecomputing.app/connector/customers/top10`
+
+There are 3 ways to specify the PAT to use:
+1. Use the `--pat` option and supply the full PAT token. E.g., `--pat <PAT>`.
+2. Use the `--patfile` option and supply the filename to the PAT token file. E.g., `--patfile /path/to/patfile`
+3. If you saved your PAT token to this directory, and it ends with `-token-secret.txt` the application will discover it and use it.
+
+For example, your call might look something like:
+
+```bash
+python test.py --account_url 'MYORG-MYACCT.snowflakecomputing.com' --role APIROLE --endpoint 'https://mzbqa5c-myorg-myacct.snowflakecomputing.app/connector/customers/top10'
+```
+
+### Accessing the endpoint via Streamlit
+The repository also contains a Streamlit to access the endpoint. Change to the `test/` directory, and run:
+
+```bash
+python -m streamlit run test_streamlit.py
+```
+
+Enter the account URL, role, and URL in the supplied boxes.
+
+The Streamlit will attempt to detect the PAT in the local directory in a file ending with `-token-secret.txt`. If one is found, it will use that as the PAT. 
+If not, it will show another box to enter the PAT in (the actual PAT value, not the filename).
+
+Enter the necessary items and click "Fetch it!". You will get a status update that it is "Trading PAT for Token..." and then "Getting data..." and then it will
+display the result from SPCS.
+
+### Endpoints
+This API was implemented using both the Snowflake Python Connector and the Snowflake Snowpark for Python package. 
+They both implement the same API routes. The ones implemented with the Snowflke Python Connector are under the `/connector/` route.
+The ones implemented with Snowpark Python are under the `/snowpark/` route.
 
 #### Top 10 Customers
-To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Connector for Python, run:
+To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Connector for Python, use:
 
-```bash
-curl -X GET "https://<YOUR_NGROK_URL>/connector/customers/top10?start_range=1995-02-01&end_range=1995-02-14"
+```
+https://<SPCS_ENDPOINT_URL>/connector/customers/top10?start_range=1995-02-01&end_range=1995-02-14
 ```
 
-To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Snowpark API, run:
-```bash
-curl -X GET "https://<YOUR_NGROK_URL>/snowpark/customers/top10?start_range=1995-02-01&end_range=1995-02-14"
+To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Snowpark API, use:
+```
+https://<SPCS_ENDPOINT_URL>/snowpark/customers/top10?start_range=1995-02-01&end_range=1995-02-14
 ```
 
 If you call the endpoint without specifying the `start_range` then `1995-01-01` will be used. If you call the endpoint without specifying the `end_range` then `1995-03-31` will be used.
 
 #### Monthly sales for a given year for a sales clerk
 To retrieve the monthly sales for clerk `000000002` for the year `1995` using the Snowflake Connector for Python, run:
-```bash
-curl -X GET "https://<YOUR_NGROK_URL>/connector/clerk/000000002/yearly_sales/1995"
+```
+https://<SPCS_ENDPOINT_URL>/connector/clerk/000000002/yearly_sales/1995
 ```
 
 To retrieve the monthly sales for clerk `000000002` for the year `1995` using the Snowflake Snowpark API, run:
-```bash
-curl -X GET "https://<YOUR_NGROK_URL>/snowpark/clerk/000000002/yearly_sales/1995"
+```
+https://<SPCS_ENDPOINT_URL>/snowpark/clerk/000000002/yearly_sales/1995
 ```
 
 <!-- ------------------------ -->
@@ -384,8 +421,8 @@ DROP DATABASE IF EXISTS API;
 DROP ROLE IF EXISTS DATA_API_ROLE;
 DROP COMPUTE POOL IF EXISTS API;
 DROP WAREHOUSE IF EXISTS DATA_API_WH;
-DROP INTEGRATION IF EXISTS NGROK;
-DROP NETWORK RULE IF EXISTS NGROK_OUT;
+DROP USER IF EXISTS APIUSER;
+DROP ROLE IF EXISTS APIROLE;
 ```
 
 <!-- ------------------------ -->
