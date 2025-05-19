@@ -23,7 +23,7 @@ Sharing information between departments or business units ("domains") of a compa
 ### What You’ll Learn
 
 - How to publish, share, discover, and consume data product with the Snowflake Internal Marketplace
-- How to setup profile for different business units that own the data products
+- How to setup profiles for different business units that own the data products
 - How to manage access to data products, including request & approval workflows 
 - How to configure governance polices for fine-grained access control of data products across business units
 
@@ -147,11 +147,15 @@ GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE sales_data_scientist_ro
 GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE marketing_analyst_role;
 ```
 
-Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
+> aside negative
+> IMPORTANT: You **may** receive an email asking for verification of your email address, if you have not done so before. Check your email inbox for a message from "Snowflake Computing" and validate the email for the `marketing_admin` user. 
 
 While waiting for the email, you can go ahead and run the following parts.
 
-Now, run the following commands to create the next two accounts that you need. You have to **use the same worksheet** as above, as the variables created are reused.
+Now, run the following commands to create the next two accounts that you need. 
+
+> aside negative
+> IMPORTANT: For the commands below, you **have to use the same worksheet** as above, as the variables created are reused (email_var, firstname_var, lastname_var, and pwd_var).
 
 ```sql
 -- Run this code in your PRIMARY account
@@ -262,10 +266,12 @@ SHOW ACCOUNTS;
 Continue working as the `org_admin` user in your Organization Account `HOL_ORG_ACCOUNT` to create data provider profiles. You will set up profiles for 3 business domains: **Sales**, **Marketing**, and **Supply chain**.
 
 - Download the script [`STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql)
-- In that script, replace the dummy email **youremail@whatever.com** with your actual email address so that you  receive access request notifications for your data product. 
+- In that script, replace the dummy email **youremail@whatever.com** with your actual email address so that you  receive access request notifications for your data product. See the image below for more details.
   - Don't worry: it's only a couple of emails and only during this lab.
 
 - Run the downloaded script `STEP5(HOL_ORG_ACCOUNT)_create_org_profiles.sql` in a worksheet.
+
+![Import](assets/ReplaceEmail.png)
 
 ### Step 6: Setup of a TPC-H sample database
 - Download the script [`STEP6(HOL_ACCOUNT1)_create_lab_database.sql`](https://github.com/Snowflake-Labs/sfguide-intra-company-data-sharing-with-the-snowflake-internal-marketplace/blob/main/sql/STEP6(HOL_ACCOUNT1)_create_lab_database.sql) 
