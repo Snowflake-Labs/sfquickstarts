@@ -33,7 +33,6 @@ The dataset is the [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-
 ### What You’ll Need 
 - [Snowflake](https://snowflake.com) Account in an AWS commercial region
 - [GitHub](https://github.com/) Account with credits for Codespaces
-- [ngrok](https://ngrok.com) Account (Optional, needed for Step 10)
 
 ### What You’ll Build 
 - API Powered by Snowflake
@@ -68,9 +67,9 @@ GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
 ## Setting up your Development Environment
 Duration: 3
 
-The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository]](https://github.com/sfc-gh-bculberson/lab_data_api_python).
+The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository]](https://github.com/sfc-gh-bhess/lab_data_api_python).
 
-To create a new codespace, browse to the GitHub [repository](https://github.com/sfc-gh-bculberson/lab_data_api_python) in a browser. You will need to login to GitHub if you are not already logged in to access Codespaces. After logging in, click on the green "<> Code" button and "create codespace on main" button.
+To create a new codespace, browse to the GitHub [repository](https://github.com/sfc-gh-bhess/lab_data_api_python) in a browser. You will need to login to GitHub if you are not already logged in to access Codespaces. After logging in, click on the green "<> Code" button and "create codespace on main" button.
 
 You will then be redirected into Codespaces where your development environment will load and all code from GitHub will be loaded in the project.
 
