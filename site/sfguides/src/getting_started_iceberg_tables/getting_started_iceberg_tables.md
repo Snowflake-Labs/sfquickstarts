@@ -517,7 +517,7 @@ Click **+ Select Data** and navigate to the ICEBERG_LAB database and schema. Sel
 
 ### Accessing Shared Data
 
-In a separate browser tab, login to the reader account previously created. After logging in, as this is a new account, create a new SQL worksheet..
+In a separate browser tab, login to the reader account previously created. After logging in, as this is a new account, create a new SQL worksheet.
 
 ```sql
 USE ROLE accountadmin;
@@ -552,8 +552,17 @@ Suppose other teams use use other engines such as Apache Spark or DuckDB to read
 ### Read with Apache Spark
 From your terminal, run the following commands to activate the virtual environment you created in the setup, and open Jupyter notebooks.
 
-```
+Verify that you are running Java 11 from the output:
+
+```sh
 conda activate iceberg-lab
+export PATH=/opt/anaconda3/envs/iceberg-lab/lib/jvm/bin:$PATH
+java --version
+```
+
+Start Jupyter:
+
+```sh
 jupyter notebook
 ```
 
