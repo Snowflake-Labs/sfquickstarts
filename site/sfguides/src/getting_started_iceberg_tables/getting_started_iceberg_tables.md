@@ -186,6 +186,7 @@ Benefits of the additional metadata that table formats like Iceberg and Snowflak
 Let’s first make a simple update to the table. Then, you can see that the row count has increased compared to the previous version of the table.
 
 ```sql
+SET query_id = LAST_QUERY_ID();
 INSERT INTO customer_iceberg
     SELECT
         *
@@ -199,7 +200,7 @@ SELECT
 FROM customer_iceberg
 JOIN (
         SELECT count(*) AS before_row_count
-        FROM customer_iceberg BEFORE(statement => LAST_QUERY_ID())
+        FROM customer_iceberg AT(STATEMENT=> $query_id)
     )
     ON 1=1
 GROUP BY 2;
@@ -341,7 +342,7 @@ Duration: 5
 
 Raw data in Iceberg tables may require further cleaning, transformation, and aggregation for downstream consumption. Snowflake supports multiple options for building and orchestrating pipelines including:
 - [Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/index): Build and run pipelines with Python, including [support for Iceberg](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrameWriter.save_as_table).
-- [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro): , including [support for Iceberg](https://docs.snowflake.com/en/user-guide/dynamic-tables-create-iceberg).
+- [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro): An automated way to transform data, including [support for Iceberg](https://docs.snowflake.com/en/user-guide/dynamic-tables-create-iceberg).
 - [Streams & Tasks](https://docs.snowflake.com/en/user-guide/data-pipelines-intro): Incorporate CDC and custom orchestration on top of Iceberg tables.
 
 ### Dynamic Tables
