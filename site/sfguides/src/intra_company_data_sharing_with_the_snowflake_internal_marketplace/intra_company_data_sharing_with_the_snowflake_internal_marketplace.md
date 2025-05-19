@@ -120,7 +120,6 @@ GRANT ROLE sales_data_scientist_role TO USER sales_admin;
 GRANT ROLE accountadmin              TO USER sales_admin;  -- for simplicity in this lab
 GRANT CREATE SHARE ON ACCOUNT                    TO ROLE sales_data_scientist_role;
 GRANT CREATE ORGANIZATION LISTING ON ACCOUNT     TO ROLE sales_data_scientist_role;
-GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE sales_data_scientist_role;
 
 
 -- Next, create a user and role for the marketing domain:
@@ -139,7 +138,7 @@ CREATE OR REPLACE USER marketing_admin
   DEFAULT_ROLE = marketing_analyst_role
   COMMENT = 'Marketing domain admin';
 
-GRANT ROLE marketing_analyst_role TO USER marketing_admin;
+GGRANT ROLE marketing_analyst_role TO USER marketing_admin;
 GRANT CREATE SHARE ON ACCOUNT                    TO ROLE marketing_analyst_role;
 GRANT CREATE ORGANIZATION LISTING ON ACCOUNT     TO ROLE marketing_analyst_role;
 
@@ -256,6 +255,7 @@ SHOW ACCOUNTS;
 -- Make a note of your account names, URLs, and passwords!
 ```
 
+![Import](assets/show_accounts.png)
 
 
 ### Step 5: Create profiles for the Sales, Marketing, and Supply Chain domains
@@ -296,9 +296,15 @@ Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 
 ### Publishing Flow: Listing Title and Ownership
 
-1. Navigate to the Provider Studio and click the blue **+Create Listing** button in the top right. Select "Internal Marketplace".
+1. Navigate to the **Catalog** -> **Internal Marketplace**
+2. Use the **Provider** filter to see data products from a specific domain
+3. Click the blue **+Create Listing** button in the top right. Select "Internal Marketplace".
+    - Note: You can create a listing also from the **Data Sharing** -> **Provider Studio** menu on the left.
+  
+  
 
-![ProviderStudio](assets/ProviderStudio.png)
+
+![IM](assets/CreateListingFromIM.png)
 ###
 ---
 2. Give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
@@ -317,7 +323,7 @@ Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 ### Publishing Flow: Selecting Data Objects to Share
 
 Now let's select the data objects that we want to share in this data product. 
-- Click on the blue **+Add Data Product** button to open the object explorer. 
+- Click on the blue **Add Data Product** button to open the object explorer. 
 
 - Then, click **+ Select**, navigate to the SF1 schema of the TPCH database, and select all tables except *Region* and *Part*. Also select the ORDER_SUMMARY view and the  function ORDERS_PER_CUSTOMER. Click **Done** and **Save**.
 
@@ -405,7 +411,7 @@ Click the blue **Publish** button in the top right corner.
 
 Your data product is now live! You can see it when you navigate to the Internal Marketplace:
 
-![](assets/Publish10-Done.png)
+![](assets/Publish10-Done-NewUI.png)
 
 ###
 ---
@@ -443,7 +449,7 @@ Let's switch back to the perspective of the data product owner to review and gra
 - Navigate to the **Provider Studio** as shown in the screenshot below and open the tab **Internal Requests**.
 - Click on each of the two requests to review the details and use the green **Grant** button to approve.
 
-![](assets/RAW02.png)
+![](assets/RAW02-newUI.png)
 
 Switch from **Needs Review** to **Resolved Requests** to see the history of requests. 
 
@@ -628,7 +634,7 @@ In this section we will review further capabilities for managing and monitoring 
 - Log into account `HOL_ACCOUNT1` as the `sales_admin` user
 - Navigate to the Provider Studio and open the **Order Insights** listing
 
-    ![](assets/ManageListings-01.png)
+    ![](assets/ManageListings-01-newUI.png)
 
 - In the top right, click on the Access definition of the listing.
 
@@ -642,7 +648,7 @@ In this section we will review further capabilities for managing and monitoring 
 ### How to Grant Listing Management Privileges
 
 - Navigate to the Provider Studio and open the **Order Insights** listing, if it is not still open from the previous exercise.
-- Click on the wheel in the top right corner.
+- Click on the three dots and **Open Settings** in the top right corner.
 - In the side panel you can now edit listing settings and privileges.
 - For example, you can authorize additional roles to *Modify* this listing and respond to access requests from data consumers:
 
