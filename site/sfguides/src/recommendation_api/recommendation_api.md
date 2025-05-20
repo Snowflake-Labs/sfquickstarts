@@ -47,7 +47,7 @@ The dataset for this guide is the [MovieLens 100K Dataset](https://grouplens.org
 
 
 <!-- ------------------------ -->
-## Download the Git repository
+## Download the Git Repository
 Duration: 2
 
 **First**: Go to [GitHub](https://github.com/sfc-gh-lambrosetti/lab_recommender_api) to download the data we'll be using for this lab.
@@ -132,7 +132,7 @@ select * from user_ratings;
 select * from title;
 ```
 
-## Load and Run the Notebook
+## Load / Run the Notebook
 
 On the left nav, go to `Projects` -> `Notebooks` - we'll create a new notebook via the import method.
 
@@ -151,7 +151,7 @@ Select the "RECOMMENDER_NOTEBOOK.ipynb" from the git repo you downloaded and unz
 For the next few steps, you won't need this guide - follow the cells in the notebook and come back to this when you're finished!
 
 <!-- ------------------------ -->
-## Setting up a Warehouse
+## Set up a Warehouse
 Duration: 1
 
 The API needs a warehouse to query the data to return to the caller. To create the database and warehouse, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:
@@ -216,7 +216,7 @@ SHOW IMAGE REPOSITORIES;
 Note the `repository_url` in the response as that will be needed in the next step.
 
 <!-- ------------------------ -->
-## Setting up your Development Environment
+## Set up Dev Environment
 Duration: 3
 
 The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/sfc-gh-lambrosetti/lab_recommender_api).
@@ -271,7 +271,7 @@ Later on, we'll have the opportunity to test the endpoint with and without the i
 While this is only a single endpoint, you can easily add other endpoints as well. Check out how to create other endpoints in a similar version to this guide [here](https://github.com/sfc-gh-bculberson/lab_data_api_python).
 
 <!-- ------------------------ -->
-## Building and Pushing the Application Container
+## Build and Push Container
 Duration: 5
 
 To create the application container, we will leverage docker. The Dockerfile is based on python 3.8 and installs the required libraries needed for the application as well as the code. To create the docker container, run this command in the terminal provided by **Codespaces**:
@@ -294,7 +294,7 @@ docker push {repository_url}/papi
 ```
 
 <!-- ------------------------ -->
-## Creating the Compute Pool
+## Create the Compute Pool
 Duration: 1
 
 To create the compute pool to run the application, go back to **Snowflake** and run the following command in the Snowflake console or using SnowSQL:
@@ -314,7 +314,7 @@ GRANT MONITOR ON COMPUTE POOL API TO ROLE DATA_API_ROLE;
 ```
 
 <!-- ------------------------ -->
-## Creating the Application Service
+## Create the Container Service
 Duration: 1
 
 To create the service to host the application, connect to Snowflake and run the following command in the Snowflake console or using SnowSQL.
@@ -377,7 +377,7 @@ Make note of the ingress_url as that will be needed to test the application. Thi
 
 
 <!-- ------------------------ -->
-## Testing the API
+## Test the API
 Duration: 1
 
 To verify the API is online, go to the `https://{INGRESS_URL}` in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
@@ -396,7 +396,7 @@ When you hit the `Submit` button, the API endpoint is called and the data is ret
 **Note: The first time you try this, it might take 1-3 seconds because the virtual warehouse needs to start. Afterwards, you should not see this latency.**
 
 <!-- ------------------------ -->
-## Calling the API programmatically
+## Call the API programmatically
 Duration: 3
 
 ### Create the user and generate the Snowflake Token
@@ -483,7 +483,7 @@ Alternatively, you can test with [Postman](https://www.postman.com/downloads/).
 When testing individual calls, remember that performance might be slightly higher than you expect. It's why I recommend testing under some load with JMeter.
 
 <!-- ------------------------ -->
-## (Optional) Test performance with JMeter locally
+## (Optional) Test with JMeter 
 Duration: 8
 
 Disclaimer: This performance testing is supposed to be directional in nature - don't think of it as "true" performance testing.
@@ -511,7 +511,7 @@ After that, you should be able to hit the green arrow (play button) at top to st
 A quick note - while we load an in-memory cache as part of the app, this test set is set by default *to not use* the cache at all. To see performance with the cache, go back to "Customer ID Test Set Config", and turn `Sharing Mode` to "Current Thread". If you decide to try this, don't forget to stop the exist testing, right-click the "Results Tree" and "Aggregate Graph" to `clear` out captured results before testing again!
 
 <!-- ------------------------ -->
-## Stopping the API
+## Stop the API
 Duration: 1
 
 To stop the API, you can suspend the service. From the Snowflake console or SnowSQL, run:
