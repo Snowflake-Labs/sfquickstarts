@@ -286,7 +286,7 @@ and the documentation for all the various Quarto outputs here: <https://quarto.o
 Quarto works with Python, R, and Javascript Observable code out-of-the box,
 and is a great tool to communicate your data science analyses.
 
-## Access Snowflake data from Python
+## Access Snowflake Data from Python
 Duration: 5
 
 Now, let's take a closer look at the code in our Quarto document. Our code will run
@@ -400,7 +400,7 @@ You can learn more about Ibis [here](https://ibis-project.org/). Take a look at 
 learn more about using Ibis to interact with 
 Snowflake specifically. 
 
-## Write to a Snowflake database
+## Write to a Snowflake Database
 Duration: 1
 
 You can also use Ibis to create a new table in a database or append to an existing table.
@@ -415,7 +415,7 @@ To insert data into an existing table, use [`insert()`](https://ibis-project.org
 
 Now that we understand how to interact with our database, we can use Python to perform our analysis.
 
-## Prepare data with Ibis
+## Prepare Data with Ibis
 Duration: 5
 
 We want to understand which variables in `HEART_FAILURE` are associated with survival
@@ -494,7 +494,7 @@ heart_failure_plot = (
 
 ![](assets/analysis/plot-sodium.png)
 
-## Make publication-ready tables with Great Tables
+## Make Publication-Ready Tables with Great Tables
 Duration: 5
 
 Next, we'll use Ibis to calculate the median values for various clinical metrics across different patient groups.
