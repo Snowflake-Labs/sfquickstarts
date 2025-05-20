@@ -202,7 +202,7 @@ filenames = [
     "app/www/heart.png"
 ]
 
-base_url = "https://snowflake-quickstart-python.s3.amazonaws.com/"
+# base_url = TODO: ADD URL
 
 for name in filenames:
     url = base_url + name
