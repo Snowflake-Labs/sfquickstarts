@@ -127,9 +127,9 @@ def customers_top10():
         abort(500, "Error reading from Snowflake. Check the logs for details.")
 ```
 
-You can also review the other endpoints in [connector.py](https://github.com/sfc-gh-bculberson/lab_data_api_python/blob/main/src/connector.py) to see how simple it is to host multiple endpoints.
+You can also review the other endpoints in [connector.py](https://github.com/sfc-gh-bhess/lab_data_api_python/blob/main/src/connector.py) to see how simple it is to host multiple endpoints.
 
-If you would also like to see how to build endpoints using the Snowflake Snowpark API, review [snowpark.py](https://github.com/sfc-gh-bculberson/lab_data_api_python/blob/main/src/snowpark.py).
+If you would also like to see how to build endpoints using the Snowflake Snowpark API, review [snowpark.py](https://github.com/sfc-gh-bhess/lab_data_api_python/blob/main/src/snowpark.py).
 
 <!-- ------------------------ -->
 ## Building the Application Container
