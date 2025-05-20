@@ -43,6 +43,7 @@ Based on a detailed study, you have identified key challenges faced by Contact C
 - How to use [Cortex Analyst](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst?_fsi=6CVthwI0) to help you create applications capable of reliably answering business questions based on your structured data in Snowflake
 - How to use [ML Functions](https://docs.snowflake.com/en/user-guide/ml-functions/classification) to build a classification model in a low-code way
 - How to use [Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) (Cortex Complete) for access to industry-leading large language models (LLMs)
+- How to use [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) to orchestrate across both structured and unstructured data sources to deliver insights
 - How to build a chatbot application using [Streamlit](https://docs.streamlit.io/) in Snowflake
 
 ### Prerequisites
@@ -53,14 +54,18 @@ Based on a detailed study, you have identified key challenges faced by Contact C
 - A Snowflake Notebook on Container Runtime to process unstructured data (audio files and PDFs) and build a Caller Intent ML Classification Model and execute predictions:
      - Audio-to-text transcription using `whisper`
      - PDF processing and text chunking using Snowflake LLM functions
+- A Cortex Agent to orchestrate across both structured and unstructured data sources to deliver insights
 - A chatbot application using Streamlit
 
 **Architecture Diagram:**
 
 <img src="assets/architecture_diagram.png"/>
 
-A simplified "agentic" workflow ties these features together to provide a single app for end users to use natural language to ask questions and get answers in natural language regardless of whether the underlying data is structured or unstructured.
+The created "Data Agent" ties these features together to provide a single app for end users to use natural language to ask questions and get answers in natural language regardless of whether the underlying data is structured or unstructured.
+
 <img src="assets/payer_cc_agentic.png"/>
+
+**Note:** We also include an older Streamlit app to show how to build an "agentic" workflow without Cortex Agent as well.
 
 ## Data and Snowflake Setup
 
@@ -167,10 +172,10 @@ Click '+ Files' in the top right of the stage. Upload all files that you downloa
 <img src="assets/upload_data_product.png"/>
 <img src="assets/upload_faqs.png"/>
 
-- **Notebook Files:** Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks).
+- **Notebook Files:** Upload notebook files to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/notebooks).
 <img src="assets/upload_notebook_files.png"/>
 
-- **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/scripts/streamlit). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/streamlit/environment.yml) file as well.
+- **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main/scripts/streamlit). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/streamlit/environment.yml) file as well. You can also upload the older Streamlit app (`payer_assistant_old.py`), which does not use Cortex Agents.
 <img src="assets/upload_streamlit_files.png"/>
 
 Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/blob/main/scripts/setup.sql) in the SQL worksheet to create the Notebooks and Streamlit app from the staged files.
@@ -283,6 +288,12 @@ ROOT_LOCATION = '@PAYERS_CC_DB.PAYERS_CC_SCHEMA.CHATBOT_APP'
 MAIN_FILE = 'payer_assistant.py'
 QUERY_WAREHOUSE = 'PAYERS_CC_WH'
 COMMENT = '{"origin":"sf_sit-is", "name":"payer_call_center_assistant_v2", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit"}}';
+
+CREATE OR REPLACE STREAMLIT PAYERS_CC_CHATBOT_OLD
+ROOT_LOCATION = '@PAYERS_CC_DB.PAYERS_CC_SCHEMA.CHATBOT_APP'
+MAIN_FILE = 'payer_assistant_old.py'
+QUERY_WAREHOUSE = 'PAYERS_CC_WH'
+COMMENT = '{"origin":"sf_sit-is", "name":"payer_call_center_assistant_v2", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit"}}';
 ```
 
 ## Access Setup Notebook
@@ -309,6 +320,8 @@ This app simulates a few different scenarios where Contact Center Agents have to
 
 <img src='assets/streamlit_app.png'>
 
+You can also open `PAYERS_CC_CHATBOT_OLD` to access the version that does not include Cortex Agents to show you what a more manual "agentic" flow would look like.
+
 ## Conclusion And Resources
 
 Duration: 1
@@ -320,6 +333,7 @@ In this guide, you processed a knowledge base of unstructured and structured Ent
 - How to build a Caller Intent ML Classification Model and execute predictions with low-code using Snowflake's ML Functions
 - How to leverage Cortex Search for a hybrid (vector and keyword) search engine on text data
 - How to use Cortex LLM functions (Cortex Complete) for access to industry-leading large language models (LLMs)
+- How to use Cortex Agents to orchestrate between structured and unstructured data sources
 - How to prototype a UI using Streamlit
 
 ### Related Resources
@@ -327,5 +341,5 @@ In this guide, you processed a knowledge base of unstructured and structured Ent
 - [Docs: Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex.html)
 - [Docs: Snowflake ML Classification](https://docs.snowflake.com/en/user-guide/ml-functions/classification)
 - [Docs: Streamlit](https://docs.streamlit.io/)
-- [Tasty Bytes: Enhancing Customer Experience](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html#0)
-- [Quickstart: Building AI Assistant using Snowflake Cortex in Snowflake Notebooks](https://quickstarts.snowflake.com/guide/ai_assistant_for_sales_calls/index.html#0)
+- [Quickstart: Getting Started with Cortex Agents](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html#0)
+- [Quickstart: Getting Started with Snowflake Cortex Agents API and React](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_agents_api_and_react/index.html?index=..%2F..index#0)
