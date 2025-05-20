@@ -158,7 +158,7 @@ your entire analysis will occur securely within Snowflake.
 
 ![](assets/vs_code/01-vscode.png)
 
-#### Step 5: Install Quarto, Shiny, and Jupyter Extensions
+### Install Quarto, Shiny, and Jupyter Extensions
 
 The Quarto and Shiny VS Code Extensions support the development 
 of Quarto documents and Shiny apps in VS Code. The Jupyter extension provides 
@@ -182,14 +182,25 @@ the extension in the same way.
 You can learn more about these extensions here: [Shiny extension](https://shiny.posit.co/blog/posts/shiny-vscode-1.0.0/), 
 [Quarto extension](https://quarto.org/docs/tools/vscode.html).
 
-#### Step 6: Access the Quickstart Materials
+### Open a new folder
 
-This Quickstart will step you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd>.
-To follow along, you can either clone the GitHub repo or download the materials from
+Use `Ctrl/Cmd+Shift+P` to open the Command Palette, then type and select `File: Open Folder` to open an existing folder. Select the directory where you want your work to live. 
+
+The folder should now be open. We will create a new subdirectory next. To create a new folder, click the `New Folder` button in the Explorer pane. Name the folder `heart_failure`. 
+
+VS Code is still pointed at the parent directory. To open `heart_failure`, reopen the Command Palette (`Ctrl/Cmd+Shift+P`) andagain select the "File: Open folder" command. Navigate to your new `heart_failure` folder and then click `OK` to open the folder.
+
+You now have a new, empty folder to begin working in.
+
+### Access the Quickstart Materials
+
+This Quickstart will walk you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd>.
+To follow along, you can either clone the [GitHub repo](https://github.com/posit-dev/snowflake-posit-quickstart-python/) or download the materials from
 our public S3 bucket. 
 
-Run the following Python code in VS Code to download the files from the S3
-bucket:
+Open the Command Palette (`Ctrl/Cmd+Shift+P`) and use the command `Create: New File` > `Python File` to create a new Python file. 
+
+Paste the following Python code into the new Python file, then click the run button in the upper right corner to run the script. When prompted, name the file `import_data.py`.
 
 ```python
 import requests
@@ -218,7 +229,7 @@ for name in filenames:
         f.write(response.content)
 ```
 
-This will also download a `requirements.txt` file with the necessary libraries for
+You should now see `quarto.qmd`, `requirements.txt`, and `app` in the Explorer Pane. 
 this guide.
   
 ### Create a virtual environment
