@@ -202,7 +202,7 @@ filenames = [
     "app/www/heart.png"
 ]
 
-# base_url = TODO: ADD URL
+base_url = "https://posit-snowflake-mlops.s3.us-east-2.amazonaws.com/snowflake-posit-quickstart-python-main/"
 
 for name in filenames:
     url = base_url + name
