@@ -26,6 +26,11 @@ We'll focus on a healthcare example by analyzing heart failure data. We'll guide
 
 ![](assets/overview/architecture.png)
 
+### What You Will Learn
+
+- How to work in VS Code from Posit Workbench Native App.
+- How to connect to your Snowflake data from Python to create tables, visualizations, and more.
+
 ### What You Will Build
 
 - A VS Code environment to use within Snowflake.
@@ -36,11 +41,6 @@ Along the way, you will use Python to analyze which variables are associated wit
 You can follow along with this quickstart guide,
 or look at the materials provided in the accompanying repository:
 <https://github.com/posit-dev/snowflake-posit-quickstart-python>.
-
-### What You Will Learn
-
-- How to work in VS Code from Posit Workbench Native App.
-- How to connect to your Snowflake data from Python to create tables, visualizations, and more.
 
 ### Prerequisites
 
@@ -583,7 +583,7 @@ Shinylive is also available for [R](https://shinylive.io/r/examples/) for Shiny 
 ## Conclusion and Resources
 Duration: 2
 
-### Conclusion
+### Overview
 
 Python is a powerful, versatile tool for data science, and combined with Snowflake's high-performance data capabilities, it enables robust, end-to-end data workflows. Using the Posit Workbench Native Application, you can securely work with Python _within Snowflake_ while taking advantage of tools like Ibis, Quarto, and Shiny for Python to analyze, visualize, and share your results.
 
