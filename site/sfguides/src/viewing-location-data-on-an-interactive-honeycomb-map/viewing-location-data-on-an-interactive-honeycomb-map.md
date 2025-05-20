@@ -1,4 +1,4 @@
-author: Honeycomb Maps Team
+author: Carston Hernke
 id: viewing-location-data-on-an-interactive-map
 summary: This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app.
 categories: data-visualization,partner-integrations
@@ -21,7 +21,7 @@ Honeycomb Maps provides a no-code interface for creating interactive, shareable,
 In this quickstart guide, you'll learn how to use Honeycomb Maps to create an interactive visualization of geospatial data. You'll create a map showing pizza restaurants in New York City, add additional layers to visualize density, and create interactive components to filter the data.
 
 ### Prerequisites
-- A Snowflake account with privileges to install apps from the Marketplace
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) account, if required.
 - Access to Snowflake's US_REAL_ESTATE sample database (available for free from Snowflake Marketplace) or your own geospatial data
 - Basic familiarity with SQL queries
 
