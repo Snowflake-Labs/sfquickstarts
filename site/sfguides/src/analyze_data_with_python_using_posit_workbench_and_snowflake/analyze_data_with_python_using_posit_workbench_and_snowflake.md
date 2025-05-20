@@ -188,7 +188,7 @@ Use `Ctrl/Cmd+Shift+P` to open the Command Palette, then type and select `File: 
 
 The folder should now be open. We will create a new subdirectory next. To create a new folder, click the `New Folder` button in the Explorer pane. Name the folder `heart_failure`. 
 
-VS Code is still pointed at the parent directory. To open `heart_failure`, reopen the Command Palette (`Ctrl/Cmd+Shift+P`) andagain select the "File: Open folder" command. Navigate to your new `heart_failure` folder and then click `OK` to open the folder.
+VS Code is still pointed at the parent directory. To open `heart_failure`, reopen the Command Palette (`Ctrl/Cmd+Shift+P`) and again select the "File: Open folder" command. Navigate to your new `heart_failure` folder and then click `OK` to open the folder.
 
 You now have a new, empty folder to begin working in.
 
@@ -229,8 +229,7 @@ for name in filenames:
         f.write(response.content)
 ```
 
-You should now see `quarto.qmd`, `requirements.txt`, and `app` in the Explorer Pane. 
-this guide.
+You should now see `quarto.qmd`, `requirements.txt`, and the `app` directory in the Explorer Pane. 
   
 ### Create a virtual environment
 
@@ -247,7 +246,7 @@ See the [Python Environments in VS Code](https://docs.posit.co/ide/server-pro/us
 ## Build Reports and Dashboards with Quarto
 Duration: 2
 
-Before we dive into the specifics of the code, let's first discuss Quarto. We've written our analysis in a Quarto (`.qmd`) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-r/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
+Before we dive into the specifics of the code, let's first discuss Quarto. We've written our analysis in a Quarto (`.qmd`) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
 is an open-source publishing system that makes it easy to create
 [data products](https://quarto.org/docs/guide/) such as
 [documents](https://quarto.org/docs/output-formats/html-basics.html),
