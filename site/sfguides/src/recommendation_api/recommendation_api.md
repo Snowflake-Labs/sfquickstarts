@@ -1,6 +1,5 @@
 author: Luke Ambrosetti (special thanks: Aric Wang, Brian Hess, Brad Culberson)
-
-id: snowflake_personalization_api
+id: snowflake_recommendation_engine
 summary: A guide to building and running a recommendation engine in Snowflake
 categories: getting-started,app-development,architecture-patterns,marketing,solution-examples
 environments: web
