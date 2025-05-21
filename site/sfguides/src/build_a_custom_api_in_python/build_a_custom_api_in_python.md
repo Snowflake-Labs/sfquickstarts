@@ -46,7 +46,7 @@ The API needs a warehouse to query the data to return to the caller. To create t
 
 ```sql
 USE ROLE ACCOUNTADMIN;
-CREATE WAREHOUSE DATA_API_WH WITH WAREHOUSE_SIZE='xsmall';
+CREATE WAREHOUSE IF NOT EXISTS DATA_API_WH WITH WAREHOUSE_SIZE='xsmall';
 ```
 
 ### Create the Application Role in Snowflake
@@ -56,7 +56,7 @@ The application will run as a new role with minimal priviledges. To create the r
 
 ```SQL
 USE ROLE ACCOUNTADMIN;
-CREATE ROLE DATA_API_ROLE;
+CREATE ROLE IF NOT EXISTS DATA_API_ROLE;
 
 GRANT USAGE ON WAREHOUSE DATA_API_WH TO ROLE DATA_API_ROLE;
 GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE DATA_API_ROLE;
@@ -80,9 +80,9 @@ The API creates two sets of endpoints, one for using the Snowflake connector:
   * Which takes the following optional query parameters:
     1. `start_range` - the start date of the range in `YYYY-MM-DD` format. Defaults to `1995-01-01`.
     1. `end_range` - the end date of the range in `YYYY-MM-DD` format. Defaults to `1995-03-31`.
-2. `https://host/connector/clerk/<CLERKID>/yearly_sales/<YEAR>`
+2. `https://host/connector/clerk/CLERK_ID/yearly_sales/YEAR`
   * Which takes 2 required path parameters:
-    1. `CLERKID` - the clerk ID. Use just the numbers, such as `000000001`.
+    1. `CLERK_ID` - the clerk ID. Use just the numbers, such as `000000001`.
     2. `YEAR` - the year to use, such as `1995`.
 
 And the same ones using Snowpark:
@@ -90,9 +90,9 @@ And the same ones using Snowpark:
   * Which takes the following optional query parameters:
     1. `start_range` - the start date of the range in `YYYY-MM-DD` format. Defaults to `1995-01-01`.
     1. `end_range` - the end date of the range in `YYYY-MM-DD` format. Defaults to `1995-03-31`.
-2. `https://host/snowpark/clerk/<CLERKID>/yearly_sales/<YEAR>`
+2. `https://host/snowpark/clerk/CLERK_ID/yearly_sales/YEAR`
   * Which takes 2 required path parameters:
-    1. `CLERKID` - the clerk ID. Use just the numbers, such as `000000001`.
+    1. `CLERK_ID` - the clerk ID. Use just the numbers, such as `000000001`.
     2. `YEAR` - the year to use, such as `1995`.
 
 ### Code
@@ -150,7 +150,7 @@ Duration: 1
 ```sql
 
 USE ROLE ACCOUNTADMIN;
-CREATE DATABASE API;
+CREATE DATABASE IF NOT EXISTS API;
 
 GRANT ALL ON DATABASE API TO ROLE DATA_API_ROLE;
 GRANT ALL ON SCHEMA API.PUBLIC TO ROLE DATA_API_ROLE;
@@ -169,11 +169,16 @@ Note the `repository_url` in the response as that will be needed in the next ste
 ## Pushing the Container to the Repository
 Duration: 1
 
-Run the following command in the terminal, replacing the `<repository_url>` with your repository in the previous step, in Codespaces to login to the container repository. You will be prompted for your Snowflake username and password to login to your repository.
+Run the following command in the terminal, replacing the `<repository_url>` with your repository in the previous step, in Codespaces to login to the container repository. You will be prompted for your Snowflake account information and credentials to add the connection to the snowflake cli. Name the connection my_snowflake.
 
 ```bash
-docker login <repository_url>
-docker build -t <repository_url>/dataapi .
+pip install snowflake-cli
+
+snow connection add
+snow connection set-default my_snowflake
+snow connection test
+
+snow spcs image-registry login --database API
 docker push <repository_url>/dataapi
 ```
 

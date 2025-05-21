@@ -123,6 +123,18 @@ private PreparedStatement monthlyPreparedStatement(Map<String, String> queryStri
 
 You can also review the other endpoints in [Handler.java](https://github.com/Snowflake-Labs/sfguide-snowflake-java-api/blob/main/src/main/java/com/snowflake/Handler.java) to see how simple it is to host multiple endpoints.
 
+## Building the Application
+Duration: 2
+
+This project uses Maven to manage dependencies and to perform the build. To build the project, run maven:
+
+```bash 
+mvn package
+```
+
+The build artifact should be created under ./target/snowflake-java-api.jar which will be used later.
+
+
 ## Configuring the Application
 Duration: 3
 
@@ -154,7 +166,6 @@ Duration: 5
 Serverless login will open a browser to authenticate the serverless tool. When running serverless, it will ask you what org to add it to. You can choose the default or any org you have setup in serverless.com. You can also keep the original snowflake-java-api name for the application or give it a new name. When asked to deploy the application, choose No.
 
 ```bash
-npm install
 serverless login
 serverless
 ```

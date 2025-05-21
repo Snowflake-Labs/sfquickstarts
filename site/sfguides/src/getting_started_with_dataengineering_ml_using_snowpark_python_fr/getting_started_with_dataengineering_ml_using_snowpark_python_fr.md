@@ -33,7 +33,7 @@ Il s’agit d’un ensemble de bibliothèques et d’environnements d’exécuti
 
 **Constructions d’exécution flexibles** : Snowpark fournit des constructions d’exécution flexibles qui permettent aux utilisateurs d’ajouter et d’exécuter une logique personnalisée. Les développeurs peuvent créer facilement des pipelines de données, des modèles de ML et des applications de données avec des fonctions définies par l’utilisateur et des procédures stockées.
 
-Pour en savoir plus sur Snowpark, cliquez [ici](https://www.snowflake.com/snowpark/).
+Pour en savoir plus sur Snowpark, cliquez [ici](https://www.snowflake.com/fr/data-cloud/snowpark/).
 
 ![Snowpark](assets/snowpark.png)
 
@@ -144,7 +144,8 @@ CREATE or REPLACE TABLE BUDGET_ALLOCATIONS_AND_ROI (
   VIDEO integer, 
   EMAIL integer, 
   ROI float 
-);
+)
+COMMENT = '{"origin":"sf_sit-is", "name":"aiml_notebooks_ad_spend_roi", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"streamlit"}}';
 
 INSERT INTO BUDGET_ALLOCATIONS_AND_ROI (MONTH, SEARCHENGINE, SOCIALMEDIA, VIDEO, EMAIL, ROI) 
 VALUES 
@@ -266,7 +267,11 @@ Duration: 20
 
 Le notebook dont le lien est fourni ci-dessous traite des tâches de Data Engineering suivantes.
 
-1) Établir une connexion sécurisée entre Snowpark Python et Snowflake 2) Charger des données depuis des tables Snowflake dans des DataFrames Snowpark 3) Effectuer une analyse exploratoire des données sur les DataFrames Snowpark 4) Faire pivoter et associer des données de plusieurs tables à l’aide de DataFrames Snowpark 5) Automatiser des tâches de pipeline de données à l’aide de tâches Snowflake Tasks
+1) Établir une connexion sécurisée entre Snowpark Python et Snowflake 
+2) Charger des données depuis des tables Snowflake dans des DataFrames Snowpark 
+3) Effectuer une analyse exploratoire des données sur les DataFrames Snowpark 
+4) Faire pivoter et associer des données de plusieurs tables à l’aide de DataFrames Snowpark 
+5) Automatiser des tâches de pipeline de données à l’aide de tâches Snowflake Tasks
 
 ### Notebook de Data Engineering dans Jupyter ou Visual Studio Code
 
@@ -443,7 +448,11 @@ Duration: 20
 
 Le notebook associé ci-dessous traite des tâches de Machine Learning suivantes.
 
-1) Établir une connexion sécurisée entre Snowpark Python et Snowflake 2) Charger des fonctionnalités et une cible depuis une table Snowflake dans un DataFrame Snowpark 3) Préparer des fonctionnalités pour l’entraînement de modèles 4) Entraîner un modèle de ML à l’aide de Snowpark ML sur Snowflake 5) Créer des [fonctions définies par l’utilisateur (UDF) Python](https://docs.snowflake.com/fr/developer-guide/snowpark/python/creating-udfs) scalaires et vectorisées (aussi appelées « batchs ») pour toute inférence sur des nouveaux points de données, en ligne et hors ligne, respectivement.
+1) Établir une connexion sécurisée entre Snowpark Python et Snowflake 
+2) Charger des fonctionnalités et une cible depuis une table Snowflake dans un DataFrame Snowpark 
+3) Préparer des fonctionnalités pour l’entraînement de modèles 
+4) Entraîner un modèle de ML à l’aide de Snowpark ML sur Snowflake 
+5) Créer des [fonctions définies par l’utilisateur (UDF) Python](https://docs.snowflake.com/fr/developer-guide/snowpark/python/creating-udfs) scalaires et vectorisées (aussi appelées « batchs ») pour toute inférence sur des nouveaux points de données, en ligne et hors ligne, respectivement
 
 ---
 
@@ -516,7 +525,13 @@ Si l’application SiS est activée dans votre compte, suivez les étapes suiva
 
 > aside negative IMPORTANT : SiS est disponible en private preview depuis le mois de juin 2023.\*\**
 
-  1) Cliquez sur **Streamlit Apps** (Applications Streamlit) dans le menu de navigation de gauche. 2) Cliquez sur **+ Streamlit App** (+ Application Streamlit) dans le coin supérieur droit. 3) Saisissez le **nom de l’application**. 4) Sélectionnez l’**entrepôt** et l’**emplacement de l’application** (Base de données et Schéma) où vous voulez créer l’application Streamlit. 5) Cliquez sur **Create** (Créer). 6) Vous recevrez alors un code pour un exemple d’application Streamlit. Ouvrez le fichier [Snowpark_Streamlit_Revenue_Prediction_SiS.py](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_Streamlit_Revenue_Prediction_SiS.py) et copiez-collez le code dans l’exemple d’application Streamlit. 7) Cliquez sur **Run** (Exécuter) dans le coin supérieur droit.
+  1) Cliquez sur **Streamlit Apps** (Applications Streamlit) dans le menu de navigation de gauche. 
+  2) Cliquez sur **+ Streamlit App** (+ Application Streamlit) dans le coin supérieur droit. 
+  3) Saisissez le **nom de l’application**. 
+  4) Sélectionnez l’**entrepôt** et l’**emplacement de l’application** (Base de données et Schéma) où vous voulez créer l’application Streamlit. 
+  5) Cliquez sur **Create** (Créer). 
+  6) Vous recevrez alors un code pour un exemple d’application Streamlit. Ouvrez le fichier [Snowpark_Streamlit_Revenue_Prediction_SiS.py](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_Streamlit_Revenue_Prediction_SiS.py) et copiez-collez le code dans l’exemple d’application Streamlit. 
+  7) Cliquez sur **Run** (Exécuter) dans le coin supérieur droit.
 
 Si tout se passe bien, l’application suivante doit apparaître dans Snowsight, comme illustré ci-dessous.
 
@@ -596,5 +611,5 @@ N’hésitez pas à nous faire part de vos commentaires sur ce guide Quickstart�
 - [Avancé : Guide de Data Engineering avec Snowpark for Python ](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html)
 - [Avancé : Guide de Machine Learning avec Snowpark for Python ](https://quickstarts.snowflake.com/guide/getting_started_snowpark_machine_learning/index.html)
 - [Démos de Snowpark for Python](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
-- [Guide du développeur Snowpark for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
+- [Guide du développeur Snowpark for Python](https://docs.snowflake.com/fr/developer-guide/snowpark/python/index.html)
 - [Documents Streamlit](https://docs.streamlit.io/)

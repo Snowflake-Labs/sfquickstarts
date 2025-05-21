@@ -57,7 +57,7 @@ Cette section vous explique comment vous connecter à Snowflake, comment créer 
     - <img src = "assets/+_sqlworksheet.png" width ="200">
 
 ### Étape 5 – Renommer une feuille de calcul
-- Renommez la feuille de calcul en cliquant sur le nom généré automatiquement (horodatage), puis en saisissant « Tasty Bytes – Collaboration ».
+- Renommez la feuille de calcul en cliquant sur le nom généré automatiquement (horodatage), puis en saisissant "Tasty Bytes – Collaboration ".
     - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
 
 ### Étape 6 – Accéder au fichier SQL de ce guide Quickstart dans GitHub
@@ -369,7 +369,12 @@ Duration: 1
 ### Conclusion
 Beau travail ! Vous avez terminé le guide Quickstart Tasty Bytes Débuter avec Snowflake sur la collaboration. 
 
-Vous avez : - Accédé à la Marketplace Snowflake - Acquis des données Weather Source en direct dans votre compte - Créé une vue - Créé une fonction SQL - Utilisé des graphiques Snowsight pour étudier des informations visuelles
+Vous avez : 
+- Accédé à la Marketplace Snowflake 
+- Acquis des données Weather Source en direct dans votre compte 
+- Créé une vue 
+- Créé une fonction SQL 
+- Utilisé des graphiques Snowsight pour étudier des informations visuelles
 
 Si vous voulez recommencer ce guide Quickstart, utilisez les scripts de réinitialisation en bas de votre feuille de calcul associée.
 
