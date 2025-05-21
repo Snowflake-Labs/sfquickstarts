@@ -108,7 +108,7 @@ GRANT USAGE ON WAREHOUSE GDSONSNOWFLAKE TO APPLICATION neo4j_graph_analytics;
 Now we will switch to the role we just created:
 
 ```sql
-use role gds_role;
+use role gds_user_role;
 ```
 
 
