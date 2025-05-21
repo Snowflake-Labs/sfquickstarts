@@ -222,7 +222,7 @@ The unified data model will be used to generate some basic visualizations that p
 
 ![Visualizations](assets/viz.png)
 
-The unified data model is stored in the Database ```MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>``` (replace with your username) and the Schema ```TARGET```.
+The unified data model is stored in the Database ```MARKETING_DATA_FOUNDATION_STARTER_V3_USERNAME``` (replace with your username) and the Schema ```TARGET```.
 
 ### 5. AI Functions
 
@@ -264,14 +264,12 @@ DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>.TARGET.CAMP
 
 Use this cleanup script to remove all objects created in this Quickstart.
 <!-- ------------------------ -->
-## Conclusion & Resources
+## Conclusion And Resources
 Duration: 2
 
-### Conclusion
+### Overview
 
 Congratulations! You have successfully learned how to easily build an end-to-end Native Application and load sample data.
- 
-You will see your application listed in your account:
 
 ### What You Learned
 
