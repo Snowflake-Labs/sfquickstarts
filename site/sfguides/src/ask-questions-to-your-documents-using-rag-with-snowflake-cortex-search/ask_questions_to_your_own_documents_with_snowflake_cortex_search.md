@@ -29,7 +29,7 @@ In a typical RAG application, there ia a process to chunk and embeed the content
 
 ![App](assets/fig1_rag.png)
 
-Snowflake Cortex is a fully managed indexing and retrieval service that simplifies and empower RAG applications. The service automatically creates embeddings and indexes and provides an enterprise search service that can be acessed via APIs:
+Snowflake Cortex Search is a fully managed indexing and retrieval service that simplifies and empower RAG applications. The service automatically creates embeddings and indexes and provides an enterprise search service that can be acessed via APIs:
 
 ![App](assets/fig2_rag_cortex_search_arch.png)
 
@@ -47,15 +47,22 @@ The final product includes an application that lets users test how the LLM respo
 - Check [LLM availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_ga=2.5151286.405859672.1709568467-277021311.1701887324&_gac=1.124754680.1707955750.Cj0KCQiA5rGuBhCnARIsAN11vgRLWfK6RIoIEqcZ7cFas8qwN4yCoL0q9nttp5UEmSocnPmhdBG57fgaAjqNEALw_wcB&_fsi=j2b82Wl3#availability) to help you decide where you want to create your snowflake account
 - A Snowflake account with [Anaconda Packages](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages.html#using-third-party-packages-from-anaconda) enabled by ORGADMIN.
 
-<!-- ------------------------ -->
-## Organize Documents and Create Pre-Processing Function
-Duration: 15
+> aside positive
+> NOTE: For an end-to-end setup experience using Snowflake Notebook, download this [.ipynb](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/RAG_Using_Snowflake_Cortex_Search_Setup_Notebook.ipynb) file and [import](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#label-notebooks-import) it in your Snowflake account. The Notebook covers setup steps 2, 3, and 4.
 
-In Snowflake, databases and schemas are used to organize and govern access to data and logic. Let´s start by getting a few documents locally and then create a database that will hold the PDFs, the functions that will process (extract and chunk) those PDFs and the table that will hold the text and that will be used to create the Cortex Search service. 
+<!-- ------------------------ -->
+## Organize Documents
+Duration: 10
+
+In Snowflake, databases and schemas are used to organize and govern access to data and logic. Let´s start by getting a few documents locally and then create a database that will hold the PDFs.
 
 **Step 1**. Download example documents
 
 Let's download a few documents we have created about bikes and skis. In those documents we have added some very specific information about those ficticious models. You can always add more or use a different type of documents that you want to try asking questions against. At the end we are going to test how the LLM responds with and without access to the information in the documents. 
+
+You can [download all documents from this zip file](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/docs.zip)
+
+Individual files:
 
 - [Mondracer Infant Bike](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/Mondracer_Infant_Bike.pdf)
 - [Premium Bycycle User Guide](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/Premium_Bicycle_User_Guide.pdf)
@@ -81,71 +88,7 @@ CREATE SCHEMA DATA;
 Relevant documentation: [Database and Schema management](https://docs.snowflake.com/en/sql-reference/ddl-database)
 
 
-**Step 4**. Create a table function that will read the PDF documents and split them in chunks
-
-We will be using the PyPDF2 and Langchain Python libraries to accomplish the necessary document processing tasks. Because as part of Snowpark Python these are available inside the integrated Anaconda repository, there are no manual installs or Python environment and dependency management required. 
-
-Relevant documentation: 
-- [Using third-party libraries in Snowflake](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages)
-- [Python User Defined Table Function](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
-
-Create the function by [running the following query](https://docs.snowflake.com/en/user-guide/ui-snowsight-query#executing-and-running-queries) inside your worksheet
-
-```SQL
-create or replace function pdf_text_chunker(file_url string)
-returns table (chunk varchar)
-language python
-runtime_version = '3.9'
-handler = 'pdf_text_chunker'
-packages = ('snowflake-snowpark-python','PyPDF2', 'langchain')
-as
-$$
-from snowflake.snowpark.types import StringType, StructField, StructType
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from snowflake.snowpark.files import SnowflakeFile
-import PyPDF2, io
-import logging
-import pandas as pd
-
-class pdf_text_chunker:
-
-    def read_pdf(self, file_url: str) -> str:
-    
-        logger = logging.getLogger("udf_logger")
-        logger.info(f"Opening file {file_url}")
-    
-        with SnowflakeFile.open(file_url, 'rb') as f:
-            buffer = io.BytesIO(f.readall())
-            
-        reader = PyPDF2.PdfReader(buffer)   
-        text = ""
-        for page in reader.pages:
-            try:
-                text += page.extract_text().replace('\n', ' ').replace('\0', ' ')
-            except:
-                text = "Unable to Extract"
-                logger.warn(f"Unable to extract from file {file_url}, page {page}")
-        
-        return text
-
-    def process(self,file_url: str):
-
-        text = self.read_pdf(file_url)
-        
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size = 1512, #Adjust this as you see fit
-            chunk_overlap  = 256, #This let's text have some form of overlap. Useful for keeping chunks contextual
-            length_function = len
-        )
-    
-        chunks = text_splitter.split_text(text)
-        df = pd.DataFrame(chunks, columns=['chunks'])
-        
-        yield from df.itertuples(index=False, name=None)
-$$;
-```
-
-**Step 5**. Create a Stage with Directory Table where you will be uploading your documents
+**Step 4**. Create a Stage with Directory Table where you will be uploading your documents
 
 ```SQL
 create or replace stage docs ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE') DIRECTORY = ( ENABLE = true );
@@ -172,14 +115,34 @@ ls @docs;
 ![App](assets/fig4_ls_docs.png)
 
 <!-- ------------------------ -->
-## Pre-process and Label Documents
+## Pre-process Documents
 Duration: 15
 
-In this step we are going to leverage our document processing functions to prepare documents before enabling Cortex Search. We are also going to use Cortex LLM serverless capabilities in order to label the type of document being processed so we can use that metadata to filter searches.
+In this step we are going to leverage Snowflake native document processing functions to prepare documents before enabling Cortex Search. We are also going to use Cortex CLASSIFY_TEXT function in order to label the type of document being processed so we can use that metadata to filter searches.
 
 ![App](assets/fig5_build.png)
 
-**Step 1**. Create the table where we are going to store the chunks for each PDF. 
+**Step 1**. Use function [SNOWFLAKE.CORTEX.PARSE_DOCUMENT](https://docs.snowflake.com/en/sql-reference/functions/parse_document-snowflake-cortex) to read the PDF documents directly from the staging area. We use here the LAYOUT mode:
+
+```SQL
+CREATE or replace TEMPORARY table RAW_TEXT AS
+SELECT 
+    RELATIVE_PATH,
+    SIZE,
+    FILE_URL,
+    build_scoped_file_url(@docs, relative_path) as scoped_file_url,
+    TO_VARCHAR (
+        SNOWFLAKE.CORTEX.PARSE_DOCUMENT (
+            '@docs',
+            RELATIVE_PATH,
+            {'mode': 'LAYOUT'} ):content
+        ) AS EXTRACTED_LAYOUT 
+FROM 
+    DIRECTORY('@docs');
+```
+
+
+**Step 2**. Create the table where we are going to store the chunks for each PDF. 
 
 ```SQL
 create or replace TABLE DOCS_CHUNKS_TABLE ( 
@@ -188,53 +151,59 @@ create or replace TABLE DOCS_CHUNKS_TABLE (
     FILE_URL VARCHAR(16777216), -- URL for the PDF
     SCOPED_FILE_URL VARCHAR(16777216), -- Scoped url (you can choose which one to keep depending on your use case)
     CHUNK VARCHAR(16777216), -- Piece of text
+    CHUNK_INDEX INTEGER, -- Index for the text
     CATEGORY VARCHAR(16777216) -- Will hold the document category to enable filtering
 );
 ```
 
-**Step 2**. Use the function previously created to process the PDF files and extract the chunks. There is no need to create embeddings as that will be managed automatically by Cortex Search service later.
+**Step 3**. Function [SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER](https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex) will be used to split the text into shorter strings.
 
 ```SQL
 insert into docs_chunks_table (relative_path, size, file_url,
-                            scoped_file_url, chunk)
+                            scoped_file_url, chunk, chunk_index)
+
     select relative_path, 
             size,
             file_url, 
-            build_scoped_file_url(@docs, relative_path) as scoped_file_url,
-            func.chunk as chunk
+            scoped_file_url,
+            c.value::TEXT as chunk,
+            c.INDEX::INTEGER as chunk_index
+            
     from 
-        directory(@docs),
-        TABLE(pdf_text_chunker(build_scoped_file_url(@docs, relative_path))) as func;
+        raw_text,
+        LATERAL FLATTEN( input => SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER (
+              EXTRACTED_LAYOUT,
+              'markdown',
+              1512,
+              256,
+              ['\n\n', '\n', ' ', '']
+           )) c;
+
 ```
 
 ### Label the product category
 
-We are going to use the power of Large Language Models to easily classify the documents we are ingesting in our RAG application. We are just going to use the file name but you could also use some of the content of the doc itself. Depending on your use case you may want to use different approaches. We are going to use a foundation LLM but you could even fine-tune your own one for your own classification use case as demoed in this [Serverless LLM Fine-tuning using Snowflake Cortex AI](https://quickstarts.snowflake.com/guide/finetuning_llm_using_snowflake_cortex_ai/index.html?index=..%2F..index#0) quickstart
+We are going to use the power of Large Language Models and the function [CLASSIFY_TEXT](https://docs.snowflake.com/en/sql-reference/functions/classify_text-snowflake-cortex)  to easily classify the documents we are ingesting in our RAG application. We are going to pass the document name and the first chunk of text into the classify_text function.
 
-First we will create a temporary table with each unique file name and we will be passing that file name to one LLM using Cortex Complete function with a prompt to classify what that use guide refres too. The prompt will be as simple as this but you can try to customize it depending on your use case and documents. Classification is not mandatory for Cortex Search but we want to use it here to also demo hybrid search.
+First we will create a temporary table with each unique file name and we will be passing that file name and the first chunk of text to CLASSIFY_TEXT. Classification is not mandatory for Cortex Search but we want to use it here to also demo hybrid search.
 
-This will be the prompt where we are adding the file name:
-
-```SQL
-      'Given the name of the file between <file> and </file> determine if it is related to bikes or snow. Use only one word <file> ' || relative_path || '</file>'
-```
 Run this SQL to create that table:
 
 ```SQL
-CREATE
-OR REPLACE TEMPORARY TABLE docs_categories AS WITH unique_documents AS (
+CREATE OR REPLACE TEMPORARY TABLE docs_categories AS WITH unique_documents AS (
   SELECT
-    DISTINCT relative_path
+    DISTINCT relative_path, chunk
   FROM
     docs_chunks_table
-),
-docs_category_cte AS (
+  WHERE 
+    chunk_index = 0
+  ),
+ docs_category_cte AS (
   SELECT
     relative_path,
-    TRIM(snowflake.cortex.COMPLETE (
-      'llama3-70b',
-      'Given the name of the file between <file> and </file> determine if it is related to bikes or snow. Use only one word <file> ' || relative_path || '</file>'
-    ), '\n') AS category
+    TRIM(snowflake.cortex.CLASSIFY_TEXT (
+      'Title:' || relative_path || 'Content:' || chunk, ['Bike', 'Snow']
+     )['label'], '"') AS category
   FROM
     unique_documents
 )
@@ -247,16 +216,10 @@ FROM
 You can check that table to identify how many categories have been created and if they are correct:
 
 ```SQL
-select category from docs_categories group by category;
+select * from docs_categories;
 ```
 
-Also notice that different LLMs will provide different results. In this specific ase, llama3-70b was providing the best results with the lower cost. You may want to experiment different options.
-
 In this example we got Snow and Bike categories. We will be using those later to filter with Cortex Search:
-
-![App](assets/fig6_categories.png)
-
-We can also check that each document category is correct:
 
 ![App](assets/fig7_docs_categories.png)
 
@@ -292,6 +255,7 @@ warehouse = COMPUTE_WH
 TARGET_LAG = '1 minute'
 as (
     select chunk,
+        chunk_index,
         relative_path,
         file_url,
         category
@@ -362,6 +326,7 @@ CORTEX_SEARCH_SERVICE = "CC_SEARCH_SERVICE_CS"
 # columns to query in the service
 COLUMNS = [
     "chunk",
+    "chunk_index",
     "relative_path",
     "category"
 ]
@@ -375,16 +340,8 @@ svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].corte
      
 def config_options():
 
-    st.sidebar.selectbox('Select your model:',(
-                                    'mixtral-8x7b',
-                                    'snowflake-arctic',
-                                    'mistral-large',
-                                    'llama3-8b',
-                                    'llama3-70b',
-                                    'reka-flash',
-                                     'mistral-7b',
-                                     'llama2-70b-chat',
-                                     'gemma-7b'), key="model_name")
+    st.sidebar.selectbox('Select your model:',('mistral-large2', 'llama3.1-70b',
+                        'llama3.1-8b', 'snowflake-arctic'), key="model_name")
 
     categories = session.sql("select category from docs_chunks_table group by category").collect()
 
@@ -500,6 +457,12 @@ The reason is that we need to add the package **snowflake.core** in our Streamli
 
 Click on **Packages** and look for **snowflake.core**
 
+You may want to use the latest versions available. This is the combination that has been tested for this lab:
+- snowflake.core = 1.2.0
+- python = 3.11
+- snowflake-snowpark-python = 1.30.0
+- streamlit = 1.42.0
+
 ![App](assets/fig11_packages.png)
 
 After adding it you should be able to run the app.
@@ -563,7 +526,6 @@ In the app, we can see the documents we had uploaded previously and can be used 
 To test out the RAG framework, here a few questions you can ask and then use the interactive widgets to compare the results when using a different LLM or when choosing to get a response without the context. This is related to very specific information that we have added into the documents and that is very unique to our products.
 
 - Is there any special lubricant to be used with the premium bike?
-- What is the warranty for the premium bike?
 - Does the mondracer infant bike need any special tool?
 - Is there any temperature to be considered with the premium bicycle?
 - What is the temperature to store the ski boots?
@@ -572,7 +534,7 @@ To test out the RAG framework, here a few questions you can ask and then use the
 
 ### Other things to test
 
-In this example we have just decided a fixed format for chunks and used only the top result in the retrieval process. This [blog](https://medium.com/@thechosentom/rag-made-simple-with-snowflake-cortex-74d1df5143fd) provides some considerations about settings in the chunking function in our Snowpark UDTF. 
+In this example we have just decided a fixed format for chunks and used only the top result in the retrieval process. This [blog](https://medium.com/@thechosentom/rag-made-simple-with-snowflake-cortex-74d1df5143fd) provides some considerations about settings in the chunking strategy. 
 
 This is the recommendation from the [Cortex Search documentation](https://docs.snowflake.com/LIMITEDACCESS/cortex-search/cortex-search-overview):
 
@@ -581,12 +543,14 @@ For optimal search results with Cortex Search, Snowflake recommends splitting th
 When an entry in the search column contains more than 512 tokens, Cortex Search performs keyword-based retrieval on the entire body of text, but only uses the first 512 tokens for semantic (i.e., vector-based) retrieval.
 
 
-```python
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size = 1512, #Adjust this as you see fit
-            chunk_overlap  = 256, #This let's text have some form of overlap. Useful for keeping chunks contextual
-            length_function = len
-        )
+```SQL
+        LATERAL FLATTEN( input => SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER (
+              EXTRACTED_LAYOUT,
+              'markdown',
+              1512,
+              256,
+              ['\n\n', '\n', ' ', '']
+           )) c;
 ```
 
 You can also try different instructions in your prompt and see how the responses may vary. Simply replace any of the text and run the app again. The prompt is very important. Make sure you are clear in the ask and the instruction and it may change depending on your own use case.
@@ -636,7 +600,13 @@ First let´s create the new Streamlit App and then we will discuss each of the s
 
 ![App](assets/fig13_streamlit_chatbot.png)
 
-In this second app, we are going to demo how to access the Complete function from Snowlfake Cortex via Python API instead of SQL as we did in the previous app. To get access to the API, you need to specify the **snowflake-ml-python** package in your Streamlit app:
+In this second app, we are going to demo how to access the Complete function from Snowlfake Cortex via Python API instead of SQL as we did in the previous app. To get access to the API, you need to specify the **snowflake-ml-python** package in your Streamlit app. This combination of packages version is known to work well:
+
+- snowflake-ml-python = 1.8.1
+- snowflake.core = 1.2.0
+- python = 3.11
+- snowflake-snowpark-python = 1.30.0
+- streamlit = 1.42.0
 
 ![App](assets/fig13_2_ml_python_package.png)
 
@@ -669,6 +639,7 @@ CORTEX_SEARCH_SERVICE = "CC_SEARCH_SERVICE_CS"
 # columns to query in the service
 COLUMNS = [
     "chunk",
+    "chunk_index",
     "relative_path",
     "category"
 ]
@@ -682,16 +653,8 @@ svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].corte
      
 def config_options():
 
-    st.sidebar.selectbox('Select your model:',(
-                                    'mixtral-8x7b',
-                                    'snowflake-arctic',
-                                    'mistral-large',
-                                    'llama3-8b',
-                                    'llama3-70b',
-                                    'reka-flash',
-                                     'mistral-7b',
-                                     'llama2-70b-chat',
-                                     'gemma-7b'), key="model_name")
+    st.sidebar.selectbox('Select your model:',('mistral-large2', 'llama3.1-70b',
+                                    'llama3.1-8b', 'snowflake-arctic'), key="model_name")
 
     categories = session.table('docs_chunks_table').select('category').distinct().collect()
 
@@ -1024,6 +987,230 @@ Here another suggestion based on specific info from the documents (unique for us
 
 
 You can try with your own documents. You will notice different peformance depending on the LLM you will be using. 
+
+<!-- ------------------------ -->
+## Automatic Processing of New Documents
+Duration: 15
+
+Maintaining your RAG system up to date when new documents are added, deleted or updated can be tedious. Snowflake makes it very easy. In one side, Cortex Search is a self-managed service. We only need to add, delete or update rows in the table where Cortex Search Service has been enabled and automatically the service will update the indexes and create new embeddings based on the frequency defined during service creation.
+
+In addition, we can use Snowflake features like Streams, Tasks and Stored Procedures to automatically process new PDF files as they are added into Snowflake. 
+
+First we create two streams for the DOCS staging area. One is going to be used to process deletes and other to process inserts. The Streams captures the chages on the Directory Table used for the DOCS staging area. So we can track new updates and deletes:
+
+```SQL
+create or replace stream insert_docs_stream on stage docs;
+create or replace stream delete_docs_stream on stage docs;
+```
+
+Second, we are going to define a Stored Procedure that process those streams to:
+
+- Delete from the docs_chunk_table the content for files that has been deleted from the stagin area, so they are no longer relevant
+- Parse new PDF documents that has been added into the staging area using PARSE_DOCUMENT
+- Chunk the new document into pieces using SPLIT_TEXT_RECURSIVE_CHARACTER
+- Classify the new documents and update the label (this step is optional just to show the part of the possible)
+
+Create the Stored Procedure:
+
+```SQL
+create or replace procedure insert_delete_docs_sp()
+RETURNS VARCHAR
+LANGUAGE SQL
+AS
+$$
+BEGIN
+
+DELETE FROM docs_chunks_table
+    USING delete_docs_stream
+    WHERE docs_chunks_table.RELATIVE_PATH = delete_docs_stream.RELATIVE_PATH
+    and delete_docs_stream.METADATA$ACTION = 'DELETE';
+
+
+CREATE or replace TEMPORARY table RAW_TEXT AS
+    SELECT 
+        RELATIVE_PATH,
+        SIZE,
+        FILE_URL,
+        build_scoped_file_url(@docs, relative_path) as scoped_file_url,
+        TO_VARCHAR (
+            SNOWFLAKE.CORTEX.PARSE_DOCUMENT (
+                '@docs',
+                RELATIVE_PATH,
+                {'mode': 'LAYOUT'} ):content
+            ) AS EXTRACTED_LAYOUT 
+    FROM 
+        insert_docs_stream
+    WHERE 
+        METADATA$ACTION = 'INSERT';
+
+    -- Insert new docs chunks
+    insert into docs_chunks_table (relative_path, size, file_url,
+                            scoped_file_url, chunk, chunk_index)
+
+    select relative_path, 
+            size,
+            file_url, 
+            scoped_file_url,
+            c.value::TEXT as chunk,
+            c.INDEX::INTEGER as chunk_index
+            
+    from 
+        RAW_TEXT,
+        LATERAL FLATTEN( input => SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER (
+              EXTRACTED_LAYOUT,
+              'markdown',
+              1512,
+              256,
+              ['\n\n', '\n', ' ', '']
+           )) c;
+
+    -- Classify the new documents
+
+    CREATE OR REPLACE TEMPORARY TABLE docs_categories AS 
+    WITH unique_documents AS (
+      SELECT DISTINCT
+        d.relative_path, d.chunk
+      FROM
+        docs_chunks_table d
+      INNER JOIN
+        RAW_TEXT r
+        ON d.relative_path = r.relative_path
+      WHERE 
+        d.chunk_index = 0
+    ),
+    docs_category_cte AS (
+      SELECT
+        relative_path,
+        TRIM(snowflake.cortex.CLASSIFY_TEXT (
+          'Title:' || relative_path || 'Content:' || chunk, ['Bike', 'Snow']
+        )['label'], '"') AS category
+      FROM
+        unique_documents
+    )
+    SELECT
+      *
+    FROM
+      docs_category_cte;
+
+    -- Update cathegories
+
+    update docs_chunks_table 
+        SET category = docs_categories.category
+        from docs_categories
+        where  docs_chunks_table.relative_path = docs_categories.relative_path;
+
+END;
+$$;
+```
+
+Now we can create a Task that every X minutes can check if there is new data in the stream and take an action. We are setting the schedule to 5 minutes so you can follow the execution, but fell free to reduce the time to 1 minute if needed. Consider what would be best for your app and how often new docs are updated.
+
+We define:
+  - Where: This is going to be executed using warehouse **COMPUTE_WH**. Please name to your own Warehouse.
+  - When: Check every 5 minutes, and execute in the case of new records in the delete_docs_stream stream (we could also use the other stream)
+  - What to do: call the stored procedure insert_delete_docs_sp()
+
+Execute this code in your Snowflake worksheet to create the task:
+
+```SQL
+create or replace task insert_delete_docs_task
+    warehouse = COMPUTE_WH
+    schedule = '5 minute'
+    when system$stream_has_data('delete_docs_stream')
+as
+    call insert_delete_docs_sp();
+
+
+alter task  insert_delete_docs_task resume;
+```
+
+After uploading the document (and if you are fast enough before the doc is automatically processed) you can see the doc in the stream:
+
+Now let's test how it works. 
+
+First your streams will be empty:
+
+```SQL
+select * from delete_docs_stream;
+select * from insert_docs_stream;
+```
+We are going to test the modification of a document and the deletion of other.
+
+First you can check what is the response to the question:
+
+"Is there any special lubricant to be used with the premium bike?"
+
+You should get something pointing to Premium Oil 2287:
+
+![App](assets/fig16_search_1.png)
+
+Now let's upate the document for the Premium Bike as we have a new lubricant to be used. Also you can test the deletion of another document.
+
+Go to your database, select the schema DATA, the Stage DOCS, click on "Premium_Bicycle_User_Guide.pdf" document and Remove:
+
+![App](assets/fig17_remove_file.png)
+
+We no longer have Ski boots, so you can also remove Ski_Boots_TDBootz_Special.pdf document.
+
+Now you can add the new version of the "Premium_Bicycle_User_Guide.pdf" document. Download the new version from:
+
+- [Premium_Bicycle_User_Guide.pdf](https://github.com/Snowflake-Labs/sfguide-ask-questions-to-your-documents-using-rag-with-snowflake-cortex-search/blob/main/NEW_DOCS/Premium_Bicycle_User_Guide.pdf)
+
+If you read the document, you will notice that the new Oil recommended is Premium Oil 5555
+
+On the top right, click on +Files and add this new file:
+
+![App](assets/fig18_upload_file.png)
+
+If you have done this fast enough (in less than 5 minutes), you can check that both streams have detected the changes:
+
+```SQL
+select * from delete_docs_stream;
+select * from insert_docs_stream;
+```
+The column METADATA$ACTION tell us if this is a DELETE or an INSERT.
+
+Select specific columns so you can see the columns from the Stream:
+
+![App](assets/fig18_2_streams.png)
+
+You can also force the task execution with:
+
+```SQL
+execute task insert_delete_docs_task;
+```
+
+Note that once the Stream has been processed it will be empty.
+
+Under Monitoring -> Task History, you can find your task and monitor the execution:
+
+![App](assets/fig19_task_history.png)
+
+And now you can go back to your streamlit app to ask again the question:
+
+"Is there any special lubricant to be used with the premium bike?"
+
+![App](assets/fig20_search_2.png)
+
+And check that the new document is being used.
+
+If you ask the question: "Who tested the ski boots?", you should get somethink like "The context provided does not mention anyone testing ski boots" as the document has been deleted.
+
+Once you have finish testing uploading new documents and asking questions, you may want to suspend the task:
+
+```SQL
+alter task insert_delete_docs_task suspend;
+```
+
+<!-- ------------------------ -->
+## Cleanup
+Duration: 1
+
+In order to avoid consuming credits, you can drop the databse used for this lab.
+
+```SQL
+drop database CC_QUICKSTART_CORTEX_SEARCH_DOCS;
+```
 
 <!-- ------------------------ -->
 ## Conclusion And Resources

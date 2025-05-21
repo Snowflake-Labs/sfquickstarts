@@ -12,19 +12,21 @@ tags: Getting Started, Data Science
 ## Overview 
 Duration: 1
 
-In this quickstart, we'll explore how to harness the power of [Snowpark Container Services (SPCS)](https://docs.snowflake.com/en/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-runtime) using GPUs to execute a [notebook](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) directly within Snowflake. Specifically, we'll train an XGBoost model and walk through a workflow that involves inspecting GPU resources, loading data from a Snowflake table, and setting up that data for modeling. In the notebook, we will train two XGBoost models—one on CPUs and the other using a GPU cluster—and then compare their runtimes and results. 
+In this quickstart, we'll explore how to easily harness the power of containers to build models at scale in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) using GPUs from [Snowflake Notebooks in the Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) in the Container Runtime (Public Preview). Specifically, we'll train an XGBoost model and walk through a workflow that involves inspecting GPU resources, loading data from a Snowflake table, and setting up that data for modeling. In the notebook, we will train two XGBoost models—one trained with open source xgboost (single GPU) and one distributing across the full GPU cluster. Finally, we'll log the model to Snowflake's model registry then test out built-in inference and explainability capabilities on the model object.
 
-This exercise will highlight the efficiency gains possible with GPUs, the flexibility SPCS offers by enabling notebook execution on containers, and the added advantage of integrating third-party Python libraries to tap into the broader open-source ecosystem.
+This exercise will illustrate how Snowflake Notebooks lets you quickly tap into the GPU compute power you need to scalably build ML models using any open-source Python framework of choice. 
 
 ### Prerequisites
-- Access to a Snowflake account with Accountadmin. 
-- Access to run Notebooks in Snowflake
+- A Snowflake Account. Sign up for a 30-day free trial account, if required. 
+- A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the XGB_GPU_LAB_USER and granting required privileges, as well as creating the EXTERNAL ACCESS INTEGRATION).
+  - To try Snowflake ML in a free trial, check out this [quickstart](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
 - Foundational knowledge of Data Science workflows
+- For an intro to Snowflake Notebooks on Container Runtime, try this [quickstart](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0) first
 
 ### What You Will Learn 
-- How to use SPCS to run notebook workloads that execute on containers, rather than virtual warehouses in Snowflake
-- GPUs can greatly speed up model training jobs
-- How to bring in third party python libraries to leverage great contirbutions to the OSS ecosystem
+- Use Snowflake Notebooks with GPUs to speed up model training jobs with distributed processing
+- Build using a set of pre-installed ML packages or pip install any of your favorite open-source package 
+- Run ML workloads at scale without any data movement
 
 ### What You’ll Need 
 - A [Snowflake](https://app.snowflake.com/) Account
@@ -43,6 +45,7 @@ Complete the following steps to setup your account:
 - Run all commands to create Snowflake objects
 
 ```sql
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is", "name":"notebook_pack_xgboost_on_gpu", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 USE ROLE ACCOUNTADMIN;
 
 -- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
@@ -118,7 +121,7 @@ GRANT ALL ON TABLE "XGB_GPU_DATABASE"."XGB_GPU_SCHEMA"."VEHICLES_TABLE" TO ROLE 
 ## Run the Notebook
 Duration: 30
 
-- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-train-xgboost-model-using-gpus-using-snowflake-notebooks/blob/main/XGBoost_on_GPU_Quickstart.ipynb)
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-train-xgboost-model-using-gpus-using-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb)
 - Change role to XGB_GPU_LAB_USER
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
@@ -145,15 +148,23 @@ Duration: 1
 
 ### Conclusion
 
-In this quickstart, we demonstrated the power of Snowpark Container Services (SPCS) in leveraging GPUs to efficiently train an XGBoost model directly within a Snowflake notebook. By walking through the process of inspecting GPU resources, loading data from a Snowflake table, and setting up that data for modeling, we successfully trained and compared two XGBoost models—one using CPUs and the other on a GPU cluster. The results underscored the significant efficiency gains GPUs can offer, along with the flexibility SPCS provides by enabling containerized notebook execution and the ability to integrate third-party Python libraries seamlessly.
+In this quickstart, we demonstrated how to use Snowflake Notebooks in the Container Runtime to efficiently train an XGBoost model with GPUs. By walking through the process of inspecting GPU resources, loading data from a Snowflake table, and setting up that data for modeling, we successfully trained and compared two XGBoost models—one using a single GPU and the other on a GPU cluster. The results underscored the significant efficiency gains GPUs can offer, along with the flexibility Container Runtime provides by enabling containerized notebook execution and the ability to integrate third-party Python libraries seamlessly. We also took a look at Snowflake's Model Registry and how that can be leveraged in machine learning workflows. 
 
-Ready to accelerate your ML workflows? Dive deeper into Snowpark Container Services and start leveraging GPUs for faster, more flexible model training!
+Ready to accelerate your ML workflows in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)? Dive deeper into Container Runtime and start leveraging GPUs for faster, more flexible model training!
 
 ### What You Learned
-- How to use SPCS to run notebook workloads that execute on containers, rather than virtual warehouses in Snowflake
+- How to use Container Runtime to run ML workloads directly from Snowflake Notebooks
 - GPUs can greatly speed up model training jobs
-- How to bring in third party python libraries to leverage great contirbutions to the OSS ecosystem
+- How to bring in third party python libraries to leverage great contributions to the OSS ecosystem
 
 ### Related Resources
-- [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
-- [Snowpark Services Container Runtime](https://docs.snowflake.com/en/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-runtime)
+- [Snowflake Notebooks on Container Runtime Docs](https://docs.snowflake.com/en/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-runtime)
+- [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+
+### Related Quickstarts
+  - Intro:
+    - [Getting Started with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/)
+  - Advanced:
+    - [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks)
+    - [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime)
+    - [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/)

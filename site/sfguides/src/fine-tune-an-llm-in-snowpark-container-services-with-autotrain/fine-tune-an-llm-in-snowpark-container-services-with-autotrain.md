@@ -334,7 +334,7 @@ Two endpoints are included in the specification file: `jupyter` and `app`. Jupyt
 
 Lastly, save the file and push to Snowflake stage `SPECS` using one of the below:
   - `PUT file://autotrain.yaml @CONTAINER_HOL_DB.PUBLIC.SPECS AUTO_COMPRESS=FALSE OVERWRITE=TRUE;` with SnowSQL
-  - `snow object stage copy ./autotrain.yaml @specs --overwrite` with [SnowCLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/command-reference/object-commands/stage/copy)
+  - `snow stage copy ./autotrain.yaml @specs --overwrite` with [SnowCLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/command-reference/object-commands/stage/copy)
   - Upload to stage `CONTAINER_HOL_DB.PUBLIC.SPECS` using Snowsight GUI.
 
 <!-- ------------------------ -->
@@ -395,7 +395,7 @@ pip3 install "fschat[model_worker,webui]"
 ```
 If you would like to also include the non-fine-tuned foundational model in the Gradio chat interface, run the below commands in the terminal as well. 
 ```bash
-pip install huggingface_hub
+pip install huggingface_hub==0.25.2
 huggingface-cli login --token $HF_TOKEN
 ```
 

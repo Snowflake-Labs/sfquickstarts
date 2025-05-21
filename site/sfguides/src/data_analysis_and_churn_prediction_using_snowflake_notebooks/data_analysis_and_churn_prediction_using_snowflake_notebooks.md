@@ -3,7 +3,7 @@ id: data_analysis_and_churn_prediction_using_snowflake_notebooks
 summary: Data Analysis and Churn Prediction Using Snowflake Notebooks
 categories: Churn, Prediction, Getting-Started
 environments: web
-status: Published
+status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Churn, Prediction, Notebooks
 
@@ -117,8 +117,8 @@ Duration: 10
 
 ### Overview
 For this Quickstart, there are 2 Snowflake Notebooks and they need to be executed in order. Make sure to run the first Notebook fully before running the second Notebook.
-1. The first Snowflake Notebook [1_telco_churn_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb) contains scripts for importing and exploring our data
-2. The second Snowflake Notebook [2_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb) contains scripts for feature engineering and model training to use in the Streamlit app within the Notebook
+1. The first Snowflake Notebook [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb) contains scripts for importing and exploring our data
+2. The second Snowflake Notebook [1_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ml_feature_engineering.ipynb) contains scripts for feature engineering and model training to use in the Streamlit app within the Notebook
 
 ### Import Snowflake Notebooks
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create the Snowflake Notebooks by importing the Notebooks.
@@ -126,7 +126,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 2. Switch Role to `CHURN_DATA_SCIENTIST`
 
-3. Download the [1_telco_churn_ingest_data.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ingest_data.ipynb) and [2_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/2_telco_churn_ml_feature_engineering.ipynb) Notebooks
+3. Download the [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb) and [1_telco_churn_ml_feature_engineering.ipynb](https://github.com/Snowflake-Labs/sfguide-data-analysis-churn-prediction-in-snowflake-notebooks/blob/main/notebooks/1_telco_churn_ml_feature_engineering.ipynb) Notebooks
 
 4. Using the `Import .ipynb file`, import the downloaded Notebooks
 
@@ -161,7 +161,8 @@ DROP WAREHOUSE IF EXISTS churn_ds_wh;
 ## Conclusion and Resources
 Duration: 5
 
-### Congrats! You're reached the end of this Quickstart!
+### Conclusion
+Congrats! You're reached the end of this Quickstart!
 
 ### What You Learned
 With the completion of this Quickstart, you have now delved into:

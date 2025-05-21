@@ -1,4 +1,4 @@
-author: marzillo-snow
+author: chandra-snow
 id: power_apps_snowflake
 summary: This is a quickstart for using Microsoft Power Platform, Power Apps, Power Automate and Snowflake
 categories: Getting-Started, data-engineering, microsoft, power-apps, power-platform, snowflake
@@ -6,50 +6,50 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Microsoft, Power Apps, Power Platform, Power Automate
+Date: 4/3/25
 
-# Getting Started with Power Apps and Snowflake
+# Getting Started with Microsoft Power Platform and Snowflake
+Duration: 45
+
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
+Join Snowflake and Microsoft for a quickstart to build a business application with Microsoft Power Apps that can access retail customer data as virtual tables, do a writeback, trigger a flow using Power Automate without making a copy of the data. 
+
+We will use the new Power Apps connector from Microsoft premium connectors marketplace, which leverages Snowflake SQL API, and allows you to read, write and execute Snowflake objects.
 
 ### Power Apps
-
-Microsoft Power Apps and Power Automate are part of the Microsoft Power Platform, a suite of tools designed to empower organizations to create custom applications and automate workflows with minimal coding effort. Power Apps is a low-code development platform that enables users to build custom web and mobile applications using a drag-and-drop interface and pre-built templates. It offers seamless integration with various data sources and other Microsoft services, making it a powerful tool for businesses to create tailored solutions without the need for extensive development resources.
-
-Power Automate, formerly known as Microsoft Flow, is a cloud-based service that enables users to automate repetitive tasks and create complex workflows across multiple applications and services. With its intuitive graphical interface and wide range of connectors, users can design and implement automation processes that streamline operations and improve overall efficiency.
+Microsoft Power Apps and Power Automate are part of the Microsoft Power Platform, a suite of tools designed to empower organizations to create custom applications and automate workflows with minimal coding effort. 
 
 ### Snowflake
-
-Snowflake is a cloud-based data warehousing and analytics platform that allows organizations to store, process, and analyze massive amounts of structured and semi-structured data. It provides a scalable and fully managed services that support diverse data types, making it an ideal choice for businesses looking to harness the power of their data. Snowflake's unique multi-cluster shared architecture separates storage, compute, and services, allowing users to scale resources independently, while offering robust security, seamless data sharing, and near-instant elasticity. Its platform-agnostic approach and support for various programming languages enable seamless integration with a wide range of tools and applications, making it a versatile solution for data-driven enterprises.
-
-### Power Apps and Snowflake Integration
-
-The Power Apps connector is a wrapper around the Snowflake SQL API that allows users of both platforms to read and write data to and from Snowflake from their Power Automate flows.
-
-### Prerequisites
-- Familiarity with [Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html#0) and a Snowflake account
-- Familiarity with [PowerApps](https://learn.microsoft.com/en-us/power-apps/powerapps-overview) and a power apps account
-- You must have a premium Power Apps license
+Snowflake is a cloud-based data platform that allows organizations to store, process, and analyze massive amounts of structured and semi-structured data. It provides a scalable and fully managed services that support diverse data types, making it an ideal choice for businesses looking to harness the power of their data. 
 
 ### You'll Learn
-- Configure a connection between Power Automate and Snowflake
-- Run a simple query from Power Automate to query Snowflake data
+- Using Power Platform to read and write to Snowflake. 
+- Leveraging Snowflake ML in Power Automate 
 
 ### What You’ll Need 
-- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
-- A Power Apps account [PowerApps](https://learn.microsoft.com/en-us/power-apps/powerapps-overview)
+- Signup for free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- Signup for [Power Apps Account](https://www.microsoft.com/en-us/power-platform/products/power-apps/)
+- You must have a premium Power Apps license 
+- Use your existing Company Entra ID, or [sign-up](https://signup.microsoft.com/get-started/signup?products=FAF849AB-BD30-42B2-856C-8F1EDC230CE9)  
 
 
 ### What You’ll Build 
-A Power Apps and Power Automate flow that will query data from a snowflake table.
+- Load customer data into Snowflake tables. 
+- Configure a connection between PowerPlatform and Snowflake.
+- Use Power Apps to build a model app, access Snowflake tables to read and writeback.
+- Use Snowflake Notebook to create a Machine Learning model. 
+- Invoke model predictions using Power Automate. 
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 5
+Duration: 15
+### Create Snowflake Objects 
 
-The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.
+The first thing we will do is create a database and warehouse in your Snowflake environment. 
+
 ```sql
-use role accountadmin;
+USE ROLE accountadmin;
 
 CREATE OR REPLACE WAREHOUSE HOL_WH WITH WAREHOUSE_SIZE='X-SMALL';
 
@@ -58,154 +58,179 @@ CREATE OR REPLACE DATABASE HOL_DB;
 GRANT USAGE ON WAREHOUSE hol_wh TO ROLE public;
 grant usage on database hol_db to role public;
 grant usage on schema hol_db.public to role public;
-grant select on table hol_db.public.rockers_table to role public;
-```
 
-### Load data
-Now we will create a simple table in this database that we will query from the Power Apps connector. Run the below code in a Snowflake worksheet.
-
-```sql
-use role accountadmin;
-use database HOL_DB;
-use warehouse HOL_WH;
-CREATE TABLE rockers_table (
-  id INT,
-  name VARCHAR(50),
-  age INT
+-- Create a Table with the columns suggested below 
+USE ROLE accountadmin;
+USE DATABASE hol_db;
+USE WAREHOUSE hol_wh;
+CREATE OR REPLACE TABLE CUSTOMER_PRESEGMENT (
+	ID NUMBER(38,0),
+	AGE NUMBER(38,0),
+	GENDER VARCHAR(16777216),
+	INCOME NUMBER(38,0),
+	SPENDING_SCORE NUMBER(38,0),
+	MEMBERSHIP_YEARS NUMBER(38,0),
+	PURCHASE_FREQUENCY NUMBER(38,0),
+	PREFERRED_CATEGORY VARCHAR(16777216),
+	LAST_PURCHASE_AMOUNT NUMBER(38,2)
 );
+GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
 
-INSERT INTO rockers_table (id, name, age)
-VALUES (1, 'Jimi Hendrix', 27),
-       (2, 'Janis Joplin', 27),
-       (3, 'Elvis Presley', 42),
-       (4, 'Freddie Mercury', 45),
-       (5, 'Whitney Houston', 48),
-       (6, 'Michael Jackson', 50),
-       (7, 'Prince', 57),
-       (8, 'Amy Winehouse', 27),
-       (9, 'Kurt Cobain', 27),
-       (10, 'John Lennon', 40);
 ```
 
-*for this quickstart we will use the ACCOUNTADMIN role to create the Snowflake environment, but in practice you will likely want to use another role when creating databases, tables and warehouses.
+### Get Sample data and scripts 
+1. Download the data for the demo [sample data file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/tree/main/data/customer_segmentation_data.csv) 
+=======
+2. Login to Snowflake Account and go to Data -> Databases -> HOL_DB
+3. Select table CUSTOMER_PRESEGMENT and click Load Data 
+![load data](assets/load_db.png)
+4. Accept the defaults and complete loading data.
 
 <!-- ------------------------ -->
-## Set up Azure AD (Entra ID) authentication for Snowflake 
+## Setup Power Apps Environment 
+<a id="Azure_Setup"></a>
+### Set up Azure AD (Entra ID) authentication for Snowflake 
 Duration: 15
 
-Now we need to set up an app registration for Active Directory (Entra ID) OAuth, which will establish trust between your power app and Azure AD. This allows you to define and manage permissions and ensures only authorized users to access your application.
+Now we need to set up an app registration for Active Directory (Entra ID) OAuth, which will establish trust between your Power Platform and Snowflake. This allows you to define and manage permissions and ensures only authorized users to access your application.
 
-1.	In [Step 1: Configure the OAuth Resource in Azure AD](https://docs.snowflake.com/en/user-guide/oauth-azure#configure-the-oauth-resource-in-azure-ad), follow steps 1-10 and define the scope as SESSION:ROLE-ANY by following these [instructions](https://docs.snowflake.com/en/user-guide/oauth-azure#using-any-role-with-external-oauth).
-2.	In [Step 2: Create an OAuth Client in Azure AD](https://docs.snowflake.com/en/user-guide/oauth-azure#create-an-oauth-client-in-azure-ad), follow steps 1-13.
-3.	Navigate to Authentication -> Platform configurations -> Add a platform -> Add "https://global.consent.azure-apim.net/redirect/snowflakepa" -> Click Save. Ensure that the redirect URL is set in the Snowflake OAuth Client and not the Snowflake OAuth Resource.
-4.	Go to the resource created in Step 1 and go to Expose an API -> Add a client application -> Add your APPLICATION_CLIENT_ID from earlier in step 3 above -> Click Save
-5.	Follow [Step 3: Collect Azure AD Information for Snowflake](https://docs.snowflake.com/en/user-guide/oauth-azure#collect-azure-ad-information-for-snowflake) entirely.
-6.	If you have already established a connection using the Snowflake certified connector, Update existing security integration in Snowflake.  
+For the purposes of this demo, we will create a  **MAKE SURE YOU FOLLOW SERVICE PRINCIPAL AUTH** Authentication and the steps are provided
+in the document below. 
 
-```sql
-ALTER SECURITY INTEGRATION <existing integration name>
-set external_oauth_audience_list = ('<existing power bi audience list url>', '< Application ID URI from Step 1>')
-```
+https://learn.microsoft.com/en-us/connectors/snowflakev2/#supported-capabilities-for-power-apps, but you can download & run the scripts below in Azure CLI as an admin 
 
-If you are establishing a new connection Create new security integration in Snowflake by following the below steps. Make sure you've set your role as ACCOUNTADMIN before executing the query.
-a)	In Microsoft Azure, go to your Snowflake OAuth Resource app and click on Endpoints. 
+[Script-for-Windows Users](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_win.ps1) | 
+[Script-for-Mac Users](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_Mac.ps1)
 
-b)	To get the AZURE_AD_ISSUER in line 5, copy the link in the Federation metadata document field and open the link in a new tab. Copy the entityID link which should something look like this: https://sts.windows.net/90288a9b-97df-4c6d-b025-95713f21cef9/. Paste it into the query and make sure you have a / before the last quotation mark and that you keep the quotation marks. 
-
-c)	To get the Keys URL in line 6, copy the link in the OpenID Connect metadata document field and open the link in a new tab. Copy the jwks_uri which should look something like this: https://login.microsoftonline.com/90288a9b-97df-4c6d-b025-95713f21cef9/discovery/v2.0/keys. Paste it into the query and make sure you keep the quotation marks.
-
-d)	Replace the Audience List URL in line 7 with Application ID URI from Step 1. Keep the quotation marks.
-
-e)	If your Snowflake account uses the same email address as your Microsoft Azure account, then replace login_name in line 9 with email_address. If not, keep it as is and do not type in your login name. Keep the quotation marks.
-
-```sql
-CREATE SECURITY INTEGRATION <integration name>
-        type = external_oauth
-        enabled = true
-        external_oauth_type = azure
-        external_oauth_issuer = '<AZURE_AD_ISSUER>'     
-        external_oauth_jws_keys_url = '< https://login.windows.net/common/discovery/keys >'
-        external_oauth_audience_list = ('<Application ID URI from registered resource app in Azure>')
-        external_oauth_token_user_mapping_claim = 'upn'
-        external_oauth_snowflake_user_mapping_attribute = 'login_name'
-        external_oauth_any_role_mode = 'ENABLE';
-```
-
-```sql
---Update existing security integration in Snowflake
-ALTER SECURITY INTEGRATION <existing integration name>
-set external_oauth_audience_list = ('< Application ID URI from Step 1>');
-```
 
 <!-- ------------------------ -->
-## Build Power Automate Flow
+### Build a PowerApp and connect to Snowflake data
 Duration: 15
 
-From the Power Apps homescreen access the apps in the top left and click on Power Automate.
+After you have configured Power Apps Connector to Snowflake, go to Power Apps 
+1. Click Tables -> Create Virtual Table 
+	![virtualtable](assets/Virtual_Table_Create.png)
 
-![](assets/power_apps.png)
+2. Select Connection that you have setup in prior step, click NEXT
+	![connection](assets/connection.jpg)
 
-On the Power Automate screen click on the 'My Flow' menu item on the left then "New Flow" and then "Instant Cloud Flow". Select Power Apps as your trigger, name the flow and then create.
+3. You should now see the table CUSTOMER_PRESEGMENT, click NEXT
 
-![](assets/new_flow.png)
+4. On Configuration screen, click Next and click FINISH on the last screen.
 
-Now, it's time to build the connector! First click on "New Step" and the search bar search for "Snowflake" and select the "Submit SQL Statement for Execution" BUT first you will have to authenticate through the security integration establishing a connection to Snowflake:
+5. Now, you see that age is negative for ID1 and ID2, click the pencil to make changes and save.
+	![crud](assets/CRUD_Change.png)
 
-While creating the connection in power platform, use the credentials as shown in below snapshot.
-a)	Client Id: Snowflake OAuth Client ID from registered Client app in Azure
-b)	Client Secret: Snowflake OAuth Client secret from registered Client app in Azure
-c)	Resource URL: Application ID URI from registered Resource app in Azure
+6. Click Apps, click [Start with a page design]
 
-![](assets/sf_auth.png)
+7. Select a dataverse table, and search CUSTOMER_PRESEGMENT and click Create App
 
-Once connected, you will populate the below information to query from Snowflake.
+8. Save the app as Marketing Segments.  
 
-for each of the parameters in the Snowflake connector please populate as such:
-```bash
-Instance: <Snowflake host> (it should resemble: sn00111.central-us.azure.snowflakecomputing.com, do not include the "https://")
-statement: select name, age from rockers_table;
-database: HOL_DB
-schema: PUBLIC
-warehouse: HOL_DB
-role: PUBLIC
+9. Click the Play button.
+	![app](assets/App_Save.png)
+	
+10. As a marketer you notice the customers aren't segmented as there is no segment field. 
+
+<!-- ------------------------ -->
+
+## Snowflake Segmentation ML Model  
+### Lets look at the clustering Model and deploy it 
+Typically your datascience teams trains and deploy the ML models, and you can invoke them. 
+
+1. Download the Customer Segmentation Notebook [Jupyter ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/customer_segmentation.ipynb) 
+
+
+2. Connect to Snowflake: Projects -> Notebook
+
+3. Import the notebook you downloaded earlier by clicking import .ipynb file
+	![notebook](assets/ImportNotebook.jpg)
+
+4. Click on packages, and make sure you add the packages listed in the screenshot
+
+	![packages](assets/Packages.png)
+
+5. Click the RunALL button or click START and execute individual cell. 
+
+6. Create a Procedure to Invoke Model Predictions by running below SQL in a worksheet 
+
+	[storedproc](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/segment_storedproc.sql)
+
+
+### Build a Power Automate Flow
+Let's build a Power Automate Flow to call stored procedure you created and run the model.
+1. Launch Power Automate
+
+2. Click My flows -> + New Flow  -> Instant Cloud Flow
+
+3. Give a name Call_Segmentize and select "When Power Apps calls a flow (V2)" for Choose how to trigger this flow 
+   ![flowcreate](assets/flow_create.png)
+
+4. In the canvas -> click New step 
+
+5. Search "Snowflake" and select "Submit SQL Statement for Execution" as shown 
+	![flow](assets/power_apps_choose_operation.png) 
+6. Let's add the following parameters 
+	- Instance - your Snowflake account URL(***WITHOUT https***)
+	- Body/statement - CALL segmentize('CUSTOMER_PRESEGMENT','CUSTOMER_SEGMENTS'); (*** Advanced Parameters ***)
+	- database - HOL_DB
+	- schema - PUBLIC 
+	- warehouse - HOL_WH
+	- role  - ANALYST
+	
+	Make sure to set connection to the one you created [above](#set-up-azure-ad-entra-id-authentication-for-snowflake) 	
+	![automateconnect](assets/automate_conn.png)
+
+7. Run the flow and ensure it completes successfully. 
+		
+		
+### Update PowerApp to invoke your Flow 
+1. Put a button called Segmentize in the CUSTOMER_PRESEGMENT screen.
+	![add_trigger](assets/app_call_flow.png)
+
+2. Click Tables -> Create Virtual Tables and select CUSTOMER_SEGMENTS 
+	![connection](assets/connection.jpg)
+
+3. Let's create another screen (name: Trigger_Success) to indicate when the flow is completed. 
+
+4. You can choose "Header and Table" or "Blank: for the screen type, we will connect new view named CUSTOMER_SEGMENTS which has the PREDICTION field. 
+![show_segment](assets/segment_show.png)
+(*** You may see data because you tested the flow ***)
+5. Go back the CUSTOMER_PRESEGMENT screen, click the segmentize button and in the Properties->Advanced table 
+   pick ONSELECT action and enter (Call_Segmentize.Run(); Navigate(Trigger_Success))
+   ![flow_trigger](assets/run_powerflow.png)
+6. Now you can see PREDICTION column in the CUSTOMER_SEGMENTS view displayed. 
+   ![show_prediction](assets/segment_prediction.png)
+
+
+<!-- ------------------------ -->
+## Clean Up
+Run the below SQL in Snowsight
+``` sql
+DROP DATABASE hol_db;
+DROP WAREHOUSE hol_wh;
 ```
 
-Next, create a "New Step" and select the action "Convert result set rows from arrays to objects" and complete the activity parameters with the options below. Selected from the box on the left of the activity.
+## Conclusion and Resources
 
-```bash
-Row Type: rowType
-Data: data
-```
+Congratulations! you have completed the lab.
 
-When completing the parameters for the "Convert result set rows from arrays to objects" make certain that you're selecting the items from the Dynamic Content options rather then simply typing the values. 
+### What You Learned
 
-![](assets/convert_selection.png)
+ * In this lab we queried Snowflake tables as Virtual tables in Power Apps, performed write-back.
+ * Invoked a Snowflake UDF to get a ML prediction using Power Automate. 
 
-Lastly, and the "Response" action. Your flow should now look like this:
+### Resources
+[Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 
-![](assets/final_flow.png)
+[Power Platform](https://learn.microsoft.com/en-us/power-apps/Power Apps-overview)
 
-Click "save" in the top right corner then once saved click "test". Move through the prompts to run the Flow: select Manually, "Save & Test" then "Run Flow" then "Done". Within several seconds you should have successfully run the flow and it shoult look like this:
 
-![](assets/run_flow.png)
 
 ### Things to look out for
-- If you're getting a username and password error make sure that you use the forward slash at the end the external_oauth_issuer parameter value
-- Similarly you may explore changing the external_oauth_snowflake_user_mapping_attribute value to "email_name" as that value in your user profile will match the email address in your Power Apps account. 
-- Make sure the you're getting the tenant id from your Power Apps account and not your Azure account as they don't always match.
+- Use Service Principal based Authentication and test the connection with a Power Automate flow for troubleshooting
+- Make sure you have set the role, default_namespace, default_warehouse, login_name are set are set for the service_principal user. 
 - If you're not seeing the Snowflake actions in your options double check your Power Automate Environment and make sure you're using an environment where the Snowflake connector is available.
-- When returning larger datasets from Snowflake (varies based on the length and width of the data, but typically more than several hundred rows of data) partitioning occurs and users will have to set up an "apply to each" flow in order to stitch the results together. This flow can be set up in a matter of minutes and will resemble the flow below.
-![](assets/applytoeach.jpg)
-
 
 <!-- ------------------------ -->
-## Conclusion and Next Steps
-Duration: 5
 
-This quickstart will get you started with creating a simple power apps flow that connects to Snowflake and queries a table. From here you can use the connector in many different flows with different power apps activities to read data from and write data to Snowflake see here for more details: [Power-Apps](https://learn.microsoft.com/en-us/power-automate/getting-started). Additionally, users can utilize Azure Active Directory and SSO to create a user that links to the security integration to for power apps. [AAD-SSO](https://docs.snowflake.com/en/user-guide/oauth-powerbi#getting-started)
-
-### Potential Use Cases for the Snowflake Power Apps
-
-- Build data apps using the connector to share dashboard/analytics for your marketing campaign with Sales or other business users.
-- Build an app to check the NextBest Offer or LTV of a customer to avoid churn.
-- Build an app that will allow a user to execute queries from Teams chat against their Snowflake environment.
