@@ -12,7 +12,7 @@ tags: Getting Started, Machine Learning, Recommendations, Personalization, API, 
 ## Overview 
 Duration: 5
 
-For real-time recommendations and personalization, modern mobile+web applications and marketing technology platforms often want to retrieve customer profile, product/inventory, or location data through http APIs in real-time. This tutorial will go through how to build, deploy, host, and call a custom API for these point-lookups in real-time, all powered by Snowflake.
+For real-time recommendations and personalization, modern mobile + web applications and marketing technology platforms often want to retrieve customer profile, product/inventory, or location data through http APIs in real-time. This tutorial will go through how to build, deploy, host, and call a custom API for these point-lookups in real-time, all powered by Snowflake.
 
 This API consists of creating a single endpoint for customer profile data stored in Snowflake. After completing this guide, you will have built a custom API built with [Python Flask](https://flask.palletsprojects.com/) that queries a [Snowflake Hybrid Table](https://docs.snowflake.com/en/user-guide/tables-hybrid). 
 
