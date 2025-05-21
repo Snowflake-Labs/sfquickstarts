@@ -18,7 +18,7 @@ Duration: 1
 This guide will show you how to experiment with and scale embeddings generation in Snowflake Notebooks on Container Runtime.
 
 ### Prerequisites
-- A non-trial Snowflake account in a supported [AWS commercial region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
+- A Snowflake Account. Sign up for a 30-day free trial account, if required. 
 - A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the CONTAINER_USER_ROLE and granting required privileges, as well as creating the EXTERNAL ACCESS INTEGRATION).
   - To try Snowflake ML in a free trial, check out this [quickstart](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0).
 - Foundational knowledge of Data Science workflows

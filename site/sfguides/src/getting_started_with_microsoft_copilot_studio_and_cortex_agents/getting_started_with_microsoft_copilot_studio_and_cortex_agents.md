@@ -19,7 +19,9 @@ Cortex Agents orchestrate across both structured and unstructured data sources t
 Using the two services together allows users to build a copilot in Microsoft with all of their Microsoft data and tooling alongside Snowflake Cortex services on top of their Snowflake data with efficiently and securely (with Oauth support).
 
 ### Use Case
-In this use cases we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search and Analyst that can be used by our copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
+In this use cases we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search (for unstructured data) and Analyst (for structured data) then wrap a Cortex Agent around it so that it can combine both the services in a unified agentic experience. This can then be used by Copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
+
+Snowflake Cortex has proven to be a best-in-class platform for building GenAI services and agents with your data and while there is overlap with functionality in Microsoft Copilot Studio we see many customers who want to build GenAI services in Snowflake Cortex then materialize those services to MS Copilot. Having MS Copilot serve as the single Copilot interface for all GenAI services and agents.
 
 
 ### Prerequisites
@@ -173,7 +175,7 @@ GRANT ROLE ANALYST TO USER SNOWSQL_OAUTH_USER;
 select system$verify_external_oauth_token(‘<token>’);
 ```
 <!-- ------------------------ -->
-## Configure Oauth (Option 1)
+## Configure Oauth (Option 2)
 
 Copy and paste the below power shell script into a text editor.
 - Replace < tenant id > with your Microsoft tenant id
@@ -501,6 +503,8 @@ To set up Cortex Analyst you will have to upload a semantic file.
 - Click "+ Files" in the top right
 - Browse and select sales_metrics_model.yaml file
 - Click "Upload"
+
+Cortex Analyst is a highly accurate text to sql generator and in order to produce highly accurate results a semantic file such as this one is required. Cortex Analyst will use this semantic file along with user prompts to generate accurate SQL.
 
 Now run the below code in the same SQL worksheet to create a Stored Procedure that calls a Snowflake Cortex Agents and will use a llama model to determine whether or not to use the Search or Analyst.
 

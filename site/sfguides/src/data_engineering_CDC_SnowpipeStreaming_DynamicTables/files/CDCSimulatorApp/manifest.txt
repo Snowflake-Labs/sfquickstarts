@@ -5,4 +5,4 @@ Class-Path:  lib/VERSIONS.txt
   lib/slf4j-api-1.7.36.jar
   lib/slf4j-simple-1.7.21.jar
   lib/snowflake-jdbc.jar
-  lib/jaxb-api-2.2.11.jar
+  lib/jaxb-api.jar
