@@ -69,7 +69,7 @@ Before we run our algorithms, we need to set the proper permissions. But before 
 use role accountadmin;
 ```
 
-Next let's set up the necessary roles, permissions, and resource access to enable Graph Analytics to operate on data within the `p2p_demo.public schema`. It creates a consumer role (gds_role) for users and administrators, grants the Neo4j Graph Analytics application access to read from and write to tables and views, and ensures that future tables are accessible. 
+Next let's set up the necessary roles, permissions, and resource access to enable Graph Analytics to operate on data within the `p2p_demo.public schema`. It creates a consumer role (gds_user_role) for users and administrators, grants the Neo4j Graph Analytics application access to read from and write to tables and views, and ensures that future tables are accessible. 
 
 It also provides the application with access to the required compute pool and warehouse resources needed to run graph algorithms at scale.
 
