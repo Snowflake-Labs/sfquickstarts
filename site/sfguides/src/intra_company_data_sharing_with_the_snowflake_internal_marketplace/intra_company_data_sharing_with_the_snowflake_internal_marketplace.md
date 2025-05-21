@@ -68,7 +68,21 @@ For Steps 2 through 7 you can download [scripts here](https://github.com/Snowfla
 
 Sign up for a trial account [here](https://signup.snowflake.com/)
 
-- Choose any cloud provider and region
+- Choose Cloud and Region, we recommend choosing one of the regions below, where this quickstart has been tested.
+  - Microsoft Azure
+    - West Europe (Netherlands)
+    - UK South (London)
+    - East US 2 (Virginia)
+    - Japan East (Tokyo)
+  - Amazon Web Services
+    - EU (Frankfurt)
+    - US West (Oregon)
+    - EU (Ireland)
+    - Asia Pacific (Tokyo)
+  - Google Cloud Platform
+    - Europe West (London)
+    - US Central (Iowa)
+
 - Choose **Enterprise Edition** or higher. (Standard Edition does not support the Internal Marketplace)
 - Activate the account with an admin user name such as `admin`
   
@@ -298,35 +312,36 @@ Duration: 30
 
 In this section you will work in `HOL_ACCOUNT1` create and publish an [organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-about). 
 
+The publishing flow consists of 5 steps:
+
+1. Listing Title and Ownership
+2. Selecting Data Objects to Share
+3. Configure Access Control and the Approval Process
+4. Add Optional Metadata and SLOs
+5. Publish your listing to the internal marketplace
+
 Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 
-### Publishing Flow: Listing Title and Ownership
+### Publishing Flow Step 1/5: Listing Title and Ownership
 
 1. Navigate to the **Catalog** -> **Internal Marketplace**
 2. Use the **Provider** filter to see data products from a specific domain
 3. Click the blue **+Create Listing** button in the top right. Select "Internal Marketplace".
     - Note: You can create a listing also from the **Data Sharing** -> **Provider Studio** menu on the left.
-  
-  
-
 
 ![IM](assets/CreateListingFromIM.png)
-###
----
-2. Give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
+
+2. Click on **“Untitled Listing”** and give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
 
 ![](assets/Publish01-Title.png)
-###
----
+
 3. Click on the **+Profile** button and select the **Sales** profile as the owner of this data product. 
 
 ![](assets/Publish02-Profile.png)
 
 - When you save the profile selection, note that the contact email from the Sales profile is automatically entered as the default support contact for this listing. You can change this on a per listing basis if you want. 
-###
----
 
-### Publishing Flow: Selecting Data Objects to Share
+### Publishing Flow Step 2/5: Selecting Data Objects to Share
 
 Now let's select the data objects that we want to share in this data product. 
 - Click on the blue **Add Data Product** button to open the object explorer. 
@@ -335,14 +350,12 @@ Now let's select the data objects that we want to share in this data product.
 
 ![](assets/Publish03-ObjectSelection.png)
 
-###
----
-### Publishing Flow: Configure Access Control and the Approval Process
+### Publishing Flow Step 3/5: Configure Access Control and the Approval Process
 
 Next you set the access control for the data product. Click on the gray **+Access Control** button. 
 - *Discovery* determines who can see the listing and all its metadata in the internal marketplace without having access to the shared data objects.
 - *Access* specifies who can discover the listing *and* access the shared data objects. 
-###
+
 For this first data product we keep it simple and stick with the defaults:
 
 - *Grant Access*: No accounts or roles are pre-approved
@@ -358,13 +371,11 @@ You could configure an external workflow engine for the request approval process
 
 After you confirm the approval flow settings, Snowflake prompts you for one more configuration. Here is why: this listing is configured to be discoverable by the entire organization. What if you add another account to the organization but in a different cloud region? Then Snowflake would transparently perform incremental replication to that region to minimize egress cost. As the data provider you can choose the frequency of this replication.
 
-So lets (1) **Review** the settings, (2) accept the default of daily replication, and then (3) **Save** the settings for this listing:
+So lets (1) **Review** the settings, (2) Change the replication interval to daily (1 Days), and then (3) **Save** the settings for this listing:
 
 ![](assets/Publish06-LAF.png)
 
-###
----
-### Publishing Flow: Add Optional Metadata and SLOs
+### Publishing Flow Step 4/5: Add Optional Metadata and SLOs
 Data products should be understandable and trustworthy for data consumers so let's add additional metadata to describe the product (see screenshot below).
 
 - Add a business **description** to document your listing.
@@ -379,6 +390,11 @@ Data products should be understandable and trustworthy for data consumers so let
   - **Timestamp Granularity**: The interval between data points. For example, "*Event-based*" if there is one record for each incoming order, or "*Daily*" if order volumes are aggregated by date, and so on.
   
   ![](assets/Publish07-MetaData.png)
+
+> aside positive 
+> Uniform Listing Locator (ULL): One of the concepts that are important to notice is the Uniform Listing Locator (or ULL) that can be seen under the Data Product Title. This is a link to the data product that is available directly to any role that has been granted access to the data listing, and can be queried directly.
+>  
+> The complete ULL is formed by three elements delimited by the symbol ‘$’. The first element is the provider’s organization name, the second element is the provider profile, and the third element is the listing name. The ULL cannot be changed after the listing is published. Although it has three parts, the ULL is treated as a single name in queries.
 
 - Add at least two **Usage examples** such as the following two queries..
   - Note these queries reference the objects in the data product via the Uniform Listing Locator (ULL).
@@ -409,19 +425,13 @@ Data products should be understandable and trustworthy for data consumers so let
 
 ![](assets/Publish08-DataDictionary.png)
 
-###
----
-### Publishing Flow: Publish your listing to the internal marketplace
+### Publishing Flow  Step 5/5: Publish your listing to the internal marketplace
 
 Click the blue **Publish** button in the top right corner.
 
 Your data product is now live! You can see it when you navigate to the Internal Marketplace:
 
 ![](assets/Publish10-Done-NewUI.png)
-
-###
----
-
 
 ## Request and Grant Access
 
@@ -431,7 +441,7 @@ In this section you will request access to the new data product for the **Market
 
 ### Request Access
 
-- Log out of your account `HOL_ACCOUNT1` and log back in as the `marketing_admin` user.
+- Open a new browser tab and log in to the `HOL_ACCOUNT1` a s the `marketing_admin` user.
 - Navigate to the Internal Marketplace
 - Click on the **Order Insights** listing
 - Review all the listing elements from the data consumer point of view
@@ -514,7 +524,7 @@ in `HOL_ACCOUNT1`
   SELECT customer_name, country, orderkey, orderdate, AMOUNT
   FROM TABLE(ORGDATACLOUD$SALES$ORDER_INSIGHTS.sf1.orders_per_customer(60001));
   ```
-- Note that the updated country information is instantly visible to data consumers!
+- Note that the updated country information, which was inferred from the updated nationkey, is instantly visible to data consumers!
 - Other data product changes such as adding a column to a table would also be immediately reflected on the consumer side. 
 - **Best practice:** inform your data consumers of structural data product changes ahead of time.  In case of a breaking change consider creating a new listing "v2.0" and give data consumers time to migrate from the old to the new listing.
 
@@ -536,7 +546,7 @@ in `HOL_ACCOUNT1`
   use role sales_data_scientist_role;
 
   SELECT *
-  FROM order_summary; 
+  FROM order_summary 
   LIMIT 100;
   ```
 ### Row-level Access Control across Domains
@@ -621,7 +631,9 @@ Let's see how the Supply Chain and Marketing teams are affected by the new polic
 
 - Log into account `HOL_ACCOUNT1` as the `marketing_admin` user and execute the same query. 
   - You should see data for Canadian customers only.
-  
+  - The Order_Amount column should be masked for orders before 1996.  
+
+As soon as you remove roles or accounts, the listing is no longer accessible for this role and/or account.
 
 
 ## Basic Listing Management
