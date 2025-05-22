@@ -50,7 +50,7 @@ After logging in to [SqlDBM](https://www.SqlDBM.com), you will be taken to the P
 ### Reverse-Engineer Using Example Schema 
 Follow the steps to create a Snowflake project and bring your schema: 
 
-* Download our [example DDL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/data_modeling_with_sqldbm/assets/sample_schema.sql) 
+* Download our [example DDL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/sqldbmguide/assets/sample_schema.sql) 
 * Click the “Create Project” button at the top to get started.
 
 * Hover over the “Snowflake” as the database type.
