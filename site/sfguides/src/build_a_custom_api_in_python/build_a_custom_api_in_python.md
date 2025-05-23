@@ -126,8 +126,9 @@ pip install snowflake-cli
 
 Next, we will create a connection for SnowCLI to our Snowflake account. When you
 run the following command in a terminal, you will be prompted for various details. 
-You only need to supply a connection name (use `my_snowflake`), the user name, and
-the password. The other prompts are optional:
+You only need to supply a connection name (use `my_snowflake`), 
+the account name (of the form `<ORGNAME>-<ACCTNAME>`, the part before `snowflakecomputing.com`),
+the user name, and the password. The other prompts are optional:
 
 ```bash
 snow connection add
@@ -148,7 +149,7 @@ snow connection test
 Let's create a database for this lab using Snowflake CLI. Run the following command in a terminal:
 
 ```bash
-snow object create database name=api
+snow object create database name=api --if-not-exists
 ```
 
 <!-- ------------------------ -->
@@ -162,20 +163,16 @@ You can create a new Notebook in Snowflake and copy commands from this guide int
 lab comes with a Notebook file you can use to create a Notebook in Snowflake with all of the commands in it.
 
 ### Importing the Notebook file
+The lab repository comes with a Notebook with the commands in it already. It actually has the full Quickstart in it 
+(the text/instructions and commands) - they are the same.
+
 To create a Notebook with this lab and commands in it, first download the `DataAPI.ipynb` file from the lab repository, 
-[here](https://raw.githubusercontent.com/sfc-gh-bhess/lab_data_api_python/refs/heads/main/DataAPI.ipynb). 
+[here](https://github.com/sfc-gh-bhess/lab_data_api_python/blob/main/DataAPI.ipynb). 
 If you are using Codespaces, you can right-click on the file in the file explorer and choose "Download".
 
 Next, in the Snowflake console, choose the "Projects" sidebar and select "Notebooks". Choose the down arrow next to the "+ Notebook"
 button and select "Import .ipynb file". You will be prompted to choose the file from your machine - choose the `DataAPI.ipynb` file that you saved.
 Next, you will be shown a form to collect information about your Notebook. You can choose any name you would like (e.g., `Data API`). 
-Choose the `API` database and the `PUBLIC` schema. Choose "Run on warehouse". Leave all of the other inputs with their defaults.
-
-When the Notebook is created, click the "Start" button on the top.
-
-### Creating an empty Notebook
-To create an empty Notebook, in the Snowflake console, choose the "Projects" sidebar and select "Notebooks". Click the "+ Notebook" button
-in the top left. Next, you will be shown a form to collect information about your Notebook. You can choose any name you would like (e.g., `Data API`). 
 Choose the `API` database and the `PUBLIC` schema. Choose "Run on warehouse". Leave all of the other inputs with their defaults.
 
 When the Notebook is created, click the "Start" button on the top.
