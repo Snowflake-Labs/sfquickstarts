@@ -67,7 +67,7 @@ The `docai_invoice_qs_setup.sql` script is designed to set up the necessary envi
 
 ### Setup Instructions
 
-To set up your environment, copy the code from the [@@@GITHUB LINK`docai_invoice_qs_setup.sql`](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/blob/main/DOC_AI_QuickStart.SQL) script available in the GitHub repository and execute it in your Snowflake account.
+To set up your environment, copy the code from the [`docai_invoice_qs_setup.sql`](https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation) script available in the GitHub repository and execute it in your Snowflake account.
 
 This will configure the necessary infrastructure to support invoice ingestion and extraction, the first part of our Document AI pipeline.
 
@@ -75,7 +75,7 @@ This will configure the necessary infrastructure to support invoice ingestion an
 ## Document AI Model
 Duration: 20 
 
-Download sample documents from the [@@@GitHub repository](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/tree/main/sample_docs). These AI-generated sample invoices will be used to demonstrate processing multiple Document AI models in a single pipeline.
+Download sample documents from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation). These AI-generated sample invoices will be used to demonstrate processing multiple Document AI models in a single pipeline.
 
 ### Create Document AI Model
 
@@ -89,7 +89,7 @@ Download sample documents from the [@@@GitHub repository](https://github.com/Sno
 
 3. **Define Values to Extract:**
 
-   - Upload one of the documents from the [@@@sample dataset](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/tree/main/sample_docs).
+   - Upload one of the documents from the folder [extraction documents](https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation).
    - Click on a document and select the **Document Processing Type** (labels/columns to extract).
 
   ![Doc_AI_initial](assets/doc_ai_initial.png)
@@ -124,7 +124,7 @@ The `docai_invoice_qs_reconcile.sql` script is designed to set up the infrastruc
 
 ### Setup Instructions
 
-To set up your environment, copy the code from the [@@@GITHUB LINK`docai_invoice_qs_reconcile.sql`](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/blob/main/DOC_AI_QuickStart.SQL) script available in the GitHub repository and execute it in your Snowflake account.
+To set up your environment, copy the code from the [`docai_invoice_qs_reconcile.sql`](https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation) script available in the GitHub repository and execute it in your Snowflake account.
 
 This will configure the necessary infrastructure to support invoice reconciliation, the final part of our Document AI pipeline.
 
@@ -143,7 +143,7 @@ The final step is to create a Streamlit app to provide manual review of document
    - Click **Create**.
 4. **Replace Default Code**:
    - Remove the default Python code.
-   - Copy and paste the code from the [@@@Streamlit-in-Snowflake.py](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/blob/main/Streamlit-in-Snowflake.py) file.
+   - Copy and paste the code from the [docai_invoice_qs_app.py](https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation) file.
 5. **Add Required Packages**:
    - In the **Packages** dropdown, select:
      - `pypdfium2`
@@ -165,7 +165,7 @@ The Streamlit app provides full manual review capabilities for the invoice recon
 ### Putting the Invoice Reconciliation in Action
 
 1. **Load Sample Invoices**:
-   - Upload all sample documents from [@@@GitHub Sample Docs](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/tree/main/sample_docs) to your `DOC_AI_STAGE` stage.
+   - Upload all sample documents from [extraction documents](https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation) to your `DOC_AI_STAGE` stage.
    This can be done using the databases gui path:
 
 ![Stage](assets/stage.png)
@@ -186,7 +186,7 @@ This step completes the quickstart, allowing you to see the invoice reconciliati
 ## Cleanup
 
 If you'd like, you can clean up the objects you created after completing this QuickStart. Run the cleanup script available at:  
-[@@@Cleanup](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake/blob/main/Cleanup.sql)
+[`docai_invoice_qs_cleanup.sql`](https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation)
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -203,4 +203,4 @@ This QuickStart provides an introduction to automating a Document AI invoice rec
 ### Resources
 
 - [Snowflake Document AI Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview)
-- [@@@Sample Scripts and Pipelines (GitHub)](https://github.com/Snowflake-Labs/sfguide-document-ai-pipeline-automation-in-snowflake)
+- [Repo for Code and Example Documents (GitHub)](https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation)
