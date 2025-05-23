@@ -239,13 +239,20 @@ the application as well as the code. To create the docker container, run this co
 docker build -t dataapi .
 ```
 
-Next, we need to tag the Docker image and push it to the image repository. To do so, replace the `<repository_url>` with the `repository_url` value 
+Next, we need to tag the Docker image. To do so, replace the `<repository_url>` with the `repository_url` value 
 returned by the `SHOW IMAGE REPOSITORIES` command you ran above.
 
 ```bash
 docker tag dataapi <repository_url>/dataapi
 ```
 
+Lastly, we need to push the image to Snowflake. Before we do that, we need to log into the Image Registry for Docker. To do so, run:
+
+```bash
+snow spcs image-registry login
+```
+
+And finally we can push it to the image repository. 
 ```bash
 docker push <repository_url>/dataapi
 ```
