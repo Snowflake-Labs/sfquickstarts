@@ -168,7 +168,7 @@ Note the `repository_url` in the response as that will be needed in the next ste
 ## Pushing the Container to the Repository
 Duration: 1
 
-Run the following command in the terminal, replacing the `<repository_url>` with your repository in the previous step, in Codespaces to login to the container repository. You will be prompted for your Snowflake account information and credentials to add the connection to the snowflake cli. Name the connection my_snowflake.
+Run the following command in the terminal, replacing the `<repository_url>` with your repository in the previous step, in Codespaces to login to the container repository. You will be prompted for your Snowflake account information and credentials to add the connection to the snowflake cli. Name the connection `my_snowflake`.
 
 ```bash
 pip install snowflake-cli
@@ -178,6 +178,7 @@ snow connection set-default my_snowflake
 snow connection test
 
 snow spcs image-registry login --database API
+docker tag dataapi <repository_url>/dataapi
 docker push <repository_url>/dataapi
 ```
 
@@ -199,6 +200,12 @@ CREATE COMPUTE POOL API
 GRANT USAGE ON COMPUTE POOL API TO ROLE DATA_API_ROLE;
 GRANT MONITOR ON COMPUTE POOL API TO ROLE DATA_API_ROLE;
 
+```
+
+You can see the status of the `API` compute pool by running:
+
+```sql
+SHOW COMPUTE POOLS;
 ```
 
 <!-- ------------------------ -->
@@ -244,15 +251,22 @@ QUERY_WAREHOUSE = DATA_API_WH;
 It will take a few minutes for your service to initialize, you can check status with these commands:
 
 ```sql
-CALL SYSTEM$GET_SERVICE_STATUS('api');
-CALL SYSTEM$GET_SERVICE_LOGS('api.public.api', 0, 'api');
-
+SHOW SERVICES IN COMPUTE POOL API;
 ```
 
-After your service has started, you can get the endpoints with this command:
+```sql
+CALL SYSTEM$GET_SERVICE_STATUS('api.public.api');
+```
 
 ```sql
-SHOW ENDPOINTS IN SERVICE API;
+CALL SYSTEM$GET_SERVICE_LOGS('api.public.api', 0, 'api');
+```
+
+After your service has started, you can get the endpoints with the following command. Note that provisioning endpoints
+can take a moment. While it does you will get a note like `Endpoints provisioning in progress...`:
+
+```sql
+SHOW ENDPOINTS IN SERVICE API.PUBLIC.API;
 ```
 
 Make note of the ingress_url as that will be need to test the application. This service will start the API, running at https://<INGRESS_URL>.
@@ -291,18 +305,22 @@ in SnowSQL or in the Snowflake console:
 USE ROLE ACCOUNTADMIN;
 CREATE ROLE IF NOT EXISTS APIROLE;
 GRANT ROLE APIROLE TO ROLE ACCOUNTADMIN;
+GRANT USAGE ON DATABASE API TO ROLE APIROLE;
+GRANT USAGE ON SCHEMA API.PUBLIC TO ROLE APIROLE;
 CREATE USER IF NOT EXISTS APIUSER PASSWORD='User123' DEFAULT_ROLE = apirole DEFAULT_SECONDARY_ROLES = ('ALL') MUST_CHANGE_PASSWORD = FALSE;
 GRANT ROLE APIROLE TO USER APIUSER;
+CREATE NETWORK POLICY IF NOT EXISTS api_rule ALLOWED_IP_LIST = ('0.0.0.0/0');
+ALTER USER apiuser SET NETWORK_POLICY = api_rule;
 ```
 
 Next, we can grant the service role to access the endpoint to the APIROLE we just created:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
-GRANT SERVICE ROLE api!api_sr TO ROLE apirole;
+GRANT SERVICE ROLE api.public.api!api_sr TO ROLE apirole;
 ```
 
-Lastly, we need to create a Programmatic Access Token for the APIUSER.
+Lastly, we need to create a Programmatic Access Token for the `APIUSER`.
 ### Generating a PAT token via SQL
 You can do this via SQL as follows:
 
@@ -353,7 +371,15 @@ python test.py --account_url 'MYORG-MYACCT.snowflakecomputing.com' --role APIROL
 ```
 
 ### Accessing the endpoint via Streamlit
-The repository also contains a Streamlit to access the endpoint. Change to the `test/` directory, and run:
+The repository also contains a Streamlit to access the endpoint. 
+
+To use Streamlit we must first install the Streamlit library:
+
+```bash
+pip install streamlit
+```
+
+Next, change to the `test/` directory, and run:
 
 ```bash
 python -m streamlit run test_streamlit.py
