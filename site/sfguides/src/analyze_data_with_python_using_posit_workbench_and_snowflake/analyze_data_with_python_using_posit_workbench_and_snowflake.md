@@ -63,10 +63,10 @@ Before we begin, let’s set up a few components. We need to:
 
 For this analysis, we'll use the [Heart Failure Clinical Records](https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records) dataset. First, we need to create a warehouse, database, and schema.
 
-In Snowsight, open a SQL worksheet (`Create` > `SQL Worksheet`). Then, paste in and run the following code, which creates the necessary database, schema, and warehouse. **Make sure to change the `myrole` to your own role (e.g., `sysadmin`).**
+In Snowsight, open a SQL worksheet (`Create` > `SQL Worksheet`). Then, paste in and run the following code, which creates the necessary database, schema, and warehouse. **Make sure to change the role to your own role.**
 
 ```sql
-USE ROLE myrole; -- Replace your actual Snowflake role (e.g., sysadmin)
+USE ROLE myrole; -- Replace with your actual Snowflake role (e.g., sysadmin)
 
 CREATE OR REPLACE DATABASE HEART_FAILURE;
 
@@ -201,13 +201,16 @@ You can learn more about these extensions here: [Shiny extension](https://shiny.
 
 ### Open a new folder
 
-Use `Ctrl/Cmd+Shift+P` to open the Command Palette, then type and select `File: Open Folder` to open an existing folder. Select the directory where you want your work to live. 
+1. **Launch “Open Folder”:**  
+   Press `Ctrl/Cmd+Shift+P` to open the Command Palette, type **File: Open Folder**, and press Enter. In the dialog that appears, navigate to the directory where you want your work to live and click **Ok**.
 
-The folder should now be open. We will create a new subdirectory next. To create a new folder, click the `New Folder` button in the Explorer pane. Name the folder `heart_failure`. 
+2. **Create a subfolder:**  
+   In the Explorer pane (left sidebar), click the **New Folder** button (the folder icon) and name the folder `heart_failure`.
 
-VS Code is still pointed at the parent directory. To open `heart_failure`, reopen the Command Palette (`Ctrl/Cmd+Shift+P`) and again select the "File: Open folder" command. Navigate to your new `heart_failure` folder and then click `OK` to open the folder.
+3. **Switch into the new folder:**  
+   Press `Ctrl/Cmd+Shift+P` again to reopen the Command Palette, select **File: Open Folder**, then navigate to `heart_failure` and click **Ok**.
 
-You now have a new, empty folder to begin working in.
+4. You now have an empty `heart_failure` folder open and ready for your work.
 
 ### Create a virtual environment 
 
@@ -229,7 +232,13 @@ This Quickstart will walk you through the analysis contained in <https://github.
 To follow along, you can either clone the [GitHub repo](https://github.com/posit-dev/snowflake-posit-quickstart-python/) or download the materials from
 our public S3 bucket. 
 
-Open the Command Palette (`Ctrl/Cmd+Shift+P`) and use the command `Create: New File` > `Python File` to create a new Python file. 
+First, install `requests`, which is required for downloading the files. In a terminal, run the following code to install `requests`:
+
+```bash
+pip install requests
+```
+
+Then, open the Command Palette (`Ctrl/Cmd+Shift+P`) and use the command `Create: New File` > `Python File` to create a new Python file. 
 
 **Paste the following Python code into the new Python file**, then click the run button in the upper right corner to run the script. When prompted, name the file `import_data.py`.
 
@@ -264,7 +273,7 @@ You should now see `quarto.qmd`, `requirements.txt`, and the `app` directory in 
   
 ### Install requirements
 
-In a terminal, run the following command to install the dependencies listed in `requirements.txt`:
+In a terminal, run the following command to **install the dependencies** listed in `requirements.txt`:
 
 ```bash
 pip install -r requirements.txt
@@ -306,7 +315,7 @@ or run `quarto preview quarto.qmd` from the terminal.
 ![](assets/quarto/preview.png)
 
 This will run all the code in the document from top to bottom and
-and generate an HTML file, by default, for you to view and share.
+generate an HTML file, by default, for you to view and share.
 
 ### Learn More about Quarto
 
@@ -492,7 +501,7 @@ Visualizing clinical variables across different patient groups can help identify
 
 We can use [plotnine](https://plotnine.org/) to visually compare sodium levels across different patient groups. In this plot, we see the distribution of serum sodium based on whether the patients have diabetes and whether they survived (`0`) or died (`1`) during the follow-up period.
 
-```r
+```python
 from plotnine import ggplot, aes, geom_boxplot, labs, theme
 
 heart_failure_plot = (
