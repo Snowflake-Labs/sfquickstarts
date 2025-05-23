@@ -455,7 +455,9 @@ python test.py --help
 ```
 
 You must supply the following:
-* `ACCOUNT_URL` - this is the URL for your Snowflake account. It should be of the form `<ORGNAME>-<ACCTNAME>.snowflakecomputing.com`.
+* `ACCOUNT_URL` - this is the URL for your Snowflake account. It should be of the form `<ORGNAME>-<ACCTNAME>.snowflakecomputing.com`. You can find this in the
+  Snowflake console by clicking the circle with initials in the lower left and choosing the "Connect a tool to Snowflake" menu option. Copy the field
+  named "Account/Server URL".
 * `ROLE` - the role to use when accessing the endpoint. For this example, it should be `APIROLE`.
 * `ENDPOINT` - this is the full URL you are trying to access. E.g., `https://<HASH>-<ORGNAME>-<ACCTNAME>.snowflakecomputing.app/connector/customers/top10`
 
