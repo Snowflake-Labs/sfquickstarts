@@ -38,40 +38,17 @@ The dataset is the [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-
 - API Powered by Snowflake
 
 <!-- ------------------------ -->
-## Setting up a Warehouse
-Duration: 1
-
-The API needs a warehouse to query the data to return to the caller. To create the database and warehouse, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:
-
-```sql
-USE ROLE ACCOUNTADMIN;
-CREATE WAREHOUSE IF NOT EXISTS DATA_API_WH WITH WAREHOUSE_SIZE='xsmall';
-```
-
-### Create the Application Role in Snowflake
-Duration: 1
-
-The application will run as a new role with minimal priviledges. To create the role, connect to Snowflake and run the following SQL statements to create the role and grant it access to the data needed for the application.
-
-```SQL
-USE ROLE ACCOUNTADMIN;
-CREATE ROLE IF NOT EXISTS DATA_API_ROLE;
-
-GRANT USAGE ON WAREHOUSE DATA_API_WH TO ROLE DATA_API_ROLE;
-GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE DATA_API_ROLE;
-
-GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
-```
-
-<!-- ------------------------ -->
 ## Setting up your Development Environment
 Duration: 3
 
-The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository]](https://github.com/sfc-gh-bhess/lab_data_api_python).
+The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/sfc-gh-bhess/lab_data_api_python).
 
-To create a new codespace, browse to the GitHub [repository](https://github.com/sfc-gh-bhess/lab_data_api_python) in a browser. You will need to login to GitHub if you are not already logged in to access Codespaces. After logging in, click on the green "<> Code" button and "create codespace on main" button.
+To create a new codespace, browse to the GitHub [repository](https://github.com/sfc-gh-bhess/lab_data_api_python) in a browser. 
+You will need to login to GitHub if you are not already logged in to access Codespaces. After logging in, click on the green "<> Code" button and "create codespace on main" button.
 
-You will then be redirected into Codespaces where your development environment will load and all code from GitHub will be loaded in the project.
+You will then be redirected into Codespaces where your development environment will load and all code from GitHub will be loaded in the project. 
+
+Let's take a quick look at the code in this repository.
 
 ### Endpoints
 The API creates two sets of endpoints, one for using the Snowflake connector:
@@ -95,7 +72,10 @@ And the same ones using Snowpark:
     2. `YEAR` - the year to use, such as `1995`.
 
 ### Code
-The `src/` directory has all the source code for the API. The `connector.py` file contains all the entrypoints for the API endpoints using the Snowflake Connector for Python. The `customers_top10()` function is one of the API endpoints we needed for this API which finds the top 10 customers by sales in a date range. Review the code and the SQL needed to retrieve the data from Snowflake and serialize it to JSON for the response. This endpoint also takes 2 optional query string parameters start_range and end_range.
+The `src/` directory has all the source code for the API. The `connector.py` file contains all the entrypoints for the API endpoints using the Snowflake Connector for Python. 
+The `customers_top10()` function is one of the API endpoints we needed for this API which finds the top 10 customers by sales in a date range. 
+Review the code and the SQL needed to retrieve the data from Snowflake and serialize it to JSON for the response. 
+This endpoint also takes 2 optional query string parameters start_range and end_range.
 
 ```python
 @connector.route('/customers/top10')
@@ -127,33 +107,118 @@ def customers_top10():
         abort(500, "Error reading from Snowflake. Check the logs for details.")
 ```
 
-You can also review the other endpoints in [connector.py](https://github.com/sfc-gh-bhess/lab_data_api_python/blob/main/src/connector.py) to see how simple it is to host multiple endpoints.
+You can also review the other endpoints in [connector.py](https://github.com/sfc-gh-bhess/lab_data_api_python/blob/main/src/connector.py) to 
+see how simple it is to host multiple endpoints.
 
-If you would also like to see how to build endpoints using the Snowflake Snowpark API, review [snowpark.py](https://github.com/sfc-gh-bhess/lab_data_api_python/blob/main/src/snowpark.py).
+If you would also like to see how to build endpoints using the Snowflake Snowpark API, 
+review [snowpark.py](https://github.com/sfc-gh-bhess/lab_data_api_python/blob/main/src/snowpark.py).
 
 <!-- ------------------------ -->
-## Building the Application Container
+## Setting up Snowflake CLI
+Duration: 4
+
+All of the commands in this step will be run in the terminal in Codespaces.
+
+First, we need to install Snowflake CLI, with the following command in the terminal:
+```bash
+pip install snowflake-cli
+```
+
+Next, we will create a connection for SnowCLI to our Snowflake account. When you
+run the following command in a terminal, you will be prompted for various details. 
+You only need to supply a connection name (use `my_snowflake`), the user name, and
+the password. The other prompts are optional:
+
+```bash
+snow connection add
+```
+
+To make this connection the default connection that SnowCLI uses, run the following in the terminal:
+
+```bash
+snow connection set-default my_snowflake
+```
+
+Test that the connection is properly set up by running the following in a terminal:
+
+```bash
+snow connection test
+```
+
+Let's create a database for this lab using Snowflake CLI. Run the following command in a terminal:
+
+```bash
+snow object create database name=api
+```
+
+<!-- ------------------------ -->
+## Creating a Notebook for this Lab
+Duration: 4
+
+It is useful to use a Notebook to follow the steps for this lab. It allows multiple commands to be put in a single cell and executed, and it allows
+seeing the output of previous steps.
+
+You can create a new Notebook in Snowflake and copy commands from this guide into new cells and execute them. Alternatively, the repo for this
+lab comes with a Notebook file you can use to create a Notebook in Snowflake with all of the commands in it.
+
+### Importing the Notebook file
+To create a Notebook with this lab and commands in it, first download the `DataAPI.ipynb` file from the lab repository, 
+[here](https://raw.githubusercontent.com/sfc-gh-bhess/lab_data_api_python/refs/heads/main/DataAPI.ipynb). 
+If you are using Codespaces, you can right-click on the file in the file explorer and choose "Download".
+
+Next, in the Snowflake console, choose the "Projects" sidebar and select "Notebooks". Choose the down arrow next to the "+ Notebook"
+button and select "Import .ipynb file". You will be prompted to choose the file from your machine - choose the `DataAPI.ipynb` file that you saved.
+Next, you will be shown a form to collect information about your Notebook. You can choose any name you would like (e.g., `Data API`). 
+Choose the `API` database and the `PUBLIC` schema. Choose "Run on warehouse". Leave all of the other inputs with their defaults.
+
+When the Notebook is created, click the "Start" button on the top.
+
+### Creating an empty Notebook
+To create an empty Notebook, in the Snowflake console, choose the "Projects" sidebar and select "Notebooks". Click the "+ Notebook" button
+in the top left. Next, you will be shown a form to collect information about your Notebook. You can choose any name you would like (e.g., `Data API`). 
+Choose the `API` database and the `PUBLIC` schema. Choose "Run on warehouse". Leave all of the other inputs with their defaults.
+
+When the Notebook is created, click the "Start" button on the top.
+
+<!-- ------------------------ -->
+## Setting up a Database and Warehouse
 Duration: 1
 
-To create the application container, we will leverage docker. The Dockerfile is based on python 3.8 and installs the required libraries needed for the application as well as the code. To create the docker container, run this command in the terminal provided by Codespaces:
-```bash
-docker build -t dataapi .
+The API needs a warehouse to query the data to return to the caller. To create the database and warehouse, 
+run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
+
+```sql
+USE ROLE ACCOUNTADMIN;
+CREATE DATABASE IF NOT EXISTS API;
+CREATE WAREHOUSE IF NOT EXISTS DATA_API_WH WITH WAREHOUSE_SIZE='xsmall';
+```
+
+### Create the Application Role in Snowflake
+Duration: 1
+
+The application will run as a new role with minimal priviledges. The following commands create the role and grant it access to the data needed for the application.
+Run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
+
+```SQL
+USE ROLE ACCOUNTADMIN;
+CREATE ROLE IF NOT EXISTS DATA_API_ROLE;
+
+GRANT ALL ON DATABASE API TO ROLE DATA_API_ROLE;
+GRANT ALL ON SCHEMA API.PUBLIC TO ROLE DATA_API_ROLE;
+GRANT USAGE ON WAREHOUSE DATA_API_WH TO ROLE DATA_API_ROLE;
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE DATA_API_ROLE;
+
+GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
 ```
 
 <!-- ------------------------ -->
 ## Creating the Image Registry
 Duration: 1
 
- To create the image registry and the database which contains it, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:
+To create the image registry, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
 
 ```sql
-
 USE ROLE ACCOUNTADMIN;
-CREATE DATABASE IF NOT EXISTS API;
-
-GRANT ALL ON DATABASE API TO ROLE DATA_API_ROLE;
-GRANT ALL ON SCHEMA API.PUBLIC TO ROLE DATA_API_ROLE;
-
 USE DATABASE API;
 CREATE OR REPLACE IMAGE REPOSITORY API;
 
@@ -165,20 +230,26 @@ SHOW IMAGE REPOSITORIES;
 Note the `repository_url` in the response as that will be needed in the next step.
 
 <!-- ------------------------ -->
-## Pushing the Container to the Repository
-Duration: 1
+## Building the Application Container
+Duration: 10
 
-Run the following command in the terminal, replacing the `<repository_url>` with your repository in the previous step, in Codespaces to login to the container repository. You will be prompted for your Snowflake account information and credentials to add the connection to the snowflake cli. Name the connection `my_snowflake`.
+The commands in this step are to be run in a terminal in Codespaces.
+
+To create the application container, we will leverage docker. The Dockerfile is based on python 3.8 and installs the required libraries needed for 
+the application as well as the code. To create the docker container, run this command in the terminal provided by Codespaces:
 
 ```bash
-pip install snowflake-cli
+docker build -t dataapi .
+```
 
-snow connection add
-snow connection set-default my_snowflake
-snow connection test
+Next, we need to tag the Docker image and push it to the image repository. To do so, replace the `<repository_url>` with the `repository_url` value 
+returned by the `SHOW IMAGE REPOSITORIES` command you ran above.
 
-snow spcs image-registry login --database API
+```bash
 docker tag dataapi <repository_url>/dataapi
+```
+
+```bash
 docker push <repository_url>/dataapi
 ```
 
@@ -186,10 +257,9 @@ docker push <repository_url>/dataapi
 ## Creating the Compute Pool
 Duration: 1
 
- To create the compute pool to run the application, connect to Snowflake and run the following command in the Snowflake console or using SnowSQL:
+To create the compute pool to run the application, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
 
 ```sql
-
 USE ROLE ACCOUNTADMIN;
 
 CREATE COMPUTE POOL API
@@ -199,7 +269,6 @@ CREATE COMPUTE POOL API
 
 GRANT USAGE ON COMPUTE POOL API TO ROLE DATA_API_ROLE;
 GRANT MONITOR ON COMPUTE POOL API TO ROLE DATA_API_ROLE;
-
 ```
 
 You can see the status of the `API` compute pool by running:
@@ -212,10 +281,9 @@ SHOW COMPUTE POOLS;
 ## Creating the Application Service
 Duration: 1
 
-To create the service to host the application, connect to Snowflake and run the following command in the Snowflake console or using SnowSQL.
+To create the service to host the application, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
 
 ```sql
-
 USE ROLE ACCOUNTADMIN;
 GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE DATA_API_ROLE;
 
@@ -245,7 +313,6 @@ serviceRoles:
   - api
 $$
 QUERY_WAREHOUSE = DATA_API_WH;
-
 ```
 
 It will take a few minutes for your service to initialize, you can check status with these commands:
@@ -269,25 +336,55 @@ can take a moment. While it does you will get a note like `Endpoints provisionin
 SHOW ENDPOINTS IN SERVICE API.PUBLIC.API;
 ```
 
-Make note of the ingress_url as that will be need to test the application. This service will start the API, running at https://<INGRESS_URL>.
-
+Make note of the ingress_url as that will be need to test the application. This service will start the API, running at `https://<INGRESS_URL>`.
 
 <!-- ------------------------ -->
 ## Testing the API
-Duration: 1
+Duration: 6
 
-To verify the API is online, go to the https://<INGRESS_URL> in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
+To verify the API is online, go to the `https://<INGRESS_URL>` in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
 
 ```json
 {"result":"Nothing to see here"}
 ```
 
+### Endpoints
+This API was implemented using both the Snowflake Python Connector and the Snowflake Snowpark for Python package. 
+They both implement the same API routes. The ones implemented with the Snowflke Python Connector are under the `/connector/` route.
+The ones implemented with Snowpark Python are under the `/snowpark/` route.
+
+#### Top 10 Customers
+To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Connector for Python, use:
+
+```
+https://<SPCS_ENDPOINT_URL>/connector/customers/top10?start_range=1995-02-01&end_range=1995-02-14
+```
+
+To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Snowpark API, use:
+```
+https://<SPCS_ENDPOINT_URL>/snowpark/customers/top10?start_range=1995-02-01&end_range=1995-02-14
+```
+
+If you call the endpoint without specifying the `start_range` then `1995-01-01` will be used. If you call the endpoint without specifying the `end_range` then `1995-03-31` will be used.
+
+#### Monthly sales for a given year for a sales clerk
+To retrieve the monthly sales for clerk `000000002` for the year `1995` using the Snowflake Connector for Python, run:
+```
+https://<SPCS_ENDPOINT_URL>/connector/clerk/000000002/yearly_sales/1995
+```
+
+To retrieve the monthly sales for clerk `000000002` for the year `1995` using the Snowflake Snowpark API, run:
+```
+https://<SPCS_ENDPOINT_URL>/snowpark/clerk/000000002/yearly_sales/1995
+```
+
 ### Testing using a webpage
-This project comes with a simple webpage that allows you to test the API. To get to it, open https://<INGRESS_URL>/test in a web browser.
+This project comes with a simple webpage that allows you to test the API. To get to it, open `https://<INGRESS_URL>/test` in a web browser.
 
 At the top you can choose if you want to exercise the Snowflake Connector for Python or the Snowflake Snowpark API endpoints.
 
-There are 2 forms below that. The first one allows you to enter parameters to test the "Top 10 Customers" endpoint. The second one allows you to enter parameters to test the "Montly Clerk Sales" endpoint.
+There are 2 forms below that. The first one allows you to enter parameters to test the "Top 10 Customers" endpoint. 
+The second one allows you to enter parameters to test the "Monthly Clerk Sales" endpoint.
 
 When you hit the `Submit` button, the API endpoint is called and the data is returned to the web page.
 
@@ -295,11 +392,13 @@ When you hit the `Submit` button, the API endpoint is called and the data is ret
 ## Programmatic Access
 Duration: 5
 
-In many situations we want to access this data API from another process outside of Snowflake programmatically. To do this, we will need a way to programmatically authenticate to Snowflake
-to allow access to the SPCS endpoint. There are a number of ways to do this today, but we will focus on using Programmatic Access Tokens (PAT), one of the simpler ways. 
+In many situations we want to access this data API from another process outside of Snowflake programmatically. To do this, we will need a way to programmatically 
+authenticate to Snowflake to allow access to the SPCS endpoint. There are a number of ways to do this today, but we will focus on using 
+Programmatic Access Tokens (PAT), one of the simpler ways.
 
-Regardless of the authenictation method, the best practice is to create a user specifically for accessing this API endpoint, as well as a role for that user. To do this, run the following
-in SnowSQL or in the Snowflake console:
+Regardless of the authenictation method, the best practice is to create a user specifically for accessing this API endpoint, as well as a role for that user. 
+
+To do this, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -309,8 +408,8 @@ GRANT USAGE ON DATABASE API TO ROLE APIROLE;
 GRANT USAGE ON SCHEMA API.PUBLIC TO ROLE APIROLE;
 CREATE USER IF NOT EXISTS APIUSER PASSWORD='User123' DEFAULT_ROLE = apirole DEFAULT_SECONDARY_ROLES = ('ALL') MUST_CHANGE_PASSWORD = FALSE;
 GRANT ROLE APIROLE TO USER APIUSER;
-CREATE NETWORK POLICY IF NOT EXISTS api_rule ALLOWED_IP_LIST = ('0.0.0.0/0');
-ALTER USER apiuser SET NETWORK_POLICY = api_rule;
+CREATE NETWORK POLICY IF NOT EXISTS api_np ALLOWED_IP_LIST = ('0.0.0.0/0');
+ALTER USER apiuser SET NETWORK_POLICY = api_np;
 ```
 
 Next, we can grant the service role to access the endpoint to the APIROLE we just created:
@@ -320,9 +419,10 @@ USE ROLE ACCOUNTADMIN;
 GRANT SERVICE ROLE api.public.api!api_sr TO ROLE apirole;
 ```
 
-Lastly, we need to create a Programmatic Access Token for the `APIUSER`.
 ### Generating a PAT token via SQL
-You can do this via SQL as follows:
+Lastly, we need to create a Programmatic Access Token for the `APIUSER`.
+In order to use PAT, the user must have a network policy applied, so we create an "allow-all" network policy for this user. In practice you would limit to the
+IP/hostname origins for your clients.You can do this via SQL as follows:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -393,41 +493,12 @@ If not, it will show another box to enter the PAT in (the actual PAT value, not 
 Enter the necessary items and click "Fetch it!". You will get a status update that it is "Trading PAT for Token..." and then "Getting data..." and then it will
 display the result from SPCS.
 
-### Endpoints
-This API was implemented using both the Snowflake Python Connector and the Snowflake Snowpark for Python package. 
-They both implement the same API routes. The ones implemented with the Snowflke Python Connector are under the `/connector/` route.
-The ones implemented with Snowpark Python are under the `/snowpark/` route.
-
-#### Top 10 Customers
-To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Connector for Python, use:
-
-```
-https://<SPCS_ENDPOINT_URL>/connector/customers/top10?start_range=1995-02-01&end_range=1995-02-14
-```
-
-To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Snowpark API, use:
-```
-https://<SPCS_ENDPOINT_URL>/snowpark/customers/top10?start_range=1995-02-01&end_range=1995-02-14
-```
-
-If you call the endpoint without specifying the `start_range` then `1995-01-01` will be used. If you call the endpoint without specifying the `end_range` then `1995-03-31` will be used.
-
-#### Monthly sales for a given year for a sales clerk
-To retrieve the monthly sales for clerk `000000002` for the year `1995` using the Snowflake Connector for Python, run:
-```
-https://<SPCS_ENDPOINT_URL>/connector/clerk/000000002/yearly_sales/1995
-```
-
-To retrieve the monthly sales for clerk `000000002` for the year `1995` using the Snowflake Snowpark API, run:
-```
-https://<SPCS_ENDPOINT_URL>/snowpark/clerk/000000002/yearly_sales/1995
-```
-
 <!-- ------------------------ -->
 ## Stopping the API
 Duration: 1
 
-To stop the API, you can suspend the service. From the Snowflake console or SnowSQL, run:
+To stop the API, you can suspend the service. 
+Run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
 
 ```sql
 USE ROLE DATA_API_ROLE;
@@ -438,7 +509,9 @@ ALTER SERVICE API.PUBLIC.API SUSPEND;
 ## Cleanup
 Duration: 2
 
-To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as `ACCOUNTADMIN` run:
+To fully remove everything you did today you only need to drop some objects in your Snowflake account. 
+Run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
+
 ```SQL
 USE ROLE ACCOUNTADMIN;
 
@@ -448,6 +521,7 @@ DROP COMPUTE POOL IF EXISTS API;
 DROP WAREHOUSE IF EXISTS DATA_API_WH;
 DROP USER IF EXISTS APIUSER;
 DROP ROLE IF EXISTS APIROLE;
+DROP NETWORK POLICY api_np;
 ```
 
 <!-- ------------------------ -->
@@ -462,7 +536,7 @@ Another consideration is enabling a frontend website to access the endpoint, the
 
 To get more comfortable with this solution, implement new endpoints pointing to the sample dataset provided or other datasets.
 
-Code for this project is available at [https://github.com/sfc-gh-bculberson/lab_data_api_python](https://github.com/sfc-gh-bculberson/lab_data_api_python).
+Code for this project is available at [https://github.com/sfc-gh-bhess/lab_data_api_python](https://github.com/sfc-gh-bhess/lab_data_api_python).
 
 ### What we've covered
 - How to configure and build a custom API Powered by Snowflake
