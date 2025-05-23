@@ -44,53 +44,70 @@ or look at the materials provided in the accompanying repository:
 
 ### Prerequisites
 
-- Familiarity with Python
-- The ability to launch Posit Workbench from [Snowflake Native Applications](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/). This can be provided by an administrator with the `accountadmin` role.
+- A [Snowflake account](https://signup.snowflake.com/) with appropriate access to databases and schemas.
+- A Posit Workbench license and the ability to launch Posit Workbench from [Snowflake Native Applications](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/). This can be provided by an administrator with the `accountadmin` role.
+- Familiarity with Python.
+
 
 ## Setup
 Duration: 15
 
-Before we begin there are a few components we need to prepare. We need to:
+Before we begin, let’s set up a few components. We need to:
 
 - Add the heart failure data to Snowflake
 - Launch the Posit Workbench Native App
 - Create a VS Code session
 - Create a virtual environment and install the necessary libraries
 
-### Add the heart failure data to Snowflake
+### Create a warehouse, database, and schema
 
-For this analysis, we'll use the [Heart Failure Clinical Records](https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records) dataset. The data is available for download as a CSV from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/). 
+For this analysis, we'll use the [Heart Failure Clinical Records](https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records) dataset. First, we need to create a warehouse, database, and schema.
 
-We'll walk through how to download the data from UCI and then upload it to Snowflake from a CSV.
+In Snowsight, open a SQL worksheet (`Create` > `SQL Worksheet`). Then, paste in and run the following code, which creates the necessary database, schema, and warehouse. **Make sure to change the `myrole` to your own role (e.g., `sysadmin`).**
 
-<!--these asides will show up as info boxes when built as part of snowflakes site-->
-> aside positive
-> 
-> If you have the necessary permissions in Snowflake, you can also import the data from this S3 bucket: s3://heart-failure-records/heart_failure.csv.
+```sql
+USE ROLE myrole; -- Replace your actual Snowflake role (e.g., sysadmin)
 
-#### Step 1: Download the data as a CSV
+CREATE OR REPLACE DATABASE HEART_FAILURE;
 
-Download the data from UCI [here](https://archive.ics.uci.edu/dataset/519/heart+failure+clinical+records), and then unzip the downloaded file. 
+CREATE OR REPLACE SCHEMA PUBLIC;
 
-#### Step 2: Add data in Snowsight
+CREATE OR REPLACE WAREHOUSE HF_WH
+    WAREHOUSE_SIZE = 'xsmall' 
+    WAREHOUSE_TYPE = 'standard'
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE;
+```
 
-Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), then click `Create` > `Add Data`. You can find the `Create` button in the upper-left corner. 
+This creates a database named `HEART_FAILURE` with a schema `PUBLIC`, as well as a warehouse named `HF_WH`. 
 
-<img src="assets/snowflake/02-add_data.png" style="width: auto; height: 300px;" />
+### Load the heart failure data into Snowflake
 
-#### Step 3: Load data
+Next, we need to create a table to hold the heart failure dataset. 
 
-Choose the `Load Data into a Table` option, then select your downloaded heart failure CSV. Create a new database
-named `HEART_FAILURE`. Then, select `+ Create a new table` and name it `HEART_FAILURE`.
+1. **Download the dataset from UCI:**  
+   [https://archive.ics.uci.edu/ml/datasets/Heart+failure+clinical+records](https://archive.ics.uci.edu/ml/datasets/Heart+failure+clinical+records)
 
-You can use an existing database with a different name. You'll just need to change the code
-we'll use later to reflect your database name.
+2. **Unzip the downloaded file.** You should now see a file named `heart_failure_clinical_records_dataset.csv`. We’ll upload this CSV into Snowflake using the Snowsight UI.
 
-<img src="assets/snowflake/03-load_data_into_table.png" style="width: auto; height: 300px;" />
+3. In **Snowsight**, click `Create > Add Data`, then select `Load Data into a Table`.
 
-#### Step 4: Confirm data
+4. Click `Browse` and choose `heart_failure_clinical_records_dataset.csv`.
 
-You should now be able to see the heart failure data in Snowsight. Navigate to `Data` > `Databases` > `HEART_FAILURE`. Expand the database, schema, and tables until you see the `HEART_FAILURE` table. 
+5. Under **Select or create a database and schema**, choose:
+   - **Database:** `HEART_FAILURE`
+   - **Schema:** `PUBLIC`
+
+6. Under **Select or create a table**:
+   - Ensure **+ Create new table** is selected.
+   - For **Name**, enter `HEART_FAILURE`.
+
+7. Click `Next`, then `Load`.
+
+### Confirm the database, data, and schema
+
+You should now be able to see the heart failure data in Snowsight. Navigate to `Data` > `Databases` > `HEART_FAILURE` > `PUBLIC` > `Tables`. You should now see the `HEART_FAILURE` table. 
 
 ![](assets/snowflake/04-confirm_data.png)
 
@@ -120,7 +137,7 @@ Click on `Launch app`. This should take you to the webpage generated for the Wor
 
 ### Create a VS Code Session 
 
-Posit Workbench provides several IDEs, including VS Code, RStudio Pro, and JupyterLab. For this analysis we will use VS Code.
+Posit Workbench provides several IDEs, including VS Code, RStudio Pro, and JupyterLab. For this analysis, we will use VS Code.
 
 #### Step 1: New Session
 
@@ -176,7 +193,7 @@ the Extensions icon in the Activity bar to open the Extensions view.
 3. **Install the Quarto extension.** Click on the Quarto extension, then click `Install`.
 4. **Install the Shiny extension.** Search for the Shiny extension, then install 
 the extension in the same way. 
-4. **Install the Jupyter extension.** Search for the Jupyter extension, then install 
+5. **Install the Jupyter extension.** Search for the Jupyter extension, then install 
 the extension in the same way. 
 
 You can learn more about these extensions here: [Shiny extension](https://shiny.posit.co/blog/posts/shiny-vscode-1.0.0/), 
@@ -192,6 +209,20 @@ VS Code is still pointed at the parent directory. To open `heart_failure`, reope
 
 You now have a new, empty folder to begin working in.
 
+### Create a virtual environment 
+
+1. **Open the Command Palette** (`Cmd/Ctrl+Shift+P`), then search for and select **Python: Create Environment**.
+
+2. **Choose `Venv`** to create a `.venv` virtual environment.
+
+3. **Select the Python version** you want to use.
+
+4. In a terminal, **activate the virtual environment** by running `source .venv/bin/activate`.
+
+> aside negative
+> 
+> If you don't already see a terminal open, open the Command Palette (`Ctrl/Cmd+Shift+P`), then select `Terminal: Create New Terminal` to open one.
+
 ### Access the Quickstart Materials
 
 This Quickstart will walk you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd>.
@@ -200,7 +231,7 @@ our public S3 bucket.
 
 Open the Command Palette (`Ctrl/Cmd+Shift+P`) and use the command `Create: New File` > `Python File` to create a new Python file. 
 
-Paste the following Python code into the new Python file, then click the run button in the upper right corner to run the script. When prompted, name the file `import_data.py`.
+**Paste the following Python code into the new Python file**, then click the run button in the upper right corner to run the script. When prompted, name the file `import_data.py`.
 
 ```python
 import requests
@@ -231,17 +262,15 @@ for name in filenames:
 
 You should now see `quarto.qmd`, `requirements.txt`, and the `app` directory in the Explorer Pane. 
   
-### Create a virtual environment
+### Install requirements
 
-Create a virtual environment and install dependencies from the provided `requirements.txt` file:
+In a terminal, run the following command to install the dependencies listed in `requirements.txt`:
 
-1. Open the Command Palette (`Ctrl/Cmd+Shift+P`), then search for "Python: Create Environment".
-2. Select `Venv` to create a `.venv` virtual environment. 
-3. Select a Python version to use for the environment.
-4. When prompted to select dependencies to install, select `requirements.txt`. If you don’t see this prompt, open a terminal and run `pip install -r requirements.txt` after the environment is created.
-5. Click `OK`. VS Code will install the required packages and create a virtual environment in your current working directory.
+```bash
+pip install -r requirements.txt
+```
 
-See the [Python Environments in VS Code](https://docs.posit.co/ide/server-pro/user/vs-code/guide/python-environments.html) section of the Posit Workbench User Guide to learn more about Python environments in Posit Workbench. 
+**Note:** Make sure your virtual environment is activated (`source .venv/bin/activate`) before installing.
 
 ## Build Reports and Dashboards with Quarto
 Duration: 2
@@ -309,7 +338,7 @@ We can also provide a `schema` here to make connecting to specific tables easier
 import ibis 
 
 con = ibis.snowflake.connect(
-  warehouse="DEFAULT_WH",  # CHANGE TO YOUR OWN WAREHOUSE NAME 
+  warehouse="HF_WH",  
   database="HEART_FAILURE",  
   schema="PUBLIC",
   connection_name="workbench"
@@ -317,11 +346,6 @@ con = ibis.snowflake.connect(
 ```
 
 The variable `con` now stores our connection. 
-
-> aside negative
-> 
-> You may need to change  `warehouse`, `database`, and `catalog` to reflect your
-available warehouses and database name. 
 
 ### Create a table that corresponds to a table in the database
 
