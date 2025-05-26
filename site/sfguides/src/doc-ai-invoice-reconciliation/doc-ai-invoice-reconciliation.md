@@ -41,7 +41,7 @@ Additionally, you can create your own customized, fine-tuned Document AI model t
 - How to monitor results and perform manual reconciliation using Streamlit UI in Snowflake.
 
 ### What You’ll Need 
-- Files from [@@@LINKTOBEADDED GitHub](https://github.com/Snowflake-Labs/sfguide-@@@) 
+- Files from [GitHub](https://github.com/Snowflake-Labs/sfguide-document-ai-invoice-reconciliation) 
 - A Snowflake instance
 
 
