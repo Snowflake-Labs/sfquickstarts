@@ -22,6 +22,7 @@ In this quickstart guide, you'll learn how to use Honeycomb Maps to create an in
 
 ### Prerequisites
 - A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) account, if required.
+- Permissions to install apps from Snowflake Marketplace (An ACCOUNTADMIN role will work)
 - Access to Snowflake's US_REAL_ESTATE sample database (available for free from Snowflake Marketplace) or your own geospatial data
 - Basic familiarity with SQL queries
 
@@ -32,11 +33,6 @@ In this quickstart guide, you'll learn how to use Honeycomb Maps to create an in
 - How to add a density heatmap layer using H3 cells
 - How to add interactive filters and metrics to the map
 - How to save and share your map
-
-### What You'll Need 
-- A Snowflake account with ACCOUNTADMIN access or a role with the necessary privileges to install apps from the Marketplace
-- Access to Snowflake's free US_REAL_ESTATE sample data or your own geospatial data
-- Basic familiarity with SQL queries
 
 ### What You'll Build 
 An interactive map dashboard showing pizza restaurants in New York City with:
@@ -58,7 +54,7 @@ The first step is to install the Honeycomb Maps application from the Snowflake M
 1. Log in to your Snowflake account
 2. Click on **Marketplace** in the left navigation menu
 3. Search for "Honeycomb" in the search bar
-4. Click on the **Honeycomb Data Explorer** tile
+4. Click on the **Honeycomb Data Explorer** or **Honeycomb Maps** tile
 
 ![Marketplace Navigation](assets/marketplace_navigation.png)
 
@@ -75,8 +71,8 @@ The first step is to install the Honeycomb Maps application from the Snowflake M
 3. The app will take 10-15 minutes to fully activate.
 
 <!-- ------------------------ -->
-## Get the Free Snowflake POI Data 
-### Get the data from Marketplace
+## Get POI Data 
+### Get the Data from Marketplace
 ![Snowflake Real Estate Data Listing](assets/snowflake_real_estate_data_listing.png)
 Snowflake provides a free dataset of POI (Point of Interest) data across the United States. This dataset can be added your account through the Snowflake Marketplace. Here is a link to the listing: [https://app.snowflake.com/marketplace/listing/GZTSZAS2KI6/snowflake-data-us-real-estate](https://app.snowflake.com/marketplace/listing/GZTSZAS2KI6/snowflake-data-us-real-estate). 
 
@@ -393,15 +389,6 @@ Congratulations! You've successfully created an interactive map visualization us
 - Save and share your map with others
 
 ![Honeycomb Maps Overview](assets/honeycomb_overview.png)
-
-### What We've Covered
-
-- Setting up Honeycomb Maps in your Snowflake environment
-- Creating a basic point-based visualization
-- Adding density analysis with H3 cells
-- Implementing interactive filters for area analysis
-- Building information components to display metrics
-- Saving and sharing your visualizations
 
 ### Learn More
 
