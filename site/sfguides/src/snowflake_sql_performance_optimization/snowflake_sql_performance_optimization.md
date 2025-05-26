@@ -18,7 +18,7 @@ This hands-on lab for query performance tuning and optimization involves a struc
 > Note: Please use the specified warehouse for performance comparison and analysis as instructed. 
 
 > aside positive
-> *It is also important to note that there are dependencies between each module and the steps within them. Please follow the steps carefully, otherwise you will encounter issues like objects not found at a later stage of the lab.*
+> It is also important to note that there are dependencies between each module and the steps within them. Please follow the steps carefully, otherwise you will encounter issues like objects not found at a later stage of the lab.
 
 ### Prerequisites
 
@@ -84,6 +84,18 @@ show tables in schema SQL_PERF_OPTIMIZATION.PUBLIC;
     <td>The list of websites visited by each user over the course of the last 12 months</td>
   </tr>
   <tr>
+    <td>TRAFFIC_CLUSTERED</td>
+    <td>319996776</td>
+    <td>13452200448</td>
+    <td>This is the clustered version of the above TRAFFIC table. This is to save time in the lab, where we do not need to wait for the AC to kick in.</td>
+  </tr>
+  <tr>
+    <td>TRAFFIC_LARGE</td>
+    <td>2559974208</td>
+    <td>138091656192</td>
+    <td>This is the 8X version of the above TRAFFIC table. This is needed to demonstrate the QAS feature, as it does require a large data set.</td>
+  </tr>
+  <tr>
     <td>USER_PROFILE</td>
     <td>120000000</td>
     <td>1096803328</td>
@@ -144,7 +156,8 @@ We are going to collect statistics of the base workload that are executed in the
 
 Click on Notebooks to return to the Notebooks panel. Then click on **MODULE2_PART2_PERFORMANCE_MONITORING**. Follow the instructions there to collect statistics via a stored procedure and store metrics in a predefined local table called `BASE_QUERY_STATS`.
 
-*Note: Please make sure that you have completed this module before proceeding*.
+> aside positive
+> Note: Please make sure that you have completed this module before proceeding.
 
 ### 2.3. Create a Dashboard for Query Performance Monitoring Visualization [Bonus]
 
@@ -204,7 +217,8 @@ Return to the main Dashboard page by clicking on the “Return to Reporting Work
 
 Following these similar steps by clicking “+” from the top-left corner, create 5 more tiles based on the following monitoring scripts. 
 
-*Please note that some of the queries might return zero rows because we do not have all the examples available in this lab*.
+> aside positive
+> Please note that some of the queries might return zero rows because we do not have all the examples available in this lab.
 
 **Long Table Scan**
 
@@ -338,25 +352,26 @@ Duration: 8
 
 This Module focuses on exploring and discovering clustering keys that can benefit the reporting workload. As we mentioned in the presentation, Auto Clustering is an overall query performance technique on a table for the most important workloads that need to perform the best most of the time. You need to consider the balance of query performance on the most important workloads and the frequent DML that may disrupt your clustering, and find a sweet spot between the balance of the two. In this lab, we only focus on the reporting workloads, not the DML workloads, while in reality, you need to take DML workloads into account.
 
-You can just follow MODULE3_PART1_AC_SETUP in the notebooks to complete this module. The instruction below provides some sample result screenshots for your reference. 
+You can just follow **MODULE3_PART1_AC_SETUP** in the notebooks to complete this module. The instruction below provides some sample result screenshots for your reference. 
 
 ### 3.1 Analyze table size
 
 ![Analyze table size](assets/pic-3-1-analyze-table-size.png)
  
-3.2 Analyze Query Filters and Join Filters
+### 3.2 Analyze Query Filters and Join Filters
 
 In the real world, you may not be involved in table design. Queries are often modified over time. You want to find out what the most common local filters and join filters are, without going through every query in the workload. Many workloads are a lot of queries. This step is to mimic these common scenarios.
 
 We are going to analyze query filters and join filters to discover table columns that may be good auto clustering key columns.
 
-Please follow 3.2 in the notebooks `MODULE3_PART1_AC_SETUP`, and you will see the following similar result.
+Please follow 3.2 in the notebooks **MODULE3_PART1_AC_SETUP**`**, and you will see the following similar result.
 
 ![Analyze filters](assets/pic-3-2-analyze-filters.png)
 
-Focus on columns from the traffic table, such as TIMESTAMP, CATEGORY_ID, and UUID, which are used mostly in local filters and join filters. Find out the distinct count of those three columns. Since we typically use date instead of timestamp, do a distinct count on to_date(TIMESTAMP).
+Focus on columns from the traffic table, such as TIMESTAMP, CATEGORY_ID, and UUID, which are used mostly in local filters and join filters. Find out the distinct count of those three columns. Since we typically use date instead of timestamp, do a distinct count on TO_DATE(TIMESTAMP).
 
-*Please note that the values you see might differ from the screenshot below*.
+> aside positive
+> Please note that the values you see might differ from the screenshot below.
 
 ![Analyze filters](assets/pic-3-3-approx-count-output.png)
 
@@ -429,7 +444,7 @@ Based on the expensive aggregation on TRAFFIC and Query 09, create a materialize
 
 ### 4.3 Rerun Query on WH_SUMMIT25_PERF_MV
 
-Rerun the query 09 from step 4.3 in notebook MODULE4_MV_OPTIMIZATION . Then go to Query History to identify the query profile. 
+Rerun the query 09 from step 4.3 in notebook **MODULE4_MV_OPTIMIZATION**. Then go to Query History to identify the query profile. 
 
 ![Query History](assets/pic-4-3-mv-query-history-menu.png)
 
@@ -447,7 +462,7 @@ Go back to step 4.4 of Notebook MODULE4_MV_OPTIMIZATION.
 
 ![Compare MV queries](assets/pic-4-6-mv-compare-queries.png)
 
-4.5 Compare Costs
+### 4.5 Compare Costs
 
 ![Compare MV costs](assets/pic-4-7-mv-compare-costs.png)
 
@@ -458,7 +473,7 @@ Search Optimization Service (SOS) is a supplement optimization feature of Auto C
 
 This module is to explore how SOS can improve a query’s performance.
 
-Follow `MODULE5_SOS_OPTIMIZATION` in the notebooks for this Module. 
+Follow **MODULE5_SOS_OPTIMIZATION** in the notebooks for this Module. 
 
 ### 5.1 Identify SOS Candidates 
 
@@ -498,7 +513,7 @@ As you can see, SOS is used instead of tableScan on the Traffic table. SOS prune
 
 ### 5.4 Compare Performance
 
-Compare the query performance between WH_SUMMIT25_PERF_BASE(without SOS) and WH_SUMMIT25_PERF_SOS (with SOS). 
+Compare the query performance between `WH_SUMMIT25_PERF_BASE` (without SOS) and `WH_SUMMIT25_PERF_SOS` (with SOS). 
 
 ![SOS compare query](assets/pic-5-7-sos-perf.png)
 
@@ -525,7 +540,7 @@ This module explores how SOS can improve a query’s performance. You can follow
 
 ### 6.1 Identify QAS Candidates & Data Preparation
 
-We have created an SP to find QAS-eligible queries on historic queries. Please follow the instructions in step 6.1 of the Notebook MODULE6_QAS_OPTIMIZATION.
+We have created an SP to find QAS-eligible queries on historic queries. Please follow the instructions in step 6.1 of the Notebook **MODULE6_QAS_OPTIMIZATION**.
 
 ### 6.2 Enable QAS
 
@@ -535,13 +550,14 @@ This confirms that the QAS is enabled on `WH_SUMMIT25_PERF_QAS`.
 
 ### 6.3 Rerun Query and Validate 
 
-Rerun the query 081 on WH_SUMMIT25_PERF_QAS. Use the query profile to validate that QAS was used and look for “partition scanned by service” on the node TableScan of the TRAFFIC_LARGE table. 
+Rerun the query 081 on `WH_SUMMIT25_PERF_QAS`. Use the query profile to validate that QAS was used and look for “**partition scanned by service**” on the node TableScan of the `TRAFFIC_LARGE` table. 
 
-*Note: you can follow instructions from step 4.3 of the notebook MODULE4_MV_OPTIMIZATION earlier to find the query profil*e.
+> aside positive
+> Note: you can follow instructions from step 4.3 of the notebook **MODULE4_MV_OPTIMIZATION** earlier to find the query profile.
 
 ![QAS rerun query profile](assets/pic-6-2-qas-query-profile.png)
 
-Then rerun the eligibility check stored procedure to verify QAS has been applied.
+Then, rerun the eligibility check stored procedure to verify QAS has been applied.
 
 ![QAS applied](assets/pic-6-3-qas-applied-check.png)
 
@@ -886,10 +902,12 @@ LIMIT
   20;
 ```
 
-## Module 9. Recap and Summary
+## Recap, Summary & Resources
 Duration: 2
 
-Conclude by summarizing insights gained from each technique:
+Congratulations! You've successfully completed this SQL Performance Tuning quickstart guide using techniques such as Auto Clustering, Materialized View, Search Optimization Service, Query Acceleration Service, and how to avoid Join Skewness based on the nature of some queries.
+
+### What You Learned
 
 - Auto Clustering improves overall query performance across diverse workloads with no storage cost.
 - Materialized Views excel at caching results for queries performing expensive aggregations.
@@ -901,9 +919,11 @@ Query Performance monitoring is an important part of query performance tuning an
 
 This lab provides a comprehensive view of different optimization strategies that participants can use and compare, enhancing both their knowledge and the application's efficiency within Snowflake.
 
-*Note: MV, SOS, and QAS features require Enterprise Edition (or higher)*.
+> aside positive
+> Note: MV, SOS, and QAS features require Enterprise Edition (or higher).
 
-## Resources
+### Related Resources
+
 - [Clustering Keys & Clustered Tables](https://docs.snowflake.com/en/user-guide/tables-clustering-keys)
   - [Automatic Clustering](https://docs.snowflake.com/en/user-guide/tables-auto-reclustering)
 - [Working with Materialized Views](https://docs.snowflake.com/en/user-guide/views-materialized)
