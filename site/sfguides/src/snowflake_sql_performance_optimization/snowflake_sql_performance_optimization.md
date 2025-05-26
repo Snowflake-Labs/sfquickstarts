@@ -9,39 +9,46 @@ tags: SQL Performance, Auto Clustering, Materialized View, Search Optimization S
 
 # OP304 Snowflake 2025 Summit Query Performance HOLs
 <!-- ------------------------ -->
-## Overview 
+## Overview
 Duration: 2
 
 This hands-on lab for query performance tuning and optimization involves a structured approach. You can experiment with different optimization techniques, including Auto Clustering, Materialized Views, Search Optimization Service, and Query Acceleration Service, with a focus on query performance monitoring, performance tuning/optimization, and performance cost analysis.
 
-Note: Please use the specified warehouse for performance comparison and analysis as instructed. 
+> aside positive
+> Note: Please use the specified warehouse for performance comparison and analysis as instructed. 
 
-*It is important to note that there are dependencies between each module and the steps within them. Please follow the steps carefully, otherwise you will encounter issues like objects not found at a later stage of the lab.*
+> aside positive
+> *It is also important to note that there are dependencies between each module and the steps within them. Please follow the steps carefully, otherwise you will encounter issues like objects not found at a later stage of the lab.*
 
 ### Prerequisites
-- TO BE ADDED
 
-### What You’ll Learn 
-How to apply the following techniques to improve query performance.
-
-- Javascript Stored Procedure/UDTF
-- Automatic Clustering
-- Materialized Views
-- Search Optimization Service
-- Query Acceleration Service
-
-### What You’ll Need 
-- Access to a Snowflake Account
-
-- Understanding of the following concepts in Snowflake
-  - Javascript Stored Procedures
-  - Javascript UDTF
+- A pre-built Snowflake account with pre-installed tables that are needed in this lab.
+  - USER_PROFILE
+  - TRAFFIC
+  - TRAFFIC_LARGE
+  - TRAFFIC_CLUSTERED
+  - CATEGORY
+  - QUESTION
+- Understanding the following features/concepts in Snowflake
   - Automatic Clustering
   - Materialized Views
   - Search Optimization Service
   - Query Acceleration Service
+  - HashJoin Basis
+  - Join Skewness
+
+### What You’ll Learn 
+
+How to apply the following techniques to improve query performance in Snowflake.
+
+- Automatic Clustering
+- Materialized Views
+- Search Optimization Service
+- Query Acceleration Service
+- Join Skewness
 
 ## Module 1. Object and Data Preparation
+Duration: 5
 
 Before diving into performance hands-on labs, let's explain the database, schema, the tables involved, and their relationships. 
 
@@ -82,6 +89,7 @@ show tables in schema SQL_PERF_OPTIMIZATION.PUBLIC;
     <td>1096803328</td>
     <td>List of answers provided by random people online. Each answer was saved against a user UUID, which is used to identify a particular user.<br />This forms the demographics/profiles of a certain population</td>
   </tr>
+</table>
 
 Each of those tables has the following columns and data types, as shown in the screenshots below.
 
@@ -119,6 +127,7 @@ We suggest you **duplicate** the browser of your assigned account so that you ha
 ![Browser Side by Side](assets/pic-1-6-browser-side-by-side.png)
 
 ## Module 2. Baseline Monitoring for Reporting Workload
+Duration: 10
 
 ### 2.1. Run Base Workload of Reporting Queries 
 
@@ -325,6 +334,7 @@ Your dashboard looks like below. Periodically, you can check this dashboard as n
 ![Create dashboard - final](assets/pic-1-15-create-dashboard-final.png)
 
 ## Module 3. Auto Clustering for Performance Tuning
+Duration: 8
 
 This Module focuses on exploring and discovering clustering keys that can benefit the reporting workload. As we mentioned in the presentation, Auto Clustering is an overall query performance technique on a table for the most important workloads that need to perform the best most of the time. You need to consider the balance of query performance on the most important workloads and the frequent DML that may disrupt your clustering, and find a sweet spot between the balance of the two. In this lab, we only focus on the reporting workloads, not the DML workloads, while in reality, you need to take DML workloads into account.
 
@@ -397,6 +407,7 @@ Follow section 3.5 in the **MODULE3_PART3_BASE_VS_AC_WORKLOAD** of the notebook,
 Please follow section 3.6 in the notebook **MODULE3_PART3_BASE_VS_AC_WORKLOAD**, which compares the cost of workloads with and without Auto Clustering.
 
 ## Module 4. Materialized Views for Performance Tuning
+Duration: 7
 
 Materialized View (MV) is another optimization feature for query performance, depending on your workload and goal. MV is suitable for frequently executed queries with expensive operations like aggregation, sort, etc. An MV is similar to a physical table, while its metadata links to its base table, so it does incur extra storage.
 
@@ -441,6 +452,7 @@ Go back to step 4.4 of Notebook MODULE4_MV_OPTIMIZATION.
 ![Compare MV costs](assets/pic-4-7-mv-compare-costs.png)
 
 ## Module 5. Search Optimization Service for Performance Tuning
+Duration: 10
 
 Search Optimization Service (SOS) is a supplement optimization feature of Auto Clustering. SOS benefits queries by allowing them to access a very small subset of data scattered over many MPs, like finding a needle in a haystack. SOS is implemented as MV internally, so it also occupies additional storage.
 
@@ -504,7 +516,8 @@ Now, check the cost of the SOS service.
 
 ![SOS credit costs](assets/pic-5-9-sos-cost.png)
 
-### Module 6. Query Acceleration Service for Performance Tuning
+## Module 6. Query Acceleration Service for Performance Tuning
+Duration: 7
 
 Query Acceleration Service (QAS) is another optimization feature that may complement other optimization features. QAS can compute part of your query. Its best use cases are ad hoc queries or mixed workloads with a few outliers of long-running queries, so that you don’t need to size up your warehouse.
 
@@ -539,6 +552,7 @@ Then rerun the eligibility check stored procedure to verify QAS has been applied
 ![QAS compare costs](assets/pic-6-6-qas-compare-costs.png)
 
 ## Module 7. Explore JOIN Skewness [Bonus]
+Duration: 10
 
 Follow **MODULE7_SKEWNESS_OPTIMIZATION** in the notebooks and the section below for this module. 
 
@@ -614,6 +628,7 @@ Even though this can introduce extra time spent on the “ORDER BY RANDOM()” o
 Then, continue with the instructions in the notebook to compare the result and finish this module.
 
 ## Module 8. Leverage AI Feature Copilot to Generate Monitoring Queries [Bonus]
+Duration: 5
 
 This module is offered as a bonus session on exploring the AI feature Copilot to speed up performance monitoring efforts. 
 
@@ -872,6 +887,7 @@ LIMIT
 ```
 
 ## Module 9. Recap and Summary
+Duration: 2
 
 Conclude by summarizing insights gained from each technique:
 
@@ -888,19 +904,19 @@ This lab provides a comprehensive view of different optimization strategies that
 *Note: MV, SOS, and QAS features require Enterprise Edition (or higher)*.
 
 ## Resources
-- [Clustering Keys & Clustered Tables] (https://docs.snowflake.com/en/user-guide/tables-clustering-keys)
-  - [Automatic Clustering] (https://docs.snowflake.com/en/user-guide/tables-auto-reclustering)
-- [Working with Materialized Views] (https://docs.snowflake.com/en/user-guide/views-materialized)
-- [Search Optimization Service] (https://docs.snowflake.com/en/user-guide/search-optimization-service)
-  - [Identifying queries that can benefit from search optimization] (https://docs.snowflake.com/en/user-guide/search-optimization/queries-that-benefit)
-  - [Monitoring search optimization using Snowsight] (https://docs.snowflake.com/en/user-guide/search-optimization/monitoring-search-optimization)
-  - [Speeding up point lookup queries with search optimization] (https://docs.snowflake.com/en/user-guide/search-optimization/point-lookup-queries)
-- [Using the Query Acceleration Service] (https://docs.snowflake.com/en/user-guide/query-acceleration-service)
-  - [Trying query acceleration] (https://docs.snowflake.com/en/user-guide/performance-query-warehouse-qas)
-  - [SYSTEM$ESTIMATE_QUERY_ACCELERATION] (https://docs.snowflake.com/en/sql-reference/functions/system_estimate_query_acceleration)
+- [Clustering Keys & Clustered Tables](https://docs.snowflake.com/en/user-guide/tables-clustering-keys)
+  - [Automatic Clustering](https://docs.snowflake.com/en/user-guide/tables-auto-reclustering)
+- [Working with Materialized Views](https://docs.snowflake.com/en/user-guide/views-materialized)
+- [Search Optimization Service](https://docs.snowflake.com/en/user-guide/search-optimization-service)
+  - [Identifying queries that can benefit from search optimization](https://docs.snowflake.com/en/user-guide/search-optimization/queries-that-benefit)
+  - [Monitoring search optimization using Snowsight](https://docs.snowflake.com/en/user-guide/search-optimization/monitoring-search-optimization)
+  - [Speeding up point lookup queries with search optimization](https://docs.snowflake.com/en/user-guide/search-optimization/point-lookup-queries)
+- [Using the Query Acceleration Service](https://docs.snowflake.com/en/user-guide/query-acceleration-service)
+  - [Trying query acceleration](https://docs.snowflake.com/en/user-guide/performance-query-warehouse-qas)
+  - [SYSTEM$ESTIMATE_QUERY_ACCELERATION](https://docs.snowflake.com/en/sql-reference/functions/system_estimate_query_acceleration)
 - Performance Monitoring and Cost
-  - [GET_QUERY_OPERATOR_STATS] (https://docs.snowflake.com/en/sql-reference/functions/get_query_operator_stats)
-  - [QUERY_HISTORY INFORMATION SCHEMA function] (https://docs.snowflake.com/en/sql-reference/functions/query_history)
-  - [QUERY_HISTORY view] (https://docs.snowflake.com/en/sql-reference/account-usage/query_history)
-  - [WAREHOUSE_METERING_HISTORY view] (https://docs.snowflake.com/en/sql-reference/account-usage/warehouse_metering_history)
-  - [METERING_DAILY_HISTORY view] (https://docs.snowflake.com/en/sql-reference/account-usage/metering_daily_history) 
+  - [GET_QUERY_OPERATOR_STATS](https://docs.snowflake.com/en/sql-reference/functions/get_query_operator_stats)
+  - [QUERY_HISTORY INFORMATION SCHEMA function](https://docs.snowflake.com/en/sql-reference/functions/query_history)
+  - [QUERY_HISTORY view](https://docs.snowflake.com/en/sql-reference/account-usage/query_history)
+  - [WAREHOUSE_METERING_HISTORY view](https://docs.snowflake.com/en/sql-reference/account-usage/warehouse_metering_history)
+  - [METERING_DAILY_HISTORY view](https://docs.snowflake.com/en/sql-reference/account-usage/metering_daily_history) 
