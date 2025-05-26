@@ -47,11 +47,11 @@ Duration: 15
 
 The setup instructions for this lab describe all the steps for you to create the 3 accounts, domain profiles, and roles shown in the diagram below.
 
-The internal marketplace exists by default. It does not need to be created. But, you will configure it with provider profiles for the different business units via the [organization account](https://docs.snowflake.com/en/user-guide/organization-accounts). The organization account is a recent Snowflake capability to optionally monitor and manage a set of a regular accounts.
+The internal marketplace exists by default. It does not need to be created. But, you will configure it with provider profiles for the different business units via the [organization account](https://docs.snowflake.com/en/user-guide/organization-accounts). The organization account is a recent Snowflake capability to optionally monitor and manage a set of regular accounts.
 
 ![LabScenario](assets/DemoScenario-and-Accounts.png)
 
-The setup has 6 steps:
+The setup follows these steps:
 - Step 1: Create a Snowflake trial account in a region of your choice
 - Step 2: Configure the first account and create two more accounts _in the same org_
 - Step 3: Configure the second account
@@ -68,20 +68,10 @@ For Steps 2 through 7 you can download [scripts here](https://github.com/Snowfla
 
 Sign up for a trial account [here](https://signup.snowflake.com/)
 
-- Choose Cloud and Region, we recommend choosing one of the regions below, where this quickstart has been tested.
-  - Microsoft Azure
-    - West Europe (Netherlands)
-    - UK South (London)
-    - East US 2 (Virginia)
-    - Japan East (Tokyo)
-  - Amazon Web Services
-    - EU (Frankfurt)
-    - US West (Oregon)
-    - EU (Ireland)
-    - Asia Pacific (Tokyo)
-  - Google Cloud Platform
-    - Europe West (London)
-    - US Central (Iowa)
+- Choose a Cloud and Region. We recommend choosing one of these regions where this Quickstart and the very latest features have been tested:
+  - **Microsoft Azure:** West Europe (Netherlands), UK South (London), East US 2 (Virginia), Japan East (Tokyo)
+  - **Amazon Web Services**: EU Central (Frankfurt), US West (Oregon), EU (Ireland), Asia Pacific (Tokyo)
+  - **Google Cloud Platform**: Europe West (London), US Central (Iowa)
 
 - Choose **Enterprise Edition** or higher. (Standard Edition does not support the Internal Marketplace)
 - Activate the account with an admin user name such as `admin`
@@ -203,7 +193,7 @@ SHOW ACCOUNTS;
 
 - Make a note of your account names, URLs, and passwords!
 - Copy or bookmark the account URLs returned by `SHOW ACCOUNTS'. 
-- When you click on one these URLs you are automatically directed to the respective account for login.
+- When you click on one of these URLs you are automatically directed to the respective account for login.
 
 
 
@@ -310,7 +300,7 @@ Continue working as the `org_admin` user in your Organization Account `HOL_ORG_A
 
 Duration: 30
 
-In this section you will work in `HOL_ACCOUNT1` create and publish an [organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-about). 
+In this section you will work in `HOL_ACCOUNT1` to create and publish an [organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-about). 
 
 The publishing flow consists of 5 steps:
 
@@ -322,26 +312,27 @@ The publishing flow consists of 5 steps:
 
 Login in to `HOL_ACCOUNT1` as user `sales_admin`.
 
-### Publishing Flow Step 1/5: Listing Title and Ownership
+### Publishing Flow (Step 1 of 5): Listing Title and Ownership
 
-1. Navigate to the **Catalog** -> **Internal Marketplace**
-2. Use the **Provider** filter to see data products from a specific domain
-3. Click the blue **+Create Listing** button in the top right. Select "Internal Marketplace".
-    - Note: You can create a listing also from the **Data Sharing** -> **Provider Studio** menu on the left.
+1. Navigate to the Provider Studio and click the blue **+Create Listing** button in the top right. 
+2. Select **"Internal Marketplace"**.
 
-![IM](assets/CreateListingFromIM.png)
+![IM](assets/ProviderStudio.png)
 
-2. Click on **“Untitled Listing”** and give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
+3. Click on **“Untitled Listing”** and give your data product a meaningful title. Let's use **Order Insights** in this lab. Click "Save".
+
+> aside positive
+> IMPORTANT: some code later in this lab will reference the listing by the name **Order Insights**. 
 
 ![](assets/Publish01-Title.png)
 
-3. Click on the **+Profile** button and select the **Sales** profile as the owner of this data product. 
+4. Click on the **+Profile** button and select the **Sales** profile as the owner of this data product. 
 
 ![](assets/Publish02-Profile.png)
 
 - When you save the profile selection, note that the contact email from the Sales profile is automatically entered as the default support contact for this listing. You can change this on a per listing basis if you want. 
 
-### Publishing Flow Step 2/5: Selecting Data Objects to Share
+### Publishing Flow Step (2 of 5): Selecting Data Objects to Share
 
 Now let's select the data objects that we want to share in this data product. 
 - Click on the blue **Add Data Product** button to open the object explorer. 
@@ -350,7 +341,7 @@ Now let's select the data objects that we want to share in this data product.
 
 ![](assets/Publish03-ObjectSelection.png)
 
-### Publishing Flow Step 3/5: Configure Access Control and the Approval Process
+### Publishing Flow (Step 3 of 5): Configure Access Control and the Approval Process
 
 Next you set the access control for the data product. Click on the gray **+Access Control** button. 
 - *Discovery* determines who can see the listing and all its metadata in the internal marketplace without having access to the shared data objects.
@@ -375,7 +366,7 @@ So lets (1) **Review** the settings, (2) Change the replication interval to dail
 
 ![](assets/Publish06-LAF.png)
 
-### Publishing Flow Step 4/5: Add Optional Metadata and SLOs
+### Publishing Flow (Step 4 of 5): Add Optional Metadata and SLOs
 Data products should be understandable and trustworthy for data consumers so let's add additional metadata to describe the product (see screenshot below).
 
 - Add a business **description** to document your listing.
@@ -391,14 +382,11 @@ Data products should be understandable and trustworthy for data consumers so let
   
   ![](assets/Publish07-MetaData.png)
 
-> aside positive 
-> Uniform Listing Locator (ULL): One of the concepts that are important to notice is the Uniform Listing Locator (or ULL) that can be seen under the Data Product Title. This is a link to the data product that is available directly to any role that has been granted access to the data listing, and can be queried directly.
->  
-> The complete ULL is formed by three elements delimited by the symbol ‘$’. The first element is the provider’s organization name, the second element is the provider profile, and the third element is the listing name. The ULL cannot be changed after the listing is published. Although it has three parts, the ULL is treated as a single name in queries.
 
-- Add at least two **Usage examples** such as the following two queries..
-  - Note these queries reference the objects in the data product via the Uniform Listing Locator (ULL).
-  - The ULL contains the domain profile name and listing name.
+- Add at least two **Usage examples** such as the following two queries.
+  - Note: Queries reference objects in a data product via the [Uniform Listing Locator (ULL)](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-query).
+  - The ULL of your **Order Insights** listing is `ORGDATACLOUD$SALES$ORDER_INSIGHTS`.
+  - The ULL contains the domain profile name and listing name. Schema name and object name can be appended to reference objects within the listing, as in the two queries below.
   - The ULL can be copied from the top of the listing page, right under the listing name.
   
   
@@ -425,11 +413,15 @@ Data products should be understandable and trustworthy for data consumers so let
 
 ![](assets/Publish08-DataDictionary.png)
 
-### Publishing Flow  Step 5/5: Publish your listing to the internal marketplace
+### Publishing Flow (Step 5 of 5): Publish your listing to the internal marketplace
 
 Click the blue **Publish** button in the top right corner.
 
-Your data product is now live! You can see it when you navigate to the Internal Marketplace:
+Your data product is now live! You can see it when you navigate to the Internal Marketplace.
+
+- In the old UI, choose **Data Products** in the menu on the left, then **Marketplace**, then **Internal Marketplace** at the top.
+- In the new UI, choose **Catalog** in the menu on the left, then **Internal Marketplace** (see below).
+- Use the *Provider* filter to show listings for specific domains only.
 
 ![](assets/Publish10-Done-NewUI.png)
 
@@ -465,7 +457,7 @@ Let's switch back to the perspective of the data product owner to review and gra
 - Navigate to the **Provider Studio** as shown in the screenshot below and open the tab **Internal Requests**.
 - Click on each of the two requests to review the details and use the green **Grant** button to approve.
 
-![](assets/RAW02-newUI.png)
+![](assets/RAW02.png)
 
 Switch from **Needs Review** to **Resolved Requests** to see the history of requests. 
 
@@ -479,7 +471,7 @@ Switch from **Needs Review** to **Resolved Requests** to see the history of requ
 
 Duration: 10
 
-Now that access has been granted let's go back to the consumer roles:
+Now that access has been granted, let's go back to the consumer roles:
 
 - In a separate browser tab log into `HOL_ACCOUNT2` as the `supply_chain_admin` user. *(Keep this tab alive for the rest of the lab.)*
 - In the Internal Marketplace open the **Order Insights** listing again
@@ -511,20 +503,21 @@ in `HOL_ACCOUNT1`
   SELECT customer_name, country, orderkey, orderdate, AMOUNT
   FROM TABLE(orders_per_customer(60001));
   ```
-- Note that customer 60001 lives in Kenya. But, he has now moved to Mozambique which requires the following update:
+- Note that customer 60001 lives in Kenya. But, the customer has now moved to Mozambique, which requires the following update to the customer's nationkey:
 
   ```sql
-  -- Customer 60001 moves from Kenya to MOZAMBIQUE !
+  -- Customer 60001 moves from Kenya to Mozambique !
   UPDATE customer SET c_nationkey = 16 WHERE c_custkey = 60001;
   ```
 - Now switch to your browser tab where you are logged into `HOL_ACCOUNT2` as `supply_chain_admin`. In the worksheet "**Order Insights - Examples**" run the second sample query again:
 
   ```sql
-  // Use the UDF to obtain the order details for one customer
+  -- Use the UDF to obtain the order details for one customer
+
   SELECT customer_name, country, orderkey, orderdate, AMOUNT
   FROM TABLE(ORGDATACLOUD$SALES$ORDER_INSIGHTS.sf1.orders_per_customer(60001));
   ```
-- Note that the updated country information, which was inferred from the updated nationkey, is instantly visible to data consumers!
+- Note that the updated country information,  inferred from the updated nationkey, is instantly visible to data consumers!
 - Other data product changes such as adding a column to a table would also be immediately reflected on the consumer side. 
 - **Best practice:** inform your data consumers of structural data product changes ahead of time.  In case of a breaking change consider creating a new listing "v2.0" and give data consumers time to migrate from the old to the new listing.
 
@@ -652,7 +645,7 @@ In this section we will review further capabilities for managing and monitoring 
 - Log into account `HOL_ACCOUNT1` as the `sales_admin` user
 - Navigate to the Provider Studio and open the **Order Insights** listing
 
-    ![](assets/ManageListings-01-newUI.png)
+    ![](assets/ManageListings-01.png)
 
 - In the top right, click on the Access definition of the listing.
 
@@ -684,6 +677,7 @@ As an organization admin you can query the [organization_usage.access_history](h
 
 ```sql
 use role globalorgadmin;
+use warehouse compute_wh;
 
 select q.account_name, 
     q.user_name, 
