@@ -14,11 +14,11 @@ Duration: 2
 
 This hands-on lab for query performance tuning and optimization involves a structured approach. You can experiment with different optimization techniques, including Auto Clustering, Materialized Views, Search Optimization Service, and Query Acceleration Service, with a focus on query performance monitoring, performance tuning/optimization, and performance cost analysis.
 
-> aside positive
-> Note: Please use the specified warehouse for performance comparison and analysis as instructed. 
+> aside negative
+> It is also important to note that there are dependencies between each module and the steps within them. Please follow the steps carefully, otherwise you will encounter issues like objects not found at a later stage of the lab.
 
 > aside positive
-> It is also important to note that there are dependencies between each module and the steps within them. Please follow the steps carefully, otherwise you will encounter issues like objects not found at a later stage of the lab.
+> Note: Please use the specified warehouse for performance comparison and analysis as instructed. 
 
 ### Prerequisites
 
@@ -150,14 +150,17 @@ Let’s run the base workload of 9 reporting queries.  From Notebooks, click on 
 
 You can click the “**Run all**” button (top right corner) to quickly execute all base reporting queries in this workload on the Warehouse **WH_SUMMIT25_PERF_BASE**. This will take a couple of minutes to finish. If your workload is somewhat interrupted, you can always re-run them in the notebook.
 
+> aside negative
+> Note: Please make sure that you have completed this step in the corresponding notebook before proceeding.
+
 ### 2.2. Collect Baseline Metrics 
 
 We are going to collect statistics of the base workload that are executed in the previous steps. The stats are collected via the system function [GET_QUERY_OPERATOR_STATS](https://docs.snowflake.com/en/sql-reference/functions/get_query_operator_stats). 
 
 Click on Notebooks to return to the Notebooks panel. Then click on **MODULE2_PART2_PERFORMANCE_MONITORING**. Follow the instructions there to collect statistics via a stored procedure and store metrics in a predefined local table called `BASE_QUERY_STATS`.
 
-> aside positive
-> Note: Please make sure that you have completed this module before proceeding.
+> aside negative
+> Note: Please make sure that you have completed this step in the corresponding notebook before proceeding.
 
 ### 2.3. Create a Dashboard for Query Performance Monitoring Visualization [Bonus]
 
@@ -217,9 +220,6 @@ Return to the main Dashboard page by clicking on the “Return to Reporting Work
 
 Following these similar steps by clicking “+” from the top-left corner, create 5 more tiles based on the following monitoring scripts. 
 
-> aside positive
-> Please note that some of the queries might return zero rows because we do not have all the examples available in this lab.
-
 **Long Table Scan**
 
 ```sql
@@ -257,7 +257,8 @@ order by local_spills desc
 
 **Long Compilation**
 
-*Note: this might contain 0 rows because in our example, we do not have long compilation example queries*.
+> aside positive
+> Note: this might contain 0 rows because in our example, we do not have long compilation example queries.
 
 ```sql
 -- Long Compilation
@@ -295,7 +296,8 @@ order by compile_ratio desc
 
 **OOMs & Retries**
 
-*Note: this might contain 0 rows because in our example, we do not have such example queries*.
+> aside positive
+> Note: this might contain 0 rows because in our example, we do not have such example queries.
 
 ```sql
 -- OOMs & Retries
@@ -322,7 +324,8 @@ where
 
 **Join Explosion**
 
-*Note: this might contain 0 rows because in our example, we do not have such example queries*.
+> aside positive
+> Note: this might contain 0 rows because in our example, we do not have such example queries.
 
 ```sql
 -- JOIN explosion
@@ -364,7 +367,7 @@ In the real world, you may not be involved in table design. Queries are often mo
 
 We are going to analyze query filters and join filters to discover table columns that may be good auto clustering key columns.
 
-Please follow 3.2 in the notebooks **MODULE3_PART1_AC_SETUP**`**, and you will see the following similar result.
+Please follow 3.2 in the notebooks **MODULE3_PART1_AC_SETUP**, and you will see the following similar result.
 
 ![Analyze filters](assets/pic-3-2-analyze-filters.png)
 
@@ -409,6 +412,9 @@ SELECT SYSTEM$ESTIMATE_AUTOMATIC_CLUSTERING_COSTS(
 
 Rerun the reporting workload by following **MODULE3_PART2_AC_WORKLOAD** in the notebooks by clicking the “Run All” button in the top-right corner. 
 
+> aside negative
+> Note: Please make sure that you have completed this step in the corresponding notebook before proceeding.
+
 ### 3.5 Comparing performance 
 
 Follow section 3.5 in the **MODULE3_PART3_BASE_VS_AC_WORKLOAD** of the notebook, which will help you:
@@ -416,6 +422,9 @@ Follow section 3.5 in the **MODULE3_PART3_BASE_VS_AC_WORKLOAD** of the notebook,
 - Analyze the performance metrics (especially execution time and credits used) for `WH_SUMMIT25_PERF_BASE` (baseline) and `WH_SUMMIT25_PERF_AC` (with Auto Clustering). 
 - Quantify the performance improvement. 
 - Discover the potential trade-off of pre-clustering if the data is frequently updated.
+
+> aside negative
+> Note: Please make sure that you have completed this step in the corresponding notebook before proceeding.
 
 ### 3.6 Cost Analysis
 
@@ -458,7 +467,7 @@ Snowflake should automatically rewrite the query to use the materialized view.
 
 ### 4.4 Compare performance
 
-Go back to step 4.4 of Notebook MODULE4_MV_OPTIMIZATION.
+Go back to step 4.4 of Notebook **MODULE4_MV_OPTIMIZATION**.
 
 ![Compare MV queries](assets/pic-4-6-mv-compare-queries.png)
 
@@ -538,9 +547,14 @@ Query Acceleration Service (QAS) is another optimization feature that may comple
 
 This module explores how SOS can improve a query’s performance. You can follow **MODULE6_QAS_OPTIMIZATION** in the notebook for this Module. 
 
+Below contains some screenshots for the commands that you will run in the notebook for reference.
+
 ### 6.1 Identify QAS Candidates & Data Preparation
 
 We have created an SP to find QAS-eligible queries on historic queries. Please follow the instructions in step 6.1 of the Notebook **MODULE6_QAS_OPTIMIZATION**.
+
+> aside negative
+> Note: Please make sure that you have completed this step in the corresponding notebook before proceeding.
 
 ### 6.2 Enable QAS
 
@@ -548,9 +562,12 @@ We have created an SP to find QAS-eligible queries on historic queries. Please f
 
 This confirms that the QAS is enabled on `WH_SUMMIT25_PERF_QAS`.
 
+> aside negative
+> Note: Please make sure that you have completed this step in the corresponding notebook before proceeding.
+
 ### 6.3 Rerun Query and Validate 
 
-Rerun the query 081 on `WH_SUMMIT25_PERF_QAS`. Use the query profile to validate that QAS was used and look for “**partition scanned by service**” on the node TableScan of the `TRAFFIC_LARGE` table. 
+Rerun the query "**Query 08 - QAS**" that we run in step 6.1 on warehouse `WH_SUMMIT25_PERF_QAS`. Use the query profile to validate that QAS was used and look for “**partition scanned by service**” on the node TableScan of the `TRAFFIC_LARGE` table. 
 
 > aside positive
 > Note: you can follow instructions from step 4.3 of the notebook **MODULE4_MV_OPTIMIZATION** earlier to find the query profile.
@@ -562,6 +579,8 @@ Then, rerun the eligibility check stored procedure to verify QAS has been applie
 ![QAS applied](assets/pic-6-3-qas-applied-check.png)
 
 ### 6.4 Compare Performance and Cost 
+
+Below just contains some sample output from the queries that you need to run in this section:
 
 ![QAS compare performance](assets/pic-6-4-qas-compare-performance.png)
 
