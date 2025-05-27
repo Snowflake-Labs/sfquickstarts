@@ -77,7 +77,7 @@ Be sure to use the **shared Snowflake worksheet** provided in Okta for the hands
 #### 2.1 ![login](assets/oktalogin.png)
 > aside negative
 > 
->  Do **not** sign in with Okta FastPass.
+>  **DO NOT** sign in with Okta FastPass.
 
 #### 2.2 ![profile](assets/oktaprofile.png)
 
@@ -98,7 +98,7 @@ Be sure to use the **shared Snowflake worksheet** provided in Okta for the hands
 * Ensure you opened the applications in the correct order: sign in to Snowflake first, then open the worksheet from your Okta SSO profile. If done in this order, you should already be signed in when the worksheet opens.
 
 **What should I do if I can't type in the shared Snowflake worksheet?**
-* Duplicate the worksheet (see steps above). 
+* Follow Step 2.3 to create a duplicate of the worksheet. 
 
 <!-- ------------------------ -->
 ## Data Consumer Experience
