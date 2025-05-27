@@ -1,6 +1,6 @@
 author: Paul Myres, Kevin Crawford
 id: simplify_and_accelerate_data_access_provisioning_with_immuta_and_snowflake
-summary: This is a sample Snowflake Guide
+summary: In this guide, you’ll learn how to securely provision data access using **Immuta** and **Snowflake**.
 categories: Getting-Started, datagovernance, Ai
 environments: web
 status: Published 
@@ -16,7 +16,7 @@ In this guide, you’ll learn how to securely provision data access using **Immu
 
 The scenario centers on a **healthcare** dataset containing **patient and provider encounters** across a network of facilities. You’ll use an HLS dataset to simulate a federated enterprise environment and experience how Immuta helps organizations streamline access while maintaining compliance and accelerating time to data.
 
-By the end of the guide, you’ll have published a secure data product, enforced dynamic policies, and accessed governed data.
+By the end of this guide, you’ll have published a secure data product, enforced dynamic policies, and accessed governed data.
 
 ### Introduction to Immuta
 
@@ -26,7 +26,7 @@ AI and other technologies have created a surge in data demand, with 10–100x mo
 Despite the push to make data more accessible, most organizations still rely on a complex, manual process involving multiple teams. From request to access, it often takes over two months—slowing down insights and frustrating users. This model no longer scales with modern data demands.
 ![people](assets/people.png)
 
-Immuta simplifies and secures the data access process with a single platform that combines a governed data marketplace with automated policy enforcement. Data consumers get fast, compliant access, while stewards, governors, and product owners work within clear, auditable workflows
+Immuta simplifies and secures the data access process with a single platform that combines a governed data marketplace with automated policy enforcement. Data consumers get fast, compliant access, while stewards, governors, and product owners work within clear, auditable workflows.
 ![dg](assets/dg.png)
 
 ### Prerequisites
@@ -39,6 +39,7 @@ Immuta simplifies and secures the data access process with a single platform tha
 * How to publish trusted, compliant data products to the Immuta Marketplace so users can discover and request the data they need without creating bottlenecks
 
 ### What You'll Need 
+* Laptop
 * Access to Immuta’s Workshop Okta SSO (provided)  
 * Access to the shared Snowflake worksheet (provided)
 
@@ -61,7 +62,7 @@ You’ve been provisioned with an **Okta profile** that will allow you to seamle
 
 In Snowflake, you’re provisioned as a data owner over a single schema within a domain-scoped database. Throughout this workshop, you’ll create fine-grained access controls to govern this data and publish a secure data product that others can request through the Immuta Marketplace.
 
-**Note:** Be sure to use the shared Snowflake worksheet provided for the hands-on exercises.
+Be sure to use the **shared Snowflake worksheet** provided in Okta for the hands-on exercises.
 
 ### What you’ll do
 
@@ -69,18 +70,35 @@ In Snowflake, you’re provisioned as a data owner over a single schema within a
 * Launch each application:  
   * Immuta Governance  
   * Immuta Marketplace  
-  * Snowflake Workshop Account
+  * Snowflake Workshop Account and shared Snowflake worksheet 
 * Review the data currently available to your user
 
 ### Follow Along in Okta
-![login](assets/oktalogin.png)
+#### 2.1 ![login](assets/oktalogin.png)
+> aside negative
+> 
+>  Do **not** sign in with Okta FastPass.
 
-![profile](assets/oktaprofile.png)
+#### 2.2 ![profile](assets/oktaprofile.png)
 
 ### Follow Along in Snowflake
-![duplicate](assets/duplicate.png)
+#### 2.3 ![duplicate](assets/duplicate.png)
 
-![checkdata](assets/checkdata.png)
+#### 2.4 ![checkdata](assets/checkdata.png)
+
+### FAQ
+**What should I do if I'm denied access to Okta SSO?**
+* Do not use Okta FastPass to sign in.
+* Make sure the credentials you entered exactly match those provided to you.
+
+**Where can I find the shared Snowflake worksheet?**
+* Open it from your Okta SSO Profile.
+
+**When I open the shared Snowflake worksheet, it prompts me to sign in. What should I do?**
+* Ensure you opened the applications in the correct order: sign in to Snowflake first, then open the worksheet from your Okta SSO profile. If done in this order, you should already be signed in when the worksheet opens.
+
+**What should I do if I can't type in the shared Snowflake worksheet?**
+* Duplicate the worksheet (see steps above). 
 
 <!-- ------------------------ -->
 ## Data Consumer Experience
@@ -92,23 +110,23 @@ Duration: 15
 
 ### What you’ll do 
 
-* You are **Connie the consumer** who is an analyst that has been tasked to review and provide insights on facility performance based on patient encounters.  
+* You are **Connie the Consumer** who is an analyst that has been tasked to review and provide insights on facility performance based on patient encounters.  
 
 * You need to find a data product that will fit your analytical needs and get access quickly to provide insights within a short deadline. 
 
 * We’ll start by looking at the **Immuta Data Marketplace** to see what data products are available that may fit your business needs.
 
 ### Follow Along in Immuta Marketplace: Request Access to a Data Product
-![selectproduct](assets/selectproduct.png)
+#### 3.1 ![selectproduct](assets/selectproduct.png)
 
-![request](assets/request.png)
+#### 3.2 ![request](assets/request.png)
 
-![form](assets/form.png)
+#### 3.3 ![form](assets/form.png)
 
 ### Follow Along in Snowflake
-![businessquery](assets/businessquery.png)
+#### 3.4 ![businessquery](assets/businessquery.png)
 
-![selectmask](assets/selectmask.png)
+#### 3.5 ![selectmask](assets/selectmask.png)
 
 <!-- ------------------------ -->
 ## Data Governor Experience
@@ -120,7 +138,7 @@ Domains in Immuta enable decentralized, federated governance by giving business 
 
 ![domains](assets/domains.png)
 
-Subscription policies determine who can see a dataset, while data policies govern how sensitive information is masked or filtered based on context, ensuring secure, compliant access. Immuta policies offer fine-grained control over data access at every level: table, column, row, and even individual cells.
+Subscription policies determine who can see a dataset, while data policies govern how sensitive information is masked or filtered based on context. Together, they ensure secure, compliant access. Immuta policies offer fine-grained control over data access at every level: table, column, row, and even individual cells.
 
 ![subpolicy](assets/subpolicy.png)
 
@@ -136,18 +154,18 @@ Subscription policies determine who can see a dataset, while data policies gover
 * Then you’ll create a domain specific data policy within the Immuta Governance application using the metadata tags available to secure location information.
 
 ### Follow Along in Immuta Governance: Review Metadata
-![finddomain](assets/finddomain.png)
+#### 4.1 ![finddomain](assets/finddomain.png)
 
-![datasource](assets/datasource.png)
+#### 4.2 ![datasource](assets/datasource.png)
 
-![dictionary](assets/dictionary.png)
+#### 4.3 ![dictionary](assets/dictionary.png)
 
 
 ### Follow Along in Immuta Governance: Create a Data Policy
-![buildmask](assets/buildmask.png)
+#### 4.4 ![buildmask](assets/buildmask.png)
 
 ### Follow Along in Snowflake
-![domainmask](assets/domainmask.png)
+#### 4.5 ![domainmask](assets/domainmask.png)
 
 <!-- ------------------------ -->
 ## Data Product Owner Experience
@@ -165,20 +183,20 @@ Duration: 15
 * Let's start by defining the data product in the product owner interface and create the access workflow for consumption.
 
 ### Follow Along in Immuta Marketplace: Publish a Data Product
-![publish](assets/publish.png)
+#### 5.1 ![publish](assets/publish.png)
 
-![publishwf1](assets/publishwf1.png)
+#### 5.2 ![publishwf1](assets/publishwf1.png)
 
-![publishwf2](assets/publishwf2.png)
+#### 5.3 ![publishwf2](assets/publishwf2.png)
 
-![publishwf3](assets/publishwf3.png)
+#### 5.4 ![publishwf3](assets/publishwf3.png)
 
-![publishwf4](assets/publishwf4.png)
+#### 5.5 ![publishwf4](assets/publishwf4.png)
 <!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 5
 
-In this lab, you stepped into the roles of Data Governor, Data Product Owner, and Data Consumer to experience how Immuta and Snowflake work together to simplify and scale secure data access. You discovered how metadata-driven policies, automated workflows, and the Immuta Marketplace reduce friction, accelerate time-to-data, and support compliance without sacrificing control.
+In this lab, you stepped into the roles of **Data Consumer, Data Governor, and Data Product Owner** to experience how Immuta and Snowflake work together to simplify and scale secure data access. You discovered how metadata-driven policies, automated workflows, and the Immuta Marketplace reduce friction, accelerate time-to-data, and support compliance without sacrificing control.
 
 ### What You Learned
 * How Immuta’s native integration with Snowflake enables secure, scalable data access
