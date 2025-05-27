@@ -1,13 +1,13 @@
 author: Gilberto Hernandez, Chris Cardillo
 id: get-started-snowflake-shared-cortex-knowledge-extensions
-summary: How to build a chatbot using Snowflake shared Cortex Knowledge Extensions
+summary: How to build a chatbot using Snowflake Cortex Knowledge Extensions
 categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering 
 
-# Getting Started with Shared Cortex Knowledge Extensions on Snowflake Marketplace
+# Getting Started with Cortex Knowledge Extensions on Snowflake Marketplace
 ## Overview 
 Duration: 1
 
