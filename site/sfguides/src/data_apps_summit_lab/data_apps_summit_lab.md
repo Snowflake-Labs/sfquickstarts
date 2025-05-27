@@ -1,4 +1,4 @@
-author: 
+author: Daniel Myers, Gilberto Hernandez
 id: data_apps_summit_lab
 summary: This is a sample Snowflake Guide
 categories: featured,app-development
@@ -47,132 +47,176 @@ You will process data with Snowpark, develop a simple ML model and create a Pyth
 * A Streamlit dashboard data application
 
 <!-- ------------------------ -->
+## Open a Snowflake Trial Account
+Duration: 5
 
-## Prepare your lab environment
+To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
 
-Duration: 8
+1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=coursera&utm_campaign=introtosnowflake)
 
-1. Install conda to manage a separate environment by running pip install conda. NOTE: The other option is to use [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
-2. Open the terminal or command prompt
+2. Start the account creation by completing the first page of the form on the page.
 
+3. On the next section of the form,  set the Snowflake edition to "Enterprise (Most popular").
 
-> aside positive
-> IMPORTANT:
-> If you are using a machine wth Apple M1 chip, follow [these instructions](https://docs.snowflake.com/en/developer-guide/snowpark/python/setup) to create the virtual environment and install Snowpark Python instead of what's described below.
+4. Select "AWS – Amazon Web Services" as the cloud provider.
 
-3. Create environment by running `conda create --name snowpark -c https://repo.anaconda.com/pkgs/snowflake python=3.10`
-4. Activate conda environment by running `conda activate snowpark`
-5. Install Snowpark for Python, pandas, and scikit-learn by running `conda install -c https://repo.anaconda.com/pkgs/snowflake snowflake-snowpark-python pandas scikit-learn`
-6. Install Streamlit by running `pip install streamlit` or `conda install streamlit`
-7. Test Streamlit installation: `streamlit hello`
-8. Create a directory on your local machine as a workspace, e.g. “PCE-Marketplace-Lab” and download the following files:
-   
-   <button><a href="https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/data_apps_summit_lab/assets/project_files" download>Lab Files</a></button>
+5. Select "US West (Oregon)" as the region.
 
----
+6. Complete the rest of the form and click "Get started".
 
-### Troubleshooting `pyarrow` related issues
+![trial](./assets/trial.png)
 
-- If you have `pyarrow` library already installed, uninstall it before installing Snowpark.
-- If you do not have `pyarrow` installed, you do not need to install it yourself; installing Snowpark automatically installs the appropriate version.
-- Do not reinstall a different version of `pyarrow` after installing Snowpark.
 
 <!-- ------------------------ -->
-## Prepare the Snowflake environment
+## Finance & Economics Data From Snowflake Marketplace
+Duration: 5
 
-Duration: 6
+Let's start by "loading" our finance and economics data into Snowflake. It turns out that "loading" is really the wrong word here. 
 
-### Working with Snowflake Marketplace
+We're using Snowflake's unique data sharing capability in Snowflake Marketplace. Because of this, we don't actually need to copy any data to our Snowflake account with any logic. Instead, we can directly access the weather data shared by a trusted provide in Snowflake Marketplace. Let's go ahead and do this.
 
-Snowflake Marketplace provides visibility to a wide variety of datasets from third-party data stewards which broaden access to data points used to transform business processes. Snowflake Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider.
+1. Log into your Snowflake account.
 
+2. Click on "Data Products".
 
-Before we begin to review working with Snowflake Marketplace data sets, verify you have installed a trial version of Snowflake. If not, click Install Snowflake Trial. Now that you have a working trial account, and you are logged into the Snowflake Console, follow the following steps.
+3. Click on "Marketplace".
 
+4. In the search bar, search for "finance and economics".
 
+5. The first result should be "Finance & Economics
+" by the "Snowflake Data" provider. Click on the listing.
 
-* At the top left corner, make sure you are logged in as ACCOUNTADMIN, switch role if not
-* Click on `Marketplace`
-* At the Search bar, type: Cybersyn Essentials then click on the Tile Box labeled: `Financial & Economic Essentials`.
+6. The dataset is free. On the right, click "Get".
 
+7. In the ensuing modal, click "Get" once more. Do **NOT** rename the dataset.
 
-![alt_text](assets/cybersyn-essentials.png)
-
-* At the top right corner, click ![alt_text](assets/get-tile.png)
-* Click on `Options` to choose roles with access to the Database being created. Then accept Cybersyn's terms and Snowflake's Privacy Notice and click `Get`.
-
-
-## 
-
-![alt_text](assets/query-data.png)
+This is a live dataset! No need to write ingestion logic to bring the data into your account. The data is maintained and kept fresh by the provider.
 
 
+![data](./assets/data.png)
+<!-- ------------------------ -->
+## Explore the Data Using Snowflake Notebooks
+Duration: 10
 
+The Finance & Economics dataset provides comprehensive daily stock price data for all U.S. equities and ETFs traded on the Nasdaq, including essential metrics such as pre-market opening prices, after-hours closing prices, daily high/low prices, and trading volumes. It's updated daily at 6 AM ET, which means it can be used for detailed analysis of stock performance across different trading sessions and time periods. 
 
-* At this point you can select Query Data, this will open a worksheet with example queries.
+We'll use this dataset to build an interactive stock analysis dashboard that calculates technical indicators and visualizes market trends to simulate real-world financial analytics workflows.
 
+Let's start by exploring the data using a Snowflake Notebook.
 
-![alt_text](assets/sample-query.png)
+1. First create a database and schema for the notebook. In a SQL worksheet, run the following:
 
-* We are interested in the US Inflation data, so we will use this query:
-`What is the US inflation over time (annually)?`
-
-    ``` sql
-    SELECT variable_name, date, value, unit 
-    FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES 
-    WHERE variable_name = 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100' 
-    AND MONTH(date) = 1 
-    ORDER BY date;
-    ```
-
-### Create a new database
-
-Now that we have a database with Cybersyn Financial & Economic Essentials, we need to create a database for our application that will store the User Defined Function.
-
-Select “Worksheets” from the Home menu of Snowflake. 
-
-Create a new worksheet by selecting the ![alt_text](assets/worksheet.png) button.
-
-In the worksheet copy the following script:
-
-``` sql
-
--- Setup database, need to be logged in as accountadmin role
--- Set role and warehouse (compute)
+```sql
 USE ROLE accountadmin;
 USE WAREHOUSE compute_wh;
 
---Create database and stage for the Snowpark Python UDF
-CREATE DATABASE IF NOT EXISTS summit_hol;
-USE DATABASE summit_hol;
-CREATE STAGE IF NOT EXISTS udf_stage;
-
--- What financial data is available as a time-series from FRED?
-SELECT DISTINCT variable_name
-FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES;
-
--- What is the size of the all the time-series data?
-SELECT COUNT(*) FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES;
-
--- What is the US inflation over time (annually)?
-SELECT variable_name, date, value, unit
-FROM CYBERSYN_FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FINANCIAL_FRED_TIMESERIES
-WHERE 
-variable_name = 'Personal Consumption Expenditures: Chain-type Price Index, Seasonally adjusted, Monthly, Index 2017=100'
-AND MONTH(date) = 1
-ORDER BY date;
-
--- Now create UDF in VS Code / Notebook
--- Once we created the UDF with the Python Notebook we can test the UDF
-SELECT predict_pce_udf(2022);
+CREATE OR REPLACE DATABASE fe_app_db;
+CREATE OR REPLACE SCHEMA fe_app_schema;
 ```
 
+2. Next, click on "Projects", then click on "Notebooks". Create a new Notebook using the button at the top right.
 
-<!-- ------------------------ -->
+3. Name the notebook "EXPLORE_FINANCE_ECONOMICS". Set the location to the `fe_app_db` database and `fe_app_schema` schema.
 
-## Exploring the Data with a (Jupyter) Notebook
+4. Select **COMPUTE_WH** as the query warehouse. 
 
-Duration: 15
+5. Leave everything else as-is and click "Create".
+
+6. Once the notebook is loaded, you'll see three cells that are pre-loaded with code. Delete all of them.
+
+Ok, let's now explore the data in the dataset.
+
+1. Create a new SQL cell and paste in and run the following to set the context:
+
+```sql
+USE ROLE accountadmin;
+USE WAREHOUSE compute_wh;
+```
+
+2. Next, create another SQL cell. Paste in and run the following:
+
+```sql
+SELECT * FROM FINANCE__ECONOMICS.CYBERSYN.STOCK_PRICE_TIMESERIES LIMIT 20;
+```
+
+This will give you a sense of the data in the dataset. You'll notice there is market data for tickers. We'll use the data in this dataset to build an app.
+
+3. We can do some neat things with this data. For example, we can find out which stocks had the highest price volatility in the past month. Create a new SQL cell and run this query:
+
+```sql
+-- Find stocks with highest price volatility in the past month
+-- Find stocks with highest price volatility in the past month
+WITH daily_stats AS (
+  SELECT 
+    ticker,
+    date,
+    MAX(CASE WHEN variable_name = 'All-Day High' THEN value END) AS day_high,
+    MAX(CASE WHEN variable_name = 'All-Day Low' THEN value END) AS day_low
+  FROM finance__economics.cybersyn.stock_price_timeseries
+  WHERE date >= DATEADD(month, -1, CURRENT_DATE())
+  GROUP BY ticker, date
+)
+SELECT 
+  ticker,
+  AVG((day_high - day_low) / day_low * 100) AS avg_daily_volatility
+FROM daily_stats
+WHERE day_low > 0
+GROUP BY ticker
+HAVING COUNT(date) >= 15  -- Ensure sufficient data points
+ORDER BY avg_daily_volatility DESC
+LIMIT 10;
+```
+
+You should see the 10 tickers with the most price volatility returned.
+
+4. Create a new SQL cell and now run this query to return stocks with largest single-day percentage gains:
+
+```sql
+-- Find stocks with largest single-day percentage gains
+WITH daily_close AS (
+  SELECT 
+    ticker,
+    date,
+    value AS close_price,
+    LAG(value) OVER (PARTITION BY ticker ORDER BY date) AS prev_close
+  FROM finance__economics.cybersyn.stock_price_timeseries
+  WHERE variable_name = 'Post-Market Close'
+  AND date >= DATEADD(month, -3, CURRENT_DATE())
+)
+SELECT 
+  ticker,
+  date,
+  close_price,
+  prev_close,
+  ((close_price / prev_close) - 1) * 100 AS pct_gain
+FROM daily_close
+WHERE prev_close > 0
+ORDER BY pct_gain DESC
+LIMIT 15;
+```
+
+5. Finally, let's take a look at volume trends for some tech stocks. Create a new SQL cell and run the following:
+
+```sql
+-- Analyze volume trends for popular tech stocks
+WITH volume_data AS (
+  SELECT 
+    ticker,
+    date,
+    value AS volume
+  FROM finance__economics.cybersyn.stock_price_timeseries
+  WHERE variable_name = 'Nasdaq Volume'
+  AND ticker IN ('AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'NVDA')
+  AND date >= DATEADD(month, -2, CURRENT_DATE())
+)
+SELECT 
+  ticker,
+  date,
+  volume,
+  AVG(volume) OVER (PARTITION BY ticker ORDER BY date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS moving_avg_volume
+FROM volume_data
+ORDER BY ticker, date;
+```
 
 Now that we have a database that we can use for the Application, we want to explore the data and create a ML model in a User Defined Function (UDF) that can be used by our application.
 
