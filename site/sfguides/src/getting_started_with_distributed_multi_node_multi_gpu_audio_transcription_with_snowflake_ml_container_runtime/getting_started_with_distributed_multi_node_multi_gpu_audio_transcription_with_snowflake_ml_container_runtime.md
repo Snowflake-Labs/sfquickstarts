@@ -150,6 +150,7 @@ To get started, follow these steps:
 
 ![Audio Processing Setup Notebook](assets/Audio_processing_notebook.png)
 
+
 Note: - "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
 
 ## Audio Transcription
@@ -239,6 +240,7 @@ To get started, follow these steps:
 - Download the whisper model from OpenAI for distributed inferencing of the audio files  
 - Run distributed inference on the multi-node, multi-GPU audio transcription  
 - Write data to the Snowflake table using Snowflake APIs.
+
 
 Note: "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
 
