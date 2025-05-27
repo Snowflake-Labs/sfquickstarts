@@ -94,7 +94,7 @@ Duration: 10
 
 Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to create a Snowflake Account. You should recieve an email to activate your trial account.
 
-Navigate to a new worksheet and execute the following commands to create a second account in the Organisation. The second account will be the account we share the model to (Snowbank). In trial accounts we cannot share externally, although the same process can be followed to share the app externally if you have a non-trial account.
+Navigate to a new worksheet and execute the following commands to create a second account in the Organisation. The second account will be the account we share the model to (Snowbank). In trial accounts we cannot share the Native App externally, although the same process can be followed to share the app externally if you have a non-trial account.
 
 ```SQL
 USE ROLE ORGADMIN;
@@ -112,11 +112,11 @@ Note down the account locator and the url from the output of the command above f
 ## Provider Account (Zamboni) - Set Up
 Duration: 20
 
-In this part of the lab we'll set up our Provider Snowflake account. In our business scenario, this step represents Zamboni developing their proprietry Credit Card Default model from their own datasets.
+In this part of the lab we'll set up our Provider Snowflake account. In our business scenario, this step represents Zamboni developing their proprietry Credit Card Default model from their own datasets. Stay in the same account from the previous section.
 
 ### Initial Set Up (Zamboni)
 
-Next, open up a worksheet and run all following steps as the ACCOUNTADMIN role
+Next, open up a new worksheet and run all following steps as the ACCOUNTADMIN role
 
 ```SQL
   -- Change role to accountadmin
@@ -126,15 +126,6 @@ Next, open up a worksheet and run all following steps as the ACCOUNTADMIN role
 First we can create a [Virtual Warehouse](https://docs.snowflake.com/en/user-guide/warehouses-overview) that can be used to load the initial dataset. We'll create this warehouse with a size of XS which is right sized for that use case in this lab.
 
 ```SQL
--- Create a virtual warehouse for data exploration
-CREATE OR REPLACE WAREHOUSE QUERY_WH WITH 
-  WAREHOUSE_SIZE = 'X-SMALL' 
-  WAREHOUSE_TYPE = 'STANDARD' 
-  AUTO_SUSPEND = 300 
-  AUTO_RESUME = TRUE 
-  MIN_CLUSTER_COUNT = 1 
-  MAX_CLUSTER_COUNT = 1;
-
 -- Create a virtual warehouse for training
 CREATE OR REPLACE WAREHOUSE training_wh with 
   WAREHOUSE_SIZE = 'MEDIUM' 
@@ -144,9 +135,18 @@ CREATE OR REPLACE WAREHOUSE training_wh with
   AUTO_RESUME = TRUE;
 ```
 
+-- Create a virtual warehouse for data exploration
+CREATE OR REPLACE WAREHOUSE QUERY_WH WITH 
+  WAREHOUSE_SIZE = 'X-SMALL' 
+  WAREHOUSE_TYPE = 'STANDARD' 
+  AUTO_SUSPEND = 300 
+  AUTO_RESUME = TRUE 
+  MIN_CLUSTER_COUNT = 1 
+  MAX_CLUSTER_COUNT = 1;
+
 ### Load Data 
 
-Next we will create a database and schema that will house the tables to train our.
+Next we will create a database and schema that will house the tables to train our model.
 
 ```SQL
 -- Create the application database and schema
@@ -233,7 +233,7 @@ SELECT COUNT(*)
 We have loaded all the data in Zamboni. We can now proceed with training the model
 
 <!-- ------------------------ -->
-## Consumer Account (Zamboni) - Create Model
+## Provider Account (Zamboni) - Create Model
 Duration: 45
 
 For this section, make sure you download the corresponding [git repo](https://github.com/Snowflake-Labs/sfguide-data-collaboration-native-app) so you have the files referenced in this section.
@@ -258,7 +258,7 @@ The first step is to set up the python environment to develop our model. To do t
 
   3. Start notebook server:
   ```
-  $ jupyter notebook
+  jupyter notebook
   ```
   Open the jupyter notebook Credit Card Default Native App Notebook
 
@@ -284,25 +284,64 @@ The first step is to set up the python environment to develop our model. To do t
 If you are having some trouble with the steps above, this could be due to having different architectures, such as an M1 chip. In that case, follow the instructions [here](https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel) and be sure to conda install jupyter notebooks and pyarrow.
 
 ### Train and Register Model
-Open up the notebook and follow the steps. Once you have completed those, you will have trained and deployed a ML Model in Snowflake that predicts credit card default risk.
+Open up the notebook and follow the steps. Once you have completed those, you will have trained and deployed a ML Model in Snowflake that predicts credit card default risk. You will also have registered the model in the Snowflake Model Registry.
 
 Stay in the Zamboni account for the next step.
 
 <!-- ------------------------ -->
-## Distribute Model as Native App
+## Provider Account (Zamboni) - Distribute Model as Native App
 Duration: 2
 
-Now we have trained the model, we want to encapsulate it in an Application Package, so we can distribute it via the Native App Framework
+Now we have trained the model, we want to encapsulate it in an Application Package, so we can distribute it via the Native App Framework. More information on the Native Application framework can be found in the documentation [here](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about). We will be working through the [Native App Development Workflow](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-workflow#development-workflow).
 
-Continue to work through the notebook
+Continue to work through the notebook.
 
-More information on the Native Application framework can be found in the documentation here. https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about
+The first step is to create an Application Package object that will hold the assets we wish to distribute to Snowbank. An application package encapsulates the data content, application logic, metadata, and setup script required by an application. An application package also contains information about versions and patch levels defined for the application. We do this by running the following SQL.
 
-The first step is to create an Application Package object, that will hold the assets we wish to distribute to Snowbank.
+```SQL
+CREATE APPLICATION PACKAGE IF NOT EXISTS CREDIT_CARD_PREDICTION_APP_PACKAGE;
+```
 
+Next, we need to create a stage within the Application package for us to put our model assets. We run the following SQL commands
 
+```SQL
+USE APPLICATION PACKAGE CREDIT_CARD_PREDICTION_APP_PACKAGE;
+CREATE SCHEMA IF NOT EXISTS MODEL_ASSETS;
+CREATE OR REPLACE STAGE CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_STAGE FILE_FORMAT = (TYPE = 'csv' FIELD_DELIMITER = '|' SKIP_HEADER = 1);
+```
 
-Explain Manifest
+So we share a model that is consistent with what is in the model registry, we are going to export the model from the registry, and put it in the Application package. We do this in the following code block
+
+```python
+# Iterate through files above and put them in Application Package Stage
+src_model = 'CREDIT_CARD_DEFAULT_MODEL'
+dst = '@CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_STAGE/models'
+
+for row in list_files.toLocalIterator():
+        parts = row["name"].rsplit('/', 1)
+        directory = parts[0]
+        filename = parts[1]
+        session.file.get(f"snow://model/{src_model}/{directory}/{filename}", f"/tmp/{directory}")
+        session.file.put(f"/tmp/{directory}/{filename}", f"{dst}/{src_model}/{directory}", auto_compress=False, overwrite=True, source_compression="NONE")
+```
+
+An application requires a manifest file, and a setup script (as outlined in the Native App Development Workflow). We upload them to our Application Package in the following commands
+
+```SQL
+PUT file://scripts/setup.sql @CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_STAGE/scripts overwrite=true auto_compress=false;
+
+PUT file://manifest.yml @CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_STAGE overwrite=true auto_compress=false;
+```
+
+The setup script contains the SQL statements that define the components created when a consumer installs your application. For us, this will include creating stored procedures to perform feature engineering, as well as registering out model for the app to use on the consumer side. This is done in the following lines
+
+```SQL
+create or replace model APP_CODE.CREDIT_CARD_DEFAULT_MODEL from '/models/CREDIT_CARD_DEFAULT_MODEL/versions/V1';
+
+grant usage on model APP_CODE.CREDIT_CARD_DEFAULT_MODEL to application role app_user;
+```
+
+Error here - cannot create application. Stuck on model creation step.
 
 Explain Versioning
 
