@@ -182,7 +182,7 @@ def call_snowflake_claude():
     tool_input_json = None
     
     payload = {
-        "model": "claude-3-7-sonnet",
+        "model": "claude-4-sonnet",
         "messages": messages,
         "tool_choice": {
             "type": "auto",
@@ -238,7 +238,7 @@ Let's break down the key elements of the tool definition:
 
 1. **Model Selection**:
    ```python
-   "model": "claude-3-7-sonnet"
+   "model": "claude-4-sonnet"
    ```
    Specifies which Claude model to use. Claude 3.7 Sonnet provides excellent tool use capabilities.
 

@@ -132,7 +132,7 @@ To set up the Streamlit in Snowflake Application,
 2. Select the Streamlit tab.
 3. Click on **+ Streamlit App** to create streamlit App. Use the configuration from below screenshot to create the Application.
 4. Once the App is created, replace the example code with the streamlit code in the [file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/streamlit/Menu_Item_Recommendations_App.py) 
-4. Add **snowflake-ml-python** package to the app and Run the Application.
+4. Add **snowflake-ml-python** and **pytorch** packages to the app and Run the Application.
 
 <img src="assets/create_streamlit.png"/>
 
