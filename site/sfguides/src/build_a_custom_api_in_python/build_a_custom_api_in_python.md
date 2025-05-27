@@ -340,7 +340,7 @@ can take a moment. While it does you will get a note like `Endpoints provisionin
 SHOW ENDPOINTS IN SERVICE API.PUBLIC.API;
 ```
 
-Make note of the ingress_url as that will be need to test the application. This service will start the API, running at `https://<INGRESS_URL>`.
+Make note of the `ingress_url` as that will be need to test the application. This service will start the API, running at `https://<INGRESS_URL>`.
 
 <!-- ------------------------ -->
 ## Testing the API
@@ -361,12 +361,12 @@ The ones implemented with Snowpark Python are under the `/snowpark/` route.
 To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Connector for Python, use:
 
 ```
-https://<SPCS_ENDPOINT_URL>/connector/customers/top10?start_range=1995-02-01&end_range=1995-02-14
+https://<INGRESS_URL>/connector/customers/top10?start_range=1995-02-01&end_range=1995-02-14
 ```
 
 To retrieve the top 10 customers in the date range of `1995-02-01` to `1995-02-14` using the Snowflake Snowpark API, use:
 ```
-https://<SPCS_ENDPOINT_URL>/snowpark/customers/top10?start_range=1995-02-01&end_range=1995-02-14
+https://<INGRESS_URL>/snowpark/customers/top10?start_range=1995-02-01&end_range=1995-02-14
 ```
 
 If you call the endpoint without specifying the `start_range` then `1995-01-01` will be used. If you call the endpoint without specifying the `end_range` then `1995-03-31` will be used.
@@ -374,12 +374,12 @@ If you call the endpoint without specifying the `start_range` then `1995-01-01` 
 #### Monthly sales for a given year for a sales clerk
 To retrieve the monthly sales for clerk `000000002` for the year `1995` using the Snowflake Connector for Python, run:
 ```
-https://<SPCS_ENDPOINT_URL>/connector/clerk/000000002/yearly_sales/1995
+https://<INGRESS_URL>/connector/clerk/000000002/yearly_sales/1995
 ```
 
 To retrieve the monthly sales for clerk `000000002` for the year `1995` using the Snowflake Snowpark API, run:
 ```
-https://<SPCS_ENDPOINT_URL>/snowpark/clerk/000000002/yearly_sales/1995
+https://<INGRESS_URL>/snowpark/clerk/000000002/yearly_sales/1995
 ```
 
 ### Testing using a webpage
@@ -463,7 +463,7 @@ You must supply the following:
   Snowflake console by clicking the circle with initials in the lower left and choosing the "Connect a tool to Snowflake" menu option. Copy the field
   named "Account/Server URL".
 * `ROLE` - the role to use when accessing the endpoint. For this example, it should be `APIROLE`.
-* `ENDPOINT` - this is the full URL you are trying to access. E.g., `https://<HASH>-<ORGNAME>-<ACCTNAME>.snowflakecomputing.app/connector/customers/top10`
+* `ENDPOINT` - this is the full URL you are trying to access. E.g., `https://<INGRESS_URL>/connector/customers/top10`
 
 There are 3 ways to specify the PAT to use:
 1. Use the `--pat` option and supply the full PAT token. E.g., `--pat <PAT>`.
@@ -529,6 +529,8 @@ DROP USER IF EXISTS APIUSER;
 DROP ROLE IF EXISTS APIROLE;
 DROP NETWORK POLICY api_np;
 ```
+
+You can now turn off your Codespaces environment.
 
 <!-- ------------------------ -->
 ## Conclusion
