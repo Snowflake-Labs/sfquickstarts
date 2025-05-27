@@ -72,21 +72,11 @@ See details here for the [model](https://huggingface.co/openai/whisper-large-v3)
 
 Prerequisites
 
-* A non-trial Snowflake account in a supported [AWS commercial region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
-
-* A Snowflake account login with a role that has the SYSADMIN role.
-
-* A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup.
-
-  * To try Snowflake ML in a free trial, check out this [quickstart](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+* A Snowflake Account. Sign up for a 30-day [free trial account](https://signup.snowflake.com/), if required.
 
 * Foundational knowledge of Data Science workflows
 
 * (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
-
-What You'll Need
-
-* A [Snowflake](https://app.snowflake.com/) Account
 
 What You'll Build
 
@@ -159,6 +149,9 @@ To get started, follow these steps:
 * Notebook will download the audio files from LibriSpeech ASR corpus as noted here: [https://www.openslr.org/resources/12](https://www.openslr.org/resources/12). The notebook also puts these audio files in a snowflake internal stage named AUDIO\_FILES\_STAGE.
 
 ![Audio Processing Setup Notebook](assets/Audio_processing_notebook.png)
+
+
+Note: - "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
 
 ## Audio Transcription
 <!-- ------------------------ -->
@@ -247,6 +240,9 @@ To get started, follow these steps:
 - Download the whisper model from OpenAI for distributed inferencing of the audio files  
 - Run distributed inference on the multi-node, multi-GPU audio transcription  
 - Write data to the Snowflake table using Snowflake APIs.
+
+
+Note: "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
 
 ## Value Proposition
 <!-- ------------------------ -->
