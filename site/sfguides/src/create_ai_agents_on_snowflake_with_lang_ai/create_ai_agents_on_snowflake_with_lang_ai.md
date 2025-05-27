@@ -191,7 +191,8 @@ Duration: 1
 By following this guide, you have successfully set up an AI Agent running on Snowflake to automate your data analysis tasks.
 
 ### Related Resources
-- [Marketplace Listing](https://app.snowflake.com/marketplace/listing/GZTSZ1TJ3IU/lang-ai-snowflake-ai-agents)
+- [Marketplace Listing](https://app.snowflake.com/marketplace/listing/GZTSZ1TJ3JN/lang-ai-snowflake-ai-agents)
+- [AI Agents Launch Guide](https://help.lang.ai/en/articles/11458138-ai-agents-launch-guide)
 - [Lang.ai Help Center](https://help.lang.ai/en/collections/9808378-build-your-first-ai-agent)
 
 ### What You Learned
