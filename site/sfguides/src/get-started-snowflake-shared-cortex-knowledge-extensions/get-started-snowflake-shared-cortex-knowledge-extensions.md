@@ -15,7 +15,7 @@ Duration: 1
 
 In this Quickstart, you'll build a chatbot that allows you to chat with the data shared in a Snowflake Cortex Knowledge Extension.
 
-Shared Snowflake Cortex Knowledge Extensions allow teams to integrate up-to-date, licensed third-party information, such as news, research, and specialized publications, directly into their AI systems. This integration respects publishers' intellectual property while enabling access to relevant and current knowledge.
+Snowflake Cortex Knowledge Extensions allow teams to integrate up-to-date, licensed third-party information, such as news, research, and specialized publications, directly into their AI systems. This integration respects publishers' intellectual property while enabling access to relevant and current knowledge.
 
 We'll build the chatbot using a few key Snowflake features:
 
@@ -35,7 +35,7 @@ We'll obtain the Cortex Knowledge Extension from Snowflake Marketplace and load 
 
 **Snowflake Cortex Knowledge Extension**
 
-We'll load the shared Snowflake Cortex Knowledge Extension into our account after locating it in the Snowflake Marketplace. This extension will have the relevant data that can be used with our chatbot.
+We'll load the Snowflake Cortex Knowledge Extension into our account after locating it in the Snowflake Marketplace. This extension will have the relevant data that can be used with our chatbot.
 
 **Snowflake Cortex AI**
 
@@ -51,7 +51,7 @@ We'll build the application's front-end using Streamlit in Snowflake.
 - Some basic familiarity with Retrieval Augmented Generation ("RAG")
 
 ### What You’ll Learn 
-- Using Snowflake Marketplace for agentic products, like shared Cortex Knowledge Extensions
+- Using Snowflake Marketplace for agentic products, like Cortex Knowledge Extensions
 - How to understand and use a Cortex Knowledge Extension
 - How to use **COMPLETE** in Snowflake Cortex AI
 - How to build an application using Streamlit in Snowflake
@@ -233,11 +233,11 @@ Duration: 1
 
 ### Conclusion
 
-Congratulations! You've built a RAG chatbot that uses a shared Cortex Knowledge Extension. 
+Congratulations! You've built a RAG chatbot that uses a Cortex Knowledge Extension. 
 
 ### What You Learned
 
-You built a RAG chatbot that allows you to chat with the Snowflake Documentation in natural language. You were able to do this by using a shared Cortex Knowledge Extension, which contained the relevant knowledge (data) to be able to answer questions about the Snowflake docs. You also used Snowflake Cortex AI's **COMPLETE** function and Streamlit in Snowflake.
+You built a RAG chatbot that allows you to chat with the Snowflake Documentation in natural language. You were able to do this by using a Cortex Knowledge Extension, which contained the relevant knowledge (data) to be able to answer questions about the Snowflake docs. You also used Snowflake Cortex AI's **COMPLETE** function and Streamlit in Snowflake.
 
 
 ### Resources
