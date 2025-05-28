@@ -65,7 +65,7 @@ Once you have logged in, create a new Workspace.
 To prepare your Snowflake environment, Create a SQL File by selecting `+ Add New` and and selecting `SQL File`. Name the file `setup.sql`.
 
 Copy the contents of [setup.sql](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/setup.sql) into your newly created setup.sql workspace file.
-
+![4](assets/4_create_setup_sql_file.png)
 
 
 ## Conclusion And Resources
@@ -82,6 +82,6 @@ Duration: 1
 
 - Github repo [Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis)
 - Snowpark Container Services [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
-- 
+
 
 
