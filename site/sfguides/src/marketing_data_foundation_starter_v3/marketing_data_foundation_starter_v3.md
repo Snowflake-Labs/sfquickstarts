@@ -75,23 +75,28 @@ git clone https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-st
 snow connection add
 ```
 
-Refer to the screenshot below for more info:
+Refer to the following below to create a connection:
 ```shell
-Enter connection name: marketing_v3_demo_conn
+Enter connection name: marketing_demo_v3_conn
 Enter account name: ******
-Enter user: <YOUR USERNAME>
-Enter password [optional]:
-Enter role: ACCOUNTADMIN
-Enter warehouse: COMPUTE_WH
+Enter user: put your username here
+Enter password: [optional]
+Enter role: accountadmin
+Enter warehouse: compute_wh
 Enter database: snowflake
 Enter schema: account_usage
-Enter host [optional]:
-Enter port [optional]:
-Enter region: us-west-1
-Enter authenticator [optional]:
-Enter private key file [optional]:
-Enter token file path [optional]:
-Wrote new connection marketing_v3_demo_conn to /Users/******/.snowflake/connections.toml
+Enter host: [optional]
+Enter port: [optional]
+Enter region: [optional]
+Enter authenticator: [optional]
+Enter private key file: [optional]
+Enter token file path: [optional]
+Wrote new connection marketing_demo_v3_conn to /Users/******/.snowflake/connections.toml
+```
+
+Let's set the connection to the default connection:
+```console
+snow connection set-default marketing_demo_v3_conn
 ```
 
 To review the new created connection use:
@@ -99,28 +104,31 @@ To review the new created connection use:
 snow connection list
 ```
 
-Refer to the screenshot below:
+Refer to the desired output below:
 ```shell
 +------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
 | connection_name        | parameters                                                                                                                                                            | is_default |
 |------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------|
-| marketing_v3_demo_conn | {'account': '******', 'user': '******', 'password': '****', 'region': 'us-west-1', 'database': 'snowflake', 'schema': 'account_usage', 'warehouse': 'COMPUTE_WH',     | True       |
-|                        | 'role': 'ACCOUNTADMIN'}                                                                                                                                               |            |
+| marketing_demo_v3_conn | {'account': '******', 'user': '******', 'password': '****', 'database': 'snowflake', 'schema': 'account_usage', 'warehouse': 'compute_wh',                            | True       |
+|                        | 'role': 'accountadmin'}                                                                                                                                               |            |
 +------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
 ```
 
-Lastly, let's export the connection name to the default connection:
-```console
-export SNOWFLAKE_DEFAULT_CONNECTION_NAME=marketing_demo_v3_conn
-```
 
 <!-- ------------------------ -->
 ## Deploy the Native App
-
-### Clone GitHub repository
 Duration: 2
 
-#### To use VSCode:
+### Docker Desktop
+Ensure that Docker Desktop is running and that you're signed in to your Docker account.
+
+### Bypass MFA
+Create a Worksheet in Snowsight and run the following command to disble MFA for 30 minutes. This statement is to allow the many cells in the Jupyter Notebook to run successfully without waiting for MFA approval from the user.
+```sql
+ALTER USER <replace with your user> SET MINS_TO_BYPASS_MFA = 30;
+```
+
+### To use VSCode
 Open the project with VSCode and select the [**deployment.ipynb**](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3/blob/main/scripts/deployment_na_spcs.ipynb) file from the File explorer. Then, select the virtual environment you created as the execution kernel for this notebook.
 
 ![vscode](assets/vscode.png)
@@ -214,7 +222,7 @@ The unified data model will be used to generate some basic visualizations that p
 
 ![Visualizations](assets/viz.png)
 
-The unified data model is stored in the Database ```MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>``` (replace with your username) and the Schema ```TARGET```.
+The unified data model is stored in the Database ```MARKETING_DATA_FOUNDATION_STARTER_V3_USERNAME``` (replace with your username) and the Schema ```TARGET```.
 
 ### 5. AI Functions
 
@@ -256,14 +264,12 @@ DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>.TARGET.CAMP
 
 Use this cleanup script to remove all objects created in this Quickstart.
 <!-- ------------------------ -->
-## Conclusion & Resources
+## Conclusion And Resources
 Duration: 2
 
-### Conclusion
+### Overview
 
 Congratulations! You have successfully learned how to easily build an end-to-end Native Application and load sample data.
- 
-You will see your application listed in your account:
 
 ### What You Learned
 

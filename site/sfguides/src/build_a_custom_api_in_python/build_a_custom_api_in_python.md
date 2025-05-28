@@ -44,6 +44,7 @@ Duration: 3
 The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask).
 
 To create a new codespace, browse to the GitHub [repository](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask) in a browser. 
+
 You will need to login to GitHub if you are not already logged in to access Codespaces. After logging in, click on the green "<> Code" button and "create codespace on main" button.
 
 You will then be redirected into Codespaces where your development environment will load and all code from GitHub will be loaded in the project. 
