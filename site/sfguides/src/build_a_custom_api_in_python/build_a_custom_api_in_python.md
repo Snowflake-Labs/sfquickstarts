@@ -38,7 +38,7 @@ The dataset is the [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-
 - API Powered by Snowflake
 
 <!-- ------------------------ -->
-## Setting up your Development Environment
+## Setting Up Your Development Environment
 Duration: 3
 
 The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask).
@@ -115,7 +115,7 @@ If you would also like to see how to build endpoints using the Snowflake Snowpar
 review [snowpark.py](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask/blob/main/src/snowpark.py).
 
 <!-- ------------------------ -->
-## Setting up Snowflake CLI
+## Setting Up Snowflake CLI
 Duration: 4
 
 All of the commands in this step will be run in the terminal in Codespaces.
@@ -154,7 +154,7 @@ snow object create database name=api --if-not-exists
 ```
 
 <!-- ------------------------ -->
-## Creating a Notebook for this Lab
+## Creating A Notebook
 Duration: 4
 
 It is useful to use a Notebook to follow the steps for this lab. It allows multiple commands to be put in a single cell and executed, and it allows
@@ -179,7 +179,7 @@ Choose the `API` database and the `PUBLIC` schema. Choose "Run on warehouse". Le
 When the Notebook is created, click the "Start" button on the top.
 
 <!-- ------------------------ -->
-## Setting up a Database and Warehouse
+## Setting Up A Database and Warehouse
 Duration: 1
 
 The API needs a warehouse to query the data to return to the caller. To create the database and warehouse, 
@@ -210,7 +210,7 @@ GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
 ```
 
 <!-- ------------------------ -->
-## Creating the Image Registry
+## Creating The Image Registry
 Duration: 1
 
 To create the image registry, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
@@ -228,7 +228,7 @@ SHOW IMAGE REPOSITORIES;
 Note the `repository_url` in the response as that will be needed in the next step.
 
 <!-- ------------------------ -->
-## Building the Application Container
+## Building The Application Container
 Duration: 10
 
 The commands in this step are to be run in a terminal in Codespaces.
@@ -259,7 +259,7 @@ docker push <repository_url>/dataapi
 ```
 
 <!-- ------------------------ -->
-## Creating the Compute Pool
+## Creating The Compute Pool
 Duration: 1
 
 To create the compute pool to run the application, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
@@ -283,7 +283,7 @@ SHOW COMPUTE POOLS;
 ```
 
 <!-- ------------------------ -->
-## Creating the Application Service
+## Creating The Application Service
 Duration: 1
 
 To create the service to host the application, run the following commands in the Snowflake (in a cell in a Snowflake Notebook, in a Worksheet in the Snowflake console, or using SnowSQL):
@@ -344,7 +344,7 @@ SHOW ENDPOINTS IN SERVICE API.PUBLIC.API;
 Make note of the `ingress_url` as that will be need to test the application. This service will start the API, running at `https://<INGRESS_URL>`.
 
 <!-- ------------------------ -->
-## Testing the API
+## Testing The API
 Duration: 6
 
 To verify the API is online, go to the `https://<INGRESS_URL>` in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
@@ -501,7 +501,7 @@ Enter the necessary items and click "Fetch it!". You will get a status update th
 display the result from SPCS.
 
 <!-- ------------------------ -->
-## Stopping the API
+## Stopping The API
 Duration: 1
 
 To stop the API, you can suspend the service. 
@@ -534,19 +534,20 @@ DROP NETWORK POLICY api_np;
 You can now turn off your Codespaces environment.
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion and Resources
 Duration: 1
-
+### Overview
 You've successfully built a custom API in Python Powered by Snowflake. 
 
-When you go to put a data API into production you should protect the API with some level of authentication and authorization. You can do this with ngrok, but you will need to change the configuration used as this example had it publicly accessible. 
+When you go to put a data API into production you should protect the API with some level of authentication and authorization. 
 
 Another consideration is enabling a frontend website to access the endpoint, the test site worked in this example because it's hosted on the same domain as the api. If you need to access the api from another website, you will need to do additional configuration.
 
 To get more comfortable with this solution, implement new endpoints pointing to the sample dataset provided or other datasets.
 
-Code for this project is available at [https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask).
-
-### What we've covered
+### What You Learned
 - How to configure and build a custom API Powered by Snowflake
 - How to run and test the API on your machine
+
+### Resources
+Code for this project is available at [https://github.com/sfc-gh-bhess/lab_data_api_python](https://github.com/sfc-gh-bhess/lab_data_api_python).
