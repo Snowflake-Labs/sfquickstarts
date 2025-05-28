@@ -135,7 +135,7 @@ Add your Cortex Agents server:
 ```json
 {
   "mcpServers": {
-    "cortex-agent": {x
+    "cortex-agent": {
       "command": "uv",
       "args": [
         "--directory",
@@ -191,7 +191,7 @@ Error: snowflake.connector.errors.InterfaceError: 250003 (08001): 404 Not Found:
 ```
 
 > aside negative
-> NOTE: If you get the above errors, make sure the ACCOUNT and HOST variables in the **_.env_** file are set correctly. For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
+> NOTE: If you get the above errors, make sure the SNOWFLAKE_ACCOUNT_URL and PAT variables in the **_.env_** file are set correctly. Account URLs including an underscore (`_`) may cause this issue, which can be fixed by changing the underscore to a hyphen (`-`). For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
 ## (Optional) Customize Cortex Agents
 <!-- ------------------------ -->
