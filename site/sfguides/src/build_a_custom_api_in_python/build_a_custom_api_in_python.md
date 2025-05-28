@@ -41,9 +41,9 @@ The dataset is the [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-
 ## Setting up your Development Environment
 Duration: 3
 
-The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/sfc-gh-bhess/lab_data_api_python).
+The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask).
 
-To create a new codespace, browse to the GitHub [repository](https://github.com/sfc-gh-bhess/lab_data_api_python) in a browser. 
+To create a new codespace, browse to the GitHub [repository](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask) in a browser. 
 You will need to login to GitHub if you are not already logged in to access Codespaces. After logging in, click on the green "<> Code" button and "create codespace on main" button.
 
 You will then be redirected into Codespaces where your development environment will load and all code from GitHub will be loaded in the project. 
@@ -107,11 +107,11 @@ def customers_top10():
         abort(500, "Error reading from Snowflake. Check the logs for details.")
 ```
 
-You can also review the other endpoints in [connector.py](https://github.com/sfc-gh-bhess/lab_data_api_python/blob/main/src/connector.py) to 
+You can also review the other endpoints in [connector.py](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask/blob/main/src/connector.py) to 
 see how simple it is to host multiple endpoints.
 
 If you would also like to see how to build endpoints using the Snowflake Snowpark API, 
-review [snowpark.py](https://github.com/sfc-gh-bhess/lab_data_api_python/blob/main/src/snowpark.py).
+review [snowpark.py](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask/blob/main/src/snowpark.py).
 
 <!-- ------------------------ -->
 ## Setting up Snowflake CLI
@@ -167,7 +167,7 @@ The lab repository comes with a Notebook with the commands in it already. It act
 (the text/instructions and commands) - they are the same.
 
 To create a Notebook with this lab and commands in it, first download the `DataAPI.ipynb` file from the lab repository, 
-[here](https://github.com/sfc-gh-bhess/lab_data_api_python/blob/main/DataAPI.ipynb). 
+[here](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask/blob/main/DataAPI.ipynb). 
 If you are using Codespaces, you can right-click on the file in the file explorer and choose "Download".
 
 Next, in the Snowflake console, choose the "Projects" sidebar and select "Notebooks". Choose the down arrow next to the "+ Notebook"
@@ -544,7 +544,7 @@ Another consideration is enabling a frontend website to access the endpoint, the
 
 To get more comfortable with this solution, implement new endpoints pointing to the sample dataset provided or other datasets.
 
-Code for this project is available at [https://github.com/sfc-gh-bhess/lab_data_api_python](https://github.com/sfc-gh-bhess/lab_data_api_python).
+Code for this project is available at [https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask).
 
 ### What we've covered
 - How to configure and build a custom API Powered by Snowflake
