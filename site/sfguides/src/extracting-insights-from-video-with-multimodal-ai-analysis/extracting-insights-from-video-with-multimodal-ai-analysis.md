@@ -68,7 +68,7 @@ Copy the contents of [setup.sql](https://github.com/Snowflake-Labs/sfguide-extra
 ![4](assets/4_create_setup_sql_file.png)
 
 
-Run the SQL commands within your `setup.sql` file.  Using the Run button.
+To setup up your environment click the blue run button above your `setup.sql` file.
 
 ![5](assets/5_run_setup.png)
 
