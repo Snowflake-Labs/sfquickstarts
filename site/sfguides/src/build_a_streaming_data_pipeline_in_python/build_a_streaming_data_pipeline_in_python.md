@@ -246,12 +246,49 @@ Verify Lift Rides are being streamed:
 select * from LIFT_RIDE limit 10;
 ```
 
-## Build Pipeline in Python
+## Import the Notebook
 
+We have created a notebook you can use to get started building the streaming data pipeline.
 
-## Build Reports in Streamlit
+[Download](https://github.com/sfc-gh-bculberson/Summit2025-DE214/raw/refs/heads/main/transformation_notebook.ipynb) the Notebook from Github.
 
+Login to Snowsight, click on the bottom left to get the Navigation Menu and Switch Role to STREAMING_INGEST.
 
+![Switch Role](SwitchRole.png)
+
+Click on the +, Notebook, and Import .ipynb File.
+
+![Import .ipynb](ImportNotebook.png)
+
+Name the notebook STREAMING_INGEST, select the db STREAMING_INGEST and the schema STREAMING_INGEST.
+
+Select Run on warehouse and use the query warehouse STREAMING_INGEST and notebook warehouse STREAMING_INGEST.
+
+This will run everything on one warehouse to keep it as efficient as possible.
+
+Click Create.
+
+![Create Notebook](CreateNotebook.png)
+
+## Create the Streamlit Application
+
+A Streamlit Application will be created to demonstrate how the data prepared previously could be leveraged in an analytic dashboard inside your organization.
+
+To create a new Streamlit Application Click on +, Streamlit App, and New Streamlit App.
+
+![Create Streamlit 1](CreateStreamlit.png)
+
+Choose the App title STREAMING_INGEST, App location in STREAMING_INGEST database and STREAMING_INGEST schema, and run on the warehouse STREAMING_INGEST.
+
+![Create Streamlit 2](CreateStreamlit2.png)
+
+Overwrite all the contents of the streamlit_app.py file in the editor with the [application code](https://raw.githubusercontent.com/sfc-gh-bculberson/Summit2025-DE214/refs/heads/main/streamlit_app.py) available in the Github repository.
+
+Add the Package plotly and pandas.
+
+![Import Plotly](ImportPlotly.png)
+
+![Import Pandas](ImportPandas.png)
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -271,7 +308,19 @@ DROP ROLE IF EXISTS STREAMING_INGEST;
 ## Conclusion
 Duration: 1
 
-### What we've covered
-- 
--
+### What we covered
+- Creating a table and pipe to receive streaming data
+- Sending data to the Snowpipe Streaming API from Python
+- Using a Notebook to create a near real-time Data Pipeline leveraging Dynamic Tables
+- Querying the streaming data from a Notebook and Streamlit
+
+### Next steps
+
+Snowflake documentation and quickstarts will provide more information you will need to build a robust streaming data pipeline. Review these resources to learn more.
+
+- [Review Rowset API Introduction](https://docs.snowflake.com/LIMITEDACCESS/snowpipe-streaming-rowset-api/rowset-api-intro)
+- [Dynamic Tables Introduction](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro)
+- Quickstart on [Dynamic Tables](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html)
+- Quickstart on [Streamlit](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_for_python_streamlit/index.html)
+
 
