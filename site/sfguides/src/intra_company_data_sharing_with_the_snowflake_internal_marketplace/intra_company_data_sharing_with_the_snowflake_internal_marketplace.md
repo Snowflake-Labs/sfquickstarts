@@ -3,7 +3,7 @@ id: internal_marketplace_intra_org_sharing
 summary: INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE
 categories: Data-Sharing
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Summit HOL, Data Sharing, Marketplace, Snowflake Internal Marketplace, Data Mesh, Data Products
 
@@ -69,8 +69,8 @@ For Steps 2 through 7 you can download [scripts here](https://github.com/Snowfla
 Sign up for a trial account [here](https://signup.snowflake.com/)
 
 - Choose a Cloud and Region. We recommend choosing one of these regions where this Quickstart and the very latest features have been tested:
-  - **Microsoft Azure:** West Europe (Netherlands), UK South (London), East US 2 (Virginia), Japan East (Tokyo)
-  - **Amazon Web Services**: EU Central (Frankfurt), US West (Oregon), EU (Ireland), Asia Pacific (Tokyo)
+  - **Microsoft Azure:** North Europe (Ireland), Central US (Iowa), Canada Central (Toronto)
+  - **Amazon Web Services**: EU (Frankfurt), Canada (Central), Asia Pacific (Tokyo)
   - **Google Cloud Platform**: Europe West (London), US Central (Iowa)
 
 - Choose **Enterprise Edition** or higher. (Standard Edition does not support the Internal Marketplace)
