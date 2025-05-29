@@ -122,12 +122,13 @@ In this guide, we will connect to The Trade Desk using the first-party endpoints
 
 To connect The Trade Desk destination:
 1. Navigate to **Integrations > Destinations** and click **Add Destination**.
-2. Search for **The Trade Desk**, select it, and click **Continue**.
-3. Scroll down to the **First-Party Data Segment** section. Input the following values in the config:
+    ![](assets/1_1_create_destination.png)
+3. Search for **The Trade Desk**, select it, and click **Continue**.
+4. Scroll down to the **First-Party Data Segment** section. Input the following values in the config:
     - **environment**: US West
     - **Advertiser ID**
     - **Advertiser secret key**
-4. Scroll down further to the **Conversion event integration** section. Input the following values in the config:
+5. Scroll down further to the **Conversion event integration** section. Input the following values in the config:
     - **Advertiser ID**
     - **Advertiser secret key**
     - **Offline data provider ID**
