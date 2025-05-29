@@ -5,7 +5,7 @@ categories: Getting-Started
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, SPCS, LLM, AI
+tags: Getting Started, Data Science, SPCS, LLM, AI, Cortex, Snowpark Container Services
 
 # Extracting Insights from Video with Multimodal AI Analysis
 <!-- ------------------------ -->
