@@ -29,6 +29,8 @@ It delivers three key benefits:
 
 By unifying all data types in a single platform with zero setup required, Cortex AISQL democratizes AI-powered analytics across the enterprise.
 
+![Cortex AISQL](assets/cortex_aisql.png)
+
 ### Use Cases
 
 Cortex AISQL benefits organizations across industries dealing with diverse data types including:
