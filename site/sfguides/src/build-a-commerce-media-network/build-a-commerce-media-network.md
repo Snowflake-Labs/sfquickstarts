@@ -183,16 +183,20 @@ Related models and events provide additional characteristics or actions on which
 
 For our Travel Media Network we will create a related model for Hotel Visits so that we can build audiences based on past or upcoming visits to certain hotels. This model will have a 1:Many relationship between Customers and Hotel Visits since an individual customer can make multiple hotel visits.
 
-![ Customers + Hotel Visits Schema ]()
-
 1. Click the **+** button on the **Customers parent model** that you created before and select **Create a related model**.
-2. Select the **HOTEL_VISITS** table using the table selector and click **Continue**.
-4. Enter a **name** for your related model. In this example, name it “Hotel Visits”.
-5. Define the related model's **Relationship**. In this example, select the relationship's cardinality as **1:Many**.
-6. To join rows from the related model to rows in the parent model, select the relevant **foreign key columns** from the parent (Customers) and related model (Hotel Visits). In this example, select **Customer_ID** as the foreign key for both models.
-8. Click **Create related model**.
+    ![](assets/4_1_create_related_model.png)
+2. Select the **HOTEL_VISITS** table using the table selector, **preview the results**, and click **Continue**.
+    ![](assets/4_2_select_hotel_visits_table.png)
+3. Configure the model:
+    ![](assets/4_3_configure_hotel_visits_model.png)
+    1. Enter a **name** for your related model. In this example, name it “Hotel Visits”.
+    2. Define the related model's **Relationship**. In this example, select the relationship's cardinality as **1:Many**.
+    3. To join rows from the related model to rows in the parent model, select the relevant **foreign key columns** from the parent (Customers) and related model (Hotel Visits). In this example, select **Customer_ID** as the foreign key for both models.
+    4. Click **Create related model**.
 
 The related model now appears in the schema builder. You can edit an existing related model by clicking on it and making changes in the Query tab.
+
+![](assets/4_4_hotel_visits_model_end.png)
 
 ### Create a Purchases event model
 Event definition is a one-time step similar to related model setup. The only difference is that event models require a timestamp column.
@@ -202,16 +206,22 @@ In this example, we will create an event model for **Purchases**. These events w
 ![Customers + Hotel Visits + Purchases Schema]()
 
 1. Click the **+** button on the **Customers parent model** and select **Create a related event**.
-2. Select the **PURCHASES** table, preview the results, and click **Continue**.
-3. Enter a **name** for your event model. For this example, use "Purchases".
-4. Set the appropriate **Timestamp** field to define when the event occurred. In this example, select **PURCHASE_DATE**.
-5. Keep the **Event type** set to **Generic**.
-6. Set the **Primary key** to **PURCHASE_ID**.
-7. Enable **Column Suggestions** to make it easier to find column values when building audiences.
-8. Define the related event's **Relationship**. Select the relationship's cardinality **1:Many**, because every individual Customer can make multiple Purchases.
-9. Click **Create event**.
+    ![](assets/5_1_create_event_model.png)
+2. Select the **PURCHASES** table using the table selector, preview the results, and click **Continue**.
+    ![](assets/5_2_select_purchases_table.png)
+3. Configure the events model:
+    ![](assets/5_3_configure_purchases_event_model.png)
+    1. Enter a **name** for your event model. For this example, use "Purchases".
+    2. Set the appropriate **Timestamp** field to define when the event occurred. In this example, select **PURCHASE_DATE**.
+    3. Keep the **Event type** set to **Generic**.
+    4. Set the **Primary key** to **PURCHASE_ID**.
+    5. Enable **Column Suggestions** to make it easier to find column values when building audiences.
+    6. Define the related event's **Relationship**. Select the relationship's cardinality **1:Many**, because every individual Customer can make multiple Purchases.
+    7. Click **Create event**.
 
 The **Purchases** event model will now appear in the schema builder. You can edit an existing event model by clicking on it and making changes in the **Query** tab.
+
+![](assets/5_4_purchase_events_model_end.png)
 
 Now that your Schema has been defined, we can use the point-and-click audience builder to create custom audiences for your advertising partners using data about your customers, their hotel visits, and past purchases.
 
