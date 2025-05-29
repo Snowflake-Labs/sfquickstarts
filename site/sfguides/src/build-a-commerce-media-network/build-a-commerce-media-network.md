@@ -124,14 +124,18 @@ To connect The Trade Desk destination:
 1. Navigate to **Integrations > Destinations** and click **Add Destination**.
     ![](assets/1_1_create_destination.png)
 3. Search for **The Trade Desk**, select it, and click **Continue**.
+    ![](assets/1_2_choose_ttd_destination.png)
 4. Scroll down to the **First-Party Data Segment** section. Input the following values in the config:
     - **environment**: US West
     - **Advertiser ID**
     - **Advertiser secret key**
+    ![](assets/1_3_1p_segment_credentials.png)
 5. Scroll down further to the **Conversion event integration** section. Input the following values in the config:
     - **Advertiser ID**
     - **Advertiser secret key**
     - **Offline data provider ID**
+    - **Offline tracking tag API token**
+    ![](assets/1_4_ttd_offline_conversion_credentials.png)
 6. Name the destination "The Trade Desk - Altuva" and click **Finish** to create the destination.
 
 <!-- ------------------------ -->
