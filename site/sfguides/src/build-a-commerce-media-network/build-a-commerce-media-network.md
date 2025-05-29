@@ -130,7 +130,7 @@ To connect The Trade Desk destination:
 3. Search for **The Trade Desk**, select it, and click **Continue**.
     ![](assets/1_2_choose_ttd_destination.png)
 4. Scroll down to the **First-Party Data Segment** section. Input the following values in the config:
-    - **environment**: US West
+    - **Environment**: US West
     - **Advertiser ID**
     - **Advertiser secret key**
     ![](assets/1_3_1p_segment_credentials.png)
