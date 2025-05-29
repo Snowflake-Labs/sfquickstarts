@@ -289,7 +289,7 @@ Open up the notebook and follow the steps. Once you have completed those, you wi
 Stay in the Zamboni account for the next step.
 
 <!-- ------------------------ -->
-## Provider Account (Zamboni) - Distribute Model as Native App
+## Provider Account (Zamboni) - Build Native App
 Duration: 2
 
 Now we have trained the model, we want to encapsulate it in an Application Package, so we can distribute it via the Native App Framework. More information on the Native Application framework can be found in the documentation [here](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about). We will be working through the [Native App Development Workflow](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-workflow#development-workflow).
@@ -313,16 +313,37 @@ CREATE OR REPLACE STAGE CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_ST
 So we share a model that is consistent with what is in the model registry, we are going to export the model from the registry, and put it in the Application package. We do this in the following code block
 
 ```python
-# Iterate through files above and put them in Application Package Stage
-src_model = 'CREDIT_CARD_DEFAULT_MODEL'
-dst = '@CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_STAGE/models'
+# Retrieve the model from the degistry
+m = registry.get_model("NATIVE_APP_DEMO.NATIVE_APP_DEMO.CREDIT_CARD_DEFAULT_MODEL")
+mv = m.version("default")
 
-for row in list_files.toLocalIterator():
-        parts = row["name"].rsplit('/', 1)
-        directory = parts[0]
-        filename = parts[1]
-        session.file.get(f"snow://model/{src_model}/{directory}/{filename}", f"/tmp/{directory}")
-        session.file.put(f"/tmp/{directory}/{filename}", f"{dst}/{src_model}/{directory}", auto_compress=False, overwrite=True, source_compression="NONE")
+# Create a temp directory to export the model
+import tempfile, pathlib, shutil, os
+local_dir = pathlib.Path(tempfile.mkdtemp(prefix="model_export_"))
+
+# export the full artefact set into that folder
+mv.export(local_dir.as_posix(), export_mode=ExportMode.FULL)
+
+# Upload the files and folder structure to the Application Package Stage
+stage_root = "@CREDIT_CARD_PREDICTION_PACKAGE.MODEL_ASSETS.MODEL_STAGE/models"
+
+for file_path in pathlib.Path(local_dir).rglob('*'):
+    if file_path.is_file():
+        rel_path = file_path.relative_to(local_dir).as_posix()   # e.g. runtimes/env.yml or manifest.yml
+        subdir   = os.path.dirname(rel_path)                     # '' or 'runtimes'
+
+        # remote prefix **must end with a slash** and contain no file-name
+        remote_prefix = f"{stage_root}/{subdir}/" if subdir else f"{stage_root}/"
+
+        session.file.put(
+            file_path.as_posix(),
+            remote_prefix,
+            overwrite=True,
+            auto_compress=False
+        )
+
+# Check that all our artefacts have been uploaded
+session.sql("LIST @CREDIT_CARD_PREDICTION_PACKAGE.MODEL_ASSETS.MODEL_STAGE/models;").collect()
 ```
 
 An application requires a manifest file, and a setup script (as outlined in the Native App Development Workflow). We upload them to our Application Package in the following commands
@@ -333,42 +354,58 @@ PUT file://scripts/setup.sql @CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MO
 PUT file://manifest.yml @CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_STAGE overwrite=true auto_compress=false;
 ```
 
-The setup script contains the SQL statements that define the components created when a consumer installs your application. For us, this will include creating stored procedures to perform feature engineering, as well as registering out model for the app to use on the consumer side. This is done in the following lines
+The setup script contains the SQL statements that define the components created when a consumer installs your application. For us, this will include creating stored procedures to perform feature engineering, as well as registering our model for the app to use on the consumer side (doecumentation [here](https://docs.snowflake.com/LIMITEDACCESS/native-apps/models)). This is done in the following lines:
 
 ```SQL
-create or replace model APP_CODE.CREDIT_CARD_DEFAULT_MODEL from '/models/CREDIT_CARD_DEFAULT_MODEL/versions/V1';
+create or replace model APP_CODE.CREDIT_CARD_DEFAULT_MODEL from @CREDIT_CARD_PREDICTION_PACKAGE.MODEL_ASSETS.MODEL_STAGE/models/;
 
 grant usage on model APP_CODE.CREDIT_CARD_DEFAULT_MODEL to application role app_user;
 ```
 
-Error here - cannot create application. Stuck on model creation step.
 
-Explain Versioning
-
-Can only distribute internally for trial accounts
 
 <!-- ------------------------ -->
-## Perform Local Testing
-Duration: 2
+## Provider Account (Zamboni) - Perform Local Testing
+Duration: 15
+
+Now the Application has been created fromt he Application Package in our Provider Account, we can perform some testing to ensure it behaves as expected. In this Quickstart, we have exposed more views and functions than what is necessary, so we can follow along and see how the app in functioning.
+
+You will need a SQL worksheet for this part of the Quickstart.
+
+This app requires the consumer to explicitly provide a reference to a table in the Snowflake instance it is installed as an input. We can acieve this through the UI, or running the following SQL.
 
 ```SQL
+-- Bind the refernce to a table in our own Snowflake Account. This can be done via SQL or the UI
+CALL credit_card_prediction_app.app_code.register_single_reference('RAW_TABLE' , 'ADD', SYSTEM$REFERENCE('TABLE', 'NATIVE_APP_DEMO.NATIVE_APP_DEMO.CC_DEFAULT_UNSCORED_DATA', 'PERSISTENT', 'SELECT'));
+
+-- Check that the reference worked
+SHOW REFERENCES IN APPLICATION credit_card_prediction_app;
+```
+
+Next lets run through the commands and see if they are working as expected.
+
+```SQL
+-- This should be empty, as we have not called the procedure to populate the table yet
 SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.RAW_TABLE_VIEW;
 
+-- Now we call the procedure
 CALL CREDIT_CARD_PREDICTION_APP.CONFIG.CREATE_TABLE_FROM_REFERENCE_RAW();
 
+-- And the table should now be populated
 SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.RAW_TABLE_VIEW LIMIT 10;
+SELECT COUNT(*) FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.RAW_TABLE_VIEW;
 
-SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.TRANSFORMED_TABLE_VIEW LIMIT 10;
+-- Next we cal the procedure to do the feature engineering
+CALL credit_card_prediction_app.app_code.cc_profile_processing();
 
-CALL CREDIT_CARD_PREDICTION_APP.CORE.CC_PROFILE_PROCESSING();
+-- The feature table should now be populated
+SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.TRANSFORMED_TABLE_VIEW LIMIT 10;
 
-SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.TRANSFORMED_TABLE_VIEW LIMIT 10;
+-- Next we call the procedure that infers our model
+CALL CREDIT_CARD_PREDICTION_APP.APP_CODE.CC_BATCH_PROCESSING();
 
-SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.SCORED_TABLE_VIEW LIMIT 10;
-
-CALL CREDIT_CARD_PREDICTION_APP.CORE.CC_BATCH_PROCESSING();
-
-SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.SCORED_TABLE_VIEW LIMIT 10;
+-- And we can now see the scored table
+SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.SCORED_TABLE_VIEW LIMIT 10;
 ```
 
 Once this is done, we need to create a version before we can share. We can do this in the manifest file, or with the code below
