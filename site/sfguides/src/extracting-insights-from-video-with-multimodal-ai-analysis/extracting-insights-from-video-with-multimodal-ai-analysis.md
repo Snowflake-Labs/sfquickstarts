@@ -18,32 +18,35 @@ In this guide, we’ll take text-rich videos (instructional content, meetings) a
 
 ![1](assets/1_arch_diagram.png)
 
-### Overview of Snowpark Container Services
-
-Snowpark Container Services is a fully managed container offering designed to facilitate the deployment, management, and scaling of containerized applications within the Snowflake ecosystem. This service enables users to run containerized workloads directly within Snowflake, ensuring that data doesn’t need to be moved out of the Snowflake environment for processing. Unlike traditional container orchestration platforms like Docker or Kubernetes, Snowpark Container Services offers an OCI runtime execution environment specifically optimized for Snowflake. This integration allows for the seamless execution of OCI images, leveraging Snowflake’s robust data platform. 
-
 ### Preqrequisites
 
 * Basic understanding of Snowflake and containers.
+* A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 
+### What You Will Build
 
-### You'll Learn
+* A containerized service that processes video to extract key moments for analysis.
+
+### What You Will Learn
 
 1. How to create an application on Snowpark Container Services.
 2. How to extend Snowflake Cortex AI with models hosted on Snowpark Container Services.
 
-### You'll Need
+<!-- ------------------------ -->
 
-* [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+### Overview of Snowpark Container Services
 
-### You'll Build
+Snowpark Container Services is a fully managed container offering designed to facilitate the deployment, management, and scaling of containerized applications within the Snowflake ecosystem. This service enables users to run containerized workloads directly within Snowflake, ensuring that data doesn’t need to be moved out of the Snowflake environment for processing. Unlike traditional container orchestration platforms like Docker or Kubernetes, Snowpark Container Services offers an OCI runtime execution environment specifically optimized for Snowflake. This integration allows for the seamless execution of OCI images, leveraging Snowflake’s robust data platform.
 
-* A containerized service that processes video to extract key moments for analysis.
+### Overview of Cortex AI
+
+Snowflake Cortex AI enables you to quickly analyze unstructured data and build generative AI applications using fully managed LLMs, RAG and text-to-SQL services. Enable multiple users to use AI services with no-code, SQL and REST API interfaces.
+
+![Cortex_AI](assets/platform-cortex-2025.jpeg)
 
 <!-- ------------------------ -->
 
-
-## Prepare your lab environment
+## Prepare Your Lab Environment
 
 ### Set up Snowflake
 
@@ -76,6 +79,8 @@ To setup up your environment click the blue run button above your `setup.sql` fi
 ## Conclusion And Resources
 Duration: 1
 
+### Overview
+
 
 ### What You Learned
 
@@ -83,10 +88,11 @@ Duration: 1
 - Calling Snowflake Cortex AI functions.
 - Processing video with multi-modal models to extract events.
 
-### Related Resources
+### Resources
 
 - Github repo [Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis)
 - Snowpark Container Services [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
+- Snowflake Cortex AI [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
 
 
 
