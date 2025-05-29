@@ -110,6 +110,7 @@ To connect Hightouch to Snowflake:
     - **Authentication method**: Password
     - **Password**: TBD
   ![](assets/2_5_provide_snowflake_credentials.png)
+6. Name your data source "Snowflake - Altuva" and click **Finish**.
 
 <!-- ------------------------ -->
 ## Connect Hightouch to The Trade Desk
