@@ -154,25 +154,29 @@ For our Travel Media Network at Altuva, there are three data types we need to re
 2. **Hotel Visits** - Information about past, present, and future hotel visits, including when and where our customers are visiting our hotels.
 3. **Purchase Events** - Past and present amenities purchased in our hotels.
 
-![Altuva Travel Media Network Schema]()
+![Altuva Travel Media Network Schema](assets/3_0_schema_overview.png)
 
 ### Create a Customer parent model
 Parent models define the primary dataset you want to build your audiences off. In this guide, we will create a Customers table that represents all Altuva Brands customers who have visited a hotel and/or signed up as a loyalty member.
 
 To create a [parent model](https://hightouch.com/docs/customer-studio/schema#parent-model-setup) for Altuva use the following steps:
-1. Go to the [Schema page](https://app.hightouch.com/schema-v2/view).
-2. Select your Snowflake data source from Step 5 by selecting it from the dropdown.
-3. Click **Create parent model**.
-4. Select the **Customers** table from the Altuva database.
-
-By default, Hightouch prompts you to select a table in your source. If you prefer to use a custom SQL query, dbt model, or another modeling method to define your own model, you can change it from the modeling method dropdown.
-5. Select the **CUSTOMERS** table, preview the results, and click **Continue**.
-6. Enter a **name** for your parent model. In this example, use “Customers”.
-7. Select a **primary key**. You must select a column with unique values. In this example, use **CUSTOMER_ID** for the primary key.
-8. Select columns for the model's **primary label** and **secondary label**. Hightouch displays these column values when previewing audiences. In this example, we will use **FIRST_NAME** as the primary label and **LAST_NAME** as the secondary label.
-9. Click **Create parent model**.
+1. Create a parent model
+    ![](assets/3_1start_schema_setup.png)
+    1. Go to the [Schema page](https://app.hightouch.com/schema-v2/view).
+    2. Select your Snowflake data source from Step 5 by selecting it from the dropdown.
+    3. Click **Create parent model**.
+2. Select the **CUSTOMERS** table, preview the results, and click **Continue**.
+    ![](assets/3_2select_customer_table.png)
+3. Configure the Customers model:
+    ![](assets/3_6_select_customer_table.png)
+    1. Enter a **name** for your parent model. In this example, use “Customers”.
+    2. Select a **primary key**. You must select a column with unique values. In this example, use **CUSTOMER_ID** for the primary key.
+    3. Select columns for the model's **primary label** and **secondary label**. Hightouch displays these column values when previewing audiences. In this example, we will use **FIRST_NAME** as the primary label and **LAST_NAME** as the secondary label.
+    4. Click **Create parent model**.
 
 The parent model now appears in the schema builder. You can edit an existing parent model by clicking on it and making changes in the Query tab. For more configuration options, refer to the [column configuration](https://hightouch.com/docs/customer-studio/schema#column-configuration) section.
+
+![](assets/3_10_customers_model_end.png)
 
 ### Create Hotel Visits related model
 Related models and events provide additional characteristics or actions on which you can filter your parent model. When you create a related model, you simultaneously set up the relationship between it and other objects in the schema.
