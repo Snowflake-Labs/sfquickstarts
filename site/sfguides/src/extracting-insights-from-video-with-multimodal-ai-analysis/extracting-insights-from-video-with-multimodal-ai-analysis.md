@@ -3,7 +3,7 @@ id: extracting-insights-from-video-with-multimodal-ai-analysis
 summary: Deriving key moments and semantic events from text-rich videos using Snowpark Container Services and Cortex AI.
 categories: Getting-Started
 environments: web
-status: Hidden 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, SPCS, LLM, AI, Cortex, Snowpark Container Services
 
@@ -34,7 +34,6 @@ In this guide, we’ll take text-rich videos (instructional content, meetings) a
 1. How to create an application on Snowpark Container Services.
 2. How to extend Snowflake Cortex AI with models hosted on Snowpark Container Services.
 
-<!-- ------------------------ -->
 ## Component Overview
 
 Duration: 1
@@ -54,7 +53,6 @@ Snowpark Container Services and Snowflake Cortex AI are two of the major compone
 ![Cortex_AI](assets/platform-cortex-2025.jpeg)
 
 <!-- ------------------------ -->
-
 ## Prepare Your Lab Environment
 
 ### Create Snowflake Account
@@ -132,16 +130,19 @@ Verify SnowCLI is correctly configured by running:
 ~~~
 
 <!-- ------------------------ -->
-# Video Analysis
+## Video Analysis
 
+video analysis section goes here
 
-# Speech Recognition
+## Speech Recognition
 <!-- ------------------------ -->
 
+speech recognition section goes here
 
 <!-- ------------------------ -->
-# Clean up
+## Clean up
 
+Cleaning up....
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
