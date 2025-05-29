@@ -203,8 +203,6 @@ Event definition is a one-time step similar to related model setup. The only dif
 
 In this example, we will create an event model for **Purchases**. These events will be used to exclude members who made a recent purchase from our advertising customers, allowing them to focus on reaching net-new customers.
 
-![Customers + Hotel Visits + Purchases Schema]()
-
 1. Click the **+** button on the **Customers parent model** and select **Create a related event**.
     ![](assets/5_1_create_event_model.png)
 2. Select the **PURCHASES** table using the table selector, preview the results, and click **Continue**.
@@ -242,20 +240,31 @@ For most CDPs and audience managers, this audience would be too complex to build
 ### Build a custom audience on Snowflake
 To build the audience:
 1. Go to **Customer Studio > Audience** and click **Add audience**.
-2. Select the **Customers parent model**.
+    ![](assets/6_1_add_audience.png)
+2. Select the **Customers** parent model.
+    ![](assets/6_2_select_customers_parent_model.png)
 3. Build the audience to match the definition here:
-![Audience Definition]()
-
-1. Select **Add filter** and choose **Customers > MEMBERSHIP_LEVEL**. Select **Platinum** and **Diamond**.
-2. Select **Add filter** and choose **Relations > Hotel Visits**. 
-3. Select **Where event property is** and choose the **CHECK_IN_DATE** field, and select **within next 1 months**.
-4. Select **Where event property is** again and choose the **HOTEL_BRAND** field. Click the **equals** box and change the logic to **does not equal** **Cavara Residences**.
-5. Select **Add filter** and choose **Events > Purchases**.
-6. Click on the filter that says **at least 1 time** and change the frequency to **at most 0 times**.
-7. Select the **Time window filter** on the **Purchase event** and change the filter to **within the previous 1 year**.
-8. Select **Add filter** and choose **Relations > Memberships**.
-10. Scroll back to the top and click **Calculate size** to get an estimate of the number of customers in the audience.
-11. Click **Continue** at the bottom. Name the audience “Upcoming Visitors - Omnira” and click **Finish** to save the audience.
+    ![](assets/6_0_audience_end.png)
+    1. Select **Add filter** and choose **Customers > MEMBERSHIP_LEVEL**.
+    ![](assets/6_3_select_membership_level_attribute.png)
+    2. Select **Platinum** and **Diamond**.
+    ![](assets/6_4_select_membership_level_values.png)
+    3. Select **Add filter** and choose **Relations > Hotel Visits**.
+    ![](assets/6_5_select_hotel_visits_relation.png)
+    4. Select **Where event property is** and choose the **CHECK_IN_DATE** field, and select **within next 1 months**.
+    ![](assets/6_6_define_checkin_filter.png)
+    5. Select **Where event property is** again and choose the **HOTEL_BRAND** field. Click the **equals** box and change the logic to **does not equal** **Cavara Residences**.
+    ![](assets/6_7_define_hotel_brand_filter.png)
+    6. Select **Add filter** and choose **Events > Purchases**.
+    ![](assets/6_8_select_purchases_filter.png)
+    7. Click on the filter that says **at least 1 time** and change the frequency to **at most 0 times**.
+    ![](assets/6_9_define_purchases_exclusion_filter.png)
+    8. Select the **Time window filter** on the **Purchase event** and change the filter to **within the previous 1 year**.
+    ![](assets/6_10_define_purchases_time_window.png)
+    9. Scroll back to the top and click **Calculate size** to get an estimate of the number of customers in the audience. Click **Continue** at the bottom.
+    ![](assets/6_11_calculate_audience_size.png)
+    10.  Name the audience “Upcoming Visitors - Omnira” and click **Finish** to save the audience.
+    ![](assets/6_12_name_save_audience.png)
 
 <!-- ------------------------ -->
 ## Sync the audience to The Trade Desk
