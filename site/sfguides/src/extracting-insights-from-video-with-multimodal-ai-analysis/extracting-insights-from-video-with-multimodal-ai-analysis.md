@@ -1,11 +1,11 @@
 author: Yavor Georgiev, Seth Mason
 id: extracting-insights-from-video-with-multimodal-ai-analysis
-summary: This is a sample Snowflake Guide
+summary: Deriving key moments and semantic events from text-rich videos using Snowpark Container Services and Cortex AI.
 categories: Getting-Started
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Science, SPCS, LLM, AI
 
 # Extracting Insights from Video with Multimodal AI Analysis
 <!-- ------------------------ -->
