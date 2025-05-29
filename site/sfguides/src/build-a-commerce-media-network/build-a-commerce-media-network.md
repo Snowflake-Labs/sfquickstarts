@@ -101,7 +101,7 @@ To connect Hightouch to Snowflake:
     - **Account identifier**: TBD
     - **Warehouse**: TBD
     - **Database**: TBD
-5. Scroll down and provide the following Snowflake credentials to authenticate:
+5. Scroll down and provide the following Snowflake credentials to authenticate and click **Continue**.
     - **Username**: TBD
     - **Role**: TBD
     - **Authentication method**: Password
