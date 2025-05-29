@@ -214,14 +214,63 @@ SHOW SEMANTIC VIEWS;
 
 ### Step 3: Describe the Semantic View
 
-To understand the structure and components of our newly created semantic view, we can use the `DESC SEMANTIC VIEW` command.
+To understand the structure and components of our newly created semantic view, we can use the `DESC SEMANTIC VIEW` command. This will provide details about its tables, relationships, facts, and dimensions.
 
 ```sql
--- Describes the semantic view named TPCDS_SEMANTIC_VIEW_SM
-DESC SEMANTIC VIEW TPCDS_SEMANTIC_VIEW_SM;
+-- Describes the semantic view named TPCDS_SEMANTIC_VIEW_SM, and as a special bonus uses our new flow operator to filter and project only the metric and dimension names
+
+DESC SEMANTIC VIEW TPCDS_SEMANTIC_VIEW_SM
+    ->> SELECT "object_kind","property_value" as "parent_object","object_name" FROM $1
+        WHERE "object_kind" IN ('METRIC','DIMENSION') AND "property" IN ('TABLE')
+;
 ```
 
 ![image](assets/desc-semantic-view.png)
+
+
+<!-- ------------------------ -->
+## "Talk To" the Semantic View with Cortex Analyst
+Duration: 5
+
+### Natural Language Querying
+
+Snowflake's Cortex Analyst allows you to interact with your semantic views using natural language. This powerful feature transforms how users can explore data without needing to know SQL syntax.
+
+### Accessing Cortex Analyst
+
+You can access Cortex Analyst through the Snowflake interface.
+
+Let's dynamically generate a link to Cortex Analyst so that you can access the semantic view.
+
+First, we'll create a SQL cell named `sql_step7`:
+
+```sql
+SELECT 'https://app.snowflake.com/' || CURRENT_ORGANIZATION_NAME() || '/' || CURRENT_ACCOUNT_NAME() || '/#/studio/analyst/databases/SAMPLE_DATA/schemas/TPCDS_SF10TCL/semanticView/TPCDS_SEMANTIC_VIEW_SM/edit' AS RESULT;
+```
+
+Next, we'll call it from the following Python code cell that we called `py_link`:
+
+```python
+import streamlit as st
+
+link = sql_step7.to_pandas()['RESULT'].iloc[0]
+
+st.link_button("Go to Cortex Analyst", link)
+```
+
+![image](assets/py_link.gif)
+
+
+### Example Natural Language Query
+
+Once in Cortex Analyst, you can ask questions like:
+
+*"Show me the top selling brands in terms of total sales quantity in the state 'TX' in the 'Books' category in the year 2003"*
+
+Cortex Analyst will automatically translate this natural language question into the appropriate Semantic SQL query and return the results.
+
+![image](assets/ask-cortex-analyst.gif)
+
 
 <!-- ------------------------ -->
 ## Querying Semantic Views
@@ -275,31 +324,165 @@ ORDER BY TotalSalesQuantity DESC LIMIT 10;
 
 ![image](assets/query-semantic-view.png)
 
+
 <!-- ------------------------ -->
-## Exploring with Cortex Analyst
-Duration: 5
+## Build an Interactive Data App
+Duration: 10
 
-### Natural Language Querying
+In this step, we'll build 2 simple interactive data apps:
 
-Snowflake's Cortex Analyst allows you to interact with your semantic views using natural language. This powerful feature transforms how users can explore data without needing to know SQL syntax.
+1. Interactive data visualization app
+2. Simple interactive dashboard
 
-### Accessing Cortex Analyst
-
-You can access Cortex Analyst through the Snowflake interface. Use the following SQL to generate a direct link to your semantic view in Cortex Analyst:
+### Query data
+Firstly, we'll modify the SQL query to show data for month 12.
 
 ```sql
-SELECT 'https://app.snowflake.com/' || CURRENT_ORGANIZATION_NAME() || '/' || CURRENT_ACCOUNT_NAME() || '/#/studio/analyst/databases/SAMPLE_DATA/schemas/TPCDS_SF10TCL/semanticView/TPCDS_SEMANTIC_VIEW_SM/edit' AS RESULT;
+-- Query the semantic view for month 12
+SELECT * FROM SEMANTIC_VIEW
+( 
+ TPCDS_SEMANTIC_VIEW_SM
+    DIMENSIONS 
+            Item.Brand,
+            Item.Category,            
+            Date.Year,
+            Date.Month,
+            Store.State
+    METRICS 
+        StoreSales.TotalSalesQuantity
+    WHERE
+        Date.Year = '2002' AND Date.Month = '12' AND Item.Category = 'Books'
+) 
+ORDER BY TotalSalesQuantity DESC;
 ```
 
-### Example Natural Language Query
+Next, in a Python cell named `df`, we'll convert the SQL table to a Pandas DataFrame:
 
-Once in Cortex Analyst, you can ask questions like:
+```python
+cell1.to_pandas()
+```
 
-*"Show me the top selling brands in terms of total sales quantity in the state 'TX' in the 'Books' category in the year 2003"*
-
-Cortex Analyst will automatically translate this natural language question into the appropriate Semantic SQL query and return the results.
+![image](assets/df.png)
 
 
+### App 1: Interactive data visualization app
+
+Here the user can interactively explore the sales data:
+
+```python
+import streamlit as st
+import pandas as pd
+
+st.title("📊 Sales Data Interactive Visualization")
+
+# Create selectbox for grouping option
+group_by = st.selectbox(
+    "Select grouping option:",
+    options=['BRAND', 'STATE'],
+    index=0
+)
+
+# Group the data based on selection
+if group_by == 'BRAND':
+    grouped_data = df.groupby('BRAND')['TOTALSALESQUANTITY'].sum().reset_index()
+    grouped_data = grouped_data.set_index('BRAND')
+    chart_title = "Total Sales Quantity by Brand"
+else:  # group_by == 'STATE'
+    grouped_data = df.groupby('STATE')['TOTALSALESQUANTITY'].sum().reset_index()
+    grouped_data = grouped_data.set_index('STATE')
+    chart_title = "Total Sales Quantity by State"
+
+# Display the chart
+st.subheader(chart_title)
+st.bar_chart(grouped_data['TOTALSALESQUANTITY'])
+
+# Optional: Display the data table
+if st.checkbox("Show data table"):
+    st.subheader("Grouped Data")
+    st.dataframe(grouped_data)
+```
+
+![image](assets/app-1-data-visualization.gif)
+
+
+### App 2: Simple interactive dashboard
+
+Here's a simple dashboard we're we've included a row of metrics:
+
+```python
+import streamlit as st
+import pandas as pd
+
+st.title("📊 Sales Data Dashboard")
+
+# Create selectbox for grouping option
+group_by = st.selectbox(
+    "Select grouping option:",
+    options=['BRAND', 'STATE'],
+    index=0
+)
+
+# Group the data based on selection
+if group_by == 'BRAND':
+    grouped_data = df.groupby('BRAND')['TOTALSALESQUANTITY'].sum().reset_index()
+    grouped_data = grouped_data.set_index('BRAND')
+    chart_title = "Total Sales Quantity by Brand"
+else:  # group_by == 'STATE'
+    grouped_data = df.groupby('STATE')['TOTALSALESQUANTITY'].sum().reset_index()
+    grouped_data = grouped_data.set_index('STATE')
+    chart_title = "Total Sales Quantity by State"
+
+# Calculate KPIs based on current grouping
+total_sales = df['TOTALSALESQUANTITY'].sum()
+avg_sales = df['TOTALSALESQUANTITY'].mean()
+top_performer = grouped_data['TOTALSALESQUANTITY'].max()
+top_performer_name = grouped_data['TOTALSALESQUANTITY'].idxmax()
+
+# Display KPI metrics in 3 columns
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric(
+        label="Total Sales Quantity", 
+        value=f"{total_sales:,.0f}",
+        delta=None
+    )
+
+with col2:
+    if group_by == 'BRAND':
+        st.metric(
+            label="Average Sales per Brand", 
+            value=f"{avg_sales:,.0f}",
+            delta=f"{((avg_sales/total_sales)*100):.3f}% of total"
+        )
+    else:
+        st.metric(
+            label="Average Sales per State", 
+            value=f"{avg_sales:,.0f}",
+            delta=f"{len(df['STATE'].unique())} state(s)"
+        )
+
+with col3:
+    st.metric(
+        label=f"Top {group_by.title()}", 
+        value=f"{top_performer:,.0f}",
+        delta=f"{top_performer_name}"
+    )
+
+# Display the chart
+st.subheader(chart_title)
+st.bar_chart(grouped_data['TOTALSALESQUANTITY'])
+
+# Optional: Display the data table
+if st.checkbox("Show data table"):
+    st.subheader("Grouped Data")
+    st.dataframe(grouped_data)
+```
+
+![image](assets/app-2-dashboard.gif)
+
+
+<!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 5
 
