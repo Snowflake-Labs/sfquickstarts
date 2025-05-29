@@ -10,7 +10,7 @@ tags: Getting Started, Data Science, Data Engineering, Twitter
 # Extracting Insights from Video with Multimodal AI Analysis
 <!-- ------------------------ -->
 
-## Introduction
+## Overview
 
 Duration: 1
 
@@ -18,33 +18,34 @@ In this guide, we’ll take text-rich videos (instructional content, meetings) a
 
 ![1](assets/1_arch_diagram.png)
 
-## Overview of Snowpark Container Services
+### Overview of Snowpark Container Services
 
 Snowpark Container Services is a fully managed container offering designed to facilitate the deployment, management, and scaling of containerized applications within the Snowflake ecosystem. This service enables users to run containerized workloads directly within Snowflake, ensuring that data doesn’t need to be moved out of the Snowflake environment for processing. Unlike traditional container orchestration platforms like Docker or Kubernetes, Snowpark Container Services offers an OCI runtime execution environment specifically optimized for Snowflake. This integration allows for the seamless execution of OCI images, leveraging Snowflake’s robust data platform. 
 
-## Preqrequisites
+### Preqrequisites
 
 * Basic understanding of Snowflake and containers.
 
 
-## You'll Learn
+### You'll Learn
 
 1. How to create an application on Snowpark Container Services.
 2. How to extend Snowflake Cortex AI with models hosted on Snowpark Container Services.
 
-## You'll Need
+### You'll Need
 
 * [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 
-## You'll Build
+### You'll Build
 
 * A containerized service that processes video to extract key moments for analysis.
-  
+
+<!-- ------------------------ -->
 
 
-# Prepare your lab environment
+## Prepare your lab environment
 
-## Set up Snowflake
+### Set up Snowflake
 
 Duration: 6
 
