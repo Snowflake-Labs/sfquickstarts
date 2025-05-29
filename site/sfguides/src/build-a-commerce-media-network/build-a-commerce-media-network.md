@@ -274,17 +274,26 @@ Now we will sync the audience that we created to The Trade Desk for targeting. F
 
 ### Configure The Trade Desk first-party data segment sync
 1. Click **Add sync** from the Upcoming Visitors - Omnira audience page.
-2. Select **First-party data segment**. This will allow you to create, sync, and refresh a first-party audience to The Trade Desk using UID2 as the match key.
-3. Keep the **create new segment** setting on and leave the **segment name** blank. The sync will automatically inherit the audience name, “Upcoming Visitors - Omnira”.
-4. Select the **UID2** field from your Snowflake Customers table. Make sure it is mapped to the **Unified ID 2.0 (UID2)** field from The Trade Desk. Click **Continue**.
-5. Set the **Schedule Type** to **Manual**. In a live environment, we would set the schedule on an interval to refresh daily so that Hightouch automatically adds and removes the appropriate users daily, ensuring your audience is always fresh and complies with opt-out requests.
-6. Click **Finish**.
+    ![](assets/7_1_add_sync.png)
+2. Select **The Trade Desk - Altuva**.
+    ![](assets/7_2_select_ttd.png)
+3. Select **First-party data segment**. This will allow you to create, sync, and refresh a first-party audience to The Trade Desk using UID2 as the match key.
+    ![](assets/7_3_select_1p_data_segment.png)
+4. Keep the **create new segment** setting on and leave the **segment name** blank. The sync will automatically inherit the audience name, “Upcoming Visitors - Omnira”.
+    ![](assets/7_4_new_segment_name_blank.png)
+5. Select the **UID2** field from your Snowflake Customers table. Make sure it is mapped to the **Unified ID 2.0 (UID2)** field from The Trade Desk. Click **Continue**.
+    ![](assets/7_5_map_uid2.png)
+6. Set the **Schedule Type** to **Manual** and click **Finish**. In a live environment, we would set the schedule on an interval to refresh daily so that Hightouch automatically adds and removes the appropriate users daily, ensuring your audience is always fresh and complies with opt-out requests.
+    ![](assets/7_6_set_sync_schedule.png)
 
 ### Run and observe the sync
 1. To run the sync manually, click **Run Sync**.
+    ![](assets/7_7_run_sync.png)
 2. To observe the status of the sync run, click on the **processing** sync under **Recent sync runs**.
+    ![](assets/7_8_select_run.png)
 
 The Run Summary page provides granular insight into the status and speed of the data being queried on Snowflake and synced to The Trade Desk. This level of observability helps your team easily monitor, diagnose, and fix any issues with slow or failed audience updates. You also have the option to set up alerting so that your team can proactively identify and fix issues.
+![](assets/7_8_review_sync_run.png)
 
 <!-- ------------------------ -->
 ## Share the audience with the advertising partner
