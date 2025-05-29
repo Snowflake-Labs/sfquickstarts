@@ -16,7 +16,7 @@ Duration: 1
 In this guide you will learn how to transform your existing Snowflake investment into a user-friendly platform that a non-technical commerce media team can use to curate custom audiences, activate and share them with their advertising partners, and provide closed-loop attribution.
 
 ### Business Scenario
-We are building a Travel Media Network for a global luxury hospitality conglomerate called Altuva, which owns multiple hotel brands with millions of  visitors annually. We are partnering with a high-end Consumer Packaged Goods company called Omnira, which sells luxury snacks, beverages, and health & wellness amenities within most of Altuva's hotels. Omnira has approached us with a specific campaign idea: they want to promote their chocolate truffles to your hotel visitors in the 30 days before their arrival to influence more in-hotel consumption.
+We are building a Travel Media Network for a global luxury hospitality conglomerate called Altuva, which owns multiple hotel brands with millions of  visitors annually. We are partnering with a high-end Consumer Packaged Goods company called Omnira, which sells luxury snacks, beverages, and health & wellness amenities within most of Altuva's hotels. Omnira has approached us with a specific campaign request: they want to promote their products to Altuva's hotel visitors in the 30 days before their arrival to influence more in-hotel consumption.
 
 Our task is to build a platform that our non-techincal media team can use to create a highly customized audience, share the audience with Omnira, and provide Omnira with attribution reports to help them understand how well their ads drive in-hotel purchases.
 
