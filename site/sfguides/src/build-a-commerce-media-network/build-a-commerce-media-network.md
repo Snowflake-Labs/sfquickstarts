@@ -94,18 +94,22 @@ Hightouch transforms Snowflake into a customer data platform (CDP), giving your 
 ![Hightouch Snowflake CDP Diagram](https://quickstarts.snowflake.com/guide/hightouch_cdp/img/a9f317db6a84b731.png)
 
 To connect Hightouch to Snowflake:
-1. Log into your Hightouch account
+1. [Log in](https://app.hightouch.com/login) to your Hightouch account.
 2. Navigate to **Integrations > Sources** and click **Add Source**.
+    ![](assets/2_2_add_source.png)
 3. Select **Snowflake** in the **Data systems** section.
+    ![](assets/2_3_select_snowflake.png)
 4. Provide the following configuration values in the **Configure your Snowflake source** section:
     - **Account identifier**: TBD
     - **Warehouse**: TBD
     - **Database**: TBD
+    ![](assets/2_4_input_snowflake_config.png)
 5. Scroll down and provide the following Snowflake credentials to authenticate and click **Continue**.
     - **Username**: TBD
     - **Role**: TBD
     - **Authentication method**: Password
     - **Password**: TBD
+    ![](assets/2_5_provide_snowflake_credentials.png)
 
 <!-- ------------------------ -->
 ## Connect Hightouch to The Trade Desk
