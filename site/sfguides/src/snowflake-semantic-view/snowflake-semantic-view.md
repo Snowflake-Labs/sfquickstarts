@@ -17,7 +17,7 @@ AI-powered Business Intelligence (BI) and conversational analytics hold immense 
 Snowflake addresses these challenges by introducing Semantic Views, a new schema-level object that stores all semantic model information natively within the database. Semantic views capture and store semantic model information directly within the database, including business-relevant concepts such as metrics (*e.g.,* total sales), dimensions (*e.g.,* product category), and facts.
 
 ### What You'll Learn
-- How to set up a database and schema in Snowflake
+- How to setup a database and schema in Snowflake
 - How to create views from existing sample data
 - The process of defining a Snowflake semantic view with tables, relationships, dimensions, and metrics
 - How to query a semantic view
@@ -26,14 +26,15 @@ Snowflake addresses these challenges by introducing Semantic Views, a new schema
 ### What You'll Build
 You will build a foundational understanding and practical setup of a Snowflake semantic view, complete with data views and a defined semantic model, enabling simplified and consistent data querying for BI and AI applications using TPC-DS sample data.
 
-### Prerequisites
-- A Snowflake account with appropriate permissions (`ACCOUNTADMIN` role is required for creating semantic views)
+### What You'll Need
+- Access to a [Snowflake account](https://signup.snowflake.com/)
+- Basic knowledge of SQL and Python
+- Familiarity with data analysis concepts
+- Access to `ACCOUNTADMIN` role is required for creating semantic views)
 - Access to the `SNOWFLAKE_SAMPLE_DATA` database
-- A Snowflake Worksheet or Notebook environment to execute SQL commands
-- Basic understanding of SQL and data modeling concepts
 
 <!-- ------------------------ -->
-## Understanding Semantic Views
+## Understand Semantic Views
 Duration: 5
 
 ### What is a Semantic View?
@@ -62,7 +63,13 @@ Every semantic view definition requires essential elements:
 ## Setup Environment
 Duration: 10
 
-### Step 1: Set up your Database and Schema
+### Download the Notebook
+
+Firstly, to follow along with this quickstart, you can click on [getting-started-with-snowflake-semantic-view.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Snowflake_Semantic_View/getting-started-with-snowflake-semantic-view.ipynb) to download the Notebook from GitHub.
+
+Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
+
+### Setup your Database and Schema
 
 First, we'll create a new database named `SAMPLE_DATA` and a schema named `TPCDS_SF10TCL` to organize our data. We will then set the context to use this new schema.
 
@@ -80,7 +87,7 @@ CREATE SCHEMA TPCDS_SF10TCL;
 USE SCHEMA TPCDS_SF10TCL;
 ```
 
-### Step 2: Create Views from Sample Data
+### Create Views from Sample Data
 
 Next, we'll create views for the tables we want to analyze. These views will be based on the `SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL` dataset, allowing us to work with a subset of the data without modifying the original tables.
 
@@ -106,7 +113,7 @@ CREATE OR REPLACE VIEW STORE_SALES AS
 SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.STORE_SALES;
 ```
 
-### Step 3: Verify your Environment Setup
+### Verify your Environment Setup
 
 Before proceeding, let's ensure our warehouse, database, and schema are correctly set, and then list the views we just created.
 
@@ -128,10 +135,10 @@ SHOW VIEWS;
 > - Verify that all views are created successfully before proceeding to the next step
 
 <!-- ------------------------ -->
-## Creating the Semantic View
+## Create the Semantic View
 Duration: 15
 
-### Step 1: Define the Semantic View
+### Define the Semantic View
 
 We'll start by switching to the `ACCOUNTADMIN` role:
 
@@ -201,7 +208,7 @@ CREATE OR REPLACE SEMANTIC VIEW TPCDS_SEMANTIC_VIEW_SM
 	with extension (CA='{"tables":[{"dimensions":[{"name":"BIRTHYEAR","unique":false,"is_enum":false},{"name":"COUNTRY","unique":false,"is_enum":false},{"name":"c_customer_sk","unique":false,"is_enum":false}],"name":"CUSTOMER"},{"dimensions":[{"name":"DATE","unique":false,"is_enum":false},{"name":"MONTH","unique":false,"is_enum":false},{"name":"WEEK","unique":false,"is_enum":false},{"name":"YEAR","unique":false,"is_enum":false},{"name":"d_date_sk","unique":false,"is_enum":false}],"name":"DATE"},{"dimensions":[{"name":"CREDIT_RATING","unique":false,"is_enum":false},{"name":"MARITAL_STATUS","unique":false,"is_enum":false},{"name":"cd_demo_sk","unique":false,"is_enum":false}],"name":"DEMO"},{"dimensions":[{"name":"BRAND","unique":false,"is_enum":false},{"name":"CATEGORY","unique":false,"is_enum":false},{"name":"CLASS","unique":false,"is_enum":false},{"name":"i_item_sk","unique":false,"is_enum":false}],"facts":[{"name":"COST"},{"name":"PRICE"}],"name":"ITEM"},{"dimensions":[{"name":"MARKET","unique":false,"is_enum":false},{"name":"SQUAREFOOTAGE","unique":false,"is_enum":false},{"name":"STATE","unique":false,"is_enum":false},{"name":"STORECOUNTRY","unique":false,"is_enum":false},{"name":"s_store_sk","unique":false,"is_enum":false}],"facts":[{"name":"TAX_RATE"}],"name":"STORE"},{"dimensions":[{"name":"ss_sold_date_sk","unique":false,"is_enum":false},{"name":"ss_cdemo_sk","unique":false,"is_enum":false},{"name":"ss_item_sk","unique":false,"is_enum":false},{"name":"ss_store_sk","unique":false,"is_enum":false},{"name":"ss_customer_sk","unique":false,"is_enum":false}],"name":"STORESALES"}],"relationships":[{"name":"SALESTOCUSTOMER","join_type":"inner","relationship_type":"many_to_one"},{"name":"SALESTODATE","join_type":"inner","relationship_type":"many_to_one"},{"name":"SALESTODEMO","join_type":"inner","relationship_type":"many_to_one"},{"name":"SALESTOITEM","join_type":"inner","relationship_type":"many_to_one"},{"name":"SALETOSTORE","join_type":"inner","relationship_type":"many_to_one"}]}');
 ```
 
-### Step 2: Verify the Semantic View Creation
+### Verify the Semantic View Creation
 
 Let's confirm that our semantic view has been successfully created by listing all semantic views in the current database.
 
@@ -212,7 +219,7 @@ SHOW SEMANTIC VIEWS;
 
 ![image](assets/show-semantic-views.png)
 
-### Step 3: Describe the Semantic View
+### Describe the Semantic View
 
 To understand the structure and components of our newly created semantic view, we can use the `DESC SEMANTIC VIEW` command. This will provide details about its tables, relationships, facts, and dimensions.
 
@@ -236,7 +243,7 @@ Duration: 5
 
 Snowflake's Cortex Analyst allows you to interact with your semantic views using natural language. This powerful feature transforms how users can explore data without needing to know SQL syntax.
 
-### Accessing Cortex Analyst
+### Access Cortex Analyst
 
 You can access Cortex Analyst through the Snowflake interface.
 
@@ -273,7 +280,7 @@ Cortex Analyst will automatically translate this natural language question into 
 
 
 <!-- ------------------------ -->
-## Querying Semantic Views
+## Query Semantic Views
 Duration: 10
 
 ### Basic Query Structure
@@ -292,7 +299,7 @@ Let's break down each part:
 - `METRICS metric1, metric2, ...`: Within the parentheses, specify the metrics (calculated values or totals) you wish to retrieve
 - `DIMENSIONS dimension1, dimension2, ...`: Next, specify the dimensions (categories or attributes) you want to group or filter your data by
 
-### Adding Filters and Sorting
+### Add Filters and Sorting
 
 You can enhance your queries with standard SQL clauses:
 
