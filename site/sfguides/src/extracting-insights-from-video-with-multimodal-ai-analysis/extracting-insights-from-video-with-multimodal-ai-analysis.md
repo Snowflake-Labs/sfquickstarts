@@ -23,6 +23,7 @@ In this guide, we’ll take text-rich videos (instructional content, meetings) a
 * Basic understanding of Snowflake and containers.
 * A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 * Installation of [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
+* Git
 
 ### What You Will Build
 
@@ -35,6 +36,8 @@ In this guide, we’ll take text-rich videos (instructional content, meetings) a
 
 <!-- ------------------------ -->
 ## Component Overview
+
+Duration: 1
 
 Snowpark Container Services and Snowflake Cortex AI are two of the major components that are utilized within this Quickstart. Below is an overview of them.
 
@@ -54,7 +57,7 @@ Snowpark Container Services and Snowflake Cortex AI are two of the major compone
 
 ## Prepare Your Lab Environment
 
-### Set up Snowflake Account
+### Create Snowflake Account
 
 Duration: 6
 
@@ -63,73 +66,46 @@ Login using your unique credentials if you have a Snowflake account. If you don�
 ![new_trial](assets/2_start_snowflake_trial.png)
 
 
-For this guide, you will only need Snowflake's **Standard Edition** on AWS. You may want to select Enterprise to try out advanced features such as Time Travel, materialized views, or Failover.
+For this guide, you will only need Snowflake's **Standard Edition** on AWS. You may want to select **Enterprise** to try out advanced features such as Time Travel, materialized views, or Failover.
 
-Choose **US West (Oregon)** for the AWS Region.
-
-Once you have logged in, create a new Workspace.
+Choose **US West (Oregon)** for the AWS Region and log in.
 
 
-![3](assets/3_workspace.png)
+### Setup Environment
 
- 
+To prepare your Snowflake environment, in Snowsight, create a SQL file by clicking on **+ Create**, then **SQL File**.
 
-To prepare your Snowflake environment, Create a SQL File by selecting `+ Add New` and and selecting `SQL File`. Name the file `setup.sql`.
+Rename the empty SQL file to `setup.sql`.
 
-Copy the following into your newly created setup.sql workspace file:
+Copy the "Common Setup" section of [setup.sql](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/setup.sql) into your newly created setup.sql SQL file:
 
-~~~sql
-USE ROLE ACCOUNTADMIN;
-
-CREATE ROLE container_user_role;
-
-CREATE DATABASE IF NOT EXISTS hol_db;
-GRANT OWNERSHIP ON DATABASE hol_db TO ROLE container_user_role COPY CURRENT GRANTS;
-
-CREATE OR REPLACE WAREHOUSE hol_warehouse WITH
-  WAREHOUSE_SIZE='X-SMALL';
-GRANT USAGE ON WAREHOUSE hol_warehouse TO ROLE container_user_role;
-
-GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE container_user_role;
-
--- Create a compute pool with one Medium GPU instance that suspendds after 1 hour of inactivity.
-CREATE COMPUTE POOL hol_compute_pool
-  MIN_NODES = 1
-  MAX_NODES = 1
-  INSTANCE_FAMILY = GPU_NV_M
-  AUTO_SUSPEND = 3600;
-
-GRANT USAGE, MONITOR ON COMPUTE POOL hol_compute_pool TO ROLE container_user_role;
-
-GRANT ROLE container_user_role TO USER <user_name>
-
-USE ROLE container_user_role;
-USE DATABASE hol_db;
-USE WAREHOUSE hol_warehouse;
-
-CREATE IMAGE REPOSITORY IF NOT EXISTS repo;
-CREATE STAGE IF NOT EXISTS videos
-  DIRECTORY = ( ENABLE = true )
-  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
-~~~
 ![4](assets/4_create_setup_sql_file.png)
 
 
-Click the blue Run button above your `setup.sql` file.
+To run the Common Setup, click the blue Run button above your `setup.sql` file.
 
 ![5](assets/5_run_setup.png)
 
+### Upload Files to Stage
 
-Install the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index). Later, we'll use the Snowflake CLI to upload video and audio files from your local machine to a Snowflake Stage.
+The Application will download the files from a Snowflake Stage to be processed.  
+
+First, download the files from the Quickstart's [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos) to your local machine.
+
+Using Snowsight, upload the files to your previously created Stage, "videos". In Snowsight, go to **Data**, then **Add Data**, then select **Load Files into a Stage**
+
+
+### Install Snowflake CLI (Optional)
+Install the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index). Snowflake CLI can be used to upload the video and audio files to a Stage, and check resources. It is not required for this Quickstart.
 
 Use Snowsight's **Connect a Tool** to [configure Snowflake CLI](https://docs.snowflake.com/user-guide/gen-conn-config#using-sf-web-interface-to-get-connection-settings) to access your Snowflake account.  Viewing **Account Details** and then **Config File** will provide you with the .toml file necessary to configure Snowflake CLI to connect to your account. It will look similar to this:
 
 ~~~TOML
 [connections.hol]
-account = "123-456_AWS_US_WEST_2"
-user = "username"
+account = "SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI"
+user = "USER"
 authenticator = "externalbrowser"
-role = "ACCOUNTADMIN"
+role = "ATTENDEE_ROLE"
 warehouse = "hol_warehouse"
 database = "hol_db"
 schema = "hol_schema"
@@ -142,20 +118,32 @@ Verify SnowCLI is correctly configured by running:
 2. `snow connection test --connection hol`
 
 ~~~
-+----------------------------------------------+
-| key             | value                      |
-|-----------------+----------------------------|
-| Connection name | hol                        |
-| Status          | OK                         |
-| Host            | 123.snowflakecomputing.com |
-| Account         | <acccount>                 |
-| User            | smason                     |
-| Role            | ACCOUNTADMIN               |
-| Database        | hol_db                     |
-| Warehouse       | hol_warehouse              |
-+----------------------------------------------+
++------------------------------------------------------------------+
+| key             | value                                          |
+|-----------------+------------------------------------------------|
+| Connection name | hol                                            |
+| Status          | OK                                             |
+| Account         | SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI |
+| User            | USER                                           |
+| Role            | ATTENDEE_ROLE                                  |
+| Database        | hol_db                                         |
+| Warehouse       | hol_warehouse                                  |
++------------------------------------------------------------------+
 ~~~
 
+<!-- ------------------------ -->
+# Video Analysis
+
+
+# Speech Recognition
+<!-- ------------------------ -->
+
+
+<!-- ------------------------ -->
+# Clean up
+
+
+<!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 1
 
