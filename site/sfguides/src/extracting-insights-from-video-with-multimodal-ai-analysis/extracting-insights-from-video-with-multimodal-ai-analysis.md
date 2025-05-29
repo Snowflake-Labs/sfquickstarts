@@ -22,6 +22,7 @@ In this guide, we’ll take text-rich videos (instructional content, meetings) a
 
 * Basic understanding of Snowflake and containers.
 * A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+* Installation of [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
 
 ### What You Will Build
 
@@ -48,7 +49,7 @@ Snowflake Cortex AI enables you to quickly analyze unstructured data and build g
 
 ## Prepare Your Lab Environment
 
-### Set up Snowflake
+### Set up Snowflake Account
 
 Duration: 6
 
@@ -66,15 +67,89 @@ Once you have logged in, create a new Workspace.
 
 ![3](assets/3_workspace.png)
 
+ 
+
 To prepare your Snowflake environment, Create a SQL File by selecting `+ Add New` and and selecting `SQL File`. Name the file `setup.sql`.
 
-Copy the contents of [setup.sql](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/setup.sql) into your newly created setup.sql workspace file.
+Copy the following into your newly created setup.sql workspace file:
+
+~~~sql
+USE ROLE ACCOUNTADMIN;
+
+CREATE ROLE container_user_role;
+
+CREATE DATABASE IF NOT EXISTS hol_db;
+GRANT OWNERSHIP ON DATABASE hol_db TO ROLE container_user_role COPY CURRENT GRANTS;
+
+CREATE OR REPLACE WAREHOUSE hol_warehouse WITH
+  WAREHOUSE_SIZE='X-SMALL';
+GRANT USAGE ON WAREHOUSE hol_warehouse TO ROLE container_user_role;
+
+GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE container_user_role;
+
+-- Create a compute pool with one Medium GPU instance that suspendds after 1 hour of inactivity.
+CREATE COMPUTE POOL hol_compute_pool
+  MIN_NODES = 1
+  MAX_NODES = 1
+  INSTANCE_FAMILY = GPU_NV_M
+  AUTO_SUSPEND = 3600;
+
+GRANT USAGE, MONITOR ON COMPUTE POOL hol_compute_pool TO ROLE container_user_role;
+
+GRANT ROLE container_user_role TO USER <user_name>
+
+USE ROLE container_user_role;
+USE DATABASE hol_db;
+USE WAREHOUSE hol_warehouse;
+
+CREATE IMAGE REPOSITORY IF NOT EXISTS repo;
+CREATE STAGE IF NOT EXISTS videos
+  DIRECTORY = ( ENABLE = true )
+  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+~~~
 ![4](assets/4_create_setup_sql_file.png)
 
 
-To setup up your environment click the blue run button above your `setup.sql` file.
+Click the blue Run button above your `setup.sql` file.
 
 ![5](assets/5_run_setup.png)
+
+
+Install the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index). Later, we'll use the Snowflake CLI to upload video and audio files from your local machine to a Snowflake Stage.
+
+Use Snowsight's **Connect a Tool** to [configure Snowflake CLI](https://docs.snowflake.com/user-guide/gen-conn-config#using-sf-web-interface-to-get-connection-settings) to access your Snowflake account.  Viewing **Account Details** and then **Config File** will provide you with the .toml file necessary to configure Snowflake CLI to connect to your account. It will look similar to this:
+
+~~~TOML
+[connections.hol]
+account = "123-456_AWS_US_WEST_2"
+user = "username"
+authenticator = "externalbrowser"
+role = "ACCOUNTADMIN"
+warehouse = "hol_warehouse"
+database = "hol_db"
+schema = "hol_schema"
+~~~
+
+Copy the above contents into `config.toml` in the [Snowflake CLI configuration directory](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-cli#location-of-the-toml-configuration-file) (e.g. `~/.snowflake/config.toml`)
+
+Verify SnowCLI is correctly configured by running:
+1. `snow connection list`
+2. `snow connection test --connection hol`
+
+~~~
++----------------------------------------------+
+| key             | value                      |
+|-----------------+----------------------------|
+| Connection name | hol                        |
+| Status          | OK                         |
+| Host            | 123.snowflakecomputing.com |
+| Account         | <acccount>                 |
+| User            | smason                     |
+| Role            | ACCOUNTADMIN               |
+| Database        | hol_db                     |
+| Warehouse       | hol_warehouse              |
++----------------------------------------------+
+~~~
 
 ## Conclusion And Resources
 Duration: 1
