@@ -268,17 +268,16 @@ To build the audience:
     ![](assets/6_10_define_purchases_time_window.png)
     9. Scroll back to the top and click **Calculate size** to get an estimate of the number of customers in the audience. Click **Continue** at the bottom.
     ![](assets/6_11_calculate_audience_size.png)
-    10.  Name the audience “Upcoming Visitors - Omnira” and click **Finish** to save the audience.
-    ![](assets/6_12_name_save_audience.png)
+    10.  Name the audience “Upcoming Visitors to Altuva Hotels” and click **Finish** to save the audience.
 
 <!-- ------------------------ -->
-## Sync the audience to The Trade Desk
+## Sync the audience to Omnira's add account
 Duration: 1
 
-Now we will sync the audience that we created to The Trade Desk for targeting. For managed services, the audience can be used immediately in campaigns from Altuva’s Trade Desk seat. For self-service, we will share the audience to Omnira's seat in a following step.
+Now we will sync the audience that we created to The Trade Desk for targeting. To enable self-service, we will share the audience with Omnira's seat.
 
 ### Configure The Trade Desk first-party data segment sync
-1. Click **Add sync** from the Upcoming Visitors - Omnira audience page.
+1. Click **Add sync** from the Upcoming Visitors to Altuva Hotels audience page.
     ![](assets/7_1_add_sync.png)
 2. Select **The Trade Desk - Omnira**.
     ![](assets/)
