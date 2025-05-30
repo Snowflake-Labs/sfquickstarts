@@ -312,57 +312,61 @@ They can also preview the audience before using it to see the number of people, 
 ![](assets/8_2_preview_audience.png)
 
 <!-- ------------------------ -->
-## Create, sync, and share brand-specific conversion events
+## Create a brand-specific conversion feed
 Duration: 1
 
 Now that Omnira is actively targeting hotel visits with targeted ads, they want to track the success of their campaign in The Trade Desk by syncing conversion events to their advertising seat. However, the purchases happen through Altuva meaning that they do not have direct access to conversion data.
 
-In order to get access to conversions, we will need to create and share conversion data with Omnira in a way where:only Omnira purchases are shared and Altuva's customer data is kept private and secure.
+In order to get access to conversions, we will need to create and share conversion data with Omnira in a way where only Omnira purchases are shared and Altuva's customer data is kept private and secure.
 
-To do this, we will:
-1. Create a brand-specific conversion model
-2. Sync the conversion data to Altuva's advertising seat using UID2 for privacy-safe matching
-3. Securely share the conversion event feed to Omnira's seat using The Trade Desk's data sharing capabilities
+1. Navigate to **Customer Studio** > **Audiences** in Hightouch and click **Add audience**.
+    ![](assets/)
+2. Select the **Purchases** parent model so that we can build an audience of purchase events.
+    ![](assets/)
+3. Click **Add filter** in the audience builder and select the **PURCHASE_DATE** property so that we can filter to recent conversion events.
+    ![](assets/)
+4. Set the **PURCHASE_DATE** time window to **within previous 1 week**.
+    ![](assets/)
+5. Click **Add filter** in the audience builder and select the **BRAND** property. Add a **contains Omnira** filter to ensure only Omnira purchase data is shared. Click **Continue**.
+    ![](assets/)
+6. Name the audience "Omnira Purchases" and click **Finish**.
 
-Let's start with creating a brand-specific conversion model...
+Now you have a brand-specific conversion audience that you can sync to The Trade Desk. You can easily clone this audience to create new conversion feeds for other brands.
 
 <!-- ------------------------ -->
-## Create a brand-specific conversion model
+## Sync the brand-specific conversion data to The Trade Desk
 Duration: 1
+
+To share the brand-specific Purchase events with Omnira, we will send the conversion data directly to their advertising seat so that they can use it for optimization and reporting:
+1. Click **Add Sync** from the Omnira Purchases audience page.
+    ![](assets/)
+2. Select the The Trade Desk - Omnira destination.
+    ![](assets/)
+3. Select the **Offline conversion events** configuration option.
+    ![](assets/)
+4. Keep the default tracking tag configuration options set and name the offline tracking tag "Altuva Purchases".
+    ![](assets/)
+5. Select **Purchases** for the event name set up the match values so that The Trade Desk can match conversions back to specific impressions and clicks for attribution. Select the **UID2** field from the **Omnira Purchases** model and map it to the **UID2** value under the **destination field**.
+    ![](assets/)
+6. Configure the conversion event metadata and click **Continue**.
+    ![](assets/)
+    1. **PURCHASE_DATE** -> **TimestampUtc**
+    2. **TOTAL_PRICE** -> **Value**
+    3. **CURRENCY** -> **ValueCurrency**
+    4. **Merchant_ID** -> **MerchantId**
+8. Define the sync schedule. In this example, set the schedule on an **Interval**. Set the interval to **every 1 day(s)**. Click **Finish**.
+
+You have successfully set up a conversion feed that will send new conversions to Omnira's advertising account, using UID2 to privately and securely match conversions to impressions and clicks from their ad campaigns.
 
 <!-- ------------------------ -->
-## Create an Offline Conversion Sync to The Trade Desk
+## Use conversion data for measurement & reporting
 Duration: 1
 
-<!-- ------------------------ -->
-## Share and use conversion data in a campaign
-Duration: 1
-
-Now that Omnira's conversion events are being privately and securely synced to Altuva's advertising seat, we can share that conversion event data with Omnira to use for self-service campaign optimization and reporting.
-
-### Share offline conversion data with your advertising partner
-
-Measurement marketplace providers can make an offline measurement offering available to buyers. In the platform UI, information for your data as a provider is listed in a tile on the Measurement Marketplace page under Reports. For details, see [Measurement Marketplace](https://desk.thetradedesk.com/knowledge-portal/en/measurement-set-up.html) and [Measurement Marketplace Partners](https://desk.thetradedesk.com/knowledge-portal/en/measurement-partners.html) in the Knowledge Portal.
-
-To get started as an offline data provider, contact The Trade Desk Data Partnerships team.
-
-![Share conversion data with a partner]()
-
-To share conversion data with an advertising partner:
-1. STEP
-2. STEP
-3. STEP
-
-### Advertiser: Use offline conversion data in a campaign
-
-Now that the conversion data has been shared with Omnira, they can use the data for campaign optimization and reporting in their self-service campaign.
+Now that the conversion data has been shared with Omnira, they can use that data for campaign measurement and reporting in their self-service campaign.
 
 Conversion events can be found within The Trade Desk by navigating to the **Advertiser Data & Identity** tile.
 
-### Use the shared conversion data feed in a campaign
-Conversion Pixels can be found within the TTD Advertiser Data & Identity tile. Once once you can see conversion events surface through each event tag, you can apply those tags to a campaign through the TTD Audience Builder tile.
-
-![Use Conversion Event in campaign]()
+![](assets/)
 
 <!-- ------------------------ -->
 ## (Bonus) Set up REDS data sync
