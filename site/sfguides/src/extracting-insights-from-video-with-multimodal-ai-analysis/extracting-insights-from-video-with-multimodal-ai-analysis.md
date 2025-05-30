@@ -113,9 +113,10 @@ Using Snowsight, upload the files to your previously created Stage, "videos". In
 ### Install Snowflake CLI
 Install the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index). Snowflake CLI can be used to upload the video and audio files to a Stage, check resources, and push container images to the Image Registrykk. 
 
-Use Snowsight's **Connect a Tool** to [configure Snowflake CLI](https://docs.snowflake.com/user-guide/gen-conn-config#using-sf-web-interface-to-get-connection-settings) to access your Snowflake account.  Viewing **Account Details** and then **Config File** will provide you with the .toml file necessary to configure Snowflake CLI to connect to your account. It will look similar to this:
+Use Snowsight's **Connect a Tool** to [configure Snowflake CLI](https://docs.snowflake.com/user-guide/gen-conn-config#using-sf-web-interface-to-get-connection-settings) to access your Snowflake account.  Viewing **Account Details** and then **Config File** will provide you with the .toml file necessary to configure Snowflake CLI to connect to your account. Add the following modified for your account to your snow CLI config file (e.g. `~/.snowflake.config.toml`):
 
 ~~~TOML
+default_connection_name = "hol"    -- sets the below connection to be implicitly used
 [connections.hol]
 account = "SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI" -- from Connection Tool
 user = "<username>"    -- update username
@@ -123,6 +124,7 @@ password = "<password>"  -- update password
 role = "container_user_role"  -- update from Quickstart
 warehouse = "hol_warehouse"
 database = "hol_db"
+schema = "public"
 ~~~
 
 Copy the above contents into `config.toml` in the [Snowflake CLI configuration directory](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-cli#location-of-the-toml-configuration-file) (e.g. `~/.snowflake/config.toml`)
@@ -130,19 +132,21 @@ Copy the above contents into `config.toml` in the [Snowflake CLI configuration d
 Verify SnowCLI is correctly configured by running:
 1. `snow connection list`
 2. `snow connection test --connection hol`
+3. `snow connection test`  to verify the default value
 
 ~~~
-+------------------------------------------------------------------+
-| key             | value                                          |
-|-----------------+------------------------------------------------|
-| Connection name | hol                                            |
-| Status          | OK                                             |
-| Account         | SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI |
-| User            | USER                                           |
-| Role            | CONTAINER_USER_ROLE                            |
-| Database        | hol_db                                         |
-| Warehouse       | hol_warehouse                                  |
-+------------------------------------------------------------------+
++-----------------------------------------------------------------------------------------+
+| key             | value                                                                 |
+|-----------------+-----------------------------------------------------------------------|
+| Connection name | hol                                                                   |
+| Status          | OK                                                                    |
+| Host            | SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI.snowflakecomputing.com |
+| Account         | SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI                        |
+| User            | USER                                                                  |
+| Role            | CONTAINER_USER_ROLE                                                   |
+| Database        | HOL_DB                                                                |
+| Warehouse       | HOL_WAREHOUSE                                                         |
++-----------------------------------------------------------------------------------------+
 ~~~
 
 <!-- ------------------------ -->
@@ -154,7 +158,34 @@ In your `setup.sql` file copy the `meeting_id` and `meeting_part` SQL commands a
 
 In the [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos), navigate to the `video_analysis` directory.
 
-Build the Container image by running `docker build -t process_video .`. The resulting image is about 16GiB.
+
+Using the Snow CLI, list your Image Registry:
+
+~~~bash
+$ snow spcs image-repository list
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+| created_on                 | name | database_name | schema_name | repository_url             | owner        | owner_role_type | comment | encryption    |
+|----------------------------+------+---------------+-------------+----------------------------+--------------+-----------------+---------+---------------|
+| 2025-05-29                 | REPO | HOL_DB        | PUBLIC      | sfsehol-summit25-unstr-dat | ACCOUNTADMIN | ROLE            |         | SNOWFLAKE_SSE |
+| 15:21:19.834000-07:00      |      |               |             | a-processtest-bchxei.regis |              |                 |         |               |
+|                            |      |               |             | try.snowflakecomputing.com |              |                 |         |               |
+|                            |      |               |             | /hol_db/public/repo        |              |                 |         |               |
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+~~~
+
+Get the Image Registry URL
+~~~bash
+$ snow spcs image-repository url repo
+sfsehol-summit25-unstr-data-processtest-bchxei.registry.snowflakecomputing.com/hol_db/public/repo 
+~~~
+
+Build the Docker Container
+The syntax of this command is `docker build --rm --platform linux/amd64 -t <repository_url>/<image_name> .` where `repository_url` is from the previous command and `image_name` is `process_video:latest`
+
+~~~bash
+$ docker build --rm --platform linux/amd64 -t sfsehol-summit25-unstr-data-processtest-bchxei.registry.snowflakecomputing.com/hol_db/public/repo/process_video:latest .
+~~~
+
 
 ## Speech Recognition
 <!-- ------------------------ -->
