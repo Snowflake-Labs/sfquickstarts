@@ -1,6 +1,6 @@
 author: Yavor Georgiev, Seth Mason
 id: extracting-insights-from-video-with-multimodal-ai-analysis
-summary: Deriving key moments and semantic events from text-rich videos using Snowpark Container Services and Cortex AI.
+summary: Extract images, transcribe audio, and analyze key moments from videos using Cortex AI and Snowpark Container Services—all within Snowflake.
 categories: Getting-Started
 environments: web
 status: Published
@@ -14,7 +14,13 @@ tags: Getting Started, Data Science, SPCS, LLM, AI, Cortex, Snowpark Container S
 
 Duration: 1
 
-In this guide, we’ll take text-rich videos (instructional content, meetings) and extract still images and audio. In order to perform OCR and speech recognitino using Whisper, we’ll process the images through [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/) using `PARSE_DOCUMENT` and `AI_TRANSCRIBE`. To extract key moments and semantic events we will then process through Qwen2.5-VL on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) (SPCS). Lastly, we will store the analysis from all three models into tables, and allow analytical queries around meeting productivity to be run on the data.
+In this Quickstart, you’ll learn how to extract and analyze insights from text-rich videos such as instructional content and recorded meetings. We’ll walk through a multi-step pipeline that includes:
+* **Frame and audio extraction** from the source video
+* **Optical Character Recognition (OCR)** using `PARSE_DOCUMENT` and speech-to-text transcription using `AI_TRANSCRIBE`, both powered by [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/)
+* **Key moment and semantic event detection** using the Qwen2.5-VL model deployed on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/)
+
+Finally, you’ll store the output from all three models into structured Snowflake tables to enable rich analytical queries—such as measuring meeting effectiveness, identifying decision points, or extracting action items—directly within the Data Cloud.
+
 
 ![1](assets/1_arch_diagram.png)
 
@@ -24,6 +30,7 @@ In this guide, we’ll take text-rich videos (instructional content, meetings) a
 * A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 * Installation of [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
 * Git
+* Docker
 
 ### What You Will Build
 
