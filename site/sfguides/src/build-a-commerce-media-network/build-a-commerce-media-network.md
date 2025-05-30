@@ -86,7 +86,7 @@ on a.ID=m.ID;
 **Phone Normalization**: The function accepts raw and hashed phone numbers. If the identifier is a phone number, you must normalize it before sending it to the service, using the [UID2 Phone Number Normalization](https://unifiedid.com/docs/getting-started/gs-normalization-encoding#phone-number-normalization) rules.
 
 <!-- ------------------------ -->
-## Connect Hightouch to Snowflake
+## Connect Snowflake to Hightouch
 Duration: 1
 
 Hightouch transforms Snowflake into a customer data platform (CDP), giving your commerce media team the ability to curate customer audiences, activate them for onsite and offsite targeting, and provide attribution and incrementality reporting without the need for engineering support. As the leading Snowflake-native CDP, Hightouch does not copy and store your data in its own infrastructure, ensuring that Snowflake remains your single source of truth and that your customer data remains private and secure. 
@@ -113,7 +113,7 @@ To connect Hightouch to Snowflake:
 6. Name your data source "Snowflake - Altuva" and click **Finish**.
 
 <!-- ------------------------ -->
-## Connect Hightouch to Omnira's The Trade Desk account
+## Connect Hightouch to The Trade Desk
 Duration: 1
 
 Next, we will connect Hightouch to The Trade Desk so that you can sync audiences and conversion events from Snowflake directly to Omnira's advertising account.
@@ -158,7 +158,7 @@ For our Travel Media Network at Altuva, there are three data types we need to re
 2. **Hotel Visits** - Information about past, present, and future hotel visits, including when and where our customers are visiting our hotels.
 3. **Purchase Events** - Past and present amenities purchased in our hotels.
 
-![Altuva Travel Media Network Schema](assets/3_0_schema_overview.png)
+![Altuva Travel Media Network Schema](assets/5_6_purchases_parent_model_end.png)
 
 ### Create a Customer parent model
 Parent models define the primary dataset you want to build your audiences off. In this guide, we will create a Customers table that represents all Altuva Brands customers who have visited a hotel and/or signed up as a loyalty member.
@@ -211,25 +211,25 @@ To do this, we will create a second Parent model for **Purchases**. These parent
 
 To create and link two parent models together:
 1. Click the **Create** button at the top right of the Schema builder page and select **Parent model**.
-    ![](assets/)
+    ![](assets/5_1_create_parent_model_purchases.png)
 2. Select the **PURCHASES** table using the table selector, preview the results, and click **Continue**.
     ![](assets/5_2_select_purchases_table.png)
 3. Configure the events model:
-    ![](assets/5_3_configure_purchases_event_model.png)
+    ![](assets/5_3_configure_purchases_parent_model.png)
     1. Enter a **name** for your event model. For this example, use "Purchases".
     2. Set the appropriate **Primary Key** field to determine how to distinguish between events. In this example, select **PURCHASE_ID**. Set the **Primary key** to **PURCHASE_ID** and the **Secondary Label** to **PRODUCT_NAME**. Click **Create parent model**.
-    ![](assets/)
+    ![](assets/5_4_add_purchases_relationship.png)
     7. You should now see a new Parent model in the schema builder. To link the Purchases and Customers tables, click on the **Purchases** parent model and click **Relationships** > **Add Relationship**.
-    ![](assets/)
+    ![](assets/5_5_configure_purchases_relationship.png)
 8.  Use the selectors to create a **many:1** relationship between Purchases and Customers. Set the foreign keys so that both tables are linked using the **CUSTOMER_ID** field in each respective model.
     9. Click **Save changes**.
 
 The **Purchases** parent model will now be linked to the Customers parent model. Now you will be able to use Hightouch's visual audience builder to create audiences for targeting and filtered purchase events for conversion tracking.
 
-![](assets/)
+![](assets/5_6_purchases_parent_model_end.png)
 
 <!-- ------------------------ -->
-## Create a custom audience for monetization
+## Create a custom audience on Snowflake
 Duration: 1
 
 Now that we've built the schema for audience building and conversion tracking, we can use Hightouch's audience builder to create a custom audience for our advertising partner's upcoming campaign.
@@ -271,16 +271,16 @@ To build the audience:
     10.  Name the audience “Upcoming Visitors to Altuva Hotels” and click **Finish** to save the audience.
 
 <!-- ------------------------ -->
-## Sync the audience to Omnira's add account
+## Sync the custom audience to The Trade Desk
 Duration: 1
 
 Now we will sync the audience that we created to The Trade Desk for targeting. To enable self-service, we will share the audience with Omnira's seat.
 
 ### Configure The Trade Desk first-party data segment sync
 1. Click **Add sync** from the Upcoming Visitors to Altuva Hotels audience page.
-    ![](assets/7_1_add_sync.png)
+    ![](assets/9_1_add_sync_v2.png)
 2. Select **The Trade Desk - Omnira**.
-    ![](assets/)
+    ![](assets/9_2_select_ttd_sync_destination_v2.png)
 3. Select **First-party data segment**. This will allow you to create, sync, and refresh a first-party audience to The Trade Desk using UID2 as the match key.
     ![](assets/7_3_select_1p_data_segment.png)
 4. Keep the **create new segment** setting on and leave the **segment name** blank. The sync will automatically inherit the audience name, “Upcoming Visitors - Omnira”.
@@ -300,30 +300,16 @@ The Run Summary page provides granular insight into the status and speed of the 
 ![](assets/7_8_review_sync_run.png)
 
 <!-- ------------------------ -->
-## Share the audience with the advertising partner
-Duration: 1
-
-Now that your audience has been synced to your The Trade Desk seat, there are two ways you can enable your advertising partners to run their campaigns:
-1. **Managed Service**: Run campaigns for your advertising partner. This gives you full control over how your brand is represented and how ads are served, but it comes with higher operational costs.
-2. **Self-Service**: Share the audience with your advertising partner so that they can run campaigns themselves. This option gives you less control, but is less expensive to manage and is easier for the advertiser.
-
-In this example, we want to enable Omnira to run self-service campaigns from their own The Trade Desk seat.
-
-To do this, we will use The Trade Desk's platform-native audience sharing features to share our audience with Omnira in a privacy-safe way:
-1. STEP
-2. STEP
-3. STEP
-
-<!-- ------------------------ -->
 ## Advertiser: Run a self-service campaign
 Duration: 1
 
-Now that Omnira has access to the audience, they can select and target that audience in campaigns that they control from their own advertising seat. When the campaign ends, Altuva can remove access to the audience.
+Now that Omnira has access to the audience, they can select and target that audience in their campaigns by adding the audience to an ad group.
 
-To select and use the shared audience in a campaign:
-1. STEP
-2. STEP
-3. STEP
+![](assets/8_1_edit_audience.png)
+
+They can also preview the audience before using it to see the number of people, households, and devices that they can reach.
+
+![](assets/8_2_preview_audience.png)
 
 <!-- ------------------------ -->
 ## Create, sync, and share brand-specific conversion events
