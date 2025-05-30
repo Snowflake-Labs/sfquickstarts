@@ -96,6 +96,7 @@ CREATE SCHEMA IF NOT EXISTS STREAMING_INGEST;
 USE SCHEMA STREAMING_INGEST;
 GRANT OWNERSHIP ON DATABASE STREAMING_INGEST TO ROLE STREAMING_INGEST;
 GRANT OWNERSHIP ON SCHEMA STREAMING_INGEST.STREAMING_INGEST TO ROLE STREAMING_INGEST;
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE STREAMING_INGEST;
 ```
 
 ## Creating the Tables and Pipes needed for data
@@ -263,7 +264,7 @@ Click on the +, Notebook, and Import .ipynb File.
 
 ![Import .ipynb](ImportNotebook.png)
 
-Name the notebook STREAMING_INGEST, select the db STREAMING_INGEST and the schema STREAMING_INGEST.
+Name the notebook TRANSFORMATION_NOTEBOOK, select the db STREAMING_INGEST and the schema STREAMING_INGEST.
 
 Select Run on warehouse and use the query warehouse STREAMING_INGEST and notebook warehouse STREAMING_INGEST.
 
@@ -272,6 +273,14 @@ This will run everything on one warehouse to keep it as efficient as possible.
 Click Create.
 
 ![Create Notebook](CreateNotebook.png)
+
+Add the Snowflake.Core package which is required by this notebook.
+
+![Create Notebook](ImportSnowflake.Core.png)
+
+Follow the Notebook cells to build the data pipeline objects.
+
+After complete, you will have a data pipeline built on the streaming data using: views, dynamic tables, and triggered tasks.
 
 ## Create the Streamlit Application
 
