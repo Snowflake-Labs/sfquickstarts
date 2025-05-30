@@ -113,10 +113,14 @@ To connect Hightouch to Snowflake:
 6. Name your data source "Snowflake - Altuva" and click **Finish**.
 
 <!-- ------------------------ -->
-## Connect Hightouch to The Trade Desk
+## Connect Hightouch to Omnira's The Trade Desk account
 Duration: 1
 
-Next, we will connect Hightouch to The Trade Desk so that you can sync audiences and conversion events from Snowflake to the ad platform.
+Next, we will connect Hightouch to The Trade Desk so that you can sync audiences and conversion events from Snowflake directly to Omnira's advertising account.
+
+Hightouch also offers media networks the option to list their audiences on The Trade Desk's third-party data marketplace where their advertising partners can access and use them without a direct connection. Through this endpoint, the media network can set access permissions and rates. The Trade Desk will then track usage across their advertising partners, bill those partners for their usage, and pay the media network for that usage.
+
+For the purpose of this guide, however, we will send audiences directly to the advertising partner.
 
 ### Create a Trade Desk destination
 To push data to The Trade Desk, you need to create a destination.
@@ -132,16 +136,16 @@ To connect The Trade Desk destination:
     ![](assets/1_2_choose_ttd_destination.png)
 4. Scroll down to the **First-Party Data Segment** section. Input the following values in the config:
     - **Environment**: US West
-    - **Advertiser ID**
-    - **Advertiser secret key**
+    - **Advertiser ID**:  `rz1pddq`
+    - **Advertiser secret key**: `jb1t6wx8dffx71ydyephpv5k121oxi28`
     ![](assets/1_3_1p_segment_credentials.png)
-5. Scroll down further to the **Conversion event integration** section. Input the following values in the config:
-    - **Advertiser ID**
-    - **Advertiser secret key**
+5. Scroll down further to the **Conversion event integration** section. Input the following values in the config for Omnira:
+    - **Advertiser ID**: `z2jxhwl`
+    - **Advertiser secret key**: `z2jxhwl`
     - **Offline data provider ID**
     - **Offline tracking tag API token**
     ![](assets/1_4_ttd_offline_conversion_credentials.png)
-6. Name the destination "The Trade Desk - Altuva" and click **Finish** to create the destination.
+6. Name the destination "The Trade Desk - Omnira" and click **Finish** to create the destination.
 
 <!-- ------------------------ -->
 ## Build the audience schema
@@ -198,36 +202,37 @@ The related model now appears in the schema builder. You can edit an existing re
 
 ![](assets/4_4_hotel_visits_model_end.png)
 
-### Create a Purchases event model
-Event definition is a one-time step similar to related model setup. The only difference is that event models require a timestamp column.
+### Create a Purchases parent model
+In order to support each advertising partner with closed-loop measurement, we will want to be able to use the audience builder to quickly create filtered-down conversion event feeds. In this example, we want to make sure that we are only sending Omnira Purchase event data from products that they sell (and that we are not sending purchase events for competing products).
 
-In this example, we will create an event model for **Purchases**. These events will be used to exclude members who made a recent purchase from our advertising customers, allowing them to focus on reaching net-new customers.
+To do this, we will create a second Parent model for **Purchases**. These parent model will be linked to the Customers parent model that we can do two things with the data:
+1. Exclude customers from our audiences if they purchased an Omnira product recently
+2. Send Purchase conversion events to Omnira's advertising account when the purchase includes an Omnira product
 
-1. Click the **+** button on the **Customers parent model** and select **Create a related event**.
-    ![](assets/5_1_create_event_model.png)
+To create and link two parent models together:
+1. Click the **Create** button at the top right of the Schema builder page and select **Parent model**.
+    ![](assets/)
 2. Select the **PURCHASES** table using the table selector, preview the results, and click **Continue**.
     ![](assets/5_2_select_purchases_table.png)
 3. Configure the events model:
     ![](assets/5_3_configure_purchases_event_model.png)
     1. Enter a **name** for your event model. For this example, use "Purchases".
-    2. Set the appropriate **Timestamp** field to define when the event occurred. In this example, select **PURCHASE_DATE**.
-    3. Keep the **Event type** set to **Generic**.
-    4. Set the **Primary key** to **PURCHASE_ID**.
-    5. Enable **Column Suggestions** to make it easier to find column values when building audiences.
-    6. Define the related event's **Relationship**. Select the relationship's cardinality **1:Many**, because every individual Customer can make multiple Purchases.
-    7. Click **Create event**.
+    2. Set the appropriate **Primary Key** field to determine how to distinguish between events. In this example, select **PURCHASE_ID**. Set the **Primary key** to **PURCHASE_ID** and the **Secondary Label** to **PRODUCT_NAME**. Click **Create parent model**.
+    ![](assets/)
+    7. You should now see a new Parent model in the schema builder. To link the Purchases and Customers tables, click on the **Purchases** parent model and click **Relationships** > **Add Relationship**.
+    ![](assets/)
+8.  Use the selectors to create a **many:1** relationship between Purchases and Customers. Set the foreign keys so that both tables are linked using the **CUSTOMER_ID** field in each respective model.
+    9. Click **Save changes**.
 
-The **Purchases** event model will now appear in the schema builder. You can edit an existing event model by clicking on it and making changes in the **Query** tab.
+The **Purchases** parent model will now be linked to the Customers parent model. Now you will be able to use Hightouch's visual audience builder to create audiences for targeting and filtered purchase events for conversion tracking.
 
-![](assets/5_4_purchase_events_model_end.png)
-
-Now that your Schema has been defined, we can use the point-and-click audience builder to create custom audiences for your advertising partners using data about your customers, their hotel visits, and past purchases.
+![](assets/)
 
 <!-- ------------------------ -->
 ## Create a custom audience for monetization
 Duration: 1
 
-Now that we've built the audience schema, we can use Hightouch's audience builder to create a custom audience for our advertising partner's upcoming campaign.
+Now that we've built the schema for audience building and conversion tracking, we can use Hightouch's audience builder to create a custom audience for our advertising partner's upcoming campaign.
 
 Omnira wants to run an influence campaign to encourage Altuva visitors to buy more of their products when they visit Altuva hotels. But they want to carefully segment the audience to ensure the campaign is as effective as possible:
 - Target customers with a visit coming up in the next 30 days
@@ -275,8 +280,8 @@ Now we will sync the audience that we created to The Trade Desk for targeting. F
 ### Configure The Trade Desk first-party data segment sync
 1. Click **Add sync** from the Upcoming Visitors - Omnira audience page.
     ![](assets/7_1_add_sync.png)
-2. Select **The Trade Desk - Altuva**.
-    ![](assets/7_2_select_ttd.png)
+2. Select **The Trade Desk - Omnira**.
+    ![](assets/)
 3. Select **First-party data segment**. This will allow you to create, sync, and refresh a first-party audience to The Trade Desk using UID2 as the match key.
     ![](assets/7_3_select_1p_data_segment.png)
 4. Keep the **create new segment** setting on and leave the **segment name** blank. The sync will automatically inherit the audience name, “Upcoming Visitors - Omnira”.
