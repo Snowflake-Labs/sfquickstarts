@@ -96,6 +96,7 @@ CREATE SCHEMA IF NOT EXISTS STREAMING_INGEST;
 USE SCHEMA STREAMING_INGEST;
 GRANT OWNERSHIP ON DATABASE STREAMING_INGEST TO ROLE STREAMING_INGEST;
 GRANT OWNERSHIP ON SCHEMA STREAMING_INGEST.STREAMING_INGEST TO ROLE STREAMING_INGEST;
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE STREAMING_INGEST;
 ```
 
 ## Creating the Tables and Pipes needed for data
@@ -132,7 +133,7 @@ FROM TABLE (
 )
 MATCH_BY_COLUMN_NAME=CASE_SENSITIVE;
 
-CREATE OR REPLACE TABLE LIFT_RIDE(TXID varchar(255), RFID varchar(255), RESORT varchar(255), LIFT varchar(255), RIDE_TIME datetime);
+CREATE OR REPLACE TABLE LIFT_RIDE(TXID varchar(255), RFID varchar(255), RESORT varchar(255), LIFT varchar(255), RIDE_TIME datetime, ACTIVATION_DAY_COUNT integer);
 
 CREATE OR REPLACE PIPE LIFT_RIDE_PIPE AS
 COPY INTO LIFT_RIDE
@@ -263,7 +264,7 @@ Click on the +, Notebook, and Import .ipynb File.
 
 ![Import .ipynb](ImportNotebook.png)
 
-Name the notebook STREAMING_INGEST, select the db STREAMING_INGEST and the schema STREAMING_INGEST.
+Name the notebook transformation_notebook, select the db STREAMING_INGEST and the schema STREAMING_INGEST.
 
 Select Run on warehouse and use the query warehouse STREAMING_INGEST and notebook warehouse STREAMING_INGEST.
 
@@ -272,6 +273,14 @@ This will run everything on one warehouse to keep it as efficient as possible.
 Click Create.
 
 ![Create Notebook](CreateNotebook.png)
+
+Add the Snowflake.Core package which is required by this notebook.
+
+![Create Notebook](ImportSnowflake.Core.png)
+
+Follow the Notebook cells to build the data pipeline objects.
+
+After complete, you will have a data pipeline built on the streaming data using: views, dynamic tables, and triggered tasks.
 
 ## Create the Streamlit Application
 
@@ -299,9 +308,10 @@ Duration: 2
 
 To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as `ACCOUNTADMIN` run:
 ```SQL
-USE ROLE ACCOUNTADMIN;
-
+USE ROLE STREAMING_INGEST;
 DROP DATABASE IF EXISTS STREAMING_INGEST;
+
+USE ROLE ACCOUNTADMIN;
 DROP WAREHOUSE IF EXISTS STREAMING_INGEST;
 DROP USER IF EXISTS STREAMING_INGEST;
 DROP ROLE IF EXISTS STREAMING_INGEST;
