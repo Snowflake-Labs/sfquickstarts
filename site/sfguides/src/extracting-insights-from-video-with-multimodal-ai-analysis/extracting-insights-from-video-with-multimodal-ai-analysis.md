@@ -78,6 +78,9 @@ Choose **US West (Oregon)** for the AWS Region and log in.
 
 ### Setup Environment
 
+We first need to set up our Snowflake account, we'll be creating Roles, Databases and a Warehouse.  Within Snowpark Container Services, we'll create a Compute Pool which provides computing resources to run our Containerized Service. We'll also need to enable our Service to reach external sites such as Huggingface and Pypi.  Snowflake accounts are secure by default and do not allow external access.  Lastly, we'll create an Image Registry for storing container images, and a Stage for storing our video and audio files will be created. All of these steps will be done within Snowsight.
+
+
 To prepare your Snowflake environment, in Snowsight, create a SQL file by clicking on **+ Create**, then **SQL File**.
 
 Rename the empty SQL file to `setup.sql`.
@@ -87,9 +90,14 @@ Copy the "Common Setup" section of [setup.sql](https://github.com/Snowflake-Labs
 ![4](assets/4_create_setup_sql_file.png)
 
 
-To run the Common Setup, click the blue Run button above your `setup.sql` file.
+To run the Common Setup, click at the beginning of a SQL line and click the blue Run button above your `setup.sql` file. 
 
 ![5](assets/5_run_setup.png)
+
+The output of the SQL command will appear in the results box.
+
+![6](assets/6_setup_output.png)
+
 
 ### Upload Files to Stage
 
