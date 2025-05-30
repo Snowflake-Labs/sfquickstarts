@@ -85,7 +85,9 @@ To prepare your Snowflake environment, in Snowsight, create a SQL file by clicki
 
 Rename the empty SQL file to `setup.sql`.
 
-Copy the "Common Setup" section of [setup.sql](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/setup.sql) into your newly created setup.sql SQL file:
+Copy the "Common Setup" section of [setup.sql](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/setup.sql) into your newly created setup.sql SQL file. 
+
+**Note:** Cloning this [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis) to your local machine can simplify this process as later on we'll need to access other files such as audio/video files from this repo.
 
 ![4](assets/4_create_setup_sql_file.png)
 
