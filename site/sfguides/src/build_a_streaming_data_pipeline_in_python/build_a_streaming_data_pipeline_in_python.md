@@ -82,6 +82,8 @@ GRANT OPERATE ON WAREHOUSE STREAMING_INGEST TO ROLE STREAMING_INGEST;
 ## Creating the Database and Schema for data
 Duration: 2
 
+This step will create the database and the schema where all the data is landed. This database will also store the notebook which sets up the data pipeline, the streamlit which displays the reports, and all tasks and dynamic tables created for this guide.
+
 Login to Snowsight or use SnowSQL to execute the following commands:
 
 ```sql
@@ -89,6 +91,7 @@ USE ROLE ACCOUNTADMIN;
 
 CREATE DATABASE IF NOT EXISTS STREAMING_INGEST;
 USE DATABASE STREAMING_INGEST;
+ALTER DATABASE STREAMING_INGEST SET USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS=10;
 CREATE SCHEMA IF NOT EXISTS STREAMING_INGEST;
 USE SCHEMA STREAMING_INGEST;
 GRANT OWNERSHIP ON DATABASE STREAMING_INGEST TO ROLE STREAMING_INGEST;
@@ -98,7 +101,7 @@ GRANT OWNERSHIP ON SCHEMA STREAMING_INGEST.STREAMING_INGEST TO ROLE STREAMING_IN
 ## Creating the Tables and Pipes needed for data
 Duration: 2
 
-Tables are used to store the data from the clients and a pipe is needed to accept data from the clients. The data is inserted into the table from the pipe.
+This step creates the pipes which are needed to accept data from the clients and the tables which store the data from the pipes.
 
 Login to Snowsight or use SnowSQL to execute the following commands:
 
