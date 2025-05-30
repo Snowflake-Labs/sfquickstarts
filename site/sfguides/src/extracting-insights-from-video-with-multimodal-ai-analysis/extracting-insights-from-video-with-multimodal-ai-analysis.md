@@ -81,13 +81,15 @@ Choose **US West (Oregon)** for the AWS Region and log in.
 We first need to set up our Snowflake account, we'll be creating Roles, Databases and a Warehouse.  Within Snowpark Container Services, we'll create a Compute Pool which provides computing resources to run our Containerized Service. We'll also need to enable our Service to reach external sites such as Huggingface and Pypi.  Snowflake accounts are secure by default and do not allow external access.  Lastly, we'll create an Image Registry for storing container images, and a Stage for storing our video and audio files will be created. All of these steps will be done within Snowsight.
 
 
+
+Git clone the Quickstart's [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis) to your local machine. 
+
+
 To prepare your Snowflake environment, in Snowsight, create a SQL file by clicking on **+ Create**, then **SQL File**.
 
 Rename the empty SQL file to `setup.sql`.
 
 Copy the "Common Setup" section of [setup.sql](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/setup.sql) into your newly created setup.sql SQL file. 
-
-**Note:** Cloning this [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis) to your local machine can simplify this process as later on we'll need to access other files such as audio/video files from this repo.
 
 ![4](assets/4_create_setup_sql_file.png)
 
@@ -105,9 +107,7 @@ The output of the SQL command will appear in the results box.
 
 Our application will process video and audio files that are stored on a Snowflake Stage. We'll need to first upload the video and audio files from the Github repo to our Snowflake account.
 
-First, download the files from the Quickstart's [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos) to your local machine.
-
-Using Snowsight, upload the files to your previously created Stage, "videos". In Snowsight, go to **Data**, then **Add Data**, then select **Load Files into a Stage**
+First, add the files from the Quickstart's locally cloned repo from the directory `sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/videos/amicorpus/IS1004` to your previously created Stage, **videos**. In Snowsight, go to **Data**, then **Add Data**, then select **Load Files into a Stage**. 
 
 
 ### Install Snowflake CLI
@@ -184,6 +184,34 @@ The syntax of this command is `docker build --rm --platform linux/amd64 -t <repo
 
 ~~~bash
 $ docker build --rm --platform linux/amd64 -t sfsehol-summit25-unstr-data-processtest-bchxei.registry.snowflakecomputing.com/hol_db/public/repo/process_video:latest .
+
+<...build output...>
+
+$ docker images
+REPOSITORY                                                                                                        TAG       IMAGE ID       CREATED             SIZE
+sfsehol-summit25-unstr-data-processtest-bchxei.registry.snowflakecomputing.com/hol_db/public/repo/process_video   latest    8a051200cd1d   About an hour ago   16.5GB
+~~~
+
+Login to your Repository with Docker using Snow CLI
+~~~bash
+$ snow spcs image-registry login
+Login Succeeded
+~~~
+
+Push the image to the registry
+~~~bash
+$ docker push sfsehol-summit25-unstr-data-processtest-bchxei.registry.snowflakecomputing.com/hol_db/public/repo/process_video:latest
+~~~
+
+List the Image in the repository:
+~~~bash
+$ snow spcs image-repository list-images repo
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+| created_on                | image_name    | tags   | digest                                                   | image_path                              |
+|---------------------------+---------------+--------+----------------------------------------------------------+-----------------------------------------|
+| 2025-05-30 15:11:34-07:00 | process_video | latest | sha256:077c6883533f7d384b0e6594038895995de6f5470892cb15e | hol_db/public/repo/process_video:latest |
+|                           |               |        | 51e4afcea611a35                                          |                                         |
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
 ~~~
 
 
