@@ -30,7 +30,7 @@ Finally, you’ll store the output from all three models into structured Snowfla
 * A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 * Installation of [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
 * Git
-* Docker
+* Docker to build Containers
 
 ### What You Will Build
 
@@ -149,7 +149,13 @@ Verify SnowCLI is correctly configured by running:
 <!-- ------------------------ -->
 ## Video Analysis
 
-video analysis section goes here
+In your `setup.sql` file copy the `meeting_id` and `meeting_part` SQL commands and run them.
+
+### Build Docker Container
+
+In the [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos), navigate to the `video_analysis` directory.
+
+Build the Container image by running `docker build -t process_video .`. The resulting image is about 16GiB.
 
 ## Speech Recognition
 <!-- ------------------------ -->
