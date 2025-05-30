@@ -130,6 +130,11 @@ Upload the video files diretory (`videos`) and its' contents to the Stage from t
 $ snow stage copy --recursive ./videos @hol_db.public.videos
 ~~~
 
+List the contents of the Stage
+~~~bash
+$ snow stage list-files @hol_db.public.videos
+~~~
+
 
 ### Install Snowflake CLI
 Install the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index). Snowflake CLI can be used to upload the video and audio files to a Stage, check resources, and push container images to the Image Registrykk. 
