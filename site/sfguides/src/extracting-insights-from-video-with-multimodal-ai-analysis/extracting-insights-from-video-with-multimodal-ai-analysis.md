@@ -107,7 +107,28 @@ The output of the SQL command will appear in the results box.
 
 Our application will process video and audio files that are stored on a Snowflake Stage. We'll need to first upload the video and audio files from the Github repo to our Snowflake account.
 
-First, add the files from the Quickstart's locally cloned repo from the directory `sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/videos/amicorpus/IS1004` to your previously created Stage, **videos**. In Snowsight, go to **Data**, then **Add Data**, then select **Load Files into a Stage**. 
+Using the Snow CLI, list the Stage you previously created
+~~~bash
+$ snow stage list
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+|        |        |        |        |     |         |        |         |        |        |         |       | notifi |         |        |         |        |
+|        |        | databa |        |     | has_cre | has_en |         |        |        |         |       | cation | storage |        | owner_r | direct |
+| create |        | se_nam | schema |     | dential | crypti |         | commen |        |         |       | _chann | _integr | endpoi | ole_typ | ory_en |
+| d_on   | name   | e      | _name  | url | s       | on_key | owner   | t      | region | type    | cloud | el     | ation   | nt     | e       | abled  |
+|--------+--------+--------+--------+-----+---------+--------+---------+--------+--------+---------+-------+--------+---------+--------+---------+--------|
+| 2025-0 | VIDEOS | HOL_DB | PUBLIC |     | N       | N      | ACCOUNT |        | None   | INTERNA | None  | None   | None    | None   | ROLE    | Y      |
+| 5-29   |        |        |        |     |         |        | ADMIN   |        |        | L NO    |       |        |         |        |         |        |
+| 15:21: |        |        |        |     |         |        |         |        |        | CSE     |       |        |         |        |         |        |
+| 23.957 |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
+| 000-07 |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
+| :00    |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+~~~
+
+Upload the video files diretory (`videos`) and its' contents to the Stage from the root of the cloned repo directory (`sfguide-extracting-insights-from-video-with-multimodal-ai-analysis`)
+~~~bash
+$ snow stage copy --recursive ./videos @hol_db.public.videos
+~~~
 
 
 ### Install Snowflake CLI
