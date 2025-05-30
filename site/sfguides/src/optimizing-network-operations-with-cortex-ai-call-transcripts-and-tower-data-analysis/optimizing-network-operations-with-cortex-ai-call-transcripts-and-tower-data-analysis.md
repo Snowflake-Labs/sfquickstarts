@@ -3,7 +3,7 @@ id: optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data
 summary: Optimizing Network Operations with Cortex AI - Call Transcripts and Tower Data Analysis
 categories: Getting-Started, Streamlit, Data-Science-&-Ai, app-development, GenAI, Cortex, Cortex Analyst
 environments: web
-status: Archived 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Apps, GenAI, Cortex, Cortex Analyst, Streamlit
 

@@ -127,7 +127,7 @@ VEHICLE_SEARCH_SERVICE='dash_db.dash_schema.vehicles_info'
 # Should not change these values
 ZOOM_TOKEN_URL = "https://zoom.us/oauth/token"
 ZOOM_CHAT_URL = "https://api.zoom.us/v2/im/chat/messages" 
-MODEL = 'claude-3-5-sonnet'
+MODEL = 'claude-4-sonnet'
 RSA_PRIVATE_KEY_PATH='rsa_key.p8'
 ```
 

@@ -12,11 +12,6 @@ tags: Getting Started, Data Science, Data Engineering, Native Apps
 ## Overview 
 Duration: 3
 
-> aside negative
-> 
-> **Important**
-> Snowflake Native Apps are currently not supported in Google Cloud Platform.  Ensure your Snowflake deployment or trial account uses AWS or Azure as the cloud provider.
-
 ![Native Apps Framework](assets/app_framework.png)
 
 In this Quickstart, you'll build your first Snowflake Native Application. 
@@ -43,13 +38,9 @@ Let's get started!
 ![streamlit](assets/streamlit.png)
 
 ### Prerequisites
-- Snowflake trial account on AWS
+- Snowflake trial account
 - Beginner Python knowledge
 
-> aside negative
-> 
-> **Important**
-> Snowflake Native Apps are currently only available on AWS.  Ensure your Snowflake deployment or trial account uses AWS as the cloud provider. Native Apps will be available on other major cloud providers soon.
 
 ### What You’ll Learn 
 - Snowflake Native App Framework
