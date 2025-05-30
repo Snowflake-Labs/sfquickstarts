@@ -101,7 +101,7 @@ The output of the SQL command will appear in the results box.
 
 ### Upload Files to Stage
 
-The Application will download the files from a Snowflake Stage to be processed.  
+Our application will process video and audio files that are stored on a Snowflake Stage. We'll need to first upload the video and audio files from the Github repo to our Snowflake account.
 
 First, download the files from the Quickstart's [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos) to your local machine.
 
