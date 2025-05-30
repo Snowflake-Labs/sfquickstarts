@@ -110,20 +110,19 @@ First, download the files from the Quickstart's [repo](https://github.com/Snowfl
 Using Snowsight, upload the files to your previously created Stage, "videos". In Snowsight, go to **Data**, then **Add Data**, then select **Load Files into a Stage**
 
 
-### Install Snowflake CLI (Optional)
-Install the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index). Snowflake CLI can be used to upload the video and audio files to a Stage, and check resources. It is not required for this Quickstart.
+### Install Snowflake CLI
+Install the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index). Snowflake CLI can be used to upload the video and audio files to a Stage, check resources, and push container images to the Image Registrykk. 
 
 Use Snowsight's **Connect a Tool** to [configure Snowflake CLI](https://docs.snowflake.com/user-guide/gen-conn-config#using-sf-web-interface-to-get-connection-settings) to access your Snowflake account.  Viewing **Account Details** and then **Config File** will provide you with the .toml file necessary to configure Snowflake CLI to connect to your account. It will look similar to this:
 
 ~~~TOML
 [connections.hol]
-account = "SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI"
-user = "USER"
-authenticator = "externalbrowser"
-role = "ATTENDEE_ROLE"
+account = "SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI" -- from Connection Tool
+user = "<username>"    -- update username
+password = "<password>"  -- update password
+role = "container_user_role"  -- update from Quickstart
 warehouse = "hol_warehouse"
 database = "hol_db"
-schema = "hol_schema"
 ~~~
 
 Copy the above contents into `config.toml` in the [Snowflake CLI configuration directory](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-cli#location-of-the-toml-configuration-file) (e.g. `~/.snowflake/config.toml`)
@@ -140,7 +139,7 @@ Verify SnowCLI is correctly configured by running:
 | Status          | OK                                             |
 | Account         | SFSEHOL-SUMMIT25_UNSTR_DATA_PROCESSTEST_BCHXEI |
 | User            | USER                                           |
-| Role            | ATTENDEE_ROLE                                  |
+| Role            | CONTAINER_USER_ROLE                            |
 | Database        | hol_db                                         |
 | Warehouse       | hol_warehouse                                  |
 +------------------------------------------------------------------+
