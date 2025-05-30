@@ -204,8 +204,9 @@ CREATE OR REPLACE SEMANTIC VIEW TPCDS_SEMANTIC_VIEW_SM
 		STORESALES.TOTALCOST as SUM(item.cost),
 		STORESALES.TOTALSALESPRICE as SUM(SS_SALES_PRICE),
 		STORESALES.TOTALSALESQUANTITY as SUM(SS_QUANTITY)
+            WITH SYNONYMS = ( 'total sales quantity', 'total sales amount')
 	)
-	with extension (CA='{"tables":[{"dimensions":[{"name":"BIRTHYEAR","unique":false,"is_enum":false},{"name":"COUNTRY","unique":false,"is_enum":false},{"name":"c_customer_sk","unique":false,"is_enum":false}],"name":"CUSTOMER"},{"dimensions":[{"name":"DATE","unique":false,"is_enum":false},{"name":"MONTH","unique":false,"is_enum":false},{"name":"WEEK","unique":false,"is_enum":false},{"name":"YEAR","unique":false,"is_enum":false},{"name":"d_date_sk","unique":false,"is_enum":false}],"name":"DATE"},{"dimensions":[{"name":"CREDIT_RATING","unique":false,"is_enum":false},{"name":"MARITAL_STATUS","unique":false,"is_enum":false},{"name":"cd_demo_sk","unique":false,"is_enum":false}],"name":"DEMO"},{"dimensions":[{"name":"BRAND","unique":false,"is_enum":false},{"name":"CATEGORY","unique":false,"is_enum":false},{"name":"CLASS","unique":false,"is_enum":false},{"name":"i_item_sk","unique":false,"is_enum":false}],"facts":[{"name":"COST"},{"name":"PRICE"}],"name":"ITEM"},{"dimensions":[{"name":"MARKET","unique":false,"is_enum":false},{"name":"SQUAREFOOTAGE","unique":false,"is_enum":false},{"name":"STATE","unique":false,"is_enum":false},{"name":"STORECOUNTRY","unique":false,"is_enum":false},{"name":"s_store_sk","unique":false,"is_enum":false}],"facts":[{"name":"TAX_RATE"}],"name":"STORE"},{"dimensions":[{"name":"ss_sold_date_sk","unique":false,"is_enum":false},{"name":"ss_cdemo_sk","unique":false,"is_enum":false},{"name":"ss_item_sk","unique":false,"is_enum":false},{"name":"ss_store_sk","unique":false,"is_enum":false},{"name":"ss_customer_sk","unique":false,"is_enum":false}],"name":"STORESALES"}],"relationships":[{"name":"SALESTOCUSTOMER","join_type":"inner","relationship_type":"many_to_one"},{"name":"SALESTODATE","join_type":"inner","relationship_type":"many_to_one"},{"name":"SALESTODEMO","join_type":"inner","relationship_type":"many_to_one"},{"name":"SALESTOITEM","join_type":"inner","relationship_type":"many_to_one"},{"name":"SALETOSTORE","join_type":"inner","relationship_type":"many_to_one"}]}');
+;
 ```
 
 ### Verify the Semantic View Creation
@@ -272,7 +273,7 @@ st.link_button("Go to Cortex Analyst", link)
 
 Once in Cortex Analyst, you can ask questions like:
 
-*"Show me the top selling brands in terms of total sales quantity in the state 'TX' in the 'Books' category in the year 2003"*
+*Show me the top selling brands in by total sales quantity in the state 'TX' in the 'Books' category in the year 2003*
 
 Cortex Analyst will automatically translate this natural language question into the appropriate Semantic SQL query and return the results.
 
