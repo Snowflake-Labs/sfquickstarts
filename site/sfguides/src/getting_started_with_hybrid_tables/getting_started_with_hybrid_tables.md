@@ -1,11 +1,11 @@
 author: Meny Kobel
 id: getting_started_with_hybrid_tables
 summary: Follow this tutorial to learn the basics of hybrid tables
-categories: Getting-Started
+categories: Getting-Started, Unistore, Hybrid Tables
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Hybrid Tables 
+tags: Getting Started, Data Engineering, Hybrid Tables, Unistore
 
 # Getting Started with Hybrid Tables  
 <!-- ------------------------ -->
