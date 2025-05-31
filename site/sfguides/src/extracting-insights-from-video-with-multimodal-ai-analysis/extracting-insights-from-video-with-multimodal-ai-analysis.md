@@ -14,13 +14,9 @@ tags: Getting Started, Data Science, SPCS, LLM, AI, Cortex, Snowpark Container S
 
 Duration: 1
 
-In this Quickstart, you’ll learn how to extract and analyze insights from text-rich videos such as instructional content and recorded meetings. We’ll walk through a multi-step pipeline that includes:
-* **Frame and audio extraction** from the source video
-* **Optical Character Recognition (OCR)** using `PARSE_DOCUMENT` and speech-to-text transcription using `AI_TRANSCRIBE`, both powered by [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/)
-* **Key moment and semantic event detection** using the Qwen2.5-VL model deployed on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/)
+Troves of enterprise data exists as video and audio, but its utility has been limited due to the difficulty of processing it to extract insights. That barrier to entry has rapidly crumbled in the last few years, with the advances of AI models that enable cheap and fast Optical Character Recognition (OCR) and Automatic Speech Recognition (ASR), as well as powerful Vision Language Models (VLMs), able to extract meaning and grounding data from video. 
 
-Finally, you’ll store the output from all three models into structured Snowflake tables to enable rich analytical queries—such as measuring meeting effectiveness, identifying decision points, or extracting action items—directly within the Data Cloud.
-
+In this Quickstart, we will employ all three techniques to analyze meeting video to extract insights.
 
 ![1](assets/1_arch_diagram.png)
 
@@ -29,17 +25,21 @@ Finally, you’ll store the output from all three models into structured Snowfla
 * Basic understanding of Snowflake and containers.
 * A [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 * Installation of [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
-* Git
-* Docker to build Containers
+* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+* [Docker Desktop](https://www.docker.com/get-started/)
+* [Hugging Face](https://huggingface.co) account and [Access Token](https://huggingface.co/docs/hub/en/security-tokens) for downloading models
 
 ### What You Will Build
 
-* A containerized service that processes video to extract key moments for analysis.
+You will build a multi-step pipeline that uses [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/) for OCR and ASR, and VLM deployed on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/) to extract structured data from meeting video. You’ll store the output from all three models into structured Snowflake tables and build a simple chatbot allowing you to use language to generate rich analytical queries. You will be able to assess meeting effectiveness, identify decision points, and extract action items—directly within the AI Data Cloud. 
 
 ### What You Will Learn
 
-1. How to create an application on Snowpark Container Services.
-2. How to extend Snowflake Cortex AI with models hosted on Snowpark Container Services.
+You will gain hands-on experience with:
+* **Cortex `AI_TRANSCRIBE`** for ASR
+* **Cortex `PARSE_DOCUMENT`** for OCR
+* **Snowpark Container Services** for loading the [Qwen2.5-VL](https://github.com/QwenLM/Qwen2.5-VL) large vision model from Hugging Face and running online inference
+
 
 ## Component Overview
 
@@ -66,7 +66,7 @@ Snowpark Container Services and Snowflake Cortex AI are two of the major compone
 
 Duration: 6
 
-Login using your unique credentials if you have a Snowflake account. If you don’t have a Snowflake account, visit [https://signup.snowflake.com/](https://signup.snowflake.com/) and sign up for a free 30-day trial environment.
+Log in using your unique credentials if you have a Snowflake account. If you don’t have a Snowflake account, visit [https://signup.snowflake.com/](https://signup.snowflake.com/) and sign up for a free 30-day trial environment.
 
 ![new_trial](assets/2_start_snowflake_trial.png)
 
@@ -76,25 +76,17 @@ For this guide, you will only need Snowflake's **Standard Edition** on AWS. You 
 Choose **US West (Oregon)** for the AWS Region and log in.
 
 
-### Setup Environment
+### Set up SQL Environment
 
-We first need to set up our Snowflake account, we'll be creating Roles, Databases and a Warehouse.  Within Snowpark Container Services, we'll create a Compute Pool which provides computing resources to run our Containerized Service. We'll also need to enable our Service to reach external sites such as Huggingface and Pypi.  Snowflake accounts are secure by default and do not allow external access.  Lastly, we'll create an Image Registry for storing container images, and a Stage for storing our video and audio files will be created. All of these steps will be done within Snowsight.
+1. Git clone the Quickstart's [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis) to your local machine. 
+2. To prepare your Snowflake environment, in Snowsight, create a SQL file by clicking on **+ Create**, then **SQL File**.
+3. Name the file `run.sql` and copy the contents [run.sql](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/run.sql) from the cloned repository
 
-
-
-Git clone the Quickstart's [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis) to your local machine. 
-
-
-To prepare your Snowflake environment, in Snowsight, create a SQL file by clicking on **+ Create**, then **SQL File**.
-
-Rename the empty SQL file to `setup.sql`.
-
-Copy the "Common Setup" section of [setup.sql](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/setup.sql) into your newly created setup.sql SQL file. 
-
+<!-- TODO needs updated due to filename change-->
 ![4](assets/4_create_setup_sql_file.png)
 
-
-To run the Common Setup, click at the beginning of a SQL line and click the blue Run button above your `setup.sql` file. 
+<!-- TODO feels like we should hold off this until they install CLI
+4. To run the Common Setup, click at the beginning of a SQL line and click the blue Run button above your `run.sql` file. 
 
 ![5](assets/5_run_setup.png)
 
@@ -102,46 +94,7 @@ The output of the SQL command will appear in the results box.
 
 ![6](assets/6_setup_output.png)
 
-
-### Upload Files to Stage
-
-Our application will process video and audio files that are stored on a Snowflake Stage. We'll need to first upload the video and audio files from the Github repo to our Snowflake account.
-
-Using the Snow CLI, list the Stage you previously created
-~~~bash
-$ snow stage list
-+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-|        |        |        |        |     |         |        |         |        |        |         |       | notifi |         |        |         |        |
-|        |        | databa |        |     | has_cre | has_en |         |        |        |         |       | cation | storage |        | owner_r | direct |
-| create |        | se_nam | schema |     | dential | crypti |         | commen |        |         |       | _chann | _integr | endpoi | ole_typ | ory_en |
-| d_on   | name   | e      | _name  | url | s       | on_key | owner   | t      | region | type    | cloud | el     | ation   | nt     | e       | abled  |
-|--------+--------+--------+--------+-----+---------+--------+---------+--------+--------+---------+-------+--------+---------+--------+---------+--------|
-| 2025-0 | VIDEOS | HOL_DB | PUBLIC |     | N       | N      | ACCOUNT |        | None   | INTERNA | None  | None   | None    | None   | ROLE    | Y      |
-| 5-29   |        |        |        |     |         |        | ADMIN   |        |        | L NO    |       |        |         |        |         |        |
-| 15:21: |        |        |        |     |         |        |         |        |        | CSE     |       |        |         |        |         |        |
-| 23.957 |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
-| 000-07 |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
-| :00    |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
-+---------------------------------------------------------------------------------------------------------------------------------------------------------+
-~~~
-
-Upload the video files diretory (`videos`) and its' contents to the Stage from the root of the cloned repo directory (`sfguide-extracting-insights-from-video-with-multimodal-ai-analysis`)
-~~~bash
-$ snow stage copy --recursive ./videos @hol_db.public.videos
-~~~
-
-List the contents of the Stage
-~~~bash
-$ snow stage list-files @hol_db.public.videos
-+-------------------------------------------------------------------------------------------------------------------------------------------+
-| name                                                        | size     | md5                              | last_modified                 |
-|-------------------------------------------------------------+----------+----------------------------------+-------------------------------|
-| videos/amicorpus/IS1004/audio/IS1004a.Mix-Lapel.mp3         | 12748652 | f9ee1bfce574d6ec1de89717465ebf3b | Fri, 30 May 2025 22:33:00 GMT |
-| videos/amicorpus/IS1004/audio/IS1004c.Mix-Lapel.mp3         | 36222956 | 6c25066bfdecf7db3a302c7a43f6173b | Fri, 30 May 2025 22:32:57 GMT |
-...
-+-------------------------------------------------------------------------------------------------------------------------------------------+
-~~~
-
+--> 
 
 ### Install Snowflake CLI
 Install the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index). Snowflake CLI can be used to upload the video and audio files to a Stage, check resources, and push container images to the Image Registrykk. 
@@ -182,10 +135,58 @@ Verify SnowCLI is correctly configured by running:
 +-----------------------------------------------------------------------------------------+
 ~~~
 
+### Run Common Setup 
+Execute the first section of the `run.sql` file labeled with the comment `COMMON SETUP`: 
+1. Create the `hol_user_role` Role, `hol_db` Database, and `hol_warehouse` Warehouse which we will use to run subsequent steps.
+2. To use Snowpark Container Services, we'll create the `hol_compute_pool` Compute Pool, which provides computing resources to run our containerized Service. 
+3. We'll also need to enable our Service to reach external sites such as Hugging Face and PyPI, so we create the `dependencies_access_integration` External Access Integration. Snowflake accounts are secure by default and do not allow external access.  
+4. We create the `hol_db.public.repo` Image Repository for storing container images
+5. Finally, we create Stages `@video` and `@model` for storing files used in later stages
+
+### Upload Files to Stage
+
+Our application will process video and audio files that are stored on a Snowflake Stage. We'll need to first upload the video and audio files from the Github repo to our Snowflake account.
+
+Using the Snow CLI, list the Stage you previously created
+~~~bash
+$ snow stage list
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+|        |        |        |        |     |         |        |         |        |        |         |       | notifi |         |        |         |        |
+|        |        | databa |        |     | has_cre | has_en |         |        |        |         |       | cation | storage |        | owner_r | direct |
+| create |        | se_nam | schema |     | dential | crypti |         | commen |        |         |       | _chann | _integr | endpoi | ole_typ | ory_en |
+| d_on   | name   | e      | _name  | url | s       | on_key | owner   | t      | region | type    | cloud | el     | ation   | nt     | e       | abled  |
+|--------+--------+--------+--------+-----+---------+--------+---------+--------+--------+---------+-------+--------+---------+--------+---------+--------|
+| 2025-0 | VIDEOS | HOL_DB | PUBLIC |     | N       | N      | ACCOUNT |        | None   | INTERNA | None  | None   | None    | None   | ROLE    | Y      |
+| 5-29   |        |        |        |     |         |        | ADMIN   |        |        | L NO    |       |        |         |        |         |        |
+| 15:21: |        |        |        |     |         |        |         |        |        | CSE     |       |        |         |        |         |        |
+| 23.957 |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
+| 000-07 |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
+| :00    |        |        |        |     |         |        |         |        |        |         |       |        |         |        |         |        |
++---------------------------------------------------------------------------------------------------------------------------------------------------------+
+~~~
+
+Upload the video files directory [`videos`](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos) from cloned repo the Stage 
+~~~bash
+$ snow stage copy --recursive ./videos @hol_db.public.videos
+~~~
+
+List the contents of the Stage
+~~~bash
+$ snow stage list-files @hol_db.public.videos
++-------------------------------------------------------------------------------------------------------------------------------------------+
+| name                                                        | size     | md5                              | last_modified                 |
+|-------------------------------------------------------------+----------+----------------------------------+-------------------------------|
+| videos/amicorpus/IS1004/audio/IS1004a.Mix-Lapel.mp3         | 12748652 | f9ee1bfce574d6ec1de89717465ebf3b | Fri, 30 May 2025 22:33:00 GMT |
+| videos/amicorpus/IS1004/audio/IS1004c.Mix-Lapel.mp3         | 36222956 | 6c25066bfdecf7db3a302c7a43f6173b | Fri, 30 May 2025 22:32:57 GMT |
+...
++-------------------------------------------------------------------------------------------------------------------------------------------+
+~~~
+
+
 <!-- ------------------------ -->
 ## Video Analysis
 
-In your `setup.sql` file copy the `meeting_id` and `meeting_part` SQL commands and run them.
+In your `run.sql` file copy the `meeting_id` and `meeting_part` SQL commands and run them.
 
 ### Build Docker Container
 
