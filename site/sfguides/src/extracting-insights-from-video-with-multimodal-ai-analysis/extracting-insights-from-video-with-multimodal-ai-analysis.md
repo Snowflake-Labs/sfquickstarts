@@ -285,10 +285,24 @@ Follow these steps in the `VIDEO ANALYSIS` section of `run.sql`:
 
 ~~~
 
+
+## Slides Analysis with OCR
+<!-- ------------------------ -->
+
+Duration: 10
+
+Write me
+
+<!-- ------------------------ -->
+
 ## Speech Recognition
 <!-- ------------------------ -->
 
-speech recognition section goes here
+Duration: 10
+
+In this section we will use Cortex `AI_TRANSCRIBE` to carry out Automatic Speech Recognition (ASR) and transcribe the meeting audio. 
+
+**Note: AI_TRANSCRIBE is currently a [Snowflake Preview feature](https://docs.snowflake.com/en/release-notes/preview-features). Contact your account representative to obtain access.** 
 
 <!-- ------------------------ -->
 ## Clean up
