@@ -12,13 +12,12 @@ tags: Getting Started, Data Science, SPCS, LLM, AI, Cortex, Snowpark Container S
 
 ## Overview
 
-Duration: 1
+Duration: 10
 
 Troves of enterprise data exists as video and audio, but its utility has been limited due to the difficulty of processing it to extract insights. That barrier to entry has rapidly crumbled in the last few years, with the advances of AI models that enable cheap and fast Optical Character Recognition (OCR) and Automatic Speech Recognition (ASR), as well as powerful Vision Language Models (VLMs), able to extract meaning and grounding data from video. 
 
-In this Quickstart, we will employ all three techniques to analyze meeting video to extract insights.
+In this Quickstart, we will employ all three techniques to analyze meeting video to extract insights. We are using the [AMI Corpus](https://groups.inf.ed.ac.uk/ami/corpus/), which is a **multi-modal dataset of 100s of hours of simulated scenario meetings in which particpants play different roles in a design team, taking a design project from kick-off to completion over the course of a day**. The same technques shown here are broadly applicable to other meeting video, especially when valuable information is displayed on-screen, such as presentation slides or demos. 
 
-![1](assets/1_arch_diagram.png)
 
 ### Preqrequisites
 
@@ -33,17 +32,19 @@ In this Quickstart, we will employ all three techniques to analyze meeting video
 
 You will build a multi-step pipeline that uses [Snowflake Cortex AI](https://www.snowflake.com/en/product/features/cortex/) for OCR and ASR, and VLM deployed on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/) to extract structured data from meeting video. You’ll store the output from all three models into structured Snowflake tables and build a simple chatbot allowing you to use language to generate rich analytical queries. You will be able to assess meeting effectiveness, identify decision points, and extract action items—directly within the AI Data Cloud. 
 
+![1](assets/1_arch_diagram.png)
+
 ### What You Will Learn
 
 You will gain hands-on experience with:
 * **Cortex `AI_TRANSCRIBE`** for ASR
 * **Cortex `PARSE_DOCUMENT`** for OCR
-* **Snowpark Container Services** for loading the [Qwen2.5-VL](https://github.com/QwenLM/Qwen2.5-VL) large vision model from Hugging Face and running online inference
+* **Snowpark Container Services (SPCS)** for loading the [Qwen2.5-VL](https://github.com/QwenLM/Qwen2.5-VL) large vision model from Hugging Face and running online inference
 
 
 ## Component Overview
 
-Duration: 1
+Duration: 3
 
 Snowpark Container Services and Snowflake Cortex AI are two of the major components that are utilized within this Quickstart. Below is an overview of them.
 
@@ -62,9 +63,9 @@ Snowpark Container Services and Snowflake Cortex AI are two of the major compone
 <!-- ------------------------ -->
 ## Prepare Your Lab Environment
 
-### Create Snowflake Account
+Duration: 15
 
-Duration: 6
+### Create Snowflake Account
 
 Log in using your unique credentials if you have a Snowflake account. If you don’t have a Snowflake account, visit [https://signup.snowflake.com/](https://signup.snowflake.com/) and sign up for a free 30-day trial environment.
 
@@ -74,7 +75,6 @@ Log in using your unique credentials if you have a Snowflake account. If you don
 For this guide, you will only need Snowflake's **Standard Edition** on AWS. You may want to select **Enterprise** to try out advanced features such as Time Travel, materialized views, or Failover.
 
 Choose **US West (Oregon)** for the AWS Region and log in.
-
 
 ### Set up SQL Environment
 
@@ -182,16 +182,18 @@ $ snow stage list-files @hol_db.public.videos
 +-------------------------------------------------------------------------------------------------------------------------------------------+
 ~~~
 
+### Meeting Source Setup
+Execute the two lines in `run.sql` that set the `meeting_id` and `meeting_part` variables. This will determine which video, audio, and image files you just uploaded will be used by subsequent analysis steps. This should match files that you uploaded to the 
+
 
 <!-- ------------------------ -->
 ## Video Analysis
 
-In your `run.sql` file copy the `meeting_id` and `meeting_part` SQL commands and run them.
+Duration: 30
 
 ### Build Docker Container
 
 In the [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos), navigate to the `video_analysis` directory.
-
 
 Using the Snow CLI, list your Image Registry:
 
@@ -247,7 +249,41 @@ $ snow spcs image-repository list-images repo
 |                           |               |        | 51e4afcea611a35                                          |                                         |
 +---------------------------------------------------------------------------------------------------------------------------------------------------------+
 ~~~
+ 
+### Execute Containerized Job
+The image you built and pushed to SPCS contains the [vLLM](https://docs.vllm.ai/en/latest/) runtime which provides scalable hosting for large AI models with support for multiple GPU instances. It is pre-configured to load the [Qwen2.5-VL-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct) VLM from Hugging Face. This model excels at:
+- Visual understanding: object recognition, but also analyzing slides, charts, and graphics
+- Understanding long videos and capturing events: for videos of over 1 hour, complete with the ability to capture events and pinpoint relevant video segments
+- Generating structured outputs: returning results in structured formats to be used for Snowflake analytical processing
 
+We will use [SPCS Jobs](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-services#execute-a-job-service) to run the model against meeting videos with the following prompt:
+> "Provide a detailed description of this meeting video, dividing it in to sections with a one sentence description, and capture the most important text that's displayed on screen. Identify the start and end of each section with a timestamp in the 'hh:mm:ss' format. Return the results as JSON"
+
+The resulting JSON will be parsed into a structured table called `video_analysis`.
+
+Follow these steps in the `VIDEO ANALYSIS` section of `run.sql`:
+1. (Optional) Dun the `DROP SERVICE IF EXISTS` command if you are executing the Job repeatedly to clean up previous runs
+2. Run the `EXECUTE JOB SERVICE` command to run the Job
+  - Replace the `<image>:<version>` section with the image path from the previous step
+  - Replace `<your_hf_token>` with you Hugging Face token to download the model
+  - The exact meeting the model will analyze have already been preset when you set the `$meeting_id` and `$meeting_part` SQL variables earlier
+  - The command is configured to run asynchronously, so it should complete within a few seconds, however the underlying Job may take 10+ minutes to complete.
+    - To monitor the Job status and progress, use the **Jobs** tab of the  **Services & jobs** area in Snowsight 
+    - Select the `PROCESS_VIDEO` Job to see the status of the containerized workload. You can also use the **Logs** tab to see the log lines being emitted by the model
+3. Run the `SELECT` statement in the `video_analysis` table when the Job completes to see the model's anslysis of the meeting. The output should look similar to the below:
+
+~~~bash
++------------+--------------+----------------------------------------------+------------+----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| MEETING_ID | MEETING_PART | VIDEO_PATH                                   | START_TIME | END_TIME | DESCRIPTION                                                                                                                                                                                                                                                                                                              |
++------------+--------------+----------------------------------------------+------------+----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| IS1004     | IS1004c      | /videos/amicorpus/IS1004/video/IS1004c.C.mp4 | 00:00:00   | 00:00:21 | The video opens with a group of four individuals entering a room equipped with a large screen displaying a presentation titled "Conceptual Design Meeting." The room is set up for a collaborative discussion, with a table covered in papers and a laptop. The individuals sit down and begin engaging in conversation. |
+| IS1004     | IS1004c      | /videos/amicorpus/IS1004/video/IS1004c.C.mp4 | 00:00:21   | 00:01:45 | The group continues their discussion, focusing on the content displayed on the screen. The screen shows a slide titled "Method" with bullet points about user preferences and constraints. The individuals take notes and discuss the information presented.                                                             |
+| IS1004     | IS1004c      | /videos/amicorpus/IS1004/video/IS1004c.C.mp4 | 00:01:45   | 00:03:09 | The screen transitions to a slide titled "Findings," listing various aspects such as user preferences, device requirements, and design constraints. The group discusses these findings, taking notes and sharing insights related to the design process.                                                                 |
+| IS1004     | IS1004c      | /videos/amicorpus/IS1004/video/IS1004c.C.mp4 | 00:03:09   | 00:04:58 | The screen changes to a slide titled "Interface Concept," which includes a diagram and text discussing the design model and technology. The group engages in a detailed discussion about the interface concept, with one individual standing and pointing at the screen while others take notes.                         |
+| IS1004     | IS1004c      | /videos/amicorpus/IS1004/video/IS1004c.C.mp4 | 00:04:58   | 00:06:57 | The screen displays a slide titled "Method" again, listing steps for the next phase of the project. The group continues their discussion, focusing on the outlined steps and making decisions based on the information presented.                                                                                        |
++------------+--------------+----------------------------------------------+------------+----------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+~~~
 
 ## Speech Recognition
 <!-- ------------------------ -->
