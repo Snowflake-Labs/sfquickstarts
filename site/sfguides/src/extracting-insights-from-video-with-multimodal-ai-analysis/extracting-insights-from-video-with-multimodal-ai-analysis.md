@@ -234,7 +234,10 @@ $ snow spcs image-registry login
 Login Succeeded
 ~~~
 
-Push the image to the registry
+### Push Container to Registry
+
+Now that you've built the container, we need to upload or Push the container image to the registry. The Snowpark Container Services (SPCS) Container Registry is a secure, Snowflake-managed repository for storing and versioning container images. It enables developers to seamlessly build, deploy, and run containerized applications within the Snowflake Data Cloud.
+
 ~~~bash
 $ docker push sfsehol-summit25-unstr-data-processtest-bchxei.registry.snowflakecomputing.com/hol_db/public/repo/process_video:latest
 ~~~
@@ -249,9 +252,11 @@ $ snow spcs image-repository list-images repo
 |                           |               |        | 51e4afcea611a35                                          |                                         |
 +---------------------------------------------------------------------------------------------------------------------------------------------------------+
 ~~~
- 
+
+
+
 ### Execute Containerized Job
-The image you built and pushed to SPCS contains the [vLLM](https://docs.vllm.ai/en/latest/) runtime which provides scalable hosting for large AI models with support for multiple GPU instances. It is pre-configured to load the [Qwen2.5-VL-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct) VLM from Hugging Face. This model excels at:
+The image you built and pushed to SPCS Image Repository contains the [vLLM](https://docs.vllm.ai/en/latest/) runtime which provides scalable hosting for large AI models with support for multiple GPU instances. It is pre-configured to load the [Qwen2.5-VL-7B-Instruct](https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct) VLM from Hugging Face. This model excels at:
 - Visual understanding: object recognition, but also analyzing slides, charts, and graphics
 - Understanding long videos and capturing events: for videos of over 1 hour, complete with the ability to capture events and pinpoint relevant video segments
 - Generating structured outputs: returning results in structured formats to be used for Snowflake analytical processing
