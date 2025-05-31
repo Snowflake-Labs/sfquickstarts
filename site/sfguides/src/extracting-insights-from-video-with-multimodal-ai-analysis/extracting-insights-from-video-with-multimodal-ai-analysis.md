@@ -3,7 +3,7 @@ id: extracting-insights-from-video-with-multimodal-ai-analysis
 summary: Extract images, transcribe audio, and analyze key moments from videos using Cortex AI and Snowpark Container Services—all within Snowflake.
 categories: Getting-Started
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, SPCS, LLM, AI, Cortex, Snowpark Container Services
 
