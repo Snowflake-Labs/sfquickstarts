@@ -305,9 +305,14 @@ Write me
 
 Duration: 10
 
-In this section we will use Cortex `AI_TRANSCRIBE` to carry out Automatic Speech Recognition (ASR) and transcribe the meeting audio. 
+In this section we will use Cortex `AI_TRANSCRIBE` to carry out Automatic Speech Recognition (ASR) and transcribe the meeting audio. Cortex AI Transcribe provides high-quality transcription of audio files using the latest AI models, allowing us to easily integrate transcription into our application.  We will use Cortex to transcribe the audio into text and then add it into our database.
 
-**Note: AI_TRANSCRIBE is currently a [Snowflake Preview feature](https://docs.snowflake.com/en/release-notes/preview-features). Contact your account representative to obtain access.** 
+
+**Note:** `AI_TRANSCRIBE` is currently a [Snowflake Preview feature](https://docs.snowflake.com/en/release-notes/preview-features). Contact your account representative to obtain access. 
+
+
+In your Snowsight `run.sql` file, go to the section labeled `-- SPEECH RECOGNITION`. Run this code.
+
 
 <!-- ------------------------ -->
 ## Clean up
