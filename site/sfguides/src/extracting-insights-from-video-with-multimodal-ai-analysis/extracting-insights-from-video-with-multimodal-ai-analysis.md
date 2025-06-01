@@ -183,7 +183,7 @@ $ snow stage list-files @hol_db.public.videos
 ~~~
 
 ### Meeting Source Setup
-Execute the two lines in `run.sql` that set the `meeting_id` and `meeting_part` variables. This will determine which video, audio, and image files you just uploaded will be used by subsequent analysis steps. This should match files that you uploaded to the 
+Execute the two lines in `run.sql` that set the `meeting_id` and `meeting_part` variables. This will determine which video, audio, and image files you just uploaded will be used by subsequent analysis steps. This should match files that you uploaded to the Stage.
 
 
 <!-- ------------------------ -->
