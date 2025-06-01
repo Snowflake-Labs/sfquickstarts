@@ -3,7 +3,7 @@ id: extracting-insights-from-video-with-multimodal-ai-analysis
 summary: Extract images, transcribe audio, and analyze key moments from videos using Cortex AI and Snowpark Container Services—all within Snowflake.
 categories: Getting-Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, SPCS, LLM, AI, Cortex, Snowpark Container Services
 
@@ -308,7 +308,7 @@ In your Snowsight `run.sql` file, go to the section labeled `OCR`:
 | MEETING_ID | MEETING_PART | IMAGE_PATH                                           | TEXT_CONTENT                                                                                                                       |         |
 +------------+--------------+------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+---------+
 | IS1004     | IS1004c      | amicorpus/IS1004/slides/IS1004c.1.34__72.51.jpg      | werPoint- [Agenda2]Window Help 107% 2) »i Arial 18 18 Design New Slide 18  Real Reaction al Design meeting Agenda                  |         |
-| IS1004     | IS1004c      | amicorpus/IS1004/slides/IS1004c.116.06__135.99.jpg   | werPoint - [Agenda2]Window Help X107% 2) »i Arial 18 Design New Slide Real Reaction  Real Reaction al Design meeting by: S. Marcel | Profedt |
+| IS1004     | IS1004c      | amicorpus/IS1004/slides/IS1004c.116.06__135.99.jpg   | werPoint - [Agenda2]Window Help X107% 2) »i Arial 18 Design New Slide Real Reaction  Real Reaction al Design meeting by: S. Marcel |
 | IS1004     | IS1004c      | amicorpus/IS1004/slides/IS1004c.1219.96__1490.04.jpg | 1)lide Shov Window 107% 2)»i Arial 18  # Method # For the Power Source: Solar Cells and Batteries                                  |         |
 +------------+--------------+------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+---------+
 
@@ -351,32 +351,67 @@ By completing the previous steps, we now have 3 distinct data sources about the 
 ### Cortex Analyst
 [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) allows users to ask questions in natural language and receive direct answers without writing SQL. The structured data we have extracted so far contains columns identifying the meeting part and time stamps. With tweaks to model prompts, additional structured columns can be added to our analysis. 
 
-TODO write me 
+To use Cortex Analyst, we create a [**semantic model**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-model-spec) which allows us to map our domain specific terminology (meeting, video, transcript, slides, etc) to database schemas and add contextual meaning. For example, when a user asks a query about a specific time in the meeting, we can establish a link with the `start_time` and `end_time` columns in our `video_analysis` table. This mapping helps Cortex Analyst understand the user’s intent and provide accurate answers.
 
+1. Navigate to the **Cortex Analyst** area in Snowsight under **Snowflake AI & ML Studio**
+2. Specify `hol_user_role` and `hol_warehouse` when prompted
+3. Select the [`meeting_analysis.yaml`](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/chatbot/meeting_analysis.yaml) file from the `@model` stage
+![semantic_view](assets/create_semantic_view.png)
+4. You should now see the semantic model that we have pre-defined over our three tables
+![semantic_model](assets/semantic_model.png)
+5. You can use the chat view to test some queries against the data, the **Verified Queries** section provides a good starting point.
+![semantic_query](assets/semantic_query.png)
+
+Explore the model and verified queries that have been pre-defined. Test out any questions you'd like to ask the model and define verified queries when the built text-to-SQL engine is unable to automatically infer the right SQL.
+
+### Streamlit Chatbot
+In this final step, we'll put all the pieces we built so far together into a single LLM-powered chatbot, allowing us to be able to use natural language to learn about the meeting. 
+
+1. Navigate to **Streamlit** under **Projects** in Snowsight
+2. Create a new Streamlit app called `meeting_chat` using `hol_db` and `hol_warehouse`
+![create_streamlit](assets/create_streamlit.png)
+3. In the **Packages** menu, include `snowflake-ml-python` in the list of necessary packages
+3. Replace the `streamlit_app.py` with [this file from the repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/blob/main/chatbot/streamlit_app.py)
+4. Run the Streamlit app
+
+You should now be able to as the chatbot questions about the meeting. The relevant rows returned by Cortex Analyst are parsed into the LLM's context, which is able to summarize them into clear and accurate answers.
+![chatbot](assets/chatbot.png)
+
+Expanding the analyst section, you will be able to see the underlying queries being executed against the parsed data.
+![chatbot_sql](assets/chatbot_sql.png)
+
+If a question you ask is not understood by Cortex Analyst, the chatbot will return some suggestions. You can edit the semantic model's verified queries (see previous step) to allow the model to uderstand more custom questions.
+![chatbot_suggestions](assets/chatbot_suggestions.png)
 
 
 ## Clean up
 
-Cleaning up....
+Duration: 2
+
+In the `run.sql` file, run the steps in the `CLEANUP` section. Ensure the following are removed in order to not incur charges:
+- `meeting_chat` Streamlit app
+- `hol_db` Database
+- `hol_warehouse` Warehouse
+- `hol_compute_pool` Compute Pool
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 1
 
 ### Overview
-
+In this quickstart, you used Optical Character Recognition (OCR),  Automatic Speech Recognition (ASR), as well as powerful Vision Language Models (VLMs) to extract meeting insights from video files.  
 
 ### What You Learned
 
-- Creating a Snowpark Container Service based application that hosts an AI model.
+- Creating a Snowpark Container Service based application that hosts an AI model
 - Calling Snowflake Cortex AI functions.
-- Processing video with multi-modal models to extract events.
+- Using Cortex Analyst with semantic models
 
 ### Resources
 
 - Github repo [Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis)
 - Snowpark Container Services [Documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 - Snowflake Cortex AI [documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
-
+- [Getting Started with Cortex Analyst Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_analyst/)
 
 
