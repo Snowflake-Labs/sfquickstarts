@@ -189,7 +189,7 @@ Execute the two lines in `run.sql` that set the `meeting_id` and `meeting_part` 
 <!-- ------------------------ -->
 ## Video Analysis
 
-Duration: 30
+Duration: 20
 
 ### Build Docker Container
 
@@ -269,8 +269,8 @@ The resulting JSON will be parsed into a structured table called `video_analysis
 Follow these steps in the `VIDEO ANALYSIS` section of `run.sql`:
 1. (Optional) Dun the `DROP SERVICE IF EXISTS` command if you are executing the Job repeatedly to clean up previous runs
 2. Run the `EXECUTE JOB SERVICE` command to run the Job
-  - Replace the `<image>:<version>` section with the image path from the previous step
-  - Replace `<your_hf_token>` with you Hugging Face token to download the model
+  - Replace the `&lt;image&gt;:&lt;version&gt;` section with the image path from the previous step
+  - Replace `&lt;your_hf_token&gt;` with you Hugging Face token to download the model
   - The exact meeting the model will analyze have already been preset when you set the `$meeting_id` and `$meeting_part` SQL variables earlier
   - The command is configured to run asynchronously, so it should complete within a few seconds, however the underlying Job may take 10+ minutes to complete.
     - To monitor the Job status and progress, use the **Jobs** tab of the  **Services & jobs** area in Snowsight 
@@ -296,7 +296,24 @@ Follow these steps in the `VIDEO ANALYSIS` section of `run.sql`:
 
 Duration: 10
 
-Write me
+Next, we will utilize [Cortex `PARSE_DOCUMENT`](https://docs.snowflake.com/en/sql-reference/functions/parse_document-snowflake-cortex) to carry out Optical Character Recognition (OCR) of the slide content presented in the meeting. The function can extract full-text and table content from slides, and we employ *layout mode*  to maintain document structure via semantic chunking.
+
+In your Snowsight `run.sql` file, go to the section labeled `OCR`:
+1. Create the `slides_analysis` table
+2. Run the `INSERT` statement, which invokes `PARSE_DOCUMENT` in layout mode on each slide image (JPG) presented in the meeting
+3. List the contents of the table, it should contain a row for each slide. Note that the recognized text will still contain a number of irrelevant word fragments and other artifacts, since the input images frequently include the full desktop of the presenter, not just the slide content. This will be addressed in the subsequent analysis.
+
+~~~bash
++------------+--------------+------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+---------+
+| MEETING_ID | MEETING_PART | IMAGE_PATH                                           | TEXT_CONTENT                                                                                                                       |         |
++------------+--------------+------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+---------+
+| IS1004     | IS1004c      | amicorpus/IS1004/slides/IS1004c.1.34__72.51.jpg      | werPoint- [Agenda2]Window Help 107% 2) »i Arial 18 18 Design New Slide 18  Real Reaction al Design meeting Agenda                  |         |
+| IS1004     | IS1004c      | amicorpus/IS1004/slides/IS1004c.116.06__135.99.jpg   | werPoint - [Agenda2]Window Help X107% 2) »i Arial 18 Design New Slide Real Reaction  Real Reaction al Design meeting by: S. Marcel | Profedt |
+| IS1004     | IS1004c      | amicorpus/IS1004/slides/IS1004c.1219.96__1490.04.jpg | 1)lide Shov Window 107% 2)»i Arial 18  # Method # For the Power Source: Solar Cells and Batteries                                  |         |
++------------+--------------+------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------+---------+
+
+~~~
+
 
 <!-- ------------------------ -->
 
@@ -307,14 +324,37 @@ Duration: 10
 
 In this section we will use Cortex `AI_TRANSCRIBE` to carry out Automatic Speech Recognition (ASR) and transcribe the meeting audio. Cortex AI Transcribe provides high-quality transcription of audio files using the latest AI models, allowing us to easily integrate transcription into our application.  We will use Cortex to transcribe the audio into text and then add it into our database.
 
-
 **Note:** `AI_TRANSCRIBE` is currently a [Snowflake Preview feature](https://docs.snowflake.com/en/release-notes/preview-features). Contact your account representative to obtain access. 
 
+In your Snowsight `run.sql` file, go to the section labeled `SPEECH RECOGNITION`:
+1. Create the `speech_analysis` table
+2. Run the `INSERT` statement, which invokes `AI_TRANSCRIBE` on the meeting audio
+3. List the contents of the table, it should contain a single entry for each audio file, similar to this:
 
-In your Snowsight `run.sql` file, go to the section labeled `-- SPEECH RECOGNITION`, and run this section.
-
+~~~bash
++------------+--------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+| MEETING_ID | MEETING_PART | AUDIO_PATH                                           | TEXT_CONTENT                                                                                                                                     |
++------------+--------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+| IS1004     | IS1004c      | @videos/amicorpus/IS1004/audio/IS1004c.Mix-Lapel.mp3 | Okay, good afternoon. Hope you have good lunch. Yeah, we had falafel. Oh, nice. And you? Uh, yes, I had something similar, but non-vegetarian... |
++------------+--------------+------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------+
+~~~
 
 <!-- ------------------------ -->
+
+## Chatbot using Semantic Model
+<!-- ------------------------ -->
+
+Duration: 20
+
+By completing the previous steps, we now have 3 distinct data sources about the meeting (semantic analysis of video, audio transcription, OCR of slides), all extracted from a single video file. Lets now turn to the analysis part, where we leverage all three to gain insights into the meeting. We will construct a conversational bot that lets us use language to query the table data generated by the previous steps.
+
+### Cortex Analyst
+[Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) allows users to ask questions in natural language and receive direct answers without writing SQL. The structured data we have extracted so far contains columns identifying the meeting part and time stamps. With tweaks to model prompts, additional structured columns can be added to our analysis. 
+
+TODO write me 
+
+
+
 ## Clean up
 
 Cleaning up....
