@@ -1,7 +1,7 @@
 author: Luke Ambrosetti (special thanks: Brian Hess, Brad Culberson)
 id: snowflake_personalization_api
 summary: A guide to building and running a custom point-lookup API Powered by Snowflake and Python/Flask
-categories: getting-started,app-development,architecture-patterns,marketing,solution-examples
+categories: getting-started,app-development,architecture-patterns,marketing,solution-examples,Unistore,Hybrid-Tables
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
