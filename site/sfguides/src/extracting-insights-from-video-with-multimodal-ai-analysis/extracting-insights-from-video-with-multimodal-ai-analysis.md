@@ -193,7 +193,7 @@ Duration: 20
 
 ### Build Docker Container
 
-In the [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos), navigate to the `video_analysis` directory.
+In your downloaded [repo](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos), navigate to the `video_analysis` directory.
 
 Using the Snow CLI, list your Image Registry:
 
