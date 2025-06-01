@@ -311,7 +311,7 @@ In this section we will use Cortex `AI_TRANSCRIBE` to carry out Automatic Speech
 **Note:** `AI_TRANSCRIBE` is currently a [Snowflake Preview feature](https://docs.snowflake.com/en/release-notes/preview-features). Contact your account representative to obtain access. 
 
 
-In your Snowsight `run.sql` file, go to the section labeled `-- SPEECH RECOGNITION`. Run this code.
+In your Snowsight `run.sql` file, go to the section labeled `-- SPEECH RECOGNITION`, and run this section.
 
 
 <!-- ------------------------ -->
