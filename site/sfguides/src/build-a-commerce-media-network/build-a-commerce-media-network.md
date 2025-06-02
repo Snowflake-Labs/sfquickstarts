@@ -11,7 +11,7 @@ tags: Marketing, Partners, Media, Hightouch, Retail, Commerce
 # Build an Offsite Commerce Media Network on Snowflake with Hightouch & The Trade Desk
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 60
 
 In this guide you will learn how to transform your existing Snowflake investment into a user-friendly platform that a non-technical commerce media team can use to curate custom audiences and conversion events, activate them to The Trade Desk for managed service and self-service campaign execution, and provide white-labeled attribution reports.
 
@@ -41,7 +41,7 @@ Our task is to build a platform that our non-techincal media team can use to cre
 
 <!-- ------------------------ -->
 ## Enrich the Snowflake Customers table with UID2
-Duration: 5
+Duration: 10
 
 These instructions provide basic setup details for this hands-on lab. Implementation for your business may vary based on your unique data, use cases, and requirements. For detailed implementation instructions, visit the [UID2 Snowflake Integration Guide &rarr;](https://unifiedid.com/docs/guides/integration-snowflake)
 
@@ -51,15 +51,6 @@ The UID2 Snowflake Native App provides a simplified and seamless process for mat
 The UID2 Snowflake Native App allows you to enrich your customer tables with UID2 data through authorized functions and views so that you can join UID2 data from the private tables to your customers' emails and phone numbers. You cannot access the private tables directly. The UID2 Share reveals only essential data needed to perform the UID2 enrichment tasks.
 
 ![UID2 Snowflake Native App Diagram](https://unifiedid.com/assets/images/uid2-snowflake-integration-architecture-drawio-e072ef23e1ed488eabe7e9e242c67cd2.png)
-
-### Log into the shared Snowflake account
-For this hands-on lab we will access and use a shared Snowflake account with the UID2 native app pre-installed. To log into the shared account:
-1. Access the Snowflake account login here: LINK
-2. Enter the following credentials to log in:
-    - **Username**: TBD
-    - **Password**: TBD
-
-Once you are logged in you will see a database called **NAME**. This database holds the private tables that you can join to your emails to enrich them with UID2 values.
 
 ### Join UID data to your customer table
 
@@ -128,18 +119,18 @@ The results table includes the data from your customer table (e.g. email address
 
 ![](assets/uid2_snowflake_results_table_example.png)
 
-Now that your customer table is enriched with UID2 values we can use them for activation and conversion tracking instead of sending directly identifiable information (DII). This will provide better privacy and security for your customer data and will improve your ability to reach your audience and match conversions to impressions and clicks for measurement.
+Now that your customer table is enriched with UID2 values, we can use them for activation and conversion tracking instead of sending directly identifiable information (DII). This will provide better privacy and security for your customer data and will improve your ability to reach your audience and match conversions to impressions and clicks for measurement.
 
 Now that we have our identity data ready to go, let's create our audience curation and activation platform using similar Snowflake data.
 
 <!-- ------------------------ -->
 ## Access your Hightouch demo account
-Duration: 1
+Duration: 3
 
-In this hands-on lab you get limited time access to a Hightouch account with:
+In this hands-on lab, you get limited time access to a Hightouch account with:
 1. **Full access to a Highotuch account with Customer Studio**, Hightouch's no-code UI that enables marketers to build custom audiences & journeys on your existing Snowflake datasets.
 2. **A pre-connected Snowflake account** loaded with mock datasets that represent your customers, loyalty memberships, hotel visits, purchases, and product metadata.
-3. **A pre-connected The Trade Desk account** with credential access send first-party data segments and offline conversion events.
+3. **A pre-connected The Trade Desk account** with credential access to send first-party data segments and offline conversion events.
 
 To access your Hightouch demo account:
 1. Click on the link provided during the session to access the demo account signup form.
@@ -151,7 +142,7 @@ The account comes pre-connected to a shared Snowflake account with mock data for
 
 <!-- ------------------------ -->
 ## Define the data schema
-Duration: 1
+Duration: 5
 
 Data schemas define how data is structured, including the data types (like users, events, accounts, and households) and relationships between those data types. If you think of your data warehouse like an actual house, your data schema is the blueprint. Just like a blueprint outlines the structure of a house—where the rooms are and how they connect—a data schema defines how your data is organized and how different parts of your data relate to one another.
 
@@ -189,7 +180,7 @@ The parent model will now appear in the schema builder. You can edit an existing
 ### Create Hotel Visits related model
 Related models and events provide additional characteristics or actions on which you can filter your parent model. When you create a related model, you simultaneously set up the relationship between it and other objects in the schema. Related objects can have 1:many, 1:1, or many:1 relationships with other objects.
 
-For our Travel Media Network we will create a related model for Hotel Visits  with a many:1 relationship with your Customers object so that we can create segments based on past or upcoming visits to certain hotels.
+For our travel media network we will create a related model for Hotel Visits  with a many:1 relationship with your Customers object so that we can create segments based on past or upcoming visits to certain hotels.
 
 1. Click the **+** button on the **Customers parent model** that you created before and select **Create a related model**.
     ![](assets/4_1_create_related_model.png)
@@ -234,7 +225,7 @@ The **Purchases** parent model will now be linked to the Customers parent model.
 
 <!-- ------------------------ -->
 ## Create a custom audience
-Duration: 1
+Duration: 5
 
 Now that we've built the schema for audience building and conversion tracking, we can use Hightouch's audience builder to create a custom audience for our advertising partner's upcoming campaign.
 
@@ -282,7 +273,7 @@ Your audience definition has now been saved in Hightouch and is ready to be acti
 
 <!-- ------------------------ -->
 ## Sync the custom audience to The Trade Desk
-Duration: 1
+Duration: 3
 
 Now we will sync the audience that we created to The Trade Desk for targeting. In this example, we will use a first-party data segment to sync the audience to your own The Trade Desk seat for managed service execution. Hightouch also offers an integration with The Trade Desk's third-party data marketplace where you can list audiences for public or private use and set CPM rates so that The Trade Desk can automatically track advertising usage, bill your customers, and pay you for their usage.
 
@@ -313,7 +304,7 @@ The Run Summary page provides granular insight into the status and speed of the 
 
 <!-- ------------------------ -->
 ## Run a managed service campaign with the audience
-Duration: 1
+Duration: 5
 
 Now that the Altuva team has access to the audience in THe Trade Desk, they can select and target that audience in their campaigns by adding the audience to an ad group.
 
@@ -327,7 +318,7 @@ Altuva can also sync audiences through the third-party data marketplace for Omni
 
 <!-- ------------------------ -->
 ## Create a brand-specific conversion feed
-Duration: 1
+Duration: 5
 
 Now that Altuva is actively targeting Omnira's audience with ads, Omnira want to track the success of their campaign in The Trade Desk. However, it's important that the reports that Altuva provide only includes conversions and revenue from Omnira products. This means that we will need to provide the Altuva team with the ability to easily segment their conversion events based on the brand of product purchases.
 
@@ -349,7 +340,7 @@ Now you have a brand-specific conversion audience that you can sync to The Trade
 
 <!-- ------------------------ -->
 ## Sync the brand-specific conversion data to The Trade Desk
-Duration: 1
+Duration: 3
 
 To activate the brand-specific Purchase events for measurement against our campaign, we will send the conversion data directly to their advertising seat. We then have the option to use those conversions in our own ad seat for managed services, or to share a feed of those conversion events with Omnira them to measure results against their self-service campaign:
 1. Click **Add Sync** from the Omnira Purchases audience page.
@@ -374,7 +365,7 @@ You have successfully set up a conversion feed that will send new conversions to
 
 <!-- ------------------------ -->
 ## Use conversion data for measurement & reporting
-Duration: 1
+Duration: 5
 
 ### Measure conversions in managed service campaigns
 Now that the conversion data has been synced to our advertising seat, they can use that data for campaign measurement and reporting in our managed service campaign. Conversion events can be found within The Trade Desk by navigating to the **Advertiser Data & Identity** tile.
@@ -388,22 +379,23 @@ If we were enabling a self-service campaign for Omnira, we could alternatively c
 
 <!-- ------------------------ -->
 ## Set up REDS data feed into Snowflake
-Duration: 1
+Duration: 5
 
-What is REDS? Why is it awesome?
-How can you use it?
+Raw Event Data Stream (REDS) is one of The Trade Desk's Snowflake-supported reporting solutions. It provides partners with log-level data on impressions, clicks, video views, and conversions from campaigns run across publishers. REDS data can be collected and delivered to Snowflake on an hourly basis.
 
-### Step
-Paragraph.
-1. Step
-2. Step
+Here's what REDS allows you to do:
+- Create whitelabeled campaign reports for each individual advertising customer.
+- Tie your attribution reports to detailed financial metrics by joining log-level data to detailed transaction and product metadata.
+- Analyze attributed revenue and spend across multiple off-site and on-site ad platforms to show full-funnel impact across all channels.
+- Fine-tune your media execution with hourly data streams, instead of waiting for information to aggregate.
 
+With The Trade Desk as a data partner at the Snowflake Data Exchange, you can use Snowflake to access your REDS data. However, because REDS requires pre-authorization to access, we will demo the use of REDS data live.
 
 <!-- ------------------------ -->
 ## Create an attribution model & chart in Snowflake
-Duration: 1
+Duration: 5
 
-Now that your REDS data is feeding into Snowflake, you can join that data to your own customer data to build custom reports and develop in-depth insights and analysis for your advertising clients. In this example, we will build a simple view-through attribution report with the help of Snowflake's AI Copilot.
+Once your REDS data is feeding into Snowflake, you can join that data to your own customer data to build custom reports and develop in-depth insights and analysis for your advertising clients. In this example, we will build a simple view-through attribution report with the help of Snowflake's AI Copilot.
 
 ### Use Copilot to generate the attribution model
 To develop the attribution report:
@@ -413,22 +405,60 @@ To develop the attribution report:
 
 ### Copilot Prompt
 ```text
-UPDATE PROMPT TO FILTER FOR OMNIRA PRODUCTS ONLY
+Write a SQL query that combines the impression log data from the CMN_HOL.PUBLIC.REDS_IMPRESSIONS table with the conversion events from the CMN_HOL.PUBLIC.PURCHASES table to create a last-touch attribution model with a 7-day view-through attribution window. Only include purchases from the Omnira brand. Provide a breakdown by Product Name. Display the attributed conversion count. Group the attribution metrics by week.
 ```
 
 The copilot will generate SQL for the attribution model. It will look something like this:
 ### Attribution Model
 ```SQL
-SELECT * FROM TABLE LIMIT 100;
+WITH last_touch AS (
+  SELECT
+    p.purchase_id,
+    p.product_name,
+    p.purchase_date,
+    p.brand,
+    i.impressionid,
+    i.logentrytime,
+    ROW_NUMBER() OVER (
+      PARTITION BY p.purchase_id
+      ORDER BY
+        i.logentrytime DESC
+    ) AS touch_rank
+  FROM
+    purchases AS p
+    LEFT JOIN reds_impressions AS i ON i.logentrytime <= p.purchase_date
+    AND DATEDIFF (DAY, i.logentrytime, p.purchase_date) <= 7
+  WHERE
+    p.brand ILIKE '%omnira%'
+)
+SELECT
+  DATE_TRUNC ('WEEK', purchase_date) AS attribution_week,
+  product_name,
+  COUNT(
+    DISTINCT CASE
+      WHEN touch_rank = 1 THEN purchase_id
+    END
+  ) AS attributed_conversions
+FROM
+  last_touch
+WHERE
+  NOT product_name IS NULL
+GROUP BY
+  DATE_TRUNC ('WEEK', purchase_date),
+  product_name
+ORDER BY
+  attribution_week,
+  product_name;
 ```
 
 Alternatively, you can copy and paste the SQL above into your project and run the SQL statement.
 
 ### Create an attribution chart
-Using the attribution model that you just created we will develop a simple bar chart to visualize the product revenue attributed to your conversion events:
-1. STEP
-2. STEP
-3. STEP
+Using the attribution model that you just created, we can develop a simple bar chart to visualize the product revenue attributed to your conversion events:
+1. Click on **Charts** in the Snowflake project.
+2. Use the **Bar Chart** type. Select the **SUM** of the **Attributed Conversions** column and the **Attribution Week** column.
+
+You should now see a bar chart showing the weekly sum of Omnira purchases per week. Using a BI tool, you can similarly create shared dashboards for your clients to display attributed conversions and revenue broken down by campaign, SKU, hotel, and more.
 
 <!-- ------------------------ -->
 ## Conclusion
