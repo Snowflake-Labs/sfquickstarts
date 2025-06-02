@@ -174,7 +174,7 @@ The `CHUNK` column represents the chunked knowledge that can be used in our RAG 
 ```sql
 select 
     snowflake.cortex.search_preview(
-        'cortex_knowledge_extension_snowflake_documentation.shared.cke_snowflake_docs_service', 
+        'cortex_knowledge_extension_.shared.cke_snowflake_docs_service', 
         '{ "query": "What is a table in Snowflake?", "columns": ["chunk","document_title", "source_url"] }');
 ```
 
