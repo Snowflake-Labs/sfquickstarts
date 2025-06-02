@@ -37,9 +37,7 @@ In addition, this end-to-end ML solution using [Snowflake ML](https://www.snowfl
 
 ### Prerequisites
 - Privileges necessary to create a user, database, and warehouse in Snowflake
-- A non-trial Snowflake account in a supported [AWS commercial region](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
-- A Snowflake account login with a role that has the ACCOUNTADMIN role. If not, you will need to work with your ACCOUNTADMIN to perform the initial account setup (e.g. creating the CONTAINER_USER_ROLE and granting required privileges, as well as creating the EXTERNAL ACCESS INTEGRATION).
-  - To try Snowflake ML in a free trial, check out this [quickstart](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+- A Snowflake Account. Sign up for a [30-day free trial](https://signup.snowflake.com/) account, if required. 
 - (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
 
 ### What You Will Learn
@@ -132,7 +130,7 @@ To set up the Streamlit in Snowflake Application,
 2. Select the Streamlit tab.
 3. Click on **+ Streamlit App** to create streamlit App. Use the configuration from below screenshot to create the Application.
 4. Once the App is created, replace the example code with the streamlit code in the [file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/streamlit/Menu_Item_Recommendations_App.py) 
-4. Add **snowflake-ml-python** package to the app and Run the Application.
+4. Add **snowflake-ml-python** and **pytorch** packages to the app and Run the Application.
 
 <img src="assets/create_streamlit.png"/>
 

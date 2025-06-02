@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Coalesce
 
+
 # From Clicks to Cortex Build AI Ready Data Pipelines on Snowflake in a Snap
 <!-- ------------------------ -->
 ## Overview

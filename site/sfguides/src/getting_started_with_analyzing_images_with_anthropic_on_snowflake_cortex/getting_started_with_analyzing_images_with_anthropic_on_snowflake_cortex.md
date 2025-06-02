@@ -13,7 +13,7 @@ author: James Cha-Earley
 
 Duration: 5
 
-In this quickstart, you'll learn how to build an end-to-end application for image analysis using AI models through Snowflake Cortex AI. This application leverages multimodal capabilities of models like Claude 3.5 Sonnet and Pixtral-large to extract insights, detect emotions, and generate descriptions from images - all within the Snowflake ecosystem. 
+In this quickstart, you'll learn how to build an end-to-end application for image analysis using AI models through Snowflake Cortex AI. This application leverages multimodal capabilities of models like Claude 4 Sonnet and Pixtral-large to extract insights, detect emotions, and generate descriptions from images - all within the Snowflake ecosystem. 
 
 *Note: SNOWFLAKE.CORTEX.COMPLETE multimodal capability is currently in Public Preview.*
 
@@ -128,7 +128,7 @@ To create and configure your Streamlit application in Snowflake:
    * Click "Run" to launch your application
 
 The application provides:
-- A model selector dropdown (Claude 3.5 Sonnet or Pixtral-large)
+- A model selector dropdown (Claude 4 Sonnet or Pixtral-large)
 - Analysis type selection
 - Custom prompt capability
 - Image selection and display
@@ -146,7 +146,7 @@ To continue your learning journey, explore creating more advanced prompting tech
 
 ### What You Learned
 - How to set up Snowflake for image storage and processing
-- How to use AI models like Claude 3.5 Sonnet and Pixtral-large for multimodal analysis
+- How to use AI models like Claude 4 Sonnet and Pixtral-large for multimodal analysis
 - How to create custom prompts for specialized image analysis
 - How to build a Streamlit application for interactive image analysis
 - How to implement batch processing for multiple images

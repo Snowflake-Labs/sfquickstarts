@@ -8,12 +8,14 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Microsoft, Power Apps, Power Platform, Power Automate
 Date: 4/3/25
 
-# Getting Started with Power Platform and Snowflake
+# Getting Started with Microsoft Power Platform and Snowflake
 Duration: 45
 
 <!-- ------------------------ -->
 ## Overview 
-Join Snowflake and Microsoft for an quickstart to build a PowerApps App that can access retail customer data as virtual table, do a writeback, trigger a segmentation flow using PowerAutomate without making a copy of the data. We will use the PowerApps connector from Microsoft premium connectors marketplace, which is a wrapper around the Snowflake SQL API that allows you to read and write data to Snowflake databases, and execute any stored procedures.
+Join Snowflake and Microsoft for a quickstart to build a business application with Microsoft Power Apps that can access retail customer data as virtual tables, do a writeback, trigger a flow using Power Automate without making a copy of the data. 
+
+We will use the new Power Apps connector from Microsoft premium connectors marketplace, which leverages Snowflake SQL API, and allows you to read, write and execute Snowflake objects.
 
 ### Power Apps
 Microsoft Power Apps and Power Automate are part of the Microsoft Power Platform, a suite of tools designed to empower organizations to create custom applications and automate workflows with minimal coding effort. 
@@ -23,11 +25,11 @@ Snowflake is a cloud-based data platform that allows organizations to store, pro
 
 ### You'll Learn
 - Using Power Platform to read and write to Snowflake. 
-- Leveraging Snowflake ML in PowerAutomate 
+- Leveraging Snowflake ML in Power Automate 
 
 ### What You’ll Need 
-- A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
-- A Power Apps account [PowerApps](https://www.microsoft.com/en-us/power-platform/products/power-apps/)
+- Signup for free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
+- Signup for [Power Apps Account](https://www.microsoft.com/en-us/power-platform/products/power-apps/)
 - You must have a premium Power Apps license 
 - Use your existing Company Entra ID, or [sign-up](https://signup.microsoft.com/get-started/signup?products=FAF849AB-BD30-42B2-856C-8F1EDC230CE9)  
 
@@ -35,9 +37,9 @@ Snowflake is a cloud-based data platform that allows organizations to store, pro
 ### What You’ll Build 
 - Load customer data into Snowflake tables. 
 - Configure a connection between PowerPlatform and Snowflake.
-- Use PowerApps to build a model app, access Snowflake tables to read and writeback.
+- Use Power Apps to build a model app, access Snowflake tables to read and writeback.
 - Use Snowflake Notebook to create a Machine Learning model. 
-- Invoke model predictions using PowerAutomate. 
+- Invoke model predictions using Power Automate. 
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
@@ -85,7 +87,7 @@ GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
 4. Accept the defaults and complete loading data.
 
 <!-- ------------------------ -->
-## Setup PowerApps Environment 
+## Setup Power Apps Environment 
 <a id="Azure_Setup"></a>
 ### Set up Azure AD (Entra ID) authentication for Snowflake 
 Duration: 15
@@ -105,7 +107,7 @@ https://learn.microsoft.com/en-us/connectors/snowflakev2/#supported-capabilities
 ### Build a PowerApp and connect to Snowflake data
 Duration: 15
 
-After you have configured PowerApps Connector to Snowflake, go to Power Apps 
+After you have configured Power Apps Connector to Snowflake, go to Power Apps 
 1. Click Tables -> Create Virtual Table 
 	![virtualtable](assets/Virtual_Table_Create.png)
 
@@ -155,10 +157,9 @@ Typically your datascience teams trains and deploy the ML models, and you can in
 	[storedproc](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/segment_storedproc.sql)
 
 
-
-### Build a PowerAutomate Flow
-Let's build a PowerAutomate Flow to call stored procedure you created and run the model.
-1. Launch PowerAutomate
+### Build a Power Automate Flow
+Let's build a Power Automate Flow to call stored procedure you created and run the model.
+1. Launch Power Automate
 
 2. Click My flows -> + New Flow  -> Instant Cloud Flow
 
@@ -216,18 +217,18 @@ Congratulations! you have completed the lab.
 
 ### What You Learned
 
- * In this lab we queried Snowflake tables as Virtual tables in PowerApps, performed write-back.
- * Invoked a Snowflake UDF to get a ML prediction using PowerAutomate. 
+ * In this lab we queried Snowflake tables as Virtual tables in Power Apps, performed write-back.
+ * Invoked a Snowflake UDF to get a ML prediction using Power Automate. 
 
 ### Resources
 [Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 
-[Power Platform](https://learn.microsoft.com/en-us/power-apps/powerapps-overview)
+[Power Platform](https://learn.microsoft.com/en-us/power-apps/Power Apps-overview)
 
 
 
 ### Things to look out for
-- Use Service Principal based Authentication and test the connection with a PowerAutomate flow for troubleshooting
+- Use Service Principal based Authentication and test the connection with a Power Automate flow for troubleshooting
 - Make sure you have set the role, default_namespace, default_warehouse, login_name are set are set for the service_principal user. 
 - If you're not seeing the Snowflake actions in your options double check your Power Automate Environment and make sure you're using an environment where the Snowflake connector is available.
 

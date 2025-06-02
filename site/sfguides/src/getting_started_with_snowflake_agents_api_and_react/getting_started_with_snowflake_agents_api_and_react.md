@@ -239,7 +239,7 @@ export function buildStandardRequestParams(params: AgentRequestBuildParams) {
     }
 
     const body = {
-        "model": "claude-3-5-sonnet",
+        "model": "claude-4-sonnet",
         "experimental": experimental,
         "messages": messages,
         "tools": tools,
