@@ -1,10 +1,9 @@
 author: Ian Maier
 id: build_an_offsite_commerce_media_network_on_snowflake
 summary: Build a commerce media platform for audience curation, offsite activation, and closed-loop measurement.
-<!--- Categories below should be hyphenated, i.e., Getting-Started. Do not leave blank. Visit site for available categories. -->
 categories: Marketing
-environments: dais <!--- What is the correct environment for the DAIS hands-on lab? -->
-status: Draft
+environments: web
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Marketing, Partners, Media, Hightouch, Retail, Commerce
 
