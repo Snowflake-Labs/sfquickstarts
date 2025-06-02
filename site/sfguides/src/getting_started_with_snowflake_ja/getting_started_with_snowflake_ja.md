@@ -172,7 +172,7 @@ UIの右上にあるユーザー名をクリックすると、パスワード、
 
 > aside negative
 > 
-> **SYSADMIN** `SYSADMIN`（システム管理者）ロールには、アカウント内でウェアハウス、データベース、およびその他のオブジェクトを作成する権限があります。リアルワールド環境では、このラボのタスクにさまざまなロールを使用し、ユーザーにロールを割り当てることになります。ロールとSnowflakeのアクセス制御モデルについてはセクション9で詳しく取り上げます。また、[Snowflakeドキュメント](https://docs.snowflake.net/manuals/user-guide/security-access-control.html)でも追加情報をご覧いただけます。
+> **SYSADMIN** `SYSADMIN`（システム管理者）ロールには、アカウント内でウェアハウス、データベース、およびその他のオブジェクトを作成する権限があります。リアルワールド環境では、このラボのタスクにさまざまなロールを使用し、ユーザーにロールを割り当てることになります。ロールとSnowflakeのアクセス制御モデルについてはセクション9で詳しく取り上げます。また、[Snowflakeドキュメント](https://docs.snowflake.com/user-guide/security-access-control-overview)でも追加情報をご覧いただけます。
 
 ### ラボストーリー
 
@@ -195,7 +195,7 @@ duration:14
 
 > aside negative
 > 
-> **データをSnowflakeに取り込む** 多くのロケーションからSnowflakeにデータを取り込むには多数の方法があります。たとえば、COPYコマンド、Snowpipeの自動取り込み、外部コネクタ、サードパーティのETL/ELTソリューションなどです。Snowflakeへのデータの取り込みに関する詳細については、[Snowflakeドキュメント](https://docs.snowflake.net/manuals/user-guide-data-load.html)を参照してください。このラボでは、COPYコマンドとAWS S3ストレージを使用してデータを手動でロードします。実際のシナリオでは、自動化プロセスまたはETLソリューションを使用する可能性が高いでしょう。
+> **データをSnowflakeに取り込む** 多くのロケーションからSnowflakeにデータを取り込むには多数の方法があります。たとえば、COPYコマンド、Snowpipeの自動取り込み、外部コネクタ、サードパーティのETL/ELTソリューションなどです。Snowflakeへのデータの取り込みに関する詳細については、[Snowflakeドキュメント](https://docs.snowflake.com/guides-overview-loading-data)を参照してください。このラボでは、COPYコマンドとAWS S3ストレージを使用してデータを手動でロードします。実際のシナリオでは、自動化プロセスまたはETLソリューションを使用する可能性が高いでしょう。
 
 使用するデータは、Citi Bike（NYC）によって提供された自転車シェアのデータです。データは、米国西部リージョンのAmazon AWS S3バケットにエクスポートされ、事前設定されています。データは、走行時間、ロケーション、ユーザータイプ、性別、年齢などの情報で構成されています。AWS S3上では、このデータは6,150万行、377個のオブジェクト、圧縮サイズ1.9GBで表されています。
 
@@ -295,7 +295,7 @@ TRIPSテーブルが作成されたことを確認します。ワークシート
 
 `<stage_name>`: `citibike_trips`
 
-`<url>`: `s3://snowflake-workshop-lab/citibike-trips-csv/`
+`<url>`: `s3://snowflake-workshop-lab/japan/citibike-trips/`
 
 **注意：**URLの最後には、必ずフォワードスラッシュ（`/`）を入れてください。これを入れておかなければ、後でバケットからデータを読み込む際にエラーが発生します。また、必要のない「credentials = (...)」ステートメントが削除されていることを確認してください。下図のように「--」を使用してコメントアウトすることもできます。create stageコマンドは、下図のようになります。あるいは、3行目を含めないでください。
 
@@ -893,7 +893,7 @@ duration:8
 
 > aside negative
 > 
-> **ロールベースのアクセス制御** Snowflakeは、ユーザーがアクセスできるオブジェクトと機能、およびユーザーのアクセスレベルを指定する、非常に強力かつ粒度の高いアクセス制御を提供しています。詳細については、[Snowflakeドキュメント](https://docs.snowflake.net/manuals/user-guide/security-access-control.html)を確認してください。
+> **ロールベースのアクセス制御** Snowflakeは、ユーザーがアクセスできるオブジェクトと機能、およびユーザーのアクセスレベルを指定する、非常に強力かつ粒度の高いアクセス制御を提供しています。詳細については、[Snowflakeドキュメント](https://docs.snowflake.com/user-guide/security-access-control-overview)を確認してください。
 
 ### 新しいロールの作成とユーザーの追加
 

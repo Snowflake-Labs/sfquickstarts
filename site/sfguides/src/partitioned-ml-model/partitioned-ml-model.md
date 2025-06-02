@@ -37,15 +37,21 @@ Duration: 2
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 - Paste and the following SQL in the worksheet 
-- Adjust <YOUR_USER> to your user
 - Run all commands to create Snowflake objects
 
 ```sql
 USE ROLE ACCOUNTADMIN;
+USE DATABASE SNOWFLAKE;
 
 -- Using ACCOUNTADMIN, create a new role for this exercise and grant to applicable users
 CREATE OR REPLACE ROLE PARTITIONED_LAB_USER;
-GRANT ROLE PARTITIONED_LAB_USER to USER <YOUR_USER>;
+
+-- assign role to current user
+BEGIN
+    LET current_user_name := CURRENT_USER();
+    EXECUTE IMMEDIATE 'GRANT ROLE PARTITIONED_LAB_USER TO USER ' || current_user_name;
+END;
+
 
 -- create our virtual warehouse
 CREATE OR REPLACE WAREHOUSE PARTITIONED_WH AUTO_SUSPEND = 60;
@@ -59,6 +65,27 @@ CREATE OR REPLACE SCHEMA PARTITIONED_SCHEMA;
 GRANT OWNERSHIP ON DATABASE PARTITIONED_DATABASE TO ROLE PARTITIONED_LAB_USER COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE PARTITIONED_DATABASE  TO ROLE PARTITIONED_LAB_USER COPY CURRENT GRANTS;
 
+USE ROLE PARTITIONED_LAB_USER;
+
+CREATE OR REPLACE FILE FORMAT PARTITIONED_DATABASE.PUBLIC.CSV_FF 
+type = 'csv'
+skip_header = 1;
+
+CREATE OR REPLACE STAGE PARTITIONED_DATABASE.PUBLIC.S3LOAD
+COMMENT = 'Quickstarts S3 Stage Connection'
+url = 's3://sfquickstarts/sfguide_partitioned_ml_model/'
+file_format = PARTITIONED_DATABASE.PUBLIC.CSV_FF;
+
+CREATE OR REPLACE TABLE PARTITIONED_DATABASE.PARTITIONED_SCHEMA.RESTAURANT_TRAFFIC(
+    EPOCH BIGINT,
+    STORE_ID INT,
+    COLLEGE_TOWN INT,
+    HOURLY_TRAFFIC INT
+);
+
+COPY INTO PARTITIONED_DATABASE.PARTITIONED_SCHEMA.RESTAURANT_TRAFFIC
+FROM @PARTITIONED_DATABASE.PUBLIC.S3LOAD;
+
 ```
 <!-- ------------------------ -->
 ## Run the Notebook
@@ -70,15 +97,9 @@ Duration: 30
 - Click Import .ipynb from the + Notebook dropdown
 - Create a new notebok with the following settings
   - Notebook Location: PARTITIONED_DATABASE, PARTITIONED_SCHEMA
+  - Run on Warehouse
   - Warehouse: PARTITIONED_WH
-- Download Partitioned_Custom_Model_Restaurant_Traffic_Data.csv
 - Click Packages in the top right, add `snowflake-ml-python`
-- Download the csv file from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-partitioned-models-snowflake-model-registry/blob/main/scripts/Partitioned_Custom_Model_Restaurant_Traffic_Data.csv)
-- Click the plus on the file explorer in the new notebook and upload the csv file
-
-![upload-file](assets/upload-file.png)
-
-- Click the packages drop down in the top right and add the Snowflake-ml-python package
 
 ![add-package](assets/add-package.png)
 

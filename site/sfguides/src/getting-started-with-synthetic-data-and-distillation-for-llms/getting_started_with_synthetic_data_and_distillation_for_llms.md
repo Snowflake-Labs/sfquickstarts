@@ -114,6 +114,9 @@ INSERT INTO support_ticket_category (category) VALUES
 
 In this step we prompt the LLM to generate 25 synthetic examples of customer support tickets for every category.
 
+> aside positive
+> NOTE: Snowflake offers a derived model that uses the SwiftKV library to optimize inference. This optimization enables Snowflake to offer model at 75% off than the 405B base model. To try the more cost effective option you can use Snowflake-Llama-3.1-405 as the model name.
+
 ```sql
 create or replace table support_tickets as (
     SELECT 

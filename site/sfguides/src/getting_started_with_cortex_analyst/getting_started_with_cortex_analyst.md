@@ -111,11 +111,11 @@ CREATE OR REPLACE STAGE raw_data DIRECTORY = (ENABLE = TRUE);
 -- Fact table: daily_revenue
 CREATE OR REPLACE TABLE cortex_analyst_demo.revenue_timeseries.daily_revenue (
     date DATE,
-    product_id INT,
-    region_id INT,
     revenue FLOAT,
     cogs FLOAT,
-    forecasted_revenue FLOAT
+    forecasted_revenue FLOAT,
+    product_id INT,
+    region_id INT
 );
 
 -- Dimension table: product_dim
@@ -324,10 +324,7 @@ def get_analyst_response(messages: List[Dict]) -> Tuple[Dict, Optional[str]]:
 * request-id: `{parsed_content['request_id']}`
 * error code: `{parsed_content['error_code']}`
 
-Message:
-```
-{parsed_content['message']}
-```
+Message: ```{parsed_content['message']}```
         """
         return parsed_content, error_msg
 ```

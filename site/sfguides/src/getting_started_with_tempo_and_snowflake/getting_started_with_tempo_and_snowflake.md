@@ -9,8 +9,10 @@ tags: Security, Deep Learning, Network Analysis, MITRE ATT&CK, Threat Detection
 
 # Tempo Setup and User Guide
 <!-- ------------------------ -->
-## Overview
-Duration: 3
+## Overview 
+Duration: 2
+
+Tempo is the first CyberSecurity solution based on a LogLM, or Log Language Model invented by DeepTempo.  These models are similar to their more familiar cousins, LLMs such as Anthropic's Claude and LLama. Like LLMs, LogLMs are Foundation Models that apply their understanding across very different environments and in response to differing inputs. However, Tempo was pre-trained using enormous quantities of logs. Tempo is focused on the pattern of events, including relative and absolute time. Tempo has been shown to be extremely accurate, with a low false positive and false negative rate.
 
 Tempo is a modern cybersecurity solution that leverages deep learning for network threat detection. By moving beyond conventional rule-based approaches, Tempo offers a sophisticated and adaptable way to identify and respond to security events. Tempo uses a Deep Learning model that analyzes network and flow logs to detect various attacks, mapping them to MITRE ATT&CK for integration with your SIEM, SOC, and Threat Response systems.
 
@@ -22,6 +24,7 @@ This comprehensive guide covers both the initial setup of Tempo on Snowflake and
 - How to perform forensic analysis using Forensichat
 - How to interpret MITRE ATT&CK framework mappings
 - How to configure data sources and settings
+
 
 ### What You'll Need
 - A Snowflake account with appropriate permissions
@@ -147,6 +150,7 @@ The overview dashboard displays key metrics including:
 - Total Network Events processed
 - Potential Anomalies identified
 - Distribution of MITRE ATT&CK tactics observed
+
 
 <!-- ------------------------ -->
 ## Forensic Analysis with Forensichat
@@ -319,6 +323,7 @@ Duration: 1
 You have successfully learned how to set up and use Tempo, a cutting-edge cybersecurity platform that leverages deep learning for advanced threat detection and forensic analysis. With Forensichat's natural language interface and comprehensive MITRE ATT&CK framework integration, you now have powerful tools for identifying and investigating network security incidents.
 
 ### What You Learned
+
 - How to install and configure Tempo on Snowflake
 - How to navigate the Tempo user interface effectively
 - How to perform forensic analysis using natural language queries
@@ -332,3 +337,4 @@ For more information and assistance:
 - **MITRE ATT&CK Framework**: [attack.mitre.org](https://attack.mitre.org/)
 - **Technical Support**: [support@deeptempo.ai](mailto:support@deeptempo.ai)
 - **Documentation**: Check the Tempo app documentation within Snowflake for additional technical details
+

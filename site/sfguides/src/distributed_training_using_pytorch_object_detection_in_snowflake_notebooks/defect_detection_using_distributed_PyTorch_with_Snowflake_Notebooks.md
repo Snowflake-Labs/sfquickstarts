@@ -16,7 +16,7 @@ Duration: 1
 
 In today's fast-paced manufacturing landscape, ensuring product quality early in the production process is crucial for minimizing defects and optimizing resources. With advancements in machine learning, manufacturers can now leverage computer vision models to automate defect detection, improving efficiency and accuracy.
 
-In this Quickstart guide, we will train a computer vision model for multiclass defect detection using Snowflake Notebooks on Container Runtime easily and efficiently. The dataset comprises labeled Printed Circuit Boards (PCBs) with annotations including defect labels and bounding boxes for each image. This approach aims to help manufacturers implement early Quality Control, reducing costs, time, and resource usage in production processes.
+In this Quickstart guide, we will train a computer vision model for multiclass defect detection using [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) easily and efficiently. The dataset comprises labeled Printed Circuit Boards (PCBs) with annotations including defect labels and bounding boxes for each image. This approach aims to help manufacturers implement early Quality Control, reducing costs, time, and resource usage in production processes.
 
 The process includes the following steps:
 - Preprocessing the dataset, which involves using the annotated data with labels and bounding boxes information for each image.
@@ -27,28 +27,23 @@ The process includes the following steps:
 - Displaying inference results for any selected PCB image within the Streamlit app.
 
 
+
 #### What is Snowflake ML?
 
-Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
+[Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
 
 #### What is Snowflake Notebooks on Container Runtime?
 
-Snowflake Notebooks are natively built into Snowsight, and provide everything you need for interactive development, cell by cell execution of Python, Markdown and SQL code.  By using Snowflake Notebooks one can increase the productivity since it simplifies connecting to the data and using popular OSS libraries for ML usecases.
-
+Snowflake Notebooks are natively built into Snowsight, and provide everything you need for interactive development, cell by cell execution of Python, Markdown and SQL code. By using Snowflake Notebooks one can increase the productivity since it simplifies connecting to the data and using popular OSS libraries for ML usecases.
 Notebooks on Container Runtime offer a robust environment with a comprehensive repository of pre-installed CPU and GPU machine learning packages and frameworks, significantly reducing the need for package management and dependency troubleshooting. This allows you to quickly get started with your preferred frameworks and even import models from external sources. Additionally, you can use pip to install any custom package as needed.
-
 The runtime also features an optimized data ingestion layer and provides a set of powerful APIs for training and hyperparameter tuning. These APIs extend popular ML packages, enabling you to train models efficiently within Snowflake.
-
 At the core of this solution is a Ray-powered distributed compute cluster, giving you seamless access to both CPU and GPU resources. This ensures high performance and optimal infrastructure usage without the need for complex setup or configuration, allowing you to focus solely on your machine learning workloads.
 
 Key Features:
 
 - Managed Environment: Focus on your ML projects without the overhead of managing underlying infrastructure.
-  
 - Scalability: Leverage distributed computing resources to efficiently handle large datasets and complex computations.
-  
 - Integration: Seamlessly combine with Snowflake's ML operations for a cohesive workflow.
-  
 - Flexibility: While common ML packages come pre-installed, you have the option to install custom packages as needed.
 
 
@@ -57,16 +52,17 @@ Key Features:
 
 ### Prerequisites
 - A GitHub Account
-- A Snowflake Account with Accountadmin access OR
-- Necessary Privileges to create a user, database,compute pool and a warehouse in Snowflake
+- A Snowflake Account
 - Access to run Notebooks in Snowflake
-- AWS Commercial deployments (non-free trial accounts)
-Container Runtime Enabled in the Account
+- A Snowflake Account. Sign up for a 30-day free trial account, if required.
+- To try Snowflake ML in a free trial, check out this [quickstart](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+- (Optional) [Completed Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+
 
 
 ### What You’ll Learn
 - How to leverage Snowflake Notebooks on Container Runtime(GPUs) to carry model training using a Computer Vision Object Detection model.
-- How to use the ShardedDataConnector that defines the training process for an individual worker during the training process. 
+- How to use the ShardedDataConnector that defines the training process for an individual worker during the training process.
 - How to achieve independent execution on each worker during the distributed training.
 - How to use the PyTorchDistributor to distribute and manage the execution of the training function across multiple workers.
 - How to log a trained model to Snowflake Model Registry
@@ -82,66 +78,51 @@ Container Runtime Enabled in the Account
 <!-- ------------------------ -->
 Duration: 2
 
-This section will walk you through creating various objects. 
-Access the setup file [here](https://github.com/Snowflake-Labs/sfguide-distributed-training-using-pytorch-object-detection-in-snowflake-notebooks/tree/main/scripts)
+This section will walk you through creating various objects.  The repository with the source code can be found [here](https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks/blob/main/notebooks). Access the gitrepo here and clone it to your local directory. The dataset can be accessed from [this](https://github.com/Charmve/Surface-Defect-Detection) link. Review the licensing requirement before using the dataset. 
 
 
-**Initial Setup**. -
 
-In Snowsight navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
-Run the following SQL commands  to create Snowflake objects (database, schema, tables).
+### Initial Setup
 
-```sql
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is", "name":"distributed_ml_crt_imageanomaly_detection", "version":{"major":1, "minor":0,},"attributes":{"is_quickstart":1, "source":"sql"}}';
-use role ACCOUNTADMIN;
+We will work with two notebooks. The first one, [0_data_preparation_run_in_local_IDE.ipynb](https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks/blob/main/notebooks/0_data_preparation_run_in_local_IDE.ipynb), handles the creation of necessary Snowflake objects, compute instances, and data loading from a third-party dataset. Be sure to comply with the dataset's licensing terms and usage guidelines.
+
+### Notebook Execution: 0_data_preparation_run_in_local_IDE.ipynb
+
+To execute the notebook, follow these steps using an IDE like Jupyter or Visual Studio Code:
 
 
-create database PCB_DATASET;
-create warehouse BUILD_WH WAREHOUSE_SIZE=SMALL;
+- **Snowflake Object Creation**:
+  - Create the required database, schema, stage, warehouse, compute pool, and external access integration in Snowflake.
 
-use database PCB_DATASET;
-use schema PUBLIC;
-use warehouse BUILD_WH;
-create compute pool NOTEBOOK_POOL
-min_nodes = 1
-max_nodes = 2
-instance_family = GPU_NV_S
-auto_suspend_secs = 7200;
-create stage DATA_STAGE;
+- **Data Preparation**:
+  - Extract images iteratively from subfolders, ensuring that the corresponding label files containing bounding box coordinates (xmin, ymin, xmax, ymax) and defect classifications are also retrieved.
 
-```
-Be sure to review and comply with the licensing terms and usage guidelines before utilizing the PCB dataset. Load the PCB Images from the external location into the Snowflake stage data_stage for training
 
-- **Load Data into Snowflake**. -
-The next step is to load the PCB dataset into a Snowflake stage.  The dataset can be accessed from [this](https://github.com/Charmve/Surface-Defect-Detection) link. 
+- **File Upload**:
+  - Upload all image files and label files to the designated Snowflake stage for storage and processing.
 
-- **Store Image as Base64 format**. -
-Read the image data and store the Base64 encoded contents along with the filename and labels in the training table. The label would typically stored as class, Filename INT,
- The data structure of the training table is:
+- **Label Management**:
+  - Store the label data (defect classification and bounding box coordinates) in a dedicated table named LABELS_TRAIN for efficient management and access.
 
-```sql
-   create or replace TABLE PCB_DATASET.PUBLIC.TRAIN_IMAGES_LABELS (
-	FILENAME NUMBER(38,0),
-	IMAGE_DATA VARCHAR(16777216),
-	CLASS NUMBER(38,0),
-	XMIN FLOAT,
-	YMIN FLOAT,
-	XMAX FLOAT,
-	YMAX FLOAT
+- **Image Data Processing**:
+  - Read image files and encode their content in Base64 format.
+  - Combine the encoded image data with metadata such as filenames and corresponding labels.
+  - Store the resulting data in a Snowflake table, with each record containing the Base64-encoded image, filename, and associated metadata.
 
-```
-Setup is now complete and we will move to the Distributed Model training.
+
+Once the setup is complete, proceed to the next step to begin distributed model training.
 
 <!-- ------------------------ -->
-## Distributed Model Training in Snowflake Notebooks
+## Distributed Model Training in Snowflake Notebooks 
 Duration: 2
 
 It is time to set up a distributed training pipeline for training a PyTorch-based Faster R-CNN (Region-based Convolutional Neural Network) model for multiclass defect detection. The training is performed on a dataset of images (specifically, PCBs) with annotations for bounding boxes and labels, using Snowflake's Container Runtime, and utilizes GPUs for accelerated training. 
 
-Import the notebook available [here](https://github.com/Snowflake-Labs/sfguide-distributed-training-using-pytorch-object-detection-in-snowflake-notebooks/blob/main/notebooks/0_Distributed_Model_Training_Snowflake_Notebooks.ipynb)
+Import the notebook available [here](https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks/blob/main/notebooks/1_Distributed_Model_Training_Snowflake_Notebooks.ipynb)
 
-Navigate to Project > Notebooks from the left menu bar.
-Import the .ipynb file you have downloaded into your Snowflake Notebook by using the Import from .ipynb button located on the top right of the Notebooks page.
+In Snowsight -> Navigate to Project > Notebooks from the left menu bar.
+Import the .ipynb file you have downloaded into your Snowflake Notebook by using the Import from .ipynb button located on the top right of the Notebooks page. Choose the database, schema, Compute pool and the warehouse that was created earlier.
+
 Let's break down step by step what the training code performs: 
 
 ### Step 3.1 Distributed Setup
@@ -217,27 +198,33 @@ Come back to the Streamlitapp and click Run. Choose an image and click the butto
 
 ## Conclusion and Resources
 
-Congratulations! You have successfully performed  distributed model training in Snowflake Notebooks on Container Runtime.
-By following these steps, you have trained a PyTorch Object Detection model with Snowflake, carry unstructured data(images) processing, train a PyTorch RCNN Object Detection model , log it in Snowflake Model Registry, and use Streamlit to visualize the inference results.
-
+Congratulations! You have successfully performed distributed model training in Snowflake Notebooks on Container Runtime. By following these steps, you have trained a PyTorch Object Detection model with Snowflake, carry unstructured data(images) processing, train a PyTorch RCNN Object Detection model , log it in Snowflake Model Registry, and use Streamlit to visualize the inference results.
 To cleanup resources and remove all of the objects and compute pools that you created during this QuickStart. This will ensure that you don't incur any unnecessary costs specifically associated with this QuickStart guide.
 
 ### What You Learned
 
 - Leverage Snowflake Notebooks on Container Runtime with seamless access to GPUs to carry model training using a Computer Vision Object Detection model.
-- Leverage ShardedDataConnector that defines the training process for an individual worker during the training process. 
+- Leverage ShardedDataConnector that defines the training process for an individual worker during the training process.
 - Carry independent execution on each worker during the distributed training.
 - Use the PyTorchDistributor to distribute and manage the execution of the training function across multiple workers.
 - Log a trained model to Snowflake Model Registry
 - Create a streamlit application to carry ongoing inference on new images.
 
+
+Ready for more? After you complete this quickstart, you can try one of the following more advanced quickstarts: 
+
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0)
+- [Scale Embeddings with Snowflake Notebooks](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/index.html?index=..%2F..index#0)
+
+
 ### Related Resources
 
 - #### [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-distributed-training-using-pytorch-object-detection-in-snowflake-notebooks)
-- #### [Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks)
-- #### [Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
-- #### [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
+- #### [Docs: Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks)
+- #### [Docs: Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
+- #### [Docs: Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - #### [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml)
+
 ### Attribution
 PyTorch, the PyTorch logo and any related marks are trademarks of The Linux Foundation.
 
