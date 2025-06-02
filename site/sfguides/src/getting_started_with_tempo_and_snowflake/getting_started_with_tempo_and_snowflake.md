@@ -1,212 +1,334 @@
-author: mando222
-id: getting_started_with_tempo_and_snowflake
-summary: This is a guide on getting started with Tempo on Snowflake
-categories: Getting-Started
+author: security_team
+id: tempo_setup_and_user_guide
+summary: Complete guide for setting up and using Tempo cybersecurity platform on Snowflake with Forensichat analysis capabilities
+categories: Security
 environments: web
-status: Published 
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Security, LLGM, Intrusion Detection
+status: Published
+feedback link: https://github.com/DeepTempo/tempo-guides/issues
+tags: Security, Deep Learning, Network Analysis, MITRE ATT&CK, Threat Detection
 
-# Getting Started with TEMPO and Snowflake
+# Tempo Setup and User Guide
 <!-- ------------------------ -->
-## Overview 
-Duration: 2
-
-Tempo is the first CyberSecurity solution based on a LogLM, or Log Language Model invented by DeepTempo.  These models are similar to their more familiar cousins, LLMs such as Anthropic's Claude and LLama. Like LLMs, LogLMs are Foundation Models that apply their understanding across very different environments and in response to differing inputs. However, Tempo was pre-trained using enormous quantities of logs. Tempo is focused on the pattern of events, including relative and absolute time. Tempo has been shown to be extremely accurate, with a low false positive and false negative rate.
-
-This guide will walk you through the process of setting up and using the TEMPO Native App in your Snowflake environment with provided sample data ([CIC Dataset](https://www.unb.ca/cic/datasets/ids-2017.html)).
-
-The data that is provided comes from the Canadian Institute for Cybersecurity.  You can see the data set - and an explanation of the attacks discerned by Tempo [here](https://www.unb.ca/cic/datasets/ids-2017.html)
-
-### What You’ll Learn 
-- How to run Tempo on sample data ([CIC Dataset](https://www.unb.ca/cic/datasets/ids-2017.html))
-- How to check to see if Tempo is accurate in flagging attacks
-- Optional - How to view the output in Splunk
-
-### What You’ll Need 
-- A [Snowflake](https://www.snowflake.com/login/) Account 
-- Optional - A [Splunk](https://www.splunk.com/) Account or instance
-
-### What You’ll Build 
-- A working LogLM alerting dashboard
-
-<!-- ------------------------ -->
-## Install the TEMPO Native App
-Duration: 2
-
-1. Find The App
-In the Snowflake app Marketplace you can find the Tempo app or simply click [Here](https://app.snowflake.com/marketplace/listing/GZTYZOYXHP3).  
-
-2. If you are running on your own data you will have the select the storage before clicking the launch app button in the deployment phase.
-To select your table please click `add` next to the `on Incident Inference Logs` section. In the popup after clicking the `add` button click the `+Select Data` button and find the table you want to use on the dropdown.  Select it and click `Save`.
-
-Note: If you are running with the demo data simply skip this step and continue. 
-
-3. Snowflake will require you to grant permissions to run this app.  For a smooth experience make sure you do this in the initial setup though the Snowflake UI.
-
-4. Go to the `Projects>Worksheets` console in Snowflake. Here you should see a `+` sign in the top right corner of the screen.  We will use this to create our own worksheets. Go ahead and click it now. 
-
-5. From the top of the worksheet there should be a dropdown called `Select Databases`.  This is what you will use to attach our database to this worksheet.  If you are using demo data select the option with TEMPO at the beginning of it's name.
-
-### The default resources created by the tempo app are as follows. 
-
-#### TEMPO_WH
-- **Type**: Snowpark Optimized
-- **Size**: Medium
-- **Auto Suspend**: 120 seconds
-- **Auto Resume**: Enabled
-- **Initial State**: Active
-
-#### TEMPO_COMPUTE_POOL
-- **Node Configuration**:
-  - **Minimum Nodes**: 1
-  - **Maximum Nodes**: 1
-- **Auto Suspend**: 360 seconds
-- **Instance Family**: GPU_NV_S
-- **Auto Resume**: Enabled
-- **Initial State**: Active
-
-<!-- ------------------------ -->
-## Start the app
-Duration: 2
-
-In the new worksheet we now need to setup our procedures. We will start with initializing the container resources. Throughout this guide we will provide you with statements to run.  Please add them to the sheet. You can do these one by one or add them all to a single worksheet.
-
-1. Initialize Application Resources
-```sql
-CALL INFRA_CONTROLS.CREATE_RESOURCES();
-```
-
-Purpose: Initializes the application by loading required model weights and configurations
-Required Permissions: Warehouse, compute pool, and task management access
-
-It is recommended that you run this command prior to running the sheet as a whole.  It can take some time for the resources to spin up.  If you are the account admin you can monitor resources using `SHOW COMPUTE POOLS IN ACCOUNT;`. Once the compute pools are idle you may continue with the rest of the worksheet.
-
-<!-- ------------------------ -->
-## Run Static Inference
-Duration: 6
-
-```sql
-CALL STATIC_DETECTION.ANOMALY_DETECTION(False);
-```
-Parameters:
-- `the boolean (true or false)`: specifies if the inference should be run with the MITRE ATT&CK framework classification turned on.
-
-If you want to use the demo feel free to name it something like `demorun` for the `your_service_name`.
-
-<!-- ------------------------ -->
-## Deep Dive Analysis in Snowflake
-Duration: 5
-
-```sql
-CALL INSPECT.INVESTIGATE_SEQUENCE(sequence_id);
-```
-Parameters:
-- `sequence_id`: Identifier of the sequence to analyze (integer). This ID can be used down the road if any anomalies are detected to run deeper investigation on suspicious interactions. 
-Purpose: Investigates specific sequences flagged as anomalies
-
-Note: If running on demo data lets use 2 as the id (valid IDs 1-1200)
-
-The results will be collections of related events making up Suspicious and Anomalous activities.  These are the events your security team would want verify as actuall intrusion events.
-
-<!-- ------------------------ -->
-## Viewing Results in Splunk
-Duration: 5
-
-This optional section guides you through setting up Splunk Enterprise to analyze the output from the Snowflake TEMPO project.  This step is optional and intended for Splunk users who want a visualization of the output.  For this demo we used a trial account on Splunk and we import the results of Tempo as CSV.  In a production use case, you will likely use the Snowflake Splunk connector, DBConnect, as explained in the Snowflake documentation [here]: (https://community.snowflake.com/s/article/Integrating-Snowflake-and-Splunk-with-DBConnect)
-
-### Prerequisites
-- An Amazon EC2 instance running Amazon Linux or another compatible Linux distribution
-- Root or sudo access
-- Splunk Enterprise installer tarball (`.tgz` file)
-- `anomaly_hub.xml` dashboard file
-
-### Install Splunk Enterprise
-Duration: 5
-
-1. Clone the installation repository:
-   ```bash
-   git clone https://github.com/your-username/splunk-tempo-dashboard-installer.git
-   cd splunk-tempo-dashboard-installer
-   ```
-
-2. Place the Splunk Enterprise tarball in the same directory as the script.
-
-3. Edit the script to set your desired credentials:
-   ```bash
-   vi splunk_tempo_install.sh
-   ```
-
-4. Make the script executable and run it:
-   ```bash
-   chmod +x splunk_tempo_install.sh
-   sudo ./splunk_tempo_install.sh
-   ```
-
-### Configure Splunk and Load Data
+## Overview
 Duration: 3
 
-1. Access Splunk at `http://your_ip:8000` and log in with the credentials you set.
+Tempo is a modern cybersecurity solution that leverages deep learning for network threat detection. By moving beyond conventional rule-based approaches, Tempo offers a sophisticated and adaptable way to identify and respond to security events. Tempo uses a Deep Learning model that analyzes network and flow logs to detect various attacks, mapping them to MITRE ATT&CK for integration with your SIEM, SOC, and Threat Response systems.
 
-2. Download the CSV file from the TEMPO Snowflake app output.
+This comprehensive guide covers both the initial setup of Tempo on Snowflake and how to effectively use the Forensichat analysis interface for cybersecurity investigations.
 
-3. In Splunk, go to Settings > Add Data > Upload > select your CSV file.
+### What You'll Learn
+- How to install and configure Tempo on Snowflake
+- How to navigate the Tempo user interface
+- How to perform forensic analysis using Forensichat
+- How to interpret MITRE ATT&CK framework mappings
+- How to configure data sources and settings
 
-4. Follow the prompts to load the CSV, using default options.
+### What You'll Need
+- A Snowflake account with appropriate permissions
+- Network flow data with required features
+- Basic understanding of network security concepts
 
-### Create the Dashboard
-Duration: 2
-
-1. After loading the CSV, click "Build Dashboards" > "Create New Dashboard".
-
-2. Select "Classic Dashboard Builder" and create the dashboard.
-
-3. In the dashboard editor, switch to "Source" view.
-
-4. Copy the XML from `anomaly_hub.xml` and paste it into the Source view.
-
-5. Save the Dashboard
-   - After the dashboard is saved, you will now have to create a Tempo Splunk macro
-
-7. Create a Tempo macro in Splunk
-   - In splunk create a new Splunk macro by going to ```Settings``` > ```Advanced Search``` > ```+ Add New```
-   - Keep Destination app as ```search```
-   - Name the macro ```TempoDataLocation```
-   - Define the macro as your Splunk path to Tempo's csv output. Will look something like this
-   ```xml
-   source="your-filename.csv" host="Your Name" sourcetype="csv"
-   ```
-   - You can leave the rest of the macro creation blank.
-   - Save the macro
-
-You should now be able to see the incidents - or anomalies - in your new dashboard.  This enables Security Operations teams to click through on the context provided by Tempo.  For example, you can see all transactions to and from a specific IP address, or across given ports, as a part of investigating the incidents that have been identified.
-
-Note that as a default, only the incidents are uploaded.  Not also transferring and loading the entire dataset of logs simplifies the work of the Security Operator and also can translate into significant cost savings, as Splunk and most security operations solutions tend to charge by data ingested.  
-
-### Important Notes
-- Set strong passwords for all user accounts.
-- Ensure sufficient disk space (minimum 10GB recommended).
-- Keep your EC2 instance and Splunk Enterprise updated with the latest security patches.
-
-### Troubleshooting
-- If the script fails to find the Splunk tarball, confirm that it's in the correct directory.
-- For user creation issues, check Splunk server logs and verify authentication credentials.
+### What You'll Build
+- A fully functional threat detection and analysis platform
 
 <!-- ------------------------ -->
-## Conclusion And Resources
+## Finding and Installing Tempo
+Duration: 4
+
+### Accessing the Snowflake Marketplace
+
+In the Snowflake Marketplace, you can find the Tempo app or directly access it [here](https://app.snowflake.com/marketplace/listing/GZTYZOYXHP3/deeptempo-cybersecurity-tempo).
+
+### Prerequisites for Deployment
+
+Before installing Tempo, ensure you have:
+- Grant Tempo necessary permissions including creating warehouses and compute pools
+- Configure proper database access
+- Verify sufficient storage and compute resources
+
+### Selecting Storage for Your Data
+
+If you want to run Tempo on your own data, follow these steps to select the correct storage before launching the app:
+
+1. Click the **Add** button next to the **on Incident Inference Logs** section
+2. In the popup window, click **+Select Data**
+3. From the dropdown menu, find and select the appropriate table containing your network flow data
+4. Click **Save** to confirm your selection
+
+**Note:** If you would like to use demo data for testing purposes, you can skip this step and proceed with the default configuration.
+
+Once Tempo is successfully installed and running, a management interface launches which will help you monitor and interact with the system.
+
+<!-- ------------------------ -->
+## User Interface Navigation
+Duration: 2
+
+### Main Navigation Menu
+
+The Tempo interface includes several main sections accessible from the navigation menu on the left side:
+
+- **Home**: Dashboard with overview and welcome information
+- **Data Sources**: Configure and manage data input sources
+- **Threat Overview**: High-level analysis of your network security posture
+- **Forensic Analysis**: Detailed investigation capabilities using Forensichat
+- **Deep Investigation**: Advanced analysis of specific threats and sequences
+- **Settings**: System configuration and user preferences
+
+### Accessing the Interface
+
+To access and use Tempo:
+
+1. Navigate to the Tempo app in your Snowflake instance, typically found under Data Products > Apps > Tempo
+2. The Tempo interface will load, displaying the available features and navigation options
+3. Use the left navigation menu to move between different analysis sections
+
+<!-- ------------------------ -->
+## Executing Procedures Through the UI
+Duration: 5
+
+The Tempo interface enables users to run predefined procedures directly from the UI instead of using Snowflake worksheets.
+
+### Important Configuration Notes
+
+**⚠️ Critical Information:**
+- **Inference Procedures** (Incident Classification, MITRE Classification) will default to demo data tables unless you explicitly configure which table to target under Reference Pages
+- **Performance Evaluation** and **Model Fine-Tuning** require you to explicitly set the target evaluation or tuning table on the reference page—they have no demo defaults
+- Ensure you have selected or created the correct source tables before executing procedures, or the command will fail
+
+### Step-by-Step Procedure Execution
+
+1. **Select Your Procedure**
+   - Click the **Select Procedure** dropdown menu
+   - Choose the desired command from options like "Investigate Sequence 🔎", "Incident Classification 🛡️", etc.
+
+2. **Enter Required Parameters (if applicable)**
+   - For **Investigate Sequence 🔎**: Enter the 29-character NetFlow Sequence ID in the text field and press Enter
+   - For **Incident Classification 🛡️**: Use the **Include MITRE Classification** toggle to enable or disable ATT&CK framework mapping
+
+3. **Execute the Command**
+   - Click **Execute Command** to launch the selected procedure
+   - The button will be disabled until all required inputs are valid or until the run is completed
+
+4. **Monitor Execution Status**
+   - Watch the status indicator above the Execute button:
+     - ⏳ **Running** (auto-polls every 5 seconds)
+     - ✅ **Completed**
+     - ❌ **Failed**
+
+5. **View Results**
+   - Once completed, scroll down to see the output table for your selected procedure:
+     - **Investigate Sequence**: Shows raw NetFlow rows and related events
+     - **Incident/MITRE Classification**: Displays inference logs with threat classifications
+     - **Performance Evaluation**: Lists recent performance metrics and accuracy scores
+     - **Model Fine-Tuning**: Returns a summary message with tuning results
+
+<!-- ------------------------ -->
+## Threat Overview Analysis
+Duration: 4
+
+### MITRE ATT&CK Framework Distribution
+
+The Threat Overview section provides a comprehensive view of your network security status through MITRE ATT&CK framework mapping. Tempo automatically categorizes detected threats into the following phases:
+
+- **Initial Access**: Events indicating initial compromise attempts
+- **Collection**: Data gathering activities by potential attackers
+- **Impact**: Actions aimed at manipulation, interruption, or destruction of systems
+- **Credential Access**: Attempts to steal user credentials or authentication tokens
+- **Privilege Escalation**: Efforts to gain higher-level permissions within systems
+- **Discovery**: Network and system reconnaissance activities
+- **Exfiltration**: Data theft and unauthorized data transfer attempts
+- **Lateral Movement**: Movement between systems within the network
+- **Reconnaissance**: Information gathering activities about targets
+
+### Network Security Metrics
+
+The overview dashboard displays key metrics including:
+- Unique IP Connections detected
+- Total Network Events processed
+- Potential Anomalies identified
+- Distribution of MITRE ATT&CK tactics observed
+
+<!-- ------------------------ -->
+## Forensic Analysis with Forensichat
+Duration: 6
+
+### Using the Forensic Analysis Assistant
+
+Forensichat is Tempo's AI-powered analysis assistant that enables natural language interaction with your security data for advanced forensic investigations.
+
+### Creating and Executing Queries
+
+1. **Access the Query Interface**
+   - Navigate to the Forensic Analysis section
+   - Locate the query input field
+
+2. **Enter Natural Language Queries**
+   - Type questions in plain English, such as:
+     - `Show me top 10 similar events to sequence id 982b5a35-d289-46f7-8adb-6aea0936b1c2`
+     - `Find all connections from suspicious IP addresses`
+     - `What are the most common attack patterns in the last 24 hours?`
+
+3. **Analyze Query Results**
+   - Results are displayed in table format showing:
+     - Sequence IDs for event correlation
+     - Source and destination IP addresses
+     - Data transfer volumes (forward and backward bytes)
+     - MITRE ATT&CK classifications
+     - Timestamp information
+
+### Forensic Insights and Similarity Analysis
+
+Tempo provides insights based on similarity search in high-dimensional embeddings constructed from your network logs. For any suspicious sequence, you can:
+
+- View similar events to identify patterns and potential attack campaigns
+- Correlate events across different time periods
+- Analyze traffic flows between specific IP addresses
+- Investigate data transfer patterns that may indicate exfiltration
+
+### Detailed Network Forensics
+
+The Forensic Analysis section allows for in-depth investigation of network activities:
+
+1. **Filter by Network Parameters**
+   - Select source and destination IPs to filter events
+   - Choose specific time ranges for analysis
+   - Filter by ports or protocols
+
+2. **Analyze Connection Statistics**
+   - View total connections between endpoints
+   - Examine forward and backward byte transfers
+   - Analyze packet counts and flow durations
+
+3. **MITRE ATT&CK Phase Analysis**
+   - View distribution of attack phases for specific connections
+   - Examine detailed occurrences of each attack technique
+   - Identify predominant tactics used in network communications
+
+<!-- ------------------------ -->
+## Deep Investigation Capabilities
+Duration: 3
+
+### Advanced Threat Analysis
+
+The Deep Investigation section provides detailed forensic analysis capabilities for specific security incidents:
+
+1. **Sequence-Based Investigation**
+   - Analyze specific NetFlow sequences flagged as suspicious
+   - View complete event timelines and related activities
+   - Correlate events across multiple network segments
+
+2. **Connection-Specific Analysis**
+   - Focus investigation on particular communication paths
+   - Examine detailed statistics about data transferred
+   - Identify attack techniques used in specific connections
+
+3. **Pattern Recognition**
+   - Leverage deep learning embeddings to find similar attack patterns
+   - Identify potential attack campaigns spanning multiple incidents
+   - Correlate seemingly unrelated security events
+
+<!-- ------------------------ -->
+## Settings and Configuration
+Duration: 3
+
+### Filtering and Display Options
+
+Tempo provides customizable filtering options to tailor forensic investigations to specific analytical needs:
+
+| Toggle Setting | Description |
+|----------------|-------------|
+| **Ignore Unclassified MITRE Tactics** | Hides events that could not be mapped to any MITRE ATT&CK tactic, enabling focus on recognized adversarial behavior patterns |
+| **Ignore Benign Network Flows** | Excludes network flows flagged as benign or normal, reducing noise and helping isolate potentially suspicious traffic |
+| **Ignore Anomalous Flows** | Removes network flows labeled as anomalous, useful when focusing only on confirmed patterns or known behavior baselines |
+| **Ignore Unclassified Events** | Filters out events that were not categorized during the detection pipeline, simplifying the visual workspace |
+
+### Data Source Configuration
+
+Configure your data sources to ensure optimal analysis:
+
+1. **Access Data Sources Section**
+   - Navigate to Data Sources from the main menu
+   - Review current data source configurations
+
+2. **Verify Data Format Requirements**
+   - Ensure your dataset includes all required features
+   - Validate timestamp formats and data types
+   - Check for proper labeling if using supervised learning
+
+<!-- ------------------------ -->
+## Required Data Features
+Duration: 2
+
+Your dataset must include the following features for proper analysis:
+
+| Feature | Description | Example |
+|---------|-------------|---------|
+| timestamp | String datetime when flow started | "2017-03-07 08:55:58" |
+| flow_dur | The duration of the flow in seconds | 120.5 |
+| src_ip | Unique identifier of the source device | "192.168.1.100" |
+| dest_ip | Unique identifier of the destination device | "10.0.0.50" |
+| src_port | Source port number | 443 |
+| dest_port | Destination port number | 80 |
+| fwd_bytes | Payload bytes sent from source to destination | 2048 |
+| bwd_bytes | Payload bytes sent from destination to source | 1024 |
+| total_fwd_pkts | Packets sent from source to destination | 15 |
+| total_bwd_pkts | Packets sent from destination to source | 12 |
+| label | Indicates if flow is suspicious (1) or normal (0) | 0 or 1 |
+
+**Compatible Data Sources:**
+These features can be exported from network monitoring tools such as NetFlow, Wireshark, Zeek, SolarWinds, or AWS/GCP Flow logs.
+
+<!-- ------------------------ -->
+## Troubleshooting
+Duration: 2
+
+### Common Issues and Solutions
+
+If you encounter issues with Tempo:
+
+1. **System Status Verification**
+   - Check the System Status page to ensure all components are online
+   - Verify that compute pools are active and accessible
+
+2. **Data Source Problems**
+   - Verify data source configurations are correct
+   - Ensure required data features are present and properly formatted
+   - Check that timestamps are in the correct format
+
+3. **Snowflake Resource Issues**
+   - Check warehouse and compute pool status using `SHOW COMPUTE POOLS IN ACCOUNT;`
+   - Verify that resources have sufficient capacity for your data volume
+   - Ensure auto-suspend and auto-resume settings are configured appropriately
+
+4. **Permission and Access Issues**
+   - Verify that all necessary permissions are properly configured
+   - Check that the management console is accessible via the Streamlit dashboard
+   - Ensure database access permissions are granted correctly
+
+5. **Performance Issues**
+   - Monitor resource utilization during analysis
+   - Consider scaling compute resources for large datasets
+   - Verify that data is properly indexed for optimal query performance
+
+<!-- ------------------------ -->
+## Conclusion and Resources
 Duration: 1
 
 ### Conclusion
 
-Congratulations, you just ran the world's first purpose-built LogLM available as a Snowflake NativeApp.  In the weeks to come DeepTempo will launch a range of additional easy-to-use options and extensions as NativeApps, including tooling to simplify the process of using your own data with Tempo and upgrades to the power of Tempo including scale out multi-GPU usage. 
+You have successfully learned how to set up and use Tempo, a cutting-edge cybersecurity platform that leverages deep learning for advanced threat detection and forensic analysis. With Forensichat's natural language interface and comprehensive MITRE ATT&CK framework integration, you now have powerful tools for identifying and investigating network security incidents.
 
 ### What You Learned
-- How to run Tempo on Snowflake as a NativeApp
-- How to monitor Tempo
-- How to see incidents and relevant context identified by Tempo in Splunk
+- How to install and configure Tempo on Snowflake
+- How to navigate the Tempo user interface effectively
+- How to perform forensic analysis using natural language queries
+- How to interpret MITRE ATT&CK framework mappings
+- How to configure settings and data sources for optimal analysis
 
-### Resources
+### Additional Resources
 
-
-To try the app please follow [This Link](https://app.snowflake.com/marketplace/listing/GZTYZOYXHNX/deeptempo-cybersecurity-tempo-cybersecurity-incident-identification-via-deep-learning?search=tempo)
-[Snowflake Native Apps ](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/) 
+For more information and assistance:
+- **Snowflake Marketplace**: [Tempo App](https://app.snowflake.com/marketplace/listing/GZTYZOYXHP3/deeptempo-cybersecurity-tempo)
+- **MITRE ATT&CK Framework**: [attack.mitre.org](https://attack.mitre.org/)
+- **Technical Support**: [support@deeptempo.ai](mailto:support@deeptempo.ai)
+- **Documentation**: Check the Tempo app documentation within Snowflake for additional technical details
