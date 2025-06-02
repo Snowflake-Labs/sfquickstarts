@@ -1,6 +1,6 @@
 author: Kuo Lun Lo
 id: end2endmigration
-summary: End to end SQLServer Migration
+summary: End to End SQLServer Migration
 categories: Getting-Started
 environments: web
 status: Published 
@@ -56,8 +56,9 @@ There are many phases in this migration framework, but most of them can be bucke
 - **Conversion** - Move it to the new platform
 - **Validation** - Test that everything works
 
-We will walk through all the nine phases shown above in this Hand-On-Lab, but note that the primary activities we are doing are the three listed above. If you get lost or you’re not sure where to go next, remember to assess -> convert -> test. Let’s start with the assessment phase. 
+We will walk through all the nine phases shown above in this Hand-On-Lab, but note that the primary activities we are doing are the three listed above. If you get lost or you’re not su    re where to go next, remember to assess -> convert -> test. Let’s start with the assessment phase. 
 
+> aside positive
 > Note that executing a migration requires a close eye on access and security. You will be running two platforms in parallel, and getting a whole new environment setup. For the purpose of time in this lab, we have already set up the target (Snowflake) environment for you, and we will assume you are the only user of this environment. But full RBAC management and support is something every database administrator will have to deal with.
 
 ### Planning and Design
@@ -757,7 +758,7 @@ And you can generally see that most of these activities fit our **assess** -> **
 
 As we continue to walk through the migration process, let’s take a look at our data pipelines. 
 
-## Pipeline Code Migration - Assessment
+## Pipeline Assessment
 Duration: 20
 
 Moving the logic and data in a data warehouse is essential to getting an operational database on a new platform. But to take advantage of the new platform in a functional way, any pipelines running moving data in or out of that data platform need to be repointed or replatformed as well. This can often be challenging as there are usually a variety of pipelines being used. This section of the lab will focus on just one for which Snowflake can provide some acceleration. But note that new ETL and pipeline accelerators are constantly being developed.
@@ -905,7 +906,7 @@ The SMA, even more so than SnowConvert, generates a large amount of assessment i
 
 With that in mind, let’s take a look at the first part of the output that you will see in the application: the readiness scores. There will be multiple readiness scores and you can expand on each one of them to better understand what is captured by that readiness score. 
 
-![sma_scores_01](/assets/sma_scores_01.png)
+![sma_scores_01](./assets/sma_scores_01.png)
 
 Each readiness score is a very basic calculation of the count of functions or elements in an API that are supported in Snowpark/Snowflake divided by the count of all functions or elements related to that API for this execution. The calculation showing you how the score is calculated is shown when you expand the window. You can also learn more about how to interpret the readiness scores by selecting “How to read through the scores” near the top left corner of this window. 
 
@@ -964,7 +965,7 @@ Looks like we only have a few issues, and our parsing error is in the pipeline p
 
 Normally, we would take a look at one other report in our Reports directory, the **ArtifactDependencyInventory.csv** file. But this is such a small execution, let’s take a look at what’s actually in these output files now, and see if we can’t get it to run in (or with) Snowflake.
 
-## Pipeline Code Migration - Conversion and Validation
+## Pipeline Conversion
 Duration: 20
 
 The SMA has “converted” our scripts, but has it really? What it has actually done is converted all references from the Spark API to the Snowpark API, but what it has not done is to replace the connections that may exist in your pipelines. 
@@ -1472,7 +1473,7 @@ And that's it for the script file. It's not the best example of a pipeline, bu i
 
 Let's move on to the reporting notebook.
 
-## Reporting Notebook Migration - Conversion and Validation
+## Notebook Conversion and Validation
 Duration: 10
 
 Let’s step over to the Reporting Notebook in our codebase: **Basic Reporting Notebook - SqlServer Spark.ipynb**. We're going to walk through a similar set of steps as we did with the pipeline script.
@@ -1716,4 +1717,4 @@ Congratulations! You've successfully completed an end-to-end migration from SQL 
 - [SnowConvert Documentation](https://docs.snowconvert.com/)
 - [Snowpark Migration Accelerator Guide](https://docs.snowflake.com/en/user-guide/migration-accelerators)
 - [Snowflake SQL Server Migration Guide](https://resources.snowflake.com/migration/microsoft-sql-server-to-snowflake-migration-guide)
-- [GitHub Repository for this Lab](https://github.com/Snowflake-Labs/sfguides/tree/master/site/sfguides/src/e2e-sqlserver-migration/)
+  - [GitHub Repository for this Lab](https://github.com/Snowflake-Labs/sfguides/tree/master/site/sfguides/src/e2e-sqlserver-migration/)
