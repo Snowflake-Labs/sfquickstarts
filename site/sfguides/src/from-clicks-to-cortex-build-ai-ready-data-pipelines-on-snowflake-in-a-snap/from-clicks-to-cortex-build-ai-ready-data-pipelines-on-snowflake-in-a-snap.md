@@ -8,9 +8,11 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Coalesce
 
 # From Clicks to Cortex Build AI Ready Data Pipelines with Coalesce on Snowflake in a Snap
+
 <!-- ------------------------ -->
 ## Overview
 Duration: 2
+
 
 This Hands-On Lab exercise is designed to help you master building data pipelines using Coalesce Marketplace. In this lab, you’ll explore the Coalesce interface, learn how to easily transform and model your data with a variety of packages from Coalesce marketplace, understand how to build reporting pipelines, and play with real-time functionality.
 

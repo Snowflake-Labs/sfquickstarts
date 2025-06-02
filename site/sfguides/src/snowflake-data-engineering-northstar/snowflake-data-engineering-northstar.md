@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 
-# Getting Started: Data Engineering with Snowflake
+# Getting Started – Data Engineering with Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
@@ -82,7 +82,7 @@ Duration: 2
 
 Tasty Bytes is a food truck company that operates globally in many countries. You're a data engineer on the Tasty Bytes team, and you've recently learned from data analysts on the team that:
 
-* Sales in the city of Hamburg, Germany dropped to $0 for the month of February
+* Sales in the city of Hamburg, Germany dropped to $0 for a few days in the month of February
 
 As a data engineer, your goal is to figure out why this happened, and to also build and end-to-end data pipeline that can  keep analysts up-to-date on the weather in Hamburg.
 
@@ -153,7 +153,7 @@ CREATE OR REPLACE SCHEMA raw_pos;
 
 4. Run this code by highlighting these two statements and clicking the Run button at the top right of the SQL worksheet.
 
-5. Next, navigate to the **copy_into.sql** file in the **sfguide-snowflake-northstar-data-engineering** repo. Copy the contents of this file.
+5. Next, navigate to the [**copy_into.sql**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/00_ingestion/copy_into.sql) file in the **00_ingestion** folder of the **sfguide-snowflake-northstar-data-engineering** repo. Copy the contents of this file.
 
 6. Navigate back to the SQL worksheet you opened. Paste in the code you copied under the two lines of SQL you wrote in the previous step.
 
@@ -187,7 +187,7 @@ Run this command. You should see a success message in the console. Great job!
 
 **We're not quite done.** We loaded about 30 rows of data into the **COUNTRY** table, but we actually need to load close to 1 GB of sales data. We won't do this line-by-line. Instead, you'll use some SQL that we've written for you in advance.
 
-1. Navigate to the **load_tasty_bytes.sql** file in the **00_ingestion** folder within the [sfguide-snowflake-northstar-data-engineering](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering) companion repo. Copy the contents. 
+1. Navigate to the [**load_tasty_bytes.sql**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/00_ingestion/load_tasty_bytes.sql) file in the **00_ingestion** folder within the **sfguide-snowflake-northstar-data-engineering** companion repo. Copy the contents. 
 
 2. Navigate back to Snowflake and create a new SQL worksheet. Paste the contents you copied into the worksheet.
 
@@ -211,36 +211,36 @@ Duration: 10
 
 We now have the necessary data in our Snowflake account. To get closer to the insights that we need – weather-related data for the city of Hamburg, Germany – we need to use SQL to apply transformations to the data. This will bring us closer to the insights we're after. Let's begin.
 
-1. Start by navigating to the **hamburg_sales.sql** file in the **01_transformation** folder in repo. Copy the contents.
+1. Start by navigating to the [**hamburg_sales.sql**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/hamburg_sales.sql) file in the **01_transformation** folder in repo. Copy the contents.
 
 2. Open a new SQL worksheet in Snowflake and paste the contents into the sheet.
 
-In this worksheet, we use SQL to explore the suspicion that there are weather-related anomalies affecting sales in Hamburg, Germany. Let's start exploring.
+In this worksheet, we use SQL to explore the suspicion that there are weather-related anomalies affecting sales in February in Hamburg, Germany. Let's start exploring.
 
 3. Run the first few lines to set your context.
 
-4. Run the first block of SQL that explores sales in Hamburg. You should encounter an error. We need to specify the city and country we're interested in exploring. On line 16, add `'GERMANY'` as the country, and `'HAMBURG'` as the city. Re-run the block of SQL.
+4. Run the first block of SQL that explores sales in Hamburg. You should encounter an error. We need to specify the city and country we're interested in exploring. On line 16, add `'Germany'` as the country, and `'Hamburg'` as the city. Re-run the block of SQL.
 
 ```sql
 -- Query to explore sales in the city of Hamburg, Germany
-WITH _feb_date_dim AS 
-    (
-    SELECT DATEADD(DAY, SEQ4(), '2022-02-01') AS date FROM TABLE(GENERATOR(ROWCOUNT => 28))
-    )
+WITH _feb_date_dim AS (
+    SELECT DATEADD(DAY, SEQ4(), '2022-02-01') AS date 
+    FROM TABLE(GENERATOR(ROWCOUNT => 28))
+)
 SELECT
     fdd.date,
     ZEROIFNULL(SUM(o.price)) AS daily_sales
 FROM _feb_date_dim fdd
 LEFT JOIN analytics.orders_v o
     ON fdd.date = DATE(o.order_ts)
-    AND o.country =  -- Add country
-    AND o.primary_city =  -- Add city
+    AND o.country = '#' -- Add country
+    AND o.primary_city = '#' -- Add city
 WHERE fdd.date BETWEEN '2022-02-01' AND '2022-02-28'
 GROUP BY fdd.date
 ORDER BY fdd.date ASC;
 ```
 
-**It looks like the analysts were correct – there are many dates in February where sales totaled 0.00. So we're on the right path.**
+**It looks like the analysts were correct – there were several days in February where sales totaled 0.00. You can use the Chart feature to confirm this visually. We're on the right path!**
 
 5. Let's now create a view that adds weather data – the data from our live data share we pulled from Snowflake Marketplace – to all cities where Tasty Bytes operates. Run the next block of SQL that creates the `tasty_bytes.harmonized.daily_weather_v` view. We'll use this view later on in our pipeline.
 
@@ -322,7 +322,7 @@ ORDER BY dw.date_valid_std DESC;
 
 A view in Snowflake allows you to store and access the **result** of a query. This is in contrast to querying multiple tables with raw data to extract insights. The queries that views store can be arbitrarily simple or complex. This helps you query exactly what you need at a much faster speed. 
 
-Views also help organize exactly which aspects of data might be valuable, and aid in help with secure data access control. We can use views to power our data pipeline, without sacrificing performance.
+Views also help organize exactly which aspects of data might be valuable, and help with secure data access control. We can use views to power our data pipeline, without sacrificing performance.
 
 We'll use these views in our pipeline later on.
 
@@ -338,7 +338,7 @@ To do this, we'll create two user-defined functions, or UDFs, that are able to t
 
 Let's get started.
 
-1. Copy the contents of the **udf.sql** file in the **01_transformation** folder in the repo.
+1. Copy the contents of the [**udf.sql**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/udf.sql) file in the **01_transformation** folder in the repo.
 
 2. Open a new SQL worksheet in Snowflake and paste the contents in.
 
@@ -374,7 +374,7 @@ Duration: 6
 
 Let's now use the UDFs to add new columns in our views. These new columns will contains the converted values for temperature and precipitation.
 
-1. Copy the contents of the **updated_hamburg_sales.sql** file in the **01_transformation** folder in repo.
+1. Copy the contents of the [**updated_hamburg_sales.sql**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/updated_hamburg_sales.sql) file in the **01_transformation** folder in repo.
 
 2. Open a new SQL worksheet in Snowflake and paste the contents in.
 
@@ -403,7 +403,7 @@ This completes the **Transformation** aspect of our pipeline for this lab.
 ## Deliver Insights With Streamlit in Snowflake
 Duration: 6
 
-We now have the insights that we need, and we can now also deliver them to our data analysts. We have views that track the weather and sales in Hamburg, Germany. So how exactly will we make these insights easily accessible for our data analysts?
+We now have the insights that we need, and we can now also deliver them to our data analysts. We specifically have views that track the weather and sales in Hamburg, Germany. So how exactly will we make these insights easily accessible for our data analysts?
 
 We're going to create a Streamlit in Snowflake app that will visualize this data for them.
 
@@ -411,7 +411,7 @@ For some context, Streamlit is a popular open-source Python library for creating
 
 Let's go ahead and create the app for our analysts.
 
-1. Copy the contents of the **streamlit.py** file in the **02_delivery** folder in the repo.
+1. Copy the contents of the [**streamlit.py**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/02_delivery/streamlit.py) file in the **02_delivery** folder in the repo.
 
 2. Navigate to "Projects", then click on "Streamlit".
 
