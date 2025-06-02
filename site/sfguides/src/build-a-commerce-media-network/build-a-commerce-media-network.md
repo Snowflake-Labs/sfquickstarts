@@ -325,16 +325,17 @@ Now that Altuva is actively targeting Omnira's audience with ads, Omnira want to
 To create a brand-specific conversion event we will use the audience builder to create an audience of Purchases with specific filters:
 
 1. Navigate to **Customer Studio** > **Audiences** in Hightouch and click **Add audience**.
-    ![](assets/)
+    ![](assets/10_1_add_conversion_audience.png)
 2. Select the **Purchases** parent model so that we can build an audience of purchase events.
-    ![](assets/)
+    ![](assets/10_2_select_purchases_parent_model.png)
 3. Click **Add filter** in the audience builder and select the **PURCHASE_DATE** property so that we can filter to recent conversion events.
-    ![](assets/)
+    ![](assets/10_3_select_purchase_date_filter.png)
 4. Set the **PURCHASE_DATE** time window to **within previous 1 week**.
-    ![](assets/)
+    ![](assets/10_4_define_purchase_date_window.png)
 5. Click **Add filter** in the audience builder and select the **BRAND** property. Add a **contains Omnira** filter to ensure only Omnira purchase data is shared. Click **Continue**.
-    ![](assets/)
+    ![](assets/10_6_select_brand_filters.png)
 6. Name the audience "Omnira Purchases" and click **Finish**.
+   ![](assets/10_5_name_purchases_audience.png)
 
 Now you have a brand-specific conversion audience that you can sync to The Trade Desk. You can easily clone this audience to create new conversion feeds for other brands.
 
@@ -344,24 +345,25 @@ Duration: 3
 
 To activate the brand-specific Purchase events for measurement against our campaign, we will send the conversion data directly to their advertising seat. We then have the option to use those conversions in our own ad seat for managed services, or to share a feed of those conversion events with Omnira them to measure results against their self-service campaign:
 1. Click **Add Sync** from the Omnira Purchases audience page.
-    ![](assets/)
-2. Select the The Trade Desk - Omnira destination.
-    ![](assets/)
+    ![](assets/11_1_add_conversion_sync.png)
+2. Select the The Trade Desk - Altuva destination.
+    ![](assets/11_2_select_ttd_offline_conversion_event_type.png)
 3. Select the **Offline conversion events** configuration option.
-    ![](assets/)
+    ![](assets/11_3_select_ttd_destination_conversions.png)
 4. Keep the default tracking tag configuration options set and name the offline tracking tag "Altuva Purchases".
-    ![](assets/)
+    ![](assets/11_4_configure_ttd_conversion_tracking_tag.png)
 5. Select **Purchases** for the event name set up the match values so that The Trade Desk can match conversions back to specific impressions and clicks for attribution. Select the **UID2** field from the **Omnira Purchases** model and map it to the **UID2** value under the **destination field**.
-    ![](assets/)
+    ![](assets/11_5_configure_ttd_conversion_name_match_key.png)
 6. Configure the conversion event metadata and click **Continue**.
-    ![](assets/)
+    ![](assets/11_6_configure_ttd_conversion_metadata.png)
     1. **PURCHASE_DATE** -> **TimestampUtc**
     2. **TOTAL_PRICE** -> **Value**
     3. **CURRENCY** -> **ValueCurrency**
     4. **Merchant_ID** -> **MerchantId**
 8. Define the sync schedule. In this example, set the schedule on an **Interval**. Set the interval to **every 1 day(s)**. Click **Finish**.
+   ![](assets/11_6_configure_ttd_conversion_sync_schedule.png)
 
-You have successfully set up a conversion feed that will send new conversions to Altuva's advertising account, using UID2 to privately and securely match conversions to impressions and clicks from their ad campaigns. For managed services, we can link these conversion events to the campaign in our own advetising seat. For self-service campaigns, we can choose to share that conversion feed with Omnira so that they can link them to their own campaign for measurement.
+You have successfully set up a conversion feed to send new conversions to Altuva's advertising account using UID2 to privately and securely match conversions to impressions and clicks from their ad campaigns. For managed services, we can link these conversion events to the campaign in our advertising seat. For self-service campaigns, we can choose to share that conversion feed with Omnira so that they can link it to their campaign for measurement.
 
 <!-- ------------------------ -->
 ## Use conversion data for measurement & reporting
@@ -370,12 +372,12 @@ Duration: 5
 ### Measure conversions in managed service campaigns
 Now that the conversion data has been synced to our advertising seat, they can use that data for campaign measurement and reporting in our managed service campaign. Conversion events can be found within The Trade Desk by navigating to the **Advertiser Data & Identity** tile.
 
-![](assets/)
+![](assets/campaign_setting.png)
+
+![](assets/edit_reporting_attribution.png)
 
 ### Share conversions for self-service campaigns
-If we were enabling a self-service campaign for Omnira, we could alternatively choose to share the conversion feed with Omnira's advertising seat where they can link those conversions to their own campaign for measurement.
-
-![](assets/)
+If we were enabling a self-service campaign for Omnira, we could alternatively choose to share the conversion feed with Omnira's advertising seat, where they can link those conversions to their own campaign for measurement.
 
 <!-- ------------------------ -->
 ## Set up REDS data feed into Snowflake
@@ -400,7 +402,7 @@ Once your REDS data is feeding into Snowflake, you can join that data to your ow
 ### Use Copilot to generate the attribution model
 To develop the attribution report:
 1. Log into Snowflake and navigate to **Projects**. Click **New project**.
-2. In the bottom right corner click **Copilot**.
+2. In the bottom right corner, click **Copilot**.
 3. Copy and paste the following prompt to ask the Copilot to generate a SQL query for our attribution model:
 
 ### Copilot Prompt
@@ -451,7 +453,9 @@ ORDER BY
   product_name;
 ```
 
-Alternatively, you can copy and paste the SQL above into your project and run the SQL statement.
+Alternatively, you can copy and paste the SQL above into your project and run the SQL statement. This will result in a table showing weekly breakdowns of attributed conversions by product name:
+
+![](assets/reds_attribution_model_sku.png)
 
 ### Create an attribution chart
 Using the attribution model that you just created, we can develop a simple bar chart to visualize the product revenue attributed to your conversion events:
@@ -460,20 +464,22 @@ Using the attribution model that you just created, we can develop a simple bar c
 
 You should now see a bar chart showing the weekly sum of Omnira purchases per week. Using a BI tool, you can similarly create shared dashboards for your clients to display attributed conversions and revenue broken down by campaign, SKU, hotel, and more.
 
+![](assets/reds_attribution_chart_example.png)
+
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 0
 
-In this guide you learned how to transform Snowflake into an end-to-end commerce media platform that your media team can use to curate custom audiences and conversion events, activate them to The Trade Desk for managed service and self-service campaigns, and measure attribution through in-platform reporting and custom reports built on log-level data in Snowflake.
+In this guide, you learned how to transform Snowflake into an end-to-end commerce media platform that your media team can use to curate custom audiences and conversion events, activate them to The Trade Desk for managed service and self-service campaigns, and measure attribution through in-platform reporting and custom reports built on log-level data in Snowflake.
 
 This guide used mock datasets as a guide, but you can use your own datasets with Hightouch to develop a platform that is customized to your unique data assets.
 
-Hightouch's flexible schema allows you to represent unique objections and events that traditional CDPs do not support. Because Hightouch accesses your datasets directly in Snowflake you can easily make any of your Snowflake ML models, like propensity or affinity models, available as attributes in your audience builder. Your media team can then use those models to develop premium custom audiences for clients that provide better performance and demad higher CPM fees.
+Hightouch's flexible schema allows you to represent unique objects and events that traditional CDPs do not support. Because Hightouch accesses your datasets directly in Snowflake, you can easily make any of your Snowflake ML models, like propensity or affinity models, available as attributes in your audience builder. Your media team can then use those models to develop premium custom audiences for clients that provide better performance and demand higher CPM fees.
 
 ### Additional Resources
-- An architecture blueprint for retail media networks
-- Higtouch Customer Studio
-- The Trade Desk for Commerce Media
+- [Blog: An architecture blueprint for retail media success](https://hightouch.com/blog/retail-media-blueprint)
+- [Hightouch Customer Studio](https://hightouch.com/platform/customer-studio)
+- [The Trade Desk for Retail & Commerce Media](https://www.thetradedesk.com/our-demand-side-platform/retail-media)
 
 ### Build your own media network
 Ready to build your own? [Contact the Hightouch team](https://www.hightouch.com/signup) to get started.
