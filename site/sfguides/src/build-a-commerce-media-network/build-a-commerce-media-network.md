@@ -355,7 +355,7 @@ To activate the brand-specific Purchase events for measurement against our campa
 6. Select **Purchases** for the event name set up the match values so that The Trade Desk can match conversions back to specific impressions and clicks for attribution. Select the **UID2** field from the **Omnira Purchases** model and map it to the **UID2** value under the **destination field**.
     ![](assets/11_5_configure_ttd_conversion_name_match_key.png)
 7. Configure the conversion event metadata and click **Continue**.
-    ![](assets/11_6_configure_ttd_conversion_metadata.png)
+    ![](assets/11_6_V2_configure_ttd_conversion_metadata)
     1. **PURCHASE_DATE** -> **TimestampUtc**
     2. **TOTAL_PRICE** -> **Value**
     3. **CURRENCY** -> **ValueCurrency**
