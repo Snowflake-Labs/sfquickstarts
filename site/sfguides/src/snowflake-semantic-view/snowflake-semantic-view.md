@@ -1,5 +1,5 @@
 author: Chanin Nantasenamat
-id: getting-started-snowflake-semantic-view
+id: snowflake-semantic-view
 summary: Learn how to create and query Snowflake Semantic Views to enhance AI-powered Business Intelligence and conversational analytics with a consistent, database-native semantic layer.
 categories: getting-started, data-engineering, artificial-intelligence
 environments: web
