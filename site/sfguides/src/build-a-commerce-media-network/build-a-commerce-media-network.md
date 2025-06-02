@@ -350,16 +350,17 @@ To activate the brand-specific Purchase events for measurement against our campa
     ![](assets/11_2_select_ttd_offline_conversion_event_type.png)
 3. Select the **Offline conversion events** configuration option.
     ![](assets/11_3_select_ttd_destination_conversions.png)
-4. Keep the default tracking tag configuration options set and name the offline tracking tag "Altuva Purchases".
-    ![](assets/11_4_configure_ttd_conversion_tracking_tag.png)
-5. Select **Purchases** for the event name set up the match values so that The Trade Desk can match conversions back to specific impressions and clicks for attribution. Select the **UID2** field from the **Omnira Purchases** model and map it to the **UID2** value under the **destination field**.
+5. Set **Would you like to create a new offline tracking tag?** to **No**. Select the **Hightouch Offline Tracking Tag - 6.1.25** tag to send data to.
+    ![](assets/11_4_v2_configure_ttd_conversion_tracking_tag.png)
+6. Select **Purchases** for the event name set up the match values so that The Trade Desk can match conversions back to specific impressions and clicks for attribution. Select the **UID2** field from the **Omnira Purchases** model and map it to the **UID2** value under the **destination field**.
     ![](assets/11_5_configure_ttd_conversion_name_match_key.png)
-6. Configure the conversion event metadata and click **Continue**.
+7. Configure the conversion event metadata and click **Continue**.
     ![](assets/11_6_configure_ttd_conversion_metadata.png)
     1. **PURCHASE_DATE** -> **TimestampUtc**
     2. **TOTAL_PRICE** -> **Value**
     3. **CURRENCY** -> **ValueCurrency**
-    4. **Merchant_ID** -> **MerchantId**
+    4. **MERCHANT_ID** -> **MerchantId**
+    5. **LINE_ITEMS** -> **LineItems**
 8. Define the sync schedule. In this example, set the schedule on an **Interval**. Set the interval to **every 1 day(s)**. Click **Finish**.
    ![](assets/11_6_configure_ttd_conversion_sync_schedule.png)
 
