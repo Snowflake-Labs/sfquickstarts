@@ -155,7 +155,7 @@ Let's explore the extension to understand how it works.
 
 ```sql
 USE ROLE accountadmin;
-USE DATABASE cortex_knowledge_extension_snowflake_documentation;
+USE DATABASE snowflake_documentation;
 USE SCHEMA shared;
 USE WAREHOUSE compute_wh;
 ```
@@ -174,7 +174,7 @@ The `CHUNK` column represents the chunked knowledge that can be used in our RAG 
 ```sql
 select 
     snowflake.cortex.search_preview(
-        'cortex_knowledge_extension_snowflake_documentation.shared.cke_snowflake_docs_service', 
+        'snowflake_documentation.shared.cke_snowflake_docs_service', 
         '{ "query": "What is a table in Snowflake?", "columns": ["chunk","document_title", "source_url"] }');
 ```
 
