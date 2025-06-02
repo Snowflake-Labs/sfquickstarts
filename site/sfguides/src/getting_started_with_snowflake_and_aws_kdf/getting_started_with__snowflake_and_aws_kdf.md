@@ -70,7 +70,7 @@ to SSH if your instance is in a private subnet
 - Create an [ADF delivery stream](https://docs.aws.amazon.com/firehose/latest/dev/basic-create.html)
 - Setup `Direct Put` as the source for the ADF delivery stream
 - Setup `Snowflake` as the destination for the ADF delivery stream
-- Optionally, secure the connection between Snowflake and ADF with [Privatelink](https://aws.amazon.com/privatelink)
+- Optionally, secure the connection between Snowflake and ADF with [Privatelink](https://aws.amazon.com/privatelink). Note [Snowflake Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#security-governance-and-data-protection) and above is a pre-requisite for Privatelink.
 - A Snowflake database and table for hosting real-time flight data
 
 <!---------------------------->
@@ -317,7 +317,7 @@ Skip `Transform records` setup.
 
 For `Snowflake account URL`, enter the URL you recorded previously from step 1 in Chapter 3, e.g. `https://xyz12345.us-west-2.privatelink.snowflakecomputing.com`.
 
-Note here we are going to use Amazon PrivateLink to secure the communication between Snowflake and ADF, so the URL is a private endpoint with `privatelink` as a substring. 
+Note here we are going to use Amazon PrivateLink (Note, [Snowflake Business Critical Edition](https://docs.snowflake.com/en/user-guide/intro-editions#security-governance-and-data-protection) or above is required) to secure the communication between Snowflake and ADF, so the URL is a private endpoint with `privatelink` as a substring. 
 
 Alternatively, you can use the public endpoint without the `privatelink` substring, e.g. `https://xyz12345.us-west-2.snowflakecomputing.com`, if this is the case, also leave the `VPCE ID` field blank below.
 

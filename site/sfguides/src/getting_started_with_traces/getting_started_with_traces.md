@@ -79,8 +79,9 @@ session = get_active_session()
 user_name = session.sql("SELECT current_user()").collect()[0][0]
 schema_name = "DATA"
 database_name = "TRACING_QUICKSTART"
+event_table = session.sql("SHOW PARAMETERS LIKE 'event_table' IN ACCOUNT").collect()[0][2]
 
-city_list = [(37.5533204, -122.3059259, 'San Mateo'), (52.3368551, 4.8694973, 'Amsterdam'),(52.5100227, 13.3776724, 'Berlin'), (52.2299305,20.9764142, 'Warsaw'), (18.5645333,73.911966, 'Pune')]
+city_list = [(37.485318, -122.176482, 'Menlo Park'), (52.3368551, 4.8694973, 'Amsterdam'),(52.5100227, 13.3776724, 'Berlin'), (52.2299305,20.9764142, 'Warsaw'), (18.5645333,73.911966, 'Pune')]
 
 api_key = st.text_input("Enter API key for openweathermap")
 if api_key == "":
@@ -229,7 +230,7 @@ Duration: 5
 
 A procedure will be used to pull the weather for all the cities in the city_list.
 
-Navigate back to the Notebook by clicking on Projects, Notebooks and opening TRACING_QUICKSTART.
+This python procedure needs the opentelemetry package. To add the package to the Notebook, click on Packages at the top. Under Anaconda Packages, add opentelemetry-api. Adding this package will take a minute as the package is downloaded and added to the running Notebook environment.
 
 Create a new Python cell at the bottom of the notebook by clicking on + Python.
 
@@ -342,14 +343,15 @@ Find your events table by running this SQL:
 
 ```sql
 SHOW PARAMETERS LIKE 'event_table' IN ACCOUNT;
-
 ```
 
-Query the memory and cpu metrics with this query, replacing `YOUR_EVENT_TABLE` with your event table found in the previous query:
+This table is where Snowflake stores all metrics, spans, and logs.
+
+Query the memory and cpu metrics with this query:
 
 ```sql
 SELECT *
-FROM YOUR_EVENT_TABLE
+FROM '{{event_table}}'
 WHERE
     RECORD_TYPE = 'METRIC' 
     and RESOURCE_ATTRIBUTES['db.user'] = '{{user_name}}' 
@@ -359,11 +361,11 @@ ORDER BY TIMESTAMP DESC;
 
 ```
 
-Query the traces with this query, replacing `YOUR_EVENT_TABLE` with your event table found in the previous query:
+Query the traces with this query:
 
 ```sql
 SELECT *
-FROM YOUR_EVENT_TABLE
+FROM '{{event_table}}'
 WHERE
     RECORD_TYPE = 'SPAN' 
     and RESOURCE_ATTRIBUTES['db.user'] = '{{user_name}}' 
@@ -373,11 +375,11 @@ ORDER BY TIMESTAMP DESC;
 
 ```
 
-Query the logs with this query, replacing `YOUR_EVENT_TABLE` with your event table found in the previous query:
+Query the logs with this query:
 
 ```sql
 SELECT *
-FROM YOUR_EVENT_TABLE
+FROM '{{event_table}}'
 WHERE
     RECORD_TYPE = 'LOG' 
     and RESOURCE_ATTRIBUTES['db.user'] = '{{user_name}}' 

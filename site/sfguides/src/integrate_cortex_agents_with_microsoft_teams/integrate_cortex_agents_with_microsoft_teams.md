@@ -138,7 +138,7 @@ AGENT_ENDPOINT='https://<your-org>-<your-account>.snowflakecomputing.com/api/v2/
 
 # You may NOT edit below values  
 RSA_PRIVATE_KEY_PATH='rsa_key.p8'
-MODEL = 'claude-3-5-sonnet'
+MODEL = 'claude-4-sonnet'
 ```
 
 > aside negative

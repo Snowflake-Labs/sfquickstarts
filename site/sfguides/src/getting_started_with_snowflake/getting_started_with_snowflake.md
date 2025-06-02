@@ -80,7 +80,7 @@ Let's get you acquainted with Snowflake! This section covers the basic component
 
 ### Projects > Worksheets
 
-Under **Projects** on the left-hand panel, select the ​**Worksheets​** tab. This provides an interface for submitting SQL queries, performing DDL and DML operations, and viewing results as your queries or operations complete. A new worksheet is created by clicking **`+`** on the top right.
+Under **Projects** on the left-hand panel, select the ​**Worksheets​** tab or go directly by [clicking here](https://app.snowflake.com/_deeplink/worksheets?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake). This provides an interface for submitting SQL queries, performing DDL and DML operations, and viewing results as your queries or operations complete. A new worksheet is created by clicking **`+`** on the top right.
 
 ![worksheets tab main](assets/3UIStory_3.png)
 
@@ -118,31 +118,31 @@ Most of the exercises in this lab are executed using pre-written SQL within this
 
 ### Projects > Dashboards
 
-Under **Projects** on the left-hand panel, select the ​**Dashboards​** tab. This tab allows you to create flexible displays of one or more charts (in the form of tiles, which can be rearranged). Tiles and widgets are produced by executing SQL queries that return results in a worksheet. Dashboards work at a variety of sizes with minimal configuration.
+Under **Projects** on the left-hand panel, select the ​**Dashboards​** tab or [click here](https://app.snowflake.com/_deeplink/dashboards?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake). This tab allows you to create flexible displays of one or more charts (in the form of tiles, which can be rearranged). Tiles and widgets are produced by executing SQL queries that return results in a worksheet. Dashboards work at a variety of sizes with minimal configuration.
 
 ![dashboards tab](assets/3UIStory_5.png)
 
 ### Data > Databases
 
-Under **Data**, the **Databases**​ tab shows information about the databases you have created or have permission to access. You can create, clone, drop, or transfer ownership of databases, as well as load data in the UI. Notice that a database already exists in your environment. However, we will not be using it in this lab.
+Under **Discover & Collaborate**, the **Catalog > Database Explorer**​ tab shows information about the databases you have created or have permission to access. Click here to naviage to the [Database Explorer](https://app.snowflake.com/_deeplink/#/data/databases?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake) directly.  You can create, clone, drop, or transfer ownership of databases, as well as load data in the UI. Notice that a database already exists in your environment. However, we will not be using it in this lab.
 
 ![databases tab](assets/3UIStory_6.png)
 
 ### Data Products > Marketplace
 
-The **Marketplace** tab is where any Snowflake customer can browse and consume data sets made available by providers. There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
+The **Marketplace** tab is where any Snowflake customer can browse and consume data sets made available by providers. Click here to navigate direclty to the [Marketplace](https://app.snowflake.com/_deeplink/marketplace?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake).There are two types of shared data: Public and Personalized. Public data is free data sets available for querying instantaneously. Personalized data requires reaching out to the provider of data for approval of sharing data.
 
 ![marketplace tab](assets/3UIStory_8.png)
 
 ### Data Products > Private Sharing
 
-Under **Data Products**, the **Private Sharing** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data.
+Under **Data Products**, the **Private Sharing** tab is where data sharing can be configured to easily and securely share Snowflake tables among separate Snowflake accounts or external users, without having to create a copy of the data.  Browse directly to Private Sharing by [clicking here](https://app.snowflake.com/_deeplink/#/data/shared/shared-with-you?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake).
 
 ![shared data tab](assets/3UIStory_7.png)
 
 ### Monitoring > Query History
 
-Under **Monitoring** there are multiple tabs for tracking your usage of your Snowflake account:
+Under **Monitoring** there are [multiple tabs](https://app.snowflake.com/_deeplink/#/compute/history/queries?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake) for tracking your usage of your Snowflake account:
 
 - **Query History** is where previous queries are shown, along with filters that can be used to hone results (user, warehouse, status, query tag, etc.). View the details of all queries executed in the last 14 days from your Snowflake account. Click a query ID to drill into it for more information.
 - **Copy History** shows the status of copy commands run to ingest data into Snowflake.
@@ -154,7 +154,7 @@ Under **Monitoring** there are multiple tabs for tracking your usage of your Sno
 
 ### Admin > Warehouses
 
-Under **Admin**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH already exists in your environment.
+Under **Admin**, the **​Warehouses​** tab is where you set up and manage compute resources known as virtual warehouses to load or query data in Snowflake. A warehouse called COMPUTE_WH already exists in your environment.  [Click here](https://app.snowflake.com/_deeplink/#/compute/warehouses?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake) to go directly to the Warehouses tab.
 
 ![warehouses tab](assets/3UIStory_10.png)
 
@@ -222,11 +222,11 @@ Data can be ingested into Snowflake from many locations by using the `COPY` comm
 ### Create a Database and Table
 Ensure you are using the `SYSADMIN` role by selecting your name at the top left, **Switch Role** > **SYSADMIN**.
 
-Navigate to the **Databases** tab. Click **Create**, name the database `CYBERSYN`, then click **CREATE**.
+Navigate to the [**Databases** tab](https://app.snowflake.com/_deeplink/#/data/databases?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake). Click **Create**, name the database `CYBERSYN`, then click **CREATE**.
 
 ![worksheet creation](assets/4PreLoad_2.png)
 
-Now navigate to the **Worksheets** tab. You should see the worksheet we created in step 3.
+Now navigate to the [**Worksheets** tab](https://app.snowflake.com/_deeplink/worksheets?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake). You should see the worksheet we created in step 3.
 
 ![new worksheet](assets/4PreLoad_3.png)
 
@@ -368,7 +368,7 @@ We will now use a virtual warehouse and the `COPY` command to initiate bulk load
 
 Compute resources are needed for loading data. Snowflake's compute nodes are called virtual warehouses and they can be dynamically sized up or out according to workload, whether you are loading data, running a query, or performing a DML operation. Each workload can have its own warehouse so there is no resource contention.
 
-Navigate to the **Warehouses** tab (under **Admin**). This is where you can view all of your existing warehouses, as well as analyze their usage trends.
+Navigate to the [**Warehouses** tab](https://app.snowflake.com/_deeplink/#/compute/warehouses?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake) (under **Admin**). This is where you can view all of your existing warehouses, as well as analyze their usage trends.
 
 Note the **+ Warehouse** option in the upper right corner of the top. This is where you can quickly add a new warehouse. However, we want to use the existing warehouse `COMPUTE_WH` included in the 30-day trial environment.
 
@@ -647,7 +647,7 @@ Duration: 5
 
 ### Snowflake Data Marketplace
 
-Make sure you're using the `ACCOUNTADMIN` role and, navigate to **Data Products** > **Marketplace**:
+Make sure you're using the `ACCOUNTADMIN` role and, [navigate to the Marketplace](https://app.snowflake.com/_deeplink/marketplace?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake) (**Data Products** > **Marketplace**):
 
 ![data marketplace tab](assets/10Share_7.png)
 
@@ -1061,7 +1061,7 @@ Notice that once you switch the UI session to the `ACCOUNTADMIN` role, new tabs 
 
 ![account usage](assets/9Role_5.png)
 
-The **Cost Management** tab shows your usage of Snowflake credits, with filters by account and consumption types:
+The [**Cost Management** tab](https://app.snowflake.com/_deeplink/#/account/usage) shows your usage of Snowflake credits, with filters by account and consumption types:
 - **Organization**: Credit usage across all the accounts in your organization.
 - **Compute**: Credits consumed by the virtual warehouses in the current account.
 - **Storage**: Average amount of data stored in all databases, internal stages, and Snowflake Failsafe in the current account for the past month.
@@ -1106,7 +1106,7 @@ Secure data sharing also powers the Snowflake Data Marketplace, which is availab
 
 ### View Existing Shares
 
-In the home page, navigate to **Data** > **Databases**. In the list of databases, look at the **SOURCE** column. You should see one database with `Local` in the column, which we created previously in the lab. The other database, `SNOWFLAKE`, shows `Share` in the column, indicating it's shared from a provider.
+In the home page, navigate to **Data** > **Databases**. In the [list of databases](https://app.snowflake.com/_deeplink/#/data/databases?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake), look at the **SOURCE** column. You should see one database with `Local` in the column, which we created previously in the lab. The other database, `SNOWFLAKE`, shows `Share` in the column, indicating it's shared from a provider.
 
 ![arrow over database icon](assets/10Share_1.png)
 

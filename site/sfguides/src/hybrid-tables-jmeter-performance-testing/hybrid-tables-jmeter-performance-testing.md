@@ -1,11 +1,11 @@
 author: Jon Osborn
 id: hybrid-tables-jmeter-performance-testing
 summary: Execute a simple performance test to evaluate hybrid tables.
-categories: Getting-Started
+categories: Getting-Started, Unistore, Hybrid Tables
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Hybrid Tables
+tags: Getting Started, Data Engineering, Hybrid Tables, Unistore
 
 # Hybrid Table Performance Testing with JMeter
 <!-- ------------------------ -->
