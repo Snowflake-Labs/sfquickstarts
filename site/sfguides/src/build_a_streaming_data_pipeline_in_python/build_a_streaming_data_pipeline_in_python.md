@@ -157,13 +157,16 @@ Make a copy of the env file to edit by running this command in the codespace ter
 cp .env.example .env
 ```
 
-Edit the Account Name in the .env file to match your Snowflake Account name.
+Edit the account name in the .env file (SNOWFLAKE_ACCOUNT) to match your Snowflake account name.
 
 If you do not know your account name, you can run this sql in Snowsight or via snowsql.
 
 ```sql
 select current_account();
 ```
+
+Paste in your private key from the rsa_key.p8 file into the .env file (PRIVATE_KEY).
+
 
 ### Stream the Data to Snowflake
 
