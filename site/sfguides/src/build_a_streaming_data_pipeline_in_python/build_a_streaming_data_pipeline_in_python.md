@@ -82,6 +82,8 @@ GRANT OPERATE ON WAREHOUSE STREAMING_INGEST TO ROLE STREAMING_INGEST;
 ## Creating the Database and Schema for data
 Duration: 2
 
+This step will create the database and the schema where all the data is landed. This database will also store the notebook which sets up the data pipeline, the streamlit which displays the reports, and all tasks and dynamic tables created for this guide.
+
 Login to Snowsight or use SnowSQL to execute the following commands:
 
 ```sql
@@ -89,16 +91,18 @@ USE ROLE ACCOUNTADMIN;
 
 CREATE DATABASE IF NOT EXISTS STREAMING_INGEST;
 USE DATABASE STREAMING_INGEST;
+ALTER DATABASE STREAMING_INGEST SET USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS=10;
 CREATE SCHEMA IF NOT EXISTS STREAMING_INGEST;
 USE SCHEMA STREAMING_INGEST;
 GRANT OWNERSHIP ON DATABASE STREAMING_INGEST TO ROLE STREAMING_INGEST;
 GRANT OWNERSHIP ON SCHEMA STREAMING_INGEST.STREAMING_INGEST TO ROLE STREAMING_INGEST;
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE STREAMING_INGEST;
 ```
 
 ## Creating the Tables and Pipes needed for data
 Duration: 2
 
-Tables are used to store the data from the clients and a pipe is needed to accept data from the clients. The data is inserted into the table from the pipe.
+This step creates the pipes which are needed to accept data from the clients and the tables which store the data from the pipes.
 
 Login to Snowsight or use SnowSQL to execute the following commands:
 
@@ -129,7 +133,7 @@ FROM TABLE (
 )
 MATCH_BY_COLUMN_NAME=CASE_SENSITIVE;
 
-CREATE OR REPLACE TABLE LIFT_RIDE(TXID varchar(255), RFID varchar(255), RESORT varchar(255), LIFT varchar(255), RIDE_TIME datetime);
+CREATE OR REPLACE TABLE LIFT_RIDE(TXID varchar(255), RFID varchar(255), RESORT varchar(255), LIFT varchar(255), RIDE_TIME datetime, ACTIVATION_DAY_COUNT integer);
 
 CREATE OR REPLACE PIPE LIFT_RIDE_PIPE AS
 COPY INTO LIFT_RIDE
@@ -246,12 +250,57 @@ Verify Lift Rides are being streamed:
 select * from LIFT_RIDE limit 10;
 ```
 
-## Build Pipeline in Python
+## Import the Notebook
 
+We have created a notebook you can use to get started building the streaming data pipeline.
 
-## Build Reports in Streamlit
+[Download](https://github.com/sfc-gh-bculberson/Summit2025-DE214/raw/refs/heads/main/transformation_notebook.ipynb) the Notebook from Github.
 
+Login to Snowsight, click on the bottom left to get the Navigation Menu and Switch Role to STREAMING_INGEST.
 
+![Switch Role](SwitchRole.png)
+
+Click on the +, Notebook, and Import .ipynb File.
+
+![Import .ipynb](ImportNotebook.png)
+
+Name the notebook transformation_notebook, select the db STREAMING_INGEST and the schema STREAMING_INGEST.
+
+Select Run on warehouse and use the query warehouse STREAMING_INGEST and notebook warehouse STREAMING_INGEST.
+
+This will run everything on one warehouse to keep it as efficient as possible.
+
+Click Create.
+
+![Create Notebook](CreateNotebook.png)
+
+Add the Snowflake.Core package which is required by this notebook.
+
+![Create Notebook](ImportSnowflake.Core.png)
+
+Follow the Notebook cells to build the data pipeline objects.
+
+After complete, you will have a data pipeline built on the streaming data using: views, dynamic tables, and triggered tasks.
+
+## Create the Streamlit Application
+
+A Streamlit Application will be created to demonstrate how the data prepared previously could be leveraged in an analytic dashboard inside your organization.
+
+To create a new Streamlit Application Click on +, Streamlit App, and New Streamlit App.
+
+![Create Streamlit 1](CreateStreamlit.png)
+
+Choose the App title STREAMING_INGEST, App location in STREAMING_INGEST database and STREAMING_INGEST schema, and run on the warehouse STREAMING_INGEST.
+
+![Create Streamlit 2](CreateStreamlit2.png)
+
+Overwrite all the contents of the streamlit_app.py file in the editor with the [application code](https://raw.githubusercontent.com/sfc-gh-bculberson/Summit2025-DE214/refs/heads/main/streamlit_app.py) available in the Github repository.
+
+Add the Package plotly and pandas.
+
+![Import Plotly](ImportPlotly.png)
+
+![Import Pandas](ImportPandas.png)
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -259,9 +308,10 @@ Duration: 2
 
 To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as `ACCOUNTADMIN` run:
 ```SQL
-USE ROLE ACCOUNTADMIN;
-
+USE ROLE STREAMING_INGEST;
 DROP DATABASE IF EXISTS STREAMING_INGEST;
+
+USE ROLE ACCOUNTADMIN;
 DROP WAREHOUSE IF EXISTS STREAMING_INGEST;
 DROP USER IF EXISTS STREAMING_INGEST;
 DROP ROLE IF EXISTS STREAMING_INGEST;
@@ -271,7 +321,19 @@ DROP ROLE IF EXISTS STREAMING_INGEST;
 ## Conclusion
 Duration: 1
 
-### What we've covered
-- 
--
+### What we covered
+- Creating a table and pipe to receive streaming data
+- Sending data to the Snowpipe Streaming API from Python
+- Using a Notebook to create a near real-time Data Pipeline leveraging Dynamic Tables
+- Querying the streaming data from a Notebook and Streamlit
+
+### Next steps
+
+Snowflake documentation and quickstarts will provide more information you will need to build a robust streaming data pipeline. Review these resources to learn more.
+
+- [Review Rowset API Introduction](https://docs.snowflake.com/LIMITEDACCESS/snowpipe-streaming-rowset-api/rowset-api-intro)
+- [Dynamic Tables Introduction](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro)
+- Quickstart on [Dynamic Tables](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html)
+- Quickstart on [Streamlit](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_for_python_streamlit/index.html)
+
 
