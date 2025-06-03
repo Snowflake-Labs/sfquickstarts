@@ -50,17 +50,17 @@ We'll build the application's front-end using Streamlit in Snowflake.
 - Some basic familiarity with SQL
 - Some basic familiarity with Retrieval Augmented Generation ("RAG")
 
-### What You’ll Learn 
+### What You'll Learn 
 - Using Snowflake Marketplace for agentic products, like Cortex Knowledge Extensions
 - How to understand and use a Cortex Knowledge Extension
 - How to use **COMPLETE** in Snowflake Cortex AI
 - How to build an application using Streamlit in Snowflake
 
-### What You’ll Need 
+### What You'll Need 
 - A free Snowflake trial account
 - The companion GitHub repo that contains the code to complete this lab: [sfguide-get-started-snowflake-cortex-knowledge-extensions](https://github.com/Snowflake-Labs/sfguide-get-started-snowflake-cortex-knowledge-extensions/)
 
-### What You’ll Build 
+### What You'll Build 
 - A chatbot that uses a Cortex Knowledge Extension
 
 
@@ -92,7 +92,7 @@ To complete this lab, you'll need a Snowflake account. A free Snowflake trial ac
 
 3. On the next section of the form,  set the Snowflake edition to "Enterprise (Most popular").
 
-4. Select "AWS – Amazon Web Services" as the cloud provider.
+4. Select "AWS - Amazon Web Services" as the cloud provider.
 
 5. Select "US West (Oregon)" as the region.
 
@@ -106,7 +106,7 @@ If you choose a different cloud provider, or select a different region within AW
 ## Chatbot Architecture
 Duration: 2
 
-In a Cortex Knowledge Extension, a provider securely shares chunked data, along with other important data attributes – like the source of the data, as an example – which can be used in RAG chatbots. Although a consumer can use the data in the extension, the data is fully secure and remains proprietary to the publisher.
+In a Cortex Knowledge Extension, a provider securely shares chunked data, along with other important data attributes - like the source of the data, as an example - which can be used in RAG chatbots. Although a consumer can use the data in the extension, the data is fully secure and remains proprietary to the publisher.
 
 Here's how the chatbot will function:
 
@@ -212,9 +212,9 @@ CREATE OR REPLACE SCHEMA chatbot_schema;
 
 The application should run and be ready for you to enter a question. Try it out by asking the following questions:
 
-* **What is a view in Snowflake?** – You should receive a response with a link to a relevant page in the docs.
+* **What is a view in Snowflake?** - You should receive a response with a link to a relevant page in the docs.
 
-* **What is MongoDB?** – The app should show you that it is unable to answer this question because the source knowledge has no content on this topic.
+* **What is MongoDB?** - The app should show you that it is unable to answer this question because the source knowledge has no content on this topic.
 
 ![app](./assets/app.png)
 
