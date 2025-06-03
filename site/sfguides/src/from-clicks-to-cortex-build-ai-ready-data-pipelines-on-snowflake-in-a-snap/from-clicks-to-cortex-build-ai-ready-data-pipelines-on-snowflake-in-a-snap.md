@@ -8,6 +8,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Coalesce
 
 # From Clicks to Cortex Build AI Ready Data Pipelines with Coalesce on Snowflake in a Snap
+
 <!-- ------------------------ -->
 ## Overview
 Duration: 2
@@ -139,7 +140,8 @@ You will need to add packages from Coalesce Marketplace into your workspace in o
 
    ![image17](./assets/image17.png)
 
-8. Paste the Package ID into the corresponding input box:
+8. Paste the 
+9. Package ID into the corresponding input box:
 
    ![image18](./assets/image18.png)
 
