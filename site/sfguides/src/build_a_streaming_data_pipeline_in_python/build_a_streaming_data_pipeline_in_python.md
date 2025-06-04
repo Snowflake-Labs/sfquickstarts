@@ -298,13 +298,15 @@ Choose the App title STREAMING_INGEST, App location in STREAMING_INGEST database
 
 ![Create Streamlit 2](CreateStreamlit2.png)
 
-Overwrite all the contents of the streamlit_app.py file in the editor with the [application code](https://raw.githubusercontent.com/sfc-gh-bculberson/Summit2025-DE214/refs/heads/main/streamlit_app.py) available in the Github repository.
-
 Add the Package plotly and pandas.
 
 ![Import Plotly](ImportPlotly.png)
 
 ![Import Pandas](ImportPandas.png)
+
+Overwrite all the contents of the streamlit_app.py file in the editor with the [application code](https://raw.githubusercontent.com/sfc-gh-bculberson/Summit2025-DE214/refs/heads/main/streamlit_app.py) available in the Github repository.
+
+Run the Streamlit to see the visualizations from the data pipeline built in this guide.
 
 <!-- ------------------------ -->
 ## Cleanup
