@@ -6,7 +6,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai, Carlos Carrero
 
-# Build Agentic Application In Snowflake
+# Build Agentic Application with Anthropic In Snowflake
 <!-- ------------------------ -->
 
 ## Overview
