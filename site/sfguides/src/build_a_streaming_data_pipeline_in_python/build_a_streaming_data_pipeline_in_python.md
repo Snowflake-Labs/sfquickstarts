@@ -167,6 +167,7 @@ select current_account();
 
 Paste in your private key from the rsa_key.p8 file into the .env file (PRIVATE_KEY).
 
+Set the appropriate value for the host where your Snowflake endpoint resides (SNOWFLAKE_HOST). You can get the Account/Server URL from the Account Details in Snowsight.
 
 ### Stream the Data to Snowflake
 
@@ -193,7 +194,7 @@ The first thing the stream_data fn should do is to create a SnowflakeStreamingIn
 To create a SnowflakeStreamingIngestClient, you will need to pass it the channel name and kwargs: account, user, database, schema, private_key, ROWSET_DEV_VM_TEST_MODE.
 
 ```python
-client = SnowflakeStreamingIngestClient(client_name, account=account_name, user=user_name, database=database_name, schema=schema_name, private_key=private_key, ROWSET_DEV_VM_TEST_MODE="false")
+client = SnowflakeStreamingIngestClient(client_name, account=account_name, host=host_name, user=user_name, database=database_name, schema=schema_name, private_key=private_key, ROWSET_DEV_VM_TEST_MODE="false")
 ```
 
 This client can be used to open a channel you will need to send data. client.open_channel function takes the channel_name, database_name, schema_name, and the pipe_name as arguments.
@@ -297,13 +298,15 @@ Choose the App title STREAMING_INGEST, App location in STREAMING_INGEST database
 
 ![Create Streamlit 2](CreateStreamlit2.png)
 
-Overwrite all the contents of the streamlit_app.py file in the editor with the [application code](https://raw.githubusercontent.com/sfc-gh-bculberson/Summit2025-DE214/refs/heads/main/streamlit_app.py) available in the Github repository.
-
 Add the Package plotly and pandas.
 
 ![Import Plotly](ImportPlotly.png)
 
 ![Import Pandas](ImportPandas.png)
+
+Overwrite all the contents of the streamlit_app.py file in the editor with the [application code](https://raw.githubusercontent.com/sfc-gh-bculberson/Summit2025-DE214/refs/heads/main/streamlit_app.py) available in the Github repository.
+
+Run the Streamlit to see the visualizations from the data pipeline built in this guide.
 
 <!-- ------------------------ -->
 ## Cleanup
