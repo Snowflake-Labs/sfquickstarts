@@ -165,9 +165,11 @@ $ snow stage list
 +---------------------------------------------------------------------------------------------------------------------------------------------------------+
 ~~~
 
-Upload the video files directory [`videos`](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos) from cloned repo the Stage 
+Upload the contents of the [`videos`](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/videos) directory and [chatbot](https://github.com/Snowflake-Labs/sfguide-extracting-insights-from-video-with-multimodal-ai-analysis/tree/main/chatbot) directories from cloned repo the Stage:
+
 ~~~bash
 $ snow stage copy --recursive ./videos @hol_db.public.videos
+$ snow stage copy --recursive ./chatbot @hol_db.public.model
 ~~~
 
 List the contents of the Stage
