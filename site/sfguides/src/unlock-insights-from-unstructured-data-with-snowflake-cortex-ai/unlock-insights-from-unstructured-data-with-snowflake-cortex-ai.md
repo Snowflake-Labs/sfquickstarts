@@ -105,7 +105,7 @@ Download sample [images](https://github.com/Snowflake-Labs/sfguide-unlock-insigh
 
 ### Upload Images
 
-In the Snowsight UI on the left hand sidebar, select the **Data > Databases** tab and navigate to **AI209_DB > PUBLIC > STAGES > IMAGES_STAGE**.
+In the Snowsight UI on the left hand sidebar, select the **Data > Databases** tab and navigate to **AI209_DB > DEMO > STAGES > IMAGES_STAGE**.
 
 In the top right hand corner, click **+ Files** to upload files to the stage.
 
@@ -129,7 +129,7 @@ To create and configure your Streamlit application in Snowflake:
 2. Configure App Settings:
    * Enter a name for your app (e.g., "AI/ML Toolkit")
    * Select the warehouse **AI209_WH**
-   * Choose **AI209_DB.PUBLIC** as your database and schema
+   * Choose **AI209_DB.DEMO** as your database and schema
    * Click **Create**
 
 3. Create the app:
