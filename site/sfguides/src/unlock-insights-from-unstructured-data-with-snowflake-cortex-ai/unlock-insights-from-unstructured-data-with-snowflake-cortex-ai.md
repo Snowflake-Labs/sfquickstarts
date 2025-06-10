@@ -92,24 +92,7 @@ USE WAREHOUSE IDENTIFIER($var_warehouse_name);
 CREATE DATABASE IF NOT EXISTS IDENTIFIER($var_database_name);
 CREATE SCHEMA IF NOT EXISTS IDENTIFIER($var_schema_name);
 USE SCHEMA IDENTIFIER($var_schema_name);
-    
--- Create Images Stage
-CREATE STAGE IF NOT EXISTS images_stage
-    DIRECTORY = ( ENABLE = true )
-    ENCRYPTION = ( TYPE = 'SNOWFLAKE_SSE' );
 ```
-
-### Download Images
-
-Download sample [images](https://github.com/Snowflake-Labs/sfguide-unlock-insights-from-unstructured-data-with-snowflake-cortex-ai/tree/main/images).
-
-### Upload Images
-
-In the Snowsight UI on the left hand sidebar, select the **Data > Databases** tab and navigate to **AI209_DB > DEMO > STAGES > IMAGES_STAGE**.
-
-In the top right hand corner, click **+ Files** to upload files to the stage.
-
-Navigate back to the SQL worksheet and run the following SQL commands to verify the files have been uploaded:
 
 <!-- ------------------------ -->
 ## Build Streamlit Application
