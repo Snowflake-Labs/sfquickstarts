@@ -128,26 +128,31 @@ source ./venv/bin/activate
 pip install -r requirements.txt
 ```
 
-You can now start the local serverless server which hosts the API.
+You can now start the local serverless server which hosts the API. Replace YOUR_ACCOUNT with your Snowflake account in the commands.
 
 ```bash
-sls wsgi serve
+export SNOWFLAKE_PRIVATE_KEY=`cat ~/.ssh/snowflake_demo_key`
+export SNOWFLAKE_ACCOUNT=YOUR_ACCOUNT
+export SNOWFLAKE_USER=DATA_APPS_DEMO
+export SNOWFLAKE_DATABASE=DATA_APPS_DEMO
+export SNOWFLAKE_SCHEMA=DEMO
+export SNOWFLAKE_WAREHOUSE=DATA_APPS_DEMO
+
+flask --app app run -h localhost -p 5001
 ```
 
 To verify the API is working properly you can hit the 3 API endpoints:
 
 ```bash 
-curl "http://localhost:5000/trips/monthly" | jq
-curl "http://localhost:5000/trips/day_of_week" | jq
-curl "http://localhost:5000/trips/temperature" | jq
+curl "http://localhost:5001/trips/monthly" | jq
+curl "http://localhost:5001/trips/day_of_week" | jq
+curl "http://localhost:5001/trips/temperature" | jq
 ```
-
-If these endpoints are not working and you are on macOS, make sure [port 5000 is not in use](https://www.reddit.com/r/webdev/comments/qg8yt9/apple_took_over_port_5000_in_the_latest_macos/). 
 
 To test the query string parameters you can use the following:
 
 ```bash
-curl "http://localhost:5000/trips/monthly?start_range=2013-06-01&end_range=2013-07-31" | jq
+curl "http://localhost:5001/trips/monthly?start_range=2013-06-01&end_range=2013-07-31" | jq
 ```
 
 These curl commands will return data in JSON format which was pulled from Snowflake using the SQL queries in app.py.

@@ -83,7 +83,7 @@ dependencies:
   - python-confluent-kafka
   - python-dotenv=0.21.0
   - python-rapidjson=1.5
-  - snowflake-connector-python=3.13.2
+  - snowflake-connector-python=3.15.0
   - snowflake-ingest=1.0.10
   - pip:
       - optional-faker==2.1.0
@@ -189,19 +189,23 @@ Kafka and the Snowpipe API both require the use of key pair authentication. Due 
 Create a database, schema, warehouse, role, and user called INGEST in your Snowflake account.
 
 ```sql
+USE ACCOUNTADMIN;
 
-CREATE WAREHOUSE INGEST;
-CREATE ROLE INGEST;
+CREATE WAREHOUSE IF NOT EXISTS INGEST;
+CREATE ROLE IF NOT EXISTS INGEST;
 GRANT USAGE ON WAREHOUSE INGEST TO ROLE INGEST;
 GRANT OPERATE ON WAREHOUSE INGEST TO ROLE INGEST;
-CREATE DATABASE INGEST;
-CREATE SCHEMA INGEST;
+CREATE DATABASE IF NOT EXISTS INGEST;
+USE DATABASE INGEST;
+CREATE SCHEMA IF NOT EXISTS INGEST;
+USE SCHEMA INGEST;
 GRANT OWNERSHIP ON DATABASE INGEST TO ROLE INGEST;
 GRANT OWNERSHIP ON SCHEMA INGEST.INGEST TO ROLE INGEST;
 
 CREATE USER INGEST PASSWORD='<REDACTED>' LOGIN_NAME='INGEST' MUST_CHANGE_PASSWORD=FALSE, DISABLED=FALSE, DEFAULT_WAREHOUSE='INGEST', DEFAULT_NAMESPACE='INGEST.INGEST', DEFAULT_ROLE='INGEST';
 GRANT ROLE INGEST TO USER INGEST;
-GRANT ROLE INGEST TO USER <YOUR_USERNAME>;
+SET USERNAME=CURRENT_USER();
+GRANT ROLE INGEST TO USER IDENTIFIER($USERNAME);
 ```
 
 To generate a key pair for the INGEST user, run the following in your shell:
@@ -209,8 +213,7 @@ To generate a key pair for the INGEST user, run the following in your shell:
 ```bash
 openssl genrsa 4096 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
 openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
-PUBK=`cat ./rsa_key.pub | grep -v KEY- | tr -d '\012'`
-echo "ALTER USER INGEST SET RSA_PUBLIC_KEY='$PUBK';"
+echo "ALTER USER INGEST SET RSA_PUBLIC_KEY='`cat ./rsa_key.pub`';"
 ```
 
 Run the sql from the output to set the RSA_PUBLIC_KEY for the INGEST user.
@@ -527,7 +530,7 @@ Create the table and the snowpipe to handle the ingest. If you changed the data 
 USE ROLE INGEST;
 CREATE OR REPLACE TABLE LIFT_TICKETS_PY_SNOWPIPE (TXID varchar(255), RFID varchar(255), RESORT varchar(255), PURCHASE_TIME datetime, EXPIRATION_TIME date, DAYS number, NAME varchar(255), ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
 
-CREATE PIPE LIFT_TICKETS_PIPE AS COPY INTO LIFT_TICKETS_PY_SNOWPIPE
+CREATE OR REPLACE PIPE LIFT_TICKETS_PIPE AS COPY INTO LIFT_TICKETS_PY_SNOWPIPE
 FILE_FORMAT=(TYPE='PARQUET') 
 MATCH_BY_COLUMN_NAME=CASE_SENSITIVE;
 ```
@@ -1115,6 +1118,19 @@ This configuration will allow data flowing through the connector to flush much q
 
 Data can be loaded in small pieces and will be merged together in the background efficiently by Snowflake. What is even better is that data is immediately available to query before it's merged. All use cases tested have shown Streaming to be as or MORE efficient than the previous Snowpipe only configuration.
 
+Run the following in your shell:
+
+```bash
+export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING
+python ./data_generator.py 1 | python ./publish_data.py
+```
+
+A table named LIFT_TICKETS_KAFKA_STREAMING should be created in your account.
+
+```sql
+SELECT get_ddl('table', 'LIFT_TICKETS_KAFKA_STREAMING');
+```
+
 To send in all your test data, you can run the following in your shell:
 
 ```bash
@@ -1178,6 +1194,19 @@ curl -i -X PUT -H "Content-Type:application/json" \
 ```
 
 Verify the connector was created and is running in the Redpanda console.
+
+Run the following in your shell:
+
+```bash
+export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED
+python ./data_generator.py 1 | python ./publish_data.py
+```
+
+A table named LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED should be created in your account.
+
+```sql
+SELECT get_ddl('table', 'LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED');
+```
 
 To send in all your test data, you can run the following in your shell:
 
