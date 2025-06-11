@@ -15,7 +15,9 @@ Duration: 10
 
 Welcome to the **Building Geospatial Multi-Lay Apps with Snowflake and Streamlit quickstart**.  Today you will learn how to analyse and transform [geospatial](https://www.ordnancesurvey.co.uk/blog/what-is-spatial-data) data in Snowflake.  You will be using **Ordnance Survey** open datasets available on the marketplace as well as the worldwide open overture buildings dataset provided by **CARTO**.
 
-![alt text](image.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![alt text](image-2.png)
+
+
+<img src='image.png' width="180">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src='image-2.png' width="140">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src='image-3.png' width="65">
 
 This is a progressive learning experience from viewing points on a mapk right through to building a multi layer app - which pulls together buildings with unique property reference numbers, the road network and urban extents.
 
@@ -28,6 +30,8 @@ You will be covering:
 - Visualising the results using **Pydeck**
 - Search Optimisation
 - Building a multi-layer app - which pulls together everything you have learned.
+
+- Using what you have learnt to create a **solar power what if scenario calculator**.  This combines Roofing data and solar elevation data supplied by the **Met Office**
 
 Thoughout the experience, you will demonstrate the concepts with **Snowflake Notebooks** and Streamlit.
 
@@ -88,6 +92,7 @@ CREATE WAREHOUSE IF NOT EXISTS LOCATION_ANALYTICS;
 CREATE SCHEMA IF NOT EXISTS NOTEBOOK;
 CREATE SCHEMA IF NOT EXISTS STREAMLIT;
 CREATE SCHEMA IF NOT EXISTS DEFAULT_SCHEMA;
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 
 ```
 
@@ -107,6 +112,16 @@ Duration: 10
     -   Ordnance Survey - Road Network Great Britain - Open Roads
     -   Ordnance Survey - Unique Property Reference Numbers - Great Britain: Open UPRN
     -   Ordnance Survey - GB: GB: OS National Geographic Database
+
+    <img src='image-5.png' width="380">
+  
+  ### Met Office Dataset
+  - Search for Met office and install the following dataset:
+
+  - Postcode Sector Weather Forecasts
+
+  <img src='image-4.png' width="380">
+
 
    
 
@@ -133,7 +148,7 @@ Are you ready to start learning about location data in Snowflake?
 This tutorial will take you through how you can use location data to perform spatial calculations, joins, and visualise the data using the popular **Pydeck** python package.  We will be using the freely available datasets which you have now installed to step through examples of how geospatial data can be handled.
 
 
-- Click [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-analysing-geospatial-location-data/blob/5629b368b26a679df26baeab717e9f9cf75a8927/Notebook/Analyse_Location_Data.ipynb) to download notebook
+- Click [here](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/ed83911899d64a123ebf0180e7e9dae407b18c06/Notebook/Analyse_Location_Data.ipynb) to download notebook
 
 - From the home page, navigate to **Projects > Notebooks**
 
@@ -142,6 +157,8 @@ This tutorial will take you through how you can use location data to perform spa
 ![import](assets/import_notebook.png)
 
 - Choose **LOCATION_ANALYTICS** as the database and **Notebooks** as the schema
+
+- Choose **LOCATION_ANALYTICS** as the query warehouse
 
 - Name the notebook **ANALYSE_LOCATION_DATA**
 
@@ -200,17 +217,13 @@ The following streamlit will allow you to visualise the buildings within any urb
 
 - copy and paste the following code into the **Streamlit** canvas from [here](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/slopey_roofs.py)
 
-- Download and the following files to the streamlit app
+- Download and the following [Style Sheet](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/extra.css) and add to the app directory.
 
-- [Style Sheet](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/extra.css)
-
-- [Logo](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/snowflake_logo_color_rgb.svg)
+Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/snowflake_logo_color_rgb.svg) and add to the app directory
 
 - Create a folder in the Streamlit directory called <b>.streamlit</b>
 
-- Within that folder, add the following config file
-
-- [C](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/config.toml)
+- Within that folder, add the following config file - [config.toml](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/config.toml)
 
 
 
