@@ -31,9 +31,7 @@ You will be covering:
 
 Thoughout the experience, you will demonstrate the concepts with **Snowflake Notebooks** and Streamlit.
 
-![alt text](assets/front_cover.png)
-
-
+<img src='assets/front_cover.png' width="600">
 
 ### Structure of the session
 
@@ -108,6 +106,8 @@ Duration: 10
     -   Ordnance Survey - Postcodes, Place Names and Road Names
     -   Ordnance Survey - Road Network Great Britain - Open Roads
     -   Ordnance Survey - Unique Property Reference Numbers - Great Britain: Open UPRN
+    -   Ordnance Survey - GB: GB: OS National Geographic Database
+
    
 
 - For each dataset found, press **Get** to get the data.  
@@ -167,6 +167,40 @@ This app gives you an example of how you can bring all these datasets together t
 
 
 <!-- ------------------------ -->
+
+## Slopey Roofs - Solar Powering our Buildings
+
+Duration: 10
+
+The following notebook will leverage building data from the UK Nationall Geographic database.  You will combine this with historic solar elevation data in order to determine what solar power could be generated from these buildings.
+
+- Click [here](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Notebook/Slopey_Roofs.ipynb) to download notebook
+
+- From the home page, navigate to **Projects > Notebooks**
+
+- Import the notebook as a new **Snowflake Notebook**
+
+![import](assets/import_notebook.png)
+
+- Before you start the notebook, click on **packages** and import the **Pydeck** package
+
+- Press **Start** to initialise the notebook and follow the instructions within the notebook.
+
+<!-- ------------------------ -->
+## Solar Powered Insights
+Duration: 10
+
+The following streamlit will allow you to visualise the buildings within any urban extent that has available sample building data to understand the potential solar radiation.
+
+- Navigate to **Projects > Streamlit**
+
+- Create a new streamlit application and call the application **SOLAR_POWER_INSIGHTS** inside the **LOCATION_ANALYTICS** database and the **STREAMLITS** schema
+
+- Delete all sample code and import the **pydeck** package by clicking on **packages** on the top left hand corner of the screen.
+
+- copy and paste the following code into the **Streamlit** canvas from [here](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/slopey_roofs.py)
+
+
 ## Conclusion and Resources
 Duration: 5
 ### Conclusion
