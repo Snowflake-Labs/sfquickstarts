@@ -200,6 +200,20 @@ The following streamlit will allow you to visualise the buildings within any urb
 
 - copy and paste the following code into the **Streamlit** canvas from [here](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/slopey_roofs.py)
 
+- Download and the following files to the streamlit app
+
+- [Style Sheet](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/extra.css)
+
+- [Logo](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/snowflake_logo_color_rgb.svg)
+
+- Create a folder in the Streamlit directory called <b>.streamlit</b>
+
+- Within that folder, add the following config file
+
+- [C](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/config.toml)
+
+
+
 
 ## Conclusion and Resources
 Duration: 5
