@@ -262,7 +262,9 @@ Congratulations on completing the **Building Geospatial Multi-Layer Apps with Sn
   You started by learning how to work with location data in Snowflake, visualizing points on a map and understanding spatial relationships.  
 
 - **Building a Multi-Layer Application**  
-  Using Streamlit, you explored how to bring together different layers of geospatial information into an interactive application.  
+  Using Streamlit, you explored how to bring together different layers of geospatial information into an interactive application. 
+
+- Apply the above techniques to generate a **solar panel insights app**
  
 
 ### Next Steps  
