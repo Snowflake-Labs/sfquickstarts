@@ -35,7 +35,7 @@ You will be covering:
 
 Thoughout the experience, you will demonstrate the concepts with **Snowflake Notebooks** and Streamlit.
 
-<img src='assets/front_cover.png' width="600">
+<img src='assets/front_cover.png' width="800">
 
 ### Structure of the session
 
@@ -182,14 +182,26 @@ This app gives you an example of how you can bring all these datasets together t
 
 - Navigate to **Projects > Streamlit**
 
-- Create a new streamlit application and call the application **ROAD_NETWORK** inside the **LOCATION_ANALYTICS** database and the **STREAMLITS** schema
+- Create a new streamlit application and call the application **URBAN_PLANNING** inside the **LOCATION_ANALYTICS** database and the **STREAMLITS** schema
 
 - Delete all sample code and import the **pydeck** package by clicking on **packages** on the top left hand corner of the screen.
 
-- copy and paste the following code into the **Streamlit** canvas from [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-analysing-geospatial-location-data/blob/main/Streamlit/towns_with_roads.py)
+- copy and paste the following code into the **Streamlit** canvas from [here](https://https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/towns_with_roads.pygithub.com/Snowflake-Labs/sfguide-getting-started-with-analysing-geospatial-location-data/blob/main/Streamlit/towns_with_roads.py)
 
-![alt text](assets/road_network.png)
 
+Download and the following [Style Sheet](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/extra.css) and add to the app directory.
+
+Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/snowflake_logo_color_rgb.svg) and add to the app directory
+
+- Create new file and call it **.streamlit/config.toml** 
+
+  <img src='image-7.png' width="400">
+
+- Navigate to view the content of the newly created empty file, and copy and paste the content from the following file - [config.toml](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/config.toml)
+
+
+
+<img src='assets/road_network.png' width="800">
 
 <!-- ------------------------ -->
 
@@ -229,12 +241,14 @@ The following streamlit will allow you to visualise the buildings within any urb
 
 Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/snowflake_logo_color_rgb.svg) and add to the app directory
 
-- Create a folder in the Streamlit directory called <b>.streamlit</b>
+- Create new file and call it **.streamlit/config.toml** 
 
-- Within that folder, add the following config file - [config.toml](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/config.toml)
+  <img src='image-7.png' width="400">
+
+- Navigate to view the content of the newly created empty file, and copy and paste the content from the following file - [config.toml](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/config.toml)
 
 
-
+Run the app
 
 ## Conclusion and Resources
 Duration: 5
