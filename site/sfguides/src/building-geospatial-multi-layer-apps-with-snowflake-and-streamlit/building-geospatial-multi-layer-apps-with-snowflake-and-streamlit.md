@@ -17,7 +17,7 @@ Welcome to the **Building Geospatial Multi-Lay Apps with Snowflake and Streamlit
 
 
 
-<img src='image.png' width="180">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src='image-2.png' width="140">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src='image-3.png' width="65">
+<img src='assets/image.png' width="180">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src='assets/image-2.png' width="140">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src='assets/image-3.png' width="65">
 
 This is a progressive learning experience from viewing points on a mapk right through to building a multi layer app - which pulls together buildings with unique property reference numbers, the road network and urban extents.
 
@@ -121,14 +121,14 @@ Duration: 10
     -   Ordnance Survey - Unique Property Reference Numbers - Great Britain: Open UPRN
     -   Ordnance Survey - GB: GB: OS National Geographic Database
 
-    <img src='image-5.png' width="380">
+    <img src='assets/image-5.png' width="380">
   
   ### Met Office Dataset
   - Search for Met office and install the following dataset:
 
   - Postcode Sector Weather Forecasts
 
-  <img src='image-4.png' width="380">
+  <img src='assets/image-4.png' width="380">
 
 
    
@@ -200,7 +200,7 @@ Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building
 
 - Click on the **+** and select Create new file and call it **.streamlit/config.toml** 
 
-  <img src='image-7.png' width="400">
+  <img src='assets/image-7.png' width="400">
 
 - Navigate to view the content of the newly created empty file, and copy and paste the content from the following file - [config.toml](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/config.toml)
 
@@ -240,7 +240,7 @@ Press **Create**
 Duration: 10
 
 
-<img src='image-8.png' width="800">
+<img src='assets/image-8.png' width="800">
 The following streamlit will allow you to visualise the buildings within any urban extent that has available sample building data to understand the potential solar radiation.
 
 - Navigate to **Projects > Streamlit**
@@ -261,7 +261,7 @@ Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building
 
 - Create new file and call it **.streamlit/config.toml** 
 
-  <img src='image-7.png' width="400">
+  <img src='assets/image-7.png' width="400">
 
 - Navigate to view the content of the newly created empty file, and copy and paste the content from the following file - [config.toml](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/config.toml)
 
@@ -274,7 +274,7 @@ the side bar will give you more information about the buildings and weather in t
 
 You will note that when you **Run Cortex** it leverages the Anthropic LLM which gives you written analysis about the building with the most potential.
 
-<img src='image-9.png' width="400">
+<img src='assets/image-9.png' width="400">
 
 ## Conclusion and Resources
 Duration: 5
@@ -290,7 +290,7 @@ Congratulations on completing the **Building Geospatial Multi-Layer Apps with Sn
 - **Building a Multi-Layer Application**  
   Using Streamlit, you explored how to bring together different layers of geospatial information into an interactive application. 
 
-- Apply the above techniques to generate a **solar panel insights app**
+- You have applied the above techniques to generate a **solar panel insights app**
  
 
 ### Next Steps  
