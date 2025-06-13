@@ -17,7 +17,7 @@ dbt Core is an open-source data transformation tool and framework that you can u
 In this lab, we will go through everything you need to know to get started with [dbt Projects on Snowflake](https://docs.snowflake.com/LIMITEDACCESS/dbt-projects-on-snowflake)!
 
 ### Prerequisites
-- Familiarity with Markdown syntax
+- Familiarity with dbt concepts
 
 ### What You’ll Learn 
 - How to use Workspaces, Snowflake's file based IDE that integrates with dbt
@@ -26,7 +26,7 @@ In this lab, we will go through everything you need to know to get started with 
 - How to deploy and orchistrate dbt Projects from within Snowflake.
 
 ### What You’ll Need 
-- A Snowflake account
+- A non-trial Snowflake account
 
 ### What You’ll Build 
 - A dbt Project running within your Snowflake account
@@ -36,6 +36,14 @@ In this lab, we will go through everything you need to know to get started with 
 Duration: 5
 
 We will be using Tasty Bytes data in this lab. Run the script [here](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake/blob/main/tasty_bytes_dbt_demo/setup/tasty_bytes_setup.sql) in Snowsight to build the objects and data required for this lab.
+
+Workspaces that you create in Snowflake are created in the personal database associated with the active user. To use Workspaces, you must run the following SQL commands to activate all secondary roles for your user.
+
+``` sql
+ALTER USER my_user SET DEFAULT_SECONDARY_ROLES = ('ALL');
+```
+
+Sign out of Snowsight and sign back in.
 
 <!-- ------------------------ -->
 ## Introduction to Workspaces
@@ -53,8 +61,8 @@ Let's explore the data we will be using in this lab.
 3. Run the following queries just like you would in worksheets. 
 
 ``` sql 
-USE WAREHOUSE default_wh;
-USE ROLE attendee_role; 
+USE WAREHOUSE tasty_bytes_dbt_wh;
+USE ROLE accountadmin; 
 
 -- What tables exist?
 SHOW TABLES IN SCHEMA tasty_bytes_dbt_db.raw;
@@ -249,7 +257,7 @@ Let's create tasks to regularly run and test our dbt project.
 We can create more complex task structure with the script below. It creates a task DAG and alerts us when there is a test failure. Copy the script below into a new SQL file and run the commands one by one. Note the alert will fail unless you have verified your email. To verify your email, click on the user icon in the bottom left of the screen > profile > enter your email > click the link in your email.  
 
 ```sql
-USE WAREHOUSE default_wh;
+USE WAREHOUSE tasty_bytes_dbt_wh;
 USE ROLE accountadmin;
 
 CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_deps_task
@@ -352,16 +360,17 @@ Additionally, you are able to build [resource monitors](https://docs.snowflake.c
 ## Conclusion And Resources
 Duration: 1
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+Congratulations! You've successfully completed the "Getting Started with dbt Projects on Snowflake" lab. You now understand how dbt Core on Snowflake enables you to define, test, and deploy SQL transformations using familiar Snowflake features. You've learned how Snowflake's native integration with Git repositories and CLI commands support CI/CD workflows for your data pipelines.
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+If you want to learn more about dbt Projects on Snowflake, check out the [official documentation](https://docs.snowflake.com/LIMITEDACCESS/dbt-projects-on-snowflake).
 
 ### What You Learned
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- How to use Workspaces, Snowflake's file-based IDE that integrates with dbt
+- How to pull a remote dbt project into Workspaces
+- How dbt Projects can be run, edited, and deployed within Snowflake
+- How to deploy and orchestrate dbt Projects from within Snowflake
 
 ### Related Resources
-- <link to github code repo>
-- <link to documentation>
+- [dbt Projects on Snowflake Documentation](https://docs.snowflake.com/LIMITEDACCESS/dbt-projects-on-snowflake)
+- [GitHub Repository: getting-started-with-dbt-on-snowflake](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake)
+- [dbt Core Documentation](https://docs.getdbt.com/)
