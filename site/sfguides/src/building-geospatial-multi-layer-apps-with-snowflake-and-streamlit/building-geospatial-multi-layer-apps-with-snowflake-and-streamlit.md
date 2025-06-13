@@ -222,14 +222,11 @@ The following notebook will leverage building data from the UK Nationall Geograp
 
 - Import the notebook as a new **Snowflake Notebook**
 
+- Select **ANALYSE_LOCATION_DATA** as the database and **STREAMLIT** as the schema.
 
-  <img src='assets/import_notebook.png' width="300">
+- Select **LOCATION_ANALYTICS** as the compute
 
-Select **ANALYSE_LOCATION_DATA** as the database and **STREAMLIT** as the schema.
-
-Select **LOCATION_ANALYTICS** as the compute
-
-Press **Create**
+- Press **Create**
 
 - Before you start the notebook, click on **packages** and import the **Pydeck** package
 
@@ -261,7 +258,7 @@ Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building
 
 - Create new file and call it **.streamlit/config.toml** 
 
-  <img src='assets/image-7.png' width="400">
+  <br><img src='assets/image-7.png' width="400">
 
 - Navigate to view the content of the newly created empty file, and copy and paste the content from the following file - [config.toml](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/config.toml)
 
