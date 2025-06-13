@@ -188,12 +188,17 @@ This app gives you an example of how you can bring all these datasets together t
 
 - copy and paste the following code into the **Streamlit** canvas from [here](https://https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/towns_with_roads.pygithub.com/Snowflake-Labs/sfguide-getting-started-with-analysing-geospatial-location-data/blob/main/Streamlit/towns_with_roads.py)
 
+You will add a selection of supporting files for the app.  In this example, you will import a logo, a style sheet and create a config.toml file.  All of which provide additional styling to the app.
 
-Download and the following [Style Sheet](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/extra.css) and add to the app directory.
+Download and the following [Style Sheet](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/extra.css) and add to the app directory.  The app directory is located in the side pane under the **Files** tab.
 
-Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/snowflake_logo_color_rgb.svg) and add to the app directory
+To add a file, you will need to click on the **+** and select **upload from local**.
 
-- Create new file and call it **.streamlit/config.toml** 
+Browse to the downloaded file and **upload**.
+
+Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/98d6e11b7bd81ae5e96bd784d1d7622371322e85/Streamlit/analyse_location_data/snowflake_logo_color_rgb.svg) and add to the app directory in the same way as previously.
+
+- Click on the **+** and select Create new file and call it **.streamlit/config.toml** 
 
   <img src='image-7.png' width="400">
 
@@ -211,13 +216,20 @@ Duration: 10
 
 The following notebook will leverage building data from the UK Nationall Geographic database.  You will combine this with historic solar elevation data in order to determine what solar power could be generated from these buildings.
 
-- Click [here](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Notebook/Slopey_Roofs.ipynb) to download notebook
+- Click [here](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/1e34125503e6212d004d564a95eb181afff079f8/Notebook/SLOPEY_ROOFS.ipynb) to download notebook
 
 - From the home page, navigate to **Projects > Notebooks**
 
 - Import the notebook as a new **Snowflake Notebook**
 
-![import](assets/import_notebook.png)
+
+  <img src='assets/import_notebook.png' width="300">
+
+Select **ANALYSE_LOCATION_DATA** as the database and **STREAMLIT** as the schema.
+
+Select **LOCATION_ANALYTICS** as the compute
+
+Press **Create**
 
 - Before you start the notebook, click on **packages** and import the **Pydeck** package
 
@@ -227,17 +239,23 @@ The following notebook will leverage building data from the UK Nationall Geograp
 ## Solar Powered Insights
 Duration: 10
 
+
+<img src='image-8.png' width="800">
 The following streamlit will allow you to visualise the buildings within any urban extent that has available sample building data to understand the potential solar radiation.
 
 - Navigate to **Projects > Streamlit**
 
 - Create a new streamlit application and call the application **SOLAR_POWER_INSIGHTS** inside the **LOCATION_ANALYTICS** database and the **STREAMLITS** schema
 
+- Select **LOCATION_ANALYTICS** as the application warehouse.
+
 - Delete all sample code and import the **pydeck** package by clicking on **packages** on the top left hand corner of the screen.
 
-- copy and paste the following code into the **Streamlit** canvas from [here](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/slopey_roofs.py)
+- Press **Create**
 
-- Download and the following [Style Sheet](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/extra.css) and add to the app directory.
+- Copy and paste the following code into the **Streamlit** canvas from [here](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/1e34125503e6212d004d564a95eb181afff079f8/Streamlit/solar_power_insights/slopey_roofs.py)
+
+- Download and the following [Style Sheet](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/extra.css) and add to the app directory.  
 
 Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building-geospatial-multilayer-app-with-snowflake-streamlit/blob/main/Streamlit/solar_power_insights/snowflake_logo_color_rgb.svg) and add to the app directory
 
@@ -249,6 +267,12 @@ Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building
 
 
 Run the app
+
+You will be able to select an urban area which will give you summary details as well as the buildings information.  Each building is color coded based on the level of potential energy efficiency.
+
+the side bar will give you more information about the buildings and weather in the selection.
+
+You will note that when you **Run Cortex** it leverages the Anthropic LLM which gives you written analysis about the building with the most potential.
 
 ## Conclusion and Resources
 Duration: 5
