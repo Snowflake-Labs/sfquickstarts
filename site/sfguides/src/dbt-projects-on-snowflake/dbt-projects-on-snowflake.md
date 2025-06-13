@@ -12,18 +12,21 @@ tags: Getting Started, Data Engineering
 ## Overview 
 Duration: 1
 
+dbt Core is an open-source data transformation tool and framework that you can use to define, test, and deploy SQL transformations. dbt on Snowflake allows you to use familiar Snowflake features to create, edit, test, run, and manage your dbt Core projects. Snowflake integrates with Git repositories and offers Snowflake CLI commands to support continuous integration and development (CI/CD) workflows for data pipelines.
 
+In this lab, we will go through everything you need to know to get started with [dbt Projects on Snowflake](https://docs.snowflake.com/LIMITEDACCESS/dbt-projects-on-snowflake)!
 
 ### Prerequisites
 - Familiarity with Markdown syntax
 
 ### What You’ll Learn 
-- how Workspaces allow you to edit
-- how dbt Projects can be run within Snowflake
-- how to deploy and orchistrate dbt Projects from within Snowflake.
+- How to use Workspaces, Snowflake's file based IDE that integrates with dbt
+- How to pull a remote dbt project into Workspaces
+- How dbt Projects can be run, edited, and deployed within Snowflake
+- How to deploy and orchistrate dbt Projects from within Snowflake.
 
 ### What You’ll Need 
-- A [GitHub](https://github.com/) Account 
+- A Snowflake account
 
 ### What You’ll Build 
 - A dbt Project running within your Snowflake account
@@ -32,205 +35,7 @@ Duration: 1
 ## Setup
 Duration: 5
 
-todo: test with existing tb setup
-todo: test with sysadmin
-
-We will be using Tasty Bytes data in this lab. Run the script below to build the data required for this lab. 
-
-``` sql
-USE ROLE accountadmin;
-USE WAREHOUSE tasty_bytes_dbt_wh;
-
-CREATE OR REPLACE DATABASE tb_101; -- source
-CREATE OR REPLACE SCHEMA tb_101.raw;
-
-
-CREATE OR REPLACE FILE FORMAT tb_101.public.csv_ff 
-type = 'csv';
-
-CREATE OR REPLACE STAGE tb_101.public.s3load
-COMMENT = 'Quickstarts S3 Stage Connection'
-url = 's3://sfquickstarts/frostbyte_tastybytes/'
-file_format = tb_101.public.csv_ff;
-
-/*--
- raw zone table build 
---*/
-
--- country table build
-CREATE OR REPLACE TABLE tb_101.raw.country
-(
-    country_id NUMBER(18,0),
-    country VARCHAR(16777216),
-    iso_currency VARCHAR(3),
-    iso_country VARCHAR(2),
-    city_id NUMBER(19,0),
-    city VARCHAR(16777216),
-    city_population VARCHAR(16777216)
-) 
-COMMENT = '{"origin":"sf_sit-is", "name":"tasty-bytes-dbt", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"sql"}}';
-
--- franchise table build
-CREATE OR REPLACE TABLE tb_101.raw.franchise 
-(
-    franchise_id NUMBER(38,0),
-    first_name VARCHAR(16777216),
-    last_name VARCHAR(16777216),
-    city VARCHAR(16777216),
-    country VARCHAR(16777216),
-    e_mail VARCHAR(16777216),
-    phone_number VARCHAR(16777216) 
-)
-COMMENT = '{"origin":"sf_sit-is", "name":"tasty-bytes-dbt", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"sql"}}';
-
--- location table build
-CREATE OR REPLACE TABLE tb_101.raw.location
-(
-    location_id NUMBER(19,0),
-    placekey VARCHAR(16777216),
-    location VARCHAR(16777216),
-    city VARCHAR(16777216),
-    region VARCHAR(16777216),
-    iso_country_code VARCHAR(16777216),
-    country VARCHAR(16777216)
-)
-COMMENT = '{"origin":"sf_sit-is", "name":"tasty-bytes-dbt", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"sql"}}';
-
--- menu table build
-CREATE OR REPLACE TABLE tb_101.raw.menu
-(
-    menu_id NUMBER(19,0),
-    menu_type_id NUMBER(38,0),
-    menu_type VARCHAR(16777216),
-    truck_brand_name VARCHAR(16777216),
-    menu_item_id NUMBER(38,0),
-    menu_item_name VARCHAR(16777216),
-    item_category VARCHAR(16777216),
-    item_subcategory VARCHAR(16777216),
-    cost_of_goods_usd NUMBER(38,4),
-    sale_price_usd NUMBER(38,4),
-    menu_item_health_metrics_obj VARIANT
-)
-COMMENT = '{"origin":"sf_sit-is", "name":"tasty-bytes-dbt", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"sql"}}';
-
--- truck table build 
-CREATE OR REPLACE TABLE tb_101.raw.truck
-(
-    truck_id NUMBER(38,0),
-    menu_type_id NUMBER(38,0),
-    primary_city VARCHAR(16777216),
-    region VARCHAR(16777216),
-    iso_region VARCHAR(16777216),
-    country VARCHAR(16777216),
-    iso_country_code VARCHAR(16777216),
-    franchise_flag NUMBER(38,0),
-    year NUMBER(38,0),
-    make VARCHAR(16777216),
-    model VARCHAR(16777216),
-    ev_flag NUMBER(38,0),
-    franchise_id NUMBER(38,0),
-    truck_opening_date DATE
-)
-COMMENT = '{"origin":"sf_sit-is", "name":"tasty-bytes-dbt", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"sql"}}';
-
--- order_header table build
-CREATE OR REPLACE TABLE tb_101.raw.order_header
-(
-    order_id NUMBER(38,0),
-    truck_id NUMBER(38,0),
-    location_id FLOAT,
-    customer_id NUMBER(38,0),
-    discount_id VARCHAR(16777216),
-    shift_id NUMBER(38,0),
-    shift_start_time TIME(9),
-    shift_end_time TIME(9),
-    order_channel VARCHAR(16777216),
-    order_ts TIMESTAMP_NTZ(9),
-    served_ts VARCHAR(16777216),
-    order_currency VARCHAR(3),
-    order_amount NUMBER(38,4),
-    order_tax_amount VARCHAR(16777216),
-    order_discount_amount VARCHAR(16777216),
-    order_total NUMBER(38,4)
-)
-COMMENT = '{"origin":"sf_sit-is", "name":"tasty-bytes-dbt", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"sql"}}';
-
--- order_detail table build
-CREATE OR REPLACE TABLE tb_101.raw.order_detail 
-(
-    order_detail_id NUMBER(38,0),
-    order_id NUMBER(38,0),
-    menu_item_id NUMBER(38,0),
-    discount_id VARCHAR(16777216),
-    line_number NUMBER(38,0),
-    quantity NUMBER(5,0),
-    unit_price NUMBER(38,4),
-    price NUMBER(38,4),
-    order_item_discount_amount VARCHAR(16777216)
-)
-COMMENT = '{"origin":"sf_sit-is", "name":"tasty-bytes-dbt", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"sql"}}';
-
--- customer loyalty table build
-CREATE OR REPLACE TABLE tb_101.raw.customer_loyalty
-(
-    customer_id NUMBER(38,0),
-    first_name VARCHAR(16777216),
-    last_name VARCHAR(16777216),
-    city VARCHAR(16777216),
-    country VARCHAR(16777216),
-    postal_code VARCHAR(16777216),
-    preferred_language VARCHAR(16777216),
-    gender VARCHAR(16777216),
-    favourite_brand VARCHAR(16777216),
-    marital_status VARCHAR(16777216),
-    children_count VARCHAR(16777216),
-    sign_up_date DATE,
-    birthday_date DATE,
-    e_mail VARCHAR(16777216),
-    phone_number VARCHAR(16777216)
-)
-COMMENT = '{"origin":"sf_sit-is", "name":"tasty-bytes-dbt", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"sql"}}';
-
-/*--
- raw zone table load 
---*/
-
--- country table load
-COPY INTO tb_101.raw.country
-FROM @tb_101.public.s3load/raw_pos/country/;
-
--- franchise table load
-COPY INTO tb_101.raw.franchise
-FROM @tb_101.public.s3load/raw_pos/franchise/;
-
--- location table load
-COPY INTO tb_101.raw.location
-FROM @tb_101.public.s3load/raw_pos/location/;
-
--- menu table load
-COPY INTO tb_101.raw.menu
-FROM @tb_101.public.s3load/raw_pos/menu/;
-
--- truck table load
-COPY INTO tb_101.raw.truck
-FROM @tb_101.public.s3load/raw_pos/truck/;
-
--- customer_loyalty table load
-COPY INTO tb_101.raw.customer_loyalty
-FROM @tb_101.public.s3load/raw_customer/customer_loyalty/;
-
--- order_header table load
-COPY INTO tb_101.raw.order_header
-FROM @tb_101.public.s3load/raw_pos/order_header/;
-
--- order_detail table load
-COPY INTO tb_101.raw.order_detail
-FROM @tb_101.public.s3load/raw_pos/order_detail/;
-
--- setup completion note
-SELECT 'tb_101 setup is now complete' AS note;
-
-```
+We will be using Tasty Bytes data in this lab. Run the script [here](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake/blob/main/tasty_bytes_dbt_demo/setup/tasty_bytes_setup.sql) in Snowsight to build the objects and data required for this lab.
 
 <!-- ------------------------ -->
 ## Introduction to Workspaces
@@ -252,10 +57,10 @@ USE WAREHOUSE default_wh;
 USE ROLE attendee_role; 
 
 -- What tables exist?
-SHOW TABLES IN SCHEMA tb_101.raw;
+SHOW TABLES IN SCHEMA tasty_bytes_dbt_db.raw;
 
 -- What is the scale of data? 
-SELECT COUNT(*) FROM tb_101.raw.order_header;
+SELECT COUNT(*) FROM tasty_bytes_dbt_db.raw.order_header;
 
 -- Understand a query that might be used in a mart -- in this case sales grouped by customer
 SELECT 
@@ -268,8 +73,8 @@ SELECT
     cl.e_mail,
     SUM(oh.order_total) AS total_sales,
     ARRAY_AGG(DISTINCT oh.location_id) AS visited_location_ids_array
-FROM tb_101.raw.customer_loyalty cl
-JOIN tb_101.raw.order_header oh
+FROM tasty_bytes_dbt_db.raw.customer_loyalty cl
+JOIN tasty_bytes_dbt_db.raw.order_header oh
 ON cl.customer_id = oh.customer_id
 GROUP BY cl.customer_id, cl.city, cl.country, cl.first_name,
 cl.last_name, cl.phone_number, cl.e_mail;
@@ -421,11 +226,28 @@ Workspaces are fully git backed. To view changes and commit, click changes from 
 ## Orchistration and Monitoring
 Duration: 5
 
-### Tasks
+### Monitor dbt Projects
 
-Let's create tasks to regularly run and test our dbt project. Copy the script below into a new SQL file and run the commands one by one. Note the alert will fail unless you have verified your email. To verify your email, click on the user icon in the bottom left of the screen > profile > enter your email > click the link in your email. 
+You can get an overview of dbt project status from the dbt Projects activity in Snowsight. Navigate to monitoring > dbt Projects to view overall status of dbt Projects and quickly jump to the deployed projects.
 
-/// html | div[class="collapse-code"]
+![dbt-projects](assets/dbt-projects.png)
+
+### Orchistrate with Tasks
+
+#### Create Scheduled dbt Tasks
+
+Let's create tasks to regularly run and test our dbt project. 
+
+1. Click dbt_project in the top right corner of Workspaces
+2. Click Create Schedule from the dropdown
+3. Enter a name, schedule, and profile, then click create
+
+![create-task](assets/create-task.png)
+
+#### Complex Tasks and Alerts
+
+We can create more complex task structure with the script below. It creates a task DAG and alerts us when there is a test failure. Copy the script below into a new SQL file and run the commands one by one. Note the alert will fail unless you have verified your email. To verify your email, click on the user icon in the bottom left of the screen > profile > enter your email > click the link in your email.  
+
 ```sql
 USE WAREHOUSE default_wh;
 USE ROLE accountadmin;
@@ -504,7 +326,6 @@ THEN
 -- Execute once
 EXECUTE ALERT tasty_bytes_dbt_db.raw.dbt_alert;
 ```
-///
 
 You can view the status or running tasks by going to Monitoring > Task History.
 
