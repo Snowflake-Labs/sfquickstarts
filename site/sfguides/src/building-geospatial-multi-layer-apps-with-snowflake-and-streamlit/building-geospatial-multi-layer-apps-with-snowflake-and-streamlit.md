@@ -274,6 +274,8 @@ the side bar will give you more information about the buildings and weather in t
 
 You will note that when you **Run Cortex** it leverages the Anthropic LLM which gives you written analysis about the building with the most potential.
 
+<img src='image-9.png' width="400">
+
 ## Conclusion and Resources
 Duration: 5
 ### Conclusion
