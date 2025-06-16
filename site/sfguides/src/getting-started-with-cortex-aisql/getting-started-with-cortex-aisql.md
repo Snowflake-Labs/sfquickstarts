@@ -2,7 +2,7 @@ id: getting-started-with-cortex-aisql
 summary: This guide outlines the process for getting started with Cortex AISQL.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai

@@ -1,12 +1,12 @@
 id: build-agentic-application-in-snowflake
 summary: In this hands-on lab, you'll learn how to build a Data Agent using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
-authors: Dash Desai
+authors: Dash Desai, Carlos Carrero
 
-# Build Agentic Application In Snowflake
+# Build Agentic Application with Anthropic In Snowflake
 <!-- ------------------------ -->
 
 ## Overview
@@ -26,11 +26,31 @@ We'll use a custom dataset focused on bikes and skis. This dataset is intentiona
 
 ### What You Will Need
 
-* A Snowflake [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_) in **US West 2 (Oregon)** region.
+* A Snowflake account in **US West 2 (Oregon)** region.
 
 ### What You Will Build
 
 A Data Agent packaged in a Streamlit application that can intelligently respond to questions by reasoning over both structured and unstructured data.
+
+<!-- ------------------------ -->
+## Snowflake Trial Account
+Duration: 5
+
+To complete this lab, you'll need to create a Snowflake account.
+
+1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_)
+
+2. Start the account creation by completing the first page of the form on the page.
+
+3. On the next section of the form, be sure to set the Snowflake edition to **Enterprise (Most popular)**).
+
+4. Select **AWS – Amazon Web Services** as the cloud provider.
+
+5. Select **US West (Oregon)** as the region.
+
+6. Complete the rest of the form and click **Get started**.
+
+![trial](assets/trial.png)
 
 ## Setup 
 <!-- ------------------------ -->
