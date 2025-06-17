@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: etting Started, Data Science, Data Engineering, Snowpark, SPCS, Model Serving
 
-# A guide on modeling serving in Snowpark Container Services
+# Getting Started with model serving in Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview
 Duration: 2
@@ -38,8 +38,8 @@ This guide uses a real-world dataset of Chicago Transit Authority (CTA) daily ri
 -   A secure, scalable model serving endpoint hosted in Snowpark Container Services.
 
 <!-- ------------------------ -->
-## Setting up our Snowflake environment and importing our notebook
-Duration: 30
+## Snowflake Setup
+Duration: 5
 
 First, we will create a database called **MODEL_SERVING_DB** in Snowflake as below. We will also create a warehouse called **DEMO_BUILD_WAREHOUSE**. 
 
@@ -68,9 +68,7 @@ Lastly, we will import our packages into Snowflake
 
 ![4_Import_Packages](assets/4_Import_Packages.png)
 
-Our notebook contains all the details that is needed. Let us do a quick overview of this notebook and what we will be doing. 
-
-1. Setup Environment
+### Setup Environment
 First, we set up the Python environment by importing the necessary libraries. This includes Snowpark for data manipulation, Snowflake ML for modeling, and the Feature Store.
 
 ```python
@@ -92,7 +90,7 @@ import pandas as pd
 session = get_active_session()
 ```
 
-2. Load Data and Create Feature Store
+### Load Data 
 We begin by loading the Chicago bus ridership data from a CSV file into a Pandas DataFrame, and then into a Snowpark DataFrame. This data is then saved as a table in Snowflake
 
 ```python
@@ -105,7 +103,11 @@ input_df = session.create_dataframe(df_clean)
 input_df.write.mode('overwrite').save_as_table('MODEL_SERVING_DB.FEATURE_STORE_MLDEMO.CHICAGO_BUS_RIDES')
 ```
 
-Create and Register a Feature Store
+<!-- ------------------------ -->
+## Machine Learning
+Duration: 5
+
+### Create and Register a Feature Store
 A Feature Store is created to manage and version our features. We then register an Entity which represents a real-world object that our features are associated with, in this case, a bus route.
 
 ```python
@@ -126,7 +128,7 @@ entity = Entity(
 fs.register_entity(entity)
 ```
 
-3. Distributed Feature Engineering
+### Distributed Feature Engineering
 We perform feature engineering to create new features that will be useful for our model. This includes extracting the day of the week and month from the date, and calculating the previous day's ridership. These engineered features are then registered as a FeatureView.
 
 ```python
@@ -157,7 +159,7 @@ agg_fv = FeatureView(
 agg_fv = fs.register_feature_view(agg_fv, version="1", overwrite=True)
 ```
 
-4. Model Training and Evaluation
+### Model Training and Evaluation
 With our features ready, we define a machine learning pipeline to preprocess the data and train an XGBoost Regressor model. The model is trained and evaluated in a distributed manner using Snowflake's compute resources.
 
 Create and Train the Model
@@ -198,7 +200,9 @@ xg_model = GridSearchCV(
 xg_model.fit(train)
 ```
 
-Evaluate the Model
+## Model Deployment
+
+### Evaluate the Model
 After training, we evaluate the model's performance on the test set.
 
 ```python
@@ -208,10 +212,8 @@ testpreds = xg_model.predict(test)
 print('MSE:', mean_absolute_error(df=testpreds, y_true_col_names='TOTAL_RIDERS', y_pred_col_names='\"TOTAL_RIDERS_FORECAST\"'))
 ```
 
-5. Model Registration and Deployment
+### Model Registration and Deployment
 Finally, the trained model is logged to the Snowflake Model Registry. This allows for versioning, management, and easy deployment of the model.
-
-Register the Model
 
 ```python
 reg_model = reg.get_model("Forecasting_Bus_Ridership").version("v2")
@@ -223,7 +225,7 @@ reg_model.create_service(service_name="ChicagoBusForecastv12",
                   ingress_enabled=True)
 ```
 
-Deploy to Snowpark Container Services (SPCS)
+### Deploy to Snowpark Container Services (SPCS)
 The registered model can be deployed as a service in SPCS for real-time inference.
 
 ```python
@@ -237,7 +239,7 @@ reg_model.create_service(service_name="ChicagoBusForecastv12",
 ```
 
 <!-- ------------------------ -->
-## Accessing our Model Serving
+## Model Serving
 Duration: 5
 
 The Snowflake Model Registry, when used with containers, allows you to package, manage, and deploy machine learning models with complex dependencies or custom runtime environments inside Snowflake. This is accomplished by using Snowpark Container Services (SPCS) which we have done above. Some parts of the architecture are as described below.
@@ -496,8 +498,11 @@ Congratulations! You have successfully built, deployed, and accessed a machine l
 
 This powerful combination of Snowpark, the Model Registry, and SPCS enables data teams to build and scale AI/ML applications securely and efficiently.
 
-What You Learned
+### What You Learned
 - Setting up a complete ML environment in Snowflake.
 - Training and versioning models with the Snowflake Model Registry.
 - Deploying models as scalable services using SPCS.
 - Authenticating and consuming model predictions from a secure endpoint.
+
+### Related Resources
+-  [Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
