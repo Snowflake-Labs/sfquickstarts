@@ -566,6 +566,15 @@ We have successfully used a ML Model shared to us within our own environment.
 <!-- ------------------------ -->
 ## Clean Up Consumer Account (Snowbank)
 
+Run the following SQL commands
+
+```SQL
+USE ROLE ACCOUNTADMIN
+DROP APPLICATION CREDIT_CARD_DEFAULT_MODEL;
+DROP DATABASE NATIVE_APP_CONSUMER;
+DROP WAREHOUSE QUERY_WH;
+```
+
 <!-- ------------------------ -->
 ## Clean Up Provider Account (Zamboni)
 
@@ -580,8 +589,12 @@ Click the vertical ellipses again and select "Delete"
 Open a new SQL worksheet and run the following
 
 ```SQL
-DROP APPLICATION CREDIT_CARD_PREDICTION_APP;
+USE ROLE ACCOUNTADMIN
+DROP APPLICATION IF EXISTS CREDIT_CARD_PREDICTION_APP;
 DROP APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE;
+DROP DATABASE IF EXISTS NATIVE_APP_DEMO;
+DROP WAREHOUSE TRAINING_WH;
+DROP WAREHOUSE QUERY_WH;
 ```
 
 <!-- ------------------------ -->
