@@ -39,7 +39,11 @@ There are numerous benefits to leveraging the Native App framework for our Use C
 - How to Consume a Native Application 
 
 ### What You Will Build 
-- A Native Application that contains an ML Model shared via a Private Listing 
+- A Native Application that contains an ML Model shared via a Private Listing
+
+The architecture of what we will build is shown below
+
+![Diagram](assets/model_na_architecture.png)
 
 ### Prerequisites
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
