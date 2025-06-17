@@ -123,19 +123,10 @@ Next, open up a new worksheet and run all following steps as the ACCOUNTADMIN ro
   USE ROLE ACCOUNTADMIN;
 ```
 
-First we can create a [Virtual Warehouse](https://docs.snowflake.com/en/user-guide/warehouses-overview) that can be used to load the initial dataset. We'll create this warehouse with a size of XS which is right sized for that use case in this lab.
+Next we create two [Virtual Warehouses](https://docs.snowflake.com/en/user-guide/warehouses-overview) that can be used to load the initial dataset, and do our model training respectively.
 
 ```SQL
--- Create a virtual warehouse for training
-CREATE OR REPLACE WAREHOUSE training_wh with 
-  WAREHOUSE_SIZE = 'MEDIUM' 
-  WAREHOUSE_TYPE = 'snowpark-optimized' 
-  MAX_CONCURRENCY_LEVEL = 1
-  AUTO_SUSPEND = 300 
-  AUTO_RESUME = TRUE;
-```
-
--- Create a virtual warehouse for data exploration
+-- Create a virtual warehouse for loading and ad-hoc queries
 CREATE OR REPLACE WAREHOUSE QUERY_WH WITH 
   WAREHOUSE_SIZE = 'X-SMALL' 
   WAREHOUSE_TYPE = 'STANDARD' 
@@ -143,6 +134,15 @@ CREATE OR REPLACE WAREHOUSE QUERY_WH WITH
   AUTO_RESUME = TRUE 
   MIN_CLUSTER_COUNT = 1 
   MAX_CLUSTER_COUNT = 1;
+
+-- Create a virtual warehouse for training
+CREATE OR REPLACE WAREHOUSE training_wh with 
+  WAREHOUSE_SIZE = 'MEDIUM' 
+  WAREHOUSE_TYPE = 'snowpark-optimized' 
+  MAX_CLUSTER_COUNT = 1
+  AUTO_SUSPEND = 300 
+  AUTO_RESUME = TRUE;
+```
 
 ### Load Data 
 
@@ -168,10 +168,6 @@ Next we set up our [External Stage](https://docs.snowflake.com/en/user-guide/dat
 CREATE OR REPLACE STAGE quickstart_cc_default_training_data
     URL = 's3://sfquickstarts/two_way_data_share/train/'
     FILE_FORMAT = parquet_format;
-
-CREATE OR REPLACE STAGE quickstart_cc_default_unscored_data
-    URL = 's3://sfquickstarts/two_way_data_share/unscored/'
-    FILE_FORMAT = parquet_format;
 ```
 
 This DDL will create the structure for the table which is the main source of data for our lab.
@@ -186,13 +182,6 @@ CREATE OR REPLACE TABLE cc_default_training_data
           FILE_FORMAT=>'parquet_format'
         )
       ));
-
--- Create below to be the template of the above (without the target column)
-CREATE OR REPLACE TABLE cc_default_unscored_data LIKE cc_default_training_data;
-ALTER TABLE cc_default_unscored_data DROP COLUMN "target";
-
--- Create below to be the template of the above
-CREATE OR REPLACE TABLE cc_default_new_data LIKE cc_default_unscored_data;
 ```
 
 Now we will load the data in the tables. We can scale up the warehouse temporarily so we do not have to wait as long
@@ -208,11 +197,6 @@ COPY INTO cc_default_training_data
   FROM @quickstart_cc_default_training_data 
   FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
   MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
-
-COPY INTO cc_default_unscored_data 
-  FROM @quickstart_cc_default_unscored_data 
-  FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
-  MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
 ```
 We can now scale down the warehouse since we have finished loading data for the lab
 
@@ -220,14 +204,11 @@ We can now scale down the warehouse since we have finished loading data for the 
 ALTER WAREHOUSE query_wh SET warehouse_size=XSMALL;
 ```
 
-You should have loaded over 5 million and 7 million rows in a few minutes. To check, query the data in the worksheet
+You should have loaded over 5.5 million rows in a few minutes. To check, query the data in the worksheet
 
 ```SQL
 SELECT COUNT(*) 
   FROM CC_DEFAULT_TRAINING_DATA;
-
-SELECT COUNT(*) 
-  FROM CC_DEFAULT_UNSCORED_DATA;
 ```
 
 We have loaded all the data in Zamboni. We can now proceed with training the model
@@ -262,29 +243,23 @@ The first step is to set up the python environment to develop our model. To do t
   ```
   Open the jupyter notebook Credit Card Default Native App Notebook
 
-- Update connection.json with your Snowflake account details and credentials.
+- Update connection.json with your Snowflake Account Identifier details and User Name.
   Here's a sample based on the object names we created in the last step:
 
 ```
 {
-  "account"   : "<your_account_identifier_goes_here>",
-  "user"      : "<your_username_goes_here>",
-  "password"  : "<your_password_goes_here>",
-  "role"      : "ACCOUNTADMIN",
-  "warehouse" : "QUERY_WH",
-  "database"  : "NATIVE_APP_DEMO",
-  "schema"    : "NATIVE_APP_DEMO"
+  "account"        : "<your_account_identifier_goes_here>",
+  "user"           : "<your_username_goes_here>",
+  "password"       : "<your_password_goes_here>",
+  "role"           : "ACCOUNTADMIN",
+  "warehouse"      : "QUERY_WH",
+  "database"       : "NATIVE_APP_DEMO",
+  "schema"         : "NATIVE_APP_DEMO"
 }
 ```
 
-> aside negative
-> 
-> **Note:** For the account parameter above, specify your account identifier and do not include the snowflakecomputing.com domain name. Snowflake automatically appends this when creating the connection. For more details on that, refer to the documentation.
-
-If you are having some trouble with the steps above, this could be due to having different architectures, such as an M1 chip. In that case, follow the instructions [here](https://docs.snowflake.com/developer-guide/snowpark-ml/index#installing-snowpark-ml-from-the-snowflake-conda-channel) and be sure to conda install jupyter notebooks and pyarrow.
-
 ### Train and Register Model
-Open up the notebook and follow the steps. Once you have completed those, you will have trained and deployed a ML Model in Snowflake that predicts credit card default risk. You will also have registered the model in the Snowflake Model Registry.
+Open up the Credit Card Default Native App notebook and follow the steps. Once you have completed those, you will have trained and deployed a ML Model in Snowflake that predicts credit card default risk. You will also have registered the model in the Snowflake Model Registry.
 
 Stay in the Zamboni account for the next step.
 
@@ -294,18 +269,20 @@ Duration: 2
 
 Now we have trained the model, we want to encapsulate it in an Application Package, so we can distribute it via the Native App Framework. More information on the Native Application framework can be found in the documentation [here](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about). We will be working through the [Native App Development Workflow](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-workflow#development-workflow).
 
-Continue to work through the notebook.
+Continue to work through the python notebook. The SQL commands below can be run from the python notebook.
 
-The first step is to create an Application Package object that will hold the assets we wish to distribute to Snowbank. An application package encapsulates the data content, application logic, metadata, and setup script required by an application. An application package also contains information about versions and patch levels defined for the application. We do this by running the following SQL.
+The next step is to create an Application Package object that will hold the assets we wish to distribute to Snowbank. An application package encapsulates the data content, application logic, metadata, and setup script required by an application. An application package also contains information about versions and patch levels defined for the application. We do this by running the following SQL.
 
 ```SQL
+GRANT CREATE APPLICATION PACKAGE ON ACCOUNT TO ROLE ACCOUNTADMIN;
 CREATE APPLICATION PACKAGE IF NOT EXISTS CREDIT_CARD_PREDICTION_APP_PACKAGE;
+SHOW APPLICATION PACKAGES;
 ```
 
 Next, we need to create a stage within the Application package for us to put our model assets. We run the following SQL commands
 
 ```SQL
-USE APPLICATION PACKAGE CREDIT_CARD_PREDICTION_APP_PACKAGE;
+USE APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE;
 CREATE SCHEMA IF NOT EXISTS MODEL_ASSETS;
 CREATE OR REPLACE STAGE CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_STAGE FILE_FORMAT = (TYPE = 'csv' FIELD_DELIMITER = '|' SKIP_HEADER = 1);
 ```
@@ -354,7 +331,7 @@ PUT file://scripts/setup.sql @CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MO
 PUT file://manifest.yml @CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_STAGE overwrite=true auto_compress=false;
 ```
 
-The setup script contains the SQL statements that define the components created when a consumer installs your application. For us, this will include creating stored procedures to perform feature engineering, as well as registering our model for the app to use on the consumer side (doecumentation [here](https://docs.snowflake.com/LIMITEDACCESS/native-apps/models)). This is done in the following lines:
+The setup script contains the SQL statements that define the components created when a consumer installs your application. For us, this will include creating stored procedures to perform feature engineering, as well as registering our model for the app to use on the consumer side (documentation [here](https://docs.snowflake.com/LIMITEDACCESS/native-apps/models)). This is done in the following lines that were run as part of setup.sql on installation of the app:
 
 ```SQL
 create or replace model APP_CODE.CREDIT_CARD_DEFAULT_MODEL from @CREDIT_CARD_PREDICTION_PACKAGE.MODEL_ASSETS.MODEL_STAGE/models/;
@@ -370,214 +347,238 @@ Duration: 15
 
 Now the Application has been created fromt he Application Package in our Provider Account, we can perform some testing to ensure it behaves as expected. In this Quickstart, we have exposed more views and functions than what is necessary, so we can follow along and see how the app in functioning.
 
-You will need a SQL worksheet for this part of the Quickstart.
+You will need a SQL worksheet for this part of the Quickstart. We can load some testing data by executing the following:
+
+```SQL
+USE SCHEMA NATIVE_APP_DEMO.NATIVE_APP_DEMO;
+
+CREATE OR REPLACE STAGE quickstart_cc_default_unscored_data
+    URL = 's3://sfquickstarts/two_way_data_share/unscored/'
+    FILE_FORMAT = parquet_format;
+
+-- Create below to be the template of the above (without the target column)
+CREATE OR REPLACE TABLE cc_default_unscored_data LIKE cc_default_training_data;
+ALTER TABLE cc_default_unscored_data DROP COLUMN "target";
+
+ALTER WAREHOUSE query_wh SET warehouse_size=MEDIUM;
+
+USE WAREHOUSE query_wh;
+
+COPY INTO cc_default_unscored_data 
+  FROM @quickstart_cc_default_unscored_data 
+  FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
+  MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+
+ALTER WAREHOUSE query_wh SET warehouse_size=XSMALL;
+```
 
 This app requires the consumer to explicitly provide a reference to a table in the Snowflake instance it is installed as an input. We can acieve this through the UI, or running the following SQL.
 
 ```SQL
--- Bind the refernce to a table in our own Snowflake Account. This can be done via SQL or the UI
+-- Bind the reference to a table in our own Snowflake Account. This can be done via SQL or the UI
 CALL credit_card_prediction_app.app_code.register_single_reference('RAW_TABLE' , 'ADD', SYSTEM$REFERENCE('TABLE', 'NATIVE_APP_DEMO.NATIVE_APP_DEMO.CC_DEFAULT_UNSCORED_DATA', 'PERSISTENT', 'SELECT'));
 
 -- Check that the reference worked
 SHOW REFERENCES IN APPLICATION credit_card_prediction_app;
 ```
 
-Next lets run through the commands and see if they are working as expected.
+Next lets run through the commands and see if they are working as expected. Note that we are running code inside an isolated Application object. This application object will eventually be shared with our consumer (Snowbank).
 
 ```SQL
 -- This should be empty, as we have not called the procedure to populate the table yet
-SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.RAW_TABLE_VIEW;
+SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.RAW_TABLE_VIEW;
 
 -- Now we call the procedure
-CALL CREDIT_CARD_PREDICTION_APP.CONFIG.CREATE_TABLE_FROM_REFERENCE_RAW();
+CALL CREDIT_CARD_PREDICTION_APP.APP_CODE.CREATE_TABLE_FROM_REFERENCE_RAW();
 
 -- And the table should now be populated
-SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP.RAW_TABLE_VIEW LIMIT 10;
+SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.RAW_TABLE_VIEW LIMIT 10;
 SELECT COUNT(*) FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.RAW_TABLE_VIEW;
 
--- Next we cal the procedure to do the feature engineering
-CALL credit_card_prediction_app.app_code.cc_profile_processing();
+-- Next we call the procedure to do the feature engineering
+CALL CREDIT_CARD_PREDICTION_APP.APP_CODE.CC_PROFILE_PROCESSING();
 
 -- The feature table should now be populated
 SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.TRANSFORMED_TABLE_VIEW LIMIT 10;
 
 -- Next we call the procedure that infers our model
+USE WAREHOUSE TRAINING_WH;
 CALL CREDIT_CARD_PREDICTION_APP.APP_CODE.CC_BATCH_PROCESSING();
 
 -- And we can now see the scored table
 SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.SCORED_TABLE_VIEW LIMIT 10;
 ```
+We are satisfied with the testing. The next step is to distribute the app
 
-Once this is done, we need to create a version before we can share. We can do this in the manifest file, or with the code below
+<!-- ------------------------ -->
+## Provider Account (Zamboni) - Distribute Native App
+Duration: 15
+
+We need to create a version before and a release directive before we can share. We can do this in the manifest file, or with the code below
 
 ```SQL
 
 ALTER APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE
   ADD VERSION v1
-  USING '@credit_card_prediction_package.stage_content.credit_card_prediction_stage'
-  LABEL = 'MyApp Version 1.0';
-
-ALTER APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE
- ADD PATCH FOR VERSION V1
- USING '@credit_card_prediction_package.stage_content.credit_card_prediction_stage';
+  USING '@CREDIT_CARD_PREDICTION_PACKAGE.MODEL_ASSETS.MODEL_STAGE'
+  LABEL = 'Credit Card Default Model Version 1.0';
 
 SHOW VERSIONS IN APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE;
 ```
 
-We need to set the release directive
+Below is how we set a Release Directive. A Release Directive is a way for Providers to control which Apps versions are available for their consumers. More information can be found in the [documentation](https://docs.snowflake.com/en/developer-guide/native-apps/update-app-release-directive)
 
 ```SQL
 ALTER APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE
   SET DEFAULT RELEASE DIRECTIVE
   VERSION = v1
-  PATCH = 1;
+  PATCH = 0;
 ```
 
+Now we can distribute the app to our consumer - Snowbank.
+
+On the left panel, navigate to Data Products > Provider Studio
+
+Select Create Listing > Internal Listing
+
+![Diagram](assets/internal_listing_ui.png)
+
+Fill in the name of the listing in the UI as "Credit Card Default Model". Then select "Add data product"
+
+![Diagram](assets/add_data_product_ui.png)
+
+Select the CREDIT_CARD_PREDICTION_PACKAGE, and click save.
+
+Select "Access Control" to open up the modal. Under "Who can access this data product?" select "Selected accounts and roles". In the Accounts dropdown, select SNOWBANK.
+
+For the Allow Discovery section, select "Not discoverable by users without access".
+
+Click Save
+
+![Diagram](assets/package_listing_ui.png)
+
+Add a support email to the listing.
+
+Finally, click Publish.
 
 
 <!-- ------------------------ -->
-## Consume Model via Native App
+## Consume Model via Native App (Snowbank)
 Duration: 2
 
-In this next step, we will log in to our consumer account. We first need to load data that we want the shared model to run against.
+In this next step, we will log in to our consumer account (Snowbank). You should have saved the details such as the account URL and username from step 3. Log in to the Snowbank Account, and follow the steps to reset your password.
 
-### Load Data 
+Next, lets ingest the data into this completely seperate account by running the following commands in a SQL worksheet.
+
+### Setup and Load Data
+
+```SQL
+USE ROLE ACCOUNTADMIN;
+
+CREATE OR REPLACE WAREHOUSE QUERY_WH WITH 
+  WAREHOUSE_SIZE = 'X-SMALL' 
+  WAREHOUSE_TYPE = 'STANDARD' 
+  AUTO_SUSPEND = 300 
+  AUTO_RESUME = TRUE 
+  MIN_CLUSTER_COUNT = 1 
+  MAX_CLUSTER_COUNT = 1;
+
+CREATE OR REPLACE DATABASE NATIVE_APP_CONSUMER;
+CREATE OR REPLACE SCHEMA NATIVE_APP_CONSUMER;
+USE SCHEMA NATIVE_APP_CONSUMER.NATIVE_APP_CONSUMER;
+
+CREATE OR REPLACE FILE FORMAT parquet_format
+TYPE = PARQUET;
+
+CREATE OR REPLACE STAGE quickstart_cc_default_unscored_data
+    URL = 's3://sfquickstarts/two_way_data_share/unscored/'
+    FILE_FORMAT = parquet_format;
+
+CREATE OR REPLACE TABLE cc_default_unscored_data 
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION=>'@quickstart_cc_default_unscored_data',
+          FILE_FORMAT=>'parquet_format'
+        )
+      ));
+
+ALTER WAREHOUSE query_wh SET warehouse_size=MEDIUM;
+
+COPY INTO cc_default_unscored_data 
+  FROM @quickstart_cc_default_unscored_data 
+  FILE_FORMAT = (FORMAT_NAME= 'parquet_format') 
+  MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+
+ALTER WAREHOUSE query_wh SET warehouse_size=XSMALL;
+```
 
 ### Accept Shared Model
 
-Log in to your second acccount and navigate through to Data Products > Private Sharing. You should see your app ready to be installed
+On the left menu, navigate through to Data Products > Marketplace. Then select the Internal Marketplace tab. You should see your app ready to be installed.
+
+![Diagram](assets/listing_consumer_side_ui.png)
+
+Select Credit Card Default Model, and on the next screen, select Get. If you do not see the Get button, ensure that you are operating as the ACCOUNTADMIN role. Wait for it to install, and then click "Configure".
+
+Select the Privileges tab, and then click "Add" to let our App refer to data in the consumer acctount
+
+![Diagram](assets/consumer_app_config_ui.png)
+
+Click "Select Data" and navigate to the CC_DEFAULT_UNSCORED_DATA in the NATIVE_APP_CONSUMER database and the NATIVE_APP_CONSUMER schema. Click save.
 
 <!-- ------------------------ -->
-## Create another version of the app
-Duration: 2
+## Use Shared Model in Consumer Account (Snowbank)
 
-<!-- ------------------------ -->
-## Metadata Configuration
-Duration: 2
+Open up a SQL Worksheet, and run the tests again. This time, the model has been shared with a segregated account, and the data that is being used for inference has not left the account.
 
-It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
+```SQL
+-- This should be empty, as we have not called the procedure to populate the table yet
+SELECT * FROM CREDIT_CARD_DEFAULT_MODEL.APP_CODE.RAW_TABLE_VIEW;
 
+-- Now we call the procedure
+CALL CREDIT_CARD_DEFAULT_MODEL.APP_CODE.CREATE_TABLE_FROM_REFERENCE_RAW();
 
-- **summary**: This is a sample Snowflake Guide 
-  - This should be a short, 1 sentence description of your guide. This will be visible on the main landing page. 
-- **id**: sample 
-  - make sure to match the id here with the name of the file, all one word.
-- **categories**: data-science 
-  - You can have multiple categories, but the first one listed is used for the icon.
-- **environments**: web 
-  - `web` is default. If this will be published for a specific event or  conference, include it here.
-- **status**: Published
-  - (`Draft`, `Published`, `Deprecated`, `Hidden`) to indicate the progress and whether the sfguide is ready to be published. `Hidden` implies the sfguide is for restricted use, should be available only by direct URL, and should not appear on the main landing page.
-- **feedback link**: https://github.com/Snowflake-Labs/sfguides/issues
-- **tags**: Getting Started, Data Science, Twitter 
-  - Add relevant  tags to make your sfguide easily found and SEO friendly.
-- **authors**: Daniel Myers 
-  - Indicate the author(s) of this specific sfguide.
+-- And the table should now be populated
+SELECT * FROM CREDIT_CARD_DEFAULT_MODEL.APP_CODE.RAW_TABLE_VIEW LIMIT 10;
+SELECT COUNT(*) FROM CREDIT_CARD_DEFAULT_MODEL.APP_CODE.RAW_TABLE_VIEW;
 
----
+-- Next we call the procedure to do the feature engineering
+CALL CREDIT_CARD_DEFAULT_MODEL.APP_CODE.CC_PROFILE_PROCESSING();
 
-You can see the source metadata for this guide you are reading now, on [the github repo](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md).
+-- The feature table should now be populated
+SELECT * FROM  CREDIT_CARD_DEFAULT_MODEL.APP_CODE.TRANSFORMED_TABLE_VIEW LIMIT 10;
 
+-- Next we call the procedure that infers our model
+CALL CREDIT_CARD_DEFAULT_MODEL.APP_CODE.CC_BATCH_PROCESSING();
 
-<!-- ------------------------ -->
-## Creating a Step
-Duration: 2
-
-A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
-
-```markdown
-## Step 1 Title
-Duration: 3
-
-All the content for the step goes here.
-
-## Step 2 Title
-Duration: 1
-
-All the content for the step goes here.
+-- And we can now see the scored table
+SELECT * FROM CREDIT_CARD_DEFAULT_MODEL.APP_CODE.SCORED_TABLE_VIEW LIMIT 10;
 ```
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
-
-The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
+We have successfully used a ML Model shared to us within our own environment.
 
 <!-- ------------------------ -->
-## Code Snippets, Info Boxes, and Tables
-Duration: 2
-
-Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-### JavaScript
-```javascript
-{ 
-  key1: "string", 
-  key2: integer,
-  key3: "string"
-}
-```
-
-### Java
-```java
-for (statement 1; statement 2; statement 3) {
-  // code block to be executed
-}
-```
-
-### Info Boxes
-> aside positive
-> 
->  This will appear in a positive info box.
-
-
-> aside negative
-> 
->  This will appear in a negative info box.
-
-### Buttons
-<button>
-
-  [This is a download button](link.com)
-</button>
-
-### Tables
-<table>
-    <thead>
-        <tr>
-            <th colspan="2"> **The table header** </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>The table body</td>
-            <td>with two columns</td>
-        </tr>
-    </tbody>
-</table>
-
-### Hyperlinking
-[Youtube - Halsey Playlists](https://www.youtube.com/user/iamhalsey/playlists)
+## Clean Up Consumer Account (Snowbank)
 
 <!-- ------------------------ -->
-## Images, Videos, and Surveys, and iFrames
-Duration: 2
+## Clean Up Provider Account (Zamboni)
 
-Look at the [markdown source for this guide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate these elements. 
+Navigate to Data Products > Provider Studio > Internal Marketplace and select Credit Card Default Model
 
+Click the vertical ellipses in the top right, and the select Unpublish
 
-### Videos
-Videos from youtube can be directly embedded:
-<video id="KmeiFXrZucE"></video>
+![Diagram](assets/clean_up_unpublish_ui.png)
 
-### Inline Surveys
-<form>
-  <name>How do you rate yourself as a user of Snowflake?</name>
-  <input type="radio" value="Beginner">
-  <input type="radio" value="Intermediate">
-  <input type="radio" value="Advanced">
-</form>
+Click the vertical ellipses again and select "Delete"
 
-### Embed an iframe
-![https://codepen.io/MarioD/embed/Prgeja](https://en.wikipedia.org/wiki/File:Example.jpg "Try Me Publisher")
+Open a new SQL worksheet and run the following
+
+```SQL
+DROP APPLICATION CREDIT_CARD_PREDICTION_APP;
+DROP APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE;
+```
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
