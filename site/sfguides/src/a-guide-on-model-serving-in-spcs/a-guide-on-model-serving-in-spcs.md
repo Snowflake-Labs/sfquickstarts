@@ -31,7 +31,7 @@ This guide uses a real-world dataset of Chicago Transit Authority (CTA) daily ri
 ### Prerequisites
 -   Familiarity with Python and SQL.
 -   Basic understanding of machine learning concepts.
-- A Snowflake account with[Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=A17i8AUv&_fsi=A17i8AUv).
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=A17i8AUv&_fsi=A17i8AUv).
 - A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
 -  A [GitHub](https://github.com/) account to access the source code and data.
 -  A local Python environment for running access scripts.
