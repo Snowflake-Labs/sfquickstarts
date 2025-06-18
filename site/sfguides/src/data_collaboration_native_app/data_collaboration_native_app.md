@@ -1,16 +1,16 @@
 author: Tim Buchhorn
 id: data_collaboration_native_app
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
+categories: data-applications
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Getting Started, Data Applications
 
 # Sharing an ML Model via Native Apps
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 5
 
 This Quickstart guide is the second in a series of Collaboration & Applications in Snowflake. Part One of the series can be found [here](https://quickstarts.snowflake.com/guide/data_collaboration_two_way/index.html?index=..%2F..index#0)
 
@@ -28,9 +28,9 @@ The Native App Framework is a collaboration framework that allows providers to s
 
 There are numerous benefits to leveraging the Native App framework for our Use Case. For example:
 - Data Sovereignty and Security for the Consumer. In the previous quickstart, it was necessary for the provider to share data with another entity. This could be potentially sensitive information, and therefore a bigger hurdle for security and governance teams to approve. With Native Apps, the app logic is brought to the consumers dataset, so no customer data is leaving their security perimeter
-- Compliance Risk Reduction for the Provider. Similar to the above, the provider of the model way not want to have access to customer data. This requires extra consideration with how to securely handle this data, which is not necessary if the model is shared to their customers to run against their own data.
+- Compliance Risk Reduction for the Provider. Similar to the above, the provider of the model may not want to have access to customer data. This requires extra consideration with how to securely handle this data, which is not necessary if the model is shared to their customers to run against their own data.
 - Increased Margin. By sharing the model to the consumer, the infrastructure cost to execute the model are now with the consumer. This means the provider can monetise the model, without worrying about infrastructure costs. Similarly the consumer can set warehouse sizes appropriate to the SLAs and budgets of the consumer organisation.
-- Faster Onboarding. By having a replicable model, the provider can simple leverage the Snowflake Marketplace for distribution. They no longer need to go through a lengthy process of approvals to set up a data pipeline with their customers.
+- Faster Onboarding. By having a replicable model, the provider can simply leverage the Snowflake Marketplace for distribution. They no longer need to go through a lengthy process of approvals to set up a data pipeline with their customers.
 
 ### What You Will Learn 
 - How to train an ML model in Snowflake
@@ -62,9 +62,9 @@ Duration: 5
 
 The Business Use case follows a similar scenario as Part One.
 
-In this guide, we are playing the role of Zamboni and Snowbank. The Credit Risk team at Snowbank has noticed a rise in credit card default rates which affects the bottom line of the business. Previously, it has shared data with an external organisation (Zamoboni) who assist with analysing the data and scoring which customers are most likely to default.
+In this guide, we are playing the role of Zamboni and Snowbank. The Credit Risk team at Snowbank has noticed a rise in credit card default rates which affects the bottom line of the business. Previously, it has shared data with an external organisation (Zamboni) who assist with analysing the data and scoring which customers are most likely to default.
 
-This time, the compliance team has said that it is too risky to share this customer data with an external party without proper procedures being followed, which could take a few months to complete. Zamboni have propsed a solution that utilises the Native Application Framework.
+This time, the compliance team has said that it is too risky to share this customer data with an external party without proper procedures being followed, which could take a few months to complete. Zamboni have proposed a solution that utilises the Native Application Framework.
 
 Since both companies use Snowflake, Zamboni has proposed sharing their proprietary Credit Default Scoring Model via the Native Application Framework. The advantages of doing this for Snowbank are:
 - No customer data leaves Snowbank's Snowflake Account
@@ -72,7 +72,7 @@ Since both companies use Snowflake, Zamboni has proposed sharing their proprieta
 
 The advantages for Zamboni are:
 - Simple deployment. Zamboni can simply share the model using a similar listing paradigm as sharing a dataset.
-- Reduced compliance risk. Zamboni's security and compliance team are similarly pleased in being able to satisfy the business needs without needing Snowbanks data hosted on their servers
+- Reduced compliance risk. Zamboni's security and compliance team are similarly pleased in being able to satisfy the business needs without needing Snowbank's data hosted on their servers
 - Increased Margin. Zamboni are now able to share their proprietary logic safely, without having to provision infrastructure to run the model on behalf of Snowbank.
 - Speed to Market. Zamboni can simply distribute the model via the Native App framework in a private listing. They no longer need to set up data pipelines. They can also build once, and distribute to lots of different customers by leveraging Snowflake's multitenancy framework.
 
@@ -96,7 +96,7 @@ Addison Howard, AritraAmex, Di Xu, Hossein Vashani, inversion, Negin, Sohier Dan
 ## Set up
 Duration: 10
 
-Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to create a Snowflake Account. You should recieve an email to activate your trial account.
+Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to create a Snowflake Account. You should receive an email to activate your trial account.
 
 Navigate to a new worksheet and execute the following commands to create a second account in the Organisation. The second account will be the account we share the model to (Snowbank). In trial accounts we cannot share the Native App externally, although the same process can be followed to share the app externally if you have a non-trial account.
 
@@ -114,9 +114,9 @@ Note down the account locator and the url from the output of the command above f
 <!-- ------------------------ -->
 
 ## Provider Account (Zamboni) - Set Up
-Duration: 20
+Duration: 10
 
-In this part of the lab we'll set up our Provider Snowflake account. In our business scenario, this step represents Zamboni developing their proprietry Credit Card Default model from their own datasets. Stay in the same account from the previous section.
+In this part of the lab we'll set up our Provider Snowflake account. In our business scenario, this step represents Zamboni developing their proprietary Credit Card Default model from their own datasets. Stay in the same account from the previous section.
 
 ### Initial Set Up (Zamboni)
 
@@ -269,7 +269,7 @@ Stay in the Zamboni account for the next step.
 
 <!-- ------------------------ -->
 ## Provider Account (Zamboni) - Build Native App
-Duration: 2
+Duration: 15
 
 Now we have trained the model, we want to encapsulate it in an Application Package, so we can distribute it via the Native App Framework. More information on the Native Application framework can be found in the documentation [here](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about). We will be working through the [Native App Development Workflow](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-workflow#development-workflow).
 
@@ -294,7 +294,7 @@ CREATE OR REPLACE STAGE CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_ST
 So we share a model that is consistent with what is in the model registry, we are going to export the model from the registry, and put it in the Application package. We do this in the following code block
 
 ```python
-# Retrieve the model from the degistry
+# Retrieve the model from the registry
 m = registry.get_model("NATIVE_APP_DEMO.NATIVE_APP_DEMO.CREDIT_CARD_DEFAULT_MODEL")
 mv = m.version("default")
 
@@ -349,7 +349,7 @@ grant usage on model APP_CODE.CREDIT_CARD_DEFAULT_MODEL to application role app_
 ## Provider Account (Zamboni) - Perform Local Testing
 Duration: 15
 
-Now the Application has been created fromt he Application Package in our Provider Account, we can perform some testing to ensure it behaves as expected. In this Quickstart, we have exposed more views and functions than what is necessary, so we can follow along and see how the app in functioning.
+Now the Application has been created from the Application Package in our Provider Account, we can perform some testing to ensure it behaves as expected. In this Quickstart, we have exposed more views and functions than what is necessary, so we can follow along and see how the app in functioning.
 
 You will need a SQL worksheet for this part of the Quickstart. We can load some testing data by executing the following:
 
@@ -376,7 +376,7 @@ COPY INTO cc_default_unscored_data
 ALTER WAREHOUSE query_wh SET warehouse_size=XSMALL;
 ```
 
-This app requires the consumer to explicitly provide a reference to a table in the Snowflake instance it is installed as an input. We can acieve this through the UI, or running the following SQL.
+This app requires the consumer to explicitly provide a reference to a table in the Snowflake instance it is installed as an input. We can achieve this through the UI, or running the following SQL.
 
 ```SQL
 -- Bind the reference to a table in our own Snowflake Account. This can be done via SQL or the UI
@@ -386,7 +386,7 @@ CALL credit_card_prediction_app.app_code.register_single_reference('RAW_TABLE' ,
 SHOW REFERENCES IN APPLICATION credit_card_prediction_app;
 ```
 
-Next lets run through the commands and see if they are working as expected. Note that we are running code inside an isolated Application object. This application object will eventually be shared with our consumer (Snowbank).
+Next let's run through the commands and see if they are working as expected. Note that we are running code inside an isolated Application object. This application object will eventually be shared with our consumer (Snowbank).
 
 ```SQL
 -- This should be empty, as we have not called the procedure to populate the table yet
@@ -468,11 +468,11 @@ Finally, click Publish.
 
 <!-- ------------------------ -->
 ## Consume Model via Native App (Snowbank)
-Duration: 2
+Duration: 10
 
 In this next step, we will log in to our consumer account (Snowbank). You should have saved the details such as the account URL and username from step 3. Log in to the Snowbank Account, and follow the steps to reset your password.
 
-Next, lets ingest the data into this completely seperate account by running the following commands in a SQL worksheet.
+Next, lets ingest the data into this completely separate account by running the following commands in a SQL worksheet.
 
 ### Setup and Load Data
 
@@ -526,7 +526,7 @@ On the left menu, navigate through to Data Products > Marketplace. Then select t
 
 Select Credit Card Default Model, and on the next screen, select Get. If you do not see the Get button, ensure that you are operating as the ACCOUNTADMIN role. Wait for it to install, and then click "Configure".
 
-Select the Privileges tab, and then click "Add" to let our App refer to data in the consumer acctount
+Select the Privileges tab, and then click "Add" to let our App refer to data in the consumer account
 
 ![Diagram](assets/consumer_app_config_ui.png)
 
@@ -534,6 +534,7 @@ Click "Select Data" and navigate to the CC_DEFAULT_UNSCORED_DATA in the NATIVE_A
 
 <!-- ------------------------ -->
 ## Use Shared Model in Consumer Account (Snowbank)
+Duration: 10
 
 Open up a SQL Worksheet, and run the tests again. This time, the model has been shared with a segregated account, and the data that is being used for inference has not left the account.
 
@@ -565,6 +566,7 @@ We have successfully used a ML Model shared to us within our own environment.
 
 <!-- ------------------------ -->
 ## Clean Up Consumer Account (Snowbank)
+Duration: 5
 
 Run the following SQL commands
 
@@ -577,6 +579,7 @@ DROP WAREHOUSE QUERY_WH;
 
 <!-- ------------------------ -->
 ## Clean Up Provider Account (Zamboni)
+Duration: 10
 
 Navigate to Data Products > Provider Studio > Internal Marketplace and select Credit Card Default Model
 
@@ -599,17 +602,20 @@ DROP WAREHOUSE QUERY_WH;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
+Duration: 5
 
-At the end of your Snowflake Guide, always have a clear call to action (CTA). This CTA could be a link to the docs pages, links to videos on youtube, a GitHub repo link, etc. 
+Congratulations, you have just shared an ML Model over the Snowflake Marketplace via the Snowflake Native App framework. By sharing the ML Model to the Consumer account, we have realised the following benefits:
 
-If you want to learn more about Snowflake Guide formatting, checkout the official documentation here: [Formatting Guide](https://github.com/googlecodelabs/tools/blob/master/FORMAT-GUIDE.md)
+- Data Sovereignty and Security for the Consumer. With Native Apps, the app logic is brought to the consumers dataset, so no customer data is leaving their security perimeter
+- Compliance Risk Reduction for the Provider. Similar to the above, the provider of the model may not want to have access to customer data. This requires extra consideration with how to securely handle this data, which is not necessary if the model is shared to their customers to run against their own data.
+- Increased Margin. By sharing the model to the consumer, the infrastructure cost to execute the model are now with the consumer. This means the provider can monetise the model, without worrying about infrastructure costs. Similarly the consumer can set warehouse sizes appropriate to the SLAs and budgets of the consumer organisation.
+- Faster Onboarding. By having a replicable model, the provider can simple leverage the Snowflake Marketplace for distribution. They no longer need to go through a lengthy process of approvals to set up a data pipeline with their customers.
 
 ### What You Learned
-- creating steps and setting duration
-- adding code snippets
-- embedding images, videos, and surveys
-- importing other markdown files
+- How to train an ML model in Snowflake
+- How to package the ML Model in an Application Package
+- How to privately list a Native Application 
+- How to Consume a Native Application 
 
 ### Resources
 - <link to github code repo>
