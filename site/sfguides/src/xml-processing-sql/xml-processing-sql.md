@@ -10,20 +10,21 @@ tags: Getting Started, Data Engineering, Notebook, SQL, XML, Financial Services,
 # Modernize XML Processing for Financial Services with SQL XML Functions
 
 <!-- ------------------------ -->
-## Overview 
+## Overview
 Duration: 1
 
 This quickstart guides users from financial services through processing XML data using Snowflake's SQL XML functions, specifically focusing on XML validation, parsing, element retrieval, and generation. It uses a trial XML dataset from the Snowflake Marketplace, "CMBS Schedule AL - XML", to demonstrate these techniques through SQL commands and Snowflake Notebooks. Users learn to leverage SQL XML functions like [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml), [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml), [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget), [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml) to transform XML data for applications such as asset valuation, risk analysis, and regulatory reporting within the Snowflake environment.
 
 ### Prerequisites
+- Access to a [Snowflake Account](https://signup.snowflake.com)
 - Privileges necessary to create a user, database, and virtual warehouse in Snowflake
 - Intermediate knowledge of SQL
-- Access to create and run Notebooks in Snowflake
+- Access to create and run [Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 
-### What You’ll Learn 
+### What You’ll Learn
 - Leveraging powerful SQL XML functions such as [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml), [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml), [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget), [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml)
-- Transforming data using Snowflake Notebooks
-- Accessing select Edgar filing data from Snowflake Marketplace
+- Transforming data using [Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
+- Accessing select Edgar filing data from [Snowflake Marketplace](https://app.snowflake.com/marketplace)
 
 ### What You’ll Need 
 - A Snowflake Account with ACCOUNTADMIN or a custom role with enough privileges
@@ -39,11 +40,12 @@ This solution harnesses the power of Snowflake SQL XML functions to validate, pa
 
 ![](assets/pic1.png)
 
-Snowflake Notebooks serve as our interactive workspace. Through the skillful application of advanced SQL XML functions like [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml), [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml), [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget), [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml), we demonstrate how to validate, parse, extract, transform and output XML to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting.
+[Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) serve as our interactive workspace. Through the skillful application of advanced SQL XML functions like [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml), [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml), [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget), [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml), we demonstrate how to validate, parse, extract, transform and output XML to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting.
 
-## Setting up the Data in Snowflake
+## Setup
 Duration: 8
 
+### Data
 We are using free trial XML data from Snowflake Marketplace: "CMBS Schedule AL - XML". 
 
 The paid dataset contains Schedule AL data from Edgar Form ABS-EE filings for 230+ CMBS deals across 9,500+ filings (monthly) and it is updated daily to capture all future ABS-EE filings as they are published in Edgar. This data, specifically Schedule AL remits, is intended for use in asset valuation and risk analysis. Investors use it to monitor changes in collateral valuations for CMBS bonds, while investors and loan originators use it to benchmark loan metrics like interest rates and debt yields.
@@ -59,8 +61,8 @@ Click on "CMBS_SCHEDULE_AI_XML" dataset link and "Start Trial".
 
 > Keep the shared database name as CMBS_Schedule_AL__XML.
 
-### Creating Objects, Data Loading, Validation, Parsing, Extraction
-Login to your Snowflake account. Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet and choose "SQL Worksheet". Name it "Snowpark XML Processing - Setup". 
+### Database
+Login to your Snowflake account. Navigate to [Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs), click "+" in the top-right corner to create a new Worksheet and choose "SQL Worksheet". Name it "SQL XML Processing Setup". 
 
 Paste the following block to your worksheet.
 
@@ -94,10 +96,10 @@ You will create Snowflake objects (database, schema, warehouse) executing the ab
 
 You can execute all at once 
 ![](assets/pic4a.png)
-or, one at the time, by selecting each statement and clicking on the Run button.
+or, one at the time, by selecting each statement and clicking on the "Run" button.
 
 <!-- ------------------------ -->
-## SQL XML Processing with Notebooks
+## SQL XML Processing
 Duration: 10
 
 You will learn how to create a notebook and to leverage powerful SQL XML functions such as [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml), [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml), [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget), [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml) to process XML data to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting, using "CMBS Schedule AL - XML" trial data from Snowflake Marketplace.
@@ -221,14 +223,13 @@ You did it! You have successfully completed the "Modernize XML Processing for Fi
 
 ### What you learned
 - Leverage SQL XML functions such as [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml), [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml), [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget), [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml)
-- Perform data engineering tasks using Snowflake Notebooks
-- Access data from Snowflake Marketplace
-
+- Perform data engineering tasks using [Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
+- Access data from [Snowflake Marketplace](https://app.snowflake.com/marketplace)
 
 ### Related Resources
 - [TO_XML](https://docs.snowflake.com/en/sql-reference/functions/to_xml): Serialize VARIANT objects back to XML strings
 - [XMLGET](https://docs.snowflake.com/en/sql-reference/functions/xmlget): Extract specific XML elements by tags
 - [PARSE_XML](https://docs.snowflake.com/en/sql-reference/functions/parse_xml): Convert XML strings to structured VARIANT objects
 - [CHECK_XML](https://docs.snowflake.com/en/sql-reference/functions/check_xml): Validate XML document structure
-- [Loading XML Data](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table#type-xml): Use the COPY command
-- [Introduction to loading and parsing XML data using SQL](https://community.snowflake.com/s/article/introduction-to-loading-and-parsing-xml-data-using-sql)
+- [Loading XML Data with COPY](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table#type-xml): Use the COPY command
+- [Loading and Parsing XML Data Using SQL](https://community.snowflake.com/s/article/introduction-to-loading-and-parsing-xml-data-using-sql)

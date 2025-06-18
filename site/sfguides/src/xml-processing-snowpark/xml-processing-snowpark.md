@@ -10,12 +10,12 @@ tags: Getting Started, Data Engineering, Notebook, Snowpark, XML, Financial Serv
 # Modernize XML Processing for Financial Services with Snowpark XML
 
 <!-- ------------------------ -->
-## Overview 
+## Overview
 Duration: 2
 
 This quickstart guides users through processing XML data using Snowflake’s Snowpark XML.
 
-Snowflake Notebooks and a US Treasury dataset downloaded from [Investments of Federal Government Accounts in Federal Securities](https://fiscaldata.treasury.gov/datasets/monthly-treasury-statement/securities-issued-by-federal-agencies-under-special-financing-authorities) are used to demonstrate Snowpark XML capabilities. 
+Snowflake [Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) and a US Treasury dataset downloaded from [Investments of Federal Government Accounts in Federal Securities](https://fiscaldata.treasury.gov/datasets/monthly-treasury-statement/securities-issued-by-federal-agencies-under-special-financing-authorities) are used to demonstrate Snowpark XML capabilities. 
 
 Snowpark XML enables scalable, Spark-like processing of XML files using Snowpark’s Python API and UDTF-based backend. 
 
@@ -25,20 +25,21 @@ Users can leverage Snowpark XML capabilities to:
 - Use simple, Spark-compatible API (`session.read.option(...).xml(...)`).
 
 ### Prerequisites
+- Access to a [Snowflake Account](https://signup.snowflake.com)
 - Privileges necessary to create a user, database, and virtual warehouse in Snowflake
-- Intermediate knowledge of Snowpark and Python
-- Access to create and run Notebooks in Snowflake
+- Intermediate knowledge of [Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/python/index) and Python
+- Access to create and run [Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 
-### What You’ll Learn 
+### What You’ll Learn
 - Efficiently ingest large or multiple XML files using `rowTag`.
 - Output as structured rows in `VARIANT`, enabling easier querying.
 - Use simple, Spark-compatible API (`session.read.option(...).xml(...)`).
-- Create and run Snowflake Notebooks
+- Create and run [Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 
-### What You’ll Need 
+### What You’ll Need
 - A Snowflake Account with ACCOUNTADMIN or a custom role with enough privileges
 
-### What You’ll Build 
+### What You’ll Build
 - A Notebook for XML Data Processing with Snowpark XML on Snowflake
 
 <!-- ------------------------ -->
@@ -49,24 +50,13 @@ This solution harnesses the power of Snowflake Snowpark XML to load, extract and
 
 ![](assets/pic1.png)
 
-Snowflake Notebooks serve as our interactive workspace. Through the skillful application of advanced Snowpark XML capabilities, we demonstrate how to process XML to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting.
+Snowflake [Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) serve as our interactive workspace. Through the skillful application of advanced Snowpark XML capabilities, we demonstrate how to process XML to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting.
 
-## Setting up the Data in Snowflake
+## Setup
 Duration: 8
 
-We are using the [Investments of Federal Government Accounts in Federal Securities](https://fiscaldata.treasury.gov/datasets/monthly-treasury-statement/securities-issued-by-federal-agencies-under-special-financing-authorities) dataset from the US Treasury.
-
-To download it, scroll down to "Data Preview", set the following and click "Download XML file":
-- Data Table = "Investments of Federal Government Accounts in Federal Securities"
-- Date Range (Record Date) = "All" 
-- Format type = "XML" 
-
-![](assets/pic2.png)
-
-A file "MTS_AgcyInvest_20150331_20250331.xml" (13.7MB) will be downloaded to your local "Downloads" folder.
-
-### Creating Objects, Data Loading, Validation, Parsing, Extraction
-Login to your Snowflake account. Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet and choose "SQL Worksheet". Name it "Snowpark XML Processing - Setup". 
+### Database
+Login to your Snowflake account. Navigate to [Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs), click "+" in the top-right corner to create a new Worksheet and choose "SQL Worksheet". Name it "Snowpark XML Processing - Setup". 
 
 Paste the following block to your worksheet.
 
@@ -96,7 +86,17 @@ You will create Snowflake objects (database, schema, warehouse) executing the ab
 
 You can execute all at once " > Run All" or, one at the time, by selecting each statement and clicking on the "Run" button.
 
-### Load Data via Snowsight
+### Data
+We are using the [Investments of Federal Government Accounts in Federal Securities](https://fiscaldata.treasury.gov/datasets/monthly-treasury-statement/securities-issued-by-federal-agencies-under-special-financing-authorities) dataset from the US Treasury.
+
+To download it, scroll down to "Data Preview", set the following and click "Download XML file":
+- Data Table = "Investments of Federal Government Accounts in Federal Securities"
+- Date Range (Record Date) = "All" 
+- Format type = "XML" 
+
+![](assets/pic2.png)
+
+A file "MTS_AgcyInvest_20150331_20250331.xml" (13.7MB) will be downloaded to your local "Downloads" folder.
 
 Login to your Snowflake Account and from the left navigation menu select Data / Database "XML_PROCESSING" database, "DATA" schema and "XMLDATA_STAGE" stage
 
@@ -110,7 +110,7 @@ Hit "Upload" and the file will be uploaded to the internal stage.
 ![](assets/pic6.png)
 
 <!-- ------------------------ -->
-## Snowpark XML Processing with Notebooks
+## Snowpark XML Processing
 Duration: 10
 
 Select "Projects" / "Notebooks" from the left navigation menu. Click "+ Notebook" from the top-right corner.
