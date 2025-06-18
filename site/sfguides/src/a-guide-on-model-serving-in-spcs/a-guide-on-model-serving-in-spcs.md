@@ -5,9 +5,9 @@ categories: Getting-Started, Data-Science, Machine-Learning
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: etting Started, Data Science, Data Engineering, Snowpark, SPCS, Model Serving
+tags: Getting Started, Data Science, Data Engineering, Snowpark, SPCS, Model Serving
 
-# Getting Started with model serving in Snowpark Container Services
+# Getting Started with Model Serving in Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview
 Duration: 2
@@ -16,26 +16,26 @@ In this guide, you will learn how to leverage the power of Snowpark Container Se
 
 This guide uses a real-world dataset of Chicago Transit Authority (CTA) daily ridership to forecast future demand. By the end, you will have a fully functional model serving endpoint accessible from both within and outside of Snowflake.
 
-### Prerequisites
--   Familiarity with Python and SQL.
--   Basic understanding of machine learning concepts.
--   Access to a Snowflake account with privileges to create databases, warehouses, and container services.
-
-### What You’ll Learn
+### What You Will Learn
 -   How to set up your Snowflake environment for machine learning.
 -   How to perform feature engineering with Snowpark.
 -   How to train, register, and version a model using the Snowflake Model Registry.
 -   How to deploy a model as a service in Snowpark Container Services.
 -   How to access the deployed model endpoint using both Key-Pair and Programmatic Access Token (PAT) authentication.
 
-### What You’ll Need
--   A [GitHub](https://github.com/) account to access the source code and data.
--   A local Python environment for running access scripts.
-
-### What You’ll Build
+### What You Will Build
 -   A complete data pipeline for feature engineering.
 -   A trained XGBoost regression model to forecast bus ridership.
 -   A secure, scalable model serving endpoint hosted in Snowpark Container Services.
+
+### Prerequisites
+-   Familiarity with Python and SQL.
+-   Basic understanding of machine learning concepts.
+- A Snowflake account with[Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=A17i8AUv&_fsi=A17i8AUv).
+- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
+-  A [GitHub](https://github.com/) account to access the source code and data.
+-  A local Python environment for running access scripts.
+
 
 <!-- ------------------------ -->
 ## Snowflake Setup
