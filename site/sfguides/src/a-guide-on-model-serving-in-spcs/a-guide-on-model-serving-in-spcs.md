@@ -490,6 +490,9 @@ if __name__ == "__main__":
 
 ```
 
+If all is well you should get a response like below
+
+![7_response](assets/7_response.png)
 <!-- ------------------------ -->
 ## Conclusion And Resources
 Duration: 1
@@ -505,4 +508,5 @@ This powerful combination of Snowpark, the Model Registry, and SPCS enables data
 - Authenticating and consuming model predictions from a secure endpoint.
 
 ### Related Resources
--  [Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
+- [Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
+- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-serving-in-spcs)
