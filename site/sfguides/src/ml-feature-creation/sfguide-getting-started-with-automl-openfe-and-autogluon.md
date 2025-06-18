@@ -1,13 +1,13 @@
 author: Eric Gudgion
 id: getting-started-with-automl-openfe-and-autogluon
-summary: Using OpenFE and AutoGluon to create features for for machine learning in a Snowflake Container Notebook.
+summary: Using OpenFE and AutoGluon to create features for machine learning in a Snowflake Container Notebook.
 categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter, Machine Learning
 
-# Machine Learning Feature Creation 
+# Getting Started with AutoML, OpenFE and AutoGluon
 <!-- ------------------------ -->
 ## Overview 
 Duration: 10
