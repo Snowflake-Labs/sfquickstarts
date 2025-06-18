@@ -105,7 +105,7 @@ input_df.write.mode('overwrite').save_as_table('MODEL_SERVING_DB.FEATURE_STORE_M
 
 <!-- ------------------------ -->
 ## Machine Learning
-Duration: 5
+Duration: 10
 
 ### Create and Register a Feature Store
 A Feature Store is created to manage and version our features. We then register an Entity which represents a real-world object that our features are associated with, in this case, a bus route.
@@ -240,7 +240,7 @@ reg_model.create_service(service_name="ChicagoBusForecastv12",
 
 <!-- ------------------------ -->
 ## Model Serving
-Duration: 5
+Duration: 10
 
 The Snowflake Model Registry, when used with containers, allows you to package, manage, and deploy machine learning models with complex dependencies or custom runtime environments inside Snowflake. This is accomplished by using Snowpark Container Services (SPCS) which we have done above. Some parts of the architecture are as described below.
 
@@ -258,7 +258,10 @@ First, you need the service's ingress URL. You can find it by running the follow
 SHOW ENDPOINTS IN SERVICE MODEL_SERVING_DB.FEATURE_STORE_MLDEMO.CHICAGOBUSFORECASTV12
 ```
 
-The full prediction endpoint will be https://<your_ingress_url>/predict.
+The full prediction endpoint will be 
+```
+https://<YOUR_INGRESS_PATH>/predict
+```
 
 ### Using Key-Pair Authentication
 
@@ -309,7 +312,7 @@ print("Token acquired successfully.")
 
 # --- 2. Endpoint URL ---
 # This must be the public endpoint for your service.
-URL = 'https://<YOUR_INGRESS_URL>/predict'
+URL = 'https://<YOUR_INGRESS_PATH>/predict'
 
 # --- 3. Preparing our data ---
 def prepare_data():
@@ -386,7 +389,7 @@ python PAT-app.py \
   --user <USERNAME>> \
   --role ACCOUNTADMIN \
   --pat <PASS_IN_YOUR_PAT_TOKEN>\
-  --endpoint <INGRESS_PATH> \
+  --endpoint <YOUR_INGRESS_PATH> \
   --endpoint-path /predict
 ```
 
@@ -495,7 +498,7 @@ If all is well you should get a response like below
 ![7_response](assets/7_response.png)
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
+Duration: 2
 
 Congratulations! You have successfully built, deployed, and accessed a machine learning model using Snowpark Container Services. You've seen how Snowflake can manage the entire MLOps lifecycle within a single, unified platform, from data engineering to production deployment.
 
