@@ -1,7 +1,7 @@
 author: Alexey Litouka
 id: java_trace_events
 summary: An example of emitting trace events from Java, and analyzing them
-categories: Getting-Started
+categories: Getting-Started, Observability
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
