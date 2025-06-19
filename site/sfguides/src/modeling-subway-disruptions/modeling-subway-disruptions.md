@@ -84,12 +84,12 @@ It also provides the application with access to the required compute pool and wa
 -- Create a consumer role for users and admins of the GDS application
 CREATE ROLE IF NOT EXISTS gds_user_role;
 CREATE ROLE IF NOT EXISTS gds_admin_role;
-GRANT APPLICATION ROLE se_snow_neo4j_graph_analytics.app_user TO ROLE gds_user_role;
-GRANT APPLICATION ROLE se_snow_neo4j_graph_analytics.app_admin TO ROLE gds_admin_role;
+GRANT APPLICATION ROLE neo4j_graph_analytics.app_user TO ROLE gds_user_role;
+GRANT APPLICATION ROLE neo4j_graph_analytics.app_admin TO ROLE gds_admin_role;
 
 CREATE DATABASE ROLE IF NOT EXISTS gds_db_role;
 GRANT DATABASE ROLE gds_db_role TO ROLE gds_user_role;
-GRANT DATABASE ROLE gds_db_role TO APPLICATION se_snow_neo4j_graph_analytics;
+GRANT DATABASE ROLE gds_db_role TO APPLICATION neo4j_graph_analytics;
 
 -- Grant access to consumer data
 GRANT USAGE ON DATABASE MTA TO ROLE gds_user_role;
@@ -107,7 +107,7 @@ GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA MTA.PUBLIC TO DATABASE ROLE gds_d
 GRANT ALL PRIVILEGES ON ALL VIEWS IN SCHEMA MTA.PUBLIC TO DATABASE ROLE gds_db_role;
 
 -- Compute and warehouse access
-GRANT USAGE ON WAREHOUSE NEO4J_GRAPH_ANALYTICS_APP_WAREHOUSE TO APPLICATION se_snow_neo4j_graph_analytics;
+GRANT USAGE ON WAREHOUSE NEO4J_GRAPH_ANALYTICS_APP_WAREHOUSE TO APPLICATION neo4j_graph_analytics;
 ```
 
 Then we need to switch the role we created:
@@ -199,7 +199,7 @@ But broadly, you will need a few things:
 
 
 ```
-CALL se_snow_neo4j_graph_analytics.graph.dijkstra('CPU_X64_L', {
+CALL neo4j_graph_analytics.graph.dijkstra('CPU_X64_L', {
 'defaultTablePrefix': 'mta.public',
   'project': {
     'nodeTables': ['nodes'], 
@@ -287,7 +287,7 @@ Then we use those new tables when we run our algorithm:
 
 
 ```
-CALL se_snow_neo4j_graph_analytics.graph.dijkstra('CPU_X64_L', {
+CALL neo4j_graph_analytics.graph.dijkstra('CPU_X64_L', {
 'defaultTablePrefix': 'mta.public',
   'project': {
     'nodeTables': ['nodes_f'], 
