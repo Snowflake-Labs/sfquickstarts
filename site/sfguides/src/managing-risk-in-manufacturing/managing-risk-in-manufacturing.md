@@ -137,7 +137,7 @@ Now that we have our data, we just need to create a notebook and grant the neces
 ### Import The Notebook
 
 - We’ve provided a Colab notebook to walk you through each SQL and Python step—no local setup required!
-- Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/subways/MTA%20Subways.ipynb), and import the notebook into snowflake.
+- Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/manufacturing/manufacturing.ipynb), and import the notebook into snowflake.
 
 ### Permissions
 
