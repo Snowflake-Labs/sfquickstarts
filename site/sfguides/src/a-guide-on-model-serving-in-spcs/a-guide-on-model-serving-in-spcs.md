@@ -200,6 +200,11 @@ xg_model = GridSearchCV(
 xg_model.fit(train)
 ```
 
+### Model Lineage
+Snowflake’s UI provides a graphical representation of the lineage, making it easier to visualize and communicate your findings. To do so, we can go to the CHICAGO_BUS_RIDES_FORECAST table and click on lineage
+
+![4_lineage](assets/4_lineage.png)
+
 ## Model Deployment
 
 ### Evaluate the Model
@@ -216,14 +221,26 @@ print('MSE:', mean_absolute_error(df=testpreds, y_true_col_names='TOTAL_RIDERS',
 Finally, the trained model is logged to the Snowflake Model Registry. This allows for versioning, management, and easy deployment of the model.
 
 ```python
-reg_model = reg.get_model("Forecasting_Bus_Ridership").version("v2")
+model_ref = reg.log_model(
+    model_name="Forecasting_Bus_Ridership",
+    version_name="v2",    
+    model=xg_model,
+    target_platforms=["WAREHOUSE"],
+    conda_dependencies=["scikit-learn","xgboost"],
+    sample_input_data=train,
+    comment="XGBoost model, Oct 9"
+)
 
-reg_model.create_service(service_name="ChicagoBusForecastv12",
-                  service_compute_pool="mypool",
-                  image_repo="MODEL_SERVING_DB.notebooks.my_inference_images",
-                  build_external_access_integration="allow_all_integration",
-                  ingress_enabled=True)
+reg_model = reg.get_model("Forecasting_Bus_Ridership").version("v2")
 ```
+
+We are able to see the model stored inside the Model tab of the database. 
+
+![4_model_served](assets/4_model_served.png)
+
+Clicking on the model, we can then further drill down to understand the model such as the model lineage. 
+
+![4_lineage_model](assets/4_lineage_model.png)
 
 ### Deploy to Snowpark Container Services (SPCS)
 The registered model can be deployed as a service in SPCS for real-time inference.
@@ -237,6 +254,12 @@ reg_model.create_service(service_name="ChicagoBusForecastv12",
                   build_external_access_integration="allow_all_integration",
                   ingress_enabled=True)
 ```
+
+### Seeing the Inference endpoint
+To see our inference endpoint, we can go to our model and click on the Inference Services tab. Opening the details, we can futher view the logs of our inference service
+
+![4_inference_serving](assets/4_inference_serving.png)
+
 
 <!-- ------------------------ -->
 ## Model Serving
