@@ -155,33 +155,11 @@ FROM mta.public.lines;
 
 Duration: 10
 
-Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run louvain to determine communities within our data. Louvain identifies communities by grouping together nodes that have more connections to each other than to nodes outside the group.
+Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run dijksra to determine the shortest path between subway stations.
 
 You can find more information about writing this function in our [documentation](https://neo4j.com/docs/snowflake-graph-analytics/current/getting-started/).
 
-You can use this code block as an outline of what you need to fill in:
-
-```
-CALL neo4j_graph_analytics.graph.louvain('COMPUTE_POOL', {
-    'project': {
-        'nodeTables': ['EXAMPLE_DB.DATA_SCHEMA.NODES'],
-        'relationshipTables': {
-            'EXAMPLE_DB.DATA_SCHEMA.RELATIONSHIPS': {
-                'sourceTable': 'EXAMPLE_DB.DATA_SCHEMA.NODES',
-                'targetTable': 'EXAMPLE_DB.DATA_SCHEMA.NODES',
-                'orientation': 'NATURAL'
-            }
-        }
-    },
-    'compute': { 'consecutiveIds': true },
-    'write': [{
-        'nodeLabel': 'NODES',
-        'outputTable': 'EXAMPLE_DB.DATA_SCHEMA.NODES_COMPONENTS'
-    }]
-});
-```
-
-But broadly, you will need a few things:
+Broadly, you will need a few things:
 
 | Name                                      | Description                                        | Our Value                  |
 | ----------------------------------------- | -------------------------------------------------- | -------------------------- |
@@ -193,13 +171,8 @@ But broadly, you will need a few things:
 
 
 
----
-
-### [#6]
-
-
 ```
-CALL neo4j_graph_analytics.graph.dijkstra('CPU_X64_L', {
+CALL neo4j_graph_analytics.graph.dijkstra('CPU_X64_XS', {
 'defaultTablePrefix': 'mta.public',
   'project': {
     'nodeTables': ['nodes'], 
@@ -287,7 +260,7 @@ Then we use those new tables when we run our algorithm:
 
 
 ```
-CALL neo4j_graph_analytics.graph.dijkstra('CPU_X64_L', {
+CALL neo4j_graph_analytics.graph.dijkstra('CPU_X64_XS', {
 'defaultTablePrefix': 'mta.public',
   'project': {
     'nodeTables': ['nodes_f'], 
@@ -351,7 +324,7 @@ In this quickstart, you learned how to bring the power of graph insights into Sn
 
 ### What You Learned
 
-By working with a our NYC Subway dataset, you were able to:
+Using our NYC Subway dataset, you were able to:
 
 1. Set up the [Neo4j Graph Analytics](https://app.snowflake.com/marketplace/listing/GZTDZH40CN/neo4j-neo4j-graph-analytics) application within Snowflake.
 2. Prepare and project your data into a graph model (stations as nodes, lines as relationships).
