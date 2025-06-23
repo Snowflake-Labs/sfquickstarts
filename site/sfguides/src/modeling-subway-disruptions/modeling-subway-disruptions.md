@@ -51,7 +51,7 @@ Duration: 5
 Dataset overview : This dataset is a digital twin of the NYC Subway!
 
 
-Let's name our database `MTA`. Using the CSVs found [here](https://github.com/neo4j-product-examples/aura-graph-analytics/tree/main/mta_subways/data), We are going to add two new tables:
+Let's name our database `MTA`. Using the CSVs found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/modeling-disruptions-subways/modeling-disruptions-subways.ipynb), We are going to add two new tables:
 
 - One called `STATIONS` based on stations.csv
 - One called `LINES` on lines.csv
