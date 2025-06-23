@@ -24,13 +24,13 @@ We'll use a custom dataset focused on bikes and skis. This dataset is intentiona
 - How to setup Cortext Search for unstructured data like PDFs and images
 - How to use Cortex Agents REST API that uses these tools in a Streamlit application
 
-### What You Will Need
-
-* A Snowflake account in **US West 2 (Oregon)** region.
-
 ### What You Will Build
 
 A Data Agent packaged in a Streamlit application that can intelligently respond to questions by reasoning over both structured and unstructured data.
+
+### What You Will Need
+
+* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](https://quickstarts.snowflake.com/guide/build-agentic-application-in-snowflake/index.html?index=..%2F..index#1).
 
 <!-- ------------------------ -->
 ## Snowflake Trial Account
@@ -38,9 +38,9 @@ Duration: 5
 
 To complete this lab, you'll need to create a Snowflake account.
 
-1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_cta=quickstarts_)
+1. Click on this link to create a [free trial account](https://bit.ly/devdaybootcamp2025).
 
-2. Start the account creation by completing the first page of the form on the page.
+2. Complete the first page of the form on the page.
 
 3. On the next section of the form, be sure to set the Snowflake edition to **Enterprise (Most popular)**).
 
