@@ -78,7 +78,8 @@ This cache stores elevation data based on the chosen map extract.  This improves
 
 In here you will see two files.  One of which is a map file.  
 
-The map file you will use is of San Francisco.  This file needs to be uploaded to the **ORS_SPCS_STAGE**.  You can do this either manually within snowsight, or more conveniently, using the snowflake addin.
+An example map file you can use is of San Francisco which is provided in the staged_files folder.  To use this file, it needs to be uploaded to the **ORS_SPCS_STAGE**.  You can do this either manually within snowsight, or more conveniently, using the snowflake add-in.
+
 
 
 You can choose from a range of map files from websites such as these
@@ -105,7 +106,7 @@ ors:
   engine:
     profile_default:
       build:  
-        source_file: /home/ors/files/ile-de-france-latest.osm.pbf
+        source_file: /home/ors/files/sanFrancisco.osm.pbf
 
 ```
 This is what the URL will be to point to the right map file.   If you would like to use a different map, as well as uploading the alternative map you will need to change the source file parameter here.
@@ -144,19 +145,48 @@ The nodes are locations where route optimization algorithms are implemented and 
 
 There are also other options available for each profile - and each option will depend on what the profile is.
 
+## Importing new files into a stage using the Snowflake Add-In.
 
--   Within the snowflake add-inn navigate to the newly created **ORS_SPCS_STAGE**.   You will see this in the **Object Explorer**
+- Download a new map file for new york city.
+
+- Click [here](https://download.bbbike.org/osm/bbbike/NewYork/NewYork.osm.pbf) to download the New York City OSM.PBF file.
+
+
+-   Within the snowflake add-in navigate to the newly created **ORS_SPCS_STAGE**.   You will see this in the **Object Explorer**
 
 
 ![alt text](image.png)
 
--   Click on the upload icon - ![alt text](image-1.png) to upload the map file and config file to snowflake.  
+-   Click on the upload icon - ![alt text](image-1.png) 
+
+Navigate to the newly downloaded file to upload the map file to the snowflake stage.
+
+Modify the config file by changing the source file location to the following:
+
+```yml
+    build:  
+        source_file: /home/ors/files/NewYork.osm.pbf
+        instructions: false
+```
+
+Finally, use the upload tool again to upload the modified config file to snowflake.  
+
+You should see the new files appear in th stages area
+
 
 Once the files are uploaded, refresh the cache of the stage
 
 ```sql
  ALTER STAGE REFRESH CORE.ORS_SPCS_STAGE REFRESH;
  ```
+
+Execute the following to ensure the files are registered on the stage directory
+
+```sql
+ select * from directory(@OPENROUTESERVICE_SETUP.PUBLIC.ORS_SPCS_STAGE);
+
+ ```
+
 
 ## Create the image and services.
 
@@ -209,6 +239,7 @@ use the manifest file to compile to package all 4 images stored inside the image
 
 Allow permissions for the consumer to create pools for running services.
 
+Specify the default streamlit for configuring the app.
 
 **The setup script**
 
@@ -221,7 +252,15 @@ This also includes the functions that we will later use in streamlit.  The follo
 
 You will also note that an additional function (download) is created which calls the downloader service to download the map and config file from the provider stage to the consumer stage.
 
-Specify the default streamlit for configuring the app.
+Once you application package is installed, you will see a new installed app appear in the **apps** section of Snowsight.  This is a locally installed app for testing purposes.
+
+![alt text](image-3.png)
+
+You will also see an application package which you can use to share with other accounts either privately or via the marketplace.
+
+
+
+
 
 # Option 2 - Using the free API service
 The results are flexible in terms of location - you can choose to simulate routes from anywhere in the world.
