@@ -1,19 +1,229 @@
-author: Becky O’Connor
+author: Becky O’Connor and Piotr Paczewski
 id: Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator
-summary: This tutorial leverages Geospatial Analytics, Stramlit, Cortex and the Open Route Service to optimise vehicle routes in order to distribute goods to chosen destinations on time.
+summary: This tutorial leverages Snowflake Container Services, native apps, Geospatial Analytics, Streamlit, Cortex and the Open Route Service to optimise vehicle routes in order to distribute goods to chosen destinations on time.
 categories: Data-Sharing, Cortex, solution-examples, streamlit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial
+tags: Geospatial, Advanced Analytics, Data Engineering, Native apps, Snowpark Container Services
 
 # Create a Route Optimisation and Vehicle Route Plan Simulator
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
-This tutorial leverages the [Open Route Service](https://openrouteservice.org/) to optimise vehicle routes in order to distribute goods to chosen destinations on time.
+This quickstart leverages the [Open Route Service](https://openrouteservice.org/) to optimize vehicle routes in order to distribute goods to chosen destinations on time.
 
+You will be creating **Directions**, **Route Optimisation** and [**Isochrone**](https://en.wikipedia.org/wiki/Isochrone_map) functions.
+
+
+The quickstart contains two options.  Both options require disinct prerequisites:
+
+
+**Option 1** - Using the Open Route Service API with a streamlit dynamic routing simulator
+
+-   You will need access to a Snowflake Account
+
+-   [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
+    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  This is for connecting to the open route service api.
+
+-   An free account with [Open Route Service](https://openrouteservice.org/)
+
+-   **ACCOUNTADMIN** access to the account.
+
+
+**Option 2** - Create a native app with Container services.  This Application will utilise the Open Route Service Image files. 
+ 
+-   [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
+    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  You will need this to download the map and config files from the provider account.
+
+-   **ACCOUNTADMIN** access to the account.
+
+-   [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
+
+- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) installed
+
+-  (Recommended) [Git](https://git-scm.com/downloads) installed. 
+
+- Either download the zip or use git to copy the contents of the the git repo here: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator. 
+
+
+- [VSCode](https://code.visualstudio.com/download) with the Snowflake extension installed.
+
+
+ 
+# Option 1 - Using the Open Route Service API with a streamlit dynamic routing simulator
+
+This will create the necessary snowflake database and stages within the public schema.
+
+- Open up visual studio code with the downloaded github repository as per the prerequisites.
+
+- Use the Snowflake **add-in** to login to your snowflake account
+
+- Within the Repo, navigate to **staged_files > env_setup.sql**
+
+- Press run all or ctrl + enter / command + enter to run the code within visual studio code.
+
+You will now have a database which contains an empty repository and three stages.
+
+The  **ORS_SPCS_STAGE** stage will contain a map extract and a config file.
+
+The **ORS_GRAPHS_SPCS_STAGE** stage will contain files in a graphs structure to easily calculate route optimisations.  The graphs created will depend on the map uploaded and which vehicle profiles are enabled.
+
+The **ORS_ELEVATION_CACHE_SPCS_STAGE**. 
+
+This cache stores elevation data based on the chosen map extract.  This improves performance when enabled.
+
+- Navigate to the folder **Provider_setup > staged files**.
+
+In here you will see two files.  One of which is a map file.  
+
+The map file you will use is of San Francisco.  This file needs to be uploaded to the **ORS_SPCS_STAGE**.  You can do this either manually within snowsight, or more conveniently, using the snowflake addin.
+
+
+You can choose from a range of map files from websites such as these
+
+https://download.geofabrik.de/
+https://download.bbbike.org/osm/
+
+The file below is the original weekly updated open street map which contains the whole planet.
+https://planet.openstreetmap.org/pbf/
+
+Bear in mind the bigger the map, the longer it will take to create the graphs.  You may also require a larger compute for the container to run if you are using a larger map. 
+
+Also please note that the size of the files uploaded using the put command is limited to 5G.  If you wish to use the world file, you will need to initially store in an S3 bucket and then copy using the copy command.
+
+The ors-config file is a configuration file for the app.  This does a variety of things.
+
+-  Open up the ors-config.yml file to take a look at it
+
+You will see at the beginning of the yml file is a source file locator.  
+
+```yml
+
+ors:
+  engine:
+    profile_default:
+      build:  
+        source_file: /home/ors/files/ile-de-france-latest.osm.pbf
+
+```
+This is what the URL will be to point to the right map file.   If you would like to use a different map, as well as uploading the alternative map you will need to change the source file parameter here.
+
+Next you will see a profiles configuration area
+
+```yml
+    profiles:
+      driving-car:
+        enabled: true
+      cycling-road:
+        enabled: true
+      cycling-electric:
+        enabled: true
+      driving-hgv:
+        enabled: true
+      foot-walking:
+        enabled: true
+```
+This is where you can configure multiple types of vehicles.  If you look at the commented out profiles in here, you can also  configure each profile further as well as adding additional profiles.
+
+Here is where you can change the amount of maximum visited nodes.
+
+The nodes are locations where route optimization algorithms are implemented and processed. These nodes are crucial for efficiently planning and executing delivery or service routes, minimizing travel time and cost.  The number of nodes required will depend on how many vehicles, what the vehicle profile is, the length of each journey and how many jobs are involved.  Here, the default number of visited nodes are much lower than the overridden default below.
+
+
+
+```yml
+    matrix:
+      enabled: true
+#      attribution: openrouteservice.org, OpenStreetMap contributors
+#      maximum_routes: 2500
+#      maximum_routes_flexible: 25
+      maximum_visited_nodes: 1000000000
+```
+
+There are also other options available for each profile - and each option will depend on what the profile is.
+
+
+-   Within the snowflake add-inn navigate to the newly created **ORS_SPCS_STAGE**.   You will see this in the **Object Explorer**
+
+
+![alt text](image.png)
+
+-   Click on the upload icon - ![alt text](image-1.png) to upload the map file and config file to snowflake.  
+
+Once the files are uploaded, refresh the cache of the stage
+
+```sql
+ ALTER STAGE REFRESH CORE.ORS_SPCS_STAGE REFRESH;
+ ```
+
+## Create the image and services.
+
+You will now load the docker images to the snowflake repository
+
+- Navigate to the provider_setup > your_connection and amend where it says YOUR_CONNECTION with your snowcli connection.  If you have not created a connection before, please navigate to the following [QuickStart](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html#0) which will explain how these are created.
+
+- Execute the following to ensure you have the correct privileges to run the bash file.  Open up a terminal within vscode and run the following:
+
+```bash
+chmod +x /provider_setup/spcs_setup.sh
+```
+
+
+Run the spcs_setup.sh file. 
+
+```bash
+./provider_setup/spcs_setup.sh
+```
+
+You will need to ensure that you have docker desktop running before you run the file.
+
+
+You now have an 4 docker images inside the previously created repository:
+
+- Within the env_setup.sql, run the following by moving the cursor to the command and using **ctrl/command + enter**
+
+![alt text](image-2.png)
+
+The **downloader** image will copy the config and map file from the setup stage to the consumer app.
+
+The **routing_reverse_proxy** will securely manage traffic between  the other three services.
+
+The **openrouteservice** contains all the apis which the openrouteservice offers
+
+The **vroom service** manages the route optimisation service.
+
+Now the assets are all setup in the repository and stages, you will now configure the app.
+
+- In the working directory, execute the following snow CLI command
+
+```bash
+snow app run -c <CONNECTION_NAME>
+```
+
+This will do the following:
+
+**The Manifest File**
+use the manifest file to compile to package all 4 images stored inside the image repository
+
+Allow permissions for the consumer to create pools for running services.
+
+
+**The setup script**
+
+When a consumer installs the app, it will add all the services for each image and create all objects needed to run the application.
+
+This also includes the functions that we will later use in streamlit.  The following functions are created:
+-   Directions
+-   Isochrones
+-   Optimisation
+
+You will also note that an additional function (download) is created which calls the downloader service to download the map and config file from the provider stage to the consumer stage.
+
+Specify the default streamlit for configuring the app.
+
+# Option 2 - Using the free API service
 The results are flexible in terms of location - you can choose to simulate routes from anywhere in the world.
 
 The open route service is free to use but there are restrictions in the number of calls to the freely available api api.
