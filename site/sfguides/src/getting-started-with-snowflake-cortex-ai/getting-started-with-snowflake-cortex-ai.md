@@ -7,7 +7,7 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
-# Getting Started Guide With Snowflake Cortex AI
+# Getting Started With Snowflake Cortex AI
 <!-- ------------------------ -->
 ## Overview
 
