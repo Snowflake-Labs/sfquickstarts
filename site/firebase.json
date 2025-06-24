@@ -246,6 +246,11 @@
       "source": "guide/getting_started_with_snowflake_arctic/{,/**}",
       "destination": "guide/getting-started-with-snowflake-cortex-ai/",
       "type": 301
+    },
+    {
+      "source": "guide/analyze_pdf_invoices_snowpark_python_java/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
     }
     ]
   }
