@@ -539,16 +539,20 @@ Click on the following dataset then press **Get** Do not change the database nam
 ![alt text](assets/I004a.png)
 
 <!-- ------------------------ -->
-<!-- ------------------------ -->
 ## Use the ORS functions with AISQL
+Duration: 30
 
-You will now test out all the functions which you have created. You will be using data simulated by **AISQL**.  Please run the following to ensure you have access to the latest Anthropic LLM
+You will now test out all the functions which you have created. You will be using data simulated by **AISQL**.  
 
-```sql
+This notebook covers using the functions, how to apply them and how to visualise the results.  At the end you will have a good understand of how the route optimisation service works well with Snowflake Advanced analytical capabilites - which will also lead onto creating the streamlit datasets which will be covered in the next section.
+
+- Please run the following to ensure you have access to the latest Anthropic LLM
+
+```sql  
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 ```
 
-Run the following SQL to setup a new database and schema for collecting Views/Tables and notebooks for the simulator:
+- Run the following SQL to setup a new database and schema for collecting Views/Tables and notebooks for the simulator:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR;
@@ -559,7 +563,7 @@ CREATE SCHEMA IF NOTE EXISTS NOTEBOOKS;
 CREATE SCHEMA IF NOT EXISTS STREAMLITS;
 ```
 
-To ensure the AI LLM model will work in your region and cloud, please run the following command:
+- To ensure the AI LLM model will work in your region and cloud, please run the following command:
 
 ```sql
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
@@ -590,86 +594,36 @@ You will now be able to try out how the functions work and use them in conjuncti
 
 Navigate to the notebook and follow the provided instructions.
 
-
+<!-- ------------------------ -->
 ## Create the Streamlit
+Duration:20
 
 Now you can see how all the functions work with AISQL, lets now build a route simulator streamlit application.
 
 
-- Click [here](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/tree/8334cf0413c58e003d7f1570365dce42bdc0703d/Streamlit) 
-
-to download the Source Code
-
-- Go to the homepage in Snowsight
-
-- Click on the **Data** icon and then navigate to **Databases** 
-
-- Navigate to the **VEHICLE_ROUTING_SIMULATOR.ROUTING** schema
-
-You should see two stages - **NOTEBOOK** and **STREAMLIT**.  The notebook code will need to be uploaded into the Notebook stage and the streamlit code will need to be uploaded to the streamlit stage.
-
-![nav](assets/CO01.png)
-
-Navigate to the Notebook stage and choose the **ROUTING_ANALYTICS** warehouse to view the contents.  This will view all contents inside the directory.
-
-Press **upload** to add the notebook files to the notebook stage.
-
-It should look like this:
-
-![upload](assets/CO02.png)
+- Click [here](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/tree/8334cf0413c58e003d7f1570365dce42bdc0703d/Streamlit) to download the Source Code
 
 
+-    Create 1 stage to store streamlit assets
+
+ ```sql
+ CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.STREAMLITS.STREAMLIT DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+```
 - Navigate to the Streamlit Stage
-
-- Upload the **routing.py** and the **environment.yml** to the stage.
-
-- Upload the config.toml in a new directory within the streamlit stage.  the directory needs to be called .streamlit
-
-![image](assets/upload.jpg)
-
-The final Directory Structure should look like this:
-
-![Streamlit directory](assets/C003.png)
-
-
-
-<!-- ------------------------ -->
-## Create Notebook and Streamlit from Stages
-Duration: 15
-
-You will now leverage the code inside the stages to generate a Notebook and a Streamlit app.
-
-
-
-- Use the existing Snowflake Worksheet in Snowsight to create them using the following SQL commands.
+- Upload all files with the exception of config.toml to the streamlit stage
+- Upload the the config.toml file to a folder called .streamlit within the streamlit stage.
+- Create the streamlit using the following script
 
 ```sql
-
---notebook
-CREATE OR REPLACE NOTEBOOK VEHICLE_ROUTING_SIMULATOR.ROUTING.ROUTING_DEMO_SETUP
-FROM '@VEHICLE_ROUTING_SIMULATOR.ROUTING.NOTEBOOK'
-MAIN_FILE = 'routing_setup.ipynb'
-QUERY_WAREHOUSE = 'ROUTING_ANALYTICS';
-
-ALTER NOTEBOOK VEHICLE_ROUTING_SIMULATOR.ROUTING.ROUTING_DEMO_SETUP ADD LIVE VERSION FROM LAST;
-
---streamlit
-CREATE OR REPLACE STREAMLIT VEHICLE_ROUTING_SIMULATOR.ROUTING.VEHICLE_ROUTING_OPTIMISATION_SIMULATION
-ROOT_LOCATION = '@VEHICLE_ROUTING_SIMULATOR.routing.streamlit'
-MAIN_FILE = 'routing.py'
+CREATE OR REPLACE STREAMLIT VEHICLE_ROUTING_SIMULATOR.STREAMLITS.SIMULATOR
+ROOT_LOCATION = '@VEHICLE_ROUTING_SIMULATOR.STREAMLITS.streamlit'
+FROM 'routing.py'
 QUERY_WAREHOUSE = 'ROUTING_ANALYTICS'
 COMMENT = '{"origin":"sf_sit", "name":"Dynamic Route Optimisation Streamlit app", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"streamlit"}}';
-
 ```
+- Go to the homepage in Snowsight
 
-<!-- ------------------------ -->
-## Begin the notebook tutorial 
-Duration: 30
-
-This tutorial is self contained inside the notebook which covers creating the functions, how to apply them and how to visualise the results.  At the end you will have a good understand of how the route optimisation servers works well with Snowflake Advanced analytical capabilites - which will also help you understand how the streamlit works.
-
-- Within the notebook area in Snowsight, navigate to the **ROUTING_DEMO_SETUP** notebook and follow the instructions inside
-- When you have completed the Notebook, navigate to the streamlit area (within projects) and open the **VEHICLE_ROUTING_SIMULATOR** app.
+- Click on the **Projects** > **Streamlits** and run the streamlit.
 
 <!-- ------------------------ -->
 ## Run the Dynamic route Optimisation and Vehicle Route Plan Simulator
