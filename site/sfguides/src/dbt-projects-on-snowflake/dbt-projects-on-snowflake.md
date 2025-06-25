@@ -26,7 +26,7 @@ In this lab, we will go through everything you need to know to get started with 
 - How to deploy and orchistrate dbt Projects from within Snowflake.
 
 ### What You’ll Need 
-- A non-trial Snowflake account
+- A Snowflake account
 
 ### What You’ll Build 
 - A dbt Project running within your Snowflake account
