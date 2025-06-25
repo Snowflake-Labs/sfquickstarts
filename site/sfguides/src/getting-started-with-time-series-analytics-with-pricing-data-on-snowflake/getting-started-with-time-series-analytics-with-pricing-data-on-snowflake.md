@@ -32,6 +32,7 @@ This quickstart explores several time series features using FactSet Tick Data, i
 
 ### What You’ll Build 
 - Time Series Analytics with Pricing Data on Snowflake
+- Streamlit app using [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 
 <!-- ------------------------ -->
 ## Setting up the Data in Snowflake
@@ -111,6 +112,33 @@ Import the following Snowflake Notebook in Snowsight and run each of the cells: 
 <img src="assets/import.png"/>
 
 <img src="assets/create_notebook.png"/>
+
+<!-- ------------------------ -->
+## Streamlit App Using Cortex Analyst
+Duration: 10
+
+Cortex Analyst is a fully-managed, LLM-powered Snowflake Cortex feature that helps you create applications capable of reliably answering business questions based on your structured data in Snowflake. With Cortex Analyst, business users can ask questions in natural language and receive direct answers without writing SQL. Available as a convenient REST API, Cortex Analyst can be seamlessly integrated into any application.
+
+In this step, you will build a Streamlit application leveraging Cortex Analyst to allow business users to query TICK_HISTORY data using natural language. 
+
+### Setup
+- Upload the semantic model to `EXAMPLE_STREAMLIT_STAGE`
+    - Download the semantic model [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-analytics-with-pricing-data-on-snowflake/blob/main/streamlit/Time_Series_Analytics.yaml)
+    - Navigate to Data > Databases > TIME_SERIES_ANALYTICS > RAW > EXAMPLE_STREAMLIT_STAGE
+    - Click + File and upload `Time_Series_Analytics.yaml`
+![upload-semantic-model](assets/semantic_model.png)
+- Create Streamlit App
+    - Navigate to Projects > Streamlit > Click + Streamlit
+    - Select TIME_SERIES_ANALYTICS database, RAW schema, and TIME_SERIES_ANALYTICS_WH warehouse
+![create-streamlit](assets/create_streamlit.png)
+    - Copy and paste the [Streamlit code](https://github.com/Snowflake-Labs/sfguide-getting-started-with-time-series-analytics-with-pricing-data-on-snowflake/blob/main/streamlit/time_series_cortex_analyst.py) into the editor
+![streamlit-code](assets/streamlit_app.png)
+
+### Run the App
+
+Ask one of the preconfigured questions or any other question! Cortex Analyst uses the semantic model and LLMs to translate natural language into SQL to explore the data. 
+
+![streamlit-app](assets/streamlit_app.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
