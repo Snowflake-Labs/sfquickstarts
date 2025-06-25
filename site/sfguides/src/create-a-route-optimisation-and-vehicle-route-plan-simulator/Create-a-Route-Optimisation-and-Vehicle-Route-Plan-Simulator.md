@@ -601,7 +601,9 @@ Duration:20
 Now you can see how all the functions work with AISQL, lets now build a route simulator streamlit application.
 
 
-- Click [here](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/tree/8334cf0413c58e003d7f1570365dce42bdc0703d/Streamlit) to download the Source Code
+- Click [here](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/09039b2eeabfb58a55c798af70b7a7527a741ef5/Streamlit/streamlit.zip) to download the files needed for the streamlit app.
+
+- Unzip all files ready for uploading to a stage.
 
 
 -    Create 1 stage to store streamlit assets
@@ -623,13 +625,13 @@ COMMENT = '{"origin":"sf_sit", "name":"Dynamic Route Optimisation Streamlit app"
 ```
 - Go to the homepage in Snowsight
 
-- Click on the **Projects** > **Streamlits** and run the streamlit.
+- Click on the **Projects** > **Streamlits** and run the **SIMULATOR**.
 
 <!-- ------------------------ -->
 ## Run the Dynamic route Optimisation and Vehicle Route Plan Simulator
-Duration: 10
+Duration: 15
 
-![alt text](assets/simulator_image.png)
+![alt text](image-9.png)
 
 The streamlit app which you have open simulates potential routes to 29 delivery locations for selected customer types - all coming from a user definable wholesaler.  Currently there are 3 types of distributor available although with the notebook, you can create limitless industry categories:
 
@@ -639,7 +641,16 @@ The streamlit app which you have open simulates potential routes to 29 delivery 
 
 If you wish to add additional choice of distributor types, you can with the provided notebook.
 
+Before you choose your category, you must select where the routing specific functions are.  This app works with both the api call method and the native app method.  If you followed the instructions and went through both options, you can test out either option using the supplied radio selector.
+
+![alt text](image-10.png)
+
+
 The places you will work with are real as they are based on the Carto Overture points of interest maps which is a dataset freely available on the marketplace.  This allows you to create a location relevant scenario based on the needs of a specific usecase.
+
+**Please note:**  For this simulation the data has been restricted to new york city.  You will need to revise the initial notebook should you require an additional location.  This is an extract filtered by **GEOHASH**.  
+
+If you have built the native app and require an alternative city, you will need to upload the new map to the configuration stage.
 
 ![alt text](assets/Overview_Diagram.png)
 
