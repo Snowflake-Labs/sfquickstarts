@@ -665,13 +665,13 @@ If you have built the native app and require an alternative city, you will need 
 **NB** You will only return results in the New York City boundary.
 - Choose the distance in KM for how wide you would like the app to search for nearby distributors.
 
-    ![alt text](![alt text](image-11.png))
+    ![alt text](image-11.png)
 
 - Scroll down to get a map which highlights the place plus where all the nearby distributors are.  
 
 - Scroll further down in the sidebar to select a specific distributor. - This is sorted by distance from the centre point.  You should have relevent wholesalers based on location and industry.
 
-![alt text](assets/select_wholesaler.png)
+![alt text](image-14.png)
 
 
 - Choose the type of customers you want to deliver goods to.  In this case, we are choosing supermarkets and restaurants.  Customer types can be configured using the provided notebook.
@@ -679,7 +679,7 @@ If you have built the native app and require an alternative city, you will need 
 
 - There is an order acceptance catchment time - this will be used to generate an isochrone which will filter possible delivery locations within that isochrone.  The isochrone produced is a polygon shaped to all the possible places you can drive within the acceptable drive time.
 
-![alt text](assets/Biosaveurs.png)
+![alt text](image-15.png)
 
 - You may close the side bar.
 
@@ -687,9 +687,9 @@ If you have built the native app and require an alternative city, you will need 
 
 This is an example scenario based on the previously selected fields.
 
-**Biosaveurs frozen and Fresh meat** within the Paris area.  This week they have 3 vehicles assigned to make up to 30 deliveries today.
+**Hudson Produce** is in New York City.  This week they have 3 vehicles assigned to make up to 30 deliveries today.
 
-![alt text](assets/vehicle_selection.png)
+![alt text](image-12.png)
 
 **Vehicle 1** will start between 8HRS and 17HRS - this vehicle is a car.  [hover over information]  the vehicle has a capacity limit of 4 and been assigned a skill level of 1 - this vehicle does not have a freezer so can only carry fresh food.
 
@@ -699,27 +699,29 @@ This is an example scenario based on the previously selected fields.
 
 
 
-**Vehicle 3** will also operate between 8hrs and 17hrs and has a skill level of 3 - they can carry  the premium food items - this vehicle will be an electric bycle [select cycling-road]. 
+**Vehicle 3** will also operate between 8hrs and 17hrs and has a skill level of 3 - they can carry  the premium food items - this vehicle will be an road bicycle [select cycling-road]. 
 
 You can look at the vehicle skill level by hovering over the '?' against each vehicle.
 
-Once the selections are made we will click on job routes to get the allocated jobs
+Once the selections are made you can choose the scope for the jobs - this is based on a catchment time.  
 
-![alt text](assets/get_job_routes.png)
+-   Select 25mins based on how far you can cycle in that time.
 
-![alt text](assets/vehicle_details.png)
+![alt text](image-16.png)
 
-You will note that orders of the premium meet orders will only go to vehicle 3, the fresh meet will go to vehicle 2 and the frozen meat will go to vehicle 1.
+![alt text](image-17.png)
 
-(if i have more vehicles that have the same skills it will also look at the time slots as well.
+You will note that orders of the Non Perishable orders will only go to vehicle 3, the fresh food will go to vehicle 2 and the frozen food will go to vehicle 1.
+
+(if i have more vehicles that have the same skills it will also look at the time slots as well).
 
 
 
 Next we look at the map
 
-![alt text](assets/all_veh_routes.png)
+![alt text](image-18.png)
 
-Vehicle 3 has the least amount of things to deliver but takes the longest to deliver them.  This is probably because the vehicle is a bicycle.  [change bcycle to hgv and re run]
+Vehicle 3 has the least amount of things to deliver but takes the longest to deliver them.  This is probably because the vehicle is a bicycle.  [change bicycle to hgv and re run]
 
 
 
@@ -734,7 +736,7 @@ Tabs - this will give instructions for each segment of the drivers journey - the
 
 ### How does it work
 
-You can see that in a couple of clicks you can create a vehicle optimisation scenario from anywhere.
+You can see that in a couple of clicks you can create a vehicle optimisation scenario from anywhere. 
 
 
 #### Finding the place
@@ -745,13 +747,7 @@ Snowflake will use the ST_DWITHIN geospatial function to filter the overture map
 
 #### The previously run notebook
 
-This has created 3 functions which fetch data from 3 open route service endpoints
-
-1 - isochrone - the isochrone endpoint will give you the catchement of a place based on drive time
-
-2 - optimisation - based on restaurant selection and vehicles, it will create a set of work for each vehicle to deliver taking into account slot windows, vehicle availablity and vehicle skill / job requirement.
-
-3 - Directions - based on what was retrieved from the optimisation, the directions api will return a route as a line string with all way points.  It will also retrieve a text based itenary.
+The previously ran notebook contains the standing data which you can go back to to customise the demo.  If you want to change the types of places to be hotels, then that is quite possible.
 
 Within the notebook, you have also created: 
 
@@ -762,7 +758,7 @@ Within the notebook, you have also created:
 - A job sample table
 
 #### The mapping
-The solution leverages pydeck to plot points, linestrings and polygons on a map.  The Isochrone is the polygon, the routes are linestrings and the places/points of interest are points.
+The solution leverages pydeck to plot points, linestrings and polygons on a map.  The Isochrone is the polygon, the routes are linestrings and the places/points of interest are points.  You would have seen how this works in the original notebook. AISQL is useful to quickly generate python code to test the maps. 
 <!-- ------------------------ -->
 ## The Streamlit Code
 Duration: 10
@@ -775,51 +771,13 @@ The Streamlit puts all of the above components together. I will now explain how 
 
 An important feature for better user experience is what the application looks like. I have themed the app to be consistant with Snowflake Branding. This is so much easier and flexible now we can add styles to Streamlit in Snowflake.
 
+For the theming, a style sheet was added to the streamlit project.
+
 ```python
-
-st.markdown(
-    """
-    <style>
-    .heading{
-        background-color: rgb(41, 181, 232);  /* light blue background */
-        color: white;  /* white text */
-        padding: 60px;  /* add padding around the content */
-    }
-    .tabheading{
-        background-color: rgb(41, 181, 232);  /* light blue background */
-        color: white;  /* white text */
-        padding: 10px;  /* add padding around the content */
-    }
-    .veh1 {
-        color: rgb(125, 68, 207);  /* purple */
-    }
-    .veh2 {
-        color: rgb(212, 91, 144);  /* pink */
-    }
-    .veh3 {
-        color: rgb(255, 159, 54);  /* orange */
-    }
-    .veh4 {
-        padding: 10px;  /* add padding around the content */
-        color: rgb(0,53,69);  /* midnight */
-    }
-    
-    body {
-        color: rgb(0,53,69);
-    }
-    
-    div[role="tablist"] > div[aria-selected="true"] {
-        background-color: rgb(41, 181, 232);
-        color: rgb(0,53,69);  /* Change the text color if needed */
-    }
-    
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-
+with open('extra.css') as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 ```
+
 
 **Industry Lookup**
 
@@ -1537,6 +1495,8 @@ You will have learned the following:
 
 - [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
 
+- [Building Geospatial Multi-Layer Apps with Snowflake and Streamlit](https://quickstarts.snowflake.com/guide/building-geospatial-mult-layer-apps-with-snowflake-and-streamlit/)
+
 - [H3 Indexing](https://h3geo.org/docs/)
 
 - [Streamlit](https://streamlit.io/)
@@ -1546,4 +1506,5 @@ You will have learned the following:
 - [Using Cortex and Streamlit With Geospatial Data](https://quickstarts.snowflake.com/guide/using_snowflake_cortex_and_streamlit_with_geospatial_data/index.html#1)
 
 - [Getting started with Geospatial AI and ML using Snowflake Cortex](https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0)
+
 
