@@ -14,7 +14,7 @@ Duration: 1
 
 dbt Core is an open-source data transformation tool and framework that you can use to define, test, and deploy SQL transformations. dbt on Snowflake allows you to use familiar Snowflake features to create, edit, test, run, and manage your dbt Core projects. Snowflake integrates with Git repositories and offers Snowflake CLI commands to support continuous integration and development (CI/CD) workflows for data pipelines.
 
-In this lab, we will go through everything you need to know to get started with [dbt Projects on Snowflake](https://docs.snowflake.com/LIMITEDACCESS/dbt-projects-on-snowflake)!
+In this lab, we will go through everything you need to know to get started with [dbt Projects on Snowflake](https://docs.snowflake.com/user-guide/data-engineering/dbt-projects-on-snowflake)!
 
 ### Prerequisites
 - Familiarity with dbt concepts
@@ -362,7 +362,7 @@ Duration: 1
 
 Congratulations! You've successfully completed the "Getting Started with dbt Projects on Snowflake" lab. You now understand how dbt Core on Snowflake enables you to define, test, and deploy SQL transformations using familiar Snowflake features. You've learned how Snowflake's native integration with Git repositories and CLI commands support CI/CD workflows for your data pipelines.
 
-If you want to learn more about dbt Projects on Snowflake, check out the [official documentation](https://docs.snowflake.com/LIMITEDACCESS/dbt-projects-on-snowflake).
+If you want to learn more about dbt Projects on Snowflake, check out the [official documentation](https://docs.snowflake.com/user-guide/data-engineering/dbt-projects-on-snowflake).
 
 ### What You Learned
 - How to use Workspaces, Snowflake's file-based IDE that integrates with dbt
@@ -371,6 +371,6 @@ If you want to learn more about dbt Projects on Snowflake, check out the [offici
 - How to deploy and orchestrate dbt Projects from within Snowflake
 
 ### Related Resources
-- [dbt Projects on Snowflake Documentation](https://docs.snowflake.com/LIMITEDACCESS/dbt-projects-on-snowflake)
+- [dbt Projects on Snowflake Documentation](https://docs.snowflake.com/user-guide/data-engineering/dbt-projects-on-snowflake)
 - [GitHub Repository: getting-started-with-dbt-on-snowflake](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake)
 - [dbt Core Documentation](https://docs.getdbt.com/)
