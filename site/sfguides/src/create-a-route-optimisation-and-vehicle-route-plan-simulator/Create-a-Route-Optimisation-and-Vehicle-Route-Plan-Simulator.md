@@ -12,30 +12,45 @@ tags: Geospatial, Advanced Analytics, Data Engineering, Native apps, Snowpark Co
 ## Overview 
 Duration: 1
 
-This quickstart leverages the [Open Route Service](https://openrouteservice.org/) to optimize vehicle routes in order to distribute goods to chosen destinations on time.
+In this quickstart, we will be leveraging the the tools within Snowflake to:
+
+  - **Visualise** the location of Delivery Points anywhere in the world understand the best routes for vehicles to deliver goods or services from a designated depo. We will use the multi layer mapping capabilities of pydeck to create easy to understand routing plans
+
+  - **Discover** what it would look like to route goods to real world points of interest such as restaurants or supermarkets using the Overture Point of Interest dataset provided freely on the marketplace by Carto.
+
+  - **Understand** numerous routing scenarios accross a variety of industries anywhere in the world.
+
+### Route Planning And Optimisation Architecture
+
+![alt text](image-7.png)
+
+The architecture above shows the solution which uses a native app and container services to power the functions.  This will be covered in option 1 of the quickstart.
+
+If you would prefer to skip to quickly see how the route optimisation service might work for you, you can quickly use the **free api service** using the instructions as option 2 for creating the functions.
+
+You will be leveraging [Open Route Service](https://openrouteservice.org/) to optimize vehicle routes in order to distribute goods to chosen destinations on time.
 
 You will be creating **Directions**, **Route Optimisation** and [**Isochrone**](https://en.wikipedia.org/wiki/Isochrone_map) functions.
 
 
-The quickstart contains two options.  Both options require disinct prerequisites:
+The quickstart contains two options.  Both options require distinct prerequisites.  With either option, Snowflake allows for creation of a fully interactive route simulator which will benefit many vehicle centric industries such as **retail**, **distribution**, **healthcare** and more.
 
+### Prerequisites
 
-**Option 1** - Using the Open Route Service API with a streamlit dynamic routing simulator
+**Option 1** 
+Use Snowpark Containers with a native app using the Open Route Service
 
--   You will need access to a Snowflake Account
+This is a self contained service which is managed by you.  There are no api calls outside of snowflake and no api limitations.  This quickstart uses a small CPU pool which is capable of running unlimited service calls within **New York City**.  if you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
 
--   [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
-    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  This is for connecting to the open route service api.
+**This is what you will need**:
 
--   An free account with [Open Route Service](https://openrouteservice.org/)
+-   [External Access Integration Activated](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
+    
+    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  You will need this to securely download the map and config files from the provider account.
 
--   **ACCOUNTADMIN** access to the account.
+- [Snowpark Container Services Activated](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 
-
-**Option 2** - Create a native app with Container services.  This Application will utilise the Open Route Service Image files. 
- 
--   [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
-    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  You will need this to download the map and config files from the provider account.
+    This is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  
 
 -   **ACCOUNTADMIN** access to the account.
 
@@ -50,9 +65,41 @@ The quickstart contains two options.  Both options require disinct prerequisites
 
 - [VSCode](https://code.visualstudio.com/download) with the Snowflake extension installed.
 
+**Option 2**
+Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service
 
- 
-# Option 1 - Using the Open Route Service API with a streamlit dynamic routing simulator
+-   You will need access to a Snowflake Account
+
+-   [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
+    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  This is for connecting to the open route service api.
+
+-   An free account with [Open Route Service](https://openrouteservice.org/)
+
+-   **ACCOUNTADMIN** access to the account.
+
+
+### What You’ll Learn 
+
+- A more advanced understanding of **Geospatial** data in Snowflake
+- Using **AISQL** functions with Snowpark
+- Create 3 user defined functions which either call the open route service API or you will learn how to create the service in snowflake using a snowpark container services native app. 
+
+-  create simple and multi waypoint directions point to point functions based on the road network and vehicle profile
+- Route Optimization to match the demands with vehicle availability
+- Create an isochrone for catchment analysis
+- Creating a location centric application using Streamlit 
+- An insight to the Carto Overture Places dataset to build an innovative route planning simulation solution
+  - Leverage vehicle capabilities and matching with job specifics
+  - use a real dataset to simulate route plans for a specific depot
+
+### What You’ll Build 
+- A streamlit application to simulate route plans for potential customers anywhere in the world.  This could be for a potential new depot or simply to try out route optimisation which you will later replace with a real data pipeline.
+
+<!-- ------------------------ -->
+## Option 1 - Native app and SPCS
+Duration: 30
+
+Use Snowpark Containers with a native app using the Open Route Service
 
 This will create the necessary snowflake database and stages within the public schema.
 
@@ -119,33 +166,40 @@ Next you will see a profiles configuration area
         enabled: true
       cycling-road:
         enabled: true
-      cycling-electric:
-        enabled: true
       driving-hgv:
+        enabled: true
+```
+This is where you can configure multiple types of vehicles.  If you look at the commented out profiles in here, you can also  configure each profile further as well as adding additional profiles.
+
+- edit the config yml file and add **cycling-electric** and **foot-walking** profiles:
+
+```yml
+    profiles:
+      driving-car:
+        enabled: true
+      cycling-road:
+        enabled: true
+        driving-hgv:
+            enabled: true
+      cycling-electric:
         enabled: true
       foot-walking:
         enabled: true
 ```
-This is where you can configure multiple types of vehicles.  If you look at the commented out profiles in here, you can also  configure each profile further as well as adding additional profiles.
 
 Here is where you can change the amount of maximum visited nodes.
 
 The nodes are locations where route optimization algorithms are implemented and processed. These nodes are crucial for efficiently planning and executing delivery or service routes, minimizing travel time and cost.  The number of nodes required will depend on how many vehicles, what the vehicle profile is, the length of each journey and how many jobs are involved.  Here, the default number of visited nodes are much lower than the overridden default below.
 
 
-
 ```yml
     matrix:
-      enabled: true
-#      attribution: openrouteservice.org, OpenStreetMap contributors
-#      maximum_routes: 2500
-#      maximum_routes_flexible: 25
       maximum_visited_nodes: 1000000000
 ```
 
 There are also other options available for each profile - and each option will depend on what the profile is.
 
-## Importing new files into a stage using the Snowflake Add-In.
+### Importing new files into a stage using the Snowflake Add-In.
 
 - Download a new map file for new york city.
 
@@ -188,7 +242,7 @@ Execute the following to ensure the files are registered on the stage directory
  ```
 
 
-## Create the image and services.
+### Create the image and services.
 
 You will now load the docker images to the snowflake repository
 
@@ -259,95 +313,219 @@ Once you application package is installed, you will see a new installed app appe
 You will also see an application package which you can use to share with other accounts either privately or via the marketplace.
 
 
+### Activate the app
 
+![alt text](image-4.png)
 
+You will need to wait a few minutes for the graphs to update.  Within the graphs stage you should see the following folders appear:
 
-# Option 2 - Using the free API service
-The results are flexible in terms of location - you can choose to simulate routes from anywhere in the world.
+![alt text](image-5.png)
+
+NB: you may need to refresh the stage to view the profiles.
+
+If you open the functions part of the app you will see the following functions appear
+
+![alt text](image-6.png)
+
+You will learn how to use these functions in section 3 of the quickstart.  Please continue to section 3.
+
+<!-- ------------------------ -->
+## Option 2 Calling ORS APIs
+Duration: 15
+
+Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service
 
 The open route service is free to use but there are restrictions in the number of calls to the freely available api api.
 
-If you need a solution  without imits, you may wish  to install the services inside a container.
-
 https://openrouteservice.org/plans/
 
-Either way, Snowflake allows for creation of a fully interactive route simulator which will benefit many vehicle centric industries such as **retail**, **distribution**, **healthcare** and more.
+### Register to Open Route Service and retrieve a key
 
+-   Visit [OpenRouteService](https://openrouteservice.org).  Register here and then retrieve your key.
 
-
-In this quickstart, we will be leveraging the the tools within Snowflake to:
-
-  - **Visualise** the location of Delivery Points anywhere in the world understand the best routes for vehicles to deliver goods or services from a designated depo. We will use the multi layer mapping capabilities of pydeck to create easy to understand routing plans
-
-  - **Discover** what it would look like to route goods to real world points of interest such as restaurants or supermarkets using the Overture Point of Interest dataset provided freely on the marketplace by Carto.
-
-  - **Understand** numerous routing scenarios accross a variety of industries anywhere in the world.
-
-
-### Route Planning And Optimisation Architecture
-Here is a flow of what you will achieve if you complete all steps in the quickstart.  You will be reminded of where you are at key intervals.
-
-  ![alt text](assets/Overview_Diagram.png)
-
-
-
-### Prerequisites
-- A Snowflake Account - **NB:** Due to the Quickstart leveraging **External Access Integration**, a trial account cannot be used.  
-
- 
-
-
-### What You’ll Learn 
-
-- An understanding of Geospatial data in Snowflake
-- Using Cortex functions with Snowpark
-- Create user 4 defined functions which call the open route service API 
-    - simple directions point to point function
-    - complex directions which include waypoints (drop off points)
-    - Route Optimisation to match the demands with vehicle availabiity
-    - Create an isochrone for catchment analysis
-- Creating a location centric application using Streamlit 
-- An insight to the Carto Overture Places dataset to build an innovative route planning simulation solution
-  - Leverage vehicle capabilities and matching with job specifics
-  - use a real dataset to simulate route plans for a specific depo
-
-
-
-### What You’ll Build 
-- A streamlit application to simulate route plans for potential customers anywhere in the world.  This could be for a potential new depot or simply to try out route optimisation which you will later replace with a real data pipeline.
-
-<!-- ------------------------ -->
-## Initial Setup
-Duration: 2
 
 Open up a new SQL worksheet and run the following commands. To open up a new SQL worksheet, select Projects » Worksheets, then click the blue plus button and select SQL worksheet.
 
 ```sql
-
 CREATE DATABASE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR;
 CREATE WAREHOUSE IF NOT EXISTS ROUTING_ANALYTICS;
 
-CREATE SCHEMA IF NOT EXISTS UTILS;
-CREATE SCHEMA IF NOT EXISTS ROUTING;
-
---- Use this to gain access to LLM functions if your snowflake region does not support them.
-
-ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
-
---- Create 2 stages, one for the notebook, and the other for the Streamlit application
-
- CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.routing.notebook DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
-
- CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.routing.streamlit DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+CREATE SCHEMA IF NOT EXISTS CORE;
+CREATE SCHEMA IF NOT EXISTS DATA;
 ```
 
+Copy the create secret command and replace the secret string with your secret token provided by Open Route Service.
 
+```sql
+CREATE SECRET IF NOT EXISTS CORE.ROUTING_TOKEN
+  TYPE = GENERIC_STRING
+  SECRET_STRING = '<replace with your secret token>'
+  COMMENT = 'token for routing demo'
+```
+Create a Network Rule and External Integration
+
+```sql
+
+CREATE OR REPLACE NETWORK RULE open_route_api
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('api.openrouteservice.org');
+
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION open_route_integration
+  ALLOWED_NETWORK_RULES = (open_route_api)
+  ALLOWED_AUTHENTICATION_SECRETS = all
+  ENABLED = true;
+
+```
+
+-   Create a simple directions function
+
+Directions Function 1 - for simple point to point directions
+
+```sql
+
+CREATE OR REPLACE FUNCTION CORE.DIRECTIONS (method varchar, jstart array, jend array)
+RETURNS VARIANT
+language python
+runtime_version = 3.10
+handler = 'get_directions'
+external_access_integrations = (OPEN_ROUTE_INTEGRATION)
+PACKAGES = ('snowflake-snowpark-python','requests')
+SECRETS = ('cred' = CORE.ROUTING_TOKEN )
+
+AS
+$$
+import requests
+import _snowflake
+def get_directions(method,jstart,jend):
+    request = f'''https://api.openrouteservice.org/v2/directions/{method}'''
+    key = _snowflake.get_generic_secret_string('cred')
+
+    PARAMS = {'api_key':key,
+            'start':f'{jstart[0]},{jstart[1]}', 'end':f'{jend[0]},{jend[1]}'}
+
+    r = requests.get(url = request, params = PARAMS)
+    response = r.json()
+    
+    return response
+$$;
+
+```
+-   Create a Directions function with Way Points
+
+```sql
+CREATE OR REPLACE FUNCTION CORE.DIRECTIONS (method varchar, locations variant)
+RETURNS VARIANT
+language python
+runtime_version = 3.9
+handler = 'get_directions'
+external_access_integrations = (OPEN_ROUTE_INTEGRATION)
+PACKAGES = ('snowflake-snowpark-python','requests')
+SECRETS = ('cred' = CORE.ROUTING_TOKEN )
+
+AS
+$$
+import requests
+import _snowflake
+import json
+
+def get_directions(method,locations):
+    request_directions = f'''https://api.openrouteservice.org/v2/directions/{method}/geojson'''
+    key = _snowflake.get_generic_secret_string('cred')
+
+    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+               'Authorization':key,
+               'Content-Type': 'application/json; charset=utf-8'}
+
+    body = locations
+
+    r = requests.post(url = request_directions,json = body, headers=HEADERS)
+    response = r.json()
+    
+    return response
+
+    $$;
+```
+
+-   Create an Optimisation Function
+
+```sql
+
+CREATE OR REPLACE FUNCTION CORE.OPTIMIZATION (jobs array, vehicles array)
+RETURNS VARIANT
+language python
+runtime_version = 3.9
+handler = 'get_optimization'
+external_access_integrations = (OPEN_ROUTE_INTEGRATION)
+PACKAGES = ('snowflake-snowpark-python','requests')
+SECRETS = ('cred' = CORE.ROUTING_TOKEN )
+
+AS
+$$
+import requests
+import _snowflake
+def get_optimization(jobs,vehicles):
+    request_optimization = f'''https://api.openrouteservice.org/optimization'''
+    key = _snowflake.get_generic_secret_string('cred')
+    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+               'Authorization':key,
+               'Content-Type': 'application/json; charset=utf-8'}
+
+    body = {"jobs":jobs,"vehicles":vehicles}
+
+    r = requests.post(url = request_optimization,json = body, headers=HEADERS)
+    response = r.json()
+    
+    return response
+$$;
+```
+.   Create an Isochrone function
+
+```sql
+CREATE OR REPLACE FUNCTION CORE.ISOCHRONES(method string, lon float, lat float, range int)
+RETURNS VARIANT
+language python
+runtime_version = 3.9
+handler = 'get_isochrone'
+external_access_integrations = (OPEN_ROUTE_INTEGRATION)
+PACKAGES = ('snowflake-snowpark-python','requests')
+SECRETS = ('cred' = CORE.ROUTING_TOKEN )
+
+AS
+$$
+import requests
+import _snowflake
+def get_isochrone(method,lon,lat,range):
+    request_isochrone = f'''https://api.openrouteservice.org/v2/isochrones/{method}'''
+    key = _snowflake.get_generic_secret_string('cred')
+    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+               'Authorization':key,
+               'Content-Type': 'application/json; charset=utf-8'}
+
+    body = {'locations':[[lon,lat]],
+                    'range':[range*60],
+                    'location_type':'start',
+                    'range_type':'time',
+                    'smoothing':10}
+
+    r = requests.post(url = request_isochrone,json = body, headers=HEADERS)
+    response = r.json()
+    
+    return response
+$$;
+```
+
+You will now see the functions below ready to use.
+
+![alt text](image-8.png)
 
 <!-- ------------------------ -->
 ## Snowflake Marketplace
 Duration: 10
 
-Once logged, navigate to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
+Before you try out your functions, you will get a dataset from the marketplace.  This is the Carto Overture dataset which includes an extensive point of interest map across the whole world.  It is also useful for routing simulations.
+-   Navigate to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
 
 ![alt text](assets/I002.png)
 
@@ -361,12 +539,66 @@ Click on the following dataset then press **Get** Do not change the database nam
 ![alt text](assets/I004a.png)
 
 <!-- ------------------------ -->
-## Add files to stages
+<!-- ------------------------ -->
+## Use the ORS functions with AISQL
 
-Now we have created our database structure, we need to add the code in order to run a notebook and a streamlit app.  The code is stored in the github resource guide.
+You will now test out all the functions which you have created. You will be using data simulated by **AISQL**.  Please run the following to ensure you have access to the latest Anthropic LLM
+
+```sql
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
+```
+
+Run the following SQL to setup a new database and schema for collecting Views/Tables and notebooks for the simulator:
+
+```sql
+CREATE DATABASE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR;
+CREATE WAREHOUSE IF NOT EXISTS ROUTING_ANALYTICS;
+
+CREATE SCHEMA IF NOT EXISTS DATA;
+CREATE SCHEMA IF NOTE EXISTS NOTEBOOKS;
+CREATE SCHEMA IF NOT EXISTS STREAMLITS;
+```
+
+To ensure the AI LLM model will work in your region and cloud, please run the following command:
+
+```sql
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
+```
+
+-   Download following [notebook](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/tree/8334cf0413c58e003d7f1570365dce42bdc0703d/Notebook) 
+
+-   Download the following [environment file](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/8334cf0413c58e003d7f1570365dce42bdc0703d/Notebook/environment.yml)
 
 
-- Click [here](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator) to download the Source Code
+-    Create 1 stage to store the notebook assets
+
+ ```sql
+ CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.notebook DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+```
+
+- Run the following to create your notebook
+
+```sql
+CREATE OR REPLACE NOTEBOOK VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.EXPLORE_ROUTING_FUNCTIONS_WITH_AISQL
+FROM '@VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.NOTEBOOK'
+FROM 'routing_setup.ipynb'
+QUERY_WAREHOUSE = 'ROUTING_ANALYTICS';
+
+ALTER NOTEBOOK VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.EXPLORE_ROUTING_FUNCTIONS_WITH_AISQL ADD LIVE VERSION FROM LAST;
+```
+You will now be able to try out how the functions work and use them in conjunction with AISQL.
+
+Navigate to the notebook and follow the provided instructions.
+
+
+## Create the Streamlit
+
+Now you can see how all the functions work with AISQL, lets now build a route simulator streamlit application.
+
+
+- Click [here](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/tree/8334cf0413c58e003d7f1570365dce42bdc0703d/Streamlit) 
+
+to download the Source Code
 
 - Go to the homepage in Snowsight
 
