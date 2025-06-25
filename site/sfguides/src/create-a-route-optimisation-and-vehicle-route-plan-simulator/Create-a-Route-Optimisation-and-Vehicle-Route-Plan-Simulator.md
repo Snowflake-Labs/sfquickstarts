@@ -652,18 +652,20 @@ The places you will work with are real as they are based on the Carto Overture p
 
 If you have built the native app and require an alternative city, you will need to upload the new map to the configuration stage.
 
-![alt text](assets/Overview_Diagram.png)
+### End to End with Streamlit Dynamic Simulator Overview Diagram
 
+![alt text](assets/Overview_Diagram.png)
 
 ### Setting the Context of the Routing Scenario
 
 - Open up the side menu
 - Select the industry type.
 - Choose the LLM model in order to search for a location.
-- Type in a word or phrase in the world which will help locate the simulation.
+- Type in a word or phrase in the world which will help locate the simulation.  
+**NB** You will only return results in the New York City boundary.
 - Choose the distance in KM for how wide you would like the app to search for nearby distributors.
 
-![alt text](assets/wholesaler_search.png)
+    ![alt text](![alt text](image-11.png))
 
 - Scroll down to get a map which highlights the place plus where all the nearby distributors are.  
 
