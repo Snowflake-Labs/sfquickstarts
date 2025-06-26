@@ -103,6 +103,8 @@ Use External Access Integration with Python Functions to call and retrieve data 
 ## Option 1 - Native app and SPCS
 Duration: 30
 
+
+![alt text](image-7.png)
 Use Snowpark Containers with a native app using the Open Route Service
 
 This will create the necessary snowflake database and stages within the public schema.
@@ -336,6 +338,8 @@ You will learn how to use these functions in section 3 of the quickstart.  Pleas
 <!-- ------------------------ -->
 ## Option 2 Calling ORS APIs
 Duration: 15
+
+![alt text](image-19.png)
 
 Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service
 
