@@ -48,11 +48,11 @@ This is a self contained service which is managed by you.  There are no api call
 
 -   [External Access Integration Activated](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
     
-    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  You will need this to securely download the map and config files from the provider account.
+> **_NOTE:_** - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  You will need this to securely download the map and config files from the provider account.
 
 - [Snowpark Container Services Activated](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 
-    This is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  
+> **_NOTE:_** This is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  
 
 -   **ACCOUNTADMIN** access to the account.
 
