@@ -217,7 +217,7 @@ There are also other options available for each profile - and each option will d
 
 ![alt text](image.png)
 
--   Click on the upload icon - ![alt text](image-1.png) 
+-   Click on the upload icon - ![alt text](assets/upload.png) 
 
 Navigate to the newly downloaded file to upload the map file to the snowflake stage.
 
@@ -274,7 +274,7 @@ You now have an 4 docker images inside the previously created repository:
 
 - Within the env_setup.sql, run the following by moving the cursor to the command and using **ctrl/command + enter**
 
-![alt text](image-2.png)
+![alt text](assets/stage_upload.png.png)
 
 The **downloader** image will copy the config and map file from the setup stage to the consumer app.
 
@@ -314,24 +314,24 @@ You will also note that an additional function (download) is created which calls
 
 Once you application package is installed, you will see a new installed app appear in the **apps** section of Snowsight.  This is a locally installed app for testing purposes.
 
-![alt text](image-3.png)
+![alt text](assets/native_app.png)
 
 You will also see an application package which you can use to share with other accounts either privately or via the marketplace.
 
 
 ### Activate the app
 
-![alt text](image-4.png)
+![alt text](assets/activate_app.png)
 
 You will need to wait a few minutes for the graphs to update.  Within the graphs stage you should see the following folders appear:
 
-![alt text](image-5.png)
+![alt text](assets/graphs_stage.png)
 
 NB: you may need to refresh the stage to view the profiles.
 
 If you open the functions part of the app you will see the following functions appear
 
-![alt text](image-6.png)
+![alt text](assets/image-6.png)
 
 You will learn how to use these functions in section 3 of the quickstart.  Please continue to section 3.
 
@@ -339,7 +339,7 @@ You will learn how to use these functions in section 3 of the quickstart.  Pleas
 ## Option 2 Calling ORS APIs
 Duration: 15
 
-![alt text](image-19.png)
+![alt text](assets/image-19.png)
 
 Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service
 
@@ -526,7 +526,7 @@ $$;
 
 You will now see the functions below ready to use.
 
-![alt text](image-8.png)
+![alt text](assets/image-8.png)
 
 <!-- ------------------------ -->
 ## Snowflake Marketplace
@@ -599,7 +599,7 @@ Navigate to the notebook and follow the provided instructions.  In order to run 
 
 - Ensure you run all the code below this section **BEFORE** you move to the streamlit.
 
-![alt text](image-20.png)
+![alt text](assets/image-20.png)
 <!-- ------------------------ -->
 ## Create the Streamlit
 Duration:20
@@ -637,7 +637,7 @@ COMMENT = '{"origin":"sf_sit", "name":"Dynamic Route Optimisation Streamlit app"
 ## Run the Dynamic route Optimisation and Vehicle Route Plan Simulator
 Duration: 15
 
-![alt text](image-9.png)
+![alt text](assets/image-9.png)
 
 The streamlit app which you have open simulates potential routes to 29 delivery locations for selected customer types - all coming from a user definable wholesaler.  Currently there are 3 types of distributor available although with the notebook, you can create limitless industry categories:
 
@@ -649,7 +649,7 @@ If you wish to add additional choice of distributor types, you can with the prov
 
 Before you choose your category, you must select where the routing specific functions are.  This app works with both the api call method and the native app method.  If you followed the instructions and went through both options, you can test out either option using the supplied radio selector.
 
-![alt text](image-10.png)
+![alt text](assets/image-10.png)
 
 
 The places you will work with are real as they are based on the Carto Overture points of interest maps which is a dataset freely available on the marketplace.  This allows you to create a location relevant scenario based on the needs of a specific usecase.
@@ -671,13 +671,13 @@ If you have built the native app and require an alternative city, you will need 
 **NB** You will only return results in the New York City boundary.
 - Choose the distance in KM for how wide you would like the app to search for nearby distributors.
 
-    ![alt text](image-11.png)
+    ![alt text](assets/image-11.png)
 
 - Scroll down to get a map which highlights the place plus where all the nearby distributors are.  
 
 - Scroll further down in the sidebar to select a specific distributor. - This is sorted by distance from the centre point.  You should have relevent wholesalers based on location and industry.
 
-![alt text](image-14.png)
+![alt text](assets/image-14.png)
 
 
 - Choose the type of customers you want to deliver goods to.  In this case, we are choosing supermarkets and restaurants.  Customer types can be configured using the provided notebook.
@@ -685,7 +685,7 @@ If you have built the native app and require an alternative city, you will need 
 
 - There is an order acceptance catchment time - this will be used to generate an isochrone which will filter possible delivery locations within that isochrone.  The isochrone produced is a polygon shaped to all the possible places you can drive within the acceptable drive time.
 
-![alt text](image-15.png)
+![alt text](assets/image-15.png)
 
 - You may close the side bar.
 
@@ -695,7 +695,7 @@ This is an example scenario based on the previously selected fields.
 
 **Hudson Produce** is in New York City.  This week they have 3 vehicles assigned to make up to 30 deliveries today.
 
-![alt text](image-12.png)
+![alt text](assets/image-12.png)
 
 **Vehicle 1** will start between 8HRS and 17HRS - this vehicle is a car.  [hover over information]  the vehicle has a capacity limit of 4 and been assigned a skill level of 1 - this vehicle does not have a freezer so can only carry fresh food.
 
@@ -713,9 +713,9 @@ Once the selections are made you can choose the scope for the jobs - this is bas
 
 -   Select 25mins based on how far you can cycle in that time.
 
-![alt text](image-16.png)
+![alt text](assets/image-16.png)
 
-![alt text](image-17.png)
+![alt text](assets/image-17.png)
 
 You will note that orders of the Non Perishable orders will only go to vehicle 3, the fresh food will go to vehicle 2 and the frozen food will go to vehicle 1.
 
@@ -725,7 +725,7 @@ You will note that orders of the Non Perishable orders will only go to vehicle 3
 
 Next we look at the map
 
-![alt text](image-18.png)
+![alt text](assets/image-18.png)
 
 Vehicle 3 has the least amount of things to deliver but takes the longest to deliver them.  This is probably because the vehicle is a bicycle.  [change bicycle to hgv and re run]
 
