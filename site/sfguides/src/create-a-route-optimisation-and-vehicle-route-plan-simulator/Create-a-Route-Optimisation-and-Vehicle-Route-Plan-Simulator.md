@@ -115,7 +115,11 @@ This will create the necessary snowflake database and stages within the public s
 
 - Use the Snowflake **add-in** to login to your snowflake account
 
-- Within the Repo, navigate to **staged_files > env_setup.sql**
+![alt text](assets/addin.png)
+
+- Within the Repo, navigate to: 
+
+  **Native_app_setup** > **Provider_setup** >  **env_setup.sql**
 
 - Press run all or ctrl + enter / command + enter to run the code within visual studio code.
 
