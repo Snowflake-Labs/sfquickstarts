@@ -554,7 +554,7 @@ You will now test out all the functions which you have created. You will be usin
 
 This notebook covers using the functions, how to apply them and how to visualise the results.  At the end you will have a good understand of how the route optimisation service works well with Snowflake Advanced analytical capabilites - which will also lead onto creating the streamlit datasets which will be covered in the next section.
 
-- Please run the following to ensure you have access to the latest Anthropic LLM
+- To ensure the AI LLM model will work in your region and cloud, please run the following command:
 
 ```sql  
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
@@ -571,11 +571,6 @@ CREATE SCHEMA IF NOTE EXISTS NOTEBOOKS;
 CREATE SCHEMA IF NOT EXISTS STREAMLITS;
 ```
 
-- To ensure the AI LLM model will work in your region and cloud, please run the following command:
-
-```sql
-ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
-```
 
 -   Download following [notebook](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/tree/8334cf0413c58e003d7f1570365dce42bdc0703d/Notebook) 
 
@@ -600,8 +595,9 @@ ALTER NOTEBOOK VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.EXPLORE_ROUTING_FUNCTIONS_WIT
 ```
 You will now be able to try out how the functions work and use them in conjunction with AISQL.
 
-Navigate to the notebook and follow the provided instructions.
+Navigate to the notebook and follow the provided instructions.  In order to run the streamlit, it is essential that you run from the cell **add_carto_data** AND BELOW.  This is to ensure that you have all the correct dependencies needed.
 
+![alt text](image-20.png)
 <!-- ------------------------ -->
 ## Create the Streamlit
 Duration:20
