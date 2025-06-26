@@ -274,7 +274,7 @@ You now have an 4 docker images inside the previously created repository:
 
 - Within the env_setup.sql, run the following by moving the cursor to the command and using **ctrl/command + enter**
 
-![alt text](assets/stage_upload.png.png)
+![alt text](assets/stage_upload.png)
 
 The **downloader** image will copy the config and map file from the setup stage to the consumer app.
 
@@ -282,7 +282,7 @@ The **routing_reverse_proxy** will securely manage traffic between  the other th
 
 The **openrouteservice** contains all the apis which the openrouteservice offers
 
-The **vroom service** manages the route optimisation service.
+The **vroom service** manages the route optimization service.
 
 Now the assets are all setup in the repository and stages, you will now configure the app.
 
@@ -552,7 +552,7 @@ Duration: 30
 
 You will now test out all the functions which you have created. You will be using data simulated by **AISQL**.  
 
-This notebook covers using the functions, how to apply them and how to visualise the results.  At the end you will have a good understand of how the route optimisation service works well with Snowflake Advanced analytical capabilites - which will also lead onto creating the streamlit datasets which will be covered in the next section.
+This notebook covers using the functions, how to apply them and how to visualize the results.  At the end you will have a good understand of how the route optimisation service works well with Snowflake Advanced analytical capabilites - which will also lead onto creating the streamlit datasets which will be covered in the next section.
 
 - To ensure the AI LLM model will work in your region and cloud, please run the following command:
 
@@ -754,7 +754,7 @@ Snowflake will use the ST_DWITHIN geospatial function to filter the overture map
 
 #### The previously run notebook
 
-The previously ran notebook contains the standing data which you can go back to to customise the demo.  If you want to change the types of places to be hotels, then that is quite possible.
+The previously ran notebook contains the standing data which you can go back to to customize the demo.  If you want to change the types of places to be hotels, then that is quite possible.
 
 Within the notebook, you have also created: 
 
@@ -765,7 +765,7 @@ Within the notebook, you have also created:
 - A job sample table
 
 #### The mapping
-The solution leverages pydeck to plot points, linestrings and polygons on a map.  The Isochrone is the polygon, the routes are linestrings and the places/points of interest are points.  You would have seen how this works in the original notebook. AISQL is useful to quickly generate python code to test the maps. 
+The solution leverages Pydeck to plot points, linestrings and polygons on a map.  The isochrone is the polygon, the routes are linestrings and the places/points of interest are points.  You would have seen how this works in the original notebook. AISQL is useful to quickly generate python code to test the maps. 
 <!-- ------------------------ -->
 ## The Streamlit Code
 Duration: 10
