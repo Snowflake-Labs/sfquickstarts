@@ -43,14 +43,16 @@ First, we will create a database called **MODEL_SERVING_DB** in Snowflake as bel
 
 ![1_DB_Creation](assets/1_DB_Creation.png)
 
+We will then import the attached notebook inside this github [repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-serving-in-spcs) by clicking the import notebook option in Snowflake. 
+
+![2_Import_Notebooks](assets/2_Import_Notebooks.png)
+
 - Name: **SNOWPARK_FORECASTING_MODEL_DEPLOYMENT**
 - Notebook location: Set to the **"MODEL_SERVING_DB"** database and the **"PUBLIC"** schema.
 - Python environment: **"Run on warehouse"** is selected, which is described as best for data analysis. The alternative, **"Run on container"** is for AI/ML workloads. In this case we will choose Run on container and we will choose the default compute pool. 
 - Query warehouse: This is the name of the warehouse used to run our queries. In this case I have created a warehouse called **DEMO_BUILD_WH**.
 
-![2_Import_Notebooks](assets/2_Import_Notebooks.png)
-
-We will then import the attached notebook inside this github [repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-serving-in-spcs) by clicking the import notebook option in Snowflake. 
+We will also import the CSV file into the stage. This can be found in the github [repo](https://github.com/Snowflake-Labs/) 
 
 ![3_Import_CSVs](assets/3_Import_CSVs.png)
 
