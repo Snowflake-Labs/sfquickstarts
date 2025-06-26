@@ -14,11 +14,11 @@ Duration: 1
 
 In this quickstart, we will be leveraging the the tools within Snowflake to:
 
-    - **Visualize** the location of Delivery Points anywhere in the world understand the best routes for vehicles to deliver goods or services from a designated depo. We will use the multi layer mapping capabilities of pydeck to create easy to understand routing plans
+- **Visualize** the location of Delivery Points anywhere in the world understand the best routes for vehicles to deliver goods or services from a designated depo. We will use the multi layer mapping capabilities of pydeck to create easy to understand routing plans
 
-    - **Discover** what it would look like to route goods to real world points of interest such as restaurants or supermarkets using the Overture Point of Interest dataset provided freely on the marketplace by Carto.
+- **Discover** what it would look like to route goods to real world points of interest such as restaurants or supermarkets using the Overture Point of Interest dataset provided freely on the marketplace by Carto.
 
-    - **Understand** numerous routing scenarios across a variety of industries anywhere in the world.
+- **Understand** numerous routing scenarios across a variety of industries anywhere in the world.
 
 
 
