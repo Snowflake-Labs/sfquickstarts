@@ -38,7 +38,7 @@ The quickstart contains two options.  Both options require distinct prerequisite
 **Option 1** 
 Use Snowpark Containers with a native app using the Open Route Service
 
-### Route Planning And Optimisation Architecture
+### Route Planning And Optimization Architecture
 
 The architecture above shows the solution which uses a native app and container services to power sophisticated routing and optimisation functions. 
 
@@ -102,7 +102,7 @@ Use External Access Integration with Python Functions to call and retrieve data 
 - A streamlit application to simulate route plans for potential customers anywhere in the world.  This could be for a potential new depot or simply to try out route optimisation which you will later replace with a real data pipeline.
 
 <!-- ------------------------ -->
-## Option 1 - Native app and SPCS
+## Option 1 - Native app & SPCS
 Duration: 30
 
 
@@ -262,16 +262,18 @@ Execute the following to ensure the files are registered on the stage directory
 
 You will now load the docker images to the snowflake repository
 
-- Navigate to the provider_setup > your_connection and amend where it says YOUR_CONNECTION with your snowcli connection.  If you have not created a connection before, please navigate to the following [QuickStart](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html#0) which will explain how these are created.
+- Navigate to the provider_setup > spcs_setup.sh and openn the file.
+- Amend where it says **YOUR_CONNECTION** with your **snowcli** connection.  
 
-- Execute the following to ensure you have the correct privileges to run the bash file.  Open up a terminal within vscode and run the following:
+> **_NOTE:_**  If you have not created a connection before, please navigate to the following [QuickStart](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html#0) before proceeding which will explain how these are created.
+
+- Execute the following to ensure you have the correct privileges to run the bash file.  Open up a terminal from the **Native_app_setup/native_app** directory within vscode and run the following:
 
 ```bash
-chmod +x /provider_setup/spcs_setup.sh
+chmod +x provider_setup/spcs_setup.sh
 ```
 
-
-Run the spcs_setup.sh file. 
+Run the **spcs_setup.sh** file. 
 
 ```bash
 ./provider_setup/spcs_setup.sh
@@ -282,7 +284,12 @@ You will need to ensure that you have docker desktop running before you run the 
 
 You now have an 4 docker images inside the previously created repository:
 
-- Within the env_setup.sql, run the following by moving the cursor to the command and using **ctrl/command + enter**
+- Within the env_setup.sql, run the following command:  
+
+```sql
+SHOW IMAGES IN IMAGE REPOSITORY IMAGE_REPOSITORY;
+```
+You should see four images pushed to the image repository like this:
 
 ![alt text](assets/stage_upload.png)
 
@@ -296,7 +303,7 @@ The **vroom service** manages the route optimization service.
 
 Now the assets are all setup in the repository and stages, you will now configure the app.
 
-- In the working directory, execute the following snow CLI command
+- Using the same terminal in the same directory as before, execute the following snow CLI command
 
 ```bash
 snow app run -c <CONNECTION_NAME>
@@ -331,19 +338,23 @@ You will also see an application package which you can use to share with other a
 
 ### Activate the app
 
+If you login to snow sight you will see the following newly created app within **Data Products > Apps**.  This is an app local to this snowflake for testing purposes.
+
 ![alt text](assets/activate_app.png)
+
+- Open the app and grant the permissions as requested by the application.  Once granted, you can then press **Activate**
 
 You will need to wait a few minutes for the graphs to update.  Within the graphs stage you should see the following folders appear:
 
 ![alt text](assets/graphs_stage.png)
 
-NB: you may need to refresh the stage to view the profiles.
+NB: you may need to refresh the stages to view the profiles. in the directory.
 
 If you open the functions part of the app you will see the following functions appear
 
 ![alt text](assets/image-6.png)
 
-You will learn how to use these functions after option 2 of the quickstart which produces the same functions using rest api calls to the external service.  If you wish, skip option 2 and navigate to the Snowflake Marketplace section.  
+You will learn how to use these functions after option 2 of the quickstart which produces the same functions using rest api calls to the external service.  If you wish, skip option 2 and navigate to the Snowflake Marketplace section.  You will need a dataset provided by **Carto** on the market place for the part of the notebook and the streamlit to run. 
 
 <!-- ------------------------ -->
 ## Option 2 Calling ORS APIs
@@ -557,7 +568,7 @@ Click on the following dataset then press **Get** Do not change the database nam
 ![alt text](assets/I004a.png)
 
 <!-- ------------------------ -->
-## Use the ORS functions with AISQL
+## Routing functions with AISQL
 Duration: 30
 
 You will now test out all the functions which you have created. You will be using data simulated by **AISQL**.  
@@ -611,7 +622,7 @@ Navigate to the notebook and follow the provided instructions.  In order to run 
 
 ![alt text](assets/image-20.png)
 <!-- ------------------------ -->
-## Create the Streamlit
+## Deploy the Streamlit
 Duration:20
 
 Now you can see how all the functions work with AISQL, lets now build a route simulator streamlit application.
@@ -645,7 +656,7 @@ COMMENT = '{"origin":"sf_sit", "name":"Dynamic Route Optimisation Streamlit app"
 - Click on the **Projects** > **Streamlits** and run the **SIMULATOR**.
 
 <!-- ------------------------ -->
-## Run the Dynamic route Optimisation and Vehicle Route Plan Simulator
+## Run the Streamlit
 Duration: 15
 
 ![alt text](assets/image-9.png)
