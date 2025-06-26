@@ -40,7 +40,7 @@ Use Snowpark Containers with a native app using the Open Route Service
 
 The architecture above shows the solution which uses a native app and container services to power sophisticated routing and optimisation functions. 
 
-![alt text](image-7.png)
+![alt text](assets/image-7.png)
 
 This is a self contained service which is managed by you.  There are no api calls outside of snowflake and no api limitations.  This quickstart uses a small CPU pool which is capable of running unlimited service calls within **New York City**.  if you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
 
@@ -70,7 +70,7 @@ This is a self contained service which is managed by you.  There are no api call
 **Option 2**
 Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service. 
 
-![alt text](image-19.png)
+![alt text](assets/image-19.png)
 
 -   You will need access to a Snowflake Account
 
@@ -104,7 +104,7 @@ Use External Access Integration with Python Functions to call and retrieve data 
 Duration: 30
 
 
-![alt text](image-7.png)
+![alt text](assets/image-7.png)
 Use Snowpark Containers with a native app using the Open Route Service
 
 This will create the necessary snowflake database and stages within the public schema.
@@ -215,7 +215,7 @@ There are also other options available for each profile - and each option will d
 -   Within the snowflake add-in navigate to the newly created **ORS_SPCS_STAGE**.   You will see this in the **Object Explorer**
 
 
-![alt text](image.png)
+![alt text](assets/view_stages.png)
 
 -   Click on the upload icon - ![alt text](assets/upload.png) 
 
@@ -582,7 +582,7 @@ CREATE SCHEMA IF NOT EXISTS STREAMLITS;
  ```sql
  CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.notebook DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 ```
-
+- Import the downloaded notebook and environment file into the stage using a method of choice such as the Snowsight UI or Visual Studio Code.
 - Run the following to create your notebook
 
 ```sql
@@ -593,7 +593,7 @@ QUERY_WAREHOUSE = 'ROUTING_ANALYTICS';
 
 ALTER NOTEBOOK VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.EXPLORE_ROUTING_FUNCTIONS_WITH_AISQL ADD LIVE VERSION FROM LAST;
 ```
-You will now be able to try out how the functions work and use them in conjunction with AISQL.
+You will now be able to try out how the functions work and use them in conjunction with **AISQL**.
 
 Navigate to the notebook and follow the provided instructions.  In order to run the streamlit, it is essential that you run from the cell **add_carto_data** AND BELOW.  This is to ensure that you have all the correct dependencies needed.
 
@@ -617,7 +617,8 @@ Now you can see how all the functions work with AISQL, lets now build a route si
  ```sql
  CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.STREAMLITS.STREAMLIT DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 ```
-- Navigate to the Streamlit Stage
+- Navigate to the Streamlit Stage or the VSCode add-in to import the files.
+
 - Upload all files with the exception of config.toml to the streamlit stage
 - Upload the the config.toml file to a folder called .streamlit within the streamlit stage.
 - Create the streamlit using the following script
