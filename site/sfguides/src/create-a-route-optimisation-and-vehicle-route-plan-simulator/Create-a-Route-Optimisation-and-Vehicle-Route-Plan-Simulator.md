@@ -597,6 +597,8 @@ You will now be able to try out how the functions work and use them in conjuncti
 
 Navigate to the notebook and follow the provided instructions.  In order to run the streamlit, it is essential that you run from the cell **add_carto_data** AND BELOW.  This is to ensure that you have all the correct dependencies needed.
 
+- Ensure you run all the code below this section **BEFORE** you move to the streamlit.
+
 ![alt text](image-20.png)
 <!-- ------------------------ -->
 ## Create the Streamlit
