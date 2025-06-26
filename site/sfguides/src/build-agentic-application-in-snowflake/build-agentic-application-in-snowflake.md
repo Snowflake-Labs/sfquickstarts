@@ -160,7 +160,7 @@ AS (
 );
 ```
 
-Bask in the Semantic model UI:
+Back in the Semantic model UI:
 
 1) Remove the sample values provided
 2) Click on **+ Search Service** and add **_ARTICLE_NAME_SEARCH**
@@ -213,7 +213,7 @@ Open the Streamlit app and let's check it out.
 
 These are questions where the answers can be found in the PDF documents.
 
-- **What is the guarantee of the premium bike?**
+- **What is the guarantee of the premium bike?** or **What is the warranty on the premium bike?**
 
 ![image](assets/10_unstructured_question.png)
 
@@ -279,3 +279,6 @@ Congratulations! You've learned how to securely build data agents and agentic ap
 - [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Integrate Cortex Agents with Slack](https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_slack/index.html)
+- [Integrate Cortex Agents with Microsoft Teams](https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_microsoft_teams/index.html)
+- [Integrate Cortex Agents with Zoom](https://quickstarts.snowflake.com/guide/integrate-snowflake-cortex-agents-with-zoom/index.html)
+- [Integrate Cortex Agents with React](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_agents_api_and_react/index.html)

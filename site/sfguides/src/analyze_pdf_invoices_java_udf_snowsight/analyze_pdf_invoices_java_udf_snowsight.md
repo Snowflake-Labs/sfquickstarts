@@ -3,7 +3,7 @@ id: analyze_pdf_invoices_snowpark_python_java
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: data-science-&-ml,data-engineering,architecture-patterns,solution-examples
 environments: web
-status: Published
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Data Engineering, Unstructured Data
 
