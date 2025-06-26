@@ -335,6 +335,8 @@ You will learn how to use these functions in section 3 of the quickstart.  Pleas
 ## Option 2 Calling ORS APIs
 Duration: 15
 
+![alt text](image-19.png)
+
 Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service
 
 The open route service is free to use but there are restrictions in the number of calls to the freely available api api.
