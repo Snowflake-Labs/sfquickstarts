@@ -20,11 +20,7 @@ In this quickstart, we will be leveraging the the tools within Snowflake to:
 
   - **Understand** numerous routing scenarios accross a variety of industries anywhere in the world.
 
-### Route Planning And Optimisation Architecture
 
-![alt text](image-7.png)
-
-The architecture above shows the solution which uses a native app and container services to power the functions.  This will be covered in option 1 of the quickstart.
 
 If you would prefer to skip to quickly see how the route optimisation service might work for you, you can quickly use the **free api service** using the instructions as option 2 for creating the functions.
 
@@ -39,6 +35,12 @@ The quickstart contains two options.  Both options require distinct prerequisite
 
 **Option 1** 
 Use Snowpark Containers with a native app using the Open Route Service
+
+### Route Planning And Optimisation Architecture
+
+The architecture above shows the solution which uses a native app and container services to power sophisticated routing and optimisation functions. 
+
+![alt text](image-7.png)
 
 This is a self contained service which is managed by you.  There are no api calls outside of snowflake and no api limitations.  This quickstart uses a small CPU pool which is capable of running unlimited service calls within **New York City**.  if you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
 
