@@ -12,6 +12,8 @@ tags: Geospatial, Advanced Analytics, Data Engineering, Native apps, Snowpark Co
 ## Overview 
 Duration: 5
 
+![alt text](assets/intromap.png)
+
 In this quickstart, we will be leveraging the the tools within Snowflake to:
 
 - **Visualize** the location of Delivery Points anywhere in the world understand the best routes for vehicles to deliver goods or services from a designated depo. We will use the multi layer mapping capabilities of pydeck to create easy to understand routing plans
