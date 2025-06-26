@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering
 
-# Getting Started with dbt Projects on Snowflake
+# Exploring dbt Projects on Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
