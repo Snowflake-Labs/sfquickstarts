@@ -256,7 +256,7 @@ Execute the following to ensure the files are registered on the stage directory
  select * from directory(@OPENROUTESERVICE_SETUP.PUBLIC.ORS_SPCS_STAGE);
 
  ```
-
+![alt text](assets/directory.png)
 
 ### Create the image and services.
 
