@@ -12,45 +12,52 @@ tags: AI, Microsoft, Agents, Cortex, Copilot, chatbot, Teams, Cortex, Search, An
 ## Overview 
 Duration: 10
 
-FILL IN HERE
+In this quickstart you learn to build a Snowflake Cortex Agent and connect to it from a Teams or MS 365 Copilot App. In this Quickstart, after Setting Up the Snowflake Environment there will be a section for configuring the app connectivity then using the app; this Quickstart can be followed all the way through but you may be focused on one experience or another depending on your role and interest :grin:
 
-Cortex Agents orchestrate across both structured and unstructured data sources to deliver insights. They plan tasks, use tools to execute these tasks, and generate responses. Agents use Cortex Analyst (structured) and Cortex Search (unstructured) as tools, along with LLMs, to analyze data. Cortex Search extracts insights from unstructured sources, while Cortex Analyst generates SQL to process structured data. A comprehensive support for tool identification and tool execution enables delivery of sophisticated applications grounded in enterprise data.
+Snowflake Cortex Agents orchestrate across both structured and unstructured data sources to deliver insights. They plan tasks, use tools to execute these tasks, and generate responses. Agents use Cortex Analyst (structured) and Cortex Search (unstructured) as tools, along with LLMs, to analyze data. Cortex Search extracts insights from unstructured sources, while Cortex Analyst generates SQL to process structured data. A comprehensive support for tool identification and tool execution enables delivery of sophisticated applications grounded in enterprise data.
 
-
+A Teams 365 Copilot app is an AI-powered productivity assistant integrated into Microsoft Teams and Microsoft 365 Services (Word, Excel, Outlook, etc.). It's part of Microsoft’s broader Copilot ecosystem, which embeds generative AI into everyday work apps and can connect to services like Snowflake Cortex Agents.
 
 ### Use Case
 In this use cases we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search (for unstructured data) and Analyst (for structured data) then wrap a Cortex Agent around it so that it can combine both the services in a unified agentic experience. This can then be used by Copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
 
-Snowflake Cortex has proven to be a best-in-class platform for building GenAI services and agents with your data and while there is overlap with functionality in Microsoft Copilot Studio we see many customers who want to build GenAI services in Snowflake Cortex then materialize those services to MS Copilot. Having MS Copilot serve as the single Copilot interface for all GenAI services and agents.
- UPDATE HERE
+Snowflake Cortex has proven to be a best-in-class platform for building GenAI services (Search and Analyst) and agents with your data and now customers can seemlessly connect to Cortex Agents in Teams and 365 Copilots alongside all of their Microsoft GenAI experiences.
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) and a Snowflake account
-- ADD HERE
+- A Teams account or 365 with Copilot (with administrator privileges if following that section)
 
 ### What You’ll Learn
 - Creating Snowflake Cortex Services for Search, Analyst and Agents
-- ADD HERE
+- Securely connecting Teams and 365 Copilot App to Cortex Agents
+- Using the Teams and 365 App with Cortex Agents!
 
-![](assets/<update>)
-1. Create a Cortex Analyst Service with Semantic Model
-2. Create a Cortex Search Service
-3. Create a Cortex Agent specification file Snowflake Stage
+First we will build a simple Cortex agent that leverages Analyst and Search Services on structured and unstructured data respectively.
+![](assets/agentarch.png)
+
+Next, we will confifure connectivity to connect the Teams/Copilot 365 App to Cortex then use it, with the underlying architecture like below. 
+1[](assets/apparch.png)
+The authentication and user flow goes like this:
+1. User authenticates to Entra ID and via the Bot Resource to authenticate into their Snowflake Account.
+2. The user then interacts with the MS app and the Bot Resource sends the request, along with the token from step 1, to the Bot backend with the user.
+3. The Bot Backend stores and retrieves the tenant level configuration and prompts the Cortex Agent API and executes queries against the SQL API when needed.
+4. Responses traverse through the Bot Backend, through the Bot Resource back to the application and to the user.
+
 ...
 
 ### What You’ll Need
 - [Snowflake account](https://signup.snowflake.com/) 
-- ...
+- A Teams account or 365 with Copilot (with administrator privileges if following that section)
 
 ### What You'll Build
 - A Snowflake Search Service
 - A Snowflake Analyst Service
 - A Snowflake Agent
-- ...
+- A Teams or 365 Copilot App that connects to the Cortex Agent
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 8
+Duration: 9
 
 
 ```sql
@@ -162,9 +169,12 @@ To set up Cortex Analyst you will have to upload a semantic file.
 
 Cortex Analyst is a highly accurate text to sql generator and in order to produce highly accurate results a semantic file such as this one is required. Cortex Analyst will use this semantic file along with user prompts to generate accurate SQL.
 
-To define the Cortex Agent specification, from the Snowflake Snowsight you wil go to Data>....
-- ...
-- ...
+To set up Cortex Analyst you will have to upload a semantic file.
+- Download [cortex_agent_definition.json](https://github.com/Snowflake-Labs/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app/cortex_agent_definition.json) (NOTE: Do NOT right-click to download.)
+- Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS
+- Click "+ Files" in the top right
+- Browse and select cortex_agent_definition.json file
+- Click "Upload"
 
 
 And last we will run this below script to grant the appropriate privileges to the PUBLIC role (or whatever role you can use). 
@@ -179,11 +189,68 @@ GRANT USAGE ON PROCEDURE call_cortex_agent_proc(VARCHAR, NUMBER) TO ROLE PUBLIC;
 ```
 <!-- ------------------------ -->
 ## Configuring the App Connectivity to Cortex
-Duration: 10
+Duration: 12
+
+A Global Administrator for your Microsoft Entra ID tenant must use the two links below to grant the necessary permissions for the applications. Please review the permissions requested on each consent screen before accepting.
+
+ <TENANT-ID> with your organization’s tenant identifier:
+https://login.microsoftonline.com/<TENANT-ID>/adminconsent?client_id=5a840489-78db-4a42-8772-47be9d833efe
+![](asset/consentone)
+
+Replace <TENANT-ID> with your organization’s tenant identifier:
+https://login.microsoftonline.com/<TENANT-ID>/adminconsent?client_id=bfdfa2a2-bce5-4aee-ad3d-41ef70eb5086
+![](assets/consenttwo.png)
+
+Admins should also make sure the Snowflake users have an email address in their Snowflake user that matches their Microsoft tenant.
+
+Admins should execute the below code to create the security integration necessary to authenticate with Entra ID.
+ <TENANT-ID> with your organization’s tenant identifier:
+```sql
+CREATE OR REPLACE SECURITY INTEGRATION entra_id_cortex_agents_integration 
+TYPE = EXTERNAL_OAUTH 
+ENABLED = TRUE 
+EXTERNAL_OAUTH_TYPE = AZURE 
+EXTERNAL_OAUTH_ISSUER = 'https://login.microsoftonline.com/<TENANT-ID>/v2.0'
+EXTERNAL_OAUTH_JWS_KEYS_URL = 'https://login.microsoftonline.com/<TENANT-ID>/discovery/v2.0/keys'
+EXTERNAL_OAUTH_AUDIENCE_LIST = ('0f24a786-17be-4e2b-bcc8-54f6b1ac897c') EXTERNAL_OAUTH_TOKEN_USER_MAPPING_CLAIM = ('email', 'upn')
+EXTERNAL_OAUTH_SNOWFLAKE_USER_MAPPING_ATTRIBUTE = 'email_address' 
+EXTERNAL_OAUTH_ANY_ROLE_MODE = 'ENABLE'
+```
+Search for "Snowflake Cortex Agents" in the Teams App Store and click "Add".
+
+The first user from your organization to interact with the agent will be guided through a one-time setup process to connect your Snowflake account for the whole organization. This user must have administrative permissions in the target Snowflake account to complete the setup.
+
+Depending on your organization’s Microsoft Teams policies, a Teams Administrator may need to approve or unblock the application before it is available to users. Reach to [Overview of app management and governance in Teams admin center”](https://learn.microsoft.com/en-us/microsoftteams/manage-apps) article in order to get more information on managing access to Teams Applications across an organization.
+ADD SCREENSHPT HERE OF ADD
+
+Upon the first interaction with the agent, you will be prompted to log in with your Microsoft account.
+
+The agent will inform you that no Snowflake account is configured for your organization and will ask for your Snowflake account URL. Clicking “I’m the Snowflake administrator” action will unveil a simple form, where you can provide your account’s URL.
+-The full URL to enter is your_organization-your_account.snowflakecomputing.com.
+![](assets/adminscreen.png)
+
+Initial Verification: The agent will perform several checks:
+- Verifies that the URL leads to a valid Snowflake instance.
+- Confirms your Microsoft user has access to this Snowflake instance via the security integration.
+- Checks that your user holds administrative privileges in the Snowflake account.
+- Ensures the Snowflake account is hosted in the Azure East US 2 region.
+
+Enter Configuration Details: Once the initial verification is successful, a form will appear requesting the following configuration details:
+- Account Alias: A user-friendly name for this Snowflake connection (e.g., "Production Analytics," "Dev Environment"), which will be used in UI to refer to this Snowflake account.
+- Agent Definition Path: The fully qualified path to the agent's JSON definition file on your Snowflake stage.
+- Warehouse: The name of the Snowflake warehouse the agent will use to run queries.
+![](assets/adminmapping.png)
+
+Final Validation: After you submit the configuration, the agent performs a final validation:
+- Checks that the JSON file exists at the specified path and contains a valid agent definition.
+- Performs a test API call to the agent to ensure it can respond correctly.
+
+If all checks pass, the Snowflake configuration has been successfully added for your organization. All users from your Microsoft tenant can now interact with the agent using this Snowflake account.
 
 <!-- ------------------------ -->
 ## Using the App
 Duration: 10
+
 
 
 <!-- ------------------------ -->
