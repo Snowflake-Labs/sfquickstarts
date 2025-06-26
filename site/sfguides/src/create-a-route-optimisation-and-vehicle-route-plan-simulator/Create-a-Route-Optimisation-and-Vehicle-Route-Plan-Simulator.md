@@ -572,9 +572,9 @@ CREATE SCHEMA IF NOT EXISTS STREAMLITS;
 ```
 
 
--   Download following [notebook](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/tree/8334cf0413c58e003d7f1570365dce42bdc0703d/Notebook) 
+-   Download following [notebook](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/1a512439a664c84b6be0cbd329fd591386762370/Notebook/routing_setup.ipynb) 
 
--   Download the following [environment file](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/8334cf0413c58e003d7f1570365dce42bdc0703d/Notebook/environment.yml)
+-   Download the following [environment file](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/1a512439a664c84b6be0cbd329fd591386762370/Notebook/environment.yml)
 
 
 -    Create 1 stage to store the notebook assets
@@ -607,7 +607,7 @@ Duration:20
 Now you can see how all the functions work with AISQL, lets now build a route simulator streamlit application.
 
 
-- Click [here](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/09039b2eeabfb58a55c798af70b7a7527a741ef5/Streamlit/streamlit.zip) to download the files needed for the streamlit app.
+- Click [here](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/1a512439a664c84b6be0cbd329fd591386762370/Streamlit/streamlit.zip) to download the files needed for the streamlit app.
 
 - Unzip all files ready for uploading to a stage.
 
