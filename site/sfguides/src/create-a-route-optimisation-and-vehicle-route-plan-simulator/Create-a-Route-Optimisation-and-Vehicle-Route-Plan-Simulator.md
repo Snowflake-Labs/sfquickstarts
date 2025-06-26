@@ -333,7 +333,7 @@ If you open the functions part of the app you will see the following functions a
 
 ![alt text](assets/image-6.png)
 
-You will learn how to use these functions in section 3 of the quickstart.  Please continue to section 3.
+You will learn how to use these functions after option 2 of the quickstart which produces the same functions using rest api calls to the external service.  If you wish, skip option 2 and navigate to the Snowflake Marketplace section.  
 
 <!-- ------------------------ -->
 ## Option 2 Calling ORS APIs
