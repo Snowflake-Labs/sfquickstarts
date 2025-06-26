@@ -123,7 +123,9 @@ This will create the necessary snowflake database and stages within the public s
 
 - Press run all or ctrl + enter / command + enter to run the code within visual studio code.
 
-You will now have a database which contains an empty repository and three stages.
+You will now have a database which contains an empty repository and three stages.  You can view these stages easily with the VSCode addin.
+
+![alt text](assets/setup_stages.png)
 
 The  **ORS_SPCS_STAGE** stage will contain a map extract and a config file.
 
