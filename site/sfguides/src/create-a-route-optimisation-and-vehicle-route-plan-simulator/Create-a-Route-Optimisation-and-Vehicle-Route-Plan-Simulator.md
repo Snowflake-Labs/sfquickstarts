@@ -10,7 +10,7 @@ tags: Geospatial, Advanced Analytics, Data Engineering, Native apps, Snowpark Co
 # Create a Route Optimization and Vehicle Route Plan Simulator
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 5
 
 In this quickstart, we will be leveraging the the tools within Snowflake to:
 
@@ -36,9 +36,9 @@ The quickstart contains two options.  Both options require distinct prerequisite
 **Option 1** 
 Use Snowpark Containers with a native app using the Open Route Service
 
-### Route Planning And Optimization Architecture
+### Route Planning And Optimisation Architecture
 
-The architecture above shows the solution which uses a native app and container services to power sophisticated routing and optimization functions. 
+The architecture above shows the solution which uses a native app and container services to power sophisticated routing and optimisation functions. 
 
 ![alt text](assets/image-7.png)
 
@@ -47,12 +47,12 @@ This is a self contained service which is managed by you.  There are no api call
 **This is what you will need**:
 
 -   [External Access Integration Activated](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
-        
-        NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  You will need this to securely download the map and config files from the provider account.
+    
+    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  You will need this to securely download the map and config files from the provider account.
 
 - [Snowpark Container Services Activated](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
 
-        This is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  
+    This is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  
 
 -   **ACCOUNTADMIN** access to the account.
 
@@ -75,7 +75,7 @@ Use External Access Integration with Python Functions to call and retrieve data 
 -   You will need access to a Snowflake Account
 
 -   [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
-        NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  This is for connecting to the open route service api.
+    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  This is for connecting to the open route service api.
 
 -   An free account with [Open Route Service](https://openrouteservice.org/)
 
@@ -93,11 +93,11 @@ Use External Access Integration with Python Functions to call and retrieve data 
 - Create an isochrone for catchment analysis
 - Creating a location centric application using Streamlit 
 - An insight to the Carto Overture Places dataset to build an innovative route planning simulation solution
-    - Leverage vehicle capabilities and matching with job specifics
-    - use a real dataset to simulate route plans for a specific depot
+  - Leverage vehicle capabilities and matching with job specifics
+  - use a real dataset to simulate route plans for a specific depot
 
 ### What You’ll Build 
-- A streamlit application to simulate route plans for potential customers anywhere in the world.  This could be for a potential new depot or simply to try out route optimization which you will later replace with a real data pipeline.
+- A streamlit application to simulate route plans for potential customers anywhere in the world.  This could be for a potential new depot or simply to try out route optimisation which you will later replace with a real data pipeline.
 
 <!-- ------------------------ -->
 ## Option 1 - Native app and SPCS
@@ -121,7 +121,7 @@ You will now have a database which contains an empty repository and three stages
 
 The  **ORS_SPCS_STAGE** stage will contain a map extract and a config file.
 
-The **ORS_GRAPHS_SPCS_STAGE** stage will contain files in a graphs structure to easily calculate route optimizations.  The graphs created will depend on the map uploaded and which vehicle profiles are enabled.
+The **ORS_GRAPHS_SPCS_STAGE** stage will contain files in a graphs structure to easily calculate route optimisations.  The graphs created will depend on the map uploaded and which vehicle profiles are enabled.
 
 The **ORS_ELEVATION_CACHE_SPCS_STAGE**. 
 
@@ -156,10 +156,10 @@ You will see at the beginning of the yml file is a source file locator.
 ```yml
 
 ors:
-    engine:
-        profile_default:
-            build:  
-                source_file: /home/ors/files/sanFrancisco.osm.pbf
+  engine:
+    profile_default:
+      build:  
+        source_file: /home/ors/files/sanFrancisco.osm.pbf
 
 ```
 This is what the URL will be to point to the right map file.   If you would like to use a different map, as well as uploading the alternative map you will need to change the source file parameter here.
@@ -167,30 +167,30 @@ This is what the URL will be to point to the right map file.   If you would like
 Next you will see a profiles configuration area
 
 ```yml
-        profiles:
-            driving-car:
-                enabled: true
-            cycling-road:
-                enabled: true
-            driving-hgv:
-                enabled: true
+    profiles:
+      driving-car:
+        enabled: true
+      cycling-road:
+        enabled: true
+      driving-hgv:
+        enabled: true
 ```
 This is where you can configure multiple types of vehicles.  If you look at the commented out profiles in here, you can also  configure each profile further as well as adding additional profiles.
 
 - edit the config yml file and add **cycling-electric** and **foot-walking** profiles:
 
 ```yml
-        profiles:
-            driving-car:
-                enabled: true
-            cycling-road:
-                enabled: true
-                driving-hgv:
-                        enabled: true
-            cycling-electric:
-                enabled: true
-            foot-walking:
-                enabled: true
+    profiles:
+      driving-car:
+        enabled: true
+      cycling-road:
+        enabled: true
+        driving-hgv:
+            enabled: true
+      cycling-electric:
+        enabled: true
+      foot-walking:
+        enabled: true
 ```
 
 Here is where you can change the amount of maximum visited nodes.
@@ -199,8 +199,8 @@ The nodes are locations where route optimization algorithms are implemented and 
 
 
 ```yml
-        matrix:
-            maximum_visited_nodes: 1000000000
+    matrix:
+      maximum_visited_nodes: 1000000000
 ```
 
 There are also other options available for each profile - and each option will depend on what the profile is.
@@ -224,9 +224,9 @@ Navigate to the newly downloaded file to upload the map file to the snowflake st
 Modify the config file by changing the source file location to the following:
 
 ```yml
-        build:  
-                source_file: /home/ors/files/NewYork.osm.pbf
-                instructions: false
+    build:  
+        source_file: /home/ors/files/NewYork.osm.pbf
+        instructions: false
 ```
 
 Finally, use the upload tool again to upload the modified config file to snowflake.  
@@ -308,7 +308,7 @@ When a consumer installs the app, it will add all the services for each image an
 This also includes the functions that we will later use in streamlit.  The following functions are created:
 -   Directions
 -   Isochrones
--   Optimization
+-   Optimisation
 
 You will also note that an additional function (download) is created which calls the downloader service to download the map and config file from the provider stage to the consumer stage.
 
@@ -366,24 +366,24 @@ Copy the create secret command and replace the secret string with your secret to
 
 ```sql
 CREATE SECRET IF NOT EXISTS CORE.ROUTING_TOKEN
-    TYPE = GENERIC_STRING
-    SECRET_STRING = '<replace with your secret token>'
-    COMMENT = 'token for routing demo'
+  TYPE = GENERIC_STRING
+  SECRET_STRING = '<replace with your secret token>'
+  COMMENT = 'token for routing demo'
 ```
 Create a Network Rule and External Integration
 
 ```sql
 
 CREATE OR REPLACE NETWORK RULE open_route_api
-    MODE = EGRESS
-    TYPE = HOST_PORT
-    VALUE_LIST = ('api.openrouteservice.org');
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('api.openrouteservice.org');
 
 
 CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION open_route_integration
-    ALLOWED_NETWORK_RULES = (open_route_api)
-    ALLOWED_AUTHENTICATION_SECRETS = all
-    ENABLED = true;
+  ALLOWED_NETWORK_RULES = (open_route_api)
+  ALLOWED_AUTHENTICATION_SECRETS = all
+  ENABLED = true;
 
 ```
 
@@ -407,16 +407,16 @@ $$
 import requests
 import _snowflake
 def get_directions(method,jstart,jend):
-        request = f'''https://api.openrouteservice.org/v2/directions/{method}'''
-        key = _snowflake.get_generic_secret_string('cred')
+    request = f'''https://api.openrouteservice.org/v2/directions/{method}'''
+    key = _snowflake.get_generic_secret_string('cred')
 
-        PARAMS = {'api_key':key,
-                        'start':f'{jstart[0]},{jstart[1]}', 'end':f'{jend[0]},{jend[1]}'}
+    PARAMS = {'api_key':key,
+            'start':f'{jstart[0]},{jstart[1]}', 'end':f'{jend[0]},{jend[1]}'}
 
-        r = requests.get(url = request, params = PARAMS)
-        response = r.json()
-        
-        return response
+    r = requests.get(url = request, params = PARAMS)
+    response = r.json()
+    
+    return response
 $$;
 
 ```
@@ -439,24 +439,24 @@ import _snowflake
 import json
 
 def get_directions(method,locations):
-        request_directions = f'''https://api.openrouteservice.org/v2/directions/{method}/geojson'''
-        key = _snowflake.get_generic_secret_string('cred')
+    request_directions = f'''https://api.openrouteservice.org/v2/directions/{method}/geojson'''
+    key = _snowflake.get_generic_secret_string('cred')
 
-        HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
-                             'Authorization':key,
-                             'Content-Type': 'application/json; charset=utf-8'}
+    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+               'Authorization':key,
+               'Content-Type': 'application/json; charset=utf-8'}
 
-        body = locations
+    body = locations
 
-        r = requests.post(url = request_directions,json = body, headers=HEADERS)
-        response = r.json()
-        
-        return response
+    r = requests.post(url = request_directions,json = body, headers=HEADERS)
+    response = r.json()
+    
+    return response
 
-        $$;
+    $$;
 ```
 
--   Create an Optimization Function
+-   Create an Optimisation Function
 
 ```sql
 
@@ -474,18 +474,18 @@ $$
 import requests
 import _snowflake
 def get_optimization(jobs,vehicles):
-        request_optimization = f'''https://api.openrouteservice.org/optimization'''
-        key = _snowflake.get_generic_secret_string('cred')
-        HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
-                             'Authorization':key,
-                             'Content-Type': 'application/json; charset=utf-8'}
+    request_optimization = f'''https://api.openrouteservice.org/optimization'''
+    key = _snowflake.get_generic_secret_string('cred')
+    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+               'Authorization':key,
+               'Content-Type': 'application/json; charset=utf-8'}
 
-        body = {"jobs":jobs,"vehicles":vehicles}
+    body = {"jobs":jobs,"vehicles":vehicles}
 
-        r = requests.post(url = request_optimization,json = body, headers=HEADERS)
-        response = r.json()
-        
-        return response
+    r = requests.post(url = request_optimization,json = body, headers=HEADERS)
+    response = r.json()
+    
+    return response
 $$;
 ```
 .   Create an Isochrone function
@@ -505,22 +505,22 @@ $$
 import requests
 import _snowflake
 def get_isochrone(method,lon,lat,range):
-        request_isochrone = f'''https://api.openrouteservice.org/v2/isochrones/{method}'''
-        key = _snowflake.get_generic_secret_string('cred')
-        HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
-                             'Authorization':key,
-                             'Content-Type': 'application/json; charset=utf-8'}
+    request_isochrone = f'''https://api.openrouteservice.org/v2/isochrones/{method}'''
+    key = _snowflake.get_generic_secret_string('cred')
+    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+               'Authorization':key,
+               'Content-Type': 'application/json; charset=utf-8'}
 
-        body = {'locations':[[lon,lat]],
-                                        'range':[range*60],
-                                        'location_type':'start',
-                                        'range_type':'time',
-                                        'smoothing':10}
+    body = {'locations':[[lon,lat]],
+                    'range':[range*60],
+                    'location_type':'start',
+                    'range_type':'time',
+                    'smoothing':10}
 
-        r = requests.post(url = request_isochrone,json = body, headers=HEADERS)
-        response = r.json()
-        
-        return response
+    r = requests.post(url = request_isochrone,json = body, headers=HEADERS)
+    response = r.json()
+    
+    return response
 $$;
 ```
 
@@ -552,7 +552,7 @@ Duration: 30
 
 You will now test out all the functions which you have created. You will be using data simulated by **AISQL**.  
 
-This notebook covers using the functions, how to apply them and how to visualize the results.  At the end you will have a good understand of how the route optimization service works well with Snowflake Advanced analytical capabilities - which will also lead onto creating the streamlit datasets which will be covered in the next section.
+This notebook covers using the functions, how to apply them and how to visualize the results.  At the end you will have a good understand of how the route optimisation service works well with Snowflake Advanced analytical capabilites - which will also lead onto creating the streamlit datasets which will be covered in the next section.
 
 - To ensure the AI LLM model will work in your region and cloud, please run the following command:
 
@@ -628,14 +628,14 @@ CREATE OR REPLACE STREAMLIT VEHICLE_ROUTING_SIMULATOR.STREAMLITS.SIMULATOR
 ROOT_LOCATION = '@VEHICLE_ROUTING_SIMULATOR.STREAMLITS.streamlit'
 FROM 'routing.py'
 QUERY_WAREHOUSE = 'ROUTING_ANALYTICS'
-COMMENT = '{"origin":"sf_sit", "name":"Dynamic Route Optimization Streamlit app", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"streamlit"}}';
+COMMENT = '{"origin":"sf_sit", "name":"Dynamic Route Optimisation Streamlit app", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"streamlit"}}';
 ```
 - Go to the homepage in Snowsight
 
 - Click on the **Projects** > **Streamlits** and run the **SIMULATOR**.
 
 <!-- ------------------------ -->
-## Run the Dynamic route Optimization and Vehicle Route Plan Simulator
+## Run the Dynamic route Optimisation and Vehicle Route Plan Simulator
 Duration: 15
 
 ![alt text](assets/image-9.png)
@@ -672,11 +672,11 @@ If you have built the native app and require an alternative city, you will need 
 **NB** You will only return results in the New York City boundary.
 - Choose the distance in KM for how wide you would like the app to search for nearby distributors.
 
-        ![alt text](assets/image-11.png)
+    ![alt text](assets/image-11.png)
 
 - Scroll down to get a map which highlights the place plus where all the nearby distributors are.  
 
-- Scroll further down in the sidebar to select a specific distributor. - This is sorted by distance from the centre point.  You should have relevant wholesalers based on location and industry.
+- Scroll further down in the sidebar to select a specific distributor. - This is sorted by distance from the centre point.  You should have relevent wholesalers based on location and industry.
 
 ![alt text](assets/image-14.png)
 
@@ -732,7 +732,7 @@ Vehicle 3 has the least amount of things to deliver but takes the longest to del
 
 
 
-When looking at the map itself, you will see the lines of the route for each vehicle, this is color coded - you will also see circles which also represent the drops for each vehicle.  The hoverover will tell you what the point represents.
+When looking at the map itself, you will see the lines of the route for each vehicle, this is colour coded - you will also see circles which also represent the drops for each vehicle.  The hoverover will tell you what the point represents.
 
 
 
@@ -743,7 +743,7 @@ Tabs - this will give instructions for each segment of the drivers journey - the
 
 ### How does it work
 
-You can see that in a couple of clicks you can create a vehicle optimization scenario from anywhere. 
+You can see that in a couple of clicks you can create a vehicle optimisation scenario from anywhere. 
 
 
 #### Finding the place
@@ -758,7 +758,7 @@ The previously ran notebook contains the standing data which you can go back to 
 
 Within the notebook, you have also created: 
 
-- The overture dataset and included optimization on geo and the category variant column to help with faster searching.
+- The overture dataset and included optimisation on geo and the category variant column to help with faster searching.
 
 - An industry lookup table to add relevant context
 
@@ -776,13 +776,13 @@ The Streamlit puts all of the above components together. I will now explain how 
 
 **Setup Theming**
 
-An important feature for better user experience is what the application looks like. I have themed the app to be consistent with Snowflake Branding. This is so much easier and flexible now we can add styles to Streamlit in Snowflake.
+An important feature for better user experience is what the application looks like. I have themed the app to be consistant with Snowflake Branding. This is so much easier and flexible now we can add styles to Streamlit in Snowflake.
 
 For the theming, a style sheet was added to the streamlit project.
 
 ```python
 with open('extra.css') as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 ```
 
 
@@ -802,13 +802,13 @@ Based on the selected industry, key variables are generated for added context to
 
 #sidebar
 with st.sidebar:
-        st.image(image)
-        choice = st.radio('select industry', industry)
-        lookup = lookup.filter(col('INDUSTRY')==choice)
-        lookup = lookup.with_column('IND',array_to_string('IND',lit(',')))
-        lookup = lookup.with_column('IND2',array_to_string('IND2',lit(',')))
-        
-        lookuppd = lookup.to_pandas()
+    st.image(image)
+    choice = st.radio('select industry', industry)
+    lookup = lookup.filter(col('INDUSTRY')==choice)
+    lookup = lookup.with_column('IND',array_to_string('IND',lit(',')))
+    lookup = lookup.with_column('IND2',array_to_string('IND2',lit(',')))
+    
+    lookuppd = lookup.to_pandas()
 
 
 ```
@@ -834,12 +834,12 @@ These vehicle types will be assigned to each of the 3 vehicles. These will be co
 ```python
 
 method =[
-                         'driving-car',
-                         'driving-hgv',
-                         'cycling-regular',
-                         'cycling-road',
-                         'cycling-mountain',
-                         'cycling-electric']
+             'driving-car',
+             'driving-hgv',
+             'cycling-regular',
+             'cycling-road',
+             'cycling-mountain',
+             'cycling-electric']
 
 ```
 
@@ -853,14 +853,14 @@ places_f = session.table('places')
 ```
 ```python
 places_f = places_f.select('GEOMETRY',call_function('ST_X',
-                                                     col('GEOMETRY')).alias('LON'),
-                                                     call_function('ST_Y',
-                                                                    col('GEOMETRY')).alias('LAT'),
-                                                                    col('ADDRESS'),
-                                                                    col('CATEGORY'),
-                                                                    col('ALTERNATE'),
-                                                                    col('PHONES'),col('NAME'),
-                                                                    col('GEOMETRY').alias('POINT')
+                           col('GEOMETRY')).alias('LON'),
+                           call_function('ST_Y',
+                                  col('GEOMETRY')).alias('LAT'),
+                                  col('ADDRESS'),
+                                  col('CATEGORY'),
+                                  col('ALTERNATE'),
+                                  col('PHONES'),col('NAME'),
+                                  col('GEOMETRY').alias('POINT')
 ```
 
 **Cortex map filter**
@@ -871,11 +871,11 @@ The user also chooses an LLM model (I have found mistral-large2 works very well)
 ```python
 
 with st.sidebar:
-        st.markdown('##### Cortex Powered Map Filter')
-        st.info(prompt)
-        model = st.selectbox('Choose Model:',['reka-flash','mistral-large2'],1)
-        place = st.text_input('Choose Input','Heathrow Airport')
-        distance = st.number_input('Distance from location in KM',1,300,5)
+    st.markdown('##### Cortex Powered Map Filter')
+    st.info(prompt)
+    model = st.selectbox('Choose Model:',['reka-flash','mistral-large2'],1)
+    place = st.text_input('Choose Input','Heathrow Airport')
+    distance = st.number_input('Distance from location in KM',1,300,5)
 
 ```
 
@@ -908,31 +908,31 @@ prompt = ('give me the LAT and LON which centers the following place')
 
 @st.cache_data
 def choose_place(place,model,distance):
-        json_template = str({'LAT':44.3452,'LON':2.345,'DISTANCE':100})
-        min_max = session.createDataFrame([{'PLACE':place}])\
-        .with_column('CENTER',
-                call_function('snowflake.cortex.complete',
-                model,
-                concat(lit(prompt),
-                col('PLACE'),lit(f'return 3 values which \
-                are as follows LAT and LON with {distance} as DISTANCE'),
-                lit('use the following json template'),
-                lit(json_template),
-                lit('return only json. DO NOT RETURN COMMENTRY OR VERBIAGE'))
-                                                                    )
-        min_max = min_max.select(parse_json(replace(replace('CENTER',
-                                                            "```",
-                                                            ''),
-                                                            'json',
-                                                            '')).alias('CENTER'))
-     return min_max.select(col('CENTER')['LAT'].astype(FloatType()).alias('LAT'),
-         col('CENTER')['LON'].astype(FloatType()).alias('LON'),
-         call_function('ST_ASWKT',
-         call_function('ST_MAKEPOINT',
-         col('LON'),col('LAT'))).alias('POINT'),
-         col('CENTER')['DISTANCE'].astype(FloatType()).alias('"DISTANCE1"'),
-         lit(0).alias('DISTANCE'),
-         lit(place).alias('NAME')).to_pandas()
+    json_template = str({'LAT':44.3452,'LON':2.345,'DISTANCE':100})
+    min_max = session.createDataFrame([{'PLACE':place}])\
+    .with_column('CENTER',
+        call_function('snowflake.cortex.complete',
+        model,
+        concat(lit(prompt),
+        col('PLACE'),lit(f'return 3 values which \
+        are as follows LAT and LON with {distance} as DISTANCE'),
+        lit('use the following json template'),
+        lit(json_template),
+        lit('return only json. DO NOT RETURN COMMENTRY OR VERBIAGE'))
+                                  )
+    min_max = min_max.select(parse_json(replace(replace('CENTER',
+                              "```",
+                              ''),
+                              'json',
+                              '')).alias('CENTER'))
+   return min_max.select(col('CENTER')['LAT'].astype(FloatType()).alias('LAT'),
+     col('CENTER')['LON'].astype(FloatType()).alias('LON'),
+     call_function('ST_ASWKT',
+     call_function('ST_MAKEPOINT',
+     col('LON'),col('LAT'))).alias('POINT'),
+     col('CENTER')['DISTANCE'].astype(FloatType()).alias('"DISTANCE1"'),
+     lit(0).alias('DISTANCE'),
+     lit(place).alias('NAME')).to_pandas()
 
 
 ```
@@ -952,17 +952,17 @@ This is a pydeck layer - which generates a map based on the returned result 
 ```python
 
 context = pdk.Layer(
-        'ScatterplotLayer',
-        bbox,
-        get_position=['LON', 'LAT'],
-        filled=True,
-        stroked=False,
-        radius_min_pixels=6,
-        radius_max_pixels=20,
-        auto_highlight=True,
-        get_fill_color=[41, 181, 232],
-        pickable=True)
-        st.divider()
+    'ScatterplotLayer',
+    bbox,
+    get_position=['LON', 'LAT'],
+    filled=True,
+    stroked=False,
+    radius_min_pixels=6,
+    radius_max_pixels=20,
+    auto_highlight=True,
+    get_fill_color=[41, 181, 232],
+    pickable=True)
+    st.divider()
 
 ```
 
@@ -971,7 +971,7 @@ Preview the results in a pydeck chart. The view state navigates the map to the p
 ```python
 
 view_state = pdk.ViewState(bbox.LON.iloc[0], bbox.LAT.iloc[0], zoom=4)
-        st.pydeck_chart(pdk.Deck(layers=[context],map_style=None,initial_view_state=view_state))
+    st.pydeck_chart(pdk.Deck(layers=[context],map_style=None,initial_view_state=view_state))
 
 ```
 ![map](assets/ST01.png)
@@ -986,40 +986,40 @@ For example:
 
 - Search one must contain one of these words:
 
-        - hospital 
-        - health 
-        - pharmaceutical
-        - drug 
-        - healthcare 
-        - pharmacy 
-        - surgical
+    - hospital 
+    - health 
+    - pharmaceutical
+    - drug 
+    - healthcare 
+    - pharmacy 
+    - surgical
 
 - From the results of search 1, search 2 must contain one of these words:
-        - supplies 
-        - warehouse 
-        - depot 
-        - distribution 
-        - wholesaler 
-        - distributors
+    - supplies 
+    - warehouse 
+    - depot 
+    - distribution 
+    - wholesaler 
+    - distributors
 
 ```python
 places_w = places_f.filter(call_function('ST_DWITHIN', 
-            places_f['GEOMETRY'],
-            to_geography(lit(bbox.POINT.iloc[0])),
-            lit(bbox.DISTANCE1.iloc[0])*1000))#.cache_result()
+      places_f['GEOMETRY'],
+      to_geography(lit(bbox.POINT.iloc[0])),
+      lit(bbox.DISTANCE1.iloc[0])*1000))#.cache_result()
 ```
 
 ```python
 
 places_1 = places_w.filter(expr(f'''search((CATEGORY,
-            ALTERNATE,
-            NAME),'{ind}',
-            analyzer=>'DEFAULT_ANALYZER')''')).cache_result()
+      ALTERNATE,
+      NAME),'{ind}',
+      analyzer=>'DEFAULT_ANALYZER')''')).cache_result()
 places_1 = places_1.filter(expr(f'''search((CATEGORY,
-            ALTERNATE,
-            NAME),
-            '{ind2}',
-            analyzer=>'DEFAULT_ANALYZER')''')).cache_result()
+      ALTERNATE,
+      NAME),
+      '{ind2}',
+      analyzer=>'DEFAULT_ANALYZER')''')).cache_result()
 
 ```
 
@@ -1032,29 +1032,29 @@ We will filter by distance from the previously allocated point which was returne
 ```python
 
 places_1 = places_1.with_column('DISTANCE',
-                                call_function('ST_DISTANCE',
-                                call_function('ST_MAKEPOINT',
-                                 col('LON'),
-                                 col('LAT')),
-                                 call_function('ST_MAKEPOINT',
-                                            lit(bbox.LON.iloc[0]),
-                                            lit(bbox.LAT.iloc[0]))))
+                call_function('ST_DISTANCE',
+                call_function('ST_MAKEPOINT',
+                 col('LON'),
+                 col('LAT')),
+                 call_function('ST_MAKEPOINT',
+                      lit(bbox.LON.iloc[0]),
+                      lit(bbox.LAT.iloc[0]))))
 
 
 ```
 ```python
 places_1 = places_1.with_column('DISTANCE',
-                     round(col('DISTANCE')/1000,2)).order_by('DISTANCE')
+           round(col('DISTANCE')/1000,2)).order_by('DISTANCE')
 ```
-**Visualize the map of depots**
+**Visualise the map of depots**
 
 This creates a map function which returns the what and where as a scatter plot map within the sidebar. You will note that there is an additional layer here. This layer will return multiple plots as apposed to 1 which is what the first layer generated.
 
 ```python
 
 @st.cache_data
-        def places_cached(distance,bbox,ind):
-                return places_1.to_pandas()
+    def places_cached(distance,bbox,ind):
+        return places_1.to_pandas()
 
 ```
 A tool tip is constructed to reveal the name of each potential distributor and the straight line distance.
@@ -1062,14 +1062,14 @@ A tool tip is constructed to reveal the name of each potential distributor and t
 ```python
 
 tooltip = {
-     "html": """<b>Name:</b> {NAME} <b><br>Distance From Centre:</b> {DISTANCE}""",
-     "style": {
-             "width":"50%",
-                "backgroundColor": "steelblue",
-                "color": "white",
-             "text-wrap": "balance"
-                        }
-                }
+   "html": """<b>Name:</b> {NAME} <b><br>Distance From Centre:</b> {DISTANCE}""",
+   "style": {
+       "width":"50%",
+        "backgroundColor": "steelblue",
+        "color": "white",
+       "text-wrap": "balance"
+            }
+        }
 
 ```
 
@@ -1078,18 +1078,18 @@ defining the second layer for  potential distributors
 
 ```python
 wholesalers = pdk.Layer(
-        'ScatterplotLayer',
-        places_cached(distance,bbox,ind),
-        get_position=['LON', 'LAT'],
-        filled=True,
-        opacity=0.5,
-        stroked=False,
-        radius_min_pixels=6,
-        radius_max_pixels=10,
-        auto_highlight=True,
-        get_fill_color=[0, 0, 0],
-        pickable=True)
-        st.divider()
+    'ScatterplotLayer',
+    places_cached(distance,bbox,ind),
+    get_position=['LON', 'LAT'],
+    filled=True,
+    opacity=0.5,
+    stroked=False,
+    radius_min_pixels=6,
+    radius_max_pixels=10,
+    auto_highlight=True,
+    get_fill_color=[0, 0, 0],
+    pickable=True)
+    st.divider()
 
 ```
 
@@ -1105,9 +1105,9 @@ Below will render the map.
 ```python
 
 st.pydeck_chart(pdk.Deck(layers=[wholesalers,context],
-    map_style=None,
-    initial_view_state=view_state, 
-    tooltip=tooltip))
+  map_style=None,
+  initial_view_state=view_state, 
+  tooltip=tooltip))
 
 ```
 
@@ -1119,18 +1119,18 @@ The returned results will also generate a list of places to select from using a 
 
 @st.cache_data
 def warehouses(distance,bbox,ind):
-    return places_1.group_by(col('NAME'))\
-                .agg(avg('DISTANCE').alias('DISTANCE'))\
-                .sort(col('DISTANCE').asc()).to_pandas()
+  return places_1.group_by(col('NAME'))\
+        .agg(avg('DISTANCE').alias('DISTANCE'))\
+        .sort(col('DISTANCE').asc()).to_pandas()
 
 ```
 
 ```python
 
 s_warehouse = st.selectbox('Choose Wholesaler to distribute goods from:',
-                                                        warehouses(distance,
-                                                                             bbox,
-                                                                             ind))
+                            warehouses(distance,
+                                       bbox,
+                                       ind))
 
 ```
 
@@ -1153,7 +1153,7 @@ pc = time_slots.filter(col('PRODUCT')=='pc').join(lookup.select('PC'))
 ```python
 
 time_slots = pa.union(pb).union(pc).with_column('PRODUCT',
-                                                                                col('PA')).drop('PA')
+                                        col('PA')).drop('PA')
 
 ```
 
@@ -1174,16 +1174,16 @@ We will now focus on filtering a new point of interest dataset by drive time. Th
 ```python
 
 isochrone = session.create_dataframe([{'LON':start_1[0], 
-                                            'LAT':start_1[1], 
-                                            'METHOD':smethod,
-                                            'RANGE_MINS':range_minutes}])
+                      'LAT':start_1[1], 
+                      'METHOD':smethod,
+                      'RANGE_MINS':range_minutes}])
 st.write(isochrone)
-                
+        
 isochrone = isochrone.select(call_function('UTILS.ISOCHRONES',
-                                                    (col('METHOD'), 
-                                                     col('LON'), 
-                                                     col('LAT'), 
-                                                     col('RANGE_MINS'))).alias('ISOCHRONE'))
+                          (col('METHOD'), 
+                           col('LON'), 
+                           col('LAT'), 
+                           col('RANGE_MINS'))).alias('ISOCHRONE'))
 
 isochrone2 = isochrone.select(to_geography(col('ISOCHRONE')['features'][0]['geometry']).alias('GEO')).cache_result()
 
@@ -1200,8 +1200,8 @@ Now lets filter **'the what'** on the customer dataset. We have all points of in
 ```python
 
 places_2 = places_f.filter(expr(f'''search((CATEGORY,ALTERNATE,NAME),
-                                                                '{" ".join(customer_type)}',
-                                                                analyzer=>'DEFAULT_ANALYZER')'''))
+                                '{" ".join(customer_type)}',
+                                analyzer=>'DEFAULT_ANALYZER')'''))
 
 ```
 
@@ -1210,12 +1210,12 @@ We will limit our customer results to match the number of 'time slots' we have c
 ```python
 
 places_2 = places_2.join(isochrone2,
-    call_function('ST_WITHIN',
-    places_2['POINT'],
-    isochrone2['GEO'])).sample(0.5).limit(time_slots.count()).cache_result()
+  call_function('ST_WITHIN',
+  places_2['POINT'],
+  isochrone2['GEO'])).sample(0.5).limit(time_slots.count()).cache_result()
 
 ```
-Next, we will create a row number after ordering the sample by a random number. This row number will effectively become our unique **'consignment number'** which will be used in the optimization service.
+Next, we will create a row number after ordering the sample by a random number. This row number will effectively become our unique **'consignment number'** which will be used in the optimisation service.
 
 ```python
 
@@ -1238,28 +1238,28 @@ Now we will format the table in to presentable jobs. This will assign skills, ti
 ```python
 
 places_2_table = places_2.select('ID',
-                col('PRODUCT').alias('"Product"'),
-                col('SLOT_START').alias('"Slot Start"'),
-                col('SLOT_END').alias('"Slot End"'),
-                col('NAME').alias('Name'),
-                col('CATEGORY').alias('"Category"'),
-                col('ADDRESS')['freeform'].astype(StringType()).alias('"Address"'),
-                col('ADDRESS')['locality'].astype(StringType()).alias('"Locality"'),
-                col('ADDRESS')['postcode'].astype(StringType()).alias('"Postcode"'),
-                col('ADDRESS')['region'].astype(StringType()).alias('"Region"'),
-                col('PHONES').alias('"Phone Number"'))
+        col('PRODUCT').alias('"Product"'),
+        col('SLOT_START').alias('"Slot Start"'),
+        col('SLOT_END').alias('"Slot End"'),
+        col('NAME').alias('Name'),
+        col('CATEGORY').alias('"Category"'),
+        col('ADDRESS')['freeform'].astype(StringType()).alias('"Address"'),
+        col('ADDRESS')['locality'].astype(StringType()).alias('"Locality"'),
+        col('ADDRESS')['postcode'].astype(StringType()).alias('"Postcode"'),
+        col('ADDRESS')['region'].astype(StringType()).alias('"Region"'),
+        col('PHONES').alias('"Phone Number"'))
 
-        
+    
 places_2 = places_2.with_column('JOB',
-                            object_construct(lit('id'),col('ID'),
-                            lit('capacity'),lit([2]),
-                            lit('skills'),array_construct(col('SKILLS')),
-                             lit('time_window'),
-                             array_construct(col('SLOT_START')*60*60,col('SLOT_END')*60*60),
-                             lit('location'),array_construct(col('LON'),col('LAT'))
-                                            py))
+              object_construct(lit('id'),col('ID'),
+              lit('capacity'),lit([2]),
+              lit('skills'),array_construct(col('SKILLS')),
+               lit('time_window'),
+               array_construct(col('SLOT_START')*60*60,col('SLOT_END')*60*60),
+               lit('location'),array_construct(col('LON'),col('LAT'))
+                      py))
 
-        
+    
 
 jobs = places_2.select(array_agg('JOB').alias('JOB'))
 
@@ -1279,25 +1279,25 @@ places_vehicles = places_1.filter(col('NAME')==s_warehouse).cache_result()
 
 ```
 
-Construct each configurable vehicle. Below is an example of one of the vehicles. You will see that we are converting the start and end time of each vehicle to seconds - likewise for the customers, the agreed delivery times for the optimization service to work are also in seconds.
+Construct each configurable vehicle. Below is an example of one of the vehicles. You will see that we are converting the start and end time of each vehicle to seconds - likewise for the customers, the agreed delivery times for the optimisation service to work are also in seconds.
 
 ```python
 
 vehicle_1 = places_vehicles.select(object_construct(lit('profile'),
-                                            lit(smethod),
-                                            lit('skills'),
-                                            lit(veh1_skills),
-                                            lit('id'),
-                                            lit(1),
-                                            lit('start'),
-                                            array_construct(col('LON'),col('LAT')),
-                                            lit('end'),
-                                            array_construct(col('LON'),col('LAT')),
-                                            lit('time_windows'),
-                                            array_construct(lit(start_time_0*60*60),
-                                                                            lit(end_time_0*60*60)),
-                                            lit('capacity'),
-                                            lit(veh1_capacity)).alias('VEHICLE'))
+                      lit(smethod),
+                      lit('skills'),
+                      lit(veh1_skills),
+                      lit('id'),
+                      lit(1),
+                      lit('start'),
+                      array_construct(col('LON'),col('LAT')),
+                      lit('end'),
+                      array_construct(col('LON'),col('LAT')),
+                      lit('time_windows'),
+                      array_construct(lit(start_time_0*60*60),
+                                      lit(end_time_0*60*60)),
+                      lit('capacity'),
+                      lit(veh1_capacity)).alias('VEHICLE'))
 
 ```
 
@@ -1306,35 +1306,35 @@ Now, we present the configurable aspects of each vehicle to the user. You will n
 ```python
 
 st.markdown('<h4 class="veh2">Vehicle 2</h2>', 
-        unsafe_allow_html=True, 
-        help=f'''Vehicle 2 {skill_types[veh2_skills[0]-1]} and a capacity of {veh2_capacity[0]}''')
-        
-        col4,col5,col6 = st.columns(3)
-        with col4:
-                start_time_1 = st.number_input('Start Time in Hours:',0,24,8,key=3)
-        with col5:
-                end_time_1 = st.number_input('End Time in Hours:',start_time_1,24,17,key=4)
-        with col6:
-                smethod_1 = st.selectbox('Choose Method:',method, key=6)
+    unsafe_allow_html=True, 
+    help=f'''Vehicle 2 {skill_types[veh2_skills[0]-1]} and a capacity of {veh2_capacity[0]}''')
+    
+    col4,col5,col6 = st.columns(3)
+    with col4:
+        start_time_1 = st.number_input('Start Time in Hours:',0,24,8,key=3)
+    with col5:
+        end_time_1 = st.number_input('End Time in Hours:',start_time_1,24,17,key=4)
+    with col6:
+        smethod_1 = st.selectbox('Choose Method:',method, key=6)
 
 ```
 
-For further formatting - when the job results are returned after going through the optimization service, it will be nice to clearly see what vehicles are aligned to what job. This detail is added to the dataframe which gives data driven color coding.
+For further formatting - when the job results are returned after going through the optimisation service, it will be nice to clearly see what vehicles are aligned to what job. This detail is added to the dataframe which gives data driven colour coding.
 
 ```python
 
 ##### ADD VEHICLE_COLOR TO VEHICLES)
-        vehicle_1 = vehicle_1.with_column('R',lit(125))
-        vehicle_1 = vehicle_1.with_column('G',lit(68))  
-        vehicle_1 = vehicle_1.with_column('B',lit(207)) 
+    vehicle_1 = vehicle_1.with_column('R',lit(125))
+    vehicle_1 = vehicle_1.with_column('G',lit(68))  
+    vehicle_1 = vehicle_1.with_column('B',lit(207)) 
 
-        vehicle_2 = vehicle_2.with_column('R',lit(212))
-        vehicle_2 = vehicle_2.with_column('G',lit(91))  
-        vehicle_2 = vehicle_2.with_column('B',lit(144)) 
+    vehicle_2 = vehicle_2.with_column('R',lit(212))
+    vehicle_2 = vehicle_2.with_column('G',lit(91))  
+    vehicle_2 = vehicle_2.with_column('B',lit(144)) 
 
-        vehicle_3 = vehicle_3.with_column('R',lit(255))
-        vehicle_3 = vehicle_3.with_column('G',lit(159))  
-        vehicle_3 = vehicle_3.with_column('B',lit(54))
+    vehicle_3 = vehicle_3.with_column('R',lit(255))
+    vehicle_3 = vehicle_3.with_column('G',lit(159))  
+    vehicle_3 = vehicle_3.with_column('B',lit(54))
 
 ```
 
@@ -1343,26 +1343,26 @@ Next, we union all vehicles into a new dataset called **vehsdet**.
 ```python
 
 vehsdet = vehicle_1.union(vehicle_2).union(vehicle_3).with_column('ID',
-                            col('VEHICLE')['id'])\
-        .with_column('PROFILE',
-                                 col('VEHICLE')['profile'].astype(StringType()))\
-        .with_column('WINDOW',
-                                    col('VEHICLE')['time_windows'].astype(StringType()))
-        vehs = vehsdet.select(array_agg('VEHICLE').alias('VEH'))
-        vehsdet = vehsdet.drop('VEHICLE')
+              col('VEHICLE')['id'])\
+    .with_column('PROFILE',
+                 col('VEHICLE')['profile'].astype(StringType()))\
+    .with_column('WINDOW',
+                  col('VEHICLE')['time_windows'].astype(StringType()))
+    vehs = vehsdet.select(array_agg('VEHICLE').alias('VEH'))
+    vehsdet = vehsdet.drop('VEHICLE')
 
 
 ```
 
-**Route Optimization Service**
+**Route Optimisation Service**
 
-So we have our 'Customers' and we have our 'Vehicles'. We now need to create our route plans for each vehicle using the Route Optimization Service. This will effectively push our jobs and vehicles into the api which will return our vehicle route plans based on information such as drive time, consignment needs and vehicle availability.
+So we have our 'Customers' and we have our 'Vehicles'. We now need to create our route plans for each vehicle using the Route Optimisation Service. This will effectively push our jobs and vehicles into the api which will return our vehicle route plans based on information such as drive time, consignment needs and vehicle availability.
 
 ```python
 
 optim = jobs.join(vehs).select('JOB',
-                                'VEH',call_function('UTILS.OPTIMIZATION',
-                                col('JOB'),col('VEH')).alias('OPTIMIZATION'))
+                'VEH',call_function('UTILS.OPTIMIZATION',
+                col('JOB'),col('VEH')).alias('OPTIMIZATION'))
 
 ```
 
@@ -1371,29 +1371,29 @@ The returned results will be an array of various objects. We will extract out th
 ```python
 
 optim = optim.with_column('CODES',col('OPTIMIZATION')['codes'])
-                optim = optim.with_column('ROUTES',col('OPTIMIZATION')['routes'])
-                optim = optim.with_column('SUMMARY',col('OPTIMIZATION')['summary'])
-                optim = optim.with_column('UNASSIGNED',col('OPTIMIZATION')['unassigned'])
-        
-        
-        
-                optim = optim.with_column('COST',col('SUMMARY')['cost'])\
-                .with_column('DURATION',col('SUMMARY')['duration'])\
-                .with_column('NUMBER_OF_ROUTES',col('SUMMARY')['routes']).drop('SUMMARY')
+        optim = optim.with_column('ROUTES',col('OPTIMIZATION')['routes'])
+        optim = optim.with_column('SUMMARY',col('OPTIMIZATION')['summary'])
+        optim = optim.with_column('UNASSIGNED',col('OPTIMIZATION')['unassigned'])
+    
+    
+    
+        optim = optim.with_column('COST',col('SUMMARY')['cost'])\
+        .with_column('DURATION',col('SUMMARY')['duration'])\
+        .with_column('NUMBER_OF_ROUTES',col('SUMMARY')['routes']).drop('SUMMARY')
 
-                optim = optim.join_table_function('flatten',col('ROUTES'))\
-                .select('VALUE')
+        optim = optim.join_table_function('flatten',col('ROUTES'))\
+        .select('VALUE')
 
-                optim = optim.select(col('VALUE')['amount'].alias('AMOUNT'),
-                                                 col('VALUE')['vehicle'].alias('VEHICLE'),
-                                                 col('VALUE')['duration'].alias('DURATION'),
-                                                 col('VALUE')['steps'].alias('STEPS'),
-                                                col('VALUE')['location'][0].alias('LON'),
-                                                 col('VALUE')['location'][0].alias('LAT')p
+        optim = optim.select(col('VALUE')['amount'].alias('AMOUNT'),
+                         col('VALUE')['vehicle'].alias('VEHICLE'),
+                         col('VALUE')['duration'].alias('DURATION'),
+                         col('VALUE')['steps'].alias('STEPS'),
+                        col('VALUE')['location'][0].alias('LON'),
+                         col('VALUE')['location'][0].alias('LAT')p
 
 ```
 
-As described in the route optimization function, the output will give steps for the journey along with other measures such as duration and what vehicle will be assigned. 
+As described in the route optimisation function, the output will give steps for the journey along with other measures such as duration and what vehicle will be assigned. 
 
 
 The **directions API** will then be used to get detailed instructions for each step.
@@ -1401,10 +1401,10 @@ The **directions API** will then be used to get detailed instructions for each s
 ```python
 
 optim_line = optim_line\
-                .select('VEHICLE','R','G','B','PROFILE','ID','TOTAL_JOBS',
-                        call_function('UTILS.DIRECTIONS_with_way_points',
-                                                                        col('PROFILE'),
-                                                        col('LINE')).alias('DIRECTIONS')).cache_result()
+        .select('VEHICLE','R','G','B','PROFILE','ID','TOTAL_JOBS',
+            call_function('UTILS.DIRECTIONS_with_way_points',
+                                    col('PROFILE'),
+                            col('LINE')).alias('DIRECTIONS')).cache_result()
 
 ```
 
@@ -1412,39 +1412,39 @@ This will return detailed route plans which include all drop offs, line strings 
 
 ![directions](assets/ST07.png)
 
-Two layers are created for the visualization - one for the line paths and the other for the drop offs. The layers have been generated by a python function in order to reuse the code for each vehicle. This is so i can show a vehicle plan each containing an independant map within each tab.
+Two layers are created for the visualisation - one for the line paths and the other for the drop offs. The layers have been generated by a python function in order to reuse the code for each vehicle. This is so i can show a vehicle plan each containing an independant map within each tab.
 
 ```python
 
 def veh_journey(dataframe,vehicle):
-                        vehicle_1_path = pdk.Layer(
-                        type="PathLayer",
-                        data=dataframe[dataframe['VEHICLE']==vehicle],
-                        pickable=True,
-                        get_color=["0+R","0+G","0+B"],
-                        width_scale=20,
-                        width_min_pixels=4,
-                        width_max_pixels=7,
-                        get_path="coordinates",
-                        get_width=5)
-                        return vehicle_1_path
+            vehicle_1_path = pdk.Layer(
+            type="PathLayer",
+            data=dataframe[dataframe['VEHICLE']==vehicle],
+            pickable=True,
+            get_color=["0+R","0+G","0+B"],
+            width_scale=20,
+            width_min_pixels=4,
+            width_max_pixels=7,
+            get_path="coordinates",
+            get_width=5)
+            return vehicle_1_path
 
-                def vehicle_drops(dataframe,vehicle):
-                        layer_end_v1 = pdk.Layer(
-                        'ScatterplotLayer',
-                        dataframe[dataframe['VEHICLE']==vehicle],
-                        get_position=['LON', 'LAT'],
-                        filled=True,
-                        stroked=False,
-                        radius_min_pixels=6,
-                        radius_max_pixels=10,
-                        line_width_min_pixels=5,
-                        auto_highlight=True,
-                        get_radius=50,
-                        get_line_color=["0+R","0+G","0+B"],
-                        get_fill_color=["0+R","0+G","0+B"],
-                        pickable=True)
-                        return layer_end_v1
+        def vehicle_drops(dataframe,vehicle):
+            layer_end_v1 = pdk.Layer(
+            'ScatterplotLayer',
+            dataframe[dataframe['VEHICLE']==vehicle],
+            get_position=['LON', 'LAT'],
+            filled=True,
+            stroked=False,
+            radius_min_pixels=6,
+            radius_max_pixels=10,
+            line_width_min_pixels=5,
+            auto_highlight=True,
+            get_radius=50,
+            get_line_color=["0+R","0+G","0+B"],
+            get_fill_color=["0+R","0+G","0+B"],
+            pickable=True)
+            return layer_end_v1
 
 
 ```
@@ -1470,7 +1470,7 @@ Duration: 5
 
 So you will now see that by combining AI, freely accessible points of interests, easy to use geospatial functions, the ability to securely call the open route service and the powers of Streamlit in Snowflake - creating innovative geospatial applications  is entirely possible. 
 
-Snowflake provides powerful solutions when you bring Snowflake's advanced analytics, Cortex, Snowpark and Streamlit's visualization capabilities together.  Also, by leveraging the open route service (or even an alternative provider such as the Carto Toolbox) using external integrations provides another level of geospatial capabilities such as route optimization, directions and isochrones.  
+Snowflake provides powerful solutions when you bring Snowflake's advanced analytics, Cortex, Snowpark and Streamlit's visualization capabilities together.  Also, by leveraging the open route service (or even an alternative provider such as the Carto Toolbox) using external integrations provides another level of geospatial capabilites such as route optimisation, directions and isochrones.  
 
 
 
@@ -1485,9 +1485,9 @@ You will have learned the following:
 
 - Leverage the open route service to create the following
 
-        - isochrones (catchements) based on drive time
-        - Simple Directions and Directions which include waypoints
-        - Route Optimizations
+    - isochrones (catchements) based on drive time
+    - Simple Directions and Directions which include waypoints
+    - Route Optimisations
 
 
 ### Related Resources
@@ -1513,6 +1513,5 @@ You will have learned the following:
 - [Using Cortex and Streamlit With Geospatial Data](https://quickstarts.snowflake.com/guide/using_snowflake_cortex_and_streamlit_with_geospatial_data/index.html#1)
 
 - [Getting started with Geospatial AI and ML using Snowflake Cortex](https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0)
-
 
 
