@@ -229,7 +229,9 @@ There are also other options available for each profile - and each option will d
 
 Navigate to the newly **downloaded New York** file to upload the map file to the snowflake stage.
 
-Modify the config file by changing the source file location to the following:
+![alt text](assets/newyork.png)
+
+Modify the **config file** by changing the source file location to the following:
 
 ```yml
     build:  
