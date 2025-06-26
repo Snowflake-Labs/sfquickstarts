@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Data Engineering, Snowpark, SPCS, Model Ser
 ## Overview
 Duration: 2
 
-In this guide, you will learn how to leverage the power of Snowpark Container Services (SPCS) and the Snowflake Model Registry to build, deploy, and serve a machine learning model for real-time predictions. We will walk through a complete data science workflow, from data preparation and feature engineering to model training and deployment as a secure, scalable service.
+In this guide, you will learn how to leverage the power of Snowpark Container Services (SPCS) and the Snowflake Model Registry to build, deploy, and serve a machine learning model for real-time predictions in Snowflake ML. We will walk through a complete data science workflow, from data preparation and feature engineering to model training and deployment as a secure, scalable service.
 
 This guide uses a real-world dataset of Chicago Transit Authority (CTA) daily ridership to forecast future demand. By the end, you will have a fully functional model serving endpoint accessible from both within and outside of Snowflake.
 
@@ -31,30 +31,28 @@ This guide uses a real-world dataset of Chicago Transit Authority (CTA) daily ri
 ### Prerequisites
 -   Familiarity with Python and SQL.
 -   Basic understanding of machine learning concepts.
-- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=A17i8AUv&_fsi=A17i8AUv).
-- A Snowflake account login with ACCOUNTADMIN role. If you have this role in your environment, you may choose to use it. If not, you will need to 1) Register for a free trial, 2) Use a different role that has the ability to create database, schema, tables, stages, tasks, user-defined functions, and stored procedures OR 3) Use an existing database and schema in which you are able to create the mentioned objects.
--  A [GitHub](https://github.com/) account to access the source code and data.
--  A local Python environment for running access scripts.
+- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). you may choose to use models with pip_requirements. In this quickstart, we are assuming you have permission to use Anaconda Package. AlternativelyIf you do not have a Snowflake account, you can register for a free trial account, which will have permission to use Anaconda Packages. Note that, trial account does not allow creation of compute pool, so model serving on Container Services cannot be tested in Trial Account.
+- Have a database schema where objects can be created. In this exercise, we will create a notebook, table to store data, stored proc for training, model to log the trained model, container images for model serving and the service hosting the model. You need privileges to have all of them. 
 
 
 <!-- ------------------------ -->
 ## Snowflake Setup
 Duration: 5
 
-First, we will create a database called **MODEL_SERVING_DB** in Snowflake as below. We will also create a warehouse called **DEMO_BUILD_WAREHOUSE**. 
+First, we will create a database called **MODEL_SERVING_DB** in Snowflake as below. We will also create a warehouse called **DEMO_BUILD_WAREHOUSE**.  If you do not have privileges to create a database or warehouse, feel free to use existing ones where you have permission (please note to change database schema name accordingly throughout this exercise).
 
 ![1_DB_Creation](assets/1_DB_Creation.png)
 
-We will then import the attached notebook inside this github repo. Some things to note
-
-- Name: **SNOWPARK_FORECASTING_MODEL_DEPLOYMENT**
-- Notebook location: Set to the **"MODEL_SERVING_DB"** database and the **"PUBLIC"** schema.
-- Python environment: **"Run on warehouse"** is selected, which is described as best for data analysis. The alternative, **"Run on container"** is for AI/ML workloads. In this case we will choose Run on warehouse
-- Query warehouse: This is the name of the warehouse used to run our queries. In this case I have created a warehouse called **DEMO_BUILD_WH**.
+We will then import the attached notebook inside this github [repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-serving-in-spcs) by clicking the import notebook option in Snowflake. 
 
 ![2_Import_Notebooks](assets/2_Import_Notebooks.png)
 
-We will then import the attached notebook inside this github [repo](https://github.com/sfc-gh-adlee/model_serving_spcs/blob/main/SNOWPARK_FORECASTING_MODEL_DEPLOYMENT.ipynb) by clicking the import notebook option in Snowflake. 
+- Name: **SNOWPARK_FORECASTING_MODEL_DEPLOYMENT**
+- Notebook location: Set to the **"MODEL_SERVING_DB"** database and the **"PUBLIC"** schema.
+- Python environment: **"Run on warehouse"** is selected, which is described as best for data analysis. The alternative, **"Run on container"** is for AI/ML workloads. In this case we will choose Run on container and we will choose the default compute pool. 
+- Query warehouse: This is the name of the warehouse used to run our queries. In this case I have created a warehouse called **DEMO_BUILD_WH**.
+
+We will also import the CSV file into the stage. This can be found in the github [repo](https://github.com/Snowflake-Labs/) 
 
 ![3_Import_CSVs](assets/3_Import_CSVs.png)
 
@@ -221,17 +219,16 @@ print('MSE:', mean_absolute_error(df=testpreds, y_true_col_names='TOTAL_RIDERS',
 Finally, the trained model is logged to the Snowflake Model Registry. This allows for versioning, management, and easy deployment of the model.
 
 ```python
-model_ref = reg.log_model(
+reg_model = reg.log_model(
     model_name="Forecasting_Bus_Ridership",
     version_name="v2",    
     model=xg_model,
     target_platforms=["WAREHOUSE"],
     conda_dependencies=["scikit-learn","xgboost"],
     sample_input_data=train,
-    comment="XGBoost model, Oct 9"
+    comment="My awesome XGBoost model"
 )
 
-reg_model = reg.get_model("Forecasting_Bus_Ridership").version("v2")
 ```
 
 We are able to see the model stored inside the Model tab of the database. 
@@ -251,7 +248,6 @@ reg_model = reg.get_model("Forecasting_Bus_Ridership").version("v2")
 reg_model.create_service(service_name="ChicagoBusForecastv12",
                   service_compute_pool="mypool",
                   image_repo="MODEL_SERVING_DB.notebooks.my_inference_images",
-                  build_external_access_integration="allow_all_integration",
                   ingress_enabled=True)
 ```
 
@@ -265,7 +261,7 @@ To see our inference endpoint, we can go to our model and click on the Inference
 ## Model Serving
 Duration: 10
 
-The Snowflake Model Registry, when used with containers, allows you to package, manage, and deploy machine learning models with complex dependencies or custom runtime environments inside Snowflake. This is accomplished by using Snowpark Container Services (SPCS) which we have done above. Some parts of the architecture are as described below.
+The Snowflake Model Registry, when used with containers, allows you to package, manage, and deploy machine learning models with complex dependencies or custom runtime environments inside Snowflake. This is accomplished by using Snowpark Container Services (SPCS) which we have done above. Some parts of the architecture for [model serving](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container) are as described below.
 
 ![5_architecture](assets/5_architecture.png)
 
@@ -285,17 +281,34 @@ The full prediction endpoint will be
 ```
 https://<YOUR_INGRESS_PATH>/predict
 ```
+predict here comes from the function exposed by the model. To know all the functions exposed in a model, you can use:
+
+```
+SHOW FUNCTIONS IN MODEL Forecasting_Bus_Ridership VERSION v2;
+```
 
 ### Using Key-Pair Authentication
 
-This method is ideal for applications and service accounts. It involves using a public/private key pair to generate a session token for authentication. We will set up our SnowSQL connection and have a named connection in our SnowSQL config (e.g., ~/.snowsql/config or the ~/.snowflake/connections.toml). In this example our named connection is called **"named_connection"**
+This method is ideal for applications and service accounts. It involves using a public/private key pair to generate a session token for authentication. We will set up our SnowSQL connection and have a named connection in your [connections.toml](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-session#connect-by-using-the-connections-toml-file). In this example our named connection is called **"named_connection"**
 
 ```yaml
-[connections.named_connection]
+[named_connection]
 #Can be used in SnowSql as #connect example
 accountname = XXX
 username = YYY
-role = accountadmin
+role = myrole
+```
+
+We will be passing in some dummy data and transforming the DataFrame into a JSON-like format before passing it to our predict URL endpoint. The full code can be found below.
+
+```python
+test = [[6 ,7,"A",486139,734535,"USW00014819",22.8,34.4,3.6 ,'2019-07-13'],  
+[6 ,6,"A",444588,784734,"USW00014819",13.9,21.7,5.1 ,'2019-06-15'],
+[4 ,6,"W",780768,765409,"USW00014819",11.1,20.6,0.5 ,'2019-06-13']]
+
+df = pd.DataFrame(test, columns=['DAY_OF_WEEK' ,'MONTH' ,'DAYTYPE' ,'TOTAL_RIDERS' ,'PREV_DAY_RIDERS' ,'NOAA_WEATHER_STATION_ID' ,'MINIMUM_TEMPERATURE' ,'MAXIMUM_TEMPERATURE' ,'PRECIPITATION' ,'DATE'])
+
+data = {"data": np.column_stack([range(df.shape[0]), df.values]).tolist()}
 ```
 
 Once done, save the code inside a file called "KP-app.py" and do "
@@ -303,6 +316,8 @@ Once done, save the code inside a file called "KP-app.py" and do "
 ```shell
 python KP-app.py
 ```
+
+
 
 ```python
 import json
@@ -523,7 +538,7 @@ If all is well you should get a response like below
 ## Conclusion And Resources
 Duration: 2
 
-Congratulations! You have successfully built, deployed, and accessed a machine learning model using Snowpark Container Services. You've seen how Snowflake can manage the entire MLOps lifecycle within a single, unified platform, from data engineering to production deployment.
+Congratulations! You have successfully built, deployed, and accessed a machine learning model using Snowpark Container Services. You've seen how [Snowflake ML](https://www.snowflake.com/en/product/use-cases/end-to-end-ml-workflows/) can manage the entire MLOps lifecycle within a single, unified platform, from data engineering to production deployment.
 
 This powerful combination of Snowpark, the Model Registry, and SPCS enables data teams to build and scale AI/ML applications securely and efficiently.
 
@@ -534,5 +549,7 @@ This powerful combination of Snowpark, the Model Registry, and SPCS enables data
 - Authenticating and consuming model predictions from a secure endpoint.
 
 ### Related Resources
+- [Snowflake ML homepage](https://www.snowflake.com/en/product/use-cases/end-to-end-ml-workflows/)
+- [More ML Quickstart](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
 - [Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-serving-in-spcs)
