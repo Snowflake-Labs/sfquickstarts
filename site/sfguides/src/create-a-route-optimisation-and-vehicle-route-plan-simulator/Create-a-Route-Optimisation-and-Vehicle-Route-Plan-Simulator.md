@@ -68,7 +68,9 @@ This is a self contained service which is managed by you.  There are no api call
 - [VSCode](https://code.visualstudio.com/download) with the Snowflake extension installed.
 
 **Option 2**
-Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service
+Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service. 
+
+![alt text](image-19.png)
 
 -   You will need access to a Snowflake Account
 
@@ -334,8 +336,6 @@ You will learn how to use these functions in section 3 of the quickstart.  Pleas
 <!-- ------------------------ -->
 ## Option 2 Calling ORS APIs
 Duration: 15
-
-![alt text](image-19.png)
 
 Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service
 
