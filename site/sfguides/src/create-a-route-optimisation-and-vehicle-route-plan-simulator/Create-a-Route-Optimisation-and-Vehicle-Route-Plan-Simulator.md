@@ -247,7 +247,7 @@ You should see the new files appear in th stages area
 Once the files are uploaded, refresh the cache of the stage
 
 ```sql
- ALTER STAGE REFRESH CORE.ORS_SPCS_STAGE REFRESH;
+ALTER STAGE OPENROUTESERVICE_SETUP.PUBLIC.ORS_SPCS_STAGE REFRESH;
  ```
 
 Execute the following to ensure the files are registered on the stage directory
