@@ -215,7 +215,7 @@ There are also other options available for each profile - and each option will d
 
 ### Importing new files into a stage using the Snowflake Add-In.
 
-- Download a new map file for new york city.
+- Download a new map file for **new york city**.
 
 - Click [here](https://download.bbbike.org/osm/bbbike/NewYork/NewYork.osm.pbf) to download the New York City OSM.PBF file.
 
@@ -227,7 +227,7 @@ There are also other options available for each profile - and each option will d
 
 -   Click on the upload icon - ![alt text](assets/upload.png) 
 
-Navigate to the newly downloaded file to upload the map file to the snowflake stage.
+Navigate to the newly **downloaded New York** file to upload the map file to the snowflake stage.
 
 Modify the config file by changing the source file location to the following:
 
