@@ -1,12 +1,12 @@
 id: build-agentic-application-in-snowflake
 summary: In this hands-on lab, you'll learn how to build a Data Agent using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
-authors: Dash Desai
+authors: Dash Desai, Carlos Carrero
 
-# Build Agentic Application In Snowflake
+# Build Agentic Application with Anthropic In Snowflake
 <!-- ------------------------ -->
 
 ## Overview
@@ -24,13 +24,33 @@ We'll use a custom dataset focused on bikes and skis. This dataset is intentiona
 - How to setup Cortext Search for unstructured data like PDFs and images
 - How to use Cortex Agents REST API that uses these tools in a Streamlit application
 
-### What You Will Need
-
-* A Snowflake [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_) in **US West 2 (Oregon)** region.
-
 ### What You Will Build
 
 A Data Agent packaged in a Streamlit application that can intelligently respond to questions by reasoning over both structured and unstructured data.
+
+### What You Will Need
+
+* A Snowflake account as described specifically in [Step 2 **Snowflake Trial Account**](https://quickstarts.snowflake.com/guide/build-agentic-application-in-snowflake/index.html?index=..%2F..index#1).
+
+<!-- ------------------------ -->
+## Snowflake Trial Account
+Duration: 5
+
+To complete this lab, you'll need to create a Snowflake account.
+
+1. Click on this link to create a [free trial account](https://bit.ly/devdaybootcamp2025).
+
+2. Complete the first page of the form on the page.
+
+3. On the next section of the form, be sure to set the Snowflake edition to **Enterprise (Most popular)**).
+
+4. Select **AWS – Amazon Web Services** as the cloud provider.
+
+5. Select **US West (Oregon)** as the region.
+
+6. Complete the rest of the form and click **Get started**.
+
+![trial](assets/trial.png)
 
 ## Setup 
 <!-- ------------------------ -->
@@ -140,7 +160,7 @@ AS (
 );
 ```
 
-Bask in the Semantic model UI:
+Back in the Semantic model UI:
 
 1) Remove the sample values provided
 2) Click on **+ Search Service** and add **_ARTICLE_NAME_SEARCH**
@@ -193,7 +213,7 @@ Open the Streamlit app and let's check it out.
 
 These are questions where the answers can be found in the PDF documents.
 
-- **What is the guarantee of the premium bike?**
+- **What is the guarantee of the premium bike?** or **What is the warranty on the premium bike?**
 
 ![image](assets/10_unstructured_question.png)
 
@@ -259,3 +279,6 @@ Congratulations! You've learned how to securely build data agents and agentic ap
 - [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Integrate Cortex Agents with Slack](https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_slack/index.html)
+- [Integrate Cortex Agents with Microsoft Teams](https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_microsoft_teams/index.html)
+- [Integrate Cortex Agents with Zoom](https://quickstarts.snowflake.com/guide/integrate-snowflake-cortex-agents-with-zoom/index.html)
+- [Integrate Cortex Agents with React](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_agents_api_and_react/index.html)

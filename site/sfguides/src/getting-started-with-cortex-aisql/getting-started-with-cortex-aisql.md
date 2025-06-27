@@ -2,7 +2,7 @@ id: getting-started-with-cortex-aisql
 summary: This guide outlines the process for getting started with Cortex AISQL.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
@@ -90,7 +90,7 @@ Duration: 10
 * Click on **Start** button on top right
 
 > aside positive
-> NOTE: At this point, it will take a couple of minutes to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
+> NOTE: At this point, it may take a couple of minutes for the session to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
 
 <!-- ------------------------ -->
 ## Run Notebook
@@ -102,32 +102,69 @@ Duration: 15
 
 Here's the code walkthrough of the [cortex_aisql.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/cortex_aisql.ipynb) notebook that you downloaded and imported into your Snowflake account.
 
-**Import_Libraries** 
+Once the status changes from **Starting** to **Active**, run through all the cells from top to bottom.
+
+> Cell **Import_Libraries** 
 
 Import libraries required for running cells in the notebook.
 
-**AI_COMPLETE**
+> Cell **AI_COMPLETE**
 
-Identify customer issues across text and image data using AI_COMPLETE() and see how the SQL operators work seamlessly across all modalities.
+Identify customer issues across text and image data using [AI_COMPLETE()](https://docs.snowflake.com/en/sql-reference/functions/ai_complete) and see how the SQL operators work seamlessly across all modalities.
 
 * Text: Emails 
 * Images: Screenshots
 
-**Consolidated_Data** 
+Cell **Preview_Data** 
 
-Notice that native FILE datatype allows for consolidating all data formats into one table.
+Notice that native FILE datatype allows for consolidating all data formats into one table. 
 
 **AI_FILTER** 
 
-Semantically "JOIN" customer issues with existing solutions using JOIN ... ON AI_FILTER()
+Semantically "JOIN" customer issues with existing solutions using JOIN ... ON [AI_FILTER()](https://docs.snowflake.com/en/sql-reference/functions/ai_filter).
 
 **AI_AGG** 
 
-Get aggregated insights across multiple rows using AI_AGG()
+Get aggregated insights across multiple rows using [AI_AGG()](https://docs.snowflake.com/en/sql-reference/functions/ai_agg).
 
 **AI_CLASSIFY** 
 
-Classification of labels that can be used in downstream applications using AI_CLASSIFY(). For example, to train ML models.
+Classification of labels that can be used in downstream applications using [AI_CLASSIFY()](https://docs.snowflake.com/en/sql-reference/functions/ai_classify). For example, to train ML models.
+
+______________________________
+
+### Optional
+
+If you'd like to see images displayed in the Notebook as part of the consolidated data in **Preview_Data** cell, follow these instructions.
+
+**Step 1**. In a SQL worksheet, execute the following statement to create a Snowflake managed internal stage to store the sample python files.
+
+```sql
+ create or replace stage DASH_PY_FILES encryption = (TYPE = 'SNOWFLAKE_SSE') directory = ( ENABLE = true );
+```
+
+**Step 2.** Use [Snowsight]((https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage)) to upload [snowbooks_extras.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/snowbooks_extras.py) on stage **DASH_PY_FILES**.
+
+**Step 3.** Reopen existing **cortex_aisql.ipynb** Notebook, and on the top right click on **Packages** >> **State Packages** and enter **@DASH_DB.DASH_SCHEMA.DASH_PY_FILES/snowbooks_extras.py** and then click on **Import**. 
+
+![Add package](assets/add_package.png)
+
+**Step 4.** If the session is **Active**, click on it to end the current session. Otherwise, click on **Start** to start a new session which will also update the packages list and include our custom package **snowbooks_extras**.
+
+> aside positive
+> NOTE: At this point, it may take a couple of minutes for the session to start. You will not be able to proceed unless the status changes from **Starting** to **Active**.
+
+**Step 5.** Add `import snowbooks_extras` to the libraries list under **Import_Libraries** and run the cell.
+
+**Step 6.** Now if you run **Preview_Data** cell, you will see images displayed in **INPUT_FILE** column as shown below.
+
+Before importing `snowbooks_extras` 
+
+![Data without images](assets/df_without_img.png)
+
+After importing `snowbooks_extras` -- you will need to click twice (not exactly a double-click though :)) to see the enlarged image as shown.
+
+![Data with images](assets/df_with_img.png)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources

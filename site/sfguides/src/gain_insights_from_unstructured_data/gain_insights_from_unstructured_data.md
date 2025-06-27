@@ -26,8 +26,8 @@ In this Quickstart guide, you will be help the fictitious food truck company, Ta
 You will need the following things before beginning:
 
 * Snowflake account in a cloud region where Snowflake Cortex LLM functions/models are [supported](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability).
-  * Cortex functions used - Complete, Translate, Sentiment, ClassifyText
-  * Model used - mistral-large2
+  * Cortex functions used - Complete/AI Complete, Translate, Sentiment, AI Aggregation, AI Classify
+  * Model used - openai-gpt-4.1
 * Snowflake Notebook enabled in your Snowflake account
 
 ### What You’ll Learn 
@@ -42,9 +42,9 @@ In this quickstart, you will learn:
 ### What You’ll Build 
 * You will analyze Tasty Bytes' customer reviews using **Snowflake Cortex** within **Snowflake notebook** to understand :
   * What our international customers are saying with Cortex **Translate**
-  * Get a summary of what customers are saying with Cortex **Summary**
-  * Classify reviews to determine if they would recommend a food truck with Cortex **ClassifyText**
-  * Gain specific insights with Cortex **Complete**
+  * Get a summary of what customers are saying with Cortex **AI AGG**
+  * Classify reviews to determine if they would recommend a food truck with Cortex **AI Classify**
+  * Gain specific insights with Cortex **Complete/AI Complete**
   * Understand how customers are feeling with Cortex **Sentiment**
 
 <!-- ------------------------ -->
@@ -235,11 +235,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
     COPY INTO tb_voc.raw_support.truck_reviews
     FROM @tb_voc.public.s3load/raw_support/truck_reviews/;
 
-
-    -- scale wh to medium
-    ALTER WAREHOUSE tasty_ds_wh SET WAREHOUSE_SIZE = 'Medium';
-
-
     CREATE OR REPLACE TABLE CONCATENATED_REVIEWS AS
     WITH RANKED_REVIEWS AS (
         SELECT 
@@ -309,7 +304,7 @@ This is done within the notebook using following code snippet in cell `CORTEX_TR
   ```python
   # Conditionally translate reviews that are not english using Cortex Translate
   reviews_df = reviews_df.withColumn('TRANSLATED_REVIEW',when(F.col('LANGUAGE') != F.lit("en"), \
-                                                              cortex.Translate(F.col('REVIEW'), \
+                                                              cortex.translate(F.col('REVIEW'), \
                                                                               F.col('LANGUAGE'), \
                                                                               "en")) \
                                     .otherwise(F.col('REVIEW')))
@@ -355,24 +350,22 @@ In this section, you will leverage **Snowflake Cortex LLM - Summarize** to quick
 
 #### Python
   ```python
-    summarized_reviews_df = session.table("CONCATENATED_REVIEWS").select(
-        F.col("TRUCK_BRAND_NAME"),
-        cortex.Summarize(F.col("ALL_REVIEWS_TEXT")).alias("SUMMARY")
-    )
+  summarized_reviews_df = session.table("TRUCK_REVIEWS_V") \
+      .group_by("TRUCK_BRAND_NAME") \
+      .agg(ai_agg(F.col("REVIEW"), 'Summarize reviews').alias("SUMMARY"))
 
-    summarized_reviews_df.select(["TRUCK_BRAND_NAME", "SUMMARY"]).show(3)
+  summarized_reviews_df.select(["TRUCK_BRAND_NAME", "SUMMARY"]).show(3)
   ```
 #### SQL
   ```sql
-    -- Generate summaries for each truck brand
-    WITH SUMMARIZED_REVIEWS AS (
-        SELECT 
-            TRUCK_BRAND_NAME,
-            SNOWFLAKE.CORTEX.SUMMARIZE(ALL_REVIEWS_TEXT) AS SUMMARY
-        FROM CONCATENATED_REVIEWS
-    )
-
-    SELECT * FROM SUMMARIZED_REVIEWS;
+  WITH SUMMARIZED_REVIEWS AS (
+      SELECT 
+          TRUCK_BRAND_NAME,
+          AI_AGG(REVIEW, 'Summarize the reviews') AS SUMMARY
+      FROM TRUCK_REVIEWS_V
+      GROUP BY TRUCK_BRAND_NAME
+  )
+  SELECT * FROM SUMMARIZED_REVIEWS;
   ```
 <!-- ------------------------ -->
 
@@ -380,46 +373,35 @@ In this section, you will leverage **Snowflake Cortex LLM - Summarize** to quick
 Duration: 5
 
 ### Overview
-In this section, you will make use of **Snowflake Cortex LLM - ClassifyText** to categories reviews to understand:
+In this section, you will make use of **Snowflake Cortex LLM - AI_CLASSIFY** to categories reviews to understand:
   * How likely their customers are to recommend Tasty Bytes food trucks to someone they know 
 
-### Get intention to recommend based on review with Cortex ClassifyText
+### Get intention to recommend based on review with Cortex AI_CLASSIFY
 
-* You can understand if a customer would recommend the food truck based on their review using **Snowflake Cortex LLM- ClassifyText**.  
+* You can understand if a customer would recommend the food truck based on their review using **Snowflake Cortex LLM - AI_CLASSIFY**.  
 
 #### Python
   ```python
   # To understand whether a customer would recommend food truck based on their review 
-  text_description = """
-  Tell me based on the following food truck customer review, will they recommend the food truck to their friends and family?
-  """
-
-  reviews_df = reviews_df.withColumn('RECOMMEND', cortex.ClassifyText(F.col('REVIEW'),["Likely","Unlikely","Unsure"], test_description))\
-  .withColumn('CLEAN_RECOMMEND', when(F.contains(F.col('RECOMMEND'), F.lit('Likely')), \
-                                                              F.lit('Likely')) \
-                                        .when(F.contains(F.col('RECOMMEND'), F.lit('Unlikely' )), \
-                                                              F.lit('Unlikely')) \
-              .when(F.contains(F.col('RECOMMEND'), F.lit('Unsure' )), \
-                                                              F.lit('Unsure')))
+  reviews_df = reviews_df.withColumn('RECOMMEND', ai_classify(prompt("Tell me based on the following food truck customer review {0}, will they recommend the food truck to their friends and family?", F.col('REVIEW')),["Likely","Unlikely","Unsure"])["labels"][0])
 
   reviews_df.select(["REVIEW","CLEAN_RECOMMEND"]).show(3)
   ```
 #### SQL
   ```sql
   WITH CLASSIFIED_REVIEWS AS (
-    SELECT 
-        REVIEW,
-        PARSE_JSON(SNOWFLAKE.CORTEX.CLASSIFY_TEXT(
-            REVIEW, 
-            ['Likely', 'Unlikely', 'Unsure'], 
-            OBJECT_CONSTRUCT('task_description', 
-                'Tell me based on the following food truck customer review, will they recommend the food truck to their friends and family?'
-            )
-        )):label::TEXT AS RECOMMEND
-    FROM TRUCK_REVIEWS_V
+      SELECT 
+          REVIEW,
+          AI_CLASSIFY(
+              REVIEW, 
+              ['Likely', 'Unlikely', 'Unsure'], 
+              OBJECT_CONSTRUCT('task_description', 
+                  'Tell me based on the following food truck customer review, will they recommend the food truck to their friends and family?'
+              )
+          ):labels[0]::TEXT AS RECOMMEND
+      FROM TRUCK_REVIEWS_V
   )
-
-  SELECT * From CLASSIFIED_REVIEWS limit 3;
+  SELECT * FROM CLASSIFIED_REVIEWS LIMIT 3;
   ```
 <!-- ------------------------ -->
 
@@ -428,13 +410,13 @@ Duration: 5
 
 ### Overview
 
-In this section, you will leverage **Snowflake Cortex LLM - Complete** to get answers to your specific questions:
+In this section, you will leverage **Snowflake Cortex LLM - Complete/AI_Complete** to get answers to your specific questions:
 
 * Answer specific questions you have that lives inside the unstructured data you have
 
 ### Answer specific questions you have    
 
-* Using **Snowflake Cortex LLM - Complete** to dive into questions you have  
+* Using **Snowflake Cortex LLM - Complete/AI_Complete** to dive into questions you have  
 
 #### Python
   ```python
@@ -442,8 +424,8 @@ In this section, you will leverage **Snowflake Cortex LLM - Complete** to get an
 
     summarized_reviews_df = session.table("CONCATENATED_REVIEWS").select(
         F.col("TRUCK_BRAND_NAME"),
-        cortex.Complete(
-            "mistral-large2",
+        cortex.complete(
+            "openai-gpt-4.1",
             F.concat(
                 F.lit("Context: "),
                 F.col("ALL_REVIEWS_TEXT"),
@@ -460,10 +442,10 @@ In this section, you will leverage **Snowflake Cortex LLM - Complete** to get an
     WITH GAIN_LEARNINGS AS (
         SELECT 
             TRUCK_BRAND_NAME,
-            SNOWFLAKE.CORTEX.COMPLETE(
-            'mistral-large2', 
-            'Context:' || ALL_REVIEWS_TEXT || ' Question: What is the number one dish positively mentioned in the feedback? Answer briefly and concisely and only name the dish:'
-        ) AS NUMBER_ONE_DISH
+            AI_COMPLETE(
+              'openai-gpt-4.1', 
+              'Context:' || ALL_REVIEWS_TEXT || ' Question: What is the number one dish positively mentioned in the feedback? Answer briefly and concisely and only name the dish:'
+          ) AS NUMBER_ONE_DISH
         FROM CONCATENATED_REVIEWS
     )
     SELECT TRUCK_BRAND_NAME, NUMBER_ONE_DISH FROM GAIN_LEARNINGS LIMIT 3;
@@ -485,7 +467,7 @@ Next, you will look at another **task specific LLM function in Cortex - Sentimen
 #### Python
   ```python
   # Understand the sentiment of customer review using Cortex Sentiment
-  reviews_df = reviews_df.withColumn('SENTIMENT', cortex.Sentiment(F.col('REVIEW')))
+  reviews_df = reviews_df.withColumn('SENTIMENT', cortex.sentiment(F.col('REVIEW')))
 
   reviews_df.select(["REVIEW","SENTIMENT"]).show(3)
   ```
@@ -509,7 +491,7 @@ With the completion of this quickstart, you have now:
 * Implementing advanced AI capabilities through Snowflake Cortex in minutes
   * Leveraging enterprise-grade language models directly within Snowflake's secure environment
   * Executing sophisticated natural language processing tasks with pre-optimized models that eliminate the need for prompt engineering. 
-  * You've mastered a powerful suite of AI-driven text analytics capabilities, from seamlessly breaking through language barriers with Translate, to decoding customer emotions through Sentiment analysis, extracting precise insights with Complete, and automatically categorizing feedback using Classify Text. These sophisticated functions transform raw customer reviews into actionable business intelligence, all within Snowflake's secure environment.
+  * You've mastered a powerful suite of AI-driven text analytics capabilities, from seamlessly breaking through language barriers with Translate, to decoding customer emotions through Sentiment analysis, extracting precise insights with Complete, and automatically categorizing feedback using AI Classify. These sophisticated functions transform raw customer reviews into actionable business intelligence, all within Snowflake's secure environment.
 
 ### Related Resources
 

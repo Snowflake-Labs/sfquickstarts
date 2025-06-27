@@ -229,7 +229,7 @@ In the upcoming steps, we'll query different Wiz data sources, but first, let's 
 ## Monitor reports runs
 Wiz reports are automatically pushed into Snowflake tables. We can use the wiz_report_runs table to monitor report execution and Wiz data ingestion into Snowflake. Let's first get a feel for how the data looks:
 ```sql
-select * from WIZDB.WIZSCHEMA.WIZ_REPORT_RUN limit 10;
+select * from WIZDB.WIZSCHEMA.WIZ_REPORT_RUNS limit 10;
 ```
 Each row contains information about the report run start and end time, the report execution status, the report ID, and the specific run ID.
 

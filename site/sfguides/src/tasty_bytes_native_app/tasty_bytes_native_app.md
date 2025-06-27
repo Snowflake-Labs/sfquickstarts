@@ -3,7 +3,7 @@ id: tasty_bytes_native_app
 summary: This is a Quickstart on how to build a Snowflake Native Application with Tasty Bytes.
 categories: Native-Applications
 environments: web
-status: Published 
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Applications
 
