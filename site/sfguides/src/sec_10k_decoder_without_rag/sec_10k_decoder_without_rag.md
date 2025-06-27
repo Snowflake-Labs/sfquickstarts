@@ -3,7 +3,7 @@ id: sec_10k_decoder_without_rag
 summary: This quickstart will help you create a streamlit application to interact with Cortex's AI21's Jamba-Instruct
 categories: Getting-Started, Cortex, Data-Science-&-Ai, Streamlit, App-Development
 environments: web
-status: Published 
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Cortex, Data Science & Ai, Streamlit, App Development
 
