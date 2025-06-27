@@ -251,6 +251,11 @@
       "source": "guide/analyze_pdf_invoices_snowpark_python_java/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
+    },
+    {
+      "source": "guide/tasty_bytes_native_app/tasty_bytes_native_app/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
     }
     ]
   }
