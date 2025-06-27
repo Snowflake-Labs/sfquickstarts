@@ -23,7 +23,7 @@ In this lab, we will go through everything you need to know to get started with 
 - How to use Workspaces, Snowflake's file based IDE that integrates with dbt
 - How to pull a remote dbt project into Workspaces
 - How dbt Projects can be run, edited, and deployed within Snowflake
-- How to deploy and orchistrate dbt Projects from within Snowflake.
+- How to deploy and orchestrate dbt Projects from within Snowflake.
 
 ### What You’ll Need 
 - A Snowflake account
@@ -132,11 +132,9 @@ with order_details as (
         m.menu_type,
         m.truck_brand_name,
         m.item_category
-    {% raw %} 
     from {{ ref('raw_pos_order_detail') }} od
     inner join {{ ref('raw_pos_order_header') }} oh on od.order_id = oh.order_id
     inner join {{ ref('raw_pos_menu') }} m on od.menu_item_id = m.menu_item_id
-    {% endraw %}
 )
 
 select
@@ -217,9 +215,10 @@ Oh no! There's an error with one of our tests. It looks like there is a test tha
 Now that we have updated and validated our dbt project, let's deploy it so we can build automation. Deploying a dbt project creates a Snowflake object and allows us to create tasks based on the object. 
 
 1. Click Deploy in the top right of workspaces
-2. Select database `tasty_bytes_dbt_db` and schema `raw`
-3. Name it `dbt_project`
-4. Deploy!
+2. Ensure your role is `accountadmin`
+3. Select database `tasty_bytes_dbt_db` and schema `raw`
+4. Name it `dbt_project`
+5. Deploy!
 
 ![deploy-dbt](assets/deploy-dbt.png)
 
@@ -231,7 +230,7 @@ Workspaces are fully git backed. To view changes and commit, click changes from 
 
 
 <!-- ------------------------ -->
-## Orchistration and Monitoring
+## Orchestration and Monitoring
 Duration: 5
 
 ### Monitor dbt Projects
@@ -240,7 +239,7 @@ You can get an overview of dbt project status from the dbt Projects activity in 
 
 ![dbt-projects](assets/dbt-projects.png)
 
-### Orchistrate with Tasks
+### Orchestrate with Tasks
 
 #### Create Scheduled dbt Tasks
 
@@ -263,7 +262,7 @@ USE ROLE accountadmin;
 CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_deps_task
 	WAREHOUSE=TASTY_BYTES_DBT_WH
 	SCHEDULE='60 MINUTES'
-	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='deps --target dev';
+	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='deps --target dev' external_access_integrations = (DBT_ACCESS_INTEGRATION);
 
 
 CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_run_task
