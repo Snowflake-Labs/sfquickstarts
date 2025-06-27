@@ -249,6 +249,27 @@ If all checks pass, the Snowflake configuration has been successfully added for 
 ## Using the App
 Duration: 10
 
+Access the App from 365 Copilot or Teams experience
+
+#### Teams
+![](assets/openteamsagent.png)
+
+#### 365 Copilot
+![](assets/opencopilotagent.png)
+
+
+View commands
+![](assets/viewavailablecommands.png)
+
+
+prompt something 
+![](assets/prompts.png)
+
+get answer
+![](assets/answer.png)
+
+
+and keep going....
 
 
 <!-- ------------------------ -->
@@ -256,16 +277,18 @@ Duration: 10
 Duration: 5
 
 ### Technical Considerations
-This quickstart showed you how to set up the connection to Cortex Agents from MS Copilots. In order to make for a more robust Copilot you will likely add additional triggers to other Agents or Knowledge Sources so that your Copilot is more versatile and can act on specific prompts/triggers.
+This quickstart showed you how to connect MS Teams and 365 Copilots Snowflake Cortex using the new App. Hopefully you're just getting started and you can build bigger Cortex Agents to help support business users query all types of data with plain text from Teams and 365 Copilot!
 
 ### What you learned
 By following this quickstart, you learned how to:
-- Creating Snowflake Cortex Services for Search, Analyst and Agents
-- Creating a Microsoft 365 Copilot 
-- Connecting your MS Copilot to the Cortex Agent
+- Create Snowflake Cortex Services for Search, Analyst and Agents
+- Securely connect Teams and 365 Copilot App to Cortex Agents
+- Use the Teams and 365 App with Cortex Agents
 
 ### Resources
 - Learn more about the complete [Snowflake Cortex set of features](https://www.snowflake.com/en/product/features/cortex/)
 - Learn more about using [Agents in Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
-- Learn more about using [MS Copilot Studio](https://www.microsoft.com/en-us/microsoft-copilot/microsoft-copilot-studio)
-- This quickstart shows you how to build custom Copilots with Snowflake Cortex. In 2025 there will be an easier way to connect a 365 or Teams Copilot to any agent in Snowflake. See the announcement in the bottom [here](https://www.snowflake.com/en/news/press-releases/snowflake-securely-integrates-microsoft-azure-openai-service-to-provide-access-to-the-latest-openai-models-with-expanded-microsoft-partnership/)
+- Learn more about using [MS 365](https://www.microsoft.com/en-us/microsoft-365/products-apps-services)
+- Learn more about using [MS Copilot](https://www.microsoft.com/en-us/microsoft-copilot/organizations)
+- The official [Teams 365 Copilot Cortex App Docs]()
+- [Demo Video](https://mpupstorageprod.blob.core.windows.net/assets/Copilot-Partner-Demo-Snowflake-v2505.mp4?skoid=2d5ceda0-b739-41e6-882d-6b378a02b9b4&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-06-27T16%3A58%3A59Z&ske=2025-06-27T17%3A58%3A59Z&sks=b&skv=2024-11-04&sv=2024-11-04&se=2025-06-27T17%3A58%3A59Z&sr=c&sp=r&sig=o%2B6FRG96qlhrsFm2TIucaIeSy2cG1OTrIDJylrde%2F0I%3D)
