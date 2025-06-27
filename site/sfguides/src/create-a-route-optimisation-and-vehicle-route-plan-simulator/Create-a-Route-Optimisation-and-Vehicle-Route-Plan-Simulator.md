@@ -193,8 +193,8 @@ This is where you can configure multiple types of vehicles.  If you look at the 
         enabled: true
       cycling-road:
         enabled: true
-        driving-hgv:
-            enabled: true
+      driving-hgv:
+        enabled: true
       cycling-electric:
         enabled: true
       foot-walking:
