@@ -176,7 +176,6 @@ To set up Cortex Analyst you will have to upload a semantic file.
 - Browse and select cortex_agent_definition.json file
 - Click "Upload"
 
-
 And last we will run this below script to grant the appropriate privileges to the PUBLIC role (or whatever role you can use). 
 
 ```sql
@@ -185,7 +184,6 @@ GRANT USAGE ON SCHEMA DATA TO ROLE PUBLIC;
 GRANT USAGE ON CORTEX SEARCH SERVICE SALES_CONVERSATION_SEARCH TO ROLE PUBLIC;
 GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE PUBLIC;
 GRANT READ ON STAGE MODELS TO ROLE PUBLIC;
-GRANT USAGE ON PROCEDURE call_cortex_agent_proc(VARCHAR, NUMBER) TO ROLE PUBLIC;
 ```
 <!-- ------------------------ -->
 ## Configuring the App Connectivity to Cortex
