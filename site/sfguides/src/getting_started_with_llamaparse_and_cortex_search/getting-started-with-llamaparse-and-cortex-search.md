@@ -89,7 +89,7 @@ CREATE OR REPLACE WAREHOUSE LLAMAPARSE_CORTEX_SEARCH_WH WITH
      INITIALLY_SUSPENDED=TRUE;
 ```
 
-Then, set your Llama-Cloud API  and Snowflake credentials as environment variables, including the wareh
+Then, set your Llama-Cloud API key and Snowflake credentials as environment variables.
 
 ```python
 import os
@@ -97,12 +97,12 @@ import nest_asyncio
 nest_asyncio.apply()
 
 os.environ["LLAMA_CLOUD_API_KEY"] = "llx-..."  # Replace with your LlamaCloud API key
-os.environ["SNOWFLAKE_ACCOUNT"] = "..."        # Use hyphens, not underscores
+os.environ["SNOWFLAKE_ACCOUNT"] = "..."        # Use hyphens in place of underscores
 os.environ["SNOWFLAKE_USER"] = "..."
 os.environ["SNOWFLAKE_PASSWORD"] = "..."
 os.environ["SNOWFLAKE_ROLE"] = "..."
 os.environ["SNOWFLAKE_WAREHOUSE"] = "LLAMAPARSE_CORTEX_SEARCH_WH"
-os.environ["SNOWFLAKE_DATABASE"] = "SEC_10KS"  # Use an existing database
+os.environ["SNOWFLAKE_DATABASE"] = "SEC_10KS"
 os.environ["SNOWFLAKE_SCHEMA"] = "PUBLIC"
 ```
 
