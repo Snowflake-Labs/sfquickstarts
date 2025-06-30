@@ -26,33 +26,9 @@ LlamaParse comes equipped with the following features:
 * Support for 10+ file types (.pdf, .pptx, .docx, .html, .xml, and more)
 * Foreign language support
 
-### What we'll be building
-
-With this workflow, you can let Cortex Search operate interoperably on data from LlamaIndex.
-
-This quickstart is a step-by-step guide to parsing complex documents with LlamaParse, loading them into Snowflake, and building a RAG pipeline using Cortex Search for hybrid search and question answering.
-
-In this guide, we will:
-
-* Parse a PDF with LlamaParse
-* Load the parsed data into Snowflake
-* Split the text for search
-* Create a Cortex Search service
-* Retrieve relevant context
-* Build a simple RAG pipeline for Q&A on your data
-
 <!-- ------------------------ -->
 
-### Prerequisites
-
-* A LlamaCloud API key ([get one here](https://docs.cloud.llamaindex.ai/api_key))
-* A Snowflake account ([sign up here](https://signup.snowflake.com/))
-* Python **3.10+**
-* Required Python packages: `llama-cloud`, `snowflake-snowpark-python`, `snowflake-ml-python`, `pandas`
-
-<!-- ------------------------ -->
-
-### What you will learn
+### What You Will Learn
 
 * How to parse complex PDFs using LlamaParse
 * How to convert Llama-Index document format to DataFrames
@@ -63,11 +39,20 @@ In this guide, we will:
 
 <!-- ------------------------ -->
 
-### What you will build
+### What You Will Build
 
 * A workflow to parse and ingest PDFs into Snowflake
 * A table of split text chunks for hybrid search (via Cortex Search)
 * A RAG pipeline for Q&A using Cortex Search and Snowflake Cortex generation
+
+<!-- ------------------------ -->
+
+### What You Will Need
+
+* A LlamaCloud API key ([get one here](https://docs.cloud.llamaindex.ai/api_key))
+* A Snowflake account ([sign up here](https://signup.snowflake.com/))
+* Python **3.10+**
+* Required Python packages: `llama-cloud`, `snowflake-snowpark-python`, `snowflake-ml-python`, `pandas`
 
 <!-- ------------------------ -->
 
@@ -89,7 +74,7 @@ CREATE OR REPLACE WAREHOUSE LLAMAPARSE_CORTEX_SEARCH_WH WITH
      INITIALLY_SUSPENDED=TRUE;
 ```
 
-To open the notebook, open [llama-parse-cortex-search.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-llamaparse-and-cortex-search/blob/main/llama-parse-cortex-search.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+To open the notebook, open [llama-parse-cortex-search.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-llamaparse-and-cortex-search/llama-parse-cortex-search.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 
 First, et your Llama-Cloud API key and Snowflake credentials as environment variables.
 
@@ -110,7 +95,7 @@ os.environ["SNOWFLAKE_SCHEMA"] = "PUBLIC"
 
 <!-- ------------------------ -->
 
-## Parse Documents using LlamaParse
+## Parse Documents with LlamaParse
 
 Duration: 3
 
@@ -134,7 +119,7 @@ result = parser.parse("./snowflake_2025_10k.pdf")
 
 <!-- ------------------------ -->
 
-## Write parsed data to Snowflake
+## Write to Snowflake
 
 Duration: 5
 
@@ -207,7 +192,7 @@ snowpark_df.write.mode("overwrite").save_as_table("snowflake_10k")
 
 <!-- ------------------------ -->
 
-## Split text
+## Split Text
 
 Duration: 2
 
@@ -350,3 +335,4 @@ Congratulations! You have parsed a PDF with LlamaParse, loaded it into Snowflake
 * [LlamaParse (LlamaIndex)](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/)
 * [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 * [Snowflake Python API](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+
