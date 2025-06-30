@@ -216,6 +216,7 @@ FROM
 """
 
 session.sql(split_text_sql).collect()
+"""
 ```
 
 <!-- ------------------------ -->
