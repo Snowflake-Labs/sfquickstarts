@@ -11,32 +11,35 @@ authors: Josh Reini
 
 ## Overview
 
-Duration: 5
+Duration: 4
 
-This guide walks through how to build a RAG using LlamaParse (from LlamaIndex) as your parser and Cortex for text splitting and search.
+This guide walks through how to build a RAG using LlamaParse (from LlamaIndex) to parse documents and Snowflake Cortex for text splitting, search and generation.
 
-The core functionalities include:
+[LlamaParse](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/) is a genAI-native document parsing platform - built with LLMs and for LLM use cases. The main goal of LlamaParse is to parse and cleans your data, ensuring that it's high quality before passing to any downstream LLM use case such as RAG or agents.
 
-- Parse documents using LlamaParse
-- Load parsed data into Snowflake
-- Split text for search
-- Create a Cortex Search service
-- Retrieve relevant context
-- Build a simple RAG pipeline
+LlamaParse is particularly suitable for complex documents with tables and charts, and comes equipped with the following features:
 
-In this tutorial, you'll learn how to parse a complex PDF report with LlamaParse, load it into Snowflake, and build a Retrieval-Augmented Generation (RAG) workflow using Cortex Search on your Snowflake data.
+* State-of-the-art table extraction
+* Provide natural language instructions to parse the output in the exact format you want it.
+* JSON mode
+* Image extraction
+* Support for 10+ file types (.pdf, .pptx, .docx, .html, .xml, and more)
+* Foreign language support
 
 ### What we'll be building
 
-Many LLMs don't natively orchestrate external "agent" workflows. With this workflow, you can expose Cortex Search capabilities as first-class tools in your data and AI stack.
+With this workflow, you can let Cortex Search operate interoperably on data from LlamaIndex.
 
-We'll:
-- Parse a PDF with LlamaParse
-- Load the parsed data into Snowflake
-- Split the text for search
-- Create a Cortex Search service
-- Retrieve relevant context
-- Build a simple RAG pipeline for Q&A on your data
+This quickstart is a step-by-step guide to parsing complex documents with LlamaParse, loading them into Snowflake, and building a RAG pipeline using Cortex Search for hybrid search and question answering.
+
+In this guide, we will:
+
+* Parse a PDF with LlamaParse
+* Load the parsed data into Snowflake
+* Split the text for search
+* Create a Cortex Search service
+* Retrieve relevant context
+* Build a simple RAG pipeline for Q&A on your data
 
 <!-- ------------------------ -->
 
@@ -49,7 +52,26 @@ We'll:
 
 <!-- ------------------------ -->
 
-## 1. Set Keys and Import Libraries
+### What you will learn
+
+* How to parse complex PDFs using LlamaParse
+* How to convert Llama-Index document format to DataFrames
+* How to load data into Snowflake
+* How to split text for retrieval
+* How to create and use Cortex Search services
+* How to build a RAG pipeline for question answering
+
+<!-- ------------------------ -->
+
+### What you will build
+
+* A workflow to parse and ingest PDFs into Snowflake
+* A table of split text chunks for hybrid search (via Cortex Search)
+* A RAG pipeline for Q&A using Cortex Search and Snowflake Cortex generation
+
+<!-- ------------------------ -->
+
+## Setup
 
 Duration: 2
 
@@ -71,17 +93,14 @@ os.environ["SNOWFLAKE_SCHEMA"] = "PUBLIC"
 
 <!-- ------------------------ -->
 
-## 2. Load Data
 
-Duration: 2
+## Parse Documents using LlamaParse
+
+Duration: 3
 
 Download a PDF (e.g., [Snowflake's latest 10K](https://d18rn0p25nwr6d.cloudfront.net/CIK-0001640147/663fb935-b123-4bbb-8827-905bcbb8953c.pdf)) and save as `snowflake_2025_10k.pdf` in your working directory.
 
-<!-- ------------------------ -->
-
-## 3. Parse PDF with LlamaParse
-
-Duration: 3
+Then, use LlamaParse to parse the documents.
 
 ```python
 from llama_cloud_services import LlamaParse
@@ -97,9 +116,11 @@ result = parser.parse("./snowflake_2025_10k.pdf")
 
 <!-- ------------------------ -->
 
-## 4. Convert LlamaIndex Documents to DataFrame
+## Write parsed data to Snowflake
 
-Duration: 2
+Duration: 5
+
+Before writing to Snowflake, we need to convert LlamaIndex Documents to python DataFrames.
 
 ```python
 # Get markdown documents
@@ -120,11 +141,7 @@ documents_df = documents_to_dataframe(markdown_documents)
 documents_df.head()
 ```
 
-<!-- ------------------------ -->
-
-## 5. Write DataFrame to Snowflake Table
-
-Duration: 3
+Then, we can connect to Snowflake and write the dataframe to a table.
 
 ```python
 from snowflake.snowpark import Session
@@ -146,7 +163,7 @@ snowpark_df.write.mode("overwrite").save_as_table("snowflake_10k")
 
 <!-- ------------------------ -->
 
-## 6. Split the Text for Search
+## Split text
 
 Duration: 2
 
@@ -165,15 +182,17 @@ FROM
         512,
         128
     )) c;
-"""
+
 session.sql(split_text_sql).collect()
+"""
+
 ```
 
 <!-- ------------------------ -->
 
-## 7. Create Cortex Search Service
+## Create Cortex Search Service
 
-Duration: 2
+Duration: 5
 
 ```python
 create_search_service_sql = """
@@ -189,15 +208,13 @@ AS (
     TEXT
   FROM SEC_10KS.PUBLIC.SNOWFLAKE_10K_MARKDOWN_CHUNKS
 );
-"""
+
 session.sql(create_search_service_sql).collect()
+"""
+
 ```
 
-<!-- ------------------------ -->
-
-## 8. Retrieve Context with Cortex Search
-
-Duration: 2
+Now that the Cortex Search Service is created, we can create a python class to retrieve relevant chunks from the service.
 
 ```python
 from snowflake.core import Root
@@ -230,9 +247,9 @@ retrieved_context
 
 <!-- ------------------------ -->
 
-## 9. Build a Simple RAG Pipeline
+## Build RAG pipeline
 
-Duration: 3
+Duration: 2
 
 ```python
 from snowflake.cortex import complete
@@ -268,7 +285,7 @@ print(response)
 ## Conclusion And Resources
 <!-- ------------------------ -->
 
-Duration: 1
+Duration: 2
 
 Congratulations! You have parsed a PDF with LlamaParse, loaded it into Snowflake, indexed it with Cortex Search, and built a simple RAG pipeline for question answering on your data.
 
@@ -281,7 +298,7 @@ Congratulations! You have parsed a PDF with LlamaParse, loaded it into Snowflake
 
 ### Related Resources
 
-  * [LlamaParse (LlamaIndex)](https://docs.llamaindex.ai/en/stable/module_guides/loading/llamaparse.html)
-  * [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
-  * [Snowflake Python API](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
-  * [LlamaCloud API Key](https://docs.cloud.llamaindex.ai/api_key)
+* [LlamaParse (LlamaIndex)](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/)
+* [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+* [Snowflake Python API](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+* [LlamaCloud API Key](https://docs.cloud.llamaindex.ai/api_key)
