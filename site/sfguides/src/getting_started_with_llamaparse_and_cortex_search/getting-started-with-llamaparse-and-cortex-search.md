@@ -333,3 +333,4 @@ Congratulations! You have parsed a PDF with LlamaParse, loaded it into Snowflake
 * [LlamaParse (LlamaIndex)](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/)
 * [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 * [Snowflake Python API](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+
