@@ -45,9 +45,9 @@ The minimum and maximum values for each eligible column on a micro-partition are
 
 &nbsp;
 
-Choosing a clustering key with an appropriate cardinality (number of distinct values) helps to balance better performance with the increased cost of clustering data. A high-cardinality clustering key is often more expensive to maintain than a low-cardinality clustering key. Rows are not ordered within micro-partitions, so there is no performance advantage to be gained from a clustering key that produces a cardinality larger than the micro-partition count for the table. The performance advantage of clustering is gained through having a narrow range between the minimum and maximum values on each micro-partition. In a perfect world, we might only have one value for the minimum and maximum values of the clustering key on a micro-partition, which we call a constant micro-partition.
+Choosing a clustering key with an appropriate cardinality (number of distinct values) balances better performance with the increased cost of clustering data. Rows are not ordered within micro-partitions, so there is no performance advantage to be gained from a clustering key that produces a cardinality larger than the micro-partition count for the table. Furthermore, a high-cardinality clustering key is often more expensive to maintain than a low-cardinality clustering key. Since the performance advantage of clustering is gained through having a narrow range between the minimum and maximum values on each micro-partition, we might ideally have only one value for the minimum and maximum values of the clustering key on a micro-partition. When the minimum and maximum values are the same, we call it a constant micro-partition.
 
-Our clustering key cardinality target is therefore aiming to have each micro-partition with either only a single value for the clustering key or to have the range between the minimum and maximum for the clustering key be as small as possible. Stated another way, the maximum we really want to see for the cardinality of a clustering key is the number of micro-partitions in the table. A sane minimum for smaller tables (under 1 million micro-partitions) is probably to have a cardinality about 1/10th of the number of micro-partitions in the table. Over a million micro-partitions, the same targets may work well, or the goal posts may change a bit, depending on the workload.
+Our clustering key cardinality target is therefore aiming to have each micro-partition with either only a single value for the clustering key or to have the range between the minimum and maximum for the clustering key be as small as possible. Stated another way, the maximum we really want to see for the cardinality of a clustering key is the number of micro-partitions in the table. A sane minimum for smaller tables (under one million micro-partitions) is probably to have a cardinality about 1/10th of the number of micro-partitions in the table. Over a million micro-partitions, the same targets may work well, or the goal posts may change a bit, depending on the workload.
 
 > aside negative
 > 
@@ -112,7 +112,7 @@ CREATE OR REPLACE TABLE clustering_exp.tpcds_clustering_test.date_dim AS
     SELECT * 
       FROM snowflake_sample_data.tpcds_sf10tcl.date_dim
      ORDER BY RANDOM();
-CREATE OR REPLACE TABLE clustering_exp.tpcds_clustering_test.inventory as
+CREATE OR REPLACE TABLE clustering_exp.tpcds_clustering_test.inventory AS
     SELECT * 
       FROM snowflake_sample_data.tpcds_sf10tcl.inventory
      ORDER BY RANDOM();
@@ -239,7 +239,7 @@ ALTER SESSION SET use_cached_result=FALSE;
 
 USE WAREHOUSE clustering_qs_l_wh;
 
-ALTER SESSION SET QUERY_TAG='query1_base';
+ALTER SESSION SET QUERY_TAG='query_1_base';
 -- query 1
 SELECT  
     w_state
@@ -356,9 +356,10 @@ The queries provided here are against `ACCOUNT_USAGE.QUERY_HISTORY` because they
 <!-- ------------------------ -->
 ## Identify Filtering Predicates
 Duration: 10
+
 We're focusing in this example on the `CATALOG_SALES` table. It is the larger table in our workload, and one where we spend a lot of time scanning micro-partitions. 
 ### Predicates
-The next thing to do with our workload is to identify predicates in the queries that provide some kind of filtering. This can be simple or complex depending on where the predicates are. Let's start by just pulling out all predicates and fully qualifying them with table names. There are two primary locations where predicates are specified in SQL - the WHERE clause (including subqueries and CTEs), and the JOIN clause. Additionally, we can find predicates that may filter data in other places - like in the case statements in query 1. We're pulling ALL predicates to start, as data modeling may mean that the predicates that specify one table actually may affect pruning for another table.
+The next thing to do with our workload is to identify predicates in the queries that have the capability to filter out data. This can be simple or complex depending on where the predicates are. Let's start by just pulling out all predicates and fully qualifying them with table names. There are two primary locations where predicates are specified in SQL - the WHERE clause (including subqueries and CTEs), and the JOIN clause. Additionally, we can find predicates that may filter data in other places - like in the case statements in query 1. We're pulling ALL predicates to start, as data modeling may mean that the predicates that specify one table actually may affect pruning for another table.
 ```sql
 -- query 1
 catalog_sales.sold_timestamp      < CAST ('2002-05-08' AS DATE)
@@ -387,7 +388,7 @@ catalog_sales.cs_order_number     IN (23224193,34574645,8038666,64998601,42)
 ```
 
 ### Filtering Predicates
-Since we're focusing on the `CATALOG_SALES` table here, it makes sense to pare down our list to predicates that apply directly or indirectly to that table. That shortened list looks something like this:
+Since we're focusing on the `CATALOG_SALES` table here, it makes sense to pare down our list to predicates that apply directly or indirectly to the `CATALOG_SALES` table. The shortened list looks something like this:
 ```sql
 -- query 1
 catalog_sales.sold_timestamp      < CAST ('2002-05-08' AS DATE)
@@ -1179,7 +1180,7 @@ Running this function may take several minutes. The output will look something l
   }
 }
 ```
-This output tells us that if we were to just turn on automatic clustering using an Alter Table statement, it would cost approximately 36.6 credits to achieve a well-clustered state. One method for reducing the initial cost of clustering is to first use either a CTAS (Create Table AS) or `INSERT ... OVERWRITE` to manually place a table in order first, and then enable automatic clustering to keep up with clustering as our data changes over time.
+This output tells us that if we were to just turn on automatic clustering using an Alter Table statement, it would cost approximately 36.6 credits to achieve a well-clustered state. One method for reducing the initial cost of clustering is to first use either a CTAS (Create Table AS) or `INSERT OVERWRITE ...` to manually place a table in order first, and then enable automatic clustering to keep up with clustering as our data changes over time.
 
 In this case, we'll use this statement to replace our table with a clustered version of the same data:
 ```sql
@@ -1188,9 +1189,9 @@ INSERT OVERWRITE INTO catalog_sales
   FROM catalog_sales
   ORDER BY date_trunc('week', sold_timestamp), floor(cs_item_sk/10000);
 ```
-This methodology works up to a size somewhere between 250,000 and one million micro-partitions. Use the largest warehouse size you are willing to for this work. If the warehouse size is too small, remote spilling will occur and the operation will become more expensive, and may not be worth doing over letting automatic clustering do the work for you. In this case, this statement took 11m and 32s on a 2XL warehouse, equating to approximately 6.16 credits(using the [credits/second from the documentation](https://docs.snowflake.com/en/user-guide/warehouses-overview)). 
+This methodology works up to a size somewhere between 250,000 and about 500,000 micro-partitions. Use the largest warehouse size you are willing to for this work - on the larger sizes, 4XL is likely to be needed. If the warehouse size is too small, remote spilling will occur and the operation will become more expensive, and may not be worth doing over letting automatic clustering do the work for you. In this case, this statement took 11m and 32s on a 2XL warehouse, equating to approximately 6.16 credits(using the [credits/second from the documentation](https://docs.snowflake.com/en/user-guide/warehouses-overview)). 
 
-We can see in the query profile that while there was local spilling, there was no remote spilling for this `INSERT ... OVERWRITE` operation:
+We can see in the query profile that while there was local spilling, there was no remote spilling for this `INSERT OVERWRITE ...` operation:
 
 <img src="assets/query_profile_insert_overwrite_statistics.png" alt="statistics pane from the query profile for the overwrite operation" width="300"/>
 
@@ -1204,9 +1205,10 @@ We can validate that auto clustering is enabled by using the SHOW TABLES command
 SHOW TABLES LIKE 'catalog_sales';
 ```
 Looking at the **automatic_clustering** column in that output, we can see that auto clustering is enabled for this table:
+
 ![img](assets/automatic_clustering_on.png)
 
-Even though we've put the data into order with the `INSERT ... OVERWRITE`, automatic clustering will likely still go through and do some work. Some time after altering the table, it makes sense to query the `AUTOMATIC_CLUSTERING_HISTORY` table to see what work has been done. That query looks something like this:
+Even though we've put the data into order with the `INSERT OVERWRITE ...`, automatic clustering will likely still go through and do some work. Some time after altering the table, it makes sense to query the `AUTOMATIC_CLUSTERING_HISTORY` table to see what work has been done. That query looks something like this:
 ```sql
 SELECT *
   FROM TABLE(INFORMATION_SCHEMA.AUTOMATIC_CLUSTERING_HISTORY(TABLE_NAME => 'catalog_sales'));
