@@ -18,10 +18,12 @@ Snowflake Cortex Agents orchestrate across both structured and unstructured data
 
 A Teams 365 Copilot app is an AI-powered productivity assistant integrated into Microsoft Teams and Microsoft 365 Services (Word, Excel, Outlook, etc.). It's part of Microsoft’s broader Copilot ecosystem, which embeds generative AI into everyday work apps and can connect to services like Snowflake Cortex Agents.
 
+CURRENTLY THIS IS ONLY AVAILABLE FOR SNOWFLAKE ACCOUNTS DEPLOYED IN AZURE US EAST 2
+
 ### Use Case
 In this use cases we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search (for unstructured data) and Analyst (for structured data) then wrap a Cortex Agent around it so that it can combine both the services in a unified agentic experience. This can then be used by Copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
 
-Snowflake Cortex has proven to be a best-in-class platform for building GenAI services (Search and Analyst) and agents with your data and now customers can seemlessly connect to Cortex Agents in Teams and 365 Copilots alongside all of their Microsoft GenAI experiences.
+Snowflake Cortex has proven to be a best-in-class platform for building GenAI services (Search and Analyst) and agents with your data and now customers can seamlessly connect to Cortex Agents in Teams and 365 Copilots alongside all of their Microsoft GenAI experiences.
 
 ### Prerequisites
 - Familiarity with [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) and a Snowflake account
@@ -247,9 +249,9 @@ If all checks pass, the Snowflake configuration has been successfully added for 
 
 <!-- ------------------------ -->
 ## Using the App
-Duration: 10
+Duration: 8
 
-Access the App from 365 Copilot or Teams experience
+Access the App from 365 Copilot or Teams experience. The experience will be mostly the same with some minor variations in the UI. See the two screenshots below.
 
 #### Teams
 ![](assets/openteamsagent.png)
@@ -258,19 +260,21 @@ Access the App from 365 Copilot or Teams experience
 ![](assets/opencopilotagent.png)
 
 
-View commands
+You can start by asking "view available commands" to then access the admin panel, get help or choose a new snowflake account.
 ![](assets/viewavailablecommands.png)
 
-
-prompt something 
+For now you can view available prompts.
 ![](assets/prompts.png)
 
-get answer
+Select (or ask by typing) "what was the largest deal size" to see the answer.
 ![](assets/answer.png)
 
 
-and keep going....
-
+And you are now ready to go! You can continue asking questions like:
+- plot our largest deals by deal size?
+- how many total deals have we done?
+- how was the call with Securebank?
+- what was the worst customer call we had?
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
