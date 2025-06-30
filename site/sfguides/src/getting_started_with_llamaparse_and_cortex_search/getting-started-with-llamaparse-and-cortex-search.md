@@ -73,7 +73,7 @@ In this guide, we will:
 
 ## Setup
 
-Set up your environment and credentials for LlamaParse and Snowflake. You'll need a [LlamaCloud API key](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/) and a [Snowflake account](https://signup.snowflake.com/). This step ensures you have all the necessary Python packages and environment variables configured.
+Set up your environment and credentials for LlamaParse and Snowflake. You'll need a [LlamaCloud API key](https://docs.cloud.llamaindex.ai/api_key) and a [Snowflake account](https://signup.snowflake.com/). This step ensures you have all the necessary Python packages and environment variables configured.
 
 Duration: 2
 
@@ -170,7 +170,7 @@ snowpark_df.write.mode("overwrite").save_as_table("snowflake_10k")
 
 ## Split text
 
-Split the loaded document text into smaller chunks using the [Snowflake Cortex Text Splitter](https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex), preparing your data for semantic or hybrid search.
+Split the loaded document text into smaller chunks using the [Snowflake Cortex Text Splitter](https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex), preparing your data for search.
 
 Duration: 2
 
@@ -199,7 +199,7 @@ session.sql(split_text_sql).collect()
 
 ## Create Cortex Search Service
 
-Create a [Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) on your chunked data to enable fast, and hybrid search over your documents in Snowflake.
+Create a [Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) on your chunked data to enable fast, hybrid search over your documents in Snowflake.
 
 Duration: 5
 
