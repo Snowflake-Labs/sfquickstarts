@@ -48,7 +48,7 @@ In this guide, we will:
 * A LlamaCloud API key ([get one here](https://docs.cloud.llamaindex.ai/api_key))
 * A Snowflake account ([sign up here](https://signup.snowflake.com/))
 * Python **3.10+**
-* Required Python packages: `llama-cloud`, `snowflake-snowpark-python`, `pandas`
+* Required Python packages: `llama-cloud`, `snowflake-snowpark-python`, `snowflake-ml-python`, `pandas`
 
 <!-- ------------------------ -->
 
@@ -73,22 +73,35 @@ In this guide, we will:
 
 ## Setup
 
-Set up your environment and credentials for LlamaParse and Snowflake. You'll need a [LlamaCloud API key](https://docs.cloud.llamaindex.ai/api_key) and a [Snowflake account](https://signup.snowflake.com/). This step ensures you have all the necessary Python packages and environment variables configured.
-
 Duration: 2
+
+Set up your environment and credentials for LlamaParse and Snowflake. You'll need a [LlamaCloud API key](https://docs.cloud.llamaindex.ai/api_key) and a [Snowflake account](https://signup.snowflake.com/).
+
+Once you have signed up for a Snowflake account, create database and warehouse using the following SQL statements:
+
+```sql
+CREATE DATABASE IF NOT EXISTS SEC_10KS;
+
+CREATE OR REPLACE WAREHOUSE LLAMAPARSE_CORTEX_SEARCH_WH WITH
+     WAREHOUSE_SIZE='X-SMALL'
+     AUTO_SUSPEND = 120
+     AUTO_RESUME = TRUE
+     INITIALLY_SUSPENDED=TRUE;
+```
+
+Then, set your Llama-Cloud API  and Snowflake credentials as environment variables, including the wareh
 
 ```python
 import os
 import nest_asyncio
 nest_asyncio.apply()
 
-# Set your API keys and Snowflake credentials
 os.environ["LLAMA_CLOUD_API_KEY"] = "llx-..."  # Replace with your LlamaCloud API key
 os.environ["SNOWFLAKE_ACCOUNT"] = "..."        # Use hyphens, not underscores
 os.environ["SNOWFLAKE_USER"] = "..."
 os.environ["SNOWFLAKE_PASSWORD"] = "..."
 os.environ["SNOWFLAKE_ROLE"] = "..."
-os.environ["SNOWFLAKE_WAREHOUSE"] = "..."
+os.environ["SNOWFLAKE_WAREHOUSE"] = "LLAMAPARSE_CORTEX_SEARCH_WH"
 os.environ["SNOWFLAKE_DATABASE"] = "SEC_10KS"  # Use an existing database
 os.environ["SNOWFLAKE_SCHEMA"] = "PUBLIC"
 ```
@@ -97,9 +110,9 @@ os.environ["SNOWFLAKE_SCHEMA"] = "PUBLIC"
 
 ## Parse Documents using LlamaParse
 
-This step uses [LlamaParse](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/) to parse your PDF or other supported documents into structured data suitable for downstream LLM and RAG workflows.
-
 Duration: 3
+
+This step uses [LlamaParse](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/) to parse your PDF or other supported documents into structured data suitable for downstream LLM and RAG workflows.
 
 Download a PDF (e.g., [Snowflake's latest 10K](https://d18rn0p25nwr6d.cloudfront.net/CIK-0001640147/663fb935-b123-4bbb-8827-905bcbb8953c.pdf)) and save as `snowflake_2025_10k.pdf` in your working directory.
 
@@ -121,9 +134,9 @@ result = parser.parse("./snowflake_2025_10k.pdf")
 
 ## Write parsed data to Snowflake
 
-Convert the parsed documents to a DataFrame and load them into your Snowflake database for further processing and search.
-
 Duration: 5
+
+Convert the parsed documents to a DataFrame and load them into your Snowflake database for further processing and search.
 
 Before writing to Snowflake, we need to convert LlamaIndex Documents to python DataFrames.
 
@@ -133,17 +146,41 @@ markdown_documents = result.get_markdown_documents(split_by_page=False)
 
 import pandas as pd
 
-def documents_to_dataframe(documents):
-    rows = []
-    for doc in documents:
-        row = {"ID": doc.id_}
-        row.update(doc.metadata)
-        row["text"] = getattr(doc.text_resource, "text", None)
-        rows.append(row)
-    return pd.DataFrame(rows)
+# fields that matter only to vector/RAG helpers – we don’t need them here
+_INTERNAL_KEYS_TO_SKIP = {
+    "excluded_embed_metadata_keys",
+    "excluded_llm_metadata_keys",
+    "relationships",
+    "metadata_template",
+    "metadata_separator",
+    "text_template",
+    "class_name",
+}
 
-documents_df = documents_to_dataframe(markdown_documents)
-documents_df.head()
+def documents_to_dataframe(documents):
+    """Convert a list of LlamaIndex documents to a tidy pandas DataFrame,
+    omitting vector-store helper fields that aren’t needed for retrieval.
+    """
+    rows = []
+
+    for doc in documents:
+        d = doc.model_dump(exclude_none=True)
+
+        for k in _INTERNAL_KEYS_TO_SKIP:
+            d.pop(k, None)
+
+        # Pull out & flatten metadata
+        meta = d.pop("metadata", {})
+        d.update(meta)
+
+        # Extract raw text
+        t_res = d.pop("text_resource", None)
+        if t_res is not None:
+            d["text"] = t_res.get("text") if isinstance(t_res, dict) else getattr(t_res, "text", None)
+
+        rows.append(d)
+
+    return pd.DataFrame(rows)
 ```
 
 Then, we can connect to Snowflake and write the dataframe to a table.
@@ -170,9 +207,9 @@ snowpark_df.write.mode("overwrite").save_as_table("snowflake_10k")
 
 ## Split text
 
-Split the loaded document text into smaller chunks using the [Snowflake Cortex Text Splitter](https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex), preparing your data for search.
-
 Duration: 2
+
+Split the loaded document text into smaller chunks using the [Snowflake Cortex Text Splitter](https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex), preparing your data for search.
 
 ```python
 split_text_sql = """
@@ -199,9 +236,9 @@ session.sql(split_text_sql).collect()
 
 ## Create Cortex Search Service
 
-Create a [Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) on your chunked data to enable fast, hybrid search over your documents in Snowflake.
-
 Duration: 5
+
+Create a [Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) on your chunked data to enable fast, hybrid search over your documents in Snowflake.
 
 ```python
 create_search_service_sql = """
@@ -258,9 +295,9 @@ retrieved_context
 
 ## Build RAG pipeline
 
-Build a simple Retrieval-Augmented Generation (RAG) pipeline that uses your Cortex Search Service to retrieve relevant context and generate answers using [Snowflake Cortex Complete](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex) LLMs.
-
 Duration: 2
+
+Build a simple Retrieval-Augmented Generation (RAG) pipeline that uses your Cortex Search Service to retrieve relevant context and generate answers using [Snowflake Cortex Complete](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex) LLMs.
 
 ```python
 from snowflake.cortex import complete
@@ -294,7 +331,6 @@ print(response)
 <!-- ------------------------ -->
 
 ## Conclusion And Resources
-<!-- ------------------------ -->
 
 Duration: 2
 
