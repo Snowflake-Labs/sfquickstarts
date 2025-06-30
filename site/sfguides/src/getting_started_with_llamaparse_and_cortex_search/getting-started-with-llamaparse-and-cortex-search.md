@@ -73,6 +73,8 @@ In this guide, we will:
 
 ## Setup
 
+Set up your environment and credentials for LlamaParse and Snowflake. You'll need a [LlamaCloud API key](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/) and a [Snowflake account](https://signup.snowflake.com/). This step ensures you have all the necessary Python packages and environment variables configured.
+
 Duration: 2
 
 ```python
@@ -93,8 +95,9 @@ os.environ["SNOWFLAKE_SCHEMA"] = "PUBLIC"
 
 <!-- ------------------------ -->
 
-
 ## Parse Documents using LlamaParse
+
+This step uses [LlamaParse](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/) to parse your PDF or other supported documents into structured data suitable for downstream LLM and RAG workflows.
 
 Duration: 3
 
@@ -117,6 +120,8 @@ result = parser.parse("./snowflake_2025_10k.pdf")
 <!-- ------------------------ -->
 
 ## Write parsed data to Snowflake
+
+Convert the parsed documents to a DataFrame and load them into your Snowflake database for further processing and search.
 
 Duration: 5
 
@@ -165,6 +170,8 @@ snowpark_df.write.mode("overwrite").save_as_table("snowflake_10k")
 
 ## Split text
 
+Split the loaded document text into smaller chunks using the [Snowflake Cortex Text Splitter](https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex), preparing your data for semantic or hybrid search.
+
 Duration: 2
 
 ```python
@@ -191,6 +198,8 @@ session.sql(split_text_sql).collect()
 <!-- ------------------------ -->
 
 ## Create Cortex Search Service
+
+Create a [Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) on your chunked data to enable fast, and hybrid search over your documents in Snowflake.
 
 Duration: 5
 
@@ -248,6 +257,8 @@ retrieved_context
 <!-- ------------------------ -->
 
 ## Build RAG pipeline
+
+Build a simple Retrieval-Augmented Generation (RAG) pipeline that uses your Cortex Search Service to retrieve relevant context and generate answers using [Snowflake Cortex Complete](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex) LLMs.
 
 Duration: 2
 
