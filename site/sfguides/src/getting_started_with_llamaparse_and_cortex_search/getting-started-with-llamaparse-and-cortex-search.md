@@ -17,7 +17,7 @@ This guide walks through how to build a RAG using LlamaParse (from LlamaIndex) t
 
 [LlamaParse](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/) is a genAI-native document parsing platform - built with LLMs and for LLM use cases. The main goal of LlamaParse is to parse and cleans your data, ensuring that it's high quality before passing to any downstream LLM use case such as RAG or agents.
 
-LlamaParse is particularly suitable for complex documents with tables and charts, and comes equipped with the following features:
+LlamaParse comes equipped with the following features:
 
 * State-of-the-art table extraction
 * Provide natural language instructions to parse the output in the exact format you want it.
