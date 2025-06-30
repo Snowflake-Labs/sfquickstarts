@@ -26,33 +26,9 @@ LlamaParse comes equipped with the following features:
 * Support for 10+ file types (.pdf, .pptx, .docx, .html, .xml, and more)
 * Foreign language support
 
-### What we'll be building
-
-With this workflow, you can let Cortex Search operate interoperably on data from LlamaIndex.
-
-This quickstart is a step-by-step guide to parsing complex documents with LlamaParse, loading them into Snowflake, and building a RAG pipeline using Cortex Search for hybrid search and question answering.
-
-In this guide, we will:
-
-* Parse a PDF with LlamaParse
-* Load the parsed data into Snowflake
-* Split the text for search
-* Create a Cortex Search service
-* Retrieve relevant context
-* Build a simple RAG pipeline for Q&A on your data
-
 <!-- ------------------------ -->
 
-### Prerequisites
-
-* A LlamaCloud API key ([get one here](https://docs.cloud.llamaindex.ai/api_key))
-* A Snowflake account ([sign up here](https://signup.snowflake.com/))
-* Python **3.10+**
-* Required Python packages: `llama-cloud`, `snowflake-snowpark-python`, `snowflake-ml-python`, `pandas`
-
-<!-- ------------------------ -->
-
-### What you will learn
+### What You Will Learn
 
 * How to parse complex PDFs using LlamaParse
 * How to convert Llama-Index document format to DataFrames
@@ -63,11 +39,20 @@ In this guide, we will:
 
 <!-- ------------------------ -->
 
-### What you will build
+### What You Will Build
 
 * A workflow to parse and ingest PDFs into Snowflake
 * A table of split text chunks for hybrid search (via Cortex Search)
 * A RAG pipeline for Q&A using Cortex Search and Snowflake Cortex generation
+
+<!-- ------------------------ -->
+
+### What You Will Need
+
+* A LlamaCloud API key ([get one here](https://docs.cloud.llamaindex.ai/api_key))
+* A Snowflake account ([sign up here](https://signup.snowflake.com/))
+* Python **3.10+**
+* Required Python packages: `llama-cloud`, `snowflake-snowpark-python`, `snowflake-ml-python`, `pandas`
 
 <!-- ------------------------ -->
 
@@ -110,7 +95,7 @@ os.environ["SNOWFLAKE_SCHEMA"] = "PUBLIC"
 
 <!-- ------------------------ -->
 
-## Parse Documents using LlamaParse
+## Parse Documents with LlamaParse
 
 Duration: 3
 
@@ -134,7 +119,7 @@ result = parser.parse("./snowflake_2025_10k.pdf")
 
 <!-- ------------------------ -->
 
-## Write parsed data to Snowflake
+## Write to Snowflake
 
 Duration: 5
 
@@ -207,7 +192,7 @@ snowpark_df.write.mode("overwrite").save_as_table("snowflake_10k")
 
 <!-- ------------------------ -->
 
-## Split text
+## Split Text
 
 Duration: 2
 
@@ -228,10 +213,9 @@ FROM
         512,
         128
     )) c;
-
-session.sql(split_text_sql).collect()
 """
 
+session.sql(split_text_sql).collect()
 ```
 
 <!-- ------------------------ -->
@@ -256,10 +240,9 @@ AS (
     TEXT
   FROM SEC_10KS.PUBLIC.SNOWFLAKE_10K_MARKDOWN_CHUNKS
 );
-
-session.sql(create_search_service_sql).collect()
 """
 
+session.sql(create_search_service_sql).collect()
 ```
 
 Now that the Cortex Search Service is created, we can create a python class to retrieve relevant chunks from the service.
