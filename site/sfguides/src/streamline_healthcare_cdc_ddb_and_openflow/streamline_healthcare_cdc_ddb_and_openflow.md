@@ -9,9 +9,10 @@ authors: James Sun, Snowflake
 
 # Streamlining Healthcare Claims Change Data Capture Processing Using Amazon DynamoDB and Snowflake OpenFlow
 <!---------------------------->
-## Solution Overview
-Duration: 5
+## Overview
+Duration: 10
 
+### Overview
 In a healthcare claims processing system, [Amazon DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) can serve as an effective front-end database due to its high scalability, low-latency performance, and schema flexibility. It allows real-time ingestion and access to diverse, evolving claim event data such as status changes, user interactions, or system-generated events without the constraints of a rigid relational schema. This is especially valuable in front-end applications where speed and adaptability are critical. On the back end, Snowflake complements DynamoDB by handling complex analytics, aggregations, data sharing and reporting. Semi-structured claim data can be periodically streamed or batch-loaded from DynamoDB into Snowflake via [Openflow](https://www.snowflake.com/en/product/features/openflow/) seamlessly, where advanced SQL queries, joins, and business intelligence tools can be applied to support audits, compliance checks, long-term trends and securely shared with teams across the globe. Together, this architecture balances speed and flexibility at the front with powerful analytics and data integrity at the back.
 
 This guickstart will walk you through how to build CDC pipelines to synchronize the front-end DynamoDB and back-end Snowflake tables for processing real-time insurance claims
@@ -20,10 +21,24 @@ Below is a schematic diagram of the demo. The CDC events in DynamoDB are capture
 
 ![](assets/demo-diagram.png)
 
-<!---------------------------->
-## Prerequisites
-Duration: 5
+### What You Will Learn
+- How to set up Change Data Capture (CDC) between Amazon DynamoDB and Snowflake
+- How to configure and use Snowflake Openflow for real-time data synchronization
+- How to capture and process DynamoDB stream events using Kinesis Data Streams
+- How to transform semi-structured JSON data for analytics in Openflow
+- How to implement and monitor real-time CDC operations (INSERT, MODIFY, REMOVE)
+- Best practices for healthcare claims data processing in a hybrid architecture
 
+### What You will Build
+- A complete CDC pipeline that synchronizes healthcare insurance claims data between DynamoDB and Snowflake
+- An Openflow connector that consumes, transforms, and loads CDC events into Snowflake
+- A set of Snowflake tables for storing and tracking claim events, including:
+  - A destination table synchronized with the source DynamoDB table
+  - A CDC operations table for staging changes
+  - An event history table for auditing and tracking all data modifications
+- SQL merge operations that maintain data consistency across both systems
+
+### Prerequisites OR What You Will Need
 Before proceeding with the quickstart, ensure you have:
 
 1. **Snowflake and AWS Account Access**
@@ -270,7 +285,7 @@ CREATE OR REPLACE TABLE openflow_insClaim_cdc_tbl like openflow_insClaim_dest_tb
 ```
 
 <!---------------------------->
-## Configure and Start the Openflow Connector
+## Set Up The Openflow Connector
 
  Download the [Openflow connector definition file](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/Openflow_Dynamo_CDC/Openflow-DDB-CDC-connector.json) and save it to your desktop.
 
@@ -353,7 +368,7 @@ Next, you will be prompted to select the destination Kinesis data stream name to
 In a few seconds, the DynamoDB stream is enabled. You will see notification of success at the top of the page.
 
 <!---------------------------->
-## Change Data Capture (CDC) in Action
+## Change Data Capture (CDC) In Action
 Duration: 15
 
 ### Ingest Claims to DynamoDB 
@@ -474,7 +489,7 @@ select
 ```
 
 <!---------------------------->
-## View the Transformed JSONs in the Openflow Pipeline - Optional
+## View Transformed Data In The Pipeline
 Duration: 5
 
 You can view the transformed json contents in various stages by right-clicking tags in the pipeline, and select `List queue`
@@ -486,7 +501,7 @@ click on the 3 dots and select `Download content` and they will be saved to your
 Feel free to compare these contents to see how the data is transformed by the [`FlatJson`](https://docs.snowflake.com/en/user-guide/data-integration/openflow/processors/flattenjson) and [`JoltTransformJson`](https://docs.snowflake.com/en/user-guide/data-integration/openflow/processors/jolttransformjson) processors.
 
 <!---------------------------->
-## SQL Queries Used In the ExecuSQLCommand Processor
+## The ExecuSQLCommand Processor
 Duration: 5
 
 Let's take a look at the `ExecuteSQLStatement` processor and see what SQL query it uses to merge the CDC events.
@@ -609,3 +624,28 @@ DROP DATABASE CDC_DB;
 -- Drop user
 DROP USER CDC_USER;
 ```
+
+<!---------------------------->
+## Conclusion And Resources 
+Duration: 5
+
+### Overview
+In this quickstart guide, you've built a complete Change Data Capture (CDC) pipeline that synchronizes healthcare insurance claims data between Amazon DynamoDB and Snowflake. This architecture leverages DynamoDB's strengths as a high-performance, scalable front-end database for real-time claims processing, while utilizing Snowflake's powerful analytics capabilities for complex reporting, data sharing, and long-term trend analysis. The Openflow connector serves as the critical bridge between these systems, ensuring that all changes (inserts, updates, and deletions) are captured and synchronized in near real-time.
+
+### What You Learned
+- How to set up and configure DynamoDB streams to capture change events
+- How to use Kinesis Data Streams as a transport layer for CDC events
+- How to configure and deploy an Openflow connector for real-time data integration
+- How to transform complex JSON data structures into analytics-ready formats
+- How to implement CDC operations (INSERT, MODIFY, REMOVE) with proper tracking
+- How to use Snowflake's MERGE operation for efficient data synchronization
+- How to maintain an audit trail of all data changes using event history tables
+- Best practices for healthcare data integration across AWS and Snowflake
+
+### Resources
+- [Snowflake Openflow Documentation](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about)
+- [Snowflake Openflow Processors](https://docs.snowflake.com/en/user-guide/data-integration/openflow/processors/index)
+- [Snowflake MERGE Statement Documentation](https://docs.snowflake.com/en/sql-reference/sql/merge)
+- [Amazon DynamoDB Streams Documentation](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html)
+- [Amazon Kinesis Data Streams Documentation](https://docs.aws.amazon.com/streams/latest/dev/introduction.html)
+- [AWS CloudFormation Documentation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
