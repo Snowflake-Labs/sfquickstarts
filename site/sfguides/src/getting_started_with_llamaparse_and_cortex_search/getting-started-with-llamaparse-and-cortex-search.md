@@ -213,10 +213,9 @@ FROM
         512,
         128
     )) c;
-
-session.sql(split_text_sql).collect()
 """
 
+session.sql(split_text_sql).collect()
 ```
 
 <!-- ------------------------ -->
@@ -241,10 +240,9 @@ AS (
     TEXT
   FROM SEC_10KS.PUBLIC.SNOWFLAKE_10K_MARKDOWN_CHUNKS
 );
-
-session.sql(create_search_service_sql).collect()
 """
 
+session.sql(create_search_service_sql).collect()
 ```
 
 Now that the Cortex Search Service is created, we can create a python class to retrieve relevant chunks from the service.
