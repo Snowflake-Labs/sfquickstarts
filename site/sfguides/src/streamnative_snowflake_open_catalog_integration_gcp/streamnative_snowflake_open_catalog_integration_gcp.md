@@ -452,7 +452,7 @@ Querying a table in Snowflake Open Catalog using Snowflake AI Data Cloud require
 
 ### Create an external volume in Snowflake
 
-Please refer to the [Snowflake documentation here](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-s3) for the latest code samples for creating an external volume.
+Please refer to the [Snowflake documentation here](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-gcs) for the latest code samples for creating an external volume.
 
 The following is an example query to create the external volume.
 
@@ -508,7 +508,7 @@ You will need to create a new catalog integration for each tenant.namespace.
 
 ### Create an externally managed table
 
-Please refer to the [Snowflake documentation here](https://docs.streamnative.io/docs/integrate-with-snowflake-open-catalog) for the latest code samples.
+Please refer to the [Snowflake documentation here](https://docs.snowflake.com/en/user-guide/tables-iceberg-open-catalog-query) for the latest code samples.
 
 The following query was used to create an externally managed table.
 
