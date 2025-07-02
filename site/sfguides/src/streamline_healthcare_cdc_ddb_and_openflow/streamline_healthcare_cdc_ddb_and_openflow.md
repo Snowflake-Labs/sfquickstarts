@@ -13,7 +13,7 @@ authors: James Sun, Snowflake
 Duration: 10
 
 ### Overview
-In a healthcare claims processing system, [Amazon DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) can serve as an effective front-end database due to its high scalability, low-latency performance, and schema flexibility. It allows real-time ingestion and access to diverse, evolving claim event data such as status changes, user interactions, or system-generated events without the constraints of a rigid relational schema. This is especially valuable in front-end applications where speed and adaptability are critical. On the back end, Snowflake complements DynamoDB by handling complex analytics, aggregations, data sharing and reporting. Semi-structured claim data can be periodically streamed or batch-loaded from DynamoDB into Snowflake via [Openflow](https://www.snowflake.com/en/product/features/openflow/) seamlessly, where advanced SQL queries, joins, and business intelligence tools can be applied to support audits, compliance checks, long-term trends and securely shared with teams across the globe. Together, this architecture balances speed and flexibility at the front with powerful analytics and data integrity at the back.
+In a healthcare claims processing system, [Amazon DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) can serve as an effective front-end database due to its high scalability, low-latency performance, and schema flexibility. It allows real-time ingestion and access to diverse, evolving claim event data such as status changes, user interactions, or system-generated events without the constraints of a rigid relational schema. This is especially valuable in front-end applications where speed and adaptability are critical. On the back end, Snowflake complements DynamoDB by handling complex analytics, aggregations, data sharing and reporting. Claim data can be streamed in near real-time from DynamoDB into Snowflake via [Openflow](https://www.snowflake.com/en/product/features/openflow/) seamlessly, where advanced SQL queries, joins, and business intelligence tools can be applied to support audits, compliance checks, long-term trends and securely shared with teams across the globe. Together, this architecture balances speed and flexibility at the front with powerful analytics and data integrity at the back.
 
 This guickstart will walk you through how to build CDC pipelines to synchronize the front-end DynamoDB and back-end Snowflake tables for processing real-time insurance claims
 
@@ -597,7 +597,7 @@ Using the AWS Management Console:
 Using the AWS CLI:
 
 ```bash
-aws cloudformation delete-stack --stack-name insurance-claims-demo
+aws cloudformation delete-stack --stack-name Openflow-DDB-CDC
 ```
 
 ### 2. Verify Resource Deletion
