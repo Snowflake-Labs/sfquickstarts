@@ -537,6 +537,7 @@ select COUNT(*) FROM TRAINING.PUBLIC.kafkaschematopic
 ## Conclusion and Resources
 Duration: 5
 
+### Conclusion
 Congratulations on creating a Streaming Augmented Lakehouse powered by StreamNative's Ursa Engine with built-in support for Iceberg and Snowflake Open Catalog. [Contact StreamNative](https://streamnative.io/contact) to learn more.
 
 ### What You Learned
