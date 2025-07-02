@@ -581,7 +581,7 @@ You will need to create a new catalog integration for each tenant.namespace.
 
 ### Create an externally managed table
 
-Please refer to the [Snowflake documentation here](https://docs.streamnative.io/docs/integrate-with-snowflake-open-catalog) for the latest code samples.
+Please refer to the [Snowflake documentation here](https://docs.snowflake.com/en/user-guide/tables-iceberg-open-catalog-query) for the latest code samples.
 
 The video includes the following details from our example:
 * A Snowflake Open Catalog warehouse.schema.table (e.g. streamnative.public.default.kafkaschematopic) is mapped to a Snowflake database.schema.table (e.g. training.public.kafkaschematopic)
