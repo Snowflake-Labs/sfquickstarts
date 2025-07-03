@@ -40,11 +40,11 @@ Use Snowpark Containers with a native app using the Open Route Service
 
 ### Route Planning And Optimization Architecture
 
-The architecture above shows the solution which uses a native app and container services to power sophisticated routing and optimisation functions. 
+The architecture below shows the solution which uses a native app and container services to power sophisticated routing and optimisation functions. 
 
 ![alt text](assets/image-7.png)
 
-This is a self contained service which is managed by you.  There are no api calls outside of snowflake and no api limitations.  This quickstart uses a small CPU pool which is capable of running unlimited service calls within **New York City**.  if you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
+This is a self contained service which is managed by you.  There are no api calls outside of snowflake and no api limitations.  This quickstart uses a medium CPU pool which is capable of running unlimited service calls within **New York City**.  if you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
 
 **This is what you will need**:
 
@@ -119,7 +119,7 @@ This will create the necessary snowflake database and stages within the public s
 
 - Within the Repo, navigate to: 
 
-  **Native_app_setup** > **Provider_setup** >  **env_setup.sql**
+  **Native_app** > **Provider_setup** >  **env_setup.sql**
 
 - Press run all or ctrl + enter / command + enter to run the code within visual studio code.
 
@@ -151,9 +151,9 @@ https://download.bbbike.org/osm/
 The file below is the original weekly updated open street map which contains the whole planet.
 https://planet.openstreetmap.org/pbf/
 
-Bear in mind the bigger the map, the longer it will take to create the graphs.  You may also require a larger compute for the container to run if you are using a larger map. 
+Bear in mind the bigger the map, the longer it will take to create the graphs.  You may also require a larger compute for the container to run if you are using a larger map. You might also need to update parameter XMX (Max RAM assigned to Java) in file `services/openrouteservice/openrouteservice.yaml`. As a Rule of Thumb, set it to: `<PBF-size> * <profiles> * 2`
 
-Also please note that the size of the files uploaded using the put command is limited to 5G.  If you wish to use the world file, you will need to initially store in an S3 bucket and then copy using the copy command.
+Also please note that the size of the files uploaded using the put command is limited to 5G.  If you wish to use the world file, you will need to initially store in a cloud storage like S3 bucket or Azure Blob Storage and then copy using the copy command.
 
 The ors-config file is a configuration file for the app.  This does a variety of things.
 
@@ -203,12 +203,13 @@ This is where you can configure multiple types of vehicles.  If you look at the 
 
 Here is where you can change the amount of maximum visited nodes.
 
-The nodes are locations where route optimization algorithms are implemented and processed. These nodes are crucial for efficiently planning and executing delivery or service routes, minimizing travel time and cost.  The number of nodes required will depend on how many vehicles, what the vehicle profile is, the length of each journey and how many jobs are involved.  Here, the default number of visited nodes are much lower than the overridden default below.
+The nodes are locations where route optimization algorithms are implemented and processed. These nodes are crucial for efficiently planning and executing delivery or service routes, minimizing travel time and cost.  The number of nodes required will depend on how many vehicles, what the vehicle profile is, the length of each journey and how many jobs are involved.  Here, the default number of visited nodes are much lower than the overridden default below. Same for maximum_routes.
 
 
 ```yml
     matrix:
       maximum_visited_nodes: 1000000000
+      maximum_routes: 25000000
 ```
 
 There are also other options available for each profile - and each option will depend on what the profile is.
@@ -267,7 +268,7 @@ You will now load the docker images to the snowflake repository
 
 > **_NOTE:_**  If you have not created a connection before, please navigate to the following [QuickStart](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html#0) before proceeding which will explain how these are created.
 
-- Execute the following to ensure you have the correct privileges to run the bash file.  Open up a terminal from the **Native_app_setup/native_app** directory within vscode and run the following:
+- Execute the following to ensure you have the correct privileges to run the bash file.  Open up a terminal from the **/native_app** directory within vscode and run the following:
 
 ```bash
 chmod +x provider_setup/spcs_setup.sh
@@ -588,7 +589,7 @@ CREATE DATABASE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR;
 CREATE WAREHOUSE IF NOT EXISTS ROUTING_ANALYTICS;
 
 CREATE SCHEMA IF NOT EXISTS DATA;
-CREATE SCHEMA IF NOTE EXISTS NOTEBOOKS;
+CREATE SCHEMA IF NOT EXISTS NOTEBOOKS;
 CREATE SCHEMA IF NOT EXISTS STREAMLITS;
 ```
 
@@ -609,7 +610,7 @@ CREATE SCHEMA IF NOT EXISTS STREAMLITS;
 ```sql
 CREATE OR REPLACE NOTEBOOK VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.EXPLORE_ROUTING_FUNCTIONS_WITH_AISQL
 FROM '@VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.NOTEBOOK'
-FROM 'routing_setup.ipynb'
+MAIN_FILE = 'routing_setup.ipynb'
 QUERY_WAREHOUSE = 'ROUTING_ANALYTICS';
 
 ALTER NOTEBOOK VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.EXPLORE_ROUTING_FUNCTIONS_WITH_AISQL ADD LIVE VERSION FROM LAST;
