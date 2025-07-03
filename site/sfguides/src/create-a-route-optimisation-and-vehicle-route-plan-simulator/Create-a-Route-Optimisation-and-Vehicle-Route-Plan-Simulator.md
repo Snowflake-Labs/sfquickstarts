@@ -203,12 +203,13 @@ This is where you can configure multiple types of vehicles.  If you look at the 
 
 Here is where you can change the amount of maximum visited nodes.
 
-The nodes are locations where route optimization algorithms are implemented and processed. These nodes are crucial for efficiently planning and executing delivery or service routes, minimizing travel time and cost.  The number of nodes required will depend on how many vehicles, what the vehicle profile is, the length of each journey and how many jobs are involved.  Here, the default number of visited nodes are much lower than the overridden default below.
+The nodes are locations where route optimization algorithms are implemented and processed. These nodes are crucial for efficiently planning and executing delivery or service routes, minimizing travel time and cost.  The number of nodes required will depend on how many vehicles, what the vehicle profile is, the length of each journey and how many jobs are involved.  Here, the default number of visited nodes are much lower than the overridden default below. Same for maximum_routes.
 
 
 ```yml
     matrix:
       maximum_visited_nodes: 1000000000
+      maximum_routes: 25000000
 ```
 
 There are also other options available for each profile - and each option will depend on what the profile is.
