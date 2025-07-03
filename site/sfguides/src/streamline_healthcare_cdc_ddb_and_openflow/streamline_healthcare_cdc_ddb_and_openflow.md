@@ -55,10 +55,12 @@ Before proceeding with the quickstart, ensure you have:
    - Familiarity with CloudFormation templates and parameters
    - Familiarity with Snowflake SQL and Snowsight UI
 
-4. **Openflow Deployment either on Snowflake or BYOC on AWS**
+4. **An Openflow deployment either on AWS BYOC or Snowflake VPC**
    - Refer to this [blog](https://medium.com/@rahul.reddy.ai/your-step-by-step-practical-guide-to-setting-up-snowflake-openflow-on-aws-byoc-07e5b7be5056) to deploy Openflow on AWS BYOC
    - At the time of writing this quickstart, the managed Openflow deployment running in Snowflake VPC is not yet in public preview. We will update this guide as it becomes available in the near future.
 
+5. **A Snowflake role that can access or create Openflow runtimes**
+   - Refer to this [doc](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow) for more details.
 
 <!---------------------------->
 ## Deploy AWS Resources
@@ -162,26 +164,27 @@ see below example screenshot:
 ## Setup Snowflake
 Duration: 10
 
-#### 1. Create user, role, database and schema
+#### 1. Create role, schema and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
-Then run the following SQL commands in a worksheet to create a user, database and the role that we will use in the lab.
+Then run the following SQL commands in a worksheet to create a database, schema and the role that we will use in the lab.
+
+```sql
+-- Type in the username who has the ACCOUNTADMIN role
+-- This can be the username you picked when sign up for
+-- the Snowflake trial account
+SET USER = < username with ACCOUNTADMIN role >
+```
 
 ```sql
 -- Set default value for multiple variables
 -- For purpose of this workshop, it is recommended to use these defaults during the exercise to avoid errors
 -- You should change them after the workshop
-SET PWD = 'LetItSn@w!!';
-SET USER = 'CDC_USER';
 SET DB = 'CDC_DB';
 SET SCHEMA = 'CDC_SCHEMA';
 SET WH = 'CDC_WH';
 SET ROLE = 'CDC_RL';
 
 USE ROLE ACCOUNTADMIN;
-
--- CREATE USERS
-CREATE USER IF NOT EXISTS IDENTIFIER($USER) PASSWORD=$PWD  COMMENT='CDC USER';
-ALTER USER IDENTIFIER($USER) SET DISABLE_MFA = FALSE;
 
 -- CREATE ROLES
 CREATE OR REPLACE ROLE IDENTIFIER($ROLE);
@@ -218,9 +221,6 @@ WHERE VALUE:type = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 Please write down the Account Identifier, we will need it later.
 ![](assets/account-identifier.png)
 
-**⚠️ IMPORTANT: Snowflake is phasing out [single-factor password authentication](https://www.snowflake.com/en/blog/blocking-single-factor-password-authentification/). It is required to change the password and enable the Multi-factor authentication (MFA) by following this [doc](https://docs.snowflake.com/en/user-guide/security-mfa) right after this lab.**
-
-
 #### 2. Set Up Key Pair Authentication
 Next we need to configure the public key for the streaming user to access Snowflake programmatically.
 
@@ -228,7 +228,9 @@ In the Snowflake worksheet, replace `< pubKey >` with the content of the file `/
 
 ```sql
 USE ROLE ACCOUNTADMIN;
-ALTER USER IDENTIFIER($USER) SET RSA_PUBLIC_KEY='< pubKey >';
+
+-- Replace the username with the one (with ACCOUNTADMIN role) you used at the beggining in step 1 above
+ALTER USER < username > SET RSA_PUBLIC_KEY='< pubKey >';
 ```
 
 #### 3. Set Up the Snowflake Tables
@@ -291,7 +293,7 @@ CREATE OR REPLACE TABLE openflow_insClaim_cdc_tbl like openflow_insClaim_dest_tb
  Download the [Openflow connector definition file](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/Openflow_Dynamo_CDC/Openflow-DDB-CDC-connector.json) and save it to your desktop.
 
 #### 1. Import the connector definition file
-Go to Openflow by clicking on `Openflow` in the `Data` drop-down menu in the Snowsight left pane.
+In Snowsight, switch to the role that has access to Openflow runtimes (described in the `Prerequisites OR What You Will Need` section above). Go to Openflow by clicking on `Openflow` in the `Data` drop-down menu in the Snowsight left pane.
 
 ![](assets/openflow-start.png)
 
@@ -324,6 +326,7 @@ There are five parameters you will need to fill in. Leave the others as default.
 -  SNOWFLAKE ACCOUNT NAME: This is the Snowflake account identifier you wrote down previously
 -  SNOWFLAKE KEY PASSPHRASE: This is the Snowflake key passphrase you chose when creating the key pair with openssl
 -  SNOWFLAKE PRIVATE KEY: This is the content of the `rsa_key.p8` file you created in the home directory on the EC2 instance.
+- SNOWFLAKE USER: This is the username with ACCOUNTADMIN role when you setup Snowflake in previous step
 
 Once finished, click `Apply` and `Close` to take effect.
 
@@ -622,8 +625,6 @@ DROP TABLE IF EXISTS openflow_insclaim_event_hist_tbl;
 -- Drop schema and database
 DROP SCHEMA CDC_SCHEMA;
 DROP DATABASE CDC_DB;
--- Drop user
-DROP USER CDC_USER;
 ```
 
 <!---------------------------->
