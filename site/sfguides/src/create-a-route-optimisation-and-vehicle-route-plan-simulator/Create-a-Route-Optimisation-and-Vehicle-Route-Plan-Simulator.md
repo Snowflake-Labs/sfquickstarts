@@ -151,7 +151,7 @@ https://download.bbbike.org/osm/
 The file below is the original weekly updated open street map which contains the whole planet.
 https://planet.openstreetmap.org/pbf/
 
-Bear in mind the bigger the map, the longer it will take to create the graphs.  You may also require a larger compute for the container to run if you are using a larger map. 
+Bear in mind the bigger the map, the longer it will take to create the graphs.  You may also require a larger compute for the container to run if you are using a larger map. You might also need to update parameter XMX(Max RAM assigned to Java) in `services/openrouteservice/openrouteservice.yaml`. `Rule of Thumb: <PBF-size> * <profiles> * 2`
 
 Also please note that the size of the files uploaded using the put command is limited to 5G.  If you wish to use the world file, you will need to initially store in a cloud storage like S3 bucket or Azure Blob Storage and then copy using the copy command.
 
