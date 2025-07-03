@@ -42,6 +42,7 @@ Below is a schematic diagram of the demo. The CDC events in DynamoDB are capture
 Before proceeding with the quickstart, ensure you have:
 
 1. **Snowflake and AWS Account Access**
+   - A Snowflake account in one of the AWS commercial [regions](https://docs.snowflake.com/en/user-guide/intro-regions#label-na-general-regions). If you do not have one you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstart-insurance-claims-dynamodb-openflow-cdc).
    - An AWS account with permissions to create the required resources using [Cloudformation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html).
    - Access to the AWS Management Console and [AWS CLI](https://docs.aws.amazon.com/cli/v1/userguide/cli-chap-configure.html) configured with required credentials.
    - A Snowflake account with permissions to run queries and create [Openflow](https://www.snowflake.com/en/product/features/openflow/) objects
@@ -158,7 +159,7 @@ see below example screenshot:
 ![](assets/key-pair-sessionmgr-3.png)
 
 <!---------------------------->
-## Prepare The Snowflake Account
+## Setup Snowflake
 Duration: 10
 
 #### 1. Create user, role, database and schema
@@ -285,7 +286,7 @@ CREATE OR REPLACE TABLE openflow_insClaim_cdc_tbl like openflow_insClaim_dest_tb
 ```
 
 <!---------------------------->
-## Set Up The Openflow Connector
+## Setup Openflow Connector
 
  Download the [Openflow connector definition file](https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/Openflow_Dynamo_CDC/Openflow-DDB-CDC-connector.json) and save it to your desktop.
 
@@ -489,7 +490,7 @@ select
 ```
 
 <!---------------------------->
-## View Transformed Data In The Pipeline
+## Transformed Data Across Pipeline
 Duration: 5
 
 You can view the transformed json contents in various stages by right-clicking tags in the pipeline, and select `List queue`
