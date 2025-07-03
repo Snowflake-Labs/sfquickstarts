@@ -272,7 +272,7 @@ Select (or ask by typing) "what was the largest deal size" to see the answer.
 
 And you are now ready to go! You can continue asking questions like:
 - plot our largest deals by deal size?
-- how many total deals have
+- how many
 - how was the call with Securebank?
 - what was the worst customer call we had?
 
