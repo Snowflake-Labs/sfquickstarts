@@ -31,7 +31,7 @@ This guide uses a real-world dataset of Chicago Transit Authority (CTA) daily ri
 ### Prerequisites
 -   Familiarity with Python and SQL.
 -   Basic understanding of machine learning concepts.
-- A Snowflake account with [Anaconda Packages enabled by ORGADMIN](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#using-third-party-packages-from-anaconda). you may choose to use models with pip_requirements. In this quickstart, we are assuming you have permission to use Anaconda Package. AlternativelyIf you do not have a Snowflake account, you can register for a free trial account, which will have permission to use Anaconda Packages. Note that, trial account does not allow creation of compute pool, so model serving on Container Services cannot be tested in Trial Account.
+-   Note that, trial account does not allow creation of compute pool, so model serving on Container Services cannot be tested in Trial Account.
 - Have a database schema where objects can be created. In this exercise, we will create a notebook, table to store data, stored proc for training, model to log the trained model, container images for model serving and the service hosting the model. You need privileges to have all of them. 
 
 
@@ -52,7 +52,7 @@ We will then import the attached notebook inside this github [repo](https://gith
 - Python environment: **"Run on warehouse"** is selected, which is described as best for data analysis. The alternative, **"Run on container"** is for AI/ML workloads. In this case we will choose Run on container and we will choose the default compute pool. 
 - Query warehouse: This is the name of the warehouse used to run our queries. In this case I have created a warehouse called **DEMO_BUILD_WH**.
 
-We will also import the CSV file into the stage. This can be found in the github [repo](https://github.com/Snowflake-Labs/) 
+We will also import the CSV file into the stage. This can be found in the github [repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-serving-in-spcs) 
 
 ![3_Import_CSVs](assets/3_Import_CSVs.png)
 
