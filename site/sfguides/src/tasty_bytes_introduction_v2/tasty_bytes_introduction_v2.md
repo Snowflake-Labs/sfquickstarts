@@ -7,10 +7,10 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tasty Bytes, Zero to Snowflake
 
-# An Introduction to Tasty Bytes V2
+# An Introduction to Tasty Bytes
 <!-- ------------------------ -->
 
-## An Introduction to Tasty Bytes V2
+## An Introduction to Tasty Bytes
 Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
 
