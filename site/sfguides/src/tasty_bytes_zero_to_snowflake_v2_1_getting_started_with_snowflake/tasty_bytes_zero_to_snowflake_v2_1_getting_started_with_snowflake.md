@@ -59,7 +59,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 - Within Worksheets, click the **"+"** button in the top-right corner of Snowsight.
 
 ### Step 5 - Renaming a Worksheet
-- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Getting Started".
+- Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Getting Started with Snowflake".
 
 ### Step 6 - Pasting SQL into your Snowflake Worksheet
 - Copy the entire SQL block below and paste it into your worksheet.
