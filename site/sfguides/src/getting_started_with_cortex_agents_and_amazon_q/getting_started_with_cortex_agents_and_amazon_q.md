@@ -274,7 +274,7 @@ def call_cortex_agent_proc(query: str, limit: int = 10):
     )
 
     payload = {
-        "model": "llama3.1-70b",
+        "model": "claude-3-5-sonnet",
         "messages": [{"role": "user", "content": [{"type": "text", "text": query}]}],
         "tools": [
             {"tool_spec": {"type": "cortex_analyst_text_to_sql", "name": "analyst1"}},
