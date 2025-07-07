@@ -38,7 +38,7 @@ Within this Quickstart, we will learn about core Snowflake concepts by exploring
 - A Resource Monitor
 - A Budget
 
-## Creating a Worksheet and Copying in our SQL
+## Creating a Worksheet in Workspaces and Copying in our SQL
 Duration: 1
 
 ### Overview
@@ -52,11 +52,11 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 2 - Logging into Snowflake
 - Log into your Snowflake account.
 
-### Step 3 - Navigating to Worksheets
-- Click on the **Projects** Tab in the left-hand navigation bar and click **Worksheets**.
+### Step 3 - Navigating to Workspaces
+- Click on the **Projects** Tab in the left-hand navigation bar and click **Workspaces**.
 
 ### Step 4 - Creating a Worksheet
-- Within Worksheets, click the **"+"** button in the top-right corner of Snowsight.
+- Within Workspaces, click the **"+ Add New"** button in the top-right corner of Snowsight.
 
 ### Step 5 - Renaming a Worksheet
 - Rename the Worksheet by clicking on the auto-generated Timestamp name and inputting "Tasty Bytes - Getting Started with Snowflake".
@@ -131,6 +131,7 @@ ALTER WAREHOUSE my_wh SET warehouse_size = 'XSmall';
 
 /* 3. Basic Transformation Techniques */
 
+-- SELECT the truck_build column
 SELECT truck_build FROM raw_pos.truck_details;
 
 -- Create the truck_dev table as a Zero Copy clone of the truck table
@@ -231,14 +232,14 @@ CREATE OR REPLACE SNOWFLAKE.CORE.BUDGET my_budget()
 -------------------------------------------------------------------------
 -- Drop created objects
 DROP RESOURCE MONITOR IF EXISTS my_resource_monitor;
-DROP WAREHOUSE IF EXISTS my_wh;
 DROP TABLE IF EXISTS raw_pos.truck_dev;
-
 -- Reset truck details
 CREATE OR REPLACE TABLE raw_pos.truck_details
 AS 
 SELECT * EXCLUDE (year, make, model)
 FROM raw_pos.truck;
+
+DROP WAREHOUSE IF EXISTS my_wh;
 
 -- Unset Query Tag
 ALTER SESSION UNSET query_tag;
@@ -369,11 +370,17 @@ Duration: 3
 
 ### Overview
 
-In this section, we will see how to handle semi-structured data, use Zero-Copy Cloning to create development environments, and clean our data. Our goal is to analyze the manufacturers of our food trucks, but this data is currently nested inside a `VARIANT` column.
+In this section, we will see some basic transformation techniques to clean our data and use Zero-Copy Cloning to create development environments. Our goal is to analyze the manufacturers of our food trucks, but this data is currently nested inside a `VARIANT` column.
 
 ### Step 1 - Creating a Development Table with Zero-Copy Clone
 
-First, we will create a development copy of our `truck_details` table. Snowflake's Zero-Copy Cloning lets us create an identical, fully independent copy of the table instantly, without using additional storage.
+First, let's take a look at the `truck_build` column. 
+```sql
+SELECT truck_build FROM raw_pos.truck_details;
+```
+This table contains data about the make, model and year of each truck, but it is nested, or embedded in an Object. We can perform operations on this column to extract these values, but first we'll create a development copy of the table.
+
+Let's create a development copy of our `truck_details` table. Snowflake's Zero-Copy Cloning lets us create an identical, fully independent copy of the table instantly, without using additional storage.
 
 ```sql
 CREATE OR REPLACE TABLE raw_pos.truck_dev CLONE raw_pos.truck_details;
