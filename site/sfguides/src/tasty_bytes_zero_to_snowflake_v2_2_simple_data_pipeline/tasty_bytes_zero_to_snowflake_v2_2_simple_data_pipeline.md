@@ -61,7 +61,8 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 - Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
-/*************************************************************************************************** Asset:        Zero to Snowflake v2 - Simple Data Pipeline
+/*************************************************************************************************** 
+Asset:        Zero to Snowflake v2 - Simple Data Pipeline
 Version:      v1     
 Copyright(c): 2025 Snowflake Inc. All rights reserved.
 ****************************************************************************************************/
