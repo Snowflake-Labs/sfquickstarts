@@ -63,7 +63,8 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 - Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
-/*************************************************************************************************** Asset:        Zero to Snowflake v2 - Governance with Horizon
+/*************************************************************************************************** 
+Asset:        Zero to Snowflake v2 - Governance with Horizon
 Version:      v1     
 Copyright(c): 2025 Snowflake Inc. All rights reserved.
 ****************************************************************************************************/
@@ -329,7 +330,7 @@ The typical hierarchy of system and custom roles might look something like this:
 
 ### Step 3 - Grant Privileges to the Custom Role
 
-A role is useless without privileges. Let's switch to the `securityadmin` role to grant our new `tb_data_steward` role the necessary permissions to use a warehouse and access our database schemas and tables.
+We can't do much with our role without granting privileges to it. Let's switch to the `securityadmin` role to grant our new `tb_data_steward` role the necessary permissions to use a warehouse and access our database schemas and tables.
 
 ```sql
 USE ROLE securityadmin;
