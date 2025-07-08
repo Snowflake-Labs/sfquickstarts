@@ -1,6 +1,6 @@
 summary: Getting Started with Event Tables and Alerts
 id: alert_on_events 
-categories: featured, getting-started, data-engineering, app-development
+categories: featured, getting-started, data-engineering, app-development, observability
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
