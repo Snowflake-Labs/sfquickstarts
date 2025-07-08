@@ -38,8 +38,9 @@ First we will build a simple Cortex agent that leverages Analyst and Search Serv
 ![](assets/agentarch.png)
 
 Next, we will confifure connectivity to connect the Teams/Copilot 365 App to Cortex then use it, with the underlying architecture like below. 
-1[](assets/apparch.png)
+![](assets/cortexteamsarch.png)
 The authentication and user flow goes like this:
+
 1. User authenticates to Entra ID and via the Bot Resource to authenticate into their Snowflake Account.
 2. The user then interacts with the MS app and the Bot Resource sends the request, along with the token from step 1, to the Bot backend with the user.
 3. The Bot Backend stores and retrieves the tenant level configuration and prompts the Cortex Agent API and executes queries against the SQL API when needed.
