@@ -58,208 +58,592 @@ This Quickstart consolidates all SQL scripts from the individual modules into on
 
 ### Step 3 - Pasting SQL into your Worksheet
 
-  - Copy the entire combined SQL block below and paste it into your worksheet. This single script contains all the SQL needed for all five modules. The `RESET` script at the end will clean up all created objects.
+  - Copy the entire combined SQL block below and paste it into your worksheet and then run all. This single script contains all the setup needed for all five modules.
 
 <!-- end list -->
 
 ```sql
-/*==================================================================================================*/
-/*==================================================================================================*/
-/*======================== MODULE 1: GETTING STARTED WITH SNOWFLAKE ================================*/
-/*==================================================================================================*/
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "getting_started_with_snowflake"}}';
-USE DATABASE tb_101;
-USE ROLE accountadmin;
+USE ROLE sysadmin;
 
--- Virtual Warehouses & Settings
-SHOW WAREHOUSES;
-CREATE OR REPLACE WAREHOUSE my_wh COMMENT = 'My TastyBytes warehouse' WAREHOUSE_TYPE = 'standard' WAREHOUSE_SIZE = 'xsmall' MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 2 SCALING_POLICY = 'standard' AUTO_SUSPEND = 60 INITIALLY_SUSPENDED = true, AUTO_RESUME = false;
-USE WAREHOUSE my_wh;
-SELECT * FROM raw_pos.truck_details; -- This will fail initially
-ALTER WAREHOUSE my_wh RESUME;
-ALTER WAREHOUSE my_wh SET AUTO_RESUME = TRUE;
-SELECT * FROM raw_pos.truck_details;
-ALTER WAREHOUSE my_wh SET warehouse_size = 'XLarge';
-SELECT o.truck_brand_name, COUNT(DISTINCT o.order_id) AS order_count, SUM(o.price) AS total_sales FROM analytics.orders_v o GROUP BY o.truck_brand_name ORDER BY total_sales DESC;
-ALTER WAREHOUSE my_wh SET warehouse_size = 'XSmall';
+-- assign Query Tag to Session 
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts","version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"sql", "vignette": "intro"}}';
 
--- Basic Transformation Techniques
-SELECT truck_build FROM raw_pos.truck_details;
-CREATE OR REPLACE TABLE raw_pos.truck_dev CLONE raw_pos.truck_details;
-SELECT TOP 15 * FROM raw_pos.truck_dev ORDER BY truck_id;
-ALTER TABLE raw_pos.truck_dev ADD COLUMN IF NOT EXISTS year NUMBER;
-ALTER TABLE raw_pos.truck_dev ADD COLUMN IF NOT EXISTS make VARCHAR(255);
-ALTER TABLE raw_pos.truck_dev ADD COLUMN IF NOT EXISTS model VARCHAR(255);
-UPDATE raw_pos.truck_dev SET year = truck_build:year::NUMBER, make = truck_build:make::VARCHAR, model = truck_build:model::VARCHAR;
-SELECT year, make, model FROM raw_pos.truck_dev;
-SELECT make, COUNT(*) AS count FROM raw_pos.truck_dev GROUP BY make ORDER BY make ASC;
-UPDATE raw_pos.truck_dev SET make = 'Ford' WHERE make = 'Ford_';
-SELECT truck_id, make FROM raw_pos.truck_dev ORDER BY truck_id;
-ALTER TABLE raw_pos.truck_details SWAP WITH raw_pos.truck_dev;
-SELECT make, COUNT(*) AS count FROM raw_pos.truck_details GROUP BY make ORDER BY count DESC;
-ALTER TABLE raw_pos.truck_details DROP COLUMN truck_build;
-DROP TABLE raw_pos.truck_details; -- "Accidental" drop
+/*--
+ • database, schema and warehouse creation
+--*/
 
--- Data Recovery with UNDROP
-DESCRIBE TABLE raw_pos.truck_details; -- This will error
-UNDROP TABLE raw_pos.truck_details;
-SELECT * from raw_pos.truck_details;
-DROP TABLE raw_pos.truck_dev; -- Drop the real dev table
+-- create tb_101 database
+CREATE OR REPLACE DATABASE tb_101;
 
+-- create raw_pos schema
+CREATE OR REPLACE SCHEMA tb_101.raw_pos;
 
-/*==================================================================================================*/
-/*==================================================================================================*/
-/*======================== MODULE 2: SIMPLE DATA PIPELINE ==========================================*/
-/*==================================================================================================*/
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "data_pipeline"}}';
-USE DATABASE tb_101;
-USE ROLE tb_data_engineer;
-USE WAREHOUSE tb_de_wh;
+-- create raw_customer schema
+CREATE OR REPLACE SCHEMA tb_101.raw_customer;
 
--- Ingestion from External stage
-CREATE OR REPLACE STAGE raw_pos.menu_stage COMMENT = 'Stage for menu data' URL = 's3://sfquickstarts/frostbyte_tastybytes/raw_pos/menu/' FILE_FORMAT = public.csv_ff;
-CREATE OR REPLACE TABLE raw_pos.menu_staging (menu_id NUMBER(19,0), menu_type_id NUMBER(38,0), menu_type VARCHAR(16777216), truck_brand_name VARCHAR(16777216), menu_item_id NUMBER(38,0), menu_item_name VARCHAR(16777216), item_category VARCHAR(16777216), item_subcategory VARCHAR(16777216), cost_of_goods_usd NUMBER(38,4), sale_price_usd NUMBER(38,4), menu_item_health_metrics_obj VARIANT);
-COPY INTO raw_pos.menu_staging FROM @raw_pos.menu_stage;
+-- create harmonized schema
+CREATE OR REPLACE SCHEMA tb_101.harmonized;
 
--- Semi-Structured data in Snowflake
-SELECT menu_item_health_metrics_obj FROM raw_pos.menu_staging;
-SELECT menu_item_name, CAST(menu_item_health_metrics_obj:menu_item_id AS INTEGER) AS menu_item_id, menu_item_health_metrics_obj:menu_item_health_metrics[0]:ingredients::ARRAY AS ingredients FROM raw_pos.menu_staging;
-SELECT i.value::STRING AS ingredient_name, m.menu_item_health_metrics_obj:menu_item_id::INTEGER AS menu_item_id FROM raw_pos.menu_staging m, LATERAL FLATTEN(INPUT => m.menu_item_health_metrics_obj:menu_item_health_metrics[0]:ingredients::ARRAY) i;
+-- create analytics schema
+CREATE OR REPLACE SCHEMA tb_101.analytics;
 
--- Dynamic Tables
-CREATE OR REPLACE DYNAMIC TABLE harmonized.ingredient LAG = '1 minute' WAREHOUSE = 'TB_DE_WH' AS SELECT ingredient_name, menu_ids FROM (SELECT DISTINCT i.value::STRING AS ingredient_name, ARRAY_AGG(m.menu_item_id) AS menu_ids FROM raw_pos.menu_staging m, LATERAL FLATTEN(INPUT => menu_item_health_metrics_obj:menu_item_health_metrics[0]:ingredients::ARRAY) i GROUP BY i.value::STRING);
-SELECT * FROM harmonized.ingredient;
-INSERT INTO raw_pos.menu_staging SELECT 10101, 15, 'Sandwiches', 'Better Off Bread', 157, 'Banh Mi', 'Main', 'Cold Option', 9.0, 12.0, PARSE_JSON('{"menu_item_health_metrics": [{"ingredients": ["French Baguette","Mayonnaise","Pickled Daikon","Cucumber","Pork Belly"],"is_dairy_free_flag": "N","is_gluten_free_flag": "N","is_healthy_flag": "Y","is_nut_free_flag": "Y"}],"menu_item_id": 157}');
-SELECT * FROM harmonized.ingredient WHERE ingredient_name IN ('French Baguette', 'Pickled Daikon'); -- May require waiting a minute
-CREATE OR REPLACE DYNAMIC TABLE harmonized.ingredient_to_menu_lookup LAG = '1 minute' WAREHOUSE = 'TB_DE_WH' AS SELECT i.ingredient_name, m.menu_item_health_metrics_obj:menu_item_id::INTEGER AS menu_item_id FROM raw_pos.menu_staging m, LATERAL FLATTEN(INPUT => m.menu_item_health_metrics_obj:menu_item_health_metrics[0]:ingredients) f JOIN harmonized.ingredient i ON f.value::STRING = i.ingredient_name;
-INSERT INTO raw_pos.order_header SELECT 459520441, 15, 1030, 101565, null, 200322900, TO_TIMESTAMP_NTZ('08:00:00', 'hh:mi:ss'), TO_TIMESTAMP_NTZ('14:00:00', 'hh:mi:ss'), null, TO_TIMESTAMP_NTZ('2022-01-27 08:21:08.000'), null, 'USD', 14.00, null, null, 14.00;
-INSERT INTO raw_pos.order_detail SELECT 904745311, 459520441, 157, null, 0, 2, 14.00, 28.00, null;
-CREATE OR REPLACE DYNAMIC TABLE harmonized.ingredient_usage_by_truck LAG = '2 minute' WAREHOUSE = 'TB_DE_WH' AS SELECT oh.truck_id, EXTRACT(YEAR FROM oh.order_ts) AS order_year, MONTH(oh.order_ts) AS order_month, i.ingredient_name, SUM(od.quantity) AS total_ingredients_used FROM raw_pos.order_detail od JOIN raw_pos.order_header oh ON od.order_id = oh.order_id JOIN harmonized.ingredient_to_menu_lookup iml ON od.menu_item_id = iml.menu_item_id JOIN harmonized.ingredient i ON iml.ingredient_name = i.ingredient_name JOIN raw_pos.location l ON l.location_id = oh.location_id WHERE l.country = 'United States' GROUP BY oh.truck_id, order_year, order_month, i.ingredient_name ORDER BY oh.truck_id, total_ingredients_used DESC;
-SELECT truck_id, ingredient_name, SUM(total_ingredients_used) AS total_ingredients_used FROM harmonized.ingredient_usage_by_truck WHERE order_month = 1 AND truck_id = 15 GROUP BY truck_id, ingredient_name ORDER BY total_ingredients_used DESC; -- May require waiting
+-- create governance schema
+CREATE OR REPLACE SCHEMA tb_101.governance;
 
+-- create raw_support
+CREATE OR REPLACE SCHEMA tb_101.raw_support;
 
-/*==================================================================================================*/
-/*==================================================================================================*/
-/*======================== MODULE 3: [DUMMY VIGNETTE] ==============================================*/
-/*==================================================================================================*/
--- ALTER SESSION SET query_tag = '{"vignette": "dummy_vignette"}';
--- USE ROLE ...
---
--- [Add SQL for Dummy Vignette Here]
---
+-- Create schema for the Semantic Layer
+CREATE OR REPLACE SCHEMA tb_101.semantic_layer
+COMMENT = 'Schema for the business-friendly semantic layer, optimized for analytical consumption.';
 
+-- create warehouses
+CREATE OR REPLACE WAREHOUSE tb_de_wh
+    WAREHOUSE_SIZE = 'large' -- Large for initial data load - scaled down to XSmall at end of this scripts
+    WAREHOUSE_TYPE = 'standard'
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+COMMENT = 'data engineering warehouse for tasty bytes';
 
-/*==================================================================================================*/
-/*==================================================================================================*/
-/*======================== MODULE 4: GOVERNANCE WITH HORIZON =======================================*/
-/*==================================================================================================*/
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "governance_with_horizon"}}';
-USE ROLE useradmin;
-USE DATABASE tb_101;
-USE WAREHOUSE tb_dev_wh;
+CREATE OR REPLACE WAREHOUSE tb_dev_wh
+    WAREHOUSE_SIZE = 'xsmall'
+    WAREHOUSE_TYPE = 'standard'
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+COMMENT = 'developer warehouse for tasty bytes';
 
--- Roles and Access Control
-CREATE OR REPLACE ROLE tb_data_steward COMMENT = 'Custom Role';
+-- create analyst warehouse
+CREATE OR REPLACE WAREHOUSE tb_analyst_wh
+    COMMENT = 'TastyBytes Analyst Warehouse'
+    WAREHOUSE_TYPE = 'standard'
+    WAREHOUSE_SIZE = 'large'
+    MIN_CLUSTER_COUNT = 1
+    MAX_CLUSTER_COUNT = 2
+    SCALING_POLICY = 'standard'
+    AUTO_SUSPEND = 60
+    INITIALLY_SUSPENDED = true,
+    AUTO_RESUME = true;
+
+-- Create a dedicated large warehouse for analytical workloads
+CREATE OR REPLACE WAREHOUSE tb_cortex_wh
+    WAREHOUSE_SIZE = 'LARGE'
+    WAREHOUSE_TYPE = 'STANDARD'
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+COMMENT = 'Dedicated large warehouse for Cortex Analyst and other analytical tools.';
+
+-- create roles
 USE ROLE securityadmin;
-GRANT OPERATE, USAGE ON WAREHOUSE tb_dev_wh TO ROLE tb_data_steward;
-GRANT USAGE ON DATABASE tb_101 TO ROLE tb_data_steward;
-GRANT USAGE ON ALL SCHEMAS IN DATABASE tb_101 TO ROLE tb_data_steward;
-GRANT SELECT ON ALL TABLES IN SCHEMA raw_customer TO ROLE tb_data_steward;
-GRANT ALL ON SCHEMA governance TO ROLE tb_data_steward;
-GRANT ALL ON ALL TABLES IN SCHEMA governance TO ROLE tb_data_steward;
-GRANT ROLE tb_data_steward TO USER USER;
 
--- Tag-Based Classification
+-- functional roles
+CREATE ROLE IF NOT EXISTS tb_admin
+    COMMENT = 'admin for tasty bytes';
+    
+CREATE ROLE IF NOT EXISTS tb_data_engineer
+    COMMENT = 'data engineer for tasty bytes';
+    
+CREATE ROLE IF NOT EXISTS tb_dev
+    COMMENT = 'developer for tasty bytes';
+    
+CREATE ROLE IF NOT EXISTS tb_analyst
+    COMMENT = 'analyst for tasty bytes';
+    
+-- role hierarchy
+GRANT ROLE tb_admin TO ROLE sysadmin;
+GRANT ROLE tb_data_engineer TO ROLE tb_admin;
+GRANT ROLE tb_dev TO ROLE tb_data_engineer;
+GRANT ROLE tb_analyst TO ROLE tb_data_engineer;
+
+-- privilege grants
 USE ROLE accountadmin;
-CREATE OR REPLACE TAG governance.pii;
-GRANT APPLY TAG ON ACCOUNT TO ROLE tb_data_steward;
-GRANT EXECUTE AUTO CLASSIFICATION ON SCHEMA raw_customer TO ROLE tb_data_steward;
-GRANT DATABASE ROLE SNOWFLAKE.CLASSIFICATION_ADMIN TO ROLE tb_data_steward;
-GRANT CREATE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE ON SCHEMA governance TO ROLE tb_data_steward;
-USE ROLE tb_data_steward;
-CREATE OR REPLACE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE governance.tb_classification_profile({'minimum_object_age_for_classification_days': 0, 'maximum_classification_validity_days': 30, 'auto_tag': true});
-CALL governance.tb_classification_profile!SET_TAG_MAP({'column_tag_map':[{'tag_name':'tb_101.governance.pii','tag_value':'pii','semantic_categories':['NAME', 'PHONE_NUMBER', 'POSTAL_CODE', 'DATE_OF_BIRTH', 'CITY', 'EMAIL']}]});
-CALL SYSTEM$CLASSIFY('tb_101.raw_customer.customer_loyalty', 'tb_101.governance.tb_classification_profile');
 
--- Masking Policies
-CREATE OR REPLACE MASKING POLICY governance.mask_string_pii AS (original_value STRING) RETURNS STRING -> CASE WHEN CURRENT_ROLE() NOT IN ('ACCOUNTADMIN', 'TB_ADMIN') THEN '****MASKED****' ELSE original_value END;
-CREATE OR REPLACE MASKING POLICY governance.mask_date_pii AS (original_value DATE) RETURNS DATE -> CASE WHEN CURRENT_ROLE() NOT IN ('ACCOUNTADMIN', 'TB_ADMIN') THEN DATE_TRUNC('year', original_value) ELSE original_value END;
-ALTER TAG governance.pii SET MASKING POLICY governance.mask_string_pii, MASKING POLICY governance.mask_date_pii;
+GRANT IMPORTED PRIVILEGES ON DATABASE snowflake TO ROLE tb_data_engineer;
 
--- Row Access Policies
-CREATE OR REPLACE TABLE governance.row_policy_map (role STRING, country_permission STRING);
-INSERT INTO governance.row_policy_map VALUES('tb_data_engineer', 'United States');
-CREATE OR REPLACE ROW ACCESS POLICY governance.customer_loyalty_policy AS (country STRING) RETURNS BOOLEAN -> CURRENT_ROLE() IN ('ACCOUNTADMIN', 'SYSADMIN') OR EXISTS (SELECT 1 FROM governance.row_policy_map rp WHERE UPPER(rp.role) = CURRENT_ROLE() AND rp.country_permission = country);
-ALTER TABLE raw_customer.customer_loyalty ADD ROW ACCESS POLICY governance.customer_loyalty_policy ON (country);
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE tb_admin;
 
--- Data Metric Functions
-CREATE OR REPLACE DATA METRIC FUNCTION governance.invalid_order_total_count(order_prices_t table(order_total NUMBER, unit_price NUMBER, quantity INTEGER)) RETURNS NUMBER AS 'SELECT COUNT(*) FROM order_prices_t WHERE order_total != unit_price * quantity';
-INSERT INTO raw_pos.order_detail SELECT 904745312, 459520442, 52, null, 0, 2, 5.0, 5.0, null;
-ALTER TABLE raw_pos.order_detail SET DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES';
-ALTER TABLE raw_pos.order_detail ADD DATA METRIC FUNCTION governance.invalid_order_total_count ON (price, unit_price, quantity);
+USE ROLE securityadmin;
 
--- Trust Center
+GRANT USAGE ON DATABASE tb_101 TO ROLE tb_admin;
+GRANT USAGE ON DATABASE tb_101 TO ROLE tb_data_engineer;
+GRANT USAGE ON DATABASE tb_101 TO ROLE tb_dev;
+
+GRANT USAGE ON ALL SCHEMAS IN DATABASE tb_101 TO ROLE tb_admin;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE tb_101 TO ROLE tb_data_engineer;
+GRANT USAGE ON ALL SCHEMAS IN DATABASE tb_101 TO ROLE tb_dev;
+
+GRANT ALL ON SCHEMA tb_101.raw_support TO ROLE tb_admin;
+GRANT ALL ON SCHEMA tb_101.raw_support TO ROLE tb_data_engineer;
+GRANT ALL ON SCHEMA tb_101.raw_support TO ROLE tb_dev;
+
+GRANT ALL ON SCHEMA tb_101.raw_pos TO ROLE tb_admin;
+GRANT ALL ON SCHEMA tb_101.raw_pos TO ROLE tb_data_engineer;
+GRANT ALL ON SCHEMA tb_101.raw_pos TO ROLE tb_dev;
+
+GRANT ALL ON SCHEMA tb_101.harmonized TO ROLE tb_admin;
+GRANT ALL ON SCHEMA tb_101.harmonized TO ROLE tb_data_engineer;
+GRANT ALL ON SCHEMA tb_101.harmonized TO ROLE tb_dev;
+
+GRANT ALL ON SCHEMA tb_101.analytics TO ROLE tb_admin;
+GRANT ALL ON SCHEMA tb_101.analytics TO ROLE tb_data_engineer;
+GRANT ALL ON SCHEMA tb_101.analytics TO ROLE tb_dev;
+
+GRANT ALL ON SCHEMA tb_101.governance TO ROLE tb_admin;
+GRANT ALL ON SCHEMA tb_101.governance TO ROLE tb_data_engineer;
+GRANT ALL ON SCHEMA tb_101.governance TO ROLE tb_dev;
+
+GRANT ALL ON SCHEMA tb_101.semantic_layer TO ROLE tb_admin;
+GRANT ALL ON SCHEMA tb_101.semantic_layer TO ROLE tb_data_engineer;
+GRANT ALL ON SCHEMA tb_101.semantic_layer TO ROLE tb_dev;
+
+-- warehouse grants
+GRANT OWNERSHIP ON WAREHOUSE tb_de_wh TO ROLE tb_admin COPY CURRENT GRANTS;
+GRANT ALL ON WAREHOUSE tb_de_wh TO ROLE tb_admin;
+GRANT ALL ON WAREHOUSE tb_de_wh TO ROLE tb_data_engineer;
+
+GRANT ALL ON WAREHOUSE tb_dev_wh TO ROLE tb_admin;
+GRANT ALL ON WAREHOUSE tb_dev_wh TO ROLE tb_data_engineer;
+GRANT ALL ON WAREHOUSE tb_dev_wh TO ROLE tb_dev;
+
+GRANT ALL ON WAREHOUSE tb_analyst_wh TO ROLE tb_admin;
+GRANT ALL ON WAREHOUSE tb_analyst_wh TO ROLE tb_data_engineer;
+GRANT ALL ON WAREHOUSE tb_analyst_wh TO ROLE tb_dev;
+
+GRANT ALL ON WAREHOUSE tb_cortex_wh TO ROLE tb_admin;
+GRANT ALL ON WAREHOUSE tb_cortex_wh TO ROLE tb_data_engineer;
+GRANT ALL ON WAREHOUSE tb_cortex_wh TO ROLE tb_dev;
+
+-- future grants
+GRANT ALL ON FUTURE TABLES IN SCHEMA tb_101.raw_pos TO ROLE tb_admin;
+GRANT ALL ON FUTURE TABLES IN SCHEMA tb_101.raw_pos TO ROLE tb_data_engineer;
+GRANT ALL ON FUTURE TABLES IN SCHEMA tb_101.raw_pos TO ROLE tb_dev;
+
+GRANT ALL ON FUTURE TABLES IN SCHEMA tb_101.raw_customer TO ROLE tb_admin;
+GRANT ALL ON FUTURE TABLES IN SCHEMA tb_101.raw_customer TO ROLE tb_data_engineer;
+GRANT ALL ON FUTURE TABLES IN SCHEMA tb_101.raw_customer TO ROLE tb_dev;
+
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.harmonized TO ROLE tb_admin;
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.harmonized TO ROLE tb_data_engineer;
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.harmonized TO ROLE tb_dev;
+
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.analytics TO ROLE tb_admin;
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.analytics TO ROLE tb_data_engineer;
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.analytics TO ROLE tb_dev;
+
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.governance TO ROLE tb_admin;
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.governance TO ROLE tb_data_engineer;
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.governance TO ROLE tb_dev;
+
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.semantic_layer TO ROLE tb_admin;
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.semantic_layer TO ROLE tb_data_engineer;
+GRANT ALL ON FUTURE VIEWS IN SCHEMA tb_101.semantic_layer TO ROLE tb_dev;
+
+-- Apply Masking Policy Grants
 USE ROLE accountadmin;
-GRANT APPLICATION ROLE SNOWFLAKE.TRUST_CENTER_ADMIN TO ROLE tb_admin;
+GRANT APPLY MASKING POLICY ON ACCOUNT TO ROLE tb_admin;
+GRANT APPLY MASKING POLICY ON ACCOUNT TO ROLE tb_data_engineer;
+  
+-- Grants for tb_admin
+GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE tb_admin;
 
-/*==================================================================================================*/
-/*==================================================================================================*/
-/*======================== MODULE 5: APPS & COLLABORATION ==========================================*/
-/*==================================================================================================*/
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "apps_and_collaboration"}}';
-USE ROLE tb_analyst;
+-- Grants for tb_analyst
+GRANT ALL ON SCHEMA harmonized TO ROLE tb_analyst;
+GRANT ALL ON SCHEMA analytics TO ROLE tb_analyst;
+GRANT OPERATE, USAGE ON WAREHOUSE tb_analyst_wh TO ROLE tb_analyst;
+GRANT ROLE tb_analyst TO USER USER;
+
+-- Grants for cortex search service
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE TB_DEV;
+GRANT USAGE ON SCHEMA TB_101.HARMONIZED TO ROLE TB_DEV;
+GRANT USAGE ON WAREHOUSE TB_DE_WH TO ROLE TB_DEV;
+
+
+-- raw_pos table build
+USE ROLE sysadmin;
 USE WAREHOUSE tb_de_wh;
 
--- Integrating Weather Source Data
-CREATE OR REPLACE VIEW harmonized.daily_weather_v COMMENT = 'Weather Source Daily History filtered to Tasty Bytes supported Cities' AS SELECT hd.*, TO_VARCHAR(hd.date_valid_std, 'YYYY-MM') AS yyyy_mm, pc.city_name AS city, c.country AS country_desc FROM zts_weathersource.onpoint_id.history_day hd JOIN zts_weathersource.onpoint_id.postal_codes pc ON pc.postal_code = hd.postal_code AND pc.country = hd.country JOIN raw_pos.country c ON c.iso_country = hd.country AND c.city = hd.city_name;
-CREATE OR REPLACE VIEW analytics.daily_sales_by_weather_v COMMENT = 'Daily Weather Metrics and Orders Data' AS WITH daily_orders_aggregated AS (SELECT DATE(o.order_ts) AS order_date, o.primary_city, o.country, o.menu_item_name, SUM(o.price) AS total_sales FROM harmonized.orders_v o GROUP BY ALL) SELECT dw.date_valid_std AS date, dw.city_name, dw.country_desc, ZEROIFNULL(doa.total_sales) AS daily_sales, doa.menu_item_name, ROUND(dw.avg_temperature_air_2m_f, 2) AS avg_temp_fahrenheit, ROUND(dw.tot_precipitation_in, 2) AS avg_precipitation_inches, ROUND(dw.tot_snowdepth_in, 2) AS avg_snowdepth_inches, dw.max_wind_speed_100m_mph AS max_wind_speed_mph FROM harmonized.daily_weather_v dw LEFT JOIN daily_orders_aggregated doa ON dw.date_valid_std = doa.order_date AND dw.city_name = doa.primary_city AND dw.country_desc = doa.country ORDER BY date ASC;
+/*--
+ • file format and stage creation
+--*/
 
--- Explore Safegraph POI data
-CREATE OR REPLACE VIEW harmonized.tastybytes_poi_v AS SELECT l.location_id, sg.postal_code, sg.country, sg.city, sg.iso_country_code, sg.location_name, sg.top_category, sg.category_tags, sg.includes_parking_lot, sg.open_hours FROM raw_pos.location l JOIN zts_safegraph.public.frostbyte_tb_safegraph_s sg ON l.location_id = sg.location_id AND l.iso_country_code = sg.iso_country_code;
-WITH TopWindiestLocations AS (SELECT TOP 3 p.location_id FROM harmonized.tastybytes_poi_v AS p JOIN zts_weathersource.onpoint_id.history_day AS hd ON p.postal_code = hd.postal_code WHERE p.country = 'United States' AND YEAR(hd.date_valid_std) = 2022 GROUP BY p.location_id, p.city, p.postal_code ORDER BY AVG(hd.max_wind_speed_100m_mph) DESC) SELECT o.truck_brand_name, ROUND(AVG(CASE WHEN hd.max_wind_speed_100m_mph <= 20 THEN o.order_total END), 2) AS avg_sales_calm_days, ZEROIFNULL(ROUND(AVG(CASE WHEN hd.max_wind_speed_100m_mph > 20 THEN o.order_total END), 2)) AS avg_sales_windy_days FROM analytics.orders_v AS o JOIN zts_weathersource.onpoint_id.history_day AS hd ON o.primary_city = hd.city_name AND DATE(o.order_ts) = hd.date_valid_std WHERE o.location_id IN (SELECT location_id FROM TopWindiestLocations) GROUP BY o.truck_brand_name ORDER BY o.truck_brand_name;
-    
-/*==================================================================================================*/
-/*==================================================================================================*/
-/*======================== COMPLETE RESET SCRIPT ===================================================*/
-/*==================================================================================================*/
-USE ROLE accountadmin;
+CREATE OR REPLACE FILE FORMAT tb_101.public.csv_ff 
+type = 'csv';
 
--- Module 5 Reset
-DROP VIEW IF EXISTS harmonized.daily_weather_v;
-DROP VIEW IF EXISTS analytics.daily_sales_by_weather_v;
-DROP VIEW IF EXISTS harmonized.tastybytes_poi_v;
+CREATE OR REPLACE STAGE tb_101.public.s3load
+COMMENT = 'Quickstarts S3 Stage Connection'
+url = 's3://sfquickstarts/frostbyte_tastybytes/'
+file_format = tb_101.public.csv_ff;
 
--- Module 4 Reset
-DROP ROLE IF EXISTS tb_data_steward;
-ALTER TAG IF EXISTS governance.pii UNSET MASKING POLICY governance.mask_string_pii, MASKING POLICY governance.mask_date_pii;
-DROP MASKING POLICY IF EXISTS governance.mask_string_pii;
-DROP MASKING POLICY IF EXISTS governance.mask_date_pii;
-ALTER SCHEMA IF EXISTS raw_customer UNSET CLASSIFICATION_PROFILE;
-DROP SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE IF EXISTS tb_classification_profile;
-ALTER TABLE IF EXISTS raw_customer.customer_loyalty DROP ALL ROW ACCESS POLICIES;
-DROP ROW ACCESS POLICY IF EXISTS governance.customer_loyalty_policy;
-DELETE FROM raw_pos.order_detail WHERE order_detail_id = 904745312;
-ALTER TABLE IF EXISTS raw_pos.order_detail DROP DATA METRIC FUNCTION governance.invalid_order_total_count ON (price, unit_price, quantity);
-DROP FUNCTION IF EXISTS governance.invalid_order_total_count(TABLE(NUMBER, NUMBER, INTEGER));
-ALTER TABLE IF EXISTS raw_pos.order_detail UNSET DATA_METRIC_SCHEDULE;
-ALTER TABLE IF EXISTS raw_customer.customer_loyalty MODIFY COLUMN first_name UNSET TAG governance.pii, SNOWFLAKE.CORE.PRIVACY_CATEGORY, SNOWFLAKE.CORE.SEMANTIC_CATEGORY, COLUMN last_name UNSET TAG governance.pii, SNOWFLAKE.CORE.PRIVACY_CATEGORY, SNOWFLAKE.CORE.SEMANTIC_CATEGORY, COLUMN e_mail UNSET TAG governance.pii, SNOWFLAKE.CORE.PRIVACY_CATEGORY, SNOWFLAKE.CORE.SEMANTIC_CATEGORY, COLUMN phone_number UNSET TAG governance.pii, SNOWFLAKE.CORE.PRIVACY_CATEGORY, SNOWFLAKE.CORE.SEMANTIC_CATEGORY, COLUMN postal_code UNSET TAG governance.pii, SNOWFLAKE.CORE.PRIVACY_CATEGORY, SNOWFLAKE.CORE.SEMANTIC_CATEGORY, COLUMN marital_status UNSET TAG governance.pii, SNOWFLAKE.CORE.PRIVACY_CATEGORY, SNOWFLAKE.CORE.SEMANTIC_CATEGORY, COLUMN gender UNSET TAG governance.pii, SNOWFLAKE.CORE.PRIVACY_CATEGORY, SNOWFLAKE.CORE.SEMANTIC_CATEGORY, COLUMN birthday_date UNSET TAG governance.pii, SNOWFLAKE.CORE.PRIVACY_CATEGORY, SNOWFLAKE.CORE.SEMANTIC_CATEGORY, COLUMN country UNSET TAG governance.pii, SNOWFLAKE.CORE.PRIVACY_CATEGORY, SNOWFLAKE.CORE.SEMANTIC_CATEGORY, COLUMN city UNSET TAG governance.pii, SNOWFLAKE.CORE.PRIVACY_CATEGORY, SNOWFLAKE.CORE.SEMANTIC_CATEGORY;
-DROP TAG IF EXISTS governance.pii;
+CREATE OR REPLACE STAGE tb_101.public.truck_reviews_s3load
+COMMENT = 'Truck Reviews Stage'
+url = 's3://sfquickstarts/tastybytes-voc/'
+file_format = tb_101.public.csv_ff;
 
--- Module 2 Reset
-DROP TABLE IF EXISTS raw_pos.menu_staging;
-DROP TABLE IF EXISTS harmonized.ingredient;
-DROP TABLE IF EXISTS harmonized.ingredient_to_menu_lookup;
-DROP TABLE IF EXISTS harmonized.ingredient_usage_by_truck;
-DELETE FROM raw_pos.order_detail WHERE order_detail_id = 904745311;
-DELETE FROM raw_pos.order_header WHERE order_id = 459520441;
+-- This stage will be used to upload your YAML files.
+CREATE OR REPLACE STAGE tb_101.semantic_layer.semantic_model_stage
+  DIRECTORY = (ENABLE = TRUE)
+  COMMENT = 'Internal stage for uploading Cortex Analyst semantic model YAML files.';
 
--- Module 1 Reset
-DROP WAREHOUSE IF EXISTS my_wh;
--- Reset truck details table to its original state before transformation
-CREATE OR REPLACE TABLE raw_pos.truck_details AS SELECT * EXCLUDE (year, make, model) FROM raw_pos.truck;
+/*--
+ raw zone table build 
+--*/
 
--- Unset Query Tag
-ALTER SESSION UNSET query_tag;
+-- country table build
+CREATE OR REPLACE TABLE tb_101.raw_pos.country
+(
+    country_id NUMBER(18,0),
+    country VARCHAR(16777216),
+    iso_currency VARCHAR(3),
+    iso_country VARCHAR(2),
+    city_id NUMBER(19,0),
+    city VARCHAR(16777216),
+    city_population VARCHAR(16777216)
+);
+
+-- franchise table build
+CREATE OR REPLACE TABLE tb_101.raw_pos.franchise 
+(
+    franchise_id NUMBER(38,0),
+    first_name VARCHAR(16777216),
+    last_name VARCHAR(16777216),
+    city VARCHAR(16777216),
+    country VARCHAR(16777216),
+    e_mail VARCHAR(16777216),
+    phone_number VARCHAR(16777216) 
+);
+
+-- location table build
+CREATE OR REPLACE TABLE tb_101.raw_pos.location
+(
+    location_id NUMBER(19,0),
+    placekey VARCHAR(16777216),
+    location VARCHAR(16777216),
+    city VARCHAR(16777216),
+    region VARCHAR(16777216),
+    iso_country_code VARCHAR(16777216),
+    country VARCHAR(16777216)
+);
+
+-- menu table build
+CREATE OR REPLACE TABLE tb_101.raw_pos.menu
+(
+    menu_id NUMBER(19,0),
+    menu_type_id NUMBER(38,0),
+    menu_type VARCHAR(16777216),
+    truck_brand_name VARCHAR(16777216),
+    menu_item_id NUMBER(38,0),
+    menu_item_name VARCHAR(16777216),
+    item_category VARCHAR(16777216),
+    item_subcategory VARCHAR(16777216),
+    cost_of_goods_usd NUMBER(38,4),
+    sale_price_usd NUMBER(38,4),
+    menu_item_health_metrics_obj VARIANT
+);
+
+-- truck table build 
+CREATE OR REPLACE TABLE tb_101.raw_pos.truck
+(
+    truck_id NUMBER(38,0),
+    menu_type_id NUMBER(38,0),
+    primary_city VARCHAR(16777216),
+    region VARCHAR(16777216),
+    iso_region VARCHAR(16777216),
+    country VARCHAR(16777216),
+    iso_country_code VARCHAR(16777216),
+    franchise_flag NUMBER(38,0),
+    year NUMBER(38,0),
+    make VARCHAR(16777216),
+    model VARCHAR(16777216),
+    ev_flag NUMBER(38,0),
+    franchise_id NUMBER(38,0),
+    truck_opening_date DATE
+);
+
+-- order_header table build
+CREATE OR REPLACE TABLE tb_101.raw_pos.order_header
+(
+    order_id NUMBER(38,0),
+    truck_id NUMBER(38,0),
+    location_id FLOAT,
+    customer_id NUMBER(38,0),
+    discount_id VARCHAR(16777216),
+    shift_id NUMBER(38,0),
+    shift_start_time TIME(9),
+    shift_end_time TIME(9),
+    order_channel VARCHAR(16777216),
+    order_ts TIMESTAMP_NTZ(9),
+    served_ts VARCHAR(16777216),
+    order_currency VARCHAR(3),
+    order_amount NUMBER(38,4),
+    order_tax_amount VARCHAR(16777216),
+    order_discount_amount VARCHAR(16777216),
+    order_total NUMBER(38,4)
+);
+
+-- order_detail table build
+CREATE OR REPLACE TABLE tb_101.raw_pos.order_detail 
+(
+    order_detail_id NUMBER(38,0),
+    order_id NUMBER(38,0),
+    menu_item_id NUMBER(38,0),
+    discount_id VARCHAR(16777216),
+    line_number NUMBER(38,0),
+    quantity NUMBER(5,0),
+    unit_price NUMBER(38,4),
+    price NUMBER(38,4),
+    order_item_discount_amount VARCHAR(16777216)
+);
+
+-- customer loyalty table build
+CREATE OR REPLACE TABLE tb_101.raw_customer.customer_loyalty
+(
+    customer_id NUMBER(38,0),
+    first_name VARCHAR(16777216),
+    last_name VARCHAR(16777216),
+    city VARCHAR(16777216),
+    country VARCHAR(16777216),
+    postal_code VARCHAR(16777216),
+    preferred_language VARCHAR(16777216),
+    gender VARCHAR(16777216),
+    favourite_brand VARCHAR(16777216),
+    marital_status VARCHAR(16777216),
+    children_count VARCHAR(16777216),
+    sign_up_date DATE,
+    birthday_date DATE,
+    e_mail VARCHAR(16777216),
+    phone_number VARCHAR(16777216)
+);
+
+/*--
+ raw_suport zone table build 
+--*/
+CREATE OR REPLACE TABLE tb_101.raw_support.truck_reviews
+(
+    order_id NUMBER(38,0),
+    language VARCHAR(16777216),
+    source VARCHAR(16777216),
+    review VARCHAR(16777216),
+    review_id NUMBER(38,0)  
+);
+
+/*--
+ • harmonized view creation
+--*/
+
+-- orders_v view
+CREATE OR REPLACE VIEW tb_101.harmonized.orders_v
+    AS
+SELECT 
+    oh.order_id,
+    oh.truck_id,
+    oh.order_ts,
+    od.order_detail_id,
+    od.line_number,
+    m.truck_brand_name,
+    m.menu_type,
+    t.primary_city,
+    t.region,
+    t.country,
+    t.franchise_flag,
+    t.franchise_id,
+    f.first_name AS franchisee_first_name,
+    f.last_name AS franchisee_last_name,
+    l.location_id,
+    cl.customer_id,
+    cl.first_name,
+    cl.last_name,
+    cl.e_mail,
+    cl.phone_number,
+    cl.children_count,
+    cl.gender,
+    cl.marital_status,
+    od.menu_item_id,
+    m.menu_item_name,
+    od.quantity,
+    od.unit_price,
+    od.price,
+    oh.order_amount,
+    oh.order_tax_amount,
+    oh.order_discount_amount,
+    oh.order_total
+FROM tb_101.raw_pos.order_detail od
+JOIN tb_101.raw_pos.order_header oh
+    ON od.order_id = oh.order_id
+JOIN tb_101.raw_pos.truck t
+    ON oh.truck_id = t.truck_id
+JOIN tb_101.raw_pos.menu m
+    ON od.menu_item_id = m.menu_item_id
+JOIN tb_101.raw_pos.franchise f
+    ON t.franchise_id = f.franchise_id
+JOIN tb_101.raw_pos.location l
+    ON oh.location_id = l.location_id
+LEFT JOIN tb_101.raw_customer.customer_loyalty cl
+    ON oh.customer_id = cl.customer_id;
+
+-- loyalty_metrics_v view
+CREATE OR REPLACE VIEW tb_101.harmonized.customer_loyalty_metrics_v
+    AS
+SELECT 
+    cl.customer_id,
+    cl.city,
+    cl.country,
+    cl.first_name,
+    cl.last_name,
+    cl.phone_number,
+    cl.e_mail,
+    SUM(oh.order_total) AS total_sales,
+    ARRAY_AGG(DISTINCT oh.location_id) AS visited_location_ids_array
+FROM tb_101.raw_customer.customer_loyalty cl
+JOIN tb_101.raw_pos.order_header oh
+ON cl.customer_id = oh.customer_id
+GROUP BY cl.customer_id, cl.city, cl.country, cl.first_name,
+cl.last_name, cl.phone_number, cl.e_mail;
+
+-- truck_reviews_v view
+  CREATE OR REPLACE VIEW tb_101.harmonized.truck_reviews_v
+      AS
+  SELECT DISTINCT
+      r.review_id,
+      r.order_id,
+      oh.truck_id,
+      r.language,
+      source,
+      r.review,
+      t.primary_city,
+      oh.customer_id,
+      TO_DATE(oh.order_ts) AS date,
+      m.truck_brand_name
+  FROM raw_support.truck_reviews r
+  JOIN raw_pos.order_header oh
+      ON oh.order_id = r.order_id
+  JOIN raw_pos.truck t
+      ON t.truck_id = oh.truck_id
+  JOIN raw_pos.menu m
+      ON m.menu_type_id = t.menu_type_id;
+
+/*--
+ • analytics view creation
+--*/
+
+-- orders_v view
+CREATE OR REPLACE VIEW tb_101.analytics.orders_v
+COMMENT = 'Tasty Bytes Order Detail View'
+    AS
+SELECT DATE(o.order_ts) AS date, * FROM tb_101.harmonized.orders_v o;
+
+-- customer_loyalty_metrics_v view
+CREATE OR REPLACE VIEW tb_101.analytics.customer_loyalty_metrics_v
+COMMENT = 'Tasty Bytes Customer Loyalty Member Metrics View'
+    AS
+SELECT * FROM tb_101.harmonized.customer_loyalty_metrics_v;
+
+-- truck_reviews_v view
+CREATE OR REPLACE VIEW tb_101.analytics.truck_reviews_v 
+    AS
+SELECT * FROM harmonized.truck_reviews_v;
+GRANT USAGE ON SCHEMA raw_support to ROLE tb_admin;
+GRANT SELECT ON TABLE raw_support.truck_reviews TO ROLE tb_admin;
+
+-- view for streamlit app
+CREATE OR REPLACE VIEW tb_101.analytics.japan_menu_item_sales_feb_2022
+AS
+SELECT
+    DISTINCT menu_item_name,
+    date,
+    order_total
+FROM analytics.orders_v
+WHERE country = 'Japan'
+    AND YEAR(date) = '2022'
+    AND MONTH(date) = '2'
+GROUP BY ALL
+ORDER BY date;
+
+-- Orders view for the Semantic Layer
+CREATE OR REPLACE VIEW tb_101.semantic_layer.orders_v
+AS
+SELECT * FROM (
+    SELECT
+        order_id::VARCHAR AS order_id,
+        truck_id::VARCHAR AS truck_id,
+        order_detail_id::VARCHAR AS order_detail_id,
+        truck_brand_name,
+        menu_type,
+        primary_city,
+        region,
+        country,
+        franchise_flag,
+        franchise_id::VARCHAR AS franchise_id,
+        location_id::VARCHAR AS location_id,
+        customer_id::VARCHAR AS customer_id,
+        gender,
+        marital_status,
+        menu_item_id::VARCHAR AS menu_item_id,
+        menu_item_name,
+        quantity,
+        order_total
+    FROM tb_101.harmonized.orders_v
+)
+LIMIT 10000;
+
+-- Customer Loyalty Metrics view for the Semantic Layer
+CREATE OR REPLACE VIEW tb_101.semantic_layer.customer_loyalty_metrics_v
+AS
+SELECT * FROM (
+    SELECT
+        cl.customer_id::VARCHAR AS customer_id,
+        cl.city,
+        cl.country,
+        SUM(o.order_total) AS total_sales,
+        ARRAY_AGG(DISTINCT o.location_id::VARCHAR) WITHIN GROUP (ORDER BY o.location_id::VARCHAR) AS visited_location_ids_array
+    FROM tb_101.harmonized.customer_loyalty_metrics_v AS cl
+    JOIN tb_101.harmonized.orders_v AS o
+        ON cl.customer_id = o.customer_id
+    GROUP BY
+        cl.customer_id,
+        cl.city,
+        cl.country
+    ORDER BY
+        cl.customer_id
+)
+LIMIT 10000;
+
+/*--
+ raw zone table load 
+--*/
+
+-- truck_reviews table load
+COPY INTO tb_101.raw_support.truck_reviews
+FROM @tb_101.public.truck_reviews_s3load/raw_support/truck_reviews/;
+
+-- country table load
+COPY INTO tb_101.raw_pos.country
+FROM @tb_101.public.s3load/raw_pos/country/;
+
+-- franchise table load
+COPY INTO tb_101.raw_pos.franchise
+FROM @tb_101.public.s3load/raw_pos/franchise/;
+
+-- location table load
+COPY INTO tb_101.raw_pos.location
+FROM @tb_101.public.s3load/raw_pos/location/;
+
+-- menu table load
+COPY INTO tb_101.raw_pos.menu
+FROM @tb_101.public.s3load/raw_pos/menu/;
+
+-- truck table load
+COPY INTO tb_101.raw_pos.truck
+FROM @tb_101.public.s3load/raw_pos/truck/;
+
+-- customer_loyalty table load
+COPY INTO tb_101.raw_customer.customer_loyalty
+FROM @tb_101.public.s3load/raw_customer/customer_loyalty/;
+
+-- order_header table load
+COPY INTO tb_101.raw_pos.order_header
+FROM @tb_101.public.s3load/raw_pos/order_header/;
 ```
 
 ### Step 4 - Click Next --\>
