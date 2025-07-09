@@ -295,4 +295,4 @@ By following this quickstart, you learned how to:
 - Learn more about using [MS 365](https://www.microsoft.com/en-us/microsoft-365/products-apps-services)
 - Learn more about using [MS Copilot](https://www.microsoft.com/en-us/microsoft-copilot/organizations)
 - The official [Teams 365 Copilot Cortex App Docs]()
-- [Demo Video](https://mpupstorageprod.blob.core.windows.net/assets/Copilot-Partner-Demo-Snowflake-v2505.mp4?skoid=2d5ceda0-b739-41e6-882d-6b378a02b9b4&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2025-06-27T16%3A58%3A59Z&ske=2025-06-27T17%3A58%3A59Z&sks=b&skv=2024-11-04&sv=2024-11-04&se=2025-06-27T17%3A58%3A59Z&sr=c&sp=r&sig=o%2B6FRG96qlhrsFm2TIucaIeSy2cG1OTrIDJylrde%2F0I%3D)
+- [Demo Video](https://cloudpartners.transform.microsoft.com/download?assetname=assets%2FCopilot-Partner-Demo-Snowflake-v2505.mp4)
