@@ -9,14 +9,14 @@ tags: Getting Started, Tasty Bytes, Zero to Snowflake, Governance, Horizon, Data
 
 # Tasty Bytes - Zero to Snowflake
 
-## Zero to Snowflake
+## Welcome to the Course!
 
 Duration: 1
 <!-- \<img src = "assets/zts\_complete\_header.png"\> -->
 
 ### Overview
 
-Welcome to the complete Powered by Tasty Bytes - Zero to Snowflake Quickstart! This guide is a consolidated journey through key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, then see how you can experiment with LLMs using the Cortex Playground to compare different models for summarizing text, use AISQL Functions to instantly analyze customer review sentiment with a simple SQL command, and leverage the Snowflake Copilot to accelerate query writing by asking for the SQL you need in plain English. Finally, you will learn to secure your data with powerful governance controls and enrich your analysis through seamless data collaboration.
+Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journey through key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, then see how you can experiment with LLMs using the Cortex Playground to compare different models for summarizing text, use AISQL Functions to instantly analyze customer review sentiment with a simple SQL command, and leverage the Snowflake Copilot to accelerate query writing by asking for the SQL you need in plain English. Finally, you will learn to secure your data with powerful governance controls and enrich your analysis through seamless data collaboration.
 
 ### Prerequisites
 
@@ -64,20 +64,21 @@ Now that you have your worksheet, it's time to add the setup SQL and execute it.
 2. **Paste into your Worksheet:** Return to your Zero To Snowflake Setup worksheet in Snowflake and paste the entire script into the editor.  
 3. **Run the Script:** To execute all the commands in the worksheet sequentially, click the **"Run All"** button located at the top-right of the worksheet editor. This will perform all the necessary setup actions, such as creating roles, databases, and warehouses that you will need for the upcoming vignettes.
 
-### **A Look Ahead: The Process for Each Vignette**
+### **Looking Ahead**
 
 The process you just completed for creating a new worksheet is the exact same workflow you will use for every subsequent vignette in this course.
 
 For each new vignette, you will:
 
 1. Create a **new** worksheet.  
-2. Give it a descriptive name (e.g., Vignette 1 \- Loading Data).  
+2. Give it a descriptive name (e.g., Vignette 1 \- Getting Started with Snowflake).  
 3. Copy and paste the SQL script for that specific vignette.  
 4. Click **"Run All"** to execute it.
 
 This practice will keep your work for each section self-contained and organized.
 
 <!-- end list -->
+### Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
 USE ROLE sysadmin;
@@ -757,7 +758,7 @@ Within this Vignette, we will learn about core Snowflake concepts by exploring V
 - A Resource Monitor
 - A Budget
 
-Copy the entire SQL block below and paste it into your worksheet.
+### Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
 /***************************************************************************************************       
@@ -1272,8 +1273,12 @@ Now that we have a warehouse, we must set it as the active warehouse for our ses
 USE WAREHOUSE my_wh;
 ```
 
-If you try to run a query now, it will fail, because the warehouse is suspended. Let's resume it and set it to auto-resume in the future.
+If you try to run the query below, it will fail, because the warehouse is suspended. 
+```sql
+SELECT * FROM raw_pos.truck_details;
+```
 
+Let's resume it and set it to auto-resume in the future.
 ```sql
 ALTER WAREHOUSE my_wh RESUME;
 ALTER WAREHOUSE my_wh SET AUTO_RESUME = TRUE;
@@ -1330,6 +1335,7 @@ FROM analytics.orders_v o
 GROUP BY o.truck_brand_name
 ORDER BY total_sales DESC;
 ```
+<img src="assets/vignette-1/query_result_cache.png">
 
 > **Query Result Cache**: Results are retained for any query for 24 hours. Hitting the result cache requires almost no compute resources, making it ideal for frequently run reports or dashboards. The cache resides in the Cloud Services Layer, making it globally accessible to all users and warehouses in the account. For more information, please visit the [documentation on using persisted query results](https://docs.snowflake.com/en/user-guide/querying-persisted-results).
 
@@ -1516,31 +1522,43 @@ While Resource Monitors track warehouse usage, Budgets provide a more flexible a
 
 ### Step 1 - Creating a Budget via SQL
 
-Let's first create the budget object.
+Let's first create the budget object in SQL.
 
 ```sql
 CREATE OR REPLACE SNOWFLAKE.CORE.BUDGET my_budget()
     COMMENT = 'My Tasty Bytes Budget';
 ```
 
-### Step 2 - Configuring the Budget in Snowsight
+### Step 2 - Budget Page in Snowsight
+Let's take a look at the Budget Page on Snowsight.
+
+Navigate to **Admin** » **Cost Management** » **Budgets**.
+<img src="assets/vignette-1/budget_page.png">
+
+Key:
+1. Warehouse Context
+2. Cost Management Navigation
+3. Time Period Filter
+4. Key Metrics Summary
+5. Spend and Forecast Trend Chart
+6. Budget Details
+
+### Step 3 - Configuring the Budget in Snowsight
 
 Configuring a budget is done through the Snowsight UI.
 
-1.  Make sure your role is set to `ACCOUNTADMIN`.
-2.  Navigate to **Admin** » **Cost Management** » **Budgets**.
-3.  Click on the **MY\_BUDGET** budget we created.
-4.  Click **Edit** in the Budget Details panel on the right.
-5.  Set the **Spending Limit** to `100`.
-6.  Enter a verified notification email address.
-7.  Click **+ Tags & Resources** and add the **TB\_101.ANALYTICS** schema and the **TB\_DE\_WH** warehouse to be monitored.
-8.  Click **Save Changes**.
-
-<!-- \<img src="assets/budgets\_ui.png"/\> -->
+1.  Make sure your account role is set to `ACCOUNTADMIN`. You can change this in the bottom left corner.
+2.  Click on the **MY\_BUDGET** budget we created.
+3.  Click **Edit** in the Budget Details panel on the right.
+4.  Set the **Spending Limit** to `100`.
+5.  Enter a verified notification email address.
+6.  Click **+ Tags & Resources** and add the **TB\_101.ANALYTICS** schema and the **TB\_DE\_WH** warehouse to be monitored.
+7.  Click **Save Changes**.
+<img src="assets/vignette-1/edit_budget.png">
 
 > For a detailed guide on Budgets, please see the [Snowflake Budgets Documentation](https://docs.snowflake.com/en/user-guide/budgets).
 
-### Step 3 - Click Next --\>
+### Step 4 - Click Next --\>
 
 ## Exploring with Universal Search
 
@@ -1558,12 +1576,14 @@ Let's try it now.
 2.  Enter `truck` into the search bar.
 3.  Observe the results. You will see categories of objects on your account, such as tables and views, as well as relevant documentation.
 
+<img src="assets/vignette-1/universal_search_truck.png">
+
 ### Step 2 - Using Natural Language Search
 
 You can also use natural language. For example, search for: `Which truck franchise has the most loyal customer base?`
 Universal search will return relevant tables and views, even highlighting columns that might help answer your question, providing an excellent starting point for analysis.
 
-<!-- \<img src="assets/universal\_search.png"/\> -->
+<img src="assets/vignette-1/universal_search_natural_language_query.png">
 
 ### Step 3 - Click Next --\>
 
@@ -1590,7 +1610,7 @@ Within this Quickstart, we will learn how to build a simple, automated data pipe
 - A staging table for raw data.
 - A multi-step data pipeline using three chained Dynamic Tables.
 
-Copy the entire SQL block below and paste it into your worksheet.
+### Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
 /***************************************************************************************************       
@@ -2405,7 +2425,7 @@ Within this Quickstart, we will explore some of the powerful governance features
 - A row access policy to restrict data visibility by country.
 - A custom Data Metric Function to check data integrity.
 
-Copy the entire SQL block below and paste it into your worksheet.
+### Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
 /***************************************************************************************************       
@@ -3443,7 +3463,7 @@ In this Quickstart, we will explore how Snowflake facilitates seamless data coll
 ### What You Will Build
 - Enriched analytical Views that combine internal sales data with external weather and POI data.
 
-Copy the entire SQL block below and paste it into your worksheet.
+### Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
 /***************************************************************************************************       
