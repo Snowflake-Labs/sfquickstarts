@@ -2260,6 +2260,53 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 ### Step 2 - Click Next --\>
 
+-----
+
+## Vignette 3: Artificial Intelligence in Snowflake
+
+Duration: 5
+
+### Overview
+
+Welcome to the Zero to Snowflake Hands-on Lab focused on Artificial Intelligence!
+
+Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, Snowflake Copilot for AI-assisted SQL development, Cortex Search for semantic text searching, Cortex Analyst for natural language analytics, and Snowflake Intelligence for unified conversational business intelligence.
+
+- For more detail on Artificial Intelligence in Snowflake please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
+
+### Prerequisites
+
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#1) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+
+### What You Will Learn
+
+* How to Experiment with AI Using AI Cortex Playground for model testing and prompt optimization.
+* How to Scale AI Analysis with Cortex AI Functions for production-scale customer review processing.
+* How to optimize development with Snowflake’s Copilot for AI-assisted SQL query generation.
+* How to enable semantic discovery with Cortex Search for intelligent text and review finding.
+* How to create conversational analytics with Cortex Analyst for natural language business intelligence.
+* How to unify AI capabilities with Snowflake Intelligence for comprehensive business intelligence.
+
+### What You Will Build
+
+Through this journey, you’ll construct a complete intelligence customer analytics platform:
+
+**Phase 1: AI Foundation**
+* AI Experimentation Environment using Cortex Playground for model testing and optimization.
+* Production-scale Review Analysis pipeline using AISQL Functions for systematic customer feedback processing.
+
+**Phase 2: Intelligent Development & Discovery**
+* AI-Assisted SQL Development Workflow using Copilot for complex query generation.
+* Semantic Search Engine using Cortex Search for instant customer feedback discovery and operational intelligence.
+
+**Phase 3: Conversational Intelligence**
+* Natural Language Business Analytics Interface using Cortex Analyst for conversational data exploration.
+* Unified AI Business Intelligence Platform using Snowflake Intelligence that connects customer voice with business performance.
+
+### Click Next -->
+
+-----
+
 ## Cortex Playground: Rapid AI Model Experimentation
 
 Duration: 4 
