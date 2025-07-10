@@ -16,7 +16,7 @@ Duration: 1
 
 ### Overview
 
-Welcome to the complete Powered by Tasty Bytes - Zero to Snowflake Quickstart\! This guide is a consolidated journey through four key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, secure your data with powerful governance controls, and finally, enrich your analysis through seamless data collaboration.
+Welcome to the complete Powered by Tasty Bytes - Zero to Snowflake Quickstart! This guide is a consolidated journey through key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, then see how you can experiment with LLMs using the Cortex Playground to compare different models for summarizing text, use AISQL Functions to instantly analyze customer review sentiment with a simple SQL command, and leverage the Snowflake Copilot to accelerate query writing by asking for the SQL you need in plain English. Finally, you will learn to secure your data with powerful governance controls and enrich your analysis through seamless data collaboration.
 
 ### Prerequisites
 
@@ -26,7 +26,7 @@ Welcome to the complete Powered by Tasty Bytes - Zero to Snowflake Quickstart\! 
 
   - **Vignette 1: Getting Started:** The fundamentals of Snowflake warehouses, caching, cloning, and Time Travel.
   - **Vignette 2: Simple Data Pipelines:** How to ingest and transform semi-structured data using Dynamic Tables.
-  - **Vignette 3: [Dummy Vignette]:** A placeholder for your future content.
+  - **Vignette 3: Artificial Intelligence:** A placeholder for your future content.
   - **Vignette 4: Governance with Horizon:** How to protect your data with roles, classification, masking, and row-access policies.
   - **Vignette 5: Apps & Collaboration:** How to leverage the Snowflake Marketplace to enrich your internal data with third-party datasets.
 
@@ -732,8 +732,32 @@ GRANT WRITE ON STAGE tb_101.semantic_layer.semantic_model_stage TO ROLE tb_admin
 
 ### Step 4 - Click Next --\>
 
-## 1. Getting Started with Snowflake
-- Copy the entire SQL block below and paste it into your worksheet.
+## Vignette 1: Getting Started with Snowflake
+
+### Overview
+
+Within this Vignette, we will learn about core Snowflake concepts by exploring Virtual Warehouses, using the query results cache, performing basic data transformations, leveraging data recovery with Time Travel, and monitoring our account with Resource Monitors and Budgets.
+
+### Prerequisites
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+
+### What You Will Learn
+- How to create, configure, and scale a Virtual Warehouse.
+- How to leverage the Query Result Cache.
+- How to use Zero-Copy Cloning for development.
+- How to transform and clean data.
+- How to instantly recover a dropped table using UNDROP.
+- How to create and apply a Resource Monitor.
+- How to create a Budget to monitor costs.
+- How to use Universal Search to find objects and information.
+
+### What You Will Build
+- A Snowflake Virtual Warehouse
+- A development copy of a table using Zero-Copy Clone
+- A Resource Monitor
+- A Budget
+
+Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
 /***************************************************************************************************       
@@ -1543,8 +1567,30 @@ Universal search will return relevant tables and views, even highlighting column
 
 ### Step 3 - Click Next --\>
 
-## 2. Simple Data Pipeline
-- Copy the entire SQL block below and paste it into your worksheet.
+## Vignette 2: Simple Data Pipeline
+
+### Overview
+Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on building a Simple Data Pipeline!
+
+Within this Quickstart, we will learn how to build a simple, automated data pipeline in Snowflake. We will start by ingesting raw, semi-structured data from an external stage, and then use the power of Snowflake's Dynamic Tables to transform and enrich that data, creating a pipeline that automatically stays up-to-date as new data arrives.
+
+### Prerequisites
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+
+### What You Will Learn
+- How to ingest data from an external S3 stage.
+- How to query and transform semi-structured VARIANT data.
+- How to use the FLATTEN function to parse arrays.
+- How to create and chain Dynamic Tables.
+- How an ELT pipeline automatically processes new data.
+- How to visualize a pipeline using the Directed Acyclic Graph (DAG).
+
+### What You Will Build
+- An external Stage for data ingestion.
+- A staging table for raw data.
+- A multi-step data pipeline using three chained Dynamic Tables.
+
+Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
 /***************************************************************************************************       
@@ -2196,48 +2242,170 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 ### Step 2 - Click Next --\>
 
-## Module 3: [DUMMY VIGNETTE - ADD TITLE HERE]
+## AI Experimentation with Cortex Playground
 
-Duration: 5
+Duration: 4 
 
 ### Overview
 
-*[Add a brief, one-paragraph overview of what the user will learn or build in this module. For example: "In this module, we will explore advanced data modeling techniques by building a star schema from our raw data..."]*
+This section demonstrates how to leverage **Snowflake Cortex Playground** for rapid experimentation with AI models to analyze customer feedback. You'll learn how to connect to data, compare different AI models, fine-tune model behavior, and understand the underlying SQL that powers these AI insights. The goal is to quickly prototype analytical strategies and identify optimal AI approaches for understanding customer sentiment and pinpointing service improvement opportunities. This directly addresses the **AI Experimentation Environment** objective from Phase 1 of your overall lab.
 
-### [Add Sub-Section Title Here]
+### Step 1 - Access Cortex Playground and Connecting to Data Source
 
-Duration: 2
+Let's begin by connecting directly to customer review data within Cortex Playground. This keeps your data secure within Snowflake while allowing you to analyze feedback using AI models.
 
-*[Add a description for the first part of this module.]*
+**Navigation steps:**
 
-**Step 1:** *[Add description for the first step.]*
+1.  Navigate to **AI & ML → Studio → Cortex Playground**.
+2.  Select **Role: TB\_DEV** and **Warehouse: TB\_DEV\_WH**.
+3.  Click "**+Connect your data**" in the prompt box.
+4.  Select data source:
+      * **Database: TB_101**
+      * **Schema: HARMONIZED**
+      * **Table: TRUCK\_REVIEWS\_V**
+5.  Select text column: **REVIEW**
+6.  Select filter column: **TRUCK\_BRAND\_NAME**
+7.  Click **Done**.
+8.  In the system prompt box, apply a filter using the **TRUCK\_BRAND\_NAME** dropdown. For instance, select "**Better Of Bread**" to narrow down the reviews.
 
-```sql
--- [Add SQL for Step 1 here]
+<img src = "assets/cortex-playground-connect.gif">
+
+> **What you've accomplished:** You now have direct access to customer review data within the AI interface. The filter allows you to focus your analysis on specific truck brands, making your experiment more targeted and relevant.
+### Step 2 - Compare AI Models to Generate Strategic Insights
+
+Now, let's analyze customer reviews to extract specific operational insights and compare how different AI models perform on this business task.
+
+**Setup Model Comparison:**
+
+1.  Click "**Compare**" to enable side-by-side model comparison.
+2.  Set the left panel to "**claude-3-5-sonnet**" and the right panel to "**snowflake-llama-3.3-70b**".
+
+> **Note:** Snowflake Cortex provides access to leading AI models from multiple providers, including Anthropic, OpenAI, Meta, and others, giving you choice and flexibility without vendor lock-in.
+**Enter this strategic prompt:**
+
 ```
-
-**Step 2:** *[Add description for the second step.]*
-
-```sql
--- [Add SQL for Step 2 here]
+Analyze this customer review across multiple dimensions: sentiment score with confidence level, key theme extraction, competitive positioning insights, operational impact assessment, and priority ranking for management action
 ```
+<img src = "assets/cortex-playground-compare-two-model.png">
 
-### [Add Another Sub-Section Title Here]
+> **Key Insight:** Notice the distinct strengths: Claude provides structured, executive-ready analysis with clear confidence. In contrast, Snowflake’s Llama model, optimized specifically for robust business intelligence, delivers comprehensive operational intelligence enriched with strategic context and detailed competitive analysis. This highlights the power of leveraging multiple AI providers, empowering you to choose the ideal approach for your specific business needs.
+With our optimal model identified, we now need to fine-tune its behavior for different business scenarios. The same model can produce vastly different results depending on its settings—let’s optimize this for our specific analytical requirements.
 
-Duration: 3
+### Step 3 - Fine-Tune Model Behavior with Temperature Settings
 
-*[Add a description for the second part of this module.]*
+We want to observe how adjusting parameters, especially "**temperature**," affects the AI model's responses. Does it lead to more consistent or more creative answers?
 
-**Step 1:** *[Add description for the first step.]*
+**How to Set Up This Temperature Test:**
 
-```sql
--- [Add SQL for Step 1 here]
-```
+1.  First, make sure both panels are set to "**claude-3-5-sonnet**." We're comparing the same model, just with different settings.
+2.  Next, click "**Change Settings**" right next to where it says "**Compare**."
+3.  Now, let's adjust those parameters for each side:
+      * **Left Panel:**
+          * Set **Temperature** to **0.1**. This will generally make the model give you really consistent, predictable answers.
+          * Set **Max-tokens** to **200**. This just keeps the responses from getting too long.
+      * **Right Panel:**
+          * Set **Temperature** to **0.8**. This should make the model's answers a bit more creative and varied.
+          * Set **top\_p** to **0.8**. This is another setting that helps encourage a wider range of words in the response.
+          * Set **Max-tokens** to **200**. Again, keeping the length in check.
+4.  Finally, use the exact same strategic prompt you used in Step 2.
+
+Give that a try and see how the responses differ\! It's pretty cool to see how these small tweaks can change the AI's "personality."
+
+<img src = "assets/cortex-playground-model-setting.gif">
+<img src = "assets/cortex-playground-same-model.png">
+
+**Observe the Impact:**
+
+Notice how adjusting the temperature parameter fundamentally changes the analytical output, even with the same AI model and data.
+
+  * **Temperature 0.1:** Produces deterministic, focused output. Ideal for structured, consistent analysis and standardized reporting.
+  * **Temperature 0.8:** Results in diverse, varied output. Perfect for generating explanatory insights or exploring less obvious connections.
+
+While temperature influences token choice, **top\_p** (set to 0.8 on the right) restricts possible tokens. **max\_tokens** simply sets the maximum response length; be mindful small values can truncate results.
+
+This gives you precise control over AI creativity versus consistency, letting you match the AI’s behavior to your analytical objectives.
+
+Now that we’ve mastered model selection and parameter optimization, let's examine the technology foundation that makes this experimentation possible. Understanding this will help us transition from playground testing to production deployment.
+
+### Step 4 - Understanding the Underlying Technology
+
+Now that we've mastered experimentation, let's explore the core technology that takes your AI insights from the playground to production.
+
+#### The Foundation: SQL at Its Core
+
+Every AI insight you generate in Cortex Playground isn't just magic; it's backed by SQL. Click "**View Code**" after any model response, and you'll see the exact SQL query, complete with your specified settings like temperature. This isn't just for show—this code is ready for action\! You can run it directly in a Snowflake worksheet, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It's also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.
+
+<img src = "assets/cortex-playground-view-code.png">
+
+#### The SNOWFLAKE.CORTEX.COMPLETE Function
+
+Behind every prompt you've run, the **SNOWFLAKE.CORTEX.COMPLETE** function is hard at work. This is Snowflake Cortex's powerful function providing direct access to industry-leading large language models for text completion. The Cortex Playground simply offers an intuitive interface to test and compare these models before you embed them directly into your SQL. (Heads up: this will evolve to AI\_COMPLETE in future releases.)
+
+This seamless integration means your AI experimentation directly translates into production-ready workflows within Snowflake.
+
+### Step 5 - Next Steps: Scaling AI Insights
+
+The Cortex Playground is an invaluable tool for experimenting with individual reviews, but true large-scale customer feedback analysis demands specialized AI functions. The prompt patterns and model selections you've refined here lay the groundwork for building scalable solutions. Our next step involves processing thousands of reviews using purpose-built AI SQL Functions like **SENTIMENT()**, **CLASSIFY()**, **EXTRACT\_ANSWER()**, and **AI\_SUMMARIZE\_AGG()**. This systematic approach ensures that AI-driven insights seamlessly become a core part of our operational strategy.
+
+-----
+
+## Section 2: Scaling AI Analysis with Cortex AI Functions
+
+**(This is where your content for Cortex AI Functions would go, formatted with its own `### Overview`, `### Step X`, etc.)**
+
+-----
+
+## Section 3: Optimizing Development with Snowflake Copilot
+
+**(This is where your content for Snowflake Copilot would go.)**
+
+-----
+
+## Section 4: Enabling Semantic Discovery with Cortex Search
+
+**(This is where your content for Cortex Search would go.)**
+
+-----
+
+## Section 5: Creating Conversational Analytics with Cortex Analyst
+
+**(This is where your content for Cortex Analyst would go.)**
+
+-----
+
+## Section 6: Unifying AI Capabilities with Snowflake Intelligence
+
+**(This is where your content for Snowflake Intelligence would go, followed by any conclusion or cleanup steps for the entire lab.)**
+
+-----
 
 ### Click Next --\>
 
-## 4. Governance with Horizon
-- Copy the entire SQL block below and paste it into your worksheet.
+## Vignette 4: Governance with Horizon
+### Overview
+Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Data Governance with Snowflake Horizon!
+
+Within this Quickstart, we will explore some of the powerful governance features within Snowflake Horizon. We will begin with a look at Role-Based Access Control (RBAC), before diving into features like automated data classification, tag-based masking policies for column-level security, row-access policies, data quality monitoring, and finally, account-wide security monitoring with the Trust Center.
+
+### Prerequisites
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+
+### What You Will Learn
+- The fundamentals of Role-Based Access Control (RBAC) in Snowflake.
+- How to automatically classify and tag sensitive data.
+- How to implement column-level security with Dynamic Data Masking.
+- How to implement row-level security with Row Access Policies.
+- How to monitor data quality with Data Metric Functions.
+- How to monitor account security with the Trust Center.
+
+### What You Will Build
+- A custom, privileged role.
+- A data classification profile for auto-tagging PII.
+- Tag-based masking policies for string and date columns.
+- A row access policy to restrict data visibility by country.
+- A custom Data Metric Function to check data integrity.
+
+Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
 /***************************************************************************************************       
@@ -3254,8 +3422,28 @@ This powerful tool gives you a continuous, actionable overview of your Snowflake
 
 ### Step 4 - Click Next --\>
 
-## 5. Apps & Collaboration
-- Copy the entire SQL block below and paste it into your worksheet.
+## Vignette 5: Apps & Collaboration
+### Overview
+Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Apps & Collaboration!
+
+In this Quickstart, we will explore how Snowflake facilitates seamless data collaboration through the Snowflake Marketplace. We will see how easy it is to acquire live, ready-to-query third-party datasets and immediately join them with our own internal data to unlock new insights—all without the need for traditional ETL pipelines.
+
+*Please note: The SQL file provided does not include the "Introduction to Streamlit" section mentioned in its header. This guide will cover all content provided in the SQL file.*
+
+### Prerequisites
+- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+
+### What You Will Learn
+- How to discover and acquire data from the Snowflake Marketplace.
+- How to instantly query live, shared data.
+- How to join Marketplace data with your own account data to create enriched views.
+- How to leverage third-party Point-of-Interest (POI) data for deeper analysis.
+- How to use Common Table Expressions (CTEs) to structure complex queries.
+
+### What You Will Build
+- Enriched analytical Views that combine internal sales data with external weather and POI data.
+
+Copy the entire SQL block below and paste it into your worksheet.
 
 ```sql
 /***************************************************************************************************       
