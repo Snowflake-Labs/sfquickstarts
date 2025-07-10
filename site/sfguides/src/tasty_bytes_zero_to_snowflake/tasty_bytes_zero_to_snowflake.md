@@ -2260,7 +2260,8 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 ### Step 2 - Click Next --\>
 
-## AI Experimentation with Cortex Playground
+## Snowflake Cortex Playground: Rapid AI Model Experimentation
+
 Duration: 4 
 <img src='./assets/cortex_playground_header.png'>
 
@@ -2369,7 +2370,7 @@ The Cortex Playground is an invaluable tool for experimenting with individual re
 
 -----
 
-## Scaling AI Analysis with AISQL Functions
+## Snowflake AISQL Functions: Analyzing Customer Feedback at Scale
 
 <img src='./assets/cortex_ai_functions_header.png'>
 
@@ -2554,11 +2555,64 @@ As our analysis grows in sophistication, combining multiple AI functions in comp
 
 -----
 
-## Section 3: Optimizing Development with Snowflake Copilot
+## Snowflake Copilot: Building Advanced Queries with Natural Language
 
 <img src='./assets/snowflake_copilot_header.png'>
 
-**(This is where your content for Snowflake Copilot would go.)**
+Duration: 4
+
+### Overview
+
+You've successfully built powerful AI SQL queries to analyze customer reviews. Now, the challenge is to connect these insights to real business impact: Do negative reviews affect loyalty? Do positive reviews boost orders? This requires **complex queries** joining multiple data sources and correlating AI results.
+
+This Codelab introduces **Snowflake Copilot**, an LLM-powered assistant designed to simplify this challenge. Running securely within Snowflake Cortex, Copilot helps you construct sophisticated analytical workflows, translating complex business questions into powerful SQL.
+
+### Step 1 - Setting Context
+
+First, let's set our session context. We will assume the role of a TastyBytes data analyst with the intention of leveraging Snowflake Copilot to build sophisticated queries and gain deeper business insights.
+
+```sql
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2_copilot","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "snowflake_copilot"}}';
+
+USE ROLE tb_analyst;
+USE WAREHOUSE tb_de_wh;
+USE DATABASE tb_101;
+USE SCHEMA harmonized;
+```
+
+<img src = "assets/vignette-3/copilot.gif">
+
+
+### Step 2 - Requirement Translation with Copilot
+
+To begin, let’s explore what types of analysis questions we can ask about our Tasty Bytes dataset using Copilot’s natural language understanding capabilities.
+
+Type the following question in the Copilot message box and click RUN to see the result of the query:
+
+**Prompt 1:** `How do I structure a query that correlates customer review sentiment with customer loyalty metrics and order behavior? I have a review sentiment data and customer loyalty metrics tables with order information. I need to understand the relationship between what customers say and their actual purchasing pattern.`
+
+<img src = "assets/vignette-3/copilot-prompt1.png">
+
+
+> **Key Insight**: Copilot provides schema-aware business intelligence, directly analyzing your specific Tasty Bytes tables and suggesting strategic analysis using your actual column names. This isn't generic AI; it's purpose-built intelligence that profoundly understands your data structure.
+
+### Step 3 - Complex Query Building with Copilot
+
+Now let’s use Copilot to generate complex SQL with multiple table joins from a simple business question.
+
+In the same Copilot panel, paste the following business question and click RUN to see the result:
+
+**Prompt 2:** `Show me high-value customers who have been leaving negative reviews. I want to understand which customers spend a lot of money with us but seem unhappy based on their feedback`
+
+<img src = "assets/vignette-3/copilot-prompt2.png">
+
+> **Key Insight**: Notice how Copilot transforms a simple business question into production-ready customer intelligence with complex analytical logic and actionable results—all without requiring SQL expertise. This showcases Copilot's core value: you can ask strategic questions in plain English and instantly receive the enterprise-grade analytics that typically demand data engineering skills.
+
+### Conclusion
+
+Snowflake Copilot profoundly transforms business intelligence by enabling users to effortlessly translate complex business questions into sophisticated SQL queries. As demonstrated with Tasty Bytes, it empowers both technical and non-technical users to derive actionable insights from their data without deep SQL expertise. This LLM-powered assistant delivers schema-aware, purpose-built intelligence, ensuring robust data governance and keeping all enterprise data securely within Snowflake. Copilot isn't just generic AI; it's a strategic tool that bridges operational insights with business intelligence.
+
+### Click Next --\>
 
 -----
 
