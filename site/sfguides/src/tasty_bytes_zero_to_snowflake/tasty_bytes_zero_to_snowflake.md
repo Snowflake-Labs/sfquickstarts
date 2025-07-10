@@ -2260,7 +2260,6 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 ### Step 2 - Click Next --\>
 
------
 
 ## Vignette 3: Artificial Intelligence in Snowflake
 
@@ -2303,11 +2302,11 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 * Natural Language Business Analytics Interface using Cortex Analyst for conversational data exploration.
 * Unified AI Business Intelligence Platform using Snowflake Intelligence that connects customer voice with business performance.
 
-### Click Next -->
+### Click Next --\> 
 
 -----
 
-## Cortex Playground: Rapid AI Model Experimentation
+## 3a. Cortex Playground: Rapid AI Model Experimentation
 
 Duration: 4 
 
@@ -2417,7 +2416,7 @@ The Cortex Playground is an invaluable tool for experimenting with individual re
 
 -----
 
-## AISQL Functions: Analyzing Customer Feedback at Scale
+## 3b. AISQL Functions: Analyzing Customer Feedback at Scale
 
 <img src='./assets/aisql_functions_header.png'>
 
@@ -2602,7 +2601,7 @@ As our analysis grows in sophistication, combining multiple AI functions in comp
 
 -----
 
-## Snowflake Copilot: Building Advanced Queries with Natural Language
+## 3c. Snowflake Copilot: Building Advanced Queries with Natural Language
 
 <img src='./assets/snowflake_copilot_header.png'>
 
@@ -2663,7 +2662,7 @@ Snowflake Copilot profoundly transforms business intelligence by enabling users 
 
 -----
 
-## Cortex Search: AI-Powered Text Intelligence
+## 3d. Cortex Search: AI-Powered Text Intelligence
 Duration: 6
 
 <img src='./assets/cortex_search_header.png'>
@@ -2734,25 +2733,123 @@ Now try another query:
 
 > **Key Insight**: These customers are about to churn, but they never said “I’m angry.” They expressed frustration in their own words. Cortex Search understands the emotion behind the language, helping you identify and save at-risk customers before they leave.
 
-### Conclusion: Empowering Customer Experience with AI
+### Conclusion
 
 Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback. It empowers the customer service manager to move beyond simply sifting through reviews, to truly understand and proactively act upon the voice of the customer at scale, driving better operational decisions and enhancing customer loyalty.
 
 In the next module - Cortex Analyst - you’ll use natural language to query structured data. Together, Cortex Search and Cortex Analyst form the foundation of Snowflake Intelligence - a complete AI assistant of your data.
 
-### Click Next -->
-
------
-
-## Section 5: Creating Conversational Analytics with Cortex Analyst
-Duration: 3
-
-<img src='./assets/cortex_analyst_header.png'>
+### Click Next --\>
 
 
-**(This is where your content for Cortex Analyst would go.)**
+## 3e. Cortex Analyst: Conversational Business Intelligence
 
------
+Duration: 10
+
+### Overview
+
+A business analyst at Tasty Bytes needs to enable self-service analytics, allowing the business team to ask complex questions in natural language and get instant insights without relying on data analysts to write SQL. While previous AI tools helped with finding reviews and complex query generation, the demand now is for **conversational analytics** that directly transforms structured business data into immediate insights.
+
+**Cortex Analyst** empowers business users to ask sophisticated questions directly, seamlessly extracting value from their analytics data through natural language interaction. **This lab will guide you through designing a semantic model, connecting it to your business data, configuring relationships and synonyms, and then executing advanced business intelligence queries using natural language.**
+
+### Step 1 - Design the Semantic Model Foundation
+
+Let's begin by navigating to Cortex Analyst in Snowsight and configuring our semantic model foundations.
+
+1. Navigate to **Cortex Analyst** under **AI & ML Studio** in Snowsight.
+
+2. **Set Role and Warehouse:**
+
+    * Change role to `TB_ADMIN`.
+    * Set Warehouse to `TB_CORTEX_WH`.
+    * Click **Create Semantic View** and then select **Create new model**.
+
+3. **On the 'Getting Started' page:**
+
+    * Choose **Semantic View**.
+    * **Location to store** dropdown: Select **DATABASE: TB_101** and **SCHEMA: SEMANTIC_LAYER**.
+    * **Name**: `tasty_bytes_business_analytics`.
+    * **Description**: (Strongly recommended for clarity and AI understanding. Use: Semantic model for Tasty Bytes executive analytics, covering customer loyalty and order performance data for natural language querying)
+
+Click **Next: Select tables** to proceed.
+
+> **Note**: To make a request to Cortex Analyst, you must use a role that has the `SNOWFLAKE.CORTEX_USER` role granted.
+
+### Step 2 - Select Tables and Configure Columns
+
+In the 'Select tables' step, let's choose our pre-built analytics views.
+
+1. **Select core business Tables:**
+
+    * **DATABASE**: `TB_101`
+    * **SCHEMA**: `SEMANTIC_LAYER`
+    * **TABLE**: `Customer_Loyalty_Metrics_v` and `Orders_v`
+
+Click **Next: Select columns** to proceed.
+
+2. **Configure Column Selection:**
+
+    * On the 'Select columns' page, ensure both selected tables are active.
+    * For each column, review its **Logical Role** (e.g., Dimension, Measure, Time Dimension) and adjust if necessary.
+    * Consider setting **Display Names** or adding **Synonyms** for columns that might have technical names but represent common business concepts (e.g., `TOTAL_SALES_AMOUNT` could be "Total Revenue").
+    * (Optional: Hide any columns that aren't relevant for natural language queries to simplify the model.)
+
+### Step 3 - Add Synonyms for Logical Tables
+
+Now let’s add table synonyms for better natural language understanding:
+
+* For **customer_loyalty_metrics_v** table, please copy & paste:
+    `Customers, customer_data, loyalty, customer_metrics, customer_info`
+* For **orders_v** table, please copy & paste:
+    `Orders, transactions, sales, purchases, order_data`
+
+### Step 4 - Configure Table Relationships
+
+After creating the semantic model, let’s establish the relationship between our logical tables and add business-friendly synonyms.
+
+Let's configure our table relationship by creating:
+
+* **Relationship name**: `orders_to_customer_loyalty_metrics`
+* **Join type**: `Left Join`
+* **Relation type**: `many-to-one`
+* **Left table**: `ORDERS_V`
+* **Right table**: `CUSTOMER_LOYALTY_METRICS_V`
+* **Join columns**: `CUSTOMER_ID = CUSTOMER_ID`
+
+Upon completion, we will have a semantic model ready for sophisticated natural language queries.
+
+### Step 5 - Execute Customer Segmentation Intelligence
+
+With our semantic model and relationship active, let’s demonstrate sophisticated natural language analysis by running our first complex business query.
+
+Navigate to **Cortex Analyst query interface**.
+
+Let's execute our customer segmentation analysis:
+
+**Prompt 1:** `Tell me, which customer groups, broken down by marital status and gender, are spending the most per customer? I'd like to see this across our different cities and regions. Also, can we compare their long-term spending habits to identify our most valuable customer demographics for focused marketing efforts?`
+
+> **Key Insight**: Instantly delivers comprehensive intelligence by combining multi-table joins, demographic segmentation, geographic insights, and lifetime value analysis - insights that would require 40+ lines of SQL and hours of analyst effort.
+
+### Step 6 - Generate Advanced Business Intelligence
+
+Having seen basic segmentation, let’s now demonstrate enterprise-grade SQL that showcases the full power of conversational business intelligence.
+
+Let's execute our multi-layered customer analysis:
+
+**Prompt 2:** `I want to understand our customer base better. Can you group customers by how much they've spent with us over time, then show me their ordering patterns differ between top spenders and lower spenders? Also compare how our franchise locations perform versus company-owned stores for each customer group`
+
+> **Key Insight**: Notice how Cortex Analyst seamlessly bridges the gap between a business user's simple, natural language question and the sophisticated, multi-faceted SQL query required to answer it. It automatically constructs the complex logic, including CTEs, window functions, and detailed aggregations, that would typically demand a skilled data analyst.
+
+### Conclusion
+
+Through these rigorous steps, we've forged a robust Cortex Analyst semantic model. This isn't just an improvement; it's a transformative tool designed to liberate users across various industries from the constraints of SQL, enabling them to surface profound business intelligence through intuitive natural language queries. Our multi-layered analyses, while showcased through the Tasty Bytes use case, powerfully illustrate how this model drastically cuts down on the time and effort traditionally needed for deep insights, thereby democratizing access to data and fueling a culture of informed, agile decision-making on a broad scale.
+
+**Integration with Snowflake Intelligence**
+
+This Cortex Analyst semantic model becomes the foundation for Snowflake Intelligence, enabling automatic dashboard generation, proactive insights, and intelligent reporting.
+
+### Click Next --\> 
+
 
 ## Section 6: Unifying AI Capabilities with Snowflake Intelligence
 
