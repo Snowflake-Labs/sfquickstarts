@@ -2260,14 +2260,15 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 ### Step 2 - Click Next --\>
 
-## Snowflake Cortex Playground: Rapid AI Model Experimentation
+## Cortex Playground: Rapid AI Model Experimentation
 
 Duration: 4 
+
 <img src='./assets/cortex_playground_header.png'>
 
 ### Overview
 
-This section demonstrates how to leverage **Snowflake Cortex Playground** for rapid experimentation with AI models to analyze customer feedback. You'll learn how to connect to data, compare different AI models, fine-tune model behavior, and understand the underlying SQL that powers these AI insights. The goal is to quickly prototype analytical strategies and identify optimal AI approaches for understanding customer sentiment and pinpointing service improvement opportunities. This directly addresses the **AI Experimentation Environment** objective from Phase 1 of your overall lab.
+As a data analyst at Tasty Bytes, you need to rapidly explore customer feedback using AI models to identify service improvement opportunities. Traditionally, AI experimentation is complex and time-consuming. **Snowflake Cortex Playground** solves this by offering a quick, secure environment directly within Snowflake's UI to experiment with diverse AI models, compare their performance on real business data, and export successful approaches as production-ready SQL. This lab guides you through using Cortex Playground for rapid prototyping and seamless integration of AI into your data workflows.
 
 ### Step 1 - Access Cortex Playground and Connecting to Data Source
 
@@ -2300,14 +2301,15 @@ Now, let's analyze customer reviews to extract specific operational insights and
 2.  Set the left panel to "**claude-3-5-sonnet**" and the right panel to "**snowflake-llama-3.3-70b**".
 
 > **Note:** Snowflake Cortex provides access to leading AI models from multiple providers, including Anthropic, OpenAI, Meta, and others, giving you choice and flexibility without vendor lock-in.
+
 **Enter this strategic prompt:**
 
-```
-Analyze this customer review across multiple dimensions: sentiment score with confidence level, key theme extraction, competitive positioning insights, operational impact assessment, and priority ranking for management action
-```
+ `Analyze this customer review across multiple dimensions: sentiment score with confidence level, key theme extraction, competitive positioning insights, operational impact assessment, and priority ranking for management action`
+
 <img src = "assets/vignette-3/cortex-playground-compare-two-model.png">
 
 > **Key Insight:** Notice the distinct strengths: Claude provides structured, executive-ready analysis with clear confidence. In contrast, Snowflake’s Llama model, optimized specifically for robust business intelligence, delivers comprehensive operational intelligence enriched with strategic context and detailed competitive analysis. This highlights the power of leveraging multiple AI providers, empowering you to choose the ideal approach for your specific business needs.
+
 With our optimal model identified, we now need to fine-tune its behavior for different business scenarios. The same model can produce vastly different results depending on its settings—let’s optimize this for our specific analytical requirements.
 
 ### Step 3 - Fine-Tune Model Behavior with Temperature Settings
@@ -2340,15 +2342,13 @@ Notice how adjusting the temperature parameter fundamentally changes the analyti
   * **Temperature 0.1:** Produces deterministic, focused output. Ideal for structured, consistent analysis and standardized reporting.
   * **Temperature 0.8:** Results in diverse, varied output. Perfect for generating explanatory insights or exploring less obvious connections.
 
-While temperature influences token choice, **top\_p** (set to 0.8 on the right) restricts possible tokens. **max\_tokens** simply sets the maximum response length; be mindful small values can truncate results.
-
-This gives you precise control over AI creativity versus consistency, letting you match the AI’s behavior to your analytical objectives.
+While temperature influences token choice, **top\_p** (set to 0.8 on the right) restricts possible tokens. **max\_tokens** simply sets the maximum response length; be mindful small values can truncate results. This gives you precise control over AI creativity versus consistency, letting you match the AI’s behavior to your analytical objectives.
 
 Now that we’ve mastered model selection and parameter optimization, let's examine the technology foundation that makes this experimentation possible. Understanding this will help us transition from playground testing to production deployment.
 
 ### Step 4 - Understanding the Underlying Technology
 
-Now that we've mastered experimentation, let's explore the core technology that takes your AI insights from the playground to production.
+In this section, let's explore the core technology that takes your AI insights from the playground to production.
 
 #### The Foundation: SQL at Its Core
 
@@ -2370,7 +2370,7 @@ The Cortex Playground is an invaluable tool for experimenting with individual re
 
 -----
 
-## Snowflake AISQL Functions: Analyzing Customer Feedback at Scale
+## AISQL Functions: Analyzing Customer Feedback at Scale
 
 <img src='./assets/cortex_ai_functions_header.png'>
 
@@ -2565,7 +2565,7 @@ Duration: 4
 
 You've successfully built powerful AI SQL queries to analyze customer reviews. Now, the challenge is to connect these insights to real business impact: Do negative reviews affect loyalty? Do positive reviews boost orders? This requires **complex queries** joining multiple data sources and correlating AI results.
 
-This Codelab introduces **Snowflake Copilot**, an LLM-powered assistant designed to simplify this challenge. Running securely within Snowflake Cortex, Copilot helps you construct sophisticated analytical workflows, translating complex business questions into powerful SQL.
+This lab introduces **Snowflake Copilot**, an LLM-powered assistant designed to simplify this challenge. Running securely within Snowflake Cortex, Copilot helps you construct sophisticated analytical workflows, translating complex business questions into powerful SQL.
 
 ### Step 1 - Setting Context
 
