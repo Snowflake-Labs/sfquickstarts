@@ -12,7 +12,7 @@ tags: Getting Started, Tasty Bytes, Zero to Snowflake, Governance, Horizon, Data
 ## Welcome to the Course!
 
 Duration: 1
-<!-- \<img src = "assets/zts\_complete\_header.png"\> -->
+<img src='./assets/zts_header.png'>
 
 ### Overview
 
@@ -24,7 +24,7 @@ Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journe
 
 ### What You Will Learn
 
-  - **Vignette 1: Getting Started:** The fundamentals of Snowflake warehouses, caching, cloning, and Time Travel.
+  - **Vignette 1: Getting Started with Snowflake:** The fundamentals of Snowflake warehouses, caching, cloning, and Time Travel.
   - **Vignette 2: Simple Data Pipelines:** How to ingest and transform semi-structured data using Dynamic Tables.
   - **Vignette 3: Artificial Intelligence:** A placeholder for your future content.
   - **Vignette 4: Governance with Horizon:** How to protect your data with roles, classification, masking, and row-access policies.
@@ -734,6 +734,8 @@ GRANT WRITE ON STAGE tb_101.semantic_layer.semantic_model_stage TO ROLE tb_admin
 ### Step 4 - Click Next --\>
 
 ## Vignette 1: Getting Started with Snowflake
+Duration: 1
+<img src='./assets/getting_started_header.png'>
 
 ### Overview
 
@@ -1588,6 +1590,8 @@ Universal search will return relevant tables and views, even highlighting column
 ### Step 3 - Click Next --\>
 
 ## Vignette 2: Simple Data Pipeline
+Duration: 1
+<img src='./assets/data_pipeline_header.png'>
 
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on building a Simple Data Pipeline!
@@ -2263,8 +2267,8 @@ You will now see a visualization of your pipeline, showing how the base tables f
 ### Step 2 - Click Next --\>
 
 ## AI Experimentation with Cortex Playground
-
 Duration: 4 
+<img src='./assets/cortex_playground_header.png'>
 
 ### Overview
 
@@ -2288,7 +2292,7 @@ Let's begin by connecting directly to customer review data within Cortex Playgro
 7.  Click **Done**.
 8.  In the system prompt box, apply a filter using the **TRUCK\_BRAND\_NAME** dropdown. For instance, select "**Better Of Bread**" to narrow down the reviews.
 
-<img src = "assets/cortex-playground-connect.gif">
+<img src = "assets/vignette-3/cortex-playground-connect.gif">
 
 > **What you've accomplished:** You now have direct access to customer review data within the AI interface. The filter allows you to focus your analysis on specific truck brands, making your experiment more targeted and relevant.
 ### Step 2 - Compare AI Models to Generate Strategic Insights
@@ -2306,7 +2310,7 @@ Now, let's analyze customer reviews to extract specific operational insights and
 ```
 Analyze this customer review across multiple dimensions: sentiment score with confidence level, key theme extraction, competitive positioning insights, operational impact assessment, and priority ranking for management action
 ```
-<img src = "assets/cortex-playground-compare-two-model.png">
+<img src = "assets/vignette-3/cortex-playground-compare-two-model.png">
 
 > **Key Insight:** Notice the distinct strengths: Claude provides structured, executive-ready analysis with clear confidence. In contrast, Snowflake’s Llama model, optimized specifically for robust business intelligence, delivers comprehensive operational intelligence enriched with strategic context and detailed competitive analysis. This highlights the power of leveraging multiple AI providers, empowering you to choose the ideal approach for your specific business needs.
 With our optimal model identified, we now need to fine-tune its behavior for different business scenarios. The same model can produce vastly different results depending on its settings—let’s optimize this for our specific analytical requirements.
@@ -2331,8 +2335,8 @@ We want to observe how adjusting parameters, especially "**temperature**," affec
 
 Give that a try and see how the responses differ\! It's pretty cool to see how these small tweaks can change the AI's "personality."
 
-<img src = "assets/cortex-playground-model-setting.gif">
-<img src = "assets/cortex-playground-same-model.png">
+<img src = "assets/vignette-3/cortex-playground-model-setting.gif">
+<img src = "assets/vignette-3/cortex-playground-same-model.png">
 
 **Observe the Impact:**
 
@@ -2355,7 +2359,7 @@ Now that we've mastered experimentation, let's explore the core technology that 
 
 Every AI insight you generate in Cortex Playground isn't just magic; it's backed by SQL. Click "**View Code**" after any model response, and you'll see the exact SQL query, complete with your specified settings like temperature. This isn't just for show—this code is ready for action\! You can run it directly in a Snowflake worksheet, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It's also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.
 
-<img src = "assets/cortex-playground-view-code.png">
+<img src = "assets/vignette-3/cortex-playground-view-code.png">
 
 #### The SNOWFLAKE.CORTEX.COMPLETE Function
 
@@ -2371,17 +2375,22 @@ The Cortex Playground is an invaluable tool for experimenting with individual re
 
 ## Section 2: Scaling AI Analysis with Cortex AI Functions
 
+<img src='./assets/cortex_ai_functions_header.png'>
+
+
 **(This is where your content for Cortex AI Functions would go, formatted with its own `### Overview`, `### Step X`, etc.)**
 
 -----
 
 ## Section 3: Optimizing Development with Snowflake Copilot
 
+<img src='./assets/snowflake_copilot_header.png'>
+
 **(This is where your content for Snowflake Copilot would go.)**
 
 -----
 
-## Section 4: Enabling Semantic Discovery with Cortex Search
+<!-- ## Section 4: Enabling Semantic Discovery with Cortex Search
 
 **(This is where your content for Cortex Search would go.)**
 
@@ -2399,9 +2408,12 @@ The Cortex Playground is an invaluable tool for experimenting with individual re
 
 -----
 
-### Click Next --\>
+### Click Next --\> -->
 
 ## Vignette 4: Governance with Horizon
+Duration: 1
+<img src='./assets/governance_header.png'>
+
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Data Governance with Snowflake Horizon!
 
@@ -3444,6 +3456,10 @@ This powerful tool gives you a continuous, actionable overview of your Snowflake
 ### Step 4 - Click Next --\>
 
 ## Vignette 5: Apps & Collaboration
+Duration: 1
+
+<img src='./assets/appscollab_header.png'>
+
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Apps & Collaboration!
 
