@@ -1674,43 +1674,187 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 ### Step 2 - Click Next --\>
 
-## Module 3: [DUMMY VIGNETTE - ADD TITLE HERE]
+-----
 
-Duration: 5
+## 3. Artificial Intelligence in Snowflake
+
+Duration: 1-2 (Approximate, for reading this introduction)
 
 ### Overview
 
-*[Add a brief, one-paragraph overview of what the user will learn or build in this module. For example: "In this module, we will explore advanced data modeling techniques by building a star schema from our raw data..."]*
+Welcome to this Zero to Snowflake Hands-on Lab, where we'll dive into **Artificial Intelligence within Snowflake**!
 
-### [Add Sub-Section Title Here]
+In this lab, you'll embark on a progressive journey, moving from initial AI experimentation all the way to unified business intelligence within Snowflake's comprehensive AI platform. We'll explore various AI capabilities by building a robust customer intelligence system. This includes using **Cortex Playground** for AI model testing, **Cortex AISQL Functions** for scalable analysis, **Snowflake Copilot** for AI-assisted SQL development, **Cortex Search** for semantic text discovery, **Cortex Analyst** for natural language analytics, and **Snowflake Intelligence** for cohesive conversational business insights.
 
-Duration: 2
+### What You Will Learn
 
-*[Add a description for the first part of this module.]*
+* **Experiment with AI** using **Cortex Playground** for model testing and prompt optimization.
+* **Scale AI Analysis** with **Cortex AI Functions** for production-scale customer review processing.
+* **Optimize Development** with **Snowflake Copilot** for AI-assisted SQL query generation.
+* **Enable Semantic Discovery** with **Cortex Search** for intelligent text and review finding.
+* **Create Conversational Analytics** with **Cortex Analyst** for natural language business intelligence.
+* **Unify AI Capabilities** with **Snowflake Intelligence** for comprehensive business intelligence.
 
-**Step 1:** *[Add description for the first step.]*
+### What You Will Build
 
-```sql
--- [Add SQL for Step 1 here]
+Throughout this journey, you'll construct a complete customer analytics platform, structured into three key phases:
+
+#### Phase 1: AI Foundation
+
+* An **AI Experimentation Environment** using **Cortex Playground** for model testing and optimization.
+* A **Production-scale Review Analysis pipeline** using **AISQL Functions** for systematic customer feedback processing.
+
+#### Phase 2: Intelligent Development & Discovery
+
+* An **AI-Assisted SQL Development Workflow** using **Copilot** for complex query generation.
+* A **Semantic Search Engine** using **Cortex Search** for instant customer feedback discovery and operational intelligence.
+
+#### Phase 3: Conversational Intelligence
+
+* A **Natural Language Business Analytics Interface** using **Cortex Analyst** for conversational data exploration.
+* A **Unified AI Business Intelligence Platform** using **Snowflake Intelligence** that connects customer voice with business performance.
+
+---
+
+## AI Experimentation with Cortex Playground
+
+Duration: 4 
+
+### Overview
+
+This section demonstrates how to leverage **Snowflake Cortex Playground** for rapid experimentation with AI models to analyze customer feedback. You'll learn how to connect to data, compare different AI models, fine-tune model behavior, and understand the underlying SQL that powers these AI insights. The goal is to quickly prototype analytical strategies and identify optimal AI approaches for understanding customer sentiment and pinpointing service improvement opportunities. This directly addresses the **AI Experimentation Environment** objective from Phase 1 of your overall lab.
+
+### Step 1 - Access Cortex Playground and Connecting to Data Source
+
+Let's begin by connecting directly to customer review data within Cortex Playground. This keeps your data secure within Snowflake while allowing you to analyze feedback using AI models.
+
+**Navigation steps:**
+
+1.  Navigate to **AI & ML → Studio → Cortex Playground**.
+2.  Select **Role: TB\_DEV** and **Warehouse: TB\_DEV\_WH**.
+3.  Click "**+Connect your data**" in the prompt box.
+4.  Select data source:
+      * **Database: TB_101**
+      * **Schema: HARMONIZED**
+      * **Table: TRUCK\_REVIEWS\_V**
+5.  Select text column: **REVIEW**
+6.  Select filter column: **TRUCK\_BRAND\_NAME**
+7.  Click **Done**.
+8.  In the system prompt box, apply a filter using the **TRUCK\_BRAND\_NAME** dropdown. For instance, select "**Better Of Bread**" to narrow down the reviews.
+
+<img src = "assets/cortex-playground-connect.gif">
+
+> **What you've accomplished:** You now have direct access to customer review data within the AI interface. The filter allows you to focus your analysis on specific truck brands, making your experiment more targeted and relevant.
+
+### Step 2 - Compare AI Models to Generate Strategic Insights
+
+Now, let's analyze customer reviews to extract specific operational insights and compare how different AI models perform on this business task.
+
+**Setup Model Comparison:**
+
+1.  Click "**Compare**" to enable side-by-side model comparison.
+2.  Set the left panel to "**claude-3-5-sonnet**" and the right panel to "**snowflake-llama-3.3-70b**".
+
+> **Note:** Snowflake Cortex provides access to leading AI models from multiple providers, including Anthropic, OpenAI, Meta, and others, giving you choice and flexibility without vendor lock-in.
+
+**Enter this strategic prompt:**
+
 ```
-
-**Step 2:** *[Add description for the second step.]*
-
-```sql
--- [Add SQL for Step 2 here]
+Analyze this customer review across multiple dimensions: sentiment score with confidence level, key theme extraction, competitive positioning insights, operational impact assessment, and priority ranking for management action
 ```
+<img src = "assets/cortex-playground-compare-two-model.png">
 
-### [Add Another Sub-Section Title Here]
+> **Key Insight:** Notice the distinct strengths: Claude provides structured, executive-ready analysis with clear confidence. In contrast, Snowflake’s Llama model, optimized specifically for robust business intelligence, delivers comprehensive operational intelligence enriched with strategic context and detailed competitive analysis. This highlights the power of leveraging multiple AI providers, empowering you to choose the ideal approach for your specific business needs.
 
-Duration: 3
+With our optimal model identified, we now need to fine-tune its behavior for different business scenarios. The same model can produce vastly different results depending on its settings—let’s optimize this for our specific analytical requirements.
 
-*[Add a description for the second part of this module.]*
+### Step 3 - Fine-Tune Model Behavior with Temperature Settings
 
-**Step 1:** *[Add description for the first step.]*
+We want to observe how adjusting parameters, especially "**temperature**," affects the AI model's responses. Does it lead to more consistent or more creative answers?
 
-```sql
--- [Add SQL for Step 1 here]
-```
+**How to Set Up This Temperature Test:**
+
+1.  First, make sure both panels are set to "**claude-3-5-sonnet**." We're comparing the same model, just with different settings.
+2.  Next, click "**Change Settings**" right next to where it says "**Compare**."
+3.  Now, let's adjust those parameters for each side:
+      * **Left Panel:**
+          * Set **Temperature** to **0.1**. This will generally make the model give you really consistent, predictable answers.
+          * Set **Max-tokens** to **200**. This just keeps the responses from getting too long.
+      * **Right Panel:**
+          * Set **Temperature** to **0.8**. This should make the model's answers a bit more creative and varied.
+          * Set **top\_p** to **0.8**. This is another setting that helps encourage a wider range of words in the response.
+          * Set **Max-tokens** to **200**. Again, keeping the length in check.
+4.  Finally, use the exact same strategic prompt you used in Step 2.
+
+Give that a try and see how the responses differ\! It's pretty cool to see how these small tweaks can change the AI's "personality."
+
+<img src = "assets/cortex-playground-model-setting.gif">
+<img src = "assets/cortex-playground-same-model.png">
+
+**Observe the Impact:**
+
+Notice how adjusting the temperature parameter fundamentally changes the analytical output, even with the same AI model and data.
+
+  * **Temperature 0.1:** Produces deterministic, focused output. Ideal for structured, consistent analysis and standardized reporting.
+  * **Temperature 0.8:** Results in diverse, varied output. Perfect for generating explanatory insights or exploring less obvious connections.
+
+While temperature influences token choice, **top\_p** (set to 0.8 on the right) restricts possible tokens. **max\_tokens** simply sets the maximum response length; be mindful small values can truncate results.
+
+This gives you precise control over AI creativity versus consistency, letting you match the AI’s behavior to your analytical objectives.
+
+Now that we’ve mastered model selection and parameter optimization, let's examine the technology foundation that makes this experimentation possible. Understanding this will help us transition from playground testing to production deployment.
+
+### Step 4 - Understanding the Underlying Technology
+
+Now that we've mastered experimentation, let's explore the core technology that takes your AI insights from the playground to production.
+
+#### The Foundation: SQL at Its Core
+
+Every AI insight you generate in Cortex Playground isn't just magic; it's backed by SQL. Click "**View Code**" after any model response, and you'll see the exact SQL query, complete with your specified settings like temperature. This isn't just for show—this code is ready for action\! You can run it directly in a Snowflake worksheet, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It's also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.
+
+<img src = "assets/cortex-playground-view-code.png">
+
+#### The SNOWFLAKE.CORTEX.COMPLETE Function
+
+Behind every prompt you've run, the **SNOWFLAKE.CORTEX.COMPLETE** function is hard at work. This is Snowflake Cortex's powerful function providing direct access to industry-leading large language models for text completion. The Cortex Playground simply offers an intuitive interface to test and compare these models before you embed them directly into your SQL. (Heads up: this will evolve to AI\_COMPLETE in future releases.)
+
+This seamless integration means your AI experimentation directly translates into production-ready workflows within Snowflake.
+
+### Step 5 - Next Steps: Scaling AI Insights
+
+The Cortex Playground is an invaluable tool for experimenting with individual reviews, but true large-scale customer feedback analysis demands specialized AI functions. The prompt patterns and model selections you've refined here lay the groundwork for building scalable solutions. Our next step involves processing thousands of reviews using purpose-built AI SQL Functions like **SENTIMENT()**, **CLASSIFY()**, **EXTRACT\_ANSWER()**, and **AI\_SUMMARIZE\_AGG()**. This systematic approach ensures that AI-driven insights seamlessly become a core part of our operational strategy.
+
+-----
+
+## Section 2: Scaling AI Analysis with Cortex AI Functions
+
+**(This is where your content for Cortex AI Functions would go, formatted with its own `### Overview`, `### Step X`, etc.)**
+
+-----
+
+## Section 3: Optimizing Development with Snowflake Copilot
+
+**(This is where your content for Snowflake Copilot would go.)**
+
+-----
+
+## Section 4: Enabling Semantic Discovery with Cortex Search
+
+**(This is where your content for Cortex Search would go.)**
+
+-----
+
+## Section 5: Creating Conversational Analytics with Cortex Analyst
+
+**(This is where your content for Cortex Analyst would go.)**
+
+-----
+
+## Section 6: Unifying AI Capabilities with Snowflake Intelligence
+
+**(This is where your content for Snowflake Intelligence would go, followed by any conclusion or cleanup steps for the entire lab.)**
+
+-----
 
 ### Click Next --\>
 
