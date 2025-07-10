@@ -54,7 +54,7 @@ First, we need a place to put our setup script.
 
 1. **Navigate to Workspaces:** In the left-hand navigation menu of the Snowflake UI, click on **Projects** » **Workspaces**. This is the central hub for all your worksheets.  
 2. **Create a New Worksheet:** Find and click the **"+ Add New"** button in the top-right corner of the Workspaces area. This will generate a new, blank worksheet.  
-3. **Rename the Worksheet:** Your new worksheet will have a name based on the timestamp it was created. Give it a descriptive name like **Zero To Snowflake Setup**.
+3. **Rename the Worksheet:** Your new worksheet will have a name based on the timestamp it was created. Give it a descriptive name like **Zero To Snowflake - Setup**.
 
 ### **Step 2 \- Add and Run the Setup Script**
 
@@ -62,7 +62,9 @@ Now that you have your worksheet, it's time to add the setup SQL and execute it.
 
 1. **Copy the SQL Code:** In the section below, you'll find a large block of SQL code. Select the *entire* script and copy it to your clipboard.  
 2. **Paste into your Worksheet:** Return to your Zero To Snowflake Setup worksheet in Snowflake and paste the entire script into the editor.  
-3. **Run the Script:** To execute all the commands in the worksheet sequentially, click the **"Run All"** button located at the top-right of the worksheet editor. This will perform all the necessary setup actions, such as creating roles, databases, and warehouses that you will need for the upcoming vignettes.
+3. **Run the Script:** To execute all the commands in the worksheet sequentially, click the **"Run All"** button located at the top-right of the worksheet editor. This will perform all the necessary setup actions, such as creating roles, schemas, and warehouses that you will need for the upcoming vignettes.
+
+<img src='./assets/create_a_worksheet.gif'>
 
 ### **Looking Ahead**
 
@@ -74,8 +76,6 @@ For each new vignette, you will:
 2. Give it a descriptive name (e.g., Vignette 1 \- Getting Started with Snowflake).  
 3. Copy and paste the SQL script for that specific vignette.  
 4. Click **"Run All"** to execute it.
-
-This practice will keep your work for each section self-contained and organized.
 
 <!-- end list -->
 ### Copy the entire SQL block below and paste it into your worksheet.
@@ -1275,7 +1275,7 @@ Now that we have a warehouse, we must set it as the active warehouse for our ses
 USE WAREHOUSE my_wh;
 ```
 
-If you try to run the query below, it will fail, because the warehouse is suspended. 
+If you try to run the query below, it will fail, because the warehouse is suspended and does not have `AUTO_RESUME` enabled. 
 ```sql
 SELECT * FROM raw_pos.truck_details;
 ```
@@ -1322,7 +1322,7 @@ Duration: 1
 
 ### Overview
 
-This is a great place to demonstrate another powerful feature in Snowflake: the Query Result Cache. When you first ran the 'sales per truck' query, it likely took several seconds. If you run the exact same query again, the result will be nearly instantaneous.
+This is a great place to demonstrate another powerful feature in Snowflake: the Query Result Cache. When you first ran the 'sales per truck' query, it likely took several seconds. If you run the exact same query again, the result will be nearly instantaneous. This is because the query results were cached in Snowflake's Query Result Cache.
 
 ### Step 1 - Re-running a Query
 
@@ -1353,7 +1353,7 @@ ALTER WAREHOUSE my_wh SET warehouse_size = 'XSmall';
 
 ## Basic Data Transformation Techniques
 
-Duration: 3
+Duration: 5
 
 ### Overview
 
@@ -1365,7 +1365,7 @@ First, let's take a look at the `truck_build` column.
 ```sql
 SELECT truck_build FROM raw_pos.truck_details;
 ```
-This table contains data about the make, model and year of each truck, but it is nested, or embedded in an Object. We can perform operations on this column to extract these values, but first we'll create a development copy of the table.
+This table contains data about the make, model and year of each truck, but it is nested, or embedded in a special type of data called a VARIANT. We can perform operations on this column to extract these values, but first we'll create a development copy of the table.
 
 Let's create a development copy of our `truck_details` table. Snowflake's Zero-Copy Cloning lets us create an identical, fully independent copy of the table instantly, without using additional storage.
 
@@ -1406,13 +1406,14 @@ GROUP BY make
 ORDER BY make ASC;
 ```
 
-We can see a data quality issue: 'Ford' and 'Ford\_' are being treated as separate manufacturers. Let's fix this with an `UPDATE` statement.
+Did you notice anything odd about the results from the last query? We can see a data quality issue: 'Ford' and 'Ford\_' are being treated as separate manufacturers. Let's easily fix this with a simple `UPDATE` statement.
 
 ```sql
 UPDATE raw_pos.truck_dev
     SET make = 'Ford'
     WHERE make = 'Ford_';
 ```
+Here we're saying we want to set the row's make value to `Ford` wherever it is `Ford_`. This will ensure none of the Ford makes have the underscore, giving us a unified make count.
 
 ### Step 4 - Promoting to Production with SWAP
 
@@ -1422,7 +1423,7 @@ Our development table is now cleaned and correctly formatted. We can instantly p
 ALTER TABLE raw_pos.truck_details SWAP WITH raw_pos.truck_dev;
 ```
 
-### Step 5 - Final Cleanup
+### Step 5 - Cleanup
 
 Now that the swap is complete, we can drop the unnecessary `truck_build` column from our new production table. We also need to drop the old production table, which is now named `truck_dev`. But for the sake of the next lesson, we will "accidentally" drop the main table.
 
@@ -1433,17 +1434,11 @@ ALTER TABLE raw_pos.truck_details DROP COLUMN truck_build;
 DROP TABLE raw_pos.truck_details;
 ```
 
-### Step 6 - Click Next --\>
-
-## Data Recovery with UNDROP
-
-Duration: 2
-
-### Overview
+### Step 6 - Data Recovery with UNDROP
 
 Oh no\! We accidentally dropped the production `truck_details` table. Luckily, Snowflake's Time Travel feature allows us to recover it instantly. The `UNDROP` command restores dropped objects.
 
-### Step 1 - Verify the Drop
+### Step 7 - Verify the Drop
 
 If you run a `DESCRIBE` command on the table, you will get an error stating it does not exist.
 
@@ -1451,7 +1446,7 @@ If you run a `DESCRIBE` command on the table, you will get an error stating it d
 DESCRIBE TABLE raw_pos.truck_details;
 ```
 
-### Step 2 - Restore the Table with UNDROP
+### Step 8 - Restore the Table with UNDROP
 
 Let's restore the `truck_details` table to the exact state it was in before being dropped.
 
@@ -1461,7 +1456,7 @@ UNDROP TABLE raw_pos.truck_details;
 
 > **[Time Travel & UNDROP](https://docs.snowflake.com/en/user-guide/data-time-travel)**: Snowflake Time Travel enables accessing historical data at any point within a defined period. This allows for restoring data that has been modified or deleted. `UNDROP` is a feature of Time Travel that makes recovery from accidental drops trivial.
 
-### Step 3 - Verify Restoration and Clean Up
+### Step 9 - Verify Restoration and Clean Up
 
 Verify the table was successfully restored by selecting from it. Then, we can safely drop the actual development table, `truck_dev`.
 
@@ -1473,7 +1468,7 @@ SELECT * from raw_pos.truck_details;
 DROP TABLE raw_pos.truck_dev;
 ```
 
-### Step 4 - Click Next --\>
+### Step 10 - Click Next --\>
 
 ## Monitoring Cost with Resource Monitors
 
@@ -1594,9 +1589,8 @@ Duration: 1
 <img src='./assets/data_pipeline_header.png'>
 
 ### Overview
-Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on building a Simple Data Pipeline!
 
-Within this Quickstart, we will learn how to build a simple, automated data pipeline in Snowflake. We will start by ingesting raw, semi-structured data from an external stage, and then use the power of Snowflake's Dynamic Tables to transform and enrich that data, creating a pipeline that automatically stays up-to-date as new data arrives.
+Within this vignette, we will learn how to build a simple, automated data pipeline in Snowflake. We will start by ingesting raw, semi-structured data from an external stage, and then use the power of Snowflake's Dynamic Tables to transform and enrich that data, creating a pipeline that automatically stays up-to-date as new data arrives.
 
 ### Prerequisites
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
@@ -2126,7 +2120,7 @@ FROM (
 
 ### Step 2 - Testing the Automatic Refresh
 
-Let's see the automation in action. One of our trucks has added a Banh Mi sandwich, which contains new ingredients. Let's insert this new menu item into our staging table.
+Let's see the automation in action. One of our trucks has added a Banh Mi sandwich, which contains new ingredients for French Baguette and Pickled Daikon. Let's insert this new menu item into our staging table.
 
 ```sql
 INSERT INTO raw_pos.menu_staging 
@@ -2223,7 +2217,7 @@ CREATE OR REPLACE DYNAMIC TABLE harmonized.ingredient_usage_by_truck
 
 ### Step 4 - Querying the Final Output
 
-Now, let's query the final table in our pipeline. After a few minutes for the refreshes to complete, you will see the ingredient usage from the Banh Mi order we inserted. The entire pipeline updated automatically.
+Now, let's query the final table in our pipeline. After a few minutes for the refreshes to complete, you will see the ingredient usage for two Banh Mis from the order we inserted in a previous step. The entire pipeline updated automatically.
 
 ```sql
 -- You may need to wait up to 2 minutes and re-run this query
@@ -2415,9 +2409,8 @@ Duration: 1
 <img src='./assets/governance_header.png'>
 
 ### Overview
-Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Data Governance with Snowflake Horizon!
 
-Within this Quickstart, we will explore some of the powerful governance features within Snowflake Horizon. We will begin with a look at Role-Based Access Control (RBAC), before diving into features like automated data classification, tag-based masking policies for column-level security, row-access policies, data quality monitoring, and finally, account-wide security monitoring with the Trust Center.
+Within this vignette, we will explore some of the powerful governance features within Snowflake Horizon. We will begin with a look at Role-Based Access Control (RBAC), before diving into features like automated data classification, tag-based masking policies for column-level security, row-access policies, data quality monitoring, and finally, account-wide security monitoring with the Trust Center.
 
 ### Prerequisites
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
@@ -3461,9 +3454,8 @@ Duration: 1
 <img src='./assets/appscollab_header.png'>
 
 ### Overview
-Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Apps & Collaboration!
 
-In this Quickstart, we will explore how Snowflake facilitates seamless data collaboration through the Snowflake Marketplace. We will see how easy it is to acquire live, ready-to-query third-party datasets and immediately join them with our own internal data to unlock new insights—all without the need for traditional ETL pipelines.
+In this vignette, we will explore how Snowflake facilitates seamless data collaboration through the Snowflake Marketplace. We will see how easy it is to acquire live, ready-to-query third-party datasets and immediately join them with our own internal data to unlock new insights—all without the need for traditional ETL pipelines.
 
 ### Prerequisites
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
