@@ -3449,8 +3449,6 @@ Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on 
 
 In this Quickstart, we will explore how Snowflake facilitates seamless data collaboration through the Snowflake Marketplace. We will see how easy it is to acquire live, ready-to-query third-party datasets and immediately join them with our own internal data to unlock new insights—all without the need for traditional ETL pipelines.
 
-*Please note: The SQL file provided does not include the "Introduction to Streamlit" section mentioned in its header. This guide will cover all content provided in the SQL file.*
-
 ### Prerequisites
 - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
@@ -3771,13 +3769,16 @@ Follow these steps in the Snowsight UI to get the Weather Source data:
 1.  Make sure you are using the `ACCOUNTADMIN` role.
 2.  Navigate to **Data Products** » **Marketplace** from the left-hand navigation menu.
 3.  In the search bar, enter: `Weather Source frostbyte`.
+<img src="assets/vignette-5/weather_source_search.png">
+
 4.  Click on the **Weather Source LLC: frostbyte** listing.
+<img src="assets/vignette-5/weather_source_listing.png">
+
 5.  Click the **Get** button.
 6.  In the options, change the **Database name** to `ZTS_WEATHERSOURCE`.
 7.  Grant access to the **PUBLIC** role.
 8.  Click **Get**.
-
-<!-- \<img src="assets/marketplace\_listing.png"/\> -->
+<!-- TODO add picture with settings -->
 
 This process makes the Weather Source data instantly available in our account as a new database, ready to be queried.
 
@@ -3858,6 +3859,7 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
+<img src="./assets//vignette-5/line_chart.png">
 <!-- \<img src="assets/line\_chart.png"/\> -->
 
 ### Step 4 - Create a Sales and Weather View
@@ -3891,8 +3893,15 @@ ORDER BY date ASC;
 
 ### Step 5 - Answer a Business Question
 
-Our analyst can now answer complex business questions, such as: "How does significant precipitation impact our sales figures in the Seattle market?"
+Our analyst can now answer complex business questions, such as: "How does significant precipitation impact our sales figures in the Seattle market?" 
 
+Let's also visualize these results in Snowsight, but as a bar chart this time.
+
+1.  Run the query below.
+2.  In the **Results** pane, click **Chart**.
+3.  Set the **Chart Type** to `Bar`.
+4.  Set the **X-Axis** to `MENU_ITEM_NAME`.
+5.  Set the **Y-Axis** to `DAILY_SALES`.
 ```sql
 SELECT * EXCLUDE (city_name, country_desc, avg_snowdepth_inches, max_wind_speed_mph)
 FROM analytics.daily_sales_by_weather_v
@@ -3902,7 +3911,7 @@ WHERE
     AND avg_precipitation_inches >= 1.0
 ORDER BY date ASC;
 ```
-
+<img src='./assets/vignette-5/bar_chart.png'>
 ### Step 6 - Click Next --\>
 
 ## Exploring Point-of-Interest (POI) Data
@@ -3988,6 +3997,30 @@ ORDER BY o.truck_brand_name;
 
 ### Step 5 - Click Next --\>
 
+## Introduction to Streamlit in Snowflake
+
+Streamlit is an open-source Python library designed for easily creating and sharing web applications for machine learning and data science. It allows for the rapid development and deployment of data-driven apps.
+
+Streamlit in Snowflake empowers developers to securely build, deploy, and share applications directly within Snowflake. This integration allows you to build apps that process and utilize data stored in Snowflake without the need of moving the data or application code to an external system.
+***
+### Step 1 - Create Streamlit App
+**Let's create our first Streamlit app, an app that will display and chart sales data for each menu item in Japan for February 2022.**
+
+1. First, navigate to the Streamlit page then click on the blue '+ Streamlit App' button in the top right to create a new app.
+
+2. Enter these values in the 'Create Streamlit App' pop-up:
+    - App title: Menu Item Sales
+    - App location:
+        - Database: tb_101
+        - Schema: Analytics
+    - App warehouse: tb_dev_wh
+3. Now click 'Create'.
+When the app first loads, you'll see a sample app on the right pane and the app's code in the editor pane to the left.
+
+4. Select all of the code and remove it.
+5. **Next copy + paste the following code in the blank editor window, then click 'Run' in the top right.**
+<img src='./assets/vignette-5/create_streamlit_app.gif'>
+### Step 2 - Click Next --\>
 ## Conclusion and Next Steps
 
 Duration: 1
