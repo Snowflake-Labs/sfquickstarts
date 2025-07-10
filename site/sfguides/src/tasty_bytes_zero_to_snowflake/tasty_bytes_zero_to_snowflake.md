@@ -3432,6 +3432,14 @@ The typical hierarchy of system and custom roles might look something like this:
                                             |  PUBLIC  |
                                             +----------+
 ```
+Snowflake System Defined Role Definitions:
+
+- ORGADMIN: Role that manages operations at the organization level.
+- ACCOUNTADMIN: This is the top-level role in the system and should be granted only to a limited/controlled number of users in your account.
+- SECURITYADMIN: Role that can manage any object grant globally, as well as create, monitor, and manage users and roles.
+- USERADMIN: Role that is dedicated to user and role management only.
+- SYSADMIN: Role that has privileges to create warehouses and databases in an account.
+- PUBLIC: PUBLIC is a pseudo-role automatically granted to all users and roles. It can own securable objects, and anything it owns becomes available to every other user and role in the account.
 
 ### Step 3 - Grant Privileges to the Custom Role
 
@@ -3730,7 +3738,7 @@ AS
 
 ### Step 3 - Test and Schedule the DMF
 
-Let's insert a bad record to test our DMF. Then, we'll call the function to see if it catches the error.
+Let's insert a bad record to test our DMF. Then, we'll call the function to see if it catches the error. The record we will be inserting is ordering 2 items with a unit price of $5, and a total price of $5 instead of the correct total $10.
 
 ```sql
 -- Insert a record with an incorrect total price
@@ -3743,7 +3751,7 @@ SELECT governance.invalid_order_total_count(
 ) AS num_orders_with_incorrect_price;
 ```
 
-To automate this check, we can associate the DMF with the table and set a schedule to have it run automatically whenever the data changes.
+To automate this check, we can associate the DMF with the table and set a schedule to have it run automatically whenever the data changes, then add it to the `order_detail` table.
 
 ```sql
 ALTER TABLE raw_pos.order_detail
@@ -3788,11 +3796,17 @@ By default, most scanner packages are disabled. Let's enable them to get a compr
 
 1.  In the Trust Center, click the **Scanner Packages** tab.
 2.  Click on **CIS Benchmarks**.
+
 <img src="assets/vignette-4/trust_center_scanner_packages.png">
+
 3.  Click the **Enable Package** button.
+
 <img src="assets/vignette-4/trust_center_cis_scanner_package.png">
+
 4.  In the modal, set the **Frequency** to `Monthly` and click **Continue**.
+
 <img src="assets/vignette-4/enable_scanner_package.png">
+
 5.  Repeat this process for the **Threat Intelligence** scanner package.
 
 ### Step 3 - Review Findings
@@ -4115,7 +4129,7 @@ Duration: 2
 
 ### Overview
 
-One of our analysts wants to see how weather impacts food truck sales. To do this, he'll use the Snowflake Marketplace to get live weather data from Weather Source, which can then be joined directly with our own sales data. The Marketplace allows us to access live, ready-to-query data from third-party providers without any data duplication or ETL.
+One of our analysts wants to see how weather impacts food truck sales. To do this, they'll use the Snowflake Marketplace to get live weather data from Weather Source, which can then be joined directly with our own sales data. The Marketplace allows us to access live, ready-to-query data from third-party providers without any data duplication or ETL.
 
 > aside positive
 > **[Introduction to the Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/data-sharing-intro)**: The Marketplace provides a centralized hub to discover and access a wide variety of third-party data, applications, and AI products.
@@ -4202,15 +4216,7 @@ JOIN raw_pos.country c
 
 ### Step 3 - Analyze and Visualize Enriched Data
 
-Using our new view, the analyst can query for the average daily temperature in Hamburg, Germany for February 2022. We can then visualize this as a line chart directly in Snowsight.
-
-1.  Run the query below.
-2.  In the **Results** pane, click **Chart**.
-3.  Set the **Chart Type** to `Line`.
-4.  Set the **X-Axis** to `DATE_VALID_STD`.
-5.  Set the **Y-Axis** to `AVERAGE_TEMP_F`.
-
-<!-- end list -->
+Using our new view, the analyst can query for the average daily temperature in Hamburg, Germany for February 2022. Run the query below, then we'll visualize this as a line chart directly in Snowsight.
 
 ```sql
 SELECT
@@ -4227,8 +4233,13 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
+1.  Run the query above.
+2.  In the **Results** pane, click **Chart**.
+3.  Set the **Chart Type** to `Line`.
+4.  Set the **X-Axis** to `DATE_VALID_STD`.
+5.  Set the **Y-Axis** to `AVERAGE_TEMP_F`.
+
 <img src="./assets//vignette-5/line_chart.png">
-<!-- \<img src="assets/line\_chart.png"/\> -->
 
 ### Step 4 - Create a Sales and Weather View
 
@@ -4263,13 +4274,6 @@ ORDER BY date ASC;
 
 Our analyst can now answer complex business questions, such as: "How does significant precipitation impact our sales figures in the Seattle market?" 
 
-Let's also visualize these results in Snowsight, but as a bar chart this time.
-
-1.  Run the query below.
-2.  In the **Results** pane, click **Chart**.
-3.  Set the **Chart Type** to `Bar`.
-4.  Set the **X-Axis** to `MENU_ITEM_NAME`.
-5.  Set the **Y-Axis** to `DAILY_SALES`.
 ```sql
 SELECT * EXCLUDE (city_name, country_desc, avg_snowdepth_inches, max_wind_speed_mph)
 FROM analytics.daily_sales_by_weather_v
@@ -4279,7 +4283,17 @@ WHERE
     AND avg_precipitation_inches >= 1.0
 ORDER BY date ASC;
 ```
+
+Let's also visualize the results again in Snowsight, but as a bar chart this time.
+
+1.  Run the query above.
+2.  In the **Results** pane, click **Chart**.
+3.  Set the **Chart Type** to `Bar`.
+4.  Set the **X-Axis** to `MENU_ITEM_NAME`.
+5.  Set the **Y-Axis** to `DAILY_SALES`.
+
 <img src='./assets/vignette-5/bar_chart.png'>
+
 ### Step 6 - Click Next --\>
 
 ## Exploring Point-of-Interest (POI) Data
