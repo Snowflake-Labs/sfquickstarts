@@ -2616,9 +2616,83 @@ Snowflake Copilot profoundly transforms business intelligence by enabling users 
 
 -----
 
-<!-- ## Section 4: Enabling Semantic Discovery with Cortex Search
+## Cortex Search: AI-Powered Text Intelligence
 
-**(This is where your content for Cortex Search would go.)**
+Duration: 6
+
+### Overview
+
+While Copilot excels at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language.
+
+**Snowflake Cortex Search** solves this by providing low-latency, high-quality "fuzzy" search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent reranking to deliver the most relevant results. **In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.**
+
+### Step 1 - Access Cortex Search in Snowsight
+
+1.  Open Snowsight and navigate to the AI & ML Studio, then select **Cortex Search**.
+2.  Click **Create** to begin setup.
+
+This opens the search service configuration interface, where you’ll define how Snowflake indexes and interprets your text data.
+
+<img src = "assets/vignette-3/cortex-search-access.png">
+
+### Step 2 - Configure the Search Service
+
+In the initial configuration screen, enter:
+
+* **Role**: `TB_DEV`
+* **Warehouse**: `TB_DEV_WH`
+* **Database**: `TB_101`
+* **Schema**: `HARMONIZED`
+* **Name**: `customer_feedback_intelligence`
+
+Click **Next: Select data**.
+
+
+<img src = "assets/vignette-3/cortex-search-new-service.png">
+
+
+### Step 3 - Connect to Review Data
+
+This wizard will guide you through several configuration screens:
+
+* **Select data**: Choose `TRUCK_REVIEWS_V`
+* **Select search column**: Choose `REVIEW` (the text column to search)
+* **Select attributes**: Choose columns for filtering (`TRUCK_BRAND_NAME`, `PRIMARY_CITY`, `REVIEW_ID`)
+* **Select columns**: choose other columns to include in the result like `DATE`, `LANGUAGE`, etc.
+* **Configure indexing**: Accept the default
+
+> **Note**: Creating the search service includes building the index, so the initial setup may take a little longer - but once created, queries run with low latency and scale seamlessly.
+>
+
+<img src = "assets/vignette-3/cortex-search-walkthrough.gif">
+
+> Behind this simple UI, Cortex Search is performing a complex task. It analyzes the text in your "REVIEW" column, using an AI model to generate semantic embeddings, which are numerical representations of the text's meaning. These embeddings are then indexed, allowing for high-speed conceptual searches later on. In just a few clicks, you have taught Snowflake to understand the intent behind your reviews.
+
+### Step 4 - Run Semantic Query
+
+When the service shows as “Active”, click on **Playground** and enter the natural language prompt in the search bar:
+
+**Prompt - 1:** `Customers getting sick`
+
+<img src = "assets/vignette-3/cortex-search-prompt1.png">
+
+> **Key Insight**: Notice Cortex Search isn’t just finding customers - it’s finding CONDITIONS that could MAKE customers sick. That is the difference between reactive keyword search and proactive semantic understanding.
+
+Now try another query:
+
+**Prompt - 2:** `Angry customers`
+
+<img src = "assets/vignette-3/cortex-search-prompt2.png">
+
+> **Key Insight**: These customers are about to churn, but they never said “I’m angry.” They expressed frustration in their own words. Cortex Search understands the emotion behind the language, helping you identify and save at-risk customers before they leave.
+
+### Conclusion: Empowering Customer Experience with AI
+
+Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback. It empowers the customer service manager to move beyond simply sifting through reviews, to truly understand and proactively act upon the voice of the customer at scale, driving better operational decisions and enhancing customer loyalty.
+
+In the next module - Cortex Analyst - you’ll use natural language to query structured data. Together, Cortex Search and Cortex Analyst form the foundation of Snowflake Intelligence - a complete AI assistant of your data.
+
+### Click Next -->
 
 -----
 
