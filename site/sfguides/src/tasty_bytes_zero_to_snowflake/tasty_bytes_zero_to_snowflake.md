@@ -2258,7 +2258,7 @@ To access the DAG in Snowsight:
 
 You will now see a visualization of your pipeline, showing how the base tables flow into your dynamic tables.
 
-<!-- \<img src="assets/dag\_view.png"/\> -->
+<img src="assets/vignette-2/dag.png">
 
 ### Step 2 - Click Next --\>
 
@@ -3417,16 +3417,17 @@ Now, navigate to the Trust Center in the Snowsight UI:
 1.  Click the **Monitoring** tab in the left navigation bar.
 2.  Click on **Trust Center**.
 
-\<img src="assets/trust\_center.png"/\>
-
 ### Step 2 - Enable Scanner Packages
 
 By default, most scanner packages are disabled. Let's enable them to get a comprehensive view of our account's security posture.
 
 1.  In the Trust Center, click the **Scanner Packages** tab.
 2.  Click on **CIS Benchmarks**.
+<img src="assets/vignette-4/trust_center_scanner_packages.png">
 3.  Click the **Enable Package** button.
+<img src="assets/vignette-4/trust_center_cis_scanner_package.png">
 4.  In the modal, set the **Frequency** to `Monthly` and click **Continue**.
+<img src="assets/vignette-4/enable_scanner_package.png">
 5.  Repeat this process for the **Threat Intelligence** scanner package.
 
 ### Step 3 - Review Findings
@@ -3437,7 +3438,7 @@ After the scanners have had a moment to run, navigate back to the **Findings** t
   - The list below details each violation, its severity, and the scanner that found it.
   - Clicking on any violation will open a details pane with a summary and recommended remediation steps.
   - You can filter the list by severity, status, or scanner package to focus on the most critical issues.
-
+<img src="assets/vignette-4/trust_center_violation_detail_pane.png">
 This powerful tool gives you a continuous, actionable overview of your Snowflake account's security health.
 
 ### Step 4 - Click Next --\>
