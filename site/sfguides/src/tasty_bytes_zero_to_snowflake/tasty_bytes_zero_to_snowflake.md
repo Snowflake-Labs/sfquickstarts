@@ -4380,6 +4380,9 @@ ORDER BY o.truck_brand_name;
 ### Step 5 - Click Next --\>
 
 ## Introduction to Streamlit in Snowflake
+Duration: 3
+
+<img src='./assets/streamlit-logo.png'>
 
 Streamlit is an open-source Python library designed for easily creating and sharing web applications for machine learning and data science. It allows for the rapid development and deployment of data-driven apps.
 
