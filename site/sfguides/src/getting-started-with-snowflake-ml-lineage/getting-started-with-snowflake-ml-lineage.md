@@ -73,6 +73,7 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE ML_LINEAGE_DATABASE TO ROLE ML_LINEAG
 - Click Import .ipynb from the + Notebook dropdown
 - Create a new notebok with the following settings
   - Notebook Location: ML_LINEAGE_DATABASE, ML_LINEAGE_SCHEMA
+  - Run on Warehouse
   - Warehouse: ML_LINEAGE_WH
 - Create Notebook
 - Upload the image located [here](https://github.com/Snowflake-Labs/getting-started-with-snowflake-ml-lineage/blob/main/scripts/img) using the plus button on the notebook file explorer

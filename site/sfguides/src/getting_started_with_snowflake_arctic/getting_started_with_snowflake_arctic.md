@@ -2,7 +2,7 @@ id: getting_started_with_snowflake_arctic
 summary: This guide provides the instructions for writing a Streamlit application that uses Snowflake Arctic for custom tasks like summarizing long-form text into JSON formatted output using prompt engineering and Snowflake Cortex task-specific LLM functions to perform operations like translate text between languages or score the sentiment of a piece of text.
 categories: featured,getting-started,data-engineering,app-development
 environments: web
-status: Published
+status: Archived
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowflake Arctic, Snowflake Cortex, Streamlit
 authors: Dash Desai

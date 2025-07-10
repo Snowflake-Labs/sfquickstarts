@@ -124,10 +124,10 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 
 Search for the **Met office Weather Data**
-- The exact name is **Postcode Sector Weather Forecasts - Advanced with Solar**
+- The exact name is **Postcode Sector Weather Forecasts**
 - Press **Try for Free** - Keep the name as it is.  You will have 14 days of free weather data to try for 14 days.
 
-![alt text](assets/I005.png)
+![alt text](assets/metoffice.png)
 
 You will have access to the dataset for a period of **14 days**
 
@@ -1647,8 +1647,8 @@ trains_latlon = trains_latlon.drop('POSTCODE_SPLIT','POSTCODE_OUTCODE','POSTCODE
 
 # Add hourly and daily weather for each train station
 
-weather_hourly = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS__ADVANCED_WITH_SOLAR.PCSECT_FORECAST."advanced_with_solar_hourly_view"')
-weather_daily = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS__ADVANCED_WITH_SOLAR.PCSECT_FORECAST."advanced_with_solar_daily_view"')
+weather_hourly = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS.PCSECT_FORECAST."postcode_hourly_view"')
+weather_daily = session.table('POSTCODE_SECTOR_WEATHER_FORECASTS.PCSECT_FORECAST."postcode_daily_view"')
 
 weather_hourly_max = weather_hourly.agg(max('"Issued_at"').alias('MAX'))
 weather_hourly = weather_hourly.join(weather_hourly_max,weather_hourly_max['MAX']==weather_hourly['"Issued_at"']).drop('MAX')

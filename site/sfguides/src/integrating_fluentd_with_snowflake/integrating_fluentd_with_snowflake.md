@@ -1,18 +1,18 @@
 author: Security Field CTO Team
 id: integrating_fluentd_with_snowflake
-summary: Walkthrough of using Fluentd to send system event logs to Snowflake as a part of a SIEM or log storage solution
-categories: cybersecurity
+summary: Walkthrough of using Fluentd to send system event logs to Snowflake as a part of a SIEM or log analysis workload
+categories: observability, cybersecurity
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: SIEM, Data Governance
 
-# Using Fluentd to Send Log Files to Snowflake for Security Analytics
+# Using Fluentd to Send Log Files to Snowflake for Security and Observability Analytics
 <!-- ------------------------ -->
 ## Overview 
 Duration: 2
 
-This Quickstart shows how to use Fluentd to send system event logs to Snowflake for use as a SIEM or for log storage. We use Apache HTTP Server to generate access log files, which we upload as gzip files to an S3 external stage. Next, we set up Snowpipe to retrieve the gzip files from the external stage and import them into Snowflake. Finally we use Snowsight to visualize log events.  
+This Quickstart shows how to use Fluentd to send system event logs to Snowflake for use as a SIEM or for log analysis. We use Apache HTTP Server to generate access log files, which we upload as gzip files to an S3 external stage. Next, we set up Snowpipe to retrieve the gzip files from the external stage and import them into Snowflake. Finally we use Snowsight to visualize log events.  
 
 > aside positive 
 >

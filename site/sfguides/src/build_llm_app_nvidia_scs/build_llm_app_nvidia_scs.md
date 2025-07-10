@@ -3,7 +3,7 @@ id: build_llm_app_nvidia_scs
 summary: Build LLM App Powered By NVIDIA on Snowpark Container Services
 categories: getting-started,llm,snowpark-container-services,nvidia,snowflake-native-app
 environments: web
-status: Published
+status: Archived
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started,Snowpark Container Services, Snowflake Native Apps
 

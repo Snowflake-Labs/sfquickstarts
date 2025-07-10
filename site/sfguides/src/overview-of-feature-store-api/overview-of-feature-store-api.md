@@ -12,7 +12,7 @@ tags: Getting Started, Data Science
 ## Overview 
 Duration: 1
 
-The Snowflake Feature Store is a native solution that data scientists and ML engineers can use to create, maintain, and use ML features in data science and ML workloads.
+The Snowflake Feature Store is a native solution that data scientists and ML engineers can use to create, maintain, and use features in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/).
 
 A Feature Store lets you standardize ML features in a single managed and governed repository. Having commonly-used features defined centrally in a Feature Store can help reduce redundancy and duplication of data and effort, improving the productivity of data science teams. By improving consistency in how features are extracted from raw data, a Feature Store can also help improve the robustness of production ML pipelines.
 
@@ -71,6 +71,7 @@ Duration: 10
 - Click Import .ipynb from the + Notebook dropdown
 - Create a new notebok with the following settings
   - Notebook Location: FS_API_DATABASE, FS_API_SCHEMA
+  - Run on Warehouse
   - Warehouse: FS_API_WH
 - Create Notebook
 - Click Packages in the top right, add `snowflake-ml-python`

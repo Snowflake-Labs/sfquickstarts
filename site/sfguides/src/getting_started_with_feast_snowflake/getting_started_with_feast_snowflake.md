@@ -3,7 +3,7 @@ id: getting_started_with_feast_snowflake
 summary: This is a guide to assist users to setup Feast feature store with Snowflake for both online and offline feature stores.
 categories: getting-started,data-science-&-ml
 environments: web
-status: Published 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
