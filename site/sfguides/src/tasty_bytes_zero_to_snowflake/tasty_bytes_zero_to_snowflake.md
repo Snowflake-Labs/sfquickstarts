@@ -2304,8 +2304,6 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 
 ### Click Next --\> 
 
------
-
 ## 3a. Cortex Playground: Rapid AI Model Experimentation
 
 Duration: 4 
@@ -2379,6 +2377,7 @@ We want to observe how adjusting parameters, especially "**temperature**," affec
 Give that a try and see how the responses differ\! It's pretty cool to see how these small tweaks can change the AI's "personality."
 
 <img src = "assets/vignette-3/cortex-playground-model-setting.gif">
+
 <img src = "assets/vignette-3/cortex-playground-same-model.png">
 
 **Observe the Impact:**
@@ -2412,9 +2411,7 @@ This seamless integration means your AI experimentation directly translates into
 
 The Cortex Playground is an invaluable tool for experimenting with individual reviews, but true large-scale customer feedback analysis demands specialized AI functions. The prompt patterns and model selections you've refined here lay the groundwork for building scalable solutions. Our next step involves processing thousands of reviews using purpose-built AI SQL Functions like **SENTIMENT()**, **CLASSIFY()**, **EXTRACT\_ANSWER()**, and **AI\_SUMMARIZE\_AGG()**. This systematic approach ensures that AI-driven insights seamlessly become a core part of our operational strategy.
 
-### Click Next --\>
-
------
+### Click Next --\> 
 
 ## 3b. AISQL Functions: Analyzing Customer Feedback at Scale
 
@@ -2599,7 +2596,6 @@ As our analysis grows in sophistication, combining multiple AI functions in comp
 
 ### Click Next --\>
 
------
 
 ## 3c. Snowflake Copilot: Building Advanced Queries with Natural Language
 
@@ -2660,7 +2656,6 @@ Snowflake Copilot profoundly transforms business intelligence by enabling users 
 
 ### Click Next --\>
 
------
 
 ## 3d. Cortex Search: AI-Powered Text Intelligence
 Duration: 6
@@ -2671,7 +2666,7 @@ Duration: 6
 
 While Copilot excels at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language.
 
-**Snowflake Cortex Search** solves this by providing low-latency, high-quality "fuzzy" search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent reranking to deliver the most relevant results. **In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.**
+**Snowflake Cortex Search** solves this by providing low-latency, high-quality "fuzzy" search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent reranking to deliver the most relevant results. In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.
 
 ### Step 1 - Access Cortex Search in Snowsight
 
@@ -2750,7 +2745,7 @@ Duration: 10
 
 A business analyst at Tasty Bytes needs to enable self-service analytics, allowing the business team to ask complex questions in natural language and get instant insights without relying on data analysts to write SQL. While previous AI tools helped with finding reviews and complex query generation, the demand now is for **conversational analytics** that directly transforms structured business data into immediate insights.
 
-**Cortex Analyst** empowers business users to ask sophisticated questions directly, seamlessly extracting value from their analytics data through natural language interaction. **This lab will guide you through designing a semantic model, connecting it to your business data, configuring relationships and synonyms, and then executing advanced business intelligence queries using natural language.**
+**Cortex Analyst** empowers business users to ask sophisticated questions directly, seamlessly extracting value from their analytics data through natural language interaction. This lab will guide you through designing a semantic model, connecting it to your business data, configuring relationships and synonyms, and then executing advanced business intelligence queries using natural language.
 
 ### Step 1 - Design the Semantic Model Foundation
 
@@ -2758,11 +2753,16 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
 
 1. Navigate to **Cortex Analyst** under **AI & ML Studio** in Snowsight.
 
+<img src = "assets/vignette-3/cortex-analyst-nav.png">
+
 2. **Set Role and Warehouse:**
 
     * Change role to `TB_ADMIN`.
     * Set Warehouse to `TB_CORTEX_WH`.
-    * Click **Create Semantic View** and then select **Create new model**.
+    * Click **Create new model**.
+
+<img src = "assets/vignette-3/cortex-analyst-setup.png">
+
 
 3. **On the 'Getting Started' page:**
 
@@ -2771,7 +2771,9 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
     * **Name**: `tasty_bytes_business_analytics`.
     * **Description**: (Strongly recommended for clarity and AI understanding. Use: Semantic model for Tasty Bytes executive analytics, covering customer loyalty and order performance data for natural language querying)
 
-Click **Next: Select tables** to proceed.
+    * Click **Next: Select tables** to proceed.
+
+<img src = "assets/vignette-3/cortex-analyst-getting-started.png">
 
 > **Note**: To make a request to Cortex Analyst, you must use a role that has the `SNOWFLAKE.CORTEX_USER` role granted.
 
@@ -2785,7 +2787,9 @@ In the 'Select tables' step, let's choose our pre-built analytics views.
     * **SCHEMA**: `SEMANTIC_LAYER`
     * **TABLE**: `Customer_Loyalty_Metrics_v` and `Orders_v`
 
-Click **Next: Select columns** to proceed.
+    * Click **Next: Select columns** to proceed.
+
+<img src = "assets/vignette-3/coretx-analyst-select-tables.png">
 
 2. **Configure Column Selection:**
 
@@ -2793,6 +2797,9 @@ Click **Next: Select columns** to proceed.
     * For each column, review its **Logical Role** (e.g., Dimension, Measure, Time Dimension) and adjust if necessary.
     * Consider setting **Display Names** or adding **Synonyms** for columns that might have technical names but represent common business concepts (e.g., `TOTAL_SALES_AMOUNT` could be "Total Revenue").
     * (Optional: Hide any columns that aren't relevant for natural language queries to simplify the model.)
+
+<img src = "assets/vignette-3/cortex-analyst-select-columns.png">
+
 
 ### Step 3 - Add Synonyms for Logical Tables
 
@@ -2803,6 +2810,9 @@ Now let’s add table synonyms for better natural language understanding:
 * For **orders_v** table, please copy & paste:
     `Orders, transactions, sales, purchases, order_data`
 
+<img src = "assets/vignette-3/cortex-analyst-synonyms.gif">
+
+
 ### Step 4 - Configure Table Relationships
 
 After creating the semantic model, let’s establish the relationship between our logical tables and add business-friendly synonyms.
@@ -2810,13 +2820,15 @@ After creating the semantic model, let’s establish the relationship between ou
 Let's configure our table relationship by creating:
 
 * **Relationship name**: `orders_to_customer_loyalty_metrics`
-* **Join type**: `Left Join`
+* **Join type**: `Left outer`
 * **Relation type**: `many-to-one`
 * **Left table**: `ORDERS_V`
 * **Right table**: `CUSTOMER_LOYALTY_METRICS_V`
 * **Join columns**: `CUSTOMER_ID = CUSTOMER_ID`
 
 Upon completion, we will have a semantic model ready for sophisticated natural language queries.
+
+<img src = "assets/vignette-3/cortex-analyst-table-relationship.png">
 
 ### Step 5 - Execute Customer Segmentation Intelligence
 
@@ -2828,6 +2840,8 @@ Let's execute our customer segmentation analysis:
 
 **Prompt 1:** `Tell me, which customer groups, broken down by marital status and gender, are spending the most per customer? I'd like to see this across our different cities and regions. Also, can we compare their long-term spending habits to identify our most valuable customer demographics for focused marketing efforts?`
 
+<img src = "assets/vignette-3/cortex-analyst-prompt1.png">
+
 > **Key Insight**: Instantly delivers comprehensive intelligence by combining multi-table joins, demographic segmentation, geographic insights, and lifetime value analysis - insights that would require 40+ lines of SQL and hours of analyst effort.
 
 ### Step 6 - Generate Advanced Business Intelligence
@@ -2837,6 +2851,9 @@ Having seen basic segmentation, let’s now demonstrate enterprise-grade SQL tha
 Let's execute our multi-layered customer analysis:
 
 **Prompt 2:** `I want to understand our customer base better. Can you group customers by how much they've spent with us over time, then show me their ordering patterns differ between top spenders and lower spenders? Also compare how our franchise locations perform versus company-owned stores for each customer group`
+
+<img src = "assets/vignette-3/cortex-analyst-prompt2.png">
+
 
 > **Key Insight**: Notice how Cortex Analyst seamlessly bridges the gap between a business user's simple, natural language question and the sophisticated, multi-faceted SQL query required to answer it. It automatically constructs the complex logic, including CTEs, window functions, and detailed aggregations, that would typically demand a skilled data analyst.
 
@@ -2855,9 +2872,6 @@ This Cortex Analyst semantic model becomes the foundation for Snowflake Intellig
 
 <img src='./assets/si_header.png'>
 
-**(This is where your content for Snowflake Intelligence would go, followed by any conclusion or cleanup steps for the entire lab.)**
-
------
 
 ### Click Next --\> -->
 
