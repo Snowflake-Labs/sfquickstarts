@@ -2419,7 +2419,7 @@ The Cortex Playground is an invaluable tool for experimenting with individual re
 
 ## AISQL Functions: Analyzing Customer Feedback at Scale
 
-<img src='./assets/cortex_ai_functions_header.png'>
+<img src='./assets/aisql_functions_header.png'>
 
 Duration: 5
 
@@ -2664,8 +2664,9 @@ Snowflake Copilot profoundly transforms business intelligence by enabling users 
 -----
 
 ## Cortex Search: AI-Powered Text Intelligence
-
 Duration: 6
+
+<img src='./assets/cortex_search_header.png'>
 
 ### Overview
 
@@ -2744,12 +2745,18 @@ In the next module - Cortex Analyst - you’ll use natural language to query str
 -----
 
 ## Section 5: Creating Conversational Analytics with Cortex Analyst
+Duration: 3
+
+<img src='./assets/cortex_analyst_header.png'>
+
 
 **(This is where your content for Cortex Analyst would go.)**
 
 -----
 
 ## Section 6: Unifying AI Capabilities with Snowflake Intelligence
+
+<img src='./assets/si_header.png'>
 
 **(This is where your content for Snowflake Intelligence would go, followed by any conclusion or cleanup steps for the entire lab.)**
 
