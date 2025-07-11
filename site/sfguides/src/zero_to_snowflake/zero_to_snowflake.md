@@ -9,7 +9,7 @@ tags: Getting Started, Tasty Bytes, Zero to Snowflake, Governance, Horizon, Data
 
 # Zero to Snowflake
 
-## Overview
+## Welcome to the Course!
 
 Duration: 1
 <img src='./assets/zts_header.png'>
@@ -35,7 +35,7 @@ Our mission is to provide unique, high-quality food options in a convenient and 
 
   - **Vignette 1: Getting Started with Snowflake:** The fundamentals of Snowflake warehouses, caching, cloning, and Time Travel.
   - **Vignette 2: Simple Data Pipelines:** How to ingest and transform semi-structured data using Dynamic Tables.
-  - **Vignette 3: Snowflake Cortex AI:** How to leverage Snowflake's comprehensive AI capabilities for experimentation, scalable analysis, AI-assisted development, and conversational business intelligence.
+  - **Vignette 3: Artificial Intelligence:** How to leverage Snowflake's comprehensive AI capabilities for experimentation, scalable analysis, AI-assisted development, and conversational business intelligence.
   - **Vignette 4: Governance with Horizon:** How to protect your data with roles, classification, masking, and row-access policies.
   - **Vignette 5: Apps & Collaboration:** How to leverage the Snowflake Marketplace to enrich your internal data with third-party datasets.
 
@@ -89,7 +89,9 @@ For each new vignette, you will:
 
 <!-- end list -->
 
-## Get Started with Snowflake
+### Step 4 - Click Next --\>
+
+## Getting Started with Snowflake
 Duration: 1
 <img src='./assets/getting_started_header.png'>
 
@@ -116,6 +118,8 @@ Within this Vignette, we will learn about core Snowflake concepts by exploring V
 ### Get the SQL and paste it into your Worksheet.
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new Worksheet to follow along in Snowflake.**
+
+### Step 7 - Click Next --\>
 
 ## Virtual Warehouses and Settings
 
@@ -200,7 +204,11 @@ GROUP BY o.truck_brand_name
 ORDER BY total_sales DESC;
 ```
 
-## Query Result Cache
+<!-- \<img src="assets/query\_results\_pane.png"/\> -->
+
+### Step 5 - Click Next --\>
+
+## Using Persisted Query Results
 
 Duration: 1
 
@@ -233,7 +241,9 @@ We will now be working with smaller datasets, so we can scale our warehouse back
 ALTER WAREHOUSE my_wh SET warehouse_size = 'XSmall';
 ```
 
-## Basic Transformation Techniques
+### Step 3 - Click Next --\>
+
+## Basic Data Transformation Techniques
 
 Duration: 5
 
@@ -350,7 +360,9 @@ SELECT * from raw_pos.truck_details;
 DROP TABLE raw_pos.truck_dev;
 ```
 
-## Resource Monitors
+### Step 10 - Click Next --\>
+
+## Monitoring Cost with Resource Monitors
 
 Duration: 2
 
@@ -387,7 +399,9 @@ ALTER WAREHOUSE my_wh
 
 > For more information on what each configuration handles, please visit the documentation for [Working with Resource Monitors](https://docs.snowflake.com/en/user-guide/resource-monitors).
 
-## Create a Budget
+### Step 3 - Click Next --\>
+
+## Monitoring Cost with Budgets
 
 Duration: 2
 
@@ -434,7 +448,9 @@ Configuring a budget is done through the Snowsight UI.
 
 > For a detailed guide on Budgets, please see the [Snowflake Budgets Documentation](https://docs.snowflake.com/en/user-guide/budgets).
 
-## Universal Search
+### Step 4 - Click Next --\>
+
+## Exploring with Universal Search
 
 Duration: 1
 
@@ -458,6 +474,8 @@ You can also use natural language. For example, search for: `Which truck franchi
 Universal search will return relevant tables and views, even highlighting columns that might help answer your question, providing an excellent starting point for analysis.
 
 <img src="assets/vignette-1/universal_search_natural_language_query.png">
+
+### Step 3 - Click Next --\>
 
 ## Simple Data Pipeline
 Duration: 1
@@ -484,7 +502,9 @@ Within this vignette, we will learn how to build a simple, automated data pipeli
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql) in a new Worksheet to follow along in Snowflake.**
 
-## External Stage Ingestion
+### Step 7 - Click Next --\>
+
+## Ingestion from External Stage
 
 Duration: 2
 
@@ -543,6 +563,8 @@ FROM @raw_pos.menu_stage;
 > aside positive
 > **[COPY INTO TABLE](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table)**: This powerful command loads data from a staged file into a Snowflake table. It is the primary method for bulk data ingestion.
 
+### Step 4 - Click Next --\>
+
 ## Semi-Structured Data
 
 Duration: 2
@@ -584,6 +606,8 @@ FROM
 
 > aside positive
 > **[Semi-Structured Data Types](https://docs.snowflake.com/en/sql-reference/data-types-semistructured)**: Snowflake's VARIANT, OBJECT, and ARRAY types allow you to store and query semi-structured data directly, without needing to define a rigid schema upfront.
+
+### Step 3 - Click Next --\>
 
 ## Dynamic Tables
 
@@ -638,7 +662,9 @@ SELECT * FROM harmonized.ingredient
 WHERE ingredient_name IN ('French Baguette', 'Pickled Daikon');
 ```
 
-## Build Out the Pipeline
+### Step 3 - Click Next --\>
+
+## Building Out the Pipeline
 
 Duration: 3
 
@@ -733,7 +759,9 @@ GROUP BY truck_id, ingredient_name
 ORDER BY total_ingredients_used DESC;
 ```
 
-## Visualize the Pipeline
+### Step 5 - Click Next --\>
+
+## Visualizing the Pipeline
 
 Duration: 1
 
@@ -755,17 +783,20 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 <img src="assets/vignette-2/dag.png">
 
-## Snowflake Cortex AI
+### Step 2 - Click Next --\>
+
+
+## Artificial Intelligence in Snowflake
 
 Duration: 5
 
 ### Overview
 
-Welcome to the Zero to Snowflake Hands-on Lab focused on Snowflake Cortex AI!
+Welcome to the Zero to Snowflake Hands-on Lab focused on Artificial Intelligence!
 
-Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, Snowflake Copilot for AI-assisted SQL development, Cortex Search for semantic text searching and Cortex Analyst for natural language analytics.
+Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, Snowflake Copilot for AI-assisted SQL development, Cortex Search for semantic text searching, Cortex Analyst for natural language analytics, and Snowflake Intelligence for unified conversational business intelligence.
 
-- For more detail on Snowflake Cortex AI please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
+- For more detail on Artificial Intelligence in Snowflake please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
 
 ### What You Will Learn
 
@@ -774,6 +805,7 @@ Within this lab, we will explore Snowflake’s complete AI platform through a pr
 * How to optimize development with Snowflake’s Copilot for AI-assisted SQL query generation.
 * How to enable semantic discovery with Cortex Search for intelligent text and review finding.
 * How to create conversational analytics with Cortex Analyst for natural language business intelligence.
+* How to unify AI capabilities with Snowflake Intelligence for comprehensive business intelligence.
 
 ### What You Will Build
 
@@ -789,8 +821,11 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 
 **Phase 3: Conversational Intelligence**
 * Natural Language Business Analytics Interface using Cortex Analyst for conversational data exploration.
+* Unified AI Business Intelligence Platform using Snowflake Intelligence that connects customer voice with business performance.
 
-## Cortex Playground
+### Click Next --\> 
+
+## 3a. Cortex Playground: Rapid AI Model Experimentation
 
 Duration: 4 
 
@@ -897,7 +932,9 @@ This seamless integration means your AI experimentation directly translates into
 
 The Cortex Playground is an invaluable tool for experimenting with individual reviews, but true large-scale customer feedback analysis demands specialized AI functions. The prompt patterns and model selections you've refined here lay the groundwork for building scalable solutions. Our next step involves processing thousands of reviews using purpose-built AI SQL Functions like **SENTIMENT()**, **CLASSIFY()**, **EXTRACT\_ANSWER()**, and **AI\_SUMMARIZE\_AGG()**. This systematic approach ensures that AI-driven insights seamlessly become a core part of our operational strategy.
 
-## AISQL Functions
+### Click Next --\> 
+
+## 3b. AISQL Functions: Analyzing Customer Feedback at Scale
 
 <img src='./assets/aisql_functions_header.png'>
 
@@ -1081,8 +1118,10 @@ We've successfully demonstrated the transformative power of AI SQL functions, sh
 
 As our analysis grows in sophistication, combining multiple AI functions in complex queries can become challenging. This is precisely where Snowflake Copilot offers powerful assistance. Let's explore how Copilot can help us create complex queries using natural language and significantly accelerate our work, empowering us to build even more intricate analytical workflows with ease.
 
+### Click Next --\>
 
-## Snowflake Copilot
+
+## 3c. Snowflake Copilot: Building Advanced Queries with Natural Language
 
 <img src='./assets/snowflake_copilot_header.png'>
 
@@ -1143,7 +1182,10 @@ In the same Copilot panel, paste the following business question and click RUN t
 
 Snowflake Copilot profoundly transforms business intelligence by enabling users to effortlessly translate complex business questions into sophisticated SQL queries. As demonstrated with Tasty Bytes, it empowers both technical and non-technical users to derive actionable insights from their data without deep SQL expertise. This LLM-powered assistant delivers schema-aware, purpose-built intelligence, ensuring robust data governance and keeping all enterprise data securely within Snowflake. Copilot isn't just generic AI; it's a strategic tool that bridges operational insights with business intelligence.
 
-## Cortex Search
+### Click Next --\>
+
+
+## 3d. Cortex Search: AI-Powered Text Intelligence
 Duration: 6
 
 <img src='./assets/cortex_search_header.png'>
@@ -1218,9 +1260,12 @@ Now try another query:
 
 Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback. It empowers the customer service manager to move beyond simply sifting through reviews, to truly understand and proactively act upon the voice of the customer at scale, driving better operational decisions and enhancing customer loyalty.
 
-In the next module - Cortex Analyst - you’ll use natural language to query structured data. 
+In the next module - Cortex Analyst - you’ll use natural language to query structured data. Together, Cortex Search and Cortex Analyst form the foundation of Snowflake Intelligence - a complete AI assistant of your data.
 
-## Cortex Analyst
+### Click Next --\>
+
+
+## 3e. Cortex Analyst: Conversational Business Intelligence
 
 Duration: 10
 
@@ -1344,6 +1389,20 @@ Let's execute our multi-layered customer analysis:
 
 Through these rigorous steps, we've forged a robust Cortex Analyst semantic model. This isn't just an improvement; it's a transformative tool designed to liberate users across various industries from the constraints of SQL, enabling them to surface profound business intelligence through intuitive natural language queries. Our multi-layered analyses, while showcased through the Tasty Bytes use case, powerfully illustrate how this model drastically cuts down on the time and effort traditionally needed for deep insights, thereby democratizing access to data and fueling a culture of informed, agile decision-making on a broad scale.
 
+**Integration with Snowflake Intelligence**
+
+This Cortex Analyst semantic model becomes the foundation for Snowflake Intelligence, enabling automatic dashboard generation, proactive insights, and intelligent reporting.
+
+### Click Next --\> 
+
+
+## Section 6: Unifying AI Capabilities with Snowflake Intelligence
+
+<img src='./assets/si_header.png'>
+
+
+### Click Next --\> -->
+
 ## Governance with Horizon
 Duration: 1
 <img src='./assets/governance_header.png'>
@@ -1370,6 +1429,8 @@ Within this vignette, we will explore some of the powerful governance features w
 ### Get the SQL and paste it into your Worksheet.
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake.**
+
+### Step 7 - Click Next --\>
 
 ## Roles and Access Control
 
@@ -1479,7 +1540,9 @@ SELECT TOP 100 * FROM raw_customer.customer_loyalty;
 
 Looking at the query results, it's clear this table contains a lot of Personally Identifiable Information (PII). In the next sections, we'll learn how to protect it.
 
-## Classification and Auto Tagging
+### Step 5 - Click Next --\>
+
+## Tag-Based Classification with Auto Tagging
 
 Duration: 3
 
@@ -1556,6 +1619,8 @@ FROM TABLE(INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS('raw_customer.customer_
 
 Notice that columns identified as PII now have our custom `governance.pii` tag applied.
 
+### Step 5 - Click Next --\>
+
 ## Masking Policies
 
 Duration: 3
@@ -1610,12 +1675,18 @@ USE ROLE public;
 SELECT TOP 100 * FROM raw_customer.customer_loyalty;
 ```
 
+<!-- \<img src="assets/masked\_data.png"/\> -->
+
 Now, switch to a privileged role, `tb_admin`. The data should now be fully visible.
 
 ```sql
 USE ROLE tb_admin;
 SELECT TOP 100 * FROM raw_customer.customer_loyalty;
 ```
+
+<!-- \<img src="assets/unmasked\_data.png"/\> -->
+
+### Step 4 - Click Next --\>
 
 ## Row Access Policies
 
@@ -1677,6 +1748,8 @@ SELECT TOP 100 * FROM raw_customer.customer_loyalty;
 ```
 
 The result set should now only contain rows where the `country` is 'United States'.
+
+### Step 4 - Click Next --\>
 
 ## Data Metric Functions
 
@@ -1751,6 +1824,8 @@ ALTER TABLE raw_pos.order_detail
     ON (price, unit_price, quantity);
 ```
 
+### Step 4 - Click Next --\>
+
 ## Trust Center
 
 Duration: 2
@@ -1809,6 +1884,8 @@ After the scanners have had a moment to run, navigate back to the **Findings** t
 
 This powerful tool gives you a continuous, actionable overview of your Snowflake account's security health.
 
+### Step 4 - Click Next --\>
+
 ## Apps & Collaboration
 Duration: 1
 
@@ -1832,7 +1909,9 @@ In this vignette, we will explore how Snowflake facilitates seamless data collab
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-5.sql) in a new Worksheet to follow along in Snowflake.**
 
-## Acquire Data from Snowflake Marketplace
+### Step 7 - Click Next --\>
+
+## Acquiring Data from Snowflake Marketplace
 
 Duration: 2
 
@@ -1873,7 +1952,9 @@ Follow these steps in the Snowsight UI to get the Weather Source data:
 
 This process makes the Weather Source data instantly available in our account as a new database, ready to be queried.
 
-## Integrate Account Data with Shared Data
+### Step 3 - Click Next --\>
+
+## Integrating Account Data with Shared Data
 
 Duration: 3
 
@@ -2001,7 +2082,9 @@ Let's also visualize the results again in Snowsight, but as a bar chart this tim
 
 <img src='./assets/vignette-5/bar_chart.png'>
 
-## Explore Point-of-Interest Data
+### Step 6 - Click Next --\>
+
+## Exploring Point-of-Interest Data
 
 Duration: 3
 
@@ -2082,6 +2165,8 @@ GROUP BY o.truck_brand_name
 ORDER BY o.truck_brand_name;
 ```
 
+### Step 5 - Click Next --\>
+
 ## Introduction to Streamlit in Snowflake
 Duration: 3
 
@@ -2110,6 +2195,8 @@ When the app first loads, you'll see a sample app on the right pane and the app'
 
 <img src='./assets/vignette-5/create_streamlit_app.gif'>
 
+### Step 2 - Click Next --\>
+
 ## Conclusion and Resources
 Duration: 1
 
@@ -2125,7 +2212,7 @@ If you would like to re-run this Quickstart, please run the complete `RESET` scr
 - **Warehousing and Performance:** How to create, manage, and scale virtual warehouses, and leverage Snowflake's results cache.
 - **Data Transformation:** How to use Zero-Copy Cloning for safe development, transform data, and instantly recover from errors using Time Travel and `UNDROP`.
 - **Data Pipelines:** How to ingest data from external stages, process semi-structured `VARIANT` data, and build automated ELT pipelines with Dynamic Tables.
-- **Snowflake Cortex AI** How to leverage Snowflake Cortex AI to build a customer analytics platform.
+- **Artificial Intelligence** How to leverage Snowflake AI to build a customer analytics platform.
 - **Data Governance:** How to implement a security framework using Role-Based Access Control, automated PII classification, tag-based Data Masking, and Row Access Policies.
 - **Data Collaboration:** How to discover and acquire live, third-party datasets from the Snowflake Marketplace and seamlessly join them with your own data to generate new insights.
 
@@ -2144,8 +2231,3 @@ If you would like to re-run this Quickstart, please run the complete `RESET` scr
 - [Data Metric Functions](https://docs.snowflake.com/en/user-guide/data-quality-intro)
 - [Trust Center](https://docs.snowflake.com/en/user-guide/trust-center/overview)
 - [Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro)
-- [Snowflake Cortex Playground](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-playground)
-- [AI SQL Functions in Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)
-- [Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot)
-- [Snowflake Cortex Search Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
-- [Snowflake Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
