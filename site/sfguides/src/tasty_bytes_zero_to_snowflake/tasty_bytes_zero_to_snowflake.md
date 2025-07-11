@@ -16,7 +16,7 @@ Duration: 1
 
 ### Overview
 
-Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journey through key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, then see how you can experiment with LLMs using the Cortex Playground to compare different models for summarizing text, use AISQL Functions to instantly analyze customer review sentiment with a simple SQL command, and leverage the Snowflake Copilot to accelerate query writing by asking for the SQL you need in plain English. Finally, you will learn to secure your data with powerful governance controls and enrich your analysis through seamless data collaboration.
+Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journey through key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, then see how you can experiment with LLMs using the Cortex Playground to compare different models for summarizing text, use AISQL Functions to instantly analyze customer review sentiment with a simple SQL command, and leverage the Snowflake Copilot to accelerate query writing by asking for the SQL you need in plain English, harness Cortex Search for intelligent text discovery, and utilize Cortex Analyst for conversational business intelligence. Finally, you will learn to secure your data with powerful governance controls and enrich your analysis through seamless data collaboration.
 
 ### Prerequisites
 
@@ -26,7 +26,7 @@ Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journe
 
   - **Vignette 1: Getting Started with Snowflake:** The fundamentals of Snowflake warehouses, caching, cloning, and Time Travel.
   - **Vignette 2: Simple Data Pipelines:** How to ingest and transform semi-structured data using Dynamic Tables.
-  - **Vignette 3: Artificial Intelligence:** A placeholder for your future content.
+  - **Vignette 3: Artificial Intelligence:** How to leverage Snowflake's comprehensive AI capabilities for experimentation, scalable analysis, AI-assisted development, and conversational business intelligence.
   - **Vignette 4: Governance with Horizon:** How to protect your data with roles, classification, masking, and row-access policies.
   - **Vignette 5: Apps & Collaboration:** How to leverage the Snowflake Marketplace to enrich your internal data with third-party datasets.
 
@@ -35,6 +35,7 @@ Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journe
   - A comprehensive understanding of the core Snowflake platform.
   - Configured Virtual Warehouses.
   - An automated ELT pipeline with Dynamic Tables.
+  - A complete intelligence customer analytics platform leveraging Snowflake AI.
   - A robust data governance framework with roles and policies.
   - Enriched analytical views combining first- and third-party data.
 
