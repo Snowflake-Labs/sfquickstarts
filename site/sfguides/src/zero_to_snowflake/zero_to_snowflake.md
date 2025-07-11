@@ -825,7 +825,7 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 
 ### Click Next --\> 
 
-## 3a. Cortex Playground: Rapid AI Model Experimentation
+## Cortex Playground: Rapid AI Model Experimentation
 
 Duration: 4 
 
@@ -934,7 +934,7 @@ The Cortex Playground is an invaluable tool for experimenting with individual re
 
 ### Click Next --\> 
 
-## 3b. AISQL Functions: Analyzing Customer Feedback at Scale
+## AISQL Functions: Analyzing Customer Feedback at Scale
 
 <img src='./assets/aisql_functions_header.png'>
 
@@ -1121,7 +1121,7 @@ As our analysis grows in sophistication, combining multiple AI functions in comp
 ### Click Next --\>
 
 
-## 3c. Snowflake Copilot: Building Advanced Queries with Natural Language
+## Snowflake Copilot: Building Advanced Queries with Natural Language
 
 <img src='./assets/snowflake_copilot_header.png'>
 
@@ -1185,7 +1185,7 @@ Snowflake Copilot profoundly transforms business intelligence by enabling users 
 ### Click Next --\>
 
 
-## 3d. Cortex Search: AI-Powered Text Intelligence
+## Cortex Search: AI-Powered Text Intelligence
 Duration: 6
 
 <img src='./assets/cortex_search_header.png'>
@@ -1265,7 +1265,7 @@ In the next module - Cortex Analyst - you’ll use natural language to query str
 ### Click Next --\>
 
 
-## 3e. Cortex Analyst: Conversational Business Intelligence
+## Cortex Analyst: Conversational Business Intelligence
 
 Duration: 10
 
@@ -2231,3 +2231,8 @@ If you would like to re-run this Quickstart, please run the complete `RESET` scr
 - [Data Metric Functions](https://docs.snowflake.com/en/user-guide/data-quality-intro)
 - [Trust Center](https://docs.snowflake.com/en/user-guide/trust-center/overview)
 - [Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro)
+- [Snowflake Cortex Playground](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-playground)
+- [AI SQL Functions in Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)
+- [Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot)
+- [Snowflake Cortex Search Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+- [Snowflake Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
