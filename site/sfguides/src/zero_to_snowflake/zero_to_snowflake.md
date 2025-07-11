@@ -35,7 +35,7 @@ Our mission is to provide unique, high-quality food options in a convenient and 
 
   - **Vignette 1: Getting Started with Snowflake:** The fundamentals of Snowflake warehouses, caching, cloning, and Time Travel.
   - **Vignette 2: Simple Data Pipelines:** How to ingest and transform semi-structured data using Dynamic Tables.
-  - **Vignette 3: Artificial Intelligence:** How to leverage Snowflake's comprehensive AI capabilities for experimentation, scalable analysis, AI-assisted development, and conversational business intelligence.
+  - **Vignette 3: Snowflake Cortex AI:** How to leverage Snowflake's comprehensive AI capabilities for experimentation, scalable analysis, AI-assisted development, and conversational business intelligence.
   - **Vignette 4: Governance with Horizon:** How to protect your data with roles, classification, masking, and row-access policies.
   - **Vignette 5: Apps & Collaboration:** How to leverage the Snowflake Marketplace to enrich your internal data with third-party datasets.
 
@@ -387,7 +387,7 @@ ALTER WAREHOUSE my_wh
 
 > For more information on what each configuration handles, please visit the documentation for [Working with Resource Monitors](https://docs.snowflake.com/en/user-guide/resource-monitors).
 
-## Monitor Cost with Budgets
+## Create a Budget
 
 Duration: 2
 
@@ -755,19 +755,17 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 <img src="assets/vignette-2/dag.png">
 
-## Artificial Intelligence in Snowflake
+## Snowflake Cortex AI in Snowflake
 
 Duration: 5
 
-<img src='./assets/ai_header.png'>
-
 ### Overview
 
-Welcome to the Zero to Snowflake Hands-on Lab focused on Artificial Intelligence!
+Welcome to the Zero to Snowflake Hands-on Lab focused on Snowflake Cortex AI!
 
 Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, Snowflake Copilot for AI-assisted SQL development, Cortex Search for semantic text searching and Cortex Analyst for natural language analytics.
 
-- For more detail on Artificial Intelligence in Snowflake please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
+- For more detail on Snowflake Cortex AI in Snowflake please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
 
 ### What You Will Learn
 
@@ -2127,7 +2125,7 @@ If you would like to re-run this Quickstart, please run the complete `RESET` scr
 - **Warehousing and Performance:** How to create, manage, and scale virtual warehouses, and leverage Snowflake's results cache.
 - **Data Transformation:** How to use Zero-Copy Cloning for safe development, transform data, and instantly recover from errors using Time Travel and `UNDROP`.
 - **Data Pipelines:** How to ingest data from external stages, process semi-structured `VARIANT` data, and build automated ELT pipelines with Dynamic Tables.
-- **Artificial Intelligence** How to leverage Snowflake AI to build a customer analytics platform.
+- **Snowflake Cortex AI** How to leverage Snowflake AI to build a customer analytics platform.
 - **Data Governance:** How to implement a security framework using Role-Based Access Control, automated PII classification, tag-based Data Masking, and Row Access Policies.
 - **Data Collaboration:** How to discover and acquire live, third-party datasets from the Snowflake Marketplace and seamlessly join them with your own data to generate new insights.
 
