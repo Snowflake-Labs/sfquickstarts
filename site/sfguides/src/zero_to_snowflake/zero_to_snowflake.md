@@ -9,7 +9,7 @@ tags: Getting Started, Tasty Bytes, Zero to Snowflake, Governance, Horizon, Data
 
 # Zero to Snowflake
 
-## Welcome to the Course!
+## Overview
 
 Duration: 1
 <img src='./assets/zts_header.png'>
@@ -200,7 +200,7 @@ GROUP BY o.truck_brand_name
 ORDER BY total_sales DESC;
 ```
 
-## Using Persisted Query Results
+## Query Result Cache
 
 Duration: 1
 
@@ -233,7 +233,7 @@ We will now be working with smaller datasets, so we can scale our warehouse back
 ALTER WAREHOUSE my_wh SET warehouse_size = 'XSmall';
 ```
 
-## Basic Data Transformation Techniques
+## Basic Transformation Techniques
 
 Duration: 5
 
@@ -350,7 +350,7 @@ SELECT * from raw_pos.truck_details;
 DROP TABLE raw_pos.truck_dev;
 ```
 
-## Monitoring Cost with Resource Monitors
+## Resource Monitors
 
 Duration: 2
 
@@ -387,7 +387,7 @@ ALTER WAREHOUSE my_wh
 
 > For more information on what each configuration handles, please visit the documentation for [Working with Resource Monitors](https://docs.snowflake.com/en/user-guide/resource-monitors).
 
-## Monitoring Cost with Budgets
+## Monitor Cost with Budgets
 
 Duration: 2
 
@@ -434,7 +434,7 @@ Configuring a budget is done through the Snowsight UI.
 
 > For a detailed guide on Budgets, please see the [Snowflake Budgets Documentation](https://docs.snowflake.com/en/user-guide/budgets).
 
-## Exploring with Universal Search
+## Universal Search
 
 Duration: 1
 
@@ -484,7 +484,7 @@ Within this vignette, we will learn how to build a simple, automated data pipeli
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql) in a new Worksheet to follow along in Snowflake.**
 
-## Ingestion from External Stage
+## External Stage Ingestion
 
 Duration: 2
 
@@ -638,7 +638,7 @@ SELECT * FROM harmonized.ingredient
 WHERE ingredient_name IN ('French Baguette', 'Pickled Daikon');
 ```
 
-## Building Out the Pipeline
+## Build Out the Pipeline
 
 Duration: 3
 
@@ -733,7 +733,7 @@ GROUP BY truck_id, ingredient_name
 ORDER BY total_ingredients_used DESC;
 ```
 
-## Visualizing the Pipeline
+## Visualize the Pipeline
 
 Duration: 1
 
@@ -1481,7 +1481,7 @@ SELECT TOP 100 * FROM raw_customer.customer_loyalty;
 
 Looking at the query results, it's clear this table contains a lot of Personally Identifiable Information (PII). In the next sections, we'll learn how to protect it.
 
-## Tag-Based Classification with Auto Tagging
+## Classification and Auto Tagging
 
 Duration: 3
 
@@ -1834,7 +1834,7 @@ In this vignette, we will explore how Snowflake facilitates seamless data collab
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-5.sql) in a new Worksheet to follow along in Snowflake.**
 
-## Acquiring Data from Snowflake Marketplace
+## Acquire Data from Snowflake Marketplace
 
 Duration: 2
 
@@ -1875,7 +1875,7 @@ Follow these steps in the Snowsight UI to get the Weather Source data:
 
 This process makes the Weather Source data instantly available in our account as a new database, ready to be queried.
 
-## Integrating Account Data with Shared Data
+## Integrate Account Data with Shared Data
 
 Duration: 3
 
@@ -2003,7 +2003,7 @@ Let's also visualize the results again in Snowsight, but as a bar chart this tim
 
 <img src='./assets/vignette-5/bar_chart.png'>
 
-## Exploring Point-of-Interest Data
+## Explore Point-of-Interest Data
 
 Duration: 3
 
