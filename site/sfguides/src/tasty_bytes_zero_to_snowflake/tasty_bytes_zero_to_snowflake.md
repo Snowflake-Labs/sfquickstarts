@@ -2198,8 +2198,10 @@ Streamlit in Snowflake empowers developers to securely build, deploy, and share 
 When the app first loads, you'll see a sample app on the right pane and the app's code in the editor pane to the left.
 
 4. Select all of the code and remove it.
-5. **Next copy + paste the following code in the blank editor window, then click 'Run' in the top right.**
+5. **Next copy + paste the following [code](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/streamlit/streamlit_app.py) in the blank editor window, then click 'Run' in the top right.**
+
 <img src='./assets/vignette-5/create_streamlit_app.gif'>
+
 ### Step 2 - Click Next --\>
 
 ## Conclusion and Next Steps
