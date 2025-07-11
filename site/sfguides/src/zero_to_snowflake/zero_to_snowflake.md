@@ -790,6 +790,8 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 Duration: 5
 
+<img src='./assets/ai_header.png'>
+
 ### Overview
 
 Welcome to the Zero to Snowflake Hands-on Lab focused on Artificial Intelligence!
