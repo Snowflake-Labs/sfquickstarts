@@ -836,7 +836,7 @@ Duration: 4
 
 As a data analyst at Tasty Bytes, you need to rapidly explore customer feedback using AI models to identify service improvement opportunities. Traditionally, AI experimentation is complex and time-consuming. **Snowflake Cortex Playground** solves this by offering a quick, secure environment directly within Snowflake's UI to experiment with diverse AI models, compare their performance on real business data, and export successful approaches as production-ready SQL. This lab guides you through using Cortex Playground for rapid prototyping and seamless integration of AI into your data workflows.
 
-### Step 1 - Access Cortex Playground and Connecting to Data Source
+### Step 1 - Connect Data & Filter
 
 Let's begin by connecting directly to customer review data within Cortex Playground. This keeps your data secure within Snowflake while allowing you to analyze feedback using AI models.
 
@@ -857,7 +857,7 @@ Let's begin by connecting directly to customer review data within Cortex Playgro
 <img src = "assets/vignette-3/cortex-playground-connect.gif">
 
 > **What you've accomplished:** You now have direct access to customer review data within the AI interface. The filter allows you to focus your analysis on specific truck brands, making your experiment more targeted and relevant.
-### Step 2 - Compare AI Models to Generate Strategic Insights
+### Step 2 - Compare AI Models for Insights
 
 Now, let's analyze customer reviews to extract specific operational insights and compare how different AI models perform on this business task.
 
@@ -878,7 +878,7 @@ Now, let's analyze customer reviews to extract specific operational insights and
 
 With our optimal model identified, we now need to fine-tune its behavior for different business scenarios. The same model can produce vastly different results depending on its settings—let’s optimize this for our specific analytical requirements.
 
-### Step 3 - Fine-Tune Model Behavior with Temperature Settings
+### Step 3 - Fine-Tune Model Behavior 
 
 We want to observe how adjusting parameters, especially "**temperature**," affects the AI model's responses. Does it lead to more consistent or more creative answers?
 
@@ -1051,7 +1051,7 @@ ORDER BY
 
 > **Key Insight**: Observe how `AI_CLASSIFY()` automatically categorized thousands of reviews into business-relevant themes such as Food Quality, Service Experience, and more. We can instantly see that Food Quality is the most discussed topic across our truck brands, providing the operations team with clear, actionable insight into customer priorities.
 
-### Step 4 - Extract Specific Operational Insights
+### Step 4 - Extract Specific Insights
 
 Next, to gain precise answers from unstructured text, we'll utilize the `EXTRACT_ANSWER()` function. This powerful function enables us to ask specific business questions about customer feedback and receive direct answers. In this step, our goal is to identify precise operational issues mentioned in customer reviews, highlighting specific problems that require immediate attention.
 
@@ -1154,7 +1154,7 @@ USE SCHEMA harmonized;
 <img src = "assets/vignette-3/copilot.gif">
 
 
-### Step 2 - Requirement Translation with Copilot
+### Step 2 - Translate Requirements with Copilot
 
 To begin, let’s explore what types of analysis questions we can ask about our Tasty Bytes dataset using Copilot’s natural language understanding capabilities.
 
@@ -1167,7 +1167,7 @@ Type the following question in the Copilot message box and click RUN to see the 
 
 > **Key Insight**: Copilot provides schema-aware business intelligence, directly analyzing your specific Tasty Bytes tables and suggesting strategic analysis using your actual column names. This isn't generic AI; it's purpose-built intelligence that profoundly understands your data structure.
 
-### Step 3 - Complex Query Building with Copilot
+### Step 3 - Build Complex Queries 
 
 Now let’s use Copilot to generate complex SQL with multiple table joins from a simple business question.
 
@@ -1197,7 +1197,7 @@ While Copilot excels at generating complex analytical queries, a common daily ch
 
 **Snowflake Cortex Search** solves this by providing low-latency, high-quality "fuzzy" search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent re-ranking to deliver the most relevant results. In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.
 
-### Step 1 - Access Cortex Search in Snowsight
+### Step 1 - Access Cortex Search 
 
 1.  Open Snowsight and navigate to the AI & ML Studio, then select **Cortex Search**.
 2.  Click **Create** to begin setup.
@@ -1276,7 +1276,7 @@ A business analyst at Tasty Bytes needs to enable self-service analytics, allowi
 
 **Cortex Analyst** empowers business users to ask sophisticated questions directly, seamlessly extracting value from their analytics data through natural language interaction. This lab will guide you through designing a semantic model, connecting it to your business data, configuring relationships and synonyms, and then executing advanced business intelligence queries using natural language.
 
-### Step 1 - Design the Semantic Model Foundation
+### Step 1 -  Design Semantic Mode
 
 Let's begin by navigating to Cortex Analyst in Snowsight and configuring our semantic model foundations.
 
@@ -1306,7 +1306,7 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
 
 > **Note**: To make a request to Cortex Analyst, you must use a role that has the `SNOWFLAKE.CORTEX_USER` role granted.
 
-### Step 2 - Select Tables and Configure Columns
+### Step 2 - Select & Configure Columns
 
 In the 'Select tables' step, let's choose our pre-built analytics views.
 
@@ -1330,7 +1330,7 @@ In the 'Select tables' step, let's choose our pre-built analytics views.
 <img src = "assets/vignette-3/cortex-analyst-select-columns.png">
 
 
-### Step 3 - Add Synonyms for Logical Tables
+### Step 3 -  Add Table Synonyms
 
 Now let’s add table synonyms for better natural language understanding:
 
@@ -1359,7 +1359,7 @@ Upon completion, we will have a semantic model ready for sophisticated natural l
 
 <img src = "assets/vignette-3/cortex-analyst-table-relationship.png">
 
-### Step 5 - Execute Customer Segmentation Intelligence
+### Step 5 - Execute Customer Segmentation
 
 With our semantic model and relationship active, let’s demonstrate sophisticated natural language analysis by running our first complex business query.
 
