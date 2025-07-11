@@ -562,7 +562,7 @@ FROM @raw_pos.menu_stage;
 
 ### Step 4 - Click Next --\>
 
-## Working with Semi-Structured Data
+## Semi-Structured Data
 
 Duration: 2
 
@@ -606,7 +606,7 @@ FROM
 
 ### Step 3 - Click Next --\>
 
-## Automating with Dynamic Tables
+## Dynamic Tables
 
 Duration: 3
 
@@ -758,7 +758,7 @@ ORDER BY total_ingredients_used DESC;
 
 ### Step 5 - Click Next --\>
 
-## Visualizing the Pipeline with a DAG
+## Visualizing the Pipeline
 
 Duration: 1
 
@@ -1436,7 +1436,7 @@ Within this vignette, we will explore some of the powerful governance features w
 
 ### Step 7 - Click Next --\>
 
-## Introduction to Roles and Access Control
+## Roles and Access Control
 
 Duration: 2
 
