@@ -54,14 +54,14 @@ Let's walk through how to create your first worksheet, add the necessary setup c
 First, we need a place to put our setup script.
 
 1. **Navigate to Workspaces:** In the left-hand navigation menu of the Snowflake UI, click on **Projects** » **Workspaces**. This is the central hub for all your worksheets.  
-2. **Create a New Worksheet:** Find and click the **"+ Add New"** button in the top-right corner of the Workspaces area. This will generate a new, blank worksheet.  
+2. **Create a New Worksheet:** Find and click the **+ Add New** button in the top-right corner of the Workspaces area, then select **SQL File**. This will generate a new, blank worksheet.  
 3. **Rename the Worksheet:** Your new worksheet will have a name based on the timestamp it was created. Give it a descriptive name like **Zero To Snowflake - Setup**.
 
 ### **Step 2 \- Add and Run the Setup Script**
 
 Now that you have your worksheet, it's time to add the setup SQL and execute it.
 
-1. **Copy the SQL Code:** In the section below, you'll find a large block of SQL code. Select the *entire* script and copy it to your clipboard.  
+1. **Copy the SQL Code:** Click the link for the [setup file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/setup.sql) and copy it to your clipboard.  
 2. **Paste into your Worksheet:** Return to your Zero To Snowflake Setup worksheet in Snowflake and paste the entire script into the editor.  
 3. **Run the Script:** To execute all the commands in the worksheet sequentially, click the **"Run All"** button located at the top-right of the worksheet editor. This will perform all the necessary setup actions, such as creating roles, schemas, and warehouses that you will need for the upcoming vignettes.
 
@@ -79,9 +79,6 @@ For each new vignette, you will:
 4. Click **"Run All"** to execute it.
 
 <!-- end list -->
-### Get the SQL and paste it into your Worksheet.
-
-**Run the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/setup.sql) in a new Worksheet to set up the Snowflake objects (database, schema, tables) needed to follow along.**
 
 ### Step 4 - Click Next --\>
 
@@ -139,7 +136,7 @@ USE ROLE accountadmin;
 
 ### Step 2 - Creating a Warehouse
 
-Let's create our first warehouse\! This command creates a new X-Small warehouse that will initially be suspended and will not auto-resume.
+Let's create our first warehouse\! This command creates a new X-Small warehouse that will initially be suspended.
 
 ```sql
 CREATE OR REPLACE WAREHOUSE my_wh
@@ -254,7 +251,7 @@ First, let's take a look at the `truck_build` column.
 ```sql
 SELECT truck_build FROM raw_pos.truck_details;
 ```
-This table contains data about the make, model and year of each truck, but it is nested, or embedded in a special type of data called a VARIANT. We can perform operations on this column to extract these values, but first we'll create a development copy of the table.
+This table contains data about the make, model and year of each truck, but it is nested, or embedded in a special data type called a VARIANT. We can perform operations on this column to extract these values, but first we'll create a development copy of the table.
 
 Let's create a development copy of our `truck_details` table. Snowflake's Zero-Copy Cloning lets us create an identical, fully independent copy of the table instantly, without using additional storage.
 
@@ -419,9 +416,10 @@ CREATE OR REPLACE SNOWFLAKE.CORE.BUDGET my_budget()
 Let's take a look at the Budget Page on Snowsight.
 
 Navigate to **Admin** » **Cost Management** » **Budgets**.
+
 <img src="assets/vignette-1/budget_page.png">
 
-Key:
+**Key:**
 1. Warehouse Context
 2. Cost Management Navigation
 3. Time Period Filter
@@ -435,7 +433,7 @@ Configuring a budget is done through the Snowsight UI.
 
 1.  Make sure your account role is set to `ACCOUNTADMIN`. You can change this in the bottom left corner.
 2.  Click on the **MY\_BUDGET** budget we created.
-3.  Click **Edit** in the Budget Details panel on the right.
+3.  Click **Budget Details** to open the Budget details panel, then click **Edit** in the Budget Details panel on the right.
 4.  Set the **Spending Limit** to `100`.
 5.  Enter a verified notification email address.
 6.  Click **+ Tags & Resources** and add the **TB\_101.ANALYTICS** schema and the **TB\_DE\_WH** warehouse to be monitored.
@@ -580,9 +578,7 @@ Let's look at the raw JSON. Notice it contains nested objects and arrays.
 SELECT menu_item_health_metrics_obj FROM raw_pos.menu_staging;
 ```
 
-<!-- \<img src="assets/variant\_column.png"/\> -->
-
-We can use special syntax to navigate the JSON structure. The colon (`:`) accesses keys by name, and square brackets (`[]`) access array elements. We can also cast (`::`) the results to the proper data type.
+We can use special syntax to navigate the JSON structure. The colon (`:`) accesses keys by name, and square brackets (`[]`) access array elements by index. We can also cast results to explicit data types using the `CAST` function or the double-colon shorthand (`::`).
 
 ```sql
 SELECT
@@ -1536,7 +1532,8 @@ Finally, we grant the new role to our own user. Then we can switch to the `tb_da
 
 ```sql
 -- Grant role to your user
-GRANT ROLE tb_data_steward TO USER USER;
+SET my_user = CURRENT_USER();
+GRANT ROLE tb_data_steward TO USER IDENTIFIER($my_user);
 
 -- Switch to the new role
 USE ROLE tb_data_steward;
@@ -1886,7 +1883,9 @@ After the scanners have had a moment to run, navigate back to the **Findings** t
   - The list below details each violation, its severity, and the scanner that found it.
   - Clicking on any violation will open a details pane with a summary and recommended remediation steps.
   - You can filter the list by severity, status, or scanner package to focus on the most critical issues.
+
 <img src="assets/vignette-4/trust_center_violation_detail_pane.png">
+
 This powerful tool gives you a continuous, actionable overview of your Snowflake account's security health.
 
 ### Step 4 - Click Next --\>
@@ -1953,7 +1952,7 @@ Follow these steps in the Snowsight UI to get the Weather Source data:
 <img src="assets/vignette-5/weather_source_listing.png">
 
 5.  Click the **Get** button.
-6.  In the options, change the **Database name** to `ZTS_WEATHERSOURCE`.
+6.  Click to expand the Options, then change the **Database name** to `ZTS_WEATHERSOURCE`.
 7.  Grant access to the **PUBLIC** role.
 8.  Click **Get**.
 <!-- TODO add picture with settings -->
@@ -2108,7 +2107,7 @@ Follow the same procedure as before to acquire the Safegraph data from the Marke
 2.  Navigate to **Data Products** » **Marketplace**.
 3.  In the search bar, enter: `safegraph frostbyte`.
 4.  Select the **Safegraph: frostbyte** listing and click **Get**.
-5.  In the options, set the **Database name** to `ZTS_SAFEGRAPH`.
+5.  Click to expand the Options, then set the **Database name** to `ZTS_SAFEGRAPH`.
 6.  Grant access to the **PUBLIC** role.
 7.  Click **Get**.
 
@@ -2187,7 +2186,7 @@ Streamlit in Snowflake empowers developers to securely build, deploy, and share 
 ### Step 1 - Create Streamlit App
 **Let's create our first Streamlit app, an app that will display and chart sales data for each menu item in Japan for February 2022.**
 
-1. First, navigate to the Streamlit page then click on the blue '+ Streamlit App' button in the top right to create a new app.
+1. First, navigate to **Projects** » **Streamlit**, then click on the blue '+ Streamlit App' button in the top right to create a new app.
 
 2. Enter these values in the 'Create Streamlit App' pop-up:
     - App title: Menu Item Sales
@@ -2199,7 +2198,7 @@ Streamlit in Snowflake empowers developers to securely build, deploy, and share 
 When the app first loads, you'll see a sample app on the right pane and the app's code in the editor pane to the left.
 
 4. Select all of the code and remove it.
-5. **Next copy + paste the following [code](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/streamlit/streamlit_app.py) in the blank editor window, then click 'Run' in the top right.**
+5. **Next copy + paste the this [code](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/streamlit/streamlit_app.py) in the blank editor window, then click 'Run' in the top right.**
 
 <img src='./assets/vignette-5/create_streamlit_app.gif'>
 
