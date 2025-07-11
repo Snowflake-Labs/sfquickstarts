@@ -72,8 +72,8 @@ The setup script creates the necessary database, schema, tables, and loads sampl
 3. Configure the notebook:
    * For **Database**, select `HOL_DB`
    * For **Schema**, select `HOL_SCHEMA` 
-   * Select `HOL_WAREHOUSE` as your warehouse
-   * For **Compute pool**, select `HOL_COMPUTE_POOL_HIGHMEM`
+   * Select `HOL_WAREHOUSE` as your query warehouse
+   * For **Compute pool**, Leave as is
    * Click **Create**
 
 ### Enable External Access Integrations
@@ -83,7 +83,7 @@ After creating the notebook, you'll need to enable external access for internet 
 1. In your newly created notebook, click on the three dots (**...**) in the top right corner
 2. Select **Notebook settings**
 3. Select the **External access** pane
-4. Toggle on **INTERNET_ACCESS_RULE MODE**
+4. Toggle on **ALLOW_ALL_ACCESS_INTEGRATION**
 5. Click **Save**
 6. Restart your notebook session for the changes to take effect
 
@@ -198,6 +198,9 @@ Run the model's explain function on input data and review the generated explanat
 
 ## Create Automated ML Pipeline
 Duration: 15
+
+>aside negative
+> **Note** You will not be able to do these next steps of the Notebook on a Trial Account
 
 Now we'll set up an automated workflow using ML Jobs to run remote code, and Snowflake's DAG framework to process new reviews and retrain models.
 
