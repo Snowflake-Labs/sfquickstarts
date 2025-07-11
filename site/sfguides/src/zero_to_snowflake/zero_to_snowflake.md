@@ -1395,14 +1395,6 @@ This Cortex Analyst semantic model becomes the foundation for Snowflake Intellig
 
 ### Click Next --\> 
 
-
-## Snowflake Intelligence
-
-<img src='./assets/si_header.png'>
-
-
-### Click Next --\> -->
-
 ## Governance with Horizon
 Duration: 1
 <img src='./assets/governance_header.png'>
