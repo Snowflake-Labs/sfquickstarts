@@ -39,7 +39,7 @@ Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journe
   - A robust data governance framework with roles and policies.
   - Enriched analytical views combining first- and third-party data.
 
-## **Creating a Worksheet in Workspaces and Copying in our SQL**
+## **Creating a Worksheet in Workspaces**
 
 Duration: 3
 
@@ -1625,7 +1625,7 @@ Notice that columns identified as PII now have our custom `governance.pii` tag a
 
 ### Step 5 - Click Next --\>
 
-## Column-Level Security with Masking Policies
+## Masking Policies
 
 Duration: 3
 
@@ -1692,7 +1692,7 @@ SELECT TOP 100 * FROM raw_customer.customer_loyalty;
 
 ### Step 4 - Click Next --\>
 
-## Row-Level Security with Row Access Policies
+## Row Access Policies
 
 Duration: 3
 
@@ -1755,7 +1755,7 @@ The result set should now only contain rows where the `country` is 'United State
 
 ### Step 4 - Click Next --\>
 
-## Data Quality Monitoring with Data Metric Functions
+## Data Metric Functions
 
 Duration: 2
 
@@ -1830,7 +1830,7 @@ ALTER TABLE raw_pos.order_detail
 
 ### Step 4 - Click Next --\>
 
-## Account Security Monitoring with the Trust Center
+## Trust Center
 
 Duration: 2
 
@@ -2091,7 +2091,7 @@ Let's also visualize the results again in Snowsight, but as a bar chart this tim
 
 ### Step 6 - Click Next --\>
 
-## Exploring Point-of-Interest (POI) Data
+## Exploring Point-of-Interest Data
 
 Duration: 3
 
@@ -2204,19 +2204,25 @@ When the app first loads, you'll see a sample app on the right pane and the app'
 
 ### Step 2 - Click Next --\>
 
-## Conclusion and Next Steps
+## Conclusion and Resources
 Duration: 1
 
-### Conclusion
+### Overview
 
 Congratulations\! You have successfully completed the entire Tasty Bytes - Zero to Snowflake journey.
 
-You have now built and configured warehouses, cloned and transformed data, recovered a dropped table with Time Travel, built an automated data pipeline for semi-structured data, implemented a robust governance framework with roles and policies, and seamlessly enriched your own data with live datasets from the Snowflake Marketplace.
+You have now built and configured warehouses, cloned and transformed data, recovered a dropped table with Time Travel, and built an automated data pipeline for semi-structured data. You've also unlocked insights using AI by generating analysis with simple AISQL functions and accelerating your workflow with Snowflake Copilot. Furthermore, you have implemented a robust governance framework with roles and policies and seamlessly enriched your own data with live datasets from the Snowflake Marketplace.
 
 If you would like to re-run this Quickstart, please run the complete `RESET` script located at the bottom of your worksheet.
 
-### Next Steps
+### What You Learned
+- **Warehousing and Performance:** How to create, manage, and scale virtual warehouses, and leverage Snowflake's results cache.
+- **Data Transformation:** How to use Zero-Copy Cloning for safe development, transform data, and instantly recover from errors using Time Travel and `UNDROP`.
+- **Data Pipelines:** How to ingest data from external stages, process semi-structured `VARIANT` data, and build automated ELT pipelines with Dynamic Tables.
+- **Artificial Intelligence** How to leverage Snowflake AI to build a customer analytics platoform.
+- **Data Governance:** How to implement a security framework using Role-Based Access Control, automated PII classification, tag-based Data Masking, and Row Access Policies.
+- **Data Collaboration:** How to discover and acquire live, third-party datasets from the Snowflake Marketplace and seamlessly join them with your own data to generate new insights.
 
-To continue your journey in the Snowflake AI Data Cloud, please now visit the link below to see all other Powered by Tasty Bytes - Quickstarts available to you.
-
-  - ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3)
+### Resources
+- **[Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3):** To continue your journey in the Snowflake AI Data Cloud, please visit the main table of contents for all available quickstarts.
+- **[Snowflake Documentation](https://docs.snowflake.com/):** For more detailed information on any of the features covered, please refer to the official documentation.
