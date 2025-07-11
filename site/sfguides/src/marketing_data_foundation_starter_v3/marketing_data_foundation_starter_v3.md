@@ -79,18 +79,18 @@ Refer to the following below to create a connection:
 ```shell
 Enter connection name: marketing_demo_v3_conn
 Enter account name: ******
-Enter user: put your username here
-Enter password: [optional]
+Enter user: [type in your username]
+Enter password: [optional: press ENTER to skip]
 Enter role: accountadmin
-Enter warehouse: compute_wh
+Enter warehouse: [optional: press ENTER to skip]
 Enter database: snowflake
 Enter schema: account_usage
-Enter host: [optional]
-Enter port: [optional]
-Enter region: [optional]
-Enter authenticator: [optional]
-Enter private key file: [optional]
-Enter token file path: [optional]
+Enter host: [optional: press ENTER to skip]
+Enter port: [optional: press ENTER to skip]
+Enter region: [optional: press ENTER to skip]
+Enter authenticator: [optional: press ENTER to skip]
+Enter private key file: [optional: press ENTER to skip]
+Enter token file path: [optional: press ENTER to skip]
 Wrote new connection marketing_demo_v3_conn to /Users/******/.snowflake/connections.toml
 ```
 
