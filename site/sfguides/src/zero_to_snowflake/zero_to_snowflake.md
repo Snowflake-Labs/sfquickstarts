@@ -1,13 +1,13 @@
 author: Dureti Shemsi, Cameron Shimmin
-id: tasty_bytes_zero_to_snowflake_v2
-summary: Tasty Bytes - Zero to Snowflake
+id: zero_to_snowflake
+summary: Zero to Snowflake
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tasty Bytes, Zero to Snowflake, Governance, Horizon, Data Security, RBAC, Masking, Data Quality
 
-# Tasty Bytes - Zero to Snowflake
+# Zero to Snowflake
 
 ## Welcome to the Course!
 
@@ -18,9 +18,18 @@ Duration: 1
 
 Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journey through key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, then see how you can experiment with LLMs using the Cortex Playground to compare different models for summarizing text, use AISQL Functions to instantly analyze customer review sentiment with a simple SQL command, and leverage the Snowflake Copilot to accelerate query writing by asking for the SQL you need in plain English, harness Cortex Search for intelligent text discovery, and utilize Cortex Analyst for conversational business intelligence. Finally, you will learn to secure your data with powerful governance controls and enrich your analysis through seamless data collaboration.
 
+### Who is Tasty Bytes?
+
+<img src='./assets/whoistb.png'>
+
+Our mission is to provide unique, high-quality food options in a convenient and cost-effective manner, emphasizing the use of fresh ingredients from local vendors. Their vision is to become the largest food truck network in the world with a zero carbon footprint.
+
 ### Prerequisites
 
-  - Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
+ - A Supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup?_fsi=6tNBra0z&_fsi=6tNBra0z#browser-requirements)
+ - An Enterprise or Business Critical Snowflake Account
+ - If you do not have a Snowflake Account, please [sign up for a Free 30 Day Trial Account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=6tNBra0z&_fsi=6tNBra0z). When signing up, please make sure to select  Enterprise edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions?_fsi=6tNBra0z&_fsi=6tNBra0z).
+ - After registering, you will receive an email with an activation link and your Snowflake Account URL.
 
 ### What You Will Learn
 
@@ -39,7 +48,7 @@ Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journe
   - A robust data governance framework with roles and policies.
   - Enriched analytical views combining first- and third-party data.
 
-## **Creating a Worksheet in Workspaces**
+## **Setup**
 
 Duration: 3
 
@@ -82,16 +91,13 @@ For each new vignette, you will:
 
 ### Step 4 - Click Next --\>
 
-## Vignette 1: Getting Started with Snowflake
+## Getting Started with Snowflake
 Duration: 1
 <img src='./assets/getting_started_header.png'>
 
 ### Overview
 
 Within this Vignette, we will learn about core Snowflake concepts by exploring Virtual Warehouses, using the query results cache, performing basic data transformations, leveraging data recovery with Time Travel, and monitoring our account with Resource Monitors and Budgets.
-
-### Prerequisites
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 - How to create, configure, and scale a Virtual Warehouse.
@@ -471,16 +477,13 @@ Universal search will return relevant tables and views, even highlighting column
 
 ### Step 3 - Click Next --\>
 
-## Vignette 2: Simple Data Pipeline
+## Simple Data Pipeline
 Duration: 1
 <img src='./assets/data_pipeline_header.png'>
 
 ### Overview
 
 Within this vignette, we will learn how to build a simple, automated data pipeline in Snowflake. We will start by ingesting raw, semi-structured data from an external stage, and then use the power of Snowflake's Dynamic Tables to transform and enrich that data, creating a pipeline that automatically stays up-to-date as new data arrives.
-
-### Prerequisites
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 - How to ingest data from an external S3 stage.
@@ -783,7 +786,7 @@ You will now see a visualization of your pipeline, showing how the base tables f
 ### Step 2 - Click Next --\>
 
 
-## Vignette 3: Artificial Intelligence in Snowflake
+## Artificial Intelligence in Snowflake
 
 Duration: 5
 
@@ -794,10 +797,6 @@ Welcome to the Zero to Snowflake Hands-on Lab focused on Artificial Intelligence
 Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, Snowflake Copilot for AI-assisted SQL development, Cortex Search for semantic text searching, Cortex Analyst for natural language analytics, and Snowflake Intelligence for unified conversational business intelligence.
 
 - For more detail on Artificial Intelligence in Snowflake please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
-
-### Prerequisites
-
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#1) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 
@@ -1404,16 +1403,13 @@ This Cortex Analyst semantic model becomes the foundation for Snowflake Intellig
 
 ### Click Next --\> -->
 
-## Vignette 4: Governance with Horizon
+## Governance with Horizon
 Duration: 1
 <img src='./assets/governance_header.png'>
 
 ### Overview
 
 Within this vignette, we will explore some of the powerful governance features within Snowflake Horizon. We will begin with a look at Role-Based Access Control (RBAC), before diving into features like automated data classification, tag-based masking policies for column-level security, row-access policies, data quality monitoring, and finally, account-wide security monitoring with the Trust Center.
-
-### Prerequisites
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 - The fundamentals of Role-Based Access Control (RBAC) in Snowflake.
@@ -1890,7 +1886,7 @@ This powerful tool gives you a continuous, actionable overview of your Snowflake
 
 ### Step 4 - Click Next --\>
 
-## Vignette 5: Apps & Collaboration
+## Apps & Collaboration
 Duration: 1
 
 <img src='./assets/appscollab_header.png'>
@@ -1898,9 +1894,6 @@ Duration: 1
 ### Overview
 
 In this vignette, we will explore how Snowflake facilitates seamless data collaboration through the Snowflake Marketplace. We will see how easy it is to acquire live, ready-to-query third-party datasets and immediately join them with our own internal data to unlock new insights—all without the need for traditional ETL pipelines.
-
-### Prerequisites
-- Before beginning, please make sure you have completed the [**Introduction to Tasty Bytes Quickstart**](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html) which provides a walkthrough on setting up a trial account and deploying the Tasty Bytes Foundation required to complete this Quickstart.
 
 ### What You Will Learn
 - How to discover and acquire data from the Snowflake Marketplace.
@@ -2224,5 +2217,17 @@ If you would like to re-run this Quickstart, please run the complete `RESET` scr
 - **Data Collaboration:** How to discover and acquire live, third-party datasets from the Snowflake Marketplace and seamlessly join them with your own data to generate new insights.
 
 ### Resources
-- **[Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html#3):** To continue your journey in the Snowflake AI Data Cloud, please visit the main table of contents for all available quickstarts.
-- **[Snowflake Documentation](https://docs.snowflake.com/):** For more detailed information on any of the features covered, please refer to the official documentation.
+- [Virtual Warehouses & Settings](https://docs.snowflake.com/en/user-guide/warehouses-overview)
+- [Resource Monitors](https://docs.snowflake.com/en/user-guide/resource-monitors)
+- [Budgets](https://docs.snowflake.com/en/user-guide/budgets)
+- [Universal Search](https://docs.snowflake.com/en/user-guide/ui-snowsight-universal-search)
+- [Ingestion from External Stage](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table)
+- [Semi-Structured Data](https://docs.snowflake.com/en/sql-reference/data-types-semistructured)
+- [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
+- [Roles & Access Control](https://docs.snowflake.com/en/user-guide/security-access-control-overview)
+- [Tag-Based Classification](https://docs.snowflake.com/en/user-guide/classify-auto)
+- [Column Level Security with Masking Policies](https://docs.snowflake.com/en/user-guide/security-column-intro)
+- [Row Level Security with Row Access Policies](https://docs.snowflake.com/en/user-guide/security-row-intro)
+- [Data Metric Functions](https://docs.snowflake.com/en/user-guide/data-quality-intro)
+- [Trust Center](https://docs.snowflake.com/en/user-guide/trust-center/overview)
+- [Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro)
