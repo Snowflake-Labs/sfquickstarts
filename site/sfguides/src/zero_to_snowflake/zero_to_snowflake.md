@@ -89,7 +89,7 @@ For each new vignette, you will:
 
 <!-- end list -->
 
-## Getting Started with Snowflake
+## Get Started with Snowflake
 Duration: 1
 <img src='./assets/getting_started_header.png'>
 
