@@ -943,7 +943,7 @@ Duration: 5
 
 ### Overview
 
-You've experimented with AI models in Cortex Playground to analyze individual customer reviews. Now, it's time to scale! This Codelab shows you how to use **AI SQL Functions** to process thousands of reviews, turning experimental insights into production-ready intelligence. You'll learn to:
+You've experimented with AI models in Cortex Playground to analyze individual customer reviews. Now, it's time to scale! This Quickstart shows you how to use **AI SQL Functions** to process thousands of reviews, turning experimental insights into production-ready intelligence. You'll learn to:
 
 1.  **USE SENTIMENT()** to score and label truck customer reviews.
 2.  **Use AI_CLASSIFY()** to categorize reviews by themes.
@@ -1195,7 +1195,7 @@ Duration: 6
 
 While Copilot excels at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language.
 
-**Snowflake Cortex Search** solves this by providing low-latency, high-quality "fuzzy" search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent reranking to deliver the most relevant results. In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.
+**Snowflake Cortex Search** solves this by providing low-latency, high-quality "fuzzy" search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent re-ranking to deliver the most relevant results. In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.
 
 ### Step 1 - Access Cortex Search in Snowsight
 
@@ -1318,7 +1318,7 @@ In the 'Select tables' step, let's choose our pre-built analytics views.
 
     * Click **Next: Select columns** to proceed.
 
-<img src = "assets/vignette-3/coretx-analyst-select-tables.png">
+<img src = "assets/vignette-3/cortex-analyst-select-tables.png">
 
 2. **Configure Column Selection:**
 
@@ -2219,7 +2219,7 @@ If you would like to re-run this Quickstart, please run the complete `RESET` scr
 - **Warehousing and Performance:** How to create, manage, and scale virtual warehouses, and leverage Snowflake's results cache.
 - **Data Transformation:** How to use Zero-Copy Cloning for safe development, transform data, and instantly recover from errors using Time Travel and `UNDROP`.
 - **Data Pipelines:** How to ingest data from external stages, process semi-structured `VARIANT` data, and build automated ELT pipelines with Dynamic Tables.
-- **Artificial Intelligence** How to leverage Snowflake AI to build a customer analytics platoform.
+- **Artificial Intelligence** How to leverage Snowflake AI to build a customer analytics platform.
 - **Data Governance:** How to implement a security framework using Role-Based Access Control, automated PII classification, tag-based Data Masking, and Row Access Policies.
 - **Data Collaboration:** How to discover and acquire live, third-party datasets from the Snowflake Marketplace and seamlessly join them with your own data to generate new insights.
 
