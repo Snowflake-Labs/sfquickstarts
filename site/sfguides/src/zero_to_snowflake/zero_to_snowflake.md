@@ -1396,7 +1396,7 @@ This Cortex Analyst semantic model becomes the foundation for Snowflake Intellig
 ### Click Next --\> 
 
 
-## Section 6: Unifying AI Capabilities with Snowflake Intelligence
+## Unifying AI Capabilities with Snowflake Intelligence
 
 <img src='./assets/si_header.png'>
 
