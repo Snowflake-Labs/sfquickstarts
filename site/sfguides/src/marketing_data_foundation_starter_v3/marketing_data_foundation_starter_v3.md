@@ -125,7 +125,7 @@ Ensure that Docker Desktop is running and that you're signed in to your Docker a
 ### Bypass MFA
 Create a Worksheet in Snowsight and run the following command to disble MFA for 30 minutes. This statement is to allow the many cells in the Jupyter Notebook to run successfully without waiting for MFA approval from the user.
 ```sql
-ALTER USER <replace with your user> SET MINS_TO_BYPASS_MFA = 30;
+ALTER USER <replace with your user> SET MINS_TO_BYPASS_MFA = 45;
 ```
 
 ### To use VSCode
