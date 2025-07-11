@@ -825,7 +825,7 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 
 ### Click Next --\> 
 
-## Cortex Playground: Rapid AI Model Experimentation
+## Cortex Playground
 
 Duration: 4 
 
@@ -934,7 +934,7 @@ The Cortex Playground is an invaluable tool for experimenting with individual re
 
 ### Click Next --\> 
 
-## AISQL Functions: Analyzing Customer Feedback at Scale
+## AISQL Functions
 
 <img src='./assets/aisql_functions_header.png'>
 
@@ -1121,7 +1121,7 @@ As our analysis grows in sophistication, combining multiple AI functions in comp
 ### Click Next --\>
 
 
-## Snowflake Copilot: Building Advanced Queries with Natural Language
+## Snowflake Copilot
 
 <img src='./assets/snowflake_copilot_header.png'>
 
@@ -1185,7 +1185,7 @@ Snowflake Copilot profoundly transforms business intelligence by enabling users 
 ### Click Next --\>
 
 
-## Cortex Search: AI-Powered Text Intelligence
+## Cortex Search
 Duration: 6
 
 <img src='./assets/cortex_search_header.png'>
@@ -1265,7 +1265,7 @@ In the next module - Cortex Analyst - you’ll use natural language to query str
 ### Click Next --\>
 
 
-## Cortex Analyst: Conversational Business Intelligence
+## Cortex Analyst
 
 Duration: 10
 
@@ -1396,7 +1396,7 @@ This Cortex Analyst semantic model becomes the foundation for Snowflake Intellig
 ### Click Next --\> 
 
 
-## Unifying AI Capabilities with Snowflake Intelligence
+## Snowflake Intelligence
 
 <img src='./assets/si_header.png'>
 
