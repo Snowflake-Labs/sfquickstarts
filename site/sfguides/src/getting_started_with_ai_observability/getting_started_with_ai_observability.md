@@ -1,7 +1,7 @@
 author: Josh Reini
 id: getting_started_with_ai_observability
 summary: This is a guide for getting started with Snowflake AI Observability.
-categories: Getting-Started
+categories: Getting-Started, Observability
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
