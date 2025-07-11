@@ -128,6 +128,9 @@ Create a Worksheet in Snowsight and run the following command to disble MFA for 
 ALTER USER <replace with your user> SET MINS_TO_BYPASS_MFA = 45;
 ```
 
+### Open Docker Desktop
+Open Docker Desktop and sign into your Docker account. Leave the Docker Desktop application open in the background.
+
 ### To use VSCode
 Open the project with VSCode and select the [**deployment.ipynb**](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3/blob/main/scripts/deployment_na_spcs.ipynb) file from the File explorer. Then, select the virtual environment you created as the execution kernel for this notebook.
 
