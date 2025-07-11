@@ -794,7 +794,7 @@ Duration: 5
 
 Welcome to the Zero to Snowflake Hands-on Lab focused on Artificial Intelligence!
 
-Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, Snowflake Copilot for AI-assisted SQL development, Cortex Search for semantic text searching, Cortex Analyst for natural language analytics, and Snowflake Intelligence for unified conversational business intelligence.
+Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, Snowflake Copilot for AI-assisted SQL development, Cortex Search for semantic text searching and Cortex Analyst for natural language analytics.
 
 - For more detail on Artificial Intelligence in Snowflake please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
 
@@ -805,7 +805,6 @@ Within this lab, we will explore Snowflake’s complete AI platform through a pr
 * How to optimize development with Snowflake’s Copilot for AI-assisted SQL query generation.
 * How to enable semantic discovery with Cortex Search for intelligent text and review finding.
 * How to create conversational analytics with Cortex Analyst for natural language business intelligence.
-* How to unify AI capabilities with Snowflake Intelligence for comprehensive business intelligence.
 
 ### What You Will Build
 
@@ -821,7 +820,6 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 
 **Phase 3: Conversational Intelligence**
 * Natural Language Business Analytics Interface using Cortex Analyst for conversational data exploration.
-* Unified AI Business Intelligence Platform using Snowflake Intelligence that connects customer voice with business performance.
 
 ### Click Next --\> 
 
@@ -1260,7 +1258,7 @@ Now try another query:
 
 Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback. It empowers the customer service manager to move beyond simply sifting through reviews, to truly understand and proactively act upon the voice of the customer at scale, driving better operational decisions and enhancing customer loyalty.
 
-In the next module - Cortex Analyst - you’ll use natural language to query structured data. Together, Cortex Search and Cortex Analyst form the foundation of Snowflake Intelligence - a complete AI assistant of your data.
+In the next module - Cortex Analyst - you’ll use natural language to query structured data. 
 
 ### Click Next --\>
 
@@ -1388,10 +1386,6 @@ Let's execute our multi-layered customer analysis:
 ### Conclusion
 
 Through these rigorous steps, we've forged a robust Cortex Analyst semantic model. This isn't just an improvement; it's a transformative tool designed to liberate users across various industries from the constraints of SQL, enabling them to surface profound business intelligence through intuitive natural language queries. Our multi-layered analyses, while showcased through the Tasty Bytes use case, powerfully illustrate how this model drastically cuts down on the time and effort traditionally needed for deep insights, thereby democratizing access to data and fueling a culture of informed, agile decision-making on a broad scale.
-
-**Integration with Snowflake Intelligence**
-
-This Cortex Analyst semantic model becomes the foundation for Snowflake Intelligence, enabling automatic dashboard generation, proactive insights, and intelligent reporting.
 
 ### Click Next --\> 
 
