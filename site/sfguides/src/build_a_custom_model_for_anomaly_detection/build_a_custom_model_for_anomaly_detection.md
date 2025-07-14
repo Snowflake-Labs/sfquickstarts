@@ -3,7 +3,7 @@ id: building_a_custom_model_for_anomaly_detection
 summary: Build a Custom Model to Detect Anomalies on the Production Floor
 categories: Getting-Started
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering
 
@@ -12,47 +12,107 @@ tags: Getting Started, Data Science, Data Engineering
 
 ## Overview
 
-This guide follows the **detect_anomolies_on_production_floor.ipynb**  notebook to simulate production data, analyze it, and detect anomalies using Snowflake and machine learning. By the end, you will have a registered anomaly detection model in Snowflake's Model Registry.
-Download the Notebook [detect_anomolies_on_production_floor.ipynb](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/detect_anomolies_on_production_floor.ipynb)
+This guide follows the **detect_anomalies_on_production_floor.ipynb**  notebook to simulate production data, analyze it, and detect anomalies using Snowflake and machine learning. By the end, you will have a registered anomaly detection model in Snowflake's Model Registry.
+Download the Notebook [detect_anomalies_on_production_floor.ipynb](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb)
 
-### What You Will Learn
+### Prerequisites
 
-- Simulate production data with normal and anomalous patterns.
-- Store and preprocess data using Snowpark.
-- Train an LSTM-based anomaly detection model.
-- Register and retrieve models from Snowflake's Model Registry.
+Before you begin, ensure you meet the following prerequisites:
+
+- Familiarity with Python programming.
+- Basic understanding of machine learning concepts.
+- Familiarity with Snowflake and the DataFrame API.
+- Access to a Snowflake account with Snowflake Notebooks enabled.
+
+---
+
+### What You’ll Need
+
+To complete this quickstart, you’ll need:
+
+- A Snowflake account in a region that supports Snowflake's Machine Learning and Model Registry capabilities.
+- Access to a warehouse with GPU capabilities for training the LSTM model.
+- Python libraries: `pandas`, `numpy`, `scikit-learn`, `tensorflow`, and `keras`.
+- A copy of the [detect_anomalies_on_production_floor.ipynb](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb) notebook.
+- 
+
+---
+
+### What You’ll Learn
+
+In this quickstart, you’ll learn how to:
+
+1. Simulate production data with normal and anomalous patterns.
+2. Store and preprocess data using Snowflake Snowpark.
+3. Train a Long Short-Term Memory (LSTM) neural network model for anomaly detection.
+4. Register and retrieve machine learning models using Snowflake's Model Registry.
+5. Use your registered anomaly detection model for inference.
+
+---
+
+### What You’ll Build
+
+You will build a complete anomaly detection workflow for IoT sensor data from production floor machinery, including:
+
+- **Data Simulation:** Generate synthetic IoT sensor data representing normal and anomalous patterns.
+- **Data Processing:** Preprocess and store data using Snowflake Snowpark.
+- **Model Training:** Train an LSTM model tailored for anomaly detection.
+- **Model Deployment:** Register your trained model in Snowflake's Model Registry for streamlined deployment.
+- **Actionable Insights:** Build a Streamlit-powered ChatUI to interact with the data and anomalies for deeper insights.
+
+By the end of this guide, you'll have a functional pipeline capable of detecting anomalies in IoT data and providing actionable insights for production monitoring and maintenance.
+
 
 ---
 
 ## Setup
 
-### Create Database and Schema
+### Create Database
 
 1. Open a new worksheet in Snowflake
 2. Create the database
 
 ```sql
+USE ROLE SYSADMIN;
 CREATE database Productionfloor_db;
 ```
 
 ### Open Snowflake Notebooks
 
-1. Click on [Getting Started Notebook](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/detect_anomolies_on_production_floor.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+1. Click [Notebook](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor/blob/main/notebooks/detect_anomolies_on_production_floor.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 2. In your Snowflake account:
 * On the left hand navigation menu, click on Projects » Notebooks
 * On the top right, click on Notebook down arrow and select **Import .ipynb** file from the dropdown menu
 * Select the file you downloaded in step 1 above
 3. In the Create Notebook popup
-* For Notebook location, select your database and schema
-* Select your **Warehouse**. You will want to have access to a container with a gpu cluster
+* For Notebook location, select your database and public schema
+* Select your **Warehouse**. You will need to have access to a **Container** with a **GPU Cluster**
 * Click on Create button
+4. Open the notebook once created
+* You will want to ensure you have external access so we can access pip
+![External Access](assets/external_access.gif)
 
 ---
 
 ## Generate Normal and Anomalous Data
-To train our model we need data. Here we are going to make our own data the represents IOT Sensors that are placed on a machines on our production floor. 
+
+In this section, you will create synthetic IoT sensor data to simulate production floor machinery performance. This data will include both normal operating conditions and intentionally introduced anomalies, enabling you to train and validate your anomaly detection model.
+
+The simulated data will represent various sensor readings, such as temperature, vibration, motor RPM, and motor current. By generating this data, you can better understand how your model distinguishes between normal and anomalous behavior in a controlled environment.
+
+---
 
 ### Generate Normal Data
+
+Normal data simulates machinery operating under standard conditions without any malfunctions. Each sensor's data is modeled as a Gaussian distribution with predefined means and variances to replicate realistic sensor behavior.
+
+Here’s how the data is generated:
+- **Timestamps:** Generate a sequence of evenly spaced timestamps to represent consistent sensor readings over time.
+- **Sensor Parameters:** Simulate sensor measurements (e.g., temperature, vibration, motor RPM, and motor current) as random values drawn from normal distributions.
+
+The resulting dataset serves as the baseline for normal operating conditions.
+
+**Code Example:**
 
 ```python
 # Parameters
@@ -72,7 +132,14 @@ motor_amps = np.random.normal(loc=0.084, scale=0.002, size=num_records)
 ```
 
 ### Add Anomalies
-We will also create some data that we know has anomalies to use our model against later.
+
+Anomalous data introduces deviations that simulate potential failures or irregularities in the production machinery. This data is used to train and test the model’s ability to detect unusual behavior.
+
+Here’s how anomalies are added:
+- **Start Point:** Define the starting index for anomalies in the dataset.
+- **Anomalous Patterns:** Introduce significant deviations in sensor values to mimic realistic anomalies, such as overheating, excessive vibration, or power irregularities.
+
+By mixing anomalous and normal data, you create a diverse dataset that challenges the anomaly detection model to perform effectively in real-world scenarios.
 ```python
 # Add anomalies
 anomaly_start_index = num_records - 200
@@ -96,6 +163,15 @@ snow_pd = pd.DataFrame(data)
 
 ## Store Data in Snowflake
 
+Once the synthetic data (both normal and anomalous) has been generated, the next step is to store it in Snowflake for further processing and analysis. Snowflake provides a seamless way to store structured data, making it easily accessible for machine learning workflows.
+
+### Steps to Store Data
+
+1. **Convert to a Snowpark DataFrame:** Use the Snowpark library to create a DataFrame from the generated Pandas DataFrame.
+2. **Save Data to a Snowflake Table:** Write the Snowpark DataFrame to a Snowflake table using the `save_as_table` method.
+
+The following code demonstrates how to store the data in Snowflake:
+
 ```python
 # Convert to Snowpark DataFrame
 spdf = session.create_dataframe(snow_pd)
@@ -103,22 +179,22 @@ spdf = session.create_dataframe(snow_pd)
 # Save data to Snowflake
 spdf.write.save_as_table("SENSOR_PREPARED", mode="overwrite")
 ```
+---
+
+## Create the Anomaly Detection Model
+
+In this section, you will define a custom anomaly detection model, register it with Snowflake's Model Registry, and prepare it for use. Snowflake's Model Registry enables you to manage and deploy machine learning models seamlessly, ensuring efficient integration with your data workflows.
 
 ---
 
-## Explore the Data
-
-### Display the Data
-
-```python
-spdf.show()
-```
-
----
-
-## Create and Register the Anomaly Detection Model
-Next we will create the model and then register it to use it later.
 ### Define the Custom Model
+
+To detect anomalies in the sensor data, we’ll create a custom model class that preprocesses the data, performs predictions, and calculates anomaly scores. This custom model will leverage an LSTM (Long Short-Term Memory) neural network for detecting patterns and deviations.
+
+**Key Steps:**
+1. **Preprocessing:** Normalize the input data using `MinMaxScaler` for consistency.
+2. **Model Inference:** Use the trained LSTM model to make predictions on the input data.
+3. **Anomaly Scoring:** Calculate the anomaly scores by comparing predicted values to the original data.
 
 ```python
 from snowflake.ml.model import custom_model
@@ -174,7 +250,13 @@ mv = ml_reg.log_model(
 )
 ```
 
-### Retrieve the Registered Model
+## Register the Model in Snowflake
+
+After defining the custom anomaly detection model, the next step is to register it in Snowflake's Model Registry. The Model Registry allows you to store, version, and manage your machine learning models directly within Snowflake, ensuring seamless integration and deployment.
+
+**Key Steps:**
+1. **Initialize the Model Registry:** Connect to the Model Registry using your active Snowflake session.
+2. **Log the Model:** Save the custom model, including dependencies and version details, to the registry.
 
 ```python
 # Retrieve the model from the registry
@@ -190,8 +272,56 @@ X_pred = mv.run(X_train_snowdf, function_name="predict")
 ```
 
 
-## Build a ChatUI on Streamlit to Learn More about the Anomolies
-Converse with your data and gain actionable insights
+## Build a ChatUI on Streamlit
+
+Streamlit provides an intuitive and interactive interface for building data-driven applications.  
+In this section, you'll create a ChatUI that allows you to interact with your anomaly detection data, enabling you to gain actionable insights and engage with the results of your model.
+
+This ChatUI leverages Streamlit's features to provide:
+- A conversational interface for querying anomaly data.
+- Seamless integration with Snowflake for real-time data retrieval.
+- AI-powered suggestions and insights to help users make informed decisions.
+
+### Key Components of the ChatUI
+
+1. **Streamlit Setup:** Configure Streamlit to display the ChatUI interface.
+2. **Session Management:** Manage user queries and responses in a conversational format.
+3. **Integration with Snowflake:** Use Snowflake Cortex functions and Snowpark queries to fetch and analyze data.
+4. **Interactive Responses:** Provide AI-powered responses and insights based on user questions.
+
+### Features of the ChatUI
+
+1. **Natural Language Queries:**  
+   Users can ask questions like "What anomalies occurred in the last 24 hours?" and receive contextually relevant answers.
+
+2. **Real-Time Data:**  
+   The ChatUI fetches anomaly data directly from the Snowflake database, ensuring that users work with up-to-date information.
+
+3. **AI Assistance:**  
+   Integrates Snowflake Cortex's `Complete` function to provide AI-enhanced insights, enabling users to make sense of complex datasets with ease.
+
+4. **User-Friendly Interface:**  
+   Built with Streamlit, the ChatUI provides an intuitive and visually appealing experience, allowing seamless interaction with data and insights.
+
+---
+
+### Benefits
+
+- **Quick Identification of Anomalies:**  
+  Users can swiftly identify and understand anomalies in IoT sensor data, reducing time to action.
+
+- **Natural Interaction with Data:**  
+  The ChatUI enables natural language queries, making it accessible to both technical and non-technical users.
+
+- **Proactive Decision-Making:**  
+  Gain actionable insights from anomaly data, supporting proactive maintenance and operational improvements.
+
+- **Seamless Integration with Snowflake:**  
+  Combines the power of Snowflake's Cortex and Snowpark capabilities with a user-friendly interface, creating an efficient and scalable solution.
+
+- **Enhanced User Experience:**  
+  The conversational design ensures that users can intuitively explore and analyze data without needing to write complex queries.
+
 
 ```python
     # Import python packages
@@ -203,12 +333,6 @@ Converse with your data and gain actionable insights
     from snowflake.core import Root
     from snowflake.snowpark.exceptions import SnowparkSQLException
     from snowflake.cortex import Complete, ExtractAnswer, Sentiment, Summarize, Translate, ClassifyText
-
-    from snowflake.snowpark.context import get_active_session
-
-    # Import python packages
-    import streamlit as st
-    from snowflake.core import Root
     from snowflake.snowpark.context import get_active_session
 
     # Constants
@@ -533,14 +657,33 @@ Converse with your data and gain actionable insights
 
 ---
 
-## Summary
+## Conclusion and Resources
 
-You’ve successfully followed the **detect_anomolies_on_production_floor.ipynb** notebook to:
+**Congratulations!** You've successfully followed the **detect_anomalies_on_production_floor.ipynb** notebook to:
 
 - Simulate production data with normal and anomalous patterns.
 - Train and register an LSTM-based anomaly detection model in Snowflake.
 - Retrieve and prepare the model for inference.
 
-This workflow provides a foundation for real-time anomaly detection in production systems.
+This workflow provides a foundation for real-time anomaly detection in production systems, enabling proactive maintenance and operational efficiency.
+
+### What We've Covered
+
+By completing this quickstart, you have learned:
+- How to simulate IoT sensor data for anomaly detection.
+- How to store, preprocess, and analyze data using Snowflake Snowpark.
+- How to build, register, and retrieve an LSTM-based custom anomaly detection model.
+- How to leverage Snowflake's Model Registry for deploying machine learning models.
+
+### Related Resources
+
+To further explore the tools and methodologies used in this quickstart, check out the following resources:
+
+- [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+- [Snowflake ML Model Registry Documentation](https://docs.snowflake.com/en/developer-guide/ml-model-registry/index)
+- [Source Code for This Quickstart](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor)
+- [Snowflake Notebooks Overview](https://docs.snowflake.com/en/user-guide/ui-snowsight#notebooks)
+
+These resources will help you deepen your understanding and build more complex machine-learning workflows using Snowflake.
 
 ---
