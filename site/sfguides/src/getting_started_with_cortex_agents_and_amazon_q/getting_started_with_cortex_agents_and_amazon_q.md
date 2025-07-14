@@ -572,7 +572,146 @@ Great Job! Your plugin is now ready to use within Q Business to query movie scri
 - **what are the highest rated movies in the database**
 - ask to return the sql from the preevious request.
 
-9. Congratulations! You've successfully built an intelligent script analysis system, integrated Q Business with Snowflake, leveraged GenAI for natural language querying, and became a certified Shrek expert in the process!
+9. Congratulations! You've successfully built an intelligent script analysis system, integrated Q Business with Snowflake, leveraged GenAI for natural language querying, and became a certified Toy Story expert in the process!
+
+<!-- ------------------------ -->
+## Optional - Deriving Data Insights with GenBI in Amazon QuickSight
+Duration: 20
+
+This lab introduces participants to [Amazon Q in QuickSight](https://aws.amazon.com/quicksight/q/), dashboard-authoring capabilities empower business analysts to swiftly build, uncover, and share valuable insights using natural language prompts. Simplify data understanding for business users through a context-aware Q&A experience, executive summaries, and customizable data stories. 
+
+
+Participants will connect the Snowflake table movies_dashboard to Amazon QuickSight to generate an interactive dashboard. This lab covers both personas – Authors (analysts) and Readers (business users/consumers), covering the Amazon Q in QuickSight features:
+
+- Natural Language Queries: Users can ask questions and receive answers in plain language, eliminating the need for SQL or complex BI tools. This feature is designed to democratize data access, enabling business users to engage with data more intuitively.
+
+- Visual Authoring: GenBI allows for rapid creation and customization of visualizations. Users can generate visuals in seconds and adjust them using natural language commands, streamlining the dashboard creation process.
+
+- Data Stories: Stories enables users to create compelling narratives around their data insights, enhancing the storytelling aspect of data presentation. This feature helps in sharing insights in a more engaging manner.
+
+### Set up Snowflake with QuickSight
+This section is essential for integrating Snowflake data with Amazon QuickSight, enabling users to leverage QuickSight's visualization and analysis capabilities. By configuring a Snowflake data source and using custom SQL to query the movies_dashboard table, users ensure that the relevant data is accessible for creating interactive dashboards and reports.
+
+**Create and refine Dashboard as BI Author**
+
+Go to Amazon QuickSight on the [console](https://ap-southeast-2.console.aws.amazon.com/ses/home?region=ap-southeast-2#/homepage) .
+1. On the top right hand corner, click on the user icon → and select US East (N. Virginia).
+
+2. Ensure to select a [Supported AWS Regions for Amazon Q in QuickSight](https://docs.aws.amazon.com/quicksight/latest/user/regions-aqs.html)
+
+![](assets/newqs.png)
+
+3. Ensure to select a [Supported AWS Regions for Amazon Q in QuickSight](https://docs.aws.amazon.com/quicksight/latest/user/regions-aqs.html)
+
+![](assets/snowflakeconnector.png)
+
+4. Use the following configuration, but replace <snowflake_account_URL>, <snowflake_username> and <snowflake_password> with your own.
+- Data source name: movies-dashboard-sf
+- Connection type: Public network
+- Database server: <snowflake_account_URL> This is your Snowflake Account/Server URL (found in Snowflake by navigating to bottom left account menu -> Account -> View Account Details -> Account/Server URL L, e.g. yoursnowflake.snowflakecomputing.com)
+- Database name: movielens
+- Warehouse: workshopwh
+- Username: <your snowflake_username>
+- Password: <your snowflake_password>
+
+![](assets/configconnector.png)
+
+![](assets/snowflakeconfig.png)
+
+![](assets/snowflakedatasource.png)
+
+5. The following message “Your database generated a SQL exception......” will return. We shall proceed to create a custom data source.
+
+6. Click on Create data source → Use custom SQL.
+
+![](assets/choosetable.png)
+
+7. Rename New custom SQL to movies-dashboard-sf. Use the following query, and then click the Confirm query button.
+
+```sql
+SELECT * FROM movies.movies_dashboard;
+```
+
+![](assets/customsql.png)
+
+8. We will be using [SPICE](https://docs.aws.amazon.com/quicksight/latest/user/spice.html) (Super-fast, Parallel, In-memory Calculation Engine), an in-memory calculation engine that allows for fast analysis of large datasets, supporting billions of rows while ensuring high availability and performance.
+
+In Amazon QuickSight, SPICE and Direct Query represent different approaches to data access and analysis. SPICE involves importing data into QuickSight's in-memory engine for faster performance, while Direct Query retrieves data directly from the source in real-time. The choice between them depends on factors like data size, freshness requirements, and performance needs. Refer to the blog: [Best practices for Amazon QuickSight SPICE and direct query mode](https://aws.amazon.com/blogs/business-intelligence/best-practices-for-amazon-quicksight-spice-and-direct-query-mode/) for further information.
+
+![](assets/finishdataset.png)
+
+We shall proceed as **BI Author** 
+
+9. click on Visualize → CREATE to create a new analysis
+Before creating the visuals, let’s ask Q to help create some calculated fields that show us the average user rating by movie title.
+
+10. Click on ‘+ Calculated Field’.
+
+![](assets/spicedata.png)
+
+11. In the Add Calculated Field page, Click Build Calculation.
+12. Type rating by movie, Click Build then, Insert.
+13. Name it Average movie rating and click Save. We will use this calculated field in the visuals later.
+
+![](assets/raitingbymovie.png)
+
+### Creating Visual as BI author
+1. Click on the “Build visual” bar at the top of the page and a right panel will appear. We will use this panel to build the analysis visualisation by entering the following 3 natural language prompts into Amazon Q.
+
+![](assets/createviz.png)
+
+2. We will use the calculated field created earlier. Type the following prompt: What are the top 10 movies based on average user ratings? and click Build. When the visualisation has been generated, click on Add to Analysis to include it in your analysis.
+
+![](assets/addanalysis.png)
+
+3. After adding the visual to the analysis, you can change the visual type using natural language. Click on Edit with Q, enter the prompt Turn this into a pie chart 
+In the input box, and then click **APPLY**
+
+4. The horizontal bar chart will now be displayed as a pie chart.
+5. Enter the next Prompt #2: Visualize the distribution of users by country.
+
+![](assets/userbycountry.png)
+
+6. Feel free to create more analysis. Once the analysis is complete, click on the PUBLISH button in the top right corner. Publish the new dashboard as movies-dashboard-sf and then click Publish dashboard. 
+Ensure to select both  “Data Story” and “Generative capabilities”  
+
+![](assets/publishdashboard.png)
+
+### As BI reader (business users/consumers) - we will now discover, summarize and share insights
+
+1. To interact with the dataset or dashboard, click on the Ask a question about movies-dashboard-sf bar at the top of the page. Amazon Q will suggest questions based on the provided dataset, and you can either choose from these suggestions or type your own questions.
+
+2. After posting a question to Amazon Q, all relevant data related to the query will be generated. You can ask “ What are the top 5 movies by user rating?”
+
+![](assets/topmoviesdashboard.png)
+
+3. In the dashboard, click on BUILD in the top right corner and select Executive summary to get a quick overview of the relevant statistics for the dashboard.
+
+![](assets/fulldashboard.png)
+
+Next, let’s create a Data Story for the Dashboard.  Creating a data story in the dashboard provides stakeholders with insights into how various factors, such as movie ratings, genres, user demographics, and interactions, affect movie performance and user engagement. By typing a descriptive prompt, selecting visuals from the published dashboard, and building the report, users generate a comprehensive narrative that aids in understanding the data and making informed decisions. This step is crucial for creating a meaningful and actionable report that can guide content production, marketing strategies, and user experience improvements, and allows for sharing these insights with others. Please note that Data story drafts are not meant to replace your own ideas or to perform analysis but as a starting point to customize and expand on as needed
+
+4. Click on BUILD in the top right corner and select **Data story.**  
+
+
+5. Type the following prompt into the “Describe the data story you need” box: 
+
+**This report helps stakeholders understand how different factors such as movie ratings, genres, user demographics, and interactions impact overall movie performance and user engagement. It can guide decisions on content production, marketing strategies, and user experience improvements.**
+
+6. Click on + ADD VISUALS and select all the visuals from the published dashboard, movies-dashboard-sf. Then click on BUILD.
+
+![](assets/fulldashboardtwo.png)
+
+7. A report with the relevant graphs and explanation will be generated. 
+
+![](assets/report.png)
+
+8. Feel free to explore and edit the narrative with Q by highlighting the text and click on Q icon. Use **SHARE** to publish the data story when ready. 
+
+![](assets/fulldashboard.png)
+
+Congratulations, you have successfully extracted relevant insights from your movie dataset in Snowflake, enabling you to make informed business decisions based on the generated report with Amazon Q in QuickSight!
+
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -580,7 +719,7 @@ Duration: 5
 
 This quickstart is just that, a quick way to get you started with using Amazon Q with Snowflake Cortex, though with this start you are now enabled to extend the quickstart in the below ways:
     - Scale the workflow to a use case with many documents and use a more robust Cortex Search Service.
-    - Scale Agents to include more robust Analyst services and multipl Analyst and Search Services.
+    - Scale Agents to include more robust Analyst services and multiple Analyst and Search Services.
     - Use a Cortex Q plugin alongside Quicksight to get next level answers on your data that's represented in your dashboards.
     - Use multiple plugins to Cortex from Q along with AWS service to create a robust web app for getting answers from your data with plain text.
 
