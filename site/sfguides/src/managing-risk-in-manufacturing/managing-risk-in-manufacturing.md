@@ -155,37 +155,18 @@ It also provides the application with access to the required compute pool and wa
 
 
 ```
--- Create an account role to manage the Graph Analytics application
+-- Create a consumer role for users of the Graph Analytics application
 CREATE ROLE IF NOT EXISTS gds_role;
-GRANT APPLICATION ROLE neo4j_graph_analytics.app_user TO ROLE gds_role;
-GRANT APPLICATION ROLE neo4j_graph_analytics.app_admin TO ROLE gds_role;
+GRANT APPLICATION ROLE Neo4j_Graph_Analytics.app_user TO ROLE gds_role;
 
---Grant permissions for the application to use the database
-GRANT USAGE ON DATABASE m_demo TO APPLICATION neo4j_graph_analytics;
-GRANT USAGE ON SCHEMA m_demo.public TO APPLICATION neo4j_graph_analytics;
+-- Grant read access on the newly created tables to the application
+GRANT USAGE ON DATABASE M_DEMO TO APPLICATION Neo4j_Graph_Analytics;
+GRANT USAGE ON SCHEMA M_DEMO.PUBLIC TO APPLICATION Neo4j_Graph_Analytics;
+GRANT SELECT ON ALL TABLES IN SCHEMA M_DEMO.PUBLIC TO APPLICATION Neo4j_Graph_Analytics;
+GRANT CREATE TABLE ON SCHEMA M_DEMO.PUBLIC TO APPLICATION Neo4j_Graph_Analytics;
 
---Create a database role to manage table and view access
-CREATE DATABASE ROLE IF NOT EXISTS gds_db_role;
-
-GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA m_demo.public TO DATABASE ROLE gds_db_role;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA m_demo.public TO DATABASE ROLE gds_db_role;
-
-GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA m_demo.public TO DATABASE ROLE gds_db_role;
-GRANT ALL PRIVILEGES ON ALL VIEWS IN SCHEMA m_demo.public TO DATABASE ROLE gds_db_role;
-
-GRANT CREATE TABLE ON SCHEMA m_demo.public TO DATABASE ROLE gds_db_role;
-
-
---Grant the DB role to the application and admin user
-GRANT DATABASE ROLE gds_db_role TO APPLICATION neo4j_graph_analytics;
-GRANT DATABASE ROLE gds_db_role TO ROLE gds_role;
-
-GRANT USAGE ON DATABASE M_DEMO TO ROLE GDS_ROLE;
-GRANT USAGE ON SCHEMA M_DEMO.PUBLIC TO ROLE GDS_ROLE;
-
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA M_DEMO.PUBLIC TO ROLE GDS_ROLE;
-GRANT CREATE TABLE ON SCHEMA M_DEMO.PUBLIC TO ROLE GDS_ROLE;
-GRANT SELECT, INSERT, UPDATE, DELETE ON FUTURE TABLES IN SCHEMA M_DEMO.PUBLIC TO ROLE GDS_ROLE;
+-- Ensure the consumer role has access to tables created by the application
+GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA M_DEMO.PUBLIC TO ROLE gds_role;
 ```
 
 Then we need to switch the role we created:
