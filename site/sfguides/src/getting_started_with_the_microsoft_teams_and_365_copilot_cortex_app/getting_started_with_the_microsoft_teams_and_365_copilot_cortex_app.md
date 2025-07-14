@@ -189,7 +189,7 @@ GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE PUBLIC;
 GRANT READ ON STAGE MODELS TO ROLE PUBLIC;
 ```
 <!-- ------------------------ -->
-## Configuring the App Connectivity to Cortex
+## App Connectivity to Cortex
 Duration: 12
 
 A Global Administrator for your Microsoft Entra ID tenant must use the two links below to grant the necessary permissions for the applications. Please review the permissions requested on each consent screen before accepting.

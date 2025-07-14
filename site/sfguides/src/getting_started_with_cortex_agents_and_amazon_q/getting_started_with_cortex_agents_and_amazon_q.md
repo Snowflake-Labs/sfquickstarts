@@ -63,7 +63,7 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 - to create a connection from Amazon Q to Cortex Search with Oauth authentication
 
 <!-- ------------------------ -->
-## Creating an Amazon Q Business Application
+## Creating an Amazon Q App
 Duration: 5
 
 In this section, we'll set up [Amazon Q Business](https://aws.amazon.com/q/business/qstart) , a generative AI-powered assistant that enables natural language interaction with business data. We'll create and configure a Q Business application that will connect with our Snowflake database, enabling intelligent querying of our movie script data. While we're using movie scripts for this example, these same steps can be applied to analyze any type of business documents in your organization.
@@ -120,7 +120,7 @@ Before we continue on, we need to make sure we have configured a user to access 
 **Well done!** From this section of the lab you have successfully configured your Q Business Application and created a user that has permissions to access the application.
 
 <!-- ------------------------ -->
-## Using Generative AI with Cortex and Amazon Q Business for Movie Data Analysis
+##  Cortex and Amazon Q Business
 
 Duration: 15
 
@@ -404,7 +404,7 @@ Your Snowflake URL (find this by clicking your account name in the bottom left o
 For more information about Snowflake's OAuth configuration, visit the [Snowflake OAuth documentation](https://docs.snowflake.com/en/user-guide/oauth-custom).
 
 <!-- ------------------------ -->
-## Configure a Q Business Custom Plugin for Snowflake Integration
+## Configure Q plugin
 Duration: 5
 
 Next, we'll create a Q Business Custom Plugin to connect our Q Business Application with the Cortex Search in Snowflake. This integration enables the Q Business chatbot interface to access and analyze the movie script data stored in Snowflake.
@@ -538,7 +538,8 @@ components:
 Great Job! Your plugin is now ready to use within Q Business to query movie script data from Snowflake
 
 <!-- ------------------------ -->
-## Testing your Movie Agent Analysis Application
+## Testing the Application
+Duration: 4 
 
 ### Testing your Q Business Application
 1. In the Q Business console navigate to the **script-plugin** on the left menu and select your plugin **movie-scripts**
@@ -575,7 +576,7 @@ Great Job! Your plugin is now ready to use within Q Business to query movie scri
 9. Congratulations! You've successfully built an intelligent script analysis system, integrated Q Business with Snowflake, leveraged GenAI for natural language querying, and became a certified Toy Story expert in the process!
 
 <!-- ------------------------ -->
-## Optional - Deriving Data Insights with GenBI in Amazon QuickSight
+## Optional Snowflake & Quicksight
 Duration: 20
 
 This lab introduces participants to [Amazon Q in QuickSight](https://aws.amazon.com/quicksight/q/), dashboard-authoring capabilities empower business analysts to swiftly build, uncover, and share valuable insights using natural language prompts. Simplify data understanding for business users through a context-aware Q&A experience, executive summaries, and customizable data stories. 
