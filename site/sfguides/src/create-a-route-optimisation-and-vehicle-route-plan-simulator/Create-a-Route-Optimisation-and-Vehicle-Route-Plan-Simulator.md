@@ -1,104 +1,561 @@
-author: Becky O’Connor
+author: Becky O’Connor and Piotr Paczewski
 id: Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator
-summary: This tutorial leverages Geospatial Analytics, Stramlit, Cortex and the Open Route Service to optimise vehicle routes in order to distribute goods to chosen destinations on time.
+summary: This tutorial leverages Snowflake Container Services, native apps, Geospatial Analytics, Streamlit, Cortex and the Open Route Service to optimize vehicle routes in order to distribute goods to chosen destinations on time.
 categories: Data-Sharing, Cortex, solution-examples, streamlit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial
+tags: Geospatial, Advanced Analytics, Data Engineering, Native apps, Snowpark Container Services
 
-# Create a Route Optimisation and Vehicle Route Plan Simulator
+# Create a Route Optimization and Vehicle Route Plan Simulator
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
+Duration: 5
 
-This tutorial leverages the [Open Route Service](https://openrouteservice.org/) to optimise vehicle routes in order to distribute goods to chosen destinations on time.
-
-The results are flexible in terms of location - you can choose to simulate routes from anywhere in the world.
-
-The open route service is free to use but there are restrictions in the number of calls to the freely available api api.
-
-If you need a solution  without imits, you may wish  to install the services inside a container.
-
-https://openrouteservice.org/plans/
-
-Either way, Snowflake allows for creation of a fully interactive route simulator which will benefit many vehicle centric industries such as **retail**, **distribution**, **healthcare** and more.
-
-
+![alt text](assets/intromap.png)
 
 In this quickstart, we will be leveraging the the tools within Snowflake to:
 
-  - **Visualise** the location of Delivery Points anywhere in the world understand the best routes for vehicles to deliver goods or services from a designated depo. We will use the multi layer mapping capabilities of pydeck to create easy to understand routing plans
+- **Visualize** the location of Delivery Points anywhere in the world understand the best routes for vehicles to deliver goods or services from a designated depo. We will use the multi layer mapping capabilities of pydeck to create easy to understand routing plans
 
-  - **Discover** what it would look like to route goods to real world points of interest such as restaurants or supermarkets using the Overture Point of Interest dataset provided freely on the marketplace by Carto.
+- **Discover** what it would look like to route goods to real world points of interest such as restaurants or supermarkets using the Overture Point of Interest dataset provided freely on the marketplace by Carto.
 
-  - **Understand** numerous routing scenarios accross a variety of industries anywhere in the world.
-
-
-### Route Planning And Optimisation Architecture
-Here is a flow of what you will achieve if you complete all steps in the quickstart.  You will be reminded of where you are at key intervals.
-
-  ![alt text](assets/Overview_Diagram.png)
+- **Understand** numerous routing scenarios across a variety of industries anywhere in the world.
 
 
+
+If you would prefer to skip to quickly see how the route optimization service might work for you, you can quickly use the **free api service** using the instructions as option 2 for creating the functions.
+
+You will be leveraging [Open Route Service](https://openrouteservice.org/) to optimize vehicle routes in order to distribute goods to chosen destinations on time.
+
+You will be creating **Directions**, **Route Optimization** and [**Isochrone**](https://en.wikipedia.org/wiki/Isochrone_map) functions.
+
+
+The quickstart contains two options.  Both options require distinct prerequisites.  With either option, Snowflake allows for creation of a fully interactive route simulator which will benefit many vehicle centric industries such as **retail**, **distribution**, **healthcare** and more.
 
 ### Prerequisites
-- A Snowflake Account - **NB:** Due to the Quickstart leveraging **External Access Integration**, a trial account cannot be used.  
 
- 
+**Option 1** 
+Use Snowpark Containers with a native app using the Open Route Service
+
+### Route Planning And Optimization Architecture
+
+The architecture below shows the solution which uses a native app and container services to power sophisticated routing and optimisation functions. 
+
+![alt text](assets/image-7.png)
+
+This is a self contained service which is managed by you.  There are no api calls outside of snowflake and no api limitations.  This quickstart uses a medium CPU pool which is capable of running unlimited service calls within **New York City**.  if you wish to use a larger map such as Europe or the World, you can increase the size of the compute.
+
+**This is what you will need**:
+
+-   [External Access Integration Activated](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
+    
+> **_NOTE:_** - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  You will need this to securely download the map and config files from the provider account.
+
+- [Snowpark Container Services Activated](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
+
+> **_NOTE:_** This is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  
+
+-   **ACCOUNTADMIN** access to the account.
+
+-   [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
+
+- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) installed
+
+-  (Recommended) [Git](https://git-scm.com/downloads) installed. 
+
+- Either download the zip or use git to copy the contents of the the git repo here: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator. 
+
+
+- [VSCode](https://code.visualstudio.com/download) with the Snowflake extension installed.
+
+**Option 2**
+Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service. 
+
+![alt text](assets/image-19.png)
+
+-   You will need access to a Snowflake Account
+
+-   [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
+    NB - External Access Integration is enabled by default with the exception of Free Trials where you would need to contact your snowflake representative to activate it.  This is for connecting to the open route service api.
+
+-   An free account with [Open Route Service](https://openrouteservice.org/)
+
+-   **ACCOUNTADMIN** access to the account.
 
 
 ### What You’ll Learn 
 
-- An understanding of Geospatial data in Snowflake
-- Using Cortex functions with Snowpark
-- Create user 4 defined functions which call the open route service API 
-    - simple directions point to point function
-    - complex directions which include waypoints (drop off points)
-    - Route Optimisation to match the demands with vehicle availabiity
-    - Create an isochrone for catchment analysis
+- A more advanced understanding of **Geospatial** data in Snowflake
+- Using **AISQL** functions with Snowpark
+- Create 3 user defined functions which either call the open route service API or you will learn how to create the service in snowflake using a snowpark container services native app. 
+
+-  create simple and multi waypoint directions point to point functions based on the road network and vehicle profile
+- Route Optimization to match the demands with vehicle availability
+- Create an isochrone for catchment analysis
 - Creating a location centric application using Streamlit 
 - An insight to the Carto Overture Places dataset to build an innovative route planning simulation solution
   - Leverage vehicle capabilities and matching with job specifics
-  - use a real dataset to simulate route plans for a specific depo
-
-
+  - use a real dataset to simulate route plans for a specific depot
 
 ### What You’ll Build 
 - A streamlit application to simulate route plans for potential customers anywhere in the world.  This could be for a potential new depot or simply to try out route optimisation which you will later replace with a real data pipeline.
 
 <!-- ------------------------ -->
-## Initial Setup
-Duration: 2
+## Option 1 - Native app & SPCS
+Duration: 30
+
+
+![alt text](assets/image-7.png)
+Use Snowpark Containers with a native app using the Open Route Service
+
+This will create the necessary snowflake database and stages within the public schema.
+
+- Open up visual studio code with the downloaded github repository as per the prerequisites.
+
+- Use the Snowflake **add-in** to login to your snowflake account
+
+![alt text](assets/addin.png)
+
+- Within the Repo, navigate to: 
+
+  **Native_app** > **Provider_setup** >  **env_setup.sql**
+
+- Press run all or ctrl + enter / command + enter to run the code within visual studio code.
+
+You will now have a database which contains an empty repository and three stages.  You can view these stages easily with the VSCode addin.
+
+![alt text](assets/setup_stages.png)
+
+The  **ORS_SPCS_STAGE** stage will contain a map extract and a config file.
+
+The **ORS_GRAPHS_SPCS_STAGE** stage will contain files in a graphs structure to easily calculate route optimisations.  The graphs created will depend on the map uploaded and which vehicle profiles are enabled.
+
+The **ORS_ELEVATION_CACHE_SPCS_STAGE**. 
+
+This cache stores elevation data based on the chosen map extract.  This improves performance when enabled.
+
+- Navigate to the folder **Provider_setup > staged files**.
+
+In here you will see two files.  One of which is a map file.  
+
+An example map file you can use is of San Francisco which is provided in the staged_files folder.  To use this file, it needs to be uploaded to the **ORS_SPCS_STAGE**.  You can do this either manually within snowsight, or more conveniently, using the snowflake add-in.
+
+
+
+You can choose from a range of map files from websites such as these
+
+https://download.geofabrik.de/
+https://download.bbbike.org/osm/
+
+The file below is the original weekly updated open street map which contains the whole planet.
+https://planet.openstreetmap.org/pbf/
+
+Bear in mind the bigger the map, the longer it will take to create the graphs.  You may also require a larger compute for the container to run if you are using a larger map. You might also need to update parameter XMX (Max RAM assigned to Java) in file `services/openrouteservice/openrouteservice.yaml`. As a Rule of Thumb, set it to: `<PBF-size> * <profiles> * 2`
+
+Also please note that the size of the files uploaded using the put command is limited to 5G.  If you wish to use the world file, you will need to initially store in a cloud storage like S3 bucket or Azure Blob Storage and then copy using the copy command.
+
+The ors-config file is a configuration file for the app.  This does a variety of things.
+
+-  Open up the ors-config.yml file to take a look at it
+
+You will see at the beginning of the yml file is a source file locator.  
+
+```yml
+
+ors:
+  engine:
+    profile_default:
+      build:  
+        source_file: /home/ors/files/sanFrancisco.osm.pbf
+
+```
+This is what the URL will be to point to the right map file.   If you would like to use a different map, as well as uploading the alternative map you will need to change the source file parameter here.
+
+Next you will see a profiles configuration area
+
+```yml
+    profiles:
+      driving-car:
+        enabled: true
+      cycling-road:
+        enabled: true
+      driving-hgv:
+        enabled: true
+```
+This is where you can configure multiple types of vehicles.  If you look at the commented out profiles in here, you can also  configure each profile further as well as adding additional profiles.
+
+- edit the config yml file and add **cycling-electric** and **foot-walking** profiles:
+
+```yml
+    profiles:
+      driving-car:
+        enabled: true
+      cycling-road:
+        enabled: true
+      driving-hgv:
+        enabled: true
+      cycling-electric:
+        enabled: true
+      foot-walking:
+        enabled: true
+```
+
+Here is where you can change the amount of maximum visited nodes.
+
+The nodes are locations where route optimization algorithms are implemented and processed. These nodes are crucial for efficiently planning and executing delivery or service routes, minimizing travel time and cost.  The number of nodes required will depend on how many vehicles, what the vehicle profile is, the length of each journey and how many jobs are involved.  Here, the default number of visited nodes are much lower than the overridden default below. Same for maximum_routes.
+
+
+```yml
+    matrix:
+      maximum_visited_nodes: 1000000000
+      maximum_routes: 25000000
+```
+
+There are also other options available for each profile - and each option will depend on what the profile is.
+
+### Importing new files into a stage using the Snowflake Add-In.
+
+- Download a new map file for **new york city**.
+
+- Click [here](https://download.bbbike.org/osm/bbbike/NewYork/NewYork.osm.pbf) to download the New York City OSM.PBF file.
+
+
+-   Within the snowflake add-in navigate to the newly created **ORS_SPCS_STAGE**.   You will see this in the **Object Explorer**
+
+
+![alt text](assets/view_stages.png)
+
+-   Click on the upload icon - ![alt text](assets/upload.png) 
+
+Navigate to the newly **downloaded New York** file to upload the map file to the snowflake stage.
+
+![alt text](assets/newyork.png)
+
+Modify the **config file** by changing the source file location to the following:
+
+```yml
+    build:  
+        source_file: /home/ors/files/NewYork.osm.pbf
+        instructions: false
+```
+
+Finally, use the upload tool again to upload the modified config file to snowflake.  
+
+You should see the new files appear in th stages area
+
+
+Once the files are uploaded, refresh the cache of the stage
+
+```sql
+ALTER STAGE OPENROUTESERVICE_SETUP.PUBLIC.ORS_SPCS_STAGE REFRESH;
+ ```
+
+Execute the following to ensure the files are registered on the stage directory
+
+```sql
+ select * from directory(@OPENROUTESERVICE_SETUP.PUBLIC.ORS_SPCS_STAGE);
+
+ ```
+![alt text](assets/directory.png)
+
+### Create the image and services.
+
+You will now load the docker images to the snowflake repository
+
+- Navigate to the provider_setup > spcs_setup.sh and openn the file.
+- Amend where it says **YOUR_CONNECTION** with your **snowcli** connection.  
+
+> **_NOTE:_**  If you have not created a connection before, please navigate to the following [QuickStart](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-cli/index.html#0) before proceeding which will explain how these are created.
+
+- Execute the following to ensure you have the correct privileges to run the bash file.  Open up a terminal from the **/native_app** directory within vscode and run the following:
+
+```bash
+chmod +x provider_setup/spcs_setup.sh
+```
+
+Run the **spcs_setup.sh** file. 
+
+```bash
+./provider_setup/spcs_setup.sh
+```
+
+You will need to ensure that you have docker desktop running before you run the file.
+
+
+You now have an 4 docker images inside the previously created repository:
+
+- Within the env_setup.sql, run the following command:  
+
+```sql
+SHOW IMAGES IN IMAGE REPOSITORY IMAGE_REPOSITORY;
+```
+You should see four images pushed to the image repository like this:
+
+![alt text](assets/stage_upload.png)
+
+The **downloader** image will copy the config and map file from the setup stage to the consumer app.
+
+The **routing_reverse_proxy** will securely manage traffic between  the other three services.
+
+The **openrouteservice** contains all the apis which the openrouteservice offers
+
+The **vroom service** manages the route optimization service.
+
+Now the assets are all setup in the repository and stages, you will now configure the app.
+
+- Using the same terminal in the same directory as before, execute the following snow CLI command
+
+```bash
+snow app run -c <CONNECTION_NAME>
+```
+
+This will do the following:
+
+**The Manifest File**
+use the manifest file to compile to package all 4 images stored inside the image repository
+
+Allow permissions for the consumer to create pools for running services.
+
+Specify the default streamlit for configuring the app.
+
+**The setup script**
+
+When a consumer installs the app, it will add all the services for each image and create all objects needed to run the application.
+
+This also includes the functions that we will later use in streamlit.  The following functions are created:
+-   Directions
+-   Isochrones
+-   Optimisation
+
+You will also note that an additional function (download) is created which calls the downloader service to download the map and config file from the provider stage to the consumer stage.
+
+Once you application package is installed, you will see a new installed app appear in the **apps** section of Snowsight.  This is a locally installed app for testing purposes.
+
+![alt text](assets/native_app.png)
+
+You will also see an application package which you can use to share with other accounts either privately or via the marketplace.
+
+
+### Activate the app
+
+If you login to snow sight you will see the following newly created app within **Data Products > Apps**.  This is an app local to this snowflake for testing purposes.
+
+![alt text](assets/activate_app.png)
+
+- Open the app and grant the permissions as requested by the application.  Once granted, you can then press **Activate**
+
+You will need to wait a few minutes for the graphs to update.  Within the graphs stage you should see the following folders appear:
+
+![alt text](assets/graphs_stage.png)
+
+NB: you may need to refresh the stages to view the profiles. in the directory.
+
+If you open the functions part of the app you will see the following functions appear
+
+![alt text](assets/image-6.png)
+
+You will learn how to use these functions after option 2 of the quickstart which produces the same functions using rest api calls to the external service.  If you wish, skip option 2 and navigate to the Snowflake Marketplace section.  You will need a dataset provided by **Carto** on the market place for the part of the notebook and the streamlit to run. 
+
+<!-- ------------------------ -->
+## Option 2 Calling ORS APIs
+Duration: 15
+
+![alt text](assets/image-19.png)
+
+Use External Access Integration with Python Functions to call and retrieve data from the Open Route Service
+
+The open route service is free to use but there are restrictions in the number of calls to the freely available api api.
+
+https://openrouteservice.org/plans/
+
+### Register to Open Route Service and retrieve a key
+
+-   Visit [OpenRouteService](https://openrouteservice.org).  Register here and then retrieve your key.
+
 
 Open up a new SQL worksheet and run the following commands. To open up a new SQL worksheet, select Projects » Worksheets, then click the blue plus button and select SQL worksheet.
 
 ```sql
-
 CREATE DATABASE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR;
 CREATE WAREHOUSE IF NOT EXISTS ROUTING_ANALYTICS;
 
-CREATE SCHEMA IF NOT EXISTS UTILS;
-CREATE SCHEMA IF NOT EXISTS ROUTING;
-
---- Use this to gain access to LLM functions if your snowflake region does not support them.
-
-ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
-
---- Create 2 stages, one for the notebook, and the other for the Streamlit application
-
- CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.routing.notebook DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
-
- CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.routing.streamlit DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+CREATE SCHEMA IF NOT EXISTS CORE;
+CREATE SCHEMA IF NOT EXISTS DATA;
 ```
 
+Copy the create secret command and replace the secret string with your secret token provided by Open Route Service.
 
+```sql
+CREATE SECRET IF NOT EXISTS CORE.ROUTING_TOKEN
+  TYPE = GENERIC_STRING
+  SECRET_STRING = '<replace with your secret token>'
+  COMMENT = 'token for routing demo'
+```
+Create a Network Rule and External Integration
+
+```sql
+
+CREATE OR REPLACE NETWORK RULE open_route_api
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('api.openrouteservice.org');
+
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION open_route_integration
+  ALLOWED_NETWORK_RULES = (open_route_api)
+  ALLOWED_AUTHENTICATION_SECRETS = all
+  ENABLED = true;
+
+```
+
+-   Create a simple directions function
+
+Directions Function 1 - for simple point to point directions
+
+```sql
+
+CREATE OR REPLACE FUNCTION CORE.DIRECTIONS (method varchar, jstart array, jend array)
+RETURNS VARIANT
+language python
+runtime_version = 3.10
+handler = 'get_directions'
+external_access_integrations = (OPEN_ROUTE_INTEGRATION)
+PACKAGES = ('snowflake-snowpark-python','requests')
+SECRETS = ('cred' = CORE.ROUTING_TOKEN )
+
+AS
+$$
+import requests
+import _snowflake
+def get_directions(method,jstart,jend):
+    request = f'''https://api.openrouteservice.org/v2/directions/{method}'''
+    key = _snowflake.get_generic_secret_string('cred')
+
+    PARAMS = {'api_key':key,
+            'start':f'{jstart[0]},{jstart[1]}', 'end':f'{jend[0]},{jend[1]}'}
+
+    r = requests.get(url = request, params = PARAMS)
+    response = r.json()
+    
+    return response
+$$;
+
+```
+-   Create a Directions function with Way Points
+
+```sql
+CREATE OR REPLACE FUNCTION CORE.DIRECTIONS (method varchar, locations variant)
+RETURNS VARIANT
+language python
+runtime_version = 3.9
+handler = 'get_directions'
+external_access_integrations = (OPEN_ROUTE_INTEGRATION)
+PACKAGES = ('snowflake-snowpark-python','requests')
+SECRETS = ('cred' = CORE.ROUTING_TOKEN )
+
+AS
+$$
+import requests
+import _snowflake
+import json
+
+def get_directions(method,locations):
+    request_directions = f'''https://api.openrouteservice.org/v2/directions/{method}/geojson'''
+    key = _snowflake.get_generic_secret_string('cred')
+
+    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+               'Authorization':key,
+               'Content-Type': 'application/json; charset=utf-8'}
+
+    body = locations
+
+    r = requests.post(url = request_directions,json = body, headers=HEADERS)
+    response = r.json()
+    
+    return response
+
+    $$;
+```
+
+-   Create an Optimisation Function
+
+```sql
+
+CREATE OR REPLACE FUNCTION CORE.OPTIMIZATION (jobs array, vehicles array)
+RETURNS VARIANT
+language python
+runtime_version = 3.9
+handler = 'get_optimization'
+external_access_integrations = (OPEN_ROUTE_INTEGRATION)
+PACKAGES = ('snowflake-snowpark-python','requests')
+SECRETS = ('cred' = CORE.ROUTING_TOKEN )
+
+AS
+$$
+import requests
+import _snowflake
+def get_optimization(jobs,vehicles):
+    request_optimization = f'''https://api.openrouteservice.org/optimization'''
+    key = _snowflake.get_generic_secret_string('cred')
+    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+               'Authorization':key,
+               'Content-Type': 'application/json; charset=utf-8'}
+
+    body = {"jobs":jobs,"vehicles":vehicles}
+
+    r = requests.post(url = request_optimization,json = body, headers=HEADERS)
+    response = r.json()
+    
+    return response
+$$;
+```
+.   Create an Isochrone function
+
+```sql
+CREATE OR REPLACE FUNCTION CORE.ISOCHRONES(method string, lon float, lat float, range int)
+RETURNS VARIANT
+language python
+runtime_version = 3.9
+handler = 'get_isochrone'
+external_access_integrations = (OPEN_ROUTE_INTEGRATION)
+PACKAGES = ('snowflake-snowpark-python','requests')
+SECRETS = ('cred' = CORE.ROUTING_TOKEN )
+
+AS
+$$
+import requests
+import _snowflake
+def get_isochrone(method,lon,lat,range):
+    request_isochrone = f'''https://api.openrouteservice.org/v2/isochrones/{method}'''
+    key = _snowflake.get_generic_secret_string('cred')
+    HEADERS = { 'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+               'Authorization':key,
+               'Content-Type': 'application/json; charset=utf-8'}
+
+    body = {'locations':[[lon,lat]],
+                    'range':[range*60],
+                    'location_type':'start',
+                    'range_type':'time',
+                    'smoothing':10}
+
+    r = requests.post(url = request_isochrone,json = body, headers=HEADERS)
+    response = r.json()
+    
+    return response
+$$;
+```
+
+You will now see the functions below ready to use.
+
+![alt text](assets/image-8.png)
 
 <!-- ------------------------ -->
 ## Snowflake Marketplace
 Duration: 10
 
-Once logged, navigate to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
+Before you try out your functions, you will get a dataset from the marketplace.  This is the Carto Overture dataset which includes an extensive point of interest map across the whole world.  It is also useful for routing simulations.
+-   Navigate to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
 
 ![alt text](assets/I002.png)
 
@@ -112,89 +569,99 @@ Click on the following dataset then press **Get** Do not change the database nam
 ![alt text](assets/I004a.png)
 
 <!-- ------------------------ -->
-## Add files to stages
-
-Now we have created our database structure, we need to add the code in order to run a notebook and a streamlit app.  The code is stored in the github resource guide.
-
-
-- Click [here](https://github.com/Snowflake-Labs/sfguide-Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator) to download the Source Code
-
-- Go to the homepage in Snowsight
-
-- Click on the **Data** icon and then navigate to **Databases** 
-
-- Navigate to the **VEHICLE_ROUTING_SIMULATOR.ROUTING** schema
-
-You should see two stages - **NOTEBOOK** and **STREAMLIT**.  The notebook code will need to be uploaded into the Notebook stage and the streamlit code will need to be uploaded to the streamlit stage.
-
-![nav](assets/CO01.png)
-
-Navigate to the Notebook stage and choose the **ROUTING_ANALYTICS** warehouse to view the contents.  This will view all contents inside the directory.
-
-Press **upload** to add the notebook files to the notebook stage.
-
-It should look like this:
-
-![upload](assets/CO02.png)
-
-
-- Navigate to the Streamlit Stage
-
-- Upload the **routing.py** and the **environment.yml** to the stage.
-
-- Upload the config.toml in a new directory within the streamlit stage.  the directory needs to be called .streamlit
-
-![image](assets/upload.jpg)
-
-The final Directory Structure should look like this:
-
-![Streamlit directory](assets/C003.png)
-
-
-
-<!-- ------------------------ -->
-## Create Notebook and Streamlit from Stages
-Duration: 15
-
-You will now leverage the code inside the stages to generate a Notebook and a Streamlit app.
-
-
-
-- Use the existing Snowflake Worksheet in Snowsight to create them using the following SQL commands.
-
-```sql
-
---notebook
-CREATE OR REPLACE NOTEBOOK VEHICLE_ROUTING_SIMULATOR.ROUTING.ROUTING_DEMO_SETUP
-FROM '@VEHICLE_ROUTING_SIMULATOR.ROUTING.NOTEBOOK'
-MAIN_FILE = 'routing_setup.ipynb'
-QUERY_WAREHOUSE = 'ROUTING_ANALYTICS';
-
-ALTER NOTEBOOK VEHICLE_ROUTING_SIMULATOR.ROUTING.ROUTING_DEMO_SETUP ADD LIVE VERSION FROM LAST;
-
---streamlit
-CREATE OR REPLACE STREAMLIT VEHICLE_ROUTING_SIMULATOR.ROUTING.VEHICLE_ROUTING_OPTIMISATION_SIMULATION
-ROOT_LOCATION = '@VEHICLE_ROUTING_SIMULATOR.routing.streamlit'
-MAIN_FILE = 'routing.py'
-QUERY_WAREHOUSE = 'ROUTING_ANALYTICS'
-COMMENT = '{"origin":"sf_sit", "name":"Dynamic Route Optimisation Streamlit app", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"streamlit"}}';
-
-```
-
-<!-- ------------------------ -->
-## Begin the notebook tutorial 
+## Routing functions with AISQL
 Duration: 30
 
-This tutorial is self contained inside the notebook which covers creating the functions, how to apply them and how to visualise the results.  At the end you will have a good understand of how the route optimisation servers works well with Snowflake Advanced analytical capabilites - which will also help you understand how the streamlit works.
+You will now test out all the functions which you have created. You will be using data simulated by **AISQL**.  
 
-- Within the notebook area in Snowsight, navigate to the **ROUTING_DEMO_SETUP** notebook and follow the instructions inside
-- When you have completed the Notebook, navigate to the streamlit area (within projects) and open the **VEHICLE_ROUTING_SIMULATOR** app.
+This notebook covers using the functions, how to apply them and how to visualize the results.  At the end you will have a good understand of how the route optimisation service works well with Snowflake Advanced analytical capabilites - which will also lead onto creating the streamlit datasets which will be covered in the next section.
+
+- To ensure the AI LLM model will work in your region and cloud, please run the following command:
+
+```sql  
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
+```
+
+- Run the following SQL to setup a new database and schema for collecting Views/Tables and notebooks for the simulator:
+
+```sql
+CREATE DATABASE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR;
+CREATE WAREHOUSE IF NOT EXISTS ROUTING_ANALYTICS;
+
+CREATE SCHEMA IF NOT EXISTS DATA;
+CREATE SCHEMA IF NOT EXISTS NOTEBOOKS;
+CREATE SCHEMA IF NOT EXISTS STREAMLITS;
+```
+
+
+-   Download following [notebook](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/1a512439a664c84b6be0cbd329fd591386762370/Notebook/routing_setup.ipynb) 
+
+-   Download the following [environment file](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/1a512439a664c84b6be0cbd329fd591386762370/Notebook/environment.yml)
+
+
+-    Create 1 stage to store the notebook assets
+
+ ```sql
+ CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.notebook DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+```
+- Import the downloaded notebook and environment file into the stage using a method of choice such as the Snowsight UI or Visual Studio Code.
+- Run the following to create your notebook
+
+```sql
+CREATE OR REPLACE NOTEBOOK VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.EXPLORE_ROUTING_FUNCTIONS_WITH_AISQL
+FROM '@VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.NOTEBOOK'
+MAIN_FILE = 'routing_setup.ipynb'
+QUERY_WAREHOUSE = 'ROUTING_ANALYTICS'
+COMMENT = '{"origin":"sf_sit-is", "name":"Route Optimization with Open Route Service", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"notebook"}}';
+
+ALTER NOTEBOOK VEHICLE_ROUTING_SIMULATOR.NOTEBOOKS.EXPLORE_ROUTING_FUNCTIONS_WITH_AISQL ADD LIVE VERSION FROM LAST;
+```
+You will now be able to try out how the functions work and use them in conjunction with **AISQL**.
+
+Navigate to the notebook and follow the provided instructions.  In order to run the streamlit, it is essential that you run from the cell **add_carto_data** AND BELOW.  This is to ensure that you have all the correct dependencies needed.
+
+- Ensure you run all the code below this section **BEFORE** you move to the streamlit.
+
+![alt text](assets/image-20.png)
+<!-- ------------------------ -->
+## Deploy the Streamlit
+Duration:20
+
+Now you can see how all the functions work with AISQL, lets now build a route simulator streamlit application.
+
+
+- Click [here](https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator/blob/1a512439a664c84b6be0cbd329fd591386762370/Streamlit/streamlit.zip) to download the files needed for the streamlit app.
+
+- Unzip all files ready for uploading to a stage.
+
+
+-    Create 1 stage to store streamlit assets
+
+ ```sql
+ CREATE STAGE IF NOT EXISTS VEHICLE_ROUTING_SIMULATOR.STREAMLITS.STREAMLIT DIRECTORY = (ENABLE = TRUE) ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+```
+- Navigate to the Streamlit Stage or the VSCode add-in to import the files.
+
+- Upload all files with the exception of config.toml to the streamlit stage
+- Upload the the config.toml file to a folder called .streamlit within the streamlit stage.
+- Create the streamlit using the following script
+
+```sql
+CREATE OR REPLACE STREAMLIT VEHICLE_ROUTING_SIMULATOR.STREAMLITS.SIMULATOR
+ROOT_LOCATION = '@VEHICLE_ROUTING_SIMULATOR.STREAMLITS.streamlit'
+FROM 'routing.py'
+QUERY_WAREHOUSE = 'ROUTING_ANALYTICS'
+COMMENT = '{"origin":"sf_sit-is", "name":"Route Optimization with Open Route Service", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"Streamlit"}}';
+```
+- Go to the homepage in Snowsight
+
+- Click on the **Projects** > **Streamlits** and run the **SIMULATOR**.
 
 <!-- ------------------------ -->
-## Run the Dynamic route Optimisation and Vehicle Route Plan Simulator
-Duration: 10
+## Run the Streamlit
+Duration: 15
 
-![alt text](assets/simulator_image.png)
+![alt text](assets/image-9.png)
 
 The streamlit app which you have open simulates potential routes to 29 delivery locations for selected customer types - all coming from a user definable wholesaler.  Currently there are 3 types of distributor available although with the notebook, you can create limitless industry categories:
 
@@ -204,26 +671,37 @@ The streamlit app which you have open simulates potential routes to 29 delivery 
 
 If you wish to add additional choice of distributor types, you can with the provided notebook.
 
+Before you choose your category, you must select where the routing specific functions are.  This app works with both the api call method and the native app method.  If you followed the instructions and went through both options, you can test out either option using the supplied radio selector.
+
+![alt text](assets/image-10.png)
+
+
 The places you will work with are real as they are based on the Carto Overture points of interest maps which is a dataset freely available on the marketplace.  This allows you to create a location relevant scenario based on the needs of a specific usecase.
 
-![alt text](assets/Overview_Diagram.png)
+**Please note:**  For this simulation the data has been restricted to new york city.  You will need to revise the initial notebook should you require an additional location.  This is an extract filtered by **GEOHASH**.  
 
+If you have built the native app and require an alternative city, you will need to upload the new map to the configuration stage.
+
+### End to End with Streamlit Dynamic Simulator Overview Diagram
+
+![alt text](assets/Overview_Diagram.png)
 
 ### Setting the Context of the Routing Scenario
 
 - Open up the side menu
 - Select the industry type.
 - Choose the LLM model in order to search for a location.
-- Type in a word or phrase in the world which will help locate the simulation.
+- Type in a word or phrase in the world which will help locate the simulation.  
+**NB** You will only return results in the New York City boundary.
 - Choose the distance in KM for how wide you would like the app to search for nearby distributors.
 
-![alt text](assets/wholesaler_search.png)
+    ![alt text](assets/image-11.png)
 
 - Scroll down to get a map which highlights the place plus where all the nearby distributors are.  
 
 - Scroll further down in the sidebar to select a specific distributor. - This is sorted by distance from the centre point.  You should have relevent wholesalers based on location and industry.
 
-![alt text](assets/select_wholesaler.png)
+![alt text](assets/image-14.png)
 
 
 - Choose the type of customers you want to deliver goods to.  In this case, we are choosing supermarkets and restaurants.  Customer types can be configured using the provided notebook.
@@ -231,7 +709,7 @@ The places you will work with are real as they are based on the Carto Overture p
 
 - There is an order acceptance catchment time - this will be used to generate an isochrone which will filter possible delivery locations within that isochrone.  The isochrone produced is a polygon shaped to all the possible places you can drive within the acceptable drive time.
 
-![alt text](assets/Biosaveurs.png)
+![alt text](assets/image-15.png)
 
 - You may close the side bar.
 
@@ -239,9 +717,9 @@ The places you will work with are real as they are based on the Carto Overture p
 
 This is an example scenario based on the previously selected fields.
 
-**Biosaveurs frozen and Fresh meat** within the Paris area.  This week they have 3 vehicles assigned to make up to 30 deliveries today.
+**Hudson Produce** is in New York City.  This week they have 3 vehicles assigned to make up to 30 deliveries today.
 
-![alt text](assets/vehicle_selection.png)
+![alt text](assets/image-12.png)
 
 **Vehicle 1** will start between 8HRS and 17HRS - this vehicle is a car.  [hover over information]  the vehicle has a capacity limit of 4 and been assigned a skill level of 1 - this vehicle does not have a freezer so can only carry fresh food.
 
@@ -251,27 +729,29 @@ This is an example scenario based on the previously selected fields.
 
 
 
-**Vehicle 3** will also operate between 8hrs and 17hrs and has a skill level of 3 - they can carry  the premium food items - this vehicle will be an electric bycle [select cycling-road]. 
+**Vehicle 3** will also operate between 8hrs and 17hrs and has a skill level of 3 - they can carry  the premium food items - this vehicle will be an road bicycle [select cycling-road]. 
 
 You can look at the vehicle skill level by hovering over the '?' against each vehicle.
 
-Once the selections are made we will click on job routes to get the allocated jobs
+Once the selections are made you can choose the scope for the jobs - this is based on a catchment time.  
 
-![alt text](assets/get_job_routes.png)
+-   Select 25mins based on how far you can cycle in that time.
 
-![alt text](assets/vehicle_details.png)
+![alt text](assets/image-16.png)
 
-You will note that orders of the premium meet orders will only go to vehicle 3, the fresh meet will go to vehicle 2 and the frozen meat will go to vehicle 1.
+![alt text](assets/image-17.png)
 
-(if i have more vehicles that have the same skills it will also look at the time slots as well.
+You will note that orders of the Non Perishable orders will only go to vehicle 3, the fresh food will go to vehicle 2 and the frozen food will go to vehicle 1.
+
+(if i have more vehicles that have the same skills it will also look at the time slots as well).
 
 
 
 Next we look at the map
 
-![alt text](assets/all_veh_routes.png)
+![alt text](assets/image-18.png)
 
-Vehicle 3 has the least amount of things to deliver but takes the longest to deliver them.  This is probably because the vehicle is a bicycle.  [change bcycle to hgv and re run]
+Vehicle 3 has the least amount of things to deliver but takes the longest to deliver them.  This is probably because the vehicle is a bicycle.  [change bicycle to hgv and re run]
 
 
 
@@ -286,7 +766,7 @@ Tabs - this will give instructions for each segment of the drivers journey - the
 
 ### How does it work
 
-You can see that in a couple of clicks you can create a vehicle optimisation scenario from anywhere.
+You can see that in a couple of clicks you can create a vehicle optimisation scenario from anywhere. 
 
 
 #### Finding the place
@@ -297,13 +777,7 @@ Snowflake will use the ST_DWITHIN geospatial function to filter the overture map
 
 #### The previously run notebook
 
-This has created 3 functions which fetch data from 3 open route service endpoints
-
-1 - isochrone - the isochrone endpoint will give you the catchement of a place based on drive time
-
-2 - optimisation - based on restaurant selection and vehicles, it will create a set of work for each vehicle to deliver taking into account slot windows, vehicle availablity and vehicle skill / job requirement.
-
-3 - Directions - based on what was retrieved from the optimisation, the directions api will return a route as a line string with all way points.  It will also retrieve a text based itenary.
+The previously ran notebook contains the standing data which you can go back to to customize the demo.  If you want to change the types of places to be hotels, then that is quite possible.
 
 Within the notebook, you have also created: 
 
@@ -314,7 +788,7 @@ Within the notebook, you have also created:
 - A job sample table
 
 #### The mapping
-The solution leverages pydeck to plot points, linestrings and polygons on a map.  The Isochrone is the polygon, the routes are linestrings and the places/points of interest are points.
+The solution leverages Pydeck to plot points, linestrings and polygons on a map.  The isochrone is the polygon, the routes are linestrings and the places/points of interest are points.  You would have seen how this works in the original notebook. AISQL is useful to quickly generate python code to test the maps. 
 <!-- ------------------------ -->
 ## The Streamlit Code
 Duration: 10
@@ -327,51 +801,13 @@ The Streamlit puts all of the above components together. I will now explain how 
 
 An important feature for better user experience is what the application looks like. I have themed the app to be consistant with Snowflake Branding. This is so much easier and flexible now we can add styles to Streamlit in Snowflake.
 
+For the theming, a style sheet was added to the streamlit project.
+
 ```python
-
-st.markdown(
-    """
-    <style>
-    .heading{
-        background-color: rgb(41, 181, 232);  /* light blue background */
-        color: white;  /* white text */
-        padding: 60px;  /* add padding around the content */
-    }
-    .tabheading{
-        background-color: rgb(41, 181, 232);  /* light blue background */
-        color: white;  /* white text */
-        padding: 10px;  /* add padding around the content */
-    }
-    .veh1 {
-        color: rgb(125, 68, 207);  /* purple */
-    }
-    .veh2 {
-        color: rgb(212, 91, 144);  /* pink */
-    }
-    .veh3 {
-        color: rgb(255, 159, 54);  /* orange */
-    }
-    .veh4 {
-        padding: 10px;  /* add padding around the content */
-        color: rgb(0,53,69);  /* midnight */
-    }
-    
-    body {
-        color: rgb(0,53,69);
-    }
-    
-    div[role="tablist"] > div[aria-selected="true"] {
-        background-color: rgb(41, 181, 232);
-        color: rgb(0,53,69);  /* Change the text color if needed */
-    }
-    
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-
+with open('extra.css') as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 ```
+
 
 **Industry Lookup**
 
@@ -1089,6 +1525,8 @@ You will have learned the following:
 
 - [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial)
 
+- [Building Geospatial Multi-Layer Apps with Snowflake and Streamlit](https://quickstarts.snowflake.com/guide/building-geospatial-mult-layer-apps-with-snowflake-and-streamlit/)
+
 - [H3 Indexing](https://h3geo.org/docs/)
 
 - [Streamlit](https://streamlit.io/)
@@ -1098,4 +1536,5 @@ You will have learned the following:
 - [Using Cortex and Streamlit With Geospatial Data](https://quickstarts.snowflake.com/guide/using_snowflake_cortex_and_streamlit_with_geospatial_data/index.html#1)
 
 - [Getting started with Geospatial AI and ML using Snowflake Cortex](https://quickstarts.snowflake.com/guide/geo-for-machine-learning/index.html?index=..%2F..index#0)
+
 

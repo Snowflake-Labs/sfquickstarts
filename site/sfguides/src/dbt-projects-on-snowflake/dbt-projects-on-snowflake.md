@@ -7,14 +7,14 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering
 
-# Getting Started with dbt Projects on Snowflake
+# Exploring dbt Projects on Snowflake
 <!-- ------------------------ -->
 ## Overview 
 Duration: 1
 
 dbt Core is an open-source data transformation tool and framework that you can use to define, test, and deploy SQL transformations. dbt on Snowflake allows you to use familiar Snowflake features to create, edit, test, run, and manage your dbt Core projects. Snowflake integrates with Git repositories and offers Snowflake CLI commands to support continuous integration and development (CI/CD) workflows for data pipelines.
 
-In this lab, we will go through everything you need to know to get started with [dbt Projects on Snowflake](https://docs.snowflake.com/LIMITEDACCESS/dbt-projects-on-snowflake)!
+In this lab, we will go through everything you need to know to get started with [dbt Projects on Snowflake](https://docs.snowflake.com/user-guide/data-engineering/dbt-projects-on-snowflake)!
 
 ### Prerequisites
 - Familiarity with dbt concepts
@@ -23,10 +23,10 @@ In this lab, we will go through everything you need to know to get started with 
 - How to use Workspaces, Snowflake's file based IDE that integrates with dbt
 - How to pull a remote dbt project into Workspaces
 - How dbt Projects can be run, edited, and deployed within Snowflake
-- How to deploy and orchistrate dbt Projects from within Snowflake.
+- How to deploy and orchestrate dbt Projects from within Snowflake.
 
 ### What You’ll Need 
-- A non-trial Snowflake account
+- A Snowflake account
 
 ### What You’ll Build 
 - A dbt Project running within your Snowflake account
@@ -132,11 +132,9 @@ with order_details as (
         m.menu_type,
         m.truck_brand_name,
         m.item_category
-    {% raw %} 
     from {{ ref('raw_pos_order_detail') }} od
     inner join {{ ref('raw_pos_order_header') }} oh on od.order_id = oh.order_id
     inner join {{ ref('raw_pos_menu') }} m on od.menu_item_id = m.menu_item_id
-    {% endraw %}
 )
 
 select
@@ -217,9 +215,10 @@ Oh no! There's an error with one of our tests. It looks like there is a test tha
 Now that we have updated and validated our dbt project, let's deploy it so we can build automation. Deploying a dbt project creates a Snowflake object and allows us to create tasks based on the object. 
 
 1. Click Deploy in the top right of workspaces
-2. Select database `tasty_bytes_dbt_db` and schema `raw`
-3. Name it `dbt_project`
-4. Deploy!
+2. Ensure your role is `accountadmin`
+3. Select database `tasty_bytes_dbt_db` and schema `raw`
+4. Name it `dbt_project`
+5. Deploy!
 
 ![deploy-dbt](assets/deploy-dbt.png)
 
@@ -231,7 +230,7 @@ Workspaces are fully git backed. To view changes and commit, click changes from 
 
 
 <!-- ------------------------ -->
-## Orchistration and Monitoring
+## Orchestration and Monitoring
 Duration: 5
 
 ### Monitor dbt Projects
@@ -240,7 +239,7 @@ You can get an overview of dbt project status from the dbt Projects activity in 
 
 ![dbt-projects](assets/dbt-projects.png)
 
-### Orchistrate with Tasks
+### Orchestrate with Tasks
 
 #### Create Scheduled dbt Tasks
 
@@ -263,7 +262,7 @@ USE ROLE accountadmin;
 CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_deps_task
 	WAREHOUSE=TASTY_BYTES_DBT_WH
 	SCHEDULE='60 MINUTES'
-	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='deps --target dev';
+	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='deps --target dev' external_access_integrations = (DBT_ACCESS_INTEGRATION);
 
 
 CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_run_task
@@ -362,7 +361,7 @@ Duration: 1
 
 Congratulations! You've successfully completed the "Getting Started with dbt Projects on Snowflake" lab. You now understand how dbt Core on Snowflake enables you to define, test, and deploy SQL transformations using familiar Snowflake features. You've learned how Snowflake's native integration with Git repositories and CLI commands support CI/CD workflows for your data pipelines.
 
-If you want to learn more about dbt Projects on Snowflake, check out the [official documentation](https://docs.snowflake.com/LIMITEDACCESS/dbt-projects-on-snowflake).
+If you want to learn more about dbt Projects on Snowflake, check out the [official documentation](https://docs.snowflake.com/user-guide/data-engineering/dbt-projects-on-snowflake).
 
 ### What You Learned
 - How to use Workspaces, Snowflake's file-based IDE that integrates with dbt
@@ -371,6 +370,6 @@ If you want to learn more about dbt Projects on Snowflake, check out the [offici
 - How to deploy and orchestrate dbt Projects from within Snowflake
 
 ### Related Resources
-- [dbt Projects on Snowflake Documentation](https://docs.snowflake.com/LIMITEDACCESS/dbt-projects-on-snowflake)
+- [dbt Projects on Snowflake Documentation](https://docs.snowflake.com/user-guide/data-engineering/dbt-projects-on-snowflake)
 - [GitHub Repository: getting-started-with-dbt-on-snowflake](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake)
 - [dbt Core Documentation](https://docs.getdbt.com/)
