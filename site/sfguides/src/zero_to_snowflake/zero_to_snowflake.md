@@ -1201,10 +1201,19 @@ This wizard will guide you through several configuration screens:
 * **Select columns**: choose other columns to include in the result like `DATE`, `LANGUAGE`, etc.
 * **Configure indexing**: Accept the default
 
-> **Note**: Creating the search service includes building the index, so the initial setup may take a little longer - but once created, queries run with low latency and scale seamlessly.
+<img src = "assets/vignette-3/cortex-search-walkthrough.gif">
+
+> **Note**: Creating the search service includes building the index, so the initial setup may take a little longer. If the creation process is taking an extended period, you can seamlessly continue the lab by using a pre-configured search service:
 >
 
-<img src = "assets/vignette-3/cortex-search-walkthrough.gif">
+1.  From the left-hand menu in Snowsight, navigate to **AI & ML**, then click on **Cortex Search**.
+2.  In the Cortex Search view, locate the dropdown filter (as highlighted in the image below, showing `TB_101 / HARMONIZED`). Select or ensure this filter is set to `TB_101 / HARMONIZED`.
+3.  In the list of "Search services" that appears, click on the pre-built service named **`TASTY_BYTES_REVIEW_SEARCH`**.
+4.  Once inside the service's details page, click on **Playground** in the top right corner to begin using the search service for the lab.
+
+- **Once any search service is active (either your new one or the pre-configured one), queries will run with low latency and scale seamlessly.**
+
+<img src = "assets/vignette-3/cortex-search-existing-service.png">
 
 > Behind this simple UI, Cortex Search is performing a complex task. It analyzes the text in your "REVIEW" column, using an AI model to generate semantic embeddings, which are numerical representations of the text's meaning. These embeddings are then indexed, allowing for high-speed conceptual searches later on. In just a few clicks, you have taught Snowflake to understand the intent behind your reviews.
 
@@ -1230,7 +1239,7 @@ Now try another query:
 
 Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback. It empowers the customer service manager to move beyond simply sifting through reviews, to truly understand and proactively act upon the voice of the customer at scale, driving better operational decisions and enhancing customer loyalty.
 
-In the next module - Cortex Analyst - you’ll use natural language to query structured data. 
+**In the next module** - Cortex Analyst - you’ll use natural language to query structured data. 
 
 ## Cortex Analyst
 
