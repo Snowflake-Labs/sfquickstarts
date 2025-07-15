@@ -28,6 +28,7 @@ Want to migrate to Snowflake in less than 90 minutes? Come to this hands-on lab.
 
 - [SnowConvert](https://www.snowflake.com/en/migrate-to-the-cloud/snowconvert-ai/) Installed
 - [VSCode](https://code.visualstudio.com/download) and [Snowflake Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) Installed
+- [Snowflake Account](https://signup.snowflake.com/).
 
 ### Scenario
 
@@ -337,7 +338,7 @@ Understanding what we have is essential to successfully completing a migration. 
 
 Since we have a good understanding of what needs to be done and it’s relatively small, let’s go ahead and attack this. Let’s resolve the issues that we have present. Before we do that, let’s take a look at the status in our object inventory. Select “GO TO DEPLOYMENT” in the application.
 
-## Deployment and solve issues
+## Deployment And Issues
 Duration: 20
 
 This will take you back to the inventory screen. It should look something like this:
@@ -744,7 +745,8 @@ As we continue to walk through the migration process, let’s take a look at our
 ## Conclusion And Resources
 Duration: 5
 
-Congratulations! You've successfully completed an end-to-end migration from SQL Server to Snowflake
+### Overview
+Congratulations! You've successfully completed an end-to-end migration from SQL Server to Snowflake from data base tables, views and procedures conversion, deployment of these objects and historical data migration.
 
 ### What You Learned
 - How to assess a SQL Server environment for migration to Snowflake
