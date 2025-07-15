@@ -922,7 +922,7 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](#18).**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
 
 ### Step 1 - Setting Context
 
@@ -1104,7 +1104,7 @@ This lab introduces **Snowflake Copilot**, an LLM-powered assistant designed to 
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-copilot.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 22 - Governance with Horizon](#21).**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-copilot.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 20 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19).**
 
 ### Step 1 - Setting Context
 
