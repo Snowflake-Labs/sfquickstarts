@@ -55,7 +55,7 @@ In this quickstart, we will use Snowflake’s tools to:
 
 <!-- ------------------------ -->
 
-## Acquire Points of Interest and Geospatial/Market datasets from Snowflake Marketplace
+## Acquire Datasets from Marketplace
 
 Duration: 5
 
@@ -71,8 +71,8 @@ Press **Get** to get the data from Marketplace
 
 ![alt text](assets/M004.png)
 
-> Leave the `Database name` as default
-> **Choose `PUBLIC` as an additional role that can access this database**
+- Leave the `Database name` as default
+- **Enter `PUBLIC` as an additional role**
 
 Press **Get** to install the database into your account.
 
@@ -85,8 +85,8 @@ Click on the following dataset then press **Get**.
 
 ![alt text](assets/M003.png)
 
-> Leave the `Database name` as default
-> **Choose `PUBLIC` as an additional role that can access this database**
+- Leave the `Database name` as default
+- **Enter `PUBLIC` as an additional role**
 
 Press **Get** to install the database into your account.
 
@@ -120,7 +120,7 @@ GRANT ROLE ENRICH_ROLE TO USER IDENTIFIER($CURRENT_USER_NAME);
 ALTER USER IDENTIFIER($CURRENT_USER_NAME) SET DEFAULT_WAREHOUSE='ENRICH_WH', DEFAULT_NAMESPACE='SAMPLES_DB.NOTEBOOKS', DEFAULT_ROLE='ENRICH_ROLE';
 ```
 
-## Explore Visual Analytics in a secured Snowflake Notebook
+## Display Demographics for a Region
 Duration: 15
 
 >**Switch current role to ENRICH_ROLE** 
@@ -349,7 +349,7 @@ We have created a simple map using the streamlit [st.map](https://docs.streamlit
 
 st.map is useful for quickly generating simple maps by rendering lines, points, polygons and H3 indexes. We will be leveraging the Pydeck library in the next step for creating points. pydeck has many more options such as different mark types, tool tips and layers we will create an additional pydeck layer which adds this data to the previously created data layer. When you hover over in the boundary box you will see a tooltip containing the attribute information of the data.
 
-## Display Point of Interest data for a region
+## Display POI for a Region
 
 Duration: 5
 
@@ -457,7 +457,7 @@ Below is an example of what you should see on map
 
 ![alt text](assets/MAP002.png)
 
-## Overlay Demographics and Points of Interest data for Location Targeting
+## Overlay POI with Demographics
 
 Duration: 5
 
@@ -628,7 +628,7 @@ Here you will see a map with tooltip that combines **MBI Demographics** with **P
 
 ![alt text](assets/MAP003.png)
 
-## Create a Streamlit App to visualize POI and Demographics overlay
+## Visualize with Streamlit
 
 Duration: 10
 
