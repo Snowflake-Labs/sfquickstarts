@@ -19,5 +19,8 @@
     "@bazel/bazel": "^0.18.1",
     "gulp-postcss": "^10.0.0",
     "postcss": "^8.4.45"
+  },
+  "dependencies": {
+    "gulp": "^5.0.1"
   }
 }
