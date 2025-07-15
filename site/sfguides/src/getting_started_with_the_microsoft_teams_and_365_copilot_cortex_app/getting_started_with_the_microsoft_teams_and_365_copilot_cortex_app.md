@@ -59,7 +59,7 @@ The authentication and user flow goes like this:
 - A Teams or 365 Copilot App that connects to the Cortex Agent
 
 <!-- ------------------------ -->
-## Set Up Snowflake Environment
+## Setup Snowflake
 Duration: 9
 
 
@@ -190,7 +190,7 @@ GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE PUBLIC;
 GRANT READ ON STAGE MODELS TO ROLE PUBLIC;
 ```
 <!-- ------------------------ -->
-## App Connectivity to Cortex
+## App Connectivity
 Duration: 12
 
 A Global Administrator for your Microsoft Entra ID tenant must use the two links below to grant the necessary permissions for the applications. Please review the permissions requested on each consent screen before accepting.
@@ -252,8 +252,7 @@ Final Validation: After you submit the configuration, the agent performs a final
 If all checks pass, the Snowflake configuration has been successfully added for your organization. All users from your Microsoft tenant can now interact with the agent using this Snowflake account.
 
 <!-- ------------------------ -->
-## Using the App
-Duration: 8
+## Run Application
 
 Access the App from 365 Copilot or Teams experience. The experience will be mostly the same with some minor variations in the UI. See the two screenshots below.
 

@@ -63,7 +63,7 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 - to create a connection from Amazon Q to Cortex Search with Oauth authentication
 
 <!-- ------------------------ -->
-## Creating an Amazon Q App
+## Create Amazon Q App
 Duration: 5
 
 In this section, we'll set up [Amazon Q Business](https://aws.amazon.com/q/business/qstart) , a generative AI-powered assistant that enables natural language interaction with business data. We'll create and configure a Q Business application that will connect with our Snowflake database, enabling intelligent querying of our movie script data. While we're using movie scripts for this example, these same steps can be applied to analyze any type of business documents in your organization.
@@ -121,7 +121,6 @@ Before we continue on, we need to make sure we have configured a user to access 
 
 <!-- ------------------------ -->
 ##  Cortex and Amazon Q Business
-
 Duration: 15
 
 In this section, we'll create the foundation for an AI-powered movie data analysis system. By configuring Snowflake Cortex Search, Cortex Analyst and a Cortex Agent, you'll build a system that can process, store, and intelligently search through movie scripts. Once completed, this setup will allow users to ask natural language questions about movie content and receive relevant answers through Amazon Q Business.
@@ -538,7 +537,7 @@ components:
 Great Job! Your plugin is now ready to use within Q Business to query movie script data from Snowflake
 
 <!-- ------------------------ -->
-## Testing the Application
+## Test Application
 Duration: 4 
 
 ### Testing your Q Business Application
@@ -576,7 +575,8 @@ Duration: 4
 9. Congratulations! You've successfully built an intelligent script analysis system, integrated Q Business with Snowflake, leveraged GenAI for natural language querying, and became a certified Toy Story expert in the process!
 
 <!-- ------------------------ -->
-## Optional Snowflake & Quicksight
+## Snowflake & Quicksight
+OPTIONAL
 Duration: 20
 
 This lab introduces participants to [Amazon Q in QuickSight](https://aws.amazon.com/quicksight/q/), dashboard-authoring capabilities empower business analysts to swiftly build, uncover, and share valuable insights using natural language prompts. Simplify data understanding for business users through a context-aware Q&A experience, executive summaries, and customizable data stories. 
