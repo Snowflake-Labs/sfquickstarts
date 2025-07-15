@@ -774,6 +774,7 @@ Within this lab, we will explore Snowflake’s complete AI platform through a pr
 * How to optimize development with Snowflake’s Copilot for AI-assisted SQL query generation.
 * How to enable semantic discovery with Cortex Search for intelligent text and review finding.
 * How to create conversational analytics with Cortex Analyst for natural language business intelligence.
+* How to unify AI capabilities with Snowflake Intelligence for comprehensive business intelligence.
 
 ### What You Will Build
 
@@ -1080,7 +1081,6 @@ GROUP BY
 We've successfully demonstrated the transformative power of AI SQL functions, shifting customer feedback analysis from individual review processing to systemic, production-scale intelligence. Our journey through these four core functions clearly illustrates how each serves a distinct analytical purpose, transforming raw customer voices into comprehensive business intelligence—systematic, scalable, and immediately actionable. What once required individual review analysis now processes thousands of reviews in seconds, providing both the emotional context and specific details crucial for data-driven operational improvements.
 
 As our analysis grows in sophistication, combining multiple AI functions in complex queries can become challenging. This is precisely where Snowflake Copilot offers powerful assistance. Let's explore how Copilot can help us create complex queries using natural language and significantly accelerate our work, empowering us to build even more intricate analytical workflows with ease.
-
 
 ## Snowflake Copilot
 
@@ -2081,7 +2081,6 @@ WHERE o.location_id IN (SELECT location_id FROM TopWindiestLocations)
 GROUP BY o.truck_brand_name
 ORDER BY o.truck_brand_name;
 ```
-
 ## Introduction to Streamlit in Snowflake
 Duration: 3
 
