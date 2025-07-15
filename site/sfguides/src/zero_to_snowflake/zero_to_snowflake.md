@@ -32,7 +32,7 @@ Our mission is to provide unique, high-quality food options in a convenient and 
  - An Enterprise or Business Critical Snowflake Account
  - If you do not have a Snowflake Account, please [sign up for a Free 30 Day Trial Account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=6tNBra0z&_fsi=6tNBra0z). When signing up, please make sure to select  Enterprise edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions?_fsi=6tNBra0z&_fsi=6tNBra0z).
  - After registering, you will receive an email with an activation link and your Snowflake Account URL.
- - **For Snowflake Cortex AI Features:** This lab may demonstrate features that utilize Snowflake Cortex AI, and some Cortex AI models are region-specific. If the features or models required for this codelab are not available in your Snowflake account's primary region, you will need to enable cross-region inference. **To enable this, an `ACCOUNTADMIN` role must execute the following SQL command in a Snowflake worksheet:** 
+ - **For Snowflake Cortex AI Features:** This lab may demonstrate features that utilize Snowflake Cortex AI, and some Cortex AI models are region-specific. If the features or models required for this lab are not available in your Snowflake account's primary region, you will need to enable cross-region inference. **To enable this, an `ACCOUNTADMIN` role must execute the following SQL command in a Snowflake worksheet:** 
 
 ```sql
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
@@ -820,10 +820,11 @@ Let's begin by connecting directly to customer review data within Cortex Playgro
       * **Database: TB_101**
       * **Schema: HARMONIZED**
       * **Table: TRUCK\_REVIEWS\_V**
-5.  Select text column: **REVIEW**
-6.  Select filter column: **TRUCK\_BRAND\_NAME**
-7.  Click **Done**.
-8.  In the system prompt box, apply a filter using the **TRUCK\_BRAND\_NAME** dropdown. For instance, select "**Better Of Bread**" to narrow down the reviews.
+5.  Click **Let's go**
+6.  Select text column: **REVIEW**
+7.  Select filter column: **TRUCK\_BRAND\_NAME**
+8.  Click **Done**.
+9.  In the system prompt box, apply a filter using the **TRUCK\_BRAND\_NAME** dropdown. There are multiple reviews available for each truck brand. For instance, you can select "**Better Of Bread**" to narrow down the reviews. If "**Better Of Bread**" isn't available, please choose any other truck brand from the dropdown and proceed with one of its reviews.
 
 <img src = "assets/vignette-3/cortex-playground-connect.gif">
 
