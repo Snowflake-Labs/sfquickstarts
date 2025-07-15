@@ -929,7 +929,7 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 First, let's set our session context. We will assume the role of a TastyBytes data analyst with the intention of leveraging AISQL functions to gain insights from customer reviews.
 
 ```sql
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2_aisql","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "aisql_functions"}}';
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts","version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"tastybytes", "vignette": "aisql_functions"}}';
 
 USE ROLE tb_analyst;
 USE DATABASE tb_101;
@@ -1111,7 +1111,7 @@ This lab introduces **Snowflake Copilot**, an LLM-powered assistant designed to 
 First, let's set our session context. We will assume the role of a TastyBytes data analyst with the intention of leveraging Snowflake Copilot to build sophisticated queries and gain deeper business insights.
 
 ```sql
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2_copilot","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "snowflake_copilot"}}';
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts","version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"tastybytes", "vignette": "snowflake_copilot"}}';
 
 USE ROLE tb_analyst;
 USE WAREHOUSE tb_de_wh;
