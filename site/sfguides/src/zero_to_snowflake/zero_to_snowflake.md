@@ -1268,7 +1268,7 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
 <img src = "assets/vignette-3/cortex-analyst-setup.png">
 
 
-3. **On the 'Getting Started' page:**
+3. On the **Getting Started** page:
 
     * Choose **Semantic View**.
     * **Location to store** dropdown: Select **DATABASE: TB_101** and **SCHEMA: SEMANTIC_LAYER**.
@@ -1279,11 +1279,9 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
 
 <img src = "assets/vignette-3/cortex-analyst-getting-started.png">
 
-> **Note**: To make a request to Cortex Analyst, you must use a role that has the `SNOWFLAKE.CORTEX_USER` role granted.
-
 ### Step 2 - Select & Configure Columns
 
-In the 'Select tables' step, let's choose our pre-built analytics views.
+In the **Select tables** step, let's choose our pre-built analytics views.
 
 1. **Select core business Tables:**
 
@@ -1297,10 +1295,8 @@ In the 'Select tables' step, let's choose our pre-built analytics views.
 
 2. **Configure Column Selection:**
 
-    * On the 'Select columns' page, ensure both selected tables are active.
-    * For each column, review its **Logical Role** (e.g., Dimension, Measure, Time Dimension) and adjust if necessary.
-    * Consider setting **Display Names** or adding **Synonyms** for columns that might have technical names but represent common business concepts (e.g., `TOTAL_SALES_AMOUNT` could be "Total Revenue").
-    * (Optional: Hide any columns that aren't relevant for natural language queries to simplify the model.)
+    * On the **Select columns** page, ensure both selected tables are active.
+    * Click **Select and Save**
 
 <img src = "assets/vignette-3/cortex-analyst-select-columns.png">
 
@@ -1330,15 +1326,22 @@ Let's configure our table relationship by creating:
 * **Right table**: `CUSTOMER_LOYALTY_METRICS_V`
 * **Join columns**: `CUSTOMER_ID = CUSTOMER_ID`
 
-Upon completion, we will have a semantic model ready for sophisticated natural language queries.
-
 <img src = "assets/vignette-3/cortex-analyst-table-relationship.png">
+
+**Upon completion**, simply use the **Save** option at the top of the UI. This will finalize your semantic view, making your semantic model ready for sophisticated natural language queries. 
+
+To access the **Cortex Analyst chat interface** in fullscreen mode, you would:
+
+1.  Click the **three-dot menu (ellipsis)** next to the "Share" button at the top right.
+2.  From the dropdown menu, select **"Enter fullscreen mode."**
+
+<img src = "assets/vignette-3/cortex-analyst-interface.png">
 
 ### Step 5 - Execute Customer Segmentation
 
 With our semantic model and relationship active, let’s demonstrate sophisticated natural language analysis by running our first complex business query.
 
-Navigate to **Cortex Analyst query interface**.
+Navigate to **Cortex Analyst chat interface**.
 
 Let's execute our customer segmentation analysis:
 
