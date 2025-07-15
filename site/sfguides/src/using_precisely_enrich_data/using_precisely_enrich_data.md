@@ -1,6 +1,6 @@
-author: Mohammad Aslam Khan
+author: Mohammad Aslam Khan, Phani Raj, Vinay Srihari
 id: using_precisely_enrich_data
-summary: This is a sample Snowflake Guide
+summary: analysis of geospatial data for location profiling with Precisely marketplace data products
 categories: Data-Sharing, Cortex
 environments: web
 status: Published
@@ -15,17 +15,18 @@ tags: Geospatial, Advanced Analytics, Data Engineering,
 
 Duration: 2
 
-Analyzing location-specific data for decision-making often requires specialized techniques typically handled by geography experts. However, with **Snowflake**, anyone can analyze geographic data—whether it's regional demographics, city points, market data, or points of interest—using the platform’s built-in geospatial functionalities.
+Analyzing location-specific data for decision-making often requires specialized techniques typically handled by geography experts. However, with Snowflake's native [Geospatial Data Types](https://docs.snowflake.com/en/sql-reference/data-types-geospatial) and [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial) anyone can analyze geographic data—whether it's regional demographics, city points, market data, or points of interest—using the platform’s built-in geospatial functionalities.
 
-Numerous location-based datasets are available within the **Snowflake Marketplace**, significantly reducing the time needed for data ingestion and engineering. Accessing these datasets is as simple as selecting **Get Data**, allowing users to leverage geospatial insights via **SQL Queries** or **Snowpark DataFrames**. These result sets can then be visualized effortlessly using **Streamlit in Snowflake** dashboards.
+Numerous location-based datasets are available within the [Snowflake Marketplace](https://app.snowflake.com/marketplace), significantly reducing the time needed for data ingestion and engineering. Accessing these datasets is as simple as accepting Listing Usage Terms and clicking `Get`, allowing authorized users to derive geospatial insights with `SQL Queries` or `Snowpark DataFrames` in Snowflake Notebooks. These insights can then be visualized effortlessly using `Streamlit in Snowflake` (demos/examples [here](https://github.com/Snowflake-Labs/snowflake-demo-streamlit)).
 
 ### What You’ll Build
 
-- A Snowflake Notebook to explore and process geospatial data. You can download the notebook from [this](https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit.git) link.
+- A Snowflake Notebook to explore and process geospatial data 
 - A Streamlit app to visualize:
   - Demographic and market insights
   - Spatial relationships between regions and city points
   - Geographic points of interest based on spatial queries
+
 
 ### What You’ll Learn
 
@@ -47,33 +48,36 @@ In this quickstart, we will use Snowflake’s tools to:
 
 ### Prerequisites
 
-- [Signup](https://signup.snowflake.com/) for free trial of Snowflake in **a region of your choice\***.
+- Download the Notebook and Streamlit code from our git repo [here](https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit)
+- [Signup](https://signup.snowflake.com/) for free trial of Snowflake in `a region of your choice`.
 
 ![alt text](assets/I001.png)
 
 <!-- ------------------------ -->
 
-## Snowflake Marketplace
+## Acquire Points of Interest and Geospatial/Market datasets from Snowflake Marketplace
 
 Duration: 5
 
-Once logged in go to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
+Once logged in go to the Snowflake Marketplace - this is under Data Products > Marketplace
 
 ![alt text](assets/I002.png)
 
-1. Search for World Points of Interest Premium Global
-
-![alt text](assets/M001.png)
+1. Search for `World Points of Interest Premium Global`
 
 ![alt text](assets/M002.png)
 
-Press **Get** to get the data from the marketplace.
+Press **Get** to get the data from Marketplace
 
 ![alt text](assets/M004.png)
 
-Leave the database name and the role option as default and then Press **Get** to install the database into your account.
+> Leave the `Database name` as default
+> **Choose `PUBLIC` as an additional role that can access this database**
 
-2. Search for MBI - Premium Geospatial & Market Data
+Press **Get** to install the database into your account.
+
+
+2. Search for `MBI - Premium Geospatial & Market Data`
 
 ![alt text](assets/MBI001.png)
 
@@ -81,82 +85,84 @@ Click on the following dataset then press **Get**.
 
 ![alt text](assets/M003.png)
 
-Leave the database name and the role option as default and then Press **Get** to install the database into your account.
+> Leave the `Database name` as default
+> **Choose `PUBLIC` as an additional role that can access this database**
+
+Press **Get** to install the database into your account.
+
 You will have access to the dataset for a period of **30 days**
 
-If you are on the AWS North Virginia region then clicking on the **Get** button will install the dataset on your snowflake account.
-
-If you are on a different region then you will get a dialog box, it will take **10 mins** to get the data ready for you.
+> Note: depending on your Snowflake account region you may get a dialog box saying it will take **10 mins** to get the data ready for you.
 
 While the data is getting ready, let us setup our database, schema, warehouse and roles. Run the following commands from Snowsight SQL worksheet.
 
 ```sql
-    USE ROLE ACCOUNTADMIN;
+USE ROLE ACCOUNTADMIN;
 
-    create WAREHOUSE IDENTIFIER('"ENRICH_WH"') COMMENT = '' WAREHOUSE_SIZE = 'X-Small' AUTO_RESUME = true AUTO_SUSPEND = 300 ENABLE_QUERY_ACCELERATION = false
-    WAREHOUSE_TYPE   ='STANDARD' MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 SCALING_POLICY = 'STANDARD';
+DROP WAREHOUSE IF EXISTS ENRICH_WH;
+CREATE WAREHOUSE ENRICH_WH WAREHOUSE_SIZE = 'SMALL' AUTO_RESUME = true AUTO_SUSPEND = 300 ENABLE_QUERY_ACCELERATION = FALSE
+WAREHOUSE_TYPE ='STANDARD' MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 2 SCALING_POLICY = 'STANDARD';
 
-    CREATE ROLE ENRICH_ROLE;
-    GRANT USAGE ON WAREHOUSE ENRICH_WH TO ROLE ENRICH_ROLE;
-    GRANT OPERATE ON WAREHOUSE ENRICH_WH TO ROLE ENRICH_ROLE;
-    CREATE DATABASE SAMPLES_DB;
-    CREATE SCHEMA NOTEBOOKS;
-    CREATE SCHEMA PROMOTIONAL;
-    GRANT OWNERSHIP ON DATABASE SAMPLES_DB TO ROLE ENRICH_ROLE;
-    GRANT OWNERSHIP ON SCHEMA SAMPLES_DB.NOTEBOOKS TO ROLE ENRICH_ROLE;
-    GRANT OWNERSHIP ON SCHEMA SAMPLES_DB.PROMOTIONAL TO ROLE ENRICH_ROLE;
+DROP ROLE IF EXISTS ENRICH_ROLE;
+CREATE ROLE ENRICH_ROLE;
+GRANT USAGE ON WAREHOUSE ENRICH_WH TO ROLE ENRICH_ROLE;
+GRANT OPERATE ON WAREHOUSE ENRICH_WH TO ROLE ENRICH_ROLE;
+CREATE OR REPLACE DATABASE SAMPLES_DB;
+CREATE SCHEMA NOTEBOOKS;
+CREATE SCHEMA APPS;
+GRANT OWNERSHIP ON DATABASE SAMPLES_DB TO ROLE ENRICH_ROLE;
+GRANT OWNERSHIP ON SCHEMA SAMPLES_DB.NOTEBOOKS TO ROLE ENRICH_ROLE;
+GRANT OWNERSHIP ON SCHEMA SAMPLES_DB.APPS TO ROLE ENRICH_ROLE;
 
-    CREATE USER ENRICH_USER PASSWORD='<REDACTED>' LOGIN_NAME='ENRICH_USER' MUST_CHANGE_PASSWORD=FALSE, DISABLED=FALSE, DEFAULT_WAREHOUSE='ENRICH_WH',
-    DEFAULT_NAMESPACE='SAMPLES_DB.NOTEBOOKS', DEFAULT_ROLE='ENRICH_ROLE';
-
-    GRANT ROLE ENRICH_ROLE TO USER ENRICH_USER;
+-- Grant the custom role to current user
+SET CURRENT_USER_NAME = CURRENT_USER();
+GRANT ROLE ENRICH_ROLE TO USER IDENTIFIER($CURRENT_USER_NAME);    
+ALTER USER IDENTIFIER($CURRENT_USER_NAME) SET DEFAULT_WAREHOUSE='ENRICH_WH', DEFAULT_NAMESPACE='SAMPLES_DB.NOTEBOOKS', DEFAULT_ROLE='ENRICH_ROLE';
 ```
 
-## Display Data on Map
+## Explore Visual Analytics in a secured Snowflake Notebook
+Duration: 15
 
-Duration: 10
+>**Switch current role to ENRICH_ROLE** 
+>(by clicking on the user icon at the bottom left corner)
 
-In Snowsight, go back to the home page and select **Projects** » **Notebooks**.
+Navigate to the left side panel: **Projects** » **Notebooks**
 
-![alt text](assets/I007.png)
+Download the notebook file `precisely_enrich.ipynb` from our git repo [here](https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit).
+Create a notebook using the `Import .ipynb file` option in the **+Notebook** pulldown.
 
-You can download the file(precisely_enrich.ipynb) from the Repository(https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit.git).
+![alt text](assets/import-notebook-file.jpg)
 
-![alt text](assets/N001.png)
+In **Notebook Location**, select SAMPLES_DB from the list of available databases and NOTEBOOKS from the available schemas. All data within the notebook will be held in this database and schema in an automatically created internal stage. 
 
-Today we will be creating a new notebook from scratch.
+Select the ENRICH_WH warehouse and press **Create**.
 
-In **Notebook location**, select SAMPLES_DB from the list of available databases and NOTEBOOKS from the available schemas. All data within the notebook will be held inside the chosen database and schema and will sit inside an automatically generated stage. Select the ENRICH_WH and press **Create**.
+![alt text](assets/create-notebook.jpg)
+> To experience the creation of the notebook yourself, create a blank notebook and copy/paste the code as we go along.
 
----
+### Create the First Map
 
-> However, to experience the creation of the notebook yourself, carry on with the blank notebook, and copy/paste the code as we go along.
+With the notebook loaded, we will need some additional Python packages in order to run. Click on `Packages` pulldown to see the two default installed.
 
-### Creating First Map
+![alt text](assets/default-packages.jpg)
 
-Once the notebook has loaded, Remove all cells in the notebook. You should see something like this:
 
-![alt text](assets/I009.png)
+Enter these 7 additional Anaconda packages one-by-one, then click `Save` to install all.
 
-Before we start working in our notebook, we will add an additional package which is not installed as default. This package is available within the Anaconda Snowflake channel and is easily accessible.
+```python
+geopandas, ipython, pandas, pydeck, shapely, snowflake-snowpark-python, streamlit-folium
+```
 
-**Add the Pydeck package for visualising location data**
-
-In the top menu, under Packages » Anaconda Packages, import packages.
-
-![alt text](assets/N002.png)
-
-![alt text](assets/N003.png)
+![alt text](assets/installed-packages.jpg)
 
 Now we have all the packages we need. Lets start the notebook by pressing **Start** which is at the top right hand corner of the screen.
 
-![alt text](assets/I009a.png)
 
-You will be using a variety of Snowflake functions to do some transformation tasks. Some of the functions are built into the snowpark library (such as array_agg, parse_json), others we need to call using the **call_function** module. **call_function** allows the user to leverage ANY Snowflake scalar function - you can use this for both built in as well as user defined functions.
+You will be using a variety of Snowflake functions to do some transformation tasks. Some of the functions are built into the snowpark library (such as `array_agg`, `parse_json`), others we need to call using the **call_function** module. **call_function** allows the user to leverage ANY Snowflake scalar function - you can use this for both built in as well as user defined functions.
 
 All functions are held inside the **snowflake.snowpark.functions** module.
 
-We will import the call_function, streamlit library, json, numpy, pandas and pydeck packages. For pydeck, you will need to add the package as this is not installed by default.
+We will import the call_function, streamlit library, json, numpy, pandas and pydeck packages. 
 
 Click on the + Python button to add a new Python cell. On the top left hand corner of the screen, you can rename your cell from 'cell1' to something more meaningful. This is useful for debugging purposes.
 
@@ -343,7 +349,7 @@ We have created a simple map using the streamlit [st.map](https://docs.streamlit
 
 st.map is useful for quickly generating simple maps by rendering lines, points, polygons and H3 indexes. We will be leveraging the Pydeck library in the next step for creating points. pydeck has many more options such as different mark types, tool tips and layers we will create an additional pydeck layer which adds this data to the previously created data layer. When you hover over in the boundary box you will see a tooltip containing the attribute information of the data.
 
-## Enriching MBI Data with POI
+## Display Point of Interest data for a region
 
 Duration: 5
 
@@ -451,11 +457,7 @@ Below is an example of what you should see on map
 
 ![alt text](assets/MAP002.png)
 
-We have created a simple map using the streamlit [st.map](https://docs.streamlit.io/develop/api-reference/charts/st.map) function.
-
-st.map is useful for quickly generating simple maps by rendering lines, points, polygons and H3 indexes. We will be leveraging the Pydeck library in the next step for creating points. pydeck has many more options such as different mark types, tool tips and layers we will create an additional pydeck layer which adds this data to the previously created data layer. When you hover over in the boundary box you will see a tooltip containing the attribute information of the data.
-
-## Enrich MBI with POI
+## Overlay Demographics and Points of Interest data for Location Targeting
 
 Duration: 5
 
@@ -622,13 +624,39 @@ Rename the the cell to **display_data_on_map**
     st.pydeck_chart(render_combined_map(gdf_points, gdf_polygons))
 ```
 
-Below is an example of what you should see on map
+Here you will see a map with tooltip that combines **MBI Demographics** with **Points-of-Interest** for a specific region in Tokyo: try hovering over any point in the polygon. 
 
 ![alt text](assets/MAP003.png)
 
-We have created a simple map using the streamlit [st.map](https://docs.streamlit.io/develop/api-reference/charts/st.map) function.
+## Create a Streamlit App to visualize POI and Demographics overlay
 
-st.map is useful for quickly generating simple maps by rendering lines, points, polygons and H3 indexes. We will be leveraging the Pydeck library in the next step for creating points. pydeck has many more options such as different mark types, tool tips and layers we will create an additional pydeck layer which adds this data to the previously created data layer. When you hover over in the boundary box you will see a tooltip containing the attribute information of the data.
+Duration: 10
+
+Navigate to the left side panel: **Projects** >> **Streamlit**
+
+- Set `Database` to `SAMPLES_DB` and `Owner role` to `ENRICH_ROLE`
+- Click on the blue `+ Streamlit App` button 
+- Choose an `App title`, set `App location` to `SAMPLES_DB`.`APPS`
+- Warehouse should be `ENRICH_WH`
+- Click on **Create**
+
+Select ALL code (`Cmd-a` or `Ctrl-a`) in `streamlit_app.py` and delete
+
+Paste in Python code from `precisely_enrich_sis.py` downloaded from the lab git repo
+
+Install these 5 Anaconda packages one-by-one:
+
+```python
+geopandas, ipython, pandas, pydeck, shapely
+```
+
+Click on **Run**
+
+![alt text](assets/mbi-spatial-insights.jpg)
+
+Try different `Layer Opacity` and `Point Radius` values, render by clicking **Apply Filter**
+
+Hover over any point to see **MBI Demographics** and **POI** data overlay. You can also try a different `Microcode` region.
 
 ## Conclusion and Resources
 
@@ -657,7 +685,7 @@ By completing this guide, you have successfully integrated and enriched geospati
 
 #### Source code
 
-- [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit.git)
+- [Source Code on Github](https://github.com/Snowflake-Labs/sfguide-geospatial-analysis-precisely-using-snowflake-notebooks-and-streamlit)
 
 #### Further Related Material
 
@@ -666,4 +694,3 @@ By completing this guide, you have successfully integrated and enriched geospati
 - [Streamlit](https://streamlit.io/)
 
 - [Pydeck](https://deckgl.readthedocs.io/en/latest/index.html#)
-
