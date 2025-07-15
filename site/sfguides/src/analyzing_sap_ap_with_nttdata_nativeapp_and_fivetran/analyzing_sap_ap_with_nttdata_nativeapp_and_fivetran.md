@@ -3,7 +3,7 @@ id: analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran
 summary: This is the Fivetran NTT SAP AP Guide
 categories: Getting-Started
 environments: web
-status: Published 
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 
