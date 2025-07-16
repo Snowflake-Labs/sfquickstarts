@@ -1296,7 +1296,7 @@ In the **Select tables** step, let's choose our pre-built analytics views.
 2. **Configure Column Selection:**
 
     * On the **Select columns** page, ensure both selected tables are active.
-    * Click **Select and Save**
+    * Click **Create and Save**
 
 <img src = "assets/vignette-3/cortex-analyst-select-columns.png">
 
