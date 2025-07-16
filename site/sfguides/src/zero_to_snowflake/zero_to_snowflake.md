@@ -1245,6 +1245,8 @@ Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback.
 
 Duration: 10
 
+<img src='./assets/cortex_analyst_header.png'>
+
 ### Overview
 
 A business analyst at Tasty Bytes needs to enable self-service analytics, allowing the business team to ask complex questions in natural language and get instant insights without relying on data analysts to write SQL. While previous AI tools helped with finding reviews and complex query generation, the demand now is for **conversational analytics** that directly transforms structured business data into immediate insights.
