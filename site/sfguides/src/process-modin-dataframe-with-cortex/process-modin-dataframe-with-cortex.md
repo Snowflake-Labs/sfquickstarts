@@ -319,7 +319,7 @@ pd.read_snowflake("avalanche_products")
 ```
 
 <!-- ------------------------ -->
-## Build a Streamlit Dashboard
+## Streamlit Dashboard
 Duration: 15
 
 What's the point of all this incredible AI-powered data processing if you can't easily share and interact with the insights? This is where Streamlit steps in, allowing you to transform your data into a beautiful, interactive web application with just a few lines of Python code. Let's build a simple yet powerful dashboard to visualize our newly enriched product data!
