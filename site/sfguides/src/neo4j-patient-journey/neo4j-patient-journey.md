@@ -197,6 +197,69 @@ CREATE OR REPLACE VIEW KidneyPatientProcedure_relationship_vw (sourceNodeId, tar
          JOIN PROCEDURE_NODE_MAPPING ON PROCEDURE_NODE_MAPPING.NODEID = PROCEDURES.CODE;
 ```
 
+## Visualizing Your Graph (Experimental)
+Duration: 10
+
+At this point, you may want to visualize your graph to get a better understanding of how everything fits together. Before we do that, we will need to create a subset of our graph to make the visualization more managable.
+
+Let's start by limiting the number of patients down to ten and then finding the procedures those individuals have undergone.
+
+```sql
+-- this is a small subset of the patients in our dataset
+CREATE OR REPLACE VIEW KidneyPatient_viz_vw (nodeId) AS
+SELECT nodeId
+FROM KidneyPatients_vw
+LIMIT 10;
+
+-- this represents the procedures those patients underwent (and will be our relationship table
+-- for the below visualization)
+CREATE OR REPLACE VIEW NEO4J_PATIENT_DB.PUBLIC.procedures_patients_vw AS
+SELECT DISTINCT
+    p.patient as sourcenodeid,
+    p.reasoncode as targetnodeid
+FROM NEO4J_PATIENT_DB.PUBLIC.PROCEDURES p
+JOIN KidneyPatient_viz_vw k
+  ON CAST(p.PATIENT AS STRING) = CAST(k.nodeId AS STRING);
+
+-- now we look at the procedures in our example
+CREATE OR REPLACE VIEW procedures_viz_vw (nodeId) AS
+SELECT distinct targetnodeid
+FROM procedures_patients_vw
+LIMIT 10;
+```
+
+Now, we are ready to visualize our graph. We can do this in two easy steps. Similarly to how we will project graphs for our graph algorithms, we need to specify what are the node and relationship tables:
+
+```sql
+CALL Neo4j_Graph_Analytics.experimental.visualize(
+{
+    'nodeTables': ['NEO4J_PATIENT_DB.public.KidneyPatient_viz_vw',
+                   'NEO4J_PATIENT_DB.public.procedures_viz_vw'
+    ],
+    'relationshipTables': {
+      'NEO4J_PATIENT_DB.public.procedures_patients_vw': {
+        'sourceTable': 'NEO4J_PATIENT_DB.public.KidneyPatient_viz_vw',
+        'targetTable': 'NEO4J_PATIENT_DB.public.procedures_viz_vw'
+      }
+    }
+  },
+  {}
+);
+```
+
+We can access the output of the previous cell by referencing its cell name, in this case cell1. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the cell1 output as a Pandas DataFrame, then accessing the first row of the "VISUALIZE" column.
+
+```python
+import streamlit.components.v1 as components
+
+components.html(
+    cell27.to_pandas().loc[0]["VISUALIZE"],
+    height=600
+)
+```
+
+  ![image](assets/graph.png)
+
 ## Running Your Algorithms
 
 Duration: 10
