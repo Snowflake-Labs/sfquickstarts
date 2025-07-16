@@ -78,9 +78,9 @@ First, we need a place to put our setup script.
 
 Now that you have your worksheet, it's time to add the setup SQL and execute it.
 
-1. **Copy the SQL Code:** Click the link for the [setup file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/setup.sql) and copy it to your clipboard.  
+1. **Copy the SQL Code:** Click the link for the **[setup file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/setup.sql)** and copy it to your clipboard.  
 2. **Paste into your Worksheet:** Return to your Zero To Snowflake Setup worksheet in Snowflake and paste the entire script into the editor.  
-3. **Run the Script:** To execute all the commands in the worksheet sequentially, click the **"Run All"** button located at the top-right of the worksheet editor. This will perform all the necessary setup actions, such as creating roles, schemas, and warehouses that you will need for the upcoming vignettes.
+3. **Run the Script:** To execute all the commands in the worksheet sequentially, click the **"Run All"** button located at the top-left of the worksheet editor. This will perform all the necessary setup actions, such as creating roles, schemas, and warehouses that you will need for the upcoming vignettes.
 
 <img src='./assets/create_a_worksheet.gif'>
 
@@ -922,7 +922,7 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet or Workspaces to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
+Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet or Workspaces to follow along in Snowflake. **Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
 
 ### Step 1 - Setting Context
 
