@@ -73,7 +73,7 @@ session = get_active_session()
 This code imports Modin's pandas implementation and connects to your active Snowflake session.
 
 <!-- ------------------------ -->
-## Load Data into Snowflake
+## Load Data
 Duration: 10
 
 ### Store Data into a Snowflake Stage
@@ -129,7 +129,7 @@ Once loaded, your DataFrame will feature three key columns, ready for the forthc
 > - The path to the CSV file is relative to the stage you created
 
 <!-- ------------------------ -->
-## Text Classification
+## Classify Text
 Duration: 10
 
 ### Classify Text with Cortex
@@ -172,7 +172,7 @@ df
 And just like that, we have beautifully clean category columns, perfectly ready for deeper analysis and visualization. No more manual sorting or tagging!
 
 <!-- ------------------------ -->
-## Translate Text with Cortex
+## Translate Text
 Duration: 10
 
 Snowflake Cortex makes language translation incredibly simple. Let's leverage Cortex's powerful `Translate` function to instantly localize our product information from English into German:
@@ -194,7 +194,7 @@ df
 With just a few lines of code, you can localize your entire product catalog, opening doors to new markets and ensuring your data speaks every language your business needs.
 
 <!-- ------------------------ -->
-## Sentiment Analysis and Text Processing
+## Process Text
 Duration: 15
 
 ### Analyze Sentiment
@@ -289,7 +289,7 @@ df
 With these quick clean-up steps, our DataFrame is now perfectly structured and ready for its final destination!
 
 <!-- ------------------------ -->
-## Write and Read Data in Snowflake
+## Data Operations
 Duration: 5
 
 Now that our data is transformed, enriched, and polished, it's time to persist these valuable insights. The beauty of working within the Snowflake ecosystem is the seamless ability to write your processed data directly back into a Snowflake table, making it available for countless other applications and analyses.
@@ -319,10 +319,8 @@ pd.read_snowflake("avalanche_products")
 ```
 
 <!-- ------------------------ -->
-## Create a Streamlit Dashboard
+## Build a Streamlit Dashboard
 Duration: 15
-
-### Build an Interactive UI
 
 What's the point of all this incredible AI-powered data processing if you can't easily share and interact with the insights? This is where Streamlit steps in, allowing you to transform your data into a beautiful, interactive web application with just a few lines of Python code. Let's build a simple yet powerful dashboard to visualize our newly enriched product data!
 
