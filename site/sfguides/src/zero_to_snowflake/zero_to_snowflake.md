@@ -122,7 +122,7 @@ Within this Vignette, we will learn about core Snowflake concepts by exploring V
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 10 - Simple Data Pipeline.](#9)**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 10 - Simple Data Pipeline.](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#9)**
 
 ## Virtual Warehouses and Settings
 
@@ -489,7 +489,7 @@ Within this vignette, we will learn how to build a simple, automated data pipeli
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 16 - Snowflake Cortex AI](#15).**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 16 - Snowflake Cortex AI](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#15).**
 
 ## External Stage Ingestion
 
@@ -1108,7 +1108,7 @@ This lab introduces **Snowflake Copilot**, an LLM-powered assistant designed to 
 
 **Snowflake Copilot is designed to be used directly within the SQL Worksheet environment.** Please ensure you are executing the SQL in a SQL Worksheet.
 
-**Note:** Once you've reached the end of the Worksheet, you can skip to [Step 20 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19).
+**Note: Once you've reached the end of the Worksheet, you can skip to [Step 20 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19).**
 
 ### Step 1 - Setting Context
 
@@ -1393,7 +1393,7 @@ Within this vignette, we will explore some of the powerful governance features w
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](#28).**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).**
 
 ## Roles and Access Control
 
