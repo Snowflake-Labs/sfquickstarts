@@ -1337,7 +1337,7 @@ To access the **Cortex Analyst chat interface** in fullscreen mode, you would:
 
 <img src = "assets/vignette-3/cortex-analyst-interface.png">
 
-### Step 5 - Execute Customer Segmentation
+### Step 5 - Execute Customer Segmentation Intelligence
 
 With our semantic model and relationship active, let’s demonstrate sophisticated natural language analysis by running our first complex business query.
 
