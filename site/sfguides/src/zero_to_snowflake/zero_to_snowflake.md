@@ -1251,7 +1251,7 @@ A business analyst at Tasty Bytes needs to enable self-service analytics, allowi
 
 **Cortex Analyst** empowers business users to ask sophisticated questions directly, seamlessly extracting value from their analytics data through natural language interaction. This lab will guide you through designing a semantic model, connecting it to your business data, configuring relationships and synonyms, and then executing advanced business intelligence queries using natural language.
 
-### Step 1 -  Design Semantic Mode
+### Step 1 -  Design Semantic Model
 
 Let's begin by navigating to Cortex Analyst in Snowsight and configuring our semantic model foundations.
 
