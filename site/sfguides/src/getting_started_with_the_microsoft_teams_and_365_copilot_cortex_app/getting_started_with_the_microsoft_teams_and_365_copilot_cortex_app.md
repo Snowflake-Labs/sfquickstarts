@@ -12,7 +12,9 @@ tags: AI, Microsoft, Agents, Cortex, Copilot, chatbot, Teams, Cortex, Search, An
 ## Overview 
 Duration: 10
 
-In this quickstart you learn to build a Snowflake Cortex Agent and connect to it from a Teams or MS 365 Copilot App. In this Quickstart, after Setting Up the Snowflake Environment there will be a section for configuring the app connectivity then using the app; this Quickstart can be followed all the way through but you may be focused on one experience or another depending on your role and interest :grin:
+The Microsoft 365 Copilot and Snowflake Cortex Agents integration simplifies AI-powered data interactions so that both technical and business users can interact with their structured and unstructured data using natural language. Direct access to Cortex Agents from Microsoft 365 Copilot makes it possible to combine powerful generative AI data agents with secure data in Snowflake, unlocking endless business efficiencies for every organization, from faster customer support to optimized supply chain operations.
+
+In this quickstart, you’ll learn to build a Snowflake Cortex Agent App and connect to it from  Microsoft Teams or Microsoft 365 Copilot. After setting up the Snowflake Environment there will be a section for configuring the app connectivity followed by a use case showing how to run the application depending on your role and desired outcomes. 
 
 Snowflake Cortex Agents orchestrate across both structured and unstructured data sources to deliver insights. They plan tasks, use tools to execute these tasks, and generate responses. Agents use Cortex Analyst (structured) and Cortex Search (unstructured) as tools, along with LLMs, to analyze data. Cortex Search extracts insights from unstructured sources, while Cortex Analyst generates SQL to process structured data. A comprehensive support for tool identification and tool execution enables delivery of sophisticated applications grounded in enterprise data.
 
@@ -21,7 +23,7 @@ A Teams 365 Copilot app is an AI-powered productivity assistant integrated into 
 CURRENTLY THIS IS ONLY AVAILABLE FOR SNOWFLAKE ACCOUNTS DEPLOYED IN AZURE US EAST 2
 
 ### Use Case
-In this use cases we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search (for unstructured data) and Analyst (for structured data) then wrap a Cortex Agent around it so that it can combine both the services in a unified agentic experience. This can then be used by Copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
+In this use case, we will build two data sources, one with structured sales data and another with unstructured sales call data. Then we will create a Cortex Agent that uses Search (for unstructured data) and Analyst (for structured data) then wrap a Cortex Agent around it so that it can combine both the services in a unified agentic experience. This can then be used by Copilot leveraging oauth authentication and triggered by a simple phrase in your Microsoft Copilot to access sales data easily with plain text questions.
 
 Snowflake Cortex has proven to be a best-in-class platform for building GenAI services (Search and Analyst) and agents with your data and now customers can seamlessly connect to Cortex Agents in Teams and 365 Copilots alongside all of their Microsoft GenAI experiences.
 
@@ -274,16 +276,17 @@ Select (or ask by typing) "what was the largest deal size" to see the answer.
 
 
 And you are now ready to go! You can continue asking questions like:
-- plot our largest deals by deal size?
-- how was the call with Securebank?
-- what was the worst customer call we had?
-- show the deals that are currently pending
+- Plot our largest deals by deal size?
+- How was the call with Securebank?
+- What was the worst customer call we had?
+- Show the deals that are currently pending
 <!-- ------------------------ -->
 ## Conclusion and Resources
 Duration: 5
 
 ### Technical Considerations
-This quickstart showed you how to connect MS Teams and 365 Copilots Snowflake Cortex using the new App. Hopefully you're just getting started and you can build bigger Cortex Agents to help support business users query all types of data with plain text from Teams and 365 Copilot!
+
+Now that you've mastered creating a Cortex Agent app, you're ready to unlock powerful insights for your organization. We're excited to see how you build on this new capability, enabling your business users to query all types of data using plain text within Teams and Microsoft 365 Copilot.
 
 ### What you learned
 By following this quickstart, you learned how to:
