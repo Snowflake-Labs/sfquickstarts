@@ -137,7 +137,7 @@ Virtual Warehouses are the dynamic, scalable, and cost-effective computing power
 First, lets set our session context. To run the queries, highlight the three queries at the top of your worksheet and click the "► Run" button.
 
 ```sql
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts,"version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "getting_started_with_snowflake"}}';
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts,"version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"tastybytes", "vignette": "getting_started_with_snowflake"}}';
 
 USE DATABASE tb_101;
 USE ROLE accountadmin;
@@ -504,7 +504,7 @@ Our raw menu data currently sits in an Amazon S3 bucket as CSV files. To begin o
 First, let's set our session context to use the correct database, role, and warehouse. Execute the first few queries in your worksheet.
 
 ```sql
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "data_pipeline"}}';
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts","version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"tastybytes", "vignette": "data_pipeline"}}';
 
 USE DATABASE tb_101;
 USE ROLE tb_data_engineer;
