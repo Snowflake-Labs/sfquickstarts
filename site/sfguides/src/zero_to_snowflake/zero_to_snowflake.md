@@ -1461,12 +1461,12 @@ The typical hierarchy of system and custom roles might look something like this:
 ```
 Snowflake System Defined Role Definitions:
 
-- ORGADMIN: Role that manages operations at the organization level.
-- ACCOUNTADMIN: This is the top-level role in the system and should be granted only to a limited/controlled number of users in your account.
-- SECURITYADMIN: Role that can manage any object grant globally, as well as create, monitor, and manage users and roles.
-- USERADMIN: Role that is dedicated to user and role management only.
-- SYSADMIN: Role that has privileges to create warehouses and databases in an account.
-- PUBLIC: PUBLIC is a pseudo-role automatically granted to all users and roles. It can own securable objects, and anything it owns becomes available to every other user and role in the account.
+- **ORGADMIN**: Role that manages operations at the organization level.
+- **ACCOUNTADMIN**: This is the top-level role in the system and should be granted only to a limited/controlled number of users in your account.
+- **SECURITYADMIN**: Role that can manage any object grant globally, as well as create, monitor, and manage users and roles.
+- **USERADMIN**: Role that is dedicated to user and role management only.
+- **SYSADMIN**: Role that has privileges to create warehouses and databases in an account.
+- **PUBLIC**: PUBLIC is a pseudo-role automatically granted to all users and roles. It can own securable objects, and anything it owns becomes available to every other user and role in the account.
 
 ### Step 3 - Grant Privileges to the Custom Role
 
