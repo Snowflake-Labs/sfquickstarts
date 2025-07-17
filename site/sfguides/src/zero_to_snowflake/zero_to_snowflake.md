@@ -93,6 +93,7 @@ For each new vignette, you will:
 1. Create a **new** worksheet.  
 2. Give it a descriptive name (e.g., Vignette 1 \- Getting Started with Snowflake).  
 3. Copy and paste the SQL script for that specific vignette.
+4. Each SQL file has all of the necessary instructions and commands to follow along.
 
 <!-- end list -->
 
