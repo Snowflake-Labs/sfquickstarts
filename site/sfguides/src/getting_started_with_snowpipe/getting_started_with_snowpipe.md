@@ -65,11 +65,7 @@ Be sure to write down or memorize your bucket and prefix to be used in future st
 Duration: 2
 
 ### Login and Setup Lab
-Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithSnowpipe&utm_cta=quickstart-getstartedwithsnowpipe-en). You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by setting up your environment below:
-
-<button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithSnowpipe)</button>
-
-This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithSnowpipe&utm_cta=quickstart-getstartedwithsnowpipe-en).
 
 
 ![setup_lab](assets/setup_lab.png)
@@ -283,6 +279,7 @@ To ensure the Snowflake user associated with executing the Snowpipe actions had 
 ```sql
 -- Create Role
 use role accountadmin;
+ALTER PIPE S3_PIPE SET PIPE_EXECUTION_PAUSED=true;
 GRANT OWNERSHIP ON PIPE S3_db.public.S3_pipe TO ROLE accountadmin;
 create or replace role S3_role;
 
