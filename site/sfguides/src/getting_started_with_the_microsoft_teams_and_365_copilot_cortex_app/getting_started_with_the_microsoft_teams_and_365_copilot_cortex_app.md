@@ -37,10 +37,13 @@ Snowflake Cortex has proven to be a best-in-class platform for building GenAI se
 - Using the Teams and 365 App with Cortex Agents!
 
 First we will build a simple Cortex agent that leverages Analyst and Search Services on structured and unstructured data respectively.
+
 ![](assets/agentarch.png)
 
-Next, we will confifure connectivity to connect the Teams/Copilot 365 App to Cortex then use it, with the underlying architecture like below. 
+Next, we will configure connectivity to connect the Teams/Copilot 365 App to Cortex then use it, with the underlying architecture like below. 
+
 ![](assets/cortexteamsarch.png)
+
 The authentication and user flow goes like this:
 
 1. User authenticates to Entra ID and via the Bot Resource to authenticate into their Snowflake Account.
