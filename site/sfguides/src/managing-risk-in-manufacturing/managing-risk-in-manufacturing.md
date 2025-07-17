@@ -137,7 +137,7 @@ Now that we have our data, we just need to create a notebook and grant the neces
 ### Import The Notebook
 
 - We’ve provided a notebook to walk you through each SQL and Python step—no local setup required!
-- Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/predictive-maintenance-manufacturing/predictive-maintenance-manufacturing.ipynb), and import the notebook into snowflake.
+- Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/predictive-maintenance-manufacturing/predictive-maintenance-manufacturing.ipynb), and import the notebook into snowflake. **Please ensure that all cells are imported as SQL, except for `viz_display` which should be a python cell**.
 
 ### Permissions
 
@@ -225,7 +225,7 @@ GROUP BY SRC_MACHINE_ID, DST_MACHINE_ID;
 
 Duration: 5
 
-At this point, you may want to visuze your graph to get a better understanding of how everything fits together. We can do this in two easy steps. Similarly to how we will project graphs for our graph algorithms, we need to specify what are the node and relationship tables:
+At this point, you may want to visualize your graph to get a better understanding of how everything fits together. We can do this in two easy steps. Similarly to how we will project graphs for our graph algorithms, we need to specify what are the node and relationship tables:
 
 ```sql
 CALL Neo4j_Graph_Analytics.experimental.visualize(
