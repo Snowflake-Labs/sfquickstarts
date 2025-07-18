@@ -37,7 +37,26 @@ Let's look into how Snowpipe can be configured for continual loading. Then, we c
 After ensuring the prerequisites detailed in this section, jump into the queueing data integration options with Snowpipe.
 
 <!-- ------------------------ -->
+## Open a Snowflake Trial Account
+Duration: 5
 
+To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
+
+1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=hol&utm_campaign=northstar-hols-2025)
+
+2. Start the account creation by completing the first page of the form on the page
+
+3. On the next section of the form,  be sure to set the Snowflake edition to "Enterprise (Most popular")
+
+4. Select "AWS – Amazon Web Services" as the cloud provider
+
+5. Select "US West (Oregon)" as the region
+
+6. Complete the rest of the form and click "Get started"
+
+![trial](./assets/trial.png)
+
+<!-- ------------------------ -->
 ## Setting up AWS Bucket and Prefix (folder) 
 Duration: 5
 
@@ -59,24 +78,6 @@ Duration: 5
 4. Click “Create folder”
 
 Be sure to write down or memorize your bucket and prefix to be used in future steps.
-
-<!-- ------------------------ -->
-## Setting up Snowflake
-Duration: 2
-
-### Login and Setup Lab
-Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithSnowpipe&utm_cta=quickstart-getstartedwithsnowpipe-en).
-
-
-![setup_lab](assets/setup_lab.png)
-
-Once the lab has been setup, it can be continued by revisiting the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithSnowpipe) and clicking `Continue Lab`
-
-![continue_lab](assets/continue_lab.png)
-
-or by navigating to Worksheets and selecting the `Getting Started with Snowpipe` folder.
-
-![worksheets](assets/worksheets.png)
 
 <!-- ------------------------ -->
 ## Choose the Data Ingestion Method
@@ -169,7 +170,7 @@ Create the role, then click to see the role’s summary and record the **ARN**.
 
 3. Integrate IAM user with Snowflake storage.
 
-Within your Snowflake web console, you’ll run a `Integrate IAM user with Snowflake storage` command on a worksheet.
+Within your Snowflake web console, you’ll run the following command to integrate IAM user with Snowflake storage.
 ```
 CREATE OR REPLACE STORAGE INTEGRATION S3_role_integration
   TYPE = EXTERNAL_STAGE
@@ -274,7 +275,7 @@ Confirm you receive a status message of, ‘Pipe S3_PIPE successfully created’
 
 2. Configure Snowpipe User Permissions
 
-To ensure the Snowflake user associated with executing the Snowpipe actions had sufficient permissions, create a unique role to manage Snowpipe security privileges. Do not employ the user account you're currently utilizing, instead create a new user to assign to Snowpipe within the web console.
+Create a new role named `S3_role` with *ACCOUNTADMIN* access. Give the `S3_role` usage permissions to the database objects, insert permission for the `S3_table` and ownership of `S3_pipe`. Lastly, set the S3_role as a Snowflake user’s default. Be sure to update `<username>` with your Snowflake username. To find your username, click on your initals in the bottom left hand corner. Hoover over 'Account' and click on 'View account details'. Confirm the statement was successful before creating the S3 event notification.
 
 ```sql
 -- Create Role
@@ -299,7 +300,6 @@ alter user <username> set default_role = S3_role;
 
 ![Snowflake_UserS3_Pipe-image](assets/Snowflake_UserS3_Pipe.png)
 
-Create a new role named `S3_role` with *SECURITYADMIN* access. Give the `S3_role` usage permissions to the database objects, insert permission for the `S3_table` and ownership of `S3_pipe`. Lastly, set the S3_role as a Snowflake user’s default. Be sure to update `<username>` with your Snowflake username. To find your username, click on your initals in the bottom left hand corner. Hoover over 'Account' and click on 'View account details'. Confirm the statement was successful before creating the S3 event notification.
 
 3. New S3 Event
 
