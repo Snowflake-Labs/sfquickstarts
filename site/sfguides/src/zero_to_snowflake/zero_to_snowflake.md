@@ -1163,7 +1163,7 @@ In the same Copilot panel, paste the following business question and click RUN t
 
 Snowflake Copilot profoundly transforms business intelligence by enabling users to effortlessly translate complex business questions into sophisticated SQL queries. As demonstrated with Tasty Bytes, it empowers both technical and non-technical users to derive actionable insights from their data without deep SQL expertise. This LLM-powered assistant delivers schema-aware, purpose-built intelligence, ensuring robust data governance and keeping all enterprise data securely within Snowflake. Copilot isn't just generic AI; it's a strategic tool that bridges operational insights with business intelligence. -->
 
-## Cortex Search
+## Optional: Cortex Search
 Duration: 6
 
 <img src='./assets/cortex_search_header.png'>
@@ -1253,7 +1253,7 @@ Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback.
 
 **In the next module** - Cortex Analyst - you’ll use natural language to query structured data. 
 
-## Cortex Analyst
+## Optional: Cortex Analyst
 
 Duration: 10
 
@@ -1400,11 +1400,11 @@ Before starting this module, your environment includes pre-configured AI service
 
   * **Cortex Search Service:** `tasty_bytes_review_search` - analyzing customer reviews and feedback
 
-      * *Note for Advanced Users:* If you want to build your own Cortex Search from scratch, an optional setup module is available. For a detailed guide, click the link to the: [Cortex Search Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19)
+      * *Note for Advanced Users:* If you want to build your own Cortex Search from scratch, an optional setup module is available. For a detailed guide, click the link to the: [Cortex Search Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18)
 
   * **Cortex Analyst Service:** `TASTY_BYTES_BUSINESS_ANALYTICS` - for translating natural language questions into SQL and providing insights from structured data, enabling self-service analytics.
 
-      * *Note for Advanced Users:* If you prefer to build your own Cortex Analyst semantic model from scratch, you can access the detailed setup module for guidance. Access the detailed setup by clicking on the: [Cortex Analyst Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#20)
+      * *Note for Advanced Users:* If you prefer to build your own Cortex Analyst semantic model from scratch, you can access the detailed setup module for guidance. Access the detailed setup by clicking on the: [Cortex Analyst Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19)
 
 ### Step 1 - Upload Semantic Model
 
