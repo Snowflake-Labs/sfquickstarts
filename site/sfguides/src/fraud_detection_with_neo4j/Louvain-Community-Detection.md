@@ -78,9 +78,7 @@ USE SCHEMA P2P_DEMO.PUBLIC;
 
 -- Create a consumer role for users and admins of the Neo4j Graph Analytics application
 CREATE ROLE IF NOT EXISTS gds_user_role;
-CREATE ROLE IF NOT EXISTS gds_admin_role;
 GRANT APPLICATION ROLE neo4j_graph_analytics.app_user TO ROLE gds_user_role;
-GRANT APPLICATION ROLE neo4j_graph_analytics.app_admin TO ROLE gds_admin_role;
 
 CREATE DATABASE ROLE IF NOT EXISTS gds_db_role;
 GRANT DATABASE ROLE gds_db_role TO ROLE gds_user_role;
