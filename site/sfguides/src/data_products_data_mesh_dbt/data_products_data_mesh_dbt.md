@@ -1,4 +1,4 @@
-summary: Build Data Products and a Data Mesh with dbt Cloud
+summary: Build Data Products and a Data Mesh with dbt platform
 id: data-products-data-mesh-dbt-cloud
 categories: getting-started, data-engineering
 environments: web
@@ -7,13 +7,13 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Data Mesh
 authors: Sean McIntyre, Doug Guthrie
 
-# Build Data Products and a Data Mesh with dbt Cloud
+# Build Data Products and a Data Mesh with dbt platform
 
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
 
-Welcome to the Build Data Products and Data Mesh with dbt Cloud Quickstart guide! Before you begin getting your hands into the technology, let's define what a data mesh is and describe what motivates the topic.
+Welcome to the Build Data Products and Data Mesh with dbt platform Quickstart guide! Before you begin getting your hands into the technology, let's define what a data mesh is and describe what motivates the topic.
 
 ### What is a data mesh?
 
@@ -68,12 +68,12 @@ The properties of a data product are:
 
 ### What you will learn
 
-Throughout this guide, imagine yourself building a data platform with Snowflake and dbt Cloud for your organization, starting with two teams:
+Throughout this guide, imagine yourself building a data platform with Snowflake and dbt platform for your organization, starting with two teams:
 
 1. **Central data team:** a team of experienced data engineers who build foundational data marts in Snowflake organized in a star schema of fact and dimensional tables
 2. **Finance team:** a team that includes data analysts in the finance department who want to own their data and data processes
 
-Each step of the guide will learn how to use features of both Snowflake and dbt Cloud to achieve building **data products**.
+Each step of the guide will learn how to use features of both Snowflake and dbt platform to achieve building **data products**.
 
 ### What you will build
 
@@ -105,24 +105,24 @@ In the following step within this Quickstart Guide, you will be given instructio
 > 
 > **You must use a Snowflake Enterprise account.** Snowflake Standard Edition is not sufficient, due to usage of Snowflake Enterprise features.
 
-#### dbt Cloud
+#### dbt platform
 
 Here are the requirements for this Quickstart Guide:
 
-- Account admin access to a dbt Cloud Enterprise account
+- Account admin access to a dbt platform Enterprise account
 - Set your development and deployment [environments](https://docs.getdbt.com/docs/dbt-cloud-environments) to use dbt version 1.6 or later. You can also choose the "Keep on latest version" option to always use the latest version of dbt.
 
-In the following step within this Quickstart Guide, you will be given instructions on how to sign-up for a dbt Cloud account using Snowflake Partner Connect.
+In the following step within this Quickstart Guide, you will be given instructions on how to sign-up for a dbt platform account. Live webinar attendees should use this workshop signup page[https://cloud.getdbt.com/workshop] and the passcode provided by your instructor. For others, we recommend using Snowflake Partner Connect.
 
 > aside negative
 > 
-> **You should use a dbt Cloud Enterprise account.** It is possible to complete most of the steps with other editions of dbt Cloud, but some steps require Enterprise.
+> **You should use a dbt platform Enterprise account.** It is possible to complete most of the steps with other editions of dbt platform, but some steps require Enterprise.
 
 <!-- ------------------------ -->
-## Launch Snowflake and dbt Cloud for this Quickstart
+## Launch Snowflake and dbt platform for this Quickstart
 Duration: 10
 
-In this step, you will set up Snowflake and dbt Cloud accounts for use in the rest of the Quickstart guide.
+In this step, you will set up Snowflake and dbt platform accounts for use in the rest of the Quickstart guide.
 
 ### Sign up for a Snowflake Enterprise trial account
 
@@ -145,9 +145,16 @@ When prompted to either explore a sample data set or load data into snowflake, s
 
 **Your Snowflake account is ready!**
 
-### Launching dbt Cloud by Snowflake Partner Connect
+### Option A (for live webinar or workshop attendees): Register for a dbt platform Enterprise account 
 
-1. We recommend that you use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
+1. Go to this workshop [signup page](https://cloud.getdbt.com/workshop).
+2. Enter your first and last name. Select "Build Data Products at Scale with dbt platform (July 2025)" as the workshop name unless otherwise specified by your live instructor.
+3. Use the passcode provided by your live instructor.
+4. Magic! Save down your password. You can now skip Option B below and move to section 3 of the quickstart guide.
+
+### Option B (for all others): Launching dbt platform by Snowflake Partner Connect
+
+1. We recommend that you use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt platform account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
 
 2. In the Snowflake UI, click on `Data Products` in the lefthand sidebar, then `Partner Connect` which is located within the `Data Products` section. <br>
 
@@ -159,7 +166,7 @@ When prompted to either explore a sample data set or load data into snowflake, s
 
     ![Search Partner Connect](assets/Snowflake_search_partner_connect.png)
 
-4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that’s entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
+4. You should now see a popup that says `Connect to dbt` that contains all of the associated objects created by Partner Connect. Click on the `Optional Grant` dropdown menu and add `Snowflake_Sample_Data` in the text box. This will grant your new dbt user role access to the database. Once that’s entered, click `Connect`. This will create a dedicated dbt user, database, warehouse, and role for your dbt platform trial.
 
     ![Connect Partner Connect](assets/Snowflake_connect_partner_connect.png)
 
@@ -167,64 +174,72 @@ When prompted to either explore a sample data set or load data into snowflake, s
 
     ![Activate Partner Connect](assets/snowflake_activate_partner_connect.png)
 
-6. You should be redirected to a dbt Cloud registration page. If your email is already associated with a dbt Cloud account, you'll see the screen below.  Fill out the Account Name and click "Complete Registration".  That will then redirect you to the login screen.  Fill out the form and make sure to save the password somewhere for login in the future. <br>
+6. You should be redirected to a dbt platform registration page. If your email is already associated with a dbt platform account, you'll see the screen below.  Fill out the Account Name and click "Complete Registration".  That will then redirect you to the login screen.  Fill out the form and make sure to save the password somewhere for login in the future. <br>
 
-    ![dbt Cloud Registration - Already Exists](assets/dbt_registration_page.png)
+    ![dbt platform Registration - Already Exists](assets/dbt_registration_page.png)
 
-If this is your first time in dbt Cloud, you'll see the screen below.  Add your Account Name and a password for your user.
+If this is your first time in dbt platform, you'll see the screen below.  Add your Account Name and a password for your user.
 
-  ![dbt Cloud Registration - New User](assets/dbt_registration_page_2.png)
+  ![dbt platform Registration - New User](assets/dbt_registration_page_2.png)
 
-7. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
+7. You should now be redirected to your dbt platform account, complete with a connection to your Snowflake account, a deployment and a development environment, as well as a sample job.
 
-    ![dbt Cloud Home Page](assets/dbt_Cloud_home_page.png)
+    ![dbt platform Home Page](assets/dbt_Cloud_home_page.png)
 
-8. To help you version control your dbt project we have connected it to a [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), which means that dbt Labs will be hosting your repository for you. This will give you access to a git workflow without you having to create and host the repository yourself. You will not need to know git for this workshop; dbt Cloud will help guide you through the workflow. In the future, when you're developing your own project, feel free to use [your own repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-installing-the-github-application). This will allow you to play with features like [Slim CI](https://docs.getdbt.com/docs/dbt-cloud/using-dbt-cloud/cloud-enabling-continuous-integration-with-github) builds after this workshop.
+8. To help you version control your dbt project we have connected it to a [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), which means that dbt Labs will be hosting your repository for you. This will give you access to a git workflow without you having to create and host the repository yourself. You will not need to know git for this workshop; dbt platform will help guide you through the workflow. In the future, when you're developing your own project, feel free to use [your own repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-installing-the-github-application). This will allow you to play with features like [Slim CI](https://docs.getdbt.com/docs/dbt-cloud/using-dbt-cloud/cloud-enabling-continuous-integration-with-github) builds after this workshop.
 
-9. Now it is best to upgrade this dbt Cloud account to Enterprise. If you are participating in the **Snowflake Summit Hands On Lab session**, [please use this form](https://forms.gle/S7P9Rw1Udbfxf7TdA) to submit your account information so your account can be upgraded for the duration of the Hands On Lab.  The required information can be found by navigating to Account Settings.  The Account ID should be in the top section "Account Information" - this is what we'll need to upgrade your account.
+9. Now it is best to upgrade this dbt platform account to Enterprise. If you are participating in the **Snowflake Summit Hands On Lab session**, [please use this form](https://forms.gle/S7P9Rw1Udbfxf7TdA) to submit your account information so your account can be upgraded for the duration of the Hands On Lab.  The required information can be found by navigating to Account Settings.  The Account ID should be in the top section "Account Information" - this is what we'll need to upgrade your account.
 
 <!-- ------------------------ -->
-## Set up Snowflake and dbt Cloud
+## Set up Snowflake and dbt platform
 Duration: 5
 
-In this step, you will be setting up Snowflake and dbt Cloud for two teams: the central data team and the finance team, as shown in the diagram below. You will be using least privileged access principles in order to properly secure the data.
+In this step, you will be setting up Snowflake and dbt platform for two teams: the central data team and the finance team, as shown in the diagram below. You will be using least privileged access principles in order to properly secure the data.
 
-![Target Snowflake and dbt Cloud configuration](assets/architecture-for-data-mesh.png)
+![Target Snowflake and dbt platform configuration](assets/architecture-for-data-mesh.png)
 
 ### About the two teams
 
 The **central data team** is well-established in the organization and the average team member is capable of building data pipelines that powers business reporting across various domains: finance, marketing, sales, customer support, and so on. The team uses data management best practices like organizing data in dimensional models for maximum re-usability in various BI and AI/ML applications.
 
-The **finance team** is an operational team. Finance team members are accustomed to consuming dashboards and building spreadsheets, however more and more demands on data has led to the finance team owning and managing more data to rapidly respond to changing demands. And so, the team has upskilled team members and brought on an analytics engineer to use Snowflake and dbt Cloud, in order to create data pipelines building off of the foundation project for daily reporting use-cases.
+The **finance team** is an operational team. Finance team members are accustomed to consuming dashboards and building spreadsheets, however more and more demands on data has led to the finance team owning and managing more data to rapidly respond to changing demands. And so, the team has upskilled team members and brought on an analytics engineer to use Snowflake and dbt platform, in order to create data pipelines building off of the foundation project for daily reporting use-cases.
 
-### Provision Snowflake and dbt Cloud the setup
+### Provision Snowflake and dbt platform the setup
 
 > aside negative
 > 
-> dbt Cloud Enterprise is required to create more than one project in an account. If you do not have a dbt Cloud Enterprise account and wish to try this, [please contact dbt Labs](https://www.getdbt.com/contact).
+> dbt platform Enterprise is required to create more than one project in an account. If you do not have a dbt platform Enterprise account and wish to try this, [please contact dbt Labs](https://www.getdbt.com/contact).
 
-[Use this app](https://sf-dbt-mesh-setup.streamlit.app/) to quickly provision the Snowflake and dbt Cloud setup for this Quickstart Guide. Come back to this guide when you have successfully followed the steps in the app!
+[Use this app](https://sf-dbt-mesh-setup.streamlit.app/) to quickly provision the Snowflake and dbt platform setup for this Quickstart Guide. To do so, you'll need to first locate the account ID (Settings > Account) and then create a Service Token with Account Admin priveleges:
+
+![Create service token](assets/dbt_create_service_token.png)
+
+Come back to this guide when you have successfully followed the steps in the app!
 
 The app creates the following resources for you:
 
 - A `foundational_role` Snowflake role for creating and managing resources in the `foundational_db` database using the `foundational_wh` warehouse. It will also be able to administer data governance responsibilities, and grant appropriate permissions for masking and tagging.
 - A `foundational_pii_reader_role` Snowflake role for users who can access PII data unmasked.
 - A `finance_role` Snowflake role for creating and managing resources in the `finance_db` database using the `finance_wh` warehouse.
-- A `Foundational Project` dbt Cloud Project for the central data team to build their transformations.
-- A `Finance Project` dbt Cloud Project for the finance team to build their transformations on top of the Foundational Project.
+- A `Foundational Project` dbt platform Project for the central data team to build their transformations.
+- A `Finance Project` dbt platform Project for the finance team to build their transformations on top of the Foundational Project.
 
-### Additional features to secure dbt Cloud and Snowflake
+Before we jump into the next section, let's take a moment to setup our developer credentials (click **Account Settings** and then **Credentials**) for both the foundational and finance projects. Add in the Snowflake username and password you just created: 
 
-When setting up dbt Cloud for production, there are four recommended security options to configure. They are out-of-scope for this particular Quickstart Guide, but worth mentioning at this point:
+![Add developer credentials](assets/dbt_add_dev_credentials.png)
 
-- [**Snowflake OAuth:**](https://docs.getdbt.com/docs/cloud/manage-access/set-up-snowflake-oauth) Require developers to connect their dbt Cloud Developer account to their Snowflake account, in order to govern data access. When this is setup, dbt Cloud users will only be able to access the data that their Snowflake user has been granted.
-- [**Snowflake Key Pair authentication:**](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake#key-pair) For scheduled production workloads in dbt Cloud, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization's policy.
-- [**dbt Cloud Role Based Access Controls:**](https://docs.getdbt.com/docs/cloud/manage-access/about-user-access#role-based-access-control) Set up roles within dbt Cloud to govern what dbt Cloud permissions users can have. For example, you can set up a finance team role so they do not have write access to the central data team project resources.
-- [**dbt Cloud SSO:**](https://docs.getdbt.com/docs/cloud/manage-access/sso-overview) Require developers to use your organization's SSO platform to log into dbt Cloud, and exchange SAML information to auto-assign dbt Cloud roles based on the permissions set in your organization's Identity Provider.
+### Additional features to secure dbt platform and Snowflake
+
+When setting up dbt platform for production, there are four recommended security options to configure. They are out-of-scope for this particular Quickstart Guide, but worth mentioning at this point:
+
+- [**Snowflake OAuth:**](https://docs.getdbt.com/docs/cloud/manage-access/set-up-snowflake-oauth) Require developers to connect their dbt platform Developer account to their Snowflake account, in order to govern data access. When this is setup, dbt platform users will only be able to access the data that their Snowflake user has been granted.
+- [**Snowflake Key Pair authentication:**](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake#key-pair) For scheduled production workloads in dbt platform, use the Snowflake Key Pair authentication mechanism rather than username and password, in order to rotate credentials as per your organization's policy.
+- [**dbt platform Role Based Access Controls:**](https://docs.getdbt.com/docs/cloud/manage-access/about-user-access#role-based-access-control) Set up roles within dbt platform to govern what dbt platform permissions users can have. For example, you can set up a finance team role so they do not have write access to the central data team project resources.
+- [**dbt platform SSO:**](https://docs.getdbt.com/docs/cloud/manage-access/sso-overview) Require developers to use your organization's SSO platform to log into dbt platform, and exchange SAML information to auto-assign dbt platform roles based on the permissions set in your organization's Identity Provider.
 
 ### Wrapping up this step
 
-With the Snowflake and dbt Cloud resources provisioned in this step, you have begun laying the first layer of an interoperable and secure data mesh. dbt Cloud adds a layer of addressability and discoverability to the data platform. In the next step, you will build your first data product.
+With the Snowflake and dbt platform resources provisioned in this step, you have begun laying the first layer of an interoperable and secure data mesh. dbt platform adds a layer of addressability and discoverability to the data platform. In the next step, you will build your first data product.
 
 Here is where you are in the journey towards a data product:
 
@@ -240,14 +255,14 @@ Here is where you are in the journey towards a data product:
 ## Build foundational project
 Duration: 5
 
-Now it's time for you to add dbt code in the foundational project using the dbt Cloud IDE. Using the sample TPCH dataset provided by Snowflake, the dbt code will create a `fct_orders` table representing all of the orders within our organization. The code below has three layers of transformations: raw data sources, staging models, and core business logic. And by using dbt, you automatically have end-to-end data lineage.
+Now it's time for you to add dbt code in the foundational project using the dbt platform IDE. Using the sample TPCH dataset provided by Snowflake, the dbt code will create a `fct_orders` table representing all of the orders within our organization. The code below has three layers of transformations: raw data sources, staging models, and core business logic. And by using dbt, you automatically have end-to-end data lineage.
 
 ### Setup the new project
 
 Here are the steps:
 
 1. Navigate back to the foundational project via the account / project dropdown in the top-right section of the navbar.
-2. Then, navigate to the **Cloud IDE** via the **Develop** dropdown in the navbar to verify your setup.
+2. Then, navigate to the **dbt platform Studio (IDE)** via the **Studio** dropdown in the navbar to verify your setup.
 3. If the repo you are working on is empty, click the **Initialize dbt project** button and commit the changes.
 4. Create a new branch.
 5. Delete the `models/example` folder.  
@@ -462,9 +477,9 @@ order by order_date
 
 Navigate to the **Command bar** at the very bottom of the IDE and execute `dbt build`. This will both validate the work you've done thus far and build out the requisite models into your sandbox within Snowflake.
 
-At this point, you may also see what you have built by looking at the **Lineage tab** in the dbt Cloud IDE, and as shown in the graphic below.
+At this point, you may also see what you have built by looking at the **Lineage tab** in the dbt platform IDE, and as shown in the graphic below.
 
-![dbt Cloud lineage](assets/lineage.png)
+![dbt platform lineage](assets/lineage.png)
 
 ### Committing your changes
 
@@ -475,8 +490,9 @@ To finish this step up, go to the **Version control** section in the IDE to:
 
 ### Additional features to build data products
 
-- [**dbt Cloud CLI:**](https://docs.getdbt.com/docs/cloud/cloud-cli-installation) In this guide, we are using the dbt Cloud IDE available within the web browser. dbt Cloud enables data practitioners to also develop with a local dbt Cloud CLI using a locally-installed code editor of their choice.
-- [**dbt Cloud IDE linting and formatting:**](https://docs.getdbt.com/docs/cloud/dbt-cloud-ide/lint-format) To keep data product code quality high and follow your team's coding standards, you can use the built-in linters and formatters in dbt Cloud.
+- [**dbt platform CLI:**](https://docs.getdbt.com/docs/cloud/cloud-cli-installation) In this guide, we are using the dbt platform IDE available within the web browser. dbt platform enables data practitioners to also develop with a local dbt platform CLI using a locally-installed code editor of their choice.
+- [**dbt Visual Studio (VS) Code Extension:**](https://docs.getdbt.com/docs/install-dbt-extension) Additionally, the dbt extensions for VS Code and Cursor enhance local development. The dbt extension is powered by the dbt Fusion engine..
+- [**dbt platform IDE linting and formatting:**](https://docs.getdbt.com/docs/cloud/dbt-cloud-ide/lint-format) To keep data product code quality high and follow your team's coding standards, you can use the built-in linters and formatters in dbt platform.
 
 ### Wrapping up this step
 
@@ -522,7 +538,7 @@ alter tag foundational_db.prod.pii_data set masking policy foundational_db.prod.
 
 ### Apply the Snowflake tags while building dbt models
 
-Now it's time to jump into dbt Cloud to use a [model post-hook](https://docs.getdbt.com/reference/resource-configs/pre-hook-post-hook) to apply the masking policy to the `name` column of the `fct_orders` dbt model immediately after the table is built.
+Now it's time to jump into dbt platform to use a [model post-hook](https://docs.getdbt.com/reference/resource-configs/pre-hook-post-hook) to apply the masking policy to the `name` column of the `fct_orders` dbt model immediately after the table is built.
 
 Open up the `fct_orders.sql` file and modify the config block at the top to include the `post_hook` argument:
 
@@ -537,7 +553,7 @@ Open up the `fct_orders.sql` file and modify the config block at the top to incl
 
 ### Additional features to govern and secure
 
-- [**dbt-tags package:**](https://dbt-tags.iflambda.com/latest/index.html) In the above steps, you created tags and masking policies directly in Snowflake using SQL statements. To scale this approach further, you can use the dbt-tags package to manage these tags in configuration files within your dbt Cloud project and use a DataOps approach to apply the policies. This package was created by the dbt and Snowflake experts at Infinite Lambda.
+- [**dbt-tags package:**](https://dbt-tags.iflambda.com/latest/index.html) In the above steps, you created tags and masking policies directly in Snowflake using SQL statements. To scale this approach further, you can use the dbt-tags package to manage these tags in configuration files within your dbt platform project and use a DataOps approach to apply the policies. This package was created by the dbt and Snowflake experts at Infinite Lambda.
 
 ### Wrapping up this step
 
@@ -643,7 +659,7 @@ models:
 
 This YAML file does the following:
 
-- It sets the `fct_orders` [model access level](https://docs.getdbt.com/docs/collaborate/govern/model-access) to public, which means other projects in the dbt Cloud account are now able to reference it.
+- It sets the `fct_orders` [model access level](https://docs.getdbt.com/docs/collaborate/govern/model-access) to public, which means other projects in the dbt platform account are now able to reference it.
 - It will add and enforce a [model contract](https://docs.getdbt.com/docs/collaborate/govern/model-contracts). This will enable dbt to do a couple things: 1) run a "preflight" check that ensures the model's query will return a set of columns with names and data types matching the ones you have defined and 2) include the column names, data types, and constraints in the DDL statements it submits to the data platform, which will be enforced while building or updating the model's table.
 - The [grants](https://docs.getdbt.com/reference/resource-configs/grants) config is used to set permissions or grants for a resource. When a model is run, dbt will run grant and/or revoke statements to ensure that the permissions on the database object match the grants you have configured on the resource.
 
@@ -657,12 +673,12 @@ To finish this step up, go to the **Version control** section in the IDE and:
 ### Additional features for model governance
 
 - [**dbt model versions:**](https://docs.getdbt.com/docs/collaborate/govern/model-versions) How do you make a change to the structure of the `fct_orders` model once downstream users and applications use it and expect its structure to remain the same due to the model contract? That is where dbt model versions come in, to allow for multiple versions of a model to co-exist for a limited period of time, while downstream queries are migrated.
-- [**Snowflake Private Listings:**](https://other-docs.snowflake.com/en/collaboration/provider-listings-creating-publishing) With Marketplace features now native to Snowflake, you can use dbt Cloud to manage listings and deploy them alongside your code, keeping the listings governed in version control.
+- [**Snowflake Private Listings:**](https://other-docs.snowflake.com/en/collaboration/provider-listings-creating-publishing) With Marketplace features now native to Snowflake, you can use dbt platform to manage listings and deploy them alongside your code, keeping the listings governed in version control.
 - [**Persisting docs to Snowflake:**](https://docs.getdbt.com/reference/resource-configs/persist_docs) Enabling the `persist_docs` configuration will commit the dbt documentation directly to Snowflake as comments, for use by other applications.
 
 ### Wrapping up this step
 
-In this step you added a straightforward YAML file, and now `fct_orders` is a tested data model with documentation, will have the proper grants applied when built, and is publicly available for other dbt Cloud projects to use. In the next step, you will build the foundational project in production.
+In this step you added a straightforward YAML file, and now `fct_orders` is a tested data model with documentation, will have the proper grants applied when built, and is publicly available for other dbt platform projects to use. In the next step, you will build the foundational project in production.
 
 Here is where you are in the journey towards a data product:
 
@@ -675,21 +691,21 @@ Here is where you are in the journey towards a data product:
 - ✅ **Useful:** it has value
 
 <!-- ------------------------ -->
-## Create and run a dbt Cloud job
+## Create and run a dbt platform job
 Duration: 5
 
 Before a downstream team can leverage assets from this foundational project, you will need to run a [deployment job](https://docs.getdbt.com/docs/deploy/deploy-jobs) successfully.
 
 ### Setting up the job
 
-To run your first deployment dbt Cloud job, you will need to create a new dbt Cloud job.
+To run your first deployment dbt platform job, you will need to create a new dbt platform job.
 
-1. Click **Deploy** and then **Jobs**. 
+1. Click **Orchestration** and then **Jobs**. 
 2. Click **Create job** and then **Deploy job**.
 3. Fill in details about the job, calling it **Daily Job**.
-4. Select the **Generate docs on run** option. This will enable dbt Cloud to pull in metadata from the warehouse to supplement the documentation found in the **Explore** section.
+4. Select the **Generate docs on run** option. This will enable dbt platform to pull in metadata from the warehouse to supplement the documentation found in the **Catalog** section.
 
-![Select the 'Generate docs on run' option when configuring your dbt Cloud job.](assets/generate_docs_on_run.png)
+![Select the 'Generate docs on run' option when configuring your dbt platform job.](assets/generate_docs_on_run.png)
 
 5. You may optionally set a schedule for the the job to run on.
 6. Save the job
@@ -700,12 +716,12 @@ To run your first deployment dbt Cloud job, you will need to create a new dbt Cl
 ### Additional job features for a data mesh
 
 - [**Continuos integration (CI) jobs:**](https://docs.getdbt.com/docs/deploy/ci-jobs) How can you catch data quality and contract errors, before your production runs? That's where CI jobs can help -- to check data quality on every Pull Request.
-- [**Job chaining:**](https://docs.getdbt.com/docs/deploy/deploy-jobs#trigger-on-job-completion--) The "Trigger Job On Completion" option in dbt Cloud Jobs allows for jobs not only to run on a schedule, but also one after another.
-- [**Model timing tab:**](https://docs.getdbt.com/docs/deploy/run-visibility#model-timing) The model timing tab within each dbt Cloud job run page helps identify the longest-running queries on Snowflake within the particular job, in order to optimize them and save on platform costs.
+- [**Job chaining:**](https://docs.getdbt.com/docs/deploy/deploy-jobs#trigger-on-job-completion--) The "Trigger Job On Completion" option in dbt platform Jobs allows for jobs not only to run on a schedule, but also one after another.
+- [**Model timing tab:**](https://docs.getdbt.com/docs/deploy/run-visibility#model-timing) The model timing tab within each dbt platform job run page helps identify the longest-running queries on Snowflake within the particular job, in order to optimize them and save on platform costs.
 
 ### Wrapping up this step
 
-In this step, you ran a dbt Cloud job that deployed a production version of the data to Snowflake and registered the project metadata in dbt Cloud's metadata storage. This was necessary for the next step, which is to reference the Foundational data from within the Finance dbt Cloud project.
+In this step, you ran a dbt platform job that deployed a production version of the data to Snowflake and registered the project metadata in dbt platform's metadata storage. This was necessary for the next step, which is to reference the Foundational data from within the Finance dbt platform project.
 
 Here is where you are in the journey towards a data product:
 
@@ -721,22 +737,22 @@ Here is where you are in the journey towards a data product:
 ## Adding the Finance project
 Duration: 5
 
-In this penultimate step, you will now set up dbt Cloud to build the finance team's data product by building off the foundational data product, the result of which is an architecture as shown in the diagram below.
+In this penultimate step, you will now set up dbt platform to build the finance team's data product by building off the foundational data product, the result of which is an architecture as shown in the diagram below.
 
-![Target Snowflake and dbt Cloud configuration](assets/target-configuration.png)
+![Target Snowflake and dbt platform configuration](assets/target-configuration.png)
 
 ### Setup the project
 
 > aside negative
 > 
-> ⚠️ This section requires a dbt Cloud Enterprise account.
+> ⚠️ This section requires a dbt platform Enterprise account.
 > 
 > If you are participating in the **Snowflake Summit Hands On Lab session**, [please use this form](https://forms.gle/S7P9Rw1Udbfxf7TdA) to submit your account information so your account can be upgraded for the duration of the Hands On Lab.
 >
-> Otherwise, you may request a dbt Cloud Enterprise account for evaluation purposes [from the dbt Labs team](https://www.getdbt.com/contact).
+> Otherwise, you may request a dbt platform Enterprise account for evaluation purposes [from the dbt Labs team](https://www.getdbt.com/contact).
 
-1. First, select the **Finance Project** from the dbt Cloud project selector.
-2. Now, open up the **Cloud IDE** in the **Develop** toolbar.
+1. First, select the **Finance Project** from the dbt platform project selector.
+2. Now, open up the **dbt platform IDE** in the **Studio** toolbar.
 3. If you’ve also started with a new git repo, click **Initialize dbt project** button under the **Version control** section and commit the changes.
 4. Delete the `models/example` folder
 5. Navigate to the `dbt_project.yml` file and rename the project (line 5) from `my_new_project` to `finance_project`.
@@ -773,11 +789,11 @@ To finish this step up, go to the **Version control** section in the IDE to:
 
 ### Setting up a finance job
 
-Now run a production dbt Cloud Job of the finance project, as you did with the foundational project.
+Now run a production dbt platform Job of the finance project, as you did with the foundational project.
 
-13. Click **Deploy** and then **Jobs**. 
+13. Click **Orchestration** and then **Jobs**. 
 14. Click **Create job** and then **Deploy job**.
-15. Select the **Generate docs on run** option. This will enable dbt Cloud to pull in metadata from the warehouse to supplement the documentation found in the **Explore** section.
+15. Select the **Generate docs on run** option. This will enable dbt platform to pull in metadata from the warehouse to supplement the documentation found in the **Catalog** section.
 16. Then, click **Run now** to trigger the job.
 
 ### Wrapping up this step
@@ -795,31 +811,32 @@ Here is where you are in the journey towards a data product:
 - 👉✅ **Useful:** it has value
 
 <!-- ------------------------ -->
-## Using dbt Explorer to discover data products
+## Using dbt Catalog to discover data products
 Duration: 5
 
-You have now completed building projects for this Quickstart Guide. Now it is time to try out **dbt Explorer** to discover and drill into the dbt assets available within your dbt Cloud account.
+You have now completed building projects for this Quickstart Guide. Now it is time to try out **dbt Catalog** to discover and drill into the dbt assets available within your dbt platform account.
 
-### Exploring dbt Explorer
+### Exploring dbt Catalog
 
-1. Click **Explore** from the upper menu bar.
-2. Using the **Search bar** at the top left of the page, search for **orders**.
+1. Head back to the foundational project.
+2. Click **Catalog** from the upper menu bar.
+3. Using the **Search bar** at the top left of the page, search for **orders**.
 
-![Discover search results](assets/discover-search.png)
+![Discover search results](assets/dbt_catalog.png)
 
 3. Click on `fct_orders` and scroll through the page, noting **Lineage,** **Build Status,** and **Description**.
 
 4. Click on the **Columns** tab, and then expand the `order_key` column to see the **Column Level Lineage**.
 
-![Discover search results](assets/discover-column-level-lineage.png)
+![Discover search results](assets/dbt_catalog_cll.png)
 
-5. Lastly, click on the **Project Recommendations** tab on the left hand side of the page to see best practices directly in dbt Explorer.
+5. Lastly, click on the **Project Recommendations** tab on the left hand side of the page to see best practices directly in dbt Catalog.
 
 ![Discover project recommendations](assets/discover-project-recommendations.png)
 
 ### Wrapping up this step
 
-With dbt Explorer, data products built with dbt are automatically published and searchable, allowing for easy discovery and re-usability. Furthermore, you can use dbt Explorer to drill into data product details including documentation, build status, and lineage at the column-level, model-level, or project-level.
+With dbt Catalog, data products built with dbt are automatically published and searchable, allowing for easy discovery and re-usability. Furthermore, you can use dbt Catalog to drill into data product details including documentation, build status, and lineage at the column-level, model-level, or project-level.
 
 You have now completed your data product journey!
 
@@ -835,17 +852,17 @@ You have now completed your data product journey!
 ## Conclusion and Resources
 Duration: 5
 
-During this quickstart guide, you used native features of Snowflake and dbt Cloud that can be combined to create data products. By using dbt Cloud, you gained additional governance, automation, and interoperability mechanisms than from Snowflake alone. Overall, these two self-service platforms combined increase the likelihood of success of a data mesh project.
+During this quickstart guide, you used native features of Snowflake and dbt platform that can be combined to create data products. By using dbt platform, you gained additional governance, automation, and interoperability mechanisms than from Snowflake alone. Overall, these two self-service platforms combined increase the likelihood of success of a data mesh project.
 
 ### What we've covered
 
 - Creating Snowflake resources with a least privileged access principle
-- Setting up dbt Cloud with two projects that relate to each other
+- Setting up dbt platform with two projects that relate to each other
 - Added dbt models to build core datasets in Snowflake
-- Added data masking with Snowflake, applied with dbt Cloud
+- Added data masking with Snowflake, applied with dbt platform
 - Created model contracts in dbt that govern the data used by other teams
-- Executed the SQL code on Snowflake with dbt Cloud jobs
-- Used dbt Explorer in order to explore data assets that were created by dbt
+- Executed the SQL code on Snowflake with dbt platform jobs
+- Used dbt Catalog in order to explore data assets that were created by dbt
 
 ### Related resources
 
