@@ -2,31 +2,37 @@ id: build-agentic-workflows-with-huggingface-smolagents-in-snowflake
 summary: This guide outlines the process for creating agentic workflow in Snowflake Notebook on Container Runtime.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
-# Build Agentic Workflows with HuggingFace smolagents in Snowflake
+# Build Agentic Workflows with Hugging Face Smolagents in Snowflake
 <!-- ------------------------ -->
 
 ## Overview
 
 Duration: 4
 
-This guide outlines the process for creating agentic workflows in Snowflake Notebook on Container Runtime using [smolagents from Hugging Face](https://github.com/huggingface/smolagents). These agents are capable of writing Python code to call tools and orchestrate other agents. In this guide, we will also see how you can create a custom tool in **smolagents** that uses Snowflake Cortex.
+This guide outlines the process for creating agentic workflows in [Snowflake Notebook on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) using Smolagents from Hugging Face. These agents are capable of writing Python code to call tools and orchestrate other agents. In this guide, we will also see how you can use out of the box tools and also create a custom tool that uses Snowflake Cortex AI.
 
 ### What is Container Runtime? 
 
-Snowflake Notebooks on Container Runtime enable advanced data science and machine learning workflows directly within Snowflake. Powered by Snowpark Container Services, it provides a flexible environment to build and operationalize various workloads, especially those requiring Python packages from multiple sources and powerful compute resources, including CPUs and GPUs. With this Snowflake-native experience, you can train models, perform hyperparameter tuning, and execute batch inference while seamlessly running SQL queries. Unlike virtual warehouses, Container Runtime for ML offers greater flexibility and tailored compute options for complex workloads. ***NOTE: This feature is currently in Public Preview.***
+Snowflake Notebooks on Container Runtime enable flexible and scalable model development and deployment directly within Snowflake for [machine learning](https://www.snowflake.com/en/data-cloud/snowflake-ml/) and [gen AI](https://www.snowflake.com/en/data-cloud/cortex/) workflows. Powered by Snowpark Container Services, it provides a flexible environment to build and operationalize various workloads, especially those requiring Python packages from multiple sources and powerful compute resources, including CPUs and GPUs. With this Snowflake-native experience, you can train models, perform hyperparameter tuning, and execute batch inference. Container Runtime offers greater flexibility and tailored compute options for complex modeling workloads. ***NOTE: This feature is currently in Public Preview.***
 
 Learn more about [Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs).
 
-### What is Snowflake Cortex? 
+### What is Snowflake Cortex AI? 
 
 Snowflake Cortex is a suite of AI features that use large language models (LLMs) to understand unstructured data, answer freeform questions, and provide intelligent assistance.
 
-Learn more about [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview).
+Learn more about [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/).
+
+### What is Smolagents?
+
+It is a lightweight library introduced by Hugging Face that enables language models to perform tasks by writing and executing code. It allows for the creation of agents that can interact with tools, execute multi-step workflows, and integrate with various large language models (LLMs). It supports models hosted on the Hugging Face Hub, as well as those from providers like OpenAI and Anthropic. It also offers first-class support for code agents, facilitating the development of agents that write their actions in code. 
+
+Learn more about [Smolagents](https://github.com/huggingface/Smolagents).
 
 ### Prerequisites
 
@@ -36,11 +42,11 @@ Learn more about [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/sno
 
 ### What You Will Learn
 
-* How to create multi-step agentic worksflow using smolagents library from Hugging Face
+* How to create agentic workflows using Smolagents library from Hugging Face in Snowflake
 
 ### What You Will Build
 
-Agentic workflow using smolagents library and Snowflake Cortex in Snowflake Notebook on Container Runtime running in Snowflake.
+Agentic workflow using Smolagents library and Snowflake Cortex AI in Snowflake Notebook on Container Runtime.
 
 <!-- ------------------------ -->
 ## Setup
@@ -57,7 +63,7 @@ Duration: 10
 
 * On the left hand navigation menu, click on **Projects » Notebooks**
 * On the top right, click on **Notebook** down arrow and select **Import .ipynb file** from the dropdown menu
-* Select **Gen_AI_Video_Search.ipynb** file you downloaded in the step above
+* Select **huggingface_smolagents_notebook_app.ipynb** file you downloaded in the step above
 * In the Create Notebook popup
     * For Notebook location, select `DASH_DB` and `DASH_SCHEMA`
     * For SQL warehouse, select `DASH_WH_S`
@@ -86,41 +92,66 @@ Duration: 15
 
 Here's the code walkthrough of the [huggingface_smolagents_notebook_app.ipynb](https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake/blob/main/huggingface_smolagents_notebook_app.ipynb) notebook that you downloaded and imported into your Snowflake account.
 
-**Cell 1:** Install **smolagents** library
+**Cell 1** 
 
-**Cell 2:** Replace `hf_ZkEXVwIXXXXXXXXXXXXXXX` with your Hugging Face token. Here we create instances of **HfApiModel**, **ToolCallingAgent**, **ManagedAgent**, and **CodeAgent** to perform web search using built-in **DuckDuckGoSearchTool**.
+Install **Smolagents** library
 
-**Cell 3:** Here we use the instance of **ManagedAgent** created in step / cell above and perform a web search using prompt `Top 5 announcements at Snowflake Summit 2024 in JSON format. Only return the JSON formatted output as the response and nothing else.`. If all goes well, you should see output similar to the following:
+**Cell 2** 
+
+Here we create instances of **HfApiModel**, **ToolCallingAgent**, and **CodeAgent** to perform web search using built-in **DuckDuckGoSearchTool**. 
+
+> aside positive
+> NOTE: Replace `hf_ZkEXVwIXXXXXXXXXXXXXXX` with your Hugging Face token before proceeding.
+
+**Cell 3**
+
+Here we use the instance of **CodeAgent** created in step / cell above and perform a web search using built-in tool (DuckDuckGoSearchTool) given the prompt `Top 5 announcements at Snowflake Summit 2024 in JSON format. Only return the JSON formatted output as the response and nothing else.`. If all goes well, you should see output similar to the following:
 
 ![Search Result 1](search_1.png)
 
-**Cell 4:** Here we use the same instance of **ManagedAgent** and perform a web search using prompt `Top 5 Cortex blogs from Snowflake Medium publication. Only return the reaponse  in a dataframe format as the response and nothing else.`. If all goes well, you should see output similar to the following:
+**Cell 4** 
+
+Here we use the same instance of **CodeAgent** and perform a web search using prompt `Top 5 blog articles on AI. Include blog title and link to the article. Return the response in a Pandas dataframe and nothing else.`. If all goes well, you should see output similar to the following:
 
 ![Search Result 2](search_2.png)
 
-**Cell 5:** Here we create a new tool/class **HFModelSnowflakeCortex** with custom code that uses [Snowflake Cortex Complete](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#complete-function) function to summarize given long-form text using prompt `Summarize the text enclosed in ### in less than 200 words in JSON format and list out upto 3 highlights in JSON format ### {txt} ###. Return only the JSON formatted output and nothing else.` and `claude-3.5-sonnet` as the default LLM to use. Feel free to experiment with [other supported LLMs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability) in your region. If all goes well, you should see the output similar to the following:
+**Cell 5** 
+
+Here we create a new tools **get_dzone_refcards**, **read_dzone_refcards**, and **summarize_article**. The first tool retrieves [popular DZone Refcards](https://dzone.com/refcardz?sort=popular), the second one extracts the content of a given article, and the third one uses [Snowflake Cortex Complete](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#complete-function) function to summarize a given article using Anthropic **claude-3-5-sonnet** LLM and prompt `Summarize the text enclosed in ### in less than 500 words: ### {article_text} ###.Produce JSON output that includes article title, article url, article summary, and 3 highlights from the article.`. 
+
+**Cell 6** 
+
+Here we create a new instance of **CodeAgent** and provide the three tools created in the previous step with prompt `Generate a list of 5 popular DZone RefCard summaries by reading them.`.  
+
+If all goes well, you should see the output similar to the following:
 
 ![Search Result 3](search_3.png)
 
 ---
 
 > aside positive
-> NOTES: 
-> * Since LLMs are non-deterministic in nature, the results for all of the 3 operations above may vary. In any case, I encourage you to try different prompts and LLMs.
-> * If you receive this error `Json Parse Error: Unexpected token '...' is not valid JSON ← here`, then replace `st.json()` with `st.write()` where applicable.
+> NOTES:
+> In all of the cases, notice the Python and other code snippets being generated to perform the task(s).
+>
+> Since LLMs are non-deterministic in nature, the results for all of the 3 operations above may vary. So I encourage you to try different prompts and [other supported LLMs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability) in your region.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 Duration: 1
 
-Congratulations! You've successfully created agentic workflow using smolagents library and Snowflake Cortex in Snowflake Notebook on Container Runtime running in Snowflake..
+Congratulations! You've successfully created agentic workflow using smolagents library and Snowflake Cortex AI in Snowflake Notebook on Container Runtime.
 
 ### What You Learned
 
-* How to create multi-step agentic worksflow using smolagents library from Hugging Face
+* How to create agentic workflows using smolagents library from Hugging Face
+* How to build custom tools and models with Snowflake Notebooks on Container Runtime
 
 ### Related Resources
 
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake)
 - [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
+- [Smolagents](https://huggingface.co/blog/smolagents#introducing-smolagents-a-simple-library-to-build-agents)
+- [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Snowflake Cortex AI](https://www.snowflake.com/en/data-cloud/cortex/)
+

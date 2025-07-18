@@ -41,7 +41,7 @@ Duration: 4
 
 Snowflake’s Secure Data Share provides Cordial with immediate access to ready-to-query data. To get started, you need to request a Secure Share.
 
-1. Visit [Cordial's listing](https://www.snowflake.com/datasets/cordial-messaging-data-personalized-user-profiles-events/) in the Snowflake Marketplace to submit a request for the data share and reach out to your Cordial client success manager to let them know that you’ve requested it.
+1. Visit [Cordial's listing](https://app.snowflake.com/marketplace/listing/GZSTZ1D9SIF/cordial-messaging-data-personalized-user-profiles-events) in the Snowflake Marketplace to submit a request for the data share and reach out to your Cordial client success manager to let them know that you’ve requested it.
 
 ![Snowflake to Cordial architecture](assets/SnowflakeUI1.png)
 
@@ -55,7 +55,7 @@ Duration: 10
 
 Once you've requested the Secure Share, Cordial will verify and provision the data share from Cordial's Snowflake account to your Snowflake account. After the share is provisioned, Cordial will notify you that your data share has been provisioned—and you'll need to follow the steps below to accept the Secure Share.
 
-1. Your account administrator will need to log in to your Snowflake account. To view the status or your data share request, click **My requests** in the **Marketplace** and select the Cordial listing. Alternatively, you can navigate directly to [Cordial's listing](https://www.snowflake.com/datasets/cordial-messaging-data-personalized-user-profiles-events/) in the Snowflake Marketplace.
+1. Your account administrator will need to log in to your Snowflake account. To view the status or your data share request, click **My requests** in the **Marketplace** and select the Cordial listing. Alternatively, you can navigate directly to [Cordial's listing](https://app.snowflake.com/marketplace/listing/GZSTZ1D9SIF/cordial-messaging-data-personalized-user-profiles-events) in the Snowflake Marketplace.
 
 ![Snowflake user interface](assets/SnowflakeUI4.png)
 
