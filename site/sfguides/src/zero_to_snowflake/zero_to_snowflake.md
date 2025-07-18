@@ -1550,12 +1550,8 @@ Within this vignette, we will explore some of the powerful governance features w
 ### Get the SQL and paste it into your Worksheet.
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake.**
-<!-- Uncomment when Copilot is added back -->
-<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).** -->
 
-<!-- Remove when Copilot is added back -->
-**Note that once you've reached the end of the Worksheet you can skip to [Step 28 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#27).**
-<!-- End Remove -->
+**Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).** 
 
 ## Roles and Access Control
 
