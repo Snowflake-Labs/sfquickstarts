@@ -771,7 +771,7 @@ Duration: 5
 
 Welcome to the Zero to Snowflake Hands-on Lab focused on Snowflake Cortex AI!
 
-Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, Snowflake Copilot for AI-assisted SQL development, Cortex Search for semantic text searching and Cortex Analyst for natural language analytics.
+Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, <!-- Snowflake Copilot for AI-assisted SQL development, --> Cortex Search for semantic text searching and Cortex Analyst for natural language analytics.
 
 - For more detail on Snowflake Cortex AI please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
 
@@ -779,7 +779,7 @@ Within this lab, we will explore Snowflake’s complete AI platform through a pr
 
 * How to Experiment with AI Using AI Cortex Playground for model testing and prompt optimization.
 * How to Scale AI Analysis with Cortex AI Functions for production-scale customer review processing.
-* How to optimize development with Snowflake’s Copilot for AI-assisted SQL query generation.
+<!-- * How to optimize development with Snowflake’s Copilot for AI-assisted SQL query generation. -->
 * How to enable semantic discovery with Cortex Search for intelligent text and review finding.
 * How to create conversational analytics with Cortex Analyst for natural language business intelligence.
 
@@ -792,7 +792,7 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 * Production-scale Review Analysis pipeline using AISQL Functions for systematic customer feedback processing.
 
 **Phase 2: Intelligent Development & Discovery**
-* AI-Assisted SQL Development Workflow using Copilot for complex query generation.
+<!-- * AI-Assisted SQL Development Workflow using Copilot for complex query generation. -->
 * Semantic Search Engine using Cortex Search for instant customer feedback discovery and operational intelligence.
 
 **Phase 3: Conversational Intelligence**
@@ -923,7 +923,13 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 
 ### Get the SQL and paste it into your Worksheet.
 
-Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet or Workspaces to follow along in Snowflake. **Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
+Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet or Workspaces to follow along in Snowflake. 
+<!-- Uncomment when Copilot is added back -->
+<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).** -->
+
+<!-- Remove when Copilot is added back -->
+**Note: Once you've reached the end of the Worksheet, you can skip to [Step 19 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
+<!-- End remove -->
 
 ### Step 1 - Setting Context
 
@@ -1088,12 +1094,13 @@ GROUP BY
 
 We've successfully demonstrated the transformative power of AI SQL functions, shifting customer feedback analysis from individual review processing to systemic, production-scale intelligence. Our journey through these four core functions clearly illustrates how each serves a distinct analytical purpose, transforming raw customer voices into comprehensive business intelligence—systematic, scalable, and immediately actionable. What once required individual review analysis now processes thousands of reviews in seconds, providing both the emotional context and specific details crucial for data-driven operational improvements.
 
-As our analysis grows in sophistication, combining multiple AI functions in complex queries can become challenging. This is precisely where Snowflake Copilot offers powerful assistance. Let's explore how Copilot can help us create complex queries using natural language and significantly accelerate our work, empowering us to build even more intricate analytical workflows with ease.
+<!-- Uncomment when Copilot is added back -->
+<!-- As our analysis grows in sophistication, combining multiple AI functions in complex queries can become challenging. This is precisely where Snowflake Copilot offers powerful assistance. Let's explore how Copilot can help us create complex queries using natural language and significantly accelerate our work, empowering us to build even more intricate analytical workflows with ease. -->
 
+<!-- Uncomment when Copilot is added back -->
+<!-- ## Snowflake Copilot -->
 
-## Snowflake Copilot
-
-<img src='./assets/snowflake_copilot_header.png'>
+<!-- <img src='./assets/snowflake_copilot_header.png'>
 
 Duration: 4
 
@@ -1154,7 +1161,7 @@ In the same Copilot panel, paste the following business question and click RUN t
 
 ### Conclusion
 
-Snowflake Copilot profoundly transforms business intelligence by enabling users to effortlessly translate complex business questions into sophisticated SQL queries. As demonstrated with Tasty Bytes, it empowers both technical and non-technical users to derive actionable insights from their data without deep SQL expertise. This LLM-powered assistant delivers schema-aware, purpose-built intelligence, ensuring robust data governance and keeping all enterprise data securely within Snowflake. Copilot isn't just generic AI; it's a strategic tool that bridges operational insights with business intelligence.
+Snowflake Copilot profoundly transforms business intelligence by enabling users to effortlessly translate complex business questions into sophisticated SQL queries. As demonstrated with Tasty Bytes, it empowers both technical and non-technical users to derive actionable insights from their data without deep SQL expertise. This LLM-powered assistant delivers schema-aware, purpose-built intelligence, ensuring robust data governance and keeping all enterprise data securely within Snowflake. Copilot isn't just generic AI; it's a strategic tool that bridges operational insights with business intelligence. -->
 
 ## Cortex Search
 Duration: 6
@@ -1162,8 +1169,12 @@ Duration: 6
 <img src='./assets/cortex_search_header.png'>
 
 ### Overview
+<!-- Uncomment when Copilot is added back -->
+<!-- While Copilot excels at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language. -->
 
-While Copilot excels at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language.
+<!-- Remove when Copilot is added back -->
+While AI-powered tools excel at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language.
+<!-- End Remove -->
 
 **Snowflake Cortex Search** solves this by providing low-latency, high-quality "fuzzy" search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent re-ranking to deliver the most relevant results. In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.
 
@@ -1396,7 +1407,13 @@ Within this vignette, we will explore some of the powerful governance features w
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake.**
+<!-- Uncomment when Copilot is added back -->
+<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).** -->
+
+<!-- Remove when Copilot is added back -->
+**Note that once you've reached the end of the Worksheet you can skip to [Step 28 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#27).**
+<!-- End Remove -->
 
 ## Roles and Access Control
 
@@ -2173,6 +2190,6 @@ If you would like to re-run this Quickstart, please run the complete `RESET` scr
 - [Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro)
 - [Snowflake Cortex Playground](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-playground)
 - [AI SQL Functions in Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)
-- [Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot)
+<!-- - [Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot) -->
 - [Snowflake Cortex Search Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Snowflake Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
