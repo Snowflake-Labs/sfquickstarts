@@ -923,7 +923,13 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 
 ### Get the SQL and paste it into your Worksheet.
 
-Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet or Workspaces to follow along in Snowflake. **Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
+Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet or Workspaces to follow along in Snowflake. 
+<!-- Uncomment when Copilot is added back -->
+<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).** -->
+
+<!-- Remove when Copilot is added back -->
+**Note: Once you've reached the end of the Worksheet, you can skip to [Step 19 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
+<!-- End remove -->
 
 ### Step 1 - Setting Context
 
@@ -1091,10 +1097,8 @@ We've successfully demonstrated the transformative power of AI SQL functions, sh
 <!-- Uncomment when Copilot is added back -->
 <!-- As our analysis grows in sophistication, combining multiple AI functions in complex queries can become challenging. This is precisely where Snowflake Copilot offers powerful assistance. Let's explore how Copilot can help us create complex queries using natural language and significantly accelerate our work, empowering us to build even more intricate analytical workflows with ease. -->
 
-
-## Snowflake Copilot
-
-### Coming Soon
+<!-- Uncomment when Copilot is added back -->
+<!-- ## Snowflake Copilot -->
 
 <!-- <img src='./assets/snowflake_copilot_header.png'>
 
@@ -1403,7 +1407,13 @@ Within this vignette, we will explore some of the powerful governance features w
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake.**
+<!-- Uncomment when Copilot is added back -->
+<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).** -->
+
+<!-- Remove when Copilot is added back -->
+**Note that once you've reached the end of the Worksheet you can skip to [Step 28 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#27).**
+<!-- End Remove -->
 
 ## Roles and Access Control
 
