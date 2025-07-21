@@ -5,7 +5,7 @@ categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Machine Learning, Operational AI
+tags: AI, Apps & Collab: External Collaboration, Partner, AI - ML Functions
 
 # A Faster Path to Operational AI with Continual and Snowflake
 <!-- ------------------------ -->

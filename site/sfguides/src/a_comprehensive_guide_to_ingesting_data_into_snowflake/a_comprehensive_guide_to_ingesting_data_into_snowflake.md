@@ -4,7 +4,7 @@ categories: featured, getting-started, data-engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Data Applications, Ingest
+tags: Data Engineering, DE: Ingestion, DE - Connectors
 authors: Brad Culberson
 
 # A Comprehensive Guide: Ingesting Data into Snowflake
