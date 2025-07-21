@@ -5,7 +5,7 @@ categories: Data-Science-&-Ml,Solution-Examples,Partner-Integrations, Data-Scien
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: AI, Partner, Getting Started, Data Engineering
 
 # A Dataiku and Snowflake Introduction to Data Science
 <!-- ------------------------ -->
