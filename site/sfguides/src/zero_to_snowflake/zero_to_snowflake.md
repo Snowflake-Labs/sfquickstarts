@@ -16,7 +16,7 @@ Duration: 1
 
 ### Overview
 
-Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journey through key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, then see how you can experiment with LLMs using the Cortex Playground to compare different models for summarizing text, use AISQL Functions to instantly analyze customer review sentiment with a simple SQL command, and leverage the Snowflake Copilot to accelerate query writing by asking for the SQL you need in plain English, harness Cortex Search for intelligent text discovery, and utilize Cortex Analyst for conversational business intelligence. Finally, you will learn to secure your data with powerful governance controls and enrich your analysis through seamless data collaboration.
+Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journey through key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, then see how you can experiment with LLMs using the Cortex Playground to compare different models for summarizing text, use AISQL Functions to instantly analyze customer review sentiment with a simple SQL command, and harness Cortex Search for intelligent text discovery, and utilize Cortex Analyst for conversational business intelligence. Finally, you will learn to secure your data with powerful governance controls and enrich your analysis through seamless data collaboration.
 
 We'll apply these concepts using a sample dataset from our fictitious food truck, Tasty Bytes, to improve and streamline their data operations. We'll explore this dataset through several workload-specific scenarios, demonstrating the benefits Snowflake provides to businesses.
 
@@ -123,7 +123,7 @@ Within this Vignette, we will learn about core Snowflake concepts by exploring V
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 10 - Simple Data Pipeline.](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#9)**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to Step 10 - Simple Data Pipeline**
 
 ## Virtual Warehouses and Settings
 
@@ -490,7 +490,7 @@ Within this vignette, we will learn how to build a simple, automated data pipeli
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 16 - Snowflake Cortex AI](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#15).**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to Step 16 - Snowflake Cortex AI.**
 
 ## External Stage Ingestion
 
@@ -925,10 +925,10 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 
 Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet or Workspaces to follow along in Snowflake. 
 <!-- Uncomment when Copilot is added back -->
-<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).** -->
+<!-- **Note that once you've reached the end of the Worksheet you can skip to Step 19 - Snowflake Copilot.** -->
 
 <!-- Remove when Copilot is added back -->
-**Note: Once you've reached the end of the Worksheet, you can skip to [Step 19 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
+**Note: Once you've reached the end of the Worksheet, you can skip to Step 19 - Cortex Search.**
 <!-- End remove -->
 
 ### Step 1 - Setting Context
@@ -1116,7 +1116,7 @@ This lab introduces **Snowflake Copilot**, an LLM-powered assistant designed to 
 
 **Snowflake Copilot is designed to be used directly within the SQL Worksheet environment.** Please ensure you are executing the SQL in a SQL Worksheet.
 
-**Note: Once you've reached the end of the Worksheet, you can skip to [Step 20 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19).**
+**Note: Once you've reached the end of the Worksheet, you can skip to Step 20 - Cortex Search.**
 
 ### Step 1 - Setting Context
 
@@ -1409,10 +1409,10 @@ Within this vignette, we will explore some of the powerful governance features w
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake.**
 <!-- Uncomment when Copilot is added back -->
-<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).** -->
+<!-- **Note that once you've reached the end of the Worksheet you can skip to Step 29 - Apps & Collaboration.** -->
 
 <!-- Remove when Copilot is added back -->
-**Note that once you've reached the end of the Worksheet you can skip to [Step 28 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#27).**
+**Note that once you've reached the end of the Worksheet you can skip to Step 28 - Apps & Collaboration.**
 <!-- End Remove -->
 
 ## Roles and Access Control
