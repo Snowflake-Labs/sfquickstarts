@@ -1,11 +1,11 @@
 author: 
 id: Accelerate_Data_Transformation_with_the_Telecom_Data_Cloud
 summary: This is a guide for getting started with Data Integration using Informatica Data Management Cloud
-categories: Getting-Started
+categories: Data Engineering, DE: Transformation
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, DE: Transformation
+tags: Data Engineering, DE: Transformation, Getting Started
 
 # Accelerate Data Transformation with the Telecom Data Cloud and Informatica
 
