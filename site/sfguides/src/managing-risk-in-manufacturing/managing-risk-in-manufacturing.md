@@ -39,7 +39,7 @@ This quickstart shows how to model a manufacturing workflow and apply Graph Anal
 
 ### What You Will Build
 
-- A mock databasemodeling machines and their relationships in a manufacturing process
+- A mock database modeling machines and their relationships in a manufacturing process
 - A notebook covering various graph algorithms and applying them to our mock database
 
 ## Create Our Database
@@ -231,7 +231,7 @@ GROUP BY SRC_MACHINE_ID, DST_MACHINE_ID;
 
 ```
 
-## Visualize Your Graph (Experimental)
+## Visualize Our Graph (Experimental)
 
 Duration: 5
 
@@ -596,4 +596,3 @@ By working with a our simulated manufacturing database, you were able to:
 ### Resources
 
 - [Neo4j Graph Analytics Documentation](https://neo4j.com/docs/snowflake-graph-analytics/)
-- [Installing Neo4j Graph Analytics on SPCS](https://neo4j.com/docs/snowflake-graph-analytics/installation/)
