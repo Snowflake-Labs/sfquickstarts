@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
-# Managing Risk in a Manufacturing Plant with Neo4j Graph Analytics
+# Manage Risk in a Manufacturing Plant with Neo4j Graph Analytics
 
 ## Overview
 
@@ -17,13 +17,18 @@ Duration: 2
 
 Neo4j helps organizations find hidden relationships and patterns across billions of data connections deeply, easily, and quickly. **Neo4j Graph Analytics for Snowflake** brings to the power of graph directly to Snowflake, allowing users to run 65+ ready-to-use algorithms on their data, all without leaving Snowflake! 
 
-### Managing Risk in a Manufacturing Plant with Neo4j Graph Analytics
+### Manage Risk in a Manufacturing Plant with Neo4j Graph Analytics
 
 This quickstart shows how to model a manufacturing workflow and apply Graph Analytics algorithms to find structural risks, operational bottlenecks, and machine similarities.
 
 ### Prerequisites
 
 - The Native App [Neo4j Graph Analytics](https://app.snowflake.com/marketplace/listing/GZTDZH40CN) for Snowflake
+
+### What You Will Need
+- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts) with appropriate access to databases and schemas.
+- Neo4j Graph Analytics application installed from the Snowflake marketplace. Access the marketplace via the menu bar on the left hand side of your screen, as seen below:
+![image](assets/marketplace.png)
 
 ### What You Will Learn
 
@@ -32,7 +37,12 @@ This quickstart shows how to model a manufacturing workflow and apply Graph Anal
 - How to conduct a **criticality ranking** by using PageRank to find influential machines and Betweenness Centrality to identify bridges that control workflow.
 - How to calculate **structural embeddings and similarity**. First generate FastRP embeddings and then run KNN to group machines with similar roles or dependencies.
 
-## Creating our Database
+### What You Will Build
+
+- A mock databasemodeling machines and their relationships in a manufacturing process
+- A notebook covering various graph algorithms and applying them to our mock database
+
+## Create Our Database
 
 Duration: 7
 
@@ -128,7 +138,7 @@ INSERT INTO rels (SRC_MACHINE_ID, DST_MACHINE_ID, THROUGHPUT_RATE) VALUES
 (10, 19, 19);
 ```
 
-## Setting Up
+## Set Up
 
 Duration: 5
 
@@ -221,7 +231,7 @@ GROUP BY SRC_MACHINE_ID, DST_MACHINE_ID;
 
 ```
 
-## Visualizing Your Graph (Experimental)
+## Visualize Your Graph (Experimental)
 
 Duration: 5
 
@@ -453,9 +463,9 @@ We’ll use two Graph Analytics algorithms:
 
 Together, embeddings + KNN surface structural affinities beyond simple degree or centrality measures.
 
-### Fast Random Projection (FastRP) Embeddings
+### FastRP Embeddings
 
-The results for FastRp are not immediately interpretable. However, machines with nearly identical embeddings have similar upstream and downstream relationships and likely play the same role in the plant. These embeddings are numerical representations that enable downstream clustering, similarity search, or anomaly detection.
+The results for FastRP are not immediately interpretable. However, machines with nearly identical embeddings have similar upstream and downstream relationships and likely play the same role in the plant. These embeddings are numerical representations that enable downstream clustering, similarity search, or anomaly detection.
 
 
 ```sql
