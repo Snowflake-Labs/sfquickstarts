@@ -18,6 +18,8 @@ Duration: 1
 
 Welcome to the Zero to Snowflake Quickstart! This guide is a consolidated journey through key areas of the Snowflake AI Data Cloud. You will start with the fundamentals of warehousing and data transformation, build an automated data pipeline, then see how you can experiment with LLMs using the Cortex Playground to compare different models for summarizing text, use AISQL Functions to instantly analyze customer review sentiment with a simple SQL command, and leverage the Snowflake Copilot to accelerate query writing by asking for the SQL you need in plain English, harness Cortex Search for intelligent text discovery, and utilize Cortex Analyst for conversational business intelligence. Finally, you will learn to secure your data with powerful governance controls and enrich your analysis through seamless data collaboration.
 
+We'll apply these concepts using a sample dataset from our fictitious food truck, Tasty Bytes, to improve and streamline their data operations. We'll explore this dataset through several workload-specific scenarios, demonstrating the benefits Snowflake provides to businesses.
+
 ### Who is Tasty Bytes?
 
 <img src='./assets/whoistb.png'>
@@ -30,6 +32,12 @@ Our mission is to provide unique, high-quality food options in a convenient and 
  - An Enterprise or Business Critical Snowflake Account
  - If you do not have a Snowflake Account, please [sign up for a Free 30 Day Trial Account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=6tNBra0z&_fsi=6tNBra0z). When signing up, please make sure to select  Enterprise edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions?_fsi=6tNBra0z&_fsi=6tNBra0z).
  - After registering, you will receive an email with an activation link and your Snowflake Account URL.
+ - **For Snowflake Cortex AI Features:** This lab may demonstrate features that utilize Snowflake Cortex AI, and some Cortex AI models are region-specific. If the features or models required for this lab are not available in your Snowflake account's primary region, you will need to enable cross-region inference. **To enable this, an `ACCOUNTADMIN` role must execute the following SQL command in a Snowflake worksheet:** 
+
+```sql
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
+```
+- Simply copy and paste the line above into a SQL worksheet and run it while logged in with the `ACCOUNTADMIN` role.
 
 ### What You Will Learn
 
@@ -63,16 +71,16 @@ Let's walk through how to create your first worksheet, add the necessary setup c
 First, we need a place to put our setup script.
 
 1. **Navigate to Workspaces:** In the left-hand navigation menu of the Snowflake UI, click on **Projects** » **Workspaces**. This is the central hub for all your worksheets.  
-2. **Create a New Worksheet:** Find and click the **+ Add New** button in the top-right corner of the Workspaces area, then select **SQL File**. This will generate a new, blank worksheet.  
+2. **Create a New Worksheet:** Find and click the **+ Add New** button in the top-left corner of the Workspaces area, then select **SQL File**. This will generate a new, blank worksheet.  
 3. **Rename the Worksheet:** Your new worksheet will have a name based on the timestamp it was created. Give it a descriptive name like **Zero To Snowflake - Setup**.
 
 ### **Step 2 \- Add and Run the Setup Script**
 
 Now that you have your worksheet, it's time to add the setup SQL and execute it.
 
-1. **Copy the SQL Code:** Click the link for the [setup file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/setup.sql) and copy it to your clipboard.  
+1. **Copy the SQL Code:** Click the link for the **[setup file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/setup.sql)** and copy it to your clipboard.  
 2. **Paste into your Worksheet:** Return to your Zero To Snowflake Setup worksheet in Snowflake and paste the entire script into the editor.  
-3. **Run the Script:** To execute all the commands in the worksheet sequentially, click the **"Run All"** button located at the top-right of the worksheet editor. This will perform all the necessary setup actions, such as creating roles, schemas, and warehouses that you will need for the upcoming vignettes.
+3. **Run the Script:** To execute all the commands in the worksheet sequentially, click the **"Run All"** button located at the top-left of the worksheet editor. This will perform all the necessary setup actions, such as creating roles, schemas, and warehouses that you will need for the upcoming vignettes.
 
 <img src='./assets/create_a_worksheet.gif'>
 
@@ -84,8 +92,8 @@ For each new vignette, you will:
 
 1. Create a **new** worksheet.  
 2. Give it a descriptive name (e.g., Vignette 1 \- Getting Started with Snowflake).  
-3. Copy and paste the SQL script for that specific vignette.  
-4. Click **"Run All"** to execute it.
+3. Copy and paste the SQL script for that specific vignette.
+4. Each SQL file has all of the necessary instructions and commands to follow along.
 
 <!-- end list -->
 
@@ -115,7 +123,7 @@ Within this Vignette, we will learn about core Snowflake concepts by exploring V
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new Worksheet to follow along in Snowflake.**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 10 - Simple Data Pipeline.](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#9)**
 
 ## Virtual Warehouses and Settings
 
@@ -130,7 +138,7 @@ Virtual Warehouses are the dynamic, scalable, and cost-effective computing power
 First, lets set our session context. To run the queries, highlight the three queries at the top of your worksheet and click the "► Run" button.
 
 ```sql
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "getting_started_with_snowflake"}}';
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts,"version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"tastybytes", "vignette": "getting_started_with_snowflake"}}';
 
 USE DATABASE tb_101;
 USE ROLE accountadmin;
@@ -149,7 +157,7 @@ CREATE OR REPLACE WAREHOUSE my_wh
     MAX_CLUSTER_COUNT = 2
     SCALING_POLICY = 'standard'
     AUTO_SUSPEND = 60
-    INITIALLY_SUSPENDED = true,
+    INITIALLY_SUSPENDED = true
     AUTO_RESUME = false;
 ```
 
@@ -482,7 +490,7 @@ Within this vignette, we will learn how to build a simple, automated data pipeli
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql) in a new Worksheet to follow along in Snowflake.**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to [Step 16 - Snowflake Cortex AI](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#15).**
 
 ## External Stage Ingestion
 
@@ -497,7 +505,7 @@ Our raw menu data currently sits in an Amazon S3 bucket as CSV files. To begin o
 First, let's set our session context to use the correct database, role, and warehouse. Execute the first few queries in your worksheet.
 
 ```sql
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "data_pipeline"}}';
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts","version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"tastybytes", "vignette": "data_pipeline"}}';
 
 USE DATABASE tb_101;
 USE ROLE tb_data_engineer;
@@ -763,7 +771,7 @@ Duration: 5
 
 Welcome to the Zero to Snowflake Hands-on Lab focused on Snowflake Cortex AI!
 
-Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, Snowflake Copilot for AI-assisted SQL development, Cortex Search for semantic text searching and Cortex Analyst for natural language analytics.
+Within this lab, we will explore Snowflake’s complete AI platform through a progressive journey from experimentation into unified business intelligence. We’ll learn AI capabilities by building a comprehensive customer intelligence system using Cortex Playground for AI experimentation, Cortex AISQL Functions for production-scale analysis, <!-- Snowflake Copilot for AI-assisted SQL development, --> Cortex Search for semantic text searching and Cortex Analyst for natural language analytics.
 
 - For more detail on Snowflake Cortex AI please visit the [Snowflake AI and ML Overview documentation](https://docs.snowflake.com/en/guides-overview-ai-features).
 
@@ -771,7 +779,7 @@ Within this lab, we will explore Snowflake’s complete AI platform through a pr
 
 * How to Experiment with AI Using AI Cortex Playground for model testing and prompt optimization.
 * How to Scale AI Analysis with Cortex AI Functions for production-scale customer review processing.
-* How to optimize development with Snowflake’s Copilot for AI-assisted SQL query generation.
+<!-- * How to optimize development with Snowflake’s Copilot for AI-assisted SQL query generation. -->
 * How to enable semantic discovery with Cortex Search for intelligent text and review finding.
 * How to create conversational analytics with Cortex Analyst for natural language business intelligence.
 
@@ -784,7 +792,7 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 * Production-scale Review Analysis pipeline using AISQL Functions for systematic customer feedback processing.
 
 **Phase 2: Intelligent Development & Discovery**
-* AI-Assisted SQL Development Workflow using Copilot for complex query generation.
+<!-- * AI-Assisted SQL Development Workflow using Copilot for complex query generation. -->
 * Semantic Search Engine using Cortex Search for instant customer feedback discovery and operational intelligence.
 
 **Phase 3: Conversational Intelligence**
@@ -813,10 +821,11 @@ Let's begin by connecting directly to customer review data within Cortex Playgro
       * **Database: TB_101**
       * **Schema: HARMONIZED**
       * **Table: TRUCK\_REVIEWS\_V**
-5.  Select text column: **REVIEW**
-6.  Select filter column: **TRUCK\_BRAND\_NAME**
-7.  Click **Done**.
-8.  In the system prompt box, apply a filter using the **TRUCK\_BRAND\_NAME** dropdown. For instance, select "**Better Of Bread**" to narrow down the reviews.
+5.  Click **Let's go**
+6.  Select text column: **REVIEW**
+7.  Select filter column: **TRUCK\_BRAND\_NAME**
+8.  Click **Done**.
+9.  In the system prompt box, apply a filter using the **TRUCK\_BRAND\_NAME** dropdown. There are multiple reviews available for each truck brand. For instance, you can select "**Better Of Bread**" to narrow down the reviews. If "**Better Of Bread**" isn't available, please choose any other truck brand from the dropdown and proceed with one of its reviews.
 
 <img src = "assets/vignette-3/cortex-playground-connect.gif">
 
@@ -914,14 +923,20 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 
 ### Get the SQL and paste it into your Worksheet.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet to follow along in Snowflake.**
+Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet or Workspaces to follow along in Snowflake. 
+<!-- Uncomment when Copilot is added back -->
+<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).** -->
+
+<!-- Remove when Copilot is added back -->
+**Note: Once you've reached the end of the Worksheet, you can skip to [Step 19 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
+<!-- End remove -->
 
 ### Step 1 - Setting Context
 
 First, let's set our session context. We will assume the role of a TastyBytes data analyst with the intention of leveraging AISQL functions to gain insights from customer reviews.
 
 ```sql
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2_aisql","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "aisql_functions"}}';
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts","version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"tastybytes", "vignette": "aisql_functions"}}';
 
 USE ROLE tb_analyst;
 USE DATABASE tb_101;
@@ -1079,12 +1094,13 @@ GROUP BY
 
 We've successfully demonstrated the transformative power of AI SQL functions, shifting customer feedback analysis from individual review processing to systemic, production-scale intelligence. Our journey through these four core functions clearly illustrates how each serves a distinct analytical purpose, transforming raw customer voices into comprehensive business intelligence—systematic, scalable, and immediately actionable. What once required individual review analysis now processes thousands of reviews in seconds, providing both the emotional context and specific details crucial for data-driven operational improvements.
 
-As our analysis grows in sophistication, combining multiple AI functions in complex queries can become challenging. This is precisely where Snowflake Copilot offers powerful assistance. Let's explore how Copilot can help us create complex queries using natural language and significantly accelerate our work, empowering us to build even more intricate analytical workflows with ease.
+<!-- Uncomment when Copilot is added back -->
+<!-- As our analysis grows in sophistication, combining multiple AI functions in complex queries can become challenging. This is precisely where Snowflake Copilot offers powerful assistance. Let's explore how Copilot can help us create complex queries using natural language and significantly accelerate our work, empowering us to build even more intricate analytical workflows with ease. -->
 
+<!-- Uncomment when Copilot is added back -->
+<!-- ## Snowflake Copilot -->
 
-## Snowflake Copilot
-
-<img src='./assets/snowflake_copilot_header.png'>
+<!-- <img src='./assets/snowflake_copilot_header.png'>
 
 Duration: 4
 
@@ -1094,16 +1110,20 @@ You've successfully built powerful AI SQL queries to analyze customer reviews. N
 
 This lab introduces **Snowflake Copilot**, an LLM-powered assistant designed to simplify this challenge. Running securely within Snowflake Cortex, Copilot helps you construct sophisticated analytical workflows, translating complex business questions into powerful SQL.
 
-### Get the SQL and paste it into your Worksheet.
+### Get the SQL and paste it into your Worksheet
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-copilot.sql) in a new Worksheet to follow along in Snowflake.**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-copilot.sql) into a new SQL Worksheet in Snowflake to follow along.**
+
+**Snowflake Copilot is designed to be used directly within the SQL Worksheet environment.** Please ensure you are executing the SQL in a SQL Worksheet.
+
+**Note: Once you've reached the end of the Worksheet, you can skip to [Step 20 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19).**
 
 ### Step 1 - Setting Context
 
 First, let's set our session context. We will assume the role of a TastyBytes data analyst with the intention of leveraging Snowflake Copilot to build sophisticated queries and gain deeper business insights.
 
 ```sql
-ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_101_v2_copilot","version":{"major":1, "minor":1},"attributes":{"is_quickstart":0, "source":"tastybytes", "vignette": "snowflake_copilot"}}';
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts","version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"tastybytes", "vignette": "snowflake_copilot"}}';
 
 USE ROLE tb_analyst;
 USE WAREHOUSE tb_de_wh;
@@ -1141,7 +1161,7 @@ In the same Copilot panel, paste the following business question and click RUN t
 
 ### Conclusion
 
-Snowflake Copilot profoundly transforms business intelligence by enabling users to effortlessly translate complex business questions into sophisticated SQL queries. As demonstrated with Tasty Bytes, it empowers both technical and non-technical users to derive actionable insights from their data without deep SQL expertise. This LLM-powered assistant delivers schema-aware, purpose-built intelligence, ensuring robust data governance and keeping all enterprise data securely within Snowflake. Copilot isn't just generic AI; it's a strategic tool that bridges operational insights with business intelligence.
+Snowflake Copilot profoundly transforms business intelligence by enabling users to effortlessly translate complex business questions into sophisticated SQL queries. As demonstrated with Tasty Bytes, it empowers both technical and non-technical users to derive actionable insights from their data without deep SQL expertise. This LLM-powered assistant delivers schema-aware, purpose-built intelligence, ensuring robust data governance and keeping all enterprise data securely within Snowflake. Copilot isn't just generic AI; it's a strategic tool that bridges operational insights with business intelligence. -->
 
 ## Cortex Search
 Duration: 6
@@ -1149,8 +1169,12 @@ Duration: 6
 <img src='./assets/cortex_search_header.png'>
 
 ### Overview
+<!-- Uncomment when Copilot is added back -->
+<!-- While Copilot excels at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language. -->
 
-While Copilot excels at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language.
+<!-- Remove when Copilot is added back -->
+While AI-powered tools excel at generating complex analytical queries, a common daily challenge for customer service teams is quickly finding specific customer reviews for complaints or compliments. Traditional keyword search often falls short, missing the nuances of natural language.
+<!-- End Remove -->
 
 **Snowflake Cortex Search** solves this by providing low-latency, high-quality "fuzzy" search over your Snowflake text data. It quickly sets up hybrid (vector and keyword) search engines, handling embeddings, infrastructure, and tuning for you. Under the hood, Cortex Search combines semantic (meaning-based) and lexical (keyword-based) retrieval with intelligent re-ranking to deliver the most relevant results. In this lab, you will configure a search service, connect it to customer review data, and run semantic queries to proactively identify key customer feedback.
 
@@ -1189,10 +1213,19 @@ This wizard will guide you through several configuration screens:
 * **Select columns**: choose other columns to include in the result like `DATE`, `LANGUAGE`, etc.
 * **Configure indexing**: Accept the default
 
-> **Note**: Creating the search service includes building the index, so the initial setup may take a little longer - but once created, queries run with low latency and scale seamlessly.
+<img src = "assets/vignette-3/cortex-search-walkthrough.gif">
+
+> **Note**: Creating the search service includes building the index, so the initial setup may take a little longer. If the creation process is taking an extended period, you can seamlessly continue the lab by using a pre-configured search service:
 >
 
-<img src = "assets/vignette-3/cortex-search-walkthrough.gif">
+1.  From the left-hand menu in Snowsight, navigate to **AI & ML**, then click on **Cortex Search**.
+2.  In the Cortex Search view, locate the dropdown filter (as highlighted in the image below, showing `TB_101 / HARMONIZED`). Select or ensure this filter is set to `TB_101 / HARMONIZED`.
+3.  In the list of "Search services" that appears, click on the pre-built service named **`TASTY_BYTES_REVIEW_SEARCH`**.
+4.  Once inside the service's details page, click on **Playground** in the top right corner to begin using the search service for the lab.
+
+- **Once any search service is active (either your new one or the pre-configured one), queries will run with low latency and scale seamlessly.**
+
+<img src = "assets/vignette-3/cortex-search-existing-service.png">
 
 > Behind this simple UI, Cortex Search is performing a complex task. It analyzes the text in your "REVIEW" column, using an AI model to generate semantic embeddings, which are numerical representations of the text's meaning. These embeddings are then indexed, allowing for high-speed conceptual searches later on. In just a few clicks, you have taught Snowflake to understand the intent behind your reviews.
 
@@ -1218,11 +1251,13 @@ Now try another query:
 
 Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback. It empowers the customer service manager to move beyond simply sifting through reviews, to truly understand and proactively act upon the voice of the customer at scale, driving better operational decisions and enhancing customer loyalty.
 
-In the next module - Cortex Analyst - you’ll use natural language to query structured data. 
+**In the next module** - Cortex Analyst - you’ll use natural language to query structured data. 
 
 ## Cortex Analyst
 
 Duration: 10
+
+<img src='./assets/cortex_analyst_header.png'>
 
 ### Overview
 
@@ -1230,7 +1265,7 @@ A business analyst at Tasty Bytes needs to enable self-service analytics, allowi
 
 **Cortex Analyst** empowers business users to ask sophisticated questions directly, seamlessly extracting value from their analytics data through natural language interaction. This lab will guide you through designing a semantic model, connecting it to your business data, configuring relationships and synonyms, and then executing advanced business intelligence queries using natural language.
 
-### Step 1 -  Design Semantic Mode
+### Step 1 -  Design Semantic Model
 
 Let's begin by navigating to Cortex Analyst in Snowsight and configuring our semantic model foundations.
 
@@ -1247,7 +1282,7 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
 <img src = "assets/vignette-3/cortex-analyst-setup.png">
 
 
-3. **On the 'Getting Started' page:**
+3. On the **Getting Started** page:
 
     * Choose **Semantic View**.
     * **Location to store** dropdown: Select **DATABASE: TB_101** and **SCHEMA: SEMANTIC_LAYER**.
@@ -1258,11 +1293,9 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
 
 <img src = "assets/vignette-3/cortex-analyst-getting-started.png">
 
-> **Note**: To make a request to Cortex Analyst, you must use a role that has the `SNOWFLAKE.CORTEX_USER` role granted.
-
 ### Step 2 - Select & Configure Columns
 
-In the 'Select tables' step, let's choose our pre-built analytics views.
+In the **Select tables** step, let's choose our pre-built analytics views.
 
 1. **Select core business Tables:**
 
@@ -1276,10 +1309,8 @@ In the 'Select tables' step, let's choose our pre-built analytics views.
 
 2. **Configure Column Selection:**
 
-    * On the 'Select columns' page, ensure both selected tables are active.
-    * For each column, review its **Logical Role** (e.g., Dimension, Measure, Time Dimension) and adjust if necessary.
-    * Consider setting **Display Names** or adding **Synonyms** for columns that might have technical names but represent common business concepts (e.g., `TOTAL_SALES_AMOUNT` could be "Total Revenue").
-    * (Optional: Hide any columns that aren't relevant for natural language queries to simplify the model.)
+    * On the **Select columns** page, ensure both selected tables are active.
+    * Click **Create and Save**
 
 <img src = "assets/vignette-3/cortex-analyst-select-columns.png">
 
@@ -1309,15 +1340,22 @@ Let's configure our table relationship by creating:
 * **Right table**: `CUSTOMER_LOYALTY_METRICS_V`
 * **Join columns**: `CUSTOMER_ID = CUSTOMER_ID`
 
-Upon completion, we will have a semantic model ready for sophisticated natural language queries.
-
 <img src = "assets/vignette-3/cortex-analyst-table-relationship.png">
 
-### Step 5 - Execute Customer Segmentation
+**Upon completion**, simply use the **Save** option at the top of the UI. This will finalize your semantic view, making your semantic model ready for sophisticated natural language queries. 
+
+To access the **Cortex Analyst chat interface** in fullscreen mode, you would:
+
+1.  Click the **three-dot menu (ellipsis)** next to the "Share" button at the top right.
+2.  From the dropdown menu, select **"Enter fullscreen mode."**
+
+<img src = "assets/vignette-3/cortex-analyst-interface.png">
+
+### Step 5 - Execute Customer Segmentation Intelligence
 
 With our semantic model and relationship active, let’s demonstrate sophisticated natural language analysis by running our first complex business query.
 
-Navigate to **Cortex Analyst query interface**.
+Navigate to **Cortex Analyst chat interface**.
 
 Let's execute our customer segmentation analysis:
 
@@ -1370,6 +1408,12 @@ Within this vignette, we will explore some of the powerful governance features w
 ### Get the SQL and paste it into your Worksheet.
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake.**
+<!-- Uncomment when Copilot is added back -->
+<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).** -->
+
+<!-- Remove when Copilot is added back -->
+**Note that once you've reached the end of the Worksheet you can skip to [Step 28 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#27).**
+<!-- End Remove -->
 
 ## Roles and Access Control
 
@@ -1434,12 +1478,12 @@ The typical hierarchy of system and custom roles might look something like this:
 ```
 Snowflake System Defined Role Definitions:
 
-- ORGADMIN: Role that manages operations at the organization level.
-- ACCOUNTADMIN: This is the top-level role in the system and should be granted only to a limited/controlled number of users in your account.
-- SECURITYADMIN: Role that can manage any object grant globally, as well as create, monitor, and manage users and roles.
-- USERADMIN: Role that is dedicated to user and role management only.
-- SYSADMIN: Role that has privileges to create warehouses and databases in an account.
-- PUBLIC: PUBLIC is a pseudo-role automatically granted to all users and roles. It can own securable objects, and anything it owns becomes available to every other user and role in the account.
+- **ORGADMIN**: Role that manages operations at the organization level.
+- **ACCOUNTADMIN**: This is the top-level role in the system and should be granted only to a limited/controlled number of users in your account.
+- **SECURITYADMIN**: Role that can manage any object grant globally, as well as create, monitor, and manage users and roles.
+- **USERADMIN**: Role that is dedicated to user and role management only.
+- **SYSADMIN**: Role that has privileges to create warehouses and databases in an account.
+- **PUBLIC**: PUBLIC is a pseudo-role automatically granted to all users and roles. It can own securable objects, and anything it owns becomes available to every other user and role in the account.
 
 ### Step 3 - Grant Privileges to the Custom Role
 
@@ -2146,6 +2190,6 @@ If you would like to re-run this Quickstart, please run the complete `RESET` scr
 - [Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro)
 - [Snowflake Cortex Playground](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-playground)
 - [AI SQL Functions in Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)
-- [Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot)
+<!-- - [Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot) -->
 - [Snowflake Cortex Search Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Snowflake Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)

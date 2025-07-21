@@ -59,6 +59,9 @@ Before diving into Ray and distributed processing, let's set up our environment 
 
 The setup script creates the necessary database, schema, tables, and loads sample data for our analysis.
 
+> aside negative
+> `CREATE COMPUTE POOL` step is expected to fail on trial accounts 
+
 ### Import the Notebook
 
 1. Navigate to Snowflake Notebooks:
@@ -71,9 +74,11 @@ The setup script creates the necessary database, schema, tables, and loads sampl
 
 3. Configure the notebook:
    * For **Database**, select `HOL_DB`
-   * For **Schema**, select `HOL_SCHEMA` 
-   * Select `HOL_WAREHOUSE` as your query warehouse
+   * For **Schema**, select `HOL_SCHEMA`
+   * For **Runtime**, select `Run on Container`  
+   * For **Runtime version**, Leave as is 
    * For **Compute pool**, Leave as is
+   * For **Query warehouse**, select `HOL_WAREHOUSE`
    * Click **Create**
 
 ### Enable External Access Integrations
