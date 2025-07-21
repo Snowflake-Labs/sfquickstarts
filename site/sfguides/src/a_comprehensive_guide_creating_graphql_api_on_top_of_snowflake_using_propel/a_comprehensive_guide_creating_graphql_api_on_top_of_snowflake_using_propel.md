@@ -5,7 +5,7 @@ categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
+tags: Platform, Apps & Collab: External Collaboration 
 
 # A Comprehensive Guide: Creating GraphQL API on Top of Snowflake Using Propel
 
