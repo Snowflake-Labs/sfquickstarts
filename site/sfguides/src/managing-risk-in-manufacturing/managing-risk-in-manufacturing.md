@@ -596,3 +596,4 @@ By working with a our simulated manufacturing database, you were able to:
 ### Resources
 
 - [Neo4j Graph Analytics Documentation](https://neo4j.com/docs/snowflake-graph-analytics/)
+- [See it in action!](https://www.youtube.com/watch?v=2rksmcCe_tY&t=425s)
