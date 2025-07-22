@@ -7,7 +7,7 @@ status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Summit HOL, Data Sharing, Horizon Access
 
-# Horizon Access for Intra-Company Sharing
+# Explore Cross-Cloud Sharing of Data and Applications with Private Listings
 <!-- ------------------------ -->
 ## Overview
 
@@ -15,15 +15,16 @@ Duration: 15
 
 Sharing information between departments, business units and subsidiaries of a company is critical for success, particularly when there are organizational silos in place. A modern data platform must provide decentralized ownership, universal discovery, access control, federated governance, and observability.
 
-**Snowflake Horizon** is a unified suite of governance and discovery capabilities organized into five pillars.
+**Snowflake Horizon Catalog** is a connected catalog for your entire data estate. It allows customers to interoperate more easily across table formats, engines & catalogs. Horizon allows you to manage metadata for all your data & AI assets in one place for easy data discovery and collaboration. 
 
-![Snowflake Horizon Diagram](assets/snowflake_horizon.jpg)
+![Snowflake Horizon Diagram](assets/horizon-catalog.jpg)
 
-This Quickstart is focused on the `Horizon Access` pillar.
+This Quickstart is focused on the `Horizon Collaboration` and `Horizon Discovery` pillars.
 
-The objective of the Access pillar is to make it simple to share, discover, understand/build trust and access listings across any boundary, internal or external to the organization, and to make loose objects discoverable across account boundaries within an organization, supported by the tools necessary to ensure policy compliance, security, and data quality.
+The objective of the Collaboration and Discovery pillars are to make it simple to share, discover, understand/build trust and access listings across any boundary, internal or external to the organization, and to make loose objects discoverable across account boundaries within an organization, supported by the tools necessary to ensure policy compliance, security, and data quality.
 
-In this lab you will experience the latest **Snowflake Horizon Access pillar** features for sharing data and native apps intra-company: organizational listings, unified search & discovery, data quality monitoring, role-based governance policies and programmatic management of data products. We will cover structured and unstructured data that is stored on-platform or on external storage.
+In this lab you will experience the latest Snowflake Horizon Collaboration and Discovery features for sharing data and native apps intra-company: private listings, unified search & discovery, data quality monitoring, role-based governance policies and programmatic management of data products. We will cover structured and unstructured data that is stored on-platform or on external storage.
+
 
 ### What You’ll Learn
 
@@ -282,14 +283,13 @@ snow stage list-files @frostbyte_tasty_bytes.movie_reviews.movie_stage
 Setup is now complete!
 
 <!-- ------------------------ -->
-## Create, Publish and Install a Data Listing
+## Publish a Data Listing
 
 Duration: 20
 
 In this section you will create, publish, consume, alter, and monitor a [listing](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about).
 
 ### Build and Publish a Listing in the Provider Studio UI
-
 1. Navigate to the Provider Studio and click the +Listing button in the top right:
 
     ![ProviderStudio](assets/101_ProviderStudio+Listing.png)
@@ -906,7 +906,7 @@ FROM analytics.CUSTOMER_LOYALTY_METRICS_V
 WHERE city = 'Melbourne' AND last_name = 'Arellano';
 ```
 
-## Publish and Monitor Data Quality Metrics for Listings
+## Publish Listing with Data Quality Metrics
 
 Duration: 15
 
@@ -1097,7 +1097,7 @@ Take the following 3 steps in the UI:
 ```
 
 <!-- ------------------------ -->
-## Create, Publish and Install a Native Application Listing
+## Publish a Native Application Listing
 
 Duration: 20
 
@@ -1449,7 +1449,7 @@ LIMIT 10
 ```
 
 <!-- ------------------------ -->
-## Share Unstructured Data within and across cloud regions
+## Share Unstructured Data
 
 Duration: 20
 
