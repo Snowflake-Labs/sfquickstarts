@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Applications
 
-# Sharing an ML Model via Native Apps
+# Getting Started With Model Sharing Using Native Apps
 <!-- ------------------------ -->
 ## Overview 
 Duration: 5
@@ -221,7 +221,7 @@ We have loaded all the data in Zamboni. We can now proceed with training the mod
 ## Provider Account (Zamboni) - Create Model
 Duration: 45
 
-For this section, make sure you download the corresponding [git repo](https://github.com/Snowflake-Labs/sfguide-data-collaboration-native-app) so you have the files referenced in this section.
+For this section, make sure you download the corresponding [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-sharing-using-native-app) so you have the files referenced in this section.
 
 ### Set Up Snowpark for Python and Snowpark ML
 
