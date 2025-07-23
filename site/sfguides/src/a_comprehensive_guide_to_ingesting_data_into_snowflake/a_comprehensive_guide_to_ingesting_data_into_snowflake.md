@@ -1,10 +1,10 @@
 summary: Learn how to ingest data into Snowflake with Python Connector, Streaming SDK, Snowpipe, and Kafka
 id: a_comprehensive_guide_to_ingesting_data_into_snowflake 
-categories: featured, getting-started, data-engineering
+categories: Data Engineering, DE: Ingestion, DE - Connectors
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Data Applications, Ingest
+tags: Data Engineering, DE: Ingestion, DE - Connectors, Getting Started
 authors: Brad Culberson
 
 # A Comprehensive Guide: Ingesting Data into Snowflake
