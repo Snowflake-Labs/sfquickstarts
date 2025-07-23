@@ -7,7 +7,8 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
-# Managing Risk in a Manufacturing Plant with Neo4j Graph Analytics
+
+# Manage Risk in a Manufacturing Plant with Neo4j Graph Analytics
 
 ## Overview
 
@@ -17,13 +18,20 @@ Duration: 2
 
 Neo4j helps organizations find hidden relationships and patterns across billions of data connections deeply, easily, and quickly. **Neo4j Graph Analytics for Snowflake** brings to the power of graph directly to Snowflake, allowing users to run 65+ ready-to-use algorithms on their data, all without leaving Snowflake! 
 
-### Managing Risk in a Manufacturing Plant with Neo4j Graph Analytics
+
+### Manage Risk in a Manufacturing Plant with Neo4j Graph Analytics
 
 This quickstart shows how to model a manufacturing workflow and apply Graph Analytics algorithms to find structural risks, operational bottlenecks, and machine similarities.
 
 ### Prerequisites
 
 - The Native App [Neo4j Graph Analytics](https://app.snowflake.com/marketplace/listing/GZTDZH40CN) for Snowflake
+
+
+### What You Will Need
+- A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts) with appropriate access to databases and schemas.
+- Neo4j Graph Analytics application installed from the Snowflake marketplace. Access the marketplace via the menu bar on the left hand side of your screen, as seen below:
+![image](assets/marketplace.png)
 
 ### What You Will Learn
 
@@ -32,14 +40,21 @@ This quickstart shows how to model a manufacturing workflow and apply Graph Anal
 - How to conduct a **criticality ranking** by using PageRank to find influential machines and Betweenness Centrality to identify bridges that control workflow.
 - How to calculate **structural embeddings and similarity**. First generate FastRP embeddings and then run KNN to group machines with similar roles or dependencies.
 
-## Creating our Database
+
+### What You Will Build
+
+- A mock database modeling machines and their relationships in a manufacturing process
+- A notebook covering various graph algorithms and applying them to our mock database
+
+## Create Our Database
 
 Duration: 7
 
 We are going to create a simple database with synthetic data. Let's first create the databse:
 
 
-```
+
+```sql
 CREATE DATABASE IF NOT EXISTS m_demo;
 USE SCHEMA m_demo.public;
 ```
@@ -47,7 +62,8 @@ USE SCHEMA m_demo.public;
 Then let's add some tables to that database:
 
 
-```
+
+```sql
 create or replace TABLE NODES (
 	MACHINE_ID NUMBER(38,0),
 	MACHINE_TYPE VARCHAR(16777216),
@@ -65,7 +81,7 @@ create or replace TABLE RELS (
 Next we are going to create a table that represents our nodes. In this case, that will be 20 machines, including cutters, welders, presses, assemblers, and painters.
 
 
-```
+```sql
 DELETE FROM nodes;
 
 INSERT INTO nodes (machine_id, machine_type, current_status, risk_level) VALUES
@@ -94,7 +110,8 @@ INSERT INTO nodes (machine_id, machine_type, current_status, risk_level) VALUES
 Next, we will have a table that reflects how those machines connect to eachother:
 
 
-```
+
+```sql
 DELETE FROM rels;
 
 INSERT INTO rels (SRC_MACHINE_ID, DST_MACHINE_ID, THROUGHPUT_RATE) VALUES
@@ -128,7 +145,8 @@ INSERT INTO rels (SRC_MACHINE_ID, DST_MACHINE_ID, THROUGHPUT_RATE) VALUES
 (10, 19, 19);
 ```
 
-## Setting Up
+
+## Set Up
 
 Duration: 5
 
@@ -136,15 +154,16 @@ Now that we have our data, we just need to create a notebook and grant the neces
 
 ### Import The Notebook
 
-- We’ve provided a Colab notebook to walk you through each SQL and Python step—no local setup required!
-- Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/predictive-maintenance-manufacturing/predictive-maintenance-manufacturing.ipynb), and import the notebook into snowflake.
+
+- We’ve provided a notebook to walk you through each SQL and Python step—no local setup required!
+- Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/predictive-maintenance-manufacturing/predictive-maintenance-manufacturing.ipynb), and import the notebook into snowflake. **Please ensure that all cells are imported as SQL, except for `viz_display` which should be a python cell**.
 
 ### Permissions
 
 Before we run our algorithms, we need to set the proper permissions. But before we get started granting different roles, we need to ensure that you are using `accountadmin` to grant and create roles. Lets do that now:
 
 
-```
+```sql
 -- you must be accountadmin to create role and grant permissions
 use role accountadmin;
 ```
@@ -154,8 +173,8 @@ Next we can set up the necessary roles, permissions, and resource access to enab
 It also provides the application with access to the required compute pool and warehouse resources needed to run graph algorithms at scale.
 
 
-```
--- Create an account role to manage the Graph Analytics application
+```sql
+-- Create an account role to manage the GDS application
 CREATE ROLE IF NOT EXISTS gds_role;
 GRANT APPLICATION ROLE neo4j_graph_analytics.app_user TO ROLE gds_role;
 GRANT APPLICATION ROLE neo4j_graph_analytics.app_admin TO ROLE gds_role;
@@ -191,7 +210,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON FUTURE TABLES IN SCHEMA M_DEMO.PUBLIC TO
 Then we need to switch the role we created:
 
 
-```
+
+```sql
 use warehouse neo4j_graph_analytics_APP_WAREHOUSE;
 use role gds_role;
 use database m_demo;
@@ -201,7 +221,8 @@ use schema public;
 Next, we are going to do a little clean up. We want our nodes table to just have the node ids.
 
 
-```
+
+```sql
 CREATE OR REPLACE TABLE NODES_VW AS
 SELECT MACHINE_ID AS nodeId
 FROM NODES;
@@ -210,7 +231,8 @@ FROM NODES;
 Your relationship table might have more than one row per machine‐pair, but we need to have exactly one throughput_rate per (source, target). To be safe you should aggregate the data, for example:
 
 
-```
+
+```sql
 CREATE OR REPLACE TABLE RELS_VW AS
 SELECT
   SRC_MACHINE_ID  AS sourceNodeId,
@@ -220,6 +242,40 @@ FROM RELS
 GROUP BY SRC_MACHINE_ID, DST_MACHINE_ID;
 
 ```
+
+
+## Visualize Our Graph (Experimental)
+
+Duration: 5
+
+At this point, you may want to visualize your graph to get a better understanding of how everything fits together. We can do this in two easy steps. Similarly to how we will project graphs for our graph algorithms, we need to specify what are the node and relationship tables:
+
+```sql
+CALL Neo4j_Graph_Analytics.experimental.visualize(
+{
+    'nodeTables': ['M_DEMO.PUBLIC.NODES_VW'],
+    'relationshipTables': {
+      'M_DEMO.PUBLIC.RELS_VW': {
+        'sourceTable': 'M_DEMO.PUBLIC.NODES_VW',
+        'targetTable': 'M_DEMO.PUBLIC.NODES_VW'
+      }
+    }
+  },
+  {}
+);
+```
+
+We can access the output of the previous cell by referencing its cell name, in this case `viz`. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the `viz` output as a Pandas DataFrame, then accessing the first row of the "VISUALIZE" column.
+
+```sql
+import streamlit.components.v1 as components
+
+components.html(
+    cell8.to_pandas().loc[0]["VISUALIZE"],
+    height=600
+)
+```
+![image](assets/viz.png)
 
 ## Structural Connectivity Analysis
 
@@ -239,7 +295,8 @@ A single connected component for our domain is ideal; it suggests an integrated 
 **Expected result:** The simulated data is designed to form a single significant component, reflecting a unified workflow.
 
 
-```
+
+```sql
 CALL neo4j_graph_analytics.graph.wcc('CPU_X64_XS', {
   'project': {
     'defaultTablePrefix': 'm_demo.public',
@@ -262,7 +319,8 @@ CALL neo4j_graph_analytics.graph.wcc('CPU_X64_XS', {
 ```
 
 
-```
+
+```sql
 SELECT
   component,
   COUNT(*) AS count
@@ -298,7 +356,8 @@ The highest-performing machines manage the most critical data flow.
 **Expected Result**:  Machine 20 has been set up as the processing hub for the simulated data, so it should be at the very top of the list.
 
 
-```
+
+```sql
 CALL neo4j_graph_analytics.graph.page_rank('CPU_X64_XS', {
   'project': {
     'defaultTablePrefix': 'm_demo.public',
@@ -324,7 +383,8 @@ CALL neo4j_graph_analytics.graph.page_rank('CPU_X64_XS', {
 ```
 
 
-```
+
+```sql
 SELECT
   nodeid,
   score
@@ -351,7 +411,7 @@ PageRank highlights machines with the most influence based on incoming flow, but
 **Expected Result:** Machines positioned between major steps, especially those that route material across different sections—should have the highest betweenness scores.
 
 
-```
+```sql
 CALL neo4j_graph_analytics.graph.betweenness('CPU_X64_XS', {
    'project': {
     'defaultTablePrefix': 'm_demo.public',
@@ -375,7 +435,8 @@ CALL neo4j_graph_analytics.graph.betweenness('CPU_X64_XS', {
 ```
 
 
-```
+
+```sql
 SELECT
   nodeid,
   score
@@ -420,12 +481,13 @@ We’ll use two Graph Analytics algorithms:
 
 Together, embeddings + KNN surface structural affinities beyond simple degree or centrality measures.
 
-### Fast Random Projection (FastRP) Embeddings
 
-The results for FastRp are not immediately interpretable. However, machines with nearly identical embeddings have similar upstream and downstream relationships and likely play the same role in the plant. These embeddings are numerical representations that enable downstream clustering, similarity search, or anomaly detection.
+### FastRP Embeddings
+
+The results for FastRP are not immediately interpretable. However, machines with nearly identical embeddings have similar upstream and downstream relationships and likely play the same role in the plant. These embeddings are numerical representations that enable downstream clustering, similarity search, or anomaly detection.
 
 
-```
+```sql
 CALL neo4j_graph_analytics.graph.fast_rp('CPU_X64_XS', {
   'project': {
     'defaultTablePrefix': 'm_demo.public',
@@ -452,7 +514,7 @@ CALL neo4j_graph_analytics.graph.fast_rp('CPU_X64_XS', {
 ```
 
 
-```
+```sql
 SELECT
   nodeid as machine,
   embedding
@@ -479,7 +541,8 @@ Machines with similarity scores close to 1.0 share almost identical structural p
 Machines that serve in parallel sections—especially those feeding into similar downstream equipment—should appear as near-duplicates. In this dataset, pairs like (17 and 9) were intentionally structured this way and are expected to rank near the top.
 
 
-```
+
+```sql
 CALL neo4j_graph_analytics.graph.knn('CPU_X64_XS', {
     'project': {
         'defaultTablePrefix': 'm_demo.public',
@@ -505,7 +568,8 @@ CALL neo4j_graph_analytics.graph.knn('CPU_X64_XS', {
 ```
 
 
-```
+
+```sql
 SELECT
     sourcenodeid,
     targetnodeid,
@@ -553,4 +617,4 @@ By working with a our simulated manufacturing database, you were able to:
 ### Resources
 
 - [Neo4j Graph Analytics Documentation](https://neo4j.com/docs/snowflake-graph-analytics/)
-- [Installing Neo4j Graph Analytics on SPCS](https://neo4j.com/docs/snowflake-graph-analytics/installation/)
+- [See it in action!](https://www.youtube.com/watch?v=2rksmcCe_tY&t=425s)
