@@ -69,7 +69,7 @@
     },
     {
       "source": "/guide/prompt_engineering_and_llm_evaluation/{,/**}",
-      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
     },
     {
@@ -94,7 +94,7 @@
     },
     {
       "source": "guide/snowpark_python_top_three_tips_for_optimal_performance/{,/**}",
-      "destination": "/guide/snowpark_python_top_tips_for_optimal_performance",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
     },
     {
@@ -134,7 +134,7 @@
     },
     {
       "source": "guide/asking_questions_to_your_own_documents_with_snowflake_cortex/{,/**}",
-      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
     },
     {
