@@ -48,7 +48,7 @@ Dataset overview : This dataset is modelled to design and analyze patients and d
 Let's name our database `NEO4J_PATIENT_DB`. Using the CSVs found [here](https://github.com/neo4j-product-examples/aura-graph-analytics/tree/main/patient_journey/data), We are going to add two new tables:
 
 - One called `PROCEDURES` based on the Procedures.csv
-- One called `PATIENTS based` on Patients.csv
+- One called `PATIENTS` based on Patients.csv
 
 Follow the steps found [here](https://docs.snowflake.com/en/user-guide/data-load-web-ui) to load in your data.
 
@@ -57,7 +57,7 @@ Duration: 5
 
 ### Import The Notebook
 
-- We’ve provided a Colab notebook to walk you through each SQL and Python step—no local setup required!
+- We’ve provided a notebook to walk you through each SQL and Python step—no local setup required!
 - Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/patient-journey/finding-similar-patients.ipynb), and import the notebook into snowflake.
 
 ### Permissions
@@ -135,24 +135,16 @@ Let's take a look at the starting point for our data. We have a table for patien
 SELECT * FROM NEO4J_PATIENT_DB.PUBLIC.PROCEDURES LIMIT 10;
 ```
 
-| STARTDATE          | STOP               | PATIENT                              | ENCOUNTER                            | SYSTEM                                           | CODE      | DESCRIPTION                                     | BASE_COST | REASONCODE | REASONDESCRIPTION\\          |
-| ------------------ | ------------------ | ------------------------------------ | ------------------------------------ | ------------------------------------------------ | --------- | ----------------------------------------------- | --------- | ---------- | ---------------------------- |
-| 2015-06-19 5:03:41 | 2015-06-19 5:18:41 | a0f3cc78-810a-3ec6-36cf-221b374350d6 | 3e3cd9ec-d27a-98ac-c4a4-51bc4420cb7b | [http://snomed.info/sct](http://snomed.info/sct) | 252160004 | Standard pregnancy test (procedure)             | 9046.75   | 72892002   | Normal pregnancy (finding)\\ |
-| 2015-06-19 5:03:41 | 2015-06-19 5:18:41 | a0f3cc78-810a-3ec6-36cf-221b374350d6 | 3e3cd9ec-d27a-98ac-c4a4-51bc4420cb7b | [http://snomed.info/sct](http://snomed.info/sct) | 169230002 | Ultrasound scan for fetal viability (procedure) | 4049.7    | 72892002   | Normal pregnancy (finding)\\ |
-| 2015-06-19 5:03:41 | 2015-06-19 5:18:41 | a0f3cc78-810a-3ec6-36cf-221b374350d6 | 3e3cd9ec-d27a-98ac-c4a4-51bc4420cb7b | [http://snomed.info/sct](http://snomed.info/sct) | 274804006 | Evaluation of uterine fundal height (procedure) | 3774.39   | 72892002   | Normal pregnancy (finding)\\ |
+<img src="assets/procedures.png" alt="image" width="400"/>
 
 
 ```sql
 SELECT * FROM NEO4J_PATIENT_DB.PUBLIC.PATIENTS LIMIT 10;
 ```
 
-| ID                                   | PREFIX | FIRST      | MIDDLE  | LAST          | SUFFIX | MAIDEN | MARITAL | RACE  | ETHNICITY   | GENDER | BIRTHPLACE                    | ADDRESS                   | CITY      | STATE         | ZIP  |
-| ------------------------------------ | ------ | ---------- | ------- | ------------- | ------ | ------ | ------- | ----- | ----------- | ------ | ----------------------------- | ------------------------- | --------- | ------------- | ---- |
-| 41313b42-6ce6-fa01-6021-6041fc6b1a26 | Mr.    | Linwood526 |         | Orn563        |        |        | M       | white | nonhispanic | M      | Boston  Massachusetts  US     | 414 Gusikowski Grove      | Worcester | Massachusetts | 1603 |
-| 06df5af7-aabe-008f-2c56-edb2a080c52a | Mr.    | Beau391    | Gail741 | Goldner995    |        |        |         | black | nonhispanic | M      | Leominster  Massachusetts  US | 635 Ullrich Meadow Apt 38 | Boston    | Massachusetts | 2129 |
-| 5c8a31b6-6309-f047-71f9-c78778250acd | Mr.    | Isreal8    | Dan465  | Jakubowski832 |        |        |         | white | nonhispanic | M      | Wrentham  Massachusetts  US   | 1082 Wehner Ferry Unit 83 | Dartmouth | Massachusetts | 0    |
+<img src="assets/patients.png" alt="image" width="400"/>
 
-We are then going to clean this up into two tables that just have the nodeids for both patient and procedure:
+We are then going to clean this up into two tables that just have the `nodeids` for both patient and procedure:
 
 
 ```sql
@@ -209,6 +201,7 @@ Let's start by limiting the number of patients down to ten and then finding the 
 CREATE OR REPLACE VIEW KidneyPatient_viz_vw (nodeId) AS
 SELECT nodeId
 FROM KidneyPatients_vw
+ORDER BY nodeId
 LIMIT 10;
 
 -- this represents the procedures those patients underwent (and will be our relationship table
@@ -247,20 +240,20 @@ CALL Neo4j_Graph_Analytics.experimental.visualize(
 );
 ```
 
-We can access the output of the previous cell by referencing its cell name, in this case cell1. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the cell1 output as a Pandas DataFrame, then accessing the first row of the "VISUALIZE" column.
+We can access the output of the previous cell by referencing its cell name, in this case `viz`. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the `viz` output as a Pandas DataFrame, then accessing the first row of the "VISUALIZE" column.
 
 ```python
 import streamlit.components.v1 as components
 
 components.html(
-    cell27.to_pandas().loc[0]["VISUALIZE"],
+    viz.to_pandas().loc[0]["VISUALIZE"],
     height=600
 )
 ```
 
   ![image](assets/graph.png)
 
-## Running Your Algorithms
+## Finding Similar Patients
 
 Duration: 10
 
@@ -330,6 +323,51 @@ You can see the similarity score between one patient and a set of another patien
 
 For example, if a patient had undergone 4 out of 5 of another patients procedures, we might predict that they will likely undergo the fifth procedure as well!
 
+## Sorting Into Groups
+
+Using the similarity scores we just calculated, we can then sort our patients into groups based on our related patients pairs and their similarity score using louvain:
+
+```sql
+CALL Neo4j_Graph_Analytics.graph.louvain('CPU_X64_XS', {
+    'defaultTablePrefix': 'neo4j_patient_db.public',
+    'project': {
+        'nodeTables': [ 'KidneyPatients_vw' ],
+        'relationshipTables': {
+            'PATIENT_PROCEDURE_SIMILARITY': {
+                'sourceTable': 'KidneyPatients_vw',
+                'targetTable': 'KidneyPatients_vw',
+                'orientation': 'UNDIRECTED'
+            }
+        }
+    },
+    'compute': {
+        'mutateProperty': 'community_id',
+        'relationshipWeightProperty': 'SIMILARITY'
+
+    },
+    'write': [{
+        'nodeLabel': 'KidneyPatients_vw',
+        'outputTable': 'patient_community',
+        'nodeProperty': 'community_id'
+    }]
+});
+```
+
+We can then take a look at the results like so:
+
+```sql
+select * from neo4j_patient_db.public.patient_community
+```
+
+| NODEID                               | COMMUNITY_ID |
+| ------------------------------------ | ------------ |
+| 00094d82-80de-4444-69cf-cf26fd56b1ac | 61           |
+| 13ca898b-7ee8-4859-6df5-dd6a37fe5ad2 | 66           |
+| 150529c7-3757-5f24-b7ed-4928fcad61cf | 74           |
+| 155d21bc-a41a-32f9-eae4-22bb3629ea99 | 74           |
+| 1b5c0719-72c0-126e-7959-6bd13e2b9268 | 74           |
+| 1c4b63ab-8483-7526-23d7-5e966fd2e6f6 | 74           |
+
 ##  Conclusions And Resources
 
 Duration: 2
@@ -347,4 +385,3 @@ By working with a patient transaction dataset, you were able to:
 ### Resources
 
 - [Neo4j Graph Analytics Documentation](https://neo4j.com/docs/snowflake-graph-analytics/)
-- [Installing Neo4j Graph Analytics on SPCS](https://neo4j.com/docs/snowflake-graph-analytics/installation/)
