@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
-# Finding Similar Patient Journeys with Neo4j
+# Find Similar Patient Journeys with Neo4j
 
 ## Overview
 
@@ -37,7 +37,7 @@ Neo4j helps organizations find hidden relationships and patterns across billions
 - How to use node similarity to identify similar nodes
 - How to read and write directly from and to your snowflake tables
 
-## Loading The Data
+## Load The Data
 Duration: 5
 
 Dataset overview : This dataset is modelled to design and analyze patients and different procedures that they undergo using graph analytics. 
@@ -52,7 +52,7 @@ Let's name our database `NEO4J_PATIENT_DB`. Using the CSVs found [here](https://
 
 Follow the steps found [here](https://docs.snowflake.com/en/user-guide/data-load-web-ui) to load in your data.
 
-## Setting Up
+## Set Up
 Duration: 5
 
 ### Import The Notebook
@@ -111,7 +111,7 @@ Then we need to switch the role we created:
 USE ROLE gds_user_role;
 ```
 
-## Cleaning Our Data
+## Clean Our Data
 
 Duration: 5
 
@@ -189,7 +189,7 @@ CREATE OR REPLACE VIEW KidneyPatientProcedure_relationship_vw (sourceNodeId, tar
          JOIN PROCEDURE_NODE_MAPPING ON PROCEDURE_NODE_MAPPING.NODEID = PROCEDURES.CODE;
 ```
 
-## Visualizing Your Graph (Experimental)
+## Visualize Your Graph (Experimental)
 Duration: 10
 
 At this point, you may want to visualize your graph to get a better understanding of how everything fits together. Before we do that, we will need to create a subset of our graph to make the visualization more managable.
@@ -253,7 +253,7 @@ components.html(
 
   ![image](assets/graph.png)
 
-## Finding Similar Patients
+## Find Similar Patients
 
 Duration: 10
 
@@ -323,7 +323,7 @@ You can see the similarity score between one patient and a set of another patien
 
 For example, if a patient had undergone 4 out of 5 of another patients procedures, we might predict that they will likely undergo the fifth procedure as well!
 
-## Sorting Into Groups
+## Sort Into Groups
 
 Using the similarity scores we just calculated, we can then sort our patients into groups based on our related patients pairs and their similarity score using louvain:
 
