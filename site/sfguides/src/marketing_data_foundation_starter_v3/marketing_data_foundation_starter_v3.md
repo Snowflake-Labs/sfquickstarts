@@ -78,9 +78,9 @@ snow connection add
 Refer to the following below to create a connection:
 ```shell
 Enter connection name: marketing_demo_v3_conn
-Enter account name: ******
+Enter account: [type in your account locator]
 Enter user: [type in your username]
-Enter password: [optional: press ENTER to skip]
+Enter password: [type in your password]
 Enter role: accountadmin
 Enter warehouse: [optional: press ENTER to skip]
 Enter database: snowflake
@@ -91,7 +91,7 @@ Enter region: [optional: press ENTER to skip]
 Enter authenticator: [optional: press ENTER to skip]
 Enter private key file: [optional: press ENTER to skip]
 Enter token file path: [optional: press ENTER to skip]
-Wrote new connection marketing_demo_v3_conn to /Users/******/.snowflake/connections.toml
+Wrote new connection marketing_demo_v3_conn to /path_to_your_configuration_file/.snowflake/connections.toml
 ```
 
 Let's set the connection to the default connection:
