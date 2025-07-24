@@ -106,7 +106,7 @@ USE ROLE ORGADMIN;
 CREATE ACCOUNT SNOWBANK
   ADMIN_NAME = ADMIN
   ADMIN_PASSWORD = 'ENTER PASSWORD HERE'
-  EMAIL = 'ENTER YOU EMAIL HERE'
+  EMAIL = 'ENTER YOUR EMAIL HERE'
   EDITION = ENTERPRISE;
 ```
 Note down the account locator and the url from the output of the command above for use in later steps
@@ -247,7 +247,7 @@ The first step is to set up the python environment to develop our model. To do t
   ```
   Open the jupyter notebook Credit Card Default Native App Notebook
 
-- Update connection.json with your Snowflake Account Identifier details and User Name.
+- Update connection.json with your Snowflake Account Identifier details and User Name in a code editor of your choice.
   Here's a sample based on the object names we created in the last step:
 
 ```
@@ -260,6 +260,12 @@ The first step is to set up the python environment to develop our model. To do t
   "database"       : "NATIVE_APP_DEMO",
   "schema"         : "NATIVE_APP_DEMO"
 }
+```
+
+You can find your account identifier by running the following SQL
+
+```SQL
+SELECT CURRENT_ORGANIZATION_NAME() || '-' || CURRENT_ACCOUNT_NAME();
 ```
 
 ### Train and Register Model
@@ -275,7 +281,7 @@ Now we have trained the model, we want to encapsulate it in an Application Packa
 
 Continue to work through the python notebook. The SQL commands below can be run from the python notebook.
 
-The next step is to create an Application Package object that will hold the assets we wish to distribute to Snowbank. An application package encapsulates the data content, application logic, metadata, and setup script required by an application. An application package also contains information about versions and patch levels defined for the application. We do this by running the following SQL.
+The next step is to create an Application Package object that will hold the assets we wish to distribute to Snowbank. An Application Package encapsulates the data content, application logic, metadata, and setup script required by an application. An Application Package also contains information about versions and patch levels defined for the application. We do this by running the following SQL.
 
 ```SQL
 GRANT CREATE APPLICATION PACKAGE ON ACCOUNT TO ROLE ACCOUNTADMIN;
@@ -283,7 +289,7 @@ CREATE APPLICATION PACKAGE IF NOT EXISTS CREDIT_CARD_PREDICTION_APP_PACKAGE;
 SHOW APPLICATION PACKAGES;
 ```
 
-Next, we need to create a stage within the Application package for us to put our model assets. We run the following SQL commands
+Next, we need to create a stage within the Application Package for us to put our model assets. We run the following SQL commands
 
 ```SQL
 USE APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE;
@@ -291,7 +297,7 @@ CREATE SCHEMA IF NOT EXISTS MODEL_ASSETS;
 CREATE OR REPLACE STAGE CREDIT_CARD_PREDICTION_APP_PACKAGE.MODEL_ASSETS.MODEL_STAGE FILE_FORMAT = (TYPE = 'csv' FIELD_DELIMITER = '|' SKIP_HEADER = 1);
 ```
 
-So we share a model that is consistent with what is in the model registry, we are going to export the model from the registry, and put it in the Application package. We do this in the following code block
+So we share a model that is consistent with what is in the model registry, we are going to export the model from the registry, and put it in the Application Package. We do this in the following code block
 
 ```python
 # Retrieve the model from the registry
@@ -376,7 +382,7 @@ COPY INTO cc_default_unscored_data
 ALTER WAREHOUSE query_wh SET warehouse_size=XSMALL;
 ```
 
-This app requires the consumer to explicitly provide a reference to a table in the Snowflake instance it is installed as an input. We can achieve this through the UI, or running the following SQL.
+This app requires the consumer to explicitly provide a reference to a table in the Snowflake instance it is installed as an input. References are a way for Native App consumers to be explicit in their permissioning to any existing object in a Snowflake account that is required. This ensures that Native Applications run as "isolated objects" within a Consumer Account, and must be granted explicit permission to access other objects. More information can be foind [here](https://docs.snowflake.com/en/developer-guide/native-apps/requesting-refs). We can achieve referencing through the UI, or running the following SQL.
 
 ```SQL
 -- Bind the reference to a table in our own Snowflake Account. This can be done via SQL or the UI
@@ -399,7 +405,7 @@ CALL CREDIT_CARD_PREDICTION_APP.APP_CODE.CREATE_TABLE_FROM_REFERENCE_RAW();
 SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.RAW_TABLE_VIEW LIMIT 10;
 SELECT COUNT(*) FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.RAW_TABLE_VIEW;
 
--- Next we call the procedure to do the feature engineering
+-- Next we call the procedure to do the feature engineering. This will take 5 mins to complete
 CALL CREDIT_CARD_PREDICTION_APP.APP_CODE.CC_PROFILE_PROCESSING();
 
 -- The feature table should now be populated
@@ -412,7 +418,7 @@ CALL CREDIT_CARD_PREDICTION_APP.APP_CODE.CC_BATCH_PROCESSING();
 -- And we can now see the scored table
 SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.SCORED_TABLE_VIEW LIMIT 10;
 ```
-We are satisfied with the testing. The next step is to distribute the app
+We are satisfied with the testing. The next step is to distribute the app.
 
 <!-- ------------------------ -->
 ## Provider Account (Zamboni) - Distribute Native App
@@ -549,13 +555,13 @@ CALL CREDIT_CARD_DEFAULT_MODEL.APP_CODE.CREATE_TABLE_FROM_REFERENCE_RAW();
 SELECT * FROM CREDIT_CARD_DEFAULT_MODEL.APP_CODE.RAW_TABLE_VIEW LIMIT 10;
 SELECT COUNT(*) FROM CREDIT_CARD_DEFAULT_MODEL.APP_CODE.RAW_TABLE_VIEW;
 
--- Next we call the procedure to do the feature engineering
+-- Next we call the procedure to do the feature engineering. It will take 5 minutes to complete
 CALL CREDIT_CARD_DEFAULT_MODEL.APP_CODE.CC_PROFILE_PROCESSING();
 
 -- The feature table should now be populated
 SELECT * FROM  CREDIT_CARD_DEFAULT_MODEL.APP_CODE.TRANSFORMED_TABLE_VIEW LIMIT 10;
 
--- Next we call the procedure that infers our model
+-- Next we call the procedure that infers our model. This will take 5 mins to complete
 CALL CREDIT_CARD_DEFAULT_MODEL.APP_CODE.CC_BATCH_PROCESSING();
 
 -- And we can now see the scored table
@@ -571,7 +577,7 @@ Duration: 5
 Run the following SQL commands
 
 ```SQL
-USE ROLE ACCOUNTADMIN
+USE ROLE ACCOUNTADMIN;
 DROP APPLICATION CREDIT_CARD_DEFAULT_MODEL;
 DROP DATABASE NATIVE_APP_CONSUMER;
 DROP WAREHOUSE QUERY_WH;
@@ -581,7 +587,7 @@ DROP WAREHOUSE QUERY_WH;
 ## Clean Up Provider Account (Zamboni)
 Duration: 10
 
-Navigate to Data Products > Provider Studio > Internal Marketplace and select Credit Card Default Model
+Navigate to Data Products > Provider Studio > Listings and select Credit Card Default Model
 
 Click the vertical ellipses in the top right, and the select Unpublish
 
@@ -592,7 +598,7 @@ Click the vertical ellipses again and select "Delete"
 Open a new SQL worksheet and run the following
 
 ```SQL
-USE ROLE ACCOUNTADMIN
+USE ROLE ACCOUNTADMIN;
 DROP APPLICATION IF EXISTS CREDIT_CARD_PREDICTION_APP;
 DROP APPLICATION PACKAGE CREDIT_CARD_PREDICTION_PACKAGE;
 DROP DATABASE IF EXISTS NATIVE_APP_DEMO;
@@ -615,10 +621,10 @@ Congratulations, you have just shared an ML Model over the Snowflake Marketplace
 - How to train an ML model in Snowflake
 - How to package the ML Model in an Application Package
 - How to privately list a Native Application 
-- How to Consume a Native Application 
+- How to consume a Native Application 
 
 ### Resources
-- GitHub Repo for Quickstart Assets: 
-- Snowflake Developer Documentation for Native Applications: https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about
-- CLI for Native Apps: https://docs.snowflake.com/en/developer-guide/snowflake-cli/native-apps/overview
-- Developer Guide on End-to-End Machine Learning in Snowflake: https://docs.snowflake.com/en/developer-guide/snowpark-ml/index
+- GitHub Repo for Quickstart Assets: [https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-sharing-using-native-app]
+- Snowflake Developer Documentation for Native Applications: [https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about]
+- CLI for Native Apps: [https://docs.snowflake.com/en/developer-guide/snowflake-cli/native-apps/overview]
+- Developer Guide on End-to-End Machine Learning in Snowflake: [https://docs.snowflake.com/en/developer-guide/snowpark-ml/index]
