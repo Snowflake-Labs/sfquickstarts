@@ -41,12 +41,12 @@ This demo consists of a native application that provides a framework to easily u
 
 ![architecture](assets/ArchitectureDiagram.png)
 
-### What You Will Build
-- A Native Application that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
-
 ### What You Will Learn
 - How to build a native application in Snowflake and how to deploy the same to your account using Snow CLI quickly.
 - How to use Snowpark Python to build a data pipeline that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
+
+### What You Will Build
+- A Native Application that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
 
 ### Prerequisites
 - Go to the [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
