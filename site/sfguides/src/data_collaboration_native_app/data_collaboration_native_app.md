@@ -624,7 +624,7 @@ Congratulations, you have just shared an ML Model over the Snowflake Marketplace
 - How to consume a Native Application 
 
 ### Resources
-- GitHub Repo for Quickstart Assets: [https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-sharing-using-native-app]
-- Snowflake Developer Documentation for Native Applications: [https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about]
-- CLI for Native Apps: [https://docs.snowflake.com/en/developer-guide/snowflake-cli/native-apps/overview]
-- Developer Guide on End-to-End Machine Learning in Snowflake: [https://docs.snowflake.com/en/developer-guide/snowpark-ml/index]
+- (GitHub Repo for Quickstart Assets)https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-sharing-using-native-app]
+- (Snowflake Developer Documentation for Native Applications)[https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about]
+- (CLI for Native Apps)[https://docs.snowflake.com/en/developer-guide/snowflake-cli/native-apps/overview]
+- (Developer Guide on End-to-End Machine Learning in Snowflake)[https://docs.snowflake.com/en/developer-guide/snowpark-ml/index]
