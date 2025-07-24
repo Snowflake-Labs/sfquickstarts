@@ -3,7 +3,7 @@ id: marketing_data_foundation_starter_v3
 summary: Marketing Data Foundation Starter Guide V3
 categories: Marketing
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Marketing, Data Engineering, Native Application
 
@@ -41,12 +41,12 @@ This demo consists of a native application that provides a framework to easily u
 
 ![architecture](assets/ArchitectureDiagram.png)
 
-### What You Will Build
-- A Native Application that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
-
 ### What You Will Learn
 - How to build a native application in Snowflake and how to deploy the same to your account using Snow CLI quickly.
 - How to use Snowpark Python to build a data pipeline that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
+
+### What You Will Build
+- A Native Application that ingests data from different sources and unifies it into a single source of truth for Marketing Data.
 
 ### Prerequisites
 - Go to the [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. After registration, you will receive an email containing a link that will take you to Snowflake, where you can sign in.
@@ -78,20 +78,20 @@ snow connection add
 Refer to the following below to create a connection:
 ```shell
 Enter connection name: marketing_demo_v3_conn
-Enter account name: ******
-Enter user: put your username here
-Enter password: [optional]
+Enter account: [type in your account locator]
+Enter user: [type in your username]
+Enter password: [type in your password]
 Enter role: accountadmin
-Enter warehouse: compute_wh
+Enter warehouse: [optional: press ENTER to skip]
 Enter database: snowflake
 Enter schema: account_usage
-Enter host: [optional]
-Enter port: [optional]
-Enter region: [optional]
-Enter authenticator: [optional]
-Enter private key file: [optional]
-Enter token file path: [optional]
-Wrote new connection marketing_demo_v3_conn to /Users/******/.snowflake/connections.toml
+Enter host: [optional: press ENTER to skip]
+Enter port: [optional: press ENTER to skip]
+Enter region: [optional: press ENTER to skip]
+Enter authenticator: [optional: press ENTER to skip]
+Enter private key file: [optional: press ENTER to skip]
+Enter token file path: [optional: press ENTER to skip]
+Wrote new connection marketing_demo_v3_conn to /path_to_your_configuration_file/.snowflake/connections.toml
 ```
 
 Let's set the connection to the default connection:
@@ -106,12 +106,11 @@ snow connection list
 
 Refer to the desired output below:
 ```shell
-+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
-| connection_name        | parameters                                                                                                                                                            | is_default |
-|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------|
-| marketing_demo_v3_conn | {'account': '******', 'user': '******', 'password': '****', 'database': 'snowflake', 'schema': 'account_usage', 'warehouse': 'compute_wh',                            | True       |
-|                        | 'role': 'accountadmin'}                                                                                                                                               |            |
-+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------+
++------------------------+------------------------------------------------------------------------------------------------------------------------------------------+---------------+
+| connection_name        | parameters                                                                                                                               | is_default    |
+|------------------------+------------------------------------------------------------------------------------------------------------------------------------------+---------------|
+| marketing_demo_v3_conn | {'account': '******', 'user': '******', 'password': '****', 'database': 'snowflake', 'schema': 'account_usage', 'role': 'accountadmin'}  | True          |
++------------------------+------------------------------------------------------------------------------------------------------------------------------------------+---------------+
 ```
 
 
@@ -125,8 +124,11 @@ Ensure that Docker Desktop is running and that you're signed in to your Docker a
 ### Bypass MFA
 Create a Worksheet in Snowsight and run the following command to disble MFA for 30 minutes. This statement is to allow the many cells in the Jupyter Notebook to run successfully without waiting for MFA approval from the user.
 ```sql
-ALTER USER <replace with your user> SET MINS_TO_BYPASS_MFA = 30;
+ALTER USER <replace with your user> SET MINS_TO_BYPASS_MFA = 45;
 ```
+
+### Open Docker Desktop
+Open Docker Desktop and sign into your Docker account. Leave the Docker Desktop application open in the background.
 
 ### To use VSCode
 Open the project with VSCode and select the [**deployment.ipynb**](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3/blob/main/scripts/deployment_na_spcs.ipynb) file from the File explorer. Then, select the virtual environment you created as the execution kernel for this notebook.
@@ -248,18 +250,32 @@ Under the AI Assistant option you will find a Chatbot that allows you to ask que
 Duration: 10
 If you connect both Data providers and want to start the solution again, you can execute this clean-up script in an SQL Worksheet to delete the Unified Data Model tables and clean up the connected sources.
 
-Replace ***<USERNAME>*** with the actual value of your application.
 
 ```SQL
-DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>.TARGET.DIM_ACCOUNT_FIVETRAN_FACEBOOK;
-DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>.TARGET.DIM_AD_GROUP_FIVETRAN_FACEBOOK;
-DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>.TARGET.DIM_CAMPAIGN_FIVETRAN_FACEBOOK;
-DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>.TARGET.METRICS_FIVETRAN_FACEBOOK;
+USE ROLE ACCOUNTADMIN;
 
-DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>.TARGET.DIM_AD_GROUP_OMNATA_LINKEDIN;
-DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>.TARGET.DIM_CAMPAIGN_OMNATA_LINKEDIN;
+-- Replace NAME with the actual value of your database
+DROP DATABASE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_NAME CASCADE;
+DROP DATABASE IF EXISTS MARKETING_DATA_FOUNDATION_V3 CASCADE;
+DROP DATABASE IF EXISTS C360_SAMPLE_DB CASCADE;
+DROP DATABASE IF EXISTS FIVETRAN_CONNECTOR_DEMO CASCADE;
+DROP DATABASE IF EXISTS DATA_QUALITY_NOTEBOOKS CASCADE;
+DROP DATABASE IF EXISTS OMNATA_CONNECTOR_DEMO CASCADE;
+DROP DATABASE IF EXISTS LLM_DEMO CASCADE;
 
-DROP TABLE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_<USERNAME>.TARGET.CAMPAIGN_PERFORMANCE;
+-- Replace application name with your application name
+DROP APPLICATION IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_REPLACE_WITH_YOUR_APPLICATION_NAME CASCADE;
+-- Replace application package name with your application package name
+DROP APPLICATION PACKAGE IF EXISTS MARKETING_DATA_FOUNDATION_STARTER_V3_PKG_REPLACE_WITH_YOUR_APPLICATION_PACKAGE_NAME; 
+
+ALTER COMPUTE POOL IF EXISTS MARKETING_DATA_FOUNDATION_COMPUTE_POOL STOP ALL;
+DROP COMPUTE POOL IF EXISTS MARKETING_DATA_FOUNDATION_COMPUTE_POOL;
+
+DROP WAREHOUSE IF EXISTS MARKETING_DATA_FOUNDATION_WAREHOUSE;
+DROP WAREHOUSE IF EXISTS MDFSV3SPCS_XSMALL_WH;
+DROP WAREHOUSE IF EXISTS MDFSV3SPCS_BUILD_WH;
+
+DROP ROLE IF EXISTS MARKETING_DATA_FOUNDATION_V3_ROLE;
 ```
 
 Use this cleanup script to remove all objects created in this Quickstart.
