@@ -5,9 +5,9 @@ environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Featured, Data Engineering, Snowpark, Cortex AI, Snowpark DB API, Iceberg Tables, Observability
-authors: sfc-gh-praj
+authors: Phani Raj
 
-# Building a Retail Analytics Data Engineering Pipeline with Snowflake
+# Build a Retail Analytics Data Engineering Pipeline with Snowflake
 <!-- ------------------------ -->
 
 ## Overview
