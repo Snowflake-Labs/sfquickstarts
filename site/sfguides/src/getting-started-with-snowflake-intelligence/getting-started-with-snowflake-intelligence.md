@@ -94,6 +94,8 @@ This tool allows the agent to search and retrieve information from unstructured 
 
 An agent is an intelligent entity within Snowflake Intelligence that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data. 
 
+Note that you can create multiple agents for various use cases and/or business teams in your organization. 
+
 * In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Agents** 
 * On the top right, click on **Create agent**
      - Schema: SNOWFLAKE_INTELLIGENCE.AGENTS
@@ -105,7 +107,7 @@ An agent is an intelligent entity within Snowflake Intelligence that acts on beh
 
 Select the newly created **Sales_AI** agent and click on **Edit** on the top right corner and make the following updates.
 
-Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset.
+Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
 
 * Tools
   - **Cortex Analyst**
