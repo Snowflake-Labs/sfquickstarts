@@ -42,7 +42,7 @@ Snowflake Intelligence streamlines data-driven decision-making across various bu
 
 ### Prerequisites
 
-* Access to a [Snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role
+* Access to a [Snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role in a region where you have access to Anthropic Claude 4, OpenAI GPT 4.1. Otherwise, you will need to enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference).
 
 ### What You Will Learn
 
@@ -68,12 +68,16 @@ Duration: 20
 
 ### Cortex Analyst
 
+This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
+
 * In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Cortex Analyst** 
 * On the top right, click on **Create new model** down arrow and select **Upload your YAML file** 
 * Upload [marketing_campaigns.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/marketing_campaigns.yaml) to **DASH_DB_SI.RETAIL** >> **SEMANTIC_MODELS** to create "Sales And Marketing Data" semantic model 
 * On the top right, click on **Save** 
 
 ### Cortex Search
+
+This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform Retrieval Augmented Generation (RAG).
 
 * In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Cortex Search** 
 * On the top right, click on **Create**
@@ -88,6 +92,8 @@ Duration: 20
 
 ### Create Agent
 
+An agent is an intelligent entity within Snowflake Intelligence that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data. 
+
 * In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Agents** 
 * On the top right, click on **Create agent**
      - Schema: SNOWFLAKE_INTELLIGENCE.AGENTS
@@ -98,6 +104,8 @@ Duration: 20
 ### Edit Agent
 
 Select the newly created **Sales_AI** agent and click on **Edit** on the top right corner and make the following updates.
+
+Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset.
 
 * Tools
   - **Cortex Analyst**
@@ -135,13 +143,29 @@ In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Snowflak
 
 ![Q1](assets/q&a_1.png)
 
+___
+
 ### Q2. *What issues are reported with jackets recently in customer support tickets?*
 
 ![Q2](assets/q&a_2.png)
 
+___
+
 ### Q3. *Why did sales of Fitness Wear grow so much in July?*
 
 ![Q3](assets/q&a_3.png)
+
+___
+
+### Sample Questions
+
+Here are some other questions you may ask.
+
+#### * *Which product categories perform best on social media?*
+
+#### * *What's the relationship between social media mentions and sales?*
+
+#### * *How do different regions respond to marketing campaigns?*
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
