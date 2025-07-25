@@ -3,7 +3,7 @@ id: building_scalable_time_series_forecasting_models_on_snowflake
 summary: Automatically Build, Register and Run Inferencing on Paritioned Forecasting Models in Snowflake.
 categories: data-science, getting-started
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, Getting Started, Data Engineering, Machine Learning, Snowpark
 
@@ -30,7 +30,6 @@ This guide will walk you through the process of:
 ### What You’ll Need 
 - A Snowflake account (ideally with CREATE DATABASE permissions). If you do not have a Snowflake account, you can register for a [Snowflake free 30-day trial](https://trial.snowflake.com).
 - The aforementioned Github Repository
-- If you want to run the notebooks using Container Runtime, you will need to use a role other than ACCOUNTADMIN, SECURITYADMIN or ORGADMIN.
 
 ### What You’ll Build 
 - An end-to-end Snowflake Notebook based forecasting solution for your time series data.

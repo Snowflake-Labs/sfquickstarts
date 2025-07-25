@@ -3,7 +3,7 @@ id: financial-services-asset-management-snowflake
 summary: Financial Services Asset Management Demo
 categories: Getting-Started
 environments: web
-status: Hidden 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter 
 

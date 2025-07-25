@@ -104,6 +104,10 @@ This application consists of two sections. The dashboard presents reviews and in
 
 ![sentiment-graph](assets/sentiment-graph.png)
 
+### Troubleshooting
+
+If you are getting an error related to model availability, you can enable [cross region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference). To do that run the following sql `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';`
+
 <!-- ------------------------ -->
 ## Understanding the Enhancing Customer Experiences Using Unstructured Data App
 Duration: 10
