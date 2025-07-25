@@ -28,7 +28,7 @@ Snowflake Intelligence is an agentic AI solution, enabling business users to dir
 
 * Enterprise-grade security and governance: Honors existing access controls and governance, unifies information from Snowflake and third-party applications for a holistic view, and provides transparency on how answers are derived and data lineage.
 
-<!-- ![Cortex AISQL](assets/cortex_aisql.png) -->
+![Snowflake Intelligence](assets/si.png)
 
 ### Use Cases
 
@@ -39,8 +39,6 @@ Snowflake Intelligence streamlines data-driven decision-making across various bu
 * Enhanced research & financial insights: Enrich internal data with external sources via Cortex Knowledge Extensions, allowing financial analysts to combine portfolio performance with market news, or product managers to analyze customer feedback alongside industry reports for deeper context.
 
 * Self-service data exploration: Enable all business users to independently explore data and get immediate answers to complex questions, reducing reliance on data teams and accelerating decisions across the organization.
-
-
 
 ### Prerequisites
 
@@ -59,18 +57,23 @@ A Snowflake Intelligence agent that can intelligently respond to questions by re
 
 Duration: 20 
 
-**Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/setup.sql) to execute all statements in order from top to bottom.
+### Create database, schema, tables and load data from AWS S3
 
-**Step 2.** Switch Snowsight user role to **SNOWFLAKE_INTELLIGENCE_ADMIN**
+* Clone [GitHub repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence).
 
-**Step 3.** Cortex Analyst
+* In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/setup.sql) to execute all statements in order from top to bottom.
+
+> aside positive
+> NOTE: Switch your user role in Snowsight to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
+
+### Cortex Analyst
 
 * In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Cortex Analyst** 
 * On the top right, click on **Create new model** down arrow and select **Upload your YAML file** 
 * Upload [marketing_campaigns.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/marketing_campaigns.yaml) to **DASH_DB_SI.RETAIL** >> **SEMANTIC_MODELS** to create "Sales And Marketing Data" semantic model 
 * On the top right, click on **Save** 
 
-**Step 4.** Cortex Search
+### Cortex Search
 
 * In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Cortex Search** 
 * On the top right, click on **Create**
@@ -83,7 +86,7 @@ Duration: 20
     - Select columns to include in the service: Select all
     - Configure your Search Service: *Keep default values*
 
-**Step 5.** Agent
+### Create Agent
 
 * In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Agents** 
 * On the top right, click on **Create agent**
@@ -92,25 +95,31 @@ Duration: 20
      - Agent object name: Sales_AI
      - Display name: Sales//AI
 
-**Step 5.** Select the newly created **Sales_AI** agent and click on **Edit** on the top right corner
-   * Tools
-     - **Cortex Analyst**
-        - Click on **+ Add**
-            - Name: Sales And Marketing Data
-            - Add: Semantic model file DASH_DB_SI.RETAIL.SEMANTIC_MODELS >> **marketing_campaigns.yaml**
-            - Warehouse: DASH_WH_SI
-            - Query timeout (seconds): 60
-            - Description: The Sales and Marketing Data model in DASH_DB_SI.RETAIL schema provides a complete view of retail business performance by connecting marketing campaigns, product information, sales data, and social media engagement. The model enables tracking of marketing campaign effectiveness through clicks and impressions, while linking to actual sales performance across different regions. Social media engagement is monitored through influencer activities and mentions, with all data connected through product categories and IDs. The temporal alignment across tables allows for comprehensive analysis of marketing impact on sales performance and social media engagement over time.
-     - **Cortex Search Services**
-        - Click on **+ Add**
-            - Name: Support Cases
-            - Search service: DASH_DB_SI.RETAIL >> **Support_Cases**
-            - ID column: ID
-            - Title column: TITLE
-   * **Orchestration**: Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.
-   * **Access**: SNOWFLAKE_INTELLIGENCE_ADMIN
+### Edit Agent
 
-**Step 6.** On the top right corner, click on **Save** to save the newly updated **Sales_AI** agent
+Select the newly created **Sales_AI** agent and click on **Edit** on the top right corner and make the following updates.
+
+* Tools
+  - **Cortex Analyst**
+    - Click on **+ Add**
+        - Name: Sales And Marketing Data
+        - Add: Semantic model file **DASH_DB_SI.RETAIL.SEMANTIC_MODELS** >> **marketing_campaigns.yaml**
+        - Warehouse: DASH_WH_SI
+        - Query timeout (seconds): 60
+        - Description: *The Sales and Marketing Data model in DASH_DB_SI.RETAIL schema provides a complete view of retail business performance by connecting marketing campaigns, product information, sales data, and social media engagement. The model enables tracking of marketing campaign effectiveness through clicks and impressions, while linking to actual sales performance across different regions. Social media engagement is monitored through influencer activities and mentions, with all data connected through product categories and IDs. The temporal alignment across tables allows for comprehensive analysis of marketing impact on sales performance and social media engagement over time.*
+  - **Cortex Search Services**
+    - Click on **+ Add**
+        - Name: Support Cases
+        - Search service: **DASH_DB_SI.RETAIL** >> **Support_Cases**
+        - ID column: ID
+        - Title column: TITLE
+
+* Orchestration: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
+
+* Access: SNOWFLAKE_INTELLIGENCE_ADMIN
+
+> aside positive
+> NOTE: On the top right corner, click on **Save** to save the newly updated **Sales_AI** agent.
 
 <!-- ------------------------ -->
 ## Snowflake Intelligence
@@ -122,15 +131,15 @@ Duration: 5
 
 In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Snowflake Intelligence** and let's ask the following questions.
 
-Q1: *Show me the trend of sales by product category between June and August*
+### Q1. *Show me the trend of sales by product category between June and August*
 
 ![Q1](assets/q&a_1.png)
 
-Q2: *What issues are reported with jackets recently in customer support tickets?*
+### Q2. *What issues are reported with jackets recently in customer support tickets?*
 
 ![Q2](assets/q&a_2.png)
 
-Q3: *Why did sales of Fitness Wear grow so much in July?*
+### Q3. *Why did sales of Fitness Wear grow so much in July?*
 
 ![Q3](assets/q&a_3.png)
 
