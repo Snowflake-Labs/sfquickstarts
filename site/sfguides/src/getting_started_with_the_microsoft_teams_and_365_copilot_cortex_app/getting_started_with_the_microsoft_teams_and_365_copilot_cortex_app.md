@@ -179,7 +179,7 @@ To set up Cortex Analyst you will have to upload a semantic file.
 Cortex Analyst is a highly accurate text to sql generator and in order to produce highly accurate results a semantic file such as this one is required. Cortex Analyst will use this semantic file along with user prompts to generate accurate SQL.
 
 To set up Cortex Analyst you will have to upload a semantic file.
-- Download [cortex_agent_definition.json](https://github.com/Snowflake-Labs/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app/cortex_agent_definition.json) (NOTE: Do NOT right-click to download.)
+- Download [cortex_agent_definition.json](https://github.com/Snowflake-Labs/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app/blob/main/cortex_agent_definition.json) (NOTE: Do NOT right-click to download.)
 - Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS
 - Click "+ Files" in the top right
 - Browse and select cortex_agent_definition.json file
