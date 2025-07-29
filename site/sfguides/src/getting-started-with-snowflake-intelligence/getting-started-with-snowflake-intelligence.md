@@ -163,11 +163,11 @@ ___
 
 Here are some other questions you may ask.
 
-#### * *Which product categories perform best on social media?*
+#### *Which product categories perform best on social media?*
 
-#### * *What's the relationship between social media mentions and sales?*
+#### *What's the relationship between social media mentions and sales?*
 
-#### * *How do different regions respond to marketing campaigns?*
+#### *How do different regions respond to marketing campaigns?*
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
