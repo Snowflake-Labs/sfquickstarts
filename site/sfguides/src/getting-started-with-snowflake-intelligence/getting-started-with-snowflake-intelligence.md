@@ -84,7 +84,7 @@ This tool allows the agent to search and retrieve information from unstructured 
     - Role and Warehouse: SNOWFLAKE_INTELLIGENCE_ADMIN | COMPUTE_WH
     - Database and Schema: DASH_DB_SI.RETAIL
     - Name: Support_Cases
-    - Select data to be indexed: SUPPORT_CASES 
+    - Select data to be indexed: select SUPPORT_CASES table
     - Select a search column: TRANSCRIPT
     - Select attribute column(s): TITLE, PRODUCT 
     - Select columns to include in the service: Select all
@@ -112,14 +112,14 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 * Tools
   - **Cortex Analyst**
     - Click on **+ Add**
-        - Name: Sales And Marketing Data
+        - Name: Sales_And_Marketing_Data
         - Add: Semantic model file **DASH_DB_SI.RETAIL.SEMANTIC_MODELS** >> **marketing_campaigns.yaml**
         - Warehouse: DASH_WH_SI
         - Query timeout (seconds): 60
         - Description: *The Sales and Marketing Data model in DASH_DB_SI.RETAIL schema provides a complete view of retail business performance by connecting marketing campaigns, product information, sales data, and social media engagement. The model enables tracking of marketing campaign effectiveness through clicks and impressions, while linking to actual sales performance across different regions. Social media engagement is monitored through influencer activities and mentions, with all data connected through product categories and IDs. The temporal alignment across tables allows for comprehensive analysis of marketing impact on sales performance and social media engagement over time.*
   - **Cortex Search Services**
     - Click on **+ Add**
-        - Name: Support Cases
+        - Name: Support_Cases
         - Search service: **DASH_DB_SI.RETAIL** >> **Support_Cases**
         - ID column: ID
         - Title column: TITLE
