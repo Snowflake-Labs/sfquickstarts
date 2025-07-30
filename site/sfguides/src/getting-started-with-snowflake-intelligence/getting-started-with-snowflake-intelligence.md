@@ -175,7 +175,7 @@ ___
 NOTE: Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **Sales_AI** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**: "If the email is not provided, send it to YOUR_EMAIL_ADDRESS_GOES_HERE".
 ___
 
-### Sample Questions
+### Other Questions
 
 Here are some other questions you may ask.
 

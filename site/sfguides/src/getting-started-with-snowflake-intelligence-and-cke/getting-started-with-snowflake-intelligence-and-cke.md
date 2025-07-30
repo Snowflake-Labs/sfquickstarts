@@ -1,5 +1,5 @@
 id: getting-started-with-snowflake-intelligence-and-cke
-summary: This guide outlines the process for getting started with Snowflake Intelligence.
+summary: This guide outlines the process for getting started with Snowflake Intelligence and Cortex Knowledge Extensions.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
 status: Published
@@ -79,30 +79,43 @@ Note that you can create multiple agents for various use cases and/or business t
 * On the top right, click on **Create agent**
      - Schema: SNOWFLAKE_INTELLIGENCE.AGENTS
      - Select **Create this agent for Snowflake Intelligence**
-     - Agent object name: HCLS
-     - Display name: HCLS
+     - Agent object name: PubMed_Biomedical
+     - Display name: PubMed_Biomedical
 
-### Edit Agent
-
-Select the newly created **HCLS** agent and click on **Edit** on the top right corner and make the following updates.
+### Add Tools
 
 Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
 
+Select the newly created **PubMed_Biomedical** agent and click on **Edit** on the top right corner and make the following updates.
+
 * Tools
+
   - **Cortex Search Services**
     - Click on **+ Add**
-        - Name: PubMed
+        - Name: PubMed_Biomedical
         - Database and Schema: **PUBMED_BIOMEDICAL_RESEARCH_CORPUS.OA_COMM**
         - Search service: **PUBMED_BIOMEDICAL_RESEARCH_CORPUS.OA_COMM.PUBMED_OA_CKE_SEARCH_SERVICE**
         - ID column: PMID
         - Title column: ARTICLE_URL
+        
+  - **Custom tools**
+    - Click on **+ Add**
+      - Name: Send_Email
+      - Resource type: procedure
+      - Database & Schema: **DASH_SI_CKE.DATA**
+      - Custom tool identifier: **DASH_SI_CKE.DATA.SEND_EMAIL()**
+      - Parameter: body
+      - Parameter: recipient_email
+        - Description: *If the email is not provided, send it to **YOUR_EMAIL_ADDRESS_GOES_HERE***.
+      - Parameter: subject
+      - Warehouse: **COMPUTE_WH**
 
 * Orchestration: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
 
 * Access: SNOWFLAKE_INTELLIGENCE_ADMIN
 
 > aside positive
-> NOTE: On the top right corner, click on **Save** to save the newly updated **Sales_AI** agent.
+> NOTE: On the top right corner, click on **Save** to save the newly updated **PubMed_Biomedical** agent.
 
 <!-- ------------------------ -->
 ## Snowflake Intelligence
@@ -136,6 +149,13 @@ ___
 
 ![Q3](assets/q&a_4.png)
 
+___
+
+### Q5. *Send a summary email*
+
+NOTE: Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **PubMed_Biomedical** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**: "If the email is not provided, send it to YOUR_EMAIL_ADDRESS_GOES_HERE".
+
+___
 
 ### Other Questions
 
