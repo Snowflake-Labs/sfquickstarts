@@ -177,7 +177,6 @@ ENCRYPTION = ( TYPE = 'SNOWFLAKE_SSE' );
 ```
 
 4. Now that we have our database ready, we can also upload the script files to the PUBLIC schema of the DOCS stage in the SCRIPT_DB database. To do this select **Data -> MOVIELENS -> DATA -> Stages -> DOCS. Click +FILES** to upload the movie script you have previously downloaded.
-
 ![](assets/uploadpdf.png)
 
 Once uploaded you should be able to see your PDF file in your webpage to validate that you have successfully uploaded the movie script.
