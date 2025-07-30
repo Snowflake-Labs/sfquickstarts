@@ -72,7 +72,7 @@ This tool enables the agent to query structured data in Snowflake by generating 
 
 * In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Cortex Analyst** 
 * On the top right, click on **Create new model** down arrow and select **Upload your YAML file** 
-* Upload [marketing_campaigns.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/marketing_campaigns.yaml) to **DASH_DB_SI.RETAIL** >> **SEMANTIC_MODELS** to create "Sales And Marketing Data" semantic model 
+* Upload [marketing_campaigns.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/marketing_campaigns.yaml) | Select database, schema, and stage: **DASH_DB_SI.RETAIL** >> **SEMANTIC_MODELS** 
 * On the top right, click on **Save** 
 
 ### Cortex Search
@@ -85,10 +85,10 @@ This tool allows the agent to search and retrieve information from unstructured 
     - Database and Schema: **DASH_DB_SI.RETAIL**
     - Name: Support_Cases
     - Select data to be indexed: select SUPPORT_CASES table
-    - Select a search column: TRANSCRIPT
-    - Select attribute column(s): TITLE, PRODUCT 
+    - Select a search column: select TRANSCRIPT
+    - Select attribute column(s): select TITLE, PRODUCT 
     - Select columns to include in the service: Select all
-    - Configure your Search Service: *Keep default values*
+    - Configure your Search Service: Keep default values **except** select **COMPUTE_WH** for "Warehouse for indexing"
 
 ### Create Agent
 
@@ -103,11 +103,11 @@ Note that you can create multiple agents for various use cases and/or business t
      - Agent object name: Sales_AI
      - Display name: Sales//AI
 
-### Edit Agent
-
-Select the newly created **Sales_AI** agent and click on **Edit** on the top right corner and make the following updates.
+### Add Tools
 
 Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
+
+Select the newly created **Sales_AI** agent and click on **Edit** on the top right corner and make the following updates.
 
 * Tools
   - **Cortex Analyst**
