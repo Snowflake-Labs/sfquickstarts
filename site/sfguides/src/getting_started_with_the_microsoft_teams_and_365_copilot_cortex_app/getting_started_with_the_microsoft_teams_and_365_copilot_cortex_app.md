@@ -3,7 +3,7 @@ id: getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app
 summary: This is a quickstart showing users how use the Microsoft Teams and 365 Copilot Cortex App
 categories: AI, Cortex, Microsoft, Azure, Agents, Copilot, Teams, Search, Analyst
 environments: web
-status: Hidden 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: AI, Microsoft, Agents, Cortex, Copilot, chatbot, Teams, Cortex, Search, Analyst
 
@@ -66,6 +66,8 @@ The authentication and user flow goes like this:
 <!-- ------------------------ -->
 ## Setup Snowflake
 Duration: 9
+
+In this section we will load data to Snowflake, create Search and Analyst Services on unstructured and structured data respectively then grant the necessary permissions.
 
 
 ```sql
@@ -199,14 +201,17 @@ GRANT READ ON STAGE MODELS TO ROLE PUBLIC;
 Duration: 12
 
 A Global Administrator for your Microsoft Entra ID tenant must use the two links below to grant the necessary permissions for the applications. Please review the permissions requested on each consent screen before accepting.
-
+```
  <TENANT-ID> with your organization’s tenant identifier:
 https://login.microsoftonline.com/<TENANT-ID>/adminconsent?client_id=5a840489-78db-4a42-8772-47be9d833efe
+```
 
 ![](assets/consentone.png)
 
+```
 Replace <TENANT-ID> with your organization’s tenant identifier:
 https://login.microsoftonline.com/<TENANT-ID>/adminconsent?client_id=bfdfa2a2-bce5-4aee-ad3d-41ef70eb5086
+```
 
 ![](assets/consenttwo.png)
 
@@ -214,6 +219,7 @@ Admins should also make sure the Snowflake users have an email address in their 
 
 Admins should execute the below code to create the security integration necessary to authenticate with Entra ID.
  <TENANT-ID> with your organization’s tenant identifier:
+
 ```sql
 CREATE OR REPLACE SECURITY INTEGRATION entra_id_cortex_agents_integration 
 TYPE = EXTERNAL_OAUTH 
@@ -230,7 +236,7 @@ Search for "Snowflake Cortex Agents" in the Teams App Store and click "Add".
 The first user from your organization to interact with the agent will be guided through a one-time setup process to connect your Snowflake account for the whole organization. This user must have administrative permissions in the target Snowflake account to complete the setup.
 
 Depending on your organization’s Microsoft Teams policies, a Teams Administrator may need to approve or unblock the application before it is available to users. Reach to [Overview of app management and governance in Teams admin center”](https://learn.microsoft.com/en-us/microsoftteams/manage-apps) article in order to get more information on managing access to Teams Applications across an organization.
-ADD SCREENSHPT HERE OF ADD
+
 
 Upon the first interaction with the agent, you will be prompted to log in with your Microsoft account.
 
