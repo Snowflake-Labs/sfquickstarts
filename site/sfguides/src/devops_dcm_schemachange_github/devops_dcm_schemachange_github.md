@@ -279,7 +279,7 @@ Now that your first database migration has been deployed to Snowflake, log into 
 You should now see a few new objects in your `DEMO_DB` database:
 
 - A new schema `DEMO` and table `HELLO_WORLD` (created by the first migration script from step 4)
-- A new schema `SCHEMACHANGE` and table `CHAGE_HISTORY` (created by schemachange to track deployed changes)
+- A new schema `SCHEMACHANGE` and table `CHANGE_HISTORY` (created by schemachange to track deployed changes)
 
 Take a look at the contents of the `CHANGE_HISTORY` table to see where/how schemachange keeps track of state. See the [schemachange README](https://github.com/Snowflake-Labs/schemachange) for more details.
 
