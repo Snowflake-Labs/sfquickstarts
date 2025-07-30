@@ -1,11 +1,11 @@
 author: 
 id: Accelerate_Data_Transformation_with_the_Telecom_Data_Cloud
 summary: This is a guide for getting started with Data Integration using Informatica Data Management Cloud
-categories: Getting-Started
+categories: Data Engineering, DE: Transformation
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Data Integration, ETL, ELT, PDO, Informatica
+tags: Data Engineering, DE: Transformation, Getting Started
 
 # Accelerate Data Transformation with the Telecom Data Cloud and Informatica
 
@@ -462,7 +462,7 @@ View job execution progress.
 
 1.	Click **My Jobs** to monitor the job execution. <br>
 ![job](assets/Lab2_Picture67.png)
-2.	Click **Refresh** icon when the “Updates available” message appears.
+2.	Click **Refresh** icon when the Â“Updates availableÂ” message appears.
 3.	When the job is completed, make sure Status is **Success**.
 ![success](assets/v_mct_status.png)
 4.	Drill down to the completed job by clicking the instance name.  Then click Download Session Log to view the log.  
