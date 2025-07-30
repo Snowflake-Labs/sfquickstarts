@@ -81,8 +81,8 @@ This tool allows the agent to search and retrieve information from unstructured 
 
 * In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Cortex Search** 
 * On the top right, click on **Create**
-    - Role and Warehouse: SNOWFLAKE_INTELLIGENCE_ADMIN | COMPUTE_WH
-    - Database and Schema: DASH_DB_SI.RETAIL
+    - Role and Warehouse: **SNOWFLAKE_INTELLIGENCE_ADMIN** | **COMPUTE_WH**
+    - Database and Schema: **DASH_DB_SI.RETAIL**
     - Name: Support_Cases
     - Select data to be indexed: select SUPPORT_CASES table
     - Select a search column: TRANSCRIPT
@@ -98,7 +98,7 @@ Note that you can create multiple agents for various use cases and/or business t
 
 * In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Agents** 
 * On the top right, click on **Create agent**
-     - Schema: SNOWFLAKE_INTELLIGENCE.AGENTS
+     - Schema: **SNOWFLAKE_INTELLIGENCE.AGENTS**
      - Select **Create this agent for Snowflake Intelligence**
      - Agent object name: Sales_AI
      - Display name: Sales//AI
@@ -114,15 +114,28 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
     - Click on **+ Add**
         - Name: Sales_And_Marketing_Data
         - Add: Semantic model file **DASH_DB_SI.RETAIL.SEMANTIC_MODELS** >> **marketing_campaigns.yaml**
-        - Warehouse: DASH_WH_SI
+        - Warehouse: **DASH_WH_SI**
         - Query timeout (seconds): 60
         - Description: *The Sales and Marketing Data model in DASH_DB_SI.RETAIL schema provides a complete view of retail business performance by connecting marketing campaigns, product information, sales data, and social media engagement. The model enables tracking of marketing campaign effectiveness through clicks and impressions, while linking to actual sales performance across different regions. Social media engagement is monitored through influencer activities and mentions, with all data connected through product categories and IDs. The temporal alignment across tables allows for comprehensive analysis of marketing impact on sales performance and social media engagement over time.*
+
   - **Cortex Search Services**
     - Click on **+ Add**
         - Name: Support_Cases
         - Search service: **DASH_DB_SI.RETAIL** >> **Support_Cases**
         - ID column: ID
         - Title column: TITLE
+
+  - **Custom tools**
+    - Click on **+ Add**
+      - Name: Send_Email
+      - Resource type: procedure
+      - Database & Schema: **DASH_DB_SI.RETAIL**
+      - Custom tool identifier: **DASH_DB_SI.RETAIL.SEND_EMAIL()**
+      - Parameter: body
+      - Parameter: recipient_email
+        - Description: *If the email is not provided, send it to **YOUR_EMAIL_ADDRESS_GOES_HERE***.
+      - Parameter: subject
+      - Warehouse: **DASH_WH_SI**
 
 * Orchestration: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
 
@@ -157,6 +170,9 @@ ___
 
 ![Q3](assets/q&a_3.png)
 
+### Q4. *Send a summary email*
+
+NOTE: Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **Sales_AI** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**: "If the email is not provided, send it to YOUR_EMAIL_ADDRESS_GOES_HERE".
 ___
 
 ### Sample Questions
