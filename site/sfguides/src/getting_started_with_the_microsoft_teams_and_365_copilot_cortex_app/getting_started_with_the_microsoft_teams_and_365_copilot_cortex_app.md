@@ -201,15 +201,19 @@ GRANT READ ON STAGE MODELS TO ROLE PUBLIC;
 Duration: 12
 
 A Global Administrator for your Microsoft Entra ID tenant must use the two links below to grant the necessary permissions for the applications. Please review the permissions requested on each consent screen before accepting.
-```
- <TENANT-ID> with your organization’s tenant identifier:
+
+ Replace <TENANT-ID> with your organization’s tenant identifier:
+
+ ```
 https://login.microsoftonline.com/<TENANT-ID>/adminconsent?client_id=5a840489-78db-4a42-8772-47be9d833efe
 ```
 
 ![](assets/consentone.png)
 
-```
+
 Replace <TENANT-ID> with your organization’s tenant identifier:
+
+```
 https://login.microsoftonline.com/<TENANT-ID>/adminconsent?client_id=bfdfa2a2-bce5-4aee-ad3d-41ef70eb5086
 ```
 
