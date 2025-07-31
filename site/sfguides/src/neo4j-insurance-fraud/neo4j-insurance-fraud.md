@@ -1,5 +1,5 @@
 author: Indu Jayapal
-id: SFGUIDE-NAME
+id: insurance-fraud
 summary: Identify insurance fraud using graph analytics
 categories: Getting-Started
 environments: web
@@ -17,7 +17,7 @@ Duration: 2 mins
 
 Neo4j helps organizations find hidden relationships and patterns across billions of data connections deeply, easily, and quickly. Neo4j Graph Analytics for Snowflake brings to the power of graph directly to Snowflake, allowing users to run 65+ ready-to-use algorithms on their data, all without leaving Snowflake!
 
-### Identifying Communities of Fraudulent Claims
+### Identify Communities of Fraudulent Claims
 
 Insurance fraud is estimated to drain \$308–309 billion annually, affecting all lines—including auto, health, property & casualty, and workers’ compensation. As a result, the average U.S. family pays an extra \$400–\$700 per year in premiums. This highlights the critical need for early detection of fraudulent claims to prevent such substantial financial losses.
 
@@ -60,7 +60,9 @@ In the pop up,
 2. Under `Select or create a database and schema`, please create a database with name `I_DEMO`.
 3. Under `Select or create a table`, please click on the '+' symbol and create a new table named `insurance_claims_full`.
 
-Now, a new table named `insurance_claims_full` will be created under `i_demo.public` with the provided CSV.## Setting Up
+Now, a new table named `insurance_claims_full` will be created under `i_demo.public` with the provided CSV.
+
+## Set Up
 
 Duration 5 
 
@@ -122,7 +124,7 @@ use database i_demo;
 use schema public;
 ```
 
-## Cleaning Our Data
+## Clean Our Data
 
 Duration 5 
 
@@ -332,26 +334,7 @@ UNION
 SELECT policy_number::STRING, months_as_customer_bucket::STRING
 FROM rel_policy_months_as_customer_bucket;
 ```
-Let's see how our data is present in the relationships table.
-
-You can also preview the data of these tables from the I_DEMO database under public schema on Snowsight Databases page. Please refer this [documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight-data-databases-table) for more information.
-
-```
-select * from rel_policy_police_report_available
-```
-
-| POLICY_NUMBER | POLICE_REPORT_AVAILABLE |
-| ------------- | ----------------------- |
-| 521585        | YES                     |
-| 342868        | ?                       |
-| 687698        | NO                      |
-| 227811        | NO                      |
-| 367455        | NO                      |
-| 104594        | NO                      |
-| 413978        | ?                       |
-| 429027        | YES                     |
-| 485665        | YES                     |
-| 636550        | ?                       |
+Let's see how our data is present in the relationships table. This table has the policy number as the `sourcenodeid` and different features of the data (like if there was a police report) as `targetnodeid`.
 
 ```
 select * from all_relationships
@@ -365,7 +348,7 @@ select * from all_relationships
 | 737252       | NO           |
 | 281388       | YES          |
 
-## Insurance Claims Embeddings and Similarity
+## Embeddings and Similarity
 
 Duration 10
 
@@ -388,6 +371,7 @@ Our approach leverages two key graph algorithms:
 By combining structural embeddings with similarity search, we move beyond surface-level connections and begin to model how fraud operates across the entire claims graph.
 
 You can find more information about these algorithms in our [documentation](https://neo4j.com/docs/snowflake-graph-analytics/current/algorithms/).
+
 ### Fast Random Projection (FastRP)
 Fraud patterns often hide behind complex, indirect relationships. FastRP allows us to translate each claim's graph position into a compact vector — a structural fingerprint that captures its role in the broader claims network.
 
@@ -493,7 +477,7 @@ ORDER BY score DESC
 
 The KNN results show that many nodes have very high structural similarity scores (mostly above 0.92), indicating they occupy very similar positions in the graph. This suggests that these claims or entities may share common patterns or connections, potentially signaling coordinated behavior. High-scoring pairs are good candidates for closer review to detect possible collusion or fraud.
 
-## Visualizing Your Graph (Experimental)
+## Visualize Your Graph (Experimental)
 Duration 5
 
 Let's visualize how the nodes are similar to one another using the `experimental.visualize` procedure. This interactive tool will help us visually see the similarity score between the nodes.
@@ -564,7 +548,7 @@ components.html(
 ```
 ![image](assets/viz.png)
 
-## Finding Additional Fraud
+## Find Additional Fraud
 
 Duration 5
 We now have pairwise similarity scores between different claims. Let's take a look at our original table and find claims that appear to be structurally the same as fraudulent claims. We are looking for claims that satisfy two conditions:
