@@ -1,5 +1,3 @@
-
-
 author: corydon baylor
 id: finding-similar-patients
 summary: How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake
@@ -9,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
-# Finding Similar Patient Journeys with Neo4j
+# Find Similar Patient Journeys with Neo4j
 
 ## Overview
 
@@ -39,29 +37,27 @@ Neo4j helps organizations find hidden relationships and patterns across billions
 - How to use node similarity to identify similar nodes
 - How to read and write directly from and to your snowflake tables
 
-## Loading The Data
-
+## Load The Data
 Duration: 5
 
 Dataset overview : This dataset is modelled to design and analyze patients and different procedures that they undergo using graph analytics. 
 
+<img src="assets/datamodel.png" alt="image" width="400"/>
+
+
 Let's name our database `NEO4J_PATIENT_DB`. Using the CSVs found [here](https://github.com/neo4j-product-examples/aura-graph-analytics/tree/main/patient_journey/data), We are going to add two new tables:
 
 - One called `PROCEDURES` based on the Procedures.csv
-- One called `PATIENTS based` on Patients.csv
+- One called `PATIENTS` based on Patients.csv
 
 Follow the steps found [here](https://docs.snowflake.com/en/user-guide/data-load-web-ui) to load in your data.
 
-Our data model will be very simple for this example. See below:
-<img src="assets/datamodel.png" alt="image" width="400"/>
-
-## Setting Up
-
+## Set Up
 Duration: 5
 
 ### Import The Notebook
 
-- We’ve provided a Colab notebook to walk you through each SQL and Python step—no local setup required!
+- We’ve provided a notebook to walk you through each SQL and Python step—no local setup required!
 - Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/patient-journey/finding-similar-patients.ipynb), and import the notebook into snowflake.
 
 ### Permissions
@@ -115,7 +111,7 @@ Then we need to switch the role we created:
 USE ROLE gds_user_role;
 ```
 
-## Cleaning Our Data
+## Clean Our Data
 
 Duration: 5
 
@@ -138,15 +134,17 @@ Let's take a look at the starting point for our data. We have a table for patien
 ```sql
 SELECT * FROM NEO4J_PATIENT_DB.PUBLIC.PROCEDURES LIMIT 10;
 ```
+
 <img src="assets/procedures.png" alt="image" width="400"/>
 
 
 ```sql
 SELECT * FROM NEO4J_PATIENT_DB.PUBLIC.PATIENTS LIMIT 10;
 ```
+
 <img src="assets/patients.png" alt="image" width="400"/>
 
-We are then going to clean this up into two tables that just have the nodeids for both patient and procedure:
+We are then going to clean this up into two tables that just have the `nodeids` for both patient and procedure:
 
 
 ```sql
@@ -191,7 +189,71 @@ CREATE OR REPLACE VIEW KidneyPatientProcedure_relationship_vw (sourceNodeId, tar
          JOIN PROCEDURE_NODE_MAPPING ON PROCEDURE_NODE_MAPPING.NODEID = PROCEDURES.CODE;
 ```
 
-## Running Your Algorithms
+## Visualize Your Graph (Experimental)
+Duration: 10
+
+At this point, you may want to visualize your graph to get a better understanding of how everything fits together. Before we do that, we will need to create a subset of our graph to make the visualization more managable.
+
+Let's start by limiting the number of patients down to ten and then finding the procedures those individuals have undergone.
+
+```sql
+-- this is a small subset of the patients in our dataset
+CREATE OR REPLACE VIEW KidneyPatient_viz_vw (nodeId) AS
+SELECT nodeId
+FROM KidneyPatients_vw
+ORDER BY nodeId
+LIMIT 10;
+
+-- this represents the procedures those patients underwent (and will be our relationship table
+-- for the below visualization)
+CREATE OR REPLACE VIEW NEO4J_PATIENT_DB.PUBLIC.procedures_patients_vw AS
+SELECT DISTINCT
+    p.patient as sourcenodeid,
+    p.reasoncode as targetnodeid
+FROM NEO4J_PATIENT_DB.PUBLIC.PROCEDURES p
+JOIN KidneyPatient_viz_vw k
+  ON CAST(p.PATIENT AS STRING) = CAST(k.nodeId AS STRING);
+
+-- now we look at the procedures in our example
+CREATE OR REPLACE VIEW procedures_viz_vw (nodeId) AS
+SELECT distinct targetnodeid
+FROM procedures_patients_vw
+LIMIT 10;
+```
+
+Now, we are ready to visualize our graph. We can do this in two easy steps. Similarly to how we will project graphs for our graph algorithms, we need to specify what are the node and relationship tables:
+
+```sql
+CALL Neo4j_Graph_Analytics.experimental.visualize(
+{
+    'nodeTables': ['NEO4J_PATIENT_DB.public.KidneyPatient_viz_vw',
+                   'NEO4J_PATIENT_DB.public.procedures_viz_vw'
+    ],
+    'relationshipTables': {
+      'NEO4J_PATIENT_DB.public.procedures_patients_vw': {
+        'sourceTable': 'NEO4J_PATIENT_DB.public.KidneyPatient_viz_vw',
+        'targetTable': 'NEO4J_PATIENT_DB.public.procedures_viz_vw'
+      }
+    }
+  },
+  {}
+);
+```
+
+We can access the output of the previous cell by referencing its cell name, in this case `viz`. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the `viz` output as a Pandas DataFrame, then accessing the first row of the "VISUALIZE" column.
+
+```python
+import streamlit.components.v1 as components
+
+components.html(
+    viz.to_pandas().loc[0]["VISUALIZE"],
+    height=600
+)
+```
+
+  ![image](assets/graph.png)
+
+## Find Similar Patients
 
 Duration: 10
 
@@ -261,6 +323,51 @@ You can see the similarity score between one patient and a set of another patien
 
 For example, if a patient had undergone 4 out of 5 of another patients procedures, we might predict that they will likely undergo the fifth procedure as well!
 
+## Sort Into Groups
+
+Using the similarity scores we just calculated, we can then sort our patients into groups based on our related patients pairs and their similarity score using louvain:
+
+```sql
+CALL Neo4j_Graph_Analytics.graph.louvain('CPU_X64_XS', {
+    'defaultTablePrefix': 'neo4j_patient_db.public',
+    'project': {
+        'nodeTables': [ 'KidneyPatients_vw' ],
+        'relationshipTables': {
+            'PATIENT_PROCEDURE_SIMILARITY': {
+                'sourceTable': 'KidneyPatients_vw',
+                'targetTable': 'KidneyPatients_vw',
+                'orientation': 'UNDIRECTED'
+            }
+        }
+    },
+    'compute': {
+        'mutateProperty': 'community_id',
+        'relationshipWeightProperty': 'SIMILARITY'
+
+    },
+    'write': [{
+        'nodeLabel': 'KidneyPatients_vw',
+        'outputTable': 'patient_community',
+        'nodeProperty': 'community_id'
+    }]
+});
+```
+
+We can then take a look at the results like so:
+
+```sql
+select * from neo4j_patient_db.public.patient_community
+```
+
+| NODEID                               | COMMUNITY_ID |
+| ------------------------------------ | ------------ |
+| 00094d82-80de-4444-69cf-cf26fd56b1ac | 61           |
+| 13ca898b-7ee8-4859-6df5-dd6a37fe5ad2 | 66           |
+| 150529c7-3757-5f24-b7ed-4928fcad61cf | 74           |
+| 155d21bc-a41a-32f9-eae4-22bb3629ea99 | 74           |
+| 1b5c0719-72c0-126e-7959-6bd13e2b9268 | 74           |
+| 1c4b63ab-8483-7526-23d7-5e966fd2e6f6 | 74           |
+
 ##  Conclusions And Resources
 
 Duration: 2
@@ -278,4 +385,3 @@ By working with a patient transaction dataset, you were able to:
 ### Resources
 
 - [Neo4j Graph Analytics Documentation](https://neo4j.com/docs/snowflake-graph-analytics/)
-- [Installing Neo4j Graph Analytics on SPCS](https://neo4j.com/docs/snowflake-graph-analytics/installation/)
