@@ -51,7 +51,7 @@ Duration: 5
 Dataset overview : This dataset is a digital twin of the NYC Subway!
 
 
-Let's name our database `MTA`. Using the CSVs found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/modeling-disruptions-subways/modeling-disruptions-subways.ipynb), We are going to add two new tables:
+Let's name our database `MTA`. Using the CSVs found [here](https://github.com/neo4j-product-examples/aura-graph-analytics/tree/main/mta_subways/data), We are going to add two new tables:
 
 - One called `STATIONS` based on stations.csv
 - One called `LINES` on lines.csv
@@ -63,7 +63,7 @@ Follow the steps found [here](https://docs.snowflake.com/en/user-guide/data-load
 ### Import The Notebook
 
 - We’ve provided a Colab notebook to walk you through each SQL and Python step—no local setup required!
-- Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/blob/main/subways/MTA%20Subways.ipynb), and import the notebook into snowflake.
+- Download the .ipynb found [here](https://github.com/neo4j-product-examples/snowflake-graph-analytics/tree/main/modeling-disruptions-subways), and import the notebook into snowflake.
 - Don't forget to install streamlit and python package before you run.
 
 ### Permissions
@@ -158,18 +158,6 @@ Duration: 10
 Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run dijksra to determine the shortest path between subway stations.
 
 You can find more information about writing this function in our [documentation](https://neo4j.com/docs/snowflake-graph-analytics/current/getting-started/).
-
-Broadly, you will need a few things:
-
-| Name                                      | Description                                        | Our Value                  |
-| ----------------------------------------- | -------------------------------------------------- | -------------------------- |
-| `EXAMPLE_DB.DATA_SCHEMA.NODES`            | A table for nodes                                  | `mta.public.nodes`         |
-| `EXAMPLE_DB.DATA_SCHEMA.RELATIONSHIPS`    | A table for relationships                          | `mta.public.relationships` |
-| `COMPUTE_POOL`                            | The size of the compute pool you would like to use | `CPU_X64_XS`               |
-| `EXAMPLE_DB.DATA_SCHEMA.NODES_COMPONENTS` | A table to output results                          | `mta.public.paths`         |
-| `NODES`                                   | A node label for our nodes                         | `nodes`                    |
-
-
 
 ```
 CALL neo4j_graph_analytics.graph.dijkstra('CPU_X64_XS', {
@@ -289,6 +277,7 @@ And then we can pull back our results like so:
 
 
 ```
+CREATE OR REPLACE VIEW mta.public.filtered_station_captions AS
 WITH flattened AS (
   SELECT 
     VALUE::NUMBER AS nodeid,
@@ -297,24 +286,81 @@ WITH flattened AS (
        LATERAL FLATTEN(input => nodeids)
 ),
 filtered AS (
-  SELECT s.*, f.ordering
+  SELECT 
+    s.id AS nodeid,
+    s.station_name AS caption, 
+    f.ordering,
   FROM mta.public.stations s
   JOIN flattened f ON s.id = f.nodeid
 )
-SELECT *
+SELECT 
+    nodeid,
+    ordering,
+    caption
 FROM filtered
 ORDER BY ordering;
+
+select * from mta.public.filtered_station_captions
 ```
 
-| STATION_NAME                  | ID   | ORDERING |
-| ----------------------------- | ---- | -------- |
-| Bergen St - Bk                | 68   | 0        |
-| Atlantic Av-Barclays Ctr - Bk | 67   | 1        |
-| Canal St - M                  | 32   | 2        |
-| 14 St-Union Sq - M            | 104  | 3        |
-| Grand Central-42 St - M       | 103  | 4        |
-| 5 Av - M                      | 186  | 5        |
-| Times Sq-42 St - M            | 24   | 6        |
+| NODEID | ORDERING | CAPTION                       |
+| ------ | -------- | ----------------------------- |
+| 68     | 0        | Bergen St - Bk                |
+| 67     | 1        | Atlantic Av-Barclays Ctr - Bk |
+| 32     | 2        | Canal St - M                  |
+| 104    | 3        | 14 St-Union Sq - M            |
+| 103    | 4        | Grand Central-42 St - M       |
+| 186    | 5        | 5 Av - M                      |
+| 24     | 6        | Times Sq-42 St - M            |
+
+## Visualize Your Graph (Experimental)
+
+At this point, you may want to visualize your graph to get a better understanding of how everything fits together. It would be nice to have our new station path represented visually. We already have everything we need for the nodes from our last step, but we also need to create a relationship table, which we do below:
+
+```sql
+CREATE OR REPLACE VIEW mta.public.relationships_view AS
+WITH ordered_nodes AS (
+  SELECT
+    nodeid AS sourcenodeid,
+    LEAD(nodeid) OVER (ORDER BY ordering) AS targetnodeid
+  FROM mta.public.filtered_station_captions
+)
+SELECT *
+FROM ordered_nodes
+WHERE targetnodeid IS NOT NULL;
+```
+
+We use our `filtered_station_captions` table as our nodes. Notice how we have a column named `caption` in that table with our station names? That naming is on purpose. Graph Analytics automatically picks up on that name and uses it to generate captions for each node.
+
+From here, our syntax will look very familiar to what we have had before when running algorithms.
+
+```
+CALL Neo4j_Graph_Analytics.experimental.visualize(
+{
+    'nodeTables': ['mta.public.filtered_station_captions'],
+    'relationshipTables': {
+      'mta.public.relationships_view': {
+        'sourceTable': 'mta.public.filtered_station_captions',
+        'targetTable': 'mta.public.filtered_station_captions'
+      }
+    }
+  },
+  {}
+);
+```
+
+We can access the output of the previous cell by referencing its cell name, in this case viz. In our next Python notebook cell, we extract the HTML/JavaScript string we want by interpreting the viz output as a Pandas DataFrame, then accessing the first row of the "VISUALIZE" column.
+
+```python
+import streamlit.components.v1 as components
+
+components.html(
+    viz.to_pandas().loc[0]["VISUALIZE"],
+    height=600
+)
+```
+
+![image](assets/viz.png)
 
 ##  Conclusions And Resources
 
