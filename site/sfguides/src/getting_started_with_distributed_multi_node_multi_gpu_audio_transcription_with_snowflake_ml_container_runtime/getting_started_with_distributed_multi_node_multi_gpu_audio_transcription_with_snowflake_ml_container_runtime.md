@@ -25,17 +25,25 @@ In this Quickstart guide, we will walk through how to use [Container Runtime](ht
 
 Container Runtime is a set of preconfigured customizable environments built for machine learning on Snowpark Container Services, covering interactive experimentation and batch ML workloads such as model training, hyperparameter tuning, batch inference and fine tuning. They include the most popular machine learning and deep learning frameworks. Container Runtime also provides flexibility the ability to pip install any open-source package of choice.
 
-### What is Snowflake Notebooks on Container Runtime?
+### What are Snowflake ML Jobs
 
-[Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)  are a powerful IDE option for building ML models at scale in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/). 
+[Snowflake ML Jobs](https://docs.snowflake.com/developer-guide/snowflake-ml/ml-jobs/overview) is a framework which lets you leverage the Container Runtime
+from any environment. You can use the [ML Jobs SDK](https://docs.snowflake.com/en/developer-guide/snowpark-ml/reference/latest/jobs) to:
 
-Snowflake Notebooks are natively built into Snowsight, and provide everything you need for interactive development, cell by cell execution of Python, Markdown and SQL code. By using Snowflake Notebooks one can increase the productivity since it simplifies connecting to the data and using popular OSS libraries for ML use cases. Notebooks on Container Runtime offer a robust environment with a comprehensive repository of pre-installed CPU and GPU machine learning packages and frameworks, significantly reducing the need for package management and dependency troubleshooting. This allows you to quickly get started with your preferred frameworks and even import models from external sources. Additionally, you can use pip to install any custom package as needed. The runtime also features an optimized data ingestion layer and provides a set of powerful APIs for training and hyperparameter tuning. These APIs extend popular ML packages, enabling you to train models efficiently within Snowflake. At the core of this solution is a Ray-powered distributed compute cluster, giving you seamless access to both CPU and GPU resources. This ensures high performance and optimal infrastructure usage without the need for complex setup or configuration, allowing you to focus solely on your machine learning workloads.
+* Submit and manage jobs for execution using [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
+* Leverage GPU and high-memory CPU instances for resource-intensive tasks
+* Use your preferred development environment (VS Code, external notebooks, etc.)
+
+Whether you're looking to productionize your ML workflows or prefer working in
+your own development environment, Snowflake ML Jobs provides the same powerful
+capabilities available in Snowflake Notebooks in a more flexible,
+integration-friendly format.
 
 Key Features:
 
 * Managed Environment: Focus on your ML projects without the overhead of managing underlying infrastructure.  
 * Scalability: Leverage distributed computing resources to efficiently handle large datasets and complex computations.  
-* Integration: Seamlessly combine with Snowflake's ML operations for a cohesive workflow.  
+* Integration: Seamlessly combine with Snowflake's ML operations for a cohesive workflow.
 * Flexibility: While common ML packages come pre-installed, you have the option to install custom packages as needed.
 
 ![ContainerRuntime For ML](assets/container_runtime_for_ml.png)
