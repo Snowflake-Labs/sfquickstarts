@@ -22,7 +22,6 @@ In this quickstart, you'll learn how to build an end-to-end application for mult
 - Creating storage structures for image and audio data
 - Using AI_COMPLETE to analyze images with AI models
 - Implementing audio transcription with AI_TRANSCRIBE
-- Implementing batch processing for multiple media files
 
 ### What You'll Build
 A multimodal analysis system that enables users to:
@@ -31,7 +30,7 @@ A multimodal analysis system that enables users to:
 - Identify scenes, objects, text, and emotions in images
 - Transcribe audio with speaker identification and precise timestamps
 - Generate custom descriptions based on specific prompts
-- Process media files individually or in batch
+- Process media files individually
 - Combine image analysis with audio transcription for comprehensive content understanding
 
 ### Prerequisites
@@ -54,7 +53,6 @@ To set up your Snowflake environment for multimodal analysis:
 4. The script will create:
    - A new database and schema for your project
    - Image and audio storage stages
-   - Tables for processing multimodal content
 
 ### Upload Media Files
 
@@ -118,9 +116,7 @@ The notebook includes:
 - Functions for analyzing images with different AI models
 - Audio transcription with various modes (text, word-level, speaker identification)
 - Example analysis with various prompt types
-- Batch processing capabilities for multiple files
-- Comparison between Claude 3.5 Sonnet and Pixtral-large models
-- Integration of image and audio analysis workflows
+- Comparison between Claude 4 Sonnet and Pixtral-large models for analyzing images
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
