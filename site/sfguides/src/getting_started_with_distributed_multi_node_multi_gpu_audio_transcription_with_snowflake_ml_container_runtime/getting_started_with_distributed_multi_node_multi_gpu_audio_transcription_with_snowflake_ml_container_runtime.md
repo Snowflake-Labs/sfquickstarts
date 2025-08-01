@@ -94,72 +94,41 @@ What You'll Build
 <!-- ------------------------ -->
 Duration: 5
 
-This section will walk you through creating various objects. The repository with the source code can be found [here](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime).
+This section will walk you through creating various objects. The source is included with this sample under [scripts/](./scripts/).
 
-Initial Setup
+Complete the following steps to setup your environment:
 
-Complete the following steps to setup your account:
+* [Install SnowCLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation#install-sf-cli-using-package-managers)
+  and [configure it](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections) to connect to your test account.
 
-* Download the Snowflake Objects creation file “step0\_setup.sql”  from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/step0_setup.sql). 
+  > Tip: You can generate a config for your account from Snowsight using the `Connect a tool to Snowflake` > `Config File` menu items.
+    ![](assets/setup_connect_tool.png) ![](assets/setup_config_file.png)
+
+* Locate the Snowflake Objects creation file [step0_setup.sql](./scripts/step0_setup.sql).
 
 * Roles required to execute commands in file are SYSADMIN and ACCOUNTADMIN.
 
-* In Snowsight navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
+* Run the commands in [step0_setup.sql](./scripts/step0_setup.sql) to create Snowflake objects (database, schema, warehouse, compute pools, and external access integration).
 
-* Paste the contents from the downloaded file “step0\_setup.sql”  in the worksheet
-
-* Run all the commands to create Snowflake objects (database, schema, warehouse, compute pools and external access integration).
-
+  * Using SnowCLI: `snow sql -f scripts/step0_setup.sql`
 
 ## Audio Processing Setup
 <!-- ------------------------ -->
 Duration: 10
 
-This notebook linked below covers the creation of snowflake objects and data loading from a third-party dataset (Audio Files) into snowflake stage. **Be sure to comply with the dataset's licensing terms and usage guidelines.**
+The steps below covers the creation of snowflake objects and data loading from a third-party dataset (Audio Files) into snowflake stage. **Be sure to comply with the dataset's licensing terms and usage guidelines.**
 
 **Audio Processing Setup Notebook**
 
 To get started, follow these steps: 
 
-* Download the notebook “Audio Processing \- Setup.ipynb” from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Setup.ipynb)
+* Locate the file [step1_audio_processing.sh](./scripts/step1_audio_processing.sh)
 
-* Navigate to Snowsight and change role to **SYSADMIN**
+* Run the script using `bash ./scripts/step1_audio_processing.sh`
 
-* Navigate to **Projects** \> **Notebooks** in Snowsight
+  * The script requires SnowCLI to be installed and configured from [Setup Environment](#setup-environment) to run
 
-* On the top right, click on **Notebook** down arrow and select **Import .ipynb** file from the dropdown menu
-
-* Create a new notebook “Audio Processing \- Setup.ipynb” with the following settings
-
- * For the Notebook Location, select MULTINODE\_MULTIGPU\_MYDB database and AUDIO\_TRANSCRIPTION\_SCH schema
-
-  * Select Warehouse – ML\_MODEL\_WH
-
-  * Python Environment \- Run On Container
-
-  * Runtime \- Snowflake ML Runtime CPU 1.0
-
-  * Compute Pool \- AUDIO\_PROCESSING\_CP\_DATA\_DOWNLOAD
-
-  * Click on **Create Button**
-
-    
-
-![Audio Processing Setup](assets/Audio_processing_Setup_create_notebook.png)
-
-* Click the three dots in the top right \> Notebook Settings  
-* Enable the ALLOW\_ALL\_INTEGRATION and click SAVE.
-
-![Audio Processing Setup External Access](assets/Audio_processing_Setup_notebook_settings_external_access.png)
-
-* Run cells in the notebook\!
-
-* Notebook will download the audio files from LibriSpeech ASR corpus as noted here: [https://www.openslr.org/resources/12](https://www.openslr.org/resources/12). The notebook also puts these audio files in a snowflake internal stage named AUDIO\_FILES\_STAGE.
-
-![Audio Processing Setup Notebook](assets/Audio_processing_notebook.png)
-
-
-Note: - "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
+* The script will download the audio files from LibriSpeech ASR corpus as noted here: [https://www.openslr.org/resources/12](https://www.openslr.org/resources/12). The notebook also puts these audio files in a snowflake internal stage named `AUDIO_FILES_STAGE`.
 
 ## Audio Transcription
 <!-- ------------------------ -->
