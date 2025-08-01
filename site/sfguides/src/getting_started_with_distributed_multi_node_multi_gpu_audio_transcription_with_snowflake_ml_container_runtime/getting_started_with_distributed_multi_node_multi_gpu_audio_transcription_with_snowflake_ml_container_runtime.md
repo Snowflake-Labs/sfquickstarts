@@ -84,7 +84,7 @@ Prerequisites
 
 * Foundational knowledge of Data Science workflows
 
-* (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+* (Optional) Completed [Getting Started with Snowflake ML Jobs](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/ml/ml_jobs#getting-started)
 
 What You'll Build
 
@@ -173,53 +173,9 @@ label_dataset.write_datasink(datasink, concurrency=4)
 
 
 
-**Audio Processing and Distributed Inferencing Notebook**
+### Audio Processing and Distributed Inferencing Job
 
-To get started, follow these steps:
-
-* Download the notebook “Audio Processing \- Distributed Inferencing.ipynb” from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Distributed%20Inferencing.ipynb)
-
-* Navigate to Snowsight and change role to **SYSADMIN**
-
-* Navigate to **Projects** \> **Notebooks** in Snowsight
-
-* On the top right, click on **Notebook** down arrow and select **Import .ipynb** file from the dropdown menu
-
-* Create a new notebook with the following settings
-
-  * For the Notebook Location, select MULTINODE\_MULTIGPU\_MYDB database and AUDIO\_TRANSCRIPTION\_SCH schema
-
-  * Select Warehouse – ML\_MODEL\_WH
-
-  * Python Environment \- Run On Container
-
-  * Runtime \- Snowflake ML Runtime GPU 1.0
-
-  * Compute Pool \- AUDIO\_PROCESSING\_CP\_GPU\_NV\_S\_5\_NODES
-
-  * Click on **Create Button**
-
-![Audio Processing Distributed Inferencing Notebook](assets/Audio_processing_Distributed_Inferencing_create_notebook.png)
-
-* Click the three dots in the top right \> Notebook Settings  
-* Enable the ALLOW\_ALL\_INTEGRATION and click SAVE.
-
-
-![Audio Processing Distributed Inferencing Notebook External Access](assets/Audio_processing_Distributed_Inferencing_notebook_settings_external_access.png)
-
-* Run cells in the notebook\!
-
-      Lets break down step by step in the notebook
-
-- Create a Ray cluster and scale upto 5 nodes.  
-- Configure logging for Ray Cluster and do necessary setups for the Ray Cluster  
-- Verify the Audio files in the stage uploaded during Step 3\.  
-- Download the whisper model from OpenAI for distributed inferencing of the audio files  
-- Run distributed inference on the multi-node, multi-GPU audio transcription  
-- Write data to the Snowflake table using Snowflake APIs.
-
-
-Note: "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
+> !TODO! Replace this with ML Job version of the main Notebook
 
 ## Value Proposition
 <!-- ------------------------ -->
