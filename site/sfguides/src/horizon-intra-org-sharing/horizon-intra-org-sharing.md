@@ -1,11 +1,11 @@
 authors: Matthias Nicola, Vinay Srihari
 id: horizon_intra_org_sharing
-summary: explore Horizon Access pillar features for intra-company sharing of data and apps
+summary: explore Horizon Collaboration pillar features for intra-company sharing of data and apps
 categories: Data-Sharing
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Summit HOL, Data Sharing, Horizon Access
+tags: Data Sharing, Horizon Collaboration, Private Listing
 
 # Explore Cross-Cloud Sharing of Data and Applications with Private Listings
 <!-- ------------------------ -->
@@ -1590,7 +1590,7 @@ Try the same steps on the **Azure Consumer Account**:
 
 Duration: 5
 
-Congratulations, you made it through our Horizon Access journey! You have exercised a broad range of data sharing and governance capabilities. You have worked with different types of data products including structured data, unstructured data, and native applications. And you have deployed different types of governance policies to implement data access and data privacy restrictions.
+Congratulations, you made it through our Horizon Collaboration journey! You have exercised a broad range of data sharing and governance capabilities. You have worked with different types of data products including structured data, unstructured data, and native applications. And you have deployed different types of governance policies to implement data access and data privacy restrictions.
 
 ### What you Learned
 
