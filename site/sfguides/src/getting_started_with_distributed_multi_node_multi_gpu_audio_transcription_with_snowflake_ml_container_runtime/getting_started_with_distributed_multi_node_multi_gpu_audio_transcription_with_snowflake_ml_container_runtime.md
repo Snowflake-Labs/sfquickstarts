@@ -25,7 +25,22 @@ In this Quickstart guide, we will walk through how to use [Container Runtime](ht
 
 Container Runtime is a set of preconfigured customizable environments built for machine learning on Snowpark Container Services, covering interactive experimentation and batch ML workloads such as model training, hyperparameter tuning, batch inference and fine tuning. They include the most popular machine learning and deep learning frameworks. Container Runtime also provides flexibility the ability to pip install any open-source package of choice.
 
-### What are Snowflake ML Jobs
+Key Features:
+
+* Managed Environment: Focus on your ML projects without the overhead of managing underlying infrastructure.  
+* Scalability: Leverage distributed computing resources to efficiently handle large datasets and complex computations.  
+* Integration: Seamlessly combine with Snowflake's ML operations for a cohesive workflow.  
+* Flexibility: While common ML packages come pre-installed, you have the option to install custom packages as needed.
+
+![ContainerRuntime For ML](assets/container_runtime_for_ml.png)
+
+### What is Snowflake Notebooks on Container Runtime?
+
+[Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)  are a powerful IDE option for building ML models at scale in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/). 
+
+Snowflake Notebooks are natively built into Snowsight, and provide everything you need for interactive development, cell by cell execution of Python, Markdown and SQL code. By using Snowflake Notebooks one can increase the productivity since it simplifies connecting to the data and using popular OSS libraries for ML use cases. Notebooks on Container Runtime offer a robust environment with a comprehensive repository of pre-installed CPU and GPU machine learning packages and frameworks, significantly reducing the need for package management and dependency troubleshooting. This allows you to quickly get started with your preferred frameworks and even import models from external sources. Additionally, you can use pip to install any custom package as needed. The runtime also features an optimized data ingestion layer and provides a set of powerful APIs for training and hyperparameter tuning. These APIs extend popular ML packages, enabling you to train models efficiently within Snowflake. At the core of this solution is a Ray-powered distributed compute cluster, giving you seamless access to both CPU and GPU resources. This ensures high performance and optimal infrastructure usage without the need for complex setup or configuration, allowing you to focus solely on your machine learning workloads.
+
+### What are Snowflake ML Jobs?
 
 [Snowflake ML Jobs](https://docs.snowflake.com/developer-guide/snowflake-ml/ml-jobs/overview) is a framework which lets you leverage the Container Runtime
 from any environment. You can use the [ML Jobs SDK](https://docs.snowflake.com/en/developer-guide/snowpark-ml/reference/latest/jobs) to:
@@ -38,15 +53,6 @@ Whether you're looking to productionize your ML workflows or prefer working in
 your own development environment, Snowflake ML Jobs provides the same powerful
 capabilities available in Snowflake Notebooks in a more flexible,
 integration-friendly format.
-
-Key Features:
-
-* Managed Environment: Focus on your ML projects without the overhead of managing underlying infrastructure.  
-* Scalability: Leverage distributed computing resources to efficiently handle large datasets and complex computations.  
-* Integration: Seamlessly combine with Snowflake's ML operations for a cohesive workflow.
-* Flexibility: While common ML packages come pre-installed, you have the option to install custom packages as needed.
-
-![ContainerRuntime For ML](assets/container_runtime_for_ml.png)
 
 ### What is Container Runtime’s architecture?
 
@@ -84,6 +90,8 @@ Prerequisites
 
 * Foundational knowledge of Data Science workflows
 
+* (Optional) Completed [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
+
 * (Optional) Completed [Getting Started with Snowflake ML Jobs](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/ml/ml_jobs#getting-started)
 
 What You'll Build
@@ -94,49 +102,78 @@ What You'll Build
 <!-- ------------------------ -->
 Duration: 5
 
-This section will walk you through creating various objects. The source is included with this sample under [scripts/](./scripts/).
+This section will walk you through creating various objects. The repository with the source code can be found [here](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime).
 
-Complete the following steps to setup your environment:
+Initial Setup
 
-* [Install SnowCLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation#install-sf-cli-using-package-managers)
-  and [configure it](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections) to connect to your test account.
+Complete the following steps to setup your account:
 
-  > Tip: You can generate a config for your account from Snowsight using the `Connect a tool to Snowflake` > `Config File` menu items.
-    ![](assets/setup_connect_tool.png) ![](assets/setup_config_file.png)
-
-* Locate the Snowflake Objects creation file [step0_setup.sql](./scripts/step0_setup.sql).
+* Download the Snowflake Objects creation file “step0\_setup.sql”  from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/step0_setup.sql). 
 
 * Roles required to execute commands in file are SYSADMIN and ACCOUNTADMIN.
 
-* Run the commands in [step0_setup.sql](./scripts/step0_setup.sql) to create Snowflake objects (database, schema, warehouse, compute pools, and external access integration).
+* In Snowsight navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 
-  * Using SnowCLI: `snow sql -f scripts/step0_setup.sql`
+* Paste the contents from the downloaded file “step0\_setup.sql”  in the worksheet
+
+* Run all the commands to create Snowflake objects (database, schema, warehouse, compute pools and external access integration).
+
 
 ## Audio Processing Setup
 <!-- ------------------------ -->
 Duration: 10
 
-The steps below covers the creation of snowflake objects and data loading from a third-party dataset (Audio Files) into snowflake stage. **Be sure to comply with the dataset's licensing terms and usage guidelines.**
+This notebook linked below covers the creation of snowflake objects and data loading from a third-party dataset (Audio Files) into snowflake stage. **Be sure to comply with the dataset's licensing terms and usage guidelines.**
 
 **Audio Processing Setup Notebook**
 
 To get started, follow these steps: 
 
-* Locate the file [step1_audio_processing.sh](./scripts/step1_audio_processing.sh)
+* Download the notebook “Audio Processing \- Setup.ipynb” from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Setup.ipynb)
 
-* Run the script using `bash ./scripts/step1_audio_processing.sh`
+* Navigate to Snowsight and change role to **SYSADMIN**
 
-  * The script requires SnowCLI to be installed and configured from [Setup Environment](#setup-environment) to run
+* Navigate to **Projects** \> **Notebooks** in Snowsight
 
-* The script will download the audio files from LibriSpeech ASR corpus as noted here: [https://www.openslr.org/resources/12](https://www.openslr.org/resources/12). The notebook also puts these audio files in a snowflake internal stage named `AUDIO_FILES_STAGE`.
+* On the top right, click on **Notebook** down arrow and select **Import .ipynb** file from the dropdown menu
+
+* Create a new notebook “Audio Processing \- Setup.ipynb” with the following settings
+
+ * For the Notebook Location, select MULTINODE\_MULTIGPU\_MYDB database and AUDIO\_TRANSCRIPTION\_SCH schema
+
+  * Select Warehouse – ML\_MODEL\_WH
+
+  * Python Environment \- Run On Container
+
+  * Runtime \- Snowflake ML Runtime CPU 1.0
+
+  * Compute Pool \- AUDIO\_PROCESSING\_CP\_DATA\_DOWNLOAD
+
+  * Click on **Create Button**
+
+![Audio Processing Setup](assets/Audio_processing_Setup_create_notebook.png)
+
+* Click the three dots in the top right \> Notebook Settings  
+* Enable the ALLOW\_ALL\_INTEGRATION and click SAVE.
+
+![Audio Processing Setup External Access](assets/Audio_processing_Setup_notebook_settings_external_access.png)
+
+* Run cells in the notebook\!
+
+* Notebook will download the audio files from LibriSpeech ASR corpus as noted here: [https://www.openslr.org/resources/12](https://www.openslr.org/resources/12). The notebook also puts these audio files in a snowflake internal stage named AUDIO\_FILES\_STAGE.
+
+![Audio Processing Setup Notebook](assets/Audio_processing_notebook.png)
+
+
+Note: - "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
 
 ## Audio Transcription
 <!-- ------------------------ -->
 Duration: 10
 
-This Notebook linked below demonstrates the distributed inferencing of audio files on Snowflake ML Container Runtime using multiple nodes and multiple GPUs.
+The samples shown below demonstrate the distributed inferencing of audio files on Snowflake ML Container Runtime using multiple nodes and multiple GPUs.
 
-In this notebook, we will be using SFStageBinaryFileDataSource and SnowflakeTableDatasink class. The signature of these two classes are as below:
+In this sample, we will be using SFStageBinaryFileDataSource and SnowflakeTableDatasink class. The signature of these two classes are as below:
 
 ```py
 class SFStageBinaryFileDataSource(
@@ -173,9 +210,57 @@ label_dataset.write_datasink(datasink, concurrency=4)
 
 
 
-### Audio Processing and Distributed Inferencing Job
+### Audio Processing and Distributed Inferencing Notebook
 
-> !TODO! Replace this with ML Job version of the main Notebook
+To get started, follow these steps:
+
+* Download the notebook “Audio Processing \- Distributed Inferencing.ipynb” from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Distributed%20Inferencing.ipynb)
+
+* Navigate to Snowsight and change role to **SYSADMIN**
+
+* Navigate to **Projects** \> **Notebooks** in Snowsight
+
+* On the top right, click on **Notebook** down arrow and select **Import .ipynb** file from the dropdown menu
+
+* Create a new notebook with the following settings
+
+  * For the Notebook Location, select MULTINODE\_MULTIGPU\_MYDB database and AUDIO\_TRANSCRIPTION\_SCH schema
+
+  * Select Warehouse – ML\_MODEL\_WH
+
+  * Python Environment \- Run On Container
+
+  * Runtime \- Snowflake ML Runtime GPU 1.0
+
+  * Compute Pool \- AUDIO\_PROCESSING\_CP\_GPU\_NV\_S\_5\_NODES
+
+  * Click on **Create Button**
+
+![Audio Processing Distributed Inferencing Notebook](assets/Audio_processing_Distributed_Inferencing_create_notebook.png)
+
+* Click the three dots in the top right \> Notebook Settings  
+* Enable the ALLOW\_ALL\_INTEGRATION and click SAVE.
+
+
+![Audio Processing Distributed Inferencing Notebook External Access](assets/Audio_processing_Distributed_Inferencing_notebook_settings_external_access.png)
+
+* Run cells in the notebook\!
+
+      Lets break down step by step in the notebook
+
+- Create a Ray cluster and scale upto 5 nodes.  
+- Configure logging for Ray Cluster and do necessary setups for the Ray Cluster  
+- Verify the Audio files in the stage uploaded during Step 3\.  
+- Download the whisper model from OpenAI for distributed inferencing of the audio files  
+- Run distributed inference on the multi-node, multi-GPU audio transcription  
+- Write data to the Snowflake table using Snowflake APIs.
+
+
+Note: "Please note, if you duplicate this notebook you will have to manually enable ALLOW_ALL_INTEGRATION again"
+
+### Audio Processing and Distributed Inferencing ML Job
+
+
 
 ## Value Proposition
 <!-- ------------------------ -->
