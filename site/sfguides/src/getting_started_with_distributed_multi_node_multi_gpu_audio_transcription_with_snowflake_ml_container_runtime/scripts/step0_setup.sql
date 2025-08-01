@@ -7,11 +7,12 @@ USE DATABASE MULTINODE_MULTIGPU_MYDB;
 CREATE SCHEMA IF NOT EXISTS AUDIO_TRANSCRIPTION_SCH;
 USE SCHEMA AUDIO_TRANSCRIPTION_SCH;
 
-CREATE WAREHOUSE ML_MODEL_WH;
+CREATE WAREHOUSE IF NOT EXISTS ML_MODEL_WH;
 USE WAREHOUSE ML_MODEL_WH;
 
 -- Create COMPUTE POOLS
 
+USE ROLE ACCOUNTADMIN;
 CREATE COMPUTE POOL if not exists audio_processing_cp_data_download
   MIN_NODES = 1
   MAX_NODES = 1
@@ -28,10 +29,13 @@ CREATE COMPUTE POOL if not exists audio_processing_cp_gpu_nv_s_5_nodes
   AUTO_RESUME = TRUE
   AUTO_SUSPEND_SECS = 300;
 
+GRANT USAGE ON COMPUTE POOL audio_processing_cp_data_download TO ROLE SYSADMIN;
+GRANT USAGE ON COMPUTE POOL audio_processing_cp_gpu_nv_s_5_nodes TO ROLE SYSADMIN;
 
 -- Create and grant access to EAIs
 -- Substep #1: create network rules (these are schema-level objects; end users do not need direct access to the network rules)
 
+USE ROLE SYSADMIN;
 create or replace network rule allow_all_rule
   TYPE = 'HOST_PORT'
   MODE= 'EGRESS'
