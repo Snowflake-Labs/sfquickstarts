@@ -1,6 +1,6 @@
 author: Tim Buchhorn
 id: data_collaboration_native_app
-summary: This is a sample Snowflake Guide
+summary: This Quickstart will take you through how to build an ML Model in Snowlfake, and then share it via the Snowflake Native App Framework.
 categories: data-applications
 environments: web
 status: Published 
@@ -93,7 +93,7 @@ R_* = Risk variables
 Addison Howard, AritraAmex, Di Xu, Hossein Vashani, inversion, Negin, Sohier Dane. (2022). American Express - Default Prediction. Kaggle. https://kaggle.com/competitions/amex-default-prediction
 
 <!-- ------------------------ -->
-## Set up
+## Setup
 Duration: 10
 
 Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to create a Snowflake Account. You should receive an email to activate your trial account.
@@ -111,14 +111,12 @@ CREATE ACCOUNT SNOWBANK
 ```
 Note down the account locator and the url from the output of the command above for use in later steps
 
-<!-- ------------------------ -->
 
-## Provider Account (Zamboni) - Set Up
-Duration: 10
+### Provider Account (Zamboni)
 
 In this part of the lab we'll set up our Provider Snowflake account. In our business scenario, this step represents Zamboni developing their proprietary Credit Card Default model from their own datasets. Stay in the same account from the previous section.
 
-### Initial Set Up (Zamboni)
+### Initial Set Up
 
 Next, open up a new worksheet and run all following steps as the ACCOUNTADMIN role
 
@@ -218,8 +216,10 @@ SELECT COUNT(*)
 We have loaded all the data in Zamboni. We can now proceed with training the model
 
 <!-- ------------------------ -->
-## Provider Account (Zamboni) - Create Model
+## Create Model
 Duration: 45
+
+### Provider Account (Zamboni)
 
 For this section, make sure you download the corresponding [git repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-model-sharing-using-native-app) so you have the files referenced in this section.
 
@@ -274,8 +274,10 @@ Open up the Credit Card Default Native App notebook and follow the steps. Once y
 Stay in the Zamboni account for the next step.
 
 <!-- ------------------------ -->
-## Provider Account (Zamboni) - Build Native App
+## Build Native App
 Duration: 15
+
+### Provider Account (Zamboni)
 
 Now we have trained the model, we want to encapsulate it in an Application Package, so we can distribute it via the Native App Framework. More information on the Native Application framework can be found in the documentation [here](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about). We will be working through the [Native App Development Workflow](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-workflow#development-workflow).
 
@@ -352,8 +354,10 @@ grant usage on model APP_CODE.CREDIT_CARD_DEFAULT_MODEL to application role app_
 
 
 <!-- ------------------------ -->
-## Provider Account (Zamboni) - Perform Local Testing
+## Perform Local Testing
 Duration: 15
+
+### Provider Account (Zamboni)
 
 Now the Application has been created from the Application Package in our Provider Account, we can perform some testing to ensure it behaves as expected. In this Quickstart, we have exposed more views and functions than what is necessary, so we can follow along and see how the app in functioning.
 
@@ -421,8 +425,10 @@ SELECT * FROM CREDIT_CARD_PREDICTION_APP.APP_CODE.SCORED_TABLE_VIEW LIMIT 10;
 We are satisfied with the testing. The next step is to distribute the app.
 
 <!-- ------------------------ -->
-## Provider Account (Zamboni) - Distribute Native App
+## Distribute Native App
 Duration: 15
+
+### Provider Account (Zamboni)
 
 We need to create a version before and a release directive before we can share. We can do this in the manifest file, or with the code below
 
@@ -473,7 +479,7 @@ Finally, click Publish.
 
 
 <!-- ------------------------ -->
-## Consume Model via Native App (Snowbank)
+## Consume Model via Native App
 Duration: 10
 
 In this next step, we will log in to our consumer account (Snowbank). You should have saved the details such as the account URL and username from step 3. Log in to the Snowbank Account, and follow the steps to reset your password.
@@ -539,8 +545,10 @@ Select the Privileges tab, and then click "Add" to let our App refer to data in 
 Click "Select Data" and navigate to the CC_DEFAULT_UNSCORED_DATA in the NATIVE_APP_CONSUMER database and the NATIVE_APP_CONSUMER schema. Click save.
 
 <!-- ------------------------ -->
-## Use Shared Model in Consumer Account (Snowbank)
+## Use Shared Model
 Duration: 10
+
+### Consumer Account (Snowbank)
 
 Open up a SQL Worksheet, and run the tests again. This time, the model has been shared with a segregated account, and the data that is being used for inference has not left the account.
 
@@ -571,8 +579,10 @@ SELECT * FROM CREDIT_CARD_DEFAULT_MODEL.APP_CODE.SCORED_TABLE_VIEW LIMIT 10;
 We have successfully used a ML Model shared to us within our own environment.
 
 <!-- ------------------------ -->
-## Clean Up Consumer Account (Snowbank)
+## Clean Up
 Duration: 5
+
+### Consumer Account (Snowbank)
 
 Run the following SQL commands
 
@@ -583,8 +593,7 @@ DROP DATABASE NATIVE_APP_CONSUMER;
 DROP WAREHOUSE QUERY_WH;
 ```
 
-<!-- ------------------------ -->
-## Clean Up Provider Account (Zamboni)
+### Provider Account (Zamboni)
 Duration: 10
 
 Navigate to Data Products > Provider Studio > Listings and select Credit Card Default Model
