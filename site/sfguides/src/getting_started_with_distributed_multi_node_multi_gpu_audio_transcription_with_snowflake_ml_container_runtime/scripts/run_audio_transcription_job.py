@@ -1,5 +1,6 @@
 import os
 from snowflake.ml.jobs import submit_file
+from snowflake.ml.jobs._utils import constants
 from snowflake.snowpark import Session
 
 ROLE = "SYSADMIN"
@@ -17,6 +18,9 @@ def main():
     session.use_schema(SCHEMA)
     session.use_warehouse(WAREHOUSE)
     session.use_role(ROLE)
+
+    # TEMPORARY: Set the container image tag to 1.6.2
+    constants.DEFAULT_IMAGE_TAG = "1.6.2"
 
     # Submit the transcribe_audio.py script as an ML Job
     job = submit_file(
