@@ -137,7 +137,7 @@ def main():
         AudioTranscriber,
         batch_size=BATCH_SIZE,
         batch_format='pandas',
-        concurrency=5,
+        concurrency=num_nodes,
         num_gpus=1,
     )
 
