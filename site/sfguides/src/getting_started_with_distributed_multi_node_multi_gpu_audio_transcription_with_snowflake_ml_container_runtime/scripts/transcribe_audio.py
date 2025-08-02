@@ -107,7 +107,8 @@ def configure_ray_logger() -> None:
 def main():
     ray.init(ignore_reinit_error=True)
     num_nodes = len([node for node in ray.nodes() if node["Alive"]==True])
-    print(f"Number of nodes: {num_nodes}", flush=True)
+    max_nodes = int(os.getenv("SNOWFLAKE_JOBS_COUNT", num_nodes))
+    print(f"Number of nodes: {num_nodes}, max nodes: {max_nodes}", flush=True)
 
     configure_ray_logger()
 
@@ -137,7 +138,7 @@ def main():
         AudioTranscriber,
         batch_size=BATCH_SIZE,
         batch_format='pandas',
-        concurrency=num_nodes,
+        concurrency=(num_nodes, max_nodes),
         num_gpus=1,
     )
 
