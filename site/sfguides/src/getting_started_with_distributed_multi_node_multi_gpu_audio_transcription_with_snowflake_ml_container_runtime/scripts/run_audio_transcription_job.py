@@ -25,6 +25,7 @@ def main():
         stage_name=PAYLOAD_STAGE,
         target_instances=5,
         min_instances=1,
+        external_access_integrations=["ALLOW_ALL_INTEGRATION"],
         session=session,
     )
     print(f"Job submitted: {job.id}")
