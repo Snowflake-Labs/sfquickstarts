@@ -271,11 +271,11 @@ You can also leverage Snowflake ML Container Runtime outside of Snowflake Notebo
   > Tip: You can generate a config for your account from Snowsight using the `Connect a tool to Snowflake` > `Config File` menu items.
     ![](assets/setup_connect_tool.png) ![](assets/setup_config_file.png)
 
-* Download the files [transcribe_audio.py](./scripts/transcribe_audio.py) and [step2_audio_transcription.py](./scripts/step2_audio_transcription.py).
+* Download the files [transcribe_audio.py](./scripts/transcribe_audio.py) and [run_audio_transcription_job.py](./scripts/run_audio_transcription_job.py).
 
 * Inspect the file [transcribe_audio.py](./scripts/transcribe_audio.py). This is the payload script we will submit and execute inside the Container Runtime using ML Jobs.
 
-* Run `python step2_audio_transcription.py` in your local environment. This will upload [transcribe_audio.py](./scripts/transcribe_audio.py) and kick off its execution
+* Run `python run_audio_transcription_job.py` in your local environment. This will upload [transcribe_audio.py](./scripts/transcribe_audio.py) and kick off its execution
   using the `submit_file()` API from the ML Job SDK.
 
 
