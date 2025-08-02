@@ -278,6 +278,20 @@ You can also leverage Snowflake ML Container Runtime outside of Snowflake Notebo
 * Run `python run_audio_transcription_job.py` in your local environment. This will upload [transcribe_audio.py](./scripts/transcribe_audio.py) and kick off its execution
   using the `submit_file()` API from the ML Job SDK.
 
+* You can monitor the job execution in the Services and Jobs UI in Snowsight
+
+![Services and Jobs UI](./assets/services_and_jobs_ui.png)
+
+Let's break down what the ML Job workflow is doing:
+
+- Create a Snowflake session from default configuration and set up database context
+- Submit the `transcribe_audio.py` script as an ML Job targeting 5 instances with a minimum of 1, scaling elastically based on available compute pool capacity
+- Configure logging for Ray Cluster and do necessary setups for the Ray Cluster
+- Load audio files from Snowflake stage using SFStageBinaryFileDataSource with file pattern filtering
+- Download and initialize the Whisper large-v3 model from OpenAI for distributed inferencing
+- Run distributed inference on multi-node, multi-GPU setup using Ray's map_batches with AudioTranscriber actor
+- Write transcribed results to Snowflake table using SnowflakeTableDatasink
+- Monitor job execution status and retrieve logs for verification
 
 
 ## Value Proposition
