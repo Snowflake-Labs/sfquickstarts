@@ -90,6 +90,37 @@ This tool allows the agent to search and retrieve information from unstructured 
     - Select columns to include in the service: Select all
     - Configure your Search Service: Keep default values **except** select **COMPUTE_WH** for "Warehouse for indexing"
 
+#### OPTIONAL: Aggregated Support Cases using Cortex AISQL
+
+Instead of creating a Cortex Search service for individual support cases, you may create one on aggregated support cases. This really depends on your use case, but it's shown here as an example using Cortex AISQL.
+
+Execute the following SQL statements that use [AI_AGG()](https://docs.snowflake.com/en/sql-reference/functions/ai_agg) to create aggregated support cases summary which is inserted into a new table **AGGREGATED_SUPPORT_CASES_SUMMARY**. Then, a Cortex Search service is created on that table.
+
+```sql
+-- Use AI_AGG to aggregate support cases summary and insert into a new table AGGREGATED_SUPPORT_CASES_SUMMARY
+
+create or replace table AGGREGATED_SUPPORT_CASES_SUMMARY as
+ select 
+    ai_agg(transcript,'Read and analyze all support cases to provide a long-form text summary in no less than 5000 words.') as summary
+    from support_cases;
+
+-- Create Cortex Search service on table AGGREGATED_SUPPORT_CASES_SUMMARY
+
+create or replace cortex search service AGGREGATED_SUPPORT_CASES 
+on summary 
+attributes
+  summary 
+warehouse = compute_wh 
+embedding_model = 'snowflake-arctic-embed-m-v1.5' 
+target_lag = '1 hour' 
+initialize=on_schedule 
+as (
+  select
+    summary
+  from AGGREGATED_SUPPORT_CASES_SUMMARY
+);
+```
+
 ### Create Agent
 
 An agent is an intelligent entity within Snowflake Intelligence that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data. 
@@ -124,6 +155,9 @@ Select the newly created **Sales_AI** agent and click on **Edit** on the top rig
         - Search service: **DASH_DB_SI.RETAIL** >> **Support_Cases**
         - ID column: ID
         - Title column: TITLE
+
+    > aside negative
+    ***NOTE: If you optionally created AGGREGATED_SUPPORT_CASES Cortex Search service, you may add it here as well.***
 
   - **Custom tools**
     - Click on **+ Add**
