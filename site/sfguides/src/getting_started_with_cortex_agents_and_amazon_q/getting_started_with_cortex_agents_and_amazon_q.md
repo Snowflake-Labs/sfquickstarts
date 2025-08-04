@@ -434,7 +434,7 @@ info:
   title: Cortex Agent via Stored Procedure
   version: 1.0.0
 servers:
-  - url: https://<snowflake url>.snowflakecomputing.com
+  - url: https://<Your-Acount-Identifier>.snowflakecomputing.com
 paths:
   /api/v2/statements:
     post:
@@ -509,8 +509,8 @@ components:
       type: oauth2
       flows:
         authorizationCode:
-          authorizationUrl: https://SFSENORTHAMERICA-HOL_MATTMARZILLO.snowflakecomputing.com/oauth/authorize
-          tokenUrl: https://SFSENORTHAMERICA-HOL_MATTMARZILLO.snowflakecomputing.com/oauth/token-request
+          authorizationUrl: https://<Your-Acount-Identifier>.snowflakecomputing.com/oauth/authorize
+          tokenUrl: https://<Your-Acount-Identifier>.snowflakecomputing.com/oauth/token-request
           scopes:
             session:role:PUBLIC: Use PUBLIC role in Snowflake
 ```
