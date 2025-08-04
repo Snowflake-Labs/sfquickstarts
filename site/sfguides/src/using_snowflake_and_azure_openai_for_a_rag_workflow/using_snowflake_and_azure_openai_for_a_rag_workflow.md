@@ -56,7 +56,7 @@ This use case will leverage movie reviews and we will build a Streamlit app that
 
 Duration: 10
 
-For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to platform.openi.com/api-keys and create a new secret key as it looks below. Make note of the model name and key as you will need this to generate a response. 
+For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to platform.openai.com/api-keys and create a new secret key as it looks below. Make note of the model name and key as you will need this to generate a response. 
 
 ![](assets/openai.png)
 
