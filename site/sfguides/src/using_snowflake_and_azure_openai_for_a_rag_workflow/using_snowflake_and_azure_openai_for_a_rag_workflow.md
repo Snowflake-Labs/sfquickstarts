@@ -200,7 +200,7 @@ Now that we have our OpenAI functions, let’s build our App.
 
 Go back to the main account view by clicking ‘<- Worksheets’ and then select ‘Streamlit’.
 
-Make sure that you’re still using the ‘ACCOUNTADMIN’ role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same RETAIL_HOL database where the link table and the image stage are located. You can name the app whatever you would like, something like "Wardrobe Recommender" is appropriate.
+Make sure that you’re still using the ‘ACCOUNTADMIN’ role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same REVIEWS_DB database where the embeddings table is located. You can name the app whatever you would like, something like "Movie Reviews" is appropriate.
 
 Once the app is created paste the below code into the app code and click 'Run' in order to create the Streamlit App!
 
