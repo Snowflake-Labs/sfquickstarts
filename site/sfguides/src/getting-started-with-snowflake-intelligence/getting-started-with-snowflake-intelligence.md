@@ -233,5 +233,6 @@ You've learned how to create building blocks for creating a Snowflake Intelligen
 ### Related Resources
 
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence)
+- [Snowflake Intelligence Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence)
 
 
