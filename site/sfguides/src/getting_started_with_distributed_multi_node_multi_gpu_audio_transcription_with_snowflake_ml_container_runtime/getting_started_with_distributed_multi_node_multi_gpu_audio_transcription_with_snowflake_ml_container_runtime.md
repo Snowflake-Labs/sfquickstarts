@@ -84,7 +84,7 @@ See details here for the [model](https://huggingface.co/openai/whisper-large-v3)
 
 ![ContainerRuntime Multi Node Multi GPU Inferencing](assets/multi-node_multi-gpu_inferencing.png)
 
-Prerequisites
+### Prerequisites
 
 * A Snowflake Account. Sign up for a 30-day [free trial account](https://signup.snowflake.com/), if required.
 
@@ -94,7 +94,7 @@ Prerequisites
 
 * (Optional) Completed [Getting Started with Snowflake ML Jobs](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/ml/ml_jobs#getting-started)
 
-What You'll Build
+### What You'll Build
 
 * A Snowflake Notebook that runs Distributed Multi-Node, Multi-GPU Audio Transcription in ML Container Runtime
 
@@ -104,7 +104,7 @@ Duration: 5
 
 This section will walk you through creating various objects. The repository with the source code can be found [here](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime).
 
-Initial Setup
+### Initial Setup
 
 Complete the following steps to setup your account:
 
@@ -124,8 +124,6 @@ Complete the following steps to setup your account:
 Duration: 10
 
 This notebook linked below covers the creation of snowflake objects and data loading from a third-party dataset (Audio Files) into snowflake stage. **Be sure to comply with the dataset's licensing terms and usage guidelines.**
-
-**Audio Processing Setup Notebook**
 
 To get started, follow these steps: 
 
@@ -185,11 +183,11 @@ class SFStageBinaryFileDataSource(
 )
 ```
 
-* stage\_location:. Stage path  
-* database: Database name. Defaults to notebook session's current database   
-* schema: Schema name. Defaults to notebook session's current database   
-* file\_pattern: The file pattern to filter the files in the stage. It supports Unix shell-style wildcards. Example: "\*.flac" will match all files with .png extension Default is to include all files under stage\_location  
-* local\_path: The local path to save the files if you choose to. Defaults to None. None means the file will not be saved to the local disk and the consumption will be through the content file\_binary. Note, in a multi-node cluster, this is not recommended, since files will be only available in the main node. 
+* `stage\_location`: Stage path  
+* `database`: Database name. Defaults to notebook session's current database   
+* `schema`: Schema name. Defaults to notebook session's current database   
+* `file\_pattern`: The file pattern to filter the files in the stage. It supports Unix shell-style wildcards. Example: "\*.flac" will match all files with .png extension Default is to include all files under stage\_location  
+* `local\_path`: The local path to save the files if you choose to. Defaults to None. None means the file will not be saved to the local disk and the consumption will be through the content file\_binary. Note, in a multi-node cluster, this is not recommended, since files will be only available in the main node. 
 
 ```py
 from snowflake.ml.ray.datasink import SnowflakeTableDatasink
@@ -209,14 +207,13 @@ label_dataset.write_datasink(datasink, concurrency=4)
 ```
 
 
-
 ### Audio Processing and Distributed Inferencing Notebook
 
 To get started, follow these steps:
 
 * Download the notebook “Audio Processing \- Distributed Inferencing.ipynb” from this [link](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime/blob/main/Audio%20Processing%20-%20Distributed%20Inferencing.ipynb)
 
-* Navigate to Snowsight and change role to **SYSADMIN**
+* Navigate to Snowsight and change role to the **SYSADMIN** role
 
 * Navigate to **Projects** \> **Notebooks** in Snowsight
 
