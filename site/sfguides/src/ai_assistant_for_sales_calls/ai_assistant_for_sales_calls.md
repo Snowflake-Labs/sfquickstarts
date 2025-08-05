@@ -179,7 +179,7 @@ CREATE OR REPLACE STAGE CHATBOT_APP DIRECTORY=(ENABLE=true); --to store streamli
 
 Click '+ Files' in the top right of the stage. Upload all files that you downloaded from GitHub into the stage. The contents should match the app directory. **Make sure your the files in your stages match the following**:
 
-- **Notebook Files:** Upload notebook files (including environment.yml) to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/notebooks). Remember to upload [the notebook-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-cortex-snowflake-notebooks/blob/main/notebooks/environment.yml) file as well.
+- **Notebook Files:** Upload notebook files to the `NOTEBOOK` stage from [notebook](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/notebooks).
 <img src="assets/notebook_stage.png"/>
 
 - **Streamlit Files:** Upload all Streamlit and chatbot-related files to the `CHATBOT_APP` stage from [streamlit](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/tree/main/scripts/streamlit). Remember to upload [the streamlit-specific environment.yml](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-co[…]snowflake-notebooks/blob/main/scripts/streamlit/environment.yml) file as well. Make sure to upload the [analytics.py](https://github.com/Snowflake-Labs/sfguide-building-ai-assistant-using-snowflake-cortex-snowflake-notebooks/blob/main/scripts/streamlit/pages/analytics.py) within a `/pages/` path.
@@ -196,8 +196,11 @@ Paste and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguid
 -- Create Notebook 
 CREATE OR REPLACE NOTEBOOK ai_assistant_sales_calls_notebook
 FROM @NOTEBOOK
-MAIN_FILE = 'ai_assistant_sales_calls_notebook.ipynb'
-QUERY_WAREHOUSE = SALES_CALLS_WH;
+MAIN_FILE = 'ai_assistant_sales_calls_notebook.ipynb' 
+QUERY_WAREHOUSE = SALES_CALLS_WH
+RUNTIME_NAME = 'SYSTEM$BASIC_RUNTIME' 
+COMPUTE_POOL = 'SYSTEM_COMPUTE_POOL_CPU'
+IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 3600;
 ALTER NOTEBOOK ai_assistant_sales_calls_notebook ADD LIVE VERSION FROM LAST;
 
 -- Create Streamlit App
@@ -218,7 +221,6 @@ To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the P
 <img src='assets/notebook.png'>
 
 Within this notebook, you'll explore sales call transcripts, apply Snowflake Cortex AI models for sentiment analysis and summarization, and visualize key trends such as customer sentiment, product feedback, and competitor mentions.
-
 
 ## Run Streamlit Application
 Duration: 20
@@ -267,4 +269,3 @@ In this guide, you learned how to use Snowflake's Cortex AI to analyze sales cal
 ### Related Resources
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex.html)
 - [Streamlit Documentation](https://docs.streamlit.io/)
-- [Tasty Bytes: Enhancing Customer Experience](https://quickstarts.snowflake.com/guide/tasty_bytes_customer_experience_app/index.html#0)

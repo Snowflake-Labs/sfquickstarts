@@ -3,7 +3,7 @@ id: snowpark_python_top_three_tips_for_optimal_performance
 summary: Snowpark Python: Top Three Tips for Optimal Performance
 categories: Data-Engineering
 environments: web
-status: Published 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering, Best Practices
 
