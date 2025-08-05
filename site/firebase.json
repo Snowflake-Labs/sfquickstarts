@@ -103,11 +103,6 @@
       "type": 301
     },
     {
-      "source": "guide/attaining_consumer_insights_with_snowflake_and_microsoft_power_bi/{,/**}",
-      "destination": "/guide/end-to-end-analytics-with-snowflake-and-power-bi",
-      "type": 301
-    },
-    {
       "source": "guide/frosty_llm_chatbot_on_streamlit_snowflake/{,/**}",
       "destination": "/guide/getting_started_with_cortex_analyst",
       "type": 301
@@ -310,6 +305,11 @@
     {
       "source": "guide/vhol_snowflake_data_wrangler/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "/guide/integrate_snowflake_cortex_agents_with_microsoft_teams{,/**}",
+      "destination": "/guide/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app",
       "type": 301
     }
     ]
