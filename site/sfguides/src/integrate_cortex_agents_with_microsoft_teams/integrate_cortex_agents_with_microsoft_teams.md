@@ -1,7 +1,7 @@
 id: integrate_snowflake_cortex_agents_with_microsoft_teams
 summary: This guide outlines the process for integrating Snowflake Cortex Agents with Microsoft Teams.
 environments: web
-status: Published
+status: Hidden
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Data-Science-&-Ai, Featured
 authors: Dash Desai
