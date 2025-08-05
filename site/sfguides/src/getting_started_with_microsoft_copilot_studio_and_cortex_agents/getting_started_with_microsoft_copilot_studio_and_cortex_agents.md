@@ -268,7 +268,9 @@ After uploading the script you will execute it by running:
 ./AppCreationAndConfig.ps1
 ```
 
-You will be prompted to name your registration and provide your tenant id again. This should all take about 1-2 minutes! Doing everything that is done manually in Option 1.
+You will be prompted to name your registration and provide your **tenant id**, as well as the define the **role** (this should be **analyst**). You will also be prompted to name the app resources and app client, you can name them something simple like **cortexappresource** and **cortexappclient**.
+
+This should all take about 1-2 minutes!
 
 You will then download the snowflakeinfo.txt file and use that code to create your security integration and user in Snowflake.
 
@@ -587,7 +589,7 @@ Click on the + icon, In between the “When an agent calls the flow” and ‘Re
 Enter in the connection parameters (refer to the snowflakeinfo.txt downloaded from the oauth set up) here. This should look similar to below.
 
 For Resource URL: this can be obtained from the snowflakeinfo.text
-<<resource URL>
+<resource URL>
 
 For example: xxxxx-32f76bad5eb7
 
@@ -621,7 +623,7 @@ For the type of output, choose **Text**  and named **output_to_copilot**, in the
 
 ![](assets/respondtoagent.png)
 
-- and select body/Data
+- and select **body/Data**
 
 ![](assets/bodydata.png)
 
@@ -680,7 +682,6 @@ By following this quickstart, you learned how to:
 
 <!-- ------------------------ -->
 ## Appendix
-Duration: 18
 
 This section shows the steps required to configure Oauth in Entra ID manually. This is handled with the Power Shell Script in the [Configure OAuth Section](#configure-oauth)
 
