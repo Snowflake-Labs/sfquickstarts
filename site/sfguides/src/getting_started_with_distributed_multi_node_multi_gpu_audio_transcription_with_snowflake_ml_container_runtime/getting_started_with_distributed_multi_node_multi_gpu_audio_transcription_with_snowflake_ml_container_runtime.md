@@ -94,7 +94,14 @@ See details here for the [model](https://huggingface.co/openai/whisper-large-v3)
 
 * (Optional) Completed [Getting Started with Snowflake ML Jobs](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/ml/ml_jobs#getting-started)
 
-### What You'll Build
+### What You Will Learn
+
+This guide will show you:
+- How to use Snowflake ML Container Runtime to build a distributed, multi-node, multi-GPU solution for audio transcription
+- How to leverage powerful, pre-configured environments with popular ML frameworks, scale your workloads across multiple nodes and GPUs for faster processing
+- How to use Snowflake's APIs to seamlessly handle unstructured data directly from your internal stages
+
+### What You Will Build
 
 * A Snowflake Notebook that runs Distributed Multi-Node, Multi-GPU Audio Transcription in ML Container Runtime
 
@@ -328,11 +335,11 @@ Ready for more? After you complete this quickstart, you can try one of the follo
 * [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/#0).  
 * [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/index.html?index=..%2F..index#0)
 
-What You Learned
+### What You Learned
 
 * The key features of Snowflake Notebooks with Container Runtime in [Snowflake ML](http://www.snowflake.com/ml) to perform Multi-Node, Multi-GPU audio transcription at limitless scale over multiple audio files.
 
-Related Quickstarts
+### Related Quickstarts
 
 * [Train an XGBoost model with GPUs in Snowflake Notebooks](https://quickstarts.snowflake.com/guide/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/index.html#0)  
 * [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks)  
@@ -340,7 +347,7 @@ Related Quickstarts
 * [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/)  
 * [Getting Started with Snowflake ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
 
-Related Resources
+### Related Resources
 
 * [Documentation: Container Runtime for ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml)  
 * [Documentation: Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)  
