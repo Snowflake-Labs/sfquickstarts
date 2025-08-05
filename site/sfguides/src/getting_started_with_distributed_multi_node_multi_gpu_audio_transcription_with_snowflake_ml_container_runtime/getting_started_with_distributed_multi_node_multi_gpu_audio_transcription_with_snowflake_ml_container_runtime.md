@@ -190,11 +190,11 @@ class SFStageBinaryFileDataSource(
 )
 ```
 
-* `stage\_location`: Stage path  
+* `stage_location`: Stage path  
 * `database`: Database name. Defaults to notebook session's current database   
 * `schema`: Schema name. Defaults to notebook session's current database   
-* `file\_pattern`: The file pattern to filter the files in the stage. It supports Unix shell-style wildcards. Example: "\*.flac" will match all files with .png extension Default is to include all files under stage\_location  
-* `local\_path`: The local path to save the files if you choose to. Defaults to None. None means the file will not be saved to the local disk and the consumption will be through the content file\_binary. Note, in a multi-node cluster, this is not recommended, since files will be only available in the main node. 
+* `file_pattern`: The file pattern to filter the files in the stage. It supports Unix shell-style wildcards. Example: "\*.flac" will match all files with .png extension Default is to include all files under stage\_location  
+* `local_path`: The local path to save the files if you choose to. Defaults to None. None means the file will not be saved to the local disk and the consumption will be through the content file\_binary. Note, in a multi-node cluster, this is not recommended, since files will be only available in the main node. 
 
 ```py
 from snowflake.ml.ray.datasink import SnowflakeTableDatasink
