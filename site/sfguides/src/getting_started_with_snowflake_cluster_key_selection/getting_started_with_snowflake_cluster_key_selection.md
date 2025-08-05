@@ -18,21 +18,21 @@ This quickstart focuses on the process of choosing a clustering key for a table 
 ### Why Cluster?
 The primary goal of clustering is to enable better micro-partition pruning when running queries. The goal is to improve query performance. There can be other benefits as well such as better compression. For more information on what clustering is and the benefits of clustering, check out [Snowflake Clustering Demystified](https://medium.com/snowflake/snowflake-clustering-demystified-8042fa81289e).
 
-### Prerequisites
+### What You Will Build 
 
-- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) account, if required.
+- A table clustered for a given workload
+- A Better knowledge of how to navigate clustering key choices
 
-### What You’ll Learn  
+### What You Will Learn  
 &nbsp;
 * Properties that make better or worse choices for clustering keys  
 * How to use data to make clustering key decisions   
 * How to simulate a clustered table for testing purposes  
 * How to estimate the cost of a clustering key  
 
-### What You’ll Build 
+### Prerequisites
 
-- A table clustered for a given workload
-- A Better knowledge of how to navigate clustering key choices
+- A [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account. Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_cta=quickstarts_) account, if required.
 
 <!-- ------------------------ -->
 ## Clustering Key Selection Concepts
@@ -1226,16 +1226,18 @@ This output represents the use of 8.1 credits in the initial clustering of this 
 ## Conclusion And Resources
 Duration: 2
 
+### Conclusion
 Clustering is one of the easier and earlier steps in performance optimizaiton. Adding clustering on top of a reasonable data model can meet many performance requirements. Using a data-based approach like this is an excellent way to start. There may be additional considerations when choosing a clustering key, like the rate and patterns of arriving data, so don't hesitate to contact your Snowflake Solutions Engineer for more guidance.
-
-To read more about clustering in Snowflake, check out the [official documentation](https://docs.snowflake.com/en/user-guide/tables-clustering-keys) and these medium articles with more information:
-
-- [Snowflake Clustering Demystified](https://medium.com/snowflake/snowflake-clustering-demystified-8042fa81289e)
-- [A Data-Driven Approach to Choosing a Clustering Key in Snowflake](https://medium.com/snowflake/a-data-driven-approach-to-choosing-a-clustering-key-in-snowflake-4b3400704778)
-- [An Example of Choosing a Clustering Key in Snowflake](https://medium.com/snowflake/an-example-of-choosing-a-clustering-key-in-snowflake-3b23a35cd9b4)
 
 ### What You Learned
 - Properties that make better or worse choices for clustering keys
 - How to use data to make clustering key decisions 
 - How to simulate a clustered table for testing purposes
 - How to estimate the cost of a clustering key
+
+### Resources
+To read more about clustering in Snowflake, check out the [official documentation](https://docs.snowflake.com/en/user-guide/tables-clustering-keys) and these medium articles with more information:
+
+- [Snowflake Clustering Demystified](https://medium.com/snowflake/snowflake-clustering-demystified-8042fa81289e)
+- [A Data-Driven Approach to Choosing a Clustering Key in Snowflake](https://medium.com/snowflake/a-data-driven-approach-to-choosing-a-clustering-key-in-snowflake-4b3400704778)
+- [An Example of Choosing a Clustering Key in Snowflake](https://medium.com/snowflake/an-example-of-choosing-a-clustering-key-in-snowflake-3b23a35cd9b4)
