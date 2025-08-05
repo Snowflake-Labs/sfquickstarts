@@ -668,7 +668,7 @@ Based on this exploration, we'd like to try the following cluster keys:
 * `DATE_TRUNC('WEEK', sold_timestamp), TRUNC(cs_item_sk,-4)`
 
 <!-- ------------------------ -->
-## Test Query Workload Against Clustered Table Copies
+## Test Query Workload
 Duration: 90
 
 Clustering is a physical state of the data, where data is grouped into micro-partitions in such a way that the minimum/maximum ranges of a clustering key are narrow. It can be achieved and maintained long-term through something like [automatic clustering](https://docs.snowflake.com/en/user-guide/tables-auto-reclustering). It can also be achieved naturally - a table with data that is loaded regularly with time-based data often achieves some natural time- or date-based clustering. Data engineering processes can also sort data as a table is built to achieve clustering. While we might want to use auto-clustering long-term, using a simple ORDER BY works well for testing the impact of clustering. We will use `CREATE TABLE ... AS ... ORDER BY ...` statements to create copies of the data in a clustered form and test performance to compare against the baseline.
@@ -1131,7 +1131,7 @@ The results look something like this:
 
 The results here are in seconds based on the calculations in the query.
 <!-- ------------------------ -->
-## Compare Test Results with Baseline and Select a Clustering Key
+## Compare Test Results
 Duration: 5
 
 Now that we have the results of performance testing for each of the potential clustering keys, we can look at them and make an informed decision. 
