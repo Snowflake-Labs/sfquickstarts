@@ -117,7 +117,7 @@ CREATE OR REPLACE TABLE clustering_exp.tpcds_clustering_test.inventory AS
       FROM snowflake_sample_data.tpcds_sf10tcl.inventory
      ORDER BY RANDOM();
 ```
-Note that we are doing a bit of change for the date storage and handling for the `CATALOG_SALES` table. This is mostly because this data model uses a highly normalized approach to dates and times that is a bit out of the ordinary. Tweaking this lets us handle dates in a more common manner throughout this tutorial. We're also defining the entire database as transient so as not to incur charges for time travel for this purely experimental work.
+Note that we are doing a bit of change for the date storage and handling for the `CATALOG_SALES` table. This is mostly because this data model uses a highly normalized approach to dates and times that is a bit out of the ordinary. Tweaking this lets us handle dates in a more common manner throughout this tutorial. We're also defining the entire database as transient so as not to incur charges for Fail-safe for this purely experimental work.
 
 The `ORDER BY RANDOM()` ensures we don't get strange effects from data that happens to be naturally clustered. In a real world scenario, we might choose not to order by random, because we often take advantage of natural clustering and want to see the effects, but using an order by random gives us a clearer baseline to compare to for this example.
 
@@ -551,7 +551,7 @@ The results of this query are:
 There are 67,271 micro-partitions in this table. Note that your numbers may vary. This means that our target for a clustering key on this table would be a cardinality between 6,727 and 67,271.
 
 ### sold_timestamp
-A date/time element is often an excellent choice for the leading edge of a clustering key. The full cardinality of a timestamp leads to an extremely high cardinality, though, so we're often working with the date_trunc function to get the cardinality we'd like to see for a clustering key. What we truncate it to depends heavily on the data. Let's start by truncating it to just the date.
+A date/time element is often an excellent choice for the leading edge of a clustering key. The full cardinality of a timestamp leads to an extremely high cardinality, though, so we're often working with the DATE_TRUNC function to get the cardinality we'd like to see for a clustering key. What we truncate it to depends heavily on the data. Let's start by truncating it to just the date.
 
 ```sql
 SELECT 
@@ -589,10 +589,10 @@ SELECT
 ;
 ```
 ![img](assets/item_card.png)
-We can see from the output here that the cardinality is 402,000. This cardinality is too high for the range that we're looking at. This means that we should use a function to reduce the cardinality if we want to use it in a clustering key. Since this field is numeric and fairly evenly distributed, we can use simple division and a floor function to reduce cardinality. Let's try a couple of numbers and see what we get.
+We can see from the output here that the cardinality is 402,000. This cardinality is too high for the range that we're looking at. This means that we should use a function to reduce the cardinality if we want to use it in a clustering key. Since this field is numeric and fairly evenly distributed, we can use simple trunc function to reduce cardinality. Let's try a couple of numbers and see what we get.
 ```sql
 SELECT 
-    FLOOR(cs_item_sk/10) AS item_ckey
+    TRUNC(cs_item_sk,-1) AS item_ckey
     ,COUNT(*)
   FROM
     catalog_sales
@@ -616,7 +616,7 @@ SELECT
 Ok, 1.6 billion, definitely not in our target range. Let's use the same technique we did for item to get it down to something reasonable.
 ```sql
 SELECT 
-    FLOOR(cs_order_number/100000) AS ord_num_ckey
+    TRUNC(cs_order_number,-5) as ord_num_ckey
     ,COUNT(*)
   FROM
     catalog_sales
@@ -626,14 +626,14 @@ SELECT
 ![img](assets/order_number_card_100000.png)
 
 ### sold_timestamp AND s_item_sk
-There are some other considerations when combining columns in a clustering key. We still care about the overall cardinality of the clustering key in the same range as when we're looking at individual columns. In this case, we're going to look at a combination of sold_timestamp and s_item_sk. The quickest way of estimating the cardinality we will get is to just multiply the cardinalities for the individual columns. For date, we had a cardinality of 1,836, while for a basic function on item(floor(cs_item_sk/10)), we had 40,201. Multiplying these would get 73,809,036. Sometimes data correlations can skew this. Let's run a query to see what it really is.
+There are some other considerations when combining columns in a clustering key. We still care about the overall cardinality of the clustering key in the same range as when we're looking at individual columns. In this case, we're going to look at a combination of sold_timestamp and s_item_sk. The quickest way of estimating the cardinality we will get is to just multiply the cardinalities for the individual columns. For date, we had a cardinality of 1,836, while for a basic function on item(TRUNC(cs_item_sk,-1)), we had 40,201. Multiplying these would get 73,809,036. Sometimes data correlations can skew this. Let's run a query to see what it really is.
 ```sql
 SELECT
-    DATE_TRUNC('DAY', sold_timestamp) AS sold_ckey
-    ,FLOOR(cs_item_sk/10) AS item_ckey
+    DATE_TRUNC('day', sold_timestamp) AS sold_ckey
+    ,TRUNC(cs_item_sk,-1) AS item_ckey
     ,COUNT(*)
-  FROM catalog_sales
- GROUP BY sold_ckey, item_ckey
+FROM catalog_sales
+GROUP BY sold_ckey, item_ckey
 ;
 ```
 ![img](assets/date_item_card_10.png)
@@ -641,7 +641,7 @@ The cardinality is pretty close to our estimate at 73,807,578. This is far too h
 ```sql
 SELECT
     DATE_TRUNC('DAY', sold_timestamp) AS sold_ckey
-    ,FLOOR(cs_item_sk/100000) AS item_ckey
+    ,TRUNC(cs_item_sk,-5) AS item_ckey
     ,COUNT(*)
   FROM catalog_sales
  GROUP BY sold_ckey, item_ckey
@@ -652,7 +652,7 @@ The cardinality is reasonable here, but we are actually down to a single digit f
 ```sql
 SELECT
     DATE_TRUNC('WEEK', sold_timestamp) AS sold_ckey
-    ,FLOOR(cs_item_sk/10000) AS item_ckey
+    ,TRUNC(cs_item_sk,-4) AS item_ckey
     ,COUNT(*)
   FROM catalog_sales
  GROUP BY sold_ckey, item_ckey
@@ -663,16 +663,16 @@ The cardinality here is within our target range.
 ### Cluster Keys to Try
 Based on this exploration, we'd like to try the following cluster keys:
 * `DATE_TRUNC('HOUR', sold_timestamp)`
-* `FLOOR(cs_item_sk/10)`
-* `FLOOR(cs_order_number/100000)`
-* `DATE_TRUNC('WEEK', sold_timestamp), FLOOR(cs_item_sk/10000)`
+* `TRUNC(cs_item_sk,-1)`
+* `TRUNC(cs_order_number,-5)`
+* `DATE_TRUNC('WEEK', sold_timestamp), TRUNC(cs_item_sk,-4)`
 
 <!-- ------------------------ -->
 ## Test Query Workload Against Clustered Table Copies
 Duration: 90
 
 Clustering is a physical state of the data, where data is grouped into micro-partitions in such a way that the minimum/maximum ranges of a clustering key are narrow. It can be achieved and maintained long-term through something like [automatic clustering](https://docs.snowflake.com/en/user-guide/tables-auto-reclustering). It can also be achieved naturally - a table with data that is loaded regularly with time-based data often achieves some natural time- or date-based clustering. Data engineering processes can also sort data as a table is built to achieve clustering. While we might want to use auto-clustering long-term, using a simple ORDER BY works well for testing the impact of clustering. We will use `CREATE TABLE ... AS ... ORDER BY ...` statements to create copies of the data in a clustered form and test performance to compare against the baseline.
-### date_trunc('hour', sold_timestamp)
+### DATE_TRUNC('hour', sold_timestamp)
 To create the table for testing, we can use this syntax:
 ```sql
 USE WAREHOUSE clustering_qs_2xl_wh;
@@ -764,7 +764,7 @@ ORDER BY cs_order_number
 ;
 ALTER SESSION UNSET QUERY_TAG;
 ```
-#### Performance Test Results for date_trunc('hour', sold_timestamp)
+#### Performance Test Results for DATE_TRUNC('hour', sold_timestamp)
 The easiest way to pull the results of our performance test is to query the `ACCOUNT_USAGE.QUERY_HISTORY` view or the `INFORMATION_SCHEMA.QUERY_HISTORY()` table function. This query looks at the average query time and P90:
 ```sql
 SELECT query_tag
@@ -787,14 +787,14 @@ The results look something like this:
 
 The results here are in seconds based on the calculations in the query.
 
-### floor(cs_item_sk/10)
+### TRUNC(cs_item_sk,-1)
 To create the table clustered on an appropriate cardinality derivation of item, this syntax works:
 ```sql
 USE WAREHOUSE clustering_qs_2xl_wh;
 CREATE OR REPLACE TABLE clustering_exp.tpcds_clustering_test.catalog_sales_by_item AS
     SELECT *
       FROM catalog_sales
-     ORDER BY FLOOR(cs_item_sk/10);
+     ORDER BY TRUNC(cs_item_sk,-1);
 ```
 After that exists, we can use our standard set of queries, with different tags, to test performance against this table.
 ```sql
@@ -879,7 +879,7 @@ ORDER BY cs_order_number
 ;
 ALTER SESSION UNSET QUERY_TAG;
 ```
-#### Performance Test Results for floor(cs_item_sk/10)
+#### Performance Test Results for TRUNC(cs_item_sk,-1)
 Again, the easiest way to pull the results of our performance test is to query the `ACCOUNT_USAGE.QUERY_HISTORY` view or the `INFORMATION_SCHEMA.QUERY_HISTORY()` table function. This query looks at the average query time and P90:
 ```sql
 SELECT query_tag
@@ -902,14 +902,14 @@ The results look something like this:
 
 The results here are in seconds based on the calculations in the query.
 
-### floor(cs_order_number/100000)
+### TRUNC(cs_order_number,-5)
 To create the table clustered on an appropriate cardinality derivation of item, this syntax works:
 ```sql
 USE WAREHOUSE clustering_qs_2xl_wh;
 CREATE OR REPLACE TABLE clustering_exp.tpcds_clustering_test.catalog_sales_by_ordnum AS
     SELECT *
       FROM catalog_sales
-     ORDER BY FLOOR(cs_order_number/100000);
+     ORDER BY TRUNC(cs_order_number,-5);
 ```
 After that exists, we can use our standard set of queries, with different tags, to test performance against this table.
 ```sql
@@ -994,7 +994,7 @@ ORDER BY cs_order_number
 ;
 ALTER SESSION UNSET QUERY_TAG;
 ```
-#### Performance Test Results for floor(cs_order_number/100000)
+#### Performance Test Results for TRUNC(cs_order_number,-5)
 Again, the easiest way to pull the results of our performance test is to query the `ACCOUNT_USAGE.QUERY_HISTORY` view or the `INFORMATION_SCHEMA.QUERY_HISTORY()` table function. This query looks at the average query time and P90:
 ```sql
 SELECT query_tag
@@ -1016,14 +1016,14 @@ The results look something like this:
 | query3_ordnum     |             11 |              1.6 |     2.4 |
 
 The results here are in seconds based on the calculations in the query.
-### date_trunc('week', sold_timestamp), floor(cs_item_sk/10000)
+### DATE_TRUNC('week', sold_timestamp), TRUNC(cs_item_sk,-4)
 To create the table clustered on an appropriate cardinality derivation of item, this syntax works:
 ```sql
 USE WAREHOUSE clustering_qs_2xl_wh;
 CREATE OR REPLACE TABLE clustering_exp.tpcds_clustering_test.catalog_sales_by_sold_week_item AS
     SELECT *
       FROM catalog_sales
-     ORDER BY DATE_TRUNC('WEEK', sold_timestamp), FLOOR(cs_item_sk/10000);
+     ORDER BY DATE_TRUNC('WEEK', sold_timestamp), TRUNC(cs_item_sk,-4);
 ```
 After that exists, we can use our standard set of queries, with different tags, to test performance against this table.
 ```sql
@@ -1108,7 +1108,7 @@ ORDER BY cs_order_number
 ;
 ALTER SESSION UNSET QUERY_TAG;
 ```
-#### Performance Test Results for date_trunc('week', sold_timestamp), floor(cs_item_sk/10000)
+#### Performance Test Results for DATE_TRUNC('week', sold_timestamp), TRUNC(cs_item_sk,-4)
 Again, the easiest way to pull the results of our performance test is to query the `ACCOUNT_USAGE.QUERY_HISTORY` view or the `INFORMATION_SCHEMA.QUERY_HISTORY()` table function. This query looks at the average query time and P90:
 ```sql
 SELECT query_tag
@@ -1143,7 +1143,9 @@ Average durations:
 | query3    |           27.1 |          1.6 |      31.2 |              1.6 |                    1.5 |
 | *sum*     |         *97.0* |       *23.0* |    *83.5* |           *27.4* |                 *12.9* | 
 
-There are some interesting things we see in this data. The first thing is that ANY of the clustering keys improve the execution time of query1. If we want the best performance for query1, we would choose to cluster on date_trunc('week', sold_timestamp), floor(cs_item_sk/10000). If we want the best performance for query2, we would choose to cluster on floor(cs_item_sk/10). If we want the best performance for query3, It is pretty much a tie between three of the four choices we tried. 
+There are some interesting things we see in this data. The first thing is that ANY of the clustering keys improve the execution time of query1. If we want the best performance for query1, we would choose to cluster on DATE_TRUNC('week', sold_timestamp), TRUNC(cs_item_sk,-4). If we want the best performance for query2, we would choose to cluster on TRUNC(cs_item_sk,-1). If we want the best performance for query3, It is pretty much a tie between three of the four choices we tried. 
+
+We're looking at query duration here because that is the metric we care about optimizing for in this case. We might also look at the number of micro-partitions scanned and look for the clustering key choice that minimizes that. 
 
 Overall, the clustering key that combines the week sold along with the item provides the best performance improvement. The new overall time for this workload is just 13% of the original time - that's an outstanding improvement in performance.
 
@@ -1164,14 +1166,14 @@ Implementing clustering for the first time or changing a clustering key can be a
 ```sql 
 SELECT SYSTEM$ESTIMATE_AUTOMATIC_CLUSTERING_COSTS(
   'clustering_exp.tpcds_clustering_test.catalog_sales'
-  , '(date_trunc(\'week\', sold_timestamp), floor(cs_item_sk/10000))'
+  , '(DATE_TRUNC(\'week\', sold_timestamp), TRUNC(cs_item_sk,-4))'
 );
 ```
 Running this function may take several minutes. The output will look something like this:
 ```json
 {
   "reportTime": "Mon, 28 Apr 2025 15:02:26 GMT",
-  "clusteringKey": "LINEAR(date_trunc(\u0027week\u0027, sold_timestamp), floor(cs_item_sk/10000))",
+  "clusteringKey": "LINEAR(DATE_TRUNC(\u0027week\u0027, sold_timestamp), TRUNC(cs_item_sk,-4))",
   "initial": {
     "unit": "Credits",
     "value": 36.580923038,
@@ -1189,7 +1191,7 @@ In this case, we'll use this statement to replace our table with a clustered ver
 INSERT OVERWRITE INTO catalog_sales
   SELECT * 
   FROM catalog_sales
-  ORDER BY date_trunc('week', sold_timestamp), floor(cs_item_sk/10000);
+  ORDER BY DATE_TRUNC('week', sold_timestamp), TRUNC(cs_item_sk,-4);
 ```
 This methodology works up to a size somewhere between 250,000 and about 500,000 micro-partitions. Use the largest warehouse size you are willing to for this work - on the larger sizes, 4XL is likely to be needed. If the warehouse size is too small, remote spilling will occur and the operation will become more expensive, and may not be worth doing over letting automatic clustering do the work for you. In this case, this statement took 11m and 32s on a 2XL warehouse, equating to approximately 6.16 credits(using the [credits/second from the documentation](https://docs.snowflake.com/en/user-guide/warehouses-overview)). 
 
@@ -1200,7 +1202,7 @@ We can see in the query profile that while there was local spilling, there was n
 We then still want to enable automatic clustering for this table so that clustering will be maintained for new data and as data is changed. That can be done using this syntax:
 ```sql
  ALTER TABLE catalog_sales 
-  CLUSTER BY (DATE_TRUNC('WEEK', sold_timestamp), FLOOR(cs_item_sk/10000));
+  CLUSTER BY (DATE_TRUNC('WEEK', sold_timestamp), TRUNC(cs_item_sk,-4));
 ```
 We can validate that auto clustering is enabled by using the SHOW TABLES command:
 ```sql
