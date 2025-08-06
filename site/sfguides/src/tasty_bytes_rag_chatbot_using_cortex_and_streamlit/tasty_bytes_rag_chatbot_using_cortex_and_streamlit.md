@@ -116,7 +116,7 @@ FROM tasty_bytes_chatbot.app.array_table;
   - Database: TASTY_BYTES_CHATBOT 
   - Schema: APP
   - Warehouse: TASTY_BYTES_CHATBOT_WH
-- Add snowpark-ml-python package from the packages dropdown in the code editor section
+- Add snowflake-ml-python package from the packages dropdown in the code editor section
 - Copy the code below into the code editor section
 - Run the app!
 
