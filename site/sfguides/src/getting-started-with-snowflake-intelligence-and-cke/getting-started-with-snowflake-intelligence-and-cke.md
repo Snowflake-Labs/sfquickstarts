@@ -125,7 +125,7 @@ Duration: 5
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Snowflake Intelligence** and let's ask the following questions.
+Open [Snowflake Intelligence**](https://ai.snowflake.com/) and let's ask the following questions.
 
 ### Q1. *What are the molecular mechanisms linking inflammation to insulin resistance in type 2 diabetes?*
 
