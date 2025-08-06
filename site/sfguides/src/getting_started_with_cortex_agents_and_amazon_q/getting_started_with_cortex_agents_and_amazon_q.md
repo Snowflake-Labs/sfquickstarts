@@ -214,7 +214,7 @@ Note: The code splits the text into 700-token chunks with 100-token overlaps. Th
 CREATE OR REPLACE CORTEX SEARCH SERVICE SCRIPT_SEARCH_SRV
 ON CHUNK_TEXT
 ATTRIBUTES DOC
-WAREHOUSE = HOL_WH
+WAREHOUSE = WORKSHOPWH 
 TARGET_LAG = '30 day'
 AS (
 SELECT CHUNK_TEXT as CHUNK_TEXT, DOC FROM SCRIPT_TABLE_CHUNK);
@@ -374,6 +374,7 @@ The final step is setting up OAuth authentication, this creates a secure connect
 1. Run the following code to create the security integration. This code creates a secure connection that will allow Amazon Q Business to safely access your Snowflake data. You'll need to replace **<Deployed URL>** with the URL of your Amazon Q application (which you have copied earlier from the AWS Console).
 ``` sql
 --create custom oauth
+USE ROLE ACCOUNTADMIN
 CREATE OR REPLACE SECURITY INTEGRATION Q_AUTH_HOL
 TYPE = OAUTH
 ENABLED = TRUE
@@ -433,7 +434,7 @@ info:
   title: Cortex Agent via Stored Procedure
   version: 1.0.0
 servers:
-  - url: https://SFSENORTHAMERICA-HOL_MATTMARZILLO.snowflakecomputing.com
+  - url: https://<Your-Acount-Identifier>.snowflakecomputing.com
 paths:
   /api/v2/statements:
     post:
@@ -508,8 +509,8 @@ components:
       type: oauth2
       flows:
         authorizationCode:
-          authorizationUrl: https://SFSENORTHAMERICA-HOL_MATTMARZILLO.snowflakecomputing.com/oauth/authorize
-          tokenUrl: https://SFSENORTHAMERICA-HOL_MATTMARZILLO.snowflakecomputing.com/oauth/token-request
+          authorizationUrl: https://<Your-Acount-Identifier>.snowflakecomputing.com/oauth/authorize
+          tokenUrl: https://<Your-Acount-Identifier>.snowflakecomputing.com/oauth/token-request
           scopes:
             session:role:PUBLIC: Use PUBLIC role in Snowflake
 ```
@@ -528,8 +529,11 @@ components:
 - Add the OAuth callback URL (same as OAUTH_REDIRECT_URI from Snowflake security integration)
 ![](assets/awssecretesmanager.png)
 
-![](assets/awssecretsmanager2.png)
+- The first time you will need to create a new service role.
+![](assets/servicerole.png)
 
+
+![](assets/awssecretsmanager2.png)
 8. Finally, Click the **Create** button then **Add Plugin** to complete your plugin setup. You can validate that your plugin has been set up successfully when the **Plugin Status** is updated to green.
 
 ![](assets/pluginstatus.png)
