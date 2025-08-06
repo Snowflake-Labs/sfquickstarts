@@ -99,6 +99,9 @@ Execute the following SQL statements that use [AI_AGG()](https://docs.snowflake.
 ```sql
 -- Use AI_AGG to aggregate support cases summary and insert into a new table AGGREGATED_SUPPORT_CASES_SUMMARY
 
+use database DASH_DB_SI;
+use schema RETAIL;
+
 create or replace table AGGREGATED_SUPPORT_CASES_SUMMARY as
  select 
     ai_agg(transcript,'Read and analyze all support cases to provide a long-form text summary in no less than 5000 words.') as summary
@@ -166,9 +169,11 @@ Select the newly created **Sales_AI** agent and click on **Edit** on the top rig
       - Database & Schema: **DASH_DB_SI.RETAIL**
       - Custom tool identifier: **DASH_DB_SI.RETAIL.SEND_EMAIL()**
       - Parameter: body
+        - Description: *If body is not provided, summarize the last question and use that as content for the email.*
       - Parameter: recipient_email
         - Description: *If the email is not provided, send it to **YOUR_EMAIL_ADDRESS_GOES_HERE***.
       - Parameter: subject
+        - Description: *If subject is not provided, use "Snowflake Intelligence"*.
       - Warehouse: **DASH_WH_SI**
 
 * Orchestration: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
@@ -186,7 +191,7 @@ Duration: 5
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-Open [Snowflake Intelligence](https://ai.snowflake.com/) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in.
+Open [Snowflake Intelligence](https://ai.snowflake.com/) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN** and warehouse is set to **DASH_WH_SI**. 
 
 Now, let's ask the following questions.
 
