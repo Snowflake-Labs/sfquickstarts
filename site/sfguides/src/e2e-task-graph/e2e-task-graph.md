@@ -32,8 +32,6 @@ You'll build a complete, production-ready ML pipeline that:
 5. Sends notifications for important events
 6. Performs cleanup operations
 
-![Task Graph Overview](assets/task-graph-overview.png)
-
 ### What You'll Need
 - Access to a [Snowflake account](https://signup.snowflake.com/)
 - Appropriate Snowflake role permissions (detailed in setup)
