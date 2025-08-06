@@ -186,7 +186,9 @@ Duration: 5
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-Open [Snowflake Intelligence**](https://ai.snowflake.com/) and let's ask the following questions.
+Open [Snowflake Intelligence](https://ai.snowflake.com/) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in.
+
+Now, let's ask the following questions.
 
 ### Q1. *Show me the trend of sales by product category between June and August*
 
