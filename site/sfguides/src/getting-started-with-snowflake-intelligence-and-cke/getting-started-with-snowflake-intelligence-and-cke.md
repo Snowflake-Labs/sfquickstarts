@@ -99,7 +99,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
   - **Cortex Search Services**
     - Click on **+ Add**
-        - Name: PubMed_Biomedical
+        - Name: Snowflake_Documentation
         - Database and Schema: **SNOWFLAKE_DOCUMENTATION.SHARED**
         - Search service: **SNOWFLAKE_DOCUMENTATION.SHARED.CKE_SNOWFLAKE_DOCS_SERVICE**
         - ID column: SOURCE_URL
@@ -124,7 +124,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 * Access: SNOWFLAKE_INTELLIGENCE_ADMIN
 
 > aside positive
-> NOTE: On the top right corner, click on **Save** to save the newly updated **PubMed_Biomedical** agent.
+> NOTE: On the top right corner, click on **Save** to save the newly updated **Snowflake_Documentation** agent.
 
 <!-- ------------------------ -->
 ## Snowflake Intelligence
@@ -149,7 +149,7 @@ ___
 
 ### Q5. *Send a summary email*
 
-NOTE: Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **PubMed_Biomedical** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**: "If the email is not provided, send it to YOUR_EMAIL_ADDRESS_GOES_HERE".
+NOTE: Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **Snowflake_Documentation** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**: "If the email is not provided, send it to YOUR_EMAIL_ADDRESS_GOES_HERE".
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
