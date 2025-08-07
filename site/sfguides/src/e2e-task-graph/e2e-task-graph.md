@@ -269,6 +269,9 @@ Congratulations! You've successfully built an end-to-end machine learning pipeli
 
 ### Related Resources
 
+YouTube video:
+- [Easily Deploy And Orchestrate ML Pipelines Over Snowflake Data ](https://www.youtube.com/watch?v=zdWtpZ9kacw)
+
 Web page:
 - [Snowflake ML Overview](http://www.snowflake.com/ml)
 
