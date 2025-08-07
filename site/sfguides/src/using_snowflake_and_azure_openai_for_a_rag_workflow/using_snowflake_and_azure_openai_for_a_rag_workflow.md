@@ -56,7 +56,7 @@ This use case will leverage movie reviews and we will build a Streamlit app that
 
 Duration: 10
 
-For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to platform.openi.com/api-keys and create a new secret key as it looks below. Make note of the model name and key as you will need this to generate a response. 
+For this quickstart you can either leverage a Azure OpenAI service or a stand alone OpenAI resource. Depending on timing and your organizations Azure subscription you may be better off utilizing a personal/trial OpenAI service that comes with a nominal cost for the sake of this lab. You will have to navigate to platform.openai.com/api-keys and create a new secret key as it looks below. Make note of the model name and key as you will need this to generate a response. 
 
 ![](assets/openai.png)
 
@@ -200,7 +200,7 @@ Now that we have our OpenAI functions, let’s build our App.
 
 Go back to the main account view by clicking ‘<- Worksheets’ and then select ‘Streamlit’.
 
-Make sure that you’re still using the ‘ACCOUNTADMIN’ role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same RETAIL_HOL database where the link table and the image stage are located. You can name the app whatever you would like, something like "Wardrobe Recommender" is appropriate.
+Make sure that you’re still using the ‘ACCOUNTADMIN’ role and then create a new Streamlit app, which should open the app editor directly. You can access this app from the Streamlit view, but make sure to use the same role and that the app is in the same REVIEWS_DB database where the embeddings table is located. You can name the app whatever you would like, something like "Movie Reviews" is appropriate.
 
 Once the app is created paste the below code into the app code and click 'Run' in order to create the Streamlit App!
 
