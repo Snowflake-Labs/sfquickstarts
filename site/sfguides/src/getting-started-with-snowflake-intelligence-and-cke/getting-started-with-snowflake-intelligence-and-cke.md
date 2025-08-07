@@ -65,8 +65,8 @@ Duration: 10
 ### Cortex Knowledge Extension
 
 * In Snowsight, on the left hand navigation menu, select **Data Products** >> **Marketplace** 
-* In **Snowflake Marketplace**, search for **PubMed** 
-* Click on **PubMed Biomedical Research Corpus** 
+* In **Snowflake Marketplace**, search for **Snowflake Documentation** 
+* Click on **Snowflake Documentation** 
 * On the top right, click on **Get** and follow instructions while keeping the default values 
 
 ### Create Agent
@@ -79,24 +79,31 @@ Note that you can create multiple agents for various use cases and/or business t
 * On the top right, click on **Create agent**
      - Schema: SNOWFLAKE_INTELLIGENCE.AGENTS
      - Select **Create this agent for Snowflake Intelligence**
-     - Agent object name: PubMed_Biomedical
-     - Display name: PubMed_Biomedical
+     - Agent object name: Snowflake_Documentation
+     - Display name: Snowflake_Documentation
+* Select the newly created **Snowflake_Documentation** agent and click on **Edit** on the top right corner and make the following updates.
+
+### Add Instructions
+
+Add the following starter questions under **Sample questions**:
+
+- How do I create a new Snowflake account and set up my first database?
+- What are virtual warehouses in Snowflake, and how do I properly size them?
+- Can you explain zero-copy cloning and how to clone a database or table?
 
 ### Add Tools
 
 Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
-
-Select the newly created **PubMed_Biomedical** agent and click on **Edit** on the top right corner and make the following updates.
 
 * Tools
 
   - **Cortex Search Services**
     - Click on **+ Add**
         - Name: PubMed_Biomedical
-        - Database and Schema: **PUBMED_BIOMEDICAL_RESEARCH_CORPUS.OA_COMM**
-        - Search service: **PUBMED_BIOMEDICAL_RESEARCH_CORPUS.OA_COMM.PUBMED_OA_CKE_SEARCH_SERVICE**
-        - ID column: PMID
-        - Title column: ARTICLE_URL
+        - Database and Schema: **SNOWFLAKE_DOCUMENTATION.SHARED**
+        - Search service: **SNOWFLAKE_DOCUMENTATION.SHARED.CKE_SNOWFLAKE_DOCS_SERVICE**
+        - ID column: SOURCE_URL
+        - Title column: DOCUMENT_TITLE
         
   - **Custom tools**
     - Click on **+ Add**
@@ -131,39 +138,18 @@ Open [Snowflake Intelligence](https://ai.snowflake.com/) and make sure you're si
 
 Now, let's ask the following questions.
 
-### Q1. *What are the molecular mechanisms linking inflammation to insulin resistance in type 2 diabetes?*
-
-![Q1](assets/q&a_1.png)
-
+### Q1. *How do I create a new Snowflake account and set up my first database?*
 ___
 
-### Q2. *What are the most effective interventions for preventing hospital-acquired infections in ICU settings?*
-
-![Q2](assets/q&a_2.png)
-
+### Q2. *What are virtual warehouses in Snowflake, and how do I properly size them?*
 ___
 
-### Q3. *What lifestyle factors most strongly influence disease progression in multiple sclerosis?*
-
-![Q3](assets/q&a_3.png)
-
-___
-
-### Q4. *What are emerging drug targets for treating KRAS-mutant cancers?*
-
-![Q3](assets/q&a_4.png)
-
+### Q3. *Can you explain zero-copy cloning and how to clone a database or table?*
 ___
 
 ### Q5. *Send a summary email*
 
 NOTE: Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **PubMed_Biomedical** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**: "If the email is not provided, send it to YOUR_EMAIL_ADDRESS_GOES_HERE".
-
-___
-
-### Other Questions
-
-Visit [PubMed Biomedical Research Corpus](https://app.snowflake.com/marketplace/listing/GZSTZ67BY9OQW/snowflake-pubmed-biomedical-research-corpus) in the Snowflake Marketplace to explore the data.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
