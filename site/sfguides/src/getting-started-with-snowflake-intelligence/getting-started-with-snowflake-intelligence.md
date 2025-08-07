@@ -136,12 +136,19 @@ Note that you can create multiple agents for various use cases and/or business t
      - Select **Create this agent for Snowflake Intelligence**
      - Agent object name: Sales_AI
      - Display name: Sales//AI
+* Select the newly created **Sales_AI** agent and click on **Edit** on the top right corner and make the following updates.
+
+### Add Instructions
+
+Add the following starter questions under **Sample questions**:
+
+- Show me the trend of sales by product category between June and August
+- What issues are reported with jackets recently in customer support tickets?
+- Why did sales of Fitness Wear grow so much in July?
 
 ### Add Tools
 
 Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
-
-Select the newly created **Sales_AI** agent and click on **Edit** on the top right corner and make the following updates.
 
 * Tools
   - **Cortex Analyst**
