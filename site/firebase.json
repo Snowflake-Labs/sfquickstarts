@@ -69,7 +69,7 @@
     },
     {
       "source": "/guide/prompt_engineering_and_llm_evaluation/{,/**}",
-      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
     },
     {
@@ -94,12 +94,7 @@
     },
     {
       "source": "guide/snowpark_python_top_three_tips_for_optimal_performance/{,/**}",
-      "destination": "/guide/snowpark_python_top_tips_for_optimal_performance",
-      "type": 301
-    },
-    {
-      "source": "guide/attaining_consumer_insights_with_snowflake_and_microsoft_power_bi/{,/**}",
-      "destination": "/guide/end-to-end-analytics-with-snowflake-and-power-bi",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
     },
     {
@@ -134,7 +129,7 @@
     },
     {
       "source": "guide/asking_questions_to_your_own_documents_with_snowflake_cortex/{,/**}",
-      "destination": "/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
     },
     {
@@ -275,6 +270,46 @@
     {
       "source": "guide/build_llm_app_nvidia_scs/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/machine_learning_with_snowpark_python/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/getting_started_with_snowpark_dataframe_api/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/vhol_snowflake_salesforce_tcrm/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/snowpark_python_top_tips_for_optimal_performance/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/fine-tune-an-llm-in-snowpark-container-services-with-autotrain/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "guide/vhol_snowflake_data_wrangler/{,/**}",
+      "destination": "https://quickstarts.snowflake.com/guide/404.html",
+      "type": 301
+    },
+    {
+      "source": "/guide/integrate_snowflake_cortex_agents_with_microsoft_teams{,/**}",
+      "destination": "/guide/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app",
       "type": 301
     }
     ]
