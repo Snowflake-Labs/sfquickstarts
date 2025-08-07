@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Machine Learning, Task Graphs, ML Jobs, Snowpark, Python, XGBoost, Model Registry
 
-# Orchestrate ML Pipelines with Snowflake ML Jobs and Task Graphs
+# Orchestrate ML Pipelines with ML Jobs and Task Graphs
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
