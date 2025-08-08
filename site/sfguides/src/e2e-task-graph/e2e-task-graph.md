@@ -260,7 +260,7 @@ Duration: 5
 Congratulations! You've successfully built an end-to-end machine learning pipeline using Snowflake Task Graphs and ML Jobs. This production-ready solution demonstrates how to orchestrate the entire ML lifecycle within Snowflake's ecosystem, from data preparation to model deployment with conditional promotion logic.
 
 ### What You Learned
-- Built a complete ML pipeline using Snowpark ML
+- Built a complete ML pipeline using Snowflake ML
 - Orchestrated ML workflows using Snowflake Task Graphs
 - Implemented distributed model training with ML Jobs
 - Created conditional logic for model promotion based on quality metrics
