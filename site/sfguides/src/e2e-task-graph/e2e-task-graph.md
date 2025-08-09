@@ -7,12 +7,12 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Machine Learning, Task Graphs, ML Jobs, Snowpark, Python, XGBoost, Model Registry
 
-# Build an End-to-End ML Pipeline with Snowflake Task Graphs
+# Orchestrate ML Pipelines with ML Jobs and Task Graphs
 <!-- ------------------------ -->
 ## Overview
 Duration: 5
 
-In this guide, you'll learn how to build a complete machine learning pipeline using Snowflake ML Jobs and Task Graphs. This end-to-end solution demonstrates how to orchestrate the entire ML lifecycle - from data preparation to model deployment - all within Snowflake's ecosystem.
+In this guide, you'll learn how to build a complete machine learning pipeline using [Snowflake ML](http://www.snowflake.com/ml) Jobs and Task Graphs. This end-to-end solution demonstrates how to orchestrate the entire ML lifecycle - from data preparation to model deployment - all within Snowflake's ecosystem.
 
 The pipeline you'll build includes data preparation, model training on distributed compute, model evaluation, conditional promotion based on quality metrics, and automated cleanup - all orchestrated through a Task Graph that can be scheduled for recurring execution.
 
@@ -260,7 +260,7 @@ Duration: 5
 Congratulations! You've successfully built an end-to-end machine learning pipeline using Snowflake Task Graphs and ML Jobs. This production-ready solution demonstrates how to orchestrate the entire ML lifecycle within Snowflake's ecosystem, from data preparation to model deployment with conditional promotion logic.
 
 ### What You Learned
-- Built a complete ML pipeline using Snowpark Python
+- Built a complete ML pipeline using Snowflake ML
 - Orchestrated ML workflows using Snowflake Task Graphs
 - Implemented distributed model training with ML Jobs
 - Created conditional logic for model promotion based on quality metrics
@@ -269,16 +269,21 @@ Congratulations! You've successfully built an end-to-end machine learning pipeli
 
 ### Related Resources
 
-Articles:
+YouTube video:
+- [Easily Deploy And Orchestrate ML Pipelines Over Snowflake Data ](https://www.youtube.com/watch?v=zdWtpZ9kacw)
+
+Web page:
+- [Snowflake ML Overview](http://www.snowflake.com/ml)
+
+Documentation:
 - [Snowflake ML Jobs Overview](https://docs.snowflake.com/developer-guide/snowflake-ml/ml-jobs/overview)
 - [Snowflake Task Graphs](https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-managing-tasks)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Snowflake Notifications](https://docs.snowflake.com/en/user-guide/notifications/snowflake-notifications)
 
-Documentation:
-- [Snowflake Documentation](https://docs.snowflake.com/)
-- [XGBoost Documentation](https://xgboost.readthedocs.io/)
-- [Snowpark Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
+More ML quickstart: 
+- [Build an End-to-End ML Workflow in Snowflake](https://quickstarts.snowflake.com/guide/end-to-end-ml-workflow/index.html?index=..%2F..index#1)
+- [Building ML Models to Crack the Code of Customer Conversions](https://quickstarts.snowflake.com/guide/build-ml-models-for-customer-conversions/index.html?index=..%2F..index#0)
 
-Happy building with Snowflake Task Graphs!
+Happy building with Snowflake ML!
