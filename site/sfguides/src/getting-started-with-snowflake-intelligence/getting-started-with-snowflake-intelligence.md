@@ -99,6 +99,9 @@ Execute the following SQL statements that use [AI_AGG()](https://docs.snowflake.
 ```sql
 -- Use AI_AGG to aggregate support cases summary and insert into a new table AGGREGATED_SUPPORT_CASES_SUMMARY
 
+use database DASH_DB_SI;
+use schema RETAIL;
+
 create or replace table AGGREGATED_SUPPORT_CASES_SUMMARY as
  select 
     ai_agg(transcript,'Read and analyze all support cases to provide a long-form text summary in no less than 5000 words.') as summary
@@ -133,12 +136,19 @@ Note that you can create multiple agents for various use cases and/or business t
      - Select **Create this agent for Snowflake Intelligence**
      - Agent object name: Sales_AI
      - Display name: Sales//AI
+* Select the newly created **Sales_AI** agent and click on **Edit** on the top right corner and make the following updates.
+
+### Add Instructions
+
+Add the following starter questions under **Sample questions**:
+
+- Show me the trend of sales by product category between June and August
+- What issues are reported with jackets recently in customer support tickets?
+- Why did sales of Fitness Wear grow so much in July?
 
 ### Add Tools
 
 Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
-
-Select the newly created **Sales_AI** agent and click on **Edit** on the top right corner and make the following updates.
 
 * Tools
   - **Cortex Analyst**
@@ -166,9 +176,11 @@ Select the newly created **Sales_AI** agent and click on **Edit** on the top rig
       - Database & Schema: **DASH_DB_SI.RETAIL**
       - Custom tool identifier: **DASH_DB_SI.RETAIL.SEND_EMAIL()**
       - Parameter: body
+        - Description: *If body is not provided, summarize the last question and use that as content for the email.*
       - Parameter: recipient_email
         - Description: *If the email is not provided, send it to **YOUR_EMAIL_ADDRESS_GOES_HERE***.
       - Parameter: subject
+        - Description: *If subject is not provided, use "Snowflake Intelligence"*.
       - Warehouse: **DASH_WH_SI**
 
 * Orchestration: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
@@ -186,7 +198,9 @@ Duration: 5
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Snowflake Intelligence** and let's ask the following questions.
+Open [Snowflake Intelligence](https://ai.snowflake.com/) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN** and warehouse is set to **DASH_WH_SI**. 
+
+Now, let's ask the following questions.
 
 ### Q1. *Show me the trend of sales by product category between June and August*
 
@@ -233,5 +247,6 @@ You've learned how to create building blocks for creating a Snowflake Intelligen
 ### Related Resources
 
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence)
+- [Snowflake Intelligence Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence)
 
 

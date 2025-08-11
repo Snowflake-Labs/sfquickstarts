@@ -65,8 +65,8 @@ Duration: 10
 ### Cortex Knowledge Extension
 
 * In Snowsight, on the left hand navigation menu, select **Data Products** >> **Marketplace** 
-* In **Snowflake Marketplace**, search for **PubMed** 
-* Click on **PubMed Biomedical Research Corpus** 
+* In **Snowflake Marketplace**, search for **Snowflake Documentation** 
+* Click on **Snowflake Documentation** 
 * On the top right, click on **Get** and follow instructions while keeping the default values 
 
 ### Create Agent
@@ -79,24 +79,31 @@ Note that you can create multiple agents for various use cases and/or business t
 * On the top right, click on **Create agent**
      - Schema: SNOWFLAKE_INTELLIGENCE.AGENTS
      - Select **Create this agent for Snowflake Intelligence**
-     - Agent object name: PubMed_Biomedical
-     - Display name: PubMed_Biomedical
+     - Agent object name: Snowflake_Documentation
+     - Display name: Snowflake_Documentation
+* Select the newly created **Snowflake_Documentation** agent and click on **Edit** on the top right corner and make the following updates.
+
+### Add Instructions
+
+Add the following starter questions under **Sample questions**:
+
+- How do I create a new Snowflake account and set up my first database?
+- What are virtual warehouses in Snowflake, and how do I properly size them?
+- Can you explain zero-copy cloning and how to clone a database or table?
 
 ### Add Tools
 
 Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
 
-Select the newly created **PubMed_Biomedical** agent and click on **Edit** on the top right corner and make the following updates.
-
 * Tools
 
   - **Cortex Search Services**
     - Click on **+ Add**
-        - Name: PubMed_Biomedical
-        - Database and Schema: **PUBMED_BIOMEDICAL_RESEARCH_CORPUS.OA_COMM**
-        - Search service: **PUBMED_BIOMEDICAL_RESEARCH_CORPUS.OA_COMM.PUBMED_OA_CKE_SEARCH_SERVICE**
-        - ID column: PMID
-        - Title column: ARTICLE_URL
+        - Name: Snowflake_Documentation
+        - Database and Schema: **SNOWFLAKE_DOCUMENTATION.SHARED**
+        - Search service: **SNOWFLAKE_DOCUMENTATION.SHARED.CKE_SNOWFLAKE_DOCS_SERVICE**
+        - ID column: SOURCE_URL
+        - Title column: DOCUMENT_TITLE
         
   - **Custom tools**
     - Click on **+ Add**
@@ -105,9 +112,11 @@ Select the newly created **PubMed_Biomedical** agent and click on **Edit** on th
       - Database & Schema: **DASH_SI_CKE.DATA**
       - Custom tool identifier: **DASH_SI_CKE.DATA.SEND_EMAIL()**
       - Parameter: body
+        - Description: *If body is not provided, summarize the last question and use that as content for the email.*
       - Parameter: recipient_email
         - Description: *If the email is not provided, send it to **YOUR_EMAIL_ADDRESS_GOES_HERE***.
       - Parameter: subject
+        - Description: *If subject is not provided, use "Snowflake Intelligence"*.
       - Warehouse: **COMPUTE_WH**
 
 * Orchestration: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
@@ -115,7 +124,7 @@ Select the newly created **PubMed_Biomedical** agent and click on **Edit** on th
 * Access: SNOWFLAKE_INTELLIGENCE_ADMIN
 
 > aside positive
-> NOTE: On the top right corner, click on **Save** to save the newly updated **PubMed_Biomedical** agent.
+> NOTE: On the top right corner, click on **Save** to save the newly updated **Snowflake_Documentation** agent.
 
 <!-- ------------------------ -->
 ## Snowflake Intelligence
@@ -125,41 +134,22 @@ Duration: 5
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Snowflake Intelligence** and let's ask the following questions.
+Open [Snowflake Intelligence](https://ai.snowflake.com/) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**. 
 
-### Q1. *What are the molecular mechanisms linking inflammation to insulin resistance in type 2 diabetes?*
+Now, let's ask the following questions.
 
-![Q1](assets/q&a_1.png)
-
+### Q1. *How do I create a new Snowflake account and set up my first database?*
 ___
 
-### Q2. *What are the most effective interventions for preventing hospital-acquired infections in ICU settings?*
-
-![Q2](assets/q&a_2.png)
-
+### Q2. *What are virtual warehouses in Snowflake, and how do I properly size them?*
 ___
 
-### Q3. *What lifestyle factors most strongly influence disease progression in multiple sclerosis?*
-
-![Q3](assets/q&a_3.png)
-
-___
-
-### Q4. *What are emerging drug targets for treating KRAS-mutant cancers?*
-
-![Q3](assets/q&a_4.png)
-
+### Q3. *Can you explain zero-copy cloning and how to clone a database or table?*
 ___
 
 ### Q5. *Send a summary email*
 
-NOTE: Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **PubMed_Biomedical** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**: "If the email is not provided, send it to YOUR_EMAIL_ADDRESS_GOES_HERE".
-
-___
-
-### Other Questions
-
-Visit [PubMed Biomedical Research Corpus](https://app.snowflake.com/marketplace/listing/GZSTZ67BY9OQW/snowflake-pubmed-biomedical-research-corpus) in the Snowflake Marketplace to explore the data.
+NOTE: Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **Snowflake_Documentation** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**: "If the email is not provided, send it to YOUR_EMAIL_ADDRESS_GOES_HERE".
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -176,4 +166,6 @@ You've learned how to create building blocks for creating a Snowflake Intelligen
 
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence-and-cke)
 - [CKE in Snowflake Marketplace](https://app.snowflake.com/marketplace/data-products?sortBy=popular&categorySecondary=%5B%2226%22%5D)
+- [Snowflake Intelligence Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence)
+
 
