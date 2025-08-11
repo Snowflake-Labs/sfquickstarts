@@ -276,6 +276,13 @@ You will then download the snowflakeinfo.txt file and use that code to create yo
 
 ![](assets/snowflakeinfo.png)
 
+
+Use the **Snowflake SQL Commands** to create the security integration, role and user in Snowflake.
+
+![](assets/createsecurityintegration.png)
+
+Keep the **Snowflake power platform connection info** to reference when you connect from Copilot Studio to Snowflake.
+
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
 Duration: 8
