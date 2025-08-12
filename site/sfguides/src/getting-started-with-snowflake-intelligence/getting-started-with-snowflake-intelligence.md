@@ -2,7 +2,7 @@ id: getting-started-with-snowflake-intelligence
 summary: This guide outlines the process for getting started with Snowflake Intelligence.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
@@ -70,7 +70,7 @@ Duration: 20
 
 This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
 
-* In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Cortex Analyst** 
+* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Cortex Analyst**](https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si)
 * On the top right, click on **Create new model** down arrow and select **Upload your YAML file** 
 * Upload [marketing_campaigns.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/marketing_campaigns.yaml) | Select database, schema, and stage: **DASH_DB_SI.RETAIL** >> **SEMANTIC_MODELS** 
 * On the top right, click on **Save** 
@@ -79,7 +79,7 @@ This tool enables the agent to query structured data in Snowflake by generating 
 
 This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform Retrieval Augmented Generation (RAG).
 
-* In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Cortex Search** 
+* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Cortex Search**](https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si) 
 * On the top right, click on **Create**
     - Role and Warehouse: **SNOWFLAKE_INTELLIGENCE_ADMIN** | **COMPUTE_WH**
     - Database and Schema: **DASH_DB_SI.RETAIL**
@@ -130,7 +130,7 @@ An agent is an intelligent entity within Snowflake Intelligence that acts on beh
 
 Note that you can create multiple agents for various use cases and/or business teams in your organization. 
 
-* In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Agents** 
+* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si) 
 * On the top right, click on **Create agent**
      - Schema: **SNOWFLAKE_INTELLIGENCE.AGENTS**
      - Select **Create this agent for Snowflake Intelligence**
@@ -198,7 +198,7 @@ Duration: 5
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-Open [Snowflake Intelligence](https://ai.snowflake.com/) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN** and warehouse is set to **DASH_WH_SI**. 
+Open [Snowflake Intelligence](https://ai.snowflake.com/_deeplink/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN** and warehouse is set to **DASH_WH_SI**. 
 
 Now, let's ask the following questions.
 

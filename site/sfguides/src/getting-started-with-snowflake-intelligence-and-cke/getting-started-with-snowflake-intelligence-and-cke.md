@@ -2,7 +2,7 @@ id: getting-started-with-snowflake-intelligence-and-cke
 summary: This guide outlines the process for getting started with Snowflake Intelligence and Cortex Knowledge Extensions.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
@@ -75,7 +75,7 @@ An agent is an intelligent entity within Snowflake Intelligence that acts on beh
 
 Note that you can create multiple agents for various use cases and/or business teams in your organization. 
 
-* In Snowsight, on the left hand navigation menu, select **AI & ML** >> **Agents** 
+* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si-and-cke)
 * On the top right, click on **Create agent**
      - Schema: SNOWFLAKE_INTELLIGENCE.AGENTS
      - Select **Create this agent for Snowflake Intelligence**
@@ -134,7 +134,7 @@ Duration: 5
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-Open [Snowflake Intelligence](https://ai.snowflake.com/) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**. 
+Open [Snowflake Intelligence](https://ai.snowflake.com/_deeplink/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si-and-cke) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**. 
 
 Now, let's ask the following questions.
 
@@ -147,7 +147,7 @@ ___
 ### Q3. *Can you explain zero-copy cloning and how to clone a database or table?*
 ___
 
-### Q5. *Send a summary email*
+### Q4. *Send a summary email*
 
 NOTE: Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **Snowflake_Documentation** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**: "If the email is not provided, send it to YOUR_EMAIL_ADDRESS_GOES_HERE".
 
