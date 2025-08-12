@@ -336,7 +336,7 @@ Duration: 1
 
 Snowflake documentation and quickstarts will provide more information you will need to build a robust streaming data pipeline. Review these resources to learn more.
 
-- [Tutorial: Get started with Snowpipe Streaming high performance architecture SDK(https://docs.snowflake.com/en/user-guide/snowpipe-streaming-high-performance-getting-started)
+- [Tutorial: Get started with Snowpipe Streaming high performance architecture SDK](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-high-performance-getting-started)
 - [Dynamic Tables Introduction](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro)
 - Quickstart on [Dynamic Tables](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html)
 - Quickstart on [Streamlit](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_for_python_streamlit/index.html)
