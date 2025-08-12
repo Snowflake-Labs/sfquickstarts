@@ -15,7 +15,7 @@ Duration: 5
 
 Snowflake is a powerful platform to process streaming data and do near real-time reporting.
 
-In this guide, we will use the Snowflake Streaming v2 (SSv2) REST API to ingest data into Snowflake tables seconds from generation. The dataset is a randomly generated dataset one would find from ski resorts. It generates Resort Tickets, Lift Rides, and Season Passes in Python and enqueues the data in a SQLite database. The streamer component reads data from the database and sends it to Snowflake and cleans up the database from data sent.
+In this guide, we will use the High-Performance Python SDK to ingest data into Snowflake tables seconds from generation. The dataset is a randomly generated dataset one would find from ski resorts. It generates Resort Tickets, Lift Rides, and Season Passes in Python and enqueues the data in a SQLite database. The streamer component reads data from the database and sends it to Snowflake and cleans up the database from data sent.
 
 To have fast and efficient near real-time reporting, we will use Dynamic Tables to materialize reports which are then queried from a Streamlit application deployed in the account.
 
@@ -336,7 +336,7 @@ Duration: 1
 
 Snowflake documentation and quickstarts will provide more information you will need to build a robust streaming data pipeline. Review these resources to learn more.
 
-- [Review Rowset API Introduction](https://docs.snowflake.com/LIMITEDACCESS/snowpipe-streaming-rowset-api/rowset-api-intro)
+- [Tutorial: Get started with Snowpipe Streaming high performance architecture SDK(https://docs.snowflake.com/en/user-guide/snowpipe-streaming-high-performance-getting-started)
 - [Dynamic Tables Introduction](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro)
 - Quickstart on [Dynamic Tables](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/index.html)
 - Quickstart on [Streamlit](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_for_python_streamlit/index.html)
