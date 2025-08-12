@@ -213,12 +213,11 @@ If this returns None, there has been no data sent to Snowflake, otherwise it wil
 
 The channel should be long lived, so there should be an event loop grabbing data. Data can be pulled using fn_get_data from the that offset, or 0 if this is the first data.
 
-Data is returned from the fn_get_data in a list of json strings, but the insert_rows function expects line delimited json. This can easily be converted using join and a list comprehension. You wll also need to get the last offset in the rows you are sending to set the correct offset token.
+Data is returned from the fn_get_data in records as: (int id, string data), but the append_row function expects a single object. This can easily be converted using json.loads from the data in each row returned from fn_get_data. You can use the id as the last offset in the append_row function to set the correct offset token.
 
 ```python
-nl_json = "\n".join([row[1] for row in rows])
-latest_committed_offset_token = rows[-1][0]
-channel.insert_rows(nl_json, offset_token=latest_committed_offset_token)
+for row in rows:
+    channel.append_row(json.loads(row[1]), str(row[0]))
 ```
 
 In order to cleanup you will also want to occasionally delete the local data from the committed offset (retrieved from Snowflake). You can use the fn_delete_data function to do so. This should also be done in the event loop.
