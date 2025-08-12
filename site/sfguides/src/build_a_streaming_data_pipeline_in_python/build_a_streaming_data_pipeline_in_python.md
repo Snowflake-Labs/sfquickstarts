@@ -213,7 +213,7 @@ If this returns None, there has been no data sent to Snowflake, otherwise it wil
 
 The channel should be long lived, so there should be an event loop grabbing data. Data can be pulled using fn_get_data from the that offset, or 0 if this is the first data.
 
-Data is returned from the fn_get_data in records as: (int id, string data), but the append_row function expects a single object. This can easily be converted using json.loads from the data in each row returned from fn_get_data. You wll also need use the id as the last offset in the append_row function to set the correct offset token.
+Data is returned from the fn_get_data in records as: (int id, string data), but the append_row function expects a single object. This can easily be converted using json.loads from the data in each row returned from fn_get_data. You will also need use the id as the last offset in the append_row function to set the correct offset token.
 
 ```python
 for row in rows:
