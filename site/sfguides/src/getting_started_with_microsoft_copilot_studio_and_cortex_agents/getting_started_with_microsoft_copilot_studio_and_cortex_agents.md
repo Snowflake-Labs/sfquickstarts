@@ -532,6 +532,9 @@ GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE ANALYST;
 GRANT READ ON STAGE MODELS TO ROLE ANALYST;
 GRANT USAGE ON PROCEDURE call_cortex_agent_proc(VARCHAR, NUMBER) TO ROLE ANALYST;
 ```
+
+**Note**: when you create the Stored Procedure it will default to "RUN AS OWNER". If you created the Stored Procedure with a different ROLE (like SYSADMIN) then when you run the Stored Procedure from Copilot Studio you will likely get a status 200 with no results. Then have to update the Stored Procedure.
+
 <!-- ------------------------ -->
 ## Configuring Copilot Agent
 Duration: 10
