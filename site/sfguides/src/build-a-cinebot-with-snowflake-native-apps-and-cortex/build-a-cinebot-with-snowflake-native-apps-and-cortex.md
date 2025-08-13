@@ -164,17 +164,14 @@ After creating the application package we'll need to upload the Native App code 
 1. Click on 'Select Warehouse' and choose 'WH_NAP' for the Warehouse 
 2. Click on the '+ Files' button in the top right corner 
 3. Browse to the location where you cloned or downloaded the Github repo and into the '/app/' folder
-4. Select all 3 files (setup.sql, manifest.yml, readme.md) 
+4. Select all 5 files (setup.sql, manifest.yml, readme.md, ui.py, environment.yaml) 
 5. Click the 'Upload' button
-6. Browse back up one level and then go into the '/src/' folder
-7. Select both files (ui.py, environment.yaml)
-8. Click the 'Upload' button
 
 When this is done succesfully your we're now ready to create the Application Package. 
 
 ### Alter the Application Package
 ```sql
-alter application package cortex_app_pkg add version v1 using @cortex_app.napp.app_stage;
+alter application package cortex_app_pkg register version v1 using @cortex_app.napp.app_stage;
 grant install, develop on application package cortex_app_pkg to role nac;
 ```
 
@@ -208,7 +205,7 @@ call CORTEX_APP_INSTANCE.CORE.TABLE_CHUNKER();
 call CORTEX_APP_INSTANCE.CORE.CREATE_CORTEX_SEARCH();
 ```
 
-At this point you can navigate the the Application by clicking on **'Data Products'** on the left side of the Snowsight screen and then by clicking on **'Apps'**.  You can click on the **Cortext_App_Instance** application and it will bring up the chatbot where you can ask it to recommend movies.   
+At this point you can navigate the the Application by clicking on **'Data Products'** on the left side of the Snowsight screen and then by clicking on **'Apps'**.  You can click on the **Cortext_App_Instance** application and it will bring up the Application. When run for the first time, it will detect that there is no "chunked" tbale, and will prompte you to run the pre-processing Stored Procedures we created in our setup.sql script. Once this is run, the app will refresh and you will be able to talk to the chatbot.
 
 <!-- ------------------------ -->
 ## Cleanup 
