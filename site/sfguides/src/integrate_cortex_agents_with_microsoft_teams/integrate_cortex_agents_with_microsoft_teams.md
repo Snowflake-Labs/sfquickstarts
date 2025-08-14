@@ -1,7 +1,7 @@
 id: integrate_snowflake_cortex_agents_with_microsoft_teams
 summary: This guide outlines the process for integrating Snowflake Cortex Agents with Microsoft Teams.
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Snowpark Python, Data-Science-&-Ai, Featured
 authors: Dash Desai
@@ -16,6 +16,9 @@ Duration: 5
 Cortex Agents simplify AI-powered data interactions via a REST API, combining hybrid search and accurate SQL generation. They streamline workflows by managing context retrieval, natural language to SQL conversion, and LLM orchestration. Response quality is enhanced with in-line citations, answer abstention, and multi-message context handling. Developers benefit from a single API call integration, real-time streamed responses, and reduced latency for optimized applications.
 
 In this guide, we will see how to integrate the Cortex Agents (*in Public Preview as of 01/12/2025*) with Microsoft Teams.
+
+> aside positive
+> Also check out the updated QS [Getting Started with The Microsoft Teams and M365 Copilot Cortex App](https://quickstarts.snowflake.com/guide/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app/#0).
 
 ### Why Cortex Agents?
 
