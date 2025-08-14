@@ -56,7 +56,7 @@ First, we need to mount a free data share containing financial market data:
 4. Click "Get" to mount this free share as a database named "Snow_Finance_Share"
 5. Grant the PUBLIC role access to the database
 
-![Figure 3](assets/Finance%20%26%20Economics%20Get%20Page.png)
+![Figure 3](assets/finance_economics_get_page.png)
 
 ### Create the Setup Worksheet
 
