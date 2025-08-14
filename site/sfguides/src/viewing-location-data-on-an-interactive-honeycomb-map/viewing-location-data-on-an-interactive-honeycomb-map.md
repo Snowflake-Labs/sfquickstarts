@@ -93,7 +93,7 @@ JOIN us_real_estate.cybersyn.us_addresses AS addr
     ON (map.address_id = addr.address_id)
 WHERE addr.city = 'New York'
   AND addr.state = 'NY'
-  AND poi.category_main = 'Pizza Restaurant'
+  AND poi.category_main = 'Pizza Restaurant';
 LIMIT 10;
 ```
  
@@ -105,7 +105,7 @@ LIMIT 10;
 
 ```sql
 -- Grant privileges on sample database to the Honeycomb application
-GRANT IMPORTED PRIVILEGES ON DATABASE US_REAL_ESTATE TO HONEYCOMB_MAPS;
+GRANT IMPORTED PRIVILEGES ON DATABASE US_REAL_ESTATE TO APPLICATION HONEYCOMB_DATA_EXPLORER;
 ```
 Execute this SQL command in a Snowflake worksheet to grant the Honeycomb app access to the sample data we'll be using. If you're using your own database, replace "US_REAL_ESTATE" with your database name.
 
