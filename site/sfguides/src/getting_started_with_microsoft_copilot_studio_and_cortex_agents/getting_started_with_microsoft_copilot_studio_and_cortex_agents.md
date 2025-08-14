@@ -525,6 +525,7 @@ call call_cortex_agent_proc('what is the Initial discovery call with TechCorp In
 And last we will run this below script to grant the appropriate privileges to the ANALYST role we created. 
 
 ```sql
+CREATE ROLE ANALYST;
 GRANT USAGE ON DATABASE SALES_INTELLIGENCE TO ROLE ANALYST;
 GRANT USAGE ON SCHEMA DATA TO ROLE ANALYST;
 GRANT USAGE ON CORTEX SEARCH SERVICE SALES_CONVERSATION_SEARCH TO ROLE ANALYST;
