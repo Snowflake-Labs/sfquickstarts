@@ -73,7 +73,7 @@ table structure to create an optimal query.
 >
 
 
-### Step 2.0 Creating an Environment
+### Creating an Environment
 
 Create a worksheet and establish a database and schema to do the work. We are doing exploration work here
 so make sure you are using a role that has permissions to create tables and view query profiles.
@@ -91,7 +91,7 @@ USE SCHEMA HT_PERFORMANCE.PRIMER;
 USE WAREHOUSE HT_PERFORMANCE_WAREHOUSE;
 ```
 
-## Explore Single Hybrid Table
+## Explore primary key and secondary indexes
 
 Duration: 10
 
@@ -110,7 +110,7 @@ Secondary Indexes provide fast access to query patterns that may not be able to 
 Create and populate a simple hybrid table. This table is similar to the table used in the getting started with hybrid tables guide but is 
 simplified for brevity. This quickstart will use similar queries for the remainder of the work:
 ```sql
---- CREATE 100 TRUCKS WITH RANDOM YEARS, MAKES, FRANCHISE AND EMAILS.
+--- CREATE LOTS OF TRUCKS WITH RANDOM YEARS, MAKES, FRANCHISE AND EMAILS.
 CREATE OR REPLACE HYBRID TABLE TRUCK (
     TRUCK_ID NUMBER(38,0) NOT NULL,
     YEAR NUMBER(38,0) NOT NULL,
@@ -125,10 +125,10 @@ AS SELECT
     ARRAY_CONSTRUCT( 'Freightliner', 'Peterbilt', 'Kenworth', 'Volvo Trucks', 'Mack', 'International (Navistar)', 'Western Star')[UNIFORM(0,6, RANDOM())],
     UNIFORM(1, 250, RANDOM()),
     RANDSTR(8, RANDOM()) || '@sf-quickstart'
-       FROM TABLE(GENERATOR(ROWCOUNT => 1000000)) -- WE NEED ENOUGH RECORDS FOR REASONABLE TESTING OTHERWISE EVERYTHING IS IN-MEMORY
+FROM TABLE(GENERATOR(ROWCOUNT => 1000000)) -- WE NEED ENOUGH RECORDS FOR REASONABLE TESTING OTHERWISE EVERYTHING IS IN-MEMORY
 ;
 -- SEE WHAT THE RESULTS LOOK LIKE
-SELECT * FROM TRUCK;
+SELECT * FROM TRUCK LIMIT 10;
 ```
 
 ### Query the table with the primary key
@@ -223,7 +223,121 @@ Next, we will cover foreign keys.
 ## Explore foreign keys
 RDBMS data models use foreign keys to establish relationships between tables. All kinds of models take advantage of the relationships to keep
 data from becoming corrupted or otherwise orphaned from a definition. We call the relationship between the primary key
-of the reference table and the useage of the key in aother table a **foreign key**
+of the reference table and the usage of the key in another table a **foreign key**.
+
+### Setup
+We will use a `TRUCK` and `ORDER_HEADER` relationship to create a foreign key relationship. Let's create the tables and
+explore how the query plan looks with and without a foreign key.
+
+Create some trucks with orders for each truck.
+
+```sql
+--- CREATE LOTS OF TRUCKS WITH RANDOM YEARS, MAKES, FRANCHISE AND EMAILS.
+CREATE OR REPLACE HYBRID TABLE TRUCK (
+    TRUCK_ID NUMBER(38,0) NOT NULL,
+    YEAR NUMBER(38,0) NOT NULL,
+    MAKE VARCHAR(250) NOT NULL,
+    FRANCHISE_ID NUMBER(38,0) NOT NULL,
+    TRUCK_EMAIL VARCHAR NOT NULL UNIQUE,
+    PRIMARY KEY (TRUCK_ID) 
+)
+AS SELECT
+    SEQ4(),
+    UNIFORM(1970, 2025, RANDOM()),
+    ARRAY_CONSTRUCT( 'Freightliner', 'Peterbilt', 'Kenworth', 'Volvo Trucks', 'Mack', 'International (Navistar)', 'Western Star')[UNIFORM(0,6, RANDOM())],
+    UNIFORM(1, 250, RANDOM()),
+    RANDSTR(8, RANDOM()) || '@sf-quickstart'
+FROM TABLE(GENERATOR(ROWCOUNT => 500))    -- USE A SMALLER NUMBER OF TRUCKS
+;
+
+--- CREATE ORDERS FOR EACH TRUCK
+CREATE OR REPLACE HYBRID TABLE ORDER_HEADER (
+	ORDER_ID NUMBER(38,0) NOT NULL,
+	TRUCK_ID NUMBER(38,0) NOT NULL,
+    ORDER_TIMESTAMP TIMESTAMP_NTZ NOT NULL,
+	ORDER_TOTAL NUMBER(38,2),
+	ORDER_STATUS VARCHAR(200) DEFAULT 'INQUEUE',
+	PRIMARY KEY (ORDER_ID),
+	FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID)
+);
+INSERT INTO ORDER_HEADER (ORDER_ID, TRUCK_ID, ORDER_TIMESTAMP, ORDER_TOTAL)
+SELECT
+    SEQ4(),
+    T.TRUCK_ID,
+    DATEADD('seconds', UNIFORM(-1*60*60*24*365, -1*60*60, RANDOM()), CURRENT_TIMESTAMP()),
+    UNIFORM(200.0, 25000.0, RANDOM())
+FROM TABLE(GENERATOR(ROWCOUNT => 5000))
+CROSS JOIN TRUCK T                       -- ASSIGN ORDERS TO EVERY TRUCK
+;
+
+-- SEE WHAT THE RESULTS LOOK LIKE
+SELECT * FROM TRUCK LIMIT 10;
+SELECT * FROM ORDER_HEADER LIMIT 10;
+```
+A basic query we would likely use is a query that selects a truck with all the order header records. While this is a 
+quite a few records, we can see how the foreign key helps load only the data that is required.
+
+```sql
+SELECT *
+FROM TRUCK T
+INNER JOIN ORDER_HEADER O ON T.TRUCK_ID=O.TRUCK_ID
+WHERE TRUE
+AND T.TRUCK_ID = 1
+;
+```
+The query plan will indicate that the foreign key was used to identify the records.
+<img src="assets/explore_75.png"/>
+
+Another query might be one that pulls a specific order for a specific truck:
+```sql
+SELECT *
+FROM TRUCK T
+INNER JOIN ORDER_HEADER O ON T.TRUCK_ID=O.TRUCK_ID
+WHERE TRUE
+AND T.TRUCK_ID = 1
+AND O.ORDER_ID = 190491
+;
+```
+Unsurprisingly, the query plan shows both primary keys in use loading only a single record
+from each table.
+<img src="assets/explore_78.png"/>
+
+## Explore foreign keys with secondary indexes
+A common query pattern is to join two tables using foreign keys and filter one of them with another pattern. For example,
+this query is fetching orders over the last 30 days for a specific truck:
+```sql
+SELECT *
+FROM ORDER_HEADER O
+INNER JOIN TRUCK T ON T.TRUCK_ID=O.TRUCK_ID
+WHERE TRUE
+AND O.ORDER_TIMESTAMP > DATEADD('days', -30, CURRENT_TIMESTAMP()) 
+AND T.TRUCK_ID = 1
+;
+```
+The `TRUCK_ID` will perform filtering on the primary key and use the foreign key to filter the orders table. The timestamp filter
+would then happen after data was fetched from disk. Performance will increase with the use of a secondary
+index. As an exercise for the reader, look at the query plan for this query. 
+
+```sql
+-- CREATE THE INDEX - THIS IS ASYNCRONOUS REQUEST
+CREATE INDEX IF NOT EXISTS IDX_TIMESTAMPS
+  ON ORDER_HEADER ( ORDER_TIMESTAMP, TRUCK_ID );
+  
+-- MONITOR THE BUILD STATUS OF THE INDEX - THIS IS SNOWFLAKE 'FLOW' QUERY FORMAT
+SHOW INDEXES
+->> SELECT "status", * FROM $1 WHERE "name" = 'IDX_TIMESTAMPS';
+```
+Building indexes can take some time. When the status changes from `BUILD IN PROGRESS` to `ACTIVE`, the query optimizer will
+begin using the indexes to optimize queries.
+
+Let's 
+
+
+<img src="assets/explore_79.png"/>
+
+
+## Best practices
+cover best practices here
 
 ## Cleanup
 
