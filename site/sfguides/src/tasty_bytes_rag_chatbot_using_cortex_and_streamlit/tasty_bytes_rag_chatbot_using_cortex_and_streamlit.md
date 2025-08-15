@@ -120,8 +120,7 @@ FROM tasty_bytes_chatbot.app.array_table;
 - Copy the code below into the code editor section
 - Run the app!
 
-!!! Note
-    Model availability varies by region. Please see [Snowflake Cortex cross region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) for steps if you are in a region without a certain model. 
+**Note:** Model availability varies by region. Please see [Snowflake Cortex cross region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) for steps if you are in a region without a certain model. 
 
 ```python
 # Import python packages
