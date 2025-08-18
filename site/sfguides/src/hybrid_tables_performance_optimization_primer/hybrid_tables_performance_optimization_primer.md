@@ -52,10 +52,10 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 
 
 ### Process
-- We will be creating three tables that represent a data model. Following the trucking example from the getting started with hybrid tables quickstart, we will use TRUCK, ORDER_HEADER, and ORDER_SHIPMENT tables to represent our data.
+- We will be creating three tables that represent a data model. Following the trucking example from the getting started with hybrid tables quickstart, we will use TRUCK and ORDER_HEADER tables to represent our data.
 - Create and work with TRUCK table to understand primary keys, secondary indexes, and accompanying query patterns
 - Build on TRUCK with ORDER_HEADER to work with foreign key relationships
-- Finally, add more records with ORDER_SHIPMENT to understand deeper data model relationships
+- Add a secondary index to find orders for trucks based on order date
 
 ## Setup
 
@@ -179,18 +179,20 @@ We can see from the query profile screen that the query plan looks far different
 <img src="assets/explore_40.png"/>
 
 Looking at the "TableScan" node, we can clearly see that the scan was `COLUMN_BASED` and did process many partitions with lots of data. This
-type of query is clearly not an optimal result
+type of query is clearly not an optimal result.
 <img src="assets/explore_50.png"/>
 
 ### Add a secondary index
 Clearly, the above query is not optimal. A secondary index can help the query run faster. Let's create a secondary index
-and use it to explore the query improvement:
+and use it to explore the query improvement. The status query uses a [flow operator](https://docs.snowflake.com/en/sql-reference/operators-flow):
 ```sql
 CREATE INDEX IF NOT EXISTS IDX_TRUCK_YEAR ON TRUCK (YEAR, MAKE);
 -- USING THE FLOW SYNTAX, WATCH THE STATUS OF THE INDEX CHANGE FROM 'BUILD IN PROGRESS` TO 'ACTIVE'
-SHOW INDEXES ->> SELECT "status", "name", "created_on", "table", "columns" FROM $1 IDX WHERE TRUE AND "name" = 'IDX_TRUCK_YEAR';
+SHOW INDEXES ->> 
+     SELECT "status", "name", "created_on", "table", "columns" 
+     FROM $1 IDX WHERE TRUE AND "name" = 'IDX_TRUCK_YEAR';
 ```
-Re-running the query:
+Re-running the query, this time using the newly created index:
 ```sql
 SELECT *
 FROM TRUCK
@@ -198,7 +200,8 @@ WHERE TRUE
 AND MAKE = 'Peterbilt'
 AND YEAR IN (2000, 2001);
 ```
-Results in a much better query plan that uses the index we created:
+
+Using the index results in a much better query plan that uses the index we created:
 <img src="assets/explore_60.png"/>
 
 This particular index likely has good enough cardinality that using just the first column of the index will also produce a solid query plan.
@@ -232,7 +235,7 @@ explore how the query plan looks with and without a foreign key.
 Create some trucks with orders for each truck.
 
 ```sql
---- CREATE LOTS OF TRUCKS WITH RANDOM YEARS, MAKES, FRANCHISE AND EMAILS.
+--- CREATE SOME OF TRUCKS WITH RANDOM YEARS, MAKES, FRANCHISE AND EMAILS.
 CREATE OR REPLACE HYBRID TABLE TRUCK (
     TRUCK_ID NUMBER(38,0) NOT NULL,
     YEAR NUMBER(38,0) NOT NULL,
@@ -247,7 +250,7 @@ AS SELECT
     ARRAY_CONSTRUCT( 'Freightliner', 'Peterbilt', 'Kenworth', 'Volvo Trucks', 'Mack', 'International (Navistar)', 'Western Star')[UNIFORM(0,6, RANDOM())],
     UNIFORM(1, 250, RANDOM()),
     RANDSTR(8, RANDOM()) || '@sf-quickstart'
-FROM TABLE(GENERATOR(ROWCOUNT => 500))    -- USE A SMALLER NUMBER OF TRUCKS
+FROM TABLE(GENERATOR(ROWCOUNT => 500))    -- USE A SMALLER NUMBER OF TRUCKS THAN THE FIRST EXAMPLE
 ;
 
 --- CREATE ORDERS FOR EACH TRUCK
@@ -267,7 +270,7 @@ SELECT
     DATEADD('seconds', UNIFORM(-1*60*60*24*365, -1*60*60, RANDOM()), CURRENT_TIMESTAMP()),
     UNIFORM(200.0, 25000.0, RANDOM())
 FROM TABLE(GENERATOR(ROWCOUNT => 5000))
-CROSS JOIN TRUCK T                       -- ASSIGN ORDERS TO EVERY TRUCK
+CROSS JOIN TRUCK T                       -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
 ;
 
 -- SEE WHAT THE RESULTS LOOK LIKE
@@ -310,12 +313,13 @@ SELECT *
 FROM ORDER_HEADER O
 INNER JOIN TRUCK T ON T.TRUCK_ID=O.TRUCK_ID
 WHERE TRUE
-AND O.ORDER_TIMESTAMP > DATEADD('days', -30, CURRENT_TIMESTAMP()) 
+AND O.ORDER_TIMESTAMP > DATEADD('days', -30, CURRENT_TIMESTAMP()) :: TIMESTAMP_NTZ
 AND T.TRUCK_ID = 1
 ;
 ```
 The `TRUCK_ID` will perform filtering on the primary key and use the foreign key to filter the orders table. The timestamp filter
-would then happen after data was fetched from disk. Performance will increase with the use of a secondary
+would then happen after data was fetched from disk. Note that the parameter value for `ORDER_TIMESTAMP` was cast to `TIMESTAMP_NTZ`
+for datatype matching purposes. Performance will increase with the use of a secondary
 index. As an exercise for the reader, look at the query plan for this query. 
 
 ```sql
@@ -328,40 +332,48 @@ SHOW INDEXES
 ->> SELECT "status", * FROM $1 WHERE "name" = 'IDX_TIMESTAMPS';
 ```
 Building indexes can take some time. When the status changes from `BUILD IN PROGRESS` to `ACTIVE`, the query optimizer will
-begin using the indexes to optimize queries.
+begin using the indexes to optimize queries. This query uses Snowflake [flow operators](https://docs.snowflake.com/en/sql-reference/operators-flow).
 
-Let's 
+Now that the index is `ACTIVE`, we can use it in a query:
 
+```sql
+SELECT *
+FROM ORDER_HEADER O
+         INNER JOIN TRUCK T ON T.TRUCK_ID=O.TRUCK_ID
+WHERE TRUE
+  AND O.ORDER_TIMESTAMP > DATEADD('days', -30, CURRENT_TIMESTAMP()) :: TIMESTAMP_NTZ
+AND T.TRUCK_ID = 1
+;
+```
+We can clearly see that the index has enabled the query optimizer to load data from disk in a filtered way, saving time and speeding
+the overall process.
 
 <img src="assets/explore_79.png"/>
 
 
-## Best practices
-cover best practices here
+## Summarize best practices
+Hybrid table performance benefits from following best practices that extract the best performance and higest value
+from this Snowflake feature.
+1. Use a `primary key`, built from business columns, to drive the highest performance.
+1. Implement `foreign keys` when joining hybrid tables.
+1. Write queries that directly use keys and indexes.
+1. Use Snowhouse query plans to verify query optimization and performance.
+1. Follow Snowflake [hybrid table best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) when building applications.
 
-## Cleanup
 
-To clean up your Snowflake environment you can run the following SQL Statements:
-
-```sql
--- add a script here to clean up
-```
-
-The last step is to clean up stuff
-
-## Conclusion and Resources
-
-### What You Learned
+## What You Learned
 
 Having completed this quickstart you have successfully
-- Done stuff
-- created tables
-- indexes
-- fk
-- optimized
+- Created hybrid tables with primary keys
+- Wrote and learned how to analyze a query profile
+- Created a child table using foreign keys to a parent table
+- Joined two tables and worked with foreign key query profiles
+- Utilized secondary indexes to speed query performance across non-primary key columns
 
 
 ### Related Resources:
 - [Snowflake Unistore Landing Page](https://www.snowflake.com/en/data-cloud/workloads/unistore/)
 - [Snowflake Documentation for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
+- [Hybrid Table Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
+- [Hybrid Table Performace Testing Quickstart](https://quickstarts.snowflake.com/guide/hybrid-tables-jmeter-performance-testing/index.html#0)
 - [Simplify Application Development Hybrid Tables Blog](https://www.snowflake.com/blog/simplify-application-development-hybrid-tables)
