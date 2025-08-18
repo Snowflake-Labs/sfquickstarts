@@ -65,17 +65,17 @@ Duration: 5
 
 ### 1. Environment Setup 
 
-To set up your Snowflake environment for multimodal analysis:
+To set up your Snowflake environment for the call centre analytics solution perform the following steps:
 
-1. Download the [setup.sql](https://github.com/Snowflake-Labs/sfguide-building-cortex-aisql-powered-callcentre-analytics/blob/main/setup.sql) file
-1. Open a new worksheet in Snowflake
-1. Paste the contents of setup.sql or upload and run the file
+1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-building-cortex-aisql-powered-callcentre-analytics/blob/main/setup.sql) file from the git repo or from the cloned local folder.
+1. Open a new sql worksheet in Snowsight.
+1. Paste the contents of [setup.sql](https://github.com/Snowflake-Labs/sfguide-building-cortex-aisql-powered-callcentre-analytics/blob/main/setup.sql) file or upload and run the file.
 
 The script will create:
 
 - A new database for the solution.
 - Stages for Audio Files and Semantic Model.
-- Copies the audio files and semantic model yaml file from github to the stage.
+- Copies the audio files and semantic model yaml file from github to the stage by creating API Integration and Git repo in Snowflake.
 
 ### 2. File to Upload to Stage
 
