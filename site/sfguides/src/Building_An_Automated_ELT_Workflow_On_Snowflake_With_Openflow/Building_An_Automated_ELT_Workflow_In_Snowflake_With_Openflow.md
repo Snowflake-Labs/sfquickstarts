@@ -288,7 +288,7 @@ We’ll use the **ExecuteSQLStatement** processor to run a **COPY INTO** command
 
 2. Connect from `Put_JSON_In_Internal_Stage` with **success** relationship > Add
 
-    ![Add ExecuteSQLStatement Processor](assets/.png)
+    ![Add ExecuteSQLStatement Processor](assets/Add_ExecuteSQLStatement_Processor.png)
 
 3. On the **Settings** tab, rename the `ExecuteSQLStatement` processor to `Copy_JSON_Into_Variant_Table`
 
@@ -313,7 +313,7 @@ We’ll use the **ExecuteSQLStatement** processor to run a **COPY INTO** command
         >
         > Option PATTERN will select every files that contains "RACE".
 
-        ![ExecuteSQLStatement Properties](assets/.png)
+        ![ExecuteSQLStatement Properties](assets/ExecuteSQLStatement_Properties.png)
 
 5. On the **Relationships** tab, Select **Terminate** for **failure** and leave success unselected so it can be passed to the next component and **apply**
 
@@ -333,7 +333,7 @@ SELECT * FROM OPENFLOW.OPENFLOW_TEST.RAW_RACE;
 
 You should see something like this :
 
-![RAW_RACE Query](assets/.png)
+![RAW_RACE Query](assets/RAW_RACE_Query.png)
 
 At this stage of the tutorial, we’ve successfully ingested JSON data from the API and stored it in a Snowflake table.
 
@@ -366,7 +366,7 @@ GROUP BY 1, 2 ORDER BY 1, 2;
 
 Below is an extract from the results:
 
-![RAW_RACE fields](assets/.png)
+![RAW_RACE fields](assets/RAW_RACE_Fields.png)
 
 Here is a proposed model to build.
 
@@ -441,7 +441,7 @@ CREATE OR REPLACE TABLE OPENFLOW.OPENFLOW_TEST.TEAMS (
 
 Check in your database that the objects are created :
 
-![Tables Creation](assets/.png)
+![Tables Creation](assets/Tables_Creation.png)
 
 
 ### Step 2: Workflow processors
@@ -458,7 +458,7 @@ Then we'll add components in OpenFlow to manage the data in these tables.
         - Extract_And_Transform_Circuits
     2. Under **Relationships**, Select **Terminate** for both failure and **success**, as these are our final components
     
-        ![Final Tables relationships](assets/.png)
+        ![Final Tables relationships](assets/Final_Tables_relationships.png)
     
     3. Under **properties** :
         - Reused the **SnowflakeConnectionService** we created as the value for **Connection Pooling Service property**
@@ -722,7 +722,7 @@ WHEN NOT MATCHED THEN
     );
 ```
 
-![Final Tables Properties](assets/.png)
+![Final Tables Properties](assets/Final_Tables_Properties.png)
 
 
 ### Step 3: Run and check
@@ -731,7 +731,7 @@ Once it's all set up, right-click on each of the four processors and set them to
 
 You should get something similar to that :
 
-![All processor view](assets/.png)
+![All processor view](assets/All_processor_view.png)
 
 Let's perform the final run. Right-Click on the `Call_JSON_F1_API_Race` processor and select **Run Once**.
 
@@ -759,7 +759,7 @@ In Openflow, if we right-click on the `Call_JSON_F1_API_Race` processor, select 
   - **CRON-driven** - Can be more precise and is based on CRON expressions.
     Races happen on Sundays, but not every Sunday. For instance, we could configure the schedule to 0 10 * * 1 if we want the processor to be triggered every Monday at 10 AM.
 
-![Scheduling view](assets/.png)
+![Scheduling view](assets/Scheduling_view.png)
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
