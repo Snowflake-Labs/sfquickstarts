@@ -26,7 +26,7 @@ In this Quickstart guide, you will be help the fictitious food truck company, Ta
 You will need the following things before beginning:
 
 * Snowflake account in a cloud region where Snowflake Cortex LLM functions/models are [supported](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability).
-  * Cortex functions used - Complete/AI Complete, Translate, Sentiment, AI Aggregation, AI Classify
+  * Cortex functions used - AI_Complete, Translate, Sentiment, AI_Summarize_Agg, AI_Classify, AI_Transcribe
   * Model used - openai-gpt-4.1
 * Snowflake Notebook enabled in your Snowflake account
 
@@ -58,215 +58,13 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 * Create review view 
 
 ### Creating Objects, Loading Data, and Joining Data
-* Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
-* Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema, raw tables), ingest shift  data from S3,  and create the review view
-
-  ```sql
-
-    USE ROLE sysadmin;
-
-    /*--
-    • database, schema and warehouse creation
-    --*/
-
-    -- create tb_voc database
-    CREATE OR REPLACE DATABASE tb_voc;
-
-    -- create raw_pos schema
-    CREATE OR REPLACE SCHEMA tb_voc.raw_pos;
-
-    -- create raw_customer schema
-    CREATE OR REPLACE SCHEMA tb_voc.raw_support;
-
-    -- create harmonized schema
-    CREATE OR REPLACE SCHEMA tb_voc.harmonized;
-
-    -- create analytics schema
-    CREATE OR REPLACE SCHEMA tb_voc.analytics;
-
-    -- create tasty_ds_wh warehouse
-    CREATE OR REPLACE WAREHOUSE tasty_ds_wh
-        WAREHOUSE_SIZE = 'large'
-        WAREHOUSE_TYPE = 'standard'
-        AUTO_SUSPEND = 60
-        AUTO_RESUME = TRUE
-        INITIALLY_SUSPENDED = TRUE
-    COMMENT = 'data science warehouse for tasty bytes';
-
-
-    USE WAREHOUSE tasty_ds_wh;
-
-    /*--
-    • file format and stage creation
-    --*/
-
-    CREATE OR REPLACE FILE FORMAT tb_voc.public.csv_ff 
-    type = 'csv';
-
-    CREATE OR REPLACE STAGE tb_voc.public.s3load
-    COMMENT = 'Quickstarts S3 Stage Connection'
-    url = 's3://sfquickstarts/tastybytes-voc/'
-    file_format = tb_voc.public.csv_ff;
-
-    /*--
-    raw zone table build 
-    --*/
-
-    -- menu table build
-    CREATE OR REPLACE TABLE tb_voc.raw_pos.menu
-    (
-        menu_id NUMBER(19,0),
-        menu_type_id NUMBER(38,0),
-        menu_type VARCHAR(16777216),
-        truck_brand_name VARCHAR(16777216),
-        menu_item_id NUMBER(38,0),
-        menu_item_name VARCHAR(16777216),
-        item_category VARCHAR(16777216),
-        item_subcategory VARCHAR(16777216),
-        cost_of_goods_usd NUMBER(38,4),
-        sale_price_usd NUMBER(38,4),
-        menu_item_health_metrics_obj VARIANT
-    );
-
-    -- truck table build 
-    CREATE OR REPLACE TABLE tb_voc.raw_pos.truck
-    (
-        truck_id NUMBER(38,0),
-        menu_type_id NUMBER(38,0),
-        primary_city VARCHAR(16777216),
-        region VARCHAR(16777216),
-        iso_region VARCHAR(16777216),
-        country VARCHAR(16777216),
-        iso_country_code VARCHAR(16777216),
-        franchise_flag NUMBER(38,0),
-        year NUMBER(38,0),
-        make VARCHAR(16777216),
-        model VARCHAR(16777216),
-        ev_flag NUMBER(38,0),
-        franchise_id NUMBER(38,0),
-        truck_opening_date DATE
-    );
-
-    -- order_header table build
-    CREATE OR REPLACE TABLE tb_voc.raw_pos.order_header
-    (
-        order_id NUMBER(38,0),
-        truck_id NUMBER(38,0),
-        location_id FLOAT,
-        customer_id NUMBER(38,0),
-        discount_id VARCHAR(16777216),
-        shift_id NUMBER(38,0),
-        shift_start_time TIME(9),
-        shift_end_time TIME(9),
-        order_channel VARCHAR(16777216),
-        order_ts TIMESTAMP_NTZ(9),
-        served_ts VARCHAR(16777216),
-        order_currency VARCHAR(3),
-        order_amount NUMBER(38,4),
-        order_tax_amount VARCHAR(16777216),
-        order_discount_amount VARCHAR(16777216),
-        order_total NUMBER(38,4)
-    );
-
-    -- truck_reviews table build
-    CREATE OR REPLACE TABLE tb_voc.raw_support.truck_reviews
-    (
-        order_id NUMBER(38,0),
-        language VARCHAR(16777216),
-        source VARCHAR(16777216),
-        review VARCHAR(16777216),
-        review_id NUMBER(18,0)
-    );
-
-    /*--
-    • harmonized view creation
-    --*/
-
-    -- truck_reviews_v view
-    CREATE OR REPLACE VIEW tb_voc.harmonized.truck_reviews_v
-        AS
-    SELECT DISTINCT
-        r.review_id,
-        r.order_id,
-        oh.truck_id,
-        r.language,
-        source,
-        r.review,
-        t.primary_city,
-        oh.customer_id,
-        TO_DATE(oh.order_ts) AS date,
-        m.truck_brand_name
-    FROM tb_voc.raw_support.truck_reviews r
-    JOIN tb_voc.raw_pos.order_header oh
-        ON oh.order_id = r.order_id
-    JOIN tb_voc.raw_pos.truck t
-        ON t.truck_id = oh.truck_id
-    JOIN tb_voc.raw_pos.menu m
-        ON m.menu_type_id = t.menu_type_id;
-
-    /*--
-    • analytics view creation
-    --*/
-
-    -- truck_reviews_v view
-    CREATE OR REPLACE VIEW tb_voc.analytics.truck_reviews_v
-        AS
-    SELECT * FROM harmonized.truck_reviews_v;
-
-
-    /*--
-    raw zone table load 
-    --*/
-
-
-    -- menu table load
-    COPY INTO tb_voc.raw_pos.menu
-    FROM @tb_voc.public.s3load/raw_pos/menu/;
-
-    -- truck table load
-    COPY INTO tb_voc.raw_pos.truck
-    FROM @tb_voc.public.s3load/raw_pos/truck/;
-
-    -- order_header table load
-    COPY INTO tb_voc.raw_pos.order_header
-    FROM @tb_voc.public.s3load/raw_pos/order_header/;
-
-    -- truck_reviews table load
-    COPY INTO tb_voc.raw_support.truck_reviews
-    FROM @tb_voc.public.s3load/raw_support/truck_reviews/;
-
-    CREATE OR REPLACE TABLE CONCATENATED_REVIEWS AS
-    WITH RANKED_REVIEWS AS (
-        SELECT 
-            TRUCK_BRAND_NAME,
-            REVIEW,
-            ROW_NUMBER() OVER (PARTITION BY TRUCK_BRAND_NAME ORDER BY REVIEW) AS ROW_NUM
-        FROM TRUCK_REVIEWS_V
-    ),
-    FILTERED_REVIEWS AS (
-        SELECT *
-        FROM RANKED_REVIEWS
-        WHERE ROW_NUM <= 20
-    ),
-    AGGREGATED_REVIEWS AS (
-        SELECT 
-            TRUCK_BRAND_NAME,
-            ARRAY_AGG(REVIEW) AS ALL_REVIEWS
-        FROM FILTERED_REVIEWS
-        GROUP BY TRUCK_BRAND_NAME
-    ),
-    CONCATENATED_REVIEWS AS (
-        SELECT 
-            TRUCK_BRAND_NAME,
-            ARRAY_TO_STRING(ALL_REVIEWS, ' ') AS ALL_REVIEWS_TEXT
-        FROM AGGREGATED_REVIEWS
-    )
-
-    SELECT * FROM CONCATENATED_REVIEWS;
-
-  -- setup completion note
-  SELECT 'Setup is complete' AS note;
-  ```
+1. Download the [setup.sql](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/blob/main/setup.sql) file
+2. Open a new worksheet in Snowflake
+3. Paste the contents of setup.sql or upload and run the file
+4. The script will create:
+   - create Snowflake objects (warehouse, database, schema, raw tables), ingest shift  data from S3,  and create the review view
+   - A new database and schema for your project
+   - Image and audio storage stages
 
 <!-- ------------------------ -->
 ## Setting up Snowflake Notebook
@@ -341,18 +139,18 @@ Duration: 5
 
 ### Overview
 
-In this section, you will leverage **Snowflake Cortex LLM - Summarize** to quickly understand what the customers are saying:
+In this section, you will leverage **Snowflake Cortex LLM - AI_SUMMARIZE_AGG** to quickly understand what the customers are saying:
 * Summarization allows us to get key learnings from large amounts of unstructured text, all in a readable form
 
 ### We want to get a insight on what people are saying
 
-* In this step, we will get a summarization of customers are saying **Snowflake Cortex LLM - Summarize** 
+* In this step, we will get a summarization of customers are saying **Snowflake Cortex LLM - AI_SUMMARIZE_AGG** 
 
 #### Python
   ```python
   summarized_reviews_df = session.table("TRUCK_REVIEWS_V") \
       .group_by("TRUCK_BRAND_NAME") \
-      .agg(ai_agg(F.col("REVIEW"), 'Summarize reviews').alias("SUMMARY"))
+      .agg(ai_summarize_agg(F.col("REVIEW")).alias("SUMMARY"))
 
   summarized_reviews_df.select(["TRUCK_BRAND_NAME", "SUMMARY"]).show(3)
   ```
@@ -361,7 +159,7 @@ In this section, you will leverage **Snowflake Cortex LLM - Summarize** to quick
   WITH SUMMARIZED_REVIEWS AS (
       SELECT 
           TRUCK_BRAND_NAME,
-          AI_AGG(REVIEW, 'Summarize the reviews') AS SUMMARY
+          AI_SUMMARIZE_AGG(REVIEW) AS SUMMARY
       FROM TRUCK_REVIEWS_V
       GROUP BY TRUCK_BRAND_NAME
   )
@@ -410,13 +208,13 @@ Duration: 5
 
 ### Overview
 
-In this section, you will leverage **Snowflake Cortex LLM - Complete/AI_Complete** to get answers to your specific questions:
+In this section, you will leverage **Snowflake Cortex LLM - AI_COMPLETE** to get answers to your specific questions:
 
 * Answer specific questions you have that lives inside the unstructured data you have
 
 ### Answer specific questions you have    
 
-* Using **Snowflake Cortex LLM - Complete/AI_Complete** to dive into questions you have  
+* Using **Snowflake Cortex LLM - AI_COMPLETE** to dive into questions you have  
 
 #### Python
   ```python
@@ -424,7 +222,7 @@ In this section, you will leverage **Snowflake Cortex LLM - Complete/AI_Complete
 
     summarized_reviews_df = session.table("CONCATENATED_REVIEWS").select(
         F.col("TRUCK_BRAND_NAME"),
-        cortex.complete(
+        ai_complete(
             "openai-gpt-4.1",
             F.concat(
                 F.lit("Context: "),
@@ -452,17 +250,56 @@ In this section, you will leverage **Snowflake Cortex LLM - Complete/AI_Complete
   ```
 <!-- ------------------------ -->
 
+## Analyze Images
+Duration: 5
+
+### Overview
+
+In this section, you will leverage **Snowflake Cortex LLM - AI_COMPLETE** to for analyzing images
+
+```sql
+  SELECT
+    AI_COMPLETE (
+      'claude-3-5-sonnet',
+      'Please describe what you see in this image.',
+      TO_FILE ('@TB_VOC.MEDIA.IMAGES', IMAGE_PATH)
+    ) AS IMAGE_DESCRIPTION
+  FROM
+    TB_VOC.MEDIA.IMAGE_TABLE
+  LIMIT
+    1;
+```
+
+## Transcription
+Duration: 5
+
+### Overview
+
+In this section, you will leverage **Snowflake Cortex LLM - AI_TRANSCRIBE** to for transcription
+
+```sql
+  SELECT
+    AI_TRANSCRIBE (
+      TO_FILE ('@TB_VOC.MEDIA.AUDIO', AUDIO_PATH)
+    ) AS TRANSCRIPTION_RESULT
+  FROM
+    TB_VOC.MEDIA.AUDIO_TABLE
+  LIMIT
+    1;
+```
+
 ## Understand customer sentiment 
 Duration: 2
 
 ### Overview
 
-Next, you will look at another **task specific LLM function in Cortex - Sentiment**. 
+Next, you will look at another **task specific LLM function in Cortex - Sentiment/AI_SENTIMENT**. 
 * This sentiment function is used to understand the customer's tone based on the review they provided.
 
-### Understand sentiment with Cortex Sentiment
+### Understand sentiment with Cortex Sentiment/AI_SENTIMENT
 * This is done within the notebook using the following code snippet in cell `CORTEX_SENTIMENT`.
-* Sentiment return value between -1 and 1 such that -1 is the most negative while 1 is the most positive.  
+* CORTEX_SENTIMENT return value between -1 and 1 such that -1 is the most negative while 1 is the most positive. 
+* AI_SENTIMENT will return a string of the sentiment. [AI_SENTIMENT](https://docs.snowflake.com/en/sql-reference/functions/ai_sentiment#returns)
 
 #### Python
   ```python
@@ -475,7 +312,7 @@ Next, you will look at another **task specific LLM function in Cortex - Sentimen
   ```sql
   SELECT 
       REVIEW, 
-      SNOWFLAKE.CORTEX.SENTIMENT(REVIEW) AS SENTIMENT
+      AI_SENTIMENT(REVIEW) AS SENTIMENT
   FROM TRUCK_REVIEWS_V
   LIMIT 3;
   ```
