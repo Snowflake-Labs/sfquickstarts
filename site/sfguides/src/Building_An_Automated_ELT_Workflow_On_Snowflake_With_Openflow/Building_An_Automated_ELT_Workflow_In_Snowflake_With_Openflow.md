@@ -39,7 +39,7 @@ We will be working with race results linked to drivers, teams, and the circuits 
 
 Let's have a look at the data :
 
-![F1 race example image](sfquickstarts/site/sfguides/src/Building_An_Automated_ELT_Workflow_In_Snowflake_With_Openflow/assets/)
+![F1 race example image](sfquickstarts/site/sfguides/src/Building_An_Automated_ELT_Workflow_In_Snowflake_With_Openflow/assets/1_JSON.png)
 
 How to understand it ?
 
