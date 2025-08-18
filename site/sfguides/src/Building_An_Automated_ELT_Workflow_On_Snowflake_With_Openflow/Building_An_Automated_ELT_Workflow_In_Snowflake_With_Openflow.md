@@ -157,7 +157,7 @@ The next steps are to add a processor that will save the response into a snowfla
         
     3. A create connection window appears. Transfer the http response to the `PutSnowflakeInternalStageFile` processor by selecting the **Response under relationship** and click **Add**
     
-        ![PutSnowflakeInternalStageFile http connection](assets/)
+        ![PutSnowflakeInternalStageFile http connection](assets/)  
         ![Two processors linked](assets/)
 
 
