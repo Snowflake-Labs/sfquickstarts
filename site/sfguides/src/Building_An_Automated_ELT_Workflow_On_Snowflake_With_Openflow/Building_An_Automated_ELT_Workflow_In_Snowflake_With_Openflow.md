@@ -72,19 +72,19 @@ CREATE OR REPLACE STAGE F1_API
 
 1. Launch Openflow from Snowflake.
 
-   ![Launch Openflow](assets/)
+   ![Launch Openflow](assets/launch_openflow.png)
 
 2. Connect to Openflow.
 
-   ![Connect to Openflow](assets/)
+   ![Connect to Openflow](assets/connect_to_openflow.png)
 
 3. Navigate to the **Runtimes** tab next to Overview, and open the runtime dedicated to this tutorial.
 
-   ![Open Runtime](assets/)
+   ![Open Runtime](assets/open_runtime.png)
 
 You should be on a white page like this one :
 
-   ![White Canvas](assets/)
+   ![White Canvas](assets/white_canvas.png)
 
 
 ### Step 3: Fetch data from API
@@ -96,11 +96,11 @@ To build the workflow, we'll need Processors and Controller Services.
 
 Drag and drop a processor from the toolbar. It's the first icon.
 
-![Toolbar](assets/)
+![Toolbar](assets/toolbar.png)
 
 Search for `InvokeHTTP` and click **Add**.
 
-![Drag and Drop InvokeHTTP](assets/)
+![Drag and Drop InvokeHTTP](assets/drag_and_drop_invokehttp.png)
 
 > **Tips:**
 > You could also find it by using tags. For example, typing "https" or "client".
@@ -118,21 +118,21 @@ We need to configure the processor we just added :
     
     The only field we need to configure is the HTTP URL since the API doesn't require authentication.
 
-    ![InvokeHTTP Properties](assets/)
+    ![InvokeHTTP Properties](assets/invokehttp_properties.png)
 
 4. On the **Relationships** tab, select **Terminate for all except Response**
 
     Relationships determine what to do with the data output from a component. Since we’re calling an API, several relationship options are available.
     In our case, we only want to keep the Response. We'll transfer it to another processor and ignore the rest.
 
-    ![InvokeHTTP Relationships](assets/)
+    ![InvokeHTTP Relationships](assets/invokehttp_relationships.png)
 
 5. Apply
 
 On the **scheduling** tab, you can define a scheduling strategy. That means, you can configure when the processor should be triggered, either using a fixed time interval or a CRON expression.
 Here, we'll keep the default configuration and run the processor manually.
 
-![InvokeHTTP Scheduling](assets/)
+![InvokeHTTP Scheduling](assets/invokehttp_scheduling.png)
 
 
 ### Step 4: Staging Processor
@@ -149,27 +149,28 @@ The next steps are to add a processor that will save the response into a snowfla
 
     1. Hover over the `Call_JSON_F1_API_Race` processor until a blue arrow appears
     
-        ![PutSnowflakeInternalStageFile drag](assets/)
+        ![PutSnowflakeInternalStageFile drag](assets/PutSnowflakeInternalStageFile_drag.png)
     
     2. Click and drag a connection from `Call_JSON_F1_API_Race` to the `PutSnowflakeInternalStageFile` processor
     
-        ![PutSnowflakeInternalStageFile drop](assets/)
+        ![PutSnowflakeInternalStageFile drop](assets/PutSnowflakeInternalStageFile_drop.png)
         
     3. A create connection window appears. Transfer the http response to the `PutSnowflakeInternalStageFile` processor by selecting the **Response under relationship** and click **Add**
     
-        ![PutSnowflakeInternalStageFile http connection](assets/)  
-        ![Two processors linked](assets/)
+        ![PutSnowflakeInternalStageFile http connection](assets/PutSnowflakeInternalStageFile_http_connection.png)  
+
+        ![Two processors linked](assets/Two_processors_linked.png)
 
 
 **Configure the Connection to Snowflake through a controller service :**
 
 1. On the **Properties** tab, Configure the **Snowflake Connection Service** > Click on the three dots > **Create new service**
 
-    ![snowflake connection service](assets/)
+    ![snowflake connection service](assets/snowflake_connection_service.png)
 
 2. On the Add Controller service window, search for **SnowflakeConnectionService** and Add
 
-    ![add controller service](assets/)
+    ![add controller service](assets/add_controller_service.png)
 
     > To remember, a Controller Service is a shared service that will provide information to processors. This way, we configure the connection to Snowflake once.
 
@@ -180,31 +181,31 @@ The next steps are to add a processor that will save the response into a snowfla
     
     You can see the current context under Controller Services. In this case, we're working on the OpenFlow sheet.
     
-    ![Controller Services Overview](assets/)
+    ![Controller Services Overview](assets/Controller_Services_Overview.png)
 
 4. Select the three dots next to the service > Edit
     - select **Password** for the **Authentication Strategy**.
     - Fill in Account with your **Account Identifier** that you can find on your Snowflake Homepage > User Profile >Account > View account details > Account > Account Identifier
     - For User, Password > Openflow User & Password
 
-    ![Edit Controller Service](assets/)
+    ![Edit Controller Service](assets/Edit_Controller_Service.png)
 
     - Fill in the following fields with information that Openflow have access to :
     
-    ![Default Openflow Database Access](assets/)
+    ![Default Openflow Database Access](assets/Default_Openflow_Database_Access.png)
 
     - Apply
 
 5. Select the three dots next to the service > **Enable** to change the service state from **disabled** to **enable**
 
-    ![Enable Controller Service](assets/)
+    ![Enable Controller Service](assets/Enable_Controller_Service.png)
 
     > On the right, under Referencing Components, you can see Processors and Controller services referencing to the Snowflake Connection
   
     1. Under Scope > Select Service Only
     2. Enable
     
-        ![Enable Controller Service Bis](assets/)
+        ![Enable Controller Service Bis](assets/Enable_Controller_Service_Bis.png)
 
 6. Click on  **Back to processor** on the upper left to finish the configuration.
 
@@ -221,7 +222,7 @@ The next steps are to add a processor that will save the response into a snowfla
     RACE_${now():toNumber():formatInstant("yyyy_MM_dd_HH_mm_ss", "CET")}
     ```
 
-    ![Put_JSON_In_Internal_Stage Properties](assets/)
+    ![Put_JSON_In_Internal_Stage Properties](assets/Put_JSON_In_Internal_Stage_Properties.png)
 
 3. On the **Relationships** tab, select **Terminate** under **Failure**, and leave Success unselected so it can be forwarded to the next processor
 
@@ -241,7 +242,7 @@ See how it works.
 One flowfile (piece of data) entered the `Call_JSON_F1_API_Race`. It was processed, and the response was sent to the `Put_JSON_In_Internal_Stage` processor.  
 The whole operation completed in just a second once the code was compiled.
 
-![Run Staging](assets/)
+![Run Staging](assets/Run_Staging.png)
 
 Now let's check on snowsight if our file is in the stage.
 
@@ -251,7 +252,7 @@ Run this on your worksheet :
 -- LIST the STAGE FILES to check if our race file is there
 LIST @OPENFLOW.OPENFLOW_TEST.F1_API pattern ='.*RACE.*';
 ```
-![Query Stage](assets/)
+![Query Stage](assets/Query_Stage.png)
 
 <!-- ------------------------ -->
 ## Load Data with COPY INTO
@@ -287,7 +288,7 @@ We’ll use the **ExecuteSQLStatement** processor to run a **COPY INTO** command
 
 2. Connect from `Put_JSON_In_Internal_Stage` with **success** relationship > Add
 
-    ![Add ExecuteSQLStatement Processor](assets/)
+    ![Add ExecuteSQLStatement Processor](assets/.png)
 
 3. On the **Settings** tab, rename the `ExecuteSQLStatement` processor to `Copy_JSON_Into_Variant_Table`
 
@@ -312,7 +313,7 @@ We’ll use the **ExecuteSQLStatement** processor to run a **COPY INTO** command
         >
         > Option PATTERN will select every files that contains "RACE".
 
-        ![ExecuteSQLStatement Properties](assets/)
+        ![ExecuteSQLStatement Properties](assets/.png)
 
 5. On the **Relationships** tab, Select **Terminate** for **failure** and leave success unselected so it can be passed to the next component and **apply**
 
@@ -332,7 +333,7 @@ SELECT * FROM OPENFLOW.OPENFLOW_TEST.RAW_RACE;
 
 You should see something like this :
 
-![RAW_RACE Query](assets/)
+![RAW_RACE Query](assets/.png)
 
 At this stage of the tutorial, we’ve successfully ingested JSON data from the API and stored it in a Snowflake table.
 
@@ -365,7 +366,7 @@ GROUP BY 1, 2 ORDER BY 1, 2;
 
 Below is an extract from the results:
 
-![RAW_RACE fields](assets/)
+![RAW_RACE fields](assets/.png)
 
 Here is a proposed model to build.
 
@@ -440,7 +441,7 @@ CREATE OR REPLACE TABLE OPENFLOW.OPENFLOW_TEST.TEAMS (
 
 Check in your database that the objects are created :
 
-![Tables Creation](assets/)
+![Tables Creation](assets/.png)
 
 
 ### Step 2: Workflow processors
@@ -457,7 +458,7 @@ Then we'll add components in OpenFlow to manage the data in these tables.
         - Extract_And_Transform_Circuits
     2. Under **Relationships**, Select **Terminate** for both failure and **success**, as these are our final components
     
-        ![Final Tables relationships](assets/)
+        ![Final Tables relationships](assets/.png)
     
     3. Under **properties** :
         - Reused the **SnowflakeConnectionService** we created as the value for **Connection Pooling Service property**
@@ -721,7 +722,7 @@ WHEN NOT MATCHED THEN
     );
 ```
 
-![Final Tables Properties](assets/)
+![Final Tables Properties](assets/.png)
 
 
 ### Step 3: Run and check
@@ -730,7 +731,7 @@ Once it's all set up, right-click on each of the four processors and set them to
 
 You should get something similar to that :
 
-![All processor view](assets/)
+![All processor view](assets/.png)
 
 Let's perform the final run. Right-Click on the `Call_JSON_F1_API_Race` processor and select **Run Once**.
 
@@ -758,7 +759,7 @@ In Openflow, if we right-click on the `Call_JSON_F1_API_Race` processor, select 
   - **CRON-driven** - Can be more precise and is based on CRON expressions.
     Races happen on Sundays, but not every Sunday. For instance, we could configure the schedule to 0 10 * * 1 if we want the processor to be triggered every Monday at 10 AM.
 
-![Scheduling view](assets/)
+![Scheduling view](assets/.png)
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
