@@ -229,47 +229,12 @@ You can learn more about these extensions here: [Shiny extension](https://shiny.
 ### Access the Quickstart Materials
 
 This Quickstart will walk you through the analysis contained in <https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd>.
-To follow along, you can either clone the [GitHub repo](https://github.com/posit-dev/snowflake-posit-quickstart-python/) or download the materials from
-our public S3 bucket. 
+To follow along, you can clone the [GitHub repo](https://github.com/posit-dev/snowflake-posit-quickstart-python/):
 
-First, install `requests`, which is required for downloading the files. In a terminal, run the following code to install `requests`:
-
-```bash
-pip install requests
+```
+git clone https://github.com/posit-dev/snowflake-posit-quickstart-python/
 ```
 
-Then, open the Command Palette (`Ctrl/Cmd+Shift+P`) and use the command `Create: New File` > `Python File` to create a new Python file. 
-
-**Paste the following Python code into the new Python file**, then click the run button in the upper right corner to run the script. When prompted, name the file `import_data.py`.
-
-```python
-import requests
-import os
-
-filenames = [
-    "quarto.qmd",
-    "requirements.txt",
-    "app/app.py",
-    "app/www/heart.png"
-]
-
-base_url = "https://posit-snowflake-mlops.s3.us-east-2.amazonaws.com/snowflake-posit-quickstart-python-main/"
-
-for name in filenames:
-    url = base_url + name
-    local_path = name  
-
-    dir_path = os.path.dirname(local_path)
-    if dir_path:  
-        os.makedirs(dir_path, exist_ok=True)
-
-    response = requests.get(url)
-    response.raise_for_status()  
-    with open(local_path, "wb") as f:
-        f.write(response.content)
-```
-
-You should now see `quarto.qmd`, `requirements.txt`, and the `app` directory in the Explorer Pane. 
   
 ### Install requirements
 
