@@ -66,7 +66,7 @@ Before we begin there are a few components we need to prepare. We need to:
 
 ### Add the Lending Club Data to Snowflake
 
-For this analysis, we'll use loan data from [LendingClub](https://www.lendingclub.com/). We've made the data available in an [S3 bucket](s3://posit-snowflake-mlops).
+For this analysis, we'll use loan data from [LendingClub](https://www.lendingclub.com/). We've made the data available in an [S3 bucket](s3://sfquickstarts/sfguide_posit_snowflake_mlops/).
 
 The data contains information for about 2.3 million loans from the Southern US states.
 
