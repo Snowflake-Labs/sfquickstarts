@@ -180,16 +180,7 @@ USE DATABASE weather_lab;
 USE SCHEMA weather_schema;
 ```
 
-2. Now let's get sense of the data in this dataset. Run the next SQL cell that contains this code:
-
-```sql
--- Explore what weather variables are available
-SELECT DISTINCT variable_name
-FROM WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_METRICS_TIMESERIES
-LIMIT 20;
-```
-
-3. We are interested in the NOAA weather data, so let's explore temperature data. Run the next SQL cell that contains the code below. It'll return the average temperature by state, in Celsius.
+4. We are interested in the NOAA weather data, so let's explore temperature data. Run the next SQL cell that contains the code below. It'll return the average temperature by state, in Celsius.
 
 ```sql
 -- Average temperature by state, in Celsius
@@ -206,7 +197,7 @@ GROUP BY idx.state_name
 ORDER BY avg_temperature DESC;
 ```
 
-4. Let's drill down a little more. Since we're going to be predicting weather for a zip code in California, let's take a look at the average temperature in California zip codes where there is a weather station present. Run the next SQL cell that contains the following code:
+5. Let's drill down a little more. Since we're going to be predicting weather for a zip code in California, let's take a look at the average temperature in California zip codes where there is a weather station present. Run the next SQL cell that contains the following code:
 
 ```sql
 -- Sample temperature data for zip codes for weather stations in California
@@ -227,9 +218,9 @@ ORDER BY ts.date DESC
 LIMIT 20;
 ```
 
-5. OK, great! We've become a little more familiar with the data by exploring it with SQL. Now let's perform an equivalent exploratory query, but this time in Python. We'll use Snowpark for Python to do this. Since we're going to be training an ML model in Python, using the scikit-learn Python package, it's important to become familiar with how to use the Snowpark DataFrame API to build the data frames we'll use to train the model. 
+6. OK, great! We've become a little more familiar with the data by exploring it with SQL. Now let's perform an equivalent exploratory query, but this time in Python. We'll use Snowpark for Python to do this. Since we're going to be training an ML model in Python, using the scikit-learn Python package, it's important to become familiar with how to use the Snowpark DataFrame API to build the data frames we'll use to train the model. 
 
-6. Run the next cell containing the Python code below. The code below is the Snowpark for Python equivalent of the prior SQL query. It uses `session.table()` to create a Snowpark DataFrame that we can easily manipulate. Don't worry about the other package imports at the top, we'll use them later on in the notebook.
+7. Run the next cell containing the Python code below. The code below is the Snowpark for Python equivalent of the prior SQL query. It uses `session.table()` to create a Snowpark DataFrame that we can easily manipulate. Don't worry about the other package imports at the top, we'll use them later on in the notebook.
 
 ```py
 from snowflake.snowpark import Session

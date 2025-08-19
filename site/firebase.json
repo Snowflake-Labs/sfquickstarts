@@ -306,11 +306,6 @@
       "source": "guide/vhol_snowflake_data_wrangler/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
-    },
-    {
-      "source": "/guide/integrate_snowflake_cortex_agents_with_microsoft_teams{,/**}",
-      "destination": "/guide/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app",
-      "type": 301
     }
     ]
   }
