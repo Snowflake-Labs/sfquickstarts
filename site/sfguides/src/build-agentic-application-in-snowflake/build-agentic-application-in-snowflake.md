@@ -266,24 +266,24 @@ Since we have processed images, the extracted descriptions can also be used by C
 #### - *Q. Is there any brand in the frame of the downhill bike?*
 
 > aside positive
-> Feel free to explore the PDF documents and image files to ask your own questions.
+> Feel free to explore the PDF documents and images to ask other questions.
 
 ### Structured Data
 
 These are analytical questions where the answers can be found in structured data stored in Snowflake tables.
 
-#### - *Q. Show me monthly sales revenue trends by product category over the past 2 years.
+#### - *Q. Show me monthly sales revenue trends by product category over the past 2 years.*
 
 #### - *Q. How many carvers are we selling per year in the North region?*
 
-Notice that for this query, all 3 tables are used. Also note that the Cortex Search integration in the semantic model understands that the article name is "Carver Skis".
+Notice that all 3 tables are used to answer this question. 
 
 #### - *Q. How many infant bikes are we selling per month?*
 
 #### - *Q. What are the top 5 customers buying the carvers?*
 
 > aside positive
-> Feel free to explore the semantic model to ask your own questions.
+> Feel free to explore the semantic model to ask other questions.
 
 ## Conclusion And Resources
 <!-- ------------------------ -->
