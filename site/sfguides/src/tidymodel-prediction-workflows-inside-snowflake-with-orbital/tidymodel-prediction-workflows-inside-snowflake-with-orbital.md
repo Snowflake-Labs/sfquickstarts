@@ -5,25 +5,23 @@ categories: Data-Science
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, R, Posit Workbench, Native Applications 
+tags: Data Science, R, Posit Workbench, Native Applications
 
 #  Tidymodel Prediction Workflows Inside Snowflake with Orbital
 
 ## Overview
 Duration: 1
 
-### Overview
-
 This Quickstart will demonstrate how to run model predictions inside Snowflake
-using the [orbital R package](https://orbital.tidymodels.org/) and the [Snowflake Native Posit Workbench App](https://app.snowflake.com/marketplace/listing/GZTSZMCB69/posit-pbc-posit-workbench?search=posit+pbc). 
+using the [orbital R package](https://orbital.tidymodels.org/) and the [Snowflake Native Posit Workbench App](https://app.snowflake.com/marketplace/listing/GZTSZMCB69/posit-pbc-posit-workbench?search=posit+pbc).
 
 With the orbital package, you can:
 
 1. Speed up model predictions by running them directly in a database like Snowflake.
-2. Easily share your models with others by storing predictions in a Snowflake table or view. 
+2. Easily share your models with others by storing predictions in a Snowflake table or view.
 
-We'll use loan data from [LendingClub](https://www.lendingclub.com/) to build an 
-example model in this Quickstart. 
+We'll use loan data from [LendingClub](https://www.lendingclub.com/) to build an
+example model in this Quickstart.
 
 ### What You Will Build
 
@@ -38,15 +36,15 @@ or look at the materials provided in the accompanying repository:
 
 ### What You Will Learn
 
-- How to create a tidymodels workflow that bundles pre-processing and modeling steps. 
-- How to transform that workflow into Snowflake SQL with orbital. 
-- How to run model predictions on Snowflake using orbital. 
-- How to create Snowflake views to store and share model predictions. 
+- How to create a tidymodels workflow that bundles pre-processing and modeling steps.
+- How to transform that workflow into Snowflake SQL with orbital.
+- How to run model predictions on Snowflake using orbital.
+- How to create Snowflake views to store and share model predictions.
 
-### Prerequisites
+### Pre-requisites
 
 - Familiarity with R
-- Familiarity with modeling in R with the [tidymodels framework](https://www.tidymodels.org/) 
+- Familiarity with modeling in R with the [tidymodels framework](https://www.tidymodels.org/)
 - The ability to launch Posit Workbench from [Snowflake Native Applications](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/). This can be provided by an administrator with the `accountadmin` role.
 - A Snowflake account with an `accountadmin` role or role that allows you to:
   - Create databases, schemas and tables
@@ -76,8 +74,7 @@ In Snowsight, click `Create` > `SQL Worksheet`. Copy [this SQL code](https://git
 into the worksheet. Run the code to create the database and table you'll need for
 this Quickstart.
 
-> aside negative
->
+
 > You may need to change the role granted usage from `SYSADMIN` to your desired
 > role.
 
@@ -86,15 +83,15 @@ this Quickstart.
 After running the code, you should be able to see the Lending Club data in Snowsight.
 
 Navigate to `Data` > `Databases` and select the database where you added the data (e.g., `LENDING_CLUB`).
-Expand the database, schema, and tables until you see the `LOAN_DATA` table. 
+Expand the database, schema, and tables until you see the `LOAN_DATA` table.
 
 ![](assets/snowflake/04-confirm_data.png)
 
 ### Launch Posit Workbench
 
-We can now start the modeling process with the data using the [Posit Workbench Native App](https://app.snowflake.com/marketplace/listing/GZTSZMCB69/posit-pbc-posit-workbench?search=posit+pbc). 
-The Posit Workbench Native App allows users to develop in their preferred IDE in 
-Posit Workbench with their Snowflake data, all while adhering to Snowflake's 
+We can now start the modeling process with the data using the [Posit Workbench Native App](https://app.snowflake.com/marketplace/listing/GZTSZMCB69/posit-pbc-posit-workbench?search=posit+pbc).
+The Posit Workbench Native App allows users to develop in their preferred IDE in
+Posit Workbench with their Snowflake data, all while adhering to Snowflake's
 security and governance protocols.
 
 #### Step 1: Navigate to Apps
@@ -115,7 +112,7 @@ After clicking on the app, you will see a page with configuration instructions a
 
 Click on `Launch app` to launch the app. You may be prompted to first login to Snowflake using your regular credentials or authentication method.
 
-### Create an RStudio Pro Session 
+### Create an RStudio Pro Session
 
 Posit Workbench provides several IDEs, such as RStudio Pro, JupyterLab, and VS Code. For this Quickstart, we will use RStudio Pro.
 
@@ -150,21 +147,21 @@ Click `Start Session` to launch the RStudio Pro IDE.
 
 Once everything is ready,
 you will be able to work with your Snowflake data
-in the familiar RStudio Pro IDE. Since the IDE is provided by the Posit Workbench Native App, 
+in the familiar RStudio Pro IDE. Since the IDE is provided by the Posit Workbench Native App,
 your entire analysis will run securely within Snowflake.
 
 ![](assets/rstudio/01-rstudio.png)
 
 #### Step 5: Access the Quickstart Materials
 
-This Quickstart will walk you through the code contained in <https://github.com/posit-dev/snowflake-posit-quickstart-orbital/blob/main/fit_and_deploy.R>. To follow along, 
+This Quickstart will walk you through the code contained in <https://github.com/posit-dev/snowflake-posit-quickstart-orbital/blob/main/fit_and_deploy.R>. To follow along,
 open the file in your RStudio Pro IDE. There are two ways to do this:
 
 1. **Simple copy-and-paste** Go to File > New File > R Script and then copy the contents of [fit_and_deploy.R](https://github.com/posit-dev/snowflake-posit-quickstart-orbital/blob/main/fit_and_deploy.R) into your new file.
 2. **Starting a new project linked to the GitHub repo.** To do this:
 
     1.  Go to `File` > `New Project` in the RStudio IDE menu bar.
-    
+
     <img src="assets/rstudio/03-new-project.png" style="width: 400px; height: auto;" />
 
     2.  Select Version Control in the New Project Wizard
@@ -181,8 +178,8 @@ open the file in your RStudio Pro IDE. There are two ways to do this:
 
     RStudio will clone a local copy of the materials on GitHub. You can use the Files pane in the bottom right-hand corner of the IDE to navigate to `quarto.qmd`. Click on the file to open it.
 
-> aside negative
-> 
+
+>
 > SSH authentication is not available in Snowpark Container Services, so when creating projects from Git, you may need to authenticate Git operations over HTTPS, using a username and password or a personal access token.
 
 
@@ -231,11 +228,11 @@ library(tidypredict)
 library(ggplot2)
 ```
 
-## Access and Prepare Snowflake Data from R
+## Access and Prepare Data with R
 Duration: 5
 
 Before starting the modeling process, we need to connect to our database and load
-the loan data. 
+the loan data.
 
 We'll use the DBI and odbc R packages to connect to the database. We'll then use dplyr and dbplyr to query the data with R without having to write raw SQL. To learn more, see [Analyze Data with R using Posit Workbench and Snowflake](https://quickstarts.snowflake.com/guide/analyze_data_with_r_using_posit_workbench_and_snowflake/#0).
 
@@ -243,7 +240,7 @@ We'll use the DBI and odbc R packages to connect to the database. We'll then use
 
 First, we use `DBI::dbConnect()` to connect to Snowflake. We'll also need a driver
 provided by the odbc package. The `warehouse`, `database`, and `schema` arguments
-specify our desired Snowflake warehouse, database, and schema. 
+specify our desired Snowflake warehouse, database, and schema.
 
 ```r
 con <- dbConnect(
@@ -254,11 +251,10 @@ con <- dbConnect(
 )
 ```
 
-> aside negative
 >
 > You may need to change `warehouse`, `database`, and `schema` to match your environment.
 
-`con` now stores our Snowflake connection. 
+`con` now stores our Snowflake connection.
 
 Once connected, we can view available databases, schemas, and tables in the RStudio IDE Connections pane. Click on the database icon to the right of a database to see its schemas. Click on the schema icon to the right of a schema to see its tables. Click the table icon to preview the table.
 
@@ -278,8 +274,8 @@ We can also use dbplyr to translate typical dplyr verbs into SQL. To prepare our
 column.
 
 ```r
-lendingclub_dat <- 
-  con |> 
+lendingclub_dat <-
+  con |>
   tbl("LOAN_DATA") |>
   mutate(
     ISSUE_YEAR = as.integer(str_sub(ISSUE_D, start = 5)),
@@ -304,26 +300,26 @@ lendingclub_dat <-
 ```
 
 We don't want to fit our model on all 2.3 million rows, so we'll filter to a single
-year and then sample 5,000 rows. 
+year and then sample 5,000 rows.
 
 ```r
-lendingclub_sample <- 
+lendingclub_sample <-
   lendingclub_dat |>
   filter(ISSUE_YEAR == 2016) |>
   slice_sample(n = 5000)
 ```
 
-Our ultimate goal is to create a model that predicts loan interest rates (the `INT_RATE` 
-column). To prepare our data for modeling, we'll first select a few columns of interest 
-(loan term, credit utilization, credit open-to-buy, and all utilization), 
-convert `INT_RATE` to a numeric variable, and remove missing values.  
+Our ultimate goal is to create a model that predicts loan interest rates (the `INT_RATE`
+column). To prepare our data for modeling, we'll first select a few columns of interest
+(loan term, credit utilization, credit open-to-buy, and all utilization),
+convert `INT_RATE` to a numeric variable, and remove missing values.
 
 > aside positive
-> Typically, we'd find our columns of interest with exploratory data analysis techniques, 
-> but for the purposes of this Quickstart, we've skipped this step. 
+> Typically, we'd find our columns of interest with exploratory data analysis techniques,
+> but for the purposes of this Quickstart, we've skipped this step.
 
 ```r
-lendingclub_prep <- 
+lendingclub_prep <-
   lendingclub_sample |>
   select(INT_RATE, TERM, BC_UTIL, BC_OPEN_TO_BUY, ALL_UTIL) |>
   mutate(INT_RATE = as.numeric(str_remove(INT_RATE, "%"))) |>
@@ -331,7 +327,7 @@ lendingclub_prep <-
   collect()
 ```
 
-`collect()` executes a query and returns the _entire_ result as a tibble, so `lendingclub_prep` now contains our entire filtered sample. 
+`collect()` executes a query and returns the _entire_ result as a tibble, so `lendingclub_prep` now contains our entire filtered sample.
 
 ## Create Model with tidymodels
 Duration: 10
@@ -341,16 +337,16 @@ Duration: 10
 Next, we'll create a tidymodels workflow. Workflows bundle pre-processing, modeling, and post-processing steps. Learn more about workflows [here](https://workflows.tidymodels.org/).
 
 The first step is to specify our model formula and pre-processing steps using the
-[recipes package](https://recipes.tidymodels.org/). 
+[recipes package](https://recipes.tidymodels.org/).
 
 ```r
 # Pre-processing
-lendingclub_rec <- 
+lendingclub_rec <-
   recipe(INT_RATE ~ ., data = lendingclub_prep) |>
   step_mutate(TERM = (TERM == "60 months")) |>
-  step_mutate(across(!TERM, as.numeric)) |> 
+  step_mutate(across(!TERM, as.numeric)) |>
   step_normalize(all_numeric_predictors()) |>
-  step_impute_mean(all_of(c("BC_OPEN_TO_BUY", "BC_UTIL"))) |>   
+  step_impute_mean(all_of(c("BC_OPEN_TO_BUY", "BC_UTIL"))) |>
   step_filter(!if_any(everything(), is.na))
 ```
 
@@ -359,19 +355,19 @@ to predict the interest rate. We also perform a few pre-processing steps, includ
 turning `TERM` into a logical, normalizing all numeric predictors, and removing
 missing values.
 
-Next, we define the type of model we want to fit: a linear model. `linear_reg()` 
+Next, we define the type of model we want to fit: a linear model. `linear_reg()`
 is from the [parsnip package](https://parsnip.tidymodels.org/).
 
 ```r
 lendingclub_lr <- linear_reg()
 ```
 
-Now, we can create our workflow, adding our linear model and pre-processing recipe. 
+Now, we can create our workflow, adding our linear model and pre-processing recipe.
 
 ```r
-lendingclub_wf <- 
-  workflow() |> 
-  add_model(lendingclub_lr) |> 
+lendingclub_wf <-
+  workflow() |>
+  add_model(lendingclub_lr) |>
   add_recipe(lendingclub_rec)
 ```
 
@@ -398,18 +394,18 @@ Model: linear_reg()
 ── Model ──────────────────────────────────────────────────────────────────────────────────────────────────────────
 Linear Regression Model Specification (regression)
 
-Computational engine: lm 
+Computational engine: lm
 ```
 
-Notice that it includes our pre-processing steps and model specification. 
+Notice that it includes our pre-processing steps and model specification.
 
 ### Fit Model and Compute Metrics
 
-Now that we have our workflow object `lendingclub_wf`, we can use it to fit our model. 
+Now that we have our workflow object `lendingclub_wf`, we can use it to fit our model.
 
 ```r
-lendingclub_fit <- 
-  lendingclub_wf |> 
+lendingclub_fit <-
+  lendingclub_wf |>
   fit(data = lendingclub_prep)
 ```
 
@@ -419,7 +415,7 @@ and then compute those metrics for `lendingclub_fit`.
 ```r
 lendingclub_metric_set <- metric_set(rmse, mae, rsq)
 
-lendingclub_metrics <- 
+lendingclub_metrics <-
   lendingclub_fit |>
   augment(lendingclub_prep) |>
   lendingclub_metric_set(truth = INT_RATE, estimate = .pred)
@@ -431,37 +427,36 @@ lendingclub_metrics <-
 # A tibble: 3 × 3
   .metric .estimator .estimate
   <chr>   <chr>          <dbl>
-1 rmse    standard       4.38 
-2 mae     standard       3.43 
+1 rmse    standard       4.38
+2 mae     standard       3.43
 3 rsq     standard       0.233
 ```
 
 ### Version Model with vetiver
 
-The [vetiver](https://rstudio.github.io/vetiver-r/) package provides tools to version, share, 
-deploy, and monitor models. 
+The [vetiver](https://rstudio.github.io/vetiver-r/) package provides tools to version, share,
+deploy, and monitor models.
 
-We'll use vetiver to version and write our fitted model to a [pin](https://pins.rstudio.com/) on [Posit Connect](https://posit.co/products/enterprise/connect/). 
+We'll use vetiver to version and write our fitted model to a [pin](https://pins.rstudio.com/) on [Posit Connect](https://posit.co/products/enterprise/connect/).
 This will allow us to identify which version of our model is active and track
-performance against other models over time. 
+performance against other models over time.
 
-First, we need to connect to a Posit Connect board. 
+First, we need to connect to a Posit Connect board.
 
 ```r
 board <- board_connect()
 ```
 
-> aside negative
 >
 > To run `rsconnect::board_connect()`, you'll first need to authenticate. To authenticate,
 > navigate to `Tools` > `Global Options` > `Publishing` > `Connect` and follow the instructions.
 
-Then, we create a vetiver model with `vetiver_model()`, supplying the function with our 
-fitted model, model name, and metadata containing our metrics. 
+Then, we create a vetiver model with `vetiver_model()`, supplying the function with our
+fitted model, model name, and metadata containing our metrics.
 
 ```r
 model_name <- "interest_rate_prediction"
-v <- 
+v <-
   vetiver_model(
     lendingclub_fit,
     model_name,
@@ -475,30 +470,28 @@ v <-
 board |> vetiver_pin_write(v)
 ```
 
-> aside negative
 >
-> If you run into a namespacing error in Connect, or a permissioning error in Snowflake, that 
-> may mean someone has already run this code with the same `model_name`. You'll need to pick 
-> a different value. 
+> If you run into a namespacing error in Connect, or a permissioning error in Snowflake, that
+> may mean someone has already run this code with the same `model_name`. You'll need to pick
+> a different value.
 
-We can use `pin_versions()` to return all the different versions of this model. 
+We can use `pin_versions()` to return all the different versions of this model.
 
 ```r
-model_versions <- 
+model_versions <-
   board |>
   pin_versions(glue("{board$account}/{model_name}"))
 ```
 
-> aside positive
 >
-> Unless you've done this Quickstart multiple times, you'll probably only have 
+> Unless you've done this Quickstart multiple times, you'll probably only have
 > one model version.
 
 Let's grab the active version of the model. We'll use this later when interacting
-with Snowflake. 
+with Snowflake.
 
 ```r
-model_version <- 
+model_version <-
   model_versions |>
   filter(active) |>
   pull(version)
@@ -511,17 +504,17 @@ At this point, we've:
 3. Versioned the model with vetiver
 4. Stored the model as a pin on Posit Connect
 
-Now, we're ready to deploy the model with orbital and Snowflake. 
+Now, we're ready to deploy the model with orbital and Snowflake.
 
-## Predict with orbital and Snowflake
+## Create predictions
 Duration: 10
 
-The [orbital package](https://orbital.tidymodels.org/) allows you to run tidymodels workflow predictions inside 
-databases, including Snowflake, substantially speeding up the prediction process. 
+The [orbital package](https://orbital.tidymodels.org/) allows you to run tidymodels workflow predictions inside
+databases, including Snowflake, substantially speeding up the prediction process.
 
 To do so, orbital converts tidymodels workflows into SQL that can run on Snowflake.
 You can then either use that SQL to run the predictions of that model or deploy the
-model directly to Snowflake as a view. 
+model directly to Snowflake as a view.
 
 ### Convert Workflow to orbital
 
@@ -545,7 +538,7 @@ orbital_obj
 7 equations in total.
 ```
 
-If you want to see the SQL statement generated by the model, run `orbital_sql()`. 
+If you want to see the SQL statement generated by the model, run `orbital_sql()`.
 
 ```r
 sql_predictor <- orbital_sql(orbital_obj, con)
@@ -564,22 +557,22 @@ sql_predictor
 
 Notice that you can see all the pre-processing steps and model prediction steps.
 
-### Run Predictions in Snowflake
+### Run predictions in Snowflake
 
-Now that we've converted our tidymodels workflow object to SQL with orbital, we can 
-run model predictions inside Snowflake. 
+Now that we've converted our tidymodels workflow object to SQL with orbital, we can
+run model predictions inside Snowflake.
 
 Calling `predict()` with our orbital object will run the SQL code we saw above directly
-in Snowflake. 
+in Snowflake.
 
 ```r
 start_time <- Sys.time()
-preds <- 
+preds <-
   predict(orbital_obj, lendingclub_dat) |>
   compute(name = "LENDING_CLUB_PREDICTIONS_TEMP")
 
 end_time <- Sys.time()
-  
+
 preds
 ```
 
@@ -602,10 +595,9 @@ preds
 # ℹ Use `print(n = ...)` to see more rows
 ```
 
-> aside positive
 >
 > We've also used `dplyr::compute()` to force the query to compute—without `compute()`,
-> `predict()` would only be evaluated lazily. `compute()` saves the results to a temporary table. 
+> `predict()` would only be evaluated lazily. `compute()` saves the results to a temporary table.
 > The `Sys.time()` calls will help us determine how fast orbital computed our predictions.
 
 To figure out how much orbital sped up our process, let's see how many predictions
@@ -635,7 +627,7 @@ Time difference of 3.027164 secs
 
 2,260,702 predictions in just 3.02 seconds—thanks to Snowflake and orbital!
 
-## Deploy Model as a Snowflake View
+## Deploy Model
 Duration: 5
 
 Next, we'll deploy our model so others can use it. We have a couple of options.
@@ -644,15 +636,15 @@ One option is to write the predictions back to Snowflake as a permanent table by
 setting `temporary = FALSE` in `compute()`:
 
 ```r
-preds <- 
+preds <-
   predict(orbital_obj, lendingclub_dat) |>
   compute(name = "LENDING_CLUB_PREDICTIONS", temporary = FALSE)
 ```
 
-Another is to write our model prediction function as a [view](https://docs.snowflake.com/en/user-guide/views-introduction). 
+Another is to write our model prediction function as a [view](https://docs.snowflake.com/en/user-guide/views-introduction).
 
 > aside positive
-> 
+>
 > A view allows query results to be accessed like a table. The query will execute
 > anytime the view is called, and will run on any new data that has been added to the table.
 
@@ -662,8 +654,8 @@ To create this view, we first need to construct the SQL query that we want to st
 ```r
 view_sql <-
   lendingclub_dat |>
-  mutate(!!!orbital_inline(orbital_obj)) |> 
-  select(any_of(c("ID", ".pred"))) |> 
+  mutate(!!!orbital_inline(orbital_obj)) |>
+  select(any_of(c("ID", ".pred"))) |>
   remote_query()
 ```
 
@@ -671,7 +663,7 @@ view_sql <-
 then use `select()` to select just the columns we need for our predictions view:
 `ID` (to identify the rows) and `.pred` (which contains the predictions).
 
-`dbplyr::remote_query()` converts our dplyr pipeline back into SQL. Let's take 
+`dbplyr::remote_query()` converts our dplyr pipeline back into SQL. Let's take
 a look at the result.
 
 ```r
@@ -725,13 +717,13 @@ END AS INT) AS "ISSUE_MONTH"
 ) "q01"
 ```
 
-> aside negative
+
 > We've abbreviated the query here for brevity.
 
 This SQL query uses our model to compute a predicted value for each loan in the `LOAN_DATA`
 table. It creates a table with two columns, `ID` and `.PRED`, which are all we need
 when creating a table of predictions. Later, if someone wants to use our prediction table,
-they can use the `ID` column to join the predictions back to the loan data. 
+they can use the `ID` column to join the predictions back to the loan data.
 
 Now, we'll take this SQL and create a view. First, we create a name for our view
 by glueing together the model name and version.
@@ -741,7 +733,7 @@ versioned_view_name <- glue("{model_name}_v{model_version}")
 ```
 
 Then, we use `glue_sql()` to combine the SQL needed to create a view with
-our model prediction SQL from above. 
+our model prediction SQL from above.
 
 ```r
 snowflake_view_statement <-
@@ -763,9 +755,8 @@ con |>
 [1] 0
 ```
 
-> aside positive
-> `dbExecute()` returned `0` because it returns the number of rows changed. We 
-> created a new view, so we changed `0` rows. 
+> `dbExecute()` returned `0` because it returns the number of rows changed. We
+> created a new view, so we changed `0` rows.
 
 Our view is now in Snowflake and ready to use!
 
@@ -773,7 +764,7 @@ Our view is now in Snowflake and ready to use!
 
 So far, we've only created one view for our one model version. But what if you have
 multiple views corresponding to multiple versions of your model? It would be helpful
-to have a view that always corresponds to the latest version of the model. Let's make 
+to have a view that always corresponds to the latest version of the model. Let's make
 that view.
 
 First, we'll make a name for this new view.
@@ -782,7 +773,7 @@ First, we'll make a name for this new view.
 main_view_name <- glue::glue("{model_name}_latest")
 ```
 
-Then, we again use `glue_sql()` and `dbExecute()` to create the view. 
+Then, we again use `glue_sql()` and `dbExecute()` to create the view.
 
 ```r
 main_view_statement <- glue::glue_sql(
@@ -809,16 +800,16 @@ con |>
 # A tibble: 100 × 2
    ID        .pred
    <chr>     <dbl>
- 1 142212962 16.7 
- 2 142529846 12.4 
- 3 141649517 13.7 
- 4 141671381 13.1 
- 5 141449070 16.9 
- 6 142661219 11.6 
- 7 142647391 15.9 
+ 1 142212962 16.7
+ 2 142529846 12.4
+ 3 141649517 13.7
+ 4 141671381 13.1
+ 5 141449070 16.9
+ 6 142661219 11.6
+ 7 142647391 15.9
  8 142646325  8.37
  9 142211815  9.98
-10 142661174 11.1 
+10 142661174 11.1
 # ℹ 90 more rows
 # ℹ Use `print(n = ...)` to see more rows
 ```
@@ -829,7 +820,7 @@ with Snowflake, including Snowsight, as shown below.
 
 ![](assets/snowflake/snowsight-view.png)
 
-## Refitting Models in Snowflake with Posit Connect
+## Refitting Models with Posit Connect
 Duration: 1
 
 As new data comes in over time, it is useful to refit our model.
