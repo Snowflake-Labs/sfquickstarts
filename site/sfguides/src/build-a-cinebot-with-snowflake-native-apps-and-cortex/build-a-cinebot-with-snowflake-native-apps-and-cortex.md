@@ -199,7 +199,9 @@ use role accountadmin;
 GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO APPLICATION cortex_app_instance;
 ```
 
+
 At this point you can navigate the the Application by clicking on **'Catalog'** on the left side of the Snowsight screen and then by clicking on **'Apps'**.  You can click on the **Cortext_App_Instance** application and it will bring up the Application. When run for the first time, it will detect that there is no "chunked" table, and will prompt you to run the pre-processing Stored Procedures we created in our setup.sql script. Once this is run, the app will refresh and you will be able to talk to the chatbot. Make sure you have the NAC role selected in the top right. If you receive an error that the selected model does not exist in your region, please select another on the left menu.
+
 
 <!-- ------------------------ -->
 ## Cleanup 
