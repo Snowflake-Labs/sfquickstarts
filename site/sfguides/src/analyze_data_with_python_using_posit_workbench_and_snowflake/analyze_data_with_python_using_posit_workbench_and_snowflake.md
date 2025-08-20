@@ -73,20 +73,20 @@ CREATE OR REPLACE DATABASE HEART_FAILURE;
 CREATE OR REPLACE SCHEMA PUBLIC;
 
 CREATE OR REPLACE WAREHOUSE HF_WH
-    WAREHOUSE_SIZE = 'xsmall' 
+    WAREHOUSE_SIZE = 'xsmall'
     WAREHOUSE_TYPE = 'standard'
     AUTO_SUSPEND = 60
     AUTO_RESUME = TRUE
     INITIALLY_SUSPENDED = TRUE;
 ```
 
-This creates a database named `HEART_FAILURE` with a schema `PUBLIC`, as well as a warehouse named `HF_WH`. 
+This creates a database named `HEART_FAILURE` with a schema `PUBLIC`, as well as a warehouse named `HF_WH`.
 
-### Load the heart failure data into Snowflake
+### Load data into Snowflake
 
-Next, we need to create a table to hold the heart failure dataset. 
+Next, we need to create a table to hold the heart failure dataset.
 
-1. **Download the dataset from UCI:**  
+1. **Download the dataset from UCI:**
    [https://archive.ics.uci.edu/ml/datasets/Heart+failure+clinical+records](https://archive.ics.uci.edu/ml/datasets/Heart+failure+clinical+records)
 
 2. **Unzip the downloaded file.** You should now see a file named `heart_failure_clinical_records_dataset.csv`. We’ll upload this CSV into Snowflake using the Snowsight UI.
@@ -107,7 +107,7 @@ Next, we need to create a table to hold the heart failure dataset.
 
 ### Confirm the database, data, and schema
 
-You should now be able to see the heart failure data in Snowsight. Navigate to `Data` > `Databases` > `HEART_FAILURE` > `PUBLIC` > `Tables`. You should now see the `HEART_FAILURE` table. 
+You should now be able to see the heart failure data in Snowsight. Navigate to `Data` > `Databases` > `HEART_FAILURE` > `PUBLIC` > `Tables`. You should now see the `HEART_FAILURE` table.
 
 ![](assets/snowflake/04-confirm_data.png)
 
@@ -119,7 +119,7 @@ and use it to connect to your database.
 
 #### Step 1: Navigate to Apps
 
-In your Snowflake account, go to `Data Products` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Get`. Please note that the Native App must be [installed and configured ](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html) by an administrator. 
+In your Snowflake account, go to `Data Products` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Get`. Please note that the Native App must be [installed and configured ](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html) by an administrator.
 
 ![](assets/snowflake/05-get_posit_workbench.png)
 
@@ -135,7 +135,7 @@ After clicking on the app, you will see a page with configuration instructions a
 
 Click on `Launch app`. This should take you to the webpage generated for the Workbench application. You may be prompted to first login to Snowflake using your regular credentials or authentication method.
 
-### Create a VS Code Session 
+### Create a VS Code Session
 
 Posit Workbench provides several IDEs, including VS Code, RStudio Pro, and JupyterLab. For this analysis, we will use VS Code.
 
@@ -170,49 +170,49 @@ and there will be a check mark in the upper-left corner.
 Click `Start Session` to launch VS Code.
 
 You will now be able to work with your Snowflake data
-in VS Code. Since the IDE is provided by the Posit Workbench Native App, 
+in VS Code. Since the IDE is provided by the Posit Workbench Native App,
 your entire analysis will occur securely within Snowflake.
 
 ![](assets/vs_code/01-vscode.png)
 
 ### Install Quarto, Shiny, and Jupyter Extensions
 
-The Quarto and Shiny VS Code Extensions support the development 
-of Quarto documents and Shiny apps in VS Code. The Jupyter extension provides 
+The Quarto and Shiny VS Code Extensions support the development
+of Quarto documents and Shiny apps in VS Code. The Jupyter extension provides
 support for running Python code in notebook cells
 
 Install these extensions:
 
 1. **Open the VS Code Extensions view.** On the right-hand side of VS Code, click
 the Extensions icon in the Activity bar to open the Extensions view.
-2. **Search for "Quarto"** to find the Quarto extension. 
+2. **Search for "Quarto"** to find the Quarto extension.
 
 <img src="assets/vs_code/02-extensions_quarto.png" style="width: 200px; height: auto;" />
 
 
 3. **Install the Quarto extension.** Click on the Quarto extension, then click `Install`.
-4. **Install the Shiny extension.** Search for the Shiny extension, then install 
-the extension in the same way. 
-5. **Install the Jupyter extension.** Search for the Jupyter extension, then install 
-the extension in the same way. 
+4. **Install the Shiny extension.** Search for the Shiny extension, then install
+the extension in the same way.
+5. **Install the Jupyter extension.** Search for the Jupyter extension, then install
+the extension in the same way.
 
-You can learn more about these extensions here: [Shiny extension](https://shiny.posit.co/blog/posts/shiny-vscode-1.0.0/), 
+You can learn more about these extensions here: [Shiny extension](https://shiny.posit.co/blog/posts/shiny-vscode-1.0.0/),
 [Quarto extension](https://quarto.org/docs/tools/vscode.html).
 
 ### Open a new folder
 
-1. **Launch “Open Folder”:**  
+1. **Launch “Open Folder”:**
    Press `Ctrl/Cmd+Shift+P` to open the Command Palette, type **File: Open Folder**, and press Enter. In the dialog that appears, navigate to the directory where you want your work to live and click **Ok**.
 
-2. **Create a subfolder:**  
+2. **Create a subfolder:**
    In the Explorer pane (left sidebar), click the **New Folder** button (the folder icon) and name the folder `heart_failure`.
 
-3. **Switch into the new folder:**  
+3. **Switch into the new folder:**
    Press `Ctrl/Cmd+Shift+P` again to reopen the Command Palette, select **File: Open Folder**, then navigate to `heart_failure` and click **Ok**.
 
 4. You now have an empty `heart_failure` folder open and ready for your work.
 
-### Create a virtual environment 
+### Create a virtual environment
 
 1. **Open the Command Palette** (`Cmd/Ctrl+Shift+P`), then search for and select **Python: Create Environment**.
 
@@ -223,7 +223,7 @@ You can learn more about these extensions here: [Shiny extension](https://shiny.
 4. In a terminal, **activate the virtual environment** by running `source .venv/bin/activate`.
 
 > aside negative
-> 
+>
 > If you don't already see a terminal open, open the Command Palette (`Ctrl/Cmd+Shift+P`), then select `Terminal: Create New Terminal` to open one.
 
 ### Access the Quickstart Materials
@@ -235,7 +235,7 @@ To follow along, you can clone the [GitHub repo](https://github.com/posit-dev/sn
 git clone https://github.com/posit-dev/snowflake-posit-quickstart-python/
 ```
 
-  
+
 ### Install requirements
 
 In a terminal, run the following command to **install the dependencies** listed in `requirements.txt`:
@@ -246,7 +246,7 @@ pip install -r requirements.txt
 
 **Note:** Make sure your virtual environment is activated (`source .venv/bin/activate`) before installing.
 
-## Build Reports and Dashboards with Quarto
+## Build Report and Dashboard
 Duration: 2
 
 Before we dive into the specifics of the code, let's first discuss Quarto. We've written our analysis in a Quarto (`.qmd`) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
@@ -275,7 +275,7 @@ When you run a cell, cell output is displayed in the Jupyter interactive console
 ![](assets/quarto/interactive-console.png)
 
 To render and preview the entire document, click the `Preview` button
-or run `quarto preview quarto.qmd` from the terminal. 
+or run `quarto preview quarto.qmd` from the terminal.
 
 ![](assets/quarto/preview.png)
 
@@ -289,39 +289,39 @@ and the documentation for all the various Quarto outputs here: <https://quarto.o
 Quarto works with Python, R, and Javascript Observable code out-of-the box,
 and is a great tool to communicate your data science analyses.
 
-## Access Snowflake Data from Python
+## Access Snowflake Data
 Duration: 5
 
 Now, let's take a closer look at the code in our Quarto document. Our code will run
 in our Python environment, but will use data stored in our database on Snowflake.
 
 To access this data, we'll use the Ibis library to connect to the database and
-query the data from Python, without having to write raw SQL. 
+query the data from Python, without having to write raw SQL.
 Let's take a look at how this works.
 
-### Connect with Ibis
+### Connect to Database
 
-[Ibis](https://ibis-project.org/) is an open source dataframe library that works with a wide variety of backends, 
+[Ibis](https://ibis-project.org/) is an open source dataframe library that works with a wide variety of backends,
 including Snowflake.
 
-First, we import `ibis`, then use `ibis.snowflake.connect` to connect to the Snowflake 
+First, we import `ibis`, then use `ibis.snowflake.connect` to connect to the Snowflake
 database. We need to provide a `warehouse` for compute and a `database` to connect to.
 We can also provide a `schema` here to make connecting to specific tables easier.
 
 ```python
-import ibis 
+import ibis
 
 con = ibis.snowflake.connect(
-  warehouse="HF_WH",  
-  database="HEART_FAILURE",  
+  warehouse="HF_WH",
+  database="HEART_FAILURE",
   schema="PUBLIC",
   connection_name="workbench"
 )
 ```
 
-The variable `con` now stores our connection. 
+The variable `con` now stores our connection.
 
-### Create a table that corresponds to a table in the database
+### Create a table
 
 Once we build a connection, we can use `table()` to create an Ibis [table expression](https://ibis-project.org/reference/expression-tables#:~:text=A%20table%20expression%20contains%20an,new%20Table%20with%20those%20changes) that represents the database table.
 
@@ -329,14 +329,14 @@ Once we build a connection, we can use `table()` to create an Ibis [table expres
 heart_failure = con.table("HEART_FAILURE")
 ```
 
-### Rely on Ibis to translate Python to SQL
+### Translate Python to SQL
 
-We can now use Ibis to interact with `heart_failure`. For example, 
+We can now use Ibis to interact with `heart_failure`. For example,
 we can filter rows and rename and select columns.
 
 ```python
 heart_failure_filtered = (
-    heart_failure.filter(heart_failure.AGE < 50)  
+    heart_failure.filter(heart_failure.AGE < 50)
     .rename(
         {
             "age": "AGE",
@@ -353,12 +353,12 @@ heart_failure_filtered = (
 )
 ```
 
-Right now, `heart_failure_filtered` is still a [table expression](https://ibis-project.org/reference/expression-tables). 
-Ibis lazily evaluates commands, which means that the full query is never run on 
+Right now, `heart_failure_filtered` is still a [table expression](https://ibis-project.org/reference/expression-tables).
+Ibis lazily evaluates commands, which means that the full query is never run on
 the database unless explicitly requested.
 
 Use `.execute()` or `.to_pandas()` to force Ibis to compile the table expression
-into SQL and run that SQL on Snowflake. 
+into SQL and run that SQL on Snowflake.
 
 ```python
 heart_failure_filtered.execute()
@@ -383,7 +383,7 @@ WHERE
   "t0"."AGE" < 50
 ```
 
-### In summary
+### Summary
 
 This system:
 
@@ -393,12 +393,12 @@ This system:
 
 We don't need to manage the process, it happens automatically behind the scenes.
 
-You can learn more about Ibis [here](https://ibis-project.org/). Take a look at the 
+You can learn more about Ibis [here](https://ibis-project.org/). Take a look at the
 [Snowflake backend documentation](https://ibis-project.org/backends/snowflake) to
-learn more about using Ibis to interact with 
-Snowflake specifically. 
+learn more about using Ibis to interact with
+Snowflake specifically.
 
-## Write to a Snowflake Database
+## Write Snowflake Data
 Duration: 1
 
 You can also use Ibis to create a new table in a database or append to an existing table.
@@ -409,11 +409,11 @@ To add a new table, use `create_table()`.
 con.create_table("HEART_FAILURE_FILTERED", heart_failure_filtered)
 ```
 
-To insert data into an existing table, use [`insert()`](https://ibis-project.org/backends/snowflake#ibis.backends.snowflake.Backend.insert). 
+To insert data into an existing table, use [`insert()`](https://ibis-project.org/backends/snowflake#ibis.backends.snowflake.Backend.insert).
 
 Now that we understand how to interact with our database, we can use Python to perform our analysis.
 
-## Prepare Data with Ibis
+## Clean Data
 Duration: 5
 
 We want to understand which variables in `HEART_FAILURE` are associated with survival
@@ -448,10 +448,10 @@ heart_failure_filtered = (
 ```
 
 > aside positive
-> 
-> By default, Ibis is in _deferred mode_ and lazily evaluates table expressions. To more easily interact with your tables and see the results of your code, you can turn on _interactive code_. In [interactive mode](https://ibis-project.org/how-to/configure/basics#interactive-mode), expressions are executed when printed to the console. Turn on interactive mode with `ibis.options.interactive = True`. 
+>
+> By default, Ibis is in _deferred mode_ and lazily evaluates table expressions. To more easily interact with your tables and see the results of your code, you can turn on _interactive code_. In [interactive mode](https://ibis-project.org/how-to/configure/basics#interactive-mode), expressions are executed when printed to the console. Turn on interactive mode with `ibis.options.interactive = True`.
 
-## Visualize Data with `plotnine`
+## Visualize Data
 Duration: 5
 
 The heart failure data provides important insights that can help us:
@@ -492,7 +492,7 @@ heart_failure_plot = (
 
 ![](assets/analysis/plot-sodium.png)
 
-## Make Publication-Ready Tables with Great Tables
+## Create tables for Analysis
 Duration: 5
 
 Next, we'll use Ibis to calculate the median values for various clinical metrics across different patient groups.
@@ -511,7 +511,7 @@ Next, we'll use Ibis to calculate the median values for various clinical metrics
 
 This is a useful way to examine the information for ourselves. However, if we wish to share the information with others, we might prefer to present the table in a more polished format. We can do this with the [Great Tables](https://posit-dev.github.io/great-tables/articles/intro.html) package.
 
-The following code prepares a table named `comparison`, which we'll display with Great Tables. 
+The following code prepares a table named `comparison`, which we'll display with Great Tables.
 
 ```python
 comparison = (
@@ -560,12 +560,12 @@ from great_tables import GT
 
 ![](assets/gt/gt-table.png)
 
-## Shiny Application
+## Create Shiny Application
 Duration: 2
 
-Earlier, we showed you how to render a report from our Quarto document. Another way 
+Earlier, we showed you how to render a report from our Quarto document. Another way
 to share our work and allow others to explore the heart failure dataset is to create an
-interactive [Shiny](https://shiny.posit.co/) app. 
+interactive [Shiny](https://shiny.posit.co/) app.
 
 Our GitHub repository contains an [example Shiny app](https://github.com/posit-dev/snowflake-posit-quickstart-python/tree/main/app).
 This app allows the user
@@ -573,7 +573,7 @@ to explore different clinical metrics in one place.
 
 ![](assets/shiny/shiny.png)
 
-To run the app, open `app/app.py` and then click the `Run Shiny App` button at the 
+To run the app, open `app/app.py` and then click the `Run Shiny App` button at the
 top of the script in VS Code.
 
 ![](assets/shiny/run.png)
@@ -585,7 +585,7 @@ After launching the app, use the sidebar to change the metric displayed.
 You can learn more about Shiny at: <https://shiny.posit.co/>.
 
 If you're new to Shiny, you can try it online with
-[shinylive](https://shinylive.io/py/examples/). 
+[shinylive](https://shinylive.io/py/examples/).
 Shinylive is also available for [R](https://shinylive.io/r/examples/) for Shiny for R.
 
 ## Conclusion and Resources
