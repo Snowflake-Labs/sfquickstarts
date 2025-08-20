@@ -143,6 +143,7 @@ The [semantic model](https://docs.snowflake.com/en/user-guide/snowflake-cortex/c
 Let's ask these analytical questions to test the semantic model.
 
 #### - *Q. What is the average revenue per transaction per sales channel?*
+
 #### - *Q. What products are often bought by the same customers?*
 
 ### Cortex Analyst and Cortex Search Integration
@@ -246,23 +247,23 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
 ### Launch Snowflake Intelligence
 
-Open [Snowflake Intelligence](https://ai.snowflake.com/_deeplink/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
+Open [Snowflake Intelligence](https://app.snowflake.com/_deeplink/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
 
 Now, let's ask the following questions.
 
 #### Unstructured Data 
 
-These are questions where the answers can be found in the PDF documents.
+These are questions where the answers can be found in the PDF documents and image descriptions.
 
-#### - *Q. What is the guarantee of the premium bike?**
+#### - *Q. What is the guarantee of the premium bike?*
 
 In this case, we can see how it cites the warranty information extracted from the PDF file. 
 
-#### - *Q. What is the length of the carver skis?**
+#### - *Q. What is the length of the carver skis?*
 
 Since we have processed images, the extracted descriptions can also be used by Cortex Agents to answer questions.
 
-#### - *Q. Is there any brand in the frame of the downhill bike?**
+#### - *Q. Is there any brand in the frame of the downhill bike?*
 
 > aside positive
 > Feel free to explore the PDF documents and image files to ask your own questions.
@@ -271,15 +272,15 @@ Since we have processed images, the extracted descriptions can also be used by C
 
 These are analytical questions where the answers can be found in structured data stored in Snowflake tables.
 
-#### - *Q. How many carvers are we selling per year in the North region?**
+#### - *Q. Show me monthly sales revenue trends by product category over the past 2 years.
+
+#### - *Q. How many carvers are we selling per year in the North region?*
 
 Notice that for this query, all 3 tables are used. Also note that the Cortex Search integration in the semantic model understands that the article name is "Carver Skis".
 
-Let's try these other questions.
+#### - *Q. How many infant bikes are we selling per month?*
 
-#### - *Q. How many infant bikes are we selling per month?**
-
-#### - *Q. What are the top 5 customers buying the carvers?**
+#### - *Q. What are the top 5 customers buying the carvers?*
 
 > aside positive
 > Feel free to explore the semantic model to ask your own questions.
