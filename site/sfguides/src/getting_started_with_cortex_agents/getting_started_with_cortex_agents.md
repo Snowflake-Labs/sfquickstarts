@@ -95,7 +95,7 @@ This script will:
 **Step 2.** Upload the semantic model:
 
 - Download [sales_metrics_model.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/sales_metrics_model.yaml)(NOTE: Do NOT right-click to download.)
-- Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS
+- Navigate to Data (Or Catalog » Database Explorer) » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS
 - Click "+ Files" in the top right
 - Browse and select sales_metrics_model.yaml file
 - Click "Upload"
@@ -128,9 +128,13 @@ Duration: 15
 Duration: 15
 
 **Step 1.** In Snowsight, Click on AI ML > Agents.
-**Step 2.** Click on Create Agents. Choose the database `SNOWFLAKE_INTELLIGENCE.AGENTS`; name it `SALES_CONVERSATION_AGENT` 
+**Step 2.** Click on Create Agents. 
+* Choose the database `SNOWFLAKE_INTELLIGENCE.AGENTS` 
+* Make the Agent Object Name `SALES_CONVERSATION_AGENT`
+* Make the Display Name `SALES_CONVERSATION_AGENT`
 ![Agent Setup step 2](assets/create-agent.png)
-**Step 3.** Click on `SALES_CONVERSATION_AGENT` - this is where we will update the agent and how it should orchestrate. Click on Edit on the top right corner. In the about section we will add the following:
+**Step 3.** Click on `SALES_CONVERSATION_AGENT` - this is where we will update the agent and how it should orchestrate. 
+* Click on Edit on the top right corner. In the **Description** section we will add the following:
 
 ```This agent orchestrates between Sales data for analyzing sales conversations using cortex search service (SALES_CONVERSATION_SEARCH) and metrics (sales_metrics_model.yaml)```  
 ![Agent Setup step 3](assets/about-agent.png)
@@ -140,17 +144,25 @@ Duration: 15
 
 ![Agent Setup step 4](assets/instructions.png)
 
-**Step 5.** Click on the left pane for Tools to add. This is where you can add the Cortex Analyst semantic yaml file that was uploaded to the stage or the semantic view. We will add the semantic yaml file to Cortex Analyst by clicking on the `+Add` 
-Give it a name `Sales_metrics_model`, click on the `Semantic model file` radio button, click on the Database dropdown and choose `SALES_INTELLIGENCE.DATA` and `MODELS` for Stage. Click on the sales_metrics_model.yaml to highlight it blue, select `SALES_INTELLIGENCE_WH` as the warehouse,  choose Query Timeout (seconds) as `60` and write in the description or generate it. Once the Add button is highlighted blue - click add as shown below:
+You can also add a **Sample Question**: 
+* How many deals did Sarah Johnson win compared to deals she lost?
+
+**Step 5.** Click on the left pane for Tools to add. This is where you can add the Cortex Analyst semantic yaml file that was uploaded to the stage or the semantic view. 
+* We will add the semantic yaml file to Cortex Analyst by clicking on the `+Add` 
+* Give it a name `Sales_metrics_model`, click on the `Semantic model file` radio button, click on the Database dropdown and choose `SALES_INTELLIGENCE.DATA` and `MODELS` for Stage. 
+* Click on the sales_metrics_model.yaml to highlight it blue, select `SALES_INTELLIGENCE_WH` as the warehouse,  choose Query Timeout (seconds) as `60` and write in the description or generate it. Once the Add button is highlighted blue - click add as shown below:
 
 ![Agent Setup step 5](assets/add_cortex_analyst.png)
 
 **Step 6.** Click on Cortex Search Services - this is the unstructured data retrieval of the sales conversations by clicking on the `+Add` 
-Give it a name `Sales_conversation_search`, Give it a description `Cortex Search Sales Service`. Click on the Database dropdown and choose `SALES_INTELLIGENCE.DATA` and choose the search service from the drop down `SALES_CONVERSATION_SEARCH`. For ID Column we will pick the `Conversation_id` which will be used to generate the hyperlink to the source. If we had pdfs/powerpoints we would use the location of the unstructured data in the stage. For Title Column we will pick `TRANSCRIPT_TEXT` which will be the search field on what we need to search for. 
+Give it a name `Sales_conversation_search`, Give it a description `Cortex Search Sales Service`. 
+* Click on the Database dropdown and choose `SALES_INTELLIGENCE.DATA` and choose the search service from the drop down `SALES_CONVERSATION_SEARCH`. 
+* For ID Column we will pick the `Conversation_id` which will be used to generate the hyperlink to the source. If we had pdfs/powerpoints we would use the location of the unstructured data in the stage. For Title Column we will pick `TRANSCRIPT_TEXT` which will be the search field on what we need to search for. 
 
 ![Agent Setup step 6](assets/add_cortex_search.png) 
 
-**Step 7.** Click save on top right to save any changes. Now click on Orchestration in the left pane and leave the orchestration to auto. This is where we can use other models to choose the orchestration from but for this hol will leave it to auto. In the Planning instructions will add the following text 
+**Step 7.** Click save on top right to save any changes. Now click on Orchestration in the left pane and leave the orchestration to auto. This is where we can use other models to choose the orchestration from but for this hol will leave it to auto. 
+* In the Planning instructions will add the following text 
 ```If a query spans both structured and unstructured data, clearly separate the sources. For any query, first determine whether it requires (a) Structured data analysis → Use YAML/Cortex Analyst (b) Report content/context → Use cortexsearch (c) Both Combine both services with clear source attribution. Please confirm which approach you'll use before providing each response.```
 
 ![Agent Setup step 7](assets/add-orchestration.png)
