@@ -140,11 +140,10 @@ The [semantic model](https://docs.snowflake.com/en/user-guide/snowflake-cortex/c
 
 ### Test the semantic model
 
-Let's ask these analytical questions to test the semantic model.
+Let's ask these analytical questions to test the semantic file:
 
-#### - *Q. What is the average revenue per transaction per sales channel?*
-
-#### - *Q. What products are often bought by the same customers?*
+- **What is the average revenue per transaction per sales channel?**
+- **What products are often bought by the same customers?**
 
 ### Cortex Analyst and Cortex Search Integration
 
@@ -177,113 +176,81 @@ Notice that Cortex Analyst is now able to provide the right answer because of th
 
 Duration: 20
 
-Now that we have the tools ready, we can create a Data Agent for Snowflake Intelligence.
+Now that we have the tools ready, we can create a Streamlit app that puts it all together using [Cortex Agents API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) API.
 
-### Create Agent
+We are going to leverage the code from [streamlit_app.py](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai/blob/main/streamlit_app.py)
 
-An agent is an intelligent entity within Snowflake Intelligence that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data. 
+On the left hand navigation menu, click on **Projects** » **Streamlit** » **Streamlit App** on the top right and select **Create from repository** as shown below.
 
-Note that you can create multiple agents for various use cases and/or business teams in your organization. 
+![image](assets/9_create_app.png)
 
-* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake) 
-* On the top right, click on **Create agent**
-     - Schema: **SNOWFLAKE_INTELLIGENCE.AGENTS**
-     - Select **Create this agent for Snowflake Intelligence**
-     - Agent object name: **Dash_AI**
-     - Display name: **Dash//AI**
-* Select the newly created **Dash_AI** agent and click on **Edit** on the top right corner and make the following updates.
+Under **File location in repository** click on **Select main file** 
 
-### Add Instructions
+![image](assets/9_create_app_2.png)
 
-Add the following starter questions under **Sample questions**:
+Select the **streamlit_app.py** file located in **DASH_CORTEX_AGENTS_SUMMIT** » **PUBLIC** » **Git Repositories** » **GIT REPO** and click on **Select file**.
 
-- Show me monthly sales revenue trends by product category over the past 2 years.
-- What is the guarantee of the premium bike?
-- What is the length of the carver skis?
-- Is there any brand in the frame of the downhill bike?
-- How many carvers are we selling per year in the North region?
+![image](assets/9_create_app_3.png)
 
-### Add Tools
+Give it a name and select other options including **DASH_CORTEX_AGENTS_SUMMIT** and **PUBLIC** for location and **Run on warehouse** for Python environment as shown below.
 
-Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
+![image](assets/9_create_app_4.png)
 
-* Tools
-  - **Cortex Analyst**
-    - Click on **+ Add**
-        - Name: Sales_Data
-        - Add: Semantic model file **DASH_CORTEX_AGENTS.DATA.SEMANTIC_FILES** >> **semantic.yaml**
-        - Warehouse: **COMPUTE_WH**
-        - Query timeout (seconds): 60
-        - Description: *This retail sales analytics semantic model from DASH_CORTEX_AGENTS.DATA database provides comprehensive sales transaction analysis capabilities through a star schema connecting customer demographics, product catalog, and sales facts. The model enables detailed reporting on sales performance across multiple dimensions including customer segments (Premium, Regular, Occasional), product categories (Bikes, Ski Boots, Skis), sales channels (Online, In-Store, Partner), and time periods. The central FACT_SALES table captures transaction details including quantities, pricing, and promotional information, while linking to DIM_CUSTOMER for demographic analysis and DIM_ARTICLE for product performance insights. The system supports advanced product search functionality and is specifically designed to answer sales-related questions about product performance, customer behavior, and revenue analysis while excluding product specifications or usage information.*
+## Run Application
+<!-- ------------------------ -->
 
-  - **Cortex Search Services**
-    - Click on **+ Add**
-        - Name: Docs
-        - Search service: **DASH_CORTEX_AGENTS.DATA.DOCS**
-        - ID column: CHUNK_INDEX
-        - Title column: RELATIVE_PATH
+Duration: 10
 
-  - **Custom tools**
-    - Click on **+ Add**
-      - Name: Send_Email
-      - Resource type: procedure
-      - Database & Schema: **DASH_CORTEX_AGENTS.DATA**
-      - Custom tool identifier: **DASH_CORTEX_AGENTS.DATA.SEND_EMAIL()**
-      - Parameter: body
-        - Description: *Use HTML-Syntax for this. If the content you get is in markdown, translate it to HTML. If body is not provided, summarize the last question and use that as content for the email.*
-      - Parameter: recipient_email
-        - Description: *If the email is not provided, send it to **YOUR_EMAIL_ADDRESS_GOES_HERE***.
-      - Parameter: subject
-        - Description: *If subject is not provided, use "Snowflake Intelligence"*.
-      - Warehouse: **COMPUTE_WH**
-      - Query timeout (seconds): 60
+Open the Streamlit app and let's check it out.
 
-* Orchestration: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
+### Unstructured Data 
 
-* Access: SNOWFLAKE_INTELLIGENCE_ADMIN
+These are questions where the answers can be found in the PDF documents.
 
-> aside positive
-> NOTE: On the top right corner, click on **Save** to save the newly updated **Dash_AI** agent.
+- **What is the guarantee of the premium bike?** or **What is the warranty on the premium bike?**
 
-### Launch Snowflake Intelligence
+![image](assets/10_unstructured_question.png)
 
-Open [Snowflake Intelligence](https://app.snowflake.com/_deeplink/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-build-agentic-application-in-snowflake) and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
+The code contains a *display_citations()* function as an example to show what pieces of information the Cortex Agent used to answer the question. In this case, we can see how it cites the warranty information extracted from the PDF file. 
 
-Now, let's ask the following questions.
+Let's try these other questions.
 
-#### Unstructured Data 
+- **What is the length of the carver skis?**
 
-These are questions where the answers can be found in the PDF documents and image descriptions.
+![image](assets/10_carvers_question.png)
 
-#### - *Q. What is the guarantee of the premium bike?*
+Since we have processed images, the extracted descriptions can also be used by Cortex Agents to answer questions. Here's one example:
 
-In this case, we can see how it cites the warranty information extracted from the PDF file. 
+- **Is there any brand in the frame of the downhill bike?**
 
-#### - *Q. What is the length of the carver skis?*
+![image](assets/10_bikes_question.png)
 
-Since we have processed images, the extracted descriptions can also be used by Cortex Agents to answer questions.
-
-#### - *Q. Is there any brand in the frame of the downhill bike?*
-
-> aside positive
-> Feel free to explore the PDF documents and images to ask other questions.
+Fell free to explore the PDF documents and image files to ask your own questions.
 
 ### Structured Data
 
 These are analytical questions where the answers can be found in structured data stored in Snowflake tables.
 
-#### - *Q. Show me monthly sales revenue trends by product category over the past 2 years.*
+- **How many carvers are we selling per year in the North region?**
 
-#### - *Q. How many carvers are we selling per year in the North region?*
+Notice that for this query, all 3 tables are used. Also note that the Cortex Search integration in the semantic model understands that the article name is "Carver Skis".
 
-Notice that all 3 tables are used to answer this question. 
+![image](assets/11_carver_query.png)
 
-#### - *Q. How many infant bikes are we selling per month?*
+Let's try these other questions.
 
-#### - *Q. What are the top 5 customers buying the carvers?*
+- **How many infant bikes are we selling per month?**
+- **What are the top 5 customers buying the carvers?**
 
-> aside positive
-> Feel free to explore the semantic model to ask other questions.
+### Cortex Agents
+
+When calling the [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) API, we define the tools the Agent can use in that call. You can read the simple [Streamlit App](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai/blob/main/streamlit_app.py) you set up to understand the basics before trying to create something more elaborat and complex.
+
+We define the **API_ENDPOINT** for the agent, and how to access the different tools its going to use. In this lab, we have two Cortex Search services to retrieve information from PDFs about bikes and skis, and one Cortex Analyst service to retrieve analytical information from Snowflake tables. The Cortex Search services were created in the Notebook and the Cortex Analyst uses the semantic model we verified earlier.
+
+![image](assets/12_api_1.png)
+
+All of these services are added to the payload sent to the Cortex Agents API. We also provide the model we want to use to build the final response, the tools to be used, and any specific instructions for generating the response.
 
 ## Conclusion And Resources
 <!-- ------------------------ -->
