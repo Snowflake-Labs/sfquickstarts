@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
-# Modeling Disruptions in the MTA Subway
+# Identify Bottlenecks and Model Disruptions using Neo4j Graph Analytics 
 
 ## Overview
 
