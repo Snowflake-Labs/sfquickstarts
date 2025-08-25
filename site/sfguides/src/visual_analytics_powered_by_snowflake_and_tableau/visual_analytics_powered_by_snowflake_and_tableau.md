@@ -17,7 +17,7 @@ Duration: 60
 
 Join Snowflake and Tableau for an instructor-led hands-on lab to build governed, visual, and interactive analytics quickly and easily on Food Truck data.
 
-![img](assets/finished_dash.png)
+![img](assets/Tableau_Dash_16.png)
 
 ### What You’ll Learn
 
@@ -52,7 +52,7 @@ Duration: 2
 
 ### Snowflake User Interface
 
- ![Snowflake Login](assets/create_folder.png)
+![Snowflake Login](assets/create_folder.png)
 
 ### Download Scripts and Create Worksheet from SQL 
 ![Create Worksheets](assets/Worksheet_1.png)
@@ -88,7 +88,7 @@ Duration: 15
 #### Download the Customer Reviews files to your laptop
 
 unzip the file before you load into AWS bucket
-[click here to download for reviews zipfile](assets/2022.zip)
+[click here to download for reviews zipfile](https://github.com/Snowflake-Labs/visual_analytics_powered_by_snowflake_and_tableau/blob/main/data/2022.zip)
 
 **Login to AWS Account, and create a bucket in the same region as your Snowflake account**
 
