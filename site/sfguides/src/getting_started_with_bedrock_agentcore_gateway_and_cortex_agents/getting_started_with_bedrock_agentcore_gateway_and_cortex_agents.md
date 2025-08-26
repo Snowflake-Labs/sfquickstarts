@@ -29,7 +29,7 @@ The end-to-end workflow will look like this:
 ![](assets/AgentCoreArch.png)
 
 Ingest data into structured and unstructured data stores then:
-1. Create a Cortex Analyst service with structured data with a Semantic Model.
+1. Create a Cortex Analyst service with structured data with a Semantic View.
 2. Using Snowflake functions prepare the data and create a Cortex Search service with unstructured data.
 3. Create a Cortex Agent that brokers the decision on when to use each service (as well as other GenAI functions)
 4. A Bedrock AgentCore Gateway Target is created using Secretes Manager to store the Snowflake PAT and connect to the Cortex Agent via OpenAPI.
@@ -46,7 +46,7 @@ Ingest data into structured and unstructured data stores then:
 - Using Cortex Analyst and semantic models in Snowflake.
 - Using Cortex Agents.
 - Using Bedrock AgentCore Gateways with OpenAPI Targets.
-- Streamlit
+- Using Streamlit to build a simple app to serve results of your AgentCore Gateway
 
 
 ### What You’ll Need
@@ -58,848 +58,493 @@ Ingest data into structured and unstructured data stores then:
 - Streamlit (local) - [Download Stremlit](https://docs.streamlit.io/get-started/installation)
 
 
-#### start here
-
 ### What You’ll Build
 You will build an end-to-end copilot workflow on unstructured data in Snowflake
 - to load data to Snowflake via Snowsight
 - to extract unstructured data and create chunks in Snowflake
 - to create a Snowflake Cortex Search Service on unstructured data
-- to create a semantic model with Cortex Analyst on structured data
+- to create a semantic view with Cortex Analyst on structured data
 - to create a Cortex Agent using the Search and Analyst services
-- to create a connection from Amazon Q to Cortex Search with Oauth authentication
+- to create a Bedrock AgentCore Gateway with a Snowflake Cortex Target leveraging AgentCore Identity
 
 
 <!-- ------------------------ -->
-## Create Amazon Q App
-Duration: 5
+## Set up Snowflake Environment
+Duration: 8
 
 
-In this section, we'll set up [Amazon Q Business](https://aws.amazon.com/q/business/qstart) , a generative AI-powered assistant that enables natural language interaction with business data. We'll create and configure a Q Business application that will connect with our Snowflake database, enabling intelligent querying of our movie script data. While we're using movie scripts for this example, these same steps can be applied to analyze any type of business documents in your organization.
+In this section, you will load 2 data sets, unstructured and structured, then create a Cortex Search service and a Cortex Analyst service. 
 
+Replace the 3 areas below where YOUR_USERNAME is indicated and run the code, this will load the data, create the Cortex Search service and generate a PAT token that you will use to authenticate from AgentCore Gateway to Snowflake.
 
-### Create your Q Business Application
-1. Open Amazon Q Business on the console and select Get Started
-![](assets/qstart.png)
-
-
-2. Select **Create application**
-![](assets/createapp.png)
-
-
-3. Provide the name **myQBusinessApp** for your application under **Application Name** myapp. You may review all the other settings, but for now we will not change the default configuration.
-![](assets/myqapp.png)
-
-
-4. To create our Q Business application we need to ensure we have Identity Center set up to help us manage user access to the app. As you scroll through the configuration select the Create account instance button to create an Identity Center instance for the AWS account and link our application.
-![](assets/createaccountinstance.png)
-
-
-5. Once you have scrolled to the very bottom, select the **Create** button located in the right corner.co
-![](assets/connecttoiam.png)
-
-
-Congratulations you have now created your first Q Business App!
-
-
-### Copy the Deployed URL and save for later
-
-
-After clicking Create, you should have been automatically routed to your QBusinessApp home page. Here you can see all of the information regarding your application. Be sure to copy the **Deployed URL** and store this in a notes page or text file to the side, we will need this later to set up our authorization between Snowflake and Q Business.
-![](assets/deployedurl.png)
-
-
-### Create an IAM User
-
-
-Before we continue on, we need to make sure we have configured a user to access our Q Business Application.
-
-
-1. To first create a user select **Manage user access** on your Q Business App web page.
-![](assets/manageuseraccess.png)
-
-
-2. Next, select **Add groups and users**, then continue by selecting the **Add new users** button in the pop up window.
-![](assets/addnewusers.png)
-
-
-3. Configure your new user with the following information, or feel free to use your own name. **Please ensure that your email is an email you have access to**.
-![](assets/addnewusers2.png)
-
-
-4. Continue through the user management process by selecting, **Add**, then **Assign** .
-
-
-5. You should then be routed to the **Manage access and subscriptions** webpage where your user details will be available for you to review. One you are happy with your use details select Confirm.
-![](assets/manageaccess.png)
-
-
-6. By this time you should have received an email in your inbox from **no-reply@login.awsapps.com**. Please open this email and select **Accept invitation**.
-![](assets/acceptinvitation.png)
-
-
-7. Follow the prompts to create a password for your user and to register an MFA device. **Please do not forget your password you will need it later to log in!**
-![](assets/newusersignup.png)
-
-
-![](assets/registermfadevice.png)
-
-
-**Well done!** From this section of the lab you have successfully configured your Q Business Application and created a user that has permissions to access the application.
-
-
-<!-- ------------------------ -->
-##  Cortex and Amazon Q Business
-Duration: 15
-
-
-In this section, we'll create the foundation for an AI-powered movie data analysis system. By configuring Snowflake Cortex Search, Cortex Analyst and a Cortex Agent, you'll build a system that can process, store, and intelligently search through movie scripts. Once completed, this setup will allow users to ask natural language questions about movie content and receive relevant answers through Amazon Q Business.
-
-
-### Upload Data to Snowflake and Create Cortex Search Service
-
-
-1. Download the movie script for Toy Story, by clicking [here](https://github.com/Snowflake-Labs/getting_started_with_cortex_agents_and_amazon_q/blob/main/toy-story-1995.pdf)  and selecting the download button. This PDF will be our test data for the search system and Q Business Application.
-
-
-2. Navigate to the Snowflake UI and create a new SQL worksheet where we'll run our setup commands.
-![](assets/snowflakeui.png)
-
-
-3. Create database MOVIELENS and schema, table for the movie  and load the move dashboard data from a csv file.
 ```sql
-CREATE OR REPLACE DATABASE movielens;
-CREATE OR REPLACE SCHEMA movielens.movies;
-CREATE OR REPLACE SCHEMA movielens.data;
-CREATE OR REPLACE WAREHOUSE workshopwh;
+-- =============================================
+-- Snowflake Setup for Cortex Agents
+-- =============================================
 
 
-USE DATABASE movielens;
-USE SCHEMA data;
+USE ROLE ACCOUNTADMIN;
 
+-- Create role for Cortex Agents
+CREATE ROLE IF NOT EXISTS cortex_agent_role 
+   COMMENT = 'Role for Cortex Agents demo';
 
+--Grant role to your user (replace YOUR_USERNAME)
+GRANT ROLE cortex_agent_role TO USER YOUR_USERNAME;
+
+-- create database, schema and warehouse
+CREATE WAREHOUSE IF NOT EXISTS WORKSHOP_WH WITH
+   WAREHOUSE_SIZE = 'XSMALL'
+   AUTO_SUSPEND = 60
+   AUTO_RESUME = TRUE
+   COMMENT = 'Warehouse for Cortex demo';
+   
+CREATE DATABASE IF NOT EXISTS movies; 
+
+GRANT OWNERSHIP ON DATABASE movies TO ROLE cortex_agent_role COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON SCHEMA movies.PUBLIC TO ROLE cortex_agent_role COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON WAREHOUSE workshopwh TO ROLE cortex_agent_role COPY CURRENT GRANTS;
+
+-- ==============================================
+-- PART 2: DATA SETUP (as cortex_agent_role)
+-- ==============================================
+USE ROLE cortex_agent_role;
+USE DATABASE movies;
+
+-- create demo table for our movie data, we will surface this in dashboard
 CREATE TABLE movies_dashboard (
 movie_id NUMBER,
-     movie_title VARCHAR,
-   movie_release_year INTEGER,
-     genre VARCHAR,
-   user_rating FLOAT,
-   rating_timestamp TIMESTAMP_NTZ,
-     user_id NUMBER,
-     user_firstname VARCHAR,
-   user_lastname VARCHAR,
-     user_city VARCHAR,
-     user_state VARCHAR,
-     user_country VARCHAR,
-     user_email VARCHAR,
-     user_phonenumber VARCHAR,
-     interaction_timestamp NUMBER ,
-     interaction_type VARCHAR
+    	movie_title VARCHAR,
+   	movie_release_year INTEGER,
+    	genre VARCHAR,
+   	user_rating FLOAT,
+   	rating_timestamp TIMESTAMP_NTZ,
+    	user_id NUMBER,
+    	user_firstname VARCHAR,
+   	user_lastname VARCHAR,
+    	user_city VARCHAR,
+    	user_state VARCHAR,
+    	user_country VARCHAR,
+    	user_email VARCHAR,
+    	user_phonenumber VARCHAR,
+    	interaction_timestamp NUMBER ,
+    	interaction_type VARCHAR
 );
-
 
 CREATE OR REPLACE STAGE MOVIEDASHBOARD
 URL='s3://hol-qs-bucket/'
 FILE_FORMAT = (TYPE = 'csv');
 
-
 COPY INTO movies_dashboard FROM @MOVIEDASHBOARD/movies_dashboard.csv
- FILE_FORMAT=(TYPE = 'csv' FIELD_DELIMITER = ',' SKIP_HEADER = 1);
+  FILE_FORMAT=(TYPE = 'csv' FIELD_DELIMITER = ',' SKIP_HEADER = 1);
 
-
-USE WAREHOUSE workshopwh;
-USE DATABASE movielens;
-USE SCHEMA data;
+-- Create stage for docs 
 CREATE STAGE DOCS
 DIRECTORY = ( ENABLE = true )
 ENCRYPTION = ( TYPE = 'SNOWFLAKE_SSE' );
-```
+
+-- Create stage for semantic models
+CREATE STAGE IF NOT EXISTS MODELS
+  DIRECTORY = (ENABLE = TRUE)
+  COMMENT = 'Stage for semantic model files';
 
 
-4. Now that we have our database ready, we can also upload the script files to the PUBLIC schema of the DOCS stage in the SCRIPT_DB database. To do this select **Data -> MOVIELENS -> DATA -> Stages -> DOCS. Click +FILES** to upload the movie script you have previously downloaded.
-![](assets/uploadpdf.png)
+select distinct movie_title from movies_dashboard;
+
+-- create demo table for our movie reviews
+CREATE OR REPLACE TABLE movie_review_unstructured (
+    review_user_id NUMBER NOT NULL,
+    document_id STRING NOT NULL,
+    review_type STRING DEFAULT 'web survey',
+    document_content VARIANT,
+    searchable_text TEXT,
+    review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP()
+);
+
+/* insert Unstructured Reviews (30 reviews)
+Toy Story (5 reviews) - Animation classic
+Tom and Huck (5 reviews) - Family adventure
+Jumanji (5 reviews) - Fantasy adventure
+Money Train (5 reviews) - Action thriller
+Heat(5 reviews) - Crime drama
+Sudden Death (5 reviews) - Action film
+Sabrina (5 reviews) - Romantic comedy */
+
+INSERT INTO movie_review_unstructured (review_user_id, document_id, searchable_text, review_date) VALUES
+(1001, 'REV_TOY_001', 'Absolutely love this movie! The animation was groundbreaking for its time and the story is timeless. Woody and Buzz have such great chemistry. My kids watch it over and over and I never get tired of it. The humor works for both children and adults. A true classic that started the Pixar revolution.',
+ TIMESTAMPADD(day, -15, CURRENT_TIMESTAMP())),
+
+(1002, 'REV_TOY_002', 'Great family movie with heart. The characters are memorable and the story teaches valuable lessons about friendship and acceptance. The animation still holds up well even after all these years. Tom Hanks and Tim Allen are perfect voice actors.',
+ TIMESTAMPADD(day, -12, CURRENT_TIMESTAMP())),
+
+(1003, 'REV_TOY_003', 'This movie brings back so many childhood memories. The concept of toys coming to life when humans aren''t around is brilliant. The writing is sharp and the emotional moments really hit home. One of the best animated films ever made.',
+ TIMESTAMPADD(day, -8, CURRENT_TIMESTAMP())),
+
+(1004, 'REV_TOY_004', 'It''s a good movie but I think it''s a bit overrated. The animation is dated now and the story is simple. Still entertaining though, especially for younger kids. I can see why it was revolutionary at the time.',
+ TIMESTAMPADD(day, -5, CURRENT_TIMESTAMP())),
+
+(1005, 'REV_TOY_005', 'Perfect in every way. The character development, the humor, the heart, the innovation - everything about this movie is exceptional. It changed animation forever and remains one of the most rewatchable films ever made.',
+ TIMESTAMPADD(day, -3, CURRENT_TIMESTAMP()));
+
+-- Insert unstructured reviews for Tom and Huck
+INSERT INTO movie_review_unstructured (review_user_id, document_id, searchable_text, review_date) VALUES
+(2001, 'REV_TOMH_001', 'Decent adaptation of the classic story. The young actors do a good job and the adventure scenes are fun. However, it feels a bit dated and some of the humor doesn''t land well. Good for family viewing but not memorable.',
+ TIMESTAMPADD(day, -20, CURRENT_TIMESTAMP())),
+
+(2002, 'REV_TOMH_002', 'A solid family adventure film. The Mississippi River setting is beautiful and the friendship between Tom and Huck is well portrayed. The movie captures the spirit of Mark Twain''s work while being accessible to modern audiences.',
+ TIMESTAMPADD(day, -18, CURRENT_TIMESTAMP())),
+
+(2003, 'REV_TOMH_003', 'This movie is pretty forgettable. The acting is wooden and the story feels rushed. It doesn''t do justice to the source material. The special effects are also quite dated. Not worth rewatching.',
+ TIMESTAMPADD(day, -14, CURRENT_TIMESTAMP())),
+
+(2004, 'REV_TOMH_004', 'Average family movie. The kids will probably enjoy it but adults might find it boring. The adventure elements are tame and the dialogue is simplistic. It''s harmless entertainment but nothing special.',
+ TIMESTAMPADD(day, -10, CURRENT_TIMESTAMP())),
+
+(2005, 'REV_TOMH_005', 'Better than I expected. The young actors have good chemistry and the story moves along nicely. The river scenes are well shot and the friendship theme is heartwarming. A good introduction to classic literature for kids.',
+ TIMESTAMPADD(day, -7, CURRENT_TIMESTAMP()));
+
+-- Insert unstructured reviews for Jumanji
+INSERT INTO movie_review_unstructured (review_user_id, document_id, searchable_text, review_date) VALUES
+(3001, 'REV_JUM_001', 'Classic adventure movie that still holds up! Robin Williams is perfect in this role and the special effects were groundbreaking for the time. The board game concept is unique and the jungle scenes are exciting. Great family entertainment.',
+ TIMESTAMPADD(day, -25, CURRENT_TIMESTAMP())),
+
+(3002, 'REV_JUM_002', 'One of my favorite childhood movies. The mix of fantasy and adventure is perfect, and Robin Williams brings so much heart to the character. The practical effects still look good and the story is engaging from start to finish.',
+ TIMESTAMPADD(day, -22, CURRENT_TIMESTAMP())),
+
+(3003, 'REV_JUM_003', 'Solid family adventure film. The concept is creative and the execution is well done. Robin Williams'' performance is the highlight. Some of the effects are dated now but the story and characters make up for it.',
+ TIMESTAMPADD(day, -19, CURRENT_TIMESTAMP())),
+
+(3004, 'REV_JUM_004', 'Really fun movie with a great premise. The board game coming to life is such a cool idea. Robin Williams is hilarious and the adventure sequences are thrilling. The ending is satisfying and the whole family can enjoy it.',
+ TIMESTAMPADD(day, -16, CURRENT_TIMESTAMP())),
+
+(3005, 'REV_JUM_005', 'Good entertainment value. The adventure elements work well and the cast is solid. Robin Williams adds his usual charm. The effects are showing their age but the story is engaging enough to overlook that.',
+ TIMESTAMPADD(day, -13, CURRENT_TIMESTAMP()));
+
+-- Insert unstructured reviews for Money Train
+INSERT INTO movie_review_unstructured (review_user_id, document_id, searchable_text, review_date) VALUES
+(4001, 'REV_MON_001', 'Not a great movie. The plot is thin and the action scenes are mediocre. Wesley Snipes and Woody Harrelson have some chemistry but the script doesn''t give them much to work with. Pretty forgettable overall.',
+ TIMESTAMPADD(day, -30, CURRENT_TIMESTAMP())),
+
+(4002, 'REV_MON_002', 'This movie is pretty bad. The story makes no sense and the characters are unlikeable. The subway setting is interesting but that''s about the only positive thing I can say. Waste of time.',
+ TIMESTAMPADD(day, -27, CURRENT_TIMESTAMP())),
+
+(4003, 'REV_MON_003', 'Mediocre action movie. Some of the subway scenes are exciting but the plot is weak and the dialogue is cheesy. Wesley Snipes tries his best but the material isn''t there. Not terrible but not good either.',
+ TIMESTAMPADD(day, -24, CURRENT_TIMESTAMP())),
+
+(4004, 'REV_MON_004', 'Poor excuse for an action movie. The plot holes are huge and the acting is wooden. The subway setting could have been interesting but it''s wasted on this script. Skip this one.',
+ TIMESTAMPADD(day, -21, CURRENT_TIMESTAMP())),
+
+(4005, 'REV_MON_005', 'Below average action flick. The concept had potential but the execution is poor. The characters are one-dimensional and the story is predictable. Some decent action scenes but not enough to save it.',
+ TIMESTAMPADD(day, -17, CURRENT_TIMESTAMP()));
+
+-- Insert unstructured reviews for Heat
+INSERT INTO movie_review_unstructured (review_user_id, document_id, searchable_text, review_date) VALUES
+(5001, 'REV_HEAT_001', 'Masterpiece of the crime genre. Michael Mann''s direction is flawless and the performances from Pacino and De Niro are legendary. The bank robbery scene is one of the most intense sequences ever filmed. A true classic.',
+ TIMESTAMPADD(day, -35, CURRENT_TIMESTAMP())),
+
+(5002, 'REV_HEAT_002', 'One of the greatest crime films ever made. The cat-and-mouse game between Pacino and De Niro is electrifying. The action sequences are realistic and intense, and the character development is superb. Masterful filmmaking.',
+ TIMESTAMPADD(day, -32, CURRENT_TIMESTAMP())),
+
+(5003, 'REV_HEAT_003', 'Excellent crime thriller with incredible performances. The bank robbery scene is absolutely thrilling and the final confrontation is perfect. The movie balances action with character development beautifully.',
+ TIMESTAMPADD(day, -29, CURRENT_TIMESTAMP())),
+
+(5004, 'REV_HEAT_004', 'A masterpiece of tension and character. Michael Mann creates an atmosphere of constant danger and the performances are all top-notch. The action is realistic and the story is compelling. One of the best films of the 90s.',
+ TIMESTAMPADD(day, -26, CURRENT_TIMESTAMP())),
+
+(5005, 'REV_HEAT_005', 'Great crime film with outstanding performances. The bank robbery sequence is one of the most realistic and intense action scenes ever filmed. The movie is long but never boring, with great character development.',
+ TIMESTAMPADD(day, -23, CURRENT_TIMESTAMP()));
+
+-- Insert unstructured reviews for Sudden Death
+INSERT INTO movie_review_unstructured (review_user_id, document_id, searchable_text, review_date) VALUES
+(6001, 'REV_SUD_001', 'Pretty bad action movie. The plot is ridiculous and Van Damme''s acting is wooden. The hockey stadium setting is unique but that''s about it. The action scenes are poorly choreographed and the story is forgettable.',
+ TIMESTAMPADD(day, -40, CURRENT_TIMESTAMP())),
+
+(6002, 'REV_SUD_002', 'Terrible movie. The acting is awful, the plot is nonsensical, and the action is boring. Van Damme should stick to martial arts movies. The hockey angle is wasted on this poor script.',
+ TIMESTAMPADD(day, -37, CURRENT_TIMESTAMP())),
+
+(6003, 'REV_SUD_003', 'Low quality action flick. The premise had potential but the execution is poor. Van Damme is miscast and the supporting actors are terrible. The hockey stadium setting is the only interesting thing about it.',
+ TIMESTAMPADD(day, -34, CURRENT_TIMESTAMP())),
+
+(6004, 'REV_SUD_004', 'One of the worst action movies I''ve seen. The plot is laughable and the acting is atrocious. Van Damme looks lost in this role. The action sequences are poorly filmed and the dialogue is cringe-worthy.',
+ TIMESTAMPADD(day, -31, CURRENT_TIMESTAMP())),
+
+(6005, 'REV_SUD_005', 'Poor excuse for an action movie. The hockey stadium setting is wasted on this terrible script. Van Damme is completely miscast and the villain is laughably bad. Skip this one entirely.',
+ TIMESTAMPADD(day, -28, CURRENT_TIMESTAMP()));
+
+-- Insert unstructured reviews for Sabrina
+INSERT INTO movie_review_unstructured (review_user_id, document_id, searchable_text, review_date) VALUES
+(7001, 'REV_SAB_001', 'Charming romantic comedy with great performances. Julia Ormond is lovely as Sabrina and Harrison Ford brings his usual charisma. The story is sweet and the Paris scenes are beautiful. A nice feel-good movie.',
+ TIMESTAMPADD(day, -45, CURRENT_TIMESTAMP())),
+
+(7002, 'REV_SAB_002', 'Decent remake of the classic. The chemistry between the leads is good and the story is engaging. The Paris setting adds charm and the fashion elements are fun. Not as good as the original but still enjoyable.',
+ TIMESTAMPADD(day, -42, CURRENT_TIMESTAMP())),
+
+(7003, 'REV_SAB_003', 'Really enjoyed this romantic comedy. Julia Ormond is perfect as the transformed Sabrina and Harrison Ford is charming as always. The Paris scenes are gorgeous and the story has heart. A solid romantic film.',
+ TIMESTAMPADD(day, -39, CURRENT_TIMESTAMP())),
+
+(7004, 'REV_SAB_004', 'Pleasant enough romantic comedy. The leads have good chemistry and the Paris setting is lovely. The story is predictable but that''s not necessarily bad for this genre. Good for a lazy Sunday afternoon.',
+ TIMESTAMPADD(day, -36, CURRENT_TIMESTAMP())),
+
+(7005, 'REV_SAB_005', 'Sweet romantic comedy with beautiful locations and good performances. Julia Ormond is delightful and Harrison Ford is charming. The transformation story is well done and the ending is satisfying. A nice escape.',
+ TIMESTAMPADD(day, -33, CURRENT_TIMESTAMP()));
+
+-- Verify the data was inserted
+SELECT COUNT(*) as total_unstructured_reviews FROM movie_review_unstructured;
+
+SELECT document_id, searchable_text, review_date 
+FROM movie_review_unstructured 
+ORDER BY review_date DESC;
 
 
-Once uploaded you should be able to see your PDF file in your webpage to validate that you have successfully uploaded the movie script.
-
-
-5. Run the following code to process your movie scripts. This code does two things: first, it extracts text from the PDFs into a table (SCRIPT_TABLE), then divides that text into searchable segments(chunks) stored into a new table SCRIPT_TABLE_CHUNK
-``` sql
---Create Table for text data
-CREATE OR REPLACE TABLE SCRIPT_TABLE AS
-SELECT
-'toy-story-script' as doc,
-SNOWFLAKE.CORTEX.PARSE_DOCUMENT(@MOVIELENS.DATA.DOCS, 'toy-story-1995.pdf', {'mode': 'LAYOUT'}) as script_text;
-
-
-
-
--- Create table with chunked text
-CREATE OR REPLACE TABLE SCRIPT_TABLE_CHUNK AS
-SELECT
-TO_VARCHAR(c.value) as CHUNK_TEXT, DOC
-FROM
-SCRIPT_TABLE,
-LATERAL FLATTEN( input => SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER (
-TO_VARCHAR(script_text:content),
-'none',
-700,
-100
-)) c;
-SELECT * FROM SCRIPT_TABLE_CHUNK;
-
-
-```
-Note: The code splits the text into 700-token chunks with 100-token overlaps. These numbers can be adjusted later to optimize your search results. For more details about text processing options, see the [Snowflake documentation](https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex).
-
-
-6. Now we are ready to create a Cortex Search Service by running the code on the CHUNK_TEXT field. This service will enable intelligent searching across your processed movie scripts:
-
-
-``` sql
--- Create Search Service
-CREATE OR REPLACE CORTEX SEARCH SERVICE SCRIPT_SEARCH_SRV
-ON CHUNK_TEXT
-ATTRIBUTES DOC
+-- Create Cortex Search service
+CREATE CORTEX SEARCH SERVICE IF NOT EXISTS MOVIE_SEARCH
+ON searchable_text
+ATTRIBUTES review_type, document_id
 WAREHOUSE = WORKSHOPWH
-TARGET_LAG = '30 day'
+TARGET_LAG = '1 hour'
 AS (
-SELECT CHUNK_TEXT as CHUNK_TEXT, DOC FROM SCRIPT_TABLE_CHUNK);
-
-
-
-
-CREATE OR REPLACE STAGE models DIRECTORY = (ENABLE = TRUE);
-
-
-```
-The service automatically updates every 30 days and allows filtering by document name using the DOC attribute..
-
-
-### Set up Cortex Analyst
-
-
-1. Download the [movie_dashboard.yaml](https://github.com/Snowflake-Labs/getting_started_with_cortex_agents_and_amazon_q/blob/main/movie_dashboard.yaml) (NOTE: Do NOT right-click to download.)
-
-
-2. Navigate to **Data » Databases » MOVIELENS » DATA » Stages »  MODELS**
-
-
-3. Click **+ Files** in the top right
-![](assets/uploadyaml.png)
-
-
-4. Browse and select movie_review.yaml file
-
-
-5. Click **Upload**
-
-
-**Well Done!** with this upload you have now created a Cortex Analyst service.
-
-
-### Set up the Agent
-
-
-In this section we create a stored procedure that passes a Cortex Agent spec to the Cortex API that utilizes the Search and Analyst Services we just created.
-
-
-``` sql
-CREATE OR REPLACE PROCEDURE CALL_CORTEX_AGENT_PROC(query STRING, limit INT)
-RETURNS VARIANT
-LANGUAGE PYTHON
-RUNTIME_VERSION = '3.9'
-PACKAGES = ('snowflake-snowpark-python')
-HANDLER = 'call_cortex_agent_proc'
-AS
-$$
-import json
-import _snowflake
-import re
-from snowflake.snowpark.context import get_active_session
-
-
-def call_cortex_agent_proc(query: str, limit: int = 10):
-   session = get_active_session()
-  
-   API_ENDPOINT = "/api/v2/cortex/agent:run"
-   API_TIMEOUT = 50000 
-
-
-   CORTEX_SEARCH_SERVICES = "MOVIELENS.DATA.SCRIPT_SEARCH_SRV"
-   SEMANTIC_MODELS = "@MOVIELENS.DATA.MODELS/movie_dashboard.yaml"
-
-
-   query = (
-       "You are an assistant tasked with answering questions about the movie Toy Story. "
-       "Please summarize and answer this question concisely: " + query
-   )
-
-
-   payload = {
-       "model": "claude-3-5-sonnet",
-       "messages": [{"role": "user", "content": [{"type": "text", "text": query}]}],
-       "tools": [
-           {"tool_spec": {"type": "cortex_analyst_text_to_sql", "name": "analyst1"}},
-           {"tool_spec": {"type": "cortex_search", "name": "search1"}}
-       ],
-       "tool_resources": {
-           "analyst1": {"semantic_model_file": SEMANTIC_MODELS},
-           "search1": {"name": CORTEX_SEARCH_SERVICES, "max_results": limit}
-       }
-   }
-
-
-   try:
-       resp = _snowflake.send_snow_api_request(
-           "POST", API_ENDPOINT, {}, {}, payload, None, API_TIMEOUT
-       )
-
-
-       if resp["status"] != 200:
-           return {"error": resp["status"]}
-
-
-       response_content = json.loads(resp["content"])
-       return process_cortex_response(response_content, session)
-
-
-   except Exception as e:
-       return {"error": str(e)}
-
-
-def clean_text(text):
-   """ Cleans up unwanted characters and symbols from search results. """
-   text = re.sub(r'[\u3010\u3011\u2020\u2021]', '', text)
-   text = re.sub(r'^\s*ns\s+\d+\.*', '', text)
-   return text.strip()
-
-
-def process_cortex_response(response, session):
-   """ Parses Cortex response and executes SQL if provided. """
-   result = {"type": "unknown", "text": None, "sql": None, "query_results": None}
-   full_text_response = []
-
-
-   for event in response:
-       if event.get("event") == "message.delta":
-           data = event.get("data", {})
-           delta = data.get("delta", {})
-
-
-           for content_item in delta.get("content", []):
-               content_type = content_item.get("type")
-
-
-               if content_type == "tool_results":
-                   tool_results = content_item.get("tool_results", {})
-
-
-                   for result_item in tool_results.get("content", []):
-                       if result_item.get("type") == "json":
-                           json_data = result_item.get("json", {})
-
-
-                           if "sql" in json_data:
-                               result["type"] = "cortex_analyst"
-                               result["sql"] = json_data["sql"]
-                               result["text"] = json_data.get("text", "")
-
-
-                               try:
-                                   query_results = session.sql(result["sql"]).collect()
-                                   result["query_results"] = [row.as_dict() for row in query_results]
-                               except Exception as e:
-                                   result["query_results"] = {"error": str(e)}
-
-
-                           elif "searchResults" in json_data:
-                               result["type"] = "cortex_search"
-                               formatted_results = []
-
-
-                               for sr in json_data.get("searchResults", []):
-                                   search_text = clean_text(sr.get("text", "").strip())
-                                   citation = sr.get("citation", "").strip()
-
-
-                                   if search_text:
-                                       if citation:
-                                           formatted_results.append(f"- {search_text} (Source: {citation})")
-                                       else:
-                                           formatted_results.append(f"- {search_text}")
-
-
-                               if formatted_results:
-                                   full_text_response.extend(formatted_results)
-
-
-               elif content_type == "text":
-                   text_piece = clean_text(content_item.get("text", "").strip())
-                   if text_piece:
-                       full_text_response.append(text_piece)
-
-
-   result["text"] = "\n".join(full_text_response) if full_text_response else "No relevant search results found."
-   return result
-$$;
-
-
-CALL call_cortex_agent_proc('what is the dinosaurs name in toy story?', 5);
-
+    SELECT 
+        searchable_text,
+        review_type,
+        document_id
+    FROM movie_review_unstructured
+);
+
+
+SELECT 
+    document_id,
+    LEFT(searchable_text, 100) || '...' as review_preview,
+    review_date
+FROM movie_review_unstructured 
+ORDER BY review_date DESC 
+LIMIT 5;
+
+-- ==============================================
+-- PART 3: PAT Token Creation
+-- ==============================================
+
+-- Create PAT for the integration (replace <YOUR_USERNAME>)
+ALTER USER YOUR_USERNAME ADD PROGRAMMATIC ACCESS TOKEN cortex_demo_token DAYS_TO_EXPIRY = 30 ROLE_RESTRICTION = 'CORTEX_AGENT_ROLE';
+ALTER USER YOUR_USERNAME REMOVE PROGRAMMATIC ACCESS TOKEN cortex_demo_token;
+
+
+-- CROSS-TABLE VERIFICATION QUERIES
+-- SELECT 
+--     'movies_dashboard' as table_name,
+--     COUNT(*) as total_records,
+--     COUNT(DISTINCT user_id) as unique_users,
+--     COUNT(DISTINCT movie_title) as unique_movies,
+--     COUNT(DISTINCT user_country) as countries_represented,
+--     MIN(rating_timestamp) as earliest_rating,
+--     MAX(rating_timestamp) as latest_rating
+-- FROM movies_dashboard
+-- UNION ALL
+-- SELECT 
+--     'movie_review_unstructured' as table_name,
+--     COUNT(*) as total_records,
+--     COUNT(DISTINCT review_user_id) as unique_users,
+--     COUNT(DISTINCT document_id) as unique_reviews,
+--     COUNT(DISTINCT review_type) as review_types,
+--     MIN(review_date) as earliest_review,
+--     MAX(review_date) as latest_review
+-- FROM movie_review_unstructured;
+
+-- -- user activity pattern
+-- SELECT 
+--     'Dashboard User Activity' as analysis_type,
+--     COUNT(*) as total_ratings,
+--     COUNT(DISTINCT user_id) as active_users,
+--     ROUND(AVG(user_rating), 2) as avg_rating,
+--     ROUND(STDDEV(user_rating), 2) as rating_stddev
+-- FROM movies_dashboard
+-- UNION ALL
+-- SELECT 
+--     'Review User Activity' as analysis_type,
+--     COUNT(*) as total_reviews,
+--     COUNT(DISTINCT review_user_id) as active_users,
+--     ROUND(AVG(LENGTH(searchable_text)), 0) as avg_review_length,
+--     ROUND(STDDEV(LENGTH(searchable_text)), 0) as length_stddev
+-- FROM movie_review_unstructured;
+
+
+-- -- Geographic distribution comparison (mostly AUS & US)
+--  SELECT 
+--     'Dashboard Users by Country' as source,
+--     user_country,
+--     COUNT(DISTINCT user_id) as user_count,
+--     COUNT(*) as total_ratings,
+--     ROUND(AVG(user_rating), 2) as avg_rating
+-- FROM movies_dashboard 
+-- WHERE user_country IS NOT NULL
+-- GROUP BY user_country
+-- ORDER BY user_count DESC
+-- LIMIT 10;
+
+
+-- -- Movie analysis comparison (Toy story, Heat)
+-- SELECT 
+--     'Dashboard Movies' as source,
+--     movie_title,
+--     COUNT(DISTINCT user_id) as unique_raters,
+--     COUNT(*) as total_ratings,
+--     ROUND(AVG(user_rating), 2) as avg_rating
+-- FROM movies_dashboard
+-- GROUP BY movie_title
+-- ORDER BY total_ratings DESC
+-- LIMIT 10;
+
+
+-- -- Review content analysis
+-- SELECT 
+--     'Review Content Analysis' as analysis_type,
+--     COUNT(*) as total_reviews,
+--     ROUND(AVG(LENGTH(searchable_text)), 0) as avg_review_length,
+--     MIN(LENGTH(searchable_text)) as shortest_review,
+--     MAX(LENGTH(searchable_text)) as longest_review,
+--     COUNT(CASE WHEN searchable_text ILIKE '%love%' THEN 1 END) as mentions_love,
+--     COUNT(CASE WHEN searchable_text ILIKE '%hate%' THEN 1 END) as mentions_hate,
+--     COUNT(CASE WHEN searchable_text ILIKE '%great%' THEN 1 END) as mentions_great,
+--     COUNT(CASE WHEN searchable_text ILIKE '%terrible%' THEN 1 END) as mentions_terrible
+-- FROM movie_review_unstructured;
+
+-- --Summary statistics for Cortex agent planning
+-- SELECT 
+--     'Cortex Agent Data Summary' as summary_type,
+--     'movies_dashboard' as data_source,
+--     COUNT(*) as record_count,
+--     COUNT(DISTINCT user_id) as unique_users,
+--     COUNT(DISTINCT movie_title) as unique_movies,
+--     'Structured ratings and user metadata' as data_description
+-- FROM movies_dashboard
+-- UNION ALL
+-- SELECT 
+--     'Cortex Agent Data Summary' as summary_type,
+--     'movie_review_unstructured' as data_source,
+--     COUNT(*) as record_count,
+--     COUNT(DISTINCT review_user_id) as unique_users,
+--     COUNT(DISTINCT document_id) as unique_reviews,
+--     'Unstructured review text for sentiment analysis' as data_description
+-- FROM movie_review_unstructured;
 
 ```
 
+#### Generate Semantic View
 
-Now you can access that stored procedure from external sources like Q for Business!
+Snowflake's Cortex Analyst is a differentiator in the market and allows Cortex to generate highly accurate SQL and execute it from plain text questions. Let's use the Snowflake UI to quickly generate a Semantic View on the MOVIES_DASHBOARD table.
 
+On the left panel of Snowsight:
+- Select **AI & ML > Cortex Analyst**
+ Make sure that you are in the role that you are just created so you can select **Create New** in the top right and select **Create New Semantic View**
+ ![](assets/startanalyst.png)
 
-### Set up Oauth
-The final step is setting up OAuth authentication, this creates a secure connection between Snowflake and Amazon Q Business nd ensures that only authorized requests can access your movie script data.
+- Select **MOVIES.PUBLIC** location and name the Semantic View **MOVIES_SEMANTIC_VIEW** and click Next.
+![](assets/analystgettingstarted.png)
 
+- Scroll to MOVIES.PUBLIC.MOVIES_DASHBOARD and select all of the columns and click Next.
+![](assets/analystselectcolumns.png)
 
-1. Run the following code to create the security integration. This code creates a secure connection that will allow Amazon Q Business to safely access your Snowflake data. You'll need to replace **<Deployed URL>** with the URL of your Amazon Q application (which you have copied earlier from the AWS Console).
-``` sql
---create custom oauth
-USE ROLE ACCOUNTADMIN
-CREATE OR REPLACE SECURITY INTEGRATION Q_AUTH_HOL
-TYPE = OAUTH
-ENABLED = TRUE
-OAUTH_ISSUE_REFRESH_TOKENS = TRUE
-OAUTH_REFRESH_TOKEN_VALIDITY = 3600
-OAUTH_CLIENT = CUSTOM
-OAUTH_CLIENT_TYPE = CONFIDENTIAL
-OAUTH_REDIRECT_URI = '<Deployed URL>/oauth/callback';
+- In the **connect to Search** screen leave all of the prefilled options as-is and select Next.
+![](assets/analystcortexsearch.png)
 
+**Cortex Search is added to the Semantic View for columns with many unique values (like product names), adding Cortex Search Services help pick the right values in queries with greater accuracy.**
 
-GRANT USAGE on database MOVIELENS to role PUBLIC;
-GRANT USAGE on SCHEMA DATA to role PUBLIC;
-GRANT USAGE on CORTEX SEARCH SERVICE SCRIPT_SEARCH_SRV to role PUBLIC;
-GRANT READ ON STAGE MODELS TO ROLE PUBLIC;
-GRANT USAGE ON PROCEDURE CALL_CORTEX_AGENT_PROC(VARCHAR, NUMBER) TO ROLE PUBLIC;
-GRANT USAGE ON WAREHOUSE WORKSHOPWH TO ROLE PUBLIC;
+You can now look inside of the UI view of the Semantic View and see how the Cortex Analyst wizard used LLMs to generate synonyms and descriptions, users are encouraged to update this to improve the performance of Cortex Analyst. Additionally, for Semantic Views that include multiple tables (most will, but not for this demo :smile) users can define relationships and include certified queries.
 
+**Semantic Synonyms and Descriptions**
+![](assets/synonymanddesc.png)
 
-DESC INTEGRATION Q_AUTH_HOL;
+**Verified Queries**
+![](assets/verifiedqueries.png)
 
+Underneath the UI Cortex Analyst is simply generating a yaml file, so users can build the Semantic View programmatically or with the UI. 
+![](assets/analystyaml.png)
 
-SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('Q_AUTH_HOL');
-```
-![](assets/oauthconfig.png)
-
-
-2. After running the code, save these important credentials, we will need them later on!:
-OAUTH_CLIENT_ID from the results
-OAUTH_CLIENT_SECRET from the results
-Your Snowflake URL (find this by clicking your account name in the bottom left of the Snowflake UI, selecting your account,then view account details. Your snowflake URL is https:// + your Account/Server URL e.g. https://<Your-Acount-Identifier>.snowflakecomputing.com)
-For more information about Snowflake's OAuth configuration, visit the [Snowflake OAuth documentation](https://docs.snowflake.com/en/user-guide/oauth-custom).
-
+Now that Snowflake is ready let's work on setting up Snowflake Cortex as a target in an AgentCore Gateway.
 
 <!-- ------------------------ -->
-## Configure Q plugin
-Duration: 5
+##  Setting of the AgentCore Gateway
+Duration: 10
 
+As a pre-requisite it is expected that users have the below available locally:
+- IDE like VS Code (or one of its derivatives).
+- AWS CLI and familiarity with it. 
+- Installed Python 3.11 or greater.
+- Streamlit library installed.
 
-Next, we'll create a Q Business Custom Plugin to connect our Q Business Application with the Cortex Search in Snowflake. This integration enables the Q Business chatbot interface to access and analyze the movie script data stored in Snowflake.
+Download the folder [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-bedrock-agentcore-gateways-and-cortex-agents/tree/e32dd380b05815e6170668e03f93c47983fae19c) by selecting **Code** and Download the zip file. 
+- Unzip the file and from VS Code cd into the **agentcore-to-cortex directory**.
+- Ensure that you are connected to your AWS account from VS Code.
 
+### 1. Environment Setup
 
-### Create your Custom Plugin for Snowflake
-1. Navigate to the **Plugins** tab found in the left navigation menu in your Q App webpage and select **Add Plugin**
-![](assets/plugins.png)
+Create a virtual environment to avoid dependency conflicts:
 
+```bash
+# Create project directory
+mkdir cortex-agents-setup
+cd cortex-agents-setup
 
-![](assets/addplugin.png)
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
+# Install required packages
+pip install bedrock-agentcore-starter-toolkit requests
 
-2. Select **Create custom plugin** button in the top right of your Q application page
-![](assets/createcustomplugin.png)
-
-
-3. Name the plugin **movie-agent**. and provide a description.For example: `plugin to connect to movie script data from snowflake`.
-
-
-4. Under **API Schema select the Define with in-line OpenAPI** schema editor
-
-
-5. Select YAML format and paste the following OpenAPI specification. Important: Please update these 3 values in the code:
-- url: <Your-Snowflake-URL>
-- authorizationUrl: <Your-Snowflake-URL>/oauth/authorize
-- tokenUrl: <Your-Snowflake-URL>/oauth/token-request
-As a reminder you can find your Snowflake URL by clicking your account name in the bottom left of the Snowflake UI, selecting your account, then view account details. Your snowflake URL is https:// + your Account/Server URL e.g. https://<Your-Acount-Identifier>.snowflakecomputing.com
-
-
-```
-openapi: 3.0.0
-info:
- title: Cortex Agent via Stored Procedure
- version: 1.0.0
-servers:
- - url: https://<Your-Acount-Identifier>.snowflakecomputing.com
-paths:
- /api/v2/statements:
-   post:
-     summary: Call Cortex Agent stored procedure
-     description: Calls the stored procedure MOVIELENS.DATA.call_cortex_agent_proc(query, 5) using the SQL API.
-     parameters:
-       - in: header
-         name: X-Snowflake-Authorization-Token-Type
-         required: true
-         description: Customer Snowflake OAuth header
-         schema:
-           type: string
-           enum: ["OAUTH"]
-     requestBody:
-       required: true
-       content:
-         application/json:
-           schema:
-             $ref: '#/components/schemas/QueryRequest'
-     responses:
-       '200':
-         description: Successful stored procedure execution
-         content:
-           application/json:
-             schema:
-               $ref: '#/components/schemas/QueryResponse'
-     security:
-       - oauth2: []
-components:
- schemas:
-   QueryRequest:
-     type: object
-     required:
-       - statement
-       - warehouse
-       - role
-     properties:
-       statement:
-         type: string
-         description: The SQL statement to execute
-       warehouse:
-         type: string
-         default: WORKSHOPWH
-         example: WORKSHOPWH
-       role:
-         type: string
-         default: PUBLIC
-         example: PUBLIC
-     example:
-       statement: CALL MOVIELENS.DATA.call_cortex_agent_proc("What is Toy Story about?", 5)
-       warehouse: WORKSHOPWH
-       role: PUBLIC
-
-
-   QueryResponse:
-     type: object
-     description: The response returned from the Snowflake SQL API.
-     properties:
-       data:
-         type: array
-         description: The result rows returned.
-         items:
-           type: object
-           additionalProperties: true
-       request_id:
-         type: string
-         description: ID of the SQL request.
-     required:
-       - data
-       - request_id
- securitySchemes:
-   oauth2:
-     type: oauth2
-     flows:
-       authorizationCode:
-         authorizationUrl: https://<Your-Acount-Identifier>.snowflakecomputing.com/oauth/authorize
-         tokenUrl: https://<Your-Acount-Identifier>.snowflakecomputing.com/oauth/token-request
-         scopes:
-           session:role:PUBLIC: Use PUBLIC role in Snowflake
+# Verify installation
+python -c "from bedrock_agentcore_starter_toolkit.operations.gateway.client import GatewayClient; print('✅ Installation successful')"
 ```
 
+- Move the **create_gateway.py, cortex_agents_openapi.json and app.py** files to the newly created cortex-agents-setup folder.
 
-**Some things to note***
+### 2. Create Gateway with OpenAPI Target
 
+With the environment ready we are set to create the AgentCore Gateway. Update the below code with your PAT Token from Snowflake and run it. 
 
-- The path defined in the OpenAPI schema assumes you set up your Stored Procedure in the MOVIELENS database, in the DATA schema,  - if you used different names in your Snowflake setup, you'll need to modify these values accordingly.
-- The description field under the POST method is crucial as Q uses this to determine when to route questions to this plugin.
 
 
-6. After you have updated the YAML code, ensure that under the Authentication header, Authentication required has been selected.
+```bash
+# Set your Snowflake PAT
+export SNOWFLAKE_PAT_TOKEN="<PAT TOKEN FROM SNOWFLAKE>"
 
-
-7. Next, look to the **AWS Secrets Manager Section** here:
-- Select **Create and add new secret**
-- Name your secret (e.g., "movie-scripts")
-- Enter your Snowflake Client ID and Client Secret we have copied from the previous setup
-- Add the OAuth callback URL (same as OAUTH_REDIRECT_URI from Snowflake security integration)
-![](assets/awssecretesmanager.png)
-
-
-- The first time you will need to create a new service role.
-![](assets/servicerole.png)
-
-
-
-
-![](assets/awssecretsmanager2.png)
-8. Finally, Click the **Create** button then **Add Plugin** to complete your plugin setup. You can validate that your plugin has been set up successfully when the **Plugin Status** is updated to green.
-
-
-![](assets/pluginstatus.png)
-
-
-Great Job! Your plugin is now ready to use within Q Business to query movie script data from Snowflake
-
-
-<!-- ------------------------ -->
-## Test Application
-Duration: 4
-
-
-### Testing your Q Business Application
-1. In the Q Business console navigate to the **script-plugin** on the left menu and select your plugin **movie-scripts**
-![](assets/startplugin.png)
-
-
-2. Now in your movie-scripts page select **Preview web experience** in the top right corner of your screen. This will open a preview of your web application's UI.
-![](assets/startplugintwo.png)
-
-
-3. For now, feel free to leave the default sessions as they are and select **View web experience.**
-![](assets/startpluginthree.png)
-
-
-4. Here you will be directed to your application, and asked to sign in. Enter the credentials for your user and log in !
-- Please note: Your username is the one you specified when creating the first user, **not your email address.**
-
-
-5. Once you have logged in simply select the Plugins option below the chat window and click on your plugin **movie-scripts**. This tells Q Business to use information from this specific source.
-![](assets/selectplugin.png)
-
-
-6. Congratulations it's now time to test your application. Lets start with an example question:
-- what is the average rating for an adventure movie?
-![](assets/pluginsubmit.png)
-
-
-7. When you ask your first question you'll be asked to authorize the connection and be redirected to Snowflake. Sign in and select **Allow**. You'll then be automatically routed back to your Q Web app where Q will output an answer to your question.
-![](assets/pluginauth.png)
-
-
-![](assets/pluginresults.png)
-
-
-8. Now it's your turn to explore! Try asking detailed questions about the movie. Q Business pulls answers directly from the script text, so you're getting the same information you would if you manually searched through the screenplay. Here are some questions to get you started:
-- ask to return the sql from the previous request.
-- **who is the primary villain in Toy Story**
-- **who are the primary characters int Toy Store**
-- **what are the highest rated movies in the database**
-- ask to return the sql from the preevious request.
-
-
-9. Congratulations! You've successfully built an intelligent script analysis system, integrated Q Business with Snowflake, leveraged GenAI for natural language querying, and became a certified Toy Story expert in the process!
-
-
-<!-- ------------------------ -->
-## Snowflake & Quicksight
-OPTIONAL
-Duration: 20
-
-
-This lab introduces participants to [Amazon Q in QuickSight](https://aws.amazon.com/quicksight/q/), dashboard-authoring capabilities empower business analysts to swiftly build, uncover, and share valuable insights using natural language prompts. Simplify data understanding for business users through a context-aware Q&A experience, executive summaries, and customizable data stories.
-
-
-
-
-Participants will connect the Snowflake table movies_dashboard to Amazon QuickSight to generate an interactive dashboard. This lab covers both personas – Authors (analysts) and Readers (business users/consumers), covering the Amazon Q in QuickSight features:
-
-
-- Natural Language Queries: Users can ask questions and receive answers in plain language, eliminating the need for SQL or complex BI tools. This feature is designed to democratize data access, enabling business users to engage with data more intuitively.
-
-
-- Visual Authoring: GenBI allows for rapid creation and customization of visualizations. Users can generate visuals in seconds and adjust them using natural language commands, streamlining the dashboard creation process.
-
-
-- Data Stories: Stories enables users to create compelling narratives around their data insights, enhancing the storytelling aspect of data presentation. This feature helps in sharing insights in a more engaging manner.
-
-
-### Set up Snowflake with QuickSight
-This section is essential for integrating Snowflake data with Amazon QuickSight, enabling users to leverage QuickSight's visualization and analysis capabilities. By configuring a Snowflake data source and using custom SQL to query the movies_dashboard table, users ensure that the relevant data is accessible for creating interactive dashboards and reports.
-
-
-**Create and refine Dashboard as BI Author**
-
-
-Go to Amazon QuickSight on the [console](https://ap-southeast-2.console.aws.amazon.com/ses/home?region=ap-southeast-2#/homepage) .
-1. On the top right hand corner, click on the user icon → and select US East (N. Virginia).
-
-
-2. Ensure to select a [Supported AWS Regions for Amazon Q in QuickSight](https://docs.aws.amazon.com/quicksight/latest/user/regions-aqs.html)
-
-
-![](assets/newqs.png)
-
-
-3. Ensure to select a [Supported AWS Regions for Amazon Q in QuickSight](https://docs.aws.amazon.com/quicksight/latest/user/regions-aqs.html)
-
-
-![](assets/snowflakeconnector.png)
-
-
-4. Use the following configuration, but replace <snowflake_account_URL>, <snowflake_username> and <snowflake_password> with your own.
-- Data source name: movies-dashboard-sf
-- Connection type: Public network
-- Database server: <snowflake_account_URL> This is your Snowflake Account/Server URL (found in Snowflake by navigating to bottom left account menu -> Account -> View Account Details -> Account/Server URL L, e.g. yoursnowflake.snowflakecomputing.com)
-- Database name: movielens
-- Warehouse: workshopwh
-- Username: <your snowflake_username>
-- Password: <your snowflake_password>
-
-
-![](assets/configconnector.png)
-
-
-![](assets/snowflakeconfig.png)
-
-
-![](assets/snowflakedatasource.png)
-
-
-5. The following message “Your database generated a SQL exception......” will return. We shall proceed to create a custom data source.
-
-
-6. Click on Create data source → Use custom SQL.
-
-
-![](assets/choosetable.png)
-
-
-7. Rename New custom SQL to movies-dashboard-sf. Use the following query, and then click the Confirm query button.
-
-
-```sql
-SELECT * FROM movies.movies_dashboard;
+# Create gateway
+python create_gateway.py
 ```
 
+You should see output like below:
 
-![](assets/customsql.png)
+[](assets/creategateway.png)
 
 
-8. We will be using [SPICE](https://docs.aws.amazon.com/quicksight/latest/user/spice.html) (Super-fast, Parallel, In-memory Calculation Engine), an in-memory calculation engine that allows for fast analysis of large datasets, supporting billions of rows while ensuring high availability and performance.
+You can now head to your AWS Portal and see what was created.
 
+- In Bedrock AgentCore select **Gateways > Find your Target** and you should see something like below.
+![](assets/gatewayandtarget.png)
 
-In Amazon QuickSight, SPICE and Direct Query represent different approaches to data access and analysis. SPICE involves importing data into QuickSight's in-memory engine for faster performance, while Direct Query retrieves data directly from the source in real-time. The choice between them depends on factors like data size, freshness requirements, and performance needs. Refer to the blog: [Best practices for Amazon QuickSight SPICE and direct query mode](https://aws.amazon.com/blogs/business-intelligence/best-practices-for-amazon-quicksight-spice-and-direct-query-mode/) for further information.
 
+- Then you can go into **Identity** and see how AgentCore create a **Secrets Manager** service to store that PAT token as an API key.
+![](assets/gatewayidentity.png)
 
-![](assets/finishdataset.png)
 
+### Use the Gateway from a Streamlit App
 
-We shall proceed as **BI Author**
+Last, from the VS Code terminal execute the below code which will open a browser with a Streamlit App.
 
+```bash
+streamlit run app.py
+```
 
-9. click on Visualize → CREATE to create a new analysis
-Before creating the visuals, let’s ask Q to help create some calculated fields that show us the average user rating by movie title.
+In the first space please enter your Snowflake account URL (e.g., myacct.snowflakecomputing.com). Then prompt with a question like any of the below:
 
+- what are the unstructured reviews of the movie Toy story?
+- what are the unstructured reviews of the movie Sudden Death?
+- what is the average rating of Toy Story?
 
-10. Click on ‘+ Calculated Field’.
 
+The app should look like this:
+![](assets/streamlitapp.png)
 
-![](assets/spicedata.png)
-
-
-11. In the Add Calculated Field page, Click Build Calculation.
-12. Type rating by movie, Click Build then, Insert.
-13. Name it Average movie rating and click Save. We will use this calculated field in the visuals later.
-
-
-![](assets/raitingbymovie.png)
-
-
-### Creating Visual as BI author
-1. Click on the “Build visual” bar at the top of the page and a right panel will appear. We will use this panel to build the analysis visualisation by entering the following 3 natural language prompts into Amazon Q.
-
-
-![](assets/createviz.png)
-
-
-2. We will use the calculated field created earlier. Type the following prompt: What are the top 10 movies based on average user ratings? and click Build. When the visualisation has been generated, click on Add to Analysis to include it in your analysis.
-
-
-![](assets/addanalysis.png)
-
-
-3. After adding the visual to the analysis, you can change the visual type using natural language. Click on Edit with Q, enter the prompt Turn this into a pie chart
-In the input box, and then click **APPLY**
-
-
-4. The horizontal bar chart will now be displayed as a pie chart.
-5. Enter the next Prompt #2: Visualize the distribution of users by country.
-
-
-![](assets/userbycountry.png)
-
-
-6. Feel free to create more analysis. Once the analysis is complete, click on the PUBLISH button in the top right corner. Publish the new dashboard as movies-dashboard-sf and then click Publish dashboard.
-Ensure to select both  “Data Story” and “Generative capabilities” 
-
-
-![](assets/publishdashboard.png)
-
-
-### As BI reader (business users/consumers) - we will now discover, summarize and share insights
-
-
-1. To interact with the dataset or dashboard, click on the Ask a question about movies-dashboard-sf bar at the top of the page. Amazon Q will suggest questions based on the provided dataset, and you can either choose from these suggestions or type your own questions.
-
-
-2. After posting a question to Amazon Q, all relevant data related to the query will be generated. You can ask “ What are the top 5 movies by user rating?”
-
-
-![](assets/topmoviesdashboard.png)
-
-
-3. In the dashboard, click on BUILD in the top right corner and select Executive summary to get a quick overview of the relevant statistics for the dashboard.
-
-
-![](assets/fulldashboard.png)
-
-
-Next, let’s create a Data Story for the Dashboard.  Creating a data story in the dashboard provides stakeholders with insights into how various factors, such as movie ratings, genres, user demographics, and interactions, affect movie performance and user engagement. By typing a descriptive prompt, selecting visuals from the published dashboard, and building the report, users generate a comprehensive narrative that aids in understanding the data and making informed decisions. This step is crucial for creating a meaningful and actionable report that can guide content production, marketing strategies, and user experience improvements, and allows for sharing these insights with others. Please note that Data story drafts are not meant to replace your own ideas or to perform analysis but as a starting point to customize and expand on as needed
-
-
-4. Click on BUILD in the top right corner and select **Data story.** 
-
-
-
-
-5. Type the following prompt into the “Describe the data story you need” box:
-
-
-**This report helps stakeholders understand how different factors such as movie ratings, genres, user demographics, and interactions impact overall movie performance and user engagement. It can guide decisions on content production, marketing strategies, and user experience improvements.**
-
-
-6. Click on + ADD VISUALS and select all the visuals from the published dashboard, movies-dashboard-sf. Then click on BUILD.
-
-
-![](assets/fulldashboardtwo.png)
-
-
-7. A report with the relevant graphs and explanation will be generated.
-
-
-![](assets/report.png)
-
-
-8. Feel free to explore and edit the narrative with Q by highlighting the text and click on Q icon. Use **SHARE** to publish the data story when ready.
-
-
-![](assets/fulldashboard.png)
-
-
-Congratulations, you have successfully extracted relevant insights from your movie dataset in Snowflake, enabling you to make informed business decisions based on the generated report with Amazon Q in QuickSight!
-
-
-
+####### comeback here
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
