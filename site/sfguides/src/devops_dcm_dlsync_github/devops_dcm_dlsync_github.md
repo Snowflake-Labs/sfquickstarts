@@ -14,7 +14,7 @@ Duration: 2
 
 <img src="assets/dlsync-logo.png" height="200" title="logo" alt="logo" />
 
-This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with GitHub Actions using [DLSync](https://github.com/Snowflake-Labs/dlsync). DLSync is a database change management tool designed to streamline the development and deployment of Snowflake changes. By associating each database object (view, table, udf, etc.) with a corresponding SQL script file, DLSync tracks every modification, ensuring efficient and accurate updates.
+This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with GitHub Actions using [DLSync](https://github.com/Snowflake-Labs/dlsync). DLSync is a database change management tool designed to streamline the development and deployment of Snowflake changes. By associating each database object (view, table, udf, etc.) with a corresponding SQL script file, DLSync tracks every modification, ensuring efficient and accurate updates. DLSync automatically handles script dependencies during deployment, ensuring that database objects are created and updated in the correct order based on their interdependencies. Additionally, DLSync includes built-in unit testing capabilities that allow you to validate your database objects with test scripts before deployment, ensuring code quality and reliability.
 
 DevOps is concerned with automating the development, release, and maintenance of software applications. This guide focuses on automated release management for Snowflake by leveraging GitHub Actions and DLSync.
 
