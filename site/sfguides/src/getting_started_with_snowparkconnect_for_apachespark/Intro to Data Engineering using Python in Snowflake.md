@@ -45,7 +45,7 @@ In Apache Spark™ version 3.4, the Apache Spark community introduced Spark Conn
 * A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 
 <!-- ------------------------ -->
-## Getting started with Snowpark Connect for Apache Spark™
+## Run PySpark Code
 
 Duration:10
 
