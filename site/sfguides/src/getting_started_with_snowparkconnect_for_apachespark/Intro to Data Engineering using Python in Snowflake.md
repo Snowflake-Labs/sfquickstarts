@@ -6,7 +6,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Apache Spark, Snowpark, Python, Data Engineering
 
-# Getting started with Snowpark Connect for Apache Spark
+# Getting Started with Snowpark Connect for Apache Spark
 <!-- ------------------------ -->
 Duration:5
 
@@ -14,7 +14,7 @@ Duration:5
 
 Through this quickstart, you will learn how to get started with [Snowpark Connect for Apache Spark™](https://www.snowflake.com/en/blog/snowpark-connect-apache-spark-preview/). Using Snowpark Connect for Apache Spark, you can run Spark workloads directly on Snowflake.
 
-### What you’ll learn
+### What you’ll Learn
 
 By the end of this quickstart, you will learn how to:
 
@@ -40,7 +40,7 @@ In Apache Spark™ version 3.4, the Apache Spark community introduced Spark Conn
 
 * Create a Snowflake Python Function and invole it with SQL passthrough from Spark
 
-### Pre-requisites
+### Prerequisites
 
 * A Snowflake account. If you do not have a Snowflake account, you can register for a [free trial account](https://signup.snowflake.com/).
 
@@ -77,7 +77,7 @@ After the installation is complete, start or restart the notebook session.
 Follow along and run each of the cells in the [Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/snowpark_connect/snowparkconnect_demo.ipynb).
 
 <!-- ------------------------ -->
-## Conclusion & Resources
+## Conclusion And Resources
 
 Duration:2
 
