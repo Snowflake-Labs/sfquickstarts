@@ -11,7 +11,7 @@ tags: Getting Started, Data Science, Data Engineering, Copilot, Amazon, Agents, 
 # Getting Started with Bedrock AgentCore Gateways and Cortex Agents
 <!-- ------------------------ -->
 ## Overview
-Duration: 15
+Duration: 10
 
 
 [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) orchestrate across both structured and unstructured data sources to deliver insights. They plan tasks, use tools to execute these tasks, and generate responses. Agents use Cortex Analyst (structured) and Cortex Search (unstructured) as tools, along with LLMs, to analyze data. Cortex Search extracts insights from unstructured sources, while Cortex Analyst generates SQL to process structured data. A comprehensive support for tool identification and tool execution enables delivery of sophisticated applications grounded in enterprise data.
@@ -462,7 +462,7 @@ Underneath the UI Cortex Analyst is simply generating a yaml file, so users can 
 Now that Snowflake is ready let's work on setting up Snowflake Cortex as a target in an AgentCore Gateway.
 
 <!-- ------------------------ -->
-##  Setting of the AgentCore Gateway
+##  AgentCore Gateway
 Duration: 10
 
 As a pre-requisite it is expected that users have the below available locally:
@@ -544,26 +544,24 @@ In the first space please enter your Snowflake account URL (e.g., myacct.snowfla
 The app should look like this:
 ![](assets/streamlitapp.png)
 
-####### comeback here
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
 Duration: 5
 
 
-This quickstart is just that, a quick way to get you started with using Amazon Q with Snowflake Cortex, though with this start you are now enabled to extend the quickstart in the below ways:
+This quickstart is just that, a quick way to get you started with using AgentCore Gateways you are encouraged to build upon this by adding more Cortex Tools to your Cortex Agents and more Targets to your AgentCore Gateway.
    - Scale the workflow to a use case with many documents and use a more robust Cortex Search Service.
-   - Scale Agents to include more robust Analyst services and multiple Analyst and Search Services.
-   - Use a Cortex Q plugin alongside Quicksight to get next level answers on your data that's represented in your dashboards.
-   - Use multiple plugins to Cortex from Q along with AWS service to create a robust web app for getting answers from your data with plain text.
+   - Scale Agents to include more robust Analyst services and multiple tables and a broader Semantic View
+   - Use multiple targets in your AgentCore Gateway
 
 
 ### What You Learned
 - How to use Cortex Search along with complimentary functions in Snowflake.
 - How to use Cortex Analyst and semantic models in Snowflake.
 - How to use Cortex Agents.
-- How to use Amazon Q to leverage generative AI to get quick answers from your data.
-- How to Connect Amazon Q to Snowflake Cortex Search with a custom plugin.
+- How to use Bedrock AgentCore Gateways with OpenAPI Targets.
+- How to use Streamlit to build a simple app to serve results of your AgentCore Gateway
 
 
 ### Resources
@@ -573,13 +571,10 @@ There are some great blogs on Medium regarding Snowflake Cortex and Amazon Servi
 - [Snowflake Cortex](https://www.snowflake.com/en/data-cloud/cortex/)
 
 
-- [Amazon Q](https://aws.amazon.com/q/?trk=c570e8a2-ec3c-4968-baa4-f8537e37dd1d&sc_channel=ps&s_kwcid=AL!4422!10!71949557907688!71950102400240&ef_id=07cc246a6d4218358de8430ee23fc18e:G:s&msclkid=07cc246a6d4218358de8430ee23fc18e)
+- [Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/)
 
 
-- [Amazon Bedrock and Snowflake Cortex](https://catalog.us-east-1.prod.workshops.aws/workshops/2d4e5ea4-78c8-496f-8246-50d8971414c9/en-US/01-overview)
-
-
-- [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
+- [AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-building.html)
 
 
 
