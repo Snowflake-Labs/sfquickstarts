@@ -12,7 +12,7 @@ tags: DevOps, Data Engineering, Database Change Management
 ## Overview
 Duration: 2
 
-<img src="assets/dlsync-logo.png" height="200" title="logo" alt="logo" />
+![logo](assets/dlsync-logo.png)
 
 This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with GitHub Actions using [DLSync](https://github.com/Snowflake-Labs/dlsync). DLSync is a database change management tool designed to streamline the development and deployment of Snowflake changes. By associating each database object (view, table, udf, etc.) with a corresponding SQL script file, DLSync tracks every modification, ensuring efficient and accurate updates. DLSync automatically handles script dependencies during deployment, ensuring that database objects are created and updated in the correct order based on their interdependencies. Additionally, DLSync includes built-in unit testing capabilities that allow you to validate your database objects with test scripts before deployment, ensuring code quality and reliability.
 
@@ -20,9 +20,10 @@ DevOps is concerned with automating the development, release, and maintenance of
 
 ### Prerequisites
 
-This guide assumes that you have a basic working knowledge of Git repositories.
+* Familiarity with Snowflake
+* Familiarity with Git and GitHub actions
 
-### What You'll Learn
+### What You Will Learn
 
 * A brief overview of GitHub Actions and how to use them for CI/CD
 * A comprehensive overview of DLSync and its capabilities
@@ -37,11 +38,11 @@ This guide assumes that you have a basic working knowledge of Git repositories.
 * How to monitor and verify successful deployments in Snowflake
 * Ideas for advanced CI/CD pipelines with multiple environments
 
-### What You'll Need
+### What You Will Need
 
 1. **Snowflake**
-    1. A Snowflake Account
-    1. A Snowflake Database (e.g., DEMO_DB)
+    1. A Snowflake Account ([Create snowflake trial account](https://signup.snowflake.com/)) 
+    1. A Snowflake Database and schema (e.g., DEMO_DB.DEMO_SCHEMA)
     1. A Snowflake User with appropriate permissions
 1. **GitHub**
     1. A GitHub Account ([Join GitHub](https://github.com/join))
@@ -50,7 +51,7 @@ This guide assumes that you have a basic working knowledge of Git repositories.
     1. Your favorite IDE with Git integration (e.g., [Visual Studio Code](https://code.visualstudio.com/))
     1. Your project repository cloned to your computer
 
-### What You'll Build
+### What You Will Build
 
 * A simple, working release pipeline for Snowflake in GitHub Actions using DLSync
 
@@ -313,7 +314,7 @@ From your repository, go to **Settings > Secrets and variables > Actions**. Add 
 
 > aside positive
 > 
->  **Tip** - For more details on Snowflake account names, see the [Snowflake Python Connector install guide](https://docs.snowflake.com/en/user-guide/python-connector-install.html#step-2-verify-your-installation).
+>  **Tip** - For more details on Snowflake connection properties, see the [JDBC Driver connection parameter reference](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc-parameters).
 
 <!-- ------------------------ -->
 ## Create an Actions Workflow
@@ -400,7 +401,7 @@ jobs:
 After creating or updating your scripts, you need to commit and push the changes to Git to trigger the GitHub Actions workflow. 
 
 <!-- ------------------------ -->
-## Manually Run the Actions Workflow
+## Manually Run Actions Workflow
 Duration: 3
 
 To manually run the workflow:
@@ -409,21 +410,31 @@ To manually run the workflow:
 2. Select the workflow (e.g., `snowflake-dlsync-demo`).
 3. Click **Run workflow** and confirm.
 
+![run github actions](assets/run-actions.png) 
+
 You can view the output of each step, including the DLSync deployment logs.
 
 <!-- ------------------------ -->
-## Confirm Changes Deployed to Snowflake
+## Confirm Deployment Changes
 Duration: 3
 
 After running the workflow, log into your Snowflake account and confirm:
 
 - New or updated database objects as defined in your scripts
-- DLSync tracking tables (e.g., `DL_SYNC_SCRIPT_HISTORY`, `DL_SYNC_CHANGE_SYNC`, `DL_SYNC_SCRIPT_EVENT`)
+- A new record about the status and details of deployemnt in `DL_SYNC_CHANGE_SYNC` 
+
+![change status](assets/change-sync.png)
+
+- new or updated records for each object changes in `DL_SYNC_SCRIPT_HISTORY`
+
+![script history](assets/script-history.png)
+
+- new records in `DL_SYNC_SCRIPT_EVENT` for each operations performed by DLSync
 
 Check the contents of the tracking tables to see deployment history and script status.
 
 <!-- ------------------------ -->
-## Create and Test Additional Scripts
+## Add More Changes
 Duration: 3
 
 Add new or updated SQL scripts to your script root directory. Let's create a new view that demonstrates how DLSync handles additional database objects and add update to existing. 
@@ -466,32 +477,27 @@ ALTER TABLE ${MY_DB}.${MY_SCHEMA}.ORDERS ADD COLUMN status VARCHAR(20) DEFAULT '
 After creating or updating your scripts, you need to commit and push the changes to Git to trigger the GitHub Actions workflow. 
 
 <!-- ------------------------ -->
-## Conclusion & Next Steps
+## Conclusion And Resources
 Duration: 3
 
 Now that you have a working Snowflake CI/CD pipeline with DLSync and GitHub Actions, consider the following next steps:
 
-### Pipeline Stages
-Extend your workflow to include multiple stages (e.g., dev, test, prod) by using different profiles and environments. See [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions).
 
-### Branching Strategy
-Adopt a branching strategy such as [GitHub flow](https://guides.github.com/introduction/flow/) or [GitLab flow](https://about.gitlab.com/blog/2014/09/29/gitlab-flow/).
+* Extend your workflow to include multiple stages (e.g., dev, test, prod) by using different profiles and environments. See [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions).
 
-### Testing Strategy
-Incorporate unit testing for your database objects using DLSync's test module. For complete dlsync unit testing guide refere [dlsync documentation](https://github.com/Snowflake-Labs/dlsync?tab=readme-ov-file#3-test-script).
+* Incorporate unit testing for your database objects using DLSync's test module. For complete dlsync unit testing guide refere [dlsync documentation](https://github.com/Snowflake-Labs/dlsync?tab=readme-ov-file#3-test-script).
 
-### What We've Covered
+### What You Learned
 
 * A brief overview of GitHub Actions
 * A brief overview of DLSync
 * How database change management tools like DLSync work
-* How a simple release pipeline works
 * How to create CI/CD pipelines in GitHub Actions
-* Ideas for more advanced CI/CD pipelines with stages
-* How to get started with branching strategies
-* How to get started with testing strategies
+* How to deploy database changes using dlsync
+* How to get started with unit testing using dlsync
 
 ### Related Resources
 
-* [DLSync](https://github.com/Snowflake-Labs/dlsync)
+* [DLSync Technical Guide (Medium)](https://medium.com/snowflake/dlsync-a-modern-way-to-manage-your-snowflake-database-changes-8dc8a1413ae8)
+* [DLSync github repo](https://github.com/Snowflake-Labs/dlsync)
 * [GitHub Actions](https://github.com/features/actions)
