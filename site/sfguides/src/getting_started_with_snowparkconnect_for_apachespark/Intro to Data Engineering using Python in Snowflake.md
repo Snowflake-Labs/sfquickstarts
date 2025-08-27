@@ -14,7 +14,7 @@ Duration:5
 
 Through this quickstart, you will learn how to get started with [Snowpark Connect for Apache Spark™](https://www.snowflake.com/en/blog/snowpark-connect-apache-spark-preview/). Using Snowpark Connect for Apache Spark, you can run Spark workloads directly on Snowflake.
 
-### What you’ll Learn
+### What You’ll Learn
 
 By the end of this quickstart, you will learn how to:
 
@@ -68,7 +68,7 @@ Download the `ipynb` from [this git repository](https://github.com/Snowflake-Lab
 
 Now you have successfully imported the notebook that contains PySpark code.
 
-### Install snowpark-connect package and run the code
+### Install snowpark-connect Package and run the code
 
 Next up, select the packages drop down at the top right of the notebook. Look for `snowpark-connect` package and install it using the package picker.
 
@@ -83,7 +83,7 @@ Duration:2
 
 Congratulations, you have successfully completed this quickstart! 
 
-### What you learned
+### What You Learned
 
 * Connect to the Snowpark Connect server
 * Execute simple PySpark code
