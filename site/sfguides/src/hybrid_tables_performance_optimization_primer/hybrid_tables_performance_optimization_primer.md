@@ -196,7 +196,9 @@ The optimizer was not able to push down any access predicates against an index.
 
 ### Add a secondary index
 Clearly, the above query is not optimal. A secondary index can help the query run faster. Let's create a secondary index
-and use it to explore the query improvement. The status query uses a [flow operator](https://docs.snowflake.com/en/sql-reference/operators-flow):
+and use it to explore the query improvement. Best practices tell us to create indexes during table creation time but for testing,
+creating a secondary index on an existing table is convenient. The index build will take a bit of time and the index
+will not be used until the status is `ACTIVE`. This example query for status uses a [flow operator](https://docs.snowflake.com/en/sql-reference/operators-flow):
 ```sql
 CREATE INDEX IF NOT EXISTS IDX_TRUCK_YEAR ON TRUCK (YEAR, MAKE);
 -- USING THE FLOW SYNTAX, WATCH THE STATUS OF THE INDEX CHANGE FROM 'BUILD IN PROGRESS` TO 'ACTIVE'
@@ -204,7 +206,7 @@ SHOW INDEXES ->>
      SELECT "status", "name", "created_on", "table", "columns" 
      FROM $1 IDX WHERE TRUE AND "name" = 'IDX_TRUCK_YEAR';
 ```
-Re-running the query, this time using the newly created index:
+Once the index is `ACTIVE` we can re-run the query and show that it is using the newly created index:
 ```sql
 SELECT *
 FROM TRUCK
@@ -430,8 +432,8 @@ SELECT * FROM ORDER_HEADER LIMIT 10;
 > -- SEE ALL INDEXES IN THE CURRENT SCHEMA
 > SHOW INDEXES;
 > -- OR SEE SPECIFIC STATUS FOR INDEXES ON A PARTICULAR TABLE
-> SHOW INDEXES
-> ->> SELECT "name", "status", "columns" FROM $1 WHERE "table" = 'ORDER_HEADER';
+> SHOW INDEXES ->>
+>     SELECT "name", "status", "columns" FROM $1 WHERE "table" = 'ORDER_HEADER';
 > ```
 
 Once the index is `ACTIVE`, we can use it in a query:
