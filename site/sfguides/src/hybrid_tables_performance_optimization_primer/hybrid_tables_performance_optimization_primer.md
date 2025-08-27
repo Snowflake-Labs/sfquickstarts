@@ -20,7 +20,7 @@ Use cases that may benefit from hybrid tables include:
 
 - Applications requiring INSERT/UPDATE/DELETE concurrency matched with SELECT performance
 - Usage requiring low-latency, high concurrency INSERT/UPDATE like log tables, metadata tracking, or status information
-- Low latency responses for single record retrieval over very large data sets
+- Low latency responses for highly selective record retrieval over very large data sets
 
 ### Architecture
 
@@ -52,7 +52,7 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 
 
 ### Process
-- We will be creating three tables that represent a data model. Following the trucking example from the getting started with hybrid tables quickstart, we will use TRUCK and ORDER_HEADER tables to represent our data.
+- We will be creating three tables that represent a data model. Following the trucking example from the [Getting Started with Hybrid Tables](https://quickstarts.snowflake.com/guide/getting_started_with_hybrid_tables/index.html#0) quickstart, we will use TRUCK and ORDER_HEADER tables to represent our data.
 - Create and work with TRUCK table to understand primary keys, secondary indexes, and accompanying query patterns
 - Build on TRUCK with ORDER_HEADER to work with foreign key relationships
 - Add a secondary index to find orders for trucks based on order date
@@ -66,8 +66,9 @@ create scenarios that do not perform well. Following the guide, you will then ad
 table structure to create an optimal query.
 
 >aside positive
-> **NOTE:** Queries executed from Snowsight support a high quality human interface and 
-> will therefore not perform with the lowest possible latency. Lowest latency is 
+> **NOTE:** Queries executed from Snowsight support an interactive development experience with rich statistics and metadata, 
+> such as runtime statistics about all query operators in the query profile. Queries executed in Snowsight 
+> will not perform with the lowest possible latency. Lowest latency is 
 > achieved via queries issued from a _code-based driver connection_ to Snowflake. Please review our [best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
 > and [performance testing](https://docs.snowflake.com/en/user-guide/tables-hybrid-test) guides for more information.
 >
@@ -90,6 +91,8 @@ so make sure you are using a role that has permissions to create tables and view
 USE SCHEMA HT_PERFORMANCE.PRIMER;
 USE WAREHOUSE HT_PERFORMANCE_WAREHOUSE;
 ```
+
+Now, let's explore primary keys and secondary indexes
 
 ## Explore primary key and secondary indexes
 
@@ -135,15 +138,20 @@ SELECT * FROM TRUCK LIMIT 10;
 Primary keys are a highly performant way to query hybrid tables. Let's look at a query profile of what querying using the primary key looks like.
 ```sql
 -- SELECT AND SET A RANDOM TRUCK_ID TO SESSION VARIABLE FOR CONVENIENCE
-SET ID = (SELECT TRUCK_ID FROM TRUCK SAMPLE(1 ROWS));
+SET TRUCK_ID = (SELECT TRUCK_ID FROM TRUCK SAMPLE(1 ROWS));
 
 SELECT *
 FROM TRUCK
-WHERE TRUCK_ID = $ID;
+WHERE TRUCK_ID = $TRUCK_ID;
 ```
 Now, click on the resulting query id (QID) on the Snowsight console. A new tab will open, and you will be presented with a screen that looks like this:
 <img src="assets/explore_00.png"/>
+
 The screen gives you basic information about the query.
+
+>aside positive
+> **NOTE:** As this query was executed on Snowsight, compile and execution times will be longer than connected driver based queries.
+>
 
 Clicking on the "Query Profile" button:
 <img src="assets/explore_10.png"/>
@@ -158,14 +166,17 @@ This is the primary screen we will be using for query analysis.
 Now that you understand how to get to the query profile screen, let's discover how this query was executed. Once we understand how the query planner decided
 to execute the query, we can understand how to implement any changes in the query that will improve performance.
 
-Clicking on the bottom "TableScan" node will foucs our attention on what happened in the data access.
+Clicking on the bottom "TableScan" node will focus our attention on what happened in the data access.
 <img src="assets/explore_30.png"/>
 In this example we can see that:
 - The Access Predicate was indeed the primary key `TRUCK.TRUCK_ID`
 - The Scan Mode was `ROW_BASED`
+- Exactly one record was retrieved from storage by the scan, exactly matching the truck ID.
 
-`ROW_BASED` scans means that the query directly accessed the row store and did not use the backing object store to produce the results. For the
-vast majority of queries, `ROW_BASED` access is the fastest and most preferred scan mode. 
+`ROW_BASED` scans means that the query directly accessed the row store and did not use the backing object store to produce the results. 
+For selective predicates against the primary key, `ROW_BASED` access indicates that the primary key index was used to 
+push down the predicate and is the fastest and most efficient way to execute the query.
+
 
 ### Query the table with `COLUMN_BASED` access (no key)
 Instead of querying the table using the primary key, let's query the table using a column that is **not** indexed and see what
@@ -178,8 +189,9 @@ WHERE MAKE LIKE 'Peter%' AND YEAR IN (2000, 2001);
 We can see from the query profile screen that the query plan looks far different. Much time is spent on disk I/O:
 <img src="assets/explore_40.png"/>
 
-Looking at the "TableScan" node, we can clearly see that the scan was `COLUMN_BASED` and did process many partitions with lots of data. This
-type of query is clearly not an optimal result.
+Looking at the "TableScan" node, we can clearly see that the scan was `COLUMN_BASED` and processed many partitions with lots of data. 
+The optimizer was not able to push down any access predicates against an index.
+
 <img src="assets/explore_50.png"/>
 
 ### Add a secondary index
@@ -197,8 +209,8 @@ Re-running the query, this time using the newly created index:
 SELECT *
 FROM TRUCK
 WHERE TRUE
-AND MAKE = 'Peterbilt'
-AND YEAR IN (2000, 2001);
+    AND MAKE = 'Peterbilt'
+    AND YEAR IN (2000, 2001);
 ```
 
 Using the index results in a much better query plan that uses the index we created:
@@ -210,8 +222,8 @@ While more time is spent returning the results, the partial index is still used 
 SELECT *
 FROM TRUCK
 WHERE TRUE
---AND MAKE = 'Peterbilt'
-AND YEAR IN (2000, 2001);
+    --AND MAKE = 'Peterbilt'
+    AND YEAR IN (2000, 2001);
 ```
 <img src="assets/explore_70.png"/>
 
@@ -232,27 +244,9 @@ of the reference table and the usage of the key in another table a **foreign key
 We will use a `TRUCK` and `ORDER_HEADER` relationship to create a foreign key relationship. Let's create the tables and
 explore how the query plan looks with and without a foreign key.
 
-Create some trucks with orders for each truck.
+Let's reuse the `TRUCK` table and create orders for each truck.
 
 ```sql
---- CREATE SOME OF TRUCKS WITH RANDOM YEARS, MAKES, FRANCHISE AND EMAILS.
-CREATE OR REPLACE HYBRID TABLE TRUCK (
-    TRUCK_ID NUMBER(38,0) NOT NULL,
-    YEAR NUMBER(38,0) NOT NULL,
-    MAKE VARCHAR(250) NOT NULL,
-    FRANCHISE_ID NUMBER(38,0) NOT NULL,
-    TRUCK_EMAIL VARCHAR NOT NULL UNIQUE,
-    PRIMARY KEY (TRUCK_ID) 
-)
-AS SELECT
-    SEQ4(),
-    UNIFORM(1970, 2025, RANDOM()),
-    ARRAY_CONSTRUCT( 'Freightliner', 'Peterbilt', 'Kenworth', 'Volvo Trucks', 'Mack', 'International (Navistar)', 'Western Star')[UNIFORM(0,6, RANDOM())],
-    UNIFORM(1, 250, RANDOM()),
-    RANDSTR(8, RANDOM()) || '@sf-quickstart'
-FROM TABLE(GENERATOR(ROWCOUNT => 500))    -- USE A SMALLER NUMBER OF TRUCKS THAN THE FIRST EXAMPLE
-;
-
 --- CREATE ORDERS FOR EACH TRUCK
 CREATE OR REPLACE HYBRID TABLE ORDER_HEADER (
 	ORDER_ID NUMBER(38,0) NOT NULL,
@@ -260,104 +254,221 @@ CREATE OR REPLACE HYBRID TABLE ORDER_HEADER (
     ORDER_TIMESTAMP TIMESTAMP_NTZ NOT NULL,
 	ORDER_TOTAL NUMBER(38,2),
 	ORDER_STATUS VARCHAR(200) DEFAULT 'INQUEUE',
-	PRIMARY KEY (ORDER_ID),
-	FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID)
-);
-INSERT INTO ORDER_HEADER (ORDER_ID, TRUCK_ID, ORDER_TIMESTAMP, ORDER_TOTAL)
+	PRIMARY KEY (ORDER_ID)
+) AS
 SELECT
     SEQ4(),
     T.TRUCK_ID,
-    DATEADD('seconds', UNIFORM(-1*60*60*24*365, -1*60*60, RANDOM()), CURRENT_TIMESTAMP()),
-    UNIFORM(200.0, 25000.0, RANDOM())
+    DATEADD('seconds', UNIFORM(-1*60*60*24*365, -1*60*60, RANDOM()), CURRENT_TIMESTAMP()), -- SPREAD RANDOM ORDER IDS OUT
+    UNIFORM(200.0, 25000.0, RANDOM()),
+    ARRAY_CONSTRUCT('DELIVERED', 'INQUEUE', 'LOADING', 'EN-ROUTE')[UNIFORM(0,3, RANDOM())],
 FROM TABLE(GENERATOR(ROWCOUNT => 5000))
-CROSS JOIN TRUCK T                       -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
+CROSS JOIN (SELECT TRUCK_ID FROM TRUCK SAMPLE (1000 ROWS)) T    -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
 ;
 
 -- SEE WHAT THE RESULTS LOOK LIKE
-SELECT * FROM TRUCK LIMIT 10;
 SELECT * FROM ORDER_HEADER LIMIT 10;
 ```
 A basic query we would likely use is a query that selects a truck with all the order header records. While this is a 
 quite a few records, we can see how the foreign key helps load only the data that is required.
 
+
 ```sql
+-- SELECT A SPECIFIC ORDER
+SET ORDER_ID = (SELECT ANY_VALUE(ORDER_ID) FROM ORDER_HEADER);
+
 SELECT *
-FROM TRUCK T
-INNER JOIN ORDER_HEADER O ON T.TRUCK_ID=O.TRUCK_ID
+FROM ORDER_HEADER O
 WHERE TRUE
-AND T.TRUCK_ID = 1
+  AND O.ORDER_ID = $ORDER_ID
 ;
 ```
-The query plan will indicate that the foreign key was used to identify the records.
+As expected, this query is fast and uses the `PRIMARY KEY`. Checkout the query plan to verify this.
+
+A more interesting query would be to retrieve all the orders for a specific truck and include the truck details.
+```sql
+-- CAPTURE A TRUCK_ID IN A SESSION VARIABLE TO USE
+SET TRUCK_ID = (SELECT ANY_VALUE(TRUCK_ID) FROM ORDER_HEADER);
+    
+-- SELECT ORDERS FOR A PARTICULAR TRUCK
+SELECT *
+FROM ORDER_HEADER O 
+INNER JOIN TRUCK T ON T.TRUCK_ID=O.TRUCK_ID
+WHERE TRUE
+    AND O.TRUCK_ID = $TRUCK_ID
+;
+```
+This query plan will include table scans of both the `ORDER_HEADER` and `TRUCK`. There are no indexes or relationships that can help
+the query optimizer build a fast execution plan so the query executes in `COLUMN_MODE` against the object store.
+
 <img src="assets/explore_75.png"/>
+
+Let's relate `ORDER_HEADER` and `TRUCK` tables with a `FOREIGN KEY` and see how this affects the query plan. Rebuild the table with a 
+`FOREIGN KEY`:
+
+```sql
+--- CREATE ORDERS FOR EACH TRUCK
+CREATE OR REPLACE HYBRID TABLE ORDER_HEADER (
+    ORDER_ID NUMBER(38,0) NOT NULL,
+    TRUCK_ID NUMBER(38,0) NOT NULL,
+    ORDER_TIMESTAMP TIMESTAMP_NTZ NOT NULL,
+    ORDER_TOTAL NUMBER(38,2),
+    ORDER_STATUS VARCHAR(200) DEFAULT 'INQUEUE',  -- USE DEFAULT VALUE
+    PRIMARY KEY (ORDER_ID),
+    FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID)  -- REFER TO THE TRUCK TABLE FOR TRUCK_ID
+);
+INSERT INTO ORDER_HEADER (ORDER_ID, TRUCK_ID, ORDER_TIMESTAMP, ORDER_TOTAL)
+SELECT
+    SEQ4(),
+    T.TRUCK_ID,
+    DATEADD('seconds', UNIFORM(-1*60*60*24*365, -1*60*60, RANDOM()), CURRENT_TIMESTAMP()), -- SPREAD RANDOM ORDER IDS OUT
+    UNIFORM(200.0, 25000.0, RANDOM()),
+FROM TABLE(GENERATOR(ROWCOUNT => 5000))
+CROSS JOIN (SELECT TRUCK_ID FROM TRUCK SAMPLE (1000 ROWS)) T    -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
+;
+
+-- SEE WHAT THE RESULTS LOOK LIKE
+SELECT * FROM ORDER_HEADER LIMIT 10;
+```
+>aside positive
+> **NOTE:** Adding a foreign key to the table requires us to use a CREATE then INSERT method. This is so the key can be
+> evaluated as records are inserted.
+>
+
+
+Re-run the query looking for all the truck orders:
+```sql
+-- CAPTURE A TRUCK_ID IN A SESSION VARIABLE TO USE
+SET TRUCK_ID = (SELECT ANY_VALUE(TRUCK_ID) FROM ORDER_HEADER);
+    
+-- SELECT ORDERS FOR A PARTICULAR TRUCK
+SELECT *
+FROM ORDER_HEADER O 
+INNER JOIN TRUCK T ON T.TRUCK_ID=O.TRUCK_ID
+WHERE TRUE
+    AND O.TRUCK_ID = $TRUCK_ID
+;
+```
+The query plan shows that the `FOREIGN KEY` was used to push the `TRUCK_ID` into a filter condition, speeding up the query.
+<img src="assets/explore_76.png"/>
 
 Another query might be one that pulls a specific order for a specific truck:
 ```sql
+SET (TRUCK_ID, ORDER_ID) = (SELECT ANY_VALUE(TRUCK_ID), ANY_VALUE(ORDER_ID) FROM ORDER_HEADER);
+
 SELECT *
 FROM TRUCK T
 INNER JOIN ORDER_HEADER O ON T.TRUCK_ID=O.TRUCK_ID
 WHERE TRUE
-AND T.TRUCK_ID = 1
-AND O.ORDER_ID = 190491
+    AND T.TRUCK_ID = $TRUCK_ID
+    AND O.ORDER_ID = $ORDER_ID
 ;
+
 ```
 Unsurprisingly, the query plan shows both primary keys in use loading only a single record
 from each table.
+
 <img src="assets/explore_78.png"/>
 
-## Explore foreign keys with secondary indexes
+Next, we will explore how secondary indexes help queries that do not use primary keys.
+
+## Explore secondary indexes
 A common query pattern is to join two tables using foreign keys and filter one of them with another pattern. For example,
-this query is fetching orders over the last 30 days for a specific truck:
+this query is fetching orders over the last few days for a specific truck:
+
 ```sql
 SELECT *
 FROM ORDER_HEADER O
 INNER JOIN TRUCK T ON T.TRUCK_ID=O.TRUCK_ID
 WHERE TRUE
-AND O.ORDER_TIMESTAMP > DATEADD('days', -30, CURRENT_TIMESTAMP()) :: TIMESTAMP_NTZ
-AND T.TRUCK_ID = 1
+    AND O.ORDER_TIMESTAMP > DATEADD('days', -2, CURRENT_TIMESTAMP()) :: TIMESTAMP_NTZ  -- NOTE THE CAST
+    AND T.TRUCK_ID = $TRUCK_ID
 ;
 ```
-The `TRUCK_ID` will perform filtering on the primary key and use the foreign key to filter the orders table. The timestamp filter
-would then happen after data was fetched from disk. Note that the parameter value for `ORDER_TIMESTAMP` was cast to `TIMESTAMP_NTZ`
-for datatype matching purposes. Performance will increase with the use of a secondary
-index. As an exercise for the reader, look at the query plan for this query. 
+The `TRUCK_ID` will be used as a primary key filter on `TRUCK` and a foreign key filter on `ORDER_HEADER`. The timestamp filter
+will be applied after data was fetched from hybrid table object store. From the query profile, we can see that only the
+`TRUCK_ID` was used as an access predicate. The `ORDER_TIMESTAMP` filtering was completed after data was fetched.
+
+<img src="assets/explore_80.png"/>
+
+As this is a common access path for our application, a secondary index will increase performance. Let's add the secondary
+index to the table. There is a foreign key that will be used to push `TRUCK_ID` down from `TRUCK`, so we will take
+advantage of that by creating the index as `(TRUCK_ID, ORDER_TIMESTAMP )`:
 
 ```sql
--- CREATE THE INDEX - THIS IS ASYNCRONOUS REQUEST
-CREATE INDEX IF NOT EXISTS IDX_TIMESTAMPS
-  ON ORDER_HEADER ( ORDER_TIMESTAMP, TRUCK_ID );
-  
--- MONITOR THE BUILD STATUS OF THE INDEX - THIS IS SNOWFLAKE 'FLOW' QUERY FORMAT
-SHOW INDEXES
-->> SELECT "status", * FROM $1 WHERE "name" = 'IDX_TIMESTAMPS';
+--- CREATE ORDERS FOR EACH TRUCK
+CREATE OR REPLACE HYBRID TABLE ORDER_HEADER (
+    ORDER_ID NUMBER(38,0) NOT NULL,
+    TRUCK_ID NUMBER(38,0) NOT NULL,
+    ORDER_TIMESTAMP TIMESTAMP_NTZ NOT NULL,
+    ORDER_TOTAL NUMBER(38,2),
+    ORDER_STATUS VARCHAR(200) DEFAULT 'INQUEUE',  -- USE DEFAULT VALUE
+    PRIMARY KEY (ORDER_ID),
+    FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID),  -- REFER TO THE TRUCK TABLE FOR TRUCK_ID
+    INDEX IDX_TRUCK_TIMESTAMPS (TRUCK_ID, ORDER_TIMESTAMP )  -- ADD THE SECONDARY INDEX FOR ORDER_TIMESTAMP
+);
+INSERT INTO ORDER_HEADER (ORDER_ID, TRUCK_ID, ORDER_TIMESTAMP, ORDER_TOTAL)
+SELECT
+    SEQ4(),
+    T.TRUCK_ID,
+    DATEADD('seconds', UNIFORM(-1*60*60*24*365, -1*60*60, RANDOM()), CURRENT_TIMESTAMP()), -- SPREAD RANDOM ORDER IDS OUT
+    UNIFORM(200.0, 25000.0, RANDOM()),
+FROM TABLE(GENERATOR(ROWCOUNT => 5000))
+CROSS JOIN (SELECT TRUCK_ID FROM TRUCK SAMPLE (1000 ROWS)) T    -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
+;
+
+-- SEE WHAT THE RESULTS LOOK LIKE
+SELECT * FROM ORDER_HEADER LIMIT 10;
 ```
-Building indexes can take some time. When the status changes from `BUILD IN PROGRESS` to `ACTIVE`, the query optimizer will
-begin using the indexes to optimize queries. This query uses Snowflake [flow operators](https://docs.snowflake.com/en/sql-reference/operators-flow).
 
-Now that the index is `ACTIVE`, we can use it in a query:
+>aside positive
+> **NOTE:** We followed best practices and added the secondary index when we created the table. Indexes created in this
+> way will be `ACTIVE` as soon as the table is created. If a secondary indexes is added
+> after the table is created, the index must be in `ACTIVE` status before it will be used in a query. Check the status
+> using these types of queries (including using the [Snowflake Flow Operator](https://docs.snowflake.com/en/sql-reference/operators-flow))
+> ```sql
+> -- SEE ALL INDEXES IN THE CURRENT SCHEMA
+> SHOW INDEXES;
+> -- OR SEE SPECIFIC STATUS FOR INDEXES ON A PARTICULAR TABLE
+> SHOW INDEXES
+> ->> SELECT "name", "status", "columns" FROM $1 WHERE "table" = 'ORDER_HEADER';
+> ```
+
+Once the index is `ACTIVE`, we can use it in a query:
 
 ```sql
+SET TRUCKID = (SELECT ANY_VALUE(TRUCK_ID) FROM ORDER_HEADER);
+
 SELECT *
 FROM ORDER_HEADER O
-         INNER JOIN TRUCK T ON T.TRUCK_ID=O.TRUCK_ID
+INNER JOIN TRUCK T ON T.TRUCK_ID=O.TRUCK_ID
 WHERE TRUE
-  AND O.ORDER_TIMESTAMP > DATEADD('days', -30, CURRENT_TIMESTAMP()) :: TIMESTAMP_NTZ
-AND T.TRUCK_ID = 1
+    AND O.ORDER_TIMESTAMP > DATEADD('days', -1, CURRENT_TIMESTAMP()) :: TIMESTAMP_NTZ
+    AND T.TRUCK_ID = $TRUCKID
 ;
 ```
 We can clearly see that the index has enabled the query optimizer to load data from disk in a filtered way, saving time and speeding
-the overall process.
+the query. Checking the Access Predicates, both columns are used to fetch data from storage.
 
-<img src="assets/explore_79.png"/>
+<img src="assets/explore_83.png"/>
 
+>aside positive
+> **NOTE:** Looking at the query in detail, you will notice that there is a cast to `TIMESTAMP_NTZ` for the `ORDER_TIMESTAMP`
+> predicate value. All types of timestamps are supported by hybrid tables, however, columns used in primary keys
+> or indexes are only supported as `TIMESTAMP_NTZ`. As an exercise, try the query without the cast and inspect
+> the result.
+> 
+
+Next, we will summarize best practices.
 
 ## Summarize best practices
 Hybrid table performance benefits from following best practices that extract the best performance and higest value
 from this Snowflake feature.
-1. Use a `primary key`, built from business columns, to drive the highest performance.
-1. Implement `foreign keys` when joining hybrid tables.
+1. Use a `PRIMARY KEY`, built from business columns, to drive the highest performance.
+1. Implement `FOREIGN KEYS` when joining hybrid tables.
 1. Write queries that directly use keys and indexes.
-1. Use Snowhouse query plans to verify query optimization and performance.
+1. Use Snowsight query plans to verify query optimization and performance.
+1. Pay close attention to data types and join criteria 
 1. Follow Snowflake [hybrid table best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) when building applications.
 
 
@@ -366,7 +477,7 @@ from this Snowflake feature.
 Having completed this quickstart you have successfully
 - Created hybrid tables with primary keys
 - Wrote and learned how to analyze a query profile
-- Created a child table using foreign keys to a parent table
+- Created a child table using foreign keys referencing a parent table
 - Joined two tables and worked with foreign key query profiles
 - Utilized secondary indexes to speed query performance across non-primary key columns
 
@@ -375,5 +486,5 @@ Having completed this quickstart you have successfully
 - [Snowflake Unistore Landing Page](https://www.snowflake.com/en/data-cloud/workloads/unistore/)
 - [Snowflake Documentation for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
 - [Hybrid Table Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
-- [Hybrid Table Performace Testing Quickstart](https://quickstarts.snowflake.com/guide/hybrid-tables-jmeter-performance-testing/index.html#0)
+- [Hybrid Table Performance Testing Quickstart](https://quickstarts.snowflake.com/guide/hybrid-tables-jmeter-performance-testing/index.html#0)
 - [Simplify Application Development Hybrid Tables Blog](https://www.snowflake.com/blog/simplify-application-development-hybrid-tables)
