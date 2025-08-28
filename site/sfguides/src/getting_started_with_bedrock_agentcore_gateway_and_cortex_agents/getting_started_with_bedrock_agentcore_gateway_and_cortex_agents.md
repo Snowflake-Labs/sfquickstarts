@@ -26,7 +26,7 @@ Duration: 10
 Users will create an intelligent search system for movie script PDFs and structured movie data using Snowflake Cortex AI and via an AgentCore Gateway. Snowflake Cortex AI will process and index the unstructured PDF movie scripts, making them searchable through advanced text analysis. We will then include the Cortex Agent as a target from a Bedrock AgentCore Gateway that can be used alongside other targets as part of a broader Bedrock AgentCore Agent.
 
 The end-to-end workflow will look like this:
-![](assets/AgentCoreArch.png)
+![](assets/AgentCoreArchitecture.png)
 
 Ingest data into structured and unstructured data stores then:
 1. Create a Cortex Analyst service with structured data with a Semantic View.
@@ -575,6 +575,147 @@ There are some great blogs on Medium regarding Snowflake Cortex and Amazon Servi
 
 
 - [AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-building.html)
+
+<!-- ------------------------ -->
+## Appendix
+
+### Cleanup
+
+```bash
+# Load settings to get gateway ID
+GATEWAY_ID=$(cat settings.json | python -c "import sys, json; print(json.load(sys.stdin)['gateway_id'])")
+
+# Get target ID (SnowflakeCortexTarget)
+TARGET_ID=$(aws bedrock-agentcore-control list-gateway-targets \
+  --gateway-identifier $GATEWAY_ID \
+  --query "items[?name=='SnowflakeCortexTarget'].targetId" \
+  --output text)
+
+# Delete target first (required before deleting gateway)
+echo "Deleting target: $TARGET_ID"
+aws bedrock-agentcore-control delete-gateway-target \
+  --gateway-identifier $GATEWAY_ID \
+  --target-id $TARGET_ID
+
+# Then delete gateway
+echo "Deleting gateway: $GATEWAY_ID"
+aws bedrock-agentcore-control delete-gateway \
+  --gateway-identifier $GATEWAY_ID
+
+# Remove local files
+rm settings.json
+
+echo "Cleanup complete!"
+
+# Deactivate virtual environment when done
+deactivate
+```
+
+### Troubleshooting
+
+#### Invalid Bearer Token Error
+
+If you see this error or similar:
+```json
+{"jsonrpc": "2.0", "id": "list-tools", "error": {"code": -32001, "message": "Invalid Bearer token"}}
+```
+You will need to refresh your OAuth token from Amazon Cognito to use AgentCore Gateway.
+
+#### Manual Token Refresh
+
+You can create a file with the below contents to refresh the token:
+
+```python
+import json
+from bedrock_agentcore_starter_toolkit.operations.gateway.client import GatewayClient
+
+# Load settings
+with open("settings.json") as f:
+    settings = json.load(f)
+
+# Refresh token
+client = GatewayClient(region_name=settings["region"])
+new_token = client.get_access_token_for_cognito(settings["client_info"])
+
+# Update settings
+settings["access_token"] = new_token
+with open("settings.json", "w") as f:
+    json.dump(settings, f, indent=2)
+
+print("Token refreshed!")
+```
+
+#### AgentCore Gateway OpenAPI Target
+
+The **OpenAPI schema** (`cortex_agents_openapi.json`) defines the **API contract** between AgentCore Gateway and Snowflake Cortex API:
+
+```python
+target_response = client.create_mcp_gateway_target(
+    gateway=gateway_response,
+    name="SnowflakeCortexTarget",
+    target_type="openApiSchema",                    # Tells AgentCore this is an OpenAPI target
+    target_payload={"inlinePayload": json.dumps(openapi_schema)}, # Inline schema definition
+    credentials={...}
+)
+```
+
+The OpenAPI schema defines the API endpoint, request and response format, and server variables for the dynamic Snowflake account URL. We provide the Snowflake account information in the test_client directly.
+
+#### OpenAPI Schema Processing flow
+
+1. AgentCore Gateway receives the MCP tool call request from the test_client.py with the provided Snowflake account.
+2. AgentCore Gateway validates the request against the OpenAPI schema and processes OpenAPI server variables to construct the target URL.
+3. AgentCore Gateway converts MCP format to Snowflake Cortex Agents API format.
+4. AgentCore Gateway retrieves credentials from the configured AgentCore Credential Provider and adds authentication headers.
+5. AgentCore Gateway makes the HTTP request to the Cortex Agents API. 
+6. AgentCore Gateway returns the API response to test_client.py through MCP.
+
+
+```json
+{
+  "servers": [
+    {
+      "url": "https://{account_url}/api/v2",  // Dynamic URL with variable
+      "variables": {
+        "account_url": {
+          "description": "Your Snowflake account URL",
+          "default": "myaccount.snowflakecomputing.com"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/cortex/agent:run": {  // Snowflake Cortex endpoint
+      "post": {
+        "parameters": [
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": true,
+            "schema": {"type": "string", "default": "application/json"}
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["model", "messages"],
+                "properties": {
+                  "model": {"type": "string", "enum": ["claude-4-sonnet", ...]},
+                  "messages": {"type": "array", ...},
+                  "tools": {"type": "array", ...},
+                  "tool_resources": {"type": "object", ...}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
 
 
 
