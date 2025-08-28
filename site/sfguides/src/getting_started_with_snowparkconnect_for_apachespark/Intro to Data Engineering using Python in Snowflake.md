@@ -32,6 +32,8 @@ With Snowpark Connect for Apache Spark, you can connect your existing Spark work
 
 In Apache Spark™ version 3.4, the Apache Spark community introduced Spark Connect. Its decoupled client-server architecture separates the user’s code from the Spark cluster where the work is done. This new architecture makes it possible for Snowflake to power Spark jobs.
 
+![Snowpark Connect](assets/snowpark_connect.png)
+
 ### What You'll Build
 
 * Run simple PySpark code examples from Snowflake
@@ -70,7 +72,7 @@ Now you have successfully imported the notebook that contains PySpark code.
 
 ### Install snowpark-connect Package and run the code
 
-Next up, select the packages drop down at the top right of the notebook. Look for `snowpark-connect` package and install it using the package picker.
+Next up, select the packages drop down at the top right of the notebook. Look for `snowflake-dataframe-processor` package and install it using the package picker.
 
 After the installation is complete, start or restart the notebook session.
 
