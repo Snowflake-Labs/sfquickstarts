@@ -23,7 +23,7 @@ Duration: 10
 ### Use Case
 
 
-Users will create an intelligent search system for movie script PDFs and structured movie data using Snowflake Cortex AI and via an AgentCore Gateway. Snowflake Cortex AI will process and index the unstructured PDF movie scripts, making them searchable through advanced text analysis. We will then include the Cortex Agent as a target from a Bedrock AgentCore Gateway that can be used alongside other targets as part of a broader Bedrock AgentCore Agent.
+Users will create an intelligent search system on structured and unstructured movie data using Snowflake Cortex AI and via an AgentCore Gateway. Snowflake Cortex AI will process and index the unstructured movie reviews and structured movie ratings, making them searchable through advanced text analysis. We will then include the Cortex Agent as a target from a Bedrock AgentCore Gateway that can be used alongside other targets as part of a broader Bedrock AgentCore Agent.
 
 The end-to-end workflow will look like this:
 ![](assets/AgentCoreArchitecture.png)
