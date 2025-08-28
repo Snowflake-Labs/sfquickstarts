@@ -434,7 +434,7 @@ from each table.
 
 Next, we will explore how secondary indexes help queries that do not use primary keys.
 
-## Explore secondary indexes
+## Explore joins with secondary indexes
 A common query pattern is to join two tables using foreign keys and filter one of them with another pattern. For example,
 this query is fetching orders over the last few days for a specific truck:
 
@@ -528,10 +528,10 @@ Hybrid table performance benefits from following best practices that extract the
 from this Snowflake feature.
 1. Use a `PRIMARY KEY`, built from business columns, to drive the highest performance.
 1. Implement `FOREIGN KEYS` when joining hybrid tables.
-1. Write queries that directly use keys and indexes.
-1. Use Snowsight query plans to verify query optimization and performance.
-1. Pay close attention to data types and join criteria 
-1. Follow Snowflake [hybrid table best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) when building applications.
+1. Write queries that use keys and indexes to keep queries in `ROW_BASED` mode.
+1. Use Snowsight query plans to verify optimal query plans and troubleshoot performance issues.
+1. Pay close attention to data types, join criteria, and index utilization.
+1. Follow Snowflake [hybrid table best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices).
 
 
 ## What You Learned
@@ -539,8 +539,9 @@ from this Snowflake feature.
 Having completed this quickstart you have successfully
 - Created hybrid tables with primary keys
 - Wrote and learned how to analyze a query profile
+- Learned how to use secondary indexes and constraints
 - Created a child table using foreign keys referencing a parent table
-- Joined two tables and worked with foreign key query profiles
+- Joined tables and worked with secondary indexes to maximize performance 
 - Utilized secondary indexes to speed query performance across non-primary key columns
 
 
