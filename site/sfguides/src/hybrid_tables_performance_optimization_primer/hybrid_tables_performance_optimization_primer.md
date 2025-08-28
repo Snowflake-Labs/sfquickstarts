@@ -119,7 +119,7 @@ CREATE OR REPLACE HYBRID TABLE TRUCK (
     YEAR NUMBER(38,0) NOT NULL,
     MAKE VARCHAR(250) NOT NULL,
     FRANCHISE_ID NUMBER(38,0) NOT NULL,
-    TRUCK_EMAIL VARCHAR NOT NULL UNIQUE,
+    TRUCK_EMAIL VARCHAR NOT NULL,
     PRIMARY KEY (TRUCK_ID) 
 )
 AS SELECT
@@ -151,6 +151,7 @@ The screen gives you basic information about the query.
 
 >aside positive
 > **NOTE:** As this query was executed on Snowsight, compile and execution times will be longer than connected driver based queries.
+> Review [hybrid table best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) to learn more.
 >
 
 Clicking on the "Query Profile" button:
@@ -182,55 +183,114 @@ push down the predicate and is the fastest and most efficient way to execute the
 Instead of querying the table using the primary key, let's query the table using a column that is **not** indexed and see what
 the resulting query plan looks like.
 ```sql
+SET EMAIL = (SELECT ANY_VALUE(TRUCK_EMAIL) FROM TRUCK);
+    
 SELECT *
 FROM TRUCK
-WHERE MAKE LIKE 'Peter%' AND YEAR IN (2000, 2001);
+WHERE TRUE
+    AND TRUCK_EMAIL = $EMAIL;
 ```
-We can see from the query profile screen that the query plan looks far different. Much time is spent on disk I/O:
+We can see from the query profile screen that the query plan looks far different. Much time is spent on the table scan and it
+is the most expensive node in the plan:
 <img src="assets/explore_40.png"/>
 
 Looking at the "TableScan" node, we can clearly see that the scan was `COLUMN_BASED` and processed many partitions with lots of data. 
 The optimizer was not able to push down any access predicates against an index.
 
-<img src="assets/explore_50.png"/>
-
 ### Add a secondary index
 Clearly, the above query is not optimal. A secondary index can help the query run faster. Let's create a secondary index
-and use it to explore the query improvement. Best practices tell us to create indexes during table creation time but for testing,
-creating a secondary index on an existing table is convenient. The index build will take a bit of time and the index
-will not be used until the status is `ACTIVE`. This example query for status uses a [flow operator](https://docs.snowflake.com/en/sql-reference/operators-flow):
+and use it to explore the query improvement:
 ```sql
-CREATE INDEX IF NOT EXISTS IDX_TRUCK_YEAR ON TRUCK (YEAR, MAKE);
--- USING THE FLOW SYNTAX, WATCH THE STATUS OF THE INDEX CHANGE FROM 'BUILD IN PROGRESS` TO 'ACTIVE'
-SHOW INDEXES ->> 
-     SELECT "status", "name", "created_on", "table", "columns" 
-     FROM $1 IDX WHERE TRUE AND "name" = 'IDX_TRUCK_YEAR';
+CREATE OR REPLACE HYBRID TABLE TRUCK (
+    TRUCK_ID NUMBER(38,0) NOT NULL,
+    YEAR NUMBER(38,0) NOT NULL,
+    MAKE VARCHAR(250) NOT NULL,
+    FRANCHISE_ID NUMBER(38,0) NOT NULL,
+    TRUCK_EMAIL VARCHAR NOT NULL UNIQUE,
+    PRIMARY KEY (TRUCK_ID),
+    INDEX IDX_TRUCK_EMAIL (TRUCK_EMAIL)
+)
+AS SELECT
+    SEQ4(),
+    UNIFORM(1970, 2025, RANDOM()),
+    ARRAY_CONSTRUCT( 'Freightliner', 'Peterbilt', 'Kenworth', 'Volvo Trucks', 'Mack', 'International (Navistar)', 'Western Star')[UNIFORM(0,6, RANDOM())],
+    UNIFORM(1, 250, RANDOM()),
+    RANDSTR(8, RANDOM()) || '@sf-quickstart'
+FROM TABLE(GENERATOR(ROWCOUNT => 1000000)) -- WE NEED ENOUGH RECORDS FOR REASONABLE TESTING OTHERWISE EVERYTHING IS IN-MEMORY
+;
+-- SEE WHAT THE RESULTS LOOK LIKE
+SELECT * FROM TRUCK LIMIT 10;
 ```
-Once the index is `ACTIVE` we can re-run the query and show that it is using the newly created index:
+Once the table is created we can re-run the query and show that it is using the newly created index:
 ```sql
+SET EMAIL = (SELECT ANY_VALUE(TRUCK_EMAIL) FROM TRUCK);
+
 SELECT *
 FROM TRUCK
 WHERE TRUE
-    AND MAKE = 'Peterbilt'
-    AND YEAR IN (2000, 2001);
+  AND TRUCK_EMAIL = $EMAIL;
 ```
 
 Using the index results in a much better query plan that uses the index we created:
-<img src="assets/explore_60.png"/>
+<img src="assets/explore_61.png"/>
 
-This particular index likely has good enough cardinality that using just the first column of the index will also produce a solid query plan.
-While more time is spent returning the results, the partial index is still used to efficiently fetch data from storage.
+### Add a UNIQUE constraint
+Hybrid tables includes capability to add and enforce UNIQUE constraints to a column. Creating a constraint also creates an index
+so let's explore a multi-column constraint. Recreate the table adding the UNIQUE constraint:
+
+```sql
+CREATE OR REPLACE HYBRID TABLE TRUCK (
+    TRUCK_ID NUMBER(38,0) NOT NULL,
+    YEAR NUMBER(38,0) NOT NULL,
+    MAKE VARCHAR(250) NOT NULL,
+    FRANCHISE_ID NUMBER(38,0) NOT NULL,
+    TRUCK_EMAIL VARCHAR NOT NULL,
+    PRIMARY KEY (TRUCK_ID),
+    INDEX IDX_TRUCK_EMAIL (TRUCK_EMAIL),
+    CONSTRAINT UNIQUE_TRUCK_EMAIL UNIQUE (FRANCHISE_ID, TRUCK_EMAIL)
+)
+AS SELECT
+    SEQ4(),
+    UNIFORM(1970, 2025, RANDOM()),
+    ARRAY_CONSTRUCT( 'Freightliner', 'Peterbilt', 'Kenworth', 'Volvo Trucks', 'Mack', 'International (Navistar)', 'Western Star')[UNIFORM(0,6, RANDOM())],
+    UNIFORM(1, 250, RANDOM()),
+    RANDSTR(8, RANDOM()) || '@sf-quickstart'
+FROM TABLE(GENERATOR(ROWCOUNT => 1000000)) -- WE NEED ENOUGH RECORDS FOR REASONABLE TESTING OTHERWISE EVERYTHING IS IN-MEMORY
+;
+-- SEE WHAT THE RESULTS LOOK LIKE
+SELECT * FROM TRUCK LIMIT 10;
+```
+
+The UNIQUE constraint automatically builds an index that can be used in a query predicate. Let's find a truck by `FRANCHISE_ID` and `TRUCK_EMAIL`:
+
+```sql
+SET (FRANCHISE, EMAIL) = (SELECT FRANCHISE_ID, TRUCK_EMAIL FROM TRUCK SAMPLE (1 ROWS));
+    
+SELECT *
+FROM TRUCK
+WHERE TRUE
+    AND FRANCHISE_ID = $FRANCHISE
+    AND TRUCK_EMAIL = $EMAIL
+;
+```
+
+<img src="assets/explore_63.png"/>
+
+
+This particular index likely has good cardinality such that using just the first column of the index will also produce a solid query plan.
+While more time is spent returning the results, the partial index is still used to efficiently fetch data from storage:
 ```sql
 SELECT *
 FROM TRUCK
 WHERE TRUE
-    --AND MAKE = 'Peterbilt'
-    AND YEAR IN (2000, 2001);
+  AND FRANCHISE_ID = $FRANCHISE
+  -- AND TRUCK_EMAIL = $EMAIL
+;
 ```
-<img src="assets/explore_70.png"/>
+<img src="assets/explore_65.png"/>
 
 >aside positive
-> **NOTE:** Both primary keys and secondary indexes should be accessed using their configured columns from left to right.
+> **NOTE:** Both primary keys and other indexes should be accessed using their configured columns from left to right.
 > _Skipping_ a column will force the query planner to only use the columns referenced in the predicate before the
 > skipped column. See [best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) for further details.
 >
