@@ -268,11 +268,6 @@
       "type": 301
     },
     {
-      "source": "guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
       "source": "guide/machine_learning_with_snowpark_python/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
