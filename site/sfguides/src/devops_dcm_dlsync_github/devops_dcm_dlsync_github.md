@@ -12,7 +12,7 @@ tags: DevOps, Data Engineering, Database Change Management
 ## Overview
 Duration: 2
 
-![logo](assets/dlsync-logo.png)
+<img src="assets/dlsync-logo.png" width="300" alt="logo"/>
 
 This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with GitHub Actions using [DLSync](https://github.com/Snowflake-Labs/dlsync). DLSync is a database change management tool designed to streamline the development and deployment of Snowflake changes. By associating each database object (view, table, udf, etc.) with a corresponding SQL script file, DLSync tracks every modification, ensuring efficient and accurate updates. DLSync automatically handles script dependencies during deployment, ensuring that database objects are created and updated in the correct order based on their interdependencies. Additionally, DLSync includes built-in unit testing capabilities that allow you to validate your database objects with test scripts before deployment, ensuring code quality and reliability.
 
@@ -78,7 +78,7 @@ For more information, see the [DLSync project page](https://github.com/Snowflake
 >  **Note** - DLSync is a community-developed tool, not an official Snowflake offering. It comes with no support or warranty.
 
 <!-- ------------------------ -->
-## Project Structure and Scripts
+## Project Structure And Scripts
 Duration: 4
 
 To use DLSync, create a script root directory containing all scripts and configurations. Here's an example structure for our demo:
@@ -401,7 +401,7 @@ jobs:
 After creating or updating your scripts, you need to commit and push the changes to Git to trigger the GitHub Actions workflow. 
 
 <!-- ------------------------ -->
-## Manually Run Actions Workflow
+## Run Actions Workflow
 Duration: 3
 
 To manually run the workflow:
