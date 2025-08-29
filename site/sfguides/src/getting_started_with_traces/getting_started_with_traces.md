@@ -1,7 +1,7 @@
 author: Brad Culberson
 id: getting_started_with_traces
 summary: Getting Started with Traces
-categories: featured,getting-started,observability
+categories: featured,getting-started,observability,trail
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
