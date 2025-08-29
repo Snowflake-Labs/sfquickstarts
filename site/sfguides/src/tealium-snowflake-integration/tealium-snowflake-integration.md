@@ -16,18 +16,17 @@ Duration: 2
 ![banner](assets/QuickstartHeader.png)
 
 ### Introduction
-This quickstart guide will review the configuration of the Snowflake Data Source and Snowflake Streaming connectors within Tealium. Tealium's Customer Data Hub acts as a high quality data source and a real-time activation engine for Snowflake. Use Tealium to capture and send low latency customer interaction data to Snowflake for further analysis or to inform AI initiatives, and automate real-time data activation using Snowflake data across Tealium’s 1300+ integration marketplace.
+This quickstart guide describes how to configure the Snowflake Data Source and Snowflake Streaming connectors within Tealium. The Tealium Customer Data Hub acts as a high quality data source and a real-time activation engine for Snowflake. Use Tealium to capture and send low latency customer interaction data to Snowflake for further analysis or to inform AI initiatives, and automate real-time data activation using Snowflake data across the 1300+ integration marketplace in Tealium.
 
 #### Send Data to Snowflake
-- Create a staging table in Snowflake to land the data
-- In Tealium, configure the Snowflake Streaming connector
-- Process the data from the staging table to the appropriate tables in Snowflake
+- Create a staging table in Snowflake to land the data.
+- In Tealium, configure the Snowflake Streaming connector.
+- Process the data from the staging table to the appropriate tables in Snowflake.
 
 #### Activate Data from Snowflake
-- Identify or create a table or view of data in Snowflake that you want to activate in Tealium
-- In Tealium configure the data source by establishing a connection to Snowflake, creating a query to capture only the data needed, map the event and visitor data to appropriate Tealium data attributes
-- Once the connection is established, data is ingested in near real-time (as fast as 2 seconds) and is activated based on business rules 
-
+- Identify or create a table or view of data in Snowflake that you want to activate in Tealium.
+- In Tealium, configure the data source by establishing a connection to Snowflake, creating a query to capture only the data needed, map the event and visitor data to appropriate Tealium data attributes.
+- After the connection is established, data is ingested in near real-time (as fast as 2 seconds) and is activated based on business rules. 
 
 ### What You'll Need
 
@@ -45,7 +44,6 @@ This quickstart guide will review the configuration of the Snowflake Data Source
 
 - Snowflake Streaming connector in Tealium to stream data into Snowflake
 - Snowflake Data Source in Tealium to capture data from Snowflake
-
 
 <!-- ------------------------ -->
 
@@ -100,7 +98,7 @@ The connector does not support the following table or column configurations
 #### IP Addresses to Allow
 Snowflake has strict rules about which systems it accepts requests from. You will need to add the [Tealium IP addresses](https://docs.tealium.com/server-side/administration/ip-allow-list/) to your Snowflake allow list.
 
-> **_NOTE:_** You must add the **us-west-1** along with the server-side profile region to your allowlist. If you do not add these addresses to your allowlist, you will see errors when you try to fetch column data.
+> **_NOTE:_** ou must add the `us-west-1` and the server-side profile region addresses to your allowlist. If you do not add these addresses to your allowlist, you will see errors when you try to fetch data. Tealium uses the `us-west-1` IP addresses during connector configuration.
 
 ### Best Practices
 We recommend the following Snowflake table configurations for the Snowflake Streaming connector.
@@ -127,16 +125,23 @@ After adding the connector, configure the following settings:
 - **URL**
   - The Snowflake account URL in the following format: **<account_identifier>.snowflakecomputing.com**
 - **Private Key**
-  - The customer-generated private key. Supports both encrypted and unencrypted versions. For instructions on generating the Snowflake private key, see [Snowflake > Key-pair authentication and key-pair rotation](https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-the-private-key)
+  - The customer-generated private key. Supports both encrypted and unencrypted versions. For instructions on generating the Snowflake private key, see [Snowflake > Key-pair authentication and key-pair rotation](https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-the-private-key). If the private key is encrypted, you must provide the Private Key Passphrase.
+- **Private Key Passphrase**  
+The encrypted private key passphrase for use with an encrypted private key. Do not assign a value if the private key is unencrypted.
 
 ![Authentication Configuration](assets/SnowflakeAuthentication.png)
 
 #### Key-pair Generation
-To complete the connector authentication, use the following steps to alter the username with the public key details in Snowflake.
+To complete the connector authentication, use the following steps to alter the username with the public key details in Snowflake:
 
-1. Generate a public key in Snowflake. For information, see [Generate a Public Key](https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-a-public-key)
-2. Assign the public key to the **username** that is being used with the connector by using an **ALTER USER** command in Snowflake. *Note* Only owners with **ACCOUNTADMIN** privileges can alter a user.
-3. Run the query to update the user with the new public key
+1. Generate a public key in Snowflake. For information, see [Generate a Public Key](https://docs.snowflake.com/en/user-guide/key-pair-auth#generate-a-public-key).
+2. Assign the public key to the above user by using an `ALTER USER` command in Snowflake. Only owners of users or users with SECURITYADMIN roles or higher can alter a user. For more information, see [Assign the public key to a Snowflake user](https://docs.snowflake.com/en/user-guide/key-pair-auth#assign-the-public-key-to-a-snowflake-user).  
+To successfully assign the public key to the user, ensure the following:
+    * Enter the Snowflake username in double quotes (`"`). For example, `"SNOWFLAKE.USER"`.
+    * Copy and paste the public key without line breaks.
+3. Run the query to update the user with the new public key.
+
+Snowflake supports public and private key rotations. For more information, see [Configuring key-pair rotation](https://docs.snowflake.com/en/user-guide/key-pair-auth#configuring-key-pair-rotation). 
 
 #### Key-pair Generation Example
 
@@ -167,17 +172,17 @@ All connector actions require the following parameters:
 
 ![Connector Configuration](assets/SnowflakeConfiguration.png)
 
-After inputing the above values, a drop-down menu with the available columns will become available to map your data. When sending the entire dataset, you will need to assign which column the data will be recorded under. This column must be a **VARIANT** type column in Snowflake. A new row will be created in the staging table for each event with the dataset available under the selected column as an object.
+After inputing the above values, map your data using the drop-down menu listing the available columns. When sending the entire dataset, you will need to assign the column the data will be recorded under. This column must be a **VARIANT** type column in Snowflake. A new row will be created in the staging table for each event with the dataset available under the selected column as an object.
 
-In addition to selecting where to record the datasets, the timestamp column needs to be identified. Because staging tables cannot increment, Tealium generates a timestamp for when the data is sent to Snowflake and inputs that value into this timestamp column. If the default Tealium timestamp is not desirable, the optional **Timestamp Attribute** format selection can be configured to the appropriate format. For more information on supported timestamp types: see [Snowflake: Supported Java data types](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#supported-java-data-types).
+You must identify a timestamp column. Because staging tables cannot increment, Tealium generates a timestamp for when the data is sent to Snowflake and uses that value into this timestamp column. Use the **Timestamp Attribute** to select an attribute to assign as the timestamp if you want to send a different format. For more information on supported timestamp types, see [Snowflake: Supported Java data types](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#supported-java-data-types).
 
-If the Snowflake Streaming connector is being setup within Tealium's AudienceStream, an additional configuration feature called **Include Current Visit Data** is included. When enabled, the dataset will include both the visitor data and current visit data.
+If the Snowflake Streaming connector is being setup within Tealium AudienceStream, an additional configuration feature called **Include Current Visit Data** is included. When enabled, the dataset includes both the visitor data and current visit data.
 
 #### Custom Data
-Tealium provides the ability to select custom data attributes to send into Snowflake, providing greater control over your transferred data. When these actions are chosen, the configuration changes slightly to include the mapping of data attributes to columns in the Snowflake staging table. As previously mentioned, the staging table will require separate columns to be created for each data attribute, including a timestamp column. Once a data attribute is mapped, another attribute cannot be mapped to that column.
+Tealium provides the ability to select custom data attributes to send into Snowflake, providing greater control over your transferred data. Choosing custom data actions changes the configuration slightly to include the mapping of data attributes to columns in the Snowflake staging table. As previously mentioned, the staging table requires separate columns to be created for each data attribute, including a timestamp column. Once a data attribute is mapped, another attribute cannot be mapped to that column.
 
 #### User and Staging Table Creation Example
-The following code snippet will create a new role that will be used to create and gain access to write to the staging table. It is recommended that a separate User is created with limited access to only the staging table for the Tealium connector. The staging table created has two columns, one to map the timestamp and the other to land the data object.
+The following code snippet creates a new role that will be used to create and gain access to write to the staging table. We recommend that a separate user is created with limited access to only the staging table for the Tealium connector. The staging table created has two columns, one to map the timestamp and the other to land the data object.
 
 ```sql
 USE ROLE SECURITYADMIN;
@@ -264,12 +269,26 @@ Snowflake data source events are sent to EventStream and AudienceStream in the s
 
 ### Configuration
 
-#### Query Modes
+### Query Modes
+
 The Snowflake data source supports three query modes to let you control how data is imported from your Snowflake table or view:
 
-- **Timestamp + Incrementing**: (*Recommended*) Tealium imports new or modified rows based on a timestamp column and an auto-increment column. In this mode, rows with a newer timestamp than the previous import and a larger auto-increment value than the last imported row are imported. This is the most reliable mode to ensure that all rows are imported as expected.
-- **Timestamp**: Tealium imports new or modified rows based on a timestamp column. In this mode, rows with a newer timestamp than the previous import are imported. Use this mode if your table has a timestamp column that gets set or updated on every update.
-- **Incrementing**: Tealium imports rows based on an auto-increment column. In this mode, rows with a larger auto-increment value than the last imported row are imported. This will not detect modifications or deletions of existing rows. Use this mode if you only have an auto-increment column and do not have a timestamp column.
+#### Timestamp + Incrementing (Recommended) 
+
+{{%tip%}}**Timestamp + Incrementing** is the most reliable mode to ensure that all rows are imported as expected.{{%/tip%}}
+
+Tealium imports new or modified rows based on a timestamp column and an auto-increment column. In this mode, rows with a newer timestamp than the previous import and/or a larger auto-increment value than the last imported row are imported.
+
+#### Additional modes
+
+**Timestamp**  
+Tealium imports new or modified rows based on a timestamp column. In this mode, rows with a newer timestamp than the previous import are imported. Use this mode if your table has a timestamp column that gets set or updated on every update. 
+**Timestamp** is not as reliable as **Timestamp + Incrementing** because rows may be missed if there are duplicate timestamps in different batches of data, as shown in the example below.
+
+
+**Incrementing** 
+Tealium imports rows based on an auto-increment column. In this mode, rows with a larger auto-increment value than the last imported row are imported. Use this mode if you only have an auto-increment column and do not have a timestamp column. 
+**Incrementing** is not as reliable as **Timestamp + Incrementing** because it cannot detect modifications or deletions of existing rows.
 
 The Snowflake data source does not support bulk query modes.
 
@@ -296,7 +315,7 @@ or
 modification_time is greater than 01Apr 13:00
 ````
 - Using **Timestamp** mode (**modification_time** in the example): The data source will fetch rows 1-1000 and mark the maximum timestamp of **01Apr 13:00**. The next time the data source fetches the data, it will look for a timestamp greater than **01Apr 13:00**. In this case, row 1001 would be skipped because it has the same timestamp value but was fetched in different batch of data.
-Using **Incrementing** mode: The data source will fetch rows 1-1000 and mark the maximum auto-increment value of **1000**, but rows with new data and an updated timestamp column would not be processed. Only newly added rows that further increment the incrementing column (customer_id in the example) would be processed.
+- Using **Incrementing** mode: The data source will fetch rows 1-1000 and mark the maximum auto-increment value of **1000**, but rows with new data and an updated timestamp column would not be processed. Only newly added rows that further increment the incrementing column (**customer_id** in the example) would be processed.
 
 #### SQL Query
 In the Snowflake data source **Query Configuration**, select the columns you want to import into Tealium. To add additional conditions for processing, use the SQL **WHERE** clause. This option adds a **WHERE** statement to your query. **WHERE** statements support basic SQL syntax.
@@ -360,24 +379,28 @@ Ensure you have the following Snowflake account information before you get start
 3. Click **Save**.
 4. In the **Connection Configuration** screen, enter your Snowflake account password and then click **Establish Connection**.
 5. After you successfully connect to Snowflake, select the data source table from the **Table Selection** drop-down list. To import data from multiple Snowflake tables, create a view in Snowflake and select it from the drop-down list. For more information, see [Snowflake: Overview of Views](https://docs.snowflake.com/en/user-guide/views-introduction).
-6. Toggle on **Enable Processing** if you want the Snowflake data source to begin processing immediately.
-7. Click **Next**.
+6. Click **Next**.
 
-### Select Query Setting
-In the **Query Settings** screen, select the appropriate query mode for your Snowflake table or view.
+## Enable processing
 
-When you select **Timestamp** or **Incrementing**, you must list the name of one column to use to detect either new and modified rows or new rows only. If you select **Timestamp + Incrementing** you must list two columns, a timestamp column and a strictly incrementing column, to detect new and modified rows.
+Toggle on **Enable Processing** if you want the Snowflake data source to begin processing immediately after you save and publish your profile.
 
-For more information, see [About Snowflake data source > Query settings](https://docs.tealium.com/early-access/snowflake-data-source/about/#query-settings).
+When you are done, click **Continue**.
 
-When you are done, click **Next**.
 
-### Configure the SQL Query
-1. In the **Query > Select Columns** section, select the table or view columns to import to Tealium. To change the Snowflake table or view, click **Back** to return to Step 1: Establish a Snowflake connection.
-2. (Optional) To add custom conditions or additional filters, include a SQL **WHERE** clause.
-  - The **WHERE** clause does not support subqueries from multiple tables. To import data from multiple Snowflake tables, create a view in Snowflake and select the view in the data source configuration. For more information, see [Snowflake: Overview of Views](https://docs.snowflake.com/en/user-guide/views-introduction).
-3. Click **Test Query** to validate your SQL query and preview the results.
-4. Click **Next**.
+### Configure the query
+In the **Query Mode and Configuration** screen, select the appropriate query mode for your Snowflake table or view and optionally include a SQL `WHERE` clause to process only those records that match your custom condition.
+
+1. Select a query mode.  
+The query modes determine which column(s) in your Snowflake table or view will be used to detect new and/or modified rows. 
+    * If you select **Timestamp + Incrementing** (recommended) you must list two columns, a timestamp column and a strictly incrementing column, to detect new and modified rows. 
+    * If you select **Timestamp** or **Incrementing**, you must list the name of one column to use to detect either new and modified rows or new rows only.  
+For more information, see [About Snowflake data source > Query modes]({{< relref "about-snowflake-data-source#query-modes" >}}).
+1. Configure the query.
+    1. In the **Query > Select Columns** section, select the table or view columns to import to Tealium. To change the Snowflake table or view, click **Previous** and return to [Step 1: Establish a Snowflake connection](#step-1-establish-a-snowflake-connection).
+    1. (Optional) To add custom conditions or additional filters, include a SQL `WHERE` clause. {{%note%}} The `WHERE` clause does not support subqueries from multiple tables. To import data from multiple Snowflake tables, create a view in Snowflake and select the view in the data source configuration. For more information, see [Snowflake: Overview of Views](https://docs.snowflake.com/en/user-guide/views-introduction).{{%/note%}}
+    1. Click **Test Query** to validate your SQL query and preview the results.
+1. Click **Continue**.
 
 #### Example SQL for Querying a Data Table with Fake Data
 ```sql
@@ -458,7 +481,7 @@ There is a short delay while the logs are processed. You can view your exported 
 Duration: 1
 
 ### What You Learned
-- How to configure Tealium's Snowflake Streaming connector in EventStream and AudienceStream
+- How to configure the Tealium Snowflake Streaming connector in EventStream and AudienceStream
 - How to create a Snowflake Data Source in Tealium to ingest data
 
 ### Conclusion
