@@ -93,7 +93,7 @@ CREATE ROLE IF NOT EXISTS cortex_agent_role
 GRANT ROLE cortex_agent_role TO USER YOUR_USERNAME;
 
 -- create database, schema and warehouse
-CREATE WAREHOUSE IF NOT EXISTS WORKSHOP_WH WITH
+CREATE WAREHOUSE IF NOT EXISTS WORKSHOPWH WITH
    WAREHOUSE_SIZE = 'XSMALL'
    AUTO_SUSPEND = 60
    AUTO_RESUME = TRUE
@@ -323,7 +323,7 @@ LIMIT 5;
 -- PART 3: PAT Token Creation
 -- ==============================================
 
--- Create PAT for the integration (replace <YOUR_USERNAME>)
+-- Create PAT for the integration (replace <YOUR_USERNAME>) AND COPY THE PAT Token for future use!
 ALTER USER YOUR_USERNAME ADD PROGRAMMATIC ACCESS TOKEN cortex_demo_token DAYS_TO_EXPIRY = 30 ROLE_RESTRICTION = 'CORTEX_AGENT_ROLE';
 ALTER USER YOUR_USERNAME REMOVE PROGRAMMATIC ACCESS TOKEN cortex_demo_token;
 
@@ -471,7 +471,7 @@ As a pre-requisite it is expected that users have the below available locally:
 - Installed Python 3.11 or greater.
 - Streamlit library installed.
 
-Download the folder [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-bedrock-agentcore-gateways-and-cortex-agents/tree/e32dd380b05815e6170668e03f93c47983fae19c) by selecting **Code** and Download the zip file. 
+Download the folder [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-bedrock-agentcore-gateways-and-cortex-agents/tree/main/agentcore-to-cortex) by selecting **Code** and Download the zip file. 
 - Unzip the file and from VS Code cd into the **agentcore-to-cortex directory**.
 - Ensure that you are connected to your AWS account from VS Code.
 
@@ -480,18 +480,14 @@ Download the folder [here](https://github.com/Snowflake-Labs/sfguide-getting-sta
 Create a virtual environment to avoid dependency conflicts:
 
 ```bash
-# Create project directory
 mkdir cortex-agents-setup
 cd cortex-agents-setup
 
-# Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install required packages
 pip install bedrock-agentcore-starter-toolkit requests
 
-# Verify installation
 python -c "from bedrock_agentcore_starter_toolkit.operations.gateway.client import GatewayClient; print('✅ Installation successful')"
 ```
 
@@ -504,17 +500,12 @@ With the environment ready we are set to create the AgentCore Gateway. Update th
 
 
 ```bash
-# Set your Snowflake PAT
 export SNOWFLAKE_PAT_TOKEN="<PAT TOKEN FROM SNOWFLAKE>"
 
-# Create gateway
 python create_gateway.py
 ```
 
-You should see output like below:
-
-[](assets/creategateway.png)
-
+You should see output affirming the creation of the AWS services like: Gateway, Role, Identity Service and others.
 
 You can now head to your AWS Portal and see what was created.
 
@@ -531,6 +522,8 @@ You can now head to your AWS Portal and see what was created.
 Last, from the VS Code terminal execute the below code which will open a browser with a Streamlit App.
 
 ```bash
+pip install streamlit
+
 streamlit run app.py
 ```
 
