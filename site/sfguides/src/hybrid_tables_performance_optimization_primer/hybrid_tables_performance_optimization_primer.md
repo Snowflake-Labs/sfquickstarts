@@ -234,67 +234,6 @@ WHERE TRUE
 Using the index results in a much better query plan that uses the index we created:
 <img src="assets/explore_61.png"/>
 
-### Add a UNIQUE constraint
-Hybrid tables includes capability to add and enforce UNIQUE constraints to a column. Creating a constraint also creates an index
-so let's explore a multi-column constraint. Recreate the table adding the UNIQUE constraint:
-
-```sql
-CREATE OR REPLACE HYBRID TABLE TRUCK (
-    TRUCK_ID NUMBER(38,0) NOT NULL,
-    YEAR NUMBER(38,0) NOT NULL,
-    MAKE VARCHAR(250) NOT NULL,
-    FRANCHISE_ID NUMBER(38,0) NOT NULL,
-    TRUCK_EMAIL VARCHAR NOT NULL,
-    PRIMARY KEY (TRUCK_ID),
-    INDEX IDX_TRUCK_EMAIL (TRUCK_EMAIL),
-    CONSTRAINT UNIQUE_TRUCK_EMAIL UNIQUE (FRANCHISE_ID, TRUCK_EMAIL)
-)
-AS SELECT
-    SEQ4(),
-    UNIFORM(1970, 2025, RANDOM()),
-    ARRAY_CONSTRUCT( 'Freightliner', 'Peterbilt', 'Kenworth', 'Volvo Trucks', 'Mack', 'International (Navistar)', 'Western Star')[UNIFORM(0,6, RANDOM())],
-    UNIFORM(1, 250, RANDOM()),
-    RANDSTR(8, RANDOM()) || '@sf-quickstart'
-FROM TABLE(GENERATOR(ROWCOUNT => 1000000)) -- WE NEED ENOUGH RECORDS FOR REASONABLE TESTING OTHERWISE EVERYTHING IS IN-MEMORY
-;
--- SEE WHAT THE RESULTS LOOK LIKE
-SELECT * FROM TRUCK LIMIT 10;
-```
-
-The UNIQUE constraint automatically builds an index that can be used in a query predicate. Let's find a truck by `FRANCHISE_ID` and `TRUCK_EMAIL`:
-
-```sql
-SET (FRANCHISE, EMAIL) = (SELECT FRANCHISE_ID, TRUCK_EMAIL FROM TRUCK SAMPLE (1 ROWS));
-    
-SELECT *
-FROM TRUCK
-WHERE TRUE
-    AND FRANCHISE_ID = $FRANCHISE
-    AND TRUCK_EMAIL = $EMAIL
-;
-```
-
-<img src="assets/explore_63.png"/>
-
-
-This particular index likely has good cardinality such that using just the first column of the index will also produce a solid query plan.
-While more time is spent returning the results, the partial index is still used to efficiently fetch data from storage:
-```sql
-SELECT *
-FROM TRUCK
-WHERE TRUE
-  AND FRANCHISE_ID = $FRANCHISE
-  -- AND TRUCK_EMAIL = $EMAIL
-;
-```
-<img src="assets/explore_65.png"/>
-
->aside positive
-> **NOTE:** Both primary keys and other indexes should be accessed using their configured columns from left to right.
-> _Skipping_ a column will force the query planner to only use the columns referenced in the predicate before the
-> skipped column. See [best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) for further details.
->
-
 Next, we will cover foreign keys.
 
 ## Explore foreign keys
@@ -327,13 +266,9 @@ SELECT
 FROM TABLE(GENERATOR(ROWCOUNT => 5000))
 CROSS JOIN (SELECT TRUCK_ID FROM TRUCK SAMPLE (1000 ROWS)) T    -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
 ;
-
--- SEE WHAT THE RESULTS LOOK LIKE
-SELECT * FROM ORDER_HEADER LIMIT 10;
 ```
-A basic query we would likely use is a query that selects a truck with all the order header records. While this is a 
-quite a few records, we can see how the foreign key helps load only the data that is required.
-
+Consider a query to retrieve a specific order and join in details for the truck for which the order was submitted. 
+This sort of pattern is common when dealing with normalized data models in transactional applications:
 
 ```sql
 -- SELECT A SPECIFIC ORDER
@@ -341,96 +276,17 @@ SET ORDER_ID = (SELECT ANY_VALUE(ORDER_ID) FROM ORDER_HEADER);
 
 SELECT *
 FROM ORDER_HEADER O
+INNER JOIN TRUCK T ON O.TRUCK_ID=T.TRUCK_ID
 WHERE TRUE
   AND O.ORDER_ID = $ORDER_ID
 ;
 ```
-As expected, this query is fast and uses the `PRIMARY KEY`. Checkout the query plan to verify this.
 
-A more interesting query would be to retrieve all the orders for a specific truck and include the truck details.
-```sql
--- CAPTURE A TRUCK_ID IN A SESSION VARIABLE TO USE
-SET TRUCK_ID = (SELECT ANY_VALUE(TRUCK_ID) FROM ORDER_HEADER);
-    
--- SELECT ORDERS FOR A PARTICULAR TRUCK
-SELECT *
-FROM ORDER_HEADER O 
-INNER JOIN TRUCK T ON T.TRUCK_ID=O.TRUCK_ID
-WHERE TRUE
-    AND O.TRUCK_ID = $TRUCK_ID
-;
-```
-This query plan will include table scans of both the `ORDER_HEADER` and `TRUCK`. There are no indexes or relationships that can help
-the query optimizer build a fast execution plan so the query executes in `COLUMN_MODE` against the object store.
+The query plan shows both primary keys in use loading only a single record
+from each table by using an Nested Loop Join pattern where we first retrieve the order record 
+and then use the truck ID for that order to push down the truck lookup against the primary key of the truck table:
 
-<img src="assets/explore_75.png"/>
-
-Let's relate `ORDER_HEADER` and `TRUCK` tables with a `FOREIGN KEY` and see how this affects the query plan. Rebuild the table with a 
-`FOREIGN KEY`:
-
-```sql
---- CREATE ORDERS FOR EACH TRUCK
-CREATE OR REPLACE HYBRID TABLE ORDER_HEADER (
-    ORDER_ID NUMBER(38,0) NOT NULL,
-    TRUCK_ID NUMBER(38,0) NOT NULL,
-    ORDER_TIMESTAMP TIMESTAMP_NTZ NOT NULL,
-    ORDER_TOTAL NUMBER(38,2),
-    ORDER_STATUS VARCHAR(200) DEFAULT 'INQUEUE',  -- USE DEFAULT VALUE
-    PRIMARY KEY (ORDER_ID),
-    FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID)  -- REFER TO THE TRUCK TABLE FOR TRUCK_ID
-);
-INSERT INTO ORDER_HEADER (ORDER_ID, TRUCK_ID, ORDER_TIMESTAMP, ORDER_TOTAL)
-SELECT
-    SEQ4(),
-    T.TRUCK_ID,
-    DATEADD('seconds', UNIFORM(-1*60*60*24*365, -1*60*60, RANDOM()), CURRENT_TIMESTAMP()), -- SPREAD RANDOM ORDER IDS OUT
-    UNIFORM(200.0, 25000.0, RANDOM()),
-FROM TABLE(GENERATOR(ROWCOUNT => 5000))
-CROSS JOIN (SELECT TRUCK_ID FROM TRUCK SAMPLE (1000 ROWS)) T    -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
-;
-
--- SEE WHAT THE RESULTS LOOK LIKE
-SELECT * FROM ORDER_HEADER LIMIT 10;
-```
->aside positive
-> **NOTE:** Adding a foreign key to the table requires us to use a CREATE then INSERT method. This is so the key can be
-> evaluated as records are inserted.
->
-
-
-Re-run the query looking for all the truck orders:
-```sql
--- CAPTURE A TRUCK_ID IN A SESSION VARIABLE TO USE
-SET TRUCK_ID = (SELECT ANY_VALUE(TRUCK_ID) FROM ORDER_HEADER);
-    
--- SELECT ORDERS FOR A PARTICULAR TRUCK
-SELECT *
-FROM ORDER_HEADER O 
-INNER JOIN TRUCK T ON T.TRUCK_ID=O.TRUCK_ID
-WHERE TRUE
-    AND O.TRUCK_ID = $TRUCK_ID
-;
-```
-The query plan shows that the `FOREIGN KEY` was used to push the `TRUCK_ID` into a filter condition, speeding up the query.
-<img src="assets/explore_76.png"/>
-
-Another query might be one that pulls a specific order for a specific truck:
-```sql
-SET (TRUCK_ID, ORDER_ID) = (SELECT ANY_VALUE(TRUCK_ID), ANY_VALUE(ORDER_ID) FROM ORDER_HEADER);
-
-SELECT *
-FROM TRUCK T
-INNER JOIN ORDER_HEADER O ON T.TRUCK_ID=O.TRUCK_ID
-WHERE TRUE
-    AND T.TRUCK_ID = $TRUCK_ID
-    AND O.ORDER_ID = $ORDER_ID
-;
-
-```
-Unsurprisingly, the query plan shows both primary keys in use loading only a single record
-from each table.
-
-<img src="assets/explore_78.png"/>
+<img src="assets/explore_72.png"/>
 
 Next, we will explore how secondary indexes help queries that do not use primary keys.
 
@@ -453,9 +309,8 @@ will be applied after data was fetched from hybrid table object store. From the 
 
 <img src="assets/explore_80.png"/>
 
-As this is a common access path for our application, a secondary index will increase performance. Let's add the secondary
-index to the table. There is a foreign key that will be used to push `TRUCK_ID` down from `TRUCK`, so we will take
-advantage of that by creating the index as `(TRUCK_ID, ORDER_TIMESTAMP )`:
+A secondary index on (TRUCK_ID, ORDER_TIMESTAMP) will improve performance by allowing us to also push the timestamp 
+filter down to storage:
 
 ```sql
 --- CREATE ORDERS FOR EACH TRUCK
@@ -478,25 +333,9 @@ SELECT
 FROM TABLE(GENERATOR(ROWCOUNT => 5000))
 CROSS JOIN (SELECT TRUCK_ID FROM TRUCK SAMPLE (1000 ROWS)) T    -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
 ;
-
--- SEE WHAT THE RESULTS LOOK LIKE
-SELECT * FROM ORDER_HEADER LIMIT 10;
 ```
 
->aside positive
-> **NOTE:** We followed best practices and added the secondary index when we created the table. Indexes created in this
-> way will be `ACTIVE` as soon as the table is created. If a secondary indexes is added
-> after the table is created, the index must be in `ACTIVE` status before it will be used in a query. Check the status
-> using these types of queries (including using the [Snowflake Flow Operator](https://docs.snowflake.com/en/sql-reference/operators-flow))
-> ```sql
-> -- SEE ALL INDEXES IN THE CURRENT SCHEMA
-> SHOW INDEXES;
-> -- OR SEE SPECIFIC STATUS FOR INDEXES ON A PARTICULAR TABLE
-> SHOW INDEXES ->>
->     SELECT "name", "status", "columns" FROM $1 WHERE "table" = 'ORDER_HEADER';
-> ```
-
-Once the index is `ACTIVE`, we can use it in a query:
+Now that the index exists and is `ACTIVE`, we can use it in a query:
 
 ```sql
 SET TRUCKID = (SELECT ANY_VALUE(TRUCK_ID) FROM ORDER_HEADER);
@@ -509,8 +348,8 @@ WHERE TRUE
     AND T.TRUCK_ID = $TRUCKID
 ;
 ```
-We can clearly see that the index has enabled the query optimizer to load data from disk in a filtered way, saving time and speeding
-the query. Checking the Access Predicates, both columns are used to fetch data from storage.
+Now the truck and timestamp predicates are being pushed down against the index in order to reduce the amount of data 
+retrieved from the order_header table improving latency and efficiency.
 
 <img src="assets/explore_83.png"/>
 
@@ -524,7 +363,7 @@ the query. Checking the Access Predicates, both columns are used to fetch data f
 Next, we will summarize best practices.
 
 ## Summarize best practices
-Hybrid table performance benefits from following best practices that extract the best performance and higest value
+Hybrid table performance benefits from following best practices that extract the best performance and highest value
 from this Snowflake feature.
 1. Use a `PRIMARY KEY`, built from business columns, to drive the highest performance.
 1. Implement `FOREIGN KEYS` when joining hybrid tables.
