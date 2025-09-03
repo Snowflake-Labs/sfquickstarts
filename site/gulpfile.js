@@ -99,6 +99,15 @@ const STAGING_BUCKET = gcs.bucketName(args.stagingBucket || 'DEFAULT_STAGING_BUC
 // VIEWS_FILTER is the filter to use for view inclusion.
 const VIEWS_FILTER = args.viewsFilter || '*';
 
+gulp.task('help', (callback) => {
+    console.log('Gulp Commands:');
+    console.log('  gulp sass     - Compiles Sass files to CSS.');
+    console.log('  gulp js       - Minifies JavaScript files.');
+    console.log('  gulp default  - Runs default tasks (e.g., sass and js).');
+    console.log('  gulp help     - Displays this help message.');
+    callback(); // Signal task completion
+});
+
 // clean:build removes the build directory
 gulp.task('clean:build', (callback) => {
   return del('build')
@@ -142,7 +151,8 @@ gulp.task('export:codelabs', (callback) => {
     // claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
     claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../" + CODELABS_BUILD_DIR, CODELABS_ELEMENTS_PREFIX, sources, callback);
   } else {
-    const sources = ["[^_]*/*.md"]; //export all markdown files in the src directory, except _imports
+    // limit sources to args.lab if specified, else all markdowns
+    const sources = args.lab ? [args.lab + '/*.md'] : ["[^_]*/*.md"]; //export all markdown files in the src directory (or lab directory), except _imports
     // claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
     claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../" + CODELABS_BUILD_DIR, CODELABS_ELEMENTS_PREFIX, sources, callback);
   }
@@ -382,9 +392,11 @@ gulp.task('watch:images', () => {
 
 // watch:codelabs watches image files for changes and updates them
 gulp.task('watch:codelabs', () => {
+  // filter to a specific lab, else watch all labs
+  const dir_filter = args.lab ? args.lab : '**';
   const srcs = [
-    CODELABS_SRC_DIR + '/**/*.md',
-    CODELABS_SRC_DIR + '/**/assets/*',
+    CODELABS_SRC_DIR + '/' + dir_filter + '/*.md',
+    CODELABS_SRC_DIR + '/' + dir_filter + '/assets/*',
   ]
   gulp.watch(srcs, gulp.series('build:codelabs'));
 });
