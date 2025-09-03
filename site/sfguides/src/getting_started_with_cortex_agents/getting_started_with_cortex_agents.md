@@ -189,7 +189,7 @@ CORTEX_AGENT_DEMO_AGENT="SALES_INTELLIGENCE_AGENT" \
 streamlit run data_agent_demo.py
 ```
 
-## Conclusion and Resources
+## Conclusion And Resources
 Duration: 5
 
 Congratulations! You've successfully built an Intelligent Sales Assistant using Snowflake Cortex capabilities. This application demonstrates the power of combining structured and unstructured data analysis through:
