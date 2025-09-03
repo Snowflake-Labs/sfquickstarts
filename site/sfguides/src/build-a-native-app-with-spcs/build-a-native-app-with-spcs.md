@@ -24,7 +24,7 @@ The Snowflake Native App Framework is a powerful way for application providers t
 
 > aside positive
 >
-> Snowpark Container Services is available across a [range of Snowflake AWS accounts](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
+> Snowpark Container Services is available across a [range of cloud providers and regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
 
 
 ### What You’ll Learn 
