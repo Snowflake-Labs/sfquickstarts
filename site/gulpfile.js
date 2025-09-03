@@ -99,15 +99,6 @@ const STAGING_BUCKET = gcs.bucketName(args.stagingBucket || 'DEFAULT_STAGING_BUC
 // VIEWS_FILTER is the filter to use for view inclusion.
 const VIEWS_FILTER = args.viewsFilter || '*';
 
-gulp.task('help', (callback) => {
-    console.log('Gulp Commands:');
-    console.log('  gulp sass     - Compiles Sass files to CSS.');
-    console.log('  gulp js       - Minifies JavaScript files.');
-    console.log('  gulp default  - Runs default tasks (e.g., sass and js).');
-    console.log('  gulp help     - Displays this help message.');
-    callback(); // Signal task completion
-});
-
 // clean:build removes the build directory
 gulp.task('clean:build', (callback) => {
   return del('build')
