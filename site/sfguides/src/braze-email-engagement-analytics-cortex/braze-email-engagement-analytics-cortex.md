@@ -14,6 +14,15 @@ Duration: 5
 
 In this hands-on lab, you'll build an intelligent email engagement analytics application that combines Braze marketing data with Snowflake's Cortex AI capabilities. You'll create a natural language interface that allows marketers to query their email campaign performance data and receive AI-powered insights and recommendations.
 
+## About Braze
+
+Braze is a Customer Engagement Platform used to power personalized, real-time marketing communications across every touchpoint, including email, push notifications, in-app messages, SMS, and WhatsApp. The platform captures a rich stream of first-party data, such as detailed user profiles, message engagement metrics (sends, opens, clicks), and custom behavioral events like purchases or conversions.
+
+By centralizing this granular engagement data in Snowflake, you can join it with other business data to build a comprehensive 360-degree customer view. This enables deeper analytics on user behavior, more sophisticated customer segmentation, and the ability to power data-driven personalization. 
+
+Fundamentally, combining Braze and Snowflake allows you to fully understand the total business impact of your marketing workflows, campaigns and interactions across the ecosystem.
+
+
 ### What You'll Learn
 - How to set up Snowflake environment for Braze engagement data
 - How to create and configure a Cortex Analyst semantic model
@@ -1074,7 +1083,7 @@ For each query, you'll see:
 Negative
 : Remember that the app can only answer questions about data that exists in your semantic model. Questions about missing data fields will be politely declined.
 
-## Conclusion and Resources
+## Conclusion And Resources
 Duration: 5
 
 Congratulations! You've successfully built an intelligent email engagement analytics application that combines Braze marketing data with Snowflake's Cortex AI capabilities.
