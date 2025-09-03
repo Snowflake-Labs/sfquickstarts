@@ -94,7 +94,7 @@ USE WAREHOUSE HT_PERFORMANCE_WAREHOUSE;
 
 Now, let's explore primary keys and secondary indexes
 
-## Explore primary key and secondary indexes
+## Explore the Primary Key
 
 Duration: 10
 
@@ -103,13 +103,13 @@ as well as the sort order for how data is written to the row storage. See [prima
 
 Secondary Indexes provide fast access to query patterns that may not be able to use the primary key.
 
-### What we will cover
+### What We Will Cover
 - Creating a hybrid table with test data
 - Primary Key setup and analysis
 - Secondary index setup and analysis
 
 
-### Create the TRUCKS hybrid table
+### Create the `TRUCKS` Hybrid Table
 Create and populate a simple hybrid table. This table is similar to the table used in the getting started with hybrid tables guide but is 
 simplified for brevity. This quickstart will use similar queries for the remainder of the work:
 ```sql
@@ -134,7 +134,7 @@ FROM TABLE(GENERATOR(ROWCOUNT => 1000000)) -- WE NEED ENOUGH RECORDS FOR REASONA
 SELECT * FROM TRUCK LIMIT 10;
 ```
 
-### Query the table with the primary key
+### Query with the Primary Key
 Primary keys are a highly performant way to query hybrid tables. Let's look at a query profile of what querying using the primary key looks like.
 ```sql
 -- SELECT AND SET A RANDOM TRUCK_ID TO SESSION VARIABLE FOR CONVENIENCE
@@ -163,7 +163,7 @@ to execute the query:
 
 This is the primary screen we will be using for query analysis.
 
-### Analyze the query profile output
+### Analyze the Query Profile Output
 Now that you understand how to get to the query profile screen, let's discover how this query was executed. Once we understand how the query planner decided
 to execute the query, we can understand how to implement any changes in the query that will improve performance.
 
@@ -179,7 +179,7 @@ For selective predicates against the primary key, `ROW_BASED` access indicates t
 push down the predicate and is the fastest and most efficient way to execute the query.
 
 
-### Query the table with `COLUMN_BASED` access (no key)
+### Query with `COLUMN_BASED` Access (no key)
 Instead of querying the table using the primary key, let's query the table using a column that is **not** indexed and see what
 the resulting query plan looks like.
 ```sql
@@ -197,7 +197,13 @@ is the most expensive node in the plan:
 Looking at the "TableScan" node, we can clearly see that the scan was `COLUMN_BASED` and processed many partitions with lots of data. 
 The optimizer was not able to push down any access predicates against an index.
 
-### Add a secondary index
+Next, we will explore secondary indexes.
+
+## Explore Secondary Indexes
+
+Duration: 10
+
+### Add a Secondary Index
 Clearly, the above query is not optimal. A secondary index can help the query run faster. Let's create a secondary index
 and use it to explore the query improvement:
 ```sql
@@ -236,7 +242,10 @@ Using the index results in a much better query plan that uses the index we creat
 
 Next, we will cover foreign keys.
 
-## Explore foreign keys
+## Explore Foreign Keys
+
+Duration: 10
+
 RDBMS data models use foreign keys to establish relationships between tables. All kinds of models take advantage of the relationships to keep
 data from becoming corrupted or otherwise orphaned from a definition. We call the relationship between the primary key
 of the reference table and the usage of the key in another table a **foreign key**.
@@ -290,8 +299,11 @@ and then use the truck ID for that order to push down the truck lookup against t
 
 Next, we will explore how secondary indexes help queries that do not use primary keys.
 
-## Explore joins with secondary indexes
-A common query pattern is to join two tables using foreign keys and filter one of them with another pattern. For example,
+## Joining and Secondary Indexes
+
+Duration: 10
+
+A common query pattern is to join two tables using foreign keys and filter one of them with another column. For example,
 this query is fetching orders over the last few days for a specific truck:
 
 ```sql
@@ -362,7 +374,10 @@ retrieved from the order_header table improving latency and efficiency.
 
 Next, we will summarize best practices.
 
-## Summarize best practices
+## Summarize Best Practices
+
+Duration: 2
+
 Hybrid table performance benefits from following best practices that extract the best performance and highest value
 from this Snowflake feature.
 1. Use a `PRIMARY KEY`, built from business columns, to drive the highest performance.
@@ -373,7 +388,16 @@ from this Snowflake feature.
 1. Follow Snowflake [hybrid table best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices).
 
 
-## What You Learned
+## Conclusion and Resources
+
+Duration: 2
+
+### Overview
+Thank you for completing this Hybrid Tables Performance Optimization Primer. You now have a solid understanding of how to 
+relate query performance to the query planning tool. You will use this knowledge to help create and optimize your hybrid table solutions.
+
+
+### What You Learned
 
 Having completed this quickstart you have successfully
 - Created hybrid tables with primary keys
