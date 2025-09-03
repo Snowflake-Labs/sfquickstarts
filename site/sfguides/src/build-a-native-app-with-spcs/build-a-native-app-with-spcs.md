@@ -12,7 +12,7 @@ tags: Getting Started, Data Applications, Native Apps, Snowpark Container Servic
 ## Overview
 Duration: 5
 
-The Snowflake Native App Framework is a powerful way for application providers to build, deploy and market applications via the Snowflake Marketplace.  In this example you will learn how to incorporate Snowpark Container Services into a Snowflake Native App allowing you to deploy a variety of new capabilities to a consumers Snowflake account.  
+The Snowflake Native App Framework is a powerful way for application providers to build, deploy and market applications via the Snowflake Marketplace. In this example you will learn how to incorporate Snowpark Container Services into a Snowflake Native App allowing you to deploy a variety of new capabilities to a consumers Snowflake account.  
 
 
 ### Prerequisites
@@ -24,7 +24,7 @@ The Snowflake Native App Framework is a powerful way for application providers t
 
 > aside positive
 >
-> Snowpark Container Services is currently in a Public Preview and is available across a [range of Snowflake AWS accounts](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
+> Snowpark Container Services is available across a [range of Snowflake AWS accounts](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
 
 
 ### What You’ll Learn 
@@ -46,7 +46,7 @@ In this quickstart we'll create a Snowflake Native App that uses Snowpark Contai
 - Flask-based Python middle tier 
 - nginx as a router
 
-Once deployed, the application can be access via a [Service Endpoint](https://docs.snowflake.com/en/sql-reference/sql/show-endpoints) which then queries the 
+Once deployed, the application can be accessed via a [Service Endpoint](https://docs.snowflake.com/en/sql-reference/sql/show-endpoints) which then queries the 
 TPC-H 100 data set and returns the top sales clerks. The frontend provides date pickers to restrict the range of the sales data and a slider to determine how many top clerks to display. The data is presented in a table sorted by highest seller to lowest.
 
 <!-- ------------------------ -->
@@ -105,6 +105,7 @@ create role if not exists nac;
 grant role nac to role accountadmin;
 create warehouse if not exists wh_nac with warehouse_size='xsmall';
 grant usage on warehouse wh_nac to role nac with grant option;
+create database if not exists snowflake_sample_data from share sfc_samples.sample_data;
 grant imported privileges on database snowflake_sample_data to role nac;
 grant create database on account to role nac;
 grant bind service endpoint on account to role nac with grant option;
@@ -203,7 +204,8 @@ With all of our Snowflake Native App assets uploaded to our Snowflake account we
 ```sql
 use role naspcs_role;
 create application package spcs_app_pkg;
-alter application package spcs_app_pkg add version v1 using @spcs_app.napp.app_stage;
+alter application package spcs_app_pkg register version v1 using @spcs_app.napp.app_stage; 
+alter application package spcs_app_pkg modify release channel default add version v1;
 grant install, develop on application package spcs_app_pkg to role nac;
 ```
 
