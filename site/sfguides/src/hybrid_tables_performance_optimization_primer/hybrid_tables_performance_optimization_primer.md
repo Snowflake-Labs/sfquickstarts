@@ -388,7 +388,7 @@ from this Snowflake feature.
 1. Follow Snowflake [hybrid table best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices).
 
 
-## Conclusion and Resources
+## Conclusion And Resources
 
 Duration: 2
 
