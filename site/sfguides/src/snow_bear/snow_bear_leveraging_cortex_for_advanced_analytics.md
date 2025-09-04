@@ -84,6 +84,9 @@ GRANT ALL ON DATABASE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB TO ROLE snow_bear_data
 GRANT ALL ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER TO ROLE snow_bear_data_scientist;
 GRANT ALL ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER TO ROLE snow_bear_data_scientist;
 
+-- Grant Cortex AI privileges (required for AI functions)
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE snow_bear_data_scientist;
+
 -- Grant role to current user
 SET my_user_var = (SELECT '"' || CURRENT_USER() || '"');
 GRANT ROLE snow_bear_data_scientist TO USER identifier($my_user_var);
@@ -239,7 +242,12 @@ SELECT COUNT(*) as total_records FROM GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STR
 ```
 
 **Option B: Upload the full dataset** (recommended for production):
-Download the complete basketball fan survey data CSV file and upload it using Snowflake's data loading features.
+
+1. Download the `basketball_fan_survey_data.csv.gz` file from this quickstart
+2. In Snowsight, navigate to Data → Databases → CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB → BRONZE_LAYER → GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED
+3. Click **Load Data** and upload the CSV file
+4. Choose appropriate file format options (header row, comma delimiter)
+5. Click **Load** to import all 500+ fan survey records
 
 <!-- ------------------------ -->
 ## AI-Enhanced Analytics
@@ -337,6 +345,11 @@ Duration: 15
 
 ### Creating Automated Theme Analysis
 
+**Note**: The theme extraction uses Cortex AI to analyze all fan feedback and may take several minutes to complete. If you encounter errors:
+- **Permission errors**: Ensure you have Cortex AI access (SNOWFLAKE.CORTEX_USER role)
+- **Timeout errors**: Use the simplified theme approach provided below
+- **Model errors**: Try again or switch to a different Cortex model if available
+
 1. Create the advanced theme extraction system:
 
 ```sql
@@ -418,7 +431,32 @@ LATERAL FLATTEN(input => PARSE_JSON(replace(themes_json,'```',''))) as theme
 ORDER BY THEME_NUMBER;
 ```
 
-2. Apply theme classification to each record:
+2. **First, verify the themes table was created successfully:**
+
+```sql
+-- Check if themes were extracted successfully
+SELECT COUNT(*) as theme_count FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_STRUCTURED;
+SELECT * FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_STRUCTURED LIMIT 5;
+```
+
+If the table doesn't exist or is empty, you can create a simplified version:
+
+```sql
+-- Fallback: Create simple themes if extraction didn't work
+CREATE OR REPLACE TABLE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_STRUCTURED AS
+SELECT * FROM VALUES
+(1, 'Food', 'Food and concession experiences'),
+(2, 'Parking', 'Parking and accessibility'),
+(3, 'Game Experience', 'Game atmosphere and entertainment'),
+(4, 'Merchandise', 'Team merchandise and pricing'),
+(5, 'Seating', 'Seat location and comfort'),
+(6, 'Stadium', 'Stadium facilities and access'),
+(7, 'Pricing', 'Ticket and general pricing'),
+(8, 'Service', 'Customer service and staff')
+AS t(THEME_NUMBER, THEME_NAME, THEME_DESCRIPTION);
+```
+
+3. Apply theme classification to each record:
 
 ```sql
 -- Create theme classification for each record
@@ -717,7 +755,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE SNOWBEAR_SEARCH_ANALYSIS
 -- Test the search service
 WITH search_results AS (
     SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-    'SNOWBEAR_SEARCH_ANALYSIS',
+    'CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.SNOWBEAR_SEARCH_ANALYSIS',
      '{
         "query": "game experience",
         "columns":[
