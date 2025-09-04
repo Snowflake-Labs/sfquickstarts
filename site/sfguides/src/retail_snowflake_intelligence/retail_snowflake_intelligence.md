@@ -13,7 +13,7 @@ tags: Getting Started, Retail
 
 Duration: 5
 
-This solution goes through Snowflake Intelligence with retail data. You will learn how Snowflake Intelligence leverages natural language to drive deep insights from you data. Frame your demo around a central business narrative. This quickstart uses a fictional hand soap company, "Lather and Leaf," to demonstrate a common retail use case. The story progresses naturally, turning data points into business decisions. 
+This solution goes through Snowflake Intelligence with retail data. You will learn how Snowflake Intelligence leverages natural language to drive deep insights from you data. This quickstart uses a fictional hand soap company, "Lather and Leaf," to demonstrate a common retail use case. The story progresses naturally, turning data points into business decisions. 
 
 ### Prerequisites
 
