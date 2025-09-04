@@ -801,7 +801,15 @@ Duration: 25
    - **Warehouse**: `SNOW_BEAR_ANALYTICS_WH`
    - **App location**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER`
 
-4. Replace the default code with the complete Snow Bear analytics application code. Due to size, you can find the complete application code in the companion file `snow_bear_complete_app.py` or use this condensed version:
+4. Replace the default code with the complete Snow Bear analytics application - the exact lift-and-shift from DataOps Live. 
+
+**For the complete application code (1,123 lines - exact DataOps Live replica)**, copy the contents from `snow_bear_complete_app.py` file included with this quickstart, OR use this direct approach:
+
+**Option A: Copy from file** (Recommended - Full DataOps Live Experience):
+- Download and copy the complete code from `snow_bear_complete_app.py` 
+- This provides the exact 7-module platform from DataOps Live
+
+**Option B: Simplified version** (For testing only):
 
 ```python
 import streamlit as st
@@ -886,7 +894,8 @@ filtered_df = filtered_df[
     (filtered_df['AGGREGATE_SENTIMENT'].between(sentiment_range[0], sentiment_range[1]))
 ]
 
-# Main tabs - Complete 7-module platform
+# Main tabs - Simplified version for quickstart demo
+# Note: The complete app (snow_bear_complete_app.py) has full DataOps Live tab names and functionality
 tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📊 Executive Dashboard", 
     "👥 Fan Journey", 
@@ -1218,6 +1227,8 @@ st.markdown("""
 ```
 
 5. Click `Run` to launch your complete Snow Bear Analytics application
+
+**✅ You now have the exact same 7-module analytics platform that runs in DataOps Live!**
 
 <!-- ------------------------ -->
 ## Testing Platform
