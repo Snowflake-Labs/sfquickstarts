@@ -594,20 +594,13 @@ These metrics will help us understand how well each RAG version performs:
 
 Duration: 10
 
-Finally, let's view and compare the results of our evaluation runs.
+Finally, let's view the results of our runs by opening the leaderboard:
 
-https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/NOTEBOOK_SCHEMA/applications/SEC_10K_CHAT_APP
+[AI Observability Leaderboard](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/NOTEBOOK_SCHEMA/applications/SEC_10K_CHAT_APP)
 
-```python
-import streamlit as st
+We can also compare the runs head to head:
 
-org_name = session.sql('SELECT CURRENT_ORGANIZATION_NAME()').collect()[0][0]
-account_name = session.sql('SELECT CURRENT_ACCOUNT_NAME()').collect()[0][0]
-db_name = session.sql('SELECT CURRENT_DATABASE()').collect()[0][0]
-schema_name = session.sql('SELECT CURRENT_SCHEMA()').collect()[0][0]
-
-st.write(f'https://app.snowflake.com/{org_name}/{account_name}/#/ai-evaluations/databases/{db_name}/schemas/{schema_name}/applications/{app_name.upper()}')
-```
+[Comparison View](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/NOTEBOOK_SCHEMA/applications/SEC_10K_CHAT_APP/compare?runKey=%7B%22database%22%3A%22CHUNKING_EVALUATION%22%2C%22schema%22%3A%22NOTEBOOK_SCHEMA%22%2C%22application%22%3A%22SEC_10K_CHAT_APP%22%2C%22version%22%3A%22contextual%20chunks%22%2C%22name%22%3A%22contextual_run_20250903092842%22%7D&runKey=%7B%22database%22%3A%22CHUNKING_EVALUATION%22%2C%22schema%22%3A%22NOTEBOOK_SCHEMA%22%2C%22application%22%3A%22SEC_10K_CHAT_APP%22%2C%22version%22%3A%22base%22%2C%22name%22%3A%22base_run_20250903092839%22%7D)
 
 This will generate a link to the AI Evaluations dashboard in Snowflake, where you can view detailed metrics and compare the performance of your two RAG applications.
 
