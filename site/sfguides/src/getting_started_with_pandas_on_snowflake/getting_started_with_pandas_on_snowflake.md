@@ -45,7 +45,7 @@ Duration: 2
 
 1. Download the Git repo [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas).
 
-2. Install the [Cybersyn Finance and Economics dataset](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/cybersyn-inc-financial-economic-essentials) from [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/). 
+2. Install the [Snowflake Public Data Finance & Economics dataset](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/snowflake-public-data-products-finance-economics?_fsi=Obqx4SaC). 
 
 3. Run the following SQL commands in a SQL worksheet to create the [warehouse](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse.html), [database](https://docs.snowflake.com/en/sql-reference/sql/create-database.html) and [schema](https://docs.snowflake.com/en/sql-reference/sql/create-schema.html).
 
@@ -80,7 +80,7 @@ USE DATABASE PANDAS_DB;
 CREATE OR REPLACE SCHEMA PUBLIC;
 
 -- Create a table from the secure shared view
-CREATE OR REPLACE TABLE STOCK_PRICE_TIMESERIES AS SELECT * FROM FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES;
+CREATE OR REPLACE TABLE STOCK_PRICE_TIMESERIES AS SELECT * FROM FINANCE__ECONOMICS.CYBERSYN.STOCK_PRICE_TIMESERIES;
 ```
 
 These can also be found in the **setup.sql** file.

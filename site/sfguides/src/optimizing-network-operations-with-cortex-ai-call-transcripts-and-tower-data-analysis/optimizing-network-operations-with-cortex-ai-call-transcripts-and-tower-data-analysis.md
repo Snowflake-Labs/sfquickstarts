@@ -50,7 +50,7 @@ In the Snowsight, Navigate to Data, click on Databases.
 - Search for the database TELCO_NETWORK_OPTIMIZATION_PROD and click on it
 - Expand RAW schema in the database
 - Click on Data stage which was created as part of the SQL script
-- Download the [Semantic Model File](https://github.com/Snowflake-Labs/sfguide-optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/blob/main/streamlit/model/semantic_mode.yaml) and upload to the stage.
+- Download the [Semantic Model File](https://github.com/Snowflake-Labs/sfguide-optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis/blob/main/streamlit/model/semantic_model.yaml) and upload to the stage.
 - Once done, it should look like below
 
 <img src="assets/model_upload.png"/>
