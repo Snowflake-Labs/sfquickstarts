@@ -15,7 +15,7 @@ Duration: 15
 
 Customer experience analytics is crucial for businesses to understand their customers and improve their services. Through comprehensive data analysis and AI-powered insights, businesses can uncover patterns in customer feedback, identify pain points, and generate actionable recommendations.
 
-In this Quickstart, we will build a comprehensive fan experience analytics platform for a basketball team called "Snow Bear". This is a complete lift-and-shift of the DataOps Live implementation, demonstrating how to use Snowflake Cortex AI functions to analyze fan survey data, extract sentiment insights, generate business recommendations, and create advanced analytics dashboards.
+In this Quickstart, we will build a comprehensive fan experience analytics platform for a basketball team called "Snow Bear". This demonstrates how to use Snowflake Cortex AI functions to analyze fan survey data, extract sentiment insights, generate business recommendations, and create advanced analytics dashboards.
 
 This Quickstart showcases the complete Snow Bear analytics platform with:
 - **7-module interactive analytics platform** with Executive Dashboard, Fan Journey Explorer, Sentiment Analysis, Theme Analysis, Recommendation Engine, Interactive Search, and AI Assistant
@@ -801,15 +801,7 @@ Duration: 25
    - **Warehouse**: `SNOW_BEAR_ANALYTICS_WH`
    - **App location**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER`
 
-4. Replace the default code with the complete Snow Bear analytics application - the exact lift-and-shift from DataOps Live. 
-
-**For the complete application code (1,123 lines - exact DataOps Live replica)**, copy the contents from `snow_bear_complete_app.py` file included with this quickstart, OR use this direct approach:
-
-**Option A: Copy from file** (Recommended - Full DataOps Live Experience):
-- Download and copy the complete code from `snow_bear_complete_app.py` 
-- This provides the exact 7-module platform from DataOps Live
-
-**Option B: Simplified version** (For testing only):
+4. Replace the default code with the complete Snow Bear analytics application:
 
 ```python
 import streamlit as st
