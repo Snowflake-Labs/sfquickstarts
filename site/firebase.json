@@ -103,11 +103,6 @@
       "type": 301
     },
     {
-      "source": "guide/attaining_consumer_insights_with_snowflake_and_microsoft_power_bi/{,/**}",
-      "destination": "/guide/end-to-end-analytics-with-snowflake-and-power-bi",
-      "type": 301
-    },
-    {
       "source": "guide/frosty_llm_chatbot_on_streamlit_snowflake/{,/**}",
       "destination": "/guide/getting_started_with_cortex_analyst",
       "type": 301
@@ -130,11 +125,6 @@
     {
       "source": "guide/getting_started_with_cybersyn_financial_and_economic_essentials_app/{,/**}",
       "destination": "/guide/getting_started_with_snowpark_for_python_streamlit",
-      "type": 301
-    },
-    {
-      "source": "guide/asking_questions_to_your_own_documents_with_snowflake_cortex/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
     },
     {
@@ -274,11 +264,6 @@
     },
     {
       "source": "guide/build_llm_app_nvidia_scs/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
     },
