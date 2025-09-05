@@ -594,13 +594,13 @@ These metrics will help us understand how well each RAG version performs:
 
 Duration: 10
 
+### Compare results
+
 Finally, let's view the results of our runs by opening the leaderboard:
 
-[AI Observability Leaderboard](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/NOTEBOOK_SCHEMA/applications/SEC_10K_CHAT_APP)
+[AI Observability Leaderboard](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/PUBLIC/applications/SEC_10K_CHAT_APP)
 
-We can also compare the runs head to head:
-
-[Comparison View](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/NOTEBOOK_SCHEMA/applications/SEC_10K_CHAT_APP/compare?runKey=%7B%22database%22%3A%22CHUNKING_EVALUATION%22%2C%22schema%22%3A%22NOTEBOOK_SCHEMA%22%2C%22application%22%3A%22SEC_10K_CHAT_APP%22%2C%22version%22%3A%22contextual%20chunks%22%2C%22name%22%3A%22contextual_run_20250903092842%22%7D&runKey=%7B%22database%22%3A%22CHUNKING_EVALUATION%22%2C%22schema%22%3A%22NOTEBOOK_SCHEMA%22%2C%22application%22%3A%22SEC_10K_CHAT_APP%22%2C%22version%22%3A%22base%22%2C%22name%22%3A%22base_run_20250903092839%22%7D)
+We can also compare the runs head to head by clicking the checkbox for each version and then clicking `Compare` on the right side of the screen.
 
 This will generate a link to the AI Evaluations dashboard in Snowflake, where you can view detailed metrics and compare the performance of your two RAG applications.
 
