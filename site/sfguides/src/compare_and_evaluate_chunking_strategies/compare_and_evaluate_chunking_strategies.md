@@ -632,7 +632,3 @@ Read more:
 
 - [AI Observability in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability)
 - [Long Context Isn't All You Need: Impact of Retrieval and Chunking on Finance RAG](https://www.snowflake.com/en/engineering-blog/impact-retrieval-chunking-finance-rag/)
-- [Snowflake Cortex Search Services](https://docs.snowflake.com/en/user-guide/snowflake-cortex/search-service)
-- [Document Parsing in Snowflake](https://docs.snowflake.com/sql-reference/functions/parse_document-snowflake-cortex)
-- [Text Splitting in Snowflake](https://docs.snowflake.com/sql-reference/functions/split_text_recursive_character-snowflake-cortex)
-- [TruLens Documentation](https://www.trulens.org/trulens_eval/getting_started/)
