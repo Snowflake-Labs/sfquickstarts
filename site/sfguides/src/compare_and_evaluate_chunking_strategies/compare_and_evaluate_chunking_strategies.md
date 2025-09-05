@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: RAG, AI Observability, Chunking, LLM
 
-# Build and Compare Chunking Strategies for RAG Applications
+# Compare and Evaluate Chunking Strategies
 
 <!-- ------------------------ -->
 ## Overview
@@ -48,11 +48,15 @@ Duration: 10
 
 ### Environment Configuration
 
-Firstly, to follow along with this quickstart, you can download the Notebook from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-compare-and-evaluate-chunking-strategies).
+Firstly, to follow along with this quickstart, you can download the Notebook from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-compare-and-evaluate-chunking-strategies) and then create a new Snowflake notebook by importing the notebook file in Snowsight.
 
-This guide uses Snowflake's Snowpark for Python to interact with Snowflake services. The notebook comes pre-installed with common Python libraries for data science and machine learning. If you need additional packages, click on the Packages dropdown on the top right to add them to your notebook.
+In your Snowflake notebook, install the following python packages from the Snowflake conda channel:
 
-Let's start by importing the necessary libraries and establishing a Snowpark session:
+- snowflake-ml-python
+- snowflake.core
+- trulens-core
+- trulens-providers-cortex
+- trulens-connectors-snowflake
 
 ```python
 import snowflake.snowpark as snowpark
@@ -66,22 +70,11 @@ os.environ["TRULENS_OTEL_TRACING"] = "1"
 
 ### Database and Schema Setup
 
-Run the following SQL commands to set up the necessary database and schemas:
-
-```sql
--- Define database and schema names
-CREATE DATABASE IF NOT EXISTS CHUNKING_EVALUATION;
-CREATE SCHEMA IF NOT EXISTS CHUNKING_EVALUATION.DOCS;
-CREATE SCHEMA IF NOT EXISTS CHUNKING_EVALUATION.PARSED_DATA;
-
--- Create a stage for storing PDF files
-CREATE STAGE IF NOT EXISTS CHUNKING_EVALUATION.DOCS.PDF_10KS
-  DIRECTORY = (ENABLE = TRUE);
-```
+Run [setup.sql](https://github.com/Snowflake-Labs/sfguide-compare-and-evaluate-chunking-strategies/blob/main/setup.sql) to create the neccessary databases, schemas, warehouses and roles.
 
 ### Data Preparation
 
-Download the PDF documents from the [data folder in the GitHub repository](https://github.com/Snowflake-Labs/sfguide-compare-and-evaluate-chunking-strategies/tree/main/data) and upload them to the stage `PDF_10KS` you just created.
+Download the PDF documents from the [data folder in the GitHub repository](https://github.com/Snowflake-Labs/sfguide-compare-and-evaluate-chunking-strategies/tree/main/data) and upload them to the stage `@CHUNKING_EVALUATION.CHUNKING_EVALUATION.PDF_10KS`.
 
 > aside positive
 > IMPORTANT:
@@ -190,7 +183,7 @@ This approach splits the text at paragraph boundaries, creating chunks of approx
 
 ### Strategy 2: Context-Enhanced Chunking
 
-For our second strategy, we'll enhance each chunk with document-level context by adding a summary:
+For our second strategy, we'll enhance each chunk with document-level context by adding a document summary using `AI_SUMMARIZE_AGG`:
 
 ```sql
 -- Add the DOC_SUMMARY column if it doesn't exist
