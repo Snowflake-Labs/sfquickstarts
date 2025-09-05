@@ -46,9 +46,13 @@ A complete RAG application that can answer questions about SEC 10-K filings, wit
 
 Duration: 10
 
-### Environment Configuration
+### Database and Schema Setup
 
-Firstly, to follow along with this quickstart, you can download the Notebook from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-compare-and-evaluate-chunking-strategies) and then create a new Snowflake notebook by importing the notebook file in Snowsight.
+Run [setup.sql](https://github.com/Snowflake-Labs/sfguide-compare-and-evaluate-chunking-strategies/blob/main/setup.sql) to create the neccessary databases, schemas, warehouses and roles.
+
+### Notebook Configuration
+
+Firstly, to follow along with this quickstart, you can download the Notebook from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-compare-and-evaluate-chunking-strategies) and then create a new Snowflake notebook by importing the notebook file in Snowsight into the `CHUNKING_EVALUATION` database and `CHUNKING_EVALUATION` schema.
 
 In your Snowflake notebook, install the following python packages from the Snowflake conda channel:
 
@@ -58,8 +62,9 @@ In your Snowflake notebook, install the following python packages from the Snowf
 - trulens-providers-cortex
 - trulens-connectors-snowflake
 
+Then, you can get the active snowpark session and turn on TruLens OpenTelemetry tracing.
+
 ```python
-import snowflake.snowpark as snowpark
 from snowflake.snowpark.context import get_active_session
 session = get_active_session()
 
@@ -67,10 +72,6 @@ session = get_active_session()
 import os
 os.environ["TRULENS_OTEL_TRACING"] = "1"
 ```
-
-### Database and Schema Setup
-
-Run [setup.sql](https://github.com/Snowflake-Labs/sfguide-compare-and-evaluate-chunking-strategies/blob/main/setup.sql) to create the neccessary databases, schemas, warehouses and roles.
 
 ### Data Preparation
 
@@ -594,6 +595,8 @@ These metrics will help us understand how well each RAG version performs:
 Duration: 10
 
 Finally, let's view and compare the results of our evaluation runs.
+
+https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/NOTEBOOK_SCHEMA/applications/SEC_10K_CHAT_APP
 
 ```python
 import streamlit as st
