@@ -598,7 +598,7 @@ Duration: 10
 
 Finally, let's view the results of our runs by opening the leaderboard:
 
-[AI Observability Leaderboard](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/PUBLIC/applications/SEC_10K_CHAT_APP)
+[AI Observability Leaderboard](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/PUBLIC/applications/SEC_10K_CHAT_APP?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-compare-and-evaluate-chunking-strategies)
 
 We can also compare the runs head to head by clicking the checkbox for each version and then clicking `Compare` on the right side of the screen.
 
