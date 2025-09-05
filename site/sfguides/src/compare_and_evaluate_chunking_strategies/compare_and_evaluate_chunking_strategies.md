@@ -596,13 +596,9 @@ Duration: 10
 
 ### Compare results
 
-Finally, let's view the results of our runs by opening the leaderboard:
+Finally, let's view the results of our runs by opening the evaluations page:
 
 [AI Observability Leaderboard](https://app.snowflake.com/_deeplink/#/ai-evaluations/databases/CHUNKING_EVALUATION/schemas/PUBLIC/applications/SEC_10K_CHAT_APP?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-compare-and-evaluate-chunking-strategies)
-
-We can also compare the runs head to head by clicking the checkbox for each version and then clicking `Compare` on the right side of the screen.
-
-This will generate a link to the AI Evaluations dashboard in Snowflake, where you can view detailed metrics and compare the performance of your two RAG applications.
 
 In the dashboard, you can:
 
@@ -610,6 +606,8 @@ In the dashboard, you can:
 2. Analyze performance on individual questions
 3. Examine retrieved contexts and generated answers
 4. Identify strengths and weaknesses of each chunking strategy
+
+To compare the runs head to head, click the checkbox for each version and then clicking `Compare` on the right side of the screen.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
