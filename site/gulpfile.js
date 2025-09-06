@@ -142,7 +142,8 @@ gulp.task('export:codelabs', (callback) => {
     // claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
     claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../" + CODELABS_BUILD_DIR, CODELABS_ELEMENTS_PREFIX, sources, callback);
   } else {
-    const sources = ["[^_]*/*.md"]; //export all markdown files in the src directory, except _imports
+    // limit sources to args.lab if specified, else all markdowns
+    const sources = args.lab ? [args.lab + '/*.md'] : ["[^_]*/*.md"]; //export all markdown files in the src directory (or lab directory), except _imports
     // claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../"+CODELABS_BUILD_DIR, sources, callback);
     claat.run(CODELABS_SRC_DIR, 'export', CODELABS_ENVIRONMENT, CODELABS_FORMAT, DEFAULT_GA, "../../" + CODELABS_BUILD_DIR, CODELABS_ELEMENTS_PREFIX, sources, callback);
   }
@@ -382,9 +383,11 @@ gulp.task('watch:images', () => {
 
 // watch:codelabs watches image files for changes and updates them
 gulp.task('watch:codelabs', () => {
+  // filter to a specific lab, else watch all labs
+  const dir_filter = args.lab ? args.lab : '**';
   const srcs = [
-    CODELABS_SRC_DIR + '/**/*.md',
-    CODELABS_SRC_DIR + '/**/assets/*',
+    CODELABS_SRC_DIR + '/' + dir_filter + '/*.md',
+    CODELABS_SRC_DIR + '/' + dir_filter + '/assets/*',
   ]
   gulp.watch(srcs, gulp.series('build:codelabs'));
 });
