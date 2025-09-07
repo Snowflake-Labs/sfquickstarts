@@ -51,7 +51,7 @@ Ingest data into structured and unstructured data stores then:
 
 ### What You’ll Need
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_cta=quickstarts_)
-- [AWS Account](https://aws.amazon.com/free) with access to Q
+- [AWS Account](https://aws.amazon.com/free) with access to Bedrock AgentCore
 - For the sake of the lab it is best if both platforms have access to the public internet and are not in a virtual network
 - AWS CLI - [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 - Python 3.11+ - [Download Python](https://www.python.org/downloads/)
@@ -459,6 +459,46 @@ You can now look inside of the UI view of the Semantic View and see how the Cort
 Underneath the UI Cortex Analyst is simply generating a yaml file, so users can build the Semantic View programmatically or with the UI. 
 ![](assets/analystyaml.png)
 
+
+#### Build Cortex Agent
+
+Snowflake Agents allow for many ways to build the Snowflake Agent Object which serves as a spec for the Cortex Agent API.
+
+Ensure that you are in the CORTEX_AGENT_ROLE and select **AIML** then **Agents** on the left panel the select the MOVIES.PUBLIC database and schema.
+![](assets/createagent.png)
+
+
+Select **Create Agent** in the top right. 
+- Unselect **Create Agent in Snowflake Intelligence**
+- Select the MOVIES.PUBLIC database and schema
+- name the agent "MOVIESAGENT"
+
+Select the MOVIES agent you just created and select **Edit**.
+- In the **About > Description** section place this sentence, "This agent helps answer questions on a select set of movies."
+- In the **Orchestration Instructions** please these instructions, "Use cortex analyst for structured data queries and questions on ratings. Use Cortex Search for questions on reviews and unstructured data requests."
+- Select your favorite Claude model (running on Bedrock) and click Save
+![](assets/orchestrateagent.png)
+
+With Cortex Agents you can add number of [tools](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#tools) including native AI services and custom tools. In this quickstart we are only using 1 Cortex Search service and 1 Cortex Analyst service, but Cortex Agents can scale to be much more complex.
+- Select **+ Add** for Cortex Analyst.
+- Select the MOVIES.PUBLIC Schema and the MOVIES_SEMANTIC_VIEW that we just created. 
+- Provide the name MOVIES_SEMANTIC_VIEW.
+- Select **Generate with Cortex**.
+- Select **Add**.
+![](assets/analysttool.png)
+
+
+- Select **+ Add** for Cortex Search.
+- Provide the name MOVIE_SEARCH.
+- Provide MOVIES.PUBLIC for the Search service.
+- Select DOCUMENT_ID for the ID Column and SEARCHABLE_TEXT for the Title column.
+- Select **Add**.
+![](assets/searchtool.png)
+
+Click **Save** in the top right.
+
+The Agent is ready, you can test it out right in the Snowflake UI with a few sample questions.
+
 Now that Snowflake is ready let's work on setting up Snowflake Cortex as a target in an AgentCore Gateway.
 
 <!-- ------------------------ -->
@@ -471,16 +511,19 @@ As a pre-requisite it is expected that users have the below available locally:
 - Installed Python 3.11 or greater.
 - Streamlit library installed.
 
-Download the folder [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-bedrock-agentcore-gateways-and-cortex-agents/tree/main/agentcore-to-cortex) by selecting **Code** and Download the zip file. 
-- Unzip the file and from VS Code cd into the **agentcore-to-cortex directory**.
-- Ensure that you are connected to your AWS account from VS Code.
+Open a terminal and clone the repo below.
+
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-bedrock-agentcore-gateways-and-cortex-agents.git
+```
+
+Before we get started please make sure you are connected to your AWS account via the (AWS CLI)[https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html]
 
 ### 1. Environment Setup
 
 Create a virtual environment to avoid dependency conflicts:
 
 ```bash
-mkdir cortex-agents-setup
 cd cortex-agents-setup
 
 python -m venv venv
