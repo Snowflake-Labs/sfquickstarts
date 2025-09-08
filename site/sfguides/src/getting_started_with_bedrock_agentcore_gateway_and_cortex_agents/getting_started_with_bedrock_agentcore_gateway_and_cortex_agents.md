@@ -69,7 +69,7 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 
 
 <!-- ------------------------ -->
-## Set up Snowflake Environment
+## Snowflake Environment
 Duration: 8
 
 
