@@ -65,7 +65,7 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 - to create a Snowflake Cortex Search Service on unstructured data
 - to create a semantic view with Cortex Analyst on structured data
 - to create a Cortex Agent using the Search and Analyst services
-- to create a Bedrock AgentCore Gateway with a Snowflake Cortex Target leveraging AgentCore Identity
+- to create a Bedrock AgentCore Gateway with a Snowflake Cortex Target leveraging AgentCore Identity along with a second target to the Wikipedia API
 
 
 <!-- ------------------------ -->
@@ -475,7 +475,8 @@ Select **Create Agent** in the top right.
 
 Select the MOVIES agent you just created and select **Edit**.
 - In the **About > Description** section place this sentence, "This agent helps answer questions on a select set of movies."
-- In the **Orchestration Instructions** please these instructions, "Use cortex analyst for structured data queries and questions on ratings. Use Cortex Search for questions on reviews and unstructured data requests."
+- In the **Orchestration Instructions** please these instructions, "Return only the final answer for the user, in clean Markdown. No planning text, no status messages, no tool traces, no JSON, no code blocks. Use short sentences. Prefer ‘- ’ bullets (not numbered lists). Avoid headings unless asked. Keep lists ≤ 8 items. Don’t echo the question. If there are no results, say ‘No results.’
+You are answering for an external app. Produce concise, well‑formatted Markdown. No preamble, no ‘thinking’, no meta‑commentary, no escaping. Final answer only."
 - Select your favorite Claude model (running on Bedrock) and click Save
 ![](assets/orchestrateagent.png)
 
@@ -575,6 +576,8 @@ In the first space please enter your Snowflake account URL (e.g., myacct.snowfla
 - what are the unstructured reviews of the movie Toy story?
 - what are the unstructured reviews of the movie Sudden Death?
 - what is the average rating of Toy Story?
+
+Additionally, you can use the other Target in the gateway to get information from the Wikipedia API.
 
 
 The app should look like this:
