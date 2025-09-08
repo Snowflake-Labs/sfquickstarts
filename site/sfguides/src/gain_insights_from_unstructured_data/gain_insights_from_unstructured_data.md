@@ -27,7 +27,7 @@ You will need the following things before beginning:
 
 * Snowflake account in a cloud region where Snowflake Cortex LLM functions/models are [supported](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#availability).
   * Cortex functions used - AI_Complete, Translate, Sentiment, AI_Summarize_Agg, AI_Classify, AI_Transcribe
-  * Model used - openai-gpt-4.1
+  * Model used - openai-gpt-4.1, claude-3-5-sonnet
 * Snowflake Notebook enabled in your Snowflake account
 
 ### What You’ll Learn 
@@ -65,6 +65,16 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
    - create Snowflake objects (warehouse, database, schema, raw tables), ingest shift  data from S3,  and create the review view
    - A new database and schema for your project
    - Image and audio storage stages
+
+### Upload Images and Audio File to Stage
+1. Download [data.zip](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/blob/main/data.zip) and extract
+2. Navigate to Catalog -> Database Explorer
+3. Select **TB_VOC** -> **MEDIA** -> **Stages** -> **AUDIO** 
+4. Click the **+ Files** on the top right hand corner
+5. Click **Browse** and upload the files in the Audio Folder in the data.zip
+6. Select **TB_VOC** -> **MEDIA** -> **Stages** -> **IMAGE** 
+7. Click the **+ Files** on the top right hand corner
+8. Click **Browse** and upload the files in the Image Folder in the data.zip
 
 <!-- ------------------------ -->
 ## Setting up Snowflake Notebook
