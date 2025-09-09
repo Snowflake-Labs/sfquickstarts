@@ -48,7 +48,7 @@ In this quickstart, you will learn:
   * Understand how customers are feeling with Cortex **Sentiment**
 
 <!-- ------------------------ -->
-## Setting up the Data in Snowflake
+## Setup Data
 Duration: 2
 
 ### Overview
@@ -78,7 +78,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 8. Click **Browse** and upload the files in the Image Folder in the data.zip
 
 <!-- ------------------------ -->
-## Setting up Snowflake Notebook
+## Setup Notebook
 Duration: 5
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
@@ -100,7 +100,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 * Now you are ready to run the notebook by clicking "Run All" button on the top right or running each cell individually. 
 
 <!-- ------------------------ -->
-## Translate multilingual reviews
+## Translate
 Duration: 2
 
 ### Overview
@@ -147,7 +147,7 @@ This is done within the notebook using following code snippet in cell `CORTEX_TR
   ```
 <!-- ------------------------ -->
 
-## Summarize what the customers are saying
+## Summarize reviews
 Duration: 5
 
 ### Overview
@@ -180,7 +180,7 @@ In this section, you will leverage **Snowflake Cortex LLM - AI_SUMMARIZE_AGG** t
   ```
 <!-- ------------------------ -->
 
-## Categorize unstructured review text data  
+## Categorize reviews  
 Duration: 5
 
 ### Overview
@@ -216,7 +216,7 @@ In this section, you will make use of **Snowflake Cortex LLM - AI_CLASSIFY** to 
   ```
 <!-- ------------------------ -->
 
-## Leverage an LLM to find your answer
+## Leverage an LLM
 Duration: 5
 
 ### Overview
@@ -301,7 +301,7 @@ In this section, you will leverage **Snowflake Cortex LLM - AI_TRANSCRIBE** to f
     1;
 ```
 
-## Understand customer sentiment 
+## Understand sentiment 
 Duration: 2
 
 ### Overview
