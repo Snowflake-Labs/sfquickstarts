@@ -123,7 +123,7 @@ create view if not exists orders as select * from snowflake_sample_data.tpch_sf1
 ```
 
 <!-- ------------------------ -->
-## Build and Upload Container Images
+## Build and Upload Images
 Duration: 10
 ### Overview
 Now that we have a place in our Snowflake account to house our application code and images we need to build the images and push them to our Image Repository.  We'll then upload our app files that detail how to install, setup and configure the Snowflake Native App.  
@@ -210,7 +210,7 @@ grant install, develop on application package spcs_app_pkg to role nac;
 ```
 
 <!-- ------------------------ -->
-## Install & Run Application 
+## Install and Run Application 
 Duration: 10 
 ### Overview
 We can now use the Consumer role to install our Snowflake Native App - but to get it fully deployed we will also need to create a Compute Pool for our Snowpark Containers to run on as well as start the Service.  
@@ -281,7 +281,7 @@ drop role nac;
 
 
 <!-- ------------------------ -->
-## Conclusion and Resources
+## Conclusion And Resources
 Duration: 5
 
 Congratulations!  You've now deployed a Snowflake Native App that includes Snowpark Container Service hosting a customer Frontend and Backend for a web application.  
