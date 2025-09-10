@@ -35,7 +35,7 @@ You will need the following things before beginning:
 In this quickstart, you will learn:
 * How to translate multilingual reviews
 * How to summarize large amounts of reviews to get specific learnings
-* How to categories unstructured review text data at scale
+* How to categorize unstructured review text data at scale
 * How to answer specific questions you have based on the reviews 
 * How to derive customer sentiment from reviews 
 
