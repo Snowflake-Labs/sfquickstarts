@@ -59,7 +59,7 @@ You can simply download the repo as a .zip if you don't have Git installed local
 <!-- ![e2e_ml_workflow](assets/snowpark-ml-e2e.png) -->
 
 <!-- ------------------------ -->
-## Set up the Snowflake environment
+## Set up Environment
 Duration: 5
 
 Run the following SQL commands in [`00_setup.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/00_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the role, database, warehouse, and stage that we need to get started:
@@ -125,7 +125,7 @@ SHOW IMAGE REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
 - The [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository) is the location in Snowflake where we will push our Docker images so that our services can use them
 
 <!-- ------------------------ -->
-## Set up your local environment
+## Set Your Local Environment
 Duration: 10
 
 ### Python Virtual Environment and SnowCLI
@@ -207,7 +207,7 @@ Duration: 10
   **Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
 
 <!-- ------------------------ -->
-## Build, Push, and Run the Jupyter Service
+## Build and Run Jupyter Service
 Duration: 45
 
 ### Build and Test the Image Locally
@@ -379,7 +379,7 @@ Now we can run a sample query using our Snowpark session!
 
 We've successfully built and deployed our Jupyter Notebook service. Now let's move on to a REST API which we will interact with using a Service Function.
 <!-- ------------------------ -->
-## Build, Push, and Run the Temperature Conversion REST API Service
+## Temperature Conversion REST API
 Duration: 30
 
 ### Build and Test the Image Locally
@@ -651,7 +651,7 @@ There are a number of useful functions we should explore with respect to control
   ```
 
 <!-- ------------------------ -->
-## Stop the Services and Suspend the Compute Pool
+## Stop and Suspend
 Duration: 2
 
 If you no longer need the services and compute pool up and running, we can stop the services and suspend the compute pool so that we don't incur any cost (Snowpark Container Services bill credits/second based on the compute pool's uptime, similar to Virtual Warehouse billing):
@@ -679,7 +679,7 @@ DROP ROLE CONTAINER_USER_ROLE;
 ```
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to create and manage long-running services using Snowflake's managed Snowpark Container Services. These services run entirely within your Snowflake account boundary using a managed container orchestration service- keeping your data secure, and making development to deployment incredibly easy.
 
 For more information, check out the resources below:
