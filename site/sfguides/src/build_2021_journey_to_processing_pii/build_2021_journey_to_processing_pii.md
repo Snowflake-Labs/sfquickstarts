@@ -200,7 +200,7 @@ grant ownership on table REYNHOLM_IND_DATA.BASEMENT.ROW_ACCESS_MAPPING to role i
 -- NOPE, blocked by Managed Access Schema
 ```
 
-Instead of granting `OWNERSHIP` rights, we will instead grant `SELECT` and `INSERT` which are all that is needed. Forcing inly the grants of the required rights is the main point of using these managed access schemas.
+Instead of granting `OWNERSHIP` rights, we will instead grant `SELECT` and `INSERT` which are all that is needed. Forcing only the grants of the required rights is the main point of using these managed access schemas.
 
 ```sql
 grant select on table REYNHOLM_IND_DATA.BASEMENT.ROW_ACCESS_MAPPING to role infosec;
