@@ -40,7 +40,7 @@ In this quickstart, you will learn:
 * How to derive customer sentiment from reviews 
 
 ### What You’ll Build 
-* You will analyze Tasty Bytes' customer reviews using **Snowflake Cortex** within **Snowflake notebook** to understand :
+* You will analyze Tasty Bytes' customer reviews using **Snowflake Cortex** within **Snowflake Notebook** to understand :
   * What our international customers are saying with Cortex **Translate**
   * Get a summary of what customers are saying with Cortex **AI AGG**
   * Classify reviews to determine if they would recommend a food truck with Cortex **AI Classify**
@@ -48,7 +48,7 @@ In this quickstart, you will learn:
   * Understand how customers are feeling with Cortex **Sentiment**
 
 <!-- ------------------------ -->
-## Setting up the Data in Snowflake
+## Setup Data
 Duration: 2
 
 ### Overview
@@ -56,6 +56,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 * Create Snowflake objects (warehouse, database, schema, raw tables)
 * Ingest data from S3 to raw tables
 * Create review view 
+* Upload Images and Audio
 
 ### Creating Objects, Loading Data, and Joining Data
 1. Download the [setup.sql](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/blob/main/setup.sql) file
@@ -77,7 +78,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 8. Click **Browse** and upload the files in the Image Folder in the data.zip
 
 <!-- ------------------------ -->
-## Setting up Snowflake Notebook
+## Setup Notebook
 Duration: 5
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
@@ -88,7 +89,9 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 * Using the import button on the top right, import the downloaded notebook.
 
-* Provide a name for the notebook and select appropriate database `tb_voc`, schema `analytics` and warehouse `tasty_ds_wh`
+* Provide a name for the notebook and select appropriate **database** `tb_voc`, **schema** `analytics`
+
+* For **Runtime** select `Run on container`
 
 * Open the notebook once created and add the following packages by using the "Packages" button on the top right
   * snowflake-snowpark-python
@@ -97,7 +100,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 * Now you are ready to run the notebook by clicking "Run All" button on the top right or running each cell individually. 
 
 <!-- ------------------------ -->
-## Translate multilingual reviews
+## Translate
 Duration: 2
 
 ### Overview
@@ -144,7 +147,7 @@ This is done within the notebook using following code snippet in cell `CORTEX_TR
   ```
 <!-- ------------------------ -->
 
-## Summarize what the customers are saying
+## Summarize reviews
 Duration: 5
 
 ### Overview
@@ -177,7 +180,7 @@ In this section, you will leverage **Snowflake Cortex LLM - AI_SUMMARIZE_AGG** t
   ```
 <!-- ------------------------ -->
 
-## Categorize unstructured review text data  
+## Categorize reviews  
 Duration: 5
 
 ### Overview
@@ -213,7 +216,7 @@ In this section, you will make use of **Snowflake Cortex LLM - AI_CLASSIFY** to 
   ```
 <!-- ------------------------ -->
 
-## Leverage an LLM to find your answer
+## Leverage an LLM
 Duration: 5
 
 ### Overview
@@ -298,7 +301,7 @@ In this section, you will leverage **Snowflake Cortex LLM - AI_TRANSCRIBE** to f
     1;
 ```
 
-## Understand customer sentiment 
+## Understand sentiment 
 Duration: 2
 
 ### Overview
@@ -331,16 +334,17 @@ Next, you will look at another **task specific LLM function in Cortex - Sentimen
 ## Conclusion And Resources
 Duration: 1
 
-**Congratulations!** You've mastered powerful customer analytics using Snowflake Cortex, processing multilingual reviews and extracting valuable insights – all while maintaining data security within Snowflake's ecosystem. By leveraging these built-in AI capabilities, you've eliminated the complexity of managing external infrastructure while keeping sensitive customer feedback protected within Snowflake's secure environment.
+### Overview
+You've mastered powerful customer analytics using Snowflake Cortex, processing multilingual reviews and extracting valuable insights – all while maintaining data security within Snowflake's ecosystem. By leveraging these built-in AI capabilities, you've eliminated the complexity of managing external infrastructure while keeping sensitive customer feedback protected within Snowflake's secure environment.
 
-### What we've covered
+### What You Learned
 With the completion of this quickstart, you have now: 
-* Implementing advanced AI capabilities through Snowflake Cortex in minutes
+  * Implementing advanced AI capabilities through Snowflake Cortex in minutes
   * Leveraging enterprise-grade language models directly within Snowflake's secure environment
   * Executing sophisticated natural language processing tasks with pre-optimized models that eliminate the need for prompt engineering. 
   * You've mastered a powerful suite of AI-driven text analytics capabilities, from seamlessly breaking through language barriers with Translate, to decoding customer emotions through Sentiment analysis, extracting precise insights with Complete, and automatically categorizing feedback using AI Classify. These sophisticated functions transform raw customer reviews into actionable business intelligence, all within Snowflake's secure environment.
 
-### Related Resources
+### Resources
 
 Want to learn more about the tools and technologies used in this quickstart? Check out the following resources:
 
