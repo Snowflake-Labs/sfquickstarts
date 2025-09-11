@@ -185,7 +185,7 @@ SELECT
   REGEXP_SUBSTR(layout, 'Product: (.*)', 1, 1, 'e', 1) as product,
   REGEXP_SUBSTR(layout, 'Date: (202[0-9]-[0-9]{2}-[0-9]{2})', 1, 1, 'e') as date,
   REGEXP_SUBSTR(layout, '## Customer Review\\n\\n(.*)', 1, 1, 'e', 1) as customer_review
-FROM $1$;
+FROM $1;
 ```
 The result table should look like the following:
 
