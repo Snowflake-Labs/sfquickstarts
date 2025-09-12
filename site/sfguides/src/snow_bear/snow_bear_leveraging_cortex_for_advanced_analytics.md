@@ -57,72 +57,14 @@ Duration: 5
 
 3. **Execute the setup script**: Copy and paste the following code to create Snowflake objects and stage:
 
-**Option A: Use the dedicated setup script** (Recommended)
-1. Use the provided `snow_bear_setup.sql` file which includes all setup commands plus stage creation
-2. This script creates the database, schemas, role, warehouse, stage, table, and file format
+Execute the setup script that creates:
+- Database, schemas, role, warehouse
+- Stage for CSV file upload
+- Bronze layer table structure
+- File format for CSV loading
+- All necessary permissions and Cortex AI access
 
-**Option B: Manual setup** (copy the SQL below):
-
-```sql
-USE ROLE accountadmin;
-
--- Create Snow Bear database and schemas
-CREATE DATABASE IF NOT EXISTS CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB;
-USE DATABASE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB;
-CREATE SCHEMA IF NOT EXISTS BRONZE_LAYER;
-CREATE SCHEMA IF NOT EXISTS GOLD_LAYER;
-
--- Create role for Snow Bear data scientists
-CREATE OR REPLACE ROLE snow_bear_data_scientist;
-
--- Create warehouse for analytics
-CREATE OR REPLACE WAREHOUSE snow_bear_analytics_wh
-    WAREHOUSE_SIZE = 'small'
-    WAREHOUSE_TYPE = 'standard'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-COMMENT = 'Analytics warehouse for Snow Bear fan experience analytics';
-
--- Grant privileges
-GRANT USAGE ON WAREHOUSE snow_bear_analytics_wh TO ROLE snow_bear_data_scientist;
-GRANT OPERATE ON WAREHOUSE snow_bear_analytics_wh TO ROLE snow_bear_data_scientist;
-GRANT ALL ON DATABASE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB TO ROLE snow_bear_data_scientist;
-GRANT ALL ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER TO ROLE snow_bear_data_scientist;
-GRANT ALL ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER TO ROLE snow_bear_data_scientist;
-
--- Grant Cortex AI privileges (required for AI functions)
-GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE snow_bear_data_scientist;
-
--- Grant role to current user
-SET my_user_var = (SELECT '"' || CURRENT_USER() || '"');
-GRANT ROLE snow_bear_data_scientist TO USER identifier($my_user_var);
-
--- Switch to Snow Bear role and create stage
-USE ROLE snow_bear_data_scientist;
-USE WAREHOUSE snow_bear_analytics_wh;
-USE SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER;
-
--- Create stage for CSV file upload
-CREATE OR REPLACE STAGE snow_bear_data_stage
-    COMMENT = 'Stage for Snow Bear fan survey data files';
-
--- Create file format for CSV loading
-CREATE OR REPLACE FILE FORMAT csv_format
-    TYPE = 'CSV'
-    FIELD_DELIMITER = ','
-    RECORD_DELIMITER = '\n'
-    SKIP_HEADER = 1
-    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
-    TRIM_SPACE = TRUE
-    ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE
-    ESCAPE_UNENCLOSED_FIELD = '\134'
-    COMMENT = 'File format for Snow Bear fan survey CSV data';
-
-SELECT 'Snow Bear setup complete! Upload basketball_fan_survey_data.csv.gz to snow_bear_data_stage' AS status;
-```
-
-4. Click `Run All` to execute the setup script
+*Setup script will be provided separately*
 
 ### Upload Data File to Stage
 5. **Upload the CSV file**: Navigate to Data → Databases → CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB → BRONZE_LAYER → Stages → SNOW_BEAR_DATA_STAGE
@@ -136,24 +78,12 @@ Duration: 10
 
 **Important**: Make sure you've completed the setup script and uploaded `basketball_fan_survey_data.csv.gz` to the stage before running this step.
 
-1. Copy and paste the following SQL to load the real fan survey data:
+Execute the data loading script that:
+- Loads real basketball fan survey data from the stage
+- Verifies successful data loading
+- Shows sample of loaded data
 
-```sql
--- Load data from stage into bronze layer table
--- This loads the real basketball fan survey data from basketball_fan_survey_data.csv.gz
-COPY INTO CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER.GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED
-FROM @snow_bear_data_stage/basketball_fan_survey_data.csv.gz
-FILE_FORMAT = csv_format
-ON_ERROR = 'CONTINUE';
-
--- Verify data loaded successfully
-SELECT COUNT(*) as total_records_loaded FROM GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED;
-
--- Show sample of loaded data
-SELECT * FROM GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED LIMIT 5;
-```
-
-2. Click `Run All` to load the data
+*Data loading script will be provided separately*
 
 ### Alternative: Use the Notebook (Recommended)
 For the best experience, use the provided `snow_bear_complete_setup.ipynb` notebook which:
@@ -694,22 +624,12 @@ Duration: 2
 
 ### Remove Snowflake Objects
 
-1. Navigate to Worksheets and create a new SQL Worksheet
-2. Copy and paste the following SQL statements to clean up:
+Execute the cleanup script to remove:
+- Cortex Search Service
+- Database and all objects
+- Warehouse and role
 
-```sql
-USE ROLE accountadmin;
-
--- Drop the search service
-DROP CORTEX SEARCH SERVICE IF EXISTS CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.SNOWBEAR_SEARCH_ANALYSIS;
-
--- Drop role and objects
-DROP ROLE IF EXISTS snow_bear_data_scientist;
-DROP DATABASE IF EXISTS CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB;
-DROP WAREHOUSE IF EXISTS snow_bear_analytics_wh;
-
-SELECT 'Cleanup complete' AS status;
-```
+*Cleanup script will be provided separately*
 
 <!-- ------------------------ -->
 ## Conclusion
