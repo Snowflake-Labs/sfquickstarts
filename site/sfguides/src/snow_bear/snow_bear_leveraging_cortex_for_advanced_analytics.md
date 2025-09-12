@@ -55,22 +55,12 @@ In this step, you'll create the Snowflake database objects and upload all necess
 
 ### Step 1: Create Database Objects
 
-Choose one of these setup methods:
-
-#### Option A: SQL Setup (Manual)
 1. In Snowsight, click `Worksheets` in the left navigation
 2. Click `+` in the top-right corner and choose `SQL Worksheet`
 3. Download the setup script: [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql)
 4. Copy and paste the entire script into your worksheet and run it
 
-#### Option B: Python Setup (Automated - Recommended)
-1. In Snowsight, click `Worksheets` in the left navigation
-2. Click `+` in the top-right corner and choose `Python Worksheet`
-3. Download the Python setup script: [setup_python.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup_python.py)
-4. Copy and paste the entire script into your Python worksheet and run it
-5. **Skip to Step 5** - this automated setup downloads files and creates everything for you!
-
-Both setup methods create:
+The setup script creates:
 - **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold schemas
 - **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
 - **Warehouse**: `SNOW_BEAR_ANALYTICS_WH` for compute resources
@@ -78,50 +68,38 @@ Both setup methods create:
 - **File Format**: `CSV_FORMAT` for data loading
 - **AI Access**: `SNOWFLAKE.CORTEX_USER` role for Cortex functions
 
-**Python Setup Additional Benefits:**
-- **Automated file download** from GitHub repository
-- **Automatic notebook creation** from downloaded files
-- **Automatic Streamlit app creation** 
-- **Zero manual file handling required**
+### Step 2: Download Required Files
 
-### Step 2: Manual File Management (SQL Setup Only)
-
-**If you used Python Setup (Option B), skip to the Run Analytics Notebook section.**
-
-For SQL Setup users, download and upload these files:
+Download these 2 files from the GitHub repository:
 
 | File | Purpose | Download Link |
 |------|---------|---------------|
 | **Data File** | Basketball fan survey data | [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) |
-| **Notebook** | Complete AI processing workflow | [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb) |
 | **Streamlit App** | Interactive analytics dashboard | [snow_bear.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear.py) |
 
-### Step 3: Upload Files to Stage (SQL Setup Only)
+### Step 3: Upload Files to Stage
 
 1. Navigate to `Data` → `Databases` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
 2. Click on `SNOW_BEAR_DATA_STAGE`
-3. Upload all 3 downloaded files to the stage
+3. Upload the 2 downloaded files to the stage
 
-### Step 4: Create the Notebook (SQL Setup Only)
+### Step 4: Import the Analytics Notebook
 
-Choose one of these two methods to create the notebook:
+1. **Download the notebook**: [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb)
 
-#### Option A: Manual Import
-1. Navigate to `Projects` → `Notebooks`
-2. Click `Import .ipynb file`
-3. Select `snow_bear_complete_setup.ipynb` from your downloads
-4. Configure the notebook settings:
+2. **Import into Snowflake**:
+   - Navigate to `Projects` → `Notebooks` in Snowsight
+   - Click the down arrow next to `+ Notebook` and select `Import .ipynb file`
+   - Choose `snow_bear_complete_setup.ipynb` from your downloads
+
+3. **Configure the notebook settings**:
    - **Database**: Select `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB`
-   - **Schema**: Select `GOLD_LAYER`
+   - **Schema**: Select `GOLD_LAYER`  
    - **Warehouse**: Select `SNOW_BEAR_ANALYTICS_WH`
-5. Click `Create` to import the notebook
 
-#### Option B: Automated Creation
-1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) script
-2. Find the "OPTIONAL: CREATE NOTEBOOK FROM STAGE" section
-3. Uncomment the notebook creation SQL statements
-4. Run the uncommented statements in your SQL worksheet
-5. The notebook will be created automatically from the uploaded file
+4. **Click `Create`** to import the notebook
+
+The notebook contains all the SQL scripts and processing logic needed for the complete analytics platform.
 
 
 <!-- ------------------------ -->
