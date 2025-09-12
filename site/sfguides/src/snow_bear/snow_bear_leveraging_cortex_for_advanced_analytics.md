@@ -67,42 +67,26 @@ The setup script creates:
 - **File Format**: `CSV_FORMAT` for data loading
 - **Cortex AI Access**: Grants `SNOWFLAKE.CORTEX_USER` role for AI functions
 
-### Upload Data File
+### Upload Files and Import Notebook
 
-4. **Download the data file**: Download [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz)
+4. **Download required files**:
+   - Data file: [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz)
+   - Processing notebook: [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb)
+   - Streamlit app: [snow_bear_complete_app.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_complete_app.py)
 
-5. **Upload to stage**: 
+5. **Upload files to stage**: 
    - Navigate to `Data` → `Databases` → `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` → `BRONZE_LAYER` → `Stages` → `SNOW_BEAR_DATA_STAGE`
-   - Click the stage name, then upload the downloaded CSV file
+   - Click the stage name, then upload all 3 downloaded files:
+     - `basketball_fan_survey_data.csv.gz` (data)
+     - `snow_bear_complete_app.py` (Streamlit app)
+     - `snow_bear_complete_setup.ipynb` (notebook)
+
+6. **Import the notebook**: 
+   - Navigate to `Projects` → `Notebooks`
+   - Click `Import .ipynb file` and select `snow_bear_complete_setup.ipynb` from the stage
+   - Set the warehouse to `SNOW_BEAR_ANALYTICS_WH`
 
 ✅ **Your Snowflake environment is now ready for the Snow Bear analytics platform!**
-
-<!-- ------------------------ -->
-## Load Fan Survey Data
-Duration: 10
-
-### Load Real Basketball Fan Data from Stage
-
-**Important**: Make sure you've completed the setup script and uploaded [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) to the stage before running this step.
-
-Execute the data loading script that:
-- Loads real basketball fan survey data from the stage
-- Verifies successful data loading
-- Shows sample of loaded data
-
-*Data loading script will be provided separately*
-
-### Alternative: Use the Notebook (Recommended)
-For the best experience, use the provided [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb) notebook which:
-- Automatically verifies your setup
-- Loads data from the stage
-- Runs all AI processing steps
-- Provides validation and troubleshooting
-
-**To use the notebook:**
-1. Complete the setup script above
-2. Upload `basketball_fan_survey_data.csv.gz` to the stage  
-3. Open and run `snow_bear_complete_setup.ipynb` in Snowflake Notebooks
 
 <!-- ------------------------ -->
 ## Use the Notebook for AI Processing
@@ -179,22 +163,23 @@ Duration: 25
 
 4. Replace the default code with the complete Snow Bear analytics application.
 
-   **📁 Download the complete Streamlit application code from:**
+   **Option A - Use the file from your stage:**
+   - Navigate to `Data` → `Databases` → `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` → `BRONZE_LAYER` → `Stages` → `SNOW_BEAR_DATA_STAGE`
+   - Download `snow_bear_complete_app.py` from the stage
+   - Copy the entire contents and paste into your Streamlit app editor
+
+   **Option B - Download directly from GitHub:**
+   - Download from: [snow_bear_complete_app.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_complete_app.py)
+   - Copy the entire contents and paste into your Streamlit app editor
    
-   ```
-   https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_complete_app.py
-   ```
-   
-   - Copy the entire contents of `snow_bear_complete_app.py`
-   - Paste it into your Streamlit app editor
-   - The application includes 7 comprehensive modules:
-     - 🏠 **Dashboard**: Overview metrics and satisfaction distribution
-     - 😊 **Sentiment Analysis**: AI-powered sentiment insights by theme
-     - 🎯 **Theme Analysis**: AI theme classification and performance
-     - 👥 **Fan Segments**: Segmentation analysis and theme preferences
-     - 🤖 **AI Recommendations**: Cortex-generated improvement suggestions
-     - 🔍 **Interactive Search**: Cortex Search for natural language queries
-     - 🧠 **AI Assistant**: Integration point for Cortex Analyst
+   The application includes 7 comprehensive modules:
+   - 🏠 **Dashboard**: Overview metrics and satisfaction distribution
+   - 😊 **Sentiment Analysis**: AI-powered sentiment insights by theme
+   - 🎯 **Theme Analysis**: AI theme classification and performance
+   - 👥 **Fan Segments**: Segmentation analysis and theme preferences
+   - 🤖 **AI Recommendations**: Cortex-generated improvement suggestions
+   - 🔍 **Interactive Search**: Cortex Search for natural language queries
+   - 🧠 **AI Assistant**: Integration point for Cortex Analyst
 
 5. Click `Run` to launch your complete Snow Bear Analytics application
 
