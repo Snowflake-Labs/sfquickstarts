@@ -52,7 +52,7 @@ This Quickstart showcases the complete Snow Bear analytics platform with:
 Duration: 5
 
 ### Prerequisites Setup
-1. **Download the data file**: Download `basketball_fan_survey_data.csv.gz` from this quickstart
+1. **Download the data file**: Download [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) from this quickstart
 2. **Run setup script**: Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 
 3. **Execute the setup script**: Copy and paste the following code to create Snowflake objects and stage:
@@ -68,7 +68,7 @@ Execute the setup script that creates:
 
 ### Upload Data File to Stage
 5. **Upload the CSV file**: Navigate to Data → Databases → CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB → BRONZE_LAYER → Stages → SNOW_BEAR_DATA_STAGE
-6. **Upload file**: Click the stage name, then upload `basketball_fan_survey_data.csv.gz`
+6. **Upload file**: Click the stage name, then upload [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz)
 
 <!-- ------------------------ -->
 ## Load Fan Survey Data
@@ -76,7 +76,7 @@ Duration: 10
 
 ### Load Real Basketball Fan Data from Stage
 
-**Important**: Make sure you've completed the setup script and uploaded `basketball_fan_survey_data.csv.gz` to the stage before running this step.
+**Important**: Make sure you've completed the setup script and uploaded [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) to the stage before running this step.
 
 Execute the data loading script that:
 - Loads real basketball fan survey data from the stage
@@ -86,7 +86,7 @@ Execute the data loading script that:
 *Data loading script will be provided separately*
 
 ### Alternative: Use the Notebook (Recommended)
-For the best experience, use the provided `snow_bear_complete_setup.ipynb` notebook which:
+For the best experience, use the provided [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb) notebook which:
 - Automatically verifies your setup
 - Loads data from the stage
 - Runs all AI processing steps
