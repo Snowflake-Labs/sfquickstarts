@@ -57,8 +57,81 @@ In this step, you'll create the Snowflake database objects and upload all necess
 
 1. In Snowsight, click `Worksheets` in the left navigation
 2. Click `+` in the top-right corner and choose `SQL Worksheet`
-3. Download the setup script: [snow_bear_setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_setup.sql)
-4. Copy and paste the entire script into your worksheet and run it
+3. Copy the setup script below and paste it into your worksheet
+4. Run the script to create all necessary objects
+
+```sql
+-- Snow Bear Analytics Setup Script
+-- Creates database, schemas, roles, warehouse, stage, and grants permissions
+
+-- Create database and schemas
+CREATE OR REPLACE DATABASE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB;
+CREATE OR REPLACE SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER;
+CREATE OR REPLACE SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER;
+
+-- Create role and warehouse
+CREATE OR REPLACE ROLE SNOW_BEAR_DATA_SCIENTIST;
+CREATE OR REPLACE WAREHOUSE SNOW_BEAR_ANALYTICS_WH 
+  WITH WAREHOUSE_SIZE = 'MEDIUM'
+  INITIALLY_SUSPENDED = TRUE
+  AUTO_SUSPEND = 60
+  AUTO_RESUME = TRUE;
+
+-- Grant permissions
+GRANT USAGE ON DATABASE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB TO ROLE SNOW_BEAR_DATA_SCIENTIST;
+GRANT USAGE ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER TO ROLE SNOW_BEAR_DATA_SCIENTIST;
+GRANT USAGE ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER TO ROLE SNOW_BEAR_DATA_SCIENTIST;
+GRANT ALL ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER TO ROLE SNOW_BEAR_DATA_SCIENTIST;
+GRANT ALL ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER TO ROLE SNOW_BEAR_DATA_SCIENTIST;
+GRANT USAGE ON WAREHOUSE SNOW_BEAR_ANALYTICS_WH TO ROLE SNOW_BEAR_DATA_SCIENTIST;
+GRANT ROLE SNOW_BEAR_DATA_SCIENTIST TO USER CURRENT_USER();
+
+-- Grant Cortex AI access
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE SNOW_BEAR_DATA_SCIENTIST;
+
+-- Create stage for file uploads
+USE SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER;
+CREATE OR REPLACE STAGE SNOW_BEAR_DATA_STAGE;
+
+-- Create file format for CSV loading
+CREATE OR REPLACE FILE FORMAT CSV_FORMAT
+  TYPE = 'CSV'
+  FIELD_DELIMITER = ','
+  RECORD_DELIMITER = '\n'
+  SKIP_HEADER = 1
+  FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+  TRIM_SPACE = TRUE
+  ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE
+  ESCAPE = 'NONE'
+  ESCAPE_UNENCLOSED_FIELD = '\134'
+  DATE_FORMAT = 'AUTO'
+  TIMESTAMP_FORMAT = 'AUTO'
+  NULL_IF = ('');
+
+-- Create bronze layer table
+CREATE OR REPLACE TABLE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER.GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED (
+    ID NUMBER,
+    REVIEW_DATE DATE,
+    OVERALL_RATING NUMBER,
+    FOOD_OFFERING_RATING NUMBER,
+    GAME_EXPERIENCE_RATING NUMBER,
+    PARKING_RATING NUMBER,
+    MERCHANDISE_PRICING_RATING NUMBER,
+    SECURITY_RATING NUMBER,
+    TICKET_PRICING_RATING NUMBER,
+    OVERALL_COMMENTS STRING,
+    FOOD_OFFERING_COMMENTS STRING,
+    GAME_EXPERIENCE_COMMENTS STRING,
+    PARKING_COMMENTS STRING,
+    MERCHANDISE_PRICING_COMMENTS STRING,
+    SECURITY_COMMENTS STRING,
+    TICKET_PRICING_COMMENTS STRING
+);
+
+-- Set role for subsequent operations
+USE ROLE SNOW_BEAR_DATA_SCIENTIST;
+USE WAREHOUSE SNOW_BEAR_ANALYTICS_WH;
+```
 
 The setup script creates:
 - **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold schemas
@@ -82,17 +155,18 @@ Download all 3 files from the GitHub repository:
 
 1. Navigate to `Data` → `Databases` → `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` → `BRONZE_LAYER` → `Stages`
 2. Click on `SNOW_BEAR_DATA_STAGE`
-3. Upload all 3 downloaded files to the stage:
-   - `basketball_fan_survey_data.csv.gz`
-   - `snow_bear_complete_app.py`
-   - `snow_bear_complete_setup.ipynb`
+3. Upload all 3 downloaded files to the stage
 
 ### Step 4: Import the Notebook
 
 1. Navigate to `Projects` → `Notebooks`
 2. Click `Import .ipynb file`
 3. Select `snow_bear_complete_setup.ipynb` from your downloads
-4. Set the warehouse to `SNOW_BEAR_ANALYTICS_WH`
+4. Configure the notebook settings:
+   - **Database**: Select `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB`
+   - **Schema**: Select `GOLD_LAYER`
+   - **Warehouse**: Select `SNOW_BEAR_ANALYTICS_WH`
+5. Click `Create` to import the notebook
 
 
 <!-- ------------------------ -->
