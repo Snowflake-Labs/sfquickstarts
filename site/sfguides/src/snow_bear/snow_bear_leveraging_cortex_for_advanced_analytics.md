@@ -57,8 +57,7 @@ In this step, you'll create the Snowflake database objects and upload all necess
 
 1. In Snowsight, click `Worksheets` in the left navigation
 2. Click `+` in the top-right corner and choose `SQL Worksheet`
-3. Download the setup script: [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql)
-4. Copy and paste the entire script into your worksheet and run it
+3. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) and paste it into your worksheet, then run it
 
 The setup script creates:
 - **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold schemas
@@ -110,14 +109,9 @@ Duration: 25
 
 ### Execute the Complete Analytics Workflow
 
-1. Navigate to `Projects` → `Notebooks` in Snowsight
-2. Open `snow_bear_complete_setup.ipynb`
-3. Run all cells sequentially using `Shift + Enter`
-4. Wait for each cell to complete before proceeding to the next
-5. The complete workflow takes approximately 20-25 minutes
-
-The notebook contains detailed explanations for each step and will process your data, apply AI analytics, and create your Streamlit dashboard.
-
+1. **Navigate to the notebook**: Go to `Projects` → `Notebooks` in Snowsight
+2. **Open the notebook**: Click on `snow_bear_complete_setup.ipynb` to open it
+3. **Execute all cells**: Click **Run All** to execute all cells in the notebook at once
 <!-- ------------------------ -->
 ## Launch Analytics Dashboard
 Duration: 5
