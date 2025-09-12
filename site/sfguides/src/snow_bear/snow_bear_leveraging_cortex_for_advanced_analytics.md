@@ -27,20 +27,20 @@ This Quickstart showcases the complete Snow Bear analytics platform with:
 
 ### What You Will Build
 - Complete 7-module interactive analytics platform
-- AI-powered sentiment analysis system
+- AI-powered sentiment analysis system using real basketball fan data
 - Advanced theme extraction and categorization engine
 - Business recommendation system with simple and complex recommendations
-- Interactive Cortex Search Service
-- AI Assistant with Cortex Analyst integration
-- Fan segmentation and journey mapping
+- Interactive Cortex Search Service for semantic search
+- Production-ready Streamlit application with advanced visualizations
+- Stage-based data loading workflow for scalability
 
 ### What You Will Learn
-- How to use all Snowflake Cortex AI functions (SENTIMENT, EXTRACT_ANSWER, COMPLETE)
-- How to build production-ready multi-tab Streamlit applications
-- How to create automated data processing pipelines with AI
-- How to implement Cortex Search for semantic search
-- How to use Cortex Analyst for natural language SQL generation
-- How to visualize AI-generated insights with advanced charts
+- How to set up a production data pipeline with Snowflake stages
+- How to use Snowflake Notebooks for complex AI processing workflows
+- How to implement all Cortex AI functions (SENTIMENT, EXTRACT_ANSWER, COMPLETE)
+- How to build scalable analytics platforms with real data
+- How to create automated theme analysis and fan segmentation
+- How to deploy interactive Streamlit applications in Snowflake
 
 ### Prerequisites
 - Familiarity with Python and SQL
@@ -168,541 +168,62 @@ For the best experience, use the provided `snow_bear_complete_setup.ipynb` noteb
 3. Open and run `snow_bear_complete_setup.ipynb` in Snowflake Notebooks
 
 <!-- ------------------------ -->
-## AI-Enhanced Analytics
+## Use the Notebook for AI Processing
 Duration: 20
 
-### Building the Complete Gold Layer with Cortex AI Processing
+### Run the Complete Setup Notebook
 
-1. Copy and paste the following SQL to create the comprehensive AI-enhanced analytics table:
+All AI-enhanced analytics processing is handled by the notebook for the best user experience.
 
-```sql
-USE SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER;
+1. **Open the notebook**: In Snowflake, navigate to Projects → Notebooks
+2. **Import or create**: Import `snow_bear_complete_setup.ipynb` or create a new notebook
+3. **Run all cells**: The notebook will automatically:
+   - Verify your setup and data upload
+   - Create the AI-enhanced analytics tables
+   - Apply Cortex AI functions for sentiment analysis
+   - Generate theme extraction and classification
+   - Create fan segmentation
+   - Set up business recommendations
+   - Create the Cortex Search Service
 
--- Drop table if exists
-DROP TABLE IF EXISTS CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD;
+### What the Notebook Does
 
--- Create the complete AI-enhanced analytics table
-CREATE OR REPLACE TABLE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-AS
-SELECT DATEADD(DAY, UNIFORM(1, 365, RANDOM()), '2024-06-01') AS REVIEW_DATE,
-       A.*,
-       CAST(NULL AS INTEGER) as AGGREGATE_SCORE,       
-       FOOD_OFFERING_COMMENT||' '||
-       GAME_EXPERIENCE_COMMENT||' '||
-       MERCHANDISE_OFFERING_COMMENT||' '||
-       MERCHANDISE_PRICING_COMMENT||' '||
-       OVERALL_EVENT_COMMENT||' '||
-       PARKING_COMMENT||' '||
-       SEAT_LOCATION_COMMENT   
-       AS AGGREGATE_COMMENT,
-       CAST(NULL AS FLOAT) AS AGGREGATE_SENTIMENT,
-       CAST(NULL AS FLOAT) AS ALT_AGGREGATE_SENTIMENT,
-       CAST(NULL AS FLOAT) AS AGGREGATE_SENTIMENT_SPREAD,
-       ROUND(SNOWFLAKE.CORTEX.SENTIMENT(FOOD_OFFERING_COMMENT), 2) AS FOOD_OFFERING_SENTIMENT,
-       ROUND(SNOWFLAKE.CORTEX.SENTIMENT(GAME_EXPERIENCE_COMMENT), 2) AS GAME_EXPERIENCE_SENTIMENT,
-       ROUND(SNOWFLAKE.CORTEX.SENTIMENT(MERCHANDISE_OFFERING_COMMENT), 2) AS MERCHANDISE_OFFERING_SENTIMENT,
-       ROUND(SNOWFLAKE.CORTEX.SENTIMENT(MERCHANDISE_PRICING_COMMENT), 2) AS MERCHANDISE_PRICING_SENTIMENT,
-       ROUND(SNOWFLAKE.CORTEX.SENTIMENT(OVERALL_EVENT_COMMENT), 2) AS OVERALL_EVENT_SENTIMENT,
-       ROUND(SNOWFLAKE.CORTEX.SENTIMENT(PARKING_COMMENT), 2) AS PARKING_SENTIMENT,   
-       ROUND(SNOWFLAKE.CORTEX.SENTIMENT(SEAT_LOCATION_COMMENT), 2) AS SEAT_LOCATION_SENTIMENT,
-       ROUND(SNOWFLAKE.CORTEX.SENTIMENT(STADIUM_COMMENT), 2) AS STADIUM_ACCESS_SENTIMENT,
-       CAST(NULL AS VARCHAR(1000)) AS AGGREGATE_SUMMARY,
-       SNOWFLAKE.CORTEX.EXTRACT_ANSWER(FOOD_OFFERING_COMMENT,'ASSIGN A THEME')[0]:answer::string AS FOOD_SUMMARY,
-       SNOWFLAKE.CORTEX.EXTRACT_ANSWER(GAME_EXPERIENCE_COMMENT,'ASSIGN A THEME')[0]:answer::string AS GAME_EXPERIENCE_SUMMARY,
-       SNOWFLAKE.CORTEX.EXTRACT_ANSWER(MERCHANDISE_OFFERING_COMMENT,'ASSIGN A THEME')[0]:answer::string AS MERCHANDISE_OFFERING_SUMMARY,
-       SNOWFLAKE.CORTEX.EXTRACT_ANSWER(MERCHANDISE_PRICING_COMMENT,'ASSIGN A THEME')[0]:answer::string AS MERCHANDISE_PRICING_SUMMARY,
-       SNOWFLAKE.CORTEX.EXTRACT_ANSWER(OVERALL_EVENT_COMMENT,'ASSIGN A THEME')[0]:answer::string  AS OVERALL_EVENT_SUMMARY,
-       SNOWFLAKE.CORTEX.EXTRACT_ANSWER(PARKING_COMMENT,'ASSIGN A THEME')[0]:answer::string AS PARKING_SUMMARY,
-       SNOWFLAKE.CORTEX.EXTRACT_ANSWER(SEAT_LOCATION_COMMENT,'ASSIGN A THEME')[0]:answer::string AS SEAT_LOCATION_SUMMARY,
-       SNOWFLAKE.CORTEX.EXTRACT_ANSWER(STADIUM_COMMENT,'ASSIGN A THEME')[0]:answer::string AS STADIUM_ACCESS_SUMMARY,
-       CAST(NULL AS VARCHAR(1000)) AS MAIN_THEME,
-       CAST(NULL AS VARCHAR(1000)) AS SECONDARY_THEME,
-       CAST(0 AS INTEGER) AS FOOD,
-       CAST(0 AS INTEGER) AS PARKING,
-       CAST(0 AS INTEGER) AS SEATING,    
-       CAST(0 AS INTEGER) AS MERCHANDISE,      
-       CAST(0 AS INTEGER) AS GAME,
-       CAST(0 AS INTEGER) AS TICKET,
-       CAST(0 AS INTEGER) AS NO_THEME,
-       CAST(0 AS INTEGER) AS VIP,
-       CAST(NULL as VARCHAR(1000)) AS SEGMENT,
-       CAST(NULL as VARCHAR(1000)) AS SEGMENT_ALT,
-       CAST(NULL AS VARCHAR(8000)) AS BUSINESS_RECOMMENDATION,       
-       CAST(NULL AS VARCHAR(8000)) AS COMPLEX_RECOMMENDATION
-FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER.GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED A;
-```
-
-2. Update aggregate scores and sentiment analysis:
-
-```sql
--- Update aggregate scores and sentiment analysis
-UPDATE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-   SET AGGREGATE_SCORE = TRUNC((CASE WHEN FOOD_OFFERING_SCORE = 'N/A' THEN NULL ELSE FOOD_OFFERING_SCORE END+
-                                CASE WHEN GAME_EXPERIENCE_SCORE = 'N/A' THEN NULL ELSE GAME_EXPERIENCE_SCORE END+
-                                CASE WHEN MERCHANDISE_OFFERING_SCORE = 'N/A' THEN NULL ELSE MERCHANDISE_OFFERING_SCORE END +
-                          CASE WHEN MERCHANDISE_PRICING_SCORE = 'N/A' THEN NULL ELSE MERCHANDISE_PRICING_SCORE END +
-                          CASE WHEN OVERALL_EVENT_SCORE = 'N/A' THEN NULL ELSE OVERALL_EVENT_SCORE END +
-                          CASE WHEN PARKING_SCORE = 'N/A' THEN NULL ELSE PARKING_SCORE END +
-                          CASE WHEN SEAT_LOCATION_SCORE = 'N/A' THEN NULL ELSE SEAT_LOCATION_SCORE END +
-                          CASE WHEN STADIUM_ACCESS_SCORE = 'N/A' THEN NULL ELSE STADIUM_ACCESS_SCORE END)/8),
-       AGGREGATE_SENTIMENT = ROUND(SNOWFLAKE.CORTEX.SENTIMENT(AGGREGATE_COMMENT), 2),
-       AGGREGATE_SUMMARY = SNOWFLAKE.CORTEX.EXTRACT_ANSWER(AGGREGATE_COMMENT,'ASSIGN A THEME')[0]:answer::string,
-       ALT_AGGREGATE_SENTIMENT = (FOOD_OFFERING_SENTIMENT+GAME_EXPERIENCE_SENTIMENT+MERCHANDISE_OFFERING_SENTIMENT+
-                                 MERCHANDISE_PRICING_SENTIMENT+OVERALL_EVENT_SENTIMENT+PARKING_SENTIMENT+
-                                 SEAT_LOCATION_SENTIMENT+STADIUM_ACCESS_SENTIMENT)/8;
-                                 
-UPDATE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-   SET AGGREGATE_SENTIMENT_SPREAD = ALT_AGGREGATE_SENTIMENT - AGGREGATE_SENTIMENT;
-```
-
-3. Click `Run All` to create and process the analytics table
+The notebook handles all the complex SQL processing including:
+- **Cortex SENTIMENT**: Analyzes fan feedback across 8 categories
+- **Cortex EXTRACT_ANSWER**: Generates theme summaries for each comment
+- **Gold layer creation**: Builds the comprehensive analytics table
+- **Data validation**: Ensures all steps completed successfully
 
 <!-- ------------------------ -->
-## Theme Analysis
+## Continue with the Notebook
 Duration: 15
 
-### Creating Automated Theme Analysis
+### Theme Analysis, Fan Segmentation, and More
 
-**Note**: The theme extraction uses Cortex AI to analyze all fan feedback and may take several minutes to complete. If you encounter errors:
-- **Permission errors**: Ensure you have Cortex AI access (SNOWFLAKE.CORTEX_USER role)
-- **Timeout errors**: Use the simplified theme approach provided below
-- **Model errors**: Try again or switch to a different Cortex model if available
+The notebook continues with advanced AI processing:
 
-1. Create the advanced theme extraction system:
+**Automated Theme Analysis:**
+- Extracts 20+ recurring themes from all fan feedback
+- Uses Cortex COMPLETE for intelligent theme classification
+- Applies themes to individual fan records
 
-```sql
--- Create a themes table to store results
-CREATE OR REPLACE TRANSIENT TABLE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_SNOWBEAR AS
-WITH all_feedback AS (
-    SELECT 
-        left(LISTAGG(
-            CONCAT(
-                'FOOD: ', COALESCE(left(FOOD_OFFERING_COMMENT,200), ''), ') | ',
-                'GAME: ', COALESCE(left(GAME_EXPERIENCE_COMMENT,200), ''), ') | ',
-                'MERCH_OFFERING: ', COALESCE(left(MERCHANDISE_OFFERING_COMMENT,200), ''), ') | ',
-                'MERCH_PRICING: ', COALESCE(MERCHANDISE_PRICING_COMMENT, ''), ') | ',
-                'PARKING: ', COALESCE(left(PARKING_COMMENT,200), ''), ') | ',
-                'SEATS: ', COALESCE(left(SEAT_LOCATION_COMMENT,200), ''), ') | ',
-                'STADIUM_ACCESS: ', COALESCE(left(STADIUM_COMMENT,200), ''),  ') | ',
-                'OVERALL: ', COALESCE(left(OVERALL_EVENT_COMMENT,200), ''), ')'
-            ), 
-            ' || '
-        ) WITHIN GROUP (ORDER BY ID),100000) as all_feedback_text
-    FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-)
-SELECT 
-    CURRENT_TIMESTAMP() as analysis_date,
-    619 as total_responses,
-    SNOWFLAKE.CORTEX.COMPLETE(
-        'llama3.1-8b',
-        [
-            {
-                'role': 'system',
-                'content': 'You are a marketing analyst for a Major League Basketball team. Analyze all fan feedback and identify the top 20 recurring themes. I want the theme to be short E.g., if the main idea is Parking Issue or Parking Great I just want to see Parking. There are positive and negative feedback. Focus on actionable insights that can improve fan experience. Return ONLY a numbered list 1-20 with concise theme descriptions. Format should be **Parking** - Parking related and should be returned as a JSON array with objects containing sequence, theme , mention count and description. Return only valid JSON array, no other text'
-            },
-            {
-                'role': 'user',
-                'content': CONCAT('Analyze this Major League Basketball fan feedback from all of these survey responses and extract the top 20 themes: ', all_feedback_text)
-            }
-        ],
-        {
-            'temperature': 0.2,
-            'max_tokens': 8192
-        }
-    ):choices[0]:messages::string as top_20_themes
-FROM all_feedback;
+**Fan Segmentation:**
+- Creates multiple segmentation approaches
+- Generates business-focused recommendations
+- Uses AI to classify fans into actionable segments
 
--- Create the themes table from the analysis text
-CREATE OR REPLACE TABLE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_STRUCTURED AS
-WITH theme_text AS (
-    SELECT TOP_20_THEMES as theme_analysis_text
-    FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_SNOWBEAR
-),
-parsed_themes AS (
-    SELECT 
-        SNOWFLAKE.CORTEX.COMPLETE(
-            'llama3.1-8b',
-            [
-                {
-                    'role': 'system',
-                    'content': 'Convert this theme analysis into a JSON array with objects containing theme_number, theme_name, mention_count, and theme_description (combine bullet points into one description). Return ONLY valid JSON array, no other text. ignore any extra verbage'
-                },
-                {
-                    'role': 'user',
-                    'content': CONCAT('Convert this to JSON format: ', theme_analysis_text)
-                }
-            ],
-            {
-                'temperature': 0.1,
-                'max_tokens': 2000
-            }
-        ):choices[0]:messages::string as themes_json
-    FROM theme_text
-)
-SELECT 
-    theme.value:theme_number::integer as THEME_NUMBER,
-    theme.value:theme_name::string as THEME_NAME,
-    theme.value:theme_description::string as THEME_DESCRIPTION,
-    CURRENT_TIMESTAMP() as CREATED_DATE
-FROM parsed_themes,
-LATERAL FLATTEN(input => PARSE_JSON(replace(themes_json,'```',''))) as theme
-ORDER BY THEME_NUMBER;
-```
+**Cortex Search Setup:**
+- Creates semantic search service
+- Enables natural language queries on fan feedback
+- Provides production-ready search capabilities
 
-2. **First, verify the themes table was created successfully:**
+### Troubleshooting Notes
 
-```sql
--- Check if themes were extracted successfully
-SELECT COUNT(*) as theme_count FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_STRUCTURED;
-SELECT * FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_STRUCTURED LIMIT 5;
-```
-
-If the table doesn't exist or is empty, you can create a simplified version:
-
-```sql
--- Fallback: Create simple themes if extraction didn't work
-CREATE OR REPLACE TABLE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_STRUCTURED AS
-SELECT * FROM VALUES
-(1, 'Food', 'Food and concession experiences'),
-(2, 'Parking', 'Parking and accessibility'),
-(3, 'Game Experience', 'Game atmosphere and entertainment'),
-(4, 'Merchandise', 'Team merchandise and pricing'),
-(5, 'Seating', 'Seat location and comfort'),
-(6, 'Stadium', 'Stadium facilities and access'),
-(7, 'Pricing', 'Ticket and general pricing'),
-(8, 'Service', 'Customer service and staff')
-AS t(THEME_NUMBER, THEME_NAME, THEME_DESCRIPTION);
-```
-
-3. Apply theme classification to each record:
-
-```sql
--- Create theme classification for each record
-CREATE OR REPLACE TRANSIENT TABLE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.SCORECARD_THEME_INFO_SNOWBEAR
-AS
-WITH theme_list AS (
-    SELECT LISTAGG(THEME_NAME, '", "') WITHIN GROUP (ORDER BY THEME_NUMBER) AS THEME_LIST
-    FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_STRUCTURED
-),
-classified_themes AS (
-    SELECT 
-        ID,
-        SNOWFLAKE.CORTEX.COMPLETE(
-            'llama3.1-8b',
-            [
-                {
-                    'role': 'system',
-                    'content': 'You are a customer experience analyst. Based on fan feedback, sentiment, and scores, identify the top 2 most relevant themes. Examples of themes are Parking, Food, Security, Seating.  Consider both content and sentiment intensity. Return ONLY the two themes seperated by |. Here are good exmples of ideal formatting of results "Parking | Concessions" or "Game Experience | Security". If there is only one theme you can identify return a single theme E.g., Food or Ticket Prices.  If there is insuffient info or no clear classification return "No Clear Theme" Do not add any new words or come up with analysis verbage or create new themes only use the ones you are given'
-                },
-                {
-                    'role': 'user',
-                    'content': CONCAT(
-                        'Available themes: "', (SELECT THEME_LIST FROM theme_list), '". ',
-                        'Fan feedback: "', REPLACE(AGGREGATE_COMMENT, '''', ''), '". ',
-                        'Overall sentiment: ', AGGREGATE_SENTIMENT, ' (range: -1 to +1). ',
-                        'Aggregate score: ', AGGREGATE_SCORE, '/5. ',
-                        'Food sentiment: ', FOOD_OFFERING_SENTIMENT, ', ',
-                        'Game sentiment: ', GAME_EXPERIENCE_SENTIMENT, ', ',
-                        'Parking sentiment: ', PARKING_SENTIMENT, ', ',
-                        'Merchandise sentiment: ', MERCHANDISE_PRICING_SENTIMENT
-                    )
-                }
-            ],
-            {
-                'temperature': 0.2,
-                'max_tokens': 100
-            }
-        ):choices[0]:messages::string as theme_classification
-    FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-    WHERE AGGREGATE_COMMENT IS NOT NULL
-)
-SELECT case when ct.theme_classification like 'Based on %' then 'No Clear Theme' else ct.theme_classification end as theme_classification,
-       ct.id
-FROM classified_themes ct;
-
--- Update main table with theme classifications
-UPDATE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-SET 
-    MAIN_THEME = CASE 
-        WHEN CHARINDEX('|', ct.theme_classification) > 0 
-        THEN TRIM(SUBSTRING(ct.theme_classification, 1, CHARINDEX('|', ct.theme_classification) - 1))
-        ELSE TRIM(ct.theme_classification)
-    END,
-    SECONDARY_THEME = CASE 
-        WHEN CHARINDEX('|', ct.theme_classification) > 0 
-        THEN TRIM(SUBSTRING(ct.theme_classification, CHARINDEX('|', ct.theme_classification) + 1, LEN(ct.theme_classification)))
-        ELSE NULL
-    END,
-    FOOD = case when charindex('FOOD',upper(ct.theme_classification))> 0 then 1 else 0 end,
-    PARKING = case when charindex('PARKING',upper(ct.theme_classification))> 0 then 1 else 0 end,
-    SEATING = case when charindex('SEATING',upper(ct.theme_classification))> 0 then 1 else 0 end,
-    VIP = case when charindex('VIP',upper(ct.theme_classification))> 0 then 1 else 0 end,
-    NO_THEME = case when charindex('CLEAR THEME',upper(ct.theme_classification))> 0 then 1 else 0 end,
-    GAME = case when charindex('GAME',upper(ct.theme_classification))> 0 then 1 else 0 end,
-    TICKET = case when charindex('TICKET',upper(ct.theme_classification))> 0 then 1 else 0 end,   
-    MERCHANDISE = case when charindex('MERCHANDISE',upper(ct.theme_classification))> 0 then 1 else 0 end
-FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.SCORECARD_THEME_INFO_SNOWBEAR ct
-WHERE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD.ID = ct.ID;
-```
-
-3. Click `Run All` to execute the theme analysis
-
-<!-- ------------------------ -->
-## Fan Segmentation
-Duration: 15
-
-### Creating Advanced Fan Segmentation
-
-1. Apply intelligent segmentation to each record:
-
-```sql
--- Create fan segments using AI
-UPDATE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-SET SEGMENT = SNOWFLAKE.CORTEX.COMPLETE(
-    'llama3.1-8b',
-    [
-        {
-            'role': 'system',
-            'content': 'You are a customer segmentation expert. Based on fan feedback, scores, and sentiment, classify each fan into ONE of these segments: "Premium Experience Seeker", "Value-Conscious Fan", "Loyal Supporter", "Experience Critic", "Family-Focused Fan", "Convenience-Driven Fan", or "Occasional Attendee". Consider their overall satisfaction, spending patterns, and main concerns. Only provide the classification do not provide any justification or verbage. I only want to see the segment names in the results'
-        },
-        {
-            'role': 'user',
-            'content': CONCAT(
-                'Fan Profile: Overall Score: ', AGGREGATE_SCORE, '/5, ',
-                'Overall Sentiment: ', AGGREGATE_SENTIMENT, ' (-1 to +1), ',
-                'Food Sentiment: ', FOOD_OFFERING_SENTIMENT, ', ',
-                'Game Sentiment: ', GAME_EXPERIENCE_SENTIMENT, ', ',
-                'Parking Sentiment: ', PARKING_SENTIMENT, ', ',
-                'Merchandise Sentiment: ', MERCHANDISE_PRICING_SENTIMENT, ', ',
-                'Seating Sentiment: ', SEAT_LOCATION_SENTIMENT, ', ',
-                'Key Feedback: "', LEFT(AGGREGATE_COMMENT, 200), '"'
-            )
-        }
-    ],
-    {
-        'temperature': 0.2,
-        'max_tokens': 50
-    }
-):choices[0]:messages::string
-WHERE AGGREGATE_COMMENT IS NOT NULL;
-
--- Clean up any malformed segments
-UPDATE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-   SET SEGMENT = 'Unknown'
- WHERE charindex('READY TO CLASSIFY',upper(segment)) > 0;
-
--- Create alternative segmentation
-UPDATE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-SET SEGMENT_ALT = SNOWFLAKE.CORTEX.COMPLETE(
-    'llama3.1-8b',
-    [
-        {
-            'role': 'system',
-            'content': 'Segment this fan based on satisfaction level, price sensitivity, and experience priorities. Return the result as just the segment name you came up with. So if the segment name is E.g., High-Value Critic the response should be only High-Value Critic. Here are some ideas of Segment Names(e.g., "High-Value Critic", "Budget-Conscious Loyalist", "Premium Experience Seeker", "Family-First Fan", "Convenience-Focused Casual", "Dissatisfied Price-Sensitive", "Happy Regular"). Do not provide any analysis and explanation only provide the actual segment name do not put any prefix like Here is the ... '
-        },
-        {
-            'role': 'user',
-            'content': CONCAT(
-                'Fan Analysis: ',
-                'Satisfaction Level: ', 
-                CASE 
-                    WHEN AGGREGATE_SCORE >= 4 THEN 'High'
-                    WHEN AGGREGATE_SCORE >= 3 THEN 'Medium' 
-                    ELSE 'Low'
-                END, ', ',
-                'Price Sensitivity: ',
-                CASE 
-                    WHEN MERCHANDISE_PRICING_SENTIMENT < -0.3 THEN 'High'
-                    WHEN MERCHANDISE_PRICING_SENTIMENT < 0.3 THEN 'Medium'
-                    ELSE 'Low'
-                END, ', ',
-                'Parking Issues: ',
-                CASE 
-                    WHEN PARKING_SENTIMENT < -0.3 THEN 'Major Concern'
-                    WHEN PARKING_SENTIMENT < 0.3 THEN 'Minor Concern'
-                    ELSE 'No Issues'
-                END, ', ',
-                'Game Experience: ',
-                CASE 
-                    WHEN GAME_EXPERIENCE_SENTIMENT > 0.3 THEN 'Positive'
-                    WHEN GAME_EXPERIENCE_SENTIMENT > -0.3 THEN 'Neutral'
-                    ELSE 'Negative'
-                END, ', ',
-                'Food Experience: ',
-                CASE 
-                    WHEN FOOD_OFFERING_SENTIMENT > 0.3 THEN 'Positive'
-                    WHEN FOOD_OFFERING_SENTIMENT > -0.3 THEN 'Neutral'
-                    ELSE 'Negative'
-                END, ', ',
-                'Sample Feedback: "', LEFT(AGGREGATE_COMMENT, 150), '"'
-            )
-        }
-    ],
-    {
-        'temperature': 0.2,
-        'max_tokens': 50
-    }
-):choices[0]:messages::string
-WHERE AGGREGATE_COMMENT IS NOT NULL;
-```
-
-### Creating Business Recommendations
-
-2. Generate business recommendations for each fan:
-
-```sql
--- Generate business recommendations
-UPDATE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-SET BUSINESS_RECOMMENDATION = SNOWFLAKE.CORTEX.COMPLETE(
-    'llama3.1-8b',
-    [
-        {
-            'role': 'system',
-            'content': 'You are a basketball team revenue optimization specialist. Generate recommendations that both improve fan satisfaction AND drive business value (ticket sales, concessions, merchandise, retention). Be specific about offers, services, or experiences to provide.'
-        },
-        {
-            'role': 'user',
-            'content': CONCAT(
-                'Fan Profile: Segment: ', SEGMENT, ', Value Score: ', AGGREGATE_SCORE, '/5, ',
-                'Revenue Opportunity: ',
-                CASE 
-                    WHEN AGGREGATE_SCORE >= 4 THEN 'Upsell Premium Experiences'
-                    WHEN AGGREGATE_SCORE >= 3 THEN 'Retention & Engagement'
-                    ELSE 'Recovery & Win-Back'
-                END, ', ',
-                'Spending Indicators: Merchandise Sentiment: ', MERCHANDISE_PRICING_SENTIMENT, ', ',
-                'Food Sentiment: ', FOOD_OFFERING_SENTIMENT, ', ',
-                'Key Concerns: ', COALESCE(MAIN_THEME, 'General'), ', ',
-                'Segment Profile: ', SEGMENT_ALT, ', ',
-                'Feedback Context: "', LEFT(AGGREGATE_COMMENT, 150), '"'
-            )
-        }
-    ],
-    {
-        'temperature': 0.3,
-        'max_tokens': 300
-    }
-):choices[0]:messages::string
-WHERE AGGREGATE_COMMENT IS NOT NULL;
-
--- Create complex multi-tier recommendations
-UPDATE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD
-SET COMPLEX_RECOMMENDATION = SNOWFLAKE.CORTEX.COMPLETE(
-    'llama3.1-8b',
-    [
-        {
-            'role': 'system',
-            'content': 'Create a 3-tier recommendation strategy: 1) Immediate (next game), 2) Short-term (this season), 3) Long-term (fan relationship). Focus on actionable solutions that address their specific concerns.'
-        },
-        {
-            'role': 'user',
-            'content': CONCAT(
-                'Fan Details: ',
-                'Satisfaction: ', AGGREGATE_SCORE, '/5 (', 
-                CASE 
-                    WHEN AGGREGATE_SCORE >= 4 THEN 'Satisfied'
-                    WHEN AGGREGATE_SCORE >= 3 THEN 'Neutral'
-                    ELSE 'Needs Attention'
-                END, '), ',
-                'Segment: ', SEGMENT, ', ',
-                'Main Issues: ', COALESCE(MAIN_THEME, 'None'), 
-                CASE WHEN SECONDARY_THEME IS NOT NULL THEN CONCAT(' & ', SECONDARY_THEME) ELSE '' END, ', ',
-                'Priority Areas: ',
-                CASE 
-                    WHEN PARKING_SENTIMENT < -0.2 THEN 'Parking, '
-                    ELSE ''
-                END,
-                CASE 
-                    WHEN FOOD_OFFERING_SENTIMENT < -0.2 THEN 'Food, '
-                    ELSE ''
-                END,
-                CASE 
-                    WHEN MERCHANDISE_PRICING_SENTIMENT < -0.2 THEN 'Pricing, '
-                    ELSE ''
-                END,
-                'Sample Feedback: "', LEFT(AGGREGATE_COMMENT, 180), '"'
-            )
-        }
-    ],
-    {
-        'temperature': 0.35,
-        'max_tokens': 400
-    }
-):choices[0]:messages::string
-WHERE AGGREGATE_COMMENT IS NOT NULL;
-```
-
-3. Click `Run All` to execute the segmentation and recommendations
-
-<!-- ------------------------ -->
-## Cortex Search Setup
-Duration: 10
-
-### Creating the Search Service
-
-1. Create the Cortex Search Service for semantic search:
-
-```sql
--- Create Cortex Search Service
-CREATE OR REPLACE CORTEX SEARCH SERVICE SNOWBEAR_SEARCH_ANALYSIS
-  ON AGGREGATE_COMMENT
-  ATTRIBUTES AGGREGATE_SCORE,SEGMENT, SEGMENT_ALT, MAIN_THEME, SECONDARY_THEME,
-        PARKING_SCORE,SEAT_LOCATION_SCORE,
-        OVERALL_EVENT_SCORE,MERCHANDISE_PRICING_SCORE,
-        MERCHANDISE_OFFERING_SCORE,GAME_EXPERIENCE_SCORE,
-        FOOD_OFFERING_SCORE,REVIEW_DATE,ID
-  WAREHOUSE = snow_bear_analytics_wh
-  TARGET_LAG = '1 days'
-  EMBEDDING_MODEL = 'snowflake-arctic-embed-m-v1.5'
-  INITIALIZE = ON_CREATE 
-  COMMENT = 'CORTEX SEARCH SERVICE FOR SNOW BEAR FAN EXPERIENCE ANALYSIS' 
-  AS (
-    SELECT
-		AGGREGATE_COMMENT,AGGREGATE_SCORE,
-        SEGMENT, SEGMENT_ALT, MAIN_THEME, SECONDARY_THEME,
-        PARKING_SCORE,SEAT_LOCATION_SCORE,
-        OVERALL_EVENT_SCORE,MERCHANDISE_PRICING_SCORE,
-        MERCHANDISE_OFFERING_SCORE,GAME_EXPERIENCE_SCORE,
-        FOOD_OFFERING_SCORE,REVIEW_DATE,ID
-	FROM "CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB"."GOLD_LAYER"."QUALTRICS_SCORECARD");
-```
-
-2. Test the search service:
-
-```sql
--- Test the search service
-WITH search_results AS (
-    SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
-    'CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.SNOWBEAR_SEARCH_ANALYSIS',
-     '{
-        "query": "game experience",
-        "columns":[
-            "aggregate_comment",
-            "game_experience_score",
-            "overall_event_score",
-            "aggregate_score",
-            "segment",
-            "segment_alt",
-            "main_theme",
-            "secondary_theme"
-        ],
-        "limit":20
-      }'
-) as search_result
-)
-SELECT 
-    result.value:aggregate_comment::string as aggregate_comment,
-    result.value:aggregate_score::string as aggregate_score,
-    result.value:game_experience_score::string as game_experience_score,
-    result.value:segment::string as segment,
-    result.value:main_theme::string as main_theme,
-    result.index + 1 as result_rank
-FROM search_results,
-LATERAL FLATTEN(input => PARSE_JSON(search_results.search_result):results) as result
-ORDER BY result.index;
-```
-
-3. Click `Run All` to create and test the search service
+If you encounter issues in the notebook:
+- **Permission errors**: Ensure SNOWFLAKE.CORTEX_USER role is granted
+- **Timeout errors**: Some AI operations may take several minutes
+- **Model errors**: Retry the cell or check Cortex model availability
+- **Empty results**: Verify data was loaded correctly from the stage
 
 <!-- ------------------------ -->
 ## Streamlit Application
@@ -1156,27 +677,16 @@ Duration: 10
 
 ### Performance Validation
 
-Verify that your implementation matches the DataOps Live functionality:
+The notebook includes validation queries to verify your implementation. Check that:
 
-```sql
--- Validation queries
-SELECT 'Fan Data Loaded' as validation, COUNT(*) as record_count 
-FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD;
+- **Fan Data**: 500+ records loaded from the CSV file
+- **AI Processing**: Sentiment analysis completed across all categories  
+- **Themes**: Theme extraction and classification completed
+- **Segmentation**: Fan segments and recommendations generated
+- **Search Service**: Cortex Search Service created and functional
+- **Streamlit App**: All 7 modules working with real data
 
-SELECT 'Themes Extracted' as validation, COUNT(*) as theme_count 
-FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.EXTRACTED_THEMES_STRUCTURED;
-
-SELECT 'Segments Created' as validation, COUNT(DISTINCT SEGMENT) as segment_count 
-FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD;
-
-SELECT 'Recommendations Generated' as validation, 
-       COUNT(*) as recommendations_count 
-FROM CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER.QUALTRICS_SCORECARD 
-WHERE BUSINESS_RECOMMENDATION IS NOT NULL;
-
-SELECT 'Search Service Status' as validation, 
-       'SNOWBEAR_SEARCH_ANALYSIS created' as status;
-```
+All validation is handled automatically by the notebook's final validation cell.
 
 <!-- ------------------------ -->
 ## Clean Up
