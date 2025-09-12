@@ -174,40 +174,38 @@ If you encounter issues in the notebook:
 
 <!-- ------------------------ -->
 ## Streamlit Application
-Duration: 25
+Duration: 10
 
-### Building the Full Snow Bear Analytics Platform
+### Create the Analytics Dashboard
 
-1. Navigate to Streamlit in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) by clicking on `Projects` → `Streamlit`
+The Streamlit application will be created directly from the uploaded file using the notebook.
 
-2. Switch Role to `SNOW_BEAR_DATA_SCIENTIST`
+**📓 Using the Notebook to Create the Streamlit App:**
 
-3. Click `+ Streamlit App` and configure:
+1. **Continue in your notebook**: In the `snow_bear_complete_setup.ipynb` notebook you imported earlier
+
+2. **Run the Streamlit creation cell**: The notebook includes a cell that automatically:
+   - Reads the `snow_bear_complete_app.py` file from the stage
+   - Creates a new Streamlit application with the correct configuration
+   - Sets up the app with the proper warehouse and location settings
+
+3. **App configuration details**: The notebook will create the app with:
    - **App name**: `Snow Bear Fan Analytics`
    - **Warehouse**: `SNOW_BEAR_ANALYTICS_WH`
    - **App location**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER`
+   - **Role**: `SNOW_BEAR_DATA_SCIENTIST`
 
-4. Replace the default code with the complete Snow Bear analytics application.
+**🌐 Application Features:**
+The created application includes 7 comprehensive modules:
+- 🏠 **Dashboard**: Overview metrics and satisfaction distribution
+- 😊 **Sentiment Analysis**: AI-powered sentiment insights by theme
+- 🎯 **Theme Analysis**: AI theme classification and performance
+- 👥 **Fan Segments**: Segmentation analysis and theme preferences
+- 🤖 **AI Recommendations**: Cortex-generated improvement suggestions
+- 🔍 **Interactive Search**: Cortex Search for natural language queries
+- 🧠 **AI Assistant**: Integration point for Cortex Analyst
 
-   **Option A - Use the file from your stage:**
-   - Navigate to `Data` → `Databases` → `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` → `BRONZE_LAYER` → `Stages` → `SNOW_BEAR_DATA_STAGE`
-   - Download `snow_bear_complete_app.py` from the stage
-   - Copy the entire contents and paste into your Streamlit app editor
-
-   **Option B - Download directly from GitHub:**
-   - Download from: [snow_bear_complete_app.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_complete_app.py)
-   - Copy the entire contents and paste into your Streamlit app editor
-   
-   The application includes 7 comprehensive modules:
-   - 🏠 **Dashboard**: Overview metrics and satisfaction distribution
-   - 😊 **Sentiment Analysis**: AI-powered sentiment insights by theme
-   - 🎯 **Theme Analysis**: AI theme classification and performance
-   - 👥 **Fan Segments**: Segmentation analysis and theme preferences
-   - 🤖 **AI Recommendations**: Cortex-generated improvement suggestions
-   - 🔍 **Interactive Search**: Cortex Search for natural language queries
-   - 🧠 **AI Assistant**: Integration point for Cortex Analyst
-
-5. Click `Run` to launch your complete Snow Bear Analytics application
+**✅ Access your app**: After the notebook creates the application, you can access it via `Projects` → `Streamlit` in Snowsight
 
 **✅ You now have a complete 7-module analytics platform powered by Snowflake Cortex AI!**
 
