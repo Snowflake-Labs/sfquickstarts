@@ -51,24 +51,31 @@ This Quickstart showcases the complete Snow Bear analytics platform with:
 ## Setup Snowflake Environment  
 Duration: 5
 
-### Prerequisites Setup
-1. **Download the data file**: Download [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) from this quickstart
-2. **Run setup script**: Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
+### Create Database Objects and Stage
 
-3. **Execute the setup script**: Copy and paste the following code to create Snowflake objects and stage:
+1. **Navigate to Worksheets**: In Snowsight, click `Worksheets` in the left navigation, then click `+` in the top-right corner and choose `SQL Worksheet`
 
-Execute the setup script that creates:
-- Database, schemas, role, warehouse
-- Stage for CSV file upload
-- Bronze layer table structure
-- File format for CSV loading
-- All necessary permissions and Cortex AI access
+2. **Download the setup script**: Get the complete setup script from [snow_bear_setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_setup.sql)
 
-*Setup script will be provided separately*
+3. **Execute the setup script**: Copy and paste the entire script into your worksheet and run it
 
-### Upload Data File to Stage
-5. **Upload the CSV file**: Navigate to Data → Databases → CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB → BRONZE_LAYER → Stages → SNOW_BEAR_DATA_STAGE
-6. **Upload file**: Click the stage name, then upload [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz)
+The setup script creates:
+- **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold layer schemas
+- **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions
+- **Warehouse**: `SNOW_BEAR_ANALYTICS_WH` for compute resources
+- **Stage**: `SNOW_BEAR_DATA_STAGE` for CSV file upload
+- **File Format**: `CSV_FORMAT` for data loading
+- **Cortex AI Access**: Grants `SNOWFLAKE.CORTEX_USER` role for AI functions
+
+### Upload Data File
+
+4. **Download the data file**: Download [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz)
+
+5. **Upload to stage**: 
+   - Navigate to `Data` → `Databases` → `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` → `BRONZE_LAYER` → `Stages` → `SNOW_BEAR_DATA_STAGE`
+   - Click the stage name, then upload the downloaded CSV file
+
+✅ **Your Snowflake environment is now ready for the Snow Bear analytics platform!**
 
 <!-- ------------------------ -->
 ## Load Fan Survey Data
