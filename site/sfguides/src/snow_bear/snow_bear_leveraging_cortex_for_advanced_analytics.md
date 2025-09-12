@@ -4,7 +4,7 @@ summary: Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Ana
 categories: Cortex, Analytics, Getting-Started, AI
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Cortex, AI, Analytics, Streamlit, Sentiment Analysis
 
 # Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics
@@ -256,7 +256,7 @@ filtered_df = filtered_df[
 ]
 
 # Main tabs - Simplified version for quickstart demo
-# Note: The complete app (snow_bear_complete_app.py) has full DataOps Live tab names and functionality
+# Note: The complete app (snow_bear_complete_app.py) has full functionality
 tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "📊 Executive Dashboard", 
     "👥 Fan Journey", 
@@ -582,14 +582,14 @@ st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #6c757d; padding: 20px;">
     <p>❄️ Snow Bear Fan Experience Analytics • Powered by Snowflake Cortex AI</p>
-    <p>Complete lift-and-shift from DataOps Live implementation</p>
+    <p>Complete analytics platform with advanced AI features</p>
 </div>
 """, unsafe_allow_html=True)
 ```
 
 5. Click `Run` to launch your complete Snow Bear Analytics application
 
-**✅ You now have the exact same 7-module analytics platform that runs in DataOps Live!**
+**✅ You now have a complete 7-module analytics platform powered by Snowflake Cortex AI!**
 
 <!-- ------------------------ -->
 ## Testing Platform
@@ -636,7 +636,7 @@ Execute the cleanup script to remove:
 Duration: 5
 
 ### Conclusion
-Congratulations! You've successfully built the complete Snow Bear Fan Experience Analytics platform - an exact lift-and-shift from the DataOps Live implementation!
+Congratulations! You've successfully built the complete Snow Bear Fan Experience Analytics platform using Snowflake Cortex AI!
 
 ### What You Built - Complete Feature Parity
 - **✅ 7-Module Analytics Platform**: Executive Dashboard, Fan Journey Explorer, Sentiment Analysis, Theme Analysis, Recommendation Engine, Interactive Search, AI Assistant
@@ -657,16 +657,6 @@ Congratulations! You've successfully built the complete Snow Bear Fan Experience
 - **Interactive Analytics**: Real-time filtering, drilling, and exploration
 - **Production Architecture**: Bronze-to-Gold data processing with AI enhancement
 
-### DataOps Live Parity Achieved
-This quickstart provides **100% functional parity** with the DataOps Live Snow Bear implementation:
-- ✅ Same data model and structure
-- ✅ Same AI processing pipeline
-- ✅ Same 7-module analytics interface
-- ✅ Same Cortex Search capabilities
-- ✅ Same recommendation systems
-- ✅ Same fan segmentation approach
-- ✅ Same business intelligence features
-
 ### Next Steps
 - **Scale Up**: Load the complete 500+ record dataset
 - **Customize**: Adapt for your specific sports team or organization
@@ -679,5 +669,5 @@ This quickstart provides **100% functional parity** with the DataOps Live Snow B
 - [Cortex Search Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-search)
 - [Cortex Analyst Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst)
 - [Streamlit in Snowflake](https://docs.snowflake.com/developer-guide/streamlit/about-streamlit)
-- [DataOps Live Platform](https://dataops.live/)
+- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/overview)
 - [Snow Bear Analytics - Complete Implementation](https://github.com/Snowflake-Labs/sfguide-snow-bear-analytics)
