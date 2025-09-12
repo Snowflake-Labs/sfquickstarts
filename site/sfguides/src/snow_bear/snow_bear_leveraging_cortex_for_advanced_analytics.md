@@ -48,13 +48,20 @@ This Quickstart showcases the complete Snow Bear analytics platform with:
 - Go to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account
 
 <!-- ------------------------ -->
-## Setup Snowflake Environment
+## Setup Snowflake Environment  
 Duration: 5
 
-### Creating Objects and Loading Data
-1. Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
+### Prerequisites Setup
+1. **Download the data file**: Download `basketball_fan_survey_data.csv.gz` from this quickstart
+2. **Run setup script**: Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
 
-2. Copy and paste the following code to create Snowflake objects:
+3. **Execute the setup script**: Copy and paste the following code to create Snowflake objects and stage:
+
+**Option A: Use the dedicated setup script** (Recommended)
+1. Use the provided `snow_bear_setup.sql` file which includes all setup commands plus stage creation
+2. This script creates the database, schemas, role, warehouse, stage, table, and file format
+
+**Option B: Manual setup** (copy the SQL below):
 
 ```sql
 USE ROLE accountadmin;
@@ -91,163 +98,74 @@ GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE snow_bear_data_scientist;
 SET my_user_var = (SELECT '"' || CURRENT_USER() || '"');
 GRANT ROLE snow_bear_data_scientist TO USER identifier($my_user_var);
 
--- Switch to Snow Bear role
+-- Switch to Snow Bear role and create stage
 USE ROLE snow_bear_data_scientist;
 USE WAREHOUSE snow_bear_analytics_wh;
-USE SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER;
-
-SELECT 'Snow Bear analytics setup complete' AS status;
-```
-
-3. Click `Run All` to execute the setup script
-
-<!-- ------------------------ -->
-## Create Data Model
-Duration: 10
-
-### Setting Up Bronze Layer Tables
-1. Copy and paste the following SQL to create the bronze layer table:
-
-```sql
 USE SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER;
 
--- Create the raw data table for basketball fan survey responses
-create or replace TABLE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER.GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED (
-	ID VARCHAR(16777216),
-	FOOD_OFFERING_COMMENT VARCHAR(16777216),
-	FOOD_OFFERING_SCORE VARCHAR(16777216),
-	GAME_EXPERIENCE_COMMENT VARCHAR(16777216),
-	GAME_EXPERIENCE_SCORE VARCHAR(16777216),
-	MERCHANDISE_OFFERING_COMMENT VARCHAR(16777216),
-	MERCHANDISE_OFFERING_SCORE VARCHAR(16777216),
-	MERCHANDISE_PRICING_COMMENT VARCHAR(16777216),
-	MERCHANDISE_PRICING_SCORE VARCHAR(16777216),
-	OVERALL_EVENT_COMMENT VARCHAR(16777216),
-	OVERALL_EVENT_SCORE VARCHAR(16777216),
-	PARKING_COMMENT VARCHAR(16777216),
-	PARKING_SCORE VARCHAR(16777216),
-	SEAT_LOCATION_COMMENT VARCHAR(16777216),
-	SEAT_LOCATION_SCORE VARCHAR(16777216),
-	STADIUM_ACCESS_SCORE VARCHAR(16777216),
-	STADIUM_COMMENT VARCHAR(16777216),
-	TICKET_PRICE_COMMENT VARCHAR(16777216),
-	TICKET_PRICE_SCORE VARCHAR(16777216),
-	COMPANY_NAME VARCHAR(16777216),
-	TOPIC VARCHAR(16777216),
-	CREATED_TIMESTAMP TIMESTAMP_NTZ(9) DEFAULT CURRENT_TIMESTAMP()
-);
+-- Create stage for CSV file upload
+CREATE OR REPLACE STAGE snow_bear_data_stage
+    COMMENT = 'Stage for Snow Bear fan survey data files';
+
+-- Create file format for CSV loading
+CREATE OR REPLACE FILE FORMAT csv_format
+    TYPE = 'CSV'
+    FIELD_DELIMITER = ','
+    RECORD_DELIMITER = '\n'
+    SKIP_HEADER = 1
+    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+    TRIM_SPACE = TRUE
+    ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE
+    ESCAPE_UNENCLOSED_FIELD = '\134'
+    COMMENT = 'File format for Snow Bear fan survey CSV data';
+
+SELECT 'Snow Bear setup complete! Upload basketball_fan_survey_data.csv.gz to snow_bear_data_stage' AS status;
 ```
 
-2. Click `Run All` to create the bronze layer table
+4. Click `Run All` to execute the setup script
 
-### Loading Sample Data
-To load the complete basketball fan survey dataset, you can either:
+### Upload Data File to Stage
+5. **Upload the CSV file**: Navigate to Data → Databases → CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB → BRONZE_LAYER → Stages → SNOW_BEAR_DATA_STAGE
+6. **Upload file**: Click the stage name, then upload `basketball_fan_survey_data.csv.gz`
 
-**Option A: Load sample data via SQL** (for demo purposes):
+<!-- ------------------------ -->
+## Load Fan Survey Data
+Duration: 10
+
+### Load Real Basketball Fan Data from Stage
+
+**Important**: Make sure you've completed the setup script and uploaded `basketball_fan_survey_data.csv.gz` to the stage before running this step.
+
+1. Copy and paste the following SQL to load the real fan survey data:
+
 ```sql
--- Insert sample fan survey data (subset of the full dataset)
-INSERT INTO GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED 
-(ID, FOOD_OFFERING_COMMENT, FOOD_OFFERING_SCORE, GAME_EXPERIENCE_COMMENT, GAME_EXPERIENCE_SCORE,
- MERCHANDISE_OFFERING_COMMENT, MERCHANDISE_OFFERING_SCORE, MERCHANDISE_PRICING_COMMENT, MERCHANDISE_PRICING_SCORE,
- OVERALL_EVENT_COMMENT, OVERALL_EVENT_SCORE, PARKING_COMMENT, PARKING_SCORE,
- SEAT_LOCATION_COMMENT, SEAT_LOCATION_SCORE, STADIUM_ACCESS_SCORE, STADIUM_COMMENT,
- TICKET_PRICE_COMMENT, TICKET_PRICE_SCORE, COMPANY_NAME, TOPIC)
-SELECT 
-    UUID_STRING() as ID,
-    CASE (UNIFORM(1, 8, RANDOM()))
-        WHEN 1 THEN 'Standard arena food, nothing special but decent quality.'
-        WHEN 2 THEN 'Great variety, loved the local food vendors.'
-        WHEN 3 THEN 'Limited options for vegetarians, everything overpriced.'
-        WHEN 4 THEN 'Impressed by the upscale dining options.'
-        WHEN 5 THEN 'Good variety of options, liked the local vendors.'
-        WHEN 6 THEN 'Food was okay but lines were too long.'
-        WHEN 7 THEN 'Loved the new food court options.'
-        ELSE 'Cold food, long waits, skip it.'
-    END as FOOD_OFFERING_COMMENT,
-    UNIFORM(1, 5, RANDOM()) as FOOD_OFFERING_SCORE,
-    CASE (UNIFORM(1, 6, RANDOM()))
-        WHEN 1 THEN 'Great game, Snow Bear was entertaining with the crowd.'
-        WHEN 2 THEN 'Amazing atmosphere, close game, and SnowBear was hilarious!'
-        WHEN 3 THEN 'Team lost, but SnowBear made kids happy.'
-        WHEN 4 THEN 'Perfect night! Great game and entertainment.'
-        WHEN 5 THEN 'SnowBear''s halftime show was fantastic!'
-        ELSE 'Great game despite the logistics issues.'
-    END as GAME_EXPERIENCE_COMMENT,
-    UNIFORM(1, 5, RANDOM()) as GAME_EXPERIENCE_SCORE,
-    CASE (UNIFORM(1, 5, RANDOM()))
-        WHEN 1 THEN 'Good variety of team gear, liked the retro collection.'
-        WHEN 2 THEN 'Loved the exclusive game day merchandise.'
-        WHEN 3 THEN 'Basic selection, nothing unique.'
-        WHEN 4 THEN 'Good selection of jerseys and accessories.'
-        ELSE 'Sold out of popular sizes early.'
-    END as MERCHANDISE_OFFERING_COMMENT,
-    UNIFORM(1, 5, RANDOM()) as MERCHANDISE_OFFERING_SCORE,
-    CASE (UNIFORM(1, 5, RANDOM()))
-        WHEN 1 THEN '$45 for a basic t-shirt is ridiculous.'
-        WHEN 2 THEN 'Prices are high but quality is good.'
-        WHEN 3 THEN 'Highway robbery on merchandise prices.'
-        WHEN 4 THEN 'Premium prices but decent quality.'
-        ELSE 'Everything seems marked up 300%.'
-    END as MERCHANDISE_PRICING_COMMENT,
-    UNIFORM(1, 5, RANDOM()) as MERCHANDISE_PRICING_SCORE,
-    CASE (UNIFORM(1, 6, RANDOM()))
-        WHEN 1 THEN 'Fun game but expensive and logistics were challenging.'
-        WHEN 2 THEN 'Great experience overall, would definitely come back.'
-        WHEN 3 THEN 'Disappointing experience, especially for the cost.'
-        WHEN 4 THEN 'One of the best sporting events I''ve attended.'
-        WHEN 5 THEN 'Good time despite some minor issues.'
-        ELSE 'Mixed experience, some good, some bad.'
-    END as OVERALL_EVENT_COMMENT,
-    UNIFORM(1, 5, RANDOM()) as OVERALL_EVENT_SCORE,
-    CASE (UNIFORM(1, 6, RANDOM()))
-        WHEN 1 THEN 'Parking was a nightmare, took 45 minutes to get out.'
-        WHEN 2 THEN 'Pre-paid parking made it easier, but still crowded.'
-        WHEN 3 THEN 'Had to park blocks away, felt unsafe walking back.'
-        WHEN 4 THEN 'VIP parking was worth the extra cost.'
-        WHEN 5 THEN 'Parking structure was organized but expensive.'
-        ELSE 'Terrible traffic management after the game.'
-    END as PARKING_COMMENT,
-    UNIFORM(1, 5, RANDOM()) as PARKING_SCORE,
-    CASE (UNIFORM(1, 6, RANDOM()))
-        WHEN 1 THEN 'Upper level but decent view of the court.'
-        WHEN 2 THEN 'Lower level, row 10 - amazing views!'
-        WHEN 3 THEN 'View partially blocked by support beam.'
-        WHEN 4 THEN 'Club level seats, great amenities.'
-        WHEN 5 THEN 'Corner seats but good angle for plays.'
-        ELSE 'Decent seats but too far from action.'
-    END as SEAT_LOCATION_COMMENT,
-    UNIFORM(1, 5, RANDOM()) as SEAT_LOCATION_SCORE,
-    UNIFORM(1, 5, RANDOM()) as STADIUM_ACCESS_SCORE,
-    CASE (UNIFORM(1, 5, RANDOM()))
-        WHEN 1 THEN 'LA Dodgers Stadium needs better signage, got lost finding our section.'
-        WHEN 2 THEN 'LA Dodgers Stadium security was efficient and friendly.'
-        WHEN 3 THEN 'LA Dodgers Stadium entrances were backed up badly.'
-        WHEN 4 THEN 'LA Dodgers Stadium premium entrance made access easy.'
-        ELSE 'LA Dodgers Stadium staff were helpful with directions.'
-    END as STADIUM_COMMENT,
-    CASE (UNIFORM(1, 6, RANDOM()))
-        WHEN 1 THEN 'Way too expensive for nosebleed seats. Not worth $150 per ticket.'
-        WHEN 2 THEN 'Got a good deal through season ticket holder exchange.'
-        WHEN 3 THEN 'Prices are outrageous for families. Can''t afford to bring kids anymore.'
-        WHEN 4 THEN 'Found great promotional tickets, excellent value.'
-        WHEN 5 THEN 'Average prices for NBA games these days.'
-        ELSE 'Dynamic pricing made last-minute tickets unreasonable.'
-    END as TICKET_PRICE_COMMENT,
-    UNIFORM(1, 5, RANDOM()) as TICKET_PRICE_SCORE,
-    'Major League Basketball Team' as COMPANY_NAME,
-    'Qualtrics Fan Reviews' as TOPIC
-FROM TABLE(GENERATOR(ROWCOUNT => 500));
+-- Load data from stage into bronze layer table
+-- This loads the real basketball fan survey data from basketball_fan_survey_data.csv.gz
+COPY INTO CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER.GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED
+FROM @snow_bear_data_stage/basketball_fan_survey_data.csv.gz
+FILE_FORMAT = csv_format
+ON_ERROR = 'CONTINUE';
 
-SELECT COUNT(*) as total_records FROM GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED;
+-- Verify data loaded successfully
+SELECT COUNT(*) as total_records_loaded FROM GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED;
+
+-- Show sample of loaded data
+SELECT * FROM GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED LIMIT 5;
 ```
 
-**Option B: Upload the full dataset** (recommended for production):
+2. Click `Run All` to load the data
 
-1. Download the `basketball_fan_survey_data.csv.gz` file from this quickstart
-2. In Snowsight, navigate to Data → Databases → CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB → BRONZE_LAYER → GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED
-3. Click **Load Data** and upload the CSV file
-4. Choose appropriate file format options (header row, comma delimiter)
-5. Click **Load** to import all 500+ fan survey records
+### Alternative: Use the Notebook (Recommended)
+For the best experience, use the provided `snow_bear_complete_setup.ipynb` notebook which:
+- Automatically verifies your setup
+- Loads data from the stage
+- Runs all AI processing steps
+- Provides validation and troubleshooting
+
+**To use the notebook:**
+1. Complete the setup script above
+2. Upload `basketball_fan_survey_data.csv.gz` to the stage  
+3. Open and run `snow_bear_complete_setup.ipynb` in Snowflake Notebooks
 
 <!-- ------------------------ -->
 ## AI-Enhanced Analytics
