@@ -51,42 +51,68 @@ This Quickstart showcases the complete Snow Bear analytics platform with:
 ## Setup Snowflake Environment  
 Duration: 5
 
-### Create Database Objects and Stage
+In this step, you'll create the Snowflake database objects and upload all necessary files for the Snow Bear analytics platform.
 
-1. **Navigate to Worksheets**: In Snowsight, click `Worksheets` in the left navigation, then click `+` in the top-right corner and choose `SQL Worksheet`
+### Step 1: Create Database Objects
 
-2. **Download the setup script**: Get the complete setup script from [snow_bear_setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_setup.sql)
+**📋 Create a SQL Worksheet:**
+1. In Snowsight, click `Worksheets` in the left navigation
+2. Click `+` in the top-right corner and choose `SQL Worksheet`
 
-3. **Execute the setup script**: Copy and paste the entire script into your worksheet and run it
+**📥 Download and execute setup script:**
+3. Download the setup script: [snow_bear_setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_setup.sql)
+4. Copy and paste the entire script into your worksheet and run it
 
-The setup script creates:
-- **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold layer schemas
-- **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions
-- **Warehouse**: `SNOW_BEAR_ANALYTICS_WH` for compute resources
-- **Stage**: `SNOW_BEAR_DATA_STAGE` for CSV file upload
-- **File Format**: `CSV_FORMAT` for data loading
-- **Cortex AI Access**: Grants `SNOWFLAKE.CORTEX_USER` role for AI functions
+**✅ What gets created:**
+- 🗄️ **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold schemas
+- 👤 **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
+- 🏭 **Warehouse**: `SNOW_BEAR_ANALYTICS_WH` for compute resources
+- 📂 **Stage**: `SNOW_BEAR_DATA_STAGE` for file uploads
+- 📄 **File Format**: `CSV_FORMAT` for data loading
+- 🤖 **AI Access**: `SNOWFLAKE.CORTEX_USER` role for Cortex functions
 
-### Upload Files and Import Notebook
+### Step 2: Download Required Files
 
-4. **Download required files**:
-   - Data file: [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz)
-   - Processing notebook: [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb)
-   - Streamlit app: [snow_bear_complete_app.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_complete_app.py)
+Download all 3 files from the GitHub repository:
 
-5. **Upload files to stage**: 
-   - Navigate to `Data` → `Databases` → `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` → `BRONZE_LAYER` → `Stages` → `SNOW_BEAR_DATA_STAGE`
-   - Click the stage name, then upload all 3 downloaded files:
-     - `basketball_fan_survey_data.csv.gz` (data)
-     - `snow_bear_complete_app.py` (Streamlit app)
-     - `snow_bear_complete_setup.ipynb` (notebook)
+| File | Purpose | Download Link |
+|------|---------|---------------|
+| 📊 **Data File** | Basketball fan survey data | [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) |
+| 📓 **Notebook** | Complete AI processing workflow | [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb) |
+| 🌐 **Streamlit App** | Interactive analytics dashboard | [snow_bear_complete_app.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_complete_app.py) |
 
-6. **Import the notebook**: 
-   - Navigate to `Projects` → `Notebooks`
-   - Click `Import .ipynb file` and select `snow_bear_complete_setup.ipynb` from the stage
-   - Set the warehouse to `SNOW_BEAR_ANALYTICS_WH`
+### Step 3: Upload Files to Stage
 
-✅ **Your Snowflake environment is now ready for the Snow Bear analytics platform!**
+**📂 Navigate to the stage:**
+1. Go to `Data` → `Databases` → `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` → `BRONZE_LAYER` → `Stages`
+2. Click on `SNOW_BEAR_DATA_STAGE`
+
+**📤 Upload all files:**
+3. Upload all 3 downloaded files to the stage:
+   - ✅ `basketball_fan_survey_data.csv.gz`
+   - ✅ `snow_bear_complete_app.py`
+   - ✅ `snow_bear_complete_setup.ipynb`
+
+### Step 4: Import the Notebook
+
+**📓 Set up the notebook:**
+1. Navigate to `Projects` → `Notebooks`
+2. Click `Import .ipynb file`
+3. Select `snow_bear_complete_setup.ipynb` from your downloads
+4. Set the warehouse to `SNOW_BEAR_ANALYTICS_WH`
+
+---
+## ✅ Setup Complete!
+
+**Your Snowflake environment is now ready for the Snow Bear analytics platform!**
+
+You now have:
+- 🗄️ Database and schemas configured
+- 📂 All files uploaded to the stage  
+- 📓 Notebook imported and ready to run
+- 🤖 AI permissions granted
+
+**Next:** Proceed to run the notebook for data processing and AI analytics.
 
 <!-- ------------------------ -->
 ## Use the Notebook for AI Processing
