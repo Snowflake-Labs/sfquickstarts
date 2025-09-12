@@ -57,81 +57,8 @@ In this step, you'll create the Snowflake database objects and upload all necess
 
 1. In Snowsight, click `Worksheets` in the left navigation
 2. Click `+` in the top-right corner and choose `SQL Worksheet`
-3. Copy the setup script below and paste it into your worksheet
-4. Run the script to create all necessary objects
-
-```sql
--- Snow Bear Analytics Setup Script
--- Creates database, schemas, roles, warehouse, stage, and grants permissions
-
--- Create database and schemas
-CREATE OR REPLACE DATABASE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB;
-CREATE OR REPLACE SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER;
-CREATE OR REPLACE SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER;
-
--- Create role and warehouse
-CREATE OR REPLACE ROLE SNOW_BEAR_DATA_SCIENTIST;
-CREATE OR REPLACE WAREHOUSE SNOW_BEAR_ANALYTICS_WH 
-  WITH WAREHOUSE_SIZE = 'MEDIUM'
-  INITIALLY_SUSPENDED = TRUE
-  AUTO_SUSPEND = 60
-  AUTO_RESUME = TRUE;
-
--- Grant permissions
-GRANT USAGE ON DATABASE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB TO ROLE SNOW_BEAR_DATA_SCIENTIST;
-GRANT USAGE ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER TO ROLE SNOW_BEAR_DATA_SCIENTIST;
-GRANT USAGE ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER TO ROLE SNOW_BEAR_DATA_SCIENTIST;
-GRANT ALL ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER TO ROLE SNOW_BEAR_DATA_SCIENTIST;
-GRANT ALL ON SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.GOLD_LAYER TO ROLE SNOW_BEAR_DATA_SCIENTIST;
-GRANT USAGE ON WAREHOUSE SNOW_BEAR_ANALYTICS_WH TO ROLE SNOW_BEAR_DATA_SCIENTIST;
-GRANT ROLE SNOW_BEAR_DATA_SCIENTIST TO USER CURRENT_USER();
-
--- Grant Cortex AI access
-GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE SNOW_BEAR_DATA_SCIENTIST;
-
--- Create stage for file uploads
-USE SCHEMA CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER;
-CREATE OR REPLACE STAGE SNOW_BEAR_DATA_STAGE;
-
--- Create file format for CSV loading
-CREATE OR REPLACE FILE FORMAT CSV_FORMAT
-  TYPE = 'CSV'
-  FIELD_DELIMITER = ','
-  RECORD_DELIMITER = '\n'
-  SKIP_HEADER = 1
-  FIELD_OPTIONALLY_ENCLOSED_BY = '"'
-  TRIM_SPACE = TRUE
-  ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE
-  ESCAPE = 'NONE'
-  ESCAPE_UNENCLOSED_FIELD = '\134'
-  DATE_FORMAT = 'AUTO'
-  TIMESTAMP_FORMAT = 'AUTO'
-  NULL_IF = ('');
-
--- Create bronze layer table
-CREATE OR REPLACE TABLE CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB.BRONZE_LAYER.GENERATED_DATA_MAJOR_LEAGUE_BASKETBALL_STRUCTURED (
-    ID NUMBER,
-    REVIEW_DATE DATE,
-    OVERALL_RATING NUMBER,
-    FOOD_OFFERING_RATING NUMBER,
-    GAME_EXPERIENCE_RATING NUMBER,
-    PARKING_RATING NUMBER,
-    MERCHANDISE_PRICING_RATING NUMBER,
-    SECURITY_RATING NUMBER,
-    TICKET_PRICING_RATING NUMBER,
-    OVERALL_COMMENTS STRING,
-    FOOD_OFFERING_COMMENTS STRING,
-    GAME_EXPERIENCE_COMMENTS STRING,
-    PARKING_COMMENTS STRING,
-    MERCHANDISE_PRICING_COMMENTS STRING,
-    SECURITY_COMMENTS STRING,
-    TICKET_PRICING_COMMENTS STRING
-);
-
--- Set role for subsequent operations
-USE ROLE SNOW_BEAR_DATA_SCIENTIST;
-USE WAREHOUSE SNOW_BEAR_ANALYTICS_WH;
-```
+3. Download the setup script: [snow_bear_setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_setup.sql)
+4. Copy and paste the entire script into your worksheet and run it
 
 The setup script creates:
 - **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold schemas
@@ -170,46 +97,30 @@ Download all 3 files from the GitHub repository:
 
 
 <!-- ------------------------ -->
-## Run Analytics Notebook and Launch App
-Duration: 30
+## Run Analytics Notebook
+Duration: 25
 
-### Step 1: Execute the Complete Analytics Workflow
+### Execute the Complete Analytics Workflow
 
-1. **Navigate to Notebooks**: Go to `Projects` → `Notebooks` in Snowsight
-2. **Open your imported notebook**: Click on `snow_bear_complete_setup.ipynb`
-3. **Set the warehouse**: Ensure the warehouse is set to `SNOW_BEAR_ANALYTICS_WH`
-4. **Run all cells sequentially**: 
-   - Click on the first cell and press `Shift + Enter` to run it
-   - Continue running each cell one by one until you reach the end
-   - Wait for each cell to complete before moving to the next (you'll see a spinning indicator while running)
-   - The entire notebook will take approximately 20-25 minutes to complete
+1. Navigate to `Projects` → `Notebooks` in Snowsight
+2. Open `snow_bear_complete_setup.ipynb`
+3. Run all cells sequentially using `Shift + Enter`
+4. Wait for each cell to complete before proceeding to the next
+5. The complete workflow takes approximately 20-25 minutes
 
-The notebook will automatically:
-- Load basketball fan data from the stage
-- Apply Cortex SENTIMENT analysis across 8 feedback categories
-- Extract and classify 20+ themes using Cortex AI
-- Create intelligent fan segments with recommendations
-- Build a Cortex Search service for natural language queries
-- Create your Streamlit analytics dashboard
-- Validate all processing completed successfully
+The notebook contains detailed explanations for each step and will process your data, apply AI analytics, and create your Streamlit dashboard.
 
-### Step 2: Access Your Analytics Dashboard
+<!-- ------------------------ -->
+## Launch Analytics Dashboard
+Duration: 5
 
-After the notebook completes successfully:
+### Access Your Analytics Platform
 
-1. **Navigate to Streamlit**: Go to `Projects` → `Streamlit` in Snowsight
-2. **Find your app**: Look for `Snow Bear Fan Analytics` in the list of apps
-3. **Launch the dashboard**: Click on the app name to open your analytics platform
-4. **Explore the features**: Your dashboard includes 7 modules:
-   - Executive Dashboard with key metrics
-   - Sentiment Analysis with AI insights
-   - Theme Analysis with automated categorization
-   - Fan Segmentation with recommendations
-   - AI-generated business recommendations
-   - Interactive search with natural language queries
-   - AI Assistant integration point
+1. Navigate to `Projects` → `Streamlit` in Snowsight
+2. Find and click on `Snow Bear Fan Analytics`
+3. Explore your 7-module analytics dashboard
 
-**Note**: If you don't see the app immediately, wait a few minutes as it may take time to appear after creation.
+Your platform includes executive dashboards, sentiment analysis, theme analysis, fan segmentation, AI recommendations, interactive search, and AI assistant capabilities.
 
 <!-- ------------------------ -->
 ## Conclusion
