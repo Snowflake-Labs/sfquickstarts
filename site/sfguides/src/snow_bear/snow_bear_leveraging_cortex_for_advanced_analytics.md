@@ -80,7 +80,7 @@ Download all 3 files from the GitHub repository:
 
 ### Step 3: Upload Files to Stage
 
-1. Navigate to `Data` → `Databases` → `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` → `BRONZE_LAYER` → `Stages`
+1. Navigate to `Data` → `Databases` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
 2. Click on `SNOW_BEAR_DATA_STAGE`
 3. Upload all 3 downloaded files to the stage
 
