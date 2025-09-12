@@ -63,7 +63,7 @@ In this step, you'll create the Snowflake database objects and upload all necess
 The setup script creates:
 - **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold schemas
 - **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
-- **Warehouse**: `SNOW_BEAR_ANALYTICS_WH` for compute resources
+- **Warehouse**: `SNOW_BEAR_WH` for compute resources
 - **Stage**: `SNOW_BEAR_DATA_STAGE` for file uploads
 - **File Format**: `CSV_FORMAT` for data loading
 - **AI Access**: `SNOWFLAKE.CORTEX_USER` role for Cortex functions
@@ -93,9 +93,11 @@ Download these 2 files from the GitHub repository:
    - Choose `snow_bear_complete_setup.ipynb` from your downloads
 
 3. **Configure the notebook settings**:
-   - **Database**: Select `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB`
-   - **Schema**: Select `GOLD_LAYER`  
-   - **Warehouse**: Select `SNOW_BEAR_ANALYTICS_WH`
+   - **Role**: Select `SNOW_BEAR_DATA_SCIENTIST`
+   - **Database**: Select `SNOW_BEAR_DB`
+   - **Schema**: Select `ANALYTICS`  
+   - **Query Warehouse**: Select `SNOW_BEAR_WH`
+   - **Notebook Warehouse**: Select `SNOW_BEAR_WH`
 
 4. **Click `Create`** to import the notebook
 
