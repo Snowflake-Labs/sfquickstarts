@@ -3,7 +3,7 @@ id: snow_bear_leveraging_cortex_for_advanced_analytics
 summary: Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics
 categories: Cortex, Analytics, Getting-Started, AI
 environments: web
-status: Published
+status: Hidden
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Cortex, AI, Analytics, Streamlit, Sentiment Analysis
 
