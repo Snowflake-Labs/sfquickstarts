@@ -55,15 +55,12 @@ In this step, you'll create the Snowflake database objects and upload all necess
 
 ### Step 1: Create Database Objects
 
-**Create a SQL Worksheet:**
 1. In Snowsight, click `Worksheets` in the left navigation
 2. Click `+` in the top-right corner and choose `SQL Worksheet`
-
-**Download and execute setup script:**
 3. Download the setup script: [snow_bear_setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_setup.sql)
 4. Copy and paste the entire script into your worksheet and run it
 
-**What gets created:**
+The setup script creates:
 - **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold schemas
 - **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
 - **Warehouse**: `SNOW_BEAR_ANALYTICS_WH` for compute resources
@@ -83,11 +80,8 @@ Download all 3 files from the GitHub repository:
 
 ### Step 3: Upload Files to Stage
 
-**Navigate to the stage:**
-1. Go to `Data` → `Databases` → `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` → `BRONZE_LAYER` → `Stages`
+1. Navigate to `Data` → `Databases` → `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` → `BRONZE_LAYER` → `Stages`
 2. Click on `SNOW_BEAR_DATA_STAGE`
-
-**Upload all files:**
 3. Upload all 3 downloaded files to the stage:
    - `basketball_fan_survey_data.csv.gz`
    - `snow_bear_complete_app.py`
@@ -95,24 +89,11 @@ Download all 3 files from the GitHub repository:
 
 ### Step 4: Import the Notebook
 
-**Set up the notebook:**
 1. Navigate to `Projects` → `Notebooks`
 2. Click `Import .ipynb file`
 3. Select `snow_bear_complete_setup.ipynb` from your downloads
 4. Set the warehouse to `SNOW_BEAR_ANALYTICS_WH`
 
----
-## Setup Complete!
-
-**Your Snowflake environment is now ready for the Snow Bear analytics platform!**
-
-You now have:
-- Database and schemas configured
-- All files uploaded to the stage  
-- Notebook imported and ready to run
-- AI permissions granted
-
-**Next:** Proceed to run the notebook for data processing and AI analytics.
 
 <!-- ------------------------ -->
 ## Run Analytics Notebook
