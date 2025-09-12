@@ -96,24 +96,46 @@ Download all 3 files from the GitHub repository:
 
 
 <!-- ------------------------ -->
-## Run Analytics Notebook
-Duration: 25
+## Run Analytics Notebook and Launch App
+Duration: 30
 
-### Execute the Complete AI Processing Workflow
+### Step 1: Execute the Complete Analytics Workflow
 
-**Open and run the notebook:**
 1. **Navigate to Notebooks**: Go to `Projects` → `Notebooks` in Snowsight
-2. **Open your imported notebook**: Find `snow_bear_complete_setup.ipynb`
-3. **Run all cells sequentially**: Execute each cell to complete the full analytics pipeline
+2. **Open your imported notebook**: Click on `snow_bear_complete_setup.ipynb`
+3. **Set the warehouse**: Ensure the warehouse is set to `SNOW_BEAR_ANALYTICS_WH`
+4. **Run all cells sequentially**: 
+   - Click on the first cell and press `Shift + Enter` to run it
+   - Continue running each cell one by one until you reach the end
+   - Wait for each cell to complete before moving to the next (you'll see a spinning indicator while running)
+   - The entire notebook will take approximately 20-25 minutes to complete
 
-**What the notebook accomplishes:**
-- **Data Loading**: Loads basketball fan data from the stage
-- **AI Sentiment Analysis**: Applies Cortex SENTIMENT across 8 feedback categories
-- **Theme Extraction**: Uses Cortex AI to identify and classify 20+ themes
-- **Fan Segmentation**: Creates intelligent fan segments with recommendations
-- **Cortex Search Setup**: Builds semantic search service for natural language queries
-- **Streamlit App Creation**: Automatically creates the analytics dashboard
-- **Data Validation**: Verifies all processing completed successfully
+The notebook will automatically:
+- Load basketball fan data from the stage
+- Apply Cortex SENTIMENT analysis across 8 feedback categories
+- Extract and classify 20+ themes using Cortex AI
+- Create intelligent fan segments with recommendations
+- Build a Cortex Search service for natural language queries
+- Create your Streamlit analytics dashboard
+- Validate all processing completed successfully
+
+### Step 2: Access Your Analytics Dashboard
+
+After the notebook completes successfully:
+
+1. **Navigate to Streamlit**: Go to `Projects` → `Streamlit` in Snowsight
+2. **Find your app**: Look for `Snow Bear Fan Analytics` in the list of apps
+3. **Launch the dashboard**: Click on the app name to open your analytics platform
+4. **Explore the features**: Your dashboard includes 7 modules:
+   - Executive Dashboard with key metrics
+   - Sentiment Analysis with AI insights
+   - Theme Analysis with automated categorization
+   - Fan Segmentation with recommendations
+   - AI-generated business recommendations
+   - Interactive search with natural language queries
+   - AI Assistant integration point
+
+**Note**: If you don't see the app immediately, wait a few minutes as it may take time to appear after creation.
 
 <!-- ------------------------ -->
 ## Conclusion
