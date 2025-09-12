@@ -123,8 +123,28 @@ Duration: 5
 Your platform includes executive dashboards, sentiment analysis, theme analysis, fan segmentation, AI recommendations, interactive search, and AI assistant capabilities.
 
 <!-- ------------------------ -->
-## Conclusion
+## Clean Up Resources
 Duration: 5
+
+### Remove All Created Objects
+
+When you're ready to remove all the resources created during this quickstart:
+
+1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) script
+2. Scroll to the bottom to find the "TEARDOWN SCRIPT" section
+3. Uncomment the teardown statements by removing the `/*` and `*/` comment blocks
+4. Copy and paste the uncommented teardown statements into a new SQL Worksheet in Snowsight
+5. Run the script to remove all databases, warehouses, roles, and objects
+6. Manually delete the Streamlit app:
+   - Go to `Projects` → `Streamlit` in Snowsight
+   - Find `Snow Bear Fan Analytics`
+   - Delete the application
+
+The teardown script will remove all objects created during this quickstart, ensuring a clean environment.
+
+<!-- ------------------------ -->
+## Conclusion
+Duration: 2
 
 Congratulations! You've successfully built the complete Snow Bear Fan Experience Analytics platform using Snowflake Cortex AI!
 
