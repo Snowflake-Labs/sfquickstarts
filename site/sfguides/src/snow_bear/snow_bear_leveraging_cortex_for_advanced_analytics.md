@@ -3,7 +3,7 @@ id: snow_bear_leveraging_cortex_for_advanced_analytics
 summary: Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics
 categories: Cortex, Analytics, Getting-Started, AI
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Cortex, AI, Analytics, Streamlit, Sentiment Analysis
 
@@ -152,14 +152,14 @@ Duration: 2
 
 Congratulations! You've successfully built the complete Snow Bear Fan Experience Analytics platform using Snowflake Cortex AI!
 
-### What You Built
-- **7-Module Analytics Platform**: Executive Dashboard, Sentiment Analysis, Theme Analysis, Fan Segments, AI Recommendations, Interactive Search, and AI Assistant
-- **Advanced AI Processing**: Complete Cortex AI integration with SENTIMENT, EXTRACT_ANSWER, and COMPLETE functions
-- **Cortex Search Service**: Semantic search across fan feedback with natural language queries
-- **Production-Ready Streamlit App**: Complete interactive dashboard with advanced visualizations
-- **500+ Fan Records**: Realistic basketball fan survey data with comprehensive feedback
+### What You Learned
+- **7-Module Analytics Platform**: How to build Executive Dashboard, Sentiment Analysis, Theme Analysis, Fan Segments, AI Recommendations, Interactive Search, and AI Assistant
+- **Advanced AI Processing**: How to implement complete Cortex AI integration with SENTIMENT, EXTRACT_ANSWER, and COMPLETE functions
+- **Cortex Search Service**: How to create semantic search across fan feedback with natural language queries
+- **Production-Ready Streamlit App**: How to develop complete interactive dashboard with advanced visualizations
+- **Real Data Processing**: How to work with 500+ realistic basketball fan survey responses
 
 ### Resources
 - [Snowflake Cortex AI Functions](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions)
-- [Cortex Search Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-search)
+- [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Streamlit in Snowflake](https://docs.snowflake.com/developer-guide/streamlit/about-streamlit)
