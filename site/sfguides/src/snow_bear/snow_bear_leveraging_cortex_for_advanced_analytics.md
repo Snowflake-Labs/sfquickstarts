@@ -55,12 +55,22 @@ In this step, you'll create the Snowflake database objects and upload all necess
 
 ### Step 1: Create Database Objects
 
+Choose one of these setup methods:
+
+#### Option A: SQL Setup (Manual)
 1. In Snowsight, click `Worksheets` in the left navigation
 2. Click `+` in the top-right corner and choose `SQL Worksheet`
 3. Download the setup script: [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql)
 4. Copy and paste the entire script into your worksheet and run it
 
-The setup script creates:
+#### Option B: Python Setup (Automated - Recommended)
+1. In Snowsight, click `Worksheets` in the left navigation
+2. Click `+` in the top-right corner and choose `Python Worksheet`
+3. Download the Python setup script: [setup_python.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup_python.py)
+4. Copy and paste the entire script into your Python worksheet and run it
+5. **Skip to Step 5** - this automated setup downloads files and creates everything for you!
+
+Both setup methods create:
 - **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold schemas
 - **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
 - **Warehouse**: `SNOW_BEAR_ANALYTICS_WH` for compute resources
@@ -68,9 +78,17 @@ The setup script creates:
 - **File Format**: `CSV_FORMAT` for data loading
 - **AI Access**: `SNOWFLAKE.CORTEX_USER` role for Cortex functions
 
-### Step 2: Download Required Files
+**Python Setup Additional Benefits:**
+- **Automated file download** from GitHub repository
+- **Automatic notebook creation** from downloaded files
+- **Automatic Streamlit app creation** 
+- **Zero manual file handling required**
 
-Download all 3 files from the GitHub repository:
+### Step 2: Manual File Management (SQL Setup Only)
+
+**If you used Python Setup (Option B), skip to the Run Analytics Notebook section.**
+
+For SQL Setup users, download and upload these files:
 
 | File | Purpose | Download Link |
 |------|---------|---------------|
@@ -78,14 +96,17 @@ Download all 3 files from the GitHub repository:
 | **Notebook** | Complete AI processing workflow | [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb) |
 | **Streamlit App** | Interactive analytics dashboard | [snow_bear.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear.py) |
 
-### Step 3: Upload Files to Stage
+### Step 3: Upload Files to Stage (SQL Setup Only)
 
 1. Navigate to `Data` → `Databases` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
 2. Click on `SNOW_BEAR_DATA_STAGE`
 3. Upload all 3 downloaded files to the stage
 
-### Step 4: Import the Notebook
+### Step 4: Create the Notebook (SQL Setup Only)
 
+Choose one of these two methods to create the notebook:
+
+#### Option A: Manual Import
 1. Navigate to `Projects` → `Notebooks`
 2. Click `Import .ipynb file`
 3. Select `snow_bear_complete_setup.ipynb` from your downloads
@@ -94,6 +115,13 @@ Download all 3 files from the GitHub repository:
    - **Schema**: Select `GOLD_LAYER`
    - **Warehouse**: Select `SNOW_BEAR_ANALYTICS_WH`
 5. Click `Create` to import the notebook
+
+#### Option B: Automated Creation
+1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) script
+2. Find the "OPTIONAL: CREATE NOTEBOOK FROM STAGE" section
+3. Uncomment the notebook creation SQL statements
+4. Run the uncommented statements in your SQL worksheet
+5. The notebook will be created automatically from the uploaded file
 
 
 <!-- ------------------------ -->
@@ -135,12 +163,14 @@ When you're ready to remove all the resources created during this quickstart:
 3. Uncomment the teardown statements by removing the `/*` and `*/` comment blocks
 4. Copy and paste the uncommented teardown statements into a new SQL Worksheet in Snowsight
 5. Run the script to remove all databases, warehouses, roles, and objects
-6. Manually delete the Streamlit app:
-   - Go to `Projects` → `Streamlit` in Snowsight
-   - Find `Snow Bear Fan Analytics`
-   - Delete the application
 
-The teardown script will remove all objects created during this quickstart, ensuring a clean environment.
+The teardown script automatically removes all created objects including:
+- All databases, schemas, tables, and stages
+- The analytics warehouse and role
+- All notebooks (including "Snow Bear Complete Setup")
+- All Streamlit apps (including "Snow Bear Fan Analytics")
+
+No manual cleanup of individual apps or notebooks is needed.
 
 <!-- ------------------------ -->
 ## Conclusion
