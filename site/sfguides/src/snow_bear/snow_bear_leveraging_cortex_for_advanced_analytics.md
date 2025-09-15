@@ -103,8 +103,8 @@ Download these 3 files from the GitHub repository:
 
 3. **Configure the notebook settings**:
    - **Role**: Select `SNOW_BEAR_DATA_SCIENTIST`
-   - **Database**: Select `SNOW_BEAR_DB`
-   - **Schema**: Select `ANALYTICS`  
+   - **Database**: Select `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB`
+   - **Schema**: Select `GOLD_LAYER`  
    - **Query Warehouse**: Select `SNOW_BEAR_WH`
    - **Notebook Warehouse**: Select `SNOW_BEAR_WH`
 
