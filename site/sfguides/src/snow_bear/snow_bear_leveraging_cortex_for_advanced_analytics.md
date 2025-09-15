@@ -80,16 +80,23 @@ Download these 3 files from the GitHub repository:
 ### Step 3: Upload Files to Stages
 
 1. In Snowsight, change your role to `SNOW_BEAR_DATA_SCIENTIST`
+
 2. Navigate to `Data` → `Databases` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
 
 **Upload data and app files:**
+
 3. Click on `SNOW_BEAR_DATA_STAGE`
+
 4. Click `Enable Directory Table`
+
 5. Upload `basketball_fan_survey_data.csv.gz` and `snow_bear.py` to this stage
 
 **Upload semantic model:**
-6. Go back and click on `SEMANTIC_MODELS` stage  
+
+6. Go back and click on `SEMANTIC_MODELS` stage
+
 7. Click `Enable Directory Table`
+
 8. Upload `snowbear_fan_360.yaml` to this stage
 
 ### Step 4: Import the Analytics Notebook
@@ -103,8 +110,8 @@ Download these 3 files from the GitHub repository:
 
 3. **Configure the notebook settings**:
    - **Role**: Select `SNOW_BEAR_DATA_SCIENTIST`
-   - **Database**: Select `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB`
-   - **Schema**: Select `GOLD_LAYER`  
+   - **Database**: Select `SNOW_BEAR_DB`
+   - **Schema**: Select `ANALYTICS`  
    - **Query Warehouse**: Select `SNOW_BEAR_WH`
    - **Notebook Warehouse**: Select `SNOW_BEAR_WH`
 
@@ -119,9 +126,9 @@ Duration: 5
 
 ### Execute the Complete Analytics Workflow
 
-1. **Navigate to the notebook**: Go to `Projects` → `Notebooks` in Snowsight
-2. **Open the notebook**: Click on `SNOW_BEAR_COMPLETE_SETUP` Notebook to open it
-3. **Execute all cells**: Click `Run all` to execute all cells in the notebook at once
+1. Go to `Projects` → `Notebooks` in Snowsight
+2. Click on `SNOW_BEAR_COMPLETE_SETUP` Notebook to open it
+3. Click `Run all` to execute all cells in the notebook at once
 <!-- ------------------------ -->
 ## Launch Analytics Dashboard
 Duration: 5
