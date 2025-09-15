@@ -11,7 +11,7 @@ tags: Getting Started, Cortex, AI, Analytics, Streamlit, Sentiment Analysis
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 15
+Duration: 5
 
 Customer experience analytics is crucial for businesses to understand their customers and improve their services. Through comprehensive data analysis and AI-powered insights, businesses can uncover patterns in customer feedback, identify pain points, and generate actionable recommendations.
 
@@ -56,11 +56,11 @@ In this step, you'll create the Snowflake database objects and upload all necess
 ### Step 1: Create Database Objects
 
 1. In Snowsight, click `Worksheets` in the left navigation
-2. Click `+` in the top-right corner and choose `SQL Worksheet`
+2. Click `+` in the top-right corner to open a new Worksheet
 3. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) and paste it into your worksheet, then run it
 
 The setup script creates:
-- **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with Bronze and Gold schemas
+- **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with `BRONZE` and `GOLD` schemas
 - **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
 - **Warehouse**: `SNOW_BEAR_WH` for compute resources
 - **Stage**: `SNOW_BEAR_DATA_STAGE` for file uploads
@@ -78,10 +78,11 @@ Download these 2 files from the GitHub repository:
 
 ### Step 3: Upload Files to Stage
 
-1. **Switch to the Snow Bear role**: In Snowsight, change your role to `SNOW_BEAR_DATA_SCIENTIST`
-2. Navigate to `Data` → `Databases` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
+1. In Snowsight, change your role to `SNOW_BEAR_DATA_SCIENTIST`
+2. Navigate to `Catalogue` → `Database Explorer` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
 3. Click on `SNOW_BEAR_DATA_STAGE`
-4. Upload both downloaded files to the stage
+4. Click `Enable Directory Table`
+5. Upload both downloaded files to the stage
 
 ### Step 4: Import the Analytics Notebook
 
@@ -106,13 +107,13 @@ The notebook contains all the SQL scripts and processing logic needed for the co
 
 <!-- ------------------------ -->
 ## Run Analytics Notebook
-Duration: 25
+Duration: 5
 
 ### Execute the Complete Analytics Workflow
 
 1. **Navigate to the notebook**: Go to `Projects` → `Notebooks` in Snowsight
 2. **Open the notebook**: Click on `SNOW_BEAR_COMPLETE_SETUP` Notebook to open it
-3. **Execute all cells**: Click **Run All** to execute all cells in the notebook at once
+3. **Execute all cells**: Click `Run all` to execute all cells in the notebook at once
 <!-- ------------------------ -->
 ## Launch Analytics Dashboard
 Duration: 5
@@ -136,16 +137,7 @@ When you're ready to remove all the resources created during this quickstart:
 1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) script
 2. Scroll to the bottom to find the "TEARDOWN SCRIPT" section
 3. Uncomment the teardown statements by removing the `/*` and `*/` comment blocks
-4. Copy and paste the uncommented teardown statements into a new SQL Worksheet in Snowsight
-5. Run the script to remove all databases, warehouses, roles, and objects
-
-The teardown script automatically removes all created objects including:
-- All databases, schemas, tables, and stages
-- The analytics warehouse and role
-- All notebooks (including "Snow Bear Complete Setup")
-- All Streamlit apps (including "Snow Bear Fan Analytics")
-
-No manual cleanup of individual apps or notebooks is needed.
+5. Run the freshly uncommented script to remove all databases, warehouses, roles, and objects
 
 <!-- ------------------------ -->
 ## Conclusion
@@ -163,4 +155,5 @@ Congratulations! You've successfully built the complete Snow Bear Fan Experience
 ### Resources
 - [Snowflake Cortex AI Functions](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions)
 - [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+- [Streamlit in Snowflake](https://docs.snowflake.com/developer-guide/streamlit/about-streamlit)
 - [Streamlit in Snowflake](https://docs.snowflake.com/developer-guide/streamlit/about-streamlit)
