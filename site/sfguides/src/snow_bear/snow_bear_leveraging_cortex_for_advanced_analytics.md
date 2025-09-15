@@ -69,20 +69,28 @@ The setup script creates:
 
 ### Step 2: Download Required Files
 
-Download these 2 files from the GitHub repository:
+Download these 3 files from the GitHub repository:
 
 | File | Purpose | Download Link |
 |------|---------|---------------|
 | **Data File** | Basketball fan survey data | [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) |
 | **Streamlit App** | Interactive analytics dashboard | [snow_bear.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear.py) |
+| **Semantic Model** | AI assistant semantic model | [snowbear_fan_360.yaml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snowbear_fan_360.yaml) |
 
-### Step 3: Upload Files to Stage
+### Step 3: Upload Files to Stages
 
 1. In Snowsight, change your role to `SNOW_BEAR_DATA_SCIENTIST`
-2. Navigate to `Catalogue` → `Database Explorer` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
+2. Navigate to `Data` → `Databases` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
+
+**Upload data and app files:**
 3. Click on `SNOW_BEAR_DATA_STAGE`
 4. Click `Enable Directory Table`
-5. Upload both downloaded files to the stage
+5. Upload `basketball_fan_survey_data.csv.gz` and `snow_bear.py` to this stage
+
+**Upload semantic model:**
+6. Go back and click on `SEMANTIC_MODELS` stage  
+7. Click `Enable Directory Table`
+8. Upload `snowbear_fan_360.yaml` to this stage
 
 ### Step 4: Import the Analytics Notebook
 
