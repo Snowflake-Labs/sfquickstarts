@@ -81,7 +81,7 @@ Download these 3 files from the GitHub repository:
 
 1. In Snowsight, change your role to `SNOW_BEAR_DATA_SCIENTIST`
 
-2. Navigate to `Data` → `Databases` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
+2. Navigate to `Catalog` → `Database Explorer` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
 
 **Upload data and app files:**
 
@@ -122,7 +122,7 @@ The notebook contains all the SQL scripts and processing logic needed for the co
 
 <!-- ------------------------ -->
 ## Run Analytics Notebook
-Duration: 5
+Duration: 12
 
 ### Execute the Complete Analytics Workflow
 
@@ -170,5 +170,4 @@ Congratulations! You've successfully built the complete Snow Bear Fan Experience
 ### Resources
 - [Snowflake Cortex AI Functions](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions)
 - [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
-- [Streamlit in Snowflake](https://docs.snowflake.com/developer-guide/streamlit/about-streamlit)
 - [Streamlit in Snowflake](https://docs.snowflake.com/developer-guide/streamlit/about-streamlit)
