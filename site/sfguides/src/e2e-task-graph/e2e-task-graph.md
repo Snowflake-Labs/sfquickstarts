@@ -129,6 +129,9 @@ EXECUTE TASK ON ACCOUNT TO ROLE ENGINEER;
 
 2. Configure your default Snowflake connection following the [connection configuration guide](https://docs.snowflake.com/developer-guide/snowflake-cli/connecting/configure-connections#define-connections)
 
+  > Tip: You can generate a config for your account from Snowsight using the `Connect a tool to Snowflake` > `Config File` menu items.
+    ![](assets/setup_connect_tool.png) ![](assets/setup_config_file.png)
+
 3. Set up your development environments using the [setup_env.sh](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/ml/ml_jobs/e2e_task_graph/scripts/setup_env.sh) helper script.
     The script will create a new virtual environment (if needed), install all the necessary Python packages,
     and create the necessary resources in your default Snowflake account from step 2.
