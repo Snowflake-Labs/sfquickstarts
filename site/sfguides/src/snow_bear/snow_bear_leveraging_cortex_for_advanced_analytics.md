@@ -155,7 +155,7 @@ When you're ready to remove all the resources created during this quickstart:
 5. Run the freshly uncommented script to remove all databases, warehouses, roles, and objects
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion and Resources
 Duration: 2
 
 Congratulations! You've successfully built the complete Snow Bear Fan Experience Analytics platform using Snowflake Cortex AI!
