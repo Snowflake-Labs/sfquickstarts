@@ -174,7 +174,7 @@ Additionally, if you have Delta tables, we offer Delta Direct that enables you t
 You can also follow along and run each of the cells in the [Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/lakehouse_analytics/LAKEHOUSE_ANALYTICS_DEMO.ipynb).
 
 <!-- ------------------------ -->
-## RBAC setup
+## RBAC Setup
 
 Duration:5
 
@@ -198,7 +198,6 @@ Congratulations, you have successfully completed this quickstart!
 * Created a Catalog linked database in Snowflake to directly query and analyze the data from our lakehouse, without moving the data at all
 * Used Snowflake’s high performance query engine to run analytics on our lakehouse
 * Created robust access control policies to ensure data security and governance is in place, thanks to Snowflake Horizon
-
 
 ### Related Resources
 
