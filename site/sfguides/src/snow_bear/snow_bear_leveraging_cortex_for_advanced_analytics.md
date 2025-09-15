@@ -3,7 +3,7 @@ id: snow_bear_leveraging_cortex_for_advanced_analytics
 summary: Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics
 categories: Cortex, Analytics, Getting-Started, AI
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Cortex, AI, Analytics, Streamlit, Sentiment Analysis
 
@@ -78,9 +78,10 @@ Download these 2 files from the GitHub repository:
 
 ### Step 3: Upload Files to Stage
 
-1. Navigate to `Data` → `Databases` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
-2. Click on `SNOW_BEAR_DATA_STAGE`
-3. Upload the 2 downloaded files to the stage
+1. **Switch to the Snow Bear role**: In Snowsight, change your role to `SNOW_BEAR_DATA_SCIENTIST`
+2. Navigate to `Data` → `Databases` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
+3. Click on `SNOW_BEAR_DATA_STAGE`
+4. Upload both downloaded files to the stage
 
 ### Step 4: Import the Analytics Notebook
 
@@ -110,7 +111,7 @@ Duration: 25
 ### Execute the Complete Analytics Workflow
 
 1. **Navigate to the notebook**: Go to `Projects` → `Notebooks` in Snowsight
-2. **Open the notebook**: Click on `snow_bear_complete_setup.ipynb` to open it
+2. **Open the notebook**: Click on `SNOW_BEAR_COMPLETE_SETUP` Notebook to open it
 3. **Execute all cells**: Click **Run All** to execute all cells in the notebook at once
 <!-- ------------------------ -->
 ## Launch Analytics Dashboard
