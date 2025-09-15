@@ -60,10 +60,10 @@ In this step, you'll create the Snowflake database objects and upload all necess
 3. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) and paste it into your worksheet, then run it
 
 The setup script creates:
-- **Database**: `CUSTOMER_MAJOR_LEAGUE_BASKETBALL_DB` with `BRONZE` and `GOLD` schemas
+- **Database**: `SNOW_BEAR_DB` with `BRONZE_LAYER`, `GOLD_LAYER`, and `ANALYTICS` schemas
 - **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
 - **Warehouse**: `SNOW_BEAR_WH` for compute resources
-- **Stage**: `SNOW_BEAR_DATA_STAGE` for file uploads
+- **Stages**: `SNOW_BEAR_DATA_STAGE` and `SEMANTIC_MODELS` for file uploads
 - **File Format**: `CSV_FORMAT` for data loading
 - **AI Access**: `SNOWFLAKE.CORTEX_USER` role for Cortex functions
 
