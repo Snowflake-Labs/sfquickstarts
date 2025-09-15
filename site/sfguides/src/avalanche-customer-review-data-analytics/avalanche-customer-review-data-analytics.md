@@ -95,7 +95,7 @@ This should yield the following results output:
 
 <!-- ------------------------ -->
 ## Retrieving Customer Review Data
-Duration: 10
+Duration: 10 mins
 
 ### Extracting Data from DOCX Files
 
@@ -133,20 +133,22 @@ Running the above query should yield the following table output:
 
 <!-- ------------------------ -->
 ## Reshaping the Data
-Duration: 15
+Duration: 15 mins
 
 ### Structuring the Extracted Content
 
-Now that we have the raw content from the DOCX files, we need to reshape it into a more structured format. We'll use regular expressions to extract specific information such as product name, date, and the customer review text.
+Now that we have the raw content from the .DOCX files, we need to reshape it into a more structured format. We'll use regular expressions to extract specific information such as product name, date, and the customer review text.
+
+👀 NOTE: Depends on the output from [this step](#retrieving-customer-review-data)
 
 ```sql
 -- Extract PRODUCT name, DATE, and CUSTOMER_REVIEW from the LAYOUT column
 SELECT 
   filename,
-  REGEXP_SUBSTR(layout, 'Product: (.*?) Date:', 1, 1, 'e') as product,
+  REGEXP_SUBSTR(layout, 'Product: (.*)', 1, 1, 'e', 1) as product,
   REGEXP_SUBSTR(layout, 'Date: (202[0-9]-[0-9]{2}-[0-9]{2})', 1, 1, 'e') as date,
-  REGEXP_SUBSTR(layout, '## Customer Review\n([\\s\\S]*?)$', 1, 1, 'es') as customer_review
-FROM previous_query_result;
+  REGEXP_SUBSTR(layout, '## Customer Review\\n\\n(.*)', 1, 1, 'e', 1) as customer_review
+FROM table(result_scan(last_query_id())); -- assuming you ran last query from Section 3
 ```
 
 This query uses `REGEXP_SUBSTR` to extract:
@@ -156,6 +158,35 @@ This query uses `REGEXP_SUBSTR` to extract:
 
 The regular expression patterns are designed to match the specific structure of the documents, extracting only the relevant information. This transformation converts unstructured text into a structured format that's easier to analyze.
 
+You can also combine this query into one combined query using [Snowflake's Flow Operator](https://docs.snowflake.com/en/sql-reference/operators-flow)
+
+It should look something like this
+
+**‼️ Please note, this is an alternate implementaiton on above code.**
+
+```sql
+WITH files AS (
+  SELECT 
+    REPLACE(REGEXP_SUBSTR(file_url, '[^/]+$'), '%2e', '.') as filename
+  FROM DIRECTORY('@avalanche_db.avalanche_schema.customer_reviews')
+  WHERE filename LIKE '%.docx'
+)
+SELECT 
+  filename,
+  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
+    @avalanche_db.avalanche_schema.customer_reviews,
+    filename,
+    {'mode': 'layout'}
+  ):content AS layout
+FROM files
+->> --Flow Operator
+SELECT 
+  filename,
+  REGEXP_SUBSTR(layout, 'Product: (.*)', 1, 1, 'e', 1) as product,
+  REGEXP_SUBSTR(layout, 'Date: (202[0-9]-[0-9]{2}-[0-9]{2})', 1, 1, 'e') as date,
+  REGEXP_SUBSTR(layout, '## Customer Review\\n\\n(.*)', 1, 1, 'e', 1) as customer_review
+FROM $1;
+```
 The result table should look like the following:
 
 ![image](assets/sql2.png)
