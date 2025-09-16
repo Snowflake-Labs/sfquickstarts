@@ -13,6 +13,17 @@ tags: Getting Started, Gen AI, Data Engineering, Snowpark , Python , Snowflake C
 
 Duration: 15
 
+**Note:** We recommend checking out our latest quickstart - [Building Cortex AISQL Powered Call Centre Analytics Solution](https://quickstarts.snowflake.com/guide/building-cortex-aisql-powered-call-centre-analytics/index.html?index=..%2F..index#0). This newest version offers significant advantages:
+* Native AI Processing: Uses Snowflake's `AI_TRANSCRIBE` function instead of hosting Whisper models in SPCS for audio to text conversion.
+* Advanced Analytics: Leverages Cortex Analyst for conversational chatbots and Cortex AISQL functions.
+* Streamlined Streamlit App workflow: Uses the modern Streamlit-in-Snowflake workflow—use snowflake UI to create streamlit apps.
+* Simplified Architecture: Eliminates complex container management and custom model hosting.
+
+When to use each version:
+* Choose the newest version for production-ready solutions with minimal complexity.
+* Use this original version when Cortex is unavailable in current deployment or  to learn about SPCS concepts and custom model hosting.
+
+
 Audio files in call centers offer rich insights beyond text. With Snowflake Cortex Functions and running open source LLM models in Snowpark Container Services, you can extract summary of the call, sentiment, and patterns which can eventually help in enhancing customer experiences. By transcribing audio to text and developing custom analytics, call centres and supervisor gain actionable insights on agent responses and proactive issue resolution, ultimately driving better customer satisfaction. These insights can inform strategic decision-making, improve operational efficiency, and drive revenue growth. From optimizing agent performance to predicting customer behavior, the possibilities are endless.
 
 In this quick start you focus on a scenario where you are a supervisor in a vehicle insurance call centre company. As a supervisor you have to identify metrics about the agent , track few key metrics like Average Handle Time(AHT), total number of first call resolution, Sentiment count to name a few. With the help of running Whisper model with in Snowpark Container Services we can transcribe the text from audio, get the call duration and using Snowflake Cortex functions supervisor can get all these details with a help of a Streamlit App. Supervisors also get options to ask questions on the extracted audio files using natural language. Following is the solution diagram for building this solution end-end in Snowflake.
@@ -107,7 +118,9 @@ git clone https://github.com/Snowflake-Labs/sfguide-call-centre-analytics-with-s
 Open a terminal and run the following commands to create a conda virtual environment and install few packages
 
 ```shell
-conda create --name demosnowparkdemo --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.8 
+conda create --name demosnowparkdemo --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.10
+
+conda activate demosnowparkdemo
 
 conda install snowflake-snowpark-python pandas pyarrow streamlit
 ```
@@ -152,7 +165,7 @@ In this step we are hosting a LLM model from [NumberStation](https://huggingface
 
 Run the following notebook to bring up the text2sql Container and creating other objects required to run the container in SPCS. 
 
-> This is required if you want the text2sql capabilities from the streamlit app. You can skip this step if you don't want to explore this feature. This capability will be soon replaced by Cortex Text2SQL function once its aviable in public preview. This steps helps you to learn on how you can host your own LLM model, fine tune on your dataset and eventually do the model inference all inside Snowflake platform.
+> This is required if you want the text2sql capabilities from the streamlit app. You can skip this step if you don't want to explore this feature. This capability is now offered by Cortex Text2SQL function. These steps help you learn how you can host your own LLM model, fine tune on your dataset and eventually do the model inference all inside Snowflake platform.
 
  [text2sql_setup_code.ipynb](https://github.com/Snowflake-Labs/sfguide-call-centre-analytics-with-snowflake-cortex-and-spcs/blob/main/text2sql/text2sql_setup_code.ipynb) found in **text2sql** folder in your cloned local directory.
 
