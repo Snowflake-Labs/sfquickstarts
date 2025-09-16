@@ -63,8 +63,6 @@ The product reviews data is in AWS S3 bucket in Apache Iceberg table format, and
 
 Follow the documentation to create an [external volume](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume-s3) and [catalog intergration](https://docs.snowflake.com/user-guide/tables-iceberg-configure-catalog-integration-rest-glue)
 
-![demo-overview](assets/demo-overview.png)
-
 Download the `ipynb` from [this git repository](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/lakehouse_analytics).
 
 ### Import the Notebook into Snowflake
@@ -187,6 +185,63 @@ Note: Row Access Policy is an enterprise feature available in enterprise edition
 Run the cell `Role Based Access Control: Row Access Policy` cell in the [Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/lakehouse_analytics/LAKEHOUSE_ANALYTICS_DEMO.ipynb) to create the row access policy.
 
 <!-- ------------------------ -->
+## Snowflake Intelligence (Optional)
+
+Duration:10
+
+In this section, you will learn how to use Snowflake Intelligence to talk to your lakehouse data in natural language.
+
+Run the last cell in the [notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/lakehouse_analytics/LAKEHOUSE_ANALYTICS_DEMO.ipynb) titled `Setup Snowflake Intelligence`.
+
+Download the [product_review_analysis.yaml](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/lakehouse_analytics/PRODUCT_REVIEW_ANALYSIS.yaml) file and upload it to your stage.
+
+### What is Snowflake Intelligence?
+
+Snowflake Intelligence is an agentic AI solution, enabling business users to directly and securely interact with their organization's structured and unstructured data using natural language. Snowflake Intelligence provides:
+
+* Natural language interaction: Engage with data like a trusted colleague to securely access and analyze both structured and unstructured data to uncover trends and understand the "why" behind the "what."
+* Actionable intelligence: Go beyond just insights by configuring agents to perform tasks based on findings, such as sending notifications, updating records in other systems, or triggering workflows.
+* Enterprise-grade security and governance: Honors existing access controls and governance, unifies information from Snowflake and third-party applications for a holistic view, and provides transparency on how answers are derived and data lineage.
+
+Snowflake Intelligence is powered by Cortex Analyst and Cortex Search under the hood, and uses Snowflake Agent.
+
+### Cortex Analyst
+
+This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
+
+In this example, we only use Cortex Analyst to power the Snowflake Intelligence experience since this is a structured dataset.
+
+In Snowsight, on the left hand navigation menu, select AI & ML » Cortex Analyst
+On the top right, click on Create new model down arrow and select Upload your YAML file
+Upload product_review_analysis.yaml | Select database, schema, and stage
+On the top right, click on Save
+
+### Create Agent
+An agent is an intelligent entity within Snowflake Intelligence that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data.
+
+Note that you can create multiple agents for various use cases and/or business teams in your organization.
+
+In Snowsight, on the left hand navigation menu, select AI & ML » Agents
+On the top right, click on Create agent
+Schema: SNOWFLAKE_INTELLIGENCE.AGENTS
+Select Create this agent for Snowflake Intelligence
+Agent object name: Amazon Product Analyst
+Display name: Amazon Product Analyst
+Select the newly created agent and click on Edit on the top right corner and make the following updates.
+
+### Add Tools To Agent
+Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
+
+* Tools: Cortex Analyst
+* Click on + Add
+* Name: Amazon Product Analyst
+* Add: Semantic model file » product_review_analysis.yaml
+
+Open Snowflake Intelligence and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left » Sign out and sign back in. Also note that your role should be set to SNOWFLAKE_INTELLIGENCE_ADMIN
+
+![snowflake-intelligence](assets/si.png)
+
+<!-- ------------------------ -->
 ## Conclusion And Resources
 
 Duration:2
@@ -204,3 +259,4 @@ Congratulations, you have successfully completed this quickstart!
 * [Catalog Linked Databases in Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) 
 * [Lakehouse Analytics on Snowflake](https://www.snowflake.com/en/product/use-cases/lakehouse-analytics/)  
 * [Source code on GitHub](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/lakehouse_analytics)  
+* [Getting Started with Snowflake Intelligence](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-intelligence/index.html?index=..%2F..index#0)
