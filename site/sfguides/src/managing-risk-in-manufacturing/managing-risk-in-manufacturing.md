@@ -8,7 +8,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
 
-# Manage Risk in a Manufacturing Plant with Neo4j Graph Analytics
+# Manage Risk with a Digital Twin in Manufacturing Data using Neo4j Graph Analytics
 
 ## Overview
 

@@ -1,4 +1,4 @@
-author: James Cha-Earley, Mubashir Masood
+author: James Cha-Earley, Mubashir Masood, Daniel Silva
 id: getting_started_with_cortex_agents
 summary: Get started with Cortex Agents
 categories: Getting-Started
@@ -75,10 +75,10 @@ A full-stack application that enables users to:
 ### What You'll Need
 Before you begin, make sure you have the following:
 
-- **Snowflake Account**: Access to Snowflake with sufficient privileges to create databases, schemas, tables, and upload files. You will also need to set up an RSA public key for the user in (Snowflake)[https://app.snowflake.com].
+- **Snowflake Account**: Access to Snowflake with sufficient privileges to create databases, schemas, tables, and upload files.
 - **Cortex Agents Access**: You will need access to Snowflake Cortex service, **Cortex Agents**, **Cortex Search**, and **Cortex Analyst** features.
 
-## Setup Workspace
+## Setup Data
 Duration: 10
 
 **Step 1.** In Snowsight, create a SQL Worksheet and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/setup.sql) to execute all statements in order from top to bottom.
@@ -100,41 +100,17 @@ This script will:
 - Browse and select sales_metrics_model.yaml file
 - Click "Upload"
 
-## Streamlit Application
-Duration: 15
-
-**Step 1.** Click on [Intelligent Sales Assistant Streamlit App](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/streamlit.py). (NOTE: Do NOT right-click to download.)
-
-**Step 2.** In your Snowflake account:
-* On the left hand navigation menu, click on Streamlit
-* On the top left click the **Streamlit App** 
-* In the Create Streamlit App dialog, select **sales_intelligence** for your database and **data** as your schema
-* Select your **Warehouse**
-* Click on Create button
-
-> aside positive
-> Make sure your database and schema match the ones created in the setup step.
-
-**Step 3.**
-* Copy and Paste contents from the [streamlit.py](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/streamlit.py) into your new Streamlit App 
-
-**Step 4.** Great questions to ask
-* How many deals did Sarah Johnson win compared to deals she lost?
-![Deals](assets/how-many-deals.png)
-* Tell me about the call with Securebank?
-![Securebank Conversation](assets/securebank_conversation.png)
-
-## Setup Agents
+## Create Agent
 Duration: 15
 
 **Step 1.** In Snowsight, Click on AI ML > Agents.
 **Step 2.** Click on Create Agents. 
-* Choose the database `SNOWFLAKE_INTELLIGENCE.AGENTS` 
-* Make the Agent Object Name `SALES_CONVERSATION_AGENT`
-* Make the Display Name `SALES_CONVERSATION_AGENT`
+* Select `Create this agent for Snowflake Intelligence` 
+* Make the Agent Object Name `SALES_INTELLIGENCE_AGENT`
+* Make the Display Name `SALES_INTELLIGENCE_AGENT`
 ![Agent Setup step 2](assets/create-agent.png)
 **Step 3.** Click on `SALES_CONVERSATION_AGENT` - this is where we will update the agent and how it should orchestrate. 
-* Click on Edit on the top right corner. In the **Description** section we will add the following:
+* Click `Edit` on the top right corner. In the **Description** section we will add the following:
 
 ```This agent orchestrates between Sales data for analyzing sales conversations using cortex search service (SALES_CONVERSATION_SEARCH) and metrics (sales_metrics_model.yaml)```  
 ![Agent Setup step 3](assets/about-agent.png)
@@ -174,14 +150,46 @@ Give it a name `Sales_conversation_search`, Give it a description `Cortex Search
 ## Snowflake Intelligence
 Duration: 5
 
-Let's ensure we saved the Agent in the last step and In Snowsight, Click on AI ML > Snowflake Intelligence. Let's ask the questions again   
+With the Agent created, we can now chat with it via Snowflake Intelligence.
+Click on AI ML > Snowflake Intelligence. Let's ask the questions to test:
 * How many deals did Sarah Johnson win compared to deals she lost?
 ![SI Deals](assets/si-question.png)
 * Tell me about the call with Securebank?
 ![Securebank Conversation](assets/si-securebank.png)
 
+## Agent REST API
+Duration: 15
 
-## Conclusion and Resources
+You can also interact with the Agent by calling the Snowflake REST API at `/api/v2/databases/{DATABASE}/schemas/{SCHEMA}/agents/{AGENT}:run`.
+We created a simple streamlit app that interacts with the REST API [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/data_agent_demo.py).
+You can use it as a building block to build your own applications. 
+Let's run the streamlit and call the API locally:
+
+**Step 1.** To authenticate to the API, let's create a Personal Access Token. 
+* In Snowsight, click on your profile (bottom left corner) » Settings » Authentication
+* Under `Programmatic access tokens`, click `Generate new token`
+* Select `Single Role` and select `sales_intelligence_rl`
+* Copy and save the token for later (you will not be able to see it again)
+
+**Step 2.** Clone the repo: `git clone git@github.com:Snowflake-Labs/sfguide-getting-started-with-cortex-agents.git`
+
+**Step 3.** Find your account URL in Snowsight: Click on your profile (bottom left corner) » Account » View account details.
+
+**Step 4.** In the cloned repo run the following commands (replacing the PAT and ACCOUNT_URL):
+```
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+
+CORTEX_AGENT_DEMO_PAT=<PAT> \
+CORTEX_AGENT_DEMO_HOST=<ACCOUNT_URL> \
+CORTEX_AGENT_DEMO_DATABASE="SNOWFLAKE_INTELLIGENCE" \
+CORTEX_AGENT_DEMO_SCHEMA="AGENTS" \
+CORTEX_AGENT_DEMO_AGENT="SALES_INTELLIGENCE_AGENT" \
+streamlit run data_agent_demo.py
+```
+
+## Conclusion And Resources
 Duration: 5
 
 Congratulations! You've successfully built an Intelligent Sales Assistant using Snowflake Cortex capabilities. This application demonstrates the power of combining structured and unstructured data analysis through:

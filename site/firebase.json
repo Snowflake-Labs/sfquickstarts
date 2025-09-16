@@ -128,11 +128,6 @@
       "type": 301
     },
     {
-      "source": "guide/asking_questions_to_your_own_documents_with_snowflake_cortex/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
       "source": "guide/getting_started_with_cortex_analyst_in_snowflake/{,/**}",
       "destination": "/guide/getting_started_with_cortex_analyst/",
       "type": 301
@@ -269,11 +264,6 @@
     },
     {
       "source": "guide/build_llm_app_nvidia_scs/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
     },

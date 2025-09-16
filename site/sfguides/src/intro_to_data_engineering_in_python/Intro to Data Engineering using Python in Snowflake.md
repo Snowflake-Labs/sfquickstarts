@@ -88,7 +88,7 @@ In addition to the ingestion and transformation steps above, you will learn how 
 
 * Create a serverless task to schedule the pipeline
 
-Follow along and run each of the cells in the [Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/intro_to_de_python/DE_100_VHOL.ipynb).
+Follow along and run each of the cells in the [Notebook](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/intro_to_de_python/DE_100.ipynb).
 
 <!-- ------------------------ -->
 ## Conclusion & Resources
