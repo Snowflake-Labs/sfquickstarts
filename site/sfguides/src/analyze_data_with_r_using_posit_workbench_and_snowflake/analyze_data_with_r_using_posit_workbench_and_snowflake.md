@@ -132,10 +132,13 @@ Follow the sign in prompts.
 ![](assets/posit_workbench/03-snowflake_login.png)
 
 If sign-in fails: verify OAuth and network policy.
+
 If the Snowflake sign-in in RStudio doesn’t complete (the Snowflake button doesn’t turn blue) or you see 403/blocked errors:
-OAuth setup for the app: Ensure the Posit Workbench Native App is configured to use OAuth so users can authenticate from inside RStudio. Follow the install steps: [Install with OAuth](https://docs.posit.co/partnerships/snowflake/workbench/native-app/install.html#oauth).
-Account network policy: If your account enforces a network policy, allow connections from the Posit Workbench Native App back to Snowflake. Guidance and remediation: [Account network policies](https://docs.posit.co/partnerships/snowflake/workbench/native-app/troubleshooting.html#account-network-policies).
+* OAuth setup for the app: Ensure the Posit Workbench Native App is configured to use OAuth so users can authenticate from inside RStudio. Follow the install steps: [Install with OAuth](https://docs.posit.co/partnerships/snowflake/workbench/native-app/install.html#oauth).
+* Account network policy: If your account enforces a network policy, allow connections from the Posit Workbench Native App back to Snowflake. Guidance and remediation: [Account network policies](https://docs.posit.co/partnerships/snowflake/workbench/native-app/troubleshooting.html#account-network-policies).
+
 Try again: After updating OAuth and/or network policy, return to RStudio in Posit Workbench and click the Snowflake button to sign in.
+
 Tip: Most sign-in issues are due to incomplete OAuth configuration or a restrictive network policy. Ask an admin to review both if you don’t have permissions.
 
 
