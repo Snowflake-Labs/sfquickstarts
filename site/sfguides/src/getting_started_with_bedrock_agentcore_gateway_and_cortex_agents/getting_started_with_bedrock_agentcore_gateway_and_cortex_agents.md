@@ -26,7 +26,7 @@ Duration: 10
 Users will create an intelligent search system on structured and unstructured movie data using Snowflake Cortex AI and via an AgentCore Gateway. Snowflake Cortex AI will process and index the unstructured movie reviews and structured movie ratings, making them searchable through advanced text analysis. We will then include the Cortex Agent as a target from a Bedrock AgentCore Gateway that can be used alongside other targets as part of a broader Bedrock AgentCore Agent.
 
 The end-to-end workflow will look like this:
-![](assets/AgentCoreArchitecture.png)
+![](assets/agentcorearchitecture.png)
 
 Ingest data into structured and unstructured data stores then:
 1. Create a Cortex Analyst service with structured data with a Semantic View.
@@ -525,7 +525,7 @@ Before we get started please make sure you are connected to your AWS account via
 Create a virtual environment to avoid dependency conflicts:
 
 ```bash
-cd cortex-agents-setup
+cd agentcore-to-cortex
 
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -535,18 +535,15 @@ pip install bedrock-agentcore-starter-toolkit requests
 python -c "from bedrock_agentcore_starter_toolkit.operations.gateway.client import GatewayClient; print('✅ Installation successful')"
 ```
 
-- Move the **create_gateway.py, cortex_agents_openapi.json and app.py** files to the newly created cortex-agents-setup folder.
-
 ### 2. Create Gateway with OpenAPI Target
 
 With the environment ready we are set to create the AgentCore Gateway. Update the below code with your PAT Token from Snowflake and run it. 
 
 
-
 ```bash
 export SNOWFLAKE_PAT_TOKEN="<PAT TOKEN FROM SNOWFLAKE>"
 
-python create_gateway.py
+python create_multitarget_gateway.py
 ```
 
 You should see output affirming the creation of the AWS services like: Gateway, Role, Identity Service and others.
@@ -571,18 +568,21 @@ pip install streamlit
 streamlit run app.py
 ```
 
-In the first space please enter your Snowflake account URL (e.g., myacct.snowflakecomputing.com). Then prompt with a question like any of the below:
-
-- what are the unstructured reviews of the movie Toy story?
-- what are the unstructured reviews of the movie Sudden Death?
-- what is the average rating of Toy Story?
-
-Additionally, you can use the other Target in the gateway to get information from the Wikipedia API.
+Try clicking one the buttons like **Toy Story Analysis** to populate the request and submit
 
 
 The app should look like this:
-![](assets/streamlitapp.png)
+![](assets/streamlitapp2.png)
 
+Feel free to make additional requests by using the buttons or asking questions that are relevant to the data.
+
+### Cleanup
+
+Run the below code to remove the underlying AWS resources.
+
+```bash
+python cleanup_aws_resources.py
+```
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -591,8 +591,8 @@ Duration: 5
 
 This quickstart is just that, a quick way to get you started with using AgentCore Gateways you are encouraged to build upon this by adding more Cortex Tools to your Cortex Agents and more Targets to your AgentCore Gateway.
    - Scale the workflow to a use case with many documents and use a more robust Cortex Search Service.
-   - Scale Agents to include more robust Analyst services and multiple tables and a broader Semantic View
-   - Use multiple targets in your AgentCore Gateway
+   - Scale Agents to include more robust Analyst services and multiple tables and a broader Semantic View.
+   - Use more targets in your AgentCore Gateway and leverage LLMs in Bedrock AgentCore to coalesce, send request and consolidate a response.
 
 
 ### What You Learned
@@ -617,38 +617,6 @@ There are some great blogs on Medium regarding Snowflake Cortex and Amazon Servi
 
 <!-- ------------------------ -->
 ## Appendix
-
-### Cleanup
-
-```bash
-# Load settings to get gateway ID
-GATEWAY_ID=$(cat settings.json | python -c "import sys, json; print(json.load(sys.stdin)['gateway_id'])")
-
-# Get target ID (SnowflakeCortexTarget)
-TARGET_ID=$(aws bedrock-agentcore-control list-gateway-targets \
-  --gateway-identifier $GATEWAY_ID \
-  --query "items[?name=='SnowflakeCortexTarget'].targetId" \
-  --output text)
-
-# Delete target first (required before deleting gateway)
-echo "Deleting target: $TARGET_ID"
-aws bedrock-agentcore-control delete-gateway-target \
-  --gateway-identifier $GATEWAY_ID \
-  --target-id $TARGET_ID
-
-# Then delete gateway
-echo "Deleting gateway: $GATEWAY_ID"
-aws bedrock-agentcore-control delete-gateway \
-  --gateway-identifier $GATEWAY_ID
-
-# Remove local files
-rm settings.json
-
-echo "Cleanup complete!"
-
-# Deactivate virtual environment when done
-deactivate
-```
 
 ### Troubleshooting
 
