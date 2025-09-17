@@ -75,7 +75,7 @@ Download these 3 files from the GitHub repository:
 |------|---------|---------------|
 | **Data File** | Basketball fan survey data | [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) |
 | **Streamlit App** | Interactive analytics dashboard | [snow_bear.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear.py) |
-| **Semantic Model** | AI assistant semantic model | [snowbear_fan_360.yaml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snowbear_fan_360.yaml) |
+| **Semantic Model** | AI assistant semantic model | [snow_bear_fan_360.yaml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_fan_360.yaml) |
 
 ### Step 3: Upload Files to Stages
 
@@ -97,7 +97,7 @@ Download these 3 files from the GitHub repository:
 
 7. Click `Enable Directory Table`
 
-8. Upload `snowbear_fan_360.yaml` to this stage
+8. Upload `snow_bear_fan_360.yaml` to this stage
 
 ### Step 4: Import the Analytics Notebook
 
