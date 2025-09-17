@@ -21,7 +21,7 @@ Duration: 15
 
 When to use each version:
 * Choose the newest version for production-ready solutions with minimal complexity.
-* Use this original version when Cortex is unavailable in current deployment or  to learn about SPCS concepts and custom model hosting.
+* Use this original version when Cortex is unavailable in current deployment or to learn about SPCS concepts and custom model hosting.
 
 
 Audio files in call centers offer rich insights beyond text. With Snowflake Cortex Functions and running open source LLM models in Snowpark Container Services, you can extract summary of the call, sentiment, and patterns which can eventually help in enhancing customer experiences. By transcribing audio to text and developing custom analytics, call centres and supervisor gain actionable insights on agent responses and proactive issue resolution, ultimately driving better customer satisfaction. These insights can inform strategic decision-making, improve operational efficiency, and drive revenue growth. From optimizing agent performance to predicting customer behavior, the possibilities are endless.
