@@ -3,7 +3,7 @@ id: snow_bear_leveraging_cortex_for_advanced_analytics
 summary: Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics
 categories: Cortex, Analytics, Getting-Started, AI
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Cortex, AI, Analytics, Streamlit, Sentiment Analysis
 
@@ -158,7 +158,7 @@ When you're ready to remove all the resources created during this quickstart:
 
 1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) script
 2. Scroll to the bottom to find the "TEARDOWN SCRIPT" section
-3. Uncomment the teardown statements by removing the `/*` and `*/` comment blocks
+3. Uncomment the teardown statements
 5. Run the freshly uncommented script to remove all databases, warehouses, roles, and objects
 
 <img src="assets/drop_objects.gif">
