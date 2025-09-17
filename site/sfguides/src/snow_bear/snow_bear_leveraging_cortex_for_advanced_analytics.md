@@ -3,7 +3,7 @@ id: snow_bear_leveraging_cortex_for_advanced_analytics
 summary: Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics
 categories: Cortex, Analytics, Getting-Started, AI
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Cortex, AI, Analytics, Streamlit, Sentiment Analysis
 
@@ -23,7 +23,9 @@ This Quickstart showcases the complete Snow Bear analytics platform with:
 - **Advanced theme extraction** and automated categorization
 - **Cortex Search Service** for semantic search
 - **Cortex Analyst integration** for natural language queries
-- **500+ real basketball fan survey responses**
+- **500+ basketball fan survey responses**
+
+<img src="assets/architecture_diagram.png">
 
 ### What You Will Build
 - Complete 7-module interactive analytics platform
@@ -75,7 +77,7 @@ Download these 3 files from the GitHub repository:
 |------|---------|---------------|
 | **Data File** | Basketball fan survey data | [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) |
 | **Streamlit App** | Interactive analytics dashboard | [snow_bear.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear.py) |
-| **Semantic Model** | AI assistant semantic model | [snowbear_fan_360.yaml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snowbear_fan_360.yaml) |
+| **Semantic Model** | AI assistant semantic model | [snow_bear_fan_360.yaml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_fan_360.yaml) |
 
 ### Step 3: Upload Files to Stages
 
@@ -97,7 +99,7 @@ Download these 3 files from the GitHub repository:
 
 7. Click `Enable Directory Table`
 
-8. Upload `snowbear_fan_360.yaml` to this stage
+8. Upload `snow_bear_fan_360.yaml` to this stage
 
 ### Step 4: Import the Analytics Notebook
 
@@ -129,6 +131,9 @@ Duration: 12
 1. Go to `Projects` → `Notebooks` in Snowsight
 2. Click on `SNOW_BEAR_COMPLETE_SETUP` Notebook to open it
 3. Click `Run all` to execute all cells in the notebook at once
+
+<img src="assets/notebook_recording_hq.gif">
+
 <!-- ------------------------ -->
 ## Launch Analytics Dashboard
 Duration: 5
@@ -141,6 +146,8 @@ Duration: 5
 
 Your platform includes executive dashboards, sentiment analysis, theme analysis, fan segmentation, AI recommendations, interactive search, and AI assistant capabilities.
 
+<img src="assets/streamlit_recording_fast.gif">
+
 <!-- ------------------------ -->
 ## Clean Up Resources
 Duration: 5
@@ -151,8 +158,10 @@ When you're ready to remove all the resources created during this quickstart:
 
 1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) script
 2. Scroll to the bottom to find the "TEARDOWN SCRIPT" section
-3. Uncomment the teardown statements by removing the `/*` and `*/` comment blocks
+3. Uncomment the teardown statements
 5. Run the freshly uncommented script to remove all databases, warehouses, roles, and objects
+
+<img src="assets/drop_objects.gif">
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
