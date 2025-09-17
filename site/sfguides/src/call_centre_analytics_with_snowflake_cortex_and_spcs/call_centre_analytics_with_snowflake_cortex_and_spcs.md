@@ -16,7 +16,7 @@ Duration: 15
 **Note:** We recommend checking out our latest quickstart - [Building Cortex AISQL Powered Call Centre Analytics Solution](https://quickstarts.snowflake.com/guide/building-cortex-aisql-powered-call-centre-analytics/index.html?index=..%2F..index#0). This newest version offers significant advantages:
 * Native AI Processing: Uses Snowflake's `AI_TRANSCRIBE` function instead of hosting Whisper models in SPCS for audio to text conversion.
 * Advanced Analytics: Leverages Cortex Analyst for conversational chatbots and Cortex AISQL functions.
-* Streamlined Streamlit App workflow: Uses the modern Streamlit-in-Snowflake workflow—use snowflake UI to create streamlit apps.
+* Streamlined Streamlit App workflow: Uses the modern Streamlit-in-Snowflake workflow - use snowflake UI to create streamlit apps.
 * Simplified Architecture: Eliminates complex container management and custom model hosting.
 
 When to use each version:
