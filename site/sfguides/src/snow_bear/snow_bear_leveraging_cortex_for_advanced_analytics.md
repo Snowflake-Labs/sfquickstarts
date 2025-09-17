@@ -23,7 +23,9 @@ This Quickstart showcases the complete Snow Bear analytics platform with:
 - **Advanced theme extraction** and automated categorization
 - **Cortex Search Service** for semantic search
 - **Cortex Analyst integration** for natural language queries
-- **500+ real basketball fan survey responses**
+- **500+ basketball fan survey responses**
+
+<img src="assets/architecture_diagram.png">
 
 ### What You Will Build
 - Complete 7-module interactive analytics platform
@@ -129,6 +131,9 @@ Duration: 12
 1. Go to `Projects` → `Notebooks` in Snowsight
 2. Click on `SNOW_BEAR_COMPLETE_SETUP` Notebook to open it
 3. Click `Run all` to execute all cells in the notebook at once
+
+<img src="assets/notebook_recording_hq.gif">
+
 <!-- ------------------------ -->
 ## Launch Analytics Dashboard
 Duration: 5
@@ -140,6 +145,8 @@ Duration: 5
 3. Explore your 7-module analytics dashboard
 
 Your platform includes executive dashboards, sentiment analysis, theme analysis, fan segmentation, AI recommendations, interactive search, and AI assistant capabilities.
+
+<img src="assets/streamlit_recording_fast.gif">
 
 <!-- ------------------------ -->
 ## Clean Up Resources
@@ -153,6 +160,8 @@ When you're ready to remove all the resources created during this quickstart:
 2. Scroll to the bottom to find the "TEARDOWN SCRIPT" section
 3. Uncomment the teardown statements by removing the `/*` and `*/` comment blocks
 5. Run the freshly uncommented script to remove all databases, warehouses, roles, and objects
+
+<img src="assets/drop_objects.gif">
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
