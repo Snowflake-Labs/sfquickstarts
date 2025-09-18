@@ -307,7 +307,7 @@ We’ll use the **ExecuteSQLStatement** processor to run a **COPY INTO** command
             SELECT 
                 PARSE_JSON($1),
                 CURRENT_TIMESTAMP(0)
-            FROM @F1_API
+            FROM @OPENFLOW_TEST.F1_API
         )
         FILE_FORMAT = (FORMAT_NAME = 'json_format')
         PATTERN = '.*RACE.*';
