@@ -3,7 +3,7 @@ id: tasty_bytes_introduction
 summary: This is the Tasty Bytes Introduction and Data Foundation Quickstart guide
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tasty Bytes, Zero to Snowflake
 

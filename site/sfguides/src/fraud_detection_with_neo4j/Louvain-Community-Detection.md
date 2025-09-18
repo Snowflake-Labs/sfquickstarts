@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
-# Finding Fraudulent Communities With Neo4j
+# Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics
 <!-- ------------------------ -->
 ## Overview
 Duration: 2
@@ -78,9 +78,7 @@ USE SCHEMA P2P_DEMO.PUBLIC;
 
 -- Create a consumer role for users and admins of the Neo4j Graph Analytics application
 CREATE ROLE IF NOT EXISTS gds_user_role;
-CREATE ROLE IF NOT EXISTS gds_admin_role;
 GRANT APPLICATION ROLE neo4j_graph_analytics.app_user TO ROLE gds_user_role;
-GRANT APPLICATION ROLE neo4j_graph_analytics.app_admin TO ROLE gds_admin_role;
 
 CREATE DATABASE ROLE IF NOT EXISTS gds_db_role;
 GRANT DATABASE ROLE gds_db_role TO ROLE gds_user_role;

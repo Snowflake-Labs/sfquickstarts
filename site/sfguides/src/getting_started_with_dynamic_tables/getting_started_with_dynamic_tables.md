@@ -89,7 +89,7 @@ Once the database is created, we will create 3 UDTF to generate our source data.
 create or replace function gen_cust_info(num_records number)
 returns table (custid number(10), cname varchar(100), spendlimit number(10,2))
 language python
-runtime_version=3.8
+runtime_version=3.10
 handler='CustTab'
 packages = ('Faker')
 as $$
@@ -122,7 +122,7 @@ Next table is **PROD_STOCK_INV** and insert 100 products inventory into it using
 create or replace function gen_prod_inv(num_records number)
 returns table (pid number(10), pname varchar(100), stock number(10,2), stockdate date)
 language python
-runtime_version=3.8
+runtime_version=3.10
 handler='ProdTab'
 packages = ('Faker')
 as $$
@@ -163,7 +163,7 @@ Next table is **SALESDATA** to store raw product sales by customer and purchase 
 create or replace function gen_cust_purchase(num_records number,ndays number)
 returns table (custid number(10), purchase variant)
 language python
-runtime_version=3.8
+runtime_version=3.10
 handler='genCustPurchase'
 packages = ('Faker')
 as $$
@@ -345,7 +345,7 @@ USE SCHEMA DEMO.DT_DEMO;
 CREATE OR REPLACE FUNCTION sum_table (INPUT_NUMBER number)
   returns TABLE (running_total number)
   language python
-  runtime_version = '3.8'
+  runtime_version = '3.10'
   handler = 'gen_sum_table'
 as
 $$

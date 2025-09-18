@@ -3,7 +3,7 @@ id: tasty_bytes_zero_to_snowflake_governance_with_horizon
 summary: Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon Quickstart
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tasty Bytes, Zero to Snowflake, Data Governance
 
@@ -136,7 +136,7 @@ In our result set we can see the high-level descriptions of what these Snowflake
 Duration: 1
 
 ### Overview
-Now that we understand these System Defined roles, let's begin leveraging them to create a test role and grant it access to the Customer Loyalty data we will deploy our initial Data Governance features against and also providing the ability to use our `tasty_dev_wh` Warehouse.
+Now that we understand these System Defined roles, let's begin leveraging them to create a test role and grant it access to the Customer Loyalty data we will deploy our initial Data Governance features against and also providing the ability to use our `tb_dev_wh` Warehouse.
 
 ### Step 1 - Using the Useradmin Role to Create our Test Role
 As we saw, a `useradmin` can create and manage users and roles. Please kick off the next two queries with the first assuming that `useradmin` role and the second leveraging a [CREATE ROLE](https://docs.snowflake.com/en/sql-reference/sql/create-role) command to generate a new `tb_test_role` we will use throughout this Quickstart. This will result in a `Role TB_TEST_ROLE successfully created.` message.
@@ -479,7 +479,7 @@ Let's now kick off the first two queries in this section which will assume the `
 ```
 USE ROLE accountadmin;
 
-CREATE OR REPLACE TABLE frostbyte_tasty_bytes.public.row_policy_map
+CREATE OR REPLACE TABLE governance.public.row_policy_map
     (role STRING, city_permissions STRING);
 ```
 
@@ -544,7 +544,7 @@ GROUP BY cl.customer_id, cl.first_name, cl.last_name, cl.city, cl.marital_status
 
 <img src = "assets/raw_rls_test.png">
 
-**Yay!** Our Row Access Policy is working as expected and we are also seeing our masking in place since we are using the `tby_test_role`. 
+**Yay!** Our Row Access Policy is working as expected and we are also seeing our masking in place since we are using the `tb_test_role`. 
 
 
 ### Step 6 - Testing our Row Access Policy Downstream

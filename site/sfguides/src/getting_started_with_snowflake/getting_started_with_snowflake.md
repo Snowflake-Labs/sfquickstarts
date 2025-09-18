@@ -28,7 +28,7 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 ### What You'll Learn:
 - How to create stages, databases, tables, views, and virtual warehouses.
 - How to load structured and semi-structured data.
-- How to consume Cybersyn data from the [Snowflake Data Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/).
+- How to consume Snowflake Public Data Products data from the [Snowflake Data Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/).
 - How to perform analytical queries on data in Snowflake, including joins between tables.
 - How to clone objects.
 - How to undo user errors using Time Travel.
@@ -36,14 +36,12 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 - How to securely and easily share data with other accounts.
 
 ### Data You'll Use:
-**Cybersyn** is a next generation data company creating a real-time view of the world's economy with analytics-ready data exclusively on Snowflake Marketplace. Initially focused on consumer insights, Cybersyn enables you to access external data directly in your Snowflake instance — no ETL required.
+[Snowflake Public Data](https://data-docs.snowflake.com/foundations/overview/) is a suite of 150+ public domain datasets made available on the [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products). Firms can eliminate web scraping and custom data pipelines for publicly available sources.
 
-This lab will use the following Cybersyn datasets:
-- Daily stock price data
-- SEC 10-K & 10-Q filings
-- Company metadata
+This lab will use the following Snowflake Public Data datasets:
+- Finance & Economics
 
-Check out Cybersyn's [Consumer Spending product](https://app.snowflake.com/marketplace/listing/GZTSZ290BUX62/) and [explore all 60+ public sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) Cybersyn offers on the [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Cybersyn).
+Check out Snowflake Public Data's [Finance & Economics product](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/snowflake-public-data-products-finance-economics) and [explore all public sources](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products) Snowflake Public Data offers on the Snowflake Marketplace.
 <!-- ------------------------ -->
 
 ## Prepare Your Lab Environment
@@ -198,7 +196,7 @@ You work at a grocery retailer. You want to understand the performance of major 
 We will start by collecting data from three different sources:
 1. Load company metadata `.csv` file.
 2. Load SEC filings from a semi-structured JSON format.
-3. Use the Snowflake Marketplace to find free stock price data from Cybersyn.
+3. Use the Snowflake Marketplace to find free Finance and Economics data from Snowflake Public Data.
 
 <!-- ------------------------ -->
 
@@ -214,7 +212,7 @@ We are using company metadata developed from the Securities and Exchange Commiss
 
 > aside negative
 > 
-> **Free Datasets from Cybersyn direct to your Snowflake instance:** The full dataset is available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7) in Snowflake Marketplace from Cybersyn -- no ETL required. For the purposes of this demo, we will focus on working with a subset of the data, staged in a csv file to learn how to load structured data into Snowflake.
+> **Free Datasets from Snowflake Public Data direct to your Snowflake instance:** The full dataset is available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with a subset of the data, staged in a csv file to learn how to load structured data into Snowflake.
 
 **Getting Data into Snowflake**
 Data can be ingested into Snowflake from many locations by using the `COPY` command, Snowpipe auto-ingestion, external connectors, or third-party ETL/ELT solutions. For more information on getting data into Snowflake, see the [Snowflake documentation](https://docs.snowflake.com/guides-overview-loading-data). For the purposes of this lab, we use the `COPY` command and AWS S3 storage to load data manually. In a real-world scenario, you would more likely use an ETL solution or grab data directly from the Snowflake Marketplace!
@@ -222,9 +220,9 @@ Data can be ingested into Snowflake from many locations by using the `COPY` comm
 ### Create a Database and Table
 Ensure you are using the `SYSADMIN` role by selecting your name at the top left, **Switch Role** > **SYSADMIN**.
 
-Navigate to the [**Databases** tab](https://app.snowflake.com/_deeplink/#/data/databases?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake). Click **Create**, name the database `CYBERSYN`, then click **CREATE**.
+Navigate to the [**Databases** tab](https://app.snowflake.com/_deeplink/#/data/databases?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake). Click **Create**, name the database `Public_Data`, then click **CREATE**.
 
-![worksheet creation](assets/4PreLoad_2.png)
+![worksheet creation](assets/Create_New_DB.png)
 
 Now navigate to the [**Worksheets** tab](https://app.snowflake.com/_deeplink/worksheets?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake). You should see the worksheet we created in step 3.
 
@@ -241,17 +239,17 @@ Select the following context settings:
 
 Next, in the drop-down for the database, select the following context settings:
 
-**Database:** `CYBERSYN`
+**Database:** `Public_Data`
 **Schema:** `PUBLIC`
 
-![context database settings](assets/4PreLoad_4b.png)
+![context database settings](assets/Choose_Schema.png)
 
 > aside negative
 > 
 >  **Data Definition Language (DDL) operations are free!**
 All the DDL operations we have done so far do not require compute resources, so we can create all our objects for free.
 
-To make working in the worksheet easier, let's rename it. In the top left corner, double-click the worksheet name, which is the timestamp when the worksheet was created, and change it to `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN`.
+To make working in the worksheet easier, let's rename it. In the top left corner, double-click the worksheet name, which is the timestamp when the worksheet was created, and change it to `ZERO_TO_SNOWFLAKE_WITH_PUBLIC_DATA`.
 
 Next we create a table called `COMPANY_METADATA` to use for loading the comma-delimited data. Instead of using the UI, we use the worksheet to run the DDL that creates the table. Copy the following SQL text into your worksheet:
 
@@ -281,15 +279,15 @@ Run the query by placing your cursor anywhere in the SQL text and clicking the b
 
 Verify your `COMPANY_METADATA` table has been created. At the bottom of the worksheet, you should see a Results section displaying a `"Table COMPANY_METADATA successfully created"` message.
 
-![TRIPS confirmation message](assets/4PreLoad_5.png)
+![TRIPS confirmation message](assets/4PreLoad_5_new.png)
 
-Navigate to the **Databases** tab by clicking the **HOME** icon in the upper left corner of the worksheet. Then click **Data** > **Databases**. In the list of databases, click `CYBERSYN` > `PUBLIC` > **TABLES** to see your newly created `COMPANY_METADATA` table. If you don't see any databases on the left, expand your browser because they may be hidden.
+Navigate to the **Databases** tab by clicking the **HOME** icon in the upper left corner of the worksheet. Then click **Data** > **Databases**. In the list of databases, click `Public_Data` > `PUBLIC` > **TABLES** to see your newly created `COMPANY_METADATA` table. If you don't see any databases on the left, expand your browser because they may be hidden.
 
-![TRIPS table](assets/4PreLoad_6.png)
+![TRIPS table](assets/4PreLoad_6_new.png)
 
 Click `COMPANY_METADATA` and the **Columns** tab to see the table structure you just created.
 
-![TRIPS table structure](assets/4PreLoad_7.png)
+![TRIPS table structure](assets/4PreLoad_7_new.png)
 
 ### Create an External Stage
 
@@ -299,13 +297,13 @@ We are working with structured, comma-delimited data that has already been stage
 > 
 >  For this lab, we are using an AWS-East bucket. To prevent data egress/transfer costs in the future, you should select a staging location from the same cloud provider and region as your Snowflake account.
 
-From the **Databases** tab, click the `CYBERSYN` database and `PUBLIC` schema. Click the **Create** button, then **Stage** > **Amazon S3**.
+From the **Databases** tab, click the `Public_Data` database and `PUBLIC` schema. Click the **Create** button, then **Stage** > **Amazon S3**.
 
-![stages create](assets/4PreLoad_8.png)
+![stages create](assets/4PreLoad_8_new.png)
 
 In the `Create Stage` dialog that opens, replace the following values in the SQL statement:
 
-**Stage Name**: `cybersyn_company_metadata`
+**Stage Name**: `Public_Data_company_metadata`
 **URL**: `s3://sfquickstarts/zero_to_snowflake/cybersyn-consumer-company-metadata-csv/`
 
 **Note:** Make sure to include the final forward slash (`/`) at the end of the URL or you will encounter errors later when loading data from the bucket.
@@ -315,19 +313,19 @@ Also ensure you have removed 'credentials = (...)' statement which is not requir
 > 
 >  The S3 bucket for this lab is public so you can leave the credentials options in the statement empty. In a real-world scenario, the bucket used for an external stage would likely require key information.
 
-![create stage settings](assets/4PreLoad_9.png)
+![create stage settings](assets/4PreLoad_9_new.png)
 
-Now let's take a look at the contents of the `cybersyn_company_metadata` stage. Navigate back to the **Worksheets** tab and open the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet we made.
+Now let's take a look at the contents of the `Public_Data_company_metadata` stage. Navigate back to the **Worksheets** tab and open the `ZERO_TO_SNOWFLAKE_WITH_Public_Data` worksheet we made.
 
 Add the following SQL statement below the previous code and then execute:
 
 ```SQL
-LIST @cybersyn_company_metadata;
+LIST @Public_Data_company_metadata;
 ```
 
 In the results in the bottom pane, you should see the list of files in the stage:
 
-![worksheet result](assets/4PreLoad_10.png)
+![worksheet result](assets/4PreLoad_10_new.png)
 
 ### Create a File Format
 
@@ -351,16 +349,16 @@ CREATE OR REPLACE FILE FORMAT csv
     COMMENT = 'File format for ingesting data for zero to snowflake';
 ```
 
-![create file format](assets/4PreLoad_11.png)
+![create file format](assets/4PreLoad_11_new.png)
 
 Verify the file format has been created with the correct settings by executing the following command:
 
 ```SQL
-SHOW FILE FORMATS IN DATABASE cybersyn;
+SHOW FILE FORMATS IN DATABASE Public_Data;
 ```
 
 The file format created should be listed in the result:
-![create file format settings](assets/4PreLoad_12.png)
+![create file format settings](assets/4PreLoad_12_new.png)
 
 ### Resize and Use a Warehouse for Data Loading
 
@@ -413,11 +411,11 @@ Change the **Size** of this data warehouse from `X-Small` to `Small`. then click
 
 Now we can run a COPY command to load the data into the `COMPANY_METADATA` table we created earlier.
 
-Navigate back to the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet in the **Worksheets** tab. Make sure the worksheet context is correctly set:
+Navigate back to the `ZERO_TO_SNOWFLAKE_WITH_PUBLIC_DATA` worksheet in the **Worksheets** tab. Make sure the worksheet context is correctly set:
 
 **Role:** `SYSADMIN`
 **Warehouse:** `COMPUTE_WH`
-**Database:** `CYBERSYN`
+**Database:** `Public_Data`
 **Schema:** `PUBLIC`
 
 ![worksheet context](assets/5Load_4.png)
@@ -425,7 +423,7 @@ Navigate back to the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet in the **Worksh
 Execute the following statements in the worksheet to load the staged data into the table. This may take up to 30 seconds.
 
 ```SQL
-COPY INTO company_metadata FROM @cybersyn_company_metadata file_format=csv PATTERN = '.*csv.*' ON_ERROR = 'CONTINUE';
+COPY INTO company_metadata FROM @Public_Data_company_metadata file_format=csv PATTERN = '.*csv.*' ON_ERROR = 'CONTINUE';
 ```
 
 In the result pane, you should see the status of each file that was loaded. Once the load is done, in the **Query Details** pane on the bottom right, you can scroll through the various statuses, error statistics, and visualizations for the last statement executed.
@@ -461,7 +459,7 @@ The size can also be changed using the UI by clicking on the worksheet context b
 Execute the same `COPY INTO` statement as before to load the same data again:
 
 ```SQL
-COPY INTO company_metadata FROM @cybersyn_company_metadata file_format=csv PATTERN = '.*csv.*' ON_ERROR = 'CONTINUE';
+COPY INTO company_metadata FROM @Public_Data_company_metadata file_format=csv PATTERN = '.*csv.*' ON_ERROR = 'CONTINUE';
 ```
 
 Once the load is done, navigate back to the **Queries** page (**Home** icon > **Activity** > **Query History**). Compare the times of the two `COPY INTO` commands. The load using the `Large` warehouse was significantly faster.
@@ -495,11 +493,11 @@ Going back to the lab's example, our company's analytics team wants to evaluate 
 - Load SEC filing data in semi-structured JSON format held in a public S3 bucket.
 - Create a view and query the JSON data using SQL dot notation.
 
-The JSON data consists of SEC filings provided by *Cybersyn*, detailing the historical performance of consumer-packaged goods companies from 2019-2023. It is also staged on AWS S3. If viewed in a text editor, the raw JSON in the GZ files looks like:
+The JSON data consists of SEC filings provided by *Snowflake Public Data*, detailing the historical performance of consumer-packaged goods companies from 2019-2023. It is also staged on AWS S3. If viewed in a text editor, the raw JSON in the GZ files looks like:
 
 ![raw JSON sample](assets/7SemiStruct_1_1.png)
 
-_(The full dataset available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/) in Snowflake Marketplace from Cybersyn -- no ETL required. For the purposes of this demo, we will focus on working with the semi-structured JSON file to learn how to load structured data into Snowflake.)_
+_(The full dataset available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with the semi-structured JSON file to learn how to load structured data into Snowflake.)_
 
 > aside negative
 > 
@@ -529,44 +527,44 @@ The `VARIANT` data type allows Snowflake to ingest semi-structured data without 
 
 In the results pane at the bottom of the worksheet, verify that your tables, `SEC_FILINGS_INDEX` and `SEC_FILINGS_ATTRIBUTES`, were created:
 
-![success message](assets/7SemiStruct_2_1.png)
+![success message](assets/7SemiStruct_2_1_new.png)
 
 ### Create Another External Stage
 
-In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, use the following command to create a stage that points to the bucket where the semi-structured JSON data is stored on AWS S3:
+In the `ZERO_TO_SNOWFLAKE_WITH_Public_Data` worksheet, use the following command to create a stage that points to the bucket where the semi-structured JSON data is stored on AWS S3:
 
 ```SQL
-CREATE STAGE cybersyn_sec_filings
+CREATE STAGE Public_Data_sec_filings
 url = 's3://sfquickstarts/zero_to_snowflake/cybersyn_cpg_sec_filings/';
 ```
 
-Now let's take a look at the contents of the `cybersyn_sec_filings` stage. Execute the following `LIST` command to display the list of files:
+Now let's take a look at the contents of the `Public_Data_sec_filings` stage. Execute the following `LIST` command to display the list of files:
 
 ```SQL
-LIST @cybersyn_sec_filings;
+LIST @Public_Data_sec_filings;
 ```
 
 In the results pane, you should see a list of `.gz` files from S3:
-![results output](assets/7SemiStruct_3_1.png)
+![results output](assets/7SemiStruct_3_1_new.png)
 
 ### Load and Verify the Semi-structured Data
 
-We will now use a warehouse to load the data from an S3 bucket into the tables we created earlier. In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, execute the `COPY` command below to load the data.
+We will now use a warehouse to load the data from an S3 bucket into the tables we created earlier. In the `ZERO_TO_SNOWFLAKE_WITH_PUBLIC_DATA worksheet, execute the `COPY` command below to load the data.
 
 Note that you can specify a `FILE FORMAT` object inline in the command. In the previous section where we loaded structured data in CSV format, we had to define a file format to support the CSV structure. Because the JSON data here is well-formed, we are able to simply specify the JSON type and use all the default settings:
 
 ```SQL
 COPY INTO sec_filings_index
-FROM @cybersyn_sec_filings/cybersyn_sec_report_index.json.gz
+FROM @Public_Data_sec_filings/cybersyn_sec_report_index.json.gz
     file_format = (type = json strip_outer_array = true);
 
 COPY INTO sec_filings_attributes
-FROM @cybersyn_sec_filings/cybersyn_sec_report_attributes.json.gz
+FROM @Public_Data_sec_filings/cybersyn_sec_report_attributes.json.gz
     file_format = (type = json strip_outer_array = true);
 ```
 
 Verify that each file has a status of `LOADED`:
-![query result](assets/7SemiStruct_4_1.png)
+![query result](assets/7SemiStruct_4_1_new.png)
 
 Now, let's take a look at the data that was loaded:
 ```SQL
@@ -628,7 +626,7 @@ FROM sec_filings_attributes;
 
 SQL dot notation `v:VARIABLE` is used in this command to pull out values at lower levels within the JSON object hierarchy. This allows us to treat each field as if it were a column in a relational table.
 
-The new view should appear as `SEC_FILINGS_INDEX_VIEW` under `CYBERSYN` > `PUBLIC` > **Views** in the object browser on the left. You may need to expand or refresh the objects browser in order to see it.
+The new view should appear as `SEC_FILINGS_INDEX_VIEW` under `Public_data` > `PUBLIC` > **Views** in the object browser on the left. You may need to expand or refresh the objects browser in order to see it.
 
 ![JSON_WEATHER_DATA _VIEW in dropdown](assets/7SemiStruct_6_1.png)
 
@@ -653,21 +651,21 @@ Make sure you're using the `ACCOUNTADMIN` role and, [navigate to the Marketplace
 
 #### Find a listing
 
-Type `stock prices` in the search box at the top, scroll through the results, and select [**Financial & Economic Essentials**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/) (provided by Cybersyn).
+Type `Finance & Economics` in the search box at the top, scroll through the results, and select [**Finance & Economics**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/) (provided by Snowflake Public Data).
 
-![health tab](assets/10Share_8.png)  
+![health tab](assets/10Share_8_new.png)  
 
-In the **Cybersyn Financial & Economic Essentials** page, you can learn more about the contents of the data listing, explore data dictionaries, and see some sample queries. You will also see links to documentation and the dataset's cloud region availability. When you're ready, click the **Get** button to make this information available within your Snowflake account:
+In the **Finance & Economics** page, you can learn more about the contents of the data listing, explore data dictionaries, and see some sample queries. You will also see links to documentation and the dataset's cloud region availability. When you're ready, click the **Get** button to make this information available within your Snowflake account:
 
-![get data fields](assets/10Share_cybersyn_get_data.png)
+![get data fields](assets/10Share_cybersyn_get_data_new.png)
 
 Review the information in the dialog and click **Get** again:
 
-![get data fields](assets/10Share_cybersyn_get_data2.png)
+![get data fields](assets/10Share_cybersyn_get_data2_new.png)
 
-You can now click **Done** or choose to run the sample queries provided by Cybersyn:
+You can now click **Done** or choose to run the sample queries provided by Snowflake Public Data:
 
-![get data fields](assets/10Share_cybersyn_query_data.png)
+![get data fields](assets/10Share_cybersyn_query_data_new.png)
 
 If you chose **Query Data**, a new worksheet opens in a new browser tab/window:
 1. Set your context 
@@ -676,16 +674,16 @@ If you chose **Query Data**, a new worksheet opens in a new browser tab/window:
 4. You can view the data results in the bottom pane.
 5. When you are done running the sample queries, click the **Home** icon in the upper left corner.
 
-![get data fields](assets/10Share_cybersyn_query_data2.png)
+![get data fields](assets/10Share_cybersyn_query_data2_new.png)
 
 Next:
 1. Click **Data** > **Databases**.
-2. Click the `Financial__Economic_Essentials` database.
+2. Click the `Finance__Economics` database.
 3. You can see details about the schemas, tables, and views that are available to query.
 
-![covid19 databases](assets/10Share_cybersyn_db_info.png)
+![covid19 databases](assets/10Share_cybersyn_db_info_new.png)
 
-That's it! You have now successfully subscribed to the Financial & Economic Essentials datasets from Cybersyn, which are updated daily with global financial data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
+That's it! You have now successfully subscribed to the Finance & Economics datasets from Snowflake Public Data, which are updated daily with global financial data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
 
 > aside positive
 > 
@@ -706,11 +704,11 @@ Within a real company, analytics users would likely have a different role than `
 
 ### Execute Some Queries
 
-Go to the **ZERO_TO_SNOWFLAKE_WITH_CYBERSYN** worksheet and change the warehouse to use the new warehouse you created in the last section. Your worksheet context should be the following:
+Go to the **ZERO_TO_SNOWFLAKE_WITH_Public_Data** worksheet and change the warehouse to use the new warehouse you created in the last section. Your worksheet context should be the following:
 
 **Role:** `SYSADMIN`
 **Warehouse:** `ANALYTICS_WH (L)`
-**Database:** `CYBERSYN`
+**Database:** `Public_Data`
 **Schema:** `PUBLIC`
 
 ![sample data query results](assets/6Query_1.png)
@@ -721,7 +719,7 @@ Run the following query to see a sample of the `company_metadata` data:
 SELECT * FROM company_metadata;
 ```
 
-![sample data query results](assets/6Query_2.png)
+![sample data query results](assets/6Query_2_new.png)
 
 Now, let's look at the performance of these companies in the stock market. Run the queries below in the worksheet. 
 
@@ -735,7 +733,7 @@ SELECT
     ts.value AS post_market_close,
     (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date))::DOUBLE AS daily_return,
     AVG(ts.value) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
-FROM Financial__Economic_Essentials.cybersyn.stock_price_timeseries ts
+FROM Finance__Economics.cybersyn.stock_price_timeseries ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
 WHERE ts.variable_name = 'Post-Market Close';
@@ -804,9 +802,9 @@ Run the following command in the worksheet to create a development (dev) table c
 CREATE TABLE company_metadata_dev CLONE company_metadata;
 ```
 
-Click the three dots (**...**) in the left pane and select **Refresh**. Expand the object tree under the `CYBERSYN` database and verify that you see a new table named `company_metadata_dev`. Your Development team now can do whatever they want with this table, including updating or deleting it, without impacting the `company_metadata` table or any other object.
+Click the three dots (**...**) in the left pane and select **Refresh**. Expand the object tree under the `Public_Data` database and verify that you see a new table named `company_metadata_dev`. Your Development team now can do whatever they want with this table, including updating or deleting it, without impacting the `company_metadata` table or any other object.
 
-![trips_dev table](assets/6Query_6.png)
+![trips_dev table](assets/6Query_6_new.png)
 
 ### Joining Tables
 
@@ -876,7 +874,7 @@ Some useful applications include:
 
 First let's see how we can restore data objects that have been accidentally or intentionally deleted.
 
-In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, run the following DROP command to remove the `SEC_FILINGS_INDEX` table:
+In the `ZERO_TO_SNOWFLAKE_WITH_Public_Data` worksheet, run the following DROP command to remove the `SEC_FILINGS_INDEX` table:
 
 ```SQL
 DROP TABLE sec_filings_index;
@@ -903,7 +901,7 @@ SELECT * FROM sec_filings_index LIMIT 10;
 
 ### Roll Back a Table
 
-Let's roll back the `COMPANY_METADATA` table in the `CYBERSYN` database to a previous state to fix an unintentional DML error that replaces all the company names in the table with the word "oops".
+Let's roll back the `COMPANY_METADATA` table in the `Public_Data` database to a previous state to fix an unintentional DML error that replaces all the company names in the table with the word "oops".
 
 First, run the following SQL statements to switch your worksheet to the proper context:
 
@@ -912,7 +910,7 @@ USE ROLE sysadmin;
 
 USE WAREHOUSE compute_wh;
 
-USE DATABASE cybersyn;
+USE DATABASE Public_Data;
 
 USE SCHEMA public;
 ```
@@ -975,7 +973,7 @@ Snowflake offers very powerful and granular access control that dictates the obj
 
 ### Create a New Role and Add a User
 
-In the `ZERO_TO_SNOWFLAKE_WITH_CYBERSYN` worksheet, switch to the `ACCOUNTADMIN` role to create a new role. `ACCOUNTADMIN` encapsulates the `SYSADMIN` and `SECURITYADMIN` system-defined roles. It is the top-level role in the account and should be granted only to a limited number of users.
+In the `ZERO_TO_SNOWFLAKE_WITH_PUBLIC_DATA` worksheet, switch to the `ACCOUNTADMIN` role to create a new role. `ACCOUNTADMIN` encapsulates the `SYSADMIN` and `SECURITYADMIN` system-defined roles. It is the top-level role in the account and should be granted only to a limited number of users.
 
 ```SQL
 USE ROLE accountadmin;
@@ -1024,21 +1022,21 @@ USE ROLE junior_dba;
 USE WAREHOUSE compute_wh;
 ```
 
-Finally, you can notice that in the database object browser panel on the left, the `CYBERSYN` and `Financial__Economic_Essentials` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
+Finally, you can notice that in the database object browser panel on the left, the `Public_Data` and `FINANCE__ECONOMICS` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
 
-Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `CYBERSYN` and `Financial__Economic_Essentials` databases. Note that the Cybersyn database from the Marketplace uses `GRANT IMPORTED PRIVILEGES`, instead of `GRANT USAGE`.
+Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `Public_data` and `FINANCE__ECONOMICS` databases. Note that the Snowflake Public Data database from the Marketplace uses `GRANT IMPORTED PRIVILEGES`, instead of `GRANT USAGE`.
 
 ```SQL
 USE ROLE accountadmin;
 
-GRANT USAGE ON DATABASE cybersyn TO ROLE junior_dba;
+GRANT USAGE ON DATABASE Public_Data TO ROLE junior_dba;
 
-GRANT IMPORTED PRIVILEGES ON DATABASE Financial__Economic_Essentials TO ROLE junior_dba;
+GRANT IMPORTED PRIVILEGES ON DATABASE Finance__Economics TO ROLE junior_dba;
 
 USE ROLE junior_dba;
 ```
 
-Notice that the `CYBERSYN` and `Financial__Economic_Essentials` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
+Notice that the `Public_Data` and `Finance__Economics` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
 
 ![object browser panel with databases](assets/9Role_3.png)
 
@@ -1147,7 +1145,7 @@ If you would like to reset your environment by deleting all the objects created 
 ```SQL
 USE ROLE accountadmin;
 
-DROP DATABASE IF EXISTS CYBERSYN;
+DROP DATABASE IF EXISTS Public_Data;
 
 DROP WAREHOUSE IF EXISTS analytics_wh;
 
@@ -1172,14 +1170,13 @@ We encourage you to continue with your free trial by loading your own sample or 
 - Join the [Snowflake Community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake).
 - Sign up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
 - Contact our [Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more.
-- Access Cybersyn's analytics-ready data on [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Cybersyn).
-- Explore the [60+ public domain sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) Cybersyn makes available on Snowflake Marketplace.
+- Access Snowflake Public Data's analytics-ready data on [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Cybersyn).
 
 ### What we've covered:
 
 - How to create stages, databases, tables, views, and virtual warehouses.
 - How to load structured and semi-structured data.
-- How to consume Cybersyn data from the [Snowflake Data Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/).
+- How to consume Snowflake Public data from the [Snowflake Data Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/).
 - How to perform analytical queries on data in Snowflake, including joins between tables.
 - How to clone objects.
 - How to undo user errors using Time Travel.

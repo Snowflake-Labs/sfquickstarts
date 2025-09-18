@@ -37,7 +37,7 @@ A basic knowledge of how to run and monitor queries in the Snowflake Web UI.
   - Get access to an existing Snowflake Enterprise Edition account with the `ACCOUNTADMIN` role or the `IMPORT SHARE` privilege
 
 ### What You’ll Build 
-Performant queries that explore the data from [LLM Training] (https://app.snowflake.com/marketplace/listing/GZTSZ290BUX1X/cybersyn-llm-training) dataset by [Cybersyn] (https://docs.cybersyn.com/intro/). Cybersyn is a Data-as-a-Service (DaaS) company that is native to Snowflake.
+Performant queries that explore the data from [LLM Training] (https://app.snowflake.com/marketplace/listing/GZTSZ290BUX1X/snowflake-public-data-products-llm-training) dataset by [Snowflake Public Data] (https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products).
 
 Negative: The Marketplace data used in this guide changes from time-to-time, and your query results may be slightly different than indicated in this guide. Additionally, the Snowflake UI changes periodically as well, and instructions/screenshots may be out of date.
 
@@ -90,10 +90,10 @@ Duration: 2
 The next step is to acquire data that has all data types supported by Search Optimization. The best place to acquire this data is the Snowflake Marketplace.
 
 - Navigate to the `Marketplace` screen using the menu on the left side of the window
-- Search for `Cybersyn` in the search bar
+- Search for `Snowflake Public Data Products` in the search bar
 - Find and click the `LLM Training` tile
 
-![LLM Training](assets/LLM_Training_data.png)
+![LLM Training](assets/LLM_Training_Snowflake_Public_Data.png)
 
 - Once in the listing, click the big blue Get Data button
 

@@ -52,11 +52,11 @@ First, we need to mount a free data share containing financial market data:
 
 1. Log into your Snowflake account
 2. Navigate to the Marketplace
-3. Search for "Snowflake Data: Finance & Economic Essentials"
+3. Search for "Finance & Economics"
 4. Click "Get" to mount this free share as a database named "Snow_Finance_Share"
 5. Grant the PUBLIC role access to the database
 
-![Figure 3](assets/figure3.jpg)
+![Figure 3](assets/finance_economics_get_page.png)
 
 ### Create the Setup Worksheet
 
@@ -171,7 +171,7 @@ create or replace function fake_py(locale varchar,provider varchar,parameters va
 returns variant
 language python
 volatile
-runtime_version = '3.8'
+runtime_version = '3.9'
 packages = ('faker','simplejson')
 handler = 'fake'
 as

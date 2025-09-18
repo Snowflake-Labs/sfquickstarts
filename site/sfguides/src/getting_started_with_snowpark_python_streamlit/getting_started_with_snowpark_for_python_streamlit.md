@@ -50,7 +50,7 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 ### Prerequisites
 
 - A [Snowflake](https://www.snowflake.com/) account
-- Access to the **Financial & Economic Essentials** dataset
+- Access to the **Finance & Economics** dataset
   - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/snowflake-data-finance-economics?_fsi=QrmINNI3), click on **Get Data** and follow the instructions to gain access. In particular, we will use data from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
 
 <!-- ------------------------ -->
@@ -363,7 +363,7 @@ def fx_rates():
         st.altair_chart(line_chart, use_container_width=True)
 
 # Display header
-st.header("Financial & Economic Essentials")
+st.header("Finance & Economics")
 
 # Create sidebar and load the first page
 page_names_to_funcs = {

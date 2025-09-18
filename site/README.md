@@ -44,6 +44,18 @@ $ gulp serve
 The output will include the address where the server is running
 (http://localhost:8000 by default).
 
+For local development and limiting the file `watch` scope to a single lab, add the `--lab` filter. This 
+dramatically will increase performance for a lab you are working with.
+
+```text
+$ gulp serve --lab <lab folder name>
+```
+
+For example:
+```text
+$ gulp serve --lab zero_to_snowflake
+```
+
 You can also serve the completely compiled and minified (prod) version with the
 `serve:dist` command. Always run this before publishing, as it will show you an
 replica of what will appear on staging/production.
@@ -359,6 +371,8 @@ is "html"
 `--codelab-source` - Google Doc ID from which to build codelab. This can be
 specified multiple times to build from multiple sources.
 
+`--lab` - name of the folder in local development. Set this parameter to the codelab folder you are working with
+to filter the `watch` and `compile` tasks down to a single lab you are working with. Applies to `gulp serve` and will massively improve performance.
 
 ## Testing
 

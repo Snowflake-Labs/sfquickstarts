@@ -172,8 +172,8 @@ Now, perform these steps for the following data listings:
 1. “OAG: Flight Emissions Data (Sample)” by OAG
 2. “OAG: Flight Status Data (Sample)” by OAG
 3. “Global Weather & Climate Data for BI” by Weather Source
-4. “Global Government” by Cybersyn
-5. “US Addresses & POI” by Cybersyn
+4. “Global Government” by Snowflake Public Data Products
+5. “US Addresses & POI” by Snowflake Public Data Products
 
 ### Inspect Imported Listings
 

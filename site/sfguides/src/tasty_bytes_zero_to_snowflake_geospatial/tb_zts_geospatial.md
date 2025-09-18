@@ -3,7 +3,7 @@ id: tasty_bytes_zero_to_snowflake_geospatial
 summary: Tasty Bytes - Zero to Snowflake - Geospatial Quickstart
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tasty Bytes, Zero to Snowflake, Geospatial
 

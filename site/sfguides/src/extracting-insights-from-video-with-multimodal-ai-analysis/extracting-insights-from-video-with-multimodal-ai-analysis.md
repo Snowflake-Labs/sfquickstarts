@@ -61,15 +61,13 @@ Snowpark Container Services and Snowflake Cortex AI are two of the major compone
 ![Cortex_AI](assets/platform-cortex-2025.jpeg)
 
 <!-- ------------------------ -->
-## Prepare Your Lab Environment
+## Prepare Your Environment
 
 Duration: 15
 
 ### Create Snowflake Account
 
-Log in using your unique credentials if you have a Snowflake account. If you don’t have a Snowflake account, visit [https://signup.snowflake.com/](https://signup.snowflake.com/) and sign up for a free 30-day trial environment.
-
-![new_trial](assets/2_start_snowflake_trial.png)
+Log into Snowflake using your unique credentials if you have a Snowflake account.
 
 
 For this guide, you will only need Snowflake's **Standard Edition** on AWS. You may want to select **Enterprise** to try out advanced features such as Time Travel, materialized views, or Failover.
