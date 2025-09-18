@@ -176,7 +176,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
       - Database & Schema: **DASH_DB_SI.RETAIL**
       - Custom tool identifier: **DASH_DB_SI.RETAIL.SEND_EMAIL()**
       - Parameter: body
-        - Description: *If body is not provided, summarize the last question and use that as content for the email.*
+        - Description: *Use HTML-Syntax for this. If the content you get is in markdown, translate it to HTML. If body is not provided, summarize the last question and use that as content for the email.*
       - Parameter: recipient_email
         - Description: *If the email is not provided, send it to **YOUR_EMAIL_ADDRESS_GOES_HERE***.
       - Parameter: subject

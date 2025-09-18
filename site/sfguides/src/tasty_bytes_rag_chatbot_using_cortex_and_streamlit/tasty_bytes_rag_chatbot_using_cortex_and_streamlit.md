@@ -120,6 +120,8 @@ FROM tasty_bytes_chatbot.app.array_table;
 - Copy the code below into the code editor section
 - Run the app!
 
+**Note:** Model availability varies by region. Please see [Snowflake Cortex cross region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) for steps if you are in a region without a certain model. 
+
 ```python
 # Import python packages
 import pandas as pd
@@ -163,11 +165,9 @@ with st.expander(":gear: Settings"):
     model = st.selectbox(
         "Change chatbot model:",
         [
-            "mistral-large",
-            "reka-flash",
-            "llama2-70b-chat",
-            "gemma-7b",
-            "mixtral-8x7b",
+            "claude-4-sonnet",
+            "openai-gpt-4.1",
+            "llama4-maverick",
             "mistral-7b",
         ],
     )

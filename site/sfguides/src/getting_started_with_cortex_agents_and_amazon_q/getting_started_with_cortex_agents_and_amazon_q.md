@@ -1,4 +1,4 @@
-author: marzillo-snow
+author: marzillo-snow, quilpie
 id: getting_started_with_cortex_agents_and_amazon_q
 summary: This is a quickstart for using Cortex Agents and Amazon Q
 categories: Getting-Started, data-science, data-engineering, AWS, cortex, genai, Amazon, Q, search, LLM, copilot, Agents, Cortex
@@ -135,7 +135,6 @@ In this section, we'll create the foundation for an AI-powered movie data analys
 3. Create database MOVIELENS and schema, table for the movie  and load the move dashboard data from a csv file.
 ```sql
 CREATE OR REPLACE DATABASE movielens;
-CREATE OR REPLACE SCHEMA movielens.movies;
 CREATE OR REPLACE SCHEMA movielens.data;
 CREATE OR REPLACE WAREHOUSE workshopwh;
 

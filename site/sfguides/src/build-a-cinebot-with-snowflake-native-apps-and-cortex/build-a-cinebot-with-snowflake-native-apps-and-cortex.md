@@ -160,21 +160,18 @@ create application package cortex_app_pkg;
 ```
 
 ### Upload Native App Code
-After creating the application package we'll need to upload the Native App code to the the **CORTEX_APP.NAPP.APP_STAGE** stage.  This can be accomplished by navigating to this stage using Snowsight - click on the 'Database' icon on the left side navigation bar and then on the **CORTEX_APP database > NAPP schema > APP_STAGE stage**.  You will need to do the following: 
+After creating the application package we'll need to upload the Native App code to the the **CORTEX_APP.NAPP.APP_STAGE** stage.  This can be accomplished by navigating to this stage using Snowsight - click on the 'Database' icon on the left side navigation bar, then select 'Database Explorer', and then on the **CORTEX_APP database > NAPP schema > APP_STAGE stage**.  You will need to do the following: 
 1. Click on 'Select Warehouse' and choose 'WH_NAP' for the Warehouse 
 2. Click on the '+ Files' button in the top right corner 
 3. Browse to the location where you cloned or downloaded the Github repo and into the '/app/' folder
-4. Select all 3 files (setup.sql, manifest.yml, readme.md) 
+4. Select all 5 files (setup.sql, manifest.yml, readme.md, ui.py, environment.yaml) 
 5. Click the 'Upload' button
-6. Browse back up one level and then go into the '/src/' folder
-7. Select both files (ui.py, environment.yaml)
-8. Click the 'Upload' button
 
 When this is done succesfully your we're now ready to create the Application Package. 
 
 ### Alter the Application Package
 ```sql
-alter application package cortex_app_pkg add version v1 using @cortex_app.napp.app_stage;
+alter application package cortex_app_pkg register version v1 using @cortex_app.napp.app_stage;
 grant install, develop on application package cortex_app_pkg to role nac;
 ```
 
@@ -201,14 +198,10 @@ grant usage on warehouse wh_nac to application cortex_app_instance;
 use role accountadmin;
 GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO APPLICATION cortex_app_instance;
 ```
-### Call the supplied Stored Procedures to process the movies data and build the Cortex Search Service
-```sql
-use role nac;
-call CORTEX_APP_INSTANCE.CORE.TABLE_CHUNKER();
-call CORTEX_APP_INSTANCE.CORE.CREATE_CORTEX_SEARCH();
-```
 
-At this point you can navigate the the Application by clicking on **'Data Products'** on the left side of the Snowsight screen and then by clicking on **'Apps'**.  You can click on the **Cortext_App_Instance** application and it will bring up the chatbot where you can ask it to recommend movies.   
+
+At this point you can navigate the the Application by clicking on **'Catalog'** on the left side of the Snowsight screen and then by clicking on **'Apps'**.  You can click on the **Cortext_App_Instance** application and it will bring up the Application. When run for the first time, it will detect that there is no "chunked" table, and will prompt you to run the pre-processing Stored Procedures we created in our setup.sql script. Once this is run, the app will refresh and you will be able to talk to the chatbot. Make sure you have the NAC role selected in the top right. If you receive an error that the selected model does not exist in your region, please select another on the left menu.
+
 
 <!-- ------------------------ -->
 ## Cleanup 
