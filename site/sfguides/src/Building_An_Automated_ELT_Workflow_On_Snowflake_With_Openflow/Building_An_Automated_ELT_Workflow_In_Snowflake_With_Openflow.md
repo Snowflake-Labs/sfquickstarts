@@ -272,7 +272,8 @@ In addition, we'll also need to define a file_format so that the COPY INTO can c
 
 ```sql
 CREATE OR REPLACE TABLE OPENFLOW.OPENFLOW_TEST.RAW_RACE (
-    v variant
+    v VARIANT
+  , insert_date TIMESTAMP_LTZ
 );
 
 CREATE OR REPLACE FILE FORMAT json_format
