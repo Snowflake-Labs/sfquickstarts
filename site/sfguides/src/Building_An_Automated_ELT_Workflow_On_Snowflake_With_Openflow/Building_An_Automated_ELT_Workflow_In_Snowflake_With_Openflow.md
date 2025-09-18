@@ -255,7 +255,7 @@ LIST @OPENFLOW.OPENFLOW_TEST.F1_API pattern ='.*RACE.*';
 
 When everithing works fine :  
 - Go back editing the last processor on Openflow.  
-- On the **Relationships** tab, select unselect the box under **Success** so it can be forwarded to the next processor.
+- On the **Relationships** tab, unselect the box under **Success** so it can be forwarded to the next processor.
 
 <!-- ------------------------ -->
 ## Load Data with COPY INTO
@@ -319,8 +319,7 @@ We’ll use the **ExecuteSQLStatement** processor to run a **COPY INTO** command
 
         ![ExecuteSQLStatement Properties](assets/ExecuteSQLStatement_Properties.png)
 
-5. On the **Relationships** tab, Select **Terminate** for **failure** and leave success unselected so it can be passed to the next component and **apply**
-
+5. On the **Relationships** tab, Select **Terminate** for **failure** and **success** and **apply**
 
 ### Step 3: Run and Check
 
@@ -338,6 +337,10 @@ SELECT * FROM OPENFLOW.OPENFLOW_TEST.RAW_RACE;
 You should see something like this :
 
 ![RAW_RACE Query](assets/RAW_RACE_Query.png)
+
+When everithing works fine :  
+- Go back editing the last processor on Openflow.  
+- On the **Relationships** tab, unselect the box under **Success** so it can be forwarded to the next processor.
 
 At this stage of the tutorial, we’ve successfully ingested JSON data from the API and stored it in a Snowflake table.
 
