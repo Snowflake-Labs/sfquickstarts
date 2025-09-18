@@ -48,7 +48,7 @@ First we'll create a set of users and roles to use for the rest of the demo.
 >  You MUST change the passwords assigned to each user. DO NOT use the samples given here. If you wish, you can remove the `password='usesomethinggoodthiswontwork' must_change_password = true` part of these SQL statements and skip to the key pair instructions below.
 
 ```sql
--- create users are roles for the demo
+-- create users and roles for the demo
 use role useradmin;
 create role itc_admin;
 create role marketing;
@@ -446,7 +446,7 @@ drop role infosec;
 drop role executive;
 ```
 
-If you missed the session this guide is based on, checkout the official [Snowflake BUILD 2021 site](https://www.snowflake.com/build/) to watch the replay. And you can also read the [blog post by the same name](https://www.snowflake.com/blog/the-journey-to-processing-pii-in-the-data-cloud/).
+If you missed the session this guide is based on, check out the official [Snowflake BUILD 2021 site](https://www.snowflake.com/build/) to watch the replay. And you can also read the [blog post by the same name](https://www.snowflake.com/blog/the-journey-to-processing-pii-in-the-data-cloud/).
 
 ### What we've covered
 - How to use Snowflake [RBAC and DAC](https://docs.snowflake.com/en/user-guide/security-access-control-overview.html)
