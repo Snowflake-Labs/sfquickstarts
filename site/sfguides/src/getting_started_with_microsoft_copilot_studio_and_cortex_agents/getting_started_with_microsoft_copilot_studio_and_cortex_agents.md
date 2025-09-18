@@ -276,6 +276,13 @@ You will then download the snowflakeinfo.txt file and use that code to create yo
 
 ![](assets/snowflakeinfo.png)
 
+
+Use the **Snowflake SQL Commands** to create the security integration, role and user in Snowflake.
+
+![](assets/createsecurityintegration.png)
+
+Keep the **Snowflake power platform connection info** to reference when you connect from Copilot Studio to Snowflake.
+
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
 Duration: 8
@@ -518,6 +525,7 @@ call call_cortex_agent_proc('what is the Initial discovery call with TechCorp In
 And last we will run this below script to grant the appropriate privileges to the ANALYST role we created. 
 
 ```sql
+CREATE ROLE ANALYST;
 GRANT USAGE ON DATABASE SALES_INTELLIGENCE TO ROLE ANALYST;
 GRANT USAGE ON SCHEMA DATA TO ROLE ANALYST;
 GRANT USAGE ON CORTEX SEARCH SERVICE SALES_CONVERSATION_SEARCH TO ROLE ANALYST;
@@ -525,6 +533,9 @@ GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE ANALYST;
 GRANT READ ON STAGE MODELS TO ROLE ANALYST;
 GRANT USAGE ON PROCEDURE call_cortex_agent_proc(VARCHAR, NUMBER) TO ROLE ANALYST;
 ```
+
+**Note**: when you create the Stored Procedure it will default to "RUN AS OWNER". If you created the Stored Procedure with a different ROLE (like SYSADMIN) then when you run the Stored Procedure from Copilot Studio you will likely get a status 200 with no results. Then have to update the Stored Procedure.
+
 <!-- ------------------------ -->
 ## Configuring Copilot Agent
 Duration: 10
