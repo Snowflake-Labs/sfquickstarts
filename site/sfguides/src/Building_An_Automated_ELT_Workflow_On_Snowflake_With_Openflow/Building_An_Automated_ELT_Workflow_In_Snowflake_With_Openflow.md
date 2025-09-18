@@ -212,7 +212,7 @@ The next steps are to add a processor that will save the response into a snowfla
 
 **Configure the rest of the staging processor :**
 
-1. On the **Settings** tab, you can **Rename** the processor to `Put_JSON_In_Internal_Stage`
+1. On the **Settings** tab, you can **Rename** the processor to `Put_JSON_In_Internal_Stage`.
 
 2. On the **Properties** tab, set :
     -  **Named** : **Internal Stage Type**
@@ -224,8 +224,7 @@ The next steps are to add a processor that will save the response into a snowfla
 
     ![Put_JSON_In_Internal_Stage Properties](assets/Put_JSON_In_Internal_Stage_Properties.png)
 
-3. On the **Relationships** tab, select **Terminate** under **Failure**, and leave Success unselected so it can be forwarded to the next processor
-
+3. On the **Relationships** tab, select **Terminate** under **Failure** and **Success**.
 
 ### Step 5: Run and Check
 
@@ -253,6 +252,8 @@ Run this on your worksheet :
 LIST @OPENFLOW.OPENFLOW_TEST.F1_API pattern ='.*RACE.*';
 ```
 ![Query Stage](assets/Query_Stage.png)
+
+When everithing works fine, Go back on the **Relationships** tab, select unselect the box under **Success** so it can be forwarded to the next processor.
 
 <!-- ------------------------ -->
 ## Load Data with COPY INTO
