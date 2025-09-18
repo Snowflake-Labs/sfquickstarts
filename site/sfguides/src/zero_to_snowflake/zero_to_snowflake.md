@@ -1255,7 +1255,7 @@ Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback.
 
 ## Optional: Cortex Analyst
 
-Duration: 10
+Duration: 3
 
 <img src='./assets/cortex_analyst_header.png'>
 
@@ -1386,102 +1386,178 @@ Here's the "Snowflake Intelligence - Unified AI Business Intelligence" quickstar
 
 ## Snowflake Intelligence
 
-Duration: 6
+Duration: 7
 
 <img src='./assets/si_header.png'>
 
 ### Overview
 
-Traditional business intelligence often leaves critical insights fragmented across various reports and systems, making it difficult for executives to connect data points like customer sentiment to financial performance. Snowflake Intelligence addresses this by unifying the capabilities of Cortex Search (for unstructured data like reviews) and Cortex Analyst (for structured data and natural language to SQL) into a single conversational AI agent. This empowers non-technical users to ask complex questions in natural language and receive immediate, visualized answers that would otherwise require extensive manual analysis.
+The Chief Operating Officer at Tasty Bytes receives dozens of fragmented reports each week: customer satisfaction dashboards, revenue analytics, operational performance metrics, and market analysis. Critical business insights remain buried across separate systems: customer sentiment lives in review platforms, sales data sits in financial dashboards, and operational metrics exist in isolated performance tools.
 
-### Prerequisites:
+When the COO needs to understand why Q3 revenue dropped, connecting customer feedback sentiment with actual financial performance requires hours of manual analysis, SQL expertise, and cross-referencing multiple data sources. This is a significant hurdle for executives and other non-technical roles.
+
+In this section, we'll demonstrate how Snowflake Intelligence tackles this challenge by combining the capabilities of Cortex Search and Cortex Analyst, which are made available through the setup. This integration allows for a single conversational AI agent. You'll see how executives and other non-technical roles can ask natural language questions and receive immediate answers with visualizations. This kind of insight would normally take weeks of analyst work across multiple teams.
+
+**Prerequisites:**
 
 Before starting this module, your environment includes pre-configured AI services that power Snowflake Intelligence:
 
-  * **Cortex Search Service:** `tasty_bytes_review_search` - analyzing customer reviews and feedback
+* **Cortex Search Service:** `tasty_bytes_review_search` - analyzing customer reviews and feedback
+    * *Note for Advanced Users:* If you want to build your own Cortex Search from scratch, an optional setup module is available. For a detailed guide, click the link to the: [Cortex Search Module](vignette-3-cortex-search.md)
 
-      * *Note for Advanced Users:* If you want to build your own Cortex Search from scratch, an optional setup module is available. For a detailed guide, click the link to the: [Cortex Search Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18)
+* **Cortex Analyst Service:** `TASTY_BYTES_BUSINESS_ANALYTICS` - for translating natural language questions into SQL and providing insights from structured data, enabling self-service analytics.
+    * *Note for Advanced Users:* If you prefer to build your own Cortex Analyst semantic model from scratch, you can access the detailed setup module for guidance. Access the detailed setup by clicking on the: [Cortex Analyst Module](vignette-3-cortex-analyst.md)
 
-  * **Cortex Analyst Service:** `TASTY_BYTES_BUSINESS_ANALYTICS` - for translating natural language questions into SQL and providing insights from structured data, enabling self-service analytics.
-
-      * *Note for Advanced Users:* If you prefer to build your own Cortex Analyst semantic model from scratch, you can access the detailed setup module for guidance. Access the detailed setup by clicking on the: [Cortex Analyst Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19)
+---
 
 ### Step 1 - Upload Semantic Model
 
-To enable business analytics capabilities in Snowflake Intelligence, you need to upload the pre-built semantic model file to your Snowflake stage. You can download the necessary YAML file directly by clicking this link: [Cortex Analyst Semantic Model](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/semantic_models/TASTY_BYTES_BUSINESS_ANALYTICS.yaml)
+To enable business analytics capabilities in Snowflake Intelligence, you need to upload the pre-built semantic model file to your Snowflake stage. You can **download the necessary YAML file directly by clicking this link:** [Cortex Analyst Semantic Model :material-download:](semantic_models/TASTY_BYTES_BUSINESS_ANALYTICS.yaml){: download="TASTY_BYTES_BUSINESS_ANALYTICS.yaml" }
+
+**Important:** If clicking the link opens the file in your browser instead of downloading it, please right-click on the link and select **"Save Link As"** to download the YAML file to your local machine.
 
 Here's how to upload the semantic model:
 
-1.  **Navigate to Cortex Analyst:** In Snowsight, go to **AI & ML** Studio and then select **Cortex Analyst**.
-2.  **Set Role and Warehouse:**
-      * Change your **role** to `TB_ADMIN`.
-      * Set the **warehouse** to `TB_CORTEX_WH`.
-3.  **Upload your YAML file:** Click the **Upload your yaml file** button.
-4.  **Configure Upload Details:** In the upload file screen, set the following:
-      * **Database:** `Tb_101`
-      * **Schema:** `semantic_layer`
-      * **Stage:** `semantic_model_stage`
-5.  **Click Upload:** This YAML file contains the pre-configured semantic model that defines the business analytics layer, including customer loyalty metrics and order data.
-6.  **Save the YAML file:** After clicking upload, save the YAML file. The semantic model will then appear in the Cortex Analyst panel, in the semantic models section.
+1.  **Navigate to Cortex Analyst**: In Snowsight, go to **AI & ML Studio** and then select **Cortex Analyst**.
 
-<img src = "assets/vignette-3/snowflake-intelligence-yaml-file-upload.gif">
+2.  **Set Role and Warehouse**:
 
+      * Change your role to `TB_DEV`.
+      * Set the warehouse to `TB_CORTEX_WH`.
 
-### Step 2 - Create Unified Agent
+3.  **Upload your YAML file**: Click the **Upload your yaml file** button.
 
-With pre-configured AI services available, let’s create a Cortex Agent that combines these capabilities into a unified intelligence interface, transforming how executives interact with data.
+4.  **Configure Upload Details**: In the upload file screen, set the following:
 
-**Create the Agent:**
+      * **Database**: `Tb_101`
+      * **Schema**: `semantic_layer`
+      * **Stage**: `semantic_model_stage`
 
-1.  Open Snowsight and navigate to the **AI & ML** Studio, then select **Agents**.
+5.  **Click Upload**: This YAML file contains the pre-configured semantic model that defines the business analytics layer, including customer loyalty metrics and order data.
+
+6.  **Save the YAML file**: After clicking upload, save the YAML file. The semantic model will then appear in the Cortex Analyst panel, in the semantic models section.
+
+![snowflake-intelligence-yaml-file-upload](assets/vignette-3/snowflake-intelligence-yaml-file-upload.gif)
+
+-----
+
+### Step 2: Create a Unified Agent
+
+With your AI services pre-configured, you can now create a Cortex Agent that combines these capabilities into a single, unified intelligence interface.
+
+### Create the Agent
+
+1.  In **Snowsight**, navigate to the **AI & ML Studio**, then select **Agents**.
 2.  Click **Create Agent**.
+3.  In the "Create New Agent" window, click **Create agent**.
+4.  **Initial Configuration**:
+      * **Platform integration**: Ensure "Create this agent for Snowflake Intelligence" is checked.
+      * **Database and schema**: This will default to `SNOWFLAKE_INTELLIGENCE.AGENTS`.
+      * **Agent object name**: Enter `tasty_bytes_intelligence_agent`.
+      * **Display name**: Enter `Tasty Bytes Business Intelligence Agent`.
+5.  Click **Create agent**.
 
-**Configure the Agent:**
+![snowflake-intelligence-create-agent](assets/vignette-3/snowflake-intelligence-create-agent.png)
 
-  * **Name:** `tasty_bytes_intelligence_agent`
-  * **Agent Overview:** 
+-----
 
-    `This agent analyzes customer feedback and business performance data for Tasty Bytes food trucks.It identifies operational issues, competitive threats, and growth opportunities by connecting customer reviews with revenue and loyalty metrics to provide actionable business insights.`
+### Configure the Agent
 
-  * **Response Instruction:** 
-  
-  You are a business intelligence analyst for Tasty Bytes food trucks. When analyzing data:
+After creating the agent, click on its name from the agent list to open the details page, then click **Edit** to begin configuring it.
 
-1.  Combine customer review insights with specific revenue and loyalty data to provide comprehensive business intelligence
-2.  Quantify business impact with specific revenue amounts and market sizes
-3.  Identify operational risks, competitive threats, and growth opportunities
-4.  Provide clear, actionable recommendations for executive decision-making
-5.  Use visualizations when helpful to illustrate business insights
-6.  Explain the correlation between customer feedback and business performance
-7.  Focus on strategic insights that drive business outcomes
+![snowflake-intelligence-edit-agent](assets/vignette-3/snowflake-intelligence-edit-agent.gif)
 
-  * **Orchestration Instruction:** 
+#### **1. About Tab**
 
-    `Use both Cortex Search and Cortex Analyst to provide unified business intelligence.Analyze customer feedback sentiment and operational issues from reviews, then correlate findings with revenue performance, customer loyalty metrics, and market data. Present insights with revenue quantification and strategic recommendations`
+  * **Display name**: `Tasty Bytes Business Intelligence Agent`
+  * **Description**:
+```
+This agent analyzes customer feedback and business performance data for Tasty Bytes food trucks. It identifies operational issues, competitive threats, and growth opportunities by connecting customer reviews with revenue and loyalty metrics to provide actionable business insights.
+```
 
-  * **In the Knowledge Section:**
+#### **2. Instructions Tab**
 
-   > **Important Note on Semantic Models/Views:**
+  * **Response Instruction**:
+```
+You are a business intelligence analyst for Tasty Bytes food trucks. When analyzing data:
+1. Combine customer review insights with specific revenue and loyalty data to provide comprehensive business intelligence
+2. Quantify business impact with specific revenue amounts and market sizes
+3. Identify operational risks, competitive threats, and growth opportunities
+4. Provide clear, actionable recommendations for executive decision-making
+5. Use visualizations when helpful to illustrate business insights
+6. Explain the correlation between customer feedback and business performance
+7. Focus on strategic insights that drive business outcomes
+```
 
-> This quickstart primarily uses a pre-built **semantic model** uploaded in Step 1. However, if you built your Cortex Analyst semantic view from scratch using the [Cortex Analyst Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#20), you will select your **semantic view** here instead of a semantic model. After setting the **Database** to `TB_101` and **Schema** to `semantic_layer`, your semantic view will be listed and selectable under that schema.
+#### **3. Tools Tab**
 
-Now, let's proceed in adding our uploaded semantic model:
+> **Note**: This lab primarily uses a pre-built **semantic model** uploaded in Step 1. However, if you built your Cortex Analyst semantic view from scratch using the [Cortex Analyst Module](vignette-3-cortex-analyst.md), you will select your **semantic view** here instead of a semantic model. After setting the **Database** to `TB_101` and **Schema** to `semantic_layer`, your semantic view will be listed and selectable under that schema.
 
-* **Add your uploaded semantic model from Step 1:**
-    * **Database:** `TB_101`
-    * **Schema:** `semantic_layer`
-    * **Stage:** `semantic_model_stage`
-    * **file-name** `TASTY_BYTES_BUSINESS_ANALYTICS.yaml`
-    * Remove the `.yaml` extension from display name
+Now, let's add the semantic model we uploaded in Step 1:
 
-* **Add pre-configured Cortex Search Service:**
-    * **Database:** `TB_101`
-    * **Schema:** `harmonized`
-    * **Select pre-built Cortex Search Service:** select `tasty_bytes_review_search`
-    * **Enter for display name:** `tasty_bytes_review_search`
-    * **URL Column:** `Review`
+**Add the Cortex Analyst Tool:**
 
-<img src = "assets/vignette-3/snowflake-intelligence-create-agent.gif">
+1.  Click **Add** next to "Cortex Analyst."
+2.  Select the **Semantic model file** radio button.
+3.  **Configure the semantic model location**:
+      * **Schema**: Choose `TB_101.SEMANTIC_LAYER`.
+      * **Stage**: Choose `SEMANTIC_MODEL_STAGE`.
+      * **File Selection**: Pick your uploaded YAML file from the list.
+4.  **Configure tool details**:
+      * **Name**: Enter `tasty_bytes_business_analytics`.
+      * **Description**:
+```
+Searches customer reviews and feedback to identify sentiment, operational issues, and customer satisfaction insights
+```
+5.  **Configure execution settings**:
+      * **Warehouse**: Select **Custom** and choose `TB_CORTEX_WH`.
+      * **Query timeout**: Enter `300`.
+6.  Click **Add**.
+
+![snowflake-intelligence-add-analyst](assets/vignette-3/snowflake-intelligence-add-analyst.gif)
+
+-----
+
+**Add the Cortex Search Services Tool:**
+
+1.  Click **Add** next to "Cortex Search Services."
+2.  **Configure tool details**:
+      * **Name**: `tasty_bytes_review_search`.
+      * **Description**: 
+``` 
+Searches customer reviews and feedback to identify sentiment, operational issues, and customer satisfaction insights
+``` 
+3.  **Configure data source location**:
+      * **Schema**: Choose `TB_101.HARMONIZED`.
+      * **Search service**: Choose `TB_101.HARMONIZED.TASTY_BYTES_REVIEW_SEARCH`.
+4.  **Configure search result columns**:
+      * **ID column**: Select **Review**
+      * **Title column**: Select **TRUCK_BRAND_NAME**
+5.  **Configure search filters (optional)**:
+      * Click **Add filter** to add up to 5 optional filters.
+6.  Click **Add**.
+
+![snowflake-intelligence-add-search](assets/vignette-3/snowflake-intelligence-add-search.gif)
+
+#### **4. Orchestration Tab**
+
+```
+Use both Cortex Search and Cortex Analyst to provide unified business intelligence.
+Analyze customer feedback sentiment and operational issues from reviews, then correlate findings with revenue performance, customer loyalty metrics, and market data.
+Present insights with revenue quantification and strategic recommendations.
+```
+
+#### **5. Access Tab**
+
+> To control who can use your agent in this lab, you'll simply keep the default ACCOUNTADMIN access, which is sufficient for testing, with no extra configuration needed; however, you have the option to add more roles, such as TB_ADMIN, by clicking Add role.
+
+#### **6. Save Configuration**
+
+  * Click **Save** in the top right corner to finalize your agent's configuration.
+
+Your unified intelligence agent is now ready to provide conversational business intelligence through the Snowflake Intelligence interface.
+
+-----
 
 ### Step 3 - Access Snowflake Intelligence Interface
 
@@ -1489,11 +1565,14 @@ With your intelligence agent created, we can now access the Snowflake Intelligen
 
 **Access the interface:**
 
-1.  Open Snowsight and navigate to the **AI & ML** Studio, then select **Snowflake Intelligence**.
-2.  Select our created agent: `tasty_bytes_intelligence_agent`.
-3.  Select the sources: both `tasty_bytes_review_search` and `tasty_bytes_business_analytics`.
+1.  Open Snowsight and navigate to the AI & ML Studio, then select **Snowflake Intelligence**
+2.  Select our created agent: `tasty_bytes_intelligence_agent`
+3.  Select the sources: select `tasy_byets_review_search` and `tasty_bytes_business_analytics`
 
 You are now ready to demonstrate unified business intelligence through natural language.
+
+![snowflake-intelligence-interface](assets/vignette-3/snowflake-intelligence-interface.gif)
+-----
 
 ### Step 4 - Correlate Revenue & Customer Themes
 
@@ -1501,11 +1580,12 @@ Let's deep dive into our highest-earning markets by mapping their financial succ
 
 **Prompt:**
 
-`Generate a bar chart displaying the top 5 cities by total revenue. For each of these top-performing cities, analyze their customer reviews to identify the 3 most frequently discussed topics or common themes (e.g., related to service, product, or facilities). Provide these topics alongside the chart.`
+```
+Generate a bar chart displaying the top 5 cities by total revenue. For each of these top-performing cities, analyze their customer reviews to identify the 3 most frequently discussed topics or common themes (e.g., related to service, product, or facilities). Provide these topics alongside the chart
+```
+![snowflake-intelligence-prompt2](assets/vignette-3/snowflake-intelligence-prompt1.png)
 
-<img src = "assets/vignette-3/snowflake-intelligence-prompt1.png">
-
-> **Key insight**: This analysis really shows off what Snowflake Intelligence can do\! It helps us connect the dots between how much money our top cities are making and what our customers in those cities are actually saying. We can quickly see our best-performing markets by revenue, and right alongside, get a clear picture of the most common things people are talking about in their reviews. This gives us a much richer, more human understanding of what's truly driving success – or perhaps what subtle issues might be brewing – even in our strongest areas. It's all about making smarter, more informed decisions, and we get these powerful insights just by asking a simple question.
+**Key insight:** This analysis really shows off what Snowflake Intelligence can do! It helps us connect the dots between how much money our top cities are making and what our customers in those cities are actually saying. We can quickly see our best-performing markets by revenue, and right alongside, get a clear picture of the most common things people are talking about in their reviews. This gives us a much richer, more human understanding of what's truly driving success – or perhaps what subtle issues might be brewing – even in our strongest areas. It's all about making smarter, more informed decisions, and we get these powerful insights just by asking a simple question.
 
 ### Step 5 - Analyze Underperforming Markets
 
@@ -1513,16 +1593,20 @@ Now let's explore strategies to address these key customer pain points and devel
 
 **Prompt:**
 
-`Identify the 5 cities with the lowest total revenue. For each of these cities, analyze their customer reviews to identify the 3 most frequently mentioned pain points or areas of dissatisfaction. Please present this as a table, showing the city, its total revenue, and the identified customer pain points.`
+```
+Identify the 5 cities with the lowest total revenue. For each of these cities, analyze their customer reviews to identify the 3 most frequently mentioned pain points or areas of dissatisfaction. Please present this as a table, showing the city, its total revenue, and the identified customer pain points.
+```
+![snowflake-intelligence-prompt2](assets/vignette-3/snowflake-intelligence-prompt2.png)
 
-<img src = "assets/vignette-3/snowflake-intelligence-prompt2.png">
+**Key insight:** This analysis from Snowflake Intelligence gives us a clear picture of our lowest-earning cities and, crucially, shines a light on the exact customer pain points that are holding them back. By directly connecting raw revenue numbers with specific feedback from customer reviews, we can pinpoint where we need to focus our efforts to improve service, product, or support. This provides actionable intelligence to drive targeted growth and customer satisfaction in these challenged markets, all by simply asking a natural language question.
 
-
-> **Key insight**: This analysis from Snowflake Intelligence gives us a clear picture of our lowest-earning cities and, crucially, shines a light on the exact customer pain points that are holding them back. By directly connecting raw revenue numbers with specific feedback from customer reviews, we can pinpoint where we need to focus our efforts to improve service, product, or support. This provides actionable intelligence to drive targeted growth and customer satisfaction in these challenged markets, all by simply asking a natural language question.
+-----
 
 ### Conclusion
 
-Snowflake Intelligence revolutionizes business understanding by seamlessly integrating Cortex Search (unstructured feedback) and Cortex Analyst (structured metrics). This unified AI agent enables users of all technical levels to ask natural language questions and receive visually rich, actionable insights. The result is rapid, data-driven decision-making, transforming fragmented data into clear business advantages.
+What we've just experienced with Tasty Bytes showcases a fundamental shift in how businesses can truly understand their data. By seamlessly integrating Snowflake Cortex Search for deep dives into unstructured customer feedback and Cortex Analyst for conversational insights from structured business metrics, we've brought a truly unified business intelligence to life.
+
+You saw firsthand the power of this integration: users of all technical levels can now simply ask natural language questions and immediately receive visually rich, actionable answers. This direct and intuitive access to insights fundamentally transforms how organizations can swiftly identify operational risks, precisely quantify financial impact, and pinpoint new growth opportunities. It's clear that Snowflake Intelligence empowers rapid, data-driven decision-making, converting what was once fragmented data into clear, compelling business advantage for everyone.
 
 ## Governance with Horizon
 Duration: 1
