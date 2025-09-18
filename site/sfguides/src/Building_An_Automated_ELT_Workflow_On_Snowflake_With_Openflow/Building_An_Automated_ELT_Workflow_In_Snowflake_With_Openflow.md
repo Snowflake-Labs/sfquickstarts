@@ -253,8 +253,8 @@ LIST @OPENFLOW.OPENFLOW_TEST.F1_API pattern ='.*RACE.*';
 ```
 ![Query Stage](assets/Query_Stage.png)
 
-- When everithing works fine, go back editing the last processor on Openflow.
-  On the **Relationships** tab, select unselect the box under **Success** so it can be forwarded to the next processor.
+When everithing works fine, go back editing the last processor on Openflow.
+On the **Relationships** tab, select unselect the box under **Success** so it can be forwarded to the next processor.
 
 <!-- ------------------------ -->
 ## Load Data with COPY INTO
