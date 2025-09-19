@@ -561,7 +561,6 @@ cp .env.example .env
 sed -i -e "s/{INSERT A RANDOM STRING HERE}/$(openssl rand -base64 12)/" .env
 sed -i -e "s/{INSERT ANOTHER RANDOM STRING HERE}/$(openssl rand -base64 12)/" .env
 ```
-:
 ```bash
 SNOWFLAKE_ACCOUNT={INSERT_ACCOUNT_NAME_HERE}
 SNOWFLAKE_USERNAME={INSERT_USER_NAME_HERE}
