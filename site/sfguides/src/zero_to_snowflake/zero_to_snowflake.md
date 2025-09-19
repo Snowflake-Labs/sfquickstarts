@@ -1402,8 +1402,6 @@ Having seen basic segmentation, let's now demonstrate enterprise-grade SQL that 
 
 Through these rigorous steps, we've forged a robust Cortex Analyst semantic model. This isn't just an improvement; it's a transformative tool designed to liberate users across various industries from the constraints of SQL, enabling them to surface profound business intelligence through intuitive natural language queries. Our multi-layered analyses, while showcased through the Tasty Bytes use case, powerfully illustrate how this model drastically cuts down on the time and effort traditionally needed for deep insights, thereby democratizing access to data and fueling a culture of informed, agile decision-making on a broad scale.
 
-Here's the "Snowflake Intelligence - Unified AI Business Intelligence" quickstart with a concise overview and conclusion:
-
 ## Snowflake Intelligence
 
 Duration: 7
