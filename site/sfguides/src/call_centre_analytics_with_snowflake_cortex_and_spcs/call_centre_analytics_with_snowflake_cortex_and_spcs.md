@@ -196,3 +196,6 @@ Want to learn more about the tools and technologies used by your app? Check out 
 * [Build powerful generative AI apps with Streamlit](https://streamlit.io/generative-ai)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 * [Snowpark Guide for Data Engineers](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
+* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Call-Center-Analytics-with-Snowflake-Cortex-Functions-and-Snowpark-Container-Services.pdf)
+* [Read the Blog](https://medium.com/snowflake/call-centre-analytics-with-snowflake-cortex-function-and-snowpark-container-services-5e06b4baef46)
+* [Watch the Demo](https://youtu.be/-3ThRxoZjcE?list=TLGG31-1X25lRtoxOTA5MjAyNQ)
