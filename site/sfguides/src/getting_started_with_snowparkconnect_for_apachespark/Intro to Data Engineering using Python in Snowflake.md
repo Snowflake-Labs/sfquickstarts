@@ -72,7 +72,7 @@ Now you have successfully imported the notebook that contains PySpark code.
 
 ### Install snowpark-connect Package and run the code
 
-Next up, select the packages drop down at the top right of the notebook. Look for `snowflake-dataframe-processor` package and install it using the package picker.
+Next up, select the packages drop down at the top right of the notebook. Look for `snowpark-connect` package and install it using the package picker.
 
 After the installation is complete, start or restart the notebook session.
 
