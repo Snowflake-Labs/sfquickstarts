@@ -1275,21 +1275,20 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
 
 2. **Set Role and Warehouse:**
 
-    * Change role to `TB_ADMIN`.
+    * Change role to `TB_DEV`.
     * Set Warehouse to `TB_CORTEX_WH`.
     * Click **Create new model**.
 
 <img src = "assets/vignette-3/cortex-analyst-setup.png">
 
 
-3. On the **Getting Started** page:
+3.  On the **Getting Started** page, configure the following:
 
-    * Choose **Semantic View**.
-    * **Location to store** dropdown: Select **DATABASE: TB_101** and **SCHEMA: SEMANTIC_LAYER**.
-    * **Name**: `tasty_bytes_business_analytics`.
-    * **Description**: (Strongly recommended for clarity and AI understanding. Use: Semantic model for Tasty Bytes executive analytics, covering customer loyalty and order performance data for natural language querying)
-
-    * Click **Next: Select tables** to proceed.
+      * **DATABASE**: `TB_101`
+      * **SCHEMA**: `SEMANTIC_LAYER`
+      * **Name**: `tasty_bytes_business_analytics`
+      * **Description**: `Semantic model for Tasty Bytes executive analytics, covering customer loyalty and order performance data for natural language querying`
+      * Click **Next**.
 
 <img src = "assets/vignette-3/cortex-analyst-getting-started.png">
 
@@ -1307,38 +1306,55 @@ In the **Select tables** step, let's choose our pre-built analytics views.
 
 <img src = "assets/vignette-3/cortex-analyst-select-tables.png">
 
-2. **Configure Column Selection:**
+### Step 2 - Select & Configure Tables and Columns
 
-    * On the **Select columns** page, ensure both selected tables are active.
-    * Click **Create and Save**
+In the **Select tables** step, let's choose our analytics views.
 
-<img src = "assets/vignette-3/cortex-analyst-select-columns.png">
+1.  Select the core business tables:
 
+      * **DATABASE**: `TB_101`
+      * **SCHEMA**: `SEMANTIC_LAYER`
+      * **VIEWS**: Select `Customer_Loyalty_Metrics_v` and `Orders_v`.
+      * Click **Next**.
 
-### Step 3 -  Add Table Synonyms
+2.  On the **Select columns** page, ensure both selected tables are active, then click **Create and Save**.
 
-Now let’s add table synonyms for better natural language understanding:
+### Step 3 - Edit Logical Table & Add Synonyms
 
-* For **customer_loyalty_metrics_v** table, please copy & paste:
-    `Customers, customer_data, loyalty, customer_metrics, customer_info`
-* For **orders_v** table, please copy & paste:
-    `Orders, transactions, sales, purchases, order_data`
+Now, let's add table synonyms and a primary key for better natural language understanding.
 
-<img src = "assets/vignette-3/cortex-analyst-synonyms.gif">
+1.  In the `customer_loyalty_metrics_v` table, copy and paste the following synonyms into the `Synonyms` box:
 
+    ```
+    Customers, customer_data, loyalty, customer_metrics, customer_info
+    ```
+
+2.  Set the **Primary Key** to `customer_id` from the dropdown.
+
+3.  For the `orders_v` table, copy and paste the following synonyms:
+
+    ```
+    Orders, transactions, sales, purchases, order_data
+    ```
+
+4.  After making these changes, click **Save** in the top right corner.
 
 ### Step 4 - Configure Table Relationships
 
-After creating the semantic model, let’s establish the relationship between our logical tables and add business-friendly synonyms.
+After creating the semantic model, let's establish the relationship between our logical tables.
 
-Let's configure our table relationship by creating:
+1.  Click **Relationships** in the left-hand navigation.
 
-* **Relationship name**: `orders_to_customer_loyalty_metrics`
-* **Join type**: `Left outer`
-* **Relation type**: `many-to-one`
-* **Left table**: `ORDERS_V`
-* **Right table**: `CUSTOMER_LOYALTY_METRICS_V`
-* **Join columns**: `CUSTOMER_ID = CUSTOMER_ID`
+2.  Click **Add relationship**.
+
+3.  Configure the relationship as follows:
+
+      * **Relationship name**: `orders_to_customer_loyalty_metrics`
+      * **Left table**: `ORDERS_V`
+      * **Right table**: `CUSTOMER_LOYALTY_METRICS_V`
+      * **Join columns**: Set `CUSTOMER_ID` = `CUSTOMER_ID`.
+
+4.  Click **Add relationship**
 
 <img src = "assets/vignette-3/cortex-analyst-table-relationship.png">
 
@@ -1353,26 +1369,30 @@ To access the **Cortex Analyst chat interface** in fullscreen mode, you would:
 
 ### Step 5 - Execute Customer Segmentation Intelligence
 
-With our semantic model and relationship active, let’s demonstrate sophisticated natural language analysis by running our first complex business query.
+With our semantic model and relationships active, let's demonstrate sophisticated natural language analysis by running our first complex business query.
 
-Navigate to **Cortex Analyst chat interface**.
+1.  Navigate to the Cortex Analyst query interface.
 
-Let's execute our customer segmentation analysis:
+2.  Enter the following prompt:
 
-**Prompt 1:** `Tell me, which customer groups, broken down by marital status and gender, are spending the most per customer? I'd like to see this across our different cities and regions. Also, can we compare their long-term spending habits to identify our most valuable customer demographics for focused marketing efforts?`
-
+    ```
+    Show customer groups by marital status and gender, with their total spending per customer and average order value. Break this down by city and region, and also include the year of the orders so I can see when the spending occurred. In addition to the yearly breakdown, calculate each group’s total lifetime spending and their average order value across all years. Rank the groups to highlight which demographics spend the most per year and which spend the most overall.
+    ```
 <img src = "assets/vignette-3/cortex-analyst-prompt1.png">
 
 > **Key Insight**: Instantly delivers comprehensive intelligence by combining multi-table joins, demographic segmentation, geographic insights, and lifetime value analysis - insights that would require 40+ lines of SQL and hours of analyst effort.
 
 ### Step 6 - Generate Advanced Business Intelligence
 
-Having seen basic segmentation, let’s now demonstrate enterprise-grade SQL that showcases the full power of conversational business intelligence.
+Having seen basic segmentation, let's now demonstrate enterprise-grade SQL that showcases the full power of conversational business intelligence.
 
-Let's execute our multi-layered customer analysis:
+1.  Clear the context by clicking the refresh icon.
 
-**Prompt 2:** `I want to understand our customer base better. Can you group customers by how much they've spent with us over time, then show me their ordering patterns differ between top spenders and lower spenders? Also compare how our franchise locations perform versus company-owned stores for each customer group`
+2.  Enter the following prompt:
 
+    ```
+    I want to understand our customer base better. Can you group customers by their total spending (high, medium, low spenders), then show me their ordering patterns differ? Also compare how our franchise locations perform versus company-owned stores for each spending group.
+    ```
 <img src = "assets/vignette-3/cortex-analyst-prompt2.png">
 
 
