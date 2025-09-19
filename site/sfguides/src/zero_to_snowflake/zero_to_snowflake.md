@@ -1412,7 +1412,7 @@ Before starting this module, your environment includes pre-configured AI service
 
 ### Step 1 - Upload Semantic Model
 
-To enable business analytics capabilities in Snowflake Intelligence, you need to upload the pre-built semantic model file to your Snowflake stage. You can **download the necessary YAML file directly by clicking this link:** [Cortex Analyst Semantic Model :material-download:](semantic_models/TASTY_BYTES_BUSINESS_ANALYTICS.yaml){: download="TASTY_BYTES_BUSINESS_ANALYTICS.yaml" }
+To enable business analytics capabilities in Snowflake Intelligence, you need to upload the pre-built semantic model file to your Snowflake stage. You can **download the necessary YAML file directly by clicking this link:** [Cortex Analyst Semantic Model](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/semantic_models/TASTY_BYTES_BUSINESS_ANALYTICS.yaml)
 
 **Important:** If clicking the link opens the file in your browser instead of downloading it, please right-click on the link and select **"Save Link As"** to download the YAML file to your local machine.
 
