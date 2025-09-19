@@ -986,6 +986,9 @@ Congratulations! You've successfully performed RAG using Snowflake Cortex and se
 - [Blog: Customizing RAG framework components using Snowpark Container Services](https://medium.com/@jason.summer/developing-a-product-chatbot-with-airmiles-in-snowflake-6b197d3fc424)
 - [Docs: Snowflake Directory Tables](https://docs.snowflake.com/en/user-guide/data-load-dirtables)
 - [Docs: Creating User-Defined Table Functions](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-udtfs)
-
+- [Blog: Build a RAG-Based AI Application on SEC Filing Data Using Snowflake Cortex and Streamlit](https://medium.com/snowflake/retrieval-augmented-generation-rag-application-using-snowflake-cortex-and-streamlit-9cb261e81c2e)
+- [Fork Repo on GitHub](https://github.com/jeremyjgriffith/cortex-rag-application/)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Build-a-RAG-Based-Application-on-SEC-Filing-Data-Using-Snowflake-Cortex.pdf)
+  
 ---
 

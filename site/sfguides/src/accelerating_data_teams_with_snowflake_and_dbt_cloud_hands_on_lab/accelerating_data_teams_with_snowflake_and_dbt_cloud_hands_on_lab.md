@@ -1104,3 +1104,9 @@ Today you learned how to use dbt and Snowflake to build data transformation pipe
 * To continue your dbt education, check out the [dbt Learn site](https://learn.getdbt.com/).
 
 * Contact the [dbt Cloud Sales team](https://www.getdbt.com/contact/) if you're interested in exploring dbt Cloud for your team or organization.
+
+*  [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/03/Data-Transformations-with-DBT-cloud-and-Snowflake.pdf)
+*  [Read the Blog](https://medium.com/snowflake/unlocking-reliable-data-and-team-efficiency-with-dbt-cloud-a-hands-on-experience-3d26da7f1bac)
+*  [Watch Demo](https://youtu.be/84RA7TuhCpg?list=TLGGGzOh827JGPQxOTA5MjAyNQ)
+
+  

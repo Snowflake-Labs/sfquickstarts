@@ -350,3 +350,7 @@ Now you know how to use Streamlit, Statistics, Data Vizualization and Storytelli
 - [GitHub repo](https://github.com/OviedoVR/Brazilian-properties-appreciation)
 - [Customizing Matplotlib with style sheets and rcParams](https://matplotlib.org/stable/tutorials/introductory/customizing.html)
 - [Data Visuzation & Storytelling book - The Big Picture: How to Use Data Visualization to Make Better Decisions―Faster (by Steve Wexler)](https://www.amazon.com/Big-Picture-Visualization-Better-Decisions_Faster/dp/126047352X/)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Analyzing-Real-Estate-Properties-using-Streamlit.pdf)
+- [Read the blog](https://blog.streamlit.io/analyzing-real-estate-properties-with-streamlit/)
+- [Watch Demo](https://youtu.be/lgGDVlsZuR4?si=ExdsYYjJZ8KviDku)
+- 

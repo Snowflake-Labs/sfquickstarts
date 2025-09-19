@@ -202,3 +202,7 @@ Congratulations! You have successfully created a live sync between Snowflake and
 ### Resources
 - [Census Live Syncs documentation](https://docs.getcensus.com/basics/live-syncs)
 - [Census Snowflake source documentation](https://docs.getcensus.com/sources/available-sources/snowflake)
+- [Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Snowflake-Census-Reference-Architecture.pdf)
+- [Read the Blog](https://medium.com/snowflake/a-developers-guide-to-activating-snowflake-data-with-census-929add207129)
+- [Watch the Demo](https://youtu.be/G_qHyY-95lU?si=L8l1lSQaBeYaFkOf)
+  

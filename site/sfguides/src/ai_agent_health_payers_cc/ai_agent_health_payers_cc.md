@@ -343,3 +343,6 @@ In this guide, you processed a knowledge base of unstructured and structured Ent
 - [Docs: Streamlit](https://docs.streamlit.io/)
 - [Quickstart: Getting Started with Cortex Agents](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents/index.html#0)
 - [Quickstart: Getting Started with Snowflake Cortex Agents API and React](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_agents_api_and_react/index.html?index=..%2F..index#0)
+- [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main?tab=readme-ov-file)
+- [Download Reference Architecture](https://quickstarts.snowflake.com/guide/ai_agent_health_payers_cc/img/16ed9348c75c10c0.png?_ga=2.261525770.687428192.1757961332-1806211272.1741193538)
+- [Watch Demo](https://youtu.be/UXge7Vv8uSg?si=aUg8-uVOgx7iSulk)
