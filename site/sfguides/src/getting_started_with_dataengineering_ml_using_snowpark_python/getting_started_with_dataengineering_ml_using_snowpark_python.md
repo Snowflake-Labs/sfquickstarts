@@ -481,3 +481,6 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
 - [Snowpark ML Modeling](https://docs.snowflake.com/developer-guide/snowpark-ml/modeling)
 - [Snowpark ML Model Registry](https://docs.snowflake.com/developer-guide/snowpark-ml/model-registry/overview)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/01/FCTO-Polaris-Causal-inference-for-Ad-Measurement-reference-architecture.pdf)
+- [Read the Blog](https://medium.com/snowflake/advertising-campaign-measurement-with-causal-inference-and-snowflake-data-clean-rooms-313121d8d76a)
+- [Watch the Demo](https://youtu.be/Lva9klc3zu0?list=TLGGkDfQ83vJ4M4yMDA5MjAyNQ)
