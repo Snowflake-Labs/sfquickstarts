@@ -471,3 +471,7 @@ Reach out to your account representatives to learn more about unlocking the full
 - [Snowflake Streaming Connector](https://docs.tealium.com/server-side-connectors/snowflake-streaming-connector/)
 - [Snowflake Data Source](https://docs.tealium.com/early-access/snowflake-data-source/about/)
 - [Tealium + Snowflake Better Together](https://tealium.com/technology-partner/better-together-tealium-snowflake/)
+
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Tealium-Ref-Architecture-1.pdf)
+- [Read the blog](https://medium.com/snowflake/how-tealiums-real-time-customer-data-capabilities-make-your-snowflake-data-more-complete-230863562a0e)
+- [Watch the Demo](https://youtu.be/VxmAdu6y1X0?list=TLGGSkiCxM9-jScyMDA5MjAyNQ)
