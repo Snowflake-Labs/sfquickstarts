@@ -276,7 +276,76 @@ FROM TABLE(GENERATOR(ROWCOUNT => 5000))
 CROSS JOIN (SELECT TRUCK_ID FROM TRUCK SAMPLE (1000 ROWS)) T    -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
 ;
 ```
-Consider a query to retrieve a specific order and join in details for the truck for which the order was submitted. 
+Consider a query that loads all orders for a specific truck. This query will join the `TRUCK` table with the `ORDER_HEADER`
+table while filtering for a particular truck.
+
+```sql
+-- SELECT A TRUCK THAT HAS ORDER DETAILS
+SET TRUCK_ID = (SELECT ANY_VALUE(TRUCK_ID) FROM ORDER_HEADER);
+
+-- QUERY FOR ALL ORDERS (5000) FOR THIS PARTICULAR TRUCK 
+SELECT *
+FROM TRUCK T
+INNER JOIN ORDER_HEADER O ON O.TRUCK_ID=T.TRUCK_ID
+WHERE TRUE
+  AND T.TRUCK_ID = $TRUCK_ID
+;
+```
+Note that the query optimizer does not have information to relate the two tables within the join. Thus,
+the optimizer chooses a column scan mode when reading data from the `ORDER_HEADER` table. Technically, the optimizer must
+interpret the join as a many-to-many join.
+
+<img src="assets/explore_70.png"/>
+
+Introducing a `FOREIGN KEY` will serve two important purposes. First, it establishes a relationship between the tables that
+guarantees a one-to-many join for a given `PRIMARY KEY` in the parent table. Second, the relationship will enforce a
+rule that requires data to be consistent such that child table `TRUCK_ID` values must exist in the `TRUCK` primary key.
+Recreate the table with a `FOREIGN KEY`:
+
+```sql
+-- CREATE ORDER_HEADER WITH A FOREIGN KEY
+CREATE OR REPLACE HYBRID TABLE ORDER_HEADER (
+    ORDER_ID NUMBER(38,0) NOT NULL,
+    TRUCK_ID NUMBER(38,0) NOT NULL,
+    ORDER_TIMESTAMP TIMESTAMP_NTZ NOT NULL,
+    ORDER_TOTAL NUMBER(38,2),
+    ORDER_STATUS VARCHAR(200) DEFAULT 'INQUEUE',
+    PRIMARY KEY (ORDER_ID),
+    CONSTRAINT FK_TRUCK_ID FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID)
+);
+-- USE INSERT INTO METHOD BECAUSE THE FOREIGN KEY MUST EXIST TO BE ENFORCED
+INSERT INTO ORDER_HEADER
+SELECT
+    SEQ4(),
+    T.TRUCK_ID,
+    DATEADD('seconds', UNIFORM(-1*60*60*24*365, -1*60*60, RANDOM()), CURRENT_TIMESTAMP()), -- SPREAD RANDOM ORDER IDS OUT
+    UNIFORM(200.0, 25000.0, RANDOM()),
+    ARRAY_CONSTRUCT('DELIVERED', 'INQUEUE', 'LOADING', 'EN-ROUTE')[UNIFORM(0,3, RANDOM())],
+FROM TABLE(GENERATOR(ROWCOUNT => 5000))
+CROSS JOIN (SELECT TRUCK_ID FROM TRUCK SAMPLE (1000 ROWS)) T    -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
+;
+```
+
+Next, find a new `TRUCK_ID` and execute the query to retrieve the order header information.
+
+```sql
+SET TRUCK_ID = (SELECT ANY_VALUE(TRUCK_ID) FROM ORDER_HEADER);
+
+SELECT *
+FROM TRUCK T
+INNER JOIN ORDER_HEADER O ON O.TRUCK_ID=T.TRUCK_ID
+WHERE TRUE
+    AND T.TRUCK_ID = $TRUCK_ID
+;
+```
+
+Checking the query plan, we can see that the query optimizer is now using the foreign key to efficiently select
+the order detail information.
+
+<img src="assets/explore_71.png"/>
+
+
+Next, consider a query to retrieve a specific order and join in details for the truck for which the order was submitted. 
 This sort of pattern is common when dealing with normalized data models in transactional applications:
 
 ```sql
