@@ -622,3 +622,6 @@ R is beloved by data scientists for its intuitive, concise syntax. You can now c
 - [Quarto for reproducible documents, reports, and data products](https://quarto.org/)
 - [Shiny for interactive dashboards and applications](https://shiny.posit.co/)
 - [Shinylive for serverless Shiny applications](https://shinylive.io/)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/05/Data-Analysis-with-R-using-POSIT-workbench.pdf)
+- [Read the Blog](https://medium.com/snowflake/analyze-data-in-r-with-posit-workbench-and-snowflake-7b837b27337b)
+- [Watch the Demo](https://youtu.be/ZscKe1Vl7Ec?list=TLGGZ4Kuet5QT6AyMjA5MjAyNQ)
