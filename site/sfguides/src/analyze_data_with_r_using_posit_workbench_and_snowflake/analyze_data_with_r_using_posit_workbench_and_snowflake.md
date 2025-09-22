@@ -90,7 +90,7 @@ and use it to connect to your database.
 
 #### Step 1: Navigate to Apps
 
-In your Snowflake account, Go to `Catalogue` > `Apps` to open the Native Apps collection. Please note that the Native App must be [installed and configured ](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html)by an administrator. 
+In your Snowflake account, Go to `Catalog` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Browse all apps` and search for `Posit Workbench` to find it. Please note that the Native App must be [installed and configured](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html) by an administrator. 
 
 ![](assets/snowflake/v2-05-find_posit_workbench.png)
 
