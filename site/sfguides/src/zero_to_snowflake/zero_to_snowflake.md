@@ -797,6 +797,7 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 
 **Phase 3: Conversational Intelligence**
 * Natural Language Business Analytics Interface using Cortex Analyst for conversational data exploration.
+* Unified AI Business Intelligence Platform using Snowflake Intelligence that connects customer voice with business performance
 
 ## Cortex Playground
 
@@ -1421,10 +1422,10 @@ In this section, we'll demonstrate how Snowflake Intelligence tackles this chall
 Before starting this module, your environment includes pre-configured AI services that power Snowflake Intelligence:
 
 * **Cortex Search Service:** `tasty_bytes_review_search` - analyzing customer reviews and feedback
-    * *Note for Advanced Users:* If you want to build your own Cortex Search from scratch, an optional setup module is available. For a detailed guide, click the link to the: [Cortex Search Module](vignette-3-cortex-search.md)
+    * *Note for Advanced Users:* If you want to build your own Cortex Search from scratch, an optional setup module is available. For a detailed guide, click the link to the: [Cortex Search Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18)
 
 * **Cortex Analyst Service:** `TASTY_BYTES_BUSINESS_ANALYTICS` - for translating natural language questions into SQL and providing insights from structured data, enabling self-service analytics.
-    * *Note for Advanced Users:* If you prefer to build your own Cortex Analyst semantic model from scratch, you can access the detailed setup module for guidance. Access the detailed setup by clicking on the: [Cortex Analyst Module](vignette-3-cortex-analyst.md)
+    * *Note for Advanced Users:* If you prefer to build your own Cortex Analyst semantic model from scratch, you can access the detailed setup module for guidance. Access the detailed setup by clicking on the: [Cortex Analyst Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19)
 
 ---
 
