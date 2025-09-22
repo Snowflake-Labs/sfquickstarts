@@ -105,7 +105,13 @@ After clicking on the app, you will see a page with activation steps and a blue 
 Click on `Activate`. This should now take you to the next step where you can see a `Launch app` button.
 ![](assets/snowflake/v2-07-Launch_App.png)
 
-Click on `Launch app`. This should take you to the webpage generated for the Workbench application. You may be prompted to first login to Snowflake using your regular credentials or authentication method.
+To setup Oauth, click on `Connections` tab, and then click on `Configure` in section titeld `Snowflake OAuth Integration`. You will then be prompted to enter your username and password along with instrucions to setup OAuth.
+
+![](assets/snowflake/v2-08-OAuth-setup.png)
+
+![](assets/snowflake/v2-09-OAuth-username-password.png)
+
+Finally, to launch the app click on `Launch app`. This should take you to the webpage generated for the Workbench application. You may be prompted to first login to Snowflake using your regular credentials or authentication method.
 
 ### Create an RStudio Pro Session 
 

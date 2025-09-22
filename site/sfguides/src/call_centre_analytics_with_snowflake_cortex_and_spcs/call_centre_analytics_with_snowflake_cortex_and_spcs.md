@@ -13,16 +13,7 @@ tags: Getting Started, Gen AI, Data Engineering, Snowpark , Python , Snowflake C
 
 Duration: 15
 
-**Note:** We recommend checking out our latest quickstart - [Building Cortex AISQL Powered Call Centre Analytics Solution](https://quickstarts.snowflake.com/guide/building-cortex-aisql-powered-call-centre-analytics/index.html?index=..%2F..index#0). This newest version offers significant advantages:
-* Native AI Processing: Uses Snowflake's `AI_TRANSCRIBE` function instead of hosting Whisper models in SPCS for audio to text conversion.
-* Advanced Analytics: Leverages Cortex Analyst for conversational chatbots and Cortex AISQL functions.
-* Streamlined Streamlit App workflow: Uses the modern Streamlit-in-Snowflake workflow—use snowflake UI to create streamlit apps.
-* Simplified Architecture: Eliminates complex container management and custom model hosting.
-
-When to use each version:
-* Choose the newest version for production-ready solutions with minimal complexity.
-* Use this original version when Cortex is unavailable in current deployment or  to learn about SPCS concepts and custom model hosting.
-
+**Note:** We recommend checking out our [Building Cortex AISQL Powered Call Centre Analytics Solution](https://quickstarts.snowflake.com/guide/building-cortex-aisql-powered-call-centre-analytics/index.html?index=..%2F..index#0) quickstart, which uses Snowflake's `AI_TRANSCRIBE` function instead of hosting Whisper models in SPCS for audio to text conversion. This original version is useful if Cortex cannot be used or if further model tuning is desirable.
 
 Audio files in call centers offer rich insights beyond text. With Snowflake Cortex Functions and running open source LLM models in Snowpark Container Services, you can extract summary of the call, sentiment, and patterns which can eventually help in enhancing customer experiences. By transcribing audio to text and developing custom analytics, call centres and supervisor gain actionable insights on agent responses and proactive issue resolution, ultimately driving better customer satisfaction. These insights can inform strategic decision-making, improve operational efficiency, and drive revenue growth. From optimizing agent performance to predicting customer behavior, the possibilities are endless.
 
