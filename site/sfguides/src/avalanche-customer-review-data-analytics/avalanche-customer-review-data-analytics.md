@@ -363,6 +363,9 @@ By analyzing sentiment across products and time periods, businesses can identify
 
 ### Related Resources
 
+- [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb?_fsi=QzKQ5lY6&_fsi=QzKQ5lY6&_fsi=9zGgF6Cf)
+- [Read Medium Blog](https://medium.com/snowflake/towards-building-a-customer-review-analytics-dashboard-with-snowflake-and-streamlit-3decdde91567)
+
 Documentation:
 - [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document)
 - [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)

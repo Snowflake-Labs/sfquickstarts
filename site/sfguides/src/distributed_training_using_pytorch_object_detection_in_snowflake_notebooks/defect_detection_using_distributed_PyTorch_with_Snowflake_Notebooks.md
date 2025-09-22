@@ -228,3 +228,6 @@ Ready for more? After you complete this quickstart, you can try one of the follo
 ### Attribution
 PyTorch, the PyTorch logo and any related marks are trademarks of The Linux Foundation.
 
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/computer-vision-defect-detection-distributed-pytorch-snowflake-notebooks.pdf)
+- [Watch the Demo](https://youtu.be/LX0FCz8ujZI?list=TLGG-aLeSqUmxJQyMDA5MjAyNQ)
+

@@ -269,3 +269,7 @@ In this guide, you learned how to use Snowflake's Cortex AI to analyze sales cal
 ### Related Resources
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex.html)
 - [Streamlit Documentation](https://docs.streamlit.io/)
+- [Fork notebook on GitHub](https://github.com/Snowflake-Labs/sfguide-ai-assistant-for-sales-calls/)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/12/ai-assistant-sales-calls.pdf)
+- [Read Medium Blog](https://medium.com/snowflake/conversations-to-insights-building-an-ai-sales-assistant-with-snowflake-cortex-and-da82a2f154e5)
+- [Watch Demo](https://youtu.be/-26LxIDOOxI?list=TLGGiS_zeHqWzZsxOTA5MjAyNQ)

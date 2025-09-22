@@ -802,3 +802,6 @@ Ready for more? After you complete this quickstart, you can try one of the follo
 Related Resources
 - [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/sfguide-build-end-to-end-ml-workflow-in-snowflake/blob/main/train_deploy_monitor_ML_in_snowflake.ipynb?_fsi=hnlih63N&_fsi=hnlih63N)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/quickstart-reference-architecture.pdf)
+- [Watch Demo](https://www.youtube.com/live/T_YQ8pYaPxU?si=zgjFTIPlHRhU8vPl)

@@ -1182,3 +1182,7 @@ We encourage you to continue with your free trial by loading your own sample or 
 - How to undo user errors using Time Travel.
 - How to create roles and users, and grant them privileges.
 - How to securely and easily share data with other accounts.
+
+- [Fork repo on GitHub](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Create%20and%20Manage%20Snowflake%20Objects%20like%20a%20Pro/Create%20and%20Manage%20Snowflake%20Objects%20like%20a%20Pro.ipynb)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/05/Citibike-Data-Analysis_-Create-and-manage-Snowflake-Objects-like-a-pro.pdf)
+- [Watch the Demo](https://youtu.be/Dj8aAoEOfrw?list=TLGGDV2-mOUmeyYyMDA5MjAyNQ)

@@ -185,3 +185,6 @@ Congratulations! You've successfully installed Mendix Data Loader app and moved 
 - [Mendix Data Loader documentation](https://docs.mendix.com/appstore/modules/snowflake/mendix-data-loader/)
 - [What is Mendix](https://www.mendix.com/)
 - [Mendix Data Loader Listing](https://app.snowflake.com/marketplace/listing/GZTDZHHIE0/mendix-mendix-data-loader)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/build-ai-enabled-enterprise-applications)
+- [Read the Blog](https://www.mendix.com/blog/double-the-power-of-your-data-with-mendix-and-snowflake/?_fsi=9zGgF6Cf)
+- [Zoom builds enterprise AI appplications with Snowflake Cortex](https://www.snowflake.com/en/customers/all-customers/video/zoom/)
