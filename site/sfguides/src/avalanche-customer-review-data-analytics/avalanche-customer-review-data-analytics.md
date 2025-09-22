@@ -85,7 +85,7 @@ Finally, we can verify that the files have been uploaded successfully to the sta
 Next, enter the following in a SQL worksheet:
 
 ```sql
- `ls @avalanche_db.avalanche_schema.customer_reviews`
+ ls @avalanche_db.avalanche_schema.customer_reviews
 ```
 
 This should yield the following results output:
