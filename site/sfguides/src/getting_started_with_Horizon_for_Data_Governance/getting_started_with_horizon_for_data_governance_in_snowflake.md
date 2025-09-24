@@ -1308,3 +1308,7 @@ You did it! In this comprehensive lab, you have seen how Horizon:
 - Read the [Definitive Guide to Governance in Snowflake](https://www.snowflake.com/resource/the-definitive-guide-to-governance-in-snowflake)
 - Join the [Snowflake Community](https://community.snowflake.com/s/)
 - Sign up for [Snowflake University](http://https://community.snowflake.com/s/snowflake-university)
+- Fork the [Repo on GitHub](https://github.com/Snowflake-Labs/sfquickstarts/blob/cortex-fine-tuning/site/sfguides/src/getting_started_with_llm_finetuning_using_cortex_ai/getting_started_with_llm_finetuning_using_cortex_ai.md)
+- Download [Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/06/LLM-Serverless-Fine-tuning-With-Snowflake-Cortex-AI-.pdf)
+- [Read the Blog](https://medium.com/snowflake/re-imagine-data-governance-with-snowflake-horizon-and-powered-by-ai-9ac1ead51b6f)
+- [Watch the Demo](https://youtu.be/CML-mhhCvOA?list=TLGGiSkeWqigbJ4yNDA5MjAyNQ)
