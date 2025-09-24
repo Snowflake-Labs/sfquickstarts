@@ -154,4 +154,6 @@ Thank you for taking the time to explore the Snowflake Public Data set and learn
 If you want to learn more about the many different free data sets that Snowflake has made available to you on the marketplace, you can find the listing here : [Snowflake Public Data Sets](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products)
 
 ### Related Resources
-- https://github.com/Snowflake-Labs/sfguide-sec-tariff-sentiment/tree/main
+- [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-sec-tariff-sentiment/tree/main)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/en/developers/solution-center/snowflake-public-data.jpg)
+- [Watch the Demo](https://youtu.be/scmY5at0Fig?list=TLGG7_O_3yx38OoyNDA5MjAyNQ)
