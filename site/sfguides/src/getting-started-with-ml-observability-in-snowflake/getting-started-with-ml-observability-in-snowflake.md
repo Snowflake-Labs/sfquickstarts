@@ -222,5 +222,9 @@ In this guide, we explored how financial firms can build end-to-end, production-
 - #### [Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 - #### [Snowpark Model Observability](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-observability)
 - #### [Getting Started with Snowflake ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+- [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ml-observability-in-snowflake/tree/main/notebook)
+- [Download Reference Architecture](https://drive.google.com/file/d/1DSXlhZQlfI8DYiE-HYKcLK5wyaFYSqIb/view?usp=sharing)
+- [Watch the Demo](https://youtu.be/VS7_yvt498Y?list=TLGGF-5YkcMeUncyNDA5MjAyNQ)
+- 
 
 
