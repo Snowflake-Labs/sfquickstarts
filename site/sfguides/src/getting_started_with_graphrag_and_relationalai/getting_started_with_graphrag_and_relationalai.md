@@ -1091,3 +1091,7 @@ In this Quickstart you have learned how to:
 ### Resources
 
 - To learn about more about RelationalAI and view full documentation, visit the [RelationalAI](https://relational.ai) website.
+- [Fork the Repo](https://github.com/RelationalAI/graphrag/tree/main/getting-started)
+- [Watch the Demo](https://youtu.be/020i5zYGrx0?list=TLGGNBS5eghM7gkyNDA5MjAyNQ)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/08/Social-Graph-of-Prominent-Tech-figures-using-GraphRAG-on-RelationalAI.pdf)
+- [Read the Blog](https://medium.com/@alex.ntoulas/9473506d6c07)
