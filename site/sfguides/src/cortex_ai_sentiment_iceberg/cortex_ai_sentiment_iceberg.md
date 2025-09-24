@@ -389,3 +389,7 @@ Congratulations! You've successfully augmented an Iceberg open data lakehouse on
 - [Snowflake Documentation for Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg)
 - [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
 - [Snowflake Notebooks Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/iceberg_cortex)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/03/Product-Review-Sentiment-Analysis-using-Snowflake-Cortex-and-Iceberg-Tables.pdf)
+- [Read the Blog](https://medium.com/snowflake/how-to-use-llama-2-on-iceberg-tables-for-sentiment-analysis-with-snowflake-cortex-32c030a8102b)
+- [Watch the Demo](https://youtu.be/Roko9aqtzl8?list=TLGGn1_ln-U6mk8yNDA5MjAyNQ)
