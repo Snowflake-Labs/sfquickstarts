@@ -589,3 +589,7 @@ Hopefully you now have the building blocks, and examples, you need to get starte
 * [Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html?index=..%2F..index#0) (Advanced Quickstart)
 * [About Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 * [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index)
+* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/07/Getting-Started-with-Data-Engineering-using-Snowflake-Notebooks.pdf)
+* [Read Medium Blog](https://medium.com/snowflake/building-data-engineering-pipelines-with-snowpark-python-e14f2b525510)
+* [Watch the Demo](https://youtu.be/1zdciOSf8mA?list=TLGGrn_7WMr68zAyNDA5MjAyNQ)
+  
