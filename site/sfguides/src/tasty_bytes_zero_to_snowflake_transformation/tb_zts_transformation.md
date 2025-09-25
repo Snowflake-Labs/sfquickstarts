@@ -228,7 +228,7 @@ It looks like we messed up the `truck_type` concatenation.  We will need to reso
 Duration: 1
 
 ### Overview
-Althoug we made a mistake on the Update statement earlier and missed adding a space  between Year and Make. Thankfully, we can use Time Travel to revert our table back to the state it was after we fixed the misspelling so we can correct our work.
+Although we made a mistake on the Update statement earlier and missed adding a space  between Year and Make. Thankfully, we can use Time Travel to revert our table back to the state it was after we fixed the misspelling so we can correct our work.
 
 >aside positive
 > Time Travel enables accessing historical data (i.e. data that has been changed or deleted) at any point within a defined period.
