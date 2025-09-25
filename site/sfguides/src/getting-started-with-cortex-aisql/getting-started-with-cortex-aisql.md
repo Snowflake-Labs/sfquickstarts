@@ -199,4 +199,6 @@ You've learned how to use powerful operators of Cortex AISQL to analyze multimod
 
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql)
 - [Cortex AISQL Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql)
+- [Download Reference Architecture](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-aisql/img/f65e99c9c8dbf752.png?_ga=2.50488033.970314110.1758562613-1806211272.1741193538&_gac=1.112796406.1758675992.CjwKCAjwisnGBhAXEiwA0zEOR1sIXOVV_EsVJWwLfve5dvv0oNT7nVRSlx19ZM16B3Kj1k4neCKwLxoCf70QAvD_BwE)
+- [Read the Blog](https://www.snowflake.com/en/blog/ai-sql-query-language/)
 

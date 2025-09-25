@@ -198,3 +198,7 @@ This guide was an introduction into the techniques for feature engineering, mode
 For more information on what we've covered today please check out these links:
 - [Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
 - [Snowpark Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops-model-registry)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-sporting-events-prediction-using-snowpark-ml)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/06/arch.jpg)
+- [Read the Blog](https://medium.com/snowflake/predicting-euro-2024-with-snowflake-ml-9b7c774fdd9e)
+- [Watch the Demo](https://youtu.be/OMXXKuVm7Q8?list=TLGGyQmuNl-sU0YyNTA5MjAyNQ)

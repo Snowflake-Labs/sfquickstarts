@@ -162,3 +162,7 @@ Ready for more? After you complete this quickstart, you can try one of the follo
 ### Related Resources
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
 - [Documentation](https://docs.snowflake.com/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-runtime)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/notebooks/0_start_here.ipynb?_fsi=EwgOAmF4&_fsi=EwgOAmF4)
+- [Download Reference Architecture](https://drive.google.com/file/d/1GA_pt6Pdy76tWkxyPFKL2xH_YG3v5ZRM/view?usp=sharing)
+- [Read Engineering Blog](https://www.snowflake.com/en/engineering-blog/machine-learning-container-runtime/)
+- [Watch the Demo](https://youtu.be/zsMaLixJZpg?list=TLGGy3VbETdGc6wyNDA5MjAyNQ)

@@ -246,3 +246,8 @@ Feel free to customize the application to suit your needs.
 - [Developer Playground](https://try-everywhere.thoughtspot.cloud/v2/#/everywhere)
 - [Getting Started with Snowflake Quickstarts](https://quickstarts.snowflake.com/)
 - [Sign up for a Snowflake Free Trial](https://signup.snowflake.com/)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/ThoughtSpot-Solution-Architecture.pdf)
+- [Read the Blog](https://medium.com/snowflake/supercharge-your-data-analytics-with-thoughtspot-and-snowflake-c29aeca474d0)
+- [Watch the Demo](https://youtu.be/Zvzz86Usw_E?list=TLGGH5mY5yGmEhMyNDA5MjAyNQ)
+
+  

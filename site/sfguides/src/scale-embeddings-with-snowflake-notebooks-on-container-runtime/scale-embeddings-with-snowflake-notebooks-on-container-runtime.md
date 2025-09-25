@@ -174,3 +174,6 @@ Ready for more? After you complete this quickstart, you can try one of the follo
 - [Documentation: Model Serving in SPCS](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container)
 - [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/index.html#0)
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-scale-embeddings-with-snowflake-notebooks-on-container-runtime/tree/main)
+- [Download Reference Architecture](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/img/d7e8912c0a95ae06.png?_ga=2.243977933.970314110.1758562613-1806211272.1741193538&_gac=1.82971236.1758675992.CjwKCAjwisnGBhAXEiwA0zEOR1sIXOVV_EsVJWwLfve5dvv0oNT7nVRSlx19ZM16B3Kj1k4neCKwLxoCf70QAvD_BwE)
+- [Watch Demo](https://youtu.be/uvLiJtfNd-M?list=TLGGdqmu7qRGY9gyNDA5MjAyNQ)

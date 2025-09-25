@@ -204,3 +204,5 @@ Have an LLM use case that would benefit from a novel Metric? Check out [Creating
 ### Related Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/emerging-solutions-toolbox/tree/main/framework-evalanche)
 - [Medium Article](https://medium.com/snowflake/lookout-its-an-evalanche-cac23f983970)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/11/evalanche-snowflake-reference-architecture.pdf)
+- [Watch the Demo](https://youtu.be/lanCEOJ-914?list=TLGGEb1eaMM_q78yNDA5MjAyNQ)

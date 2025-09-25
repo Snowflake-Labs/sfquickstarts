@@ -178,3 +178,8 @@ and how to efficiently chunk text for input into the LLM.
   
 - #### [Snowpark Cortex Search Tutorials](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/overview-tutorials)
 
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-analyzing-support-cases-using-snowflake-cortex)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/streamlining-support-case-analysis-with-snowflake-cortex.pdf)
+- [Read Medium Blog](https://medium.com/snowflake/streamline-your-support-tickets-with-snowflakes-ai-powered-ticket-automation-agent-d148527ecd84)
+- [Watch the Demo](https://youtu.be/Orvlo9q3iBo?list=TLGGvAiUj-zrj0gyNDA5MjAyNQ)
+  
