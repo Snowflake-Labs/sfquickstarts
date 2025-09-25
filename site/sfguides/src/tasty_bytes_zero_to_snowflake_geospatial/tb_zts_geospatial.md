@@ -167,7 +167,7 @@ JOIN tb_safegraph.public.frostbyte_tb_safegraph_s cpg
 
 ### Step 2 - Click Next -->
 
-## Creating Geograpy Points from Latitude and Longitude
+## Creating Geography Points from Latitude and Longitude
 Duration: 1
 
 ### Overview

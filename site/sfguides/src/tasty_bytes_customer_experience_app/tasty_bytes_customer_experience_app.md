@@ -47,7 +47,7 @@ Open a new Snowsight worksheet and run all commands from setup.sql.
 
 - Download all files from the [app directory](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-enhancing-customer-experience/tree/main/customer-experience-app/app). This includes the file in the pages subdirectory.
 - In Snowsight, change role to sysadmin
-- open the tasty_bytes_customer_support_email.app.customer_support_email_app stage
+- open the tasty_bytes_enhancing_customer_experience.app.enhance_customer_experience_app stage
 
 ![stage-location](assets/app-stage-location.png)
 
