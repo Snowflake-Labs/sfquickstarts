@@ -80,8 +80,8 @@ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.3.0/docker-compose.y
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
-    - ./dbt:/dbt # add this in
-    - ./dags:/dags # add this in
+    - ${AIRFLOW_PROJ_DIR:-.}/dbt:/dbt # add this in
+    - ${AIRFLOW_PROJ_DIR:-.}/dags:/dags # add this in
 
 ```
 
@@ -90,7 +90,7 @@ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.3.0/docker-compose.y
 `.env`
 
 ```bash
-_PIP_ADDITIONAL_REQUIREMENTS=dbt==0.19.0
+_PIP_ADDITIONAL_REQUIREMENTS=dbt-snowflake==1.7.3
 ```
 
 ---
@@ -208,13 +208,15 @@ packages.yml
 
 ```yml
 packages:
-  - package: fishtown-analytics/dbt_utils
-    version: 0.6.4
+  - package: dbt-labs/dbt_utils
+    version: 1.1.1
 ```
 
 dbt_project.yml
 
 ```yml
+name: example
+profile: default
 models:
   my_new_project:
       # Applies to all files under models/example/
@@ -224,6 +226,7 @@ models:
       analysis:
           schema: analysis
           materialized: view
+seed-paths: ["data"]
 ```
 
 次に、`packages.yml`内に配置した`fishtown-analytics/dbt_utils`をインストールします。これを行うには、`dbt`フォルダから`dbt deps`コマンドを実行します。
@@ -265,7 +268,7 @@ dbt deps
 
 ここまでで、次のようなフォルダ構造になります。
 
-![airflow](assets/data_engineering_with_apache_airflow_3_dbt_structure.png)
+![airflow](assets/data_engineering_with_apache_airflow_3_dbt_structure_fixed.png)
 
 これでdbtの設定は完了です。次のセクションでは、csvファイルとdagsの作成に進みましょう。
 
@@ -455,6 +458,7 @@ from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime
+import os
 
 
 default_args = {
