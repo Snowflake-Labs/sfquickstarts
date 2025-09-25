@@ -16,7 +16,7 @@ Duration: 5
 
 In this guide, you will use Kumo as a Snowflake native app to recommend the top ten products your highest value customers are most likely to buy. These predictions can be used to make product recommendations that users are more likely to buy, leading to increase engagement and sales.
 
-Specifically, you will learn how to develop the following two models using Snowflake's TPC-DS retail dataset.
+Specifically, you will learn how to develop the following two models using Snowflake's TPC-DS retail dataset and Showflake's arctic Cortex LLM.
 
 - **Customer LTV Prediction**: Predict how much money each customer will spend in the next 30 days
 - **Product Recommendation**: Predict the top 10 products that each user is most likely to buy
@@ -47,6 +47,7 @@ In summary, you will learn how to:
 
 * Connect Snowflake's TPC-DS retail dataset  
 * Create Kumo predictive queries to predict your highest value customers (i.e., highest “lifetime value” customers) and the products they are most likely to buy in the next 30 days  
+* Set up and populate an embedding column in Snowflake tables with Cortex embeddings.
 * Train your predictive queries  
 * Evaluate your predictive models using Kumo’s explainable AI tools   
 * Create batch predictions for production use
@@ -123,6 +124,23 @@ CREATE TABLE WEB_SITE AS SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.WEB_S
 Once the sample dataset has been created, you will see the new `KUMO_REC_DEMO` database under the Databases pane.
 
 ![img](assets/image21.png)
+
+## Creating Your Cortex LLM Embeddings
+The KUMO_REC_DEMO.ITEMS_MINI table contains a column called I_ITEM_DESC that holds item descriptions for each of the products. Using Snowflake’s Cortex LLM, you can create numerical representations (i.e., vector embeddings) that capture the meanings and relationships of the words and sentences in these item descriptions. And because Kumo supports incorporating the world knowledge comprehension that external LLMs provide by way of embeddings, you can easily incorporate Cortex’s vector embeddings into Kumo when registering your table schemas, enabling even more powerful predictive capabilities.
+
+![img](assets/image39.png)
+
+### Setting up the embedding column
+The following SQL code will create a new column for the Cortex vector embeddings in the your ITEMS_MINI table, and then populate the new column with the Cortex vector embeddings created from the I_ITEM_DESC column:
+
+```
+-- Create a new column for the Cortex embeddings in the ITEMS_MINI table
+ALTER TABLE ITEMS_MINI ADD COLUMN I_ITEM_DESC_EMBED VECTOR(FLOAT, 768);
+UPDATE ITEMS_MINI
+  SET I_ITEM_DESC_EMBED = SNOWFLAKE.CORTEX.EMBED_TEXT_768('snowflake-arctic-embed-m', I_ITEM_DESC);
+```
+
+Once this new column is set up, you will simply set the I_ITEM_DESC_EMBED column type to Embedding when registering your schema (in the next step).
 
 ## Registering Your Schema in Kumo
 
