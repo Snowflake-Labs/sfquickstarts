@@ -172,8 +172,7 @@ Now, perform these steps for the following data listings:
 1. “OAG: Flight Emissions Data (Sample)” by OAG
 2. “OAG: Flight Status Data (Sample)” by OAG
 3. “Global Weather & Climate Data for BI” by Weather Source
-4. “Global Government” by Cybersyn
-5. “US Addresses & POI” by Cybersyn
+4. “Snowflake Public Data (Free)” by Snowflake Public Data Products
 
 ### Inspect Imported Listings
 
@@ -183,8 +182,8 @@ That’s all! The imported listings are now available in our account and can be 
 SELECT * FROM oag_flight_emissions_data_sample.public.estimated_emissions_schedules_sample LIMIT 100;
 SELECT * FROM oag_flight_status_data_sample.public.flight_status_latest_sample LIMIT 100;
 SELECT * FROM global_weather__climate_data_for_bi.standard_tile.forecast_day LIMIT 100;
-SELECT * FROM global_government.cybersyn.datacommons_timeseries LIMIT 100;
-SELECT * FROM us_addresses__poi.cybersyn.point_of_interest_index LIMIT 100;
+SELECT * FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.datacommons_timeseries LIMIT 100;
+SELECT * FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_index LIMIT 100;
 ```
 
 <!-- ------------------------ -->
