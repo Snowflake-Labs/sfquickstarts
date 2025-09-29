@@ -300,3 +300,7 @@ Want to learn more about the tools and technologies used by your app? Check out 
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-solution)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 * [Snowpark Guide for Data Engineers](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
+* [Watch the Demo](https://youtu.be/_4ws-vgUOcQ?list=TLGGy7ICEHIG2xEyNDA5MjAyNQ)
+* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/09/Campaign-Intelligence-reference-architecture.pdf)
+* [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-marketing-data-foundation-starter-v3)
+* [Read the Blog](https://medium.com/snowflake/tips-for-data-teams-building-campaign-intelligence-5a1955f7d533)

@@ -465,5 +465,8 @@ At the end of this guide, you've successfully set up a near real-time data inges
 - [Snowplow GitHub Repository](https://github.com/snowplow/snowplow)
 - [Snowplow Documentation](https://docs.snowplow.io/)
 - [Snowflake Snowpipe Streaming Documentation](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Next-Gen-Digital-Analytics-with-Snowplow.pdf)
+- [Read the Blog](https://medium.com/snowflake/snowflake-hybrid-connected-native-apps-featuring-snowplow-e704314bcc90)
+- [Watch the Demo](https://youtu.be/mk2LrJ6JikM?list=TLGGuTqHXnTLVtcyNTA5MjAyNQ)
 
 Happy Streaming and Analyzing!

@@ -753,9 +753,13 @@ Duration: 3
 
 ### Related Resources
 
-- [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-build-rag-based-equipment-maintenance-app-using-snowflake-cortex)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-build-rag-based-equipment-maintenance-app-using-snowflake-cortex)
 - [Snowflake Cortex](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Build-a-RAG-based-Equipment-Maintenance-using-Snowflake-Cortex.pdf)
+- [Read the Blog](https://medium.com/snowflake/reduce-your-equipment-downtime-with-snowflake-cortex-and-streamlit-a-rag-based-approach-071ff4f3347e)
+- [Watch the Demo](https://youtu.be/RLCJrM8v76o?list=TLGGDooT-1mt5mUyNDA5MjAyNQ)
+  
 
 We would love your feedback on this QuickStart Guide! Please submit your feedback using this [Feedback Form](https://forms.gle/FZsHyujZoffrQRjG8).

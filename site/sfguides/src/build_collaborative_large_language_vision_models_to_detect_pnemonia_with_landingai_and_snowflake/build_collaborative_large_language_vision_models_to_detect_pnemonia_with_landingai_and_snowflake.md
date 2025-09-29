@@ -232,3 +232,6 @@ In this quickstart you learned:
 - To learn about more about LandingLens, check out the [LandingLens docs](https://support.landing.ai/docs/snowflake)
 - To connect with other LandingLens users, join the [LandingAI Community](https://community.landing.ai/home)
 - To learn more about LandingAI, check out [landing.ai/](https://landing.ai/)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/09/Build-a-Visual-AI-model_-Reference-Architecture-1.pdf)
+- [Watch the Demo](https://youtu.be/WPoYJvD9PRI?list=TLGGvn9jegVK8uEyNDA5MjAyNQ)
+- [Read the Blog](https://medium.com/snowflake/how-to-train-visual-ai-models-process-images-stored-in-snowflake-using-landinglens-311e125b9ce6)

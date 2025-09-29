@@ -347,6 +347,10 @@ Congratulations on completing the our Question and Answering on Knowledge Graphs
 - To learn about more about RelationalAI and view full documentation, visit [https://relational.ai](https://relational.ai)
 - [Snowflake Marketplace](https://app.snowflake.com/marketplace)
 - More info on [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/KGQA-Reference-Architecture.pdf)
+- [Fork Repo on GitHub](https://github.com/RelationalAI/QuestionAnsweringKG/tree/main)
+- [Read the Blog](https://medium.com/snowflake/question-answering-on-knowledge-graphs-using-relationalai-and-snowflake-cortex-ai-27ba9bfc8d13)
+- [Watch the Demo](https://youtu.be/VQYERJBe31I?list=TLGGc2HxZ8lhv6YyNDA5MjAyNQ)
 
 ### APPENDIX
 

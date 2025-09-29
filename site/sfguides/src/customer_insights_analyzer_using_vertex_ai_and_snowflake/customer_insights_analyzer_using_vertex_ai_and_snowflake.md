@@ -588,4 +588,10 @@ Congratulations! You've successfully built your first Streamlit App with Vertex 
 
 - [Blog on this use case](https://cloudydata.substack.com/p/snowflake-and-vertex-ai-foundational)
 
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/05/Customer-Insights-Analyzer-using-Vertex-Generative-AI-and-Snowflake.pdf)
+
+- [Read the Blog](https://medium.com/@cloudydata/customer-insights-analyzer-using-vertex-generative-ai-and-snowflake-8f8150316da9)
+
+- [Watch the Demo](https://youtu.be/8VSIB_XpoMU?list=TLGGjtrk5Hd7gNQyMjA5MjAyNQ)
+
 If you have any questions, reach out to your Snowflake account team!

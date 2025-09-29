@@ -193,6 +193,10 @@ By following this guide, you have successfully set up an AI Agent running on Sno
 ### Related Resources
 - [Marketplace Listing](https://app.snowflake.com/marketplace/listing/GZTSZ1TJ3IU/lang-ai-snowflake-ai-agents)
 - [Lang.ai Help Center](https://help.lang.ai/en/collections/9808378-build-your-first-ai-agent)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/create_ai_agents_on_snowflake_with_lang_ai)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Snowflake-AI-Agents-by-Lang.ai_.pdf)
+- [Read the Blog](https://medium.com/snowflake/ai-agents-in-snowflake-for-data-analysis-055c9f97338a)
+- [Watch the Demo](https://youtu.be/giXLPbLDaOw?list=TLGGcxw4RdvtB40yMjA5MjAyNQ)
 
 ### What You Learned
 - How to set up the Lang.ai Snowflake Native App

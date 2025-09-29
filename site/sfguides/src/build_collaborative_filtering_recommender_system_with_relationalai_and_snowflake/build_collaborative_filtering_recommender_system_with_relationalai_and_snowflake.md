@@ -226,3 +226,7 @@ In this Quickstart you learned
 - To see a brief summary of the recommender system you just built, see [Blogpost](https://medium.com/@haythemtellili/recommender-systems-with-relationalais-snowflake-native-app-68d9c76bb07f)
 - [Snowflake Marketplace](https://app.snowflake.com/marketplace)
 - More info on [Snowflake Native Apps](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
+- [Fork Repo on GitHub](https://github.com/RelationalAI/rai-samples/tree/main/samples/recommender-system)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/05/Community-Detection-using-RelationalAI-and-Snowflake-1.pdf)
+- [Read the Blog](https://medium.com/@haythemtellili/recommender-systems-with-relationalais-snowflake-native-app-68d9c76bb07f)
+- [Watch the Demo](https://youtu.be/QHlVp21icfg?list=TLGGkrjRtPl_vKMyNDA5MjAyNQ)

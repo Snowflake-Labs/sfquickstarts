@@ -950,5 +950,7 @@ We look forward to working with you. Please reach out for any questions snowflak
 - [Reference Architecture](https://drive.google.com/file/d/1Es4gaeOOmpfmBDSp9RkCIGZB1PQHyzHg/view])
 - [Blog](https://medium.com/snowflake/ultra-secure-identity-and-audience-profile-enrichment-made-simple-21e48a56ab4a)
 <!-- - [<link to github code repo>] -->
+[Fork Repo on GitHub](https://github.com/Snowflake-Labs/sf-samples/pull/155)
 <!-- - [<link to documentation>] -->
 <!-- - [<link to youtube>] -->
+[Watch the Demo](https://youtu.be/I4e-qj5jHW8?list=TLGGsB5qTdKOvZ4yNDA5MjAyNQ)

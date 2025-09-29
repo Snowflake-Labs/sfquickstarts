@@ -255,3 +255,6 @@ You have learnt how to use Snowflake Cortex AI to:
 - [Snowflake Cortex Fine-tuning](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-finetuning)
 - [Snowflake Cortex COMPLETE()](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions#label-cortex-llm-complete)
 - [Snowflake Notebooks: Demo Repository](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/cortex-fine-tuning/Fine%20Tuning%20LLMs%20using%20Cortex%20AI/Fine%20tuning%20LLM%20using%20Cortex%20AI%20using%20SQL%20APIs.ipynb)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/06/LLM-Serverless-Fine-tuning-With-Snowflake-Cortex-AI-.pdf)
+- [Watch the Demo](https://youtu.be/4RItxPcq4vk?list=TLGGbfQIY2LeG1wyNDA5MjAyNQ)

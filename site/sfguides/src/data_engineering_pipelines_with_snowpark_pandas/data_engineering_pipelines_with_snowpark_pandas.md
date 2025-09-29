@@ -172,3 +172,6 @@ Congratulations, you have successfully completed this quickstart! Through this q
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-pipelines-with-pandas-on-snowflake)
 * [pandas on Snowflake Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/snowpark-pandas)
 * [Getting Started with pandas on Snowflake Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_pandas_on_snowflake/)
+* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/07/End-to-end-Data-Engineering-with-Snowpark-Pandas.pdf)
+* [Read the Medium Blog](https://www.snowflake.com/en/blog/run-pandas-tb-enterprise-data-snowflake/)
+* [Watch the Demo](https://youtu.be/qbcHE1FcX4g?list=TLGG_7g9SQPseKoyMjA5MjAyNQ)
