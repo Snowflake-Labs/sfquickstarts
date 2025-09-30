@@ -28,7 +28,7 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 ### What You'll Learn:
 - How to create stages, databases, tables, views, and virtual warehouses.
 - How to load structured and semi-structured data.
-- How to consume Cybersyn data from the [Snowflake Data Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/).
+- How to consume Snowflake Public Data data from the [Snowflake Data Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=Snowflake+Public+Data+%28Free%29).
 - How to perform analytical queries on data in Snowflake, including joins between tables.
 - How to clone objects.
 - How to undo user errors using Time Travel.
@@ -36,12 +36,10 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 - How to securely and easily share data with other accounts.
 
 ### Data You'll Use:
-**Cybersyn** is a next generation data company creating a real-time view of the world's economy with analytics-ready data exclusively on Snowflake Marketplace. Initially focused on consumer insights, Cybersyn enables you to access external data directly in your Snowflake instance — no ETL required.
+**Snowflake Public Data** is a next generation data company creating a real-time view of the world's economy with analytics-ready data exclusively on Snowflake Marketplace. Initially focused on consumer insights, Snowflake Public Data enables you to access external data directly in your Snowflake instance — no ETL required.
 
-This lab will use the following Cybersyn datasets:
-- Daily stock price data
-- SEC 10-K & 10-Q filings
-- Company metadata
+This lab will use the following Snowflake Public Data datasets:
+
 
 Check out Cybersyn's [Consumer Spending product](https://app.snowflake.com/marketplace/listing/GZTSZ290BUX62/) and [explore all 60+ public sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) Cybersyn offers on the [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Cybersyn).
 <!-- ------------------------ -->
