@@ -81,14 +81,14 @@ This tool allows the agent to search and retrieve information from unstructured 
 
 * In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Cortex Search**](https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si) 
 * On the top right, click on **Create**
-    - Role and Warehouse: **SNOWFLAKE_INTELLIGENCE_ADMIN** | **COMPUTE_WH**
+    - Role and Warehouse: **SNOWFLAKE_INTELLIGENCE_ADMIN** | **DASH_WH_SI**
     - Database and Schema: **DASH_DB_SI.RETAIL**
     - Name: Support_Cases
     - Select data to be indexed: select SUPPORT_CASES table
     - Select a search column: select TRANSCRIPT
     - Select attribute column(s): select TITLE, PRODUCT 
     - Select columns to include in the service: Select all
-    - Configure your Search Service: Keep default values **except** select **COMPUTE_WH** for "Warehouse for indexing"
+    - Configure your Search Service: Keep default values **except** select **DASH_WH_SI** for "Warehouse for indexing"
 
 #### OPTIONAL: Aggregated Support Cases using Cortex AISQL
 
@@ -113,7 +113,7 @@ create or replace cortex search service AGGREGATED_SUPPORT_CASES
 on summary 
 attributes
   summary 
-warehouse = compute_wh 
+warehouse = dash_wh_si 
 embedding_model = 'snowflake-arctic-embed-m-v1.5' 
 target_lag = '1 hour' 
 initialize=on_schedule 
@@ -178,7 +178,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
       - Parameter: body
         - Description: *Use HTML-Syntax for this. If the content you get is in markdown, translate it to HTML. If body is not provided, summarize the last question and use that as content for the email.*
       - Parameter: recipient_email
-        - Description: *If the email is not provided, send it to **YOUR_EMAIL_ADDRESS_GOES_HERE***.
+        - Description: *If the email is not provided, send it to the current user's email address.
       - Parameter: subject
         - Description: *If subject is not provided, use "Snowflake Intelligence"*.
       - Warehouse: **DASH_WH_SI**
@@ -220,7 +220,7 @@ ___
 
 ### Q4. *Send a summary email*
 
-NOTE: Check your inbox to see the summary email that would have been sent to the email address set it **AI & ML** >> **Agents** >> **Sales_AI** >> **Custom tools** >> **Send_Email** >> **recipient_email** >> **Description**: "If the email is not provided, send it to YOUR_EMAIL_ADDRESS_GOES_HERE".
+*NOTE: Check your inbox to see the summary email that would have been sent to the current user's email address.*
 ___
 
 ### Other Questions
