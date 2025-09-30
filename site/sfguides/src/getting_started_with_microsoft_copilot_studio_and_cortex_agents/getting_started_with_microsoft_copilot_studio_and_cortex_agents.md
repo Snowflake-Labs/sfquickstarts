@@ -388,14 +388,46 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE sales_conversation_search
 CREATE OR REPLACE STAGE models DIRECTORY = (ENABLE = TRUE);
 ```
 
-To set up Cortex Analyst you will have to upload a semantic file.
-- Download [sales_metrics_model.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/sales_metrics_model.yaml) (NOTE: Do NOT right-click to download.)
-- Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS
-- Click "+ Files" in the top right
-- Browse and select sales_metrics_model.yaml file
-- Click "Upload"
+Setting up Cortex Analyst
+- Go to **AI * ML** on the side and select **Cortex Analyst**.
+- Select the SALES_INTELLIGENCE.DATA Database and Schema.
+- Select **Create New** and select **Create new Semantic View**.
+ ![](assets/analystui.png)
 
-Cortex Analyst is a highly accurate text to sql generator and in order to produce highly accurate results a semantic file such as this one is required. Cortex Analyst will use this semantic file along with user prompts to generate accurate SQL.
+ Select the MODELS Stage and name the Analyst Service SALES_METRICS_MODEL and select **Next**.
+ - Select the SALES_INTELLIGENCE database and the SALES_METRICS table then select **Next**.
+ - Select all of the columns and select **Create and Save**.
+
+ This is a VERY simple Analyst service. You can click through the dimensions and see that Cortex used LLMS to write descriptions and synonyms for each of the dimensions. We're going to leave this as-is, but know that you can adjust this as needed to enhance the performance of Cortex Analyst.
+ ![](assets/builtanalyst.png)
+
+Setting up Cortex Agent
+- Go to **AI * ML** on the side and select **Cortex Analyst**.
+- Select the SALES_INTELLIGENCE.DATA Database and Schema.
+- Select **Create Agent**.
+- Name the agent SALES_INTELLIGENCE_AGENT and create the agent.
+![](assets/salesintelligence.png)
+
+Let's add the tools and orchestration to the agent
+- Select **Edit** in the top right.
+- Select **Tools** and **Add** by Cortex Analyst.
+- Select the SALES_INTELLIGENCE.DATA Database and Schema and Select the SALES_METRICS_MODEL and generate a Description with Cortex AI.
+- Select **Add**
+![](assets/analysttoolui.png)
+
+- Select **Add** by Cortex Search.
+- Select the SALES_INTELLIGENCE.DATA Database and Schema and Select the SALES_CONVERSATION_SEARCH.
+- Enter the name SALES_CONVERSATION_SEARCH and enter the description "the search service is for providing information on sales call transcripts".
+- Select **Add**.
+![](assets/searchtoolui.png)
+
+- Select **Orchestration** and s leave the model set to **auto**.
+- Add the following orchestration instructions, "use the analyst tool for sales metric and the search tool for call details".
+- Add the following response instructions, "make the response concise and direct so that a strategic sales person can quickly understand the information provided".
+- Select **Save**.
+
+
+Cortex Agent with Analyst and Search  offers a highly accurate text to sql generator along with an efficient hybrid search service wrapped in an efficient data agent.
 
 Now run the below code in the same SQL worksheet to create a Stored Procedure that calls a Snowflake Cortex Agents and will use a llama model to determine whether or not to use the Search or Analyst.
 
@@ -527,18 +559,19 @@ And last we will run this below script to grant the appropriate privileges to th
 ```sql
 CREATE ROLE ANALYST;
 GRANT USAGE ON DATABASE SALES_INTELLIGENCE TO ROLE ANALYST;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE ANALYST;
 GRANT USAGE ON SCHEMA DATA TO ROLE ANALYST;
 GRANT USAGE ON CORTEX SEARCH SERVICE SALES_CONVERSATION_SEARCH TO ROLE ANALYST;
 GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE ANALYST;
 GRANT READ ON STAGE MODELS TO ROLE ANALYST;
-GRANT USAGE ON PROCEDURE call_cortex_agent_proc(VARCHAR, NUMBER) TO ROLE ANALYST;
+GRANT USAGE ON PROCEDURE call_cortex_agent_proc(VARCHAR) TO ROLE ANALYST;
 ```
-
-**Note**: when you create the Stored Procedure it will default to "RUN AS OWNER". If you created the Stored Procedure with a different ROLE (like SYSADMIN) then when you run the Stored Procedure from Copilot Studio you will likely get a status 200 with no results. Then have to update the Stored Procedure.
 
 <!-- ------------------------ -->
 ## Configuring Copilot Agent
 Duration: 10
+
+**NOTE:** This quickstart shows how to set up the connectivity with **Triggers** in Copilot Studio, but you can also use **Tools** with a similar flow to use Cortex.
 
 ![](assets/azurecopilot.png)
 
@@ -619,7 +652,7 @@ Enter the values as shown in the screenshot below.
 - For the Body/Statement parameter, enter this query
 
 ```sql
-CALL sales_intelligence.data.call_cortex_agent_proc('<>', 1);
+CALL sales_intelligence.data.call_cortex_agent_proc('<>');
 ```
 
 ![](assets/connectorwithcall.png)
