@@ -23,7 +23,8 @@ In order to help customers experience the full power of their own data, Snowflak
 
 The contents of these data sets cover a myriad of topics, from [US Real Estate](https://app.snowflake.com/marketplace/listing/GZTSZAS2KI6/snowflake-public-data-products-us-real-estate?originTab=provider&providerName=Snowflake%20Public%20Data%20Products&profileGlobalName=GZTSZAS2KCS) to information about Canada's GDP in the [Canadian Government Data](https://app.snowflake.com/marketplace/listing/GZTSZAS2KFB/snowflake-public-data-products-canadian-government?originTab=provider&providerName=Snowflake%20Public%20Data%20Products&profileGlobalName=GZTSZAS2KCS) listing.
 
-A full list of Snowflake's data products can be browsed [here](https://data-catalog.snowflake.com/) and any of these data sets can be downloaded to your account from the [Marketplace Listing](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products)
+A full list of Snowflake's data products can be browsed [here](https://data-catalog.snowflake.com/) and any of these data sets can be downloaded to your account from the [Marketplace Listing](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255
+)
 
 
 ### Why Snowflake Public Data Products
@@ -44,7 +45,7 @@ History tables provide an auditable record of data changes over time.
 
 ### This Demo
 
-The SEC Tarrif Sentiment Demo downloads and utilizes the [SEC Filings](https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/snowflake-public-data-products-sec-filings?originTab=provider&providerName=Snowflake%20Public%20Data%20Products&profileGlobalName=GZTSZAS2KCS) dataset. 
+The SEC Tarrif Sentiment Demo downloads and utilizes the [SEC Filings](https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/snowflake-public-data-products-sec-filings) dataset. 
 
 ### Prerequisites
 - Familiarity with Snowflake Marketplace
@@ -78,7 +79,7 @@ Duration: 2
 To download the SEC Filings data you have two options
 
 ### Download from the listing
-You can download the [SEC Filings](https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/snowflake-public-data-products-sec-filings?originTab=provider&providerName=Snowflake%20Public%20Data%20Products&profileGlobalName=GZTSZAS2KCS) dataset from the listing.
+You can download the [SEC Filings](https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/snowflake-public-data-products-sec-filings) dataset from the listing.
 
 ### Run the notebook cell
 You can alternatively run the "Download_SEC_Data" cell of the notebook
@@ -151,7 +152,8 @@ Duration: 1
 
 Thank you for taking the time to explore the Snowflake Public Data set and learn a bit about how these data sets can be leveraged! 
 
-If you want to learn more about the many different free data sets that Snowflake has made available to you on the marketplace, you can find the listing here : [Snowflake Public Data Sets](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products)
+If you want to learn more about the many different free data sets that Snowflake has made available to you on the marketplace, you can find the listing here : [Snowflake Public Data Sets](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255
+)
 
 ### Related Resources
 - [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-sec-tariff-sentiment/tree/main)
