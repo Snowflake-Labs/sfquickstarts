@@ -571,6 +571,8 @@ GRANT USAGE ON PROCEDURE call_cortex_agent_proc(VARCHAR) TO ROLE ANALYST;
 ## Configuring Copilot Agent
 Duration: 10
 
+**NOTE:** This quickstart shows how to set up the connectivity with **Triggers** in Copilot Studio, but you can also use **Tools** with a similar flow to use Cortex.
+
 ![](assets/azurecopilot.png)
 
 Go to your Microsoft Copilot Studio or select Copilot Studio from your Azure Portal.
