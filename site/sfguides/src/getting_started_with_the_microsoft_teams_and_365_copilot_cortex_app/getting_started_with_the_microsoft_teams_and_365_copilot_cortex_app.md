@@ -216,7 +216,7 @@ Let's add the tools and orchestration to the agent
 And last we will run this below script to grant the appropriate privileges to the PUBLIC role (or whatever role you can use). 
 
 ```sql
-REVOKE DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE PUBLIC;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE PUBLIC;
 GRANT USAGE ON DATABASE SALES_INTELLIGENCE TO ROLE PUBLIC;
 GRANT USAGE ON SCHEMA DATA TO ROLE PUBLIC;
 GRANT SELECT ON SALES_METRICS_VIEW TO ROLE PUBLIC;
@@ -300,9 +300,12 @@ And you are now ready to go! You can continue asking questions like:
 - What was the worst customer call we had?
 - Show the deals that are currently pending
 
-The Snowflake Cortex Teams and M365 App now supports the below functionality. Users are encouraged to expand on this use case to explore its complete functionality.
+The Snowflake Cortex Teams and M365 App now supports the below functionality. Users are encouraged to expand on this use case to explore its complete functionality
+
 :busts_in_silhouette: Multi-Agent Support: Users can now use and switch between multiple agents across multiple Snowflake accounts.
+
 :left_speech_bubble: Multi-Turn Conversations: Stateful conversations are now supported via the new Threads API, providing a genuine chatbot experience.
+
 :brain: Improved Reasoning & UX: Agents now use a multi-step “Reasoning Path” for tools, and the UI shows “thinking” traces and status updates.
 <!-- ------------------------ -->
 ## Conclusion and Resources
