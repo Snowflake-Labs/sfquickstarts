@@ -39,9 +39,9 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 **Snowflake Public Data** is a next generation data company creating a real-time view of the world's economy with analytics-ready data exclusively on Snowflake Marketplace. Initially focused on consumer insights, Snowflake Public Data enables you to access external data directly in your Snowflake instance — no ETL required.
 
 This lab will use the following Snowflake Public Data datasets:
+- Snowflake Public Data (Free)
 
-
-Check out Cybersyn's [Consumer Spending product](https://app.snowflake.com/marketplace/listing/GZTSZ290BUX62/) and [explore all 60+ public sources](https://app.cybersyn.com/data_catalog/?utm_source=Snowflake+Quickstart&utm_medium=organic&utm_campaign=Snowflake+Quickstart) Cybersyn offers on the [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Cybersyn).
+Check out Snowflake Public Data's [Snowflake Public Data (Free)](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=Snowflake+Public+Data+%28Free%29) product and [explore all public sources](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products) Snowflake Public Data offers on the Snowflake Marketplace.
 <!-- ------------------------ -->
 
 ## Prepare Your Lab Environment
@@ -196,7 +196,7 @@ You work at a grocery retailer. You want to understand the performance of major 
 We will start by collecting data from three different sources:
 1. Load company metadata `.csv` file.
 2. Load SEC filings from a semi-structured JSON format.
-3. Use the Snowflake Marketplace to find free stock price data from Cybersyn.
+3. Use the Snowflake Marketplace to find free stock price data in "Snowflake Public Data (Free)" from Snowflake Public Data.
 
 <!-- ------------------------ -->
 
@@ -212,7 +212,7 @@ We are using company metadata developed from the Securities and Exchange Commiss
 
 > aside negative
 > 
-> **Free Datasets from Cybersyn direct to your Snowflake instance:** The full dataset is available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7) in Snowflake Marketplace from Cybersyn -- no ETL required. For the purposes of this demo, we will focus on working with a subset of the data, staged in a csv file to learn how to load structured data into Snowflake.
+> **Free Datasets from Cybersyn direct to your Snowflake instance:** The full dataset is available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=Snowflake+Public+Data+%28Free%29) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with a subset of the data, staged in a csv file to learn how to load structured data into Snowflake.
 
 **Getting Data into Snowflake**
 Data can be ingested into Snowflake from many locations by using the `COPY` command, Snowpipe auto-ingestion, external connectors, or third-party ETL/ELT solutions. For more information on getting data into Snowflake, see the [Snowflake documentation](https://docs.snowflake.com/guides-overview-loading-data). For the purposes of this lab, we use the `COPY` command and AWS S3 storage to load data manually. In a real-world scenario, you would more likely use an ETL solution or grab data directly from the Snowflake Marketplace!
