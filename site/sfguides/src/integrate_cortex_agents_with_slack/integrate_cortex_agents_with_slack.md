@@ -12,11 +12,11 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 5
+Duration: 2
 
 Cortex Agents simplify AI-powered data interactions via a REST API, combining hybrid search and accurate SQL generation. They streamline workflows by managing context retrieval, natural language to SQL conversion, and LLM orchestration. Response quality is enhanced with in-line citations, answer abstention, and multi-message context handling. Developers benefit from a single API call integration, real-time streamed responses, and reduced latency for optimized applications.
 
-In this guide, we will see how to integrate the Cortex Agents (*in Public Preview as of 01/12/2025*) with Slack.
+In this guide, we will see how to integrate the Cortex Agents (*in Public Preview as September 2025*) with Slack.
 
 ### Why Cortex Agents?
 
@@ -27,7 +27,7 @@ language interface allowing organizations to develop conversational applications
 users to query data in natural language and get accurate answers in near real
 time. 
 
-Learn more about [Cortex Agents](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg).
+Learn more about [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents).
 
 ### Why Slack?
 
@@ -40,7 +40,7 @@ across projects.
 
 ### Prerequisites
 
-* A Snowflake account in one of these [regions](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability) and also where [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability) is available. If you do not have one you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+* A Snowflake account in one of these [regions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql#label-cortex-llm-availability). If you do not have an account, register for a [free trial](https://signup.snowflake.com/?utm_cta=quickstarts_).
 * A Slack account with access to a workspace where you can install applications. **_NOTE_** _: Slack recommends using a workspace where you won’t disrupt real work getting done —_[ _you can create a new one for free_](https://slack.com/get-started#create) _._
 * Python version >= 3.8, < 3.13
 
@@ -49,6 +49,7 @@ across projects.
 * How to setup Slack application
 * How to setup Cortex Analyst
 * How to setup Cortext Search 
+* How to setup Cortex Agent with Cortex Analyst and Cortext Search tools
 * How to use Cortex Agents REST API and integrate it with Slack
 
 ### What You Will Build
@@ -84,45 +85,43 @@ Duration: 10
 
 **Step 1:** Clone the [GitHub repo](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack).
 
-**Step 2:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/setup.sql) to execute all statements in order from top to bottom. This is to to create a database, schema, and table **SUPPORT_TICKETS** with data loaded from AWS S3. And also to create Snowflake managed internal stages for store the semantic model specification file and PDF documents.
+**Step 2:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/setup.sql) to execute all statements in order from top to bottom. This is to to create a database, schema, tables, and load data from AWS S3. And also to create Snowflake managed internal stages for store the semantic model specification file and PDF documents.
 
-**Step 3:** Use [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) to upload [the semantic model spec file](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/support_tickets_semantic_model.yaml) to the **DASH_SEMANTIC_MODELS** stage.
+> aside positive
+> NOTE: At this point, switch your user role in Snowsight to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
 
-**Step 4:** Use [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) to upload [PDF documents](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/tree/main/data) to the **DASH_PDFS** stage.
+**Step 3:** Use [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) to upload [the semantic model spec file](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/support_tickets_semantic_model.yaml) to the **DASH_AGENT_SLACK.DATA.SEMANTIC_MODELS** stage.
 
-**Step 5:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [cortex_search_service.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/cortex_search_service.sql) to execute all statements in order from top to bottom. This is to create a Cortex Search service for getting insights from the PDF documents. *NOTE: [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability) is in Public Preview as of 01/12/2025.*
+**Step 4:** Use [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) to upload [PDF documents](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/tree/main/data) to the **DASH_AGENT_SLACK.DATA.PDFS** stage.
 
-**Step 6:** Configure [key-pair authentication](https://docs.snowflake.com/user-guide/key-pair-auth#configuring-key-pair-authentication) and assign the public key to your user in Snowflake and store/save/copy the private key file (**_.p8_**) in your cloned app folder.
+**Step 5:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [cortex_search_service.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/cortex_search_service.sql) to execute all statements in order from top to bottom. This is to create a Cortex Search service for getting insights from the PDF documents.
+
+**Step 6:** Create [Personal Access Token (PAT)](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) for **SNOWFLAKE_INTELLIGENCE_ADMIN** role and make a note/local copy of it. (You will need to paste it later in .env file.)
 
 > aside negative
 > IMPORTANT: If you use different names for objects created in this section, be sure to update scripts and code in the following sections accordingly.
 
-## Setup Application
+## Setup Environment
 <!-- ------------------------ -->
 
-Duration: 5
+Duration: 3
 
 **Step 1:** Change or browse to the cloned repo folder **_sfguide-integrate-snowflake-cortex-agents-with-slack_** on your local machine and open the contents of the folder in your favorite IDE — like VS Code.
 
 **Step 2:** In the same folder, create a new file **.env** and set the following environment variables:
 
 ```bash 
-DEMO_DATABASE='DASH_DB'
-DEMO_SCHEMA='DASH_SCHEMA'
-WAREHOUSE='DASH_S'
-DEMO_USER='<your-user-name>'
-DEMO_USER_ROLE='<your-user-role>'
-SEMANTIC_MODEL='@DASH_DB.DASH_SCHEMA.DASH_SEMANTIC_MODELS/support_tickets_semantic_model.yaml'
-SEARCH_SERVICE='DASH_DB.DASH_SCHEMA.vehicles_info'
 ACCOUNT='<your-account-identifier>'
 HOST='<your-account-identifier>.snowflakecomputing.com'
-AGENT_ENDPOINT='https://<your-org>-<your-account>.snowflakecomputing.com/api/v2/cortex/agent:run'
+DEMO_USER='<your-user-name>'
+PAT='<your-personal-access-token>'
+AGENT_ENDPOINT='https://<your-org>-<your-account>.snowflakecomputing.com/api/v2/databases/snowflake_intelligence/schemas/agents/agents/support_ai:run'
 SLACK_APP_TOKEN='<your-slack-app-token>'
 SLACK_BOT_TOKEN='<your-slack-bot-token>'
-      
-# You may NOT edit below values  
-RSA_PRIVATE_KEY_PATH='rsa_key.p8'
-MODEL = 'claude-4-sonnet'
+
+#Do Not Modify
+WAREHOUSE='dash_agent_wh'
+DEMO_USER_ROLE='snowflake_intelligence_admin'
 ```
 
 **Step 3:** In a terminal window, browse to the same cloned folder **_sfguide-integrate-snowflake-cortex-agents-with-slack_** and run the following commands to create Python environment and install the Python packages and dependencies required for the application.
@@ -135,7 +134,63 @@ pip install -r requirements.txt
 
 **Step 4:** Browse to your **Slack App** >> navigate to **OAuth & Permissions** on the left >> scroll down to **Scopes**, and then add `files:write` by clicking on **Add an OAuth Scope** button. This is required by the app to generate, save, and display chart image files.
 
-## Test
+
+## Setup Agent
+<!-- ------------------------ -->
+
+Duration: 5
+
+An agent is an intelligent entity within Snowflake Intelligence that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data. 
+
+Note that you can create multiple agents for various use cases and/or business teams in your organization. 
+
+> aside positive
+> NOTE: At this point, switch your user role in Snowsight to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
+
+### Create Agent
+
+* In Snowsight, on the left hand navigation menu, select [**AI & ML** >> **Agents**](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-getting-started-with-agents-slack) 
+* On the top right, click on **Create agent**
+     - Schema: **SNOWFLAKE_INTELLIGENCE.AGENTS**
+     - Select **Create this agent for Snowflake Intelligence**
+     - Agent object name: Support_AI
+     - Display name: Support//AI
+* Select the newly created **Support_AI** agent and click on **Edit** on the top right corner and make the following updates.
+
+### Add Instructions
+
+Add the following starter questions under **Sample questions**:
+
+- Can you show me a breakdown of customer support tickets by service type cellular vs business internet?
+- How many unique customers have raised a support ticket with a 'Cellular' service type and have 'Email' as their contact preference?
+- What are the payment terms for Snowtires?
+
+### Add Tools
+
+Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
+
+* Tools
+  - **Cortex Analyst**
+    - Click on **+ Add**
+        - Name: Support_Tickets_Data
+        - Add: Semantic model file **DASH_AGENT_SLACK.DATA.SEMANTIC_MODELS** >> **support_tickets_semantic_model.yaml**
+        - Warehouse: **DASH_AGENT_WH**
+        - Query timeout (seconds): 60
+        - Description: *This dataset contains information about customer support tickets for phone services. You can analyze customer interactions, including who submitted tickets, their contact preferences, what type of phone service they have, and what requests or feedback they provided. This allows you to understand customer service patterns, analyze different types of service requests, and examine customer communication preferences.*
+
+  - **Cortex Search Services**
+    - Click on **+ Add**
+        - Name: Docs
+        - Search service: **DASH_AGENT_SLACK.DATA** >> **VEHICLES_INFO**
+        - ID column: RELATIVE_PATH
+        - Title column: TITLE
+
+* Access: SNOWFLAKE_INTELLIGENCE_ADMIN
+
+> aside positive
+> NOTE: On the top right corner, click on **Save** to save the newly updated **Support_AI** agent.
+
+## Test Agent
 <!-- ------------------------ -->
 
 Duration: 3
@@ -147,16 +202,42 @@ Browse to the cloned folder in VS Code and run `python test.py` in a terminal wi
 If you see the output as shown below, then you're good to go.
 
 ```bash
-✅ Cortex Agents response:
+======================================================================
+🎯 FINAL API RESPONSE:
+======================================================================
+Here's the breakdown of customer support tickets by service type for Cellular vs Business Internet:The data shows that Cellular service has significantly more support tickets (114) compared to Business Internet (35). This means Cellular accounts for about 76% of the tickets between these two service types, while Business Internet accounts for about 24%.
+======================================================================
 
-event: message.delta
-data: {"id":"msg_001","object":"message.delta","delta":{"content":[{"index":0,"type":"tool_use","tool_use":{"tool_use_id":"tooluse_257e026c935a46848d09b4","name":"supply_chain","input":{"query":"Can you show me a breakdown of customer support tickets by service type cellular vs business internet?","model":"snowflake-hosted-semantic","experimental":""}}},{"index":0,"type":"tool_results","tool_results":{"tool_use_id":"tooluse_257e026c935a46848d09b4","content":[{"type":"json","json":{"sql":"WITH __support_tickets AS (\n  SELECT\n    ticket_id,\n    service_type\n  FROM dash_db_swt_2024.data.support_tickets\n)\nSELECT\n  service_type,\n  COUNT(DISTINCT ticket_id) AS ticket_count\nFROM __support_tickets\nWHERE\n  service_type IN (\u0027Cellular\u0027, \u0027Business Internet\u0027)\nGROUP BY\n  service_type\n -- Generated by Cortex Analyst\n;","verified_query_used":false,"text":"This is our interpretation of your question:\n\nShow me the count of support tickets broken down by service type, specifically for Cellular and Business Internet services"}}],"status":"success","name":"supply_chain","type":"cortex_analyst_text_to_sql"}}]}}
+💾 EXTRACTED 1 SQL QUERIES:
+======================================================================
 
-event: done
-data: [DONE]
+📋 Query 1:
+----------------------------------------
+WITH __support_tickets AS (
+  SELECT
+    service_type,
+    ticket_id
+  FROM dash_db.dash_schema.support_tickets
+)
+SELECT
+  service_type,
+  COUNT(DISTINCT ticket_id) AS ticket_count
+FROM __support_tickets
+WHERE
+  service_type IN ('Cellular', 'Business Internet')
+GROUP BY
+  service_type
+ -- Generated by Cortex Analyst
+;
+----------------------------------------
+
+✅ CORTEX EXECUTION COMPLETE
+==================================================
+
+Test completed.
 ```
 
-If you see any errors, please double check all values set in **.env**. Common errors are related to ACCOUNT, HOST, AGENT_ENDPOINT and how the RSA key-pair is generated.  
+If you see any errors, please double check all values set in **.env**. Common errors are related to ACCOUNT, HOST, AGENT_ENDPOINT and how PAT (Personal Access Token) is generated.  
 
 If you get this error **Caused by SSLError(SSLCertVerificationError(1, “[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid...**, then try adding **locator.region** to **your-account-identifier**. For additional instructions and help, refer to the [documentation](https://docs.snowflake.com/en/user-guide/admin-account-identifier).
 
@@ -166,7 +247,7 @@ If you get this error **Caused by SSLError(SSLCertVerificationError(1, “[SSL: 
 ## Run Application
 <!-- ------------------------ -->
 
-Duration: 4
+Duration: 10
 
 Browse to the cloned repo folder ***sfguide-integrate-snowflake-cortex-agents-with-slack*** in a terminal window where you executed the commands in the previous section and start the application by running the following command.
 
@@ -177,97 +258,65 @@ Browse to the cloned repo folder ***sfguide-integrate-snowflake-cortex-agents-wi
 If all goes well, you should see the following output on the command line.
 
 ```bash
+🔗 Attempting Snowflake connection with PAT authentication...
+   ✅ PAT authentication successful! Snowflake version: 9.26.0
+🚀 Initialization complete
 ⚡️ Bolt app is running!
 ```
 
-## Slack It To Me
-<!-- ------------------------ -->
-
-Duration: 5
-
 Assuming your app is running without any errors, head over to your Slack channel/app you set up in the **Setup Slack** section and ask the following questions.
 
-### Cortex Analyst: Structured Data
-
-**Question:** *Can you show me a breakdown of customer support tickets by service type cellular vs business internet?*
+### Q. *Can you show me a breakdown of customer support tickets by service type cellular vs business internet?*
 
 In a few moments, you should see the following response:
 
-![Q&A1](assets/q1.png)
+![Q&A1](assets/slack_q_1_a.png)
+
+Now click on **Show Details** button you should see the planning and thinking steps including the [verified] SQL query that was executed.
+
+![Q&A1A](assets/slack_q_1_b.png)
+
+![Q&A1B](assets/slack_q_1_c.png)
 
 Now let’s ask this question.
 
-**Question:** *How many unique customers have raised a support ticket with a ‘Cellular’ service type and have ‘Email’ as their contact preference?*
+### Q. *How many unique customers have raised a support ticket with a 'Cellular' service type and have 'Email' as their contact preference?*
 
 In a few moments, you should see the following response:
 
-![Q&A1](assets/q2.png)
+![Q&A1](assets/slack_q_2.png)
 
-### Cortex Search: Unstructured Data
+NOTE: Feel free to click on **Show Details** button to see the planning and thinking steps.
 
-**Question:** *What are the payment terms for Snowtires?*
-
-In a few moments, you should see the following response:
-
-![Q&A1](assets/q3.png)
-
-Now let’s ask this question.
-
-**Question:** *What's the latest, most effective way to recycle rubber tires?*
+### Q. *What are the payment terms for Snowtires?*
 
 In a few moments, you should see the following response:
 
-![Q&A1](assets/q4.png)
+![Q&A1](assets/slack_q_3.png)
 
-As you can see, now (business) users can directly get answers to their questions written in natural language using the Slack app.
+NOTE: Feel free to click on **Show Details** button to see the planning and thinking steps.
 
-### Code Walkthrough
+### *What's the latest, most effective way to recycle rubber tires?*
 
-As you may have noticed, the main application code is in [app.py](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/app.py) and the Cortex agent REST API code is in [cortex_chat.py](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/cortex_chat.py).
+In a few moments, you should see the following response:
 
-Here are some things you should make a note of in case you’d like to extend or modify the application.
+![Q&A1](assets/slack_q_4.png)
 
-**init()**
-
-In this method, a secure connection to Snowflake is established and an instance of **CortexChat** is created. This CortexChat instance is initialized with AGENT_ENDPOINT, SEARCH_SERVICE, SEMANTIC_MODEL, MODEL, and a Java Web Token (JWT). 
-
-**handle_message_events()**
-
-This method is decorated with `@app.event("message")` and is invoked when you type a question in Slack. After displaying the initial message, it calls **ask_agent()** passing it the question in variable `prompt`. Then it calls **display_agent_response()** passing it the response from 
-
-**ask_agent()**
-
-This method is called from **handle_message_events**. It use the instance of **CortexChat** to call **chat()** method. This methods internally calls **_retrieve_response()**, **_parse_response()** and other methods to retrieve and parse the Cortex Agent response. 
-
-**display_agent_response()**
-
-This method is called from **handle_message_events.** It takes the response from **ask_agent()** and sends the formatted output to Slack.
-
-NOTE: The response from Cortex Agents REST API includes the SQL query that is generated based on the natural language prompt/question passed in as input. This SQL query is executed in the application (*line 125 in app.py*) to display the results in Slack.
-
-**plot_chart()**
-
-This method takes a Pandas DataFrame as an input and dynamically generates a pie chart. 
-
-NOTE: While the code to generate the chart is very specific to the data used in this example, the flow/logic is broadly applicable.
-
-* A chart is generated based on the data
-* The chart image is saved locally — *line 237 in app.py*
-* The image file is securely uploaded to Slack using Slack APIs [getUploadURLExternal](https://api.slack.com/methods/files.getUploadURLExternal) and [completeUploadExternal](https://api.slack.com/methods/files.completeUploadExternal)
-* The permalink provided by Slack is used to access / display the image — *line 176 in app.py*
+NOTE: Feel free to click on **Show Details** button to see the planning and thinking steps.
 
 ## Conclusion And Resources
 <!-- ------------------------ -->
 
 Duration: 1
 
-Congratulations! You've sucessfully integrated Cortex Agents with Slack. I hope you found this guide both educational and inspiring.
+Congratulations! You've sucessfully integrated Cortex Agents with Slack.
 
 ### What You Learned
 
 * How to setup Slack application
 * How to setup Cortex Analyst
 * How to setup Cortext Search 
+* How to setup Cortex Agent with Cortex Analyst and Cortext Search tools
 * How to use Cortex Agents REST API and integrate it with Slack
 
 ### Related Resources

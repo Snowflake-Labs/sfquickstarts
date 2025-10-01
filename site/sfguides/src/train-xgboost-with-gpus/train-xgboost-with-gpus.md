@@ -166,3 +166,7 @@ Ready to accelerate your ML workflows in [Snowflake ML](https://www.snowflake.co
     - [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks)
     - [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime)
     - [Getting Started with Running Distributed PyTorch Models on Snowflake](https://quickstarts.snowflake.com/guide/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+    - [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-train-xgboost-model-using-gpus-using-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb?_fsi=EwgOAmF4&_fsi=EwgOAmF4&_fsi=EwgOAmF4)
+    - [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/harness-gpus-in-snowflake-notebooks-to-train-an-xgboost-model.pdf)
+    - [Read Engineering Blog](https://www.snowflake.com/en/engineering-blog/machine-learning-container-runtime/)
+    - [Watch the Demo](https://youtu.be/MD5aP0uEAps?list=TLGGjL9LjRsTO-AyNDA5MjAyNQ)

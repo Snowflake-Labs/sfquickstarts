@@ -128,11 +128,6 @@
       "type": 301
     },
     {
-      "source": "guide/asking_questions_to_your_own_documents_with_snowflake_cortex/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
       "source": "guide/getting_started_with_cortex_analyst_in_snowflake/{,/**}",
       "destination": "/guide/getting_started_with_cortex_analyst/",
       "type": 301
@@ -273,11 +268,6 @@
       "type": 301
     },
     {
-      "source": "guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/{,/**}",
-      "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
       "source": "guide/machine_learning_with_snowpark_python/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
       "type": 301
@@ -305,11 +295,6 @@
     {
       "source": "guide/vhol_snowflake_data_wrangler/{,/**}",
       "destination": "https://quickstarts.snowflake.com/guide/404.html",
-      "type": 301
-    },
-    {
-      "source": "/guide/integrate_snowflake_cortex_agents_with_microsoft_teams{,/**}",
-      "destination": "/guide/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app",
       "type": 301
     }
     ]

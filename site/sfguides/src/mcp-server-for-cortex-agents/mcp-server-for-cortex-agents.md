@@ -222,3 +222,4 @@ Congratulations! You've sucessfully built an MCP server for Cortex Agents. I hop
   * [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
   * [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
   * [MCP Server Quickstart](https://modelcontextprotocol.io/quickstart/server)
+  * [Watch the Demo](https://youtu.be/GO_P4Iov5Gg?list=TLGGfBnhaVxeX7AyNDA5MjAyNQ)

@@ -359,11 +359,15 @@ Documentation:
 - [Snowflake Notebooks Overview](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 - [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Streamlit in Snowflake Guide](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/ocr-rag-snowflake-notebooks.pdf)
+- [Fork Notebook](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ocr-rag-with-snowflake-notebooks)
 
 Blogs & Articles:
 - [Introduction to RAG Applications](https://quickstarts.snowflake.com/guide/ask_questions_to_your_own_documents_with_snowflake_cortex_search/#0)
 - [Cortex Search Best Practices](https://www.snowflake.com/engineering-blog/cortex-search-and-retrieval-enterprise-ai/)
+- [Read Medium Blog](https://medium.com/snowflake/unlocking-insights-from-images-with-ocr-and-rag-in-snowflake-968298b0c3cc)
 
 Sample Code & Guides:
 - [Snowpark Python Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 - [Snowflake Machine Learning](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
+- [Watch the Demo](https://youtu.be/fEI9CbkJcCU?list=TLGG9VdpCfB4GAQyMjA5MjAyNQ)

@@ -484,5 +484,6 @@ For more information, check out the resources below:
 - [Cortex Analyst docs](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst)
 - [Cortex Analyst examples](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/cortex-analyst)
 - [Semantic Model Generator](https://github.com/Snowflake-Labs/semantic-model-generator)
+- [Watch the Demo](https://youtu.be/eat-J-roEU8?list=TLGGeG7BOVuJNYUyMjA5MjAyNQ)
 
 <!-- ------------------------ -->

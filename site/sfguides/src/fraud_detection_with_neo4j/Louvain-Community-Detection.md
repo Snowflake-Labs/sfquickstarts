@@ -7,7 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Data Engineering, Twitter
 
-# Finding Fraudulent Communities With Neo4j
+# Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics
 <!-- ------------------------ -->
 ## Overview
 Duration: 2

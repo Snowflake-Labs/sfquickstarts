@@ -600,4 +600,8 @@ This guide contained code patterns that you can leverage to get quickly started 
 
 - [Anomaly Detection](https://docs.snowflake.com/en/user-guide/analysis-anomaly-detection) Product Docs, alongside the [anomaly syntax](https://docs.snowflake.com/en/sql-reference/classes/anomaly_detection)
 - [Forecasting](https://docs.snowflake.com/en/user-guide/analysis-forecasting) Product Docs, alongside the [forecasting syntax](https://docs.snowflake.com/sql-reference/classes/forecast)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/notebook-demo/tree/main/Getting%20Started%20with%20Snowflake%20Cortex%20ML-Based%20Functions)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Forecasting-Restaurant-Sales-and-Identifying-Sales-Anomalies-using-Cortex-ML-functions.pdf)
+- [Read the Blog](https://medium.com/snowflake/detecting-anomalies-with-snowflake-cortex-ml-based-functions-869c209d152d)
+- [Watch the Demo](https://youtu.be/xgxycDLg07U?list=TLGGW3mZkg03mM0yNDA5MjAyNQ)
 

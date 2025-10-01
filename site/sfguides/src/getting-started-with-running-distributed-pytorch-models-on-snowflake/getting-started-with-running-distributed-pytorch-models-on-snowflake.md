@@ -168,3 +168,7 @@ When you click the **Get Recommendations** button, the application filters the d
 - [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](https://quickstarts.snowflake.com/guide/defect_detection_using_distributed_pyTorch_with_snowflake_notebooks/#0)
 - [Scale Embeddings with Snowflake Notebooks on Container Runtime](https://quickstarts.snowflake.com/guide/scale-embeddings-with-snowflake-notebooks-on-container-runtime/#0)
 - [Getting Started with Snowflake MLeg](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/tree/main)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/End-to-End-ML-Workflows-with-Snowflake-ML-Architecture.png)
+- [Read the Blog](https://medium.com/snowflake/running-distributed-pytorch-models-on-snowflake-an-end-to-end-ml-solution-452d16a39553)
+- [Watch the Demo](https://youtu.be/9uqcNBIY14g?list=TLGGGYyd9046ENkyNDA5MjAyNQ) 

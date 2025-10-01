@@ -30,6 +30,8 @@ You'll learn to architect an end-to-end analytics pipeline that seamlessly proce
 
 ![Architecture](assets/Architecture.png)
 
+> Source Code - https://github.com/Snowflake-Labs/sfguide-building-cortex-aisql-powered-callcentre-analytics
+
 ### What You Will Learn
 
 You will quickly learn how to use Cortex AI Transcribe for automated audio file processing, utilize advanced Cortex AISQL functions including AI_Complete and AI_Sentiment for intelligent data extraction from transcribed conversations, and integrate Cortex Analyst with semantic models to create sophisticated conversational chatbots. Additionally, you will develop interactive Streamlit dashboards that present critical KPIs and comprehensive analytics, empowering business stakeholders with data-driven insights.
@@ -50,102 +52,44 @@ A comprehensive call center analytics solution featuring:
 * Access to a [Snowflake account](https://signup.snowflake.com/)
 * Basic understanding of Streamlit applications
 * Account must have these features:
-[AI_COMPLETE Function](https://docs.snowflake.com/sql-reference/functions/ai_complete)
-[AI_TRANSCRIBE Function](https://docs.snowflake.com/en/sql-reference/functions/ai_transcribe)
+
+  - [AI_COMPLETE Function](https://docs.snowflake.com/sql-reference/functions/ai_complete)
+  - [AI_TRANSCRIBE Function](https://docs.snowflake.com/en/sql-reference/functions/ai_transcribe)
+
+> We are using CLAUDE-3-5-SONNET models in this solution, if this model is not available in your region please enable cortex cross region inference for your account https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference .
 
 <!-- ------------------------ -->
 ## Setup
 
 Duration: 5
 
-### 1. Environment Setup
+### 1. Environment Setup 
 
-Create the necessary Snowflake objects for the solution:
+To set up your Snowflake environment for the call centre analytics solution perform the following steps:
 
-```sql
+1. Open the [setup.sql](https://github.com/Snowflake-Labs/sfguide-building-cortex-aisql-powered-callcentre-analytics/blob/main/setup.sql) file from the git repo or from the cloned local folder.
+1. Open a new sql worksheet in Snowsight.
+1. Paste the contents of [setup.sql](https://github.com/Snowflake-Labs/sfguide-building-cortex-aisql-powered-callcentre-analytics/blob/main/setup.sql) file or upload and run the file.
 
-USE ROLE ACCOUNTADMIN;
+The script will create:
 
-CREATE ROLE IF NOT EXISTS DE_DEMO_ROLE;
-CREATE DATABASE IF NOT EXISTS call_centre_analytics_db;
+- A new database for the solution.
+- Stages for Audio Files and Semantic Model.
+- Copies the audio files and semantic model yaml file from github to the stage by creating API Integration and Git repo in Snowflake.
 
--- Create warehouse
-CREATE WAREHOUSE IF NOT EXISTS cca_xs_wh 
-    WAREHOUSE_SIZE = 'SMALL'
-    AUTO_SUSPEND = 300
-    AUTO_RESUME = TRUE;
-
-USE DATABASE call_centre_analytics_db;
-USE SCHEMA PUBLIC;
-
--- Create stages for file storage
-CREATE STAGE IF NOT EXISTS AUDIO_FILES
-    ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
-
-CREATE STAGE IF NOT EXISTS SEMANTIC_MODELS
-    ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
-
--- Grant permissions to custom role
-GRANT USAGE ON DATABASE call_centre_analytics_db TO ROLE DE_DEMO_ROLE;
-GRANT USAGE ON SCHEMA PUBLIC TO ROLE DE_DEMO_ROLE;
-GRANT USAGE ON WAREHOUSE cca_xs_wh TO ROLE DE_DEMO_ROLE;
-GRANT READ, WRITE ON STAGE AUDIO_FILES TO ROLE DE_DEMO_ROLE;
-GRANT READ, WRITE ON STAGE SEMANTIC_MODELS TO ROLE DE_DEMO_ROLE;
-
--- Switch to custom role
-USE ROLE DE_DEMO_ROLE;
-USE DATABASE call_centre_analytics_db;
-USE WAREHOUSE cca_xs_wh;
-USE SCHEMA PUBLIC;
-
-CREATE STAGE IF NOT EXISTS UDF
-ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
-DIRECTORY = (ENABLE = TRUE)
-COMMENT = ' used to create UDFs';
-
-CREATE STAGE IF NOT EXISTS AUDIO_FILES
-ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
-DIRECTORY = (ENABLE = TRUE)
-COMMENT = ' stage for Cortex Analyst semantic model files';;;
-
-CREATE STAGE IF NOT EXISTS SEMANTIC_MODEL_STAGE
-ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
-DIRECTORY = (ENABLE = TRUE)
-COMMENT = ' stores the semantic yaml file for cortex analyst';
-
--- Stored the audio file path and the transcription of the audio file. Duration is in seconds.
- CREATE or REPLACE TABLE ALL_CLAIMS_RAW (
-    DATETIME DATE,
-    AUDIOFILE VARCHAR(16777216),
-    AUDIOFILE_RELATIVE_PATH VARCHAR(16777216),
-    CONVERSATION VARCHAR(16777216),
-    PRESIGNED_URL_PATH VARCHAR(16777216),
-    DURATION FLOAT  NULL
-  );
-
- CREATE or REPLACE TABLE AUDIO_CLAIMS_EXTRACTED_INFO 
-    (
-        DATETIME DATE,
-        AUDIO_FILE_NAME VARCHAR(100),
-        AUDIO_FULL_FILE_PATH VARCHAR(16777216),
-        RAW_CONVERSATION VARCHAR(16777216),
-        PROMPTED_CONVERSATION VARCHAR(16777216),
-        DURATION FLOAT,
-        CALL_DETAILS VARIANT,
-        CALL_SUMMARY VARCHAR(16777216),
-        CALL_SENTIMENT variant,
-        REPONSE_GIVEN FLOAT
-    );
-
-```
 ### 2. File to Upload to Stage
 
- - Upload all the files in <b>*[`audio_files`](https://github.com/Snowflake-Labs/sfguide-building-cortex-aisql-powered-callcentre-analytics/tree/main/audio_files)*</b> folder from your cloned repo to *AUDIO_FILES* stage that you have created above. Ensure you upload the files with the same folder structure to the stage.
+ Ensure the uploaded files has the following folder structure in the stage.
 
  ![Audio File Listing](assets/audio_file_stage_screenshot.png)
 
+ If you are unable to create the API integration and GIT repository in Snowflake you should upload the following files to the stages created.
+ 
+ - All the files in <b>*[`audio_files`](https://github.com/Snowflake-Labs/sfguide-building-cortex-aisql-powered-callcentre-analytics/tree/main/audio_files)*</b> folder from your cloned repo to *AUDIO_FILES* stage that you have created above. 
+
  - Upload ['call_center_analytics_model.yaml'](https://github.com/Snowflake-Labs/sfguide-building-cortex-aisql-powered-callcentre-analytics/blob/main/call_center_analytics_model.yaml) to *SEMANTIC_MODEL_STAGE* stage.
 
+Following two files are for: 
 - `streamlit_cortex_analyst_dashboard_sis.py` - Main Streamlit application
 
 - `call_center_analytics_model.yaml` - Semantic model for Cortex Analyst
@@ -173,6 +117,9 @@ After you complete running through the notebook you can create the streamlit app
 3. **Schema**: Choose `PUBLIC`
 4. **Warehouse**: Choose `cca_xs_wh` warehouse
 
+Paste the contents of [streamlit_cortex_analyst_dashboard_sis.py](https://github.com/Snowflake-Labs/sfguide-building-cortex-aisql-powered-callcentre-analytics/blob/main/streamlit_cortex_analyst_dashboard_sis.py) and run the streamlit app. 
+
+While running the app for the first time it will give you package not found error for plotly, please add ploytly in the call_centre_analytics_app streamlit app packages and rerun the app  .
 
 ![Streamlit App Dashboard](assets/streamlit_app_dashbaord.jpg)
 
@@ -290,4 +237,3 @@ You've built a complete call center analytics solution featuring:
 - [Snowflake Cortex Analyst Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Streamlit in Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
-

@@ -498,3 +498,7 @@ With the completion of this Quickstart, you have now delved into:
 - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
 - [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+- [Fork Repo on Github](https://github.com/Snowflake-Labs/sfguide-intro-to-cdc-using-snowflake-postgres-connector-dynamic-tables/tree/main)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Real-Time-Financial-Insights-Using-CDC-Architecture.png)
+- [Read the Blog](https://medium.com/snowflake/real-time-financial-insights-using-cdc-with-the-snowflake-connector-for-postgresql-and-dynamic-989c2911c393)
+- [Watch the Demo](https://youtu.be/M77Aun9ke7I?list=TLGGUvQ7ij03_TUyNDA5MjAyNQ)

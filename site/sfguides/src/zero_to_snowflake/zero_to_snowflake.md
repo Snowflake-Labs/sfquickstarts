@@ -797,6 +797,7 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 
 **Phase 3: Conversational Intelligence**
 * Natural Language Business Analytics Interface using Cortex Analyst for conversational data exploration.
+* Unified AI Business Intelligence Platform using Snowflake Intelligence that connects customer voice with business performance
 
 ## Cortex Playground
 
@@ -925,10 +926,10 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 
 Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet or Workspaces to follow along in Snowflake. 
 <!-- Uncomment when Copilot is added back -->
-<!-- **Note that once you've reached the end of the Worksheet you can skip to Step 19 - Snowflake Copilot.** -->
+<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).** -->
 
 <!-- Remove when Copilot is added back -->
-**Note: Once you've reached the end of the Worksheet, you can skip to Step 19 - Cortex Search.**
+**Note: Once you've reached the end of the Worksheet, you can skip to [Step 19 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
 <!-- End remove -->
 
 ### Step 1 - Setting Context
@@ -1163,7 +1164,7 @@ In the same Copilot panel, paste the following business question and click RUN t
 
 Snowflake Copilot profoundly transforms business intelligence by enabling users to effortlessly translate complex business questions into sophisticated SQL queries. As demonstrated with Tasty Bytes, it empowers both technical and non-technical users to derive actionable insights from their data without deep SQL expertise. This LLM-powered assistant delivers schema-aware, purpose-built intelligence, ensuring robust data governance and keeping all enterprise data securely within Snowflake. Copilot isn't just generic AI; it's a strategic tool that bridges operational insights with business intelligence. -->
 
-## Cortex Search
+## Optional: Cortex Search
 Duration: 6
 
 <img src='./assets/cortex_search_header.png'>
@@ -1253,9 +1254,9 @@ Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback.
 
 **In the next module** - Cortex Analyst - you’ll use natural language to query structured data. 
 
-## Cortex Analyst
+## Optional: Cortex Analyst
 
-Duration: 10
+Duration: 3
 
 <img src='./assets/cortex_analyst_header.png'>
 
@@ -1275,21 +1276,20 @@ Let's begin by navigating to Cortex Analyst in Snowsight and configuring our sem
 
 2. **Set Role and Warehouse:**
 
-    * Change role to `TB_ADMIN`.
+    * Change role to `TB_DEV`.
     * Set Warehouse to `TB_CORTEX_WH`.
     * Click **Create new model**.
 
 <img src = "assets/vignette-3/cortex-analyst-setup.png">
 
 
-3. On the **Getting Started** page:
+3.  On the **Getting Started** page, configure the following:
 
-    * Choose **Semantic View**.
-    * **Location to store** dropdown: Select **DATABASE: TB_101** and **SCHEMA: SEMANTIC_LAYER**.
-    * **Name**: `tasty_bytes_business_analytics`.
-    * **Description**: (Strongly recommended for clarity and AI understanding. Use: Semantic model for Tasty Bytes executive analytics, covering customer loyalty and order performance data for natural language querying)
-
-    * Click **Next: Select tables** to proceed.
+      * **DATABASE**: `TB_101`
+      * **SCHEMA**: `SEMANTIC_LAYER`
+      * **Name**: `tasty_bytes_business_analytics`
+      * **Description**: `Semantic model for Tasty Bytes executive analytics, covering customer loyalty and order performance data for natural language querying`
+      * Click **Next**.
 
 <img src = "assets/vignette-3/cortex-analyst-getting-started.png">
 
@@ -1307,38 +1307,55 @@ In the **Select tables** step, let's choose our pre-built analytics views.
 
 <img src = "assets/vignette-3/cortex-analyst-select-tables.png">
 
-2. **Configure Column Selection:**
+### Step 2 - Select & Configure Tables and Columns
 
-    * On the **Select columns** page, ensure both selected tables are active.
-    * Click **Create and Save**
+In the **Select tables** step, let's choose our analytics views.
 
-<img src = "assets/vignette-3/cortex-analyst-select-columns.png">
+1.  Select the core business tables:
 
+      * **DATABASE**: `TB_101`
+      * **SCHEMA**: `SEMANTIC_LAYER`
+      * **VIEWS**: Select `Customer_Loyalty_Metrics_v` and `Orders_v`.
+      * Click **Next**.
 
-### Step 3 -  Add Table Synonyms
+2.  On the **Select columns** page, ensure both selected tables are active, then click **Create and Save**.
 
-Now let’s add table synonyms for better natural language understanding:
+### Step 3 - Edit Logical Table & Add Synonyms
 
-* For **customer_loyalty_metrics_v** table, please copy & paste:
-    `Customers, customer_data, loyalty, customer_metrics, customer_info`
-* For **orders_v** table, please copy & paste:
-    `Orders, transactions, sales, purchases, order_data`
+Now, let's add table synonyms and a primary key for better natural language understanding.
 
-<img src = "assets/vignette-3/cortex-analyst-synonyms.gif">
+1.  In the `customer_loyalty_metrics_v` table, copy and paste the following synonyms into the `Synonyms` box:
 
+    ```
+    Customers, customer_data, loyalty, customer_metrics, customer_info
+    ```
+
+2.  Set the **Primary Key** to `customer_id` from the dropdown.
+
+3.  For the `orders_v` table, copy and paste the following synonyms:
+
+    ```
+    Orders, transactions, sales, purchases, order_data
+    ```
+
+4.  After making these changes, click **Save** in the top right corner.
 
 ### Step 4 - Configure Table Relationships
 
-After creating the semantic model, let’s establish the relationship between our logical tables and add business-friendly synonyms.
+After creating the semantic model, let's establish the relationship between our logical tables.
 
-Let's configure our table relationship by creating:
+1.  Click **Relationships** in the left-hand navigation.
 
-* **Relationship name**: `orders_to_customer_loyalty_metrics`
-* **Join type**: `Left outer`
-* **Relation type**: `many-to-one`
-* **Left table**: `ORDERS_V`
-* **Right table**: `CUSTOMER_LOYALTY_METRICS_V`
-* **Join columns**: `CUSTOMER_ID = CUSTOMER_ID`
+2.  Click **Add relationship**.
+
+3.  Configure the relationship as follows:
+
+      * **Relationship name**: `orders_to_customer_loyalty_metrics`
+      * **Left table**: `ORDERS_V`
+      * **Right table**: `CUSTOMER_LOYALTY_METRICS_V`
+      * **Join columns**: Set `CUSTOMER_ID` = `CUSTOMER_ID`.
+
+4.  Click **Add relationship**
 
 <img src = "assets/vignette-3/cortex-analyst-table-relationship.png">
 
@@ -1353,26 +1370,30 @@ To access the **Cortex Analyst chat interface** in fullscreen mode, you would:
 
 ### Step 5 - Execute Customer Segmentation Intelligence
 
-With our semantic model and relationship active, let’s demonstrate sophisticated natural language analysis by running our first complex business query.
+With our semantic model and relationships active, let's demonstrate sophisticated natural language analysis by running our first complex business query.
 
-Navigate to **Cortex Analyst chat interface**.
+1.  Navigate to the Cortex Analyst query interface.
 
-Let's execute our customer segmentation analysis:
+2.  Enter the following prompt:
 
-**Prompt 1:** `Tell me, which customer groups, broken down by marital status and gender, are spending the most per customer? I'd like to see this across our different cities and regions. Also, can we compare their long-term spending habits to identify our most valuable customer demographics for focused marketing efforts?`
-
+    ```
+    Show customer groups by marital status and gender, with their total spending per customer and average order value. Break this down by city and region, and also include the year of the orders so I can see when the spending occurred. In addition to the yearly breakdown, calculate each group’s total lifetime spending and their average order value across all years. Rank the groups to highlight which demographics spend the most per year and which spend the most overall.
+    ```
 <img src = "assets/vignette-3/cortex-analyst-prompt1.png">
 
 > **Key Insight**: Instantly delivers comprehensive intelligence by combining multi-table joins, demographic segmentation, geographic insights, and lifetime value analysis - insights that would require 40+ lines of SQL and hours of analyst effort.
 
 ### Step 6 - Generate Advanced Business Intelligence
 
-Having seen basic segmentation, let’s now demonstrate enterprise-grade SQL that showcases the full power of conversational business intelligence.
+Having seen basic segmentation, let's now demonstrate enterprise-grade SQL that showcases the full power of conversational business intelligence.
 
-Let's execute our multi-layered customer analysis:
+1.  Clear the context by clicking the refresh icon.
 
-**Prompt 2:** `I want to understand our customer base better. Can you group customers by how much they've spent with us over time, then show me their ordering patterns differ between top spenders and lower spenders? Also compare how our franchise locations perform versus company-owned stores for each customer group`
+2.  Enter the following prompt:
 
+    ```
+    I want to understand our customer base better. Can you group customers by their total spending (high, medium, low spenders), then show me their ordering patterns differ? Also compare how our franchise locations perform versus company-owned stores for each spending group.
+    ```
 <img src = "assets/vignette-3/cortex-analyst-prompt2.png">
 
 
@@ -1381,6 +1402,230 @@ Let's execute our multi-layered customer analysis:
 ### Conclusion
 
 Through these rigorous steps, we've forged a robust Cortex Analyst semantic model. This isn't just an improvement; it's a transformative tool designed to liberate users across various industries from the constraints of SQL, enabling them to surface profound business intelligence through intuitive natural language queries. Our multi-layered analyses, while showcased through the Tasty Bytes use case, powerfully illustrate how this model drastically cuts down on the time and effort traditionally needed for deep insights, thereby democratizing access to data and fueling a culture of informed, agile decision-making on a broad scale.
+
+## Snowflake Intelligence
+
+Duration: 7
+
+<img src='./assets/si_header.png'>
+
+### Overview
+
+The Chief Operating Officer at Tasty Bytes receives dozens of fragmented reports each week: customer satisfaction dashboards, revenue analytics, operational performance metrics, and market analysis. Critical business insights remain buried across separate systems: customer sentiment lives in review platforms, sales data sits in financial dashboards, and operational metrics exist in isolated performance tools.
+
+When the COO needs to understand why Q3 revenue dropped, connecting customer feedback sentiment with actual financial performance requires hours of manual analysis, SQL expertise, and cross-referencing multiple data sources. This is a significant hurdle for executives and other non-technical roles.
+
+In this section, we'll demonstrate how Snowflake Intelligence tackles this challenge by combining the capabilities of Cortex Search and Cortex Analyst, which are made available through the setup. This integration allows for a single conversational AI agent. You'll see how executives and other non-technical roles can ask natural language questions and receive immediate answers with visualizations. This kind of insight would normally take weeks of analyst work across multiple teams.
+
+**Prerequisites:**
+
+Before starting this module, your environment includes pre-configured AI services that power Snowflake Intelligence:
+
+* **Cortex Search Service:** `tasty_bytes_review_search` - analyzing customer reviews and feedback
+    * *Note for Advanced Users:* If you want to build your own Cortex Search from scratch, an optional setup module is available. For a detailed guide, click the link to the: [Cortex Search Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18)
+
+* **Cortex Analyst Service:** `TASTY_BYTES_BUSINESS_ANALYTICS` - for translating natural language questions into SQL and providing insights from structured data, enabling self-service analytics.
+    * *Note for Advanced Users:* If you prefer to build your own Cortex Analyst semantic model from scratch, you can access the detailed setup module for guidance. Access the detailed setup by clicking on the: [Cortex Analyst Module](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#19)
+
+---
+
+### Step 1 - Upload Semantic Model
+
+To enable business analytics capabilities in Snowflake Intelligence, you need to upload the pre-built semantic model file to your Snowflake stage. You can **download the necessary YAML file directly by clicking this link:** [Cortex Analyst Semantic Model](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/semantic_models/TASTY_BYTES_BUSINESS_ANALYTICS.yaml)
+
+**Important:** If clicking the link opens the file in your browser instead of downloading it, please right-click on the link and select **"Save Link As"** to download the YAML file to your local machine.
+
+Here's how to upload the semantic model:
+
+1.  **Navigate to Cortex Analyst**: In Snowsight, go to **AI & ML Studio** and then select **Cortex Analyst**.
+
+2.  **Set Role and Warehouse**:
+
+      * Change your role to `TB_DEV`.
+      * Set the warehouse to `TB_CORTEX_WH`.
+
+3.  **Upload your YAML file**: Click the **Upload your yaml file** button.
+
+4.  **Configure Upload Details**: In the upload file screen, set the following:
+
+      * **Database**: `Tb_101`
+      * **Schema**: `semantic_layer`
+      * **Stage**: `semantic_model_stage`
+
+5.  **Click Upload**: This YAML file contains the pre-configured semantic model that defines the business analytics layer, including customer loyalty metrics and order data.
+
+6.  **Save the YAML file**: After clicking upload, save the YAML file. The semantic model will then appear in the Cortex Analyst panel, in the semantic models section.
+
+![snowflake-intelligence-yaml-file-upload](assets/vignette-3/snowflake-intelligence-yaml-file-upload.gif)
+
+-----
+
+### Step 2: Create a Unified Agent
+
+With your AI services pre-configured, you can now create a Cortex Agent that combines these capabilities into a single, unified intelligence interface.
+
+### Create the Agent
+
+1.  In **Snowsight**, navigate to the **AI & ML Studio**, then select **Agents**.
+2.  Click **Create Agent**.
+3.  In the "Create New Agent" window, click **Create agent**.
+4.  **Initial Configuration**:
+      * **Platform integration**: Ensure "Create this agent for Snowflake Intelligence" is checked.
+      * **Database and schema**: This will default to `SNOWFLAKE_INTELLIGENCE.AGENTS`.
+      * **Agent object name**: Enter `tasty_bytes_intelligence_agent`.
+      * **Display name**: Enter `Tasty Bytes Business Intelligence Agent`.
+5.  Click **Create agent**.
+
+![snowflake-intelligence-create-agent](assets/vignette-3/snowflake-intelligence-create-agent.png)
+
+-----
+
+### Configure the Agent
+
+After creating the agent, click on its name from the agent list to open the details page, then click **Edit** to begin configuring it.
+
+![snowflake-intelligence-edit-agent](assets/vignette-3/snowflake-intelligence-edit-agent.gif)
+
+#### **1. About Tab**
+
+  * **Display name**: `Tasty Bytes Business Intelligence Agent`
+  * **Description**:
+```
+This agent analyzes customer feedback and business performance data for Tasty Bytes food trucks. It identifies operational issues, competitive threats, and growth opportunities by connecting customer reviews with revenue and loyalty metrics to provide actionable business insights.
+```
+
+#### **2. Tools Tab**
+
+> **Note**: This lab primarily uses a pre-built **semantic model** uploaded in Step 1. However, if you built your Cortex Analyst semantic view from scratch using the [Cortex Analyst Module](vignette-3-cortex-analyst.md), you will select your **semantic view** here instead of a semantic model. After setting the **Database** to `TB_101` and **Schema** to `semantic_layer`, your semantic view will be listed and selectable under that schema.
+
+Now, let's add the semantic model we uploaded in Step 1:
+
+**Add the Cortex Analyst Tool:**
+
+1.  Click **Add** next to "Cortex Analyst."
+2.  Select the **Semantic model file** radio button.
+3.  **Configure the semantic model location**:
+      * **Schema**: Choose `TB_101.SEMANTIC_LAYER`.
+      * **Stage**: Choose `SEMANTIC_MODEL_STAGE`.
+      * **File Selection**: Pick your uploaded YAML file from the list.
+4.  **Configure tool details**:
+      * **Name**: Enter `tasty_bytes_business_analytics`.
+      * **Description**:
+```
+Searches customer reviews and feedback to identify sentiment, operational issues, and customer satisfaction insights
+```
+5.  **Configure execution settings**:
+      * **Warehouse**: Select **Custom** and choose `TB_CORTEX_WH`.
+      * **Query timeout**: Enter `300`.
+6.  Click **Add**.
+
+![snowflake-intelligence-add-analyst](assets/vignette-3/snowflake-intelligence-add-analyst.gif)
+
+-----
+
+**Add the Cortex Search Services Tool:**
+
+1.  Click **Add** next to "Cortex Search Services."
+2.  **Configure tool details**:
+      * **Name**: `tasty_bytes_review_search`.
+      * **Description**: 
+``` 
+Searches customer reviews and feedback to identify sentiment, operational issues, and customer satisfaction insights
+``` 
+3.  **Configure data source location**:
+      * **Schema**: Choose `TB_101.HARMONIZED`.
+      * **Search service**: Choose `TB_101.HARMONIZED.TASTY_BYTES_REVIEW_SEARCH`.
+4.  **Configure search result columns**:
+      * **ID column**: Select **Review**
+      * **Title column**: Select **TRUCK_BRAND_NAME**
+5.  **Configure search filters (optional)**:
+      * Click **Add filter** to add up to 5 optional filters.
+6.  Click **Add**.
+
+![snowflake-intelligence-add-search](assets/vignette-3/snowflake-intelligence-add-search.gif)
+
+#### **3. Orchestration Tab**
+
+* **Orchestration Instruction**:
+
+```
+Use both Cortex Search and Cortex Analyst to provide unified business intelligence.
+Analyze customer feedback sentiment and operational issues from reviews, then correlate findings with revenue performance, customer loyalty metrics, and market data.
+Present insights with revenue quantification and strategic recommendations.
+```
+
+* **Response Instruction**:
+```
+You are a business intelligence analyst for Tasty Bytes food trucks. When analyzing data:
+1. Combine customer review insights with specific revenue and loyalty data to provide comprehensive business intelligence
+2. Quantify business impact with specific revenue amounts and market sizes
+3. Identify operational risks, competitive threats, and growth opportunities
+4. Provide clear, actionable recommendations for executive decision-making
+5. Use visualizations when helpful to illustrate business insights
+6. Explain the correlation between customer feedback and business performance
+7. Focus on strategic insights that drive business outcomes
+```
+
+#### **4. Access Tab**
+
+> To control who can use your agent in this lab, you'll simply keep the default ACCOUNTADMIN access, which is sufficient for testing, with no extra configuration needed; however, you have the option to add more roles, such as TB_ADMIN, by clicking Add role.
+
+#### **5. Save Configuration**
+
+  * Click **Save** in the top right corner to finalize your agent's configuration.
+
+Your unified intelligence agent is now ready to provide conversational business intelligence through the Snowflake Intelligence interface.
+
+-----
+
+### Step 3 - Access Snowflake Intelligence Interface
+
+With your intelligence agent created, we can now access the Snowflake Intelligence interface that provides unified natural language business intelligence.
+
+**Access the interface:**
+
+1.  Open Snowsight and navigate to the AI & ML Studio, then select **Snowflake Intelligence**
+2.  Select our created agent: `tasty_bytes_intelligence_agent`
+3.  Select the sources: select `tasy_byets_review_search` and `tasty_bytes_business_analytics`
+
+You are now ready to demonstrate unified business intelligence through natural language.
+
+![snowflake-intelligence-interface](assets/vignette-3/snowflake-intelligence-interface.gif)
+-----
+
+### Step 4 - Correlate Revenue & Customer Themes
+
+Let's deep dive into our highest-earning markets by mapping their financial success to the voice of their customers.
+
+**Prompt:**
+
+```
+Generate a bar chart displaying the top 5 cities by total revenue. For each of these top-performing cities, analyze their customer reviews to identify the 3 most frequently discussed topics or common themes (e.g., related to service, product, or facilities). Provide these topics alongside the chart
+```
+![snowflake-intelligence-prompt2](assets/vignette-3/snowflake-intelligence-prompt1.png)
+
+**Key insight:** This analysis really shows off what Snowflake Intelligence can do! It helps us connect the dots between how much money our top cities are making and what our customers in those cities are actually saying. We can quickly see our best-performing markets by revenue, and right alongside, get a clear picture of the most common things people are talking about in their reviews. This gives us a much richer, more human understanding of what's truly driving success – or perhaps what subtle issues might be brewing – even in our strongest areas. It's all about making smarter, more informed decisions, and we get these powerful insights just by asking a simple question.
+
+### Step 5 - Analyze Underperforming Markets
+
+Now let's explore strategies to address these key customer pain points and develop targeted action plans to improve performance in these cities.
+
+**Prompt:**
+
+```
+Identify the 5 cities with the lowest total revenue. For each of these cities, analyze their customer reviews to identify the 3 most frequently mentioned pain points or areas of dissatisfaction. Please present this as a table, showing the city, its total revenue, and the identified customer pain points.
+```
+![snowflake-intelligence-prompt2](assets/vignette-3/snowflake-intelligence-prompt2.png)
+
+**Key insight:** This analysis from Snowflake Intelligence gives us a clear picture of our lowest-earning cities and, crucially, shines a light on the exact customer pain points that are holding them back. By directly connecting raw revenue numbers with specific feedback from customer reviews, we can pinpoint where we need to focus our efforts to improve service, product, or support. This provides actionable intelligence to drive targeted growth and customer satisfaction in these challenged markets, all by simply asking a natural language question.
+
+-----
+
+### Conclusion
+
+What we've just experienced with Tasty Bytes showcases a fundamental shift in how businesses can truly understand their data. By seamlessly integrating Snowflake Cortex Search for deep dives into unstructured customer feedback and Cortex Analyst for conversational insights from structured business metrics, we've brought a truly unified business intelligence to life.
+
+You saw firsthand the power of this integration: users of all technical levels can now simply ask natural language questions and immediately receive visually rich, actionable answers. This direct and intuitive access to insights fundamentally transforms how organizations can swiftly identify operational risks, precisely quantify financial impact, and pinpoint new growth opportunities. It's clear that Snowflake Intelligence empowers rapid, data-driven decision-making, converting what was once fragmented data into clear, compelling business advantage for everyone.
 
 ## Governance with Horizon
 Duration: 1
@@ -1408,12 +1653,8 @@ Within this vignette, we will explore some of the powerful governance features w
 ### Get the SQL and paste it into your Worksheet.
 
 **Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake.**
-<!-- Uncomment when Copilot is added back -->
-<!-- **Note that once you've reached the end of the Worksheet you can skip to Step 29 - Apps & Collaboration.** -->
 
-<!-- Remove when Copilot is added back -->
-**Note that once you've reached the end of the Worksheet you can skip to Step 28 - Apps & Collaboration.**
-<!-- End Remove -->
+**Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).** 
 
 ## Roles and Access Control
 

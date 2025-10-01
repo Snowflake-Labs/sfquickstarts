@@ -222,3 +222,7 @@ Now that you have built your customer 360, you are ready to start connecting it 
 
 ### Related Resources
 - [Amperity Documentation](https://docs.amperity.com/)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/MMDS-Snowflake-Reference-Architecture.pdf)
+- [Read the blog](https://medium.com/snowflake/amperity-snowflake-quickstart-a154611e0160)
+- [Watch the Demo](https://youtu.be/_IQjSSROkJM?list=TLGGtApyaWG82HQyMjA5MjAyNQ)
+  

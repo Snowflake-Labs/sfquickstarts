@@ -252,3 +252,7 @@ This demo has showcased how Snowflake enables the creation of unified "Player 36
 - [Streamlit](https://docs.streamlit.io/)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/model-registry/overview)
 - [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro)
+- [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/12/player-360-reference-architecture.pdf)
+- [Read Medium Blog](https://medium.com/snowflake/getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization-cff23c188fd3)
+- [Watch the Demo](https://youtu.be/Ws7O8iSPoUM?list=TLGGpCvoAtbDc_QyNDA5MjAyNQ)

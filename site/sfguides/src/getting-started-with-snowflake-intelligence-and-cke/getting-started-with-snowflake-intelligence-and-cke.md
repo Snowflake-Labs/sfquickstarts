@@ -38,7 +38,7 @@ Cortex Knowledge Extensions (CKEs) allow publishers to bring their documents (fo
 
 ### Prerequisites
 
-* Access to a [Snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role in a region where you have access to Anthropic Claude 4, OpenAI GPT 4.1. Otherwise, you will need to enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference).
+* Access to a [Snowflake account](https://signup.snowflake.com/) with ACCOUNTADMIN role.
 
 ### What You Will Learn
 
@@ -109,8 +109,8 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
     - Click on **+ Add**
       - Name: Send_Email
       - Resource type: procedure
-      - Database & Schema: **DASH_SI_CKE.DATA**
-      - Custom tool identifier: **DASH_SI_CKE.DATA.SEND_EMAIL()**
+      - Database & Schema: **SNOWFLAKE_INTELLIGENCE.DATA**
+      - Custom tool identifier: **SNOWFLAKE_INTELLIGENCE.DATA.SEND_EMAIL()**
       - Parameter: body
         - Description: *If body is not provided, summarize the last question and use that as content for the email.*
       - Parameter: recipient_email

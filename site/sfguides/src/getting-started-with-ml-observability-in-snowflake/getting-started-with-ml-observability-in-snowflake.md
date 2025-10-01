@@ -1,7 +1,7 @@
 author: Kala Govindarajan
 id: getting-started-with-ml-observability-in-snowflake
 summary: ML Ops is defined as the core function of ML engineering focused on optimizing the process of deploying, maintaining, and monitoring models in production. Snowflake ML Observability allows to monitor models deployed in production via Snowflake Model Registry to track the quality of the model across multiple dimensions such as performance and drift along with volume. With this ML Ops-driven approach for customer churn monitoring, enterprises can ensure that ML models add real value, minimize the risk of performance decay, and make informed, data-driven decisions that drive customer retention. 
-categories: Getting-Started, Observability 
+categories: Getting-Started, Observability, Trail
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -222,5 +222,9 @@ In this guide, we explored how financial firms can build end-to-end, production-
 - #### [Snowpark ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 - #### [Snowpark Model Observability](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/model-observability)
 - #### [Getting Started with Snowflake ML](https://quickstarts.snowflake.com/guide/intro_to_machine_learning_with_snowpark_ml_for_python/#0)
+- [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-ml-observability-in-snowflake/tree/main/notebook)
+- [Download Reference Architecture](https://drive.google.com/file/d/1DSXlhZQlfI8DYiE-HYKcLK5wyaFYSqIb/view?usp=sharing)
+- [Watch the Demo](https://youtu.be/VS7_yvt498Y?list=TLGGF-5YkcMeUncyNDA5MjAyNQ)
+- 
 
 

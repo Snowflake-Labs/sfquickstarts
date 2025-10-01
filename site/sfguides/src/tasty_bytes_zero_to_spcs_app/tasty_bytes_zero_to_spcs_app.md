@@ -36,7 +36,7 @@ This lab builds directly on the same code and solution as the [Build a Data App 
 > aside positive
 > **Snowpark Container Services availability**
 > 
->  Snowpark Container Services is currently in a *Public Preview* and is available across a [range of Snowflake AWS accounts](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
+>  Snowpark Container Services is currently available across a [range of cloud providers and regions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions). For this lab ensure that you have an account in one of the supported regions.
 
 ### What You’ll Learn 
 - How to configure and build a custom API Powered by Snowflake, written in Node.js
@@ -102,8 +102,7 @@ create or replace warehouse query_wh with
 	auto_suspend = 300 
 	auto_resume = true 
 	min_cluster_count = 1 
-	max_cluster_count = 1 
-	scaling_policy = 'standard';
+	max_cluster_count = 1;
 ```
 
 ### Step 2.2 Load Data
@@ -163,8 +162,7 @@ create or replace warehouse load_wh with
 	auto_suspend = 300 
 	auto_resume = true 
 	min_cluster_count = 1 
-	max_cluster_count = 1 
-	scaling_policy = 'standard';
+	max_cluster_count = 1;
 ```
 Next we have to create a [STAGE](https://docs.snowflake.com/en/user-guide/data-load-overview) which is a Snowflake object that points to a cloud storage location Snowflake can access to both ingest and query data.  In this lab the data is stored in a publicly accessible AWS S3 bucket which we are referencing when creating the Stage object. 
 ```sql
@@ -379,6 +377,7 @@ Much like we created separate Virtual Warehouses for exploring and loading data,
 We start by creating a role that can be responsible for administering the setup of the services and everything else. There are a number of permissions that can be granted, and in a production build environment, these permissions may instead be granted to different roles with different responsibilities.
 
 ```sql
+USE ROLE accountadmin;
 USE DATABASE frostbyte_tasty_bytes;
 USE SCHEMA APP;
 
@@ -443,7 +442,7 @@ CREATE OR REPLACE IMAGE REPOSITORY tasty_app_repository;
 -- Show the repo we just created
 SHOW IMAGE REPOSITORIES;
 -- List images in repo (can be called later to verify that images have been pushed to the repo)
-call system$registry_list_images('/frostbyte_tasty_bytes/app/tasty_app_repository');
+SHOW IMAGES IN IMAGE REPOSITORY TASTY_APP_REPOSITORY;
 ```
 
 We can also create a stage to hold service specification files, although for this guide we will provide the specifications inline with the service creation. 
@@ -532,14 +531,13 @@ If you have access to GitHub and credits on an account that let's you run GitHub
 
 If you don't have access to this, or prefer to build this locally, go to Option 2 instead.
 
-First, create your on fork of the main repository, go to the GitHub repository at [GitHub: Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs.git) and create your own fork of the repo.
+First, create your own fork of the main repository, go to the GitHub repository at [GitHub: Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs.git) and create your own fork of the repo.
 ![Fork Repository](assets/fork_repository.png)
 
-Once you have your own fork, go to the '<> CODE' button and select 'Codespaces' and create a new.
+Once you have your own fork, go to the '<> CODE' button and select 'Codespaces' and create a new codespace.
 ![Create Codespace](assets/create_codespace.png)
 
-
-
+#### Option 2 - Build locally
 The code for this lab is hosted on GitHub. Start by cloning the repository into a separate folder. Note that we are cloning a specific branch `spcs` here that contains the code adapted for this guide.
 ```bash
 git clone https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs.git zero-to-app-spcs
@@ -558,11 +556,11 @@ docker --version
 
 For local testing, we can then let the backend connect to the Snowflake account using credentials we supply in the environment variables. Copy the `.env.example` file to `.env` and fill out the details for your account there. 
 ```bash
+cd .../zero-to-app-spcs/src/backend
 cp .env.example .env
 sed -i -e "s/{INSERT A RANDOM STRING HERE}/$(openssl rand -base64 12)/" .env
 sed -i -e "s/{INSERT ANOTHER RANDOM STRING HERE}/$(openssl rand -base64 12)/" .env
 ```
-:
 ```bash
 SNOWFLAKE_ACCOUNT={INSERT_ACCOUNT_NAME_HERE}
 SNOWFLAKE_USERNAME={INSERT_USER_NAME_HERE}
@@ -624,7 +622,7 @@ This should return the following JSON response:
 
 Currently there is no authentication of the user calling this endpoint. We will change that to take advantage of the mechanism built into Snowflake Container Services.
 
-In the earlier guide [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake) authentication was implemented using JWT tokens, where the client frontend called a login endpoint and provider user name and password, and the service looked that up in the database (the `USERS` table that is also created for this lab.) and then supplied the client with an accesstoken that could be passed along with future calls to the API. With SPCS this will not work because the environment strips any request headers from calls to the public endpoints as they are routed to the service, meaning we cannot evaluate a Bearer Authentication token in calls from the client to the backend. Remember, with a React application, the frontend is running directly as javascript in the client's browser, even if the code is served from the frontend service, so calls to the API are coming from the end users' browsers, not from the internal service hosting the frontend.
+In the earlier guide [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake) authentication was implemented using JWT tokens, where the client frontend called a login endpoint and provided user name and password, and the service looked that up in the database (the `USERS` table that is also created for this lab.) and then supplied the client with an accesstoken that could be passed along with future calls to the API. With SPCS this will not work because the environment strips any request headers from calls to the public endpoints as they are routed to the service, meaning we cannot evaluate a Bearer Authentication token in calls from the client to the backend. Remember, with a React application, the frontend is running directly as javascript in the client's browser, even if the code is served from the frontend service, so calls to the API are coming from the end users' browsers, not from the internal service hosting the frontend.
 
 > aside positive
 >
@@ -710,7 +708,7 @@ function validateSnowflakeHeader(req, res, next) {
 };
 ```
 
-Comparing this to the code that validates a JWT access token it is similar, but we here also have to look up the user in a database call, because unlike the JWT we cannot securely pass any additional information (like the `franchise_id` in the toke), the only value we can trust here is the user header, since it is securely set by the SPCS environment and cannot be tampered with by a javascript client. The rest of the code in that file is supporting the authentication using other methods, but this is the only one that will be used in this guide and when we deploy the services to Snowflake.
+Comparing this to the code that validates a JWT access token it is similar, but we here also have to look up the user in a database call, because unlike the JWT we cannot securely pass any additional information (like the `franchise_id` in the token), the only value we can trust here is the user header, since it is securely set by the SPCS environment and cannot be tampered with by a javascript client. The rest of the code in that file is supporting the authentication using other methods, but this is the only one that will be used in this guide and when we deploy the services to Snowflake.
 
 Also review the file `/routes/login.js` that introduces a new endpoint `/authorize` that responds with an accesstoken containing the `user id` and `franchise id` when called with a header of `Sf-Context-Current-User`. This can be used by the frontend later on to check what franchise to set in the UI. Note that this endpoint also returns a JWT token, but we are only using that format to keep the code in the frontend as similar to the original code as possible, we are not using the JWT access token for future authorization of calls from the frontend to the backend.
 
@@ -789,7 +787,7 @@ docker image rm backend-backend_service
 
 ### Step 4.3 Connecting to Snowflake data
 
-With this update, we can now look at how the backend service can access the data in the Snowflake tables and views. In the self hosted version of of the code (as in the [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake)) we use a key pair authentication schema to connect the service to Snowflake. For a service running on Snowpark Container Services, we can benefit from the service already running on Snowflake and we can use a provided and pre-loaded authentication model based on OAuth. This is available for every service running on SPCS.
+With this update, we can now look at how the backend service can access the data in the Snowflake tables and views. In the self hosted version of the code (as in the [Build a Data App with Snowflake](https://quickstarts.snowflake.com/guide/build_a_data_app_with_snowflake)) we use a key pair authentication schema to connect the service to Snowflake. For a service running on Snowpark Container Services, we can benefit from the service already running on Snowflake and we can use a provided and pre-loaded authentication model based on OAuth. This is available for every service running on SPCS.
 
 Open the file `connect.js` and look at how the code is sending the options for the connection to Snowflake:
 
@@ -1252,7 +1250,7 @@ We can now build and push all images to the Snowflake repository, from `/src` ru
 
 Once that finishes, you can verify in a Snowflake worksheet that the images have been pushed to the repository:
 ```sql
-call system$registry_list_images('/frostbyte_tasty_bytes/app/tasty_app_repository');
+SHOW IMAGES IN IMAGE REPOSITORY TASTY_APP_REPOSITORY;
 ```
 
 The output should be similar to this:
@@ -1307,7 +1305,7 @@ $$
   MIN_INSTANCES=1
   MAX_INSTANCES=1
 ;
-GRANT USAGE ON SERVICE backend_service TO ROLE tasty_app_ext_role;
+GRANT SERVICE ROLE backend_service!ALL_ENDPOINTS_USAGE TO ROLE tasty_app_ext_role;
 ```
 This creates the backend service using the image `backend_service_image:tutorial` that we should now have pushed to the repository. Note how we can supply overriding environment variables to the services.
 
@@ -1317,7 +1315,7 @@ Lastly we call `GRANT USAGE ON SERVICE` to allow the `tasty_app_ext_role` role a
 
 We can then call `SHOW SERVICES` to look at the services created. In order to check the status of the newly created service we can call:
 ```sql
-SELECT SYSTEM$GET_SERVICE_STATUS('backend_service'); 
+SHOW SERVICE CONTAINERS IN SERVICE backend_service;
 ```
 Which will return the status of the service. After a few moments the service should report status `READY` and that it is running:
 
@@ -1382,12 +1380,12 @@ $$
   MIN_INSTANCES=1
   MAX_INSTANCES=1
 ;
-GRANT USAGE ON SERVICE frontend_service TO ROLE tasty_app_ext_role;
+GRANT SERVICE ROLE frontend_service!ALL_ENDPOINTS_USAGE TO ROLE tasty_app_ext_role;
 ```
 
 In the same way we can check the status of the service and read the logs. Note that there are two logs to read, one for each container in the service.
 ```sql
-SELECT SYSTEM$GET_SERVICE_STATUS('frontend_service'); 
+SHOW SERVICE CONTAINERS IN SERVICE frontend_service;
 CALL SYSTEM$GET_SERVICE_LOGS('frontend_service', '0', 'frontend', 50);
 CALL SYSTEM$GET_SERVICE_LOGS('frontend_service', '0', 'router', 50);
 ```
@@ -1477,11 +1475,6 @@ USE ROLE ACCOUNTADMIN;
 SHOW DATABASES;
 DROP DATABASE FROSTBYTE_TASTY_BYTES;
 
--- Delete the OAuth security integration
-USE ROLE tasty_app_admin_role;
-SHOW SECURITY INTEGRATIONS;
-DROP SECURITY INTEGRATION "Application Authentication";
-
 -- Delete the roles
 USE ROLE ACCOUNTADMIN;
 SHOW ROLES;
@@ -1517,17 +1510,17 @@ docker image prune --all
 
 Good work! You have now successfully built, deployed and run a data application on Snowpark Container Services.
 
+### What You Learned
+
 You now have gone through the basic concepts of building a a Data Application that can run directly on Snowflake, we have looked through how to adapt existing code to cover:
 - Authentication and Authorization and user management
 - Public endpoints for service
 - Service to service communication
 - Services connecting to Snowflake accounts
 
-Using this you should be able to build your own Data Application and run it direclty on Snowpark Container Services, directly connected to your data.
+Using this you should be able to build your own Data Application and run it directly on Snowpark Container Services, directly connected to your data.
 
 We would love your feedback on this QuickStart Guide! Please submit your feedback using this Feedback Form.
-
-### What You Learned
 
 ### Related Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-zero-to-app-with-spcs)

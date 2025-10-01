@@ -363,7 +363,7 @@ def fx_rates():
         st.altair_chart(line_chart, use_container_width=True)
 
 # Display header
-st.header("Financial & Economic Essentials")
+st.header("Finance & Economics")
 
 # Create sidebar and load the first page
 page_names_to_funcs = {

@@ -171,7 +171,7 @@ create or replace function fake_py(locale varchar,provider varchar,parameters va
 returns variant
 language python
 volatile
-runtime_version = '3.8'
+runtime_version = '3.9'
 packages = ('faker','simplejson')
 handler = 'fake'
 as

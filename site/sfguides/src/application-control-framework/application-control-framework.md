@@ -471,7 +471,7 @@ Repeat the steps in the **Disable the Consumer** section, but set the enabled va
 
 <!-- ------------------------ -->
 
-## Conclusion
+## Conclusion And Resources
 Duration: 1
 
 You've performed the following:
@@ -487,3 +487,10 @@ To get more comfortable with this solution, continue to toggle the limits set fo
 - How to use the ACF Streamlit App (App Control Manager) to set Native App limits and which functionality consumers can access
 - How to build and list a demo Native App, using the ACF
 - How to update consumer metadata and verify that the changes are applied immediately.
+
+###Resources
+- [Fork repo on Github](https://github.com/Snowflake-Labs/sfguide-application-control-framework/tree/main)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/05/Application-Control-Framework-Reference-Architecture.pdf)
+- [Explore Emerging Solutions Toolbox](https://emerging-solutions-toolbox.streamlit.app/)
+- [Read blog](https://medium.com/snowflake/manage-how-consumers-use-your-native-app-d8eeb4af8f5c)
+- [Watch the Demo](https://youtu.be/gZv-EkZsOAk?si=Mb1RSYIGQfuiLPip)

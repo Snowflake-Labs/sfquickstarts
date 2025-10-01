@@ -247,7 +247,6 @@ reg_model = reg.get_model("Forecasting_Bus_Ridership").version("v2")
 
 reg_model.create_service(service_name="ChicagoBusForecastv12",
                   service_compute_pool="mypool",
-                  image_repo="MODEL_SERVING_DB.notebooks.my_inference_images",
                   ingress_enabled=True)
 ```
 
