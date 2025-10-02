@@ -522,3 +522,5 @@ Want to learn more about the tools and technologies used in this quickstart? Che
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-customer-reviews-analytics-using-snowflake-cortex)
 * [Cortex LLM](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/08/Customer-Reviews-Analytics-using-Snowflake-Cortex.pdf)
+* [Read Medium Blog](https://medium.com/snowflake/transforming-customer-experience-with-snowflake-the-tasty-bytes-story-1b213afc4fc7)

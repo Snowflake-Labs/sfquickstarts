@@ -37,26 +37,47 @@ Let's look into how Snowpipe can be configured for continual loading. Then, we c
 After ensuring the prerequisites detailed in this section, jump into the queueing data integration options with Snowpipe.
 
 <!-- ------------------------ -->
-## Setting up Snowflake
-Duration: 2
+## Open a Snowflake Trial Account
+Duration: 5
 
-### Login and Setup Lab
-Log into your Snowflake account or [signup for a free trial](https://signup.snowflake.com/?lab=getStartedWithSnowpipe&utm_cta=quickstart-getstartedwithsnowpipe-en). You can access the SQL commands we will execute throughout this lab directly in your Snowflake account by setting up your environment below:
+To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
 
-<button>[Setup Lab Environment](https://app.snowflake.com/resources/labs/getStartedWithSnowpipe)</button>
+1. Navigate to [https://signup.snowflake.com/](https://signup.snowflake.com/?trial=student&cloud=aws&region=us-west-2&utm_source=hol&utm_campaign=northstar-hols-2025)
 
-This will create worksheets containing the lab SQL that can be executed as we step through this lab.
+2. Start the account creation by completing the first page of the form on the page
 
+3. On the next section of the form,  be sure to set the Snowflake edition to "Enterprise (Most popular")
 
-![setup_lab](assets/setup_lab.png)
+4. Select "AWS – Amazon Web Services" as the cloud provider
 
-Once the lab has been setup, it can be continued by revisiting the [lab details page](https://app.snowflake.com/resources/labs/getStartedWithSnowpipe) and clicking `Continue Lab`
+5. Select "US West (Oregon)" as the region
 
-![continue_lab](assets/continue_lab.png)
+6. Complete the rest of the form and click "Get started"
 
-or by navigating to Worksheets and selecting the `Getting Started with Snowpipe` folder.
+![trial](./assets/trial.png)
 
-![worksheets](assets/worksheets.png)
+<!-- ------------------------ -->
+## Setting up AWS Bucket and Prefix (folder) 
+Duration: 5
+
+### Create a S3 Bucket
+1. Log in to the [AWS Management Console](https://console.aws.amazon.com/) or create a free trial account if you don’t have one
+   - Must have a credit card and mobile number to set up a free trial account. However, account won't be charged unless upgraded after trial ends.
+2. Once account is created, search for “S3” in the search bar
+3. Click on "Create bucket"
+4. Fill in the following details:
+    - Bucket name: Must be globally unique (e.g., my-example-bucket-123)
+    - Region: Choose your desired AWS Region
+5. Leave other settings as default or adjust as needed (e.g., versioning, encryption)
+6. Click "Create bucket" at the bottom
+
+### Create a Prefix (folder)
+1. After creating the bucket, click on the bucket name to open it
+2. Click the “Create folder” button
+3. Enter the folder name (e.g., my-prefix/)
+4. Click “Create folder”
+
+Be sure to write down or memorize your bucket and prefix to be used in future steps.
 
 <!-- ------------------------ -->
 ## Choose the Data Ingestion Method
@@ -79,7 +100,7 @@ Duration: 3
 
 Notifications from your cloud storage infrastructure are a straight-forward way to trigger Snowpipe for continuous loading. 
 
-Cloud Storage Platforms Snowpipe Supports
+Cloud Storage Platforms Snowpipe Supports:
 
 - Google Cloud Storage
 - Microsoft Azure Blob Storage
@@ -99,9 +120,9 @@ To begin using AWS storage notifications for Snowpipe processing, you’ll follo
 
 1. Create IAM Policy for Snowflake’s S3 Access
 
-Snowflake needs IAM policy permission to access your S3 with `GetObject`, `GetObjectVersion`, and `ListBucket`. Log into your AWS console and navigate to the IAM service. Within the **Account settings**, confirm the **Security Token Service** list records your account’s region as **Active**.
+Snowflake needs IAM policy permission to access your S3 with `GetObject`, `GetObjectVersion`, and `ListBucket`. Log into your AWS console and search for IAM. Within the **Account settings**, confirm the **Security Token Service** list records your account’s region as **Active**.
 
-Navigate to **Policies** and use the JSON below to create a new IAM policy named 'snowflake_access’.
+Navigate to **Policies** and click on 'Create policy'. Switch the 'Policy editor' to JSON and replace with the following: 
 
 ```
 {
@@ -130,25 +151,26 @@ Navigate to **Policies** and use the JSON below to create a new IAM policy named
     ]
 }
 ```
-Don’t forget to replace the `<bucket>` and `<prefix>` with **your** AWS S3 bucket name and folder path prefix.
+Don’t forget to replace the `<bucket>` and `<prefix>` with **your** bucket name and folder path prefix. Click next and enter 'snowflake_access' as the policy name, then click on 'Create policy'.
 
 2. New IAM Role
 
-On the AWS IAM console, add a new IAM role tied to the ‘snowflake_access’ IAM policy. Create the role with the following settings.
+Add a new IAM role tied to the ‘snowflake_access’ IAM policy by click on 'Roles' under 'Access management' followed by 'Create role'. Create the role with the following settings:
 
-- **Trusted Entity**: Another AWS account
-- **Account ID**: <your_account_id>
+- **Trusted entity type**: AWS account
+- **An AWS account**: This account
 - **Require External ID**: [x]
 - **External ID**: 0000
+- **Add permissions**: search for 'snowflake_access' and select the checkbox and hit next
 - **Role Name**: snowflake_role
-- **Role Description**: Snowflake role for access to S3 `<bucket>`
-- **Policies**: snowflake_access
+- **Role Description**: Snowflake role for access to S3 bucket
 
-Create the role, then click to see the role’s summary and record the **Role ARN**.
+Create the role, then click to see the role’s summary and record the **ARN**.
+
 
 3. Integrate IAM user with Snowflake storage.
 
-Within your Snowflake web console, you’ll run a `CREATE STORAGE INTEGRATION` command on a worksheet.
+Within your Snowflake web console, you’ll run the following command to integrate IAM user with Snowflake storage.
 ```
 CREATE OR REPLACE STORAGE INTEGRATION S3_role_integration
   TYPE = EXTERNAL_STAGE
@@ -157,7 +179,7 @@ CREATE OR REPLACE STORAGE INTEGRATION S3_role_integration
   STORAGE_AWS_ROLE_ARN = "arn:aws:iam::<role_account_id>:role/snowflake_role"
   STORAGE_ALLOWED_LOCATIONS = ("s3://<bucket>/<path>/”);
 ```
-Be sure to change the `<bucket>`, `<prefix>` and `<role_account_id>` is replaced with *your* AWS S3 bucket name, folder path prefix, and IAM role account ID.
+Be sure to change the `<bucket>`, `<prefix>` and `<role_account_id>` with *your* AWS S3 bucket name, folder path prefix, and IAM role account ID (found on the IAM dashboard).
 
 ![Snowflake_CreateIntegration-image](assets/Snowflake_CreateInt.png)
 Note in the figure above the **ACCOUNTADMIN** role and status message of a successful creation.
@@ -174,7 +196,7 @@ Record the property values displayed for `STORAGE_AWS_IAM_USER_ARN` and `STORAGE
 
 5. IAM User Permissions
 
-Navigate back to your AWS IAM service console. Within the **Roles**, click the ‘snowflake_role’. On the **Trust relationships** tab, click **Edit trust relationship** and edit the file with the `STORAGE_AWS_IAM_USER_ARN` and `STORAGE_AWS_EXTERNAL_ID` retrieved in the previous step.
+Navigate back to your AWS IAM service console. Within the **Roles**, click the ‘snowflake_role’. On the **Trust relationships** tab, click **Edit trust policy** and edit the file with the `STORAGE_AWS_IAM_USER_ARN` and `STORAGE_AWS_EXTERNAL_ID` retrieved in the previous step.
 
 ```
 {
@@ -195,7 +217,7 @@ Navigate back to your AWS IAM service console. Within the **Roles**, click the �
   ]
 }
 ```
-**Update Trust Policy** after replacing the string values for *your* `STORAGE_AWS_IAM_USER_ARN` and `STORAGE_AWS_EXTERNAL_ID`.
+**Update Policy** after replacing the string values for *your* `STORAGE_AWS_IAM_USER_ARN` and `STORAGE_AWS_EXTERNAL_ID`.
 
 After completing this section, your AWS and Snowflake account permissions are ready for Snowpipe. The next section provides the steps to perform automated micro-batching with cloud notifications triggering Snowpipe.
 
@@ -233,7 +255,7 @@ create or replace stage S3_stage
   storage_integration = S3_role_integration;
 ```
 
-To make the external [stage](https://docs.snowflake.com/en/sql-reference/sql/create-stage.html) needed for our S3 bucket, use this command. Be mindful to replace the `<bucket>` and `<path>` with your S3 bucket name and file path.
+To make the external [stage](https://docs.snowflake.com/en/sql-reference/sql/create-stage.html) needed for our S3 bucket, use this command. Be sure to update the `<bucket>` and `<path>` with your S3 bucket name and file path from earlier.
 
 ![Snowflake_CreateStage-image](assets/Snowflake_CreateStage.png)
 The figure above shows *Results* reading ‘Stage area S3_STAGE successfully created’.
@@ -253,11 +275,13 @@ Confirm you receive a status message of, ‘Pipe S3_PIPE successfully created’
 
 2. Configure Snowpipe User Permissions
 
-To ensure the Snowflake user associated with executing the Snowpipe actions had sufficient permissions, create a unique role to manage Snowpipe security privileges. Do not employ the user account you're currently utilizing, instead create a new user to assign to Snowpipe within the web console.
+Create a new role named `S3_role` with *ACCOUNTADMIN* access. Give the `S3_role` usage permissions to the database objects, insert permission for the `S3_table` and ownership of `S3_pipe`. Lastly, set the S3_role as a Snowflake user’s default. Be sure to update `<username>` with your Snowflake username. To find your username, click on your initals in the bottom left hand corner. Hoover over 'Account' and click on 'View account details'. Confirm the statement was successful before creating the S3 event notification.
 
 ```sql
 -- Create Role
-use role securityadmin;
+use role accountadmin;
+ALTER PIPE S3_PIPE SET PIPE_EXECUTION_PAUSED=true;
+GRANT OWNERSHIP ON PIPE S3_db.public.S3_pipe TO ROLE accountadmin;
 create or replace role S3_role;
 
 -- Grant Object Access and Insert Permission
@@ -276,7 +300,6 @@ alter user <username> set default_role = S3_role;
 
 ![Snowflake_UserS3_Pipe-image](assets/Snowflake_UserS3_Pipe.png)
 
-Create a new role named `S3_role` with *SECURITYADMIN* access. Give the `S3_role` usage permissions to the database objects, insert permission for the `S3_table` and ownership of `S3_pipe`. Lastly, set the S3_role as a Snowflake user’s default. Confirm the statement was successful before creating the S3 event notification.
 
 3. New S3 Event
 
@@ -290,13 +313,13 @@ show pipes;
 
 Copy the ARN because you’ll need it to configure the S3 event notification.
 
-Sign in to your AWS account and navigate to the S3 service console. Select the bucket being used for Snowpipe and go to the **Properties** tab. The **Events** card listed will allow you to **Add notification**. Create a notification with the values listed.
+Sign in to your AWS account and navigate to the S3 service console. Select the bucket being used for Snowpipe and go to the **Properties** tab. The **Events notification** card listed will allow you to **Create event notification**. Create a notification with the values listed:
 
-- **Name**: Auto-ingest Snowflake
-- **Events**: All object create events
-- **Send to**: SQS Queue
-- **SQS**: Add SQS queue ARN
-- **SQS queue ARN:** <S3_pipe_ARN>
+- **Event name**: Auto-ingest Snowflake
+- **Events types**: All object create events
+- **Destination**: SQS Queue
+- **Specify SQS queues**: Enter SQS queue ARN
+- **SQS queue:** <S3_pipe_ARN>
 
 ![Snowflake_AWSS3Notification-image](assets/Snowflake_AWSS3Notification.png)
 Snowpipe’s automated micro-batching is now active. Learn how to manage database integration in the next step.

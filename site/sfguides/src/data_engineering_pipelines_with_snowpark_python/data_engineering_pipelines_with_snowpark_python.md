@@ -894,6 +894,11 @@ And finally, here's a quick recap of related resources:
     * [Writing Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html)
     * [Writing Stored Procedures in Snowpark (Python)](https://docs.snowflake.com/en/sql-reference/stored-procedures-python.html)
     * [Working with DataFrames in Snowpark Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes.html)
+* [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python?_fsi=TNKw8Mx5&amp;_fsi=TNKw8Mx5)
+* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Data-Engineering-Pipelines-with-Snowpark-in-Snowflake-Notebooks.pdf)
+* [Read the Blog](https://medium.com/snowflake/building-data-engineering-pipelines-with-snowpark-python-e14f2b525510)
+* [Watch the Demo](https://youtu.be/mpstEt0fU8U?list=TLGGTh02wdk5rsQyMjA5MjAyNQ)
+  
 * Related Tools
     * [Snowflake Visual Studio Code Extension](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc)
     * [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli)

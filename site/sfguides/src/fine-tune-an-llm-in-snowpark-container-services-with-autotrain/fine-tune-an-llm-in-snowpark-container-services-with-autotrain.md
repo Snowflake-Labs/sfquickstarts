@@ -3,7 +3,7 @@ id: fine-tune-an-llm-in-snowpark-container-services-with-autotrain
 summary: Fine-Tuning an LLM in Snowpark Container Services with AutoTrain
 categories: Getting-Started
 environments: web
-status: Published 
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Science, LLM, AI 
 

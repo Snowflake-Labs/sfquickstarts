@@ -349,4 +349,6 @@ Congratulations, you have successfully completed this QuickStart! By completing 
 - [Docs: Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
 - [Video: Building Advanced ML with Snowpark Container Services - Summit 2023](https://www.youtube.com/watch?v=DelaJBm0UgI)
 - [Video: Snowpark Container Services with NVIDIA](https://www.youtube.com/watch?v=u98YTgCelYg)
+- [Watch Demo](https://youtu.be/l8NZSY3C7OU?si=WHphvkTe8b3j1N6m)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/06/Build-AI-Apps-Fast-using-Hybrid-Tables-Native-Apps-and-GenAI.pdf)
 

@@ -3,7 +3,7 @@ id: marketing_data_foundation_starter_v2
 summary: Marketing Data Foundation V2
 categories: Data-Engineering
 environments: web
-status: Published 
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Marketing, Data Engineering, Native Application
 

@@ -104,3 +104,8 @@ Ready to elevate your machine learning projects? Dive into the full potential of
 - [Feature Views](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/feature-views)
 - [Datasets](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/modeling#generating-datasets-for-training)
 - [Snowflake ML Webpage](https://www.snowflake.com/en/data-cloud/snowflake-ml/)
+
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/notebooks/0_start_here.ipynb?_fsi=EwgOAmF4&_fsi=EwgOAmF4)
+- [Download Reference Architecture](https://drive.google.com/file/d/1GA_pt6Pdy76tWkxyPFKL2xH_YG3v5ZRM/view?usp=sharing)
+- [Read Engineering Blog](https://www.snowflake.com/en/engineering-blog/machine-learning-container-runtime/)
+- [Watch the Demo](https://youtu.be/5zXP6Kj5gM4?list=TLGGiXdaWh2xmL4yMjA5MjAyNQ)

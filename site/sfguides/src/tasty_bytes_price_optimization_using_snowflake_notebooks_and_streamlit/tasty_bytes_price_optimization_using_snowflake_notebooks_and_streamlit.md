@@ -3,7 +3,7 @@ id: tasty_bytes_price_optimization_using_snowflake_notebooks_and_streamlit
 summary: Price Optimization Using Snowflake Notebooks and Streamlit
 categories: Tasty-Bytes, Getting-Started
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Tasty Bytes, Price Optimization, Notebooks
 

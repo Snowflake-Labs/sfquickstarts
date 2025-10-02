@@ -34,7 +34,7 @@ Python based dbt models are made possible by [Snowflake's new native Python supp
 * Python Stored Procedures
 * Integration with Anaconda
 
-With Snowflake's Snowpark Python capabilities, you no longer need to maintain, secure and pay for separate infrastructure/services to run Python code as it can now be run directly within Snowflake's Enterprise grade data platform! For more details check out [the Snowpark Developer Guide for Python](ttps://docs.snowflake.com/en/developer-guide/snowpark/python/index.html).
+With Snowflake's Snowpark Python capabilities, you no longer need to maintain, secure and pay for separate infrastructure/services to run Python code as it can now be run directly within Snowflake's Enterprise grade data platform! For more details check out [the Snowpark Developer Guide for Python](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html).
 
 This guide will provide step-by-step instructions for how to get started with Snowflake Snowpark Python and dbt's new Python-based models.
 

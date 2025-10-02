@@ -350,4 +350,7 @@ Congratulations! You've successfully created image recognition applications in S
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-snowpark-pytorch-streamlit-openai-image-rec)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/03/Image-Recognition-App-in-Snowflake-using-Snowpark-Python-PyTorch-Streamlit-and-OpenAI.pdf)
+- [Read the Blog](https://medium.com/snowflake/image-recognition-in-snowflake-using-snowpark-python-pytorch-streamlit-and-openai-1a8167b82449)
+- [Watch Demo](https://youtu.be/UX6hBV5c0T0?list=TLGGKLQ968siKR8xOTA5MjAyNQ)
 

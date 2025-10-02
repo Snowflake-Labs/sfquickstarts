@@ -74,7 +74,7 @@ CREATE OR REPLACE WAREHOUSE LLAMAPARSE_CORTEX_SEARCH_WH WITH
      INITIALLY_SUSPENDED=TRUE;
 ```
 
-To open the notebook, open [llama-parse-cortex-search.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-llamaparse-and-cortex-search/llama-parse-cortex-search.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
+To open the notebook, open [llama-parse-cortex-search.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-llamaparse-and-cortex-search/blob/main/llama-parse-cortex-search.ipynb) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)
 
 First, et your Llama-Cloud API key and Snowflake credentials as environment variables.
 
@@ -333,4 +333,6 @@ Congratulations! You have parsed a PDF with LlamaParse, loaded it into Snowflake
 * [LlamaParse (LlamaIndex)](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/)
 * [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 * [Snowflake Python API](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
+* [Fork the Repo](https://github.com/sfc-gh-jreini/llama-parse-cortex-search/blob/main/llama-cloud-snowflake.ipynb)
+* [Watch the Demo](https://youtu.be/D1rw57cuwm8?list=TLGG75AAIM6FkzoyNDA5MjAyNQ)
 

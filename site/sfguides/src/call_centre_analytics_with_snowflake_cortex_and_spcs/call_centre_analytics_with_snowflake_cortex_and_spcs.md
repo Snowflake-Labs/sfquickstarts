@@ -3,7 +3,7 @@ id: call_centre_analytics_with_snowflake_cortex_and_spcs
 summary: This guide will provide step-by-step details for building call centre analytics using Snowflake Cortex LLM functions and Snowpark Container Services
 categories: Getting-Started,data-science, gen-ai
 environments: web
-status: Published
+status: Hidden
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Gen AI, Data Engineering, Snowpark , Python , Snowflake Cortex, Snowpark Container Services,Vectors, Embeddings,Streamlit
 
@@ -12,6 +12,8 @@ tags: Getting Started, Gen AI, Data Engineering, Snowpark , Python , Snowflake C
 ## Overview
 
 Duration: 15
+
+**Note:** We recommend checking out our [Building Cortex AISQL Powered Call Centre Analytics Solution](https://quickstarts.snowflake.com/guide/building-cortex-aisql-powered-call-centre-analytics/index.html?index=..%2F..index#0) quickstart, which uses Snowflake's `AI_TRANSCRIBE` function instead of hosting Whisper models in SPCS for audio to text conversion. This original version is useful if Cortex cannot be used or if further model tuning is desirable.
 
 Audio files in call centers offer rich insights beyond text. With Snowflake Cortex Functions and running open source LLM models in Snowpark Container Services, you can extract summary of the call, sentiment, and patterns which can eventually help in enhancing customer experiences. By transcribing audio to text and developing custom analytics, call centres and supervisor gain actionable insights on agent responses and proactive issue resolution, ultimately driving better customer satisfaction. These insights can inform strategic decision-making, improve operational efficiency, and drive revenue growth. From optimizing agent performance to predicting customer behavior, the possibilities are endless.
 
@@ -107,7 +109,9 @@ git clone https://github.com/Snowflake-Labs/sfguide-call-centre-analytics-with-s
 Open a terminal and run the following commands to create a conda virtual environment and install few packages
 
 ```shell
-conda create --name demosnowparkdemo --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.8 
+conda create --name demosnowparkdemo --override-channels -c https://repo.anaconda.com/pkgs/snowflake python=3.10
+
+conda activate demosnowparkdemo
 
 conda install snowflake-snowpark-python pandas pyarrow streamlit
 ```
@@ -152,7 +156,7 @@ In this step we are hosting a LLM model from [NumberStation](https://huggingface
 
 Run the following notebook to bring up the text2sql Container and creating other objects required to run the container in SPCS. 
 
-> This is required if you want the text2sql capabilities from the streamlit app. You can skip this step if you don't want to explore this feature. This capability will be soon replaced by Cortex Text2SQL function once its aviable in public preview. This steps helps you to learn on how you can host your own LLM model, fine tune on your dataset and eventually do the model inference all inside Snowflake platform.
+> This is required if you want the text2sql capabilities from the streamlit app. You can skip this step if you don't want to explore this feature. This capability is now offered by Cortex Text2SQL function. These steps help you learn how you can host your own LLM model, fine tune on your dataset and eventually do the model inference all inside Snowflake platform.
 
  [text2sql_setup_code.ipynb](https://github.com/Snowflake-Labs/sfguide-call-centre-analytics-with-snowflake-cortex-and-spcs/blob/main/text2sql/text2sql_setup_code.ipynb) found in **text2sql** folder in your cloned local directory.
 
@@ -196,3 +200,6 @@ Want to learn more about the tools and technologies used by your app? Check out 
 * [Build powerful generative AI apps with Streamlit](https://streamlit.io/generative-ai)
 * [Snowpark Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 * [Snowpark Guide for Data Engineers](https://www.snowflake.com/resource/the-data-engineers-guide-to-python-for-snowflake/)
+* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Call-Center-Analytics-with-Snowflake-Cortex-Functions-and-Snowpark-Container-Services.pdf)
+* [Read the Blog](https://medium.com/snowflake/call-centre-analytics-with-snowflake-cortex-function-and-snowpark-container-services-5e06b4baef46)
+* [Watch the Demo](https://youtu.be/-3ThRxoZjcE?list=TLGG31-1X25lRtoxOTA5MjAyNQ)

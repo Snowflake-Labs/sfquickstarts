@@ -173,3 +173,7 @@ In this guide, you learned how to use Snowflake's Notebooks and Cortex AI to har
 ### Related Resources
 - [Snowflake Cortex Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex.html)
 - [Streamlit Documentation](https://docs.streamlit.io/)
+- [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/12/entity-resolution-aggregating-product-data.pdf)
+- [Read Medium Blog](https://medium.com/snowflake/disparate-data-to-unified-insights-leveraging-snowflake-cortex-streamlit-for-e-commerce-retail-110b83e1c088)
+- [Watch Demo](https://youtu.be/mXAQad61JHc?si=WUk42NowdRWoZ9LF)

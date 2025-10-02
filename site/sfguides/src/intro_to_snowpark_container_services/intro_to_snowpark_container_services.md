@@ -30,7 +30,7 @@ For more information on these objects, check out [this article](https://medium.c
 
 How are customers and partners using Snowpark Container Services today? Containerized services on Snowflake open up the opportunity to host and run long-running services, like front-end web applications, all natively within your Snowflake environment. Customers are now running GPU-enabled machine learning and AI workloads, such as GPU-accelerated model training and open-source Large Language Models (LLMs) as jobs and as service functions, including fine-tuning of these LLMs on your own Snowflake data, without having to move the data to external compute infrastructure. Snowpark Container Services are an excellent path for deploying applications and services that are tightly coupled to the Data Cloud.
 
-Note that while in this quickstart, we will predominantly use the direct SQL commands to interact with Snowpark Container Services and their associated objects, there is also [Python API support](https://docs.snowflake.com/developer-guide/snowflake-python-api/snowflake-python-overview) in Public Preview that you can also use. Refer to the [documentation](https://docs.snowflake.com/developer-guide/snowflake-python-api/snowflake-python-overview) for more info.
+Note that while in this quickstart, we will predominantly use the direct SQL commands to interact with Snowpark Container Services and their associated objects, there is also [Python API support](https://docs.snowflake.com/developer-guide/snowflake-python-api/snowflake-python-overview) that you can use. Refer to the [documentation](https://docs.snowflake.com/developer-guide/snowflake-python-api/snowflake-python-overview) for more info.
 
 ### What you will learn 
 - The basic mechanics of how Snowpark Container Services works
@@ -59,7 +59,7 @@ You can simply download the repo as a .zip if you don't have Git installed local
 <!-- ![e2e_ml_workflow](assets/snowpark-ml-e2e.png) -->
 
 <!-- ------------------------ -->
-## Set up the Snowflake environment
+## Set up Environment
 Duration: 5
 
 Run the following SQL commands in [`00_setup.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/00_setup.sql) using the Snowflake VSCode Extension OR in a SQL worksheet to create the role, database, warehouse, and stage that we need to get started:
@@ -125,7 +125,7 @@ SHOW IMAGE REPOSITORIES IN SCHEMA CONTAINER_HOL_DB.PUBLIC;
 - The [image repository](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-registry-repository) is the location in Snowflake where we will push our Docker images so that our services can use them
 
 <!-- ------------------------ -->
-## Set up your local environment
+## Set Your Local Environment
 Duration: 10
 
 ### Python Virtual Environment and SnowCLI
@@ -134,7 +134,7 @@ Duration: 10
 
 - Open a new terminal window, navigate to your Git repo, and execute the following commands in the same terminal window:
 
-  1. Create the conda environment.
+  1. Create the conda environment using [conda_env.yml](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/conda_env.yml).
   ```
   conda env create -f conda_env.yml
   ```
@@ -166,10 +166,29 @@ Duration: 10
   # test the connection:
   snow connection test --connection "CONTAINER_hol"
   ```
-
-  6. Start docker via opening Docker Desktop.
+  If you encounter an error requesting MFA for your account, don't worry! There are several authentication methods available in Snowflake. For alternative ways to sign in, please refer to documentation at [Additional ways to authenticate your connection](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#additional-ways-to-authenticate-your-connection). Below is an example of how to authenticate using a [MFA passcode](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#use-multi-factor-authentication-mfa) with [MFA caching](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#use-mfa-caching) enabled. Follow step 1 in [MFA passcode](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#use-multi-factor-authentication-mfa) to setup mfa authenticator for your account. To enable MFA caching edit the “authenticator” parameter in the connection profile in config.toml file to “username_password_mfa”,
+  ```bash
+  name : CONTAINER_hol
+  ...
+  authenticator : username_password_mfa
+  ...
+  ```
+  and run the following commands in a SQL worksheet.
+  ```bash
+  USE ROLE ACCOUNTADMIN;
+  ALTER ACCOUNT SET ALLOW_CLIENT_MFA_CACHING = TRUE;
+  ```
+  With MFA caching enabled, you only need to provide your passcode on the first command. Subsequent commands will use your existing authenticated session until the MFA cache expires or is reset; see [documentation](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#use-mfa-caching) for details.
   
-  7. Test that we can successfully login to the image repository we created above, `CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO`. Run the following using Snowflake VSCode Extension or in a SQL worksheet and copy the `repository_url` field, then execute a `snow spcs image-registry login` from the terminal:
+  Now add parameter “--mfa-passcode” to the snow cli command and pass in the code from your authenticator app as below.
+  ```bash
+  # test the connection:
+  snow connection test --connection "CONTAINER_hol" --mfa-passcode <pass-code>
+  ```
+
+  4. Start docker via opening Docker Desktop.
+  
+  5. Test that we can successfully login to the image repository we created above, `CONTAINER_HOL_DB.PUBLIC.IMAGE_REPO`. Run the following using Snowflake VSCode Extension or in a SQL worksheet and copy the `repository_url` field, then execute a `snow spcs image-registry login` from the terminal:
   ```sql
   // Get the image repository URL
   use role CONTAINER_user_role;
@@ -181,10 +200,10 @@ Duration: 10
   snow spcs image-registry login --connection CONTAINER_hol
   > prompt for password
   ```
-  **Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
+  **Note** the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)
 
 <!-- ------------------------ -->
-## Build, Push, and Run the Jupyter Service
+## Build and Run Jupyter Service
 Duration: 45
 
 ### Build and Test the Image Locally
@@ -215,7 +234,7 @@ ENTRYPOINT ["jupyter", "notebook","--allow-root","--ip=0.0.0.0","--port=8888","-
 ```
 This is just a normal Dockerfile, where we install some packages, change our working directory, expose a port, and then launch our notebook service. There's nothing unique to Snowpark Container Services here! 
 
-Let's build and test the image locally from the terminal. **Note it is a best practice to tag your local images with a `local_repository` prefix.** Often, users will set this to a combination of first initial and last name, e.g. `jsmith/my-image:latest`. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark` and run a Docker build command:
+Let's build and test the image locally from the terminal. **Note:** It is a best practice to tag your local images with a `local_repository` prefix. Often, users will set this to a combination of first initial and last name, e.g. `jsmith/my-image:latest`. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark` and run a Docker build command:
 ```bash
 cd .../sfguide-intro-to-snowpark-container-services/src/jupyter-snowpark
 docker build --platform=linux/amd64 -t <local_repository>/python-jupyter-snowpark:latest .
@@ -226,7 +245,7 @@ docker image list
 ```
 Now that our local image has built, let's validate that it runs successfully. From a terminal run:
 ```bash
-docker run -d -p 8888:8888 <local_repository>/python-jupyter-snowpark:latest
+docker run -d -p 8888:8888 --name python-jupyter-snowpark <local_repository>/python-jupyter-snowpark:latest
 ```
 Open up a browser and navigate to [localhost:8888/lab](http://localhost:8888/lab) to verify your notebook service is working locally. Once you've verified that the service is working, you can stop the container: `docker stop python-jupyter-snowpark`.
 
@@ -251,7 +270,7 @@ docker push <repository_url>/python-jupyter-snowpark:dev
 This may take some time, so you can move on to the next step **Configure and Push the Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following SQL using the Snowflake VSCode Extension or SQL worksheet:
 ```sql
 USE ROLE CONTAINER_USER_ROLE;
-CALL SYSTEM$REGISTRY_LIST_IMAGES('/CONTAINER_HOL_DB/PUBLIC/IMAGE_REPO');
+SHOW IMAGES IN IMAGE REPOSITORY IMAGE_REPO;
 ```
 You should see your `python-jupyter-snowpark` image listed.
 
@@ -303,7 +322,7 @@ create service CONTAINER_HOL_DB.PUBLIC.jupyter_snowpark_service
     specification_file='jupyter-snowpark.yaml'
     external_access_integrations = (ALLOW_ALL_EAI);
 ```
-Run `CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE');` to verify that the service is successfully running. These commands are also spelled out in [`02_jupyter_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/02_jupyter_service.sql).
+Run `SHOW SERVICE CONTAINERS IN SERVICE JUPYTER_SNOWPARK_SERVICE;` to verify that the service is successfully running. These commands are also spelled out in [`02_jupyter_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/02_jupyter_service.sql).
 
 Since we specified that the `jupyter-snowpark` endpoint running on port `8888` would be `public: true` in our spec YAML, Snowflake is going to generate a URL for our service that can be used to access the service via our Web Browser. To get the URL, once the service is successfully in a `RUNNING` state, execute the following:
 ```sql
@@ -356,7 +375,7 @@ Now we can run a sample query using our Snowpark session!
 
 We've successfully built and deployed our Jupyter Notebook service. Now let's move on to a REST API which we will interact with using a Service Function.
 <!-- ------------------------ -->
-## Build, Push, and Run the Temperature Conversion REST API Service
+## Temperature Conversion REST API
 Duration: 30
 
 ### Build and Test the Image Locally
@@ -425,7 +444,7 @@ if __name__ == '__main__':
 
 The only thing unique to Snowflake about this container, is that the REST API code expects to receive requests in the format that [Snowflake External Function](https://docs.snowflake.com/en/sql-reference/external-functions-data-format#body-format) calls are packaged, and must also package the response in the expected format so that we can use it as a Service Function. **Note this is only required if you intend to interact with the API via a SQL function**.
 
-Let's build and test the image locally from the terminal. **Note it is a best practice to tag your local images with a `local_repository` prefix. Often, users will set this to a combination of first initial and last name, e.g. `jsmith/my-image:latest`. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/convert-api` and run a Docker build command:
+Let's build and test the image locally from the terminal. **Note:** It is a best practice to tag your local images with a `local_repository` prefix. Often, users will set this to a combination of first initial and last name, e.g. `jsmith/my-image:latest`. Navigate to your local clone of `.../sfguide-intro-to-snowpark-container-services/src/convert-api` and run a Docker build command:
 ```bash
 cd .../sfguide-intro-to-snowpark-container-services/src/convert-api
 docker build --platform=linux/amd64 -t <local_repository>/convert-api:latest .
@@ -436,7 +455,7 @@ docker image list
 ```
 Now that our local image has built, let's validate that it runs successfully. From a terminal run:
 ```bash
-docker run -d -p 9090:9090 <local_repository>/convert-api:latest
+docker run -d -p 9090:9090 --name convert-api <local_repository>/convert-api:latest
 ```
 Test our local container endpoint by running the following from a different terminal window:
 ```bash
@@ -456,7 +475,7 @@ Now that we have a local version of our container working, we need to push it to
   > prompt for password
   docker tag <local_repository>/convert-api:latest <repository_url>/convert-api:dev
 ```
-**Note the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)**
+**Note** the difference between `REPOSITORY_URL` (`org-account.registry.snowflakecomputing.com/container_hol_db/public/image_repo`) and `SNOWFLAKE_REGISTRY_HOSTNAME` (`org-account.registry.snowflakecomputing.com`)
 
 Verify that the new tagged image exists by running:
 ```bash
@@ -469,7 +488,7 @@ docker push <repository_url>/convert-api:dev
 This may take some time, so you can move on to the next step **Configure and Push the Spec YAML** while the image is being pushed. Once the `docker push` command completes, you can verify that the image exists in your Snowflake Image Repository by running the following SQL using the Snowflake VSCode Extension or SQL worksheet:
 ```sql
 USE ROLE CONTAINER_USER_ROLE;
-CALL SYSTEM$REGISTRY_LIST_IMAGES('/CONTAINER_HOL_DB/PUBLIC/IMAGE_REPO');
+SHOW IMAGES IN IMAGE REPOSITORY IMAGE_REPO;
 ```
 You should see your `convert-api` image listed.
 
@@ -511,7 +530,7 @@ create service CONTAINER_HOL_DB.PUBLIC.convert_api
     specification_file='convert-api.yaml'
     external_access_integrations = (ALLOW_ALL_EAI);
 ```
-Run `CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.CONVERT-API');` to verify that the service is successfully running. These commands are also listed in [`03_rest_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service.sql)
+Run `SHOW SERVICE CONTAINERS IN SERVICE CONVERT_API;` to verify that the service is successfully running. These commands are also listed in [`03_rest_service.sql`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/03_rest_service.sql)
 
 ### Create and Test the Service Function
 Once the service is up and running, we will create a Service Function that allows us to call our REST API's function via SQL. First, let's create a table with some sample weather data in it:
@@ -595,23 +614,23 @@ Duration: 5
 
 There are a number of useful functions we should explore with respect to controlling the service itself from SQL. More information on SQL commands can be found at [Snowpark Container Services SQL Commands](https://docs.snowflake.com/en/sql-reference/commands-snowpark-container-services#service) and [Snowpark Container Services System Functions](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#what-s-next)
 
-1. Get the status of your container using CALL $SYSTEM:
+1. Get the status of your container using:<br>
 
-    From a SQl console:
+    From a SQL console:
 
     ```sql
-    CALL SYSTEM$GET_SERVICE_STATUS('CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE');
+    SHOW SERVICE CONTAINERS IN SERVICE JUPYTER_SNOWPARK_SERVICE;
     ```
 
-2. Check the status of the logs with :
+2. Check the status of the logs with:<br>
 
-    From a SQl console:
+    From a SQL console:
 
     ```sql
     CALL SYSTEM$GET_SERVICE_LOGS('CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE', '0', 'jupyter-snowpark',10);
     ```
 
-3. Suspend your container using the ALTER SERVICE command
+3. Suspend your container using the ALTER SERVICE command:<br>
 
     From a SQL console:
 
@@ -619,16 +638,16 @@ There are a number of useful functions we should explore with respect to control
     ALTER SERVICE CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE SUSPEND ;
     ```
 
-4. Resume your container using the ALTER SERVICE command
+4. Resume your container using the ALTER SERVICE command:<br>
 
-  From a SQL console:
+    From a SQL console:
 
-  ```sql
-  ALTER SERVICE CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE RESUME ;
-  ```
+    ```sql
+    ALTER SERVICE CONTAINER_HOL_DB.PUBLIC.JUPYTER_SNOWPARK_SERVICE RESUME ;
+    ```
 
 <!-- ------------------------ -->
-## Stop the Services and Suspend the Compute Pool
+## Stop and Suspend
 Duration: 2
 
 If you no longer need the services and compute pool up and running, we can stop the services and suspend the compute pool so that we don't incur any cost (Snowpark Container Services bill credits/second based on the compute pool's uptime, similar to Virtual Warehouse billing):
@@ -656,7 +675,7 @@ DROP ROLE CONTAINER_USER_ROLE;
 ```
 
 <!-- ------------------------ -->
-## Conclusion
+## Conclusion And Resources
 Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to create and manage long-running services using Snowflake's managed Snowpark Container Services. These services run entirely within your Snowflake account boundary using a managed container orchestration service- keeping your data secure, and making development to deployment incredibly easy.
 
 For more information, check out the resources below:

@@ -730,4 +730,10 @@ After setting up our AWS and Snowflake and envrionments we built two primary thi
 
 - [IAM Role with Snowpark External Access Documentation](https://docs.snowflake.com/en/LIMITEDACCESS/external-network-access/external-network-access-examples#accessing-amazon-s3-with-aws-iam)
 
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/AWS-Bedrock-and-Streamlit-Reference-Architecture.pdf)
+
+- [Fork the Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-bedrock-streamlit-and-snowflake/tree/main)
+
+- [Watch the Demo](https://youtu.be/XkXhlYEqAeM?list=TLGGkUFy7-BXF04yMjA5MjAyNQ)
+
 If you have any questions, reach out to your Snowflake account team!

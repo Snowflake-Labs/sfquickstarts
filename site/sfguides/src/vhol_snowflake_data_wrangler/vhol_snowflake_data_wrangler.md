@@ -2,7 +2,7 @@ summary: This lab will walk you through how to apply a data-centric approach to 
 id: vhol_snowflake_data_wrangler
 categories: data-science-&-ml,partner-integrations
 environments: web
-status: Hidden
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: SageMaker, Data Wrangler, Feature Engineering, Data Marketplace, Machine Learning, Financial Services, Storage Integration
 authors: andries.engelbrecht@snowflake.com
@@ -1643,4 +1643,8 @@ Related Resources
 - [Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/data-marketplace.html)
 - [SageMaker Data Wrangler](https://aws.amazon.com/sagemaker/data-wrangler/)
 - [SageMaker Studio](https://aws.amazon.com/sagemaker/studio/)
+- [Fork GitHub Repo](https://github.com/dylan-tong-aws/snowflake-sagemaker-workshops?_fsi=TNKw8Mx5&amp;_fsi=TNKw8Mx5)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Student-Loan-Default-Prediction-using-Snowpark-ML-and-Amazon-SageMaker.pdf)
+- [Read the Blog](https://medium.com/snowflake/integrating-machine-learning-models-with-snowpark-ml-a-guide-for-azureml-and-sagemaker-users-735292843a7b)
+- [Watch the Demo](https://youtu.be/m0eXjwiHU8E?list=TLGGY7poE1orVScyNDA5MjAyNQ)
 
