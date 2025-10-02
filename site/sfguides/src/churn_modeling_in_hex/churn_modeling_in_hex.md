@@ -60,7 +60,7 @@ Clicking this button will copy the template project into your new workspace.
 
 </button>
 
-Now that you've got your project imported, you will find yourself in the [Logic view](https://learn.hex.tech/docs/develop-logic/logic-view-overview) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project.
+Now that you've got your project imported, you will find yourself in the [Logic view](https://learn.hex.tech/docs/explore-data/projects/projects-introduction#the-notebook-view) of a Hex project. The Logic view is a notebook-like interface made up of cells such as code cells, markdown cells, input parameters and more! On the far left side, you'll see a control panel that will allow you to do things like upload files, import data connections, or search your project.
 
 Before we dive into the code, we'll need to import our Snowflake data connection, which has been automatically created by the partner connect process.
 
@@ -68,7 +68,7 @@ Head over to the Data sources tab represented by a database icon with a lightn
 
 ![](assets/DC.gif)
 
-One nice feature of Hex is the [reactive execution model](https://learn.hex.tech/docs/develop-logic/compute-model/reactive-execution). This means that when you run a cell, all related cells are also executed so that your projects are always in a clean state. However, if you want to ensure you don’t get ahead of yourself as we run through the tutorial, you can opt to turn this feature off. In the top right corner of your screen, you’ll see a Run mode dropdown. If this is set to Auto, select the dropdown and change it to cell only.
+One nice feature of Hex is the [reactive execution model](https://learn.hex.tech/docs/explore-data/projects/project-execution/execution-model#reactive-graph-based-execution-model). This means that when you run a cell, all related cells are also executed so that your projects are always in a clean state. However, if you want to ensure you don’t get ahead of yourself as we run through the tutorial, you can opt to turn this feature off. In the top right corner of your screen, you’ll see a Run mode dropdown. If this is set to Auto, select the dropdown and change it to cell only.
 
 ![](assets/mode.gif)
 
@@ -309,7 +309,7 @@ accuracy = round(accuracy_score(actual, predictions), 3)
 recall = round(recall_score(actual, predictions), 3)
 ```
 
-This will calculate an accuracy and recall score for us which we'll display in a [single value cell](https://learn.hex.tech/docs/logic-cell-types/display-cells/single-value-cells#single-value-cell-configuration).
+This will calculate an accuracy and recall score for us which we'll display in a [single value cell](https://learn.hex.tech/docs/explore-data/cells/visualization-cells/single-value-cells#single-value-cell-configuration).
 
 ![](assets/scores.png)
 
