@@ -71,12 +71,13 @@ The setup script creates:
 
 ### Step 2: Download Required Files
 
-Download these 3 files from the GitHub repository:
+Download these 4 files from the GitHub repository:
 
 | File | Purpose | Download Link |
 |------|---------|---------------|
 | **Data File** | Basketball fan survey data | [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) |
 | **Streamlit App** | Interactive analytics dashboard | [snow_bear.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear.py) |
+| **Environment File** | Conda environment configuration | [environment.yml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/environment.yml) |
 | **Semantic Model** | AI assistant semantic model | [snow_bear_fan_360.yaml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_fan_360.yaml) |
 
 ### Step 3: Upload Files to Stages
@@ -85,13 +86,13 @@ Download these 3 files from the GitHub repository:
 
 2. Navigate to `Catalog` → `Database Explorer` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
 
-**Upload data and app files:**
+**Upload data, app, and environment files:**
 
 3. Click on `SNOW_BEAR_DATA_STAGE`
 
 4. Click `Enable Directory Table`
 
-5. Upload `basketball_fan_survey_data.csv.gz` and `snow_bear.py` to this stage
+5. Upload `basketball_fan_survey_data.csv.gz`, `snow_bear.py`, and `environment.yml` to this stage
 
 **Upload semantic model:**
 
