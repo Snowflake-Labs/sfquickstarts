@@ -588,3 +588,6 @@ Want to learn more about Hightouch and the Composable CDP? Check out the followi
 - [Warner Music Group Case Study](https://www.snowflake.com/en/why-snowflake/customers/all-customers/case-study/warner-music-group/)
 - [Snowflake-Hightouch Solutions One-Pager](https://hightouch.com/resources/snowflake-one-pager)
 - [The Complete Guide to the Composable CDP](https://hightouch.com/resources/composable-cdp-ebook)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Hightouch-Snowflake-Architecture-Diagram.pdf)
+- [Read the Blog](https://www.snowflake.com/en/blog/composable-cdps-healthcare-life-sciences-secure-data-insights/)
+- [Watch Demo](https://youtu.be/2QViEoXpw7s?list=TLGGG6-z6JE74yMyMDA5MjAyNQ)

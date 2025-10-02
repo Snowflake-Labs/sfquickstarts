@@ -125,20 +125,29 @@ In this step we are going to leverage Snowflake native document processing funct
 **Step 1**. Use function [SNOWFLAKE.CORTEX.PARSE_DOCUMENT](https://docs.snowflake.com/en/sql-reference/functions/parse_document-snowflake-cortex) to read the PDF documents directly from the staging area. We use here the LAYOUT mode:
 
 ```SQL
-CREATE or replace TEMPORARY table RAW_TEXT AS
+CREATE OR REPLACE TEMPORARY TABLE RAW_TEXT AS
+WITH FILE_TABLE as (
+  (SELECT 
+        RELATIVE_PATH,
+        SIZE,
+        FILE_URL,
+        build_scoped_file_url(@docs, relative_path) as scoped_file_url,
+        TO_FILE('@DOCS', RELATIVE_PATH) AS docs 
+    FROM 
+        DIRECTORY(@DOCS))
+)
 SELECT 
     RELATIVE_PATH,
     SIZE,
     FILE_URL,
-    build_scoped_file_url(@docs, relative_path) as scoped_file_url,
+    scoped_file_url,
     TO_VARCHAR (
-        SNOWFLAKE.CORTEX.PARSE_DOCUMENT (
-            '@docs',
-            RELATIVE_PATH,
+        SNOWFLAKE.CORTEX.AI_PARSE_DOCUMENT (
+            docs,
             {'mode': 'LAYOUT'} ):content
         ) AS EXTRACTED_LAYOUT 
 FROM 
-    DIRECTORY('@docs');
+    FILE_TABLE;
 ```
 
 
@@ -201,9 +210,9 @@ CREATE OR REPLACE TEMPORARY TABLE docs_categories AS WITH unique_documents AS (
  docs_category_cte AS (
   SELECT
     relative_path,
-    TRIM(snowflake.cortex.CLASSIFY_TEXT (
+    TRIM(snowflake.cortex.AI_CLASSIFY (
       'Title:' || relative_path || 'Content:' || chunk, ['Bike', 'Snow']
-     )['label'], '"') AS category
+     )['labels'][0], '"') AS CATEGORY
   FROM
     unique_documents
 )
@@ -1025,29 +1034,38 @@ DELETE FROM docs_chunks_table
     WHERE docs_chunks_table.RELATIVE_PATH = delete_docs_stream.RELATIVE_PATH
     and delete_docs_stream.METADATA$ACTION = 'DELETE';
 
-
-CREATE or replace TEMPORARY table RAW_TEXT AS
+CREATE OR REPLACE TEMPORARY TABLE RAW_TEXT AS
+    WITH FILE_TABLE as 
+      (SELECT 
+            RELATIVE_PATH,
+            SIZE,
+            FILE_URL,
+            build_scoped_file_url(@docs, relative_path) as scoped_file_url,
+            TO_FILE('@DOCS', RELATIVE_PATH) AS docs 
+        FROM 
+            insert_docs_stream
+        WHERE 
+            METADATA$ACTION = 'INSERT'        
+        )
     SELECT 
         RELATIVE_PATH,
         SIZE,
         FILE_URL,
-        build_scoped_file_url(@docs, relative_path) as scoped_file_url,
+        scoped_file_url,
         TO_VARCHAR (
-            SNOWFLAKE.CORTEX.PARSE_DOCUMENT (
-                '@docs',
-                RELATIVE_PATH,
+            SNOWFLAKE.CORTEX.AI_PARSE_DOCUMENT (
+                docs,
                 {'mode': 'LAYOUT'} ):content
             ) AS EXTRACTED_LAYOUT 
     FROM 
-        insert_docs_stream
-    WHERE 
-        METADATA$ACTION = 'INSERT';
+        FILE_TABLE;
+    
 
     -- Insert new docs chunks
-    insert into docs_chunks_table (relative_path, size, file_url,
+insert into docs_chunks_table (relative_path, size, file_url,
                             scoped_file_url, chunk, chunk_index)
 
-    select relative_path, 
+select relative_path, 
             size,
             file_url, 
             scoped_file_url,
@@ -1081,9 +1099,9 @@ CREATE or replace TEMPORARY table RAW_TEXT AS
     docs_category_cte AS (
       SELECT
         relative_path,
-        TRIM(snowflake.cortex.CLASSIFY_TEXT (
-          'Title:' || relative_path || 'Content:' || chunk, ['Bike', 'Snow']
-        )['label'], '"') AS category
+        TRIM(snowflake.cortex.AI_CLASSIFY (
+            'Title:' || relative_path || 'Content:' || chunk, ['Bike', 'Snow']
+            )['labels'][0], '"') AS CATEGORY
       FROM
         unique_documents
     )
@@ -1098,9 +1116,9 @@ CREATE or replace TEMPORARY table RAW_TEXT AS
         SET category = docs_categories.category
         from docs_categories
         where  docs_chunks_table.relative_path = docs_categories.relative_path;
-
 END;
 $$;
+
 ```
 
 Now we can create a Task that every X minutes can check if there is new data in the stream and take an action. We are setting the schedule to 5 minutes so you can follow the execution, but fell free to reduce the time to 1 minute if needed. Consider what would be best for your app and how often new docs are updated.

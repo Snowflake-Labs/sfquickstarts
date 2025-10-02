@@ -90,21 +90,28 @@ and use it to connect to your database.
 
 #### Step 1: Navigate to Apps
 
-In your Snowflake account, Go to `Data Products` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Get`. Please note that the Native App must be [installed and configured ](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html)by an administrator. 
+In your Snowflake account, Go to `Catalog` > `Apps` to open the Native Apps collection. If Posit Workbench is not already installed, click `Browse all apps` and search for `Posit Workbench` to find it. Please note that the Native App must be [installed and configured](https://docs.posit.co/ide/server-pro/integration/snowflake/native-app/install.html) by an administrator. 
 
-![](assets/snowflake/05-get_posit_workbench.png)
+![](assets/snowflake/v2-05-find_posit_workbench.png)
 
-#### Step 2: Open the Posit Workbench Native App
+#### Step 2: Activate and launch Posit Workbench Native App
 
 Once Posit Workbench is installed, click on the app under `Installed Apps` to launch the app. If you do not see the Posit Workbench app listed, ask your Snowflake account administrator for access to the app.
 
-![](assets/snowflake/06-open_app.png)
+After clicking on the app, you will see a page with activation steps and a blue `Activate` button.
 
-After clicking on the app, you will see a page with configuration instructions and a blue `Launch app` button.
+![](assets/snowflake/v2-06-Activate_App.png)
 
-![](assets/snowflake/09-launch-app.png)
+Click on `Activate`. This should now take you to the next step where you can see a `Launch app` button.
+![](assets/snowflake/v2-07-Launch_App.png)
 
-Click on `Launch app`. This should take you to the webpage generated for the Workbench application. You may be prompted to first login to Snowflake using your regular credentials or authentication method.
+To setup Oauth, click on `Connections` tab, and then click on `Configure` in section titeld `Snowflake OAuth Integration`. You will then be prompted to enter your username and password along with instrucions to setup OAuth.
+
+![](assets/snowflake/v2-08-OAuth-setup.png)
+
+![](assets/snowflake/v2-09-OAuth-username-password.png)
+
+Finally, to launch the app click on `Launch app`. This should take you to the webpage generated for the Workbench application. You may be prompted to first login to Snowflake using your regular credentials or authentication method.
 
 ### Create an RStudio Pro Session 
 
@@ -129,6 +136,17 @@ Under `Credentials`, click the button with the Snowflake icon to sign in to Snow
 Follow the sign in prompts.
 
 ![](assets/posit_workbench/03-snowflake_login.png)
+
+If sign-in fails: verify OAuth and network policy.
+
+If the Snowflake sign-in in RStudio doesn’t complete (the Snowflake button doesn’t turn blue) or you see 403/blocked errors:
+* OAuth setup for the app: Ensure the Posit Workbench Native App is configured to use OAuth so users can authenticate from inside RStudio. Follow the install steps: [Install with OAuth](https://docs.posit.co/partnerships/snowflake/workbench/native-app/install.html#oauth).
+* Account network policy: If your account enforces a network policy, allow connections from the Posit Workbench Native App back to Snowflake. Guidance and remediation: [Account network policies](https://docs.posit.co/partnerships/snowflake/workbench/native-app/troubleshooting.html#account-network-policies).
+
+Try again: After updating OAuth and/or network policy, return to RStudio in Posit Workbench and click the Snowflake button to sign in.
+
+Tip: Most sign-in issues are due to incomplete OAuth configuration or a restrictive network policy. Ask an admin to review both if you don’t have permissions.
+
 
 When you're successfully signed into Snowflake, the Snowflake button will turn blue
 and there will be a checkmark in the upper-left corner.
@@ -585,6 +603,8 @@ To run the app, open `app.R` and then click the Run App button at the top of the
 
 ![](assets/shiny/run.png)
 
+If you face package missing errors like this: `there is no package called ‘xyz’`, please install the required package by running `install.packages("xyz")` in the R console.
+
 Change the metric in the sidebar to control which metric is plotted.
 
 ### Learn More About Shiny
@@ -622,3 +642,6 @@ R is beloved by data scientists for its intuitive, concise syntax. You can now c
 - [Quarto for reproducible documents, reports, and data products](https://quarto.org/)
 - [Shiny for interactive dashboards and applications](https://shiny.posit.co/)
 - [Shinylive for serverless Shiny applications](https://shinylive.io/)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/05/Data-Analysis-with-R-using-POSIT-workbench.pdf)
+- [Read the Blog](https://medium.com/snowflake/analyze-data-in-r-with-posit-workbench-and-snowflake-7b837b27337b)
+- [Watch the Demo](https://youtu.be/ZscKe1Vl7Ec?list=TLGGZ4Kuet5QT6AyMjA5MjAyNQ)

@@ -196,7 +196,11 @@ You did it! By following these steps, you have integrated the PyTorch model with
 ### Related Resources
 
 - #### [Snowpark Container Services documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
-- 
+  
 - #### [Snowpark Container Services Tutorials](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview-tutorials)
 
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-medical-images-classification-using-pytorch/tree/main)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Medical-Image-ProcessingandAnalytics.pdf)
+- [Read the Blog](https://medium.com/snowflake/pytorch-model-to-detect-pneumonia-using-snowpark-container-service-and-snowflake-ml-features-e2f17a785f42)
+- [Watch the Demo](https://youtu.be/5UdOUSVe814?list=TLGGnNy70R3PJLsyNDA5MjAyNQ)
 

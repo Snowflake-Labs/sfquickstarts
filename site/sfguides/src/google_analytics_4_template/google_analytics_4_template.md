@@ -631,7 +631,11 @@ In this QuickStart we created a table called `events` with analytics-ready GA4 d
 
 ### Related Resources
 
-Be sure to check out all Sigma's latest developments at [Sigma's First Friday Feature page!](https://quickstarts.sigmacomputing.com/firstfridayfeatures/)
+- Be sure to check out all Sigma's latest developments at [Sigma's First Friday Feature page!](https://quickstarts.sigmacomputing.com/firstfridayfeatures/)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/Snowflake-Solution-GA4-Architecute-diagram.pdf)
+- [Read the Blog](https://medium.com/snowflake/how-snowflakes-connector-for-google-analytics-centralizes-marketing-data-cd6df8f53105)
+- [Watch the Demo](https://youtu.be/svz3NB3_WRg?si=6WLx-6XzHHpkwzJL)
+  
 
 [Help Center Home](https://help.sigmacomputing.com)<br>
 [Sigma Community](https://community.sigmacomputing.com/)<br>

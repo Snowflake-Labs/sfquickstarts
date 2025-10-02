@@ -131,3 +131,6 @@ Congratulations on making it to the end of this Lab! You've successfully trained
 * [Machine Learning Made Easy With SNowflake ML Functions And Hex](https://www.youtube.com/watch?v=Sj64VEyfwww)
 * [Snowflake ML Functions Documentation](https://docs.snowflake.com/en/guides-overview-ml-functions)
 * [Hex Documentation](https://learn.hex.tech/)
+* [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/05/Cortex-ML-Archtecture.pdf)
+* [Read the Blog](https://medium.com/snowflake/building-ml-models-in-minutes-with-hex-and-snowflake-cortex-434e94486365)
+* [Watch the Demo](https://youtu.be/Sj64VEyfwww?list=TLGG6uV5wGgnKuIxOTA5MjAyNQ)

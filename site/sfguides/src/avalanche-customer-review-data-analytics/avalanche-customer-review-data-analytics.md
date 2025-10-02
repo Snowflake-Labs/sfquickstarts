@@ -35,13 +35,10 @@ A customer review analytics dashboard that processes unstructured text data and 
 ## Setup
 Duration: 10
 
-### Download the Notebook
-
-Firstly, to follow along with this quickstart, you can click on [Avalanche-Customer-Review-Analytics.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb) to download the Notebook from GitHub.
-
-Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
 
 ### Create the database and schema
+
+Firstly, retrieve [setup.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/setup.sql) to follow along our creation of the Avalanche database, schema and table.
 
 Secondly, let's create the Avalanche database and schema by running the following in a SQL worksheet:
 ```sql
@@ -85,17 +82,24 @@ Finally, we can verify that the files have been uploaded successfully to the sta
 Next, enter the following in a SQL worksheet:
 
 ```sql
- `ls @avalanche_db.avalanche_schema.customer_reviews`
+ ls @avalanche_db.avalanche_schema.customer_reviews
 ```
 
 This should yield the following results output:
 
 ![image](assets/list-stage.png)
 
+### Download the Notebook
+
+Finally, before proceeding further to the next step, you can click on [Avalanche-Customer-Review-Analytics.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb) to download the Notebook from GitHub.
+
+Snowflake Notebooks come pre-installed with common Python libraries for data science and machine learning, such as `numpy`, `pandas`, `matplotlib`, and more! If you are looking to use other packages, click on the Packages dropdown on the top right to add additional packages to your notebook.
 
 <!-- ------------------------ -->
 ## Retrieving Customer Review Data
 Duration: 10 mins
+
+Open up the [Avalanche-Customer-Review-Analytics.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb) notebook as downloaded in the previous step to follow along this step onwards.
 
 ### Extracting Data from DOCX Files
 
@@ -362,6 +366,9 @@ By analyzing sentiment across products and time periods, businesses can identify
 - Built a complete analytics pipeline for customer review data
 
 ### Related Resources
+
+- [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb?_fsi=QzKQ5lY6&_fsi=QzKQ5lY6&_fsi=9zGgF6Cf)
+- [Read Medium Blog](https://medium.com/snowflake/towards-building-a-customer-review-analytics-dashboard-with-snowflake-and-streamlit-3decdde91567)
 
 Documentation:
 - [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document)

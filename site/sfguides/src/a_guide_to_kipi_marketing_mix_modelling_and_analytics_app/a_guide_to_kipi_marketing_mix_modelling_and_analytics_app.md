@@ -231,3 +231,5 @@ We've covered a ton in this Quickstart, and here are the highlights:
 And finally, here's a quick recap of related resources:
 
 - Read through the Blog- [Unlocking the Power of Marketing Mix Modeling ](https://www.kipi.ai/insights/unlocking-the-power-of-marketing-mix-modeling-with-snowpark/)
+- [Download Reference Architecture](https://quickstarts.snowflake.com/guide/a_guide_to_kipi_marketing_mix_modelling_analytics_app/img/3be51d0b94a8705c.png)
+- [Watch the Demo](https://youtu.be/YTtJsVXDEOg?list=TLGGeghw6iBwBOcyNDA5MjAyNQ)

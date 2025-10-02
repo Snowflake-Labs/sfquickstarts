@@ -60,20 +60,20 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight),
 The [Snowflake Marketplace](https://other-docs.snowflake.com/en/collaboration/collaboration-marketplace-about) provides mutiple listings for data you may use for analytical purposes. We will be leveraging the open data aggregated by Snowflake Public Data for this quickstart, which contains a database of holidays to enrich our sales data. 
 
 - Log into your Snowflake account as the ACCOUNTADMIN or similar role
-- Follow the steps below to access the **Global Government** listing in your account. 
+- Follow the steps below to access the **Snowflake Public Data (Free)** listing in your account. 
   - Click on 'Marketplace' on the left hand banner:
   
     <img src = "assets/marketplace.png">
   
-  - In the search bar, search for 'Global Government'
+  - In the search bar, search for 'Snowflake Public Data (Free)'
     
   - Click on the first listing, with the same title: 
 
-    <img src = "assets/Global_Government_search.png">
+    <img src = "assets/Search_result.png">
 
   - Click on get, and on the pop-up screen, rename the database to FROSTBYTE_CS_PUBLIC (in all caps). Note - if prompted, you may need to fill in your details before being able to get access. Grant access to the `PUBLIC` role in the dropdown menu: 
   
-    <img src = "assets/Mount_Global_Government.png">
+    <img src = "assets/FROSTBYTE_CS_PUBLIC.png">
 
 ### Step 2: Creating Objects, Load Data, & Set Up Tables
 
@@ -281,7 +281,7 @@ CREATE OR REPLACE VIEW canadian_holidays AS (
         holiday_name,
         is_financial
     FROM
-        frostbyte_cs_public.cybersyn.public_holiday_calendar
+        frostbyte_cs_public.PUBLIC_DATA_FREE.public_holiday_calendar
     WHERE
         ISO_ALPHA2 LIKE 'CA'
         AND date > '2022-01-01'
@@ -600,4 +600,8 @@ This guide contained code patterns that you can leverage to get quickly started 
 
 - [Anomaly Detection](https://docs.snowflake.com/en/user-guide/analysis-anomaly-detection) Product Docs, alongside the [anomaly syntax](https://docs.snowflake.com/en/sql-reference/classes/anomaly_detection)
 - [Forecasting](https://docs.snowflake.com/en/user-guide/analysis-forecasting) Product Docs, alongside the [forecasting syntax](https://docs.snowflake.com/sql-reference/classes/forecast)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/notebook-demo/tree/main/Getting%20Started%20with%20Snowflake%20Cortex%20ML-Based%20Functions)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/04/Forecasting-Restaurant-Sales-and-Identifying-Sales-Anomalies-using-Cortex-ML-functions.pdf)
+- [Read the Blog](https://medium.com/snowflake/detecting-anomalies-with-snowflake-cortex-ml-based-functions-869c209d152d)
+- [Watch the Demo](https://youtu.be/xgxycDLg07U?list=TLGGW3mZkg03mM0yNDA5MjAyNQ)
 

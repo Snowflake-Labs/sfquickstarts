@@ -683,6 +683,9 @@ To further explore the tools and methodologies used in this quickstart, check ou
 - [Snowflake ML Model Registry Documentation](https://docs.snowflake.com/en/developer-guide/ml-model-registry/index)
 - [Source Code for This Quickstart](https://github.com/Snowflake-Labs/sfguide-build-custom-model-to-detect-anomalies-on-production-floor)
 - [Snowflake Notebooks Overview](https://docs.snowflake.com/en/user-guide/ui-snowsight#notebooks)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2025/anomaly-detection.pdf)
+- [Read Medium Blog](https://medium.com/@kala.govindarajan/building-llm-powered-chat-experiences-for-anomaly-detection-and-predictive-maintenance-in-snowflake-4f3f84c06b1d)
+  
 
 These resources will help you deepen your understanding and build more complex machine-learning workflows using Snowflake.
 

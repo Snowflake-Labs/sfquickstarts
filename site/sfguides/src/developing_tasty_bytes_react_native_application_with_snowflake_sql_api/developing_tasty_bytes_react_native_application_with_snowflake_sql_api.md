@@ -286,3 +286,8 @@ To continue your journey in the Snowflake Data Cloud, please visit the link belo
 - ### [Powered by Tasty Bytes - Quickstarts Table of Contents](https://quickstarts.snowflake.com/guide/tasty_bytes_introduction/index.html)
 
 - [Demo on Snowflake Demo Hub](https://developers.snowflake.com/demos/mobile-data-applications-with-snowflake/)
+- [Watch the Demo](https://youtu.be/9gzumSuGBoc?list=TLGGnSS4RRe_OnEyNDA5MjAyNQ)
+- [Fork Repo on GitHub](https://github.com/sf-gh-sjasti/TastyBytesReactNativeAppWithSnowflake-SQL_API)
+- [Down Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/03/Mobile-Data-App.pdf)
+- [Read the Blog](https://medium.com/snowflake/developing-react-react-native-mobile-web-application-using-snowflake-sql-api-52b16c27b2c4)
+  

@@ -225,4 +225,7 @@ Congratulations! You've successfully completed the lab using Snowpark for Python
 - [Snowpark for Python Demos](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Streamlit Docs](https://docs.streamlit.io/)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/03/Industry-Solutions-Use-Predict-Home-Prices-using-ML.pdf)
+- [Read the Blog](https://medium.com/snowflake/building-ml-workflows-with-scikit-learn-and-snowflake-e879234edb0d)
+- [Watch the Demo](https://youtu.be/zbKLOw66LQk?list=TLGGlDtv7VvSbXUyNDA5MjAyNQ)
 

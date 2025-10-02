@@ -5,7 +5,7 @@ categories: Data Engineering, DE: Transformation
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, DE: Transformation, Getting Started
+tags: Data_Engineering, DE_Transformation, Getting_Started
 
 # Accelerate Data Transformation with the Telecom Data Cloud and Informatica
 

@@ -300,5 +300,8 @@ For further learning, explore the following resources:
 - [Domo Community Forum](https://community-forums.domo.com/main)
 - [How to Join the Domo Community](https://www.domo.com/blog/how-to-join-the-community-forums-step-by-step/)
 - [Domo Support](https://www.domo.com/login/customer-community)
+- [Read Medium Blog](https://medium.com/snowflake/introducing-domos-marketing-app-enriching-marketing-analytics-with-snowflake-integration-11d48e7b8ad4)
+- [Watch the Demo](https://youtu.be/yjoDM6FOkZQ?si=urgLa_WqNpmU7JI4)
 - Architecture  
   <img src="assets/architecture.png" width="600" />
+  

@@ -771,9 +771,9 @@ def get_analyst_response(messages: List[Dict]) -> Tuple[Dict, Optional[str]]:
 * error code: `{parsed_content['error_code']}`
 
 Message:
-```
+
 {parsed_content['message']}
-```
+
         """
         return parsed_content, error_msg
 

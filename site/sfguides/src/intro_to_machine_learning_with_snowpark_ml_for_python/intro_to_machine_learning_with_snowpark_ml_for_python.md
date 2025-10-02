@@ -232,5 +232,8 @@ For more information, check out the resources below:
 - [Quickstart: Build an End-to-End ML Workflow in Snowflake
 ](https://quickstarts.snowflake.com/guide/end-to-end-ml-workflow/#0)
 - Check out other Snowflake ML quickstarts [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
+- [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/10/snowflake_ml_e2e.png)
+- [Read the Blog](https://medium.com/snowflake/end-to-end-machine-learning-with-snowpark-ml-in-snowflake-notebooks-faa42f1f57fc)
+- [Watch the Demo](https://youtu.be/LeSGBW0YoLg?list=TLGGS3MVx9ovt9oyNDA5MjAyNQ)
 
 <!-- ------------------------ -->
