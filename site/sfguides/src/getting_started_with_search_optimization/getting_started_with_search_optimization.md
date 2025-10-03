@@ -22,7 +22,7 @@
   ]
 }
 
-# Getting started with Search Optimization
+# Getting started with Search Optimization 
 
 <!-- ------------------------ -->
 ## Overview 
