@@ -65,7 +65,7 @@ The setup script creates:
 - **Database**: `SNOW_BEAR_DB` with `BRONZE_LAYER`, `GOLD_LAYER`, and `ANALYTICS` schemas
 - **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
 - **Warehouse**: `SNOW_BEAR_WH` for compute resources
-- **Stages**: `SNOW_BEAR_DATA_STAGE` and `SEMANTIC_MODELS` for file uploads
+- **Stages**: `SNOW_BEAR_DATA_STAGE`, `SEMANTIC_MODELS`, and `STREAMLIT_STAGE` for file uploads
 - **File Format**: `CSV_FORMAT` for data loading
 - **AI Access**: `SNOWFLAKE.CORTEX_USER` role for Cortex functions
 
@@ -86,21 +86,29 @@ Download these 4 files from the GitHub repository:
 
 2. Navigate to `Catalog` → `Database Explorer` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
 
-**Upload data, app, and environment files:**
+**Upload data file:**
 
 3. Click on `SNOW_BEAR_DATA_STAGE`
 
 4. Click `Enable Directory Table`
 
-5. Upload `basketball_fan_survey_data.csv.gz`, `snow_bear.py`, and `environment.yml` to this stage
+5. Upload `basketball_fan_survey_data.csv.gz` to this stage
 
-**Upload semantic model:**
+**Upload app files:**
 
-6. Go back and click on `SEMANTIC_MODELS` stage
+6. Go back and click on `STREAMLIT_STAGE`
 
 7. Click `Enable Directory Table`
 
-8. Upload `snow_bear_fan_360.yaml` to this stage
+8. Upload `snow_bear.py` and `environment.yml` to this stage
+
+**Upload semantic model:**
+
+9. Go back and click on `SEMANTIC_MODELS` stage
+
+10. Click `Enable Directory Table`
+
+11. Upload `snow_bear_fan_360.yaml` to this stage
 
 ### Step 4: Import the Analytics Notebook
 
