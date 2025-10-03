@@ -173,30 +173,56 @@ CREATE OR REPLACE STAGE models DIRECTORY = (ENABLE = TRUE);
 
 Now we will have to set up a semantic model for Cortex Analyst.
 
-To set up Cortex Analyst you will have to upload a semantic file.
-- Download [sales_metrics_model.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/sales_metrics_model.yaml) (NOTE: Do NOT right-click to download.)
-- Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS
-- Click "+ Files" in the top right
-- Browse and select sales_metrics_model.yaml file
-- Click "Upload"
 
-Cortex Analyst is a highly accurate text to sql generator and in order to produce highly accurate results a semantic file such as this one is required. Cortex Analyst will use this semantic file along with user prompts to generate accurate SQL.
+Setting up Cortex Analyst
+- Go to **AI * ML** on the side and select **Cortex Analyst**.
+- Select the SALES_INTELLIGENCE.DATA Database and Schema.
+- Select **Create New** and select **Create new Semantic View**.
+ ![](assets/analystui.png)
 
-To set up Cortex Analyst you will have to upload a semantic file.
-- Download [cortex_agent_definition.json](https://github.com/Snowflake-Labs/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app/blob/main/cortex_agent_definition.json) (NOTE: Do NOT right-click to download.)
-- Navigate to Data » Databases » SALES_INTELLIGENCE » DATA » Stages » MODELS
-- Click "+ Files" in the top right
-- Browse and select cortex_agent_definition.json file
-- Click "Upload"
+ Select the MODELS Stage and name the Analyst Service SALES_METRICS_MODEL and select **Next**.
+ - Select the SALES_INTELLIGENCE database and the SALES_METRICS table then select **Next**.
+ - Select all of the columns and select **Create and Save**.
+
+ This is a VERY simple Analyst service. You can click through the dimensions and see that Cortex used LLMS to write descriptions and synonyms for each of the dimensions. We're going to leave this as-is, but know that you can adjust this as needed to enhance the performance of Cortex Analyst.
+ ![](assets/builtanalyst.png)
+
+Setting up Cortex Agent
+- Go to **AI * ML** on the side and select **Cortex Analyst**.
+- Select the SALES_INTELLIGENCE.DATA Database and Schema.
+- Select **Create Agent**.
+- Name the agent SALES_INTELLIGENCE_AGENT and create the agent.
+![](assets/salesintelligence.png)
+
+Let's add the tools and orchestration to the agent
+- Select **Edit** in the top right.
+- Select **Tools** and **Add** by Cortex Analyst.
+- Select the SALES_INTELLIGENCE.DATA Database and Schema and Select the SALES_METRICS_MODEL and generate a Description with Cortex AI.
+- Select **Add**
+![](assets/analysttoolui.png)
+
+- Select **Add** by Cortex Search.
+- Select the SALES_INTELLIGENCE.DATA Database and Schema and Select the SALES_CONVERSATION_SEARCH.
+- Enter the name SALES_CONVERSATION_SEARCH and enter the description "the search service is for providing information on sales call transcripts".
+- Select CONVERSATION_ID as the ID column and CUSTOMER_NAME as the Title Column.
+- Select **Add**.
+![](assets/searchtoolui.png)
+
+- Select **Orchestration** and s leave the model set to **auto**.
+- Add the following orchestration instructions, "use the analyst tool for sales metric and the search tool for call details".
+- Add the following response instructions, "make the response concise and direct so that a strategic sales person can quickly understand the information provided".
+- Select **Save**.
 
 And last we will run this below script to grant the appropriate privileges to the PUBLIC role (or whatever role you can use). 
 
 ```sql
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE PUBLIC;
 GRANT USAGE ON DATABASE SALES_INTELLIGENCE TO ROLE PUBLIC;
 GRANT USAGE ON SCHEMA DATA TO ROLE PUBLIC;
+GRANT SELECT ON SALES_METRICS_VIEW TO ROLE PUBLIC;
+GRANT SELECT ON SALES_INTELLIGENCE.DATA.SALES_METRICS TO ROLE PUBLIC;
 GRANT USAGE ON CORTEX SEARCH SERVICE SALES_CONVERSATION_SEARCH TO ROLE PUBLIC;
 GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE PUBLIC;
-GRANT READ ON STAGE MODELS TO ROLE PUBLIC;
 ```
 <!-- ------------------------ -->
 ## App Connectivity
@@ -247,22 +273,6 @@ The agent will inform you that no Snowflake account is configured for your organ
 -The full URL to enter is your_organization-your_account.snowflakecomputing.com.
 ![](assets/adminscreen.png)
 
-Initial Verification: The agent will perform several checks:
-- Verifies that the URL leads to a valid Snowflake instance.
-- Confirms your Microsoft user has access to this Snowflake instance via the security integration.
-- Checks that your user holds administrative privileges in the Snowflake account.
-- Ensures the Snowflake account is hosted in the Azure East US 2 region.
-
-Enter Configuration Details: Once the initial verification is successful, a form will appear requesting the following configuration details:
-- Account Alias: A user-friendly name for this Snowflake connection (e.g., "Production Analytics," "Dev Environment"), which will be used in UI to refer to this Snowflake account.
-- Agent Definition Path: The fully qualified path to the agent's JSON definition file on your Snowflake stage.
-- Warehouse: The name of the Snowflake warehouse the agent will use to run queries.
-![](assets/adminmapping.png)
-
-Final Validation: After you submit the configuration, the agent performs a final validation:
-- Checks that the JSON file exists at the specified path and contains a valid agent definition.
-- Performs a test API call to the agent to ensure it can respond correctly.
-
 If all checks pass, the Snowflake configuration has been successfully added for your organization. All users from your Microsoft tenant can now interact with the agent using this Snowflake account.
 
 <!-- ------------------------ -->
@@ -278,20 +288,25 @@ Access the App from M365 Copilot or Microsoft Teams experience. The experience w
 
 
 You can start by asking "view available commands" to then access the admin panel, get help or choose a new snowflake account.
-![](assets/viewavailablecommands.png)
+![](assets/viewcommands.png)
 
-For now you can view available prompts.
-![](assets/prompts.png)
 
-Select (or ask by typing) "what was the largest deal size" to see the answer.
+Ask by typing "what was the largest deal size" to see the answer.
 ![](assets/answer.png)
-
 
 And you are now ready to go! You can continue asking questions like:
 - Plot our largest deals by deal size?
 - How was the call with Securebank?
 - What was the worst customer call we had?
 - Show the deals that are currently pending
+
+The Snowflake Cortex Teams and M365 App now supports the below functionality. Users are encouraged to expand on this use case to explore its complete functionality
+
+:busts_in_silhouette: Multi-Agent Support: Users can now use and switch between multiple agents across multiple Snowflake accounts.
+
+:left_speech_bubble: Multi-Turn Conversations: Stateful conversations are now supported via the new Threads API, providing a genuine chatbot experience.
+
+:brain: Improved Reasoning & UX: Agents now use a multi-step “Reasoning Path” for tools, and the UI shows “thinking” traces and status updates.
 <!-- ------------------------ -->
 ## Conclusion and Resources
 Duration: 5

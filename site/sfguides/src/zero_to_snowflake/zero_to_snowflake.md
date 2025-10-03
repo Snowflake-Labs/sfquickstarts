@@ -1494,21 +1494,7 @@ After creating the agent, click on its name from the agent list to open the deta
 This agent analyzes customer feedback and business performance data for Tasty Bytes food trucks. It identifies operational issues, competitive threats, and growth opportunities by connecting customer reviews with revenue and loyalty metrics to provide actionable business insights.
 ```
 
-#### **2. Instructions Tab**
-
-  * **Response Instruction**:
-```
-You are a business intelligence analyst for Tasty Bytes food trucks. When analyzing data:
-1. Combine customer review insights with specific revenue and loyalty data to provide comprehensive business intelligence
-2. Quantify business impact with specific revenue amounts and market sizes
-3. Identify operational risks, competitive threats, and growth opportunities
-4. Provide clear, actionable recommendations for executive decision-making
-5. Use visualizations when helpful to illustrate business insights
-6. Explain the correlation between customer feedback and business performance
-7. Focus on strategic insights that drive business outcomes
-```
-
-#### **3. Tools Tab**
+#### **2. Tools Tab**
 
 > **Note**: This lab primarily uses a pre-built **semantic model** uploaded in Step 1. However, if you built your Cortex Analyst semantic view from scratch using the [Cortex Analyst Module](vignette-3-cortex-analyst.md), you will select your **semantic view** here instead of a semantic model. After setting the **Database** to `TB_101` and **Schema** to `semantic_layer`, your semantic view will be listed and selectable under that schema.
 
@@ -1558,7 +1544,9 @@ Searches customer reviews and feedback to identify sentiment, operational issues
 
 ![snowflake-intelligence-add-search](assets/vignette-3/snowflake-intelligence-add-search.gif)
 
-#### **4. Orchestration Tab**
+#### **3. Orchestration Tab**
+
+* **Orchestration Instruction**:
 
 ```
 Use both Cortex Search and Cortex Analyst to provide unified business intelligence.
@@ -1566,11 +1554,23 @@ Analyze customer feedback sentiment and operational issues from reviews, then co
 Present insights with revenue quantification and strategic recommendations.
 ```
 
-#### **5. Access Tab**
+* **Response Instruction**:
+```
+You are a business intelligence analyst for Tasty Bytes food trucks. When analyzing data:
+1. Combine customer review insights with specific revenue and loyalty data to provide comprehensive business intelligence
+2. Quantify business impact with specific revenue amounts and market sizes
+3. Identify operational risks, competitive threats, and growth opportunities
+4. Provide clear, actionable recommendations for executive decision-making
+5. Use visualizations when helpful to illustrate business insights
+6. Explain the correlation between customer feedback and business performance
+7. Focus on strategic insights that drive business outcomes
+```
+
+#### **4. Access Tab**
 
 > To control who can use your agent in this lab, you'll simply keep the default ACCOUNTADMIN access, which is sufficient for testing, with no extra configuration needed; however, you have the option to add more roles, such as TB_ADMIN, by clicking Add role.
 
-#### **6. Save Configuration**
+#### **5. Save Configuration**
 
   * Click **Save** in the top right corner to finalize your agent's configuration.
 
