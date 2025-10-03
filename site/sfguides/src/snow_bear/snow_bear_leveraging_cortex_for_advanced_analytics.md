@@ -65,19 +65,18 @@ The setup script creates:
 - **Database**: `SNOW_BEAR_DB` with `BRONZE_LAYER`, `GOLD_LAYER`, and `ANALYTICS` schemas
 - **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
 - **Warehouse**: `SNOW_BEAR_WH` for compute resources
-- **Stages**: `SNOW_BEAR_DATA_STAGE`, `SEMANTIC_MODELS`, and `STREAMLIT_STAGE` for file uploads
+- **Stage**: `SNOW_BEAR_STAGE` for all file uploads
 - **File Format**: `CSV_FORMAT` for data loading
 - **AI Access**: `SNOWFLAKE.CORTEX_USER` role for Cortex functions
 
 ### Step 2: Download Required Files
 
-Download these 4 files from the GitHub repository:
+Download these 3 files from the GitHub repository:
 
 | File | Purpose | Download Link |
 |------|---------|---------------|
 | **Data File** | Basketball fan survey data | [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) |
 | **Streamlit App** | Interactive analytics dashboard | [snow_bear.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear.py) |
-| **Environment File** | Conda environment configuration | [environment.yml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/environment.yml) |
 | **Semantic Model** | AI assistant semantic model | [snow_bear_fan_360.yaml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_fan_360.yaml) |
 
 ### Step 3: Upload Files to Stages
@@ -86,29 +85,16 @@ Download these 4 files from the GitHub repository:
 
 2. Navigate to `Catalog` → `Database Explorer` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
 
-**Upload data file:**
+**Upload all files:**
 
-3. Click on `SNOW_BEAR_DATA_STAGE`
+3. Click on `SNOW_BEAR_STAGE`
 
 4. Click `Enable Directory Table`
 
-5. Upload `basketball_fan_survey_data.csv.gz` to this stage
-
-**Upload app files:**
-
-6. Go back and click on `STREAMLIT_STAGE`
-
-7. Click `Enable Directory Table`
-
-8. Upload `snow_bear.py` and `environment.yml` to this stage
-
-**Upload semantic model:**
-
-9. Go back and click on `SEMANTIC_MODELS` stage
-
-10. Click `Enable Directory Table`
-
-11. Upload `snow_bear_fan_360.yaml` to this stage
+5. Upload all three files to this stage:
+   - `basketball_fan_survey_data.csv.gz`
+   - `snow_bear.py`
+   - `snow_bear_fan_360.yaml`
 
 ### Step 4: Import the Analytics Notebook
 
