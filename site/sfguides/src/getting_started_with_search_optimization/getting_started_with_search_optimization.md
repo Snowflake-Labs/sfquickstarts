@@ -1,11 +1,26 @@
-author: Shreya Agrawal
-id: getting_started_with_search_optimization
-summary: Quickstart guide for using Search Optimization
-categories: getting-started
-environments: web
-status: Published 
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Search Optimization, Search, Query acceleration, performance, speed 
+{
+  "author": "Shreya Agrawal",
+  "id": "getting_started_with_search_optimization",
+  "summary": "Quickstart guide for using Search Optimization",
+  "categories": [
+    "getting-started"
+  ],
+  "environments": [
+    "web"
+  ],
+  "status": "Published",
+  "feedback link": "https://github.com/Snowflake-Labs/sfguides/issues",
+  "tags": [
+    "Getting Started",
+    "Data Engineering",
+    "Search",
+    "Optimization",
+    "Search",
+    "Query acceleration",
+    "performance",
+    "speed"
+  ]
+}
 
 # Getting started with Search Optimization
 
@@ -93,7 +108,7 @@ The next step is to acquire data that has all data types supported by Search Opt
 - Search for `Snowflake Public Data Products` in the search bar
 - Find and click the `Snowflake Public Data (Free)` tile
 
-![LLM Training](assets/Snowflake%20Public%20Data%20Free.png)
+![LLM Training](assets/Snowflake Public Data Free.png)
 
 - Once in the listing, click the big blue Get Data button
 
