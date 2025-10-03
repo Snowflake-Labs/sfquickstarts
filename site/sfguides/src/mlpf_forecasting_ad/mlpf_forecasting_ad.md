@@ -60,20 +60,20 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight),
 The [Snowflake Marketplace](https://other-docs.snowflake.com/en/collaboration/collaboration-marketplace-about) provides mutiple listings for data you may use for analytical purposes. We will be leveraging the open data aggregated by Snowflake Public Data for this quickstart, which contains a database of holidays to enrich our sales data. 
 
 - Log into your Snowflake account as the ACCOUNTADMIN or similar role
-- Follow the steps below to access the **Snowflake Public Data (Free)** listing in your account. 
+- Follow the steps below to access the **Global Government** listing in your account. 
   - Click on 'Marketplace' on the left hand banner:
   
     <img src = "assets/marketplace.png">
   
-  - In the search bar, search for 'Snowflake Public Data (Free)'
+  - In the search bar, search for 'Global Government'
     
   - Click on the first listing, with the same title: 
 
-    <img src = "assets/Search_result.png">
+    <img src = "assets/Global_Government_search.png">
 
   - Click on get, and on the pop-up screen, rename the database to FROSTBYTE_CS_PUBLIC (in all caps). Note - if prompted, you may need to fill in your details before being able to get access. Grant access to the `PUBLIC` role in the dropdown menu: 
   
-    <img src = "assets/FROSTBYTE_CS_PUBLIC.png">
+    <img src = "assets/Mount_Global_Government.png">
 
 ### Step 2: Creating Objects, Load Data, & Set Up Tables
 
@@ -281,7 +281,7 @@ CREATE OR REPLACE VIEW canadian_holidays AS (
         holiday_name,
         is_financial
     FROM
-        frostbyte_cs_public.PUBLIC_DATA_FREE.public_holiday_calendar
+        frostbyte_cs_public.cybersyn.public_holiday_calendar
     WHERE
         ISO_ALPHA2 LIKE 'CA'
         AND date > '2022-01-01'
