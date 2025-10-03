@@ -93,7 +93,7 @@ The next step is to acquire data that has all data types supported by Search Opt
 - Search for `Snowflake Public Data Products` in the search bar
 - Find and click the `Snowflake Public Data (Free)` tile
 
-![LLM Training](assets/Snowflake_Public_Data_Free.png)
+![LLM Training](assets/Snowflake%20Public%20Data%20Free.png)
 
 - Once in the listing, click the big blue Get Data button
 
