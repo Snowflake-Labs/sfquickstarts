@@ -61,7 +61,7 @@ The first step in the guide is to set up or log into Snowflake and set up a virt
 
 The Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. 
 
-![worksheet-image](assets/worksheets.png)
+![worksheet-image](assets/Worksheets.png)
 
 This will allow you to create shared databases from Snowflake Marketplace listings. If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
@@ -93,7 +93,7 @@ The next step is to acquire data that has all data types supported by Search Opt
 - Search for `Snowflake Public Data Products` in the search bar
 - Find and click the `Snowflake Public Data (Free)` tile
 
-![LLM Training](assets/Snowflake Public Data Free.png)
+![LLM Training](assets/Snowflake_Public_Data_Free.png)
 
 - Once in the listing, click the big blue Get Data button
 
