@@ -73,10 +73,10 @@ The first step is to install the Honeycomb Maps application from the Snowflake M
 <!-- ------------------------ -->
 ## Get POI Data 
 ### Get the Data from Marketplace
-![Snowflake Real Estate Data Listing](assets/Snowflake_Public_Data_Free_Listing.png)
-Snowflake provides a free dataset of POI (Point of Interest) data across the United States. This dataset can be added your account through the Snowflake Marketplace. [Here is a link to the listing.](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?originTab=provider&providerName=Snowflake%20Public%20Data%20Products&profileGlobalName=GZTSZAS2KCS) 
+![Snowflake Real Estate Data Listing](assets/snowflake_real_estate_data_listing.png)
+Snowflake provides a free dataset of POI (Point of Interest) data across the United States. This dataset can be added your account through the Snowflake Marketplace. Here is a link to the listing: [https://app.snowflake.com/marketplace/listing/GZTSZAS2KI6/snowflake-data-us-real-estate](https://app.snowflake.com/marketplace/listing/GZTSZAS2KI6/snowflake-data-us-real-estate). 
 
-1. Open Snowflake Marketplace and find the 'Snowflake Public Data (Free)' dataset provided by Snowflake
+1. Open Snowflake Marketplace and find the 'US Real Estate' dataset provided by Snowflake
 2. Click on 'Get' and follow the instructions to add this data to your account
 3. Once the data has been added, make sure that you can query the data successfully. Open up a new worksheet in Snowsight (Projects -> Worksheets -> '+') and run the following query:
 
@@ -86,10 +86,10 @@ SELECT
     poi.poi_name,
     addr.latitude,
     addr.longitude
-FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_index AS poi
-JOIN SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_addresses_relationships AS map
+FROM us_real_estate.cybersyn.point_of_interest_index AS poi
+JOIN us_real_estate.cybersyn.point_of_interest_addresses_relationships AS map
     ON (poi.poi_id = map.poi_id)
-JOIN SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.us_addresses AS addr
+JOIN us_real_estate.cybersyn.us_addresses AS addr
     ON (map.address_id = addr.address_id)
 WHERE addr.city = 'New York'
   AND addr.state = 'NY'
@@ -99,15 +99,15 @@ LIMIT 10;
  
 4. The query above should run successfully and return 10 rows of data. If it does not, make sure that the role you are using has access to the 'US_REAL_ESTATE' database that was created when you added the data from Marketplace.
 
-![POI data Snowsight query](assets/POI_Query.png)
+![POI data Snowsight query](assets/poi_data_snowsight_query.png)
 
 5. For Honeycomb Maps to access this data, you need to grant the application the necessary privileges:
 
 ```sql
 -- Grant privileges on sample database to the Honeycomb application
-GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_PUBLIC_DATA_FREE TO APPLICATION HONEYCOMB_DATA_EXPLORER;
+GRANT IMPORTED PRIVILEGES ON DATABASE US_REAL_ESTATE TO HONEYCOMB_MAPS;
 ```
-Execute this SQL command in a Snowflake worksheet to grant the Honeycomb app access to the sample data we'll be using. If you're using your own database, replace "SNOWFLAKE_PUBLIC_DATA_FREE" with your database name.
+Execute this SQL command in a Snowflake worksheet to grant the Honeycomb app access to the sample data we'll be using. If you're using your own database, replace "US_REAL_ESTATE" with your database name.
 
 ### Launch the Application
 
@@ -160,10 +160,10 @@ SELECT
     addr.city,
     addr.state,
     addr.zip
-FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_index AS poi
-JOIN SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_addresses_relationships AS map
+FROM US_REAL_ESTATE.cybersyn.point_of_interest_index AS poi
+JOIN US_REAL_ESTATE.cybersyn.point_of_interest_addresses_relationships AS map
     ON (poi.poi_id = map.poi_id)
-JOIN SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.us_addresses AS addr
+JOIN US_REAL_ESTATE.cybersyn.us_addresses AS addr
     ON (map.address_id = addr.address_id)
 WHERE addr.city = 'New York'
   AND addr.state = 'NY'
