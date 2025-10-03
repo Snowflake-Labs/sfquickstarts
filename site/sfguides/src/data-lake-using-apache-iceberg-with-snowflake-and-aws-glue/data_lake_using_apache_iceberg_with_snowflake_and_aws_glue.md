@@ -229,6 +229,51 @@ You have succesfully created an Iceberg table in your AWS account from paruqet f
 
 As a bonus step you can open the browser tab with the S3 console and see the new folders and files where the data and metadata/manifest files are stored.
 
+<!-- ------------------------ -->
+## Configue AWS Lake Formation
+Duration: 7
+
+### Configure Lake Formation access controls
+To configure your Lake Formation access controls, first set up the application integration:
+
+- Sign in to the [Lake Formation console](https://console.aws.amazon.com/lakeformation/) as a data lake administrator.
+- Choose `Administration` in the navigation pane.
+Select `Application integration settings`.
+- Enable `Allow external engines to access data in Amazon S3 locations with full table access`.
+- Choose `Save`.
+
+Next you can grant data locations to the role that was created.
+- Select `Data locations` under `Permissions` in the left pane.
+- Click on `Grant` located at the top-right corner.
+- For `IAM users and roles`, select the role that was created.
+- For `Storage locations`, click on `Browse` and select the s3 bucket.
+- Check `Grantable` box.
+- Leave the other fields as default and clicke on `Grant`.
+- Click on the refresh button, the new data location appears.
+
+Now you can register the data lake location:
+- Select `Data lake locations` under `Administration` in the left pane.
+- Click on `Register location` located at the top-right corner.
+- For `Amazon S3 path`, enter the S3 bucket path created earlier.
+- For `IAM role`, select the role that was created.
+- For `Permission mode`, select `Lake Formation`.
+- Leave the other fields as default and click on `Register location`.
+
+Now you can grant permissions to the IAM role that was created earlier:
+
+- Choose `Data permissions` in the navigation pane.
+- Choose `Grant`.
+- Configure the following settings:
+- - For `Principals`, select `IAM users and roles` and choose the role that was created.
+- - For `Resources`, select `Named Data Catalog resources`.
+- - For `Catalog`, choose your AWS account ID.
+- - For `Database`, choose `iceberg`.
+- - For `Table`, choose `quotes`.
+- - For `Permissions`, select `SUPER`.
+- Choose `Grant`.
+
+SUPER access is required for mounting the Iceberg table in Amazon S3 as a Snowflake table.
+
 
 <!-- ------------------------ -->
 ## Setup Snowflake account and configure the AWS integrations
