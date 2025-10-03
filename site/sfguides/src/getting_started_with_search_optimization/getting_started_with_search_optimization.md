@@ -1,28 +1,13 @@
-{
-  "author": "Shreya Agrawal",
-  "id": "getting_started_with_search_optimization",
-  "summary": "Quickstart guide for using Search Optimization",
-  "categories": [
-    "getting-started"
-  ],
-  "environments": [
-    "web"
-  ],
-  "status": "Published",
-  "feedback link": "https://github.com/Snowflake-Labs/sfguides/issues",
-  "tags": [
-    "Getting Started",
-    "Data Engineering",
-    "Search",
-    "Optimization",
-    "Search",
-    "Query acceleration",
-    "performance",
-    "speed"
-  ]
-}
+author: Shreya Agrawal
+id: getting_started_with_search_optimization
+summary: Quickstart guide for using Search Optimization
+categories: getting-started
+environments: web
+status: Published 
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Getting Started, Data Engineering, Search Optimization, Search, Query acceleration, performance, speed 
 
-# Getting started with Search Optimization 
+# Getting started with Search Optimization
 
 <!-- ------------------------ -->
 ## Overview 
@@ -52,7 +37,7 @@ A basic knowledge of how to run and monitor queries in the Snowflake Web UI.
   - Get access to an existing Snowflake Enterprise Edition account with the `ACCOUNTADMIN` role or the `IMPORT SHARE` privilege
 
 ### What You’ll Build 
-Performant queries that explore the data from [Snowflake Public Data (Free)](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=snowflake%20public%20data) dataset by [Snowflake Public Data Products](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products).
+Performant queries that explore the data from [Snowflake Public Data (Free)] (https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=snowflake%20public%20data) dataset by [Snowflake Public Data] (https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products).
 
 Negative: The Marketplace data used in this guide changes from time-to-time, and your query results may be slightly different than indicated in this guide. Additionally, the Snowflake UI changes periodically as well, and instructions/screenshots may be out of date.
 
@@ -76,7 +61,7 @@ The first step in the guide is to set up or log into Snowflake and set up a virt
 
 The Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. 
 
-![SO Working](assets/Worksheets.png)
+![worksheet-image](assets/worksheets.png)
 
 This will allow you to create shared databases from Snowflake Marketplace listings. If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
@@ -191,7 +176,7 @@ USE SCHEMA Public_Data;
 ALTER WAREHOUSE my_wh set warehouse_size='4x-large';
 
 //This query time will depend on the warehouse size.
-CREATE OR REPLACE TABLE OPENALEX_WORKS_INDEX AS SELECT * FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.OPENALEX_WORKS_INDEX; 
+CREATE OR REPLACE TABLE OPENALEX_WORKS_INDEX AS SELECT * FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.; 
 ```
 ```
 //Note: Check the table details
@@ -301,7 +286,7 @@ To start off, we have already enabled Search Optimization on the `MAG_WORK_ID` a
 ![SOEqualitySearch](assets/EqualitySearchSOEnabled_LLM.png)
 
 > **_NOTE:_** \
-If you wish to run the queries below on both databases (`SNOWFLAKE_PUBLIC_DATA_FREE` and `LLM_TRAINING_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
+If you wish to run the queries below on both databases (`LLM_TRAINING` and `LLM_TRAINING_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
 \
 ALTER SESSION SET USE_CACHED_RESULT = false; \
 ALTER WAREHOUSE my_wh SUSPEND;
@@ -361,7 +346,7 @@ Duration: 5
 In this section, let’s search in the variant data and analyze how Search Optimization helps in these cases. 
 
 > **_NOTE:_**  
- If you wish to run the queries below on both databases (`SNOWFLAKE_PUBLIC_DATA_FREE` and `LLM_TRAINING_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
+ If you wish to run the queries below on both databases (`LLM_TRAINING` and `LLM_TRAINING_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
  \
 ALTER SESSION SET USE_CACHED_RESULT = false;\
 ALTER WAREHOUSE my_wh SUSPEND;
@@ -491,4 +476,4 @@ Duration: 1
 
 In this guide, we have covered how to acquire a shared database from Snowflake Marketplace, how to enable Search Optimization on specific columns and analyze the performance improvements in queries with Search Optimization enabled. 
 
-You are now ready to explore the larger world of Snowflake [Search Optimization Service](https://docs.snowflake.com/en/user-guide/search-optimization-service.html)
+You are now ready to explore the larger world of Snowflake [Search Optimizaitn Service](https://docs.snowflake.com/en/user-guide/search-optimization-service.html)
