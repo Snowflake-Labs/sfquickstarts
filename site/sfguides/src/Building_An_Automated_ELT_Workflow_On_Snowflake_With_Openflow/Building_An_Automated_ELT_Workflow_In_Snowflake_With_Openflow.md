@@ -33,7 +33,7 @@ Openflow is **Snowflake’s new built-in ELT** (Extract, Load, Transform) tool. 
   - A **Runtime** is where you build your flows.
 
 <!-- ------------------------ -->
-## Extract API Data into a Stage
+## Extract API Data
 
 We will be working with race results linked to drivers, teams, and the circuits where the races took place.
 
@@ -258,7 +258,7 @@ When everithing works fine :
 - On the **Relationships** tab, unselect the box under **Success** so it can be forwarded to the next processor.
 
 <!-- ------------------------ -->
-## Load Data with COPY INTO
+## Load Data
 
 The goal of this step is to transfer data from the internal stage into a Snowflake table called **RAW_RACE**.
 
@@ -769,7 +769,7 @@ In Openflow, if we right-click on the `Call_JSON_F1_API_Race` processor, select 
 ![Scheduling view](assets/Scheduling_view.png)
 
 <!-- ------------------------ -->
-## Conclusion and Resources
+## Conclusion And Resources
 
 ### Conclusion
 
