@@ -31,7 +31,7 @@ create table trips
 
 -- 3.2 
 
-create or replace stage citibike_trips url = 's3://snowflake-workshop-lab/citibike-trips';
+create or replace stage citibike_trips url = 's3://snowflake-workshop-lab/citibike-trips-csv/';
 
 -- 3.2.4
 
