@@ -268,8 +268,8 @@ Now you can grant permissions to the IAM role that was created earlier:
 - - For `Resources`, select `Named Data Catalog resources`.
 - - For `Catalog`, choose your AWS account ID.
 - - For `Database`, choose `iceberg`.
-- - For `Table`, choose `quotes`.
-- - For `Permissions`, select `SUPER`.
+- - For `Database permissions`, select `SUPER`.
+- - For `Grantable permissions`, select `SUPER`.
 - Choose `Grant`.
 
 SUPER access is required for mounting the Iceberg table in Amazon S3 as a Snowflake table.
