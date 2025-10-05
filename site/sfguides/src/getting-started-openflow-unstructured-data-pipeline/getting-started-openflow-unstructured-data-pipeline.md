@@ -976,6 +976,9 @@ Before setting up Snowflake Intelligence, ensure you have:
 Create the required database and schema structure:
 
 ```sql
+-- Use ACCOUNTADMIN role for setup
+USE ROLE ACCOUNTADMIN;
+
 -- Create database for Snowflake Intelligence
 CREATE DATABASE IF NOT EXISTS snowflake_intelligence;
 GRANT USAGE ON DATABASE snowflake_intelligence TO ROLE PUBLIC;
@@ -988,30 +991,17 @@ GRANT USAGE ON SCHEMA snowflake_intelligence.agents TO ROLE PUBLIC;
 GRANT CREATE AGENT ON SCHEMA snowflake_intelligence.agents TO ROLE FESTIVAL_DEMO_ROLE;
 ```
 
-Verify your Cortex Search service is available:
-
-```sql
--- Connect to your demo database
-USE DATABASE OPENFLOW_FESTIVAL_DEMO;
-USE SCHEMA FESTIVAL_OPS;
-
--- Verify your Cortex Search service exists
-SHOW CORTEX SEARCH SERVICES IN SCHEMA FESTIVAL_OPS;
-
--- Test the search service
-SELECT SNOWFLAKE.CORTEX.SEARCH(
-    'CORTEX_SEARCH_SERVICE',
-    'expansion strategy AND market analysis'
-) as search_results;
-```
-
 ### Create the Agent
+
+> aside positive
+> **IMPORTANT:** Before creating the agent, ensure you are using the `FESTIVAL_DEMO_ROLE` role in Snowsight. This ensures the agent is owned by the correct role and has proper access to resources. You can switch roles using the role selector in the top-right corner of Snowsight.
 
 #### Access Agent Creation Interface
 
 1. Sign in to Snowsight
-2. Navigate directly to Agents: [Create Snowflake Intelligence Agent](https://app.snowflake.com/_deeplink/#/agents/)
-3. Select **"Create agent"**
+2. **Switch to `FESTIVAL_DEMO_ROLE`** using the role selector in the top-right corner
+3. Navigate directly to Agents: [Create Snowflake Intelligence Agent](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-buidling-new-snowflake-intelligence-agents)
+4. Select **"Create agent"**
 
 ![Agent Creation Interface](assets/si_agent_create.png)
 
@@ -1019,14 +1009,30 @@ SELECT SNOWFLAKE.CORTEX.SEARCH(
 
 - ☑️ Select **"Create this agent for Snowflake Intelligence"**
 
-#### Configure Agent Basics
-
-![Agent About Configuration](assets/si_agent_about.png)
-
 **Agent Details:**
 
 - **Agent object name:** `FESTIVAL_DOC_INTELLIGENCE`
 - **Display name:** `Festival Document Intelligence`
+
+#### Configure Agent Basics
+
+After creating the agent, you need to configure its details:
+
+1. **Click on the agent name** (`FESTIVAL_DOC_INTELLIGENCE`) in the agent list to open it
+
+   ![Agents List](assets/si_agents_list.png)
+
+2. **Click "Edit"** button to start editing the agent configuration and details
+
+   ![Agent Edit Button](assets/si_agent_edit.png)
+
+> aside positive
+> **IMPORTANT:** As you configure each section below (About, Tools, Orchestration, Access), remember to click **"SAVE"** after completing all configurations to ensure your changes are preserved.
+
+Now configure the agent basics in the "About" section:
+
+![Agent About Configuration](assets/si_agent_about.png)
+
 - **Description:** `Query and analyze business documents using natural language, powered by festival operations data processed via Openflow pipeline.`
 
 **Example Questions** (Add these to help users get started):
@@ -1114,8 +1120,11 @@ Focus on actionable insights and business value in your responses.
 
 #### Getting Started with Queries
 
-1. Access Snowflake Intelligence: [Open Snowflake Intelligence](https://ai.snowflake.com/)
+1. Access Snowflake Intelligence: [Open Snowflake Intelligence](https://ai.snowflake.com/sfdevrel/sfdevrel_enterprise/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-snowflake-intelligence-chat)
 2. Select your agent `FESTIVAL_DOC_INTELLIGENCE` from the dropdown
+
+   ![Choose Agent](assets/si_chat_choose_agent.png)
+
 3. Choose the Cortex Search service as your data source
 
 **Start with the Example Questions** you configured - these are specifically tailored to your festival operations data.
