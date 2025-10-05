@@ -455,7 +455,7 @@ Now configure the Google Drive connector with the following parameters:
 
 ![Google Drive Source Parameters](assets/openflow_connector_gdrive_source_parameters.png)
 
-- **GCP Service Account JSON**: Upload your Google Service Account JSON key file
+- **GCP Service Account JSON**: Paste the JSON content from your Google Service Account key file
 - **Google Delegation User**: `hi@kameshs.dev` (your Google Workspace user with drive access)
 
 > aside positive
