@@ -412,7 +412,7 @@ If you already have a runtime from the Openflow SPCS quickstart (e.g., `QUICKSTA
 > - Database and schema access is configured at the runtime level
 > - Connector-specific settings are configured when adding the Google Drive connector
 
-### Add Google Drive Connector
+## Add Google Drive Connector
 
 Once the runtime is active, add the [Google Drive connector](https://docs.snowflake.com/user-guide/data-integration/openflow/connectors/google-drive/about) (Overview tab in Openflow Home page):
 
@@ -425,6 +425,9 @@ Once the runtime is active, add the [Google Drive connector](https://docs.snowfl
 4. Click **Add to Runtime**
 
    ![Add Connector to Runtime](assets/openflow_add_connector_to_runtime.gif)
+
+> aside positive
+> **NOTE:** After adding the connector to the runtime, you may see authorization prompts. Accept these prompts to allow the connector to access the runtime and required resources.
 
 The connector will be automatically added to your canvas:
 
@@ -461,29 +464,35 @@ Now configure the Google Drive connector with the following parameters:
 
 - **Destination Database**: `OPENFLOW_FESTIVAL_DEMO`
 - **Destination Schema**: `FESTIVAL_OPS`
+- **Snowflake Authentication Strategy**: `SNOWFLAKE_SESSION_TOKEN`
 - **Snowflake Role**: `FESTIVAL_DEMO_ROLE`
 - **Snowflake Warehouse**: `FESTIVAL_DEMO_S`
-- **Snowflake Authentication Strategy**: `SNOWFLAKE_SESSION_TOKEN`
 
 ### Configure Ingestion Parameters
 
 > aside positive
-> **NOTE:** This section inherits parameters from "Configure Source Parameters" and "Configure Destination Parameters" sections above. Look for the downward arrow icon (↓) in the UI to identify inherited parameters.
+> **NOTE:** By default, this section inherits parameters from "Configure Source Parameters" and "Configure Destination Parameters" sections above. For clarity in this quickstart, we'll turn off inheritance and configure only the required ingestion-specific parameters.
 
 Navigate to Parameter Contexts from Runtime Canvas:
 
 ![Navigate to Parameter Contexts](assets/openflow_parameter_contexts.gif)
 
-Configure the Ingestion Parameters:
+**Turn Off Parameter Inheritance** (for clarity):
 
-![Google Drive Ingestion Parameters](assets/openflow_connector_gdrive_ingestion_parameters.png)
+Click the checkbox to disable inherited parameters and show only ingestion-specific settings:
 
-- **Google Folder Name**: `Festival Operations` (The folder path in your Google Shared Drive)
+![Turn Off Inherited Parameters](assets/openflow_connector_gdrive_ingestion_parameters_off_inhertience.png)
+
+**Configure the Ingestion Parameters:**
+
+Now configure only the ingestion-specific parameters:
+
+![Google Drive Ingestion Parameters](assets/openflow_connector_gdrive_ingestion_parameters_no_inhertiance.png)
+
+- **File Extensions To Ingest**: `pdf,txt,docx,xlsx,pptx,html,jpg`
 - **Google Domain**: `[YOUR WORKSPACE DOMAIN]`
 - **Google Drive ID**: `[Your shared drive ID]`
-- **GCP Service Account JSON**: Upload your Google Service Account JSON key file
-- **Google Delegation User**: `[Your Google Workspace user with drive access]`
-- **File Extensions To Ingest**: `pdf,txt,docx,xlsx,pptx,html,jpg`
+- **Google Folder Name**: `Festival Operations` (The folder path in your Google Shared Drive)
 - **OCR Mode**: `LAYOUT` (preserves document structure during text extraction)
 - **Snowflake Cortex Search Service Role**: `FESTIVAL_DEMO_ROLE`
 
