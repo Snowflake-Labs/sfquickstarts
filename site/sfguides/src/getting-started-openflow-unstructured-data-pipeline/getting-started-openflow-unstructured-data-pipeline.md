@@ -315,40 +315,102 @@ SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
 <!-- ------------------------ -->
 ## Openflow Configuration
 
-Duration: 15
+Duration: 25
+
+This section guides you through setting up Openflow SPCS infrastructure and creating a runtime for the Festival Operations document pipeline.
 
 > aside positive
-> **IMPORTANT:** Before configuring connectors, ensure you have completed the **Openflow SPCS deployment setup**.
->
-> Follow the official Snowflake documentation for detailed setup instructions:
-> [Set up Openflow - Snowflake Deployment](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs)
->
-> This includes:
->
-> 1. **Setup core Snowflake** - Configure admin role, privileges, and network
-> 2. **Create deployment** - Set up Openflow SPCS deployment with optional event table
-> 3. **Create runtime role** - Configure role with external access integrations
-> 4. **Create runtime** - Associated with the runtime role
+> **IMPORTANT:** Before configuring connectors, you must complete the **Openflow SPCS deployment setup**. This is a one-time configuration that establishes the foundation for all your Openflow data pipelines.
 
-### Access Openflow
+### Complete Openflow SPCS Setup
 
-1. In Snowsight, navigate to **Work with data** > **Ingestion** > **Openflow**
-2. Access your existing Openflow deployment and runtime
+Follow the comprehensive **Getting Started with Openflow SPCS** quickstart to set up your infrastructure:
+
+**Quickstart Guide**: [Getting Started with Openflow SPCS](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html)
+
+This 25-minute setup includes:
+
+| Step | Task | Duration | What You'll Create |
+|------|------|----------|-------------------|
+| 1 | **Setup Core Snowflake** | 10 min | `OPENFLOW_ADMIN` role, network rules, BCR bundles |
+| 2 | **Create Deployment** | 5 min | Openflow SPCS deployment with optional event logging |
+| 3 | **Create Runtime Role** | 5 min | Runtime role with external access integrations |
+| 4 | **Create Runtime** | 5 min | Active runtime environment ready for connectors |
+
+**Key Components You'll Set Up:**
+
+- **`OPENFLOW_ADMIN` Role**: Administrative role with deployment and integration privileges
+- **Network Rules**: Required for Openflow to communicate with Snowflake and external services
+- **Deployment**: Container environment running in Snowpark Container Services (SPCS)
+- **Runtime Role**: For this quickstart, use `FESTIVAL_DEMO_ROLE` (created in Setup Environment) with database, schema, warehouse access, and external access integrations
+- **Active Runtime**: Ready to host connectors like Google Drive
+
+> aside positive
+> **TIP:** The quickstart includes downloadable SQL scripts and Jupyter notebooks for automated setup. You can use these scripts to accelerate your deployment process.
+
+**After Setup**: Once you complete the quickstart, you'll have a production-ready Openflow environment. You can then proceed with adding the Google Drive connector for this Festival Operations demo.
+
+### Alternative: Use Existing Openflow Infrastructure
+
+If you already have Openflow SPCS set up in your account, you can reuse your existing infrastructure. However, for this quickstart, we recommend using `FESTIVAL_DEMO_ROLE` to keep naming consistent:
+
+1. **Use existing deployment and runtime** - No need to create new ones
+2. **Grant `FESTIVAL_DEMO_ROLE` access** - Ensure it has access to `festival_ops_access_integration` (created in the previous "Setup Environment" section)
+3. **Grant integration access** - Add the external access integration to `FESTIVAL_DEMO_ROLE`:
+
+   ```sql
+   USE ROLE ACCOUNTADMIN;
+   GRANT USAGE ON INTEGRATION festival_ops_access_integration TO ROLE FESTIVAL_DEMO_ROLE;
+   ```
 
 ### Configure Runtime for Festival Operations
 
 ![Openflow SPCS Overview](assets/openflow_spcs_overview.png)
 
-Create or select your runtime with these settings:
+After completing the Openflow SPCS setup, configure your runtime for the Festival Operations pipeline:
 
-- **Runtime Name**: `FESTIVAL_DOC_INTELLIGENCE`
-- **External Access Integration**: `festival_ops_access_integration` (created in previous step)
+#### Option A: Create New Runtime (Recommended for Demo)
+
+Create a dedicated runtime for this demo:
+
+1. Navigate to **Work with data** > **Ingestion** > **Openflow** > **Runtimes**
+2. Click **Create Runtime**
+3. Configure with these settings:
+   - **Runtime Name**: `FESTIVAL_DOC_INTELLIGENCE`
+   - **Runtime Role**: `FESTIVAL_DEMO_ROLE` (created in Setup Environment)
+   - **External Access Integration**: `festival_ops_access_integration` (created in previous step)
+   - **Database**: `OPENFLOW_FESTIVAL_DEMO`
+   - **Schema**: `FESTIVAL_OPS`
+   - **Warehouse**: `FESTIVAL_DEMO_S`
 
 > aside positive
-> **NOTE:**
+> **NOTE:** Ensure the `festival_ops_access_integration` is accessible to `FESTIVAL_DEMO_ROLE`:
 >
-> - Openflow SPCS automatically manages compute resources. No manual compute pool configuration is required.
-> - Database and schema configuration will be specified at the connector level when setting up the Google Drive connector.
+> ```sql
+> USE ROLE ACCOUNTADMIN;
+> GRANT USAGE ON INTEGRATION festival_ops_access_integration TO ROLE FESTIVAL_DEMO_ROLE;
+> ```
+
+#### Option B: Use Existing Runtime
+
+If you already have a runtime from the Openflow SPCS quickstart (e.g., `QUICKSTART_RUNTIME`):
+
+1. Grant access to the Festival Operations integration:
+
+   ```sql
+   USE ROLE ACCOUNTADMIN;
+   GRANT USAGE ON INTEGRATION festival_ops_access_integration TO ROLE YOUR_RUNTIME_ROLE;
+   ```
+
+2. The runtime will automatically have access to the integration for Google Drive connectivity
+
+> aside positive
+> **RESOURCE MANAGEMENT:**
+>
+> - Openflow SPCS automatically manages compute resources and scaling
+> - No manual compute pool configuration is required
+> - Database and schema access is configured at the runtime level
+> - Connector-specific settings are configured when adding the Google Drive connector
 
 ### Add Google Drive Connector
 
@@ -1398,10 +1460,16 @@ Congratulations! You've successfully built an end-to-end unstructured data pipel
 
 ### Related Resources
 
+**Quickstarts:**
+
+- [Getting Started with Openflow SPCS](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html) - Complete infrastructure setup guide
 - [Source Code and Sample Data](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-unstructured-data-pipeline)
+
+**Documentation:**
+
 - [Snowflake Workspaces Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces)
 - [Openflow Documentation](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about)
-- [Openflow SPCS Setup Guide](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs)
+- [Openflow SPCS Setup Guide](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs) - Official setup documentation
 - [Google Drive Connector Documentation](https://docs.snowflake.com/user-guide/data-integration/openflow/connectors/google-drive/about)
 - [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Snowflake Intelligence Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
