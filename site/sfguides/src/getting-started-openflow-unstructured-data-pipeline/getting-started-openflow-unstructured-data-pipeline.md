@@ -458,6 +458,9 @@ Now configure the Google Drive connector with the following parameters:
 - **GCP Service Account JSON**: Upload your Google Service Account JSON key file
 - **Google Delegation User**: `hi@kameshs.dev` (your Google Workspace user with drive access)
 
+> aside positive
+> **SECURITY BEST PRACTICE:** For production environments, consider using a **SecretManagerParameterProvider** (such as `AwsSecretsManagerParameterProvider`) to securely manage sensitive credentials like the GCP Service Account JSON. This approach stores secrets in a dedicated secrets manager instead of directly in the connector configuration, providing better security and easier credential rotation.
+
 ### Configure Destination Parameters
 
 ![Google Drive Destination Parameters](assets/openflow_connector_gdrive_destination_parameters.png)
