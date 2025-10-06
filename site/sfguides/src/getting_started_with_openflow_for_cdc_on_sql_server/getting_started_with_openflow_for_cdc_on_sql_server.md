@@ -10,11 +10,11 @@ tags: Getting Started, Data Engineering, SQL Server, Snowflake Openflow
 # Getting Started with Snowflake Openflow for Change Data Capture from SQL Server
 <!-- ------------------------ -->
 
-# Overview
+## Overview
 
 Through this guide, you will learn how to move beyond slow, nightly batch jobs and stream data in real-time from an operational database like SQL Server directly into Snowflake. Using Openflow, a cloud-native data movement platform, you will build a continuous Change Data Capture (CDC) pipeline that unlocks immediate access to your business data for faster, more accurate analytics.
 
-## What You Will Learn
+### What You Will Learn
 
 By the end of this guide, you will learn to work with:
 
@@ -27,7 +27,7 @@ By the end of this guide, you will learn to work with:
 > [!NOTE]
 > Please note that Openflow on SPCS is not available on Snowflake's free[trial account](https://signup.snowflake.com/). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
 
-## What is Snowflake Openflow?
+### What is Snowflake Openflow?
 
 Openflow is a cloud-native data movement platform built on Apache NiFi, designed specifically for scalable, real-time streaming and Change Data Capture (CDC) pipelines. It provides a unified experience for building and monitoring data integration workflows, complete with built-in observability and governance.
 
@@ -35,7 +35,7 @@ Openflow is a cloud-native data movement platform built on Apache NiFi, designed
 
 Openflow is engineered for high-speed, continuous ingestion of all data types—from structured database records to unstructured text, images, and sensor data—making it ideal for feeding near real-time data into modern cloud platforms for AI and analytics.
 
-## What is Change Data Capture (CDC)?
+### What is Change Data Capture (CDC)?
 
 Change Data Capture (CDC) is crucial for modern businesses because it solves the inherent problems of traditional data pipelines that lock valuable information in operational databases. By moving away from slow, overnight batch jobs, CDC addresses the urgent business demand for real-time data and immediate insights.* Data Staleness: Eliminates delays from nightly batches, providing up-to-the-minute data.
 
@@ -49,11 +49,11 @@ Change Data Capture (CDC) is crucial for modern businesses because it solves the
 
 * High Maintenance: Reduces the overhead and sprawl of maintaining numerous custom scripts.
 
-## What You'll Build
+### What You'll Build
 
 By the end of this quickstart guide, you will learn how to build:- Enable Change Data Capture (CDC) on a source SQL Server database.- Use the Openflow platform to configure and launch a real-time data connector.- Stream live data from an OLTP database directly into Snowflake tables.* Query and analyze real-time data within Snowflake to generate immediate business insights.
 
-## Prerequisites
+### Prerequisites
 
 A Snowflake account with Snowflake Openflow and Snowpark Container Services access.
 
@@ -62,11 +62,11 @@ A Snowflake account with Snowflake Openflow and Snowpark Container Services acce
 
 <!------------------>
 
-# SQL Server Setup
+## SQL Server Setup
 
 To set the stage for our real-time data streaming demonstration, we first need a source database. We will use SQL Server as a transaction db for this use-case. This will serve as the live OLTP environment from which we will stream data changes into Snowflake.
 
-## 1. Creating the AWS RDS SQL Server Instance
+### 1. Creating the AWS RDS SQL Server Instance
 
 This is the primary, step-by-step guide from AWS for creating and connecting to a SQL Server instance on RDS. It covers everything from the initial setup in the AWS console to configuring the security groups.
 
@@ -76,13 +76,13 @@ This is a more general guide that provides context on all available settings whe
 
 * AWS User Guide:[Creating an Amazon RDS DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CreateDBInstance.html)
 
-## 2. Connecting with SQL Server Management Studio (SSMS)
+### 2. Connecting with SQL Server Management Studio (SSMS)
 
 Once your RDS instance is running, this AWS document shows you exactly how to find your database endpoint and connect to it using the most common tool, SSMS.
 
 * Official AWS Documentation:[Connecting to your DB instance with Microsoft SQL Server Management Studio](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ConnectToMicrosoftSQLServerInstance.SSMS.html)
 
-## 3. Getting and Loading the Northwind Database Script
+### 3. Getting and Loading the Northwind Database Script
 
 The installation script `instawnd.sql` for the Northwind database is provided by Microsoft. The link below is to the official Microsoft SQL Server samples repository on GitHub, which is the most reliable place to get the script.
 
@@ -90,7 +90,7 @@ The installation script `instawnd.sql` for the Northwind database is provided by
 
 Once you download the `instawnd.sql` file from that repository, you can simply open it in SSMS (while connected to your RDS instance) and execute it to create and populate all the Northwind tables.
 
-## Configure Change-tracking on Database
+### Configure Change-tracking on Database
 
 To configure change-tracking, execute the `console.sql` script from  [this repository](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/openflow-cdc-sqlserver-demo/sqlserver-setup) against the Northwind database.
 
@@ -104,9 +104,9 @@ In the next section, we will configure Snowflake Openflow connector and analyze 
 
 <!------------------>
 
-# Configure Openflow
+## Configure Openflow
 
-## Available Connectors
+### Available Connectors
 
 Openflow supports 19+ connectors including:* Cloud Storage: Google Drive, Box, SharePoint, Amazon S3, Azure Blob Storage
 
@@ -116,7 +116,7 @@ Openflow supports 19+ connectors including:* Cloud Storage: Google Drive, Box, S
 
 * SaaS Applications: Salesforce, ServiceNow, WorkdayFor a complete list with descriptions, see [Openflow connectors](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/about-openflow-connectors).
 
-## Openflow Configuration
+### Openflow Configuration
 
 Before creating a deployment, you need to configure core Snowflake components including the `OPENFLOW_ADMIN` role and network rule.
 
@@ -138,11 +138,11 @@ Before creating a deployment, you need to configure core Snowflake components in
 
 * It also creates the required network rule for Openflow deployments to communicate with Snowflake services:For a detailed, step-by-step guide on these prerequisite configurations, please complete **Steps 2** of the following Snowflake Quickstart guide:[ Snowflake Configuration for Openflow](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html?index=..%2F..index#1).
 
-## Create Deployment
+### Create Deployment
 
 With the core Snowflake components configured, the next step is to create the Openflow deployment. This deployment provisions the necessary containerized environment within your Snowflake account where the Openflow service will execute.
 
-## IMPORTANT: Verify User Role
+### IMPORTANT: Verify User Role
 
 Before proceeding, ensure your current active role in the Snowsight UI is set to `OPENFLOW_ADMIN`. You can verify and switch your role using the user context menu located in the top-left corner of the Snowsight interface. Failure to assume the correct role will result in permissions errors during the deployment creation process.First, login to Snowflake UI.
 
@@ -164,7 +164,7 @@ Before proceeding, ensure your current active role in the Snowsight UI is set to
 
 6) Look for your deployment with status ACTIVE to verify deployment status
 
-## Create Runtime Role
+### Create Runtime Role
 
 Create a runtime role that will be used by your Openflow runtime. This role needs access to databases, schemas, and warehouses for data ingestion.
 
@@ -190,7 +190,7 @@ GRANT USAGE ON WAREHOUSE NORTHWIND_WH TO ROLE NORTHWIND_ROLE;
 GRANT ROLE NORTHWIND_ROLE TO ROLE OPENFLOW_ADMIN;
 ```
 
-## Create External Access Integration
+### Create External Access Integration
 
 External Access Integrations allow your runtime to connect to external data sources. This quickstart creates one integration with network rules for SQL Server.\
 ```sql
@@ -214,7 +214,7 @@ SHOW INTEGRATIONS LIKE 'EAI_SQL_SERVER_INTEGRATION';
 DESC INTEGRATION EAI_SQL_SERVER_INTEGRATION;
 ```
 
-## Create Runtime
+### Create Runtime
 
 Next step is to create a runtime associated with the previously created runtime role. A runtime is the execution environment for your Openflow connectors. Follow these steps to create your runtime:* Navigate to Data → Ingestion → Openflow → Runtimes tab
 
@@ -239,9 +239,9 @@ Next step is to create a runtime associated with the previously created runtime 
 
 <!------------------>
 
-# SQL Server Connector 
+## SQL Server Connector 
 
-## Configure and Launch the SQL Server CDC Connector
+### Configure and Launch the SQL Server CDC Connector
 
 This section details the final step of launching the Openflow connector.
 
@@ -261,7 +261,7 @@ This section details the final step of launching the Openflow connector.
 
 ![SQL Server Process Group](./assets/sql server connector.png)
 
-## Configure the connector
+### Configure the connector
 
 You can configure the connector to replicate a set of tables in real-time.
 
@@ -274,13 +274,13 @@ You can configure the connector to replicate a set of tables in real-time.
 >[!NOTE]
 >The connector does not replicate any data until any tables to be replicated are explicitly added to its ingestion configuration.
 
-## Run the flow
+### Run the flow
 
 - Right-click on the plane and select Enable all Controller Services.
 
 - Right-click on the `sqlserver-connector` and select Start. The connector starts the data ingestion.
 
-## Exploratory Analysis of Ingested Data
+### Exploratory Analysis of Ingested Data
 
 Once the initial data replication from SQL Server to the `NORTHWIND_QS` database in Snowflake is complete, you can perform an exploratory analysis to validate the ingested data.
 
@@ -290,11 +290,11 @@ Once the initial data replication from SQL Server to the `NORTHWIND_QS` database
 
 3) Run Analysis Cells: Execute all cells in the notebook sequentially to perform the data analysis. **Do not execute the final cell**, as it is reserved for the live data validation step.Completing this analysis confirms that the initial data load was successful and prepares the environment for the next phase, where we will generate live transactions in SQL Server to verify that the changes are tracked and replicated into Snowflake in real time.
 
-## Live Data Simulation and Real-Time Verification
+### Live Data Simulation and Real-Time Verification
 
 This final procedure validates the end-to-end CDC pipeline by simulating new transactional data in the source SQL Server and observing its immediate replication and availability in Snowflake.
 
-## Simulate Live Transactions in SQL Server
+### Simulate Live Transactions in SQL Server
 
 To generate changes for the CDC process to capture, you will execute pre-defined SQL scripts from [this repository](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/openflow-cdc-sqlserver-demo/sqlserver-setup) against the source Northwind database.
 
@@ -306,7 +306,7 @@ To generate changes for the CDC process to capture, you will execute pre-defined
 
   - waffles.sql: Simulates a product catalog update by adding a new item to the Products table and also inserts associated sales orders for that new product.
 
-## Verify Real-Time Replication in Snowflake
+### Verify Real-Time Replication in Snowflake
 
 After the simulation scripts have been executed in SQL Server, the changes will be captured and streamed by Openflow. You can verify their arrival in Snowflake nearly instantly.
 
@@ -318,15 +318,15 @@ After the simulation scripts have been executed in SQL Server, the changes will 
 
 <!------------------>
 
-# Conclusion and Resources
+## Conclusion and Resources
 
 You've successfully built a real-time Change Data Capture (CDC) pipeline to stream data from SQL Server to Snowflake using Openflow. This modern approach to data integration eliminates the delays of traditional batch jobs, enabling immediate data analysis and faster business decisions.
 
-## What You Learned
+### What You Learned
 
 * How to set up a source database for Change Data Capture.* How to configure Snowflake Openflow by creating deployments, runtimes, and the necessary roles and integrations.* How to launch and configure a SQL Server CDC connector to stream data.- How to validate a real-time pipeline by simulating live transactions and observing the immediate replication in Snowflake.
 
-## Related Resources
+### Related Resources
 
 * Openflow for SPCS Quickstart: [Getting Started with Openflow in Snowpark Container Services](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html?index=..%2F..index#5)
 
