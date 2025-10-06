@@ -28,8 +28,9 @@ For this guide we will use a Financial Services use case where Insurance data is
 ### What You’ll Learn 
 - How to create an Iceberg table in the [Glue Data Catalog](https://docs.aws.amazon.com/prescriptive-guidance/latest/serverless-etl-aws-glue/aws-glue-data-catalog.html) and convert parquet data on S3 in place(no rewrite) to Iceberg format
 - How to configure a [Snowflake External Volume](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-external-volume#configure-an-external-volume-for-amazon-s3) with S3 
-- How to configure a [Snowflake External Catalog](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration#configure-a-catalog-integration-for-aws-glue) with the Glue Data Catalog
-- How to create Snowflake [Managed](https://docs.snowflake.com/en/user-guide/tables-iceberg-create#create-an-iceberg-table-with-snowflake-as-the-catalog) and [Unmanaged](https://docs.snowflake.com/en/user-guide/tables-iceberg-create#create-an-iceberg-table-with-aws-glue-as-the-catalog) Iceberg Tables  
+- How to configure Lake Formation for fine-graned access control on Iceberg tables
+- How to configure a [Snowflake Catalog-linked database](https://docs.aws.amazon.com/lake-formation/latest/dg/aws-lake-formation-api-credential-vending.html) with the Glue Data Catalog via [Iceberg Rest Catalog APIs](https://docs.aws.amazon.com/lake-formation/latest/dg/aws-lake-formation-api-credential-vending.html)
+
 
 ### What You’ll Need 
 - A [Snowflake Enterprise Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access in US WEST (OREGON REGION)
