@@ -662,7 +662,7 @@ Snowflake:
 AWS:
   - Remove data locations in Lake Formation
   - De-register data lake locations in Lake Formation
-  - Empty S3 bucket
+  - Empty and delete the S3 bucket
   - Delete Cloudformation Template
 
 
