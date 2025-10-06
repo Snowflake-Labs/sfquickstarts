@@ -1,11 +1,11 @@
-author: Andries Engelbrecht
+author: Andries Engelbrecht, James Sun
 id: data_lake_using_apache_iceberg_with_snowflake_and_aws_glue
 summary: This guide shows how to integrate Snowflake with External Volumes to S3 and the Glue Data Catalog for use with Iceberg tables
 categories: Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Lake, Iceberg, Apache Iceberg 
+tags: Data Lake, Iceberg, Apache Iceberg, Catalog-linked Database
 
 # Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue
 <!-- ------------------------ -->
@@ -14,7 +14,7 @@ Duration: 4
 
 [Apache Iceberg](https://iceberg.apache.org/) is an open table format for huge analytical datasets that enables high performance analytics on open data formats with ACID compliance. Snowflake and AWS both support Iceberg format that enables customers to drastically improve data interoperability, speed of implmentation and peformance for integrated data lakes.
 
-This guide will take you through the steps of converting existing parquet data to Iceberg and using it to build open analytic environments using Snowflake and [AWS Glue](https://aws.amazon.com/glue/).
+This guide will take you through the steps of converting existing parquet data to Iceberg and using it to build open analytic environments using Snowflake and [AWS Glue](https://aws.amazon.com/glue/) with [AWS Lake Formation](https://aws.amazon.com/lake-formation/) providing fine-graned access controls and [temporary access token](https://docs.aws.amazon.com/lake-formation/latest/dg/aws-lake-formation-api-credential-vending.html) to Iceberg tables.
 
 ![Workflow](assets/Workflow.png)
 
