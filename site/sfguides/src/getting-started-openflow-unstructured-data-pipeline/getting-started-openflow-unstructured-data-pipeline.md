@@ -363,18 +363,28 @@ If you already have Openflow SPCS set up in your account, you can reuse your exi
    GRANT USAGE ON INTEGRATION festival_ops_access_integration TO ROLE FESTIVAL_DEMO_ROLE;
    ```
 
+### Access Openflow Interface
+
+After completing the Openflow SPCS setup, access the Openflow interface to configure your runtime:
+
+1. In Snowsight, navigate to **Work with data** in the left sidebar
+2. Select **Ingestion**
+3. Click on **Openflow** (this will open Openflow in a new browser tab)
+
+   ![Launch Openflow from Snowsight](assets/snowsight_launch_openflow.png)
+
+4. **Accept the authentication prompt** when Openflow opens in the new tab
+
 ### Configure Runtime for Festival Operations
 
-![Openflow SPCS Overview](assets/openflow_spcs_overview.png)
-
-After completing the Openflow SPCS setup, configure your runtime for the Festival Operations pipeline:
+Now that you have Openflow open, configure your runtime for the Festival Operations pipeline:
 
 #### Option A: Create New Runtime (Recommended for Demo)
 
 Create a dedicated runtime for this demo:
 
-1. Navigate to **Work with data** > **Ingestion** > **Openflow** > **Runtimes**
-2. Click **Create Runtime**
+1. In the Openflow interface, click on the **Runtimes** tab at the top
+2. Click **Create Runtime** button
 3. Configure with these settings:
    - **Runtime Name**: `FESTIVAL_DOC_INTELLIGENCE`
    - **Runtime Role**: `FESTIVAL_DEMO_ROLE` (created in Setup Environment)
@@ -390,6 +400,10 @@ Create a dedicated runtime for this demo:
 > USE ROLE ACCOUNTADMIN;
 > GRANT USAGE ON INTEGRATION festival_ops_access_integration TO ROLE FESTIVAL_DEMO_ROLE;
 > ```
+
+After creating the runtime, your Openflow interface will look like this:
+
+![Openflow SPCS Overview](assets/openflow_spcs_overview.png)
 
 #### Option B: Use Existing Runtime
 
