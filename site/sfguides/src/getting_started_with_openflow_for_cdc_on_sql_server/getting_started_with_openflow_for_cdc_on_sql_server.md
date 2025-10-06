@@ -62,7 +62,7 @@ A Snowflake account with Snowflake Openflow and Snowpark Container Services acce
 
 <!------------------>
 
-# Setup OLTP database
+# SQL Server Setup
 
 To set the stage for our real-time data streaming demonstration, we first need a source database. We will use SQL Server as a transaction db for this use-case. This will serve as the live OLTP environment from which we will stream data changes into Snowflake.
 
@@ -104,7 +104,7 @@ In the next section, we will configure Snowflake Openflow connector and analyze 
 
 <!------------------>
 
-# Configuring Snowflake Openflow Connectors
+# Configure Openflow
 
 ## Available Connectors
 
@@ -239,7 +239,9 @@ Next step is to create a runtime associated with the previously created runtime 
 
 <!------------------>
 
-# Configure and Launch the SQL Server CDC Connector
+# SQL Server Connector 
+
+## Configure and Launch the SQL Server CDC Connector
 
 This section details the final step of launching the Openflow connector.
 
