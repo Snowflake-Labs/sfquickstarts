@@ -65,18 +65,7 @@ We will now run a CloudFormation Template to configure a S3 bucket and Role with
 
 - It is recommended to duplicate the browser tab 3 times to make it simple to use multiple AWS services in the same browser session.
 
-
-- You can now create a CloudFormtion Stack. You can click the **Create stack** button, or if it is not visible click on the **3 Horizontal bars** top left corner and then select **Stacks** to see the **Create stack** button.
-
-- Once you are in the Create stack screen select the following options:
-- - Prepare template > Choose an existing template
-- - Template source > Amazon S3 URL
-
-- Then copy the CloudFormation Template URL below into the Amazon S3 URL box.
-
-
-
-<https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/glue-snflk-devday-v1.4.yaml>
+- You can now create a CloudFormtion Stack by clicking [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=Glue-IRC-Int&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/glue-snflk-devday-v1.4.yaml).
 
 
 ![CreateStack](assets/CreateStack.png)
