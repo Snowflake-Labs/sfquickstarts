@@ -29,7 +29,10 @@ By the end of this guide, you will learn to work with:
 
 ## What is Snowflake Openflow?
 
-Openflow is a cloud-native data movement platform built on Apache NiFi, designed specifically for scalable, real-time streaming and Change Data Capture (CDC) pipelines. It provides a unified experience for building and monitoring data integration workflows, complete with built-in observability and governance.\
+Openflow is a cloud-native data movement platform built on Apache NiFi, designed specifically for scalable, real-time streaming and Change Data Capture (CDC) pipelines. It provides a unified experience for building and monitoring data integration workflows, complete with built-in observability and governance.
+
+![Openflow](./assets/openflow.png)
+
 Openflow is engineered for high-speed, continuous ingestion of all data types—from structured database records to unstructured text, images, and sensor data—making it ideal for feeding near real-time data into modern cloud platforms for AI and analytics.
 
 ## What is Change Data Capture (CDC)?
@@ -55,7 +58,7 @@ By the end of this quickstart guide, you will learn how to build:- Enable Change
 A Snowflake account with Snowflake Openflow and Snowpark Container Services access.
 
 > [!NOTE]
-> Please note that Openflow on SPCS is not available on Snowflake's free[ trial account](https://signup.snowflake.com/). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
+> Please note that Openflow on SPCS is not available on Snowflake's free[trial account](https://signup.snowflake.com/). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
 
 <!------------------>
 
@@ -81,21 +84,21 @@ Once your RDS instance is running, this AWS document shows you exactly how to fi
 
 ## 3. Getting and Loading the Northwind Database Script
 
-The installation script \`instawnd.sql\` for the Northwind database is provided by Microsoft. The link below is to the official Microsoft SQL Server samples repository on GitHub, which is the most reliable place to get the script.
+The installation script `instawnd.sql` for the Northwind database is provided by Microsoft. The link below is to the official Microsoft SQL Server samples repository on GitHub, which is the most reliable place to get the script.
 
 * Official Microsoft GitHub Repository:[Northwind and pubs sample databases for Microsoft SQL Server](https://github.com/microsoft/sql-server-samples/tree/master/samples/databases/northwind-pubs)
 
-Once you download the \`instawnd.sql\` file from that repository, you can simply open it in SSMS (while connected to your RDS instance) and execute it to create and populate all the Northwind tables.
+Once you download the `instawnd.sql` file from that repository, you can simply open it in SSMS (while connected to your RDS instance) and execute it to create and populate all the Northwind tables.
 
 ## Configure Change-tracking on Database
 
-To configure change-tracking, execute the \`console.sql\` script from  [this repository](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/openflow-cdc-sqlserver-demo/sqlserver-setup) against the Northwind database.
+To configure change-tracking, execute the `console.sql` script from  [this repository](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/openflow-cdc-sqlserver-demo/sqlserver-setup) against the Northwind database.
 
 * It enables Change Tracking for the entire Northwind database. This is configured to retain tracking information for two days and to automatically clean up old, expired tracking data.
 
 * The script also enables tracking on each individual table that we need to monitor for changes. This includes tables like Orders, OrderDetails, Products, and Customers. For each table, it also activates an important option to track which specific columns were modified during an update, providing more granular detail for the data pipeline.
 
-* Finally, the script executes an \`UPDATE\` statement to simulate a real-world transaction. It finds and modifies a set of recent orders related to a specific product, changing their order and shipping dates. Because Change Tracking is now active, this modification is immediately captured and will be picked up by the CDC streaming process.
+* Finally, the script executes an `UPDATE` statement to simulate a real-world transaction. It finds and modifies a set of recent orders related to a specific product, changing their order and shipping dates. Because Change Tracking is now active, this modification is immediately captured and will be picked up by the CDC streaming process.
 
 In the next section, we will configure Snowflake Openflow connector and analyze real-time data from SQL Server to generate business insights
 
@@ -115,9 +118,9 @@ Openflow supports 19+ connectors including:* Cloud Storage: Google Drive, Box, S
 
 ## Openflow Configuration
 
-Before creating a deployment, you need to configure core Snowflake components including the \`OPENFLOW\_ADMIN\` role and network rule.
+Before creating a deployment, you need to configure core Snowflake components including the `OPENFLOW_ADMIN` role and network rule.
 
-* Download \`setup\_roles.sql\` from [this repository](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/openflow-cdc-sqlserver-demo/snowflake-setup).
+* Download `setup_roles.sql` from [this repository](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/openflow-cdc-sqlserver-demo/snowflake-setup).
 
 * Login to your Snowflake Account.
 
@@ -127,7 +130,7 @@ Before creating a deployment, you need to configure core Snowflake components in
 
 * Add SQL File: Click "..." (more options) → "Import SQL file"
 
-* Select Downloaded Script: Choose the .sql file you downloaded (e.g., \`setup\_roles.sql\`)
+* Select Downloaded Script: Choose the .sql file you downloaded (e.g., `setup_roles.sql`)
 
 * Click the ▶ Run All button to execute the entire script to create all the roles needed for deployment
 
@@ -141,7 +144,7 @@ With the core Snowflake components configured, the next step is to create the Op
 
 ## IMPORTANT: Verify User Role
 
-Before proceeding, ensure your current active role in the Snowsight UI is set to \`OPENFLOW\_ADMIN\`. You can verify and switch your role using the user context menu located in the top-left corner of the Snowsight interface. Failure to assume the correct role will result in permissions errors during the deployment creation process.First, login to Snowflake UI.
+Before proceeding, ensure your current active role in the Snowsight UI is set to `OPENFLOW_ADMIN`. You can verify and switch your role using the user context menu located in the top-left corner of the Snowsight interface. Failure to assume the correct role will result in permissions errors during the deployment creation process.First, login to Snowflake UI.
 
 1) On the left pane, navigate to Data → Ingestion → Openflow
 
@@ -155,7 +158,7 @@ Before proceeding, ensure your current active role in the Snowsight UI is set to
 
 3) Click on the Deployments tab. Click Create Deployment button
 
-4) Enter Deployment Location as \`Snowflake\` and Name as \`CDC\_QS\_DEPLOYMENT\`
+4) Enter Deployment Location as `Snowflake` and Name as `CDC_QS_DEPLOYMENT`
 
 5) Complete the wizard
 
@@ -217,15 +220,15 @@ Next step is to create a runtime associated with the previously created runtime 
 
 * Click the Create Runtime button in the top right, and select the following inputs:
 
-  - Deployment Name: \`CDC\_QS\_DEPLOYMENT\`
+  - Deployment Name: `CDC_QS_DEPLOYMENT`
 
-  - Enter Runtime Name: \`CDC\_QS\_RUNTIME\`
+  - Enter Runtime Name: `CDC_QS_RUNTIME`
 
-  - Node Type: \`M\`, Min nodes: 1, Max nodes: 1
+  - Node Type: `M`, Min nodes: 1, Max nodes: 1
 
-  - Select Runtime Role: Choose \```SQL_SERVER_NETWORK_RULE` ``from the dropdown
+  - Select Runtime Role: Choose `SQL_SERVER_NETWORK_RULE` from the dropdown
 
-  - Select External Access Integration: Choose \``` EAI_SQL_SERVER_INTEGRATION` `` from the dropdown
+  - Select External Access Integration: Choose `EAI_SQL_SERVER_INTEGRATION` from the dropdown
 
   - Select Compute Pool: Choose an existing compute pool from the list
 
@@ -238,17 +241,29 @@ Next step is to create a runtime associated with the previously created runtime 
 
 # Configure and Launch the SQL Server CDC Connector
 
-This section details the final step of launching the Openflow connector.* Navigate to the Openflow Overview page. On the Openflow connectors page, find the SQL Server connector and select Add to runtime.
+This section details the final step of launching the Openflow connector.
 
-* In the Select runtime dialog, select \`CDC\_QS\_RUNTIME\` from the available runtimes drop-down list. Select Add.
+![Openflow Connectors](./assets/connectors.png)
 
-* Authenticate to the deployment with your Snowflake account credentials and select \`allow\` when prompted to allow the runtime application to access your Snowflake account. The connector installation process takes a few minutes to complete.
+* Navigate to the Openflow Overview page. On the Openflow connectors page, find the SQL Server connector and select Add to runtime.
 
-* Authenticate to the runtime with your Snowflake account credentials.The Openflow canvas appears with the connector process group added to it.Double click on the process group. You will notice it has two other process groups nested under it. Snapshot load, Incremental load.Double click on the Incremental load to see the DAG of processors in the process group.
+* In the Select runtime dialog, select `CDC_QS_RUNTIME` from the available runtimes drop-down list. Select Add.
+
+* Authenticate to the deployment with your Snowflake account credentials and select `allow` when prompted to allow the runtime application to access your Snowflake account. The connector installation process takes a few minutes to complete.
+
+* Authenticate to the runtime with your Snowflake account credentials.The Openflow canvas appears with the connector process group added to it.
+
+* Double click on the process group. You will notice it has two other process groups nested under it. Snapshot load, Incremental load.
+
+* Double click on the Incremental load to see the DAG of processors in the process group.
+
+![SQL Server Process Group](./assets/sql server connector.png)
 
 ## Configure the connector
 
-You can configure the connector to replicate a set of tables in real-time.* Right-click on the \`Incremental Load\` process group and select Parameters. 
+You can configure the connector to replicate a set of tables in real-time.
+
+* Right-click on the `Incremental Load` process group and select Parameters. 
 
 * Select ‘SQL Server Ingestion Parameters' and update the parameters such as destination table, account name, JDBC URL, JDBC driver and other credentials to authenticate.
 
@@ -261,11 +276,11 @@ You can configure the connector to replicate a set of tables in real-time.* Righ
 
 - Right-click on the plane and select Enable all Controller Services.
 
-- Right-click on the \`sqlserver-connector\` and select Start. The connector starts the data ingestion.
+- Right-click on the `sqlserver-connector` and select Start. The connector starts the data ingestion.
 
 ## Exploratory Analysis of Ingested Data
 
-Once the initial data replication from SQL Server to the \``` NORTHWIND_QS` `` database in Snowflake is complete, you can perform an exploratory analysis to validate the ingested data.
+Once the initial data replication from SQL Server to the `NORTHWIND_QS` database in Snowflake is complete, you can perform an exploratory analysis to validate the ingested data.
 
 1) Download Analysis Notebook: Download the `northwind.ipynb` Jupyter Notebook from this [git repository](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/openflow-cdc-sqlserver-demo/snowflake-setup/NORTHWIND.ipynb).
 
@@ -285,7 +300,7 @@ To generate changes for the CDC process to capture, you will execute pre-defined
 
 * Execute Scripts: Run the following scripts from the project repository to introduce new data:
 
-  - live\_orders.sql: Executes a series of INSERT statements into the OrderDetails table, simulating new incoming sales orders.
+  - live_orders.sql: Executes a series of INSERT statements into the OrderDetails table, simulating new incoming sales orders.
 
   - waffles.sql: Simulates a product catalog update by adding a new item to the Products table and also inserts associated sales orders for that new product.
 
