@@ -72,7 +72,7 @@ We will now run a CloudFormation Template to configure a S3 bucket and Role with
 
 - Click **Next**
 
-- On the next screen **Specify stack details** enter a name for the stack in **Stack name**, in this case you can use `glue-snowflake` then click **Next**
+- On the next screen **Specify stack details** enter a name for the stack in **Stack name**, leave the default stack name `Glue-IRC-Int` then click **Next**
 
 - The following screen **Configure stack options** simply click **Next**
 
