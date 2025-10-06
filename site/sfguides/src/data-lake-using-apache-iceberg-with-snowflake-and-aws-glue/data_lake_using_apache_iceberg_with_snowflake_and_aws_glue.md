@@ -646,10 +646,42 @@ select * from iceberg_linked_db."iceberg"."quote_analysis_ice" limit 10;
 This completes the creation of iceberg tables in Snowflake using the Glue Data Catalog IRC API and Lake Formation credential vending. You also used the iceberg table with internal tables to perform analysis on isurance customers, quotes and policies. This demonstrates the powerful integration which provides read and write capabilities to glue from Snowflake.
 
 <!-- ------------------------ -->
-## Conclusion
+## Cleanup
+
+Follow below steps to ensure the deployed resources are cleaned up.
+Snowflake:
+  - Drop Snowflake database
+  ```sql
+  DROP DATABASE HOL_ICE_DB;
+  ```
+  - Drop Extenal Volume
+  ```sql
+  DROP EXTERNAL VOLUME HOL_ICE_EXT_VOL;
+  ```
+  - Drop Iceberg table
+  ```sql
+  DROP TABLE iceberg_linked_db."iceberg"."quote_analysis_ice";
+  ```
+  - Drop Catalong-linked database
+  ```sql
+  DROP DATABASE iceberg_linked_db;
+  ```
+  - Drop Glue catalog integration 
+  ```sql
+  DROP CATALOG INTEGRATION glue_catalog_irc_int;
+  ```
+AWS:
+  - Remove data locations in Lake Formation
+  - De-register data lake locations in Lake Formation
+  - Empty S3 bucket
+  - Delete Cloudformation Template
+
+
+<!-- ------------------------ -->
+## Conclusion and Resources
 Duration: 1
 
-You've succesfully converted parquet data to Iceberg format use AWS Glue, integrated Snowflake with S3 and the Glue Data Catalog, then combined Iceberg table data with Internal Snowflake data for analytics, wrote aggregate data in Iceberg format to S3 and finally used Snowflake to analzye the Iceberg data.
+You've succesfully converted parquet data to Iceberg format use AWS Glue, integrated Snowflake with S3 and the Glue Data Catalog Iceberg Rest, then combined Iceberg table data with Internal Snowflake data for analytics, wrote aggregate data in Iceberg format to S3 and finally used Snowflake to analzye the Iceberg data.
 
 ### What You Learned
 - how Snowflake integrates with S3 and the Glue Data Catalog to modernize Data Lakes wiht Iceberg
