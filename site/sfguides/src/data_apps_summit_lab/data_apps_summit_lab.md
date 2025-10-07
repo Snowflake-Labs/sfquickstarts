@@ -85,9 +85,9 @@ Snowflake Marketplace also removes the need to integrate and model data by provi
 
 3. Click on "Marketplace".
 
-4. In the search bar, search for "snowflake weather".
+4. In the search bar, search for "Snowflake Public Data (Free)".
 
-5. The first result should be "Weather & Environment" by the "Snowflake Public Data Products" provider. Click on the listing.
+5. The first result should be "Snowflake Public Data (Free)" by the "Snowflake Public Data Products" provider. Click on the listing.
 
 6. The dataset is free. On the right, click "Get".
 
@@ -96,7 +96,7 @@ Snowflake Marketplace also removes the need to integrate and model data by provi
 This is a live dataset! No need to write ingestion logic to bring the data into your account. The data is maintained and kept fresh by the provider.
 
 
-![data](./assets/data.png)
+![data](./assets/Snowflake_Public_Data_Free.png)
 <!-- ------------------------ -->
 ## Load the Snowflake Notebook
 Duration: 10
@@ -161,7 +161,7 @@ It covers topics like:
 
 ...and much more.
 
-We'll use this data to build an application that lets us predict weather for the 90210 zip code (Beverly Hills) in California. We'll specifically explore and use the **WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_METRICS_TIMESERIES** and **WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_STATION_INDEX** datasets.
+We'll use this data to build an application that lets us predict weather for the 90210 zip code (Beverly Hills) in California. We'll specifically explore and use the **SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.NOAA_WEATHER_METRICS_TIMESERIES** and **SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.NOAA_WEATHER_STATION_INDEX** datasets.
 
 Let's begin.
 
@@ -187,8 +187,8 @@ USE SCHEMA weather_schema;
 SELECT 
     idx.state_name,
     AVG(ts.value) as avg_temperature
-FROM WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_METRICS_TIMESERIES ts
-JOIN WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_STATION_INDEX idx 
+FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.NOAA_WEATHER_METRICS_TIMESERIES ts
+JOIN SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.NOAA_WEATHER_STATION_INDEX idx 
     ON ts.noaa_weather_station_id = idx.noaa_weather_station_id
 WHERE ts.variable_name = 'Average Temperature'
     AND ts.date >= '2020-01-01'
@@ -207,8 +207,8 @@ SELECT
     idx.noaa_weather_station_name,
     idx.zip_name,
     idx.state_name
-FROM WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_METRICS_TIMESERIES ts
-JOIN WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_STATION_INDEX idx 
+FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.NOAA_WEATHER_METRICS_TIMESERIES ts
+JOIN SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.NOAA_WEATHER_STATION_INDEX idx 
     ON ts.noaa_weather_station_id = idx.noaa_weather_station_id
 WHERE ts.variable_name = 'Average Temperature'
     AND idx.state_name = 'California'
@@ -237,8 +237,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 session = Session.builder.getOrCreate()
 
 # Snowpark DataFrame equivalent to previous SQL query
-ts = session.table("WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_METRICS_TIMESERIES")
-idx = session.table("WEATHER__ENVIRONMENT.CYBERSYN.NOAA_WEATHER_STATION_INDEX")
+ts = session.table("SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.NOAA_WEATHER_METRICS_TIMESERIES")
+idx = session.table("SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.NOAA_WEATHER_STATION_INDEX")
 
 sample_weather_df = (
     ts.join(idx, ts.col("NOAA_WEATHER_STATION_ID") == idx.col("NOAA_WEATHER_STATION_ID"))
