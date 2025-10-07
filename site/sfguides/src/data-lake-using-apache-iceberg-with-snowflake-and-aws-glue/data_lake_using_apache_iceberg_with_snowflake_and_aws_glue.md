@@ -65,7 +65,7 @@ We will now run a CloudFormation Template to configure a S3 bucket and Role with
 
 - It is recommended to duplicate the browser tab 3 times to make it simple to use multiple AWS services in the same browser session.
 
-- You can now create a CloudFormtion Stack by clicking [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=Glue-IRC-Int&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/glue-snflk-devday-v1.4.yaml).
+- You can now deploy a CloudFormtion Stack by clicking [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=Glue-IRC-Int&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Iceberg_SNOW_AWS/setup/glue-snflk-devday-v1.4.yaml). This creates a S3 bucket and a role with necessary policies attached that Glue can assume to perform tasks.
 
 
 ![CreateStack](assets/CreateStack.png)
