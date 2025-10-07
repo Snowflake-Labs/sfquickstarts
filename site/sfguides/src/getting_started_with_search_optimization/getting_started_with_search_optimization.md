@@ -37,7 +37,7 @@ A basic knowledge of how to run and monitor queries in the Snowflake Web UI.
   - Get access to an existing Snowflake Enterprise Edition account with the `ACCOUNTADMIN` role or the `IMPORT SHARE` privilege
 
 ### What You’ll Build 
-Performant queries that explore the data from [LLM Training] (https://app.snowflake.com/marketplace/listing/GZTSZ290BUX1X/snowflake-public-data-products-llm-training) dataset by [Snowflake Public Data] (https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products).
+Performant queries that explore the data from [Snowflake Public Data (Free)](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=snowflake%20public%20data) dataset by [Snowflake Public Data](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products).
 
 Negative: The Marketplace data used in this guide changes from time-to-time, and your query results may be slightly different than indicated in this guide. Additionally, the Snowflake UI changes periodically as well, and instructions/screenshots may be out of date.
 
@@ -93,7 +93,8 @@ The next step is to acquire data that has all data types supported by Search Opt
 - Search for `Snowflake Public Data Products` in the search bar
 - Find and click the `LLM Training` tile
 
-![LLM Training](assets/LLM_Training_Snowflake_Public_Data.png)
+![LLM Training](assets/Snowflake Public Data Free.png)
+
 
 - Once in the listing, click the big blue Get Data button
 
@@ -176,7 +177,8 @@ USE SCHEMA CYBERSYN;
 ALTER WAREHOUSE my_wh set warehouse_size='4x-large';
 
 //This query time will depend on the warehouse size.
-CREATE OR REPLACE TABLE OPENALEX_WORKS_INDEX AS SELECT * FROM LLM_TRAINING.CYBERSYN.OPENALEX_WORKS_INDEX; 
+
+CREATE OR REPLACE TABLE OPENALEX_WORKS_INDEX AS SELECT * FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.; 
 ```
 ```
 //Note: Check the table details
@@ -477,3 +479,4 @@ Duration: 1
 In this guide, we have covered how to acquire a shared database from Snowflake Marketplace, how to enable Search Optimization on specific columns and analyze the performance improvements in queries with Search Optimization enabled. 
 
 You are now ready to explore the larger world of Snowflake [Search Optimizaitn Service](https://docs.snowflake.com/en/user-guide/search-optimization-service.html)
+
