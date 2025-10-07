@@ -33,7 +33,7 @@ For this guide we will use a Financial Services use case where Insurance data is
 
 
 ### What You’ll Need 
-- A [Snowflake Enterprise Account](https://signup.snowflake.com/?utm_cta=quickstarts_) with `ACCOUNTADMIN` access in US WEST (OREGON REGION)
+- A [Snowflake Enterprise Account](https://signup.snowflake.com/?utm_cta=quickstarts_build_datalake_with_glue_and_iceberg) with `ACCOUNTADMIN` access in US WEST (OREGON REGION)
 - An [AWS Account](https://aws.amazon.com/free/) with `Administartor Access`
 
 ### What You’ll Build 
