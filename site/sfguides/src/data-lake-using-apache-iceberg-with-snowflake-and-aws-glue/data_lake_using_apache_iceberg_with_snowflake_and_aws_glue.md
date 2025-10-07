@@ -273,7 +273,7 @@ Now you are ready to setup Snowflake account and configure the AWS integrations.
 ## Setup Snowflake account and configure the AWS integrations
 Duration: 7
 
-In this step we will configure the Snowflake account with Internal tables to represent Customer and Policy data. We will also create Snowflake objects such as a databaase, warehouse and role that are used the quickstart. Then we will configure the external volume to allow Snowflake to read and write on S3. We will also create an integration with the Glue Data Catalog to allow Snowflake to retrieve the Iceberg Catalog information directly from the the Glue Catalog.
+In this step we will configure the Snowflake account with Internal tables to represent Customer and Policy data. We will also create Snowflake objects such as a databaase, warehouse and role that are used in the quickstart. Then we will configure the external volume to allow Snowflake to read and write on S3. We will also create an integration with the Glue Data Catalog to allow Snowflake to retrieve the Iceberg Catalog information directly from the Glue Catalog.
 
 ### Configure your Snowflake account
 
@@ -482,7 +482,7 @@ Your IAM Trust policy will look something like this
 
 **This now completes the integration to the Glue Catalog**
 
-Now go back to the worksheet and run this command to valide that the integration is working.
+Now go back to the worksheet and run this command to validate that the integration is working.
 ```sql
 SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION('glue_catalog_irc_int');
 ```
@@ -492,7 +492,7 @@ The result should say success.
 ## Working with Iceberg tables in Snowflake
 Duration: 4
 
-In this step we will create a [catalog-linked database](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) in Snowflake using the integrations with Lake Formation and Glue catalog IRC API to create an Iceberg table object referring the Quotes Iceberg table. THat will be used for analysis with the internal Customer and Policy tables. We will then create an aggregate table written in Iceberg format on S3 and use Snowflake to query it.
+In this step we will create a [catalog-linked database](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database) in Snowflake using the integrations with Lake Formation and Glue catalog IRC API to create an Iceberg table object referring the Quotes Iceberg table. That will be used for analysis with the internal Customer and Policy tables. We will then create an aggregate table written in Iceberg format on S3 and use Snowflake to query it.
 
 Execute line 67 in the worksheet:
 
@@ -555,7 +555,7 @@ CREATE OR REPLACE ICEBERG TABLE iceberg_linked_db."iceberg"."quote_analysis_ice"
 BASE_LOCATION = 's3://<Enter your S3 bucket name that was created>/iceberg/quote-analysis-iceberg';
 ```
 
-We can now combine internal Snowflake tables `CUSTOMER` and `POLICIES` with the the existing `quotes` iceberg table
+We can now combine internal Snowflake tables `CUSTOMER` and `POLICIES` with the existing `quotes` iceberg table
  and insert into the new Iceberg table `quote_analysis_ice`.
 
 ```sql
@@ -617,7 +617,7 @@ AWS:
 ## Conclusion and Resources
 Duration: 1
 
-You've successfully converted parquet data to Iceberg format use AWS Glue, integrated Snowflake with S3 and the Glue Data Catalog Iceberg Rest, then combined Iceberg table data with Internal Snowflake data for analytics, wrote aggregate data in Iceberg format to S3 and finally used Snowflake to analyze the Iceberg data.
+You've successfully converted parquet data to Iceberg format using AWS Glue, integrated Snowflake with S3 and the Glue Data Catalog Iceberg Rest, then combined Iceberg table data with Internal Snowflake data for analytics, wrote aggregate data in Iceberg format to S3 and finally used Snowflake to analyze the Iceberg data.
 
 ### What You Learned
 - how Snowflake integrates with S3 and the Glue Data Catalog to modernize Data Lakes with Iceberg
