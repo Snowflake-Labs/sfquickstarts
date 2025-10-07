@@ -180,3 +180,6 @@ Congratulations! You've successfully built the complete Snow Bear Fan Experience
 - [Snowflake Cortex AI Functions](https://docs.snowflake.com/user-guide/snowflake-cortex/llm-functions)
 - [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Streamlit in Snowflake](https://docs.snowflake.com/developer-guide/streamlit/about-streamlit)
+- [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb)
+- [Download Reference Architecture](https://publish-p57963-e462109.adobeaemcloud.com/content/dam/snowflake-site/en/developers/solution-center/snow-bear-architecture-diagram.png)
+- 

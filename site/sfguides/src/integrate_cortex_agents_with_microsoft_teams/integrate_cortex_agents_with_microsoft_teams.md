@@ -15,10 +15,10 @@ Duration: 5
 
 Cortex Agents simplify AI-powered data interactions via a REST API, combining hybrid search and accurate SQL generation. They streamline workflows by managing context retrieval, natural language to SQL conversion, and LLM orchestration. Response quality is enhanced with in-line citations, answer abstention, and multi-message context handling. Developers benefit from a single API call integration, real-time streamed responses, and reduced latency for optimized applications.
 
-In this guide, we will see how to integrate the Cortex Agents (*in Public Preview as of 01/12/2025*) with Microsoft Teams.
+In this guide, we will see how to integrate the Cortex Agents with Microsoft Teams.
 
 > aside positive
-> Also check out the updated QS [Getting Started with The Microsoft Teams and M365 Copilot Cortex App](https://quickstarts.snowflake.com/guide/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app/#0).
+> Also check out [Getting Started with The Microsoft Teams and M365 Copilot Cortex App](https://quickstarts.snowflake.com/guide/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app/#0).
 
 ### Why Cortex Agents?
 
@@ -44,9 +44,9 @@ across projects.
 
 ### Prerequisites
 
-* A Snowflake account in one of these [regions](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability) and also where [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability) is available. If you do not have one you can register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
+* A Snowflake account in one of these [regions](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-agents?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#availability). If you do not have an account, register for a [free trial account](https://signup.snowflake.com/?utm_cta=quickstarts_).
 * [Node.js](https://nodejs.org/) -- Supported versions: 18, 20
-* [Teams Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [Teams Toolkit CLI](https://aka.ms/teamsfx-toolkit-cli). For local debugging using Teams Toolkit CLI, complete extra steps described in [Set up your Teams Toolkit CLI for local debugging](https://aka.ms/teamsfx-cli-debugging).
+* [Microsoft 365 Agents Toolkit for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=TeamsDevApp.ms-teams-vscode-extension).
 
 ### What You Will Learn
 
@@ -71,7 +71,7 @@ Duration: 12
 
 **Step 4:** Use [Snowsight](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-stage-ui#upload-files-onto-a-named-internal-stage) to **upload six** [PDF documents](https://github.com/Snowflake-Labs//sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/tree/main/data) to the **DASH_PDFS** stage.
 
-**Step 5:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [cortex_search_service.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/cortex_search_service.sql) to **execute all statements** in order from top to bottom. This is to create a Cortex Search service for getting insights from the PDF documents. *NOTE: [PARSE_DOCUMENT](https://docs.snowflake.com/en/user-guide/snowflake-cortex/parse-document#label-parse-document-regional-availability) is in Public Preview as of 01/12/2025.*
+**Step 5:** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [cortex_search_service.sql](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/cortex_search_service.sql) to **execute all statements** in order from top to bottom. This is to create a Cortex Search service for getting insights from the PDF documents.
 
 **Step 6:** Configure [key-pair authentication](https://docs.snowflake.com/user-guide/key-pair-auth#configuring-key-pair-authentication) and assign the public key to your user in Snowflake and store/save/copy the private key file (**_.p8_**) in your cloned app folder.
 
@@ -85,11 +85,11 @@ Duration: 15
 
 ### Create Basic Bot
 
-**Step 1.** Select the **Teams Toolkit** extension icon on the left in the VS Code toolbar.
+**Step 1.** Select the **Microsoft 365 Agents Toolkit** extension icon on the left in the VS Code toolbar.
 
-**Step 2.** Click on **Create a New App**
+**Step 2.** Click on **Create a New Agent/App**
 
-**Step 3.** Select **Bot** from the dropdown menu and then select **Basic Bot**
+**Step 3.** Select **Teams Agents and Apps** -> **Other Teams Capabilities** -> **Simple Bot**
 
 **Step 4.** Select **JavaScript** as the language
 
@@ -101,7 +101,7 @@ At this point, you should have a folder structure similar to the one shown below
 
 ### Test Basic Bot
 
-Click on **Run** > **Start Debugging** which launches your app in **Teams App Test Tool** in a web browser. 
+Click on **Run** > **Debug in Microsoft 365 Agents Playground** which launches your app in **Teams App Test Tool** in a web browser. 
 
 If all goes well, you will see an application that you can interact with in Teams App Test Tool as shown below. You will receive a welcome message from the bot, and you can send anything to the bot to get an echoed response.
 
@@ -124,7 +124,9 @@ If all goes well, you will see an application that you can interact with in Team
 
 **Step 6:** Download **new** [jwtGenerator.js](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/jwtGenerator.js) and **copy the file** in the same folder.
 
-**Step 7:** Set the following variables in existing **env/.env.dev** file:
+**Step 7:** Download [test.js](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/test.js) and **copy the file** in the same folder.
+
+**Step 8:** Set the following variables in existing **env/.env.dev** file:
 
 ```bash 
 DEMO_DATABASE='DASH_DB'
@@ -155,7 +157,10 @@ Duration: 3
 
 Before proceeding, make sure you [test](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/test.js) that the Cortex Agents API endpoint and other env variables in **env/.env.dev** have been set correctly.
 
-Browse to the cloned folder in VS Code and run `node test.js` in a terminal window.
+Browse to the cloned folder in VS Code and in a new terminal window, run the following commands:
+
+* `npm install`
+* `node test.js`
 
 If you see the output as shown below, then you're good to go.
 

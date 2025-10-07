@@ -2,7 +2,7 @@ id: getting-started-with-snowflake-mcp-server
 summary: This guide outlines the process for getting started with Snowflake MCP Server.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
-status: Hidden
+status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
@@ -74,7 +74,15 @@ This tool allows the agent to search and retrieve information from unstructured 
     - Select columns to include in the service: Select all
     - Configure your Search Service: Keep default values and select **DASH_WH_S** for "Warehouse for indexing"
 
-### Create Snowflake MCP Server
+<!-- ------------------------ -->
+## Snowflake MCP Server
+
+Duration: 5
+
+> aside negative
+> PREREQUISITE: Successful completion of steps outlined under **Setup**.
+
+#### Create Snowflake MCP Server
 
 To create the Snowflake MCP server, run the following in the same SQL worksheet.
 
@@ -90,13 +98,9 @@ tools:
 $$;
 ```
 
-<!-- ------------------------ -->
-## Cursor
+Now let's try this out in Cursor, but note that you should be able to use other clients like CrewAI, Claude by Anthropic, Devin by Cognition, and Agentforce by Salesforce.
 
-Duration: 5
-
-> aside negative
-> PREREQUISITE: Successful completion of steps outlined under **Setup**.
+#### Cursor
 
 In Cursor, open or create `mcp.json` located at the root of your project and add the following. NOTE: Replace **<YOUR-ORG-YOUR-ACCOUNT>** and **<YOUR-PAT-TOKEN>** with your values.
 
@@ -104,7 +108,7 @@ In Cursor, open or create `mcp.json` located at the root of your project and add
 {
     "mcpServers": {
       "Snowflake": {
-        "url": "https://<YOUR-ORG-YOUR-ACCOUNT>.aws.snowflakecomputing.com/api/v2/databases/dash_mcp_db/schemas/data/mcp-servers/dash_mcp_server",
+        "url": "https://<YOUR-ORG-YOUR-ACCOUNT>.snowflakecomputing.com/api/v2/databases/dash_mcp_db/schemas/data/mcp-servers/dash_mcp_server",
             "headers": {
               "Authorization": "Bearer <YOUR-PAT-TOKEN>"
             }
@@ -113,7 +117,7 @@ In Cursor, open or create `mcp.json` located at the root of your project and add
 }
 ```
 
-Then, select **Cursor** -> **Settings** -> **Cursor Settings** -> **MCP** (or **Tools**) and you should see **Snowflake** under **Installed Servers**. 
+Then, select **Cursor** -> **Settings** -> **Cursor Settings** -> **MCP** (or **Tools & MCP**) and you should see **Snowflake** under **Installed Servers**. 
 
 NOTE: If it continues to say "Loading tools" running the following `curl` command to test your connection.
 
@@ -282,6 +286,6 @@ Congratulations! You've successfully created a Snowflake MCP Server that intelli
 ### Related Resources
 
 - [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server)
-
+- [Snowflake-managed MCP server Docs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp)
 
 
