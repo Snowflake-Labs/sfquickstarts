@@ -82,13 +82,14 @@ The setup script creates:
 
 ### Step 2: Download Required Files
 
-Download these 3 files from the GitHub repository:
+Download these 4 files from the GitHub repository:
 
 | File | Purpose | Download Link |
 |------|---------|---------------|
 | **Data File** | Basketball fan survey data | [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) |
 | **Streamlit App** | Interactive analytics dashboard | [snow_bear.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear.py) |
 | **Semantic Model** | AI assistant semantic model | [snow_bear_fan_360.yaml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_fan_360.yaml) |
+| **Notebook** | Setup and data processing notebook | [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb) |
 
 ### Step 3: Upload Files to Stages
 
@@ -114,14 +115,12 @@ Download these 3 files from the GitHub repository:
 
 ### Step 4: Import the Analytics Notebook
 
-1. **Download the notebook**: [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb)
-
-2. **Import into Snowflake**:
+1. **Import into Snowflake**:
    - Navigate to `Projects` → `Notebooks` in Snowsight
    - Click the down arrow next to `+ Notebook` and select `Import .ipynb file`
    - Choose `snow_bear_complete_setup.ipynb` from your downloads
 
-3. **Configure the notebook settings**:
+2. **Configure the notebook settings**:
    - **Role**: Select `SNOW_BEAR_DATA_SCIENTIST`
    - **Database**: Select `SNOW_BEAR_DB`
    - **Schema**: Select `ANALYTICS`  
