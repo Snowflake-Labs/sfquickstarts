@@ -57,7 +57,9 @@ In this step, you'll create the Snowflake database objects and upload all necess
 
 ### Step 1: Create Database Objects
 
-> **Important**: Starting in September 2025, Snowflake is gradually upgrading accounts from Worksheets to [Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces). Workspaces will become the default SQL editor. Follow the instructions below that match your interface.
+> aside positive
+> 
+> Starting in September 2025, Snowflake is gradually upgrading accounts from Worksheets to [Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces). Workspaces will become the default SQL editor. Follow the instructions below that match your interface.
 
 **If you have Workspaces:**
 1. In Snowsight, click `Projects`, then `Workspaces` in the left navigation
