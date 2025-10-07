@@ -165,7 +165,7 @@ Open [Snowflake Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm
 USE ROLE ACCOUNTADMIN;
 CREATE ROLE IF NOT EXISTS FESTIVAL_DEMO_ROLE;
 CREATE WAREHOUSE IF NOT EXISTS FESTIVAL_DEMO_S
-  WAREHOUSE_SIZE = MEDIUM
+  WAREHOUSE_SIZE = SMALL
   AUTO_SUSPEND = 300
   AUTO_RESUME = TRUE;
 GRANT USAGE ON WAREHOUSE FESTIVAL_DEMO_S TO ROLE FESTIVAL_DEMO_ROLE;
@@ -175,7 +175,8 @@ CREATE DATABASE IF NOT EXISTS OPENFLOW_FESTIVAL_DEMO;
 GRANT OWNERSHIP ON DATABASE OPENFLOW_FESTIVAL_DEMO TO ROLE FESTIVAL_DEMO_ROLE;
 
 -- Grant role to current user
-GRANT ROLE FESTIVAL_DEMO_ROLE TO ROLE IDENTIFIER(CURRENT_USER());
+SET CURR_USER=(SELECT CURRENT_USER());
+GRANT ROLE FESTIVAL_DEMO_ROLE TO ROLE IDENTIFIER($CURR_USER);
 
 -- Switch to demo role and create schema
 USE ROLE FESTIVAL_DEMO_ROLE;
@@ -314,42 +315,118 @@ SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
 <!-- ------------------------ -->
 ## Openflow Configuration
 
-Duration: 15
+Duration: 25
+
+This section guides you through setting up Openflow SPCS infrastructure and creating a runtime for the Festival Operations document pipeline.
 
 > aside positive
-> **IMPORTANT:** Before configuring connectors, ensure you have completed the **Openflow SPCS deployment setup**.
->
-> Follow the official Snowflake documentation for detailed setup instructions:
-> [Set up Openflow - Snowflake Deployment](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs)
->
-> This includes:
->
-> 1. **Setup core Snowflake** - Configure admin role, privileges, and network
-> 2. **Create deployment** - Set up Openflow SPCS deployment with optional event table
-> 3. **Create runtime role** - Configure role with external access integrations
-> 4. **Create runtime** - Associated with the runtime role
+> **IMPORTANT:** Before configuring connectors, you must complete the **Openflow SPCS deployment setup**. This is a one-time configuration that establishes the foundation for all your Openflow data pipelines.
 
-### Access Openflow
+### Complete Openflow SPCS Setup
 
-1. In Snowsight, navigate to **Work with data** > **Ingestion** > **Openflow**
-2. Access your existing Openflow deployment and runtime
+Follow the comprehensive **Getting Started with Openflow SPCS** quickstart to set up your infrastructure:
+
+**Quickstart Guide**: [Getting Started with Openflow SPCS](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html)
+
+This 25-minute setup includes:
+
+| Step | Task | Duration | What You'll Create |
+|------|------|----------|-------------------|
+| 1 | **Setup Core Snowflake** | 10 min | `OPENFLOW_ADMIN` role, network rules, BCR bundles |
+| 2 | **Create Deployment** | 5 min | Openflow SPCS deployment with optional event logging |
+| 3 | **Create Runtime Role** | 5 min | Runtime role with external access integrations |
+| 4 | **Create Runtime** | 5 min | Active runtime environment ready for connectors |
+
+**Key Components You'll Set Up:**
+
+- **`OPENFLOW_ADMIN` Role**: Administrative role with deployment and integration privileges
+- **Network Rules**: Required for Openflow to communicate with Snowflake and external services
+- **Deployment**: Container environment running in Snowpark Container Services (SPCS)
+- **Runtime Role**: For this quickstart, use `FESTIVAL_DEMO_ROLE` (created in Setup Environment) with database, schema, warehouse access, and external access integrations
+- **Active Runtime**: Ready to host connectors like Google Drive
+
+> aside positive
+> **TIP:** The quickstart includes downloadable SQL scripts and Jupyter notebooks for automated setup. You can use these scripts to accelerate your deployment process.
+
+**After Setup**: Once you complete the quickstart, you'll have a production-ready Openflow environment. You can then proceed with adding the Google Drive connector for this Festival Operations demo.
+
+### Alternative: Use Existing Openflow Infrastructure
+
+If you already have Openflow SPCS set up in your account, you can reuse your existing infrastructure. However, for this quickstart, we recommend using `FESTIVAL_DEMO_ROLE` to keep naming consistent:
+
+1. **Use existing deployment and runtime** - No need to create new ones
+2. **Grant `FESTIVAL_DEMO_ROLE` access** - Ensure it has access to `festival_ops_access_integration` (created in the previous "Setup Environment" section)
+3. **Grant integration access** - Add the external access integration to `FESTIVAL_DEMO_ROLE`:
+
+   ```sql
+   USE ROLE ACCOUNTADMIN;
+   GRANT USAGE ON INTEGRATION festival_ops_access_integration TO ROLE FESTIVAL_DEMO_ROLE;
+   ```
+
+### Access Openflow Interface
+
+After completing the Openflow SPCS setup, access the Openflow interface to configure your runtime:
+
+1. In Snowsight, navigate to **Work with data** in the left sidebar
+2. Select **Ingestion**
+3. Click on **Openflow** (this will open Openflow in a new browser tab)
+
+   ![Launch Openflow from Snowsight](assets/snowsight_launch_openflow.png)
+
+4. **Accept the authentication prompt** when Openflow opens in the new tab
 
 ### Configure Runtime for Festival Operations
 
-![Openflow SPCS Overview](assets/openflow_spcs_overview.png)
+Now that you have Openflow open, configure your runtime for the Festival Operations pipeline:
 
-Create or select your runtime with these settings:
+#### Option A: Create New Runtime (Recommended for Demo)
 
-- **Runtime Name**: `FESTIVAL_DOC_INTELLIGENCE`
-- **External Access Integration**: `festival_ops_access_integration` (created in previous step)
+Create a dedicated runtime for this demo:
+
+1. In the Openflow interface, click on the **Runtimes** tab at the top
+2. Click **Create Runtime** button
+3. Configure with these settings:
+   - **Runtime Name**: `FESTIVAL_DOC_INTELLIGENCE`
+   - **Runtime Role**: `FESTIVAL_DEMO_ROLE` (created in Setup Environment)
+   - **External Access Integration**: `festival_ops_access_integration` (created in previous step)
+   - **Database**: `OPENFLOW_FESTIVAL_DEMO`
+   - **Schema**: `FESTIVAL_OPS`
+   - **Warehouse**: `FESTIVAL_DEMO_S`
 
 > aside positive
-> **NOTE:**
+> **NOTE:** Ensure the `festival_ops_access_integration` is accessible to `FESTIVAL_DEMO_ROLE`:
 >
-> - Openflow SPCS automatically manages compute resources. No manual compute pool configuration is required.
-> - Database and schema configuration will be specified at the connector level when setting up the Google Drive connector.
+> ```sql
+> USE ROLE ACCOUNTADMIN;
+> GRANT USAGE ON INTEGRATION festival_ops_access_integration TO ROLE FESTIVAL_DEMO_ROLE;
+> ```
 
-### Add Google Drive Connector
+After creating the runtime, your Openflow interface will look like this:
+
+![Openflow SPCS Overview](assets/openflow_spcs_overview.png)
+
+#### Option B: Use Existing Runtime
+
+If you already have a runtime from the Openflow SPCS quickstart (e.g., `QUICKSTART_RUNTIME`):
+
+1. Grant access to the Festival Operations integration:
+
+   ```sql
+   USE ROLE ACCOUNTADMIN;
+   GRANT USAGE ON INTEGRATION festival_ops_access_integration TO ROLE YOUR_RUNTIME_ROLE;
+   ```
+
+2. The runtime will automatically have access to the integration for Google Drive connectivity
+
+> aside positive
+> **RESOURCE MANAGEMENT:**
+>
+> - Openflow SPCS automatically manages compute resources and scaling
+> - No manual compute pool configuration is required
+> - Database and schema access is configured at the runtime level
+> - Connector-specific settings are configured when adding the Google Drive connector
+
+## Add Google Drive Connector
 
 Once the runtime is active, add the [Google Drive connector](https://docs.snowflake.com/user-guide/data-integration/openflow/connectors/google-drive/about) (Overview tab in Openflow Home page):
 
@@ -362,6 +439,9 @@ Once the runtime is active, add the [Google Drive connector](https://docs.snowfl
 4. Click **Add to Runtime**
 
    ![Add Connector to Runtime](assets/openflow_add_connector_to_runtime.gif)
+
+> aside positive
+> **NOTE:** After adding the connector to the runtime, you may see authorization prompts. Accept these prompts to allow the connector to access the runtime and required resources.
 
 The connector will be automatically added to your canvas:
 
@@ -389,8 +469,11 @@ Now configure the Google Drive connector with the following parameters:
 
 ![Google Drive Source Parameters](assets/openflow_connector_gdrive_source_parameters.png)
 
-- **GCP Service Account JSON**: Upload your Google Service Account JSON key file
+- **GCP Service Account JSON**: Paste the JSON content from your Google Service Account key file
 - **Google Delegation User**: `hi@kameshs.dev` (your Google Workspace user with drive access)
+
+> aside positive
+> **SECURITY BEST PRACTICE:** For production environments, consider using a **SecretManagerParameterProvider** (such as `AwsSecretsManagerParameterProvider`) to securely manage sensitive credentials like the GCP Service Account JSON. This approach stores secrets in a dedicated secrets manager instead of directly in the connector configuration, providing better security and easier credential rotation.
 
 ### Configure Destination Parameters
 
@@ -398,29 +481,35 @@ Now configure the Google Drive connector with the following parameters:
 
 - **Destination Database**: `OPENFLOW_FESTIVAL_DEMO`
 - **Destination Schema**: `FESTIVAL_OPS`
+- **Snowflake Authentication Strategy**: `SNOWFLAKE_SESSION_TOKEN`
 - **Snowflake Role**: `FESTIVAL_DEMO_ROLE`
 - **Snowflake Warehouse**: `FESTIVAL_DEMO_S`
-- **Snowflake Authentication Strategy**: `SNOWFLAKE_SESSION_TOKEN`
 
 ### Configure Ingestion Parameters
 
 > aside positive
-> **NOTE:** This section inherits parameters from "Configure Source Parameters" and "Configure Destination Parameters" sections above. Look for the downward arrow icon (↓) in the UI to identify inherited parameters.
+> **NOTE:** By default, this section inherits parameters from "Configure Source Parameters" and "Configure Destination Parameters" sections above. For clarity in this quickstart, we'll turn off inheritance and configure only the required ingestion-specific parameters.
 
 Navigate to Parameter Contexts from Runtime Canvas:
 
 ![Navigate to Parameter Contexts](assets/openflow_parameter_contexts.gif)
 
-Configure the Ingestion Parameters:
+**Turn Off Parameter Inheritance** (for clarity):
 
-![Google Drive Ingestion Parameters](assets/openflow_connector_gdrive_ingestion_parameters.png)
+Click the checkbox to disable inherited parameters and show only ingestion-specific settings:
 
-- **Google Folder Name**: `Festival Operations` (The folder path in your Google Shared Drive)
+![Turn Off Inherited Parameters](assets/openflow_connector_gdrive_ingestion_parameters_off_inhertience.png)
+
+**Configure the Ingestion Parameters:**
+
+Now configure only the ingestion-specific parameters:
+
+![Google Drive Ingestion Parameters](assets/openflow_connector_gdrive_ingestion_parameters_no_inhertiance.png)
+
+- **File Extensions To Ingest**: `pdf,txt,docx,xlsx,pptx,html,jpg`
 - **Google Domain**: `[YOUR WORKSPACE DOMAIN]`
 - **Google Drive ID**: `[Your shared drive ID]`
-- **GCP Service Account JSON**: Upload your Google Service Account JSON key file
-- **Google Delegation User**: `[Your Google Workspace user with drive access]`
-- **File Extensions To Ingest**: `pdf,txt,docx,xlsx,pptx,html,jpg`
+- **Google Folder Name**: `Festival Operations` (The folder path in your Google Shared Drive)
 - **OCR Mode**: `LAYOUT` (preserves document structure during text extraction)
 - **Snowflake Cortex Search Service Role**: `FESTIVAL_DEMO_ROLE`
 
@@ -904,6 +993,9 @@ Before setting up Snowflake Intelligence, ensure you have:
 Create the required database and schema structure:
 
 ```sql
+-- Use ACCOUNTADMIN role for setup
+USE ROLE ACCOUNTADMIN;
+
 -- Create database for Snowflake Intelligence
 CREATE DATABASE IF NOT EXISTS snowflake_intelligence;
 GRANT USAGE ON DATABASE snowflake_intelligence TO ROLE PUBLIC;
@@ -916,30 +1008,17 @@ GRANT USAGE ON SCHEMA snowflake_intelligence.agents TO ROLE PUBLIC;
 GRANT CREATE AGENT ON SCHEMA snowflake_intelligence.agents TO ROLE FESTIVAL_DEMO_ROLE;
 ```
 
-Verify your Cortex Search service is available:
-
-```sql
--- Connect to your demo database
-USE DATABASE OPENFLOW_FESTIVAL_DEMO;
-USE SCHEMA FESTIVAL_OPS;
-
--- Verify your Cortex Search service exists
-SHOW CORTEX SEARCH SERVICES IN SCHEMA FESTIVAL_OPS;
-
--- Test the search service
-SELECT SNOWFLAKE.CORTEX.SEARCH(
-    'CORTEX_SEARCH_SERVICE',
-    'expansion strategy AND market analysis'
-) as search_results;
-```
-
 ### Create the Agent
+
+> aside positive
+> **IMPORTANT:** Before creating the agent, ensure you are using the `FESTIVAL_DEMO_ROLE` role in Snowsight. This ensures the agent is owned by the correct role and has proper access to resources. You can switch roles using the role selector in the top-right corner of Snowsight.
 
 #### Access Agent Creation Interface
 
 1. Sign in to Snowsight
-2. Navigate directly to Agents: [Create Snowflake Intelligence Agent](https://app.snowflake.com/_deeplink/#/agents/)
-3. Select **"Create agent"**
+2. **Switch to `FESTIVAL_DEMO_ROLE`** using the role selector in the top-right corner
+3. Navigate directly to Agents: [Create Snowflake Intelligence Agent](https://app.snowflake.com/_deeplink/#/agents?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-buidling-new-snowflake-intelligence-agents)
+4. Select **"Create agent"**
 
 ![Agent Creation Interface](assets/si_agent_create.png)
 
@@ -947,14 +1026,30 @@ SELECT SNOWFLAKE.CORTEX.SEARCH(
 
 - ☑️ Select **"Create this agent for Snowflake Intelligence"**
 
-#### Configure Agent Basics
-
-![Agent About Configuration](assets/si_agent_about.png)
-
 **Agent Details:**
 
 - **Agent object name:** `FESTIVAL_DOC_INTELLIGENCE`
 - **Display name:** `Festival Document Intelligence`
+
+#### Configure Agent Basics
+
+After creating the agent, you need to configure its details:
+
+1. **Click on the agent name** (`FESTIVAL_DOC_INTELLIGENCE`) in the agent list to open it
+
+   ![Agents List](assets/si_agents_list.png)
+
+2. **Click "Edit"** button to start editing the agent configuration and details
+
+   ![Agent Edit Button](assets/si_agent_edit.png)
+
+> aside positive
+> **IMPORTANT:** As you configure each section below (About, Tools, Orchestration, Access), remember to click **"SAVE"** after completing all configurations to ensure your changes are preserved.
+
+Now configure the agent basics in the "About" section:
+
+![Agent About Configuration](assets/si_agent_about.png)
+
 - **Description:** `Query and analyze business documents using natural language, powered by festival operations data processed via Openflow pipeline.`
 
 **Example Questions** (Add these to help users get started):
@@ -1042,8 +1137,11 @@ Focus on actionable insights and business value in your responses.
 
 #### Getting Started with Queries
 
-1. Access Snowflake Intelligence: [Open Snowflake Intelligence](https://ai.snowflake.com/)
+1. Access Snowflake Intelligence: [Open Snowflake Intelligence](https://ai.snowflake.com/sfdevrel/sfdevrel_enterprise/#/ai?utm_source=quickstart&utm_medium=quickstart&utm_campaign=-us-en-all&utm_content=app-snowflake-intelligence-chat)
 2. Select your agent `FESTIVAL_DOC_INTELLIGENCE` from the dropdown
+
+   ![Choose Agent](assets/si_chat_choose_agent.png)
+
 3. Choose the Cortex Search service as your data source
 
 **Start with the Example Questions** you configured - these are specifically tailored to your festival operations data.
@@ -1397,10 +1495,16 @@ Congratulations! You've successfully built an end-to-end unstructured data pipel
 
 ### Related Resources
 
+**Quickstarts:**
+
+- [Getting Started with Openflow SPCS](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html) - Complete infrastructure setup guide
 - [Source Code and Sample Data](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-unstructured-data-pipeline)
+
+**Documentation:**
+
 - [Snowflake Workspaces Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces)
 - [Openflow Documentation](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about)
-- [Openflow SPCS Setup Guide](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs)
+- [Openflow SPCS Setup Guide](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs) - Official setup documentation
 - [Google Drive Connector Documentation](https://docs.snowflake.com/user-guide/data-integration/openflow/connectors/google-drive/about)
 - [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Snowflake Intelligence Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
