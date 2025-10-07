@@ -76,7 +76,7 @@ The setup script creates:
 - **Database**: `SNOW_BEAR_DB` with `BRONZE_LAYER`, `GOLD_LAYER`, and `ANALYTICS` schemas
 - **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
 - **Warehouse**: `SNOW_BEAR_WH` for compute resources
-- **Stages**: `SNOW_BEAR_STAGE` for app/data files and `SEMANTIC_MODELS` for AI assistant
+- **Stages**: `SNOW_BEAR_STAGE` (in ANALYTICS) for app/data files and `SEMANTIC_MODELS` (in GOLD_LAYER) for AI assistant
 - **File Format**: `CSV_FORMAT` for data loading
 - **AI Access**: `SNOWFLAKE.CORTEX_USER` role for Cortex functions
 
@@ -96,11 +96,12 @@ Download these 5 files from the GitHub repository:
 
 1. In Snowsight, change your role to `SNOW_BEAR_DATA_SCIENTIST`
 
-2. Navigate to `Catalog` → `Database Explorer` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
+2. Navigate to `Catalog` → `Database Explorer` → `SNOW_BEAR_DB`
 
-**Upload files to two stages:**
+**Upload files to two stages in different schemas:**
 
-3. **Upload to `SNOW_BEAR_STAGE`:**
+3. **Upload to `ANALYTICS` → `Stages` → `SNOW_BEAR_STAGE`:**
+   - Navigate to `ANALYTICS` → `Stages`
    - Click on `SNOW_BEAR_STAGE`
    - Click `Enable Directory Table`
    - Upload these files:
@@ -108,7 +109,8 @@ Download these 5 files from the GitHub repository:
      - `snow_bear.py`
      - `environment.yml`
 
-4. **Upload to `SEMANTIC_MODELS` stage:**
+4. **Upload to `GOLD_LAYER` → `Stages` → `SEMANTIC_MODELS`:**
+   - Navigate to `GOLD_LAYER` → `Stages`
    - Click on `SEMANTIC_MODELS`
    - Click `Enable Directory Table`
    - Upload this file:
