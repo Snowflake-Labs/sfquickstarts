@@ -37,7 +37,7 @@ A basic knowledge of how to run and monitor queries in the Snowflake Web UI.
   - Get access to an existing Snowflake Enterprise Edition account with the `ACCOUNTADMIN` role or the `IMPORT SHARE` privilege
 
 ### What You’ll Build 
-Performant queries that explore the data from [LLM Training] (https://app.snowflake.com/marketplace/listing/GZTSZ290BUX1X/snowflake-public-data-products-llm-training) dataset by [Snowflake Public Data] (https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products).
+Performant queries that explore the data from [Snowflake Public Data (Free)](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=snowflake%20public%20data) dataset by [Snowflake Public Data Products](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products).
 
 Negative: The Marketplace data used in this guide changes from time-to-time, and your query results may be slightly different than indicated in this guide. Additionally, the Snowflake UI changes periodically as well, and instructions/screenshots may be out of date.
 
@@ -61,7 +61,7 @@ The first step in the guide is to set up or log into Snowflake and set up a virt
 
 The Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. 
 
-![worksheet-image](assets/worksheets.png)
+![SO Working](assets/Worksheets.png)
 
 This will allow you to create shared databases from Snowflake Marketplace listings. If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
@@ -91,15 +91,15 @@ The next step is to acquire data that has all data types supported by Search Opt
 
 - Navigate to the `Marketplace` screen using the menu on the left side of the window
 - Search for `Snowflake Public Data Products` in the search bar
-- Find and click the `LLM Training` tile
+- Find and click the `Snowflake Public Data (Free)` tile
 
-![LLM Training](assets/LLM_Training_Snowflake_Public_Data.png)
+![LLM Training](assets/Snowflake_Public_Data_Free.png)
 
 - Once in the listing, click the big blue Get Data button
 
 On the `Get Data` screen, you may be prompted to complete your user profile if you have not done so before. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get Data` screen.
 
-Congratulations! You have just created a shared database named `LLM_TRAINING` from a listing on the Snowflake Marketplace. Click the big blue `Query Data` button and advance to the next step in the guide.
+Congratulations! You have just created a shared database named `Snowflake_Public_Data_Free` from a listing on the Snowflake Marketplace. Click the big blue `Query Data` button and advance to the next step in the guide.
 
 ---
 
@@ -111,11 +111,11 @@ The prior section opened a worksheet editor in the new Snowflake UI with a few p
 
 ### Understanding the data
 
-You are going to first copy over two of the tables from `LLM_TRAINING` (the database that you just imported) into a new database (we will call it `LLM_TRAINING_SO`). 
+You are going to first copy over two of the tables from `Snowflake_Public_Data_Free` (the database that you just imported) into a new database (we will call it `LLM_TRAINING_SO`). 
 
 This is necessary as 
-- You wouldn’t have the privileges to set up Search Optimization on the shared `LLM_TRAINING` database  
-- It will allow you to run the same query on both search optimized (in `LLM_TRAINING_SO` database) and non search optimized tables (in `LLM_TRAINING` database) to compare the performance of Search Optimization.
+- You wouldn’t have the privileges to set up Search Optimization on the shared `Snowflake_Public_Data_Free` database  
+- It will allow you to run the same query on both search optimized (in `LLM_TRAINING_SO` database) and non search optimized tables (in `Snowflake_Public_Data_Free` database) to compare the performance of Search Optimization.
 - Optionally, you can also create another database to store the tables without Search Optimization to compare performance and check the partition access/pruning details, as querying on the shared data will not show this information.
 
 The table we will use is `OPENALEX_WORKS_INDEX`, which has data from OpenAlex, a bibliographic catalogue of scientific papers, authors, and institutions accessible in open access mode. It has ***~260 million rows***.
@@ -169,26 +169,26 @@ SHOW SCHEMAS;
 
 //Note: Create Schema name of your choice if you do not want to use PUBLIC schema
 USE SCHEMA public;
-CREATE SCHEMA CYBERSYN;
-USE SCHEMA CYBERSYN;
+CREATE SCHEMA Public_Data;
+USE SCHEMA Public_Data;
 
 //Note: Substitute my_wh with your warehouse name if different and use warehouse size of your choice
 ALTER WAREHOUSE my_wh set warehouse_size='4x-large';
 
 //This query time will depend on the warehouse size.
-CREATE OR REPLACE TABLE OPENALEX_WORKS_INDEX AS SELECT * FROM LLM_TRAINING.CYBERSYN.OPENALEX_WORKS_INDEX; 
+CREATE OR REPLACE TABLE OPENALEX_WORKS_INDEX AS SELECT * FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.OPENALEX_WORKS_INDEX; 
 ```
 ```
 //Note: Check the table details
 DESCRIBE TABLE OPENALEX_WORKS_INDEX;
 
-SHOW TABLES LIKE 'OPENALEX_WORKS_INDEX' IN SCHEMA LLM_TRAINING_SO.CYBERSYN;
+SHOW TABLES LIKE 'OPENALEX_WORKS_INDEX' IN SCHEMA SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE;
 
 //Note: Check the table details by looking at the table DDL.
-SELECT GET_DDL('table','LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX');
+SELECT GET_DDL('table','SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.OPENALEX_WORKS_INDEX');
 
 //Note: Check the data (Optional)
-SELECT * FROM LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX LIMIT 100;
+SELECT * FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.OPENALEX_WORKS_INDEX LIMIT 100;
 ```
 
 Before enabling Search Optimization on the table, it is recommended to execute queries on the table `OPENALEX_WORKS_INDEX` with filter predicates on the columns on which you wish to enable Search Optimization. This will show you the benefits of using Search Optimization. 
@@ -207,16 +207,16 @@ ALTER WAREHOUSE my_wh RESUME;
 ALTER WAREHOUSE my_wh SET warehouse_size= 'X-SMALL';
 
 // Note: This query will take ~2 minutes 
-SELECT *  from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX where mag_work_id = 2240388798; 
+SELECT *  from LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX where mag_work_id = 2240388798; 
 
 // Note: This query will take ~2.5 minutes 
-SELECT *  from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX where work_title ilike 'Cross-domain applications of multimodal human-computer interfaces'; 
+SELECT *  from LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX where work_title ilike 'Cross-domain applications of multimodal human-computer interfaces'; 
 
 // Note: This query will take ~3 minutes 
-SELECT * from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX  where WORK_PRIMARY_LOCATION:source:display_name ilike 'Eco-forum'; 
+SELECT * from LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX  where WORK_PRIMARY_LOCATION:source:display_name ilike 'Eco-forum'; 
 
 // Note: This query will take ~4 minutes 
-SELECT * from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX  where WORK_PRIMARY_LOCATION:source:issn_l = '2615-6946'; 
+SELECT * from LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX  where WORK_PRIMARY_LOCATION:source:issn_l = '2615-6946'; 
 ```
 
 Check Search Optimization estimated credit consumption before enabling Search Optimization using the [cost estimation function](https://docs.snowflake.com/en/sql-reference/functions/system_estimate_search_optimization_costs).
@@ -224,7 +224,7 @@ Check Search Optimization estimated credit consumption before enabling Search Op
 ```
 //Note: Optional but recommended step
 
-SELECT SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS('LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX',
+SELECT SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS('LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX',
                                                'EQUALITY(MAG_WORK_ID),EQUALITY(WORK_PRIMARY_LOCATION:source.display_name),
                                                SUBSTRING(WORK_TITLE),SUBSTRING(WORK_PRIMARY_LOCATION:source.issn_l)')
 AS estimate_for_columns_without_search_optimization;
@@ -240,18 +240,18 @@ For this guide, let's selectively enable Search optimization for a few columns:
 
 ```
 // Defining Search Optimization on NUMBER fields For Equality
-ALTER TABLE LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON EQUALITY(MAG_WORK_ID);
+ALTER TABLE LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON EQUALITY(MAG_WORK_ID);
 
 // Defining Search Optimization on VARCHAR fields optimized for Wildcard search
-ALTER TABLE LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON SUBSTRING(WORK_TITLE);
+ALTER TABLE LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON SUBSTRING(WORK_TITLE);
 
 // Defining Search Optimization on VARIANT field For Equality
-ALTER TABLE LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON SUBSTRING(WORK_PRIMARY_LOCATION:source.display_name);
+ALTER TABLE LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON SUBSTRING(WORK_PRIMARY_LOCATION:source.display_name);
 
 // Defining Search Optimization on VARIANT field For Wildcard search
-ALTER TABLE LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON EQUALITY(WORK_PRIMARY_LOCATION:source.issn_l);
+ALTER TABLE LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX ADD SEARCH OPTIMIZATION ON EQUALITY(WORK_PRIMARY_LOCATION:source.issn_l);
 
-SHOW TABLES LIKE 'OPENALEX_WORKS_INDEX' IN SCHEMA LLM_TRAINING_SO.CYBERSYN;
+SHOW TABLES LIKE 'OPENALEX_WORKS_INDEX' IN SCHEMA LLM_TRAINING_SO.Public_Data;
 ```
 
 ### Ensure Search Optimization first time indexing is complete
@@ -261,7 +261,7 @@ Now, let's verify that Search Optimization is enabled and the backend process ha
 Run the below query against the newly created database (`LLM_TRAINING_SO`)
 
 ```
-DESCRIBE SEARCH OPTIMIZATION ON LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX;
+DESCRIBE SEARCH OPTIMIZATION ON LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX;
 ```
 It would return a result like below:
 
@@ -286,7 +286,7 @@ To start off, we have already enabled Search Optimization on the `MAG_WORK_ID` a
 ![SOEqualitySearch](assets/EqualitySearchSOEnabled_LLM.png)
 
 > **_NOTE:_** \
-If you wish to run the queries below on both databases (`LLM_TRAINING` and `LLM_TRAINING_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
+If you wish to run the queries below on both databases (`SNOWFLAKE_PUBLIC_DATA_FREE` and `LLM_TRAINING_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
 \
 ALTER SESSION SET USE_CACHED_RESULT = false; \
 ALTER WAREHOUSE my_wh SUSPEND;
@@ -295,7 +295,7 @@ Now, run the same queries that you executed earlier when the Search Optimization
 
 ```
 SELECT *  
-  FROM LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX 
+  FROM LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX 
   WHERE 
     mag_work_id = 2240388798;
 ```
@@ -318,7 +318,7 @@ Let's look at another example with the SUBSTR search on the column `WORK_TITLE`.
 
 ```
 SELECT *  
-  FROM LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX 
+  FROM LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX 
   WHERE 
     work_title ilike 'Cross-domain applications of multimodal human-computer interfaces'; 
 ```
@@ -346,7 +346,7 @@ Duration: 5
 In this section, let’s search in the variant data and analyze how Search Optimization helps in these cases. 
 
 > **_NOTE:_**  
- If you wish to run the queries below on both databases (`LLM_TRAINING` and `LLM_TRAINING_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
+ If you wish to run the queries below on both databases (`SNOWFLAKE_PUBLIC_DATA_FREE` and `LLM_TRAINING_SO`) to evaluate performance impact, please make sure to run the commands below before you switch from one database to another. This will ensure that no cached results (hot or warm) are used. \
  \
 ALTER SESSION SET USE_CACHED_RESULT = false;\
 ALTER WAREHOUSE my_wh SUSPEND;
@@ -360,7 +360,7 @@ Now, run the same queries that you executed earlier when the Search Optimization
 
 ```
 select * 
-  from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX  
+  from LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX  
   where 
     WORK_PRIMARY_LOCATION:source:issn_l = '2615-6946';
 ```
@@ -384,7 +384,7 @@ Another example, for EQUALITY search on the variant column `WORK_PRIMARY_LOCATIO
 
 ```
 select * 
-  from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX  
+  from LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX  
   where 
     WORK_PRIMARY_LOCATION:source:display_name ilike 'Eco-forum'; 
 ```
@@ -459,7 +459,7 @@ Not all queries benefit from Search Optimization. One such example is the follow
 
 ```
 select * 
-  from LLM_TRAINING_SO.CYBERSYN.OPENALEX_WORKS_INDEX  
+  from LLM_TRAINING_SO.Public_Data.OPENALEX_WORKS_INDEX  
   where 
     WORK_PRIMARY_LOCATION:source:display_name ilike 'Reactions Weekly'; 
 ```
@@ -476,4 +476,4 @@ Duration: 1
 
 In this guide, we have covered how to acquire a shared database from Snowflake Marketplace, how to enable Search Optimization on specific columns and analyze the performance improvements in queries with Search Optimization enabled. 
 
-You are now ready to explore the larger world of Snowflake [Search Optimizaitn Service](https://docs.snowflake.com/en/user-guide/search-optimization-service.html)
+You are now ready to explore the larger world of Snowflake [Search Optimization Service](https://docs.snowflake.com/en/user-guide/search-optimization-service.html)

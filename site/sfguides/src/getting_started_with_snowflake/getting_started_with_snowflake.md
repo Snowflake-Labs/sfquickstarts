@@ -28,7 +28,7 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 ### What You'll Learn:
 - How to create stages, databases, tables, views, and virtual warehouses.
 - How to load structured and semi-structured data.
-- How to consume Snowflake Public Data Products data from the [Snowflake Data Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/).
+- How to consume Snowflake Public Data data from the [Snowflake Data Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=Snowflake+Public+Data+%28Free%29).
 - How to perform analytical queries on data in Snowflake, including joins between tables.
 - How to clone objects.
 - How to undo user errors using Time Travel.
@@ -36,12 +36,12 @@ This Snowflake Guide is available as a free, instructor-led Virtual Hands on Lab
 - How to securely and easily share data with other accounts.
 
 ### Data You'll Use:
-[Snowflake Public Data](https://data-docs.snowflake.com/foundations/overview/) is a suite of 150+ public domain datasets made available on the [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products). Firms can eliminate web scraping and custom data pipelines for publicly available sources.
+**Snowflake Public Data** is a next generation data company creating a real-time view of the world's economy with analytics-ready data exclusively on Snowflake Marketplace. Initially focused on consumer insights, Snowflake Public Data enables you to access external data directly in your Snowflake instance — no ETL required.
 
 This lab will use the following Snowflake Public Data datasets:
-- Finance & Economics
+- Snowflake Public Data (Free)
 
-Check out Snowflake Public Data's [Finance & Economics product](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/snowflake-public-data-products-finance-economics) and [explore all public sources](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products) Snowflake Public Data offers on the Snowflake Marketplace.
+Check out Snowflake Public Data's [Snowflake Public Data (Free)](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=Snowflake+Public+Data+%28Free%29) product and [explore all public sources](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products) Snowflake Public Data offers on the Snowflake Marketplace.
 <!-- ------------------------ -->
 
 ## Prepare Your Lab Environment
@@ -196,7 +196,7 @@ You work at a grocery retailer. You want to understand the performance of major 
 We will start by collecting data from three different sources:
 1. Load company metadata `.csv` file.
 2. Load SEC filings from a semi-structured JSON format.
-3. Use the Snowflake Marketplace to find free Finance and Economics data from Snowflake Public Data.
+3. Use the Snowflake Marketplace to find free stock price data in "Snowflake Public Data (Free)" from Snowflake Public Data.
 
 <!-- ------------------------ -->
 
@@ -212,7 +212,7 @@ We are using company metadata developed from the Securities and Exchange Commiss
 
 > aside negative
 > 
-> **Free Datasets from Snowflake Public Data direct to your Snowflake instance:** The full dataset is available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with a subset of the data, staged in a csv file to learn how to load structured data into Snowflake.
+> **Free Datasets from Snowflake Public Data direct to your Snowflake instance:** The full dataset is available [**for free**](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=Snowflake+Public+Data+%28Free%29) in Snowflake Marketplace from Snowflake Public Data -- no ETL required. For the purposes of this demo, we will focus on working with a subset of the data, staged in a csv file to learn how to load structured data into Snowflake.
 
 **Getting Data into Snowflake**
 Data can be ingested into Snowflake from many locations by using the `COPY` command, Snowpipe auto-ingestion, external connectors, or third-party ETL/ELT solutions. For more information on getting data into Snowflake, see the [Snowflake documentation](https://docs.snowflake.com/guides-overview-loading-data). For the purposes of this lab, we use the `COPY` command and AWS S3 storage to load data manually. In a real-world scenario, you would more likely use an ETL solution or grab data directly from the Snowflake Marketplace!
@@ -651,21 +651,21 @@ Make sure you're using the `ACCOUNTADMIN` role and, [navigate to the Marketplace
 
 #### Find a listing
 
-Type `Finance & Economics` in the search box at the top, scroll through the results, and select [**Finance & Economics**](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/) (provided by Snowflake Public Data).
+Type `Snowflake Public Data (Free)` in the search box at the top, scroll through the results, and select [**Snowflake Public Data (Free)**]([https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=Snowflake+Public+Data+%28Free%29)) (provided by Snowflake Public Data).
 
-![health tab](assets/10Share_8_new.png)  
+![health tab](assets/Search_result.png)  
 
-In the **Finance & Economics** page, you can learn more about the contents of the data listing, explore data dictionaries, and see some sample queries. You will also see links to documentation and the dataset's cloud region availability. When you're ready, click the **Get** button to make this information available within your Snowflake account:
+In the **Snowflake Public Data (Free)** page, you can learn more about the contents of the data listing, explore data dictionaries, and see some sample queries. You will also see links to documentation and the dataset's cloud region availability. When you're ready, click the **Get** button to make this information available within your Snowflake account:
 
-![get data fields](assets/10Share_cybersyn_get_data_new.png)
+![get data fields](assets/Snowflake_Public_Data_Free_Listing.png)
 
 Review the information in the dialog and click **Get** again:
 
-![get data fields](assets/10Share_cybersyn_get_data2_new.png)
+![get data fields](assets/default_get.png)
 
 You can now click **Done** or choose to run the sample queries provided by Snowflake Public Data:
 
-![get data fields](assets/10Share_cybersyn_query_data_new.png)
+![get data fields](assets/ready.png)
 
 If you chose **Query Data**, a new worksheet opens in a new browser tab/window:
 1. Set your context 
@@ -674,16 +674,14 @@ If you chose **Query Data**, a new worksheet opens in a new browser tab/window:
 4. You can view the data results in the bottom pane.
 5. When you are done running the sample queries, click the **Home** icon in the upper left corner.
 
-![get data fields](assets/10Share_cybersyn_query_data2_new.png)
-
 Next:
 1. Click **Data** > **Databases**.
-2. Click the `Finance__Economics` database.
+2. Click the `SNOWFLAKE_PUBLIC_DATA_FREE` database.
 3. You can see details about the schemas, tables, and views that are available to query.
 
-![covid19 databases](assets/10Share_cybersyn_db_info_new.png)
+![covid19 databases](assets/database_details.png)
 
-That's it! You have now successfully subscribed to the Finance & Economics datasets from Snowflake Public Data, which are updated daily with global financial data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
+That's it! You have now successfully subscribed to the Snowflake Public Data (Free) from Snowflake Public Data, which is updated regularly with global financial data. Notice we didn't have to create databases, tables, views, or an ETL process. We simply searched for and accessed shared data from the Snowflake Data Marketplace.
 
 > aside positive
 > 
@@ -733,7 +731,7 @@ SELECT
     ts.value AS post_market_close,
     (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date))::DOUBLE AS daily_return,
     AVG(ts.value) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
-FROM Finance__Economics.cybersyn.stock_price_timeseries ts
+FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.STOCK_PRICE_TIMESERIES ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
 WHERE ts.variable_name = 'Post-Market Close';
@@ -754,7 +752,7 @@ SELECT
     ts.date,
     ts.value AS nasdaq_volume,
     (ts.value / LAG(ts.value, 1) OVER (PARTITION BY meta.primary_ticker ORDER BY ts.date))::DOUBLE AS volume_change
-FROM cybersyn.stock_price_timeseries ts
+FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.STOCK_PRICE_TIMESERIES ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
 WHERE ts.variable_name = 'Nasdaq Volume';
@@ -776,7 +774,7 @@ SELECT
     ts.value AS post_market_close,
     (ts.value / LAG(ts.value, 1) OVER (PARTITION BY primary_ticker ORDER BY ts.date))::DOUBLE AS daily_return,
     AVG(ts.value) OVER (PARTITION BY primary_ticker ORDER BY date ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) AS five_day_moving_avg_price
-FROM cybersyn.stock_price_timeseries ts
+FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.STOCK_PRICE_TIMESERIES ts
 INNER JOIN company_metadata meta
 ON ts.ticker = meta.primary_ticker
 WHERE variable_name = 'Post-Market Close';
@@ -1022,21 +1020,21 @@ USE ROLE junior_dba;
 USE WAREHOUSE compute_wh;
 ```
 
-Finally, you can notice that in the database object browser panel on the left, the `Public_Data` and `FINANCE__ECONOMICS` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
+Finally, you can notice that in the database object browser panel on the left, the `Public_Data` and `SNOWFLAKE_PUBLIC_DATA_FREE` databases no longer appear. This is because the `JUNIOR_DBA` role does not have privileges to access them.
 
-Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `Public_data` and `FINANCE__ECONOMICS` databases. Note that the Snowflake Public Data database from the Marketplace uses `GRANT IMPORTED PRIVILEGES`, instead of `GRANT USAGE`.
+Switch back to the `ACCOUNTADMIN` role and grant the `JUNIOR_DBA` the USAGE privilege required to view and use the `Public_data` and `SNOWFLAKE_PUBLIC_DATA_FREE` databases. Note that the Snowflake Public Data database from the Marketplace uses `GRANT IMPORTED PRIVILEGES`, instead of `GRANT USAGE`.
 
 ```SQL
 USE ROLE accountadmin;
 
 GRANT USAGE ON DATABASE Public_Data TO ROLE junior_dba;
 
-GRANT IMPORTED PRIVILEGES ON DATABASE Finance__Economics TO ROLE junior_dba;
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_PUBLIC_DATA_FREE TO ROLE junior_dba;
 
 USE ROLE junior_dba;
 ```
 
-Notice that the `Public_Data` and `Finance__Economics` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
+Notice that the `Public_Data` and `SNOWFLAKE_PUBLIC_DATA_FREE` databases now appear in the database object browser panel on the left. If they don't appear, try clicking **...** in the panel, then clicking **Refresh**.
 
 ![object browser panel with databases](assets/9Role_3.png)
 
@@ -1170,7 +1168,7 @@ We encourage you to continue with your free trial by loading your own sample or 
 - Join the [Snowflake Community](https://community.snowflake.com/s/topic/0TO0Z000000wmFQWAY/getting-started-with-snowflake).
 - Sign up for [Snowflake University](https://community.snowflake.com/s/article/Getting-Access-to-Snowflake-University).
 - Contact our [Sales Team](https://www.snowflake.com/free-trial-contact-sales/) to learn more.
-- Access Snowflake Public Data's analytics-ready data on [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Cybersyn).
+- Access Snowflake Public Data's analytics-ready data on [Snowflake Marketplace](https://app.snowflake.com/marketplace/providers/GZTSZAS2KCS/Snowflake%20Public%20Data%20Products).
 
 ### What we've covered:
 
