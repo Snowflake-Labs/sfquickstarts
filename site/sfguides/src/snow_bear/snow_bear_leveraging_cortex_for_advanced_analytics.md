@@ -57,7 +57,16 @@ In this step, you'll create the Snowflake database objects and upload all necess
 
 ### Step 1: Create Database Objects
 
-1. In Snowsight, click `Worksheets` in the left navigation
+> **Important**: Starting in September 2025, Snowflake is gradually upgrading accounts from Worksheets to [Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces). Workspaces will become the default SQL editor. Follow the instructions below that match your interface.
+
+**If you have Workspaces:**
+1. In Snowsight, click `Projects`, then `Workspaces` in the left navigation
+2. Click `+ Add new` to create a new Workspace
+3. Click `SQL File` to create a new SQL file
+4. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) and paste it into your SQL file, then run it
+
+**If you have Worksheets:**
+1. In Snowsight, click `Projects`, then `Worksheets` in the left navigation
 2. Click `+` in the top-right corner to open a new Worksheet
 3. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) and paste it into your worksheet, then run it
 
