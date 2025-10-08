@@ -207,26 +207,10 @@ GRANT ROLE NORTHWIND_ROLE TO ROLE OPENFLOW_ADMIN;
 
 External Access Integrations allow your runtime to connect to external data sources. This quickstart creates one integration with network rules for SQL Server.
 
-```sql
-CREATE OR REPLACE NETWORK RULE SQL_SERVER_NETWORK_RULE
-  MODE = EGRESS
-  TYPE = HOST_PORT
-  VALUE_LIST = ('<your-rds-sql-server-endpoint>:1433');
+> USE COMPANION NOTEBOOKS:
+>
+> For detailed External Access Integration setup for specific connectors, use the notebooks from the [companion repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-openflow-spcs/tree/main/notebooks) and look for SQL Server
 
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION EAI_SQL_SERVER_INTEGRATION
-  ALLOWED_NETWORK_RULES = ('SQL_SERVER_NETWORK_RULE')
-  ENABLED = TRUE;
-
-GRANT USAGE ON INTEGRATION EAI_SQL_SERVER_INTEGRATION TO ROLE OPENFLOW_ADMIN;
-
--- Verify role and grants
-SHOW ROLES LIKE 'SQL_SERVER_NETWORK_RULE';
-SHOW GRANTS TO ROLE SQL_SERVER_NETWORK_RULE;
-
--- Verify integration
-SHOW INTEGRATIONS LIKE 'EAI_SQL_SERVER_INTEGRATION';
-DESC INTEGRATION EAI_SQL_SERVER_INTEGRATION;
-```
 
 ### Create Runtime
 
