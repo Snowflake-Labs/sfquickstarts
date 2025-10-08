@@ -24,14 +24,15 @@ By the end of this guide, you will learn to work with:
 
 * Change Data Capture (CDC) on a source SQL Server database.
 
-> [!NOTE]
-> Please note that Openflow on SPCS is not available on Snowflake's free[trial account](https://signup.snowflake.com/). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
+> NOTE
+>
+> Please note that Openflow on SPCS is not available on Snowflake's free [trial account](https://signup.snowflake.com/). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
 
 ### What is Snowflake Openflow?
 
 Openflow is a cloud-native data movement platform built on Apache NiFi, designed specifically for scalable, real-time streaming and Change Data Capture (CDC) pipelines. It provides a unified experience for building and monitoring data integration workflows, complete with built-in observability and governance.
 
-![Openflow](./assets/openflow.png)
+![Openflow](assets/openflow.png)
 
 Openflow is engineered for high-speed, continuous ingestion of all data types—from structured database records to unstructured text, images, and sensor data—making it ideal for feeding near real-time data into modern cloud platforms for AI and analytics.
 
@@ -51,14 +52,20 @@ Change Data Capture (CDC) is crucial for modern businesses because it solves the
 
 ### What You'll Build
 
-By the end of this quickstart guide, you will learn how to build:- Enable Change Data Capture (CDC) on a source SQL Server database.- Use the Openflow platform to configure and launch a real-time data connector.- Stream live data from an OLTP database directly into Snowflake tables.* Query and analyze real-time data within Snowflake to generate immediate business insights.
+By the end of this quickstart guide, you will learn how to build:
+
+* Enable Change Data Capture (CDC) on a source SQL Server database.
+* Use the Openflow platform to configure and launch a real-time data connector.
+* Stream live data from an OLTP database directly into Snowflake tables.
+* Query and analyze real-time data within Snowflake to generate immediate business insights.
 
 ### Prerequisites
 
 A Snowflake account with Snowflake Openflow and Snowpark Container Services access.
 
-> [!NOTE]
-> Please note that Openflow on SPCS is not available on Snowflake's free[trial account](https://signup.snowflake.com/). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
+> NOTE
+>
+> Please note that Openflow on SPCS is not available on Snowflake's free [trial account](https://signup.snowflake.com/). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
 
 <!------------------>
 
@@ -192,7 +199,8 @@ GRANT ROLE NORTHWIND_ROLE TO ROLE OPENFLOW_ADMIN;
 
 ### Create External Access Integration
 
-External Access Integrations allow your runtime to connect to external data sources. This quickstart creates one integration with network rules for SQL Server.\
+External Access Integrations allow your runtime to connect to external data sources. This quickstart creates one integration with network rules for SQL Server.
+
 ```sql
 CREATE OR REPLACE NETWORK RULE SQL_SERVER_NETWORK_RULE
   MODE = EGRESS
@@ -234,8 +242,9 @@ Next step is to create a runtime associated with the previously created runtime 
 
 * Complete the runtime creation
 
->[!NOTE]
->Runtime creation typically takes 3-5 minutes. The status will progress from CREATING → ACTIVEOnce your runtime is active, you can access the Openflow canvas to add and configure connectors. We will add and configure connectors in the next section.
+> NOTE
+>
+> Runtime creation typically takes 3-5 minutes. The status will progress from CREATING → ACTIVEOnce your runtime is active, you can access the Openflow canvas to add and configure connectors. We will add and configure connectors in the next section.
 
 <!------------------>
 
@@ -245,7 +254,7 @@ Next step is to create a runtime associated with the previously created runtime 
 
 This section details the final step of launching the Openflow connector.
 
-![Openflow Connectors](./assets/connectors.png)
+![Openflow Connectors](assets/connectors.png)
 
 * Navigate to the Openflow Overview page. On the Openflow connectors page, find the SQL Server connector and select Add to runtime.
 
@@ -259,7 +268,7 @@ This section details the final step of launching the Openflow connector.
 
 * Double click on the Incremental load to see the DAG of processors in the process group.
 
-![SQL Server Process Group](./assets/sql server connector.png)
+![SQL Server Process Group](assets/sql server connector.png)
 
 ### Configure the connector
 
@@ -271,8 +280,9 @@ You can configure the connector to replicate a set of tables in real-time.
 
 * Populate all the required parameter values as described in [Snowflake Openflow Documentation](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/sql-server/setup#flow-parameters).
 
->[!NOTE]
->The connector does not replicate any data until any tables to be replicated are explicitly added to its ingestion configuration.
+> NOTE
+>
+> The connector does not replicate any data until any tables to be replicated are explicitly added to its ingestion configuration.
 
 ### Run the flow
 
@@ -324,7 +334,10 @@ You've successfully built a real-time Change Data Capture (CDC) pipeline to stre
 
 ### What You Learned
 
-* How to set up a source database for Change Data Capture.* How to configure Snowflake Openflow by creating deployments, runtimes, and the necessary roles and integrations.* How to launch and configure a SQL Server CDC connector to stream data.- How to validate a real-time pipeline by simulating live transactions and observing the immediate replication in Snowflake.
+* How to set up a source database for Change Data Capture.
+* How to configure Snowflake Openflow by creating deployments, runtimes, and the necessary roles and integrations.
+* How to launch and configure a SQL Server CDC connector to stream data.
+* How to validate a real-time pipeline by simulating live transactions and observing the immediate replication in Snowflake.
 
 ### Related Resources
 
