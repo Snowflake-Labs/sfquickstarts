@@ -115,7 +115,9 @@ In the next section, we will configure Snowflake Openflow connector and analyze 
 
 ### Available Connectors
 
-Openflow supports 19+ connectors including:* Cloud Storage: Google Drive, Box, SharePoint, Amazon S3, Azure Blob Storage
+Openflow supports 19+ connectors including:
+
+* Cloud Storage: Google Drive, Box, SharePoint, Amazon S3, Azure Blob Storage
 
 * Databases: MySQL, PostgreSQL, Oracle, SQL Server
 
@@ -143,7 +145,11 @@ Before creating a deployment, you need to configure core Snowflake components in
 
 * This creates the admin role and grants it the necessary permissions to create and manage Openflow deployments.
 
-* It also creates the required network rule for Openflow deployments to communicate with Snowflake services:For a detailed, step-by-step guide on these prerequisite configurations, please complete **Steps 2** of the following Snowflake Quickstart guide:[ Snowflake Configuration for Openflow](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html?index=..%2F..index#1).
+* It also creates the required network rule for Openflow deployments to communicate with Snowflake services.
+
+> NOTE
+> 
+> For a detailed, step-by-step guide on these prerequisite configurations, please complete **Steps 2** of the following Snowflake Quickstart guide: [Snowflake Configuration for Openflow](https://quickstarts.snowflake.com/guide/getting_started_with_Openflow_spcs/index.html?index=..%2F..index#1).
 
 ### Create Deployment
 
