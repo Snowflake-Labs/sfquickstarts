@@ -423,8 +423,8 @@ Let's add the tools and orchestration to the agent
 ![](assets/searchtoolui.png)
 
 - Select **Orchestration** and s leave the model set to **auto**.
-- Add the following orchestration instructions, "use the analyst tool for sales metric and the search tool for call details".
-- Add the following response instructions, "make the response concise and direct so that a strategic sales person can quickly understand the information provided. Provide answers that are suitable for all chat interfaces with no visualizations".
+- Add the following orchestration instructions, "use the analyst tool for sales metric and the search tool for call details, be quick with decisions efficiency is important".
+- Add the following response instructions, "make the response concise and direct so that a strategic sales person can quickly understand the information provided. Provide answers that are suitable for all chat interfaces with no visualizations and quick and brief responses".
 - Click on **Access** and select the Analyst role.
 - Select **Save**.
 
@@ -458,10 +458,10 @@ import _snowflake
 
 def call_sales_intelligence_agent_proc(query: str):
     API_ENDPOINT = "/api/v2/databases/SNOWFLAKE_INTELLIGENCE/schemas/AGENTS/agents/SALES_INTELLIGENCE_AGENT:run"
-    API_TIMEOUT = 15000  
+    API_TIMEOUT = 15000  # this can be adjusted
     
     # Force very quick response
-    speed_query = f"Quick answer in 2-3 bullets: {query}"
+    speed_query = f"Quick answer: {query}"
 
     payload = {
         "messages": [
@@ -651,7 +651,7 @@ In the Body/statement parameter where we call the stored procedure remove the <>
 - Now you can update the stored procedure or Flow to better output the results or you can immediately ask the agent "can you summarize this call" and it will use Azure OpenAI to summarize the call.
 - Enter "use cortex agent" once more and after the prompt type "what was the size of the securebank deal?" Now the Agent is using Cortex Analyst to return results from a SQL query. Ask the Copilot "just show me the deal value" and you'll see below.
 
-**if you expect (and are comfortable with) long running flows users can increase the timeout on the Snowflake Execute SQL action however users can also provide additional instructions to the cortex agent to maximize efficiency**
+**if you expect (and are comfortable with) long running flows users can increase the Timeout value on the Snowflake Execute SQL action however users can also provide additional instructions to the cortex agent to maximize efficiency**
 
 
 <!-- ------------------------ -->
