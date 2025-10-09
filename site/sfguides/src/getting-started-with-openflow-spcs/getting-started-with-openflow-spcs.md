@@ -218,9 +218,6 @@ SHOW ROLES LIKE 'OPENFLOW_ADMIN';
 
 -- Verify grants
 SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
-
--- Verify network rule
-DESC NETWORK RULE snowflake_deployment_network_rule;
 ```
 
 > aside positive
@@ -515,13 +512,6 @@ Duration: 5
    WHERE RECORD:severity = 'ERROR'
    ORDER BY TIMESTAMP DESC
    LIMIT 100;
-   ```
-
-3. **Check Network Rule**:
-
-   ```sql
-   -- Verify network rule exists
-   DESC NETWORK RULE snowflake_deployment_network_rule;
    ```
 
 ### Runtime Cannot Access External Services
