@@ -754,24 +754,34 @@ The git actions for plan and deploy will execute and the dynamic table ORDER_FAC
 
 ![Git actions for PR and merge to main](assets/git_actions_PR_and_merge_to_main_PROJ_002.png)
 
-## Summary
+## Conclusion and Resources
 
-In this guide we went through the steps in setting up a pipeline to manage Dynamic Tables. We introduced
-the concept of a sandbox environment that is an isolated developer area to develop and test out dynamic tables.
+1) Conclusion
+
+Utilizing snowflake DCM we can design a pipeline to build and deploy tables, views , dynamic tables via 
+git actions. Using github or a similar source control system helps with leveraging multi-developer workflows.
+
+2) What you learned
+
+In this guide we went through the steps in setting up a pipeline to build and deploy Dynamic Tables. We introduced
+the concept of a sandbox environment that is an isolated developer area to develop and test the dynamic tables.
 We also saw how we can leverage Git actions that respond to certain actions like creating and merging PR.
-In this guide we targetted a handful of tables in the northwind database. 
+In this guide we targetted a subset of tables in the northwind database. 
+
+3) Resources
 
 DDL and DML for loading the entire northwind database - https://github.com/Snowflake-Labs/data_project_quickstart/tree/main/zadditional/northwind
 Additional dynamic tables that can be used to extend this quickstart - https://github.com/Snowflake-Labs/data_project_quickstart/tree/main/zadditional/dynamic_tables
+Add destroy action to sandbox script - https://github.com/Snowflake-Labs/data_project_quickstart/tree/main/zadditional/sandbox
 
-Here are some ideas to expand on this guide
-1) You can have a prod snowflake account and a non-prod snowflake account. The prod snowflake account could share
+4) Here are some ideas to expand on this guide
+
+a) You can have a prod snowflake account and a non-prod snowflake account. The prod snowflake account could share
    its bronze layer to the non-prod snowflake account. You can also have a script that redacts information
    from the tables in the prod snowflake account.
-2) You can have the main branch map to the prod snowflake account, and an integration branch can be mapped
+b) You can have the main branch map to the prod snowflake account, and an integration branch can be mapped
    to the non-prod snowflake account.
-3) The sandbox creation script can be hosted in a CI system like Jenkins, etc
-4) You can use a separate snowflake service account for use in the git actions  
-5) Add destroy action to sandbox script - https://github.com/Snowflake-Labs/data_project_quickstart/tree/main/zadditional/sandbox
+c) The sandbox creation script can be hosted in a CI system like Jenkins, etc
+d) You can use a separate snowflake service account for use in the git actions  
 
 All scripts/shell commands are tested to work on macOS.
