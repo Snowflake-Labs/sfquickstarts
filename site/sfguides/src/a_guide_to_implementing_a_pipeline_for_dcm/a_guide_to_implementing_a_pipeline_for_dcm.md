@@ -1,11 +1,11 @@
 author: Meher Garda
-id: SFGUIDE-NAME
+id: a_guide_to_implementing_a_pipeline_for_database_change_management
 summary: Implementing a Pipeline for Database Change Management
 categories: Getting-Started, Data Engineering
 environments: web
-status: Draft 
+status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering
+tags: Data Engineering
 
 
 # Implementing a Pipeline for Database Change Management
@@ -17,9 +17,9 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 
 ### Prerequisites
 - Familiarity with Snowflake, Github
-- A snowflake user with Key Pair (https://docs.snowflake.com/en/user-guide/key-pair-auth), role sysadmin.
+- A snowflake user with [Key Pair](https://docs.snowflake.com/en/user-guide/key-pair-auth), role sysadmin.
 - A XSMALL snowflake warehouse. 
-- Setup Snowflake cli connections (https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections)
+- Setup Snowflake [cli connections](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections)
 
 ### What You’ll Learn 
 - how to use snow cli DCM specific commands
@@ -31,7 +31,7 @@ In this guide we will walkthrough how to use Snowflake Data Change Management fe
 - [Git cli](https://git-scm.com/downloads/mac) Installed
 - [Snowflake cli](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) Installed
 - Python (>= 3.11) Installed
-- Virtualenv (https://virtualenv.pypa.io/en/latest/installation.html#installation) Installed
+- [Virtualenv](https://virtualenv.pypa.io/en/latest/installation.html#installation) Installed
 
 ### What You’ll Build 
 - We will be utilising the northwind database, git actions and snowflake to implement a pipeline to build and deploy dynamic tables from bronze to gold layer.
@@ -58,12 +58,12 @@ Duration: 2
 ## Setup Github environment
 Duration: 15
 
-1) Create a repo
-2) Base64 encode the private key of the Snowflake Key pair and add it to Github Secret named SNOW_PRIVATE_KEY. (https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets#creating-secrets-for-a-repository)   
+1) [Create a repo](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository)
+2) Base64 encode the private key of the Snowflake Key pair and add it to [Github Secret](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets#creating-secrets-for-a-repository). Call the secret SNOW_PRIVATE_KEY.   
 3) Clone the repo
 4) Create git actions. We will create two actions. 
-   Git action prod_plan.yml - Runs DCM plan when a PR is made to main branch. 
-   Git action prod_deploy.yml - Runs DCM deploy, when a PR is merged into main branch.
+   <br />Git action prod_plan.yml - Runs DCM plan when a PR to main branch is created. 
+   <br />Git action prod_deploy.yml - Runs DCM deploy, when a PR is merged into main branch.
    
 ```shell
 git clone <repo>
@@ -72,9 +72,9 @@ mkdir -p .github/workflows
 cd .github/workflows
 touch prod_plan.yml prod_deploy.yml
 ```
-Copy the following content into the respective files.
+  + Copy the following content into the respective files.
 
-Content of prod_plan.yml
+  + Content of prod_plan.yml
 ```shell
 name: Run DCM PLAN on PR to main
 
@@ -126,7 +126,7 @@ jobs:
         
 ```
 
-Content of prod_deploy.yml
+  + Content of prod_deploy.yml
 ```shell
 name: Run DCM DEPLOY on merging to main branch
 
@@ -182,7 +182,7 @@ jobs:
 ```
 5) Add sandbox script and requirements.txt
 
-Sandbox is a self-contained environment mapped to a JIRA ticket. It is implemented as a
+  + Sandbox is a self-contained environment mapped to a JIRA ticket. It is implemented as a
 script. The sandbox allows a developer to develop and test prior to pushing the branch to github. 
 
 ```shell
@@ -192,7 +192,7 @@ cd sandbox
 touch do.sh
 touch requirements.txt
 ```
-Copy following content into do.sh
+  + Copy following content into do.sh
 ```shell
 #! /bin/bash
 
@@ -285,7 +285,7 @@ exit 1
 esac
 ```
 
-Copy following content into requirements.txt
+  + Copy following content into requirements.txt
 
 ```shell
 annotated-types==0.7.0
@@ -357,7 +357,7 @@ cd data_project
 touch manifest.yml
 ```
 
-Copy following content into manifest.yml
+  + Copy following content into manifest.yml
 
 ```shell
 manifest_version: 1.0
@@ -591,8 +591,7 @@ INSERT INTO order_details VALUES
 
 ## Setup DCM to manage the gold layer
 1) Create gold database and schema
-
-Add a sql file into the data_project/definitions folder called gold.sql.
+  + Add a sql file into the data_project/definitions folder called gold.sql.
 
 ```shell
 git checkout -b setup_gold
@@ -600,7 +599,7 @@ cd data_project/definitions
 touch gold.sql
 ```
 
-Contents of gold.sql:
+  + Contents of gold.sql:
 
 ```sql
 define database {{target_db}};
@@ -615,9 +614,15 @@ git commit -m "add gold layer datbase and schema" .
 git push origin setup_gold
 ```
 
-3) Make a PR to main branch. Git action called "Run DCM PLAN on PR to main" will do a dry-run.
+3) Make a PR to main branch. Browse to Github Actions.
 
-4) Merge to main. Git action called "Run DCM DEPLOY on merging to main branch" will execute the sql.
+![Git action on merge to main](assets/click_on_actions.png)
+
+  + Git action called "Run DCM PLAN on PR to main" will do a dry-run.
+
+4) Merge to main. Go to Github Actions. Git action called "Run DCM DEPLOY on merging to main branch" will execute the sql.
+
+![Git action on merge to main](assets/git_action_setup_gold_database.png)
 
 ## Develop and test in the sandbox env to create a dynamic table  
 Duration: 10
@@ -636,10 +641,9 @@ cd data_project/definitions
 touch customer_dim.sql
 ```
 
-do.sh creates a git branch named 'PROJ-001' and all changes are made in the context of this branch. 
-It also creates a sandbox environment by cloning the gold layer.
+  + do.sh creates a git branch named 'PROJ-001' and all changes are made in the context of this branch. It also creates a sandbox environment by cloning the gold layer.
 
-Copy following into customer_dim.sql
+  + Copy following into customer_dim.sql
 ```sql
 DEFINE DYNAMIC TABLE {{target_db}}.{{target_schema}}.CUSTOMER_DIM
     TARGET_LAG = '10 minutes'
@@ -652,7 +656,7 @@ left join {{source_db}}.{{source_schema}}.us_states u on c.region = u.state_abbr
 
 ```
 
-customer_dim.sql uses jinja templating. The variables in '{{}}' are replaced by their values which are defined in manifest.yml.
+  + customer_dim.sql uses jinja templating. The variables in '{{}}' are replaced by their values which are defined in manifest.yml.
 
 2) Build and deploy the dynamic table in the sandbox environment.
 
@@ -661,18 +665,18 @@ cd <your repo>
 cd sandbox
 ./do.sh plan
 ```
-The output of plan will display the operation/s, target objects. In this case, it will CREATE a DYNAMIC TABLE called 'PROJ_001.PROJ_001.CUSTOMER_DIM'.
+  + The output of plan will display the operation/s, target objects. In this case, it will CREATE a DYNAMIC TABLE called 'PROJ_001.PROJ_001.CUSTOMER_DIM'.
 
-Now lets deploy the changes.
+  + Now lets deploy the changes.
 
 ```shell
 ./do.sh deploy
 ```
 
-In the snowflake UI, you can verify the dynamic table 'PROJ_001.PROJ_001.CUSTOMER_DIM'.
+  + In the snowflake UI, you can verify the dynamic table 'PROJ_001.PROJ_001.CUSTOMER_DIM'.
 
 
-If satisfied, add and commit changes to your branch and push the branch.
+  + If satisfied, add and commit changes to your branch and push the branch.
 
 ```shell
 git add .
@@ -680,7 +684,7 @@ git commit -m "adding dynamic table CUSTOMER_DIM" .
 git push origin PROJ-001
 ```
 
-## Now lets simulate another developer on the team creating another dynamic table
+## Simulate another developer on the team creating another dynamic table
 
 1) Reset branch context to main
 
@@ -702,7 +706,7 @@ cd data_project/definitions
 touch order_fact.sql
 ```
 
-Copy following into order_fact.sql
+  + Copy following into order_fact.sql
 
 ```sql
 define DYNAMIC TABLE {{target_db}}.{{target_schema}}.ORDER_FACT
@@ -724,7 +728,7 @@ cd sandbox
 ./do.sh deploy
 ```
 
-In the snowflake UI, you can verify the dynamic table 'PROJ_002.PROJ_002.ORDER_FACT'. If satisfied, add and commit changes to your branch and push the branch.
+  + In the snowflake UI, you can verify the dynamic table 'PROJ_002.PROJ_002.ORDER_FACT'. If satisfied, add and commit changes to your branch and push the branch.
 
 ```shell
 git add .
@@ -736,21 +740,21 @@ git push origin PROJ-002
 ## Push to gold environment
 Duration: 15
 
-Make a PR from PROJ-001 to main branch. Once a PR is made, git action triggers
+  + Make a PR from PROJ-001 to main branch. Once a PR is made, git action triggers
 to run a DCM plan.
 
 ![Git action on PR](assets/git_action_on_PR_PROJ_001.png)
 
-Once the output of the git action is green, merge the PR. At this point, another
+  + Once the output of the git action is green, merge the PR. At this point, another
 git action triggers to deploy the changes.
 
 ![Git action on merge to main](assets/git_action_merge_to_main_PROJ_001.png)
 
-The dynamic table CUSTOMER_DIM is now deployed in the gold layer.
+  + The dynamic table CUSTOMER_DIM is now deployed in the gold layer.
 
-Repeat the PR/merge steps for PROJ-002 branch.
+  + Repeat the PR/merge steps for PROJ-002 branch.
 
-The git actions for plan and deploy will execute and the dynamic table ORDER_FACT is deployed to the gold layer.
+  + The git actions for plan and deploy will execute and the dynamic table ORDER_FACT is deployed to the gold layer.
 
 ![Git actions for PR and merge to main](assets/git_actions_PR_and_merge_to_main_PROJ_002.png)
 
@@ -758,30 +762,30 @@ The git actions for plan and deploy will execute and the dynamic table ORDER_FAC
 
 1) Conclusion
 
-Utilizing snowflake DCM we can design a pipeline to build and deploy tables, views , dynamic tables via 
+  + Utilizing snowflake DCM we can design a pipeline to build and deploy tables, views , dynamic tables via 
 git actions. Using github or a similar source control system helps with leveraging multi-developer workflows.
 
 2) What you learned
 
-In this guide we went through the steps in setting up a pipeline to build and deploy Dynamic Tables. We introduced
+  + In this guide we went through the steps in setting up a pipeline to build and deploy Dynamic Tables. We introduced
 the concept of a sandbox environment that is an isolated developer area to develop and test the dynamic tables.
 We also saw how we can leverage Git actions that respond to certain actions like creating and merging PR.
 In this guide we targetted a subset of tables in the northwind database. 
 
 3) Resources
 
-DDL and DML for loading the entire northwind database - https://github.com/Snowflake-Labs/data_project_quickstart/tree/main/zadditional/northwind
-Additional dynamic tables that can be used to extend this quickstart - https://github.com/Snowflake-Labs/data_project_quickstart/tree/main/zadditional/dynamic_tables
-Add destroy action to sandbox script - https://github.com/Snowflake-Labs/data_project_quickstart/tree/main/zadditional/sandbox
+  + [DDL and DML for loading the entire northwind database](https://github.com/Snowflake-Labs/data_project_quickstart/tree/main/zadditional/northwind)
+  + [Additional dynamic tables that can be used to extend this quickstart](https://github.com/Snowflake-Labs/data_project_quickstart/tree/main/zadditional/dynamic_tables)
+  + [Add destroy action to sandbox script](https://github.com/Snowflake-Labs/data_project_quickstart/tree/main/zadditional/sandbox)
 
 4) Here are some ideas to expand on this guide
 
-a) You can have a prod snowflake account and a non-prod snowflake account. The prod snowflake account could share
+  + You can have a prod snowflake account and a non-prod snowflake account. The prod snowflake account could share
    its bronze layer to the non-prod snowflake account. You can also have a script that redacts information
    from the tables in the prod snowflake account.
-b) You can have the main branch map to the prod snowflake account, and an integration branch can be mapped
+  + You can have the main branch map to the prod snowflake account, and an integration branch can be mapped
    to the non-prod snowflake account.
-c) The sandbox creation script can be hosted in a CI system like Jenkins, etc
-d) You can use a separate snowflake service account for use in the git actions  
+  + he sandbox creation script can be hosted in a CI system like Jenkins, etc
+  + You can use a separate snowflake service account for use in the git actions  
 
-All scripts/shell commands are tested to work on macOS.
+5) All scripts/shell commands in this quickstart are tested to work on macOS.
