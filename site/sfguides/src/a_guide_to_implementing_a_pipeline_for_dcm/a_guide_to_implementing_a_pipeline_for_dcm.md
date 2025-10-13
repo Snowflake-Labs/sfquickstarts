@@ -765,23 +765,26 @@ git push origin PROJ-002
 ## Push to gold environment
 Duration: 15
 
-  + Make a PR from PROJ-001 to main branch. Once a PR is made, git action triggers
-to run a DCM plan.
+  + Make a PR from PROJ-001 to main branch. 
+
+  + Once a PR is created, git action triggers to run a DCM plan.
+
+  + Merge the PR, when the output of the git action is green.  
+
+![Git actions for PR and merge to main](assets/git_actions_PR_and_merge_to_main_PROJ_002.png)
+
+  + At this point, another git action triggers to deploy the changes. Browse to Github Actions, to verify that both actions have completed successfully.
 
 ![Git action on PR](assets/git_action_on_PR_PROJ_001.png)
 
-  + Once the output of the git action is green, merge the PR. At this point, another
-git action triggers to deploy the changes.
-
-![Git action on merge to main](assets/git_action_merge_to_main_PROJ_001.png)
-
-  + The dynamic table CUSTOMER_DIM is now deployed in the gold layer.
+  + The dynamic table CUSTOMER_DIM is now deployed in the gold layer. You can verify the same in the Snowflake UI.
 
   + Repeat the PR/merge steps for PROJ-002 branch.
 
   + The git actions for plan and deploy will execute and the dynamic table ORDER_FACT is deployed to the gold layer.
 
-![Git actions for PR and merge to main](assets/git_actions_PR_and_merge_to_main_PROJ_002.png)
+
+![Git action on merge to main](assets/git_action_merge_to_main_PROJ_001.png)
 
 ## Conclusion and Resources
 
