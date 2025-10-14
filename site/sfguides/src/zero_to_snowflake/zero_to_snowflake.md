@@ -121,9 +121,9 @@ Within this Vignette, we will learn about core Snowflake concepts by exploring V
 - A Resource Monitor
 - A Budget
 
-### Get the SQL and paste it into your SQL File.
+### Get the SQL code and paste it into your SQL File.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new SQL File to follow along in Snowflake. Note that once you've reached the end of the SQL File you can skip to Step 10 - Simple Data Pipeline**
+**Copy and paste the SQL code from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new SQL File to follow along in Snowflake. Note that once you've reached the end of the SQL File you can skip to Step 10 - Simple Data Pipeline**
 
 ## Virtual Warehouses and Settings
 
