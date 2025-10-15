@@ -50,8 +50,8 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 ### Prerequisites
 
 - A [Snowflake](https://www.snowflake.com/) account
-- Access to the **Finance & Economics** dataset
-  - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7/snowflake-data-finance-economics?_fsi=QrmINNI3), click on **Get Data** and follow the instructions to gain access. In particular, we will use data from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
+- Access to the **Snowflake Public Data (Free)** dataset
+  - In the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=snowflake%20public%20data), click on **Get Data** and follow the instructions to gain access. In particular, we will use data from tables **STOCK_PRICE_TIMESERIES** and **FX_RATES_TIMESERIES**.
 
 <!-- ------------------------ -->
 ## Get Started
@@ -105,14 +105,14 @@ In the above code snippet, we're importing the required libraries, setting the a
 
 Duration: 5
 
-Now add the following Python function that loads and caches data from the `FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES` and `FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES` tables.
+Now add the following Python function that loads and caches data from the `SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.STOCK_PRICE_TIMESERIES` and `SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.FX_RATES_TIMESERIES` tables.
 
 ```python
 @st.cache_data()
 def load_data():
     # Load and transform daily stock price data.
     snow_df_stocks = (
-        session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES")
+        session.table("SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.STOCK_PRICE_TIMESERIES")
         .filter(
             (col('TICKER').isin('AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA')) & 
             (col('VARIABLE_NAME').isin('Nasdaq Volume', 'Post-Market Close')))
@@ -131,7 +131,7 @@ def load_data():
     )
 
     # Load foreign exchange (FX) rates data.
-    snow_df_fx = session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES").filter(
+    snow_df_fx = session.table("SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.FX_RATES_TIMESERIES").filter(
         (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
     
     return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()
@@ -276,7 +276,7 @@ session = get_active_session()
 def load_data():
     # Load and transform daily stock price data.
     snow_df_stocks = (
-        session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.STOCK_PRICE_TIMESERIES")
+        session.table("SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.STOCK_PRICE_TIMESERIES")
         .filter(
             (col('TICKER').isin('AAPL', 'MSFT', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NVDA')) & 
             (col('VARIABLE_NAME').isin('Nasdaq Volume', 'Post-Market Close')))
@@ -295,7 +295,7 @@ def load_data():
     )
 
     # Load foreign exchange (FX) rates data.
-    snow_df_fx = session.table("FINANCIAL__ECONOMIC_ESSENTIALS.CYBERSYN.FX_RATES_TIMESERIES").filter(
+    snow_df_fx = session.table("SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.FX_RATES_TIMESERIES").filter(
         (col('BASE_CURRENCY_ID') == 'EUR') & (col('DATE') >= '2019-01-01')).with_column_renamed('VARIABLE_NAME','EXCHANGE_RATE')
     
     return snow_df_stocks_transformed.to_pandas(), snow_df_fx.to_pandas()

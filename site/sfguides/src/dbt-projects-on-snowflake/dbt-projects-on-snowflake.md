@@ -259,15 +259,9 @@ We can create more complex task structure with the script below. It creates a ta
 USE WAREHOUSE tasty_bytes_dbt_wh;
 USE ROLE accountadmin;
 
-CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_deps_task
-	WAREHOUSE=TASTY_BYTES_DBT_WH
-	SCHEDULE='60 MINUTES'
-	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='deps --target dev' external_access_integrations = (DBT_ACCESS_INTEGRATION);
-
-
 CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_run_task
 	WAREHOUSE=TASTY_BYTES_DBT_WH
-	AFTER tasty_bytes_dbt_db.raw.dbt_deps_task
+	SCHEDULE='60 MINUTES'
 	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='run --target dev';
 
 
@@ -288,9 +282,8 @@ CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_test_task
         END;
 
 -- Run the tasks once
-ALTER TASK tasty_bytes_dbt_db.raw.dbt_run_task RESUME;
 ALTER TASK tasty_bytes_dbt_db.raw.dbt_test_task RESUME;
-EXECUTE TASK tasty_bytes_dbt_db.raw.dbt_deps_task;
+EXECUTE TASK tasty_bytes_dbt_db.raw.dbt_run_task;
 
 -- Optionally create alerts from the task
 -- NOTE: you must validate your email and replace it at the bottom of the alert
