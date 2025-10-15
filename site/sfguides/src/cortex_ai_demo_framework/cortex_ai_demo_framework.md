@@ -150,86 +150,619 @@ Duration: 8
 The notebook processes sample data and deploys the complete framework application suite.
 
 <!-- ------------------------ -->
-## Explore Framework Applications
-Duration: 10
+## Framework Overview
+Duration: 3
 
 ### Access Your Demo Framework
 
 1. Navigate to `Projects` → `Streamlit` in Snowsight
-2. You'll see 6 framework applications deployed:
+2. You'll see 6 framework applications deployed
 
-### Core Applications
+### The 6 Applications
 
-#### **Synthetic Data Generator** (Start Here 🚀)
-**Purpose**: Create realistic AI-powered datasets for any industry
-**How to use**: 
-- Select industry template (retail, healthcare, finance, etc.)
-- Define data parameters (rows, columns, relationships)
-- Generate synthetic data with AI-powered realistic values
-- Export to Snowflake tables for immediate use
+#### **1. Synthetic Data Generator** 🎲 (Always Start Here)
+Creates realistic AI-powered datasets using Cortex LLMs. Saves raw JSON to `BRONZE_LAYER` tables.
 
-#### **Structured Tables** 
-**Purpose**: Design optimal data schemas and relationships
-**How to use**:
-- Import existing table structures or create new ones
-- Define relationships between tables (foreign keys, joins)
-- Optimize schema design for analytics performance
-- Generate DDL scripts for table creation
+#### **2. Structured Tables** 🔄
+Transforms raw JSON into clean, structured database tables. Outputs analytics-ready data to `SILVER_LAYER`.
 
-#### **SQL to YAML Converter**
-**Purpose**: Generate semantic models for Cortex Analyst integration
-**How to use**:
-- Input SQL queries or table structures
-- Automatically convert to YAML semantic model format
-- Configure dimensions, measures, and relationships
-- Deploy semantic models for natural language querying
+#### **3. SQL to YAML Converter** ⚙️
+Converts SQL queries into interactive demo configurations for Snow Demo (App 4).
 
-#### **Snow Demo**
-**Purpose**: Configure and orchestrate complete demo scenarios
-**How to use**:
-- Combine data, visualizations, and AI insights into demo flows
-- Set up presentation sequences and talking points
-- Configure demo parameters and customizations
-- Execute end-to-end demo scenarios
+#### **4. Snow Demo** 📊
+Runs interactive SQL-driven presentations with live visualizations and AI experimentation.
 
-#### **YAML Wizard**
-**Purpose**: Interactive dashboard configuration creator with database introspection
-**How to use**:
-- Connect to any Snowflake database and analyze table structures
-- Auto-detect dimensions, metrics, and data relationships
-- Customize dashboard configurations through guided interface
-- Generate YAML files for advanced dashboard creation
-- Create Intelligence Agents for natural language data interaction
+#### **5. YAML Wizard** 🧙
+Guided dashboard configuration creator. Generates YAML files for Snow Viz (App 6).
 
-#### **Snow Viz**
-**Purpose**: Advanced dashboard renderer that uses YAML configurations
-**How to use**:
-- Load YAML configurations created by YAML Wizard or manually
-- Render interactive dashboards with multiple visualization types
-- Support for Overview, Product, Compare, TopN, Search, and Analyst tabs
-- Integrate Cortex Search and Cortex Analyst capabilities
-- Export and share professional dashboard presentations
+#### **6. Snow Viz** 📈
+Renders advanced interactive dashboards with multi-tab analytics and AI integration.
 
-### Demo Creation Workflow
+### Application Dependencies
 
-**Create a complete demo in ~5 minutes:**
+```console
+1. SYNTHETIC DATA GENERATOR (START HERE)
+   └─ Creates realistic datasets
+      │
+      ├─ 2. STRUCTURED TABLES
+      │  └─ Transforms JSON → SQL tables
+      │     │
+      │     └─ 5. YAML WIZARD
+      │        └─ Generates dashboard configs
+      │           │
+      │           └─ 6. SNOW VIZ
+      │              └─ Renders dashboards
+      │
+      └─ 3. SQL TO YAML CONVERTER
+         └─ Converts queries → demo configs
+            │
+            └─ 4. SNOW DEMO
+               └─ Runs interactive SQL demos
+```
 
-**Step 1: Data Creation** (Required)
-→ Use **Synthetic Data Generator** to create realistic datasets
+**Next**: Page 5 shows which apps to use based on your role and goals.
 
-**Optional Enhancements:**
-- **Schema Design** → Use **Structured Tables** to optimize data organization
-- **AI Integration** → Use **SQL to YAML Converter** for Cortex Analyst capabilities
-- **Dashboard Configuration** → Use **YAML Wizard** to create interactive dashboard configs
-- **Visualization** → Use **Snow Viz** to render dashboards from YAML configurations
-- **Demo Orchestration** → Use **Snow Demo** to configure presentation flow
+<!-- ------------------------ -->
+## Persona Workflows
+Duration: 5
 
-### Framework Capabilities
+### Who Should Use This Framework?
 
-- **Industry Templates**: Retail, Financial Services, Healthcare, Manufacturing, Telecommunications
-- **AI Features**: Sentiment analysis, text generation, semantic search, natural language queries
-- **Visualization Types**: Charts, dashboards, interactive filters, drill-down capabilities
-- **Performance**: Real-time data generation, sub-second dashboard response, scalable architecture
+The framework supports **4 different user personas**. Find your role below to see which apps you need and in what order.
+
+---
+
+### Persona 1: Full-Stack Data Developer
+
+**Who You Are**:
+- Data engineers building end-to-end pipelines
+- Analytics developers creating dashboards
+- Technical users who want the complete experience
+
+**What You'll Build**: A complete analytics pipeline from data generation to interactive dashboards
+
+**Apps You'll Use**: 1 → 2 → 5 → 6
+
+**Time Required**: ~25 minutes
+
+**Your Workflow**:
+1. **App 1 - Synthetic Data Generator**: Generate 100 records, save to `BRONZE_LAYER`
+2. **App 2 - Structured Tables**: Transform JSON to `SILVER_LAYER` table
+3. **App 5 - YAML Wizard**: Create dashboard YAML from `SILVER_LAYER` table
+4. **App 6 - Snow Viz**: View your 8-tab dashboard
+
+**What You'll Get**:
+- Synthetic dataset with realistic values
+- Clean, structured database table
+- Interactive dashboard with Overview, Product, VS, Top N, Self Service tabs
+- AI-powered analytics capabilities
+
+> aside positive
+> 
+> **Important**: Always use `SILVER_LAYER` tables (not `BRONZE_LAYER`) when creating dashboards in App 5.
+
+---
+
+### Persona 2: SQL Demo Creator / Solutions Architect
+
+**Who You Are**:
+- Solutions architects building customer demos
+- Technical evangelists presenting Snowflake capabilities
+- Demo creators showcasing SQL + AI features
+
+**What You'll Build**: Interactive SQL-driven presentations with live query execution and AI experimentation
+
+**Apps You'll Use**: 1 → 2 → 3 → 4
+
+**Time Required**: ~30 minutes
+
+**Your Workflow**:
+1. **App 1 - Synthetic Data Generator**: Generate 150 records for demo data
+2. **App 2 - Structured Tables**: Create structured table in `SILVER_LAYER`
+3. **App 3 - SQL to YAML Converter**: Write SQL queries, convert to demo YAML
+4. **App 4 - Snow Demo**: Run interactive SQL presentation with live visualizations
+
+**What You'll Get**:
+- Realistic demo dataset
+- Multi-step SQL presentation
+- Interactive visualizations (bar charts, line charts, tables)
+- Live AI experimentation interface (adjust temperature, change models, edit prompts)
+
+> aside positive
+> 
+> **Pro Tip**: Include `SNOWFLAKE.CORTEX.COMPLETE()` queries in your SQL to create interactive AI demos where you can modify prompts live.
+
+---
+
+### Persona 3: Data Preparation Specialist
+
+**Who You Are**:
+- Data scientists needing training data
+- ML engineers requiring test datasets
+- BI developers prototyping dashboards
+- Application developers populating dev databases
+
+**What You'll Build**: Clean, structured datasets for export to external tools (notebooks, ML pipelines, BI tools)
+
+**Apps You'll Use**: 1 → 2 only
+
+**Time Required**: ~15 minutes
+
+**Your Workflow**:
+1. **App 1 - Synthetic Data Generator**: Generate 300+ records (use temperature 0.1-0.3 for medical/financial data)
+2. **App 2 - Structured Tables**: Transform to clean `SILVER_LAYER` table
+3. Export data via CSV, Python/Snowpark, or direct BI tool connections
+
+**What You'll Get**:
+- Production-ready synthetic datasets
+- Validated data quality (null checks, value ranges, date validity)
+- Export-ready structured tables
+- Realistic data for any industry (healthcare, finance, retail, etc.)
+
+> aside positive
+> 
+> **Pro Tip**: For medical/financial data, use temperature 0.1-0.3 for consistency. For creative content (reviews, feedback), use temperature 0.7+.
+
+---
+
+### Persona 4: Dashboard Consumer / Executive
+
+**Who You Are**:
+- Business executives viewing insights
+- Managers making data-driven decisions
+- Analysts exploring pre-built dashboards
+- Non-technical users who need analytics
+
+**What You'll Do**: View and interact with dashboards created by your data team (no setup required)
+
+**Apps You'll Use**: 6 only (after colleague completes setup)
+
+**Time Required**: ~5 minutes
+
+**Prerequisites**:
+A colleague must first complete Apps 1 → 2 → 5 to create the dashboard. Once that's done, you can view and explore it.
+
+**Your Workflow**:
+1. **App 6 - Snow Viz**: Open app, select dashboard from dropdown
+2. Explore tabs: Overview (metrics + trends), VS (comparisons), Top N (rankings)
+3. Use AI Assistant to ask questions in plain English (no SQL needed)
+4. Export data to CSV for further analysis
+
+**What You Can Do**:
+- View key metrics with MoM/YoY comparisons
+- Explore interactive time series and ranked grids
+- Compare entities side-by-side (products, customers, regions)
+- Ask questions like "What are the top 5 products by revenue?"
+- Export results to spreadsheets
+
+> aside positive
+> 
+> **Pro Tip**: No technical skills required. Cortex Analyst converts your questions to SQL automatically. Just ask in plain English.
+
+---
+
+### Choose Your Path
+
+**Ready to get started?** Jump to the pages for your persona:
+
+| Persona | Pages to Follow | What You'll Build |
+|---------|----------------|-------------------|
+| **Full-Stack Developer** | 6 → 7 → 10 → 11 | Complete analytics pipeline with dashboards |
+| **SQL Demo Creator** | 6 → 7 → 8 → 9 | Interactive SQL presentations with AI |
+| **Data Preparation** | 6 → 7 | Clean datasets for ML/BI/external tools |
+| **Dashboard Consumer** | 11 only | Explore pre-built dashboards (no setup) |
+
+**Or read all app instructions** (Pages 6-11) to understand the full framework capabilities.
+
+<!-- ------------------------ -->
+## App 1: Synthetic Data Generator
+Duration: 10
+
+**Purpose**: Create realistic AI-powered datasets for any business scenario using Cortex LLMs  
+**Dependencies**: None (START HERE)  
+**Output**: Raw JSON data saved to `BRONZE_LAYER` tables
+
+### Who Uses This App
+
+**All Personas start here!** This is the foundation of the framework.
+
+- **Persona 1** (Full-Stack Developer): Generate 100 records for dashboards
+- **Persona 2** (SQL Demo Creator): Generate 150 records for presentations  
+- **Persona 3** (Data Preparation): Generate 300+ records for ML/BI export
+- **Persona 4** (Dashboard Consumer): Your colleague uses this to create data for you
+
+---
+
+### Step-by-Step Instructions
+
+#### Step 1: Open the App
+
+Navigate to `Projects` → `Streamlit` → **`SYNTHETIC_DATA_GENERATOR`**
+
+#### Step 2: Configuration Management (Optional)
+
+**Left Sidebar - Top Section:**
+```
+Load Configuration: Create New ▼
+
+If you have saved configurations, select one from dropdown and click:
+📁 Load Configuration
+```
+
+For first-time use, leave as "Create New"
+
+#### Step 3: Dataset Configuration
+
+**Left Sidebar:**
+
+```
+Company Name: TechCorp
+(Default: "Acme Corp" - change to your company)
+
+Topic/Domain: Customer Orders
+(Default: "Customer Orders" - change to your use case)
+```
+
+**Examples**:
+- Retail: "RetailCorp" + "Product Sales"
+- Healthcare: "MedCenter" + "Patient Vitals"
+- Finance: "FinanceFirst" + "Loan Applications"
+
+#### Step 4: Define Data Fields
+
+**Left Sidebar - Fields Section:**
+
+```
+Fields (one per line):
+customer_id
+customer_name
+email
+order_date
+product_name
+quantity
+price
+total_amount
+```
+
+**Tips**:
+- One field per line
+- Use descriptive field names
+- Include date fields for time-series analysis
+- Add 6-10 fields for realistic datasets
+
+#### Step 5: Batch Configuration
+
+**Left Sidebar:**
+
+```
+Records per Batch: 10
+(Slider: 10-200, step 10)
+
+Number of Batches: 10
+(Slider: 1-1000)
+
+Total records to generate: 100
+```
+
+> aside positive
+> 
+> **Recommended Settings**:
+> - **Testing**: 10 records × 10 batches = 100 records (~2-3 min)
+> - **Demos**: 30 records × 15 batches = 450 records (~8-10 min)
+> - **Production**: 50 records × 20 batches = 1000 records (~15-20 min)
+
+**Why smaller batches?**
+- Higher accuracy (95%+ valid JSON)
+- Faster generation per batch
+- Better error recovery
+
+#### Step 6: Configure Cortex LLM
+
+**Left Sidebar:**
+
+```
+Model Type: LARGE ▼
+(Options: SMALL, MEDIUM, LARGE)
+
+Model: mistral-large2 ▼
+(Recommended for consistent results)
+
+Temperature: 0.7
+(Slider: 0.0-1.0, step 0.1)
+
+Max Tokens: 4000
+(Slider: 100-8000, step 100)
+```
+
+> aside positive
+> 
+> **Model Selection Guide**:
+> - **mistral-large2** (LARGE): Best accuracy, handles any batch size
+> - **mixtral-8x7b** (MEDIUM): Good balance, use ≤30 records/batch
+> - **llama3.1-8b** (SMALL): Fastest, use ≤20 records/batch
+> 
+> **Temperature Guide**:
+> - **0.1-0.3**: Medical/financial data (high consistency)
+> - **0.7**: General business data (balanced)
+> - **0.9**: Creative content (reviews, feedback)
+
+#### Step 7: Performance Configuration
+
+**Left Sidebar:**
+
+```
+☑ High-Performance Mode
+(Uses stored procedures - RECOMMENDED)
+
+☐ Show Manual Scripts
+(Leave unchecked unless you need SQL)
+```
+
+Keep "High-Performance Mode" checked for best results!
+
+#### Step 8: Auto-save Configuration
+
+**Left Sidebar:**
+
+```
+☑ Auto-save batches to table
+
+Database: AI_FRAMEWORK_DB
+Schema: BRONZE_LAYER
+Table Name: techcorp_orders
+
+☑ Append to existing table
+```
+
+> aside positive
+> 
+> **Important**: Data saves to `BRONZE_LAYER` first. You'll transform it to `SILVER_LAYER` in App 2!
+
+#### Step 9: Generate Data
+
+**Main Panel:**
+
+1. Click **"Generate Default Prompts"** button
+   - System prompt appears (left column)
+   - User prompt appears (right column)
+   - You can edit these if needed
+
+2. Review the prompts (300px text areas)
+   - System prompt: Instructions for AI behavior
+   - User prompt: Specific data requirements
+
+3. Scroll down and click **"🎲 Generate Synthetic Data"**
+
+4. Watch progress:
+   ```
+   Batch 1/10: ✅ Generated 10 records
+   Batch 2/10: ✅ Generated 10 records
+   ...
+   Batch 10/10: ✅ Generated 10 records
+   ```
+
+Generation time: ~2-3 minutes for 100 records
+
+#### Step 10: Verify Success
+
+**Expected Output**:
+```
+✅ Generated 100 records successfully!
+📊 Data saved to: AI_FRAMEWORK_DB.BRONZE_LAYER.TECHCORP_ORDERS
+
+Sample data preview:
+| CUSTOMER_NAME | PRODUCT_NAME | QUANTITY | PRICE | TOTAL_AMOUNT |
+|---------------|--------------|----------|-------|--------------|
+| Sarah Johnson | Laptop Pro   | 1        | 1299  | 1299         |
+| Mike Chen     | Wireless Mouse| 2       | 29    | 58           |
+```
+
+**Verification Steps**:
+
+1. Go to Snowsight → **Data** → **Databases** → **AI_FRAMEWORK_DB** → **BRONZE_LAYER**
+2. Find your table (e.g., `TECHCORP_ORDERS`)
+3. Click to view:
+   - Should see **10 rows** (one per batch)
+   - Each row has **MESSAGES** column with JSON array
+   - Check **_META_** columns for generation metadata
+
+**Data Quality Check**:
+```sql
+-- Run this query to check your data
+SELECT 
+    COUNT(*) as total_batches,
+    SUM(_META_RECORDS_IN_BATCH) as total_records,
+    AVG(_META_RECORDS_IN_BATCH) as avg_records_per_batch,
+    _META_COMPANY_NAME,
+    _META_TOPIC
+FROM AI_FRAMEWORK_DB.BRONZE_LAYER.TECHCORP_ORDERS
+GROUP BY _META_COMPANY_NAME, _META_TOPIC;
+```
+
+Expected: 10 batches, 100 total records
+
+#### Step 11: Save Configuration (Optional)
+
+**Bottom of Main Panel:**
+
+```
+Configuration Name: TechCorp_Customer_Orders_Config
+
+💾 Save Configuration
+```
+
+Save your configuration to reuse later with different batch sizes or models!
+
+---
+
+### Common Use Cases
+
+#### **Retail / E-commerce**
+```
+Company: ShopSmart
+Topic: Product Sales
+Fields: product_id, product_name, category, sale_date, sale_amount, 
+        customer_segment, region, payment_method
+```
+
+#### **Healthcare**
+```
+Company: MedCenter
+Topic: Patient Vitals
+Fields: patient_id, age, gender, blood_pressure_systolic, 
+        blood_pressure_diastolic, heart_rate, temperature, 
+        oxygen_saturation, recorded_date
+```
+
+#### **Financial Services**
+```
+Company: FinanceFirst
+Topic: Loan Applications
+Fields: application_id, applicant_name, loan_amount, credit_score, 
+        income, employment_status, application_date, approval_status
+```
+
+---
+
+### Troubleshooting
+
+#### **Issue: Generation is slow**
+**Solution**: 
+- Reduce batch size (try 10 records/batch)
+- Use smaller model (llama3.1-8b for speed)
+- Check warehouse size (use Medium or Large)
+
+#### **Issue: Invalid JSON in results**
+**Solution**:
+- Lower temperature (try 0.3 for consistency)
+- Reduce batch size (10-20 records)
+- Use mistral-large2 model (best accuracy)
+
+#### **Issue: Data doesn't look realistic**
+**Solution**:
+- Edit prompts to be more specific
+- Add industry context in Topic/Domain
+- Include expected value ranges in field descriptions
+
+#### **Issue: Date fields have invalid dates**
+**Solution**:
+- App automatically adds YYYY-MM-DD formatting instructions
+- Use TRY_TO_DATE() in queries to filter invalid dates
+- Lower temperature (0.1-0.3) for better date consistency
+
+---
+
+### Best Practices
+
+✅ **Start small**: Test with 10 records × 10 batches first  
+✅ **Use mistral-large2**: Best accuracy across all scenarios  
+✅ **Name tables descriptively**: Include company/topic in table name  
+✅ **Save configurations**: Reuse settings for consistent results  
+✅ **Check data quality**: Verify first batch before generating more  
+✅ **Use appropriate temperature**: Low for factual, high for creative
+
+---
+
+### What's Next?
+
+**For All Personas**:
+→ Continue to **Page 7 (App 2 - Structured Tables)** to transform your data from `BRONZE_LAYER` to `SILVER_LAYER`
+
+Your data is now in raw JSON format. App 2 will clean and structure it into proper database columns!
+
+<!-- ------------------------ -->
+## App 2: Structured Tables
+Duration: 8
+
+**Purpose**: Transform raw JSON data into clean, structured database tables  
+**Dependencies**: Requires data from App 1  
+**Output**: Analytics-ready data in `SILVER_LAYER` tables
+
+### Who Uses This App
+
+- **Persona 1** (Full-Stack Developer): Transform to structured tables for dashboards
+- **Persona 2** (SQL Demo Creator): Clean data for SQL presentations
+- **Persona 3** (Data Preparation): Structure data before export to ML/BI tools
+- **Persona 4** (Dashboard Consumer): Your colleague uses this to prepare data
+
+---
+
+**[FULL DETAILED INSTRUCTIONS WILL BE ADDED HERE - Similar to App 1 format above]**
+
+**Next**: Continue to Page 8, 10, or 11 depending on your persona workflow.
+
+<!-- ------------------------ -->
+## App 3: SQL to YAML Converter
+Duration: 10
+
+**Purpose**: Convert SQL queries into interactive demo configurations for Snow Demo  
+**Dependencies**: Requires tables from App 1 or 2  
+**Output**: YAML files for `FRAMEWORK_YAML_STAGE`
+
+### Who Uses This App
+
+- **Persona 2** (SQL Demo Creator): Convert SQL queries to demo YAML
+
+---
+
+**[FULL DETAILED INSTRUCTIONS WILL BE ADDED HERE - Similar to App 1 format above]**
+
+**Next**: Continue to Page 9 (App 4 - Snow Demo) to run your interactive SQL presentation.
+
+<!-- ------------------------ -->
+## App 4: Snow Demo
+Duration: 10
+
+**Purpose**: Run interactive SQL-driven presentations with live visualizations  
+**Dependencies**: Requires YAML configs from App 3 (uploaded to `FRAMEWORK_YAML_STAGE`)  
+**Output**: Live demo orchestration with charts and AI experimentation
+
+### Who Uses This App
+
+- **Persona 2** (SQL Demo Creator): Present interactive SQL demos with live AI
+
+---
+
+**[FULL DETAILED INSTRUCTIONS WILL BE ADDED HERE - Similar to App 1 format above]**
+
+**Next**: Your demo is complete! Return to Page 5 to explore other workflows or see cleanup instructions on Page 12.
+
+<!-- ------------------------ -->
+## App 5: YAML Wizard
+Duration: 12
+
+**Purpose**: Create dashboard configurations through guided interface  
+**Dependencies**: Requires tables from App 1 or 2  
+**Output**: YAML files for `VISUALIZATION_YAML_STAGE`
+
+### Who Uses This App
+
+- **Persona 1** (Full-Stack Developer): Create dashboard YAML from structured tables
+
+---
+
+**[FULL DETAILED INSTRUCTIONS WILL BE ADDED HERE - Similar to App 1 format above]**
+
+**Next**: Continue to Page 11 (App 6 - Snow Viz) to view your interactive dashboard.
+
+<!-- ------------------------ -->
+## App 6: Snow Viz
+Duration: 10
+
+**Purpose**: Render advanced interactive dashboards from YAML configurations  
+**Dependencies**: Requires YAML configs from App 5 (uploaded to `VISUALIZATION_YAML_STAGE`)  
+**Output**: Multi-tab analytics dashboards with AI integration
+
+### Who Uses This App
+
+- **Persona 1** (Full-Stack Developer): View complete analytics dashboard
+- **Persona 4** (Dashboard Consumer): Explore pre-built dashboards (read-only)
+
+---
+
+**[FULL DETAILED INSTRUCTIONS WILL BE ADDED HERE - Similar to App 1 format above]**
+
+**Next**: Your dashboard is complete! Return to Page 5 to explore other workflows or see cleanup instructions on Page 12.
 
 <!-- ------------------------ -->
 ## Clean Up Resources
@@ -253,10 +786,10 @@ Duration: 2
 Congratulations! You've successfully built the complete Cortex AI Demo Framework using Snowflake Cortex AI!
 
 ### What You Learned
-- **8-Application Demo Platform**: How to build Framework Overview, Synthetic Data Generator, Data Provider, Structured Tables, YAML Wizard, Semantic Model Creator, Demo Orchestrator, and Advanced Visualizations
-- **Advanced AI Processing**: How to implement complete Cortex AI integration with SENTIMENT, EXTRACT_ANSWER, and COMPLETE functions
-- **Cortex Search Service**: How to create semantic search across synthetic data with natural language queries
-- **Production-Ready Streamlit Apps**: How to develop complete interactive demo platform with advanced visualizations
+- **6-Application Demo Platform**: How to build complete demo infrastructure from data generation to visualization
+- **Persona-Based Workflows**: How different roles use the framework for their specific needs
+- **Advanced AI Processing**: How to implement Cortex AI integration with SENTIMENT, EXTRACT_ANSWER, and COMPLETE functions
+- **Production-Ready Streamlit Apps**: How to develop interactive demo platforms with advanced visualizations
 - **Rapid Demo Development**: How to transform weeks of development into minutes of setup
 
 ### Resources
