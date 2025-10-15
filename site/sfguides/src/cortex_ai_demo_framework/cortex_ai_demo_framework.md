@@ -221,25 +221,20 @@ The framework supports **4 different user personas**. Find your role below to se
 
 **What You'll Build**: A complete analytics pipeline from data generation to interactive dashboards
 
-**Apps You'll Use**: 1 → 2 → 5 → 6
+**Apps You'll Use**: Synthetic Data Generator → Structured Tables → YAML Wizard → Snow Viz
 
 **Time Required**: ~25 minutes
 
 **Your Workflow**:
-1. **App 1 - Synthetic Data Generator**: Generate 100 records, save to `BRONZE_LAYER`
-2. **App 2 - Structured Tables**: Transform JSON to `SILVER_LAYER` table
-3. **App 5 - YAML Wizard**: Create dashboard YAML from `SILVER_LAYER` table
-4. **App 6 - Snow Viz**: View your 8-tab dashboard
+1. **Synthetic Data Generator**: Generate synthetic data
+2. **Structured Tables**: Transform JSON to structured table
+3. **YAML Wizard**: Create dashboard configuration
+4. **Snow Viz**: View your interactive dashboard
 
 **What You'll Get**:
 - Synthetic dataset with realistic values
 - Clean, structured database table
-- Interactive dashboard with Overview, Product, VS, Top N, Self Service tabs
-- AI-powered analytics capabilities
-
-> aside positive
-> 
-> **Important**: Always use `SILVER_LAYER` tables (not `BRONZE_LAYER`) when creating dashboards in App 5.
+- Interactive dashboard with multiple visualization tabs
 
 ---
 
@@ -252,25 +247,20 @@ The framework supports **4 different user personas**. Find your role below to se
 
 **What You'll Build**: Interactive SQL-driven presentations with live query execution and AI experimentation
 
-**Apps You'll Use**: 1 → 2 → 3 → 4
+**Apps You'll Use**: Synthetic Data Generator → Structured Tables → SQL to YAML Converter → Snow Demo
 
 **Time Required**: ~30 minutes
 
 **Your Workflow**:
-1. **App 1 - Synthetic Data Generator**: Generate 150 records for demo data
-2. **App 2 - Structured Tables**: Create structured table in `SILVER_LAYER`
-3. **App 3 - SQL to YAML Converter**: Write SQL queries, convert to demo YAML
-4. **App 4 - Snow Demo**: Run interactive SQL presentation with live visualizations
+1. **Synthetic Data Generator**: Generate synthetic data for demos
+2. **Structured Tables**: Create structured table
+3. **SQL to YAML Converter**: Write SQL queries and convert to demo format
+4. **Snow Demo**: Run interactive SQL presentation
 
 **What You'll Get**:
 - Realistic demo dataset
 - Multi-step SQL presentation
-- Interactive visualizations (bar charts, line charts, tables)
-- Live AI experimentation interface (adjust temperature, change models, edit prompts)
-
-> aside positive
-> 
-> **Pro Tip**: Include `SNOWFLAKE.CORTEX.COMPLETE()` queries in your SQL to create interactive AI demos where you can modify prompts live.
+- Interactive visualizations with live AI experimentation
 
 ---
 
@@ -280,28 +270,22 @@ The framework supports **4 different user personas**. Find your role below to se
 - Data scientists needing training data
 - ML engineers requiring test datasets
 - BI developers prototyping dashboards
-- Application developers populating dev databases
 
 **What You'll Build**: Clean, structured datasets for export to external tools (notebooks, ML pipelines, BI tools)
 
-**Apps You'll Use**: 1 → 2 only
+**Apps You'll Use**: Synthetic Data Generator → Structured Tables
 
 **Time Required**: ~15 minutes
 
 **Your Workflow**:
-1. **App 1 - Synthetic Data Generator**: Generate 300+ records (use temperature 0.1-0.3 for medical/financial data)
-2. **App 2 - Structured Tables**: Transform to clean `SILVER_LAYER` table
+1. **Synthetic Data Generator**: Generate synthetic data
+2. **Structured Tables**: Transform to structured table
 3. Export data via CSV, Python/Snowpark, or direct BI tool connections
 
 **What You'll Get**:
 - Production-ready synthetic datasets
-- Validated data quality (null checks, value ranges, date validity)
+- Validated data quality
 - Export-ready structured tables
-- Realistic data for any industry (healthcare, finance, retail, etc.)
-
-> aside positive
-> 
-> **Pro Tip**: For medical/financial data, use temperature 0.1-0.3 for consistency. For creative content (reviews, feedback), use temperature 0.7+.
 
 ---
 
@@ -311,33 +295,26 @@ The framework supports **4 different user personas**. Find your role below to se
 - Business executives viewing insights
 - Managers making data-driven decisions
 - Analysts exploring pre-built dashboards
-- Non-technical users who need analytics
 
 **What You'll Do**: View and interact with dashboards created by your data team (no setup required)
 
-**Apps You'll Use**: 6 only (after colleague completes setup)
+**Apps You'll Use**: Snow Viz only (after colleague completes setup)
 
 **Time Required**: ~5 minutes
 
 **Prerequisites**:
-A colleague must first complete Apps 1 → 2 → 5 to create the dashboard. Once that's done, you can view and explore it.
+A colleague must first complete Synthetic Data Generator → Structured Tables → YAML Wizard to create the dashboard. Once that's done, you can view and explore it.
 
 **Your Workflow**:
-1. **App 6 - Snow Viz**: Open app, select dashboard from dropdown
-2. Explore tabs: Overview (metrics + trends), VS (comparisons), Top N (rankings)
-3. Use AI Assistant to ask questions in plain English (no SQL needed)
+1. **Snow Viz**: Open app and select dashboard
+2. Explore tabs with different visualization types
+3. Use AI Assistant to ask questions in plain English
 4. Export data to CSV for further analysis
 
 **What You Can Do**:
-- View key metrics with MoM/YoY comparisons
-- Explore interactive time series and ranked grids
-- Compare entities side-by-side (products, customers, regions)
-- Ask questions like "What are the top 5 products by revenue?"
+- View key metrics and trends
+- Ask questions in natural language
 - Export results to spreadsheets
-
-> aside positive
-> 
-> **Pro Tip**: No technical skills required. Cortex Analyst converts your questions to SQL automatically. Just ask in plain English.
 
 ---
 
@@ -345,12 +322,12 @@ A colleague must first complete Apps 1 → 2 → 5 to create the dashboard. Once
 
 **Ready to get started?** Jump to the pages for your persona:
 
-| Persona | Pages to Follow | What You'll Build |
+| Persona | Apps to Follow | What You'll Build |
 |---------|----------------|-------------------|
-| **Full-Stack Developer** | 6 → 7 → 10 → 11 | Complete analytics pipeline with dashboards |
-| **SQL Demo Creator** | 6 → 7 → 8 → 9 | Interactive SQL presentations with AI |
-| **Data Preparation** | 6 → 7 | Clean datasets for ML/BI/external tools |
-| **Dashboard Consumer** | 11 only | Explore pre-built dashboards (no setup) |
+| **Full-Stack Developer** | Synthetic Data Generator → Structured Tables → YAML Wizard → Snow Viz | Complete analytics pipeline with dashboards |
+| **SQL Demo Creator** | Synthetic Data Generator → Structured Tables → SQL to YAML Converter → Snow Demo | Interactive SQL presentations with AI |
+| **Data Preparation** | Synthetic Data Generator → Structured Tables | Clean datasets for ML/BI/external tools |
+| **Dashboard Consumer** | Snow Viz only | Explore pre-built dashboards (no setup) |
 
 **Or read all app instructions** (Pages 6-11) to understand the full framework capabilities.
 
