@@ -332,7 +332,7 @@ A colleague must first complete Synthetic Data Generator â†’ Structured Tables â
 **Or read all app instructions** (Pages 6-11) to understand the full framework capabilities.
 
 <!-- ------------------------ -->
-## App 1: Synthetic Data Generator
+## Synthetic Data Generator
 Duration: 10
 
 **Purpose**: Create realistic AI-powered datasets for any business scenario using Cortex LLMs  
@@ -648,7 +648,7 @@ Fields: application_id, applicant_name, loan_amount, credit_score,
 Your data is now in raw JSON format. App 2 will clean and structure it into proper database columns!
 
 <!-- ------------------------ -->
-## App 2: Structured Tables
+## Structured Tables
 Duration: 8
 
 **Purpose**: Transform raw JSON data into clean, structured database tables  
@@ -669,7 +669,7 @@ Duration: 8
 **Next**: Continue to Page 8, 10, or 11 depending on your persona workflow.
 
 <!-- ------------------------ -->
-## App 3: SQL to YAML Converter
+## SQL to YAML Converter
 Duration: 10
 
 **Purpose**: Convert SQL queries into interactive demo configurations for Snow Demo  
@@ -687,7 +687,7 @@ Duration: 10
 **Next**: Continue to Page 9 (App 4 - Snow Demo) to run your interactive SQL presentation.
 
 <!-- ------------------------ -->
-## App 4: Snow Demo
+## Snow Demo
 Duration: 10
 
 **Purpose**: Run interactive SQL-driven presentations with live visualizations  
@@ -705,7 +705,7 @@ Duration: 10
 **Next**: Your demo is complete! Return to Page 5 to explore other workflows or see cleanup instructions on Page 12.
 
 <!-- ------------------------ -->
-## App 5: YAML Wizard
+## YAML Wizard
 Duration: 12
 
 **Purpose**: Create dashboard configurations through guided interface  
@@ -723,7 +723,7 @@ Duration: 12
 **Next**: Continue to Page 11 (App 6 - Snow Viz) to view your interactive dashboard.
 
 <!-- ------------------------ -->
-## App 6: Snow Viz
+## Snow Viz
 Duration: 10
 
 **Purpose**: Render advanced interactive dashboards from YAML configurations  
