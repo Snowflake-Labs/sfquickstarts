@@ -512,10 +512,10 @@ Table Name: techcorp_orders
 
 4. Watch progress:
    ```
-   Batch 1/10: ✅ Generated 10 records
-   Batch 2/10: ✅ Generated 10 records
+   Batch 1/10: Generated 10 records
+   Batch 2/10: Generated 10 records
    ...
-   Batch 10/10: ✅ Generated 10 records
+   Batch 10/10: Generated 10 records
    ```
 
 Generation time: ~2-3 minutes for 100 records
@@ -524,8 +524,8 @@ Generation time: ~2-3 minutes for 100 records
 
 **Expected Output**:
 ```
-✅ Generated 100 records successfully!
-📊 Data saved to: AI_FRAMEWORK_DB.BRONZE_LAYER.TECHCORP_ORDERS
+Generated 100 records successfully!
+Data saved to: AI_FRAMEWORK_DB.BRONZE_LAYER.TECHCORP_ORDERS
 
 Sample data preview:
 | CUSTOMER_NAME | PRODUCT_NAME | QUANTITY | PRICE | TOTAL_AMOUNT |
@@ -631,12 +631,12 @@ Fields: application_id, applicant_name, loan_amount, credit_score,
 
 ### Best Practices
 
-✅ **Start small**: Test with 10 records × 10 batches first  
-✅ **Use mistral-large2**: Best accuracy across all scenarios  
-✅ **Name tables descriptively**: Include company/topic in table name  
-✅ **Save configurations**: Reuse settings for consistent results  
-✅ **Check data quality**: Verify first batch before generating more  
-✅ **Use appropriate temperature**: Low for factual, high for creative
+**Start small**: Test with 10 records × 10 batches first  
+**Use mistral-large2**: Best accuracy across all scenarios  
+**Name tables descriptively**: Include company/topic in table name  
+**Save configurations**: Reuse settings for consistent results  
+**Check data quality**: Verify first batch before generating more  
+**Use appropriate temperature**: Low for factual, high for creative
 
 ---
 
