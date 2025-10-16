@@ -457,7 +457,7 @@ import json
 import _snowflake
 
 def call_sales_intelligence_agent_proc(query: str):
-    API_ENDPOINT = "/api/v2/databases/SNOWFLAKE_INTELLIGENCE/schemas/AGENTS/agents/SALES_INTELLIGENCE_AGENT:run"
+    API_ENDPOINT = "/api/v2/databases/SALES_INTELLIGENCE/schemas/DATA/agents/SALES_INTELLIGENCE_AGENT:run"
     API_TIMEOUT = 15000  # this can be adjusted
     
     # Force very quick response
