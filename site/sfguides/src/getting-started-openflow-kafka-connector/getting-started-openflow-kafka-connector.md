@@ -1606,7 +1606,7 @@ USE SCHEMA PUBLIC;
 -- Includes both base and evolved schema attributes for comprehensive filtering
 CREATE OR REPLACE CORTEX SEARCH SERVICE application_logs_search
   ON MESSAGE
-  ATTRIBUTES LEVEL, SERVICE, ERROR, STATUS_CODE, MEMORY_PERCENT, DISK_USAGE_PERCENT, REGION
+  ATTRIBUTES LEVEL, SERVICE, ERROR, STATUS_CODE, DURATION_MS, MEMORY_PERCENT, DISK_USAGE_PERCENT, REGION
   WAREHOUSE = QUICKSTART_KAFKA_CONNECTOR_WH
   TARGET_LAG = '1 minute'
   AS (
@@ -1616,6 +1616,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE application_logs_search
       SERVICE,
       ERROR,
       STATUS_CODE,
+      DURATION_MS::NUMBER as DURATION_MS,
       TIMESTAMP,
       REQUEST_ID,
       HOST,
@@ -1633,11 +1634,12 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE application_logs_search
 > **What This Does**:
 >
 > - **ON MESSAGE**: Indexes the MESSAGE field for semantic search
-> - **ATTRIBUTES**: LEVEL, SERVICE, ERROR, STATUS_CODE, MEMORY_PERCENT, DISK_USAGE_PERCENT, REGION become filterable dimensions
+> - **ATTRIBUTES**: LEVEL, SERVICE, ERROR, STATUS_CODE, DURATION_MS, MEMORY_PERCENT, DISK_USAGE_PERCENT, REGION become filterable dimensions
 > - **TARGET_LAG**: Search index updates within 1 minute of new data
 > - **Semantic Understanding**: Understands concepts, not just exact text matches
 > - **Evolved Schema Support**: Includes both base and evolved schema columns for comprehensive filtering
-> - **Type Casting**: Numeric columns (MEMORY_PERCENT, AVAILABLE_MB, DISK_USAGE_PERCENT, AVAILABLE_GB) are cast to NUMBER for proper filter operations
+> - **Type Casting**: Numeric columns (DURATION_MS, MEMORY_PERCENT, AVAILABLE_MB, DISK_USAGE_PERCENT, AVAILABLE_GB) are cast to NUMBER for proper filter operations
+> - **Performance Filtering**: DURATION_MS is indexed as an attribute, enabling fast filtering for performance-related searches (e.g., slow requests, timeout issues)
 
 ### Query Using Snowflake Intelligence
 
@@ -1671,7 +1673,7 @@ SELECT
       "filter": {"@eq": {"LEVEL": "ERROR"}},
       "limit": 10
     }'
-  );
+  ) AS search_results;
 
 -- Search for payment issues with base schema columns
 SELECT
@@ -1683,7 +1685,7 @@ SELECT
       "filter": {"@eq": {"SERVICE": "payment-service"}},
       "limit": 10
     }'
-  );
+  ) AS search_results;
 
 -- Find database connection problems
 SELECT
@@ -1695,7 +1697,7 @@ SELECT
       "filter": {"@eq": {"LEVEL": "ERROR"}},
       "limit": 10
     }'
-  );
+  ) AS search_results;
 ```
 
 ### Search with Multiple Filters
@@ -1721,7 +1723,7 @@ SELECT
       },
       "limit": 20
     }'
-  );
+  ) AS search_results;
 
 -- Search for system warnings with high memory usage (evolved schema)
 SELECT
@@ -1738,7 +1740,21 @@ SELECT
       },
       "limit": 15
     }'
-  );
+  ) AS search_results;
+
+-- Search for slow requests with performance issues
+SELECT
+  SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+    'QUICKSTART_KAFKA_CONNECTOR_DB.PUBLIC.application_logs_search',
+    '{
+      "query": "slow request timeout performance",
+      "columns": ["MESSAGE", "SERVICE", "DURATION_MS", "STATUS_CODE", "TIMESTAMP", "REQUEST_ID"],
+      "filter": {
+        "@gte": {"DURATION_MS": 1000}
+      },
+      "limit": 20
+    }'
+  ) AS search_results;
 ```
 
 > aside positive
