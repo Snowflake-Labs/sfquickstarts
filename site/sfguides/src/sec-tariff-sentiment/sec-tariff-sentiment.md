@@ -21,9 +21,9 @@ It leverages the SEC data of the catalog.
 
 In order to help customers experience the full power of their own data, Snowflake has curated hundreds of datasets that can be downloaded straight to your account from the Snowflake Marketplace!
 
-The contents of these data sets cover a myriad of topics, from [US Real Estate](https://app.snowflake.com/marketplace/listing/GZTSZAS2KI6/snowflake-public-data-products-us-real-estate?originTab=provider&providerName=Snowflake%20Public%20Data%20Products&profileGlobalName=GZTSZAS2KCS) to information about Canada's GDP in the [Canadian Government Data](https://app.snowflake.com/marketplace/listing/GZTSZAS2KFB/snowflake-public-data-products-canadian-government?originTab=provider&providerName=Snowflake%20Public%20Data%20Products&profileGlobalName=GZTSZAS2KCS) listing.
+The contents of these data sets cover a myriad of topics, from [US Real Estate](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255) to information about Canada's GDP in the [Canadian Government Data](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255) listing.
 
-A full list of Snowflake's data products can be browsed [here](https://data-catalog.snowflake.com/) and any of these data sets can be downloaded to your account from the [Marketplace Listing](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255
+A full list of Snowflake's data products can be browsed [here](https://data-docs.snowflake.com/foundations/sources/) and any of these data sets can be downloaded to your account from the [Marketplace Listing](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255
 )
 
 
@@ -45,7 +45,7 @@ History tables provide an auditable record of data changes over time.
 
 ### This Demo
 
-The SEC Tarrif Sentiment Demo downloads and utilizes the [SEC Filings](https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/snowflake-public-data-products-sec-filings) dataset. 
+The SEC Tarrif Sentiment Demo downloads and utilizes the [SEC Filings](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255) dataset. 
 
 ### Prerequisites
 - Familiarity with Snowflake Marketplace
@@ -79,7 +79,7 @@ Duration: 2
 To download the SEC Filings data you have two options
 
 ### Download from the listing
-You can download the [SEC Filings](https://app.snowflake.com/marketplace/listing/GZTSZAS2KH9/snowflake-public-data-products-sec-filings) dataset from the listing.
+You can download the [SEC Filings](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255) dataset from the listing.
 
 ### Run the notebook cell
 You can alternatively run the "Download_SEC_Data" cell of the notebook

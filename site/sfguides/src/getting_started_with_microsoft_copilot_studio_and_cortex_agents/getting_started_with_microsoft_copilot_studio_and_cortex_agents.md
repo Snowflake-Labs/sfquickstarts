@@ -290,6 +290,7 @@ Duration: 8
 
 ```sql
 -- Create database and schema
+USE ROLE ACCOUNTADMIN;
 CREATE OR REPLACE DATABASE sales_intelligence;
 CREATE OR REPLACE SCHEMA sales_intelligence.data;
 CREATE OR REPLACE WAREHOUSE sales_intelligence_wh;
@@ -398,11 +399,11 @@ Setting up Cortex Analyst
  - Select the SALES_INTELLIGENCE database and the SALES_METRICS table then select **Next**.
  - Select all of the columns and select **Create and Save**.
 
- This is a VERY simple Analyst service. You can click through the dimensions and see that Cortex used LLMS to write descriptions and synonyms for each of the dimensions. We're going to leave this as-is, but know that you can adjust this as needed to enhance the performance of Cortex Analyst.
+ This is a VERY simple Analyst service. You can click through the dimensions and see that Cortex used LLMs to write descriptions and synonyms for each of the dimensions. We're going to leave this as-is, but know that you can adjust this as needed to enhance the performance of Cortex Analyst.
  ![](assets/builtanalyst.png)
 
 Setting up Cortex Agent
-- Go to **AI * ML** on the side and select **Cortex Analyst**.
+- Go to **AI * ML** on the side and select **Cortex Agent**.
 - Select the SALES_INTELLIGENCE.DATA Database and Schema.
 - Select **Create Agent**.
 - Name the agent SALES_INTELLIGENCE_AGENT and create the agent.
@@ -422,48 +423,58 @@ Let's add the tools and orchestration to the agent
 ![](assets/searchtoolui.png)
 
 - Select **Orchestration** and s leave the model set to **auto**.
-- Add the following orchestration instructions, "use the analyst tool for sales metric and the search tool for call details".
-- Add the following response instructions, "make the response concise and direct so that a strategic sales person can quickly understand the information provided".
+- Add the following orchestration instructions, "use the analyst tool for sales metric and the search tool for call details, be quick with decisions efficiency is important".
+- Add the following response instructions, "make the response concise and direct so that a strategic sales person can quickly understand the information provided. Provide answers that are suitable for all chat interfaces with no visualizations and quick and brief responses".
+- Click on **Access** and select the Analyst role.
 - Select **Save**.
 
 
 Cortex Agent with Analyst and Search  offers a highly accurate text to sql generator along with an efficient hybrid search service wrapped in an efficient data agent.
 
-Now run the below code in the same SQL worksheet to create a Stored Procedure that calls a Snowflake Cortex Agents and will use a llama model to determine whether or not to use the Search or Analyst.
+Now run the below code in the same SQL worksheet to create a Stored Procedure that calls a Snowflake Cortex Agents that will orchestrate with the provided tools and return an answer.
 
 ```sql
-CREATE OR REPLACE PROCEDURE call_cortex_agent_proc(query STRING, limit INT)
-RETURNS VARIANT
+USE ROLE ACCOUNTADMIN;
+GRANT USAGE ON DATABASE SALES_INTELLIGENCE TO ROLE ANALYST;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE ANALYST;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_ANALYST_USER TO ROLE ANALYST;
+GRANT USAGE ON SCHEMA DATA TO ROLE ANALYST;
+GRANT USAGE ON CORTEX SEARCH SERVICE SALES_CONVERSATION_SEARCH TO ROLE ANALYST;
+GRANT SELECT ON TABLE SALES_INTELLIGENCE.DATA.SALES_METRICS TO ROLE ANALYST;
+GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE ANALYST;
+
+GRANT ROLE ACCOUNTADMIN TO ROLE ANALYST;
+
+CREATE OR REPLACE PROCEDURE call_cortex_agent_proc(query STRING)
+RETURNS STRING
 LANGUAGE PYTHON
 RUNTIME_VERSION = '3.9'
 PACKAGES = ('snowflake-snowpark-python')
-HANDLER = 'call_cortex_agent_proc'
+HANDLER = 'call_sales_intelligence_agent_proc'
+EXECUTE AS CALLER
 AS $$
 import json
 import _snowflake
-import re
-from snowflake.snowpark.context import get_active_session
 
-def call_cortex_agent_proc(query: str, limit: int = 10):
-    session = get_active_session()
+def call_sales_intelligence_agent_proc(query: str):
+    API_ENDPOINT = "/api/v2/databases/SNOWFLAKE_INTELLIGENCE/schemas/AGENTS/agents/SALES_INTELLIGENCE_AGENT:run"
+    API_TIMEOUT = 15000  # this can be adjusted
     
-    API_ENDPOINT = "/api/v2/cortex/agent:run"
-    API_TIMEOUT = 50000  
-
-    CORTEX_SEARCH_SERVICES = "sales_intelligence.data.sales_conversation_search"
-    SEMANTIC_MODELS = "@sales_intelligence.data.models/sales_metrics_model.yaml"
+    # Force very quick response
+    speed_query = f"Quick answer: {query}"
 
     payload = {
-        "model": "llama3.1-70b",
-        "messages": [{"role": "user", "content": [{"type": "text", "text": query}]}],
-        "tools": [
-            {"tool_spec": {"type": "cortex_analyst_text_to_sql", "name": "analyst1"}},
-            {"tool_spec": {"type": "cortex_search", "name": "search1"}}
-        ],
-        "tool_resources": {
-            "analyst1": {"semantic_model_file": SEMANTIC_MODELS},
-            "search1": {"name": CORTEX_SEARCH_SERVICES, "max_results": limit}
-        }
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": speed_query
+                    }
+                ]
+            }
+        ]
     }
 
     try:
@@ -472,101 +483,35 @@ def call_cortex_agent_proc(query: str, limit: int = 10):
         )
 
         if resp["status"] != 200:
-            return {"error": "API call failed"}
+            return f"Error: {resp['status']}"
 
         response_content = json.loads(resp["content"])
-        return process_cortex_response(response_content, session)
+        
+        # Super fast processing - take first text found
+        for event in response_content:
+            event_type = event.get("event")
+            
+            if event_type == "response.text":
+                return event.get("data", {}).get("text", "")
+            elif event_type == "response.text.delta":
+                text = event.get("data", {}).get("delta", {}).get("text", "")
+                if text:
+                    return text  # Return immediately on first text chunk
+        
+        return "No response within time limit"
 
     except Exception as e:
-        return {"error": str(e)}
-
-def clean_text(text):
-    """ Cleans up unwanted characters and symbols from search results. """
-    text = re.sub(r'[\u3010\u3011\u2020\u2021]', '', text)  # Remove unwanted symbols
-    text = re.sub(r'^\s*ns\s+\d+\.*', '', text)  # Remove prefixes like "ns 1."
-    text = text.strip()  # Trim whitespace
-    return text
-
-def process_cortex_response(response, session):
-    """ Parses Cortex response and executes SQL if provided. """
-    result = {"type": "unknown", "text": None, "sql": None, "query_results": None}
-
-    full_text_response = []  # Stores formatted search responses
-    
-    for event in response:
-        if event.get("event") == "message.delta":
-            data = event.get("data", {})
-            delta = data.get("delta", {})
-
-            for content_item in delta.get("content", []):
-                content_type = content_item.get("type")
-
-                if content_type == "tool_results":
-                    tool_results = content_item.get("tool_results", {})
-
-                    for result_item in tool_results.get("content", []):
-                        if result_item.get("type") == "json":
-                            json_data = result_item.get("json", {})
-
-                            if "sql" in json_data:
-                                result["type"] = "cortex_analyst"
-                                result["sql"] = json_data["sql"]
-                                result["text"] = json_data.get("text", "")
-
-                                # Execute the generated SQL query in Snowflake
-                                try:
-                                    query_results = session.sql(result["sql"]).collect()
-                                    result["query_results"] = [row.as_dict() for row in query_results]
-                                except Exception as e:
-                                    result["query_results"] = {"error": str(e)}
-
-                            elif "searchResults" in json_data:
-                                result["type"] = "cortex_search"
-                                formatted_results = []
-
-                                for sr in json_data.get("searchResults", []):
-                                    search_text = clean_text(sr.get("text", "").strip())
-                                    citation = sr.get("citation", "").strip()
-
-                                    if search_text:
-                                        if citation:
-                                            formatted_results.append(f"- {search_text} (Source: {citation})")
-                                        else:
-                                            formatted_results.append(f"- {search_text}")
-                                
-                                if formatted_results:
-                                    full_text_response.extend(formatted_results)
-                
-                elif content_type == "text":
-                    text_piece = clean_text(content_item.get("text", "").strip())
-                    if text_piece:
-                        full_text_response.append(text_piece)
-
-    result["text"] = "\n".join(full_text_response) if full_text_response else "No relevant search results found."
-    return result
+        return f"Timeout or error: {str(e)}"
 $$;
 ```
 
 After the creation of stored_proc, let’s test and verify the stored proc works
 
 ```sql
-call call_cortex_agent_proc('what is the Initial discovery call with TechCorp Inc about',2) 
+call call_cortex_agent_proc('what is the Initial discovery call with TechCorp Inc about') 
 ```
 ![](assets/callproc.png)
 
-And last we will run this below script to grant the appropriate privileges to the ANALYST role we created. 
-
-```sql
-CREATE ROLE ANALYST;
-GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE ANALYST;
-GRANT USAGE ON WAREHOUSE SALES_INTELLIGENCE_WH TO ROLE ANALYST;
-GRANT USAGE ON DATABASE SALES_INTELLIGENCE TO ROLE ANALYST;
-GRANT USAGE ON SCHEMA DATA TO ROLE ANALYST;
-GRANT USAGE ON CORTEX SEARCH SERVICE SALES_CONVERSATION_SEARCH TO ROLE ANALYST;
-GRANT SELECT ON SALES_METRICS_MODEL TO ROLE ANALYST;
-GRANT USAGE PRIVILEGE ON AGENT SALES_INTELLIGENCE_AGENT TO ROLE ANALYST;
-GRANT USAGE ON PROCEDURE call_cortex_agent_proc(VARCHAR) TO ROLE ANALYST;
-```
 
 <!-- ------------------------ -->
 ## Configuring Copilot Agent
@@ -705,6 +650,9 @@ In the Body/statement parameter where we call the stored procedure remove the <>
 - You will see results from a call with Securebank, the Cortex agent used the Cortex Search tool to provide the results.
 - Now you can update the stored procedure or Flow to better output the results or you can immediately ask the agent "can you summarize this call" and it will use Azure OpenAI to summarize the call.
 - Enter "use cortex agent" once more and after the prompt type "what was the size of the securebank deal?" Now the Agent is using Cortex Analyst to return results from a SQL query. Ask the Copilot "just show me the deal value" and you'll see below.
+
+**if you expect (and are comfortable with) long running flows users can increase the Timeout value on the Snowflake Execute SQL action however users can also provide additional instructions to the cortex agent to maximize efficiency**
+
 
 <!-- ------------------------ -->
 ## Conclusion and Resources

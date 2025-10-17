@@ -181,55 +181,6 @@ GRANT ROLE OPENFLOW_ADMIN TO USER IDENTIFIER(CURRENT_USER());
 
 This creates the admin role and grants it the necessary permissions to create and manage Openflow deployments.
 
-### Create Snowflake Deployments Network Rule
-
-Create the required network rule for Openflow deployments to communicate with Snowflake services:
-
-```sql
--- Switch to OPENFLOW_ADMIN role
-USE ROLE OPENFLOW_ADMIN;
-
--- Create network rule for Snowflake Openflow deployments
-CREATE OR REPLACE NETWORK RULE snowflake_deployment_network_rule
-  MODE = EGRESS
-  TYPE = IPV4
-  VALUE_LIST = ('10.16.0.0/12');
-
--- Verify the network rule
-DESC NETWORK RULE snowflake_deployment_network_rule;
-```
-
-> aside positive
-> **NETWORK RULE CONFIGURATION:**
->
-> This network rule is **required** for Openflow deployments to communicate with Snowflake's backend services. The IP range `10.16.0.0/12` provides access to Snowflake's Openflow infrastructure.
-
-### Add Network Rule to Account Network Policy
-
-**Step 1: Check if you have an account-level network policy**
-
-```sql
--- Switch to ACCOUNTADMIN role
-USE ROLE ACCOUNTADMIN;
-
--- Check for account-level network policies
-SHOW NETWORK POLICIES IN ACCOUNT;
-```
-
-**Step 2: Add network rule to your policy (if one exists)**
-
-If the above command returns any network policies, add the network rule to your account policy:
-
-```sql
--- Add network rule to your account network policy
--- Replace <YOUR_ACCOUNT_LEVEL_NETWORK_POLICY_NAME> with the policy name from Step 1
-ALTER NETWORK POLICY <YOUR_ACCOUNT_LEVEL_NETWORK_POLICY_NAME> 
-  ADD ALLOWED_NETWORK_RULE_LIST = (snowflake_deployment_network_rule);
-```
-
-> aside positive
-> **NOTE:** If `SHOW NETWORK POLICIES` returns no results, you don't have an account-level network policy and can **skip this step**. Network policies are optional and not all accounts have them configured.
-
 ### Enable BCR Bundle 2025_06 for Integration-level Network Policy
 
 > aside negative
@@ -267,9 +218,6 @@ SHOW ROLES LIKE 'OPENFLOW_ADMIN';
 
 -- Verify grants
 SHOW GRANTS TO ROLE OPENFLOW_ADMIN;
-
--- Verify network rule
-DESC NETWORK RULE snowflake_deployment_network_rule;
 ```
 
 > aside positive
@@ -499,7 +447,6 @@ With your Openflow SPCS infrastructure set up, you're ready to configure connect
 After completing this guide, you have:
 
 - ✅ **`OPENFLOW_ADMIN` role** - Administrative role with deployment and integration privileges
-- ✅ **Snowflake Deployments Network Rule** - Required for Openflow to communicate with Snowflake services
 - ✅ **Openflow Deployment (`QUICKSTART_DEPLOYMENT`)** - Container environment running in SPCS
 - ✅ **Runtime Role (`QUICKSTART_ROLE`)** - With database, schema, and warehouse access
 - ✅ **External Access Integration (`quickstart_access`)** - Network rules for Google Drive and PostgreSQL connectors
@@ -565,13 +512,6 @@ Duration: 5
    WHERE RECORD:severity = 'ERROR'
    ORDER BY TIMESTAMP DESC
    LIMIT 100;
-   ```
-
-3. **Check Network Rule**:
-
-   ```sql
-   -- Verify network rule exists
-   DESC NETWORK RULE snowflake_deployment_network_rule;
    ```
 
 ### Runtime Cannot Access External Services
