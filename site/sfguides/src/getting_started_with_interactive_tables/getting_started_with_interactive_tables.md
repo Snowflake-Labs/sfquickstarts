@@ -424,6 +424,8 @@ This gives the following plot:
 
 ### Compare to a standard warehouse
 
+![](assets/compare-to-standard-warehouse.png)
+
 To establish a performance baseline, we'll run an identical page-view query on a standard warehouse to measure and plot its results for comparison.
 
 We'll start by preparing the session for a performance benchmark by selecting a standard `XSMALL` warehouse, disabling the result cache, and setting the active database:
