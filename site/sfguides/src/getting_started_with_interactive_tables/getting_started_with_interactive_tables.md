@@ -314,6 +314,8 @@ Statement executed successfully.
 
 ### Create an interactive table
 
+![](assets/create-interactive-table.png)
+
 Now, we'll use the `WH` warehouse to efficiently create our new interactive `CUSTOMERS` table by copying all the data from the original standard table:
 
 ```python
