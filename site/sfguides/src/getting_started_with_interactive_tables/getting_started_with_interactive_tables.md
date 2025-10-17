@@ -163,8 +163,7 @@ This essentially retrieves data from the `MY_DEMO_DB` database, `BENCHMARK_FDN` 
 ## Performance Demo of Snowflake's Interactive Warehouses/Tables
 Duration: 15
 
-To proceed with carrying out this performance comparison of interactive warehouses/tables with standard ones, you can download the Jupyter notebook file provided in the repo.
-<!-- To Do: Add repo link ------------------------ -->
+To proceed with carrying out this performance comparison of interactive warehouses/tables with standard ones, you can download notebook file [Getting_Started_with_Interactive_Tables.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Interactive_Tables/Getting_Started_with_Interactive_Tables.ipynb) provided in the repo.
 
 ### Load libraries and define custom functions
 
