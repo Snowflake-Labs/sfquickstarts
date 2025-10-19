@@ -1,4 +1,5 @@
 id: getting-started-with-openflow-kafka-connector
+language: en
 summary: Getting Started with Openflow Kafka Connector for Real-Time Log Streaming
 categories: featured,getting-started,data-engineering,streaming,openflow,connectors
 environments: web
@@ -1827,7 +1828,7 @@ rpk topic delete application-logs
 > **Managed Kafka Services**: For Confluent Cloud and other managed Kafka platforms, you can also delete topics through the service console or web UI.
 
 <!-- ------------------------ -->
-## Next Steps
+## Conclusion And Resources
 
 Duration: 2
 
