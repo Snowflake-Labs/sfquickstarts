@@ -1,11 +1,10 @@
 summary: Build Data Products and a Data Mesh with dbt platform
 id: data-products-data-mesh-dbt-cloud
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-categories: getting-started, data-engineering
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Data Mesh
 authors: Sean McIntyre, Doug Guthrie
 
 # Build Data Products and a Data Mesh with dbt platform

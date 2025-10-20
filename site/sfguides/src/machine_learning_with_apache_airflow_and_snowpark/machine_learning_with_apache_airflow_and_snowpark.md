@@ -1,12 +1,11 @@
 author: Michael Gregory, George Yates
 id: ml_with_snowpark_and_apache_airflow
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This is a sample Snowflake Guide
-categories: data-engineering,architecture-patterns,partner-integrations
 environments: web
 status: Development 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Snowpark, Airflow, Machine Learning, AI
 
 
 # Machine Learning with Snowpark and Apache Airflow

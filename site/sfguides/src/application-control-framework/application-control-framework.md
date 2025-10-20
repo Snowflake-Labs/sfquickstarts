@@ -1,12 +1,11 @@
 author: Marc Henderson
 id: application-control-framework
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
 summary: A guide to building a Native App with consumer controls and limits.
-categories: Getting-Started, App-Development, Streamlit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Native Apps, Streamlit 
 
 # Getting Started with the Application Control Framework (ACF)
 <!-- ------------------------ -->

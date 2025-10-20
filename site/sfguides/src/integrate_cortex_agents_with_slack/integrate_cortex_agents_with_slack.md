@@ -1,11 +1,10 @@
 id: integrate_snowflake_cortex_agents_with_slack
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
 language: en
 summary: This guide outlines the process for integrating Snowflake Cortex Agents with Slack.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowpark Python, Data-Science-&-Ai, Featured
-categories: featured,getting-started,app-development,data-science,gen-ai,data-science-&-ai,cortex
 authors: Dash Desai
 
 # Getting Started with Cortex Agents and Slack

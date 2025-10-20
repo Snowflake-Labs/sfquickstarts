@@ -1,12 +1,11 @@
 author: Sikha Das
 id: ai_agent_health_payers_cc
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification
-categories: Getting-Started, data-science-&-ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowpark Python, Streamlit, Data-Science-&-Ai
 
 # Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification
 <!-- ------------------------ -->

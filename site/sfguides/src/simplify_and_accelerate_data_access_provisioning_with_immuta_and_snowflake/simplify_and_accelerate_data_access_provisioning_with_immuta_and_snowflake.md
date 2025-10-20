@@ -1,12 +1,11 @@
 author: Paul Myres, Kevin Crawford
 id: simplify_and_accelerate_data_access_provisioning_with_immuta_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started, datagovernance, Ai
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, AI, Immuta, Access Control 
 
 # Simplify and Accelerate Data Access Provisioning with Immuta and Snowflake
 <!-- ------------------------ -->

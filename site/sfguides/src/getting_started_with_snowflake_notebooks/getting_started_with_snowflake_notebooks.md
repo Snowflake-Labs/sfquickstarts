@@ -1,11 +1,10 @@
 id: getting_started_with_snowflake_notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: This guide provides the instructions on how to get started with your first Snowflake Notebook.
-categories: featured,getting-started
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowflake Notebooks
 authors: Vino Duraisamy, Doris Lee
 
 # A Getting Started Guide With Snowflake Notebooks

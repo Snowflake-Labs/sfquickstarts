@@ -1,12 +1,11 @@
 author: Michael Gardner
 id: create_eureka_moments_with_data_world
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
 summary: This guide will help you connect Snowflake to data.world, where you can join, query, and share your data
-categories: Getting-Started
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Catalog
 
 # Create Eureka Moments with data.world and Snowflake
 

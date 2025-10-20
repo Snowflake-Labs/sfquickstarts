@@ -1,12 +1,11 @@
 author: Chanin Nantasenamat
 id: scheduled-query-report
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Build an interactive report to analyze failed or long-running scheduled queries using Snowflake Notebooks with Streamlit integration.
-categories: getting-started, audit, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake, Python, Streamlit, Data Visualization, Task Management
 
 # Build an Interactive Scheduled Query Execution Report
 <!-- ------------------------ -->

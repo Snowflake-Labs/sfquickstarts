@@ -1,12 +1,11 @@
 author: Mats Stellwall
 id: automating_document_processing_workflows_with_document_ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/document-ai
 language: en
 summary: This guide will provide step-by-step details for automating document processing workflows with Document AI
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started,  LLMs, Generative AI, Streamlit, Data Engineering, Document AI
 
 # Automating Document Processing Workflows With Document AI
 <!-- ------------------------ -->

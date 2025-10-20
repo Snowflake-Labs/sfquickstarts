@@ -1,12 +1,11 @@
 author: Joviane Bellegarde
 id: connectors_google_analytics_raw_data
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/connectors
 language: en
 summary: Getting Started with the Snowflake Connector for Google Analytics
-categories: Getting-Started, Connectors, Dynamic Tables, BigQuery
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Connectors, Analytics, BigQuery
 
 # Getting Started with the Snowflake Connector for Google Analytics
 <!-- ------------------------ -->

@@ -1,12 +1,11 @@
 author: marzillo-snow, quilpie
 id: getting_started_with_bedrock_agentcore_gateways_and_cortex_agents
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: This is a quickstart for using Cortex Agents and Amazon Q
-categories: Getting-Started, data-science, data-engineering, AWS, cortex, genai, Amazon, Bedrock, MCP, search, LLM, copilot, Agents, Cortex
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Copilot, Amazon, Agents, Bedrock
 
 
 # Getting Started with Bedrock AgentCore Gateways and Cortex Agents

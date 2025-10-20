@@ -1,11 +1,10 @@
 id: getting_started_with_Openflow_spcs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: Getting Started with Snowflake Openflow using Snowpark Container Services (SPCS)
-categories: featured,getting-started,data-engineering,data-integration,Openflow,spcs
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguide-getting-started-with-openflow-spcs/issues>
-tags: Getting Started, Openflow, SPCS, Snowpark Container Services, Data Integration, Connectors
 authors: Kamesh Sampath<kamesh.sampath@snowflake.com>, Dan Chaffelson<dan.chaffelson@snowflake.com>
 
 # Getting Started with Snowflake Openflow SPCS

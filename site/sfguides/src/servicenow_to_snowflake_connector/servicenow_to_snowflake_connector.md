@@ -1,12 +1,11 @@
 author: sfc-gh-drichert
 id: servicenow_to_snowflake_connector
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/connectors
 language: en
 summary: Step-by-step to set up Servicenow connector
-categories: Connectors
 environments: web
 status: Private 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Connectors, Data Engineering, Servicenow 
 
 # Snowflake Connector for ServiceNow Installation
 <!-- ------------------------ -->

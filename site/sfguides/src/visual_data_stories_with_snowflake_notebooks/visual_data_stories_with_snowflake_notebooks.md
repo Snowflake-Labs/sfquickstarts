@@ -1,11 +1,10 @@
 id: visual_data_stories_with_snowflake_notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/observability, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: This guide provides the instructions on how to build visualizations in Snowflake Notebook.
-categories: featured,getting-started
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowflake Notebooks
 authors: Vino Duraisamy, Doris Lee
 
 # A Guide to Visual Data Storytelling in Snowflake Notebooks

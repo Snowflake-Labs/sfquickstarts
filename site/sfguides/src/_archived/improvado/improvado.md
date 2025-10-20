@@ -1,12 +1,11 @@
 author: Ilya Sudakov
 id: improvado
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: Getting Started guide to show how users can use Improvado Composable “Agentic” Data Platform with Snowflake
-categories: Getting-Started,partner-integrations,marketing
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started
 
 # Improvado Composable “Agentic” Data Platform with Snowflake
 <!-- ------------------------ -->

@@ -1,12 +1,11 @@
 author: Ripu Jain
 id: analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
 summary: This is the Fivetran NTT SAP AP Guide
-categories: Getting-Started
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Analyzing SAP Accounts Payables with NTT DATA’s Snowflake Native App and Fivetran
 <!-- ------------------------ -->

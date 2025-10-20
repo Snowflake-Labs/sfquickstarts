@@ -1,12 +1,11 @@
 author: Prash Medirattaa
 id: end_to_end_machine_learning_with_dataiku
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a sample Snowflake Guide
-categories: data-science-&-ml,solution-examples,partner-integrations
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # End to End Machine learning with Snowflake and Dataiku
 <!-- ------------------------ -->

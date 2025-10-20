@@ -1,12 +1,11 @@
 author: Kevin McGinley
 id: getting_started_with_geospatial_geography
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/geospatial
 language: en
 summary: Getting Started with Geospatial - Geography
-categories: getting-started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Geospatial
 
 # Getting Started with Geospatial - Geography
 <!-- ------------------------ -->

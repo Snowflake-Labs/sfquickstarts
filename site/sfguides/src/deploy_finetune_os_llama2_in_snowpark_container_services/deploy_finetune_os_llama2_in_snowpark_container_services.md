@@ -1,12 +1,11 @@
 author: Dash Desai
 id: deploy_finetune_os_llama2_in_snowpark_container_services
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 language: en
 summary: Through this quickstart guide, you will explore Snowpark Container Services
-categories: Getting-Started
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Containers, Snowpark, Snowpark Container Services
 
 # Deploy and Fine-tune Open Source Llama 2 in Snowpark Container Services
 <!-- ------------------------ -->

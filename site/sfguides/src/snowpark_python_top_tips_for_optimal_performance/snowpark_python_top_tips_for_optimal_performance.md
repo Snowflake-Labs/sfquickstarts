@@ -1,12 +1,11 @@
 author: Hanbing Yan and Rahul Reddy
 id: snowpark_python_top_tips_for_optimal_performance
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Snowpark Python: Key Tips for Optimal Performance
-categories: Data-Engineering
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Best Practices, Snowpark, Best Practices
 
 # Snowpark Python: Top Tips for Optimal Performance
 <!-- ------------------------ -->

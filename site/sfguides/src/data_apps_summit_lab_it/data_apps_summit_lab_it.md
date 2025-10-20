@@ -1,12 +1,11 @@
 author: 
 id: data_apps_summit_lab_it
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations
 language: en
 summary: questo è un esempio di guida di Snowflake
-categories: featured,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Guida introduttiva, Getting Started, Data Science, Data Engineering, Twitter, it 
 
 # Creare una data application con il Marketplace Snowflake, Snowpark e Streamlit
 

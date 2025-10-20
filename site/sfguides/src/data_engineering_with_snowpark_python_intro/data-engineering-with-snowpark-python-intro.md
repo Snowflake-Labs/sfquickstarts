@@ -1,12 +1,11 @@
 author: Vino Duraisamy, Kamesh Sampath
 id: data_engineering_with_snowpark_python_intro
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python
-categories: Getting-Started, featured, data-engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Snowpark, Python, Intro
 
 # Intro to Data Engineering with Snowpark Python
 <!-- ------------------------ -->

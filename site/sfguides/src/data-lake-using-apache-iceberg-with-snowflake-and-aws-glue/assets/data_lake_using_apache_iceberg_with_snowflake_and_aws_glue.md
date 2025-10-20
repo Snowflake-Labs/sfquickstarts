@@ -1,12 +1,11 @@
 author: Andries Engelbrecht
 id: data_lake_using_apache_iceberg_with_snowflake_and_aws_glue
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 language: en
 summary: This guide shows how to integrate Snowflake with External Volumes to S3 and the Glue Data Catalog for use with Iceberg tables
-categories: Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Lake, Iceberg, Apache Iceberg 
 
 # Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue
 <!-- ------------------------ -->

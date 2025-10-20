@@ -1,12 +1,11 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_governance_with_horizon
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon Quickstart
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake, Data Governance
 
 
 # Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon

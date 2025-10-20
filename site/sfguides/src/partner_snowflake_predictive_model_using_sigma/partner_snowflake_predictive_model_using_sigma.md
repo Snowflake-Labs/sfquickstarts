@@ -1,12 +1,11 @@
 author: Fran Britschgi
 id: partner_snowflake_predictive_model_using_sigma
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/model-development
 language: en
 summary: Building predictive modeling in Snowflake and Sigma
-categories: data-science-&-ml,solution-examples, partner-Integrations, connectors
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Predictive Modeling, Machine Learning, BI
 
 lastUpdated: 2024-07-09
 

@@ -1,12 +1,11 @@
 authors: Venkatesh Sekar, Jhonatan Garrido-Lecca
 id: sf_esri_arcgis_locationservice
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: Calculate ISOChrone or ServiceArea using ArcGIS Location Services (API), natively in Snowflake.
-categories: data-science-&-ml, data-engineering, geospatial, partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Data Engineering, Geospatial, Snowpark python vudtf, ESRI, ArcGIS, Location Services, IsoChrone, Service Area, Snowpark
 
 # Interfacing with ArcGIS Location Services (API) using Snowpark
 

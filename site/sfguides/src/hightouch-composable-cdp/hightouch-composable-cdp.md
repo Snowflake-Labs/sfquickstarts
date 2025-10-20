@@ -1,11 +1,10 @@
 summary: Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake
 id: hightouch_cdp
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-categories: Marketing,Getting-Started,Partner-Integrations
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Marketing, MarTech, Composable CDP
 author: Luke Ambrosetti
 
 # Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake

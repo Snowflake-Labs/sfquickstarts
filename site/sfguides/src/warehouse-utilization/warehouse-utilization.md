@@ -1,12 +1,11 @@
 author: Chanin Nantasenamat
 id: warehouse-utilization
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: Learn how to create an interactive heatmap visualization of Snowflake warehouse utilization patterns in Snowflake Notebooks and Streamlit.
-categories: getting-started, audit, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake, Python, Streamlit, Data Visualization, Cost Optimization
 
 # Build Warehouse Utilization App in Snowflake Notebooks
 <!-- ------------------------ -->

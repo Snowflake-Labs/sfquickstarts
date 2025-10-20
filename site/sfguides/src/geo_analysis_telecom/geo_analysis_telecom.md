@@ -1,12 +1,11 @@
 author: Oleksii Bielov
 id: geo_analysis_telecom
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/telecom, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/geospatial
 language: en
 summary: Geospatial Analysis for Telecom with Snowflake and Carto
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Geospatial, Python UDFs
 
 # Geospatial Analytics for Telecom with Snowflake and Carto
 <!-- ------------------------ -->

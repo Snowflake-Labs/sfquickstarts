@@ -1,12 +1,11 @@
 author: Fredrik Göransson
 id: build_a_data_application_with_hybrid_tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: Build a data application using Snowflake Hybrid Tables for transactional processing
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Hybrid Tables 
 
 # Build a Data Application with Hybrid Tables
 <!-- ------------------------ -->

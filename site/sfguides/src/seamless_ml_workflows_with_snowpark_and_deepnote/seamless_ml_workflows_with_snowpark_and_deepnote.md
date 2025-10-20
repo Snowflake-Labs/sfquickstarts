@@ -1,12 +1,11 @@
 author: Allan Campopiano
 id: seamless_ML_workflows_with_snowpark_and_deepnote
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Prototype your ML models in Deepnote's collaborative, multi-language notebook. Then, use Snowpark to productionize models without moving your data out of the warehouse or changing your code.
-categories: data-science-&-ml,partner-integrations
 environments: web
 status: Draft
 feedback link: [https://github.com/Snowflake-Labs/sfguides/issues](https://github.com/Snowflake-Labs/sfguides/issues)
-tags: Data Science, Machine Learning, Notebooks, Snowflake, Snowpark, Deepnote, Python, Jupyter, EDA
 
 # Seamless Machine Learning Workflows with Snowpark & Deepnote
 

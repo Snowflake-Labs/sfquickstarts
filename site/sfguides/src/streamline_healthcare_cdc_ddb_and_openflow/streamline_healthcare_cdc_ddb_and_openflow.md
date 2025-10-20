@@ -1,11 +1,10 @@
 id: Streamline_Healthcare_CDC_DDB_And_Openflow
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/platform
 language: en
 summary: This guide will walk you through how to build CDC pipelines to synchronize the front-end DynamoDB and back-end Snowflake tables for processing real-time insurance claims
-categories: data-engineering, Getting-Started, Openflow, HCLS
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Openflow, Getting Started, Streaming, CDC, Change Data Capture, Cloudformation, Snowflake, DynamoDB, Healthcare, HCLS
 authors: James Sun, Snowflake
 
 # Streamlining Healthcare Claims Change Data Capture Processing Using Amazon DynamoDB and Snowflake OpenFlow

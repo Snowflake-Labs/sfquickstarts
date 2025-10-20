@@ -1,12 +1,11 @@
 author: Charlie Hammond
 id: develop-and-manage-ml-models-with-feature-store-and-model-registry
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
 summary: This guide demonstrates an end-to-end ML experiment cycle in Snowflake including feature creation, training data generation, model training and inference
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science 
 
 # Develop and Manage ML Models with Feature Store and Model Registry
 <!-- ------------------------ -->

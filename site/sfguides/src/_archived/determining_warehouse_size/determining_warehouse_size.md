@@ -1,12 +1,11 @@
 author: Lorena Diaconescu
 id: determining_warehouse_size
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: Determine the best warehouse size to use for your query
-categories: undefined
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
 
 # Determine Appropriate Warehouse Sizes
 

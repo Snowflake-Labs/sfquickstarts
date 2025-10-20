@@ -1,12 +1,11 @@
 author: Josh Reini
 id: getting_started_with_ai_observability
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: This is a guide for getting started with Snowflake AI Observability.
-categories: Getting-Started, Observability, Trail
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, AI, Observability, RAG, LLMs, TruLens, Snowflake
 
 # Getting Started with AI Observability
 

@@ -1,12 +1,11 @@
 author: Rishu Saxena
 id: getting_started_with_feast_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: This is a guide to assist users to setup Feast feature store with Snowflake for both online and offline feature stores.
-categories: getting-started,data-science-&-ml
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Getting Started with Snowpark for Python and Feast
 <!-- ------------------------ -->

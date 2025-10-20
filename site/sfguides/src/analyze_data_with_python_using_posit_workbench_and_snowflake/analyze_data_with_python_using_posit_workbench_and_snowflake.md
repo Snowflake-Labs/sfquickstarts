@@ -1,12 +1,11 @@
 author: Sara Altman, Daniel Chen
 id: analyze_data_with_python_using_posit_workbench_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
 language: en
 summary: Analyze Data with Python using Posit Workbench and Snowflake
-categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Python, Posit Workbench, Native Applications
 
 <style>
   img {

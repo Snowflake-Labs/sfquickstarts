@@ -1,12 +1,11 @@
 author: Allen Wong
 id: financial-services-asset-management-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/financial-operations
 language: en
 summary: Financial Services Asset Management Demo
-categories: Getting-Started
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Financial Services Asset Management
 <!-- ------------------------ -->

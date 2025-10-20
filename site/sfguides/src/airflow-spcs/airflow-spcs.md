@@ -1,12 +1,11 @@
 author: Praveen Padige
 id: airflow-spcs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Running Apache Airflow on SPCS
-categories: data-engineering,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Apache Airflow 
 
 # Running Apache Airflow on SPCS
 <!-- ------------------------ -->

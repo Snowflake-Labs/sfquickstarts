@@ -1,12 +1,11 @@
 author: Allan Mitchell
 id: data_mapping_in_native_apps
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
 summary: This guide will provide step-by-step details for building a data mapping requirement in Snowflake Native Apps and Streamlit
-categories: Getting-Started, featured, data-engineering, Native-App, Streamlit
 environments: web
 status: draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Native App, Streamlit, Python
 
 # Data Mapping in Snowflake Native Apps using Streamlit
 <!-- ------------------------ -->

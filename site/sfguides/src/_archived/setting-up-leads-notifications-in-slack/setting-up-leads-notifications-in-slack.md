@@ -1,12 +1,11 @@
 author: Szymon Rybka
 id: setting-up-leads-notifications-in-slack
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: How to use webhooks for export Snowflake Marketplace lead information.
-categories: Getting-Started
 environments: web
 status: Archived 
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Webhooks, Snowflake Marketplace, Leads, JavaScript, Slack
 
 # Setting Up Leads Notifications in Slack
 <!-- ------------------------ -->

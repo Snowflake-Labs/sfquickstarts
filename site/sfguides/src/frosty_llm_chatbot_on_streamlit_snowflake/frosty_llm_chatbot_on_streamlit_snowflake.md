@@ -1,11 +1,10 @@
 summary: This guide provides the instructions for writing an LLM chatbot in Streamlit on your Snowflake data.
 id: frosty_llm_chatbot_on_streamlit_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions
 language: en
-categories: data-science-&-ml,app-development
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowpark Python, Streamlit, OpenAI, LLMs
 authors: Joshua Carroll, Richard Meng, Caroline Frasca
 
 # Frosty: Build an LLM Chatbot in Streamlit on your Snowflake Data

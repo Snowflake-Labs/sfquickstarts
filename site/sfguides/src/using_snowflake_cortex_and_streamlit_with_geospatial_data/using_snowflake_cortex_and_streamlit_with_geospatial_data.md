@@ -1,12 +1,11 @@
 author: Becky O’Connor
 id: using_snowflake_cortex_and_streamlit_with_geospatial_data
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
 summary: This is a sample Snowflake Guide
-categories: Data-Sharing, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial
 
 # Using Snowflake Cortex And Streamlit With Geospatial Data
 <!-- ------------------------ -->

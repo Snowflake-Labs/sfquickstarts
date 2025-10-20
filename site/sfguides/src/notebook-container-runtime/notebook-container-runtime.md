@@ -1,12 +1,11 @@
 author: Charlie Hammond
 id: notebook-container-runtime
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This guide will walk show you how to use Snowflake Notebooks with Container Runtime
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Getting Started with Snowflake Notebook Container Runtime
 <!-- ------------------------ -->

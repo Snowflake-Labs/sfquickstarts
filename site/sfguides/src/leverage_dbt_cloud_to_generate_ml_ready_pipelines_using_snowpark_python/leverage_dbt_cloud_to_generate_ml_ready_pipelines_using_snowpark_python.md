@@ -1,12 +1,11 @@
 author: hope-wat
 id: leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 
 # Leverage dbt Cloud to Generate ML ready pipelines using Snowpark python

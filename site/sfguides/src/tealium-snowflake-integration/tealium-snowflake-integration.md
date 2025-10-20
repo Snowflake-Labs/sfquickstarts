@@ -1,12 +1,11 @@
 author: jmusselwhite-tealium
 id: tealium-snowflake-integration
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/platform
 language: en
 summary: This tutorial reviews the process for configuring inbound and outbound Snowflake integrations within Tealium Customer Data Hub
-categories: Getting-Started, Partner-Integrations, Marketing, Architecture-Patterns
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tealium, Snowpipe Streaming, Staging Tables, Real-Time, CDP, Customer Data Platform, Data Activation
 
 # Collect and Activate Customer Data Using Tealium and Snowpipe Streaming
 

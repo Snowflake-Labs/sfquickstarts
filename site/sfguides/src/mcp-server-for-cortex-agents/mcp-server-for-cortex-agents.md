@@ -1,10 +1,10 @@
 id: mcp-server-for-cortex-agents
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/platform
 language: en
 summary: This guide outlines the process for building an MCP Server for Cortex Agents.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Josh Reini
 
 # Build an MCP Server for Cortex Agents

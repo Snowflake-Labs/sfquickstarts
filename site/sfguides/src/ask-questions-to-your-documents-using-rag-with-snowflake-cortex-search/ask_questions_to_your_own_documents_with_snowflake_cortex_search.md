@@ -1,10 +1,9 @@
 author: Carlos Carrero
 id: ask_questions_to_your_own_documents_with_snowflake_cortex_search
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: Step-by-step guide on how to create a RAG app using Snowflake Cortex Search and Streamlit. 
-categories: featured,getting-started,data-science,gen-ai 
 environments: web 
-tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings, Getting Started
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 

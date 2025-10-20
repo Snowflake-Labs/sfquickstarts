@@ -1,12 +1,11 @@
 author: Charlie Hammond
 id: tasty_bytes_customer_support_email_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: This quickstart builds a customer support email application in Streamlit using Cortex LLM features to help agents quickly and effectively answer customer questions. 
-categories: Tasty-Bytes, Getting-Started, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake Cortex, Streamlit
 
 # Tasty Bytes - Customer Support Streamlit Application Powered by Cortex
 <!-- ------------------------ -->

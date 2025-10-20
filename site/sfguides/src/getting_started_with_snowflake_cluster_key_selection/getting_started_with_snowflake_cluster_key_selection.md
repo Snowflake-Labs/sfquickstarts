@@ -1,12 +1,11 @@
 author: Ember Crooks
 id: getting_started_with_snowflake_cluster_key_selection
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: This is a hands-on guide to choosing a Snowflake clustering key
-categories: Resource-Optimization, Getting-Started, Snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Performance, Clustering, Snowflake 
 
 # A Data-Driven Methodology for Choosing a Snowflake Clustering Key
 <!-- ------------------------ -->

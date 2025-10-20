@@ -2,7 +2,7 @@ author: sfc-gh-imehaddi
 id: end_to_end_nlp_and_ml_using_snowpark_python_and_streamlit:_sentiments_analysis
 language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

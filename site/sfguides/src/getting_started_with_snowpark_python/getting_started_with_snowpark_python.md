@@ -1,12 +1,11 @@
 author: Caleb Baechtold
 id: getting_started_with_snowpark_python
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: This is a sample Snowflake Guide
-categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Data Engineering, Getting Started, Machine Learning
 
 # Getting Started with Snowpark Python
 <!-- ------------------------ -->

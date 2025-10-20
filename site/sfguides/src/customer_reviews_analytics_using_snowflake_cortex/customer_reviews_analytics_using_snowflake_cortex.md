@@ -1,12 +1,11 @@
 author: Shriya Rai
 id: customer_reviews_analytics_using_snowflake_cortex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
 language: en
 summary: This guide demonstrates how we can leverage Snowflake Cortex to enable customer review analytics.
-categories: data-science, gen-ai, data-science-&-ai, tasty-bytes, cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Tasty Bytes, Cortex, Notebook,Generative AI, LLMs
 
 # Customer Reviews Analytics using Snowflake Cortex
 <!-- ------------------------ -->

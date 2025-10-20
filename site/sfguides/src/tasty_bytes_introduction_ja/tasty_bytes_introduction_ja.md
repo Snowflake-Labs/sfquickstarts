@@ -1,12 +1,11 @@
 author: Jacob Kranzler
 id: tasty_bytes_introduction_ja
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: jp
 summary: これはTasty Bytesの紹介とデータ基盤クイックスタートガイドです。
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake, ja
 
 # Tasty Bytesの紹介
 

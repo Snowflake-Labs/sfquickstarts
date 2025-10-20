@@ -1,11 +1,10 @@
 id: getting-started-with-openflow-postgresql-cdc
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: Getting Started with Openflow PostgreSQL Change Data Capture (CDC)
-categories: featured,getting-started,data-engineering,cdc,openflow,connectors
 environments: web
 status: published
 feedback link: <https://github.com/Snowflake-Labs/sfquickstarts/issues>
-tags: Getting Started, Openflow, PostgreSQL, CDC, Change Data Capture, Real-time Analytics
 authors: Kamesh Sampath<kamesh.sampath@snowflake.com>
 
 # Getting Started with PostgreSQL CDC

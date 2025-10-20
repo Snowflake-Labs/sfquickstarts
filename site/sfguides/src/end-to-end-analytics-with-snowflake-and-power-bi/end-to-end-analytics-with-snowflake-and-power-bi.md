@@ -1,12 +1,11 @@
 author: joshcrittenden
 id: end-to-end-analytics-with-snowflake-and-power-bi
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/applied-analytics
 language: en
 summary: Building end-to-end analytical solutions with Snowflake and Power BI
-categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Power BI, Tasty Bytes
 
 # End-to-End Analytics with Snowflake and Power BI
 

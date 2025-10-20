@@ -1,12 +1,11 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_transformation_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: Tasty Bytes - Zero to Snowflake - Transformation Quickstart
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Data Warehouse, kr
 
 # Tasty Bytes - 제로부터 Snowflake까지 - 변환
 

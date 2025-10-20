@@ -1,12 +1,11 @@
 author: Ritika Sharma
 id: a_guide_to_kipi_marketing_mix_modelling_analytics_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 language: en
 summary: This is a sample Snowflake Guide
-categories: Applications & Collaboration, Apps & Collab: External Collaboration, AI - Snowflake ML, Apps & Collab - Native Apps
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, MMM , Marketing, Native Apps
 
 # A Guide to Kipi Marketing Mix Modelling and Analytics App
 <!-- ------------------------ -->

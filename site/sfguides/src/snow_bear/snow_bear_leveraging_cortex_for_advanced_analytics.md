@@ -1,12 +1,11 @@
 author: Joviane Bellegarde
 id: snow_bear_leveraging_cortex_for_advanced_analytics
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics
 language: en
 summary: Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics
-categories: Cortex, Analytics, Getting-Started, AI
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Cortex, AI, Analytics, Media & Entertainment
 
 # Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics
 <!-- ------------------------ -->

@@ -1,12 +1,11 @@
 author: caleb-baechtold, doris-lee
 id: getting_started_with_pandas_on_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: Through this quickstart guide, you will learn how to use pandas on Snowflake.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
 # Getting Started with pandas on Snowflake
 <!-- ------------------------ -->

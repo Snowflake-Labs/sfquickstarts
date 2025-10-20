@@ -1,12 +1,11 @@
 author: Brian Hess, Brad Culberson
 id: build_a_custom_api_in_python
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: A guide to building and running a custom API Powered by Snowflake and Python/Flask
-categories: getting-started,app-development,architecture-patterns,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, API 
 
 # Build a Custom API in Python and Flask
 <!-- ------------------------ -->

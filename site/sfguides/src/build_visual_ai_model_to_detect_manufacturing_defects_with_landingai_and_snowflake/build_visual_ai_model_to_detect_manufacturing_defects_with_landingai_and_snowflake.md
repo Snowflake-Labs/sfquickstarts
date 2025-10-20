@@ -1,12 +1,11 @@
 
 author: Bianca Ragsdale
 id: build_visual_ai_model_to_detect_manufacturing_defects_with_landingai_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: This guide shows how to use LandingLens and Snowflake to create a computer vision model that detects defects in a manufacturing dataset.
-categories: data-science, data-applications, healthcare, data-science-&-ai, app-development
 environments: web
 status: Published
-tags: Getting Started, Data Science, LandingAI, LVM, Data Applications
 
 # Use Visual AI Models to Detect Defects with LandingLens on Snowflake
 

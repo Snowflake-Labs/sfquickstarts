@@ -1,11 +1,10 @@
 id: getting-started-with-snowflake-cortex-ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: This guide provides the instructions for getting started with Snowflake Cortex AI.
-categories: featured,getting-started,app-development,data-science,gen-ai,data-science-&-ai,cortex
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowpark Python, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
 # Getting Started With Snowflake Cortex AI

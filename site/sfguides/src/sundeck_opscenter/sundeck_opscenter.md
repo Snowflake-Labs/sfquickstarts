@@ -1,12 +1,11 @@
 author: Robert Maybin
 id: sundeck_opscenter
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
 summary: This Guide shows you how to quickly get started with Sundeck OpsCenter on Snowflake, a free Native App which providing a range of tools to better understand, manage, and alert on Snowflake activity and spend.
-categories: Getting-Started
 environments: web
 status: Draft 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Cost Management, Workload Analytics, Query Monitoring
 
 # Getting Started with Sundeck OpsCenter
 <!-- ------------------------ -->

@@ -1,11 +1,10 @@
 id: getting_started_with_generative_ai_snowflake_external_functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: Getting Started with Generative AI in Snowflake and Streamlit
-categories: featured,getting-started,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Generative AI, Snowflake External Access, Snowflake External Functions, OpenAI
 authors: Dash Desai
 
 # Getting Started with Generative AI in Snowflake and Streamlit

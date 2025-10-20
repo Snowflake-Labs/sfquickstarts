@@ -1,12 +1,11 @@
 author: Adrian Lee
 id: data_engineering_with_apache_airflow_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This is a sample Snowflake Guide
-categories: data-engineering,architecture-patterns,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Airflow, kr
 
 # Apache Airflow, Snowflake 및 dbt를 사용한 데이터 엔지니어링
 

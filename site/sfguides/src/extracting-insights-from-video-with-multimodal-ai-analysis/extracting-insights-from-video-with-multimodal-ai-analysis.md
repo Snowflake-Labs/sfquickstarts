@@ -1,12 +1,11 @@
 author: Yavor Georgiev, Seth Mason
 id: extracting-insights-from-video-with-multimodal-ai-analysis
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: Extract images, transcribe audio, and analyze key moments from videos using Cortex AI and Snowpark Container Services—all within Snowflake.
-categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, SPCS, LLM, AI, Cortex, Snowpark Container Services
 
 # Extracting Insights from Video with Multimodal AI Analysis
 <!-- ------------------------ -->

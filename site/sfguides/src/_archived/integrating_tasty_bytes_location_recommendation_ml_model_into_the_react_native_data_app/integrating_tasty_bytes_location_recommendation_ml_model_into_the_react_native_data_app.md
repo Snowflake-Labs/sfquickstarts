@@ -1,12 +1,11 @@
 author: Swathi Jasti
 id: integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
 summary: Integrating Tasty Bytes Location Recommendations ML model into the React Native Data Application
-categories: Tasty-Bytes, Getting-Started, app-development, Data-Science-&-Ml
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Data Engineering, API, Data Science, Snowpark, Machine Learning
 
 # Integrating Tasty Bytes Location Recommendations ML model into the React Native Data Application
 <!-- ------------------------ -->

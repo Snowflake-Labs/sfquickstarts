@@ -1,11 +1,10 @@
 id: apache-iceberg-snowflake-open-catalog-snowpipe-streaming
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 language: en
 summary: Learn how Apache Iceberg integrates with Snowflake Open Catalog, a managed service for Apache Polaris, to enhance data lake interoperability and analytics performance. Discover key benefits and use cases for modern data architectures.
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Featured, Apache Iceberg, Snowflake Open Catalog, Apache Polaris
 authors: Dash Desai
 
 # Apache Iceberg and Snowflake Open Catalog: Unlock Data Lake Interoperability with Apache Polaris

@@ -1,12 +1,11 @@
 author: Leon Yen, Zack Drach
 id: leveraging_kumo_for_smarter_recommendations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/commercialize, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
 summary: This guide will provide step-by-step details for generating product recommendations and performing customer LTV calculation using Kumo in a Snowflake Native App
-categories: Getting-Started, data-science, retail
 environments: web
 status: Draft
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Recommendations, Data Engineering, Snowpark Container Services, Machine Learning, Lifetime Value, Data Science, Retail
 
 
 # Product Recommendations for High LTV Customers using Kumo in Snowflake Native Apps

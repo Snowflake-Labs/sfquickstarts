@@ -1,12 +1,11 @@
 author: Oleksii Bielov
 id: geo_performance
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: Performance optimization techniques for Geo
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Performance, H3, Search Optimization
 
 # Performance Optimization Techniques for Geospatial queries
 

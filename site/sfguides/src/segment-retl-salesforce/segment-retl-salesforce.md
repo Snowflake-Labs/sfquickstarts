@@ -1,12 +1,11 @@
 author: Ginu Kuncheria, Segment Solutions Engineer
 id: segment-retl-salesforce
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Use Segment Reverse ETL to sync your Snowflake customer table to Salesforce
-categories: Getting-Started, marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Segment, Salesforce, Reverse ETL
 
 # Use Segment Reverse ETL to sync your Snowflake customer table to Salesforce
 <!-- ------------------------ -->

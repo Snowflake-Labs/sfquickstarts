@@ -1,12 +1,11 @@
 author: James Cha-Earley
 id: gain_insights_from_unstructured_data
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: Gain Insights From Unstructured Data with Snowflake Cortex
-categories: data-science, gen-ai, data-science-&-ai, cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Tasty Bytes, Cortex, Notebook,Generative AI, LLMs
 
 # Gain Insights From Unstructured Data using Snowflake Cortex
 <!-- ------------------------ -->

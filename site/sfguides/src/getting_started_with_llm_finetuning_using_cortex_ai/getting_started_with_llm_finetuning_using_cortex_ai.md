@@ -1,11 +1,10 @@
 id: finetuning_llm_using_snowflake_cortex_ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: This guide provides the instructions for fine-tuning large language models using Snowflake Cortex AI.
-categories: featured,getting-started,cortex
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowflake Cortex, Streamlit
 authors: Vino Duraisamy, Dash Desai
 
 # Serverless LLM Fine-tuning using Snowflake Cortex AI

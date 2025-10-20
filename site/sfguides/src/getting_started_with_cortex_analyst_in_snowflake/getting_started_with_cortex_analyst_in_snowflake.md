@@ -1,12 +1,11 @@
 author: Dash Desai
 id: getting_started_with_cortex_analyst_in_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 language: en
 summary: Through this quickstart guide, you will learn how to use Cortex Analyst to provide natural-language query interfaces to structured data in Snowflake.
-categories: Getting-Started
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, GenAI, Cortex, Cortex Analyst
 
 # Getting Started with Cortex Analyst in Snowflake
 <!-- ------------------------ -->

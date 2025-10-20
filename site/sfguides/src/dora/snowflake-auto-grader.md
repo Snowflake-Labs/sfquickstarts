@@ -1,12 +1,11 @@
 author: Gilberto Hernandez
 id: snowflake-auto-grader
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: In this guide, you'll set up Snowflake's Auto-Grader.
-categories: Getting-Started
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # How to Setup the Snowflake Auto-Grader
 <!-- ------------------------ -->

@@ -1,12 +1,11 @@
 author: Anthony Alteirac
 id: getting_started_keboola
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/platform
 language: en
 summary: Getting Started With Keboola
-categories: getting-started,partner-integrations
 environments: web
 status: Draft 
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
-tags: Getting Started, Data Engineering 
 
 # Getting Started with Keboola 
 <!-- ------------------------ -->

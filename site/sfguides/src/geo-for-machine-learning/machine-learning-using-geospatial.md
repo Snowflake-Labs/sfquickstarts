@@ -1,13 +1,11 @@
 author: Oleksii Bielov
 id: geo-for-machine-learning
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
 summary: Cortex, Geospatial and Streamlit features for Machine Learning use cases 
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Analytics, H3, Machine Learning.
-tags: Geospatial, Analytics, H3, Machine Learning.
 
 # Geospatial Analytics, AI and ML using Snowflake
 <!-- ----------------------------------------- -->

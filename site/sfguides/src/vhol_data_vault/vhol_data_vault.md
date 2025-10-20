@@ -1,12 +1,11 @@
 author: yarodmi
 id: vhol_data_vault
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Building a Real-time Data Vault in Snowflake
-categories: data-engineering,architecture-patterns,solution-examples,marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Vault, Data Enineering
 
 # Building a Real-Time Data Vault in Snowflake
 <!-- ------------------------ -->

@@ -1,12 +1,11 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_geospatial
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 language: en
 summary: Tasty Bytes - Zero to Snowflake - Geospatial Quickstart
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake, Geospatial
 
 # Tasty Bytes - Zero to Snowflake - Geospatial
 <!-- ------------------------ -->

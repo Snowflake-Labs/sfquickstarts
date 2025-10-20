@@ -1,12 +1,11 @@
 author: Vladi Bilonenko
 id: kepler_gl_maps_inside_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
 language: en
 summary: This guide will help you create interactive maps directly within Snowflake using Kepler.gl
-categories: Getting-Started
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Maps, Kepler.gl
 
 # Creating Interactive Maps with Kepler.gl in Snowflake Using Dekart
 <!-- ------------------------ -->

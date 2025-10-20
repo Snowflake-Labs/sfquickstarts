@@ -1,12 +1,11 @@
 author: Parag Jain
 id: getting_started_with_dynamic_tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 language: en
 summary: Getting Started with Snowflake Dynamic Tables
-categories: Getting-Started, marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Dynamic Tables, Data Engineering, Data Pipeline 
 
 # Getting Started with Snowflake Dynamic Tables
 <!-- ------------------------ -->

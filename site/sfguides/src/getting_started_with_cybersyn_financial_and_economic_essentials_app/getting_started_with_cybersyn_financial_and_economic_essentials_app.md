@@ -1,12 +1,11 @@
 author: ashleynagaki, vskarine
 id: getting_started_with_cybersyn_financial_and_economic_essentials_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: How to access and use Cybersyn’s Financial & Economic Essentials App.
-categories: Streamlit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Quickstart Guide: Cybersyn Financial & Economic Essentials App
 <!-- ------------------------ -->

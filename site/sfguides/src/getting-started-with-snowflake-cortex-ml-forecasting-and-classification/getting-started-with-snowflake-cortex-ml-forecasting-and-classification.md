@@ -1,12 +1,11 @@
 author: Ellery Berk
 id: getting-started-with-snowflake-cortex-ml-forecasting-and-classification
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
 summary: This is an introduction to building with ML functions.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake ML Functions, Advanced Analytics, Machine Learning 
 
 # Getting Started with Snowflake ML Forecasting and Classification
 <!-- ------------------------ -->

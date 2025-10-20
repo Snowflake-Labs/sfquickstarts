@@ -1,12 +1,11 @@
 author: Ian Funnell
 id: load-integrate-data-matillion-data-productivity-cloud
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Load and Integrate data from multiple sources using the Matillion Data Productivity Cloud
-categories: featured,getting-started,data-engineering,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Getting Started, Matillion, Data Integration, Partner, Data Transformation
 
 # Getting Started with Matillion Data Productivity Cloud
 <!-- ------------------------ -->

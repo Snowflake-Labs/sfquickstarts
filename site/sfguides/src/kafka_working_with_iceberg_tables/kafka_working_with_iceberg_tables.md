@@ -1,12 +1,11 @@
 author: Ashish Kumar
 id: kafka_working_with_iceberg_tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 language: en
 summary: Through this quickstart guide, you will explore how to ingest data from kafka to Iceberg tables.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering 
 
 # Intro to Kafka and Snowflake Managed Iceberg
 <!-- ------------------------ -->

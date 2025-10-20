@@ -1,12 +1,11 @@
 author: Jacob Kranzler
 id: tasty_bytes_introduction_es
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: es
 summary: Esta es la introducción a la quickstart guide de base de datos de Tasty Bytes
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Introducción, Tasty Bytes, De cero a Snowflake, Getting Started, Zero to Snowflake, es
 
 # Introducción a Tasty Bytes
 <!-- ------------------------ -->

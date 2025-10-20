@@ -1,12 +1,11 @@
 author: Charlie Hammond
 id: getting-started-with-snowflake-ml-lineage
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions
 language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started, Data-Science, Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Getting Started with Snowflake ML Lineage
 <!-- ------------------------ -->

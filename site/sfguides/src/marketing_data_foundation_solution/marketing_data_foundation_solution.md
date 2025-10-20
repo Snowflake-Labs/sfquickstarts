@@ -1,12 +1,11 @@
 author: Manuel Figueroa
 id: marketing_data_foundation_starter_v2
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Marketing Data Foundation V2
-categories: Data-Engineering
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Marketing, Data Engineering, Native Application
 
 # Marketing Data Foundation Starter V2 Guide
 <!-- ------------------------ -->

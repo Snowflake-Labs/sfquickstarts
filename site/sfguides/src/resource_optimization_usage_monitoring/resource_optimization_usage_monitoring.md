@@ -1,11 +1,10 @@
 summary: This guide can be used to help customers setup and run queries pertaining to monitoring usage that might be causing over-consumption.
 id: resource_optimization_usage_monitoring
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-categories: resource-optimization
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Resource Optimization, Cost Optimization, Consumption, Usage Monitoring, Usage, Monitoring 
 authors: Matt Meredith
 
 # Resource Optimization: Usage Monitoring

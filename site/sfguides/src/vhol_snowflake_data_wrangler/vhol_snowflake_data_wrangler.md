@@ -1,11 +1,10 @@
 summary: This lab will walk you through how to apply a data-centric approach to Machine Learning with Snowflake and Amazon SageMaker.
 id: vhol_snowflake_data_wrangler
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
 language: en
-categories: data-science-&-ml,partner-integrations
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: SageMaker, Data Wrangler, Feature Engineering, Data Marketplace, Machine Learning, Financial Services, Storage Integration
 authors: andries.engelbrecht@snowflake.com
 
 # Data-centric Approach to Machine Learning Using Snowflake and Amazon SageMaker Data Wrangler

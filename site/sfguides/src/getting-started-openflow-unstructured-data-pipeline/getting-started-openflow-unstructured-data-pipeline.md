@@ -1,11 +1,10 @@
 id: getting_started_with_Openflow_unstructured_data_pipeline
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: Getting Started with Openflow Unstructured Data Pipeline using Google Drive and Snowflake Intelligence
-categories: featured,getting-started,data-engineering,unstructured-data,ai,Openflow,connectors
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-unstructured-data-pipeline/issues>
-tags: Getting Started, Openflow, Google Drive, Unstructured Data, Snowflake Intelligence, Cortex Search
 authors: Kamesh Sampath<kamesh.sampath@snowflake.com>
 
 # Getting Started with Openflow Unstructured Data Pipeline

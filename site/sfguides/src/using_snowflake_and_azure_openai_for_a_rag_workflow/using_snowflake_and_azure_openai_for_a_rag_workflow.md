@@ -1,10 +1,9 @@
 id: using_snowflake_and_azure_openai_for_a_rag_workflow
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: Using Snowflake with Azure OpenAI to build a RAG workflow
-categories: featured,rag,app-development, azure, openai, streamlit, genai, ai, ml, image
 environments: web
 status: Published
-tags: RAG, Generative AI, Snowflake External Access, Azure, OpenAI, Snowpark, Streamlit
 authors: Matt Marzillo
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 

@@ -1,12 +1,11 @@
 author: Matt Marzillo
 id: getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: This is a quickstart showing users how use the Microsoft Teams and M365 Copilot Cortex App
-categories: AI, Cortex, Microsoft, Azure, Agents, Copilot, Teams, Search, Analyst
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: AI, Microsoft, Agents, Cortex, Copilot, chatbot, Teams, Cortex, Search, Analyst
 
 # Getting Started with The Microsoft Teams and M365 Copilot Cortex App
 <!-- ------------------------ -->

@@ -1,11 +1,10 @@
 summary: Building a Single-Page Data Application on Snowflake
 id: data_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
-categories: app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Data Engineering, API
 authors: Brad Culberson
 
 # Building a Data Application

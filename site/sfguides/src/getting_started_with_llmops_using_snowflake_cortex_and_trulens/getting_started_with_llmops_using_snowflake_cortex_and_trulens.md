@@ -1,12 +1,11 @@
 author: Josh Reini
 id: getting_started_with_llmops_using_snowflake_cortex_and_trulens
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 summary: This is a guide for getting started with LLMOps using Snowflake Cortex and TruLens.
-categories: Getting-Started
 environments: web
 status: hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, LLMOps, RAG, LLMs, TruLens, Snowflake
 
 # Getting Started with LLMOps using Snowflake Cortex and TruLens
 

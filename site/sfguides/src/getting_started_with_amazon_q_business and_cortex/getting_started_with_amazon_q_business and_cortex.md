@@ -1,12 +1,11 @@
 author: marzillo-snow
 id: getting_started_with_amazon_q_business and_cortex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
 summary: This is a quickstart for using Amazon Q Business with Cortex
-categories: Getting-Started, data-science, data-engineering, AWS, cortex, genai, Amazon, Q, search, LLM, copilot
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Copilot
 
 # Getting Started with Amazon Q Business and Cortex
 <!-- ------------------------ -->

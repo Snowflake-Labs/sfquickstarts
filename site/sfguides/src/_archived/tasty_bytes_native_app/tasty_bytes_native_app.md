@@ -1,12 +1,11 @@
 author: Gilberto Hernandez, Charlie Hammond
 id: tasty_bytes_native_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
 language: en
 summary: This is a Quickstart on how to build a Snowflake Native Application with Tasty Bytes.
-categories: Native-Applications
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Applications
 
 # Tasty Bytes - Snowflake Native Application
 <!-- ------------------------ -->

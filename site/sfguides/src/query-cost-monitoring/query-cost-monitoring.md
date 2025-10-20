@@ -1,12 +1,11 @@
 author: Chanin Nantasenamat
 id: query-cost-monitoring
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
 summary: Learn how to build a Query Cost Monitoring tool using Snowflake, Streamlit, Pandas and Altair to analyze and visualize compute costs by individual queries.
-categories: getting-started, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake, Streamlit, Pandas, Data Visualization, Altair, Notebooks
 
 # Build a Query Cost Monitoring Tool with Snowflake and Streamlit
 <!-- ------------------------ -->
