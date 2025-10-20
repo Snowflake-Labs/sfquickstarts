@@ -1,11 +1,11 @@
 author: Carlos Suarez
 id: data_engineering_snowpark_streamlit_inegi
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
+language: en
 summary: End-to-End from local to cloud using Snowapark Python Streamlit
-categories: getting-started
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: snowpark, Data engineering, python, streamlit, es
 
 # Ingenieria de Datos con Snowpark y visualización con Streamlit
 <!-- ------------------------ -->

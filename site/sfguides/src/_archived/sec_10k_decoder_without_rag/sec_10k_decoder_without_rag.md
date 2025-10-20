@@ -1,11 +1,11 @@
 author: camwasi
 id: sec_10k_decoder_without_rag
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: This quickstart will help you create a streamlit application to interact with Cortex's AI21's Jamba-Instruct
-categories: Getting-Started, Cortex, Data-Science-&-Ai, Streamlit, App-Development
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Cortex, Data Science & Ai, Streamlit, App Development
 
 # AI21's Jamba-Instruct Quickstart | SEC 10K Decoder Without RAG
 <!-- ------------------------ -->

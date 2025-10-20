@@ -1,11 +1,11 @@
 author: Janet Revell
 id: soda
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Follow this guide to set up and run a Soda scan for data quality in Snowflake.
-categories: Getting-Started, Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Data Quality, Data Testing
 
 # Data Quality Testing with Soda
 <!-- ------------------------ -->

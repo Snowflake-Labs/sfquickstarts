@@ -1,10 +1,10 @@
 id: getting-started-with-snowflake-mcp-server
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
+language: en
 summary: This guide outlines the process for getting started with Snowflake MCP Server.
-categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
 # Getting Started with Managed Snowflake MCP Server

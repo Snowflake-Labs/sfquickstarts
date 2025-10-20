@@ -1,11 +1,11 @@
 author: Chandra Nayak & Madeline Lee
 id: visual_analytics_powered_by_snowflake_and_tableau
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
+language: en
 summary: Visual Analytics Powered by Snowflake and Tableau
-categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Data Collaboration, Date Lake
 
 # Visual Analytics Powered by Snowflake and Tableau
 

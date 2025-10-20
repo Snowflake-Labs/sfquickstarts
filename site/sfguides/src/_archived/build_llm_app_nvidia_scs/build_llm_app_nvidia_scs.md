@@ -1,11 +1,11 @@
 authors: Karuna Nadadur, Kamesh Sampath
 id: build_llm_app_nvidia_scs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
+language: en
 summary: Build LLM App Powered By NVIDIA on Snowpark Container Services
-categories: getting-started,llm,snowpark-container-services,nvidia,snowflake-native-app
 environments: web
 status: Archived
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started,Snowpark Container Services, Snowflake Native Apps
 
 # Build LLM App Powered By NVIDIA on Snowpark Container Services
 

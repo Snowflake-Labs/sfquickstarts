@@ -1,10 +1,10 @@
 summary: Create predictive features with RudderStack and Snowflake without MLOps
 id: rudderstack_predictions
-categories: data-science-&-ai,Getting-Started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, RudderStack, Machine Learning
 author: RudderStack
 
 # Build predictive features without MLOps using RudderStack and Snowflake

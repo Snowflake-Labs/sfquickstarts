@@ -1,11 +1,11 @@
 author: marzillo-snow
 id: getting_started_with_cortex_search_and_microsoft_fabric
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a quickstart for using Cortex Search with Microsoft Fabric
-categories: Getting-Started, data-science, data-engineering, azure, cortex, genai, Microsoft, Fabric, search
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
 
 # Getting Started with Cortex Search and Microsoft Fabric
 <!-- ------------------------ -->

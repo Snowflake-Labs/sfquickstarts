@@ -1,11 +1,11 @@
 author: Charlie Hammond
 id: intro-to-feature-store
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This guide give an overview of the key features of Snowflake Feature Store
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Introduction to Snowflake Feature Store with Snowflake Notebooks
 <!-- ------------------------ -->

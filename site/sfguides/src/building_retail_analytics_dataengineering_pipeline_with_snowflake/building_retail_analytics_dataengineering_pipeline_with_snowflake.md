@@ -1,10 +1,10 @@
 id: building-retail-analytics-de-pipeline
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Build a comprehensive retail analytics pipeline using Snowflake's modern data engineering features including Snowpark DB APIs, Snowpark APIS, Cortex AI, managed Iceberg tables, streamlit and using Snowflake Trail for Observability.
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Featured, Data Engineering, Snowpark, Cortex AI, Snowpark DB API, Iceberg Tables, Observability
 authors: Phani Raj
 
 # Build a Retail Analytics Data Engineering Pipeline with Snowflake

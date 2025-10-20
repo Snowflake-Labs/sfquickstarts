@@ -1,11 +1,11 @@
 author: Kate Guttridge, StreamSets
 id: streamsets_transformer_for_snowflake_hol
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Hands on Lab for Transformer for Snowflake
-categories: data-engineering,partner-integrations
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, StreamSets
 
 # StreamSets' Transformer for Snowflake: Hands on Lab
 <!-- ------------------------ -->

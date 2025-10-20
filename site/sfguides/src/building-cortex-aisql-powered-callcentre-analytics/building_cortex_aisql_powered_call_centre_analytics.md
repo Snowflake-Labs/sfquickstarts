@@ -1,10 +1,10 @@
 id: building-cortex-aisql-powered-call-centre-analytics
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
+language: en
 summary: Build a comprehensive call center analytics solution using Snowflake Cortex Analyst, Cortex AISQL, and interactive Streamlit dashboards for intelligent conversation insights and natural language querying.
-categories: featured,getting-started,ai,cortex,cortex-aisql, AI Transcribe
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Featured, Snowpark, Cortex AI, Cortex Analyst, Streamlit, Audio Analytics, Cortex AISQL, Audio Processing, Cortex AI Transcribe
 author: Phani Raj
 
 # Build Cortex AISQL Powered Call Center Analytics Solution

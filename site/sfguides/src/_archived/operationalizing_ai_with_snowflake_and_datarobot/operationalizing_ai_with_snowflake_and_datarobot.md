@@ -1,11 +1,11 @@
 author: Matt Harris (Snowflake) and Atalia Horenshtien (DataRobot)
 id: operationalizing_ai_with_snowflake_and_datarobot
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
+language: en
 summary: This is a sample Snowflake Guide!!
-categories: Data-Science-&-Ml
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Machine Learning, DataRobot, Automated ML, AI
 
 # Operationalizing AI with Snowflake and DataRobot
 

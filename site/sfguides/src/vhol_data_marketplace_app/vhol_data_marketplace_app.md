@@ -1,11 +1,11 @@
 author: Bren Stokes
 id: vhol_data_marketplace_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations
+language: en
 summary: This is a sample Snowflake Guide
-categories: app-development, marketing
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Building an application on Snowflake with data from Snowflake Marketplace
 <!-- ------------------------ -->

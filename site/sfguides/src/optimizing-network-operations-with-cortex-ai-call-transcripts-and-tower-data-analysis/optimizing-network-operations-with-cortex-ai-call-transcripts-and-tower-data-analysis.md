@@ -1,11 +1,11 @@
 author: Swathi Jasti
 id: optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
 summary: Optimizing Network Operations with Cortex AI - Call Transcripts and Tower Data Analysis
-categories: Getting-Started, Streamlit, Data-Science-&-Ai, app-development, GenAI, Cortex, Cortex Analyst
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Apps, GenAI, Cortex, Cortex Analyst, Streamlit
 
 # Optimizing Network Operations with Snowflake Cortex AI
 

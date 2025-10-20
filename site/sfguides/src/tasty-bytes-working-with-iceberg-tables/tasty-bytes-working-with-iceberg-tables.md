@@ -1,11 +1,11 @@
 author: nadithya-sf
 id: tasty_bytes_working_with_iceberg_tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+language: en
 summary: This tutorial is a guide built as an extention to the Tasty Bytes series, where we will go over how data from an external Data Lake is made available in Snowflake using External Tables & Iceberg Tables.
-categories: Getting-Started, Tasty-Bytes, Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Iceberg Tables, AWS, S3
 
 # Tasty Bytes - Working with Iceberg Tables
 <!-- ------------------------ -->

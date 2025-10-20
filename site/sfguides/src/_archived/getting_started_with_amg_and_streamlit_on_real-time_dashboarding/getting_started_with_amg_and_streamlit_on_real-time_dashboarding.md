@@ -1,10 +1,10 @@
 id: getting_started_with_amg_and_streamlit_on_real-time_dashboarding
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming
+language: en
 summary: This guide will walk you through how to build real-time dashboards with AMG and Streamlit to track data ingested by Snowpipe Streaming
-categories: getting-started
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Grafana, Streaming, Amazon AMG, Streamlit, Container, ECS, Application Load Balancer
 authors: James Sun
 
 # Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding

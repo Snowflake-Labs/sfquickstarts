@@ -1,11 +1,11 @@
 author: Charlie Hammond
 id: partitioned-ml-model
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 summary: This is a sample Snowflake Guide
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Getting Started with Partitioned Models in Snowflake Model Registry
 <!-- ------------------------ -->

@@ -1,11 +1,11 @@
 author: Manuel Figueroa, Joviane Bellegarde
 id: marketing_data_foundation_starter_v3
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: Marketing Data Foundation Starter Guide V3
-categories: Marketing
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Marketing, Data Engineering, Native Application
 
 # Marketing Data Foundation Starter Guide V3
 <!-- ------------------------ -->

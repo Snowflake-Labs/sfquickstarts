@@ -1,11 +1,11 @@
 author: Security Field CTO Team
 id: security_dashboards_for_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance
+language: en
 summary: Walkthrough of creating security dashboards for Snowflake based on Snowflake audit and config data
-categories: Cybersecurity, audit, 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Security, SnowSight, Dashboards
 
 # Snowflake Security Dashboards
 <!-- ------------------------ -->

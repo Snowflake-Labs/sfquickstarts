@@ -1,11 +1,11 @@
 author: Vincent Raudszus
 id: getting_started_with_snowflake_devops
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Getting Started with Snowflake DevOps
-categories: devops,getting-started,data-engineering
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Getting Started with Snowflake DevOps
 

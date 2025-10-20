@@ -1,11 +1,11 @@
 author: Kelsey Hammock
 id: snowflake_build_secure_multitenant_data_applications_snowflake_sigma
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Snowflake Summit 2023 HoL with Sigma
-categories: Snowflake
 environments: web
 status: Published
 feedback link: https://github.com/sigmacomputing/sigmaquickstarts/issues
-tags: Snowflake, Sigma
 
 # Build and Secure Multi-Tenant Data Applications with Snowflake and Sigma
 <!-- The above name is what appears on the website and is searchable. -->

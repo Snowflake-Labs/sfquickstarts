@@ -1,11 +1,11 @@
 author: Sikha Das
 id: ai_assistant_for_sales_calls
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: This application provides a centralized, AI-driven approach to analyze sales calls to gain actionable insights, enhance decision-making, and drive better alignment between product and GTM strategies.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Snowpark, Snowflake Cortex, Streamlit
 
 # Building AI Assistant using Snowflake Cortex in Snowflake Notebooks
 <!-- ------------------------ -->

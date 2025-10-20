@@ -1,11 +1,11 @@
 author: Jeremy Ber, Sean Falconer
 id: snowflake-confluent-tableflow-iceberg
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+language: en
 summary: Build a real-time data pipeline connecting Apache Kafka with Snowflake using Confluent Cloud and Tableflow in Iceberg format
-categories: getting-started, confluent, streaming, real-time, tableflow, kafka, flink, polaris, snowflake
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Confluent, Kafka, Polaris, Snowflake, Tableflow, Iceberg, Flink
 
 # Stream Kafka Data to Snowflake via Confluent Tableflow and Iceberg
 

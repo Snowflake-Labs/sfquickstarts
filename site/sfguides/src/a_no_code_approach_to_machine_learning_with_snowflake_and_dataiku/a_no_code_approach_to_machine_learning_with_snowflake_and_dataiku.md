@@ -1,11 +1,11 @@
 author: Stephen Franks
 id: a_no_code_approach_to_machine_learning_with_snowflake_and_dataiku
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai
+language: en
 summary: This is an introduction to Dataiku and Snowflake
-categories: AI, Partner
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, AI, Dataiku
 
 
 # A No Code Approach to Machine Learning with Snowflake and Dataiku

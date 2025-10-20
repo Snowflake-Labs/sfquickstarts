@@ -1,11 +1,11 @@
 author: Charlie Hammond
 id: retail_snowflake_intelligence
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/product/platform
+language: en
 summary: This solution goes through Snowflake Intelligence with retail data.
-categories: Getting-Started, AI
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Retail
 
 # Retail Snowflake Intelligence with Cortex Agents
 <!-- ------------------------ -->

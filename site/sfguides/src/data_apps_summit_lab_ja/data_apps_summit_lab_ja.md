@@ -1,11 +1,11 @@
 author: 
 id: data_apps_summit_lab_ja
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: これはサンプルのSnowflakeガイドのカテゴリーです
-categories: featured,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, 日本語, Data Engineering, Twitter, ja 
 
 # Snowflakeマーケットプレイス、Snowpark、Streamlitによるデータアプリケーションの構築
 

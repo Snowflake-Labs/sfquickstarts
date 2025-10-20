@@ -1,10 +1,10 @@
 summary: Machine learning on unstructured data with Saturn Cloud and Snowflake
 id: machine_learning_with_saturncloud
-categories: data-science-&-ml,data-engineering,partner-integrations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 environments: Web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
-tags: Machine Learning, Computer Vision
 
 # Machine Learning on Unstructured Data with Saturn Cloud and Snowflake
 

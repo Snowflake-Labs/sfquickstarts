@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Apply categories from Excel mapping and remove categories/tags lines from markdown files.
+"""Apply categories from CSV mapping and remove categories/tags lines from markdown files.
 
-Reads Excel at site/sfguides/src/_SCRIPTS/language_data.xlsx and for each row maps the id (col A)
-to the category values located in columns M, N, Q and T (Excel 1-based). Then walks
-site/sfguides/src and for every .md file removes existing lines that start with
-"categories:" or "tags:" and inserts a new "categories: <values>" line immediately
+Reads CSV at site/sfguides/src/_SCRIPTS/language_data.csv and for each row maps the id (col A)
+to the category values located in columns G, H, I, L, O, P, S, T, W, and X (Excel 1-based).
+Then walks site/sfguides/src and for every .md file removes existing lines that start
+with "categories:" or "tags:" and inserts a new "categories: <values>" line immediately
 after the file's "id:" header line. Generates a CSV report at
 site/sfguides/scripts/categories_update_report.csv with per-file details.
 
@@ -19,7 +19,7 @@ import sys
 try:
     import pandas as pd
 except Exception:
-    print("pandas not found. Please install pandas and openpyxl: pip3 install pandas openpyxl")
+    print("pandas not found. Please install pandas: pip3 install pandas")
     sys.exit(1)
 
 
@@ -39,66 +39,30 @@ def find_repo_root():
 REPO_ROOT = find_repo_root()
 SRC_ROOT = REPO_ROOT / 'site' / 'sfguides' / 'src'
 SCRIPTS_DIR = REPO_ROOT / 'site' / 'sfguides' / 'scripts'
-XLSX_PATH = REPO_ROOT / 'site' / 'sfguides' / 'src' / '_SCRIPTS' / 'language_data.xlsx'
+# --- UPDATED to point to .csv file ---
+DATA_PATH = REPO_ROOT / 'site' / 'sfguides' / 'src' / '_SCRIPTS' / 'language_data.csv'
 REPORT_PATH = SCRIPTS_DIR / 'categories_update_report.csv'
 
 
-def load_mapping(excel_path: Path):
-    # Read the Excel file into a DataFrame
-    df = pd.read_excel(excel_path, engine='openpyxl', header=0)
+def load_mapping(csv_path: Path):
+    # --- UPDATED to read a CSV file ---
+    try:
+        df = pd.read_csv(csv_path, header=0)
+    except Exception as e:
+        print(f"Error reading CSV file at {csv_path}: {e}")
+        print("Please ensure the file is a valid CSV and the path is correct.")
+        sys.exit(1)
 
     # The ID column is expected to be the first column (column A). We'll take its name.
     if df.shape[1] == 0:
-        raise RuntimeError('Excel file appears empty')
-
-    id_col = df.columns[0]
-
-    # Excel columns G,H,I,L,O,P,S,T,W,X are 7,8,9,12,15,16,19,20,23,24 (1-based).
-    # Convert to 0-based indexes: 6, 7, 8, 11, 14, 15, 18, 19, 22, 23.
-    # Added index 11 for Column L.
-    desired_idx = [6, 7, 8, 11, 14, 15, 18, 19, 22, 23]
-
-    # Build mapping id -> list(categories)
-    mapping = {}
-    for _, row in df.iterrows():
-        raw_id = row[id_col]
-        if pd.isna(raw_id):
-            continue
-        guide_id = str(raw_id).strip()
-        cats = []
-        for idx in desired_idx:
-            if idx < len(df.columns):
-                col_name = df.columns[idx]
-                val = row[col_name]
-                if pd.notna(val):
-                    text = str(val).strip()
-                    if text:
-                        cats.append(text)
-        # Normalize and deduplicate while preserving order
-        seen = set()
-        uniq = []
-        for c in cats:
-            if c not in seen:
-                seen.add(c)
-                uniq.append(c)
-        mapping[guide_id] = uniq
-
-    return mapping
-
-
-    # Read the Excel file into a DataFrame
-    df = pd.read_excel(excel_path, engine='openpyxl', header=0)
-
-    # The ID column is expected to be the first column (column A). We'll take its name.
-    if df.shape[1] == 0:
-        raise RuntimeError('Excel file appears empty')
+        raise RuntimeError('CSV file appears empty')
 
     id_col = df.columns[0]
 
     # --- UPDATED LOGIC HERE ---
-    # Excel columns G,H,I,O,P,S,T,W,X are 7,8,9,15,16,19,20,23,24 (1-based).
-    # Convert to 0-based indexes: 6, 7, 8, 14, 15, 18, 19, 22, 23.
-    desired_idx = [6, 7, 8, 14, 15, 18, 19, 22, 23]
+    # Excel columns G,H,I,L,O,P,S,T,W,X are 7,8,9,12,15,16,19,20,23,24 (1-based).
+    # Convert to 0-based indexes: 6, 7, 8, 11, 14, 15, 18, 19, 22, 23.
+    desired_idx = [6, 7, 8, 11, 14, 15, 18, 19, 22, 23]
     # --- END UPDATED LOGIC ---
 
     # Build mapping id -> list(categories)
@@ -128,46 +92,7 @@ def load_mapping(excel_path: Path):
 
     return mapping
 
-
-    # Read the Excel file into a DataFrame
-    df = pd.read_excel(excel_path, engine='openpyxl', header=0)
-
-    # The ID column is expected to be the first column (column A). We'll take its name.
-    if df.shape[1] == 0:
-        raise RuntimeError('Excel file appears empty')
-
-    id_col = df.columns[0]
-
-    # Excel columns M,N,Q,T are 13,14,17,20 (1-based). Convert to 0-based indexes.
-    desired_idx = [12, 13, 16, 19]
-
-    # Build mapping id -> list(categories)
-    mapping = {}
-    for _, row in df.iterrows():
-        raw_id = row[id_col]
-        if pd.isna(raw_id):
-            continue
-        guide_id = str(raw_id).strip()
-        cats = []
-        for idx in desired_idx:
-            if idx < len(df.columns):
-                col_name = df.columns[idx]
-                val = row[col_name]
-                if pd.notna(val):
-                    text = str(val).strip()
-                    if text:
-                        cats.append(text)
-        # Normalize and deduplicate while preserving order
-        seen = set()
-        uniq = []
-        for c in cats:
-            if c not in seen:
-                seen.add(c)
-                uniq.append(c)
-        mapping[guide_id] = uniq
-
-    return mapping
-
+# --- REMOVED the two duplicate/incorrect definitions of load_mapping ---
 
 def process_markdown_files(mapping):
     rows = []
@@ -280,12 +205,13 @@ def write_report(rows, out_path: Path):
 
 
 def main():
-    if not XLSX_PATH.exists():
-        print(f'Excel mapping not found at {XLSX_PATH}')
+    # --- UPDATED to check for the .csv file path ---
+    if not DATA_PATH.exists():
+        print(f'Data mapping file not found at {DATA_PATH}')
         sys.exit(1)
 
-    print(f'Loading mapping from {XLSX_PATH}...')
-    mapping = load_mapping(XLSX_PATH)
+    print(f'Loading mapping from {DATA_PATH}...')
+    mapping = load_mapping(DATA_PATH)
     print(f'Loaded {len(mapping)} mappings')
 
     print('Scanning markdown files and applying categories...')

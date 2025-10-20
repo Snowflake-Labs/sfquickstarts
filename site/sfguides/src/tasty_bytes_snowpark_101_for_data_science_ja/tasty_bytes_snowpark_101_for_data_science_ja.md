@@ -1,11 +1,11 @@
 author: Marie Coolsaet
 id: tasty_bytes_snowpark_101_for_data_science_ja
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: jp
 summary: Tasty Bytes - データサイエンスのためのSnowpark入門
-categories: Tasty-Bytes, Getting-Started, Featured, Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Snowpark, Machine Learning, Streamlit, ja
 
 # Tasty Bytes - データサイエンスのためのSnowpark入門
 
