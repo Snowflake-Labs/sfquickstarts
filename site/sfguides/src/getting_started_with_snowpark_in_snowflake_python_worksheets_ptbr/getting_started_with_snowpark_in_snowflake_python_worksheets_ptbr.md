@@ -1,10 +1,10 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_ptbr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/platform
+language: pt_br
 summary: Introdução ao Snowpark em planilhas Python para Snowflake
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets, ptbr
 authors: Dash Desai
 
 # Introdução ao Snowpark em planilhas Python para Snowflake

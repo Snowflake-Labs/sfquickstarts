@@ -1,11 +1,11 @@
 author: marzillo-snow, quilpie
 id: getting_started_with_cortex_agents_and_amazon_q
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
+language: en
 summary: This is a quickstart for using Cortex Agents and Amazon Q
-categories: Getting-Started, data-science, data-engineering, AWS, cortex, genai, Amazon, Q, search, LLM, copilot, Agents, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Copilot, Amazon, Agents
 
 # Getting Started with Cortex Agents and Amazon Q
 <!-- ------------------------ -->

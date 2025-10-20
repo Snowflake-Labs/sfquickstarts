@@ -1,11 +1,11 @@
 author: Luke Ambrosetti (special thanks: Brian Hess, Brad Culberson)
 id: snowflake_personalization_api
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: A guide to building and running a custom point-lookup API Powered by Snowflake and Python/Flask
-categories: getting-started,app-development,architecture-patterns,marketing,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Personalization, API, Marketing
 
 # Build a Real-Time Personalization API with Snowflake
 <!-- ------------------------ -->

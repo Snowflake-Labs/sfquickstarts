@@ -1,11 +1,11 @@
 author: Sreedhar Bolneni, Venkatesh Sekar, Tushar Sarde
 id: processing_hl7_v2_messages_with_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This is a guide to get familiarised with how to ingest and process HL7 V2.x messages using Snowflake Data Programmability features.
-categories: data-engineering,architecture-patterns,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Data Lake, Unstructured Data, Health & Life Sciences, HL7, FHIR 
 
 # Getting Started - Processing HL7 V2 Messages with Snowflake
 <!-- ------------------------ -->

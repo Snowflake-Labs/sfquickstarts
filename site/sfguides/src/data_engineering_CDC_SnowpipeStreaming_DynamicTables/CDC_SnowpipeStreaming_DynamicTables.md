@@ -1,10 +1,10 @@
 id: CDC_SnowpipeStreaming_DynamicTables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Learn how to use Snowpipe Streaming and Dynamic Tables for Real-Time Streaming (CDC use case)
-categories: Data-Engineering
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Streaming, CDC, Snowpipe, Dynamic Tables, Financial Services
 authors: steven.maser@snowflake.com 
 
 # Snowpipe Streaming and Dynamic Tables for Real-Time Ingestion (CDC Use Case)

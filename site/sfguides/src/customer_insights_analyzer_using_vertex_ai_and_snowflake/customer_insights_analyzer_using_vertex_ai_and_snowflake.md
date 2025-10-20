@@ -1,11 +1,11 @@
 author: Matt Marzillo
 id: customer_insights_analyzer_using_vertex_ai_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: This is a quickstart for using Snowflake with Google for Generative AI
-categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, LLM, GenAI, Google, GCP, Streamlit
 
 # Getting Started with Google, Snowflake and Streamlit for Generative AI
 <!-- ------------------------ -->

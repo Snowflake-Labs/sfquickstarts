@@ -1,12 +1,12 @@
 
 author: jeff ellerbee
 id: altr_get_started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance
+language: en
 summary: ALTR Quickstart - Data Access Control. Connect ALTR to snowflake and create an automatically enforced role based data access policy.
-categories: cybersecurity
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Steward, Data Owner, Data Security 
 
 # ALTR Quickstart - Data Access Control
 

@@ -1,11 +1,11 @@
 author: Swathi Jasti
 id: developing_tasty_bytes_react_native_application_with_snowflake_sql_api_it
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: Sviluppare una data application React Native per Tasty Bytes con Snowflake, SQL API
-categories: Tasty-Bytes, Guida-introduttiva, sviluppo-app
 environments: web
 status: Pubblicato
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Guida introduttiva, Data Applications, Data Engineering, API, it 
 
 # Tasty Bytes - Sviluppare una data application React Native con la SQL API
 <!-- ------------------------ -->

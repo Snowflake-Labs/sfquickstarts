@@ -1,10 +1,9 @@
 summary: Getting Started with Python
 id: getting_started_with_python
-categories: getting-started
-tags: python
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 status: Published
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Data Engineering, SnowSQL, Python
 
 # Getting Started with Python
 <!-- ------------------------ -->

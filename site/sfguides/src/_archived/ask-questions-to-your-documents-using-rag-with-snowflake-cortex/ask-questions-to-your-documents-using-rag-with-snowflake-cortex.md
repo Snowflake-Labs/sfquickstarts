@@ -1,9 +1,9 @@
 author: Carlos Carrero
 id: asking_questions_to_your_own_documents_with_snowflake_cortex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-search
+language: en
 summary: Step-by-step guide on how to build a document search assistant using vector embeddings in Cortex AI.
-categories: featured,getting-started,data-science, gen-ai 
 environments: web 
-tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings, Getting Started
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 

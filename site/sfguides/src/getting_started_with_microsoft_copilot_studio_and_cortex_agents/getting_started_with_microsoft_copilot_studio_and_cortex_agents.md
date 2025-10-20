@@ -1,11 +1,11 @@
 author: Matt Marzillo
 id: getting_started_with_microsoft_copilot_studio_and_cortex_agents
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: This is a quickstart showing users how use Microsoft Copilot Studio with Snowflake Cortex Agents
-categories: AI, Cortex, Microsoft, Azure, Agents, Copilot
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: AI, Microsoft, Agents, Cortex, Copilot, chatbot
 
 # Getting Started with Microsoft Copilot Studio and Snowflake Cortex Agents
 <!-- ------------------------ -->

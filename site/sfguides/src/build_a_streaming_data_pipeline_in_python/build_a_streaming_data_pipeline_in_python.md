@@ -1,11 +1,11 @@
 author: Brad Culberson, Keith Gaputis
 id: build_a_streaming_data_pipeline_in_python
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: A guide to using Rowset API, Dynamic Tables, and Streamlit to build a streaming data pipeline in Python
-categories: data-engineering,app-development,streamlit
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Data Applications, Snowpark, Python
 
 # Build a Streaming Data Pipeine in Python
 

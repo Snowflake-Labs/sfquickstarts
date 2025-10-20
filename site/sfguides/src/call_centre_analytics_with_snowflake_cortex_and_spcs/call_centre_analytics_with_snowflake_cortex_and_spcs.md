@@ -1,11 +1,11 @@
 author: Phani Raj, Karuna Nadadur
 id: call_centre_analytics_with_snowflake_cortex_and_spcs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
+language: en
 summary: This guide will provide step-by-step details for building call centre analytics using Snowflake Cortex LLM functions and Snowpark Container Services
-categories: Getting-Started,data-science, gen-ai
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Gen AI, Data Engineering, Snowpark , Python , Snowflake Cortex, Snowpark Container Services,Vectors, Embeddings,Streamlit
 
 # Call Centre Analytics with Snowflake Cortex LLM and Snowpark Container Services
 <!-- ------------------------ -->

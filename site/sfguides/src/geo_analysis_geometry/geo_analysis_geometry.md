@@ -1,11 +1,11 @@
 author: Peter Popov, Oleksii Bielov
 id: geo_analysis_geometry
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
+language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Geospatial, Python UDFs
 
 # Geospatial Analysis using Geometry and Geography Data Type
 <!-- ----------------------------------------- -->

@@ -1,9 +1,9 @@
 summary: Getting Started With External Functions on AWS
 id: getting_started_external_functions_aws
-categories: getting-started,partner-integrations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 status: Published
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Data Engineering, AWS, External Functions
 
 # Getting Started With External Functions on AWS
 <!-- ------------------------ -->

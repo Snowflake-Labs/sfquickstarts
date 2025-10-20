@@ -1,11 +1,11 @@
 author: Shreya Agrawal
 id: getting_started_with_search_optimization
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Quickstart guide for using Search Optimization
-categories: getting-started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Search Optimization, Search, Query acceleration, performance, speed 
 
 # Getting started with Search Optimization
 

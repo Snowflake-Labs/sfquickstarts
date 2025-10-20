@@ -1,11 +1,11 @@
 author: Josh Hall
 id: from-clicks-to-cortex-build-ai-ready-data-pipelines-with-coalesce-on-snowflake-in-a-snap
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Learn how to leverage Coalesce Marketplace to extend any of your data projects effortlessly.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Coalesce
 
 # From Clicks to Cortex Build AI Ready Data Pipelines with Coalesce on Snowflake in a Snap
 

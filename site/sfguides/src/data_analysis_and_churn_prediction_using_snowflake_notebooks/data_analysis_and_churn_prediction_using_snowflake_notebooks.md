@@ -1,11 +1,11 @@
 author: Joviane Bellegarde
 id: data_analysis_and_churn_prediction_using_snowflake_notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/business-intelligence
+language: en
 summary: Data Analysis and Churn Prediction Using Snowflake Notebooks
-categories: Churn, Prediction, Getting-Started
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Churn, Prediction, Notebooks
 
 # Data Analysis and Churn Prediction Using Snowflake Notebooks
 <!-- ------------------------ -->

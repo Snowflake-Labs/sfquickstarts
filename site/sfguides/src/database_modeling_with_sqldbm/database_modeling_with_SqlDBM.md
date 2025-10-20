@@ -1,10 +1,10 @@
 summary: Begin modeling your Snowflake database online with SqlDBM 
 id: database_modeling_with_sqldbm
-categories: data-engineering,partner-integrations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Modeling, Data Engineering, CICD 
 authors: Serge Gershkovich
 
 # Cloud-native Database Modeling with SqlDBM 

@@ -1,11 +1,11 @@
 authors: Jeremiah Hansen
 id: data_engineering_with_notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowflake Notebooks
-categories: featured,data-engineering,notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Snowpark, Python, Notebooks
 
 # Getting Started with Data Engineering using Snowflake Notebooks
 <!-- ------------------------ -->
@@ -17,10 +17,6 @@ Notebooks are a very popular tool that are used to do everything from ad-hoc exp
 This Quickstart will focus on how to build Python data engineering pipelines using Snowflake native Notebooks! Additionally, it will provide all the details needed to manage and deploy those Notebooks through an automated CI/CD pipeline from development to production! Here's a quick visual overview of what we'll accomplish in this Quickstart:
 
 <img src="assets/quickstart_overview.png" width="800" />
-
-> aside negative
-> 
-> **Note** - As of 6/11/2024, the [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) are in Public Preview.
 
 ### What You’ll Learn
 * How to ingest custom file formats (like Excel) with Snowpark from an external stage (such as an S3 bucket) into a Snowflake table
@@ -182,7 +178,7 @@ To put this in context, we are on step **#4** in our data flow overview:
 ### Git in Snowsight
 When you ran the setup cells in the `00_start_here.ipynb` Notebook in the previous step, you created a Git Integration in Snowflake for your forked GitHub repository! Please see [Using a Git repository in Snowflake](https://docs.snowflake.com/en/developer-guide/git/git-overview) for more details.
 
-You can browse your Git repository in Snowsight, by using our Snowsight Git integration features. To do that, click on "Data" -> "Databases" in the left navigation. Then click on "DEMO_DB" database, then "INTEGRATIONS" schema, then "Git Repositories" and finally "DEMO_GIT_REPO". You will see the details and content of your Git repository in Snowsight. You can change branches and browse the files in the repo by clicking on the folder names to drill down.
+You can browse your Git repository in Snowsight, by using our Snowsight Git integration features. To do that, click on "Catalog" -> "Database Explorer" in the left navigation. Then click on "DEMO_DB" database, then "INTEGRATIONS" schema, then "Git Repositories" and finally "DEMO_GIT_REPO". You will see the details and content of your Git repository in Snowsight. You can change branches and browse the files in the repo by clicking on the folder names to drill down.
 
 ### Deploy Notebooks
 Scroll down to the "Step 04 Deploy to Dev" section of the `00_start_here.ipynb` Notebook and run the Python cell there. This cell will deploy both the `06_load_excel_files` and `07_load_daily_city_metrics` Notebooks to our `DEV_SCHEMA` schema (and will prefix both workbook names with `DEV_`).
@@ -221,11 +217,11 @@ That's it... we don't have to do anything from here to keep this data updated. T
 ## Load Location and Order Detail
 Duration: 8
 
-During this step we will be loading data from two Excel files in S3 into the `LOCATION` and `ORDER_DETAIL` tables. To do this we'll take advantage of the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python#reading-files). For more details on this please see my related blog post [Simplify data ingestion with Snowpark Python file access](https://medium.com/snowflake/simplify-data-ingestion-with-snowpark-python-file-access-f2bc0e4cd887).
+During this step we will be loading data from two Excel files in S3 into the `LOCATION` and `ORDER_DETAIL` tables. To do this we'll take advantage of the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-sprocs#reading-dynamically-specified-files-with-snowflakefile). For more details on this please see my related blog post [Simplify data ingestion with Snowpark Python file access](https://medium.com/snowflake/simplify-data-ingestion-with-snowpark-python-file-access-f2bc0e4cd887).
 
 > aside negative
 > 
-> **Note** - As of 6/11/2024, the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python#reading-files), which relies on the `SnowflakeFile` class, does not yet work inside Notebooks. So we are using a workaround of copying the file locally to the Notebook and then processing from there.
+> **Note** - As of 6/11/2024, the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-sprocs#reading-dynamically-specified-files-with-snowflakefile), which relies on the `SnowflakeFile` class, does not yet work inside Notebooks. So we are using a workaround of copying the file locally to the Notebook and then processing from there.
 
 To put this in context, we are on step **#6** in our data flow overview:
 
@@ -267,11 +263,11 @@ So we're able to take the results of a SQL query and use them in Python! And thi
 
 ### Dynamic File Access
 
-Like I mentioned at the beginning of this section, we're able to read on process Excel files with the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python#reading-files). And this same principle applies to more than just Excel files, you can use it to process any file format you'd like. For more details on this please see my related blog post [Simplify data ingestion with Snowpark Python file access](https://medium.com/snowflake/simplify-data-ingestion-with-snowpark-python-file-access-f2bc0e4cd887).
+Like I mentioned at the beginning of this section, we're able to read on process Excel files with the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-sprocs#reading-dynamically-specified-files-with-snowflakefile). And this same principle applies to more than just Excel files, you can use it to process any file format you'd like. For more details on this please see my related blog post [Simplify data ingestion with Snowpark Python file access](https://medium.com/snowflake/simplify-data-ingestion-with-snowpark-python-file-access-f2bc0e4cd887).
 
 > aside negative
 > 
-> **Note** - As of 6/11/2024, the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-python#reading-files), which relies on the `SnowflakeFile` class, does not yet work inside Notebooks. So we are using a workaround of copying the file locally to the Notebook and then processing from there.
+> **Note** - As of 6/11/2024, the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-sprocs#reading-dynamically-specified-files-with-snowflakefile), which relies on the `SnowflakeFile` class, does not yet work inside Notebooks. So we are using a workaround of copying the file locally to the Notebook and then processing from there.
 
 
 <!-- ------------------------ -->
@@ -411,8 +407,8 @@ Now, after your DAG is deployed, all the tasks in your DAG will be running as pe
 
 Snowflake provides some rich task observability features in the Snowsight UI. Try it out for yourself by following these steps:
 
-1. In the Snowsight navigation menu, click **Data** » **Databases**.
-1. In the right pane, using the object explorer, navigate to the `DEMO_DB` database and `DEV_SCHEMA` schema.
+1. In the Snowsight navigation menu, click **Catalog** » **Database Explorer**.
+1. In the right pane, using the database explorer, navigate to the `DEMO_DB` database and `DEV_SCHEMA` schema.
 1. For the selected schema, select and expand **Tasks**.
 1. Select a task. Task information is displayed, including **Task Details**, **Graph**, and **Run History** sub-tabs.
 1. Select the **Graph** tab. The task graph appears, displaying a hierarchy of child tasks.
@@ -527,7 +523,7 @@ We're running two commands for the deployment, and both are calling the Snowflak
 
 ### Snowflake CLI
 
-As discussed above we're leveraging the Snowflake CLI in our CI/CD pipeline to help with the deployment. The [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) is an open-source command-line tool explicitly designed for developer-centric workloads in addition to SQL operations.
+As discussed above we're leveraging the Snowflake CLI in our CI/CD pipeline to help with the deployment. The [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) is an open-source command-line tool explicitly designed for developer-centric workloads in addition to SQL operations.
 
 In addition to running SQL commands and scripts, the Snowflake CLI allows developers to create, manage, update, and view Snowflake apps such as:
 * Snowpark UDFs and Sprocs
@@ -546,8 +542,8 @@ Toggle back to the `00_start_here` Notebook and scroll back to the "Step 08 Orch
 
 Finally, to execute the production version of the Task DAG, follow the steps we did in step 8.
 
-1. In the Snowsight navigation menu, click **Data** » **Databases**.
-1. In the right pane, using the object explorer, navigate to the `DEMO_DB` database and `PROD_SCHEMA` schema.
+1. In the Snowsight navigation menu, click **Catalog** » **Database Explorer**.
+1. In the right pane, using the database explorer, navigate to the `DEMO_DB` database and `PROD_SCHEMA` schema.
 1. For the selected schema, select and expand **Tasks**.
 1. Select the root `DEMO_DAG` task.
 1. Select the **Graph** tab.
@@ -588,8 +584,7 @@ Hopefully you now have the building blocks, and examples, you need to get starte
 * [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-notebooks)
 * [Data Engineering Pipelines with Snowpark Python](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html?index=..%2F..index#0) (Advanced Quickstart)
 * [About Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
-* [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index)
+* [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
 * [Download Reference Architecture](https://www.snowflake.com/content/dam/snowflake-site/developers/2024/07/Getting-Started-with-Data-Engineering-using-Snowflake-Notebooks.pdf)
 * [Read Medium Blog](https://medium.com/snowflake/building-data-engineering-pipelines-with-snowpark-python-e14f2b525510)
 * [Watch the Demo](https://youtu.be/1zdciOSf8mA?list=TLGGrn_7WMr68zAyNDA5MjAyNQ)
-  

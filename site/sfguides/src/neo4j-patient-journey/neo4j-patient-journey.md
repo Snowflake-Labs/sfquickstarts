@@ -1,11 +1,11 @@
 author: corydon baylor
 id: finding-similar-patients
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/analytics
+language: en
 summary: How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake
-categories: getting-started,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter
 
 # Identify Similar Patient Journeys in Healthcare Data with Neo4j Graph Analytics
 

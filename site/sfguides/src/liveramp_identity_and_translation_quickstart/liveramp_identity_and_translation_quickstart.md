@@ -1,10 +1,10 @@
 id: liveramp_identity_and_translation_quickstart
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Identity Resolution and Transcoding with LiveRamp and Snowflake
-categories: Marketing,Getting-Started,Partner-Integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, MarTech, Marketing
 
 # Identity Resolution and Transcoding with LiveRamp and Snowflake
 <!-- ------------------------ -->

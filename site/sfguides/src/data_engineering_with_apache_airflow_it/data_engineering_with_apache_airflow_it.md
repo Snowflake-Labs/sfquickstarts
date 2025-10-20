@@ -1,11 +1,11 @@
 autors: Adrian Lee
 id: data_engineering_with_apache_airflow_it
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: questo è un esempio di guida di Snowflake
-categories: data-engineering, modelli-di-architettura, integrazioni-dei-partner
 environments: web
 status: Pubblicato
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Guida introduttiva, Data Engineering, dbt, Airflow, it  
 
 # Data Engineering con Apache Airflow, Snowflake e dbt
 <!-- ------------------------ -->

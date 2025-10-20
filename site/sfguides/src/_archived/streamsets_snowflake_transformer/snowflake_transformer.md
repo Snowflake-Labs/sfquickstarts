@@ -1,10 +1,10 @@
 summary: A Dive into Slowly Changing Dimensions with Snowpark
 id: snowflake_transformer
-categories: data-engineering,partner-integrations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Snowpark
 authors: Brenna Buuck, StreamSets
 
 # A Dive Into Slowly Changing Dimensions with Snowpark and StreamSets

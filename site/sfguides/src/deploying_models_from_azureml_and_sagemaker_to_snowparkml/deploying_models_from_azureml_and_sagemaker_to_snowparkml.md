@@ -1,10 +1,10 @@
 id: deploying_models_from_azureml_and_sagemaker_to_snowparkml
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: Learning how to easily access models from AzureML and Amazon Sagemaker then deploy them to Snowpark ML registries
-categories: featured,getting-started,snowpark, azure, aws, streamlit, genai, ai, ml, azureml
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, AI, Snowpark, Azure, AWS
 authors: Matt Marzillo,
 
 # Deploying Models from AzureML and Sagemaker to Snowpark ML 

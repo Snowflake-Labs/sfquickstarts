@@ -1,11 +1,11 @@
 author: Jacob Kranzler
 id: tasty_bytes_introduction_fr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: fr
 summary: Présentation de Tasty Bytes
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake, Premiers pas, Tasty Bytes, Débuter avec Snowflake, fr  
 
 # Présentation de Tasty Bytes
 <!-- ------------------------ -->

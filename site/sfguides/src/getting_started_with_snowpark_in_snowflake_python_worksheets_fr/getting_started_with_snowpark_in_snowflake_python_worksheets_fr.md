@@ -1,10 +1,10 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_fr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/platform
+language: en
 summary: Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets, Premiers pas, Feuilles de calcul Python, fr  
 authors: Dash Desai
 
 # Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake

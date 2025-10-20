@@ -1,1 +1,10 @@
 This folder has reference files that are used to run the Archive script in /sfguides/scripts folder
+
+
+
+To update the language tags:
+python3 site/sfguides/scripts/language_tags/insert_language_tags.py
+
+
+To update the categories list:
+./site/sfguides/scripts/categories/apply_categories_from_xlsx.py

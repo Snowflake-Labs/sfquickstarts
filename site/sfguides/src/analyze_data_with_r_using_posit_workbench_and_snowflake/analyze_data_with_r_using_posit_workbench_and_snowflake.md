@@ -1,11 +1,11 @@
 author: Daniel Chen, Sara Altman
 id: analyze_data_with_r_using_posit_workbench_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics
+language: en
 summary: Analyze Data with R using Posit Workbench and Snowflake
-categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, R, Posit Workbench, Native Applications
 
 #  Analyze Data with R using Posit Workbench and Snowflake
 

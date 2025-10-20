@@ -1,11 +1,11 @@
 author: Fady Heiba, Amit Gupta
 id: monitor_schema_drift_in_data_shares_with_sharewatch
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Step-by-step to set up Sharewatch ( a schema drift monitor for data shares)
-categories: Data-Sharing, DevOps, Streamlit 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Collaboration, Schema Drift, Data Sharing, Streamlit, Streamlit in Snowflake, DevOps, DataOps, Data Sharing Best Practices
 
 # Monitor Schema Drift in Data Shares with Sharewatch
 <!-- ------------------------ -->

@@ -1,11 +1,11 @@
 author: Caleb Baechtold
 id: intro_to_snowpark_container_services
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
+language: en
 summary: Through this quickstart guide, you will explore Snowpark Container Services
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Containers, Snowpark
 
 # Intro to Snowpark Container Services
 <!-- ------------------------ -->

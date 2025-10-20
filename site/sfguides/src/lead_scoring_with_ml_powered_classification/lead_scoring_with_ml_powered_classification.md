@@ -1,12 +1,12 @@
 author: Jim Warner
 id: lead_scoring_with_ml_powered_classification
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Shows how marketers can predict the value of leads and new
 customers to make audiences for activation.
-categories: data-science-&-ml, solution-examples, marketing
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, AdTech, Machine Learning
 
 # Lead Scoring with ML-Powered Classification
 <!-- ------------------------ -->

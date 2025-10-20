@@ -1,11 +1,11 @@
 author: Carston Hernke
 id: viewing-location-data-on-an-interactive-map
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app.
-categories: data-visualization,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Geospatial, Visualization, Native Apps
 
 # Viewing Location Data on an Interactive Map
 <!-- ------------------------ -->

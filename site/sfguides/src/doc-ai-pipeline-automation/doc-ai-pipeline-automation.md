@@ -1,11 +1,11 @@
 author: Sarathi Balakrishnan
 id: doc-ai-pipeline-automation
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/document-ai
+language: en
 summary: Automate document processing using Snowflake Document AI
-categories: document-ai, Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 
 # Document AI Pipeline Automation

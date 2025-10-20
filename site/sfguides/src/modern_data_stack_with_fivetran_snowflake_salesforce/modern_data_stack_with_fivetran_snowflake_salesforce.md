@@ -1,11 +1,11 @@
 author: David Hrncir
 id: modern_data_stack_with_fivetran_snowflake_salesforce
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
+language: en
 summary: Lab to demonstrate the ease of use to ingest data from Salesforce to Snowflake through Fivetran with insights dashboard from dbt models.
-categories: Getting-Started, marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Analytics, Data Engineering, Fivetran, Salesforce, dbt
 
 # Fivetran - Automate Salesforce Insights: Source, Target, Transformations, Dashboard...NO CODE
 <!-- ------------------------ -->

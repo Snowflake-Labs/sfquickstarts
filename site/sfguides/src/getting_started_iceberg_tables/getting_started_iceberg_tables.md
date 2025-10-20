@@ -1,11 +1,11 @@
 author: Scott Teal, Brad Culberson, Vino Duraisamy
 id: getting_started_iceberg_tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Lake, Iceberg
 
 # Getting Started with Iceberg Tables
 <!-- ------------------------ -->
