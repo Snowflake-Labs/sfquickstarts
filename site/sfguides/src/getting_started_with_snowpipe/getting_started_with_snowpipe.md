@@ -1,5 +1,6 @@
 summary: This guide will help you get started with Snowpipe.
 id: getting_started_with_snowpipe
+language: en
 categories: featured,getting-started
 environments: web
 status: Published

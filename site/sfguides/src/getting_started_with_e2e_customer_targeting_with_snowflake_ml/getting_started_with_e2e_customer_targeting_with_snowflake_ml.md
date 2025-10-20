@@ -1,5 +1,6 @@
 author: Ranjeeta Pegu
 id: getting-started-with-e2e-customer-targeting-with-snowflake-ml
+language: en
 summary: Learn how to leverage Snowflake ML to build and deploy propensity-based targeting models, enabling businesses to predict customer behaviors, segment audiences, and deliver personalized marketing campaigns at scale for maximum impact
 categories: Getting-Started
 environments: web

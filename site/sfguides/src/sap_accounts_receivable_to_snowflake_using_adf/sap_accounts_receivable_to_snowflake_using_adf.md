@@ -1,5 +1,6 @@
 author: sfc-gh-drichert, sfc-gh-ahuck
 id: sap_accounts_receivable_to_snowflake_using_adf
+language: en
 summary: Extract SAP data using Azure Data Factory and transform accounts receivable data in Snowflake.
 categories: solution-examples
 environments: web

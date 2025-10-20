@@ -1,4 +1,5 @@
 id: getting_started_with_snowpipe_streaming_azure_eventhubs
+language: en
 summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Azure Eventhubs.
 categories: getting-started
 environments: web

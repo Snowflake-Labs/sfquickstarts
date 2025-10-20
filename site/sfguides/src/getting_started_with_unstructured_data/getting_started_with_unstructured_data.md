@@ -1,5 +1,6 @@
 author: Scott Teal, Saurin Shah, Zohar Nissare-Houssen, Kesav Rayaprolu, Mauricio Rojas Fernandez
 id: getting_started_with_unstructured_data
+language: en
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
 categories: getting-started,architecture-patterns
 environments: web

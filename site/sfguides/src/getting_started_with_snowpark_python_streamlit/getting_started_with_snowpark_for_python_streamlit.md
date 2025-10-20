@@ -1,4 +1,5 @@
 id: getting_started_with_snowpark_for_python_streamlit
+language: en
 summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from the Snowflake Marketplace.
 categories: featured,getting-started,data-engineering,app-development
 environments: web

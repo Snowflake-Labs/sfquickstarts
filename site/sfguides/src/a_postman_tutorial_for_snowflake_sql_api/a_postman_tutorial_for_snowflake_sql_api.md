@@ -1,5 +1,6 @@
 author: Joyce
 id: a_postman_tutorial_for_snowflake_sql_api
+language: en
 summary: Explore the Snowflake SQL API with Postman
 categories: featured,getting-started,data-engineering,app-development,partner-integrations
 environments: web

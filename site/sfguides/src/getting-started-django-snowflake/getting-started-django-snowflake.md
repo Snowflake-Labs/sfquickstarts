@@ -1,5 +1,6 @@
 author: Gilberto Hernandez
 id: getting-started-django-snowflake
+language: en
 summary: How to get started with Snowflake as a backend for Django.
 categories: Getting-Started
 environments: web

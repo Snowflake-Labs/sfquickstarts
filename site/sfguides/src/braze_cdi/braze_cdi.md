@@ -1,5 +1,6 @@
 author: Luke Ambrosetti 
 id: braze_cdi
+language: en
 summary: Braze Cloud Data Ingestion
 categories: Marketing,Getting-Started,Partner-Integrations
 environments: web

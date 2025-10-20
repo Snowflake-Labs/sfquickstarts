@@ -1,4 +1,5 @@
 id: getting_started_with_streams_and_tasks
+language: en
 summary: Learn how to use streams and tasks with Snowflake.
 categories: featured,getting-started
 environments: web

@@ -1,5 +1,6 @@
 author: Chanin Nantasenamat
 id: bioinformatics-dashboard
+language: en
 summary: Learn how to build a bioinformatics solubility dashboard in Snowflake using Python, Pandas, and Streamlit to analyze molecular properties important for drug discovery.
 categories: streamlit, snowflake, featured
 environments: web

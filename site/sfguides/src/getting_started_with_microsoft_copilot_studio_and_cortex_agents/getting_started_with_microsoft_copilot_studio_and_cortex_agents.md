@@ -1,5 +1,6 @@
 author: Matt Marzillo
 id: getting_started_with_microsoft_copilot_studio_and_cortex_agents
+language: en
 summary: This is a quickstart showing users how use Microsoft Copilot Studio with Snowflake Cortex Agents
 categories: AI, Cortex, Microsoft, Azure, Agents, Copilot
 environments: web

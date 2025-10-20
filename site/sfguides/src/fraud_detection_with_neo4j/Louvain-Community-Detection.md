@@ -1,5 +1,6 @@
 author: corydon baylor
 id: finding-fraudulent-communities-with-neo4j
+language: en
 summary: How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake
 categories: getting-started,partner-integrations
 environments: web

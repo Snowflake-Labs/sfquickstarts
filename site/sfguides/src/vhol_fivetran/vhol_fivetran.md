@@ -1,5 +1,6 @@
 summary: Automating Data Pipelines to Drive Marketing Analytics with Snowflake & Fivetran
 id: vhol_fivetran 
+language: en
 categories: data-engineering,partner-integrations, marketing
 environments: web
 status: Published 

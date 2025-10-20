@@ -1,5 +1,6 @@
 author: Luke Merrick (lukemerrick.com)
 id: text_embedding_as_snowpark_python_udf
+language: en
 summary: Text Embedding As A Snowpark Python UDF
 categories: data-science-&-ml
 environments: web

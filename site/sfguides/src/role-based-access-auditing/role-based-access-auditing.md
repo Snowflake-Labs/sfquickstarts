@@ -1,5 +1,6 @@
 author: Chanin Nantasenamat
 id: role-based-access-auditing
+language: en
 summary: Build a utility notebook to audit and report on user roles and privileges in Snowflake Notebooks.
 categories: getting-started, cybersecurity, audit, streamlit, notebooks, snowflake, featured
 environments: web

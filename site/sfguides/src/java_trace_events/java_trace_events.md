@@ -1,5 +1,6 @@
 author: Alexey Litouka
 id: java_trace_events
+language: en
 summary: An example of emitting trace events from Java, and analyzing them
 categories: Getting-Started, Observability, Trail
 environments: web

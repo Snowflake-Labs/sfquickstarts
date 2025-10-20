@@ -1,5 +1,6 @@
 author: Stephen Franks
 id: a_no_code_approach_to_machine_learning_with_snowflake_and_dataiku
+language: en
 summary: This is an introduction to Dataiku and Snowflake
 categories: AI, Partner
 environments: web

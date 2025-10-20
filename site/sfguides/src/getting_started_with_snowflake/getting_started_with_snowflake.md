@@ -1,4 +1,5 @@
 id: getting_started_with_snowflake
+language: en
 summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data.
 categories: featured,getting-started
 environments: web

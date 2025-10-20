@@ -1,5 +1,6 @@
 author: 
 id: insights-to-action-with-snowflake-and-servicenow
+language: en
 summary: insights-to-action-with-snowflake-and-servicenow
 categories: Getting-Started
 environments: web

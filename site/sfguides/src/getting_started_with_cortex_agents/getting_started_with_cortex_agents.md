@@ -1,5 +1,6 @@
 author: James Cha-Earley, Mubashir Masood, Daniel Silva
 id: getting_started_with_cortex_agents
+language: en
 summary: Get started with Cortex Agents
 categories: Getting-Started
 environments: web

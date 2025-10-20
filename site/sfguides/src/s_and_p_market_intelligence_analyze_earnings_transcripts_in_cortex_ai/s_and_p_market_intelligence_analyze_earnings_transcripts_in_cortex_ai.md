@@ -1,5 +1,6 @@
 author: Mats Stellwall, Henry Chiang
 id: s_and_p_market_intelligence_analyze_earnings_transcripts_in_cortex_ai
+language: en
 summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake
 categories: Getting-Started
 environments: web

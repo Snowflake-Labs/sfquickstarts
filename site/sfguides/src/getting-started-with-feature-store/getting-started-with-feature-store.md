@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: intro-to-feature-store
+language: en
 summary: This guide give an overview of the key features of Snowflake Feature Store
 categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web

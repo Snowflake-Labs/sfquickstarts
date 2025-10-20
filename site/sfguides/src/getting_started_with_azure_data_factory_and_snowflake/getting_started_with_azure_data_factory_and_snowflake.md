@@ -1,5 +1,6 @@
 author: sfc-gh-etolotti
 id: getting_started_with_azure_data_factory_and_snowflake
+language: en
 summary: This is a quickstart for using Snowflake with Azure Data Factory
 categories: Getting-Started, data-engineering, Microsoft
 environments: web

@@ -1,5 +1,6 @@
 summary: Getting Started with Python
 id: getting_started_with_python
+language: en
 categories: getting-started
 tags: python
 status: Published

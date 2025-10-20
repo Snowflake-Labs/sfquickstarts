@@ -1,5 +1,6 @@
 author: Matt Harris (Snowflake) and Atalia Horenshtien (DataRobot)
 id: operationalizing_ai_with_snowflake_and_datarobot
+language: en
 summary: This is a sample Snowflake Guide!!
 categories: Data-Science-&-Ml
 environments: web

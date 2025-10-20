@@ -1,5 +1,6 @@
 author: Ember Crooks
 id: getting_started_with_snowflake_cluster_key_selection
+language: en
 summary: This is a hands-on guide to choosing a Snowflake clustering key
 categories: Resource-Optimization, Getting-Started, Snowflake
 environments: web

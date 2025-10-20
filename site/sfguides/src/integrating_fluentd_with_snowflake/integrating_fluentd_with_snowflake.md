@@ -1,5 +1,6 @@
 author: Security Field CTO Team
 id: integrating_fluentd_with_snowflake
+language: en
 summary: Walkthrough of using Fluentd to send system event logs to Snowflake as a part of a SIEM or log analysis workload
 categories: observability, cybersecurity
 environments: web

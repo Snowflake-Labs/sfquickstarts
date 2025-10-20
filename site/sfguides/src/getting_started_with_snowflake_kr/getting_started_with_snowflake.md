@@ -1,5 +1,6 @@
 summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data.
 id: getting_started_with_snowflake_kr
+language: en
 categories: undefined
 environments: web
 status: Hidden

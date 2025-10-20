@@ -1,5 +1,6 @@
 author: Kala Govindarajan
 id: defect_detection_using_distributed_pyTorch_with_snowflake_notebooks
+language: en
 summary: Perform multiclass defect detection on PCB images using distributed PyTorch training across multiple nodes and workers within a Snowflake Notebook. This guide utilizes a pre-trained Faster R-CNN model with ResNet50 as the backbone from PyTorch, fine-tuned for the task. The trained model is logged in the Snowpark Model Registry for future use. Additionally, a Streamlit app is developed to enable real-time defect detection on new images, making inference accessible and user-friendly
 categories: data-science-&-ml,Getting-Started
 environments: web

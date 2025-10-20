@@ -1,5 +1,6 @@
 author: Chanin Nantasenamat
 id: avalanche-customer-review-data-analytics
+language: en
 summary: Learn how to process and analyze customer review data using Snowflake's data processing capabilities and visualization tools. This guide demonstrates how to extract insights from unstructured text data through sentiment analysis and visualization.
 categories: getting-started, analytics, streamlit, notebooks, snowflake, featured
 environments: web

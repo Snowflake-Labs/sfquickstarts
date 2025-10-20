@@ -1,5 +1,6 @@
 author: Becky O’Connor
 id: building-geospatial-mult-layer-apps-with-snowflake-and-streamlit
+language: en
 summary: In this hands-on lab, you'll learn how to analyze and transform geospatial data in Snowflake, progressing from visualizing points on a map to building a multi-layer streamlit app.
 categories: Data-Sharing, streamlit
 environments: web

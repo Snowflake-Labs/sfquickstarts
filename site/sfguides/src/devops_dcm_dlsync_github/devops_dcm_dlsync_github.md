@@ -1,5 +1,6 @@
 author: Ytbarek Hailu
 id: devops_dcm_dlsync_github
+language: en
 summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging DLSync and GitHub
 categories: devops
 environments: web

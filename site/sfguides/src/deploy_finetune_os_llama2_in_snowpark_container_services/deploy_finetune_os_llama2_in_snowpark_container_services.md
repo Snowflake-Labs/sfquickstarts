@@ -1,5 +1,6 @@
 author: Dash Desai
 id: deploy_finetune_os_llama2_in_snowpark_container_services
+language: en
 summary: Through this quickstart guide, you will explore Snowpark Container Services
 categories: Getting-Started
 environments: web

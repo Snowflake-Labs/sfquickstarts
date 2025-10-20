@@ -1,5 +1,6 @@
 summary: Create predictive features with RudderStack and Snowflake without MLOps
 id: rudderstack_predictions
+language: en
 categories: data-science-&-ai,Getting-Started
 environments: web
 status: Draft

@@ -1,5 +1,6 @@
 author: Vino Duraisamy
 id: intro_to_data_engineering_python
+language: en
 summary: Through this quickstart guide, you will explore Data engineering in Snowflake using Python
 categories: Getting-Started
 environments: web

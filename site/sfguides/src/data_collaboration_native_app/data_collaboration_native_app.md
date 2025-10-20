@@ -1,5 +1,6 @@
 author: Tim Buchhorn
 id: data_collaboration_native_app
+language: en
 summary: This Quickstart will take you through how to build an ML Model in Snowlfake, and then share it via the Snowflake Native App Framework.
 categories: data-applications
 environments: web

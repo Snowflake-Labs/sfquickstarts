@@ -1,5 +1,6 @@
 author: Dustin Nest
 id: streamnative_snowflake_open_catalog_integration
+language: en
 summary: Use StreamNative to build a cost-effective Streaming Augmented Lakehouse, streaming Kafka messages directly to object storage in Iceberg format an connect to Snowflake Open Catalog.
 categories: Getting-Started, Partner-Integrations, Devops, Architecture-Patterns, Datagovernance
 environments: web

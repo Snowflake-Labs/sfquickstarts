@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: many-model-inference-in-snowflake
+language: en
 summary: Easily run inference on many models in Snowflake
 categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web

@@ -1,5 +1,6 @@
 author: Josh Reini, Elliot Botwick
 id: compare-and-evaluate-chunking-strategies
+language: en
 summary: Learn how to evaluate different chunking strategies for Retrieval Augmented Generation (RAG) applications using Snowflake's AI Observability features.
 categories: getting-started, streamlit, snowflake, featured
 environments: web

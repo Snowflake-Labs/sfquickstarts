@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_transformation_it
+language: it
 summary: Quickstart Tasty Bytes - Da zero a Snowflake - Trasformazione
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

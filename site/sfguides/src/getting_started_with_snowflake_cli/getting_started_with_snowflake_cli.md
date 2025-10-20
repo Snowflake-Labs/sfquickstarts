@@ -1,6 +1,7 @@
 author: Tomasz Urbaszek, Gilberto Hernandez, Bhumika Goel, David Wang
 summary: Getting Started with Snowflake CLI
 id:getting-started-with-snowflake-cli
+language: en
 categories: getting-started
 environments: web
 status: Published 

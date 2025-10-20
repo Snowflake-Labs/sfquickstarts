@@ -1,5 +1,6 @@
 author: Ariel Pohoryles
 id: compare_google,_bing,_facebook,_linkedin,_and_x_ads_campaigns_with_snowflake_and_rivery
+language: en
 summary: Unlock powerful cross-channel analytics by effortlessly combining Google, Bing, Facebook, LinkedIn, and X Ads data in Snowflake using Rivery’s no-code data integration, transforming your marketing strategy with real-time insights and optimized budget allocation
 categories: Getting-Started
 environments: web

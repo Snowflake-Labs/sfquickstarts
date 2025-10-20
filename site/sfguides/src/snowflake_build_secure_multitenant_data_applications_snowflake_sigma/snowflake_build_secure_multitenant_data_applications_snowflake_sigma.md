@@ -1,5 +1,6 @@
 author: Kelsey Hammock
 id: snowflake_build_secure_multitenant_data_applications_snowflake_sigma
+language: en
 summary: Snowflake Summit 2023 HoL with Sigma
 categories: Snowflake
 environments: web

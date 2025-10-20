@@ -1,5 +1,6 @@
 author: Mats Stellwall
 id: getting_started_with_snowpark_python_scikit
+language: en
 summary: Getting Started with Snowpark for Python with Scikit-learn
 categories: Getting-Started
 environments: web

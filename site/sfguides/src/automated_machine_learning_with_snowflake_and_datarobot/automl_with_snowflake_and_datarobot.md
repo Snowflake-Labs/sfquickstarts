@@ -1,5 +1,6 @@
 author: miles.adkins@snowflake.com
 id: automl_with_snowflake_and_datarobot
+language: en
 summary: This lab will walk you through how to use Snowflake and DataRobot to perform supervised machine learning.
 categories: data-science-&-ml,partner-integrations
 environments: web

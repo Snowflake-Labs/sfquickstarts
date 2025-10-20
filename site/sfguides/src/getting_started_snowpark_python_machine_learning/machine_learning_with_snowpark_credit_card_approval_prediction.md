@@ -1,5 +1,6 @@
 author: Michael Gorkow
 id: getting_started_snowpark_machine_learning
+language: en
 summary: Machine Learning with Snowpark Python for Credit Card Approval Prediction
 categories: data-science-&-ml,app-development,architecture-patterns,solution-examples
 environments: web

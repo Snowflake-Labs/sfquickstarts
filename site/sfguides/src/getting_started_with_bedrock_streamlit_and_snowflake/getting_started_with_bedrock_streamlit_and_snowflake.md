@@ -1,4 +1,5 @@
 id: getting_started_with_bedrock_streamlit_and_snowflake
+language: en
 summary: Getting Started with Bedrock, Streamlit and Snowflake using Snowpark External Access
 categories: featured,getting-started,app-development, bedrock, aws, streamlit, genai, ai, ml
 environments: web

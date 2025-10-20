@@ -3,8 +3,8 @@ This folder has reference files that are used to run the Archive script in /sfgu
 
 
 To update the language tags:
-python3 site/sfguides/scripts/Updating\ Language\ Tags/insert_language_tags.py
+python3 site/sfguides/scripts/language_tags/insert_language_tags.py
 
 
 To update the categories list:
-./site/sfguides/scripts/Updating\ Categories/apply_categories_from_xlsx.py
+./site/sfguides/scripts/categories/apply_categories_from_xlsx.py

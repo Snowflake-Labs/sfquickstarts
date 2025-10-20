@@ -1,5 +1,6 @@
 author: Constantin Stanca
 id: xml-processing-snowpark
+language: en
 summary: Snowflake guide on how to process XML with Snowpark
 categories: Getting-Started
 environments: web

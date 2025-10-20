@@ -1,5 +1,6 @@
 author: Carston Hernke
 id: viewing-location-data-on-an-interactive-map
+language: en
 summary: This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app.
 categories: data-visualization,partner-integrations
 environments: web

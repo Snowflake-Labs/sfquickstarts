@@ -1,5 +1,6 @@
 author: hope-wat
 id: leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web

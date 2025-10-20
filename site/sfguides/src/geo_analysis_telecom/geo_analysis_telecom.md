@@ -1,5 +1,6 @@
 author: Oleksii Bielov
 id: geo_analysis_telecom
+language: en
 summary: Geospatial Analysis for Telecom with Snowflake and Carto
 categories: Getting-Started
 environments: web

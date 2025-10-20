@@ -1,5 +1,6 @@
 author: Alex Engelmann
 id: transform_your_data_with_coalesce
+language: en
 summary: Accelerate Transformations with Coalesce and Snowflake
 categories: data-engineering,partner-integrations
 environments: web

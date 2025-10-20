@@ -1,5 +1,6 @@
 author: Vladi Bilonenko
 id: kepler_gl_maps_inside_snowflake
+language: en
 summary: This guide will help you create interactive maps directly within Snowflake using Kepler.gl
 categories: Getting-Started
 environments: web

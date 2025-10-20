@@ -1,5 +1,6 @@
 author: Rachel Blum
 id: building_scalable_time_series_forecasting_models_on_snowflake
+language: en
 summary: Automatically Build, Register and Run Inferencing on Paritioned Forecasting Models in Snowflake.
 categories: data-science, getting-started
 environments: web

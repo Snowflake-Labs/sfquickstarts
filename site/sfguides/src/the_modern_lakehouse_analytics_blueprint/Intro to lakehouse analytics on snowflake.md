@@ -1,5 +1,6 @@
 author: Vino Duraisamy
 id: modern_lakehouse_analytics_on_snowflake
+language: en
 summary: This quickstart guide shows you how to get started Lakehouse analytics use cases on Snowflake
 categories: Getting-Started
 environments: web

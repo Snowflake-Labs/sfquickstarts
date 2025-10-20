@@ -1,5 +1,6 @@
 author: Robert Maybin
 id: sundeck_opscenter
+language: en
 summary: This Guide shows you how to quickly get started with Sundeck OpsCenter on Snowflake, a free Native App which providing a range of tools to better understand, manage, and alert on Snowflake activity and spend.
 categories: Getting-Started
 environments: web

@@ -1,5 +1,6 @@
 author: Mats Stellwall, Doris Lee
 id: data_engineering_pipelines_with_snowpark_pandas
+language: en
 summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake
 categories: Getting-Started
 environments: web

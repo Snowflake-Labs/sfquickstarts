@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: train-an-xgboost-model-with-gpus-using-snowflake-notebooks
+language: en
 summary: This is a sample Snowflake Guide
 categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web

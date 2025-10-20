@@ -1,5 +1,6 @@
 author: Ripu Jain
 id: analyzing_sap_ap_with_nttdata_nativeapp_and_fivetran
+language: en
 summary: This is the Fivetran NTT SAP AP Guide
 categories: Getting-Started
 environments: web

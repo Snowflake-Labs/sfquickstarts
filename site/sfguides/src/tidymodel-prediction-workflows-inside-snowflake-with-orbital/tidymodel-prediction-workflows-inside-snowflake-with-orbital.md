@@ -1,5 +1,6 @@
 author: Sara Altman
 id: tidymodel-prediction-workflows-inside-snowflake-with-orbital
+language: en
 summary: Tidymodel Prediction Workflows Inside Snowflake with Orbital
 categories: Data-Science
 environments: web

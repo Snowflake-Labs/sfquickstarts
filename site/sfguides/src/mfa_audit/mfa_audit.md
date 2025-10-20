@@ -1,5 +1,6 @@
 author: Chanin Nantasenamat
 id: mfa-audit
+language: en
 summary: Learn how to build a Streamlit app in Snowflake Notebooks to audit and monitor Multi-Factor Authentication (MFA) status of users, with automated email notifications for non-compliant users.
 categories: featured, cybersecurity, data-engineering, streamlit
 environments: web

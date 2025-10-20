@@ -1,5 +1,6 @@
 author: Ellery Berk
 id: getting-started-with-snowflake-cortex-ml-forecasting-and-classification
+language: en
 summary: This is an introduction to building with ML functions.
 categories: Getting-Started
 environments: web

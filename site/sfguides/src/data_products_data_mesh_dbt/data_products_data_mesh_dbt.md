@@ -1,5 +1,6 @@
 summary: Build Data Products and a Data Mesh with dbt platform
 id: data-products-data-mesh-dbt-cloud
+language: en
 categories: getting-started, data-engineering
 environments: web
 status: Published

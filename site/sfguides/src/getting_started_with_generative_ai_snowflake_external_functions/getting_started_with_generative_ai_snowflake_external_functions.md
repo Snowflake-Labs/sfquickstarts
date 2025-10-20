@@ -1,4 +1,5 @@
 id: getting_started_with_generative_ai_snowflake_external_functions
+language: en
 summary: Getting Started with Generative AI in Snowflake and Streamlit
 categories: featured,getting-started,app-development
 environments: web

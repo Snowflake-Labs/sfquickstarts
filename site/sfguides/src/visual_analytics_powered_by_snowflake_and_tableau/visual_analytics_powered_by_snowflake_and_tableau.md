@@ -1,5 +1,6 @@
 author: Chandra Nayak & Madeline Lee
 id: visual_analytics_powered_by_snowflake_and_tableau
+language: en
 summary: Visual Analytics Powered by Snowflake and Tableau
 categories: Getting-Started
 environments: web

@@ -1,4 +1,5 @@
 id: build_rag_based_equipment_maintenance_app_using_snowflake_cortex
+language: en
 summary: Build Rag Based Equipment Maintenance App Using Snowflake Cortex
 categories: cortex,getting-started,app-development
 environments: web

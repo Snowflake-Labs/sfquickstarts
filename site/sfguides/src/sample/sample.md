@@ -1,5 +1,6 @@
 summary: This is a sample Snowflake Guide
 id: sample 
+language: en
 categories: undefined
 environments: web
 status: Hidden 

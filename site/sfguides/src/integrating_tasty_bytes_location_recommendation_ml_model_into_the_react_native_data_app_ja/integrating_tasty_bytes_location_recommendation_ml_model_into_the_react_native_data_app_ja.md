@@ -1,5 +1,6 @@
 author: Swathi Jasti
 id: integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_ja
+language: jp
 summary: Tasty Bytesのロケーション推奨MLモデルのReact Nativeデータアプリケーションへの統合
 categories: Tasty-Bytes, Getting-Started, app-development, Data-Science-&-Ml
 environments: web

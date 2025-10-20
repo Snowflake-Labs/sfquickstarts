@@ -1,5 +1,6 @@
 author: Manuel Figueroa, Joviane Bellegarde
 id: marketing_data_foundation_starter_v3
+language: en
 summary: Marketing Data Foundation Starter Guide V3
 categories: Marketing
 environments: web

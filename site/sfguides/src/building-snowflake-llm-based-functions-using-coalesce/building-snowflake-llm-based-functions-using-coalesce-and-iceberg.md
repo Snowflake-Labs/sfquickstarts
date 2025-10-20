@@ -1,5 +1,6 @@
 author: Josh Hall
 id: building-snowflake-llm-based-functions-using-coalesce-and-iceberg
+language: en
 summary: Learn to build Cortex based data pipelines in Coalesce using Iceberg tables
 categories: data-engineering
 environments: web

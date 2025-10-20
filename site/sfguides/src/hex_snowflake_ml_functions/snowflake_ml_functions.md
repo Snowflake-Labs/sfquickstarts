@@ -1,5 +1,6 @@
 author: Armin Efendic
 id: building_ml_models_in_minutes_with_hex_and_snowflake_ml_functions
+language: en
 summary: This lab will walk you through how to use Snowflake ML Functions and Hex.
 categories: data-science-&-ml,partner-integrations
 environments: web

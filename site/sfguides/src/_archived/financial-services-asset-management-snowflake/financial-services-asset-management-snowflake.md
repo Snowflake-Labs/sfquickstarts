@@ -1,5 +1,6 @@
 author: Allen Wong
 id: financial-services-asset-management-snowflake
+language: en
 summary: Financial Services Asset Management Demo
 categories: Getting-Started
 environments: web

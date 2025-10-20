@@ -1,5 +1,6 @@
 author: Josh Reini
 id: build-evaluate-rag-langchain-snowflake
+language: en
 summary: Learn how to build and evaluate a Retrieval-Augmented Generation (RAG) application using LangChain and Snowflake Cortex. This guide walks through creating a retriever, building a RAG chain, and evaluating its performance with TruLens.
 categories: getting-started, data-engineering, snowflake, featured
 environments: web

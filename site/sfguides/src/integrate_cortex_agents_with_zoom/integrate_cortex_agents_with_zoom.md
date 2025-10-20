@@ -1,4 +1,5 @@
 id: integrate-snowflake-cortex-agents-with-zoom
+language: en
 summary: This guide outlines the process for integrating Snowflake Cortex Agents with Zoom Team Chat.
 environments: web
 status: Published

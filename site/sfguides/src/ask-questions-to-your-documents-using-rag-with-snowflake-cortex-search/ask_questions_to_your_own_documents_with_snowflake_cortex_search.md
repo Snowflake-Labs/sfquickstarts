@@ -1,5 +1,6 @@
 author: Carlos Carrero
 id: ask_questions_to_your_own_documents_with_snowflake_cortex_search
+language: en
 summary: Step-by-step guide on how to create a RAG app using Snowflake Cortex Search and Streamlit. 
 categories: featured,getting-started,data-science,gen-ai 
 environments: web 

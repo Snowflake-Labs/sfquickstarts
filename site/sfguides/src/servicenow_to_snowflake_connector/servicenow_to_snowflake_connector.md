@@ -1,5 +1,6 @@
 author: sfc-gh-drichert
 id: servicenow_to_snowflake_connector
+language: en
 summary: Step-by-step to set up Servicenow connector
 categories: Connectors
 environments: web

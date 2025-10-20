@@ -1,5 +1,6 @@
 author: ashleynagaki, vskarine
 id: getting_started_with_streamlit_in_snowflake
+language: en
 summary: How to run custom Streamlit app in Snowflake 
 categories: Streamlit
 environments: web

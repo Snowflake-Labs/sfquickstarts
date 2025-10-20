@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: develop-and-manage-ml-models-with-feature-store-and-model-registry
+language: en
 summary: This guide demonstrates an end-to-end ML experiment cycle in Snowflake including feature creation, training data generation, model training and inference
 categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web

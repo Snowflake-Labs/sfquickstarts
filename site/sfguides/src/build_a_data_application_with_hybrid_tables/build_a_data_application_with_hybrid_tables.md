@@ -1,5 +1,6 @@
 author: Fredrik Göransson
 id: build_a_data_application_with_hybrid_tables
+language: en
 summary: Build a data application using Snowflake Hybrid Tables for transactional processing
 categories: Getting-Started
 environments: web

@@ -1,5 +1,6 @@
 author: melindawebster
 id: dcdf_incremental_processing
+language: en
 summary: Getting Started with DCDF Data Architecture Incremental Processing/Logical Partitions
 categories: architecture-patterns
 environments: web

@@ -1,5 +1,6 @@
 author: Snowplow
 id: snowplow-web-analytics
+language: en
 summary: Set up real-time event tracking and analytics using Snowplow and Snowflake
 categories: Getting-Started,Data-Engineering
 environments: web

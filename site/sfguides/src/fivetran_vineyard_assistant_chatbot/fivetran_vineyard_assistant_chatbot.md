@@ -1,5 +1,6 @@
 author: David Hrncir
 id: fivetran_vineyard_assistant_chatbot
+language: en
 summary: Build a RAG-based GenAI Streamlit application with Fivetran and Snowflake using structured data.
 categories: Getting-Started, Cortex
 environments: web

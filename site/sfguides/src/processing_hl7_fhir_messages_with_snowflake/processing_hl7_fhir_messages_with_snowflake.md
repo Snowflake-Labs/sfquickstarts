@@ -1,5 +1,6 @@
 author: Adrian Gonzalez, Dan Murphy
 id: processing_hl7_fhir_messages_with_snowflake
+language: en
 summary: This is a guide to get familiarized with how to ingest and process HL7 FHIR JSON messages using Snowflake native features.
 categories: data-engineering,architecture-patterns,solution-examples
 environments: web

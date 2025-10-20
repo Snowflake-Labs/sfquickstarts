@@ -1,5 +1,6 @@
 author: Caleb Baechtold
 id: machine_learning_with_snowpark_python
+language: en
 summary: This is a sample Snowflake Guide
 categories: getting-started,data-science-&-ml
 environments: web

@@ -1,5 +1,6 @@
 author: Adrian Benavides, Mrinal Wadhwa, Brad Culberson
 id: build_a_private_custom_api_in_python
+language: en
 summary: A guide to building and running a custom private API Powered by Snowflake, Ockam, and Python/Flask
 categories: getting-started,app-development,architecture-patterns,solution-examples
 environments: web

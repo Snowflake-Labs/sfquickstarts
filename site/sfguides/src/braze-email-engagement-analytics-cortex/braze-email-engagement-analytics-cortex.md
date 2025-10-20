@@ -1,5 +1,6 @@
 author: Snowflake
 id: braze-email-engagement-analytics-cortex
+language: en
 summary: Build an intelligent email engagement analytics app using Braze data and Snowflake Cortex AI
 categories: cortex,analytics,marketing,streamlit
 environments: web

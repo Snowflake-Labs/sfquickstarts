@@ -1,5 +1,6 @@
 author: Praveen Purushothaman
 id: getting_started_cost_performance_optimization
+language: en
 summary: This is a Snowflake Guide that walks through optimization features and options on the platform
 categories: Getting-Started
 environments: web

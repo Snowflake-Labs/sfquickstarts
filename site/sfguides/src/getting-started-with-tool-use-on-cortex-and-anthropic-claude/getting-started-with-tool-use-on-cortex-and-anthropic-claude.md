@@ -1,5 +1,6 @@
 author: James Cha-Earley
 id: getting-started-with-tool-use-on-cortex-and-anthropic-claude
+language: en
 summary: This guide demonstrates how Snowflake Cortex integrates with Claude to enable external API interactions through tools.
 categories: Getting-Started
 environments: web

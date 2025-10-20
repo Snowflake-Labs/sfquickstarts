@@ -1,5 +1,6 @@
 author: Gilberto Hernandez, Charlie Hammond
 id: tasty_bytes_native_app
+language: en
 summary: This is a Quickstart on how to build a Snowflake Native Application with Tasty Bytes.
 categories: Native-Applications
 environments: web

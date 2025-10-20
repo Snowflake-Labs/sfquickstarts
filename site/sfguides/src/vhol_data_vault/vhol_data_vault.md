@@ -1,5 +1,6 @@
 author: yarodmi
 id: vhol_data_vault
+language: en
 summary: Building a Real-time Data Vault in Snowflake
 categories: data-engineering,architecture-patterns,solution-examples,marketing
 environments: web

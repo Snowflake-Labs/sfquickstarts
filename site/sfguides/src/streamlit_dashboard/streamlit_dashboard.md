@@ -1,5 +1,6 @@
 author: Chanin Nantasenamat
 id: streamlit-dashboard
+language: en
 summary: Learn how to create an interactive YouTube analytics dashboard using Streamlit within Snowflake Notebooks. This guide covers data generation, visualization, and user interaction to effectively communicate your data insights.
 categories: featured, streamlit, getting-started, data-science
 environments: web

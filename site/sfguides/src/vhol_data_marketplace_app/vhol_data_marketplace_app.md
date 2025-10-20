@@ -1,5 +1,6 @@
 author: Bren Stokes
 id: vhol_data_marketplace_app
+language: en
 summary: This is a sample Snowflake Guide
 categories: app-development, marketing
 environments: web

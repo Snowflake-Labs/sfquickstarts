@@ -1,5 +1,6 @@
 author: Michael Gardner
 id: create_eureka_moments_with_data_world
+language: en
 summary: This guide will help you connect Snowflake to data.world, where you can join, query, and share your data
 categories: Getting-Started
 environments: web

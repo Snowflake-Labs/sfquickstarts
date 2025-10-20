@@ -1,5 +1,6 @@
 author: tolotti-snow
 id: getting_started_with_iceberg_in_oneLake
+language: en
 summary: This is a quickstart for creating Iceberg tables usable by both Snowflake and Microsoft Fabric
 categories: Getting-Started, data-engineering, azure, iceberg, Microsoft, Fabric, OneLake, search
 environments: web

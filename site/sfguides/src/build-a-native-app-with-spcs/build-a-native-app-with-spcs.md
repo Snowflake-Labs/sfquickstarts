@@ -1,5 +1,6 @@
 author: Charles Yorek
 id: build-a-native-app-with-spcs
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web

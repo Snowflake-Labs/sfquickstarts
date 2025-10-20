@@ -1,5 +1,6 @@
 author: Vino Duraisamy, Kala Govindarajan
 id: getting_started_with_snowpark_connect_for_apache_spark
+language: en
 summary: This quickstart guide shows you how to get started with Snowpark Connect for Apache Spark™ categories: Getting-Started
 environments: web
 status: Published

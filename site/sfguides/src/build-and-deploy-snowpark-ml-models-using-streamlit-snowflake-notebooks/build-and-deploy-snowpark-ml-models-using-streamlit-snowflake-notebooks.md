@@ -1,5 +1,6 @@
 author: Shriya Rai
 id: build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks
+language: en
 summary: This is a sample Snowflake Guide
 categories: data-science, data-science-&-ml, app-development
 environments: web

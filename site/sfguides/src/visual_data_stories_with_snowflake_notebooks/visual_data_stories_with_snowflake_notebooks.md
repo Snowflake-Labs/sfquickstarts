@@ -1,4 +1,5 @@
 id: visual_data_stories_with_snowflake_notebooks
+language: en
 summary: This guide provides the instructions on how to build visualizations in Snowflake Notebook.
 categories: featured,getting-started
 environments: web

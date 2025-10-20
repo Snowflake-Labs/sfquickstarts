@@ -1,5 +1,6 @@
 author: Kala Govindarajan
 id: credit-card-fraud-detection-using-snowflake-ml
+language: en
 summary: Build a Credit card fraud detection app that leverages Snowflake ML to train a binary classification model to detect if a transaction is fraudulent or not
 categories: Data-Science-&-Ml
 environments: web

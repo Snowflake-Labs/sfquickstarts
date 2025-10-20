@@ -1,5 +1,6 @@
 author: David Hrncir
 id: modern_data_stack_with_fivetran_snowflake_salesforce
+language: en
 summary: Lab to demonstrate the ease of use to ingest data from Salesforce to Snowflake through Fivetran with insights dashboard from dbt models.
 categories: Getting-Started, marketing
 environments: web

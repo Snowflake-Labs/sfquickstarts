@@ -1,5 +1,6 @@
 summary: Analyzing real estate properties with Streamlit 
 id: analyzing_real_estate_properties_with_streamlit
+language: en
 categories: App-Development, Streamlit
 environments: web
 status: Draft

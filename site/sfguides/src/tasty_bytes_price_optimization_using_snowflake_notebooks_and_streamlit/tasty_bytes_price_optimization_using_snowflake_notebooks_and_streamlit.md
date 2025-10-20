@@ -1,5 +1,6 @@
 author: Joviane Bellegarde
 id: tasty_bytes_price_optimization_using_snowflake_notebooks_and_streamlit
+language: en
 summary: Price Optimization Using Snowflake Notebooks and Streamlit
 categories: Tasty-Bytes, Getting-Started
 environments: web

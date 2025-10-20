@@ -1,5 +1,6 @@
 authors: Venkatesh Sekar, Jhonatan Garrido-Lecca
 id: sf_esri_arcgis_locationservice
+language: en
 summary: Calculate ISOChrone or ServiceArea using ArcGIS Location Services (API), natively in Snowflake.
 categories: data-science-&-ml, data-engineering, geospatial, partner-integrations
 environments: web

@@ -1,5 +1,6 @@
 author: Matt Marzillo
 id: customer_insights_analyzer_using_vertex_ai_and_snowflake
+language: en
 summary: This is a quickstart for using Snowflake with Google for Generative AI
 categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web

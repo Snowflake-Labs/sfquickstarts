@@ -1,5 +1,6 @@
 author: Constantin Stanca
 id: xml-processing-sql
+language: en
 summary: Snowflake guide on how to process XML with SQL
 categories: Getting-Started
 environments: web

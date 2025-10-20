@@ -1,5 +1,6 @@
 summary: Learn how to manage Snowflake using Terraform
 id: terraforming_snowflake
+language: en
 categories: featured,getting-started,app-development,devops
 environments: web
 status: Published

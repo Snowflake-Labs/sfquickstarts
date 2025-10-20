@@ -1,4 +1,5 @@
 id: liveramp_identity_and_translation_quickstart
+language: en
 summary: Identity Resolution and Transcoding with LiveRamp and Snowflake
 categories: Marketing,Getting-Started,Partner-Integrations
 environments: web

@@ -1,5 +1,6 @@
 author: Vino Duraisamy, Kamesh Sampath
 id: data_engineering_with_snowpark_python_intro
+language: en
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python
 categories: Getting-Started, featured, data-engineering
 environments: web

@@ -1,5 +1,6 @@
 summary: Begin modeling your Snowflake database online with SqlDBM 
 id: database_modeling_with_sqldbm
+language: en
 categories: data-engineering,partner-integrations
 environments: web
 status: Published 

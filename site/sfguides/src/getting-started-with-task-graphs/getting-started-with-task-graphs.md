@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: getting-started-with-task-graphs
+language: en
 summary: This quickstart sets up an example Snowflake task graph to showcase its features.
 categories: Getting-Started, Data-Engineering
 environments: web

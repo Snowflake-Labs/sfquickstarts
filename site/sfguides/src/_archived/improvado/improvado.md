@@ -1,5 +1,6 @@
 author: Ilya Sudakov
 id: improvado
+language: en
 summary: Getting Started guide to show how users can use Improvado Composable “Agentic” Data Platform with Snowflake
 categories: Getting-Started,partner-integrations,marketing
 environments: web

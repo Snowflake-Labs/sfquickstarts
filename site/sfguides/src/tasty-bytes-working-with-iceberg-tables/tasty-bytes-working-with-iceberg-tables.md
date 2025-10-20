@@ -1,5 +1,6 @@
 author: nadithya-sf
 id: tasty_bytes_working_with_iceberg_tables
+language: en
 summary: This tutorial is a guide built as an extention to the Tasty Bytes series, where we will go over how data from an external Data Lake is made available in Snowflake using External Tables & Iceberg Tables.
 categories: Getting-Started, Tasty-Bytes, Data-Engineering
 environments: web

@@ -1,4 +1,5 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_ja
+language: jp
 summary: Snowflake PythonワークシートによるSnowpark入門
 categories: featured,getting-started,data-engineering,app-development
 environments: web

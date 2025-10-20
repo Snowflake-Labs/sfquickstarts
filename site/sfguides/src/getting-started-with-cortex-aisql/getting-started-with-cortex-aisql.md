@@ -1,4 +1,5 @@
 id: getting-started-with-cortex-aisql
+language: en
 summary: This guide outlines the process for getting started with Cortex AISQL.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web

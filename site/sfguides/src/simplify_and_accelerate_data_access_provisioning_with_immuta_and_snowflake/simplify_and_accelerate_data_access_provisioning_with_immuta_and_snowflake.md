@@ -1,5 +1,6 @@
 author: Paul Myres, Kevin Crawford
 id: simplify_and_accelerate_data_access_provisioning_with_immuta_and_snowflake
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started, datagovernance, Ai
 environments: web

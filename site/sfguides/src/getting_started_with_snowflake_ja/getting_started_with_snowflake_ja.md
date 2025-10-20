@@ -1,5 +1,6 @@
 summary: これはSnowflakeの大まかな紹介であり、ログイン、クエリの実行、データのロード方法について説明しています。
 id: getting_started_with_snowflake_ja
+language: jp
 categories: featured,getting-started
 environments: web
 status: Published

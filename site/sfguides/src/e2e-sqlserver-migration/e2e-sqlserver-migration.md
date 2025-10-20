@@ -1,5 +1,6 @@
 author: Kuo Lun Lo
 id: end2endmigration
+language: en
 summary: End to End SQLServer Migration
 categories: Getting-Started
 environments: web

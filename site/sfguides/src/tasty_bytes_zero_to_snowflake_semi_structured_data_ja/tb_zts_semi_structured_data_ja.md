@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_semi_structured_data_ja
+language: jp
 summary: Tasty Bytes - ゼロからのSnowflake - 半構造化データクックスタート
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

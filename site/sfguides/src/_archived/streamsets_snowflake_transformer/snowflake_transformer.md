@@ -1,5 +1,6 @@
 summary: A Dive into Slowly Changing Dimensions with Snowpark
 id: snowflake_transformer
+language: en
 categories: data-engineering,partner-integrations
 environments: web
 status: Published 

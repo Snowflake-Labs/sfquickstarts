@@ -1,5 +1,6 @@
 author: Parag Jain
 id: getting_started_with_dynamic_tables
+language: en
 summary: Getting Started with Snowflake Dynamic Tables
 categories: Getting-Started, marketing
 environments: web

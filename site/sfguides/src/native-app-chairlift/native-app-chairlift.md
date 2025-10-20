@@ -1,5 +1,6 @@
 author: Gilberto Hernandez
 id: native-app-chairlift
+language: en
 summary: This Snowflake Native App demonstrates how a chairlift manufacturer can build a native app to provide chairlift customers with analytics on purchased chairlifts by using sensor data collected from the chairlifts owned by the customer.
 categories: Getting-Started
 environments: web

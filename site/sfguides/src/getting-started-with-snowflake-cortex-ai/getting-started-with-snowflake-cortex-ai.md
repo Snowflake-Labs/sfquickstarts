@@ -1,4 +1,5 @@
 id: getting-started-with-snowflake-cortex-ai
+language: en
 summary: This guide provides the instructions for getting started with Snowflake Cortex AI.
 categories: featured,getting-started,app-development,data-science,gen-ai,data-science-&-ai,cortex
 environments: web

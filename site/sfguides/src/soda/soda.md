@@ -1,5 +1,6 @@
 author: Janet Revell
 id: soda
+language: en
 summary: Follow this guide to set up and run a Soda scan for data quality in Snowflake.
 categories: Getting-Started, Data-Engineering
 environments: web

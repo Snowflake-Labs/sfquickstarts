@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: getting-started-with-snowflake-ml-lineage
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started, Data-Science, Data-Science-&-Ml
 environments: web

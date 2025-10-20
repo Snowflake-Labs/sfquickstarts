@@ -1,5 +1,6 @@
 summary: ThoughtSpot 및 Snowflake로 대화형 React 앱 구축 
 id: getting_started_thoughtspot_kr
+language: ko
 categories: undefined
 environments: 웹
 status: Hidden

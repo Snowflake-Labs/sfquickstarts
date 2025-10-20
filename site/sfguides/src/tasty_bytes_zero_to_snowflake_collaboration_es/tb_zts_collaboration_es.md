@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_collaboration_es
+language: es
 summary: Tasty Bytes - De cero a Snowflake - Colaboración
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

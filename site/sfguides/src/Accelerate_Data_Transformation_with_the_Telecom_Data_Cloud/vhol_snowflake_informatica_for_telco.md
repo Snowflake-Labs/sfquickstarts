@@ -1,5 +1,6 @@
 author: 
 id: Accelerate_Data_Transformation_with_the_Telecom_Data_Cloud
+language: en
 summary: This is a guide for getting started with Data Integration using Informatica Data Management Cloud
 categories: Data Engineering, DE: Transformation
 environments: web

@@ -1,5 +1,6 @@
 author: Piotr Hachaj
 id: connectors_example_push_based_java
+language: en
 summary: Overview of building Snowflake push based connectors using Java and Native Apps.
 categories: connectors,solution-examples,partner-integrations
 environments: web

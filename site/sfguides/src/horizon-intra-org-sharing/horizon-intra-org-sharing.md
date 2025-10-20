@@ -1,5 +1,6 @@
 authors: Matthias Nicola, Vinay Srihari
 id: horizon_intra_org_sharing
+language: en
 summary: explore Horizon Collaboration pillar features for sharing of data and apps
 categories: Data-Sharing
 environments: web

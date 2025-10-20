@@ -1,5 +1,6 @@
 author: Daniel Perlovsky
 id: build-unified-customer-360-using-amperity
+language: en
 summary: In this quickstart we will walk through the basic steps to turn raw data into a world class Customer 360 collection of tables in hours instead of months using Amperity.
 categories: Getting-Started,Marketing,Data-Engineering,solution-examples
 environments: web

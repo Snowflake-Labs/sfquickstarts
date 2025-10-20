@@ -1,5 +1,6 @@
 author: 
 id: data_apps_summit_lab_ja
+language: en
 summary: これはサンプルのSnowflakeガイドのカテゴリーです
 categories: featured,app-development
 environments: web

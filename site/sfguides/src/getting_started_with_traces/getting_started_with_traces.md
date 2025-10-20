@@ -1,5 +1,6 @@
 author: Brad Culberson
 id: getting_started_with_traces
+language: en
 summary: Getting Started with Traces
 categories: featured,getting-started,observability,trail
 environments: web

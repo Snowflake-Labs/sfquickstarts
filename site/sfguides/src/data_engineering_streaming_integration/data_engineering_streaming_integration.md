@@ -1,5 +1,6 @@
 summary: Streaming Data Integration with Snowflake
 id: data_engineering_streaming_integration
+language: en
 categories: data-engineering
 environments: web
 status: Published

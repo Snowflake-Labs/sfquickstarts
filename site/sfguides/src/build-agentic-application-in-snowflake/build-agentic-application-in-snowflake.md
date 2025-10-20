@@ -1,4 +1,5 @@
 id: build-agentic-application-in-snowflake
+language: en
 summary: In this hands-on lab, you'll learn how to build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.
 environments: web
 status: Published

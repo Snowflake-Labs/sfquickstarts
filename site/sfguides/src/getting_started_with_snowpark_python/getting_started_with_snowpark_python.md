@@ -1,5 +1,6 @@
 author: Caleb Baechtold
 id: getting_started_with_snowpark_python
+language: en
 summary: This is a sample Snowflake Guide
 categories: undefined
 environments: web

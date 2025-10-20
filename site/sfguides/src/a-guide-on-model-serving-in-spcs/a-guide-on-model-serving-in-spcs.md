@@ -1,5 +1,6 @@
 author: Adrian
 id: snowpark-container-services-model-serving-guide
+language: en
 summary: Learn how to build and deploy a machine learning model for real-time inference using Snowpark Container Services and the Snowflake Model Registry.
 categories: Getting-Started, Data-Science, Machine-Learning
 environments: web

@@ -1,5 +1,6 @@
 author: laura manor
 id: managing-risk-in-manufacturing
+language: en
 summary: How to manage risk in manufacturing using Neo4j Graph Analytics for Snowflake
 categories: getting-started,partner-integrations
 environments: web

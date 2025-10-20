@@ -1,4 +1,5 @@
 id: integrate_snowflake_cortex_agents_with_slack
+language: en
 summary: This guide outlines the process for integrating Snowflake Cortex Agents with Slack.
 environments: web
 status: Published

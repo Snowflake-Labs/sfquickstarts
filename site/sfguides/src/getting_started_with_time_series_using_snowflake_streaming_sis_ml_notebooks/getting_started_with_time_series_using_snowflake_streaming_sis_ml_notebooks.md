@@ -1,4 +1,5 @@
 id: getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks
+language: en
 summary: Getting Started with Time Series Analytics for IoT in Snowflake
 categories: getting-started,time-series,featured,data-engineering,streaming,streamlit,snowpark,cortex,solution-examples,snowflake
 environments: web

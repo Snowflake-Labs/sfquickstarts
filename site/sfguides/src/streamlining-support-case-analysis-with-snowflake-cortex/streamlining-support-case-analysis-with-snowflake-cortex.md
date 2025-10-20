@@ -1,5 +1,6 @@
 author: Kala Govindarajan
 id: streamlining-support-case-analysis-with-snowflake-cortex
+language: en
 summary: A streamlined approach using advanced data processing and AI-driven summarization to help analyze support tickets leading to faster resolution times and better insights into common customer issues. By integrating Snowflake Cortex AI features, product managers and support teams can automate the analysis and summarization of support tickets seamlessly.
 categories: Getting-Started, Cortex, Data-Science-&-Ai, Streamlit, App-Development
 environments: web

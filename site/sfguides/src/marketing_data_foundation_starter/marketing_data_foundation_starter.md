@@ -1,5 +1,6 @@
 author: NaveenAlanThomas
 id: marketing_data_foundation_starter
+language: en
 summary: Marketing Data Foundation Starter Guide
 categories: Marketing
 environments: web

@@ -1,4 +1,5 @@
 id: data_teams_with_dbt_core
+language: en
 summary: Build your data pipeline with dbt Core & Snowflake
 categories: marketing,data-engineering,partner-integrations
 environments: web

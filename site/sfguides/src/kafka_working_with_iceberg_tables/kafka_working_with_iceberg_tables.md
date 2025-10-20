@@ -1,5 +1,6 @@
 author: Ashish Kumar
 id: kafka_working_with_iceberg_tables
+language: en
 summary: Through this quickstart guide, you will explore how to ingest data from kafka to Iceberg tables.
 categories: Getting-Started
 environments: web

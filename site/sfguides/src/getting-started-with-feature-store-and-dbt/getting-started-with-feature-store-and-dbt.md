@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: getting-started-with-feature-store-and-dbt
+language: en
 summary: This guide will go through everything you need to get started with dbt and Snowflake Feature Store
 categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web

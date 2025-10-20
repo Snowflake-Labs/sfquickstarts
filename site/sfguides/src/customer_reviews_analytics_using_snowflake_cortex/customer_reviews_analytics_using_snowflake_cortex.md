@@ -1,5 +1,6 @@
 author: Shriya Rai
 id: customer_reviews_analytics_using_snowflake_cortex
+language: en
 summary: This guide demonstrates how we can leverage Snowflake Cortex to enable customer review analytics.
 categories: data-science, gen-ai, data-science-&-ai, tasty-bytes, cortex
 environments: web

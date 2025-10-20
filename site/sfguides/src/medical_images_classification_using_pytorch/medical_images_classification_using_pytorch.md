@@ -1,5 +1,6 @@
 author: Kala Govindarajan
 id: medical_images_classification_using_pytorch
+language: en
 summary: Detect pneumonia in chest x-rays and show how to train a PyTorch image classification model on GPUs through transfer learning from torchvision.Leverage Snowpark Container Service for training and log and manage the trained model in Snowpark Model Registry and deploy either in Snowflake Warehouse(CPUs) or Snowflake Compute pools(CPU or GPU) for inference. Finally, perform inference within Snowflake using a data app built using Streamlit in Snowflake. 
 categories: Getting-Started
 environments: web

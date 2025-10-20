@@ -1,5 +1,6 @@
 author: Mohammad Aslam Khan, Phani Raj, Vinay Srihari
 id: using_precisely_enrich_data
+language: en
 summary: analysis of geospatial data for location profiling with Precisely marketplace data products
 categories: Data-Sharing, Cortex
 environments: web

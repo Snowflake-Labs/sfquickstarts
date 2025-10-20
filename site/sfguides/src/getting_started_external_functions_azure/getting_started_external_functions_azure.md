@@ -1,4 +1,5 @@
 id: getting_started_external_functions_azure
+language: en
 summary: Getting Started With External Functions on Azure
 categories: getting-started,partner-integrations
 environments: web

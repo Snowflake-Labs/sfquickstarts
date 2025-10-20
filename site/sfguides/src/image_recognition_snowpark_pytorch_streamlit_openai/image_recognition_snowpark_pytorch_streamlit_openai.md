@@ -1,4 +1,5 @@
 id: image_recognition_snowpark_pytorch_streamlit_openai
+language: en
 summary: This guide provides the instructions for writing image recognition applications in Snowflake using Snowpark for Python, PyTorch, Streamlit and OpenAI.
 categories: data-science-&-ml,app-development,solution-examples
 environments: web

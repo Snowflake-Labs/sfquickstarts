@@ -1,5 +1,6 @@
 author: Jim Warner
 id: predict_ad_impressions_with_ml_powered_analysis
+language: en
 summary: Shows how advertisers can predict ad impressions using ML-powered analysis in Snowflake
 categories: data-science-&-ml,solution-examples, marketing
 environments: web

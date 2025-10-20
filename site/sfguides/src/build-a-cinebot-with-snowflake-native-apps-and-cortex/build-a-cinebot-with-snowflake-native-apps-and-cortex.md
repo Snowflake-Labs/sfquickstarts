@@ -1,5 +1,6 @@
 author: Charles Yorek
 id: build-a-cinebot-with-snowflake-native-apps-and-cortex
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web

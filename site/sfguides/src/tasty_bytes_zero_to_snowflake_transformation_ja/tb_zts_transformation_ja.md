@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_transformation_ja
+language: jp
 summary: Tasty Bytes - ゼロからのSnowflake - 変換クイックスタート
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

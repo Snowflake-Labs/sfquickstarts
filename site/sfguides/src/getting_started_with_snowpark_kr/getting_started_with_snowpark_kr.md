@@ -1,4 +1,5 @@
 id: getting_started_with_snowpark_kr
+language: ko
 summary: 이 가이드는 Snowpark를 사용하여 단순한 예시 설정을 위한 기본 지침을 제공합니다.
 categories: undefined
 environments: web

@@ -1,5 +1,6 @@
 author: Carlos Suarez
 id: data_engineering_snowpark_streamlit_inegi
+language: en
 summary: End-to-End from local to cloud using Snowapark Python Streamlit
 categories: getting-started
 environments: web

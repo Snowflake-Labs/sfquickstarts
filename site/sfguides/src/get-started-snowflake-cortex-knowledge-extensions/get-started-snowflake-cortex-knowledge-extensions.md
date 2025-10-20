@@ -1,5 +1,6 @@
 author: Gilberto Hernandez, Chris Cardillo
 id: get-started-snowflake-cortex-knowledge-extensions
+language: en
 summary: How to build a chatbot using Snowflake Cortex Knowledge Extensions
 categories: Getting-Started
 environments: web

@@ -1,5 +1,6 @@
 author: Ian Funnell
 id: load-integrate-data-matillion-data-productivity-cloud
+language: en
 summary: Load and Integrate data from multiple sources using the Matillion Data Productivity Cloud
 categories: featured,getting-started,data-engineering,partner-integrations
 environments: web

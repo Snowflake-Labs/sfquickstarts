@@ -1,5 +1,6 @@
 author: marzillo-snow, quilpie
 id: getting_started_with_bedrock_agentcore_gateways_and_cortex_agents
+language: en
 summary: This is a quickstart for using Cortex Agents and Amazon Q
 categories: Getting-Started, data-science, data-engineering, AWS, cortex, genai, Amazon, Bedrock, MCP, search, LLM, copilot, Agents, Cortex
 environments: web

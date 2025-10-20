@@ -1,5 +1,6 @@
 author: Harsh Patel
 id: ml_forecasting_ad
+language: en
 summary: Getting started with Anomaly Detection & Forecasting ML Functions
 categories: Getting-Started
 environments: web

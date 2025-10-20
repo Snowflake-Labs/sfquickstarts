@@ -1,4 +1,5 @@
 id: finetuning_llm_using_snowflake_cortex_ai
+language: en
 summary: This guide provides the instructions for fine-tuning large language models using Snowflake Cortex AI.
 categories: featured,getting-started,cortex
 environments: web

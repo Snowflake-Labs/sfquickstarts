@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_extracting_insights_with_docai
+language: en
 summary: Walkthrough extracting data from PDF Inspection Reports using Document AI
 categories: Tasty-Bytes, Getting-Started
 environments: web

@@ -1,4 +1,5 @@
 id: getting_started_with_azure_openai_streamlit_and_snowflake_for_image_use_cases
+language: en
 summary: Getting Started with Azure OpenAI Streamlit and Snowflake using Snowpark External Access for image use cases
 categories: featured,getting-started,app-development, azure, openai, streamlit, genai, ai, ml, image
 environments: web

@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_introduction_ja
+language: jp
 summary: これはTasty Bytesの紹介とデータ基盤クイックスタートガイドです。
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

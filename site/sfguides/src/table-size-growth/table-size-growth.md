@@ -1,5 +1,6 @@
 author: Chanin Nantasenamat
 id: table-size-growth
+language: en
 summary: Learn how to monitor and analyze table storage growth trends in Snowflake Notebooks.
 categories: getting-started, audit, streamlit, notebooks, snowflake, featured
 environments: web

@@ -1,5 +1,6 @@
 author: Jim Warner
 id: lead_scoring_with_ml_powered_classification
+language: en
 summary: Shows how marketers can predict the value of leads and new
 customers to make audiences for activation.
 categories: data-science-&-ml, solution-examples, marketing

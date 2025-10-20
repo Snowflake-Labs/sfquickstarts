@@ -1,5 +1,6 @@
 author: b-mckenna
 id: A Faster Path to Operational AI with Continual and Snowflake
+language: en
 summary: Build an operational, continually updating predictive model for customer churn with Snowflake and Continual
 categories: AI, Apps & Collab: External Collaboration, Partner, AI - ML Functions
 environments: web

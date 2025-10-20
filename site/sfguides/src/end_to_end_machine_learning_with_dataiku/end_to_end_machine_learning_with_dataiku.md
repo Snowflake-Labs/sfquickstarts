@@ -1,5 +1,6 @@
 author: Prash Medirattaa
 id: end_to_end_machine_learning_with_dataiku
+language: en
 summary: This is a sample Snowflake Guide
 categories: data-science-&-ml,solution-examples,partner-integrations
 environments: web

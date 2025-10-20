@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_cost_management
+language: en
 summary: Tasty Bytes - Zero to Snowflake - Cost Management Quickstart
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

@@ -1,5 +1,6 @@
 author: marzillo-snow
 id: getting_started_with_snowpark_for_machine_learning_on_sagemaker
+language: en
 summary: This is a qucikstart for using Snowpark for ML on SageMaker
 categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web

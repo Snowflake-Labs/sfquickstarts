@@ -1,4 +1,5 @@
 id: getting_started_with_amg_and_streamlit_on_real-time_dashboarding
+language: en
 summary: This guide will walk you through how to build real-time dashboards with AMG and Streamlit to track data ingested by Snowpipe Streaming
 categories: getting-started
 environments: web

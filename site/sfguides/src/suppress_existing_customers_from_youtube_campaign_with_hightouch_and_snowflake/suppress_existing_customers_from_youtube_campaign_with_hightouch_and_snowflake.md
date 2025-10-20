@@ -1,5 +1,6 @@
 author: Jim Warner
 id: suppress_existing_customers_from_youtube_campaign_with_hightouch_and_snowflake
+language: en
 summary: Build and sync an audience of existing customers to Youtube to suppress from future prospecting campaigns, using Hightouch and Snowflake.
 categories: solution-examples,partner-integrations
 environments: web

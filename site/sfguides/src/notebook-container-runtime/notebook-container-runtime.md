@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: notebook-container-runtime
+language: en
 summary: This guide will walk show you how to use Snowflake Notebooks with Container Runtime
 categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web

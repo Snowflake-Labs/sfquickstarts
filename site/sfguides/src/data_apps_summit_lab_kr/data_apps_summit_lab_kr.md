@@ -1,5 +1,6 @@
 author: 
 id: data_apps_summit_lab_kr
+language: en
 summary: This is a sample Snowflake Guide
 categories: featured,app-development
 environments: web

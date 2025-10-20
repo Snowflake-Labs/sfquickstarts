@@ -1,5 +1,6 @@
 author: Leon Yen, Zack Drach
 id: leveraging_kumo_for_smarter_recommendations
+language: en
 summary: This guide will provide step-by-step details for generating product recommendations and performing customer LTV calculation using Kumo in a Snowflake Native App
 categories: Getting-Started, data-science, retail
 environments: web

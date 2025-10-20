@@ -1,5 +1,6 @@
 author: Lorena Diaconescu
 id: determining_warehouse_size
+language: en
 summary: Determine the best warehouse size to use for your query
 categories: undefined
 environments: web

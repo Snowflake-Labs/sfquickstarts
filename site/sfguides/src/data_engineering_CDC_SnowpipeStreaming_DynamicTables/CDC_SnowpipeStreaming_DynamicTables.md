@@ -1,4 +1,5 @@
 id: CDC_SnowpipeStreaming_DynamicTables
+language: en
 summary: Learn how to use Snowpipe Streaming and Dynamic Tables for Real-Time Streaming (CDC use case)
 categories: Data-Engineering
 environments: web

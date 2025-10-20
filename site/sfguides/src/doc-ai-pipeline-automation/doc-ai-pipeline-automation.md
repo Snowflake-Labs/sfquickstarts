@@ -1,5 +1,6 @@
 author: Sarathi Balakrishnan
 id: doc-ai-pipeline-automation
+language: en
 summary: Automate document processing using Snowflake Document AI
 categories: document-ai, Getting-Started
 environments: web

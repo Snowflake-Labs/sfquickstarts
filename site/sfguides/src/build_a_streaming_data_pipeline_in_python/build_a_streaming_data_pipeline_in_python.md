@@ -1,5 +1,6 @@
 author: Brad Culberson, Keith Gaputis
 id: build_a_streaming_data_pipeline_in_python
+language: en
 summary: A guide to using Rowset API, Dynamic Tables, and Streamlit to build a streaming data pipeline in Python
 categories: data-engineering,app-development,streamlit
 environments: web

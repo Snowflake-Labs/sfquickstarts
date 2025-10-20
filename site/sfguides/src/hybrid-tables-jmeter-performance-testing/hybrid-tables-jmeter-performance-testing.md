@@ -1,5 +1,6 @@
 author: Jon Osborn
 id: hybrid-tables-jmeter-performance-testing
+language: en
 summary: Execute a simple performance test to evaluate hybrid tables.
 categories: Getting-Started, Unistore, Hybrid Tables
 environments: web

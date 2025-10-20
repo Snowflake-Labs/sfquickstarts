@@ -1,5 +1,6 @@
 author: Chanin Nantasenamat
 id: process-modin-dataframe-with-cortex
+language: en
 summary: Learn how to process data using Modin DataFrames with Snowflake Cortex AI capabilities for text classification, translation, sentiment analysis, and more.
 categories: getting-started, data-engineering, streamlit, notebooks, snowflake, featured
 environments: web

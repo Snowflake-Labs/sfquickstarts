@@ -1,5 +1,6 @@
 
 id: getting_started_with_ocr_and_rag_with_snowflake_notebooks
+language: en
 summary: Getting Started with OCR and RAG with Snowflake Notebooks
 categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web

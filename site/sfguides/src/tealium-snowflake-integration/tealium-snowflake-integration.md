@@ -1,5 +1,6 @@
 author: jmusselwhite-tealium
 id: tealium-snowflake-integration
+language: en
 summary: This tutorial reviews the process for configuring inbound and outbound Snowflake integrations within Tealium Customer Data Hub
 categories: Getting-Started, Partner-Integrations, Marketing, Architecture-Patterns
 environments: web

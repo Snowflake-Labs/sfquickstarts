@@ -1,5 +1,6 @@
 summary: Questa è un’introduzione generale a Snowflake che spiega come effettuare il login, eseguire query e caricare dati.
 id: getting_started_with_snowflake_it
+language: it
 categories: in-evidenza, guida-introduttiva
 environment: web
 status: Pubblicato

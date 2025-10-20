@@ -1,4 +1,5 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_it
+language: it
 summary: Guida introduttiva all’uso di Snowpark nei fogli di lavoro Snowflake Python
 categories: featured,getting-started,data-engineering,app-development
 environments: web

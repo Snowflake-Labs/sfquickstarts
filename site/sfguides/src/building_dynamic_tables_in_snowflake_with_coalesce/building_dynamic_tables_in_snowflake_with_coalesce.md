@@ -1,5 +1,6 @@
 author: Christina Jimenez
 id: building_dynamic_tables_in_snowflake_with_coalesce
+language: en
 summary: Building Dynamic Tables in SNowflake with Coalesce
 categories: data-engineering
 environments: web

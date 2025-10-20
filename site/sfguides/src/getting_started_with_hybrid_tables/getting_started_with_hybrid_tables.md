@@ -1,5 +1,6 @@
 author: Meny Kobel
 id: getting_started_with_hybrid_tables
+language: en
 summary: Follow this tutorial to learn the basics of hybrid tables
 categories: Getting-Started
 environments: web

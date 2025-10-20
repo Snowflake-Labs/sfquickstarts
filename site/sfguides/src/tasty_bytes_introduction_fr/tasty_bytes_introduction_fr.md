@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_introduction_fr
+language: fr
 summary: Présentation de Tasty Bytes
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

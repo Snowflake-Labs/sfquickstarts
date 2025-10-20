@@ -1,5 +1,6 @@
 author: Oleksii Bielov
 id: geo-for-machine-learning
+language: en
 summary: Cortex, Geospatial and Streamlit features for Machine Learning use cases 
 categories: Getting-Started
 environments: web

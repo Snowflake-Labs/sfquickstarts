@@ -1,5 +1,6 @@
 author: Oleksii Bielov
 id: geo_performance
+language: en
 summary: Performance optimization techniques for Geo
 categories: Getting-Started
 environments: web

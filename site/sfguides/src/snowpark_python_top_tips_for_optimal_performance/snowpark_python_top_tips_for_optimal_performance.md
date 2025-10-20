@@ -1,5 +1,6 @@
 author: Hanbing Yan and Rahul Reddy
 id: snowpark_python_top_tips_for_optimal_performance
+language: en
 summary: Snowpark Python: Key Tips for Optimal Performance
 categories: Data-Engineering
 environments: web

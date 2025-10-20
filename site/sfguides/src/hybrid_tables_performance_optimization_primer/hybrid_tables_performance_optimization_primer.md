@@ -1,5 +1,6 @@
 author: Jon Osborn
 id: hybrid_tables_performance_optimization_primer
+language: en
 summary: Follow this primer to learn about basic hybrid table performance optimization techniques
 categories: Getting-Started, Hybrid Tables, Unistore
 environments: web

@@ -1,5 +1,6 @@
 authors: Matthias Nicola, Henrik Nielsen
 id: internal_marketplace_intra_org_sharing
+language: en
 summary: INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE
 categories: Data-Sharing
 environments: web

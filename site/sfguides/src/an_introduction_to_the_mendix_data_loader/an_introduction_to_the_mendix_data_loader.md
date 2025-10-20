@@ -1,5 +1,6 @@
 author: Trong Tran
 id: mendix_data_loader
+language: en
 summary: Guide on how to use the Mendix Data Loader to ingest data from Mendix applications via a published OData service.
 categories: connectors,partner-integrations
 environments: web

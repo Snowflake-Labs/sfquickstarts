@@ -1,5 +1,6 @@
 author: Guy Mast 
 id: security_analytics_with_wiz_and_snowflake
+language: en
 summary: learn about the Wiz and Snowflake integration for analyzing Wiz data in Snowflake
 categories: cybersecurity,solution-examples,partner-integrations
 environments: web

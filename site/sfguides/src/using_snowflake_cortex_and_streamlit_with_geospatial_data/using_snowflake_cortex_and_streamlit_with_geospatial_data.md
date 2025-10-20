@@ -1,5 +1,6 @@
 author: Becky O’Connor
 id: using_snowflake_cortex_and_streamlit_with_geospatial_data
+language: en
 summary: This is a sample Snowflake Guide
 categories: Data-Sharing, Cortex
 environments: web

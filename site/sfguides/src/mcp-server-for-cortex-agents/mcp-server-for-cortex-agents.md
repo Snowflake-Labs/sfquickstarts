@@ -1,4 +1,5 @@
 id: mcp-server-for-cortex-agents
+language: en
 summary: This guide outlines the process for building an MCP Server for Cortex Agents.
 environments: web
 status: Published

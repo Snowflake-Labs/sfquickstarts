@@ -1,5 +1,6 @@
 author: Emily
 id: validate_your_customer_identity_model_with_identityqa
+language: en
 summary: Use IdentityQA to validate your customer identity model
 categories: getting-started,data-warehouse,data-engineering, marketing
 environments: web

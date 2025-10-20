@@ -1,5 +1,6 @@
 author: Michael Gregory, George Yates
 id: ml_with_snowpark_and_apache_airflow
+language: en
 summary: This is a sample Snowflake Guide
 categories: data-engineering,architecture-patterns,partner-integrations
 environments: web

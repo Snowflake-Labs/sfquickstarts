@@ -1,5 +1,6 @@
 author: David Hung
 id: e2e-task-graph
+language: en
 summary: Learn how to build an end-to-end machine learning pipeline using Snowflake Task Graphs and ML Jobs, including data preparation, model training, evaluation, and conditional promotion.
 categories: featured, getting-started, data-engineering, snowflake
 environments: web

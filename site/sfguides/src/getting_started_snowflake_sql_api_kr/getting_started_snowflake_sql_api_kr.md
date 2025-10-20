@@ -1,4 +1,5 @@
 id: getting_started_snowflake_sql_api_kr
+language: ko
 summary: Snowflake SQL API 시작하기
 categories: undefined
 environments: web

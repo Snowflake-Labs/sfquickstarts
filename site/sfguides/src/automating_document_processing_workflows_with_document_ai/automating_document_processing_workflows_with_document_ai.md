@@ -1,5 +1,6 @@
 author: Mats Stellwall
 id: automating_document_processing_workflows_with_document_ai
+language: en
 summary: This guide will provide step-by-step details for automating document processing workflows with Document AI
 categories: Getting-Started
 environments: web

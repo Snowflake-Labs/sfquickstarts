@@ -1,5 +1,6 @@
 author: Gilberto Hernandez
 id: data_apps_summit_lab
+language: en
 summary: Build a data app un Snowflake
 categories: featured, app-development
 environments: web

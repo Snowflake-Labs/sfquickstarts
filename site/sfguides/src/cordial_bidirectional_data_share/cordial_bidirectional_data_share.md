@@ -1,5 +1,6 @@
 author: J.J. Mason-Anselmi
 id: cordial_bidirectional_data_share
+language: en
 summary: Set up a secure bidirectional data share with Cordial.
 categories: getting-started, data-sharing, data-engineering, partner-integrations
 environments: web

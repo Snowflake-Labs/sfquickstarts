@@ -1,5 +1,6 @@
 author: Jeremiah Hansen
 id: devops_dcm_schemachange_github
+language: en
 summary: This guide will provide step-by-step details for getting started with DevOps on Snowflake by leveraging schemachange and GitHub
 categories: devops
 environments: web

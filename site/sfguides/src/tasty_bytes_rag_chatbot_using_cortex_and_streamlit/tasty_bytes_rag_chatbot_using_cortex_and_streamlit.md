@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: tasty_bytes_rag_chatbot_using_cortex_and_streamlit
+language: en
 summary: In this guide, we build a Cortex LLM powered chatbot to help Tasty Bytes support agents find answers to customer questions faster.
 categories: Getting-Started, Tasty-Bytes, Cortex
 environments: web

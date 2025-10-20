@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_introduction_kr
+language: en
 summary: This is the Tasty Bytes Introduction and Data Foundation Quickstart guide
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

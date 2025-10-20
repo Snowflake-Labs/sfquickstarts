@@ -1,5 +1,6 @@
 author: Caleb Baechtold
 id: intro_to_snowpark_container_services
+language: en
 summary: Through this quickstart guide, you will explore Snowpark Container Services
 categories: Getting-Started
 environments: web

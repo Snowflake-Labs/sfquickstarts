@@ -1,5 +1,6 @@
 author: Daniel Chen, Sara Altman
 id: analyze_data_with_r_using_posit_workbench_and_snowflake
+language: en
 summary: Analyze Data with R using Posit Workbench and Snowflake
 categories: Getting-Started
 environments: web

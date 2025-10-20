@@ -1,5 +1,6 @@
 author: Kala Govindarajan
 id: Enhancing_Customer_Experiences_using_Cortex_FineTuning
+language: en
 summary: Build an automated customer support agent that showcases the power of Cortex Fine-Tuning and helps the Tasty Bytes team to respond with a highly accurate automated email to customer tickets
 categories: Tasty-Bytes, Cortex, LLM,FineTuning
 environments: web

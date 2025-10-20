@@ -1,4 +1,5 @@
 id: getting_started_with_snowflake_notebooks
+language: en
 summary: This guide provides the instructions on how to get started with your first Snowflake Notebook.
 categories: featured,getting-started
 environments: web

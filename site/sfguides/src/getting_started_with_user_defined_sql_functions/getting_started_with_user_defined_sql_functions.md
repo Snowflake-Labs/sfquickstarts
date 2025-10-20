@@ -1,5 +1,6 @@
 summary: Guide to getting started with user-defined SQL functions
 id: getting_started_with_user_defined_sql_functions
+language: en
 categories: getting-started
 environments: Web
 status: Published

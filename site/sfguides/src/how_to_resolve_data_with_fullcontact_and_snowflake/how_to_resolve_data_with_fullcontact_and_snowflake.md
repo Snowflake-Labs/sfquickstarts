@@ -1,5 +1,6 @@
 author: Dan Lee, Alix Thoi
 id: how_to_resolve_data_with_fullcontact_and_snowflake
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web

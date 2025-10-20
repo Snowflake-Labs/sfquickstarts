@@ -1,4 +1,5 @@
 id: getting_started_with_Openflow_spcs
+language: en
 summary: Getting Started with Snowflake Openflow using Snowpark Container Services (SPCS)
 categories: featured,getting-started,data-engineering,data-integration,Openflow,spcs
 environments: web

@@ -1,5 +1,6 @@
 author: James Cha-Earley
 id: building_a_custom_model_for_anomaly_detection
+language: en
 summary: Build a Custom Model to Detect Anomalies on the Production Floor
 categories: Getting-Started
 environments: web

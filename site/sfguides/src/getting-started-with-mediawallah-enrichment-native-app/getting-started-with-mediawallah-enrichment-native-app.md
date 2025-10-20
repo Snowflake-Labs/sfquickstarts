@@ -1,5 +1,6 @@
 author: Jeffrey Chen
 id: getting-started-with-mediawallah-enrichment-native-app
+language: en
 summary: This is a guide to use MediaWallah's Enrichment Application
 categories: data-science, Getting-Started, data-science, data-applications
 environments: web

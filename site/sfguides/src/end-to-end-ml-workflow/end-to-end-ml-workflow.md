@@ -1,5 +1,6 @@
 author: Elliott Botwick
 id: end-to-end-ml-workflow
+language: en
 summary: Learn how to build an end-to-end machine learning workflow in Snowflake, from feature engineering to model deployment and monitoring.
 categories: getting-started, data-engineering, streamlit, snowflake
 environments: web

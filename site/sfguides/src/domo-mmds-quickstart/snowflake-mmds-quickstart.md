@@ -1,5 +1,6 @@
 author: Jon Tiritilli
 id: domo_marketing_attribution_quickstart
+language: en
 summary: Build powerful marketing attribution and media mix models
 categories: Getting-Started, Data-Science, Data-Engineering, Marketing
 environments: web

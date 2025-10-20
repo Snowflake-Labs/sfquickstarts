@@ -1,5 +1,6 @@
 author: Meher Garda
 id: a_guide_to_implementing_a_pipeline_for_database_change_management
+language: en
 summary: Implementing a Pipeline for Database Change Management
 categories: Getting-Started, Data Engineering
 environments: web

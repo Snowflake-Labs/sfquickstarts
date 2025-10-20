@@ -1,5 +1,6 @@
 author: chriswhong
 id: geocoding_address_data_with_mapbox
+language: en
 summary: Forward and Reverse Geocoding with the Mapbox App
 categories: featured,getting-started,data-engineering,partner-integrations
 environments: 

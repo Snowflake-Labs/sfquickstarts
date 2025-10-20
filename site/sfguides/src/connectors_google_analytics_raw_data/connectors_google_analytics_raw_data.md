@@ -1,5 +1,6 @@
 author: Joviane Bellegarde
 id: connectors_google_analytics_raw_data
+language: en
 summary: Getting Started with the Snowflake Connector for Google Analytics
 categories: Getting-Started, Connectors, Dynamic Tables, BigQuery
 environments: web

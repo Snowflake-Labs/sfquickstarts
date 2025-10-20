@@ -1,5 +1,6 @@
 author: Kala Govindarajan
 id: root-cause-analysis-for-vehicle-product-quality-with-snowflake
+language: en
 summary: 
 categories: Getting-Started,data-science-&-ml, solution-examples
 environments: web

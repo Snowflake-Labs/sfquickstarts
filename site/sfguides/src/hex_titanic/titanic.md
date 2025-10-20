@@ -1,5 +1,6 @@
 author: Armin Efendic and Chase Romano
 id: end_to_end_model_development_with_snowpark_and_hex
+language: en
 summary: This lab will walk you through how to use Snowflake and Hex.
 categories: data-science-&-ml,partner-integrations
 environments: web

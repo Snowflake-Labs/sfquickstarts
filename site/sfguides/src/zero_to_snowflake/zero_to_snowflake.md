@@ -1,5 +1,6 @@
 author: Dureti Shemsi, Cameron Shimmin
 id: zero_to_snowflake
+language: en
 summary: Zero to Snowflake
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

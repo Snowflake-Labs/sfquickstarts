@@ -1,5 +1,6 @@
 summary: This guide can be used to help customers setup and run queries pertaining to monitoring billing metrics that might help identify areas of over-consumption.
 id: resource_optimization_billing_metrics
+language: en
 categories: data-science-&-ml,resource-optimization
 environments: web
 status: Published

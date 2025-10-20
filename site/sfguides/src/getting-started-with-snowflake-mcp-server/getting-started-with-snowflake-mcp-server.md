@@ -1,4 +1,5 @@
 id: getting-started-with-snowflake-mcp-server
+language: en
 summary: This guide outlines the process for getting started with Snowflake MCP Server.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web

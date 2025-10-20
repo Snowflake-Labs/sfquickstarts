@@ -1,4 +1,5 @@
 id: getting_started_with_snowflake_and_aws_kdf
+language: en
 summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Amazon Data Firehose (ADF).
 categories: getting-started
 environments: web

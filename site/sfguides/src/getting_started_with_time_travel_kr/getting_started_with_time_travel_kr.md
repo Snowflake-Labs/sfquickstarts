@@ -1,4 +1,5 @@
 id: getting_started_with_time_travel_kr
+language: ko
 summary: Time Travel을 사용하여 이전 데이터베이스 상태를 쿼리하고 데이터를 복구합니다.
 categories: undefined
 environments: web

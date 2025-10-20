@@ -1,5 +1,6 @@
 author: Vincent Raudszus
 id: getting_started_with_snowflake_devops
+language: en
 summary: Getting Started with Snowflake DevOps
 categories: devops,getting-started,data-engineering
 environments: web

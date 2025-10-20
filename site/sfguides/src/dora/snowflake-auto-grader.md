@@ -1,5 +1,6 @@
 author: Gilberto Hernandez
 id: snowflake-auto-grader
+language: en
 summary: In this guide, you'll set up Snowflake's Auto-Grader.
 categories: Getting-Started
 environments: web

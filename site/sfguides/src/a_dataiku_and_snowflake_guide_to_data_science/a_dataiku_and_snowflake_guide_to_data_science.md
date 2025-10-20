@@ -1,5 +1,6 @@
 author: Stephen Franks
 id: a_dataiku_and_snowflake_guide_to_data_science
+language: en
 summary: This is an introduction to Dataiku and Snowflake
 categories: Data Engineering, AI, Partner
 environments: web

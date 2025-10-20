@@ -1,5 +1,6 @@
 author: RelationalAI
 id: kgqa_using_relationalai
+language: en
 summary: This guide shows how to use RelationalAI and Snowflake to create a system that lets a user ask and answer natural language questions on a custom knowledge graph.
 categories: data-science, graph-analysis, relationalai, generativeai
 environments: web

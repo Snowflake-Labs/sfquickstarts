@@ -1,5 +1,6 @@
 author: Christina Jimenez
 id: parsing_semi_structured_data_with_coalesce
+language: en
 summary: Parsing Semi-Structured Data (JSON / XML) with Coalesce
 categories: data-engineering
 environments: web

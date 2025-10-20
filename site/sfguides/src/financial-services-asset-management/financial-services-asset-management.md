@@ -1,5 +1,6 @@
 author: Allen Wong
 id: financial-services-asset-management
+language: en
 summary: Build a Financial Services Asset Management demo in Snowflake that scales to handle 3 billion synthetic trades while providing real-time cash and profit/loss calculations.
 categories: snowflake, featured, data-engineering
 environments: web

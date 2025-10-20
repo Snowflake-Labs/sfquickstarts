@@ -1,5 +1,6 @@
 author: Jake Berkowsky
 id: vpc_flow_log_ingestion
+language: en
 summary: This tutorial is a guide for ingestion AWS VPC Flowlogs into Snowflake. It demonstrates configuration of VPC flowlogs on AWS, ingestion using an external stage with Snowpipe and sample queries for CSPM and threat detection.
 categories: cybersecurity,solution-examples,partner-integrations
 environments: web

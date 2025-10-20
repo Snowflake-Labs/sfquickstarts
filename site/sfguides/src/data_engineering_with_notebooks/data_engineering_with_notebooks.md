@@ -1,5 +1,6 @@
 authors: Jeremiah Hansen
 id: data_engineering_with_notebooks
+language: en
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowflake Notebooks
 categories: featured,data-engineering,notebooks
 environments: web

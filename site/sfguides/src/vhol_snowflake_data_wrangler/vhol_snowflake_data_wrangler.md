@@ -1,5 +1,6 @@
 summary: This lab will walk you through how to apply a data-centric approach to Machine Learning with Snowflake and Amazon SageMaker.
 id: vhol_snowflake_data_wrangler
+language: en
 categories: data-science-&-ml,partner-integrations
 environments: web
 status: Archived

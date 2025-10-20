@@ -1,4 +1,5 @@
 id: getting_started_with_snowpark_scala
+language: en
 summary: This guide provides the basic instructions for setting up a simple example using Snowpark.
 categories: getting-started
 environments: web

@@ -1,5 +1,6 @@
 author: 
 id: data_apps_summit_lab_it
+language: en
 summary: questo è un esempio di guida di Snowflake
 categories: featured,app-development
 environments: web

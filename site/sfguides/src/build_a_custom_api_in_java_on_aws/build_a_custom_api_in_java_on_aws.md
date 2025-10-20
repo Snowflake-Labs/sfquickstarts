@@ -1,5 +1,6 @@
 author: Brad Culberson
 id: build_a_custom_api_in_java_on_aws
+language: en
 summary: A guide to building and running a custom API (in Java) Powered by Snowflake and AWS
 categories: getting-started,app-development,architecture-patterns,solution-examples
 environments: web

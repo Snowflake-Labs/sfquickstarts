@@ -1,4 +1,5 @@
 id: getting-started-with-snowflake-intelligence-and-cke
+language: en
 summary: This guide outlines the process for getting started with Snowflake Intelligence and Cortex Knowledge Extensions.
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web

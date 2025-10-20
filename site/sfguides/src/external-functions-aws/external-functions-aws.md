@@ -1,5 +1,6 @@
 summary: Getting Started With External Functions on AWS
 id: getting_started_external_functions_aws
+language: en
 categories: getting-started,partner-integrations
 status: Published
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues

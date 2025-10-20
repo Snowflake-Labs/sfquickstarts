@@ -1,4 +1,5 @@
 id: getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks
+language: en
 summary: Getting Started with Audio Sentiment Analysis using Snowflake Notebooks
 categories: featured,getting-started,data-science-&-ml,app-development
 environments: web

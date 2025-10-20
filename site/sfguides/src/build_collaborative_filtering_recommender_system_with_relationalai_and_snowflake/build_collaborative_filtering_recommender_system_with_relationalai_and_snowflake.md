@@ -1,5 +1,6 @@
 author: Haythem Tellili
 id: build_collaborative_filtering_recommender_system_with_relationalai_and_snowflake
+language: en
 summary: This guide shows how to use RelationalAI and Snowflake to create a recommender system.
 categories: data-science, graph-analysis, relationalai
 environments: web

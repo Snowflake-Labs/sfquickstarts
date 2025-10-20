@@ -1,5 +1,6 @@
 author: seb_froh
 id: getting_started_datameer
+language: en
 summary: This is a broad introduction of Datameer and covers how to start, load and transform data, and share insights.
 categories: getting-started,partner-integrations
 environments: web

@@ -1,5 +1,6 @@
 summary: Getting Started With Snowflake SQL API
 id: getting_started_snowflake_sql_api
+language: en
 categories: getting-started
 environments: web
 status: Draft

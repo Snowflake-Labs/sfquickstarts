@@ -1,5 +1,6 @@
 author: Shreya Sisodia
 id: data_engineering_with_datastage
+language: en
 summary: Lab to demonstrate ease of loading enterprise data into Snowflake through DataStage.
 categories: featured,getting-started,data-engineering,partner-integrations
 environments: web

@@ -1,5 +1,6 @@
 summary: Getting Started with SnowSQL
 id:getting_started_with_snowsql
+language: en
 categories: getting-started
 environments: web
 status: Published 

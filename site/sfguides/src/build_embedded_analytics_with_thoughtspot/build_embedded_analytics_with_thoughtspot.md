@@ -1,5 +1,6 @@
 author: Ali Alladin (ali.alladin@thoughtspot.com)
 id: ai_powered_embedded_analytics_using_thoughtspot
+language: en
 summary: Guide to create your own embedded analytics application using ThoughtSpot
 categories: Getting-Started, Embedded Analytics, BI
 environments: web

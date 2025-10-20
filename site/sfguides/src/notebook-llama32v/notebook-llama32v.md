@@ -1,5 +1,6 @@
 author: Rajiv Shah
 id: notebook-llama32v
+language: en
 summary: This guide will walk show you how to use LLama 3.2 Vision Models on Snowflake Notebooks with Container Runtime with Transformers
 categories: Getting-Started
 environments: web

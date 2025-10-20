@@ -1,5 +1,6 @@
 author: Jason Summer
 id: orchestrate-llm-evaluations-with-evalanche
+language: en
 summary: Orchestrate LLM Evaluations in Snowflake with Evalanche 
 categories: data-science-&-ai 
 environments: web

@@ -1,4 +1,5 @@
 id: getting-started-with-openflow-postgresql-cdc
+language: en
 summary: Getting Started with Openflow PostgreSQL Change Data Capture (CDC)
 categories: featured,getting-started,data-engineering,cdc,openflow,connectors
 environments: web

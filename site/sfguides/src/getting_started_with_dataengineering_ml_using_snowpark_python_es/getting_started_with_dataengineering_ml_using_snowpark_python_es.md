@@ -1,4 +1,5 @@
 id: getting_started_with_dataengineering_ml_using_snowpark_python_es
+language: en
 summary: Introducción a la ingeniería de datos y al ML con Snowpark para Python 
 categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web

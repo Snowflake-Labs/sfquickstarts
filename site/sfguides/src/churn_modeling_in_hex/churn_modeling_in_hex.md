@@ -1,5 +1,6 @@
 author: gflomo@hex.tech
 id: hex-churn-model
+language: en
 summary: This lab will walk you through how to use Snowflake and Hex.
 categories: data-science-&-ml,partner-integrations
 environments: web

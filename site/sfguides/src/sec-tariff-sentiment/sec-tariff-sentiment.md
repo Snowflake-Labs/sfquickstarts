@@ -1,5 +1,6 @@
 author: Hartland Brown
 id: SFGUIDE-SEC-TARIFF-SENTIMENT
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started, data-science
 environments: web

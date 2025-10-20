@@ -1,5 +1,6 @@
 author: Adrian Lee
 id: data_engineering_with_apache_airflow_kr
+language: en
 summary: This is a sample Snowflake Guide
 categories: data-engineering,architecture-patterns,partner-integrations
 environments: web

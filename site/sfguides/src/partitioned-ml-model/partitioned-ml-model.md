@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: partitioned-ml-model
+language: en
 summary: This is a sample Snowflake Guide
 categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web

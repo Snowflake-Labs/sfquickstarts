@@ -1,5 +1,6 @@
 author: joshcrittenden
 id: end-to-end-analytics-with-snowflake-and-power-bi
+language: en
 summary: Building end-to-end analytical solutions with Snowflake and Power BI
 categories: Getting-Started
 environments: web

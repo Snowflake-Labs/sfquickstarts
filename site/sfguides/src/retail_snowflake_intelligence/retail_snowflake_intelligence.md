@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: retail_snowflake_intelligence
+language: en
 summary: This solution goes through Snowflake Intelligence with retail data.
 categories: Getting-Started, AI
 environments: web

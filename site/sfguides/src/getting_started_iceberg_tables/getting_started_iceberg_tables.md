@@ -1,5 +1,6 @@
 author: Scott Teal, Brad Culberson, Vino Duraisamy
 id: getting_started_iceberg_tables
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web

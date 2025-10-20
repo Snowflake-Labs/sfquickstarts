@@ -1,5 +1,6 @@
 author: Carlos Carrero
 id: asking_questions_to_your_own_documents_with_snowflake_cortex
+language: en
 summary: Step-by-step guide on how to build a document search assistant using vector embeddings in Cortex AI.
 categories: featured,getting-started,data-science, gen-ai 
 environments: web 

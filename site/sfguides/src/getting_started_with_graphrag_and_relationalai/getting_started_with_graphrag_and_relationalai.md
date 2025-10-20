@@ -1,5 +1,6 @@
 author: RelationalAI
 id: getting_started_with_graphrag_and_relationalai
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web

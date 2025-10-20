@@ -1,5 +1,6 @@
 author: Brian Hess, Fredrik Göransson, Charles Yorek, Kesav Rayaprolu 
 id: build_a_data_app_with_snowflake
+language: en
 summary: A guide to building and running a data application powered by Snowflake and Node.js
 categories: getting-started,app-development,architecture-patterns,solution-examples
 environments: web

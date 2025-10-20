@@ -1,5 +1,6 @@
 authors: Jeremiah Hansen
 id: data_engineering_pipelines_with_snowpark_python_ja
+language: en
 summary: このガイドでは、Snowpark Pythonカテゴリーを使用してデータエンジニアリングパイプラインを構築する方法について詳細に説明します。
 categories: featured,data-engineering
 environments: web

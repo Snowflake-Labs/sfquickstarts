@@ -1,5 +1,6 @@
 summary: Building a Single-Page Data Application on Snowflake
 id: data_app
+language: en
 categories: app-development
 environments: web
 status: Published

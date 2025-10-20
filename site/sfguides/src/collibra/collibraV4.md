@@ -1,5 +1,6 @@
 author: 
 id: collibra
+language: en
 summary: This is a sample Snowflake Guide to show how a user can work with Collibra in integration with Snowflake. 
 categories: Getting-Started
 environments: web

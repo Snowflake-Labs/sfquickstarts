@@ -1,5 +1,6 @@
 author: Vino Duraisamy
 id: prompt_engineering_and_llm_evaluation
+language: en
 summary: This guide provides instructions to perform prompt engineering on your LLM models and to build a streamlit app for evaluating LLM responses using human feedback
 categories: data-science-&-ml, app-development
 environments: web

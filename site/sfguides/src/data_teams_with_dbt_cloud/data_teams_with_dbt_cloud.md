@@ -1,4 +1,5 @@
 id: data_teams_with_dbt_cloud
+language: en
 summary: Build your data pipeline with dbt Cloud & Snowflake
 categories: undefined
 environments: web

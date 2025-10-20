@@ -1,5 +1,6 @@
 author: ashleynagaki, vskarine
 id: getting_started_with_cybersyn_financial_and_economic_essentials_app
+language: en
 summary: How to access and use Cybersyn’s Financial & Economic Essentials App.
 categories: Streamlit
 environments: web

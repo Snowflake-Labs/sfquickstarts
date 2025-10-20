@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_governance_with_horizon
+language: en
 summary: Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon Quickstart
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

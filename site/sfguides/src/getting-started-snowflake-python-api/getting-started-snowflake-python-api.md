@@ -1,5 +1,6 @@
 author: Gilberto Hernandez, Kamesh Sampath
 id: getting-started-snowflake-python-api
+language: en
 summary: Learn how to get started with Snowflake's Python API to manage Snowflake objects and tasks.
 categories: Getting-Started
 environments: web

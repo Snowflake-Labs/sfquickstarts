@@ -1,5 +1,6 @@
 author: Josh Reini
 id: getting_started_with_ai_observability
+language: en
 summary: This is a guide for getting started with Snowflake AI Observability.
 categories: Getting-Started, Observability, Trail
 environments: web

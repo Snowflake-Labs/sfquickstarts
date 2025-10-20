@@ -1,5 +1,6 @@
 author: Allie Fero, James Cha-Earley
 id: build-ml-models-for-customer-conversions
+language: en
 summary: This hands-on lab will guide you through building a custom machine learning model to predict customer purchase likelihood by analyzing the complex relationship between website experience metrics and product reviews.
 categories: Getting-Started
 environments: web

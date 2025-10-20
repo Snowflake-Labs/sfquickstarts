@@ -1,5 +1,6 @@
 author: Matt Marzillo
 id: getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app
+language: en
 summary: This is a quickstart showing users how use the Microsoft Teams and M365 Copilot Cortex App
 categories: AI, Cortex, Microsoft, Azure, Agents, Copilot, Teams, Search, Analyst
 environments: web

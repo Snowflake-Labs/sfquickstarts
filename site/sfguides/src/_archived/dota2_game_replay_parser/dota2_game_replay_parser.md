@@ -1,5 +1,6 @@
 summary: Parse a Dota 2 game replay
 id: dota2_game_replay_parser 
+language: en
 categories: undefined
 environments: web
 status: Archived 

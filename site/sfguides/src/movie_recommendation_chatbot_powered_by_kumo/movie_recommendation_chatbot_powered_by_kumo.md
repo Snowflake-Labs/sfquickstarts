@@ -1,5 +1,6 @@
 author: Naisha Agarwal, Effy Fang
 id: movie_recommendation_chatbot_powered_by_kumo
+language: en
 summary: This guide will provide step-by-step details for building a personalized movie recommendation chatbot using Kumo in a Snowflake Native App, CortexAI and Streamlit.
 categories: Getting-Started, data-science, data-engineer, partner-integrations
 environments: web

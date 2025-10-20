@@ -1,5 +1,6 @@
 author: Shreya Agrawal
 id: getting_started_with_search_optimization
+language: en
 summary: Quickstart guide for using Search Optimization
 categories: getting-started
 environments: web

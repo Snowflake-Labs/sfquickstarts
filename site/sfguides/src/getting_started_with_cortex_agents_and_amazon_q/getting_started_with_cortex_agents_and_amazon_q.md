@@ -1,5 +1,6 @@
 author: marzillo-snow, quilpie
 id: getting_started_with_cortex_agents_and_amazon_q
+language: en
 summary: This is a quickstart for using Cortex Agents and Amazon Q
 categories: Getting-Started, data-science, data-engineering, AWS, cortex, genai, Amazon, Q, search, LLM, copilot, Agents, Cortex
 environments: web

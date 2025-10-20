@@ -1,6 +1,7 @@
 author: Haebichan Jung
 summary: A ETL-LLM Integration Guide: Automate and Ensure Consistent Schema Change Propagation using AI
 id: schema_lineage_auto_propagation_llm
+language: en
 categories: Data Engineering, AI, Partner
 status: Published
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_collaboration_ja
+language: jp
 summary: Tasty Bytes - ゼロからのSnowflake - コラボレーションクイックスタート
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

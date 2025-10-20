@@ -1,4 +1,5 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_fr
+language: en
 summary: Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake
 categories: featured,getting-started,data-engineering,app-development
 environments: web

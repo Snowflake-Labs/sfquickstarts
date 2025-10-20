@@ -1,5 +1,6 @@
 author: camwasi
 id: sec_10k_decoder_without_rag
+language: en
 summary: This quickstart will help you create a streamlit application to interact with Cortex's AI21's Jamba-Instruct
 categories: Getting-Started, Cortex, Data-Science-&-Ai, Streamlit, App-Development
 environments: web

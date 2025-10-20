@@ -1,5 +1,6 @@
 author: Joviane Bellegarde
 id: connectors_postgresql_cdc
+language: en
 summary: CDC Data from PostgreSQL to Snowflake
 categories: CDC, Getting-Started, Connectors, Dynamic Tables
 environments: web

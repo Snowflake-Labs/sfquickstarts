@@ -1,5 +1,6 @@
 summary: Accelerating Data Science with Snowflake and Dataiku
 id: data_science_with_dataiku
+language: en
 categories: data-science-&-ml,partner-integrations
 environments: web
 status: Archived

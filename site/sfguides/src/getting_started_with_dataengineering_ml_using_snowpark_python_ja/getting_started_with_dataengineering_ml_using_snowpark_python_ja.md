@@ -1,4 +1,5 @@
 id: getting_started_with_dataengineering_ml_using_snowpark_python_ja
+language: jp
 summary: Snowpark for Pythonを使用したデータエンジニアリングとMLの入門
 categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web

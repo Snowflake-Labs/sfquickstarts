@@ -1,5 +1,6 @@
 author: mando222
 id: getting_started_with_tempo_and_snowflake
+language: en
 summary: This is a guide on getting started with Tempo on Snowflake
 categories: Getting-Started
 environments: web

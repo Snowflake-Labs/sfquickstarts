@@ -1,5 +1,6 @@
 author: Oleksii Bielov
 id: geospatial_analytics_with_snowflake_and_carto_ny
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web

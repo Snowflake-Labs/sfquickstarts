@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: dbt-projects-on-snowflake
+language: en
 summary: This Quickstart will show you how to get started using dbt Projects on Snowflake
 categories: Getting-Started, Data-Engineering, Tasty-Bytes
 environments: web

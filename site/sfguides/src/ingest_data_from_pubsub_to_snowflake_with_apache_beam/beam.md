@@ -1,5 +1,6 @@
 author: Kamil Bregula
 id: ingest_data_from_pubsub_to_snowflake_with_apache_beam
+language: en
 summary: Ingest data from PubSub to Snowflake with Apache Beam
 categories: data-engineering,architecture-patterns,solution-examples,partner-integrations
 environments: web

@@ -1,5 +1,6 @@
 author: Sikha Das
 id: ai_assistant_for_sales_calls
+language: en
 summary: This application provides a centralized, AI-driven approach to analyze sales calls to gain actionable insights, enhance decision-making, and drive better alignment between product and GTM strategies.
 categories: Getting-Started
 environments: web

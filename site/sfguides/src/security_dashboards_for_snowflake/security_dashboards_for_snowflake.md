@@ -1,5 +1,6 @@
 author: Security Field CTO Team
 id: security_dashboards_for_snowflake
+language: en
 summary: Walkthrough of creating security dashboards for Snowflake based on Snowflake audit and config data
 categories: Cybersecurity, audit, 
 environments: web

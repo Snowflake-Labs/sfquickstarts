@@ -1,5 +1,6 @@
 author: Jonathan Tao and Hanbing Yan
 id: snowpark_python_top_three_tips_for_optimal_performance
+language: en
 summary: Snowpark Python: Top Three Tips for Optimal Performance
 categories: Data-Engineering
 environments: web

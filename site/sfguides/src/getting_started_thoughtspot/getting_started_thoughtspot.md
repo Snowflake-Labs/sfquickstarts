@@ -1,5 +1,6 @@
 author: Thoughtspot
 id: getting_started_thoughtspot
+language: en
 summary: Build an interactive react app with ThoughtSpot and Snowflake
 categories: app-development,partner-integrations
 environments: web

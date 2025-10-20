@@ -1,5 +1,6 @@
 author: Kevin McGinley
 id: getting_started_with_geospatial_geography
+language: en
 summary: Getting Started with Geospatial - Geography
 categories: getting-started
 environments: web

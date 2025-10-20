@@ -1,5 +1,6 @@
 summary: Getting Started with Event Tables and Alerts
 id: alert_on_events 
+language: en
 categories: featured, getting-started, data-engineering, app-development, observability, trail
 environments: web
 status: Published 

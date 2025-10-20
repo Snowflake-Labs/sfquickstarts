@@ -1,5 +1,6 @@
 author: Matt Barreiro
 id: getting-started-with-snowflake-trail-for-observability
+language: en
 summary: Learn how to enable and use Snowflake Trail for comprehensive observability across your Snowflake workloads, including logs, traces, metrics, and monitoring capabilities.
 categories: Trail,Observability,Getting-Started
 environments: web

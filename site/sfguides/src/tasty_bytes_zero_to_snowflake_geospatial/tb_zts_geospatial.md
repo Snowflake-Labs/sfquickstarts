@@ -1,5 +1,6 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_geospatial
+language: en
 summary: Tasty Bytes - Zero to Snowflake - Geospatial Quickstart
 categories: Tasty-Bytes, Getting-Started, Featured
 environments: web

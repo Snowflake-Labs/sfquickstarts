@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: overview-of-feature-store-api
+language: en
 summary: This guide goes through different features of the Snowflake feature Store API.
 categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web

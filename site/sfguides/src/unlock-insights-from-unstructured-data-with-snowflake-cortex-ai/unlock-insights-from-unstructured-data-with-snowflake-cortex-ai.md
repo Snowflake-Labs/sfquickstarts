@@ -1,5 +1,6 @@
 summary: Unlock Insights from Unstructured Data with Snowflake Cortex AI
 id: unlock_insights_from_unstructured_data_with_snowflake_cortex_ai
+language: en
 categories: data-engineering,ai,app-development
 environments: web
 status: Published

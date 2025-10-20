@@ -1,5 +1,6 @@
 author: Marie Coolsaet
 id: tasty_bytes_snowpark_101_for_data_science_ptbr
+language: pt_br
 summary: Tasty Bytes: introdução ao Snowpark para ciência de dados
 categories: Tasty-Bytes, Getting-Started, Featured, Data-Science-&-Ml
 environments: web

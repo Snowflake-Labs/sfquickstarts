@@ -1,5 +1,6 @@
 summary: Auto-Ingest Twitter Data into Snowflake
 id: auto_ingest_twitter_data
+language: en
 categories: data-engineering,app-development,solution-examples, marketing
 status: Archived
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues

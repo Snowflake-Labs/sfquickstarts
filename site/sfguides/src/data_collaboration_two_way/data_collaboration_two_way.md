@@ -1,5 +1,6 @@
 author: Tim Buchhorn
 id: data_collaboration_two_way
+language: en
 summary: This is a Snowflake Guide on how to use Snowflake's Data Collaboration features to share an enrich data. 
 categories: Getting-Started
 environments: web

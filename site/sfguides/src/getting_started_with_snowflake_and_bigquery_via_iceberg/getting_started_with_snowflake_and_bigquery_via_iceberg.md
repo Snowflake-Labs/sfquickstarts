@@ -1,5 +1,6 @@
 author: Matt Marzillo
 id: getting_started_with_snowflake_and_bigquery_via_iceberg
+language: en
 summary: This is a quickstart showing users how use iceberg with Snowflake and Big Query
 categories: Data-Sharing, GCP, Iceberg, Big Query, Google, Open, Open Table Format
 environments: web

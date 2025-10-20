@@ -1,5 +1,6 @@
 author: Simon Coombes
 id: building_a_sports_prediction_model_with_snowpark_ml
+language: en
 summary: Building a Sports Prediction Model with Snowpark ML
 categories: data-science-&-ml, data-engineering
 environments: web

@@ -1,5 +1,6 @@
 author: Eddy Widjaja
 id: harness_the_power_of_snowflake_with_informatica_idmc
+language: en
 summary: This is a guide for getting started with Data Engineering using Informatica Data Management Cloud
 categories: data-science-&-ml,data-engineering,partner-integrations
 environments: web

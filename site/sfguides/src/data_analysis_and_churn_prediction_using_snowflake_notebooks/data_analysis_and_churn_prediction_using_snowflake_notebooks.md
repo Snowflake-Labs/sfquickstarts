@@ -1,5 +1,6 @@
 author: Joviane Bellegarde
 id: data_analysis_and_churn_prediction_using_snowflake_notebooks
+language: en
 summary: Data Analysis and Churn Prediction Using Snowflake Notebooks
 categories: Churn, Prediction, Getting-Started
 environments: web

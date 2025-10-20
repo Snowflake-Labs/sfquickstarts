@@ -1,5 +1,6 @@
 author: Vino Duraisamy, Ron Ortloff, Scott Teal
 id: cortex_ai_sentiment_iceberg
+language: en
 summary: This is a guide for applying artificial intelligence on an Iceberg open data lakehouse
 categories: Cortex
 environments: web

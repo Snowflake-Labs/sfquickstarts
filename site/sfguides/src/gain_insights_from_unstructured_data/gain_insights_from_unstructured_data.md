@@ -1,5 +1,6 @@
 author: James Cha-Earley
 id: gain_insights_from_unstructured_data
+language: en
 summary: Gain Insights From Unstructured Data with Snowflake Cortex
 categories: data-science, gen-ai, data-science-&-ai, cortex
 environments: web

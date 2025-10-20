@@ -1,5 +1,6 @@
 author: Josh Hall
 id: from-clicks-to-cortex-build-ai-ready-data-pipelines-with-coalesce-on-snowflake-in-a-snap
+language: en
 summary: Learn how to leverage Coalesce Marketplace to extend any of your data projects effortlessly.
 categories: Getting-Started
 environments: web

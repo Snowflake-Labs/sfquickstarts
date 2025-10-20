@@ -1,4 +1,5 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_kr
+language: ko
 summary: Snowflake Python 워크시트에서 Snowpark 시작하기
 categories: featured,getting-started,data-engineering,app-development
 environments: web

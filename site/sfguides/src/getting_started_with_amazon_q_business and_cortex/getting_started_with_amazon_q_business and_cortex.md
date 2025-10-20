@@ -1,5 +1,6 @@
 author: marzillo-snow
 id: getting_started_with_amazon_q_business and_cortex
+language: en
 summary: This is a quickstart for using Amazon Q Business with Cortex
 categories: Getting-Started, data-science, data-engineering, AWS, cortex, genai, Amazon, Q, search, LLM, copilot
 environments: web

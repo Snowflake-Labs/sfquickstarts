@@ -1,5 +1,6 @@
 authors: Jonathan Leclavier
 id: Building_An_Automated_ELT_Workflow_On_Snowflake_With_Openflow
+language: en
 summary: Build an automated ELT workflow on Snowflake with Openflow
 categories: getting-started,data-engineering,partner-integrations,demos
 environments: web

@@ -1,5 +1,6 @@
 authors: Karuna Nadadur, Kamesh Sampath
 id: build_llm_app_nvidia_scs
+language: en
 summary: Build LLM App Powered By NVIDIA on Snowpark Container Services
 categories: getting-started,llm,snowpark-container-services,nvidia,snowflake-native-app
 environments: web

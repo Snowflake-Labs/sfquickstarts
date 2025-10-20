@@ -1,5 +1,6 @@
 author: Anthony Alteirac
 id: getting_started_keboola
+language: en
 summary: Getting Started With Keboola
 categories: getting-started,partner-integrations
 environments: web

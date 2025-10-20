@@ -1,5 +1,6 @@
 author: marzillo-snow
 id: setting_up_snowflake_environments_in_vertex_ai
+language: en
 summary: This is a quickstart for Setting up Snowflake Environments in Vertex AI
 categories: Getting-Started, data-science, data-engineering, Google, AI, Vertex-AI, GCP
 environments: web

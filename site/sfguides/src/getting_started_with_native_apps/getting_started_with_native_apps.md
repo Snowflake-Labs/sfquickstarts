@@ -1,5 +1,6 @@
 author: Daniel Myers
 id: getting_started_with_native_apps
+language: en
 summary: Follow this tutorial to get up and running with your first Snowflake Native Application
 categories: Getting-Started
 environments: web

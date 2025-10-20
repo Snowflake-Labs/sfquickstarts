@@ -1,5 +1,6 @@
 author: Marc Henderson
 id: application-control-framework
+language: en
 summary: A guide to building a Native App with consumer controls and limits.
 categories: Getting-Started, App-Development, Streamlit
 environments: web

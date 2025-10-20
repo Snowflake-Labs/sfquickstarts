@@ -1,5 +1,6 @@
 author: obashaw
 id: google_analytics_4_template_setup
+language: en
 summary: This QuickStart provides instructions on how to set up Sigma's Google Analytics 4 template.
 categories: partners,featured,partner-integrations
 environments: web

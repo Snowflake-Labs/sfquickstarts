@@ -1,5 +1,6 @@
 author: Prabhath Nanisetty
 id: build-a-visual-idea-generator-with-text-to-image-models
+language: en
 summary: A guide to building a visual concept/idea generator from unstructured data powered by Text2Image LLM models and Streamlit.
 categories: Data-Science-&-AI,Getting-Started,App-Development,Cortex,Data-Science-&-ML,Solution-Examples,Streamlit
 environments: web

@@ -1,5 +1,6 @@
 author: Jim Warner
 id: reach_and_frequency_queries
+language: en
 summary: Shows common reach and frequency queries for advertising measurement
 categories: data-science-&-ml,solution-examples
 environments: web

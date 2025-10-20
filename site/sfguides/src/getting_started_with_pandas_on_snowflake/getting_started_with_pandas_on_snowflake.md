@@ -1,5 +1,6 @@
 author: caleb-baechtold, doris-lee
 id: getting_started_with_pandas_on_snowflake
+language: en
 summary: Through this quickstart guide, you will learn how to use pandas on Snowflake.
 categories: Getting-Started
 environments: web

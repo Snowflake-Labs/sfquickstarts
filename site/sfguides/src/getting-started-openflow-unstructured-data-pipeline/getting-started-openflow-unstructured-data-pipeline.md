@@ -1,4 +1,5 @@
 id: getting_started_with_Openflow_unstructured_data_pipeline
+language: en
 summary: Getting Started with Openflow Unstructured Data Pipeline using Google Drive and Snowflake Intelligence
 categories: featured,getting-started,data-engineering,unstructured-data,ai,Openflow,connectors
 environments: web

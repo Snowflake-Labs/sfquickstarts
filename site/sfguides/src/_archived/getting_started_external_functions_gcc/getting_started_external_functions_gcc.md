@@ -1,5 +1,6 @@
 summary: Getting Started With External Functions Using the Google Cloud Console
 id: getting_started_external_functions_gcc
+language: en
 categories: getting-started,partner-integrations
 status: Archived
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues

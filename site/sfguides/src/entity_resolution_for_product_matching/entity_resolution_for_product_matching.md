@@ -1,5 +1,6 @@
 author: Vinit Patel
 id: getting-started-with-entity-resolution-retail-product-classification-for-aggregated-insights
+language: en
 summary: This application provides a centralized, AI-driven approach to match products across retailer and e-commerce catalogs to aggregate data, with the potential to enable competitve price tracking, enhanced supply chain management and much, much more.
 categories: Getting-Started, Cortex
 environments: web

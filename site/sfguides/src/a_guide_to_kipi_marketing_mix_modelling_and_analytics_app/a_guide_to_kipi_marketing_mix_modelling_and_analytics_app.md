@@ -1,5 +1,6 @@
 author: Ritika Sharma
 id: a_guide_to_kipi_marketing_mix_modelling_analytics_app
+language: en
 summary: This is a sample Snowflake Guide
 categories: Applications & Collaboration, Apps & Collab: External Collaboration, AI - Snowflake ML, Apps & Collab - Native Apps
 environments: web

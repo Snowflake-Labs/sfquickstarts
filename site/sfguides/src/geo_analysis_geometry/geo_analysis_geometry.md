@@ -1,5 +1,6 @@
 author: Peter Popov, Oleksii Bielov
 id: geo_analysis_geometry
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web

@@ -1,5 +1,6 @@
 author: Daniel_Yu
 id: getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization
+language: en
 summary: The Player 360 solution showcases how gaming companies can create a comprehensive unified data intelligence platform, tailored for game developers, analysts and data scientists aiming to build exceptional gaming experiences. 
 categories: Getting-Started, data-science-&-ml, solution-examples
 environments: web

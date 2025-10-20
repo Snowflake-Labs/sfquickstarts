@@ -1,5 +1,6 @@
 author: Swathi Jasti
 id: optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis
+language: en
 summary: Optimizing Network Operations with Cortex AI - Call Transcripts and Tower Data Analysis
 categories: Getting-Started, Streamlit, Data-Science-&-Ai, app-development, GenAI, Cortex, Cortex Analyst
 environments: web

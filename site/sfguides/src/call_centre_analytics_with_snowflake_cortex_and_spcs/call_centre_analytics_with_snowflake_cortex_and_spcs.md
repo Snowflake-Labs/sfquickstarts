@@ -1,5 +1,6 @@
 author: Phani Raj, Karuna Nadadur
 id: call_centre_analytics_with_snowflake_cortex_and_spcs
+language: en
 summary: This guide will provide step-by-step details for building call centre analytics using Snowflake Cortex LLM functions and Snowpark Container Services
 categories: Getting-Started,data-science, gen-ai
 environments: web

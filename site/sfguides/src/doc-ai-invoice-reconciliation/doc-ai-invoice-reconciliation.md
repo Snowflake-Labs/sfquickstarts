@@ -1,5 +1,6 @@
 author: Anthony Melatti
 id: doc-ai-invoice-reconciliation
+language: en
 summary: Snowflake Document AI for Automated Invoice Reconciliation
 categories: document-ai, Getting-Started
 environments: web

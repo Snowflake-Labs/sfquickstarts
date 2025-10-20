@@ -1,5 +1,6 @@
 authors: Jeremiah Hansen
 id: data_engineering_pipelines_with_snowpark_python_it
+language: en
 summary: Questa guida fornisce indicazioni dettagliate per creare pipeline di data engineering con Snowpark Python
 categories: in-evidenza, data-engineering
 environment: web

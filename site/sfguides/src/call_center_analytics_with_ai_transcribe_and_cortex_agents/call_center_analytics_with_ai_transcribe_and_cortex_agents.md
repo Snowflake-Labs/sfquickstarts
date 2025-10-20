@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: call_center_analytics_with_ai_transcribe_and_cortex_agents
+language: en
 summary: This guide provides step-by-step details for building call center analytics using AI_TRANSCRIBE and Cortex Agents with simplified setup
 categories: Getting-Started,data-science, Ai
 environments: web

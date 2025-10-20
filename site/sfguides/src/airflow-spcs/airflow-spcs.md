@@ -1,5 +1,6 @@
 author: Praveen Padige
 id: airflow-spcs
+language: en
 summary: Running Apache Airflow on SPCS
 categories: data-engineering,app-development
 environments: web

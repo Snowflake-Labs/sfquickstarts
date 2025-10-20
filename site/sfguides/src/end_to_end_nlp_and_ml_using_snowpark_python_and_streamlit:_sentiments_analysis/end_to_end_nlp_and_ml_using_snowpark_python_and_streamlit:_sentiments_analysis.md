@@ -1,5 +1,6 @@
 author: sfc-gh-imehaddi
 id: end_to_end_nlp_and_ml_using_snowpark_python_and_streamlit:_sentiments_analysis
+language: en
 summary: This is a sample Snowflake Guide
 categories: Getting-Started
 environments: web

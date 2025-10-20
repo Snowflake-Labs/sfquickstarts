@@ -1,5 +1,6 @@
 author: Charlie Hammond
 id: tasty_bytes_customer_support_email_app
+language: en
 summary: This quickstart builds a customer support email application in Streamlit using Cortex LLM features to help agents quickly and effectively answer customer questions. 
 categories: Tasty-Bytes, Getting-Started, Cortex
 environments: web

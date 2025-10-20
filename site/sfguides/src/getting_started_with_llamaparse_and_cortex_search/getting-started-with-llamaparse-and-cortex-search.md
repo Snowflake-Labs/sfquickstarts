@@ -1,4 +1,5 @@
 id: getting-started-with-llamaparse-and-cortex-search
+language: en
 summary: Parse Documents with LlamaParse and Search with Cortex
 environments: web
 status: Published

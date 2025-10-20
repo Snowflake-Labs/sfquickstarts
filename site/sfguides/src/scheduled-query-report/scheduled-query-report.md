@@ -1,5 +1,6 @@
 author: Chanin Nantasenamat
 id: scheduled-query-report
+language: en
 summary: Build an interactive report to analyze failed or long-running scheduled queries using Snowflake Notebooks with Streamlit integration.
 categories: getting-started, audit, streamlit, notebooks, snowflake, featured
 environments: web

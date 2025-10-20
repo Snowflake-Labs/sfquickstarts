@@ -1,5 +1,6 @@
 author: Susan Devitt
 id: getting_started_with_horizon_for_data_governance_in_snowflake
+language: en
 summary: This guide is used to demonstrate the capabilities of Horizon for Data Governance. The walk-through consists of being able to ingest and monitor data pipelines in your organization, how to actively govern data including lineage and masking, and how Horizon can help with monitoring data in Snowflake using Snowsight.
 categories: Data governance, data engineering
 environments: web
