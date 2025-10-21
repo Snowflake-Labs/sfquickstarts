@@ -1,6 +1,6 @@
 author: Joviane Bellegarde
 id: connectors_postgres_cdc
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/transformation
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
 summary: CDC Data from PostgreSQL to Snowflake
 environments: web
