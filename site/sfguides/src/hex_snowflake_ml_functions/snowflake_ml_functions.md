@@ -1,6 +1,6 @@
 author: Armin Efendic
 id: building_ml_models_in_minutes_with_hex_and_snowflake_ml_functions
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowfalke-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: This lab will walk you through how to use Snowflake ML Functions and Hex.
 environments: web
