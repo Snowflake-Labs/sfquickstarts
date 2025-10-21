@@ -1,6 +1,6 @@
 author: Dash Desai
 id: build_genai_inpainting_and_hybridtable_app_in_snowpark_container_services
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowfalke-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
 language: en
 summary: Through this quickstart guide, you will explore GenAI inpainting and Hybrid tables with everything running within a Streamlit app in Snowpark Container Services
 environments: web
