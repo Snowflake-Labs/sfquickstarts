@@ -2,7 +2,7 @@ summary: Learn how to get started with Data Quality Monitoring Framework in Snow
 id: getting_started_with_data_quality_in_snowflake
 categories: getting-started
 environments: web
-status: Archived
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Engineering
 authors: Vino Duraisamy, Pino Suliman
