@@ -429,7 +429,7 @@ We will use this audit table in our upcoming notebook to ensure we're matching l
 In the next section, we'll use these harmonized tables to perform intelligent entity matching using a hybrid approach that combines vector similarity with AI classification.
 
 <!-- ------------------------ -->
-## data harmonization with Hybrid Matching
+## Data Harmonization - Hybrid Matching
 Duration: 25
 
 Now that we have harmonized datasets, it's time to tackle the core challenge: **determining which ABT products correspond to which Best Buy products**. This is where the magic of hybrid entity matching comes in.
