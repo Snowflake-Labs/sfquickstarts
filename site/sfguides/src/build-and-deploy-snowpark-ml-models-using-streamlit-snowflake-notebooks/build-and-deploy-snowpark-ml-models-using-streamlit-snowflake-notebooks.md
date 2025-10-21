@@ -1,6 +1,6 @@
 author: Shriya Rai
 id: build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowfalke-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark
 language: en
 summary: This is a sample Snowflake Guide
 environments: web
