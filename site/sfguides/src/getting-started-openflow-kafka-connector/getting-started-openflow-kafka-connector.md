@@ -1,11 +1,10 @@
 id: getting-started-with-openflow-kafka-connector
 language: en
 summary: Getting Started with Openflow Kafka Connector for Real-Time Log Streaming
-categories: featured,getting-started,data-engineering,streaming,openflow,connectors
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfquickstarts/issues>
-tags: Getting Started, Openflow, Kafka, Real-time Streaming, Event Streaming, Log Analytics
 authors: Kamesh Sampath<kamesh.sampath@snowflake.com>
 
 # Getting Started with Openflow Kafka Connector
