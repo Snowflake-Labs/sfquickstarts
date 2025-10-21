@@ -1,11 +1,11 @@
 author: Vino Duraisamy, Ron Ortloff, Scott Teal
 id: cortex_ai_sentiment_iceberg
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+language: en
 summary: This is a guide for applying artificial intelligence on an Iceberg open data lakehouse
-categories: Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Cortex, Data Lake, Iceberg
 
 # Sentiment Analysis Using Snowflake Cortex AI on Iceberg Tables
 <!-- ------------------------ -->

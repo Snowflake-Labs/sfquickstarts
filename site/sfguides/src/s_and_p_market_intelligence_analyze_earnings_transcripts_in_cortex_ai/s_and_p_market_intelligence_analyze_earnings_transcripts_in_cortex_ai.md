@@ -1,11 +1,11 @@
 author: Mats Stellwall, Henry Chiang
 id: s_and_p_market_intelligence_analyze_earnings_transcripts_in_cortex_ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
+language: en
 summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering 
 
 # S&P Market Intelligence: Analyze Earnings Transcripts with LLMs in Cortex AI
 <!-- ------------------------ -->

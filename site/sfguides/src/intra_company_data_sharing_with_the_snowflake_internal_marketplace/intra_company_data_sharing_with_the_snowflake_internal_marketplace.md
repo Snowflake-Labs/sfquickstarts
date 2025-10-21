@@ -1,11 +1,11 @@
 authors: Matthias Nicola, Henrik Nielsen
 id: internal_marketplace_intra_org_sharing
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/internal-marketplace
+language: en
 summary: INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE
-categories: Data-Sharing
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Summit HOL, Data Sharing, Marketplace, Snowflake Internal Marketplace, Data Mesh, Data Products
 
 # Intra-Company Data Sharing With The Snowflake Internal Marketplace 
 <!-- ------------------------ -->

@@ -1,10 +1,10 @@
 id: build-agentic-workflows-with-huggingface-smolagents-in-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: This guide outlines the process for creating agentic workflow in Snowflake Notebook on Container Runtime.
-categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
 # Build Agentic Workflows with Hugging Face Smolagents in Snowflake

@@ -1,11 +1,11 @@
 author: Mats Stellwall
 id: deploying_custom_models_to_snowflake_model_registry
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: Through this quickstart guide, you will learn how to deploy a custom model to the Snowflake Model Registry.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Machine Learning, Snowpark, Model registry 
 
 # Deploying Custom Models To Snowflake Model Registry
 <!-- ------------------------ -->

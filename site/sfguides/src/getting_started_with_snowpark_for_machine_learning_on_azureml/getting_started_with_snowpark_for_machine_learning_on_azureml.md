@@ -1,11 +1,11 @@
 author: marzillo-snow
 id: example_matt_marzillo
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a quickstart for using Snowpark for ML on AzureML
-categories: Getting-Started, data-science, data-engineering, azure, azureml, snowpark
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
 
 # Getting Started with Snowpark for Machine Learning on AzureML
 <!-- ------------------------ -->

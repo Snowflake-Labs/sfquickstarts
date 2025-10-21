@@ -1,11 +1,11 @@
 author: Charles Yorek
 id: build-a-native-app-with-spcs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Native Apps, Snowpark Container Services, SPCS 
 
 # Build a Snowflake Native App with Snowpark Container Services
 <!-- ------------------------ -->

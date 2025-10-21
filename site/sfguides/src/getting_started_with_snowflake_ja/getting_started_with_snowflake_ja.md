@@ -1,10 +1,10 @@
 summary: これはSnowflakeの大まかな紹介であり、ログイン、クエリの実行、データのロード方法について説明しています。
 id: getting_started_with_snowflake_ja
-categories: featured,getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: jp
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, ja, はじめに, データサイエンス, データエンジニアリング
 
 # Snowflake入門 - ゼロからはじめるSnowflake
 

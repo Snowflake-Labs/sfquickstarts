@@ -1,11 +1,11 @@
 author: Meny Kobel
 id: getting_started_with_hybrid_tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Follow this tutorial to learn the basics of hybrid tables
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Hybrid Tables 
 
 # Getting Started with Hybrid Tables  
 <!-- ------------------------ -->

@@ -1,11 +1,11 @@
 author: Marie Coolsaet
 id: tasty_bytes_snowpark_101_for_data_science_ptbr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: pt_br
 summary: Tasty Bytes: introdução ao Snowpark para ciência de dados
-categories: Tasty-Bytes, Getting-Started, Featured, Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Introdução, Getting Started, Data Science, Data Engineering, Snowpark, Machine Learning, Streamlit, ptbr
 
 # Tasty Bytes: introdução ao Snowpark para ciência de dados
 <!-- ------------------------ -->

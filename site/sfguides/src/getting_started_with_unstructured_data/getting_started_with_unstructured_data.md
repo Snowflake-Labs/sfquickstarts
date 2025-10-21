@@ -1,11 +1,11 @@
 author: Scott Teal, Saurin Shah, Zohar Nissare-Houssen, Kesav Rayaprolu, Mauricio Rojas Fernandez
 id: getting_started_with_unstructured_data
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
+language: en
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
-categories: getting-started,architecture-patterns
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Data Lake, Unstructured Data 
 
 # Getting Started with Unstructured Data
 <!-- ------------------------ -->

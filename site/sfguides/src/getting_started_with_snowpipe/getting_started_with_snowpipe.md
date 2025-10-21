@@ -1,10 +1,10 @@
 summary: This guide will help you get started with Snowpipe.
 id: getting_started_with_snowpipe
-categories: featured,getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, AWS, SQL, Data Engineering, Snowpipe, auto-ingest
 
 # Getting Started with Snowpipe
 <!-- ------------------------ -->

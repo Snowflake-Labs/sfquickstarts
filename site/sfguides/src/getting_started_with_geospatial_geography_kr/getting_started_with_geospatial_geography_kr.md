@@ -1,6 +1,7 @@
 summary: 지리 공간 데이터 활용기
 id: getting_started_with_geospatial_geography_kr
-categories: undefined
+language: ko
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/geospatial
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

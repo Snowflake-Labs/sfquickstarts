@@ -1,10 +1,10 @@
 summary: This guide can be used to help customers setup and run queries pertaining to specific setup & configuration items that might be causing over-consumption.
 id: resource_optimization_setup
-categories: resource-optimization
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Resource Optimization, Cost Optimization, Consumption, Setup, Configuration, Administration, Monitoring 
 authors: Matt Meredith
 
 # Resource Optimization: Setup & Configuration

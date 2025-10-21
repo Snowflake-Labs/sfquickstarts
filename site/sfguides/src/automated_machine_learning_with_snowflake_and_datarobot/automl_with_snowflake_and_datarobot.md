@@ -1,11 +1,11 @@
 author: miles.adkins@snowflake.com
 id: automl_with_snowflake_and_datarobot
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: This lab will walk you through how to use Snowflake and DataRobot to perform supervised machine learning.
-categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: DataRobot, AutoML, Partner Connect, Databases, Tables, Stages, File Formats
 
 # Accelerating Machine Learning with Snowflake and DataRobot
 

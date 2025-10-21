@@ -1,11 +1,11 @@
 author: Chanin Nantasenamat
 id: table-size-growth
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/storage
+language: en
 summary: Learn how to monitor and analyze table storage growth trends in Snowflake Notebooks.
-categories: getting-started, audit, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowflake, Notebooks, Streamlit, Storage Monitoring, SQL
 
 # Monitor Table Size Growth in Snowflake Notebooks
 <!-- ------------------------ -->

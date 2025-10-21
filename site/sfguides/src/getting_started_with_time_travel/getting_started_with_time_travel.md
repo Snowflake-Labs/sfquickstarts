@@ -1,10 +1,10 @@
 summary: Use Time Travel to query previous database states and undrop data.
 id: getting_started_with_time_travel
-categories: featured,getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 environments: test, web, hello
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Data Engineering
 
 # Getting Started with Time Travel
 <!-- ------------------------ -->

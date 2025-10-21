@@ -1,11 +1,11 @@
 author: Charlie Hammond
 id: tasty_bytes_rag_chatbot_using_cortex_and_streamlit
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
+language: en
 summary: In this guide, we build a Cortex LLM powered chatbot to help Tasty Bytes support agents find answers to customer questions faster.
-categories: Getting-Started, Tasty-Bytes, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake Cortex, Streamlit
 
 # Tasty Bytes - RAG Chatbot Using Cortex and Streamlit
 <!-- ------------------------ -->

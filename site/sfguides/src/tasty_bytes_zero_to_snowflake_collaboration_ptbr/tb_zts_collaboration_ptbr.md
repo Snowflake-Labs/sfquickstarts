@@ -1,11 +1,11 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_collaboration_ptbr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: pt_br
 summary: Quickstart Tasty Bytes: do zero ao Snowflake - colaboração
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake, Introdução, Do zero ao Snowflake, ptbr
 
 # Tasty Bytes: do zero ao Snowflake - colaboração
 <!-- ------------------------ -->

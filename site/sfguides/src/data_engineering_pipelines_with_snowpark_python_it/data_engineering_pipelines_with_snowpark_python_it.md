@@ -1,11 +1,11 @@
 authors: Jeremiah Hansen
 id: data_engineering_pipelines_with_snowpark_python_it
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Questa guida fornisce indicazioni dettagliate per creare pipeline di data engineering con Snowpark Python
-categories: in-evidenza, data-engineering
 environment: web
 status: Pubblished
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Snowpark, Python, it
 
 # Pipeline di data engineering con Snowpark Python
 <!-- ------------------------ -->

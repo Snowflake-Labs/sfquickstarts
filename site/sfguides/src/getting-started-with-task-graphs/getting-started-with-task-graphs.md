@@ -1,11 +1,11 @@
 author: Charlie Hammond
 id: getting-started-with-task-graphs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: This quickstart sets up an example Snowflake task graph to showcase its features.
-categories: Getting-Started, Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering
 
 # Getting Started with Snowflake Task Graphs
 <!-- ------------------------ -->

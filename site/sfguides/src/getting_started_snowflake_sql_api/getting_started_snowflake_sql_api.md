@@ -1,10 +1,10 @@
 summary: Getting Started With Snowflake SQL API
 id: getting_started_snowflake_sql_api
-categories: getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Data Engineering
 
 # Getting Started With Snowflake SQL API
 

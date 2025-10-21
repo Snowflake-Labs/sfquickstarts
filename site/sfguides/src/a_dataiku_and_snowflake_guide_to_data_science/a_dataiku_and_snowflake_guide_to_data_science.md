@@ -1,11 +1,11 @@
 author: Stephen Franks
 id: a_dataiku_and_snowflake_guide_to_data_science
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This is an introduction to Dataiku and Snowflake
-categories: Data Engineering, AI, Partner
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, AI, Partner, Dataiku
 
 # A Dataiku and Snowflake Introduction to Data Science
 <!-- ------------------------ -->

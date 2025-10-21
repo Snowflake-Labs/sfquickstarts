@@ -1,11 +1,11 @@
 author: Jason Summer
 id: fine-tune-an-llm-in-snowpark-container-services-with-autotrain
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
+language: en
 summary: Fine-Tuning an LLM in Snowpark Container Services with AutoTrain
-categories: Getting-Started
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, LLM, AI 
 
 # Fine-Tuning an LLM in Snowpark Container Services with AutoTrain
 <!-- ------------------------ -->

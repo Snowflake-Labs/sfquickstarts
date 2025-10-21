@@ -1,11 +1,11 @@
 author: 
 id: data_apps_summit_lab_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a sample Snowflake Guide
-categories: featured,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter, kr 
 
 # Snowflake 마켓플레이스, Snowpark, Streamlit으로 데이터 애플리케이션 구축
 

@@ -1,11 +1,11 @@
 author: Swathi Jasti
 id: developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: Developing Tasty Bytes React Native Data Application using Snowflake, Hybrid Tables, SQLAlchemy, Flask
-categories: Tasty-Bytes, Getting-Started, app-development, hybrid-tables, sql-alchemy, flask, react
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Data Engineering, API, Hybrid Tables, SQLAlchemy, Flask, React
 
 # Developing React Native Application using Snowflake Hybrid Tables
 

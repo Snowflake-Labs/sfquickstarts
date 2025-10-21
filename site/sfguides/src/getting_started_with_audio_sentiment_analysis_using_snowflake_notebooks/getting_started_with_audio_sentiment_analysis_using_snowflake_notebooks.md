@@ -1,10 +1,10 @@
 id: getting_started_with_audio_sentiment_analysis_using_snowflake_notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: Getting Started with Audio Sentiment Analysis using Snowflake Notebooks
-categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake Notebooks, Machine Learning, Audio Processing
 author: James Cha-Earley
 
 # Getting Started with Audio Sentiment Analysis using Snowflake Notebooks 

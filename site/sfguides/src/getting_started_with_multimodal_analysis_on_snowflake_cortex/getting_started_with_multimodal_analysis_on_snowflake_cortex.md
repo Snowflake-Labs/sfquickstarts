@@ -1,10 +1,10 @@
 summary: Getting Started with Multimodal Analysis on Snowflake Cortex
 id: getting_started_with_multimodal_analysis_on_snowflake_cortex
-categories: getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
+language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Data Engineering, AI, Multimodal
 author: James Cha-Earley
 
 # Getting Started with Multimodal Analysis on Snowflake Cortex AI

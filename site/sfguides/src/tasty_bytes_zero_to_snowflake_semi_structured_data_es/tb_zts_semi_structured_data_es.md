@@ -1,11 +1,11 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_semi_structured_data_es
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: es
 summary: Tasty Bytes - De cero a Snowflake - Datos semiestructurados
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: introducción, Getting Started, Data Engineering, Data Warehouse, es
 
 # Tasty Bytes - De cero a Snowflake - Datos semiestructurados
 <!-- ------------------------ -->

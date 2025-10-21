@@ -1,10 +1,10 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_es
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Introducción a la ingeniería de datos y al ML con Snowpark para Python
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets, introducción, Snowpark para Python, ingeniería de datos, hojas de trabajo de Python, es 
 authors: Dash Desai
 
 # Introducción a Snowpark con las hojas de trabajo de Snowflake para Python

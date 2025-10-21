@@ -1,10 +1,10 @@
 id: image_recognition_snowpark_pytorch_streamlit_openai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: This guide provides the instructions for writing image recognition applications in Snowflake using Snowpark for Python, PyTorch, Streamlit and OpenAI.
-categories: data-science-&-ml,app-development,solution-examples
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowpark Python, Streamlit, PyTorch, OpenAI
 authors: Dash Desai
 
 # A Image Recognition App in Snowflake using Snowpark Python, PyTorch, Streamlit and OpenAI

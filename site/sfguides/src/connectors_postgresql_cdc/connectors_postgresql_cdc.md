@@ -1,11 +1,11 @@
 author: Joviane Bellegarde
 id: connectors_postgresql_cdc
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform, snowfalke-site:taxonomy/solution-center/certification/community-sourced
+language: en
 summary: CDC Data from PostgreSQL to Snowflake
-categories: CDC, Getting-Started, Connectors, Dynamic Tables
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: CDC, Getting Started, Connectors, Dynamic Tables
 
 # Real-Time Financial Insights Using Change Data Capture (CDC) with the Snowflake Connector for PostgreSQL and Dynamic Tables
 <!-- ------------------------ -->

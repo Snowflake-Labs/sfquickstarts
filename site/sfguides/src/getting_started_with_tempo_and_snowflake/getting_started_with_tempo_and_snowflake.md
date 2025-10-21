@@ -1,11 +1,11 @@
 author: mando222
 id: getting_started_with_tempo_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a guide on getting started with Tempo on Snowflake
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Security, LLGM, Intrusion Detection
 
 # Getting Started with TEMPO and Snowflake
 <!-- ------------------------ -->
