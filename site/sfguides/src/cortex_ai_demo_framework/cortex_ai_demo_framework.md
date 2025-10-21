@@ -3,7 +3,7 @@ id: cortex_ai_demo_framework
 summary: Cortex AI Demo Framework - Build sophisticated Cortex-powered demos in ~5 minutes
 categories: Cortex, AI, Demo Development, Getting-Started
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cortex, AI, Demo Development, Framework
 
@@ -339,6 +339,8 @@ Duration: 10
 **Dependencies**: None (START HERE)  
 **Output**: Raw JSON data saved to `BRONZE_LAYER` tables
 
+![Synthetic Data Generator Demo](assets/app1-synthetic-data-generator.gif)
+
 ### Who Uses This App
 
 **All Personas start here!** This is the foundation of the framework.
@@ -359,38 +361,35 @@ Navigate to `Projects` → `Streamlit` → **`SYNTHETIC_DATA_GENERATOR`**
 #### Step 2: Configuration Management (Optional)
 
 **Left Sidebar - Top Section:**
-```
-Load Configuration: Create New ▼
 
-If you have saved configurations, select one from dropdown and click:
-📁 Load Configuration
-```
-
-For first-time use, leave as "Create New"
+For first-time use, leave "Load Configuration" as **Create New**. If you have saved configurations, select one from dropdown and click **📁 Load Configuration**.
 
 #### Step 3: Dataset Configuration
 
 **Left Sidebar:**
 
-```
-Company Name: TechCorp
-(Default: "Acme Corp" - change to your company)
+Enter your company name and topic/domain:
 
-Topic/Domain: Customer Orders
-(Default: "Customer Orders" - change to your use case)
+```
+Acme Corp
 ```
 
-**Examples**:
-- Retail: "RetailCorp" + "Product Sales"
-- Healthcare: "MedCenter" + "Patient Vitals"
-- Finance: "FinanceFirst" + "Loan Applications"
+```
+Customer Orders
+```
+
+**Other Examples**:
+- ShopSmart + "Product Sales"
+- MedCenter + "Patient Vitals"
+- FinanceFirst + "Loan Applications"
 
 #### Step 4: Define Data Fields
 
 **Left Sidebar - Fields Section:**
 
+Enter your fields (one per line):
+
 ```
-Fields (one per line):
 customer_id
 customer_name
 email
@@ -411,15 +410,11 @@ total_amount
 
 **Left Sidebar:**
 
-```
-Records per Batch: 10
-(Slider: 10-200, step 10)
+Set your batch configuration using the sliders:
 
-Number of Batches: 10
-(Slider: 1-1000)
-
-Total records to generate: 100
-```
+- **Records per Batch**: `10` (Slider: 10-200, step 10)
+- **Number of Batches**: `10` (Slider: 1-1000)
+- **Total records to generate**: `100`
 
 > aside positive
 > 
@@ -437,19 +432,12 @@ Total records to generate: 100
 
 **Left Sidebar:**
 
-```
-Model Type: LARGE ▼
-(Options: SMALL, MEDIUM, LARGE)
+Configure the Cortex LLM settings:
 
-Model: mistral-large2 ▼
-(Recommended for consistent results)
-
-Temperature: 0.7
-(Slider: 0.0-1.0, step 0.1)
-
-Max Tokens: 4000
-(Slider: 100-8000, step 100)
-```
+- **Model Type**: `LARGE` (Options: SMALL, MEDIUM, LARGE)
+- **Model**: `mistral-large2` (Recommended for consistent results)
+- **Temperature**: `0.7` (Slider: 0.0-1.0, step 0.1)
+- **Max Tokens**: `4000` (Slider: 100-8000, step 100)
 
 > aside positive
 > 
@@ -467,13 +455,8 @@ Max Tokens: 4000
 
 **Left Sidebar:**
 
-```
-☑ High-Performance Mode
-(Uses stored procedures - RECOMMENDED)
-
-☐ Show Manual Scripts
-(Leave unchecked unless you need SQL)
-```
+- ☑ **High-Performance Mode** (Uses stored procedures - RECOMMENDED)
+- ☐ **Show Manual Scripts** (Leave unchecked unless you need SQL)
 
 Keep "High-Performance Mode" checked for best results!
 
@@ -481,15 +464,13 @@ Keep "High-Performance Mode" checked for best results!
 
 **Left Sidebar:**
 
-```
-☑ Auto-save batches to table
+Check the following options:
 
-Database: AI_FRAMEWORK_DB
-Schema: BRONZE_LAYER
-Table Name: techcorp_orders
-
-☑ Append to existing table
-```
+- ☑ **Auto-save batches to table**
+- **Database**: `AI_FRAMEWORK_DB`
+- **Schema**: `BRONZE_LAYER`
+- **Table Name**: `GENERATED_DATA`
+- ☑ **Append to existing table**
 
 > aside positive
 > 
@@ -497,35 +478,16 @@ Table Name: techcorp_orders
 
 #### Step 9: Generate Data
 
-**Main Panel:**
-
-1. Click **"Generate Default Prompts"** button
-   - System prompt appears (left column)
-   - User prompt appears (right column)
-   - You can edit these if needed
-
-2. Review the prompts (300px text areas)
-   - System prompt: Instructions for AI behavior
-   - User prompt: Specific data requirements
-
-3. Scroll down and click **"🎲 Generate Synthetic Data"**
-
-4. Watch progress:
-   ```
-   Batch 1/10: Generated 10 records
-   Batch 2/10: Generated 10 records
-   ...
-   Batch 10/10: Generated 10 records
-   ```
-
-Generation time: ~2-3 minutes for 100 records
+1. Click **"Generate Default Prompts"** → Review/edit prompts if needed
+2. Click **"🎲 Generate Synthetic Data"** → Wait ~2-3 minutes
+3. Watch progress: Batch 1/10... 10/10
 
 #### Step 10: Verify Success
 
 **Expected Output**:
 ```
 Generated 100 records successfully!
-Data saved to: AI_FRAMEWORK_DB.BRONZE_LAYER.TECHCORP_ORDERS
+Data saved to: AI_FRAMEWORK_DB.BRONZE_LAYER.GENERATED_DATA
 
 Sample data preview:
 | CUSTOMER_NAME | PRODUCT_NAME | QUANTITY | PRICE | TOTAL_AMOUNT |
@@ -537,7 +499,7 @@ Sample data preview:
 **Verification Steps**:
 
 1. Go to Snowsight → **Data** → **Databases** → **AI_FRAMEWORK_DB** → **BRONZE_LAYER**
-2. Find your table (e.g., `TECHCORP_ORDERS`)
+2. Find your table (e.g., `GENERATED_DATA`)
 3. Click to view:
    - Should see **10 rows** (one per batch)
    - Each row has **MESSAGES** column with JSON array
@@ -552,7 +514,7 @@ SELECT
     AVG(_META_RECORDS_IN_BATCH) as avg_records_per_batch,
     _META_COMPANY_NAME,
     _META_TOPIC
-FROM AI_FRAMEWORK_DB.BRONZE_LAYER.TECHCORP_ORDERS
+FROM AI_FRAMEWORK_DB.BRONZE_LAYER.GENERATED_DATA
 GROUP BY _META_COMPANY_NAME, _META_TOPIC;
 ```
 
@@ -562,10 +524,10 @@ Expected: 10 batches, 100 total records
 
 **Bottom of Main Panel:**
 
-```
-Configuration Name: TechCorp_Customer_Orders_Config
+Enter a configuration name and click **💾 Save Configuration**:
 
-💾 Save Configuration
+```
+Acme_Corp_Customer_Orders_Config
 ```
 
 Save your configuration to reuse later with different batch sizes or models!
@@ -601,34 +563,6 @@ Fields: application_id, applicant_name, loan_amount, credit_score,
 
 ---
 
-### Troubleshooting
-
-#### **Issue: Generation is slow**
-**Solution**: 
-- Reduce batch size (try 10 records/batch)
-- Use smaller model (llama3.1-8b for speed)
-- Check warehouse size (use Medium or Large)
-
-#### **Issue: Invalid JSON in results**
-**Solution**:
-- Lower temperature (try 0.3 for consistency)
-- Reduce batch size (10-20 records)
-- Use mistral-large2 model (best accuracy)
-
-#### **Issue: Data doesn't look realistic**
-**Solution**:
-- Edit prompts to be more specific
-- Add industry context in Topic/Domain
-- Include expected value ranges in field descriptions
-
-#### **Issue: Date fields have invalid dates**
-**Solution**:
-- App automatically adds YYYY-MM-DD formatting instructions
-- Use TRY_TO_DATE() in queries to filter invalid dates
-- Lower temperature (0.1-0.3) for better date consistency
-
----
-
 ### Best Practices
 
 **Start small**: Test with 10 records × 10 batches first  
@@ -655,6 +589,8 @@ Duration: 8
 **Dependencies**: Requires data from App 1  
 **Output**: Analytics-ready data in `SILVER_LAYER` tables
 
+![Structured Tables Demo](assets/app2-structured-tables.gif)
+
 ### Who Uses This App
 
 - **Persona 1** (Full-Stack Developer): Transform to structured tables for dashboards
@@ -674,45 +610,25 @@ Navigate to `Projects` → `Streamlit` → **`STRUCTURED_TABLES`**
 
 **Main Panel - Left Column:**
 
-```
-Select source table with synthetic data:
-techcorp_orders ▼
-
-Help text: "Tables containing generated synthetic data with 'messages' column"
-```
+Select source table with synthetic data from the dropdown (e.g., `GENERATED_DATA`).
 
 The dropdown shows all tables from `BRONZE_LAYER` that contain a `MESSAGES` column (generated by Synthetic Data Generator).
-
-**Select your table** from Step 1 (e.g., `techcorp_orders`)
 
 #### Step 3: Configure Target Table Name
 
 **Main Panel - Right Column:**
 
-```
-Enter name for structured table:
-techcorp_orders_structured
+Enter name for structured table (e.g., `GENERATED_DATA_STRUCTURED`).
 
-Help text: "Name for the new structured table"
-```
-
-The app auto-fills this by adding `_structured` to your source table name. You can customize it if needed.
+The app auto-fills this by adding `_STRUCTURED` to your source table name. You can customize it if needed.
 
 #### Step 4: Filter by Company and Topic
 
 **Main Panel - Filter Section:**
 
-```
-Left Column:
-Select Company: TechCorp ▼
-
-Right Column:
-Select Topic: Customer Orders ▼
-```
+Select the company and topic you used when generating data in Step 1 from the dropdowns (e.g., `Acme Corp` and `Customer Orders`).
 
 These dropdowns populate automatically from your source table's metadata (`_meta_company_name` and `_meta_topic` columns).
-
-**Select the company and topic** you used when generating data in Step 1.
 
 #### Step 5: Review Data Quality Analysis
 
@@ -752,7 +668,7 @@ Avg Length: 2,500 chars
 ```
 | MESSAGES | _META_COMPANY_NAME | _META_TOPIC | _META_RECORDS_IN_BATCH |
 |----------|-------------------|-------------|------------------------|
-| [{"customer_id": 1, ...}] | TechCorp | Customer Orders | 10 |
+| [{"customer_id": 1, ...}] | Acme Corp | Customer Orders | 10 |
 ```
 
 This shows your raw BRONZE_LAYER data with JSON arrays in the `MESSAGES` column.
@@ -780,15 +696,13 @@ The app automatically detects field names from your JSON structure and shows how
 
 **Bottom Section:**
 
+**Configuration name:**
 ```
-Configuration name:
-TechCorp_Customer Orders_techcorp_orders
-
-[💾 Save Configuration] [🔄 Transform Data] [Additional Options]
+Acme_Corp_Customer_Orders_GENERATED_DATA
 ```
 
 1. **Optional**: Edit the configuration name if you want to save settings
-2. Click **"🔄 Transform Data"** (blue button)
+2. Click **"🔄 Transform Data"** button
 
 **Progress indicator**:
 ```
@@ -808,7 +722,7 @@ This process:
 **Expected Output**:
 
 ```
-Successfully transformed data to table: techcorp_orders_structured
+Successfully transformed data to table: GENERATED_DATA_STRUCTURED
 
 📋 Sample of Transformed Data
 
@@ -819,7 +733,7 @@ Successfully transformed data to table: techcorp_orders_structured
 
 📊 Transformation Summary:
 Records processed: 100
-Target table: AI_FRAMEWORK_DB.SILVER_LAYER.TECHCORP_ORDERS_STRUCTURED
+Target table: AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
 ```
 
 **What happened**:
@@ -831,7 +745,7 @@ Target table: AI_FRAMEWORK_DB.SILVER_LAYER.TECHCORP_ORDERS_STRUCTURED
 **Verification Steps**:
 
 1. Go to Snowsight → **Data** → **Databases** → **AI_FRAMEWORK_DB** → **SILVER_LAYER**
-2. Find your table (e.g., `TECHCORP_ORDERS_STRUCTURED`)
+2. Find your table (e.g., `GENERATED_DATA_STRUCTURED`)
 3. Click to view data
 4. Verify:
    - Row count matches expected (e.g., 100 individual records)
@@ -847,7 +761,7 @@ SELECT
     MIN(order_date) as earliest_order,
     MAX(order_date) as latest_order,
     SUM(total_amount) as total_revenue
-FROM AI_FRAMEWORK_DB.SILVER_LAYER.TECHCORP_ORDERS_STRUCTURED;
+FROM AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED;
 ```
 
 #### Step 11: Save Configuration (Optional)
@@ -890,7 +804,7 @@ Row 2: customer_id=2, customer_name=..., email=...  ← Many rows, structured co
 
 ```
 BRONZE_LAYER (Raw Synthetic Data)
-├─ Table: techcorp_orders
+├─ Table: GENERATED_DATA
 ├─ Structure: Batched JSON arrays
 ├─ Columns: MESSAGES, _META_* fields
 └─ Rows: 10 (one per batch)
@@ -898,9 +812,9 @@ BRONZE_LAYER (Raw Synthetic Data)
          ↓ Transform ↓
 
 SILVER_LAYER (Structured Data)
-├─ Table: techcorp_orders_structured
+├─ Table: GENERATED_DATA_STRUCTURED
 ├─ Structure: Individual records in columns
-├─ Columns: CUSTOMER_ID, CUSTOMER_NAME, EMAIL, etc.
+├─ Columns: CUSTOMER_ID, CUSTOMER_NAME, EMAIL, ORDER_DATE, etc.
 └─ Rows: 100 (individual records)
 ```
 
@@ -925,51 +839,13 @@ Export structured data via:
 ```sql
 -- Export to CSV
 SELECT * 
-FROM AI_FRAMEWORK_DB.SILVER_LAYER.TECHCORP_ORDERS_STRUCTURED;
+FROM AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED;
 
 -- Use in Python/Snowpark
-session.table("AI_FRAMEWORK_DB.SILVER_LAYER.TECHCORP_ORDERS_STRUCTURED").to_pandas()
+session.table("AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED").to_pandas()
 
 -- Connect BI tools directly to SILVER_LAYER tables
 ```
-
----
-
-### Troubleshooting
-
-#### **Issue: "No tables found" in dropdown**
-**Solution**:
-- Verify you completed Synthetic Data Generator first
-- Check that table exists in `AI_FRAMEWORK_DB.BRONZE_LAYER`
-- Ensure table has `MESSAGES` column
-
-#### **Issue: High "Invalid JSON" count**
-**Solution**:
-- This indicates data quality issues from Step 1
-- Regenerate data with lower temperature (0.1-0.3)
-- Use mistral-large2 model for better JSON consistency
-- Reduce batch size in Synthetic Data Generator (10-20 records)
-
-#### **Issue: Missing fields in Fields Analysis**
-**Solution**:
-- Check if field names were consistent in Synthetic Data Generator
-- Some LLMs may use different field names than requested
-- Preview sample data to see actual field structure
-- May need to regenerate with more specific prompts
-
-#### **Issue: "Very Short" records detected**
-**Solution**:
-- Indicates truncated JSON from LLM token limits
-- Increase Max Tokens in Synthetic Data Generator
-- Reduce Records per Batch in Synthetic Data Generator
-- Regenerate affected batches
-
-#### **Issue: Transformation fails or hangs**
-**Solution**:
-- Check warehouse is running (Medium or Large recommended)
-- Verify source table permissions
-- Try with smaller data subset (filter by company/topic)
-- Check Snowflake query history for error details
 
 ---
 
@@ -994,6 +870,8 @@ Duration: 10
 **Purpose**: Convert SQL queries into interactive demo configurations for Snow Demo  
 **Dependencies**: Requires tables from App 1 or 2  
 **Output**: YAML files for `FRAMEWORK_YAML_STAGE`
+
+![SQL to YAML Converter Demo](assets/app3-sql-to-yaml.gif)
 
 ### Who Uses This App
 
@@ -1033,7 +911,7 @@ SELECT
     ORDER_DATE,
     PRODUCT_NAME,
     TOTAL_AMOUNT
-FROM AI_FRAMEWORK_DB.SILVER_LAYER.TECHCORP_ORDERS_STRUCTURED
+FROM AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
 LIMIT 10;
 
 -- Step 2: Revenue by Product
@@ -1042,20 +920,20 @@ SELECT
     COUNT(*) as order_count,
     SUM(TOTAL_AMOUNT) as total_revenue,
     AVG(TOTAL_AMOUNT) as avg_order_value
-FROM AI_FRAMEWORK_DB.SILVER_LAYER.TECHCORP_ORDERS_STRUCTURED
+FROM AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
 GROUP BY PRODUCT_NAME
 ORDER BY total_revenue DESC;
 
--- Step 3: AI-Powered Customer Insights
+-- Step 3: Top Customers Analysis
 SELECT 
     CUSTOMER_NAME,
-    EMAIL,
-    SNOWFLAKE.CORTEX.COMPLETE('mixtral-8x7b', 
-        'Based on this customer order history, suggest a personalized product recommendation: ' || 
-        'Customer: ' || CUSTOMER_NAME || ', Last Product: ' || PRODUCT_NAME
-    ) as recommendation
-FROM AI_FRAMEWORK_DB.SILVER_LAYER.TECHCORP_ORDERS_STRUCTURED
-LIMIT 5;
+    COUNT(*) as total_orders,
+    SUM(TOTAL_AMOUNT) as total_spent,
+    AVG(TOTAL_AMOUNT) as avg_order_value
+FROM AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
+GROUP BY CUSTOMER_NAME
+ORDER BY total_spent DESC
+LIMIT 10;
 ```
 
 **Tips**:
@@ -1073,24 +951,43 @@ LIMIT 5;
 **Demo Metadata Section (Two Columns):**
 
 **Left Column:**
+
+**Topic:**
 ```
-Topic: Customer Analytics
-Sub-topic: Order Analysis
-Tertiary Topic: Revenue Insights
-Title: TechCorp Customer Orders Analytics Dashboard
+Customer Analytics
+```
+
+**Sub-topic:**
+```
+Order Analysis
+```
+
+**Tertiary Topic:**
+```
+Revenue Insights
+```
+
+**Title:**
+```
+Acme Corp Customer Orders Analytics Dashboard
 ```
 
 **Right Column:**
+
+**Logo URL:** (optional - leave blank)
+
+**Owner:**
 ```
-Logo URL: (optional - leave blank)
-Owner: Data Analytics Team
-Database: (leave blank to auto-detect)
-Schema: (leave blank to auto-detect)
+Data Analytics Team
 ```
+
+**Database:** (leave blank to auto-detect)
+
+**Schema:** (leave blank to auto-detect)
 
 **Overview Description:**
 ```
-Comprehensive analysis of TechCorp customer order data showcasing:
+Comprehensive analysis of Acme Corp customer order data showcasing:
 - Customer order patterns and revenue trends
 - Top-performing products and customer segments
 - AI-powered customer insights and recommendations
@@ -1142,11 +1039,11 @@ Key Metrics:
 - 2 Visualization Types
 
 Cortex AI Analysis:
-- 1 Cortex Complete call detected
-- 1 Interactive Cortex step created
+- 0 Cortex Complete calls detected
+- 0 Interactive Cortex steps created
 
 Interactive Steps:
-- Step 3: AI-Powered Customer Insights (Interactive Cortex Complete)
+- None (add CORTEX.COMPLETE() for interactive AI steps)
 ```
 
 This shows what the app detected in your SQL and how it will be presented in Snow Demo.
@@ -1164,12 +1061,12 @@ Step 1: Customer Overview
 Step 2: Revenue by Product
 - Type: Query  
 - Visualization: Bar Chart
-- SQL: SELECT PRODUCT_NAME, COUNT(*)...
+- SQL: SELECT PRODUCT_NAME, COUNT(*) as order_count...
 
-Step 3: AI-Powered Customer Insights
-- Type: Interactive Cortex Complete
-- Prompt: Based on this customer order history...
-- Model: mixtral-8x7b
+Step 3: Top Customers Analysis
+- Type: Query
+- Visualization: Table
+- SQL: SELECT CUSTOMER_NAME, COUNT(*) as total_orders...
 ```
 
 Verify all your steps are correctly parsed and visualization types make sense.
@@ -1190,22 +1087,18 @@ You don't need to edit this manually - it's automatically generated!
 
 **Results Section - Tab 4 (Download & Export):**
 
+**Configuration Name:**
 ```
-Configuration Name:
 Customer_Analytics_Order_Analysis_Revenue_Insights_20250115
-
-[Save to Database]  [Download YAML Configuration]
 ```
 
 **Option 1: Save to Database** (Recommended)
 - Click **"Save to Database"** button
 - Config saved to `AI_FRAMEWORK_DB.CONFIG.DEMO_CONFIGURATIONS`
-- Can be loaded later for editing
 
 **Option 2: Download YAML File**
 - Click **"Download YAML Configuration"** button
-- Downloads `.yaml` file to your computer
-- You'll need to upload this to a Snowflake stage for Snow Demo (next step)
+- Downloads `.yaml` file for uploading to Snow Demo stage
 
 ---
 
@@ -1267,34 +1160,6 @@ FROM my_table;
 
 ---
 
-### Troubleshooting
-
-#### **Issue: No steps detected**
-**Solution**:
-- Ensure SQL has comment headers (`-- Step 1:`)
-- Check SQL is valid Snowflake syntax
-- Verify queries reference existing tables
-
-#### **Issue: Cortex function not detected as interactive**
-**Solution**:
-- Use full function name: `SNOWFLAKE.CORTEX.COMPLETE()`
-- Ensure function call is in SELECT clause
-- Check syntax matches Snowflake Cortex format
-
-#### **Issue: Wrong visualization type suggested**
-**Solution**:
-- App auto-suggests based on SQL patterns
-- You can manually edit YAML after download if needed
-- Consider restructuring query for better visualization
-
-#### **Issue: Cannot save to database**
-**Solution**:
-- Verify you're connected to Snowflake
-- Check permissions on `CONFIG` schema
-- Download YAML as backup alternative
-
----
-
 ### Best Practices
 
 **Write clear SQL comments**: Use `-- Step X:` format for step detection  
@@ -1309,17 +1174,7 @@ FROM my_table;
 
 **For Persona 2 (SQL Demo Creator)**:
 
-You now have a YAML configuration file. Next steps:
-
-1. **Upload YAML to Snowflake Stage**:
-   ```sql
-   -- Create project directory
-   PUT file://dummy.txt @AI_FRAMEWORK_DB.CONFIGS.FRAMEWORK_YAML_STAGE/analytics/;
-   
-   -- Upload your YAML
-   PUT file://your_config.yaml @AI_FRAMEWORK_DB.CONFIGS.FRAMEWORK_YAML_STAGE/analytics/;
-   ```
-
+1. **Upload your YAML to Snowflake Stage** (see upload instructions in Snow Demo section below)
 2. **Continue to Page 9 (Snow Demo)** to run your interactive presentation
 
 Your SQL queries are now a professional, interactive demo ready for presentations!
@@ -1332,39 +1187,23 @@ Duration: 10
 **Dependencies**: Requires YAML configs from App 3 (uploaded to `FRAMEWORK_YAML_STAGE`)  
 **Output**: Live demo orchestration with charts and AI experimentation
 
+![Snow Demo](assets/app4-snow-demo.gif)
+
 ### Who Uses This App
 
 - **Persona 2** (SQL Demo Creator): Present interactive SQL demos with live AI experimentation
 
 ---
 
-### Prerequisites: Upload YAML to Stage
+### Upload YAML to Stage
 
-Before using Snow Demo, you must upload your YAML file from the SQL to YAML Converter to a Snowflake stage.
+Before using Snow Demo, upload your YAML file to Snowflake:
 
-#### Method 1: PUT Commands (SQL/Terminal)
-
-```sql
--- 1. Create a project directory (choose a descriptive name)
-PUT file://dummy.txt @AI_FRAMEWORK_DB.CONFIGS.FRAMEWORK_YAML_STAGE/analytics/;
-
--- 2. Upload your YAML file to the project directory
-PUT file://your_demo_config.yaml @AI_FRAMEWORK_DB.CONFIGS.FRAMEWORK_YAML_STAGE/analytics/;
-
--- 3. Verify the upload
-LIST @AI_FRAMEWORK_DB.CONFIGS.FRAMEWORK_YAML_STAGE;
-```
-
-**Project Directory Examples**: `analytics`, `sales_demo`, `customer_insights`, `geospatial`, `financial`
-
-#### Method 2: Snowsight UI
-
-1. Navigate to **Data** → **Databases** → **AI_FRAMEWORK_DB** → **CONFIGS** → **Stages**
-2. Click on **FRAMEWORK_YAML_STAGE**
-3. Click **"Create"** → Select **"Folder"** → Name it `analytics` (or your project name)
-4. Click into the `analytics` folder
-5. Click **"Upload"** → Select your YAML file
-6. Verify: File should appear at `FRAMEWORK_YAML_STAGE/analytics/your_file.yaml`
+1. Navigate to **Data** → **Databases** → **AI_FRAMEWORK_DB** → **CONFIGS** → **Stages** → **FRAMEWORK_YAML_STAGE**
+2. Click **"+ Files"** button
+3. Select your downloaded YAML file
+4. In path field, enter: `/analytics/` (or choose: `sales_demo`, `customer_insights`, etc.)
+5. Click **"Upload"**
 
 ---
 
@@ -1374,233 +1213,38 @@ LIST @AI_FRAMEWORK_DB.CONFIGS.FRAMEWORK_YAML_STAGE;
 
 Navigate to `Projects` → `Streamlit` → **`SNOW_DEMO`**
 
-#### Step 2: Select Area (Project Directory)
+#### Step 2: Select Area
 
-**Left Sidebar:**
+**Left Sidebar:** Select the project directory where you uploaded your YAML file (e.g., `analytics`)
 
-```
-Select Area:
-[Select an Area] ▼
+#### Step 3: Select Demo
 
-Available options:
-- analytics
-- sales_demo  
-- customer_insights
-```
+**Left Sidebar:** Select your YAML configuration file from the dropdown
 
-Select the project directory where you uploaded your YAML file.
+#### Step 4: Review and Run Demo
 
-#### Step 3: Select Demo Configuration
+**Left Sidebar:** Review the auto-displayed demo metadata, then click **[Run Demo]**
 
-**Left Sidebar - After selecting area:**
+#### Step 5: Navigate Demo Steps
 
-```
-Select a Demo:
-[Select a Demo] ▼
+**Main Panel:** Each SQL step appears as a section with:
+- Auto-executed query results
+- Visualization selector (Table, Bar Chart, Line Chart, etc.)
+- Optional instructions and talk track
 
-Available options:
-- customer_analytics_order_analysis.yaml
-- sales_performance_q4.yaml
-```
+**Tips:** Change **Display Options** dropdown to switch visualizations on-the-fly
 
-Select your YAML configuration file.
+#### Step 6: Interactive Cortex AI (Optional)
 
-#### Step 4: Review Demo Preview
-
-**Left Sidebar - Auto-displays after selection:**
-
-```
-Topic: Customer Analytics
-Sub-topic: Order Analysis
-Title: TechCorp Customer Orders Analytics Dashboard
-Owner: Data Analytics Team
-
-Overview:
-• Comprehensive analysis of customer order data
-• Customer order patterns and revenue trends
-• Top-performing products and customer segments
-• AI-powered customer insights and recommendations
-```
-
-This shows the metadata from your YAML configuration. Verify it matches what you configured in the SQL to YAML Converter.
-
-#### Step 5: Run Demo
-
-**Left Sidebar:**
-
-Click the blue **[Run Demo]** button
-
-The main panel will load your interactive demo presentation.
-
-#### Step 6: Navigate Demo Steps
-
-**Main Panel - Demo Header:**
-
-```
-[Logo] (if provided)
-TechCorp Customer Orders Analytics Dashboard
-Customer Feedback Analysis with AI
-
-Overview:
-• Comprehensive analysis of customer order data
-• Customer order patterns and revenue trends
-• AI-powered customer insights
-```
-
-**Step Navigation:**
-
-Each step from your SQL appears as a section. Example:
-
-**Step 1: Customer Overview**
-
-```
-Instructions: (expandable)
-Review customer order data...
-
-[SQL Query automatically executes]
-
-Display Options: Table ▼
-Options: Table, Bar Chart, Line Chart, Map, Metric, Plot, Network, H3, Polygon
-
-[Results display in selected visualization]
-
-Talk Track: (if provided)
-Present the customer overview showing...
-```
-
-**Tips**:
-- Expand **Instructions** to see step guidance
-- Change **Display Options** to switch visualizations on-the-fly
-- Use **Talk Track** as presenter notes
-
-#### Step 7: Interactive Cortex AI Steps
-
-For steps with `SNOWFLAKE.CORTEX.COMPLETE()` calls, you'll see an interactive AI panel:
-
-**Interactive Cortex Complete Interface:**
-
-```
-Parameters:
-Model: mixtral-8x7b ▼
-Options: llama3.1-8b, llama3.1-70b, mistral-large, mixtral-8x7b
-
-Temperature: [slider] 0.0 ———●——— 1.0
-Default: 0.7
-
-Max Tokens: [slider] 100 ———●——— 4000
-Default: 2000
-
-Prompts:
-System Prompt: (large text area - editable)
-You are an AI assistant analyzing customer data...
-
-User Prompt: (large text area - editable)
-Based on this customer order history, suggest a personalized product recommendation...
-
-[Run Query] (button)
-
-Results:
-(AI responses appear here in real-time)
-```
-
-**What you can do**:
-- **Change model**: Switch between different Cortex LLMs
-- **Adjust temperature**: Control creativity (low = consistent, high = creative)
-- **Edit prompts**: Modify system/user prompts live during presentation
-- **Re-run queries**: Click "Run Query" to see updated AI responses
+If your SQL includes `SNOWFLAKE.CORTEX.COMPLETE()` calls, you'll see an interactive panel where you can:
+- Change the AI model (llama3.1-8b, mixtral-8x7b, etc.)
+- Adjust temperature and max tokens
+- Edit system and user prompts live
+- Re-run queries with different parameters
 
 > aside positive
 > 
-> **Live Audience Engagement**: This interactive AI panel lets you demonstrate Cortex AI capabilities in real-time. Ask your audience for prompt ideas and run them live!
-
-#### Step 8: Navigate Between Steps
-
-**Step Progression:**
-
-Steps appear sequentially in the main panel. Scroll down to see all steps in your demo flow.
-
-Each step includes:
-- Instructions (optional, expandable)
-- SQL query execution
-- Visualization options
-- Results display
-- Talk track (optional)
-
-#### Step 9: Reset Environment (Optional)
-
-**Bottom of Demo:**
-
-```
-[Reset Environment] (button)
-```
-
-If your YAML includes cleanup commands, this button will execute them to reset the demo state.
-
----
-
-### Demo Presentation Features
-
-**Real-time Interactivity**:
-- Change visualizations on-the-fly (Table → Bar Chart → Line Chart)
-- Modify AI prompts during presentation
-- Adjust AI parameters to show different behaviors
-- Run queries multiple times with different settings
-
-**Professional Interface**:
-- Branded with your company name and logo
-- Structured overview and metadata
-- Clear step progression
-- Presenter notes (talk tracks)
-
-**Storytelling Flow**:
-- Multiple SQL steps in logical order
-- Mix of data queries and AI demonstrations
-- Interactive experimentation sections
-- Seamless audience engagement
-
----
-
-### Use Cases
-
-#### **Executive Presentations**
-Present data insights with interactive AI capabilities to leadership teams
-
-#### **Customer Demos**
-Showcase Snowflake's Cortex AI features with live data exploration
-
-#### **Training Sessions**
-Teach SQL and Cortex AI concepts with hands-on demonstrations
-
-#### **Conference Presentations**
-Engage audiences with real-time prompt modifications and AI experimentation
-
----
-
-### Troubleshooting
-
-#### **Issue: No areas showing in dropdown**
-**Solution**:
-- Verify YAML uploaded to `FRAMEWORK_YAML_STAGE`
-- Check directory structure: `FRAMEWORK_YAML_STAGE/project_name/file.yaml`
-- Ensure stage has directory enabled
-
-#### **Issue: Demo won't load**
-**Solution**:
-- Verify YAML syntax is valid
-- Check YAML is in correct format (has `steps`, not `tabs`)
-- Review YAML preview to ensure metadata loaded
-
-#### **Issue: SQL queries fail**
-**Solution**:
-- Verify tables referenced in SQL exist
-- Check warehouse is running
-- Ensure current role has access to tables
-
-#### **Issue: Interactive Cortex step not showing**
-**Solution**:
-- Verify SQL includes `SNOWFLAKE.CORTEX.COMPLETE()` function
-- Check YAML was generated by SQL to YAML Converter
-- Ensure Cortex AI functions are enabled in your account
+> **Live Audience Engagement**: Modify AI prompts in real-time during presentations!
 
 ---
 
@@ -1633,6 +1277,8 @@ Duration: 12
 **Purpose**: Create dashboard configurations through guided interface  
 **Dependencies**: Requires tables from App 1 or 2  
 **Output**: YAML files for `VISUALIZATION_YAML_STAGE`
+
+![YAML Wizard Demo](assets/app5-yaml-wizard.gif)
 
 ### Who Uses This App
 
@@ -1782,95 +1428,42 @@ Decimals: 2
 
 #### Step 6: Generate Dashboard YAML
 
-**Click the "Generate" tab**
+**Click the "Generate" tab**, then enter:
 
-Fill in dashboard metadata:
-
+**App Name:**
 ```
-App Name: TechCorp Customer Orders Dashboard
-Description: Comprehensive analysis of customer order data with product performance and revenue insights
-YAML Filename: techcorp_orders_dashboard.yaml
+Acme Corp Customer Orders Dashboard
 ```
 
-**Tips**:
-- Use descriptive names that match your business use case
-- Filename will be used when uploading to stages
-
-Click the blue **"Generate Customized YAML"** button
-
-#### Step 7: Verify Generation Success
-
-**Expected Output:**
-
+**Description:**
 ```
-Generated Customized YAML!
-Generated 8 tabs: Overview, Product / Category, VS, Top N, Self Service, Search, AI Assistant, Raw Data
+Comprehensive analysis of customer order data
 ```
 
-This means your dashboard will have 8 interactive tabs for different types of analysis.
+**YAML Filename:**
+```
+acme_corp_orders_dashboard.yaml
+```
 
-**What each tab does**:
-- **Overview**: Key metrics and trends over time
-- **Product / Category**: Drill-down by dimensions
-- **VS**: Compare two entities side-by-side
-- **Top N**: Rankings and leaderboards
-- **Self Service**: Custom metric/dimension selection
-- **Search**: Cortex Search integration (if configured)
-- **AI Assistant**: Natural language queries with Cortex Analyst
-- **Raw Data**: Full data table export
+Click **"Generate Customized YAML"** → Generates 8 tabs (Overview, Product/Category, VS, Top N, Self Service, Search, AI Assistant, Raw Data)
 
-#### Step 8: Download YAML File
-
-**Generate Tab - Bottom Section:**
+#### Step 7: Download and Save
 
 Click **"Download YAML"** button
 
-The dashboard configuration file downloads to your computer (e.g., `techcorp_orders_dashboard.yaml`).
-
-**Save this file** - you'll need it for Snow Viz!
-
-#### Step 9: Save Configuration to Database (Optional)
-
-**Generate Tab:**
-
-Click **"Save to AI_FRAMEWORK_DB.CONFIGS"** button
-
-**Expected Output:**
-
-```
-Saved config: techcorp_orders_dashboard
-Saved X dimension customizations and Y metric customizations
-```
-
-This saves your dimension/metric customizations so you can reload and edit them later.
+**Optional:** Click **"Save to AI_FRAMEWORK_DB.CONFIGS"** to save your customizations for later editing
 
 ---
 
 ### Upload YAML to Stage for Snow Viz
 
-To use your dashboard in Snow Viz, upload the YAML file to the `VISUALIZATION_YAML_STAGE`:
+Upload your YAML file to Snowflake:
 
-#### Method 1: PUT Commands (SQL/Terminal)
-
-```sql
--- 1. Create a project directory
-PUT file://dummy.txt @AI_FRAMEWORK_DB.CONFIGS.VISUALIZATION_YAML_STAGE/techcorp_orders/;
-
--- 2. Upload your YAML file
-PUT file://techcorp_orders_dashboard.yaml @AI_FRAMEWORK_DB.CONFIGS.VISUALIZATION_YAML_STAGE/techcorp_orders/;
-
--- 3. Verify the upload
-LIST @AI_FRAMEWORK_DB.CONFIGS.VISUALIZATION_YAML_STAGE;
-```
-
-#### Method 2: Snowsight UI
-
-1. Navigate to **Data** → **Databases** → **AI_FRAMEWORK_DB** → **CONFIGS** → **Stages**
-2. Click on **VISUALIZATION_YAML_STAGE**
-3. Click **"Create"** → Select **"Folder"** → Name it `techcorp_orders`
-4. Click into the `techcorp_orders` folder
-5. Click **"Upload"** → Select your YAML file
-6. Verify: `VISUALIZATION_YAML_STAGE/techcorp_orders/techcorp_orders_dashboard.yaml`
+1. Navigate to **Data** → **Databases** → **AI_FRAMEWORK_DB** → **CONFIGS** → **Stages** → **VISUALIZATION_YAML_STAGE**
+2. Click **"+ Files"** button
+3. Select your downloaded YAML file
+4. In path field, enter: `/customer_orders/` (or your project name)
+5. Click **"Upload"**
 
 ---
 
@@ -1907,34 +1500,6 @@ Configuration table has 0 saved configs
 
 ---
 
-### Troubleshooting
-
-#### **Issue: Don't see table columns or sample data**
-**Solution**:
-- Verify Database/Schema/Table selection
-- Ensure table exists in `SILVER_LAYER` or `BRONZE_LAYER`
-- Check you have SELECT permissions on the table
-
-#### **Issue: Generate button doesn't work**
-**Solution**:
-- Did you click "Apply All Dimension Changes"?
-- Did you click "Apply All Metric Changes"?
-- Both steps are REQUIRED before generating
-
-#### **Issue: "No dimensions configured" error**
-**Solution**:
-- Go back to Step 3
-- Check at least one dimension box
-- Click "Apply All Dimension Changes" in Step 4
-
-#### **Issue: Can't save to database**
-**Solution**:
-- Check Snowflake connection is active
-- Verify permissions on CONFIGS schema
-- Download YAML as backup alternative
-
----
-
 ### Best Practices
 
 **Start simple**: Pick 2-3 dimensions and 3-5 metrics for first try  
@@ -1963,6 +1528,8 @@ Duration: 10
 **Purpose**: Render advanced interactive dashboards from YAML configurations  
 **Dependencies**: Requires YAML configs from App 5 (uploaded to `VISUALIZATION_YAML_STAGE`)  
 **Output**: Multi-tab analytics dashboards with AI integration
+
+![Snow Viz Demo](assets/app6-snow-viz.gif)
 
 ### Who Uses This App
 
@@ -2169,44 +1736,15 @@ Results show in interactive data table with:
 
 **Powered by Cortex Analyst:**
 
-```
-Ask a question about your data:
-(text area)
-"What are the top 3 products by revenue in the last quarter?"
-
-[Ask Analyst] (button)
-
-View Options:
-◉ Grid (Data table)
-○ Bar (Bar chart)
-○ Line (Time series)
-```
-
-**AI Narrative (Optional):**
+Type your question in natural language:
 
 ```
-Generate AI analysis of results:
-
-Model: llama3.1-8b ▼
-Options: llama3.1-8b, llama3.1-70b, mistral-large, mixtral-8x7b
-
-Temperature: [slider] 0.0 ———●——— 1.0
-Default: 0.2
-
-Max Tokens: 1500
-
-Optional question: (text area)
-"Explain the trend and provide recommendations"
-
-[Generate Analysis] (button)
+What are the top 3 products by revenue in the last quarter?
 ```
 
-**How it works**:
-1. Type question in natural language
-2. Cortex Analyst translates to SQL
-3. Query executes automatically
-4. Results display in selected format
-5. Optional: Generate AI narrative explaining results
+Click **[Ask Analyst]** → Select view option (Grid, Bar, or Line chart)
+
+**AI Narrative (Optional):** Generate AI analysis by selecting a model, adjusting temperature, and clicking **[Generate Analysis]**
 
 **Example Questions**:
 - "What is the average revenue per customer?"
@@ -2220,16 +1758,13 @@ Optional question: (text area)
 
 **Semantic Search (if configured):**
 
-```
-Search your data:
-(text input)
-"laptop with high ratings"
+Enter your search query:
 
-[Search] (button)
-
-Results:
-Shows relevant records based on semantic similarity
 ```
+laptop with high ratings
+```
+
+Click **[Search]** → Shows relevant records based on semantic similarity
 
 **Note**: Requires Cortex Search service to be configured. If not set up, this tab will show a setup message.
 
@@ -2237,23 +1772,12 @@ Shows relevant records based on semantic similarity
 
 ### Tab 8: Raw Data
 
-**Full Data Export:**
+Shows complete dataset in table format with sortable columns and CSV export option.
 
-```
-Shows complete dataset in table format
-
-Features:
-- Sortable columns
-- Scrollable view
-- All records (paginated)
-- Export to CSV option
-```
-
-Use this tab to:
+**Use this tab to:**
 - Verify data quality
 - Export raw data
 - See all available fields
-- Check data completeness
 
 ---
 
@@ -2292,37 +1816,6 @@ Use this tab to:
 - Ask questions in plain English
 - Compare entities side-by-side
 - Export data for presentations
-
----
-
-### Troubleshooting
-
-#### **Issue: No projects showing in dropdown**
-**Solution**:
-- Verify YAML uploaded to `VISUALIZATION_YAML_STAGE`
-- Check directory structure: `VISUALIZATION_YAML_STAGE/project_name/file.yaml`
-- Ensure stage has directory enabled
-
-#### **Issue: Dashboard loads but no data**
-**Solution**:
-- Verify table referenced in YAML exists
-- Check warehouse is running
-- Ensure current role has SELECT permissions
-- Verify time window includes data
-
-#### **Issue: AI Assistant not working**
-**Solution**:
-- Cortex Analyst requires semantic model (optional feature)
-- Check if error message provides guidance
-- Try simpler questions first
-- Verify Cortex AI functions are enabled
-
-#### **Issue: Charts show "No data"**
-**Solution**:
-- Adjust time window (try "all_time")
-- Check filters aren't excluding all data
-- Verify metrics are configured correctly
-- Review raw data tab to see available data
 
 ---
 
