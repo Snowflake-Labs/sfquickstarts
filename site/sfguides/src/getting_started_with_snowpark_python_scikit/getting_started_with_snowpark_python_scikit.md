@@ -1,6 +1,6 @@
 author: Mats Stellwall
 id: getting_started_with_snowpark_python_scikit
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowfalke-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: Getting Started with Snowpark for Python with Scikit-learn
 environments: web
