@@ -74,11 +74,11 @@ In this step, you'll create the Snowflake database objects and prepare for frame
 3. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-ai-demo-framework/blob/main/scripts/setup.sql) and paste it into your worksheet, then run it
 
 The setup script creates:
-- **Database**: `CORTEX_FRAMEWORK_DB` with `BRONZE_LAYER`, `SILVER_LAYER`, `APPS`, and `CONFIGS` schemas
-- **Role**: `CORTEX_FRAMEWORK_DATA_SCIENTIST` with all necessary permissions  
-- **Warehouse**: `CORTEX_FRAMEWORK_WH` for compute resources
-- **Stages**: `FRAMEWORK_DATA_STAGE`, `SEMANTIC_MODELS`, and `DEMO_CONFIGS` for file uploads
-- **File Formats**: `CSV_FORMAT`, `YAML_FORMAT`, and `JSON_FORMAT` for data processing
+- **Database**: `CORTEX_AI_FRAMEWORK_DB` with `BRONZE_LAYER`, `SILVER_LAYER`, `APPS`, and `CONFIGS` schemas
+- **Role**: `cortex_ai_demo_data_scientist` with all necessary permissions  
+- **Warehouses**: `cortex_ai_framework_wh` and `cortex_ai_framework_synthetic_data_wh` for compute resources
+- **Stages**: `CORTEX_AI_FRAMEWORK_APPS`, `FRAMEWORK_YAML_STAGE`, `VISUALIZATION_YAML_STAGE`, and `SEMANTIC_MODELS` for file uploads
+- **File Formats**: `YAML_CSV_FORMAT`, `STANDARD_CSV_FORMAT`, and `JSON_FORMAT` for data processing
 - **AI Access**: `SNOWFLAKE.CORTEX_USER` role for Cortex functions
 
 ### Step 2: Download Required Framework Files
@@ -100,11 +100,11 @@ Download these framework files from the GitHub repository:
 
 1. In Snowsight, change your role to `cortex_ai_demo_data_scientist`
 
-2. Navigate to `Catalog` → `Database Explorer` → `AI_FRAMEWORK_DB` → `APPS` → `Stages`
+2. Navigate to `Catalog` → `Database Explorer` → `CORTEX_AI_FRAMEWORK_DB` → `APPS` → `Stages`
 
-**Upload all framework files to the single `AI_FRAMEWORK_APPS` stage:**
+**Upload all framework files to the single `CORTEX_AI_FRAMEWORK_APPS` stage:**
 
-3. Click on `AI_FRAMEWORK_APPS` stage, then click `Enable Directory Table` and upload all 7 files:
+3. Click on `CORTEX_AI_FRAMEWORK_APPS` stage, then click `Enable Directory Table` and upload all 7 files:
    - `01_ai_framework_synthetic_data_generator.py`
    - `02_ai_framework_structured_tables.py`
    - `03_ai_framework_sql_to_yaml_converter.py`
@@ -122,10 +122,10 @@ Download these framework files from the GitHub repository:
 
 2. **Configure the notebook settings**:
    - **Role**: Select `cortex_ai_demo_data_scientist`
-   - **Database**: Select `AI_FRAMEWORK_DB`
+   - **Database**: Select `CORTEX_AI_FRAMEWORK_DB`
    - **Schema**: Select `BRONZE_LAYER`  
-   - **Query Warehouse**: Select `cortex_ai_demo_wh`
-   - **Notebook Warehouse**: Select `cortex_ai_demo_wh`
+   - **Query Warehouse**: Select `cortex_ai_framework_wh`
+   - **Notebook Warehouse**: Select `cortex_ai_framework_wh`
 
 3. **Click `Create`** to import the notebook
 
@@ -467,7 +467,7 @@ Keep "High-Performance Mode" checked for best results!
 Check the following options:
 
 - ☑ **Auto-save batches to table**
-- **Database**: `AI_FRAMEWORK_DB`
+- **Database**: `CORTEX_AI_FRAMEWORK_DB`
 - **Schema**: `BRONZE_LAYER`
 - **Table Name**: `GENERATED_DATA`
 - ☑ **Append to existing table**
@@ -487,7 +487,7 @@ Check the following options:
 **Expected Output**:
 ```
 Generated 100 records successfully!
-Data saved to: AI_FRAMEWORK_DB.BRONZE_LAYER.GENERATED_DATA
+Data saved to: CORTEX_AI_FRAMEWORK_DB.BRONZE_LAYER.GENERATED_DATA
 
 Sample data preview:
 | CUSTOMER_NAME | PRODUCT_NAME | QUANTITY | PRICE | TOTAL_AMOUNT |
@@ -498,7 +498,7 @@ Sample data preview:
 
 **Verification Steps**:
 
-1. Go to Snowsight → **Data** → **Databases** → **AI_FRAMEWORK_DB** → **BRONZE_LAYER**
+1. Go to Snowsight → **Data** → **Databases** → **CORTEX_AI_FRAMEWORK_DB** → **BRONZE_LAYER**
 2. Find your table (e.g., `GENERATED_DATA`)
 3. Click to view:
    - Should see **10 rows** (one per batch)
@@ -514,7 +514,7 @@ SELECT
     AVG(_META_RECORDS_IN_BATCH) as avg_records_per_batch,
     _META_COMPANY_NAME,
     _META_TOPIC
-FROM AI_FRAMEWORK_DB.BRONZE_LAYER.GENERATED_DATA
+FROM CORTEX_AI_FRAMEWORK_DB.BRONZE_LAYER.GENERATED_DATA
 GROUP BY _META_COMPANY_NAME, _META_TOPIC;
 ```
 
@@ -733,7 +733,7 @@ Successfully transformed data to table: GENERATED_DATA_STRUCTURED
 
 📊 Transformation Summary:
 Records processed: 100
-Target table: AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
+Target table: CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
 ```
 
 **What happened**:
@@ -744,7 +744,7 @@ Target table: AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
 
 **Verification Steps**:
 
-1. Go to Snowsight → **Data** → **Databases** → **AI_FRAMEWORK_DB** → **SILVER_LAYER**
+1. Go to Snowsight → **Data** → **Databases** → **CORTEX_AI_FRAMEWORK_DB** → **SILVER_LAYER**
 2. Find your table (e.g., `GENERATED_DATA_STRUCTURED`)
 3. Click to view data
 4. Verify:
@@ -761,7 +761,7 @@ SELECT
     MIN(order_date) as earliest_order,
     MAX(order_date) as latest_order,
     SUM(total_amount) as total_revenue
-FROM AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED;
+FROM CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED;
 ```
 
 #### Step 11: Save Configuration (Optional)
@@ -839,10 +839,10 @@ Export structured data via:
 ```sql
 -- Export to CSV
 SELECT * 
-FROM AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED;
+FROM CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED;
 
 -- Use in Python/Snowpark
-session.table("AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED").to_pandas()
+session.table("CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED").to_pandas()
 
 -- Connect BI tools directly to SILVER_LAYER tables
 ```
@@ -911,7 +911,7 @@ SELECT
     ORDER_DATE,
     PRODUCT_NAME,
     TOTAL_AMOUNT
-FROM AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
+FROM CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
 LIMIT 10;
 
 -- Step 2: Revenue by Product
@@ -920,7 +920,7 @@ SELECT
     COUNT(*) as order_count,
     SUM(TOTAL_AMOUNT) as total_revenue,
     AVG(TOTAL_AMOUNT) as avg_order_value
-FROM AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
+FROM CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
 GROUP BY PRODUCT_NAME
 ORDER BY total_revenue DESC;
 
@@ -930,7 +930,7 @@ SELECT
     COUNT(*) as total_orders,
     SUM(TOTAL_AMOUNT) as total_spent,
     AVG(TOTAL_AMOUNT) as avg_order_value
-FROM AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
+FROM CORTEX_AI_FRAMEWORK_DB.SILVER_LAYER.GENERATED_DATA_STRUCTURED
 GROUP BY CUSTOMER_NAME
 ORDER BY total_spent DESC
 LIMIT 10;
@@ -1094,7 +1094,7 @@ Customer_Analytics_Order_Analysis_Revenue_Insights_20250115
 
 **Option 1: Save to Database** (Recommended)
 - Click **"Save to Database"** button
-- Config saved to `AI_FRAMEWORK_DB.CONFIG.DEMO_CONFIGURATIONS`
+- Config saved to `CORTEX_AI_FRAMEWORK_DB.CONFIG.DEMO_CONFIGURATIONS`
 
 **Option 2: Download YAML File**
 - Click **"Download YAML Configuration"** button
@@ -1199,7 +1199,7 @@ Duration: 10
 
 Before using Snow Demo, upload your YAML file to Snowflake:
 
-1. Navigate to **Data** → **Databases** → **AI_FRAMEWORK_DB** → **CONFIGS** → **Stages** → **FRAMEWORK_YAML_STAGE**
+1. Navigate to **Data** → **Databases** → **CORTEX_AI_FRAMEWORK_DB** → **CONFIGS** → **Stages** → **FRAMEWORK_YAML_STAGE**
 2. Click **"+ Files"** button
 3. Select your downloaded YAML file
 4. In path field, enter: `/analytics/` (or choose: `sales_demo`, `customer_insights`, etc.)
@@ -1300,7 +1300,7 @@ Navigate to `Projects` → `Streamlit` → **`YAML_WIZARD`**
 ◉ Create new (selected by default)
 ○ Load existing
 
-Database: AI_FRAMEWORK_DB ▼
+Database: CORTEX_AI_FRAMEWORK_DB ▼
 Schema: SILVER_LAYER ▼
 Table: TECHCORP_ORDERS_STRUCTURED ▼
 ```
@@ -1451,7 +1451,7 @@ Click **"Generate Customized YAML"** → Generates 8 tabs (Overview, Product/Cat
 
 Click **"Download YAML"** button
 
-**Optional:** Click **"Save to AI_FRAMEWORK_DB.CONFIGS"** to save your customizations for later editing
+**Optional:** Click **"Save to CORTEX_AI_FRAMEWORK_DB.CONFIGS"** to save your customizations for later editing
 
 ---
 
@@ -1459,7 +1459,7 @@ Click **"Download YAML"** button
 
 Upload your YAML file to Snowflake:
 
-1. Navigate to **Data** → **Databases** → **AI_FRAMEWORK_DB** → **CONFIGS** → **Stages** → **VISUALIZATION_YAML_STAGE**
+1. Navigate to **Data** → **Databases** → **CORTEX_AI_FRAMEWORK_DB** → **CONFIGS** → **Stages** → **VISUALIZATION_YAML_STAGE**
 2. Click **"+ Files"** button
 3. Select your downloaded YAML file
 4. In path field, enter: `/customer_orders/` (or your project name)
