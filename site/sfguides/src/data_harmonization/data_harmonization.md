@@ -10,7 +10,7 @@ tags: Data Engineering, AI, Cortex, data harmonization, Streamlit, Entity Matchi
 # End-to-End Data Harmonization with Snowflake Cortex AI
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
+Duration: 5
 
 ### The Business Problem
 
@@ -281,7 +281,7 @@ Your Snowflake environment is now ready! In the next section, we'll use the Data
 
 <!-- ------------------------ -->
 ## Data Harmonization
-Duration: 15
+Duration: 10
 
 ### Understanding the Challenge
 
@@ -429,8 +429,8 @@ We will use this audit table in our upcoming notebook to ensure we're matching l
 In the next section, we'll use these harmonized tables to perform intelligent entity matching using a hybrid approach that combines vector similarity with AI classification.
 
 <!-- ------------------------ -->
-## data harmonization with Hybrid Matching
-Duration: 25
+## Data Harmonization with Hybrid Matching
+Duration: 10
 
 Now that we have harmonized datasets, it's time to tackle the core challenge: **determining which ABT products correspond to which Best Buy products**. This is where the magic of hybrid entity matching comes in.
 
@@ -539,10 +539,10 @@ Implements the two-stage matching logic that combines vector similarity with AI 
 
 **Stage 1: High-Confidence Vector Matches**
 - For each reference product, identify the top candidates by vector similarity
-- If the top match has similarity ≥ 0.8, accept it immediately (no AI needed)
+- If the top match is a clear similarity match accept it immediately (no AI needed)
 
 **Stage 2: AI_CLASSIFY for Ambiguous Cases**
-- For reference products with multiple candidates (similarity between 0.3 and 0.8)
+- For reference products with multiple candidates:
 - Aggregate the top 15 candidate names into an array
 - Call `AI_CLASSIFY(reference_name, [candidate1, candidate2, ...])` to intelligently select the best match
 - AI_CLASSIFY uses context and semantic understanding beyond simple similarity
@@ -637,7 +637,7 @@ In the next section, we'll build an interactive Streamlit app to review and corr
 
 <!-- ------------------------ -->
 ## Unmatched Record Reconciliation
-Duration: 15
+Duration: 10
 
 After running the hybrid matching algorithm, you'll have two sets of records:
 1. **Matched Records**: High-confidence matches ready for use in analysis
