@@ -1,0 +1,217 @@
+name: Validate abusive words and Stage
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [master]
+
+jobs:
+  validate_and_stage:
+    # Only run for PRs from branches in this repo (not forks) into master
+    #if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.base.ref == 'master'
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.base.ref == 'github-actions'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install validator dependencies
+        run: |
+          npm init -y >/dev/null 2>&1 || true
+          npm install --no-audit --no-fund badwords-list@1.0.0
+          npm install --no-audit --no-fund gray-matter@4.0.3
+          node -e "require('badwords-list'); console.log('badwords-list installed')"
+          node -e "require('gray-matter'); console.log('gray-matter installed')"
+
+      - name: Determine changed markdown files in quickstarts
+        id: detect
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          pr_number=${{ github.event.pull_request.number }}
+          repo=${{ github.repository }}
+          files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
+          md_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | select(endswith(".md"))' | sort -u)
+          if [ -z "$md_files" ]; then files_arr='[]'; else files_arr=$(printf '%s\n' "$md_files" | jq -R -s -c 'split("\n") | map(select(length>0))'); fi
+
+          # Build quickstart names and languages like the legacy workflow
+          quickstart_names=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("site/sfguides/src/")) | capture("^site/sfguides/src/(?<name>[^/]+)/").name' | sort -u)
+          if [ -z "$quickstart_names" ]; then
+            quickstart_names_json='[]'
+            quickstart_folders_json='[]'
+            quickstart_name=''
+          else
+            objs='[]'
+            names_arr='[]'
+            while IFS= read -r name; do
+              [ -z "$name" ] && continue
+              md_file=$(ls -1 "site/sfguides/src/$name"/*.md 2>/dev/null | head -n1 || true)
+              lang=""
+              if [ -n "$md_file" ] && [ -f "$md_file" ]; then
+                lang=$(sed -n '1,50p' "$md_file" | grep -m1 -E '^[[:space:]]*language:[[:space:]]*' | sed -E 's/^[[:space:]]*language:[[:space:]]*//')
+                lang=$(printf '%s' "$lang" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
+                if [[ "$lang" =~ ^\".*\"$ ]]; then lang=${lang:1:${#lang}-2}; fi
+                if [[ "$lang" =~ ^\'.*\'$ ]]; then lang=${lang:1:${#lang}-2}; fi
+              fi
+              objs=$(echo "$objs" | jq -c --arg name "$name" --arg lang "$lang" '. + [{name:$name, language:$lang}]')
+              names_arr=$(echo "$names_arr" | jq -c --arg name "$name" '. + [$name]')
+            done <<< "$quickstart_names"
+
+            # Validate languages are in allowed set (legacy behavior)
+            invalid_count=$(echo "$objs" | jq '[ .[]
+              | if type=="object" and (.language|type)=="string"
+                then (.language | ascii_downcase) as $l
+                | (["en","es","it","fr","de","ja","ko","pt_br"] | index($l))
+                | ( . == null )
+                else true
+              end
+            ] | map(select(.)) | length')
+          if [ "$invalid_count" -ne 0 ]; then
+              echo "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" >&2
+              echo "$objs" | jq . >&2
+              jq -n --argjson objs "$objs" --arg msg "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br" '{type:"language", message:$msg, objects:$objs}' > validation-error.json
+              exit 1
+            fi
+
+            quickstart_names_json="$objs"
+            quickstart_folders_json=$(echo "$names_arr" | jq -c .)
+            quickstart_name=$(printf '%s\n' "$quickstart_names" | head -n1)
+          fi
+
+          echo "files_json=$files_arr" >> $GITHUB_OUTPUT
+          echo "quickstart_names_json=$quickstart_names_json" >> $GITHUB_OUTPUT
+          echo "quickstart_folders_json=$quickstart_folders_json" >> $GITHUB_OUTPUT
+          echo "quickstart_name=$quickstart_name" >> $GITHUB_OUTPUT
+
+      - name: Validate abusive words in markdown
+        id: validate
+        env:
+          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
+          BLOCKLIST_STRING: ${{ vars.PROFANITY_BLOCKLIST }}
+          BLOCKLIST_SECRET_STRING: ${{ secrets.PROFANITY_BLOCKLIST_SECRET }}
+        run: |
+          node scripts/validate-profanity.js || {
+            echo "Abusive words detected. See 'profanity-report.json' for details." >&2
+            exit 1
+          }
+
+      - name: Validate title presence
+        id: validate_title
+        env:
+          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
+        run: |
+          node scripts/validate-title.js || {
+            echo "Title validation failed. See 'title-error.json' for details." >&2
+            exit 1
+          }
+
+      - name: Validate tags syntax in markdown
+        id: validate_tags
+        env:
+          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
+        run: |
+          node scripts/validate-tags.js || {
+            echo "Tag syntax validation failed. See 'tags-error.json' for details." >&2
+            exit 1
+          }
+
+      - name: Comment PR with validation findings (on failure)
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = 'Validation failed.';
+            if (fs.existsSync('validation-error.json')) {
+              try {
+                const v = JSON.parse(fs.readFileSync('validation-error.json','utf8'));
+                if (v && v.type === 'language') {
+                  const items = Array.isArray(v.objects) ? v.objects.map(o => `- ${o.name}: "${o.language || ''}"`).join('\n') : '';
+                  body = `${v.message || 'Language validation failed.'}\n\n${items}`;
+                }
+              } catch {}
+            } else if (fs.existsSync('title-error.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('title-error.json','utf8'));
+                const issues = Array.isArray(data.issues) ? data.issues : [];
+                if (issues.length) {
+                  const lines = issues.map(issue => `- ${issue.file}: ${issue.reason || 'missing or empty title'}`);
+                  body = `Validation failed: title is required.\n\n${lines.join('\n')}`;
+                } else {
+                  body = 'Validation failed: title is required.';
+                }
+              } catch {}
+            } else if (fs.existsSync('tags-error.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('tags-error.json','utf8'));
+                const issues = Array.isArray(data.issues) ? data.issues : [];
+                if (issues.length) {
+                  const lines = issues.map(issue => `- ${issue.file}: ${(issue.invalid || []).join(', ')}`);
+                  body = `Validation failed: tag syntax is invalid. Expected tags like 'snowflake-site:taxonomy/x/y'.\n\n${lines.join('\n')}`;
+                } else {
+                  body = 'Validation failed: tag syntax is invalid.';
+                }
+              } catch {}
+            } else if (fs.existsSync('profanity-report.json')) {
+              try {
+                const data = JSON.parse(fs.readFileSync('profanity-report.json','utf8'));
+                const issues = Array.isArray(data.issues) ? data.issues : [];
+                if (issues.length) {
+                  const lines = issues.map(issue => `- ${issue.file}: ${(issue.words || []).join(', ')}`);
+                  body = `Validation failed: abusive words detected.\n\n${lines.join('\n')}`;
+                } else {
+                  body = 'Validation failed: profanity check failed but no issues were listed.';
+                }
+              } catch {
+                body = 'Validation failed due to profanity check.';
+              }
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body
+            });
+
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-artifacts
+          path: |
+            profanity-report.json
+            validation-error.json
+            tags-error.json
+            title-error.json
+          if-no-files-found: ignore
+
+      - name: Call Workato staging webhook
+        env:
+          WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_WEBHOOK_URL }}
+        run: |
+          payload=$(jq -n \
+            --arg repo "$GITHUB_REPOSITORY" \
+            --arg pr "${{ github.event.pull_request.number }}" \
+            --arg sha "$GITHUB_SHA" \
+            --arg env "staging" \
+            --arg qname "${{ steps.detect.outputs.quickstart_name }}" \
+            --argjson qnames '${{ steps.detect.outputs.quickstart_names_json }}' \
+            --argjson qfolders '${{ steps.detect.outputs.quickstart_folders_json }}' \
+            '{repo:$repo, pr_number: ($pr|tonumber), commit_sha:$sha, environment:$env, quickstart_name:$qname, quickstart_names:$qnames, quickstart_folders:$qfolders}')
+          echo "$payload" | jq .
+          response=$(curl -sS -X POST "$WORKATO_STAGING_WEBHOOK_URL" -H "Content-Type: application/json" --data-raw "$payload")
+          echo "$response" > workato-response.json
+          url=$(jq -r '.urls.staging // .url // empty' workato-response.json)
+          if [ -n "$url" ]; then echo "staging_url=$url" >> $GITHUB_OUTPUT; fi
