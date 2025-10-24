@@ -1,10 +1,11 @@
 author: Vino Duraisamy, Kala Govindarajan
 id: getting_started_with_snowpark_connect_for_apache_spark
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
+language: en
 summary: This quickstart guide shows you how to get started with Snowpark Connect for Apache Spark™ categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Apache Spark, Snowpark, Python, Data Engineering
 
 # Getting Started with Snowpark Connect for Apache Spark
 <!-- ------------------------ -->

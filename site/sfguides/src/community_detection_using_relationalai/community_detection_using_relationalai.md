@@ -1,11 +1,11 @@
 author: Patrick Lee, Steve Bertolani
 id: community_detection_using_relationalai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/monitoring
+language: en
 summary: This guide shows how to use RelationalAI and Snowflake to create a social graph and detect customer communities from retail transaction data.
-categories: data-science, graph-analysis, relationalai, community-detection
 environments: web
 status: Published 
 feedback link: https://github.com/RelationalAI/rai-samples/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Community Detection using RelationalAI
 

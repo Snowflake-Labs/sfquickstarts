@@ -1,11 +1,11 @@
 author: NaveenAlanThomas
 id: marketing_data_foundation_starter
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: Marketing Data Foundation Starter Guide
-categories: Marketing
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Marketing, Data Engineering, Native Application
 
 # Marketing Data Foundation Starter Guide
 <!-- ------------------------ -->

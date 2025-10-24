@@ -1,11 +1,11 @@
 authors: Bobby Birstock, Amy Chen
 id: accelerating_data_teams_with_snowflake_and_dbt_cloud_hands_on_lab
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
+language: en
 summary: Build a dbt project and data pipeline with dbt Cloud and Snowflake
-categories: getting-started,data-engineering,partner-integrations,marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Data
 
 # Accelerating Data Teams with Snowflake and dbt Cloud Hands On Lab
 <!-- ------------------------ -->

@@ -1,11 +1,11 @@
 author: Allen Wong
 id: financial-services-asset-management
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: Build a Financial Services Asset Management demo in Snowflake that scales to handle 3 billion synthetic trades while providing real-time cash and profit/loss calculations.
-categories: snowflake, featured, data-engineering
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Financial Services, Asset Management, Data Engineering, SQL, Python, Dashboard
 
 # Build a Financial Services Asset Management P&L Dashboard
 
@@ -52,11 +52,11 @@ First, we need to mount a free data share containing financial market data:
 
 1. Log into your Snowflake account
 2. Navigate to the Marketplace
-3. Search for "Finance & Economics"
+3. Search for "Snowflake Public Data (Free)"
 4. Click "Get" to mount this free share as a database named "Snow_Finance_Share"
 5. Grant the PUBLIC role access to the database
 
-![Figure 3](assets/finance_economics_get_page.png)
+![Figure 3](assets/Snowflake_Get.png)
 
 ### Create the Setup Worksheet
 
@@ -125,7 +125,7 @@ use schema finservam.public;
 
 -- Verify Data Marketplace Share
 select *
-from Snow_Finance_Share.cybersyn.stock_price_timeseries
+from Snow_Finance_Share.PUBLIC_DATA_FREE.stock_price_timeseries
 where ticker = 'SNOW' and variable = 'post-market_close' order by date;
 
 -- transform.exclude_symbol
@@ -133,7 +133,7 @@ create or replace table transform.exclude_symbol
 comment = 'Exclude Symbols that have ever had a price less than 1 cent or greater than $4500'
 as
 select distinct ticker symbol
-from Snow_Finance_Share.cybersyn.stock_price_timeseries
+from Snow_Finance_Share.PUBLIC_DATA_FREE.stock_price_timeseries
 where
 variable = 'post-market_close'
 and primary_exchange_name in ('NASDAQ CAPITAL MARKET', 'NEW YORK STOCK EXCHANGE')
@@ -150,7 +150,7 @@ date,
 value close,
 primary_exchange_code exchange,
 asset_class
-from Snow_Finance_Share.cybersyn.stock_price_timeseries k
+from Snow_Finance_Share.PUBLIC_DATA_FREE.stock_price_timeseries k
 left outer join transform.exclude_symbol e on e.symbol = k.ticker
 where
 variable = 'post-market_close'
@@ -421,7 +421,7 @@ select fake_py('zh_CN','name',null)::varchar as FAKE_NAME from table(generator(r
 
 -- Cross-Database Joins
 select *
-from Snow_Finance_Share.cybersyn.stock_price_timeseries s
+from Snow_Finance_Share.PUBLIC_DATA_FREE.stock_price_timeseries s
 inner join finservam.public.stock_history h on s.ticker = h.symbol and h.date = s.date
 where s.ticker = 'SNOW' and s.variable = 'post-market_close' and s.date = business_date();
 ```

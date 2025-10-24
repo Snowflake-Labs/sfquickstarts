@@ -1,11 +1,11 @@
 author: melindawebster
 id: dcdf_incremental_processing
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
+language: en
 summary: Getting Started with DCDF Data Architecture Incremental Processing/Logical Partitions
-categories: architecture-patterns
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Cloud Deployment Framework, DCDF, Data Engineering, Data Architecture 
 
 # Getting Started with DCDF Data Architecture Incremental Processing & Logical Partitions
 <!-- ------------------------ -->

@@ -1,11 +1,11 @@
 author: Shriya Rai
 id: build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark
+language: en
 summary: This is a sample Snowflake Guide
-categories: data-science, data-science-&-ml, app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Data Applications, Machine Learning, Streamlit, Snowpark, Notebook
 
 # Build and deploy Snowpark ML models using Streamlit and Notebooks in Snowflake
 <!-- ------------------------ -->

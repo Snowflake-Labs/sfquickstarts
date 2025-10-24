@@ -1,11 +1,11 @@
 author: James Cha-Earley
 id: gain_insights_from_unstructured_data
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: Gain Insights From Unstructured Data with Snowflake Cortex
-categories: data-science, gen-ai, data-science-&-ai, cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Tasty Bytes, Cortex, Notebook,Generative AI, LLMs
 
 # Gain Insights From Unstructured Data using Snowflake Cortex
 <!-- ------------------------ -->
@@ -60,7 +60,7 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 ### Creating Objects, Loading Data, and Joining Data
 1. Download the [setup.sql](https://github.com/Snowflake-Labs/sfguide-gaining-insights-from-unstructured-data-with-cortex-ai/blob/main/setup.sql) file
-2. Open a new worksheet in Snowflake
+2. Open it in Workspaces in Snowflake
 3. Paste the contents of setup.sql or upload and run the file
 4. The script will create:
    - create Snowflake objects (warehouse, database, schema, raw tables), ingest shift  data from S3,  and create the review view
@@ -92,10 +92,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 * Provide a name for the notebook and select appropriate **database** `tb_voc`, **schema** `analytics`
 
 * For **Runtime** select `Run on container`
-
-* Open the notebook once created and add the following packages by using the "Packages" button on the top right
-  * snowflake-snowpark-python
-  * snowflake-ml-python
 
 * Now you are ready to run the notebook by clicking "Run All" button on the top right or running each cell individually. 
 

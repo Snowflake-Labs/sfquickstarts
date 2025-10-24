@@ -1,10 +1,10 @@
 summary: Questa è un’introduzione generale a Snowflake che spiega come effettuare il login, eseguire query e caricare dati.
 id: getting_started_with_snowflake_it
-categories: in-evidenza, guida-introduttiva
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: it
 environment: web
 status: Pubblicato
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Guida introduttiva, Data science, Data Engineering, it 
 
 
 # Guida introduttiva a Snowflake - Da zero a Snowflake

@@ -1,11 +1,11 @@
 author: Chanin Nantasenamat
 id: automated-query-performance-insights
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Learn how to analyze query performance in Snowflake using SQL queries to identify bottlenecks and optimize execution times.
-categories: getting-started, data-engineering, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: SQL, Performance Optimization, Query Analysis, Snowflake, Data Engineering
 
 # Analyze Query Performance in Snowflake Notebooks
 <!-- ------------------------ -->

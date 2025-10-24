@@ -1,11 +1,11 @@
 author: Joviane Bellegarde
 id: snow_bear_leveraging_cortex_for_advanced_analytics
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics
+language: en
 summary: Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics
-categories: Cortex, Analytics, Getting-Started, AI
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Cortex, AI, Analytics, Media & Entertainment
 
 # Snow Bear Fan Experience Analytics - Leveraging Cortex for Advanced Analytics
 <!-- ------------------------ -->
@@ -57,7 +57,18 @@ In this step, you'll create the Snowflake database objects and upload all necess
 
 ### Step 1: Create Database Objects
 
-1. In Snowsight, click `Worksheets` in the left navigation
+> aside positive
+> 
+> Starting in September 2025, Snowflake is gradually upgrading accounts from Worksheets to [Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces). Workspaces will become the default SQL editor. Follow the instructions below that match your interface.
+
+**To use Workspaces:**
+1. In Snowsight, click `Projects`, then `Workspaces` in the left navigation
+2. Click `+ Add new` to create a new Workspace
+3. Click `SQL File` to create a new SQL file
+4. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) and paste it into your SQL file, then run it
+
+**To use Worksheets:**
+1. In Snowsight, click `Projects`, then `Worksheets` in the left navigation
 2. Click `+` in the top-right corner to open a new Worksheet
 3. Copy the setup script from [setup.sql](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/setup.sql) and paste it into your worksheet, then run it
 
@@ -65,52 +76,54 @@ The setup script creates:
 - **Database**: `SNOW_BEAR_DB` with `BRONZE_LAYER`, `GOLD_LAYER`, and `ANALYTICS` schemas
 - **Role**: `SNOW_BEAR_DATA_SCIENTIST` with all necessary permissions  
 - **Warehouse**: `SNOW_BEAR_WH` for compute resources
-- **Stages**: `SNOW_BEAR_DATA_STAGE` and `SEMANTIC_MODELS` for file uploads
+- **Stages**: `SNOW_BEAR_STAGE` (in ANALYTICS) for app/data files and `SEMANTIC_MODELS` (in GOLD_LAYER) for AI assistant
 - **File Format**: `CSV_FORMAT` for data loading
 - **AI Access**: `SNOWFLAKE.CORTEX_USER` role for Cortex functions
 
 ### Step 2: Download Required Files
 
-Download these 3 files from the GitHub repository:
+Download these 5 files from the GitHub repository:
 
 | File | Purpose | Download Link |
 |------|---------|---------------|
 | **Data File** | Basketball fan survey data | [basketball_fan_survey_data.csv.gz](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/basketball_fan_survey_data.csv.gz) |
 | **Streamlit App** | Interactive analytics dashboard | [snow_bear.py](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear.py) |
+| **Environment File** | Streamlit dependencies | [environment.yml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/environment.yml) |
 | **Semantic Model** | AI assistant semantic model | [snow_bear_fan_360.yaml](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/scripts/snow_bear_fan_360.yaml) |
+| **Notebook** | Setup and data processing notebook | [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb) |
 
 ### Step 3: Upload Files to Stages
 
 1. In Snowsight, change your role to `SNOW_BEAR_DATA_SCIENTIST`
 
-2. Navigate to `Catalog` → `Database Explorer` → `SNOW_BEAR_DB` → `ANALYTICS` → `Stages`
+2. Navigate to `Catalog` → `Database Explorer` → `SNOW_BEAR_DB`
 
-**Upload data and app files:**
+**Upload files to two stages in different schemas:**
 
-3. Click on `SNOW_BEAR_DATA_STAGE`
+3. **Upload to `ANALYTICS` → `Stages` → `SNOW_BEAR_STAGE`:**
+   - Navigate to `ANALYTICS` → `Stages`
+   - Click on `SNOW_BEAR_STAGE`
+   - Click `Enable Directory Table`
+   - Upload these files:
+     - `basketball_fan_survey_data.csv.gz`
+     - `snow_bear.py`
+     - `environment.yml`
 
-4. Click `Enable Directory Table`
-
-5. Upload `basketball_fan_survey_data.csv.gz` and `snow_bear.py` to this stage
-
-**Upload semantic model:**
-
-6. Go back and click on `SEMANTIC_MODELS` stage
-
-7. Click `Enable Directory Table`
-
-8. Upload `snow_bear_fan_360.yaml` to this stage
+4. **Upload to `GOLD_LAYER` → `Stages` → `SEMANTIC_MODELS`:**
+   - Navigate to `GOLD_LAYER` → `Stages`
+   - Click on `SEMANTIC_MODELS`
+   - Click `Enable Directory Table`
+   - Upload this file:
+     - `snow_bear_fan_360.yaml`
 
 ### Step 4: Import the Analytics Notebook
 
-1. **Download the notebook**: [snow_bear_complete_setup.ipynb](https://github.com/Snowflake-Labs/sfguide-snow-bear-fan-experience-analytics-leveraging-cortex/blob/main/notebooks/snow_bear_complete_setup.ipynb)
-
-2. **Import into Snowflake**:
+1. **Import into Snowflake**:
    - Navigate to `Projects` → `Notebooks` in Snowsight
    - Click the down arrow next to `+ Notebook` and select `Import .ipynb file`
    - Choose `snow_bear_complete_setup.ipynb` from your downloads
 
-3. **Configure the notebook settings**:
+2. **Configure the notebook settings**:
    - **Role**: Select `SNOW_BEAR_DATA_SCIENTIST`
    - **Database**: Select `SNOW_BEAR_DB`
    - **Schema**: Select `ANALYTICS`  

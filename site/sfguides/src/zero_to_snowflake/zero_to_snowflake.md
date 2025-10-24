@@ -1,11 +1,11 @@
 author: Dureti Shemsi, Cameron Shimmin
 id: zero_to_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Zero to Snowflake
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake, Governance, Horizon, Data Security, RBAC, Masking, Data Quality
 
 # Zero to Snowflake
 
@@ -32,12 +32,12 @@ Our mission is to provide unique, high-quality food options in a convenient and 
  - An Enterprise or Business Critical Snowflake Account
  - If you do not have a Snowflake Account, please [sign up for a Free 30 Day Trial Account](https://signup.snowflake.com/?utm_cta=quickstarts_&_fsi=6tNBra0z&_fsi=6tNBra0z). When signing up, please make sure to select  Enterprise edition. You are welcome to choose any [Snowflake Cloud/Region](https://docs.snowflake.com/en/user-guide/intro-regions?_fsi=6tNBra0z&_fsi=6tNBra0z).
  - After registering, you will receive an email with an activation link and your Snowflake Account URL.
- - **For Snowflake Cortex AI Features:** This lab may demonstrate features that utilize Snowflake Cortex AI, and some Cortex AI models are region-specific. If the features or models required for this lab are not available in your Snowflake account's primary region, you will need to enable cross-region inference. **To enable this, an `ACCOUNTADMIN` role must execute the following SQL command in a Snowflake worksheet:** 
+ - **For Snowflake Cortex AI Features:** This lab may demonstrate features that utilize Snowflake Cortex AI, and some Cortex AI models are region-specific. If the features or models required for this lab are not available in your Snowflake account's primary region, you will need to enable cross-region inference. **To enable this, an `ACCOUNTADMIN` role must execute the following SQL command in a Workspace SQL file:** 
 
 ```sql
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 ```
-- Simply copy and paste the line above into a SQL worksheet and run it while logged in with the `ACCOUNTADMIN` role.
+- Simply copy and paste the line above into a SQL file and run it while logged in with the `ACCOUNTADMIN` role.
 
 ### What You Will Learn
 
@@ -62,35 +62,35 @@ Duration: 3
 
 ### **Overview**
 
-In this Quickstart, we will use Snowflake Workspaces to organize, edit, and run all the SQL scripts required for this course. We will create a dedicated SQL worksheet for the setup and each vignette. This will keep our code organized and easy to manage.
+In this Quickstart, we will use Snowflake Workspaces to organize, edit, and run all the SQL scripts required for this course. We will create a dedicated SQL file for the setup and each vignette. This will keep our code organized and easy to manage.
 
-Let's walk through how to create your first worksheet, add the necessary setup code, and run it.
+Let's walk through how to create your first SQL file, add the necessary setup code, and run it.
 
-### **Step 1 \- Create Your Setup Worksheet**
+### **Step 1 \- Create Your Setup SQL File**
 
 First, we need a place to put our setup script.
 
-1. **Navigate to Workspaces:** In the left-hand navigation menu of the Snowflake UI, click on **Projects** » **Workspaces**. This is the central hub for all your worksheets.  
-2. **Create a New Worksheet:** Find and click the **+ Add New** button in the top-left corner of the Workspaces area, then select **SQL File**. This will generate a new, blank worksheet.  
-3. **Rename the Worksheet:** Your new worksheet will have a name based on the timestamp it was created. Give it a descriptive name like **Zero To Snowflake - Setup**.
+1. **Navigate to Workspaces:** In the left-hand navigation menu of the Snowflake UI, click on **Projects** » **Workspaces**. This is the central hub for all your SQL files.  
+2. **Create a New SQL File:** Find and click the **+ Add New** button in the top-left corner of the Workspaces area, then select **SQL File**. This will generate a new, blank SQL file.  
+3. **Rename the SQL File:** Your new SQL file will have a name based on the timestamp it was created. Give it a descriptive name like **Zero To Snowflake - Setup**.
 
 ### **Step 2 \- Add and Run the Setup Script**
 
-Now that you have your worksheet, it's time to add the setup SQL and execute it.
+Now that you have your SQL file, it's time to add the setup SQL and execute it.
 
 1. **Copy the SQL Code:** Click the link for the **[setup file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/setup.sql)** and copy it to your clipboard.  
-2. **Paste into your Worksheet:** Return to your Zero To Snowflake Setup worksheet in Snowflake and paste the entire script into the editor.  
-3. **Run the Script:** To execute all the commands in the worksheet sequentially, click the **"Run All"** button located at the top-left of the worksheet editor. This will perform all the necessary setup actions, such as creating roles, schemas, and warehouses that you will need for the upcoming vignettes.
+2. **Paste into your SQL File:** Return to your Zero To Snowflake Setup SQL file in Snowflake and paste the entire script into the editor.  
+3. **Run the Script:** To execute all the commands in the SQL file sequentially, click the **"Run All"** button located at the top-left of the editor. This will perform all the necessary setup actions, such as creating roles, schemas, and warehouses that you will need for the upcoming vignettes.
 
 <img src='./assets/create_a_worksheet.gif'>
 
 ### **Looking Ahead**
 
-The process you just completed for creating a new worksheet is the exact same workflow you will use for every subsequent vignette in this course.
+The process you just completed for creating a new SQL file is the exact same workflow you will use for every subsequent vignette in this course.
 
 For each new vignette, you will:
 
-1. Create a **new** worksheet.  
+1. Create a **new** SQL file.  
 2. Give it a descriptive name (e.g., Vignette 1 \- Getting Started with Snowflake).  
 3. Copy and paste the SQL script for that specific vignette.
 4. Each SQL file has all of the necessary instructions and commands to follow along.
@@ -121,9 +121,9 @@ Within this Vignette, we will learn about core Snowflake concepts by exploring V
 - A Resource Monitor
 - A Budget
 
-### Get the SQL and paste it into your Worksheet.
+### Get the SQL code and paste it into your SQL File.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to Step 10 - Simple Data Pipeline**
+**Copy and paste the SQL code from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-1.sql) in a new SQL File to follow along in Snowflake. Note that once you've reached the end of the SQL File you can skip to Step 10 - Simple Data Pipeline**
 
 ## Virtual Warehouses and Settings
 
@@ -135,7 +135,7 @@ Virtual Warehouses are the dynamic, scalable, and cost-effective computing power
 
 ### Step 1 - Setting Context
 
-First, lets set our session context. To run the queries, highlight the three queries at the top of your worksheet and click the "► Run" button.
+First, lets set our session context. To run the queries, highlight the three queries at the top of your SQL file and click the "► Run" button.
 
 ```sql
 ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts,"version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"tastybytes", "vignette": "getting_started_with_snowflake"}}';
@@ -488,9 +488,9 @@ Within this vignette, we will learn how to build a simple, automated data pipeli
 - A staging table for raw data.
 - A multi-step data pipeline using three chained Dynamic Tables.
 
-### Get the SQL and paste it into your Worksheet.
+### Get the SQL and paste it into your SQL File.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql) in a new Worksheet to follow along in Snowflake. Note that once you've reached the end of the Worksheet you can skip to Step 16 - Snowflake Cortex AI.**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-2.sql) in a new SQL File to follow along in Snowflake. Note that once you've reached the end of the SQL File you can skip to Step 16 - Snowflake Cortex AI.**
 
 ## External Stage Ingestion
 
@@ -502,7 +502,7 @@ Our raw menu data currently sits in an Amazon S3 bucket as CSV files. To begin o
 
 ### Step 1 - Set Context
 
-First, let's set our session context to use the correct database, role, and warehouse. Execute the first few queries in your worksheet.
+First, let's set our session context to use the correct database, role, and warehouse. Execute the first few queries in your SQL file.
 
 ```sql
 ALTER SESSION SET query_tag = '{"origin":"sf_sit-is","name":"tb_zts","version":{"major":1, "minor":1},"attributes":{"is_quickstart":1, "source":"tastybytes", "vignette": "data_pipeline"}}';
@@ -893,7 +893,7 @@ In this section, let's explore the core technology that takes your AI insights f
 
 #### The Foundation: SQL at Its Core
 
-Every AI insight you generate in Cortex Playground isn't just magic; it's backed by SQL. Click "**View Code**" after any model response, and you'll see the exact SQL query, complete with your specified settings like temperature. This isn't just for show—this code is ready for action\! You can run it directly in a Snowflake worksheet, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It's also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.
+Every AI insight you generate in Cortex Playground isn't just magic; it's backed by SQL. Click "**View Code**" after any model response, and you'll see the exact SQL query, complete with your specified settings like temperature. This isn't just for show—this code is ready for action\! You can run it directly in a Workspace SQL file, automate it with streams and tasks, or integrate it with a dynamic table for live data processing. It's also worth noting that the functionalities of this Cortex Complete can be accessed programmatically via Python or a REST API, offering flexible integration options.
 
 <img src = "assets/vignette-3/cortex-playground-view-code.png">
 
@@ -922,14 +922,14 @@ You've experimented with AI models in Cortex Playground to analyze individual cu
 3.  **Use EXTRACT_ANSWER()** to pull specific complaints or praise.
 4.  **Use AI_SUMMARIZE_AGG()** to generate quick summaries per truck brand.
 
-### Get the SQL and paste it into your Worksheet.
+### Get the SQL code and paste it into your SQL File.
 
-Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new Worksheet or Workspaces to follow along in Snowflake. 
+Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-aisql.sql) in a new SQL File to follow along in Snowflake. 
 <!-- Uncomment when Copilot is added back -->
-<!-- **Note that once you've reached the end of the Worksheet you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).** -->
+<!-- **Note that once you've reached the end of the SQL File you can skip to [Step 19 - Snowflake Copilot](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).** -->
 
 <!-- Remove when Copilot is added back -->
-**Note: Once you've reached the end of the Worksheet, you can skip to [Step 19 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
+**Note: Once you've reached the end of the SQL File, you can skip to [Step 19 - Cortex Search](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#18).**
 <!-- End remove -->
 
 ### Step 1 - Setting Context
@@ -1111,13 +1111,13 @@ You've successfully built powerful AI SQL queries to analyze customer reviews. N
 
 This lab introduces **Snowflake Copilot**, an LLM-powered assistant designed to simplify this challenge. Running securely within Snowflake Cortex, Copilot helps you construct sophisticated analytical workflows, translating complex business questions into powerful SQL.
 
-### Get the SQL and paste it into your Worksheet
+### Get the SQL and paste it into your SQL File
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-copilot.sql) into a new SQL Worksheet in Snowflake to follow along.**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-3-copilot.sql) into a new SQL File in Snowflake to follow along.**
 
-**Snowflake Copilot is designed to be used directly within the SQL Worksheet environment.** Please ensure you are executing the SQL in a SQL Worksheet.
+**Snowflake Copilot is designed to be used directly within the SQL File environment.** Please ensure you are executing the SQL in a SQL File.
 
-**Note: Once you've reached the end of the Worksheet, you can skip to Step 20 - Cortex Search.**
+**Note: Once you've reached the end of the SQL File, you can skip to Step 20 - Cortex Search.**
 
 ### Step 1 - Setting Context
 
@@ -1650,11 +1650,11 @@ Within this vignette, we will explore some of the powerful governance features w
 - A row access policy to restrict data visibility by country.
 - A custom Data Metric Function to check data integrity.
 
-### Get the SQL and paste it into your Worksheet.
+### Get the SQL code and paste it into your SQL File.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new Worksheet to follow along in Snowflake.**
+**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-4.sql) in a new SQL File to follow along in Snowflake.**
 
-**Note that once you've reached the end of the Worksheet you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).** 
+**Note that once you've reached the end of the SQL File you can skip to [Step 29 - Apps & Collaboration](https://quickstarts.snowflake.com/guide/zero_to_snowflake/index.html?index=..%2F..index#28).** 
 
 ## Roles and Access Control
 
@@ -2113,9 +2113,9 @@ In this vignette, we will explore how Snowflake facilitates seamless data collab
 ### What You Will Build
 - Enriched analytical Views that combine internal sales data with external weather and POI data.
 
-### Get the SQL and paste it into your Worksheet.
+### Get the SQL code and paste it into your SQL File.
 
-**Copy and paste the SQL from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-5.sql) in a new Worksheet to follow along in Snowflake.**
+**Copy and paste the SQL code from this [file](https://github.com/Snowflake-Labs/sfguide-getting-started-from-zero-to-snowflake/blob/main/scripts/vignette-5.sql) in a new SQL File to follow along in Snowflake.**
 
 ## Acquire Data from Snowflake Marketplace
 
@@ -2404,7 +2404,7 @@ Congratulations\! You have successfully completed the entire Tasty Bytes - Zero 
 
 You have now built and configured warehouses, cloned and transformed data, recovered a dropped table with Time Travel, and built an automated data pipeline for semi-structured data. You've also unlocked insights using AI by generating analysis with simple AISQL functions and accelerating your workflow with Snowflake Copilot. Furthermore, you have implemented a robust governance framework with roles and policies and seamlessly enriched your own data with live datasets from the Snowflake Marketplace.
 
-If you would like to re-run this Quickstart, please run the complete `RESET` script located at the bottom of your worksheet.
+If you would like to re-run this Quickstart, please run the complete `RESET` script located at the bottom of your SQL file.
 
 ### What You Learned
 - **Warehousing and Performance:** How to create, manage, and scale virtual warehouses, and leverage Snowflake's results cache.

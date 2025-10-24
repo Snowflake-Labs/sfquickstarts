@@ -1,11 +1,11 @@
 author: Susan Devitt
 id: getting_started_with_horizon_for_data_governance_in_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
+language: en
 summary: This guide is used to demonstrate the capabilities of Horizon for Data Governance. The walk-through consists of being able to ingest and monitor data pipelines in your organization, how to actively govern data including lineage and masking, and how Horizon can help with monitoring data in Snowflake using Snowsight.
-categories: Data governance, data engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Horizon, Data Intelligence, Data Engineering, Data Governance, Observability, Getting Started
 
 # Getting Started with Horizon for Data Governance in Snowflake
 <!-- ------------------------ -->

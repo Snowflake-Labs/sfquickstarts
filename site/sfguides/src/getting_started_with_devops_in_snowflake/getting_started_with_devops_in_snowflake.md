@@ -1,11 +1,11 @@
 author: Vincent Raudszus
 id: getting_started_with_snowflake_devops
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Getting Started with Snowflake DevOps
-categories: devops,getting-started,data-engineering
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Getting Started with Snowflake DevOps
 
@@ -172,8 +172,7 @@ Now, perform these steps for the following data listings:
 1. “OAG: Flight Emissions Data (Sample)” by OAG
 2. “OAG: Flight Status Data (Sample)” by OAG
 3. “Global Weather & Climate Data for BI” by Weather Source
-4. “Global Government” by Snowflake Public Data Products
-5. “US Addresses & POI” by Snowflake Public Data Products
+4. “Snowflake Public Data (Free)” by Snowflake Public Data Products
 
 ### Inspect Imported Listings
 
@@ -183,8 +182,8 @@ That’s all! The imported listings are now available in our account and can be 
 SELECT * FROM oag_flight_emissions_data_sample.public.estimated_emissions_schedules_sample LIMIT 100;
 SELECT * FROM oag_flight_status_data_sample.public.flight_status_latest_sample LIMIT 100;
 SELECT * FROM global_weather__climate_data_for_bi.standard_tile.forecast_day LIMIT 100;
-SELECT * FROM global_government.cybersyn.datacommons_timeseries LIMIT 100;
-SELECT * FROM us_addresses__poi.cybersyn.point_of_interest_index LIMIT 100;
+SELECT * FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.datacommons_timeseries LIMIT 100;
+SELECT * FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_index LIMIT 100;
 ```
 
 <!-- ------------------------ -->
@@ -301,10 +300,10 @@ View(
         count(case when category_main = 'Aquarium' THEN 1 END) aquarium_cnt,
         count(case when category_main = 'Zoo' THEN 1 END) zoo_cnt,
         count(case when category_main = 'Korean Restaurant' THEN 1 END) korean_restaurant_cnt,
-    from us_addresses__poi.cybersyn.point_of_interest_index poi
-    join us_addresses__poi.cybersyn.point_of_interest_addresses_relationships poi_add 
+    from SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_index poi
+    join SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_addresses_relationships poi_add 
         on poi_add.poi_id = poi.poi_id
-    join us_addresses__poi.cybersyn.us_addresses address 
+    join SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.us_addresses address 
         on address.address_id = poi_add.address_id
     join major_us_cities city on city.geo_id = address.id_city
     where true

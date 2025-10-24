@@ -1,11 +1,11 @@
 author: Rachel Blum
 id: building_scalable_time_series_forecasting_models_on_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 summary: Automatically Build, Register and Run Inferencing on Paritioned Forecasting Models in Snowflake.
-categories: data-science, getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Getting Started, Data Engineering, Machine Learning, Snowpark
 
 # Building Scalable Time Series Forecasting Models on Snowflake
 <!-- ------------------------ -->

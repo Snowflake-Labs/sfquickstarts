@@ -1,10 +1,10 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/platform
+language: ko
 summary: Snowflake Python 워크시트에서 Snowpark 시작하기
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets, kr  
 authors: Dash Desai
 
 # Snowflake Python 워크시트에서 Snowpark 시작하기

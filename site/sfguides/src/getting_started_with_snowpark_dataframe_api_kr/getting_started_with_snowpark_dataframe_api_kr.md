@@ -1,10 +1,10 @@
 id: getting_started_with_snowpark_dataframe_api_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
+language: ko
 summary: Snowpark에서 Jupyter Notebook을 시작하고 DataFrame API를 사용하는 방법을 알아보십시오.
-categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크 시작하기, 데이터 과학, Snowpark, 데이터 엔지니어링, kr
 authors: Robert Fehrmann
 
 # Snowpark 및 DataFrame API 시작하기

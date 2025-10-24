@@ -1,10 +1,10 @@
 summary: This is a sample Snowflake Guide
 id: sample 
-categories: undefined
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+language: en
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 authors: Snowflake
 
 # Snowflake Guide Template

@@ -1,11 +1,11 @@
 author: Dustin Nest
 id: streamnative_snowflake_open_catalog_integration
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics, snowflake-site:taxonomy/snowflake-feature/storage, snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming
+language: en
 summary: Use StreamNative to build a cost-effective Streaming Augmented Lakehouse, streaming Kafka messages directly to object storage in Iceberg format an connect to Snowflake Open Catalog.
-categories: Getting-Started, Partner-Integrations, Devops, Architecture-Patterns, Datagovernance
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Kafka, Data Streaming, Open Catalog, Iceberg
 
 # Cost-Effective Data Streaming in Apache Iceberg&trade; Format and Snowflake Open Catalog Integration with StreamNative
 <!-- ------------------------ -->

@@ -1,10 +1,10 @@
 summary: Analyzing real estate properties with Streamlit 
 id: analyzing_real_estate_properties_with_streamlit
-categories: App-Development, Streamlit
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science & ML, Solution Examples 
 authors: Vinícius Oviedo
 
 

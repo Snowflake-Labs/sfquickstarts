@@ -1,11 +1,11 @@
 author: Alexey Litouka
 id: java_trace_events
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: An example of emitting trace events from Java, and analyzing them
-categories: Getting-Started, Observability, Trail
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Trace Events, Telemetry, Java 
 
 # Using trace events in Java
 <!-- ------------------------ -->

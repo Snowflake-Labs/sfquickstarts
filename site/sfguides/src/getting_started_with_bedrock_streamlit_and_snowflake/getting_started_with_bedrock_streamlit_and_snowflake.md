@@ -1,10 +1,10 @@
 id: getting_started_with_bedrock_streamlit_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Getting Started with Bedrock, Streamlit and Snowflake using Snowpark External Access
-categories: featured,getting-started,app-development, bedrock, aws, streamlit, genai, ai, ml
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Generative AI, Snowflake External Access, Bedrock, Snowpark, Streamlit
 authors: Matt Marzillo, Dan Hunt
 
 # Getting Started with Bedrock, Streamlit and Snowflake

@@ -1,11 +1,11 @@
 author: Adrian
 id: snowpark-container-services-model-serving-guide
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
+language: en
 summary: Learn how to build and deploy a machine learning model for real-time inference using Snowpark Container Services and the Snowflake Model Registry.
-categories: Getting-Started, Data-Science, Machine-Learning
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Snowpark, SPCS, Model Serving
 
 # Getting Started with Model Serving in Snowpark Container Services
 <!-- ------------------------ -->

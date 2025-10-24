@@ -1,11 +1,11 @@
 author: chandra-snow
 id: power_apps_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a quickstart for using Microsoft Power Platform, Power Apps, Power Automate and Snowflake
-categories: Getting-Started, data-engineering, microsoft, power-apps, power-platform, snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Microsoft, Power Apps, Power Platform, Power Automate
 Date: 4/3/25
 
 # Getting Started with Microsoft Power Platform and Snowflake

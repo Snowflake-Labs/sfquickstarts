@@ -1,10 +1,10 @@
 id: data_teams_with_dbt_cloud
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: Build your data pipeline with dbt Cloud & Snowflake
-categories: undefined
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Data Sharing
 authors: Amy Chen, Dmytro Yaroshenko
 
 # Accelerating Data Teams with dbt Cloud & Snowflake

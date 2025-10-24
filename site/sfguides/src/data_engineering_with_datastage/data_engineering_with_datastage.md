@@ -1,11 +1,11 @@
 author: Shreya Sisodia
 id: data_engineering_with_datastage
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
+language: en
 summary: Lab to demonstrate ease of loading enterprise data into Snowflake through DataStage.
-categories: featured,getting-started,data-engineering,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Getting Started, DataStage, Data Integration
 
 # A Data Integration Guide: Load Banking Data into Snowflake with IBM DataStage
 
