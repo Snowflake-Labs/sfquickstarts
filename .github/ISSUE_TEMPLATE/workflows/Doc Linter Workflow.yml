@@ -1,0 +1,43 @@
+name: Lint Codelab Docs
+
+on:
+  pull_request:
+    paths:
+      - '**.md' # Only run this action if .md files are changed
+
+jobs:
+  lint-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Code
+        uses: actions/checkout@v4
+        # We need to fetch the base branch to compare against
+        with:
+          fetch-depth: 0 
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Find Changed Markdown Files
+        id: changed-files
+        run: |
+          # Compare the PR's HEAD against the base branch
+          FILES=$(git diff --name-only --diff-filter=AM "origin/${{ github.event.pull_request.base.ref }}"...HEAD | grep '\.md$' || true)
+          
+          if [ -z "$FILES" ]; then
+            echo "No .md files changed. Skipping lint."
+            echo "files_to_lint=''" >> $GITHUB_OUTPUT
+          else
+            echo "Found changed .md files:"
+            echo "$FILES"
+            # Pass the files as a single string to the next step
+            echo "files_to_lint=$FILES" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Codelab Linter
+        if: steps.changed-files.outputs.files_to_lint != ''
+        run: |
+          # Pass the changed files as arguments to the script
+          node .github/scripts/lint-codelab.js ${{ steps.changed-files.outputs.files_to_lint }}
