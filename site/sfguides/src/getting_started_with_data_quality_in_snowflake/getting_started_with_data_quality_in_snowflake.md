@@ -184,7 +184,7 @@ Duration: 5
 The first step in the data quality lifecycle is data profiling. Data profiling is the process of analyzing a dataset to understand its structure, content, and quality. It typically includes gathering statistics such as data types, value distributions, null counts, and uniqueness to identify patterns and potential data quality issues.
 Using Snowsight, you can easily profile a dataset by accessing the Data Quality Tab. This is an important role in helping you get started with continuous data quality monitoring by laying the groundwork for identifying data quality rules.
 
-![customer orders](assets/customer orders.png)
+![customer_orders](assets/customer_orders.png)
 
 <!-- ------------------------ -->
 
