@@ -12,7 +12,7 @@ authors: Simon Field
 ## Overview 
 Duration: 5
 
-This advanced guide walks through an end-to-end customer segmentation machine-learning use-case using Snowflake Feature Store and Model Registry.  By completing this guide, you will be able to go from ingesting raw data through to implementing a production inference data-pipeline with Snowflake ML to maintain customer segments.
+Test changing markdown. This advanced guide walks through an end-to-end customer segmentation machine-learning use-case using Snowflake Feature Store and Model Registry.  By completing this guide, you will be able to go from ingesting raw data through to implementing a production inference data-pipeline with Snowflake ML to maintain customer segments.
 
 The primary focus in this guide is the Snowflake Feature Stores functionality and how it integrates within the broader ecosystem within Snowflake ML.
 
