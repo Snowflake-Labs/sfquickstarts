@@ -46,7 +46,7 @@ A Snowflake account with Enterprise edition or higher.
 
 <!-- ------------------------ -->
 
-## setup
+## Setup
 
 Duration: 10
 
@@ -190,7 +190,7 @@ Using Snowsight, you can easily profile a dataset by accessing the Data Quality 
 
 ## Best Practices
 
-Overview: 10
+Duration: 10
 
 ### Best practices for monitoring data quality with DMFs and Expectations
 
@@ -303,7 +303,7 @@ Now that we’ve set up DMFs and Expectations to monitor our pipeline, let’s e
 
 ## Review
 
-Overview: 10
+Duration: 10
 
 ### Review Data Quality Monitoring Dashboard in Snowsight
 
@@ -333,7 +333,7 @@ The DMF side panel automatically displays the objects that are [downstream](http
 
 ## Conclusion and Resources
 
-Overview: 5
+Duration: 5
 
 You've successfully implemented data quality monitoring for your pipeline. By combining proactive monitoring with an interactive UI for root cause analysis, it simplifies data quality management directly within Snowflake. 
 
