@@ -4,6 +4,7 @@ summary: Build an end-to-end data harmonization solution using Snowflake Cortex 
 categories: data-engineering, ai-ml, streamlit, cortex
 environments: web
 status: Published 
+language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Data Engineering, AI, Cortex, data harmonization, Streamlit, Entity Matching, Data Harmonization
 
