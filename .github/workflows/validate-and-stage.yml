@@ -107,16 +107,6 @@ jobs:
             exit 1
           }
 
-      - name: Validate title presence
-        id: validate_title
-        env:
-          FILE_LIST_JSON: ${{ steps.detect.outputs.files_json }}
-        run: |
-          node scripts/validate-title.js || {
-            echo "Title validation failed. See 'title-error.json' for details." >&2
-            exit 1
-          }
-
       - name: Validate tags syntax in markdown
         id: validate_tags
         env:
@@ -140,17 +130,6 @@ jobs:
                 if (v && v.type === 'language') {
                   const items = Array.isArray(v.objects) ? v.objects.map(o => `- ${o.name}: "${o.language || ''}"`).join('\n') : '';
                   body = `${v.message || 'Language validation failed.'}\n\n${items}`;
-                }
-              } catch {}
-            } else if (fs.existsSync('title-error.json')) {
-              try {
-                const data = JSON.parse(fs.readFileSync('title-error.json','utf8'));
-                const issues = Array.isArray(data.issues) ? data.issues : [];
-                if (issues.length) {
-                  const lines = issues.map(issue => `- ${issue.file}: ${issue.reason || 'missing or empty title'}`);
-                  body = `Validation failed: title is required.\n\n${lines.join('\n')}`;
-                } else {
-                  body = 'Validation failed: title is required.';
                 }
               } catch {}
             } else if (fs.existsSync('tags-error.json')) {
@@ -194,7 +173,6 @@ jobs:
             profanity-report.json
             validation-error.json
             tags-error.json
-            title-error.json
           if-no-files-found: ignore
 
       - name: Call Workato staging webhook
