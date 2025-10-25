@@ -1,16 +1,15 @@
 author: Marie Coolsaet
 id: tasty_bytes_snowpark_101_for_data_science_ptbr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
+language: pt_br
 summary: Tasty Bytes: introdução ao Snowpark para ciência de dados
-categories: Tasty-Bytes, Getting-Started, Featured, Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Introdução, Getting Started, Data Science, Data Engineering, Snowpark, Machine Learning, Streamlit, ptbr
 
 # Tasty Bytes: introdução ao Snowpark para ciência de dados
 <!-- ------------------------ -->
 ## Visão geral 
-Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 Neste quickstart guide “Introdução ao Snowpark para ciência de dados”, você vai ajudar a empresa fictícia de food trucks Tasty Bytes a aumentar as vendas treinando um modelo para oferecer recomendações de locais aos motoristas. Você vai usar o **Snowpark para Python** para preparar dados e treinar e implementar um modelo. Após a implementação, você vai criar um protótipo de aplicação usando o **Streamlit** para demonstrar como os motoristas podem usar o modelo para encontrar o melhor local para estacionar pensando no próximo turno.
 
@@ -44,7 +43,6 @@ O Streamlit *(adquirido pela Snowflake em março de 2022)* é uma biblioteca Pyt
 
 <!-- ------------------------ -->
 ## Configuração dos dados no Snowflake
-Duration: 6
 
 ### Visão geral
 Você vai usar o [Snowsight](https://docs.snowflake.com/pt/user-guide/ui-snowsight), a interface da web do Snowflake, para:
@@ -147,7 +145,6 @@ SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 
 <!-- ------------------------ -->
 ## Ciência de dados com Snowpark
-Duration: 22
 
 ### Visão geral
 A Tasty Bytes busca um crescimento de 25% das vendas anuais nos próximos cinco anos. Para apoiar esse objetivo e maximizar a receita diária da frota de caminhões, a equipe de ciência de dados precisa construir um modelo de aprendizado de máquina (machine learning, ML) para direcionar os caminhões aos locais onde maiores vendas são esperadas em determinados turnos.
@@ -227,7 +224,6 @@ jupyter notebook
 
 <!-- ------------------------ -->
 ## Criação do protótipo de aplicação com o Streamlit
-Duration: 6
 
 ### Visão geral
 Após implementar um modelo que prevê as vendas por turno de cada local para o turno seguinte, você gostaria de encontrar um jeito para que os motoristas usem essas previsões para escolherem onde estacionar. É preciso criar um protótipo de aplicação para mostrar à equipe de engenharia como um motorista poderia interagir com o modelo de previsão de vendas por turno. A aplicação vai permitir que um usuário escolha uma cidade e um horário (manhã ou tarde) e mostrar a previsão de vendas por local em um mapa.
@@ -257,7 +253,6 @@ Após implementar um modelo que prevê as vendas por turno de cada local para o 
 
 <!-- ------------------------ -->
 ## Limpeza
-Duration: 5
 
 ### Visão geral dos objetos criados neste quickstart
 **Snowflake:** 
@@ -313,7 +308,6 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 
 <!-- ------------------------ -->
 ## Conclusão e próximas etapas
-Duration: 1
 
 ### Conclusão
 **Você conseguiu!** Você acaba de completar com sucesso o quickstart “Tasty Bytes: introdução ao Snowpark para ciência de dados”.

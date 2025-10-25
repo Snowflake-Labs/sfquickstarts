@@ -1,16 +1,15 @@
 author: James Cha-Earley, Mubashir Masood, Daniel Silva
 id: getting_started_with_cortex_agents
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: Get started with Cortex Agents
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Getting Started with Cortex Agents
 
 ## Overview
-Duration: 5
 
 Modern organizations face the challenge of managing both structured data (like metrics and KPIs) and unstructured data (such as customer conversations, emails, and meeting transcripts). The ability to analyze and derive insights from both types of data is crucial for understanding customer needs, improving processes, and driving business growth. 
 
@@ -79,7 +78,6 @@ Before you begin, make sure you have the following:
 - **Cortex Agents Access**: You will need access to Snowflake Cortex service, **Cortex Agents**, **Cortex Search**, and **Cortex Analyst** features.
 
 ## Setup Data
-Duration: 10
 
 **Step 1.** In Snowsight, create a SQL Worksheet and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
@@ -101,7 +99,6 @@ This script will:
 - Click "Upload"
 
 ## Create Agent
-Duration: 15
 
 **Step 1.** In Snowsight, Click on AI ML > Agents.
 **Step 2.** Click on Create Agents. 
@@ -148,7 +145,6 @@ Give it a name `Sales_conversation_search`, Give it a description `Cortex Search
 ![Agent Setup step 8](assets/add-access.png)
 
 ## Snowflake Intelligence
-Duration: 5
 
 With the Agent created, we can now chat with it via Snowflake Intelligence.
 Click on AI ML > Snowflake Intelligence. Let's ask the questions to test:
@@ -158,7 +154,6 @@ Click on AI ML > Snowflake Intelligence. Let's ask the questions to test:
 ![Securebank Conversation](assets/si-securebank.png)
 
 ## Agent REST API
-Duration: 15
 
 You can also interact with the Agent by calling the Snowflake REST API at `/api/v2/databases/{DATABASE}/schemas/{SCHEMA}/agents/{AGENT}:run`.
 We created a simple streamlit app that interacts with the REST API [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents/blob/main/data_agent_demo.py).
@@ -190,7 +185,6 @@ streamlit run data_agent_demo.py
 ```
 
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built an Intelligent Sales Assistant using Snowflake Cortex capabilities. This application demonstrates the power of combining structured and unstructured data analysis through:
 - Natural language interactions with your sales data

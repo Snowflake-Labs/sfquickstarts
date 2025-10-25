@@ -1,17 +1,16 @@
 author: Kala Govindarajan
 id: credit-card-fraud-detection-using-snowflake-ml
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/financial-operations, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: Build a Credit card fraud detection app that leverages Snowflake ML to train a binary classification model to detect if a transaction is fraudulent or not
-categories: Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake ML Function, Data Science, Feature Store, Machine Learning
 
 # Credit Card Fraud Detection using Snowflake ML Functions
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 1
 
 ### Overview
 In this Quickstart guide, we will train a model using Snowflake ML Functions for Credit card fraud detection. Fraud Detection involves a range of methods and techniques aimed at preventing fraudulent purchases, both online and in-store. The goal is to verify the legitimacy of the transaction and ensure that the true cardholder is involved. Depending on the detection techniques used one may address questions about the cardholder's identity and intentions either in real-time or after the transaction has occurred. Thus, credit card fraud detection serves as both a preventative measure against payment fraud and a method for investigating past transactions. We will be walking through a use case where the ML Capabilities of the Snowflake Data Cloud will be leveraged for investigating the past transactions.
@@ -34,7 +33,6 @@ How to render a map and plot in the Streamlit app
 
 ## Setup Snowflake
 <!-- ------------------------ -->
-Duration: 5
 
 You will use  Snowsight, the Snowflake web interface, to only create an initial database and schema that needs to be a prerequisite for Notebooks. And then we will be carrying the rest of the execution within Snowflake Notebooks.
 

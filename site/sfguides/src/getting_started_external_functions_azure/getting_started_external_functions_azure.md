@@ -1,10 +1,10 @@
 id: getting_started_external_functions_azure
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Getting Started With External Functions on Azure
-categories: getting-started,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Azure
 
 # Getting Started With External Functions on Azure
 
@@ -12,7 +12,6 @@ tags: Getting Started, Data Science, Data Engineering, Azure
 
 ## Overview
 
-Duration: 1
 
 This guide provides an introduction to external functions created in Azure for use in Snowflake. You will learn how you can use Snowflake’s external functions to call endpoints through Azure API management.
 
@@ -47,7 +46,6 @@ Negative
 
 ## Prepare the Tracking Worksheet
 
-Duration: 3
 
 Progressing through this guide will be substantially more manageable if you make a note of specific values. We've provided the following worksheet to help you organize those pieces of information. We highly recommend you use it.
 
@@ -81,7 +79,6 @@ Once you've stashed this worksheet somewhere handy, you are ready to begin!
 
 ## Create a New Azure Function App
 
-Duration: 5
 
 The first step in creating an Azure Function is to create an Azure Function app. This app will serve as a container for your function. Log into the Azure Portal, and follow the steps in the Microsoft documentation for creating an [Azure Function App](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal).
 
@@ -108,7 +105,6 @@ Once you **create** your Azure function app, you can move on to creating an Azur
 
 ## Create an HTTP-Triggered Function
 
-Duration: 5
 
 You can call Azure Functions in a few ways with Azure. That being said, a Snowflake external function invokes a remote service via an HTTP POST command, so the Azure Function you create must be an “HTTP-triggered function.”
 
@@ -167,7 +163,6 @@ Be sure to save your changes! Now let's test out what this code does.
 
 ## Test the Function
 
-Duration: 1
 
 You should still be in the **Code + Test** section. From there, click **Test/Run** above your code. You can then specify the input parameters of your test.
 
@@ -210,7 +205,6 @@ Great! Our HTTP-triggered function is successfully created and tested in Azure. 
 
 ## Configure Azure AD Authentication
 
-Duration: 10
 
 There are a few steps that take place when an external function is called. First, Snowflake sends an HTTP POST command to a proxy service, and then that relays the command to the remote service.
 
@@ -266,7 +260,6 @@ Once you have that information recorded, you're good to move on to the next step
 
 ## Create the Azure API Management Service
 
-Duration: 30
 
 Now you need to [create the API Management service](https://docs.microsoft.com/en-us/azure/api-management/get-started-create-service-instance) in the Azure Portal. You can find the correct screen by searching for **Create API Management** in the search bar.
 
@@ -286,7 +279,6 @@ Wait until the process is completed, and then move on to the next step.
 
 ## Import the API Containing the Azure Function
 
-Duration: 10
 
 After you create the API Management service, the next step is to import and publish the Azure Function app that you'll call through that API Management service.
 
@@ -314,7 +306,6 @@ That's all you need to do in the Azure portal! The next steps will be in a Snowf
 
 ## Create an API integration in Snowflake
 
-Duration: 5
 
 After setting up and configuring resources on Azure, you'll enable Snowflake to securely access the Azure API Management endpoint by using the following code to create the API integration.
 
@@ -365,7 +356,6 @@ Then execute the CREATE API INTEGRATION statement you entered.
 
 ## Link the API Integration for Azure to the Proxy Service
 
-Duration: 5
 
 Before you can call the external function, you need to link the Snowflake API Integration to the Azure API Management Service. But first, you'll need to access some information about the API integration to create a service principal.
 
@@ -405,7 +395,6 @@ At this point, you have finished creating a service principal in your tenant to 
 
 ## Create the External Function
 
-Duration: 5
 
 Now let's finally create the external function in Snowflake. You'll do this using a  [CREATE EXTERNAL FUNCTION](https://docs.snowflake.com/en/sql-reference/sql/create-external-function.html) statement. The statement should take the following form:
 
@@ -439,7 +428,6 @@ After making those adjustments, execute the CREATE EXTERNAL FUNCTION command tha
 
 ## Calling the External Function
 
-Duration: 1
 
 At last, you have everything in place to invoke the external function in Snowflake.
 
@@ -465,7 +453,6 @@ And just like that, you've successfully called the external function!
 
 ## Conclusion and Next Steps
 
-Duration: 1
 
 Over the period of this lab, you created an Azure Function that you accessed from Snowflake. That being said, any authenticated clients can call that function as well. If you'd like to restrict the use to only Snowflake, check out our documentation on [Creating the Azure Security Policy for the Proxy Service in the Portal](https://docs.snowflake.com/en/sql-reference/external-functions-creating-azure-ui-security-policy.html).
 

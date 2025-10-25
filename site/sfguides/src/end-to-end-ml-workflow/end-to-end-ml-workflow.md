@@ -1,17 +1,16 @@
 author: Elliott Botwick
 id: end-to-end-ml-workflow
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 summary: Learn how to build an end-to-end machine learning workflow in Snowflake, from feature engineering to model deployment and monitoring.
-categories: getting-started, data-engineering, streamlit, snowflake
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: machine learning, feature store, model registry, model monitoring, snowpark
 
 # Build an End-to-End ML Workflow in Snowflake
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this guide, you'll learn how to build and deploy a complete machine learning workflow entirely within Snowflake ML. You'll work through a mortgage lending prediction use case, implementing each stage of the ML lifecycle from feature engineering to model deployment and monitoring.
 
@@ -40,7 +39,6 @@ You'll build a complete mortgage lending prediction system that:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 Firstly, run this SQL setup script to create the notebook:
 ```sql
@@ -189,7 +187,6 @@ except:
 
 <!-- ------------------------ -->
 ## Feature Engineering
-Duration: 15
 
 In this section, we'll create features from our raw mortgage lending data using Snowpark APIs.
 
@@ -305,7 +302,6 @@ loan_fv = fs.register_feature_view(loan_fv, version=VERSION_NUM, overwrite=True)
 
 <!-- ------------------------ -->
 ## Dataset Generation and Preprocessing
-Duration: 10
 
 ### Generate Dataset from Feature View
 
@@ -359,7 +355,6 @@ test_pd = test.to_pandas()
 
 <!-- ------------------------ -->
 ## Baseline Model Training
-Duration: 10
 
 ### Train a Baseline XGBoost Model
 
@@ -398,7 +393,6 @@ print(f'F1: {f1_base_train} \nPrecision {precision_base_train} \nRecall: {recall
 
 <!-- ------------------------ -->
 ## Model Registry and Evaluation
-Duration: 15
 
 ### Create a Model Registry
 
@@ -481,7 +475,6 @@ print(f'F1: {f1_base_test} \nPrecision {precision_base_test} \nRecall: {recall_b
 
 <!-- ------------------------ -->
 ## Hyperparameter Optimization
-Duration: 20
 
 Our baseline model shows signs of overfitting, with performance dropping significantly from training to test data. Let's use Snowflake's distributed hyperparameter optimization to improve our model.
 
@@ -613,7 +606,6 @@ m.set_tag("PROD", optimized_version_name)
 
 <!-- ------------------------ -->
 ## Model Explainability
-Duration: 15
 
 Snowflake offers built-in explainability capabilities for models logged in the Model Registry. Let's generate SHAP values to understand how input features impact our models' predictions.
 
@@ -673,7 +665,6 @@ plt.show()
 
 <!-- ------------------------ -->
 ## Model Monitoring Setup
-Duration: 15
 
 Let's set up model monitoring to track our models' performance over time.
 
@@ -776,7 +767,6 @@ DATEADD(DAY, -60, CURRENT_DATE()) -- start date
 ```
 
 ## Conclusion And Resources
-Duration: 5
 
 You just walked through a guided experience building and deploying a complete end-to-end machine learning workflow within Snowflake ML for a mortgage lending prediction case. The workflow covers feature engineering with Snowflake Feature Store, model training and hyperparameter optimization using Snowflake ML APIs, model logging and management with Snowflake Model Registry, and model performance tracking and drift detection via ML Observability. 
 

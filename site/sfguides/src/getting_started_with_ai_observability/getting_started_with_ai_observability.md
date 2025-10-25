@@ -1,17 +1,16 @@
 author: Josh Reini
 id: getting_started_with_ai_observability
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
+language: en
 summary: This is a guide for getting started with Snowflake AI Observability.
-categories: Getting-Started, Observability, Trail
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, AI, Observability, RAG, LLMs, TruLens, Snowflake
 
 # Getting Started with AI Observability
 
 ## Overview
 
-Duration: 5
 
 AI Observability in Snowflake Cortex enables you to easily evaluate and trace your gen AI applications. With AI Observability, you can measure the performance of your AI applications by running systematic evaluations, and iterate on your application configurations to optimize performance. In addition, you can log the application traces to debug your application. AI Observability improves trust and transparency of gen AI applications and agents, enabling thorough benchmarking and performance measurement prior to deploying your applications.
 
@@ -46,7 +45,6 @@ Here is a summary of what you will be able to learn in each step by following th
 
 ## Setup Environment
 
-Duration: 8
 
 If you are not working in a Snowflake trial account and do not have ACCOUNTADMIN privileges, ensure that the user role has the following roles granted ():
 
@@ -90,7 +88,6 @@ USE WAREHOUSE cortex_search_tutorial_wh;
 
 ## Prepare Data
 
-Duration: 10
 
 You will use a sample dataset of the Federal Open Market Committee (FOMC) meeting minutes for this example. This is a sample of twelve 10-page documents with meeting notes from FOMC meetings from 2023 and 2024. Download the files directly from your browser by following this link:
 
@@ -167,7 +164,6 @@ FROM
 
 ## Create a RAG
 
-Duration: 10
 
 Set up the Cortex Search service to enable efficient querying of the chunked content.
 
@@ -318,7 +314,6 @@ response = rag.query("how was inflation expected to evolve in 2024?")
 
 ## Register the App
 
-Duration: 5
 
 Set metadata including application name and version, along with the snowpark session to store the experiments.
 
@@ -341,7 +336,6 @@ tru_rag = TruApp(
 
 ## Create a Run
 
-Duration: 5
 
 Prepare a set of test queries to evaluate the RAG system.
 
@@ -389,7 +383,6 @@ run.start()
 
 ## Compute Evaluation Metrics
 
-Duration: 2
 
 Analyze the performance of the RAG system by computing relevant metrics.
 

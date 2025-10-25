@@ -1,18 +1,17 @@
 author: Jacob Kranzler
 id: tasty_bytes_introduction_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This is the Tasty Bytes Introduction and Data Foundation Quickstart guide
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake, kr
 
 # Tasty Bytes 소개
 
 <!-- ------------------------ -->
 ## Tasty Bytes 소개
 
-Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 ### 개요
 
@@ -51,7 +50,6 @@ Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 �
 
 ## Tasty Bytes 설정
 
-Duration: 6
 
 ### 개요
 
@@ -117,7 +115,6 @@ Duration: 6
 
 ## Tasty Bytes 기초 탐색
 
-Duration: 2
 
 ### 개요
 
@@ -198,7 +195,6 @@ WHERE m.truck_brand_name = 'Plant Palace';
 
 ## Tasty Bytes 사용 - Quickstart
 
-Duration: 1
 
 ### 개요
 

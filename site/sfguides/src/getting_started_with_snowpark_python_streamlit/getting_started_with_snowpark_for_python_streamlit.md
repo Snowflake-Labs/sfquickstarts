@@ -1,17 +1,16 @@
 id: getting_started_with_snowpark_for_python_streamlit
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This guide provides the instructions for writing a Streamlit application using Snowpark for Python and data from the Snowflake Marketplace.
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowpark Python, Streamlit
 authors: Dash Desai
 
 # Getting Started With Snowpark for Python and Streamlit
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 This guide provides the instructions for building a Streamlit application using Snowpark for Python and data from the Snowflake Marketplace.
 
@@ -56,7 +55,6 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 <!-- ------------------------ -->
 ## Get Started
 
-Duration: 5
 
 Follow these steps to start building Streamlit application in Snowsight.
 
@@ -77,7 +75,6 @@ Follow these steps to start building Streamlit application in Snowsight.
 <!-- ------------------------ -->
 ## Application Setup
 
-Duration: 2
 
 Delete existing sample application code in the code editor on the left and add the following code snippet at the very top.
 
@@ -103,7 +100,6 @@ In the above code snippet, we're importing the required libraries, setting the a
 <!-- ------------------------ -->
 ## Load and Transform Data
 
-Duration: 5
 
 Now add the following Python function that loads and caches data from the `SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.STOCK_PRICE_TIMESERIES` and `SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.FX_RATES_TIMESERIES` tables.
 
@@ -145,7 +141,6 @@ In the above code snippet, we’re leveraging several Snowpark DataFrame functio
 <!-- ------------------------ -->
 ## Daily Stock Performance
 
-Duration: 5
 
 Now add the following Python function that displays daily stock performance. Create selection dropdowns for date, stock ticker, and metric to be visualized.
 
@@ -193,7 +188,6 @@ In the above code snippet, a line chart is constructed which takes a dataframe a
 
 ## EUR Exchange (FX) Rates
 
-Duration: 5
 
 Next, add the following Python function that displays a currency selection dropdown and a chart to visualize euro exchange rates over time for the selected quote currencies.
 
@@ -228,7 +222,6 @@ In the above code snippet, a line chart is constructed which takes a dataframe a
 
 ## Application Components
 
-Duration: 5
 
 Add the following code snippet to display application header, create a sidebar, and map `stock_prices()` and `fx_rates()` functions to **Daily Stock Performance** and **Exchange (FX) Rates** options respectively in the sidebar.
 
@@ -248,7 +241,6 @@ page_names_to_funcs[selected_page]()
 <!-- ------------------------ -->
 ## Run Application
 
-Duration: 5
 
 The fun part! Assuming your code is free of syntax and other errors, you’re ready to run the Streamlit application.
 
@@ -389,7 +381,6 @@ In the application:
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully completed the Getting Started with Snowpark for Python and Streamlit with data from the Snowflake Marketplace.
 

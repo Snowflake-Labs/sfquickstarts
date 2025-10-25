@@ -1,11 +1,11 @@
 author: Dash Desai
 id: getting_started_with_cortex_analyst_in_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
 summary: Through this quickstart guide, you will learn how to use Cortex Analyst to provide natural-language query interfaces to structured data in Snowflake.
-categories: Getting-Started
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, GenAI, Cortex, Cortex Analyst
 
 # Getting Started with Cortex Analyst in Snowflake
 <!-- ------------------------ -->
@@ -44,7 +44,6 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 
 <!-- ------------------------ -->
 ## Setup Snowflake Environment
-Duration: 2
 
 > aside positive
 >
@@ -102,7 +101,6 @@ CREATE OR REPLACE TABLE CORTEX_ANALYST_DEMO.REVENUE_TIMESERIES.DAILY_REVENUE_BY_
 
 <!-- ------------------------ -->
 ## Ingest Revenue Data and Semantic Model YAML
-Duration: 10
 
 > aside positive
 >
@@ -196,7 +194,6 @@ FORCE = TRUE;
 ```
 <!-- ------------------------ -->
 ## Create Streamlit Conversational App
-Duration: 10
 
 Now, you will create a demo chat application to call the Cortex Analyst API and ask natural-language questions over our structured revenue datasets. To create the Streamlit in Snowflake application:
 
@@ -237,7 +234,6 @@ You can now begin asking natural language questions about the revenue data in th
 
 <!-- ------------------------ -->
 ## Semantic Models
-Duration: 5
 
 *[Optional reading]*
 
@@ -301,7 +297,6 @@ For more information about the semantic model, please refer to the [documentatio
 
 <!-- ------------------------ -->
 ## Verified Query Repository
-Duration: 5
 
 *[Optional reading]*
 

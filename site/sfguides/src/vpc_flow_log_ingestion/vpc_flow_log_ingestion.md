@@ -1,16 +1,15 @@
 author: Jake Berkowsky
 id: vpc_flow_log_ingestion
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/platform
+language: en
 summary: This tutorial is a guide for ingestion AWS VPC Flowlogs into Snowflake. It demonstrates configuration of VPC flowlogs on AWS, ingestion using an external stage with Snowpipe and sample queries for CSPM and threat detection.
-categories: cybersecurity,solution-examples,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Cybersecurity, SIEM, CSPM, VPC Flow Logs
 
 # AWS VPC Flow Logs Ingestion
 
 ## Overview 
-Duration: 1
 
 VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. 
 Flow logs can help you with a number of tasks, such as:
@@ -32,7 +31,6 @@ This quickstart is a guide for ingestion AWS VPC Flowlogs into Snowflake. It dem
 ![A diagram depicting the journey of VPC Flow Logs from an Amazon VPC to a snowflake database. The diagram is split between sections, AWS Cloud and Snowflake Cloud. The diagram begins on the AWS Cloud side at Amazon VPC, an arrow leads to VPC Flow Logs, then to S3 External Stage, then to an SQS Queue with the description “Event Notification”. An arrow leads from the SQS queue to the Snowflake Cloud section of the diagram to an icon named Snowpipe. After Snowpipe the arrow leads back to S3 External stage with a description of “triggers”. Finally the path terminates on the Snowflake Cloud side at an icon named “Snowflake DB” with a description of “copy into”.](assets/vpc-flow-arch.png)
 
 ## Enable VPC Flow Logs and Push to S3
-Duration: 5
 
 _See [here](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-s3.html#flow-logs-s3-create-flow-log) for more detailed instructions or for more granular VPC flow use cases._
 
@@ -50,7 +48,6 @@ Configure VPC flow logs as desired. Ensure the following settings:
 ![A screenshot of the VPC configuration wizard with the above configuration](assets/vpc-flow-configuration.png)
 
 ## Create a storage integration in Snowflake
-Duration: 3
 
 *Replace \<RoleName\> with the desired name of the role you’d like snowflake to use ( this role will be created in the next step).  Replace \<BUCKET_NAME\>/path/to/logs/ with the path to your VPC flow logs as set in the previous step*
 
@@ -69,7 +66,6 @@ Take note of **STORAGE_AWS_IAM_USER_ARN** and **STORAGE_AWS_EXTERNAL_ID**
 ![A screenshot showing the result of describing an integration. STORAGE_AWS_IAM_USER_ARN property is in the format of an aws ARN set to arn:aws:iam::123456789012:user/abc10000-a and the STORAGE_AWS_EXTERNAL_ID is in the format of ABC12345_SFCRole=1 ABCDEFGHIJKLMNOPORSTUVWXYZab= ](assets/generic-integration-screenshot.png)
 
 ## Create role and policy in AWS
-Duration: 5
 
 *The following assumes a user with the ability to create and manage IAM logged into the AWS console or using the CLI.  A full explanation can be found in [this documentation](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html)*
 
@@ -152,7 +148,6 @@ You will now be able to see your role, policy and trust relationship in the cons
 ![Screenshot of snowflake source displayed in AWS IAM](assets/generic-aws-iam.png)
 
 ## Prepare Snowflake to receive data
-Duration: 6
 
 This quickstart requires a warehouse to perform computation and ingestion. We recommend creating a separate warehouse for security related analytics if one does not exist. The following will create a medium sized single cluster warehouse that suspends after 5 minutes of inactivity. For production workloads a larger warehouse will likely be required.
 
@@ -197,7 +192,6 @@ select * from public.vpc_flow limit 10;
 ![Screenshot showing vpc flowlogs in snowflake](assets/vpc-flow-select.png)
 
 ## Setup Snowpipe for continuous loading
-Duration: 5
 
 The following instructions depend on a Snowflake account running on AWS. Accounts running on other cloud providers may invoke snowpipe from a rest endpoint.
 [https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html)
@@ -254,7 +248,6 @@ select *
 ```
 
 ## Create a view to better query data
-Duration: 3
 
 Create a view
 ```sql
@@ -284,7 +277,6 @@ select * from vpc_flow_view limit 10;
 ![Screenshot of view for vpc flow logs](assets/vpc-flow-view.png)
 
 ## Query the data
-Duration: 2
 
 Create a workbook to query the new view. If desired, use the following to help get you started:
 
@@ -317,7 +309,6 @@ select interface_id,sum(bytes) as total_bytes from vpc_flow_view where "START" >
 ```
 
 ## Conclusion & next steps
-Duration: 0
 
 Having completed this quickstart you have successfully:
 - Enabled VPC flow logs

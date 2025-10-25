@@ -1,17 +1,16 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_fr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/platform
+language: en
 summary: Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets, Premiers pas, Feuilles de calcul Python, fr  
 authors: Dash Desai
 
 # Premiers pas avec Snowpark dans les feuilles de calcul Python de Snowflake
 <!-- ------------------------ -->
 ## Présentation
 
-Duration: 5
 
 Ce guide va vous permettre d’essayer Snowpark for Python depuis l’interface utilisateur Snowflake. À la fin de ce guide, vous saurez comment exécuter les principales tâches de Data Engineering à l’aide de Snowpark dans une feuille de calcul Python de Snowflake.
 
@@ -46,7 +45,6 @@ Un ensemble de données préparé pouvant être utilisé dans des applications e
 <!-- ------------------------ -->
 ## Premiers pas
 
-Duration: 10
 
 ### Créer un compte d’essai Snowflake
 
@@ -69,7 +67,6 @@ Le bouton de configuration de l’environnement de l’atelier ci-dessus vous re
 <!-- ------------------------ -->
 ## Charger des données de tables Snowflake dans des DataFrames Snowpark
 
-Duration: 1
 
 Commençons par importer la bibliothèque Snowpark Python.
 
@@ -80,7 +77,6 @@ import snowflake.snowpark as snowpark
 
 ### Charger les données agrégées relatives aux dépenses de campagne et aux revenus
 
-Duration: 3
 
 La table des dépenses de campagne regroupe les données de clics publicitaires qui ont été rassemblées afin de montrer les dépenses quotidiennes sur tous nos canaux publicitaires numériques, y compris les moteurs de recherche, les réseaux sociaux, les e-mails et les vidéos. La table des revenus contient les données relatives aux revenus sur une période de 10 ans.
 
@@ -103,7 +99,6 @@ CONSEIL : pour en savoir plus sur les DataFrames Snowpark, cliquez [ici](https:
 <!-- ------------------------ -->
 ## Transformations de données
 
-Duration: 10
 
 Dans cette section, nous allons effectuer un ensemble de transformations (agrégation et association de deux dataframes, par exemple).
 
@@ -204,7 +199,6 @@ Voici à quoi ressemble l’onglet **Output** (Sortie) une fois la feuille de ca
 <!-- ------------------------ -->
 ## Enregistrer des données transformées
 
-Duration: 1
 
 Enregistrons les données transformées dans une table Snowflake ***SPEND_AND_REVENUE_PER_MONTH*** pour pouvoir les utiliser ultérieurement à des fins d’analyse et/ou pour l’entraînement d’un modèle.
 
@@ -215,7 +209,6 @@ snow_df_spend_and_revenue_per_month.write.mode('overwrite').save_as_table('SPEND
 <!-- ------------------------ -->
 ## Afficher et renvoyer des données transformées
 
-Duration: 1
 
 L’une des valeurs de retour d’une feuille de calcul Python est de type ***Table()***. Dans notre cas, cela vous permet d’afficher et de renvoyer les données transformées en tant que DataFrame Snowpark.
 
@@ -234,7 +227,6 @@ Voici à quoi ressemble l’onglet **Results** (Résultats) une fois la feuille 
 <!-- ------------------------ -->
 ## Déployer en tant que procédure stockée
 
-Duration: 2
 
 Vous pouvez également déployer cette feuille de calcul en tant que procédure stockée Python pour pouvoir la planifier à l’aide de [Snowflake Tasks](https://docs.snowflake.com/fr/user-guide/tasks-intro), par exemple. Pour déployer cette feuille de calcul, cliquez sur le bouton **Deploy** (Déployer) dans le coin supérieur droit, puis suivez les instructions comme illustré ci-dessous.
 

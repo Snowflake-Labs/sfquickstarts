@@ -1,17 +1,16 @@
 id: build_rag_based_equipment_maintenance_app_using_snowflake_cortex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: Build Rag Based Equipment Maintenance App Using Snowflake Cortex
-categories: cortex,getting-started,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowpark Python, Streamlit, LLMs, Data Engineering,CORTEX
 authors: Ryan Ellis, Tim Long
 
 # Build Rag Based Equipment Maintenance App Using Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 By completing this guide, you will be able to go from downloaded maintenance manuals to an interactive application that can help your organization optimize the downtime experienced on your manufacturing equipment.
 
@@ -96,7 +95,6 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 <!-- ------------------------ -->
 ## Setup Environment
 
-Duration: 15
 
 ### Create Tables, Load Data and Setup Stages
 
@@ -143,7 +141,6 @@ Your snowflake environment is now ready to start loading files, creating tables,
 <!-- ------------------------ -->
 ## Get Started
 
-Duration: 8
 
 This section covers cloning of the GitHub repository and downloading the needed repair manuals.
 
@@ -208,7 +205,6 @@ In the following section you will use Snowpark and Snowflake native text embeddi
 <!-- ------------------------ -->
 ## Data Engineering
 
-Duration: 20
 
 Now we will create the Python UDF to read in those PDF's we just uploaded to our internal stage. This Python UDF will use Snowpark and PyPDF2 to read in the repair manuals we just uploaded.  The UDF in addition to a SQL UDF will break up the repair manuals into vectorized chunks.
 
@@ -565,7 +561,6 @@ If you have made it this far you should see something similar to this.
 <!-- ------------------------ -->
 ## Combined Logs and Manuals
 
-Duration: 20
 
 Up to this point we have loaded both repair manuals and repair logs.  Now we need to combine them so we can feed them to the LLM and get the best answer of the two combined texts.  This will generate the most accurate answer for our questions around how to repair our little robot.
 
@@ -741,7 +736,6 @@ This drops all the created database objects including the internal stage, tables
 
 You have built an Ai guided equipment maintenance chat bot.  This chat bot base can be used for any piece of equipment.  If you have the repair manuals for a Drill Press, a lithography machine, or a robotic arm.  This app can be used to decrease downtime due to servicing the equipment when in a failed state. You can add your geniune repair logs to further enhance the quality of output from the LLM.
 
-Duration: 3
 
 ### What You Learned
 

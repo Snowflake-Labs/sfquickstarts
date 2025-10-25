@@ -1,16 +1,15 @@
 author: Tim Buchhorn
 id: data_collaboration_two_way
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
+language: en
 summary: This is a Snowflake Guide on how to use Snowflake's Data Collaboration features to share an enrich data. 
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering 
 
 # Two Way Data Collaboration
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 This guide will take you through Snowflake's Collaboration features, and highlight how easy it is to share data between two organisations.
 
@@ -51,7 +50,6 @@ We will also build on these concepts, and introduce how we can utilise Streams a
 
 <!-- ------------------------ -->
 ## Business Use Case and Context
-Duration: 5
 
 In this hands-on-lab, we are playing the role of SnowBank. The Credit Risk team has noticed a rise in credit card default rates which affects the bottom line of the business. It has enlisted the help of an external organisation (Zamboni) to score the credit card default risk of their existing customers, based on a series of attributes in categories such as spending, balance, delinquency, payment and risk. The data needs to be shared between the two parties.
 
@@ -88,7 +86,6 @@ Addison Howard, AritraAmex, Di Xu, Hossein Vashani, inversion, Negin, Sohier Dan
 
 <!-- ------------------------ -->
 ## Set up
-Duration: 10
 
 Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to create a Snowflake Account.
 
@@ -98,7 +95,6 @@ Check your emails and follow the prompts to activate both the accounts. One will
 
 <!-- ------------------------ -->
 ## Provider Account (SnowBank) - Set Up
-Duration: 20
 
 In this part of the lab we'll set up our Provider Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading, and finally load our credit card default prediction data into our tables.
 
@@ -233,7 +229,6 @@ We have loaded all the data in SnowBank. We can now switch over to our second ac
 
 <!-- ------------------------ -->
 ## Consumer Account (Zamboni) - Set Up
-Duration: 5
 
 In this step, we set up the consumer account. Log in to the second trial account that was set up, and accept the Anaconda and Snowflake Marketplace Terms as we did in the last step. ![Diagram](assets/accept_terms_navigation.png)
 
@@ -257,7 +252,6 @@ After you have noted / copied these details, switch back to the SnowBank account
 
 <!-- ------------------------ -->
 ## Provider Account (SnowBank) - Create Private Listing
-Duration: 10
 
 In the SnowBank account, open up Snowsight and navigate to Data > Provider Studio on the left hand menu. then click the blue "Listing" button in the top right. Screenshot is below: ![Diagram](assets/provider_studio_navigation.png)
 
@@ -269,7 +263,6 @@ Click Publish, and now your listing is live and ready for the consumer. No movem
 
 <!-- ------------------------ -->
 ## Consumer Account (Zamboni) - Accept Share and Create Warehouses
-Duration: 10
 
 In this section, we assume the role of the consumer of the data (Zamboni). Our data science team will take the data shared with us securely, score it for credit card default risk, and share the results back with SnowBank (the original data provider).
 
@@ -310,7 +303,6 @@ We will train our model in the next step. We stay in this account.
 
 <!-- ------------------------ -->
 ## Consumer Account (Zamboni) - Create Model
-Duration: 45
 
 For this section, make sure you download the corresponding [git repo](https://github.com/Snowflake-Labs/sfguide-two-way-data-collaboration) so you have the files referenced in this section.
 
@@ -366,7 +358,6 @@ Stay in the Zamboni account for the next step.
 
 <!-- ------------------------ -->
 ## Consumer Account (Zamboni) - Productionise the ML Pipeline
-Duration: 15
 
 Now we have trained the ML model, we will create some Stored Procedures which holds the feature engineering and scoring logic. In a subsequent step, we will encompass these in Streams and Tasks to automate this pipeline.
 
@@ -491,7 +482,6 @@ Let's now switch over to the SnowBank account and share a new dataset to be scor
 
 <!-- ------------------------ -->
 ## Provider Account (SnowBank) - Share New Data
-Duration: 10
 
 In this section, we will go back to assuming the role of the bank. We will switch back to our original provider account and create another listing of unscored data to share to our partner to score for default risk. This time however, we will create a [stream on the shared table](https://docs.snowflake.com/en/user-guide/data-sharing-provider#label-data-sharing-streams) so the new data can be shared live (without etl). In order to set up a stream, the provider of data (SnowBank in this example) needs to have enables Change Tracking on the table. We have already done this in our set-up step.
 
@@ -508,7 +498,6 @@ Switch over to the Zamboni account for the next step.
 
 <!-- ------------------------ -->
 ## Consumer Account (Zamboni) - Automate Scoring Pipeline
-Duration: 10
 
 Switch over to the Consumer Account, and you should see the newly shared table in the databases tab. If not, click the ellipsis and click "Refresh". Screenshot below.
 ![Diagram](assets/updated_listing_in_consumer_navigation.png)
@@ -615,7 +604,6 @@ Switch over to the SnowBank account for the next step.
 
 <!-- ------------------------ -->
 ## Provider Account (SnowBank) - Accept Share and Use Scored Data
-Duration: 5
 
 Open up the SnowBank account, and accept the share from Zamboni of the newly scored data. This is the same process in reverse of Step 7.
 
@@ -629,7 +617,6 @@ You should now see SCORED_DATA as one of the Databases in your catalog, with the
 
 <!-- ------------------------ -->
 ## Provider Account (SnowBank) -  Add New Data
-Duration: 10
 
 In this section, we will add some new data to demonsrate how the automated pipeline would operate between the two accounts.
 
@@ -648,7 +635,6 @@ We have not run ours on a schedule so we can step through what is happening. How
 
 <!-- ------------------------ -->
 ## Consumer Account (Zamboni) -  Manually Inspect Automated Pipeline
-Duration: 15
 
 In production, this step would most likely be an automated ingestion pipeline form a source system. However for this example we have set the schedule to once a year to avoid unnecessary credit consumption
 
@@ -684,7 +670,6 @@ Lets switch back to SnowBank and see if we can see the newly scored data.
 
 <!-- ------------------------ -->
 ## Consumer Account (SnowBank) - Inspect Newly Scored Data
-Duration: 5
 
 Open up a SQL worksheet in SnowBank and test the new data is there by running the following query in a worksheet.
 
@@ -708,7 +693,6 @@ We should see from the results that the newly scored data is in our Snowflake Ac
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 10
 
 Open up the Zamboni Account and [unpublish the Listing](https://docs.snowflake.com/en/user-guide/data-exchange-managing-data-listings#unpublishing-a-data-listing). You can do this by navigating to Data > Provider Studio > Listings, and select the listing. A screenshot is below ![Diagram](assets/delist_navigation.png)
 
@@ -746,7 +730,6 @@ DROP WAREHOUSE QUERY_WH;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 Congratulations! You have successfully created an end-to-end automated ML pipeline between two Snowflake accounts leveraging Snowflake's Collaboration features. 
 

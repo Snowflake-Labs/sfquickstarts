@@ -1,16 +1,15 @@
 summary: Machine learning on unstructured data with Saturn Cloud and Snowflake
 id: machine_learning_with_saturncloud
-categories: data-science-&-ml,data-engineering,partner-integrations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 environments: Web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/devlabs/issues
-tags: Machine Learning, Computer Vision
 
 # Machine Learning on Unstructured Data with Saturn Cloud and Snowflake
 
 ## Image Classification Problems 
 
-Duration: 0:04:00
 
 <img src="assets/saturncloud_logo.png" alt="Saturn Cloud" width="200"/>
 
@@ -66,7 +65,6 @@ This guide assumes you have:
 
 ## Create Accounts
 
-Duration: 0:05:00
 
 First, we'll go over how to create your Snowflake and Saturn Cloud accounts.
 
@@ -83,7 +81,6 @@ If you need more resources, [upgrade to pay-per-use with our Hosted Pro accounts
 
 ## Snowflake Setup
 
-Duration: 0:05:00
 
 Snowflake's unstructured file storage allows you to add an organizing layer on top of your files stored in a storage option like AWS S3 or Google Cloud Storage - options that offer minimal or no convenient way to organize and structure the files. **By integrating with Snowflake, you can make these files easy to find, query, and access!** Furthermore, this technique improves the security of these files by only requiring the Snowflake credentials to be shared - as you'll see, you can control access on the Snowflake side and keep your Google or AWS credentials private.
 
@@ -107,7 +104,6 @@ Now you have created the database that we'll be using to house the unstructured 
 <!-- ------------------------ -->
 
 ## Saturn Cloud Setup 
-Duration: 0:04:00
 
 Next, we need to [go in to Saturn Cloud](https://app.community.saturnenterprise.io/) and set up our working environment. Visit Saturn Cloud and log in with your account created previously. You'll start on the Resources page.
 
@@ -166,7 +162,6 @@ Once the resource is created and started, and your credentials are loaded into S
 
 ## Load Image Files into Database
 
-Duration: 0:08:00
 
 In the following steps, we will load image files of garments from S3 into the Snowflake database you already created, so your machine learning model can access them.
 
@@ -274,7 +269,6 @@ Now we have all of our setup in Snowflake done, and we're ready to work on model
 
 ## Train Model
 
-Duration: 00:10:00
 
 ### Task Overview
 
@@ -359,7 +353,6 @@ As the model trains, it will write out the trained model state dictionary every 
 
 ## Run Inference
 
-Duration: 0:07:00
 
 The next task is to use our trained model object to infer the correct class for new images. Open the `inference.ipynb` notebook in your Jupyter instance to see the code and run it. (You can either use your own trained model from the previous step or use the model provided to you in the repository.)
 
@@ -443,7 +436,6 @@ futures_computed = client.compute(futures_gathered, sync=False)
 
 ## Skim Results
 
-Duration: 0:05:00
 
 You can examine the results of the model in the inference notebook- here are some examples from different early versions of the model!
 
@@ -465,7 +457,6 @@ In a neural network, we can't really be sure what is driving the model's choices
 
 ## Save Inference Results to Snowflake
 
-Duration: 0:05:00
 
 After the inference is done (it should take only five to ten seconds), we are ready to save the results back to Snowflake, attaching the predictions to the original image files in our `clothing_test` data table. We will do all of this from Python programmatically.
 
@@ -527,7 +518,6 @@ with snowflake.connector.connect(**conn_kwargs) as conn:
 
 ## Cleanup
 
-Duration: 0:03:00
 
 When your job is complete, you can shut down the Saturn Cloud resources by clicking the red squares on each card. 
 
@@ -547,7 +537,6 @@ drop table if exists clothing_test;
 
 ## Conclusion and Next Steps
 
-Duration: 0:03:00
 
 We hope that this guide has given you insight into how you can use Snowflake and Saturn Cloud together to manage your machine learning pipelines! 
 

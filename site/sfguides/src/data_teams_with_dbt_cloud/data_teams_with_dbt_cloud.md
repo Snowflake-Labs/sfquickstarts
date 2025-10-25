@@ -1,16 +1,15 @@
 id: data_teams_with_dbt_cloud
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: Build your data pipeline with dbt Cloud & Snowflake
-categories: undefined
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Data Sharing
 authors: Amy Chen, Dmytro Yaroshenko
 
 # Accelerating Data Teams with dbt Cloud & Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Modern businesses need modern data strategies, built on platforms that support agility, growth and operational efficiency. 
 
@@ -42,7 +41,6 @@ Let's get started.
 
 
 ## Architecture and Use Case Overview
-Duration: 1
 
 In this lab, we are going to analyze the historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas, which is available in Snowflake Marketplace. We’ll also make use of a few manual uploads.
 To do this, we are going to set up the environments, build scalable pipelines in dbt, establish data tests , and promote code to production. 
@@ -57,7 +55,6 @@ Stay tuned!
 
 <!-- ------------------------ -->
 ## Snowflake Configuration 
-Duration: 1
 
 1. Login to your Snowflake trial account.  
 ![Snowflake Log In Screen](assets/snowflake_login.png)  
@@ -77,7 +74,6 @@ If you ever want to change from the new UI to the classic one, click on the home
 
 <!-- ------------------------ -->
 ## Connect to Data Source
-Duration: 5
 
 Now we need to obtain our raw data. We are going to the Snowflake Marketplace to connect to the Knoema dataset. 
 
@@ -137,7 +133,6 @@ Congratulations! You successfully tapped into a live data feed of Trade and FX r
 
 <!-- ------------------------ -->
 ## dbt Configuration 
-Duration: 2
 
 Now it's time to set up dbt. We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials in minutes.
  
@@ -171,7 +166,6 @@ To help you version control your dbt project, we have connected it to a [managed
 
 <!-- ------------------------ -->
 ## dbt Project Configuration
-Duration: 5
 
 1. Now let’s set up our dbt project. Click on the hamburger menu on the top left side and click on `Develop`.  This will spin up your IDE (Integrated Development Environment) where you will be developing your dbt Project. 
 
@@ -388,7 +382,6 @@ packages:
 <!-- ------------------------ -->
 
 ## Building dbt Data Pipelines
-Duration: 1
 
 Now we start to get into the fun stuff. In the next few sections, we are going to build our dbt pipelines. This will include transformations that define these these areas of interest: 
 - Stock trading history
@@ -397,7 +390,6 @@ Now we start to get into the fun stuff. In the next few sections, we are going t
 - Profit & Loss calculation
 
 ## dbt pipelines - Sources & Staging
-Duration: 5
 
 #### Setting up our Sources
 
@@ -541,7 +533,6 @@ In this dataset, different measures like Close, Open, High and Low price are rep
 So let’s do that!
 
 ## dbt pipelines - Intermediate 
-Duration: 10
 
 ### Setting up our intermediate models
 
@@ -764,7 +755,6 @@ dbt is able to generate a static webpage with a data dictionary by pulling in in
 <!-- ------------------------ -->
 
 ## dbt pipelines - Seeds
-Duration: 5
 
 Following our use case story, we are going to manually upload two small datasets using [dbt seed](https://docs.getdbt.com/docs/building-a-dbt-project/seeds) representing trading books of two desks. As you might notice, they were buying and selling AAPL shares, but logging the cash paid/received in different currencies: USD and GBP.
 
@@ -852,7 +842,6 @@ As you can see,  the macro from the dbt_utils package wrote the code, aligned th
 
 <!-- ------------------------ -->
 ## dbt pipelines - Intermediate Part 2
-Duration: 5
  
 1. Next challenge! We have a great log of trading activities, but it only provides records when shares were bought or sold. Ideally, to make the daily performance analysis more meaningful, we should have rows for the days shares were held as well. To do this, let’s make this new file: `int_daily_position.sql` in the intermediate folder. 
 
@@ -985,7 +974,6 @@ order by  book_date
  
 <!-- ------------------------ -->
 ## dbt pipelines - Facts
-Duration: 5
 
 #### dbt pipelines - PnL calculation
 Now for the last models in our tale. We have the trading history of our desks and our stock price history. 
@@ -1157,7 +1145,6 @@ You will not see a true performance improvement in this example because our data
 
 <!-- ------------------------ -->
 ## dbt pipelines - Tests & Docs
-Duration: 5
 
 ### Testing & Documentation 
 
@@ -1303,7 +1290,6 @@ You should now see the description field populated.
  
 <!-- ------------------------ -->
 ## dbt pipelines - Deployment
-Duration: 5 
 
 Okay, it seems like we have everything in place: pipelines have been developed, tested and documented.  
 
@@ -1379,7 +1365,6 @@ And this concludes our workshop! If you’re interested in exploring further, th
  
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 1
 
 Congratulations on completing the lab! 
 

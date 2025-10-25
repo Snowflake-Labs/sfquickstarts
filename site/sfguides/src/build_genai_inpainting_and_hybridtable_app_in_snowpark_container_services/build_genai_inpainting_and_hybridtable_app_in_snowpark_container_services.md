@@ -1,16 +1,15 @@
 author: Dash Desai
 id: build_genai_inpainting_and_hybridtable_app_in_snowpark_container_services
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
+language: en
 summary: Through this quickstart guide, you will explore GenAI inpainting and Hybrid tables with everything running within a Streamlit app in Snowpark Container Services
-categories: Getting-Started, Data-Science-&-Ai, Streamlit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Containers, Snowpark, Snowpark Container Services
 
 # Build GenAI Inpainting and Hybrid Table App in Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 By completing this QuickStart guide, you will get to explore [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) (SPCS) to deploy a Streamlit application showcasing GenAI inpainting using open source libraries as well as use of hybrid table for transactional workload.
 
@@ -52,7 +51,6 @@ Learn more about [Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 8
 
 **Step 1**. Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services). If you don't have Git installed, you can also download the repo as a .zip file.
 
@@ -72,7 +70,6 @@ Log into your Snowflake account and use Snowsight to load data into newly create
 
 <!-- ------------------------ -->
 ## Code Walkthrough
-Duration: 5
 
 The code for the Streamlit application is split into two .py files -- and 
 
@@ -87,7 +84,6 @@ The code for the Streamlit application is split into two .py files -- and
 
 <!-- ------------------------ -->
 ## Build, Tag and Push Docker Image
-Duration: 30
 
 In the cloned repo, you should see a [Dockerfile](https://github.com/Snowflake-Labs/sfguide-build-genai-hybridtable-app-in-snowpark-container-services/blob/main/Dockerfile) that looks like this:
 
@@ -209,7 +205,6 @@ If needed, make edits to the default names of the database, schema, and/or image
 
 <!-- ------------------------ -->
 ## Create Service
-Duration: 5
 
 Once the `docker push...` command completes in the previous step, verify that the image exists by running the following commands in a SQL worksheet:
 
@@ -272,7 +267,6 @@ lateral flatten(input => t.$1) v;
 
 <!-- ------------------------ -->
 ## Run Application
-Duration: 8
 
 Once the service is in a `READY` state, execute the following command in a SQL worksheet to get the endpoint URL:
 
@@ -303,7 +297,6 @@ In a new browser window, copy-paste the **ingress_url** URL from above and you s
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 To cleanup resources and remove all of the objects you created during this QuickStart, run the following commands in a SQL worksheet. This will ensure that you don't incur any unnecessary costs specifically associated with this QuickStart guide. 
 
@@ -326,7 +319,6 @@ DROP ROLE DASH_SPCS;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations, you have successfully completed this QuickStart! By completing this guide, you were able to create and manage long-running service using Snowflake's managed Snowpark Container Services to deploy a Streamlit application showcasing GenAI inpainting using open source libraries as well as use of hybrid tables for transactional workload.
 

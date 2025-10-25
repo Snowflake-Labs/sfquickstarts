@@ -1,16 +1,15 @@
 author: corydon baylor
 id: finding-fraudulent-communities-with-neo4j
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance
+language: en
 summary: How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake
-categories: getting-started,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter
 
 # Discover Fraudulent Communities in Financial Services Data with Neo4j Graph Analytics
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 ### What Is Neo4j Graph Analytics For Snowflake? 
 
@@ -39,7 +38,6 @@ Finding different communities within P2P transactions is the first step towards 
 
 <!-- ------------------------ -->
 ## Loading The Data
-Duration: 5
 
 Dataset overview : This dataset is modelled to design and analyze a peer to peer transaction network to identify fraudulent activity using graph analytics. 
 ![image](assets/datamodel.png)
@@ -112,7 +110,6 @@ use role gds_user_role;
 
 <!-- ------------------------ -->
 ## Cleaning Our Data
-Duration: 5
 
 We need our data to be in a particular format in order to work with Graph Analytics. In general it should be like so:
 
@@ -152,7 +149,6 @@ CREATE OR REPLACE VIEW p2p_users_vw (nodeId) AS
 <!-- ------------------------ -->
 
 ## Running Your Algorithms
-Duration: 10
 
 Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run louvain to determine communities within our data. Louvain identifies communities by grouping together nodes that have more connections to each other than to nodes outside the group.
 
@@ -240,7 +236,6 @@ You can use plotly as a visualization package and explore more. Nodes that clust
 ![image](assets/communities_visualization.png)
 
 ##  Conclusions And Resources
-Duration: 2
 
 In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics. 
 

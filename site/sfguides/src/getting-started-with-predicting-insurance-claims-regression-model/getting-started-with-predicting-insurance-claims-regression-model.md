@@ -1,16 +1,15 @@
 author: Swathi Jasti
 id: getting-started-with-predicting-insurance-claims-regression-model
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: This quickstart provides an end-to-end workflow for predicting insurance claim outcomes using machine learning, focusing on feature engineering, model training, and deployment.
-categories: Getting-Started, data-science, Data-Science-&-Ml
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
 
 # Getting Started with Predicting Insurance Claims using XGBoost Regression Model
 
 ## Overview
-Duration: 3
 
 <img src="assets/insurance_claim_pred_banner.png"/>
 
@@ -39,7 +38,6 @@ This solution provides an end-to-end workflow for predicting insurance claim out
 
 
 ## Setup Environment
-Duration: 10
 
 Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 
@@ -69,7 +67,6 @@ The deployed model generates predictions in real time, producing claim predictio
 This architecture leverages Snowflake’s integrated ML tools, covering data ingestion, preprocessing, model training, deployment, and inference to provide a comprehensive, efficient solution for insurance claims prediction.
 
 ## Insurance Claims Prediction - Regression Notebook
-Duration: 5
 
 This notebook demonstrates how to create and manage feature views within a feature store. By facilitating collaboration across teams, it enables seamless reuse of features while bridging the gap between training and serving environments. In this example, we train and deploy a XGBoost model to generate insurance claims predictions.
 
@@ -98,7 +95,6 @@ This notebook demonstrates how to create and manage feature views within a featu
 - Click each cell or Run all to run the Notebook
 
 ## Conclusion And Resources
-Duration: 1
 
 In this quickstart, you learned how to use Snowflake's integrated ML tools to create an end-to-end workflow for predicting insurance claim outcomes. You learned how to load and examine insurance claims data, generate new features, build a preprocessing pipeline, train an XGBoost model, and deploy the model for real-time predictions.
 

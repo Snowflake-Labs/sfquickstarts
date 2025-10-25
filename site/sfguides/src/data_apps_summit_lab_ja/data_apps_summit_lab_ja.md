@@ -1,16 +1,15 @@
 author: 
 id: data_apps_summit_lab_ja
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: これはサンプルのSnowflakeガイドのカテゴリーです
-categories: featured,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, 日本語, Data Engineering, Twitter, ja 
 
 # Snowflakeマーケットプレイス、Snowpark、Streamlitによるデータアプリケーションの構築
 
 ## 概要
-Duration: 2
 
 このハンズオンラボでは、KnoemaがSnowflakeマーケットプレイスで公開しているEconomical Data Atlasを活用するデータアプリケーションを構築します。
 
@@ -49,7 +48,6 @@ Snowparkでデータを処理し、Snowflakeで簡単なMLモデルを開発し�
 <!-- ------------------------ -->
 ## ラボ環境の準備
 
-Duration: 8
 
 1. 別の環境を管理するため、pip install condaを実行してcondaをインストールします。注意：[Miniconda](https://docs.conda.io/en/latest/miniconda.html)を使用する方法もあります。
 2. ターミナルまたはコマンドプロンプトを開きます。
@@ -74,7 +72,6 @@ Duration: 8
 <!-- ------------------------ -->
 ## Snowflakeの環境の準備
 
-Duration: 6
 
 ### Snowflakeマーケットプレイスの利用
 
@@ -150,7 +147,6 @@ SELECT predict_pce_udf(2021);
 <!-- ------------------------ -->
 ## （Jupyter）ノートブックによるデータの探索
 
-Duration: 15
 
 アプリケーションで使用できるデータベースができたので、データを探索し、アプリケーションで使用できるユーザー定義関数（UDF）でMLモデルを作成したいと思います。
 
@@ -291,7 +287,6 @@ session.sql("select predict_pce_udf(2021)").show()
 <!-- ------------------------ -->
 ## Streamlitアプリケーションの作成
 
-Duration: 7
 
 ### 必要なライブラリのインポート
 
@@ -478,7 +473,6 @@ Streamlitを利用する場合はPandas DataFramesが必要であることに注
 <!-- ------------------------ -->
 ## ウェブアプリケーションの実行
 
-Duration: 4
 
 楽しいパートです。Pythonスクリプトに構文エラーや接続エラーがなければ、アプリケーションを実行する準備は完了です。
 

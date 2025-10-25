@@ -1,9 +1,10 @@
 id: getting-started-with-llamaparse-and-cortex-search
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: Parse Documents with LlamaParse and Search with Cortex
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Josh Reini
 
 # Getting Started with LlamaParse and Cortex Search
@@ -11,7 +12,6 @@ authors: Josh Reini
 
 ## Overview
 
-Duration: 4
 
 This guide walks through how to build a RAG using LlamaParse (from LlamaIndex) to parse documents and Snowflake Cortex for text splitting, search and generation.
 
@@ -58,7 +58,6 @@ LlamaParse comes equipped with the following features:
 
 ## Setup
 
-Duration: 2
 
 Set up your environment and credentials for LlamaParse and Snowflake. You'll need a [LlamaCloud API key](https://docs.cloud.llamaindex.ai/api_key) and a [Snowflake account](https://signup.snowflake.com/).
 
@@ -97,7 +96,6 @@ os.environ["SNOWFLAKE_SCHEMA"] = "PUBLIC"
 
 ## Parse Documents with LlamaParse
 
-Duration: 3
 
 This step uses [LlamaParse](https://docs.llamaindex.ai/en/stable/llama_cloud/llama_parse/) to parse your PDF or other supported documents into structured data suitable for downstream LLM and RAG workflows.
 
@@ -121,7 +119,6 @@ result = parser.parse("./snowflake_2025_10k.pdf")
 
 ## Write to Snowflake
 
-Duration: 5
 
 Convert the parsed documents to a DataFrame and load them into your Snowflake database for further processing and search.
 
@@ -194,7 +191,6 @@ snowpark_df.write.mode("overwrite").save_as_table("snowflake_10k")
 
 ## Split Text
 
-Duration: 2
 
 Split the loaded document text into smaller chunks using the [Snowflake Cortex Text Splitter](https://docs.snowflake.com/en/sql-reference/functions/split_text_recursive_character-snowflake-cortex), preparing your data for search.
 
@@ -222,7 +218,6 @@ session.sql(split_text_sql).collect()
 
 ## Create Cortex Search Service
 
-Duration: 5
 
 Create a [Cortex Search Service](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) on your chunked data to enable fast, hybrid search over your documents in Snowflake.
 
@@ -280,7 +275,6 @@ retrieved_context
 
 ## Build RAG pipeline
 
-Duration: 2
 
 Build a simple Retrieval-Augmented Generation (RAG) pipeline that uses your Cortex Search Service to retrieve relevant context and generate answers using [Snowflake Cortex Complete](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex) LLMs.
 
@@ -317,7 +311,6 @@ print(response)
 
 ## Conclusion And Resources
 
-Duration: 2
 
 Congratulations! You have parsed a PDF with LlamaParse, loaded it into Snowflake, indexed it with Cortex Search, and built a simple RAG pipeline for question answering on your data.
 

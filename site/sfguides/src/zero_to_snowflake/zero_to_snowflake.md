@@ -1,17 +1,16 @@
 author: Dureti Shemsi, Cameron Shimmin
 id: zero_to_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+language: en
 summary: Zero to Snowflake
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake, Governance, Horizon, Data Security, RBAC, Masking, Data Quality
 
 # Zero to Snowflake
 
 ## Overview
 
-Duration: 1
 <img src='./assets/zts_header.png'>
 
 ### Overview
@@ -58,7 +57,6 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 
 ## **Setup**
 
-Duration: 3
 
 ### **Overview**
 
@@ -98,7 +96,6 @@ For each new vignette, you will:
 <!-- end list -->
 
 ## Get Started with Snowflake
-Duration: 1
 <img src='./assets/getting_started_header.png'>
 
 ### Overview
@@ -127,7 +124,6 @@ Within this Vignette, we will learn about core Snowflake concepts by exploring V
 
 ## Virtual Warehouses and Settings
 
-Duration: 3
 
 ### Overview
 
@@ -210,7 +206,6 @@ ORDER BY total_sales DESC;
 
 ## Query Result Cache
 
-Duration: 1
 
 ### Overview
 
@@ -243,7 +238,6 @@ ALTER WAREHOUSE my_wh SET warehouse_size = 'XSmall';
 
 ## Basic Transformation Techniques
 
-Duration: 5
 
 ### Overview
 
@@ -360,7 +354,6 @@ DROP TABLE raw_pos.truck_dev;
 
 ## Resource Monitors
 
-Duration: 2
 
 ### Overview
 
@@ -397,7 +390,6 @@ ALTER WAREHOUSE my_wh
 
 ## Create a Budget
 
-Duration: 2
 
 ### Overview
 
@@ -444,7 +436,6 @@ Configuring a budget is done through the Snowsight UI.
 
 ## Universal Search
 
-Duration: 1
 
 ### Overview
 
@@ -468,7 +459,6 @@ Universal search will return relevant tables and views, even highlighting column
 <img src="assets/vignette-1/universal_search_natural_language_query.png">
 
 ## Simple Data Pipeline
-Duration: 1
 <img src='./assets/data_pipeline_header.png'>
 
 ### Overview
@@ -494,7 +484,6 @@ Within this vignette, we will learn how to build a simple, automated data pipeli
 
 ## External Stage Ingestion
 
-Duration: 2
 
 ### Overview
 
@@ -553,7 +542,6 @@ FROM @raw_pos.menu_stage;
 
 ## Semi-Structured Data
 
-Duration: 2
 
 ### Overview
 
@@ -595,7 +583,6 @@ FROM
 
 ## Dynamic Tables
 
-Duration: 3
 
 ### Overview
 
@@ -648,7 +635,6 @@ WHERE ingredient_name IN ('French Baguette', 'Pickled Daikon');
 
 ## Build Out the Pipeline
 
-Duration: 3
 
 ### Overview
 
@@ -743,7 +729,6 @@ ORDER BY total_ingredients_used DESC;
 
 ## Visualize the Pipeline
 
-Duration: 1
 
 ### Overview
 
@@ -765,7 +750,6 @@ You will now see a visualization of your pipeline, showing how the base tables f
 
 ## Snowflake Cortex AI
 
-Duration: 5
 
 ### Overview
 
@@ -801,7 +785,6 @@ Through this journey, you’ll construct a complete intelligence customer analyt
 
 ## Cortex Playground
 
-Duration: 4 
 
 <img src='./assets/cortex_playground_header.png'>
 
@@ -911,7 +894,6 @@ The Cortex Playground is an invaluable tool for experimenting with individual re
 
 <img src='./assets/aisql_functions_header.png'>
 
-Duration: 5
 
 ### Overview
 
@@ -1103,7 +1085,6 @@ We've successfully demonstrated the transformative power of AI SQL functions, sh
 
 <!-- <img src='./assets/snowflake_copilot_header.png'>
 
-Duration: 4
 
 ### Overview
 
@@ -1165,7 +1146,6 @@ In the same Copilot panel, paste the following business question and click RUN t
 Snowflake Copilot profoundly transforms business intelligence by enabling users to effortlessly translate complex business questions into sophisticated SQL queries. As demonstrated with Tasty Bytes, it empowers both technical and non-technical users to derive actionable insights from their data without deep SQL expertise. This LLM-powered assistant delivers schema-aware, purpose-built intelligence, ensuring robust data governance and keeping all enterprise data securely within Snowflake. Copilot isn't just generic AI; it's a strategic tool that bridges operational insights with business intelligence. -->
 
 ## Optional: Cortex Search
-Duration: 6
 
 <img src='./assets/cortex_search_header.png'>
 
@@ -1256,7 +1236,6 @@ Ultimately, Cortex Search transforms how Tasty Bytes analyzes customer feedback.
 
 ## Optional: Cortex Analyst
 
-Duration: 3
 
 <img src='./assets/cortex_analyst_header.png'>
 
@@ -1405,7 +1384,6 @@ Through these rigorous steps, we've forged a robust Cortex Analyst semantic mode
 
 ## Snowflake Intelligence
 
-Duration: 7
 
 <img src='./assets/si_header.png'>
 
@@ -1628,7 +1606,6 @@ What we've just experienced with Tasty Bytes showcases a fundamental shift in ho
 You saw firsthand the power of this integration: users of all technical levels can now simply ask natural language questions and immediately receive visually rich, actionable answers. This direct and intuitive access to insights fundamentally transforms how organizations can swiftly identify operational risks, precisely quantify financial impact, and pinpoint new growth opportunities. It's clear that Snowflake Intelligence empowers rapid, data-driven decision-making, converting what was once fragmented data into clear, compelling business advantage for everyone.
 
 ## Governance with Horizon
-Duration: 1
 <img src='./assets/governance_header.png'>
 
 ### Overview
@@ -1658,7 +1635,6 @@ Within this vignette, we will explore some of the powerful governance features w
 
 ## Roles and Access Control
 
-Duration: 2
 
 ### Overview
 
@@ -1766,7 +1742,6 @@ Looking at the query results, it's clear this table contains a lot of Personally
 
 ## Classification and Auto Tagging
 
-Duration: 3
 
 ### Overview
 
@@ -1843,7 +1818,6 @@ Notice that columns identified as PII now have our custom `governance.pii` tag a
 
 ## Masking Policies
 
-Duration: 3
 
 ### Overview
 
@@ -1904,7 +1878,6 @@ SELECT TOP 100 * FROM raw_customer.customer_loyalty;
 
 ## Row Access Policies
 
-Duration: 3
 
 ### Overview
 
@@ -1965,7 +1938,6 @@ The result set should now only contain rows where the `country` is 'United State
 
 ## Data Metric Functions
 
-Duration: 2
 
 ### Overview
 
@@ -2038,7 +2010,6 @@ ALTER TABLE raw_pos.order_detail
 
 ## Trust Center
 
-Duration: 2
 
 ### Overview
 
@@ -2095,7 +2066,6 @@ After the scanners have had a moment to run, navigate back to the **Findings** t
 This powerful tool gives you a continuous, actionable overview of your Snowflake account's security health.
 
 ## Apps & Collaboration
-Duration: 1
 
 <img src='./assets/appscollab_header.png'>
 
@@ -2119,7 +2089,6 @@ In this vignette, we will explore how Snowflake facilitates seamless data collab
 
 ## Acquire Data from Snowflake Marketplace
 
-Duration: 2
 
 ### Overview
 
@@ -2160,7 +2129,6 @@ This process makes the Weather Source data instantly available in our account as
 
 ## Integrate Account Data with Shared Data
 
-Duration: 3
 
 ### Overview
 
@@ -2288,7 +2256,6 @@ Let's also visualize the results again in Snowsight, but as a bar chart this tim
 
 ## Explore Point-of-Interest Data
 
-Duration: 3
 
 ### Overview
 
@@ -2368,7 +2335,6 @@ ORDER BY o.truck_brand_name;
 ```
 
 ## Introduction to Streamlit in Snowflake
-Duration: 3
 
 <img src='./assets/streamlit-logo.png'>
 
@@ -2396,7 +2362,6 @@ When the app first loads, you'll see a sample app on the right pane and the app'
 <img src='./assets/vignette-5/create_streamlit_app.gif'>
 
 ## Conclusion and Resources
-Duration: 1
 
 ### Overview
 

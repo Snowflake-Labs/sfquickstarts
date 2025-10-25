@@ -1,16 +1,15 @@
 id: getting_started_with_snowpark_scala
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
+language: en
 summary: This guide provides the basic instructions for setting up a simple example using Snowpark.
-categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter
 
 # Getting Started With Snowpark Scala
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 1
 
 Using the [Snowpark API](https://docs.snowflake.com/en/developer-guide/snowpark/index.html),
 you can query and manipulate data by writing code that uses
@@ -47,7 +46,6 @@ Snowpark supports code compiled to run on Java 11.
 <!-- ------------------------ -->
 ## Download the repository
 
-Duration: 5
 
 You'll find the demo in a Snowflake GitHub repository. After installing git, you can clone the
 repository using your terminal.
@@ -89,7 +87,6 @@ run this example to create those stages and upload those files.
 <!-- ------------------------ -->
 ## Configure the settings for connecting to Snowflake
 
-Duration: 5
 
 The demo directory contains a `snowflake_connection.properties` file that the
 example code uses to
@@ -122,7 +119,6 @@ SCHEMA = my_schema
 <!-- ------------------------ -->
 ## Connect to Snowflake
 
-Duration: 5
 
 In this step, you'll confirm that you can connect to Snowflake with the demo
 code and your connection properties.
@@ -192,7 +188,6 @@ the data and libraries to make the UDF work.
 <!-- ------------------------ -->
 ## Download the data file and libraries for the demo
 
-Duration: 10
 
 In this step, you'll download the sample data file and libraries you need to
 run the user-defined function you're going to create. This demo uses the
@@ -244,7 +239,6 @@ the files to the stages.
 <!-- ------------------------ -->
 ## Upload the data file and libraries to internal stages
 
-Duration: 20
 
 In this section, you'll run the `UDFDemoSetup.scala` example to create
 [internal stages](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage.html)
@@ -398,7 +392,6 @@ Next, run the `UDFDemo.scala` example to create the user-defined function.
 <!-- ------------------------ -->
 ## Run the UDF demo
 
-Duration: 10
 
 In this step, you'll run the `UDFDemo.scala` demo application to create and call
 a user-defined function (UDF). Read the topics that follow to take a closer
@@ -429,7 +422,6 @@ See the topics that follow for more on how this works.
 <!-- ------------------------ -->
 ## Load data from a stage and create a DataFrame
 
-Duration: 5
 
 The `collectTweetData` method creates a `DataFrame` to [read CSV data from a file in a stage](https://docs.snowflake.com/en/developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-stages). It does this with a
 [DataFrameReader](https://docs.snowflake.com/en/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrameReader.html) object.
@@ -533,7 +525,6 @@ For `collectTweetData`, you'll see output such as the following.
 <!-- ------------------------ -->
 ## Define a UDF
 
-Duration: 5
 
 The `createUDF` method sets up dependencies for a UDF that analyzes tweets
 for sentiment, then it creates the UDF in Snowflake.
@@ -616,7 +607,6 @@ compiles your UDF and uploads the JAR file to the stage:
 <!-- ------------------------ -->
 ## Use the UDF to process the tweets
 
-Duration: 5
 
 The `processHappyTweets` method uses the UDF to analyze tweet text to discover
 which tweets are happy.
@@ -705,7 +695,6 @@ a stored procedure in Snowflake.
 <!-- ------------------------ -->
 ## Create a stored procedure from the Scala code
 
-Duration: 5
 
 In this step, you'll take the code you've just run and create a stored
 procedure from it. To do that, you'll copy the Scala code into a Snowflake
@@ -801,7 +790,6 @@ call discoverHappyTweets();
 
 ## Conclusion & Next Steps
 
-Duration: 1
 
 Congratulations! You used Snowpark to perform sentiment analysis on tweets. 
 You used a sample dataset of tweets for this guide. If you want to automatically

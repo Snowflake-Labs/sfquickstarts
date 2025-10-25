@@ -1,16 +1,15 @@
 author: Ashish Kumar
 id: kafka_working_with_iceberg_tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+language: en
 summary: Through this quickstart guide, you will explore how to ingest data from kafka to Iceberg tables.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering 
 
 # Intro to Kafka and Snowflake Managed Iceberg
 <!-- ------------------------ -->
 ## Overview 
-Duration: 60
 
 This guide provides a comprehensive walkthrough for establishing a local data streaming pipeline from open-source Apache Kafka to Snowflake-managed Iceberg tables. We will configure the Snowflake Kafka Connector to leverage Snowpipe Streaming, enabling efficient, near real-time data ingestion while seamlessly handling schema evolution. This setup facilitates a robust and adaptable data flow, ensuring that changes in your Kafka topics are automatically reflected in your Snowflake-managed Iceberg tables.
 

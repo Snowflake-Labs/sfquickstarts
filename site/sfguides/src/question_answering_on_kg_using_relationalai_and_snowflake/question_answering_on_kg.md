@@ -1,18 +1,17 @@
 author: RelationalAI
 id: kgqa_using_relationalai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
+language: en
 summary: This guide shows how to use RelationalAI and Snowflake to create a system that lets a user ask and answer natural language questions on a custom knowledge graph.
-categories: data-science, graph-analysis, relationalai, generativeai
 environments: web
 status: Published 
 feedback link: https://github.com/RelationalAI/QuestionAnsweringKG/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter
 
 
 # KGQA: Question Answering on Knowledge Graphs Using RelationalAI and Snowflake Cortex AI
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Knowledge graphs are a useful structure to use to encode information about a particular domain. They allow for explicit inspection of the data encoded and the ability to reason over the relations. However, writing a query against a knowledge graph can be more challenging than other systems given that they generally lack a natural language interface. In order to query over a knowledge graph such as the one created by Wikidata, the user must know the specialized syntax of SPARQL as well as the knowledge graph representation of the entities and relations. For example, the concept of a hospital in wikidata is represented internally as Q16917.
 
@@ -70,7 +69,6 @@ Users may already have  their data in Snowflake. RelationalAI runs within the us
 <!-- ------------------------ -->
 
 ## Example Walkthrough
-Duration: 2
 
 <img src="./assets/kgqa_example_udf.png" alt="KGQA Example" width="1400">
 
@@ -95,7 +93,6 @@ Note that everything runs securely in the user’s  Snowflake account on snowpar
 <!-- ------------------------ -->
 
 ## Demo Setup
-Duration: 25
 
 Follow the below steps to launch End-to-End Demo Setup.
 
@@ -173,7 +170,6 @@ Now, we are all set to run the Demo notebook!
 
 
 ## Demo Notebook 
-Duration: 10
 
 ### STEP 1 : Create API Integration
 - Open a SQL Worksheet on Snowflake and execute the following command on your database and schema as defined in the [config.json](https://github.com/RelationalAI/QuestionAnsweringKG/blob/main/kgqa_demo/kgqa_demo_setup/config.json). 
@@ -208,7 +204,6 @@ Run the [KGQA Demo Notebook](https://github.com/RelationalAI/QuestionAnsweringKG
 
 
 ## Launch the KGQA SF Service
-Duration: 25
 
 Follow the below steps to launch End-to-End pipeline as a Service on Snowflake and interact with it.
 
@@ -292,7 +287,6 @@ python3 $SETUP_PATH/setup.py --config $SETUP_PATH/config.json --output_dir $SETU
 <!-- ------------------------ -->
 
 ## Troubleshooting
-Duration: 1
 
 In case you encounter any of the following issues, please follow the recommended steps:
 
@@ -335,7 +329,6 @@ drop warehouse temp_wh;
 <!-- ------------------------ -->
 
 ## Conclusion & Resources
-Duration: 1
 
 Congratulations on completing the our Question and Answering on Knowledge Graphs using RelationalAI and Snowflake guide! In this Quickstart you learned
 

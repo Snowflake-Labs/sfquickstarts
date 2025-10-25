@@ -1,16 +1,15 @@
 author: Scott Teal, Saurin Shah, Zohar Nissare-Houssen, Kesav Rayaprolu, Mauricio Rojas Fernandez
 id: getting_started_with_unstructured_data
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
+language: en
 summary: This is a guide to get familiar with Snowflake's support for unstructured data
-categories: getting-started,architecture-patterns
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Data Lake, Unstructured Data 
 
 # Getting Started with Unstructured Data
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This Quickstart is designed to help you understand the capabilities included in Snowflake’s support for unstructured data. Sign up for a free 30-day trial of Snowflake and follow along with this lab exercise. After completing this lab, you’ll be ready to start storing and managing your own unstructured data in Snowflake. 
 
@@ -33,7 +32,6 @@ This Quickstart is designed to help you understand the capabilities included in 
 
 <!-- ------------------------ -->
 ## Notice and Terms of Use
-Duration: 1
 
 The data provided for this lab is an extract from the Enron email database made available by Carnegie Mellon University ([https://www.cs.cmu.edu/~enron/](https://www.cs.cmu.edu/~enron/)).
 
@@ -43,7 +41,6 @@ By accessing this data, you acknowledge and agree to the limits and terms relate
 
 <!-- ------------------------ -->
 ## Prepare your lab environment
-Duration: 2
 
 If you haven't already, register for a [Snowflake free 30-day trial](https://trial.snowflake.com/).
 The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.
@@ -60,7 +57,6 @@ For this lab, you will use the latest Snowflake web interface, Snowsight.
 
 <!-- ------------------------ -->
 ## Store & Access Unstructured Data
-Duration: 10
 
 Let’s start by preparing to load the unstructured data into Snowflake. Snowflake supports two types of stages for storing data files used for loading and unloading:
 - [Internal stages](https://docs.snowflake.com/en/user-guide/data-load-overview.html#internal-stages) store the files internally within Snowflake.
@@ -200,7 +196,6 @@ You should now see an identical list of files uploaded to the internal stage. Ma
 
 <!-- ------------------------ -->
 ## Govern Unstructured Data Access
-Duration: 5
 
 Just like structured and semi-structured data, access permissions to unstructured data in Snowflake can be governed using role-based access control (RBAC).
 
@@ -249,7 +244,6 @@ In the subsequent sections, we will see a more fine-grained access control of th
 
 <!-- ------------------------ -->
 ## Catalog Unstructured Data using Directory Tables
-Duration: 6
 
 One of the main pain points in managing large repositories of unstructured data is the ability to access metadata easily on the numerous files, as well as retrieve files per some metadata attributes (last modified, file size, file patterns).
 
@@ -314,7 +308,6 @@ create stream documents_stream on directory(<stage_name>);
 
 <!-- ------------------------ -->
 ## URLs for Secure Access
-Duration: 5
 
 In the previous sections, we have seen how to store unstructured data in Snowflake, as well as access metadata about the unstructured files, and build queries to retrieve files based on metadata filters. 
 
@@ -443,7 +436,6 @@ Open a new tab in your web browser, and paste the copied URL. This should downlo
 
 <!-- ------------------------ -->
 ## Perform Natural Language Processing
-Duration: 20
 
 We have so far reviewed how to store unstructured data files, retrieve them, provide granular access to the files through various URLs and through secure views. In this section, we want to extract additional attributes from the files. The entities extracted are going to be person names mentioned in the emails, as well as locations. The goal is to have these additional attributes used to enrich the file-level metadata for analytics.
 
@@ -887,7 +879,6 @@ As you can see, we can perform aggregations, and analytics on unstructured text 
 
 <!-- ------------------------ -->
 ## Share Unstructured Data
-Duration: 15
 
 In this example, we want to share all the email corpus mentioning 'Willman' with another party using a Snowflake reader account.
 
@@ -1032,7 +1023,6 @@ You have now completed this demonstration of how unstructured data can be secure
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Congratulations! You used Snowflake to perform natural language processing on email files. 
 

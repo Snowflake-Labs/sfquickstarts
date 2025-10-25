@@ -1,11 +1,11 @@
 author: Emily
 id: validate_your_customer_identity_model_with_identityqa
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Use IdentityQA to validate your customer identity model
-categories: getting-started,data-warehouse,data-engineering, marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues 
-tags: Identity, Identity Model, Identity Modeling, Identity Resolution, Getting Started, Data Engineering, Native Apps 
 
 # Validate Your Customer Identity Model with IdentityQA
 
@@ -13,7 +13,6 @@ tags: Identity, Identity Model, Identity Modeling, Identity Resolution, Getting 
 
 ## Overview 
 
-Duration: 1
 
 In this guide, we’ll be walking you through how to validate that the assumptions you’ve made about your identity model are correct using Simon Data’s Snowflake native app, IdentityQA.  Let’s get going!
 
@@ -46,7 +45,6 @@ By the end of this guide, you'll learn:
 
 ## Application Architecture
 
-Duration: 1
 
 ### Native App Overview
 First, it’s important to understand how Snowflake native apps work and the benefits they provide from a security & privacy standpoint.
@@ -61,7 +59,6 @@ By default, the application has no permissions to do anything in your Snowflake 
 
 ## App Setup
 
-Duration: 3
 
 ### Install IdentityQA
 
@@ -104,7 +101,6 @@ GRANT SELECT ON TABLE <YOUR_TABLE_NAME> TO APPLICATION <CHOSEN APP NAME>;
 
 ## Set Input Table
 
-Duration: 3
 
 In a worksheet, run the **SET_INPUT_TABLE** stored procedure, as follows. Be sure to include as many lines as you have identifiers in your source table.
 
@@ -147,7 +143,6 @@ CALL SIMONIDQA.APP.SET_INPUT_TABLE('SIMONDATA_TEST.PUBLIC.IDENTITY', [['EMAIL', 
 
 ## Set Constraints
 
-Duration: 8 
 
 Once you've configured your identifiers, you can set certain constraints (or assumptions) to validate. These constraints outline the relationships between two identifiers (i.e. 1:1 or 1:many) and identifier-specific limits (e.g. device_id can be shared across a maximum of 5 profiles).
 
@@ -215,7 +210,6 @@ CALL SIMONIDQA.APP.SET_SHARED_IDENTIFIER_LIMIT('phone_number', 3);
 
 ## Generate Report
 
-Duration: 5 
 
 ### Manual Inspection
 
@@ -256,7 +250,6 @@ To view your report in Streamlit, return to the app & launch it in Streamlit. St
 
 ## Interpreting the Report
 
-Duration: 10 
 
 This is an example input table that we used to generate the report shown in screenshots below.  
 
@@ -305,7 +298,6 @@ Next, the report shows **email** & **phone_number** validations.  You can see in
 
 ## Conclusion & Resources
 
-Duration: 1
 
 Congratulations!  You’ve successfully QA’d your customer identity model using Simon Data’s Native Snowflake App, **IdentityQA**!  You now have the insight you need to be able to finetune & improve your identity model.  
 

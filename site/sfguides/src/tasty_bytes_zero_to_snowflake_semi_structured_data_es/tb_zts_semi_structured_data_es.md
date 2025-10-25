@@ -1,17 +1,16 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_semi_structured_data_es
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: es
 summary: Tasty Bytes - De cero a Snowflake - Datos semiestructurados
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: introducción, Getting Started, Data Engineering, Data Warehouse, es
 
 # Tasty Bytes - De cero a Snowflake - Datos semiestructurados
 <!-- ------------------------ -->
 
 ## Procesamiento de datos semiestructurados en Snowflake
-Duration: 1 <img src = "assets/semi_structured_header.png">
 
 ### Descripción general
 Te damos la bienvenida a la quickstart guide Tasty Bytes - De cero a Snowflake centrada en el procesamiento de datos semiestructurados.
@@ -37,7 +36,6 @@ Para obtener más información sobre los datos semiestructurados en Snowflake, c
 - Un gráfico de barras útil a nivel ejecutivo
 
 ## Creación de una hoja de trabajo y copia en SQL
-Duration: 1
 
 ### Descripción general
 En esta quickstart guide se narra una historia de Tasty Bytes mediante una hoja de trabajo SQL en Snowsight. Esta página servirá de guía completa paralela con comentarios adicionales, imágenes y enlaces a la documentación.
@@ -76,7 +74,6 @@ En esta sección te explicaremos cómo iniciar sesión en Snowflake, crear una n
 ### Paso 9: hacer clic en Next -->
 
 ## Elaboración de perfiles de datos semiestructurados de la carta
-Duration: 1
 
 ### Descripción general
 Como ingeniero de datos de Tasty Bytes, debes elaborar un perfil para los datos de nuestra carta, lo que incluye una columna para datos semiestructurados. A partir de esta tabla con la carta tendrás que generar la vista de una capa analítica que incluya los datos de los ingredientes y alérgenos para los usuarios finales.
@@ -143,7 +140,6 @@ Una vez más, vamos a hacer clic en una de las celdas de esta columna para anali
 ### Paso 4: hacer clic en Next -->
 
 ## Cómo quitar el formato de datos semiestructurados
-Duration: 2
 
 ### Descripción general
 Después de haber visto cómo podemos consultar fácilmente los datos semiestructurados tal y como aparecen en una columna Variant mediante la notación de puntos, nuestro ingeniero de datos de Tasty ya puede proporcionar los datos solicitados a los colaboradores internos.
@@ -209,7 +205,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 ### Paso 4: hacer clic en Next -->
 
 ## Creación de vistas estructuradas a partir de datos semiestructurados
-Duration: 2
 
 ### Descripción general
 En la sección anterior, hemos utilizado un conjunto de funcionalidades de datos semiestructurados de Snowflake para desarrollar una consulta que proporciona el resultado exacto que necesitan nuestros usuarios finales. A continuación, vamos a seguir el proceso de promoción de esta consulta en nuestra capa sin procesar a través de la capa armonizada y, finalmente, hasta la analítica. Nuestros usuarios poseen privilegios para poder leer esta última capa.
@@ -268,7 +263,6 @@ Por otro lado, estamos utilizando los parámetros [SELECT * EXCLUDE y RENAME](ht
 ### Paso 3: hacer clic en Next -->
 
 ## Análisis de los datos semiestructurados procesados en Snowsight
-Duration: 2
 
 ### Descripción general
 Cuando nuestra vista de la carta esté lista en nuestra capa de analíticas, vamos a ejecutar un par de consultas en ella que proporcionaremos a nuestros usuarios finales para mostrar cómo Snowflake impulsa una experiencia de consulta relacional con datos semiestructurados sin tener que hacer copias adicionales ni realizar ningún procesamiento complejo.
@@ -349,7 +343,6 @@ Para terminar con esta quickstart guide, ya solo nos falta recalcar lo fácil qu
 ### Paso 4: hacer clic en Next -->
 
 ## Conclusión y siguientes pasos
-Duration: 1
 
 ### Conclusión
 ¡Bien hecho! Has completado la quickstart guide Tasty Bytes - De cero a Snowflake sobre datos semiestructurados. 

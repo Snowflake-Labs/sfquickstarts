@@ -1,17 +1,16 @@
 author: Kamil Bregula
 id: ingest_data_from_pubsub_to_snowflake_with_apache_beam
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Ingest data from PubSub to Snowflake with Apache Beam
-categories: data-engineering,architecture-patterns,solution-examples,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Apache Beam, Data Engineering
 
 # Ingest data from PubSub to Snowflake with Apache Beam
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 30
 
 
 This guide shows you how to set up your Google Cloud project, Snowflake account, create a Java project with Maven by using the Apache Beam SDK and run a streaming pipeline locally and on the Dataflow service. Each step is presented as a console command or an SQL command to reduce the possibility of incorrect execution of a step.

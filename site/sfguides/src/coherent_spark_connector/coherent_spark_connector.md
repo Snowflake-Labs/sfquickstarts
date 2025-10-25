@@ -1,17 +1,16 @@
 authors: Dustin Smith, Alan Hung
 id: coherent_spark_connector
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: Use business logic from Excel in Snowflake with Coherent Spark
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Coherent, Coherent Spark, Excel
 
 
 # Coherent Spark Connector - use business logic from Excel spreadsheets in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 
 The Coherent Spark Connector transforms business logic designed in Microsoft Excel spreadsheets into reusable SQL functions that call our Spark APIs from Snowflake Data Cloud. Joint customers can save significant time on development and testing, and hence roll out their products to the market quickly while the original dataset remains in the Snowflake environment. The entire workflow comes with enterprise-grade security and scalability. Please see the FAQs in Step 6 for additional information.
@@ -90,7 +89,6 @@ _Table last updated: 3rd June 2023._
 
 <!-- ------------------------ -->
 ## Download the connector from Private Sharing or Public Marketplace
-Duration: 1
 
 ### Download from Private Sharing
 
@@ -120,7 +118,6 @@ Duration: 1
 
 <!-- ------------------------ -->
 ## Grant privileges to application/user access to allow service synchronization
-Duration: 1
 
 
 ### 1. Specify the active application for the session.
@@ -186,7 +183,6 @@ CALL SPARK_PUBLIC.SETUP('{SPARK_FOLDER}', '{SPARK_KEY}', 'SYNTHETICKEY', CURRENT
 
 <!-- ------------------------ -->
 ## Synchronize folders and services
-Duration: 1
 
 ### Synchronize the folder regularly to maintain the updated services.
 
@@ -216,7 +212,6 @@ For each version of each service in a synchronized folder, you will see two data
 
 <!-- ------------------------ -->
 ## Use the functions in the Snowflake environment
-Duration: 1
 
 
 The two database functions operate in different modes:
@@ -256,7 +251,6 @@ SELECT SPARK.BLACKSCHOLES_VARIANT(90, 0.5, 0.9, 56, 0.5);
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Congratulations, you're now all set up to call your Spark services from your Snowflake environment! This means you can take business logic written in Excel, upload it to Spark, and immediately use it on all of your data in Snowflake via API, no coding needed!
 

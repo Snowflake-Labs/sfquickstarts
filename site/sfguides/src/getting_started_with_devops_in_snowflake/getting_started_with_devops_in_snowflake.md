@@ -1,18 +1,17 @@
 author: Vincent Raudszus
 id: getting_started_with_snowflake_devops
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Getting Started with Snowflake DevOps
-categories: devops,getting-started,data-engineering
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Getting Started with Snowflake DevOps
 
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 A data pipeline is a series of automated processes that ingest, process, and move data from one place to another. It's a crucial component in data management and analytics, enabling organizations to make use of the vast amounts of data available to them.
 
@@ -77,7 +76,6 @@ During this Quickstart you will accomplish the following things:
 <!-- ------------------------ -->
 ## Setup Environment
 
-Duration: 4
 
 ### Fork the Quickstart Repository
 
@@ -114,7 +112,6 @@ Now use these credentials to login with the VS Code extension, by clicking the S
 <!-- ------------------------ -->
 ## Setup Snowflake
 
-Duration: 4
 
 To get started we need to create some basic Snowflake objects like databases, stages and a warehouse that we will use later on. Open `steps/01_setup_snowflake.sql` to review what statements will be executed.
 
@@ -144,7 +141,6 @@ Start by opening the `steps/01_setup_snowflake.sql` script. Now you can run all 
 <!-- ------------------------ -->
 ## Load Data from the Marketplace
 
-Duration: 8
 
 In this step, we will be "loading" the raw data we need to find the perfect vacation spot to Snowflake. But "loading" is really the wrong word here. Because as we're using Snowflake's unique data sharing capability, we don't actually need to copy any data to our Snowflake account. Instead, we can directly access the data shared by various data providers in the Snowflake Data Marketplace.
 
@@ -189,7 +185,6 @@ SELECT * FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.point_of_interest_inde
 <!-- ------------------------ -->
 ## Harmonize Marketplace Data
 
-Duration: 3
 
 The step will establish a data pipeline that will help us answer the question of what the perfect vacation spot is by joining together the different data sources from the market place, aggregating data points and picking only the columns and rows we need.
 
@@ -204,7 +199,6 @@ To establish the pipeline, we need to run the commands in the Python file `steps
 <!-- ------------------------ -->
 ## Orchestrate Jobs
 
-Duration: 12
 
 During this step we will be orchestrating our new pipeline with Snowflake's native orchestration feature named “tasks”. In this step, we will create two tasks and chain them together. We will then deploy or run the tasks to operationalize the data pipeline.
 
@@ -256,7 +250,6 @@ Check out [this](https://quickstarts.snowflake.com/guide/data_engineering_pipeli
 <!-- ------------------------ -->
 ## Database Change Management
 
-Duration: 12
 
 Just as business needs change, so do data needs. Over time our data pipeline will need to adapt to capture new or differently formatted data. It is our responsibility as data engineers to make sure that these changes can be made in a safe manner. In DevOps, Infrastructure as Code (IaC) is a common pattern applied when making infrastructure changes. Managing our database resources in a common, versioned source allows us to effectively collaborate and have a source off truth that is consistent across all deployments. IaC if often done in a declarative manner using tools such as [terraform](https://quickstarts.snowflake.com/guide/devops_dcm_terraform_github/#0).
 
@@ -389,7 +382,6 @@ If done correctly, you will shortly receive another email with your updated vaca
 <!-- ------------------------ -->
 ## Separate Dev and Prod Environments
 
-Duration: 5
 
 In the previous section we did not pause to verify our changes before deploying them to Snowflake. In this section, we will discuss how to properly test the changes before deploying them to our production database.
 
@@ -436,7 +428,6 @@ data_retention_time_in_days = {{retention_time}};
 <!-- ------------------------ -->
 ## Deployment Automation
 
-Duration: 15
 
 In this section we will use the Jinja templating to automatically deploy the pipeline using GitHub Actions. We build a CI/CD pipeline to deploy the data pipeline to the “prod” database when changes are pushed to the repository’s “main” branch. Thanks to templating, commits to the “dev” branch are deployed to the “dev” database instead.
 
@@ -591,14 +582,12 @@ Both commands are executed using the `snow` command. This command is part of the
 <!-- ------------------------ -->
 ## Cleanup
 
-Duration: 1
 
 Once you're finished with the Quickstart and want to clean things up, you can drop all the objects you created by running the cleanup script. Open `steps/08_cleanup.sql` in the VS Code extension and run all command using the "Execute All Statements" button in the upper right corner of the editor window.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 2
 
 Wow, we have covered a lot of ground during this Quickstart! Not only can you now skip this year’s vacation planning, but you have also learned how to manage a data pipeline with DevOps practices. You followed the Infrastructure as Code principle and used Snowflake’s version control capabilities in combination with declarative Create-or-Alters to make database change management much less error-prone and less painful. With the help of SnowflakeCLI and Jinja templating you verified your changes in a test environment before automatically rolling them out to production with the help of a CI/CD pipeline.
 

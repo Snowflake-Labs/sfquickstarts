@@ -1,16 +1,15 @@
 author: Mats Stellwall
 id: getting_started_with_snowpark_python_scikit
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Getting Started with Snowpark for Python with Scikit-learn
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
 
 # Getting Started with Snowpark for Python with Scikit-learn
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 By completing this guide, you will be able to go from raw data to build a machine learning model that can help to predict house prices.
 
@@ -55,7 +54,6 @@ It is one of the most popular [open source](https://scikit-learn.org/) machine l
 <!-- ------------------------ -->
 ## Clone GitHub Repository
 
-Duration: 8
 
 This section covers cloning of the GitHub repository and creating a Python 3.10 environment.
 
@@ -110,7 +108,6 @@ conda activate snowpark_scikit_learn
 <!-- ------------------------ -->
 ## Data Ingest
 
-Duration: 10
 
 The Notebook linked below covers the following data ingestion tasks.
 
@@ -135,7 +132,6 @@ To get started, follow these steps:
 
 ## Data Exploration
 
-Duration: 20
 
 The Notebook linked below covers the following data exploration tasks.
 
@@ -159,7 +155,6 @@ To get started, follow these steps:
 
 ## Machine Learning using Scikit learn
 
-Duration: 30
 
 > aside negative
 > PREREQUISITE: Successful completion of previous steps
@@ -196,7 +191,6 @@ To get started, follow these steps:
 
 ## Conclusion And Resources
 
-Duration: 5
 
 Congratulations! You've successfully completed the lab using Snowpark for Python and scikit-learn.
 

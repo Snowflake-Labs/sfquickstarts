@@ -1,16 +1,15 @@
 author: Mats Stellwall
 id: automating_document_processing_workflows_with_document_ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/document-ai
+language: en
 summary: This guide will provide step-by-step details for automating document processing workflows with Document AI
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started,  LLMs, Generative AI, Streamlit, Data Engineering, Document AI
 
 # Automating Document Processing Workflows With Document AI
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Through this quickstart guide, you will explore Document AI. You will set up your Snowflake environment, use Document AI to create a model to extract values from documents, create a document extraction pipline using the model and use streamlit to build a application to verify the extracted values.  
 
@@ -44,7 +43,6 @@ You will use documents from the [Contract Understanding Atticus Dataset (CUAD) v
 
 <!-- ------------------------ -->
 ## Setup the Snowflake enviroment
-Duration: 10
 
 ### Overview
 This section covers cloning of the GitHub repository and creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..)
@@ -118,7 +116,6 @@ We are now ready to start.
 
 <!-- ------------------------ -->
 ## Build a Document AI model
-Duration: 20
 
 ### Overview
 In This step we will create a Document AI model by uploading documents and sepcify the questions needed to extarct values. Once done we will publish the models so it can be use for extracting values from documents.
@@ -218,7 +215,6 @@ We are now ready to create a document processing pipeline.
 
 <!-- ------------------------ -->
 ## Create a document processing pipeline
-Duration: 15
 
 ### Overview
 In this step we will use our previously published model to extract values from new documents. This step might be done by a data engineer or someone responsible for setting up piplines.
@@ -303,7 +299,6 @@ Next step is to create the Streamlit application for verifying the extracted val
 
 <!-- ------------------------ -->
 ## Create a Streamlit application
-Duration: 10
 
 ### Overview
 In this step we will create a Streamlit application in Snowflake to be used for verifying the extracted values.

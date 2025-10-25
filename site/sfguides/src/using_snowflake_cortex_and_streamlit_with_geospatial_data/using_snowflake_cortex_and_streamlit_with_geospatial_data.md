@@ -1,16 +1,15 @@
 author: Becky O’Connor
 id: using_snowflake_cortex_and_streamlit_with_geospatial_data
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
+language: en
 summary: This is a sample Snowflake Guide
-categories: Data-Sharing, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial
 
 # Using Snowflake Cortex And Streamlit With Geospatial Data
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Analyzing Location specific data in order to make decisions often requires 'niche' techniques which are often worked on by 'geography' experts.   In snowflake, everyone can be an expert in any location in which they need to understand - whether it's points of interest, transport links or government boundaries - all is feasible using standard functionality available within Snowflake.  
 
@@ -69,7 +68,6 @@ Here is a flow of what you will achieve if you complete all steps in the quickst
 
 <!-- ------------------------ -->
 ## Initial Setup
-Duration: 2
 
 Open up a new SQL worksheet and run the following commands. To open up a new SQL worksheet, select Projects » Worksheets, then click the blue plus button and select SQL worksheet.
 
@@ -98,7 +96,6 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 
 <!-- ------------------------ -->
 ## Snowflake Marketplace
-Duration: 2
 
 ![alt text](assets/flow0.png)
 Once logged in go to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
@@ -133,7 +130,6 @@ You will have access to the dataset for a period of **14 days**
 
 
 ## Create your First map Layer
-Duration: 5
 
 ![alt text](assets/flow2.png)
 
@@ -256,7 +252,6 @@ st.map is useful for quickly generating simple maps by rendering latitude and lo
 <!-- ------------------------ -->
 ## Create a Boundary for filtering purposes
 
-Duration: 10
 
 You previously loaded the places dataset from Carto Overture maps.  This dataset offers a comprehensive list of places of interest across the world such as restaurants, bars and schools.  We want to filter this dataset to only list places of interest that occur within the Northern Trains locality.  Creating a Boundary box is the easiest option.
 
@@ -350,7 +345,6 @@ When you run the cell, the boundary box should look like this:
 
 <!-- ------------------------ -->
 ## Filtering the data using the boundary box
-Duration: 10
 
 Next, lets leverage and filter the overture maps so these will only consist of data within this area.  Overture maps consist of location data across the entire globe.
 
@@ -481,7 +475,6 @@ We have now rendered a multi layer map which overlays restaurants and northern r
 
 <!-- ------------------------ -->
 ## Use Cortex to describe the Train Stations
-Duration: 10
 
 ![alt text](assets/flow3.png)
 At the moment we only have very basic train station information.  Lets add more info from the shared dataset:
@@ -628,7 +621,6 @@ Hover over the map and checked the updated tool tips.
 <!-- ------------------------ -->
 ## Use Cortex to list Key location events
 
-Duration: 10
 
 ![alt text](assets/flow4.png)
 Any location may be impacted by key events.  Let's try and pinpoint out any key event happening in the north of England and how restaurants and train stations may be impacted by this.  We do not have specific event data for this, so in this case, we will leverage Snowflake Cortex to suggest events that may impact this area.  
@@ -778,7 +770,6 @@ We now have all of this joined together - in the next step we will use an LLM to
 
 <!-- ------------------------ -->
 ## Use Cortex to write relevant correspondence
-Duration: 10
 
 ![alt text](assets/flow6.png)
 
@@ -919,7 +910,6 @@ That's it. If you wish, you can download the completed python code from here by 
 
 <!-- ------------------------ -->
 ## Generate Synthetic Incidents
-Duration: 10
 
 ![alt text](assets/flow7.png)
 
@@ -1254,7 +1244,6 @@ st.markdown(
 
 ```
 ### Running the App to generate data
-Duration: 10
 
 Within the App, generate events for various mp's.   You can decide how many you would like to generate.  Once  you have selected what you would like to generate, press Generate Reports.  This will create Incidents relating to the MP.  They will also be in the context of the specified activity.
 
@@ -1549,7 +1538,6 @@ st.table(social_media.drop('V'))
 ```
 <!-- ------------------------ -->
 ## Use Cortex to Embed Generated Text and create a Search Service
-Duration: 10
 
 ![assets](assets/flow9.png)
 
@@ -1566,7 +1554,6 @@ Import as a new snowflake notebook.  Add it to the BUILD.UK.NOTEBOOKS schema and
 
 <!-- ------------------------ -->
 ## Bringing in Met Office Weather
-Duration: 10
 ### Met office Weather
 
 ![alt text](assets/flow10.png)
@@ -1969,7 +1956,6 @@ if run:
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 ### Conclusion
 
 Snowflake provides powerful capabilities when you bring Cortex with Snowpark and Streamlit's visualization capabilities together.

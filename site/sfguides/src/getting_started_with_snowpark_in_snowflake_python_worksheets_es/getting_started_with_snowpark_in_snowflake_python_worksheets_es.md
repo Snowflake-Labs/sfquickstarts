@@ -1,17 +1,16 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_es
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Introducción a la ingeniería de datos y al ML con Snowpark para Python
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowpark Python, Data Engineering, Python Worksheets, introducción, Snowpark para Python, ingeniería de datos, hojas de trabajo de Python, es 
 authors: Dash Desai
 
 # Introducción a Snowpark con las hojas de trabajo de Snowflake para Python
 <!-- ------------------------ -->
 ## Descripción general
 
-Duration: 5
 
 Tras completar esta guía, serás capaz de probar Snowpark para Python desde la UI de Snowflake. Además, comprenderás mejor cómo llevar a cabo tareas esenciales de ingeniería de datos con Snowpark en una hoja de trabajo de Snowflake para Python.
 
@@ -46,7 +45,6 @@ Un conjunto de datos preparado que se podrá utilizar en aplicaciones y análisi
 <!-- ------------------------ -->
 ## Introducción
 
-Duration: 10
 
 ### Creación de una cuenta de prueba de Snowflake
 
@@ -69,7 +67,6 @@ El botón que aparece más arriba te redirigirá a la página de la prueba **Int
 <!-- ------------------------ -->
 ## Carga de datos de tablas de Snowflake en DataFrames de Snowpark
 
-Duration: 1
 
 En primer lugar, vamos a importar la biblioteca de Snowpark para Python.
 
@@ -80,7 +77,6 @@ import snowflake.snowpark as snowpark
 
 ### Carga de datos de gastos e ingresos agregados de una campaña
 
-Duration: 3
 
 La tabla de gastos de campaña contiene los datos de los clics en anuncios que se han agregado para mostrar los gastos diarios en diferentes canales de publicidad digital como buscadores, redes sociales, correo electrónico y vídeos. La tabla de ingresos contiene datos de diez años.
 
@@ -103,7 +99,6 @@ Consejo: Obtén más información sobre [DataFrames de Snowpark](https://docs.sn
 <!-- ------------------------ -->
 ## Transformaciones de datos
 
-Duration: 10
 
 En esta sección vamos a realizar un conjunto de transformaciones, como agregaciones y uniones de dos DataFrames.
 
@@ -204,7 +199,6 @@ Este es el aspecto que debería tener la pestaña **Output** tras haber ejecutad
 <!-- ------------------------ -->
 ## Guardar de datos transformados
 
-Duration: 1
 
 Vamos a guardar los datos transformados en una tabla de Snowflake ***SPEND_AND_REVENUE_PER_MONTH*** y así podremos utilizarla para continuar con el análisis y el entrenamiento de un modelo.
 
@@ -215,7 +209,6 @@ snow_df_spend_and_revenue_per_month.write.mode('overwrite').save_as_table('SPEND
 <!-- ------------------------ -->
 ## Visualización y devolución de datos transformados
 
-Duration: 1
 
 Uno de los valores que ha devuelto una hoja de trabajo de Python es de tipo y configuración ***Table()*** que, en nuestro caso, nos permitirá visualizar y devolver los datos transformados como un DataFrame de Snowpark.
 
@@ -234,7 +227,6 @@ Este es el aspecto que debería tener la pestaña **Results** tras haber ejecuta
 <!-- ------------------------ -->
 ## Implementación como un procedimiento almacenado
 
-Duration: 2
 
 De manera opcional, también puedes implementar esta hoja de trabajo como un procedimiento almacenado de Python para poder, por ejemplo, programarlo usando [Snowflake Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro). Para ello, haz clic en el botón **Deploy** en la parte superior derecha y sigue las instrucciones que se muestran a continuación.
 

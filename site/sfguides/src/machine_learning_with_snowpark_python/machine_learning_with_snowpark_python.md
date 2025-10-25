@@ -1,16 +1,15 @@
 author: Caleb Baechtold
 id: machine_learning_with_snowpark_python
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This is a sample Snowflake Guide
-categories: getting-started,data-science-&-ml
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Data Engineering, Getting Started, Machine Learning
 
 # Machine Learning with Snowpark Python
 <!-- ------------------------ -->
 ## Overview 
-Duration: 7
 
 **Note: if this is your first time experimenting with Snowpark Python, we recommend completing the [Getting Started with Snowpark for Python](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_python/index.html?index=..%2F..index#0) Quickstart before working on this quickstart. It will include an overview of more fundamental concepts, this Quickstart is meant to be a 300+ level resource.**
 
@@ -57,7 +56,6 @@ The source code for this quickstart is available on [GitHub](https://github.com/
 
 <!-- ------------------------ -->
 ## Use-Case: Predicting Bike Share Trips 
-Duration: 1
 
 In this example we use the [Citibike dataset](https://ride.citibikenyc.com/system-data). Citibike is a bicycle sharing system in New York City. Everyday users choose from 20,000 bicycles at over 1000 stations around New York City.
 
@@ -67,7 +65,6 @@ Importantly, at the end of each section of this Quickstart, we are going to expo
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 **Persona**: DBA/Platform Administrator
 
@@ -126,7 +123,6 @@ session.use_role(state_dict['connection_parameters']['role'])
 
 <!-- ------------------------ -->
 ## Data Engineering
-Duration: 10
 
 **Persona**: Data Engineeer
 
@@ -152,7 +148,6 @@ Run the last few cells of the notebook to bulk-load ~94M records into your Snowf
 
 <!-- ------------------------ -->
 ## Data Marketplace
-Duration: 5
 
 **Persona**: Data Engineer
 
@@ -175,7 +170,6 @@ Open up the [02_Data_Marketplace](https://github.com/Snowflake-Labs/sfguide-citi
 
 <!-- ------------------------ -->
 ## Data Science Exploration and Modeling
-Duration: 20
 
 **Persona**: Data Scientist
 
@@ -201,7 +195,6 @@ Finally, train your TabNet regression model using the final feature set and eval
 
 <!-- ------------------------ -->
 ## ML Engineering Development for ML Ops Pipelines
-Duration: 10
 
 **Persona**: ML Engineer
 
@@ -224,7 +217,6 @@ Your data scientists have done some exploratory analysis, feature engineering, a
 
 <!-- ------------------------ -->
 ## Operationalizing ML Code for MLOps
-Duration: 10
 
 **Persona**: ML Engineer
 
@@ -247,7 +239,6 @@ The ML Engineer must now create a pipeline to automate deployment of your statio
 
 <!-- ------------------------ -->
 ## Orchestration with Apache Airflow
-Duration: 20
 
 **Persona**: ML Engineer
 
@@ -307,7 +298,6 @@ _**Note:** The `Dockerfile` file for this project has been modified to make thin
 
 <!-- ------------------------ -->
 ## Integration with Streamlit for Model Consumption
-Duration: 15
 
 **Persona**: Application Developer / Data Scientist
 
@@ -329,7 +319,6 @@ For more information on Streamlit + Snowflake, please visit [the Snowflake blog.
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 In this quickstart we demonstrated how Snowpark Python enables rapid, end-to-end machine learning workload development, deployment, and orchestration. 
 

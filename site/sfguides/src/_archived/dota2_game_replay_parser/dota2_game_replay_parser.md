@@ -1,17 +1,16 @@
 summary: Parse a Dota 2 game replay
 id: dota2_game_replay_parser 
-categories: undefined
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/gaming, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Dota2
 authors: Marius Ndini
 
 # Dota2 game replay parser
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
 Parse a replay into a table as described above as it is necessary.  Welcome to Snowflake! This guide designed for database and data warehouse administrators and architects will help you navigate the Snowflake interface and introduce you to some of our core capabilities. [Sign up for a free 30-day trial of Snowflake](https://trial.snowflake.com) and follow along with this lab exercise. Once we cover the basics you’ll be ready to start processing your own data and diving into Snowflake’s more advanced features like a pro.
 
@@ -34,7 +33,6 @@ Parse a replay into a table as described above as it is necessary.  Welcome to S
 
 <!-- ------------------------ -->
 ## Prepare Your Lab Environment
-Duration: 2
 
 ### Steps to Prepare Your Lab Environment
 
@@ -227,13 +225,11 @@ Once you have completed the steps above, place the public and private keys in th
 
 <!-- ------------------------ -->
 ## Java UDF
-Duration: 2
 
 PLACE JAVA UDF DOCS HERE
 
 <!-- ------------------------ -->
 ## Front End Viz App
-Duration: 5
 
 The visualization app is a node.js front end. It is pre-built for mac and windows in the **Front End/Dist** folder and available for download or should you want to combile the source code is provided. 
 
@@ -267,7 +263,6 @@ Click here for more fun
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 1
 
 The Conclusion and Next Steps section is one of the most important parts of a guide. This last section helps to sum up all the information the reader has gone through, and in many ways should read like a [TLDR summary](https://www.howtogeek.com/435266/what-does-tldr-mean-and-how-do-you-use-it/#post-435266:~:text=How%20Do%20You%20Use%20TLDR%3F,you%E2%80%99re%20the%20author%20or%20commenter.%20Using). 
 

@@ -1,16 +1,15 @@
 author: Matt Marzillo
 id: getting_started_with_microsoft_copilot_studio_and_cortex_agents
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: This is a quickstart showing users how use Microsoft Copilot Studio with Snowflake Cortex Agents
-categories: AI, Cortex, Microsoft, Azure, Agents, Copilot
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: AI, Microsoft, Agents, Cortex, Copilot, chatbot
 
 # Getting Started with Microsoft Copilot Studio and Snowflake Cortex Agents
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 Microsoft Copilot Studio is a conversational AI platform that allows users to create and customize copilots, using a low-code, graphical interface, enabling them to build agents for various scenarios and integrate them with Microsoft 365 Copilot or as standalone applications.
 
@@ -285,7 +284,6 @@ Keep the **Snowflake power platform connection info** to reference when you conn
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 8
 
 
 ```sql
@@ -457,7 +455,7 @@ import json
 import _snowflake
 
 def call_sales_intelligence_agent_proc(query: str):
-    API_ENDPOINT = "/api/v2/databases/SNOWFLAKE_INTELLIGENCE/schemas/AGENTS/agents/SALES_INTELLIGENCE_AGENT:run"
+    API_ENDPOINT = "/api/v2/databases/SALES_INTELLIGENCE/schemas/DATA/agents/SALES_INTELLIGENCE_AGENT:run"
     API_TIMEOUT = 15000  # this can be adjusted
     
     # Force very quick response
@@ -515,7 +513,6 @@ call call_cortex_agent_proc('what is the Initial discovery call with TechCorp In
 
 <!-- ------------------------ -->
 ## Configuring Copilot Agent
-Duration: 10
 
 **NOTE:** This quickstart shows how to set up the connectivity with **Triggers** in Copilot Studio, but you can also use **Tools** with a similar flow to use Cortex.
 
@@ -656,7 +653,6 @@ In the Body/statement parameter where we call the stored procedure remove the <>
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 ### Technical Considerations
 This quickstart showed you how to set up the connection to Cortex Agents from MS Copilots. In order to make for a more robust Copilot you will likely add additional triggers to other Agents or Knowledge Sources so that your Copilot is more versatile and can act on specific prompts/triggers.

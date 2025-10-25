@@ -1,17 +1,16 @@
 author: Miles Adkins
 id: automl_with_snowflake_and_h2o
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This lab will walk you through how to use Snowflake and H2O to perform supervised machine learning.
-categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: H2O, AutoML, Partner Connect, Databases, Tables, Stages, File Formats
 
 # AutoML with Snowflake and H2O Driverless AI
 
 <!-- ------------------------ -->
 # AutoML with Snowflake and H2O Driverless AI
-Duration: 5
 ## Use Case Overview
 
 H2O Driverless AI is a supervised machine learning platform leveraging the concept of automated machine learning. Supervised machine learning is a method that takes historic data where the response or **target** is known and build relationships between the input variables and the target variable. Driverless AI automates most of difficult supervised machine learning workflow such as feature engineering, model validation, model tuning, model selection, and model deployment. Modeling pipelines, which are produced from H2O Driverless AI, can exported as standalone scoring artifacts to power your AI/ML use case.
@@ -51,7 +50,6 @@ We will use Snowflake and Driverless AI to:
 
 <!-- ------------------------ -->
 ## Setting up Snowflake
-Duration: 5
 
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
 
@@ -92,7 +90,6 @@ CREATE OR REPLACE TABLE loans (
 
 <!-- ------------------------ -->
 ## Launching Driverless AI
-Duration: 5
 
 Snowflake's Partner Connect feature allows you to seamlessly get started with partner tools and manages most of the connection details for you to get up and running as quickly as possible.
 
@@ -150,7 +147,6 @@ To execute the entire .sql code, which contains 9 different statements, all we n
 
 <!-- ------------------------ -->
 ## Import Data from Snowflake
-Duration: 5
 
 From the empty Datasets view, click the `Add Dataset` button and select the `SNOWFLAKE` connector:
 
@@ -180,7 +176,6 @@ The dataset is now available for next steps in Driverless AI
 
 <!-- ------------------------ -->
 ## Dataset Details
-Duration: 10
 
 Right click the `loans` dataset to get details.
 
@@ -208,7 +203,6 @@ This is helpful in understanding the layout of the data. A quick inspection of y
 
 <!-- ------------------------ -->
 ## Visualizing Datasets
-Duration: 10
 
 `Autoviz` in Driverless AI automatically creates a variety of informative interactive graphs that are designed for understanding the data to be used in building a predictive model. `Autoviz` is unique in that it only shows the graphs that are applicable for your data based on the information in your data.
 
@@ -240,7 +234,6 @@ There are a number of additional useful graphs that can be navigated to fully un
 
 <!-- ------------------------ -->
 ## Split Data
-Duration: 10
 
 Splitting data into train and test sets allows models to be built with the train set and evaluated on the test data. This protects against overfit and yields more accurate error estimates. To use the Dataset Splitter utility, right click the dataset and select `SPLIT`
 
@@ -263,7 +256,6 @@ The `train` dataset has around 31,000 rows and the `test` dataset around 8000 ro
 
 <!-- ------------------------ -->
 ## Experiment
-Duration: 15
 
 We use the term _Experiment_ in Driverless AI to refer to the entire feature engineering and model evolution process. Instead of fitting one model, we are fitting many and using a "survival of the fittest" approach to optimize features and model hyperparameters. The result is a combination feature engineering-modeling _pipeline_, which can easily be investigated and promoted into production.
 
@@ -441,7 +433,6 @@ and Kolmogorov-Smirnov
 
 <!-- ------------------------ -->
 ## Experiment Inspection
-Duration: 10
 
 Once an experiment is completed, it is important to understand the final model's predictive performance, its features, parameters, and how the features and model combine to make a pipeline.
 
@@ -506,7 +497,6 @@ This pipeline is also available in the AutoReport, along with explanatory notes 
 
 <!-- ------------------------ -->
 ## Model Interpretability
-Duration: 10
 
 One of Driverless AI's most important features is the implementation of a host of cutting-edge techniques and methodologies for interpreting and explaining the results of black-box models. In this tutorial, we just highlight some of the MLI features available in Driverless AI without discussing their theoretical underpinnings.
 
@@ -556,7 +546,6 @@ The MLI view provides tools for disparate impact analysis and sensitivity analys
 
 <!-- ------------------------ -->
 ## Deploy the model using Java UDFs
-Duration: 5
 
 ### Introduction
 

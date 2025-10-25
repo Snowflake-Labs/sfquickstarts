@@ -1,17 +1,16 @@
 summary: Snowflake 및 Dataiku로 데이터 과학 가속화
 id: data_science_with_dataiku_kr
-categories: undefined
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: ko
 environments: web
 status: Hidden
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크, 데이터 사이언스, Data Science, Dataiku, kr
 
 # Snowflake 및 Dataiku로 데이터 과학 가속화
 
 <!-- ------------------------ -->
 ## 랩 개요
 
-Duration: 1
 
 이 Snowflake 빠른 시작은 데이터 과학 프로젝트의 일환으로 Snowflake와 Dataiku Cloud를 함께 사용하는 것에 대한 기본 사항을 소개합니다. 두 가지 클라우드 기반 기술을 잘 통합한 몇몇 기능을 다룰 것입니다. 이는 특히나 [Snowflake 30일 무료 평가판](https://trial.snowflake.com) 및 Snowflake의 Partner Connect를 통해 Dataiku Cloud 평가판 버전과 사용하기 위해 설계되었습니다. 또한 Snowflake의 Data Marketplace와 여기에서 가져오는 타사 데이터 세트가 여러분의 Data Science 프로젝트를 강화하고 지원할 수 있는 방법에 대해 알아볼 것입니다.
 
@@ -51,7 +50,6 @@ Duration: 1
 <!-- ------------------------ -->
 ## 랩 환경 준비
 
-Duration: 5
 
 [Snowflake 30일 무료 평가판](https://trial.snowflake.com?utm_source=Snowflake&utm_medium=lab guide&utm_campaign=dataiku-vhol-download-free-trial-from-lab-guide)에 아직 등록하지 않았다면, 지금 등록하십시오.
 
@@ -73,7 +71,6 @@ Negative : **화면 캡처, 샘플 코드 및 환경에 관하여** <br> 이 랩
 <!-- ------------------------ -->
 ## Snowflake 사용자 인터페이스
 
-Duration: 10
 
 ### Snowflake 사용자 인터페이스(UI)에 로그인
 
@@ -142,7 +139,6 @@ Negative : **SYSADMIN** <br> 이 랩 대부분에서는 웨어하우스, 데이�
 <!-- ------------------------ -->
 ## Snowflake Partner Connect를 통해 Dataiku 평가판 계정 준비
 
-Duration: 10
 
 ### Partner Connect를 통해 Dataiku 평가판 생성
 
@@ -257,7 +253,6 @@ Negative : 사용자 암호(Snowflake에서 생성되며 절대 표시되지 않
 <!-- ------------------------ -->
 ## Snowflake Marketplace에서 COVID-19 데이터 가져오기 및 준비
 
-Duration: 20
 
 Positive : **Snowflake의 데이터 공유** <br> Snowflake Marketplace는 Snowflake의 호스팅된 데이터 익스체인지입니다. 여기에서 모든 Snowflake 고객은 원활하게 타사 데이터에 액세스할 수 있습니다. 또한 여기에서 회사는 데이터를 게시하고 다른 Snowflake 고객이 검색하고 구매할 데이터 서비스를 제공할 수 있습니다. 오늘날 220개 이상의 데이터 목록과 더불어 100명 이상의 데이터 공급자를 보유하고 있습니다. 더 자세한 정보는 [이 웹 페이지](https://www.snowflake.com/data-marketplace/)를 검토하십시오. <br> 또한 Snowflake Data Exchange를 확장하고, 여러분의 고객을 위한 파일을 생성하기 위해 FTP, 파일 공유 및 ETL 프로세스의 필요를 없앨 수 있으며, Snowflake Data Exchange를 표준화할 수 있습니다. 이는 데이터 사일로를 허물 것이며 이를 통해 여러분의 회사, 공급업체, 파트너 또는 고객을 높은 수준으로 통제하는 방식으로 마찰 없이 데이터를 공유할 수 있습니다. 여러분의 Data Exchange는 단일 데이터 사본에 대한 실시간 액세스를 통제합니다. 이를 통해 데이터에 대한 액세스를 안전하게 제어할 수 있으며, 파일을 복사하거나 ETL 파이프라인을 구축하는 것과 같은 기존 데이터 공유 메서드의 비용과 문제를 제거합니다.
 
@@ -477,7 +472,6 @@ Dataiku 작업을 위해 이 가상 웨어하우스를 사용할 것입니다. �
 <!-- ------------------------ -->
 ## Dataiku 프로젝트 생성 및 실행
 
-Duration: 20
 
 이 모듈에서는 Dataiku에서 호스팅하는 평가판 계정에 로그인하고 Dataiku 프로젝트를 생성할 것입니다.
 
@@ -1015,7 +1009,6 @@ DSS는 여러분의 디자인 설정에 맞춰 모델을 생성하고 학습시�
 <!-- ------------------------ -->
 ## Snowflake에서 Dataiku 예측 검토
 
-Duration: 5
 
 이제 예측을 작성했던 Snowflake 테이블을 확인할 것입니다.
 
@@ -1075,7 +1068,6 @@ DATAIKU_TEST_DB 데이터베이스 아래에서 새로운 테이블을 볼 수 �
 <!-- ------------------------ -->
 ## 타임 트래블 사용
 
-Duration: 5
 
 Snowflake의 타임 트래블 기능으로 사전 구성 가능한 기간 내 어느 시점이든 과거 데이터에 액세스할 수 있습니다. 기본 기간은 24시간이며 Snowflake Enterprise Edition 으로는 90일까지 가능합니다. 대부분의 데이터 웨어하우스에서는 이 기능을 제공하지 않지만, Snowflake에서는 쉽게 할 수 있습니다!
 
@@ -1246,7 +1238,6 @@ alter warehouse “PC_DATAIKU_WH” set warehouse_size = ‘XSMALL’;
 
 ## 종료 및 다음 단계
 
-Duration: 1
 
 이 자습서는 Snowflake와 Dataiku를 사용하는 방법을 알려주는 동시에 일부 주요 기능을 선보이기 위한 실습형 소개로 설계되었습니다.
 

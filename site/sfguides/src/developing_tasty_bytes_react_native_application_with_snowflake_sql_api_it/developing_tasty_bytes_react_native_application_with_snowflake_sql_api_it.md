@@ -1,16 +1,15 @@
 author: Swathi Jasti
 id: developing_tasty_bytes_react_native_application_with_snowflake_sql_api_it
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/solution-center/certification/community-sourced
+language: en
 summary: Sviluppare una data application React Native per Tasty Bytes con Snowflake, SQL API
-categories: Tasty-Bytes, Guida-introduttiva, sviluppo-app
 environments: web
 status: Pubblicato
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Guida introduttiva, Data Applications, Data Engineering, API, it 
 
 # Tasty Bytes - Sviluppare una data application React Native con la SQL API
 <!-- ------------------------ -->
 ## Panoramica
-Duration: 2 <img src="assets/tasty_bytes_header.png"/>
 
 Nell’attuale panorama data-driven, la maggior parte delle applicazioni si è evoluta verso un impiego sempre più intenso dei dati. Tuttavia, sviluppare data application di successo può essere una sfida, soprattutto in vista della crescita sia del numero di utenti che del volume e della complessità dei dati. Snowflake è la forza motrice di numerose applicazioni basate sui dati e consente ai team specializzati in software di accelerare la progettazione e creare applicazioni scalabili evitando le complessità operative. Concentrandosi sull’incremento della velocità di progettazione, Snowflake offre prestazioni e scalabilità eccezionali per le applicazioni. 
 
@@ -40,7 +39,6 @@ In questo tutorial creerai un’applicazione il cui scopo è aiutare l’azienda
 
 <!-- ------------------------ -->
 ## Configurare i dati in Snowflake
-Duration: 3
 
 Per questa demo utilizzeremo i dati sugli ordini di Tasty Bytes. Utilizzando i dati sugli ordini creerai un’applicazione per i conducenti dei food truck con le seguenti funzionalità:
 - Il conducente può vedere gli ordini nella sua coda
@@ -157,7 +155,6 @@ SELECT * FROM frostbyte_tasty_bytes_app.analytics.data_app_orders_v;
 
 <!-- ------------------------ -->
 ## Creare un utente per l’applicazione
-Duration: 5
 
 Per garantire l’efficacia delle misure di sicurezza, è essenziale stabilire un account utente dedicato per l’applicazione, separato dal tuo account personale. Questo nuovo account verrà utilizzato per interrogare Snowflake. Secondo le best practice di sicurezza, l’account utilizzerà l’autenticazione a coppia di chiavi e avrà un accesso limitato all’interno dell’ambiente Snowflake.
 
@@ -214,7 +211,6 @@ GRANT ROLE tasty_bytes_data_app_demo TO USER data_app_demo;
 
 <!-- ------------------------ -->
 ## Data application con la SQL API
-Duration: 10
 
 L’applicazione che eseguirai è scritta in React Native. 
 
@@ -251,7 +247,6 @@ Stiamo utilizzando l’autenticazione a coppia di chiavi per eseguire l’autent
 
 <!-- ------------------------ -->
 ## Pulizia
-Duration: 1
 
 Vai a Snowsight Worksheets, fai clic su “+” nell’angolo superiore destro per creare un nuovo foglio di lavoro e scegli “SQL Worksheet”. Incolla ed esegui il seguente codice SQL nel foglio di lavoro per eliminare gli oggetti Snowflake creati in questo quickstart.
 
@@ -267,7 +262,6 @@ DROP ROLE tasty_bytes_data_app_demo;
 
 <!-- ------------------------ -->
 ## Conclusione
-Duration: 1
 
 ### Conclusione
 **Ce l’hai fatta!** Hai completato il quickstart Tasty Bytes - Sviluppare una data application React Native con l’API SQL.

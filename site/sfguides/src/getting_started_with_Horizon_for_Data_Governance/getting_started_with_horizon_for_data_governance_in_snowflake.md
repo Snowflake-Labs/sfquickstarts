@@ -1,16 +1,15 @@
 author: Susan Devitt
 id: getting_started_with_horizon_for_data_governance_in_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
+language: en
 summary: This guide is used to demonstrate the capabilities of Horizon for Data Governance. The walk-through consists of being able to ingest and monitor data pipelines in your organization, how to actively govern data including lineage and masking, and how Horizon can help with monitoring data in Snowflake using Snowsight.
-categories: Data governance, data engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Horizon, Data Intelligence, Data Engineering, Data Governance, Observability, Getting Started
 
 # Getting Started with Horizon for Data Governance in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
 Horizon is a suite of native Snowflake features that allow people easily find, understand, and trust data. In this lab you'll learn how Horizon ensures people have reliable and trustworthy data to make confident, data-driven decisions while ensuring observability and security of data assets.
 
@@ -45,7 +44,6 @@ Now that you have the introduction to Horizon and our personas, lets get started
 - A trial [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) Account with ACCOUNTADMIN access (recommended) or an existing Snowflake account (with ACCOUNTADMIN access)
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 All the scripts for this lab are available at [Snowflake Labs](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake) for you as a resource.
 
@@ -284,7 +282,6 @@ copy into @CustomerNYStage from HRZN_DB.HRZN_SCH.CUSTOMER_ORDER_SUMMARY_NY;
 <!-- ------------------------ -->
 
 ## Horizon as a Data Engineer - Data Quality Monitoring
-Duration: 20
 
 ### Overview
 Data Governance doesn't need to be a daunting undertaking. This section is all about how to get started with curating assets to understand common problems that most data organizations want to solve such as data quality monitoring. We will show you how easily all roles benefit from Horizon and Snowflake's RBAC Framework. 
@@ -542,7 +539,6 @@ ORDER BY change_commit_time DESC;
 
 
 ## Horizon as Data Governor - Know & protect your data
-Duration: 30
 
 **Overview**
 
@@ -1069,7 +1065,6 @@ Now that we've protected our data and our users can access it appropriately to a
 
 <!-- ------------------------ -->
 ## Governor Admin - Access & Audit
-Duration: 10
 
 **Overview**
 
@@ -1285,7 +1280,6 @@ Base Objects Accessed: Base data objects required to execute a query.
  >Create a new worksheet named 99_lab_teardown. Copy and paste the entire Teardown Script at [ 99-lab-teardown.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-horizon-data-governance-in-snowflake/blob/main/99-lab-teardown.sql) 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 You did it! In this comprehensive lab, you have seen how Horizon:
 - Secures data with role-based access control, governance policies, and more 

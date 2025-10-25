@@ -1,16 +1,15 @@
 author: Tim Buchhorn
 id: data_collaboration_native_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: This Quickstart will take you through how to build an ML Model in Snowlfake, and then share it via the Snowflake Native App Framework.
-categories: data-applications
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications
 
 # Getting Started With Model Sharing Using Native Apps
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 This Quickstart guide is the second in a series of Collaboration & Applications in Snowflake. Part One of the series can be found [here](https://quickstarts.snowflake.com/guide/data_collaboration_two_way/index.html?index=..%2F..index#0)
 
@@ -58,7 +57,6 @@ The architecture of what we will build is shown below
 
 <!-- ------------------------ -->
 ## Business Use Case and Context
-Duration: 5
 
 The Business Use case follows a similar scenario as Part One.
 
@@ -94,7 +92,6 @@ Addison Howard, AritraAmex, Di Xu, Hossein Vashani, inversion, Negin, Sohier Dan
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 Navigate to the [Snowflake Trial Landing Page](https://signup.snowflake.com/?utm_cta=quickstarts_). Follow the prompts to create a Snowflake Account. You should receive an email to activate your trial account.
 
@@ -217,7 +214,6 @@ We have loaded all the data in Zamboni. We can now proceed with training the mod
 
 <!-- ------------------------ -->
 ## Create Model
-Duration: 45
 
 ### Provider Account (Zamboni)
 
@@ -275,7 +271,6 @@ Stay in the Zamboni account for the next step.
 
 <!-- ------------------------ -->
 ## Build Native App
-Duration: 15
 
 ### Provider Account (Zamboni)
 
@@ -355,7 +350,6 @@ grant usage on model APP_CODE.CREDIT_CARD_DEFAULT_MODEL to application role app_
 
 <!-- ------------------------ -->
 ## Perform Local Testing
-Duration: 15
 
 ### Provider Account (Zamboni)
 
@@ -426,7 +420,6 @@ We are satisfied with the testing. The next step is to distribute the app.
 
 <!-- ------------------------ -->
 ## Distribute Native App
-Duration: 15
 
 ### Provider Account (Zamboni)
 
@@ -480,7 +473,6 @@ Finally, click Publish.
 
 <!-- ------------------------ -->
 ## Consume Model via Native App
-Duration: 10
 
 In this next step, we will log in to our consumer account (Snowbank). You should have saved the details such as the account URL and username from step 3. Log in to the Snowbank Account, and follow the steps to reset your password.
 
@@ -546,7 +538,6 @@ Click "Select Data" and navigate to the CC_DEFAULT_UNSCORED_DATA in the NATIVE_A
 
 <!-- ------------------------ -->
 ## Use Shared Model
-Duration: 10
 
 ### Consumer Account (Snowbank)
 
@@ -580,7 +571,6 @@ We have successfully used a ML Model shared to us within our own environment.
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 5
 
 ### Consumer Account (Snowbank)
 
@@ -594,7 +584,6 @@ DROP WAREHOUSE QUERY_WH;
 ```
 
 ### Provider Account (Zamboni)
-Duration: 10
 
 Navigate to Data Products > Provider Studio > Listings and select Credit Card Default Model
 
@@ -617,7 +606,6 @@ DROP WAREHOUSE QUERY_WH;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations, you have just shared an ML Model over the Snowflake Marketplace via the Snowflake Native App framework. By sharing the ML Model to the Consumer account, we have realised the following benefits:
 

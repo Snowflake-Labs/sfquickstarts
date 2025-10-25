@@ -1,16 +1,15 @@
 author: Ritika Sharma
 id: a_guide_to_kipi_marketing_mix_modelling_analytics_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: This is a sample Snowflake Guide
-categories: Applications & Collaboration, Apps & Collab: External Collaboration, AI - Snowflake ML, Apps & Collab - Native Apps
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, MMM , Marketing, Native Apps
 
 # A Guide to Kipi Marketing Mix Modelling and Analytics App
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 ### What is MMM and Why is it needed?
 Companies often struggle to accurately attribute their marketing spend to specific outcomes. Businesses invest significant amounts in marketing, but without clear insights into ROI from different channels, they may overspend on less effective tactics or underfund the ones driving real results. This inefficiency can lead to wasted budget and missed opportunities for growth.  
@@ -38,7 +37,6 @@ You’ll learn how to set it up and explore all the key features the app has to 
 
 <!-- ------------------------ -->
 ## Install Kipi's MMM Native App
-Duration: 10
 1. First, log in to a snowflake account in your browser, as a user with `ACCOUNTADMIN` privileges.
 2. Navigate to the `Data Products -> Marketplace` tab on the left sidebar. Search for the App [Kipi Marketing Mix Modelling & Analytics App](https://app.snowflake.com/marketplace/listing/GZSTZ4CLE1N4E/kipi-ai-kipi-marketing-mix-modeling-analytics-app) in the Snowflake Marketplace.
 
@@ -64,7 +62,6 @@ Duration: 10
 
 <!-- ------------------------ -->
 ## Explore In-App Sample Data and Dashboard
-Duration: 5
 
 To help users get started with analyzing their marketing campaigns, the app comes preloaded with a sample dataset of media campaign aggregated dataset containing 288K rows. This dataset simulates real-world marketing activities and consists of various metrics related to advertising spend and campaign performance.  
 Sample structure and rows can be viewed under the `Data Sources Tab` in the application.
@@ -107,7 +104,6 @@ In next few sections, we will explore insights from marketing sales & spend data
 
 <!-- ------------------------ -->
 ## Descriptive Analytics
-Duration: 10
 
 ### **A. Media Channel Analysis:** 
 
@@ -147,7 +143,6 @@ The "Sales Insights" tab offers a detailed analysis of campaign performance, foc
 
 <!-- ------------------------ -->
 ## Diagnostic Analytics
-Duration: 5
 
 The Diagnostic Analysis feature allows you to perform in-depth exploratory analysis on your Snowflake-hosted datasets. It provides interactive visualizations to help you understand how different metrics behave over time and in response to various marketing factors.
 In this step, we’ll filter the data to focus on specific campaigns and uncover performance trends.
@@ -161,7 +156,6 @@ This step helps you identify seasonal shifts and strategic opportunities within 
 
 <!-- ------------------------ -->
 ## Predictive Analytics
-Duration: 10
 
 This section allows you to use predictive analytics to forecast how changes in budget allocation may impact your key performance metrics. You can evaluate different budget scenarios to identify the most efficient resource allocation for maximizing ROI.
 The screen is divided into two key sub-tabs:
@@ -197,7 +191,6 @@ The right chart shows the predicted Sales (Target KPI) outcome for both scenario
 
 <!-- ------------------------ -->
 ## Use Your Own Data(Optional)
-Duration: 5
 
 Now that we’ve walked through all the tabs and key features. To customize the app and use it with your own data, head over to the Settings page.You can refer to this guide for custom-data configuration [Kipi MMM Live-Data Setup](https://docs.google.com/document/d/1cCOrtV5a59Hjc7zDKW0N6Z0VRrTfEQszst0Ze5Oj9gg/edit?tab=t.0#heading=h.4d7j2a4cv0n)
 
@@ -215,7 +208,6 @@ Note : Currently, only a single aggregated table is supported.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! In just a few minutes, we have successfully set up a Snowflake Native Application that enables you to harness the power of a Marketing Mix Modeling (MMM) solution directly within your account. Additionally, access to this app can be extended to other roles beyond the `ACCOUNTADMIN`, ensuring that relevant team members can also utilize its features. This completes your setup, and you are now ready to explore the full potential of the MMM solution on your own data.
 

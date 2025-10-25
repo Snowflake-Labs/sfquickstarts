@@ -1,16 +1,15 @@
 author: Charlie Hammond
 id: tasty_bytes_customer_support_email_app
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: This quickstart builds a customer support email application in Streamlit using Cortex LLM features to help agents quickly and effectively answer customer questions. 
-categories: Tasty-Bytes, Getting-Started, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake Cortex, Streamlit
 
 # Tasty Bytes - Customer Support Streamlit Application Powered by Cortex
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 ![banner](assets/ece_header.png)
 
@@ -35,7 +34,6 @@ Additionally, agents can contribute responses to the knowledge base, enabling th
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 ### Step 1 - Accessing hosted Setup SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
@@ -89,7 +87,6 @@ GRANT USAGE ON STREAMLIT tasty_bytes_customer_support_email.app.customer_support
 
 <!-- ------------------------ -->
 ## Running the Customer Support Email App
-Duration: 10
 
 This application is divided into three sections.
 
@@ -136,7 +133,6 @@ where source = 'EMAIL';
 
 <!-- ------------------------ -->
 ## Understanding the Customer Support Email App
-Duration: 5
 
 The following features are used in the customer support email app.
 
@@ -209,7 +205,6 @@ The app has an embedded RAG chatbot for agents to ask more questions of the know
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You have built a customer support email application in Streamlit using Cortex LLMs. This powerful application helps Tasty Bytes customer support agents quickly and accurately answer customer emails, including automatic responses. 
 

@@ -1,16 +1,15 @@
 author: Swathi Jasti
 id: getting-started-with-time-series-analytics-with-pricing-data-on-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics
+language: en
 summary: Getting Started with Time Series Analytics with Pricing Data on Snowflake
-categories: Getting-Started, Time-Series, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Time Series 
 
 # Getting Started with Time Series Analytics with Pricing Data on Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 <img src="assets/time_series_analytics_banner.png"/>
 
@@ -36,7 +35,6 @@ This quickstart explores several time series features using FactSet Tick Data, i
 
 <!-- ------------------------ -->
 ## Setting up the Data in Snowflake
-Duration: 2
 
 We are using FactSet Tick History data from Snowflake Marketplace for this Quickstart. FactSet Provides historical trading information which we will analyze in this Quickstart. 
 
@@ -59,7 +57,6 @@ Follow below instructions to get the FactSet Tick History data from Snowflake Ma
 - Click: Get
 
 ### Creating Objects, Loading Data, and Joining Data
-Duration: 3
 
 Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 
@@ -67,7 +64,6 @@ Run the SQL from the [file](https://github.com/Snowflake-Labs/sfguide-getting-st
 
 <!-- ------------------------ -->
 ## Time Series Analytics using Snowflake Notebooks
-Duration: 10
 
 This quickstart demonstrates several advanced time series features using FactSet Tick Data on Snowflake. You will learn to leverage powerful SQL functions such as TIME_SLICE, ASOF JOIN, and RANGE BETWEEN to gain deeper insights into time series trade data.
 
@@ -115,7 +111,6 @@ Import the following Snowflake Notebook in Snowsight and run each of the cells: 
 
 <!-- ------------------------ -->
 ## Streamlit App Using Cortex Analyst
-Duration: 10
 
 Cortex Analyst is a fully-managed, LLM-powered Snowflake Cortex feature that helps you create applications capable of reliably answering business questions based on your structured data in Snowflake. With Cortex Analyst, business users can ask questions in natural language and receive direct answers without writing SQL. Available as a convenient REST API, Cortex Analyst can be seamlessly integrated into any application.
 
@@ -142,7 +137,6 @@ Ask one of the preconfigured questions or any other question! Cortex Analyst use
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 **You did it!** You have successfully completed the Time Series Analytics with Pricing Data on Snowflake Quickstart.
 

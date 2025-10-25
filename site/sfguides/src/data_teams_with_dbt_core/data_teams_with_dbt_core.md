@@ -1,16 +1,15 @@
 id: data_teams_with_dbt_core
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: Build your data pipeline with dbt Core & Snowflake
-categories: marketing,data-engineering,partner-integrations
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Data Sharing
 authors: Dmytro Yaroshenko
 
 # Accelerating Data Teams with dbt Core & Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 Modern Businesses need modern data strategy built on platforms that could support agility, growth and operational efficiency. Snowflake is Data Cloud, a future proof solution that can simplify data pipelines for all your businesses so you can focus on your data and analytics instead of infrastructure management and maintenance.
 
@@ -50,7 +49,6 @@ To participate in the virtual hands-on lab, attendees need the following:
 
 <!-- ------------------------ -->
 ## Snowflake Configuration 
-Duration: 5
 
 1. Login to your Snowflake trial account.  
 ![Snowflake Log In Screen](assets/image124.png)  
@@ -109,7 +107,6 @@ We would suggest having a look at these articles for inspiration: [How we config
 
 <!-- ------------------------ -->
 ## dbt Configuration 
-Duration: 5
 
 ### Initialize dbt project
 
@@ -189,7 +186,6 @@ Congratulations! You just run your first dbt models on Snowflake!
 
 <!-- ------------------------ -->
 ## Architecture and Use Case Overview
-Duration: 2
 
 In this lab, we are going to analyze historical trading performance of a company that has trading desks spread across different regions. As inputs, we are going to leverage datasets available in Knoema Economy Data Atlas that is available in Snowflake Marketplace, plus few manual uploads. 
 
@@ -205,7 +201,6 @@ Stay tuned!
 
 <!-- ------------------------ -->
 ## Connect to Data Sources
-Duration: 5
 
 Let's go to the Snowflake Marketplace and find what we need. The Data Marketplace lives in the new UI called Snowsight (currently in Preview mode but feel free to test drive after the lab). Click on Preview App at the top of the UI
 
@@ -267,7 +262,6 @@ Now let's start building our pipelines.
 
 <!-- ------------------------ -->
 ## Building dbt Data Pipelines
-Duration: 15
 
 In this section, we are going to start building our dbt pipelines:
 
@@ -368,7 +362,6 @@ Now that we are fully armed. Let's start building data pipelines!
 <!-- ------------------------ -->
 
 ## dbt pipelines - Stock trading history
-Duration: 10
 
 1.. We are going to start building our pipelines starts by declaring [dbt sources](https://docs.getdbt.com/docs/building-a-dbt-project/using-sources). 
 For this let's create a **models/l10_staging/sources.yml** file and add the following configuration:
@@ -507,7 +500,6 @@ SELECT *
 <!-- ------------------------ -->
 
 ## dbt pipelines - Currency exchange rates
-Duration: 10
 Our Stock history comes in USD. In this step, we are going to complement our landscape with additional models for currency exchange rates so we can see key measures in different currencies. 
 
 Let's start by creating new models:
@@ -584,7 +576,6 @@ SELECT *
 <!-- ------------------------ -->
 
 ## dbt pipelines - Trading books
-Duration: 10
 
 Following our use case story, we are going to manually upload two small datasets using 
 [dbt seed](https://docs.getdbt.com/docs/building-a-dbt-project/seeds) representing trading books of two desks. As you would notice, they were buying and selling AAPL shares, but logging the cash paid/received in different currencies: USD and GBP. 
@@ -717,7 +708,6 @@ SELECT *
 <!-- ------------------------ -->
 
 ## dbt pipelines - PnL calculation
-Duration: 10
 
 This section should bring the last models to complete the story. 
 Now we have trading history of our desks and stock price history. Let's create a model to show how Market Value and PnL were changing over time. For this we are going to start by creating a model:
@@ -832,7 +822,6 @@ And this is it! Now you have a worksheet that you can slice'n'dice, share with y
 
 <!-- ------------------------ -->
 ## Testing, Deployment, Materializations
-Duration: 5
 
 ### Establishing Testing
 To build trust in your data solution, it is hard to underestimate the importance of testing. While there are many ways to organize automated testing, thankfully dbt tool comes with the great [data tests framework](https://docs.getdbt.com/docs/building-a-dbt-project/tests). Let's build an example.
@@ -1004,7 +993,6 @@ With that, let's move to our final section for this lab!
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 2
 
 Congratulations on completing this lab using dbt and Snowflake for building data pipelines to drive analytics! You’ve mastered the dbt and Snowflake basics and are ready to apply these fundamentals to your own data. Be sure to reference this guide if you ever need a refresher.
 

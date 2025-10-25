@@ -1,17 +1,16 @@
 id: getting_started_with_snowflake_arctic
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This guide provides the instructions for writing a Streamlit application that uses Snowflake Arctic for custom tasks like summarizing long-form text into JSON formatted output using prompt engineering and Snowflake Cortex task-specific LLM functions to perform operations like translate text between languages or score the sentiment of a piece of text.
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Archived
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowflake Arctic, Snowflake Cortex, Streamlit
 authors: Dash Desai
 
 # A Getting Started Guide With Snowflake Arctic and Snowflake Cortex 
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 Getting started with AI on enterprise data can seem overwhelming, between getting familiar with LLMs, how to perform custom prompt engineering, and how to get a wide range of LLMs deployed/integrated to run multiple tests all while keeping that valuable enterprise data secure. Well, a lot of these complexities are being abstracted away for you in Snowflake Cortex. 
 
@@ -57,7 +56,6 @@ An interactive Streamlit application running in Snowflake.
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5
 
 Prior to GenAI, a lot of the information was buried in text format and therefore going underutilized for root cause analysis due to complexities in implementing natural language processing. But with Snowflake Cortex it’s as easy as writing a SQL statement! 
 
@@ -125,7 +123,6 @@ COPY into CALL_TRANSCRIPTS
 <!-- ------------------------ -->
 ## Snowflake Cortex
 
-Duration: 5
 
 Given the data in `call_transcripts` table, let’s see how we can use Snowflake Cortex. It offers access to industry-leading AI models, without requiring any knowledge of how the AI models work, how to deploy LLMs, or how to manage GPU infrastructure.
 
@@ -181,7 +178,6 @@ select transcript,snowflake.cortex.classify_text(transcript,['Refund','Exchange'
 <!-- ------------------------ -->
 ## Snowflake Arctic
 
-Duration: 5
 
 ### Prompt Engineering
 Being able to pull out the summary is good, but it would be great if we specifically pull out the product name, what part of the product was defective, and limit the summary to 200 words. 
@@ -212,7 +208,6 @@ Here we’re selecting the Snowflake Arctic model and giving it a prompt telling
 <!-- ------------------------ -->
 ## Streamlit Application
 
-Duration: 9
 
 To put it all together, let's create a Streamlit application in Snowflake.
 
@@ -343,7 +338,6 @@ This is also a good way to quickly and easily compare how different LLMs might p
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully completed the Getting Started with Snowflake Arctic and Snowflake Cortex quickstart guide. 
 

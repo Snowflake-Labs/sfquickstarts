@@ -1,16 +1,15 @@
 author: Prabhath Nanisetty
 id: build-a-visual-idea-generator-with-text-to-image-models
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
 summary: A guide to building a visual concept/idea generator from unstructured data powered by Text2Image LLM models and Streamlit.
-categories: Data-Science-&-AI,Getting-Started,App-Development,Cortex,Data-Science-&-ML,Solution-Examples,Streamlit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science & AI, Data Applications, Text to Image, Streamlit, Model Registry, Container Runtime Notebooks, Services, Innovation, Idea Generation, CPG Concept, Concept Testing, Ad Creative Automation
 
 # Build a Visual Concept/Idea Generator using a Text-to-Image AI Model
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 In this quickstart, you will learn how to easily build a Streamlit application that can generate images inspired by customer feedback or new innovation ideas. 
 
@@ -49,7 +48,6 @@ Wouldn't it be great if you could generate these automatically and easily? Well,
 
 <!-- ------------------------ -->
 ## About Concept / Idea Generation
-Duration: 5
 
 ### Overview
 Many companies have innovation teams that gather input from customers and research the market or industry in order to capture new innovation ideas for their products. A common practice in Retail & Consumer Goods is to understand both disruptive innovation, the development of fundamentally new products, or commercial innovation, the development of new packaging or smaller innovations.
@@ -98,7 +96,6 @@ Other models that have been tested and confirmed to work are listed below along 
 
 <!-- ------------------------ -->
 ## Setup Roles and Permissions
-Duration: 5
 
 In this section, we will set-up all the required Snowflake objects and permissions for this demo. We will be referencing the `1_set_up.sql` script located [here](https://github.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/blob/main/1_set_up.sql).
 
@@ -165,7 +162,6 @@ CREATE STAGE CONCEPT_GEN_INPUT_IMAGES
 
 <!-- ------------------------ -->
 ## Create Compute Engines
-Duration: 5
 
 ### Create warehouse and compute pools
 First we will create the warehouse to power our Notebook
@@ -203,7 +199,6 @@ CREATE COMPUTE POOL IF NOT EXISTS CONCEPT_GEN_POOL_L
 
 <!-- ------------------------ -->
 ## Setup Access to External Resources
-Duration: 5
 
 ### Create External Access Integrations
 In this step, we will create the External Access Integrations (EAIs) that we will need for our Notebooks and objects to access external resources outside of the Snowflake perimeter.
@@ -290,7 +285,6 @@ VALUES
 
 <!-- ------------------------ -->
 ## Run Demo in Notebook
-Duration: 30
 
 > aside negative
 >
@@ -326,7 +320,6 @@ There are a few different methods in this Notebook, so hitting Run All is not re
 
 <!-- ------------------------ -->
 ## Create an Image Model Service
-Duration: 30
 
 If we don't want to be limited in using a Snowflake Notebook, but instead want to embed this capability into an application or open up for an API, you will need to create a model service that can serve up the model easily.
 
@@ -409,7 +402,6 @@ This flow is what will guide our Streamlit application in the next section. Whil
 
 <!-- ------------------------ -->
 ## Create a Streamlit Application
-Duration: 5
 
 > aside negative
 >
@@ -441,7 +433,6 @@ After an image has been generated all of the inputs as well as the output are sh
 
 <!-- ------------------------ -->
 ## Further Considerations
-Duration: 1
 
 This quickstart help you to quickly create a service and an accompanying Streamlit app for non-technical users to use. However, there are many other modalities for Idea generation that will be discussed below.
 
@@ -458,7 +449,6 @@ The orange areas highlighted in the image above represent the scope of this quic
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 You have just built an entire idea generation engine from scratch and the best part is that you did not need to manage any complex cloud infrastructure other than setting up compute pools or custom configuring APIs to external LLMs. Snowflake took care of all that complexity for you!
 

@@ -1,16 +1,15 @@
 summary: Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake
 id: hightouch_cdp
-categories: Marketing,Getting-Started,Partner-Integrations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Marketing, MarTech, Composable CDP
 author: Luke Ambrosetti
 
 # Marketing Orchestration and Campaign Intelligence with Hightouch and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Too often, marketers have limited access to their data. They must submit ad-hoc requests to data teams, rely on analysts to provide customer insights, and sporadically collect and upload manual customer list CSVs into their marketing and advertising platforms.
  
@@ -42,7 +41,6 @@ You will need a Snowflake Account with ACCOUTADMIN access to install Hightouch v
 
 <!-- ------------------------ -->
 ## Pre-work: Create Hightouch Workspace
-Duration: 2
 
 ***Important: You will need to set up a new workspace in Hightouch specifically for this lab. If you already have a Hightouch account, please create a new Workspace through Partner Connect as described in this section.***
 
@@ -78,7 +76,6 @@ You can set up a database, schema, and warehouse for use with Hightouch by setti
 
 <!-- ------------------------ -->
 ## Pre-work: Load Sample Data
-Duration: 3
 
 1. Copy the following SQL:
 
@@ -144,7 +141,6 @@ select * from users;
 
 <!-- ------------------------ -->
 ## Destination Creation
-Duration: 5
 
 [Destinations](https://hightouch.com/docs/getting-started/concepts#destinations) are the tools and services you want to send your data to. You need to connect your destination to Hightouch before you can set up any syncs to destinations. For the purpose of this live Hands-on-Lab, your workspace will come pre-configured with destinations. Please SKIP this Adding a Destination section.
 
@@ -168,7 +164,6 @@ Duration: 5
 
 <!-- ------------------------ -->
 ## Customer Studio - Schema Creation
-Duration: 1
 
 Schemas define the data Hightouch should read from in Snowflake. Think about this as setting up your semantic layer with a visual ERD in Hightouch. Once you've set up your schema, which is a one-time setup*, you and your marketing team can build thousands of audiences with just a small set of initial models and events.
 
@@ -179,7 +174,6 @@ By following along with the setup in this section, you'll learn how to create a 
 
 <!-- ------------------------ -->
 ## Customer Studio - Creating a Parent Model
-Duration: 10
 
 In this example, the parent model would be the dataset of all customers. The example data set will include the following columns:
 
@@ -221,7 +215,6 @@ In this example, the parent model would be the dataset of all customers. The exa
 
 <!-- ------------------------ -->
 ## Customer Studio - Creating Event Models
-Duration: 20
 
 Great, now your parent model **Users** have been created. Your team can now begin building audiences off of this data. That said, they’ll likely want to utilize more than just user data, so we will go ahead and add event models to create audiences using customer behavioral events. 
 
@@ -341,7 +334,6 @@ For this quickstart, navigate to each event model, click **columns**, click the 
 
 <!-- ------------------------ -->
 ## Customer Studio - Audiences and Syncs
-Duration: 20
 
 With your Schema defined, any Hightouch user can now use Customer Studio to explore, build, and sync audiences across marketing tools and advertising channels. Hightouch’s powerful no-code audience builder gives marketers everything they need to operate independently on the data in Snowflake - all while giving data teams peace of mind through enterprise-grade governance controls.
 
@@ -447,7 +439,6 @@ Sync templates let you define sync configuration settings once for a particular 
 
 <!-- ------------------------ -->
 ## Customer Studio - Splits
-Duration: 10
 
 ### Experiment with Splits
 
@@ -509,7 +500,6 @@ Using Splits, you can run experiments such as:
 
 <!-- ------------------------ -->
 ## (Optional) Campaign Intelligence
-Duration: 10
 
 ### Analyze data with Campaign Intelligence
 
@@ -570,7 +560,6 @@ As you can imagine, the Intelligence, Audiences, and Splits features all come to
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 Congratulations! You have successfully learned how to transform your Data Cloud into a Self-Serve Marketing Engine.
 

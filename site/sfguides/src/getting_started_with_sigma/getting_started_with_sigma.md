@@ -1,16 +1,15 @@
 author: Sigma Computing -- Shawn Namdar, Partner Engineer
 id: getting_started_with_sigma
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a guide to setting up Sigma on top of Snowflake and visualizing some sample data.
-categories: getting-started,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Analytics, Data Engineering, BI, Business Intelligence, Sigma, Sigma Computing, Snowflake, Dashboarding, Visualization, Analysis, Excel, Spreadsheet 
 
 # Getting Started with Sigma
 <!-- ------------------------ -->
 ## Lab Overview 
-Duration: 3
 
 This entry-level lab introduces you to the user interface and basic capabilities of both Snowflake and Sigma, and how to use both solutions to build analytics. It is designed specifically for use with the Snowflake, free 30-day trial at https://trial.snowflake.com and the Sigma, free 14-day trial available within the Snowflake free trial on Snowflake Partner Connect. When done with the lab you should be ready to load your own data into Snowflake, analyze and visualize it with Sigma.
 
@@ -36,7 +35,6 @@ By walking through this lab you will:
 
 <!-- ------------------------ -->
 ## Prepare Your Snowflake Lab Environment
-Duration: 3
 
 ### Steps to Prepare Your Lab Environment
 1. If not yet done, register for a Snowflake free 30-day trial at [https://trial.snowflake.com](https://trial.snowflake.com) 
@@ -51,7 +49,6 @@ Duration: 3
 
 <!-- ------------------------ -->
 ## The Snowflake User Interface
-Duration: 10
 
 ### Logging Into the Snowflake User Interface (UI)
 Open a browser window and enter the URL of your Snowflake 30-day trial environment. You should see the login screen below. Enter your unique credentials to log in.
@@ -101,7 +98,6 @@ First let’s get you acquainted with Snowflake! This section covers the basic c
 
 <!-- ------------------------ -->
 ## Provisioning Sigma
-Duration: 5
 
 
 ### Provisioning Sigma via Partner Connect 
@@ -150,7 +146,6 @@ Duration: 5
 
 <!-- ------------------------ -->
 ## Preparing & Loading Data into Snowflake
-Duration: 15
 
 
 ### The Lab Story
@@ -284,7 +279,6 @@ This will confirm that the PC_SIGMA_ROLE has access to the customer table as wel
 
 <!-- ------------------------ -->
 ## Using Sigma for Analysis & Visualizations
-Duration: 10
 
 
 ### Start Working With Sigma
@@ -328,7 +322,6 @@ Your Snowflake account has now been set up with the data that will be used by Si
 
 <!-- ------------------------ -->
 ## Modeling The Data
-Duration: 10
 
 
 ### Create a Sigma Dataset
@@ -384,7 +377,6 @@ Sigma has the ability to join tables, other datasets, csv uploads, or your own S
 
 <!-- ------------------------ -->
 ## Accessing The Data
-Duration: 5
 
 ### Sigma Workbook
 1. At the top left of the Sigma UI click on the small crane icon to go to the home page.
@@ -421,7 +413,6 @@ Sigma is unique in empowering users to do analysis in an interface they already 
 <!-- ------------------------ -->
 
 ## Analyzing The Data
-Duration: 18
 
 ### Sigma Workbook Analysis
 Today we will be looking at our fictitious company Plugs Electronics data. It contains the retail transactions from our stores across the country as well as some attributes around our customers making the purchase. We will create some calculations, join tables, parse json, and build some visualizations with the ultimate goal of creating and embedding a dashboard for our Regional Sales Managers to get insights into the performance of their stores.
@@ -556,7 +547,6 @@ From the In Use tab select the Workbook Element “TRANSACTIONS”
 
 <!-- ------------------------ -->
 ## Finalizing The Workbook
-Duration: 8
 
 ### Create Filters
 1. Next, let's add a filter to this data. We will do this by adding a control element to our canvas.  Controls enable interactions with the chart such as filter the charts when in use. Clicking the “+” icon on the upper left hand pane next to “Page Elements”, select “Date Range”.  This will add a Date Range control to the canvas.
@@ -634,7 +624,6 @@ You will also notice other UI elements available to you here:
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 3
 
 In this lab we went through the process of setting up up a Snowflake free trial, and a Sigma free trial through Snowflake partner connect. We leveraged an [external stage](https://docs.snowflake.com/en/user-guide/data-load-overview.html#external-stages) in Snowflake to copy data into tables. Finally we did some light modeling, and an analysis resulting in a “Sales Performance” dashboard.
 

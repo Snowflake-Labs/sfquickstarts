@@ -1,18 +1,17 @@
 author: laura manor
 id: managing-risk-in-manufacturing
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/product/analytics
+language: en
 summary: How to manage risk in manufacturing using Neo4j Graph Analytics for Snowflake
-categories: getting-started,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter
 
 
 # Manage Risk with a Digital Twin in Manufacturing Data using Neo4j Graph Analytics
 
 ## Overview
 
-Duration: 2
 
 ### What Is Neo4j Graph Analytics For Snowflake? 
 
@@ -48,7 +47,6 @@ This quickstart shows how to model a manufacturing workflow and apply Graph Anal
 
 ## Create Our Database
 
-Duration: 7
 
 We are going to create a simple database with synthetic data. Let's first create the databse:
 
@@ -148,7 +146,6 @@ INSERT INTO rels (SRC_MACHINE_ID, DST_MACHINE_ID, THROUGHPUT_RATE) VALUES
 
 ## Set Up
 
-Duration: 5
 
 Now that we have our data, we just need to create a notebook and grant the necessary permissions.
 
@@ -246,7 +243,6 @@ GROUP BY SRC_MACHINE_ID, DST_MACHINE_ID;
 
 ## Visualize Our Graph (Experimental)
 
-Duration: 5
 
 At this point, you may want to visualize your graph to get a better understanding of how everything fits together. We can do this in two easy steps. Similarly to how we will project graphs for our graph algorithms, we need to specify what are the node and relationship tables:
 
@@ -279,7 +275,6 @@ components.html(
 
 ## Structural Connectivity Analysis
 
-Duration: 5
 
 Structural connectivity helps verify whether your production line is truly integrated or split into isolated sections. We use Weakly Connected Components (WCC) to evaluate this.
 
@@ -336,7 +331,6 @@ LIMIT 5;
 
 ## Criticality Analysis
 
-Duration: 10
 
 Identifying the most critical machines in your workflow can help avoid shutdowns. If these machines slow down or fail, downstream operations halt. We use centrality algorithms to surface high-impact nodes. Both machines concentrate flow (PageRank) and machines that connect key sections of the graph (Betweenness). This gives us a fuller picture of how risk and workload are distributed. With these analyses, we can:
 
@@ -459,7 +453,6 @@ Machines 14, 13, 3, and 15 act as structural bridges in the workflow. Their high
 
 ##  Structural Embeddings & Similarity
 
-Duration: 10
 
 Getting an even deeper understanding of each machine's workflow requires more than looking at direct connections, as we have done so far. Structural embeddings capture broader patterns by summarizing each machine’s position in the overall operation into a numeric vector. This allows you to:
 
@@ -602,7 +595,6 @@ Structural similarity gives you a way to surface these patterns automatically—
 
 ##  Conclusions And Resources
 
-Duration: 2
 
 In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics. 
 

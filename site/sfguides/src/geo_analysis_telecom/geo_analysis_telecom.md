@@ -1,17 +1,16 @@
 author: Oleksii Bielov
 id: geo_analysis_telecom
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/telecom, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/geospatial
+language: en
 summary: Geospatial Analysis for Telecom with Snowflake and Carto
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Geospatial, Python UDFs
 
 # Geospatial Analytics for Telecom with Snowflake and Carto
 <!-- ------------------------ -->
 ## Overview 
 
-Duration: 10
 
 Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the `GEOGRAPHY` data type, help you understand geospatial formats supported by Snowflake, walk you through the use of a variety of functions on a sample geospatial data set from the Snowflake Marketplace, and show you how to analyze and visualize your Snowflake data using CARTO’s Analytics Toolbox. 
 
@@ -48,7 +47,6 @@ A sample use case that involves LTE cell towers in the United Kingdom. You will 
 <!-- ------------------------ -->
 ## Setup your Account
 
-Duration: 10
 
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
 
@@ -143,7 +141,6 @@ Once you have entered the parameters, you can click the Connect button. CARTO wi
 
 ## Get Data and Analytics Toolbox
 
-Duration: 15
 
 The first step in the guide is to acquire geospatial data sets that you can freely use to explore the basics of Snowflake's geospatial functionality.  The best place to acquire this data is the Snowflake Marketplace!  
 
@@ -228,7 +225,6 @@ Voila! Now you have a table with the boundaries of districts in the UK and the N
 <!-- ------------------------ -->
 ## Understand Geospatial Types and Formats
 
-Duration: 10
 
 Now we will run different queries to understand how the `GEOGRAPHY` data type works in Snowflake. First, open the worksheet you created earlier.
 
@@ -337,7 +333,6 @@ Notice how WKB is incomprehensible to a human reader. However, this format is ha
 
 ## Spatial Analysis
 
-Duration: 15
 
 Now that you have a basic understanding of how the `GEOGRAPHY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walkthrough a scenario that requires you to run and visualize geospatial queries to answer some questions.
 
@@ -542,7 +537,6 @@ It seems our LTE network covers more than 90% of the motorways. A good number to
 <!-- ------------------------ -->
 ## Advanced Analysis using H3
 
-Duration: 20
 
 In this section we will cover more advanced use case where we will leverage H3 functions.
 

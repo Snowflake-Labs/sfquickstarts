@@ -1,16 +1,15 @@
 author: Kate Guttridge, StreamSets
 id: streamsets_transformer_for_snowflake_hol
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Hands on Lab for Transformer for Snowflake
-categories: data-engineering,partner-integrations
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, StreamSets
 
 # StreamSets' Transformer for Snowflake: Hands on Lab
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 StreamSets is a data integration platform for the modern data ecosystem, empowering data engineers to build, run, monitor, and manage smart data pipelines in one place. **Transformer for Snowflake** is a fully hosted service embedded within the StreamSets DataOps Platform. It uses the Snowpark Client Libraries to generate SnowSQL queries that are executed natively in Snowflake, allowing your data to remain in your Snowflake Data Cloud.
 
@@ -46,7 +45,6 @@ The lab uses the **TPCH_SF1** dataset pre-populated in your Snowflake account to
 <!-- You can import the final products to compare against [placeholder for pipeline export(s)](https://github.com/streamsets/Pipeline-Examples/blob/fb4240adc106ba5fd14a680b6eb82ab8b2c27555/tx4snowflake_hol/). -->
 
 ## **Transformer for Snowflake**
-Duration: 2
 
 ### **What does it do?**
 
@@ -65,7 +63,6 @@ Transformer for Snowflake is a hosted service embedded within the StreamSets Dat
   ![How_Does_It_Work](assets/how_does_it_work.png)
 
 ## **Getting Started with Snowflake**
-Duration: 5
 
 ### **Create Snowflake Trial Account**
 1. If you haven't already, create a Snowflake trial Account using this [link](https://trial.snowflake.com/?owner=SPN-PID-26749). 
@@ -120,7 +117,6 @@ Duration: 5
   - Now it's time to set up your StreamSets account!
 
 ## **Use Partner Connect to Create a StreamSets Organization**
-Duration: 5
 
 We’ll use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a StreamSets organization that will  auto-populate [Snowflake Credentials](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/GettingStarted/MyAccount.html#concept_d2k_yld_gsb) and [Snowflake Pipeline Default Settings](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/GettingStarted/MyAccount.html#concept_ofy_mld_gsb) so you can start building pipelines right away.
 
@@ -170,7 +166,6 @@ Note: All steps assume you are using the SnowSight UI.
   - Use the link that was sent to the email address for your Snowflake account. Be sure to check your Spam folder if you don’t see it.
  
 ## **Overview of the DataOps Platform UI**
-Duration: 5
 
 Before we get started building a pipeline, let's look at how to navigate Control Hub, a web-based user interface (UI) for building, managing, and monitoring all of your pipelines. (Note: Control Hub displays timestamps using the browser time zone determined by your local operating system.)
 
@@ -196,7 +191,6 @@ The Control Hub UI includes the following general areas and icons. You can find 
   - ![help](assets/icon_Help.png) Help icon	- Provides access to the online help and shows help tips. Also provides documentation for the Control Hub REST API.
 
 ## **Create and Run a Simple Pipeline**
-Duration: 8
 
 The pipeline we build in this portion of the lab is based on the sample Sales data in the ``SNOWFLAKE_SAMPLE_DATA`` database. It contains tables with Orders and Order Line Items. We would like to be able to report from one table with a combination of the data from both tables. We are going to step through the pipeline build, noting some of the StreamSets features that make pipeline and development easier.
 
@@ -440,7 +434,6 @@ Now replace the Trash stage with a real destination in Snowflake.
 - Want to download and import a copy of the pipeline build so far? Download it from [github](https://github.com/streamsets/Pipeline-Examples/blob/main/tx4snowflake_hol/my_first_pipeline_v1.zip). Later in the lab, we'll go over the simple task of importing object, but you can find the documentation [here](https://docs.streamsets.com/portal/platform-controlhub/controlhub/UserGuide/ExportImport/Importing.html#task_qr5_szm_qx).
 
 ## **More Advanced Transformation**
-Duration: 25
 
 ### **Pipeline Publishing & Version Control**
 
@@ -687,7 +680,6 @@ Let's continue on with our pipeline development. Now let's add ``LINEITEMS`` to 
 20. A complete version of this pipeline can be found [here](https://github.com/streamsets/Pipeline-Examples/blob/359a57b4e5f486ba5c094a3380e4a618662a1657/tx4snowflake_hol/my_first_pipeline_step_3.zip) on github.
 
 ## **User Defined Functions**
-Duration: 5
 
 In the previous step, we added an **Expression Evaluator** to the pipeline to calculate values like unit cost and unit discount amount. What if these calculations were already codified in Snowflake? Snowflake UDFs (User Defined Functions) make this possible. (At the time this lab was written) Snowflake  supports UDFs written in Java, JavaScript, Python, and SQL, and [Transformer for Snowflake supports](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/Pipelines/UDF.html?hl=udf) the use of **ALL** of these. The only thing required is that your role has the **USAGE** privilege granted the function. 
 
@@ -738,7 +730,6 @@ Obviously this is a very simple example, but the ability to use _any_ Snowflake 
 
 
 ## **Pipeline Fragments**
-Duration: 10
 
 In the next part of the lab, we want to create a **Pivot Table** that can be used to support some analytics. Our goal for this portion is the lab is to create a table to support the analysis of monthly net sales by clerk. The desired output has rows for _CLERKs_,  columns as _Year/Month_, and  cell values as _Net Sales Amount_ totals.
 
@@ -826,7 +817,6 @@ You can find out more about Pipeline Fragments in [StreamSets Documentation](htt
 3. An archive file with the completed pipeline can be found [here](https://github.com/streamsets/Pipeline-Examples/blob/85acaa98a6af565e4eb8fb2ce5e8f86829e2761f/tx4snowflake_hol/my_first_pipeline_final.zip).
 
 ## **Create a Job**
-Duration: 5
 
 ### Create & Run a Job
 In this next step, we will create a StreamSets [job instance](https://docs.streamsets.com/portal/platform-txsnowflake/latest/tx-snowflake/ControlHub/Title.html#concept_qv1_5sn_hsb), which is the execution of a published pipeline. A job instance can be created from a pipeline or a job template.
@@ -870,7 +860,6 @@ There is much more that can be done with jobs, such as scheduling them or trigge
 -->
 
 ## **Slowly Changing Dimension**
-Duration: 20
 
 You can see that the ``NATION`` table in the ``SNOWFLAKE_SAMPLE_DATA`` database and ``TPCH_SF1`` schema has a region assigned to each country. Over time, the company might add or change regions as they grow. For instance, there is only an ``America`` region, but eventually it might make sense to split that into ``North America`` and ``South America``. For our reporting over time, however, we may want to preserve the historical nation to region mappings, so we want to capture this in a **Slowly Changing Dimension**. 
 
@@ -1003,7 +992,6 @@ You can see that the ``NATION`` table in the ``SNOWFLAKE_SAMPLE_DATA`` database 
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Thank you for participating in this Hands on Lab! 
 

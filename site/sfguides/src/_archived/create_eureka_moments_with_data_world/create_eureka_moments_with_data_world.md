@@ -1,11 +1,11 @@
 author: Michael Gardner
 id: create_eureka_moments_with_data_world
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: This guide will help you connect Snowflake to data.world, where you can join, query, and share your data
-categories: Getting-Started
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Catalog
 
 # Create Eureka Moments with data.world and Snowflake
 
@@ -13,7 +13,6 @@ tags: Getting Started, Data Catalog
 
 ## Overview
 
-Duration: 1
 
 At data.world we offer organizations and teams private, secure environments in which they can collaborate together. By bringing in data from Snowflake, you can further extend your data using data.world features, and connecting to open datasets.
 
@@ -41,7 +40,6 @@ We will walk through both data.world and Snowflake account creation in the next 
 
 ## Create Your data.world Account
 
-Duration: 2
 
 To create a free data.world account, do the following:
 
@@ -61,7 +59,6 @@ On the data.world landing page, you will find some helpful resources. In additio
 
 ## Create Your Snowflake Trial Account
 
-Duration: 3
 
 To create a Snowflake trial account, do the following:
 
@@ -82,7 +79,6 @@ Your Snowflake account is now ready to go!
 
 ## Connect to data.world via Partner Connect
 
-Duration: 3
 
 With your data.world and Snowflake accounts set up, you are now ready to connect Snowflake to data.world. In this step, you will activate the data.world partner conenction, and create a dataset in data.world where that connection can be accessed.
 
@@ -107,7 +103,6 @@ Your data.world partner account has been created, and connected to your data.wor
 
 ## Create a Dataset and Add Data
 
-Duration: 3
 
 Now that you have successfully connected Snowflake to data.world, it's time to create a dataset, where you will be able to interact with your data.
 
@@ -138,7 +133,6 @@ Now that you have successfully connected Snowflake to data.world, it's time to c
 
 ## Interact With Your Data
 
-Duration: 5
 
 After you add the tables to your dataset, it will take a few moments for data.world to index the columns. Once the tables have completed processing, you will see a live preview of the first 5 rows of each table. Now is time to write some queries. In this step, you'll create a new data.world project, where you can link datasets, run queries, and save results.
 
@@ -173,7 +167,6 @@ group by ca_state, ca_location_type
 
 ## Save Query Results and Extend Your Data
 
-Duration: 3
 
 So far, you've created a query against data that you already have access to in Snowflake. In this example, we will extend your data using built-in features of data.world.
 
@@ -201,7 +194,6 @@ You now have a report that can be aggregated from State to Region, without havin
 
 ## Create an Insight
 
-Duration: 3
 
 To lead the rest of your team the Eureka moments you discover through the data, you can create insights on your projects. Insights are a space where you can embed content via markdown, have discussions, and collaborate with your team members.
 
@@ -231,7 +223,6 @@ To lead the rest of your team the Eureka moments you discover through the data, 
 
 ## Conclusion
 
-Duration: 1
 
 Blim Blam!! You've seen how you can use data.world and Snowflake together to create Eureka insights for you and your team. This is just a small sample of what you can do in data.world. You can also join your data to other open dataset hosted on data.world by organizations around the world, import data from files such as CSV, JSON, Excel, or XML. And so much more!
 

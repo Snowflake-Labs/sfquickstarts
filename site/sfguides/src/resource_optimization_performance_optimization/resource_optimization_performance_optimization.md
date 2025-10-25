@@ -1,10 +1,10 @@
 summary: This guide can be used to help customers setup and run queries pertaining to identifying areas where poor performance might be causing excess consumption, driven by a variety of factors.
 id: resource_optimization_performance_optimization
-categories: resource-optimization
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Resource Optimization, Cost Optimization, Performance, Optimization, Performance Optimization, Monitoring
 authors: Praveen Purushothaman
 
 # Resource Optimization: Performance

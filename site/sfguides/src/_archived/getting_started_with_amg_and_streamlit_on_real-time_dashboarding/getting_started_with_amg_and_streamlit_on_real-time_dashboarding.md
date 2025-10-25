@@ -1,16 +1,15 @@
 id: getting_started_with_amg_and_streamlit_on_real-time_dashboarding
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming
+language: en
 summary: This guide will walk you through how to build real-time dashboards with AMG and Streamlit to track data ingested by Snowpipe Streaming
-categories: getting-started
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Grafana, Streaming, Amazon AMG, Streamlit, Container, ECS, Application Load Balancer
 authors: James Sun
 
 # Getting Started with Amazon Managed Service for Grafana and Streamlit On Real-time Dashboarding
 <!---------------------------->
 ## Overview
-Duration: 5
 
 Monitoring your real-time assets in Snowflake is crucial as it allows you to spot anomalies fast and handle the
 incoming issues proactively to minimize the blast radius. 
@@ -70,13 +69,11 @@ Note that you must have network administrator permissions to deploy these resour
 
 <!---------------------------->
 ## Data Ingestion, Option 1
-Duration: 1
 
 If you have completed the quickstarts for [Snowpipe Streaming and Amazon MSK](https://quickstarts.snowflake.com/guide/getting_started_with_snowpipe_streaming_aws_msk/index.html?index=..%2F..index#0) and haven't cleaned up the database, there is no further actions required, just skip ahead to the section for `Monitor with Amazon Managed Service for Grafana (AMG)` on the left pane.
 
 <!---------------------------->
 ## Data Ingestion, Option 2
-Duration: 10
 
 At this point, you can either choose to complete `Option 1` above first then skip ahead to the section for `Monitor with Amazon Managed Service for Grafana (AMG)` on the left pane, 
 or you can start by processing some sample data described in steps below before using AMG or Streamlit. 
@@ -232,7 +229,6 @@ The task is scheduled to run evey minute.
 
 <!---------------------------->
 ## Monitor with Amazon Managed Service for Grafana (AMG)
-Duration: 15
 
 Before we start, for simplicity reason, we will set the timezone in Snowflake to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time).
 Run the following command as the Administrator to change the default timezone to UTC:
@@ -343,7 +339,6 @@ Now you should be able to see the sample dashboard that tracks the real-time fli
 To learn more about Grafana's features, feel free to visit their [documentation portal](https://grafana.com/docs/).
 
 ## Monitor with Streamlit
-Duration: 10
 
 For developers with Python skills, they might want to quickly develop a custom monitoring dashboard of their own.
 Streamlit will be a great tool for this use case as it is open-source and can use all the supported Python graphic libraries to build sleek dashboards.
@@ -383,7 +378,6 @@ Here is the [source code](https://github.com/sfc-gh-jsun/sfquickstarts/blob/mast
 
 <!---------------------------->
 ## Conclusions
-Duration: 5
 
 In this lab, we showed a demo on how to use AMG and Streamlit to visualize and monitor live flight data, we also provided a sample Grafana dashboard and Streamlit code for you to get started quickly.
 

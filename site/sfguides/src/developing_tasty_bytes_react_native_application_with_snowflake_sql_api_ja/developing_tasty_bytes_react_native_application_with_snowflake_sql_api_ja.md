@@ -1,18 +1,17 @@
 author: Swathi Jasti
 id: developing_tasty_bytes_react_native_application_with_snowflake_sql_api_ja
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/solution-center/certification/community-sourced
+language: ja
 summary: Snowflakeを使用したTasty Bytes React Nativeデータアプリケーションの開発、SQL API
-categories: Tasty-Bytes, Getting-Started, app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Data Engineering, API, ja
 
 # Tasty Bytes - SQL APIによるReact Nativeデータアプリケーションの開発
 
 <!-- ------------------------ -->
 ## 概要
 
-Duration: 2 <img src="assets/tasty_bytes_header.png"/>
 
 現代のデータドリブンな状況においては、アプリケーションの大半が高度にデータ集約的なものへと進化しています。しかし、特にユーザー数が増加し、データの量と複雑さが増している中では、優れたデータアプリケーションの開発が困難となる場合があります。Snowflakeは、多くのデータアプリケーションを支える原動力であり、ソフトウェアチームがエンジニアリングを迅速化し、運用上の複雑さに煩わされず、スケーラブルなアプリケーションを作成できるようにします。Snowflakeは、エンジニアリングの迅速化に重点を置いており、極めて高いパフォーマンスとスケーラビリティをアプリケーションに提供します。
 
@@ -47,7 +46,6 @@ Snowflakeは、データアプリの開発を促進するためにSQL APIを提�
 <!-- ------------------------ -->
 ## Snowflakeでのデータの設定
 
-Duration:3
 
 ここでは、Tasty Bytesの注文データを使用します。注文データを使用して、以下の機能を持つキッチンカーの運転手用のアプリケーションを構築します。
 
@@ -167,7 +165,6 @@ SELECT * FROM frostbyte_tasty_bytes_app.analytics.data_app_orders_v;
 <!-- ------------------------ -->
 ## アプリケーションのユーザーを作成する
 
-Duration:5
 
 堅牢なセキュリティ対策を確保するには、個人アカウントとは別に、アプリケーション専用のユーザーアカウントを設定することが不可欠です。この新しいアカウントは、Snowflakeのクエリに使用されます。セキュリティに関するベストプラクティスに従い、このアカウントではキーペア認証を採用し、アクセスをSnowflake環境内に制限します。
 
@@ -227,7 +224,6 @@ GRANT ROLE tasty_bytes_data_app_demo TO USER data_app_demo;
 <!-- ------------------------ -->
 ## SQL APIによるデータアプリケーション
 
-Duration:10
 
 皆さんが実行するアプリケーションはReact Nativeで記述されます。
 
@@ -266,7 +262,6 @@ Duration:10
 <!-- ------------------------ -->
 ## クリーンアップ
 
-Duration:1
 
 Snowsightワークシートに移動し、右上の「+」をクリックして新しいワークシートを作成し、「SQLワークシート」を選択します。次のSQLをワークシートに貼り付けて実行し、クイックスタートで作成したSnowflakeオブジェクトを削除します。
 
@@ -283,7 +278,6 @@ DROP ROLE tasty_bytes_data_app_demo;
 <!-- ------------------------ -->
 ## まとめ
 
-Duration:1
 
 ### まとめ
 

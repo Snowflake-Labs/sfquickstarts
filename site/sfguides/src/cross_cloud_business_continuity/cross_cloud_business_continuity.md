@@ -1,16 +1,15 @@
 author: Vinay Srihari, Prateek Parashar
 id: cross_cloud_business_continuity
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This guide demonstrates Snowflake replication, failover and client redirect features for business continuity
-categories: business-continuity,data-engineering,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Replication, Data Engineering
 
 # Cross Cloud Business Continuity With Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 15
 
 “By failing to prepare, you are preparing to fail” - Benjamin Franklin
 
@@ -101,7 +100,6 @@ In this quickstart you will learn
 
 <!-- ------------------------ -->
 ## Primary Account Setup (AWS)
-Duration: 20 
 
 Download ZIP or Clone [sfguide_failover_scripts](https://github.com/Snowflake-Labs/sfguide_failover_scripts) Github repo to your local machine
 
@@ -166,7 +164,6 @@ We will observe how Snowflake's pipeline replication features (in Public Preview
 
 <!-- ------------------------ -->
 ## Review Source Account
-Duration: 5
 
 Our scripts in the previous step have created a production like snowflake environment for us. Here's a list of objects you just created when you ran those scripts:
 - Users & Roles
@@ -266,7 +263,6 @@ __Object Tags:__
 
 <!-- ------------------------ -->
 ## Configure AWS and Azure accounts for Business Continuity
-Duration: 10 
 
 Now that our Primary AWS account has been populated with users, database objects, governance policies, account metadata and data tranformation pipelines - we are ready to configure our Azure account as a Secondary target.
 
@@ -350,7 +346,6 @@ Client applications will use the `CONNECTION_URL` that can be redirected to eith
 
 <!-- ------------------------ -->
 ## Demonstrate Application Failover using Streamlit, Sigma, Snowsight
-Duration: 10
 
 Welcome App Developers!
 
@@ -415,7 +410,6 @@ Edit the python file to fill in `user`, `password`, `account`:
 
 <!-- ------------------------ -->
 ## Replication To Target
-Duration: 5 
 
 All that work behind us, we set up our account resources like users, roles, RBAC hierarchy, databases (not to mention, the crucial data it contains), compute warehouses, governance policies with RLS and CLS features, direct shares and then some beautiful customer facing apps - Phew!
 
@@ -473,7 +467,6 @@ ALTER FAILOVER GROUP sales_payroll_financials SET REPLICATION_SCHEDULE = '3 MINU
 
 <!-- ------------------------ -->
 ## Failover To Target
-Duration: 15
 
 Moment of truth! With our data and account objects safely replicated to the secondary account. Let's assume disaster has struck! Our primary account is experiencing outage and business and tech teams (The awesome failover HoL participants) have invested time and money in ensuring that they are prepared for this very event.
 

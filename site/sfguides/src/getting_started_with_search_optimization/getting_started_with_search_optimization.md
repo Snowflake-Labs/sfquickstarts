@@ -1,17 +1,16 @@
 author: Shreya Agrawal
 id: getting_started_with_search_optimization
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Quickstart guide for using Search Optimization
-categories: getting-started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Search Optimization, Search, Query acceleration, performance, speed 
 
 # Getting started with Search Optimization
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 Are you looking to significantly improve the performance of point lookup queries and certain analytical queries that require fast access to records? Search Optimization Service will help you achieve exactly that. 
 
@@ -45,7 +44,6 @@ Negative: The Marketplace data used in this guide changes from time-to-time, and
 
 <!-- ------------------------ -->
 ## Setup Snowflake Account and Virtual Warehouse 
-Duration: 5
 
 The first step in the guide is to set up or log into Snowflake and set up a virtual warehouse if necessary. 
 
@@ -68,7 +66,6 @@ This will allow you to create shared databases from Snowflake Marketplace listin
 ---
 
 ## Create a Virtual Warehouse (if needed)
-Duration: 2
 
 ***If you don't already have access to a Virtual Warehouse to run queries***, you will need to create one.
 
@@ -85,7 +82,6 @@ Be sure to change the `Suspend After (min) field` to 1 min to avoid wasting comp
 ---
 
 ## Acquiring Data from Snowflake Marketplace
-Duration: 2
 
 The next step is to acquire data that has all data types supported by Search Optimization. The best place to acquire this data is the Snowflake Marketplace.
 
@@ -104,7 +100,6 @@ Congratulations! You have just created a shared database named `Snowflake_Public
 ---
 
 ## Data Setup
-Duration: 10
 
 The prior section opened a worksheet editor in the new Snowflake UI with a few pre-populated queries that came from the sample queries defined in the Marketplace listing. You are not going to run any of these queries in this guide, but you are welcome to run them later. 
 
@@ -276,7 +271,6 @@ Please note that the results, query time, partitions or bytes scanned might diff
 
 ---
 ## Equality and Wildcard Search
-Duration: 10
 
 Now let’s build some queries and observe how Search Optimization helps optimize them. 
 
@@ -341,7 +335,6 @@ Want to learn more? You can refer to our external documentations for benefitting
 ---
 
 ## Searching in Variant data
-Duration: 5
 
 In this section, let’s search in the variant data and analyze how Search Optimization helps in these cases. 
 
@@ -409,7 +402,6 @@ Want to learn more? You can refer to our external documentations for [benefittin
 ----
 
 <!-- ## Accelerating Joins
-Duration: 5
 
 The search optimization service can improve the performance of queries that join a small table with a large table. 
 
@@ -472,7 +464,6 @@ The following query returns **~256K rows**. As shown in the snapshot below, **on
 ----
 
 ## Conclusion
-Duration: 1
 
 In this guide, we have covered how to acquire a shared database from Snowflake Marketplace, how to enable Search Optimization on specific columns and analyze the performance improvements in queries with Search Optimization enabled. 
 

@@ -1,17 +1,16 @@
 author: Matt Barreiro
 id: getting-started-with-snowflake-trail-for-observability
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Learn how to enable and use Snowflake Trail for comprehensive observability across your Snowflake workloads, including logs, traces, metrics, and monitoring capabilities.
-categories: Trail,Observability,Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Observability, Trail, Event Tables, Best Practices
 
 # Getting Started with Snowflake Trail for Observability
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 3
 
 Snowflake Trail is Snowflake's suite of observability capabilities that enable its users to better monitor, troubleshoot, debug and take actions on pipelines, apps, user code and compute utilizations.
 
@@ -48,7 +47,6 @@ This quickstart is intended to help tie together all the components of Snowflake
 <!-- ------------------------ -->
 ## Data Source Overview
 
-Duration: 2
 
 Observability in Snowflake comes in two main categories: System Views and Telemetry.
 
@@ -68,7 +66,6 @@ This distinction is important because of the default behavior of each:
 <!-- ------------------------ -->
 ## Enabling Telemetry
 
-Duration: 5
 
 By default, Snowflake includes a [predefined event table](https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up#label-logging-event-table-default) (`SNOWFLAKE.TELEMETRY.EVENTS`) that is used if you don't specify an active event table. You can also [create your own event tables](https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up#label-logging-event-table-custom) for specific uses.
 
@@ -128,7 +125,6 @@ Note that valid and default values are as follows:
 <!-- ------------------------ -->
 ## Traces
 
-Duration: 5
 
 A **trace** represents the complete execution path of a request through your Snowflake workloads. It provides a detailed view of how operations flow through different components, helping you understand performance bottlenecks, dependencies, and execution patterns. Each trace is made up of one or more **spans**, where each span represents a single operation within the trace (like a SQL query, UDF execution, or procedure call).
 
@@ -218,7 +214,6 @@ This detailed information helps you understand exactly what happened during each
 
 ## Logs
 
-Duration: 5
 
 **Logs** are structured records of events that occur during the execution of your Snowflake workloads. They provide detailed information about what happened during code execution, including informational messages, warnings, errors, and debug information. Logs are essential for troubleshooting issues, understanding application behavior, and monitoring the health of your systems.
 
@@ -269,7 +264,6 @@ You can also click on any log entry to bring up a sidebar with more details, inc
 <!-- ------------------------ -->
 ## Query History
 
-Duration: 7
 
 **Query History** provides a comprehensive view of all SQL queries executed in your Snowflake account. It's one of the most important tools for monitoring, troubleshooting, and optimizing database performance. Query History shows detailed information about query execution, performance metrics, and resource usage patterns.
 
@@ -364,7 +358,6 @@ By clicking into a single grouped query, you can see detailed information about 
 <!-- ------------------------ -->
 ## Copy History
 
-Duration: 5
 
 **Copy History** provides comprehensive monitoring for all data loading activities in your Snowflake account. It tracks operations from COPY INTO commands, Snowpipe, and Snowpipe Streaming, giving you visibility into data ingestion performance, errors, and throughput patterns.
 
@@ -413,7 +406,6 @@ Click on any operation to see detailed information about that operation/target t
 <!-- ------------------------ -->
 ## Task History
 
-Duration: 5
 
 **Task History** provides monitoring and observability for Snowflake Tasks, which are scheduled SQL statements or procedures that run automatically. Tasks are essential for building data pipelines, ETL processes, and automated maintenance operations. Task History helps you monitor task execution, troubleshoot failures, and optimize task performance.
 
@@ -480,7 +472,6 @@ Clicking into any task run will bring you to the Run History for that task.
 <!-- ------------------------ -->
 ## Dynamic Tables
 
-Duration: 4
 
 **Dynamic Tables** are a table type that automatically materializes the results of a query and keeps them updated as the underlying data changes. They combine the simplicity of views with the performance of materialized data, automatically managing refresh operations. Dynamic Tables monitoring helps you track refresh performance, data freshness, and resource usage.
 
@@ -527,7 +518,6 @@ Clicking on any table will bring you to the graph view for that table.
 <!-- ------------------------ -->
 ## AI Observability
 
-Duration: 2
 
 **AI Observability** in Snowflake provides monitoring and insights for AI/ML workloads, including Cortex AI functions and model inference operations. As AI becomes increasingly integrated into data workflows, observability helps ensure AI operations are performing reliably and cost-effectively.
 
@@ -546,7 +536,6 @@ AI Observability has the following features:
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 2
 
 Congratulations! You have successfully explored the comprehensive observability capabilities available in Snowflake Trail. By following this quickstart, you've gained hands-on experience with the key components that make up Snowflake's observability platform.
 

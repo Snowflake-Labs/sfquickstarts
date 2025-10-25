@@ -1,11 +1,11 @@
 author: Fran Britschgi
 id: partner_snowflake_predictive_model_using_sigma
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 summary: Building predictive modeling in Snowflake and Sigma
-categories: data-science-&-ml,solution-examples, partner-Integrations, connectors
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Predictive Modeling, Machine Learning, BI
 
 lastUpdated: 2024-07-09
 
@@ -13,7 +13,6 @@ lastUpdated: 2024-07-09
 <!-- The above name is what appears on the website and is searchable. -->
 
 ## Overview 
-Duration: 1 
 
 This QuickStart will guide you through an end-to-end example of utilizing Snowflake's new machine learning features. 
 
@@ -100,7 +99,6 @@ Upon import, Snowflake will prompt you for a database and schema to be used in t
 <!-- END OF SECTION-->
 
 ## Setup
-Duration: 20
 
 We're starting from scratch with a blank Sigma workbook. I'll first load our sales data from Snowflake. If you have sales data in Snowflake, we can directly connect to it from Sigma. In this case, we don’t have that data in Snowflake, so we’ll need to upload it. Fortunately, that’s easy to do in Sigma. Let's upload a CSV file of shift sales from the city of Seattle.
 
@@ -130,7 +128,6 @@ We're starting from scratch with a blank Sigma workbook. I'll first load our sal
 <!-- END OF SECTION-->
 
 ## Sigma Data Exploration
-Duration: 20
 
 1: Shift sales will be of primary importance for this QuickStart, so let’s adjust adjust its format to `currency` at the start of our analysis. Select the `Shift Sales` column, and use the buttons next to the formula bar to adjust the format:
 
@@ -191,7 +188,6 @@ Just like in the months, we can see that certain weekdays definitely return grea
 <!-- END OF SECTION-->
 
 ## Create a Dataset for Modeling
-Duration: 20
 
 
 Now that we have identified Month Number, Weekday, and Shift as potential predictors for shift sales, let’s prepare a dataset with these variables for our data scientist. In Sigma, this may be something that a data scientist does in the existing workbook, or the analyst can prepare it with guidance. There is lots of room for collaboration through [live edit](https://help.sigmacomputing.com/docs/workbook-collaboration-with-live-edit) and our [comment feature.](https://help.sigmacomputing.com/docs/workbook-comments)
@@ -273,7 +269,6 @@ We recommend calling it `Train`, but you can name it anything you’d like:
 <!-- END OF SECTION-->
 
 ## Snowflake Programming
-Duration: 20
 
 We can now let our data scientist know that TASTY_BITES_TRAIN is ready for them to train their model on Month, Weekday, and Shift. The Data Scientist can now begin their work in the Snowflake Notebook that was downloaded in the beginning section of this hands on lab.
 
@@ -366,7 +361,6 @@ session.sql("GRANT USAGE ON ALL MODELS IN SCHEMA SE_DEMO_DB.ML_REGISTRY TO ROLE 
 <!-- END OF SECTION-->
 
 ## Using the Model in Sigma
-Duration: 5
 
 We’ll now show how we can apply that trained model in sigma, and look at an example application of that method. 
 
@@ -449,7 +443,6 @@ This simple format for calling the model will make your Model far more accessibl
 <!-- END OF SECTION-->
 
 ## Extended Applications
-Duration: 5
 
 This section documents examples of how different personas can benefit from deployed ML functions.
 
@@ -479,7 +472,6 @@ Then, the residuals can be plotted to see if the predictive power of our model i
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 3
 
 Congratulations! You've successfully built a training dataset, trained a model, and exposed it in a easy to use medium through a Sigma front end. This exercise is just scratching the surface of what is possible with Snowflake, Snowpark, and Sigma.
 

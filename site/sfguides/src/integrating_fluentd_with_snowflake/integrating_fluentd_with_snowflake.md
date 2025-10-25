@@ -1,16 +1,15 @@
 author: Security Field CTO Team
 id: integrating_fluentd_with_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Walkthrough of using Fluentd to send system event logs to Snowflake as a part of a SIEM or log analysis workload
-categories: observability, cybersecurity
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: SIEM, Data Governance
 
 # Using Fluentd to Send Log Files to Snowflake for Security and Observability Analytics
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 This Quickstart shows how to use Fluentd to send system event logs to Snowflake for use as a SIEM or for log analysis. We use Apache HTTP Server to generate access log files, which we upload as gzip files to an S3 external stage. Next, we set up Snowpipe to retrieve the gzip files from the external stage and import them into Snowflake. Finally we use Snowsight to visualize log events.  
 
@@ -45,7 +44,6 @@ Prior to starting you should:
 
 <!-- ------------------------ -->
 ## Deploy Apache2 on the Target Server (Amazon Linux)
-Duration: 10
 
 After deploying Amazon Linux from the official AWS AMI, log in to Linux:
 
@@ -83,7 +81,6 @@ Run the following command to verify that the access log shows recent access:
 
 <!-- ------------------------ -->
 ## Deploy the Fluentd Agent (td-agent) on the Target Server
-Duration: 15
 
 Install Fluentd, start the service, and set up auto-run:
 ``` bash
@@ -156,7 +153,6 @@ The data should look similar to the following (CSV, tabs are the delimiters):
 
 <!-- ------------------------ -->
 ## Set up the External Stage on Snowflake
-Duration: 15
 
 Use an IAM role that can retrieve data from S3 to create a storage integration.
 To get the `STORAGE_AWS_ROLE_ARN`, see [Configuring Secure Access to Amazon S3](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html) and complete the steps.
@@ -232,7 +228,6 @@ The parsed log should be stored as JSON in the “RECORD” column.
 
 <!-- ------------------------ -->
 ## Set up Snowpipe to Retrieve Data From the External Stage
-Duration: 15
 
 Configure Snowflake Snowpipe:
 ```sql
@@ -305,7 +300,6 @@ select *
 
 <!-- ------------------------ -->
 ## Set up Snowsight to Visualize log Events
-Duration: 12
 
 Since parsed logs are stored as JSON in the `RECORD` column, you can set up Snowsight to visualize log events.
 
@@ -349,7 +343,6 @@ Response Code & Source IP
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations! You learned how to configure Fluentd to send system event logs to Snowflake, and how to use Snowsight to visualize log events! Consolidating log files in Snowflake makes it possible to develop a single dashboard to monitor security activity across your network. 
 

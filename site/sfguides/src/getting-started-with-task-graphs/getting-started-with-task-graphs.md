@@ -1,16 +1,15 @@
 author: Charlie Hammond
 id: getting-started-with-task-graphs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: This quickstart sets up an example Snowflake task graph to showcase its features.
-categories: Getting-Started, Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering
 
 # Getting Started with Snowflake Task Graphs
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 With [task graphs](https://docs.snowflake.com/en/user-guide/tasks-graphs) in Snowflake, you can automatically run sequences of tasks. A task graph, or directed acyclic graph, is a series of tasks composed of a root task and child tasks, organized by their dependencies. Task graphs flow in a single direction, meaning a task later in the series cannot prompt the run of an earlier task. Each task can depend on multiple other tasks and won’t run until they all complete. Each task can also have multiple child tasks that depend on it.
 
@@ -29,7 +28,6 @@ This quickstart sets up an example task graph to showcase its features. You will
 - A Snowflake Task Graph
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 5
 
 ### Account Setup
 
@@ -97,7 +95,6 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE TASK_GRAPH_DATABASE TO ROLE TASK_GRAP
 
 <!-- ------------------------ -->
 ## View Task Graph
-Duration: 5
 
 To view the task graph in Snowsight, go to Monitoring > Task History. Task History opens to Task Graph Runs which shows an overview of task graph execution in the account along with successful and failed task metrics. 
 
@@ -142,7 +139,6 @@ DROP INTEGRATION GITHUB_PUBLIC;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 To streamline complex workflows in Snowflake, task graphs enable seamless automation of task sequences. By defining dependencies between a root task and subsequent child tasks, you can ensure efficient, orderly execution from start to finish. 
 

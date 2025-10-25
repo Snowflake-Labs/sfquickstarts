@@ -1,17 +1,16 @@
 author: Vino Duraisamy
 id: prompt_engineering_and_llm_evaluation
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: This guide provides instructions to perform prompt engineering on your LLM models and to build a streamlit app for evaluating LLM responses using human feedback
-categories: data-science-&-ml, app-development
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Generative AI, Snowflake External Access, OpenAI, LLMs, Streamlit, Snowflake Marketplace
 
 # Prompt Engineering and Evaluation of LLM responses
 <!-- ------------------------ -->
 ## Overview 
 
-Duration: 5
 
 This quickstart will cover the basics of prompt engineering on your Large Language Models (LLMs) and how to evaluate the responses of different LLMs through human feedback.
 
@@ -84,7 +83,6 @@ Streamlit enables data scientists and Python developers to combine Streamlit's c
 
 ## Set up Snowflake
 
-Duration: 5
 
 Sign up for [Snowflake Free Trial](https://signup.snowflake.com/?utm_cta=quickstarts_) and create an account. Log into [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#) using your credentials to create tables, streamlit app and more.
 
@@ -234,7 +232,6 @@ FROM PRODUCT;
 
 ## Use External Access
 
-Duration: 10
 
 In this implementation, we will use External Access to securely connect to the OpenAI API from Snowpark Python.
 
@@ -542,7 +539,6 @@ Fun part is you can work with Snowflake data and OpenAI models together using Sn
 
 ## LLM Evaluation with Human Feedback
 
-Duration: 10
 
 Follow these steps to build a Streamlit application in Snowsight.
 
@@ -580,7 +576,6 @@ Voila. It's done!
 
 ## Conclusion and Resources
 
-Duration: 3
 
 Congratulations! You have successfully learnt the basics of prompt engineering on your Large Language Models (LLMs) and to evaluate the responses of different LLMs through human feedback by building an interative Streamlit Application.
 

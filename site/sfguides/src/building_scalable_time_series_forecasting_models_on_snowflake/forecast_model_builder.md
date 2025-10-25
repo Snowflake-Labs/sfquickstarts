@@ -1,16 +1,15 @@
 author: Rachel Blum
 id: building_scalable_time_series_forecasting_models_on_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 summary: Automatically Build, Register and Run Inferencing on Paritioned Forecasting Models in Snowflake.
-categories: data-science, getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Getting Started, Data Engineering, Machine Learning, Snowpark
 
 # Building Scalable Time Series Forecasting Models on Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Forecasting is a business process that predicts future events over time based on historical time-series data, and has cross-industry applicability and utility in nearly every organization. Multiple business units can benefit from this modelling technique to more accurately predict performance, demand, or or any activity that can lead to improved business reactivity and optimization.
 
@@ -53,7 +52,6 @@ This solution leverages several key Snowflake features:
 
 <!-- ------------------------ -->
 ## Solution Setup
-Duration: 2
 
 To setup the Forecast Model Builder solution in Snowflake you will:
 1) Download from Github and then import the [Forecast_Model_Builder_Deployment.ipynb notebook](https://github.com/Snowflake-Labs/emerging-solutions-toolbox/blob/main/framework-forecast-model-builder/FORECAST_MODEL_BUILDER_DEPLOYMENT.ipynb) to Snowsight.  (For instructions on how create a new Snowflake Notebook from an existing file, please see [this documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#create-a-new-notebook) and follow the instructions for creating a notebook from an existing file.)
@@ -61,7 +59,6 @@ To setup the Forecast Model Builder solution in Snowflake you will:
 
 <!-- ------------------------ -->
 ## Exploratory Data Analysis
-Duration: 2
 
 Understanding the structure and patterns of time series data is crucial for building accurate forecasting models. This notebook walks through an **Exploratory Data Analysis (EDA)** of time series data, providing statistical summaries and visual insights to inform model development.
 
@@ -108,7 +105,6 @@ To run the EDA Notebook:
 
 <!-- ------------------------ -->
 ## Feature Engineering and Advanced Modeling
-Duration: 4
 
 In this notebook, we explore a **partitioned time series modeling approach** using **XGBoost** and **Snowflake's Snowpark**, enabling efficient and scalable forecasting for large datasets.
 
@@ -132,7 +128,6 @@ To run the Feature Engineering and Advanced Modeling Notebook:
 
 <!-- ------------------------ -->
 ## Inferencing
-Duration: 4
 
 This notebook is designed to perform **inference** using the trained time series model from the modeling pipeline. It leverages **Snowflake's Snowpark** environment to efficiently make predictions on new data, ensuring seamless integration between model training and deployment.
 
@@ -156,7 +151,6 @@ To run the Inferencing Notebook:
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 By following this structured workflow, businesses can build scalable, reliable, and high-performing forecasting models. Whether applied to retail traffic, sales predictions, or resource allocation, this pipeline ensures that forecasting models are accurate, interpretable, and easy to deploy in production. 
 

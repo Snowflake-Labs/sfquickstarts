@@ -1,16 +1,15 @@
 author: Ali Alladin (ali.alladin@thoughtspot.com)
 id: ai_powered_embedded_analytics_using_thoughtspot
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: Guide to create your own embedded analytics application using ThoughtSpot
-categories: Getting-Started, Embedded Analytics, BI
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, analytics, app-development, solution-examples, marketing, retail 
 
 # AI Powered Embedded Analytics using ThoughtSpot
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 When combined with Snowflake’s robust and efficient data cloud solution, ThoughtSpot can help you turn your data into actionable insights. Our AI-Powered Analytics platform is designed for everyone—whether you’re code first or code free. Instead of relying on data teams to crank out clunky dashboards and outdated reports, business users can use a familiar natural language search interface and augmented analytics to discover insights, create and share Liveboards, and make real-time decisions. This frees analysts and data teams to work on more impactful projects, like data pipeline optimizations or complex analysis. By choosing ThoughtSpot and Snowflake, you’re investing in a modern data infrastructure built to scale, grow, and innovate with your business. 
 
@@ -38,7 +37,6 @@ When combined with Snowflake’s robust and efficient data cloud solution, Thoug
 
 <!-- ------------------------ -->
 ## Get Started
-Duration: 10
 
 To get started, we are going to need a few cloud environments, one for Snowflake and another for ThoughtSpot. Thankfully, both platforms offer free trials you can sign up for online. This tutorial will use sample datasets in each environment. If you already have an existing Snowflake or ThoughtSpot instance, it is recommended to create a new free trial instance.
 
@@ -59,7 +57,6 @@ To get started, we are going to need a few cloud environments, one for Snowflake
 
 <!-- ------------------------ -->
 ## Connect to Snowflake
-Duration: 2
 
 ### Snowflake Connection
 
@@ -74,7 +71,6 @@ After tapping **Continue**, you will be prompted to enter Snowflake connection d
 
 <!-- ------------------------ -->
 ## Create a Worksheet in ThoughtSpot
-Duration: 10
 
 Worksheet is a flat table representation exposed to business users, the goal is for business users to express questions on top of this worksheet without having to worry about the data schema hidden behind this simplistic definition. ThoughtSpot uses Worksheets, which are logical views of data, to model complex datasets. The Worksheets simplify access to data for end-users and application services by incorporating these key features, and more:
 
@@ -139,7 +135,6 @@ To add sources to your Worksheet, follow these steps. The Worksheet creation UI 
 
 <!-- ------------------------ -->
 ## Build your own embedded application
-Duration: 10
 
 ### ThoughtSpot Embed with Snowflake
 
@@ -229,7 +224,6 @@ Open your browser and go to [your newly created application](http://localhost:51
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 ### What you learned today
 Congratulations! You've successfully learned how to

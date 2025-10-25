@@ -1,18 +1,17 @@
 author: Kala Govindarajan
 id: defect_detection_using_distributed_pyTorch_with_snowflake_notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Perform multiclass defect detection on PCB images using distributed PyTorch training across multiple nodes and workers within a Snowflake Notebook. This guide utilizes a pre-trained Faster R-CNN model with ResNet50 as the backbone from PyTorch, fine-tuned for the task. The trained model is logged in the Snowpark Model Registry for future use. Additionally, a Streamlit app is developed to enable real-time defect detection on new images, making inference accessible and user-friendly
-categories: data-science-&-ml,Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Science, Unstructured Data
 
 
 # Defect Detection Using Distributed PyTorch With Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
 
-Duration: 1
 
 In today's fast-paced manufacturing landscape, ensuring product quality early in the production process is crucial for minimizing defects and optimizing resources. With advancements in machine learning, manufacturers can now leverage computer vision models to automate defect detection, improving efficiency and accuracy.
 
@@ -76,7 +75,6 @@ Key Features:
 
 ## Setup Environment
 <!-- ------------------------ -->
-Duration: 2
 
 This section will walk you through creating various objects.  The repository with the source code can be found [here](https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks/blob/main/notebooks). Access the gitrepo here and clone it to your local directory. The dataset can be accessed from [this](https://github.com/Charmve/Surface-Defect-Detection) link. Review the licensing requirement before using the dataset. 
 
@@ -114,7 +112,6 @@ Once the setup is complete, proceed to the next step to begin distributed model 
 
 <!-- ------------------------ -->
 ## Distributed Model Training in Snowflake Notebooks 
-Duration: 2
 
 It is time to set up a distributed training pipeline for training a PyTorch-based Faster R-CNN (Region-based Convolutional Neural Network) model for multiclass defect detection. The training is performed on a dataset of images (specifically, PCBs) with annotations for bounding boxes and labels, using Snowflake's Container Runtime, and utilizes GPUs for accelerated training. 
 
@@ -170,7 +167,6 @@ Pinning memory to GPU: By specifying pin_memory=True, the data loading process i
 
 <!-- ------------------------ -->
 ## Streamlit App 
-Duration: 2
 
 Follow these steps to build a Streamlit application in Snowsight.
 

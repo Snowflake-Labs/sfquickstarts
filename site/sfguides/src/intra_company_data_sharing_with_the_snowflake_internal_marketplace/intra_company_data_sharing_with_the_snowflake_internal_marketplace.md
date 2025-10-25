@@ -1,17 +1,16 @@
 authors: Matthias Nicola, Henrik Nielsen
 id: internal_marketplace_intra_org_sharing
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/internal-marketplace
+language: en
 summary: INTRA-COMPANY DATA SHARING WITH THE SNOWFLAKE INTERNAL MARKETPLACE
-categories: Data-Sharing
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Summit HOL, Data Sharing, Marketplace, Snowflake Internal Marketplace, Data Mesh, Data Products
 
 # Intra-Company Data Sharing With The Snowflake Internal Marketplace 
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 Sharing information between departments or business units ("domains") of a company is critical for success. Sharing and consuming data assets is more successful if data is shared as a product. A data product is a collection of related data objects plus metadata, such as a business description, ownership and contact information, service level objectives, data dictionary, and more. In a Data Mesh, data products are typically also subject to various data management and organizational principles.  
 
@@ -43,7 +42,6 @@ Sharing information between departments or business units ("domains") of a compa
 
 ## Setup
 
-Duration: 15
 
 The setup instructions for this lab describe all the steps for you to create the 3 accounts, domain profiles, and roles shown in the diagram below.
 
@@ -298,7 +296,6 @@ Continue working as the `org_admin` user in your Organization Account `HOL_ORG_A
 
 ## Create / Publish Org Listing
 
-Duration: 30
 
 In this section you will work in `HOL_ACCOUNT1` to create and publish an [organizational listing](https://docs.snowflake.com/en/user-guide/collaboration/listings/organizational/org-listing-about). 
 
@@ -427,7 +424,6 @@ Your data product is now live! You can see it when you navigate to the Internal 
 
 ## Request and Grant Access
 
-Duration: 10
 
 In this section you will request access to the new data product for the **Marketing** domain and the **Supply chain** domain.
 
@@ -469,7 +465,6 @@ Switch from **Needs Review** to **Resolved Requests** to see the history of requ
 
 ## Consume Org Listing
 
-Duration: 10
 
 Now that access has been granted, let's go back to the consumer roles:
 
@@ -489,7 +484,6 @@ Now that access has been granted, let's go back to the consumer roles:
 ---
 ## Live Data Sharing
 
-Duration: 10
 
 What happens when the data owner decides to update the data product?
 
@@ -526,7 +520,6 @@ in `HOL_ACCOUNT1`
 
 ## Data Governance Policies
 
-Duration: 10
 
 Let's examine some simple techniques for row- and column-level access control across domains.
 
@@ -631,7 +624,6 @@ As soon as you remove roles or accounts, the listing is no longer accessible for
 
 ## Basic Listing Management
 
-Duration: 10
 
 In this section we will review further capabilities for managing and monitoring listings as a data product owner or as an organization data steward:
 
@@ -700,7 +692,6 @@ order by query_start_time desc;
 
 ## Programmatic Listings
 
-Duration: 10
 
 So far this lab has managed listings mainly through the Snowflake UI. But, [data owners](https://docs.snowflake.com/en/progaccess/listing-progaccess-about) and [data consumers](https://other-docs.snowflake.com/en/collaboration/consumer-listings-progaccess-examples) can also work with listings programmatically through the [Listing API](https://docs.snowflake.com/en/sql-reference/commands-listings). 
 
@@ -946,7 +937,6 @@ Now switch to the different local roles (sales_emea_role, sales_apj_role, etc) i
 
 ## Conclusion And Resources
 
-Duration: 5
 
 Congratulations, you completed this **Snowflake Internal Marketplace** journey! You have seen how data products can be authored, published, requested, consumed, and governed. These are key capabilities for sharing documented and understandable data products across business units with governance and compliance control controls.
 

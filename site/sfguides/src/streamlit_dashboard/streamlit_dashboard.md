@@ -1,16 +1,15 @@
 author: Chanin Nantasenamat
 id: streamlit-dashboard
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: Learn how to create an interactive YouTube analytics dashboard using Streamlit within Snowflake Notebooks. This guide covers data generation, visualization, and user interaction to effectively communicate your data insights.
-categories: featured, streamlit, getting-started, data-science
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues  
-tags: Snowflake Notebooks, Streamlit, Python, Data Visualization
 
 # Building a YouTube Analytics Dashboard with Streamlit in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Have you ever wanted to create an interactive dashboard directly within your Snowflake environment? Many data professionals struggle with building visually appealing and interactive dashboards that can effectively communicate their data insights. This tutorial leverages Snowflake Notebooks combined with Streamlit to build a comprehensive YouTube analytics dashboard without leaving your Snowflake environment.
 
@@ -35,7 +34,6 @@ The dashboard displays key metrics, such as subscriber growth, views, and engage
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 ### Environment Configuration
 Begin by setting up your environment by importing the required libraries. We'll use pandas for data manipulation, numpy for numerical operations, datetime for handling dates, and streamlit for creating the dashboard interface.
@@ -64,7 +62,6 @@ import streamlit as st
 
 <!-- ------------------------ -->
 ## Building the Dashboard Framework
-Duration: 10
 
 Before diving into the implementation details, let's set up the framework for our dashboard. We'll start by generating sample YouTube channel data spanning 5 years with various metrics.
 
@@ -139,7 +136,6 @@ df['DATE'] = pd.to_datetime(df['DATE'])
 
 <!-- ------------------------ -->
 ## Building the Interactive Dashboard
-Duration: 15
 
 ### Helper functions
 First, let's create helper functions for powering the dashboard with the data and charts.
@@ -361,7 +357,6 @@ st.dataframe(
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 Congratulations! You've successfully built a comprehensive YouTube analytics dashboard using Streamlit within Snowflake Notebooks. This dashboard allows you to visualize key metrics, interactively filter data, and gain valuable insights directly within your Snowflake environment. Happy coding!
 

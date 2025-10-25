@@ -1,17 +1,16 @@
 author: gflomo@hex.tech
 id: hex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This lab will walk you through how to use Snowflake and Hex.
-categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Hex, Notebooks, Partner Connect
 
 # Building and deploying a time series forecast with Hex + Snowflake
 
 <!-- ------------------------ -->
 ## Lab Overview 
-Duration: 5
 
 In this demo, we will play the role of a data scientist at a large restaurant chain tasked with helping the restaurant operators optimize their staffing schedule. To do this, we would like to forecast the hourly foot traffic for each of the restaurants stores in 200 different locations. Let's see how we can use Hex in collaboration with Snowflake/Snowpark to build an XGBoost forecasting model to help with the task at hand. 
 
@@ -47,12 +46,10 @@ This pipeline will:
 
 <!-- ------------------------ -->
 ## Creating a Snowflake account
-Duration: 5
 
 Head over to the [Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) sign-up page and register for a free account. Once you've registered, you'll get an email that will bring you to Snowflake so that you can sign in.
 
 ## Connecting Snowflake with Hex
-Duration: 5
 
 
 Once you've logged into your Snowflake account, you'll land on the `Learn` page. Simply navigate to the `Admin` tab on the left and click `Partner connect`. In the search bar at the top, type in `Hex`, and you should see the Hex partner connect tile appear. Clicking on the tile will bring up a new screen, and all you have to do is to press the connect button in the lower right corner. After this, you'll see a new screen confirming that your account has been created and from here you can click `Activate`.
@@ -112,7 +109,6 @@ The last thing we'll want to do is accept the [Anaconda terms and conditions ena
 
 <!-- ------------------------ -->
 ## Getting Started with Hex
-Duration: 5
 
 Now we can move back over to Hex and get started on our project. The first thing you'll need to do is download the Hex project that contains all of the code for generating our data and training our model.
 
@@ -141,7 +137,6 @@ Next we can import our Snowflake data connection by heading over to the `Data so
 ![](assets/vhol-dc.gif)
 
 ## Install and import required packages
-Duration: 3
 
 The first thing we'll want to do is make sure that all of the packages we want to use are installed and imported. Hex comes with a variety of [pre-installed](https://learn.hex.tech/docs/environment-configuration/using-packages#use-a-pre-installed-package) packages and also supports [installing new packages through pip](https://learn.hex.tech/docs/environment-configuration/using-packages#install-new-packages-through-pip). You can run this cell to install the packages: 
 
@@ -155,7 +150,6 @@ Clicking the button will install the packages.
 
 
 ## Establishing a connection to Snowflake
-Duration: 3
 
 Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection, you'll see a `query` option appear at the bottom. This will allow us to query this connection in an SQL cell, however, what we want to do is create a Snowpark session using this connection. Click on the dropdown next to the `query` button and select `get Snowpark session`. What this will do is create a new cell for us with all the code needed to spin up a Snowpark session.
 
@@ -177,7 +171,6 @@ In this cell, we reference our Snowpark session with the variable `hex_snowpark_
 ![](assets/vhol-var-edit.gif)
 
 ## Generating our forecasting data
-Duration: 8
 
 <!-- Not sure how much detail I should go into here -->
 
@@ -188,7 +181,6 @@ In order to train our forecasting model, we'll need to show it historical data s
 <!-- Ask chase what exactly the holiday table is for, also maybe check out the presentation that he sent. https://www.Snowflake.com/blog/Snowpark-python-feature-engineering-machine-learning/ -->
 
 ## Write the data back to Snowflake
-Duration: 5
 
 Now that we've created our data, we're going to write our tables back to Snowflake. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. If you hover your mouse under the header "Write data back to database" an element to add a new cell will appear. Click on this element to see a panel of all the different cell types available and you'll find writeback under utilities. 
 
@@ -209,14 +201,12 @@ To write the data back to our database, we'll want to enable the cell by clickin
 
 
 ## Exploring the Historical data
-Duration: 3
 
 Now that we have our data back in Snowflake, we can use our Snowpark session object to pull our data back into Hex using the function `session.table()` with the name of our tables as arguments. By calling the `toPandas` function, we can preview the table in Hex.
 
 ![](assets/vhol-dataset.png)
 
 ## Feature Engineering
-Duration: 5
 
 To create our training dataset we'll use our tables pulled in from Snowflake and join them together. We extract the date and hour from the `TIME_POINTS` column in the traffic table and join on the `DATE` column in the calendar table. We've also filtered out records between the hours of 10pm and 7am which is when the restaurants are closed. This table will be the input to our XGBoost model where we'll index on the `TIME_POINTS` column, the rest of the columns will be our features and `HOURLY_TRAFFIC` is the value we want to predict.
 
@@ -236,7 +226,6 @@ As the last step, we combine the past and future tables together in order to obt
 
 
 ## Training the model
-Duration: 10
 
 The objective here is to provide a store level forecast across the restaurant's 200 locations, which means we need to train 200 individual forecast models. By leveraging a UDTF, we're able to distribute the processing across multiple nodes and train our model in parallel. First, we'll define the output schema for the UDTF.
 
@@ -272,7 +261,6 @@ If you want to see a performance boost at this step, you can upgrade the size of
 
 
 ## Visualizing the results
-Duration: 5
 
 Now that we have our data in Snowflake, we can pull the predicted values back into Hex using an SQL cell. To do this, add a new SQL cell to the project and paste the following snippet into the cell.
 
@@ -298,7 +286,6 @@ Once selected you will see this visual appear:
 ![](assets/vhol-vis.png)
 
 ## Sharing our results
-Duration: 3
 
 Now that we've completed going through our project, how can we share this project with others? First, we might want to arrange our cells and also hide some of the logic that isn't super important for understanding how to build a forecast model. To do this we can head over to the app side of things. At the top of your project, you'll see a button showing if you're in the logic or app view. By switching over to the app side of things, we can start arranging our cells and adding/removing them as we see fit. Check out the [Hex docs](https://learn.hex.tech/docs/build-apps/app-builder) to learn about how you can effectively use the app builder.
 

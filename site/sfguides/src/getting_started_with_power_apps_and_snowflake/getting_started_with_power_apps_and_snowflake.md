@@ -1,15 +1,14 @@
 author: chandra-snow
 id: power_apps_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a quickstart for using Microsoft Power Platform, Power Apps, Power Automate and Snowflake
-categories: Getting-Started, data-engineering, microsoft, power-apps, power-platform, snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Microsoft, Power Apps, Power Platform, Power Automate
 Date: 4/3/25
 
 # Getting Started with Microsoft Power Platform and Snowflake
-Duration: 45
 
 <!-- ------------------------ -->
 ## Overview 
@@ -43,7 +42,6 @@ Snowflake is a cloud-based data platform that allows organizations to store, pro
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 15
 ### Create Snowflake Objects 
 
 The first thing we will do is create a database and warehouse in your Snowflake environment. 
@@ -94,7 +92,6 @@ GRANT ALL ON SCHEMA  hol_db.public TO ROLE ANALYST;
 
 <a id="Azure_Setup"></a>
 ### Set up Azure AD (Entra ID) authentication for Snowflake 
-Duration: 15
 
 Now we need to set up an app registration for Active Directory (Entra ID) OAuth, which will establish trust between your Power Platform and Snowflake. This allows you to define and manage permissions and ensures only authorized users to access your application.
 
@@ -107,7 +104,6 @@ in the document below.
 [Script-for-Mac Users](https://github.com/Snowflake-Labs/sfguide-getting-started-with-powerplatform-and-snowflake/blob/main/AppCreationAndConfigLatest_Mac.ps1)
 
 #### Setup the Connector in Power Apps or Power Automate
-Duration: 2 mins
 
 Get the values from the script output from previous step or 
 from your Entra Admin who configured your Oauth resource and client. 
@@ -119,7 +115,6 @@ Enter the client_id and secret from Entra. Click Create and ensure a successful 
 ![alt text](assets/connector_config2.png)
 <!-- ------------------------ -->
 ### Build a PowerApp and connect to Snowflake data
-Duration: 15 mins
 
 After you have configured Power Apps Connector to Snowflake, go to Power Apps 
 1. Click Tables -> Create Virtual Table 

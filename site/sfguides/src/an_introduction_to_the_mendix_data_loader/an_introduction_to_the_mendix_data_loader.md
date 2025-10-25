@@ -1,16 +1,15 @@
 author: Trong Tran
 id: mendix_data_loader
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/connectors
+language: en
 summary: Guide on how to use the Mendix Data Loader to ingest data from Mendix applications via a published OData service.
-categories: connectors,partner-integrations
 environments: web
 status: Published
-tags: Getting Started, Data Science, Data Engineering, Twitter, Connectors, Native Apps, External Connectivity, Mendix
 
 # An Introduction to the Mendix Data Loader
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 In this tutorial you will learn how to ingest data from a Mendix application. In the following steps you will learn how to configure the Mendix Data Loader component, a Snowflake application that is deployed in your Snowflake environment that ingests your Mendix data.
 
@@ -44,7 +43,6 @@ If you already have a Mendix application and just want to connect to that applic
 
 ## (Optional) Setting Up Your Mendix Application
 
-Duration: 15
 
 ### Mendix
 
@@ -79,7 +77,6 @@ The application you just downloaded, uploaded to Mendix' version control server 
 <!-- ------------------------ -->
 ## Install the Mendix Data Loader
 
-Duration: 5
 
 - Download the Mendix Data Loader from the [Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZTDZHHIE0/mendix-mendix-data-loader)
 - Once a window displaying "successfully Installed" appears, click `Close`, navigate to `Data Products` -> `Apps` -> `Mendix Data Loader`, a documentation page titled `Mendix Data Loader` should appear
@@ -102,7 +99,6 @@ Should any data reside in the specified database and schema from prior ingestion
 <!-- ------------------------ -->
 ## Mendix Data Loader Configuration
 
-Duration: 5
 
 ### Starting the Application
 
@@ -143,7 +139,6 @@ The final step before data ingestion is to configure the staging area. The stagi
 <!-- ------------------------ -->
 ## Mendix Data Loader Data Ingestion
 
-Duration: 5
 
 ### Start a Single Ingestion
 

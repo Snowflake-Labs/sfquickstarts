@@ -1,17 +1,16 @@
 author: Charlie Hammond
 id: retail_snowflake_intelligence
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/product/platform
+language: en
 summary: This solution goes through Snowflake Intelligence with retail data.
-categories: Getting-Started, AI
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Retail
 
 # Retail Snowflake Intelligence with Cortex Agents
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 This solution goes through Snowflake Intelligence with retail data. You will learn how Snowflake Intelligence leverages natural language to drive deep insights from you data. This quickstart uses a fictional hand soap company, "Lather and Leaf," to demonstrate a common retail use case. The story progresses naturally, turning data points into business decisions. 
 
@@ -34,7 +33,6 @@ This quickstart includes the implementation of a complete retail intelligence so
 <!-- ------------------------ -->
 ## Setup Environment
 
-Duration: 15
 
 ### **1. Setting Up the Environment**
 
@@ -84,7 +82,6 @@ With your files staged, you can now create the agent in the Snowflake UI and con
 <!-- ------------------------ -->
 ## Using Your Solution
 
-Duration: 10
 
 Once you've completed the setup steps above, you can begin using your Snowflake Intelligence solution. Navigate to AI > Snowflake Intelligence from Snowsight to open your chat interface. You can also use the chat from the agent setup screen once you save.
 
@@ -118,7 +115,6 @@ Try using some of the prompts below. They designed to be copy-pasted directly in
 <!-- ------------------------ -->
 ## Conclusion
 
-Duration: 1
 
 Congratulations! You have successfully built and deployed a complete Retail Intelligence solution using Snowflake. You can now find data driven answers to your complex business questions! 
 

@@ -1,18 +1,17 @@
 authors: Dash Desai
 id: getting_started_with_dataengineering_ml_using_snowpark_python_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: Getting Started with Data Engineering and ML using Snowpark for Python
-categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues/
-tags: Getting Started, kr, Snowpark Python, Streamlit, scikit-learn, Data Engineering, Machine Learning
 
 # Snowpark for Python를 사용하여 데이터 엔지니어링 및 ML 시작하기
 
 <!-- ------------------------ -->
 ## 개요
 
-Duration: 5
 
 이 가이드를 완료하면 가공 전 데이터를 조직이 광고 예산 할당을 최적화하는 데 도움을 줄 수 있는 인터랙티브 애플리케이션으로 만들 수 있습니다.
 
@@ -70,7 +69,6 @@ Streamlit은 개발자가 데이터 애플리케이션을 빠르고 쉽게 작�
 <!-- ------------------------ -->
 ## 설정 환경
 
-Duration: 15
 
 ### 테이블 생성, 데이터 로드 및 스테이지 설정
 
@@ -173,7 +171,6 @@ CREATE OR REPLACE STAGE dash_udfs;
 <!-- ------------------------ -->
 ## 시작하기
 
-Duration: 8
 
 이 섹션에서는 GitHub 리포지토리 복제 및 Snowpark for Python 환경 설정을 다룹니다.
 
@@ -264,7 +261,6 @@ pip install snowflake-ml-python
 <!-- ------------------------ -->
 ## 데이터 엔지니어링
 
-Duration: 20
 
 아래에 링크가 연결된 노트북은 다음 데이터 엔지니어링 작업을 다룹니다.
 
@@ -443,7 +439,6 @@ session.sql("alter task monthly_revenue_data_pipeline_task suspend").collect()
 <!-- ------------------------ -->
 ## 머신러닝
 
-Duration: 20
 
 > aside negative 사전 필요 조건 및 지식: [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb)에서 설명한 데이터 엔지니어링 단계를 성공적을 완료해야 합니다.
 
@@ -502,7 +497,6 @@ session.sql('USE SCHEMA DASH_SCHEMA').collect()
 <!-- ------------------------ -->
 ## Streamlit 애플리케이션
 
-Duration: 10
 
 ### 로컬에서 Streamlit 앱 실행
 
@@ -591,7 +585,6 @@ alter task monthly_revenue_data_pipeline_task suspend;
 <!-- ------------------------ -->
 ## 결론 및 리소스
 
-Duration: 3
 
 축하합니다! 성공적으로 데이터 엔지니어링 작업을 수행하고 Snowpark for Python 및 scikit-learn을 사용하여 검색, 동영상, 소셜 미디어 및 이메일을 포함한 여러 채널에 걸쳐 다양한 광고 지출 예산의 향후 ROI(투자 수익)를 예측하기 위해 선형 회귀 모델을 학습시키셨습니다. 그런 다음 이러한 모델을 사용하여 사용자 입력에 따라 새로운 예산 할당에 대한 예측을 생성하는 Streamlit 애플리케이션을 생성했습니다.
 

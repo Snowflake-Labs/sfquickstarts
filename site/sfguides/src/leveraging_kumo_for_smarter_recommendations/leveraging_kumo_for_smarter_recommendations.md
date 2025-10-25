@@ -1,18 +1,17 @@
 author: Leon Yen, Zack Drach
 id: leveraging_kumo_for_smarter_recommendations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/commercialize, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: This guide will provide step-by-step details for generating product recommendations and performing customer LTV calculation using Kumo in a Snowflake Native App
-categories: Getting-Started, data-science, retail
 environments: web
 status: Draft
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Recommendations, Data Engineering, Snowpark Container Services, Machine Learning, Lifetime Value, Data Science, Retail
 
 
 # Product Recommendations for High LTV Customers using Kumo in Snowflake Native Apps
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 In this guide, you will use Kumo as a Snowflake native app to recommend the top ten products your highest value customers are most likely to buy. These predictions can be used to make product recommendations that users are more likely to buy, leading to increase engagement and sales.
 
@@ -68,7 +67,6 @@ Please note that starting and using Kumo as a Snowflake native app will incur me
 
 ## Setting Up Data in Snowflake
 
-Duration: 10
 
 You will first need to install and downsample the public TPC-DS dataset that comes with your Snowflake deployment. The TPC-DS dataset models the decision support functions of a retail product supplier, containing vital business information such as customer, order, and product data. Although you will be downsampling the data for demonstration purposes, Kumo as a native Snowflake app can scale to billions of rows and terabytes of data. 
 
@@ -126,7 +124,6 @@ Once the sample dataset has been created, you will see the new `KUMO_REC_DEMO` d
 
 ## Registering Your Schema in Kumo
 
-Duration: 10
 
 This step assumes that you have already installed Kumo as a Snowflake native app. If not, [follow these directions](https://docs.kumo.ai/docs/installing-kumo-on-spcs\#4-create-a-compute-pool-and-launch-the-kumo-container) to set up, install, and launch Kumo as a Snowflake native app. 
 
@@ -202,7 +199,6 @@ Click the `Complete Graph Creation` button to continue.
 
 ## Building Your Predictive Queries
 
-Duration: 5
 
 To create product recommendations for your highest value customers, you will first predict *who* your highest LTV customers are, followed by predictions regarding which products they are most likely to purchase. This entails writing predictive queries using Kumo’s predictive query language (PQL), an easy-to-use, SQL-like language interface for querying the future.
 
@@ -308,7 +304,6 @@ Once the predictive query starts the training process, you will be routed to you
 
 ## Evaluating the Model Performance
 
-Duration: 5
 
 Kumo provides a wide range of mechanisms for gauging the efficacy of your predictive models. On the `Training` tab of your predictive query, Kumo will display various metrics and statistics explaining the results of various neural architecture experiments and model planner parameters.
 
@@ -350,7 +345,6 @@ Please refer to [Kumo’s documentation](https://docs.kumo.ai/docs/explorer) to 
 
 ## Productionize Your Model
 
-Duration: 10
 
 After training your predictive query, you can set up a batch prediction workflow and jobs to run your predictive query on a regular basis. From your predictive query’s detail page, click on `Create BP Workflow` in the top right-hand corner.
 
@@ -392,7 +386,6 @@ Please refer to [Kumo’s Documentation](https://docs.kumo.ai/docs/batch-predict
 
 ## Cleanup and Shutdown
 
-Duration: 5
 
 Once you’re done using the Kumo native app, you should shut it down so as not to incur additional metered costs. You can do this by running the following command in a SQL worksheet:
 
@@ -413,7 +406,6 @@ You can always restart the compute pool and app at a later time, if needed. For 
 
 ## Conclusion and Resources
 
-Duration: 5
 
 #### Conclusion
 

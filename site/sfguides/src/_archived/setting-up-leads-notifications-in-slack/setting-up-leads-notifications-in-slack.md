@@ -1,16 +1,15 @@
 author: Szymon Rybka
 id: setting-up-leads-notifications-in-slack
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: How to use webhooks for export Snowflake Marketplace lead information.
-categories: Getting-Started
 environments: web
 status: Archived 
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Webhooks, Snowflake Marketplace, Leads, JavaScript, Slack
 
 # Setting Up Leads Notifications in Slack
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 This guide is designed for users who wish to automate the export of lead events from the Snowflake Marketplace and use them in an external system. As a practical example, we will demonstrate how to send new lead information as a Slack message using webhooks.
 
@@ -42,7 +41,6 @@ By the end of this guide, you should be familiar with Snowflake listing events a
 
 <!-- ------------------------ -->
 ## Introduction To LISTING_EVENTS_DAILY view
-Duration: 2
 
 To retrieve lead information, we will need to use the `LISTING_EVENTS_DAILY` view in the `DATA_SHARING_USAGE` schema. It lets you query the daily history of consumer activity on listings for the Snowflake Marketplace and data exchanges.
 
@@ -101,7 +99,6 @@ WHERE
 
 <!-- ------------------------ -->
 ## Create new Notification Integration
-Duration: 10
 
 The next step is to create a `NOTIFICATION INTEGRATION`. This document is based on official documentation for setting this up: [Snowflake Notification Integration Documentation](https://docs.snowflake.com/en/sql-reference/sql/create-notification-integration-webhooks).
 
@@ -153,7 +150,6 @@ As a result, the notification should be added to the sending queue and shortly a
 
 <!-- ------------------------ -->
 ## Sending Only New Events
-Duration: 15
 
 Since we plan to trigger our integration daily, we need to ensure that the same event is not sent twice. To achieve this, I suggest creating a table to track the leads that have already been sent. This table will serve as a log to keep a record of all sent events, allowing us to check for duplicates and prevent sending the same event multiple times.
 
@@ -211,7 +207,6 @@ Two new conditions in this query are worth noting:
 
 <!-- ------------------------ -->
 ## Parsing events in JavaScript
-Duration: 5
 
 Since we assume these steps will be performed quite frequently, I recommend creating an appropriate procedure right away. We decided to write it in **JavaScript**, but the choice of programming language is not essential.
 
@@ -574,7 +569,6 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.NOTIFICATION_HISTORY());
 
 <!-- ------------------------ -->
 ## Automating Lead Notifications
-Duration: 10
 
 The solution described above enables easy lead processing and notifications but still requires manual execution. To streamline this, we can automate the process by creating a Snowflake Task. A task can be scheduled to automatically run the `get_events_and_send_notification_for_new_leads` procedure at specified intervals without manual intervention.
 
@@ -621,14 +615,12 @@ For more details on how to create and manage tasks in Snowflake, you can visit t
 
 <!-- ------------------------ -->
 ## Calculating the Cost of the Solution
-Duration: 2
 Before implementing the automated lead notification solution, it’s important to understand the potential costs involved. Snowflake charges for both compute resources (warehouses) and data storage. The main factors influencing the cost of this solution are:
 - Warehouse Usage: The task uses the designated warehouse each time it runs. The cost will depend on how long the warehouse is active during each execution and its size.
 - Storage Costs: The task processes leads, which are stored in the leads_notification_history table. The amount of data stored will depend on the number of leads and the data retention period.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 ### Conclusion
 

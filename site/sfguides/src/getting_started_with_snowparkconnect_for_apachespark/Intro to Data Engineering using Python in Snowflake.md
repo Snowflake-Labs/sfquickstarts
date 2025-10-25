@@ -1,14 +1,14 @@
 author: Vino Duraisamy, Kala Govindarajan
 id: getting_started_with_snowpark_connect_for_apache_spark
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
+language: en
 summary: This quickstart guide shows you how to get started with Snowpark Connect for Apache Spark™ categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Apache Spark, Snowpark, Python, Data Engineering
 
 # Getting Started with Snowpark Connect for Apache Spark
 <!-- ------------------------ -->
-Duration:5
 
 ## Overview
 
@@ -49,7 +49,6 @@ In Apache Spark™ version 3.4, the Apache Spark community introduced Spark Conn
 <!-- ------------------------ -->
 ## Run PySpark Code
 
-Duration:10
 
 During this step you will learn how to run PySpark code on Snowflake to:
 
@@ -81,7 +80,6 @@ Follow along and run each of the cells in the [Notebook](https://github.com/Snow
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration:2
 
 Congratulations, you have successfully completed this quickstart! 
 

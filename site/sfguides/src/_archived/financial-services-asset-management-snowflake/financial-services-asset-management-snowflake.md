@@ -1,16 +1,15 @@
 author: Allen Wong
 id: financial-services-asset-management-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/financial-operations
+language: en
 summary: Financial Services Asset Management Demo
-categories: Getting-Started
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Financial Services Asset Management
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 **Summary**
 - What would a Single Version of the Truth (SVOT) for Asset Managers on Snowflake look like?
@@ -54,7 +53,6 @@ Duration: 1
 
 <!-- ------------------------ -->
 ## Script "10 Setup"
-Duration: 2
 
 We setup
 - Role Based Access Control RBAC
@@ -68,7 +66,6 @@ YouTube video: [Running script 10](https://youtu.be/HkrRXMHDd-E?t=2136)
 
 <!-- ------------------------ -->
 ## Script "20 Marketplace"
-Duration: 3
 
 We:
 - "mount" and verify the Knoema economy_data_atlas share
@@ -92,7 +89,6 @@ YouTube video: [Running script 20 and mounting the share](https://youtu.be/HkrRX
 
 <!-- ------------------------ -->
 ## Script "30 DDL"
-Duration: 6
 
 We:
 - Size up compute to create 3 billion synthetic trades
@@ -106,7 +102,6 @@ YouTube video: [Running script 30](https://youtu.be/HkrRXMHDd-E?t=2782)
 
 <!-- ------------------------ -->
 ## Script "40 Queries"
-Duration: 3
 
 We:
 - Query 3 billion rows with only small compute and 3 second run-time
@@ -121,7 +116,6 @@ YouTube video: [Running script 40](https://youtu.be/HkrRXMHDd-E?t=3297)
 
 <!-- ------------------------ -->
 ## Script "60 Filter SnowSight"
-Duration: 2
 
 We setup
 - Three Snowsight filters: Trader, TradeDate, and Snowsight
@@ -134,7 +128,6 @@ YouTube video: [Running script 60 building the three filters in Snowsight](https
 
 <!-- ------------------------ -->
 ## Script "70 Snowsight" Dashboard
-Duration: 2
 
 We setup
 - a Snowsight dashboard with charts (line, bar, and scorecard)
@@ -147,7 +140,6 @@ YouTube video: [Running script 70 to build the dashboard](https://youtu.be/HkrRX
 
 <!-- ------------------------ -->
 ## Script "90 Optional Reset"
-Duration: 2
 
 Optional Script to reset / remove all objects created during this demo
 
@@ -155,7 +147,6 @@ Run the <button>[finserv demo 90 reset](https://github.com/Snowflake-Labs/sfguid
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 ### Recap
 

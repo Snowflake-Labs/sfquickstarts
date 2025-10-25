@@ -1,16 +1,15 @@
 author: Kala Govindarajan
 id: llm_assisted_medical_coding_extraction_for_healthcare
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
+language: en
 summary: Clinical coding is the task of transforming medical records, usually presented as free texts written by clinicians or as typed texts, into structured codes in a classification system like ICD-10. By completing this QuickStart guide, you will see how fine tuning alleviates the workload on physicians and medical coders, as we aim to advance the implementation of autonomous medical coding. This approach will not only ensure high accuracy and clinical specificity in Medical code extraction but also support various healthcare models paving the way for a more sustainable and effective healthcare environment.
-categories: Getting-Started,data-science-&-ml, solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Cortex, Data Science & Ai
 
 # LLM Assisted Medical Coding Extraction for Healthcare in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 <img src="assets/hcls.png"/>
 
 
@@ -52,7 +51,6 @@ Also Cortex fine-tuning does Automatic Parameter Efficient Fine-tuning (PEFT) wi
   
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 2
 
 This section will walk you through creating various objects
 
@@ -77,7 +75,6 @@ We will explore the Notebook in detailed in the next section.
 
 <!-- ------------------------ -->
 ## Cortex Fine Tuning
-Duration: 2
 
 In this section we will explore the notebook. As mentioned earlier, do not execute Run All. Instead execute cell by cell.
 
@@ -137,7 +134,6 @@ If you have customers and a risk score mapping for various conditions, you can n
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 At the end of this guide, we have seen how to create a production ready AI based autonomous medical coding extraction pipeline which is accurate and cost-effective at the same time, and not rely on a low accurate Prompt engineered or RAG application
 We saw that how easily fine tuning alleviates the workload on physicians and medical coders, as we aim to advance the implementation of autonomous medical coding. This approach will not only ensure high accuracy and clinical specificity but also support various healthcare models paving the way for a more sustainable and effective healthcare environment.

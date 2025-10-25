@@ -1,16 +1,15 @@
 author: Vladi Bilonenko
 id: kepler_gl_maps_inside_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: This guide will help you create interactive maps directly within Snowflake using Kepler.gl
-categories: Getting-Started
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Maps, Kepler.gl
 
 # Creating Interactive Maps with Kepler.gl in Snowflake Using Dekart
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 This guide will help you create interactive maps directly within Snowflake using [Kepler.gl](https://kepler.gl), powered by [Dekart Snowpark Application](https://dekart.xyz/docs/snowflake-snowpark/about/). With this approach, you can analyze and visualize geospatial data from public datasets, all within Snowflake, avoiding external data transfers and approvals.
 
@@ -31,7 +30,6 @@ A map that visualizes UK highways with color-coded density of nearby EV charging
 
 <!-- ------------------------ -->
 ## Install Dekart for Snowflake
-Duration: 12
 
 [Dekart](https://dekart.xyz) is an open-source application that integrates [Kepler.gl](https://kepler.gl) with Snowflake. With [Dekart Snowpark Application](https://dekart.xyz/docs/snowflake-snowpark/about/), you can create maps directly in Snowflake, without any data transfers outside of your Snowflake account.
 
@@ -79,7 +77,6 @@ Watch this video for a detailed walkthrough of the Dekart installation process.
 
 <!-- ------------------------ -->
 ## Access Overture Maps
-Duration: 2
 
 To build our map, we need geospatial datasets from Overture Maps, available in the Snowflake Marketplace.
 
@@ -96,7 +93,6 @@ To build our map, we need geospatial datasets from Overture Maps, available in t
 
 <!-- ------------------------ -->
 ## Configure Permissions to Data
-Duration: 2
 
 Since Dekart operates within your Snowflake account, it requires permissions to access the Overture Maps datasets. This ensures that Dekart can read and visualize the data within Snowflake without transferring it externally.
 
@@ -119,7 +115,6 @@ These commands authorize Dekart to access the specific tables within the Overtur
 
 <!-- ------------------------ -->
 ## Create Maps with SQL in Snowflake
-Duration: 2
 
 Now we’re ready to start creating maps! Dekart allows you to visualize data directly from SQL queries, which means you can write custom queries to shape the data as you like.
 
@@ -131,7 +126,6 @@ Now we’re ready to start creating maps! Dekart allows you to visualize data di
 
 <!-- ------------------------ -->
 ## Build Map in Dekart
-Duration: 5
 
 Let’s construct a map that visualizes UK highways with color-coded density of nearby EV charging stations. We’ll use SQL queries to filter and aggregate data from Overture Maps, focusing on major roads and charging infrastructure.
 
@@ -273,7 +267,6 @@ This will color-code road segments based on EV station density.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 
 ### Conclusion
 In this guide, you created an interactive, real-time map within Snowflake, using Dekart and the Overture Maps datasets. You explored UK highway infrastructure with a focus on EV charging station density.

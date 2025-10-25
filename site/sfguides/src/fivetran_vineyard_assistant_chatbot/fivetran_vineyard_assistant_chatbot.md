@@ -1,16 +1,15 @@
 author: David Hrncir
 id: fivetran_vineyard_assistant_chatbot
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
+language: en
 summary: Build a RAG-based GenAI Streamlit application with Fivetran and Snowflake using structured data.
-categories: Getting-Started, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: GenAI, RAG, Fivetran, chat
 
 # Build a RAG-based, GenAI chatbot using Structured Data with Snowflake and Fivetran
 <!-- ------------------------ -->
 ## Overview
-Duration: 3
 
 GenAI can be used to solve an unlimited number of problems, but this technology can be daunting.  Defining the problem, acquiring data related to that problem, preparing the data, assigning the appropriate models and protocols, training the data, parameter tuning, etc.  Thankfully, there are numerous LLMs available that are ready for use and can be utilized for many use cases out of the box.  So why RAG?  RAG gives you the ability to utilize your custom dataset along with the LLM thereby expanding the LLMs reach on building customized responses using your valuable data.
 
@@ -44,7 +43,6 @@ All in less than 30 minutes!
 
 
 ## Accounts - Snowflake and Fivetran
-Duration: 10
 
 The outcome of this step is to:
 - Have a Snowflake account with all the objects needed for Fivetran to ingest data (account, user, role, warehouse, database)
@@ -72,7 +70,6 @@ If you do not have a Fivetran account and you are unable to use `Partner Connect
 In the case where you have Snowflake and Fivetran accounts already, you may use a current Snowflake destination in Fivetran or simply follow the [Snowflake destination setup guide](https://fivetran.com/docs/destinations/snowflake/setup-guide) to create a new Snowflake destination in Fivetran.
 
 ## Option 1 PostgreSQL Source
-Duration: 5
 
 Ok, let's replicate our structured data from a PostgreSQL database into Snowflake via the quickest, easiest, and most reliable method available in the world today...Fivetran!  Ensure you are logged into your Fivetran account.
 
@@ -133,7 +130,6 @@ Find the `Agriculture` schema in the list, click on the toggle on the right side
 Continue to <a href="#4" target="_self">Transform the Wine Structured Dataset</a>.
 
 ## Option 2 Amazon S3 Source
-Duration: 0
 
 If by some chance the PostgreSQL database is unavailable or inaccessible, you may use the below dataset that was copied from the PostgreSQL database to JSON residing in Amazon S3.
 
@@ -168,7 +164,6 @@ Scroll down and you will see the remainder of the configuration fields.  Set the
 ![Fivetran Connector 16](assets/fivetran/f_0150.png)
 
 ## Transform the Wine Structured Dataset
-Duration: 3
 
 Now that Fivetran landed the structured dataset into tables in Snowflake, it's time to convert that data into a format a LLM can read.  Since LLMs do not like columnar data, we have to first transform the data into a human readable chunk.  Then secondly, we are going to transform that chunk into vectors.  We could use Snowflake's vector search service, but we are doing this manually in this lab so you can understand all the aspects.  So we will be working in the Snowflake Snowsight UI for the rest of the lab.
 
@@ -239,7 +234,6 @@ You may then preview the data by refreshing the left nav panel (click the `refre
 That's it for transforming the data...now we are ready to build our Streamlit app!
 
 ## Build the Chatbot as a Streamlit Application
-Duration: 5
 We are now ready to build our Streamlit application.  Snowflake's Streamlit feature makes creating and sharing applications easy.
 
 **Step 1.** Click the Projects icon in the left menu and select `Streamlit`.
@@ -541,7 +535,6 @@ The `run_prompt` is the controller function that formats the prompt, calls Corte
 Last, the `main` function, like any other Python application, is the entry point to the entire process, calls all other processes, and displays the results in reverse order so that your most recent prompt results are at the top of the history.
 
 ## Run the Chatbot
-Duration: 2
 
 Ok, you are close to the end.  Click the Run button in the upper right corner to run the application.
 
@@ -578,7 +571,6 @@ There are two additional pieces of information added to the bottom of each respo
 ![Fivetran Snowflake 13](assets/snowflake/s_0130.png)
 
 ## Chatbot Tests
-Duration: 0
 
 ### Testing Notes
 Now that you know your way around the key features, it’s time to put the California Wine Country Visit Assistant to work.
@@ -660,7 +652,6 @@ This lab is RAG-based meaning you are using a pre-trained LLM and adding your da
 You may have noticed that you did not need to build a chunking function to split our concatenated, unstructured string data records into appropriately sized chunks.  The dataset is a controlled dataset where the string records created do not exceed 2000 tokens.  Had there been very large records, a chunking function (text splitting) would have been implemented.
 
 ## Conclusion and Resources
-Duration: 2
 
 ### Conclusion
 This lab demonstrates the ease at which you can utilize "structured datasets" for GenAI provided by Fivetran's fully automated data integration pipelines allowing you to build value-add applications in Snowflake and ask questions about "your" data without having to worry about data freshness!

@@ -1,16 +1,15 @@
 author: Daniel Myers
 id: getting_started_with_native_apps
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: Follow this tutorial to get up and running with your first Snowflake Native Application
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Native Apps 
 
 # Getting Started with Snowflake Native Apps
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
 ![Native Apps Framework](assets/app_framework.png)
 
@@ -57,7 +56,6 @@ Let's get started!
 
 <!-- ------------------------ -->
 ## Architecture & Concepts
-Duration: 2
 
 Snowflake Native Apps are a new way to build data intensive applications. Snowflake Native Apps benefit from running *inside* Snowflake and can be installed from the Snowflake Marketplace, similar to installing an app on a smart phone. Snowflake Native Apps can read and write data to a user's database (when given permission to do so). Snowflake Native Apps can even bring in new data to their users, providing new insights. 
 
@@ -73,7 +71,6 @@ The diagram below demonstrates this model:
 
 <!-- ------------------------ -->
 ## Clone Sample Repo & Directory Structure
-Duration: 3
 
 To create our Snowflake Native Application, we will first clone the [starter project](https://github.com/Snowflake-Labs/sfguide-getting-started-with-native-apps) by running this command:
 
@@ -117,7 +114,6 @@ There `src` directory is used to store all of our various source code including 
 
 <!-- ------------------------ -->
 ## Upload Necessary Data
-Duration: 2
 
 ### Upload provider shipping data 
 
@@ -220,7 +216,6 @@ FIELD_OPTIONALLY_ENCLOSED_BY = '\"');
 ```
 
 ## Share the Provider Shipping Data
-Duration: 2
 
 In order for this data to be available to the application consumer, we'll need to share it in the application package via reference usage.
 
@@ -255,7 +250,6 @@ This flow ensures that the data is able to be shared securely with the consumer 
 
 <!-- ------------------------ -->
 ## Manifest.yml
-Duration: 3
 
 The `manifest.yml` file is an important aspect of a Snowflake Native App. This file defines some metadata about the app, configuration options, and provides references to different artifacts of the application.
 
@@ -323,7 +317,6 @@ references:
 
 <!-- ------------------------ -->
 ## Installation Script
-Duration: 3
 
 The installation script **setup.sql** defines all Snowflake objects used within the application. This script runs every time a user installs the application into their environment. 
 
@@ -399,7 +392,6 @@ grant usage on procedure app_instance_schema.update_reference(string, string, st
 
 <!-- ------------------------ -->
 ## Create App Package
-Duration: 2
 
 A Snowflake Application Package is conceptually similar to that of an application installer for a desktop computer (like `.msi` for Windows or `.pkg` for Mac). An app package for Snowflake contains all the material used to install the application later, including the setup scripts. In fact, we will be using this app package in future steps to test our app!
 
@@ -417,7 +409,6 @@ snow app run
 > This code is going to actually create the entire application, not only the application package.
 <!-- ------------------------ -->
 ## Update UDF.py
-Duration: 3
 
 To add some new functionality to our application we will modify **UDF.py**. This is the Python file we use to create all our User Defined Functions (UDFs).
 
@@ -456,7 +447,6 @@ In the next step, we will expose this function to Consumers by adding it to our 
 
 <!-- ------------------------ -->
 ## Update Installation Script
-Duration: 3
 
 
 Let's add the following code snippet to our `setup.sql` script so we can use the python function we created in the previous step:
@@ -475,7 +465,6 @@ grant usage on function app_instance_schema.hello_world() to application role ap
 
 <!-- ------------------------ -->
 ## Create App Package Version
-Duration: 4
 
 We've now added some basic functionality to the native app. From here, we will create the first version of our application package. You can have multiple versions available. 
 
@@ -500,7 +489,6 @@ version:
 
 <!-- ------------------------ -->
 ## Install the Application
-Duration: 3
 
 To use the application, we'll first need to install it in the account. Normally you would click an install button in the Snowflake Marketplace, but since we're building the application and using a single account to demonstrate the provider and consumer experiences, you'll run the same `snow app run` CLI command as we mentioned before. This command creates and/or updates the application package and also deploys the application. If you'd like to instead install the application yourself, you can do so like this:
 
@@ -521,7 +509,6 @@ When it finishes running, it is going to show you a link to open the app directl
 
 <!-- ------------------------ -->
 ## Run the Streamlit App
-Duration: 1
 
 Click on the app to launch it and give it a few seconds to warm up. 
 
@@ -543,7 +530,6 @@ And to delete the database you used to populate the application, this command wi
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 1
 
 Congratulations, you have now developed your first Snowflake Native Application! As next steps and to learn more, checkout additional documentation at [docs.snowflake.com](https://docs.snowflake.com) and demos of other Snowflake Native Apps at [developers.snowflake.com/solutions](https://developers.snowflake.com/solutions/?_sft_technology=native-apps).
 

@@ -1,17 +1,16 @@
 author: Adrian Benavides, Mrinal Wadhwa, Brad Culberson
 id: build_a_private_custom_api_in_python
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: A guide to building and running a custom private API Powered by Snowflake, Ockam, and Python/Flask
-categories: getting-started,app-development,architecture-patterns,solution-examples
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, API
 
 # Build a private Custom API in Python and Flask using Ockam
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Many builders want to share some of the data stored in Snowflake, over an http API, with various enterprise applications.
 This tutorial will go through how to build, deploy, and host a __private__ custom API Powered by Snowflake.
@@ -54,7 +53,6 @@ The dataset is the [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-
 
 <!-- ------------------------ -->
 ## Setting up a Warehouse
-Duration: 1
 
 The API needs a warehouse to query the data to return to the caller. To create the database and warehouse, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:
 
@@ -64,7 +62,6 @@ CREATE WAREHOUSE DATA_API_WH WITH WAREHOUSE_SIZE='xsmall';
 ```
 
 ### Create the Application Role in Snowflake
-Duration: 1
 
 The application will run as a new role with minimal privileges. To create the role, connect to Snowflake and run the following SQL statements to create the role and grant it access to the data needed for the application.
 
@@ -81,7 +78,6 @@ GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
 
 <!-- ------------------------ -->
 ## Setting up your Development Environment
-Duration: 3
 
 The code used in this guide is hosted in GitHub. You will need a new codespace from [this GitHub repository](https://github.com/sfc-gh-bculberson/lab_data_api_python).
 
@@ -148,7 +144,6 @@ If you would also like to see how to build endpoints using the Snowflake Snowpar
 
 <!-- ------------------------ -->
 ## Building the Application Container
-Duration: 1
 
 To create the application container, we will leverage docker. The Dockerfile is based on python 3.8 and installs the required libraries needed for the application as well as the code. To create the docker container, run this command in the codespace terminal:
 
@@ -158,7 +153,6 @@ docker build -t dataapi .
 
 <!-- ------------------------ -->
 ## Creating the Image Registry
-Duration: 1
 
 To create the image registry and the database which contains it, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:
 
@@ -182,7 +176,6 @@ SHOW IMAGE REPOSITORIES;
 
 <!-- ------------------------ -->
 ## Pushing the Container to the Repository
-Duration: 1
 
 Run the following command in the codespace terminal, replacing the `&lt;repository_url&gt;` with your repository in the previous step, to login to the container repository. You will be prompted for your Snowflake username and password to login to your repository.
 
@@ -194,7 +187,6 @@ docker push <repository_url>/dataapi
 
 <!-- ------------------------ -->
 ## Creating the Compute Pool
-Duration: 1
 
 To create the compute pool to run the application, connect to Snowflake and run the following command in the Snowflake console or using SnowSQL:
 
@@ -212,7 +204,6 @@ GRANT MONITOR ON COMPUTE POOL API_POOL TO ROLE DATA_API_ROLE;
 
 <!-- ------------------------ -->
 ## Creating the Application Service
-Duration: 1
 
 To create the service to host the application, connect to Snowflake and run the following command in the Snowflake console or using SnowSQL.
 
@@ -271,7 +262,6 @@ SHOW SERVICES;
 
 <!-- ------------------------ -->
 ## Accessing the Private API Securely
-Duration: 5
 
 #### Get started with Ockam
 
@@ -416,7 +406,6 @@ curl -X GET "http://localhost:8001/connector/clerk/000000002/yearly_sales/1995"
 
 <!-- ------------------------ -->
 ## Stopping the API
-Duration: 1
 
 To stop the API, you can suspend the service. From the Snowflake console or SnowSQL, run:
 
@@ -427,7 +416,6 @@ ALTER SERVICE API.PRIVATE.API SUSPEND;
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as `DATA_API_ROLE` run:
 
@@ -452,7 +440,6 @@ DROP WAREHOUSE IF EXISTS DATA_API_WH;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You've successfully built and deployed a custom private API in Python powered by Snowflake, Ockam, and Flask. You created an http API to share data stored in Snowflake with enterprise applications.
 

@@ -1,17 +1,16 @@
 summary: Getting Started with Multimodal Analysis on Snowflake Cortex
 id: getting_started_with_multimodal_analysis_on_snowflake_cortex
-categories: getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
+language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Data Engineering, AI, Multimodal
 author: James Cha-Earley
 
 # Getting Started with Multimodal Analysis on Snowflake Cortex AI
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 In this quickstart, you'll learn how to build an end-to-end application for multimodal analysis using AI models through Snowflake Cortex AI. This application uses AI_COMPLETE with models like Claude 4 Sonnet and Pixtral-large to extract insights, detect emotions, and generate descriptions from images, plus uses AI_TRANSCRIBE to transcribe audio with speaker identification - all within the Snowflake ecosystem.
 
@@ -43,7 +42,6 @@ A multimodal analysis system that enables users to:
 <!-- ------------------------ -->
 ## Setup Environment
 
-Duration: 10
 
 To set up your Snowflake environment for multimodal analysis:
 
@@ -96,7 +94,6 @@ You should see your uploaded files listed with their sizes.
 <!-- ------------------------ -->
 ## Create Snowflake Notebook
 
-Duration: 15
 
 Let's create a notebook to explore multimodal analysis techniques:
 
@@ -121,7 +118,6 @@ The notebook includes:
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 5
 
 Congratulations! You've successfully built an end-to-end multimodal analysis system using AI models via Snowflake Cortex. This solution allows you to extract valuable insights from both images and audio content, perform transcription with speaker identification, detect emotions, analyze scenes, and generate rich descriptions - all within the Snowflake environment using AI_COMPLETE and AI_TRANSCRIBE functions.
 

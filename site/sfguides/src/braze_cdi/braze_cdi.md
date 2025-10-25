@@ -1,16 +1,15 @@
 author: Luke Ambrosetti 
 id: braze_cdi
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: Braze Cloud Data Ingestion
-categories: Marketing,Getting-Started,Partner-Integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Marketing, MarTech, Braze, Personalization
 
 # Braze Cloud Data Ingestion
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Braze Cloud Data Ingestion (CDI) is the easiest way to take data from Snowflake and ingest into the Braze platform.
 
@@ -39,7 +38,6 @@ Braze CDI allows you to set up a direct connection from your data storage soluti
 
 <!-- ------------------------ -->
 ## Snowflake Setup
-Duration: 4
 
 ### Create the Braze User, Role, and Warehouse
 
@@ -112,7 +110,6 @@ as
 
 <!-- ------------------------ -->
 ## Setup and Simulate Snowflake Data Pipeline
-Duration: 10
 
 ### Generate simple sample data
 
@@ -275,7 +272,6 @@ A Snowflake stream is going to be one of the easiest and most efficient ways to 
 
 <!-- ------------------------ -->
 ## Automation + CDI Installation
-Duration: 5
 
 Now that we've successfully simulated how this process works, it's time to think about automating this process to run consistently for Braze CDI.
 
@@ -360,7 +356,6 @@ As deciding on the schedule, a best practice here would be to run the task simil
 
 <!-- ------------------------ -->
 ## Braze Setup
-Duration: 10
 
 For this quickstart, we'll walk through setting up the `users attributes` sync for Braze CDI. We created the Snowflake pipeline to also handle `user deletes`, but that will not be documented step by step here. 
 
@@ -448,7 +443,6 @@ You can repeat these steps for user deletes as well. Click **Create new data syn
 
 <!-- ------------------------ -->
 ## Starting CDI
-Duration: 10
 
 After testing the connection, you should see now that your connection is in *Draft* mode.
 
@@ -464,7 +458,6 @@ After running this sync once, for this quickstart, I highly suggest pausing the 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ### What You Learned
 

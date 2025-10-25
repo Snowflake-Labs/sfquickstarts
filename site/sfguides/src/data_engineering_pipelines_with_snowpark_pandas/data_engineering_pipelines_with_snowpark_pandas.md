@@ -1,11 +1,11 @@
 author: Mats Stellwall, Doris Lee
 id: data_engineering_pipelines_with_snowpark_pandas
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
+language: en
 summary: This guide will provide step-by-step details for building a data engineering pipeline with pandas on Snowflake
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering 
 
 # Data Engineering Pipeline with pandas on Snowflake
 <!-- ------------------------ -->
@@ -49,7 +49,6 @@ A Customer profile table using the Snowpark Pandas API and a serverless task tha
 
 <!-- ------------------------ -->
 ## Setup The Snowflake Environment
-Duration: 10
 
 ### Overview
 This section covers cloning of the GitHub repository and creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..)
@@ -74,7 +73,6 @@ You can also use the Git integration feature of Snowflake Notebooks, in order to
 <!-- ------------------------ -->
 ## Setup Snowflake
 
-Duration: 10
 
 During this step you will verify that the [Snowflake Sample TPC-H dataset](https://docs.snowflake.com/en/user-guide/sample-data-tpch) is available in your account, and if not add the share.
 
@@ -141,7 +139,6 @@ Before you run the notebook you need to add the following Python libraries:
 
 <!-- ------------------------ -->
 ## Data Engineering with pandas on Snowflake
-Duration: 30
 
 During this step you will learn how to use pandas on Snowflake to:
 * Create datframe from a Snowflake table
@@ -156,7 +153,6 @@ Within this Notebook, we will use Snowpark Pandas API to create DataFrames, join
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 4
 
 Congratulations, you have successfully completed this quickstart! Through this quickstart, we were able to showcase how you can use [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks), [pandas on Snowflake](https://docs.snowflake.com/developer-guide/snowpark/python/snowpark-pandas), [Git integration](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-snowgit), and [Serverless Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro) to build an end-to-end data engineering pipeline.
 

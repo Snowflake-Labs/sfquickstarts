@@ -1,17 +1,16 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_semi_structured_data_ja
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: ja
 summary: Tasty Bytes - ゼロからのSnowflake - 半構造化データクックスタート
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Data Warehouse, ja
 
 # Tasty Bytes - ゼロからのSnowflake - 半構造化データ
 
 <!-- ------------------------ -->
 ## Snowflakeにおける半構造化データ処理
-Duration: 1
 <img src = "assets/semi_structured_header.png">
 
 ### 概要
@@ -38,7 +37,6 @@ Snowflakeにおける半構造化データの詳細については、[半構造�
 - 幹部にふさわしい棒チャート
 
 ## ワークシートの作成とSQLのコピー
-Duration: 1
 
 ### 概要
 このクイックスタートでは、Snowsight SQLワークシートを使ってTasty Bytesをテーマとしたストーリーを追っていきます。このページには、横に置いて活用できるよう、追加の解説、画像、ドキュメントリンクが掲載されています。
@@ -78,7 +76,6 @@ Duration: 1
 ### ステップ9 - 「Next」クリックする
 
 ## 半構造化メニューデータのプロファイリング
-Duration: 1
 
 ### 概要
 Tasty Bytesのデータエンジニアとして、私たちは半構造化データ列を含むメニューデータのプロファイリングを任されました。このメニューテーブルから、食事と成分のデータをエンドユーザーに公開する分析レイヤービューを作成する必要があります。
@@ -149,7 +146,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m;
 ### ステップ4 - 「Next」クリックする
 
 ## 半構造化データのフラット化
-Duration: 2
 
 ### 概要
 ドット表記を使用して、Variant列に存在する半構造化データを簡単にクエリできる方法が分かりました。社内のステークホルダーに要求されたデータを提供するというTastyのデータエンジニアのタスクは順調に進んでいます。
@@ -216,7 +212,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 ### ステップ4 - 「Next」をクリックする
 
 ## 半構造化データに対する構造化ビューの作成
-Duration: 2
 
 ### 概要
 前のセクションでは、一連のSnowflakeの半構造化データ機能を使用して、エンドユーザーが必要とする正確な出力を提供するクエリを構築しました。次に、このクエリを未加工レイヤーから整合レイヤーを経て最終的にはエンドユーザーが読み取ることができる分析レイヤーに昇格させるプロセスを追います。
@@ -277,7 +272,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 ### ステップ3 - 「Next」をクリックする
 
 ## Snowsightで処理された半構造化データの分析
-Duration: 2
 
 ### 概要
 分析レイヤーでメニュービューが利用できるようになりました。次に、私たちがエンドユーザーに提供するいくつかのクエリを実行することで、Snowflakeでは追加のコピーや複雑な処理を行うことなく、半構造化データに対して強力なリレーショナルクエリを実行できることを示しましょう。
@@ -358,7 +352,6 @@ GROUP BY m.brand_name;
 ### ステップ4 - 「Next」をクリックする
 
 ## まとめと次のステップ
-Duration: 1
 
 ### まとめ
 すばらしい出来です！これで、Tasty Bytes - ゼロからのSnowflake - 半構造化データクイックスタートが無事完了しました。

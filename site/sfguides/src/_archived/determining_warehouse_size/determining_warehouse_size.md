@@ -1,11 +1,11 @@
 author: Lorena Diaconescu
 id: determining_warehouse_size
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: Determine the best warehouse size to use for your query
-categories: undefined
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
 
 # Determine Appropriate Warehouse Sizes
 
@@ -13,7 +13,6 @@ tags: Getting Started, Data Science, Data Engineering
 
 ## Overview
 
-Duration: 1
 
 At Snowflake, compute resources (or warehouses) can be configured based on your needs. This guide will introduce you to warehouses and show how to determine the appropriate warehouse size for your query. Using the correct warehouse size can help you get the best experience from your Snowflake account.
 
@@ -34,7 +33,6 @@ At Snowflake, compute resources (or warehouses) can be configured based on your 
 
 ## What is a Warehouse
 
-Duration: 1
 
 A warehouse is a cluster of compute resources in Snowflake. A warehouse provides the required resources, such as CPU, memory, and temporary storage, to perform the following operations in a Snowflake session:
 
@@ -60,7 +58,6 @@ To learn more about warehouses, visit the Snowflake [documentation](https://docs
 
 ## Evaluating warehouse sizes
 
-Duration: 1
 
 In the following sections, you will run the same query on different sized warehouses to determine which is the best size for the query.
 
@@ -74,7 +71,6 @@ You will disable the query result cache and suspend the warehouse after each tes
 
 ## Preparing your environment
 
-Duration: 2
 
 Login to your Snowflake trial account. If you do not already have an account, you can sign up for a free 30-day trial at [signup.snowflake.com](https://signup.snowflake.com/?referrer=quickstart-warehouse-sizing).
 
@@ -97,7 +93,6 @@ USE SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL;
 
 ## Run a sample query with an extra small warehouse
 
-Duration: 7
 
 1. Change the size of your warehouse to XSmall.
 
@@ -150,7 +145,6 @@ LIMIT 100;
 
 ## Run a sample query with a small warehouse
 
-Duration: 4
 
 1. Return to your worksheet.
 2. Suspend your warehouse, change its size to small and resume it.
@@ -188,7 +182,6 @@ LIMIT 100;
 
 ## Run a sample query with a medium warehouse
 
-Duration: 3
 
 1. Return to your worksheet.
 2. Suspend your warehouse, change its size to medium and resume it.
@@ -222,7 +215,6 @@ LIMIT 100;
 
 ## Run a sample query with a large warehouse
 
-Duration: 2
 
 1. Return to your worksheet.
 2. Suspend your warehouse, change its size to large, and resume it.
@@ -256,7 +248,6 @@ LIMIT 100;
 
 ## Run a sample query with an extra large warehouse
 
-Duration: 2
 
 1. Return to your worksheet.
 2. Suspend your warehouse, change its size to extra large, and resume it.
@@ -296,7 +287,6 @@ ALTER WAREHOUSE SAMPLE_WH SET WAREHOUSE_SIZE = XSmall;
 
 ## Summarize results
 
-Duration: 2
 
 1. Run a query showing the query history results for these performance tests.
 
@@ -326,7 +316,6 @@ ORDER BY start_time DESC;
 
 ## Clean up
 
-Duration: 1
 
 1. Reset the query tag.
 

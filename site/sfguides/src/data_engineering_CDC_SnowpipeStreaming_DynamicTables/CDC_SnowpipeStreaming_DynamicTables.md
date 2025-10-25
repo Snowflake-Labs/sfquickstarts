@@ -1,16 +1,15 @@
 id: CDC_SnowpipeStreaming_DynamicTables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+language: en
 summary: Learn how to use Snowpipe Streaming and Dynamic Tables for Real-Time Streaming (CDC use case)
-categories: Data-Engineering
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Streaming, CDC, Snowpipe, Dynamic Tables, Financial Services
 authors: steven.maser@snowflake.com 
 
 # Snowpipe Streaming and Dynamic Tables for Real-Time Ingestion (CDC Use Case)
 <!-- ------------------------ -->
 ## Overview 
-Duration: 4
 
 This guide will take you through a scenario of using Snowflake's Snowpipe Streaming to ingest a simulated stream, then utilize Dynamic tables to transform and prepare the raw ingested JSON payloads into ready-for-analytics datasets.  These are two of Snowflake's powerful Data Engineering innovations for ingestion and transformation.
 
@@ -55,7 +54,6 @@ To complete this Quickstart, attendees need the following:
 
 <!-- ------------------------ -->
 ## Setting up Snowflake
-Duration: 5
 
 ### a) Download
 The first thing you will need to do is download the following two files.  The first is a ZIP file you need to extract to a directory (for example C:/SnowflakeQuickstarts) that is the streaming simulator client.  The second file contains a series of SQL commands to execute in a Worksheet throughout this lab **Click the green buttons to access the page to download the files**
@@ -83,7 +81,6 @@ Each step throughout the Snowflake portion of the guide has an associated SQL co
 
 <!-- ------------------------ -->
 ## Setting up Your Desktop
-Duration: 10
 
 ### a) Unzip and Prepare Java Client
 Find where you downloaded your ZIP-compressed client application in step 2a), for example C:/SnowflakeQuickstarts.  Extract file **CDCSimulatorApp.zip** file which will create a CDCSimulatorApp directory and many files within.
@@ -133,7 +130,6 @@ For assistance on [Account identifiers](https://docs.snowflake.com/en/user-guide
 
 <!-- ------------------------ -->
 ## Begin Construction
-Duration: 5
 Create Foundational Snowflake Objects for this Hands-on Lab:
 
 ### a)  Create new roles for this Lab and grant permissions
@@ -213,7 +209,6 @@ You should see this:
 If you get any errors / exceptions, read the error message closely and ask for help.  As this application is running on your desktop, you may be missing a prerequisite, have an older version of Java, have too restrictive user profile, or many other reasons.  Also check your snowflake.properties file to ensure you have the correct Account Name and Identifier set if you get connector errors.  If authentication issues, check and review your public key configuration.
 
 ## Streaming Records!
-Duration: 15
 
 ### a)  Run Streaming Application
 
@@ -268,7 +263,6 @@ select distinct RECORD_CONTENT:transaction:schema::varchar,RECORD_CONTENT:transa
 ```
 
 ## Create Dynamic Tables
-Duration: 15
 Now that data is landed and ready for Data Engineering, many possiblities to process.  Here are three examples: 
 
 ### a)  The "Current State"
@@ -456,7 +450,6 @@ Feel free to create views for the other two dynamic tables.  Could also create a
 
 
 ## Handling PII/Sensitive Data
-Duration: 15
 
 This section will enable authorized users to utilize the orderid value, which was an encrypted-at-the-source field.  Next steps will create roles to assign to authorized users, a secure function to decrypt that value and the means to do so, and secondly create a secure view that adds the orderid as an unencypted value.  Within the Source Stream generator, there is two secure data fields added to protect the orderid value.  First is an AES-encryption method (reversible) and secondly a tokenization method (irreversible but repeatable to maintain referential integrity with other source tables).  Note:  These are not production-quality reusable security assets, but are for demonstration purposes.
 
@@ -598,7 +591,6 @@ select * from VHOL_ENG_CDC.PII.LIMIT_ORDERS_VW limit 1000;
 
 
 ## Final Steps & Cleanup
-Duration: 2
 ### a) Use Cntrl-C to kill your Streaming App running on your Desktop
 
 ### b) See how many transactions you have processed
@@ -630,7 +622,6 @@ drop role PII_ALLOWED;
 ```
 
 ## Conclusion
-Duration: 2
 
 **Congratulations, you have completed this Lab!**
 

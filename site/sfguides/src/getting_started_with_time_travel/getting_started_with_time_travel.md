@@ -1,15 +1,14 @@
 summary: Use Time Travel to query previous database states and undrop data.
 id: getting_started_with_time_travel
-categories: featured,getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 environments: test, web, hello
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Data Engineering
 
 # Getting Started with Time Travel
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
 Panic hits when you mistakenly delete data. Problems can come from a mistake that disrupts a process, or worse, the whole database was deleted. Thoughts of how recent was the last backup and how much time will be lost might have you wishing for a rewind button. Straightening out your database isn’t a disaster to recover from with Snowflake’s Time Travel. A few SQL commands allow you to go back in time and reclaim the past, saving you from the time and stress of a more extensive restore.
 
@@ -36,7 +35,6 @@ We’ll get started in the Snowflake web console, configure data retention, and 
 <!-- ------------------------ -->
 
 ## Get Started With the Essentials
-Duration: 7
 
 First things first, let’s get your Snowflake account and user permissions primed to use Time Travel features.
 
@@ -72,7 +70,6 @@ Now that you have the account and user permissions needed, let’s create the re
 
 <!-- ------------------------ -->
 ## Generate Database Objects
-Duration: 5
 
 Within the Snowflake web console, navigate to **Worksheets** and use the 'Getting Started with Time Travel' Worksheets we created earlier.
 
@@ -100,7 +97,6 @@ With the Snowflake account and database ready, let’s get down to business by c
 
 <!-- ------------------------ -->
 ## Prepare Your Database for Disaster
-Duration: 6
 
 Be ready for anything by setting up data retention beforehand. The default setting is one day of data retention. However, if your one day mark passes and you need the previous database state back, you can’t retroactively extend the data retention period. This section teaches you how to be prepared by preconfiguring Time Travel retention.
 
@@ -117,7 +113,6 @@ Now you know how easy it is to [alter](https://docs.snowflake.com/en/sql-referen
 
 <!-- ------------------------ -->
 ## Query Your Time Travel Data
-Duration: 4
 
 With your data retention period specified, let’s turn back the clock with the `AT` and `BEFORE` [clauses](https://docs.snowflake.com/en/sql-reference/constructs/at-before.html#at-before).
 
@@ -144,7 +139,6 @@ By practicing these queries, you’ll be confident in how to find a previous dat
 
 <!-- ------------------------ -->
 ## Clone Past Database States
-Duration: 5
 
 With the past at your fingertips, make a copy of the old database state you need with the `clone` keyword.
  
@@ -162,7 +156,6 @@ Cloning will allow you to maintain the current database while getting a copy of 
 
 <!-- ------------------------ -->
 ## Cleanup and Know Your Options
-Duration: 4
 
 You’ve created a Snowflake account, made database objects, configured data retention, query old table states, and generate a copy of the old table state. Pat yourself on the back! Complete the steps to this tutorial by deleting the objects created.
 

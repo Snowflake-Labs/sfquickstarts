@@ -1,16 +1,15 @@
 author: Chanin Nantasenamat
 id: avalanche-customer-review-data-analytics
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
 summary: Learn how to process and analyze customer review data using Snowflake's data processing capabilities and visualization tools. This guide demonstrates how to extract insights from unstructured text data through sentiment analysis and visualization.
-categories: getting-started, analytics, streamlit, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Analytics, Sentiment Analysis, Snowflake, Streamlit, Cortex, LLM, Data Visualization
 
 # Build a Customer Review Analytics Dashboard with Snowflake Cortex and Streamlit
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this tutorial, you'll learn how to process and analyze customer review data using an LLM-powered data processing workflow with Snowflake Cortex followed by building a dashboard. Briefly, you'll work with the Avalanche dataset, which contains customer reviews for a hypothetical winter sports gear company, and transform unstructured text data into actionable insights through sentiment analysis and data visualization.
 
@@ -33,7 +32,6 @@ A customer review analytics dashboard that processes unstructured text data and 
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 
 ### Create the database and schema
@@ -97,7 +95,6 @@ Snowflake Notebooks come pre-installed with common Python libraries for data sci
 
 <!-- ------------------------ -->
 ## Retrieving Customer Review Data
-Duration: 10 mins
 
 Open up the [Avalanche-Customer-Review-Analytics.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Avalanche-Customer-Review-Analytics/Avalanche-Customer-Review-Analytics.ipynb) notebook as downloaded in the previous step to follow along this step onwards.
 
@@ -137,7 +134,6 @@ Running the above query should yield the following table output:
 
 <!-- ------------------------ -->
 ## Reshaping the Data
-Duration: 15 mins
 
 ### Structuring the Extracted Content
 
@@ -242,7 +238,6 @@ This conversion allows us to use Python's data visualization libraries to create
 
 <!-- ------------------------ -->
 ## Create Visualizations
-Duration: 20
 
 ### Build Interactive Charts with Streamlit and Altair
 
@@ -352,7 +347,6 @@ This button allows users to download a CSV file containing the product name, dat
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built an end-to-end workflow for creation of a customer review analytics dashboard that processes unstructured text data and finally visualizes sentiment trends. This pipeline demonstrates how to leverage Snowflake's data processing capabilities and Cortex LLM functions to process and extract valuable insights from customer feedback.
 

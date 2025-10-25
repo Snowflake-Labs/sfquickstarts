@@ -1,17 +1,16 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_semi_structured_data_ptbr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Quickstart Tasty Bytes: do zero ao Snowflake - dados semiestruturados
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Introdução, Getting Started, Data Engineering, Data Warehouse, ptbr  
 
 # Tasty Bytes: do zero ao Snowflake - dados semiestruturados
 <!-- ------------------------ -->
 
 ## Processamento de dados semiestruturados no Snowflake
-Duration: 1 <img src = "assets/semi_structured_header.png">
 
 ### Visão geral
 Damos as boas-vindas ao quickstart “Powered by Tasty Bytes: do zero ao Snowflake”, voltado para o processamento de dados semiestruturados!
@@ -37,7 +36,6 @@ Para obter mais informações sobre dados semiestruturados no Snowflake, consult
 - Um gráfico de barras de nível executivo.
 
 ## Criação de uma planilha e cópia no código SQL
-Duration: 1
 
 ### Visão geral
 Neste quickstart, vamos acompanhar a história da Tasty Bytes por meio de uma planilha SQL do Snowsight. Esta página servirá como um guia de referência completo com comentários adicionais, imagens e links para a documentação.
@@ -76,7 +74,6 @@ Nesta seção vamos mostrar como acessar o Snowflake, criar uma planilha nova, r
 ### Etapa 9 - Clicar em Next -->
 
 ## Criação dos perfis de dados semiestruturados do menu
-Duration: 1
 
 ### Visão geral
 Enquanto engenheiros de dados da Tasty Bytes, recebemos a tarefa de criar o perfil dos nossos dados de menu, que incluem uma coluna de dados semiestruturados. A partir desta tabela de menu, precisamos criar uma exibição da camada de análise de dados que apresente as restrições alimentares e os ingredientes aos usuários finais.
@@ -146,7 +143,6 @@ Vamos clicar novamente em uma das células da coluna para analisar melhor.
 ### Etapa 4 - Clicar em Next -->
 
 ## Nivelamento de dados semiestruturados
-Duration: 2
 
 ### Visão geral
 Depois de ver como é fácil consultar os dados semiestruturados em uma coluna Variant usando a notação de pontos, nosso engenheiro de dados da Tasty já pode fornecer os dados solicitados aos colaboradores internos.
@@ -212,7 +208,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 ### Etapa 4 - Clicar em Next -->
 
 ## Criar modos de exibição estruturados com dados semiestruturados
-Duration: 2
 
 ### Visão geral
 Na última seção, criamos uma consulta que fornece o resultado exato solicitado por usuários finais ao usar uma série de funcionalidades do Snowflake para dados semiestruturados. A seguir, vamos dar continuidade ao processo de promover essa consulta com base na camada bruta, passando pela camada harmonizada, até chegar à camada de análise de dados, para que os usuários finais possam ler os resultados.
@@ -271,7 +266,6 @@ Também usaremos os parâmetros [SELECT * EXCLUDE e RENAME](https://docs.snowfla
 ### Etapa 3 - Clicar em Next -->
 
 ## Análise de dados semiestruturados processados no Snowsight
-Duration: 2
 
 ### Visão geral
 Com nossa exibição de menu disponível na camada de análise de dados, vamos executar algumas consultas que forneceremos aos usuários finais, demonstrando como o Snowflake permite uma experiência de consulta relacional sobre dados semiestruturados sem a necessidade de cópias adicionais ou processamento complexo.
@@ -352,7 +346,6 @@ Para terminar esse quickstart, devemos ressaltar a facilidade com que um executi
 ### Etapa 4 - Clicar em Next -->
 
 ## Conclusão e próximas etapas
-Duration: 1
 
 ### Conclusão
 Ótimo trabalho! Você concluiu com sucesso o quickstart “Tasty Bytes: do zero ao Snowflake - dados semiestruturados”. 

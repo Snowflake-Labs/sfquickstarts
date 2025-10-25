@@ -1,16 +1,15 @@
 author: Jake Berkowsky
 id: cloudtrail_log_ingestion
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance
+language: en
 summary: AWS CloudTrail is an AWS service that helps you enable operational and risk auditing, governance, and compliance of your AWS account. By ingesting and analyzing these logs in Snowflake, practitioners are able to gain analytical insights and work toward securing their environments at scale. This quickstart is a guide to ingesting and processing AWS CloudTrail events into snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for analytics, threat detection and posture management.
-categories: cybersecurity,solution-examples,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Cybersecurity, AWS
 
 # AWS Cloudtrail Ingestion
 
 ## Overview 
-Duration: 1
 
 AWS CloudTrail is an AWS service that helps you enable operational and risk auditing, governance, and compliance of your AWS account. Actions taken by a user, role, or an AWS service are recorded as events in CloudTrail. Events include actions taken in the AWS Management Console, AWS Command Line Interface, and AWS SDKs and APIs. By ingesting and analyzing these logs in Snowflake, practitioners are able to gain analytical insights and work toward securing their environments at scale.
 
@@ -28,7 +27,6 @@ This quickstart is a guide to ingesting and processing AWS CloudTrail events int
 
 
 ## Enable CloudTrail
-Duration: 5
 
 For simplicity purposes, this quickstart will walk through configuring CloudTrail from a single account using default settings. 
 
@@ -56,7 +54,6 @@ Note: Cloudtrail logging may take some time to start creating records.
 
 
 ## Create a storage integration in Snowflake
-Duration: 3
 
 *Replace \<RoleName\> with the desired name of the role you’d like Snowflake to use ( this role will be created in the next step).  Replace \<BUCKET_NAME\>/path/to/logs/ with the path to your CloudTrail logs as set in the previous step*
 
@@ -75,7 +72,6 @@ Take note of **STORAGE_AWS_IAM_USER_ARN** and **STORAGE_AWS_EXTERNAL_ID**
 ![A screenshot showing the result of describing an integration. STORAGE_AWS_IAM_USER_ARN property is in the format of an aws ARN set to arn:aws:iam::123456789012:user/abc10000-a and the STORAGE_AWS_EXTERNAL_ID is in the format of ABC12345_SFCRole=1 ABCDEFGHIJKLMNOPORSTUVWXYZab= ](assets/generic-integration-screenshot.png)
 
 ## Create role and policy in AWS
-Duration: 5
 
 *The following assumes a user with the ability to create and manage IAM logged into the AWS console or using the CLI.  A full explanation can be found in [this documentation](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html)*
 
@@ -157,7 +153,6 @@ You will now be able to see your role, policy and trust relationship in the cons
 ![Screenshot of Snowflake source displayed in AWS IAM](assets/generic-aws-iam.png)
 
 ## Prepare Snowflake to receive data
-Duration: 6
 
 This quickstart requires a warehouse to perform computation and ingestion. We recommend creating a separate warehouse for security related analytics if one does not exist. The following will create a medium sized single cluster warehouse that suspends after 1 minute of inactivity. For production workloads a larger warehouse will likely be required.
 
@@ -199,7 +194,6 @@ select * from public.cloudtrail_raw limit 5;
 ```
 
 ## Setup Snowpipe for continuous loading
-Duration: 5
 
 The following instructions depend on a Snowflake account running on AWS. Accounts running on other cloud providers may invoke snowpipe from a rest endpoint.
 [https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html)
@@ -255,7 +249,6 @@ You can view recent pipe usage history using the following command
   ```
 
 ## Create a view to better query data
-Duration: 3
 
 To better make queries we will be creating a view using Snowflake's native JSON processing capabilities.
 
@@ -305,7 +298,6 @@ select * from cloudtrail limit 10;
 
 
 ## Query the data
-Duration: 2
 
 Create a workbook to query the new view. If desired, use the following to help get you started:
 
@@ -353,7 +345,6 @@ select * from cloudtrail where eventName in (
 ```
 
 ## Conclusion & next steps
-Duration: 0
 
 Having completed this quickstart you have successfully:
 - Configured AWS Cloudtrail

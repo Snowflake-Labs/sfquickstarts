@@ -1,9 +1,10 @@
 id: build-agentic-application-in-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: In this hands-on lab, you'll learn how to build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
 # Build Agentic Application with Anthropic In Snowflake
@@ -11,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 1
 
 In this guide, you'll learn how to build a Data Agent for Snowflake Intelligence using Snowflake Cortex AI that can intelligently respond to questions by reasoning over both structured and unstructured data.
 
@@ -46,7 +46,6 @@ A Data Agent that can intelligently respond to questions by reasoning over both 
 
 <!-- ------------------------ -->
 ## Snowflake Trial Account
-Duration: 5
 
 To complete this lab, you'll need to create a Snowflake account.
 
@@ -67,7 +66,6 @@ To complete this lab, you'll need to create a Snowflake account.
 ## Setup 
 <!-- ------------------------ -->
 
-Duration: 3
 
 * Clone [GitHub repo](https://github.com/Snowflake-Labs/sfguide-build-data-agents-using-snowflake-cortex-ai).
 
@@ -115,7 +113,6 @@ Stored Procedure:
 ## Create Tools
 <!-- ------------------------ -->
 
-Duration: 30
 
 We will use Snowflake Notebook to setup the Cortex Analyst and Cortex Search tools that will be used by the data agent in Snowflake Intelligence.
 
@@ -175,7 +172,6 @@ Notice that Cortex Analyst is now able to provide the right answer because of th
 ## Snowflake Intelligence
 <!-- ------------------------ -->
 
-Duration: 20
 
 Now that we have the tools ready, we can create a Data Agent for Snowflake Intelligence.
 
@@ -288,7 +284,6 @@ Notice that all 3 tables are used to answer this question.
 ## Conclusion And Resources
 <!-- ------------------------ -->
 
-Duration: 1
 
 Congratulations! You've learned how to securely build data agents and agentic application in Snowflake.
 

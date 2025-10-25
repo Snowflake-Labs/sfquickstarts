@@ -1,17 +1,16 @@
 author: Stephen Franks
 id: a_no_code_approach_to_machine_learning_with_snowflake_and_dataiku
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai
+language: en
 summary: This is an introduction to Dataiku and Snowflake
-categories: AI, Partner
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, AI, Dataiku
 
 
 # A No Code Approach to Machine Learning with Snowflake and Dataiku
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This Snowflake Quickstart covers the basics of training machine learning models, interpreting them, and deploying them to make predictions. 
 
@@ -46,7 +45,6 @@ The exercises in this lab will walk you through the steps to:
 
 <!-- ------------------------ -->
 ## Create Your Snowflake Lab Environment
-Duration: 3
 
 If you haven't already, [register for a Snowflake free 30-day trial](https://trial.snowflake.com/) The rest of the sections in this lab assume you are using a new Snowflake account created by registering for a trial.
 
@@ -72,7 +70,6 @@ After activation, you will create a ```username```and ```password```. Write down
 <!-- ------------------------ -->
 ## Create Your Dataiku Lab Environment (Via Snowflake Partner Connect)
 
-Duration: 6
 
 ### Log Into the Snowflake User Interface (UI)
 
@@ -229,7 +226,6 @@ You've now successfully set up your Dataiku trial account via Snowflake's Partne
 <!-- ------------------------ -->
 ## Create a Snowpark Optimized Warehouse in Snowflake
 
-Duration: 5
 ### Return to the Snowflake UI
 
 We will now create an optimized warehouse
@@ -278,7 +274,6 @@ You should now see your new privileges have been applied
 <!-- ------------------------ -->
 ## Import a Baseline Dataiku Project
 
-Duration: 5
 
 Return to the Dataiku trial launchpad in your browser
 
@@ -327,7 +322,6 @@ Now that we have all our setup done, lets start working with our data.
 <!-- ------------------------ -->
 ## Analyze trends in the data
 
-Duration: 5
 
 Before we begin analyzing the data in our new project lets take a minute to understand some of the concepts and terminology of a project in Dataiku.
 
@@ -394,7 +388,6 @@ See if you can identify a few other features we should include in our models.
 <!-- ------------------------ -->
 ## Train Machine Learning Models
 
-Duration: 10
 
 ### Create a new Visual SnowparkML recipe
 
@@ -511,7 +504,6 @@ Leave the Train ratio and random seed as is. This will split our input dataset i
 <!-- ------------------------ -->
 ## Machine Learning - Basic Theory (Optional)
 
-Duration: 5
 
 While we’re waiting for our models to train, let’s learn a bit about machine learning. This is an oversimplification of some complicated topics. If you’re interested there are links at the end of the course for the Dataiku Academy and many other free resources online.
 
@@ -707,7 +699,6 @@ For more in-depth tutorials and self-paced machine learning courses see the link
 <!-- ------------------------ -->
 ## Model Evaluation
 
-Duration: 7
 
 Once we’ve trained our models, we’ll want to take a deeper dive deep into how they’re performing, what features they’re considering, and whether they may be biased. Dataiku has a number of tools for evaluating models.
 
@@ -763,7 +754,6 @@ Try moving the threshold bar back and forth. It will cause the model to be more 
 
 ## Make Predictions (Scoring)
 
-Duration: 8
 
 Using a machine learning model to make predictions is called `scoring` or `inference`
 
@@ -827,7 +817,6 @@ When it finishes, your flow should look like this
 
 ## MLOps (optional)
 
-Duration: 8
 
 Let’s say we want to automatically run new loan applications through our model every week on Sunday night.
 
@@ -917,7 +906,6 @@ You can automatically retrain your model every month with scenarios, and put in 
 
 <!-- ------------------------ -->
 ## Conclusion & Resources
-Duration: 1
 
 Congratulations on completing this introductory lab exercise! Congratulations! You've mastered the Snowflake basics and you’ve taken your first steps toward a no-code approach to training machine learning models with Dataiku.
 

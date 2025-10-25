@@ -1,17 +1,16 @@
 id: getting_started_with_dataengineering_ml_using_snowpark_python_fr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: Premiers pas avec le Data Engineering et le Machine Learning à l’aide de Snowpark for Python
-categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Premiers pas, Getting Started, Snowpark Python, Streamlit, scikit-learn, Data Engineering, Machine Learning, fr  
 authors: Dash Desai
 
 # Premiers pas avec le Data Engineering et le Machine Learning à l’aide de Snowpark for Python
 <!-- ------------------------ -->
 ## Présentation
 
-Duration: 5
 
 Ce guide va vous permettre de passer de données brutes à une application interactive capable d’aider une organisation à optimiser l’allocation de son budget publicitaire.
 
@@ -69,7 +68,6 @@ Streamlit est un framework d’application [open source](https://github.com/stre
 <!-- ------------------------ -->
 ## Configuration de l’environnement
 
-Duration: 15
 
 ### Créer des tables, charger des données et configurer des zones de préparation
 
@@ -172,7 +170,6 @@ Vous pouvez également ouvrir le fichier [setup.sql](https://github.com/Snowflak
 <!-- ------------------------ -->
 ## Premiers pas
 
-Duration: 8
 
 Cette section explique comment cloner le référentiel GitHub et configurer votre environnement Snowpark for Python.
 
@@ -263,7 +260,6 @@ Si vous choisissez d’utiliser votre compte [Hex](https://app.hex.tech/login) e
 <!-- ------------------------ -->
 ## Data Engineering
 
-Duration: 20
 
 Le notebook dont le lien est fourni ci-dessous traite des tâches de Data Engineering suivantes.
 
@@ -442,7 +438,6 @@ Vous pouvez également activer les notifications push sur un service de messager
 <!-- ------------------------ -->
 ## Machine Learning
 
-Duration: 20
 
 > aside negative CONDITION PRÉALABLE : vous devez réaliser les étapes Data Engineering décrites dans le fichier [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).
 
@@ -501,7 +496,6 @@ session.sql('USE SCHEMA DASH_SCHEMA').collect()
 <!-- ------------------------ -->
 ## Application Streamlit
 
-Duration: 10
 
 ### Exécuter localement l’application Streamlit
 
@@ -590,7 +584,6 @@ alter task monthly_revenue_data_pipeline_task suspend;
 <!-- ------------------------ -->
 ## Conclusion et ressources
 
-Duration: 3
 
 Félicitations ! Vous avez réalisé les tâches de Data Engineering et entraîné un modèle de régression linéaire pour prévoir le futur RSI (retour sur investissement) des budgets variables de dépenses publicitaires sur plusieurs canaux (moteurs de recherche, vidéos, réseaux sociaux et e-mails, par exemple) à l’aide de Snowpark for Python et de scikit-learn. Vous avez ensuite créé une application Streamlit qui utilise ce modèle pour générer des prévisions sur les nouvelles allocations budgétaires sur la base des entrées des utilisateurs.
 

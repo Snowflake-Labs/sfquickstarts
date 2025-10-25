@@ -1,16 +1,15 @@
 author: Charles Yorek
 id: build-a-cinebot-with-snowflake-native-apps-and-cortex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Native Apps, Cortex, Data Applications
 
 # Build a CineBot with Snowflake Native Apps and Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 The Snowflake Native App Framework is a powerful way for application providers to build, deploy and market applications via the Snowflake Marketplace.  In this example you will learn how to incorporate Snowflake's Cortex Suite into a Native App that will create a 'CineBot' that can recommend Movies. 
 
@@ -36,7 +35,6 @@ The Snowflake Native App Framework is a powerful way for application providers t
 
 <!-- ------------------------ -->
 ## Snowflake Application Code
-Duration: 5
 ### Overview
 In preparation for building our Snowflake Native App we need to download the code artifacts for the Native App.
 
@@ -47,7 +45,6 @@ git clone https://github.com/Snowflake-Labs/sfguide-build-chatbot-with-snowflake
 ```
 <!-- ------------------------ -->
 ## Native App Provider Setup 
-Duration: 5
 ### Overview
 To simulate a Native App provider experience we will create a role called 'nactx_role' and grant it the necessary privileges required to create an [Application Package](https://docs.snowflake.com/en/developer-guide/native-apps/creating-app-package) as well as create a database that will store our app code.  
 
@@ -72,7 +69,6 @@ create warehouse if not exists wh_nap with warehouse_size='xsmall';
 ```
 <!-- ------------------------ -->
 ## Native App Consumer Setup 
-Duration: 5
 ### Overview
 To simulate the app consumer experience we will create a role called 'nac' and grant it the necessary privileges required to create Applications as well as set up a database to house the data we'll be querying with our Snowflake Native App.  
 
@@ -149,7 +145,6 @@ from movies.data.movies_metadata;
 ```
 
 ## Create Application Package
-Duration: 5 
 ### Overview
 With all of our Snowflake Native App assets uploaded to our Snowflake account we can now create our Application Package using our Provider role.  Since we're doing this in a single Snowflake account we will also grant the Consumer role privileges to install it. 
 
@@ -176,7 +171,6 @@ grant install, develop on application package cortex_app_pkg to role nac;
 ```
 
 ## Install & Run Application
-Duration: 5
 ### Overview
 To simulate the app consumer experience we will create a role called 'nac' and grant it the necessary privileges required to create Applications as well as set up a database to house the data we'll be querying with our Snowflake Native App.  
 
@@ -205,7 +199,6 @@ At this point you can navigate the the Application by clicking on **'Catalog'** 
 
 <!-- ------------------------ -->
 ## Cleanup 
-Duration: 2
 ### Overview
 
 To clean up your environment you can run the following series of commands.
@@ -231,7 +224,6 @@ drop role nac;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 
 Congratulations!  You've now deployed a Snowflake Native App that utilizes the Snowflake Cortex Suite to enhance the capabilities that a Native App Provider can give to their consumers.
 

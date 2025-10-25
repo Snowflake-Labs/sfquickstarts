@@ -1,16 +1,15 @@
 author: Eddy Widjaja
 id: harness_the_power_of_snowflake_with_informatica_idmc
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This is a guide for getting started with Data Engineering using Informatica Data Management Cloud
-categories: data-science-&-ml,data-engineering,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Data Integration, ETL, ELT, PDO, Informatica
 
 # Harness the Power of Snowflake with Informatica Intelligent Data Management Cloud
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 This quickstart will guide you through the steps to use the Informatica Intelligent Cloud Services Accelerator for Snowflake to create an Informatica Intelligent Data Management Cloud (IDMC) organization, which provides free data processing of up to one billion records per month.  You will then learn how to build a data integration mapping and mapping task or data pipeline using Informatica's Data Integration.
 
@@ -60,7 +59,6 @@ By the end of this guide, you'll learn:
 
 ## Prepare Your Lab Environment
 
-Duration: 5
 
 If you haven’t already, register for a [Snowflake free 30-day trial](https://trial.snowflake.com).  You can also use an existing Snowflake account **as long as you have ACCOUNTADMIN access in that account**.
 
@@ -72,7 +70,6 @@ Resize your browser window, so that you can view this guide and your web browser
 
 <!-- ------------------------ -->
 ## Create the IDMC Organization
-Duration: 3
 
 ### Step 1 
 1. Login to **Snowflake Snowsight**.
@@ -126,7 +123,6 @@ Duration: 3
 
 <!-- ------------------------ -->
 ## Review the Snowflake Connection
-Duration: 2
 
 The Snowflake connection is automatically configured in the IDMC organization when you create the organization through Snowflake Partner Connect.  Let's take a look at the connection.
 
@@ -148,7 +144,6 @@ The Snowflake connection is automatically configured in the IDMC organization wh
 
 <!-- ------------------------ -->
 ## Review the Snowflake Objects
-Duration: 2
 
 As described in Step 2 of **Create IDMC Organization** section, a set of Snowflake objects were created.  Those objects are Database, Warehouse, System User, and System Role.
 
@@ -186,7 +181,6 @@ show roles like 'PC_INF%';
 
 <!-- ------------------------ -->
 ## Configure an AWS S3 connection
-Duration: 5
 
 An AWS S3 connection is required to access and read an AWS S3 bucket.  Follow configuration steps below to create the S3 connection.
 
@@ -232,7 +226,6 @@ Reference: [AWS S3 V2 Connector Documentation](https://docs.informatica.com/inte
 3. Follow the steps above to create the S3 connection using your own S3 credentials.
 
 ## Create a Project Folder
-Duration: 2
 
 ### Step 1
 1. Click the Service Selector at the top left, then select **Data Integration** service.
@@ -250,7 +243,6 @@ Let's create a project to store our mapping or assets.
 ![HandsonLab](assets/Lab2_Picture27.png)
 
 ## Load Data from AWS S3 into Snowflake using Pushdown Optimization (ELT)
-Duration: 15
 
 IDMC Data Integration allows you to load source data from databases, applications, and data files in the cloud or on-premises into Snowflake.  Data Integration supports many transformations that can be used to transform and enrich the source data.  In addition, pushdown optimization (PDO) can be utilized for some transformations and functions to take advantage of Snowflake compute resources for data processing.
 
@@ -444,7 +436,6 @@ Lastly the target table is going to be in Snowflake.
 ![targetcomplete](assets/Lab2_Picture61.png)
 
 ## Configure Pushdown Optimization and Execute the Mapping Task
-Duration: 10
 
 Let’s configure Pushdown Optimization (PDO) in the Mapping Task and execute it.
 
@@ -494,7 +485,6 @@ INSERT INTO "PC_INFORMATICA_DB"."PUBLIC"."ORDERSLINEITEM"("orderkey","custkey","
 
 <!-- ------------------------ -->
 ## Transform Semi-Structured JSON Data
-Duration: 3
 
 ### Step 1 
 JSON (JavaScript Object Notation) is a text-based data format commonly used between servers and web applications and web-connected devices.  Because it is text-based, it is readable by both humans and machines.  JSON semi-structured data can be stored in Snowflake variant column alongside relational data.  In IDMC, the hierarchy parser transformation parses and transforms hierarchy data to relational data.
@@ -536,7 +526,6 @@ alter warehouse pc_informatica_wh set warehouse_size = xsmall;
 ![copytable](assets/Lab3_Picture2.png)
 
 ## Configure Hierarchical Schema
-Duration: 5
 
 ### Step 1
 Copy JSON data from the Snowflake table and save it locally in your computer.
@@ -570,7 +559,6 @@ Create a Hierarchical Schema in IDMC.
 ![save](assets/Lab3_Picture6.png)
 
 ## Create a Mapping to Read the Weather Table
-Duration: 15
 
 Create a mapping to read from the daily_14_total table, use hierarchy parser to parse the JSON data, join the relational data, convert the temperature and write to a new Snowflake table.
 
@@ -702,7 +690,6 @@ Finally, let’s configure the Target.
 
 
 ## Create and Execute a Mapping Task
-Duration: 5
 
 ### Step 1
 
@@ -731,7 +718,6 @@ Validate job execution result.
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 **Congratulations! You have successfully created a free IDMC organization, completed an ELT workload to load S3 files into Snowflake, and transformed JSON using the IDMC Data Integration service.**
 

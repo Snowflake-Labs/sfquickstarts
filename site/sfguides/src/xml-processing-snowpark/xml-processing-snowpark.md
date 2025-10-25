@@ -1,17 +1,16 @@
 author: Constantin Stanca
 id: xml-processing-snowpark
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform
+language: en
 summary: Snowflake guide on how to process XML with Snowpark
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Notebook, Snowpark, XML, Financial Services, Regulatory
 
 # Modernize XML Processing for Financial Services with Snowpark XML
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 This quickstart guides users through processing XML data using Snowflake’s Snowpark XML.
 
@@ -44,7 +43,6 @@ Users can leverage Snowpark XML capabilities to:
 
 <!-- ------------------------ -->
 ## Architecture
-Duration: 3
 
 This solution harnesses the power of Snowflake Snowpark XML to load, extract and render financial data in XML format.
 
@@ -53,7 +51,6 @@ This solution harnesses the power of Snowflake Snowpark XML to load, extract and
 Snowflake [Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks) serve as our interactive workspace. Through the skillful application of advanced Snowpark XML capabilities, we demonstrate how to process XML to support multiple use cases in financial services, including asset valuation, risk analysis, or regulatory reporting.
 
 ## Setup
-Duration: 8
 
 ### Database
 Login to your Snowflake account. Navigate to [Worksheets](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs), click "+" in the top-right corner to create a new Worksheet and choose "SQL Worksheet". Name it "Snowpark XML Processing - Setup". 
@@ -111,7 +108,6 @@ Hit "Upload" and the file will be uploaded to the internal stage.
 
 <!-- ------------------------ -->
 ## Snowpark XML Processing
-Duration: 10
 
 Select "Projects" / "Notebooks" from the left navigation menu. Click "+ Notebook" from the top-right corner.
 
@@ -190,7 +186,6 @@ You can run cells, one by one, using "run this cell only" for each cell.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 3
 
 You did it! You have successfully completed the "Modernize XML Processing for Financial Services with Snowpark XML" quickstart  with notebooks and Snowpark XML.
 

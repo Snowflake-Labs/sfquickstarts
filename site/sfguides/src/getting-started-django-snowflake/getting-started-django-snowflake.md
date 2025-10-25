@@ -1,16 +1,15 @@
 author: Gilberto Hernandez
 id: getting-started-django-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
+language: en
 summary: How to get started with Snowflake as a backend for Django.
-categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter, Django, Snowflake, django-snowflake
 
 # Getting Started with Snowflake as a backend for Django
 <!-- ------------------------ -->
 ## Overview 
-Duration: 0
 
 Django is a popular Python open-source web framework that allows developers to build web applications quickly and easily. Django provides many features and tools for web development, such as an Object-Relational Mapping (ORM) system for interacting with databases, an admin interface for managing application data, and much more. Django is commonly used with OLTP databases for its backend, but Snowflake can be a great backend for Django when you need the power of the data cloud behind your app.
 
@@ -42,7 +41,6 @@ Let's get started!
 
 <!-- ------------------------ -->
 ## Clone the sfguide-getting-started-django-snowflake repo
-Duration: 1
 
 First, clone Snowflake's **[sfguide-getting-started-django-snowflake](https://github.com/Snowflake-Labs/sfguide-getting-started-django-snowflake)** repo and navigate into the cloned repo.
 
@@ -52,7 +50,6 @@ git clone https://github.com/Snowflake-Labs/sfguide-getting-started-django-snowf
 
 <!-- ------------------------ -->
 ## Install Django and run the app
-Duration: 3
 
 This repo contains a Django project called **quickstart**, which contains an app called **trips** representing Citibike trip data. To run the project, you'll need to install Django. If you don't have Django installed, you can install it using pip.
 
@@ -71,7 +68,6 @@ Navigate to [localhost:8000/trips](http://localhost:8000/trips) in your browser.
 If you don't see the success message, you can troubleshoot errors using Django's documentation.
 <!-- ------------------------ -->
 ## Create a database in Snowflake
-Duration: 2
 
 Let's create a database in Snowflake that we can connect to the Django app. If you don't already have a Snowflake account, now's a good time to create one by registering for a [free 30-day trial](https://signup.snowflake.com/developers).
 
@@ -81,7 +77,6 @@ In Snowflake, navigate to the "Databases" subsection within the "Data" section o
 
 <!-- ------------------------ -->
 ## Install **django-snowflake**
-Duration: 1
 
 To connect the Django app to the database you created in Snowflake, you'll need the **django-snowflake** package. You should install the version of **django-snowflake** that corresponds to your version of Django. To check the version of Django you have installed, run the following command:
 
@@ -98,7 +93,6 @@ pip install django-snowflake==4.1.*
 Note that the minor release number of Django doesn't correspond to the minor release number of **django-snowflake**. Use the latest minor release of each.
 <!-- ------------------------ -->
 ## Connect the Django app to Snowflake
-Duration: 2
 
 Let's configure the project's settings to use Snowflake as the backend. Change into the **quickstart/** folder (within the parent **quickstart/** folder, i.e., **quickstart/quickstart/**) and take a look at what's inside. You'll notice several files  associated with the project. Using your preferred code editor, open the **settings.py** file. This file contains the database settings that we'll configure.
 
@@ -149,7 +143,6 @@ That's it! You don't have to run any additional commands to connect to Snowflake
 > A more common approach would be to configure multiple databases for your Django application, with Snowflake acting as the backend for data warehouse use cases (rather than writing web apps). For more information, refer to the Django documentation on [Multiple databases](https://docs.djangoproject.com/en/4.1/topics/db/multi-db/).
 <!-- ------------------------ -->
 ## Run the Django migrations
-Duration: 1
 
 You've probably seen that pesky warning about unapplied migrations several times in your terminal by now. Let's address them.
 
@@ -166,7 +159,6 @@ These tables contain Django-specific information required to run your applicatio
 ![DefaultDjangoMigrations](assets/getting-started-django-snowflake-img-2.png)
 <!-- ------------------------ -->
 ## Load data into your database
-Duration: 7
 
 Let's load some fun data into the database that we can use in the Django app. We're going to load data into **DJANGO_DB** by doing the following:
 
@@ -239,7 +231,6 @@ Great, we now have some data to play with in the database!
 
 <!-- ------------------------ -->
 ## Create Django models using **inspectdb**
-Duration: 2
 
 For demonstration purposes, the app includes a view that will render a sample of the trip data once everything is properly configured. Navigate to [localhost:8000/trips/from/graham-conselyea](http://localhost:8000/trips/from/graham-conselyea). You should encounter an error! That's because although we've connected the app to Snowflake, we haven't yet created the Django models necessary to represent the trip data in the app. Let's create those models now.
 
@@ -280,7 +271,6 @@ trip_id = models.BigAutoField(blank=True, primary_key=True)
 
 <!-- ------------------------ -->
 ## Create and run migrations
-Duration: 1
 
 Because we've created a model, we'll need to also create – not run – a migration. This migration will record the creation of the model. In your terminal, from the root **quickstart/** folder, run the following command:
 
@@ -302,7 +292,6 @@ That's it! We can now use this model through the Django app.
 
 <!-- ------------------------ -->
 ## Browse the data as an end user
-Duration: 1
 
 As mentioned in a previous step, the app includes a view that will render a sample of the data once everything is properly configured (i.e., creating a model). We've since created the model necessary to use the trip data in the app, so we can now view the bike trip data as if we were an end user of the app.
 
@@ -322,7 +311,6 @@ For some context, we configured the view as follows:
 For more information on views in Django, see [Writing Views](https://docs.djangoproject.com/en/4.1/topics/http/views/) in the Django documentation.
 <!-- ------------------------ -->
 ## (Optional) Browse the data as a Django admin
-Duration: 3
 
 If you're an admin of a Django app, you can browse models in an admin UI that Django provides out of the box. To view the data as an admin, you'll need to register as a super user of the app, and also register the model to the admin site.
 
@@ -355,7 +343,6 @@ Save the file and reload the admin page in your browser. If successful, you shou
 > Django's admin UI is a handy interface provided by Django out of the box. However, depending on your use case, it might not be the best interface to use if you want to edit data. We demonstrate the admin UI in this Quickstart to show how it is possible to browse data in Snowflake from within Django. For database administration, you should choose a workflow that best suits your use case.
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 0
 
 Congratulations! In just a few minutes, you were able to configure a Django app to use Snowflake as a backend using **django-snowflake**. What we covered here is only a sample demonstration of what's possible – there are all sorts of great things that you can build when using Snowflake as a backend in Django. What will you build?
 

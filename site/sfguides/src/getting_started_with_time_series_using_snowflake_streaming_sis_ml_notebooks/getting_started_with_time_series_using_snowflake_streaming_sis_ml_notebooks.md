@@ -1,16 +1,15 @@
 id: getting_started_with_time_series_using_snowflake_streaming_sis_ml_notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/time-series-functions
+language: en
 summary: Getting Started with Time Series Analytics for IoT in Snowflake
-categories: getting-started,time-series,featured,data-engineering,streaming,streamlit,snowpark,cortex,solution-examples,snowflake
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Data Engineering, Streaming, Streamlit, Time Series, Snowpark, Snowflake
 author: nathan.birch@snowflake.com
 
 # Getting Started with Time Series Analytics for IoT in Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Snowflake offers a rich set of functionalities for **Time Series Analytics** making it a performant and cost effective platform for bringing in your time series workloads. This quickstart lab covers a real world scenario of ingesting, analyzing and visualizing IOT time series data.
 
@@ -48,7 +47,6 @@ By the end of this lab you will have an **end-to-end streaming Time Series Analy
 
 <!-- ------------------------ -->
 ## Lab Setup
-Duration: 15
 
 ### Step 1 - Fork the Lab GitHub Repository
 
@@ -276,7 +274,6 @@ As part of the GitHub Codespace setup, an **OpenSSL Private Key-pair** will be g
 
 <!-- ------------------------ -->
 ## Setup Snowflake Resources
-Duration: 5
 
 #### Create the Foundational Snowflake Objects for this Lab
 
@@ -451,7 +448,6 @@ GRANT CREATE NOTEBOOK ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESE
 
 <!-- ------------------------ -->
 ## Snowpipe Streaming Ingestion
-Duration: 10
 
 With the foundational objects setup, we can now **deploy a staging table** to stream time series data into Snowflake via a Snowpipe Streaming client.
 
@@ -705,7 +701,6 @@ Each IoT device reading is a **JSON payload**, transmitted in the following Kafk
 
 <!-- ------------------------ -->
 ## Data Modeling and Transformation
-Duration: 5
 
 Now that data has been streamed into Snowflake, we are ready for some **Data Engineering** activities to get the data into a report ready state for analytics. We'll be **transforming the data** from the **JSON VARIANT** format into a tabular format. Using Snowflake **Dynamic Tables**, the data streamed into Snowflake will continuously update the analytics layers.
 
@@ -899,7 +894,6 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 
 <!-- ------------------------ -->
 ## Time Series Analysis
-Duration: 20
 
 Now that we have created the analytics views, we can start to query the data using **Snowflake native time series functions**.
 
@@ -1696,7 +1690,6 @@ For more information, please review [How to use Snowflake Copilot](https://docs.
 
 <!-- ------------------------ -->
 ## Build Your Own Time Series Functions
-Duration: 10
 
 Now that you have a great understanding of running **Time Series Analysis**, we will now look at deploying time series [User Defined Table Functions (UDTF)](https://docs.snowflake.com/en/developer-guide/udf/udf-overview) that can query time series data in a re-usable manner. Table functions will accept a set of input parameters and perform operations on a data set, and return results in a table format.
 
@@ -2192,7 +2185,6 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 <!-- ------------------------ -->
 ## Build Your Time Series Application in Streamlit
-Duration: 15
 
 After completing the analysis of the time series data that was streamed into Snowflake, we are now ready to **deliver a Time Series Analytics application** for end users to easily consume time series data. For this purpose we are going to use a **Streamlit in Snowflake** application, deployed using **Snowflake CLI**.
 
@@ -2582,7 +2574,6 @@ cd iotstream
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 3
 
 1. In **VS Code** open the worksheet `worksheets/hol_timeseries_8_cleanup.sql`.
 
@@ -2634,7 +2625,6 @@ DROP USER USER_HOL_TIMESERIES;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 > aside positive
 > 

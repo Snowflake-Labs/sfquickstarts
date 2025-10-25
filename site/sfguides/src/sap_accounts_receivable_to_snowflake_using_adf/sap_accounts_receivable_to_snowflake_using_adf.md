@@ -1,15 +1,14 @@
 author: sfc-gh-drichert, sfc-gh-ahuck
 id: sap_accounts_receivable_to_snowflake_using_adf
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Extract SAP data using Azure Data Factory and transform accounts receivable data in Snowflake.
-categories: solution-examples
 environments: web
 status: Published 
 feedback link: david.richert@snowflake.com
-tags: Getting Started, Data Engineering, SAP, Finance, AR, Azure, Azure Data Factory, ADF, dbt, Tableau
 
 # SAP Accounts Receivable to Snowflake using ADF
 ## Overview 
-Duration: 1
 
 This step-by-step shows you how to:
 * Deploy an SAP ECC demo system in Azure using SAP CAL:
@@ -41,7 +40,6 @@ We provide a Tableau report to visualize the data regionally, per customer, per 
 Let’s get started!
 
 ### What you need to have before starting the lab
-Duration: 60
 
 To participate in the virtual hands-on lab, attendees need the following:
 
@@ -80,7 +78,6 @@ An Accounts Receivable pipeline for Financial Services from SAP ECC to Snowflake
 <!-- ------------------------ -->
 
 ## Create Azure account & deploy SAP ERP
-Duration: 120
 <aside class="callout">
 In the interest of getting data out of SAP for this lab, we will use Azure Data Factory's SAP CDC connector, but there are many other ways to do this, and we are not recommending this particular path. If you otherwise have access to the demo data in this lab, you can skip building the Azure and SAP environments and go directly to the sections of creating your Snowflake account and installing and configuring DBT.
 </aside>
@@ -136,7 +133,6 @@ Check that you have Accounting >  Financial Accounting > Accounts Receivable in 
 </aside>
 
 ## Create & configure Snowflake
-Duration: 25 
 1. Sign up for a Snowflake trial account at https://signup.snowflake.com/.
 1. Login to your Snowflake trial account.  
 ![Login Screen](./assets/login_screen.png)
@@ -389,7 +385,6 @@ In Snowflake, you can also monitor the progress through Query History
 ![SF Full Load](./assets/sf_full_load.png)
 
 ## Clone project, install dbt, python & packages
-Duration: 60
 
 ### Clone the dbt project from git
 
@@ -458,7 +453,6 @@ Ok! let's get to configuring the project in the next section!
 
 
 ## Point dbt project to Snowflake
-Duration: 5
 
 1. To point dbt to your Snowflake instance, open file `~/.dbt/profiles.yml` in your prefered text editor 
 
@@ -502,7 +496,6 @@ Fix any errors thrown by this command.
 OK! Now we are ready to run our data flow in the next section!
 
 ## Run dbt model
-Duration: 2
 
 `dbt run` executes compiled sql model files, in this case pulling data from the SAP_RAW schema and transforming it at various stages until we reach the datamart schema. Models are run in the order defined by the dependency graph generated during compilation. Intelligent multi-threading is used to minimize execution time without violating dependencies.
 
@@ -549,7 +542,6 @@ After the run your Snowflake Account should look like:
 
 
 ## Visualize your data flow!
-Duration: 1
 
 dbt automatically generates the model code, a DAG of your project, any tests you've added to a column, and enables you to annotate models, columns, and sources! This is critically important for lineage, impact analysis, troubleshooting, and just plain visibility into your project! 
 
@@ -575,7 +567,6 @@ This command can be rerun for every model and documentation change.
 You can access the lineage graph at any time using the graph button in the bottom right corner.
 For more information see [here](https://docs.getdbt.com/docs/building-a-dbt-project/documentation)
 ## Track your DSO in Tableau
-Duration: 5
 
 Visualize your Days of Sales Outstanding (DSO) by geography and customer through this Tableau dashboard!
 ![Tableau Dashboard](./assets/Account_Receivable_Dasboard_Tableau.png)
@@ -598,7 +589,6 @@ Once the connection is established you will be redirected to the main Dashboard 
 <!-- ------------------------ -->
 
 ## Optional: Create Snowsight dashboard
-Duration: 2
 
 You can find some example queries in the analysis director of the project, for example for dso details analysis
 
@@ -618,7 +608,6 @@ ORDER BY DEBIT_AMT_LOCAL_CURRENCY DESC;
 ```
 
 ## Conclusion
-Duration: 1
 Great job! This demo gives an example environment of how to transform SAP accounts receivable into a data mart.  
 
 During this tutorial you learned following topics:
@@ -662,7 +651,6 @@ Successfully uninstalled dbt-snowflake-1.0.0
 To remove the demo package you can simply delete the directory `~/sf-samples/samples/sap_accounts_receivable_dbt`
 
 ## Optional: SAP extractors
-Duration: 15
 
 There are [several tools on the market](https://medium.com/snowflake/if-extraction-from-sap-were-easy-b5f3d02f0ec9) to manage initial and delta extractions from SAP. This section simply gives a couple of example applications that extract data from SAP. 
 <aside class="callout">
@@ -677,7 +665,6 @@ It is not required to perform the steps in the videos.
 <video id="PyybzHl6A3M"></video>
 
 ## [Appendix] Business Semantics
-Duration: 10
 
 All downstream descriptions and translation of the SAP columns are auto-generated. We used publicly available column information and consolidated them into a single machine-parsable csv file to generate the documentation. The used code can be found in the dbt project under the `/generators` folder.
 

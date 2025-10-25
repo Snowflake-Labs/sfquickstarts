@@ -1,18 +1,17 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_collaboration
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Tasty Bytes - Zero to Snowflake - Collaboration Quickstart
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake
 
 
 # Tasty Bytes - Zero to Snowflake - Collaboration
 <!-- ------------------------ -->
 
 ## Collaboration in Snowflake
-Duration: 1
 <img src = "assets/collaboration_header.png">
 
 ### Overview
@@ -36,7 +35,6 @@ Welcome to the Tasty Bytes - Zero to Snowflake Quickstart focused on Collaborati
 - An Understanding of How to Unlock Additional Insights via the Snowflake Marketplace
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -73,7 +71,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 9 - Click Next -->
 
 ## Investigating Days with Zero Sales
-Duration: 1
 
 ### Overview
 Tasty Bytes Financial Analysts have let the business know that there are Trucks in the Raw Point of Sales Sytem Data that are missing Sales for various days.
@@ -115,7 +112,6 @@ Based on what we are seeing above, we can agree with our analysts that we do not
 ### Step 2 - Click Next -->
 
 ## Acquiring Weather Source Data from the Snowflake Marketplace 
-Duration: 2
 
 ### Overview
 From what we saw above, it looks like we are missing sales for February 16th through February 21st for Hamburg. Within our first party data there is not much else we can use to investigate what might have caused this.
@@ -234,7 +230,6 @@ Once again this sort of data might better present trends via a quick Snowsight C
 ### Step 5 - Click Next -->
 
 ## Democratizing First and Third Party Data
-Duration: 3
 
 ### Overview
 We have determined that hurricane-level winds were likely the reason for the days with zero sales that our financial analysts brought to our attention.
@@ -335,7 +330,6 @@ Amazing we have now democratized these sort of insights to the Tasty Bytes organ
 ### Step 4 - Click Next -->
 
 ## Using Harmonized Data to Answer Questions from the Business
-Duration: 1
 
 ### Overview
 With Harmonized Sales and Weather Data now available in our Analytics layer, our users can begin to leverage this data to derive insights and ensure we are using data when making decisions.
@@ -392,7 +386,6 @@ By completing this Quickstart we have seen how quickly we are able to derive rea
 ### Step 2 - Click Next -->
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Collaboration Quickstart. 

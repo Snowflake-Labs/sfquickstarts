@@ -1,17 +1,16 @@
 author: 
 id: data_apps_summit_lab_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: This is a sample Snowflake Guide
-categories: featured,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter, kr 
 
 # Snowflake 마켓플레이스, Snowpark, Streamlit으로 데이터 애플리케이션 구축
 
 ## 개요
 
-duration: 2
 
 이 실습 랩에서는 Snowflake 마켓플레이스에 Knoema가 게시한 Economical Data Atlas를 활용하여 데이터 애플리케이션을 구축합니다.
 
@@ -50,7 +49,6 @@ Snowpark로 데이터를 처리하고, 단순한 ML 모델을 개발하고, Snow
 <!-- ------------------------ -->
 ## 랩 환경 준비
 
-duration: 8
 
 1. pip install conda를 실행하여 별도의 환경을 관리하기 위해 Conda를 설치합니다. 참고: 대신 [Miniconda](https://docs.conda.io/en/latest/miniconda.html)를 사용할 수도 있습니다.
 2. 터미널이나 명령 프롬프트를 엽니다.
@@ -75,7 +73,6 @@ duration: 8
 <!-- ------------------------ -->
 ## Snowflake 환경 준비
 
-duration: 6
 
 ### Snowflake 마켓플레이스로 작업
 
@@ -151,7 +148,6 @@ SELECT predict_pce_udf(2021);
 <!-- ------------------------ -->
 ## (Jupyter) 노트북으로 데이터 탐색
 
-duration: 15
 
 이제 애플리케이션에 사용할 수 있는 데이터베이스를 보유하고 있으니 데이터를 탐색하고 애플리케이션이 사용할 수 있는 사용자 정의 함수(UDF)의 ML 모델을 생성하고자 합니다.
 
@@ -292,7 +288,6 @@ session.sql("select predict_pce_udf(2021)").show()
 <!-- ------------------------ -->
 ## Streamlit 애플리케이션 생성
 
-duration: 7
 
 ### 필수 라이브러리 가져오기
 
@@ -479,7 +474,6 @@ Streamlit으로 작업할 때는 Pandas DataFrame이 필요하며 Python용 Snow
 <!-- ------------------------ -->
 ## 웹 애플리케이션 실행
 
-duration: 4
 
 재미 있는 부분입니다! Python 스크립트에 구문 및 연결 오류가 없다면 애플리케이션을 실행할 준비가 된 것입니다.
 

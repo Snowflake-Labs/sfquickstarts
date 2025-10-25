@@ -1,16 +1,15 @@
 author: Vino Duraisamy, Ajita Sharma, Jason Hughes
 id: hands-on_with_apache_iceberg_and_snowflake_open_catalog
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/business-intelligence, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+language: en
 summary: Learn how to create managed Apache Iceberg tables in Snowflake and sync them with Snowflake Open Catalog to enable cross-engine analytics with this hands-on tutorial.
-categories: getting-started, data-engineering, notebooks, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Apache Iceberg, Snowflake Open Catalog, Data Lakehouse, Cross-Engine Analytics
 
 # Build a Lakehouse with Apache Iceberg and Snowflake Open Catalog
 <!-- ------------------------ -->
 ## Overview
-Duration: 10
 
 Snowflake's native integration with Apache Iceberg empowers organizations to build a highly interoperable and open lakehouse architecture. Additionally, Snowflake Open Catalog, a managed service for Apache Polaris, offers robust role-based access controls, ensuring seamless data governance and secure collaboration across multiple engines.
 
@@ -32,7 +31,6 @@ This guide covers how to create managed Apache Iceberg™ tables in Snowflake us
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5 
 
 ### Set Up Snowflake Open Catalog
 
@@ -85,7 +83,6 @@ Duration: 5
 <!-- ------------------------ -->
 ## Setup IAM Roles & Policies
 
-Duration: 10
 
 ### Create an IAM policy that grants access to your S3 location
 
@@ -161,7 +158,6 @@ Duration: 10
 <!-- ------------------------ -->
 
 ## Create a Catalog
-Duration: 15
 
 ### Creating a Catalog in Snowflake Open Catalog
 
@@ -255,7 +251,6 @@ Duration: 15
 
 <!-- ------------------------ -->
 ## Create Iceberg Table
-Duration: 15
 
 
 ### Create Catalog Integration
@@ -451,7 +446,6 @@ select city, region, count(*)
 
 <!-- ------------------------ -->
 ## Create a Dynamic Iceberg Table
-Duration: 5
 
 Now, let’s actually persist those query results as a dynamic iceberg table. You’ll note that TARGET_LAG is set to 1 minute. This means that snowflake will automatically keep that dynamic table’s contents up to date within 1 minute of any upstream source data changes. If when it checks, the upstream table (in this case “poi”) hasn’t changed, then you won’t be billed at all. 
 
@@ -476,7 +470,6 @@ SELECT * FROM poi_dt_iceberg
 
 <!-- ------------------------ -->
 ## (Optional) Read Data from Spark
-Duration: 10 
 
 - In Snowflake Open Catalog, click “Catalogs” on the left sidebar, then click “external_catalog_snowflake”
 - Under Storage Details, under “Credential Vending”, click the pencil icon and on the box that pops up, click “Enable”
@@ -560,7 +553,6 @@ except Exception as e :
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 ❄️ Congratulations! This concludes our lab.
 

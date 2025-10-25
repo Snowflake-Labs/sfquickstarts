@@ -1,16 +1,15 @@
 author: Charlie Hammond
 id: train-an-xgboost-model-with-gpus-using-snowflake-notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform
+language: en
 summary: This is a sample Snowflake Guide
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Train an XGBoost Model with GPUs using Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 In this quickstart, we'll explore how to easily harness the power of containers to build models at scale in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/) using GPUs from [Snowflake Notebooks in the Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) in the Container Runtime (Public Preview). Specifically, we'll train an XGBoost model and walk through a workflow that involves inspecting GPU resources, loading data from a Snowflake table, and setting up that data for modeling. In the notebook, we will train two XGBoost models—one trained with open source xgboost (single GPU) and one distributing across the full GPU cluster. Finally, we'll log the model to Snowflake's model registry then test out built-in inference and explainability capabilities on the model object.
 
@@ -34,7 +33,6 @@ This exercise will illustrate how Snowflake Notebooks lets you quickly tap into 
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -117,7 +115,6 @@ GRANT ALL ON TABLE "XGB_GPU_DATABASE"."XGB_GPU_SCHEMA"."VEHICLES_TABLE" TO ROLE 
 
 <!-- ------------------------ -->
 ## Run the Notebook
-Duration: 30
 
 - Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-train-xgboost-model-using-gpus-using-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb)
 - Change role to XGB_GPU_LAB_USER
@@ -142,7 +139,6 @@ Duration: 30
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ### Conclusion
 

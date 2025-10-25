@@ -1,15 +1,14 @@
 summary: Getting Started with SnowSQL
 id:getting_started_with_snowsql
-categories: getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Data Engineering, SnowSQL
 
 # Getting Started with SnowSQL
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 SnowSQL is the software CLI tool used to interact with Snowflake. Using SnowSQL, you can control all aspects of your Snowflake Data Cloud, including uploading data, querying data, changing data, and deleting data.  This guide will review SnowSQL and use it to create a database, load data, and learn helpful commands to manage your tables and data directly from your CLI. 
 
@@ -38,7 +37,6 @@ Be sure to check the needed computing requirements before beginning. Also, downl
 
 <!-- ------------------------ -->
 ## Set up SnowSQL
-Duration: 8
 First, you’ll get a Snowflake account and get comfortable navigating in the web console. After downloading the SnowSQL installer, you’ll install and confirm your success.
 
 ### Create a Snowflake Account
@@ -85,7 +83,6 @@ After completing these steps, you’ll be ready to use SnowSQL to make a databas
 
 <!-- ------------------------ -->
 ## Create a Database
-Duration: 6
 With your account active and SnowSQL installed, you’ll use the terminal to sign in and create
 the needed objects for cloud storage.
 
@@ -145,7 +142,6 @@ With the database objects ready, you’ll employ SnowSQL to move the sample data
 
 <!-- ------------------------ -->
 ## Upload Data
-Duration: 8
 In this section, you’ll stage your sample CVS employee files and execute a SQL command to
 copy the data onto your table.
 
@@ -211,7 +207,6 @@ The output indicates if the data was successfully copied and records any errors.
 
 <!-- ------------------------ -->
 ## Query Data
-Duration: 15
 
 With your data in the cloud, you need to know how to query it. We’ll go over a few calls that will
 put your data on speed-dial.
@@ -254,7 +249,6 @@ specific tasks performed, consider setting up an [​external function](https://
 
 <!-- ------------------------ -->
 ## Manage and Delete Data
-Duration: 6
 
 Often data isn’t static. We’ll review a few common ways to maintain your cloud database.
 
@@ -292,7 +286,6 @@ After practicing the basics covered in this tutorial, you’ll no longer need th
 For security reasons, it’s best not to leave your terminal connection open unnecessarily. Once you’re ready to close your SnowSQL connection, simply enter `!exit`.
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 ### Use SnowSQL for Your Application
 You’ve created a Snowflake account, set up a cloud database with compute resources, and

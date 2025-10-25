@@ -1,17 +1,16 @@
 author: Armin Efendic and Chase Romano
 id: end_to_end_model_development_with_snowpark_and_hex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This lab will walk you through how to use Snowflake and Hex.
-categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Hex, Notebooks, Partner Connect
 
 # End to End Model Development with Hex and Snowpark
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 In this quickstart, we will be utilizing the classic Titanic dataset to determine if we would survive the infamous maiden voyage. Highlights of the quickstart include, preprocessing, model training, registry, and finally an interactive Hex app for inference. By the end of this lab you will learn how to leverage Snowpark ML, Hex's Snowpark intergration, and Snowflake's Model Registry.
 
@@ -95,7 +94,6 @@ In this quickstart, you will create machine learning model using Snowpark ML. Th
 <!-- ------------------------ -->
 
 ## Getting Started with Hex
-Duration: 5
 
 Now we can move back over to Hex and get started on our project. The first thing you'll need to do is transfer the Hex project into your new or existing Hex org.
 
@@ -129,7 +127,6 @@ Enable the Snowpark and Writeback toggles.
 ![](assets/connection_toggles.png)
 
 ## Write the data back to Snowflake
-Duration: 5
 
 Now that you have the Hex project, let's write the data into the imported Snowflake instance. To do this, we'll use one of Hex's utility cells called the [writeback cell](https://learn.hex.tech/docs/logic-cell-types/writeback-cells). What this cell does is exactly what it sounds like, writes data back to a database. 
 
@@ -141,7 +138,6 @@ Using this cell is quite simple. First we'll need choose the source data from th
 
 
 ## Create a Snowpark Session
-Duration: 3
 
 Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection, you'll see a `query` option appear at the bottom. This will allow us to query this connection in an SQL cell, however, what we want to do is create a Snowpark session using this connection. Click on the dropdown next to the `query` button and select `Get Snowpark session`. What this will do is create a new cell for us with all the code needed to spin up a Snowpark session.
 
@@ -163,7 +159,6 @@ In this cell, we reference our Snowpark session with the variable `session` whic
 ![](assets/snowpark_session.png)
 
 ## Hex Project
-Duration: 45
 
 The rest of the lab can entirely be followed step-by-step from the Hex project. Any subsequent steps and explanation will be found in the Hex project itself.
 
@@ -177,7 +172,6 @@ Key sections of the Hex project include:
 
 
 ## Sharing our results
-Duration: 3
 
 Now that we've completed going through our project, we can share this project with others! To do this:
 - Head over to the app builder

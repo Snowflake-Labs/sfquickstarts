@@ -1,6 +1,7 @@
 summary: 지리 공간 데이터 활용기
 id: getting_started_with_geospatial_geography_kr
-categories: undefined
+language: ko
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/geospatial
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -12,7 +13,6 @@ author: Kevin McGinley
 <!-- ------------------------ -->
 ## 개요
 
-Duration: 10
 
 Snowflake의 지리 공간 쿼리 기능은 지리 공간 오브젝트를 대상으로 계산을 분석, 구성 및 실행하는 데 사용할 수 있는 데이터 타입과 특화된 쿼리 기능의 조합을 기반으로 구축되었습니다. 이 가이드에서는 `GEOGRAPHY` 데이터 타입을 소개하며 여러분이 Snowflake에서 지원하는 지리 공간 형식을 이해할 수 있도록 돕습니다. 또한 Snowflake Marketplace에서 가져온 샘플 지리 공간 데이터 세트에 다양한 함수를 사용하는 방법을 안내합니다.
 
@@ -44,7 +44,6 @@ Snowflake의 지리 공간 쿼리 기능은 지리 공간 오브젝트를 대상
 <!-- ------------------------ -->
 ## Marketplace 데이터 습득
 
-Duration: 20
 
 이 가이드의 첫 단계는 Snowflake 지리 공간 기능의 기본 사항을 탐색하기 위해 자유롭게 사용할 수 있는 지리 공간 데이터 세트를 습득하는 것입니다. 이 데이터를 습득할 최적의 장소는 Snowflake Marketplace입니다!
 
@@ -107,7 +106,6 @@ Positive : `ACCOUNTADMIN` 역할이 없다면 대신 `IMPORT SHARE` 권한을 �
 <!-- ------------------------ -->
 ## 지리 공간 형식에 대한 이해
 
-Duration: 20
 
 이전 섹션의 마지막 단계에서 워크시트 편집기를 새로운 Snowflake UI에서 열었습니다. Marketplace 목록에서 정의된 샘플 쿼리에서 가져온 몇몇 사전 정의된 쿼리가 포함되어 있었습니다. 이 가이드에서는 어떠한 쿼리도 실행하지만 추후에 실행해 보십시오. 대신 새로운 워크시트 편집기를 열고 다양한 쿼리를 실행하여 `GEOGRAPHY` 데이터 타입이 Snowflake에서 어떻게 작동하는지 이해해 보겠습니다.
 
@@ -230,7 +228,6 @@ select coordinates, name from v_osm_ny_shop_electronics where type = 'way' limit
 <!-- ------------------------ -->
 ## 데이터 언로드/로드
 
-Duration: 20
 
 다양한 출력 형식을 이해했으니 electronics 뷰에서 새로운 파일을 생성한 다음 이러한 파일을 `GEOGRAPHY` 데이터 타입을 가진 새로운 테이블로 로드할 수 있습니다. 또한 지리 공간 _파서_ 및 _생성자_의 첫 예를 마주하게 됩니다.
 
@@ -366,7 +363,6 @@ select * from electronics_points;
 <!-- ------------------------ -->
 ## 계산 및 더 많은 생성자
 
-Duration: 20
 
 `GEOGRAPHY` 데이터 타입의 작동 방법과 다양한 출력 형식을 가진 데이터 지리 공간 표현의 모습에 대한 기본 사항을 이해했습니다. 이제 여러분이 일부 질문에 답하기 위해 일부 지리 공간 쿼리를 실행해야 하는 시나리오를 진행할 시간입니다.
 
@@ -585,7 +581,6 @@ as length_meters from locations;
 <!-- ------------------------ -->
 ## 조인
 
-Duration: 10
 
 이전 섹션에서는 가장 가까운 Best Buy, 주류 판매점 및 커피숍을 찾기 위한 모든 쿼리가 여러분의 타임스퀘어 아파트와 얼마나 가까운지를 기반으로 했습니다. 그러나 예를 들어 Best Buy와 더 가까운 주류 판매점 및 또는 커피숍이 있는지 확인하는 것이 더 효율적이지 않을까요? 테이블 조인의 지리 공간 함수를 사용하여 이를 확인할 수 있습니다.
 
@@ -707,7 +702,6 @@ as length_meters from locations;
 <!-- ------------------------ -->
 ## 추가 계산 및 생성자
 
-Duration: 15
 
 이전 섹션에서 생성했던 `LINESTRING` 오브젝트는 깔끔하고 멋진 4면을 가진 폴리곤처럼 보입니다. 곧 알게 되겠지만 `POLYGON`은 여러분이 구성하고 작업할 수 있는 또 다른 지리 공간 오브젝트 유형입니다. `LINESTRING`을 도형의 테두리로 생각했을 때 `POLYGON`은 도형 자체가 채워진 버전입니다. `POLYGON`에 대한 중요한 부분은 시작점에서 끝나야 한다는 것입니다. 반면에 `LINESTRING`은 시작점으로 돌아올 필요가 없습니다.
 
@@ -932,7 +926,6 @@ select st_collect(polygon) from final_plot;
 <!-- ------------------------ -->
 ## 결론
 
-Duration: 5
 
 이 가이드에서는 Snowflake Marketplace에서 지리 공간 데이터를 습득하고, `GEOGRAPHY` 데이터 타입과 관련 형식의 작동 방법을 알아보고, 지리 공간 데이터가 포함된 데이터 파일을 생성하고, `GEOGRAPHY` 형식의 열을 가진 새로운 테이블에 이러한 파일을 로드하고, 단일 테이블과 조인을 포함한 여러 테이블에서 파서, 생성자, 변환 및 계산 함수를 사용하여 지리 공간 데이터를 쿼리했습니다. 그런 다음 새롭게 구성된 지리 공간 오브젝트를 geojson.io 또는 WKT Playground와 같은 도구로 시각화할 수 있는 방법을 확인했습니다.
 

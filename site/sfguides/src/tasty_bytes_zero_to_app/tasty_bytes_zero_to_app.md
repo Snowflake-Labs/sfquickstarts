@@ -1,16 +1,15 @@
 author: Brian Hess, Fredrik Göransson, Charles Yorek, Kesav Rayaprolu 
 id: build_a_data_app_with_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: A guide to building and running a data application powered by Snowflake and Node.js
-categories: getting-started,app-development,architecture-patterns,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, API 
 
 # Build a Data App with Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 Snowflake is a terrific platform on which to build data applications. The unique characteristics and
 cloud-based design allow for building applications that scale with data and workload. This tutorial
@@ -59,7 +58,6 @@ for Tasty Bytes.
 
 <!-- ------------------------ -->
 ## Lab 1: Data
-Duration: 10
 
 ### Overview
 In this part of the lab we'll set up our Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our Tasty Bytes Food Truck orders data into our ORDERS table and run a few queries to get familiar with the data.
@@ -194,7 +192,6 @@ order by month(order_ts);
 ```
 
 ## Lab 2: Queries
-Duration: 20
 
 ### Overview
 Now that we've done the initial set up within our Snowflake account including loading data into the ORDERS table we will focus on turning our business questions into queries for our application.  
@@ -505,7 +502,6 @@ insert into users
 
 <!-- ------------------------ -->
 ## Lab 4: Building the backend
-Duration: 50
 
 This lab will take you through building the backend, in the form of an API, that can be called by the frontend application. The backend API will connect to the Snowflake database and serve the results of queries over a number of API endpoints.
 We will take the queries designed in the <a href="#3" target="_self">Lab 3: Snowflake Setup</a> and have the results of these queries returned by endpoints in the API.
@@ -1044,7 +1040,6 @@ Next, in the `auth.js` file we can update the `validateToken` function:
 <!-- ------------------------ -->
 ## Lab 5: Stressing and Scaling your Snowflake instance
 
-Duration: 10
 
 ### Overview
 
@@ -1070,7 +1065,6 @@ config:
       timeout: 180  
   processor: "./load_test/load_test_helper.js"
   phases:
-    - duration: 100
       arrivalRate: 10
       rampTo: 50
       
@@ -1258,7 +1252,6 @@ They say a picture paints a thousand words so here is a graph from Snowsight tha
 
 <!-- ------------------------ -->
 ## Lab 6: Frontend Overview
-Duration: 40
 
 This lab will take you through building a React JS frontend that can then be displayed in your favorite browser. The frontend will connect to the backend API which then connects to the Snowflake database and serves the results of queries over a number of API endpoints. The query results are then rendered in the browser as charts which are then easily consumed by the end users.
 

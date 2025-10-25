@@ -1,16 +1,15 @@
 author: Charlie Hammond
 id: many-model-inference-in-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Easily run inference on many models in Snowflake
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Many Model Inference in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Many datasets can be easily partitioned into multiple independent subsets. For example, a dataset containing sales data for a chain of stores can be partitioned by store number. A separate model can then be trained for each partition. Training and inference operations on the partitions can be parallelized, reducing the wall-clock time for these operations. Furthermore, since individual stores likely differ somewhat in how their features affect their sales, this approach can actually lead to more accurate inference at the store level.
 
@@ -32,7 +31,6 @@ In this quickstart, you will use the [Snowflake Model Registry](https://docs.sno
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -65,7 +63,6 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE MANY_MODELS_DATABASE  TO ROLE MANY_MO
 
 <!-- ------------------------ -->
 ## Run the Notebooks
-Duration: 30
 
 ### Setup Notebook
 - Download the setup notebook from this [link](https://github.com/Snowflake-Labs/sfguide-many-model-inference-in-snowflake/blob/main/notebooks/0_start_here.ipynb)
@@ -86,7 +83,6 @@ Duration: 30
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Partitioning datasets for machine learning enables efficient parallel processing and improved accuracy by tailoring models to specific subsets of data, such as store-specific sales trends. With Snowflake’s Model Registry, you can seamlessly implement partitioned inference using stateful models. This approach allows you to train models independently for each partition, log them as a single model, and leverage Snowflake’s compute resources to perform parallelized inference across all partitions.
 

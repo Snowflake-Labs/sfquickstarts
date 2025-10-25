@@ -1,17 +1,16 @@
 author: Manuel Figueroa
 id: marketing_data_foundation_starter_v2
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Marketing Data Foundation V2
-categories: Data-Engineering
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Marketing, Data Engineering, Native Application
 
 # Marketing Data Foundation Starter V2 Guide
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 15
 
 Customers looking to use Snowflake for marketing use cases initially face a significant challenge: it is difficult to import all relevant marketing data into Snowflake and structure it in a unified format that downstream applications can easily utilize to power data-driven marketing.
 This starter solution tackles this challenge by offering an integrated application that unifies data sets from different Connectors and Marketing Data providers.
@@ -85,7 +84,6 @@ This solution consists of a native application that provides a framework to easi
 ## Setup
 
 ### Clone GitHub repository
-Duration: 2
 
 Clone the git repo to your local
 
@@ -136,7 +134,6 @@ Refer to the screenshot below:
 
 ## Deploy the Native application
 
-Duration: 2
 
 We prepared a deployment Jupyter notebook that executes all the steps required to configure this solution in your account.
 
@@ -149,7 +146,6 @@ export SNOWFLAKE_DEFAULT_CONNECTION_NAME=marketing_demo_conn
 
 ### Execute the deployment notebook
 
-Duration: 5
 
 Once the Snowflake connection is set as default, you can proceed to execute the Jupyter notebook that deploys the application in your Snowflake account.
 
@@ -185,7 +181,6 @@ The application and the application package should be listed in your databases l
 
 ## Open the Native App
 
-Duration: 2
 
 ### Open the new native application
 
@@ -310,7 +305,6 @@ TRUNCATE TABLE MARKETING_DATA_FOUNDATION_<USERNAME>.USER_SETTINGS.EXISTING_SOURC
 
 ## Conclusion and Resources
 ### Conclusion
-Duration: 1
 
 Congratulations! You have successfully learned how to easily build an end-to-end Native Application and load sample data.
  

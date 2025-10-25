@@ -1,17 +1,16 @@
 author: hope-wat
 id: leverage_dbt_cloud_to_generate_ml_ready_pipelines_using_snowpark_python
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 
 # Leverage dbt Cloud to Generate ML ready pipelines using Snowpark python
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
 The focus of this workshop will be to demonstrate how we can use both *SQL and python together* in the same workflow to run *both analytics and machine learning models* on dbt Cloud.
 
@@ -54,7 +53,6 @@ The code complete repository for this quickstart can be found on [GitHub](https:
 
 <!-- ------------------------ -->
 ## Architecture and use case overview
-Duration: 2 
 
 In this lab we'll be transforming raw Formula 1 data into a consumable form for both analytics and machine learning pipelines. To understand how our data are related, we've included an entity relationship diagram (ERD) of the tables we'll be using today. 
 
@@ -71,7 +69,6 @@ Here's a visual for the data pipeline that we'll be building using dbt!
 
 <!-- ------------------------ -->
 ## Getting started with Snowflake
-Duration: 5
 
 ### Setup Snowflake trial and email alias 
 
@@ -118,7 +115,6 @@ To recap, we created this email alias to ensure that later when we launch Partne
 
 <!-- ------------------------ -->
 ## Load data into Snowflake
-Duration: 7
 
 We need to obtain our data source by copying our Formula 1 data into Snowflake tables from a public S3 bucket that dbt Labs hosts. 
 
@@ -412,7 +408,6 @@ We're ready to setup our dbt account!
 
 <!-- ------------------------ -->
 ## Launching dbt cloud through partner connect 
-Duration: 2
 
 We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up a dbt Cloud account. Using this method will allow you to spin up a fully fledged dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake) and environments already established.
 
@@ -450,7 +445,6 @@ Instead of building an entire version controlled data project from scratch, we'l
 
 <!-- ------------------------ -->
 ## Forking repository into dbt Cloud
-Duration: 5
 
 To keep the focus on dbt python and deployment today, we only want to build a subset of models that would be in an entire data project. To achieve this we need to fork an existing repository into our personal github, copy our forked repo name into dbt cloud, and add the dbt deploy key to our github account. Viola! There will be some back and forth between dbt cloud and GitHub as part of this process, so keep your tabs open, and let's get the setup out of the way!
 
@@ -489,7 +483,6 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 If you tried to start developing onto of this repo right now, we'd get permissions errors. So we need to give dbt Cloud write access. 
 
 ## Giving dbt cloud repo write access using github deploy keys
-Duration: 5
 
 1. Click on your git cloned repository link. dbt Cloud generated a deploy key to link the development we do in dbt cloud back to our GitHub repo. **Copy** the deploy key starting with **ssh-rsa** followed by a long hash key (full key hidden for privacy).
 <img src="assets/development-schema-and-forking-repo/github-deploy-keys/copy_deploy_key_from_dbt_cloud.png" alt="copy_deploy_key_from_dbt_cloud">
@@ -520,7 +513,6 @@ Alas, now that our setup work is complete, time get a look at our production dat
 
 <!-- ------------------------ -->
 ## IDE overview and building our dbt project
-Duration: 5
 
 dbt Cloud's IDE will be our development space for this workshop, so let's get familiar with it. Once we've done that we'll run the pipeline we imported from our forked repo. 
 
@@ -548,7 +540,6 @@ We did a lot upstream in our forked repo and we'll explore it at a high level of
 
 <!-- ------------------------ -->
 ## Understanding our existing pipeline 
-Duration: 5
 
 We brought a good chunk of our data pipeline in through our forked repo to lay a foundation for machine learning.
 In the next couple steps we are taking time to review how this was done. That way when you have your own dbt project you'll be familiar with the setup! We'll start with the dbt_project.yml, sources, and staging. 
@@ -642,7 +633,6 @@ Remember you can always reference the entire project in [GitHub](https://github.
 
 <!-- ------------------------ -->
 ## Data modeling: review sources and staging 
-Duration: 3
 
 In any data project we follow the process of starting with raw data, cleaning and transforming it, and then gaining insights. In this step we'll be showing you how to bring raw data into dbt and create staging models. The steps of setting up sources and staging models were completed when we forked our repo, so we'll only need to preview these files (instead of build them).
 
@@ -704,7 +694,6 @@ You can see for every source table, we have a staging table. Now that we're done
 
 <!-- ------------------------ -->
 ## SQL Transformations 
-Duration: 5
 
 dbt got it's start in being a powerful tool to enhance the way data transformations are done in SQL. Before we jump into python, let's pay homage to SQL. <br>
 SQL is so performant at data cleaning and transformation, that many data science projects "use SQL for everything you can, then hand off to python" and that's exactly what we're going to do. 
@@ -786,7 +775,6 @@ Now that we've joined and denormalized our data we're ready to use it in python 
 
 <!-- ------------------------ -->
 ## Python development in snowflake python worksheets 
-Duration: 5
 
 This step is optional for this quickstart to give a better feel for working with python directly in Snowflake. To see how to implement this in dbt Cloud, you may skip to the next section.
 
@@ -846,7 +834,6 @@ Now that we've created this dataframe and lap time trend insight, what do we do 
 
 <!-- ------------------------ -->
 ## Python transformations in dbt Cloud  
-Duration: 2
 
 ### Our first dbt python model for lap time trends
 Let's get our lap time trends in our data pipeline so we have this data frame to leverage as new data comes in. The syntax of of a dbt python model is a variation of our development code in the python worksheet so we'll be explaining the code and concepts more.
@@ -922,7 +909,6 @@ Let’s take a step back before starting machine learning to both review and go 
 Now that we understand how to create python transformations we can use them to prepare train machine learning models and generate predictions!
 
 ## Machine Learning: training and prediction
-Duration: 8
 
 In upstream parts of our data lineage we had dedicated steps and data models to cleaning, encoding, and splitting out the data into training and testing datasets. We do these steps to ensure:
  - We have features for prediction and the predictions aren't erroneous (we filtered our drivers that weren't active drivers present at 2020) &mdash; review `ml_data_prep.py`
@@ -1185,7 +1171,6 @@ We can see that we created predictions in our final dataset for each result.
 
 <!-- ------------------------ -->
 ## Pipeline Deployment 
-Duration: 5 
 
 ### Committing all development work 
 Before we jump into deploying our code, let's have a quick primer on environments. Up to this point, all of the work we've done in the dbt Cloud IDE has been in our development environment, with code committed to a feature branch and the models we've built created in our development schema in Snowflake as defined in our Development environment connection. Doing this work on a feature branch, allows us to separate our code from what other coworkers are building and code that is already deemed production ready. Building models in a development schema in Snowflake allows us to separate the database objects we might still be modifying and testing from the database objects running production dashboards or other downstream dependencies. Together, the combination of a Git branch and Snowflake database objects form our environment.
@@ -1295,7 +1280,6 @@ With this in mind we're going to have two jobs:
 That wraps all of our hands on the keyboard time for today! 
 
 ## Conclusion
-Duration: 1 
 
 Fantastic! You’ve finished the workshop! We hope you feel empowered in using both SQL and Python in your dbt Cloud workflows with Snowflake. Having a reliable pipeline to surface both analytics and machine learning is crucial to creating tangible business value from your data. 
 

@@ -1,16 +1,15 @@
 author: Fredrik Göransson
 id: build_a_data_application_with_hybrid_tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: Build a data application using Snowflake Hybrid Tables for transactional processing
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Hybrid Tables 
 
 # Build a Data Application with Hybrid Tables
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This quickstart will take you through building a data application that runs on Snowflake Hybrid Tables. [Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid?_fsi=siV2rnOG) is a Snowflake table type that has been designed for transactional and operational work together with analytical workloads. Hybrid Tables typically offers lower latency and higher throughput on row level and point reads and writes, making them a good choice for a backing source for an application that requires faster operations on individual rows and point lookup, especially when compared to standard Snowflake tables that are optimized for analytical operations.
 
@@ -44,7 +43,6 @@ As a primer, you may want to go through the [Getting Started with Hybrid Tables]
 
 <!-- ------------------------ -->
 ## Setup Snowflake
-Duration: 5
 
 We start by seting up the environment in our Snowflake account. While this can be done using other interfaces, like SnowSQL or SnowCLI, we will here use Snowsight to show the setup.
 
@@ -184,7 +182,6 @@ Finally this is a view similar to tha above but aggregates data across status an
 
 <!-- ------------------------ -->
 ## Create sample data
-Duration: 5
 
 We can now create some sample data for our application to use. We do this so that we can see how Hybrid Tables will work for us when the application is being used and there is actually data to be processed.
 
@@ -371,7 +368,6 @@ DROP FUNCTION create_fake_task(int, string, string);
 
 <!-- ------------------------ -->
 ## Building the application
-Duration: 5
 
 We are now ready to build out the application and connect to the data. Start by cloning the repo with the code for the Python Flask application.
 ```bash
@@ -532,7 +528,6 @@ Notice how we are updating both the Task description and the associated labels i
 
 <!-- ------------------------ -->
 ## Connecting to the data
-Duration: 10
 
 We will now look at how this application connects to the data, both for reads and writes.
 
@@ -869,7 +864,6 @@ You can continue exploring the application and examine the performance of the va
 
 <!-- ------------------------ -->
 ## Clean-up
-Duration: 1
 
 We can now remove all the resources created for this quickstart.
 
@@ -886,7 +880,6 @@ DROP ROLE HYBRID_TASK_APP_ROLE;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Congratulations on completing this end-to-end guide on building a data application running directly on Snowflake Hybrid Tables. You should now have the tools to work with Hybrid Tables for other types of applications that are working with operational or transactional data, which is expecially useful when you want to combine that with analytical data and operations also living on the Snowflake platform. Withouth having to manage connections to multiple databases and database technologies, your applications are becoming both easier to write and to maintain.
 

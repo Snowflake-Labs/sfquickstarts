@@ -1,17 +1,16 @@
 author: Jacob Kranzler
 id: tasty_bytes_extracting_insights_with_docai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/document-ai
+language: en
 summary: Walkthrough extracting data from PDF Inspection Reports using Document AI
-categories: Tasty-Bytes, Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Document AI
 
 # Extracting Insights from Unstructured Data with Document AI
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 1
 <img src="assets/docaiheader.png"/>
 
 ### Overview
@@ -34,7 +33,6 @@ Within this Quickstart, we will walk through how to train and leverage a Documen
 - How to Flatten Semi-Structured Data
 
 ## Database, Warehouse, Role and Privileges
-Duration: 3
 
 ### Overview
 For this section, please create a new Snowflake SQL Worksheet by Navigating to Projects -> Worksheets and clicking the **+** button. 
@@ -117,7 +115,6 @@ Please leverage the two buttons below to download these .zip files. Once downloa
 ### Step 3 - Click Next -->
 
 ## Uploading our Inspection Reports to our Stage
-Duration: 2
 
 ### Overview
 
@@ -136,7 +133,6 @@ This will kick off our file upload and you will eventually see our Inspection Re
 ### Step 3 - Click Next -->
 
 ## Training our Document AI Model
-Duration: 30
 
 ### Overview
 
@@ -220,7 +216,6 @@ When training is complete, you will see **Trained** next to the model name indic
 ### Step 6 - Click Next -->
 
 ## Using our Document AI Model against our Inspection Reports
-Duration: 1
 
 ### Overview
 In the last section, we walked through training our Inspection Report Extraction model in Snowflake. We will now use that model to extract our values from the full set of documents we uploaded to our stage earlier.
@@ -316,7 +311,6 @@ ORDER BY truck_id;
 ### Step 6 - Click Next -->
 
 ## Conclusion and Resources
-Duration: 1
 
 **Fantastic work!** You have successfully completed the Extracting Insights with Document AI Quickstart walking through the process of moving PDF to tabular result. 
 

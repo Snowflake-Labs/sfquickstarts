@@ -1,17 +1,16 @@
 author: gflomo@hex.tech
 id: hex-churn-model
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions
+language: en
 summary: This lab will walk you through how to use Snowflake and Hex.
-categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Hex, Notebooks, Partner Connect
 
 # Churn modeling using Snowflake and Hex
 
 ## Overview
 
-Duration: 5
 
 In this Quickstart guide, we will play the role of a data scientist at a telecom company that wants to identify users who are at high risk of churning. To accomplish this, we need to build a model that can learn how to identify such users. We will demonstrate how to use Hex in conjunction with Snowflake/Snowpark to build a Random Forest Classifier to help us with this task.
 
@@ -36,7 +35,6 @@ In this Quickstart guide, we will play the role of a data scientist at a telecom
 
 ## Setting up partner connect
 
-Duration: 5
 
 After logging into your Snowflake account, you will land on the `Learn` page. To connect with Hex, navigate to the `Admin` tab on the left and click on `Partner connect`. In the search bar at the top, type `Hex` and the Hex partner connect tile will appear. Clicking on the tile will bring up a new screen, and click the `connect button` in the lower right corner. A new screen will confirm that your account has been created, from which you can click `Activate`.
 
@@ -48,7 +46,6 @@ After activating your account, you'll be directed to Hex and prompted to create 
 
 ## Getting Started with Hex
 
-Duration: 5
 
 Now we can move back over to Hex and get started on our project. The first thing you'll need to do is get the Hex project that contains all of the code we'll work through to train our model.
 
@@ -76,7 +73,6 @@ In the walkthrough video of the lab, we opt to leave this on and instead un-comm
 
 ## Reading and writing data
 
-Duration: 8
 
 To predict customer churn, we first need data to train our model. In the SQL cell labeled **Pull churn results** assign `[Demo] Hex public data` as the data connection source and run the cell.
 
@@ -100,7 +96,6 @@ In the SQL cell labeled **Churn data**, change the data source to `Snowflake` an
 
 ## Data preparation
 
-Duration: 2
 
 Now that we have our data in Hex, we want to make sure the it’s clean enough for our machine learning algorithm. To ensure this, we’ll first check for any null values.
 
@@ -130,7 +125,6 @@ The charts' results allow us to visualize each variables distribution, which can
 
 ## Understanding churn rate
 
-Duration: 2
 
 If you take a look at our visuals, you may notice that the churn chart looks a little odd. Specifically, it looks like there are a lot more users who haven’t churned than who have.
 
@@ -141,7 +135,6 @@ As you can see, the majority of observations are in support of user who haven’
 
 ## Establishing a Snowpark connection
 
-Duration: 2
 
 Now, we can connect to our Snowflake connection that we imported earlier. To do this head over to the data sources tab on the left control panel to find your Snowflake connection. If you hover your mouse over the connection and click on the dropdown next to the `query` button and select `get Snowpark session`. This will create a new cell for us with all the code needed to spin up a Snowpark session.
 
@@ -155,7 +148,6 @@ session.use_schema("PC_HEX_DB.PUBLIC")
 
 ## Feature engineering
 
-Duration: 10
 
 In order to predict the churn outcomes for customers not in our dataset, we’ll need to train a model that can identify users who are at risk of churning from the history of users who have. However, it was mentioned in the last section that there is an imbalance in the class distribution that will cause problems for our model if not handled properly. One way to handle this is to create new data points such that the classes balance out. This is also known as upsampling.
 
@@ -270,7 +262,6 @@ To do this, navigate back to Snowflake and click on your username in the top lef
 
 ## Model training
 
-Duration: 5
 
 Now we can train our model. Run the cell labeled `Model training`.
 
@@ -295,7 +286,6 @@ In the next section, we will look at how well our model performed as well as whi
 
 ## Model evaluation and feature importance
 
-Duration: 5
 
 In order to understand how well our model performs at identifying users at risk of churning, we’ll need to evaluate how well it does predicting churn outcomes. Specifically, we’ll be looking at the recall score, which tells us _of all the customers that will churn, how many can it identify._
 
@@ -330,7 +320,6 @@ Let’s visualize the most important features.
 
 ## Predicting churn for a new user
 
-Duration: 10
 
 Now is the moment we've all been waiting for: predicting the churn outcome for a new user. In this section, you should see an array of input parameters already in the project. Each of these inputs allow you to adjust a different feature that goes into predicting customer churn, which will simulate a new user. But we’ll still need to pass this data to our model, so how can we do that?
 
@@ -413,7 +402,6 @@ To display the results in our project, we can do so in a markdown cell. In this 
 
 ## Making Hex apps
 
-Duration: 5
 
 At this stage of the project, we have completed building out our logic and are ready to share it with the world. To make the end product more user-friendly, we can use the app builder to simplify our logic. The app builder enables us to rearrange and organize the cells in our logic to hide the irrelevant parts and only show what matters.
 
@@ -425,7 +413,6 @@ Once you've arranged your cells and are satisfied with how it looks, use the sha
 
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations on making it to the end of this Lab where we explored churn modeling using Snowflake and Hex. We learned how to import/export data between Hex and Snowflake, train a Random Forest model, visualize predictions, convert a Hex project into a web app, and make predictions for new users. You can view the published version of this [project here](https://app.hex.tech/hex-public/app/8bd7b9bb-7f6c-41f1-9b4c-ff563a7fcaea/latest)!
 

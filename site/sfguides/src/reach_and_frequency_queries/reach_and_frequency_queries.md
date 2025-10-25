@@ -1,16 +1,15 @@
 author: Jim Warner
 id: reach_and_frequency_queries
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Shows common reach and frequency queries for advertising measurement
-categories: data-science-&-ml,solution-examples
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, AdTech
 
 # Reach and Frequency queries for advertising measurement
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Reach and Frequency are two of the most simple, but also most important, measures for an advertising campaign. Advertisers typically pay for *impressions*, which is simply the number of times your ad is shown. Reach, on the other hand, tells you the total number of *people* who see your ad, while *frequency* refers to the number of times people see your ad.
 
@@ -36,7 +35,6 @@ Because of the speed and scale of Snowflake, many companies store ad impression 
 
 <!-- ------------------------ -->
 ## Prepare Your Environment
-Duration: 8
 
 If you do not have a Snowflake account, you can register for a [Snowflake free 30-day trial](https://trial.snowflake.com). The cloud provider (AWS, Azure, Google Cloud), and Region (US East, EU, e.g.) do _not_ matter for this lab. However, we suggest you select the region which is physically closest to you.
 
@@ -107,7 +105,6 @@ select count(distinct(user_id)) from IMPRESSIONS where campaign_id='174631';
 The first shows that 20,000,000 were, in fact, generated.  The second shows that these rows contain 2,000 distinct placement IDs.  The final shows 3,488,543 distinct user IDs.
 
 ## Calculating reach
-Duration: 2
 
 When a campaign first starts, it reaches almost entirely new people. As it goes on, however, it reaches more people who have seen the campaign already. It gets harder and harder for the campaign to reach people the longer it goes on.
 
@@ -304,7 +301,6 @@ Viewing the chart, and adding a second line, you can see the following.
 ![Two curves at different frequency](assets/two-curves-uniques.png)
 
 ## Calculating frequency
-Duration: 2
 
 Frequency management is very important in advertising.  On the one hand, a single impression may not be enough to drive effectiveness.  On the other hand, deliver too many impressions to the same people, and they can get "creative wear-out" and KPIs will likely decline.  In addition, although it is common to look at average frequency, frequency is often not normally distributed, so looking at the distribution of frequency is also important.  For more detail on why distribution of ad frequency is important, see [this AdExchanger article](https://www.adexchanger.com/data-driven-thinking/the-seventh-deadly-sin-of-digital-reach-and-frequency/).
 
@@ -350,7 +346,6 @@ Notice that this histogram looks ideal - this is because the data is generated r
 
 <!-- ------------------------ -->
 ## Incremental reach
-Duration: 15
 
 Understanding how many people your campaign reached is important, but when planning the next campaign, it is common to think about *incremental reach*. Incremental reach tells you how many unique people a site, publisher, platform or placement reached that could not be reached elsewhere.
 
@@ -404,7 +399,6 @@ order by 2 asc;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 Congratulations, you have completed this Quickstart for a quick overview of writing queries for Reach and Frequency on Snowflake and visualizing the results in Snowsight.
 

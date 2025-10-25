@@ -1,10 +1,10 @@
 id: apache-iceberg-snowflake-open-catalog-snowpipe-streaming
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+language: en
 summary: Learn how Apache Iceberg integrates with Snowflake Open Catalog, a managed service for Apache Polaris, to enhance data lake interoperability and analytics performance. Discover key benefits and use cases for modern data architectures.
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Featured, Apache Iceberg, Snowflake Open Catalog, Apache Polaris
 authors: Dash Desai
 
 # Apache Iceberg and Snowflake Open Catalog: Unlock Data Lake Interoperability with Apache Polaris
@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 4
 
 Snowflake’s native integration with Apache Iceberg empowers organizations to build a highly interoperable and open lakehouse architecture. With streamlined support for batch and streaming data ingestion, transformation pipelines, and analytics, Snowflake simplifies complex workflows on Iceberg tables. Additionally, Snowflake Open Catalog, a managed service for Apache Polaris, offers robust role-based access controls, ensuring seamless data governance and secure collaboration across multiple engines.
 
@@ -41,7 +40,6 @@ You will learn how to stream data directly into Apache Iceberg tables for real-t
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 20
 
 **Step 1.** Create Snowflake Open Catalog Account, Connections, Roles
 
@@ -130,7 +128,6 @@ Use the following .csv files and load data into respective tables using [Snowsig
 <!-- ------------------------ -->
 ## Snowpipe Streaming
 
-Duration: 10
 
 Follow these instructions to setup Snowpipe Streaming.
 
@@ -190,7 +187,6 @@ At this point you should also check refresh history of *VEHICLE_EVENTS_SCD2*, *V
 <!-- ------------------------ -->
 ## Spark in Snowflake Notebooks
 
-Duration: 15
 
 Assuming everything has gone smoothly so far, follow instructions below to query data in Spark using Snowflake Notebooks.
 
@@ -337,7 +333,6 @@ Assuming everything has gone smoothly so far, follow instructions below to query
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully completed this guide to discover the key benefits and use cases for modern data architectures using Apache Iceberg and Snowflake Open Catalog.
 

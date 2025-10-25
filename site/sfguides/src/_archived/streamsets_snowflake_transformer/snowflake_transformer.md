@@ -1,16 +1,15 @@
 summary: A Dive into Slowly Changing Dimensions with Snowpark
 id: snowflake_transformer
-categories: data-engineering,partner-integrations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Snowpark
 authors: Brenna Buuck, StreamSets
 
 # A Dive Into Slowly Changing Dimensions with Snowpark and StreamSets
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 StreamSets Transformer for Snowflake is a hosted service embedded within the StreamSets DataOps Platform that uses the Snowpark Client Libraries to generate SnowSQL queries that are executed in Snowflake. Build your pipelines in the StreamSets canvas and when you execute that pipeline, StreamSets generates a DAG. StreamSets then uses the DAG and the Snowpark Client Libraries to generate SnowSQL. That SnowSQL is sent over to Snowflake to be executed in the Warehouse of your choice. 
 
@@ -37,7 +36,6 @@ In this guide, you will learn how to build pipelines using Transformer for Snowf
 
 <!-- ------------------------ -->
 ## Configure your Snowflake Credentials and Connection Defaults
-Duration: 2
 
 If you have not used Transformer for Snowflake before, after signing up for the platform, you will need to add your Snowflake Credentials to your user. You can find these settings under the User Icon > My Account
 
@@ -53,7 +51,6 @@ Your Snowflake account URL will change depending on the area where you’re loca
 
 <!-- ------------------------ -->
 ## Create a New Pipeline
-Duration: 2
 
 Once your credentials are saved, you are ready to build your first pipeline. Using the tabs on the left hand menu, select Build > Pipelines. Use the ➕ icon to create a new pipeline.
 
@@ -77,7 +74,6 @@ If you entered Default Pipeline Parameters in the previous step, the **Snowflake
 
 <!-- ------------------------ -->
 ## Code Snippets, Info Boxes, and Tables
-Duration: 2
 
 Every Transformer for Snowflake pipeline must have an origin and a destination. For this pipeline, select the Snowflake Table Origin from either the drop down menu at the top of the canvas or from the full menu of processors on the right.
 
@@ -89,7 +85,6 @@ At this point, run the first section of SQL in the SQL Script file to create and
 
 <!-- ------------------------ -->
 ## Add Slowly Changing Dimension
-Duration: 2
 
 Now add the **Slowly Changing Dimension** processor from the top menu (which only appears when the origin is selected on the canvas) or from the right side menu of all Processors. Make sure the Employees Table Origin is connected to the Slowly Changing Dimensions.
 
@@ -119,7 +114,6 @@ In the settings for the Slowly Changing Dimension, add the following configurati
 
 <!-- -------------------------->
 ## Add Snowflake Table Destination
-Duration: 2
 
 The final step to complete this pipeline is to add the Table Destination.  
 
@@ -137,7 +131,6 @@ The destination can be renamed on the General tab, and on the Table tab, update 
 
 <!-- -------------------------->
 ## Preview Results
-Duration: 2
 
 Now that the pipeline has sources and a target, there should be no validation warnings showing, and the pipeline can be previewed. 
 
@@ -163,7 +156,6 @@ There are a few things to observe.
 
 <!-- -------------------------->
 ## Add a Transformation
-Duration: 2
 
 To transform the data in the pipeline, add an **Apply Functions** processor between the **Updates** origin and the **Slowly Changing Dimension** processor. Click on the line connecting the two processors, and then select the **Apply Functions** processor from the menu that appears at the top of the screen. 
 
@@ -179,7 +171,6 @@ Now preview the results, and select the Apply Functions processor to see the inp
 
 <!-- -------------------------->
 ## Create and Run Pipeline as a Job
-Duration: 2
 
 Before being able to run the pipeline, it needs to be published. Once the preview is closed, check the pipeline in. 
 
@@ -211,7 +202,6 @@ Select the **History** tab on the left menu to see more details about the job ru
 
 <!-- -------------------------->
 ## Check Results in Snowflake
-Duration: 2
 
 Run the query **SELECT * FROM DEMO.HCM.EMPLOYEES**; to see the updated results in the **EMPLOYEES** table. Here it can be seen that the record with the updated title and upper case names and title was added as a second version of the record, and the previous record was expired.
 
@@ -223,7 +213,6 @@ While in Snowflake, check out the Query History to see the Merge record that the
 
 <!-- -------------------------->
 ## Conclusion
-Duration: 2
 
 Congratulations on completing this lab!
 

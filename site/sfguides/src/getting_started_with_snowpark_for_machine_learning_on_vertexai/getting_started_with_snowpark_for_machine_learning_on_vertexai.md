@@ -1,15 +1,14 @@
 id: getting_started_with_snowpark_for_machine_learning_on_vertexai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a qucikstart for using Snowpark for ML on Vertex AI
-categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, GCP, Vertex AI
 
 # Getting Started with Snowpark for Machine Learning on Vertex AI
 <!-- ------------------------ -->
 ## Overview 
-Duration: 15
 
 Python is the language of choice for Data Science and Machine Learning workloads. Snowflake has long supported Python via the Python Connector, allowing data scientists to interact with data stored in Snowflake from their preferred Python environment. This did, however, require data scientists to write verbose SQL queries. To provide a more friendly, expressive, and extensible interface to Snowflake, we built Snowpark Python, a native Python experience with a pandas and PySpark-like API for data manipulation. This includes a client-side API to allow users to write Python code in a Spark-like API without the need to write verbose SQL. Python UDF and Stored Procedure support also provides more general additional capabilities for compute pushdown.
 
@@ -47,7 +46,6 @@ The end-to-end workflow will look like this:
 
 <!-- ------------------------ -->
 ## Use Case
-Duration: 5
 
 In this use case you will build a binary model based on the 'Machine Predictive Maintenance Classification' dataset from [Kaggle](https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification). We supplement this dataset with data from the Snowflake [data marketplace](https://www.snowflake.com/en/data-cloud/marketplace/).
 
@@ -55,7 +53,6 @@ The use case uses information related to machine diagnostics (torque, rotational
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 5
 
 The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.
 ```sql
@@ -77,7 +74,6 @@ https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-packages#usi
 
 <!-- ------------------------ -->
 ## Set Up Vertex AI Environment
-Duration: 5
 
 If you haven't used Vertex AI you will have to create a Vertex AI service inside of a Google Cloud project. You can review material [here](https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform) though it is straightforward to create the service by searching "Vertex AI" in the Google Cloud console and starting up the service.
 
@@ -91,7 +87,6 @@ Start the instance and wait several minutes for the instance to start then click
 
 <!-- ------------------------ -->
 ## Clone Github Repo
-Duration: 5
 
 
 In the terminal window you will copy the public repo that contains the data and scripts needed for this quickstart.
@@ -106,7 +101,6 @@ Click into the folder on the side that has been copied. Click into the folder op
 
 <!-- ------------------------ -->
 ## Load data into Snowflake
-Duration: 5
 
 Now work through the set up script. Uncomment the "pip install" code at the top in order to install the libraries you need. Your chosen role will need to have permissions to create these objects - if you are in a fresh lab account, the `ACCOUNTADMIN` role will work, but note that this wouldn't be used in a production setting.
 
@@ -145,7 +139,6 @@ Once complete with the script, check back to your Snowflake environment to make 
 
 <!-- ------------------------ -->
 ## Build and Deploy Model
-Duration: 10
 
 Now open and work through the `1...` workbook to join together the datasets, bring in the training data then build and deploy the model. Once again, make sure to select the correct python environment.
 
@@ -162,7 +155,6 @@ select GET(aml_model!predict_proba(AIR_TEMPERATURE_K,
 
 <!-- ------------------------ -->
 ## Conclusion and Additional Considerations
-Duration: 5
 
 This quickstart is just that, a quick way to get you started with using Vertex AI with Snowflake and Snowpark. For enterprise uses, data scientists and developers will want to consider additional details. Most important is considering the tracking of the mlops lineage from data to model to deployment. A more mature architecture will include the additional steps below which include the registration of the data and the model.
 

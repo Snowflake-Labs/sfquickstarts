@@ -1,11 +1,11 @@
 author: caleb-baechtold, doris-lee
 id: getting_started_with_pandas_on_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Through this quickstart guide, you will learn how to use pandas on Snowflake.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
 # Getting Started with pandas on Snowflake
 <!-- ------------------------ -->
@@ -41,7 +41,6 @@ We will be using [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-
 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
-Duration: 2
 
 1. Download the Git repo [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowpark-pandas).
 2. Install the [Snowflake Public Data (Free)](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free?search=snowflake%20public%20data%20) dataset. 
@@ -85,7 +84,6 @@ These can also be found in the **setup.sql** file.
 
 <!-- ------------------------ -->
 ## Create Snowflake Notebook
-Duration: 10
 
 ### Navigate To Snowflake Notebooks
 
@@ -105,7 +103,6 @@ Duration: 10
 
 <!-- ------------------------ -->
 ## Get started with pandas on Snowflake
-Duration: 20
 
 Once you have created a notebook based on the [ipynb file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-pandas-on-snowflake/blob/main/notebooks/0_start_here.ipynb)
 

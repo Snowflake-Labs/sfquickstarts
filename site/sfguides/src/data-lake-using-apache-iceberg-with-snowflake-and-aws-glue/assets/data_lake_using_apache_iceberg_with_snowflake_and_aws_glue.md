@@ -1,16 +1,15 @@
 author: Andries Engelbrecht
 id: data_lake_using_apache_iceberg_with_snowflake_and_aws_glue
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+language: en
 summary: This guide shows how to integrate Snowflake with External Volumes to S3 and the Glue Data Catalog for use with Iceberg tables
-categories: Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Lake, Iceberg, Apache Iceberg 
 
 # Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue
 <!-- ------------------------ -->
 ## Overview 
-Duration: 4
 
 [Apache Iceberg](https://iceberg.apache.org/) is an open table format for huge analytical datasets that enables high performance analytics on open data formats with ACID compliance. Snowflake and AWS both support Iceberg format that enables customers to drastically improve data interoperability, speed of implmentation and peformance for integrated data lakes.
 
@@ -42,7 +41,6 @@ For this guide we will use a Financial Services use case where Insurance data is
 
 <!-- ------------------------ -->
 ## Configure the AWS Account
-Duration: 4
 
 In this step we will use CloudFormation to configure objects in the AWS account needed for the quickstart, we will also cover basics of the AWS console and how to leverage browser tabs to multi task with various AWS services.
 
@@ -97,7 +95,6 @@ It will take a few seconds to create the resources in your AWS account. In the E
 
 <!-- ------------------------ -->
 ## Use AWS Glue to create the Iceberg table
-Duration: 6
 
 In this step we will use AWS Glue to create an icebrg table and convert parquet data to iceberg format. Glue Studio will be used.
 
@@ -232,7 +229,6 @@ As a bonus step you can open the browser tab with the S3 console and see the new
 
 <!-- ------------------------ -->
 ## Setup Snowflake account and configure the AWS integrations
-Duration: 7
 
 In this step we will configure the Snowflake account with Internal tables to represent Customer and Policy data. We will also create Snowflake objects such as a databaase, warehouse and role that are used the quickstart. Then we will configure the external volume to allow Snowflake to read and write on S3. We will also create an integration with the Glue Data Catalog to allow Snowflake to retrieve the Iceberg Catalog information directly from the the Glue Catalog.
 
@@ -506,7 +502,6 @@ Your IAM Trust policy will look something like this
 
 <!-- ------------------------ -->
 ## Working with Iceberg tables in Snowflake
-Duration: 4
 
 
 In this step we will use the integrations with S3 adn Glue to create an Iceberg table object refering the Quotes Iceberg table. THat will be used for analysis with the internal Customer and Policy tables. We will then create an aggregate table written in Iceberg format on S3 and use Snowflake to query it.
@@ -598,7 +593,6 @@ This completes the creation of iceberg tables in Snowflake using an External Cat
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 You've succesfully converted parquet data to Iceberg format use AWS Glue, integrated Snowflake with S3 and the Glue Data Catalog, then combined Iceberg table data with Internal Snowflake data for analytics, wrote aggregate data in Iceberg format to S3 and finally used Snowflake to analzye the Iceberg data.
 

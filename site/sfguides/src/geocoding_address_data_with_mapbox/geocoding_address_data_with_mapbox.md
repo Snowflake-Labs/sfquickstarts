@@ -1,18 +1,17 @@
 author: chriswhong
 id: geocoding_address_data_with_mapbox
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: Forward and Reverse Geocoding with the Mapbox App
-categories: featured,getting-started,data-engineering,partner-integrations
 environments: 
 status: Published
 feedback link: https://github.com/chriswhong/sfquickstarts
-tags: Getting Started, API, Geo, Spatial, Geospatial, Geocoding
 
 # Geocoding Address Data with Mapbox
 
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 1
 
 This Quickstart will help you get started with the __Mapbox Snowflake Native App__, which adds new stored procedures for geocoding, navigation, and Mapbox boundaries APIs and data that you can use in your SQL queries.  Geocoding converts your address data (e.g. "1600 Pennsylvania Ave, Washington, DC, 20500") into geographic coordinates which can be used for mapping and spatial analysis. Navigation stored procedures help calculate distance and duration between start and destination points, and calculate isochrones. Mapbox boundaries stored procedures allow you to do point-in-polygon lookups against the Mapbox boundaries dataset.
 
@@ -49,7 +48,6 @@ The Mapbox Snowflake Native App is powered by [Mapbox APIs](https://docs.mapbox.
 © 2023 Mapbox, Inc
 
 ## Installing the Mapbox App
-Duration: 3
 
 ### Step 1
 
@@ -73,12 +71,10 @@ GRANT UPDATE ON TABLE mydatabase.testing.sample_addresses to application mapbox;
 Note that some of the examples in the "Usage" section below use sample data from sample tables provided by the application. The application does not need additional privileges to run against those sample tables and data provided by the application.
 
 ## Usage
-Duration: 1
 
 A general usage note: stored procedures must pass all parameters in the stored procedure signature. Pass "null" if you do not wish to use a given parameter. All of the examples act on sample data that comes with the application. Wherever you see "mapbox" as a parameter in the stored procedure examples, if you did not name the native app "mapbox" you must change "mapbox" to match whatever you named the app.
 
 ## Geocoding
-Duration: 5
 
 The geocoding stored procedures comply with the [Mapbox Geocoding V6 API.](https://docs.mapbox.com/api/search/geocoding-v6/)
 
@@ -288,7 +284,6 @@ CALL mapbox.core.geocode_structured_enrich (
 This will update the mapbox.sample_data.geocode_structured table's "response" column and populate it with the structured geocoding result for each row
 
 ## Navigation
-Duration: 5
 
 #### Distance and duration
 
@@ -418,7 +413,6 @@ CALL mapbox.core.isochrone_enrich (
 ```
 
 ## Boundaries
-Duration: 5
 
 #### mapbox_boundaries_reverse_enrich
 
@@ -487,7 +481,6 @@ GRANT UPDATE ON TABLE mydatabase.testing.sample_points to application mapbox
 ```
 
 ## General tips
-Duration: 1
 
 ### Using response values
 
@@ -563,7 +556,6 @@ SELECT response:context:country:country_code from mapbox.sample_data.geocode_for
 ```
 
 ## Version and upgrade notes
-Duration: 1
 
 Earlier versions of the application included user-defined functions (UDFs) for accessing geocoding functionality. These UDFs have been replaced with stored procedures. This table shows the name of the stored procedures that supercede each UDF
 
@@ -575,7 +567,6 @@ geocode_structured | geocode_structured_enrich
 
 
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You've successfully completed the Getting Started with Mapbox Geocoding & Analysis Tools quickstart guide.
 

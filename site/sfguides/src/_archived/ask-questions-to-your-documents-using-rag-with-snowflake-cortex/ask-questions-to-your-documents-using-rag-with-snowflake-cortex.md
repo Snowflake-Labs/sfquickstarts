@@ -1,9 +1,9 @@
 author: Carlos Carrero
 id: asking_questions_to_your_own_documents_with_snowflake_cortex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-search
+language: en
 summary: Step-by-step guide on how to build a document search assistant using vector embeddings in Cortex AI.
-categories: featured,getting-started,data-science, gen-ai 
 environments: web 
-tags: Snowpark Python, Streamlit, Generative AI, Snowflake Cortex, Vectors, Embeddings, Getting Started
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 In this quickstart we will show you how to quickly and securely build a document search assistant using vector embeddings in Cortex AI without having to build integrations, manage any infrastructure or deal with security concerns with data moving outside of the Snowflake governance framework. 
 
@@ -48,7 +47,6 @@ The final product includes an application that lets users test how the LLM respo
 
 <!-- ------------------------ -->
 ## Organize Documents and Create Pre-Processing Functions
-Duration: 15
 
 In Snowflake, databases and schemas are used to organize and govern access to data and logic. Let´s start by getting a few documents locally and then create a database that will hold the PDFs, the functions that will process (extract and chunk) those PDFs and the table that will hold the text embeddings. 
 
@@ -177,7 +175,6 @@ ls @docs;
 
 <!-- ------------------------ -->
 ## Build the Vector Store
-Duration: 15
 
 In this step we are going to leverage our document processing functions to prepare documents before turning the text into embeddings using Snowflake Cortex. These embeddings will be stored in a Snowflake Table using the new native VECTOR data type. 
 
@@ -253,7 +250,6 @@ After completing all the steps in this section you should see the following obje
 
 <!-- ------------------------ -->
 ## Build Chat UI and Chat (Retrieval and Generation) Logic
-Duration: 15
 
 To make it easy for anyone to ask questions against the vector store, let's create a fairly simple front-end using Streamlit. As part of the app, we will provide the end-user with a toggle that allows testing of LLM responses with and without access to the context to observe the differences.
 
@@ -497,7 +493,6 @@ num_chunks = 3
 
 <!-- ------------------------ -->
 ## Build a ChatBot UI that Remember Previous Conversations
-Duration: 15
 
 In the previous section we have created a simple interface where we can ask questions about our documents and select the LLM running within Snowflake Cortex to answer the question. We have seen that when no context from our documents is provided, we just get a general answer, versus a specific answer related to our documents when we use context from the PDFs. But what if we want to have a conversation sytle?
 
@@ -899,7 +894,6 @@ You can try with your own documents. You will notice different peformance depend
 
 <!-- ------------------------ -->
 ## Optional: Automatic Processing of New Documents
-Duration: 5
 
 We can use Snowflake features Streams and Task to automatically process new PDF files as they are added into Snowflake. 
 
@@ -966,7 +960,6 @@ alter task task_extract_chunk_vec_from_pdf suspend;
 
 <!-- ------------------------ -->
 ## Conclusion & Resources
-Duration: 5
 
 Congratulations! You've successfully performed RAG using Snowflake Cortex and securely built a full-stack RAG application in Snowflake without having to build integrations, manage any infrastructure or deal with security concerns with data moving outside of the Snowflake governance framework. 
 

@@ -1,18 +1,17 @@
 author: Josh Reini, Elliot Botwick
 id: compare-and-evaluate-chunking-strategies
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
+language: en
 summary: Learn how to evaluate different chunking strategies for Retrieval Augmented Generation (RAG) applications using Snowflake's AI Observability features.
-categories: getting-started, streamlit, snowflake, featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: RAG, AI Observability, Chunking, LLM
 
 # Compare and Evaluate Chunking Strategies
 
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 Chunking strategies play a critical role in the effectiveness of Retrieval Augmented Generation (RAG) applications. The way you split your documents can significantly impact the quality of responses your AI system provides. In this guide, you'll learn how to systematically compare different chunking approaches using Snowflake's AI Observability features.
 
@@ -44,7 +43,6 @@ A complete RAG application that can answer questions about SEC 10-K filings, wit
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 10
 
 ### Database and Schema Setup
 
@@ -85,7 +83,6 @@ Download the PDF documents from the [data folder in the GitHub repository](https
 <!-- ------------------------ -->
 ## Parse Documents
 
-Duration: 15
 
 In this section, we'll extract text from the PDF documents using Snowflake's AI_PARSE_DOCUMENT function. This function can handle complex document layouts, including tables and columns.
 
@@ -150,7 +147,6 @@ This gives us a sense of the document sizes and helps us plan our chunking strat
 <!-- ------------------------ -->
 ## Implement Chunking Strategies
 
-Duration: 20
 
 Now we'll implement two different chunking strategies to compare their effectiveness.
 
@@ -217,7 +213,6 @@ This strategy prepends each chunk with a summary of the entire document, providi
 <!-- ------------------------ -->
 ## Create Search Services
 
-Duration: 15
 
 Now we'll create two Cortex Search services, one for each chunking strategy, to enable vector search capabilities.
 
@@ -303,7 +298,6 @@ These tests help us verify that both search services are operational and returni
 <!-- ------------------------ -->
 ## Build RAG Applications
 
-Duration: 15
 
 Now we'll build two RAG applications, one for each chunking strategy, using the search services we created.
 
@@ -387,7 +381,6 @@ The `@instrument` decorators in our RAG class enable AI Observability, which wil
 <!-- ------------------------ -->
 ## Set Up AI Observability
 
-Duration: 10
 
 Now we'll set up AI Observability to compare the performance of our two RAG applications.
 
@@ -431,7 +424,6 @@ This registration allows AI Observability to track and compare the performance o
 <!-- ------------------------ -->
 ## Create Test Dataset
 
-Duration: 10
 
 To evaluate our RAG applications, we need a test dataset with questions and ground truth answers.
 
@@ -502,7 +494,6 @@ This dataset contains specific questions about information in the 10-K filings, 
 <!-- ------------------------ -->
 ## Run Evaluations
 
-Duration: 20
 
 Now we'll create and run evaluations to compare our two RAG applications.
 
@@ -592,7 +583,6 @@ These metrics will help us understand how well each RAG version performs:
 <!-- ------------------------ -->
 ## View and Compare Results
 
-Duration: 10
 
 ### Compare results
 
@@ -612,7 +602,6 @@ To compare the runs head to head, click the checkbox for each version and then c
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 5
 
 Congratulations! You've successfully built and compared two different chunking strategies for a RAG application using Snowflake's AI Observability features. By systematically evaluating these approaches, you now have data-driven insights into which chunking strategy works better for your specific use case.
 

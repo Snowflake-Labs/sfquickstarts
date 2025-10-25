@@ -1,16 +1,15 @@
 author: Carston Hernke
 id: viewing-location-data-on-an-interactive-map
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: This guide walks you through creating an interactive map visualization to analyze location data using the Honeycomb Maps native app.
-categories: data-visualization,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Geospatial, Visualization, Native Apps
 
 # Viewing Location Data on an Interactive Map
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
 Honeycomb Maps is a Snowflake Native App that enables logistics and mobility companies to build interactive map dashboards directly using their data in Snowflake. As a native app, Honeycomb runs inside your Snowflake account, keeping your data secure by eliminating the need to extract or duplicate it.
 
@@ -45,7 +44,6 @@ Let's get started with creating our first Honeycomb map!
 
 <!-- ------------------------ -->
 ## Install Honeycomb Maps 
-Duration: 5
 
 The first step is to install the Honeycomb Maps application from the Snowflake Marketplace.
 
@@ -119,7 +117,6 @@ You have now successfully installed Honeycomb Maps and are ready to create your 
 
 <!-- ------------------------ -->
 ## Create Your First Map
-Duration: 10
 
 Now that you have Honeycomb Maps installed, let's create your first map visualization.
 
@@ -207,7 +204,6 @@ Your map now displays all pizza restaurants with customized styling and tooltips
 
 <!-- ------------------------ -->
 ## Add Title and Legend
-Duration: 10
 
 Now let's enhance our map by adding a label and legend to the map
 
@@ -294,7 +290,6 @@ This interactive filter is especially useful for analyzing density and distribut
 
 <!-- ------------------------ -->
 ## Save and Share Your Map
-Duration: 5
 
 Once you're satisfied with your map, let's save it and learn how to share it with others.
 
@@ -339,7 +334,6 @@ Congratulations! You've successfully created, customized, and shared an interact
 
 <!-- ------------------------ -->
 ## Next Steps and Advanced Features
-Duration: 5
 
 ![Advanced Maps](assets/advanced_features.png)
 
@@ -378,7 +372,6 @@ Explore these advanced features to create even more powerful geographic visualiz
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You've successfully created an interactive map visualization using Honeycomb Maps. You've learned how to:
 

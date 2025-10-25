@@ -1,17 +1,16 @@
 author: Phani Raj, Karuna Nadadur
 id: call_centre_analytics_with_snowflake_cortex_and_spcs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
+language: en
 summary: This guide will provide step-by-step details for building call centre analytics using Snowflake Cortex LLM functions and Snowpark Container Services
-categories: Getting-Started,data-science, gen-ai
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Gen AI, Data Engineering, Snowpark , Python , Snowflake Cortex, Snowpark Container Services,Vectors, Embeddings,Streamlit
 
 # Call Centre Analytics with Snowflake Cortex LLM and Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 15
 
 **Note:** We recommend checking out our [Building Cortex AISQL Powered Call Centre Analytics Solution](https://quickstarts.snowflake.com/guide/building-cortex-aisql-powered-call-centre-analytics/index.html?index=..%2F..index#0) quickstart, which uses Snowflake's `AI_TRANSCRIBE` function instead of hosting Whisper models in SPCS for audio to text conversion. This original version is useful if Cortex cannot be used or if further model tuning is desirable.
 
@@ -94,7 +93,6 @@ Below gif explaining the main pages of the app and the information it gives abou
 
 ## Setup
 
-Duration: 15
 
 ### Clone GitHub repository
 
@@ -178,7 +176,6 @@ Run the following notebook to bring up the Snowpark container required for runni
 <!-- ------------------------ -->
 ## Conclusion & Resources
 
-Duration: 5
 
 Congratulations! You have successfully learnt how to transcibe audio files, perform analytics on unstructured data using the power of Cortex LLM functions and build a text summarization, audio analytics dashboards, RAG based and Text2SQL chatbots using Streamlit and all with in the Snowflake platform.
 

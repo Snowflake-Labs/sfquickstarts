@@ -1,18 +1,17 @@
 author: Sikha Das
 id: ai_agent_health_payers_cc
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification
-categories: Getting-Started, data-science-&-ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowpark Python, Streamlit, Data-Science-&-Ai
 
 # Building an AI Agent for Healthcare Using Snowflake Cortex, Notebooks, and ML Classification
 <!-- ------------------------ -->
 ## Overview
 ![banner](assets/banner.png)
 
-Duration: 5
 
 In this quickstart, you will learn how to easily build an AI agent entirely in Snowflake. We will walk through a scenario in the healthcare industry to illustrate this.
 
@@ -69,7 +68,6 @@ The created "Data Agent" ties these features together to provide a single app fo
 
 ## Data and Snowflake Setup
 
-Duration: 15
 
 > **You can access the full code in [this GIT REPO](https://github.com/Snowflake-Labs/sfguide-ai-agent-hcls-payers-cc-cortex-notebooks-mlclassification/tree/main).**
 
@@ -298,7 +296,6 @@ COMMENT = '{"origin":"sf_sit-is", "name":"payer_call_center_assistant_v2", "vers
 
 ## Access Setup Notebook
 
-Duration: 20
 
 The notebook has already been created in your Snowflake account! All packages and Python setup has already been completed.
 
@@ -312,7 +309,6 @@ You will also predict the intent of a caller using historical data.This will all
 
 ## Run Streamlit Application
 
-Duration: 20
 
 The Streamlit in Snowflake Application has been deployed as part of the setup process. To access it, navigate to Snowsight, select the `SYSADMIN` role, and under Projects, click the Streamlit tab. Open `PAYERS_CC_CHATBOT` and explore.
 
@@ -324,7 +320,6 @@ You can also open `PAYERS_CC_CHATBOT_OLD` to access the version that does not in
 
 ## Conclusion And Resources
 
-Duration: 1
 
 In this guide, you processed a knowledge base of unstructured and structured Enterprise data and then used it to build an AI-powered Assistant for a Contact Center.
 

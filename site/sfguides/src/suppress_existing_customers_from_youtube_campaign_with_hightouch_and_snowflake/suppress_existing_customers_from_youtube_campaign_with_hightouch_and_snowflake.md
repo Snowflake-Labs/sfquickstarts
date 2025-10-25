@@ -1,16 +1,15 @@
 author: Jim Warner
 id: suppress_existing_customers_from_youtube_campaign_with_hightouch_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Build and sync an audience of existing customers to Youtube to suppress from future prospecting campaigns, using Hightouch and Snowflake.
-categories: solution-examples,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, AdTech
 
 # Suppress existing customers from a Youtube campaign with Hightouch and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Hightouch helps marketers activate their customer data from Snowflake to over 125 different applications.  The [Data Activation](https://hightouch.com/blog/what-is-data-activation) platform, powered by Reverse ETL, provides both a SQL-based UI as well as a no-code [audience builder](https://hightouch.com/platform/audiences) to help teams across an organization complete what is now being called the "last mile" of the [Modern Data Stack](https://hightouch.com/blog/reverse-etl-bringing-the-modern-data-stack-full-circle).
 
@@ -41,7 +40,6 @@ In this Quickstart, we will cover this last example, a suppression audience use-
 
 <!-- ------------------------ -->
 ## Prepare your audience within Snowflake & connect Hightouch
-Duration: 4
 
 First, you need to have the data that you want to push prepared within Snowflake.
 
@@ -134,7 +132,6 @@ GRANT SELECT ON VIEW PC_HIGHTOUCH_DB.public.customer_sales TO ROLE PC_HIGHTOUCH_
 ```
 
 ## Create audience and configure destination in Hightouch
-Duration: 8
 
 Now that we have our test data, we can create the audience in Hightouch and push it to Google Ads.  Connecting to Hightouch from Snowflake via Partner Connect already created the data source within Hightouch.
 
@@ -263,7 +260,6 @@ This section will tell you how to exclude the audience from your Youtube campaig
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Especially in challenging macroeconomic environments, it is important that ad campaigns are targeted to the right people. In this example, we showed how we could use Snowflake and Hightouch to suppress recent purchasers from an ad campaign running with YouTube.
 

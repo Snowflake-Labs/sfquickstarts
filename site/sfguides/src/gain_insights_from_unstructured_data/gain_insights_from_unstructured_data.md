@@ -1,16 +1,15 @@
 author: James Cha-Earley
 id: gain_insights_from_unstructured_data
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: Gain Insights From Unstructured Data with Snowflake Cortex
-categories: data-science, gen-ai, data-science-&-ai, cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Tasty Bytes, Cortex, Notebook,Generative AI, LLMs
 
 # Gain Insights From Unstructured Data using Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 In this Quickstart guide, you will be help the fictitious food truck company, Tasty Bytes, to identify where their customer experience may be falling short at the truck and business level by leveraging **Snowflake Cortex**. The company gathers customer reviews across multiple sources and languages to assess their food truck operations. This comprehensive feedback helps them identify areas for improvement, ultimately boosting customer satisfaction and loyalty. Leveraging Snowflake Cortex's advanced language AI capabilities, they can automatically process reviews through real-time translation, generate actionable insights through intelligent summarization, and analyze customer sentiment at scale – transforming diverse, unstructured feedback into strategic business decisions that drive their food truck operations forward.
 
@@ -49,7 +48,6 @@ In this quickstart, you will learn:
 
 <!-- ------------------------ -->
 ## Setup Data
-Duration: 2
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
@@ -79,7 +77,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Setup Notebook
-Duration: 5
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to create Snowflake notebook by importing notebook.
 
@@ -97,7 +94,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Translate
-Duration: 2
 
 ### Overview
 
@@ -144,7 +140,6 @@ This is done within the notebook using following code snippet in cell `CORTEX_TR
 <!-- ------------------------ -->
 
 ## Summarize reviews
-Duration: 5
 
 ### Overview
 
@@ -177,7 +172,6 @@ In this section, you will leverage **Snowflake Cortex LLM - AI_SUMMARIZE_AGG** t
 <!-- ------------------------ -->
 
 ## Categorize reviews  
-Duration: 5
 
 ### Overview
 In this section, you will make use of **Snowflake Cortex LLM - AI_CLASSIFY** to categories reviews to understand:
@@ -213,7 +207,6 @@ In this section, you will make use of **Snowflake Cortex LLM - AI_CLASSIFY** to 
 <!-- ------------------------ -->
 
 ## Leverage an LLM
-Duration: 5
 
 ### Overview
 
@@ -260,7 +253,6 @@ In this section, you will leverage **Snowflake Cortex LLM - AI_COMPLETE** to get
 <!-- ------------------------ -->
 
 ## Analyze Images
-Duration: 5
 
 ### Overview
 
@@ -280,7 +272,6 @@ In this section, you will leverage **Snowflake Cortex LLM - AI_COMPLETE** to for
 ```
 
 ## Transcription
-Duration: 5
 
 ### Overview
 
@@ -298,7 +289,6 @@ In this section, you will leverage **Snowflake Cortex LLM - AI_TRANSCRIBE** to f
 ```
 
 ## Understand sentiment 
-Duration: 2
 
 ### Overview
 
@@ -328,7 +318,6 @@ Next, you will look at another **task specific LLM function in Cortex - Sentimen
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ### Overview
 You've mastered powerful customer analytics using Snowflake Cortex, processing multilingual reviews and extracting valuable insights – all while maintaining data security within Snowflake's ecosystem. By leveraging these built-in AI capabilities, you've eliminated the complexity of managing external infrastructure while keeping sensitive customer feedback protected within Snowflake's secure environment.

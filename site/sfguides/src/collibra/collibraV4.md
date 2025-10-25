@@ -1,16 +1,15 @@
 author: 
 id: collibra
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance
+language: en
 summary: This is a sample Snowflake Guide to show how a user can work with Collibra in integration with Snowflake. 
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Collibra Data Governance with Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This is a guide on how to catalog Snowflake data into Collibra, link the data to business and logical context, create and enforce policies. Also we will show how a user can search and find data in Collibra, request access and go directly to the data in Snowflake with access policies automatically enforced. 
 
@@ -57,7 +56,6 @@ Collibra is a Data Intelligence platform that allows users to search, and find o
 
 <!-- ------------------------ -->
 ## Catalog Snowflake into Collibra
-Duration: 2
 
 In this step we will import into Collibra the techincal metadata from a Snowflake database. We will use Collibra Edge, which is an Integration Hub residing within the customer firewall for safety. This integration hub retrieves the Snowflake metadata using native JDBC drivers.  
 
@@ -98,7 +96,6 @@ Collibra also allows users to see profiling information and sampling (anonymized
 <!-- ------------------------ -->
 
 ## Data Privacy and Policy Enforcement
-Duration: 2
 
 In this stage, we will specifically define the Data Privacy policies and rules that will be automatically enforced in Snowflake directly from within Collibra. 
 
@@ -149,7 +146,6 @@ We can simply check this if we login to Snowflake and go to D_CUSTOMER database,
 
 <!-- ------------------------ -->
 ## Data Consumption and Access
-Duration: 2
 
 In this chapter we will look into how a user can search and find trusted data to use and request access to the data while at the same time policies will be automatically enforced.
 
@@ -250,7 +246,6 @@ And also the country is filtered to include customers from Sweden only:
 
 <!-- ------------------------ -->
 ## Conclusion 
-Duration: 2
 
 In this lab we learned how to catalog Snowflake data, how to link this data to its business context, how to enforce privacy policies on it and how to search and access it.
 

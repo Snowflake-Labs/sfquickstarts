@@ -1,16 +1,15 @@
 summary: This is a sample Snowflake Guide
 id: sample 
-categories: undefined
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+language: en
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 authors: Snowflake
 
 # Snowflake Guide Template
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) as a template for writing your own Snowflake Quickstarts. This example guide has elements that you will use when writing your own quickstarts, including: code snippet highlighting, downloading files, inserting photos, and more. 
 
@@ -39,7 +38,6 @@ The rest of this Snowflake Guide explains the steps of writing your own guide.
 
 <!-- ------------------------ -->
 ## Metadata Configuration
-Duration: 2
 
 It is important to set the correct metadata for your Snowflake Guide. The metadata contains all the information required for listing and publishing your guide and includes the following:
 
@@ -67,29 +65,24 @@ You can see the source metadata for this guide you are reading now, on [the gith
 
 <!-- ------------------------ -->
 ## Creating a Step
-Duration: 2
 
 A single sfguide consists of multiple steps. These steps are defined in Markdown using Header 2 tag `##`. 
 
 ```markdown
 ## Step 1 Title
-Duration: 3
 
 All the content for the step goes here.
 
 ## Step 2 Title
-Duration: 1
 
 All the content for the step goes here.
 ```
 
-To indicate how long each step will take, set the `Duration` under the step title (i.e. `##`) to an integer. The integers refer to minutes. If you set `Duration: 4` then a particular step will take 4 minutes to complete. 
 
 The total sfguide completion time is calculated automatically for you and will be displayed on the landing page. 
 
 <!-- ------------------------ -->
 ## Code Snippets, Info Boxes, and Tables
-Duration: 2
 
 Look at the [markdown source for this sfguide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
 
@@ -145,7 +138,6 @@ for (statement 1; statement 2; statement 3) {
 
 <!-- ------------------------ -->
 ## Images, Videos, and Surveys, and iFrames
-Duration: 2
 
 Look at the [markdown source for this guide](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/_template/markdown.template) to see how to use markdown to generate these elements. 
 
@@ -169,13 +161,11 @@ Videos from youtube can be directly embedded:
 
 <!-- ------------------------ -->
 ## Importing markdown files
-Duration: 1
 <<_imports/sample_import.md>>
 
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 1
 
 The Conclusion and Next Steps section is one of the most important parts of a guide. This last section helps to sum up all the information the reader has gone through, and in many ways should read like a [TLDR summary](https://www.howtogeek.com/435266/what-does-tldr-mean-and-how-do-you-use-it/#post-435266:~:text=How%20Do%20You%20Use%20TLDR%3F,you%E2%80%99re%20the%20author%20or%20commenter.%20Using). 
 

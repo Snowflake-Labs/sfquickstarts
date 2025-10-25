@@ -1,15 +1,14 @@
 author: Dan Lee, Alix Thoi
 id: how_to_resolve_data_with_fullcontact_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a sample Snowflake Guide
-categories: Getting-Started
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data Science, Data Engineering, Twitter
 
 # How To Resolve Data with FullContact and Snowflake
 <!---------------------------->
-Duration: 1
 
 ## Overview
 As Snowflake is used more and more frequently as the central data warehouse users often find themselves with duplicate copies of customer information in different tables. 
@@ -35,7 +34,6 @@ To see a more in depth example with other sample datasets, make sure to check ou
 <!---------------------------->
 ## Install the FullContact for Snowflake App
 
-Duration: 1
 
 The FullContact for Snowflake Native App is available in the Snowflake Marketplace
 
@@ -100,7 +98,6 @@ On the main app page, click the *CONFIG* tab on the top nav bar to complete thes
 <!-- ------------------------ -->
 ## Creating a FullContact account and API key
 
-Duration: 2
 
 In order to use the FullContact for Snowflake Application you need a license (API) key. You will generate this key in the FullContact platform, which is outside of Snowflake. Follow these instructions to get your free API Key, you will need this key for the next steps in this guide.
 
@@ -137,7 +134,6 @@ In order to use the FullContact for Snowflake Application you need a license (AP
 <!-- ------------------------ -->
 ## Prepping the Input Data
 
-Duration: 5
 
 Before we can run Resolve to unify the sample customer data we need to create a semantic view to help the FullContact application understand how to interpret the different columns in the input data.
 Because the demo input data is owned by the app, additional grants are not required.
@@ -198,7 +194,6 @@ At this point you should have your semantic view `FC_QUICKSTART.INPUT.CUST_JOURN
 <!-- ------------------------ -->
 ## Running the Resolve SPROC to Assign PersonIDs
 
-Duration: 2
 
 These steps are where the magic happens.
 
@@ -238,7 +233,6 @@ SELECT * FROM FC_NATIVE_APP_IO.RESOLVE_OUT.CUST_JOURNEY_PURCHASE_DEMO_RESULTS WH
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 By following this guide you learned how to use the FullContact for Snowflake application to unify disparate customer data through the Fullcontact PersonID. This application reads, standardizes and joins your dataset to the FullContact Identity Graph all without your data leaving the confines of Snowflake or being shared with FullContact.
 

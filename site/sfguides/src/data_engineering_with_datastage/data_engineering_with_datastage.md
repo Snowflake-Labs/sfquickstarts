@@ -1,11 +1,11 @@
 author: Shreya Sisodia
 id: data_engineering_with_datastage
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
+language: en
 summary: Lab to demonstrate ease of loading enterprise data into Snowflake through DataStage.
-categories: featured,getting-started,data-engineering,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Getting Started, DataStage, Data Integration
 
 # A Data Integration Guide: Load Banking Data into Snowflake with IBM DataStage
 
@@ -33,7 +33,6 @@ IBM DataStage is a world-class data integration tool that helps users build trus
 <!-- ------------------------ -->
 
 ## Create and prepare a Snowflake data warehouse
-Duration: 2
 
 Your goal is to use IBM DataStage to load data into your Snowflake account. To accomplish that, you need a data warehouse in your Snowflake account. Follow these steps to create a data warehouse in your Snowflake account.
 
@@ -69,7 +68,6 @@ Your goal is to use IBM DataStage to load data into your Snowflake account. To a
 <!-- ------------------------ -->
 
 ## Provision DataStage on Cloud Pak for Data as a Service
-Duration: 2
 
 ![datastage_snowflake_trydatastage](assets/datastage_snowflake_trydatastage.png)<br>
 
@@ -97,7 +95,6 @@ To provision DataStage and begin working with the enterprise data, you must firs
 <!-- ------------------------ -->
 
 ## Create a DataStage project
-Duration: 2
 
 You need a project to store the connections to external data sources and the DataStage flow. A project is a collaborative workspace where you work with data and other assets to accomplish a particular goal. Follow these steps to create the sample project:
 
@@ -124,7 +121,6 @@ You need a project to store the connections to external data sources and the Dat
 
 <!-- ------------------------ -->
 ## Create a connection to your Snowflake data warehouse
-Duration: 2
 
 You need to add the connection information to your project so you can access the Snowflake data warehouse in your DataStage flow. Follow these steps to create the connection asset in your project:
 
@@ -159,7 +155,6 @@ You need to add the connection information to your project so you can access the
 
 <!-- ------------------------ -->
 ## Create a DataStage flow
-Duration: 1
 
 Now you are ready to create a DataStage flow that loads the Db2 Warehouse data to your Snowflake data warehouse. Follow these steps to create the DataStage flow:
 
@@ -181,7 +176,6 @@ Now you are ready to create a DataStage flow that loads the Db2 Warehouse data t
 <!-- ------------------------ -->
 
 ## Design the DataStage flow
-Duration: 5
 
 Now you are ready to design a DataStage flow to load data into Snowflake. The DataStage flow contains two connector nodes: the Db2 Warehouse connector pointing to the source data asset and the Snowflake connector pointing to the target data asset. You will also add in two other nodes to perform simple transformations and join and filter the data assets. Follow these steps to add the nodes to your canvas:<br>
 
@@ -242,7 +236,6 @@ Because you are reading data from Db2 Warehouse into Snowflake, the Db2 connecto
 
 <!-- ------------------------ -->
 ## Add Transformation Nodes
-Duration: 5
 
 Now you have a basic DataStage flow to load the data into Snowflake. Follow these steps to add two nodes to join and filter the data: <br><br>
 
@@ -337,7 +330,6 @@ Now you have a basic DataStage flow to load the data into Snowflake. Follow thes
 
 <!-- ------------------------ -->
 ## Run the DataStage job
-Duration: 1
 
 Now you are ready to compile and run the DataStage job to load the Mortgage Application data from Db2 Warehouse into Snowflake. Follow these steps to run the DataStage job:
 
@@ -351,7 +343,6 @@ Now you are ready to compile and run the DataStage job to load the Mortgage Appl
 
 <!-- ------------------------ -->
 ## View the data asset in the Snowflake data warehouse
-Duration: 1
 
 To check whether the data was loaded data into Snowflake correctly, you can go back to your Snowflake dashboard.
 

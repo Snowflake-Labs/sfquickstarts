@@ -1,16 +1,15 @@
 author: Allan Mitchell
 id: data_mapping_in_native_apps
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: This guide will provide step-by-step details for building a data mapping requirement in Snowflake Native Apps and Streamlit
-categories: Getting-Started, featured, data-engineering, Native-App, Streamlit
 environments: web
 status: draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Native App, Streamlit, Python
 
 # Data Mapping in Snowflake Native Apps using Streamlit
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 The Snowflake Native App Framework is a fantastic way for Snowflake application providers to distribute proprietary functionality to their customers, partners and to the wider Snowflake Marketplace. As a provider you can be assured that your code and data (if included) is secure and that the consumers of your application can take advantage of the functionality but not see the details of the implementation. As a consumer of an application you can be assured that the provider via the application is not able to see or operate on any data in your account unless you explicitly allow them access.
 
@@ -68,7 +67,6 @@ The first solution is not really what we want to be doing because the consumer w
 
 <!-- ------------------------ -->
 ## Project Structure
-Duration: 7
 
 The project we are about to create is composed of several files in the following tree structure:
 
@@ -127,7 +125,6 @@ Finally, the tree structure inside your project structure should look like this:
 
 <!-- ------------------------ -->
 ## Building the Application
-Duration: 7
 
 The application itself has been broken down into three parts:
 
@@ -216,7 +213,6 @@ We now have the referenced database setup in the provider account so we are read
 
 <!-- ------------------------ -->
 ## Provider Setup
-Duration: 5
 
 > aside positive
 > 
@@ -244,7 +240,6 @@ Fantastic,  we now have an application package with permissions onto the lookup 
 
 <!-- ------------------------ -->
 ## The Manifest File
-Duration: 3
 
 Every Snowflake Native App is required to have a manifest file.  The manifest file defines any properties of the application as well as the location of the application's setup script.  The manifest file for this application will not use all the possible fetures of the manifest file so you can read more about it [here](https://docs.snowflake.com/en/developer-guide/native-apps/creating-manifest).  The manifest file has three requirements:
 
@@ -283,7 +278,6 @@ The **artifacts** section details what files will be included in the application
 
 <!-- ------------------------ -->
 ## The Setup Script
-Duration: 10
 
 In a Snowflake Native App, the setup script is used to define what objects will be created when the application is installed on the consumer account.  The location of the file as we have seen is defined in the manifest file.  The setup script is run on initial installation of the application and any subsequent upgrades/patches.
 
@@ -409,7 +403,6 @@ $$;
 
 <!-- ------------------------ -->
 ## Creating the Streamlit
-Duration: 5
 
 We now come to arguably the most important part of the application for us which is the user interface.  We have defined all the objects we need to create and also the permissions we will require from the consumer of the application.
 
@@ -479,7 +472,6 @@ All the pieces are in place for our application, we just created (manifest.yml, 
 
 <!-- ------------------------ -->
 ## Creating and Deploying the Application
-Duration: 2
 
 There are a few ways we could deploy our application:
 
@@ -541,7 +533,6 @@ SELECT * FROM TEST_DATA;"
 
 <!-- ------------------------ -->
 ## Teardown
-Duration: 1
 
 Once you have finished with the application and want to clean up your environment you can execute the following script
 
@@ -552,7 +543,6 @@ snow app teardown
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 We have covered a lot of ground in this Quickstart.  We have covered the building blocks of almost every Snowflake Native App you will ever build.  Sure some will be more complicated but the way you structure them will be very similar to what you have covered here.
 

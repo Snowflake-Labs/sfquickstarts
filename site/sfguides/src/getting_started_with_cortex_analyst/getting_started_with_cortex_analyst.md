@@ -1,11 +1,11 @@
 author: caleb-baechtold
 id: getting_started_with_cortex_analyst 
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
 summary: Through this quickstart guide, you will learn how to use Cortex Analyst to provide natural-language query interfaces to structured data in Snowflake using GenAI
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, GenAI, Cortex, Cortex Analyst
 
 # Getting Started with Cortex Analyst: Augment BI with AI
 <!-- ------------------------ -->
@@ -47,7 +47,6 @@ This quickstart will focus on getting started with Cortex Analyst, teaching the 
 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
-Duration: 2
 
 > aside positive
 >
@@ -136,7 +135,6 @@ These can also be found in the [**create_snowflake_objects.sql**](https://github
 
 <!-- ------------------------ -->
 ## Ingest the Revenue Data and Semantic Model YAML
-Duration: 10
 
 > aside positive
 >
@@ -244,7 +242,6 @@ FORCE = TRUE ;
 ```
 <!-- ------------------------ -->
 ## Integrate Cortex Search
-Duration: 5
 
 Now, you will integrate Cortex Search as a way to improve literal string searches to help Cortex Analyst generate more accurate SQL queries. Writing the correct SQL query to answer a question sometimes requires knowing exact literal values to filter on. Since those values can’t always be extracted directly from the question, a search of some kind may be needed.
 
@@ -266,7 +263,6 @@ use ROLE cortex_user_role;
 
 <!-- ------------------------ -->
 ## Create a Streamlit Conversational App
-Duration: 10
 
 Now, you will create a demo chat application to call the Cortex Analyst API and ask natural-language questions over our structured revenue datasets. To create the Streamlit in Snowflake application:
 
@@ -333,7 +329,6 @@ You can now begin asking natural language questions about the revenue data in th
 
 <!-- ------------------------ -->
 ## Semantic Model Details
-Duration: 10
 
 The semantic model file [`revenue_timeseries.yaml`](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst/blob/main/revenue_timeseries.yaml) is the key that unlocks Cortex Analyst's power. This YAML file dictates the tables, columns, etc. that Analyst can use in order to run queries that answer natural-language questions Let's talk a little about the details of this file:
 
@@ -424,7 +419,6 @@ For more information about the semantic model, please refer to the [documentatio
 
 <!-- ------------------------ -->
 ## Using the Verified Query Repository (VQR)
-Duration: 10
 
 In addition to the previously discussed Semantic Model information, the [Cortex Analyst Verified Query Repository (VQR)](https://docs.snowflake.com/user-guide/snowflake-cortex/cortex-analyst/verified-query-repository) can help improve accuracy and trustworthiness of results by providing a collection of questions and corresponding SQL queries to answer them. Cortex Analyst will then use these verified queries when answering similar types of questions in the future.
 

@@ -1,17 +1,16 @@
 author: marzillo-snow, quilpie
 id: getting_started_with_bedrock_agentcore_gateways_and_cortex_agents
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
+language: en
 summary: This is a quickstart for using Cortex Agents and Amazon Q
-categories: Getting-Started, data-science, data-engineering, AWS, cortex, genai, Amazon, Bedrock, MCP, search, LLM, copilot, Agents, Cortex
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Copilot, Amazon, Agents, Bedrock
 
 
 # Getting Started with Bedrock AgentCore Gateways and Cortex Agents
 <!-- ------------------------ -->
 ## Overview
-Duration: 10
 
 
 [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) orchestrate across both structured and unstructured data sources to deliver insights. They plan tasks, use tools to execute these tasks, and generate responses. Agents use Cortex Analyst (structured) and Cortex Search (unstructured) as tools, along with LLMs, to analyze data. Cortex Search extracts insights from unstructured sources, while Cortex Analyst generates SQL to process structured data. A comprehensive support for tool identification and tool execution enables delivery of sophisticated applications grounded in enterprise data.
@@ -70,7 +69,6 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 
 <!-- ------------------------ -->
 ## Snowflake Environment
-Duration: 8
 
 
 In this section, you will load 2 data sets, unstructured and structured, then create a Cortex Search service and a Cortex Analyst service. 
@@ -504,7 +502,6 @@ Now that Snowflake is ready let's work on setting up Snowflake Cortex as a targe
 
 <!-- ------------------------ -->
 ##  AgentCore Gateway
-Duration: 10
 
 As a pre-requisite it is expected that users have the below available locally:
 - IDE like VS Code (or one of its derivatives).
@@ -586,7 +583,6 @@ python cleanup_aws_resources.py
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 
 This quickstart is just that, a quick way to get you started with using AgentCore Gateways you are encouraged to build upon this by adding more Cortex Tools to your Cortex Agents and more Targets to your AgentCore Gateway.

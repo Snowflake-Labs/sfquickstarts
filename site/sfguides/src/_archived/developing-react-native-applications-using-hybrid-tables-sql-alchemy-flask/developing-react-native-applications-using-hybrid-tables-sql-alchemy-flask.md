@@ -1,17 +1,16 @@
 author: Swathi Jasti
 id: developing-react-native-applications-using-hybrid-tables-sql-alchemy-flask
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: Developing Tasty Bytes React Native Data Application using Snowflake, Hybrid Tables, SQLAlchemy, Flask
-categories: Tasty-Bytes, Getting-Started, app-development, hybrid-tables, sql-alchemy, flask, react
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Data Engineering, API, Hybrid Tables, SQLAlchemy, Flask, React
 
 # Developing React Native Application using Snowflake Hybrid Tables
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 <img src="assets/tb_unistore_driver_app_header.png"/>
 
 Tasty Bytes is a fictional global food truck enterprise that has established its presence in 30 cities spanning across 15 countries, boasting a network of 450 trucks offering 15 diverse menu types under various brands. Catering to the needs of both customers and truck owners/operators, Tasty Bytes has developed a robust Truck Driver App. This specialized app provides truck owners/operators with a comprehensive 360-degree view of the order process, allowing them to efficiently manage their operations. Once orders are placed by customers, they are queued for processing, and drivers have the flexibility to prioritize each order based on various factors. This driver-focused app grants efficient access to both historical and real-time order data, enabling swift updates on ongoing orders. However, the exponential rise in daily order volumes, driven by Tasty Bytes growing success, has strained the application's performance and its ability to support concurrent users effectively.
@@ -47,7 +46,6 @@ To tackle scaling challenges, the implementation of Hybrid Tables within this li
 
 <!-- ------------------------ -->
 ## Setting up the Data in Snowflake
-Duration: 5
 
 For this demo, we are utilizing Tasty Bytes Orders data to develop an application tailored for truck drivers, leveraging Snowflake hybrid tables. Here are the advantages of using Snowflake hybrid tables for this purpose:
 
@@ -240,7 +238,6 @@ WHERE truck_id = 81;
 
 <!-- ------------------------ -->
 ## Create User for the Application
-Duration: 5
 
 To ensure robust security measures, it is essential to establish a dedicated user account for the application, separate from your personal account. This new account will be utilized for querying Snowflake. Following best security practices, the account will employ key-pair authentication and be granted restricted access within the Snowflake environment.
 
@@ -292,7 +289,6 @@ GRANT ROLE tasty_bytes_data_app_unistore_demo TO USER data_app_unistore_demo;
 
 <!-- ------------------------ -->
 ## React Native Application leveraging Hybrid Tables
-Duration: 7
 
 The application is structured around a 3-tier architecture, comprising a Persistence layer, Processing layer, and User Interface layer.
 
@@ -400,7 +396,6 @@ You may also explore additional hybrid tables such as TRUCK, MENU, and CUSTOMER_
 
 <!-- ------------------------ -->
 ## Exploring Hybrid Tables
-Duration: 5
 
 Let's delve into an example illustrating how hybrid tables enforce Foreign Key Constraints and row locking.
 
@@ -531,7 +526,6 @@ supporting transactional applications.
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 1
 
 Navigate to Snowsight Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet". Paste and run the following SQL in the worksheet to drop Snowflake objects created in the Quickstart.
 
@@ -546,7 +540,6 @@ DROP ROLE tasty_bytes_data_app_unistore_demo;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 ### Conclusion
 **You did it!** You have successfully completed the Tasty Bytes - Developing React Native Application using Snowflake Hybrid Tables Quickstart.

@@ -1,18 +1,17 @@
 author: Swathi Jasti
 id: developing_tasty_bytes_react_native_application_with_snowflake_sql_api_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/native-apps, snowflake-site:taxonomy/solution-center/certification/community-sourced
+language: ko
 summary: Developing Tasty Bytes React Native Data Application using Snowflake, SQL API
-categories: Tasty-Bytes, Getting-Started, app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Data Engineering, API, kr
 
 # Tasty Bytes - SQL API로 React Native 데이터 애플리케이션 개발
 
 <!-- ------------------------ -->
 ## 개요
 
-duration: 2 <img src="assets/tasty_bytes_header.png"/>
 
 오늘날의 데이터 주도적인 환경에서는 애플리케이션 대부분이 매우 데이터 집약적인 상태로 발전했습니다. 하지만 특히나 사용자 수가 늘어나고 데이터의 볼륨과 복잡성이 늘어남에 따라 성공적인 데이터 애플리케이션을 개발하는 것은 어려울 수 있습니다. Snowflake는 수많은 데이터 애플리케이션을 후방에서 지원합니다. 즉, 소프트웨어 팀이 엔지니어링 속도를 향상하고 운영 복잡성의 부담 없이 확장 가능한 애플리케이션을 만들 수 있도록 합니다. 엔지니어링 속도를 단축하는 것에 집중하기에 Snowflake는 뛰어난 애플리케이션 성능과 확장성을 제공합니다.
 
@@ -47,7 +46,6 @@ duration: 2 <img src="assets/tasty_bytes_header.png"/>
 <!-- ------------------------ -->
 ## Snowflake에서 데이터 설정
 
-duration: 3
 
 이 데모를 위해 Tasty Bytes 주문 데이터를 사용합니다. 주문 데이터를 사용하여 다음 기능이 탑재된 트럭 기사를 위한 애플리케이션을 구축하게 됩니다.
 
@@ -167,7 +165,6 @@ SELECT * FROM frostbyte_tasty_bytes_app.analytics.data_app_orders_v;
 <!-- ------------------------ -->
 ## 애플리케이션을 위해 사용자 생성
 
-duration: 5
 
 강력한 보안 조치를 보장하려면 개인 계정과 분리된 애플리케이션을 위한 전용 사용자 계정을 생성하는 것이 필수적입니다. 이 새로운 계정은 Snowflake를 쿼리하는 데 활용됩니다. 모범 보안 사례에 따라 해당 계정은 키 쌍 인증을 사용하고 Snowflake 환경 내에서 제한된 액세스를 보유하게 됩니다.
 
@@ -227,7 +224,6 @@ GRANT ROLE tasty_bytes_data_app_demo TO USER data_app_demo;
 <!-- ------------------------ -->
 ## SQL API를 사용하는 데이터 애플리케이션
 
-duration: 10
 
 실행할 애플리케이션은 React Native에서 작성되었습니다.
 
@@ -269,7 +265,6 @@ SQL API를 사용하여 Snowflake와 인증하기 위해 키 쌍 인증을 사�
 <!-- ------------------------ -->
 ## 정리
 
-duration: 1
 
 Snowsight Worksheets로 이동하고, 새로운 워크시트를 생성하기 위해 오른쪽 상단 모서리에 있는 ‘+’를 클릭하고, ‘SQL Worksheet’를 선택합니다. 워크시트에 다음 SQL을 붙여넣고 실행하여 Quickstart에서 생성한 Snowflake 객체를 드롭합니다.
 
@@ -286,7 +281,6 @@ DROP ROLE tasty_bytes_data_app_demo;
 <!-- ------------------------ -->
 ## 결론
 
-duration: 1
 
 ### 결론
 

@@ -1,17 +1,16 @@
 author: Matt Marzillo
 id: customer_insights_analyzer_using_vertex_ai_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: This is a quickstart for using Snowflake with Google for Generative AI
-categories: getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, LLM, GenAI, Google, GCP, Streamlit
 
 # Getting Started with Google, Snowflake and Streamlit for Generative AI
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 10
 
 In this quickstart you will build a Streamlit application that leverages Snowpark External Access in Snowflake with Vertex AI and Generative AI to analyze customer reviews.
 
@@ -57,7 +56,6 @@ This use case will leverage sample customer reviews to allow users to analyze th
 
 ## Google Environment
 
-Duration: 10
 
 For this quickstart you will need a Google Cloud account with a Vertex AI service enabled. Users can create a trial Google Cloud account [here](cloud.google.com). There will be a cost to run this lab, but if there is it will be nominal.
 
@@ -82,7 +80,6 @@ Click "Exchange authorization code for tokens" and note the "Refresh Token".
 <!-- ------------------------ -->
 ## Snowflake Environment
 
-Duration: 10
 
 Open a SQL Worksheet (from the Projects tab) in the Snowflake UI and Copy and paste the below code into your Snowflake worksheet, this will create a table with customer reviews. For the sake of the quickstart we are using the ACCOUNTADMIN role, but in practice you will likely want to use a different, organization specific role.
 
@@ -121,7 +118,6 @@ select top 10 * from REVIEWS;
 <!-- ------------------------ -->
 ## Snowpark External Access to call Vertex AI
 
-Duration: 10
 
 Now we will work through the below code in a new Snowflake SQL worksheet. This code creates several objects that allows Snowflake to access Vertex models via a stored procedure and function that leverage a network rule and a Snowpark External Access object that allows Snowflake to securely make requests to Vertex AI (or any other external service).
 
@@ -270,7 +266,6 @@ select GET_VERTEX_REVIEW_SENTIMENT_UDF('This is a shoe I will wear with black dr
 
 ## Build Streamlit App - With data in Snowflake 
 
-Duration: 10
 
 Now that we have our VertexAI Function and Stored Procedure let's build a Streamlit app to analyze customer reviews.
 
@@ -567,7 +562,6 @@ with st.container():
 <!-- ------------------------ -->
 ## Conclusion  And Resources
 
-Duration: 5
 
 Congratulations! You've successfully built your first Streamlit App with Vertex AI LLMs. After setting up our Google Cloud and Snowflake environments we built two primary things: a set of a UDF and stored procedures that utilize Snowpark External Access to make a call to a Vertex AI model and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and Vertex AI.
 

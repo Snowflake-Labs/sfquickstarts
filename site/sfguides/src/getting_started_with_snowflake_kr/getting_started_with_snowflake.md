@@ -1,10 +1,10 @@
 summary: This is a broad introduction of Snowflake and covers how to login, run queries, and load data.
 id: getting_started_with_snowflake_kr
-categories: undefined
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
+language: en
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, kr
 
 # Snowflake 시작하기 - 제로부터 Snowflake까지
 
@@ -12,7 +12,6 @@ tags: Getting Started, Data Science, Data Engineering, kr
 
 ## 개요
 
-Duration: 2
 
 Snowflake에 오신 것을 환영합니다! 데이터베이스와 데이터웨어하우스 관리자 및 설계자를 위한 초급 가이드입니다. Snowflake 인터페이스를 탐색하는 방법과 Snowflake의 핵심 기능들을 소개할 것입니다.  [Snowflake 30일 무료 평가판에 등록](https://trial.snowflake.com/)하여 이 랩 연습을 따라 해보십시오. 기초학습을 모두 완료한 후엔 직접 데이터를 처리하고 Snowflake의 고도화된 기능들을 전문가처럼 이용할 수 있습니다.
 
@@ -40,7 +39,6 @@ Snowflake에 오신 것을 환영합니다! 데이터베이스와 데이터웨�
 
 ## 랩 환경 준비
 
-Duration: 2
 
 ### 랩 환경을 준비하는 단계
 
@@ -55,7 +53,6 @@ Snowflake 에디션(Standard, Enterprise, Business Critical 등), 클라우드 �
 
 ## Snowflake 사용자 인터페이스 및 랩 스토리
 
-Duration: 8
 
 > aside negative
 > 
@@ -201,7 +198,6 @@ UI 오른쪽 상단의 사용자 이름을 클릭하면 비밀번호, 역할 및
 
 ## 데이터 로드 준비
 
-Duration: 14
 
 Citi Bike 라이더 트랜잭션 정형 데이터를 Snowflake에 로드할 준비부터 시작하겠습니다.
 
@@ -371,7 +367,6 @@ show file formats in database citibike;
 
 ## 데이터 로딩
 
-Duration: 10
 
 이 섹션에서는 데이터 웨어하우스와 COPY 명령을 사용하여 방금 생성한 Snowflake 테이블에 정형 데이터 대량 로드 (bulk loading)를 시작할 것입니다.
 
@@ -508,7 +503,6 @@ Snowflake Enterprise Edition(또는 그 이상)을 사용 중이고 **Multi-clus
 
 ## 분석 쿼리, 결과 캐시, 클론
 
-Duration: 8
 
 이전 연습에서, Snowflake의 대량 로더인  `COPY`  명령과 웨어하우스  `COMPUTE_WH`를 이용하여 데이터를 두 개의 테이블로 로드했습니다. 이제 워크시트와 두 번째 웨어하우스인  `ANALYTICS_WH`를 이용하여 해당 테이블의 데이터를 쿼리해야 하는 Citi Bike의 분석 사용자 역할을 수행해 보겠습니다.
 
@@ -606,7 +600,6 @@ create table trips_dev clone trips
 
 ## 반정형 데이터, 뷰, 조인
 
-Duration: 16
 
 > aside positive
 > 
@@ -794,7 +787,6 @@ group by 1 order by 2 desc;
 
 ## 타임 트래블 사용
 
-Duration: 6
 
 Snowflake의 타임 트래블 기능으로 사전 구성 가능한 기간 내 어느 시점이든 데이터에 액세스할 수 있습니다. 기본 기간은 24시간이며 Snowflake 엔터프라이즈 에디션으로는 90일까지 가능합니다. 대부분의 데이터 웨어하우스는 이러한 기능을 제공할 수 없지만, 짐작하셨겠지만 Snowflake는 이러한 기능을 쉽게 만들어 줍니다!
 
@@ -907,7 +899,6 @@ limit 20;
 
 ## 역할 기반 액세스 제어, 계정 사용 및 계정 관리자
 
-Duration: 8
 
 이 섹션에서는 새로운 역할 생성 및 특정 권한 부여와 같은 Snowflake의 역할 기반 액세스 제어(RBAC) 측면을 살펴보고자 합니다. 또한  `ACCOUNTADMIN`(계정 관리자) 역할도 다뤄볼 것입니다.
 
@@ -1041,7 +1032,6 @@ UI 세션을 ACCOUNTADMIN 역할로 전환하면 **Account**에서 새 탭을 �
 
 <!-- ------------------------ -->
 ## 안전한 데이터 공유 및 데이터 마켓플레이스
-Duration:12
 
 Snowflake는 공유를 통해 계정 간 데이터 액세스를 가능하게 합니다. 공유는 데이터 공급자가 생성하고 데이터 소비자가 자신의 Snowflake 계정 또는 프로비저닝된 Snowflake 읽기 전용 계정을 통해 가져옵니다. 소비자는 외부 엔터티 또는 고유한 Snowflake 계정이 필요한 다른 내부 비즈니스 단위일 수 있습니다.
 
@@ -1153,7 +1143,6 @@ ACCOUNTADMIN 역할을 사용 중인지 확인하고 **Data** 아래에서 **Mar
 
 <!-- ------------------------ -->
 ## Snowflake 환경 초기화
-Duration: 2
 
 이 랩의 일부로 생성된 모든 객체를 삭제하여 환경을 초기화하려면 워크시트에서 아래의 SQL을 실행하십시오.
 
@@ -1184,7 +1173,6 @@ drop role if exists junior_dba;
 
 ## 종료 및 다음 단계
 
-Duration: 2
 
 이 기초 랩 연습을 완료하신 것을 축하드립니다! Snowflake 기본 사항을 마스터했으며 이러한 기본 사항을 자신의 데이터에 적용할 준비가 되었습니다. 언제라도 기억을 떠올릴 때 필요하다면 이 안내서를 참조하십시오.
 

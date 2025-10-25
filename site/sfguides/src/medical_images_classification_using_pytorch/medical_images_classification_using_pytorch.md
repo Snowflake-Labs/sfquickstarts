@@ -1,17 +1,16 @@
 author: Kala Govindarajan
 id: medical_images_classification_using_pytorch
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 summary: Detect pneumonia in chest x-rays and show how to train a PyTorch image classification model on GPUs through transfer learning from torchvision.Leverage Snowpark Container Service for training and log and manage the trained model in Snowpark Model Registry and deploy either in Snowflake Warehouse(CPUs) or Snowflake Compute pools(CPU or GPU) for inference. Finally, perform inference within Snowflake using a data app built using Streamlit in Snowflake. 
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Medical Images Classification using PyTorch in Snowflake
 <!-- ------------------------ -->
 
 ## Overview 
-Duration: 1
 <img src="assets/hcls.png"/>
 
 
@@ -42,7 +41,6 @@ A Streamlit app to run inference using a PyTorch image classification model trai
 
 ## Setup Environment
 <!-- ------------------------ -->
-Duration: 2
 This section will walk you through creating various objects
 
 
@@ -65,7 +63,6 @@ Fetch the file streamlit_app.py from the [app folder](https://github.com/Snowfla
 
 <!-- ------------------------ -->
 ## Build and containerize a Model Training Service
-Duration: 2
 
 <img src="assets/image2.png"/>
 
@@ -155,7 +152,6 @@ SHOW MODELS LIKE 'DICOM_PYTORCH_MODEL_MULTIGPU' IN SCHEMA dicom_db.dicom_schema
 
 <!-- ------------------------ -->
 ## Run Inference Application using Streamlit in Snowflake
-Duration: 2
 
 
 Now that the model training is completed and the model is logged in a model registry we use the Streamlit app setup before to carry ongoing inference. The app was already built in Step 2

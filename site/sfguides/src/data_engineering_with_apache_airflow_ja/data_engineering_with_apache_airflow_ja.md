@@ -1,18 +1,17 @@
 author: Adrian Lee
 id: data_engineering_with_apache_airflow_ja
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This guide shows you how to build a Data Pipeline with Apache Airflow that manages DBT model transformations and conducts data analysis with Snowpark, all in a single DAG
-categories: data-engineering,architecture-patterns,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Airflow, Snowpark, ja
 
 # Apache Airflow、Snowflake、dbtによるデータエンジニアリング
 
 <!-- ------------------------ -->
 ## 概要
 
-duration:5
 
 ![アーキテクチャ](assets/data_engineering_with_apache_airflow_0_overall_architecture.png)
 
@@ -59,7 +58,6 @@ Apache Airflowは、データパイプラインの作成と管理に使用でき
 <!-- ------------------------ -->
 ## 環境設定
 
-duration:2
 
 まず、以下のコマンドを実行してフォルダを作成しましょう。
 
@@ -112,7 +110,6 @@ mkdir dags
 <!-- ------------------------ -->
 ## DBTプロジェクトの設定
 
-duration:6
 
 レポジトリを作成したので、次はDBTプロジェクトを設定します。
 
@@ -272,7 +269,6 @@ dbt deps
 <!-- ------------------------ -->
 ## dbtでのCSVデータファイルの作成
 
-duration:10
 
 このセクションでは、サンプルのCSVデータファイルと関連するSQLモデルを準備します。
 
@@ -319,7 +315,6 @@ id,first_name,last_name,birthdate,membership_no
 <!-- ------------------------ -->
 ## modelsフォルダへのdbtモデルの作成
 
-duration:2
 
 modelsフォルダに`analysis`と`transform`の2つのフォルダを作成します。分析と変換については、それぞれ以下のセクションに従ってください。
 
@@ -407,7 +402,6 @@ FROM {{ ref('prepped_data') }}
 <!-- ------------------------ -->
 ## Airflow DAGの準備
 
-duration:5
 
 `dags`フォルダに、`init.py`と`transform_and_analysis.py`の2つのファイルを作成します。`init.py`は初期化を行い、CSVデータを参照します。`transform_and_analysis.py`は変換と分析を実行します。
 
@@ -493,7 +487,6 @@ with DAG('2_daily_transformation_analysis', default_args=default_args, schedule_
 <!-- ------------------------ -->
 ## Airflowのdocker-composeファイルの実行
 
-duration:5
 
 `docker-compose up`を実行し、[http://localhost:8080/](http://localhost:8080/)に移動しましょう。デフォルトのユーザー名は`airflow`、パスワードは`airflow`です。
 
@@ -543,7 +536,6 @@ Snowflakeインスタンスに戻ったときにすべてがうまくいって�
 <!-- ------------------------ -->
 ## まとめ
 
-duration:1
 
 おめでとうございます。dbtとSnowflakeを使用して最初のApache Airflowを作成しました。無料トライアルを続行し、自分のサンプルデータまたは本番データをロードして、このラボで扱っていないAirflowとSnowflakeのより高度な機能を試してみることをお勧めします。
 

@@ -1,16 +1,15 @@
 author: J.J. Mason-Anselmi
 id: cordial_bidirectional_data_share
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: Set up a secure bidirectional data share with Cordial.
-categories: getting-started, data-sharing, data-engineering, partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Cordial, Personalized Marketing, Data Sharing, Data Engineering
 
 # Create a Bidirectional Data Share with Cordial
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 Easy access to real-time customer data is crucial in marketers’ efforts to send messages that resonate. Marketers  also need to leverage that data to understand customer behavior and shape strategy. The bidirectional data integration between Cordial and Snowflake unlocks this potential.
 
@@ -37,7 +36,6 @@ At the end of this Quickstart, you will successfully:
 
 <!-- ------------------------ -->
 ## Request a Secure Data Share
-Duration: 4
 
 Snowflake’s Secure Data Share provides Cordial with immediate access to ready-to-query data. To get started, you need to request a Secure Share.
 
@@ -51,7 +49,6 @@ Snowflake’s Secure Data Share provides Cordial with immediate access to ready-
 
 <!-- ------------------------ -->
 ## Accept the Secure Data Share
-Duration: 10
 
 Once you've requested the Secure Share, Cordial will verify and provision the data share from Cordial's Snowflake account to your Snowflake account. After the share is provisioned, Cordial will notify you that your data share has been provisioned—and you'll need to follow the steps below to accept the Secure Share.
 
@@ -71,7 +68,6 @@ Once you've requested the Secure Share, Cordial will verify and provision the da
 
 <!-- ------------------------ -->
 ## Query the Secure Data Share
-Duration: 20
 
 Once you accept the Cordial data share and assign it to a new database in your Snowflake account, you can start querying the data share. Here are the datasets available to query.
 
@@ -345,7 +341,6 @@ ORDER BY
 
 <!-- ------------------------ -->
 ## Send Data from Snowflake to Cordial
-Duration: 20
 
 Cordial provides an array of opportunities to leverage your Snowflake customer data to send messages that resonate. When Snowflake is enabled as a data source in Cordial, Cordial automatically queries one or multiple Tables and/or Views in your Snowflake warehouse on a customizable interval.
 
@@ -380,7 +375,6 @@ Array attributes will be updated as a whole unless additional syntax is included
 
 <!-- ------------------------ -->
 ## Enable Snowflake as a Data Source in Cordial
-Duration: 10
 
 You can enable Snowflake as a data source in Cordial’s UI.
 
@@ -425,7 +419,6 @@ Select this method if you want to use [key-pair authentication in Snowflake](htt
 ![Saved key](assets/SnowflakeConfigWSavedKey.png)
 
 ## Create Data Jobs in Cordial with Snowflake as a Data Source
-Duration: 10
 
 In Cordial, you can use Data Jobs to:
 

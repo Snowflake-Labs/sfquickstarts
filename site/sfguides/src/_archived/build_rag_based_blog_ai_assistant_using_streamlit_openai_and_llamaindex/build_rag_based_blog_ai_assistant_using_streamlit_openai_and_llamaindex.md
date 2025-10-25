@@ -1,17 +1,16 @@
 author: Vino Duraisamy
 id: build_rag_based_blog_ai_assistant_using_streamlit_openai_and_llamaindex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
+language: en
 summary: This guide will provide step-by-step details for building an LLM chatbot that answers questions based on Snowflake Quickstart Blogs
-categories: data-science-&-ml,app-development, marketing
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, LLMs, Generative AI, Streamlit, ChatBot, OpenAI
 
 # Build a Retrieval Augmented Generation(RAG) based LLM assistant using  Streamlit, OpenAI and LlamaIndex
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 This quickstart will cover the basics of Retrieval Augmented Generation (RAG) and how to build an LLM assistant using Streamlit, OpenAI and LlamaIndex. The AI assistant will be trained on Snowpark data engineering quickstarts and can answer questions related to those blogs.
 
@@ -94,7 +93,6 @@ Great, we installed all the dependancies needed to work through this demo.
 
 ## Data Pipeline to Download Blogs
 
-Duration: 5
 
 During this step, we will identify the blog or list of blogs that we want to query using the AI chatbot. In this example, the bot will answer questions about Snowpark Data Engineering quickstarts. The list of blogs the bot is capable of answering is defined in `data_pipeline.py` file in `PAGES` list.
 
@@ -125,7 +123,6 @@ This will iteratively download all the blogs in `PAGES` list into  `.content` di
 
 ## Chunk the Blog Contents and Build Index
 
-Duration: 10
 
 In this step, we will build a vector index for the markdown files. It involves chunking the blogs in the `.content` directory, storing them as a [TreeIndex](https://gpt-index.readthedocs.io/en/latest/api_reference/indices/tree.html) using LlamaIndex.
 
@@ -229,7 +226,6 @@ Here is how the app looks:
 
 ## Conclusion and next steps
 
-Duration: 1
 
 Congratulations – you've just built an LLM-powered chatbot capable of answering questions based on the blog(s) you built it on.
 

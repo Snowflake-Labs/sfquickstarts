@@ -1,10 +1,10 @@
 id: getting-started-with-snowflake-intelligence
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: This guide outlines the process for getting started with Snowflake Intelligence.
-categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
 # Getting Started with Snowflake Intelligence
@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 4
 
 Snowflake Intelligence offers a powerful solution for organizations to access and activate their vast data. It addresses common challenges for business users struggling to get timely answers from scattered data, and for data teams overwhelmed by ad hoc requests. By using AI agents, Snowflake Intelligence enables employees to securely talk with their data, derive deeper insights, and initiate actions, all from a unified, easy-to-use interface. This transforms how businesses operate by bridging the gap between data and actionable insights.
 
@@ -55,7 +54,6 @@ A Snowflake Intelligence agent that can intelligently respond to questions by re
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 20 
 
 ### Create database, schema, tables and load data from AWS S3
 
@@ -193,7 +191,6 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 <!-- ------------------------ -->
 ## Snowflake Intelligence
 
-Duration: 5
 
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
@@ -236,7 +233,6 @@ Here are some other questions you may ask.
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully created a Snowflake Intelligence agent that can intelligently respond to questions by reasoning over both structured and unstructured data
 

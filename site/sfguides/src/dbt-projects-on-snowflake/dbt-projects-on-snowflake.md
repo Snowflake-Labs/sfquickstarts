@@ -1,16 +1,15 @@
 author: Charlie Hammond
 id: dbt-projects-on-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/external-collaboration
+language: en
 summary: This Quickstart will show you how to get started using dbt Projects on Snowflake
-categories: Getting-Started, Data-Engineering, Tasty-Bytes
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering
 
 # Exploring dbt Projects on Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 dbt Core is an open-source data transformation tool and framework that you can use to define, test, and deploy SQL transformations. dbt on Snowflake allows you to use familiar Snowflake features to create, edit, test, run, and manage your dbt Core projects. Snowflake integrates with Git repositories and offers Snowflake CLI commands to support continuous integration and development (CI/CD) workflows for data pipelines.
 
@@ -33,7 +32,6 @@ In this lab, we will go through everything you need to know to get started with 
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 We will be using Tasty Bytes data in this lab. Run the script [here](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake/blob/main/tasty_bytes_dbt_demo/setup/tasty_bytes_setup.sql) in Snowsight to build the objects and data required for this lab.
 
@@ -47,7 +45,6 @@ Sign out of Snowsight and sign back in.
 
 <!-- ------------------------ -->
 ## Introduction to Workspaces
-Duration: 5
 
 We will start with your personal Workspace. Workspaces provides a developer environment where you can  edit, test, and deploy your dbt projects, all within Snowflake. The personal workspace is your own area where you can create and edit files. 
 
@@ -108,7 +105,6 @@ Let's now clone an example dbt project we will use in the rest of this lab.
 
 <!-- ------------------------ -->
 ## Operate dbt Projects on Snowflake
-Duration: 10
 
 ### Example Project 
 
@@ -231,7 +227,6 @@ Workspaces are fully git backed. To view changes and commit, click changes from 
 
 <!-- ------------------------ -->
 ## Orchestration and Monitoring
-Duration: 5
 
 ### Monitor dbt Projects
 
@@ -350,7 +345,6 @@ Additionally, you are able to build [resource monitors](https://docs.snowflake.c
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You've successfully completed the "Getting Started with dbt Projects on Snowflake" lab. You now understand how dbt Core on Snowflake enables you to define, test, and deploy SQL transformations using familiar Snowflake features. You've learned how Snowflake's native integration with Git repositories and CLI commands support CI/CD workflows for your data pipelines.
 

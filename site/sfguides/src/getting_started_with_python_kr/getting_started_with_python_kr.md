@@ -1,17 +1,16 @@
 summary: Python 시작하기
 id: getting_started_with_python_kr
-categories: undefined
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: ko
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크 시작하기, SQL, 데이터 엔지니어링, SnowSQL, Python, kr
 
 # Python 시작하기
 
 <!-- ------------------------ -->
 ## 개요
 
-Duration: 1
 
 다양한 언어로 Snowflake와 연결할 수 있습니다. 선택한 언어가 Python이라면 Snowflake와의 연결을 여기에서 시작하는 것이 좋습니다. Python Connector 실행을 시작한 다음 이를 사용하여 수행할 수 있는 기본 작업에 대해 알아보겠습니다. Python Connector는 꽤나 강력하며 Pandas DataFrames와의 통합도 지원합니다.
 
@@ -44,7 +43,6 @@ Duration: 1
 <!-- ------------------------ -->
 ## Python Connector 설정
 
-Duration: 5
 
 이 가이드에서는 Python 3을 사용하겠습니다. 여러분의 시스템에 있는 Python의 버전을 확인하겠습니다. 터미널을 열고 다음 명령을 입력하여 확인합니다.
 
@@ -70,7 +68,6 @@ Python과 Snowflake Connector가 모두 설치되었다면 시작할 준비가 �
 <!-- ------------------------ -->
 ## 설치 테스트
 
-Duration: 3
 
 Snowflake 커넥터 *사용*을 자세히 알아보기 전에 올바르게 설치되었는지 확인하겠습니다. 다음 스크립트를 통해 확인할 수 있습니다.
 
@@ -107,7 +104,6 @@ python validate.py
 <!-- ------------------------ -->
 ## Snowflake 연결
 
-Duration: 5
 
 Python용 Snowflake 커넥터를 사용할 시간입니다. Python 환경을 엽니다. 우선적으로 해야 하는 일은 Snowflake 커넥터 모듈을 가져오는 것입니다. 어떠한 Snowflake 관련 명령을 사용하기 전에 이를 가져와야 합니다.
 
@@ -136,7 +132,6 @@ conn = snowflake.connector.connect(
 <!-- ------------------------ -->
 ## 세션 매개 변수 설정
 
-Duration: 1
 
 세션 매개 변수를 설정하여 여러분의 세션을 조정하고 여러분이 원하는 대로 설정할 수 있습니다. 2가지 방식으로 설정할 수 있습니다. 우선 처음 연결할 때 다음과 같이 설정할 수 있습니다.
 
@@ -169,7 +164,6 @@ conn.cursor().execute("ALTER SESSION SET QUERY_TAG = 'EndOfMonthFinancials'")
 <!-- ------------------------ -->
 ## 웨어하우스 생성
 
-Duration: 2
 
 Snowflake와 상호 작용하기 위한 SQL 명령에 익숙하다면 Python Connector 내 명령에도 익숙하실 것입니다. 명령이 어떻게 구성되어 있는지 분석해 보겠습니다.
 
@@ -196,7 +190,6 @@ conn.cursor().execute("USE WAREHOUSE tiny_warehouse_mg")
 <!-- ------------------------ -->
 ## 데이터베이스 생성
 
-Duration: 2
 
 다음 단계는 데이터베이스 생성입니다. 데이터베이스는 여러분의 데이터베이스 오브젝트가 포함되어 있는 스키마를 포함합니다. 웨어하우스를 생성했을 때와 동일한 방식으로 데이터베이스를 생성할 수 있습니다. 다만 이번에는 `CREATE DATABASE` 명령을 사용하겠습니다.
 
@@ -215,7 +208,6 @@ conn.cursor().execute("USE DATABASE testdb")
 <!-- ------------------------ -->
 ## 스키마 생성
 
-Duration: 2
 
 스키마는 여러분의 데이터베이스 오브젝트의 그룹화입니다. 스키마에는 여러분의 테이블, 테이블에 있는 데이터 및 뷰가 포함되어 있습니다. 스키마는 데이터베이스 내에 있습니다. `CREATE SCHEMA` 명령으로 스키마를 생성할 수 있습니다.
 
@@ -240,7 +232,6 @@ conn.cursor().execute("USE SCHEMA otherdb.testschema")
 <!-- ------------------------ -->
 ## 테이블 생성
 
-Duration: 2
 
 웨어하우스, 데이터베이스 및 스키마를 생성했으니 데이터에 있는 데이터 조작에 필요한 모든 것이 준비되었습니다. 우선 테이블을 생성해야 합니다. `CREATE TABLE` 명령을 통해 생성합니다.
 
@@ -255,7 +246,6 @@ conn.cursor().execute(
 <!-- ------------------------ -->
 ## 데이터 삽입
 
-Duration: 2
 
 `test_table` 테이블을 생성했으니 여기에 데이터를 추가할 수 있습니다. `INSERT` 명령으로 추가할 수 있습니다.
 
@@ -279,7 +269,6 @@ conn.cursor().execute("COPY INTO test_table")
 <!-- ------------------------ -->
 ## 데이터 쿼리
 
-Duration: 2
 
 당연히 언젠가 여러분의 데이터를 쿼리하고 싶을 것입니다. Python Connector 내에서 이를 쉽게 진행할 수 있습니다. `print` 명령으로 쉽게 테이블에서 가져온 값을 확인할 수 있습니다.
 
@@ -308,7 +297,6 @@ connection.close()
 <!-- ------------------------ -->
 ## 다음 단계: Python으로 고급 조작
 
-Duration: 1
 
 이 단계에서는 Python Connector 사용의 기본 사항을 파악하셨을 것입니다. 알아차리셨을 수도 있지만 이는 이미 확립된 Snowflake SQL 명령에 상당히 의존합니다. 당연히 Connector로 수행할 수 있는 작업은 더 많습니다. 여러분의 사용 사례에 따라 관심을 가지실 만한 잠재적인 다음 단계는 다음과 같습니다.
 

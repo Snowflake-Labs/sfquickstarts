@@ -1,17 +1,16 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_semi_structured_data_it
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: it
 summary: Quickstart Tasty Bytes - Da zero a Snowflake - Dati semi-strutturati categorie: Tasty-Bytes, Guida-introduttiva, In-evidenza
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Guida introduttiva, Getting Started, Data Engineering, Data Warehouse, it
 
 # Tasty Bytes - Da zero a Snowflake - Dati semi-strutturati
 <!-- ------------------------ -->
 
 ## Elaborare dati semi-strutturati in Snowflake
-Duration: 1 <img src = "assets/semi_structured_header.png">
 
 ### Panoramica
 Questo quickstart Powered by Tasty Bytes - Da zero a Snowflake è dedicato all’elaborazione dei dati semi-strutturati.
@@ -37,7 +36,6 @@ Per maggiori dettagli sui dati semi-strutturati in Snowflake, consulta la [docum
 - Un grafico a barre utile per i dirigenti
 
 ## Creare un foglio di lavoro e copiare il codice SQL
-Duration: 1
 
 ### Panoramica
 In questo quickstart seguiremo la storia del cliente Tasty Bytes attraverso un foglio di lavoro SQL di Snowsight, utilizzando questa pagina come guida completa di commenti aggiuntivi, immagini e link alla documentazione.
@@ -76,7 +74,6 @@ In questa sezione vedremo nei dettagli come accedere a Snowflake, creare un nuov
 ### Passaggio 9 - Fai clic su Next -->
 
 ## Profilare i dati semi-strutturati dei menu
-Duration: 1
 
 ### Panoramica
 Nel ruolo di data engineer di Tasty Bytes, siamo stati incaricati di profilare i dati dei nostri menu, che includono una colonna di dati semi-strutturati. Da questa tabella dei menu dobbiamo produrre una vista del layer analitico che metta a disposizione dei nostri utenti finali i dati relativi alle restrizioni dietetiche e agli ingredienti.
@@ -142,7 +139,6 @@ Facciamo nuovamente clic in una delle celle di questa colonna per esaminarla nei
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Appiattire i dati semi-strutturati
-Duration: 2
 
 ### Panoramica
 Dopo avere visto come interrogare facilmente i dati semi-strutturati contenuti in una colonna Variant utilizzando la notazione punto, il nostro data engineer di Tasty Bytes è sulla buona strada per fornire ai suoi stakeholder interni i dati che hanno richiesto.
@@ -209,7 +205,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Creare viste strutturate dei dati semi-strutturati
-Duration: 2
 
 ### Panoramica
 Nella sezione precedente abbiamo creato una query che fornisce esattamente l’output richiesto dai nostri utenti finali utilizzando una serie di funzionalità di Snowflake per i dati semi-strutturati. Ora vedremo il processo da seguire per promuovere questa query dal layer dei dati grezzi a quello armonizzato e infine a quello analitico, in cui gli utenti finali dispongono dei privilegi necessari per leggere i risultati.
@@ -270,7 +265,6 @@ Utilizziamo inoltre i parametri [SELECT * EXCLUDE e RENAME](https://docs.snowfla
 ### Passaggio 3 - Fai clic su Next -->
 
 ## Analizzare dati semi-strutturati elaborati in Snowsight
-Duration: 2
 
 ### Panoramica
 Con la vista menu disponibile nel layer analitico, eseguiamo alcune query su questa vista che forniremo ai nostri utenti finali e che mostrano come Snowflake consente di ottenere l’esperienza di una query relazionale su dati semi-strutturati senza dover creare copie aggiuntive o eseguire elaborazioni complesse.
@@ -351,7 +345,6 @@ Per completare questo quickstart, dobbiamo evidenziare la facilità con cui un d
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Conclusione e fasi successive
-Duration: 1
 
 ### Conclusione
 Ottimo lavoro! Hai completato il quickstart Tasty Bytes - Da zero a Snowflake - Dati semi-strutturati. 

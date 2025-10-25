@@ -1,16 +1,15 @@
 author: Ilya Sudakov
 id: improvado
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Getting Started guide to show how users can use Improvado Composable “Agentic” Data Platform with Snowflake
-categories: Getting-Started,partner-integrations,marketing
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started
 
 # Improvado Composable “Agentic” Data Platform with Snowflake
 <!-- ------------------------ -->
 ## Introduction
-Duration: 2
 
 This guide will show you how to connect your Snowflake AI Data Cloud to Improvado platform, manage user & data access, and understand how AI Agent uses your Snowflake data for analytics & marketing data governance.
 
@@ -55,7 +54,6 @@ Additionally, Improvado offers a custom Marketing Data Governance solution to en
 
 <!-- ------------------------ -->
 ## Connect Snowflake to Improvado
-Duration: 4
 
 In this step, we’ll learn how to connect your Snowflake schema to Improvado. Improvado integrates with Snowflake using a native Python Connector, ensuring efficient data transfers and fast updates.
 
@@ -130,7 +128,6 @@ After successfully connecting your Snowflake database, Improvado AI Agent will a
 
 <!-- ------------------------ -->
 ## Data Privacy
-Duration: 2
 
 In this step, we will learn about Data Privacy policies and rules within Improvado & Snowflake.
 
@@ -148,7 +145,6 @@ Workspaces allow for access management and control within a single Improvado ins
 
 <!-- ------------------------ -->
 ## Data Access and Consumption
-Duration: 2
 
 The AI Agent automatically scans and collects metadata for each table, column and row values in your Snowflake storage. This step is crucial as it enables the AI Agent to understand the structure and relationships within your database.
 
@@ -164,7 +160,6 @@ Improvado Billing Dashboard offers an in-depth analysis of your data usage, prov
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 In this guide, we learned how to connect your Snowflake data to Improvado for analytics & governance.
 

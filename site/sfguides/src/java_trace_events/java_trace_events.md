@@ -1,16 +1,15 @@
 author: Alexey Litouka
 id: java_trace_events
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: An example of emitting trace events from Java, and analyzing them
-categories: Getting-Started, Observability, Trail
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Trace Events, Telemetry, Java 
 
 # Using trace events in Java
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Have you ever created a stored procedure or a user-defined function in Snowflake? If you have, then you probably want to know whether it’s working well. If something goes wrong with it, you want to know what exactly is not working as expected. In other words, you are concerned about _observability_ of your code. You probably know that you can use a [logger](https://docs.snowflake.com/en/developer-guide/logging-tracing/logging) in your code, and that log records are stored in the [event table](https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up). But have you heard about [**trace events**](https://docs.snowflake.com/en/developer-guide/logging-tracing/tracing)? We have recently launched them in preview, and this guide explains how they can help you improve observability.
 
@@ -37,7 +36,6 @@ Please be aware that our current implementation of trace events has several limi
 - SQL queries which you can use to find those trace events in the event table, and aggregate them.
 
 ## Creating and seeding a database
-Duration: 2
 
 In this quickstart, we'll use a stored procedure that reads data from an input table, performs some computations, and saves results of those computations in an output table. So, let's create those tables and populate the input table with data:
 
@@ -136,7 +134,6 @@ K-means clustering is an algorithm that finds groups of points in a dataset whic
 The K-means algorithm is fast, but the caller has to know the number of clusters in advance.
 
 ## Setting up an event table
-Duration: 1
 
 Trace events are stored in an event table. So, let's make sure that you have one. Please run the following commands:
 
@@ -165,7 +162,6 @@ show parameters like 'EVENT_TABLE' in account;
 ```
 
 ## Creating a stored procedure
-Duration: 2
 
 Now, let's create our example stored procedure. It is quite long, because it does several things:
 - Reads data from an input table;
@@ -523,7 +519,6 @@ $$;
 ```
 
 ## Taking a closer look at the code
-Duration: 5
 
 Let's take a closer look at the code of our stored procedure, and find parts required for emitting trace events:
 
@@ -564,7 +559,6 @@ Telemetry.addEvent(TRACE_PREFIX + "summary", attributesBuilder.build());
 ```
 
 ## Calling the stored procedure
-Duration: 2
 
 ### Enabling logging and tracing
 First, let's make sure that logging and tracing are enabled:
@@ -589,7 +583,6 @@ If everything worked well, it should return the string `SUCCESS`. Try changing t
 Every time when the `kmeans` procedure runs successfully, it inserts rows into the `centroids` table. The number of rows is equal to the number of clusters (`3` in the example above). Our input table contains 3 clusters centered around points with coordinates `(1, 2)`; `(10, 20)`; and `(5, 15)`. If everything works well, you should see values similar to those in the `centroids` table. However, the algorithm isn't always able to find an optimal solution. If you see values which are substantially different, you can `truncate table centroids` and call the `kmeans` procedure again.
 
 ## Analyzing trace events
-Duration: 10
 
 Trace events are structured records. Because of this, you can easily aggregate data collected from multiple invocations of your code, and answer questions such as:
 
@@ -718,7 +711,6 @@ where
 ```
 
 ## What can be recorded as a trace event
-Duration: 5
 
 ### Time taken to execute each part of a stored procedure
 If your procedure performs several lengthy operations, you may want to record the amount of time taken by each operation. Later on, you can aggregate this information with a SQL query. 
@@ -848,7 +840,6 @@ class KMeansClusterer {
 ```
 
 ## What can be recorded as a span attribute
-Duration: 1
 
 Trace events are grouped into _spans_. However, the current version of the telemetry API does not allow you to create your own spans, or to control lifecycle of spans automatically created for you.
 
@@ -862,7 +853,6 @@ Telemetry.setSpanAttribute(TRACE_PREFIX + "input.max_iterations", maxIterations)
 ```
 
 ## Conclusion
-Duration: 1
 
 Trace events allow you to record structured information about what’s happening in your code while it is running in Snowflake. You can easily analyze trace events by running SQL queries against the event table. We recommend using trace events in stored procedures or functions which are invoked only once per SQL query.
 

@@ -1,16 +1,15 @@
 author: Gilberto Hernandez, Rida Safdar
 id: snowflake-northstar-data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Build an end-to-end data pipeline in Snowflake using the I-T-D framework.
-categories: Data-Engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
 
 # Getting Started – Data Engineering with Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 ### Overview
 
@@ -58,7 +57,6 @@ We'll deliver a final data product using:
 
 <!-- ------------------------ -->
 ## Open a Snowflake Trial Account
-Duration: 5
 
 To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
 
@@ -78,7 +76,6 @@ To complete this lab, you'll need a Snowflake account. A free Snowflake trial ac
 
 <!-- ------------------------ -->
 ## Understand The Pipeline We'll Build
-Duration: 2
 
 Tasty Bytes is a food truck company that operates globally in many countries. You're a data engineer on the Tasty Bytes team, and you've recently learned from data analysts on the team that:
 
@@ -110,7 +107,6 @@ Let's get started!
 
 <!-- ------------------------ -->
 ## Weather Data From Snowflake Marketplace
-Duration: 5
 
 Let's start by "loading" the raw weather data into Snowflake. It turns out that "loading" is really the wrong word here. 
 
@@ -136,7 +132,6 @@ This is a live dataset! No need to write ingestion logic to bring the data into 
 
 <!-- ------------------------ -->
 ## Load Sales Data From AWS S3
-Duration: 15
 
 Let's now load the Tasty Bytes sales data. This data is currently sitting across many CSV files in an AWS S3 bucket. Let's use Snowflake's COPY INTO command to load the data into your Snowflake account.
 
@@ -207,7 +202,6 @@ This completes the **Ingestion** aspect of our pipeline for this lab.
 
 <!-- ------------------------ -->
 ## Data Transformations With SQL
-Duration: 10
 
 We now have the necessary data in our Snowflake account. To get closer to the insights that we need – weather-related data for the city of Hamburg, Germany – we need to use SQL to apply transformations to the data. This will bring us closer to the insights we're after. Let's begin.
 
@@ -328,7 +322,6 @@ We'll use these views in our pipeline later on.
 
 <!-- ------------------------ -->
 ## Create User-Defined Functions For Calculations
-Duration: 6
 
 We're missing some critical data for our pipeline. Our analysts have requested that we track certain weather measurements using the metric system. We are tracking a country in Europe after all.
 
@@ -370,7 +363,6 @@ Great! We'll use these functions to expand the views we're planning on using in 
 
 <!-- ------------------------ -->
 ## Apply UDFs For Data Transformations
-Duration: 6
 
 Let's now use the UDFs to add new columns in our views. These new columns will contains the converted values for temperature and precipitation.
 
@@ -401,7 +393,6 @@ This completes the **Transformation** aspect of our pipeline for this lab.
 
 <!-- ------------------------ -->
 ## Deliver Insights With Streamlit in Snowflake
-Duration: 6
 
 We now have the insights that we need, and we can now also deliver them to our data analysts. We specifically have views that track the weather and sales in Hamburg, Germany. So how exactly will we make these insights easily accessible for our data analysts?
 
@@ -443,7 +434,6 @@ With this application, we've now completed our end-to-end data pipeline. This co
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ### Conclusion
 

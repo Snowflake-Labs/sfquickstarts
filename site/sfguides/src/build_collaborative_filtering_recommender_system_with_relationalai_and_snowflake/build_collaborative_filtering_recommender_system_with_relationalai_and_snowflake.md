@@ -1,16 +1,15 @@
 author: Haythem Tellili
 id: build_collaborative_filtering_recommender_system_with_relationalai_and_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build, snowflake-site:taxonomy/snowflake-feature/native-apps
+language: en
 summary: This guide shows how to use RelationalAI and Snowflake to create a recommender system.
-categories: data-science, graph-analysis, relationalai
 environments: web
 status: Published 
 feedback link: https://github.com/RelationalAI/rai-samples/issues
-tags: Getting Started, Data Science, Data Engineering, RelationalAI, Recommender Systems
 
 # Recommender Systems with RelationalAI’s Snowflake Native App
 
 ## Overview 
-Duration: 1
 
 By completing this guide, you will be able to build a collaborative filtering recommender system RelationalAI’s Native App on Snowflake.
 
@@ -44,7 +43,6 @@ In this quickstart, you'll learn how to:
 
 ## Data Preparation
 
-Duration: 15
 
 To prepare data needed for this tutorial, follow these steps:
 
@@ -188,7 +186,6 @@ to synchronize your Snowflake data with your RelationalAI model at an interval o
 <!-- ------------------------ -->
 ## Building a Recommender System
 
-Duration: 20
 
 The Notebook linked below covers the following steps.
 
@@ -211,7 +208,6 @@ To get started, follow these steps:
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 2
 
 Thanks to RelationalAI’s Native App on Snowflake, we built a recommendation system with just a few steps. Although the dataset used was a small graph with thousands of nodes and edges, our solution can scale to real world datasets due to our cloud-native architecture that separates compute from storage.
 

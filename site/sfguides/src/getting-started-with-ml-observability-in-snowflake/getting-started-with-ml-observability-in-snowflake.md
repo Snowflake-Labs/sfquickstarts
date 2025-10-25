@@ -1,16 +1,15 @@
 author: Kala Govindarajan
 id: getting-started-with-ml-observability-in-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/transformation
+language: en
 summary: ML Ops is defined as the core function of ML engineering focused on optimizing the process of deploying, maintaining, and monitoring models in production. Snowflake ML Observability allows to monitor models deployed in production via Snowflake Model Registry to track the quality of the model across multiple dimensions such as performance and drift along with volume. With this ML Ops-driven approach for customer churn monitoring, enterprises can ensure that ML models add real value, minimize the risk of performance decay, and make informed, data-driven decisions that drive customer retention. 
-categories: Getting-Started, Observability, Trail
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
 
 # Getting Started with ML Observability in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Snowflake ML provides organizations with an integrated set of capabilities for end-to-end ML development and operations in a single platform on top of governed data. 
 For many large enterprises, extracting tangible value from Machine Learning (ML) initiatives remains a significant challenge. Despite substantial investments, the journey from developing models to realizing their benefits often encounters numerous roadblocks. MLOps is a core function of ML engineering and focuses on streamlining the process of taking machine learning models to production, and then maintaining and monitoring them effectively. Unlike traditional software, machine learning models can change their behavior over time due to various factors, including input drift, outdated assumptions from model training, issues in data pipelines, and standard challenges like hardware/software environments and traffic. These factors can lead to a decline in model performance and unexpected behavior which needs to be monitored very closely. 
@@ -50,7 +49,6 @@ For demonstration purposes, let's consider a multinational financial services fi
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 2
 
 This section will walk you through creating various objects
 
@@ -206,7 +204,6 @@ These metrics combined with the alert function helps maintain model reliability,
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 In this guide, we explored how financial firms can build end-to-end, production-ready customer churn prediction models using Snowflake ML. With Snowflake's new features supporting MLOps, organizations can now monitor, optimize, and manage models at scale in production. This approach ensures models are deployed in a controlled, reliable manner and continue to evolve, delivering sustained value over time. Ultimately, Snowflake empowers organizations to move confidently from development to production, unlocking the full potential of their machine learning models and driving impactful, large-scale results.
 

@@ -1,18 +1,17 @@
 author: Adrian Lee
 id: data_engineering_with_apache_airflow_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This is a sample Snowflake Guide
-categories: data-engineering,architecture-patterns,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Airflow, kr
 
 # Apache Airflow, Snowflake 및 dbt를 사용한 데이터 엔지니어링
 
 <!-- ------------------------ -->
 ## 개요
 
-duration: 5
 
 ![architecture](assets/data_engineering_with_apache_airflow_0_overall_architecture.png)
 
@@ -59,7 +58,6 @@ Apache Airflow는 데이터 파이프라인을 작성 및 관리하는 데 사�
 <!-- ------------------------ -->
 ## 환경 설정
 
-duration: 2
 
 우선, 아래 명령을 실행하여 폴더를 생성하겠습니다.
 
@@ -112,7 +110,6 @@ mkdir dags
 <!-- ------------------------ -->
 ## dbt 프로젝트 설정
 
-duration: 6
 
 이제 리포지토리를 설정했으니 dbt 프로젝트를 구성 및 설정하겠습니다.
 
@@ -272,7 +269,6 @@ dbt 구성이 완료되었습니다. 다음 섹션에서는 CSV 파일과 DAG를
 <!-- ------------------------ -->
 ## dbt에서 CSV 데이터 파일 생성
 
-duration: 10
 
 이 섹션에서는 샘플 CSV 데이터 파일과 관련 SQL 모델을 준비하겠습니다.
 
@@ -319,7 +315,6 @@ id,first_name,last_name,birthdate,membership_no
 <!-- ------------------------ -->
 ## models 폴더에서 dbt 모델 생성
 
-duration: 2
 
 models 폴더에서 `analysis` 및 `transform` 폴더 2개를 생성합니다. 분석 및 변환을 위해 아래에 있는 섹션을 각각 따르십시오.
 
@@ -407,7 +402,6 @@ FROM {{ ref('prepped_data') }}
 <!-- ------------------------ -->
 ## Airflow DAG 준비
 
-duration: 5
 
 `dags` 폴더에서 `init.py` 및 `transform_and_analysis.py` 파일 2개를 생성합니다. `init.py`는 초기화하며 CSV 데이터를 열람합니다. `transform_and_analysis.py`는 변환 및 분석 작업을 수행합니다.
 
@@ -493,7 +487,6 @@ with DAG('2_daily_transformation_analysis', default_args=default_args, schedule_
 <!-- ------------------------ -->
 ## Airflow를 위해 docker-compose 파일 실행
 
-duration: 5
 
 `docker-compose up`을 실행하고 [http://localhost:8080/](http://localhost:8080/)으로 이동하겠습니다. 기본 사용자 이름은 `airflow`이고 암호는 `airflow`입니다.
 
@@ -543,7 +536,6 @@ duration: 5
 <!-- ------------------------ -->
 ## 결론
 
-duration: 1
 
 축하합니다! dbt 및 Snowflake로 첫 번째 Apache Airflow를 생성하셨습니다! 자체 샘플이나 프로덕션 데이터를 로드하고 이 랩에서 다루지 않은 더 고급 수준의 Airflow 및 Snowflake 기능을 사용하여 무료 평가판을 계속 사용해 보십시오.
 

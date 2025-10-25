@@ -1,16 +1,15 @@
 id: getting_started_with_snowpipe_streaming_azure_eventhubs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: This guide will walk you through how to apply a data-intensive approach to real-time data using Snowpipe Streaming and Azure Eventhubs.
-categories: getting-started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Kafka, Streaming, Azure, Eventhubs, Snowpipe Streaming, SnowSQL
 authors: James Sun
 
 # Getting Started with Snowpipe Streaming and Azure Event Hubs
 <!---------------------------->
 ## Overview
-Duration: 5
 
 Snowflake's Snowpipe streaming capabilities are designed for rowsets with variable arrival frequency.
 It focuses on lower latency and cost for smaller data sets. This helps data workers stream rows into Snowflake
@@ -65,7 +64,6 @@ To participate in the virtual hands-on lab, attendees need the following resourc
 
 <!---------------------------->
 ## Create an Event Hub and a VM in Azure
-Duration: 25
 
 #### 1. Create a resource group
 
@@ -281,7 +279,6 @@ See below example screenshot:
 
 <!---------------------------->
 ## Prepare the Snowflake account for streaming
-Duration: 10
 
 #### 1. Creating user, role, and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
@@ -397,7 +394,6 @@ At this point, the Snowflake setup is complete.
 
 <!---------------------------->
 ## Configure the Kafka connector for Snowpipe Streaming
-Duration: 10
 
 #### 1. Collect parameters for the Kafka connector
 
@@ -486,7 +482,6 @@ EOF
 
 <!---------------------------->
 ## Putting it all together
-Duration: 10
 
 Finally, we are ready to start ingesting data into the Snowflake table.
 
@@ -523,7 +518,6 @@ table `az_streaming_db.az_streaming_schema.az_streaming_tbl`.
 
 <!---------------------------->
 ## Query ingested data in Snowflake
-Duration: 10
 
 Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
 The data should have been streamed into a table, ready for further processing.
@@ -602,7 +596,6 @@ You can now go back to the Snowflake worksheet to run a `select count(1) from fl
 
 <!---------------------------->
 ## Cleanup
-Duration: 5
 
 When you are done with the demo, to tear down the Azure resources, follow this [doc](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/delete-resource-group?tabs=azure-powershell) to dismantle the resource group and its associated resources. 
 
@@ -621,7 +614,6 @@ DROP USER IF EXISTS STREAMING_USER;
 
 <!---------------------------->
 ## Conclusion and Resources
-Duration: 5
 
 In this lab, we built a demo to show how to ingest time-series data using Snowpipe streaming and Kafka with low latency. We demonstrated this using an Azure event hub and the Kafka connector for Snowpipe streaming hosted on a VM. You can also containerize the connector on the [Azure Kubernetes Services (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service) to leverage the benefits of scability and manageability.
 

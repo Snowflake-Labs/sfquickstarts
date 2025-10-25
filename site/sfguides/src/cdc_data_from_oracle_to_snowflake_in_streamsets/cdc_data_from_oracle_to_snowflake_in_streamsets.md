@@ -1,16 +1,15 @@
 author: Brenna Buuck
 id: cdc_data_from_oracle_to_snowflake_in_streamsets
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: CDC Data from Oracle to Snowflake in StreamSets
-categories: data-engineering,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Oracle CDC
 
 # Process Change Data Capture (CDC) data from Oracle to Snowflake Using StreamSets
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Change Data Capture (CDC) is a design pattern to determine, track, capture, and deliver changes made to enterprise data sources. These sources are typically relational databases like Oracle, MySQL, and PostgreSQL. CDC is critical because when changes occur at the source the changed data must be made available to downstream destinations like data warehouses, because decisions can’t be made and analysis can’t be done using stale data.
 
@@ -36,7 +35,6 @@ Given this critical need, let's look at how StreamSets DataOps Platform can be u
 In this guide, you will learn how to process Change Data Capture (CDC) data from Oracle to Snowflake in StreamSets DataOps Platform.
 <!-- ------------------------ -->
 ## Import Pipeline
-Duration: 1
 
 To get started making a pipeline in StreamSets, download the [sample pipeline from GitHub](https://github.com/iamontheinet/StreamSets/blob/master/Sample%20Pipelines/Oracle%20CDC%20To%20Snowflake/Oracle%20CDC%20To%20Snowflake.zip) and use the **Import a pipeline** feature to create an instance of the pipeline in your StreamSets DataOps Platform account.
 
@@ -53,7 +51,6 @@ been deployed once your deployment was successfully activated.
 
 <!-- ------------------------ -->
 ## Configure Oracle CDC Client Origin
-Duration: 2
 
 [Oracle CDC Client](https://docs.streamsets.com/portal/#datacollector/latest/help/datacollector/UserGuide/Origins/OracleCDC.html#concept_rs5_hjj_tw) origin will enable you to capture Create, Update, and Delete operations across various tables in your Oracle data warehouse so that your Snowflake Data Cloud can be kept in sync.
 
@@ -71,7 +68,6 @@ processors.
 
 <!-- ------------------------ -->
 ## Configure Stream Selector Processor
-Duration: 2
 
 This is an optional step and can be removed before proceding. This processor will conditionally route records based on user-defined conditions. For instance, in this case, we’d like to protect customer email addresses from being ingested (in plaintext) in Snowflake.
 
@@ -84,7 +80,6 @@ Key configuration on **Conditions** tab for this setup:
 <!-- ------------------------ -->
 
 ## Configure Field Masker Processor
-Duration: 2
 
 This is another optional processor. This processor will enable us to “mask” PII in configured fields. In this case, it is configured to mask customer email addresses before sending it over to Snowflake.
 
@@ -95,7 +90,6 @@ Key configuration on **Mask** tab for this setup:
 
 <!-- ------------------------ -->
 ## Snowflake Destination Configuration
-Duration: 2
 
 [Snowflake](https://docs.streamsets.com/portal/#datacollector/latest/help/datacollector/UserGuide/Destinations/Snowflake.html#concept_vxl_zzc_1gb) destination uses the MERGE command to write CDC data that’s being
 captured from Oracle. Note that this provides real-time access to data as it is
@@ -130,7 +124,6 @@ For other configuration details such as **Staging, Snowflake File Format**, defa
 
 <!-- ------------------------ -->
 ## Set Pipeline Parameters
-Duration: 2
 
 Click on the **Edit** button and
 update the following pipeline parameters.
@@ -152,7 +145,6 @@ Pipeline parameters to update.
 
   <!-- ------------------------ -->
 ## Pipeline Validation, Preview and Test Run
-Duration: 2
 
 Once you’ve updated the pipeline parameters, you can **Validate** it to make sure the credentials are correct.
 

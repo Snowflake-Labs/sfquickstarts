@@ -1,17 +1,16 @@
 author: miles.adkins@snowflake.com
 id: automl_with_snowflake_and_datarobot
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/external-collaboration, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: This lab will walk you through how to use Snowflake and DataRobot to perform supervised machine learning.
-categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: DataRobot, AutoML, Partner Connect, Databases, Tables, Stages, File Formats
 
 # Accelerating Machine Learning with Snowflake and DataRobot
 
 <!-- ------------------------ -->
 ## Use Case Overview
-Duration: 5
 
 This guide will take you through the process of performing supervised machine learning by building a binary classification model to help predict whether a customer is likely to churn (that is, no longer be our customer).
 
@@ -45,7 +44,6 @@ To showcase the full lifecycle of a deploying machine learning model, we will fi
 
 <!-- ------------------------ -->
 ## Setting up Snowflake
-Duration: 5
 
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
 
@@ -123,7 +121,6 @@ Continuing, trial accounts automatically come with `COMPUTE_WH` created for you.
 
 <!-- ------------------------ -->
 ## Creating a Snowflake Table
-Duration: 5
 
 As part of the lab, we are going to create 2 tables:
  - `TRAIN_DATA` -- The dataset that we will use to train our machine learning model
@@ -197,7 +194,6 @@ You can go one level deeper here and look at the column definitions for each tab
 
 <!-- ------------------------ -->
 ## Creating a Snowflake External Stage
-Duration: 5
 
 [Stages](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage.html) in snowflake are places that you can land your data before it is uploaded to a Snowflake table. You might have a batch of CSV files living on a disk driver somewhere, and, in order to start querying the data via a table, the data must be landed within the Snowflake environment for a data upload to be possible.
 
@@ -224,7 +220,6 @@ Here is the two csv files we will be using for our example project today.
 
 <!-- ------------------------ -->
 ## Creating a Snowflake File Format
-Duration: 5
 
 [File Formats](https://docs.snowflake.com/en/sql-reference/sql/create-file-format.html) tell Snowflake the structure of the data coming in. The last thing that we need to do before we can load the data into our Snowflake tables is: we have to create a `File Format` that matches the data structure of the local files we want to upload. As smart as Snowflake is, its not THAT smart.
 
@@ -251,7 +246,6 @@ CREATE OR REPLACE FILE FORMAT churndata_ff
 
 <!-- ------------------------ -->
 ## Loading Data into Snowflake
-Duration: 15
 
 In this section, we will use a virtual [warehouse](https://docs.snowflake.com/en/user-guide/warehouses-overview.html) and the [COPY command](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table.html) to initiate bulk loading of the CSV file sitting in our AWS external stage, moving it into the Snowflake table we just created.
 
@@ -300,7 +294,6 @@ You should see something like this. Note we have our `HURN` column. This will be
 
 <!-- ------------------------ -->
 ## Connecting Snowflake with DataRobot
-Duration: 10
 
 At this point in time, we have our data sitting in an optimized table within Snowflake that is available for a variety of different downstream functions. Snowflake does not offer machine learning capabilities, and therefore, happily partners with the leading data science and machine learning partners in the industry. We are on a mission to help us figure out which of our customers are most likely to churn and DataRobot can help us build a machine learning model to answer that question.
 
@@ -315,7 +308,6 @@ We have all the Snowflake objects we need created already, so press "Connect".
 
 <!-- ------------------------ -->
 ## Getting Started with DataRobot
-Duration: 10
 
 Go to your email, and verify your account, you will be redirected to the DataRobot account registration page.
 
@@ -340,7 +332,6 @@ We will now land on the DataRobot main home page. Feel free to take a peak aroun
 
 <!-- ------------------------ -->
 ## Creating a DataRobot Data Connection
-Duration: 15
 
 To start a new ML project - on the top right click on the button '+ Create new project' 
 
@@ -388,7 +379,6 @@ On the Search by: choose Tables and type 'train' - you will see the table 'TRAIN
 
 <!-- ------------------------ -->
 ## Setting up a DataRobot Project
-Duration: 10
 
 When we want to take some data and leave with a model to deploy, the culmination of all these steps are stored in a DataRobot "project." A new project is kicked off as soon as you load your data into the system, just like we did. When your data is upload, DataRobot then begins performing exploratory data analysis (EDA), the first step in a typical machine learning lifecycle. This is a combination of detecting the data types and showing the number of unique, missing, mean, median, standard deviation, and minimum and maximum values. This information is helpful for getting a sense of the data shape and distribution.
 
@@ -419,7 +409,6 @@ If you want to customize the model building process, you can modify a variety of
 
 <!-- ------------------------ -->
 ## Starting DataRobot Quick Autopilot
-Duration: 10
 
 Lets get to building models automatically. Go ahead and click the “Start​” button to kick off DataRobots Autopilot process. DataRobot will continue to compute a variety of different statistics to help aid our machine learning problem. One of these steps is computing a feature's "Alternating Conditional Expectation." This is in essence an “Importance” grade that  tells you how much a given feature helps predict what you are looking to predict in an isolated fashion.
 
@@ -445,7 +434,6 @@ And of course, recommends a model for deployment.
 Let's take a 7 min break, and when we come back, we will analyze the results.
 <!-- ------------------------ -->
 ## Evaluating the "Recommended For Deployment" Model
-Duration: 10
 
 Let's 'star' the first model in the leadeboard. This is the model that was the most optimal given our chosen optimization metric. Let's star it. To start evaluating it, we can click on the model which will present use with the following options: Evaluate, Understand, Describe, and Predict (​additional tabs may be present based on extra features that are enabled).
 
@@ -496,7 +484,6 @@ Lastly, DataRobot’s "Insights" tab at the top provides more graphical represen
 
 <!-- ------------------------ -->
 ## Deploying our model and using Job Defintions with Snowflake
-Duration: 10		
 
 Every model built in DataRobot is immediately ready for deployment. And there a several methods of scoring new data against this Deployment
 
@@ -614,7 +601,6 @@ For the advanced python users you can keep the lab to see how to use python for 
 
 ## (Extra) Connecting Snowflake with Zepl - DataRobot notebooks in the cloud
 
-Duration: 2
 
 Go back to the partner connect section in Snowflake and click the "Data Science & ML" category and click "Zepl"
 
@@ -633,7 +619,6 @@ You then will be prompted to activate your account now, click the blue "Activate
 This will launch a new tab to the Zepl platform.
 <!-- ------------------------ -->
 ## Getting Started with Zepl - DataRobot notebooks in the cloud
-Duration: 2
 
 DataRobot Zepl the cloud data science notebook solution that enables advanced data scientists to do exploratory, code-centric work in Python, R, and Scala with enterprise features such as collaboration, versioning, and security.
 
@@ -657,7 +642,6 @@ Import the notebook: click import on the right side, upload the notebook that wa
 
 <!-- ------------------------ -->
 ## Creating a Zepl Data Connection
-Duration: 2
 
 To create a data connection from a notebook do the following:
 1. Open the data sources sidebar by clicking the data sources icon on the right side of the notebook
@@ -688,7 +672,6 @@ You will see the new secret under the 'Attached to this notebook'
 
 <!-- ------------------------ -->
 ## Connect to Snowflake Snowpark
-Duration: 5
 
 Download the Snowpark library:
 <button>
@@ -736,7 +719,6 @@ Section 4 will present the data in the training table we created in snowflake, q
 
 <!-- ------------------------ -->
 ## EDA on Zepl notebook using python for snowpark
-Duration: 2
 
 In the notebook, run Section 5
 This section will create a new feature to identify if a user is more active at night or day.

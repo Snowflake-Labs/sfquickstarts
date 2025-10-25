@@ -1,16 +1,15 @@
 author: camwasi
 id: sec_10k_decoder_without_rag
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: This quickstart will help you create a streamlit application to interact with Cortex's AI21's Jamba-Instruct
-categories: Getting-Started, Cortex, Data-Science-&-Ai, Streamlit, App-Development
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Cortex, Data Science & Ai, Streamlit, App Development
 
 # AI21's Jamba-Instruct Quickstart | SEC 10K Decoder Without RAG
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 In this quickstart, we will review how to build a Streamlit App within Snowflake that allows you to easily analyze years of NVIDIA 10K filings using Jamba-Instruct in Cortex. With Jamba’s 256K context window, there is no requirement to build a RAG pipeline that chunks the filings into segments that fit into a smaller context window.
 
@@ -42,7 +41,6 @@ This Streamlit application within Snowflake illustrates Jamba-Instruct's text an
 
 <!-- ------------------------ -->
 ## Setup code and streamlit prerequisites
-Duration: 5
 
 ### Step 1: Accessing the data in Snowflake Marketplace
 <button>
@@ -94,7 +92,6 @@ After logging into your Snowflake account, access [Cybersyn’s SEC Filings](htt
 
 <!-- ------------------------ -->
 ## Using Jamba-Instruct in Cortex
-Duration: 3
 
 AI21’s Jamba-Instruct is a powerful language model designed with a 256k context window to handle large volumes of text, up to ~800 pages, making it ideal for tasks such as summarizing lengthy documents, analyzing call transcripts, and extracting information from extensive data.
 
@@ -133,7 +130,6 @@ Cybersyn’s [SEC_FILINGS](https://app.snowflake.com/marketplace/listing/GZTSZAS
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You’ve successfully built a GenAI Streamlit app using Jamba-Instruct on Snowflake Cortex AI. With this fully managed approach, GenAI can be harnessed without any data ever needing to leave Snowflake's secure walls.
 

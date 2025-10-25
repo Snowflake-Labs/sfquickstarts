@@ -1,16 +1,15 @@
 author: Alex Engelmann
 id: transform_your_data_with_coalesce
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Accelerate Transformations with Coalesce and Snowflake
-categories: data-engineering,partner-integrations
 environments: web
 status: final
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
 authors: Alex Engelmann
 # Accelerate Transformations with Coalesce and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 Coalesce is a best-in-class Data Transformation solution for Snowflake. With Coalesce, you build directed acyclic graphs (DAG) made up of nodes that run on a schedule and produce tested, up-to-date datasets ready for your business users.
 
@@ -38,7 +37,6 @@ The following video provides a brief overview of (most of) what this guide will 
 
 <!-- ------------------------ -->
 ## Initial Setup
-Duration: 2
 
 ### Interface Overview
 When you first sign in on a new account, you'll be presented with the **Projects Dashboard**, where a default **Project** and **Development Workspace** will be already created. Feel free to disregard the warning about Version Control, as this guide will not be using that feature. Click the **Launch** button to open the workspace to continue.
@@ -87,7 +85,6 @@ A storage location is a logical name you provide to represent a database and sch
 
 <!-- ------------------------ -->
 ## Add Data Sources
-Duration: 2
 
 Now it's time to add **Sources** to the graph.  The graph node view is where you'll configure **Nodes** that will transform your data.  Below is an example of a graph with several nodes -
 
@@ -113,7 +110,6 @@ To add **Source Nodes** take the following steps:
 
 <!-- ------------------------ -->
 ## Make a Stage Node
-Duration: 2
 
 Now that you have a few **Source Nodes** on your graph, it's time to add a **Stage Node**.  **Stage Nodes** are intermediate nodes in the graph where you prepare the data by applying business logic.
 
@@ -139,7 +135,6 @@ Congratulations!  You've connected your database and applied a basic transformat
 
 <!-- ------------------------ -->
 ## Create a Dimension Table
-Duration: 3
 
 Now let's create a simple slowly changing dimension (Type 2) — an industry standard for tracking historical data by creating multiple records for a given natural key.
 
@@ -166,7 +161,6 @@ You have now finished creating a Type 2 Dimension table.  Next we will make a Fa
 <!-- ------------------------ -->
 
 ## Create a Fact Table
-Duration: 3
 
 Now let's create a fact table.
 
@@ -198,7 +192,6 @@ group by DIM.C_NAME;
 ```
 
 ## Conclusion
-Duration: 1
 
 Now that you're familiar with some of Coalesce's basic functionality and how it can be used to automate many of your SQL workflows, you can:  
 

@@ -1,10 +1,10 @@
 id: integrate_snowflake_cortex_agents_with_slack
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants
+language: en
 summary: This guide outlines the process for integrating Snowflake Cortex Agents with Slack.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Snowpark Python, Data-Science-&-Ai, Featured
-categories: featured,getting-started,app-development,data-science,gen-ai,data-science-&-ai,cortex
 authors: Dash Desai
 
 # Getting Started with Cortex Agents and Slack
@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 2
 
 Cortex Agents simplify AI-powered data interactions via a REST API, combining hybrid search and accurate SQL generation. They streamline workflows by managing context retrieval, natural language to SQL conversion, and LLM orchestration. Response quality is enhanced with in-line citations, answer abstention, and multi-message context handling. Developers benefit from a single API call integration, real-time streamed responses, and reduced latency for optimized applications.
 
@@ -59,7 +58,6 @@ Cortex Agents integrated with Slack
 ## Setup Slack
 <!-- ------------------------ -->
 
-Duration: 10
 
 Follow instructions in this [step-by-step guide](https://tools.slack.dev/bolt-python/getting-started/) to create and set up your barebones Slack application in Python. 
 
@@ -81,7 +79,6 @@ if __name__ == "__main__":
 ## Setup Snowflake
 <!-- ------------------------ -->
 
-Duration: 10
 
 **Step 1:** Clone the [GitHub repo](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack).
 
@@ -104,7 +101,6 @@ Duration: 10
 ## Setup Environment
 <!-- ------------------------ -->
 
-Duration: 3
 
 **Step 1:** Change or browse to the cloned repo folder **_sfguide-integrate-snowflake-cortex-agents-with-slack_** on your local machine and open the contents of the folder in your favorite IDE — like VS Code.
 
@@ -138,7 +134,6 @@ pip install -r requirements.txt
 ## Setup Agent
 <!-- ------------------------ -->
 
-Duration: 5
 
 An agent is an intelligent entity within Snowflake Intelligence that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data. 
 
@@ -193,7 +188,6 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 ## Test Agent
 <!-- ------------------------ -->
 
-Duration: 3
 
 Before proceeding, make sure you [test](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-slack/blob/main/test.py) that the Cortex Agents API endpoint and other env variables in **.env** have been set correctly.
 
@@ -247,7 +241,6 @@ If you get this error **Caused by SSLError(SSLCertVerificationError(1, “[SSL: 
 ## Run Application
 <!-- ------------------------ -->
 
-Duration: 10
 
 Browse to the cloned repo folder ***sfguide-integrate-snowflake-cortex-agents-with-slack*** in a terminal window where you executed the commands in the previous section and start the application by running the following command.
 
@@ -307,7 +300,6 @@ NOTE: Feel free to click on **Show Details** button to see the planning and thin
 ## Conclusion And Resources
 <!-- ------------------------ -->
 
-Duration: 1
 
 Congratulations! You've sucessfully integrated Cortex Agents with Slack.
 

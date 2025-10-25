@@ -1,18 +1,17 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_collaboration_ja
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: ja
 summary: Tasty Bytes - ゼロからのSnowflake - コラボレーションクイックスタート
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake, ja
 
 
 # Tasty Bytes - ゼロからのSnowflake - コラボレーション
 <!-- ------------------------ -->
 
 ## Snowflakeマーケットプレイスを使用したサードパーティデータへの直接アクセス
-Duration: 1
 <img src = "assets/collaboration_header.png">
 
 ### 概要
@@ -36,7 +35,6 @@ Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。
 - Snowflakeマーケットプレイスで追加のインサイトを引き出す方法の理解
 
 ## ワークシートの作成とSQLのコピー
-Duration: 1
 
 ### 概要
 このクイックスタートでは、Snowsight SQLワークシートを使ってTasty Bytesをテーマとしたストーリーを追っていきます。このページには、横に置いて活用できるよう、追加の解説、画像、ドキュメントリンクが掲載されています。
@@ -77,7 +75,6 @@ Duration: 1
 ### ステップ9 - 「Next」をクリックする
 
 ## ファーストパーティデータにおける売上ゼロ日の調査
-Duration: 1
 
 ### 概要
 Tasty Bytesの財務アナリストは、前年比分析を行う中で、さまざまな都市でキッチンカーの売上がゼロとなっている説明のつかない日があることを指摘しました。その一例として挙げられたのが2022年2月のドイツ、ハンブルグのケースです。
@@ -109,7 +106,6 @@ ORDER BY o.date ASC;
 ### ステップ2 - 「Next」をクリックする
 
 ## SnowflakeマーケットプレイスのWeather Sourceデータの活用
-Duration: 2
 
 ### 概要
 前のセクションで見た内容から、ハンブルグでは2月16日から2月21日までの売上がないように見えます。  ファーストパーティデータの中には、これを調査するために利用できるものは他にあまりありませんが、何か大きなことがここで起こっていたはずです。
@@ -222,7 +218,6 @@ ORDER BY dw.date_valid_std DESC;
 ### ステップ5 - 「Next」をクリックする
 
 ## データインサイトの民主化
-Duration: 3
 
 ### 概要
 私たちは、財務アナリストが指摘した売上ゼロの日について、おそらくハリケーン級の強風が原因になっているだろうと判断することができました。
@@ -330,7 +325,6 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 ### ステップ4 - 「Next」をクリックする
 
 ## 売上とマーケットプレイスの気象データからのインサイトの抽出
-Duration: 1
 
 ### 概要
 キッチンカーが営業している全都市の売上と気象データを利用できるようになったところで、次は、私たちが財務アナリストのインサイトを得るまでの時間を短縮した方法に目を向けてみましょう。
@@ -368,7 +362,6 @@ ORDER BY date DESC;
 ### ステップ2 - 「Next」をクリックする
 
 ## まとめと次のステップ
-Duration: 1
 
 ### まとめ
 すばらしい出来です！これで、Tasty Bytes - ゼロからのSnowflake - コラボレーションクイックスタートが無事完了しました。

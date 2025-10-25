@@ -1,16 +1,15 @@
 author: Jim Warner
 id: build_an_ad_tag_in_python_on_aws
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: A guide to building and running a simple ad tag (in Python) Powered by Snowflake and AWS
-categories: getting-started,app-development,architecture-patterns,solution-examples, marketing
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, AdTech
 
 # Build an Ad Tag in Python on AWS
 
 ## Overview
-Duration: 5
 
 Many Snowflake customers use Snowflake as their centralized platform for their advertising data. In some cases, this can come directly through Snowflake, as with [The Trade Desk](https://www.snowflake.com/datasets/the-trade-desk-raw-event-data-stream-reds/). In other cases, though, it might be easiest to place a tag in the media, and ingest that data into Snowflake.
 
@@ -45,7 +44,6 @@ After completing this guide, you will have built, tested, and deployed an Ad Tag
 - Ad Tag by Snowflake
 
 ## Downloading the Code
-Duration: 3
 
 The code used in this guide is hosted in github. You can download the code as a ZIP from [GitHub](https://github.com/Snowflake-Labs/sf-samples) or use the following git command to clone the repository.
 
@@ -86,7 +84,6 @@ def log_request_and_return():
 The tag reads data from the HTTP request, serializes the data as JSON, and sends it to Kinesis Firehose. The tag itself returns no payload and uses 204 no content, because the ad tag just needs information about the ad impression, and need not waste bytes across the wire sending a response.
 
 ## Setting up Snowflake and AWS
-Duration: 3
 
 The setup.sql file contains the SQL statements used in this section.
 
@@ -150,7 +147,6 @@ Then you will take this ARN to S3 to set up notifications when new files arrive 
 Now you are ready to run your tag code.
 
 ## Configuring the Application
-Duration: 3
 
 Copy the serverless-template.yml to serverless.yml. Update the serverless.yml to name your service by replacing <NAME_OF_YOUR_SERVICE> and set the name of your Kinesis Firehose stream by replacing <FIREHOSE_STREAM_NAME>.
 
@@ -161,7 +157,6 @@ aws configure get region
 ```
 
 ## Configuring, Packaging, and Testing
-Duration: 5
 
 Serverless login will open a browser to authenticate the serverless tool. When running serverless, it will ask you what org to add it to. You can choose the default or any org you have setup in serverless.com. You can also keep the original snowflake-python-api name for the application or give it a new name. When asked to deploy the application, choose No.
 
@@ -200,7 +195,6 @@ If these endpoints are not working and you are on macOS, make sure [port 5000 is
 The curl commands will not return any data because we used 204 no content as the HTTP response. You can also open these uris in a browser if that's preferred.
 
 ## Deploying, Verifying and Monitoring the tag
-Duration: 6
 
 ### Deploying to AWS
 
@@ -256,7 +250,6 @@ The serverless console allows you to easily view requests to the API as well as 
 If you are more familiar with the AWS Console this same information is available in Cloudwatch Metrics and Logs.
 
 ## Cleanup
-Duration: 1
 
 If you are done with this exercise you can remove all aws resources by having Serverless Framework cleanup.
 
@@ -265,7 +258,6 @@ serverless remove
 ```
 
 ## Conclusion
-Duration: 1
 
 You've successfully built, tested, and deployed an ad tag on AWS Powered by Snowflake. The serverless stack from AWS is a great way to quickly and easily build an ad tag that can scale to any volume.
 

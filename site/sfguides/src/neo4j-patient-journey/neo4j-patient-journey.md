@@ -1,17 +1,16 @@
 author: corydon baylor
 id: finding-similar-patients
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/analytics
+language: en
 summary: How to find communities affected by fraud using louvain in Neo4j Graph Analytics for Snowflake
-categories: getting-started,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter
 
 # Identify Similar Patient Journeys in Healthcare Data with Neo4j Graph Analytics
 
 ## Overview
 
-Duration: 2
 
 ### What Is Neo4j Graph Analytics For Snowflake? 
 
@@ -38,7 +37,6 @@ Neo4j helps organizations find hidden relationships and patterns across billions
 - How to read and write directly from and to your snowflake tables
 
 ## Load The Data
-Duration: 5
 
 Dataset overview : This dataset is modelled to design and analyze patients and different procedures that they undergo using graph analytics. 
 
@@ -53,7 +51,6 @@ Let's name our database `NEO4J_PATIENT_DB`. Using the CSVs found [here](https://
 Follow the steps found [here](https://docs.snowflake.com/en/user-guide/data-load-web-ui) to load in your data.
 
 ## Set Up
-Duration: 5
 
 ### Import The Notebook
 
@@ -113,7 +110,6 @@ USE ROLE gds_user_role;
 
 ## Clean Our Data
 
-Duration: 5
 
 We need our data to be in a particular format in order to work with Graph Analytics. In general it should be like so:
 
@@ -190,7 +186,6 @@ CREATE OR REPLACE VIEW KidneyPatientProcedure_relationship_vw (sourceNodeId, tar
 ```
 
 ## Visualize Your Graph (Experimental)
-Duration: 10
 
 At this point, you may want to visualize your graph to get a better understanding of how everything fits together. Before we do that, we will need to create a subset of our graph to make the visualization more managable.
 
@@ -255,7 +250,6 @@ components.html(
 
 ## Find Similar Patients
 
-Duration: 10
 
 Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run louvain to determine communities within our data. Louvain identifies communities by grouping together nodes that have more connections to each other than to nodes outside the group.
 
@@ -370,7 +364,6 @@ select * from neo4j_patient_db.public.patient_community
 
 ##  Conclusions And Resources
 
-Duration: 2
 
 In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics. 
 

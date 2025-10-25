@@ -1,16 +1,15 @@
 author: Michael Meyer
 id: getting_started_with_alation
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/platform
+language: en
 summary: This guide is used to help with the installation of the Alation Data Intelligence Platform. The walk-through consists of being able to find & trust data in your organization, how to actively govern data, and how Alation can help with when migrating data to Snowflake.
-categories: partner-integrations, marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Catalog, Data Intelligence, Data Engineering, Data Governance, Alation, Getting Started
 
 # Learn How Alation Powers Data Intelligence on Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Does your organization have data intelligence? Can people easily find, understand, and trust data? If not, you’ll want to join this lab to learn how Alation ensures people have reliable and trustworthy data to make confident, data-driven decisions.
 
@@ -32,7 +31,6 @@ During the lab, you’ll kickstart your 14-day free trial of Alation — to whic
 
 <!-- ------------------------ -->
 ## Getting Your Snowflake Trial Account (Optional)
-Duration: 3
 
 - To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_cta=quickstarts_) and fill out the form before clicking Continue. You'll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click: ``` Get Started ```
 
@@ -40,7 +38,6 @@ Duration: 3
 
 <!-- ------------------------ -->
 ## Getting your Alation Trial 
-Duration: 3
 **1. Access Partner Connect from your Snowflake trial account.**
 
 ![Step1](./assets/Section3-AlationTrial-Screen1.png)
@@ -87,7 +84,6 @@ Duration: 3
 
 <!-- ------------------------ -->
 ## Accessing the Lab
-Duration: 2
 
 In this Alation Data Intelligence Platform lab, you can expect to see how the platform helps to solve problems for roles ranging from business analysts to data engineers. Each section will have discussion points along with exercises to help reinforce each topic.
 
@@ -110,7 +106,6 @@ Let's get started with Chapter 01. Establishing a Governance Framework. Please c
 ![VHOL-Screen2](./assets/Section4-Access-Screen2.png)
 
 ## Establishing a Governance Framework
-Duration: 5
 
 **Overview**
 
@@ -130,7 +125,6 @@ To continue to the next section, click on the link in the highlighted box at the
 
 <!-- ------------------------ -->
 ## Identifying Policies
-Duration: 10
 
 **Overview**
 
@@ -191,7 +185,6 @@ Now it is time to move on to Search and Discovery!
 
 <!-- ------------------------ -->
 ## Search & Discovery
-Duration: 10
 
 **Overview**
 
@@ -260,7 +253,6 @@ Now it is time to move on to Compose, Alation's SQL editor!
 ![VHOL-Screen20](./assets/Section7-Search-screen7.png)
 <!-- ------------------------ -->
 ## Compose 
-Duration: 10
 
 **Overview**
 
@@ -328,7 +320,6 @@ Now it is time to move onto Data Quality!
 ![VHOL-Screen26](./assets/Section8-Compose-Screen6.png)
 <!-- ------------------------ -->
 ## Data Quality
-Duration: 5
 
 **Overview**
 
@@ -415,7 +406,6 @@ Time to wrap this up with a quick Summary!
 
 <!-- ------------------------ -->
 ## Conclusion And Resources 
-Duration: 3
 
 You did it! In this short period, you have seen how Alation and Snowflake work together bringing the pillars of Horizon to life for data governance and data quality. Whether your working on data mondernization or AI readiness, Snowflake and Alation are the perfect combination.
 

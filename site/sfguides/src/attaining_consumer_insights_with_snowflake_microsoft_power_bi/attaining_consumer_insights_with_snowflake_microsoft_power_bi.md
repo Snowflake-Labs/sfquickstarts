@@ -1,17 +1,16 @@
 summary: In this lab, you’ll learn how to access all relevant data from a single source and turn data into insights through the Microsoft PowerBI integration.
 id: attaining_consumer_insights_with_snowflake_and_microsoft_power_bi
-categories: partner-integrations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence
+language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering
 
 
 # Attaining Consumer Insights with Snowflake and Microsoft Power BI
 
 ## Overview
 
-Duration: 1.5
 
 In this lab, you’ll learn how to access all relevant data from a single source and turn data into insights through the Microsoft PowerBI integration:
 
@@ -71,7 +70,6 @@ Resize your browser windows so you can view this lab guide and your web browser 
 
 ## The Snowflake User Interface
 
-Duration: 8
 
 > aside negative
 > 
@@ -145,7 +143,6 @@ In a real-world environment, you would use different roles for the tasks in this
 
 ## Migrating Lab Data to Azure
 
-Duration: 15
 
 This module will walk you through the steps to:
 

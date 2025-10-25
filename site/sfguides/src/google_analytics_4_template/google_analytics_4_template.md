@@ -1,11 +1,11 @@
 author: obashaw
 id: google_analytics_4_template_setup
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This QuickStart provides instructions on how to set up Sigma's Google Analytics 4 template.
-categories: partners,featured,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/sigmacomputing/sigmaquickstarts/issues
-tags: Getting Started, Partners
 lastUpdated: 2023-09-21
 
 # Getting Started with Google Analytics 4 (GA4) Using Snowflake and Sigma
@@ -49,7 +49,6 @@ How to deploy Sigma's **Google Analytics 4** template.
 <!-- END OF OVERVIEW -->
 
 ## Preparing your Google Analytics and GCP accounts
-Duration: 20
 
 Before configuring the Snowflake Connector for Google Analytics Raw Data (GARD), you will need to perform some one-time setup in your Google account.  This process requires access to both Google Analytics and Google Cloud Platform (GCP).  
 
@@ -65,7 +64,6 @@ For a detailed step-by-step process, we refer to Snowflake's documentation on [P
 <!-- END OF SECTION-->
 
 ## Install and configure Snowflake's Google Analytics Raw Data Connector
-Duration: 10
 
 Once your Google Analytics data is in BigQuery, it's time to install the GARD Connector. To do that, find the [Snowflake Connector for Google Analytics Raw Data](https://app.snowflake.com/marketplace/listing/GZSTZTP0KKC/snowflake-snowflake-connector-for-google-analytics-raw-data) listing on the Snowflake Marketplace.
 
@@ -80,7 +78,6 @@ Now the GA4 raw data will sync into your Snowflake account at the desired cadenc
 <!-- END OF SECTION-->
 
 ## Transforming the Raw GA4 Data
-Duration: 5
 
 The Google Analytics data that the Snowflake Connector loads into your account is raw events data.  Each row represents a unique event, but that data is wrapped in nested JSON.
 
@@ -593,7 +590,6 @@ Once you've set this value, you can run the entire script and verify that you ca
 <!-- END OF SECTION-->
 
 ## Deploying the template
-Duration: 5
 
 Once you have created the `events` table, go to Sigma.
 
@@ -624,7 +620,6 @@ For example:
 <!-- END OF SECTION-->
 
 ## Conclusion and Resources
-Duration: 5
 
 ### What You Learned
 In this QuickStart we created a table called `events` with analytics-ready GA4 data and launched Sigma's `Google Analytics 4` template.

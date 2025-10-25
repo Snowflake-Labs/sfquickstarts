@@ -1,18 +1,16 @@
 author: Oleksii Bielov
 id: geo-for-machine-learning
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
+language: en
 summary: Cortex, Geospatial and Streamlit features for Machine Learning use cases 
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Analytics, H3, Machine Learning.
-tags: Geospatial, Analytics, H3, Machine Learning.
 
 # Geospatial Analytics, AI and ML using Snowflake
 <!-- ----------------------------------------- -->
 ## Overview 
 
-Duration: 6
 
 Snowflake offers a rich toolkit for predictive analytics with a geospatial component. It includes two data types and specialized functions for transformation, prediction, and visualization. This guide is divided into multiple labs, each covering a separate use case that showcases different features for a real-world scenario.
 
@@ -52,7 +50,6 @@ When you complete this quickstart, you will have gained practical experience in 
 
 ## Setup your Account
 
-Duration: 10
 
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
 
@@ -100,7 +97,6 @@ ALTER SESSION SET GEOGRAPHY_OUTPUT_FORMAT='WKT';
 
 ## Geospatial 101
 
-Duration: 30
 
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
@@ -813,7 +809,6 @@ You are now ready to explore the larger world of Snowflake geospatial support an
 
 ## Geocoding and Reverse Geocoding
 
-Duration: 40
 
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
@@ -1187,7 +1182,6 @@ There is a high chance that datasets focused on particular counties have richer 
 
 ## Forecasting time series on a map
 
-Duration: 40
 
 > aside negative
 >  Before starting with this lab, complete preparation steps from `Setup your account` page.
@@ -1680,7 +1674,6 @@ You have information about public and school holidays and sports events among ou
 
 ## Customer Reviews Sentiment Analysis
 
-Duration: 40
 
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
@@ -2043,7 +2036,6 @@ You can also analyze what areas are getting higher scores for each of the catego
 
 ## Processing unstructured geospatial data
 
-Duration: 40
 
 > aside negative
 >  Before starting with this lab, complete the preparation steps from `Setup your account` page.
@@ -2976,7 +2968,6 @@ In this lab, you have learned how to load geospatial data from unstructured form
 
 ## Creating Interactive Maps with Kepler.gl
 
-Duration: 30
 
 In this Lab you will learn how to create interactive maps directly within Snowflake using [Kepler.gl](https://kepler.gl), powered by [Dekart.xyz](https://dekart.xyz/docs/snowflake-snowpark/about/). You will use Dekart.XYZ app and use public datasets from Marketplace to visualize UK highways with color-coded density of nearby EV charging stations. 
 
@@ -3138,7 +3129,6 @@ In this Lab, you created an interactive, real-time map within Snowflake, using D
 
 ## Conclusion And Resources
 
-Duration: 4
 
 Congratulations! You've successfully performed data analytics, data engineering and data science tasks for various use cases.
 Congratulations! You've successfully performed data analytics, data engineering and data science tasks for various use cases.

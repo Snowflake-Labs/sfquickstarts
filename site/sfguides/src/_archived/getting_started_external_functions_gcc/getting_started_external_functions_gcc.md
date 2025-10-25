@@ -1,9 +1,9 @@
 summary: Getting Started With External Functions Using the Google Cloud Console
 id: getting_started_external_functions_gcc
-categories: getting-started,partner-integrations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 status: Archived
 Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, SQL, Data Engineering, GCC, External Functions
 
 # Getting Started With External Functions Using the Google Cloud Console
 
@@ -11,7 +11,6 @@ tags: Getting Started, SQL, Data Engineering, GCC, External Functions
 
 ## Overview
 
-Duration: 1
 
 This guide provides detailed instructions for using the Google Cloud Console user interface to create an external function hosted on GCP (Google Cloud Platform). You can use this guide either to create the sample external function we'll use or as a guide to create your own external function.
 
@@ -44,7 +43,6 @@ Positive
 
 ## Prepare the Tracking Worksheet
 
-Duration: 2
 
 As you progress through this guide, you'll have to insert your own specific values to move on. To keep track of all the information you'll, we recommend you use this worksheet with fields for each of the required values:
 
@@ -89,7 +87,6 @@ Now that you have this worksheet by your side, we can begin!
 
 ## Create the Google Cloud Function
 
-Duration: 5
 
 First, you need to create a Google Cloud function. The easiest way to do so is to use Google's [Cloud Console Quickstart](https://cloud.google.com/functions/docs/quickstarts) guide found in their documentation.
 
@@ -162,7 +159,6 @@ Then click **Deploy** to finalize the creation. Now let's test the function out.
 
 ## Test the Google Cloud Function
 
-Duration: 2
 
 After you finish creating the Google Cloud Function, use the **Testing** tab in the console to call the function to make sure that it works as expected. You can also access this tab by clicking the three dots for the function and selecting **Test function**.
 
@@ -200,7 +196,6 @@ If the test succeeded, congratulations! You now have a Google Cloud Function tha
 
 ## Create an API Definition
 
-Duration: 5
 
 Snowflake does not send data (HTTP POST requests) directly to a remote service. Instead, Snowflake sends the data to a proxy service that relays the data from Snowflake to the remote service (i.e., GCP Cloud Function) and back again.
 
@@ -306,7 +301,6 @@ Once you've made all the changes, be sure to save the configuration file. Then, 
 
 ## Create an API Gateway
 
-Duration: 10
 
 Three steps together make up creating an API Gateway. Let's walk you through them now.
 
@@ -375,7 +369,6 @@ Click on the **GATEWAYS** tab; You'll want to copy the **Gateway URL** to the â€
 
 ## Create the API Integration
 
-Duration: 3
 
 Now let's go over how to create an API integration object in Snowflake to work with your proxy service (i.e., Google Cloud API Gateway).
 
@@ -425,7 +418,6 @@ Now we have everything we need to create the external function!
 
 ## Create the External Function
 
-Duration: 3
 
 Now it's time to discuss how to create an external function object in Snowflake. This object stores information about the remote service, such as the parameters that the remote service accepts.
 
@@ -472,7 +464,6 @@ You should now be able to call your external function. Let's go over how to do t
 
 ## Calling the External Function
 
-Duration: 1
 
 Now it's finally time to call the external function!
 
@@ -502,7 +493,6 @@ Great! You've successfully created and called an external function for GCP!
 
 ## Conclusion & Next Steps
 
-Duration: 1
 
 In the previous steps, you created a Google Cloud Function that can be called by anyone who has the correct Google Cloud API Gateway endpoint.
 

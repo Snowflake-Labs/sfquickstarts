@@ -1,16 +1,15 @@
 author: Hanbing Yan and Rahul Reddy
 id: snowpark_python_top_tips_for_optimal_performance
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/healthcare-and-life-sciences, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
+language: en
 summary: Snowpark Python: Key Tips for Optimal Performance
-categories: Data-Engineering
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Best Practices, Snowpark, Best Practices
 
 # Snowpark Python: Top Tips for Optimal Performance
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 This Quickstart guide contains key tips for optimal performance when using Snowpark Python.  The guide is broken up into multiple labs, each covering a key concept that can improve performance and/or efficiency while running workloads in Snowpark.  
 
@@ -37,7 +36,6 @@ In this quickstart, you will learn how to make optimized decisions when using Sn
 
 
 ## Setup
-Duration: 5
 ### Step 1: Cone Github Code
 In your preferred local directory, clone the code repository by running the below command in Mac terminal or Windows Shell.
 ```   
@@ -66,7 +64,6 @@ While importing,for notebook location:
  - Specify the default database as `SNOWPARK_BEST_PRACTICES_LABS` and default schema as `PUBLIC`. This is where notebooks will be stored, you can also specific any database and schema that your role has access to.
 
 ## Lab 1 (Vectorised UDFs) - Overview
-Duration: 2
 
 ### Lab Summary
 
@@ -84,7 +81,6 @@ In this notebook, we will do the following:
  - We will execute 4 different use-cases, namely, Numerical Computation, String Manipulation, Regex Masking, and Timestamp Manipulation. Please note, these are hypothetical use-cases but are commonly found when working with data in Snowflake.
 
 ## Lab 1 (Vectorised UDFs) - Execution
-Duration: 20
 
 ### Prerequisites
 - Your snowflake user needs to have access to database SNOWFLAKE_SAMPLE_DATA. For instructions to import SNOWFLAKE_SAMPLE_DATA, please click [here](https://docs.snowflake.com/en/user-guide/sample-data-using).
@@ -184,7 +180,6 @@ It is important to note:
 > If you did not complete all test cases in the notebook, please ensure you cleaned up the environment by executing the final code block so that all other labs will function properly
 
 ## Lab 2 (Vectorised UDTFs) - Overview
-Duration: 2
 
 ### Lab Summary
 
@@ -215,7 +210,6 @@ In this lab, we will do the following:
 
 
 ## Lab 2 (Vectorised UDTFs) - Execution
-Duration: 20
 
 ### Prerequisites
 - Your snowflake user needs to be granted to a role have write access to database SNOWFLAKE_SAMPLE_DATA. For instructions to import SNOWFLAKE_SAMPLE_DATA, please click [here](https://docs.snowflake.com/en/user-guide/sample-data-using).
@@ -315,7 +309,6 @@ The metrics we've gathered provide comprehensive insights into the performance o
 
 
 ## Lab 3 (Cachetools) - Overview
-Duration: 3
 
 ### Lab Summary
 
@@ -346,7 +339,6 @@ To analyze this data in Snowflake Snowpark Python, we have created a Python User
 Lately as the number of transactions are growing we are seeing performance degradation of our select queries which is using the UDF to fetch the required information from the pickle file. We need to look for ways to improve the performance of the Python UDF that we have created.
 
 ## Lab 3 (Cachetools) - Execution
-Duration: 5
 
 ### What You'll Do
 
@@ -369,7 +361,6 @@ Based on the our testing, we have identified that the total duration for the que
 It is important to understand that the UDF executes code from top-to-bottom for every row/batch (if vectorised). This also includes any code that loads an artifact from disk, as in this case. So, if you have 1000 batches, without cachetools you will load the artifact 1000 times. But, with cachetools, you only load it once per Python process. This is also dependent on the warehouse size and the total nodes underneath.
 
 ## Lab 4 (Local Testing) - Overview and Setup
-Duration: 5
 
 ### Overview
 The lab provides a local testing framework that allows users to leverage their compute resources from local machine to perform basic DE/DS tasks, instead of using Snowflake's built-in Virtual Warehouse. It's a great approach for users to save compute costs during development and testing phase.
@@ -446,7 +437,6 @@ Snowpark local testing framework provides developer a convenient way to easily t
 
 
 ## Conclusion and Resources
-Duration: 3
 
 Congratulations! You've successfully performed all the labs illustrating the best practices for getting optimal performance when using Snowpark Python.  You're now ready to implement these concepts in your own projects.
 

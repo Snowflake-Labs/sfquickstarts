@@ -1,16 +1,15 @@
 author: Rishu Saxena
 id: getting_started_with_feast_snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 summary: This is a guide to assist users to setup Feast feature store with Snowflake for both online and offline feature stores.
-categories: getting-started,data-science-&-ml
 environments: web
 status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Getting Started with Snowpark for Python and Feast
 <!-- ------------------------ -->
 ## Overview
-Duration: 6
 
 In this guide, we'll be walking you through how to setup the integration between [Feast](https://docs.feast.dev/) and Snowflake to use Snowflake as the batch engine to perform push-down processing of data to create offline feature store. We will also be using Snowflake as an online feature store, however, configuration of Feast could be updated to easily use any Feast supported database for online feature serving. 
 
@@ -58,7 +57,6 @@ You will build an end-to-end data science workflow leveraging Snowpark for Pytho
 
 <!-- ------------------------ -->
 ## Use-Case: Predicting Customer Churn
-Duration: 2
 
 You are part of a team of data engineers and data scientists at a Telecom company that has been tasked to reduce customer churn using a machine learning based solution. 
 
@@ -72,7 +70,6 @@ To streamline your path to production, we will learn how to bring trained models
 
 <!-- ------------------------ -->
 ## Setup - Snowpark Python
-Duration: 5
 
 Let's set up the Python environment necessary to run this quickstart:
 
@@ -112,7 +109,6 @@ Please refer to the Snowpark documentation to solve this issue:
 
 <!-- ------------------------ -->
 ## Load Data Using Snowpark Python Client API
-Duration: 10
 
 **Persona**: DBA/Platform Administrator/Data Engineer
 
@@ -126,7 +122,6 @@ Open up the [`01-Load-Data-with-Snowpark`](https://github.com/Snowflake-Labs/sfg
 
 <!-- ------------------------ -->
 ## Setup - Feast on Snowflake
-Duration: 20
 
 **Persona**: ML Engineer/Data Scientist 
 
@@ -142,7 +137,6 @@ Open up the [`02-Install-and-Setup-Feast-Feature-Store`](https://github.com/Snow
 
 <!-- ------------------------ -->
 ## Build and Deploy ML Model using Snowpark Python and Feast
-Duration: 15
 
 **Persona**: Data Scientist/ML Engineer
 
@@ -158,7 +152,6 @@ Open up the [`03-Snowpark-UDF-Deployment`](https://github.com/Snowflake-Labs/sfg
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 Through this Quickstart we were able to experience how Feast could be setup to utilise Snowflake as processing engine to create offline as well as offline feature stores. You experienced push down processing for the generation of offline and online features. This is particularly useful when you are dealing with very large datasets. Here’s what you were able to complete:
 

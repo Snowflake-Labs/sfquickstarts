@@ -1,17 +1,16 @@
 author: Vinit Patel
 id: getting-started-with-entity-resolution-retail-product-classification-for-aggregated-insights
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This application provides a centralized, AI-driven approach to match products across retailer and e-commerce catalogs to aggregate data, with the potential to enable competitve price tracking, enhanced supply chain management and much, much more.
-categories: Getting-Started, Cortex
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: GenAI, Data Engineering, Snowpark, Snowflake Cortex
 # Getting Started with Entity Resolution: Retail Product Classification for Aggregated Insights
 <!-- --------------------------->
 ## Overview
 ![banner](assets/entity_res_banner.png)
 
-**Duration: 3 minutes**
 Retailers and e-commerce platforms often face challenges in aggregating data about their products, which limits them in various aspects such as supply chain management, competitive pricing, demand forecasting, inventory optimization and much, much more. The root of this issue can be attributed to the lack of standardized UPCs or product descriptions across these various retailers and e-commerce platforms, resulting in a complex system that creates a need for companies to spend hundreds of thousands on DBT jobs or various other approaches to harmonizing their product data. 
 
 Addressing these challenges with a centralized, AI-driven approach can empower these retailers to gain actionable insights off their product perforamnce based on the data available.
@@ -44,7 +43,6 @@ This guide covers:
 
 <!-- --------------------------->
 ## Architecture
-**Duration: 3 minutes**
 
 The architecture of the Entity Resolution solution is designed to generate and validate product matches. 
 
@@ -66,7 +64,6 @@ This architecture integrates various Snowflake features to create a robust end-t
 
 <!-- --------------------------->
 ## Data from Marketplace
-**Duration: 5 minutes**
 The first step of this quickstart is to get the data we'll be using from Snowflake Marketplace: 
 - On the left hand side of Snowsight, navigate to Data Products, then Marketplace. 
 - Search for Similarweb Ltd, and click on their provider page.
@@ -83,7 +80,6 @@ A SQL worksheet will be added to your account; feel free to explore the data we'
 <!-- --------------------------->
 ## Snowflake Setup
 
-**Duration: 10 minutes**
 To get started using Snowflake Notebooks, first login to Snowsight. In the top-left corner, click "+ Create" to create a new Worksheet, and choose "SQL Worksheet".
 <img src="assets/create_worksheet.png"/>
 <br></br>
@@ -104,7 +100,6 @@ For the Cortex Analyst we will use later to power our chatbot, the semantic mode
 
 <!-- --------------------------->
 ## Access Notebook
-**Duration: 10 minutes**
 
 Please download the [notebook](https://github.com/Snowflake-Labs/sfguide-entity-resolution-for-product-classification/tree/main/notebooks) from the repo.
 
@@ -126,7 +121,6 @@ Please note the notebook will take about 10 minutes to run!
 
 <!-- --------------------------->
 ## Run Streamlit Application
-**Duration: 20 minutes**
 
 Similarly to the notebook, we will be creating the streamlit application **directly on Snowsight**!
 
@@ -163,7 +157,6 @@ Since our data from Similarweb Ltd is based around estimated product views and p
 
 <!-- --------------------------->
 ## Conclusion And Resources
-**Duration: 1 minute**
 In this guide, you learned how to use Snowflake's Notebooks and Cortex AI to harmonize retailer data, finding shared product offerings and aggregating their performane data. You also learned how to use Streamlit to create an intuitive application for interacting with the analyzed data.
 ### What You Learned
 - How to use Snowflake Notebooks and Snowpark Python for data processing

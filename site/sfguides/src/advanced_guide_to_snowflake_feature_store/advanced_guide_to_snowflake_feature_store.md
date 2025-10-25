@@ -1,16 +1,15 @@
 id: advanced_guide_to_snowflake_feature_store
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+language: en
 summary: Learn how to get started and use Snowflake Feature Store to manage features and deploy models into production
-categories: data-science-&-ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Advanced Guide, Data Science, Data Engineering, Machine Learning, data-science-&-ml,  Snowpark, Twitter 
 authors: Simon Field
 
 # Advanced Guide to Snowflake Feature Store
 <!-- --------------------------------------- -->
 ## Overview 
-Duration: 5
 
 This advanced guide walks through an end-to-end customer segmentation machine-learning use-case using Snowflake Feature Store and Model Registry.  By completing this guide, you will be able to go from ingesting raw data through to implementing a production inference data-pipeline with Snowflake ML to maintain customer segments.
 
@@ -104,7 +103,6 @@ Using these features, you can build and operationalize a complete ML workflow, t
 
 ### Get Started
 
-Duration: 8
 
 This section covers cloning of the GitHub repository and setting up your Snowpark for Python environment.
 
@@ -220,7 +218,6 @@ session = Session.builder.configs(connection_parameters).create()
 <!-- ------------------------ -->
 ## Setup Database Environment
 
-Duration: 20
 
 We will now need to setup the Database to mimic development and production databases environments, where new data is being regularly ingested to maintain the latest data from source systems.  Snowflakes Feature Store automates the maintenance of the feature-engineering pipelines from source tables in Snowflake which we want to observe in this Guide.
 
@@ -284,7 +281,6 @@ You can see that the Tasks are set to execute every minute if new data is availa
 
 <!-- ------------------------ -->
 ## Feature Engineering & Model Training
-Duration: 30
 
 ### Key Snowfake Feature Store API Concepts
 In the Snowflake Feature Store, as typical of other Feature Store solutions:
@@ -408,7 +404,6 @@ This ends the model-development phase.  From this point on, we assume that the s
 
 <!-- ------------------------ -->
 ## Model Operationalization in Production
-Duration: 30
 
 We will use a new Notebook ([Step03_TPCXAI_UC01_Operations.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store/tree/main/Step03_TPCXAI_UC01_Operations.ipynb)) for the Model Operationalisation stage.  This may be created by a different person/role in the organisation. For example a data or ML engineer.  Open the Notebook and adjust the Notebook connection method if needed for your environment.
 
@@ -480,7 +475,6 @@ We can monitor how CUSTOMERS behaviour (segment) changes over time and take targ
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 5
 
 Once you have completed this Guide and no longer need the databases and objects created by it you will want to clean up.  We provide a Notebook that does this. [Step04_TPCXAI_UC01_Cleanup.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-feature-store/tree/main/Step04_TPCXAI_UC01_Cleanup.ipynb)
 
@@ -489,7 +483,6 @@ If you want to keep the data, but shut down the Tasks and Dynamic Tables to mini
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 3
 
 Congratulations! You've successfully performed Feature Engineering using Snowpark, made use of Snowflake Feature Store to publish and maintain features in a development and production environment. You've learnt how you can deploy a model from the Snowflake Model Registry and combine it with a feature-engineering pipeline in Feature Store to operationalise an incremental inference process in Snowflake ML.
 

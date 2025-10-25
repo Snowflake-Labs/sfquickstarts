@@ -1,16 +1,15 @@
 author: Luke Ambrosetti (special thanks: Brian Hess, Brad Culberson)
 id: snowflake_personalization_api
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: A guide to building and running a custom point-lookup API Powered by Snowflake and Python/Flask
-categories: getting-started,app-development,architecture-patterns,marketing,solution-examples
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Personalization, API, Marketing
 
 # Build a Real-Time Personalization API with Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 For real-time personalization, modern mobile+web applications and marketing technology platforms often want to retrieve customer profile, product/inventory, or location data through http APIs in real-time. This tutorial will go through how to build, deploy, host, and call a custom API for these point-lookups in real-time, all powered by Snowflake.
 
@@ -40,7 +39,6 @@ The dataset for this guide is the [TPC-H](https://docs.snowflake.com/en/user-gui
 
 <!-- ------------------------ -->
 ## Setting up a Warehouse
-Duration: 1
 
 The API needs a warehouse to query the data to return to the caller. To create the database and warehouse, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:
 
@@ -50,7 +48,6 @@ CREATE WAREHOUSE DATA_API_WH WITH WAREHOUSE_SIZE='xsmall';
 ```
 
 ### Create the Application Role in Snowflake
-Duration: 1
 
 The application will run as a new role with minimal priviledges. To create the role, connect to Snowflake and run the following SQL statements to create the role and grant it access to the data needed for the application.
 
@@ -66,7 +63,6 @@ GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
 
 <!-- ------------------------ -->
 ## Setting up your Development Environment
-Duration: 3
 
 The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/sfc-gh-lambrosetti/snow_personalization_api).
 
@@ -135,7 +131,6 @@ While this is only a single endpoint, you can easily add other endpoints as well
 
 <!-- ------------------------ -->
 ## Building the Application Container
-Duration: 1
 
 To create the application container, we will leverage docker. The Dockerfile is based on python 3.8 and installs the required libraries needed for the application as well as the code. To create the docker container, run this command in the terminal provided by **Codespaces**:
 ```bash
@@ -144,7 +139,6 @@ docker build -t papi .
 
 <!-- ------------------------ -->
 ## Creating the Image Registry and Hybrid Table
-Duration: 1
 
  To create the image registry and the database which contains it, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:
 
@@ -217,7 +211,6 @@ Note the `repository_url` in the response as that will be needed in the next ste
 
 <!-- ------------------------ -->
 ## Pushing the Container to the Repository
-Duration: 1
 
 Run the following command in the terminal, replacing the `{repository_url}` with your repository in the previous step, in **Codespaces** to login to the container repository. You will be prompted for your Snowflake username and password to login to your repository.
 
@@ -229,7 +222,6 @@ docker push {repository_url}/papi
 
 <!-- ------------------------ -->
 ## Creating the Compute Pool
-Duration: 1
 
  To create the compute pool to run the application, connect to Snowflake and run the following command in the Snowflake console or using SnowSQL:
 
@@ -249,7 +241,6 @@ GRANT MONITOR ON COMPUTE POOL API TO ROLE DATA_API_ROLE;
 
 <!-- ------------------------ -->
 ## Creating the Application Service
-Duration: 1
 
 To create the service to host the application, connect to Snowflake and run the following command in the Snowflake console or using SnowSQL.
 
@@ -307,7 +298,6 @@ Make note of the ingress_url as that will be needed to test the application. Thi
 
 <!-- ------------------------ -->
 ## Testing the API
-Duration: 1
 
 To verify the API is online, go to the `https://{INGRESS_URL}` in your browser. You will be asked to authenticate to Snowflake and be given the root content: 
 
@@ -326,7 +316,6 @@ When you hit the `Submit` button, the API endpoint is called and the data is ret
 
 <!-- ------------------------ -->
 ## Calling the API programmatically
-Duration: 3
 
 ### Create the user and generate the Snowflake Token
 
@@ -399,7 +388,6 @@ When testing individual calls, remember that performance might be slightly highe
 
 <!-- ------------------------ -->
 ## (Optional) Test performance with JMeter locally
-Duration: 8
 
 Disclaimer: This performance testing is supposed to be directional in nature - don't think of it as "true" performance testing.
 
@@ -427,7 +415,6 @@ A quick note - while we load an in-memory cache as part of the app, this test se
 
 <!-- ------------------------ -->
 ## Stopping the API
-Duration: 1
 
 To stop the API, you can suspend the service. From the Snowflake console or SnowSQL, run:
 
@@ -438,7 +425,6 @@ ALTER SERVICE API.PUBLIC.API SUSPEND;
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as `ACCOUNTADMIN` run:
 ```SQL
@@ -453,7 +439,6 @@ DROP WAREHOUSE IF EXISTS DATA_API_WH;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 
 ### Conclusion
 

@@ -1,17 +1,16 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_geospatial
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence
+language: en
 summary: Tasty Bytes - Zero to Snowflake - Geospatial Quickstart
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Tasty Bytes, Zero to Snowflake, Geospatial
 
 # Tasty Bytes - Zero to Snowflake - Geospatial
 <!-- ------------------------ -->
 
 ## Geospatial Analysis in Snowflake
-Duration: 1
 <img src = "assets/geospatial_header.png">
 
 ###  Overview 
@@ -37,7 +36,6 @@ Within this Quickstart we will conduct in-depth Geospatial analysis leveraging p
 - An Understanding of How to Conduct Geospatial Analysis in Snowflake
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -74,7 +72,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 
 ## Acquiring SafeGraph POI Data from the Snowflake Marketplace
-Duration: 1
 
 ### Overview
 Tasty Bytes operates Food Trucks in numerous cities and countries across the globe with each truck having the ability to choose two different selling locations per day.
@@ -133,7 +130,6 @@ Let's get this harmonized with our Sales data in the next section.
 ### Step 3 - Click Next -->
 
 ## Harmonizing and Promoting First and Third Party Data
-Duration: 1
 
 ### Overview
 To make our Geospatial analysis seamless, let's make sure to get SafeGraph POI data included in the `analytics.orders_v` so all of our downstream users can also access it.
@@ -168,7 +164,6 @@ JOIN tb_safegraph.public.frostbyte_tb_safegraph_s cpg
 ### Step 2 - Click Next -->
 
 ## Creating Geograpy Points from Latitude and Longitude
-Duration: 1
 
 ### Overview
 With Point of Interest metrics now readily available from the Snowflake Marketplace without any ETL required, let's start on our Geospatial analysis journey.
@@ -204,7 +199,6 @@ One thing to note here is despite typically hearing Latitude then Longitude this
 ### Step 2 - Click Next -->
 
 ## Calculating Straight Line Distance between Points
-Duration: 1
 
 ### Overview
 Starting with our Geographic Point, we can now begin to dive into some of the powerful Geospatial functions Snowflake offers natively. 
@@ -250,7 +244,6 @@ ORDER BY geography_distance_miles;
 ### Step 2 - Click Next -->
 
 ## Collecting Coordinates, Creating a Bounding Polygon & Finding its Center Point
-Duration: 3
 
 ### Overview
 Now that we understand how to create points, and calculate distance, we will now pile on a large set additional Snowflake Geospatial functionality to further our analysis.
@@ -335,7 +328,6 @@ Once pasted in, please execute the query which will yield a `Statement executed 
 ### Step 4 - Click Next -->
 
 ## Finding Locations Furthest Away from our Top Selling Center Point
-Duration: 2
 
 ### Overview
 As mentioned earlier, our Tasty Bytes Executives are interested in seeing what locations we may want to stop having our Food Trucks visit in their weekly schedules. Thankfully, every step we have taken so far has now enabled us to deliver on this exact request.
@@ -368,7 +360,6 @@ Fantastic work! We have now delivered on the exact as from our Executive Team th
 ### Step 2 - Click Next -->
 
 ## Geospatial Analysis with H3 (Hexagonal Hierarchical Geospatial Indexing System)
-Duration: 2
 
 ### Overview
 H3 is a way of dividing the Earth's surface into hexagonal shapes, organizing them into levels of resolution, and assigning unique codes to each hexagon for easy reference. 
@@ -468,7 +459,6 @@ SELECT H3_GRID_DISTANCE('871fb4671ffffff', '871fb4670ffffff') AS cell_distance;
 ### Step 5 - Click Next -->
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 **Fantastic work!** You have successfully completed the Tasty Bytes - Zero to Snowflake - Geospatial Quickstart. 

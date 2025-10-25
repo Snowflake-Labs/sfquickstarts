@@ -1,16 +1,15 @@
 author: Becky O’Connor
 id: building-geospatial-mult-layer-apps-with-snowflake-and-streamlit
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/applied-analytics
+language: en
 summary: In this hands-on lab, you'll learn how to analyze and transform geospatial data in Snowflake, progressing from visualizing points on a map to building a multi-layer streamlit app.
-categories: Data-Sharing, streamlit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Advanced Analytics, Data Engineering, United kingdom, Geospatial, Ordnance Survey
 
 # Building Geospatial Multi-Layer Apps with Snowflake and Streamlit
 <!-- ------------------------ -->
 ## Overview
-Duration: 10
 
 
 Welcome to the **Building Geospatial Multi-Lay Apps with Snowflake and Streamlit quickstart**.  Today you will learn how to analyse and transform [geospatial](https://www.ordnancesurvey.co.uk/blog/what-is-spatial-data) data in Snowflake.  You will be using **Ordnance Survey** open datasets available on the marketplace as well as the worldwide open overture buildings dataset provided by **CARTO**.
@@ -79,7 +78,6 @@ The Lab consists of three notebooks and two Streamlit applications.
 
 <!-- ------------------------ -->
 ## Initial Setup
-Duration: 2
 
 Open up a new SQL worksheet and run the following commands. To open up a new SQL worksheet, select Projects » Worksheets, then click the blue plus button and select SQL worksheet.
 
@@ -108,7 +106,6 @@ WITH
 
 <!-- ------------------------ -->
 ## Snowflake Marketplace
-Duration: 10
 
 - From the home page Navigate to **Data Products >> Marketplace**
 
@@ -149,7 +146,6 @@ This dataset provides sample building polygons all over the world.
 
 <!-- ------------------------ -->
 ## Notebook Walkthrough
-Duration: 45
 
 Are you ready to start learning about location data in Snowflake?
 
@@ -176,7 +172,6 @@ This tutorial will take you through how you can use location data to perform spa
 
 <!-- ------------------------ -->
 ## The Streamlit Road Network Example
-Duration: 10
 
 This app gives you an example of how you can bring all these datasets together to form a multi layered mapping visual.
 
@@ -212,7 +207,6 @@ Download the following [Logo](https://github.com/Snowflake-Labs/sfguide-building
 
 ## Slopey Roofs - Solar Powering our Buildings
 
-Duration: 10
 
 The following notebook will leverage building data from the UK Nationall Geographic database.  You will combine this with historic solar elevation data in order to determine what solar power could be generated from these buildings.
 
@@ -234,7 +228,6 @@ The following notebook will leverage building data from the UK Nationall Geograp
 
 <!-- ------------------------ -->
 ## Solar Powered Insights
-Duration: 10
 
 
 <img src='assets/image-8.png' width="800">
@@ -274,7 +267,6 @@ You will note that when you **Run Cortex** it leverages the Anthropic LLM which 
 <img src='assets/image-9.png' width="400">
 
 ## Conclusion and Resources
-Duration: 5
 ### Conclusion
 
 Congratulations on completing the **Building Geospatial Multi-Layer Apps with Snowflake and Streamlit** Quickstart! Throughout this session, you've explored how Snowflake can be used to analyze and transform geospatial data, combining multiple datasets to generate valuable insights.  

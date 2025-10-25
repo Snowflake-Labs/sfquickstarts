@@ -1,16 +1,15 @@
 author: Adrian Lee, George Yates
 id: data_engineering_with_apache_airflow
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This guide shows you how to build a Data Pipeline with Apache Airflow that manages DBT model transformations and conducts data analysis with Snowpark, all in a single DAG
-categories: data-engineering,architecture-patterns,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Airflow, Snowpark
 
 # Data Engineering with Apache Airflow, Snowflake, Snowpark, dbt & Cosmos
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 ![architecture](assets/data_engineering_with_apache_airflow_0_overall_architecture.png)
 
@@ -61,7 +60,6 @@ You will need the following things before beginning:
 
 <!-- ------------------------ -->
 ## Set up of environment
-Duration: 2
 
 First, let us create a folder by running the command below
 
@@ -94,7 +92,6 @@ Your tree repository should look like this
 
 <!-- ------------------------ -->
 ## Setting up our dbt Project
-Duration: 6
 
 Now that we have gotten our repo up, it is time to configure and set up our dbt project. 
 
@@ -246,7 +243,6 @@ Now we are done setting up our dbt environment. Your file structure should look 
 
 <!-- ------------------------ -->
 ## Creating our CSV data files in dbt
-Duration: 10
 
 In this section, we will be prepping our sample csv data files alongside the associated sql models. 
 
@@ -292,7 +288,6 @@ Our folder structure should be like as below
 
 <!-- ------------------------ -->
 ## Creating our dbt models in models folder
-Duration: 2
 
 Create 2 folders ```analysis``` and ```transform``` in the models folder. Please follow the sections below for analysis and transform respectively. 
 
@@ -376,7 +371,6 @@ Your file structure should look like the below screenshot. We have now finished 
 
 <!-- ------------------------ -->
 ## Preparing our Airflow Environment
-Duration: 5
 
 Now going back to your Airflow directory, open up the requirements.txt file that the Astro CLI created. Copy and paste the following text block to install the [Cosmos](https://astronomer.github.io/astronomer-cosmos/index.html) and Snowflake libraries for Airflow. Cosmos will be used to turn each dbt model into a task/task group complete with retries, alerting, etc. 
 ```
@@ -396,7 +390,6 @@ RUN python -m venv dbt_venv && source dbt_venv/bin/activate && pip install --no-
 
 <!-- ------------------------ -->
 ## Building Our dbt DAG
-Duration: 5
 
 Now that our Airflow environment is set up, lets create our DAG! Instead of using the conventional DAG definition methods, we'll be using Cosmos' dbtDAG class to create a DAG based on our dbt models. This allows us to turn our dbt projects into Apache Airflow DAGs and Task Groups with a few lines of code. To do so, create a new file in the ```dags``` folder called ```my_cosmos_dag.py``` and copy and paste the following code block into the file. 
 
@@ -452,7 +445,6 @@ After the imports, a ProfileConfig object is created, which is used to define th
 
 <!-- ------------------------ -->
 ## Starting Airflow Environment & Adding Connections
-Duration: 5
 
 Within your Airflow ```dbt_airflow``` directory, enter the below command to start your Airflow environment 
 ```bash
@@ -461,7 +453,6 @@ astro dev start
 
 
 ## Running our docker-compose file for Airflow
-Duration: 5
 
 
 
@@ -656,7 +647,6 @@ After you've done so, you can view your data dashboard by navigating to http://l
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Congratulations! You have created your first Apache Airflow DAG with dbt, Cosmos, Snowflake, and Snowpark! We encourage you to continue with your free trial by loading your own sample or production data and by using some of the more advanced capabilities of Airflow and Snowflake not covered in this lab. 
 

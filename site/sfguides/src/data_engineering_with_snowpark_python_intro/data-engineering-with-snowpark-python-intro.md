@@ -1,17 +1,16 @@
 author: Vino Duraisamy, Kamesh Sampath
 id: data_engineering_with_snowpark_python_intro
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
+language: en
 summary: This guide will provide step-by-step details for building data engineering pipelines with Snowpark Python
-categories: Getting-Started, featured, data-engineering
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Snowpark, Python, Intro
 
 # Intro to Data Engineering with Snowpark Python
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 15
 
 This Quickstart will cover the basics of data engineering with Snowpark for Python. By completing this guide, you will be able to build a data pipeline to process data from different sources, and periodically run the pipeline to update your data tables in Snowflake.
 
@@ -72,7 +71,6 @@ You will need the following things before beginning:
 <!-- ------------------------ -->
 ## Quickstart Setup
 
-Duration: 10
 
 ### Fork the GitHub Repository
 
@@ -121,7 +119,6 @@ During the codespace setup we created an Anaconda environment named `snowflake-d
 <!-- ------------------------ -->
 ## Setup Snowflake Objects
 
-Duration: 10
 
 ### Snowflake Extensions for VS Code
 
@@ -210,7 +207,6 @@ CREATE OR REPLACE STAGE FROSTBYTE_RAW_STAGE
 <!-- ------------------------ -->
 ## Load Weather
 
-Duration: 5
 
 
 During this step we will be "loading" the raw weather data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace.
@@ -269,7 +265,6 @@ You can also view the shared database `FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL
 <!-- ------------------------ -->
 ## Load Location and Order Detail
 
-Duration: 10
 
 During this step we will be "loading" the raw excel files containing location and order details data from an external stage (s3 bucket) to Snowflake using the Dynamic File Access feature. If you would like to peek at the raw excel files, you can check out the `data` folder in the [Git repo](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python-intro/tree/main/data). We use a Python stored procedure to load this data from an S3 bucket into a Snowflake table.
 
@@ -371,7 +366,6 @@ Fantastic. We now have all the raw data needed to build our data pipeline and fu
 
 ## Daily City Metrics Update Sproc
 
-Duration: 10
 
 During this step we will be creating our second Snowpark Python sproc to Snowflake. This sproc will join the `ORDER_DETAIL` table with the `LOCATION` table and `HISTORY_DAY` table to create a final, aggregated table for analysis named `DAILY_CITY_METRICS`.
 
@@ -518,7 +512,6 @@ Again, for more details about the Snowpark Python DataFrame API, please check ou
 
 ## Orchestrate Jobs
 
-Duration: 10
 
 During this step we will be orchestrating our new Snowpark pipelines with Snowflake's native orchestration feature named Tasks. You can create and deploy Snowflake Task objects using SQL as well as Python Task APIs. For the scope of this quickstart, we will use Snowflake Python Task APIs to create and run Tasks.
 
@@ -669,7 +662,6 @@ You should now see all the queries run by your tasks!
 <!-- ------------------------ -->
 ## Teardown
 
-Duration: 2
 
 Once you're finished with the Quickstart and want to clean things up, you can simply run the `steps/08_teardown.sql`. Since this is a SQL script we will be using our native VS Code extension to execute it. So simply open the `steps/08_teardown.sql` script in VS Code and run the whole thing using the "Execute All Statements" button in the upper right corner of the editor window.
 
@@ -677,7 +669,6 @@ Once you're finished with the Quickstart and want to clean things up, you can si
 
 ## Conclusion and Resources
 
-Duration: 2
 
 Congratulations! You have successfully built a data engineering pipeline using Snowpark Python, loaded data from an external stage using Snowflake Dynamic File Access, used data from Snowflake Marketplace and orchestrated the data pipeline using Snowflake Tasks as well.
 

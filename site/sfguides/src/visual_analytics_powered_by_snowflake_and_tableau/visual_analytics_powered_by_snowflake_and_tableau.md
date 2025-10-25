@@ -1,15 +1,14 @@
 author: Chandra Nayak & Madeline Lee
 id: visual_analytics_powered_by_snowflake_and_tableau
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
+language: en
 summary: Visual Analytics Powered by Snowflake and Tableau
-categories: Getting-Started
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Data Collaboration, Date Lake
 
 # Visual Analytics Powered by Snowflake and Tableau
 
-Duration: 60
 
 <!-- ------------------------ -->
 
@@ -44,7 +43,6 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 <!--- ------------------------- -->
 
 ## Snowflake Setup
-Duration: 2
 
 1. Create a Snowflake enterprise trial account 
 2. Login to your Snowflake account
@@ -61,7 +59,6 @@ Duration: 2
 
 ## Manage Semi-Structured Data
 
-Duration: 5
 
 ### Run the scripts in a Snowsight or VSCode 
 
@@ -83,7 +80,6 @@ Duration: 5
 ## DataLake Integration 
 
 ### Create the necessary AWS Configuration 
-Duration: 15 
 
 #### Download the Customer Reviews files to your laptop
 
@@ -271,7 +267,6 @@ select * from frostbyte_tasty_bytes.analytics.product_sentiment limit 10;
 
 ## Connect Tableau to Snowflake
 
-Duration: 20
 
 Navigate to https://online.tableau.com/ and login to Tableau Cloud (Online) using your login credentials.
 

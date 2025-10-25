@@ -1,16 +1,15 @@
 author: Becky O’Connor and Piotr Paczewski
 id: Create-a-Route-Optimisation-and-Vehicle-Route-Plan-Simulator
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: This tutorial leverages Snowflake Container Services, native apps, Geospatial Analytics, Streamlit, Cortex and the Open Route Service to optimize vehicle routes in order to distribute goods to chosen destinations on time.
-categories: Data-Sharing, Cortex, solution-examples, streamlit
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Geospatial, Advanced Analytics, Data Engineering, Native apps, Snowpark Container Services
 
 # Create a Route Optimization and Vehicle Route Plan Simulator
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 ![alt text](assets/intromap.png)
 
@@ -103,7 +102,6 @@ Use External Access Integration with Python Functions to call and retrieve data 
 
 <!-- ------------------------ -->
 ## Option 1 - Native app & SPCS
-Duration: 30
 
 
 ![alt text](assets/image-7.png)
@@ -359,7 +357,6 @@ You will learn how to use these functions after option 2 of the quickstart which
 
 <!-- ------------------------ -->
 ## Option 2 Calling ORS APIs
-Duration: 15
 
 ![alt text](assets/image-19.png)
 
@@ -552,7 +549,6 @@ You will now see the functions below ready to use.
 
 <!-- ------------------------ -->
 ## Snowflake Marketplace
-Duration: 10
 
 Before you try out your functions, you will get a dataset from the marketplace.  This is the Carto Overture dataset which includes an extensive point of interest map across the whole world.  It is also useful for routing simulations.
 -   Navigate to the Snowflake Marketplace - this is under Data Products > Snowflake Marketplace
@@ -570,7 +566,6 @@ Click on the following dataset then press **Get** Do not change the database nam
 
 <!-- ------------------------ -->
 ## Routing functions with AISQL
-Duration: 30
 
 You will now test out all the functions which you have created. You will be using data simulated by **AISQL**.  
 
@@ -625,7 +620,6 @@ Navigate to the notebook and follow the provided instructions.  In order to run 
 ![alt text](assets/image-20.png)
 <!-- ------------------------ -->
 ## Deploy the Streamlit
-Duration:20
 
 Now you can see how all the functions work with AISQL, lets now build a route simulator streamlit application.
 
@@ -659,7 +653,6 @@ COMMENT = '{"origin":"sf_sit-is", "name":"Route Optimization with Open Route Ser
 
 <!-- ------------------------ -->
 ## Run the Streamlit
-Duration: 15
 
 ![alt text](assets/image-9.png)
 
@@ -791,7 +784,6 @@ Within the notebook, you have also created:
 The solution leverages Pydeck to plot points, linestrings and polygons on a map.  The isochrone is the polygon, the routes are linestrings and the places/points of interest are points.  You would have seen how this works in the original notebook. AISQL is useful to quickly generate python code to test the maps. 
 <!-- ------------------------ -->
 ## The Streamlit Code
-Duration: 10
 
 This final Section, gives you some explanation as to how the streamlit code works.
 
@@ -1488,7 +1480,6 @@ The app is confined to a B2B model as we do not have public names and addresses 
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 ### Conclusion
 
 So you will now see that by combining AI, freely accessible points of interests, easy to use geospatial functions, the ability to securely call the open route service and the powers of Streamlit in Snowflake - creating innovative geospatial applications  is entirely possible. 

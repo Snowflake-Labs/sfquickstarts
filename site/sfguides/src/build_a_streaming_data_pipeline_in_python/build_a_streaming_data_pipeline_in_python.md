@@ -1,17 +1,16 @@
 author: Brad Culberson, Keith Gaputis
 id: build_a_streaming_data_pipeline_in_python
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: A guide to using Rowset API, Dynamic Tables, and Streamlit to build a streaming data pipeline in Python
-categories: data-engineering,app-development,streamlit
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Engineering, Data Applications, Snowpark, Python
 
 # Build a Streaming Data Pipeine in Python
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Snowflake is a powerful platform to process streaming data and do near real-time reporting.
 
@@ -49,7 +48,6 @@ Click on the green Code Button, go to the Codespaces tab, and click the green Cr
 
 <!-- ------------------------ -->
 ## Creating the Service User & Role
-Duration: 4
 
 To send data to Snowflake, the client must have a Service User's credentials. We will use key-pair authentication in this guide to authenticate to Snowflake and create a custom role with minimal privileges.
 
@@ -80,7 +78,6 @@ GRANT OPERATE ON WAREHOUSE STREAMING_INGEST TO ROLE STREAMING_INGEST;
 ```
 
 ## Creating the Database and Schema for data
-Duration: 2
 
 This step will create the database and the schema where all the data is landed. This database will also store the notebook which sets up the data pipeline, the streamlit which displays the reports, and all tasks and dynamic tables created for this guide.
 
@@ -100,7 +97,6 @@ GRANT EXECUTE TASK ON ACCOUNT TO ROLE STREAMING_INGEST;
 ```
 
 ## Creating the Tables and Pipes needed for data
-Duration: 2
 
 This step creates the pipes which are needed to accept data from the clients and the tables which store the data from the pipes.
 
@@ -309,7 +305,6 @@ Run the Streamlit to see the visualizations from the data pipeline built in this
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 To fully remove everything you did today you only need to drop some objects in your Snowflake account. From the Snowflake console or SnowSQL, as `ACCOUNTADMIN` run:
 ```SQL
@@ -324,7 +319,6 @@ DROP ROLE IF EXISTS STREAMING_INGEST;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 ### What we covered
 - Creating a table and pipe to receive streaming data

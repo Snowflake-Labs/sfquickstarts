@@ -1,17 +1,16 @@
 author: Swathi Jasti
 id: integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
+language: ko
 summary: Integrating Tasty Bytes Location Recommendations ML model into the React Native Data Application
-categories: Tasty-Bytes, Getting-Started, app-development, Data-Science-&-Ml
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Applications, Data Engineering, API, Data Science, Snowpark, Machine Learning, kr
 
 # React Native 데이터 애플리케이션으로 Tasty Bytes 위치 추천 ML 모델 통합
 <!-- ------------------------ -->
 ## 개요
 
-Duration: 2
 <img src="assets/tasty_bytes_header.png"/>
 
 Snowflake는 ML 모델을 저장 프로시저, 사용자 정의 함수(UDF) 및 사용자 정의 테이블 함수(UDTF)로 배포할 수 있도록 하는 간편한 기능을 통해 데이터 애플리케이션으로 머신러닝 모델을 통합하는 작업을 간소화했습니다. 또한, Snowflake는 RESTful API인 SQL API를 제공하여 배포된 ML 모델을 쿼리할 수 있도록 합니다. 이는 애플리케이션과 ML 모델 간의 원활한 통합을 가능하게 만듭니다.
@@ -46,7 +45,6 @@ Snowflake는 ML 모델을 저장 프로시저, 사용자 정의 함수(UDF) 및 
 <!-- ------------------------ -->
 ## Snowflake에서 데이터 설정
 
-Duration: 3
 
 다음을 위해 Snowflake 웹 인터페이스인 [Snowsight](https://docs.snowflake.com/ko/user-guide/ui-snowsight.html#)를 사용하게 됩니다.
 
@@ -158,7 +156,6 @@ SELECT * FROM frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v;
 <!-- ------------------------ -->
 ## 애플리케이션을 위해 사용자 생성
 
-Duration: 5
 
 강력한 보안 조치를 보장하려면 개인 계정과 분리된 애플리케이션을 위한 전용 사용자 계정을 생성하는 것이 필수적입니다. 이 새로운 계정은 Snowflake를 쿼리하는 데 활용됩니다. 모범 보안 사례에 따라 해당 계정은 키 쌍 인증을 사용하고 Snowflake 환경 내에서 제한된 액세스를 보유하게 됩니다.
 
@@ -217,7 +214,6 @@ GRANT ROLE tasty_bytes_data_ml_app_demo TO USER data_ml_app_demo;
 <!-- ------------------------ -->
 ## Snowflake에서 ML 모델 훈련 및 배포
 
-Duration: 10
 
 ### 개요
 
@@ -427,7 +423,6 @@ GRANT ALL PRIVILEGES ON FUNCTION udf_predict_location_sales_prod(FLOAT,FLOAT,FLO
 <!-- ------------------------ -->
 ## SQL API를 사용하여 ML 모델에서 데이터 가져오기 및 데이터 애플리케이션으로 통합
 
-Duration: 10
 
 실행할 애플리케이션은 React Native에서 작성되었습니다.
 
@@ -460,7 +455,6 @@ SQL API를 사용하여 Snowflake와 인증하기 위해 키 쌍 인증을 사�
 <!-- ------------------------ -->
 ## 정리
 
-Duration: 1
 
 Snowsight Worksheets로 이동하고, 새로운 워크시트를 생성하기 위해 오른쪽 상단 모서리에 있는 ‘+’를 클릭하고, ‘SQL Worksheet’를 선택합니다. 워크시트에 다음 SQL을 붙여넣고 실행하여 Quickstart에서 생성한 Snowflake 객체를 드롭합니다.
 
@@ -477,7 +471,6 @@ DROP ROLE tasty_bytes_data_ml_app_demo;
 <!-- ------------------------ -->
 ## 결론
 
-Duration: 1
 
 ### 결론
 

@@ -1,16 +1,15 @@
 author: Patrick Lee, Steve Bertolani
 id: community_detection_using_relationalai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/monitoring
+language: en
 summary: This guide shows how to use RelationalAI and Snowflake to create a social graph and detect customer communities from retail transaction data.
-categories: data-science, graph-analysis, relationalai, community-detection
 environments: web
 status: Published 
 feedback link: https://github.com/RelationalAI/rai-samples/issues
-tags: Getting Started, Data Science, Data Engineering, Twitter 
 
 # Community Detection using RelationalAI
 
 ## Overview 
-Duration: 1
 
 In this quickstart, we'll use RelationalAI — a Native App available in the Snowflake Marketplace — to run community detection algorithms. The sample data represent food-truck orders, and we'll use them to identify groups of customers who probably know each other. This allows us to build a social graph and interact with groups of related customers.
 
@@ -49,7 +48,6 @@ Users can build a knowledge graph using Python and materialize it on top of thei
 <!-- ------------------------ -->
 
 ## Set Up Your Environment
-Duration: 8
 
 In addition to your Snowflake account setup, follow the steps below to set up a local installation of Python with Jupyter Lab and the RelationalAI Python library.
 
@@ -88,7 +86,6 @@ Run `rai init` from your terminal and follow the prompts to enter your credentia
 8. Press `Enter` to accept the default profile name of `default`.
 
 ## Run the Notebook in Jupyter Lab
-Duration: 15
 
 1. Start Jupyter Lab with the following command:
    
@@ -109,7 +106,6 @@ Duration: 15
 ---
 
 ## Conclusion & Resources
-Duration: 1
 
 Congratulations on completing the our Community Detection using RelationalAI guide! In this Quickstart you learned
 

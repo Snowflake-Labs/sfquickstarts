@@ -1,10 +1,10 @@
 id: getting-started-with-cortex-aisql
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: This guide outlines the process for getting started with Cortex AISQL.
-categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
 # Getting Started with Cortex AISQL
@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 4
 
 Cortex AISQL reimagines SQL into an AI query language for multimodal data, bringing powerful AI capabilities directly into Snowflake's SQL engine. It enables users to build scalable AI pipelines across text, images, and audio using familiar SQL commands. 
 With native support for multimodal data through a new FILE datatype, Cortex AISQL seamlessly integrates AI operators with traditional SQL primitives like AI_FILTER and AGGREGATE, allowing analysts to process diverse data types more efficiently and cost-effectively while maintaining enterprise-grade security and governance.
@@ -66,7 +65,6 @@ Snowflake Notebook that helps you get started with using Cortex AISQL with multi
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 10 
 
 **Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-aisql/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
@@ -102,7 +100,6 @@ Duration: 10
 <!-- ------------------------ -->
 ## Run Notebook
 
-Duration: 15
 
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
@@ -181,7 +178,6 @@ If you'd like to see images displayed in the Notebook as part of the consolidate
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully created a Snowflake Notebook that helps you get started with using Cortex AISQL with multimodal data.
 

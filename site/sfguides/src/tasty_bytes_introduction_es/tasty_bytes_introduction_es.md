@@ -1,17 +1,16 @@
 author: Jacob Kranzler
 id: tasty_bytes_introduction_es
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: es
 summary: Esta es la introducción a la quickstart guide de base de datos de Tasty Bytes
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Introducción, Tasty Bytes, De cero a Snowflake, Getting Started, Zero to Snowflake, es
 
 # Introducción a Tasty Bytes
 <!-- ------------------------ -->
 
 ## Introducción a Tasty Bytes 
-Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 ### Descripción general
 En esta quickstart guide Introducción a Tasty Bytes descubrirás, antes de nada, la marca ficticia de food trucks Tasty Bytes, creada por el equipo frostbyte en Snowflake.
@@ -43,7 +42,6 @@ Al terminar esta quickstart guide, habrás implementado los conceptos esenciales
     - Control de acceso basado en funciones (RBAC)
 
 ## Configuración de Tasty Bytes
-Duration: 6
 
 ### Descripción general
 En esta quickstart guide, usarás la interfaz web de Snowflake denominada Snowsight. Si es la primera vez que utilizas Snowsight, te recomendamos que eches un vistazo a la [documentación sobre Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), que cuenta con una guía detallada.
@@ -90,7 +88,6 @@ En esta quickstart guide, usarás la interfaz web de Snowflake denominada Snowsi
 ### Paso 11: hacer clic en Next -->
 
 ## Exploración de los conceptos esenciales de Tasty Bytes
-Duration: 2
 
 ### Descripción general
 Ahora que ya hemos completado la configuración de Tasty Bytes, podemos explorar la base de datos, los roles y los almacenes que hemos creado. 
@@ -155,7 +152,6 @@ WHERE m.truck_brand_name = 'Plant Palace';
 ### Paso 7: hacer clic en Next -->
 
 ## Powered by Tasty Bytes - Quickstart guides
-Duration: 1
 
 ### Descripción general
 ¡Enhorabuena! Has completado la configuración de los conceptos esenciales de Tasty Bytes.

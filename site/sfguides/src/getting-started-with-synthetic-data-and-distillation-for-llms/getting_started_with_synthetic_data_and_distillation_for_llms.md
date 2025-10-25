@@ -1,17 +1,16 @@
 author: Arne Mauser, Kelvin So, Dash Desai
 id: getting_started_with_synthetic_data_and_distillation_for_llms
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
+language: en
 summary: This guide provides the instructions for creating custom LLMs with synthetic data and distillation using Snowflake Cortex AI.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowflake Cortex, Cortex AI, Meta, Llama 3.1 405B, Llama 405B, Serverless, Fine-Tuning 
 
 # Getting Started with Llama 3.1 405B: Build Custom LLMs with Synthetic Data Generation and Distillation
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 Getting started with AI on enterprise data can seem overwhelming. Between getting familiar with LLMs, how to perform custom prompt engineering, fine-tuning an existing foundation model and how to get a wide range of LLMs deployed/integrated to run multiple tests all while keeping that valuable enterprise data secure. Well, a lot of these complexities are being abstracted away for you in Snowflake Cortex AI.
 
@@ -91,7 +90,6 @@ USE WAREHOUSE DASH_S;
 <!-- ------------------------ -->
 ## Generate Synthetic Training Data
 
-Duration: 10
 
 ### Define Support Ticket Categories
 
@@ -322,7 +320,6 @@ Depending on the values in the `contact_preference` column, Cortex AI can genera
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully generated synthetic data and distilled the knowledge from a big foundation model into a small and specialized fine-tuned model. You can use any of [these](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions?_fsi=TNKw8Mx5&_fsi=TNKw8Mx5#availability) supported LLMs for fine-tuning with Cortex.
 

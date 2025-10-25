@@ -1,16 +1,15 @@
 author: Census
 id: triggering_real_time_notifications_using_dynamic_tables_and_census_live_syncs
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: In this guide, you will learn how to set up a live sync between Census and Snowflake to move data to your activation platforms in real time.
-categories: partner-integrations,marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Census, Real-Time, Dynamic Tables, Reverse ETL
 
 # A Guide to Triggering Real-Time Notifications Using Dynamic Tables and Census Live Syncs
 
 ## Overview
-Duration: 1
 
 In this guide, you will learn how to set up a live sync between Census and Snowflake to move data to your activation platforms in real time.
 
@@ -31,7 +30,6 @@ In this guide, you will learn how to set up a live sync between Census and Snowf
 - **Either:** pre-existing connections between Census, Snowflake and your destination platform, OR the credentials to add connections between Census, Snowflake and your destination platform
 
 ## Introduction To Live Syncs With Census
-Duration: 5
 
 Live syncs allow Census+Snowflake users to leverage real-time insights in their activation platforms by building low-latency data flows without incurring the cost of running high-frequency queries.
 
@@ -86,7 +84,6 @@ GRANT CREATE STAGE ON SCHEMA "CENSUS"."CENSUS" TO ROLE CENSUS_ROLE;
 ```
 
 ## Configure a New Connection in Census
-Duration: 5
 
 1. Visit the Sources section on Census, and press New Source, selecting Snowflake from the list. Select **Advanced sync engine**.
    
@@ -109,7 +106,6 @@ Duration: 5
 4. After the connection is saved, go ahead and press the **Test** button. This will validate that you've completed the above steps correctly. Once you've got a checkmark for all four steps, you're good to go!
 
 ## Configure at least one destination within Census
-Duration: 5
 
 Within Census, navigate to the Destinations menu and select **+ New Destination**
 
@@ -131,7 +127,6 @@ Each platform will have a slightly different process for configuring the connect
 > Send, replace, and upload and swap mirror destinations are not supported by Live Syncs.
 
 ## Create a table
-Duration: 2
 
 Tables can be either standard Snowflake tables or Dynamic Tables.
 
@@ -151,7 +146,6 @@ Insert the data you wish to sync into your table.
 ![](assets/QS6.png)
 
 ## Create a Sync within Census
-Duration: 5
 
 1. Navigate to the **Add New…** menu and select **Sync**.
 
@@ -188,7 +182,6 @@ Duration: 5
 > Selecting “Map records” as a sync behavior will keep records in sync between the source and destination, while selecting “Activate events” can be used to trigger actions in the destination when new records are added to the source.
 
 ## Conclusion and Resources
-Duration: 1
 
 Congratulations! You have successfully created a live sync between Snowflake and your activation platform via Census. You are now fully prepared to begin activating the data in your Snowflake tables in real time. 
 

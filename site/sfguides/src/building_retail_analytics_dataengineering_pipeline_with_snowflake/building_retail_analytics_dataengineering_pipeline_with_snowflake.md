@@ -1,10 +1,10 @@
 id: building-retail-analytics-de-pipeline
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/retail-and-cpg, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Build a comprehensive retail analytics pipeline using Snowflake's modern data engineering features including Snowpark DB APIs, Snowpark APIS, Cortex AI, managed Iceberg tables, streamlit and using Snowflake Trail for Observability.
-categories: featured,getting-started,data-engineering,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Featured, Data Engineering, Snowpark, Cortex AI, Snowpark DB API, Iceberg Tables, Observability
 authors: Phani Raj
 
 # Build a Retail Analytics Data Engineering Pipeline with Snowflake
@@ -12,7 +12,6 @@ authors: Phani Raj
 
 ## Overview
 
-Duration: 3
 
 This quickstart demonstrates how to build a comprehensive retail analytics data analytics pipeline using Snowflake's latest data engineering capabilities in Python. Python has become the preferred language for data engineers due to its rich ecosystem of data processing libraries, ease of use, and extensive community support. Snowflake offers native Python support through Snowpark API, Snowpark Pandas APIs and offers  seamless integration with popular Python libraries, and familiar APIs that make data engineering accessible and efficient.
 
@@ -68,7 +67,6 @@ An end to end Data Engineering pipeline which does the following:
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5
 
 ### 1. Environment Setup
 
@@ -376,7 +374,6 @@ This notebook contains comprehensive instructions for implementing the data engi
 
 Please ensure that all prerequisite steps mentioned in the **Setup** have been completed prior to executing the notebook. Failure to complete will result in code execution errors within the notebook environment.
 
-Duration: 10
 
 ### 1. Multi-Source Data Loading
 
@@ -614,7 +611,6 @@ Reference implementation: [`dashboard.py`](https://github.com/Snowflake-Labs/sfg
 
 ## Observability and Monitoring
 
-Duration: 5
 
 ### Snowflake Trail Integration
 

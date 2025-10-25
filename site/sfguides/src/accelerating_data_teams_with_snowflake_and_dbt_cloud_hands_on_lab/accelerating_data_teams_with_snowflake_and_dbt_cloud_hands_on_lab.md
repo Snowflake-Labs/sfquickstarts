@@ -1,16 +1,15 @@
 authors: Bobby Birstock, Amy Chen
 id: accelerating_data_teams_with_snowflake_and_dbt_cloud_hands_on_lab
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
+language: en
 summary: Build a dbt project and data pipeline with dbt Cloud and Snowflake
-categories: getting-started,data-engineering,partner-integrations,marketing
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, dbt, Data
 
 # Accelerating Data Teams with Snowflake and dbt Cloud Hands On Lab
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 Modern businesses need modern data strategies built on platforms that support agility, growth, and operational efficiency.
 
@@ -44,7 +43,6 @@ Let's get started.
 
 <!-- ------------------------ -->
 ## Architecture and Use Case Overview
-Duration: 1
 
 In this lab we’ll be transforming raw retail data into a consumable orders model that’s ready for visualization. We’ll be utilizing the TPC-H dataset that comes out of the box with your Snowflake account and transform it using some of dbt’s most powerful features. By the time we’re done you’ll have a fully functional dbt project with testing and documentation, dedicated development and production environments, and experience with the dbt git workflow.
 
@@ -56,7 +54,6 @@ Here's a sneak peak of the model lineage that we'll be creating using dbt!
 
 <!-- ------------------------ -->
 ## Let's Get Started With Snowflake
-Duration: 5
 
 To create a Snowflake trial account, follow [this link](https://signup.snowflake.com/?utm_cta=quickstarts_) and fill out the form before clicking `Continue`. You’ll be asked to choose a cloud provider and for the purposes of this workshop any of them will do. After checking the box to agree to the terms, click `Get Started`. <br> <br> 
 Once your account is created you’ll receive an email confirmation. Within that email, click the `Click to Activate` button and then create your login credentials. You should now be able to see your account! 
@@ -98,7 +95,6 @@ Great! Now it’s time to set up dbt Cloud.
 
 <!-- ------------------------ -->
 ## Launching dbt Cloud via Partner Connect
-Duration: 5
 
 
 1. We are going to use [Snowflake Partner Connect](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect.html) to set up your dbt Cloud account and project. Using Partner Connect will allow you to create a complete dbt account with your [Snowflake connection](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/connecting-your-database#connecting-to-snowflake), [managed repository](https://docs.getdbt.com/docs/dbt-cloud/cloud-configuring-dbt-cloud/cloud-using-a-managed-repository), [environments](https://docs.getdbt.com/docs/guides/managing-environments), and credentials with just a few clicks.
@@ -133,7 +129,6 @@ Duration: 5
 
 <!-- ------------------------ -->
 ## IDE Walkthrough
-Duration: 7
 
 1. Now that our dbt Cloud account is set up, let’s open up the IDE (Integrated Development Environment) and familiarize ourselves with some of the key product features. Click on the `Develop` button in the upper left hand corner of the screen.<br>
 
@@ -179,7 +174,6 @@ Duration: 7
 
 <!-- ------------------------ -->
 ## Foundational Structure
-Duration: 12
 
 
 ### Configuring the dbt_project.yml 
@@ -297,7 +291,6 @@ packages:
 <!-- ------------------------ -->
 
 ## Sources and Staging
-Duration: 8
 
 In this section, we are going to learn about sources and staging models. 
 
@@ -452,7 +445,6 @@ Before we move onto the next section be sure to commit your new models to your g
 <!-- ------------------------ -->
 
 ## Seeds and Incremental Materialization
-Duration: 15
 
 Seeds and incremental models are both key dbt features that we’re going to bring together to create an incremental staging model. 
 
@@ -648,7 +640,6 @@ Although our TPC-H dataset isn’t changing and in this case is rather small, we
 <!-- ------------------------ -->
 
 ## Transformed Models
-Duration: 8
 
 Now that we have our staging models built we’re able to start transforming our data to meet our modeling needs. The plan here is to build two transformed models: one is an intermediate model that performs new line items calculations and the other is a fact model that aggregates the new line items calculations back at the order level. The final fact model is what we will use to [build a chart ](https://docs.snowflake.com/en/user-guide/ui-snowsight-dashboards.html)[in Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight-dashboards.html).
 
@@ -814,7 +805,6 @@ Let’s make sure to save our work before moving on to the next section. Take a 
 <!-- ------------------------ -->
 
 ## Tests and Docs
-Duration: 12
 
 Now that we’ve built out our models and transformations, it’s really important to document and test them. This ensures we catch any errors that violate our assumptions about our data models and provides a guide to anyone else that comes across our work and wants to understand what we built. dbt’s native features include both a data testing and documentation framework to help us accomplish all of our documentation and testing needs.
 
@@ -954,7 +944,6 @@ Let’s commit our work for the section. Click the `Commit and push` button and 
 <!-- ------------------------ -->
 
 ## Deployment
-Duration: 12
 
 Before we jump into deploying our code, let’s have a quick primer on environments. Up to this point all of the work we’ve done in the dbt Cloud IDE has been in our development environment, with code committed to a feature branch and the models we’ve built created in our development schema in Snowflake as defined in our Development environment connection. Doing this work on a feature branch allows us to separate our code from what other coworkers are building, as well as code that is already deemed production ready. Building models in a development schema in Snowflake allows us to separate the database objects we might still be modifying and testing from the database objects running production dashboards or other downstream dependencies. Together, the combination of git branch and Snowflake database objects form our environment. 
 
@@ -1023,7 +1012,6 @@ Now that we’ve completed testing and documenting our work, we’re ready to de
 <!-- ------------------------ -->
 
 ## Visualizing Your Data with [Snowsight Dashboards](https://docs.snowflake.com/en/user-guide/ui-snowsight-dashboards.html)
-Duration: 5
 
 With all of our data now live in our production environment courtesy of our production job, we’re ready to visualize our data! Our sales team has asked us to build a dashboard showing all time sales by quarter. We’re going to take our `fct_orders` model and create a bar chart in order to do this. Before we jump in, take a second to make sure that you’re in the new Snowflake UI so that you’ll be able to access the dashboard feature.
 

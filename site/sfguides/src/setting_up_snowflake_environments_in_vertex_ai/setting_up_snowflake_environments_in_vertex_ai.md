@@ -1,16 +1,15 @@
 author: marzillo-snow
 id: setting_up_snowflake_environments_in_vertex_ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: This is a quickstart for Setting up Snowflake Environments in Vertex AI
-categories: Getting-Started, data-science, data-engineering, Google, AI, Vertex-AI, GCP
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, GCP, Google, Vertex, ML, AI
 
 # Setting up Snowflake Environments in Vertex AI
 <!-- ------------------------ -->
 ## Overview 
-Duration: 15
 
 Snowflake and Google Cloud empower countless customers to seamlessly run AI and machine learning (AI/ML) workloads, including cutting-edge Generative AI. With several proven architectural patterns, integrating Snowflake with Google services like Vertex AI has never been easier. Whether you're diving into traditional AI/ML or  Generative AI, we have quickstart guides to get you up and running fast ([AI/ML quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_for_machine_learning_on_vertexai/index.html?index=..%2F..index#0) and [Snowflake + VertexAI for Generative AI quickstart](https://quickstarts.snowflake.com/guide/customer_insights_analyzer_using_vertex_ai_and_snowflake/index.html?index=..%2F..index#0)).
 
@@ -41,7 +40,6 @@ As this quickstart is targeted at getting environments there are no specific ind
 
 <!-- ------------------------ -->
 ## Configuration Script
-Duration: 15
 
 To use a startup script in Vertex AI that installs the current versions of the Snowflake and Snowpark Python packages, you can take advantage of custom training jobs or notebooks in Vertex AI. The below shows how use the startup script with a notebook in Vertex AI
 
@@ -106,7 +104,6 @@ pip show snowflake-snowpark-python
 
 <!-- ------------------------ -->
 ## Google Container Registry (GCR).
-Duration: 15
 
 Users can build the docker image locally then push the image to GCR however using the Google terminal offers a more robust method for building and pushing the image.
 
@@ -327,7 +324,6 @@ The job will run for several minutes once it successfully completes, head to you
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 With these two methods customers are now equipped to use Snowflake from Vertex AI. The configuration script is a great way to set up a workbook for interactive work quickly while building the container image is a great way to create robust workloads. Any questions, please reach out to your Google and Snowflake account teams and ask them how to best use Snowflake and Google Cloud Services together!
 

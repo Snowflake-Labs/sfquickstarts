@@ -1,17 +1,16 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_collaboration_es
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: es
 summary: Tasty Bytes - De cero a Snowflake - Colaboración
-categories: Tasty-Bytes, Getting-Started, Featured
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Introducción, De cero a Snowflake, Getting Started, Tasty Bytes, Zero to Snowflake, es  
 
 # Tasty Bytes - De cero a Snowflake - Colaboración
 <!-- ------------------------ -->
 
 ## Acceso directo a datos de terceros a través de Snowflake Marketplace
-Duration: 1 <img src = "assets/collaboration_header.png">
 
 ### Descripción general
 Te damos la bienvenida a la quickstart guide De cero a Snowflake de Tasty Bytes centrada en la colaboración. En esta quickstart guide explicaremos cómo puedes enriquecer tus datos de primera mano con datos meteorológicos a través de Snowflake Marketplace. En Snowflake Marketplace podrás encontrar, probar y comprar datos y aplicaciones de terceros sin tener que configurar procesos de extracción, transformación y carga (extract, transform, load; ETL), flujos de datos ni integraciones.
@@ -34,7 +33,6 @@ Te damos la bienvenida a la quickstart guide De cero a Snowflake de Tasty Bytes 
 - Cómo obtener información adicional a través de Snowflake Marketplace
 
 ## Creación de una hoja de trabajo y copia en SQL
-Duration: 1
 
 ### Descripción general
 En esta quickstart guide se narra una historia de Tasty Bytes mediante una hoja de trabajo SQL en Snowsight. Esta página servirá de guía completa paralela con comentarios adicionales, imágenes y enlaces a la documentación.
@@ -75,7 +73,6 @@ En esta sección te explicaremos cómo iniciar sesión en Snowflake, crear una n
 ### Paso 9: hacer clic en Next -->
 
 ## Investigación de los días sin ventas en los datos de primera mano
-Duration: 1
 
 ### Descripción general
 Los analistas financieros de Tasty Bytes nos han informado de que, al ejecutar análisis interanuales, hay días en varias ciudades en los que las ventas de los food trucks se quedaron a 0 sin ningún motivo aparente. Un ejemplo que nos dieron fue Hamburgo (Alemania) en febrero de 2022.
@@ -107,7 +104,6 @@ Basándonos en lo que acabamos de ver, estamos de acuerdo con los analistas en q
 ### Paso 2: hacer clic en Next -->
 
 ## Uso de los datos de Weather Source desde Snowflake Marketplace
-Duration: 2
 
 ### Descripción general
 Como hemos podido ver en la sección anterior, parece que nos faltan ventas entre el 16 y el 21 de febrero en Hamburgo (Alemania). En nuestros datos de primera mano no hay mucha más información que podamos utilizar para seguir investigando, pero debe de haber ocurrido algo importante. 
@@ -219,7 +215,6 @@ De nuevo, este tipo de datos podría mostrar mejor las tendencias a través de u
 ### Paso 5: hacer clic en Next -->
 
 ## Democratización de la información de los datos
-Duration: 3
 
 ### Descripción general
 Ahora sabemos que probablemente los vientos huracanados influyeran en los días sin ventas que nos comunicaron los analistas financieros.
@@ -326,7 +321,6 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 ### Paso 4: hacer clic en Next -->
 
 ## Obtención de la información a partir de ventas y datos meteorológicos de Marketplace
-Duration: 1
 
 ### Descripción general
 Ahora que los datos de ventas y meteorológicos de todas las ciudades en las que operan nuestros food trucks ya están disponibles, vamos a ver cómo hemos reducido el tiempo que los analistas financieros dedican a obtener información.
@@ -364,7 +358,6 @@ Al completar esta quickstart guide, hemos visto la rapidez con la que podemos ob
 ### Paso 2: hacer clic en Next -->
 
 ## Conclusión y siguientes pasos
-Duration: 1
 
 ### Conclusión
 ¡Bien hecho! Has completado la quickstart guide De cero a Snowflake de Tasty Bytes sobre colaboración. 

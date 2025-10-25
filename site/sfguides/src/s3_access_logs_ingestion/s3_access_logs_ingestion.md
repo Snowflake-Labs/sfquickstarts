@@ -1,16 +1,15 @@
 author: Jake Berkowsky
 id: s3_access_log_ingestion
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/ingestion
+language: en
 summary: This quickstart is a guide to ingesting and processing S3 Access Logs into snowflake. It provides detailed instructions for configuring an automated ingestion and processing pipeline as well as example queries for data loss prevention and incident response.
-categories: cybersecurity,solution-examples,partner-integrations
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Cybersecurity, Data Loss Protection
 
 # AWS S3 Access Logs Ingestion
 
 ## Overview 
-Duration: 1
 
 S3 access logging allows for auditing of operations preformed on objects in an S3 bucket. Like CloudTrail events, S3 access logs will provide information about accessed objects, actors preforming those actions and the actions themselves. S3 access logs contain additional fields and may log events not logged in CloudTrail. Importantly to note is that they are delivered on a best effort basis and may not contain every action. More information about S3 access logs and CloudTrail can be found in the [official documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/logging-with-S3.html). 
 
@@ -29,7 +28,6 @@ S3 access logs are configured to log to a separate bucket which serves as a snow
 
 
 ## Enable S3 Access Logging
-Duration: 5
 
 See [here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-server-access-logging.html) for more detailed instructions.
 
@@ -46,7 +44,6 @@ Note: S3 access logging may take some time to start creating records.
 
 
 ## Create a storage integration in Snowflake
-Duration: 3
 
 *Replace \<RoleName\> with the desired name of the role you’d like snowflake to use ( this role will be created in the next step).  Replace \<BUCKET_NAME\>/path/to/logs/ with the path to your S3 Access logs as set in the previous step*
 
@@ -65,7 +62,6 @@ Take note of **STORAGE_AWS_IAM_USER_ARN** and **STORAGE_AWS_EXTERNAL_ID**
 ![A screenshot showing the result of describing an integration. STORAGE_AWS_IAM_USER_ARN property is in the format of an aws ARN set to arn:aws:iam::123456789012:user/abc10000-a and the STORAGE_AWS_EXTERNAL_ID is in the format of ABC12345_SFCRole=1 ABCDEFGHIJKLMNOPORSTUVWXYZab= ](assets/generic-integration-screenshot.png)
 
 ## Create role and policy in AWS
-Duration: 5
 
 *The following assumes a user with the ability to create and manage IAM logged into the AWS console or using the CLI.  A full explanation can be found in [this documentation](https://docs.snowflake.com/en/user-guide/data-load-s3-config.html)*
 
@@ -148,7 +144,6 @@ You will now be able to see your role, policy and trust relationship in the cons
 ![Screenshot of snowflake source displayed in AWS IAM](assets/generic-aws-iam.png)
 
 ## Prepare Snowflake to receive data
-Duration: 6
 
 This quickstart requires a warehouse to perform computation and ingestion. We recommend creating a separate warehouse for security related analytics if one does not exist. The following will create a medium sized single cluster warehouse that suspends after 1 minute of inactivity. For production workloads a larger warehouse will likely be required.
 
@@ -215,7 +210,6 @@ select * from public.s3_access_logs_staging limit 5;
 ```
 
 ## Setup Snowpipe for continuous loading
-Duration: 5
 
 The following instructions depend on a Snowflake account running on AWS. Accounts running on other cloud providers may invoke snowpipe from a rest endpoint.
 [https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-rest.html)
@@ -345,7 +339,6 @@ After the task runs, very that the data was parsed. If you don't wish to wait ei
 
 
 ## Query the data
-Duration: 2
 
 Create a workbook to query the new view. If desired, use the following to help get you started:
 
@@ -382,7 +375,6 @@ WHERE Requester IS NULL;
 ```
 
 ## Conclusion & next steps
-Duration: 0
 
 Having completed this quickstart you have successfully:
 - Configured S3 access logging

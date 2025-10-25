@@ -1,16 +1,15 @@
 author: Swathi Jasti
 id: optimizing-network-operations-with-cortex-ai-call-transcripts-and-tower-data-analysis
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
 summary: Optimizing Network Operations with Cortex AI - Call Transcripts and Tower Data Analysis
-categories: Getting-Started, Streamlit, Data-Science-&-Ai, app-development, GenAI, Cortex, Cortex Analyst
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Apps, GenAI, Cortex, Cortex Analyst, Streamlit
 
 # Optimizing Network Operations with Snowflake Cortex AI
 
 ## Overview
-Duration: 1
 
 <img src="assets/network_operations_banner.png"/>
 
@@ -34,7 +33,6 @@ This quickstart helps you develop a streamlit application utilizes cell tower da
 - A chatbot that enables intuitive interaction with cell tower data
 
 ## Setup Environment
-Duration: 5
 
 In the Snowsight, Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 
@@ -43,7 +41,6 @@ Run the SQL from the [file](https://github.com/Snowflake-Labs/sfguide-optimizing
 The above scripts creates sentiment scores for call transcripts using CORTEX SENTIMENT function which will then be used in the Streamlit App. 
 
 ## Ingest the Semantic Model YAML
-Duration: 2
 
 In the Snowsight, Navigate to Data, click on Databases.
 
@@ -58,7 +55,6 @@ In the Snowsight, Navigate to Data, click on Databases.
 This semantic model file will then be used by the Cortex Analyst Chatbot in the Streamlit App.
 
 ## Streamlit App
-Duration: 10
 
 To run the Streamlit Application,
 
@@ -91,7 +87,6 @@ The chatbot allows you to ask any questions related to cell tower data using nat
 - For the top 10 cells congested, list the 10 most impacted MSISDN.
 
 ## Conclusion And Resources
-Duration: 1
 
 ### What You Learned
 - How to optimize network operations using Cortex AI

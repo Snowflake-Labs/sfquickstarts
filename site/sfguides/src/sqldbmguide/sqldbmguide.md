@@ -1,16 +1,15 @@
 summary: Data modeling your Snowflake database with SqlDBM 
 id: data_modeling_with_sqldbm
-categories: data-engineering,partner-integrations
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Modeling, Data Engineering, CICD 
 authors: Eric Ruiz
 
 # Data Modeling With Snowflake + SqlDBM
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 Relational database modeling enables instant visual review of a database landscape and the relationships between its entities, serving as a blueprint for your data.
 
@@ -40,7 +39,6 @@ A sample schema diagram like the one we will create:
 
 <!-- ------------------------ -->
 ## Creating a Project in SqlDBM
-Duration: 5
 
 After logging in to [SqlDBM](https://www.SqlDBM.com), you will be taken to the Projects Dashboard. Otherwise, select “Dashboard” from the top-right dropdown.
 
@@ -100,7 +98,6 @@ Subject areas serve as folders for keeping diagrams organized by categories such
 
 <!-- ------------------------ -->
 ## Standards, Conventions, and Mappings
-Duration: 8
 
 You can add prefixes and suffixes to the names of different object types, define attribute names using naming rules and for bulk renaming of individual fields or auto-expansion of naming abbreviations using **Name Mappings**, **Case Standards** and **Glossary Terms**  .
 
@@ -152,7 +149,6 @@ Templates come standard with SqlDBM wether you want to build templates for a set
 
 <!-- ------------------------ -->
 ## Share, Document & Model Governance
-Duration: 10
 
 ### Sharing Data Models
 
@@ -188,7 +184,6 @@ Model Governance will supplement existing projects and offer its own role, allow
 
 <!-- ------------------------ -->
 ## Track Changes and Compare Model Versions
-Duration: 6 
 
 Every save in SqlDBM generates a versioned _revision_, which allows for change tracking and version control. SqlDBM projects store an infinite revision history, and any two revisions can be compared to track changes. The latest revision is indicated next to the project name at the top of the screen. 
 
@@ -209,7 +204,6 @@ You will see all the database objects listed in the revisions you have selected.
 
 <!-- ------------------------ -->
 ## Forward Engineer & Code Generation
-Duration: 8
 
 ### DDL and ALTER Script Generation
 Forward Engineering allows users to export the database objects created in SqlDBM projects by generating SQL scripts. Through Forward Engineering, users can generate complete CREATE statements for selected objects or ALTER scripts for changes between project versions or environments.
@@ -221,7 +215,6 @@ Users can forward engineer dbt-compatible source or model YAML for tables and vi
 
 <!-- ------------------------ -->
 ## Collaborate and Work Together on Data Modeling Projects
-Duration: 10
 
 ### How to add collaborators
 From the top menu of a project, click the share icon and enter an email address for a project member that has previously been added in the Admin Console.
@@ -252,7 +245,6 @@ Allows:
 
 <!-- ------------------------ -->
 ## Logical Projects
-Duration: 5 
 
 ### Database Agnostic Business Modeling
 Logical modeling allows users to design independently of a specific database type and establish a foundational business model that can be shared or converted. Logical projects offer full control over the data type mapping, normalization, and naming convention settings for easy import and export from physical. 
@@ -261,7 +253,6 @@ Logical modeling allows users to design independently of a specific database typ
 
 <!-- ------------------------ -->
 ## Schema Change Management
-Duration: 3
 
 ### DB Schema Monitoring 
 
@@ -271,7 +262,6 @@ DB Schema Monitoring periodically polls your cloud databases and alerts designat
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 4
 
 Visually guided database modeling can help an enterprise data team make sense of, and accelerate database development. In this Quickstart, we followed a simple development workflow: from creating and instantiating a new Snowflake project and schema, to making changes, all the way to deployment. However, the benefits of a centralized modeling tool extend well beyond the role of a developer. 
 

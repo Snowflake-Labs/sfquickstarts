@@ -1,16 +1,15 @@
 summary: This guide provides the instructions for writing an LLM chatbot in Streamlit on your Snowflake data.
 id: frosty_llm_chatbot_on_streamlit_snowflake
-categories: data-science-&-ml,app-development
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions
+language: en
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Snowpark Python, Streamlit, OpenAI, LLMs
 authors: Joshua Carroll, Richard Meng, Caroline Frasca
 
 # Frosty: Build an LLM Chatbot in Streamlit on your Snowflake Data
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 ![Preview of final app](assets/App_Demo.gif)
 
@@ -51,7 +50,6 @@ The [Snowflake Marketplace](https://www.snowflake.com/en/data-cloud/marketplace/
 
 <!-- ------------------------ -->
 ## Prepare your environment
-Duration: 8
 
 Complete the following steps in your local machine (or an equivalent dev environment):
 
@@ -89,7 +87,6 @@ If you prefer to run through the tutorial in a remote environment instead of set
 <!-- ------------------------ -->
 ## Accessing data on Snowflake Marketplace
 
-Duration: 4
 
 Snowflake Marketplace provides visibility to a wide variety of datasets from third-party data stewards which broaden access to data points used to transform business processes. Snowflake Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider.
 
@@ -134,7 +131,6 @@ You can copy the SQL statements from [this file](https://github.com/Snowflake-La
 Now that we've configured the dataset we'll be using for our application, we can get started with Streamlit.
 
 ## Setting up Streamlit environment
-Duration: 8
 
 ### Run an example Streamlit app
 1. Head back over to the command line and navigate to your `llm-chatbot` folder.
@@ -238,7 +234,6 @@ st.write(df)
 
 <!-- ------------------------ -->
 ## Build a simple chatbot application
-Duration: 8
 
 We're ready to start building our app! We're going to first build a simple version of the chatbot app that simply passes user-inputted messages to GPT-3.5 and returns GPT-3.5's response. We'll build on the app's complexity in subsequent sections.
 
@@ -338,7 +333,6 @@ if st.session_state.messages[-1]["role"] != "assistant":
 
 <!-- ------------------------ -->
 ## Add prompt engineering and SQL extraction
-Duration: 10
 
 Now that we've built a simple version of the chatbot app, let's expand the functionality to enable Frosty to translate our requests into SQL statements and execute those statements using the Cybersyn dataset stored in our Snowflake database.
 
@@ -590,7 +584,6 @@ if st.session_state.messages[-1]["role"] != "assistant":
 
 <!-- ------------------------ -->
 ## Explore the data via natural language
-Duration: 5
 
 Finally, it's time to explore the Cybersyn Financial & Economic Essentials using natural language. Try asking Frosty any of the following questions:
 
@@ -607,7 +600,6 @@ Finally, it's time to explore the Cybersyn Financial & Economic Essentials using
 
 <!-- ------------------------ -->
 ## Conclusion and next steps
-Duration: 1
 
 Congratulations – you've just built an LLM-powered chatbot capable of translating natural language to SQL queries and running those queries on data stored in Snowflake!
 

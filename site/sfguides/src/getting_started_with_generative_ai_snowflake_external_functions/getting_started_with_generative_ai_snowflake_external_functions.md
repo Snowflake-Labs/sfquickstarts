@@ -1,17 +1,16 @@
 id: getting_started_with_generative_ai_snowflake_external_functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
+language: en
 summary: Getting Started with Generative AI in Snowflake and Streamlit
-categories: featured,getting-started,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Generative AI, Snowflake External Access, Snowflake External Functions, OpenAI
 authors: Dash Desai
 
 # Getting Started with Generative AI in Snowflake and Streamlit
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 By completing this guide, you will be able to deploy different implementations of integrating Large Language Models (LLMs) such as OpenAI using External Access and External Functions in Snowflake.
 
@@ -54,7 +53,6 @@ Here are some key differences and similarities between the two implementations.
 <!-- ------------------------ -->
 ## Use External Access
 
-Duration: 10
 
 In this implementation, we will use External Access to securely connect to the OpenAI API from Snowpark Python.
 
@@ -140,7 +138,6 @@ SELECT CHATGPT_4('What do you think of the Data Cloud World Tour') as chatgpt_4_
 <!-- ------------------------ -->
 ## Use AWS API Gateway
 
-Duration: 20
 
 ### Step 1
 
@@ -272,7 +269,6 @@ select OPENAI_EXT_FUNC('### Snowflake SQL tables, with their properties:### CAMP
 <!-- ------------------------ -->
 ## Use AWS Lambda
 
-Duration: 20
 
 For this implementation, you can leverage some of the existing objects you may have already created in the first implementation (AWS API Gateway), but assuming you want to keep the two implementations and environments separate, here are the steps that will get you up and running.
 
@@ -375,7 +371,6 @@ TOTAL_CLICKS NUMBER(38,0),TOTAL_COST NUMBER(38,0),ADS_SERVED NUMBER(38,0)
 <!-- ------------------------ -->
 ## Streamlit Application
 
-Duration: 5
 
 If you have Streamlit in Snowflake (currently in Preview) enabled, then follow these steps to create and run the Streamlit application in Snowsight.
 

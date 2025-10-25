@@ -1,17 +1,16 @@
 id:getting_started_with_snowsql_kr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: ko
 summary: SnowSQL 시작하기
-categories: undefined
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: 스노우플레이크 시작하기, SQL, 데이터 엔지니어링, SnowSQL, kr
 
 # SnowSQL 시작하기
 
 <!-- ------------------------ -->
 ## 개요
 
-Duration: 2
 
 SnowSQL은 Snowflake와 상호 작용하기 위해 사용되는 소프트웨어 CLI 도구입니다. SnowSQL을 사용하여 Snowflake Data Cloud의 모든 측면을 제어할 수 있습니다. 여기에는 데이터 업로드, 데이터 쿼리, 데이터 변경 및 데이터 삭제가 포함됩니다.  이 가이드에서는 SnowSQL을 검토하고 이를 사용하여 데이터베이스를 생성하고, 데이터를 로드하고, CLI에서 바로 테이블 및 데이터를 관리하는 데 유용한 명령을 배울 수 있습니다.
 
@@ -45,7 +44,6 @@ SnowSQL은 Snowflake와 상호 작용하기 위해 사용되는 소프트웨어 
 <!-- ------------------------ -->
 ## SnowSQL 설정
 
-Duration: 8 우선 Snowflake 계정을 만들고 웹 콘솔 탐색에 익숙해져 보겠습니다. SnowSQL 설치 프로그램을 다운로드한 다음 이를 설치하고 성공 여부를 확인하겠습니다.
 
 ### Snowflake 계정 생성
 
@@ -92,7 +90,6 @@ curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/darwin_x86
 <!-- ------------------------ -->
 ## 데이터베이스 생성
 
-Duration: 6 여러분의 계정이 활성 상태이고 SnowSQL이 설치되었다면 터미널을 사용하여 로그인하고 클라우드 저장소에 필요한 오브젝트를 생성할 것입니다.
 
 ### 터미널에서 로그인
 
@@ -153,7 +150,6 @@ create or replace warehouse sf_tuts_wh with
 <!-- ------------------------ -->
 ## 데이터 업로드
 
-Duration: 8 이 섹션에서는 여러분의 샘플 CVS 직원 파일을 스테이징하고 데이터를 여러분의 테이블로 복사하기 위해 SQL 명령을 실행하겠습니다.
 
 아직 샘플 파일을 다운로드하지 않았다면 다음에서 다운로드할 수 있습니다.
 
@@ -220,7 +216,6 @@ copy into emp_basic
 <!-- ------------------------ -->
 ## 데이터 쿼리
 
-Duration: 15
 
 클라우드에 있는 데이터를 쿼리하는 방법을 알아야 합니다. 여러분의 데이터를 빠르게 호출할 수 있도록 하는 몇몇 호출을 다루겠습니다.
 
@@ -261,7 +256,6 @@ Snowflake는 다양한 [함수](https://docs.snowflake.com/ko/sql-reference-func
 <!-- ------------------------ -->
 ## 데이터 관리 및 삭제
 
-Duration: 6
 
 종종 데이터는 고정적이지 않습니다. 여러분의 클라우드 데이터베이스를 유지하기 위한 몇몇 일반적인 방법을 검토하겠습니다.
 
@@ -301,7 +295,6 @@ drop warehouse if exists sf_tuts_wh;
 <!-- ------------------------ -->
 ## 결론
 
-Duration: 1
 
 ### 애플리케이션을 위해 SnowSQL 사용
 

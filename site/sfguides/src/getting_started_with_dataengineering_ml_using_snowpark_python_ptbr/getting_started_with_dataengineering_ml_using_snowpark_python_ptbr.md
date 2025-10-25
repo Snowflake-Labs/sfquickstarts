@@ -1,17 +1,16 @@
 id: getting_started_with_dataengineering_ml_using_snowpark_python_ptr
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ml-functions
+language: en
 summary: Introdução à engenharia de dados e ML com Snowpark para Python
-categories: featured,getting-started,data-science-&-ml,data-engineering,app-development
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Snowpark Python, Streamlit, scikit-learn, Data Engineering, Machine Learning, Introdução, Engenharia de dados, Aprendizado de máquina, ptbr
 authors: Dash Desai
 
 # Introdução à engenharia de dados e ML com Snowpark para Python
 <!-- ------------------------ -->
 ## Visão geral
 
-Duration: 5
 
 Ao completar este guia, você poderá criar uma aplicação interativa a partir de dados brutos para ajudar uma organização a otimizar a alocação de recursos para publicidade.
 
@@ -72,7 +71,6 @@ Este quickstart é voltado para a API Snowpark ML Modeling, que expande a engenh
 <!-- ------------------------ -->
 ## Configuração do ambiente
 
-Duration: 15
 
 ### Criação de tabelas, carregamento de dados e configuração de estágios
 
@@ -175,7 +173,6 @@ Se preferir, você pode abrir o [setup.sql](https://github.com/Snowflake-Labs/sf
 <!-- ------------------------ -->
 ## Introdução
 
-Duration: 8
 
 Esta seção aborda a clonagem do repositório do GitHub e a configuração do ambiente Snowpark para Python.
 
@@ -266,7 +263,6 @@ Caso opte por usar sua conta [Hex](https://app.hex.tech/login) ou [criar uma con
 <!-- ------------------------ -->
 ## Engenharia de dados
 
-Duration: 20
 
 O notebook do link abaixo aborda as seguintes tarefas de engenharia de dados.
 
@@ -445,7 +441,6 @@ Também é possível habilitar notificações por push para um serviço de mensa
 <!-- ------------------------ -->
 ## Aprendizado de máquina
 
-Duration: 20
 
 > aside negative PRÉ-REQUISITO: concluir as etapas descritas em [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).
 
@@ -504,7 +499,6 @@ session.sql('USE SCHEMA DASH_SCHEMA').collect()
 <!-- ------------------------ -->
 ## Aplicação Streamlit
 
-Duration: 10
 
 ### Execução local da aplicação Streamlit
 
@@ -593,7 +587,6 @@ alter task monthly_revenue_data_pipeline_task suspend;
 <!-- ------------------------ -->
 ## Conclusão e recursos
 
-Duration: 3
 
 Parabéns! Você executou com sucesso tarefas de engenharia de dados e treinou um modelo de regressão linear para prever o retorno do investimento (ROI) futuro de diversos orçamentos de publicidade em diferentes canais, incluindo pesquisa, vídeo, redes sociais e email usando o Snowpark para Python e scikit-learn. Depois, você criou uma aplicação Streamlit que usa esse modelo para gerar previsões de novas alocações de orçamento com base nos dados inseridos pelo usuário.
 

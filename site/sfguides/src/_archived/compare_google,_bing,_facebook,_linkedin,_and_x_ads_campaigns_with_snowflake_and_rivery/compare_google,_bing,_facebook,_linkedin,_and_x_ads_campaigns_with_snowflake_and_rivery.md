@@ -1,16 +1,15 @@
 author: Ariel Pohoryles
 id: compare_google,_bing,_facebook,_linkedin,_and_x_ads_campaigns_with_snowflake_and_rivery
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics
+language: en
 summary: Unlock powerful cross-channel analytics by effortlessly combining Google, Bing, Facebook, LinkedIn, and X Ads data in Snowflake using Rivery’s no-code data integration, transforming your marketing strategy with real-time insights and optimized budget allocation
-categories: Getting-Started
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Rivery, Data Pipelines, Marketing Analytics
 
 # Compare Google, Bing, Facebook, LinkedIn, and X Ads Campaigns with Snowflake & Rivery
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 A large portion of most B2B marketing teams' budget goes toward digital Ads. This budget is often spread across multiple online advertising channels such as Google Ads, Bing Ads, YouTube Ads (aka paid search channels), Facebook Ads, LinkedIn Ads, and X Ads (aka paid social channels). This spread makes it hard to understand campaign performance across channels, before diving deeper into channel-specific optimizations. Optimizing your paid Ads strategy starts with finding the answers to questions like: 
 
@@ -48,7 +47,6 @@ In this lab, you will learn how to set up a data pipeline that orchestrates the 
 <!-- ------------------------ -->
 
 ## Set up a Rivery account
-Duration: 2
 
 **If you already have a Rivery account you can skip this step.** 
 
@@ -69,7 +67,6 @@ Once you select Rivery, you’ll be prompted with a “Connect to Rivery” scre
 <!-- ------------------------ -->
 
 ## Setup the Target Database and Schemas
-Duration: 5
 
 Create a dedicated Snowflake database and schemas (for the marketing channels) to use for this Quickstart lab and make sure the Rivery Role which is auto created by Partner Connect has the permissions to use this database and Schemas (if you are not using Partner Connect, please adjust the below to use your own Role name). To do so, simply open a new SQL worksheet under the Snowflake console project menu and run the following SQL query in the Snowflake console (make sure you select `Run All`):
 
@@ -105,7 +102,6 @@ commit;
 <!-- ------------------------ -->
 
 ## Use the Rivery Paid Ads to Snowflake kit
-Duration: 10
 
 Navigate to the kits marketplace by hitting `Kits` from the left navigation menu. 
 
@@ -148,7 +144,6 @@ Once you set your connections, hit the `Next` button and your kit will be on it�
 <!-- ------------------------ -->
 
 ## Set your variables and run the data workflow 
-Duration: 10
 
 Once your kit is added successfully, hit the `View Rivers` button. You will see all the Rivers (pipelines) of the kit:
 
@@ -217,7 +212,6 @@ You can monitor the execution result and make sure your River run was successful
 <!-- ------------------------ -->
 
 ## Set up a Snowflake dashboard and analyze the data
-Duration: 10  
 
 Once you successfully run the main river, your data should be available in Snowflake under the All_Channels_Fact_Table table located under the DIGITAL_AD_ANALYTICS schema within the MARKETING_QUICKSTART database. 
 
@@ -392,7 +386,6 @@ With all the tiles created, you can control your visual layout. Here is an examp
 
 
 ## Conculsion And Resources
-Duration: 2
 
 Congratulations! You’ve now configured a complete data analytics solution for your paid Ads using Rivery and Snowflake data migration pipeline. 
 

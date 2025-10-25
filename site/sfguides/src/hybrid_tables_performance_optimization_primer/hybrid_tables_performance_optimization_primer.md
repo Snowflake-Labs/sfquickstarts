@@ -1,16 +1,15 @@
 author: Jon Osborn
 id: hybrid_tables_performance_optimization_primer
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Follow this primer to learn about basic hybrid table performance optimization techniques
-categories: Getting-Started, Hybrid Tables, Unistore
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Hybrid Tables, Unistore
 
 # Hybrid Tables Performance Optimization Primer
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 ### Hybrid Tables
 
@@ -59,7 +58,6 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 
 ## Setup
 
-Duration: 5
 
 We will use table structures populated with synthetic data to create scenarios We will initially
 create scenarios that do not perform well. Following the guide, you will then adjust the query and/or the 
@@ -96,7 +94,6 @@ Now, let's explore primary keys and secondary indexes
 
 ## Explore the Primary Key
 
-Duration: 10
 
 Primary keys are a required configuration for a hybrid table. The key establishes the rules for row uniqueness
 as well as the sort order for how data is written to the row storage. See [primary key documentation](https://docs.snowflake.com/en/sql-reference/sql/create-hybrid-table#required-parameters) for more details.
@@ -201,7 +198,6 @@ Next, we will explore secondary indexes.
 
 ## Explore Secondary Indexes
 
-Duration: 10
 
 ### Add a Secondary Index
 Clearly, the above query is not optimal. A secondary index can help the query run faster. Let's create a secondary index
@@ -244,7 +240,6 @@ Next, we will cover foreign keys.
 
 ## Explore Foreign Keys
 
-Duration: 10
 
 RDBMS data models use foreign keys to establish relationships between tables. All kinds of models take advantage of the relationships to keep
 data from becoming corrupted or otherwise orphaned from a definition. We call the relationship between the primary key
@@ -370,7 +365,6 @@ Next, we will explore how secondary indexes help queries that do not use primary
 
 ## Joining and Secondary Indexes
 
-Duration: 10
 
 A common query pattern is to join two tables using foreign keys and filter one of them with another column. For example,
 this query is fetching orders over the last few days for a specific truck:
@@ -445,7 +439,6 @@ Next, we will summarize best practices.
 
 ## Summarize Best Practices
 
-Duration: 2
 
 Hybrid table performance benefits from following best practices that extract the best performance and highest value
 from this Snowflake feature.
@@ -459,7 +452,6 @@ from this Snowflake feature.
 
 ## Conclusion And Resources
 
-Duration: 2
 
 ### Overview
 Thank you for completing this Hybrid Tables Performance Optimization Primer. You now have a solid understanding of how to 

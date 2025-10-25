@@ -1,16 +1,15 @@
 author: Snowflake
 id: braze-email-engagement-analytics-cortex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
 summary: Build an intelligent email engagement analytics app using Braze data and Snowflake Cortex AI
-categories: cortex,analytics,marketing,streamlit
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
-tags: Cortex, Analytics, Marketing, Streamlit, Braze, AI
 
 # AI-Powered Campaign Analytics with Braze and Snowflake Cortex
 
 ## Overview
-Duration: 5
 
 In this hands-on lab, you'll build an intelligent email engagement analytics application that combines Braze marketing data with Snowflake's Cortex AI capabilities. You'll create a natural language interface that allows marketers to query their email campaign performance data and receive AI-powered insights and recommendations.
 
@@ -40,7 +39,6 @@ Fundamentally, combining Braze and Snowflake allows you to fully understand the 
 - Understanding of email marketing concepts
 
 ## Environment Setup
-Duration: 10
 
 First, let's prepare your Snowflake environment and enable cross-region LLM usage.
 
@@ -72,7 +70,6 @@ CREATE OR REPLACE STAGE EMAIL_STAGE DIRECTORY = (ENABLE = TRUE);
 ```
 
 ## Create Data Tables
-Duration: 10
 
 Now we'll create tables for your email engagement data and campaign changelog data. The full table schemas for Braze engagement data can be found [here](https://www.braze.com/docs/assets/download_file/data-sharing-raw-table-schemas.txt?dadd92e90dc27e8a5066e9eea327c65e).
 
@@ -233,7 +230,6 @@ CREATE OR REPLACE TABLE EMAIL_UNSUBSCRIBES (
 After running this SQL, navigate to **Data** > **Databases** and you should see your BRAZE_ENGAGEMENT database, EMAIL_DATA schema, and the 5 tables you just created.
 
 ## Upload Sample Data
-Duration: 10
 
 Now we'll upload sample CSV files to populate our tables with demo data.
 
@@ -260,7 +256,6 @@ To upload the data files:
 Navigate to **Data > Databases**, click into your BRAZE_ENGAGEMENT Database, EMAIL_DATA Schema, and the EMAIL_STAGE. You should see your 5 files listed.
 
 ## Load Data into Tables
-Duration: 15
 
 Now we'll load the data from your CSV files into their respective tables. Run the following SQL against the BRAZE_ENGAGEMENT database:
 
@@ -406,7 +401,6 @@ LIMIT 10;
 ```
 
 ## Create Semantic Model
-Duration: 20
 
 Now we'll create a semantic model that enables natural language queries using Cortex Analyst.
 
@@ -565,7 +559,6 @@ Test your model with these questions:
 Save these as verified queries and add them as onboarding questions.
 
 ## Create Streamlit App
-Duration: 20
 
 Now we'll create a Streamlit application that provides a natural language interface to your Braze data.
 
@@ -986,7 +979,6 @@ if __name__ == "__main__":
 Click **Create** to create your Streamlit app.
 
 ## Understanding Cortex Integration
-Duration: 10
 
 Let's examine how our application leverages Snowflake Cortex capabilities:
 
@@ -1029,7 +1021,6 @@ Positive
 : Both functions use the `snowflake-arctic` model to ensure consistent, high-quality responses tailored for marketing use cases.
 
 ## Testing Your Application
-Duration: 15
 
 Now let's test our Marketing Insight Navigator application!
 
@@ -1084,7 +1075,6 @@ Negative
 : Remember that the app can only answer questions about data that exists in your semantic model. Questions about missing data fields will be politely declined.
 
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built an intelligent email engagement analytics application that combines Braze marketing data with Snowflake's Cortex AI capabilities.
 

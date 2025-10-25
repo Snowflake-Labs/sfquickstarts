@@ -1,11 +1,11 @@
 author: Christina Jimenez
 id: parsing_semi_structured_data_with_coalesce
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: Parsing Semi-Structured Data (JSON / XML) with Coalesce
-categories: data-engineering
 environments: web
 status: public
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering
 
 # Parsing Semi-Structured Data with Coalesce
 <!-- ------------------------ -->
@@ -37,7 +37,6 @@ Read on for a step-by-step guide on how to parse JSON and XML data in Snowflake 
 <!-- -------------------------->
 ## Setting Up Your Snowflake Account
 
-Duration: 2 
 
 1. Navigate to your Snowflake account and create a new Worksheet. Rename it “JSON Coalesce Sample.” 
 
@@ -54,7 +53,6 @@ Duration: 2
 <!-- -------------------------->
 ## Setting Up Your Coalesce Account
 
-Duration: 2
 
 1. Switch over to your Coalesce account and open your **Development Workspace** in your default Project.
 
@@ -83,7 +81,6 @@ Duration: 2
 <!-- -------------------------->
 ## Adding Source Nodes
 
-Duration: 2
 
 1. Click back to your Browser tab and click the Nodes icon in the left sidebar. Click the + icon that appears next to the Search bar. Click **Add Sources** from the dropdown menu.
 
@@ -101,7 +98,6 @@ Duration: 2
 <!-- -------------------------->
 ## Deriving JSON Mappings
 
-Duration: 2
 
 1. Right click on your source node and hover over **Add Node** to open the dropdown menu. Click on **Stage** to create a stage node on top of your source node. 
 
@@ -132,7 +128,6 @@ Or you can preview the data within your stage node:
 <!---------------------------->
 ## Parsing XML
 
-Duration: 5
 
 Coalesce offers XML parsing capabilities (currently in beta). This process functions similarly to the JSON example that is previously covered in this guide. 
 
@@ -201,7 +196,6 @@ select parse_xml('<catalog issue="spring" date="2015-04-15">
 
 <!---------------------------->
 ## Conclusion
-Duration: 1 
 
 Congratulations, you’ve completed this guide and experienced how easy it is to parse semi-structured data in Snowflake with Coalesce! To learn more about Coalesce’s JSON parsing capabilities, please visit our [documentation](https://docs.coalesce.io/docs/parsers). 
 

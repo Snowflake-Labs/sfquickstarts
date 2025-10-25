@@ -1,11 +1,11 @@
 author: sikha-das
 id: intro_to_machine_learning_with_snowpark_ml_for_python
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/migrations, snowflake-site:taxonomy/snowflake-feature/snowpark
+language: en
 summary: Through this quickstart guide, you will explore Snowflake for Machine Learning.
-categories: Getting-Started
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, Machine Learning, Snowpark
 
 # Getting Started with ML Development in Snowflake
 <!-- ------------------------ -->
@@ -63,7 +63,6 @@ This quickstart will focus on building a custom ML workflow using the following 
 
 <!-- ------------------------ -->
 ## Using Snowflake Notebooks
-Duration: 2
 
 To get started using Snowflake Notebooks, first login to Snowsight and run the following [setup.sql](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python/blob/main/scripts/setup.sql) in a SQL worksheet. Sign up for a 30-day [free trial](https://signup.snowflake.com/) account, if required. This will connect to the git repo where all the Snowflake Notebooks are stored and create them for you in your Snowflake environment.
 
@@ -179,7 +178,6 @@ ALTER STREAMLIT ML_HOL_STREAMLIT_APP ADD LIVE VERSION FROM LAST;
 
 <!-- ------------------------ -->
 ## Set up the data in Snowflake
-Duration: 7
 
 **Change role to** `ML_MODEL_HOL_USER`
 
@@ -191,7 +189,6 @@ The overall goal of this ML project is to predict the price of diamonds given di
 
 <!-- ------------------------ -->
 ## ML Feature Transformations
-Duration: 10
 
 **Change role to** `ML_MODEL_HOL_USER`
 
@@ -201,7 +198,6 @@ In this notebook, we will walk through a few transformations on the `diamonds` d
 
 <!-- ------------------------ -->
 ## ML Model Training and Inference
-Duration: 15
 
 **Change role to** `ML_MODEL_HOL_USER`
 
@@ -211,7 +207,6 @@ In this notebook, we will illustrate how to train an XGBoost model with the `dia
 
 <!-- ------------------------ -->
 ## Optional: Streamlit App
-Duration: 7
 
 **Change role to** `ML_MODEL_HOL_USER`
 

@@ -1,17 +1,16 @@
 summary: Learn how to get started with Jupyter Notebooks on Snowpark and use the DataFrame API.
 id: getting_started_with_snowpark_dataframe_api
-categories: getting-started
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+language: en
 environments: web
 status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Snowpark, Data Engineering
 authors: Robert Fehrmann
 
 # Getting Started with Snowpark and the Dataframe API 
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 3
 
 ![](assets/stock_small.jpg)
 
@@ -67,7 +66,6 @@ All notebooks will be fully self contained, meaning that all you need for proces
 
 <!-- ------------------------ -->
 ## Preparing your lab environment 
-Duration: 10
 
 ### Option 1:  Running Jupyter locally
 
@@ -155,7 +153,6 @@ In case you can't install docker on your local machine you could run the tutoria
 
 <!-- ------------------------ -->
 ## Setup Credentials
-Duration: 10
 
 
 First, we have to set up the Jupyter environment for our notebook. The full instructions for setting up the environment are in the Snowpark documentation [Configure Jupyter](https://docs.snowflake.com/en/developer-guide/snowpark/quickstart-jupyter.html#configuring-the-jupyter-notebook-for-snowpark).
@@ -190,7 +187,6 @@ Then, update your credentials in that file and they will be saved on your local 
 
 <!-- ------------------------ -->
 ## Part 1:  Introduction to the Snowpark DataFrame API 
-Duration: 10
 
 This is the first notebook of a series to show how to use Snowpark on Snowflake. This notebook provides a quick-start guide and an introduction to the Snowpark DataFrame API. The notebook explains the steps for setting up the environment (REPL), and how to resolve dependencies to Snowpark. After a simple "Hello World" example you will learn about the Snowflake DataFrame API, projections, filters, and joins.
 
@@ -213,7 +209,6 @@ Navigate to the folder snowparklab/notebook/part1 and Double click on the part1.
 
 <!-- ------------------------ -->
 ## Part 2:  Aggregations, Pivots, and UDF's 
-Duration: 15
 
 This is the second notebook in the series. It builds on the quick-start of the first part. Using the TPCH dataset in the sample database, we will learn how to use aggregations and pivot functions in the Snowpark DataFrame API. Then, it introduces user definde functions (UDFs) and how to build a stand-alone UDF: a UDF that only uses standard primitives. From there, we will learn how to use third party Scala libraries to perform much more complex tasks like math for numbers with unbounded (unlimited number of significant digits) precision and how to perform sentiment analysis on an arbitrary string.
 
@@ -242,7 +237,6 @@ Navigate to the folder snowparklab/notebook/part2 and Double click on the part2.
 
 <!-- ------------------------ -->
 ## Part 3:  Data Ingestion, transformation, and model training 
-Duration: 15
 
 The third notebook builds on what you learned in part 1 and 2. It implements an end-to-end ML use-case including data ingestion, ETL/ELT transformations, model training, model scoring, and result visualization.
 
@@ -268,7 +262,6 @@ Navigate to the folder snowparklab/notebook/part2 and Double click on the part2.
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 2
 
 Snowpark is a brand new developer experience that brings scalable data processing to the Data Cloud. In Part1 of this series, we learned how to set up a Jupyter Notebook and configure it to use Snowpark to connect to the Data Cloud. Next, we built a simple Hello World! program to test connectivity using embedded SQL. Then we enhanced that program by introducing the Snowpark Dataframe API. Lastly we explored the power of the Snowpark Dataframe API using filter, projection, and join transformations.
 

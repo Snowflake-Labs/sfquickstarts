@@ -1,16 +1,15 @@
 author: Lang.ai
 id: create_ai_agents_on_snowflake_with_lang_ai
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/business-intelligence
+language: en
 summary: Through this quickstart guide, you will set up an AI Agent running on Snowflake to set up recurring data analysis for your business teams.
-categories: Getting-Started, Data-Science-&-Ai, Data-Science-&-Ml, partner-integrations 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Data Engineering, AI Agents 
 
 # Create AI Agents on Snowflake with Lang.ai
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Lang.ai's Snowflake AI Agents empower data teams to create custom agents that derive actionable priorities from customer interactions, driving retention and growth. 
 
@@ -33,7 +32,6 @@ This quickstart is a guide to installing and running your first Lang AI Agent fo
 
 <!-- ------------------------ -->
 ## Creating a sample database
-Duration: 5
 
 In this step we will be creating a sample database and a sample view. We will be using this data in the following steps to create our first AI Agent.
 
@@ -68,7 +66,6 @@ You may include additional columns that may be used by the AI Agent to aggregate
 
 <!-- ------------------------ -->
 ## Installing the application
-Duration: 5
 
 > aside positive
 > NOTE: This guide shows the steps needed to install the app via the user interface. If you prefer to install it using SQL scripts, please follow this [guide](https://help.lang.ai/en/articles/9813363-install-the-native-app-with-an-sql-script).
@@ -99,7 +96,6 @@ Navigate back to the *Data Products > Apps* page and wait for the spinner in the
 
 <!-- ------------------------ -->
 ## Creating Your First AI Agent
-Duration: 5
 
 Learn to run your first AI Agent on top of Snowflake data.
 
@@ -166,7 +162,6 @@ Click "Create Agent" to start the analysis. The AI Agent will process your data 
 
 
 ## Reviewing the Insights of Your AI Agent
-Duration: 5
 
 > aside positive
 > Automate insight delivery to Slack! For instructions on setting up the Slack integration, please check this [guide](https://help.lang.ai/en/articles/9950927-connecting-the-slack-integration).
@@ -186,7 +181,6 @@ Additionally, you have the option to download the data from your active filters 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 By following this guide, you have successfully set up an AI Agent running on Snowflake to automate your data analysis tasks.
 

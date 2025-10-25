@@ -1,17 +1,16 @@
 author: Armin Efendic
 id: analyzing_customer_reviews_using_hex_and_snowflake_cortex
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/data-engineering
+language: en
 summary: This lab will walk you through how to use Hex with Snowflake Cortex to analyze and understand sentiment on customer reviews.
-categories: data-science-&-ml,partner-integrations
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Hex, Notebooks, Partner Connect
 
 # Analyzing Customer Reviews With Hex and Snowflake Cortex
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 This quickstart guide has been slightly modified from the original quickstart guide titled [Customer Reviews Analytics using Snowflake Cortex](https://quickstarts.snowflake.com/guide/customer_reviews_analytics_using_snowflake_cortex/#0).
 
@@ -34,7 +33,6 @@ You will create a Hex data app that uses Snowflake Cortex and Hex to analyze cus
 
 
 ## Setting up partner connect
-Duration: 5
 
 If you have an existing Hex account, login to your Hex account and continue to the next section. Otherwise, follow the steps below.
 
@@ -61,7 +59,6 @@ The following issues may occur if you have an existing Hex account and you're no
 
 
 ## Getting Started with Hex
-Duration: 5
 
 The first thing you'll need to do is transfer the Hex project into your new or existing Hex org.
 
@@ -95,7 +92,6 @@ Enable the Snowpark and Writeback toggles.
 ![](assets/connection_toggles.png)
 
 ## Writing Data To Snowflake
-Duration: 5
 
 ***NOTE: The Hex project is designed to be paired with the quickstart guide, please ensure to follow the quickstart guide as it will provide additional information and highlight the most important concepts!***
 
@@ -283,7 +279,6 @@ SELECT 'setup is now complete' AS note;
 ```
 
 ## Hex Quickstart Guide Best Practices
-Duration: 1
 
 Below is a short list of suggestions:
 * You may safely delete the SQL cell previously ran from the Hex project or comment it out. Once completed, you may select Run all at the top right of the Hex project or step through each code cell and run them individually. The ladder is the recommended approach. 
@@ -291,7 +286,6 @@ Below is a short list of suggestions:
 * Ensure that every SQL cell has the correct Snowflake database connection selected prior to running it.
 
 ## Working With Snowpark In Hex
-Duration: 15
 
 Hex offers a straightforward and secure way to interact with Snowpark. To quickly return a Snowpark dataframe, simply select the Snowpark return mode from the next SQL cell in your Hex project. The output of this SQL cell will be a Snowpark dataframe named `reviews`, which you can easily rename by clicking on the highlighted variable in blue.
 
@@ -321,7 +315,6 @@ session.use_schema("analytics")
 At this time, complete the Hex project until you reach the section titled Snowflake Cortex. At that time, move to the next quickstart guide section titled Working With Snowflake Cortex in Hex.
 
 ## Working with Snowflake Cortex in Hex
-Duration: 45
 
 [Snowflake Cortex AI](https://docs.snowflake.com/en/guides-overview-ai-features) is an intelligent, fully managed service that provides access to industry-leading large language models (LLMs) and chat with your data services. Cortex AI capabilities include:
 
@@ -352,7 +345,6 @@ reviews_24.filter(F.col("LANGUAGE") != F.lit("en")).select(
 This capability allows for LLMs to be easily utilized in conditional statements and at scale. Continue in the Hex project until you reach the **Single-Shot vs. Zero-Shot Prompting** section, and then proceed to the next section.
 
 ## Single-Shot vs. Zero-Shot Prompting
-Duration: 10
 
 **Single-Shot Prompting:** Providing the model with one example of the task to guide it, helping clarify the desired output or format before requesting a response.
 
@@ -461,7 +453,6 @@ models = [
 Return to the Hex project and complete the cells until you reach the **Classification Analysis** section. Once there, progress to the next section in the quickstart guide. 
 
 ## Classification Using Cortex
-Duration: 5
 
 Performing classification was once a rather complex task requiring supervised machine learning where labeled data was used to train models to recognize patterns and categorize inputs. This involved collecting large datasets, preprocessing them, and training models like decision trees, SVMs, or neural networks, which could be time-consuming and resource-intensive. Today, with large language models (LLMs), we can perform classification without explicit training data or supervision by simply prompting the model.
 
@@ -501,7 +492,6 @@ review_df.select(["REVIEW", "CATEGORY_SENTIMENT"]).show(1)
 Complete the rest of the Hex project and progress to the next quickstart section to build your own Hex App!
 
 ## Create A Hex App
-Duration: 5
 
 Congratulations on successfully completing the Hex project! Now is the perfect time to share these insights with the team. However, simply sharing the technical analysis and code cells with stakeholders may not be the most effective approach. Traditional workflows, such as using BI tools for showing visuals or embedding screenshots in PowerPoint or PDF have proven to be very tedious for ad hoc analytical work. Often times, this workflow results in incomplete communication, leaving end users with more questions than answers.
 

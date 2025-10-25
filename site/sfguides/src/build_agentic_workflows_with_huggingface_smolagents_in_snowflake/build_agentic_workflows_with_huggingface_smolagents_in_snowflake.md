@@ -1,10 +1,10 @@
 id: build-agentic-workflows-with-huggingface-smolagents-in-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/build
+language: en
 summary: This guide outlines the process for creating agentic workflow in Snowflake Notebook on Container Runtime.
-categories: featured,getting-started,data-science-&-ml,app-development
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
-tags: Getting Started, Data-Science-&-Ai, Featured
 authors: Dash Desai
 
 # Build Agentic Workflows with Hugging Face Smolagents in Snowflake
@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 4
 
 This guide outlines the process for creating agentic workflows in [Snowflake Notebook on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs) using Smolagents from Hugging Face. These agents are capable of writing Python code to call tools and orchestrate other agents. In this guide, we will also see how you can use out of the box tools and also create a custom tool that uses Snowflake Cortex AI.
 
@@ -51,7 +50,6 @@ Agentic workflow using Smolagents library and Snowflake Cortex AI in Snowflake N
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 10 
 
 **Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-build-agentic-workflows-with-huggingface-smolagents-in-snowflake/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
@@ -85,7 +83,6 @@ Duration: 10
 <!-- ------------------------ -->
 ## Run Notebook
 
-Duration: 15
 
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
@@ -138,7 +135,6 @@ If all goes well, you should see the output similar to the following:
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully created agentic workflow using smolagents library and Snowflake Cortex AI in Snowflake Notebook on Container Runtime.
 
