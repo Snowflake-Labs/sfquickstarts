@@ -1,5 +1,5 @@
 id: getting_started_with_Openflow_unstructured_data_pipeline
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/openflow
 language: en
 summary: Getting Started with Openflow Unstructured Data Pipeline using Google Drive and Snowflake Intelligence
 environments: web

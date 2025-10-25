@@ -1,5 +1,5 @@
 id: advanced_guide_to_snowflake_feature_store
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 language: en
 summary: Learn how to get started and use Snowflake Feature Store to manage features and deploy models into production
 environments: web
