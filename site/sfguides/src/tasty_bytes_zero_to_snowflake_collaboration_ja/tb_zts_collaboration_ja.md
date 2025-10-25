@@ -1,7 +1,7 @@
 author: Jacob Kranzler
 id: tasty_bytes_zero_to_snowflake_collaboration_ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/applications-and-collaboration
-language: jp
+language: ja
 summary: Tasty Bytes - ゼロからのSnowflake - コラボレーションクイックスタート
 environments: web
 status: Published

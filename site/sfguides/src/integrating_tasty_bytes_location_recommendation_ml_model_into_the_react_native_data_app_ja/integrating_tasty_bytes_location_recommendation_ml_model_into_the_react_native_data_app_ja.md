@@ -1,7 +1,7 @@
 author: Swathi Jasti
 id: integrating_tasty_bytes_location_recommendation_ml_model_into_the_react_native_data_app_ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
-language: jp
+language: ja
 summary: Tasty Bytesのロケーション推奨MLモデルのReact Nativeデータアプリケーションへの統合
 environments: web
 status: Published 

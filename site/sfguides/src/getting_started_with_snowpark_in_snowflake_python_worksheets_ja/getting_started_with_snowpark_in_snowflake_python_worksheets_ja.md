@@ -1,6 +1,6 @@
 id: getting_started_with_snowpark_in_snowflake_python_worksheets_ja
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/platform
-language: jp
+language: ja
 summary: Snowflake PythonワークシートによるSnowpark入門
 environments: web
 status: Published
