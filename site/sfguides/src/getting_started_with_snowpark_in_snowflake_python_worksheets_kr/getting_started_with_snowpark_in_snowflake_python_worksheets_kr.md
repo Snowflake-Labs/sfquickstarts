@@ -12,7 +12,6 @@ authors: Dash Desai
 <!-- ------------------------ -->
 ## 개요
 
-Duration: 5
 
 이 가이드를 완료하면 Snowflake UI 내에서 Snowpark for Python을 사용해 볼 수 있습니다. 결과적으로 Snowflake Python 워크시트에서 Snowpark를 사용하여 핵심 데이터 엔지니어링 작업을 수행하는 방법을 더 잘 이해하게 됩니다.
 
@@ -47,7 +46,6 @@ Python 워크시트는 Snowpark를 더 빨리 시작할 수 있도록 돕는 Sno
 <!-- ------------------------ -->
 ## 시작하기
 
-Duration: 10
 
 ### Snowflake 평가판 계정 생성
 
@@ -70,7 +68,6 @@ Snowflake 계정에 로그인합니다. 이 랩에 액세스하고 샘플 데이
 <!-- ------------------------ -->
 ## Snowflake 테이블에서 Snowpark DataFrame으로 데이터 로드
 
-Duration: 1
 
 우선, Snowpark Python 라이브러리를 가져오겠습니다.
 
@@ -81,7 +78,6 @@ import snowflake.snowpark as snowpark
 
 ### 집계된 캠페인 지출 및 수익 데이터 로드
 
-Duration: 3
 
 이 캠페인 지출 테이블에는 일일 지출을 보여주기 위해 여러 디지털 광고 채널(예: 검색 엔진, 소셜 미디어, 이메일 및 동영상)에 걸쳐 집계된 광고 클릭 데이터가 포함되어 있습니다. 수익 테이블에는 10년 동안의 수익 데이터가 포함되어 있습니다.
 
@@ -104,7 +100,6 @@ snow_df_revenue = session.table('monthly_revenue')
 <!-- ------------------------ -->
 ## 데이터 변환
 
-Duration: 10
 
 이 섹션에서는 집계 및 2개의 DataFrame 결합을 비롯한 변환 세트를 수행하겠습니다.
 
@@ -205,7 +200,6 @@ snow_df_spend_and_revenue_per_month.explain()
 <!-- ------------------------ -->
 ## 변환된 데이터 저장
 
-Duration: 1
 
 변환된 데이터를 추가 분석 및 또는 모델 훈련에 사용할 수 있도록 이를 ***SPEND_AND_REVENUE_PER_MONTH*** Snowflake 테이블에 저장하겠습니다.
 
@@ -216,7 +210,6 @@ snow_df_spend_and_revenue_per_month.write.mode('overwrite').save_as_table('SPEND
 <!-- ------------------------ -->
 ## 변환된 데이터 보기 및 반환
 
-Duration: 1
 
 Python 워크시트의 반환 값 중 하나는 ***Table()*** 유형이며 여기에서 이를 설정하면 변환된 데이터를 Snowpark DataFrame으로 보고 반환할 수 있습니다.
 
@@ -235,7 +228,6 @@ return snow_df_spend_and_revenue_per_month
 <!-- ------------------------ -->
 ## 저장 프로시저로 배포
 
-Duration: 2
 
 선택적으로 이 워크시트를 Python 저장 프로시저로 배포할 수도 있습니다. 이렇게 하면 예를 들어, [Snowflake 작업](https://docs.snowflake.com/ko/user-guide/tasks-intro)을 사용하여 이를 예약할 수 있습니다. 이 워크시트를 배포하려면 오른쪽 상단에서 **Deploy** 버튼을 클릭하고 아래에서 보이는 것과 같이 지침을 따릅니다.
 

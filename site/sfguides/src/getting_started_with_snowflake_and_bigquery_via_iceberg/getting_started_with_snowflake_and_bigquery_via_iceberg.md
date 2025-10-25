@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowflake and BigQuery via Iceberg
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 Apache Iceberg has become a very popular open-source table format for data lakes as its flexibility enables freedom of choice for organizations. Whether an organization wants to use best of breed services or they’ve inherited multiple data platforms due to mergers or acquisitions, adopting an open table format could be key to eliminating data silos.
 
@@ -46,7 +45,6 @@ There is often no one-size-fits-all approach to tackling complex business challe
 
 <!-- ------------------------ -->
 ## Snowflake Iceberg to BigQuery
-Duration: 18
 
 In this section, you will create a table in Snowflake using the Iceberg format and also create a BigLake (external) table in BigQuery that points to the same Iceberg files.
 
@@ -243,7 +241,6 @@ SYSTEM$GET_ICEBERG_TABLE_INFORMATION('<iceberg_table_name>')
 
 <!-- ------------------------ -->
 ## Big Lake Iceberg to Snowflake
-Duration: 19
 
 In this section, you will create a table in BigQuery using the Iceberg format and also create an Iceberg (external) table in Snowflake that points to the same Iceberg files.
 
@@ -472,7 +469,6 @@ NOTE: You will not see the new record. You first need to tell BigQuery to export
 
 <!-- ------------------------ -->
 ## Keeping BQ in-sync with Snowflake
-Duration: 5
 
 In this section you will set up BigQuery to stay in-sync with Iceberg tables hosted in Snowflake.
 
@@ -486,7 +482,6 @@ In this section you will set up BigQuery to stay in-sync with Iceberg tables hos
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 ### Technical Considerations
 Technical considerations for the data sharing integration between BigQuery and Snowflake today include:

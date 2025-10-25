@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Snowflake Connector for ServiceNow Installation
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Use this quickstart lab to configure and understand the Snowflake Connector for ServiceNow® using the Snowsight wizard, select some tables, ingest data, and run an example query. This quickstart is not meant to be exhaustive. Please check the [Snowflake Connector for ServiceNow® documentation](https://other-docs.snowflake.com/en/connectors/servicenow/servicenow-index.html) for full functionality and limitations.
 
@@ -36,7 +35,6 @@ A ServiceNow® to Snowflake ingestion data flow.
 
 <!-- ------------------------ -->
 ## Set up the ServiceNow® Developer Instance
-Duration: 5
 
 If you do not want to test this connector on your ServiceNow® account, no problem, this step explains how to set up a developer instance! 
 
@@ -51,14 +49,12 @@ Deployment is usually pretty quick, around five minutes. But, while you wait, le
 ### Create the Snowflake Account
 If you do not have a Snowflake account, no problem, you can get a free trial  at [snowflake.com](https://www.snowflake.com/en/). Select **Start for Free** and follow the instructions. 
 ### Accept the Terms & Conditions
-Duration: 1
 1. Log on to your Snowflake account through the Snowsight web interface and change to the **ORGADMIN** role. 
 1. Select “Admin -> Billing & Terms”.
 4. In the “Snowflake Marketplace” section, review the Consumer Terms of Service.
 5. If you agree to the terms, select “Accept Terms & Conditions”.
 
 ### Set up a Virtual Warehouse
-Duration: 1
 
 You'll need some compute for the connector installation process, so let's set up a virtual warehouse to do that.
 
@@ -67,7 +63,6 @@ Change to the **ACCOUNTADMIN** role.
 2. Name the virtual warehouse **CONNECTOR_UI_WH**, size XS, and, leaving the defaults, select **Create Warehouse**. 
 
 ### Install the ServiceNow® connector
-Duration: 1
 
 The connector, the first of its kind to be deployed on Snowflake's [Native App Framework](https://www.snowflake.com/en/data-cloud/workloads/applications/native-apps/), is delivered through the Snowflake Marketplace, and is available to all Snowflake customers instantly. 
 Once chosen, it is installed into your account as an application with several views, and stored procedures. 
@@ -105,14 +100,12 @@ Please have two tabs in your browser open for the next part, as you will have to
 * From the ServiceNow® side we want the Application Registry to provide the **Client ID** and **secret**, which we then paste into Snowflake.
 
 ### On the Snowflake hand
-Duration: 1
 
 1. Copy the redirect URL. You will need it in the next section.
 
 Now, open a new tab in your browser (without closing the above), and follow the steps in the next section.
 
 ### On the ServiceNow® other hand
-Duration: 2
 
 1. Log on to your ServiceNow® developer instance.
 1. From the main page, select **All** and search **Application Registry**.
@@ -132,7 +125,6 @@ Duration: 2
 Now, time to jump back to the Snowflake configuration tab.
 
 ## Configure the Connector
-Duration: 1
 
 When all the preparation tasks are done, move to the next step by clicking **Start configuration**
 
@@ -155,7 +147,6 @@ Select **Configure**. It can take a few minutes for the configuration process to
 ![resource monitor](assets/monitor.png)
 
 ## Set up the Snowflake to ServiceNow® OAuth2 hand-shake
-Duration: 1
 
 1. Select **OAuth2** as an authentication method
 1. Fill in the ServiceNow® instance details. This is the first part of the ServiceNow® URL for your ServiceNow® account, **without** *https://* protocol and the trailing *service-now.com*.
@@ -174,7 +165,6 @@ To verify the connection, select the three dots [...] and **View Details**. At t
 > If you are having issues, perhaps the Client secret wasn't copied. Unlock the password field and copy and paste the text.
 
 ## Configure deletions sync
-Duration: 1
 
 If you want not only inserts and updates, but also deletes to be synchronized to Snowflake, you have to provide name of the journal table.
 By default ServiceNow® uses `sys_audit_delete` table to store information about deleted records so feel free to provide this name.
@@ -187,7 +177,6 @@ It can take a few minutes for the process to complete.
 When it's done, please select **Define data to sync** to select tables for the ingestion.
 
 ## Select ServiceNow® Tables
-Duration: 1
 
 > aside negative
 > A couple of things to be aware of:
@@ -220,7 +209,6 @@ You receive a message indicating success. It appears once at least one table has
 > Don't stop the ingest too quickly. Make sure the views are built in the destination database first.
 
 ## Connector Monitoring
- Duration: 2
 
 Let's open a worksheet to check what's going on inside the connector.
 Here are some examples of SQL queries you can execute to get monitoring
@@ -250,7 +238,6 @@ SELECT * FROM SNOWFLAKE_CONNECTOR_FOR_SERVICENOW.public.connector_overview;
 
 
 ## Configuring access to the ingested data
-Duration: 1
 
 The connector exposes an application role named `DATA_READER`. It has read access to all the ingested data in the destination schema.
 It's automatically granted to the role provided during the **Configure** step of the installation process.
@@ -258,7 +245,6 @@ It was named `SERVICE_NOW_RESOURCES_PROVIDER` in the screenshot earlier in this 
 You can grant either application role or account role further if needed.
 
 ## Query the Data
-Duration: 1
 
 Check out the tables that the connector has created under the destination schema of the destination database. For each table in ServiceNow® that is configured for synchronization, the connector creates the following table and views:
 
@@ -328,7 +314,6 @@ GRANT USAGE ON WAREHOUSE SERVICENOW_WAREHOUSE TO ROLE servicenow_monitor_role;
 ```
 
 ## Stop the Ingestion
-Duration: 1
 
 During this lab, we're only ingesting the data, so it makes sense to stop the ingestion after that initial load. However, in an operational environment, you would keep it running.
 
@@ -341,7 +326,6 @@ During this lab, we're only ingesting the data, so it makes sense to stop the in
 1. In the **Snowflake Connector for ServiceNow** window, select **Pause Connector**.
 
 ## Uninstall the Connector (but not the data)
-Duration: 1
 
 If you completed the experiment or for any reason no longer need the connector you can easily uninstall it via the Snowflake Marketplace.
 
@@ -354,7 +338,6 @@ If you completed the experiment or for any reason no longer need the connector y
 ![uninstall](assets/uninstall.png)
 
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You've successfully installed and configured the Snowflake Connector for ServiceNow®, ingested data and ran a query to get some insights on incidents and priority!
 

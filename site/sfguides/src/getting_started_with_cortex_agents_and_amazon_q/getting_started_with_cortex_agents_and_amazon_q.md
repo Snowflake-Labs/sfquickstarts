@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Cortex Agents and Amazon Q
 <!-- ------------------------ -->
 ## Overview 
-Duration: 15
 
 [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) orchestrate across both structured and unstructured data sources to deliver insights. They plan tasks, use tools to execute these tasks, and generate responses. Agents use Cortex Analyst (structured) and Cortex Search (unstructured) as tools, along with LLMs, to analyze data. Cortex Search extracts insights from unstructured sources, while Cortex Analyst generates SQL to process structured data. A comprehensive support for tool identification and tool execution enables delivery of sophisticated applications grounded in enterprise data.
 
@@ -64,7 +63,6 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 
 <!-- ------------------------ -->
 ## Create Amazon Q App
-Duration: 5
 
 In this section, we'll set up [Amazon Q Business](https://aws.amazon.com/q/business/qstart) , a generative AI-powered assistant that enables natural language interaction with business data. We'll create and configure a Q Business application that will connect with our Snowflake database, enabling intelligent querying of our movie script data. While we're using movie scripts for this example, these same steps can be applied to analyze any type of business documents in your organization.
 
@@ -121,7 +119,6 @@ Before we continue on, we need to make sure we have configured a user to access 
 
 <!-- ------------------------ -->
 ##  Cortex and Amazon Q Business
-Duration: 15
 
 In this section, we'll create the foundation for an AI-powered movie data analysis system. By configuring Snowflake Cortex Search, Cortex Analyst and a Cortex Agent, you'll build a system that can process, store, and intelligently search through movie scripts. Once completed, this setup will allow users to ask natural language questions about movie content and receive relevant answers through Amazon Q Business.
 
@@ -404,7 +401,6 @@ For more information about Snowflake's OAuth configuration, visit the [Snowflake
 
 <!-- ------------------------ -->
 ## Configure Q plugin
-Duration: 5
 
 Next, we'll create a Q Business Custom Plugin to connect our Q Business Application with the Cortex Search in Snowflake. This integration enables the Q Business chatbot interface to access and analyze the movie script data stored in Snowflake.
 
@@ -541,7 +537,6 @@ Great Job! Your plugin is now ready to use within Q Business to query movie scri
 
 <!-- ------------------------ -->
 ## Test Application
-Duration: 4 
 
 ### Testing your Q Business Application
 1. In the Q Business console navigate to the **script-plugin** on the left menu and select your plugin **movie-scripts**
@@ -580,7 +575,6 @@ Duration: 4
 <!-- ------------------------ -->
 ## Snowflake & Quicksight
 OPTIONAL
-Duration: 20
 
 This lab introduces participants to [Amazon Q in QuickSight](https://aws.amazon.com/quicksight/q/), dashboard-authoring capabilities empower business analysts to swiftly build, uncover, and share valuable insights using natural language prompts. Simplify data understanding for business users through a context-aware Q&A experience, executive summaries, and customizable data stories. 
 
@@ -719,7 +713,6 @@ Congratulations, you have successfully extracted relevant insights from your mov
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 This quickstart is just that, a quick way to get you started with using Amazon Q with Snowflake Cortex, though with this start you are now enabled to extend the quickstart in the below ways:
     - Scale the workflow to a use case with many documents and use a more robust Cortex Search Service.

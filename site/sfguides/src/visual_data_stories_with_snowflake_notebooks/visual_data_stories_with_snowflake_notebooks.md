@@ -11,7 +11,6 @@ authors: Vino Duraisamy, Doris Lee
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) offer an interactive, cell-based programming environment for Python and SQL. With a Snowflake Notebook, you can perform exploratory data analysis, visualize your data, build data dashboards, experiment with feature engineering for machine learning, and perform other data science tasks within Snowflake.
 
@@ -47,7 +46,6 @@ Here is a summary of what you will be able to learn in each step by following th
 <!-- ------------------------ -->
 ## Load demo notebooks to Snowflake
 
-Duration: 5
 
 You can create a Snowflake Notebook directly from the Snowsight UI or upload an existing IPython Notebook to Snowflake.
 
@@ -72,7 +70,6 @@ The notebook files are available for download as `.ipynb` files in the demo repo
 <!-- ------------------------ -->
 ## Plotting data using Altair, Matplotlib and Plotly
 
-Duration: 5
 
 With Snowflake Notebook, you can use your favorite Python visualization library, including Altair, matplotlib and plotly, to develop your visualization. 
 
@@ -151,7 +148,6 @@ px.bar(df, x='measurement', y='value', color='species')
 <!-- ------------------------ -->
 ## Working with Markdown cells
 
-Duration: 5
 
 With Snowflake Notebooks, you can leverage Markdown language to develop rich text displays with formatting.
 
@@ -212,7 +208,6 @@ The syntax looks like `![text](hyperlink)`. Here are some examples!
 <!-- ------------------------ -->
 ## Using Streamlit in Notebook
 
-Duration: 5
 
 You can bring your data narrative alive in notebooks and make it even more interactive by using Streamlit.
 
@@ -247,7 +242,6 @@ st.image(image)
 <!-- ------------------------ -->
 ## Build Interactive Data Apps with Streamlit
 
-Duration: 5
 
 Think of each cell in your Snowflake Notebook as a mini Streamlit app. As you interact with your data app, the relevant cells will get re-executed and the results in your app updates.
 
@@ -277,7 +271,6 @@ alt.Chart(df).mark_bar().encode(
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully completed the Visual Data Stories with Snowflake Notebooks quickstart guide. [Try out Notebooks](https://signup.snowflake.com/?utm_cta=quickstarts_) yourself to build your own data narrative!
 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Quickstart Guide: Cybersyn Streamlit in Snowflake - Financial Demo
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 ![logo-image](assets/FinancialDataSnowflakeNativeApp.png)
 
@@ -40,7 +39,6 @@ A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 
 <!-- ------------------------ -->
 ## Setting up the Streamlit Application
-Duration: 4
 
 ### Step 1: Accessing Data in Snowflake Marketplace
 <button>[Cybersyn Financial Data Package](https://app.snowflake.com/marketplace/listing/GZTSZAS2KF7)</button>
@@ -85,7 +83,6 @@ After logging into your Snowflake account, access [Cybersyn’s Financial Data P
 
 <!-- ------------------------ -->
 ## Walk-through of the App Functionality
-Duration: 3
 
 To see the Streamlit in the full window, click < Streamlit Apps on the top left and reopen the application you created (eg. Financial Streamlit).
 

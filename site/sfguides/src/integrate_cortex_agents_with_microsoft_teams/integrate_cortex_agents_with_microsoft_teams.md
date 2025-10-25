@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 5
 
 Cortex Agents simplify AI-powered data interactions via a REST API, combining hybrid search and accurate SQL generation. They streamline workflows by managing context retrieval, natural language to SQL conversion, and LLM orchestration. Response quality is enhanced with in-line citations, answer abstention, and multi-message context handling. Developers benefit from a single API call integration, real-time streamed responses, and reduced latency for optimized applications.
 
@@ -62,7 +61,6 @@ A conversationl interface using Cortex Agents REST API integrated with Microsoft
 ## Setup Snowflake
 <!-- ------------------------ -->
 
-Duration: 12
 
 **Step 1:** Clone the [GitHub repo](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams).
 
@@ -82,7 +80,6 @@ Duration: 12
 ## Setup Microsoft Teams
 <!-- ------------------------ -->
 
-Duration: 15
 
 ### Create Basic Bot
 
@@ -154,7 +151,6 @@ At this point, you should have an updated folder structure similar to the one sh
 ## Test
 <!-- ------------------------ -->
 
-Duration: 3
 
 Before proceeding, make sure you [test](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-microsoft-teams/blob/main/test.js) that the Cortex Agents API endpoint and other env variables in **env/.env.dev** have been set correctly.
 
@@ -185,7 +181,6 @@ If you get this error **Caused by SSLError(SSLCertVerificationError(1, “[SSL: 
 ## Run Application
 <!-- ------------------------ -->
 
-Duration: 5
 
 In VS Code, click on **Run** > **Start Debugging** which launches your app in **Teams App Test Tool** in a web browser. If all goes well, you will see an application that you can interact with in Teams App Test Tool. 
 
@@ -305,7 +300,6 @@ The response from Cortex Agents REST API can include SQL query for questions ser
 ## Next Steps
 <!-- ------------------------ -->
 
-Duration: 2
 
 As next steps, follow these links to extend the Bot's functionality.
 
@@ -322,7 +316,6 @@ As next steps, follow these links to extend the Bot's functionality.
 ## Conclusion And Resources
 <!-- ------------------------ -->
 
-Duration: 1
 
 Congratulations! You've sucessfully integrated Cortex Agents with Microsoft Teams. I hope you found this guide both educational and inspiring.
 

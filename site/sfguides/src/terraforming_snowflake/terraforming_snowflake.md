@@ -10,7 +10,6 @@ authors: Brad Culberson, Scott Winkler, François Vienneau Binette
 # Terraforming Snowflake
 
 ## Overview
-Duration: 5
 
 > aside negative
 > ⚠️ **Disclaimer**: You may have already been using the Provider in one of it's legacy version developed by the open source community. Major reworks came with v1.0.0 at the end of 2024, bringing us closer to the official and generally available v2.0.0 release. Not every Snowflake objects are available through the Provider, it's a work in progress. Refer to the [official documentation](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs) and check out the [project roadmap](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/ROADMAP.md) for more information.
@@ -66,7 +65,6 @@ In practice, the workflow looks like this:
   ![Terraforming_Snowflake_Overview](assets/terraforming-snowflake-overview.png)
 
 ## Create a New Repository
-Duration: 5
 
 Let's create a new repository to store your Terraform project code. We use the repository name `sfguide-terraform-sample` in this lab. 
 
@@ -90,7 +88,6 @@ $ git push -u origin main
 You now have an empty repo that we will use in subsequent steps to Terraform your Snowflake account.
 
 ## Create a Service User for Terraform
-Duration: 5
 
 We will now create a service user separate from your own user. A [service-type](https://docs.snowflake.com/en/user-guide/admin-user-management#types-of-users) user authenticate with Snowflake without a login and password but only with a key-pair approach. No need for password or MFA. This is also how most CI/CD pipelines run Terraform.
 
@@ -132,7 +129,6 @@ GRANT ROLE SECURITYADMIN TO USER TERRAFORM_SVC;
 >  We grant the user `SYSADMIN` and `SECURITYADMIN` privileges to keep the lab simple. An important security best practice, however, is to limit all user accounts to least-privilege access. In a production environment, the public key should also be secured with a secrets management solution like HashiCorp Vault, Azure Key Vault, AWS Secrets Manager, etc.
 
 ## Setup Terraform Authentication
-Duration: 1
 
 We need to pass provider information to Terraform so it can authenticate as the user on our Snowflake account.
 
@@ -175,7 +171,6 @@ provider "snowflake" {
 The Snowflake Provider will use the information we provided to securely authenticate with your Snowflake account as the service user.
 
 ## Declaring Resources
-Duration: 3
 
 In the the same `main.tf` file, let's add two configurations for the database and the warehouse that we want Terraform to create.
 
@@ -217,7 +212,6 @@ Snowflake objects creation, or _resources_ in Terraform terms, all follow the sa
 Always consult the [documentation](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs) when you're creating new resources. 
 
 ## Preparing the Project to Run
-Duration: 3
 
 To set up the project to run Terraform, you first need to initialize the project.
 
@@ -242,7 +236,6 @@ Create a file named `.gitignore` in your project root, then add the following te
 ```
 
 ## Commit changes to source control
-Duration: 2
 
 Run the following to check in your files for future change tracking:
 
@@ -272,7 +265,6 @@ $ terraform plan
 The Provider will send multiple `SHOW` commands to Snowflake to compare what is present in your infrastructure what have been defined in the Terraform configuration file(s).
 
 ## Running Terraform
-Duration: 3
 
 Now that you have reviewed the plan, we simulate the next step of the CI/CD job by applying those changes to your account.
 
@@ -286,7 +278,6 @@ Now that you have reviewed the plan, we simulate the next step of the CI/CD job 
 3. Log in to your Snowflake account and verify that Terraform created the database and the warehouse.
 
 ## Changing and Adding Resources
-Duration: 5
 
 The syntax to add new resources is very similar to the database and warehouse you already created. By now you have learned almost everything you need to know to create and update resources in Snowflake. The Provider also lets you add resources but also modify your existing resources. 
 
@@ -461,7 +452,6 @@ The output will list all the actions Terraform would perform when applying the c
 >  You will need to run `terraform init -upgrade` in order to use `tls_private_key` resource. Running the command will install [hashicorp/tls](https://registry.terraform.io/providers/hashicorp/tls/latest).
 
 ## Commit Changes to Source Control
-Duration: 3
 
 Let's check in our files for future change tracking:
 
@@ -476,7 +466,6 @@ $ git push origin HEAD
 You can log in to Github to create the pull request and merge the changes. Pull Requests allow for process controls for reviews and the centralized git repo can automatically event CI/CD workflows as desired.
 
 ## Apply and Verify the Changes
-Duration: 2
 
 To simulate the CI/CD pipeline, we can apply the changes to conform the desired state with the stored state.
 
@@ -492,7 +481,6 @@ To simulate the CI/CD pipeline, we can apply the changes to conform the desired 
 Because all changes are stored in source control and applied by CI/CD, you can get a [history](https://github.com/Snowflake-Labs/sfguide-terraform-sample/commits/main/main.tf) of all your environment changes. You can put compliance controls into place and limit authorization to directly manage the environments to fewer users. This also makes it easy to bring up new environments that are identical to others in a timely manner without managing SQL scripts.
 
 ## Cleanup
-Duration: 1
 
 You're almost done with the demo. We have one thing left to do: clean up your account.
 
@@ -516,7 +504,6 @@ DROP USER TERRAFORM_SVC;
 ```
 
 ## Conclusion
-Duration: 3
 
 If you are new to Terraform, there's still a lot to learn. We suggest researching [remote state](https://developer.hashicorp.com/terraform/language/state/remote), [input variables](https://developer.hashicorp.com/terraform/language/values/variables), and [building modules](https://developer.hashicorp.com/terraform/language/modules/develop). This will empower you to build and manage your Snowflake environment(s) through a simple declarative language.
 

@@ -11,7 +11,6 @@ authors: Sean McIntyre, Doug Guthrie
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Welcome to the Build Data Products and Data Mesh with dbt platform Quickstart guide! Before you begin getting your hands into the technology, let's define what a data mesh is and describe what motivates the topic.
 
@@ -120,7 +119,6 @@ In the following step within this Quickstart Guide, you will be given instructio
 
 <!-- ------------------------ -->
 ## Launch Snowflake and dbt platform for this Quickstart
-Duration: 10
 
 In this step, you will set up Snowflake and dbt platform accounts for use in the rest of the Quickstart guide.
 
@@ -192,7 +190,6 @@ If this is your first time in dbt platform, you'll see the screen below.  Add yo
 
 <!-- ------------------------ -->
 ## Set up Snowflake and dbt platform
-Duration: 5
 
 In this step, you will be setting up Snowflake and dbt platform for two teams: the central data team and the finance team, as shown in the diagram below. You will be using least privileged access principles in order to properly secure the data.
 
@@ -253,7 +250,6 @@ Here is where you are in the journey towards a data product:
 
 <!-- ------------------------ -->
 ## Build foundational project
-Duration: 5
 
 Now it's time for you to add dbt code in the foundational project using the dbt platform IDE. Using the sample TPCH dataset provided by Snowflake, the dbt code will create a `fct_orders` table representing all of the orders within our organization. The code below has three layers of transformations: raw data sources, staging models, and core business logic. And by using dbt, you automatically have end-to-end data lineage.
 
@@ -510,7 +506,6 @@ Here is where you are in the journey towards a data product:
 
 <!-- ------------------------ -->
 ## Apply Snowflake masking to PII data
-Duration: 5
 
 Congratulations! You built a useful dataset. But, it's not secure. Organizational data privacy policies require Personally Identifiable Information (PII) to be restricted only to a few select people within the organization. Naturally, this restriction is best checked within Snowflake itself, as various applications within the organization access data, so restricting the data at the source helps protect your customers' privacy.
 
@@ -571,7 +566,6 @@ Here is where you are in the journey towards a data product:
 
 <!-- ------------------------ -->
 ## Add model contracts and enforce Snowflake grants
-Duration: 5
 
 Now that you have set up with data masking, it's time to set up proper grants to the foundational project's `fct_orders` table, add a model contract, and make it accessible to other dbt projects.
 
@@ -692,7 +686,6 @@ Here is where you are in the journey towards a data product:
 
 <!-- ------------------------ -->
 ## Create and run a dbt platform job
-Duration: 5
 
 Before a downstream team can leverage assets from this foundational project, you will need to run a [deployment job](https://docs.getdbt.com/docs/deploy/deploy-jobs) successfully.
 
@@ -735,7 +728,6 @@ Here is where you are in the journey towards a data product:
 
 <!-- ------------------------ -->
 ## Adding the Finance project
-Duration: 5
 
 In this penultimate step, you will now set up dbt platform to build the finance team's data product by building off the foundational data product, the result of which is an architecture as shown in the diagram below.
 
@@ -812,7 +804,6 @@ Here is where you are in the journey towards a data product:
 
 <!-- ------------------------ -->
 ## Using dbt Catalog to discover data products
-Duration: 5
 
 You have now completed building projects for this Quickstart Guide. Now it is time to try out **dbt Catalog** to discover and drill into the dbt assets available within your dbt platform account.
 
@@ -850,7 +841,6 @@ You have now completed your data product journey!
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 During this quickstart guide, you used native features of Snowflake and dbt platform that can be combined to create data products. By using dbt platform, you gained additional governance, automation, and interoperability mechanisms than from Snowflake alone. Overall, these two self-service platforms combined increase the likelihood of success of a data mesh project.
 

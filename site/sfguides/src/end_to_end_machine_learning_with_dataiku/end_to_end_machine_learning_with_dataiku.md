@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview  
 
-Duration: 5
 
 This Snowflake Quickstart introduces you to the using Snowflake together with Dataiku Cloud as part of a Machine learning project, and build an end-to-end machine learning solution. This lab will showcase seamless integration of both Snowflake and Dataiku at every stage of ML life cycle. We will also use Snowflake Marketplace to enrich the dataset. 
 
@@ -66,7 +65,6 @@ Operational end-to-end ML project using joint capabilities of Snowflake and Data
 
 <!-- ------------------------ -->
 ## Setting up Snowflake 
-Duration: 5
 
 
 
@@ -104,7 +102,6 @@ After activation, you will create a ```user name```and ```password```. Write dow
 
 <!-- ------------------------ -->
 ## Logging in  Snowflake 
-Duration: 5
 
 
 #### Step 1
@@ -163,7 +160,6 @@ You can name anything, but for this lab we will Rename it as ```Data Loading```.
 
 
 ## Load data in  Snowflake 
-Duration: 15
 
 
 Download the following .sql file that contains a series of SQL commands we will execute throughout this lab. You can either execute cell by cell commands from the sql file or copy the below code blocks and follow. 
@@ -548,7 +544,6 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 
 <!-- ------------------------ -->
 ## Connect Dataiku with Snowflake
-Duration: 8
 
 
 Go to ```home screen``` clicking on home button. 
@@ -648,7 +643,6 @@ You’ve now successfully set up your Dataiku trial account via Snowflake’s Pa
 
 
 ## Database for Machine Learning
-Duration: 5
 
 After connecting  ```Snowflake``` to ```Dataiku``` via partner connect. We will clone the table created in ```ML_DB``` to ```PC_DATAIKU_DB``` for the Dataiku consumption. 
 
@@ -724,7 +718,6 @@ you should have two datasets ```LOANS_ENRICHED``` and ```UNEMPLOYMENT_DATA```
 
 <!-- ------------------------ -->
 ## Getting Started with a Dataiku Project
-Duration: 4
 
 Return to Dataiku Online and if you haven't already click on **OPEN DATAIKU DSS** from the Launchpad to start your instance of Dataiku DSS
 
@@ -771,7 +764,6 @@ Name the project as ``Credit Scoring``
 
 <!-- ------------------------ -->
 ## Data Import, Analysis & Join
-Duration: 10
 
 The project home acts as the command center from which you can see the overall status of a project, view recent activity, and collaborate through comments, tags, and a project to-do list. Let’s add our datasets from Snowflake.
 
@@ -855,7 +847,6 @@ Your flow should now look like this
 ![45](assets/dk-17_700_Flow_join.png)
 
 ## Prepare the Data 
-Duration: 12
 
 Data cleaning and preparation is typically one of the most time-consuming tasks for anyone working with data. In our lab, in order to save some of that time, our main lending dataset already had a number of cleaning steps applied. In the real world this would be done by other colleagues, say, from the data analytics team collaborating on this project and you would see their work as steps in our projects flow. 
 
@@ -965,7 +956,6 @@ As before you can optionally group and comment your transformation steps.
 
 <!-- ------------------------ -->
 ## Feature Engineering with Code Recipes & Snowpark
-Duration: 10
 
 
 Dataiku DSS integrates with `Snowpark for Python` allowing coders to take advantage all the benefits of Snowflake whilst collaborating alongside their no/low-code colleagues on projects to accelerate time to value in DSS, their end-to-end, governed AI lifecycle platform.
@@ -1091,7 +1081,6 @@ From the default Code Editor lets check apply the correct code environment. Clic
 
 <!-- ------------------------ -->
 ## Training 
-Duration: 15
 
 Having sufficiently explored and prepared the loans and employment data, the next stage of the AI lifecycle is to experiment with machine learning models.
 
@@ -1216,7 +1205,6 @@ As you can see on our results page we saw an improvement in our score and addres
 
 
 ## Evaluate a Model 
-Duration: 10
 
 After having trained as many models as desired, DSS offers tools for full training management to track and compare model performance across different algorithms. DSS also makes it easy to update models as new data becomes available and to monitor performance across sessions over time.
 
@@ -1251,7 +1239,6 @@ Here we can see `Variable importance`
 
 <!-- ------------------------ -->
 ## Deployment  
-Duration: 3
 
 After experimenting with a range of models built on historic training data, the next stage is to deploy our chosen model to score new, unseen records. 
 
@@ -1269,7 +1256,6 @@ Your flow should now look like this:
 
 <!-- ------------------------ -->
 ## Scoring  
-Duration: 8
 
 
 * From your `Flow` select the `newly deployed model` (Green diamond) and the `Score` recipe from the `actions menu`
@@ -1325,7 +1311,6 @@ order by prediction_yes DESC;
 
 <!-- ------------------------ -->
 ## Conclusion and Next Steps  
-Duration: 1
 
 Congratulations  you have now successfully built,  deployed and scored your model results back to Snowflake. Your final flow should look like this.
 

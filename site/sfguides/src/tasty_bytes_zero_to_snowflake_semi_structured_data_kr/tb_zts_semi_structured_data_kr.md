@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Snowflake에서 반정형 데이터 처리
 
-Duration: 1 <img src = "assets/semi_structured_header.png">
 
 ### 개요
 
@@ -43,7 +42,6 @@ Snowflake의 반정형 데이터에 대한 상세 정보는 [반정형 데이터
 
 ## 워크시트 생성 및 SQL 복사
 
-Duration: 1
 
 ### 개요
 
@@ -97,7 +95,6 @@ Duration: 1
 
 ## 반정형 메뉴 데이터 프로파일링
 
-Duration: 1
 
 ### 개요
 
@@ -172,7 +169,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m;
 
 ## 반정형 데이터 평면화
 
-Duration: 2
 
 ### 개요
 
@@ -242,7 +238,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 
 ## 반정형 데이터에 대한 정형 뷰 생성
 
-Duration: 2
 
 ### 개요
 
@@ -303,7 +298,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 
 ## Snowsight에서 처리된 반정형 데이터 분석
 
-Duration: 2
 
 ### 개요
 
@@ -388,7 +382,6 @@ GROUP BY m.brand_name;
 
 ## 종료 및 다음 단계
 
-Duration: 1
 
 ### 결론
 

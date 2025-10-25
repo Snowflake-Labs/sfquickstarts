@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Building an MFA Audit System with Streamlit in Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 Learn how to create an interactive Multi-Factor Authentication (MFA) audit system using Streamlit in Snowflake Notebooks. This application helps security administrators monitor user MFA compliance and automatically notify relevant stakeholders about users who haven't enabled MFA.
 
@@ -34,7 +33,6 @@ An interactive Streamlit application that displays user MFA status and sends for
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 ### Open Snowflake Notebook
 You can retrieve the [MFA Audit Snowflake Notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/MFA_Audit_of_Users/MFA_Audit_of_Users_with_Streamlit_in_Snowflake_Notebooks.ipynb) and follow along with the tutorial.
@@ -136,7 +134,6 @@ Running this query should return the following confirmation:
 
 <!-- ------------------------ -->
 ## Creating the MFA Status Query
-Duration: 5
 
 ### Writing the Query
 
@@ -174,7 +171,6 @@ The notification email looks as follows:
 
 <!-- ------------------------ -->
 ## Building the Streamlit Interface
-Duration: 10
 
 ### Creating the Interactive Dashboard
 Build the Streamlit application with filtering capabilities and email notifications.
@@ -234,7 +230,6 @@ Here's how the MFA report that has been delivered to your email inbox looks like
 ![image](assets/img06.PNG)
 
 ## Conclusion
-Duration: 1
 
 Congratulations! You've successfully built an MFA audit system that helps monitor and manage user security compliance through an interactive Streamlit interface with automated email notifications.
 

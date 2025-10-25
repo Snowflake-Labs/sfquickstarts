@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowflake Dynamic Tables
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 Dynamic tables are new declarative way of defining your data pipeline in Snowflake. It's a new kind of Snowflake table which is defined as a query to continuously and automatically materialize the result of that query as a table. Dynamic Tables can join and aggregate across **multiple source objects** and **incrementally update** results as sources change. 
 
@@ -48,7 +47,6 @@ In this quickstart we will build a change data capture (CDC) pipeline, cumulativ
 
 <!-- ------------------------ -->
 ## Sample data setup
-Duration: 4
 
 ### Problem Statement
 
@@ -229,7 +227,6 @@ select * from salesdata limit 10;
 
 <!-- ------------------------ -->
 ## Build data pipeline using Dynamic Tables
-Duration: 7
 
 With Dynamic Tables, customers provide a query and Snowflake automatically materializes the results of that query. 
 
@@ -501,7 +498,6 @@ ALTER ALERT alert_low_inv SUSPEND;
 
 <!-- ------------------------ -->
 ## Monitor Dynamic Tables: Cost, DAG and Dashboard
-Duration: 4
 
 ### Monitor DAG and dashboard
 Snowflake makes it easier to monitor your data pipeline.
@@ -574,7 +570,6 @@ Dynamic tables support **Time Travel, Replication, Data Governance, Masking, Tag
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 Dynamic Tables are a new kind of Snowflake table which is defined as a query and continually and automatically maintains the result of that query as a table. It's extremely flexible and we want you to start thinking of Dynamic tables as the easiest and default way of creating data pipelines. Some top use cases of DTs are -
 

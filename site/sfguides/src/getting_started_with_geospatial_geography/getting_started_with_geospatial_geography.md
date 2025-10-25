@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Geospatial - Geography
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the `GEOGRAPHY` data type, help you understand geospatial formats supported by Snowflake, and walk you through the use of a variety of functions on a sample geospatial data set from the Snowflake Marketplace.  
 
@@ -41,7 +40,6 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 
 <!-- ------------------------ -->
 ## Acquire Marketplace Data
-Duration: 20
 
 The first step in the guide is to acquire a geospatial data set that you can freely use to explore the basics of Snowflake's geospatial functionality. The best place to acquire this data is the Snowflake Marketplace!
 
@@ -106,7 +104,6 @@ Congratulations! You have just created a shared database from a listing on the S
 
 <!-- ------------------------ -->
 ## Understand Geospatial Formats
-Duration: 20
 
 The final step in the prior section opened a worksheet editor in the new Snowflake UI with a few pre-populated queries that came from the sample queries defined in the Marketplace listing. You are not going to run any of these queries in this guide, but you are welcome to run them later. Instead, you are going to open a new worksheet editor and run different queries to understand how the `GEOGRAPHY` data type works in Snowflake.
 
@@ -228,7 +225,6 @@ Notice how WKB is incomprehensible to a human reader. Other than the length of t
 
 <!-- ------------------------ -->
 ## Unload/Load Data
-Duration: 20
 
 Now that you understand the different output formats, you can create new files from the electronics view, then load those files into new tables with the `GEOGRAPHY` data type. You will also encounter your first examples of geospatial _parsers_ and _constructors_.
 
@@ -363,7 +359,6 @@ select * from electronics_points;
 
 <!-- ------------------------ -->
 ## Calculations and More Constructors
-Duration: 20
 
 Now that you have the basic understand of how the `GEOGRAPHY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walkthrough a scenario that requires you to run some geospatial queries to answer some questions.
 
@@ -582,7 +577,6 @@ Now move to the next section to see how you can optimize your shopping trip.
 
 <!-- ------------------------ -->
 ## Joins
-Duration: 10
 
 In the previous section, all of your queries to find the closest Best Buy, liquor store, and coffee shop were based on proximity to your Times Square apartment. But wouldn't it make more sense to see, for example, if there was a liquor store and/or coffee shop closer to Best Buy? You can use geospatial functions in a table join to find out.
 
@@ -704,7 +698,6 @@ Nice! 1537 meters, which is a savings of about 583 meters, or a third of a mile.
 <!-- ------------------------ -->
 
 ## Additional Calculations and Constructors
-Duration: 15
 > aside positive
 > 
 > he `LINESTRING` object that was created in the previous section looks like a nice, clean, four-sided polygon. As it turns out, a `POLYGON` is another geospatial object type that you can construct and work with. Where you can think of a `LINESTRING` as a border of a shape, a `POLYGON` is the filled version of the shape itself. The key thing about a `POLYGON` is that it must end at its beginning, where a `LINESTRING` does not need to return to the starting point.
@@ -931,7 +924,6 @@ Copy the result cell from the above query and paste it into geojson.io. You shou
 <!-- ------------------------ -->
 
 ## Conclusion
-Duration: 5
 
 In this guide, you acquired geospatial data from the Snowflake Marketplace, explored how the `GEOGRAPHY` data type and its associated formats work, created data files with geospatial data in it, loaded those files into new tables with `GEOGRAPHY` typed columns, and queried geospatial data using parser, constructor, transformation and calculation functions on single tables and multiple tables with joins. You then saw how newly constructed geospatial objects could be visualized in tools like geojson.io or WKT Playground.
 

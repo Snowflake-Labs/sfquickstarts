@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Player 360: Unlocking Churn Prediction and Game Optimization
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 <img src="assets/Player_360_banner.png"/>
 
 In the gaming industry, Player data is often fragmented across multiple sources, including event streams, purchase histories, and platform-specific behaviors. This disjointed data makes it challenging for gaming companies and key personas such as marketing and product to gain a holistic understanding of individual players and overall game performance. In this demo we will create a "Player 360" dashboard, which integrates and visualizes diverse player data sources into a single, dynamic "Player Card." This card will offer insights into player activity & interactions (behavior, buying habits, etc), and this preliminary use case will potentially show the highest risk for churn players. Similarly, we will create a “Game 360” dashboard which integrates games-level insights across the playerbase, focusing on key KPIs, metrics, and overall user behavior.
@@ -50,7 +49,6 @@ By aggregating these data streams in a unified system and leveraging Snowflake f
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 **Step 1**. - Copy the the setup script and run it in Snowsight SQL Worksheet. This is the [setup script](https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/blob/main/scripts/setup.sql).
 
 **Step 2**. - Copy the the code below and run it in Snowsight SQL Worksheet. This is the [build script](https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/blob/main/scripts/raw_build.sql) that populates the database with the RAW data.
@@ -80,7 +78,6 @@ Click '+ Files' in the top right of the stage. Upload all files that you downloa
 
 <!-- ------------------------ -->
 ## Static Churn Prediction Notebook 
-Duration: 10
 **Step 1:** Run following [0_notebook_setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/blob/main/scripts/0_notebook_setup.sql) script as a sql worksheet in snowsight
 ```sql
 use role SYSADMIN;
@@ -102,7 +99,6 @@ Within this notebook, you'll visualize player segments and analyze key churn fea
 
 <!-- ------------------------ -->
 ## Rolling Churn Prediction Notebook 
-Duration: 20 
 **Step 1:** Run the [1_notebook_setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-player-360-unlocking-churn-prediction-and-game-optimization/blob/main/scripts/1_notebook_setup.sql) script as a sql worksheet in snowsight. This sets up compute pools and external access integration and programmatically creates Snowflake Container Notebook for notebook 2.
 
 ```sql
@@ -180,7 +176,6 @@ This notebook creates a ML Model that can handle inference on incoming near-real
 
 <!-- ------------------------ -->
 ## Streamlit
-Duration: 20
 **Step 1:** Run following streamlit_setup.sql script
 ```sql
 use role SYSADMIN;
@@ -235,7 +230,6 @@ To access it, navigate to Snowsight, select the `SYSADMIN` role, and click the P
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 This demo has showcased how Snowflake enables the creation of unified "Player 360" and "Game 360" dashboards by aggregating diverse player and game data streams into a single, actionable view. Through the use of Snowpark ML, Snowflake Notebooks, and Streamlit, we've demonstrated how companies can leverage these integrated tools to gain deeper insights into player behavior, churn risk, and overall game performance. By consolidating data sources and applying advanced analytics, gaming companies can optimize player engagement and refine monetization strategies, all within a governed and scalable environment.
 

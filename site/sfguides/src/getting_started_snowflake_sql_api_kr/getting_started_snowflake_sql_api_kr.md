@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## 개요
 
-Duration: 1
 
 환영합니다! Snowflake SQL API는 Snowflake 데이터에 있는 데이터에 액세스하고 업데이트하는 데 사용할 수 있는 [REST API](https://en.wikipedia.org/wiki/Representational_state_transfer)입니다. 이 API를 사용하여 [표준 쿼리](https://docs.snowflake.com/ko/sql-reference/constructs.html)와 대부분의 [DDL](https://docs.snowflake.com/ko/sql-reference/sql-ddl-summary.html) 및 [DML](https://docs.snowflake.com/ko/sql-reference/sql-dml.html) 문을 실행할 수 있습니다.
 
@@ -43,7 +42,6 @@ Duration: 1
 <!-- ------------------------ -->
 ## API 소개
 
-Duration: 3
 
 다음 URL의 버전을 탐색하여 SQL API로 이동합니다. 여러분의 Snowflake 계정을 위한 계정 로케이터로 `*account_locator*`를 대체합니다.
 
@@ -70,7 +68,6 @@ Positive : REST API(예: Postman)를 위한 개발자 도구 및 라이브러리
 <!-- ------------------------ -->
 ## 요청 재제출을 위해 고유한 요청 ID 할당
 
-Duration: 1
 
 일부 경우 Snowflake가 API 요청에서 SQL 문을 실행했는지가 확실하지 않을 수 있습니다(예: 네트워크 오류 또는 시간제한으로 인해). Snowflake가 문을 실행하지 않았을 경우 Snowflake에 동일한 요청을 재제출하기로 결정할 수 있습니다.
 
@@ -91,7 +88,6 @@ Snowflake가 요청을 처리하는 데 실패하면 동일한 요청 ID로 동�
 <!-- ------------------------ -->
 ## 서버에 인증
 
-Duration: 3
 
 요청을 전송할 때 요청에는 인증 정보가 반드시 포함되어야 합니다. 인증을 제공하는 2가지 옵션은 OAuth 및 JWT 키 쌍 인증입니다. 둘 중 이전에 구현했던 것이나 가장 익숙한 것을 사용할 수 있습니다. 이 예에서는 [JWT](https://jwt.io/)로 인증하는 것을 상세하게 설명합니다.
 
@@ -134,7 +130,6 @@ X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
 <!-- ------------------------ -->
 ## SQL 문 실행을 위해 요청 제출
 
-Duration: 3
 
 실행을 위해 SQL 문을 제출하려면 [POST 요청을 /api/v2/statements/ endpoint](https://docs.snowflake.com/ko/developer-guide/sql-api/reference.html#post-api-v2-statements)로 전송합니다.
 
@@ -194,7 +189,6 @@ X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT
 <!-- ------------------------ -->
 ## 문에 바인드 변수 사용
 
-Duration: 5
 
 바인드 변수(`?` 자리 표시자)를 문에 사용하고 싶다면 `bindings` 필드를 사용하여 삽입되어야 하는 값을 지정합니다.
 
@@ -245,7 +239,6 @@ statementHandle: "<ID>"
 <!-- ------------------------ -->
 ## 문 실행 상태 확인
 
-Duration: 1
 
 실행을 위해 SQL 문을 제출할 때 문 실행이 아직 완료되지 않았거나 비동기 쿼리를 제출했을 경우 Snowflake는 202 응답 코드를 반환합니다.
 
@@ -297,7 +290,6 @@ POST /api/v2/statements/{statementHandle}/cancel
 <!-- ------------------------ -->
 ## 결과 검색
 
-Duration: 1
 
 [실행을 위해 SQL 문을 제출](https://docs.snowflake.com/ko/developer-guide/sql-api/guide.html#label-sql-api-executing-multiple-statements)하거나 [문 실행 상태를 확인](https://docs.snowflake.com/ko/developer-guide/sql-api/guide.html#checking-the-status-of-the-statement-execution-and-retrieving-the-data)한다면, 문이 성공적으로 실행되었을 경우 Snowflake는 [ResultSet](https://docs.snowflake.com/ko/developer-guide/sql-api/guide.html#checking-the-status-of-the-statement-execution-and-retrieving-the-data) 오브젝트를 응답 본문에서 반환합니다.
 
@@ -476,7 +468,6 @@ Link: </api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=918e221
 <!-- ------------------------ -->
 ## 종료 및 다음 단계
 
-Duration: 1
 
 이 자습서는 Snowflake SQL API에 대한 실습 소개로 설계되었습니다. API로 수행할 수 있는 작업을 보려면 [Snowflake SQL API 참조](https://docs.snowflake.com/ko/developer-guide/sql-api/reference.html)를 확인하십시오.
 

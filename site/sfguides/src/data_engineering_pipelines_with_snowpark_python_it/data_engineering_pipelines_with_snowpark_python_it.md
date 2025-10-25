@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Pipeline di data engineering con Snowpark Python
 <!-- ------------------------ -->
 ## Panoramica 
-Duration: 15
 
 > “I data engineer si concentrano principalmente sulla creazione e la manutenzione delle pipeline di dati, che trasportano i dati attraverso vari passaggi per restituirli in uno stato utilizzabile… Il processo di data engineering include tutto il lavoro necessario per creare **pipeline di dati** che automatizzano il trasferimento di dati da un luogo all’altro e li trasformano in un formato specifico per un determinato tipo di analisi. In questo senso, il data engineering non è un compito che si svolge una sola volta. È una procedura che continua nel tempo e comporta la raccolta, la preparazione, la trasformazione e la distribuzione dei dati. Una pipeline di dati aiuta ad automatizzare queste attività perché possano essere ripetute in modo affidabile. È una procedura più che una specifica tecnologia.” (Da Cloud Data Engineering for Dummies, Snowflake Special Edition)
 
@@ -89,7 +88,6 @@ Nel corso di questo quickstart eseguirai le seguenti operazioni:
 
 <!-- ------------------------ -->
 ## Configurare il quickstart
-Duration: 10
 
 ### Creare e clonare un fork del repository per il quickstart
 Dovrai creare un fork del repository per questo quickstart nel tuo account GitHub. Visita il [repository Data Engineering Pipelines with Snowpark Python su GitHub](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python) e fai clic sul pulsante “Fork” in alto a destra. Completa gli eventuali campi richiesti e fai clic su “Create Fork”.
@@ -139,7 +137,6 @@ conda activate pysnowpark
 
 <!-- ------------------------ -->
 ## Configurare Snowflake
-Duration: 10
 
 ### Estensioni Snowflake per VS Code
 Puoi eseguire query SQL sui dati contenuti in Snowflake in molti modi diversi (tramite l’interfaccia utente Snowsight, SnowSQL, ecc.), ma per questo quickstart utilizzeremo l’estensione Snowflake per VS Code. Per una breve panoramica dell’estensione nativa di Snowflake per VS Code, consulta la [pagina dell’estensione VS Code nel Marketplace Snowflake](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc).
@@ -154,7 +151,6 @@ Per eseguire tutte le query di questo script, utilizza il pulsante “Execute Al
 
 <!-- ------------------------ -->
 ## Caricare i dati grezzi
-Duration: 10
 
 In questo passaggio caricheremo i dati grezzi sui POS e sulla fidelizzazione dei clienti di Tasty Bytes dai file Parquet non elaborati in `s3://sfquickstarts/data-engineering-with-snowpark-python/` negli schemi `RAW_POS` e `RAW_CUSTOMER` in Snowflake. Orchestrerai questo processo dal tuo computer in Python utilizzando la Snowpark API per Python. Per contestualizzare, siamo al passaggio **2** della nostra panoramica del flusso di dati:
 
@@ -251,7 +247,6 @@ Utilizzeremo ancora questo schema nel corso di questo quickstart, quindi è impo
 
 <!-- ------------------------ -->
 ## Caricare i dati meteorologici
-Duration: 4
 
 In questo passaggio “caricheremo” i dati meteorologici grezzi in Snowflake. Tuttavia, “caricare” non è la parola giusta in questo caso. Poiché utilizziamo l’esclusiva funzionalità di condivisione dei dati di Snowflake, in realtà non abbiamo bisogno di copiare i dati nel nostro account Snowflake con un processo ETL personalizzato. Possiamo invece accedere direttamente ai dati meteorologici condivisi da Weather Source nel Marketplace Snowflake. Per contestualizzare, siamo al passaggio **3** della nostra panoramica del flusso di dati:
 
@@ -282,7 +277,6 @@ SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
 
 <!-- ------------------------ -->
 ## Creare una vista POS
-Duration: 10
 
 In questo passaggio creeremo una vista per semplificare lo schema dei dati grezzi sui POS mettendo in join sei tabelle diverse e scegliendo solo le colonne che ci servono. Ma la cosa veramente interessante è che definiremo questa vista con la Snowpark DataFrame API! Poi creeremo uno stream Snowflake su questa vista per poter elaborare in modo incrementale le modifiche a qualsiasi tabella dei POS. Per contestualizzare, siamo al passaggio **4** della nostra panoramica del flusso di dati:
 
@@ -336,7 +330,6 @@ Per maggiori informazioni, consulta la sezione [Stream sulle viste](https://docs
 
 <!-- ------------------------ -->
 ## UDF per la conversione da Fahrenheit a Celsius
-Duration: 10
 
 In questo passaggio creeremo e distribuiremo su Snowflake il nostro primo oggetto Snowpark Python, una User Defined Function (UDF). Inizialmente l’UDF sarà molto semplice, ma in un passaggio successivo la aggiorneremo per includere un pacchetto Python di terze parti. In questo passaggio incontrerai anche il nuovo strumento della riga di comando per sviluppatori SnowCLI. SnowCLI trasforma la creazione e la distribuzione di oggetti Snowpark Python in un’esperienza coerente per lo sviluppatore. Più avanti troverai maggiori informazioni su SnowCLI. Per contestualizzare, siamo al passaggio **5** della nostra panoramica del flusso di dati:
 
@@ -422,7 +415,6 @@ CREATE OR REPLACE  FUNCTION fahrenheit_to_celsius_udf(temp_f float)
 
 <!-- ------------------------ -->
 ## Stored procedure per l’aggiornamento degli ordini
-Duration: 10
 
 In questo passaggio creeremo e distribuiremo su Snowflake la nostra prima stored procedure (o sproc) Snowpark Python. Questa stored procedure farà il merge delle modifiche dallo stream `HARMONIZED.POS_FLATTENED_V_STREAM` con la tabella target `HARMONIZED.ORDERS`. Per contestualizzare, siamo al passaggio **6** della nostra panoramica del flusso di dati:
 
@@ -511,7 +503,6 @@ Di nuovo, per maggiori informazioni sulla Snowpark Python DataFrame API, consult
 
 <!-- ------------------------ -->
 ## Stored procedure per l’aggiornamento delle metriche giornaliere per città
-Duration: 10
 
 In questo passaggio creeremo e distribuiremo su Snowflake la nostra seconda stored procedure di Snowpark Python. Questa stored procedure esegue il join dei dati di `HARMONIZED.ORDERS` con i dati di Weather Source per creare una tabella aggregata finale per l’analisi, chiamata `ANALYTICS.DAILY_CITY_METRICS`. Elaboreremo i dati della tabella `HARMONIZED.ORDERS` in modo incrementale utilizzando un altro stream Snowflake. Inoltre, utilizzeremo di nuovo il metodo `merge()` dei DataFrame di Snowpark per eseguire un merge/upsert dei dati. Per contestualizzare, siamo al passaggio **7** della nostra panoramica del flusso di dati:
 
@@ -575,7 +566,6 @@ La query di aggregazione complessa viene poi unita alla tabella di analisi final
 
 <!-- ------------------------ -->
 ## Orchestrare i processi
-Duration: 10
 
 In questo passaggio orchestreremo le nuove pipeline Snowpark con la funzionalità di orchestrazione nativa di Snowflake chiamata Tasks. Creeremo due task, uno per ogni stored procedure, poi li concateneremo e infine li eseguiremo. Per contestualizzare, siamo al passaggio **8** della nostra panoramica del flusso di dati:
 
@@ -670,7 +660,6 @@ Per maggiori informazioni e per scoprire come visualizzare la cronologia dei tas
 
 <!-- ------------------------ -->
 ## Elaborare in modo incrementale
-Duration: 10
 
 In questo passaggio aggiungeremo nuovi dati alle tabelle degli ordini dei POS e poi eseguiremo l’intera pipeline end-to-end per elaborare i nuovi dati. Questa pipeline completa elaborerà i dati in modo incrementale grazie all’avanzata funzionalità degli stream/CDC di Snowflake. Per contestualizzare, siamo al passaggio **9** della nostra panoramica del flusso di dati:
 
@@ -713,7 +702,6 @@ Ora dovresti vedere tutte le query eseguite dai task. Dai un’occhiata a ciascu
 
 <!-- ------------------------ -->
 ## Distribuire tramite CI/CD
-Duration: 15
 
 In questo passaggio modificheremo l’UDF `FAHRENHEIT_TO_CELSIUS_UDF()` e poi la distribuiremo tramite una pipeline CI/CD. Aggiorneremo l’UDF `FAHRENHEIT_TO_CELSIUS_UDF()` per utilizzare un pacchetto Python di terze parti, la invieremo al fork del repository GitHub e infine la distribuiremo utilizzando SnowCLI in un flusso di lavoro GitHub Actions. Per contestualizzare, siamo al passaggio **n. 10** della nostra panoramica del flusso di dati:
 
@@ -834,14 +822,12 @@ L’output del passaggio `Deploy Snowpark apps` dovrebbe ormai esserti familiare
 
 <!-- ------------------------ -->
 ## Pulizia
-Duration: 2
 
 Una volta completato questo quickstart, puoi eliminare gli oggetti non più necessari eseguendo lo script `steps/11_teardown.sql`. Poiché questo è uno script SQL, utilizzeremo l’estensione nativa VS Code per eseguirlo. Apri semplicemente lo script `steps/11_teardown.sql` in VS Code ed eseguilo tutto utilizzando il pulsante “Execute All Statements” nell’angolo superiore destro della finestra dell’editor.
 
 
 <!-- ------------------------ -->
 ## Conclusione
-Duration: 4
 
 Abbiamo davvero fatto molta strada in questo quickstart! A questo punto hai creato una solida pipeline di data engineering utilizzando le stored procedure di Snowpark Python. La pipeline elabora i dati in modo incrementale, è orchestrata con task di Snowflake ed è distribuita tramite una pipeline CI/CD. Inoltre hai imparato come utilizzare il nuovo strumento CLI per sviluppatori e l’estensione Visual Studio Code di Snowflake. Ecco una rapida sintesi grafica:
 

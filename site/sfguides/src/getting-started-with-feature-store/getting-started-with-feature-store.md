@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Introduction to Snowflake Feature Store with Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 The Snowflake Feature Store offers a comprehensive solution for data scientists and machine learning (ML) engineers to create, manage, and utilize ML features within their data science workflows in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/). Features, which are enriched or transformed data, serve as essential inputs for machine learning models. For instance, a feature might extract the day of the week from a timestamp to help the model identify weekly patterns, such as predicting that sales are typically 20% lower on Wednesdays. Other features often involve data aggregation or time-shifting. The process of defining these features, known as feature engineering, is crucial to developing high-quality ML applications.
 
@@ -32,7 +31,6 @@ This is part 1 of a 3-part introduction quickstart series to Snowflake Feature S
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -70,7 +68,6 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE FEATURE_STORE_DATABASE  TO ROLE FEATU
 
 <!-- ------------------------ -->
 ## Run the Notebook
-Duration: 10
 
 - Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-intro-to-feature-store-using-snowflake-notebooks/blob/main/notebooks/0_start_here.ipynb)
 - Change role to FEATURE_STORE_LAB_USER
@@ -88,7 +85,6 @@ Duration: 10
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 The Snowflake Feature Store provides a powerful, all-in-one solution for data scientists and ML engineers to create, manage, and utilize machine learning features effectively.  In this quickstart, you’ve learned the essentials of building a feature store workflow, including entities, feature views, and datasets. Now, take the next step and apply these concepts to build robust, scalable ML pipelines within Snowflake. Check out the links below and start building you Feature Stores today!
 

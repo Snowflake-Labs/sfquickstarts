@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Semi-Structured Data Processing in Snowflake
-Duration: 1
 <img src = "assets/semi_structured_header.png">
 
 ### Overview
@@ -38,7 +37,6 @@ For more detail on Semi-Structured Data in Snowflake please visit the [Semi-Stru
 - An Executive-Worthy Bar Chart
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -74,7 +72,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 9 - Click Next -->
 
 ## Semi-Structured Data and the Variant Data Type
-Duration: 1
 
 ### Overview
 As a Tasty Bytes Data Engineer, we have been tasked with profiling our Menu data that includes a Semi-Structured Data column. From this menu table we need to produce an Analytics layer View that exposes Dietary and Ingredient data to our end users.
@@ -122,7 +119,6 @@ Looking at our result set, we see the `menu_item_health_metrics_obj` is a [VARIA
 ### Step 3 - Click Next -->
 
 ##  Querying Semi-Structured Data via Dot and Bracket Notation + Flatten
-Duration: 3
 
 ### Overview
 Within our `menu_item_health_metrics_obj` column, we saw that `menu_item_id` was included alongside the more nested Ingredients and Dietary Restriction data we need to access. 
@@ -222,7 +218,6 @@ FROM raw_pos.menu m,
 
 
 ## Providing Flattened Data to Business Users
-Duration: 2
 
 ### Overview
 With all of the required data, extracted, flattened and available in tabular form, we will now work to provide access to our Business Users.
@@ -308,7 +303,6 @@ GRANT SELECT ON analytics.menu_v TO ROLE tb_dev;
 
 
 ## Analyzing Processed Semi-Structured Data in Snowsight
-Duration: 2
 
 ### Overview:
 With our Menu View available in our Analytics layer, let's now jump into the life of a Tasty Bytes Developer. Within this step, we will address questions from  the the Tasty Bytes Leadership Team related to our Food Truck Menu's.
@@ -417,7 +411,6 @@ To finish off this Quickstart, we must point out how easy a Tasty Bytes Executiv
 ### Step 5 - Click Next -->
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Semi-Structured Data Quickstart. 

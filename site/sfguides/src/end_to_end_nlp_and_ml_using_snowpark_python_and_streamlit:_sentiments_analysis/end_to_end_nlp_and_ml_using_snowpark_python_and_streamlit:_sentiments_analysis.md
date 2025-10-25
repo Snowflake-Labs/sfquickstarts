@@ -11,7 +11,6 @@ tags: Getting Started, Data Science, Data Engineering, NLP, Snowpark, Streamlit
 # NLP and ML with Snowpark Python and Streamlit for Sentiment Analysis
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 This Quickstart will demonstrate how you can perform Natural Language Processing (NLP) and ML within Snowflake using Snowpark Python and Streamlit. We'll use these tools to perform sentiment analysis with Snowpark (feature engineering, training, and prediction).
 
@@ -43,7 +42,6 @@ You will build an end-to-end Data Science workflow leveraging Snowpark for Pytho
 <!-- ------------------------ -->
 ## Python Environment Setup
 
-Duration: 6
 
 This section covers cloning of the GitHub repository and creating a Python 3.8 environment.
 
@@ -103,7 +101,6 @@ jupyter notebook
 
 <!-- ------------------------ -->
 ## Snowflake Environment Setup
-Duration: 2
 
 ### Option 1 - Environment setup via the Streamlit App
 Use the Streamlit App to setup Snowflake Objects
@@ -160,7 +157,6 @@ USE IMDB.PUBLIC;
 
 <!-- ------------------------ -->
 ## Load Data
-Duration: 4
 
 We used Python code to load the data into Snowflake. In order to simplify code execution you can click on the right button to start loading the data.
 
@@ -194,7 +190,6 @@ with z.open("TRAIN_DATASET.csv") as f:
 
 <!-- ------------------------ -->
 ## Analyze Data
-Duration: 2
 
 ### What You'll Do
 
@@ -242,7 +237,6 @@ pd_describe = df_table.describe().to_pandas()
 
 <!-- ------------------------ -->
 ## Data Prep & Train Model
-Duration: 5
 
 ### What You'll Do
 
@@ -332,7 +326,6 @@ CALL train_model_review_pipline("TRAIN_DATASET")
 ---
 <!-- ------------------------ -->
 ## Monitoring & Model Catalog
-Duration: 1
 
 ### Monitore your execution using QUERY_HISTORY
 
@@ -350,7 +343,6 @@ Use use the section **Model Catalog**. Here you can see your models that you dep
 ---
 <!-- ------------------------ -->
 ## Inference & Prediction
-Duration: 6
 
 ### Inference
 
@@ -375,7 +367,6 @@ Select the new dataset that you want to predict and the Inference will run autom
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 1
 
 Use the section to clean Up to remove all the Snowflake Objects and the Data that you already load:
 
@@ -385,7 +376,6 @@ Use the section to clean Up to remove all the Snowflake Objects and the Data tha
 ---
 <!-- ------------------------ -->
 ## Conclusion & Resources
-Duration: 3
 
 Congratulations! You've successfully performed the Sentiment Analysis use case and built an end-to-end Data Science workflow leveraging Snowpark for Python and Streamlit.
 

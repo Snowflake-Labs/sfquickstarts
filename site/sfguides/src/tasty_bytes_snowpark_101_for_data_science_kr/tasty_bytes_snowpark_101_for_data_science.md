@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## 개요
 
-Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 이 데이터 사이언스를 위한 Snowpark 101 Quickstart에서는 가상의 푸드 트럭 회사인 Tasty Bytes가 트럭 기사에게 위치 추천을 제공하기 위해 모델을 훈련시켜 매출을 올리는 것을 돕게 됩니다. 여러분은 데이터를 준비하고, 모델을 훈련시키고, 모델을 배포하기 위해 **Snowpark for Python**을 사용할 것입니다. 배포한 후에는 **Streamlit**을 사용해 애플리케이션 프로토타입을 생성하여 트럭 기사가 다가오는 교대조를 위해 주차할 최고의 위치를 찾는 데 모델을 사용할 수 있는 방법을 확인할 것입니다.
 
@@ -48,7 +47,6 @@ Streamlit*(2022년 3월에 Snowflake에서 인수)*은 사용자 정의 웹 앱�
 <!-- ------------------------ -->
 ## Snowflake에서 데이터 설정
 
-Duration: 6
 
 ### 개요
 
@@ -158,7 +156,6 @@ SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 <!-- ------------------------ -->
 ## Snowpark를 통한 데이터 사이언스
 
-Duration: 22
 
 ### 개요
 
@@ -259,7 +256,6 @@ jupyter notebook
 <!-- ------------------------ -->
 ## Streamlit을 사용한 애플리케이션 프로토타입
 
-Duration: 6
 
 ### 개요
 
@@ -293,7 +289,6 @@ Duration: 6
 <!-- ------------------------ -->
 ## 정리
 
-Duration: 5
 
 ### 이 Quickstart에 생성된 객체 개요
 
@@ -359,7 +354,6 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 <!-- ------------------------ -->
 ## 종료 및 다음 단계
 
-Duration: 1
 
 ### 결론
 

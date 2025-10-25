@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Orchestrate ML Pipelines with ML Jobs and Task Graphs
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 In this guide, you'll learn how to build a complete machine learning pipeline using [Snowflake ML](http://www.snowflake.com/ml) Jobs and Task Graphs. This end-to-end solution demonstrates how to orchestrate the entire ML lifecycle - from data preparation to model deployment - all within Snowflake's ecosystem.
 
@@ -39,7 +38,6 @@ You'll build a complete, production-ready ML pipeline that:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 Firstly, to follow along with this quickstart, you can use the code in the [e2e_task_graph](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/ml/ml_jobs/e2e_task_graph) GitHub repo to download the code used in this article.
 
@@ -258,7 +256,6 @@ promote_model(session, mv)  # Sets as default version
 ```
 
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built an end-to-end machine learning pipeline using Snowflake Task Graphs and ML Jobs. This production-ready solution demonstrates how to orchestrate the entire ML lifecycle within Snowflake's ecosystem, from data preparation to model deployment with conditional promotion logic.
 

@@ -11,7 +11,6 @@ author: James Cha-Earley
 
 ## Overview
 
-Duration: 5
 
 In this quickstart, you'll learn how to build an end-to-end application that analyzes audio files for emotional tone and sentiment using [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs). The application combines audio processing, speech recognition, and sentiment analysis to create comprehensive insights from audio data.
 
@@ -64,7 +63,6 @@ A full-stack application that enables users to:
   - [Cortex Functions](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex)
 
 ## Setup Workspace
-Duration: 10
 
 **Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-audio-sentiment-analysis-using-snowflake-notebooks/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
@@ -97,7 +95,6 @@ Duration: 10
 
 ## Audio File Requirements
 
-Duration: 5
 
 ### Supported Audio Formats
 - WAV (recommended)
@@ -111,7 +108,6 @@ For best results, your audio files should have:
 - Sample rate: 16kHz or higher
 - Bit depth: 16-bit or higher
 - Channels: Mono (stereo will be converted to mono)
-- Duration: 30 seconds to 10 minutes per file
 - File size: Up to 25MB
 
 ### Best Practices
@@ -136,7 +132,6 @@ This system works well for analyzing:
 
 ## Run Notebook
 
-Duration: 15
 
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
@@ -194,7 +189,6 @@ The notebook outputs results showing the file name, detected emotion, emotion co
 
 ## Understanding Results
 
-Duration: 10
 
 The analysis provides multiple metrics that work together to give a comprehensive view of the audio:
 
@@ -226,7 +220,6 @@ The 'Tone_Sentiment_Match' field in the results indicates:
 
 ## Conclusion and Resources
 
-Duration: 5
 
 Congratulations! You've successfully built an end-to-end audio analysis application in Snowflake that combines emotional tone detection, speech recognition, and sentiment analysis using Container Runtime for ML.
 

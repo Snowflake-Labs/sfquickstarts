@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## 概要
 
-Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 このデータサイエンスのためのSnowpark入門クイックスタートガイドでは、架空のキッチンカー会社であるTasty Bytes社に対し、キッチンカーの運転手にロケーション推奨を提供するモデルのトレーニングを行うことで売上を伸ばす支援をします。**Snowpark for Python**を使用してデータの準備、モデルのトレーニング、モデルの展開を行います。展開後は、**Streamlit**を使用してアプリケーションのプロトタイプを作成し、キッチンカーの運転手が次のシフトのために駐車する最適なロケーションを見つけるためにこのモデルをどのように利用できるかについてデモを行います。
 
@@ -48,7 +47,6 @@ Streamlit *（2022年3月にSnowflakeが買収）* は、カスタムウェブ�
 <!-- ------------------------ -->
 ## Snowflakeでのデータの設定
 
-Duration: 6
 
 ### 概要
 
@@ -157,7 +155,6 @@ SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 <!-- ------------------------ -->
 ## Snowparkによるデータサイエンス
 
-Duration: 22
 
 ### 概要
 
@@ -258,7 +255,6 @@ jupyter notebook
 <!-- ------------------------ -->
 ## Streamlitによるアプリケーションプロトタイプ
 
-Duration: 6
 
 ### 概要
 
@@ -292,7 +288,6 @@ Duration: 6
 <!-- ------------------------ -->
 ## クリーンアップ
 
-Duration: 5
 
 ### このクイックスタートで作成されるオブジェクトの概要
 
@@ -358,7 +353,6 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 <!-- ------------------------ -->
 ## まとめと次のステップ
 
-Duration: 1
 
 ### まとめ
 

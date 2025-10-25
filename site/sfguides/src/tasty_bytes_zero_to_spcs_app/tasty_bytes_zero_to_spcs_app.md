@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build a Data App and run it on Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Snowflake is a terrific platform on which to build data applications. The unique characteristics and cloud-based design allow for building applications that scale with data and workload. This tutorial will go through how to build and deploy both the Processing Layer and the User Interface Layer paired with Snowflake as the Persistence Layer.
 
@@ -75,7 +74,6 @@ Without the router part of the frontend service, CORS would actually prevent the
 
 
 ## Set up the Data
-Duration: 5
 
 ### Overview
 In this part of the lab we'll set up our Snowflake account, create database structures to house our data, create a Virtual Warehouse to use for data loading and finally load our Tasty Bytes Food Truck orders data into our ORDERS table and run a few queries to get familiar with the data.
@@ -361,7 +359,6 @@ You can spend some time creating the queries for each of these and then check yo
 <!-- ------------------------ -->
 
 ## Setup Snowflake
-Duration: 10
 
 ### Overview
 Now that we've created our database, loaded data and developed the queries needed to answer our business questions, the last step before getting into application code is setting up the necessary objects so that the application can connect to Snowflake securely and query data on its own Virtual Warehouse. We will also set up the objects required to create and run services. The objects we will look at are:
@@ -521,7 +518,6 @@ GRANT ROLE tasty_app_ext_role TO USER user3;
 <!-- ------------------------ -->
 
 ## Building the backend code
-Duration: 5
 
 ### Overview
 We now look at the code for the backend and frontend to adapt it to run in Snowpark Container Services.
@@ -825,7 +821,6 @@ Once connected, the rest of the backend code is working the same, regardless if 
 <!-- ------------------------ -->
 
 ## Building the frontend code
-Duration: 3
 
 ### Overview
 We can now look at how the frontend has been updated to take advantage of the changes and for us to be able to run it on SPCS.
@@ -1100,7 +1095,6 @@ With those changes, the code should be ready to be Dockerized and then deployed 
 <!-- ------------------------ -->
 
 ## Containerize the Application
-Duration: 5
 
 Now we can prepare the services for deployment, and we will do that by building Docker container images for each service to deploy.
 
@@ -1274,7 +1268,6 @@ The output should be similar to this:
 <!-- ------------------------ -->
 
 ## Create the Services
-Duration: 5
 
 ### Step 7.1 Creating the Service in Snowflake
 
@@ -1427,7 +1420,6 @@ Once logged in, the application loads the authorization status, and then redirec
 <!-- ------------------------ -->
 
 ## Clean up resources
-Duration: 1
 
 Once we have tested the application we can tear down any resources that we have created. The following resouces should be removed:
 

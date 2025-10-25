@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- 1 ------------------------ -->
 ## ALTR Quickstart - Data Access Control  
-Duration: 1
 
 This Quick Start Guide is intended for Data Owners and Data Stewards or any other role responsible for securing sensitive data in your Snowflake data warehouses. Its purpose is to demonstrate how ALTR automates data governance.
 
@@ -30,7 +29,6 @@ This Quick Start Guide is intended for Data Owners and Data Stewards or any othe
 
 <!-- 2 ------------------------ -->
 ## Create a sample database
-Duration: 2
 
 >aside positive
 >**In This Step:** 
@@ -68,7 +66,6 @@ CREATE TABLE SAMPLE_CUSTOMER AS
 >
 <!-- 3 ------------------------ -->
 ## Setup a new ALTR account
-Duration: 3
 
 >aside positive
 >**In This Step:** 
@@ -98,7 +95,6 @@ Duration: 3
 >
 <!-- 4------------------------ -->
 ## ALTR Setup for existing accounts
-Duration: 1
 
 >aside positive
 >**In This Step**
@@ -140,7 +136,6 @@ Duration: 1
 
 <!-- ------------------------ -->
 ## Build Data Classification Report
-Duration: 1
 
 >aside positive
 >**In This Step**
@@ -176,7 +171,6 @@ Duration: 1
 
 <!-- ------------------------ -->
 ## Define Role Based Data Access Policy
-Duration: 2
 
 >aside positive
 >**In This Step**
@@ -312,7 +306,6 @@ select * from SAMPLE_CUSTOMER;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 ### What we covered:
 - How to set up a Free ALTR Account and connect it to a Snowflake Database

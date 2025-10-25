@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native
 <!-- ------------------------ -->
 ## Panoramica
-Duration: 2 <img src="assets/tasty_bytes_header.png"/>
 
 Snowflake ha semplificato l’integrazione dei modelli di machine learning nelle data application grazie a comode funzionalità che consentono di distribuire i modelli ML come stored procedure, User Defined Function (UDF) e User Defined Table Function (UDTF). Inoltre offre la Snowflake SQL API, un’API RESTful che facilita l’interrogazione dei modelli ML distribuiti e consente un’integrazione trasparente tra l’applicazione e il modello ML.
 
@@ -39,7 +38,6 @@ In questo tutorial, stai creando un’applicazione che aiuta l’azienda fittizi
 
 <!-- ------------------------ -->
 ## Configurare i dati in Snowflake
-Duration: 3
 
 Utilizzerai [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), l’interfaccia web di Snowflake, per:
 - Accedere ai dati sulle posizioni di SafeGraph dal Marketplace Snowflake
@@ -148,7 +146,6 @@ SELECT * FROM frostbyte_tasty_bytes_ml_app.analytics.shift_sales_v;
 
 <!-- ------------------------ -->
 ## Creare un utente per l’applicazione
-Duration: 5
 
 Per garantire l’efficacia delle misure di sicurezza, è essenziale stabilire un account utente dedicato per l’applicazione, separato dal tuo account personale. Questo nuovo account verrà utilizzato per interrogare Snowflake. Secondo le best practice di sicurezza, l’account utilizzerà l’autenticazione a coppia di chiavi e avrà un accesso limitato all’interno dell’ambiente Snowflake.
 
@@ -205,7 +202,6 @@ GRANT ROLE tasty_bytes_data_ml_app_demo TO USER data_ml_app_demo;
 
 <!-- ------------------------ -->
 ## Addestrare e distribuire un modello ML in Snowflake
-Duration: 10
 
 ### Panoramica
 Tasty Bytes intende ottenere una crescita annuale delle vendite del 25% per cinque anni. Per supportare questo obiettivo e massimizzare i ricavi giornalieri in tutta la flotta di food truck, il team di data science deve creare un modello ML per portare i food truck nelle posizioni in cui sono previste le vendite più elevate per un dato turno.
@@ -411,7 +407,6 @@ GRANT ALL PRIVILEGES ON FUNCTION udf_predict_location_sales_prod(FLOAT,FLOAT,FLO
 
 <!-- ------------------------ -->
 ## Recuperare i dati dal modello ML utilizzando la SQL API e integrarli nella data application
-Duration: 10
 
 L’applicazione che eseguirai è scritta in React Native. 
 
@@ -439,7 +434,6 @@ Stiamo utilizzando l’autenticazione a coppia di chiavi per eseguire l’autent
 
 <!-- ------------------------ -->
 ## Pulizia
-Duration: 1
 
 Vai a Snowsight Worksheets, fai clic su “+” nell’angolo superiore destro per creare un nuovo foglio di lavoro e scegli “SQL Worksheet”. Incolla ed esegui il seguente codice SQL nel foglio di lavoro per eliminare gli oggetti Snowflake creati in questo quickstart.
 
@@ -456,7 +450,6 @@ DROP ROLE tasty_bytes_data_ml_app_demo;
 
 <!-- ------------------------ -->
 ## Conclusione
-Duration: 1
 
 ### Conclusione
 **Ce l’hai fatta!** Hai completato il quickstart Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native.

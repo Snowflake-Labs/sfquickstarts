@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Snowflakeでの変換
-Duration: 1
 <img src = "assets/transformation_header.png">
 
 ### 概要
@@ -37,7 +36,6 @@ Powered by Tasty Bytes - ゼロからのSnowflakeクイックスタートへよ�
 
 
 ## ワークシートの作成とSQLのコピー
-Duration: 1
 
 ### 概要
 このクイックスタートでは、Snowsight SQLワークシートを使ってTasty Bytesをテーマとしたストーリーを追っていきます。このページには、横に置いて活用できるよう、追加の解説、画像、ドキュメントリンクが掲載されています。
@@ -77,7 +75,6 @@ Duration: 1
 ### ステップ9 - 「Next」をクリックする
 
 ## 開発用に本番テーブルのクローンを即座に作成する
-Duration: 1
 
 ### 概要
 Tasty Bytesのキッチンカーフリート分析の一環として、私たちの開発者は、計算されたキッチンカーの使用年数列をキッチンカーテーブルに追加するタスクを任されました。
@@ -105,7 +102,6 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 ### ステップ2 - 「Next」をクリックする
 
 ## Snowflakeのクエリ結果セットキャッシュのテスト
-Duration: 1
 
 ### 概要
 ゼロコピークローンが即時に利用できるため、本番環境に影響を与える不安なく、クローンに対して開発を開始できます。ただし、何らかの変更を加える前に、まず簡単なクエリを実行し、Snowflakeの結果セットキャッシュをテストしてみましょう。
@@ -156,7 +152,6 @@ ORDER BY t.truck_id;
 ### ステップ3 - 「Next」をクリックする
 
 ## データの更新とキッチンカーの使用年数の計算
-Duration: 1
 
 ### 概要
 上記の出力に基づき、まず`make`列に表示されたFord\_ recordsのタイプミスに対処する必要があります。その後、各キッチンカーの使用年数を算出する計算に取りかかることができます。
@@ -191,7 +186,6 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ### ステップ3 - 「Next」をクリックする
 
 ## 列の追加と更新
-Duration: 1
 
 ### 概要
 
@@ -233,7 +227,6 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ### ステップ4 - 「Next」をクリックする
 
 ## タイムトラベルを利用したデータ災害からの回復
-Duration: 1
 
 ### 概要
 私たちはミスをしましたが、Snowflakeにはトラブル解消に役立つ多くの機能が備わっています。このプロセスでは、クエリ履歴、SQL変数、タイムトラベルを活用して、`truck_dev`テーブルを、誤った更新ステートメントを実行する前の状態に戻します。
@@ -303,7 +296,6 @@ BEFORE(STATEMENT => $query_id);
 ### ステップ4 - 「Next」をクリックする
 
 ## 開発を本番に昇格
-Duration: 1
 
 ### 概要
 `truck_dev`テーブルを誤った更新ステートメントの前の状態に戻すことができたので、次に列を正しく更新することができます。ここから、正しい計算を行ったテーブルを本番に昇格させ、割り当てられたタスクを完了させます。
@@ -348,7 +340,6 @@ WHERE t.make = 'Ford';
 ### ステップ4 - 「Next」をクリックする
 
 ## テーブルのドロップとドロップ解除
-Duration: 1
 
 ### 概要
 
@@ -386,7 +377,6 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 ### ステップ4 - 「Next」をクリックする
 
 ## まとめと次のステップ
-Duration: 1
 
 ### まとめ
 すばらしい出来です！これで、Tasty Bytes - ゼロからのSnowflake - 変換クイックスタートが無事完了しました。

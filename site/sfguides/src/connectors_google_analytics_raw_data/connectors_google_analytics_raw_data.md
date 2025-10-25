@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with the Snowflake Connector for Google Analytics
 <!-- ------------------------ -->
 ## Overview
-Duration: 10
 
 <img src="assets/snowflake_connector_banner.png">
 
@@ -35,7 +34,6 @@ You will learn how to:
 
 <!-- ------------------------ -->
 ## Snowflake Environment
-Duration: 5
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to create Snowflake objects (warehouse, database, schema, role).
@@ -47,7 +45,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Google Analytics
-Duration: 5
 
 ### Overview
 In this section, we will create a Google Analytics Account and Property in Google Analytics.
@@ -81,7 +78,6 @@ In this section, we will create a Google Analytics Account and Property in Googl
 
 <!-- ------------------------ -->
 ## BigQuery
-Duration: 10
 
 ### Overview
 In this section, we will create a BigQuery dataset and table to store Google Analytics data.
@@ -154,7 +150,6 @@ In this section, we will create a BigQuery dataset and table to store Google Ana
 
 <!-- ------------------------ -->
 ## Link Analytics
-Duration: 5
 
 ### Overview
 In this section, we will link Google Analytics to BigQuery.
@@ -192,7 +187,6 @@ In this section, we will link Google Analytics to BigQuery.
 
 <!-- ------------------------ -->
 ## Service Account
-Duration: 10
 
 ### Overview
 In this step, we will configure the OAuth Consent Screen.
@@ -233,7 +227,6 @@ In this step, we will configure the OAuth Consent Screen.
 
 
 ## OAuth Configuration
-Duration: 10 
 
 ### Overview
 In this section, we will configure the OAuth Consent Screen.
@@ -275,7 +268,6 @@ In this section, we will configure the OAuth Consent Screen.
 
 <!-- ------------------------ -->
 ## Enable API
-Duration: 2
 
 ### Overview
 In this section, we will enable the Cloud Resource Manager API.
@@ -292,7 +284,6 @@ In this section, we will enable the Cloud Resource Manager API.
 
 <!-- ------------------------ -->
 ## Connector
-Duration: 6
 
 ### Overview
 In this section, we will install and configure the Snowflake Connector for Google Analytics Raw Data.
@@ -336,7 +327,6 @@ In this section, we will install and configure the Snowflake Connector for Googl
 
 <!-- ------------------------ -->
 ## Notebook
-Duration: 2
 
 ### Overview
 In this section, we will create a Snowflake Notebook to view the data: both the raw un-flattened and flattened data.
@@ -354,7 +344,6 @@ In this section, we will create a Snowflake Notebook to view the data: both the 
 
 <!-- ------------------------ -->
 ## Streamlit
-Duration: 3
 
 ### Overview
 In this section, we will create a Streamlit application to visualize the data.
@@ -369,7 +358,6 @@ In this section, we will create a Streamlit application to visualize the data.
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 2
 
 ### Overview
 When you're finished with this Quickstart, you can clean up the objects created in Snowflake.
@@ -379,7 +367,6 @@ Navigate to the last cell in the Snowflake Notebook labeled **clean_up** to unco
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 3
 ### Congrats! You're reached the end of this Quickstart!
 
 #### What You Learned

@@ -39,7 +39,6 @@ This lab will walk you through the process of connecting to a Sigma template, ex
 
 <!-- ------------------------ -->
 ## Getting started
-Duration: 10
 
 ### Connecting to Sigma 
 

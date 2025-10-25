@@ -11,7 +11,6 @@ authors: Vinícius Oviedo
 # Analyzing real estate properties using Streamlit
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Analyzing residential properties for sale in Brazil (or any country) can be time-consuming. Usually, there are public reports that track real estate prices but no interactive data visualizations to compare assets across cities. That can be solved by creating an **"appreciation of residential properties"** app which combine Python programming, statistics and storytelling techniques to make data analysis more accessible!
 
@@ -36,7 +35,6 @@ This guide will show you how to create your own residential properties analyzer 
 
 <!-- ------------------------ -->
 ## Working Principle
-Duration: 4
 
 For this guide, we turn the audience into the center of attention. To do that, we allow it to select a location from our dataset, which is highlighted during the app's usage. Besides, the app uses a single visual type—the stripplot.
 
@@ -54,7 +52,6 @@ These statistical measures allow the user to compare the situation of the chosen
 
 <!-- ------------------------ -->
 ## Initial Set-Up
-Duration: 2
 
 In this step, we need to import the required Python modules and set up the Matplotlib layout for storytelling.
 
@@ -98,7 +95,6 @@ plt.rcParams['ytick.major.size'] = 0
 
 <!-- ------------------------ -->
 ## Data collection & app structuring
-Duration: 4
 
 To load the data [GitHub](https://github.com/OviedoVR/Brazilian-properties-appreciation/blob/main/data/BR_real_estate_appreciation_Q1_2023.csv), we can use the `read_csv` method of Pandas:
 
@@ -145,7 +141,6 @@ other_cities = BR_real_estate_appreciation.query('Location != @your_city')
 
 <!-- ------------------------ -->
 ## Stripplot for Annual Appreciation
-Duration: 10
 
 This step refers to the first stripplot, which compares the selected location's annual appreciation to other locations. You can highlight the chosen location in the chart and add reference lines, such as the first quartile, median, and third quartile, to see how it performs.
 
@@ -204,7 +199,6 @@ plt.tight_layout()
 ```
 <!-- ------------------------ -->
 ## Stripplot for Price by Squared Meter
-Duration: 10
 
 This step refers to the second stripplot, which shows the relationship between location and price per square meter.
 
@@ -263,7 +257,6 @@ plt.tight_layout()
 ```
 <!-- ------------------------ -->
 ## Finalizing the app
-Duration: 3
 
 Here, we can split the charts into two columns and add a legend. To make it more accessible, let's:
 
@@ -337,7 +330,6 @@ font="serif"
 ```
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 Now you know how to use Streamlit, Statistics, Data Vizualization and Storytelling techniques to analyze residential properties across distinct locations. Although this app takes into account Brazilian real estate properties, you can surely apply the same methodology to any country's data.
 

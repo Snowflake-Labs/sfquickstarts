@@ -9,7 +9,6 @@ status: Published
 # Visual AI Models with LandingLens on Snowflake
 
 ## Overview
-Duration: 1
 
 In this quickstart, we'll use LandingLens — a Native App available in the Snowflake Marketplace — to create a computer vision model that detects pneumonia in X-ray images. After completing this quickstart, users can use the concepts and procedures from this quickstart to build Object Detection, Segmentation, and Classifications models in LandingLens. 
 
@@ -38,7 +37,6 @@ To users who are familiar with machine learning, LandingLens offers advanced too
 <!-- ------------------------ -->
 
 ## Install the LandingLens Native App in Your Account
-Duration: 30
 
 ### Request the LandingLens App
 Access to the LandingLens app is available by request. To request the app, follow the instructions below:
@@ -101,7 +99,6 @@ After you've requested the app and been granted access it, follow the instructio
 <!-- ------------------------ -->
 
 ## Get Sample Images
-Duration: 15
 
 Now that you've installed the LandingLens app, you are ready to get the sample images. LandingAI provides a set of sample images as an "app" that can be downloaded from the Snowflake Marketplace. You will use these images to train a computer vision model in LandingLens that detects pneumonia.
 
@@ -131,7 +128,6 @@ To get the sample images, follow these instructions:
 <!-- ------------------------ -->
 ## Build a Pneumonia Detection Project
 
-Duration: 20
 
 Now that you've loaded the sample dataset into your Snowflake account, you're ready to create a computer vision model using those images in LandingLens.
 
@@ -217,7 +213,6 @@ WHERE
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 2
 
 Congratulations on creating a pneumonia detection computer vision model in LandingLens! You can now apply the concepts you've learned to building custom computer vision models in LandingLens.
 

@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Accéder directement à des données tierces via la Marketplace Snowflake
-Duration: 1 <img src = "assets/collaboration_header.png">
 
 ### Présentation
 Bienvenue dans ce guide Quickstart Tasty Bytes Débuter avec Snowflake sur la collaboration ! Dans ce guide, nous allons vous montrer comment vous pouvez enrichir vos données internes avec des données météorologiques tierces via la Marketplace Snowflake. La Marketplace Snowflake vous permet de trouver, d’essayer et d’acheter des applications et données tierces, sans avoir à configurer d’ETL, de pipelines de données ou d’intégrations.
@@ -34,7 +33,6 @@ Bienvenue dans ce guide Quickstart Tasty Bytes Débuter avec Snowflake sur la co
 - Comprendre comment exploiter davantage d’informations via la Marketplace Snowflake
 
 ## Créer une feuille de calcul et la copier dans un fichier SQL
-Duration: 1
 
 ### Présentation
 Dans ce guide Quickstart, vous allez suivre une histoire de Tasty Bytes via une feuille de calcul SQL Snowsight. Cette page, qui fait office de guide étape par étape, comprend également des commentaires, des images et des liens vers de la documentation.
@@ -75,7 +73,6 @@ Cette section vous explique comment vous connecter à Snowflake, comment créer 
 ### Étape 9 – Cliquer sur Next (Suivant) -->
 
 ## Étudier les jours sans vente dans nos données internes
-Duration: 1
 
 ### Présentation
 Après analyse des données de cette année par rapport à celles de l’année dernière, les analystes financiers de Tasty Bytes nous ont fait savoir que certains jours, dans plusieurs villes, leurs camionnettes n’enregistraient aucune vente et qu’ils n’y voyaient aucune explication. Ils nous ont donné l’exemple de la ville de Hambourg, en Allemagne, en février 2022.
@@ -107,7 +104,6 @@ Selon ce que nous observons ci-dessus, nous sommes d’accord avec les analystes
 ### Étape 2 – Cliquer sur Next (Suivant) -->
 
 ## Exploiter des données Weather Source depuis la Marketplace Snowflake
-Duration: 2
 
 ### Présentation
 D’après ce que nous avons vu dans la section précédente, il semble qu’il manque les chiffres des ventes du 16 au 21 février pour la ville de Hambourg, en Allemagne. Il n’y a pas grand-chose de plus dans nos données internes que nous pouvons utiliser pour y voir plus clair, mais il doit bien y avoir une explication. 
@@ -219,7 +215,6 @@ De nouveau, il se peut qu’un graphique Snowsight soit plus efficace pour déga
 ### Étape 5 – Cliquer sur Next (Suivant) -->
 
 ## Démocratiser des informations extraites de données
-Duration: 3
 
 ### Présentation
 Nous avons déterminé que des vents de force ouragan ont probablement exercé une influence sur les jours sans vente, une tendance dont nos analystes financiers nous ont fait part.
@@ -326,7 +321,6 @@ Incroyable ! Nous avons désormais démocratisé ce type d’informations pour 
 ### Étape 4 – Cliquer sur Next (Suivant) -->
 
 ## Tirer des informations des données de ventes et météorologiques de la Marketplace
-Duration: 1
 
 ### Présentation
 Les données de ventes et météorologiques étant disponibles pour toutes les villes où nos food trucks opèrent, voyons comment nous avons raccourci le délai d’analyse des analystes financiers.
@@ -364,7 +358,6 @@ Tout au long de ce guide Quickstart, nous avons vu comment notre travail nous pe
 ### Étape 2 – Cliquer sur Next (Suivant) -->
 
 ## Conclusion et étapes suivantes
-Duration: 1
 
 ### Conclusion
 Beau travail ! Vous avez terminé le guide Quickstart Tasty Bytes Débuter avec Snowflake sur la collaboration. 

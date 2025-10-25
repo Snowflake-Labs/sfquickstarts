@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # A Faster Path to Operational AI with Continual and Snowflake
 <!-- ------------------------ -->
 ## Guide Overview
-Duration: 1
 
 Continual is the Operational AI layer for the [Modern Data Stack](https://continual.ai/) with Snowflake as the foundation. This guide is a simple introduction that will cover connecting Continual to Snowflake, building feature sets and models from data stored in Snowflake, and analyzing and maintaining ML models continuously over time. After completing this guide, there are [more advanced examples](https://docs.continual.ai/customer-churn/) to try with other Modern Data Stack technologies like [dbt](https://www.getdbt.com/).
 
@@ -38,7 +37,6 @@ To keep things simple, we’ll use a nicely manicured dataset to illustrate how 
 
 ## Prepare your lab environment
 ### Set up Snowflake
-Duration: 6
 
 Login using your unique credentials if you have a Snowflake account. If you don’t have a Snowflake account, visit https://signup.snowflake.com/ and sign up for a free 30-day trial environment.
 ![new_trial](assets/1_start_snowflake_trial.png)
@@ -119,7 +117,6 @@ Commit;
 Outside of what we defined above, we will not use additional databases/schemas/tables as sources for feature sets or models in this example. But for an actual use case, you will likely use additional sources and will need to grant the Continual user USAGE permission on any such resources. See [our docs](https://docs.continual.ai/snowflake/#snowflake) for more information.
 
 ## Set up Continual
-Duration: 4
 ### Signup for a trial account
 To get started, navigate to [Continual.ai](https://cloud.continual.ai/register?utm_campaign=Snowflake%20QuickStarts&utm_source=continual%20guide) and register an account. Continual has a free 30-day trial and no credit card is required.
 
@@ -154,7 +151,6 @@ Test the connection and then create the connection between Continual and Snowfla
 ![13](assets/13.png)
 
 ## Create a feature set
-Duration: 2
 
 Now that we’ve established our connection and can access data in Snowflake, it’s time to prepare features for a model. 
 
@@ -199,7 +195,6 @@ Once the Feature Set has been created, we can see it listed on **Feature Sets** 
 ![20](assets/20.png)
 
 ## Create a model
-Duration: 5
 
 In the last section, we connected to Snowflake and created a feature set for a ML model. Now it’s time to create a model that will ingest our feature set, along with a few additional individual features, to predict the probability of a customer churning. The flow is very similar to creating a feature set except with some additional configurations. 
 
@@ -271,7 +266,6 @@ SELECT * FROM continual.customerchurn.model_customer_churn_30days_predictions;
 ![34](assets/34.png)
 
 ## MLOps: Monitoring data and models
-Duration: 3
 
 Back in Continual, there are many tools and automation for monitoring data, models, and prediction jobs.
 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Data Engineering con Apache Airflow, Snowflake e dbt
 <!-- ------------------------ -->
 ## Panoramica 
-Duration: 5
 
 ![architettura](assets/data_engineering_with_apache_airflow_0_overall_architecture.png)
 
@@ -51,7 +50,6 @@ Prima di iniziare dovrai disporre di:
 
 <!-- ------------------------ -->
 ## Configurare l’ambiente
-Duration: 2
 
 Per prima cosa, creiamo una cartella eseguendo il comando riportato sotto
 
@@ -100,7 +98,6 @@ La struttura del repository dovrebbe essere la seguente
 
 <!-- ------------------------ -->
 ## Configurare il progetto dbt
-Duration: 6
 
 Ora che il repository è pronto, è il momento di configurare e preparare il progetto dbt. 
 
@@ -250,7 +247,6 @@ La configurazione di dbt è completata. Nella prossima sezione creeremo i file C
 
 <!-- ------------------------ -->
 ## Creare i file di dati CSV in dbt
-Duration: 10
 
 In questa sezione prepareremo i file CSV di dati campione insieme ai modelli SQL associati. 
 
@@ -293,7 +289,6 @@ La struttura delle cartelle dovrebbe essere come segue
 
 <!-- ------------------------ -->
 ## Creare i modelli dbt nella cartella “models”
-Duration: 2
 
 Crea due cartelle chiamate ```analysis``` e ```transform``` nella cartella “models”. Segui le procedure nelle sezioni riportate sotto, rispettivamente per l’analisi e la trasformazione. 
 
@@ -377,7 +372,6 @@ La struttura dei file dovrebbe essere come illustrato sotto. Abbiamo già comple
 
 <!-- ------------------------ -->
 ## Preparare i DAG Airflow
-Duration: 5
 
 Nella cartella ```dags```, crea due file: ```init.py``` e ```transform_and_analysis.py```. ```init.py``` inizializza e rileva i dati CSV. ```transform_and_analysis.py``` esegue la trasformazione e l’analisi. 
 
@@ -462,7 +456,6 @@ with DAG('2_daily_transformation_analysis', default_args=default_args, schedule_
 
 <!-- ------------------------ -->
 ## Eseguire il file docker-compose per Airflow
-Duration: 5
 
 Eseguiamo ```docker-compose up``` e andiamo all’indirizzo [http://localhost:8080/](http://localhost:8080/). Il nome utente predefinito è ```airflow``` e la password è ```airflow```
 
@@ -508,7 +501,6 @@ Le viste ```Transform``` e ```Analysis``` sono state create correttamente!
 
 <!-- ------------------------ -->
 ## Conclusione
-Duration: 1
 
 Congratulazioni! Hai creato il tuo primo progetto Apache Airflow con dbt e Snowflake. Ti invitiamo a continuare la tua prova gratuita caricando i tuoi dati di esempio o di produzione e utilizzando alcune delle funzionalità più avanzate di Airflow e Snowflake non trattate in questo workshop. 
 

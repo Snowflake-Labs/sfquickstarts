@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Fivetran - Automate Salesforce Insights: Source, Target, Transformations, Dashboard...NO CODE
 <!-- ------------------------ -->
 ## Overview
-Duration: 3
 
 Your sales are the driving factor for your company.  Your Salesforce data is a wealth of information just waiting to be tapped.  Salesforce is an incredible product and an industry leader.  But what happens when you exhaust all options within Salesforce reporting?  Moreover, what happens when you want to cross reference your Salesforce data with ad campaign or live event data from 2, 3, 10, or more data sources as well as custom data sources?
 
@@ -42,7 +41,6 @@ All in less than 40 minutes!
 
 
 ## Accounts - Snowflake and Fivetran
-Duration: 10
 
 The outcome of this step is to:
 - Have a Snowflake account with all the objects needed for Fivetran to ingest data (account, user, role, warehouse, database)
@@ -67,7 +65,6 @@ Once the tile is clicked you will be presented with the Fivetran configuration s
 >
 
 ## Configure the Fivetran Salesforce Connector
-Duration: 8
 
 Ok, let's get our data from Salesforce into Snowflake via the quickest, easiest, and most reliable method available in the world today...Fivetran!  Ensure you are logged into your Fivetran account.
 
@@ -119,7 +116,6 @@ With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`.  A
 > This is the power of Fivetran SaaS.  No allocating resources.  No development.  Fully automated data replication...a production data pipeline in a few steps!
 >
 ## Configure Fivetran Quickstart Transformations
-Duration: 5
 
 Fivetran is going to replicate your Salesforce data into a fully normalized Snowflake schema.  Now to make the data easier to query for our dashboard/use cases, let's transform it.  Fivetran gives you the ability, and is ever expanding, to utilize dbt Core data modeling to further curate your data with NO CODE!  These transformations are called Fivetran [Quickstart Data Models](https://fivetran.com/docs/transformations/dbt/quickstart).  Let's configure these now.
 
@@ -150,7 +146,6 @@ In the Fivetran UI, you can view the lineage for any of the transformation jobs 
 >
 
 ## Build Insights Via Snowflake Dashboard
-Duration: 10
 
 Now that our models are built and ready to query, let's build some insights into your data!  For the purposes of this lab, we will build a four tile dashboard within Snowflake.  The SQL and accompanying screenshot of each tile setup is given below.  NOTE: Only change the SQL if your database and/or schema name do not match below.
 
@@ -211,7 +206,6 @@ Here is the example dashboard giving insights to the data for your use cases in 
 ![Fivetran Dashboard 8](assets/dashboard/d_0050.png)
 
 ## Conclusion
-Duration: 2
 
 The lab demonstrates the power, flexibility, reliability, and speed to insights by performing ELT with no code!
 

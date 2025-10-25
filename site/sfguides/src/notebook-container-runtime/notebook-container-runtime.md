@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowflake Notebook Container Runtime
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Snowflake Notebooks in the Container Runtime are a powerful IDE option for building ML models at scale in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/). Container Runtime (Public Preview) gives you a flexible container infrastructure that supports building and operationalizing a wide variety of resource-intensive ML workflows entirely within Snowflake. Using Snowflake Notebooks in Container Runtime gives you access to distributed processing on both CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture and Model Registry integration. Container Runtime also provides flexibility to leverage a set of preinstalled packages or the ability to pip install any open-source package of choice.  
 
@@ -31,7 +30,6 @@ This introductory Quickstart will take you through the steps of running Snowflak
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -114,7 +112,6 @@ FROM @CONTAINER_RUNTIME_LAB.NOTEBOOKS.DIAMOND_ASSETS;
 
 <!-- ------------------------ -->
 ## Run the Notebook
-Duration: 15
 
 - Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/notebooks/0_start_here.ipynb)
 - Change role to CONTAINER_RUNTIME_LAB_USER
@@ -139,7 +136,6 @@ Duration: 15
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 In conclusion, running Snowflake Notebooks Container Runtime offers a robust and flexible infrastructure for managing large-scale, advanced data science and machine learning workflows directly within Snowflake. With the ability to install external packages and choose optimal compute resources, including GPU machine types, Container Runtime provides a more versatile environment suited to the needs of data science and ML teams. 
 

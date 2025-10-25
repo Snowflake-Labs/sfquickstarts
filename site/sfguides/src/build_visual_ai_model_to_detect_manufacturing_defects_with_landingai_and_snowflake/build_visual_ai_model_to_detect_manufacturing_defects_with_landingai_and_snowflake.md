@@ -10,7 +10,6 @@ status: Published
 # Use Visual AI Models to Detect Defects with LandingLens on Snowflake
 
 ## Overview
-Duration: 1
 
 In this quickstart, we'll use LandingLens — a Native App available in the Snowflake Marketplace — to create a computer vision model that detects defects in components from a manufacturing environment. After completing this quickstart, users can use the concepts and procedures from this quickstart to build Object Detection, Segmentation, and Classifications models in LandingLens. 
 
@@ -39,7 +38,6 @@ To users who are familiar with machine learning, LandingLens offers advanced too
 <!-- ------------------------ -->
 
 ## Install the LandingLens Native App in Your Account
-Duration: 30
 
 ### Request the LandingLens App
 Access to the LandingLens app is available by request. To request the app, follow the instructions below:
@@ -102,7 +100,6 @@ After you've requested the app and been granted access it, follow the instructio
 <!-- ------------------------ -->
 
 ## Get Sample Images
-Duration: 15
 
 Now that you've installed the LandingLens app, you are ready to get the sample images. LandingAI provides a set of sample images as an "app" that can be downloaded from the Snowflake Marketplace. You will use these images to train a computer vision model in LandingLens that detects manufacturing defects.
 
@@ -131,7 +128,6 @@ To get the sample images, follow these instructions:
 
 <!-- ------------------------ -->
 ## Build a Defect Detection Project
-Duration: 20
 
 Now that you've loaded the sample dataset into your Snowflake account, you're ready to create a computer vision model using those images in LandingLens.
 
@@ -172,7 +168,6 @@ Once training finishes, you will see the model's predictions and performance inf
 
 <!-- ------------------------ -->
 ## Deploy the Model to an Endpoint
-Duration: 20
 
 After you are happy with the results of your trained model, you are ready to use it. To use a model, you **deploy** it, which means you put the model in a virtual location so that you can then upload images to it. When you upload images, the model runs **inference**, which means that it detects what it was trained to look for.
 
@@ -196,7 +191,6 @@ To deploy the model with Cloud Deployment, follow these instructions:
 <!-- ------------------------ -->
 ## Run Inference
 
-Duration: 20
 
 After deploying a model with Cloud Deployment, there are a few ways to send images to that endpoint for inference. In this example, you will run inference using SQL commands in Snowsight. 
 
@@ -289,7 +283,6 @@ After running inference, you can also see the prediction results in LandingLens.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations on creating a defect detection computer vision model in LandingLens! You can now apply the concepts you've learned to building custom computer vision models in LandingLens.
 

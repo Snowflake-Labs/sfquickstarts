@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Streamlining Support Case Analysis with Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Support case analysis is a critical task for any product-driven company. Understanding customer issues, their frequency, and patterns can significantly enhance product development and customer satisfaction. With the rise of data engineering and AI, platforms like Snowflake with AI-powered language models are game-changers in automating and enhancing this process. In this guide, we will explore how to leverage these technologies to dissect, analyze, and summarize product support cases effectively.
 
@@ -47,7 +46,6 @@ With Cortex Search, one can quickly set up a hybrid (vector and keyword) search 
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 2
 
 This section will walk you through creating various objects
 
@@ -107,7 +105,6 @@ reduce_template = PromptTemplate.from_template("""
 <!-- ------------------------ -->
 ## Streamlit Application 
 
-Duration: 2
 
 The app is built on open source Streamlit and can be hosted in one's own platform. The app allows the user carries the end to end processing that was carried in the Notebook with fine tuned granular control by the end user.
 
@@ -154,7 +151,6 @@ This Streamlit page processes and summarizes Snowflake support cases to identify
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 ### Conclusion
 

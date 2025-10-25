@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Snowflake 마켓플레이스를 통한 서드 파티 데이터에 대한 직접 액세스
 
-Duration: 1 <img src = "assets/collaboration_header.png">
 
 ### 개요
 
@@ -39,7 +38,6 @@ Duration: 1 <img src = "assets/collaboration_header.png">
 
 ## 워크시트 생성 및 SQL 복사
 
-Duration: 1
 
 ### 개요
 
@@ -95,7 +93,6 @@ Duration: 1
 
 ## 자사 데이터에서 매출이 0인 날짜 조사
 
-Duration: 1
 
 ### 개요
 
@@ -128,7 +125,6 @@ ORDER BY o.date ASC;
 
 ## Snowflake 마켓플레이스의 Weather Source 데이터 활용
 
-Duration: 2
 
 ### 개요
 
@@ -243,7 +239,6 @@ ORDER BY dw.date_valid_std DESC;
 
 ## 데이터 인사이트 민주화
 
-Duration: 3
 
 ### 개요
 
@@ -352,7 +347,6 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 
 ## 매출 및 마켓플레이스 날씨 데이터에서 인사이트 도출
 
-Duration: 1
 
 ### 개요
 
@@ -393,7 +387,6 @@ ORDER BY date DESC;
 
 ## 종료 및 다음 단계
 
-Duration: 1
 
 ### 결론
 

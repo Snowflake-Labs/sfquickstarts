@@ -11,7 +11,6 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 10
 
 Audio files in call centers offer rich insights beyond text. With Snowflake Cortex Functions and native capabilities, you can quickly transcribe audio files, extract summaries of calls, sentiment, and patterns which can eventually help in enhancing customer experiences. By transcribing audio to text and developing custom analytics, call centers and supervisors gain actionable insights on agent responses and proactive issue resolution, ultimately driving better customer satisfaction.
 
@@ -56,7 +55,6 @@ During this Quickstart you will accomplish the following:
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 5
 
 ### Run Setup SQL
 
@@ -76,7 +74,6 @@ After running the setup script (which automatically grants you the `call_center_
 <!-- ------------------------ -->
 ## Transcribe Calls
 
-Duration: 10
 
 ### Upload and Run Analytics Notebook
 
@@ -113,7 +110,6 @@ SELECT AI_TRANSCRIBE(audio_file) FROM audio_files;
 
 **Key Specifications**:
 - Maximum file size: 700 MB
-- Maximum audio duration: 90 minutes  
 - Supported formats: .mp3 and .wav files
 - Available across major cloud regions
 
@@ -153,7 +149,6 @@ The notebook will:
 <!-- ------------------------ -->
 ## Deploy Streamlit Application
 
-Duration: 5
 
 ### Upload Streamlit Application
 
@@ -218,7 +213,6 @@ The **Audio Explorer** showcases **AI_TRANSCRIBE** capabilities for call analysi
 
 ## Conclusion & Resources
 
-Duration: 2
 
 Congratulations! You have successfully built a call center analytics solution using Snowflake Cortex LLM functions and Streamlit.
 

@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 5
 
 Cortex Agents simplify AI-powered data interactions via a REST API, combining hybrid search and accurate SQL generation. They streamline workflows by managing context retrieval, natural language to SQL conversion, and LLM orchestration. Response quality is enhanced with in-line citations, answer abstention, and multi-message context handling. Developers benefit from a single API call integration, real-time streamed responses, and reduced latency for optimized applications.
 
@@ -61,7 +60,6 @@ A conversational interface using Cortex Agents and Cortex Inference REST APIs in
 ## Setup Snowflake
 <!-- ------------------------ -->
 
-Duration: 12
 
 ### Step 1
 Clone the [GitHub repo](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom).
@@ -87,7 +85,6 @@ Configure [key-pair authentication](https://docs.snowflake.com/user-guide/key-pa
 ## Setup Zoom
 <!-- ------------------------ -->
 
-Duration: 15
 
 ### Step 1
 
@@ -200,7 +197,6 @@ On the left nav, click on **Scopes** and add/enable the following scopes:
 ## Run Application
 <!-- ------------------------ -->
 
-Duration: 5
 
 Before proceeding, it is important to make sure that `ngork` is still running. If for some reason you need to restart it, you will need to update the forwarding URL as described in sub-steps 3, 7, 8 in "**Setup Application**" and also **ZOOM_REDIRECT_URI** in your `.env` file.
 
@@ -230,7 +226,6 @@ And, clicking on **Allow** should add it to Zoom Workspace running locally,
 ## Get Insights
 <!-- ------------------------ -->
 
-Duration: 5
 
 ### Structured Data
 
@@ -272,7 +267,6 @@ If all goes well, you should see responses similar to the following:
 ## Code Walkthrough
 <!-- ------------------------ -->
 
-Duration: 2
 
 As you may have noticed, the main application code is in [app.py](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom/blob/main/app.py) and the Snowflake Cortex AI code is in [cortex_chat.py](https://github.com/Snowflake-Labs/sfguide-integrate-snowflake-cortex-agents-with-zoom/blob/main/cortex_chat.py).
 
@@ -313,7 +307,6 @@ Translates the dataframe into natural language. This is done using Snowflake Cor
 ## Conclusion And Resources
 <!-- ------------------------ -->
 
-Duration: 1
 
 Congratulations! You've sucessfully integrated Snowflake Cortex AI in Zoom. I hope you found this guide both educational and inspiring.
 

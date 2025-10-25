@@ -13,7 +13,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 2
 
 Analyzing location-specific data for decision-making often requires specialized techniques typically handled by geography experts. However, with Snowflake's native [Geospatial Data Types](https://docs.snowflake.com/en/sql-reference/data-types-geospatial) and [Geospatial Functions](https://docs.snowflake.com/en/sql-reference/functions-geospatial) anyone can analyze geographic data—whether it's regional demographics, city points, market data, or points of interest—using the platform’s built-in geospatial functionalities.
 
@@ -57,7 +56,6 @@ In this quickstart, we will use Snowflake’s tools to:
 
 ## Acquire Datasets from Marketplace
 
-Duration: 5
 
 Once logged in go to the Snowflake Marketplace - this is under Data Products > Marketplace
 
@@ -121,7 +119,6 @@ ALTER USER IDENTIFIER($CURRENT_USER_NAME) SET DEFAULT_WAREHOUSE='ENRICH_WH', DEF
 ```
 
 ## Display Demographics for a Region
-Duration: 15
 
 >**Switch current role to ENRICH_ROLE** 
 >(by clicking on the user icon at the bottom left corner)
@@ -351,7 +348,6 @@ st.map is useful for quickly generating simple maps by rendering lines, points, 
 
 ## Display POI for a Region
 
-Duration: 5
 
 Add a new python cell by hovering over the bottom edge of the cell and select Python.
 
@@ -459,7 +455,6 @@ Below is an example of what you should see on map
 
 ## Overlay POI with Demographics
 
-Duration: 5
 
 Combining the demographics data from MBI with POI data can put us in a strong position to target where we can open a store. For example targeted stores(KFC) from POI data with an insight of purchasing power or monthly income from MBI will help us in making decesions on opening a store.
 
@@ -630,7 +625,6 @@ Here you will see a map with tooltip that combines **MBI Demographics** with **P
 
 ## Visualize with Streamlit
 
-Duration: 10
 
 Navigate to the left side panel: **Projects** >> **Streamlit**
 
@@ -660,7 +654,6 @@ Hover over any point to see **MBI Demographics** and **POI** data overlay. You c
 
 ## Conclusion and Resources
 
-Duration: 5
 
 ### Conclusion
 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Snowflake Security Dashboards
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 The Security Field CTO team at Snowflake has talked with thousands of Snowflake customers over the years. Most of them have a simple request: "Tell us how to do security well for Snowflake, please." It's a reasonable thing to ask. We've tried many ways to deliver the answer to this question, from checklists and tutorials to documents and slides. In 2021, we started a project (code named "Snow Sentry") that aimed to take much of that advice and put it into code. We created a set of sample tiles contained in a single dashboard to act as an MVP for monitoring security items in Snowflake. You will build a replica of that MVP during this Quickstart lab. 
 
@@ -40,7 +39,6 @@ These dashboards are for any Snowflake customer who wants to gain a deeper under
 
 <!-- ------------------------ -->
 ## Getting Started with Snowflake's SnowSight Tiles
-Duration: 1
 
 Throughout this lab we will be creating dashboard tiles (_i.e._ charts, graphs) to display information. _How_ to create these tiles is not the point of this lab, but if you don't know the basics, you will likely get lost. So, we will step through creating the first tile in detail, and assume you will know what to do for the rest.  
 
@@ -51,7 +49,6 @@ The majority of what you should need to know is in the documentation here:
 
 <!-- ------------------------ -->
 ## Create the Dashboard and the First Tile
-Duration: 10
 
 First, prepare by setting up some background items. We will create a special role, grant it rights, and then grant that role to the user that you are using for this lab. You can do this in whatever UI or tool you want. 
 
@@ -138,7 +135,6 @@ From this point on, tiles will be presented in their final form and instructions
 
 <!-- ------------------------ -->
 ## Authentication Tiles
-Duration: 5
 
 Our Security Dashboard will have three tiles focusing on authentication data. The first is the `Authentication: Failures, by User and Reason` tile that we made in the previous step. This shows that the Snowflake audit trail is capturing all the information you need to track the health of authentication events.
 
@@ -185,7 +181,6 @@ As you build this out ask yourself: What other information does your organizatio
 
 <!-- ------------------------ -->
 ## Privileged Access Tiles
-Duration: 6
 
 Good security practices require keeping an eye on privileged access users on any system. These tiles show you how to do that using the audit trail Snowflake provides you. There are two tiles in this category. 
 
@@ -226,7 +221,6 @@ An obvious extension to these tiles would be to include other built-in roles, li
 
 <!-- ------------------------ -->
 ## Identity Management Tiles
-Duration: 6
 
 Governing users well is arguably the most important thing you can do to have healthy security outcomes. These three tiles cover a few basics. Everyone should be checking these in every system. 
 
@@ -284,7 +278,6 @@ Again, there are many aspects to Identity Management that deserve to be delved i
 
 <!-- ------------------------ -->
 ## Least Privileged Access Tiles
-Duration: 5
 
 A close second to Identity Management is Entitlement Management. The ideal for this is achieving Least Privileged Access, the state where user and roles have only exactly the entitlements required to accomplish their authorized business goals. There are two tiles we have created to help with that. 
 
@@ -486,7 +479,6 @@ Since these tiles are doing a deeper level of analysis, the SQL is much more com
 
 <!-- ------------------------ -->
 ## Configuration Management Tiles
-Duration: 4
 
 There are many types of policy that control the security properties of your Snowflake Accounts. These two tiles explore how those properties are managed. The first looks broadly at all thes changes that may be taking place to your Snowflake configuration. This will help you track when any changes are made to these policies.  
 
@@ -539,7 +531,6 @@ You can easily modify this to watch for modifications to any of the policies con
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 The Security Dashboard you've built here is a starting point. The hope is you've seen that all the information you would likely want to use is available, and we make it relatively easy to get that information displayed in a useful way. 
 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Tasty Bytes - Snowpark 101 for Data Science
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
 
 In this Snowpark 101 for Data Science Quickstart guide, you will be help the fictitious food truck company, Tasty Bytes, to increase sales by training a model to provide location recommendations to truck drivers. You will use **Snowpark for Python** to prepare data, train a model, and deploy the model. Once deployed, you will create an application prototype using **Streamlit** to demonstrate how truck drivers could use the model to find the best location to park for an upcoming shift.
@@ -42,7 +41,6 @@ Streamlit is a Python library that makes it easy to create and share custom web 
 
 <!-- ------------------------ -->
 ## Setting up the Data in Snowflake
-Duration: 6
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
@@ -232,7 +230,6 @@ SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 
 <!-- ------------------------ -->
 ## Data Science with Snowpark
-Duration: 22
 
 ### Overview
 Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. To support this goal and maximize daily revenue across the fleet of trucks, the data science team needs to build an ML model to direct trucks to locations that are expected to have the highest sales on a given shift.
@@ -283,7 +280,6 @@ Download [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfgu
 
 <!-- ------------------------ -->
 ## Application Prototype with Streamlit
-Duration: 6
 
 ### Overview
 Now that you have deployed a model that predicts the shift sales of each location for the upcoming shift, you want to find a way for truck drivers to use these predictions to pick where they will park. You need to create an application prototype to show the engineering team how a truck driver would interact with the shift sales forecast model. The application will allow a user to pick a city and shift time (AM or PM) and show predicted sales by location on a map.
@@ -313,7 +309,6 @@ The [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-t
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 5
 
 ### Overview of Objects Created in this Quickstart
 **Snowflake:**
@@ -348,7 +343,6 @@ DROP WAREHOUSE IF EXISTS tasty_dsci_wh;
 
 <!-- ------------------------ -->
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 **You did it!** You have successfully complete the Tasty Bytes - Snowpark 101 for Data Science Quickstart.

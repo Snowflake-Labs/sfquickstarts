@@ -10,7 +10,6 @@ authors: Brad Culberson
 # Building a Data Application
 
 ## Overview
-Duration: 1
 
 Snowflake powers a huge variety of applications across many industries and use-cases. In this tutorial you will create a data application and API that uses Snowflake as its analytical engine. You will then load test against custom API endpoints and scale the backend both vertically and horizontally to see the impact. Finally, you will increase the API's efficiency and performance using a materialization.
 
@@ -39,7 +38,6 @@ The example application you start with is based on [Express](https://expressjs.c
 
 
 ## Setting up the Database and Warehouse
-Duration: 1
 
 The application needs a warehouse to query the data, and a database to store the data presented on the dashboard. To create the database and warehouse, connect to Snowflake and run the following commands in the Snowflake console or using SnowSQL:
 
@@ -95,7 +93,6 @@ GRANT ROLE DATA_APPS_DEMO_APP TO USER DATA_APPS_DEMO;
 ```
 
 ## Importing the data
-Duration: 10
 
 The data for this demo is in an S3 bucket in the external stage that you added in step two. The following commands load the data into a temporary table for use by the data application.
 
@@ -148,7 +145,6 @@ CREATE OR REPLACE TABLE WEATHER AS
 ```
 
 ## Getting the source code for the project
-Duration: 3
 
 The application you will be running is written on node.js. It is a Citi Bike dashboard that lets users view bike usage over time and in differing weather conditions. The source code is available in [GitHub](https://github.com/Snowflake-Labs/sfguide-data-apps-demo).
 
@@ -160,7 +156,6 @@ npm install -g artillery
 ```
 
 ## Configure the Application
-Duration: 5
 
 Copy the contents of `config-template.js` to `config.js` and change the following settings to match the values that you created in the previous steps:
 * `snowflake_account`
@@ -172,7 +167,6 @@ To get the `snowflake_account` value from Snowflake, run `Select CURRENT_ACCOUNT
 Run ```npm start``` in a terminal to start the application. If you see errors, check that the configuration is correct.
 
 ## Testing the Application
-Duration: 5
 
 Open a web browser and go to: [http://localhost:3000](http://localhost:3000)
 
@@ -188,7 +182,6 @@ Open these URIs in a browser to see the APIs that control the application:
 You now have a custom, single-page application that uses a custom API powered by Snowflake!
 
 ## Query Cache Performance
-Duration: 5
 
 If Snowflake determines that the data result for a query remains unchanged, it returns cached results, increasing efficiency and decreasing latencies. The query cache is a really powerful Snowflake capability.
 
@@ -207,7 +200,6 @@ In a dashboard application such as this, default queries reuse cached results wh
 API response times typically exceed query response times. This is partly due to latency and bandwidth constraints between the client and Snowflake, and partly due to the processing time it takes your computer to retrieve, format, and return the result set.
 
 ## Load Test for a Small Cluster
-Duration: 5
 
 Clusters in Snowflake are restricted to eight concurrent queries. Let's perform another load test to validate the concurrency limit. To avoid the cached query results we saw in the previous step, we will use a different endpoint and run a different test that uses random dates. First, run the test against the endpoint to get a baseline result for a small cluster that should be able to do eight concurrency.
 
@@ -221,7 +213,6 @@ Press Control-C to stop the test.
 
 
 ## Load Test for a Medium Cluster
-Duration: 5
 
 In Snowflake we can scale out workloads both vertically (bigger clusters) and horizontally (more clusters). The first instinct for customers is usually to increase the cluster size. Increasing the cluster size does not increase concurrency but can double the performance of complex/data-intensive queries for every increase in size.
 
@@ -241,7 +232,6 @@ artillery run scripts/load_tests/monthly_random.yaml
 Unfortunately, these queries are not scanning enough data to distribute across a Medium-sized cluster, and you will still hit similar concurrency limits from the previous test. This would have decreased the query latency up to 2x if the query scanned more data. The amount of bytes scanned is available in the query history in the Snowflake console.
 
 ## Load Test for a Multi-Cluster Warehouse
-Duration: 5
 
 To get more concurrency you need more clusters. Snowflake has a technology called multi-cluster warehouse that automatically adds clusters after queries are queued.
 
@@ -267,7 +257,6 @@ Press Control-C to stop the load test.
 Log in to the Snowflake console to view the query history again. You will now see which cluster a query was executed on, as well as the timings of the query. As the load test ramped up, more clusters were *automatically* added to support the influx of users.
 
 ## Materialization
-Duration: 5
 
 The SLO for this application is a five second p95. We are approaching success! The best way at this point to decrease latency is to simplify the amount of work needed to populate the dashboard.
 
@@ -301,7 +290,6 @@ artillery run scripts/load_tests/monthly_random.yaml
 Your load tests will be faster than before. You should now be below the five second p95 desired by this application with no timeouts. You have now scaled out the API for higher performance and concurrency!
 
 ## Cleanup
-Duration: 1
 
 To clean up the objects we created for this demo, run the following SQL either from SnowSQL or the Snowflake console:
 
@@ -315,7 +303,6 @@ DROP WAREHOUSE DATA_APPS_ADHOC;
 ```
 
 ## Conclusion & Next Steps
-Duration: 2
 
 In this guide you created a custom, single-page, data application and custom API powered by Snowflake. You also learned how Snowflake scales workloads vertically and horizontally.
 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with DCDF Data Architecture Incremental Processing & Logical Partitions
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
 The topics of covered in this guide were originally presented in Episode 2 of Snowflake's Data Cloud Deployment Framework (DCDF) webinar series. [DCDF Webinar Episode 2](https://www.snowflake.com/webinar/for-customers/applying-architectural-patterns-to-solve-business-questions-2023-01-11/) focused on the ELT implementation patterns to operationalize data loading, centralize the management of data transformations and restructure the data for optimal reporting and analysis.
 
@@ -48,7 +47,6 @@ An extensible ELT data pipeline, using logical partitions, that employs repeatab
 
 <!-- ------------------------ -->
 ## DCDF Data Architecture Review
-Duration: 3
 
 Let's review the DCDF Data Architecture processing layers and the purpose of each layer.  This was discussed in detail in the [DCDF Webinar Series Episode 1](https://www.snowflake.com/webinar/for-customers/data-cloud-deployment-framework-series/).
 
@@ -95,7 +93,6 @@ A Workspace is a sandbox environment where individual teams can persist data for
 
 <!-- ------------------------ -->
 ## Incremental Processing Concepts
-Duration: 4
 >aside positive
 >
 >"The best way to process big data, is to turn it into small data"
@@ -132,7 +129,6 @@ Let's see how this works!
 
 <!-- ------------------------ -->
 ## Lab Overview
-Duration: 3
 
 Below is an overview diagram of what we will be building.  Each step builds upon what was produced in the prior step.  We will only build the tables in this diagram.  
 
@@ -180,7 +176,6 @@ Below is an overview diagram of what we will be building.  Each step builds upon
 
 <!-- ------------------------ -->
 ## Quickstart Setup
-Duration: 5
 
 ### Clone Repository for Quickstart
 The sample code templates provided will be used to demonstrate incremental processing and logical partitions.  This code is written using SQL Scripting.  The code is tool ignostic and can be easily implemented into your tool set.
@@ -208,7 +203,6 @@ To clone the repository for this Quickstart, visit the [DCDF Incremental Process
 
 <!-- ------------------------ -->
 ## Snowflake Setup
-Duration: 5
 
 ### Sample Data Set
 - Login to your account and verify that you have access to the SNOWFLAKE_SAMPLE_DATA database.  See screenshot below.
@@ -267,7 +261,6 @@ select
 
 <!-- ------------------------ -->
 ## Data Acquistion
-Duration: 15
 
 During this step we will acquiring the data from the SNOWFLAKE_SAMPLE_DATA to load in the next step. We will use the SNOWFLAKE_SAMPLE_DATA data set for tables lineitem, orders, part, and partsupp to generate the data files to load into our raw layer.  
 
@@ -450,7 +443,6 @@ use warehouse dev_webinar_wh;
 
 <!-- ------------------------ -->
 ## Raw Layer - Staging the data
-Duration: 10
 
 In this section, we will take the acquired data from the Internal Table Stage mentioned in the previous section and load it into the staging tables in the Raw layer.  We will load LINE_ITEM_STG, ORDER_STG, PART_STG, and PARTSUPP_STG tables.
 
@@ -631,7 +623,6 @@ truncate table partsupp_stg;
 
 <!-- ------------------------ -->
 ## Raw Layer - Identify Impacted Partitions
-Duration: 5
 
 In this section we will identify the impacted partitions that were loaded into the staging tables in the Raw Layer and persist those identified partitions in a table for use in subsequent steps.
 
@@ -748,7 +739,6 @@ order by 1;
 
 <!-- ------------------------ -->
 ## Raw Layer - Incrementally Process
-Duration: 15
 
 In this section we will incrementally process the data and load it into the persistent tables in the Raw layer by utilizing the impacted partitions that were identified in the prior step.  We will load LINE_ITEM, LINE_ITEM_HIST, PART, ORDERS, and PARTSUPP tables.
 
@@ -1160,7 +1150,6 @@ where ps_partkey in ( 105237594, 128236374);
 
 <!-- ------------------------ -->
 ## Integration Layer
-Duration: 10
 
 In this step we will incrementally process an isolated unit of work, deriving certain business rules from the impacted partitions that we previously identified. 
 
@@ -1288,7 +1277,6 @@ and m.dw_line_item_shk = l.dw_line_item_shk;
 ![img](assets/integration_line_item_margin_results.png)
 <!-- ------------------------ -->
 ## Presentation Layer
-Duration: 6
 
 In this step we will incrementally process the data that was loaded in the previous section, and re-organizing the data for consumption from the Presentation layer, utilizing the identified impacted partitions.
 
@@ -1459,7 +1447,6 @@ where p_partkey in ( 105237594, 128236374);
 
 <!-- ------------------------ -->
 ## BONUS - Type 2 Slowly Changing Dimension
-Duration: 5
 
 >aside positive
 >Slowly changing dimension type 2 changes add a new row in the dimension with the updated attribute values. This requires generalizing the primary key of the dimension beyond the natural or durable key because there will potentially be multiple rows describing each member. When a new row is created for a dimension member, a new primary surrogate key is assigned and used as a foreign key in all fact tables from the moment of the update until a subsequent change creates a new dimension key and updated dimension row. -  Kimball Group.
@@ -1623,7 +1610,6 @@ order by olf.orderdate;
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 This step is to cleanup and drop all the objects we created as part of this quickstart.
 
@@ -1643,7 +1629,6 @@ drop database dev_webinar_common_db;
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 4
 
 This tutorial was designed as a hands-on introduction to the Data Cloud Deployment Framework (DCDF) data architecture incremental processing and logical partitions.
 

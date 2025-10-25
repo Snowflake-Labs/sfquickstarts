@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Transformation in Snowflake
-Duration: 1
 <img src = "assets/transformation_header.png">
 
 ### Overview
@@ -37,7 +36,6 @@ Within this Quickstart we will walk through a large set of Snowflake functionali
 
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -73,7 +71,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 9 - Click Next -->
 
 ## Zero Copy Cloning
-Duration: 1
 
 ### Overview
 As part of Tasty Bytes Fleet Analysis, our Developer has been tasked with creating and updating a new Truck Type column within the Raw layer Truck table that combines the Year, Make and Model together.
@@ -100,7 +97,6 @@ CREATE OR REPLACE TABLE raw_pos.truck_dev CLONE raw_pos.truck;
 ### Step 2 - Click Next -->
 
 ## Testing Snowflakes Query Result Set Cache
-Duration: 1
 
 ### Overview
 With our Zero Copy Clone instantly available we can now begin to develop against it without any fear of impacting production. However, before we make any changes let's first run some simple queries against it and test out Snowflake's Result Set Cache.
@@ -152,7 +148,6 @@ ORDER BY t.truck_id;
 ### Step 3 - Click Next -->
 
 ## Adding and Updating a Column in a Table
-Duration: 1
 
 ### Overview
 Within this step, we will now will Add and Update a Truck Type column to the Development Truck Table we created previously while also addressing the typo in the `Make` field.
@@ -225,7 +220,6 @@ It looks like we messed up the `truck_type` concatenation.  We will need to reso
 ### Step 6 - Click Next -->
 
 ## Time-Travel for Table Restore
-Duration: 1
 
 ### Overview
 Althoug we made a mistake on the Update statement earlier and missed adding a space  between Year and Make. Thankfully, we can use Time Travel to revert our table back to the state it was after we fixed the misspelling so we can correct our work.
@@ -319,7 +313,6 @@ UPDATE raw_pos.truck_dev t
 ### Step 4 - Click Next -->
 
 ## Table Swap, Drop and Undrop
-Duration: 1
 
 ### Overview
 Based on our previous efforts, we have addressed the requirements we were given and to complete our task need to push our Development into Production.
@@ -381,7 +374,6 @@ DROP TABLE raw_pos.truck_dev;
 ### Step 7 - Click Next -->
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Transformation Quickstart. 

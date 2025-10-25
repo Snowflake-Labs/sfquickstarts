@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Amazon Sagemaker Canvas and Snowflake for Generative AI Use Cases
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 Amazon SageMaker is a fully managed machine learning service. With SageMaker, data scientists and developers can quickly and easily build and train machine learning models, and then directly deploy them into a production-ready hosted environment. It provides an integrated Jupyter authoring notebook instance for easy access to your data sources for exploration and analysis, so you don't have to manage servers. 
 
@@ -48,13 +47,11 @@ The end-to-end workflow will look like this:
 
 <!-- ------------------------ -->
 ## Use Case
-Duration: 5
 
 In this use case you will build a binary model based on the 'Loan Fraud Prediction' dataset from Kaggle and [AWS](https://catalog.us-east-1.prod.workshops.aws/workshops/80ba0ea5-7cf9-4b8c-9d3f-1cd988b6c071/en-US/1-use-cases/4-finserv). Also, Important to note that you can always supplement your data with Snowflake Marketplace data.
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 5
 
 The first thing we will do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet.
 ```sql
@@ -116,7 +113,6 @@ Your Snowflake environment should look like this:
 
 <!-- ------------------------ -->
 ## Set Up Sagemaker Canvas
-Duration: 10
 
 Open up your Sagemaker Canvas application and click on the datasets blade (this is changing to the Data Preparation blade soon) on the left side then click create in the upper left and select a tabular dataset then name the dataset "loan-data" and click create.
 ![](assets/canvas-create-dataset.png)
@@ -140,7 +136,6 @@ Click on "Create Dataset" and now you've created a Canvas dataset!
 
 <!-- ------------------------ -->
 ## Talking to your data
-Duration: 10
 
 Before chatting with data you will want to make sure that you have access to Anthropic models through the Bedrock service. Head to the Bedrock service and select "Model Access", then check to make sure that you have access to the Anthropic models. You can request access if you don't have access. The chat with data functionality uses Anthropic models via Bedrock so expect standard Bedrock charges to apply when using chat with data.
 ![](assets/bedrockaccess.png)
@@ -176,7 +171,6 @@ Lastly, let's type "can you detect anomalies in the data" and after several seco
 
 <!-- ------------------------ -->
 ## Conclusion and Additional Considerations
-Duration: 5
 
 This quickstart is just that, a quick way to get you started with using Canvas with Chat with Data with Snowflake. We encourage users to continue to explore using their Snowflake with Canvas and the many ways that Canvas allows users to leverage Generative AI services easily with their data.
 

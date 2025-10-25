@@ -13,7 +13,6 @@ feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 
 ## Overview
 
-Duration: 2
 
 This quickstart primarily shows how to download a Large Language Model [Mistral-7b-instruct v0.1](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1) from [HuggingFace](https://huggingface.co/) and then shrink the model size to fit in a smaller GPU(A10G->GPU_NV_M) on [NemoLLM Inference Microservice NIMs](https://registry.ngc.nvidia.com/orgs/ohlfw0olaadg/teams/ea-participants/containers/nemollm-inference-ms/tags) Container using the [model_generator](https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/modelgenerator.sh) and [instruct.yaml](https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/instruct.yaml) provided by NVIDIA.
 
@@ -65,7 +64,6 @@ git clone https://<user>:<token>@huggingface.co/mistralai/Mistral-7B-Instruct-v0
 
 ## Model Generator Explained
 
-Duration: 5
 
 Model Generator [model_generator.sh](https://github.com/Snowflake-Labs/sfguide-build-ai-app-using-nvidia-snowpark-container-services/blob/main/docker/inference/modelgenerator.sh) script downloads `Mistral LLM` model from Huggingface and using NIMs and `model_generator` package shrink the LLM model to fit to a smaller GPU (`A10G = GPU_NV_M`).
 
@@ -101,7 +99,6 @@ ln -s /blockstore/model/store/trt_llm_0.0.1_trtllm /model-store/trt_llm_0.0.1_tr
 
 ## Inference Service Explained
 
-Duration: 5
 
 The Inference service executes the `model_generator.sh` to generate the model and launch the `triton` inference server with requested/assigned number of GPUs.
 
@@ -128,7 +125,6 @@ The Inference service is configured using an YAML as shown,
 
 ## Download Demo Sources
 
-Duration: 1
 
 Clone the guide demo sources,
 
@@ -147,7 +143,6 @@ export DEMO_HOME="$PWD"
 
 ## Create Provider and Consumer Roles
 
-Duration: 5
 
 On your Snowsight worksheet run the following SQL commands to create the Snowflake Native App `Provider` and `Consumer` roles,
 
@@ -188,7 +183,6 @@ GRANT ROLE NVIDIA_LLM_APP_CONSUMER_ROLE to USER <USER_NAME>;
 
 ## Snowflake Native App Prerequisite
 
-Duration: 5
 
 ```sql
 SET COMPUTE_POOL_NAME = 'my-compute-pool';
@@ -237,7 +231,6 @@ SHOW IMAGE REPOSITORIES;
 
 ## Docker Setup
 
-Duration: 15
 
 Register at <https://org.ngc.nvidia.com/setup/api-key> and download your nvcr.io login credentials. Let use store the credentials in the environment variable named `$NVCR_DOCKER_USER` and `$NVCR_DOCKER_API_KEY`,
 
@@ -329,7 +322,6 @@ docker run --rm=true "$SNOWFLAKE_IMAGE_REGISTRY_URL/nvidia_nemo_ms_master/code_s
 
 ## As a Provider
 
-Duration: 10
 
 ```sql
 USE ROLE NVIDIA_LLM_APP_PROVIDER_ROLE;
@@ -358,7 +350,6 @@ call core.get_app_endpoint($APP_INSTANCE);
 
 ## Publish Your Native App
 
-Duration: 5
 
 > aside positive
 > Before you publish the App, try to test your App [locally](https://docs.snowflake.com/en/developer-guide/native-apps/installing-testing-application)
@@ -398,7 +389,6 @@ END;
 
 ## As a Consumer
 
-Duration: 5
 
 Follow the [steps](https://other-docs.snowflake.com/en/native-apps/consumer-about) to download and install the Native App.
 
@@ -487,7 +477,6 @@ CALL CORE.GET_APP_ENDPOINT('APP1'); -- GET APP ENDPOINTS TO ACCESS STREAMLIT APP
 
 ### Exposing Consumer App using Streamlit
 
-Duration: 1
 
 Get the Native App endpoint URL,
 
@@ -503,7 +492,6 @@ Copy the endpoint URL next to the Streamlit App and launch that URL on a browser
 
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully created build and deployed a Snowflake LLM Native App powered by NVDIA using Snowpark Container Services.
 

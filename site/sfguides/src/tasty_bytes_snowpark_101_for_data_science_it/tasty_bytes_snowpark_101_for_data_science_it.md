@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Tasty Bytes - Introduzione a Snowpark per la data science
 <!-- ------------------------ -->
 ## Panoramica 
-Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 In questo quickstart Introduzione a Snowpark per la data science, aiuterai l’azienda di food truck fittizia Tasty Bytes ad aumentare le vendite addestrando un modello per fornire consigli sulle posizioni ai conducenti dei food truck. Utilizzerai **Snowpark per Python** per preparare i dati, addestrare un modello e distribuirlo. Una volta distribuito, creerai un prototipo di applicazione utilizzando **Streamlit** per dimostrare come i conducenti dei food truck potrebbero usare questo modello per trovare la posizione migliore in cui parcheggiare per il prossimo turno.
 
@@ -44,7 +43,6 @@ Streamlit *(acquisito da Snowflake a marzo 2022)* è una libreria Python che con
 
 <!-- ------------------------ -->
 ## Configurare i dati in Snowflake
-Duration: 6
 
 ### Panoramica
 Utilizzerai [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), l’interfaccia web di Snowflake, per:
@@ -149,7 +147,6 @@ SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 
 <!-- ------------------------ -->
 ## Data Science con Snowpark
-Duration: 22
 
 ### Panoramica
 Tasty Bytes intende ottenere una crescita annuale delle vendite del 25% per cinque anni. Per supportare questo obiettivo e massimizzare i ricavi giornalieri in tutta la flotta di food truck, il team di data science deve creare un modello ML per dirigere i food truck verso le posizioni in cui si prevedono le vendite più elevate per un dato turno.
@@ -231,7 +228,6 @@ jupyter notebook
 
 <!-- ------------------------ -->
 ## Prototipo di applicazione con Streamlit
-Duration: 6
 
 ### Panoramica
 Ora che hai distribuito un modello che prevede le vendite di ogni posizione per il prossimo turno, devi trovare un modo per consentire ai conducenti dei food truck di utilizzare queste previsioni per scegliere le posizioni migliori dove parcheggiare. Devi creare un prototipo di applicazione per mostrare al team di progettazione come un conducente potrebbe interagire con il modello di previsione delle vendite per turno. L’applicazione consentirà a un utente di scegliere una città e un turno (mattina o pomeriggio) e mostrerà le vendite previste per ogni posizione su una mappa.
@@ -261,7 +257,6 @@ Ora che hai distribuito un modello che prevede le vendite di ogni posizione per 
 
 <!-- ------------------------ -->
 ## Pulizia
-Duration: 5
 
 ### Panoramica degli oggetti creati in questo quickstart
 **Snowflake:**
@@ -315,7 +310,6 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 
 <!-- ------------------------ -->
 ## Conclusione e fasi successive
-Duration: 1
 
 ### Conclusione
 **Ecco fatto!** Hai completato il quickstart Tasty Bytes - Introduzione a Snowpark per la data science.

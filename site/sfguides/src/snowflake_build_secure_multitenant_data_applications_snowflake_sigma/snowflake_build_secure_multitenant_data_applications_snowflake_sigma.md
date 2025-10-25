@@ -11,7 +11,6 @@ feedback link: https://github.com/sigmacomputing/sigmaquickstarts/issues
 <!-- The above name is what appears on the website and is searchable. -->
 
 ## Overview 
-Duration: 5 
 
 
 Whether you are a global retailer, a tech company, or a financial services firm, providing near real-time embedded analytics to your external users can help optimize your operations, improve your product conversion, drive new lines of revenue, and more. 
@@ -56,7 +55,6 @@ In this lab you’ll learn how to:
 <!-- END OF OVERVIEW -->
 
 ## Setting up the Lab Environment
-Duration: 16
 
 2.1 After setting up your trial, log into Snowflake.
 
@@ -140,7 +138,6 @@ Upon save, Sigma will validate the connection is reachable.
 <!-- END OF SECTION-->
 
 ## Setting up the Workbook
-Duration: 16
 
 3.1 From the home page select `Create New` then select `Workbook`:
 
@@ -246,7 +243,6 @@ This will create a new calculated column. Name this column `COGS` (Cost of Goods
 <!-- END OF SECTION-->
 
 ## Building the Workbook 
-Duration: 16
 
 Now that we have created our base data elements and saved the first version of our workbook, we are ready to move on to building the visualizations for our sales portal. 
 
@@ -425,7 +421,6 @@ Click the blue `Publish` button in the top right corner.
 <!-- END OF SECTION-->
 
 ## Setting up Security 
-Duration: 16
 
 Now that we have created our workbook, we need to set up the security permissions on the data set and the workbook itself. 
 
@@ -702,7 +697,6 @@ You will now see your new Tasty Bytes Workspace. Click on its title, then select
 <!-- END OF SECTION-->
 
 ## Exploring Embedding
-Duration: 16
 
 Many customers want to embed Sigma content in another web application. Embedding allows that to happen. In the case of this lab, we don't have another application handy, but we can still build and test embedding directly in Sigma.
 
@@ -795,7 +789,6 @@ You should now see the new version of the workbook that was created by your Embe
 <!-- END OF SECTION-->
 
 ## Conclusion And Resources
-Duration: 5
 
 In this lab we learned how to connect Sigma to Snowflake, create interactive, embeddable dashboards in Sigma, and how to leverage Snowflake & Sigma security policies to secure multi-tenant datasets backing an application. We thank you for your participation, and hope this exercise has helped you understand the value Sigma on Snowflake can drive for your organization and your customers.
 

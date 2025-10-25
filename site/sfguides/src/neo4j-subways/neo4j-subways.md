@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 2
 
 ### What Is Neo4j Graph Analytics For Snowflake? 
 
@@ -46,7 +45,6 @@ Using Graph Analytics for Snowflake, we can easily model what would happen if a 
 
 ## Loading The Data
 
-Duration: 5
 
 Dataset overview : This dataset is a digital twin of the NYC Subway!
 
@@ -119,7 +117,6 @@ USE ROLE gds_user_role;
 
 ## Cleaning Our Data
 
-Duration: 5
 
 We need our data to be in a particular format in order to work with Graph Analytics. In general it should be like so:
 
@@ -153,7 +150,6 @@ FROM mta.public.lines;
 
 ## Running Your Algorithms
 
-Duration: 10
 
 Now we are finally at the step where we create a projection, run our algorithms, and write back to snowflake. We will run dijksra to determine the shortest path between subway stations.
 
@@ -222,7 +218,6 @@ ORDER BY ordering;
 
 ## Modeling a Disruption
 
-Duration: 15
 
 But what would happen if one of those stations were closed? How can we model what would be the new path? Luckily it will be pretty simple. 
 
@@ -364,7 +359,6 @@ components.html(
 
 ##  Conclusions And Resources
 
-Duration: 2
 
 In this quickstart, you learned how to bring the power of graph insights into Snowflake using Neo4j Graph Analytics. 
 

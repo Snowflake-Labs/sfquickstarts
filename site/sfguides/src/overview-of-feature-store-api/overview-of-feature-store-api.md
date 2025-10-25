@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowflake Feature Store API
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 The Snowflake Feature Store is a native solution that data scientists and ML engineers can use to create, maintain, and use features in [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/).
 
@@ -33,7 +32,6 @@ This is part 2 of a 3-part introduction quickstart series to Snowflake Feature S
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
@@ -63,7 +61,6 @@ GRANT OWNERSHIP ON ALL SCHEMAS IN DATABASE FS_API_DATABASE TO ROLE FS_API_ROLE C
 
 <!-- ------------------------ -->
 ## Run the Notebook
-Duration: 10
 
 - Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-overview-of-feature-store-api/blob/main/notebooks/0_start_here.ipynb)
 - Change role to FS_API_ROLE
@@ -81,7 +78,6 @@ Duration: 10
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 The Snowflake Feature Store is a native tool that empowers data scientists and ML engineers to efficiently create, manage, and utilize ML features in their workflows. By centralizing commonly-used features in a governed repository, the Feature Store reduces redundancy and duplication, enhancing the productivity of data science teams. This centralization also improves consistency in feature extraction, leading to more robust production ML pipelines.
 

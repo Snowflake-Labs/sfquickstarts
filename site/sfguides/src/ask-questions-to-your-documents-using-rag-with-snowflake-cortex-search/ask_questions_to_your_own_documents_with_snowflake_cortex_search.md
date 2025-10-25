@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 To reduce hallucinations (i.e. incorrect responses), LLMs can be combined with private datasets. Today, the most common approach for reducing hallucinations without having to change the model (e.g. fine-tuning) is the Retrieval Augmented Generation (RAG) framework. RAG allows you to “ground” the model’s responses by making a set of relevant documents available to the LLM as context in the response. 
 
@@ -52,7 +51,6 @@ The final product includes an application that lets users test how the LLM respo
 
 <!-- ------------------------ -->
 ## Organize Documents
-Duration: 10
 
 In Snowflake, databases and schemas are used to organize and govern access to data and logic. Let´s start by getting a few documents locally and then create a database that will hold the PDFs.
 
@@ -116,7 +114,6 @@ ls @docs;
 
 <!-- ------------------------ -->
 ## Pre-process Documents
-Duration: 15
 
 In this step we are going to leverage Snowflake native document processing functions to prepare documents before enabling Cortex Search. We are also going to use Cortex CLASSIFY_TEXT function in order to label the type of document being processed so we can use that metadata to filter searches.
 
@@ -252,7 +249,6 @@ After completing all the steps in this section you should see the following obje
 
 <!-- ------------------------ -->
 ## Create Cortex Search Service
-Duration: 5
 
 Next step is to create the CORTEX SEARCH SERVICE in the table we have created before. We will execute this SQL command:
 
@@ -283,7 +279,6 @@ This is all what we have to do. There is no need here to create embeddings as th
 
 <!-- ------------------------ -->
 ## Build Chat UI with Retrieval and Generation Logic
-Duration: 15
 
 To make it easy for anyone to ask questions against the Cortex Search service, let's create a fairly simple front-end using Streamlit. As part of the app, we will provide the end-user with a toggle that allows testing of LLM responses with and without access to the context to observe the differences. The app will also show what are the pieces of text that the service is returning and that are used to fill the calls to LLM to create the answers.
 
@@ -593,7 +588,6 @@ NUM_CHUNKS = 3 # Num-chunks provided as context. Play with this to check how it 
 
 <!-- ------------------------ -->
 ## Build a ChatBot UI with Conversation History
-Duration: 15
 
 In the previous section we have created a simple interface where we can ask questions about our documents and select the LLM running within Snowflake Cortex to answer the question. We have seen that when no context from our documents is provided, we just get a general answer, versus a specific answer related to our documents when we use context from the PDFs. But what if we want to have a conversation sytle?
 
@@ -999,7 +993,6 @@ You can try with your own documents. You will notice different peformance depend
 
 <!-- ------------------------ -->
 ## Automatic Processing of New Documents
-Duration: 15
 
 Maintaining your RAG system up to date when new documents are added, deleted or updated can be tedious. Snowflake makes it very easy. In one side, Cortex Search is a self-managed service. We only need to add, delete or update rows in the table where Cortex Search Service has been enabled and automatically the service will update the indexes and create new embeddings based on the frequency defined during service creation.
 
@@ -1222,7 +1215,6 @@ alter task insert_delete_docs_task suspend;
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 1
 
 In order to avoid consuming credits, you can drop the databse used for this lab.
 
@@ -1232,7 +1224,6 @@ drop database CC_QUICKSTART_CORTEX_SEARCH_DOCS;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully performed RAG using Snowflake Cortex Search and securely built a full-stack RAG application in Snowflake without having to build integrations, manage any infrastructure or deal with security concerns with data moving outside of the Snowflake governance framework. 
 

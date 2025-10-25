@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 5
 
 In this quickstart, you'll learn how to leverage Snowflake's Cortex Agents to orchestrate across both structured and unstructured data sources to deliver insights. Cortex Agents can plan tasks, use tools to execute these tasks, and generate responses. They combine Cortex Analyst for structured data queries and Cortex Search for unstructured data insights, along with LLMs for natural language understanding.
 
@@ -51,7 +50,6 @@ An intelligent application that:
 
 ## Setup Workspace
 
-Duration: 10
 
 To get started, clone or download the tutorial project from: [Snowflake Agent API Chatbot Tutorial](https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-agents-and-react)
 
@@ -74,7 +72,6 @@ This script will:
 
 ## Define Environment Variables
 
-Duration: 15
 
 Now that we have set up the workspace, let's configure the necessary environment variables for the application. Create an `.env` file in the root folder of your project and add the following variables:
 
@@ -124,7 +121,6 @@ If not specified, the application will use default suggested queries.
 
 ## Run the Application
 
-Duration: 10
 
 Now that we have set up the workspace and configured the environment variables, let's run the application locally.
 
@@ -156,7 +152,6 @@ Click on one of the questions to see what it can do!
 
 ## Explain the Integration
 
-Duration: 15
 
 Now that we have our application running, let's examine how to integrate with the Cortex Agent API. The bulk of the Agent API integration logic is located in the `@/lib/agent-api` directory.
 
@@ -276,7 +271,6 @@ The states returned from this hook are then passed to the appropriate components
 
 ### Handle Citation Processing
 
-Duration: 15
 
 In the Cortex Agent implementation, we need a way to process citations that are returned from search results. The code from the message.tsx file shows how this is handled:
 
@@ -330,7 +324,6 @@ The citation processing is a key part of making Cortex Search results more usabl
 
 ### Message Content Flow
 
-Duration: 15
 
 Let's examine how the message content flows through the application. In page.tsx, we can see how the hook is called and its results are passed to child components:
 
@@ -368,7 +361,6 @@ The flow of data through the application provides a complete picture of how the 
 
 ### Displaying Message Components in the UI
 
-Duration: 15
 
 As seen in the message.tsx file, the application handles different types of content and displays them appropriately:
 
@@ -421,7 +413,6 @@ The component uses conditional rendering to ensure that the appropriate UI eleme
 
 ## Conclusion and Resources
 
-Duration: 5
 
 ### Conclusion
 

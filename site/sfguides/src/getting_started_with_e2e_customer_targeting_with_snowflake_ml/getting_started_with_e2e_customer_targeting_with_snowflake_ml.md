@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 Companies use machine learning for targeted customer campaigns to improve engagement and conversions. The intent of this notebook is to demonstrate how you can implement propensity-based targeting directly in Snowflake, where your data resides. This approach eliminates the need for data movement and ensures faster, more efficient turnarounds.
 
@@ -52,7 +51,6 @@ Define entities, register feature views, and manage versioned features in Snowfl
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 **Step 1.** To set up the environment, download the [sqlsetup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-end-to-end-customer-targeting-on-snowflake-ml/blob/main/Setup.sql) script from GitHub and execute all the statements in a [Snowflake worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file).
 
@@ -96,7 +94,6 @@ grant write on stage  ML_MODELS.DS.MODEL_STAGE  to role FR_SCIENTIST;
 
 <!-- ------------------------ -->
 ## Generate Realistic Synthetic Data 
-Duration: 5
 
 We will generate a synthetic dataset consisting of 100,000 rows and 508 columns, including member_id, a binary target variable, and a mix of numerical and categorical features. Using Scikit-Learn's make_classification, we will create 150 base features, then augment the dataset with 200 low-variance features, 150 highly correlated features, 5 categorical columns, and introduce missing values in selected fields.
 
@@ -186,7 +183,6 @@ Next, we split the full dataset into five DataFrames, evenly distributing the 50
 
 <!-- ------------------------ -->
 ## Feature Store Creation in Snowflake
-Duration: 10 mins
 
 The [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview) enables data scientists and ML engineers to create, manage, and reuse machine learning features entirely within Snowflake. It simplifies the end-to-end workflow by keeping features close to the data. In this example, we'll demonstrate how to define entities and create feature views directly from existing Snowflake tables, making your features accessible for both training and inference tasks.
 
@@ -321,7 +317,6 @@ select * from POC_DATASET;
 
 <!-- ------------------------ -->
 ## Feature Reduction 
-Duration: 15 mins
 
 In this step, we preprocess the dataset by performing feature reduction, removing redundant or irrelevant features before model training. For feature reduction, we will employ techniques such as Variance Threshold and Correlation Analysis. There are numerous other dimensionality reduction techniques available, which you can explore further [here](https://en.wikipedia.org/wiki/Dimensionality_reduction)
 
@@ -397,7 +392,6 @@ Finally, we reduce the total number of columns in the dataset from 508 to 150. T
 
 <!-- ------------------------ -->
 ## Model Training 
-Duration: 20 mins
 
 In this step, we will train the model using Snowflake ML, beginning by creating a preprocessing pipeline that will convert categorical variables into numerical format through one-hot encoding and apply Min-Max scaling to standardize numerical features.
 
@@ -596,7 +590,6 @@ reg.get_model(model_name).show_versions()
 
 <!-- ------------------------ -->
 ## Model Inferencing and Scheduling
-Duration: 10 mins
 
 In this section, you'll learn how to perform batch inferencing using Snowflake ML by:
 * Leveraging features stored in the Feature Store 
@@ -673,7 +666,6 @@ prediction_result = mv.run(df, function_name ="PREDICT")
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You’ve successfully built an end-to-end customer targeting model in a Snowflake Notebook and logged the trained model to the Snowflake ML Registry, making it ready for inference and future use.
 

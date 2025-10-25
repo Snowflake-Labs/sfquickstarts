@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Tasty Bytesの紹介
-Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
 
 ### 概要
@@ -44,7 +43,6 @@ Tasty Bytesの組織について学んだ後、Tasty Bytes基盤のデータモ�
   - ロールベースのアクセス制御（RBAC）
 
 ## Tasty Bytesの設定
-Duration: 6
 
 ### 概要
 このクイックスタートでは、Snowsightとして知られるSnowflakeウェブインターフェースを使用します。Snowsightを初めて利用する場合は、[Snowsightのドキュメント](https://docs.snowflake.com/ja/user-guide/ui-snowsight)でその概要を確認することを強くお勧めします。
@@ -91,7 +89,6 @@ Duration: 6
 ### ステップ11 - 「Next」をクリックする
 
 ## Tasty Bytes基盤の探索
-Duration: 2
 
 ### 概要
 Tasty Bytesの設定が完了したので、作成したデータベース、ロール、ウェアハウスを探索できるようになりました。
@@ -160,7 +157,6 @@ WHERE m.truck_brand_name = 'Plant Palace';
 ### ステップ7 - 「Next」をクリックする
 
 ## Powered by Tasty Bytes - クイックスタート
-Duration: 1
 
 ### 概要
 おめでとうございます。これでTasty Bytes基盤の設定が完了しました。

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Creare una data application con il Marketplace Snowflake, Snowpark e Streamlit
 
 ## Panoramica
-Duration: 2
 
 In questo lab pratico creerai una data application che utilizza il data set Economical Data Atlas pubblicato da Knoema nel Marketplace Snowflake.
 
@@ -50,7 +49,6 @@ Elaborerai i dati con Snowpark, svilupperai un semplice modello ML e creerai una
 
 ## Preparare l’ambiente del workshop
 
-Duration: 8
 
 1. Installa conda per gestire un ambiente separato eseguendo il comando pip install conda. NOTA: in alternativa puoi utilizzare [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 2. Apri il Terminale o il prompt dei comandi
@@ -76,7 +74,6 @@ IMPORTANTE: se usi un computer con chip Apple M1, segui [queste istruzioni](http
 <!-- ------------------------ -->
 ## Preparare l’ambiente Snowflake
 
-Duration: 6
 
 ### Lavorare con il Marketplace Snowflake
 
@@ -167,7 +164,6 @@ SELECT predict_pce_udf(2021);
 
 ## Esplorare i dati con un notebook (Jupyter)
 
-Duration: 15
 
 Ora che abbiamo un database da utilizzare per l’applicazione, vogliamo esplorare i dati e creare un modello ML in una User Defined Function (UDF) utilizzabile dalla nostra applicazione.
 
@@ -332,7 +328,6 @@ session.sql("select predict_pce_udf(2021)").show()
 <!-- ------------------------ -->
 ## Creare l’applicazione Streamlit
 
-Duration: 7
 
 
 ### Importare le librerie richieste
@@ -542,7 +537,6 @@ Nel frammento di codice riportato sopra, viene creato un grafico a barre utilizz
 <!-- ------------------------ -->
 ## Eseguire l’applicazione web
 
-Duration: 4
 
 Questa è la parte divertente! Se lo script Python non presenta errori di sintassi o di collegamento, ora puoi eseguire l’applicazione.
 

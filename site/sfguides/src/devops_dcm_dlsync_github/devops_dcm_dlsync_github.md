@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # DevOps: Database Change Management with DLSync and GitHub
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 <img src="assets/dlsync-logo.png" width="300" alt="logo"/>
 
@@ -57,7 +56,6 @@ DevOps is concerned with automating the development, release, and maintenance of
 
 <!-- ------------------------ -->
 ## GitHub Overview
-Duration: 2
 
 GitHub provides a complete, end-to-end set of software development tools to manage the SDLC, including collaborative coding, automation & CI/CD, security, project management, and more.
 
@@ -67,7 +65,6 @@ GitHub Actions makes it easy to automate all your software workflows, including 
 
 <!-- ------------------------ -->
 ## DLSync Overview
-Duration: 2
 
 DLSync is a database change management tool for Snowflake. It tracks changes to database objects by associating each object with a unique SQL script file. DLSync supports both state-based and migration-based change management, unit testing, change detection, dependency resolution, parametrization, rollback, verification, and script creation.
 
@@ -79,7 +76,6 @@ For more information, see the [DLSync project page](https://github.com/Snowflake
 
 <!-- ------------------------ -->
 ## Project Structure And Scripts
-Duration: 4
 
 To use DLSync, create a script root directory containing all scripts and configurations. Here's an example structure for our demo:
 
@@ -252,7 +248,6 @@ MY_SCHEMA=DEMO_SHCMEA_PROD
 
 <!-- ------------------------ -->
 ## Setup Snowflake
-Duration: 3
 
 Before configuring GitHub Actions, you need to set up the necessary Snowflake objects. Connect to your Snowflake account and run the following commands to create the required role, database, and schema:
 
@@ -287,7 +282,6 @@ GRANT ROLE demo_role TO USER DEMO_USER;
 
 <!-- ------------------------ -->
 ## Create Action Secrets
-Duration: 3
 
 Action Secrets in GitHub are used to securely store values/variables for your CI/CD pipelines. For DLSync, you will need to create secrets for each Snowflake connection parameter and any other required environment variables.
 
@@ -318,7 +312,6 @@ From your repository, go to **Settings > Secrets and variables > Actions**. Add 
 
 <!-- ------------------------ -->
 ## Create an Actions Workflow
-Duration: 5
 
 Action Workflows are defined as YAML files in your repository under `.github/workflows`. Here is an example workflow to test and deploy changes using DLSync:
 
@@ -402,7 +395,6 @@ After creating or updating your scripts, you need to commit and push the changes
 
 <!-- ------------------------ -->
 ## Run Actions Workflow
-Duration: 3
 
 To manually run the workflow:
 
@@ -416,7 +408,6 @@ You can view the output of each step, including the DLSync deployment logs.
 
 <!-- ------------------------ -->
 ## Confirm Deployment Changes
-Duration: 3
 
 After running the workflow, log into your Snowflake account and confirm:
 
@@ -435,7 +426,6 @@ Check the contents of the tracking tables to see deployment history and script s
 
 <!-- ------------------------ -->
 ## Add More Changes
-Duration: 3
 
 Add new or updated SQL scripts to your script root directory. Let's create a new view that demonstrates how DLSync handles additional database objects and add update to existing. 
 
@@ -478,7 +468,6 @@ After creating or updating your scripts, you need to commit and push the changes
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 3
 
 Now that you have a working Snowflake CI/CD pipeline with DLSync and GitHub Actions, consider the following next steps:
 

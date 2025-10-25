@@ -12,7 +12,6 @@ authors: Snowflake
 
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 ![](assets/asset_abstract_9.jpg)
 
@@ -25,7 +24,6 @@ In this quickstart we will explore an end-to-end example of building a scalable 
 
 <!-- ------------------------ -->
 ## Prerequisites 
-Duration: 1
 
 You need access to an AWS and a Snowflake account. If you do not already have access, follow the links for a [free AWS](https://aws.amazon.com/free/) and a [free Snowflake](https://signup.snowflake.com/?utm_cta=quickstarts_) account.
 
@@ -43,7 +41,6 @@ You also need Snowflake's command line interface (CLI). If Snowsql isn't already
 
 <!-- ------------------------ -->
 ## Use Case
-Duration: 2
 
 The dataset we will explore is the [Synthetic Financial Datasets For Fraud Detection](https://www.kaggle.com/ealaxi/paysim1) on [kaggle](https://www.kaggle.com).
 
@@ -53,7 +50,6 @@ The goal of this exercise is to build an ML model that accurately predicts both 
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 Building a hands-on environment that will allow you to build and score the Model in your environment is very straightforward. It requires 3 simple, script-driven steps.
 
@@ -172,7 +168,6 @@ Creating the stack should take about one minute. At this point, the integration 
 
 <!-- ------------------------ -->
 ## Snowflake/Autopilot Integration
-Duration: 20
 
 To follow best practices, we will not use the ACCOUNTADMIN role to run the steps for this demo. Therefore, log in into Snowflake with user autopilot_user. The password should be in your setup scripts.
 
@@ -460,6 +455,5 @@ With these results, there is just one obvious question left to answer. Why would
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Having managed ML capabilities directly in the Snowflake Data Cloud opens up the world of machine learning for data engineers, data analysts, and data scientists who are primarily working in a more SQL-centric environment. Not only can you take advantage of all the benefits of the Snowflake Data Cloud but now you can add full ML capabilities (model building and scoring) from the same interface. As you have seen in this article, AutoML makes ML via SQL extremely powerful and easy to use.

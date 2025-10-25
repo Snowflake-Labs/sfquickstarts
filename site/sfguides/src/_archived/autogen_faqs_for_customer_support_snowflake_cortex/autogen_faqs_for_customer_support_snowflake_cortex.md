@@ -10,7 +10,6 @@ author: James Cha-Earley
 # AutoGen FAQs for Customer Support with Snowflake Cortex
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 In this quickstart, you'll learn how to build an automated FAQ generation system using customer support tickets and Large Language Models (LLMs). The application analyzes support conversations and automatically generates relevant FAQ entries that can be viewed through an interactive Streamlit interface.
 
@@ -33,7 +32,6 @@ In this quickstart, you'll learn how to build an automated FAQ generation system
 
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 10
 
 ### Create Database and Tables
 
@@ -71,7 +69,6 @@ CREATE OR REPLACE TABLE CUSTOMER_SUPPORT.FAQS.CUSTOMER_SUPPORT_FAQ (
 Dataset from NebulaByte/E-Commerce_Customer_Support_Conversations on HuggingFace
 <!-- ------------------------ -->
 ## Process Support Tickets
-Duration: 10
 
 Let's examine our customer support tickets:
 
@@ -86,13 +83,11 @@ LIMIT 3;
 
 <!-- ------------------------ -->
 ## Generate FAQs with LLMs
-Duration: 15
 
 Now we'll generate FAQ entries using the Claude 3.5 Sonnet LLM:
 
 ### Snowflake Notebook
 
-Duration: 5
 
 1. Click on [Notebook](https://github.com/Snowflake-Labs/sfguide-autogen-faqs-for-customer-support-with-snowflake-cortex) to download the Notebook from GitHub. (NOTE: Do NOT right-click to download.)  
      
@@ -172,7 +167,6 @@ FROM ParsedOutputs;
 ```
 <!-- ------------------------ -->
 ## Verify and Review
-Duration: 10
 
 Check the generated FAQs:
 
@@ -189,7 +183,6 @@ Ensure:
 
 <!-- ------------------------ -->
 ## Build the FAQ Viewer
-Duration: 20
 
 1. Navigate to Streamlit in Snowflake:  
      
@@ -344,7 +337,6 @@ if __name__ == "__main__":
 ```
 
 ## Conclusion and Resources
-Duration: 5
 
 Congratulations! You've built an automated FAQ generation system that:
 - Processes support conversations

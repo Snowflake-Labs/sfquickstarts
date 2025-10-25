@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Traitement de données semi-structurées dans Snowflake
-Duration: 1 <img src = "assets/semi_structured_header.png">
 
 ### Présentation
 Bienvenue dans le guide Quickstart Powered by Tasty Bytes Débuter avec Snowflake sur le traitement des données semi-structurées !
@@ -37,7 +36,6 @@ Pour plus d’informations au sujet des données semi-structurées dans Snowflak
 - Un graphique à barres digne d’un cadre
 
 ## Créer une feuille de calcul et la copier dans un fichier SQL
-Duration: 1
 
 ### Présentation
 Dans ce guide Quickstart, vous allez suivre une histoire de Tasty Bytes via une feuille de calcul SQL Snowsight. Cette page, qui fait office de guide étape par étape, comprend également des commentaires, des images et des liens vers de la documentation.
@@ -76,7 +74,6 @@ Cette section vous explique comment vous connecter à Snowflake, comment créer 
 ### Étape 9 – Cliquer sur Next (Suivant) -->
 
 ## Établir le profil des données de menu semi-structurées
-Duration: 1
 
 ### Présentation
 En tant que data engineers de Tasty Bytes, il nous a été demandé d’établir le profil de nos données de menu, qui doit inclure une colonne pour les données semi-structurées. Depuis cette table de menu, nous devons créer une vue de couche d’analyse qui affiche les données relatives aux ingrédients et aux restrictions alimentaires pour nos utilisateurs finaux.
@@ -145,7 +142,6 @@ Cliquons de nouveau sur l’une des cellules de cette colonne pour en examiner l
 ### Étape 4 – Cliquer sur Next (Suivant) -->
 
 ## Aplatir des données semi-structurées
-Duration: 2
 
 ### Présentation
 Après avoir vu comment nous pouvons facilement interroger des données semi-structurées qui figurent dans une colonne VARIANT à l’aide de la notation par points, en tant que data engineer chez Tasty Bytes, vous êtes bien parti pour fournir aux parties prenantes internes les données qu’elles vous ont demandées.
@@ -211,7 +207,6 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 ### Étape 4 – Cliquer sur Next (Suivant) -->
 
 ## Créer des vues structurées à partir de données semi-structurées
-Duration: 2
 
 ### Présentation
 Dans la section précédente, nous avons créé une requête qui fournit les résultats exacts requis par nos utilisateurs finaux à l’aide d’une suite de fonctionnalités de données semi-structurées Snowflake. Nous allons poursuivre le processus qui consiste à mettre à profit cette requête qui se trouve dans notre couche brute vers la couche harmonisée, puis dans la couche d’analyse, d’où nos utilisateurs finaux sont autorisés à lire des données.
@@ -270,7 +265,6 @@ Nous utilisons également les paramètres [SELECT * EXCLUDE et RENAME](https://
 ### Étape 3 – Cliquer sur Next (Suivant) -->
 
 ## Analyser des données semi-structurées traitées dans Snowsight
-Duration: 2
 
 ### Présentation
 Notre vue de menu étant disponible dans notre couche d’analyse, interrogeons-la en exécutant plusieurs requêtes qui montreront à nos utilisateurs finaux comment Snowflake crée une expérience de requête relationnelle à partir de données semi-structurées sans avoir à en faire des copies supplémentaires ou à les traiter de manière complexe.
@@ -351,7 +345,6 @@ Pour terminer ce guide Quickstart, nous devons préciser à quel point il serait
 ### Étape 4 – Cliquer sur Next (Suivant) -->
 
 ## Conclusion et étapes suivantes
-Duration: 1
 
 ### Conclusion
 Beau travail ! Vous avez terminé le guide Quickstart Tasty Bytes Débuter avec Snowflake sur les données semi-structurées. 

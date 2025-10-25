@@ -17,7 +17,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 #  Analyze Data with Python using Posit Workbench and Snowflake
 
 ## Overview
-Duration: 1
 
 In this guide, we'll use Python to analyze data in Snowflake using the Posit
 Workbench Native App. You'll learn how to launch the Posit Workbench Native App and use the available VS Code IDE. You'll also learn how to use the Ibis library to translate Python code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
@@ -50,7 +49,6 @@ or look at the materials provided in the accompanying repository:
 
 
 ## Setup
-Duration: 15
 
 Before we begin, let’s set up a few components. We need to:
 
@@ -247,7 +245,6 @@ pip install -r requirements.txt
 **Note:** Make sure your virtual environment is activated (`source .venv/bin/activate`) before installing.
 
 ## Build Report and Dashboard
-Duration: 2
 
 Before we dive into the specifics of the code, let's first discuss Quarto. We've written our analysis in a Quarto (`.qmd`) document, [quarto.qmd](https://github.com/posit-dev/snowflake-posit-quickstart-python/blob/main/quarto.qmd). [Quarto](https://quarto.org/)
 is an open-source publishing system that makes it easy to create
@@ -290,7 +287,6 @@ Quarto works with Python, R, and Javascript Observable code out-of-the box,
 and is a great tool to communicate your data science analyses.
 
 ## Access Snowflake Data
-Duration: 5
 
 Now, let's take a closer look at the code in our Quarto document. Our code will run
 in our Python environment, but will use data stored in our database on Snowflake.
@@ -399,7 +395,6 @@ learn more about using Ibis to interact with
 Snowflake specifically.
 
 ## Write Snowflake Data
-Duration: 1
 
 You can also use Ibis to create a new table in a database or append to an existing table.
 
@@ -414,7 +409,6 @@ To insert data into an existing table, use [`insert()`](https://ibis-project.org
 Now that we understand how to interact with our database, we can use Python to perform our analysis.
 
 ## Clean Data
-Duration: 5
 
 We want to understand which variables in `HEART_FAILURE` are associated with survival
 of patients with heart failure.
@@ -452,7 +446,6 @@ heart_failure_filtered = (
 > By default, Ibis is in _deferred mode_ and lazily evaluates table expressions. To more easily interact with your tables and see the results of your code, you can turn on _interactive code_. In [interactive mode](https://ibis-project.org/how-to/configure/basics#interactive-mode), expressions are executed when printed to the console. Turn on interactive mode with `ibis.options.interactive = True`.
 
 ## Visualize Data
-Duration: 5
 
 The heart failure data provides important insights that can help us:
 
@@ -493,7 +486,6 @@ heart_failure_plot = (
 ![](assets/analysis/plot-sodium.png)
 
 ## Create tables for Analysis
-Duration: 5
 
 Next, we'll use Ibis to calculate the median values for various clinical metrics across different patient groups.
 
@@ -561,7 +553,6 @@ from great_tables import GT
 ![](assets/gt/gt-table.png)
 
 ## Create Shiny Application
-Duration: 2
 
 Earlier, we showed you how to render a report from our Quarto document. Another way
 to share our work and allow others to explore the heart failure dataset is to create an
@@ -589,7 +580,6 @@ If you're new to Shiny, you can try it online with
 Shinylive is also available for [R](https://shinylive.io/r/examples/) for Shiny for R.
 
 ## Conclusion and Resources
-Duration: 2
 
 ### Overview
 

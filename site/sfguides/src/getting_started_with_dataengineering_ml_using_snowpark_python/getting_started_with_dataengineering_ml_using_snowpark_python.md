@@ -11,7 +11,6 @@ authors: Dash Desai
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 By completing this guide, you will be able to go from raw data to an interactive application that can help organization optimize their advertising budget allocation.
 
@@ -92,7 +91,6 @@ Learn more about [Streamlit](https://www.snowflake.com/en/data-cloud/overview/st
 <!-- ------------------------ -->
 ## Setup Environment
 
-Duration: 8
 
 ### Create Tables and Load Data
 
@@ -190,7 +188,6 @@ Optionally, you can also open [setup.sql](https://github.com/Snowflake-Labs/sfgu
 <!-- ------------------------ -->
 ## Data Engineering
 
-Duration: 15
 
 The Notebook linked below covers the following data engineering tasks.
 
@@ -375,7 +372,6 @@ You can also enable push notifications to a cloud messaging service when errors 
 <!-- ------------------------ -->
 ## Machine Learning
 
-Duration: 15
 
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under [Data Engineering](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python/blob/main/Snowpark_For_Python_DE.ipynb).
@@ -414,7 +410,6 @@ If all goes well, you should see the following:
 <!-- ------------------------ -->
 ## Streamlit Application
 
-Duration: 5
 
 Follow these steps to build Streamlit application in Snowsight.
 

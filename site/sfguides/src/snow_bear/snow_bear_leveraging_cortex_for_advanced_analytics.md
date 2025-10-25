@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 5
 
 Customer experience analytics is crucial for businesses to understand their customers and improve their services. Through comprehensive data analysis and AI-powered insights, businesses can uncover patterns in customer feedback, identify pain points, and generate actionable recommendations.
 
@@ -51,7 +50,6 @@ This Quickstart showcases the complete Snow Bear analytics platform with:
 
 <!-- ------------------------ -->
 ## Setup Snowflake Environment  
-Duration: 5
 
 In this step, you'll create the Snowflake database objects and upload all necessary files for the Snow Bear analytics platform.
 
@@ -137,7 +135,6 @@ The notebook contains all the SQL scripts and processing logic needed for the co
 
 <!-- ------------------------ -->
 ## Run Analytics Notebook
-Duration: 12
 
 ### Execute the Complete Analytics Workflow
 
@@ -149,7 +146,6 @@ Duration: 12
 
 <!-- ------------------------ -->
 ## Launch Analytics Dashboard
-Duration: 5
 
 ### Access Your Analytics Platform
 
@@ -163,7 +159,6 @@ Your platform includes executive dashboards, sentiment analysis, theme analysis,
 
 <!-- ------------------------ -->
 ## Clean Up Resources
-Duration: 5
 
 ### Remove All Created Objects
 
@@ -178,7 +173,6 @@ When you're ready to remove all the resources created during this quickstart:
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 Congratulations! You've successfully built the complete Snow Bear Fan Experience Analytics platform using Snowflake Cortex AI!
 

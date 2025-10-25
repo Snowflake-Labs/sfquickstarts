@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Predict Ad Impressions with ML-Powered Analysis
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 The pacing of ad campaigns can be unpredictable. Consider an advertiser with a cross-channel campaign.  Some channels may not be able to fulfill the level of inventory desired, leading to advertisers needing to increase spending on other channels to make up the gap.  On the sell side, a media publisher might want to show how a campaign is likely to pace over the remaining period of the campaign.
 
@@ -33,7 +32,6 @@ Fortunately, for those advertisers or ad platforms who are bringing their data i
 
 <!-- ------------------------ -->
 ## Prepare Your Environment
-Duration: 8
 
 If you do not have a Snowflake account, you can register for a [Snowflake free 30-day trial](https://trial.snowflake.com). The cloud provider (AWS, Azure, Google Cloud), and Region (US East, EU, e.g.) do _not_ matter for this lab. However, we suggest you select the region which is physically closest to you.
 
@@ -116,7 +114,6 @@ It is easiest to visual the data by clicking _Chart_.  You should see a graph li
 ![Test data](assets/verify-data-graph.png)
 
 ## Create and visualize a forecast
-Duration: 4
 
 Now we have data that could represent the number of impressions delivered over the first several months of a campaign. An analyst might want to understand how many impressions are likely to be delivered if no changes are made to the campaign.  To do this, we will show how to forecast the number of impressions over the next two weeks, and show how the analyst can visualize the forecast.
 
@@ -168,7 +165,6 @@ Once that is configured, you should see the results as follows.
 As you can see, the forecast was able to successfully capture the day of week effect, as the dips in the chart correspond to weekends.
 
 ## Anomaly detection
-Duration: 4
 
 Many ad campaigns are still manually set up, with people typing impression volumes or budgets into ad platforms. With that comes the possibility of human error. The same data used to train the forecasting model can be used to train an anomaly detection model. This model could be used when data for a new time period comes into the system to detect if the new time period is an outlier. If it is an outlier, that could trigger an alert, where analysts could check to make sure that the change was intentional. This would enable those running the campaign to detect possible human error as soon as possible.
 
@@ -225,7 +221,6 @@ This value is still fairly high, well above the forecast of almost 44,000.  Howe
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 Congratulations, you have completed this Quickstart for a quick overview of using ML-Powered Analysis to make predictions about ad impression data in Snowflake.
 

@@ -11,7 +11,6 @@ authors: Matt Marzillo, Dan Hunt
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 In this quickstart we will build a Streamlit application that leverages Snowpark External Access in Snowflake with Amazon Bedrock that will generate a personalized marketing message to customers to cross-sell products.
 
@@ -49,14 +48,12 @@ We will build an efficient architecture all within Snowflake that will access pu
 
 <!-- ------------------------ -->
 ## Use Case
-Duration: 5
 
 This use case will leverage purchase data that represents the most frequently purchased products for each customer along with a unique identifier. Additionally, we have a field with a perfect message to a customer that we will use at the end for the optional step of fine tuning a model with Sagemaker Canvas and Bedrock.
 
 <!-- ------------------------ -->
 ## AWS Environment
 
-Duration: 10
 
 This part should be straightforward, head to your Bedrock service in AWS and let’s make sure that you have access to some base models by clicking on “Model Access” and check to make sure that you see “Access Granted”  for the Amazon Titan models as this what we will be using for the quickstart.
 
@@ -82,7 +79,6 @@ Note: if you are using a managed AWS account, the credentials page may look more
 <!-- ------------------------ -->
 ## Snowflake Environment
 
-Duration: 5
 
 Copy and paste the below code into your Snowflake worksheet, what we’ll be doing here is creating two tables inside of a database that will be used in our application.
 
@@ -164,7 +160,6 @@ select top 10 * from CUSTOMER_PURCHASES;
 <!-- ------------------------ -->
 ## Snowpark External Access to call Bedrock
 
-Duration: 15
 
 Now we will work through the below code which will access the purchase data from Snowflake and generate a message from Bedrock. You will have to update the 2-3 values from the AWS command line tokens that we generated earlier (access key, secret key, and possibly session token). Additionally, you may have to update the AWS region depending on where your account is running - please make sure to use a supported Amazon Bedrock region!
 
@@ -500,7 +495,6 @@ Now, let's use that UDF in a Streamlit app!
 <!-- ------------------------ -->
 ## Build Streamlit App
 
-Duration: 10
 
 Now that we have our Bedrock function, let’s build an interactive app where we can experiment and refine our prompts.
 
@@ -705,7 +699,6 @@ Once the model the provisioned throughput is active you can utilize the model na
 <!-- ------------------------ -->
 ## Conclusion
 
-Duration: 5
 
 ### What we covered
 After setting up our AWS and Snowflake and envrionments we built two primary things: a UDF that utilizes Snowpark External Access to make a call to different Bedrock models and a Streamlit app that leverages that function to make a simple and useful app that can be shared within an organization. With these two, easy to build, Snowflake features we expect customers to see value quickly when using Snowflake and Bedrock!

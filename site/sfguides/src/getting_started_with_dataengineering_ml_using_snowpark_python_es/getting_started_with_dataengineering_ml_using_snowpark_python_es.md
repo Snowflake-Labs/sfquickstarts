@@ -11,7 +11,6 @@ authors: Dash Desai
 <!-- ------------------------ -->
 ## Descripción general
 
-Duration: 5
 
 Tras completar esta guía, serás capaz de pasar de datos sin procesar a una aplicación interactiva que podrá ayudar a tu organización a optimizar la asignación de presupuestos de publicidad.
 
@@ -69,7 +68,6 @@ Streamlit es un marco de aplicación de lenguaje Python puro [de código abierto
 <!-- ------------------------ -->
 ## Configuración del entorno
 
-Duration: 15
 
 ### Creación de tablas, carga de datos y configuración de fases
 
@@ -171,7 +169,6 @@ De manera opcional, también puedes abrir [setup.sql](https://github.com/Snowfla
 <!-- ------------------------ -->
 ## Introducción
 
-Duration: 8
 
 Esta sección incluye cómo clonar un repositorio de GitHub y cómo configurar tu entorno de Snowpark para Python.
 
@@ -262,7 +259,6 @@ Si decides usar tu cuenta de [Hex](https://app.hex.tech/login) o [crear una cuen
 <!-- ------------------------ -->
 ## Ingeniería de datos
 
-Duration: 20
 
 Encontrarás a continuación el enlace a este cuaderno que incluye las siguientes tareas de ingeniería de datos:
 
@@ -441,7 +437,6 @@ También puedes habilitar el envío de notificaciones push a un servicio de mens
 <!-- ------------------------ -->
 ## Aprendizaje automático
 
-Duration: 20
 
 > aside negative SE REQUIERE haber completado correctamente los pasos de ingeniería de datos que se describen en [Snowpark_For_Python_DE.ipynb](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn/blob/main/Snowpark_For_Python_DE.ipynb).
 
@@ -500,7 +495,6 @@ session.sql('USE SCHEMA DASH_SCHEMA').collect()
 <!-- ------------------------ -->
 ## Aplicación de Streamlit
 
-Duration: 10
 
 ### Ejecución de la aplicación de Streamlit en el entorno local
 
@@ -589,7 +583,6 @@ alter task monthly_revenue_data_pipeline_task suspend;
 <!-- ------------------------ -->
 ## Conclusiones y recursos
 
-Duration: 3
 
 ¡Enhorabuena! Has realizado las tareas de ingeniería de datos y entrenado un modelo de regresión lineal para predecir el futuro ROI de los presupuestos de gasto en publicidad variable en varios canales, como búsqueda, vídeo, redes sociales y correo electrónico con Snowpark para Python y scikit-learn. Además, has creado una aplicación de Streamlit que utiliza ese modelo para generar predicciones en nuevas asignaciones de presupuesto en función de lo que introduzca el usuario.
 

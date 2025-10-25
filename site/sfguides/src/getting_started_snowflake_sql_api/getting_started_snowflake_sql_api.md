@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 Welcome! The Snowflake SQL API is a [REST API](https://en.wikipedia.org/wiki/Representational_state_transfer) that you can use to access and update data in a Snowflake database. You can use this API to execute [standard queries](https://docs.snowflake.com/en/sql-reference/constructs.html) and most [DDL](https://docs.snowflake.com/en/sql-reference/sql-ddl-summary.html) and [DML](https://docs.snowflake.com/en/sql-reference/sql-dml.html) statements.
 
@@ -41,7 +40,6 @@ This getting started guide will walk you through executing a SQL statement with 
 
 <!-- ------------------------ -->
 ## Introducing the API
-Duration: 3
 
 Head to the SQL API by navigating to your version of the following URL, replacing  `*account_locator*` with the account locator for your own Snowflake account: 
 
@@ -72,7 +70,6 @@ It's important to be aware of the [limitations that the SQL API](https://docs.sn
 
 <!-- ------------------------ -->
 ## Assigning a Unique Request ID for Resubmitting Requests
-Duration: 1
 
 In some cases, it might not be clear if Snowflake executed the SQL statement in an API request (e.g., due to a network error or a timeout). You might choose to resubmit the same request to Snowflake again in case Snowflake did not execute the statement.
 
@@ -92,7 +89,6 @@ Now let's move on to additional information you need to include in requests: aut
 
 <!-- ------------------------ -->
 ## Authenticating to the Server
-Duration: 3
 
 When you send a request, the request must include authentication information. There are two options for providing authentication: OAuth and JWT key pair authentication. You can use whichever one you have previously implemented or whichever one you are most comfortable with. This example will be detailing authentication with [JWT](https://jwt.io/). 
 
@@ -136,7 +132,6 @@ Now that you have been introduced to authentication and unique request IDs, you 
 
 <!-- ------------------------ -->
 ## Submitting a Request to Execute a SQL Statement
-Duration: 3
 
 To submit a SQL statement for execution, send a [POST request to the /api/v2/statements/ endpoint](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements):
 
@@ -198,7 +193,6 @@ Now we'll look at how you can include bind variables (`?` placeholders) in the s
 
 <!-- ------------------------ -->
 ## Using Bind Variables in a Statement
-Duration: 5
 
 If you want to use bind variables (`?` placeholders) in the statement, use the `bindings` field to specify the values that should be inserted.
 
@@ -250,7 +244,6 @@ Whether you use bind variables or not, you'll want to check the status of your s
 
 <!-- ------------------------ -->
 ## Checking the Status of the Execution of the Statement
-Duration: 1
 
 When you submit a SQL statement for execution, Snowflake returns a 202 response code if the execution of the statement has not yet been completed or if you submitted an asynchronous query.
 
@@ -301,7 +294,6 @@ POST /api/v2/statements/{statementHandle}/cancel
 
 <!-- ------------------------ -->
 ## Retrieving the Results
-Duration: 1
 
 If you [submit a SQL statement for execution](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#label-sql-api-executing-multiple-statements) or [check the status of statement execution](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#checking-the-status-of-the-statement-execution-and-retrieving-the-data), Snowflake returns a [ResultSet](https://docs.snowflake.com/en/developer-guide/sql-api/guide.html#checking-the-status-of-the-statement-execution-and-retrieving-the-data) object in the body of the response if the statement was executed successfully.
 
@@ -482,7 +474,6 @@ Link: </api/v2/statements/01a288b9-0603-af68-0000-328502422e7e?requestId=918e221
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
 
-Duration: 1
 
 This tutorial was designed as a hands-on introduction to the Snowflake SQL API. To see what else you can do with the API, check out the [Snowflake SQL API Reference](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html).
 

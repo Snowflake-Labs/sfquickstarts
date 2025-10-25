@@ -11,7 +11,6 @@ authors: Kamesh Sampath<kamesh.sampath@snowflake.com>
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 This quickstart demonstrates how to build a real-time streaming pipeline from Apache Kafka to Snowflake using Openflow. You'll learn how to capture application and system logs in real-time, enabling immediate analytics and insights on operational data.
 
@@ -106,7 +105,6 @@ Before we dive in, here's what you'll need:
 
 ## Clone Repository
 
-Duration: 2
 
 Let's grab the [companion code](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-kafka-connector) which has everything you need—SQL scripts, sample data, and helpful utilities to make your life easier.
 
@@ -152,7 +150,6 @@ The `QUICK_START_REPO` environment variable will help us reference files easily 
 
 ## Configure Kafka
 
-Duration: 10
 
 Time to get Kafka ready! We'll install the Kafka CLI tools (rpk), create our topic, and make sure everything's connected properly before we start streaming logs.
 
@@ -461,7 +458,6 @@ With your Kafka environment validated, you're ready to configure Snowflake to ac
 <!-- ------------------------ -->
 ## Configure Snowflake
 
-Duration: 8
 
 Perfect! Kafka's configured. Now let's get Snowflake ready to receive those logs. We'll create a dedicated database, warehouse, and—here's the important part—network rules that tell Snowflake "these Kafka brokers are safe to connect to."
 
@@ -567,7 +563,6 @@ You should see all objects created successfully.
 <!-- ------------------------ -->
 ## Setup Openflow Runtime
 
-Duration: 10
 
 Before you can use the Kafka connector, you need an active Openflow SPCS runtime. If you've already set up Openflow SPCS for another quickstart, you can skip this section and reuse your existing runtime.
 
@@ -607,7 +602,6 @@ You're now ready to configure the Kafka connector!
 <!-- ------------------------ -->
 ## Add Kafka Connector
 
-Duration: 15
 
 Perfect! Both Kafka and Snowflake are set up. Now comes the fun part—connecting them together with Openflow. We'll add the Kafka connector to our runtime and configure it through the Openflow Canvas (web UI).
 
@@ -621,7 +615,6 @@ The **Openflow Kafka; JSON + SASL + Schema evolution** connector is now on your 
 <!-- ------------------------ -->
 ## Configure Kafka Connector
 
-Duration: 10
 
 The **Openflow Kafka; JSON + SASL + Schema evolution** connector uses three parameter contexts to organize its configuration:
 
@@ -768,7 +761,6 @@ This returns you to the main canvas where you'll see the **Kafka JSON SASL SCHEM
 <!-- ------------------------ -->
 ## Start the Connector
 
-Duration: 2
 
 With all three parameter contexts configured, you're now ready to start the Kafka connector and begin streaming data from Kafka to Snowflake.
 
@@ -805,7 +797,6 @@ Your Kafka connector is now configured and running!
 <!-- ------------------------ -->
 ## Schema Evolution
 
-Duration: 15
 
 In this section, you'll witness the power of **automatic schema evolution** by:
 
@@ -1221,7 +1212,6 @@ If you don't see data in Snowflake after producing logs:
 <!-- ------------------------ -->
 ## Log Analytics
 
-Duration: 10
 
 Now that logs are streaming into Snowflake, let's perform powerful analytics that would be difficult or expensive in traditional log platforms.
 
@@ -1459,7 +1449,6 @@ Discover when errors in one service correlate with errors in another—great for
 <!-- ------------------------ -->
 ## Semantic Search
 
-Duration: 10
 
 Enable natural language search over your log messages using Snowflake Cortex Search. This allows you to query logs using plain English through Snowflake Intelligence or programmatically.
 
@@ -1641,7 +1630,6 @@ SELECT
 <!-- ------------------------ -->
 ## Monitoring the Pipeline
 
-Duration: 5
 
 Let's monitor the health and performance of your streaming pipeline.
 
@@ -1754,7 +1742,6 @@ CREATE OR REPLACE ALERT PUBLIC.CRITICAL_SERVICE_ALERT
 <!-- ------------------------ -->
 ## Cleanup
 
-Duration: 2
 
 When you're done with the demo, you can clean up resources to avoid unnecessary costs.
 
@@ -1829,7 +1816,6 @@ rpk topic delete application-logs
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 2
 
 Congratulations! You've successfully built a real-time log streaming pipeline from Kafka to Snowflake using Openflow.
 

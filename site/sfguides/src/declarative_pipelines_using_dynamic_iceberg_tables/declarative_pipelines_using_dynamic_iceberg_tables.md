@@ -11,7 +11,6 @@ tags: Data Engineering, Iceberg Tables, Dynamic Tables, Python
 <!-- ------------------------ -->
 ## Overview 
 
-Duration: 5
 
 
 This guide demonstrates how to build a declarative incremental pipeline and establish a multi-layered lakehouse architecture in Snowflake using Dynamic Iceberg Tables that read from and write back to an external AWS Glue Catalog-managed Iceberg data lake.
@@ -43,7 +42,6 @@ You will build a three-tiered lakehouse architecture in Snowflake:
 
 ## AWS Setup
 
-Duration: 15
 
 Creating Glue managed Iceberg tables in the AWS Glue Catalog is a key step to setting up the Bronze layer for the Snowflake Iceberg integration. You can create the Glue managed Iceberg tables using the AWS Management Console (via AWS Glue or Lake Formation) or using SQL via Amazon Athena. For now, we will use Athena to define the schema and table properties for Iceberg.
 
@@ -209,7 +207,6 @@ Download the iceberg_dt.py file from [this git repository](https://github.com/Sn
 
 ## Snowflake Setup
 
-Duration: 15
 
 ### Catalog Integration and Catalog Linked Database (CLD)
 
@@ -580,7 +577,6 @@ WHERE c."customer_id" IS NOT NULL
 
 ## Analytics
 
-Duration: 15
 
 ### Gold Layer Creation: Analytical Aggregations
 
@@ -785,7 +781,6 @@ select count(*) from gold_analytics_db.public."sales_summary_trends";
 
 ## Conclusion and Resources
 
-Duration: 5
 
 This implementation successfully demonstrates a multi-layered lakehouse architecture using Snowflake Dynamic Iceberg Tables integrated with the AWS Glue Catalog.
 

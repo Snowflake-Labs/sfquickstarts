@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Snowflake Public Data - SEC Tarrif Sentiment
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 ### Snowflake Public Data - SEC Tarrif Sentiment
 
@@ -64,7 +63,6 @@ The SEC Tarrif Sentiment Demo downloads and utilizes the [SEC Filings](https://a
 
 <!-- ------------------------ -->
 ## Get Started/Download the Notebook
-Duration: 2
 
 To follow this quickstart please download the SEC_Tarrif_Demo.ipynb notebook from the [github repo](https://github.com/Snowflake-Labs/sfguide-sec-tariff-sentiment) and upload it into your snowflake environment.
 
@@ -74,7 +72,6 @@ To follow this quickstart please download the SEC_Tarrif_Demo.ipynb notebook fro
 
 <!-- ------------------------ -->
 ## Download the data
-Duration: 2
 
 To download the SEC Filings data you have two options
 
@@ -94,7 +91,6 @@ Once you have downloaded the data, please update the PUBLIC_DATA_DB variable in 
 <!-- ------------------------ -->
 
 ## Filter the Data
-Duration: 2
 
 At this point we are going to go through two steps of filtering in order to minimize querried data, and sort for relevant tariff data. This helps to improve the performance of the LLM when analyzing sentiment.
 
@@ -110,7 +106,6 @@ Please run the "extract_tariff_mentions" cell, this will further filter the data
 
 <!-- ------------------------ -->
 ## Query Cortex for sentiment
-Duration: 2
 
 Now we'll pass the data we've curated to Cortex with the goal of extracting each company's sentiment on Tariff's. The prompt below defines what we believe "Pessimistic", "Neutral", and "Optimistic" to mean and requests that cortex include the sentiment at the start of the response.
 
@@ -119,7 +114,6 @@ Please run the "pass_reports_to_cortex" cell of the notebook now.
 ![cortex sentiment](assets/cortex_sentiment.jpg)
 
 ### Analyze Results - Graphs
-Duration: 2
 
 Here we will analyze the sentiment that Cortex returns to us by first viewing the mention of tariffs over time.
 
@@ -132,7 +126,6 @@ Please run the "group_results" and "graphs" cells. This will result in the below
 <!-- ------------------------ -->
 
 ### Analyze Results - By Company
-Duration: 2
 
 Finally, we'll take a look at the specific results retrieved from Cortex and browse each result by the company who filed the 10-Q to see what their sentiment is towards tariffs.
 
@@ -148,7 +141,6 @@ We are taking a look at 1-800 Flowers' sentiment towards tariffs in the filed re
 
 
 ## Conclusion And Resources
-Duration: 1
 
 Thank you for taking the time to explore the Snowflake Public Data set and learn a bit about how these data sets can be leveraged! 
 

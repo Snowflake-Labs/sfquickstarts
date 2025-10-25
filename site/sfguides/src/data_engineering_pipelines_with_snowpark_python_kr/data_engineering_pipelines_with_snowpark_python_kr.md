@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## 개요
 
-duration: 15
 
 > “데이터 엔지니어는 기본적으로 여러 단계를 거쳐 데이터를 전송하는 데이터 파이프라인을 구축 및 유지하는 데 집중하고 이를 사용 가능한 상태로 만듭니다. 데이터 엔지니어링 프로세스에는 한 장소에서 다른 장소로 데이터를 전송하는 것을 자동화하고 이러한 데이터를 특정 유형의 분석을 위해 특성 형식으로 변환하는 **데이터 파이프라인**을 생성하기 위한 종합적인 노력이 포함됩니다. 이러한 측면에서 보면 데이터 엔지니어링은 한 번에 끝낼 수 있는 작업이 아닙니다. 이는 지속적인 관행이며 데이터를 수집하고, 준비하고, 변환하고, 전달해야 합니다. 데이터 파이프라인은 신뢰할 수 있는 방식으로 반복할 수 있도록 이러한 작업을 자동화하는 것을 돕습니다. 이는 특정 기술이라기보다는 오히려 관행입니다.” (출처: Cloud Data Engineering for Dummies, Snowflake 특별 에디션)
 
@@ -93,7 +92,6 @@ duration: 15
 <!-- ------------------------ -->
 ## Quickstart 설정
 
-duration: 10
 
 ### Quickstart를 위해 리포지토리 포크 및 복제
 
@@ -146,7 +144,6 @@ conda activate pysnowpark
 <!-- ------------------------ -->
 ## Snowflake 설정
 
-duration: 10
 
 ### VS Code용 Snowflake 확장 프로그램
 
@@ -163,7 +160,6 @@ VS Code의 왼쪽 탐색 메뉴에서 Snowflake 확장 프로그램을 클릭하
 <!-- ------------------------ -->
 ## 가공 전 데이터 로드
 
-duration: 10
 
 이 단계에서는 가공 전 Tasty Bytes POS 및 고객 충성도 데이터를 `s3://sfquickstarts/data-engineering-with-snowpark-python/`에 있는 가공 전 Parquet 파일에서 Snowflake의 `RAW_POS` 및 `RAW_CUSTOMER` 스키마로 로드하겠습니다. 또한, Snowpark Python API를 사용하여 노트북에서 Python으로 이 프로세스를 조정하게 됩니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **2**단계로 이동합니다.
 
@@ -267,7 +263,6 @@ Snowflake에는 [가상 웨어하우스](https://docs.snowflake.com/ko/user-guid
 <!-- ------------------------ -->
 ## 날씨 로드
 
-duration: 4
 
 이 단계에서는 가공 전 날씨 데이터를 Snowflake로 ‘로드’하겠습니다. 하지만 ‘로드’는 이 작업을 올바르게 설명하는 단어는 아닙니다. 왜냐하면 우리가 Snowflake의 고유한 데이터 공유 기능을 사용하기 때문입니다. 우리는 실질적으로 사용자 정의 ETL 프로세스를 사용하여 Snowflake 계정에 데이터를 복사할 필요가 없습니다. 대신 Snowflake 데이터 마켓플레이스에서 Weather Source가 공유하는 날씨 데이터에 바로 액세스할 수 있습니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **3**단계로 이동합니다.
 
@@ -300,7 +295,6 @@ SELECT * FROM FROSTBYTE_WEATHERSOURCE.ONPOINT_ID.POSTAL_CODES LIMIT 100;
 <!-- ------------------------ -->
 ## POS 뷰 생성
 
-duration: 10
 
 이 단계에서는 6개의 각기 다른 테이블을 결합하고 필요한 열만 골라 뷰를 생성하여 가공 전 POS 스키마를 간소화하겠습니다. 정말 멋진 부분은 Snowpark DataFrame API로 해당 뷰를 정의하게 된다는 것입니다! 그런 다음 증분적으로 모든 POS 테이블에 대한 변경 사항을 처리할 수 있도록 해당 뷰에서 Snowflake 스트림을 생성하겠습니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **4**단계로 이동합니다.
 
@@ -358,7 +352,6 @@ def create_pos_view_stream(session):
 <!-- ------------------------ -->
 ## 화씨 섭씨 변환 UDF
 
-duration: 10
 
 이 단계에서는 첫 번째 Snowpark Python 객체를 생성하고 이를 사용자 정의 함수(또는 UDF)인 Snowflake에 배포하겠습니다. 처음에는 UDF가 매우 단순하지만, 추후 단계에서는 서드 파티 Python 패키지를 포함하도록 업데이트할 것입니다. 또한, 이 단계에서는 새로운 개발자 명령줄 도구인 새로운 SnowCLI를 소개하겠습니다. SnowCLI는 개발자가 Snowpark Python 객체를 구축하고 이를 Snowflake로 배포하는 경험을 일관되게 만듭니다. SnowCLI에 대한 상세 정보는 다음과 같습니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **5**단계로 이동합니다.
 
@@ -448,7 +441,6 @@ CREATE OR REPLACE  FUNCTION fahrenheit_to_celsius_udf(temp_f float)
 <!-- ------------------------ -->
 ## 주문 업데이트 저장 프로시저
 
-duration: 10
 
 이 단계에서는 첫 번째 Snowpark Python 저장 프로시저를 생성하고 이를 Snowflake에 배포하겠습니다. 이 저장 프로시저는 `HARMONIZED.POS_FLATTENED_V_STREAM` 스트림의 변경 사항을 대상 `HARMONIZED.ORDERS` 테이블과 병합합니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **6**단계로 이동합니다.
 
@@ -542,7 +534,6 @@ def create_orders_stream(session):
 <!-- ------------------------ -->
 ## 일일 도시 지표 업데이트 저장 프로시저
 
-duration: 10
 
 이 단계에서는 두 번째 Snowpark Python 저장 프로시저를 생성하고 이를 Snowflake에 배포하겠습니다. 이 저장 프로시저는 `ANALYTICS.DAILY_CITY_METRICS`라는 분석을 위해 집계된 최종 테이블을 생성하기 위해 `HARMONIZED.ORDERS` 데이터와 Weather Source 데이터를 결합합니다. 다른 Snowflake 스트림을 사용하여 해당 데이터를 `HARMONIZED.ORDERS` 테이블에서 증분적으로 처리하겠습니다. 또한, 다시 한번 Snowpark DataFrame `merge()` 메소드를 사용하여 데이터를 병합 또는 업서트하겠습니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **7**단계로 이동합니다.
 
@@ -620,7 +611,6 @@ def create_daily_city_metrics_table(session):
 <!-- ------------------------ -->
 ## 작업 조정
 
-duration: 10
 
 이 단계에서는 새로운 Snowpark 파이프라인과 Snowflake의 기본 오케스트레이션 기능인 작업을 조정하겠습니다. 각 저장 프로시저를 위한 2개의 작업을 생성하고 이를 연결하겠습니다. 그런 다음 작업을 실행하겠습니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **8**단계로 이동합니다.
 
@@ -732,7 +722,6 @@ ORDER BY COMPLETED_TIME DESC;
 <!-- ------------------------ -->
 ## 증분적 처리
 
-duration: 10
 
 이 단계에서는 새로운 데이터를 POS 주문 테이블에 추가한 다음 새로운 데이터를 처리하기 위해 전체 엔드 투 엔드 파이프라인을 실행하겠습니다. 또한, 이 전체 파이프라인은 Snowflake의 고급 스트림 및 CDC 기능을 활용하여 데이터를 증분적으로 처리하게 됩니다. 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **9**단계로 이동합니다.
 
@@ -778,7 +767,6 @@ ORDER BY SCHEDULED_TIME DESC
 <!-- ------------------------ -->
 ## CI/CD를 통한 배포
 
-duration: 15
 
 이 단계에서는 `FAHRENHEIT_TO_CELSIUS_UDF()` UDF에 변경 사항을 적용하고 이를 CI/CD 파이프라인을 통해 배포하겠습니다. 서드 파티 Python 패키지를 사용하기 위해 `FAHRENHEIT_TO_CELSIUS_UDF()` UDF를 업데이트하고, 이를 포크된 GitHub 리포지토리로 푸시하고, 마지막으로 GitHub Actions 워크플로우에서 SnowCLI를 사용하여 이를 배포하겠습니다! 콘텍스트에 적용하기 위해 데이터 흐름 개요의 **10**단계로 이동합니다.
 
@@ -904,14 +892,12 @@ GitHub Actions 워크플로우를 Snowflake 계정과 연결하려면 Snowflake 
 <!-- ------------------------ -->
 ## 해체
 
-duration: 2
 
 Quickstart를 완료하고 정리하고 싶다면 간단히 `steps/11_teardown.sql` 스크립트를 실행하면 됩니다. 이는 SQL 스크립트이므로 이를 실행하기 위해 네이티브 VS Code 확장 프로그램을 사용하겠습니다. 간단히 VS Code에서 `steps/11_teardown.sql` 스크립트를 열고 편집기 창의 오른쪽 상단 모서리에 있는 ‘Execute All Statements’ 버튼을 사용하여 모든 것을 실행합니다.
 
 <!-- ------------------------ -->
 ## 결론
 
-duration: 4
 
 이 Quickstart에서는 많은 내용을 다뤘습니다! 이렇게 Snowpark Python 저장 프로시저를 사용하여 강력한 데이터 엔지니어링 파이프라인을 구축하셨습니다. 이 파이프라인은 데이터를 증분적으로 처리하고, Snowflake 작업과 조정되고, CI/CD 파이프라인을 통해 배포됩니다. 또한, Snowflake의 새로운 개발자 CLI 도구 및 Visual Studio Code 확장 프로그램을 사용하는 방법을 배웠습니다. 간략한 시각적 요약은 다음과 같습니다.
 

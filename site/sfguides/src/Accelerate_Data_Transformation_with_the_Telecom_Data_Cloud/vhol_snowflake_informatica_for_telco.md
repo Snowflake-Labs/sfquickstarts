@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 2
 
 This quickstart will guide you through the steps to use the Informatica Intelligent Cloud Services Accelerator for Snowflake to create an Informatica Intelligent Data Management Cloud (IDMC) organization, which provides free data processing of up to one billion records per month.  You will then learn how to build a data integration mapping and mapping task or data pipeline using Informatica's Data Integration.
 
@@ -62,7 +61,6 @@ By the end of this guide, you'll learn:
 
 ## Prepare Your Lab Environment
 
-Duration: 5
 
 ![Warning](assets/v_warning1.png) <BR>
 <BR>
@@ -79,7 +77,6 @@ Resize your browser window, so that you can view this guide and your web browser
 <!-- ------------------------ -->
 
 ## Create the IDMC Organization
-Duration: 3
 
 
 
@@ -137,7 +134,6 @@ Duration: 3
 
 <!-- ------------------------ -->
 ## Review the Snowflake Connection
-Duration: 2
 
 The Snowflake connection is automatically configured in the IDMC organization when you create the organization through Snowflake Partner Connect.  Let's take a look at the connection.
 
@@ -159,7 +155,6 @@ The Snowflake connection is automatically configured in the IDMC organization wh
 
 <!-- ------------------------ -->
 ## Review the Snowflake Objects
-Duration: 2
 
 As described in Step 2 of **Create IDMC Organization** section, a set of Snowflake objects were created.  Those objects are Database, Warehouse, System User, and System Role.
 
@@ -200,7 +195,6 @@ show roles like 'PC_INF%';
 
 <!-- ------------------------ -->
 ## Configure an AWS S3 connection
-Duration: 5
 
 An AWS S3 connection is required to access and read an AWS S3 bucket.  Follow configuration steps below to create the S3 connection.
 
@@ -241,7 +235,6 @@ Reference: [AWS S3 V2 Connector Documentation](https://docs.informatica.com/inte
 2. This action is optional and not needed for this lab. The only purpose is if you want to use the files using own bucket later.
 <!-- ------------------------ -->
 ## Create a Project Folder
-Duration: 2
 
 ### Step 1
 1. Click the Service Selector at the top left, then select **Data Integration** service.
@@ -260,7 +253,6 @@ Let's create a project to store our mapping or assets.
 
 <!-- ------------------------ -->
 ## Load Data from AWS S3 into Snowflake using Pushdown Optimization (ELT)
-Duration: 25
 
 IDMC Data Integration allows you to load source data from databases, applications, and data files in the cloud or on-premises into Snowflake.  Data Integration supports many transformations that can be used to transform and enrich the source data.  In addition, pushdown optimization (PDO) can be utilized for some transformations and functions to take advantage of Snowflake compute resources for data processing.
 
@@ -432,7 +424,6 @@ Lastly the target table is going to be in Snowflake.
 
 
 ## Configure Pushdown Optimization and Execute the Mapping Task
-Duration: 10
 
 Let's configure Pushdown Optimization (PDO) in the Mapping Task and execute it.
 
@@ -488,7 +479,6 @@ INSERT INTO "PC_INFORMATICA_DB"."PUBLIC"."T_TELCO_AGG"("C_TOTAL","C_DATE","PHONE
 
 <!-- ------------------------ -->
 ## Transform Semi-Structured JSON Data
-Duration: 3
 
 ### Step 1 
 JSON (JavaScript Object Notation) is a text-based data format commonly used between servers and web applications and web-connected devices.  Because it is text-based, it is readable by both humans and machines.  JSON semi-structured data can be stored in Snowflake variant column alongside relational data.  In IDMC, the hierarchy parser transformation parses and transforms hierarchy data to relational data.
@@ -517,7 +507,6 @@ copy into T_VHOL_JSON
 ![copytable](assets/v_last_insert_snowflake_sql.png)
 
 ## Configure Hierarchical Schema
-Duration: 15
 
 ### Step 1
 Copy JSON data from the Snowflake table and save it locally in your computer.
@@ -551,7 +540,6 @@ Create a Hierarchical Schema in IDMC.
 ![save](assets/v_hs_save.png)
 
 ## Create a Mapping to Read Hierarchical Data
-Duration: 15
 
 Create a mapping to read from the t_vhol_json table, use hierarchy parser to parse the JSON data.
 
@@ -639,7 +627,6 @@ Finally, let's configure the Target.
 
 
 ## Create and Execute a Mapping Task
-Duration: 5
 
 ### Step 1
 
@@ -670,7 +657,6 @@ Validate job execution result.
 <!-- ------------------------ -->
 
 ## Optional -  Create a Mapping to load additional data into aggragate table
-Duration: 15
 
 Optionally you can load data T_TELCO_INFO into T_TELCO_AGG and review results.
 
@@ -724,7 +710,6 @@ Optionally you can load data T_TELCO_INFO into T_TELCO_AGG and review results.
 
 
 ## Conclusion
-Duration: 2
 
 **Congratulations! You have successfully completed these Labs**
 

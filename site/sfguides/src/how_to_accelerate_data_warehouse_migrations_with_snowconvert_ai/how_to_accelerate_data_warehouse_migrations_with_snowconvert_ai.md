@@ -11,7 +11,6 @@ tags: SnowConvert, AI, Database Migration, Snowflake, Teradata, Oracle, SQL Serv
 
 ## 1. Overview
 
-Duration: 5
 
 At its core, data migration is the process of moving data between locations like on-premises servers, cloud platforms, or SaaS applications. This is typically driven by key business events like modernizing legacy infrastructure, centralizing data for analytics, or preparing datasets for AI training. However, an unsuccessful migration can lead to data loss, business disruptions and compliance issues.
 
@@ -84,7 +83,6 @@ By the end of this quickstart guide, you will have a complete understanding of t
 
 ## 2. Setup and Installation
 
-Duration: 10
 
 ### System Requirements
 
@@ -158,7 +156,6 @@ To ensure quality, access codes are required to use SnowConvert AI and are valid
 
 ## 3. Understanding SnowConvert AI Projects
 
-Duration: 5
 
 The process begins when a user creates a new project and assigns it a name. The user then selects the source code to be migrated; in the provided example, the source is SQL Server. To utilize SnowConvert, a free access code is required, which can be requested and is sent immediately via email. A local working folder must also be set up on the user's machine for the project. In addition to code conversion, the tool offers optional features to replatform ETLs, like Informatica or SSIS, and to repoint Power BI reports to the new Snowflake database.
 
@@ -199,7 +196,6 @@ When resuming the migration process:
 
 ## 4. Database Object Extraction
 
-Duration: 15
 
 ### Extraction Overview
 
@@ -295,7 +291,6 @@ END
 
 ## 5. Code Conversion and Assessment
 
-Duration: 5
 
 ### Conversion Process Overview
 
@@ -360,7 +355,6 @@ GROUP BY customer_id;
 
 ## 6. AI Verification
 
-Duration: 10
 
 ### Overview
 
@@ -387,7 +381,6 @@ It is important to understand that the migration engineer needs to review the AI
 
 ## 7. SSIS Replatform
 
-Duration: 10
 
 ### Overview
 
@@ -448,7 +441,6 @@ Review the generated CSV files for detailed conversion information:
 
 ## 8. Power BI Repointing
 
-Duration: 10
 
 ### Overview
 
@@ -486,7 +478,6 @@ To review the overall status of the repointed reports, you can review the “ETL
 
 ## 9. Deployment to Snowflake
 
-Duration: 15
 
 ### Deployment Overview
 
@@ -599,7 +590,6 @@ $$;
 
 ## 10. Data Migration
 
-Duration: 25
 
 ### Data Migration Overview
 
@@ -750,7 +740,6 @@ The migration process outlines the essential steps for efficiently transferring 
 
 ## 11. Data Validation
 
-Duration: 10
 
 ### Validation Overview
 
@@ -848,7 +837,6 @@ products,price,max,999.99,999.99,PASS,Maximum values match
 
 ## 12. Troubleshooting
 
-Duration: 10
 
 ### Common Installation Issues
 
@@ -934,7 +922,6 @@ GRANT INSERT, SELECT ON ALL TABLES IN SCHEMA target_db.public TO ROLE migration_
 
 ## 13. Best Practices
 
-Duration: 10
 
 Adhering to best practices is crucial for a successful and efficient migration to Snowflake. This section outlines key considerations across SSIS replatforming, general migration strategies, data validation, and code conversion, providing guidance to optimize performance, ensure data integrity, and streamline the overall process.
 
@@ -1039,7 +1026,6 @@ def validate_table_metrics(source_table, target_table):
 
 ## 14. Conclusion And Resources
 
-Duration: 5
 
 This guide has walked you through the complete lifecycle of data warehouse migration using SnowConvert AI, from initial setup and configuration to advanced topics like SSIS replatforming and AI verification. You are now equipped to confidently accelerate your migration projects, ensuring accuracy and efficiency as you transition to Snowflake's powerful platform.
 
@@ -1067,7 +1053,6 @@ This guide has walked you through the complete lifecycle of data warehouse migra
 
 ### Next Steps
 
-Duration: 5
 
 Now that you have successfully migrated your data warehouse to Snowflake using SnowConvert AI, consider these next steps to fully leverage the power of the Snowflake Data Cloud:
 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowflake CLI
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 
 Snowflake CLI is a command-line interface designed for developers building apps on Snowflake. Using Snowflake CLI, you can manage a Snowflake Native App, Snowpark functions, stored procedures, Snowpark Container Services, and much more. This guide will show you how to configure and efficiently use Snowflake CLI.
@@ -36,7 +35,6 @@ Snowflake CLI is a command-line interface designed for developers building apps 
 
 <!-- ------------------------ -->
 ## Install Snowflake CLI
-Duration: 6
 First, you’ll install the Snowflake CLI, and later you'll configure it to connect to your Snowflake account.
 
 ### Create a Snowflake Account
@@ -163,7 +161,6 @@ In the example above, we use `my_connection` as the connection name, as it corre
 
 <!-- ------------------------ -->
 ## Working with connections
-Duration: 5
 
 An understanding of connections is critical for efficiently working with Snowflake CLI. In the next step, you'll learn how to work with connections.
 
@@ -292,7 +289,6 @@ In the example above, we establish a temporary connection to Snowflake and execu
 
 
 ## Using Snowflake CLI to execute SQL commands
-Duration: 6
 
 Snowflake CLI enables basic execution of SQL. In this step you will learn how to execute ad-hoc queries or entire SQL files.
 
@@ -456,7 +452,6 @@ select 40 + 2
 ```
 
 ## Managing Snowflake objects
-Duration: 5
 
 Snowflake CLI offers commands for generic object operations like `SHOW`, `DROP` and `DESCRIBE`. Those commands are available under `snow object` command.
 
@@ -512,7 +507,6 @@ snow object drop database snowflake_cli_db
 To check for list of supported objects run `snow object drop --help`.
 
 ## Using Snowflake CLI to work with stages
-Duration: 10
 
 You can use Snowflake CLI to work with stages. In this step you will learn how to use the `snow stage` commands.
 
@@ -637,12 +631,10 @@ In the output, you should see a message like this one:
 ```
 
 ## Building applications using Snowflake CLI
-Duration: 1
 
 In the next steps, you'll learn how to use Snowflake CLI to bootstrap and develop Snowpark, Snowflake Native App and Streamlit apps. 
 
 ## Working with Snowpark applications
-Duration: 10
 
 Let's take a look at how Snowflake CLI can support development of Snowpark applications with multiple functions and procedures.
 
@@ -751,7 +743,6 @@ Running this command should return an output similar to this one:
 ```
 
 ## Working with a Snowflake Native App
-Duration: 10
 
 Let's take a look at how Snowflake CLI can support development of a Snowflake Native App.
 
@@ -837,7 +828,6 @@ snow app teardown
 This will drop both the objects for you. As a note, it will not drop any other roles, databases, warehouses etc associated with the Snowflake Native App project.
 
 ## Working with Streamlit applications
-Duration: 10
 
 Snowflake CLI also provides commands to work with Streamlit applications. In this step you will learn how to deploy a Streamlit application using Snowflake CLI.
 
@@ -893,7 +883,6 @@ snow streamlit get-url streamlit_app --database=streamlit_example --open
 ```
 <!-- ------------------------ -->
 ## Working with Snowpark Container Services 
-Duration: 15
 
 > aside negative
 > 
@@ -1064,7 +1053,6 @@ snow object drop warehouse tutorial_warehouse
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Congratulations! In just a few short steps, you were able to get up and running with Snowflake CLI for connection and object management, working with stages, and building and deploying Snowpark projects, Snowflake Native App and Streamlit applications.
 

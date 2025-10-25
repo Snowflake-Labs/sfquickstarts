@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Building Snowflake LLM Based Functions using Coalesce and Iceberg
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This Hands-On Lab exercise is designed to help you learn how to build and manage Iceberg tables with Snowflake Cortex LLM nodes within Coalesce. In this lab, you’ll explore the Coalesce interface, load Iceberg tables into your project, learn how to easily transform and model your data with our core capabilities, and use the Cortex LLM functions node that Coalesce provides users. 
 
@@ -38,7 +37,6 @@ This Hands-On Lab exercise is designed to help you learn how to build and manage
 
 <!-- ------------------------ -->
 ## Setup Work
-Duration: 10
 
 To complete this lab, please create free trial accounts with Snowflake and Coalesce by following the steps below. You have the option of setting up Git-based version control for your lab, but this is not required to perform the following exercises. Please note that none of your work will be committed to a repository unless you set Git up before developing.
 
@@ -140,7 +138,6 @@ GRANT USAGE ON INTEGRATION iceberg_catalog_integration TO ROLE pc_coalesce_role;
 
 <!-- ------------------------ -->
 ## Navigating the Coalesce User Interface 
-Duration: 3
 
 | About this lab: Screenshots (product images, sample code, environments) depict examples and results that may vary slightly from what you see when you complete the exercises. This lab exercise does not include Git (version control). Please note that if you continue developing in your Coalesce account after this lab, none of your work will be saved or committed to a repository unless you set up before developing.   |
 | :---- |
@@ -180,7 +177,6 @@ Your trial account includes a default Project to help you get started.
 
 <!-- ------------------------ -->
 ## Install Iceberg and Cortex Packages from Coalesce Marketplace
-Duration: 4
 
 In order to leverage Iceberg table functionality, we need to add Iceberg table nodes to our workspace. Using Coalesce Marketplace, we can easily install Iceberg nodes that will be immediately available to use, which will allow us to read in and manage data in Iceberg table format. Additionally, we will be working with a dataset that contains multiple languages in the form of call transcripts. We want to explore these transcripts further using Cortex LLM functions, so we’ll need to use the Cortex package from Coalesce Marketplace. 
 
@@ -231,7 +227,6 @@ In order to leverage Iceberg table functionality, we need to add Iceberg table n
 
 <!-- ------------------------ -->
 ## Adding an Iceberg Table to a Pipeline 
-Duration: 8
 
 Let’s start to build the foundation of your LLM data pipeline by creating a Graph (DAG) and adding data in the form of Iceberg Tables. 
 
@@ -285,7 +280,6 @@ Let’s start to build the foundation of your LLM data pipeline by creating a Gr
 
 <!-- ------------------------ -->
 ## Creating Stage Nodes 
-Duration: 10
 
 Now that you’ve added your Source node, let’s prepare the data by adding business logic with Stage nodes. Stage nodes represent staging tables within Snowflake where transformations can be previewed and performed. Let's start by adding a standardized "stage layer" for the data source.
 
@@ -351,7 +345,6 @@ Navigate back to the Build Interface and right click on the STG\_CALL\_TRANSCRIP
 
 <!-- ------------------------ -->
 ## Translating Text Data with Cortex LLM Functions 
-Duration: 8
 
 Now that we have prepared the call transcript data by creating nodes for each language, we can now process the language of the transcripts and translate them into a singular language. In this case, English. 
 
@@ -409,7 +402,6 @@ Any values in the transcript field which do not match the language being transla
 
 <!-- ------------------------ -->
 ## Unifying the Translated Data 
-Duration: 8
 
 You have now processed the transcript data by translating the German and French transcripts into English. However, this translated data exists in two different tables, and in order to build an analysis on all of our transcript data, we need to unify the two tables together into one. 
 
@@ -451,7 +443,6 @@ You have now processed the transcript data by translating the German and French 
 
 <!-- ------------------------ -->
 ## Sentiment Analysis and Finding Customers
-Duration: 10
 
 Now that we have all of our translated transcript data in the same table, we can now begin our analysis and extract insights from the data. For the sake of our use case, we want to perform a sentiment analysis on the Transcript, to understand how each of our customers felt during their interaction with our company. 
 
@@ -503,7 +494,6 @@ Additionally, our call center reps are trained to ask for the customer’s name 
 
 <!-- ------------------------ -->
 ## Process and Expose results with a View 
-Duration: 6
 
 You have now used Cortex LLM Functions to process all of your text data without writing any code to configure the cortex functions, which are now ready for analysis. Let’s perform some final transformations to expose for your analysis. 
 
@@ -532,7 +522,6 @@ You have now used Cortex LLM Functions to process all of your text data without 
 
 <!-- ------------------------ -->
 ## Output the View in Iceberg Format
-Duration: 5
 
 We now have a view that creates an output that can be used by our organization in a variety of ways. In some cases, other systems in our organization may need access to this output in order to allow our company to make decisions. In this case, we can allow everyone to operate on a single copy of data, by using Iceberg tables to output this data. 
 
@@ -564,7 +553,6 @@ We now have a view that creates an output that can be used by our organization i
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 
 ### Conclusion
 

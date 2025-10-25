@@ -9,7 +9,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowpipe
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 When building data applications, your users count on seeing the latest. Stale data is less actionable and could lead to costly errors. That's why continuously generated data is essential. Snowflake provides a data loading tool to drive updates, ensuring your databases are accurate by updating tables in micro-batches.
 
@@ -38,7 +37,6 @@ After ensuring the prerequisites detailed in this section, jump into the queuein
 
 <!-- ------------------------ -->
 ## Open a Snowflake Trial Account
-Duration: 5
 
 To complete this lab, you'll need a Snowflake account. A free Snowflake trial account will work just fine. To open one:
 
@@ -58,7 +56,6 @@ To complete this lab, you'll need a Snowflake account. A free Snowflake trial ac
 
 <!-- ------------------------ -->
 ## Setting up AWS Bucket and Prefix (folder) 
-Duration: 5
 
 ### Create a S3 Bucket
 1. Log in to the [AWS Management Console](https://console.aws.amazon.com/) or create a free trial account if you don’t have one
@@ -81,7 +78,6 @@ Be sure to write down or memorize your bucket and prefix to be used in future st
 
 <!-- ------------------------ -->
 ## Choose the Data Ingestion Method
-Duration: 2
 
 Snowpipe is an event based data ingest tool. Snowpipe provides two main methods for triggering a data loading event. This trigger could be a cloud storage notification (i.e. AWS S3 `ObjectCreated` event) or by directly calling the Snowpipe `insertFiles` REST API.
 
@@ -96,7 +92,6 @@ The image above reveals the two Snowpipe workflows. Option one shows continuous 
 
 <!-- ------------------------ -->
 ## Configure Cloud Storage Event Notifications
-Duration: 3
 
 Notifications from your cloud storage infrastructure are a straight-forward way to trigger Snowpipe for continuous loading. 
 
@@ -114,7 +109,6 @@ Let’s go over the access requirements needed to begin using S3 event notificat
 
 <!-- ------------------------ -->
 ## Configure Cloud Storage Permissions
-Duration: 8
 
 To begin using AWS storage notifications for Snowpipe processing, you’ll follow these steps within your AWS and Snowflake account to set up the security conditions.
 
@@ -222,7 +216,6 @@ Navigate back to your AWS IAM service console. Within the **Roles**, click the �
 After completing this section, your AWS and Snowflake account permissions are ready for Snowpipe. The next section provides the steps to perform automated micro-batching with cloud notifications triggering Snowpipe.
 
 ## Create a pipe in Snowflake
-Duration: 8
 
 Now that your AWS and Snowflake accounts have the right security conditions, complete Snowpipe setup with S3 event notifications.
 
@@ -326,7 +319,6 @@ Snowpipe’s automated micro-batching is now active. Learn how to manage databas
 
 <!-- ------------------------ -->
 ## Manage and Remove Pipes
-Duration: 3
 
 Snowpipe is configured and now updates the Snowflake database when any object is created in the AWS S3 bucket. Let’s review a few common commands to manage and remove Snowpipe.
 
@@ -367,7 +359,6 @@ After wrapping up this section, you’re ready to look ahead to using Snowpipe o
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 You’ve learned the benefits of continuous data loading and the different ways Snowpipe can be triggered to load new data. Plus, you can now configure cloud storage event notifications and manage Snowpipe. 
 

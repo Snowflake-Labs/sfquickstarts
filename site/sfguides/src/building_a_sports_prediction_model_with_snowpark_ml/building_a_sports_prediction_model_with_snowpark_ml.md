@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Predicting Sporting Outcomes with Snowpark ML
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 In this guide, we'll be walking through all the steps you'll need to go through to build a prediction model for the Euro 2024 Football (Soccer) Tournament. Leveraging features like Snowpark, Snowpark ML, and the Snowflake Model Registry, this guide will be using historical results and international rankings to create a model and then simulate all 51 games of the tournament.
 
@@ -38,7 +37,6 @@ In this guide, we'll be walking through all the steps you'll need to go through 
 
 <!-- ------------------------ -->
 ## Prepare Your Environment
-Duration: 10
 
 > aside positive
 > 
@@ -102,7 +100,6 @@ To load the notebooks in Hex, please follow [these instructions](https://learn.h
 
 <!-- ------------------------ -->
 ## Ingesting the Data into Tables
-Duration: 8
 
 > aside positive
 > 
@@ -119,7 +116,6 @@ At the end of this step, you should see 3 new tables in the `EURO_2024` database
 
 <!-- ------------------------ -->
 ## Feature Engineering
-Duration: 15
 
 > aside positive
 > 
@@ -135,7 +131,6 @@ In this notebook you will be executing various feature engineering steps to buil
 
 <!-- ------------------------ -->
 ## Model Operations
-Duration: 15
 
 > aside positive
 > 
@@ -152,7 +147,6 @@ In this notebook you will be using Snowpark ML and Snowflake Model Registry to p
 
 <!-- ------------------------ -->
 ## Creating Stored Procedures and UDTFs
-Duration: 10
 
 > aside positive
 > 
@@ -173,7 +167,6 @@ At the end of this step, we will have a model, and all the functions and procedu
 
 <!-- ------------------------ -->
 ## Simulating the Euro 2024 Tournament
-Duration: 15
 
 > aside positive
 > 
@@ -188,7 +181,6 @@ At the end of this stage, we will have a predicted winner of the tournament. Gre
 <img src="assets/beckham-england.gif" alt="england" width="400"/>
 
 ## Conclusion and Resources
-Duration: 1
 
 Congratulation! - you've completed all the steps to build a full end-to-end model pipeline with Snowpark ML, seen how to persist models into the Snowflake Model Registry, and then used these Models for inference with both Snowpark Python and SQL.
 

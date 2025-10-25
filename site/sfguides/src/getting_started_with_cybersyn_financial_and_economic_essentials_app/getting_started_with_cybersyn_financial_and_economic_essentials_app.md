@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Quickstart Guide: Cybersyn Financial & Economic Essentials App
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 ![logo-image](assets/Financial_Cover_Page.png)
 
@@ -50,7 +49,6 @@ A [Snowflake account](https://signup.snowflake.com/?utm_cta=quickstarts_)
 
 <!-- ------------------------ -->
 ## Accessing the Application in Snowflake Marketplace
-Duration: 4
 
 After logging into your Snowflake account, access the [Cybersyn Financial & Economic Essentials App in the Marketplace](https://app.snowflake.com/marketplace/listing/GZTSZAS2KIU). 
 - Click the Get button on the top right box on the listing
@@ -63,7 +61,6 @@ After logging into your Snowflake account, access the [Cybersyn Financial & Econ
 
 <!-- ------------------------ -->
 ## Walk-through of the App Functionality
-Duration: 3
 
 Access the Financial & Economic Essentials App in the Apps section in your Snowflake account. 
 
@@ -126,7 +123,6 @@ The includes a side panel navigation bar where you can flip through the followin
 
 <!-- ------------------------ -->
 ## How to use the app to query the data
-Duration: 3
 
 Cybersyn has developed this Streamlit application on our database for users to get example use cases and demo the underlying data tables. Users can filter a chart then get the SQL query for the underlying database to easily access the raw data in their Snowflake Account.
 

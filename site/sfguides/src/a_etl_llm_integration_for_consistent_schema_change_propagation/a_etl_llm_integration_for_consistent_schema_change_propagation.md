@@ -11,7 +11,6 @@ Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 2
 
 Schema changes in upstream tables, like new fields from sources like Salesforce, must be carefully propagated to all downstream tables. Data Engineers manually tracking and updating each affected table is time-consuming and error-prone, often leading to broken pipelines and data inconsistencies. This guide leverages AI-powered automation to streamline schema propagation, ensuring accurate and consistent updates across data lineage, minimizing errors, and saving valuable time for data engineers.
 
@@ -36,7 +35,6 @@ A powerful solution for automated schema propagation that combines Snowflake’s
 ---
 
 ## Application Architecture 
-Duration: 3
 
 This solution leverages the intelligence of LLMs to dynamically analyze and respond to schema changes, creating a seamless flow of information across your data pipeline. The architecture of this application includes:
 
@@ -52,7 +50,6 @@ This solution leverages the intelligence of LLMs to dynamically analyze and resp
 ---
 
 ## Initial (Dynamic) Tables 
-Duration: 5
 
 This section includes the setup of the initial tables, which represent different levels in the data lineage (Bronze, Silver, Gold, etc.) using Dynamic Tables. We also create a baseline schema to detect future changes.
 
@@ -216,7 +213,6 @@ FROM base;
 
 <!-- ------------------------ -->
 ## Monitoring Task
-Duration: 4
 
 In this part, you’ll create a Snowflake task to continuously monitor schema changes in upstream tables. When a change is detected, the task logs it in a schema change log and updates the schema baseline for consistency.
 
@@ -268,7 +264,6 @@ ALTER TASK schema_change_monitor RESUME;
 
 <!-- ------------------------ -->
 ## Upstream Schema Changes
-Duration: 3
 
 In this part, simulate a schema change in the upstream table by adding a new column. This change will automatically be detected and logged, triggering downstream updates.
 
@@ -292,7 +287,6 @@ END;
 ```
 <!-- ------------------------ -->
 ## Snowflake in Streamlit Code 
-Duration: 10
 
 With the groundwork laid, you’re ready to integrate the Streamlit-based UI for hands-on control of schema propagation. This UI, backed by LLMs, allows you to manage schema changes in a user-friendly environment. Users will be able to visualize lineage, apply or preview LLM-suggested DDL changes, and monitor the entire propagation process.
 
@@ -694,7 +688,6 @@ if selected_source_object != 'Select Table':
 
 <!-- ------------------------ -->
 ## Streamlit User Guide
-Duration: 15
 
 ### User Guide
 
@@ -725,7 +718,6 @@ Duration: 15
 
 <!-- ------------------------ -->
 ## Observe the Results
-Duration: 5
 
 To verify the propagated schema changes directly in Snowflake, you can query each downstream table:
 
@@ -741,7 +733,6 @@ This verification step provides confidence that the lineage propagation was exec
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 ### What You Learned
 In this guide, you implemented a powerful LLM-driven solution to automatically propagate schema changes across a data lineage in Snowflake. By combining Snowflake’s schema monitoring capabilities with Streamlit’s interactive interface and LLM intelligence, you’ve enabled efficient, automated schema consistency throughout your pipeline, ensuring data integrity with minimal manual intervention.

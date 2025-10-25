@@ -13,7 +13,6 @@ feedback link: https://github.com/loopDelicious/sfquickstarts
 
 ## Overview
 
-Duration: 1
 
 The [Snowflake SQL API](https://docs.snowflake.com/en/developer-guide/sql-api/index.html) is a REST API that you can use to access and update data in a Snowflake database. You can use this API to execute [standard queries](https://docs.snowflake.com/en/sql-reference/constructs.html) and statements.
 
@@ -51,7 +50,6 @@ This getting started guide will walk through the basics of executing a SQL state
 
 ## Fork the sample collection
 
-Duration: 2
 
 ### Fork the collection
 
@@ -78,7 +76,6 @@ For each folder and request, review the companion documentation in the context b
 
 ## Introducing the API
 
-Duration: 5
 
 Select the sample collection in the sidebar, and update the `baseUrl` collection variable under the **Variables** tab with your version of the following URL, replacing `*account_locator*` with the account locator for your own Snowflake account:
 
@@ -108,7 +105,6 @@ In the steps to come, you shall use all these endpoints to familiarize yourself 
 
 ## Authorize API requests
 
-Duration: 5
 
 When you send a request, the request must include authorization information. There are two options for providing authorization: OAuth and JWT key pair authorization. You can use whichever one you have previously implemented or whichever one you are most comfortable with. This example will be detailing authorization with [JWT](https://jwt.io/).
 
@@ -165,7 +161,6 @@ Under the **Headers** tab of the request, find the `Authorization` key. You may 
 
 ## Assign a Unique Request ID to Resubmit Requests
 
-Duration: 3
 
 In some cases, it might not be clear if Snowflake executed the SQL statement in an API request (e.g. due to a network error or a timeout). You might choose to resubmit the same request to Snowflake again in case Snowflake did not execute the statement.
 
@@ -195,7 +190,6 @@ Now that you have been introduced to authorization and unique request IDs, let's
 
 ## Submit a Request to Execute a SQL Statement
 
-Duration: 3
 
 To submit a SQL statement for execution, send a `POST` request to the [`/api/v2/statements/`](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html#post-api-v2-statements) endpoint:
 
@@ -242,7 +236,6 @@ Now let's check the status of the execution of the statement.
 
 ## Check the Status of the Execution of the Statement
 
-Duration: 1
 
 When you submit a SQL statement for execution, Snowflake returns a 202 response code if the execution of the statement has not yet been completed or if you submitted an asynchronous query.
 
@@ -293,7 +286,6 @@ In the next step, let's walk through an example of automating an API workflow.
 
 ## Automate an API workflow
 
-Duration: 3
 
 ### Walk through an API workflow in Postman
 
@@ -330,7 +322,6 @@ Update the SQL statement and parameters to your liking, and then find the `Code`
 
 ## Next Steps
 
-Duration: 1
 
 This tutorial was a hands-on introduction to the Snowflake SQL API. To see what else you can do with the API, check out the [Snowflake SQL API Reference](https://docs.snowflake.com/en/developer-guide/sql-api/reference.html) and the [Snowflake public workspace in Postman](https://www.postman.com/snowflake/workspace/snowflake-public-workspace/overview).
 

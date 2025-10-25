@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview 
-Duration: 1
 <img src="assets/hcls.png"/>
 
 
@@ -42,7 +41,6 @@ A Streamlit app to run inference using a PyTorch image classification model trai
 
 ## Setup Environment
 <!-- ------------------------ -->
-Duration: 2
 This section will walk you through creating various objects
 
 
@@ -65,7 +63,6 @@ Fetch the file streamlit_app.py from the [app folder](https://github.com/Snowfla
 
 <!-- ------------------------ -->
 ## Build and containerize a Model Training Service
-Duration: 2
 
 <img src="assets/image2.png"/>
 
@@ -155,7 +152,6 @@ SHOW MODELS LIKE 'DICOM_PYTORCH_MODEL_MULTIGPU' IN SCHEMA dicom_db.dicom_schema
 
 <!-- ------------------------ -->
 ## Run Inference Application using Streamlit in Snowflake
-Duration: 2
 
 
 Now that the model training is completed and the model is logged in a model registry we use the Streamlit app setup before to carry ongoing inference. The app was already built in Step 2

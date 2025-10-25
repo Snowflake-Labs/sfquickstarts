@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowflake ML Functions: Anomaly Detection & Forecasting
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 One of the most critical activities that a Data/Business Analyst has to perform is to produce recommendations to their business stakeholders based upon the insights they have gleaned from their data. In practice, this means that they are often required to build models to: make forecasts, identify long running trends, and identify abnormalities within their data. However, Analysts are often impeded from creating the best models possible due to the depth of statistical and machine learning knowledge required to implement them in practice. Further, python or other programming frameworks may be unfamiliar to Analysts who write SQL, and the nuances of fine-tuning a model may require expert knowledge that may be out of reach. 
 
@@ -47,7 +46,6 @@ Let's get started!
 
 <!-- ------------------------ -->
 ## Setting Up Data in Snowflake
-Duration: 10
 
 ### Overview:
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), the Snowflake web interface, to: 
@@ -134,7 +132,6 @@ At this point, we have all the data we need to start building models. We will ge
 
 <!-- ------------------------ -->
 ## Forecasting Demand for Lobster Mac & Cheese
-Duration: 10
 
 We will start off by first building a forecasting model to predict the demand for Lobster Mac & Cheese in Vancouver.
 
@@ -260,7 +257,6 @@ CALL lobstermac_forecast!FORECAST(FORECASTING_PERIODS => 10, CONFIG_OBJECT => {'
 
 <!-- ------------------------ -->
 ## Building Multiple Forecasts & Adding Holiday Information
-Duration: 15
 
 In the previous section, we built a forecast model to predict the demand for only the Lobster Mac & Cheese item our food trucks were selling. However, this is not the only item sold in the city of Vancouver - what if we wanted to build out a separate forecast model for each of the individual items? We can use the `series_colname` argument in the forecasting ML function, which lets a user specify a column that contains the different series that needs to be forecasted individually. 
 
@@ -408,7 +404,6 @@ CALL VANCOUVER_FORECAST!show_evaluation_metrics();
 
 <!-- ------------------------ -->
 ## Identifying Anomalous Sales with the Anomaly Detection ML Function
-Duration: 10
 
 In the past couple of sections we have built forecasting models for the items sold in Vancouver to plan ahead to meet demand. As an analyst, another question we might be interested in understanding further are anomalous sales. If there is a consistent trend across a particular food item, this may constitute a recent trend, and we can use this information to better understand the customer experience and optimize it. 
 
@@ -486,7 +481,6 @@ From the image above, it seems as if Hot Ham & Cheese, Pastrami, and Italian hav
 
 <!-- ------------------------ -->
 ## Productionizing Your Workflow Using Tasks & Stored Procedures
-Duration: 15
 
 In this last section, we will walk through how we can use the models created previously and build them into a pipeline to send email reports for the most trending items in the past 30 days. This involves a few components that includes: 
 

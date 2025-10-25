@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Snowflake에서 변환
 
-Duration: 1 <img src = "assets/transformation_header.png">
 
 ### 개요
 
@@ -41,7 +40,6 @@ Duration: 1 <img src = "assets/transformation_header.png">
 
 ## 워크시트 생성 및 SQL 복사
 
-Duration: 1
 
 ### 개요
 
@@ -95,7 +93,6 @@ Duration: 1
 
 ## 개발을 위해 즉각적으로 프로덕션 테이블 복제
 
-Duration: 1
 
 ### 개요
 
@@ -124,7 +121,6 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 
 ## Snowflake의 쿼리 결과 세트 캐시 테스트
 
-Duration: 1
 
 ### 개요
 
@@ -177,7 +173,6 @@ ORDER BY t.truck_id;
 
 ## 데이터 업데이트 및 푸드 트럭 나이 계산
 
-Duration: 1
 
 ### 개요
 
@@ -215,7 +210,6 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 
 ## 열 추가 및 업데이트
 
-Duration: 1
 
 ### 개요
 
@@ -265,7 +259,6 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 
 ## 데이터 재해 복구를 위해 Time Travel 활용
 
-Duration: 1
 
 ### 개요
 
@@ -341,7 +334,6 @@ BEFORE(STATEMENT => $query_id);
 
 ## 개발에서 프로덕션으로 승격
 
-Duration: 1
 
 ### 개요
 
@@ -391,7 +383,6 @@ WHERE t.make = 'Ford';
 
 ## 테이블 드롭 및 드롭 취소
 
-Duration: 1
 
 ### 개요
 
@@ -433,7 +424,6 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 
 ## 종료 및 다음 단계
 
-Duration: 1
 
 ### 결론
 

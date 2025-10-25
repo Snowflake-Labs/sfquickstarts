@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 2
 <img src="assets/price_optimization_header.png"/>
 
 Tasty Bytes, a fictitious company, is one of the largest food truck networks in the world with localized menu options spread across 15 food truck brands globally. Tasty Bytes is aiming to achieve 25% YoY sales growth over 5 years. Price optimization enables Tasty Bytes to achieve this goal by determining the right prices for their menu items to maximize profitability while maintaining customer satisfaction. 
@@ -35,7 +34,6 @@ We will implement price optimization for their diversified food-truck brands to 
 
 <!-- ------------------------ -->
 ## Setting up Data in Snowflake
-Duration: 5
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface to:
@@ -49,7 +47,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Machine Learning With Snowpark
-Duration: 10
 
 ### Overview
 At Tasty Bytes, brand managers are responsible for setting their food-truck brand's menu item prices for the upcoming month. By default, price for the upcoming month is set to the current price. As Tasty Byte Data Scientists, we want to create a user-friendly way for brand managers to use ML-models to inform their pricing and increase the company's profits.
@@ -105,7 +102,6 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 
 <!-- ------------------------ -->
 ## Streamlit in Snowflake
-Duration: 5
 
 ### Overview
 At Tasty Bytes, brand managers are responsible for setting their food-truck brand's menu item prices for the upcoming month. 
@@ -286,7 +282,6 @@ with st.expander("View Submitted Prices"):
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 1
 
 ### Remove Snowflake Objects
 - Navigate to Worksheets, click `+` in the top-right corner to create a new Worksheet, and choose `SQL Worksheet`
@@ -303,7 +298,6 @@ DROP WAREHOUSE IF EXISTS tb_po_app_wh;
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 1
 
 ### Conclusion
 **Congrats!** You've successfully created a user-friendly way to use ML-models to inform pricing and increase the fictitious company, Tasty Bytes', profits. You also built a Streamlit in Snowflake (SiS) application that shows the recommended price per item per day-of-week and profit lift over the current price.

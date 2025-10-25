@@ -62,7 +62,6 @@ In this QuickStart we will analyse executive on-topicness and proactiveness usin
 
 <!-- ------------------------ -->
 ## Setup The Environment
-Duration: 10
 
 ### Overview
 This section covers cloning of the GitHub repository, creating the needed Snowflake objects (i.e role, warehouse, database, schema, etc..) and importing the notebook to be used.
@@ -195,7 +194,6 @@ SELECT * FROM SAMPLE_TRANSCRIPT LIMIT 10;
 
 <!-- ------------------------ -->
 ## Analyze Earnings Transcripts with LLMs in Cortex AI
-Duration: 30
 
 During this step you will learn how to use Snowflake Cortex to analyse executive on-topicness and proactiveness using the analysts’ questions, executives’ answers and LLM answers.
 
@@ -209,7 +207,6 @@ Follow along and run each of the cells in [the Notebook](https://github.com/Snow
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 4
 
 Congratulations, you have successfully completed this QuickStart! Through this QuickStart, we were able to showcase how you can use [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) and [Snowflake Cortex LLM functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) on earnings call using the [Machine Readable Transcripts](https://app.snowflake.com/marketplace/listing/GZT0Z8P3D2V/s-p-global-market-intelligence-machine-readable-transcripts) and additional dataset from S&P Global Market Intelligence.
 

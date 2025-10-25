@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # DevOps: Database Change Management with schemachange and GitHub
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 <img src="assets/devops_dcm_schemachange_github-1.png" width="600" />
 
@@ -65,7 +64,6 @@ You will need the following things before beginning:
 
 <!-- ------------------------ -->
 ## GitHub Overview
-Duration: 2
 
 <img src="assets/devops_dcm_schemachange_github-2.png" width="250" />
 
@@ -89,7 +87,6 @@ This guide will be focused on the GitHub Actions service.
 
 <!-- ------------------------ -->
 ## schemachange Overview
-Duration: 2
 
 <img src="assets/devops_dcm_schemachange_github-4.png" width="250" />
 
@@ -105,7 +102,6 @@ For more information about schemachange please see [the schemachange project pag
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
-Duration: 4
 
 Open up your cloned repository in your favorite IDE and create a folder named `migrations`. In that new folder create a script named `V1.1.1__initial_objects.sql` (make sure there are two underscores after the version number) with the following contents:
 
@@ -124,7 +120,6 @@ Then commit the new script and push the changes to your GitHub repository. Assum
 
 <!-- ------------------------ -->
 ## Create Action Secrets
-Duration: 5
 
 Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create secrets for each of the parameters used by schemachange.
 
@@ -179,7 +174,6 @@ When you’re finished adding all the secrets, the page should look like this:
 
 <!-- ------------------------ -->
 ## Create an Actions Workflow
-Duration: 5
 
 Action Workflows represent automated pipelines, which inludes both build and release pipelines. They are defined as YAML files and stored in your repository in a directory called `.github/workflows`. In this step we will create a deployment workflow which will run schemachange and deploy changes to our Snowflake database.
 
@@ -250,7 +244,6 @@ A few things to point out from the YAML pipeline definition:
 
 <!-- ------------------------ -->
 ## Manually Run the Actions Workflow
-Duration: 4
 
 In this step we will manually run the new Actions workflow for the first time. This will deploy the first database migration script we created in step 4.
 
@@ -270,7 +263,6 @@ To view the details of a run, click on the name of specific run (you may have to
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake
-Duration: 4
 
 Now that your first database migration has been deployed to Snowflake, log into your Snowflake account and confirm.
 
@@ -289,7 +281,6 @@ From your Snowflake account click on the `History` tab at the top of the window.
 
 <!-- ------------------------ -->
 ## Create Your Second Database Migration
-Duration: 2
 
 In this script you will create your second database migration and have GitHub Actions automatically deploy it to your Snowflake account (no need to manually run the workflow this time)!
 
@@ -304,7 +295,6 @@ Then commit the new script and push the changes to your GitHub repository. Becau
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 4
 
 So now that you’ve got your first Snowflake CI/CD pipeline set up, what’s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.
 

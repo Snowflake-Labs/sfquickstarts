@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Model Serving in Snowpark Container Services
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 In this guide, you will learn how to leverage the power of Snowpark Container Services (SPCS) and the Snowflake Model Registry to build, deploy, and serve a machine learning model for real-time predictions in Snowflake ML. We will walk through a complete data science workflow, from data preparation and feature engineering to model training and deployment as a secure, scalable service.
 
@@ -37,7 +36,6 @@ This guide uses a real-world dataset of Chicago Transit Authority (CTA) daily ri
 
 <!-- ------------------------ -->
 ## Snowflake Setup
-Duration: 5
 
 First, we will create a database called **MODEL_SERVING_DB** in Snowflake as below. We will also create a warehouse called **DEMO_BUILD_WAREHOUSE**.  If you do not have privileges to create a database or warehouse, feel free to use existing ones where you have permission (please note to change database schema name accordingly throughout this exercise).
 
@@ -103,7 +101,6 @@ input_df.write.mode('overwrite').save_as_table('MODEL_SERVING_DB.FEATURE_STORE_M
 
 <!-- ------------------------ -->
 ## Machine Learning
-Duration: 10
 
 ### Create and Register a Feature Store
 A Feature Store is created to manage and version our features. We then register an Entity which represents a real-world object that our features are associated with, in this case, a bus route.
@@ -258,7 +255,6 @@ To see our inference endpoint, we can go to our model and click on the Inference
 
 <!-- ------------------------ -->
 ## Model Serving
-Duration: 10
 
 The Snowflake Model Registry, when used with containers, allows you to package, manage, and deploy machine learning models with complex dependencies or custom runtime environments inside Snowflake. This is accomplished by using Snowpark Container Services (SPCS) which we have done above. Some parts of the architecture for [model serving](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/container) are as described below.
 
@@ -535,7 +531,6 @@ If all is well you should get a response like below
 ![7_response](assets/7_response.png)
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 2
 
 Congratulations! You have successfully built, deployed, and accessed a machine learning model using Snowpark Container Services. You've seen how [Snowflake ML](https://www.snowflake.com/en/product/use-cases/end-to-end-ml-workflows/) can manage the entire MLOps lifecycle within a single, unified platform, from data engineering to production deployment.
 

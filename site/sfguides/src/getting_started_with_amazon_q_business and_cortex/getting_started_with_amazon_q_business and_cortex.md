@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Amazon Q Business and Cortex
 <!-- ------------------------ -->
 ## Overview 
-Duration: 15
 
 Cortex Search enables low-latency, high-quality “fuzzy” search over your Snowflake data. Cortex Search powers a broad array of search experiences for Snowflake users including Retrieval Augmented Generation (RAG) applications leveraging Large Language Models (LLMs).
 
@@ -61,7 +60,6 @@ You will build an end-to-end copilot workflow on unstructured data in Snowflake
 
 <!-- ------------------------ -->
 ## Set Up Snowflake and Cortex
-Duration: 5
 
 Download both of the files in [this repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-amazon-q-for-business-and-cortex) by clicking on each file and clicking the download button near the top right.
 
@@ -131,7 +129,6 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE PUMP_SEARCH_SERVICE
 Notice how we're setting up the Cortex Search service with a 30 day lag so that incremental updates to the service will be made ever 30 days. Additionally, we're setting up the service so that additional filters can be used on the attribute "DOC".
 
 ## Set Up Q Business
-Duration: 5
 
 Head to you AWS console search "Amazon Q Business" then select the orange button "Create Application" then accept all of the default/recommended settings for creating your application, make sure that you have at least one user created for the app with a Q Business Pro subscription the select Create.
 
@@ -139,7 +136,6 @@ Head to you AWS console search "Amazon Q Business" then select the orange button
 
 <!-- ------------------------ -->
 ## Setting up OAuth
-Duration: 10
 
 From the Q Business Application Details screen copy the "Deployed URL" and save it to a notebook.
 
@@ -175,7 +171,6 @@ Also, make note of your Snowflake url. You can do this by going to your alias in
 
 <!-- ------------------------ -->
 ## Create Cortex Plugin
-Duration: 15
 
 Head back to your Q Business application and select "Plugins" under "Actions" on the left side. Select the orange "Add Plugin" button then 
 "Create Custom Plugin" in the top right.
@@ -304,7 +299,6 @@ Finally, select "Add Plugin" and it will take 1-2 minutes to get the plugin crea
 
 <!-- ------------------------ -->
 ## Connect Q and Cortex
-Duration: 5
 
 Navigate into the "cortex-pump" plugin and select "Preview web experience" in the top right, a new window will open to edit the web experience, leave it as-is and select "View web experience" in the top right:
 
@@ -331,7 +325,6 @@ You can check the answer against the manuals, it should match! Test out other pr
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 This quickstart is just that, a quick way to get you started with using Amazon Q with Snowflake Cortex, though with this start you are now enabled to extend the quickstart in the below ways:
     - Scale the workflow to a use case with many documents and use a more robust Cortex Search Service.

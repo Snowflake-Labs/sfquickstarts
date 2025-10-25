@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Introdução à Tasty Bytes 
-Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 ### Visão geral
 Neste quickstart “Introdução à Tasty Bytes“, você vai conhecer a marca fictícia de food trucks Tasty Bytes, criada pela equipe frostbyte da Snowflake.
@@ -43,7 +42,6 @@ Ao finalizar este guia, você terá implementado os elementos básicos necessár
     - Controle de acesso baseado em funções (RBAC)
 
 ## Configuração da Tasty Bytes
-Duration: 6
 
 ### Visão geral
 Neste quickstart, você usará a interface da web do Snowflake, conhecida como Snowsight. Caso seja sua primeira vez usando o Snowsight, recomendamos consultar a [documentação do Snowsight](https://docs.snowflake.com/pt/user-guide/ui-snowsight) para obter orientações gerais.
@@ -90,7 +88,6 @@ Neste quickstart, você usará a interface da web do Snowflake, conhecida como S
 ### Etapa 11 - Clicar em Next -->
 
 ## Exploração dos elementos básicos da Tasty Bytes
-Duration: 2
 
 ### Visão geral
 Após configurar a Tasty Bytes com sucesso, podemos agora explorar o banco de dados, as funções e os armazenamentos que criamos. 
@@ -155,7 +152,6 @@ Incrível! Em poucos minutos temos um ambiente de demonstração Tasty Bytes com
 ### Etapa 7 - Clicar em Next -->
 
 ## Powered by Tasty Bytes - quickstarts
-Duration: 1
 
 ### Visão geral
 Parabéns! Você acaba de concluir a configuração dos elementos básicos para a Tasty Bytes!

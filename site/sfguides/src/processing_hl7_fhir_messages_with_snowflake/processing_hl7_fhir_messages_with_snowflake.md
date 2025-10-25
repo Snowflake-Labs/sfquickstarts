@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started - Processing HL7 FHIR Messages with Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 This Quickstart is designed to help you understand the capabilities included in Snowflake’s support for processing Healthcare HL7 FHIR messages. The lab will give you a view into how you can leverage Snowflake’s features to ingest semistructured data and use other native features to parse HL7 FHIR messages in JSON format and analyze them using Snowsight.
 
@@ -38,7 +37,6 @@ Sign up for a free 30-day trial of Snowflake and follow along with this lab exer
 
 <!-- ------------------------ -->
 ## Notice and Terms of Use
-Duration: 5
 
 The data provided for this lab is an provided by the Synthea Data Generator on github ([Synthea Github](https://github.com/synthetichealth/synthea)). More details about Synthea and general terms of use can be found dirently in their [website](https://synthetichealth.github.io/synthea/).
 
@@ -54,7 +52,6 @@ By accessing this data, you acknowledge and agree to the limits and terms relate
 
 <!-- ------------------------ -->
 ## Prepare your lab environment
-Duration: 10
 
 If you haven't already, register for a [Snowflake free 30-day trial](https://trial.snowflake.com/). The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.
 
@@ -94,7 +91,6 @@ After downloading the zip file to your preferred location, please unzip the cont
 
 <!-- ------------------------ -->
 ## Store & Access HL7 FHIR Messages
-Duration: 15
 
 Let’s start by preparing to load the HL7 FHIR messages into Snowflake. Snowflake supports two types of stages for storing data files used for loading and unloading:
 - [Internal stages](https://docs.snowflake.com/en/user-guide/data-load-overview.html#internal-stages) store the files internally within Snowflake.
@@ -221,7 +217,6 @@ FROM DIRECTORY(@HL7_FHIR_STAGE_INTERNAL);
 
 <!-- ------------------------ -->
 ## Loading HL7 FHIR messages into Snowflake Tables
-Duration: 10
 
 
 ### Create Table
@@ -381,7 +376,6 @@ SELECT * FROM HL7_FHIR.HL7_FHIR_V1.PATIENTS_VW;
 
 <!-- ------------------------ -->
 ## Use Masking Policies to Protect Confidential Data
-Duration: 10
 
 Now let's demostrate how you can leverage [Dynamic Data Masking](https://docs.snowflake.com/en/user-guide/security-column-ddm.html) to protect PII or HIPPA data by selecting different functional roles. To learn more about roles, please click [here](https://docs.snowflake.com/en/user-guide/security-access-control-overview.html).
 
@@ -437,7 +431,6 @@ LIMIT 100;
 
 <!-- ------------------------ -->
 ## Analyze FHIR messages using Snowsight
-Duration: 15
 
 Once we have this data ready for analysis, let's create a couple of dashboards leveraging __Snowsight__, the exploratory visualization feature within Snowflake.
 
@@ -544,7 +537,6 @@ Once you finish creating additional visualizations, you could have a dashboard l
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 
 Congratulations! You used Snowflake to trasform your HL7 FHIR JSON messages using Snowflake native capabilities and gather valuable insights by using Snowsight's exploratory features.

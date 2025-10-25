@@ -63,7 +63,6 @@ A set on notebooks that trains a PyCaret model, creates a CustomModel for it and
 <!-- ------------------------ -->
 
 ## Setup The Environment
-Duration: 10
 
 ### Clone The Git Repository
 The very first step is to clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-deploying-custom-models-snowflake-model-registry). This repository contains all the code you will need to successfully complete this QuickStart Guide.
@@ -139,7 +138,6 @@ These can also be found in the [setup.sql](https://github.com/Snowflake-Labs/sfg
 
 <!-- ------------------------ -->
 ## Train A PyCaret Model
-Duration: 20
 
 During this step we will train a PyCaret model and save it to local disc.
 
@@ -151,7 +149,6 @@ During this step we will train a PyCaret model and save it to local disc.
 
 <!-- ------------------------ -->
 ## Create And Deploy A Custom Model
-Duration: 20
 
 During this step we will create a CustomModel class that we will use with our trained PyCaret model, created in previous notebook, log it into the Snowflake Model Registry and do inference using the logged model on a Snowpark DataFrame.
 

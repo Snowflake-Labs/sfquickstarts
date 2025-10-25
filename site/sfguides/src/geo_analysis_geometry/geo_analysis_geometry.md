@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ----------------------------------------- -->
 ## Overview 
 
-Duration: 10
 
 Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the `GEOMETRY` data type, help you understand geospatial formats supported by Snowflake and walk you through the use of a variety of functions on sample geospatial data sets. 
 
@@ -47,7 +46,6 @@ A sample use case that involves energy grids and LTE cell towers in the Netherla
 <!-- ----------------------------------------- -->
 ## Setup your Account
 
-Duration: 5
 
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
 
@@ -138,7 +136,6 @@ Once you have entered the parameters, you can click the Connect button. CARTO wi
 
 ## Acquire Marketplace Data and Analytics Toolbox
 
-Duration: 5
 
 The first step in the guide is to acquire geospatial data sets that you can freely use to explore the basics of Snowflake's geospatial functionality.  The best place to acquire this data is the Snowflake Marketplace!  
 * Navigate to the `Marketplace` screen using the menu on the left side of the window
@@ -191,7 +188,6 @@ Congratulations! Now you have data and the analytics toolbox!
 
 ## Load Data from External Storage
 
-Duration: 5
 
 Now that you understand how to get data from Marketplace, let's try another way of getting data, namely, getting it from the external S3 storage. While you loading data you will learn formats supported by geospatial data types.
 
@@ -301,7 +297,6 @@ Notice how WKB is incomprehensible to a human reader. However, this format is ha
 
 ## Load Data from Internal Storage
 
-Duration: 10
 
 Now that you have a basic understanding of how the `GEOMETRY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walk through a scenario that requires you to use constructors to load data.  You will do it while trying one more way of getting data, namely, from the Shapefile file stored in the internal stage. 
 
@@ -410,7 +405,6 @@ Excellent! Now that all the datasets are successfully loaded, let's proceed to t
 <!-- ----------------------------------------- -->
 ## Spatial analysis
 
-Duration: 25
 
 To showcase the capabilities of the GEOMETRY data type, you will explore several use cases. In these scenarios, you'll assume you are an analyst working for an energy utilities company responsible for maintaining electrical grids.
 
@@ -550,7 +544,6 @@ You can modify the colors of cell towers in the output and expand their radius i
 <!-- ------------------------ -->
 ## Advanced Analysis using Spatial Joins and H3
 
-Duration: 20
 
 In the previous section you've found cell towers that don't have electricity cables nearby. But what about answering more sophisticated questions, like what areas in the Netherlands have very good and bad coverage by LTE (4G) network? You can use geospatial functions combined with spatial join and H3 functions.
 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # DevOps: Database Change Management with schemachange and Jenkins
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 <img src="assets/devops_dcm_schemachange_jenkins-1.png" width="600" />
 
@@ -64,7 +63,6 @@ You will need the following things before beginning:
 
 <!-- ------------------------ -->
 ## Jenkins Overview
-Duration: 2
 
 <img src="assets/devops_dcm_schemachange_jenkins-2.png" width="250" />
 
@@ -81,7 +79,6 @@ A Jenkins Pipeline "orchestrates long-running activities that can span multiple 
 
 <!-- ------------------------ -->
 ## schemachange Overview
-Duration: 2
 
 <img src="assets/devops_dcm_schemachange_jenkins-3.png" width="250" />
 
@@ -98,7 +95,6 @@ For more information about schemachange please see [the schemachange project pag
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
-Duration: 4
 
 Open up your cloned repository in your favorite IDE and create a folder named `migrations`. In that new folder create a script named `V1.1.1__initial_objects.sql` (make sure there are two underscores after the version number) with the following contents:
 
@@ -117,7 +113,6 @@ Then commit the new script and push the changes to your GitHub repository. Assum
 
 <!-- ------------------------ -->
 ## Deploying Jenkins
-Duration: 12
 
 ### Building and Running a Docker Image
 
@@ -192,7 +187,6 @@ On the next results page you should see a bunch of green checkmarks each with a 
 
 <!-- ------------------------ -->
 ## Creating a Jenkins Pipeline
-Duration: 15
 
 ### Creating the Jenkinsfile
 
@@ -324,7 +318,6 @@ When you're finished don't forget to click on the blue ```Save``` button to save
 
 <!-- ------------------------ -->
 ## Manually Run the Pipeline
-Duration: 5
 
 In this step we will manually run the new Jenkins Pipeline for the first time. This will deploy the first database migration script we created in step 4.
 
@@ -344,7 +337,6 @@ To view the log output from the execution you can either hover over the stage sh
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake
-Duration: 4
 
 Now that your first database migration has been deployed to Snowflake, log into your Snowflake account and confirm.
 
@@ -363,7 +355,6 @@ From your Snowflake account click on the `History` tab at the top of the window.
 
 <!-- ------------------------ -->
 ## Create Your Second Database Migration
-Duration: 5
 
 In this script you will create your second database migration and have the Jenkins Pipeline deploy it to your Snowflake account!
 
@@ -391,7 +382,6 @@ You can also confirm that the changes have been deployed to your Snowflake accou
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 4
 
 So now that you've got your first Snowflake CI/CD pipeline set up with Jenkins, what's next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.
 

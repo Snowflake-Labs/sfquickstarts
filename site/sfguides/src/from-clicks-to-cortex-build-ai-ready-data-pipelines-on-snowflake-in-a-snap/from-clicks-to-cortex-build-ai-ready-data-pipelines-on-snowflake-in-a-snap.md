@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 
 This Hands-On Lab exercise is designed to help you master building data pipelines using Coalesce Marketplace. In this lab, you’ll explore the Coalesce interface, learn how to easily transform and model your data with a variety of packages from Coalesce marketplace, understand how to build reporting pipelines, and play with real-time functionality.
@@ -38,7 +37,6 @@ By completing the steps we’ve outlined in this guide, you’ll have mastered t
 * A Directed Acyclic Graph (DAG) representing a real-time data pipeline leverage advanced Snowflake features.
 
 ## Before You Start
-Duration: 10
 
 To complete this lab, please create free trial accounts with Snowflake and Coalesce by following the steps below. You have the option of setting up Git-based version control for your lab, but this is not required to perform the following exercises. Please note that none of your work will be committed to a repository unless you set Git up before developing.
 
@@ -104,7 +102,6 @@ Your trial account includes a default Project to help you get started. Click on 
 
 
 ## Installing Packages From Coalesce Marketplace
-Duration: 10
 
 You will need to add packages from Coalesce Marketplace into your workspace in order to complete this lab.
 
@@ -159,7 +156,6 @@ You will need to add packages from Coalesce Marketplace into your workspace in o
 10. Continue to follow this process until all four packages have been installed.
 
 ## Configure Storage Locations and Mappings
-Duration: 3
 
 Your Partner Connect Coalesce Account will come with two Storage Locations out of the box. We need to add one more to accomodate for some of the work we will be doing. In the setup of this guide, you will have run a SQL script in Snowflake that, among other things, created a stage and external volume. These two items will need to be mapped to a storage location in Coalesce so our packages can work with these objects.
 
@@ -180,7 +176,6 @@ Your Partner Connect Coalesce Account will come with two Storage Locations out o
     ![image30](./assets/image30.png)
 
 ## Adding Data Sources
-Duration: 10
 
 1. In the Browser within the Build Interface, select the + button in the upper left corner of the screen
 
@@ -249,7 +244,6 @@ Duration: 10
     ![image45](./assets/image45.png)
 
 ## Creating Stage Nodes
-Duration: 10
 
 Now that you have your data sources added into Coalesce, we can begin processing all of the data by building a preparation layer for the rest of our data pipeline. Specifically, we'll use some stage nodes to accomplish this for several of our tables.
 
@@ -316,7 +310,6 @@ Now that you have your data sources added into Coalesce, we can begin processing
 14. Create and Run all of the Stage Nodes to build and populate them with data in Snowflake.
 
 ## Using Dynamic Table Nodes
-Duration: 10
 
 For the rest of the staging layer, you will use Dynamic Tables to transform your data while leveraging real-time pipeline updates to your data. Let's begin.
 
@@ -377,7 +370,6 @@ For the rest of the staging layer, you will use Dynamic Tables to transform your
 12. Select Create to create the Dynamic Table.
 
 ## Joining Nodes Together
-Duration: 7
 
 Now that you have built your processing layer, it's time to join some of these objects together to prepare data for further analysis.
 
@@ -444,7 +436,6 @@ Now that you have built your processing layer, it's time to join some of these o
     ![image83](./assets/image83.png)
 
 ## Processing Real Time Data
-Duration: 10
 
 You now have an order master table, producing data that is cleaned and unified. However, there is still more that can be done to allow your data team to process this data, especially large amounts of this data, in an efficient manner.
 
@@ -511,7 +502,6 @@ You now have an order master table, producing data that is cleaned and unified. 
     ![image98](./assets/image98.png)
 
 ## Creating a type 2 slowly changing dimension
-Duration: 3
 
 So far, you've spent your time building pipelines with some of the more exciting packages from Coalesce Marketplace. But in the real world, not every use case needs you to use functionality like this. What happens when you need to create objects from standard requests, like creating Type 2 Slowly changing dimensions? Coalesce supports this functionality out of the box, without you having to write a single line of code.
 
@@ -536,7 +526,6 @@ So far, you've spent your time building pipelines with some of the more exciting
     ![image103](./assets/image103.png)
 
 ## Using Cortex Functions
-Duration: 7
 
 You've processed your orders data and have built some nodes around your customer data, but now it's time to circle back to the STG_CUSTOMER_MASTER table to gain some more insights our of this data. Primarily, we want to generate a sentiment score for each of our customers, based on the reviews they have left us. Let's learn how to do this.
 
@@ -569,7 +558,6 @@ You've processed your orders data and have built some nodes around your customer
     ![image110](./assets/image110.png)
 
 ## Creating aggregate FCT node
-Duration: 5
 
 Now that you have an object that is creating a sentiment score about your customers reviews, the next thing you will do is create a Fact table that will store the measures about customers: in this case average review and average sentiment. Let's learn how to do this.
 
@@ -614,7 +602,6 @@ Now that you have an object that is creating a sentiment score about your custom
     ![image117](./assets/image117.png)
 
 ## Reporting on our data
-Duration: 5
 
 So far, you've used packages from Coalesce Marketplace to create a pipeline that lerverages different functionality that is fully managed by the nodes you've added to the pipeline. You've also created various objects that can be joined together to provide a holistic view of your data. Let's create a reporting object that brings together your order data, menu data, and customer data.
 
@@ -655,7 +642,6 @@ So far, you've used packages from Coalesce Marketplace to create a pipeline that
 
 
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations on completing your lab. You've mastered working with Coalesce Marketplace and extending the functionality of your data pipelines. Be sure to reference this exercise if you ever need a refresher.
 

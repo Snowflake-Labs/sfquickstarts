@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Build an Interactive Scheduled Query Execution Report
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Learn how to create an interactive report for monitoring and analyzing scheduled query executions in Snowflake. Using Snowflake Notebooks with Streamlit integration, you'll build a dashboard that provides insights into query performance, failure patterns, and execution timing.
 
@@ -33,7 +32,6 @@ An interactive dashboard featuring:
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 ### Download the Notebook
 Firstly, to follow along with this quickstart, you can click on [Scheduled_Query_Execution_Report.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Scheduled_Query_Execution_Report/Scheduled_Query_Execution_Report.ipynb) to download the Notebook from GitHub.
@@ -43,7 +41,6 @@ Snowflake Notebooks comes pre-installed with common Python libraries for data sc
 
 <!-- ------------------------ -->
 ## Retrieve Query Execution Data
-Duration: 10
 
 ### Write the SQL Query
 Create a query to fetch execution history from the `task_history` view (this SQL cell is named `sql_data`, which we'll call upon shortly):
@@ -79,7 +76,6 @@ sql_data.to_pandas()
 ```
 
 ## Build Query Execution Report
-Duration: 15
 
 ### Create Interactive Interface
 
@@ -200,7 +196,6 @@ And here's the DataFrame:
 In the above example, we've incrementally built the query execution report in chunks. It should however be mentioned that instead, we could have also piece together all the code blocks mentioned above to generate the interactive query execution report in one run.           
 
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully built an interactive dashboard for analyzing scheduled query executions in Snowflake. This tool will help you monitor query performance and identify potential issues in your scheduled tasks.
 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Improving ad performance with Facebook's Conversion API (CAPI), using Hightouch and Snowflake.
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Hightouch helps marketers activate their customer data from Snowflake to over 125 different applications.  The [Data Activation](https://hightouch.com/blog/what-is-data-activation) platform, powered by Reverse ETL, provides both a SQL-based UI as well as a no-code [audience builder](https://hightouch.com/platform/audiences) to help teams across an organization complete what is now being called the "last mile" of the [Modern Data Stack](https://hightouch.com/blog/reverse-etl-bringing-the-modern-data-stack-full-circle).
 
@@ -51,7 +50,6 @@ In this Quickstart, we will cover sending conversion events to Facebook. Leverag
 
 <!-- ------------------------ -->
 ## Connect Hightouch to Snowflake
-Duration: 4
 
 First, you need to have the data that you want to push prepared within Snowflake.
 
@@ -82,7 +80,6 @@ You can set up a database, schema, and warehouse for use with Hightouch by setti
 5. Log in to Hightouch using your Hightouch credentials, and you will have a Data Source from Snowflake created in Hightouch.
 
 ## Connect Hightouch to Facebook
-Duration: 8
 
 Next, we will connect Hightouch to Facebook to allow it to push data
 from Snowflake to Facebok.
@@ -181,7 +178,6 @@ With the model created, it's time to create your sync to Facebook.
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 By implementing Facebook Conversions API (CAPI) with Snowflake and Hightouch, you can in just a matter of minutes setup a flexible and observable solution to routing conversion events to any paid media platform. This integration will enable you to harness the full power of Facebook's advertising platform and improve the effectiveness of your campaigns.
 

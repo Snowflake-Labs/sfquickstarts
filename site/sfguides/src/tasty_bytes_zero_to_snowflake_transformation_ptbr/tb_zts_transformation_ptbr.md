@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Transformação no Snowflake
-Duration: 1 <img src = "assets/transformation_header.png">
 
 ### Visão geral
 Damos as boas-vindas ao quickstart “Powered by Tasty Bytes: do zero ao Snowflake”, voltado para transformação!
@@ -36,7 +35,6 @@ Neste quickstart, apresentaremos várias funcionalidades do Snowflake, incluindo
 
 
 ## Criação de uma planilha e cópia no código SQL
-Duration: 1
 
 ### Visão geral
 Neste quickstart, vamos acompanhar a história da Tasty Bytes por meio de uma planilha SQL do Snowsight. Esta página servirá como um guia de referência completo com comentários adicionais, imagens e links para a documentação.
@@ -75,7 +73,6 @@ Nesta seção vamos mostrar como acessar o Snowflake, criar uma planilha nova, r
 ### Etapa 9 - Clicar em Next -->
 
 ## Clonagem instantânea da tabela de produção para desenvolvimento
-Duration: 1
 
 ### Visão geral
 Como parte da análise da frota de caminhões da Tasty Bytes, nosso desenvolvedor recebeu a tarefa de adicionar uma coluna com a idade dos veículos à tabela de caminhões. 
@@ -101,7 +98,6 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 ### Etapa 2 - Clicar em Next -->
 
 ## Teste do cache de conjunto de resultados do Snowflake
-Duration: 1
 
 ### Visão geral
 Com nosso clone Zero Copy disponível instantaneamente, podemos programar nele sem correr o risco de afetar a produção. Porém, antes de qualquer mudança, vamos executar algumas consultas simples e testar o cache de conjunto de resultados do Snowflake.
@@ -150,7 +146,6 @@ ORDER BY t.truck_id;
 ### Etapa 3 - Clicar em Next -->
 
 ## Atualização de dados e cálculo da idade dos food trucks
-Duration: 1
 
 ### Visão geral
 Com base nos resultados acima, precisamos resolver o erro de digitação nos registros Ford_ observados na coluna `make`. Depois disso, vamos poder focar nos cálculos que indicarão a idade de cada veículo.
@@ -184,7 +179,6 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ### Etapa 3 - Clicar em Next -->
 
 ## Adição e atualização de uma coluna
-Duration: 1
 
 ### Visão geral
 Após calcular a idade dos caminhões em anos, vamos agora adicionar uma nova coluna na tabela clonada para ajudar, e encerrar atualizando essa coluna para refletir os valores calculados.
@@ -225,7 +219,6 @@ Parece que erramos o cálculo de `truck_age` e fizemos uma divisão, em vez de u
 ### Etapa 4 - Clicar em Next -->
 
 ## Utilização do recurso Time Travel para recuperação de desastres em dados
-Duration: 1
 
 ### Visão geral
 Apesar do nosso erro, o Snowflake conta com muitos recursos que podem nos ajudar. O processo que aplicaremos vai usar o histórico de consultas, as variáveis SQL e o Time Travel para reverter a tabela `truck_dev` ao estágio anterior antes da instrução de atualização incorreta.
@@ -293,7 +286,6 @@ Consulte a lista abaixo para ver demais opções de instruções Time-Travel dis
 ### Etapa 4 - Clicar em Next -->
 
 ## Promoção do desenvolvimento para a produção
-Duration: 1
 
 ### Visão geral
 Com a tabela `truck_dev` de volta ao estado em que estava antes da instrução de atualização incorreta, podemos agora garantir que a coluna está atualizada corretamente. Daqui em diante, vamos promover a tabela com o cálculo correto para a produção e completar a tarefa recebida.
@@ -337,7 +329,6 @@ HERE t.make = 'Ford';
 ### Etapa 4 - Clicar em Next -->
 
 ## Descarte e restauração de tabelas
-Duration: 1
 
 ### Visão geral
 Podemos afirmar, oficialmente, que nosso desenvolvedor completou sua tarefa. Com a coluna `truck_age` criada e usando o cálculo correto, o `sysadmin` pode eliminar a tabela remanescente e encerrar o dia.
@@ -374,7 +365,6 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 ### Etapa 4 - Clicar em Next -->
 
 ## Conclusão e próximas etapas
-Duration: 1
 
 ### Conclusão
 Ótimo trabalho! Você concluiu com sucesso o quickstart “Tasty Bytes: do zero ao Snowflake - transformação”. 

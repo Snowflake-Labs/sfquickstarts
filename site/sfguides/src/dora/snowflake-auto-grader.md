@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # How to Setup the Snowflake Auto-Grader
 <!-- ------------------------ -->
 ## Overview 
-Duration: 0
 
 In this guide, you'll learn how to setup Snowflake's auto-grader.
 
@@ -26,7 +25,6 @@ The auto-grader runs in your Snowflake account and can be used to check successf
 
 <!-- ------------------------ -->
 ## Create the API integration
-Duration: 2
 
 In your Snowflake account, open a new SQL worksheet and run the following code:
 
@@ -56,7 +54,6 @@ If the integration was successfully created, you should see output similar to th
 
 <!-- ------------------------ -->
 ## Create the `grader` function
-Duration: 2
 
 Next, create the `grader` function. This function will be used for validating the successful completion of lab steps in your account.
 
@@ -85,7 +82,6 @@ The `grader` function will be located in the `UTIL_DB.PUBLIC` schema in your acc
 ![refresh picker](./assets/picker-refresh.png)
 <!-- ------------------------ -->
 ## Confirm that the auto-grader is provisioned correctly
-Duration: 1
 
 To confirm that the auto-grader is functioning as intended, open a new SQL worksheet and run the following code:
 
@@ -105,7 +101,6 @@ select grader(step, (actual = expected), actual, expected, description) as grade
 If the auto-grader is correctly provisioned, you should see a **GRADED_RESULTS** column with several pieces of information, including a checkbox and a message `"description": "The Snowflake auto-grader has been successfully set up in your account!"`.
 <!-- ------------------------ -->
 ## Create the `greeting` function
-Duration: 2
 
 Next, you'll create the `greeting` function. This function will link your Snowflake account to our badging system. If you don't complete this step, you'll risk not receiving your badge.
 
@@ -132,7 +127,6 @@ The `greeting` function will be located in the `UTIL_DB.PUBLIC` schema in your a
 
 <!-- ------------------------ -->
 ## Register your name and email
-Duration: 1
 
 Next, you'll need to register your name and email. You'll do this by running the `greeting` function with your name and email. This information will be used to issue your badge. Here are some important rules to follow PRIOR to running the SQL below:
 
@@ -158,7 +152,6 @@ select util_db.public.greeting(<email>, <first name>, <middle name>, <last name>
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 That's it! You should now have the auto-grader correctly provisioned in your account.
 

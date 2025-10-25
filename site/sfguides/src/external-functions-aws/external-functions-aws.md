@@ -8,7 +8,6 @@ Feedback Link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started With External Functions on AWS
 <!-- ------------------------ -->
 ## Overview
-Duration: 1
 
 Snowflake's external functions feature enables you to create SQL functions that securely invoke externally implemented HTTPS endpoints. This means your functions can be implemented in any language and use any libraries. Using your functions with your data in Snowflake gives you quite a few options for processing your data. Using external functions, you can easily extend your data pipelines by calling out to external services, third-party libraries, or even your own custom logic, enabling exciting new use cases. 
 
@@ -49,7 +48,6 @@ As you progress through the tutorial, you'll want to record the following inform
 
 <!-- ------------------------ -->
 ## Creating a Lambda Function on AWS
-Duration: 10
 
 First, let's create a remote service implemented as a Python function executing in AWS Lambda. We'll be using a function written in Python that invokes the Amazon Translate API provided by Boto AWS SDK to return the Italian translation for a given input text string.
 
@@ -184,7 +182,6 @@ If everything has worked correctly, you now have an AWS Lambda function that you
 
 <!-- ------------------------ -->
 ## Creating an IAM role for Snowflake use
-Duration: 5
 
 Now let's begin integrating it with Snowflake. First, go to the AWS main console. Search for and select IAM.
 
@@ -213,7 +210,6 @@ Now that y you've created the role, you'll want to record the ARN. Click on the 
 
 <!-- ------------------------ -->
 ## Creating an AWS API Gateway
-Duration: 10
 
 Now let's create an AWS API Gateway for our function. From the main AWS console, search for and select "API Gateway."
 
@@ -292,7 +288,6 @@ We are now done creating the API Gateway!
 
 <!-- ------------------------ -->
 ## Securing the AWS API Gateway Proxy
-Duration: 5
 
 Now that we have created the API Gateway, we need to secure the API Gateway so that only your Snowflake account can access it.
 
@@ -341,7 +336,6 @@ With this taken care of, you can securely redeploy the API. Do so by clicking on
 
 <!-- ------------------------ -->
 ## Creating an API Integration in Snowflake
-Duration: 5
 
 Now let's begin integrating that API with Snowflake! We'll be moving over to the Snowflake console, but don't close out of your AWS console just yet; you'll need to come back to it later.
 
@@ -393,7 +387,6 @@ You'll need to jot down a few more pieces of information in your template:
 
 <!-- ------------------------ -->
 ## Setting up a trust relationship between Snowflake and IAM role.
-Duration: 10
 
 Now it's time to return to the AWS console using those values you grabbed from Snowflake. Don't close your Snowflake window, though; you'll have to return to it later!
 
@@ -441,7 +434,6 @@ Click on "Update Trust Policy" to finish setting up the trust relationship betwe
 
 <!-- ------------------------ -->
 ## Creating an external function in Snowflake.
-Duration: 5
 
 Now go back to the Snowflake console for creating an external function in Snowflake. Type the `CREATE EXTERNAL FUNCTION` command as shown, with a few customized parameters:
 
@@ -462,7 +454,6 @@ Once you do so, execute the `CREATE EXTERNAL FUNCTION` command.
 
 <!-- ------------------------ -->
 ## Calling the external function
-Duration: 5
 
 Now it's finally almost time to call the external function!
 
@@ -485,7 +476,6 @@ If everything has gone smoothly, your output should look like this:
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 1
 
 In this tutorial, you learned how to use external functions to invoke an API via AWS API Gateway to trigger a Lambda function. The Lambda function was written in Python and invoked the Amazon Translator API to return the Italian translation for a given input text string.
 

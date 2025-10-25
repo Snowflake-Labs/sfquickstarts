@@ -376,7 +376,6 @@ tags: Getting Started, Data Science, Data Engineering, Twitter</p>
 <h1 id="end-to-end-machine-learning-with-snowflake-and-dataiku">End to End Machine learning with Snowflake and Dataiku</h1>
 <!-- ------------------------ -->
 <h2 id="overview">Overview</h2>
-<p>Duration: 5</p>
 <p>This Snowflake Quickstart introduces you to the using Snowflake together with Dataiku Cloud as part of a Machine learning project, and build an end-to-end machine learning solution. This lab will showcase seamless integration of both Snowflake and Dataiku at every stage of ML life cycle. We will also use Snowflake Marketplace to enrich the dataset.</p>
 <h3 id="business-problem">Business Problem</h3>
 <p>Will go through a <strong>supervised machine learning</strong> by building a binary classification model to predict if a lender will default on a loan. <strong>LOAN_STATUS (yes/no)</strong>  considering multiple features.</p>
@@ -411,7 +410,6 @@ tags: Getting Started, Data Science, Data Engineering, Twitter</p>
 </ul>
 <!-- ------------------------ -->
 <h2 id="setting-up-snowflake">Setting up Snowflake</h2>
-<p>Duration: 5</p>
 <ul>
 <li>
 <p>If you haven’t already, register for a <a href="https://trial.snowflake.com/">Snowflake free 30-day trial</a></p>
@@ -435,7 +433,6 @@ tags: Getting Started, Data Science, Data Engineering, Twitter</p>
 <p><img src="assets/sf-5-user_id_password.png" alt="5"></p>
 <!-- ------------------------ -->
 <h2 id="logging-in-snowflake">Logging in  Snowflake</h2>
-<p>Duration: 2</p>
 <h4 id="step-1">Step 1</h4>
 <p>Log in with your credentials</p>
 <p><img src="assets/sf-6-login.png" alt="6"></p>
@@ -705,7 +702,6 @@ SELECT * FROM UNEMPLOYMENT_DATA LIMIT 100;
 <h4 id="important-database-for-machine-learning-consumption-will-be-created-after-connecting-snowflake-with-dataiku-using-partner-connect">IMPORTANT: Database for Machine learning consumption will be created after connecting Snowflake with Dataiku using partner connect.</h4>
 <!-- ------------------------ -->
 <h2 id="connect-dataiku-with-snowflake">Connect Dataiku with Snowflake</h2>
-<p>Duration: 8</p>
 <p>Verify that your user is operating under the Account Admin role.</p>
 <p>To do this:</p>
 <ul>
@@ -789,7 +785,6 @@ SELECT * FROM LOANS_ENRICHED LIMIT 10;
 <h4 id="now-lets-move-to-dataiku-console-for-feature-engineering-model-building-scoring-and-deployment">Now lets move to Dataiku console for feature engineering, model building, Scoring and deployment.</h4>
 <!-- ------------------------ -->
 <h2 id="getting-started-with-a-dataiku-project">Getting Started with a Dataiku Project</h2>
-<p>Duration: 2</p>
 <p>Return to Dataiku Online and if you haven't already click on <strong>OPEN DATAIKU DSS</strong> from the Launchpad to start your instance of Dataiku DSS</p>
 <p><img src="assets/dk-6_100_DKU_Online_launch_screen.png" alt="35"></p>
 <p>At the end of the lab, the project Flow will look like this:</p>
@@ -821,7 +816,6 @@ To do this, we’ll join the input datasets, perform transformations &amp; featu
 <p><img src="assets/dk6d-new_project.png" alt="35d"></p>
 <!-- ------------------------ -->
 <h2 id="data-import-analysis--join">Data Import, Analysis &amp; Join</h2>
-<p>Duration: 5</p>
 <p>After creating our project let’s add our datasets from Snowflake to the Flow.</p>
 <ul>
 <li>From the Flow click <code>+ Import Your First Dataset</code> in the centre of the screen.</li>
@@ -879,7 +873,6 @@ To do this, we’ll join the input datasets, perform transformations &amp; featu
 <p>Your flow should now look like this
 <img src="assets/dk-17_700_Flow_join.png" alt="45"></p>
 <h2 id="prepare-the-data">Prepare the Data</h2>
-<p>Duration: 5</p>
 <p>Data cleaning and preparation is typically one of the most time-consuming tasks for anyone working with data. In our lab, in order to save some of that time, our main lending dataset has already been largley cleaned. In the real world this would be done by other colleagues, say, from the data analytics team collaborating on this project and you would see their work as steps in our projects flow.</p>
 <p>Let’s take a brief look at the <code>Prepare recipe</code>, the workhorse of the visual recipes in Dataiku, and perform some final investigations and transformations.</p>
 <ul>
@@ -938,7 +931,6 @@ Let’s turn our attention to the <code>INT_RATE</code> column. The interest rat
 </ul>
 <!-- ------------------------ -->
 <h2 id="feature-engineering-with-code">Feature Engineering with Code</h2>
-<p>Duration: 5</p>
 <p>Till now we've used visual tools but lets see how users who prefer to code can collaborate alongside their low/no code colleagues</p>
 <ul>
 <li>Return to the Flow.</li>
@@ -974,7 +966,6 @@ df[&quot;INSTALL_NORM&quot;] = (df.INSTALLMENT.values - np.mean(df.INSTALLMENT.v
 <p>Dataiku DSS allows you to create an arbitrary number of <code>Code environments</code> to address managing dependencies and versions when writing code in R and Python. Code environments in Dataiku DSS are similar to the Python virtual environments. In each location where you can run Python or R code (e.g., code recipes, notebooks, and when performing visual machine learning/deep learning) in your project, you can select which code environment to use.</p>
 <!-- ------------------------ -->
 <h2 id="training">Training</h2>
-<p>Duration: 5</p>
 <p>Having sufficiently explored and prepared the loans and employment data, the next stage of the AI lifecycle is to experiment with machine learning models.</p>
 <p>This experimentation stage encompasses two key phases: model building and model assessment.</p>
 <p><code>Model building</code>: Users have full control over the choice and design of a model — its features, algorithms, hyperparameters and more.</p>
@@ -1053,7 +1044,6 @@ df[&quot;INSTALL_NORM&quot;] = (df.INSTALLMENT.values - np.mean(df.INSTALLMENT.v
 <p><img src="assets/dk-35-1100_variable_imp.jpg" alt="61"></p>
 <!-- ------------------------ -->
 <h2 id="deployment">Deployment</h2>
-<p>Duration: 2</p>
 <p>After experimenting with a range of models built on historic training data, the next stage is to deploy our chosen model to score new, unseen records.</p>
 <p>For many AI applications, batch scoring, where new data is collected over some period of time before being passed to the model, is the most effective scoring pattern.
 Deploying a model creates a “saved” model in the Flow, together with its lineage. A saved model is the output of a Training recipe which takes as input the original training data used while designing the model.</p>
@@ -1064,7 +1054,6 @@ Deploying a model creates a “saved” model in the Flow, together with its lin
 <p><img src="assets/dk-34-1200_flow_pre_score.jpg" alt="61"></p>
 <!-- ------------------------ -->
 <h2 id="scoring-and-evaluation">Scoring and Evaluation</h2>
-<p>Duration: 2</p>
 <ul>
 <li>Select the <code>LOANS_TEST</code> dataset and the <code>Score</code> recipe from the <code>actions menu</code></li>
 <li>Select your model</li>
@@ -1096,11 +1085,9 @@ order by prediction_yes DESC;
 </div></code></pre>
 <!-- ------------------------ -->
 <h2 id="conclusion-and-next-steps">Conclusion  and Next Steps</h2>
-<p>Duration: 2</p>
 <p>Congratulations  you have now successfully built,  deployed and scored your model results back to Snowflake. Your final flow should look like this.</p>
 <p><img src="assets/dk-38-1400_complete_flow.jpg" alt="63"></p>
 <h2 id="bonus-material---snowpark--python">Bonus Material - Snowpark -Python</h2>
-<p>Duration: 5
 To be added soon</p>
 
 </body>

@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-Duration: 15
 
 Customers looking to use Snowflake for marketing use cases initially face a significant challenge: it is difficult to import all relevant marketing data into Snowflake and structure it in a unified format that downstream applications can easily utilize to power data-driven marketing.
 
@@ -94,7 +93,6 @@ This solution consists of 2 individual solutions.
 ## Setup
 
 ### Clone GitHub repository
-Duration: 2
 
 Clone the git repo to your local
 
@@ -125,7 +123,6 @@ Refer to the screenshot below for more info.
 
 ## Create Database objects
 
-Duration: 2
 
 Navigate to the repo folder in your local machine and run the below command to create your database, schema and stage objects
 
@@ -147,7 +144,6 @@ snow sql -f sql_scripts/setup.sql
 
 ## Upload sample data to stage
 
-Duration: 4
 
 Upload all the sample data files in the folder data to the stage created in step 1
 
@@ -176,7 +172,6 @@ If the upload fails due to an access issue then, please follow the instructions 
 
 ## Load Sample data to the table and Create a Native Application
 
-Duration: 2
 
 ### Load data and create views
 
@@ -197,7 +192,6 @@ snow app run
 
 ## [Quick-deploy] Build and Deploy App in one go
 
-Duration: 2
 
 Please **DO NOT** run this step if you have completed individual steps above. This step is for users to quickly run all the snow cli commands in one go.
 
@@ -208,7 +202,6 @@ bash ./sfguide-marketing-data-foundation-starter/build_deploy_app.sh
 ![Alt text](assets/Appcreation.png)
 
 ## Conclusion and Resources
-Duration: 1
 
 Congratulations! You have successfully learned how to easily build an end-to-end Native Application loading sample data. 
 

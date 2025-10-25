@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Tasty Bytes - RAG Chatbot Using Cortex and Streamlit
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 ![banner](assets/ece_header.png)
 
@@ -34,7 +33,6 @@ In this guide, we will build a Cortex LLM powered chatbot to help Tasty Bytes ag
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 ### Create Snowflake Database, Schema, and Warehouse
 
@@ -259,7 +257,6 @@ if st.session_state.messages[-1]["role"] != "assistant":
 
 <!-- ------------------------ -->
 ## Streamlit App
-Duration: 5
 
 Within Streamlit in Snowflake, leverage the application to ask questions regarding Tasty Bytes. A few suggested questions and demo steps detailed below:
 
@@ -282,7 +279,6 @@ Within Streamlit in Snowflake, leverage the application to ask questions regardi
 
 <!-- ------------------------ -->
 ## Understanding the Streamlit Chatbot Application
-Duration: 10
 
 The following features are used in the RAG chatbot Streamlit Application.
 
@@ -361,7 +357,6 @@ def get_prompt(chat, context):
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations, you've created a RAG chatbot using Cortex and Streamlit! In this tutorial, we talked through all of the pieces required to build the Streamlit in Snowflake application, including Cortex LLMs and RAG fundamentals. 
 

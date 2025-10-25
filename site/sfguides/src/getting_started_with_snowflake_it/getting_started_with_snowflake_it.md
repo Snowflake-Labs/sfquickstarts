@@ -14,7 +14,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Panoramica
 
-Duration: 2
 
 Ti diamo il benvenuto in Snowflake! Questa guida introduttiva, concepita per amministratori e architetti di database e data warehouse, aiuta a orientarsi nell’interfaccia di Snowflake e presenta alcune delle nostre funzionalità fondamentali. [Registrati per una prova gratuita di 30 giorni di Snowflake](https://trial.snowflake.com) per seguire gli esercizi di questo workshop. Una volta apprese le nozioni di base, sarai in grado di iniziare a elaborare i tuoi dati e affrontare con sicurezza le funzionalità più avanzate di Snowflake.
 
@@ -43,7 +42,6 @@ Questa guida a Snowflake è disponibile come Hands-On Lab virtuale gratuito tenu
 
 ## Preparare l’ambiente del workshop
 
-Duration: 2
 
 Se non l’hai ancora fatto, registrati per una [prova gratuita di 30 giorni di Snowflake](https://signup.snowflake.com/developers). Le sezioni successive di questo workshop presuppongono che tu stia utilizzando un nuovo account Snowflake creato al momento della registrazione per la prova gratuita.
 
@@ -56,7 +54,6 @@ Al termine della registrazione, riceverai un’email con un link per l’attivaz
 
 ## L’interfaccia utente di Snowflakee la storia del workshop
 
-Duration: 8
 
 > aside negative
 > 
@@ -201,7 +198,6 @@ Per prima cosa caricheremo in Snowflake i dati `.csv` strutturati provenienti da
 
 ## Preparare l’ambiente per il caricamento dei dati
 
-Duration: 14
 
 Per iniziare, prepariamoci a caricare in Snowflake i dati strutturati delle transazioni degli utenti di Citi Bike.
 
@@ -370,7 +366,6 @@ Il formato di file appena creato dovrebbe essere elencato nel riquadro dei risul
 
 ## Caricare i dati
 
-Duration: 10
 
 In questa sezione utilizzeremo un virtual warehouse e il comando COPY per avviare il caricamento in blocco di dati strutturati nella tabella Snowflake che abbiamo creato nella sezione precedente.
 
@@ -511,7 +506,6 @@ Fai clic sul pulsante **Create Warehouse** per creare il warehouse.
 
 ## Lavorare con le query, la cache dei risultati e la clonazione
 
-Duration: 8
 
 Negli esercizi precedenti abbiamo caricato dati in due tabelle utilizzando il comando per il caricamento in blocco COPY e il virtual warehouse `COMPUTE_WH`. Ora assumeremo il ruolo degli utenti di Citi Bike che eseguono le analisi e hanno bisogno di interrogare i dati in quelle tabelle utilizzando il foglio di lavoro e il secondo warehouse `ANALYTICS_WH`.
 
@@ -606,7 +600,6 @@ Fai clic sui tre puntini (**…**) nel riquadro a sinistra e seleziona **Refresh
 
 ## Lavorare con dati semi-strutturati, viste e join
 
-Duration: 16
 
 > aside positive
 > 
@@ -801,7 +794,6 @@ L’obiettivo iniziale era stabilire se esistesse una correlazione tra il numero
 
 ## Utilizzare Time Travel
 
-Duration: 6
 
 La potente funzionalità Time Travel di Snowflake consente di accedere ai dati storici e agli oggetti che li contengono in qualsiasi momento entro un determinato periodo di tempo. La finestra temporale predefinita è di 24 ore e può essere aumentata fino a 90 giorni se si utilizza Snowflake Enterprise Edition. La maggior parte dei data warehouse non è in grado di offrire questa funzionalità, ma naturalmente… Snowflake rende tutto più facile!
 
@@ -919,7 +911,6 @@ limit 20;
 
 ## Lavorare con i ruoli, ACCOUNTADMIN e l’utilizzo dell’account
 
-Duration: 8
 
 In questa sezione esploreremo alcuni aspetti del modello di sicurezza per il controllo degli accessi di Snowflake, come la creazione di un ruolo e l’assegnazione di specifiche autorizzazioni. Esamineremo anche altri usi del ruolo ACCOUNTADMIN (amministratore dell’account) che abbiamo presentato brevemente in una delle sezioni precedenti.
 
@@ -1056,7 +1047,6 @@ Per la prossima sezione, mantieni il ruolo ACCOUNTADMIN per la sessione UI.
 <!-- ------------------------ -->
 
 ## Condividere i dati in modo sicuro e utilizzare il Marketplace
-Duration: 12
 
 Snowflake consente l’accesso ai dati con account diversi tramite le funzionalità di Secure Data Sharing. Le condivisioni vengono create dai provider di dati e importate dai data consumer tramite il proprio account Snowflake o un reader account Snowflake attivato. Il data consumer può essere un’entità esterna o un’altra business unit interna, che deve avere il proprio account Snowflake univoco.
 
@@ -1167,7 +1157,6 @@ Per maggiori informazioni su come utilizzare la nuova interfaccia del foglio di 
 <!-- ------------------------ -->
 
 ## Ripristinare l’ambiente Snowflake
-Duration: 2
 
 Se desideri ripristinare il tuo ambiente eliminando tutti gli oggetti creati nel corso di questo workshop, esegui queste istruzioni SQL in un foglio di lavoro.
 
@@ -1197,7 +1186,6 @@ drop role if exists junior_dba;
 
 ## Conclusione e fasi successive
 
-Duration: 2
 
 Congratulazioni per avere completato questo workshop introduttivo! Hai appreso le nozioni fondamentali di Snowflake e puoi iniziare ad applicarle ai tuoi dati. Potrai tornare a consultare questa guida se avrai bisogno di un ripasso.
 

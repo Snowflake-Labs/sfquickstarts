@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Building a Real-Time Data Vault in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
  
 In this day and age, with the ever-increasing availability and volume of data from many types of sources such as IoT, mobile devices, and weblogs, there is a growing need, and yes, demand, to go from batch load processes to streaming or “real-time” (RT) loading of data. Businesses are changing at an alarming rate and are becoming more competitive all the time. Those that can harness the value of their data faster to drive better business outcomes will be the ones to prevail.
@@ -48,7 +47,6 @@ Luckily, streaming data is one of the [use-cases](https://www.snowflake.com/clou
 
 <!-- ------------------------ -->
 ## Reference Architecture
-Duration: 5
 
 Let’s start with the overall architecture to put everything in context. 
 
@@ -69,7 +67,6 @@ Architecturally, we will split the data lifecycle into following layers:
 
 <!-- ------------------------ -->
 ## Environment setup 
-Duration: 5
 
 1. Login to your Snowflake trial account.  
 ![Snowflake Log In Screen](assets/img4.png)  
@@ -124,7 +121,6 @@ CREATE OR REPLACE SCHEMA l30_id  COMMENT = 'Schema for Information Delivery obje
 
 <!-- ------------------------ -->
 ## Data Pipelines: Design
-Duration: 10
 
 ![dbt_project.yml](assets/img2.png)  
 
@@ -148,7 +144,6 @@ Following this approach will result in a hands-off production data pipeline that
 
 <!-- ------------------------ -->
 ## Sample data & staging area
-Duration: 5
 
 Every Snowflake account provides access to [sample data sets](https://docs.snowflake.com/en/user-guide/sample-data.html). You can find corresponding schemas in SNOWFLAKE_SAMPLE_DATA database in your object explorer.
 For this guide we are going to use a subset of objects from [TPC-H](https://docs.snowflake.com/en/user-guide/sample-data-tpch.html) set, representing **customers** and their **orders**. We also going to take some reference data about **nations** and **regions**. 
@@ -404,7 +399,6 @@ Well done! We build our staging/inbound pipeline, ready to accomodate streaming 
 
 <!-- ------------------------ -->
 ## Build: Raw Data Vault
-Duration: 10
 
 In this section, we will start building structures and pipelines for **Raw Data Vault** area. 
 
@@ -723,7 +717,6 @@ Great. We now have data in our **Raw Data Vault** core structures. Let's move on
 
 <!-- ------------------------ -->
 ## Views for Agile Reporting
-Duration: 10
 
 One of the great benefits of having the compute power from Snowflake is that now it is totally possible to have most of your business vault and information marts in a Data Vault architecture be built exclusively from views. There are numerous customers using this approach in production today. There is no longer a need to have the argument that there are “too many joins” or that the response won’t be fast enough. The elasticity of the Snowflake virtual warehouses combined with our dynamic optimization engine have solved that problem. (For more details, see this [post](https://www.snowflake.com/blog/tips-for-optimizing-the-data-vault-architecture-on-snowflake-part-3/))
 
@@ -745,7 +738,6 @@ As said before, virtualization is not only a way to improve time-to-value and pr
 
 <!-- ------------------------ -->
 ## Build: Business Data Vault
-Duration: 10
 
 As a quick example of using views for transformations we just discussed, here is how enrichment of customer descriptive data could happen in Business Data Vault, connecting data received from source with some reference data.
 
@@ -889,7 +881,6 @@ Let's finally move into the **Information Delivery** layer.
 
 <!-- ------------------------ -->
 ## Build: Information Delivery
-Duration: 10
 
 When it comes to Information Delivery area we are not changing the meaning of data, but we may change format to simplify users to access and work with the data products/output interfaces. Different consumers may have different needs and preferences, some would prefer star/snowflake dimensional schemas, some would adhere to use flattened objects or even transform data into JSON/parquet objects. 
 
@@ -1027,7 +1018,6 @@ Voila! This concludes our journey for this guide. Hope you enjoyed it and lets s
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Simplicity of engineering, openness, scalable performance, enterprise-grade governance enabled by the core of the Snowflake platform are now allowing teams to focus on what matters most for the business and build truly agile, collaborative data environments. Teams can now connect data from all parts of the landscape, until there are no stones left unturned. They are even tapping into new datasets via live access to the Snowflake Marketplace. The Snowflake Data Cloud combined with a Data Vault 2.0 approach is allowing teams to democratize access to all their data assets at any scale. We can now easily derive more and more value through insights and intelligence, day after day, bringing businesses to the next level of being truly data-driven.  
 

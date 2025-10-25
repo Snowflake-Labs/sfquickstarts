@@ -13,7 +13,6 @@ feedback link: [https://github.com/Snowflake-Labs/sfguides/issues](https://githu
 
 ## Overview
 
-Duration: 2
 
 Deepnote brings Python and SQL into a collaborative data science notebook, along with a suite 
 of low-code tools and tight integration with Snowflake. Altogether, Deepnote 
@@ -56,7 +55,6 @@ to solve the hardest data analysis problems.
 
 ## Setup a Snowflake integration inside Deepnote
 
-Duration: 1
 
 To connect a Snowflake database to a Deepnote project, open the 
 Snowflake integration modal and supply the associated Snowflake 
@@ -76,7 +74,6 @@ tables with SQL blocks (described below).
 
 ## Query Snowflake with Deepnote's SQL blocks
 
-Duration: 3
 
 Similar to Python code cells used in Jupyter notebooks, Deepnote also includes 
 native SQL cells which include syntax highlighting and autocomplete 
@@ -99,7 +96,6 @@ other tool in the Python library ecosystem to further explore the data.
 
 ## Mix-and-match Python and SQL
 
-Duration: 3
 
 SQL queries in Deepnote also support the JinjaSQL templating language. 
 This allows users to pass Python variables **directly into SQL queries** as well as 
@@ -122,7 +118,6 @@ repeat similar blocks of code, over and over again.
 
 ## Visualize the results of a query 
 
-Duration: 4
 
 Deepnote provides no-code data visualization tools for streamlining EDA. 
 Given the results of the query above, let’s build a data visualization to 
@@ -166,7 +161,6 @@ stopping us from using Altair, Plotly, or any other Python visualization library
 
 ## Build a UI around the SQL query
 
-Duration: 4
 
 Data exploration is iterative. Put another way—data exploration is repetitive. 
 While analysts strive to follow the DRY principle (do not repeat yourself), 
@@ -203,7 +197,6 @@ we can again use a chart block to visualize it further
 
 ## Conclusion
 
-Duration: 1
 
 With Deepnote and Snowflake you get the best in class for secure data 
 governance and rapid exploratory programming, together in the same place. 

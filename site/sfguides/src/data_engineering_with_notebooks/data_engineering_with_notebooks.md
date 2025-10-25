@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Data Engineering using Snowflake Notebooks
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 Notebooks are a very popular tool that are used to do everything from ad-hoc exploration of data to productionalized data engineering pipelines. While Notebooks can contain a mix of both Python and SQL, most of the time they're used for Python coding. In my previous Quickstart I detailed [how to build Python data engineering pipelines in Snowflake](https://quickstarts.snowflake.com/guide/data_engineering_pipelines_with_snowpark_python/index.html?index=..%2F..index#0) using Visual Studio Code, from a lower-level developer perspective.
 
@@ -56,7 +55,6 @@ You will need the following things before beginning:
 
 <!-- ------------------------ -->
 ## Quickstart Setup
-Duration: 15
 
 ### Create a GitHub Personal Access Token
 In order for Snowflake to authenticate to your GitHub repository, you will need to generate a personal access token. Please follow the [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic) instructions to create your token.
@@ -136,7 +134,6 @@ When you’re finished adding all the secrets, the page should look like this:
 
 <!-- ------------------------ -->
 ## Setup Snowflake
-Duration: 10
 
 Since the focus of this Quickstart is on Notebooks, we're going to use a Notebook to set up our Snowflake demo environment. 
 
@@ -167,7 +164,6 @@ Scroll down to the "Step 03 Setup Snowflake" section. You'll want to run all the
 
 <!-- ------------------------ -->
 ## Deploy to Dev
-Duration: 5
 
 During this step we will be deploying the dev versions of our two data engineering Notebooks: `DEV_06_load_excel_files` and `DEV_07_load_daily_city_metrics`. For this Quickstart you will notice that our main data engineering Notebooks will be named with a prefix for the environment label, like `DEV_` for dev and `PROD_` for prod. A full discussion of different approaches for managing multiple environments with Snowflake is out of scope for this Quickstart. For a real world use case, you may or may not need to do the same, depending on your Snowflake set up.
 
@@ -191,7 +187,6 @@ Also, please note that the `scripts/deploy_notebooks.sql` script also includes J
 
 <!-- ------------------------ -->
 ## Load Weather
-Duration: 5
 
 During this step we will be "loading" the raw weather data to Snowflake. But "loading" is the really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#5** in our data flow overview:
 
@@ -215,7 +210,6 @@ That's it... we don't have to do anything from here to keep this data updated. T
 
 <!-- ------------------------ -->
 ## Load Location and Order Detail
-Duration: 8
 
 During this step we will be loading data from two Excel files in S3 into the `LOCATION` and `ORDER_DETAIL` tables. To do this we'll take advantage of the [Snowpark Python file access feature](https://docs.snowflake.com/en/developer-guide/snowpark/python/creating-sprocs#reading-dynamically-specified-files-with-snowflakefile). For more details on this please see my related blog post [Simplify data ingestion with Snowpark Python file access](https://medium.com/snowflake/simplify-data-ingestion-with-snowpark-python-file-access-f2bc0e4cd887).
 
@@ -272,7 +266,6 @@ Like I mentioned at the beginning of this section, we're able to read on process
 
 <!-- ------------------------ -->
 ## Load Daily City Metrics
-Duration: 10
 
 During this step we will be joining data from our `LOCATION` and `ORDER_DETAIL` tables (from the previous step) with the weather data we set up in step 5 to produce an aggregated reporting table `DAILY_CITY_METRICS`. We'll leverage the Snowpark DataFrame API to perform the data transformations, and will also show how to incorporate logging into your code. To put this in context, we are on step **#7** in our data flow overview:
 
@@ -368,7 +361,6 @@ All of your log messages can be found in your default logging table, which we cr
 
 <!-- ------------------------ -->
 ## Orchestrate Jobs
-Duration: 8
 
 During this step we will be orchestrating our new Snowpark Notebook pipelines with Snowflake's native orchestration feature named Tasks. You can create and deploy Snowflake Task objects using SQL as well as with our Python Task APIs. For this Quickstart, we will use Snowflake Python Task APIs to create the Tasks. We will create two tasks, one for each Notebook, and chain them together. To put this in context, we are on step **#8** in our data flow overview:
 
@@ -457,7 +449,6 @@ ORDER BY COMPLETED_TIME DESC;
 
 <!-- ------------------------ -->
 ## Deploy to Production
-Duration: 12
 
 During this step we will be deploying our Notebooks to production using a CI/CD pipeline. We will make a small change to a Notebook and then commit that change to our Git repo all within Snowsight. After that we will create a Pull Request (or PR), merge our changes to `main` and deploy with GitHub Actions. To put this in context, we are on step **#9** in our data flow overview:
 
@@ -552,7 +543,6 @@ Finally, to execute the production version of the Task DAG, follow the steps we 
 
 <!-- ------------------------ -->
 ## Teardown
-Duration: 2
 
 Once you're finished with the Quickstart and want to clean things up, toggle back to the `00_start_here` Notebook and scroll down to the "Step 10 Teardown" section. Then just run the SQL commands in the `sql_step10` cell to remove all the objects created during the Quickstart.
 
@@ -560,7 +550,6 @@ Finally, you can delete the `00_start_here` Notebook. With the Notebook open cli
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You have now built end-to-end data engineering pipelines with Notebooks in Snowflake. You've also seen how to follow a complete Software Development Life Cycle (SDLC) for data engineering with Notebooks, including integration with Git, deploying to multiple environments through a CI/CD pipeline, instrumenting your code for monitoring and debugging, and orchestrating the pipelines with Task DAGs. Here's a quick visual recap:
 

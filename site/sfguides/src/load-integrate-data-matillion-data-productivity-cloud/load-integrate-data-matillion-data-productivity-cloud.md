@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Matillion Data Productivity Cloud
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This Quickstart will show you how to load and integrate enterprise data into Snowflake quickly and efficiently using the Matillion Data Productivity Cloud.
 
@@ -38,7 +37,6 @@ Matillion is the data pipeline platform that brings push-down ELT and AI to Snow
 
 <!-- ------------------------ -->
 ## Create your Matillion and Snowflake accounts
-Duration: 5
 
 If you already have a Matillion and Snowflake account, just [log in to the Matillion Data Productivity Cloud](https://hub.matillion.com/) and go straight to the next step in this Quickstart.
 
@@ -85,7 +83,6 @@ For reference here's a video that takes you through all the steps above.
 
 <!-- ------------------------ -->
 ## Create a Development branch
-Duration: 1
 
 Matillion development is tightly integrated with git, so when you are [logged in to the Matillion Data Productivity Cloud](https://hub.matillion.com/) and developing ETL pipelines, you're always working in the context of a git branch. This Quickstart will demonstrate the **feature branching** strategy.
 
@@ -103,7 +100,6 @@ Meanwhile, click on the new branch name to enter the [Pipeline Designer](https:/
 
 <!-- ------------------------ -->
 ## Create Static Metadata
-Duration: 5
 
 The first data to be loaded into Snowflake is a few fixed records of reference information, which will be used later. This kind of setup is sometimes known as "seed" data.
 
@@ -205,7 +201,6 @@ Now you have some reference data in Snowflake, it's time for the next step.
 
 <!-- ------------------------ -->
 ## Load Sales data from Excel
-Duration: 6
 
 In this step you will start to work with some real data.
 
@@ -289,7 +284,6 @@ The pipeline should validate cleanly now.
 
 <!-- ------------------------ -->
 ## Load Customer data from JSON
-Duration: 5
 
 In this step, you will add a new, semi-structured data source to your `GreenWave Technologies Demo` Orchestration pipeline.
 
@@ -345,7 +339,6 @@ Expand the Task History to view the Task Details, and check that the row count i
 
 <!-- ------------------------ -->
 ## Flatten and relationalize semi-structured data
-Duration: 4
 
 In the pipeline designer interface, create another new Transformation pipeline, named `Calculate Profit and Revenue` this time.
 
@@ -377,7 +370,6 @@ To prepare for the next step, rename the Extract Nested Data component to `ACC` 
 
 <!-- ------------------------ -->
 ## Data Integration
-Duration: 7
 
 At this stage four tables have been extracted and loaded: `GW_ORDERS`, `GW_ITEMS` and `GW_ORDER_ITEMS` from Excel, and the newly flattened `GW_CUSTOMER_ACCOUNTS` from the JSON file. They are related like this:
 
@@ -501,7 +493,6 @@ Now all the data is in place to start adding the derived columns including profi
 
 <!-- ------------------------ -->
 ## Calculate Profit and Revenue
-Duration: 2
 
 Matillion has several ways to add derived fields, and the most commonly used is the [Calculator](https://docs.matillion.com/data-productivity-cloud/designer/docs/calculator/) component.
 
@@ -523,7 +514,6 @@ Use the **Sample data** panel to check that the three new columns have been adde
 
 <!-- ------------------------ -->
 ## Aggregating with Copilot assistance
-Duration: 2
 
 The profit and revenue data is still at order item level, but the reporting need is at a higher granularity. So it must be aggregated as a final step before presentation.
 
@@ -552,7 +542,6 @@ The data transformation and integration is complete! The last piece of developme
 
 <!-- ------------------------ -->
 ## Orchestrating the ETL pipelines
-Duration: 1
 
 To get the transformation and integration to run at the right time, first go right back to the `GreenWave Technologies Demo` orchestration pipeline.
 
@@ -570,7 +559,6 @@ This means the transformation pipeline will always run at the right time: after 
 
 <!-- ------------------------ -->
 ## Merge the Development branch
-Duration: 2
 
 All this pipeline work has been happening in the `development` git branch. Now it's completed, it's time to merge this feature branch back into main.
 
@@ -597,7 +585,6 @@ Now all the pipelines are in the main branch. You can delete the feature branch,
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations on completing this lab!
 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Ingenieria de Datos con Snowpark y visualización con Streamlit
 <!-- ------------------------ -->
 ## Contexto 
-Duration: 5 
 
 **INEGI** es un organismo público autónomo responsable de normar y coordinar el Sistema Nacional de Información Estadística y Geográfica [Inegi](https://www.inegi.org.mx), así como de captar y difundir información de México en cuanto al territorio, los recursos, la población y economía, que permita dar a conocer las características del país y ayudar a la toma de decisiones, publican el [Sistema de consulta](https://www.inegi.org.mx/siscon/) del cual se pueden tomar set de datos públicos.
 
@@ -48,7 +47,6 @@ Base de datos (lista):
 
 
 ## Instalación
-Duration: 10 
 
 <h4>Código fuente</h4>
 Descargar el repositorio que contiene el código necesario
@@ -135,7 +133,6 @@ Detalle en repositorio [github repo](https://github.com/sfc-gh-csuarez/snowpark_
 
 
 ## Extraer y Transformar 
-Duration: 10 
 
 ### Descargar archivos desde web hosting
 
@@ -165,7 +162,6 @@ Teniendo la conexión a internet activa, iniciará el proceso de descarga de arc
 
 
 ## Modelo y Cargar a Snowflake
-Duration: 10 
 
 Dentro del directorio descargado desde Github,  abrir Visual Studio Code (VSC) y activar virtual environment **snowpark_env** creado en la instalación
 
@@ -191,7 +187,6 @@ Ejecutar el cell **#Transformando a objeto Snowflake** para la colocación de da
 
 
 ## Vistas y Materialización
-Duration: 15 
 
  Abrir el archivo **03_INEGI_dataModeling.ipynb** y ejecutar los dos primeros cells para cargar las librerías necesarias y activar la sesión a Snowflake. 
 ![VSC](assets/vsc6.png)
@@ -211,7 +206,6 @@ Ejecutar el cell **#Validar la vista solo con totales por entidad** para validar
 
 
 ## Visualización de Datos
-Duration: 10 
 
 Creación de sesión utilizando los constructores de Snowpark y los valores de acceso a Snowflake en el archivo **04_Streamlit.py** y ejecutar en terminal de Visual Studio Code
 
@@ -285,7 +279,6 @@ Visualización de histograma con tabla de datos
 
 <!-- ------------------------ -->
 ## Conclusión
-Duration: 5 
 
 Con Snowpark y Streamlit es posible de forma directa hacer aplicaciones End-to-End desde la carga y transformación, hasta la visualización aprovechando la capacidad de cómputo de Snowflake.
 

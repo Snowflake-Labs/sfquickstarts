@@ -9,7 +9,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Intro to Data Engineering using Python in Snowflake
 <!-- ------------------------ -->
-Duration:5
 
 ## Overview
 
@@ -50,7 +49,6 @@ Snowpark is the set of libraries and code execution environments that run Python
 <!-- ------------------------ -->
 ## Setup
 
-Duration:10
 
 This section covers the Snowflake objects creation and other setup needed to run this quickstart successfully.
 
@@ -69,7 +67,6 @@ With this, we are ready to run our first data engineering pipeline in Snowflake 
 <!-- ------------------------ -->
 ## Data Engineering using Python
 
-Duration:10
 
 During this step you will learn how to use pandas on Snowflake to:
 
@@ -93,7 +90,6 @@ Follow along and run each of the cells in the [Notebook](https://github.com/Snow
 <!-- ------------------------ -->
 ## Conclusion & Resources
 
-Duration:2
 
 Congratulations, you have successfully completed this quickstart\! 
 

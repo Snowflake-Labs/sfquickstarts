@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Use Case Overview
-Duration: 4
 
 This guide will take you through the process of integrating Salesforce and Snowflake using Tableau CRM to deliver Customer 360.
 
@@ -45,7 +44,6 @@ Here is an outline of the workflow:
 
 <!-- ------------------------ -->
 ## Setting up Snowflake
-Duration: 3
 
 The first thing you will need to do is download the following .sql file that contains a series of SQL commands we will execute throughout this lab.
 
@@ -99,7 +97,6 @@ Each step throughout the guide has an associated SQL command to perform the work
 
 <!-- ------------------------ -->
 ## Creating Snowflake Role, User, Database & Warehouse
-Duration: 5
 
 To get started, we are going to create the Snowflake objects for this lab. You can create objects using the UI, but for the purposes of this lab we will use Snowflake DDL commands in the SQL script file that we downloaded in the previous step. 
 
@@ -151,7 +148,6 @@ The warehouse is now ready to use.
 
 <!-- ------------------------ -->
 ## Load Shipping data into Snowflake
-Duration: 5
 
 We will now load shipping data into Snowflake to simulate data from internal shipping and financials systems, that are typically doen with ELT/ETL processes.
 
@@ -203,7 +199,6 @@ This data will simulate data from various internal systems.
 
 <!-- ------------------------ -->
 ## Snowflake MarketPlace Data
-Duration: 10
 
 The **Snowflake Marketplace** has a large number of Data Providers where you can gain immediate access to external data without the need to perform any ETL or transformations. The data will show up as a database in your account. Additionally the the data will immediately be updated as soon a the Data Provider performs any updates. This is an extremely powerful mechanism to enrich your data with external data sources.
 
@@ -270,7 +265,6 @@ Click `Done` when finished and close the browser tab that was used for the Marke
 
 <!-- ------------------------ -->
 ## Enrich the Shipping data with Marketplace data
-Duration: 4
 
 Let's look at the Marketplace data we got from the previous steps. The Marketplace data will look like databases in your Snowflake account with no need to do any ETL.
 
@@ -340,7 +334,6 @@ You can use this view for easier consumption of the data.
 
 <!-- ------------------------ -->
 ## Loading Data into Salesforce
-Duration: 5
 
 Let's switch to Salesforce. Open another tab on your browser and login to the [Salesforce Analytics Developer Account](https://trailhead.salesforce.com/en/promo/orgs/analytics-de).
 
@@ -408,7 +401,6 @@ The object will now be accessible for data integration.
 
 <!-- ------------------------ -->
 ## Configure Tableau CRM and Sync Salesforce data with Snowflake
-Duration: 15
 
 
 ### The next step is to configure the connection to the Salesforce object in the Data Manager.
@@ -544,7 +536,6 @@ The data will now be successfully written to a table in Snowflake.
 
 <!-- ------------------------ -->
 ## Enrich the Salesforce data in Snowflake
-Duration: 3
 
 Switch back to the Snowflake tab in your browser. Tableau CRM Sync Out automatically created a table in Snowflake with the Salesforce data. The table name in Snowflake will match the object name from Salesforce - `master_customer_case__c`.
 
@@ -577,7 +568,6 @@ This provides a consolidated view of all the data sources.
 
 <!-- ------------------------ -->
 ## Read live data from Snowflake in Salesforce
-Duration: 10
 
 Switch back to your Salesforce Tableau CRM Data Manager tab in your browser. 
 
@@ -650,7 +640,6 @@ The analytics information can be used in the Salesforce UI for simpler access by
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 1
 
 In this lab we have build a simple example of how you can combine and enrich Salesforce data with internal and external data in Snowflake. Also how you can use this enriched Snowflake data with Tableau CRM to drive action in Salesforce.   
 

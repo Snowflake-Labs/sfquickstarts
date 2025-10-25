@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Intro to Snowpark Container Services with Snowflake Python APIs
 <!-- ------------------------ ----------------------------------->
 ## Overview 
-Duration: 3
 
 Through this quickstart guide, you will explore [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview), which are now in Public Preview on AWS. You will explore Snowpark Container Services using [Python API](https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-overview), which is now in Public Preview. You will learn the basic mechanics of working with Snowpark Container Services using Python API and build several introductory services. **Please note: this quickstart assumes some existing knowledge and familiarity with containerization (e.g. Docker) , basic familiarity with container orchestration. and basic familiartity with Python**
 
@@ -61,7 +60,6 @@ You can simply download the repo as a .zip if you don't have Git installed local
 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment
-Duration: 5
 
 Run the following Python API code in [`00_setup.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/00_setup.py) using the Snowpark Python Connector and Python API to create the role, database, warehouse, and stage that we need to get started:
 ```Python API
@@ -218,7 +216,6 @@ our first [compute pool](https://docs.snowflake.com/en/developer-guide/snowpark-
 
 <!-- ------------------------ -->
 ## Set up your local environment
-Duration: 10
 
 ### Python Virtual Environment and SnowCLI
 
@@ -304,7 +301,6 @@ Duration: 10
 
 <!-- ------------------------ -->
 ## Build, Push, and Run the Jupyter Service
-Duration: 45
 
 ### Build and Test the Image Locally
 
@@ -562,7 +558,6 @@ Now we can run a sample query using our Snowpark session!
 We've successfully built and deployed our Jupyter Notebook service. Now let's move on to a REST API which we will interact with using a Service Function.
 <!-- ------------------------ -->
 ## Build, Push, and Run the Temperature Conversion REST API Service
-Duration: 30
 
 ### Build and Test the Image Locally
 
@@ -933,7 +928,6 @@ Run the cell, and you should see the following output dataframe, with our new co
 Now, save the Jupyter notebook- when you come back to this service in the future, your new code will be saved because of our stage-backed volume mount!
 <!-- ------------------------ -->
 ## Managing Services with Python API
-Duration: 5
 
 There are a number of useful Python API we should explore with respect to controlling the service itself.  More information on Python API can be found at [Snowpark Container Services Python API](https://docs.snowflake.com/developer-guide/snowflake-python-api/snowflake-python-overview) 
 
@@ -964,7 +958,6 @@ There are a number of useful Python API we should explore with respect to contro
 
 <!-- ------------------------ -->
 ## Stop the Services and Suspend the Compute Pool
-Duration: 2
 
 If you no longer need the services and compute pool up and running, we can stop the services and suspend the compute pool so that we don't incur any cost (Snowpark Container Services bill credits/second based on the compute pool's uptime, similar to Virtual Warehouse billing) run the following from [`05_stop_snowpark_container_services_and_suspend_compute_pool.py`](https://github.com/Snowflake-Labs/sfguide-intro-to-snowpark-container-services/blob/main/05_stop_snowpark_container_services_and_suspend_compute_pool.py):
 ```Python API

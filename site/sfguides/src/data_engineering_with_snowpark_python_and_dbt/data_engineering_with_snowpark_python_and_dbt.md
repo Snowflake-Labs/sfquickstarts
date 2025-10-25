@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Data Engineering with Snowpark Python and dbt
 <!-- ------------------------ -->
 ## Overview 
-Duration: 4
 
 <img src="assets/data_engineering_with_snowpark_python_and_dbt-1.png" width="600" />
 
@@ -78,7 +77,6 @@ The following are optional but will help you debug your Python dbt models:
 
 <!-- ------------------------ -->
 ## Create the dbt Project
-Duration: 10
 
 The easiest way to get started with dbt, and ensure you have the most up-to-date dbt configurations, is to the run the `dbt init` command. The `dbt init` process will create two folders in the directory you run it from, a `logs` folder and a folder with the same name as your project. So in a terminal change to the directory where you want the new dbt project folder created and execute `dbt init`. Follow the prompts to create your new project. For most of the prompts enter the value appropriate to your environment, but for **database** and **schema** enter the values below:
 
@@ -119,7 +117,6 @@ To verify that everything is configured properly, open a terminal, cd to the fol
 
 <!-- ------------------------ -->
 ## Create a Simple Python Model
-Duration: 8
 
 ### Overview
 Now that you've created your dbt project and run it once successfully, it's time to create our first Python model! But before we do, here's a brief overview of how to create a Python model in dbt (from [dbt Python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models)):
@@ -161,7 +158,6 @@ Finally, save the file and execute `dbt run` again. If everything ran successful
 
 <!-- ------------------------ -->
 ## Understand How the Simple dbt Python Model Works
-Duration: 10
 
 So what just happened you ran your dbt Python model? The single best thing to help you debug and understand what's happening is to look at your [Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history) in Snowflake. Please take a minute now to review what happened in your Snowflake account, by reviewing your recent query history.
 
@@ -326,7 +322,6 @@ def main(session):
 
 <!-- ------------------------ -->
 ## Create a Python Model with a UDF
-Duration: 10
 
 Now that you understand the basics of dbt Python models, let's add in another concept, the user-defined function (or UDF for short). "A UDF (user-defined function) is a user-written function that can be called from Snowflake in the same way that a built-in function can be called. Snowflake supports UDFs written in multiple languages, including Python." (see [Introduction to Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python-introduction.html) for more details). By creating and registering a UDF it can be used in your DataFrame (or SQL) expression just like a built-in function.
 
@@ -397,7 +392,6 @@ Notice that the function is defined outside the `main()` handler function and th
 
 <!-- ------------------------ -->
 ## Understand How the dbt Python Model with a UDF Works
-Duration: 8
 
 Now let's take another deep dive into what happened when we run the second dbt model with a UDF. As before, please take a minute now to review what happened in your Snowflake account, by reviewing your recent query history ([Query History](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity.html#query-history)).
 
@@ -476,7 +470,6 @@ The overall steps are the same, but notice that what happens during the stored p
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 4
 
 ### Conclusion
 

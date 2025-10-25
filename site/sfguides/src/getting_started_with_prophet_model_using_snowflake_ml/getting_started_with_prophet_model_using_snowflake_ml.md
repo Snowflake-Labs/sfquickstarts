@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Prophet Model using Snowflake ML
 <!-- ------------------------ -->
 ## Overview 
-Duration: 4
 
 
 This guide shows how to create and log a Prophet forecasting model using Snowflake ML. 
@@ -44,7 +43,6 @@ The Prophet model is a time series forecasting tool developed by Facebook, desig
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 **Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-prophet-using-snowflake-ml/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
@@ -125,7 +123,6 @@ predicted_sales = mv.run(forecast_dates)
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You’ve successfully built a Prophet forecasting model in a Snowflake Notebook and logged the trained model to the Snowflake ML registry, making it ready for inference and future use.
 

@@ -11,7 +11,6 @@ authors: Matt Marzillo,
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 10
 
 In this quickstart we will walk you through how to access models deployed with Snowflake's major CSP partners and deploy them to Snowflake.
 
@@ -50,14 +49,12 @@ In this quickstart you will work through two examples of how to deploy models to
 
 <!-- ------------------------ -->
 ## Use Case / Workload
-Duration: 5
 
 Customers who use Snowflake with AzureML or AWS Sagemaker will have models trained and registered in either cloud ML tool and may prefer to deploy those models to Snowflake for batch inference. Often it's the case that all (or most) of the inference data is in Snowflake and customers prefer the ease of use, performance and security of having the model deployed in Snowflake.
 
 <!-- ------------------------ -->
 ## Solution and Workbooks
 
-Duration: 10
 
 *Please review the “Important Notes” section below before preparing your code to run.
 
@@ -179,7 +176,6 @@ Both of these notebooks can also be found [here](https://github.com/Snowflake-La
 <!-- ------------------------ -->
 ## Important Notes
 
-Duration: 10
 
 For both AzureML and Sagemaker deployment patterns users will need to make sure that they have properly installed all of the necessary libraries in their Python environments. For the required Snowflake packages this can usually be done with the instructions [here](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index#installing-snowpark-ml)
 
@@ -202,7 +198,6 @@ With Sagemaker there is no way easy programmatic way to access the dependencies 
 <!-- ------------------------ -->
 ## Benefits of Deploying to Snowpark ML Registries
 
-Duration: 5
 
 Customers prefer deploying models to Snowpark for several reasons. These reasons include:
 Bringing the model to the inference data. If all (or most) of your inference data is in Snowflake then having the model with the data makes for a more efficient and secure experience. Data doesn’t have to leave the Snowflake plane and results are returned more quickly
@@ -212,7 +207,6 @@ Enhanced prediction functionality. With SnowparkML models registered now come pr
 <!-- ------------------------ -->
 ## Conclusion
 
-Duration: 5
 
 ### What we covered
 Working through the provided notebooks you likely used one of two examples that allowed you to deploy models to Snowpark ML Registries from cloud CSPs, that you can now access from Snowflake to generate inference from a model that is deployed in the same environment as your data!

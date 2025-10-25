@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Orchestrate LLM Evaluations in Snowflake with Evalanche
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 By completing this guide, you will have deployed the Evalanche application in a Snowflake account and conducted your first LLM use case evaluation.
 
@@ -49,7 +48,6 @@ Data Sources provide the values to Metrics’ required inputs. Data Sources can 
 
 <!-- ------------------------ -->
 ## Deploying Evalanche to Streamlit
-Duration: 2
 
 1. Copy the entire contents of file [`git_setup.sql`](https://github.com/Snowflake-Labs/emerging-solutions-toolbox/blob/main/framework-evalanche/setup/git_setup.sql).
 
@@ -68,7 +66,6 @@ Once competed, Evalanche will be accessible in your Snowflake account under the 
 
 <!-- ------------------------ -->
 ## Create Sample Data
-Duration: 1
 
 Next, we will create hypothetical data for our first Evaluation. Within Snowsight, select the + tab to create a new SQL Worksheet. 
 
@@ -113,7 +110,6 @@ SELECT * FROM GENAI_UTILITIES.EVALUATION.SAMPLE_TABLE;
 
 <!-- ------------------------ -->
 ## Open Evalanche and Select Metrics
-Duration: 1
 
 Navigate to the Evalanche app by selecting **Projects** > **Streamlit** > **Evalanche: GenAI Evaluation Application**. For a quick overview of the application, select the Help button.
 
@@ -129,7 +125,6 @@ Click Continue.
 
 <!-- ------------------------ -->
 ## Select and Configure Data Source
-Duration: 2
 
 A Data Source should have at least the required input(s) for the select Metric(s). A Data Source can be a single table, 2 tables (if expected and generated results are separate), and/or custom SQL if the data are not readily available as singular tables.
 
@@ -145,7 +140,6 @@ Click Run.
 
 <!-- ------------------------ -->
 ## View Evaluation Results
-Duration: 2
 
 ![Evaluation Results](assets/results.png)
 
@@ -170,7 +164,6 @@ Click Rerun. The score should improve. Click Save.
 
 <!-- ------------------------ -->
 ## Save Results and Evaluation
-Duration: 2
 
 Evaluation results can be saved to Snowflake table(s) for subsequent analysis if desired. Click Record Results and provide a Snowflake database, schema, and table name. 
 
@@ -188,7 +181,6 @@ Return to the homepage by clicking home in the left-side panel. Click the saved 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You've successfully deployed Evalanche and created your first saved Evaluation using out of the box Metrics. For ongoing evaluations or experimentation, we encourage using Automated Evaluations. 
 

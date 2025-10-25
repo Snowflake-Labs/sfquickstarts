@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-Duration: 10
 
 In this Quickstart guide, we will walk through how to use [Container Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml) in [Snowflake ML](http://www.snowflake.com/ml) to perform Multi-Node, Multi-GPU audio transcription at limitless scale over multiple audio files.
 
@@ -107,7 +106,6 @@ This guide will show you:
 
 ## Setup Environment
 <!-- ------------------------ -->
-Duration: 5
 
 This section will walk you through creating various objects. The repository with the source code can be found [here](https://github.com/Snowflake-Labs/sfguide-distributed-multi-node-multi-gpu-audio-transcription-with-snowflake-ml-container-runtime).
 
@@ -128,7 +126,6 @@ Complete the following steps to setup your account:
 
 ## Audio Processing Setup
 <!-- ------------------------ -->
-Duration: 10
 
 This notebook linked below covers the creation of snowflake objects and data loading from a third-party dataset (Audio Files) into snowflake stage. **Be sure to comply with the dataset's licensing terms and usage guidelines.**
 
@@ -174,7 +171,6 @@ Note: - "Please note, if you duplicate this notebook you will have to manually e
 
 ## Audio Transcription
 <!-- ------------------------ -->
-Duration: 10
 
 The samples shown below demonstrate the distributed inferencing of audio files on Snowflake ML Container Runtime using multiple nodes and multiple GPUs.
 
@@ -299,7 +295,6 @@ Let's break down what the ML Job workflow is doing:
 
 ## Value Proposition
 <!-- ------------------------ -->
-Duration: 5
 
 Snowflake ML Container Runtime offers significant value for distributed multi-node, multi-GPU audio transcription. Here are the key benefits:
 

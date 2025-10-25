@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 <!-- ------------------------ -->
 ## Overview 
 
-Duration: 1
 
 
 Modern Data Stack requires setup and maintenance and Snowflake goes a long way to lowering the bar.
@@ -41,7 +40,6 @@ This Quickstart will guide you to build a complete data pipeline from ingestion,
 ![Template](assets/template.png) 
 
 ## Create Keboola Account with Partner Connect
-Duration: 5
 
 ### Step 1 
 1. Login to **Snowflake Snowsight**.
@@ -77,7 +75,6 @@ Add email, first and last name:
 ![PartnerConnect](assets/pcprofile2.png)
 
 ## Activate Keboola Account
-Duration: 2
 
 ### Define your Keboola password
 After you have clicked "Activate" from the previous section, you'll land on Keboola's Welcome page to define your password:
@@ -108,7 +105,6 @@ Go back to Keboola, you should see the following:
 
 
 ## Get Snowflake Account URL
-Duration: 1
 
 Here we'll prepare everything for Keboola to write into Snowflake account, remember Partner Connect flow already created a DB (PC_KEBOOLA_DB) and a warehouse (PC_KEBOOLA_WH):
 
@@ -125,7 +121,6 @@ At the left bottom of the screen, hover the account and click on "Copy account U
 Paste the content in safe place to reuse later.
 
 ## Instantiate the Template
-Duration: 3
 
 We need first to activate the Data Apps feature in Keboola:
 
@@ -156,7 +151,6 @@ You'll see more details on the template, click the top right green button "+ USE
 Enter a name and click " -> NEXT STEP"
 
 ## Configure the Template
-Duration: 5
 
 For this lab, we'll use dummy Shopify data so we don't need to configure the Shopify Component.
 
@@ -196,7 +190,6 @@ Save the template:
 ![Template](assets/savetp.png) 
 
 ## Configure the Data App Secrets
-Duration: 5
 
 ### Get Keboola token:
 
@@ -239,7 +232,6 @@ Change the values according to your Snowflake account and Keboola API token:
 ![Template Creation](assets/appsecrets.png)
 
 ## Run the Flow
-Duration: 10
 
 The template generated a Keboola Flow. A flow is a sequence of actions.
 
@@ -264,7 +256,6 @@ Success!
 ![Template](assets/success.png)
 
 ## See results in Snowflake
-Duration: 2
 
 Open your Snowflake web tab and check the PC_KEBOOLA_DB content.
 
@@ -274,7 +265,6 @@ You should see the tables created:
 
 
 ## Open Streamlit
-Duration: 5
 
 We have seen Keboola Shopify template in action. We have now a complete set of tables in Snowflake with Shopify sales data including an RFM segmentation, ready to use!
 
@@ -302,7 +292,6 @@ Open the Data App
 ![Template Creation](assets/openapp.png)
 
 ## Play with Data
-Duration: 5
 
 If your Snowflake information are correct, after clicking "Connect" you should see:
 
@@ -357,7 +346,6 @@ Check the table in Keboola:
 YOU'RE DONE WITH THE LAB !!  🍾
 
 ## Troubleshooting
-Duration: 0
 
 ### You choose the wrong template
 
@@ -418,7 +406,6 @@ Correct the secrets:
 ![Template Creation](assets/appsecrets.png)
 
 ## Conclusion
-Duration: 1
 
 Congratulations! You've successfully built a complete data pipeline from ingestion, transformation, orchestration, to presentation in a Streamlit application!
 

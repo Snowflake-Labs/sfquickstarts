@@ -11,7 +11,6 @@ authors: Dash Desai
 <!-- ------------------------ -->
 ## Visão geral
 
-Duration: 5
 
 Ao concluir este guia, você poderá testar o Snowpark para Python dentro da interface do Snowflake, e vai ter uma compreensão melhor de como realizar tarefas essenciais de engenharia de dados usando o Snowpark em uma planilha Snowflake Python.
 
@@ -46,7 +45,6 @@ Um conjunto de dados preparado que pode ser usado em análises e aplicações ma
 <!-- ------------------------ -->
 ## Introdução
 
-Duration: 10
 
 ### Criar uma conta de avaliação Snowflake
 
@@ -69,7 +67,6 @@ O botão acima vai levar você até a página de avaliação intitulada **Introd
 <!-- ------------------------ -->
 ## Carregar dados de tabelas do Snowflake nos DataFrames do Snowpark
 
-Duration: 1
 
 Primeiro, vamos importar a biblioteca Snowpark Python.
 
@@ -80,7 +77,6 @@ import snowflake.snowpark as snowpark
 
 ### Carregar dados agregados de despesas e receitas da campanha
 
-Duration: 3
 
 A tabela campaign spend contém dados de cliques em anúncios que foram agregados para mostrar as despesas diárias em diferentes canais de anúncios digitais, incluindo mecanismos de busca, redes sociais, emails e vídeos. A tabela revenue contém dados de receita de 10 anos.
 
@@ -103,7 +99,6 @@ DICA: saiba mais sobre os [DataFrames do Snowpark](https://docs.snowflake.com/pt
 <!-- ------------------------ -->
 ## Transformações de dados
 
-Duration: 10
 
 Nesta seção, vamos executar uma série de transformações, incluindo agregações e combinação de dois dataframes.
 
@@ -204,7 +199,6 @@ Aqui demonstramos o resultado da guia **Output** após executar a planilha.
 <!-- ------------------------ -->
 ## Salvar os dados transformados
 
-Duration: 1
 
 Vamos salvar os dados transformados em uma tabela Snowflake chamada ***SPEND_AND_REVENUE_PER_MONTH*** para que eles possam ser usados para análise e/ou treinamento de modelos.
 
@@ -215,7 +209,6 @@ snow_df_spend_and_revenue_per_month.write.mode('overwrite').save_as_table('SPEND
 <!-- ------------------------ -->
 ## Visualização e retorno de dados transformados
 
-Duration: 1
 
 Um dos valores retornados de uma planilha Python é do tipo ***Table()*** e, no nosso caso, isso permitirá que você exiba e retorne os dados transformados como um Dataframe do Snowpark.
 
@@ -234,7 +227,6 @@ Aqui demonstramos o resultado da guia **Results** após executar a planilha.
 <!-- ------------------------ -->
 ## Implementação como um procedimento armazenado
 
-Duration: 2
 
 Como alternativa, também é possível implementar essa planilha como um procedimento armazenado Python que você pode agendar usando o [Snowflake Tasks](https://docs.snowflake.com/pt/user-guide/tasks-intro), por exemplo. Para implementar essa planilha, clique em **Deploy** no canto superior direito e siga as instruções abaixo.
 

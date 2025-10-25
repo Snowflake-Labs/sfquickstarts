@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-Duration: 1
 
 ### Overview
 In this Quickstart guide, we will train a model using Snowflake ML Functions for Credit card fraud detection. Fraud Detection involves a range of methods and techniques aimed at preventing fraudulent purchases, both online and in-store. The goal is to verify the legitimacy of the transaction and ensure that the true cardholder is involved. Depending on the detection techniques used one may address questions about the cardholder's identity and intentions either in real-time or after the transaction has occurred. Thus, credit card fraud detection serves as both a preventative measure against payment fraud and a method for investigating past transactions. We will be walking through a use case where the ML Capabilities of the Snowflake Data Cloud will be leveraged for investigating the past transactions.
@@ -34,7 +33,6 @@ How to render a map and plot in the Streamlit app
 
 ## Setup Snowflake
 <!-- ------------------------ -->
-Duration: 5
 
 You will use  Snowsight, the Snowflake web interface, to only create an initial database and schema that needs to be a prerequisite for Notebooks. And then we will be carrying the rest of the execution within Snowflake Notebooks.
 

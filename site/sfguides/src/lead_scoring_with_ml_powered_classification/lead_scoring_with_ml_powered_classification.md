@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Lead Scoring with ML-Powered Classification
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Many customers use Snowflake as the basis of their [Customer
 360](https://www.snowflake.com/enable-customer-360-with-snowflake/) -
@@ -46,7 +45,6 @@ teams can build and activate audiences.
 
 <!-- ------------------------ -->
 ## Prepare Your Environment
-Duration: 8
 
 If you do not have a Snowflake account, you can register for a [Snowflake free 30-day trial](https://trial.snowflake.com). The cloud provider (AWS, Azure, Google Cloud), and Region (US East, EU, e.g.) do _not_ matter for this lab. However, we suggest you select the region which is physically closest to you.
 
@@ -178,7 +176,6 @@ select * from customers;
 ```
 
 ## Prepare data and create the model
-Duration: 4
 
 Now we have data that mimics what we might have after a company has
 created a Customer 360. We have demographic data and a total of all
@@ -257,7 +254,6 @@ SELECT * FROM customer_predictions;
 ```
 
 ## Creating audiences
-Duration: 3
 
 Once we have run these predictions, we can use the predictions to
 build audiences. In some flows, the audiences could be saved, or a
@@ -307,7 +303,6 @@ where c.join_date<'2024-02-11'::date and predictions:class='GOLD'
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 2
 
 As we have seen in this Quickstart, Snowflake's [ML-Powered
 Analysis](https://docs.snowflake.com/en/guides-overview-analysis)

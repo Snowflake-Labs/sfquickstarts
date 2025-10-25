@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## 개요
 
-Duration: 1
 
 [Snowpark API](https://docs.snowflake.com/ko/developer-guide/snowpark/index.html)를 사용하여 SQL 문 대신 오브젝트(예: [DataFrame](https://docs.snowflake.com/ko/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrame.html))를 사용하는 코드를 작성하여 데이터를 쿼리하고 조작할 수 있습니다. Snowpark는 복잡한 데이터 파이프라인을 쉽게 구축할 수 있도록 설계되었습니다. 이를 통해 데이터를 이동하지 않고도 Snowflake와 직접 상호 작용할 수 있습니다. Snowpark API를 사용할 때 라이브러리는 Snowflake에서 여러분의 코드를 업로드하고 실행합니다. 따라서 처리를 위해 별도의 시스템으로 데이터를 이동할 필요가 없습니다.
 
@@ -41,7 +40,6 @@ Snowpark는 Java 11에서 실행되도록 컴파일된 코드를 지원합니다
 <!-- ------------------------ -->
 ## 리포지토리 다운로드
 
-Duration: 5
 
 Snowflake GitHub 리포지토리에서 데모를 찾을 수 있습니다. Git을 설치한 다음 여러분의 터미널을 사용하여 리포지토리를 복제할 수 있습니다.
 
@@ -75,7 +73,6 @@ Snowflake GitHub 리포지토리에서 데모를 찾을 수 있습니다. Git을
 <!-- ------------------------ -->
 ## Snowflake와의 연결을 위한 설정 구성
 
-Duration: 5
 
 데모 디렉터리에는 예시 코드가 Snowflake와 연결하기 위해 [세션 생성](https://docs.snowflake.com/ko/developer-guide/snowpark/creating-session.html)에 사용하는 `snowflake_connection.properties` 파일이 포함되어 있습니다. 코드가 여러분의 Snowflake 계정과 연결될 수 있도록 이러한 속성을 편집해야 합니다.
 
@@ -101,7 +98,6 @@ SCHEMA = my_schema
 <!-- ------------------------ -->
 ## Snowflake 연결
 
-Duration: 5
 
 이 단계에서는 여러분이 Snowflake를 데모 코드 및 연결 속성과 연결할 수 있음을 확인하겠습니다.
 
@@ -161,7 +157,6 @@ HelloWorld 애플리케이션이 성공적으로 실행되면 다음과 같은 �
 <!-- ------------------------ -->
 ## 데모를 위한 데이터 파일 및 라이브러리 다운로드
 
-Duration: 10
 
 이 단계에서는 앞으로 생성할 사용자 정의 함수를 실행하기 위해 필요한 샘플 데이터 파일과 라이브러리를 다운로드하겠습니다. 이 데모는 [CoreNLP 프로젝트](https://stanfordnlp.github.io/CoreNLP/)에서 가져온 [sentiment140](https://www.kaggle.com/kazanova/sentiment140) 데이터 세트와 라이브러리를 사용합니다.
 
@@ -205,7 +200,6 @@ stanford-corenlp-3.6.0-models.jar
 <!-- ------------------------ -->
 ## 내부 스테이지에 데이터 파일 및 라이브러리 업로드
 
-Duration: 20
 
 이 섹션에서는 `UDFDemoSetup.scala` 예시를 실행하여 데이터 파일과 라이브러리를 저장하기 위한 [내부 스테이지](https://docs.snowflake.com/ko/user-guide/data-load-local-file-system-create-stage.html)를 생성한 다음 이러한 파일을 스테이지에 업로드하겠습니다.
 
@@ -337,7 +331,6 @@ UDFDemoSetup 애플리케이션이 성공적으로 실행된다면 다음을 읽
 <!-- ------------------------ -->
 ## UDF 데모 실행
 
-Duration: 10
 
 이 단계에서는 `UDFDemo.scala` 데모 애플리케이션을 실행하여 UDF(사용자 정의 함수)를 생성하고 호출하겠습니다. Snowpark 라이브러리가 이러한 작업을 어떻게 수행하는지 확인하기 위해 다음 주제를 읽어 예시와 출력을 보다 자세하게 확인하십시오.
 
@@ -364,7 +357,6 @@ sbt "runMain UDFDemo"
 <!-- ------------------------ -->
 ## 스테이지에서 데이터 로드 및 DataFrame 생성
 
-Duration: 5
 
 `collectTweetData` 메서드는 `DataFrame`을 생성하여 [스테이지에 있는 파일에서 CSV 데이터를 읽습니다](https://docs.snowflake.com/ko/developer-guide/snowpark/working-with-dataframes.html#label-snowpark-dataframe-stages). [DataFrameReader](https://docs.snowflake.com/ko/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/DataFrameReader.html) 오브젝트로 이러한 작업을 수행합니다.
 
@@ -443,7 +435,6 @@ Duration: 5
 <!-- ------------------------ -->
 ## UDF 정의
 
-Duration: 5
 
 `createUDF` 메서드는 감정을 위해 트윗을 분석하는 UDF의 종속성을 설정한 다음 Snowflake에서 UDF를 생성합니다.
 
@@ -516,7 +507,6 @@ Duration: 5
 <!-- ------------------------ -->
 ## 트윗 처리를 위해 UDF 사용
 
-Duration: 5
 
 `processHappyTweets` 메서드는 UDF를 사용하여 어떤 트윗이 행복한지 발견하기 위해 트윗 텍스트를 분석합니다.
 
@@ -591,7 +581,6 @@ Duration: 5
 <!-- ------------------------ -->
 ## Scala 코드에서 저장 프로시저 생성
 
-Duration: 5
 
 이 단계에서는 방금 실행했던 코드를 가져와 이로부터 저장 프로시저를 생성하겠습니다. 이를 위해 Scala 코드를 Snowflake 워크시트로 복사하고 코드를 SQL 문에서 래핑한 다음 이를 실행하여 저장 프로시저를 생성하겠습니다.
 
@@ -664,7 +653,6 @@ call discoverHappyTweets();
 <!-- ------------------------ -->
 ## 종료 및 다음 단계
 
-Duration: 1
 
 축하드립니다! Snowpark를 사용하여 트윗을 대상으로 감정 분석을 수행했습니다. 이 가이드를 위해 트윗의 샘플 데이터 세트를 사용했습니다. 새로운 트윗이 작성됨에 따라 이를 자동으로 수집하고자 한다면 [Snowflake로 Twitter 데이터 자동 수집](/guide/auto_ingest_twitter_data/) 가이드를 따르십시오.
 

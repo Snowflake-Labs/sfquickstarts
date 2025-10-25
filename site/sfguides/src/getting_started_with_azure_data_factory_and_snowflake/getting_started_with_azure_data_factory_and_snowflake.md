@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Azure Data Factory and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 Azure Data Factory serves as a central orchestrator for managing data tasks, especially in ETL processes. It empowers businesses to seamlessly manage data movement through a code-free UI for intuitive authoring and single-pane-of-glass monitoring and management. By streamlining these workflows, Azure Data Factory enables organizations to harness their data assets effectively, driving informed decision-making and operational efficiency in today's data-centric landscape.
 
@@ -42,14 +41,12 @@ The end-to-end workflow will look like this:
 
 <!-- ------------------------ -->
 ## Use Case
-Duration: 5
 
 As a retail analyst, imagine effortlessly unraveling your company's sales performance with Azure Data Factory and Snowflake. Your sales data, stored in Azure SQL, seamlessly flows into Snowflake, where you can conduct comprehensive analyses with unprecedented speed and scalability. A combination of GUI and scripting-based interfaces allows anyone, no matter their skillset or preferences, to easily orchestrate data pipelines. With pushdown compute capabilities, choose between SQL and Python to effortlessly sift through the data within Snowflake, revealing invaluable insights. 
 
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 5
 
 The first thing to do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet. You are using the AccountAdmin role here for demo purposes, but in production you will likely use a different role.
 
@@ -205,7 +202,6 @@ The result should look like this screenshot, with tables, stored procedure, and 
 
 <!-- ------------------------ -->
 ## Set Up Azure Environment
-Duration: 15
 
 ### Set Up Azure SQL with AdventureWorks Data
 
@@ -261,7 +257,6 @@ Behind the scenes, ADF will use Blob Storage to stage data as it is moved.  So y
 
 <!-- ------------------------ -->
 ## Configure the Linked Services
-Duration: 10
 
 Now you want to get into the ADF Studio.  Go to the ADF resource you created and click Launch Studio from the Overview tab.  This will open up the Data Factory Studio.
 
@@ -289,7 +284,6 @@ Linked Services act as the connection strings to any data sources or destination
 
 <!-- ------------------------ -->
 ## Create Source & Sink Datasets
-Duration: 10
 
 Next you need to create datasets that map the data inside the linked services.  In this case you'll need to set up 5 source datasets for the Azure SQL tables, and 5 sink datasets for the Snowflake tables.
 
@@ -318,7 +312,6 @@ Again repeat this process for the following:
 
 <!-- ------------------------ -->
 ## Create the Pipeline
-Duration: 30
 
 Now it’s time to set up the pipeline that will control the flow of the data.
 
@@ -381,7 +374,6 @@ Then go into your Snowflake instance and validate that the tables have data.
 
 <!-- ------------------------ -->
 ## Triggers and Monitors
-Duration: 5
 
 ADF is designed to be an automated pipeline orchestrator. 
 
@@ -399,7 +391,6 @@ Once the trigger has activated and the pipeline is running, you can monitor the 
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 Congratulations! You've successfully set up a data pipeline ingesting data from Azure SQL to Snowflake, using CopyData, DataFlows, and Script activities. You now have bulk data ingestion occuring at a scheduled interval, and your AdventureWorks retail data is prepared for analytics, machine learning, and data applications.
 

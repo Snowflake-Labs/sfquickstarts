@@ -11,7 +11,6 @@ authors: Vino Duraisamy, Doris Lee
 <!-- ------------------------ -->
 ## Overview
 
-Duration: 5
 
 [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) offer an interactive, cell-based programming environment for Python and SQL. With a Snowflake Notebook, you can perform exploratory data analysis, experiment with feature engineering for machine learning, and perform other data science tasks within Snowflake.
 
@@ -51,7 +50,6 @@ Here is a summary of what you will be able to learn in each step by following th
 <!-- ------------------------ -->
 ## Load demo notebooks to Snowflake
 
-Duration: 5
 
 You can create a Snowflake Notebook directly from the Snowsight UI or upload an existing IPython Notebook to Snowflake.
 
@@ -76,7 +74,6 @@ The notebook files are available for download as `.ipynb` files in the demo repo
 <!-- ------------------------ -->
 ## Running Snowflake Notebooks
 
-Duration: 5
 
 Let's walk through the first demo notebook in Snowflake now.
 
@@ -189,7 +186,6 @@ WHERE RATING > 5
 <!-- ------------------------ -->
 ## Create Interactive Streamlit App
 
-Duration: 5
 
 Putting all our learnings together, let's build a streamlit app to explore how different parameters impact the shape of the data distribution histogram.
 
@@ -236,7 +232,6 @@ As you adjust the slider values, you will see that cells below re-executes and t
 <!-- ------------------------ -->
 ## Keyboard Shortcuts 
 
-Duration: 1
 
 These shortcuts can help you navigate around your notebook more quickly. 
 
@@ -255,7 +250,6 @@ You can view the full list of shortcuts by clicking the `?` button on the bottom
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully completed the Getting Started with Snowflake Notebooks quickstart guide. 
 

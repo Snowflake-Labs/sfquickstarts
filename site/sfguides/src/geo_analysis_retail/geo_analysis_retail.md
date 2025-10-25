@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Geospatial Analytics for Retail with Snowflake and CARTO
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the `GEOGRAPHY` data type, help you understand geospatial formats supported by Snowflake, walk you through the use of a variety of functions on a sample geospatial data set from the Snowflake Marketplace, and show you how to analyze and visualize your Snowflake data using CARTO's Analytics Toolbox.
 
@@ -43,7 +42,6 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 
 <!-- ------------------------ -->
 ## Acquire Marketplace Data and Analytics Toolbox
-Duration: 20
 
 The first step in the guide is to acquire a geospatial data set that you can freely use to explore the basics of Snowflake's geospatial functionality. The best place to acquire this data is the Snowflake Marketplace!
 
@@ -124,7 +122,6 @@ Congratulations! Now you have data and the analytics toolbox!
 
 <!-- ------------------------ -->
 ## Connect Snowflake and CARTO
-Duration: 5
 
 Let's connect your Snowflake to CARTO so you can run and visualize the queries in the following exercises of this workshop.
 
@@ -161,7 +158,6 @@ Once you have entered the parameters, you can click the Connect button. CARTO wi
 
 <!-- ------------------------ -->
 ## Understand Geospatial Formats
-Duration: 20
 
 Now we will run different queries to understand how the `GEOGRAPHY` data type works in Snowflake. Navigate to the query editor by clicking on `Worksheets` on the top left navigation bar.
 
@@ -282,7 +278,6 @@ Notice how WKB is incomprehensible to a human reader. Other than the length of t
 
 <!-- ------------------------ -->
 ## Unload/Load Data
-Duration: 20
 
 Now that you understand the different output formats, you can create new files from the electronics view, then load those files into new tables with the `GEOGRAPHY` data type. You will also encounter your first examples of geospatial parsers and constructors.
 
@@ -414,7 +409,6 @@ select * from electronics_points;
 
 <!-- ------------------------ -->
 ## Calculations and More Constructors
-Duration: 20
 
 Now that you have the basic understand of how the `GEOGRAPHY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walkthrough a scenario that requires you to run and visualize geospatial queries to answer some questions.
 
@@ -625,7 +619,6 @@ Now move to the next section to see how you can optimize your shopping trip.
 
 <!-- ------------------------ -->
 ## Joins
-Duration: 10
 
 In the previous section, all of your queries to find the closest Best Buy, liquor store, and coffee shop were based on proximity to your Times Square apartment. But wouldn't it make more sense to see, for example, if there was a liquor store and/or coffee shop closer to Best Buy? You can use geospatial functions in a table join to find out.
 
@@ -761,7 +754,6 @@ Nice! 1537 meters, which is a savings of about 583 meters, or a third of a mile.
 
 <!-- ------------------------ -->
 ## Additional Calculations and Constructors
-Duration: 15
 
 The `LINESTRING` object that was created in the previous section looks like a nice, clean, four-sided polygon. As it turns out, a `POLYGON` is another geospatial object type that you can construct and work with. Where you can think of a `LINESTRING` as a border of a shape, a `POLYGON` is the filled version of the shape itself. The key thing about a `POLYGON` is that it must end at its beginning, where a `LINESTRING` does not need to return to the starting point.
 
@@ -848,7 +840,6 @@ Nice! That query returned the same 1537 meters you got before as the distance of
 
 <!-- ------------------------ -->
 ## Using Spatial Indexes
-Duration: 15
 
 ### The Scenario, Part 2
 The lease for our very nice Times Square apartment has ended so we have to find a new apartment! You love coffee shops, specifically Starbucks, so let's find an area where we have the MOST Starbuck locations.
@@ -897,7 +888,6 @@ Congratulations! You have borrowed your search!
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 5
 
 In this guide, you acquired geospatial data from the Snowflake Marketplace, explored how the `GEOGRAPHY` data type and its associated formats work, created data files with geospatial data in it, loaded those files into new tables with `GEOGRAPHY` typed columns, and queried geospatial data using parser, constructor, transformation and calculation functions on single tables and multiple tables with joins. You then saw how newly constructed geospatial objects could be visualized in CARTO!
 

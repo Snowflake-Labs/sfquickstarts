@@ -12,7 +12,6 @@ authors: Dash Desai
 
 ## Overview
 
-Duration: 4
 
 This guide outlines the process for creating a video search and summarization workflow in Snowflake Notebook on Container Runtime. Videos stored in the cloud storage are processed to generate embeddings using the Twelve Labs API, with parallelization achieved through a Snowpark Python User Defined Table Function (UDTF). These embeddings are stored in a Snowflake table using the VECTOR datatype, enabling efficient similarity searches with VECTOR_COSINE_SIMILARITY. Text queries are converted into embeddings using the same API to find the top N matching video clips. Audio from these clips is extracted using MoviePy and transcribed with Whisper. Finally, Cortex Complete is used to summarize the results, including video details, timestamps, and transcripts.
 
@@ -65,7 +64,6 @@ AI videos processing and search app using Twelve Labs, Whisper, Streamlit, and S
 <!-- ------------------------ -->
 ## Setup
 
-Duration: 10 
 
 **Step 1.** In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-ai-video-search-with-snowflake-and-twelveLabs/blob/main/setup.sql) to execute all statements in order from top to bottom.
 
@@ -101,7 +99,6 @@ Duration: 10
 <!-- ------------------------ -->
 ## Run Notebook
 
-Duration: 15
 
 > aside negative
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
@@ -183,7 +180,6 @@ In all of the following examples, notice the highlighted clip start and end time
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Duration: 1
 
 Congratulations! You've successfully created a interactive AI videos processing and search app using Twelve Labs, Whisper, Streamlit, and Snowflake Cortex in Snowflake Notebook on Container Runtime running in Snowflake.
 

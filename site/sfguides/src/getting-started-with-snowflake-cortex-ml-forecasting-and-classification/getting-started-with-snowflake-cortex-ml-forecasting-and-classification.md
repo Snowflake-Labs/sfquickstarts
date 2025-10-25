@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowflake ML Forecasting and Classification
 <!-- ------------------------ -->
 ## Overview 
-Duration: 3
 
 One of the most critical activities that a Data/Business Analyst has to perform is to produce recommendations to their business stakeholders based upon the insights they have gleaned from their data. In practice, this means that they are often required to build models to: identify trends, identify abnormalities within their data, and classify users or entities into one of many groups. However, Analysts are often impeded from creating the best models possible due to the depth of statistical and machine learning knowledge required to implement them in practice. Further, python or other programming frameworks may be unfamiliar to Analysts who write SQL, and the nuances of fine-tuning a model may require expert knowledge that may be out of reach.
 For these use cases, Snowflake has developed a set of SQL based ML Functions that implement machine learning models on the user's behalf. As of June 2024, four ML Functions are available:
@@ -52,7 +51,6 @@ Let's get started!
 
 <!-- ------------------------ -->
 ## Setting Up Data in Snowflake
-Duration: 5
 
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight), the Snowflake web interface, to:
 - Create Snowflake objects (i.e warehouse, database, schema, etc..)
@@ -126,7 +124,6 @@ SELECT * FROM quickstart.ml_functions.bank_marketing LIMIT 100;
 ```
 <!-- ------------------------ -->
 ## Exploratory Data Analysis
-Duration: 3
 
 Before building our model, let's first visualize our data to get a feel for what it looks like and get a sense of what variables we will be working with. Follow along below:
 ```sql
@@ -154,7 +151,6 @@ Lastly, on the right hand side of the result set, you'll notice that there are m
 ## Classification
 
 ### Step 1: Preparing Training and Inference Views
-Duration: 2
 
 Now that we have a sense of what our data looks like, let's prepare our dataset for both training and inference purposes.
 ```sql
@@ -194,7 +190,6 @@ In the code above, we made use of the both the `Uniform` and the `Random` functi
 In the next section, we will use these views to build our model and make predictions.
 
 ### Step 2: Use Snowflake AI & ML Studio
-Duration: 2
 
 We’ll use the new **Snowflake AI & ML Studio** to set us up for classification.
 
@@ -227,7 +222,6 @@ The results? A worksheet with all of the SQL you need to train your model, gener
 <img src ="assets/cortex_class_sql.png">
 
 ### Step 2: Generate Predictions
-Duration: 3
 
 Use the SQL generated in the previous section to train a model, generate predictions, evaluate your model and generate predictions. 
 First, train your model: 
@@ -277,7 +271,6 @@ FROM My_classification_2024_04_15;
 Note that each row contains `CUSTOMER_ID`, so that we can understand which specific customers will subscribe _in addition_ to understanding in aggregate how many customers will subscribe.
 
 ### Step 3: Evaluating our Classifier and Understanding Feature Importances
-Duration: 6
 
 Now that we have built our classifier, we can begin to evaluate it to better understand both its performance as well as the primary factors within the dataset that were driving the predictions. Follow along below to see the various commands you may run to evalute your own classifier:
 
@@ -331,7 +324,6 @@ Now that we’ve built a model to understand whether specific customers are like
 To do this, we’ll train a forecasting model then use it to generate predictions – and evaluate the model to understand how accurate those predictions are likely to be. 
 
 ### Step 1: Visualize Data and Prepare for Forecasting
-Duration: 3
 
 In this scenario, we want to forecast the number of total subscriptions per day – for customers aged 40 and under, and aged 40 and up. This helps us better prepare for and market to our distinct customer segments. 
 
@@ -384,7 +376,6 @@ WHERE timestamp NOT IN (SELECT timestamp FROM forecast_training);
 ```
 
 ### Step 2: Use Snowflake AI & ML Studio 
-Duration: 3
 
 We’ll use the new Snowflake AI & ML Studio to set us up for forecasting. 
 
@@ -429,7 +420,6 @@ The results? A worksheet with all of the SQL you need to train your model, gener
 <img src ="assets/cortex_forecast_sql.png">
 
 ### Step 3: Generate Predictions and Visualize 
-Duration: 3
 
 **Once you’ve run the steps under `SETUP` in your worksheet,** run this step in your worksheet to train your model: 
 ```sql
@@ -483,7 +473,6 @@ Run the above SQL then click on “Chart” in the results pane. Be sure to add 
 <img src ="assets/image28.png">
 
 ### Step 4: Evaluate the Model 
-Duration: 3
 
 Great, we’ve trained a model and used it to generate forecasts. Before we rely on this model to make recurring business decisions, let’s see how well it performs. 
 
@@ -513,7 +502,6 @@ The results indicate that `aggregated_endogenous_trend_features` are the most im
 We now know how well our model is likely to perform (accuracy) and what is influencing our model’s predictions! 
 
 ### Step 5: Use Tasks to Automate Training and Prediction
-Duration: 3
 
 Now that we’ve gotten comfortable with our model, we can schedule our model to train and predict on a regular basis. This is helpful when our business needs predictions each week to help make planning decisions. These steps are not included in the worksheet you produced, so you’ll need to copy these into your worksheet.
 
@@ -562,7 +550,6 @@ DROP TASK predict_task;
 ```
 
 ## Conclusion and Resources
-Duration: 1
 
 You did it! You've successfully built and evaluated Snowflake ML Classification and Forecast models!
 

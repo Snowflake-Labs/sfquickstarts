@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Tokenization in Snowflake Using Python UDFs (Python Camouflage)
 <!-- ------------------------ -->
 ## Python Camouflage Overview
-Duration: 1
 
 Project Python Camouflage provides a basic framework for tokenization in Snowflake that allows customers to obfuscate (or *mask*) personal identifiable information (PII), while also allowing the masked data to be used in joins and other operations that require data consistency. Python Camouflage uses Snowflake Python UDFs (user defined functions) and Python encryption libraries to mask data natively in Snowflake. This version of Python Camouflage is a working MVP (minimum viable product) that others may embrace and extend. It is not a full-featured solution for obfuscating PII. Rather, it is a demo that can serve as a starting point for customers who want to have the benefits of tokenization and are willing to roll up their sleeves a bit to get what they want, but do not want to turn to a commercial solution or use external functions. 
 
@@ -39,7 +38,6 @@ Because this demo has quite a few code snippets, we recommend putting the whole 
 
 <!-- ------------------------ -->
 ## Understanding Tokenization
-Duration: 2
 
 The key to understanding this project is understanding the difference between “masking” and “tokenization.” These terms (as well as “obfuscation,” and even sometimes “encryption”) are often used interchangeably. However, there is a formal distinction between them.
 
@@ -53,7 +51,6 @@ Let's get started!
 
 <!-- ------------------------ -->
 ## Set up Roles, the Database, Schema, and Warehouse
-Duration: 3
 
 This QuickStart requires quite a few objects. Let's create those and grant the rights to them.
 
@@ -98,7 +95,6 @@ create stage python_libs;
 
 <!-- ------------------------ -->
 ## Set Up a Stage and Upload FF3 Python Libraries
-Duration: 5
 
 The libraries we will use for FF3 tokenization are not included in Snowflake's default set, so we need to get those, package them for use in Snowflake, and upload them to a Snowflake Stage where they can be accessed by our user-defined functions (UDFs) that will do the heavy lifting later. Let's start by making sure our stage is ready by running a simple list command.
 
@@ -144,7 +140,6 @@ ls @python_libs; -- should now contain the ff3.zip file
 
 <!-- ------------------------ -->
 ## Tags, Source and Target Table Preparation, Granting Rights
-Duration: 3
 
 In addition to the database, schema, and stage objects, we will  use tags and some demo data in a couple tables. We will create those now. Let's start with the tags.
 
@@ -229,7 +224,6 @@ grant all privileges on schema ff3_testing_db.ff3_testing_schema to role masked;
 
 <!-- ------------------------ -->
 ## Setting Up Encryption Keys – Caution!
-Duration: 2
 
 Under the covers, FF3 is using encryption to achieve results. As with all encryption, there are keys, which are secrets. For this demo, the keys will be set explicitly, and we will give example keys here as part of the demo. The actual requirement is that they be present as a session variable. These keys can then be populated any way that is appropriate. In a real world setting. they may be retrieved programmatically via an external function from an external KMS or another vault.  
 
@@ -265,7 +259,6 @@ select $userkeys; -- check the results
 
 <!-- ------------------------ -->
 ## Installing and Testing String Tokenization UDFs
-Duration: 7
 
 All the real tokenization work is done in UDFs leveraging Python. We will work with these UDFs in a few stages. First, we will take an example using strings (specifically emails), and walk through it step-by-step. Then we will install the remaining UDFs for the data types that are currently supported in this demo code. Finally, we will use the tables and tags we created in the first steps to apply these UDFs to something more like a real-world demo.
 
@@ -640,7 +633,6 @@ This section provides a first glimpse of the potential of using these FF3 capabi
 
 <!-- ------------------------ -->
 ## Install the Python-based Tokenization UDFs for Other Strings, Numbers (Integer + Decimal), and Floats
-Duration: 3
 
 Now that we understand the basic concepts, we will install the UDFs needed for all the other data types. Then we will test them. Get your copy &amp; paste muscles warmed up!
 
@@ -1314,7 +1306,6 @@ $$;
 
 <!-- ------------------------ -->
 ## Test the Python-based Tokenization UDFs for Other Strings, Numbers (Integer  &amp; Decimal), and Floats
-Duration: 5
 
 Let's be sure all the UDFs were properly created:
 ``` */
@@ -1437,7 +1428,6 @@ This gives us a full set of tools, but now we want to see how those tools can be
 
 <!-- ------------------------ -->
 ## Create Masking Policies and Grant More Rights
-Duration: 4
 
 The final step before our last big walkthrough is to create a number of policies and grant rights on those and the other UDFs to all the roles that will need to interact with the policies to see these controls applied automatically.
 
@@ -1623,7 +1613,6 @@ grant all privileges on function format_ff3_string_usphone_pass3(string) to role
 
 <!-- ------------------------ -->
 ## Walk-through the Full Demo of Tokenization Applied Automatically
-Duration: 7
 
 Up to this point, we have called the UDFs directly to manipulate data. That is not a very real-world way to use this. Instead, you would want to have this applied in the background so that users don't need to do anything special. That is what we will explore in these steps.
 
@@ -1763,7 +1752,6 @@ select  * from ff3_pass3_target1; -- shows data in SQL join format
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Hopefully this demo has given you a glimpse into how tokenization can be achieved leveraging Snowflake's Python support. Project Python Camouflage aims to give a working MVP for tokenization in Snowflake using Python. The problem this aims to solve is allowing you to obfuscate (or “mask”) PII, while at the same time not losing the ability to use that data in joins and other operations where the consistency of the data through operations is required. As an MVP, this is not meant to offer a complete solution to the problem. Rather, this is a framework that you can embrace and extend.
 

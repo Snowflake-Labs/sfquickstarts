@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 #  Tidymodel Prediction Workflows Inside Snowflake with Orbital
 
 ## Overview
-Duration: 1
 
 This Quickstart will demonstrate how to run model predictions inside Snowflake
 using the [orbital R package](https://orbital.tidymodels.org/) and the [Snowflake Native Posit Workbench App](https://app.snowflake.com/marketplace/listing/GZTSZMCB69/posit-pbc-posit-workbench?search=posit+pbc).
@@ -53,7 +52,6 @@ or look at the materials provided in the accompanying repository:
 - Access to [Posit Connect](https://posit.co/products/enterprise/connect/)
 
 ## Setup
-Duration: 5
 
 Before we begin there are a few components we need to prepare. We need to:
 
@@ -229,7 +227,6 @@ library(ggplot2)
 ```
 
 ## Access and Prepare Data with R
-Duration: 5
 
 Before starting the modeling process, we need to connect to our database and load
 the loan data.
@@ -330,7 +327,6 @@ lendingclub_prep <-
 `collect()` executes a query and returns the _entire_ result as a tibble, so `lendingclub_prep` now contains our entire filtered sample.
 
 ## Create Model with tidymodels
-Duration: 10
 
 ### Create a Workflow
 
@@ -507,7 +503,6 @@ At this point, we've:
 Now, we're ready to deploy the model with orbital and Snowflake.
 
 ## Create predictions
-Duration: 10
 
 The [orbital package](https://orbital.tidymodels.org/) allows you to run tidymodels workflow predictions inside
 databases, including Snowflake, substantially speeding up the prediction process.
@@ -628,7 +623,6 @@ Time difference of 3.027164 secs
 2,260,702 predictions in just 3.02 seconds—thanks to Snowflake and orbital!
 
 ## Deploy Model
-Duration: 5
 
 Next, we'll deploy our model so others can use it. We have a couple of options.
 
@@ -821,7 +815,6 @@ with Snowflake, including Snowsight, as shown below.
 ![](assets/snowflake/snowsight-view.png)
 
 ## Refitting Models with Posit Connect
-Duration: 1
 
 As new data comes in over time, it is useful to refit our model.
 We can refit periodically, monitor performance, and store the best-performing
@@ -831,7 +824,6 @@ but we've put together sample code for the process in [this Quarto document](htt
 [This blog post](https://posit.co/blog/running-tidymodel-prediction-workflows-inside-databases/) also covers the process.
 
 ## Conclusion and Resources
-Duration: 2
 
 ### Conclusion
 

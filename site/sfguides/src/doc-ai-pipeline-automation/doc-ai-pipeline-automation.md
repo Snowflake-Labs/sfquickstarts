@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Document AI Pipeline Automation
 <!-- ------------------------ -->
 ## Overview 
-Duration: 30
 
 This QuickStart help you understand and build the Snowflake Document AI Data Extraction & Validation Pipeline, designed for seamless and reusable document processing. The pipeline enables users to load their files into a Snowflake stage and leverages streams, tasks, and Python-based procedures for efficient data extraction, validation, and downstream integration. It can be easily adapted to work with multiple Document AI models by creating an appropriate end table to capture the final data points.
 
@@ -48,7 +47,6 @@ The pipeline ensures that documents meet business expectations through pre-proce
 
 <!-- ------------------------ -->
 ## Pre-Processing 
-Duration: 2
 
 The pre-processing stage validates document attributes such as size and page count to ensure only processable documents proceed further. Criteria can be customized to align with business needs and Document AI guidelines, as outlined in the [Snowflake Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/preparing-documents)
 Files failing these checks are routed to a "Manual Review" stage, where users can review and, if necessary, resend documents for processing via a Streamlit app.
@@ -61,7 +59,6 @@ Documents are ingested from the Internal Stage and processed through a stream. A
 
 <!-- ------------------------ -->
 ## Create Tables, Stages & Metadata 
-Duration: 2
 
 The `DOC_AI_QuickStart.SQL` script is designed to set up the necessary environment for the Document AI pipeline. When executed in your Snowflake account, it will:
 

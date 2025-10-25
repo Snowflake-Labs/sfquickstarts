@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Sentiment Analysis Using Snowflake Cortex AI on Iceberg Tables
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 This guide is designed to help you learn how to bring artificial intelligence (AI) to open data lakehouses with Snowflake Cortex AI and Iceberg Tables.
 
@@ -49,7 +48,6 @@ This guide is designed to help you learn how to bring artificial intelligence (A
 
 <!-- ------------------------ -->
 ## Setup Snowflake
-Duration: 10
 
 ### Create Database and Warehouse
 Create a separate database and warehouse for this demo.
@@ -133,7 +131,6 @@ CREATE OR REPLACE ICEBERG TABLE demo.public.product_reviews (
 ```
 
 ## Load CSV files into Iceberg via Snowpark Python
-Duration: 5
 
 There are multiple ways to load new data into Snowflake-managed Iceberg Tables including INSERT, [COPY INTO](https://docs.snowflake.com/en/sql-reference/sql/copy-into-table), and [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto).
 
@@ -201,7 +198,6 @@ You now see metadata files and Parquet data files in your object storage, whethe
 ![iceberg_files](assets/iceberg_files.png)
 
 ## Snowflake Cortex LLM Functions
-Duration: 3
 
 Now you can query the Iceberg Table using LLM functions from Snowflake Cortex. Run the query below to calculate sentiment scores for product reviews.
 
@@ -226,7 +222,6 @@ UPDATE demo.public.product_reviews AS pr
 ```
 
 ## Create a CDC Pipeline
-Duration: 8
 
 Suppose new product reviews continue to be generated, stored as new CSV files, and you'd like to use Snowflake to automatically compute sentiment scores on new product reviews.
 
@@ -309,7 +304,6 @@ st.bar_chart(sql_reviews.to_df(), x='SENTIMENT_DIFF', y='PRODUCT_NAME')
 
 <!-- ------------------------ -->
 ## Access Iceberg Tables from Apache Spark
-Duration: 15
 
 Suppose another team that uses Spark wants to read the Snowflake-managed Iceberg Table using their Spark clusters. They can use the Snowflake Iceberg Catalog SDK to access snapshot information, and directly access data and metadata in object storage, all without using any Snowflake warehouses.
 
@@ -356,7 +350,6 @@ Download the [spark.ipynb notebook here](https://github.com/Snowflake-Labs/sf-sa
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 1
 
 To delete all of the objects created in this guide, you can drop the database, warehouse, and external volume.
 
@@ -375,7 +368,6 @@ conda remove -n iceberg-cortex-demo --all
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 Congratulations! You've successfully augmented an Iceberg open data lakehouse on Snowflake with Cortex.
 

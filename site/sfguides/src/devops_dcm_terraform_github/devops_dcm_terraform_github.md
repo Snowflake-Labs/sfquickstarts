@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 # DevOps: Database Change Management with Terraform and GitHub
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 <img src="assets/devops_dcm_terraform_github-1.png" width="600" />
 
@@ -70,7 +69,6 @@ You will need the following things before beginning:
 
 <!-- ------------------------ -->
 ## GitHub Overview
-Duration: 2
 
 <img src="assets/devops_dcm_terraform_github-2.png" width="250" />
 
@@ -94,7 +92,6 @@ This quickstart will be focused on the GitHub Actions service.
 
 <!-- ------------------------ -->
 ## Terraform Overview
-Duration: 6
 
 <img src="assets/devops_dcm_terraform_github-4.png" width="250" />
 
@@ -126,7 +123,6 @@ Some of the key features include (from [Why Terraform Cloud?](https://www.terraf
 
 <!-- ------------------------ -->
 ## Setup and Configure Terraform Cloud
-Duration: 8
 
 As discussed in the Overview section, you will need to have a Terraform Cloud Account for this quickstart. If you don't already have a Terraform Cloud account you can create on for free. Visit the [Create an account](https://app.terraform.io/signup/account) page to get started. After you create your account you'll be asked to provide an organization name.
 
@@ -190,7 +186,6 @@ Click on the "Create an API token" button, give your token a "Description" (like
 
 <!-- ------------------------ -->
 ## Create the Actions Workflow
-Duration: 8
 
 ### Create Actions Secrets
 Action Secrets in GitHub are used to securely store values/variables which will be used in your CI/CD pipelines. In this step we will create a secret to store the API token to Terraform Cloud.
@@ -264,7 +259,6 @@ A few things to point out from the YAML pipeline definition:
 
 <!-- ------------------------ -->
 ## Create Your First Database Migration
-Duration: 5
 
 Open up your cloned GitHub repository in your favorite IDE and create a new file in the root named `main.tf` with the following contents. *Please be sure to replace the organization name with your Terraform Cloud organization name.*
 
@@ -299,7 +293,6 @@ Then commit the new script and push the changes to your GitHub repository. By pu
 
 <!-- ------------------------ -->
 ## Confirm Changes Deployed to Snowflake
-Duration: 4
 
 By now your first database migration should have been successfully deployed to Snowflake, and you should now have a `DEMO_DB` database available. There a few different places that you should check to confirm that everything deployed successfully, or to help you debug in the event that an error happened.
 
@@ -321,7 +314,6 @@ Log in to your Snowflake account and you should see your new `DEMO_DB` database!
 
 <!-- ------------------------ -->
 ## Create Your Second Database Migration
-Duration: 4
 
 Now that we've successfully deployed our first change to Snowflake, it's time to make a second one. This time we will add a schema to the `DEMO_DB` and have it deployed through our automated pipeline.
 
@@ -341,7 +333,6 @@ Congratulations, you now have a working CI/CD pipeline with Terraform and Snowfl
 
 <!-- ------------------------ -->
 ## Bonus: Advanced Actions Workflow
-Duration: 10
 
 In the previous sections we created and tested a simple GitHub Actions workflow with Terraform. This section provides a more advanced workflow that you can test out. This one adds the capability for having Terraform validate and plan a change before it's actually deployed. This pipeline adds CI triggers that cause it to run when a Pull Request (PR) is created/updated. During that process it will run a `terraform plan` and stick the results in the PR itself for easy review. Please give it a try!
 
@@ -427,7 +418,6 @@ This worklow was adapted from [Automate Terraform with GitHub Actions](https://l
 
 <!-- ------------------------ -->
 ## Conclusion & Next Steps
-Duration: 4
 
 So now that you’ve got your first Snowflake CI/CD pipeline set up, what’s next? The software development life cycle, including CI/CD pipelines, gets much more complicated in the real-world. Best practices include pushing changes through a series of environments, adopting a branching strategy, and incorporating a comprehensive testing strategy, to name a few.
 

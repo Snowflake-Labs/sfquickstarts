@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## An Introduction to Tasty Bytes 
-Duration: 1
 <img src="assets/tasty_bytes_header.png"/>
 
 ### Overview
@@ -44,7 +43,6 @@ Upon finishing this Quickstart, you will have deployed the foundation required t
     - Role Based Access Control (RBAC)
 
 ## Setting up Tasty Bytes
-Duration: 6
 
 ### Overview
 For this Quickstart, you will use the Snowflake web interface known as Snowsight. If this is your first time leveraging Snowsight, we highly recommend taking a look at our [Snowsight Documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight) for a high-level walkthrough.
@@ -88,7 +86,6 @@ For this Quickstart, you will use the Snowflake web interface known as Snowsight
 ### Step 11 - Click Next -->
 
 ## Exploring the Tasty Bytes Foundation
-Duration: 2
 
 ### Overview
 With the Tasty Bytes Setup successful, we can now explore the Database, Roles and Warehouses we created. 
@@ -163,7 +160,6 @@ Amazing! Within a few minutes we now have a Tasty Bytes demo environment complet
 ### Step 7 - Click Next -->
 
 ## Powered by Tasty Bytes - Quickstarts
-Duration: 1
 
 ### Overview
 Congratulations! You have now completed the Tasty Bytes Foundational Setup!

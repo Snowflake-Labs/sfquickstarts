@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Microsoft Copilot Studio and Snowflake Cortex Agents
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 Microsoft Copilot Studio is a conversational AI platform that allows users to create and customize copilots, using a low-code, graphical interface, enabling them to build agents for various scenarios and integrate them with Microsoft 365 Copilot or as standalone applications.
 
@@ -285,7 +284,6 @@ Keep the **Snowflake power platform connection info** to reference when you conn
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 8
 
 
 ```sql
@@ -515,7 +513,6 @@ call call_cortex_agent_proc('what is the Initial discovery call with TechCorp In
 
 <!-- ------------------------ -->
 ## Configuring Copilot Agent
-Duration: 10
 
 **NOTE:** This quickstart shows how to set up the connectivity with **Triggers** in Copilot Studio, but you can also use **Tools** with a similar flow to use Cortex.
 
@@ -656,7 +653,6 @@ In the Body/statement parameter where we call the stored procedure remove the <>
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 ### Technical Considerations
 This quickstart showed you how to set up the connection to Cortex Agents from MS Copilots. In order to make for a more robust Copilot you will likely add additional triggers to other Agents or Knowledge Sources so that your Copilot is more versatile and can act on specific prompts/triggers.

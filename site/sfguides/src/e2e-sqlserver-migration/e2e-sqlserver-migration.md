@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # End-to-End Migration to Snowflake in Action: Data and Pipelines
 
 ## Overview
-Duration: 5
 
 Want to migrate to Snowflake in less than 90 minutes? Come to this hands-on lab. We will work through Snowflake's migration strategy and automation tools—for example, SnowConvert and Snowpark Migration Accelerator—to assess, move, and validate an entire pipeline with data into Snowflake. Our data will be in another data warehouse, a data lake, and even on prem. Can we move it into Snowflake? Our pipelines are written in Jupyter notebooks utilizing Spark. Can those fully exist in Snowflake? Can all of it happen in Snowflake? Let's find out.
 
@@ -41,7 +40,6 @@ Over time, they have decided to consider using Snowflake. They want to take one 
 AdventureWorks has decided to do a Proof of Concept (POC) with a single database. The goal is to move everything from this database into Snowflake, as well as at least one of the pipelines bringing data into this database and at least one of the reporting notebooks they have connected to this database.
 
 ## Assessment
-Duration: 10
 
 Assessing what you have and developing a plan is the most essential part of a migration. When done right, this will set you up for success over the remainder of the migration. Whether it’s one table, pipeline, or data warehouse, you need to have a plan that takes into account not just your data, but everything that interacts with your data. A successful migration is built at the beginning with a complete picture of what you want to migrate. With that assessment, comes a plan of attack on how to migrate.
 
@@ -129,7 +127,6 @@ We’ll walk through moving the following steps:
 While at the highest level, this phase focuses on moving or converting from the source to Snowflake, there will often be testing and additional pieces of code to assess as we move through it. Meaning that while we do this conversion, it will be iterative with the testing intermixed into the process.
 
 ## Database Code Conversion
-Duration: 5
 
 We will start by assessing what we have. SnowConvert.
 
@@ -345,7 +342,6 @@ Understanding what we have is essential to successfully completing a migration. 
 Since we have a good understanding of what needs to be done and it’s relatively small, let’s go ahead and attack this. Let’s resolve the issues that we have present. Before we do that, let’s take a look at the status in our object inventory. Select “GO TO DEPLOYMENT” in the application.
 
 ## Deployment and solve issues
-Duration: 20
 
 This will take you back to the inventory screen. It should look something like this:
 
@@ -692,7 +688,6 @@ Success! We have all of our tables and functions deployed. There was one view th
 Success again! We have officially deployed all of the schema to Snowflake. There’s one more thing we can do in the SnowConvert application, and that is move the data from the original SQL Server database into Snowflake. Select “GO TO DATA MIGRATION” at the bottom right of the screen.
 
 ## Data Migration
-Duration: 10
 
 The Data Migration page will give you the same catalog that you can see on the previous screens. For the migration of the data, note that only the data in tables will be migrated. The rest of the DDL is already present, but there is no “data” present in a view or a function, so the tables will be what is migrated. Also note that no data can be migrated to a table where the DDL wasn’t already successfully deployed. 
 
@@ -759,7 +754,6 @@ And you can generally see that most of these activities fit our **assess** -> **
 As we continue to walk through the migration process, let’s take a look at our data pipelines. 
 
 ## Pipeline Assessment
-Duration: 20
 
 Moving the logic and data in a data warehouse is essential to getting an operational database on a new platform. But to take advantage of the new platform in a functional way, any pipelines running moving data in or out of that data platform need to be repointed or replatformed as well. This can often be challenging as there are usually a variety of pipelines being used. This section of the lab will focus on just one for which Snowflake can provide some acceleration. But note that new ETL and pipeline accelerators are constantly being developed.
 
@@ -966,7 +960,6 @@ Looks like we only have a few issues, and our parsing error is in the pipeline p
 Normally, we would take a look at one other report in our Reports directory, the **ArtifactDependencyInventory.csv** file. But this is such a small execution, let’s take a look at what’s actually in these output files now, and see if we can’t get it to run in (or with) Snowflake.
 
 ## Pipeline Conversion
-Duration: 20
 
 The SMA has “converted” our scripts, but has it really? What it has actually done is converted all references from the Spark API to the Snowpark API, but what it has not done is to replace the connections that may exist in your pipelines. 
 
@@ -1474,7 +1467,6 @@ And that's it for the script file. It's not the best example of a pipeline, bu i
 Let's move on to the reporting notebook.
 
 ## Notebook Conversion and Validation
-Duration: 10
 
 Let’s step over to the Reporting Notebook in our codebase: **Basic Reporting Notebook - SqlServer Spark.ipynb**. We're going to walk through a similar set of steps as we did with the pipeline script.
 - **Resolve All Issues**: “Issues” here means the issues generated by the SMA. Take a look at the output code. Resolve parsing errors and conversion errors, and investigate warnings.
@@ -1703,7 +1695,6 @@ Snowflake has spent a great deal of time improving its ingestion and data engine
 
 
 ## Conclusion And Resources
-Duration: 5
 
 Congratulations! You've successfully completed an end-to-end migration from SQL Server to Snowflake, including both the database objects and the ETL pipelines that feed your data mart.
 

@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview 
 
-Duration: 10
 
 This Quickstart guide contains key tips for optimal performance when using Snowflake Geospatial Feature. The guide is broken up into multiple labs, each covering a separate technique that can improve performance and/or efficiency while running geo workloads in Snowflake.
 
@@ -34,7 +33,6 @@ In this quickstart, you will learn how to improve performance of queries when us
 
 ## Setup your Account
 
-Duration: 10
 
 If this is the first time you are logging into the Snowflake UI, you will be prompted to enter your account name or account URL that you were given when you acquired a trial. The account URL contains your [account name](https://docs.snowflake.com/en/user-guide/connecting.html#your-snowflake-account-name) and potentially the region. You can find your account URL in the email that was sent to you after you signed up for the trial.
 
@@ -87,7 +85,6 @@ ALTER SESSION SET USE_CACHED_RESULT = FALSE;
 
 ## Acquire Data 
 
-Duration: 10
 
 The first step in the guide is to acquire geospatial data sets that you can freely use to explore the basics of Snowflake's geospatial functionality. 
 
@@ -158,7 +155,6 @@ MATCH_BY_COLUMN_NAME = case_insensitive;
 
 ## Lab 1: Storing geospatial data types
 
-Duration: 5
 
 Geospatial types are designed for quick and efficient spatial operations and GEOGRAPHY is the ideal choice when your coordinates are in latitude and longitude.
 
@@ -211,7 +207,6 @@ This query was completed in 2.5 seconds, which is more than three times faster t
 
 ## Lab 2: Geospatial Joins
 
-Duration: 10
 
 Another advantage of using materialized geospatial types is that you can use fast and efficient geospatial joins. Whenever you join two datasets using geo predicate, such as [ST_CONTAINS](https://docs.snowflake.com/en/sql-reference/functions/st_contains), [ST_WITHIN](https://docs.snowflake.com/en/sql-reference/functions/st_within), etc., Snowflake under the hood builds a spatial grid for both datasets and then compares the content of cells. If both objects are within some cell, then the actual geo predicate executes. Snowflake decides on the size of the cells in the grid based on the size of the objects that take part in a join. 
 
@@ -264,7 +259,6 @@ The query is completed in about 12 sec. By cleaning 0.17% of the boundaries data
 
 ## Lab 3: Search Optimization for lookup queries
 
-Duration: 20
 
 In this lab, you'll step into the role of an analyst working with a dataset containing New York taxi trips. Your task is to identify all trips that occurred within a specific location. You will see how you can improve the execution time of lookup queries even on extra small warehouse when you enable Search Optimization (SO) for the geography column.
 
@@ -364,7 +358,6 @@ This query was finished in just 2 seconds, which is about 20 times faster compar
 
 ## Lab 4: H3 for approximate calculations
 
-Duration: 10
 
 In certain situations, users need to determine the distance between objects. For example, consider a logistics company that keeps track of where their trucks are. They do this by recording the GPS location of each truck every two minutes. To check if this location data is accurate, they might measure the distance between the most recent location they recorded and the one before that. If this distance is too large – say, more than three miles – it could indicate that the latest GPS reading was wrong. Below is a visualization displaying correct GPS records (in green) and two incorrect records (in red).
 
@@ -444,7 +437,6 @@ Note that in the query above, you cast `value` as an integer since `H3_GRID_DISK
 
 ## Lab 5: H3 for speeding up queries with joins
 
-Duration: 15
 
 For this Lab you need to change the warehouse size back to LARGE as you will be running quite complex queries:
 ```
@@ -529,7 +521,6 @@ This query completed in 40 seconds and returned 9985 rows. A different number of
 
 ## Conclusion
 
-Duration: 5
 
 In this guide, you acquired geospatial data from different sources and explored various techniques for improving the performance of geospatial queries. You can now apply those techniques to your data and use cases.
 

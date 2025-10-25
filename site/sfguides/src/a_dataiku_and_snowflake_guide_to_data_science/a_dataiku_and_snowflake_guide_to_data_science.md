@@ -12,9 +12,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-Duration: 3
 
-Duration: 1
 
 This Snowflake Quickstart introduces you to the basics of using Snowflake together with Dataiku Cloud as part of a Data Science project. We’ll be highlighting some of the well-integrated functionalities between the two technologies. It is designed specifically for use with the [Snowflake free 30-day trial](https://trial.snowflake.com), and the Dataiku Cloud free trial version via Snowflake’s Partner Connect. 
 
@@ -52,7 +50,6 @@ We will build a project that uses input datasets from Snowflake. We’ll build a
 
 ## Prepare Your Lab Environment
 
-Duration: 5
 
 - If you haven’t already, register for a [Snowflake free 30-day trial](https://trial.snowflake.com/) The rest of the sections in this lab assume you are using a new Snowflake account created by registering for a trial.
 
@@ -80,7 +77,6 @@ After activation, you will create a ```username```and ```password```. Write down
 
 ## The Snowflake User Interface
 
-Duration: 10
 
 ### Logging Into the Snowflake User Interface (UI)
 
@@ -157,7 +153,6 @@ If you click on the bottom left of the UI where your username appears, you will 
 
 ## Prepare Dataiku Trial Account Via Snowflake Partner Connect
 
-Duration: 10
 
 ### Create Dataiku trial via Partner Connect
 
@@ -267,7 +262,6 @@ You’ve now successfully set up your Dataiku trial account via Snowflake’s Pa
 
 ## Preparing And Exploring The Data In Snowflake 
 
-Duration: 20
 
 
 
@@ -466,7 +460,6 @@ alter warehouse PC_DATAIKU_WH set warehouse_size=MEDIUM;
 
 ## Creating And Running A Dataiku Project
 
-Duration: 10
 
 For this module, we will login into the Dataiku hosted trial account and create a Dataiku project.
 
@@ -590,7 +583,6 @@ Click the `close` button when you are finished
 
 ## Cleaning The Data With The Prepare Recipe
 
-Duration: 20
 
 After exploring our data we are going to perform some transformation steps to clean the data and generate new features.
 
@@ -698,7 +690,6 @@ If your script now matches the below screenshot go ahead and click on the green 
 <!-- ------------------------ -->
 ## Feature Engineering With Snowpark
 
-Duration: 12
 
 In addition to a wide number of visual tools to enable to the low/no coder Dataiku also provides rich and familiar toolsets and language support for coders. 
 
@@ -806,7 +797,6 @@ Your code should now look similar to this (don't worry if you haven't separated 
 
 ## Split The Dataset
 
-Duration: 5
 
 > aside positive
 > For the remainder of this lab we will be using Dataiku's Visual ML interface to design, train & test our model. This is the best option for most circumstances, however if you are specifically interested in trying out Snowflakes SnowparkML library then you could, of course, write that code from Dataiku as we just saw with the Python recipe but, even better, Dataiku provides a UI via a plugin so non-coders can use it. If you wish to develop your model using that plugin then jump to the optional chapter on the SnowparkML plugin near the end of this guide
@@ -849,7 +839,6 @@ When the job finishes, navigate back to the Flow (g + f) to see your progress.
 
 ## Train A Model
 
-Duration: 5
 
 The first step is to define the basic parameters of the machine learning task at hand.
 
@@ -883,7 +872,6 @@ Based on the characteristics of the input training data, Dataiku has automatical
 
 ## Inspect The Results
 
-Duration: 10
 
 Once your models have finished training, let’s see how Dataiku did.
 
@@ -939,7 +927,6 @@ Alongside the results, you’ll also want to be sure how exactly the model was t
 <!-- ------------------------ -->
 ## Iterate On The Model Training Design (optional)
 
-Duration: 10
 
 > aside positive
 > This chapter is optional in the lab for timing reasons but would be a standard part of real world model development. 
@@ -997,7 +984,6 @@ Once you have just the top three features in the model design, you can kick off 
 
 ## Apply A Model To Generate Predictions On New Data
 
-Duration: 8
 
 Up until now, the models you’ve trained are present only in the Lab, a space for experimental prototyping and analysis. You can’t actually use any of these models until you have added them to the Flow, where your actual project pipeline of datasets and recipes lives. Let’s do that now!
 
@@ -1127,7 +1113,6 @@ Congratulations. You are using SnowparkML from a UI! You can explore your model 
 
 ## Conclusions And Resources
 
-Duration: 3
 
 Congratulations on completing this introductory lab exercise! Congratulations! You've mastered the Snowflake basics and you’ve taken your first steps toward data cleansing, feature engineering and training machine learning models with Dataiku.
 

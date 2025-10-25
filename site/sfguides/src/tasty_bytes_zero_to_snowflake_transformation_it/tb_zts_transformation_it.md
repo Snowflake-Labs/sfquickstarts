@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Trasformazione in Snowflake
-Duration: 1 <img src = "assets/transformation_header.png">
 
 ### Panoramica
 Questo quickstart Powered by Tasty Bytes - Da zero a Snowflake è dedicato alla trasformazione.
@@ -37,7 +36,6 @@ In questo quickstart esamineremo un’ampia gamma di funzionalità di Snowflake,
 
 
 ## Creare un foglio di lavoro e copiare il codice SQL
-Duration: 1
 
 ### Panoramica
 In questo quickstart seguiremo la storia del cliente Tasty Bytes attraverso un foglio di lavoro SQL di Snowsight, utilizzando questa pagina come guida completa di commenti aggiuntivi, immagini e link alla documentazione.
@@ -76,7 +74,6 @@ In questa sezione vedremo nei dettagli come accedere a Snowflake, creare un nuov
 ### Passaggio 9 - Fai clic su Next -->
 
 ## Clonare istantaneamente una tabella di produzione per lo sviluppo
-Duration: 1
 
 ### Panoramica
 Nel quadro dell’analisi della flotta di food truck di Tasty Bytes, il nostro sviluppatore è stato incaricato di aggiungere alla tabella dei furgoni una colonna calcolata con l’età dei veicoli. 
@@ -103,7 +100,6 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 ### Passaggio 2 - Fai clic su Next -->
 
 ## Testare la cache dei set di risultati di Snowflake
-Duration: 1
 
 ### Panoramica
 Con il nostro clone Zero-Copy istantaneamente disponibile, possiamo iniziare a utilizzarlo per sviluppare senza temere ripercussioni sull’ambiente di produzione. Tuttavia, prima di apportare qualsiasi modifica, eseguiamo alcune semplici query sul clone per testare la cache dei set di risultati di Snowflake.
@@ -153,7 +149,6 @@ Se un utente ripete una query che è già stata eseguita e i dati nelle tabelle 
 ### Passaggio 3 - Fai clic su Next -->
 
 ## Aggiornare i dati e calcolare l’età dei food truck
-Duration: 1
 
 ### Panoramica
 In base all’output ottenuto sopra, per prima cosa dobbiamo correggere l’errore di battitura nei record Ford_ che abbiamo visto nella colonna `make`. Poi potremo iniziare a lavorare sul calcolo che ci fornirà l’età di ogni furgone.
@@ -187,7 +182,6 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ### Passaggio 3 - Fai clic su Next -->
 
 ## Aggiungere una colonna e aggiornarla
-Duration: 1
 
 ### Panoramica
 Ora che abbiamo completato il calcolo dell’età dei furgoni in anni, aggiungiamo una nuova colonna alla tabella clonata per supportarlo e quindi aggiorniamo la colonna per riflettere i valori calcolati.
@@ -228,7 +222,6 @@ Evidentemente abbiamo sbagliato il calcolo di `truck_age` inserendo una division
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Utilizzare Time Travel per il disaster recovery dei dati
-Duration: 1
 
 ### Panoramica
 Anche se abbiamo fatto un errore, Snowflake offre molte funzionalità che possono aiutarci a salvare la situazione. In questo processo utilizzeremo Query History, le variabili SQL e Time Travel per ripristinare la tabella `truck_dev` allo stato in cui si trovava prima di quell’istruzione pdate errata.
@@ -297,7 +290,6 @@ Di seguito sono riportate le altre opzioni disponibili per le istruzioni Time Tr
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Promuovere da sviluppo a produzione
-Duration: 1
 
 ### Panoramica
 Ora che la tabella `truck_dev` è tornata allo stato in cui si trovava prima della nostra istruzione di aggiornamento errata, possiamo assicurarci che la colonna venga aggiornata correttamente. Poi promuoveremo la tabella con il calcolo corretto in produzione per completare il compito che ci è stato assegnato.
@@ -341,7 +333,6 @@ WHERE t.make = 'Ford';
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Fare il drop e l’undrop di tabelle
-Duration: 1
 
 ### Panoramica
 Possiamo dire ufficialmente che il nostro sviluppatore ha completato il compito che gli era stato assegnato. Ora che la colonna `truck_age` è stata creata e calcolata correttamente, il nostro `sysadmin` può eliminare la tabella superflua e consegnare il suo lavoro.
@@ -378,7 +369,6 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 ### Passaggio 4 - Fai clic su Next -->
 
 ## Conclusione e fasi successive
-Duration: 1
 
 ### Conclusione
 Ottimo lavoro! Hai completato il quickstart Tasty Bytes - Da zero a Snowflake - Trasformazione. 

@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Transformación en Snowflake
-Duration: 1 <img src = "assets/transformation_header.png">
 
 ### Descripción general
 Te damos la bienvenida a la quickstart guide Tasty Bytes - De cero a Snowflake centrada en la transformación.
@@ -36,7 +35,6 @@ En esta quickstart guide veremos un gran número de funcionalidades de Snowflake
 
 
 ## Creación de una hoja de trabajo y copia en SQL
-Duration: 1
 
 ### Descripción general
 En esta quickstart guide se narra una historia de Tasty Bytes mediante una hoja de trabajo SQL en Snowsight. Esta página servirá de guía completa paralela con comentarios adicionales, imágenes y enlaces a la documentación.
@@ -75,7 +73,6 @@ En esta sección te explicaremos cómo iniciar sesión en Snowflake, crear una n
 ### Paso 9: hacer clic en Next -->
 
 ## Clonación instantánea de tablas de producción para desarrollo
-Duration: 1
 
 ### Descripción general
 Como parte del análisis de la flota de food trucks de Tasty Bytes, nuestro desarrollador se ha encargado de añadir una columna con la antigüedad calculada de cada vehículo en nuestra tabla de food trucks. 
@@ -101,7 +98,6 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
 ### Paso 2: hacer clic en Next -->
 
 ## Prueba de la caché del conjunto de resultados de consulta de Snowflake
-Duration: 1
 
 ### Descripción general
 Con nuestro clon de Zero Copy Cloning disponible al instante, ya podemos empezar a desarrollar en él sin miedo a que esto afecte a la tabla de producción. Sin embargo, antes de hacer ningún cambio, vamos a ejecutar un par de consultas simples en él y a probar la caché del conjunto de resultados de Snowflake.
@@ -150,7 +146,6 @@ ORDER BY t.truck_id;
 ### Paso 3: hacer clic en Next -->
 
 ## Actualización de los datos y cálculo de la antigüedad de los food trucks
-Duration: 1
 
 ### Descripción general
 Según el resultado obtenido, debemos corregir el error en la escritura de los registros “Ford_” que hemos visto en la columna `make`. Desde ahí, podemos empezar a trabajar en el cálculo que nos proporcionará la antigüedad de cada food trucks.
@@ -184,7 +179,6 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ### Paso 3: hacer clic en Next -->
 
 ## Adición y actualización de una columna
-Duration: 1
 
 ### Descripción general
 Ya hemos realizado y corregido el cálculo de la antigüedad en años de los food trucks. Ahora, vamos a añadir una nueva columna a nuestra tabla clonada para apoyar el cálculo y terminar actualizando la columna para que refleje los valores calculados.
@@ -227,7 +221,6 @@ Parece que hemos metido la pata con el cálculo de la columna `truck_age`. Está
 ### Paso 4: hacer clic en Next -->
 
 ## Uso de Time Travel para la recuperación de datos ante desastres
-Duration: 1
 
 ### Descripción general
 Aunque hayamos cometido un error, Snowflake cuenta con muchas funciones que nos pueden ayudar a solucionarlo. El proceso que vamos a seguir utiliza el historial de consultas, las variables de SQL y Time Travel para volver a dejar nuestra tabla `truck_dev` tal y como estaba antes de ejecutar la sentencia incorrecta de actualización.
@@ -296,7 +289,6 @@ En la lista que aparece a continuación puedes ver otras opciones disponibles de
 ### Paso 4: hacer clic en Next -->
 
 ## Promoción de desarrollo a producción
-Duration: 1
 
 ### Descripción general
 Ahora que tenemos la tabla `truck_dev` como estaba antes de la sentencia incorrecta de actualización, podemos asegurarnos de que la columna se actualiza correctamente. A continuación, promoveremos nuestra tabla a producción con el cálculo correcto para completar la tarea asignada.
@@ -340,7 +332,6 @@ WHERE t.make = 'Ford';
 ### Paso 4: hacer clic en Next -->
 
 ## Borrado y recuperación de tablas
-Duration: 1
 
 ### Descripción general
 Oficialmente podemos decir que nuestro desarrollador ha terminado la tarea que se le asignó. Con la columna `truck_age` en su sitio y con todos los cálculos correctos, `sysadmin` ya puede eliminar la tabla borrador y dar por terminada su jornada.
@@ -377,7 +368,6 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 ### Paso 4: hacer clic en Next -->
 
 ## Conclusión y siguientes pasos
-Duration: 1
 
 ### Conclusión
 ¡Bien hecho! Has completado la quickstart guide Tasty Bytes - De cero a Snowflake - Transformación. 

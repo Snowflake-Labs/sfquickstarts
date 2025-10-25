@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Building an application on Snowflake with data from Snowflake Marketplace
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 Snowflake Data Market Place can provide rapid results to external data which can be used as an overlay or enhancement of your existing data to monitor trends and perform compelling results. Building an application to distribute your results rapidly on a modern data platform are key to innovating faster and gaining a competitive advantage.
 Snowflake combined with Quasar, a modern Application framework together with AWS can help you achieve that competitive advantage. In this lab, we will show how to build a small web application we use the Quasar Application Framework and AWS Lambda Python Layer.  
@@ -58,14 +57,12 @@ Snowflake combined with Quasar, a modern Application framework together with AWS
 <!-- ------------------------ -->
 
 ## Working with Data Market Place 
-Duration: 2
 
 Snowflake’s Data Marketplace provides visibility to a wide variety of datasets from third party data stewards which broaden access to data points used to transform business process.  The Data Marketplace also removes the need to integrate and model data by providing secure access to data sets fully maintained by the data provider. Preview Levi's video in this VHOL to select the Knoema datasets from the Snowflake MarketPlace.
 
 ```markdown
 
 ## Step 1  Review the available data tables
-Duration: 8
 --Review the datasets available
 select * from "KNOEMA_POVERTY_DATA_ATLAS"."POVERTY"."DATASETS";
 select * from "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."DATASETS";
@@ -87,14 +84,12 @@ select * from "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."WBPED2020"
   Review the datasets available and identify which data sets can be joined by running simple select statements for a variety of different data views.  This will allow you to see patterns in data which join views to produce a combined view of many datasets. 
 <!-- ------------------------ -->
 ## Create Snowflake Views
-Duration: 1
 
 Using Snowflake's Regression function returns the slope of the linear regression line for non-null pairs in a group. It is computed for non-null pairs, a powerful way to compare multiple variables in a set of data. It will help us evaluate in this case, Credit worthiness of Single Persons relative to poverty. We also look at Savings rate and average investment rates by geography and time.
 
 ```markdown
 
 ## Step 1 Create a View from the Regression query
-Duration: 1
 
 create view VHOLAPP2 as select 
 agi."geo RegionId" as GeoRegionIdAgi
@@ -130,7 +125,6 @@ inner join "KNOEMA_ECONOMY_DATA_ATLAS"."ECONOMY"."teina500-20160217" sr on agi."
 
 
 ## Step 2 Create a view to pair down the variables for the APP --
-Duration: 2
 
 create view VHOLAPP3 as select 
  GeoRegionIdPth, dateagi
@@ -149,13 +143,11 @@ create view VHOLAPP3 as select
 <!-- ------------------------ -->
 
 ## Create Application Code for Line Chart
-Duration: 1
 
 This example uses the Quasar Application Framework we review the vue.js file. Please  see the prerequisits for this lab.  
 
 ```markdown
 ## Create Index.vue
-Duration: 2
 
 <template>
   <q-page>
@@ -356,7 +348,6 @@ export default {
 
 <!-- ------------------------ -->
 ## Building the Lambda
-Duration: 8
 
 From the AWS services console, go straight into the Lambda and follow the video instructions presented in this VHOL by Bren Stokes. 
 
@@ -444,7 +435,6 @@ def lambda_handler(event, context):
 ```
 <!-- ------------------------ -->
 ## Additional References
-Duration: 2
 
 A fantastic reference for downloading the snowflake-python connector .zip file  [Getting your AWS Lambda Functions to work with Snowflake](https://medium.com/snowflake/getting-your-aws-lambda-functions-to-work-with-snowflake-a14b453bb5ee) to see how to use markdown to generate these elements. 
 
@@ -460,7 +450,6 @@ A fantastic reference for downloading the snowflake-python connector .zip file  
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 
 

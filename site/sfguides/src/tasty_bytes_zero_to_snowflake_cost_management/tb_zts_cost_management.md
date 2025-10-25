@@ -11,7 +11,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Cost Management in Snowflake
-Duration: 1
 <img src = "assets/cost_management_header.png">
 
 ### Overview
@@ -40,7 +39,6 @@ For more detail on Cost Management in Snowflake please visit the [Cost Managemen
 
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -76,7 +74,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 9 - Click Next -->
 
 ## Virtual Warehouses and Settings 
-Duration: 2
 
 ### Overview
 As a Tasty Bytes Snowflake Administrator we have been tasked with gaining an understanding of the features Snowflake provides to help ensure proper Financial Governance is in place before we begin querying and analyzing data.
@@ -143,7 +140,6 @@ Based on the query we ran, please see the details below on what each configurati
 ### Step 3 - Click Next -->
 
 ## Resuming, Suspending and Scaling a Warehouse
-Duration: 2
 
 ### Overview
 With a Warehouse created, let's now use it to answer a few questions from the business. While doing so we will learn how to resume, suspend and elastically scale the Warehouse.
@@ -218,7 +214,6 @@ ALTER WAREHOUSE tb_test_wh SUSPEND;
 
 
 ## Controlling Cost with Session Timeout Parameters
-Duration: 1
 
 ### Overview
 With monitoring in place, let's now make sure we are protecting ourselves from bad long running queries ensuring timeout parameters are adjusted on the Warehouse.
@@ -265,7 +260,6 @@ ALTER WAREHOUSE tb_test_wh SET statement_queued_timeout_in_seconds = 600;
 ### Step 4 - Click Next -->
 
 ## Controlling Cost with Account Timeout Parameters
-Duration: 1
 
 ### Overview
 The Timeout Parameters we set on our Test Warehouse are also available at the Account, User and Session level. Within this step, we will adjust these at the Account level.
@@ -306,7 +300,6 @@ ALTER ACCOUNT SET statement_queued_timeout_in_seconds = 3600;
 
 
 ## Monitoring Cost with Resource Monitors
-Duration: 2
 
 ### Overview
 With a Test Warehouse in place, let's now leverage Snowflakes Resource Monitors to ensure the Warehouse has a monthly quota. 
@@ -365,7 +358,6 @@ ALTER WAREHOUSE tb_test_wh SET RESOURCE_MONITOR = tb_test_rm;
 
 
 ## Tag Objects to Attribute Spend
-Duration: 2
 
 ### Overview
 Within this step, we will help our Finance department attribute consumption costs for the Test Warehouse to our Development Team. 
@@ -390,7 +382,6 @@ ALTER WAREHOUSE tb_test_wh SET TAG cost_center = 'DEVELOPMENT_TEAM';
 
 
 ## Exploring Cost with Snowsight
-Duration: 1
 
 ### Overview
 Snowflake also provides many ways to visually inspect Cost data within Snowsight.
@@ -413,7 +404,6 @@ To access and drill down into overall cost within Snowsight:
 
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Cost Management Quickstart. 

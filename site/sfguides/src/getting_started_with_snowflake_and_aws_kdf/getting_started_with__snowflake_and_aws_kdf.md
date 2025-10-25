@@ -10,7 +10,6 @@ authors: James Sun
 # Getting Started with Snowflake and [Amazon Data Firehose](https://aws.amazon.com/firehose/) (ADF)
 <!---------------------------->
 ## Overview
-Duration: 5
 
 Snowflake's Snowpipe streaming capabilities are designed for rowsets with variable arrival frequency.
 It focuses on lower latency and cost for smaller data sets. This helps data workers stream rows into Snowflake
@@ -75,7 +74,6 @@ to SSH if your instance is in a private subnet
 
 <!---------------------------->
 ## Provision a Linux jumphost in AWS
-Duration: 10
 
 #### 1. Create an EC2 instance
 First, click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=ADF-Snowflake&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/VHOL_Snowflake_KDF/kdf-bastion.json)
@@ -166,7 +164,6 @@ see below example screenshot:
 
 <!---------------------------->
 ## Prepare the Snowflake account for streaming
-Duration: 15
 
 #### 1. Creating user, role, and database
 First login to your Snowflake account as a power user with ACCOUNTADMIN role. 
@@ -299,7 +296,6 @@ At this point, the Snowflake setup is complete.
 
 <!---------------------------->
 ## Create an ADF delivery stream
-Duration: 15
 
 In this step, we are going to create an ADF delivery stream for data streaming.
 
@@ -357,7 +353,6 @@ Your delivery stream will be generated in about 5 minutes.
 
 <!---------------------------->
 ## Ingest and Query data in Snowflake
-Duration: 10
 
 Now, switch back to the Snowflake console and make sure that you signed in as the default user `streaming_user`. 
 The data should have been streamed into a table, ready for further processing.
@@ -443,7 +438,6 @@ As a result, you will see a nicely structured output with columns derived from t
 
 <!---------------------------->
 ## Use Copilot to interact with your data in natural language
-Duration: 5
 
 [Snowflake Copilot](https://docs.snowflake.com/en/user-guide/snowflake-copilot) is an LLM-powered assistant that simplifies data analysis while maintaining robust data governance, and seamlessly integrates into your existing Snowflake workflow. You can gain insights from your data stored in Snowflake by using natural language. 
 
@@ -473,7 +467,6 @@ Again, Copilot gives the SQL command which you can execute to get the distance b
 
 <!---------------------------->
 ## Use Amazon Managed Service for Flink for real-time analytics - Optional
-Duration: 20
 
 Note that you will need to complete the base workshop first without cleaning up the resources in order to proceed.
 
@@ -585,7 +578,6 @@ You should see the filtered flight tracks are captured in table `ADF_FLINK_TBL`.
 
 <!---------------------------->
 ## Cleanup
-Duration: 5
 
 When you are done with the demo, to tear down the AWS resources, simply go to the [Cloudformation](https://console.aws.amazon.com/cloudformation/home?stacks) console.
 Select the Cloudformation template you used to deploy the jumphost at the start of the demo, also the template for Amazon Managed Flink if you optionally deployed it, then click the `Delete` tab.
@@ -602,7 +594,6 @@ You will also need to delete the Firehose delivery stream. Navigate to the [ADF 
 
 <!---------------------------->
 ## Conclusion
-Duration: 5
 
 In this lab, we built a demo to show how to ingest real-time data using Amazon Data Firehose with low latency. We demonstrated this using an ADF
 connector on an EC2 instance. Alternatively, if you have infrastructure supported by either [Amazon EKS](https://aws.amazon.com/eks/) or

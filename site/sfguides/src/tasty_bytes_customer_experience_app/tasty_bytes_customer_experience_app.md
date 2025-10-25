@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Tasty Bytes - Enhance Customer Experience Using Unstructured Data
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
 ![banner](assets/ece_header.png)
 
@@ -32,7 +31,6 @@ This application supports Tasty Bytes management by analyzing both customer revi
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 ### Step 1 - Accessing hosted Setup SQL in GitHub
 - Click the button below which will direct you to our Tasty Bytes SQL Setup file that is hosted on GitHub.
@@ -84,7 +82,6 @@ GRANT USAGE ON STREAMLIT tasty_bytes_enhancing_customer_experience.app.enhancing
 
 <!-- ------------------------ -->
 ## Running the Enhancing Customer Experiences Using Unstructured Data App
-Duration: 10
 
 This application consists of two sections. The dashboard presents reviews and inspection details for each truck, while the analytics section offers the ability to generate plots based on review data.
 
@@ -110,7 +107,6 @@ If you are getting an error related to model availability, you can enable [cross
 
 <!-- ------------------------ -->
 ## Understanding the Enhancing Customer Experiences Using Unstructured Data App
-Duration: 10
 
 ### Cortex Complete
 
@@ -147,7 +143,6 @@ Unstructured inspection documents are used in the app. We have previously used D
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations, you have built an application in Streamlit using Cortex LLMs to enhance Tasty Bytes customer experience. This powerful application helps Tasty Bytes owners quickly understand truck metrics, including unstructured inspection data. We also used Cortex LLMs to generate emails to truck owners based on that unstructured data.
 

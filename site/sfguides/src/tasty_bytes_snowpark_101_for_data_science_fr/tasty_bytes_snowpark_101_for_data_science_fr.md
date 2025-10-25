@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Tasty Bytes – Snowpark 101 pour la Data Science
 <!-- ------------------------ -->
 ## Présentation 
-Duration: 1 <img src="assets/tasty_bytes_header.png"/>
 
 Dans ce guide Quickstart Snowpark 101 pour la Data Science, vous allez aider l’entreprise fictive de food trucks Tasty Bytes à accroître ses ventes en entraînant un modèle destiné à fournir des recommandations d’emplacements aux chauffeurs des camionnettes. Vous allez utiliser **Snowpark for Python** pour préparer les données, mais aussi pour entraîner et déployer un modèle. Une fois celui-ci déployé, vous créerez un prototype d’application à l’aide de **Streamlit** afin de montrer comment les chauffeurs des camionnettes pourraient utiliser le modèle pour trouver le meilleur emplacement de stationnement à chaque fois.
 
@@ -44,7 +43,6 @@ Streamlit *(dont Snowflake a fait l’acquisition en mars 2022)* est une biblio
 
 <!-- ------------------------ -->
 ## Configuration des données dans Snowflake
-Duration: 6
 
 ### Présentation
 Vous allez utiliser [Snowsight](https://docs.snowflake.com/fr/user-guide/ui-snowsight.html#), l’interface Web de Snowflake, pour : 
@@ -147,7 +145,6 @@ SELECT * FROM frostbyte_tasty_bytes_dev.analytics.shift_sales_v;
 
 <!-- ------------------------ -->
 ## Data Science avec Snowpark
-Duration: 22
 
 ### Présentation
 Tasty Bytes vise une croissance des ventes de 25 % par an sur cinq ans. Pour atteindre cet objectif et optimiser les revenus quotidiens de la flotte de camionnettes, l’équipe data science doit concevoir un modèle de ML pour orienter les camionnettes vers les emplacements où les ventes devraient être les plus élevées sur une période de travail donnée.
@@ -227,7 +224,6 @@ jupyter notebook
 
 <!-- ------------------------ -->
 ## Prototype d’application avec Streamlit
-Duration: 6
 
 ### Présentation
 Maintenant que vous avez déployé un modèle qui prévoit les futures ventes par équipe de chaque emplacement, trouvez un moyen d’aider les chauffeurs de camionnettes à utiliser ces prévisions pour choisir leur emplacement de stationnement. Vous devez créer un prototype d’application pour montrer à l’équipe d’ingénierie comment un chauffeur de camionnette pourrait utiliser le modèle de prévisions de ventes par équipe. Grâce à l’application, chaque utilisateur pourra choisir une ville et un horaire (midi ou soir), mais aussi afficher les prévisions de ventes par emplacement sur une carte.
@@ -258,7 +254,6 @@ Maintenant que vous avez déployé un modèle qui prévoit les futures ventes pa
 
 <!-- ------------------------ -->
 ## Nettoyage
-Duration: 5
 
 ### Présentation des objets créés dans ce guide Quickstart
 **Snowflake :**
@@ -315,7 +310,6 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 
 <!-- ------------------------ -->
 ## Conclusion et étapes suivantes
-Duration: 1
 
 ### Conclusion
 **Vous avez réussi !** Vous avez terminé le guide Quickstart Tasty Bytes Snowpark 101 pour la Data Science.

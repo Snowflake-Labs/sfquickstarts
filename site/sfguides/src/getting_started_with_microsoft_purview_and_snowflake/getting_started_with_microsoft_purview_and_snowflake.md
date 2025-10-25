@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Microsoft Purview and Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
 Snowflake Horizon is a built-in governance solution that helps users manage their data ecosystem. It provides a unified platform that supports five core pillars of data governance: compliance, security, privacy, interoperability, and access. These capabilities enable users to govern data, apps, and more across clouds, teams, partners, and customers. 
 That interoperability works with Microsoft Purview, which extends the unified data governance solution to help you manage services across your entire Microsoft estate. These services include Azure storage services, Power BI, databases like SQL or Hive, file services, applications, and many more.
@@ -39,7 +38,6 @@ This use case will leverage sample retail data to register and scan that data so
 
 <!-- ------------------------ -->
 ## Set Up Snowflake Environment
-Duration: 5
 
 The first thing to do is create a database and warehouse in your Snowflake environment. Run the below code in a Snowflake worksheet. You are using the AccountAdmin role here for demo purposes, but in production you will likely use a different role.
 
@@ -134,7 +132,6 @@ The result should look like this screenshot with tables, views, and schemas:
 
 <!-- ------------------------ -->
 ## Set Up Azure Environment
-Duration: 5
 
 ### Set Up Microsoft Purview
 
@@ -156,7 +153,6 @@ Now you need to set up your Purview instance.
 
 
 ## Purview Workspace Overview
-Duration: 5
 
 Once in the Purview workspace, there are a number of options on the left panel.
 
@@ -182,7 +178,6 @@ Once in the Purview workspace, there are a number of options on the left panel.
 
 <!-- ------------------------ -->
 ## Scanning and the Catalog
-Duration: 10
 
 Now you need to register Snowflake as a data source, which will allow you to scan Snowflake data into the catalog.
 
@@ -215,7 +210,6 @@ Now you need to register Snowflake as a data source, which will allow you to sca
 
 <!-- ------------------------ -->
 ## Classification and Lineage
-Duration: 5
 
 Classifications categorize data based on its sensitivity, importance, or usage, enabling you to apply appropriate access controls, cryptions, and retention policies. They help mitigate the risk of data breaches or regulator non-compliance.
 
@@ -245,7 +239,6 @@ Now click Lineage at the top. This view will show how this data object ties to u
 
 <!-- ------------------------ -->
 ## Data Estate Insights
-Duration: 5
 
 
 The data estate insights show a comprehensive overview of your organization's data ecosystem. It highlights key metrics such as number of data sources, assets, data health, and usage patterns. These metrics can help you identify what data your organization needs the most and what data needs to be curated and defined.
@@ -270,7 +263,6 @@ Note: Data Insights may take 24 hours to populate after first scanning data.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 5
 
 Congratulations! You've successfully set up Microsoft Purview. You have scanned your Snowflake data, classified and labeled. You can now monitor your data estate and see how the data you prepare in the Snowflake platform is used downstream in Azure and Microsoft services.
 

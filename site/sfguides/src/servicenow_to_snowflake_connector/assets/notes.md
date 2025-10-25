@@ -4,7 +4,6 @@ notes.md
 
 <!-- ------------------------ -->
 ## Code Snippets, Info Boxes, and Tables
-Duration: 2
 
 Look at the [markdown source for this sfguide](https://raw.githubusercontent.com/Snowflake-Labs/sfguides/master/site/sfguides/sample.md) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
 

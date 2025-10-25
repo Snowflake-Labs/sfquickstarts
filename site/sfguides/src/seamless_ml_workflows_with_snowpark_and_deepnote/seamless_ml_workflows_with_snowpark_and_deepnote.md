@@ -13,7 +13,6 @@ feedback link: [https://github.com/Snowflake-Labs/sfguides/issues](https://githu
 
 ## Overview
 
-Duration: 4
 
 ### What is Snowpark?
 
@@ -78,7 +77,6 @@ Join us in this guide where we develop a churn prediction model using Scikit-lea
 
 ## Setup a Snowflake integration inside Deepnote
 
-Duration: 2
 
 To connect a Snowflake database to a Deepnote project, open the Snowflake 
 integration modal and supply the associated Snowflake credentials (i.e., 
@@ -97,7 +95,6 @@ please see [this quickstart](https://quickstarts.snowflake.com/guide/exploratory
 
 ## Initialize the Snowpark session
 
-Duration: 2
 
 After connecting your Snowflake integration, click the “How to use” button on 
 the newly created integration in the right sidebar. As you can see in the 
@@ -111,7 +108,6 @@ that will help you to initialize your Snowpark session.
 
 ## Using Snowpark’s DataFrame API
 
-Duration: 3
 
 Similar to Pandas and PySpark, Snowpark’s main abstraction is the DataFrame. 
 The SQL commands and functions that you require for selecting, 
@@ -160,7 +156,6 @@ between your notebook and the Snowflake database.
 
 ## Prototyping machine learning models
 
-Duration: 4
 
 After EDA, we enter a prototyping phase. Typically, this involves feature 
 selection and generation, as well as training and evaluation of a model before 
@@ -281,7 +276,6 @@ warehouse—where your data live. No need to move data back and fourth
 
 ## Return predictions from the productionized model
 
-Duration: 4
 
 You may have noticed that the `train_churn_prediction_model` also saves the 
 model object itself to a stage in Snowflake called `my_models` . This is 
@@ -360,7 +354,6 @@ column.
 
 ## Conclusion
 
-Duration: 1
 
 Machine learning workflows generally involves model prototyping, evaluation, 
 and deployment. These typically require different languages, technologies, 

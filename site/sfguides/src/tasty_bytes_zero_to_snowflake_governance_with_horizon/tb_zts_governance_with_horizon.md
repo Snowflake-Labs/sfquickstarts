@@ -12,7 +12,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Governance in Snowflake 
-Duration: 1
 <img src = "assets/governance_with_horizon_header.png">
 
 ### Overview
@@ -43,7 +42,6 @@ Within this Quickstart we will learn about Snowflake Roles, Role Based Access Co
 - A Robust Data Governance Foundation for your Account
 
 ## Creating a Worksheet and Copying in our SQL
-Duration: 1
 
 ### Overview
 Within this Quickstart we will follow a Tasty Bytes themed story via a Snowsight SQL Worksheet with this page serving as a side by side guide complete with additional commentary, images and documentation links.
@@ -79,7 +77,6 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 ### Step 9 - Click Next -->
 
 ## Exploring Available Roles
-Duration: 1
 
 ### Overview
 Our Tasty Bytes Administrator has been tasked with learning the process of deploying Role Based Access Control (RBAC) and proper Governance across our Snowflake Account. 
@@ -133,7 +130,6 @@ In our result set we can see the high-level descriptions of what these Snowflake
 >
 
 ## Creating a Role and Granting Privileges
-Duration: 1
 
 ### Overview
 Now that we understand these System Defined roles, let's begin leveraging them to create a test role and grant it access to the Customer Loyalty data we will deploy our initial Data Governance features against and also providing the ability to use our `tb_dev_wh` Warehouse.
@@ -240,7 +236,6 @@ GRANT ROLE tb_test_role TO USER identifier($my_user_var);
 
 
 ## Column-Level Security and Tagging = Tag-Based Masking
-Duration: 4
 
 ### Overview
 The first Governance feature set we want to deploy and test will be Snowflake Tag Based Dynamic Data Masking. This will allow us to mask PII data in columns from our Test Role but not from more privileged Roles.
@@ -347,7 +342,6 @@ FROM TABLE(information_schema.tag_references_all_columns
 ### Step 6 - Click Next -->
 
 ## Creating Masking Policies and Applying to Tags
-Duration: 3
 
 ### Overview
 With our Tags in place we can now create our Masking Policies that will mask data for all but privileged Roles. We need to create 1 policy for every data type where the return data type can be implicitly cast into the column datatype. We can only assign 1 policy per datatype to an individual Tag.
@@ -455,7 +449,6 @@ ORDER BY lifetime_sales_usd;
 ### Step 5 - Click Next -->
 
 ## Row-Access Policies
-Duration: 5
 
 ### Overview
 Happy with our Tag Based Dynamic Masking controlling masking at the Column level,
@@ -566,7 +559,6 @@ Just as expected, our Governance features are seen downstream despite only havin
 
 
 ## Aggregation Policies
-Duration: 4
 
 ### Overview
  Outside of the Data Access Policies (Masking and Row Access) we have covered, Snowflake Horizon also provides [Privacy Policies](https://docs.snowflake.com/en/user-guide/aggregation-policies). In this section we will cover the ability to set Aggregation Policies on Database Objects which can restrict certain roles to only aggregate data by only allowing for queries that aggregate data into groups of a minimum size versus retrieving individual roles.
@@ -666,7 +658,6 @@ ORDER BY order_total DESC;
 
 
 ## Projection Policies
-Duration: 3
 
 ### Overview:
 Within this step, we will cover another Privacy Policy framework provided by Snowflake Horizon, this time diving into [Projection Policies](https://docs.snowflake.com/en/user-guide/projection-policies) which in short will prevent queries from using a SELECT statement to project values from a column.
@@ -729,7 +720,6 @@ SELECT TOP 100 * EXCLUDE postal_code FROM raw_customer.customer_loyalty;
 
 
 ## Sensitive Data Classification
-Duration: 3
 
 ### Overview
 In some cases, you may not know if there is sensitive data in a table. Snowflake Horizon provides the capability to attempt to automatically detect sensitive information and apply relevant Snowflake system defined privacy tags. 
@@ -787,7 +777,6 @@ SELECT * FROM TABLE(information_schema.tag_references_all_columns('raw_pos.franc
 
 
 ## Custom Data Classification
-Duration: 4
 
 ### Overview
 Snowflake provides the CUSTOM_CLASSIFIER class in the SNOWFLAKE.DATA_PRIVACY schema to enable Data Engineers to extend their Data Classification capabilities based on their own knowledge of their data.
@@ -878,7 +867,6 @@ Moving forward as Schemas or Tables are created and updated we can use this exac
 
 
 ## Access History (Reads and Writes)
-Duration: 3
 
 ### Overview:
 Access History provides insights into user queries encompassing what data was  read and when, as well as what statements have performed a write operations.
@@ -956,7 +944,6 @@ ORDER BY number_of_queries DESC;
 ### Step 2 - Click Next -->
 
 ## Discovery with Snowflake Horizon - Universal Search
-Duration: 2
 
 ### Overview
 Having explored a wide variety of Governance functionality available in Snowflake, it is time to put it all together with Universal Search.
@@ -983,7 +970,6 @@ To leverage Universal Search in Snowsight:
 ### Step 2 - Click Next -->
 
 ## Conclusion and Next Steps
-Duration: 1
 
 ### Conclusion
 Fantastic work! You have successfully completed the Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon Quickstart. 

@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # LLM Assisted Medical Coding Extraction for Healthcare in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 <img src="assets/hcls.png"/>
 
 
@@ -52,7 +51,6 @@ Also Cortex fine-tuning does Automatic Parameter Efficient Fine-tuning (PEFT) wi
   
 <!-- ------------------------ -->
 ## Setup Environment
-Duration: 2
 
 This section will walk you through creating various objects
 
@@ -77,7 +75,6 @@ We will explore the Notebook in detailed in the next section.
 
 <!-- ------------------------ -->
 ## Cortex Fine Tuning
-Duration: 2
 
 In this section we will explore the notebook. As mentioned earlier, do not execute Run All. Instead execute cell by cell.
 
@@ -137,7 +134,6 @@ If you have customers and a risk score mapping for various conditions, you can n
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 At the end of this guide, we have seen how to create a production ready AI based autonomous medical coding extraction pipeline which is accurate and cost-effective at the same time, and not rely on a low accurate Prompt engineered or RAG application
 We saw that how easily fine tuning alleviates the workload on physicians and medical coders, as we aim to advance the implementation of autonomous medical coding. This approach will not only ensure high accuracy and clinical specificity but also support various healthcare models paving the way for a more sustainable and effective healthcare environment.

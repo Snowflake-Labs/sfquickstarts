@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started - Processing HL7 V2 Messages with Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 10
 
 This Quickstart is designed to help you understand the capabilities included in Snowflake’s support for processing Healthcare HL7 V2.x messages. The labs will give you a view into how you can leverage Snowflake’s data programmability features to parse HL7 V2.x messages using Java UDTF, Java UDF, and Python UDF.
 
@@ -39,7 +38,6 @@ Sign up for a free 30-day trial of Snowflake and follow along with this lab exer
 
 <!-- ------------------------ -->
 ## Notice and Terms of Use
-Duration: 1
 
 The data provided for this lab is an extract from the Simhospital repository on github ([Simhospital dataset](https://github.com/google/simhospital/blob/master/docs/artifacts/messages.out)).
 
@@ -54,7 +52,6 @@ By accessing this data, you acknowledge and agree to the limits and terms relate
 
 <!-- ------------------------ -->
 ## Prepare your lab environment
-Duration: 10
 
 If you haven't already, register for a [Snowflake free 30-day trial](https://trial.snowflake.com/). The Snowflake edition (Standard, Enterprise, Business Critical, e.g.), cloud provider (AWS, Azure, e.g.), and Region (US East, EU, e.g.) do not matter for this lab. We suggest you select the region which is physically closest to you and the Enterprise Edition, our most popular offering. After registering, you will receive an email with an activation link and your Snowflake account URL.
 
@@ -96,7 +93,6 @@ Download all the files locally to your workstation.
 
 <!-- ------------------------ -->
 ## Store & Access HL V2.x Messages
-Duration: 15
 
 Let’s start by preparing to load the HL7 V2.x messages into Snowflake. Snowflake supports two types of stages for storing data files used for loading and unloading:
 - [Internal stages](https://docs.snowflake.com/en/user-guide/data-load-overview.html#internal-stages) store the files internally within Snowflake.
@@ -233,7 +229,6 @@ from directory(@hl7_stage_internal);
 
 <!-- ------------------------ -->
 ## Processing HL7 messages using Java UDF & UDTF
-Duration: 20
 
 Java UDFs and UDTFs allow workloads expressed in Java to execute in Snowflake and therefore benefit from the virtually unlimited performance and scalability of the Data Cloud.   
 
@@ -525,7 +520,6 @@ For example - `msh` is a root element in json string and `message_type` and `id`
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 1
 
 
 Congratulations! You used Snowflake to trasform your HL7 V2.x messages using Snowflake Java UDFs/UDTFs and Python UDFs.
