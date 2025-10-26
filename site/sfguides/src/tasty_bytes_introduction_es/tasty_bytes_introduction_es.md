@@ -20,14 +20,14 @@ Cuando ya conozcas la organización Tasty Bytes, realizaremos el proceso de conf
 Al terminar esta quickstart guide, habrás implementado los conceptos esenciales necesarios para ejecutar el resto de quickstart guides de nuestra sección [ Powered by Tasty Bytes - Quickstart guides](/guide/tasty_bytes_introduction_es/index.html#3).
 
 ### ¿Qué es Tasty Bytes?
-<img src="assets/who_is_tasty_bytes.png"/>
+![assets/who_is_tasty_bytes.png](assets/who_is_tasty_bytes.png)
 
 ### Requisitos previos
 - Un [Navegador](https://docs.snowflake.com/en/user-guide/setup#browser-requirements) compatible con Snowflake.
 - Una cuenta de Snowflake Business Critical o Entreprise.
     - Si no tienes una cuenta de Snowflake, [**regístrate para obtener una cuenta de prueba gratuita durante 30 días**](https://signup.snowflake.com/). Al iniciar sesión, asegúrate de seleccionar **Enterprise Edition**. Puedes elegir cualquier [nube o región de Snowflake](https://docs.snowflake.com/en/user-guide/intro-regions).
     - Después de registrarte, recibirás un correo electrónico con un enlace de activación y la URL de tu cuenta de Snowflake.
-    - <img src="assets/choose_edition.png" width="300"/>
+    - ![assets/choose_edition.png](assets/choose_edition.png)
     
 ### Contenido que se enseñará 
 - Cómo crear una hoja de trabajo de Snowflake
@@ -51,19 +51,19 @@ En esta quickstart guide, usarás la interfaz web de Snowflake denominada Snowsi
 
 ### Paso 2: iniciar sesión en Snowflake
 - Inicia sesión en tu cuenta de Snowflake.
-    - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+    - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 ### Paso 3: acceder a las hojas de trabajo
 - Haz clic en la pestaña Worksheets en la barra de navegación situada a la izquierda para acceder a las hojas de trabajo.
-    - <img src ="assets/worksheet_tab.png" width="250"/>
+    - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### Paso 4: crear una hoja de trabajo
 - En la pestaña Worksheets, haz clic en el botón “+” en la esquina superior derecha de Snowsight y elige “SQL Worksheet”.
-    - <img src = "assets/+_sqlworksheet.png" width ="200">
+    - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### Paso 5: cambiar el nombre de una hoja de trabajo
 - Cambia el nombre de la hoja de trabajo haciendo clic en el nombre generado automáticamente (marca de tiempo) y escribe “Tasty Bytes - Setup"
-    - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+    - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### Paso 6: acceder a un código SQL de configuración alojado en GitHub
 - Haz clic en el botón que aparece a continuación. Te redirigirá a nuestro archivo SQL de configuración de Tasty Bytes, alojado en GitHub.
@@ -72,18 +72,18 @@ En esta quickstart guide, usarás la interfaz web de Snowflake denominada Snowsi
 
 ### Paso 7: copiar el código SQL de configuración de GitHub
 - En GitHub, ve al lado derecho y haz clic en “Copy raw contents”. De esta forma, se copiará todo el código SQL necesario en el portapapeles.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Paso 8: pegar el código SQL de configuración de GitHub en tu hoja de trabajo de Snowflake
 - Vuelve a la hoja de trabajo que acabas de crear en Snowsight y pega (*CMD + V para Mac o CTRL + V para Windows*) lo que has copiado de GitHub.
 
 ### Paso 9: ejecutar el SQL de configuración de forma sincronizada
 - Haz clic dentro de la hoja de trabajo de configuración de Tasty Bytes que acabamos de crear, selecciona todo (*CMD + A para Mac o CTRL + A para Windows*) y haz clic en “► Run” para ejecutarla. 
-    - <img src ="assets/run_all_queries.gif"/>
+    - ![assets/run_all_queries.gif](assets/run_all_queries.gif)
 
 ### Paso 10: finalizar la configuración
 - Después de hacer clic en “► Run”, verás que las consultas empiezan a ejecutarse. Se ejecutarán una tras otra. La ejecución de toda la hoja de trabajo durará unos 5 minutos. Una vez finalizada, aparecerá el mensaje `frostbyte_tasty_bytes setup is now complete` para indicar que la configuración se ha completado.
-    - <img src="assets/setup_complete.png">
+    - ![assets/setup_complete.png](assets/setup_complete.png)
 
 ### Paso 11: hacer clic en Next -->
 
@@ -100,35 +100,35 @@ Esta consulta con el comando [SHOW DATABASES](https://docs.snowflake.com/en/sql-
 ```
 SHOW DATABASES LIKE 'frostbyte_tasty_bytes';
 ``` 
-<img src = "assets/show_tb_db.png"> 
+![assets/show_tb_db.png](assets/show_tb_db.png) 
 
 ### Paso 2: explorar los esquemas en la base de datos de Tasty Bytes
 Esta consulta con el comando [SHOW SCHEMAS](https://docs.snowflake.com/en/sql-reference/sql/show-schemas) devolverá los esquemas de la base de datos que hemos creado. 
 ```
 SHOW SCHEMAS IN DATABASE frostbyte_tasty_bytes;
 ``` 
-<img src = "assets/show_tb_schemas.png"> 
+![assets/show_tb_schemas.png](assets/show_tb_schemas.png) 
 
 ### Paso 3: explorar las tablas en el esquema RAW_POS dentro de la base de datos de Tasty Bytes
 Esta consulta con el comando [SHOW TABLES](https://docs.snowflake.com/en/sql-reference/sql/show-tables) devolverá las tablas del esquema `raw_pos`. 
 ```
 SHOW TABLES IN SCHEMA frostbyte_tasty_bytes.raw_pos;
 ``` 
-<img src = "assets/show_tb_tables.png"> 
+![assets/show_tb_tables.png](assets/show_tb_tables.png) 
 
 ### Paso 4: explorar los roles de Tasty Bytes
 Esta consulta con el comando [SHOW ROLES](https://docs.snowflake.com/en/sql-reference/sql/show-roles) devolverá los roles que hemos creado. 
 ```
 SHOW ROLES LIKE 'tasty%';
 ``` 
-<img src = "assets/show_tb_roles.png"> 
+![assets/show_tb_roles.png](assets/show_tb_roles.png) 
 
 ### Paso 5: explorar los almacenes de Tasty Bytes
 Esta consulta con el comando [SHOW WAREHOUSES](https://docs.snowflake.com/en/sql-reference/sql/show-warehouses) devolverá los almacenes que hemos creado. 
 ```
 SHOW WAREHOUSES LIKE 'tasty%';
 ``` 
-<img src = "assets/show_tb_whs.png"> 
+![assets/show_tb_whs.png](assets/show_tb_whs.png) 
 
 ### Paso 6: recopilar todo
 Las siguientes tres consultas van a: 1\. Asumir el rol `tasty_data_engineer` mediante [USE ROLE](https://docs.snowflake.com/en/sql-reference/sql/use-role.html) 2. Utilizar el almacén `tasty_de_wh` mediante [USE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/use-warehouse.html) 3. Ejecutar una consulta en la tabla `raw_pos.menu` para saber qué artículos del menú se venden en nuestros food trucks de la línea Plant Palace.
@@ -145,7 +145,7 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.menu m 
 WHERE m.truck_brand_name = 'Plant Palace'; 
 ``` 
-<img src = "assets/plant_palace.png"> 
+![assets/plant_palace.png](assets/plant_palace.png) 
 
 ¡Genial! En tan solo unos minutos hemos creado un entorno de demostración completo con datos, roles y almacenes configurados en nuestra cuenta de Snowflake. Ahora vamos a echarle un vistazo al resto de quickstart guides de Tasty Bytes que tenemos a nuestra disposición.
 
@@ -158,7 +158,7 @@ WHERE m.truck_brand_name = 'Plant Palace';
 
 El siguiente índice recoge todas las quickstart guides de Tasty Bytes disponibles que utilizan como base los elementos que acabas de crear.
 
-<img src ="assets/pbtb_quickstarts.png"/>
+![assets/pbtb_quickstarts.png](assets/pbtb_quickstarts.png)
 
 ### De cero a Snowflake
 

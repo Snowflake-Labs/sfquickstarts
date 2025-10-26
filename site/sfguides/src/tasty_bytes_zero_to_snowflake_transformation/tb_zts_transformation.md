@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Transformation in Snowflake
-<img src = "assets/transformation_header.png">
+![assets/transformation_header.png](assets/transformation_header.png)
 
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Transformation!
@@ -63,7 +63,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
@@ -118,7 +118,7 @@ FROM raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
 
-<img src = "assets/truck.png">
+![assets/truck.png](assets/truck.png)
 
 ### Step 2 - Using Persisted Query Results
 To test Snowflake's [Result Set Cache](https://docs.snowflake.com/en/user-guide/querying-persisted-results), the next query we run will be identical to what we just ran. 
@@ -136,7 +136,7 @@ FROM raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
 
-<img src = "assets/truck_2.png">
+![assets/truck_2.png](assets/truck_2.png)
 
 
 >aside positive
@@ -175,7 +175,7 @@ SELECT
 FROM raw_pos.truck_dev;
 ```
 
-<img src = "assets/truck_type.png">
+![assets/truck_type.png](assets/truck_type.png)
 
 ### Step 3 - Adding a Column
 To start, please execute the next query which uses [ALTER TABLE... ADD COLUMN](https://docs.snowflake.com/en/sql-reference/sql/alter-table-column) to
@@ -211,7 +211,7 @@ FROM raw_pos.truck_dev
 ORDER BY truck_id;
 ```
 
-<img src = "assets/bad_data.png">
+![assets/bad_data.png](assets/bad_data.png)
 
 **Uh oh!** Thank goodness we were smart developers and didn't do this sort of thing blindly in production. 
 
@@ -245,7 +245,7 @@ WHERE 1=1
 ORDER BY start_time DESC;
 ```
 
-<img src = "assets/query_history.png">
+![assets/query_history.png](assets/query_history.png)
 
 ### Step 2 - Setting a SQL Variable
 As expected, we see our typo correction as well as our update and their associated unique query_id's. Please run the next query which creates a `query_id` SQL Variable that we will use to revert our changes via Time-Travel in the next step. 
@@ -279,7 +279,7 @@ ORDER BY truck_id;
 
 ```
 
-<img src = "assets/time_travel.png">
+![assets/time_travel.png](assets/time_travel.png)
 
 Please refer to the list below for the other Time-Travel Statement options available.
 >aside positive
@@ -342,7 +342,7 @@ FROM raw_pos.truck t
 WHERE t.make = 'Ford';
 ```
 
-<img src = "assets/validate_prod.png">
+![assets/validate_prod.png](assets/validate_prod.png)
 
 ### Step 3 - Dropping and Undropping Tables
 We can officially say our developer has completed their assigned task. With the `truck_type` column in place and correctly calculated, our `sysadmin` can 

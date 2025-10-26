@@ -54,25 +54,25 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ### 2단계 - Snowflake에 로그인
 
 - Snowflake 계정에 로그인합니다.
-  - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+  - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 
 ### 3단계 - Worksheets로 이동
 
 - 왼쪽 탐색 메뉴에 있는 Worksheets 탭을 클릭합니다.
-  - <img src ="assets/worksheet_tab.png" width="250"/>
+  - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 
 ### 4단계 - 워크시트 생성
 
 - Worksheets 내에서 Snowsight 오른쪽 상단 모서리에 있는 ‘+’ 버튼을 클릭하고 ‘SQL Worksheet’를 선택합니다.
-  - <img src = "assets/+_sqlworksheet.png" width ="200">
+  - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 
 ### 5단계 - 워크시트 이름 바꾸기
 
 - 자동으로 생성된 Timestamp 이름을 클릭하고 ‘Tasty Bytes - Transformation’을 입력하여 워크시트의 이름을 바꿉니다.
-  - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+  - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 
 ### 6단계 - GitHub에서 Quickstart SQL에 액세스
@@ -82,7 +82,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ### 7단계 - GitHub에서 설정 SQL 복사
 
 - GitHub 내에서 오른쪽으로 이동하여 ‘Copy raw contents’를 클릭합니다. 이렇게 하면 모든 필수 SQL이 클립보드로 복사됩니다.
-  - <img src ="assets/github_copy_raw_contents.png"/>
+  - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 
 ### 8단계 - 설정 SQL을 GitHub에서 Snowflake 워크시트로 붙여넣기
@@ -113,7 +113,7 @@ CREATE OR REPLACE TABLE frostbyte_tasty_bytes.raw_pos.truck_dev
     CLONE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src ="assets/3.1.truck_dev_clone.png">
+![assets/3.1.truck_dev_clone.png](assets/3.1.truck_dev_clone.png)
 
 > aside positive **제로 카피 클론**: 데이터베이스, 스키마 또는 테이블의 사본을 생성합니다. 소스 객체에 있는 데이터의 스냅샷은 복제가 생성되었고 이것이 복제된 객체에 제공되었을 때 찍습니다. 복제된 객체는 쓰기 가능하며 복제 소스와는 별도입니다. 따라서 소스 객체 또는 복제 객체에 적용된 변경 사항은 다른 객체에 포함되지 않습니다.
 
@@ -144,7 +144,7 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
 
-<img src = "assets/4.1.truck.png">
+![assets/4.1.truck.png](assets/4.1.truck.png)
 
 ### 2단계 - 쿼리 재실행
 
@@ -162,8 +162,8 @@ FROM frostbyte_tasty_bytes.raw_pos.truck_dev t
 ORDER BY t.truck_id;
 ```
 
-<img src = "assets/4.2.1.truck.png">
-<img src = "assets/4.2.2.cache.png">
+![assets/4.2.1.truck.png](assets/4.2.1.truck.png)
+![assets/4.2.2.cache.png](assets/4.2.2.cache.png)
 
 > aside positive 사용자가 이미 실행된 쿼리를 반복하고 마지막으로 쿼리를 실행한 시점 이후로 테이블에 있는 데이터가 변경되지 않은 경우, 쿼리 결과는 동일합니다. Snowflake는 쿼리를 다시 실행하는 대신 이전에 반환된 결과와 동일한 결과를 반환합니다.
 > 
@@ -188,7 +188,7 @@ SET make = 'Ford'
 WHERE make = 'Ford_';
 ```
 
-<img src = "assets/5.1.ford_.png">
+![assets/5.1.ford_.png](assets/5.1.ford_.png)
 
 ### 2단계 - 나이 계산 구축
 
@@ -204,7 +204,7 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ```
 
-<img src = "assets/5.2.age.png">
+![assets/5.2.age.png](assets/5.2.age.png)
 
 ### 3단계 - 다음 클릭 -->
 
@@ -235,7 +235,7 @@ UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
     SET truck_age = (YEAR(CURRENT_DATE()) / t.year);
 ```
 
-<img src = "assets/6.2.update.png">
+![assets/6.2.update.png](assets/6.2.update.png)
 
 ### 3단계 - 새로운 열 쿼리
 
@@ -249,7 +249,7 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.truck_dev t;
 ```
 
-<img src = "assets/6.3.bad_data.png">
+![assets/6.3.bad_data.png](assets/6.3.bad_data.png)
 
 **이런!** 프로덕션에서 무턱대고 이러한 작업을 진행하지 않은 똑똑한 개발자라 다행입니다.
 
@@ -284,7 +284,7 @@ WHERE 1=1
 ORDER BY start_time DESC;
 ```
 
-<img src = "assets/7.1.query_history.png">
+![assets/7.1.query_history.png](assets/7.1.query_history.png)
 
 ### 2단계 - SQL 변수 설정
 
@@ -316,7 +316,7 @@ BEFORE(STATEMENT => $query_id);
 
 ```
 
-<img src = "assets/7.3.time_travel.png">
+![assets/7.3.time_travel.png](assets/7.3.time_travel.png)
 
 다른 사용 가능한 Time Travel 문 옵션은 아래 목록을 참조하십시오.
 
@@ -348,7 +348,7 @@ UPDATE frostbyte_tasty_bytes.raw_pos.truck_dev t
 SET truck_age = (YEAR(CURRENT_DATE()) - t.year);
 ```
 
-<img src = "assets/8.1.correct_update.png">
+![assets/8.1.correct_update.png](assets/8.1.correct_update.png)
 
 ### 2단계 - 개발 테이블을 프로덕션으로 교체
 
@@ -377,7 +377,7 @@ WHERE t.make = 'Ford';
 
 ```
 
-<img src = "assets/8.3.validate_prod.png">
+![assets/8.3.validate_prod.png](assets/8.3.validate_prod.png)
 
 ### 4단계 - 다음 클릭 -->
 
@@ -396,7 +396,7 @@ WHERE t.make = 'Ford';
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src = "assets/9.1.drop.png">
+![assets/9.1.drop.png](assets/9.1.drop.png)
 
 **이런!!** 결과 세트에 따르면 `sysadmin`도 실수를 할 수 있습니다. 개발 `truck_dev`가 아니라 프로덕션 `truck`을 잘못 드롭했습니다. 다행히 Snowflake의 Time Travel이 다시 한번 도움을 줄 수 있습니다.
 
@@ -408,7 +408,7 @@ DROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 ```
 
-<img src = "assets/9.2.undrop.png">
+![assets/9.2.undrop.png](assets/9.2.undrop.png)
 
 ### 3단계 - 올바른 테이블 드롭
 
@@ -418,7 +418,7 @@ UNDROP TABLE frostbyte_tasty_bytes.raw_pos.truck;
 DROP TABLE frostbyte_tasty_bytes.raw_pos.truck_dev;
 ```
 
-<img src = "assets/9.3.correctdrop.png">
+![assets/9.3.correctdrop.png](assets/9.3.correctdrop.png)
 
 ### 4단계 - 다음 클릭 -->
 

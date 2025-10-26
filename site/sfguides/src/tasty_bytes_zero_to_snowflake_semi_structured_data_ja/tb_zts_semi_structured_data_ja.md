@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!-- ------------------------ -->
 ## Snowflakeにおける半構造化データ処理
-<img src = "assets/semi_structured_header.png">
+![assets/semi_structured_header.png](assets/semi_structured_header.png)
 
 ### 概要
 Powered by Tasty Bytes - ゼロからのSnowflakeクイックスタートへようこそ。今回は半構造化データ処理を中心的に取り上げます。
@@ -48,19 +48,19 @@ Snowflakeにおける半構造化データの詳細については、[半構造�
 
 ### ステップ2 - Snowflakeにログインする
 - Snowflakeアカウントにログインします。
-  - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+  - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 ### ステップ3 - ワークシートに移動する
 - 左側のナビゲーションバーにある「ワークシート」タブをクリックします。
-  - <img src ="assets/worksheet_tab.png" width="250"/>
+  - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 ### ステップ4 - ワークシートを作成する
 - ワークシート内で、Snowsightの右上にある「+」ボタンをクリックし、「SQLワークシート」を選択します。
-  - <img src = "assets/+_sqlworksheet.png" width ="200">
+  - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 ### ステップ5 - ワークシートの名前を変更する
 - 自動生成されたタイムスタンプ名をクリックし、「Tasty Bytes - 半構造化データ」と入力してワークシートの名前を変更します。
-  - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+  - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 ### ステップ6 - GitHubでQuickstart SQLにアクセスする
 - 下のボタンをクリックすると、GitHubでホストされているTasty BytesのSQLファイルに移動します。
@@ -68,7 +68,7 @@ Snowflakeにおける半構造化データの詳細については、[半構造�
 
 ### ステップ7 - GitHubからSetup SQLをコピーする
 - GitHub内で右側に移動し、「未加工コンテンツをコピー」をクリックします。これで、必要なSQLがすべてクリップボードにコピーされます。
-  - <img src ="assets/github_copy_raw_contents.png"/>
+  - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### ステップ8 - GitHubからSnowflakeワークシートにSetup SQLを貼り付ける
 - Snowsightと新しく作成したワークシートに戻り、先ほどGitHubからコピーしたものを貼り付けます（*Macの場合はCMD + V、Windowsの場合はCTRL + V*）。
@@ -98,13 +98,13 @@ SELECT TOP 10
 FROM frostbyte_tasty_bytes.raw_pos.menu m;
 ```
 
-<img src = "assets/3.1.menu.png">
+![assets/3.1.menu.png](assets/3.1.menu.png)
 
 出力の中で、`menu_item_health_metrics_obj`が、私たちがダウンストリームに提供する必要があるメトリックが含まれていると伝えられていた半構造化データであることがわかります。
 
 この列のセルをクリックすると、Snowsightによって統計ペインが自動的に展開され、内容がわかりやすい形式で表示されます。
 
-<img src = "assets/3.1.2.stats.png">
+![assets/3.1.2.stats.png](assets/3.1.2.stats.png)
 
 ### ステップ2 - 半構造化列を調査する
 この列がSnowflakeでどのように定義されているかを詳しく調べるには、次のクエリを実行し、[SHOW COLUMNS](https://docs.snowflake.com/ja/sql-reference/sql/show-columns)を活用して`menu`テーブルに存在するデータ型を調べてください。
@@ -113,7 +113,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m;
 SHOW COLUMNS IN frostbyte_tasty_bytes.raw_pos.menu;
 ```
 
-<img src = "assets/3.2.show_columns.png">
+![assets/3.2.show_columns.png](assets/3.2.show_columns.png)
 
 結果セットを見ると、`menu_item_health_metrics_obj`は[VARIANT](https://docs.snowflake.com/ja/sql-reference/data-types-semistructured)データ型であることが分かります。
 
@@ -133,13 +133,13 @@ SELECT
 FROM frostbyte_tasty_bytes.raw_pos.menu m;
 ```
 
-<img src = "assets/3.3.dot.png">
+![assets/3.3.dot.png](assets/3.3.dot.png)
 
 ドット表記を使用することで、`menu_item_id`を完全に抽出することには成功しましたが、`menu_item_health_metrics`列の出力には追加の半構造化オブジェクトがまだ残っているようです。
 
 もう1度、この列のセルをクリックして、さらに詳しく見てみましょう。
 
-<img src = "assets/3.3.2.stats.png">
+![assets/3.3.2.stats.png](assets/3.3.2.stats.png)
 
 **しっかり進んでいますね！** 次のセクションでは、追加のSnowflake関数を使って`menu_item_health_metrics`の処理を進める方法を見ていきましょう。
 
@@ -169,7 +169,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/4.1.lat_flat.png">
+![assets/4.1.lat_flat.png](assets/4.1.lat_flat.png)
 
 ### ステップ2 - 配列関数を調査する
 求められた食事データを抽出する前に、次のクエリを開始してください。ここでは、Snowflake配列関数に着目し、[ARRAY_CONTAINS](https://docs.snowflake.com/ja/sql-reference/functions/array_contains)を活用してレタスを含む`menu_item_name`の`ingredients`列を探っていきます。
@@ -183,7 +183,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 WHERE ARRAY_CONTAINS('Lettuce'::VARIANT, obj.value:"ingredients"::VARIANT);
 ```
 
-<img src = "assets/4.2.array_contains.png">
+![assets/4.2.array_contains.png](assets/4.2.array_contains.png)
 
 出力を見ると、相当数のメニューにレタスが含まれていることが分かります。このような分析は、私たちがサポートする都市や国で食品関連のリコールが発生した場合に、サプライチェーン調達マネージャーにとって非常に価値のあるものとなります。
 
@@ -205,7 +205,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/4.3.lat_flat_2.png">
+![assets/4.3.lat_flat_2.png](assets/4.3.lat_flat_2.png)
 
 **すばらしい！** この出力は、ステークホルダーが要求した要件を正確に満たしていると言えるでしょう。次のセクションでは、この出力をどのように分析レイヤーに昇格させ、ステークホルダーがアクセスできるようにするかを検討していきます。
 
@@ -250,7 +250,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
     LATERAL FLATTEN (input => m.menu_item_health_metrics_obj:menu_item_health_metrics) obj;
 ```
 
-<img src = "assets/5.1.harmonized_view.png">
+![assets/5.1.harmonized_view.png](assets/5.1.harmonized_view.png)
 
 `harmonized.menu_v`ビューが作成されたことにより、ビュー内で使用した複雑なSQLを活用することなく、直接ビューにクエリを実行できるようになりました。しかし、ステークホルダーがデータにアクセスする場所は分析レイヤーであるため、次のステップを実行してこれを作成しましょう。
 
@@ -267,7 +267,7 @@ FROM frostbyte_tasty_bytes.raw_pos.menu m,
 > **名前を変更：** すべての列を選択する場合（SELECT \*またはSELECT table_name.\*）、結果で使用すべき列エイリアスを指定します。
 >
 
-<img src = "assets/5.2.analytics_view.png">
+![assets/5.2.analytics_view.png](assets/5.2.analytics_view.png)
 
 ### ステップ3 - 「Next」をクリックする
 
@@ -299,7 +299,7 @@ WHERE 1=1
 ORDER BY m1.menu_type;
 ```
 
-<img src = "assets/6.1.arrays.png">
+![assets/6.1.arrays.png](assets/6.1.arrays.png)
 
 ここでもまた、私たちが構築したビューをそのまま使用することで、この種のクエリからキッチンカー事業者に実際のビジネス価値がもたらされます。毎週の調達業務の際に必要な食材を予測して注文できるようになるからです。
 
@@ -318,7 +318,7 @@ SELECT
 FROM frostbyte_tasty_bytes.analytics.menu_v m;
 ```
 
-<img src = "assets/6.2.metrics.png">
+![assets/6.2.metrics.png](assets/6.2.metrics.png)
 
 ここで得られた出力により、半構造化データを含む未加工テーブルから、組織内の誰でも簡単にアクセスでき、Tasty Bytesがさらにデータドリブンになるのに役立つ単一の集計行が得られました。
 
@@ -339,13 +339,13 @@ WHERE m.brand_name IN  ('Plant Palace', 'Peking Truck','Revenge of the Curds')
 GROUP BY m.brand_name;
 ```
 
-<img src = "assets/6.3.results.png">
+![assets/6.3.results.png](assets/6.3.results.png)
 
 デフォルトでは、Snowsightはクエリ結果を表形式で返します。しかし、まだ紹介していませんでしたが、Snowsightの強力な機能の1つに[チャートの使用](https://docs.snowflake.com/ja/user-guide/ui-snowsight-visualizations#using-charts)があります。
 
 次のスクリーンショットの矢印に従って、特定の食事制限に対応するメニュー項目についての、これらの各種キッチンカーブランド間の比較を示す棒グラフを作成してください。
 
-<img src = "assets/6.3.chart.png">
+![assets/6.3.chart.png](assets/6.3.chart.png)
 
 このクイックスタートの締めくくりとして、Tasty Bytesの幹部が、私たちが構築したビューでカプセル化された半構造化データ処理について知らなくても、このような分析を自力で簡単に実行できるということを指摘しておく必要があります。これにより、私たちはTasty Bytesの組織においてデータの民主化の推進に貢献しているということに確信を持てます。
 

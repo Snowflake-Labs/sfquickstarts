@@ -52,25 +52,25 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ### 2단계 - Snowflake에 로그인
 
 - Snowflake 계정에 로그인합니다.
-  - <img src ="assets/log_into_snowflake.gif" width = "300"/>
+  - ![assets/log_into_snowflake.gif](assets/log_into_snowflake.gif)
 
 
 ### 3단계 - Worksheets로 이동
 
 - 왼쪽 탐색 메뉴에 있는 Worksheets 탭을 클릭합니다.
-  - <img src ="assets/worksheet_tab.png" width="250"/>
+  - ![assets/worksheet_tab.png](assets/worksheet_tab.png)
 
 
 ### 4단계 - 워크시트 생성
 
 - Worksheets 내에서 Snowsight 오른쪽 상단 모서리에 있는 ‘+’ 버튼을 클릭하고 ‘SQL Worksheet’를 선택합니다.
-  - <img src = "assets/+_sqlworksheet.png" width ="200">
+  - ![assets/+_sqlworksheet.png](assets/+_sqlworksheet.png)
 
 
 ### 5단계 - 워크시트 이름 바꾸기
 
 - 자동으로 생성된 Timestamp 이름을 클릭하고 ‘Tasty Bytes - Collaboration’을 입력하여 워크시트의 이름을 바꿉니다.
-  - <img src ="assets/rename_worksheet_tasty_bytes_setup.gif"/>
+  - ![assets/rename_worksheet_tasty_bytes_setup.gif](assets/rename_worksheet_tasty_bytes_setup.gif)
 
 
 ### 6단계 - GitHub에서 Quickstart SQL에 액세스
@@ -82,7 +82,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ### 7단계 - GitHub에서 설정 SQL 복사
 
 - GitHub 내에서 오른쪽으로 이동하여 ‘Copy raw contents’를 클릭합니다. 이렇게 하면 모든 필수 SQL이 클립보드로 복사됩니다.
-  - <img src ="assets/github_copy_raw_contents.png"/>
+  - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 
 ### 8단계 - 설정 SQL을 GitHub에서 Snowflake 워크시트로 붙여넣기
@@ -118,7 +118,7 @@ GROUP BY o.date
 ORDER BY o.date ASC;
 ```
 
-<img src = "assets/3.1.orders_v.png">
+![assets/3.1.orders_v.png](assets/3.1.orders_v.png)
 위에서 확인한 내용에 따르면 2월의 몇몇 날짜에 일일 매출 기록이 없다는 점에서 분석가의 의견에 동의할 수 있습니다. 따라서 분석가는 확실히 문제가 있는 부분을 지적했습니다. 다음 섹션에서는 이러한 현상이 발생한 이유를 조금 더 자세히 알아보겠습니다.
 
 ### 2단계 - 다음 클릭 -->
@@ -146,7 +146,7 @@ Snowflake 마켓플레이스는 혁신적인 비즈니스 솔루션을 지원하
 - 데이터베이스 이름 바꾸기 -> FROSTBYTE_WEATHERSOURCE(전부 대문자)
 - 추가 역할에 부여 -> PUBLIC
 
-<img src = "assets/4.1.acquire_weather_source.gif">
+![assets/4.1.acquire_weather_source.gif](assets/4.1.acquire_weather_source.gif)
 > aside positive Weather Source는 선도적인 전 세계 날씨 및 기후 데이터 공급자입니다. 이 회사의 OnPoint Product Suite는 비즈니스가 여러 산업에 걸쳐 다양한 사용 사례에 대한 의미 있고 실행 가능한 인사이트를 빠르게 생성하는 데 필요한 날씨 및 기후 데이터를 제공합니다.
 
 ### 2단계 - 자사 및 서드 파티 데이터 조정
@@ -170,7 +170,7 @@ JOIN frostbyte_tasty_bytes.raw_pos.country c
     AND c.city = hd.city_name;
 ```
 
-<img src = "assets/4.2.daily_weather_v.png">
+![assets/4.2.daily_weather_v.png](assets/4.2.daily_weather_v.png)
 위 뷰 정의에서 확인할 수 있듯이 `onpoint_id` 스키마 내 2개의 `frostbyte_weathersource` 테이블을 결합한 다음 `frostbyte_tasty_bytes` 데이터베이스 및 `raw_pos` 스키마의 `country` 테이블과 이를 조정하고 있습니다.
 
 이러한 작업은 일반적으로 조정 계층(실버 영역이라고도 함)에서 찾아볼 수 있습니다.
@@ -197,11 +197,11 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-<img src = "assets/4.3.results.png">
+![assets/4.3.results.png](assets/4.3.results.png)
 
 추세를 추가적으로 조사하기 위해 Snowsight 그래프 생성을 활용하여 시간의 흐름에 따른 평균 기온의 선 그래프를 생성하겠습니다.
 
-<img src = "assets/4.3.chart.png">
+![assets/4.3.chart.png](assets/4.3.chart.png)
 
 위에서 확인한 내용에 따르면 트럭에서 매출이 없는 날짜가 발생한 명백한 이유를 아직 찾지 못했습니다. 다음 단계에서 이유를 설명할 수도 있는 다른 요인을 찾아보겠습니다.
 
@@ -227,11 +227,11 @@ GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
 ```
 
-<img src = "assets/4.4.result.png">
+![assets/4.4.result.png](assets/4.4.result.png)
 
 여기서도 빠른 Snowsight 그래프를 통해 이러한 데이터의 추세를 더 잘 나타낼 수 있습니다. 결과에서 그래프로 이동하기 위해 아래 스크린샷에 있는 화살표를 따르십시오.
 
-<img src = "assets/4.4.chart.png">
+![assets/4.4.chart.png](assets/4.4.chart.png)
 
 **찾았습니다!** 매출이 0인 날짜에는 바람이 태풍 수준이었습니다. 이것이 바로 트럭이 이러한 날짜에 아무것도 판매할 수 없었던 더 타당한 이유인 것 같습니다. 하지만 조정에서 이 분석을 실행했기에 이제 분석가가 이러한 인사이트에 스스로 액세스할 수 있도록 분석에 이 내용을 제공하기 위한 여정을 시작하겠습니다.
 
@@ -261,7 +261,7 @@ $$
 $$;
 ```
 
-<img src = "assets/5.1.f_to_c.png">
+![assets/5.1.f_to_c.png](assets/5.1.f_to_c.png)
 
 ```
 CREATE OR REPLACE FUNCTION frostbyte_tasty_bytes.analytics.inch_to_millimeter(inch NUMBER(35,4))
@@ -272,7 +272,7 @@ $$
 $$;
 ```
 
-<img src = "assets/5.1.inch_to_mm.png">
+![assets/5.1.inch_to_mm.png](assets/5.1.inch_to_mm.png)
 
 > aside positive UDF를 생성할 때 지원되는 언어 중 하나로 코드가 작성된 핸들러를 지정합니다. 핸들러의 언어에 따라 CREATE FUNCTION 문이 포함된 핸들러 소스 코드 인라인을 포함하거나 핸들러가 미리 컴파일되었거나 스테이지의 소스 코드인 경우에 CREATE FUNCTION에서 핸들러 위치를 참조할 수 있습니다.
 
@@ -306,7 +306,7 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 ```
 
-<img src = "assets/5.2.SQL.png">
+![assets/5.2.SQL.png](assets/5.2.SQL.png)
 
 방금 수신한 결과가 만족스럽습니다. 이제 다음 단계에서는 뷰에서 이 SQL을 래핑할 수 있습니다.
 
@@ -339,7 +339,7 @@ WHERE 1=1
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 ```
 
-<img src = "assets/5.3.view.png">
+![assets/5.3.view.png](assets/5.3.view.png)
 
 이제 이러한 인사이트를 Tasty Bytes 조직을 대상으로 민주화했습니다. 다음 섹션에서 모두 결합하여 작업을 검증하겠습니다.
 
@@ -377,7 +377,7 @@ WHERE 1=1
 ORDER BY date DESC;
 ```
 
-<img src = "assets/6.1.results.png">
+![assets/6.1.results.png](assets/6.1.results.png)
 
 **좋습니다!** 금융 분석가가 초기에 연구를 진행할 때 이것이 제공되었다면 인사이트를 바로 확인할 수 있기에 데이터 팀에 도움을 요청하지 않아도 되었을 것입니다.
 

@@ -10,13 +10,13 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # LLM Assisted Medical Coding Extraction for Healthcare in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-<img src="assets/hcls.png"/>
+![assets/hcls.png](assets/hcls.png)
 
 
 In the complex landscape of healthcare, the accurate calculation of patient risk scores is not just a matter of compliance, but a crucial aspect that can significantly influence a provider's financial reimbursements. Accurate risk scoring is instrumental in ensuring that healthcare providers receive the appropriate compensation for the level of care they provide, balancing the dual objectives of delivering high-quality care and maintaining financial viability.
 And these  scores not only influence clinical decisions and resource allocation but also significantly impact reimbursement rates from insurance companies. Given their importance, the need for precision in calculating risk scores cannot be overstated.
 
-<img src="assets/ICDCode.png"/>
+![assets/ICDCode.png](assets/ICDCode.png)
 
 Traditionally, healthcare providers have relied on various tools and methodologies to estimate patient risk scores. However, these conventional methods often fall short in addressing the complexity and variability inherent in patient data.  In this Quickstart guide we will study how to leverage a large language model in the beginning and implement a Distillation flow with a Llama 405b to generate training samples to teach a smaller model perform the code extraction task with the same accuracy but lower cost. Large language model (LLM) distillation focuses on replicating the performance of a large model on a specific task by transferring its capabilities to a smaller model. This allows developers to achieve similar results to models like GPT-4 but with reduced computational cost and faster performance—though only for the targeted task.
 
@@ -56,7 +56,7 @@ This section will walk you through creating various objects
 
 #### High-Level Workflow
 
-<img src="assets/workflow.png"/>
+![assets/workflow.png](assets/workflow.png)
 
 Steps:
 **Step 1**. - Clone [GitHub](https://github.com/Snowflake-Labs/sfguide-llm-assisted-medical-coding-extraction-for-healthcare-in-snowflake) repository.

@@ -86,18 +86,14 @@ To run the EDA Notebook:
 2) Open the notebook <YOUR_PROJECT_NAME>_EDA.
 3) In the upper right hand corner of your UI, click the down arrow next to the word Start and select 'Edit compute settings'.
 
-    <img
-        src="assets/editcompute.png" 
-        width=50%
+![Edit Compute](assets/editcompute.png)
     />
 
 
 4) Select 'Run on container' and click Save.  You will also do this for the Modeling and Inference notebooks.  (Please note that you will need to use a role other than ACCOUNTADMIN, SECURITYADMIN or ORGADMIN to run the notebook on a container.)
 
     
-    <img
-        src="assets/container.png" 
-        width=50%
+![Container](assets/container.png)
     />
     
 

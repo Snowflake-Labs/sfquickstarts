@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Overview
-<img src="assets/docaiheader.png"/>
+![assets/docaiheader.png](assets/docaiheader.png)
 
 ### Overview
 Within this Quickstart, we will walk through how to train and leverage a Document Extraction Model using Document AI. We will use this model to convert unstructured Inspection Reports into structured, easy-to-analyze rows and columns all within the Snowflake AI Data Cloud.
@@ -121,12 +121,12 @@ Please leverage the two buttons below to download these .zip files. Once downloa
 ### Step 1 - Navigating to our Stage
 Within the Snowsight interface, navigate to Data -> Databases and then search for `TB_DOC_AI`. From there navigate to the `RAW_DOC` schema and the `INSPECTION_REPORTS` stage.
 
-<img src="assets/find_stage.png"/>
+![assets/find_stage.png](assets/find_stage.png)
 
 ### Step 2 - Uploading our Inspection Reports
 In the top-right corner, click the **+Files** button and either drop or browse to the unzipped Inspection Reports Full from Step 1. From there click **Upload**.
 
-<img src="assets/upload_to_stage.png"/>
+![assets/upload_to_stage.png](assets/upload_to_stage.png)
 
 This will kick off our file upload and you will eventually see our Inspection Report PDF's within the Stage.
 
@@ -144,14 +144,14 @@ Within the New Build screen, enter the following:
 - **Choose Database:** TB_DOC_AI
 - **Choose Schema:** RAW_DOC
 
-<img src="assets/new_build.png"/>
+![assets/new_build.png](assets/new_build.png)
 
 ### Step 2 - Uploading our Training Documents
 After the build creation is successful, we will land in our Document AI Build Details window, where we can begin our document upload by clicking the **Upload documents** button. 
 
 Within the Upload documents screen drop or browse to the unzipped Training Inspection Reports from Step 1. From there click **Upload**.
 
-<img src="assets/upload_to_build.png"/>
+![assets/upload_to_build.png](assets/upload_to_build.png)
 
 
 ### Step 3 - Specifying our Values and Questions
@@ -178,14 +178,14 @@ From here please enter the following set of Values and Questions one by one that
 > Please see [Question optimization for extracting information with Document AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/optimizing-questions) for best practices.
 >
 
-<img src="assets/question_values.png"/>
+![assets/question_values.png](assets/question_values.png)
 
 ### Step 4 - Reviewing our Test Documents
 After completing our initial document review in the previous step, we will now review the models' initial extraction results for our remaining test documents.
 
 To begin, please move on to the second document by clicking the arrow at the bottom of the screen.
 
-<img src="assets/review_next.png"/>
+![assets/review_next.png](assets/review_next.png)
 
 Once the next document appears, please again conduct the following steps for each Value and Question pair.
 
@@ -193,20 +193,20 @@ Once the next document appears, please again conduct the following steps for eac
 - If **Yes** - Click the check-box to indicate this value was extracted correctly.
 - If **No** - Delete the provided value and enter the correct value.
 
-<img src="assets/docai_review.gif"/>
+![assets/docai_review.gif](assets/docai_review.gif)
 
 After completing review of all documents, please navigate back to the Document AI UI by click the arrow next to **Documents review**
 
-<img src="assets/doc_review_arrow.png"/>
+![assets/doc_review_arrow.png](assets/doc_review_arrow.png)
 
 Next navigate to the Build Details tab.
 
-<img src="assets/build_details.png"/>
+![assets/build_details.png](assets/build_details.png)
 
 ### Step 5 - Training our Model
 Using the **Model accuracy** tile, we will now train our model by clicking the **Train model** button. Within the **Start training** pop-up click **Start Training** which will take around 20 minutes.
 
-<img src="assets/start_training.png"/>
+![assets/start_training.png](assets/start_training.png)
 
 - For more on Document AI training time estimation please visit our [Document AI documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/prepare-model-build#training-time-estimation).
 
@@ -241,7 +241,7 @@ Using a [LIST](https://docs.snowflake.com/en/sql-reference/sql/list) command, le
 LIST @inspection_reports;
 ```
 
-<img src="assets/list_files.png"/>
+![assets/list_files.png](assets/list_files.png)
 
 
 ### Step 3 - Extraction for a single Document
@@ -251,7 +251,7 @@ To begin our extraction, let's use our model and the [PREDICT](https://docs.snow
 SELECT inspection_report_extraction!PREDICT(GET_PRESIGNED_URL(@inspection_reports, '02.13.2022.5.pdf'));
 ```
 
-<img src="assets/one_file.png"/>
+![assets/one_file.png](assets/one_file.png)
 
 
 ### Step 4 - Extraction for all Documents
@@ -271,7 +271,7 @@ Before moving on let's take a look at our raw, extracted results.
 SELECT * FROM ir_raw;
 ```
 
-<img src="assets/select_all.png"/>
+![assets/select_all.png](assets/select_all.png)
 
 
 ### Step 5 - Flattening our Extracted Object
@@ -304,7 +304,7 @@ FROM ir_raw
 ORDER BY truck_id;
 ```
 
-<img src="assets/extract.png"/>
+![assets/extract.png](assets/extract.png)
 
 **Amazing!** Exactly as desired we have moved from Unstructured PDF to easy to digest tabular results in the matter of minutes all within the Snowflake AI Data Cloud.
 

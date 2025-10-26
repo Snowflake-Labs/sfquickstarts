@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
-<img src="assets/TB_EndToEndML_banner.png"/>
+![assets/TB_EndToEndML_banner.png](assets/TB_EndToEndML_banner.png)
 
 This solution generates upsell and cross-sell recommendations to increase sales for the Tasty Bytes business. In this quickstart, we will walk through how to build an end-to-end Pytorch recommendation model using [Snowflake ML](https://www.snowflake.com/en/data-cloud/snowflake-ml/). This involves:
 
@@ -71,7 +71,7 @@ Run the SQL from the [file](https://github.com/Snowflake-Labs/sfguide-getting-st
 
 The architecture of the Tasty Bytes ML solution is designed to generate personalized upsell and cross-sell recommendations. Here's a detailed walkthrough of how we use components of Snowflake ML to complete this workflow:
 
-<img src="assets/Architecture.png"/>
+![assets/Architecture.png](assets/Architecture.png)
 
 **Extracting Features:** This begins with the ingestion of data into Snowflake. Data sources include customer profiles, menu details, and purchase histories. Snowflake Notebooks can be leveraged to provide an integrated development environment where SQL and Python are used to query, manipulate, and prepare the data. The team automates the extraction of relevant features, ensuring that data from various sources is consolidated and ready for subsequent steps.
 
@@ -97,19 +97,19 @@ This notebook demonstrates how to create and manage feature views within a featu
 
 - Import the following Snowflake Notebook in Snowsight: [0_start_here.ipynb](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/notebooks/0_start_here.ipynb)
 
-<img src="assets/import.png"/>
+![assets/import.png](assets/import.png)
 
 - Create notebook with the settings in the screenshot.
 
-<img src="assets/create_notebook.png"/>
+![assets/create_notebook.png](assets/create_notebook.png)
 
 - Once created, Click on Notebook Settings in the top right corner inside Snowflake Notebooks
 
-<img src="assets/notebook_settings.png"/>
+![assets/notebook_settings.png](assets/notebook_settings.png)
 
 - Enable **TASTYBYTESENDTOENDML_ALLOW_ALL_ACCESS_INTEGRATION** as per screenshot
 
-<img src="assets/eai.png"/>
+![assets/eai.png](assets/eai.png)
 
 - Click each cell or Run all to run the Notebook
 
@@ -127,7 +127,7 @@ To set up the Streamlit in Snowflake Application,
 4. Once the App is created, replace the example code with the streamlit code in the [file](https://github.com/Snowflake-Labs/sfguide-getting-started-with-running-distributed-pytorch-models-on-snowflake/blob/main/streamlit/Menu_Item_Recommendations_App.py) 
 4. Add **snowflake-ml-python** and **pytorch** packages to the app and Run the Application.
 
-<img src="assets/create_streamlit.png"/>
+![assets/create_streamlit.png](assets/create_streamlit.png)
 
 ### Application Flow
 
@@ -135,7 +135,7 @@ This application generates menu item recommendations based on the filters select
 
 When you click the **Get Recommendations** button, the application filters the data based on your selections, processes the features for the model, and runs the deep learning model inference to generate menu item recommendations along with purchase history for better context. You also have the option to save these results for use in campaigns and marketing efforts. By clicking the **Save** button, the results are saved to the Stage.
 
-<img src="assets/App_Preview.png"/>
+![assets/App_Preview.png](assets/App_Preview.png)
 
 ## Conclusion And Resources
 

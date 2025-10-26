@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the `GEOGRAPHY` data type, help you understand geospatial formats supported by Snowflake, walk you through the use of a variety of functions on a sample geospatial data set from the Snowflake Marketplace, and show you how to analyze and visualize your Snowflake data using CARTO’s Analytics Toolbox. 
 
-<img src ='assets/geo_sf_carto_telco_1.png'>
+![assets/geo_sf_carto_telco_1.png](assets/geo_sf_carto_telco_1.png)
 
 ### Prerequisites
 * Quick Video [Introduction to Snowflake](https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc.)
@@ -42,7 +42,7 @@ A sample use case that involves LTE cell towers in the United Kingdom. You will 
 * What UK motorways are poorly or not covered by LTE network.
 
 
-<img src ='assets/geo_sf_carto_telco_2.jpeg'>
+![assets/geo_sf_carto_telco_2.jpeg](assets/geo_sf_carto_telco_2.jpeg)
 
 <!-- ------------------------ -->
 ## Setup your Account
@@ -61,7 +61,7 @@ The Snowflake web interface has a lot to offer, but for now, switch your current
 > aside positive
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
-<img src ='assets/geo_sf_carto_telco_3.png' width=500>
+![assets/geo_sf_carto_telco_3.png](assets/geo_sf_carto_telco_3.png)
 
 ### Create a Virtual Warehouse
 
@@ -71,7 +71,7 @@ You will need to create a Virtual Warehouse to run queries.
 - Click the big blue `+ Warehouse` button in the upper right of the window
 - Create an Large Warehouse as shown in the screen below
 
-<img src ='assets/geo_sf_carto_telco_4.png' width=500>
+![assets/geo_sf_carto_telco_4.png](assets/geo_sf_carto_telco_4.png)
 
 Be sure to change the `Suspend After (min)` field to 5 min to avoid wasting compute credits.
 
@@ -93,7 +93,7 @@ Navigate to the query editor by clicking on  `Worksheets`  on the top left navig
 * Click the + Worksheet button in the upper right of your browser window. This will open a new window.
 * In the new Window, make sure `ACCOUNTADMIN` and `MY_WH` (or whatever your warehouse is named) are selected in the upper right of your browser window.
 
-<img src ='assets/geo_sf_carto_telco_17.png' width=700>
+![assets/geo_sf_carto_telco_17.png](assets/geo_sf_carto_telco_17.png)
 
 
 First, create a new database and schema where we will store datasets in the Geography data type.
@@ -113,7 +113,7 @@ Access the CARTO Workspace: [app.carto.com](http://app.carto.com/)
 
 Go to the Connections section in the Workspace, where you can find the list of all your current connections.
 
-<img src ='assets/geo_sf_carto_telco_5.png' width=700>
+![assets/geo_sf_carto_telco_5.png](assets/geo_sf_carto_telco_5.png)
 
 To add a new connection, click on `New connection` and follow these steps:
 
@@ -135,7 +135,7 @@ These are the parameters you need to provide:
 - **Database (optional)**. Default database to run your queries. Use GEOLAB.
 - **Role (optional)**. Default Role to run your queries. Use ACCOUNTADMIN.
 
-<img src ='assets/geo_sf_carto_telco_6.png' width=700>
+![assets/geo_sf_carto_telco_6.png](assets/geo_sf_carto_telco_6.png)
 
 Once you have entered the parameters, you can click the Connect button. CARTO will try to connect to your Snowflake account. If everything is OK, your new connection will be registered.
 
@@ -154,24 +154,24 @@ Now you can acquire sample geospatial data from the Snowflake Marketplace.
 * Search for` OpenCelliD` in the search bar
 * Find and click the` OpenCelliD - Open Database of Cell Towers` tile
 
-<img src ='assets/geo_sf_carto_telco_7.png' width=700>
+![assets/geo_sf_carto_telco_7.png](assets/geo_sf_carto_telco_7.png)
 
 * Once in the listing, click the big blue `Get` button
 
 > aside negative
 >  On the `Get` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get` screen.
 
-<img src ='assets/geo_sf_carto_telco_8.png' width=500>
+![assets/geo_sf_carto_telco_8.png](assets/geo_sf_carto_telco_8.png)
 
 * On the `Get Data` screen, change the name of the database from the default to `OPENCELLID`, as this name is shorter, and all future instructions will assume this name for the database.
 
-<img src ='assets/geo_sf_carto_telco_9.png' width=500>
+![assets/geo_sf_carto_telco_9.png](assets/geo_sf_carto_telco_9.png)
 
 Congratulations! You have just created a shared database from a listing on the Snowflake Marketplace. 
 
 Similarly to the above dataset, search and get the `UK Open Map Data - Sonra` dataset from the Marketplace and rename it to `osm_uk`.
 
-<img src ='assets/geo_sf_carto_telco_32.png' width=500>
+![assets/geo_sf_carto_telco_32.png](assets/geo_sf_carto_telco_32.png)
 
 ### Install CARTO Analytics Toolbox from the Snowflake Marketplace
 
@@ -180,16 +180,16 @@ Now you can acquire CARTO’s Analytics Toolbox from the Snowflake Marketplace. 
 * Similar to how you did with the data in the previous steps, navigate to the `Marketplace` screen using the menu on the left side of the window
 * Search for` CARTO` in the search bar
 
-<img src ='assets/geo_sf_carto_telco_10.png' width=700>
+![assets/geo_sf_carto_telco_10.png](assets/geo_sf_carto_telco_10.png)
 
 * Find and click the` Analytics Toolbox`  tile 
 
-<img src ='assets/geo_sf_carto_telco_11.png' width=700>
+![assets/geo_sf_carto_telco_11.png](assets/geo_sf_carto_telco_11.png)
 
 * Click on big blue` Get`  button 
 * In the options, name the database `CARTO` and optionally add more roles that can access the database 
 
-<img src ='assets/geo_sf_carto_telco_12.png' width=500>
+![assets/geo_sf_carto_telco_12.png](assets/geo_sf_carto_telco_12.png)
 
 * Click on `Get` and then `Done`. 
 
@@ -213,12 +213,12 @@ create or replace TABLE GEOLAB.GEOGRAPHY.UK_NL_DISTRICTS (
 
 Then click `Refresh` in the sidebar, navigate to the newly created table, right-click on it, and select "Load data".
 
-<img src ='assets/geo_sf_carto_telco_13.png' width=700>
+![assets/geo_sf_carto_telco_13.png](assets/geo_sf_carto_telco_13.png)
 
 
 In the pop-up, choose the file you want to upload and click the Next button. When it suggests selecting the file format and some other parameters, select the values as shown below and click the Next button one more time:
 
-<img src ='assets/geo_sf_carto_telco_14.png' width=500>
+![assets/geo_sf_carto_telco_14.png](assets/geo_sf_carto_telco_14.png)
 
 Voila! Now you have a table with the boundaries of districts in the UK and the Netherlands.
 
@@ -287,7 +287,7 @@ In the result set, notice the `geometry` column and how it displays a JSON repre
 
 Notice that in the result set coordinates represented as pairs of longitude and latitude:
 
-<img src ='assets/geo_sf_carto_telco_18.png' width=700>
+![assets/geo_sf_carto_telco_18.png](assets/geo_sf_carto_telco_18.png)
 
 Now look at the same query but in a different format. Run the following query:
 
@@ -360,15 +360,15 @@ Now let’s do the query in CARTO Builder to see where the point is.
 
 * Create a new map. Use the navigation menu on the left to get to Maps and then click on (+) New Map.
 
-<img src ='assets/geo_sf_carto_telco_19.png' width=700>
+![assets/geo_sf_carto_telco_19.png](assets/geo_sf_carto_telco_19.png)
 
 * Click on the “Add Source From”
 
-<img src ='assets/geo_sf_carto_telco_20.png' width=700>
+![assets/geo_sf_carto_telco_20.png](assets/geo_sf_carto_telco_20.png)
 
 * Then click on `Custom Query` and make sure you have selected Snowflake Connection that you have created in previous steps. 
 
-<img src ='assets/geo_sf_carto_telco_21.gif' width=700>
+![assets/geo_sf_carto_telco_21.gif](assets/geo_sf_carto_telco_21.gif)
 
 
 * Now paste the query and click on the green `Run` button. 
@@ -382,7 +382,7 @@ select to_geography('POINT(-0.131034 51.526473)') as geom;
 
 * Use the map zoom controls (+/- buttons) and click the zoom in (+) button until you can see the point better. You should see something like the screenshot below, though you may see more depending on your browser window size. 
 
-<img src ='assets/geo_sf_carto_telco_22.png' width=700>
+![assets/geo_sf_carto_telco_22.png](assets/geo_sf_carto_telco_22.png)
 
 
 > aside positive
@@ -390,7 +390,7 @@ select to_geography('POINT(-0.131034 51.526473)') as geom;
 
 The green dot represents the `POINT` object location. Now you know where you are!
 
-<img src ='assets/geo_sf_carto_telco_23.png' width=700>
+![assets/geo_sf_carto_telco_23.png](assets/geo_sf_carto_telco_23.png)
 
 
 ### Find the Nearest Cell Towers
@@ -424,7 +424,7 @@ LIMIT 10;
 
 The query returns `POINT` objects, which you can visualize using CARTO.
 
-<img src ='assets/geo_sf_carto_telco_24.png' width=700>
+![assets/geo_sf_carto_telco_24.png](assets/geo_sf_carto_telco_24.png)
 
 In the previous section you've found the closest cell towers to your location. But what about answering more sophisticated questions, like what areas in the UK have very good and bad coverage by LTE network? You can use geospatial functions combined with spatial join to find out.
 
@@ -514,7 +514,7 @@ SELECT geometry AS geom,
 FROM geolab.geography.uk_districts_coverage;
 ```
 
-<img src ='assets/geo_sf_carto_telco_33.gif' width=700>
+![assets/geo_sf_carto_telco_33.gif](assets/geo_sf_carto_telco_33.gif)
 
 ### What percent of the UK roads have LTE coverage?
 
@@ -608,16 +608,16 @@ select h3, signal_strength from geolab.geography.uk_lte_coverage_h3;
 
 As we create an H3 layer we will need to configure the layer type from the query console:
 
-<img src ='assets/geo_sf_carto_telco_26.gif' width=700>
+![assets/geo_sf_carto_telco_26.gif](assets/geo_sf_carto_telco_26.gif)
 
 H3 layers allow us to show aggregated information at different resolutions for different zoom levels. Because of this, when we style the layer, we need to decide an aggregation method for the attribute to show, in this example we will use `SIGNAL_STRENGTH`.
 
-<img src ='assets/geo_sf_carto_telco_27.png' width=700>
+![assets/geo_sf_carto_telco_27.png](assets/geo_sf_carto_telco_27.png)
 
 Remember to select a color palette of your liking and the color scale (the default is custom but we want to *Quantize* bins for this use case).
 We can also change the relation between the zoom level and the resolution. The higher the resolution configuration, the more granularity we will see on the map but it will also take longer to load. Select resolution 5.
 
-<img src ='assets/geo_sf_carto_telco_28.gif' width=700>
+![assets/geo_sf_carto_telco_28.gif](assets/geo_sf_carto_telco_28.gif)
 
 Let’s now use the road network from `UK Open Map Data` to see which road segments have good coverage and which do not.
 To intersect the road layer with the H3 signal strength layer, we will split the road geometries onto its minimal road segments and compute the H3 index for the centroid of each segment. We will then join on the H3 index and keep as 'No signal' all of the road segments with no coverage or coverage of under "30". 
@@ -691,15 +691,15 @@ For this, we can add the layer from either:
 * Add source from → Custom Query (SQL) 
 * Add source from → Data Explorer
 
-<img src ='assets/geo_sf_carto_telco_29.png' width=700>
+![assets/geo_sf_carto_telco_29.png](assets/geo_sf_carto_telco_29.png)
 
 Then select your connection and the `GEOLAB.GEOGRAPHY.OSM_UK_NOT_COVERED` table.
 
-<img src ='assets/geo_sf_carto_telco_30.png' width=700>
+![assets/geo_sf_carto_telco_30.png](assets/geo_sf_carto_telco_30.png)
 
 Once we have our second layer on the map, we can click on it to style it and show the stroke color based on our “signal” column. For that create a “Custom palette” with just two colors: gray for roads with good signal and red for roads with no/poor signal.
 
-<img src ='assets/geo_sf_carto_telco_31.gif' width=700>
+![assets/geo_sf_carto_telco_31.gif](assets/geo_sf_carto_telco_31.gif)
 
 > aside positive
 >  You may feel that these last several queries were a bit long and repetitive, but remember that the intention of this guide was to walk you through the progression of building these longer, more complicated queries by illustrating to you what happens at each step through the progression. By understanding how functions can be combined, it helps you to understand how you can do more advanced things with Snowflake geospatial features!

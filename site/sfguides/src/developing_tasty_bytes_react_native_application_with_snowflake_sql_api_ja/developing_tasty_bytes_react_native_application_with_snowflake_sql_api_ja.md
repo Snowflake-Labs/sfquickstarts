@@ -251,14 +251,14 @@ GRANT ROLE tasty_bytes_data_app_demo TO USER data_app_demo;
 2. この操作により、Webブラウザでアプリが起動します。
 3. 起動すると、「キュー内の注文」画面が表示されます。
 
-<img src="assets/OrdersInQueue.png"/>
+![assets/OrdersInQueue.png](assets/OrdersInQueue.png)
 4. 注文の詳細を表示するには、「View Order（注文を表示）」ボタンをクリックします。
 
-<img src="assets/OrderDetails.png"/>
+![assets/OrderDetails.png](assets/OrderDetails.png)
 5. 注文を完了処理するには、「ORDER READY（注文準備完了）」ボタンをクリックします。この操作により、この注文の注文ステータスの値が「完了」に更新され、「キュー内の注文」画面に戻ります。
 6. ここで、「注文履歴」タブをクリックすると、完了した注文を確認できます。
 
-<img src="assets/OrderHistory.png"/>
+![assets/OrderHistory.png](assets/OrderHistory.png)
 <!-- ------------------------ -->
 ## クリーンアップ
 

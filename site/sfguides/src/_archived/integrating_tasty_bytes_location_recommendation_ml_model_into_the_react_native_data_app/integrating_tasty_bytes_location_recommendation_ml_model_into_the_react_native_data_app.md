@@ -10,7 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Integrating Tasty Bytes Location Recommendations ML model into the React Native Data Application
 <!-- ------------------------ -->
 ## Overview
-<img src="assets/tasty_bytes_header.png"/>
+![assets/tasty_bytes_header.png](assets/tasty_bytes_header.png)
 
 Snowflake has simplified the integration of Machine Learning models into Data Applications through its convenient features that allow for the deployment of ML models as Stored Procedures, User Defined Functions (UDF's), and User Defined Table Functions (UDTF's). Furthermore, Snowflake offers a SQL API, a RESTful API to facilitate querying the deployed ML models, enabling seamless integration between the application and the ML model.
 
@@ -60,7 +60,7 @@ Tasty Bytes operates food trucks in cities across the globe with each truck havi
   - Rename Database -> FROSTBYTE_SAFEGRAPH (all capital letters)
   - Grant to Additional Roles -> PUBLIC
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
 >aside positive
 >SafeGraph is a global geospatial data company that offers any data on any place in the world. Customers like Esri, Tripadvisor, Mapbox, and Sysco use SafeGraph data to better understand their customers, create new products, and make better decisions for their business.
@@ -435,7 +435,7 @@ We are using Key Pair Authentication to authenticate with Snowflake using SQL AP
 2. This launches the app in Web Browser
 3. Upon Launch, You can see the InQueue Orders Screen,
 
-<img src="assets/Locations.png"/>
+![assets/Locations.png](assets/Locations.png)
 
 <!-- ------------------------ -->
 ## Clean Up

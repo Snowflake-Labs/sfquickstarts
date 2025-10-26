@@ -142,7 +142,7 @@ FROM TRUCK
 WHERE TRUCK_ID = $TRUCK_ID;
 ```
 Now, click on the resulting query id (QID) on the Snowsight console. A new tab will open, and you will be presented with a screen that looks like this:
-<img src="assets/explore_00.png"/>
+![assets/explore_00.png](assets/explore_00.png)
 
 The screen gives you basic information about the query.
 
@@ -152,11 +152,11 @@ The screen gives you basic information about the query.
 >
 
 Clicking on the "Query Profile" button:
-<img src="assets/explore_10.png"/>
+![assets/explore_10.png](assets/explore_10.png)
 
 will lead you to a screen showing you the visual representation of how the query planner decided
 to execute the query:
-<img src="assets/explore_20.png"/>
+![assets/explore_20.png](assets/explore_20.png)
 
 This is the primary screen we will be using for query analysis.
 
@@ -165,7 +165,7 @@ Now that you understand how to get to the query profile screen, let's discover h
 to execute the query, we can understand how to implement any changes in the query that will improve performance.
 
 Clicking on the bottom "TableScan" node will focus our attention on what happened in the data access.
-<img src="assets/explore_30.png"/>
+![assets/explore_30.png](assets/explore_30.png)
 In this example we can see that:
 - The Access Predicate was indeed the primary key `TRUCK.TRUCK_ID`
 - The Scan Mode was `ROW_BASED`
@@ -189,7 +189,7 @@ WHERE TRUE
 ```
 We can see from the query profile screen that the query plan looks far different. Much time is spent on the table scan and it
 is the most expensive node in the plan:
-<img src="assets/explore_40.png"/>
+![assets/explore_40.png](assets/explore_40.png)
 
 Looking at the "TableScan" node, we can clearly see that the scan was `COLUMN_BASED` and processed many partitions with lots of data. 
 The optimizer was not able to push down any access predicates against an index.
@@ -234,7 +234,7 @@ WHERE TRUE
 ```
 
 Using the index results in a much better query plan that uses the index we created:
-<img src="assets/explore_61.png"/>
+![assets/explore_61.png](assets/explore_61.png)
 
 Next, we will cover foreign keys.
 
@@ -290,7 +290,7 @@ Note that the query optimizer does not have information to relate the two tables
 the optimizer chooses a column scan mode when reading data from the `ORDER_HEADER` table. Technically, the optimizer must
 interpret the join as a many-to-many join.
 
-<img src="assets/explore_70.png"/>
+![assets/explore_70.png](assets/explore_70.png)
 
 Introducing a `FOREIGN KEY` will serve two important purposes. First, it establishes a relationship between the tables that
 guarantees a one-to-many join for a given `PRIMARY KEY` in the parent table. Second, the relationship will enforce a
@@ -337,7 +337,7 @@ WHERE TRUE
 Checking the query plan, we can see that the query optimizer is now using the foreign key to efficiently select
 the order detail information.
 
-<img src="assets/explore_71.png"/>
+![assets/explore_71.png](assets/explore_71.png)
 
 
 Next, consider a query to retrieve a specific order and join in details for the truck for which the order was submitted. 
@@ -359,7 +359,7 @@ The query plan shows both primary keys in use loading only a single record
 from each table by using an Nested Loop Join pattern where we first retrieve the order record 
 and then use the truck ID for that order to push down the truck lookup against the primary key of the truck table:
 
-<img src="assets/explore_72.png"/>
+![assets/explore_72.png](assets/explore_72.png)
 
 Next, we will explore how secondary indexes help queries that do not use primary keys.
 
@@ -382,7 +382,7 @@ The `TRUCK_ID` will be used as a primary key filter on `TRUCK` and a foreign key
 will be applied after data was fetched from hybrid table object store. From the query profile, we can see that only the
 `TRUCK_ID` was used as an access predicate. The `ORDER_TIMESTAMP` filtering was completed after data was fetched.
 
-<img src="assets/explore_80.png"/>
+![assets/explore_80.png](assets/explore_80.png)
 
 A secondary index on (TRUCK_ID, ORDER_TIMESTAMP) will improve performance by allowing us to also push the timestamp 
 filter down to storage:
@@ -426,7 +426,7 @@ WHERE TRUE
 Now the truck and timestamp predicates are being pushed down against the index in order to reduce the amount of data 
 retrieved from the order_header table improving latency and efficiency.
 
-<img src="assets/explore_83.png"/>
+![assets/explore_83.png](assets/explore_83.png)
 
 >aside positive
 > **NOTE:** Looking at the query in detail, you will notice that there is a cast to `TIMESTAMP_NTZ` for the `ORDER_TIMESTAMP`

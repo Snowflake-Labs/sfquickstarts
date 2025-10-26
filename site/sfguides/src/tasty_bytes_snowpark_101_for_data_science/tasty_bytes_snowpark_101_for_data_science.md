@@ -10,7 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Tasty Bytes - Snowpark 101 for Data Science
 <!-- ------------------------ -->
 ## Overview 
-<img src="assets/tasty_bytes_header.png"/>
+![assets/tasty_bytes_header.png](assets/tasty_bytes_header.png)
 
 In this Snowpark 101 for Data Science Quickstart guide, you will be help the fictitious food truck company, Tasty Bytes, to increase sales by training a model to provide location recommendations to truck drivers. You will use **Snowpark for Python** to prepare data, train a model, and deploy the model. Once deployed, you will create an application prototype using **Streamlit** to demonstrate how truck drivers could use the model to find the best location to park for an upcoming shift.
 
@@ -32,10 +32,10 @@ Streamlit is a Python library that makes it easy to create and share custom web 
 
 ### What You Will Build 
 - **A sales forecast by location**<br>
-<img src="assets/notebook_preview.gif"/>
+![assets/notebook_preview.gif](assets/notebook_preview.gif)
 
 - **A Streamlit application for finding the top locations by predicted sales**<br>
-<img src="assets/streamlit_preview.gif"/>
+![assets/streamlit_preview.gif](assets/streamlit_preview.gif)
 
 
 
@@ -63,7 +63,7 @@ Tasty Bytes operates food trucks in cities across the globe with each truck havi
   - Rename Database -> FROSTBYTE_SAFEGRAPH (all capital letters)
   - Grant to Additional Roles -> PUBLIC
 
-<img src = "assets/acquire_safegraph.gif">
+![assets/acquire_safegraph.gif](assets/acquire_safegraph.gif)
 
 >aside positive
 >SafeGraph is a global geospatial data company that offers any data on any place in the world. Customers like Esri, Tripadvisor, Mapbox, and Sysco use SafeGraph data to better understand their customers, create new products, and make better decisions for their business.
@@ -263,7 +263,7 @@ Download [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfgu
   - Change Schema to ANALYTICS
   - Change Warehouse to TASTY_DSCI_WH
 
-<img src = "assets/create_notebook.gif">
+![assets/create_notebook.gif](assets/create_notebook.gif)
 
 ### Step 3 - Add Required Packages
 - Click the packages drop down from the top right corner of the notebook. Add the following packages
@@ -272,11 +272,11 @@ Download [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfgu
   - matplotlib
   - plotly
 
-<img src = "assets/add_packages.gif">
+![assets/add_packages.gif](assets/add_packages.gif)
 
 ### Step 4- Running the Jupyter Notebook
 - Run through the cells of [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/tasty_bytes_snowpark_101.ipynb) from your Snowflake Notebook.
-<img src = "assets/notebook_preview.png">
+![assets/notebook_preview.png](assets/notebook_preview.png)
 
 <!-- ------------------------ -->
 ## Application Prototype with Streamlit
@@ -304,7 +304,7 @@ The [tasty_bytes_snowpark_101.ipynb](https://github.com/Snowflake-Labs/sfguide-t
   - snowflake-ml-python
 - Copy the code from [streamlit_app.py](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-snowpark-101-for-data-science/blob/main/streamlit_app.py) into the code editor section
 - Run the app!
-<img src = "assets/streamlit_preview.png">
+![assets/streamlit_preview.png](assets/streamlit_preview.png)
 
 
 <!-- ------------------------ -->

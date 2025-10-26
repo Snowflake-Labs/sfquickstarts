@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-<img src="assets/devops_dcm_schemachange_azure_devops-1.png" width="600" />
+![assets/devops_dcm_schemachange_azure_devops-1.png](assets/devops_dcm_schemachange_azure_devops-1.png)
 
 This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with Azure DevOps. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake and Azure DevOps.
 
@@ -67,7 +67,7 @@ You will need the following things before beginning:
 <!-- ------------------------ -->
 ## Azure DevOps Overview
 
-<img src="assets/devops_dcm_schemachange_azure_devops-2.png" width="300" />
+![assets/devops_dcm_schemachange_azure_devops-2.png](assets/devops_dcm_schemachange_azure_devops-2.png)
 
 "Azure DevOps provides developer services for support teams to plan work, collaborate on code development, and build and deploy applications. Developers can work in the cloud using Azure DevOps Services or on-premises using Azure DevOps Server." (from Microsoft’s [What is Azure DevOps?](https://docs.microsoft.com/en-us/azure/devops/user-guide/what-is-azure-devops?view=azure-devops))
 
@@ -165,7 +165,7 @@ This guide will be focused on the Azure Pipelines service.
 <!-- ------------------------ -->
 ## schemachange Overview
 
-<img src="assets/devops_dcm_schemachange_azure_devops-3.png" width="300" />
+![assets/devops_dcm_schemachange_azure_devops-3.png](assets/devops_dcm_schemachange_azure_devops-3.png)
 
 Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this guide to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 

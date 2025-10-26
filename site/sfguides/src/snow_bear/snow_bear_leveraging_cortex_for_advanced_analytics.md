@@ -24,7 +24,7 @@ This Quickstart showcases the complete Snow Bear analytics platform with:
 - **Cortex Analyst integration** for natural language queries
 - **500+ basketball fan survey responses**
 
-<img src="assets/architecture_diagram.png">
+![assets/architecture_diagram.png](assets/architecture_diagram.png)
 
 ### What You Will Build
 - Complete 7-module interactive analytics platform
@@ -142,7 +142,7 @@ The notebook contains all the SQL scripts and processing logic needed for the co
 2. Click on `SNOW_BEAR_COMPLETE_SETUP` Notebook to open it
 3. Click `Run all` to execute all cells in the notebook at once
 
-<img src="assets/notebook_recording_hq.gif">
+![assets/notebook_recording_hq.gif](assets/notebook_recording_hq.gif)
 
 <!-- ------------------------ -->
 ## Launch Analytics Dashboard
@@ -155,7 +155,7 @@ The notebook contains all the SQL scripts and processing logic needed for the co
 
 Your platform includes executive dashboards, sentiment analysis, theme analysis, fan segmentation, AI recommendations, interactive search, and AI assistant capabilities.
 
-<img src="assets/streamlit_recording_fast.gif">
+![assets/streamlit_recording_fast.gif](assets/streamlit_recording_fast.gif)
 
 <!-- ------------------------ -->
 ## Clean Up Resources
@@ -169,7 +169,7 @@ When you're ready to remove all the resources created during this quickstart:
 3. Uncomment the teardown statements
 5. Run the freshly uncommented script to remove all databases, warehouses, roles, and objects
 
-<img src="assets/drop_objects.gif">
+![assets/drop_objects.gif](assets/drop_objects.gif)
 
 <!-- ------------------------ -->
 ## Conclusion and Resources

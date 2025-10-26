@@ -234,16 +234,16 @@ Stiamo utilizzando l’autenticazione a coppia di chiavi per eseguire l’autent
 2. L’applicazione viene avviata in un browser web
 3. All’avvio viene visualizzata la schermata degli ordini in coda,
 
-<img src="assets/OrdersInQueue.png"/>
+![assets/OrdersInQueue.png](assets/OrdersInQueue.png)
 
 4. Ora fai clic su View Order per vedere i dettagli dell’ordine.
 
-<img src="assets/OrderDetails.png"/>
+![assets/OrderDetails.png](assets/OrderDetails.png)
 
 5. Fai clic sul pulsante ORDER READY per completare l’ordine. Questa azione aggiorna il valore Order Status per questo ordine impostandolo su Completed e ti riporta alla schermata degli ordini in coda
 6. Ora fai clic sulla scheda Order History per vedere gli ordini completati.
 
-<img src="assets/OrderHistory.png"/>
+![assets/OrderHistory.png](assets/OrderHistory.png)
 
 <!-- ------------------------ -->
 ## Pulizia

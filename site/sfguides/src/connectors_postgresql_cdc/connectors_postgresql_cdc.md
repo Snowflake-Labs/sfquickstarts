@@ -228,17 +228,17 @@ Navigate to [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.ht
 2. Open the application
 3. Select **Mark all as done** as we will create our source databases from scratch.
 
-<img src="assets/mark_all_done.png">
+![assets/mark_all_done.png](assets/mark_all_done.png)
 
 4. Click **Start configuration**
 5. If you have Event Tables already activated in your account, the **Event Log Database**, **Event Log Schema**, and **Event Table** will populate automatically with what is active. The names of the **Event Log Database**, **Event Log Schema**, and **Event Table** could be slightly different from what is shown.
 6. On the **Configure Connector** screen, select **Configure**
 
-<img src="assets/configure_connector.png">
+![assets/configure_connector.png](assets/configure_connector.png)
 
 7. On the **Verify Agent Connection** screen select **Generate file** to download the Agent Configuration file. The downloaded file name should resemble **snowflake.json**. Save this file for use during the Agent configuration section.
 
-<img src="assets/generate_file.png">
+![assets/generate_file.png](assets/generate_file.png)
 
 <!-- ------------------------ -->
 ## Agent Configuration
@@ -338,7 +338,7 @@ Directory Structure
 #### Verifying Connection with Snowflake
 Navigate to Snowsight to your previously created Snowflake Connector for PostgreSQL Native App. Click on the **Refresh** button in the Agent Connection Section. When successfully configured, you should see the "Successfully configured" message. Click "Define data to sync".
 
-<img src="assets/successfully_configured.png">
+![assets/successfully_configured.png](assets/successfully_configured.png)
 
 <!-- ------------------------ -->
 ## Replication Process

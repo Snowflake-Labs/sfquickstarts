@@ -251,16 +251,16 @@ SQL API를 사용하여 Snowflake와 인증하기 위해 키 쌍 인증을 사�
 2. 이렇게 하면 웹 브라우저에서 앱이 시작됩니다.
 3. 시작된 후 InQueue Orders 화면을 확인할 수 있습니다.
 
-<img src="assets/OrdersInQueue.png"/>
+![assets/OrdersInQueue.png](assets/OrdersInQueue.png)
 
 4. 이제 Order Details를 확인하기 위해 View Order 버튼을 클릭합니다.
 
-<img src="assets/OrderDetails.png"/>
+![assets/OrderDetails.png](assets/OrderDetails.png)
 
 5. 주문을 완료하기 위해 ORDER READY 버튼을 클릭합니다. 이 작업은 해당 Order의 Order Status 값을 Completed로 업데이트하고 InQueue Orders 화면으로 리디렉션합니다.
 6. 이제 완료된 주문을 확인하기 위해 Order History 탭을 클릭합니다.
 
-<img src="assets/OrderHistory.png"/>
+![assets/OrderHistory.png](assets/OrderHistory.png)
 
 <!-- ------------------------ -->
 ## 정리

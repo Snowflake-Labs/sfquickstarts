@@ -22,7 +22,7 @@ The challenge is that in both cases, once you have data and research, it's often
 
 You want to be able to provide your teams concepts like the one below to spark ideas for marketing campaigns:
 
-<img src="assets/diagram_final_concept.jpg" alt="image of paper towel with christmas patterns" width="450"/>
+![assets/diagram_final_concept.jpg](assets/diagram_final_concept.jpg)
 
 This particular concept has a brand logo, a potential idea for Christmas patterns, and a marketing tagline.
 
@@ -295,7 +295,7 @@ In this section, we will do a full end-to-end creation of a concept image all wi
 ### What we will create
 At the end of this demo, we will create an image that contains a visualization of a product or marketing idea that also contains a brand logo and a marketing tagline.
 
-<img src="assets/diagram_final_concept.jpg" alt="image of paper towel with christmas patterns" width="450"/>
+![assets/diagram_final_concept.jpg](assets/diagram_final_concept.jpg)
 
 If you do not have a brand logo to use, you can use the [logo of a fictitious brand called "Charisma"](https://raw.githubusercontent.com/Snowflake-Labs/sfguide-build-a-visual-idea-generator-with-text-to-image-models/refs/heads/main/charisma_paper_towels.png) - located in the Github repo. You can either link to it via URL or upload it to the Snowflake stage you created in the set-up step.
 

@@ -59,23 +59,23 @@ Sample Google Ads data will be provided if you do not have a Google Ads account.
 
 3. Let’s change our role and enable notifications. We need to work in the ACCOUNTADMIN role for this lab and notifications are how Snowflake will alert you when resource monitor thresholds have been crossed. Click on your User Name in the upper right-hand corner.  
 <!--- ![Change role - step 1](assets/image27.png)  -->
-<img src="assets/image27.png" width="400">
+![assets/image27.png](assets/image27.png)
 
 4. You’ll get a popup with 4 items; click on Switch Role.  
 <!--- ![Change role - step 2](assets/image22.png)  -->
-<img src="assets/image22.png" width="400">
+![assets/image22.png](assets/image22.png)
 
 5. Select **ACCOUNTADMIN**.  
 <!--- ![Change role - step 3](assets/image62.png)  -->
-<img src="assets/image62.png" width="500">
+![assets/image62.png](assets/image62.png)
 
 6. The UI will refresh and you should see ACCOUNTADMIN under your username. If you don’t, go back to step 5.  
 <!--- ![Change role - step 4](assets/image30.png)  -->
-<img src="assets/image30.png" width="400">
+![assets/image30.png](assets/image30.png)
 
 7. Click on your username again and you’ll get the same popup with 4 items; click on Preferences.  
 <!---![Preferences - step 1](assets/image59.png)  -->
-<img src="assets/image59.png" width="500">
+![assets/image59.png](assets/image59.png)
 
 8. Click on **Notifications**.  
 ![Preferences - step 2](assets/image137.png)  
@@ -85,7 +85,7 @@ Sample Google Ads data will be provided if you do not have a Google Ads account.
 
 10. Now let’s create your Fivetran account.  Click on the **Partner Connect** tile at the top of the UI...
 <!--- ![Create Fivetran Account - step 1](assets/image89.png)  -->
-<img src="assets/image89.png" width="500">
+![assets/image89.png](assets/image89.png)
 
 11. ...and then click on the Fivetran tile inside Snowflake Partner Connect. (if you aren’t in the ACCOUNTADMIN role you’ll receive a warning.  Go back and complete steps 6-9.)  
 ![Create Fivetran Account - step 2](assets/image134.png)  
@@ -101,7 +101,7 @@ Sample Google Ads data will be provided if you do not have a Google Ads account.
 ## Fivetran - Configure Source  
 
 <!-- ![Fivetran](assets/image79.png) --> 
-<img src="assets/image79.png" width="500">
+![assets/image79.png](assets/image79.png)
 
 In the next three sections we will create an automated data pipeline, with an extract-load (ELT) architecture::
 1.	Extract and Load:
@@ -411,7 +411,7 @@ In doing so, we have set up a complete, end-to-end modern data pipeline focusing
  
 10. Let’s start our work performing DBA functions.   We need to set the context we want to use within the worksheet.  In each worksheet I can have a different role,  warehouse, database, and schema.  Each worksheet is independent of the others (like Snowflake compute!).  My worksheet role can also be different from the role I have in the upper right-hand corner under my name.  <br><br>
 
-    Let’s execute the SQL in script section **A** to set our worksheet context.  To do so, highlight the two lines (_use role..., use schema..._) and click the <img src="assets/image136.png" width="60"> button.  <br><br>
+    Let’s execute the SQL in script section **A** to set our worksheet context.  To do so, highlight the two lines (_use role..., use schema..._) and click the ![assets/image136.png](assets/image136.png) button.  <br><br>
     
     _**Pro Tip: You may get a pop-up asking if you want to run both statements.  If you don’t want this warning every time, click in the check box and click OK.**_
 
@@ -514,10 +514,10 @@ order by 6 desc;
 21. And then find the **Weather Source** tile.  Once you find it, click on it.  
 ![Snowflake Part 2 - 21](assets/image84.png)  
 
-22. Here you’ll find a description of the data, example queries, and other useful information.  Let’s get this data into our Snowflake account.  You’ll be amazed at how fast and easy this is.  Click <img src="assets/image40.png" width="60">.
+22. Here you’ll find a description of the data, example queries, and other useful information.  Let’s get this data into our Snowflake account.  You’ll be amazed at how fast and easy this is.  Click ![assets/image40.png](assets/image40.png).
 ![Snowflake Part 2 - 22](assets/image56.png)  
 
-23. In the pop-up, rename the database to WEATHERSOURCE (**important!**),  check the “I accept…” box and then <img src="assets/image26.png" width="100">.  No need to add additional roles (though you might in real-life).  
+23. In the pop-up, rename the database to WEATHERSOURCE (**important!**),  check the “I accept…” box and then ![assets/image26.png](assets/image26.png).  No need to add additional roles (though you might in real-life).  
 ![Snowflake Part 2 - 24](assets/image28.png)  
 
     What is happening here?  Weather Source has granted access to this data from their Snowflake account to yours.  You’re creating a new database in your account for this data to live - but the best part is that no data is going to move between accounts!  When you query you’ll really be querying the data that lives in the Weather Source account.  If they change the data you’ll automatically see those changes.  No need to define schemas, move data,  or create a data pipeline either. Isn’t that slick?
@@ -615,7 +615,7 @@ undrop table GOOGLE_ADS__URL_AD_ADAPTER;
 32. See anything that looks like this?  These notifications come from the resource monitor we set up earlier in the lab.  You’ll also get emails with the same information.  
 ![Snowflake Part 2 - 33](assets/image101.png)  
 ![Snowflake Part 2 - 33](assets/image101.png)<!-- .element style="width: 25%; border: 0; background: None; box-shadow: None" -->
-<img src="assets/image101.png" width="400">
+![assets/image101.png](assets/image101.png)
 
 33. Now, click on the **Account** tile.  
 ![Snowflake Part 2 - 34](assets/image16.png)  

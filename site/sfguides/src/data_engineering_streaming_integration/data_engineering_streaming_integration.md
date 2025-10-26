@@ -48,7 +48,7 @@ By the end of this guide, readers will learn about:
 
 ## Introduction 
 
-<img src="assets/img1.png"  />
+![assets/img1.png](assets/img1.png)
 
 Before we begin, let's take a few minutes to clarify the terminology as this topic can become quite confusing. It is crucial that we are all on the same page when discussing the variations in design patterns.
 
@@ -90,7 +90,7 @@ This is excellent, but how does it relate to Snowpipe, the COPY command, and oth
 
 ## Options. How to decide? 
 
-<img src="assets/img2.png"  />
+![assets/img2.png](assets/img2.png)
 
 Snowflake offers a variety of building blocks for working with streaming data. There is no one-size-fits-all approach, so it is important to understand the differences in order to effectively address requirements.  
 

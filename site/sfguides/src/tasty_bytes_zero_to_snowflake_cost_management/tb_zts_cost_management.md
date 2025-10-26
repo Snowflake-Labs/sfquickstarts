@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Cost Management in Snowflake
-<img src = "assets/cost_management_header.png">
+![assets/cost_management_header.png](assets/cost_management_header.png)
 
 ### Overview
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Cost Management!
@@ -66,11 +66,11 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
-    - <img src = "assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 ### Step 9 - Click Next -->
 
 ## Virtual Warehouses and Settings 
@@ -93,7 +93,7 @@ USE WAREHOUSE tb_de_wh;
 USE DATABASE tb_101;
 ```
 
-<img src = "assets/use_role_and_wh.png"> 
+![assets/use_role_and_wh.png](assets/use_role_and_wh.png) 
 
 ### Step 2 - Creating and Configuring a Warehouse
 Within Snowflake, Warehouses are highly configurable to meet your compute demands. This can range from scaling up and down to meet compute needs or scaling out to meet concurrency needs. 
@@ -159,7 +159,7 @@ SELECT
 FROM raw_pos.menu m
 WHERE truck_brand_name = 'Plant Palace';
 ```
-<img src = "assets/menu_items_plant_palace.png"> 
+![assets/menu_items_plant_palace.png](assets/menu_items_plant_palace.png) 
 
 
 ### Step 2 - Scaling Our Warehouse Up
@@ -188,7 +188,7 @@ JOIN analytics.customer_loyalty_metrics_v clm
 GROUP BY o.customer_id, name
 ORDER BY order_count DESC;
 ```
-<img src = "assets/total_orders_volume_loyalty.png">
+![assets/total_orders_volume_loyalty.png](assets/total_orders_volume_loyalty.png)
 
 ### Step 4 - Scale our Warehouse Down
 Having seen the instant upward scalability of our Snowflake Warehouse and how it can aggregate large result sets with ease, let's now instantly scale our `tb_test_wh` back down by running the next query. 
@@ -224,7 +224,7 @@ To begin, let's run the next query to find all Warehouse Parameters related to S
 ```
 SHOW PARAMETERS LIKE '%statement%' IN WAREHOUSE tb_test_wh;
 ```
-<img src= "assets/show_parameters.png">
+![assets/show_parameters.png](assets/show_parameters.png)
 
  
 ### Step 2 - Adjusting Warehouse Statement Timeout Parameter
@@ -326,7 +326,7 @@ WITH
         ON 100 PERCENT DO SUSPEND -- suspend warehouse at 100 percent, let queries finish
         ON 110 PERCENT DO SUSPEND_IMMEDIATE;
 ```
-<img src = "assets/create_rm.png"> 
+![assets/create_rm.png](assets/create_rm.png) 
 
 For additional detail on what each configuration handles in our statement above please see below:
 > aside positive

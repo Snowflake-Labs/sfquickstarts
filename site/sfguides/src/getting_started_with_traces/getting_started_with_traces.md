@@ -318,7 +318,7 @@ If you expand the `get_weather_fn` entry under `get_weather_for_all_cities`, you
 
 This tracing information shows the entire execution timeline wsith information on every call.
 
-<img src="assets/trace_details.png" width="889" height="513">
+![assets/trace_details.png](assets/trace_details.png)
 
 <!-- ------------------------ -->
 ## Query the Metrics, Logs, and Trace Data

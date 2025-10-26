@@ -74,7 +74,7 @@ After installing the `relationalai` package, you will need to set up a RAI confi
 
 Run `rai init` from your terminal and follow the prompts to enter your credentials and other configuration data:
 
-<img src="assets/rai_init.png" alt="RAI Init" width="800">
+![assets/rai_init.png](assets/rai_init.png)
 
 1. Choose `Snowflake` as your host platform.
 2. Select a profile from `~/.snowflake/connections.toml` if you have one, or enter your username, password, and Account ID otherwise. 
@@ -97,7 +97,7 @@ Run `rai init` from your terminal and follow the prompts to enter your credentia
 
 2. Open the `community-detection.ipynb` file in Jupyter lab. You should see the top of the notebook:
 
-<img src="assets/rai_notebook_1.png" alt="RAI Notebook 1" width="800">
+![assets/rai_notebook_1.png](assets/rai_notebook_1.png)
 
 3. If you don't already have a Snowflake table called `RAI_DEMO.TASTYBYTES.ORDERS`, scroll down to the Appendix and run the cells in that section to insert the data for this demo into your Snowflake account.
    

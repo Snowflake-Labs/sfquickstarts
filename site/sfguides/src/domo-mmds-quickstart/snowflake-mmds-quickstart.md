@@ -15,7 +15,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 In this quickstart, we’ll walk through how to use Domo’s Marketing app—available in the Snowflake Marketplace—to build powerful marketing attribution and media mix models that can transform your business. By the end of this guide, you'll be equipped to deploy and utilize the suite's capabilities to drive data-driven marketing decisions and optimize your campaign performance.
 
-<img src="assets/overview.gif" width="800" />
+![assets/overview.gif](assets/overview.gif)
 
 ### What is Domo’s Marketing App?
 
@@ -59,7 +59,7 @@ The Domo team will review the request and contact you with more information.
 Over the next few sections, you'll supercharge your marketing data by leveraging SQL in Snowflake alongside Domo’s Magic ETL. Connect key sources such as Adobe Analytics, Google Analytics, Marketo, NetSuite, Salesforce, Facebook, and Instagram. Use customizable join logic and preparatory steps tailored to your data environment to build a cohesive, centralized data foundation. These preparatory steps allow for advanced attribution models and media mix analysis, ensuring you have the insights needed to optimize your marketing strategy.
 
 Leverage the Domo Data Warehouse to access your data wherever it sits to transform & visualize.
-<img src="assets/warehouse.png" width="800" />
+![assets/warehouse.png](assets/warehouse.png)
 
 ## Add a DataSet using a Connector
 
@@ -152,7 +152,7 @@ For hour, day, and week options, you can specify the interval (every # hours/day
 _Note: If you set a Connector schedule using the hourly method, the end time is not inclusive. For example, if the schedule is set to hourly with the active hours set to run 8 AM UTC to 7 AM UTC it will skip the 7 AM UTC run because the end hour is not treated as inclusive.
 If you select Manually for your update interval, you can instruct Domo to send you a notification when the data has not been updated for a given period of time. Time periods range from one hour to three months._
 
-  <img src="assets/connector.png" width="800" />
+  ![assets/connector.png](assets/connector.png)
 
 _Note: If you need your DataSet to update faster than every 15 minutes, please reach out to your account team for evaluation._
 
@@ -175,14 +175,14 @@ You can indicate whether updates are done on a set interval (such as "every 15 m
 _Note: If you need your DataSet to update faster than every 15 minutes, please reach out to your account team for evaluation.
 Schedule times are based on UTC but can be seen in your timezone._
 
-  <img src="assets/advanced_connector.png" width="800" />
-  <img src="assets/advanced_connector2.png" width="800" />
+  ![assets/advanced_connector.png](assets/advanced_connector.png)
+  ![assets/advanced_connector2.png](assets/advanced_connector2.png)
 
 ## Connector Error handling
 
 Retry settings determine whether Domo should attempt to retry if updates fail for this DataSet and, if so, the frequency and maximum number of retries. These settings apply only to scheduled runs, not manual runs. You access the retry options dialog by selecting *Always retry when an update fails*.
 
-  <img src="assets/error_handling_connector.png" width="800" />
+  ![assets/error_handling_connector.png](assets/error_handling_connector.png)
 
 The options in this dialog are as follows:
 | Option | Description |
@@ -198,15 +198,15 @@ Follow these steps to create a *Magic ETL* DataFlow:
 
 1. In the ribbon at the top of the Data Center, select *Transform Data* > *Magic ETL* to open the Magic ETL canvas.
 
-    <img src="assets/magic_etl.jpg" width="600" />
+    ![assets/magic_etl.jpg](assets/magic_etl.jpg)
 
 1. In the left panel, expand DataSets and drag an Input DataSet tile to the canvas.
 
-    <img src="assets/canvas_magic_etl.png" width="600" />
+    ![assets/canvas_magic_etl.png](assets/canvas_magic_etl.png)
 
 1. The tile editor expands below the canvas.
 
-    <img src="assets/dataset_magic_etl.jpg" width="600" />
+    ![assets/dataset_magic_etl.jpg](assets/dataset_magic_etl.jpg)
 
 1. In the tile editor, select Choose DataSet to choose the DataSet you want to transform.
 
@@ -224,18 +224,18 @@ Follow these steps to create a *Magic ETL* DataFlow:
 ### Tips and Notes
 
 - You must configure each tile in the editor before you can configure the following tile. If a tile is not configured, the connector to the next tile appears as a dashed line.  
-  <img src="assets/tiles_magic_etl.png" width="400" />
+  ![assets/tiles_magic_etl.png](assets/tiles_magic_etl.png)
 
 - Use the search tool in the left panel to find the tile you need.  
-  <img src="assets/search_magic_etl.png" width="400" />
+  ![assets/search_magic_etl.png](assets/search_magic_etl.png)
 
 - The Mini Map displays in the corner of the screen and helps you see the layout and navigate around complex and detailed DataFlows. Click and drag the white square in the mini map to move to a certain view of the DataFlow on the canvas.  
-  <img src="assets/minimap_magic_etl.jpg" width="400" />
+  ![assets/minimap_magic_etl.jpg](assets/minimap_magic_etl.jpg)
 
 - If you close the mini map, reopen it by selecting the map pointer icon.  
-  <img src="assets/show_minimap_magic_etl.png" width="200" />
+  ![assets/show_minimap_magic_etl.png](assets/show_minimap_magic_etl.png)
 
-- You can get help on a specific tile in the canvas by clicking the tile, then clicking <img src="assets/help_icon.png" width="20" />.
+- You can get help on a specific tile in the canvas by clicking the tile, then clicking ![assets/help_icon.png](assets/help_icon.png).
 
 - You can select a number of tiles at once by clicking on the canvas then dragging the mouse pointer over them. When multiple tiles are selected, you can drag all of the selected tiles as a group to where you want them. You can also delete the selected tiles by selecting Delete in the left panel.
 
@@ -268,13 +268,13 @@ We recommend the following for your DataFlow:
 ## Connect to Your Data
 
 1. Select the _DataFlows_ icon on the left  
-  <img src="assets/dataflows_menu.png" width="200" />
+  ![assets/dataflows_menu.png](assets/dataflows_menu.png)
 
 1. Locate the Mixed Media Model Dataflow  
-  <img src="assets/dataflows_row.png" width="300" />
+  ![assets/dataflows_row.png](assets/dataflows_row.png)
 
 1. Select the input dataset and click _Change Dataset_ to replace the sample data with the data you have created through this quickstart.  
-  <img src="assets/change_dataset_magic_etl.png" width="500" />
+  ![assets/change_dataset_magic_etl.png](assets/change_dataset_magic_etl.png)
 
 ## Leveraging Attribution and Models
 
@@ -303,5 +303,5 @@ For further learning, explore the following resources:
 - [Read Medium Blog](https://medium.com/snowflake/introducing-domos-marketing-app-enriching-marketing-analytics-with-snowflake-integration-11d48e7b8ad4)
 - [Watch the Demo](https://youtu.be/yjoDM6FOkZQ?si=urgLa_WqNpmU7JI4)
 - Architecture  
-  <img src="assets/architecture.png" width="600" />
+  ![assets/architecture.png](assets/architecture.png)
   

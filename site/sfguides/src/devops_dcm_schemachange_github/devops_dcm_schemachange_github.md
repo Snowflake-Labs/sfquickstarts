@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-<img src="assets/devops_dcm_schemachange_github-1.png" width="600" />
+![assets/devops_dcm_schemachange_github-1.png](assets/devops_dcm_schemachange_github-1.png)
 
 This guide will provide step-by-step instructions for how to build a simple CI/CD pipeline for Snowflake with GitHub Actions. My hope is that this will provide you with enough details to get you started on your DevOps journey with Snowflake and GitHub Actions.
 
@@ -65,7 +65,7 @@ You will need the following things before beginning:
 <!-- ------------------------ -->
 ## GitHub Overview
 
-<img src="assets/devops_dcm_schemachange_github-2.png" width="250" />
+![assets/devops_dcm_schemachange_github-2.png](assets/devops_dcm_schemachange_github-2.png)
 
 ### GitHub
 GitHub provides a complete, end-to-end set of software development tools to manage the SDLC. In particular GitHub provides the following services (from GitHub's [Features](https://github.com/features)):
@@ -78,7 +78,7 @@ GitHub provides a complete, end-to-end set of software development tools to mana
 - Team Administration
 - Community
 
-<img src="assets/devops_dcm_schemachange_github-3.png" width="250" />
+![assets/devops_dcm_schemachange_github-3.png](assets/devops_dcm_schemachange_github-3.png)
 
 ### GitHub Actions
 "GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD. Build, test, and deploy your code right from GitHub. Make code reviews, branch management, and issue triaging work the way you want" (from GitHub’s [GitHub Actions](https://github.com/features/actions)). GitHub Actions was [first announced in October 2018](https://github.blog/2018-10-16-future-of-software/) and has since become a popular CI/CD tool. To learn more about GitHub Actions, including migrating from other popular CI/CD tools to GitHub Actions check out [Learn GitHub Actions](https://docs.github.com/en/actions/learn-github-actions).
@@ -88,7 +88,7 @@ This guide will be focused on the GitHub Actions service.
 <!-- ------------------------ -->
 ## schemachange Overview
 
-<img src="assets/devops_dcm_schemachange_github-4.png" width="250" />
+![assets/devops_dcm_schemachange_github-4.png](assets/devops_dcm_schemachange_github-4.png)
 
 Database Change Management (DCM) refers to a set of processes and tools which are used to manage the objects within a database. It’s beyond the scope of this guide to provide details around the challenges with and approaches to automating the management of your database objects. If you’re interested in more details, please see my blog post [Embracing Agile Software Delivery and DevOps with Snowflake](https://www.snowflake.com/blog/embracing-agile-software-delivery-and-devops-with-snowflake/).
 

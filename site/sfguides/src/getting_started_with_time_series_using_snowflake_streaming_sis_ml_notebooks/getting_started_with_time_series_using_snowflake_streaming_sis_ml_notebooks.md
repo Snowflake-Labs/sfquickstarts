@@ -24,14 +24,14 @@ Upon completing this quickstart lab, you will have learned how to perform time s
 - **Building your own time series functions** using Snowpark UDFs when necessary
 - **Deploying a Streamlit application** for visualizing and analyzing time series data
 
-<img src="assets/overview_architecture.png" width="800" />
+![assets/overview_architecture.png](assets/overview_architecture.png)
 
 
 ### What You'll Build
 
 By the end of this lab you will have an **end-to-end streaming Time Series Analysis solution**, with a front-end application deployed using **Streamlit in Snowflake**.
 
-<img src="assets/streamlit_video_summary.gif" />
+![assets/streamlit_video_summary.gif](assets/streamlit_video_summary.gif)
 
 
 ### What You'll Need
@@ -59,11 +59,11 @@ The first step is to create a fork of the Lab GitHub repository.
 
 3. Click on the **"Fork"** button near the top right.
 
-<img src="assets/labsetup_fork.png" width="800" />
+![assets/labsetup_fork.png](assets/labsetup_fork.png)
 
 4. Click **"Create Fork"**.
 
-<img src="assets/labsetup_createfork.png" width="800" />
+![assets/labsetup_createfork.png](assets/labsetup_createfork.png)
 
 
 ### Step 2 - Deploy a GitHub Codespace for the Lab
@@ -76,21 +76,21 @@ Now create the GitHub Codespace.
 
 3. Click `Create codespace on main`.
 
-<img src="assets/labsetup_createcodespace.png" width="800" />
+![assets/labsetup_createcodespace.png](assets/labsetup_createcodespace.png)
 
 > aside negative
 >
 > If you are seeing the message **Codespace access limited**, you may be logged into Github with an organization account. Please [Sign up to GitHub](https://github.com/signup) using a personal account and retry the **Lab Setup**.
 >
 
-<img src="assets/labsetup_codespace_limited.png" />
+![assets/labsetup_codespace_limited.png](assets/labsetup_codespace_limited.png)
 
 > aside positive
 > 
 > This will open a new browser window and begin **Setting up your codespace**. The Github Codespace deployment will take several minutes to set up the entire environment for this lab.
 >
 
-<img src="assets/labsetup_setupcodespace.png" width="800" />
+![assets/labsetup_setupcodespace.png](assets/labsetup_setupcodespace.png)
 
 > aside negative
 >
@@ -99,14 +99,14 @@ Now create the GitHub Codespace.
 > **Ignore any notifications** that may prompt to refresh the Codespace, these will disappear once the postCreateCommand has run.
 >
 
-<img src="assets/labsetup_postcreate.png" />
+![assets/labsetup_postcreate.png](assets/labsetup_postcreate.png)
 
 
 #### INFO: Github Codespace Deployment Summary
 
 Once complete you should see a hosted web-based version of **VS Code Integrated Development Environment (IDE)** in your browser with your forked repository.
 
-<img src="assets/labsetup_vscode.png" width="800" />
+![assets/labsetup_vscode.png](assets/labsetup_vscode.png)
 
 **The Github Codespace deployment will contain all the resources needed to complete the lab**.
 
@@ -123,17 +123,17 @@ To activate the virtual environment:
 
 1. Remove any existing open Terminal by clicking the `Kill Terminal` button
 
-<img src="assets/labsetup_killterminal.png" />
+![assets/labsetup_killterminal.png](assets/labsetup_killterminal.png)
 
 2. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
 
-<img src="assets/labsetup_newterminal.png" />
+![assets/labsetup_newterminal.png](assets/labsetup_newterminal.png)
 
 3. Enter command `conda activate hol-timeseries`
 
-<img src="assets/labsetup_condaactivate.png" />
+![assets/labsetup_condaactivate.png](assets/labsetup_condaactivate.png)
 
-<img src="assets/labsetup_condaactivated.png" />
+![assets/labsetup_condaactivated.png](assets/labsetup_condaactivated.png)
 
 The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the **hol-timeseries** virtual environment is activated.
 
@@ -144,11 +144,11 @@ The terminal prompt should now show a prefix `(hol-timeseries)` to confirm the *
 
 2. From the menu expand `Projects > Worksheets`
 
-<img src="assets/analysis_worksheets.png" />
+![assets/analysis_worksheets.png](assets/analysis_worksheets.png)
 
 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 
-<img src="assets/analysis_newworksheet.png" />
+![assets/analysis_newworksheet.png](assets/analysis_newworksheet.png)
 
 4. **In the new worksheet**, execute the following command that uses [SYSTEM$ALLOWLIST](https://docs.snowflake.com/en/sql-reference/functions/system_allowlist) to find your **ACCOUNT_IDENTIFIER**:
 
@@ -160,20 +160,20 @@ WHERE AL.VALUE:type::VARCHAR = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 
 5. In the results returned, below the command, select the row returned, and **Copy** the **ACCOUNT_IDENTIFIER**.
 
-<img src="assets/labsetup_regionless.png" />
+![assets/labsetup_regionless.png](assets/labsetup_regionless.png)
 
 6. Back in **VS Code**, navigate to the following files and in the files replace **<ACCOUNT_IDENTIFIER>** with your Snowflake account identifier value:
 
 * `.snowflake/config.toml`
     - **account** variable for **both** connections
 
-<img src="assets/labsetup_files_snowflakeconfig.png" />
+![assets/labsetup_files_snowflakeconfig.png](assets/labsetup_files_snowflakeconfig.png)
  
 * `iotstream/snowflake.properties`
     - **account** variable
     - **host** variable
 
-<img src="assets/labsetup_files_iotstreamproperties.png" />
+![assets/labsetup_files_iotstreamproperties.png](assets/labsetup_files_iotstreamproperties.png)
 
 7. **Save** file changes by pressing `Command/Ctrl` and `S`
 
@@ -182,32 +182,32 @@ WHERE AL.VALUE:type::VARCHAR = 'SNOWFLAKE_DEPLOYMENT_REGIONLESS';
 
 1. Open the **Snowflake VS Code Extension**
 
-<img src="assets/labsetup_vscodeextension.png" />
+![assets/labsetup_vscodeextension.png](assets/labsetup_vscodeextension.png)
 
 2. For **Account Identifier/URL**, enter your **<ACCOUNT_IDENTIFIER>**, **without** the `.snowflakecomputing.com`
 3. Click **Continue**
 
-<img src="assets/labsetup_snowextension.png" />
+![assets/labsetup_snowextension.png](assets/labsetup_snowextension.png)
 
 1. For Auth Method select `Username/password`
 2. For Username enter the **ACCOUNTADMIN user** (defined when setting up the Snowflake account)
 3. For Password enter the **ACCOUNTADMIN password**
 3. Click `Sign in`
 
-<img src="assets/labsetup_snowsignin.png" />
+![assets/labsetup_snowsignin.png](assets/labsetup_snowsignin.png)
 
 > aside positive
 >
 > **The VS Code Snowflake Extension** should now be connected to your Snowflake. **Once connected**, it will show a `Sign Out` button along with **Databases** and **Applications** in the `OBJECT EXPLORER` section.
 
-<img src="assets/labsetup_snowconnected.png" />
+![assets/labsetup_snowconnected.png](assets/labsetup_snowconnected.png)
 
 
 ### Step 6 - Expand Snowflake Worksheets Folder
 
 **Worksheets** have been provided for the next sections, these can be accessed by going to **VS Code Explorer** and expanding the `worksheets` folder.
 
-<img src="assets/labsetup_worksheet1.png" />
+![assets/labsetup_worksheet1.png](assets/labsetup_worksheet1.png)
 
 > aside negative
 >
@@ -227,14 +227,14 @@ As part of the GitHub Codespace setup, an **OpenSSL Private Key-pair** will be g
 >
 > ensure you **DO NOT** copy these lines.
 
-<img src="assets/labsetup_publickey.png" />
+![assets/labsetup_publickey.png](assets/labsetup_publickey.png)
 
 > aside negative
 > 
 > The **GitHub Codespace** may prompt to access the clipboard in **VSCode**, select **Allow** if prompted.
 >
 
-<img src="assets/streamlit_codespace_paste.png" />
+![assets/streamlit_codespace_paste.png](assets/streamlit_codespace_paste.png)
 
 
 ### Step 8 - Update Snowflake "Setup" Worksheet with Lab Provisioned PUBLIC KEY
@@ -242,7 +242,7 @@ As part of the GitHub Codespace setup, an **OpenSSL Private Key-pair** will be g
 
 2. **Find and replace** the **<RSA_PUBLIC_KEY>** with the **PUBLIC KEY** copied from the `keys/rsa_key.pub` file.
 
-<img src="assets/labsetup_rsakey.png" />
+![assets/labsetup_rsakey.png](assets/labsetup_rsakey.png)
 
 **NOTE:** The pasted **PUBLIC KEY** can show on multiple lines and will work.
 
@@ -290,7 +290,7 @@ This includes:
     - **ANALYTICS** - serving and analytics functions schema
 - Grants: Access control grants for role **ROLE_HOL_TIMESERIES**
 
-<img src="assets/snowsetup_architecture.png" />
+![assets/snowsetup_architecture.png](assets/snowsetup_architecture.png)
 
 
 ### Step 1 - Run Snowflake Setup Worksheet
@@ -305,26 +305,26 @@ In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_1
 >
 > - **Execute All Statements**: To run the worksheet in full, select the `Execute All Statements` button at the top right of the worksheet.
 >
-> <img src="assets/labsetup_vscodeextension_runall.png" />
+> ![assets/labsetup_vscodeextension_runall.png](assets/labsetup_vscodeextension_runall.png)
 >
 > - **Multiple Statements**: Highlighting / selecting the statements you want to run, and pressing **Command/Ctrl** and **Enter**.
 >
-> <img src="assets/labsetup_vscodeextension_runmulti.png" />
+> ![assets/labsetup_vscodeextension_runmulti.png](assets/labsetup_vscodeextension_runmulti.png)
 >
 > - **Individual Statements**: Click the `Execute` link above each statement line.
 > 
-> <img src="assets/snowsetup_vscode_execute.png" />
+> ![assets/snowsetup_vscode_execute.png](assets/snowsetup_vscode_execute.png)
 >
 > **Executed statements** will show in the **QUERY HISTORY** tab of the Snowflake VS Code Extension.
 >
-> <img src="assets/labsetup_vscodeextension_queryhistory.png" />
+> ![assets/labsetup_vscodeextension_queryhistory.png](assets/labsetup_vscodeextension_queryhistory.png)
 >
 
 #### Run the Worksheet to get Snowflake Resources Created
 
 **As the worksheet has been set up during the "Lab Setup" section, click** `Execute All Statements`.
 
-<img src="assets/labsetup_vscodeextension_runall.png" />
+![assets/labsetup_vscodeextension_runall.png](assets/labsetup_vscodeextension_runall.png)
 
 > aside negative
 > 
@@ -435,11 +435,11 @@ GRANT CREATE NOTEBOOK ON SCHEMA HOL_TIMESERIES.ANALYTICS TO ROLE ROLE_HOL_TIMESE
 >
 > 2. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`.
 >
-> <img src="assets/analysis_worksheets.png" />
+> ![assets/analysis_worksheets.png](assets/analysis_worksheets.png)
 >
 > 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 >
-> <img src="assets/analysis_newworksheet.png" />
+> ![assets/analysis_newworksheet.png](assets/analysis_newworksheet.png)
 >
 > 4. **Paste** the copied content into the newly created **Worksheet in Snowsight**.
 >
@@ -453,14 +453,14 @@ With the foundational objects setup, we can now **deploy a staging table** to st
 
 For this lab a **Java IOT Simulator Client** application has been created to stream IoT sensor readings into Snowflake.
 
-<img src="assets/snowpipe_streamingest.png" />
+![assets/snowpipe_streamingest.png](assets/snowpipe_streamingest.png)
 
 
 ### Step 1 - Create Streaming Staging Table
 
 We'll create a stage loading table to stream RAW time series data into Snowflake. This will be located in the **STAGING** schema of the **HOL_TIMESERIES** database.
 
-<img src="assets/snowpipe_stagetable.png" />
+![assets/snowpipe_stagetable.png](assets/snowpipe_stagetable.png)
 
 In the **GitHub Codespace VS Code** open worksheet: `worksheets/hol_timeseries_2_ingest.sql`
 
@@ -504,11 +504,11 @@ The IoT data will be streamed into Snowflake in a similar [schema format as Kafk
 
 Snowflake provides an [Ingest Client SDK](https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk) in Java that allows applications, such as Kafka Connectors, to stream rows of data into a Snowflake table at low latency.
 
-<img src="assets/data-load-snowpipe-streaming.png" />
+![assets/data-load-snowpipe-streaming.png](assets/data-load-snowpipe-streaming.png)
 
 The Ingest Client SDK is configured with a secure JDBC connection to Snowflake, and will establish a streaming [Channel](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview#channels) between the client and a Snowflake table.
 
-<img src="assets/data-load-snowpipe-streaming-client-channel.png" />
+![assets/data-load-snowpipe-streaming-client-channel.png](assets/data-load-snowpipe-streaming-client-channel.png)
 
 
 ### Step 2 - Test Streaming Client
@@ -524,7 +524,7 @@ In the **GitHub Codespace VS Code**:
 
 1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
 
-<img src="assets/labsetup_newterminal.png" />
+![assets/labsetup_newterminal.png](assets/labsetup_newterminal.png)
 
 2. Change directory into to the **iotstream** folder: `cd iotstream`
 
@@ -554,7 +554,7 @@ SHOW CHANNELS;
 
 The query should return a single channel `CHANNEL_1_TEST` opened to the `RAW_TS_IOTSTREAM_DATA` table.
 
-<img src="assets/snowpipe_channeltest.png" />
+![assets/snowpipe_channeltest.png](assets/snowpipe_channeltest.png)
 
 **With a channel now opened to the table we are ready to stream data into the table.**
 
@@ -563,7 +563,7 @@ The query should return a single channel `CHANNEL_1_TEST` opened to the `RAW_TS_
 
 With the channel connection being successful, we can now load the IoT data set, as fast as the connection and machine will allow.
 
-<img src="assets/snowpipe_streamingclient.png" />
+![assets/snowpipe_streamingclient.png](assets/snowpipe_streamingclient.png)
 
 The simulated **IoT dataset contains six sensor devices** at various frequencies, with each device being assigned a unique Tag Names within a single **namespace** called **"IOT"**.
 
@@ -602,7 +602,7 @@ SHOW CHANNELS;
 
 The query should return a new channel `CHANNEL_1_MAX` opened to the `RAW_TS_IOTSTREAM_DATA` table, with an **offset_token** showing the number of rows loaded.
 
-<img src="assets/snowpipe_channelmax.png" />
+![assets/snowpipe_channelmax.png](assets/snowpipe_channelmax.png)
 
 3. In **VS Code** open the worksheet `worksheets/hol_timeseries_2_ingest.sql` and view the streamed records, by running the `Check stream table data` script.
 
@@ -613,11 +613,11 @@ SELECT * FROM HOL_TIMESERIES.STAGING.RAW_TS_IOTSTREAM_DATA LIMIT 10;
 
 - **RECORD_METADATA** - This contains metadata about IOT Tag reading.
 
-<img src="assets/snowpipe_record_meta.png" />
+![assets/snowpipe_record_meta.png](assets/snowpipe_record_meta.png)
 
 - **RECORD_CONTENT** - This contains the IOT Tag reading.
 
-<img src="assets/snowpipe_record_content.png" />
+![assets/snowpipe_record_content.png](assets/snowpipe_record_content.png)
 
 Each IoT device reading is a **JSON payload**, transmitted in the following Kafka like format:
 
@@ -670,11 +670,11 @@ Each IoT device reading is a **JSON payload**, transmitted in the following Kafk
 >
 > 2. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`.
 >
-> <img src="assets/analysis_worksheets.png" />
+> ![assets/analysis_worksheets.png](assets/analysis_worksheets.png)
 >
 > 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 >
-> <img src="assets/analysis_newworksheet.png" />
+> ![assets/analysis_newworksheet.png](assets/analysis_newworksheet.png)
 >
 > 4. **Paste** the copied content into the newly created **Worksheet in Snowsight**.
 >
@@ -686,15 +686,15 @@ Each IoT device reading is a **JSON payload**, transmitted in the following Kafk
 >
 > 1. Open [GitHub Codespaces](https://github.com/codespaces). Select `Menu > Change machine type`.
 >
-> <img src="assets/troubleshoot_ingest_codespace_machine.png" />
+> ![assets/troubleshoot_ingest_codespace_machine.png](assets/troubleshoot_ingest_codespace_machine.png)
 >
 > 2. Select a **machine type with more memory**, and click `Update Codespace`.
 >
-> <img src="assets/troubleshoot_ingest_codespace_machineupdate.png" />
+> ![assets/troubleshoot_ingest_codespace_machineupdate.png](assets/troubleshoot_ingest_codespace_machineupdate.png)
 >
 > 3. If the GitHub Codespace was already running, select `Menu > Stop codespace`
 >
-> <img src="assets/troubleshoot_ingest_codespace_machinestop.png" />
+> ![assets/troubleshoot_ingest_codespace_machinestop.png](assets/troubleshoot_ingest_codespace_machinestop.png)
 >
 > 4. Select the Github Codespace to launch it, and **Re-run** the ingestion scripts.
 >
@@ -706,7 +706,7 @@ Now that data has been streamed into Snowflake, we are ready for some **Data Eng
 
 Along with setting up Dynamic Tables for continuous loading, we'll also deploy some **analytics views** for the consumer serving layer. This will allow for specific columns of data to be exposed to the end users and applications.
 
-<img src="assets/model_dataengineering.png" />
+![assets/model_dataengineering.png](assets/model_dataengineering.png)
 
 
 #### INFO: Dynamic Tables
@@ -715,7 +715,7 @@ Along with setting up Dynamic Tables for continuous loading, we'll also deploy s
 
 Dynamic Tables can also be chained together to create a DAG for more complex data pipelines.
 
-<img src="assets/dynamic_tables.png" />
+![assets/dynamic_tables.png](assets/dynamic_tables.png)
 
 
 ### Step 1 - Model Time Series Data with Dynamic Tables
@@ -724,7 +724,7 @@ For the IoT streaming data we'll setup two Dynamic Tables in a simple Dimension 
 - **DT_TS_TAG_METADATA (Dimension)**: Containing Tag Metadata such as tag names, sourcing, and data types
 - **DT_TS_TAG_READINGS (Fact)**: Containing the readings from each IoT sensor in raw and numeric format
 
-<img src="assets/model_dynamictables.png" />
+![assets/model_dynamictables.png](assets/model_dynamictables.png)
 
 In **VS Code** open the worksheet `worksheets/hol_timeseries_3_transform.sql` and run the **Dynamic Tables Setup** scripts.
 
@@ -794,25 +794,25 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 **The DT_TS_TAG_METADATA table will show six rows loaded, representing the six tags of data streamed into Snowflake**.
 
-<img src="assets/model_dynamictables_metadata.png" />
+![assets/model_dynamictables_metadata.png](assets/model_dynamictables_metadata.png)
 
 2. Open the `Data Preview` tab
 
 **You can now see the Tag Metadata in a columnar table format**.
 
-<img src="assets/model_dynamictables_metadata_preview.png" />
+![assets/model_dynamictables_metadata_preview.png](assets/model_dynamictables_metadata_preview.png)
 
 3. Select `Dynamic Tables > DT_TS_TAG_READINGS > Refresh History`
 
 **The DT_TS_TAG_READINGS table will show all the tag readings streamed into Snowflake**.
 
-<img src="assets/model_dynamictables_readings.png" />
+![assets/model_dynamictables_readings.png](assets/model_dynamictables_readings.png)
 
 4. Open the `Data Preview` tab
 
 **You can now see the Tag Readings in a columnar table format**.
 
-<img src="assets/model_dynamictables_readings_preview.png" />
+![assets/model_dynamictables_readings_preview.png](assets/model_dynamictables_readings_preview.png)
 
 > aside positive
 > 
@@ -823,7 +823,7 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY UPPER(CONCAT('/', SRC.RECORD_METADATA:he
 
 The Dynamic Tables are now set up to continuously transform streaming data. We can now look at setting up a **Curated Analytics** serving layer with some views for end users and applications to consume the streaming data.
 
-<img src="assets/model_analyticviews.png" />
+![assets/model_analyticviews.png](assets/model_analyticviews.png)
 
 We'll create a set of analytics views similar to the Dynamic Tables with a subset of columns in the **ANALYTICS** schema:
 - **TS_TAG_REFERENCE (Dimension)**: Containing Tag Metadata such as tag names, sourcing, and data types
@@ -881,11 +881,11 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 >
 > 2. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`.
 >
-> <img src="assets/analysis_worksheets.png" />
+> ![assets/analysis_worksheets.png](assets/analysis_worksheets.png)
 >
 > 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 >
-> <img src="assets/analysis_newworksheet.png" />
+> ![assets/analysis_newworksheet.png](assets/analysis_newworksheet.png)
 >
 > 4. **Paste** the copied content into the newly created **Worksheet in Snowsight**.
 >
@@ -897,7 +897,7 @@ FROM HOL_TIMESERIES.TRANSFORM.DT_TS_TAG_READINGS READ;
 
 Now that we have created the analytics views, we can start to query the data using **Snowflake native time series functions**.
 
-<img src="assets/analysis_overview.png" />
+![assets/analysis_overview.png](assets/analysis_overview.png)
 
 
 #### INFO: Time Series Query Profiles
@@ -924,11 +924,11 @@ The following query profiles will be covered in this section.
 
 1. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`
 
-<img src="assets/analysis_worksheets.png" />
+![assets/analysis_worksheets.png](assets/analysis_worksheets.png)
 
 2. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 
-<img src="assets/analysis_newworksheet.png" />
+![assets/analysis_newworksheet.png](assets/analysis_newworksheet.png)
 
 3. In **VS Code** open the worksheet `worksheets/hol_timeseries_4_anaysis.sql`
 
@@ -942,11 +942,11 @@ The following query profiles will be covered in this section.
 >
 > **Multiple Statements:** To run multiple query statements, **highlight all the query statements you want to run together**, and then click the `Run` button.
 >
-> <img src="assets/analysis_info_queryrun_multi.png" />
+> ![assets/analysis_info_queryrun_multi.png](assets/analysis_info_queryrun_multi.png)
 >
 > **Individual Statements:** To run individual query statements, **select the query by placing your cursor within the query statement**, and then click the `Run` button at the top right of the worksheet.
 >
-> <img src="assets/analysis_info_queryrun.png" />
+> ![assets/analysis_info_queryrun.png](assets/analysis_info_queryrun.png)
 >
 
 
@@ -981,7 +981,7 @@ AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-<img src="assets/analysis_query_rawleft.png" />
+![assets/analysis_query_rawleft.png](assets/analysis_query_rawleft.png)
 
 ### Time Series Statistical Aggregates
 
@@ -1009,7 +1009,7 @@ GROUP BY TAGNAME
 ORDER BY TAGNAME;
 ```
 
-<img src="assets/analysis_query_aggcount.png" />
+![assets/analysis_query_aggcount.png](assets/analysis_query_aggcount.png)
 
 **Math Operations**: Retrieve statistical detail for the readings within the time boundary.
 
@@ -1037,7 +1037,7 @@ GROUP BY TAGNAME
 ORDER BY TAGNAME;
 ```
 
-<img src="assets/analysis_query_aggminmaxavgsum.png" />
+![assets/analysis_query_aggminmaxavgsum.png](assets/analysis_query_aggminmaxavgsum.png)
 
 **Relative Frequency**: Consider the use case of **calculating the frequency and relative frequency** of each value within a specific time frame, to **determine how often the value occurs**.
 
@@ -1066,7 +1066,7 @@ ORDER BY TAGNAME, FREQUENCY DESC;
 
 **Relative Frequency**: Value 424 occurs most, with a frequency of 13 and a relative frequency of 21.6%. 
 
-<img src="assets/analysis_query_relativefrequency.png" />
+![assets/analysis_query_relativefrequency.png](assets/analysis_query_relativefrequency.png)
 
 > aside positive
 > 
@@ -1136,7 +1136,7 @@ GROUP BY TAGNAME
 ORDER BY TAGNAME;
 ```
 
-<img src="assets/analysis_query_aggdistributions.png" />
+![assets/analysis_query_aggdistributions.png](assets/analysis_query_aggdistributions.png)
 
 **Watermarks**: Consider the use case of **determining a sensor variance over time** by calculating the latest (high watermark) and earliest (low watermark) readings within a time boundary.
 
@@ -1165,7 +1165,7 @@ GROUP BY TAGNAME
 ORDER BY TAGNAME;
 ```
 
-<img src="assets/analysis_query_aggwatermark.png" />
+![assets/analysis_query_aggwatermark.png](assets/analysis_query_aggwatermark.png)
 
 
 ### Time Series Analytics using Window Functions
@@ -1202,7 +1202,7 @@ AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-<img src="assets/analysis_query_windowlaglead.png" />
+![assets/analysis_query_windowlaglead.png](assets/analysis_query_windowlaglead.png)
 
 **First and Last Value**: Consider the use case of **change detection** where you want to **detect any sudden pressure changes** in comparison to initial and final values in a specific time frame.
 
@@ -1229,7 +1229,7 @@ AND TAGNAME = '/IOT/SENSOR/TAG301'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-<img src="assets/analysis_query_windowfirstlast.png" />
+![assets/analysis_query_windowfirstlast.png](assets/analysis_query_windowfirstlast.png)
 
 **Rows Between - Preceding and Following**: Consider the use case, where the data you have is **second by second** sensor readings, and you want to compute the **rolling 6 second average** of sensor readings over a specific time frame to **detect trends and patterns** in the data.
 
@@ -1275,7 +1275,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 **Selecting the first six row cells will show the matching ROWS BETWEEN averages preceding and following**.
 
-<img src="assets/analysis_query_windowrowsbetween.png" />
+![assets/analysis_query_windowrowsbetween.png](assets/analysis_query_windowrowsbetween.png)
 
 > aside negative
 > 
@@ -1293,7 +1293,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 > ORDER BY TAGNAME, TIMESTAMP;
 > ```
 >
-> <img src="assets/analysis_query_windowrangebetween_gaps.png" />
+> ![assets/analysis_query_windowrangebetween_gaps.png](assets/analysis_query_windowrangebetween_gaps.png)
 >
 > Now say you want to perform an aggregation to **calculate the 1 minute rolling average** of sensor readings,
 over a specific time frame to detect trends and patterns in the data.
@@ -1313,7 +1313,7 @@ over a specific time frame to detect trends and patterns in the data.
 > * Allow for **reporting frequencies that differ** from the data frequency.
 >   - For example, data at 5 second frequency that you want to aggregate the prior 1 minute.
 >
-> <img src="assets/analysis_info_range_between.png" />
+> ![assets/analysis_info_range_between.png](assets/analysis_info_range_between.png)
 >
 > More detail at [Interval Constants](https://docs.snowflake.com/en/sql-reference/data-types-datetime#interval-constants)
 >
@@ -1344,7 +1344,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 **The first minute of data aligns for both RANGE BETWEEN and ROWS BETWEEN, however, after the first minute the rolling values will start to show variances due to the introduced time gaps**.
 
-<img src="assets/analysis_query_windowrangebetween_error.png" />
+![assets/analysis_query_windowrangebetween_error.png](assets/analysis_query_windowrangebetween_error.png)
 
 ##### CHART: Rolling 1 MIN Average and Sum - showing differences between RANGE BETWEEN and ROWS BETWEEN
 
@@ -1355,7 +1355,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 **The chart shows variances between the RANGE BETWEEN and ROWS BETWEEN occuring after the first minute**.
 
-<img src="assets/analysis_chart_rangerow_1min.png" />
+![assets/analysis_chart_rangerow_1min.png](assets/analysis_chart_rangerow_1min.png)
 
 **Range Between - 5 MIN Rolling Average and Sum**: Let's expand on RANGE BETWEEN and create a rolling AVG and SUM for the time **INTERVAL** five minutes preceding, inclusive of the current row.
 
@@ -1379,7 +1379,7 @@ AND TAGNAME = '/IOT/SENSOR/TAG401'
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-<img src="assets/analysis_query_windowrangebetween_5min.png" />
+![assets/analysis_query_windowrangebetween_5min.png](assets/analysis_query_windowrangebetween_5min.png)
 
 ##### CHART: Rolling 5 MIN Average
 
@@ -1389,7 +1389,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 **A rolling average could be useful in scenarios where you are trying to detect EXCEEDANCES in equipment operating limits over periods of time, such as a maximum pressure limit**.
 
-<img src="assets/analysis_chart_range_5min.png" />
+![assets/analysis_chart_range_5min.png](assets/analysis_chart_range_5min.png)
 
 ### Downsampling Time Series Data
 
@@ -1425,7 +1425,7 @@ ORDER BY TAGNAME, START_TIMESTAMP;
 
 **For a one second tag (3600 data points over an hour), the results will show in five minute intervals containing 300 data points each, along with aggregates for counts, sum, average, and 95th percentile values**.
 
-<img src="assets/analysis_query_timebin.png" />
+![assets/analysis_query_timebin.png](assets/analysis_query_timebin.png)
 
 
 ### Aligning Time Series Data
@@ -1457,7 +1457,7 @@ AND ONE_SEC.TIMESTAMP <= '2024-01-03 09:45:00'
 ORDER BY ONE_SEC.TIMESTAMP;
 ```
 
-<img src="assets/analysis_query_asof_align.png" />
+![assets/analysis_query_asof_align.png](assets/analysis_query_asof_align.png)
 
 ##### CHART: Aligned Time Series Data
 
@@ -1468,7 +1468,7 @@ ORDER BY ONE_SEC.TIMESTAMP;
 
 **One sensor is showing a significant drop whilst the other is showing an increase to a peak at similar times, which could potentially be an anomaly**.
 
-<img src="assets/analysis_chart_align.png" />
+![assets/analysis_chart_align.png](assets/analysis_chart_align.png)
 
 ### Gap Filling
 
@@ -1513,7 +1513,7 @@ ASOF JOIN DATA A MATCH_CONDITION(TIMES.TIMESTAMP >= A.TIMESTAMP) ON TIMES.TAGNAM
 ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-<img src="assets/analysis_query_gapfill_locf.png" />
+![assets/analysis_query_gapfill_locf.png](assets/analysis_query_gapfill_locf.png)
 
 
 ### Time Series Forecasting
@@ -1616,7 +1616,7 @@ ORDER BY DATASET, TAGNAME, TIMESTAMP;
 
 **The chart will show a flow sensor with ACTUALS and FORECAST values**.
 
-<img src="assets/analysis_chart_forecast.png" />
+![assets/analysis_chart_forecast.png](assets/analysis_chart_forecast.png)
 
 
 ### Ask Copilot
@@ -1633,19 +1633,19 @@ For more information, please review [How to use Snowflake Copilot](https://docs.
 
 1. At the top left of the screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 
-<img src="assets/analysis_newsheet.png" />
+![assets/analysis_newsheet.png](assets/analysis_newsheet.png)
 
 2. At the bottom right of the worksheet, click the **Ask Copilot** button.
 
-<img src="assets/analysis_askcopilot.png" />
+![assets/analysis_askcopilot.png](assets/analysis_askcopilot.png)
 
 3. A **Snowflake Copilot** tab will appear to the right of the window, at the bottom click **Select Database**.
 
-<img src="assets/analysis_selectdatabase.png" />
+![assets/analysis_selectdatabase.png](assets/analysis_selectdatabase.png)
 
 4. Select the database and schema `HOL_TIMESERIES > ANALYTICS`.
 
-<img src="assets/analysis_database_analytics.png" />
+![assets/analysis_database_analytics.png](assets/analysis_database_analytics.png)
 
 5. **Try asking Snowflake Copilot the following prompts**, by entering them into the text prompt box. Snowflake Copilot will return a **generated SQL query along with annotations** of how it structures the SQL query.
 
@@ -1654,7 +1654,7 @@ For more information, please review [How to use Snowflake Copilot](https://docs.
     - Show me the max value, and time for tag name /IOT/SENSOR/TAG101 on January 10 2024 by tag name
     - Show me 1hr averages for tag /IOT/SENSOR/TAG301 on January 3 2024 by tag
 
-<img src="assets/analysis_query_copilot.png" />
+![assets/analysis_query_copilot.png](assets/analysis_query_copilot.png)
 
 > aside negative
 > 
@@ -1663,11 +1663,11 @@ For more information, please review [How to use Snowflake Copilot](https://docs.
 
 6. Click the `Run` button below the generated SQL query. If it's correct, please give the generated prompt output a **thumbs up**!
 
-<img src="assets/analysis_query_copilot_run.png" />
+![assets/analysis_query_copilot_run.png](assets/analysis_query_copilot_run.png)
 
 **Copilot** will execute the SQL in the worksheet.
 
-<img src="assets/analysis_query_copilot_hourlybin.png" />
+![assets/analysis_query_copilot_hourlybin.png](assets/analysis_query_copilot_hourlybin.png)
 
 > aside negative
 > 
@@ -1693,7 +1693,7 @@ For more information, please review [How to use Snowflake Copilot](https://docs.
 
 Now that you have a great understanding of running **Time Series Analysis**, we will now look at deploying time series [User Defined Table Functions (UDTF)](https://docs.snowflake.com/en/developer-guide/udf/udf-overview) that can query time series data in a re-usable manner. Table functions will accept a set of input parameters and perform operations on a data set, and return results in a table format.
 
-<img src="assets/byo_functions.png" />
+![assets/byo_functions.png](assets/byo_functions.png)
 
 #### INFO: Time Series Query Profiles
 
@@ -1728,7 +1728,7 @@ The **LTTB** algorithm **reduces the number of visual data points in a time seri
 
 2. Click the `Execute All Statements` button at the top right of the worksheet to **deploy all functions and procedures**.
 
-<img src="assets/function_info_runall.png" />
+![assets/function_info_runall.png](assets/function_info_runall.png)
 
 #### INFO: Time Series Functions and Procedures
 
@@ -1956,11 +1956,11 @@ $$;
 
 1. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`
 
-<img src="assets/analysis_worksheets.png" />
+![assets/analysis_worksheets.png](assets/analysis_worksheets.png)
 
 2. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 
-<img src="assets/analysis_newworksheet.png" />
+![assets/analysis_newworksheet.png](assets/analysis_newworksheet.png)
 
 3. In **VS Code** open the worksheet `worksheets/hol_timeseries_6_function_queries.sql`
 
@@ -2002,7 +2002,7 @@ Call the interpolate table function to return both the linear interpolated value
 SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSOR/TAG401', '2024-01-01 12:10:00'::TIMESTAMP_NTZ, '2024-01-01 13:10:00'::TIMESTAMP_NTZ, 10, 362)) ORDER BY TAGNAME, TIMESTAMP;
 ```
 
-<img src="assets/function_query_direct.png" />
+![assets/function_query_direct.png](assets/function_query_direct.png)
 
 ##### CHART: Interpolation - Linear and LOCF
 
@@ -2013,7 +2013,7 @@ SELECT * FROM TABLE(HOL_TIMESERIES.ANALYTICS.FUNCTION_TS_INTERPOLATE('/IOT/SENSO
 
 **The chart will display both LINEAR and LOCF for interpolated values between data points**.
 
-<img src="assets/function_chart_linearlocf.png" />
+![assets/function_chart_linearlocf.png](assets/function_chart_linearlocf.png)
 
 
 ### Interpolation - Last Observed Value Carried Forward (LOCF) Query
@@ -2053,7 +2053,7 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 
 **The chart will display a LOCF value where the prior value is interpolated between data points**.
 
-<img src="assets/function_chart_locf.png" />
+![assets/function_chart_locf.png](assets/function_chart_locf.png)
 
 
 ### Interpolation - Linear Query
@@ -2089,7 +2089,7 @@ CALL HOL_TIMESERIES.ANALYTICS.PROCEDURE_TS_INTERPOLATE(
 
 **The chart will display a smoother LINEAR interpolated value between data points**.
 
-<img src="assets/function_chart_linear.png" />
+![assets/function_chart_linear.png](assets/function_chart_linear.png)
 
 
 ### LTTB Query
@@ -2120,7 +2120,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 **7200 Data Points**
 
-<img src="assets/function_chart_lttb_raw.png" />
+![assets/function_chart_lttb_raw.png](assets/function_chart_lttb_raw.png)
 
 **LTTB Query**
 
@@ -2153,7 +2153,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 **500 Data Points - The shape and variability of the values are retained, when compared to the 7200 data point RAW chart**.
 
-<img src="assets/function_chart_lttb_downsampled.png" />
+![assets/function_chart_lttb_downsampled.png](assets/function_chart_lttb_downsampled.png)
 
 
 > aside positive
@@ -2172,11 +2172,11 @@ ORDER BY TAGNAME, TIMESTAMP;
 >
 > 2. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`.
 >
-> <img src="assets/analysis_worksheets.png" />
+> ![assets/analysis_worksheets.png](assets/analysis_worksheets.png)
 >
 > 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 >
-> <img src="assets/analysis_newworksheet.png" />
+> ![assets/analysis_newworksheet.png](assets/analysis_newworksheet.png)
 >
 > 4. **Paste** the copied content into the newly created **Worksheet in Snowsight**.
 >
@@ -2188,7 +2188,7 @@ ORDER BY TAGNAME, TIMESTAMP;
 
 After completing the analysis of the time series data that was streamed into Snowflake, we are now ready to **deliver a Time Series Analytics application** for end users to easily consume time series data. For this purpose we are going to use a **Streamlit in Snowflake** application, deployed using **Snowflake CLI**.
 
-<img src="assets/streamlit_overview.png" />
+![assets/streamlit_overview.png](assets/streamlit_overview.png)
 
 > aside positive
 > 
@@ -2250,7 +2250,7 @@ In the **GitHub Codespace VS Code**:
 
 1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
 
-<img src="assets/labsetup_newterminal.png" />
+![assets/labsetup_newterminal.png](assets/labsetup_newterminal.png)
 
 2. Activate `hol-timeseries` python virtual environment by running `conda activate hol-timeseries`
 
@@ -2258,9 +2258,9 @@ In the **GitHub Codespace VS Code**:
 conda activate hol-timeseries
 ```
 
-<img src="assets/labsetup_condaactivate.png" />
+![assets/labsetup_condaactivate.png](assets/labsetup_condaactivate.png)
 
-<img src="assets/labsetup_condaactivated.png" />
+![assets/labsetup_condaactivated.png](assets/labsetup_condaactivated.png)
 
 3. **Copy and run** the following Snowflake CLI command **into the Terminal** to deploy the Streamlit application
 
@@ -2273,7 +2273,7 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 > The **GitHub Codespace** may prompt to access the clipboard in **VSCode**, select **Allow** if prompted.
 >
 
-<img src="assets/streamlit_codespace_paste.png" />
+![assets/streamlit_codespace_paste.png](assets/streamlit_codespace_paste.png)
 
 > aside positive
 > 
@@ -2293,13 +2293,13 @@ snow --config-file=".snowflake/config.toml" streamlit deploy --replace --project
 
 Once the Streamlit application is successfully deployed, Snowflake CLI will display the message **"Streamlit successfully deployed and available"** and will provide the URL for the Streamlit application.
 
-<img src="assets/streamlit_launch.png" />
+![assets/streamlit_launch.png](assets/streamlit_launch.png)
 
 1. Press **Command/Ctrl** and **click the URL** link to launch the Streamlit application in a new tab. Alternatively, copy and paste the URL into a new tab.
 
 2. Select `Open` once prompted.
 
-<img src="assets/streamlit_open.png" />
+![assets/streamlit_open.png](assets/streamlit_open.png)
 
 > aside positive
 > 
@@ -2307,7 +2307,7 @@ Once the Streamlit application is successfully deployed, Snowflake CLI will disp
 >
 > You can also launch **Streamlit Applications** from inside Snowflake by going to `Projects > Streamlit` and opening the `HOL_TIMESERIES_STREAMLIT` application.
 >
-> <img src="assets/streamlit_open_snowsight.png" />
+> ![assets/streamlit_open_snowsight.png](assets/streamlit_open_snowsight.png)
 >
 
 
@@ -2321,7 +2321,7 @@ The **Streamlit in Snowflake** application contains several **pages**, accessibl
 * **Statistical Aggregate** Time Series Data
 * **Time Binning / Downsampling** Time Series Data
 
-<img src="assets/streamlit_video_summary.gif" />
+![assets/streamlit_video_summary.gif](assets/streamlit_video_summary.gif)
 
 #### Filtering Menu
 
@@ -2331,7 +2331,7 @@ Each page has a filtering menu to:
 * Set the sample size of chart visualizations
 * Select various aggregations
 
-<img src="assets/streamlit_video_menu.gif" />
+![assets/streamlit_video_menu.gif](assets/streamlit_video_menu.gif)
 
 #### Streamlit Features
 
@@ -2341,7 +2341,7 @@ At the bottom of each page there are options to:
 * **Supporting Detail** - Shows the queries being run
 * **Refresh Mode** - Contains a toggle to enable auto refresh and see new data automatically
 
-<img src="assets/streamlit_video_features.gif" />
+![assets/streamlit_video_features.gif](assets/streamlit_video_features.gif)
 
 
 ### Step 5 - Set Streamlit Filters and Query Data
@@ -2364,7 +2364,7 @@ Open the **Streamlit Application**:
 
 6. For **End Time** select `04:00`
 
-<img src="assets/streamlit_query_filter.png" />
+![assets/streamlit_query_filter.png](assets/streamlit_query_filter.png)
 
 > aside positive
 > 
@@ -2375,7 +2375,7 @@ Open the **Streamlit Application**:
 
 **Data for 1-Jan-2024 should now display**
 
-<img src="assets/streamlit_query_raw.png" />
+![assets/streamlit_query_raw.png](assets/streamlit_query_raw.png)
 
 7. Select the **TS Aggregates** page
 
@@ -2401,7 +2401,7 @@ Open the **Streamlit Application**:
 >
 > If an **aggregation has been applied** to the Tag Data, the **TAGNAME will be updated** to reflect the aggregation and time interval of the data.
 >
-> <img src="assets/streamlit_tag_data.png" />
+> ![assets/streamlit_tag_data.png](assets/streamlit_tag_data.png)
 >
 
 
@@ -2409,13 +2409,13 @@ Open the **Streamlit Application**:
 
 We can now **start a continuous stream of data into Snowflake**, similar to the initial streaming load, to simulate IoT device **data streaming in near real-time** to Snowflake.
 
-<img src="assets/model_streamingclient.png" />
+![assets/model_streamingclient.png](assets/model_streamingclient.png)
 
 In the **GitHub Codespace VS Code**:
 
 1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open
 
-<img src="assets/labsetup_newterminal.png" />
+![assets/labsetup_newterminal.png](assets/labsetup_newterminal.png)
 
 2. Change directory into to the **iotstream** folder: `cd iotstream`
 
@@ -2438,7 +2438,7 @@ cd iotstream
 
     - The charts and data should now start to **automatically update with new data streaming into Snowflake every minute**.
 
-<img src="assets/streamlit_refresh.png" />
+![assets/streamlit_refresh.png](assets/streamlit_refresh.png)
 
 5. Select the **TS Raw** page to see the raw data
 
@@ -2446,7 +2446,7 @@ cd iotstream
 
     - The charts and data should now contain two additional tags with the data updating every minute.
 
-<img src="assets/streamlit_query_stream.png" />
+![assets/streamlit_query_stream.png](assets/streamlit_query_stream.png)
 
 > aside positive
 > 
@@ -2463,7 +2463,7 @@ cd iotstream
 >
 > 1. Open `Menu > Terminal > New Terminal` - a new terminal window will now open.
 >
-> <img src="assets/labsetup_newterminal.png" />
+> ![assets/labsetup_newterminal.png](assets/labsetup_newterminal.png)
 >
 > 2. Activate `hol-timeseries` python virtual environment by running `conda activate hol-timeseries`.
 >
@@ -2471,9 +2471,9 @@ cd iotstream
 > conda activate hol-timeseries
 > ```
 >
-> <img src="assets/labsetup_condaactivate.png" />
+> ![assets/labsetup_condaactivate.png](assets/labsetup_condaactivate.png)
 >
-> <img src="assets/labsetup_condaactivated.png" />
+> ![assets/labsetup_condaactivated.png](assets/labsetup_condaactivated.png)
 >
 > 3. **Copy and run** the following Snowflake CLI command **into the Terminal** to deploy the Streamlit application.
 >
@@ -2482,7 +2482,7 @@ cd iotstream
 > ```
 >   - You should receive an output with **Status "OK"**.
 >
-> <img src="assets/troubleshoot_snowflakecli_conntest.png" />
+> ![assets/troubleshoot_snowflakecli_conntest.png](assets/troubleshoot_snowflakecli_conntest.png)
 >
 > 4. If the **Status is NOT "OK"**, review the error returned to Troubleshoot further.
 >
@@ -2496,7 +2496,7 @@ cd iotstream
 >
 > 2. **Login to Snowflake**, and select `+ Create > SQL Worksheet` under the Snowflake logo at the top left.
 >
-> <img src="assets/troubleshoot_streamlit_files_worksheet.png" />
+> ![assets/troubleshoot_streamlit_files_worksheet.png](assets/troubleshoot_streamlit_files_worksheet.png)
 > 
 > 3. **Create a stage** using the `Lab Downloaded Files` worksheet `worksheets/hol_timeseries_7_streamlit.sql` SQL.
 >
@@ -2514,21 +2514,21 @@ cd iotstream
 >
 > 4. **Open the stage** by expanding `Data > Databases > HOL_TIMESERIES > ANALYTICS > Stages > STAGE_TS_STREAMLIT`.
 >
-> <img src="assets/troubleshoot_streamlit_stage.png" />
+> ![assets/troubleshoot_streamlit_stage.png](assets/troubleshoot_streamlit_stage.png)
 >
 > 5. At the top right of the stage click the `+ Files` button.
 >
-> <img src="assets/troubleshoot_streamlit_addfiles.png" />
+> ![assets/troubleshoot_streamlit_addfiles.png](assets/troubleshoot_streamlit_addfiles.png)
 >
 > 6. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT**, then click **Upload**.
 >       - streamlit/1_TS_Home.py
 >       - streamlit/environment.yml
 >
-> <img src="assets/troubleshoot_streamlit_files_home.png" />
+> ![assets/troubleshoot_streamlit_files_home.png](assets/troubleshoot_streamlit_files_home.png)
 > 
 > 7. Click the `+ Files` button.
 >
-> <img src="assets/troubleshoot_streamlit_addfiles.png" />
+> ![assets/troubleshoot_streamlit_addfiles.png](assets/troubleshoot_streamlit_addfiles.png)
 >
 > 8. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit/pages` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT/pages**, then click **Upload**.
 >       - streamlit/pages/2_TS_Raw.py
@@ -2536,21 +2536,21 @@ cd iotstream
 >       - streamlit/pages/4_TS_Binning.py
 >       - streamlit/pages/8_TS_About.py
 >
-> <img src="assets/troubleshoot_streamlit_files_pages.png" />
+> ![assets/troubleshoot_streamlit_files_pages.png](assets/troubleshoot_streamlit_files_pages.png)
 >
 > 9. Click the `+ Files` button.
 >
-> <img src="assets/troubleshoot_streamlit_addfiles.png" />
+> ![assets/troubleshoot_streamlit_addfiles.png](assets/troubleshoot_streamlit_addfiles.png)
 >
 > 10. In the **Upload Your Files** window, **Drag and Drop** the following files from `Lab Downloaded Files` under the `streamlit/common` folder, and set the `Specify the path` to **/HOL_TIMESERIES_STREAMLIT/streamlit/common**, then click **Upload**.
 >       - streamlit/common/snowflake.png
 >       - streamlit/common/snowflakelogo.png
 >
-> <img src="assets/troubleshoot_streamlit_files_common.png" />
+> ![assets/troubleshoot_streamlit_files_common.png](assets/troubleshoot_streamlit_files_common.png)
 >
 > 11. Under the Snowflake logo at the top left, select `+ Create > SQL Worksheet`.
 >
-> <img src="assets/troubleshoot_streamlit_files_worksheet.png" />
+> ![assets/troubleshoot_streamlit_files_worksheet.png](assets/troubleshoot_streamlit_files_worksheet.png)
 >
 > 12. **Run** the following SQL to create the Streamlit Application.
 >
@@ -2569,7 +2569,7 @@ cd iotstream
 >
 > 13. **Launch the Streamlit** application from `Projects > Streamlit > HOL_TIMESERIES_STREAMLIT`.
 >
-> <img src="assets/troubleshoot_streamlit_launch.png" />
+> ![assets/troubleshoot_streamlit_launch.png](assets/troubleshoot_streamlit_launch.png)
 >
 
 <!-- ------------------------ -->
@@ -2579,7 +2579,7 @@ cd iotstream
 
 2. Click the `Execute All Statements` button at the top right of the worksheet to **run the cleanup script**.
 
-<img src="assets/cleanup_script_runall.png" />
+![assets/cleanup_script_runall.png](assets/cleanup_script_runall.png)
 
 ```sql
 /*##### CLEANUP SCRIPT #####*/
@@ -2600,7 +2600,7 @@ DROP USER USER_HOL_TIMESERIES;
 
 2. Stop or delete the [Github Codespace](https://github.com/codespaces), using the Codespace actions menu.
 
-<img src="assets/cleanup_codespace.png" />
+![assets/cleanup_codespace.png](assets/cleanup_codespace.png)
 
 > aside negative
 > 
@@ -2612,11 +2612,11 @@ DROP USER USER_HOL_TIMESERIES;
 >
 > 2. **Login to Snowflake**, and from the menu expand `Projects > Worksheets`.
 >
-> <img src="assets/analysis_worksheets.png" />
+> ![assets/analysis_worksheets.png](assets/analysis_worksheets.png)
 >
 > 3. At the top right of the **Worksheets** screen, select `+ > SQL Worksheet`. This will open a new worksheet in Snowsight.
 >
-> <img src="assets/analysis_newworksheet.png" />
+> ![assets/analysis_newworksheet.png](assets/analysis_newworksheet.png)
 >
 > 4. **Paste** the copied content into the newly created **Worksheet in Snowsight**.
 >

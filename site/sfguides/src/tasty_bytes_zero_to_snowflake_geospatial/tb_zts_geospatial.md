@@ -11,7 +11,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 
 ## Geospatial Analysis in Snowflake
-<img src = "assets/geospatial_header.png">
+![assets/geospatial_header.png](assets/geospatial_header.png)
 
 ###  Overview 
 Welcome to the Powered by Tasty Bytes - Zero to Snowflake Quickstart focused on Geospatial Analysis!
@@ -63,7 +63,7 @@ This section will walk you through logging into Snowflake, Creating a New Worksh
 
 ### Step 7 - Copying Setup SQL from GitHub
 - Within GitHub navigate to the right side and click "Copy raw contents". This will copy all of the required SQL into your clipboard.
-    - <img src ="assets/github_copy_raw_contents.png"/>
+    - ![assets/github_copy_raw_contents.png](assets/github_copy_raw_contents.png)
 
 ### Step 8 - Pasting Setup SQL from GitHub into your Snowflake Worksheet
 - Path back to Snowsight and your newly created Worksheet and Paste (*CMD + V for Mac or CTRL + V for Windows*) what we just copied from GitHub.
@@ -121,7 +121,7 @@ WHERE 1=1
     AND cpg.country = 'France';
 ```
 
-<img src = "assets/safegraph_data.png">
+![assets/safegraph_data.png](assets/safegraph_data.png)
 
 **Amazing!** These sort of POI metrics will be immensely valuable in conducting Geospatial analysis to assist our Executives in making data driven location decisions. 
 
@@ -190,7 +190,7 @@ GROUP BY location_id, latitude, longitude
 ORDER BY total_sales_usd DESC;
 ```
 
-<img src = "assets/st_makepoint.png">
+![assets/st_makepoint.png](assets/st_makepoint.png)
 
 The results we see in the geo_point column will be essential for everything else we do moving forward.
 
@@ -237,7 +237,7 @@ QUALIFY a.location_id <> LAG(b.location_id) OVER (ORDER BY geography_distance_mi
 ORDER BY geography_distance_miles;
 ```
 
-<img src = "assets/st_distance.png">
+![assets/st_distance.png](assets/st_distance.png)
 
 **Wow!** Look at how far we have already came in so little time. Let's keep diving deeper into what Geospatial insights we can derive in our next section.
 
@@ -283,7 +283,7 @@ SELECT
 FROM _top_10_locations;
 ```
 
-<img src = "assets/collect_draw_area.png">
+![assets/collect_draw_area.png](assets/collect_draw_area.png)
 
 Look at how much we accomplished within a single SQL query, but we can't stop yet, let's keep going to see what else we can accomplish.
 
@@ -312,7 +312,7 @@ SELECT
 FROM _top_10_locations tl;
 ```
 
-<img src = "assets/st_centroid.png">
+![assets/st_centroid.png](assets/st_centroid.png)
 
 
 ### Step 3 - Storing our Center Point in a Variable
@@ -353,7 +353,7 @@ FROM _paris_locations
 ORDER BY kilometer_from_top_selling_center DESC;
 ```
 
-<img src = "assets/far_out.png">
+![assets/far_out.png](assets/far_out.png)
 
 Fantastic work! We have now delivered on the exact as from our Executive Team through a simple process by leveraging SafeGraph from the Snowflake Marketplace.
 
@@ -387,7 +387,7 @@ FROM analytics.orders_v
 WHERE location_name = 'Musee du Louvre';
 ```
 
-<img src = "assets/h3_louvre.png">
+![assets/h3_louvre.png](assets/h3_louvre.png)
 
 >aside positive
 > **Resolution 4** = 288 thousand hexagons covering the globe
@@ -410,7 +410,7 @@ FROM analytics.orders_v
 WHERE location_name = 'Musee du Louvre';
 ```
 
-<img src = "assets/h3louvre_parent_child.png">
+![assets/h3louvre_parent_child.png](assets/h3louvre_parent_child.png)
 
 
 ### Step 3 - Locations within Top Selling Hexagons
@@ -454,7 +454,7 @@ To conclude, in the next query we will see if our two Top Selling Resolution 6 H
 SELECT H3_GRID_DISTANCE('871fb4671ffffff', '871fb4670ffffff') AS cell_distance;
 ```
 
-<img src = "assets/h3_grid_distance.png">
+![assets/h3_grid_distance.png](assets/h3_grid_distance.png)
 
 ### Step 5 - Click Next -->
 

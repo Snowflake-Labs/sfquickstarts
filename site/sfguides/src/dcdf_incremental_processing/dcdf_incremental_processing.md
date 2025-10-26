@@ -182,7 +182,7 @@ The sample code templates provided will be used to demonstrate incremental proce
 
 To clone the repository for this Quickstart, visit the [DCDF Incremental Processing associated GitHub Repository](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/dcdf_incremental_processing). Click on the green "Code" icon near the top of the page to obtain the "HTTPS" link needed to clone the repository. For more information on cloning a git repository please refer to the [GitHub Docs](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
 
-<img src="assets/git_repo_url.png" width="300" />
+![assets/git_repo_url.png](assets/git_repo_url.png)
 
 >aside positive
 >

@@ -62,7 +62,7 @@ You might also see that `circuits` cannot be directly joined to `results` since 
 
 **Formula 1 ERD:** <br>
 ERD can also be downloaded for interactive view from [S3](https://formula1-dbt-cloud-python-demo.s3.amazonaws.com/Formula1_ERD.svg)
-<img src="assets/architecture-use-case/Formula1_ERD.svg" alt="F1_ERD" width="600" height="300">
+![assets/architecture-use-case/Formula1_ERD.svg](assets/architecture-use-case/Formula1_ERD.svg)
 
 Here's a visual for the data pipeline that we'll be building using dbt!
 ![project_DAG](assets/architecture-use-case/project_DAG.png)
@@ -81,22 +81,22 @@ In this section we’re going to sign up for a Snowflake trial account and enabl
 3. To ensure we are working with a clean slate and create a fresh dbt Cloud instance when launching partner connect we will be using email aliasing. What this will look like is <your_email>+<alias_addition>@<your_domain>.com. 
 
 4. Navigate to your left panel menu **∨** and select **Profile**. 
-<img src="assets/configure-snowflake/alias-account-email/1-snowflake_account_profile_menu.png" alt="snowflake_account_profile_menu">
+![assets/configure-snowflake/alias-account-email/1-snowflake_account_profile_menu.png](assets/configure-snowflake/alias-account-email/1-snowflake_account_profile_menu.png)
 
 5. You will see your unaliased email you used to sign up for your snowflake trial (screenshot is redacted for privacy). 
-<img src="assets/configure-snowflake/alias-account-email/2-unaliased_email_profile.png" alt="unaliased_email_profile">
+![assets/configure-snowflake/alias-account-email/2-unaliased_email_profile.png](assets/configure-snowflake/alias-account-email/2-unaliased_email_profile.png)
 
 6. Edit the email field to include the alias using the notation <your_email>+dbtsnowpark@<your_domain>.com. Ensure you **Save** your updated aliased email. 
-<img src="assets/configure-snowflake/alias-account-email/3-alias_email_update_profile_save.png" alt="alias_email_update_profile_save">
+![assets/configure-snowflake/alias-account-email/3-alias_email_update_profile_save.png](assets/configure-snowflake/alias-account-email/3-alias_email_update_profile_save.png)
 
 7. This should automatically send a re-verification email. In your email simply click the email link to verify your new aliased email, and then you're good to go. If for any reason you did the email was not generated you can navigate back to your **Profile** and click the link to manually **Resend verification email**. 
-<img src="assets/configure-snowflake/alias-account-email/4-manually_resend_verification_email.png" alt="manually_resend_verification_email">
+![assets/configure-snowflake/alias-account-email/4-manually_resend_verification_email.png](assets/configure-snowflake/alias-account-email/4-manually_resend_verification_email.png)
 
 8. Your verification email will look like the image below. Select **Validate your email**. 
-<img src="assets/configure-snowflake/alias-account-email/5-verification_email.png" alt="verification_email">
+![assets/configure-snowflake/alias-account-email/5-verification_email.png](assets/configure-snowflake/alias-account-email/5-verification_email.png)
 
 8. After you validate your email your screen should look as follows:
-<img src="assets/configure-snowflake/alias-account-email/6-verification_confirmation_page.png" alt="verification_confirmation_page">
+![assets/configure-snowflake/alias-account-email/6-verification_confirmation_page.png](assets/configure-snowflake/alias-account-email/6-verification_confirmation_page.png)
 
 9. Re-login or refresh your browser window. 
 
@@ -415,13 +415,13 @@ We are going to be using [Snowflake Partner Connect](https://docs.snowflake.com/
 2. In Snowsight, confirm that you are using the **ACCOUNTADMIN** role.
 3. Confirm that your email address contains an email alias. 
 4. Navigate to the **Admin** **> Partner Connect**. Find **dbt** either by using the search bar or navigating the **Data Integration**. Select the **dbt** tile.
-<img src="assets/launching-dbt-cloud-through-partner-connect/1-open-partner-connect.png" alt="open-partner-connect">
+![assets/launching-dbt-cloud-through-partner-connect/1-open-partner-connect.png](assets/launching-dbt-cloud-through-partner-connect/1-open-partner-connect.png)
 
 5. You should now see a new window that says **Connect to dbt**. Select **Optional Grant** and add the `FORMULA1` database. This will grant access for your new dbt user role to the FORMULA1 database.
-<img src="assets/launching-dbt-cloud-through-partner-connect/2-partner-connect-optional-grant.png" alt="partner-connect-optional-grant">
+![assets/launching-dbt-cloud-through-partner-connect/2-partner-connect-optional-grant.png](assets/launching-dbt-cloud-through-partner-connect/2-partner-connect-optional-grant.png)
 
 6. Ensure the `FORMULA1` is present in your optional grant before clicking **Connect**.  This will create a dedicated dbt user, database, warehouse, and role for your dbt Cloud trial.
-<img src="assets/launching-dbt-cloud-through-partner-connect/3a-connect-to-dbt.png" alt="connect-to-dbt">
+![assets/launching-dbt-cloud-through-partner-connect/3a-connect-to-dbt.png](assets/launching-dbt-cloud-through-partner-connect/3a-connect-to-dbt.png)
 
 If you forgot to add the optional grant to the Formula1 database in the previous screenshot, please run these commands:
 
@@ -433,10 +433,10 @@ grant select on all tables in schema FORMULA1.RAW to role PC_DBT_ROLE;
 ```    
 
 6. When you see the **Your partner account has been created** window, click **Activate**.
-<img src="assets/launching-dbt-cloud-through-partner-connect/3b-activate-partner-connect.png" alt="connect-to-dbt">
+![assets/launching-dbt-cloud-through-partner-connect/3b-activate-partner-connect.png](assets/launching-dbt-cloud-through-partner-connect/3b-activate-partner-connect.png)
 
 7. You should be redirected to a dbt Cloud registration page. Fill out the form using whatever account name you'd like. Make sure to save the password somewhere for login in the future. 
-<img src="assets/launching-dbt-cloud-through-partner-connect/4-dbt-cloud-sign-up.png" alt="dbt-cloud-sign-up">
+![assets/launching-dbt-cloud-through-partner-connect/4-dbt-cloud-sign-up.png](assets/launching-dbt-cloud-through-partner-connect/4-dbt-cloud-sign-up.png)
 
 8. Select **Complete Registration**. You should now be redirected to your dbt Cloud account, complete with a connection to your Snowflake account, a deployment and a development environment, and a sample job.
 
@@ -451,63 +451,63 @@ To keep the focus on dbt python and deployment today, we only want to build a su
 1. Open a new browser tab and navigate to our demo repo by [clicking here](https://github.com/dbt-labs/dbt-python-hands-on-lab-snowpark).
 
 2. **Fork** your own copy of the lab repo.
-<img src="assets/development-schema-and-forking-repo/forking-repo/5_fork_exisiting_formula1_repo.png" alt="fork_exisiting_formula1_repo">
+![assets/development-schema-and-forking-repo/forking-repo/5_fork_exisiting_formula1_repo.png](assets/development-schema-and-forking-repo/forking-repo/5_fork_exisiting_formula1_repo.png)
 
 3. Add a description if you'd like such as: "learning about dbt Cloud is cool" and **Create fork**.  
-<img src="assets/development-schema-and-forking-repo/forking-repo/6_create_new_fork.png" alt="create_new_fork">
+![assets/development-schema-and-forking-repo/forking-repo/6_create_new_fork.png](assets/development-schema-and-forking-repo/forking-repo/6_create_new_fork.png)
 
 4. Select the **Code** button. Choose the SSH option and use the **copy** button shortcut for our repo. We'll be using this copied path in step 11 in this section.
-<img src="assets/development-schema-and-forking-repo/forking-repo/7_copy_repo_ssh_github.png" alt="copy_repo_ssh_github">
+![assets/development-schema-and-forking-repo/forking-repo/7_copy_repo_ssh_github.png](assets/development-schema-and-forking-repo/forking-repo/7_copy_repo_ssh_github.png)
 
 5. Head back over to your dbt Cloud browser tab so we can connect our new forked repository into our dbt Cloud project. 
  
 6. We'll need to delete the existing connection to the managed repository spun up during Partner Connect before we input our new one. To do this navigate to **Settings > Account Settings > Partner Connect Trial**.
 
 7. This will open the **Project Details**. Navigate to **Repository** and click the existing managed repository GitHub connection setup during partner connect.
-<img src="assets/development-schema-and-forking-repo/forking-repo/1-select-partner-connect-repo.png" alt="select-existing-partner-connect-repo">
+![assets/development-schema-and-forking-repo/forking-repo/1-select-partner-connect-repo.png](assets/development-schema-and-forking-repo/forking-repo/1-select-partner-connect-repo.png)
 
 8. In the **Repository Details** select **Edit** in the lower right corner. The option to **Disconnect** will appear, select it.
-<img src="assets/development-schema-and-forking-repo/forking-repo/2_repository_details_disconnect.png" alt="repository_details_disconnect">
+![assets/development-schema-and-forking-repo/forking-repo/2_repository_details_disconnect.png](assets/development-schema-and-forking-repo/forking-repo/2_repository_details_disconnect.png)
 
 9. **Confirm disconnect**. 
-<img src="assets/development-schema-and-forking-repo/forking-repo/3_confirm_disconnect_from_managed_repo.png" alt="confirm_disconnect_from_managed_repo">
+![assets/development-schema-and-forking-repo/forking-repo/3_confirm_disconnect_from_managed_repo.png](assets/development-schema-and-forking-repo/forking-repo/3_confirm_disconnect_from_managed_repo.png)
 
 10. Within your **Project Details** you should have the option to **Configure Repository**.
-<img src="assets/development-schema-and-forking-repo/forking-repo/4_configure_repository.png" alt="configure_repository">
+![assets/development-schema-and-forking-repo/forking-repo/4_configure_repository.png](assets/development-schema-and-forking-repo/forking-repo/4_configure_repository.png)
 
 11. After deleting our partner connect managed repository, we should see **New Repository**. Select **Git Clone**. Input the repository by pasting what you copied from GitHub in step 4 above into the **Repository** parameter and clicking **Import**.
-<img src="assets/development-schema-and-forking-repo/forking-repo/8_git_clone_copy_repo_from_github.png" alt="git_clone_copy_repo_from_github">
+![assets/development-schema-and-forking-repo/forking-repo/8_git_clone_copy_repo_from_github.png](assets/development-schema-and-forking-repo/forking-repo/8_git_clone_copy_repo_from_github.png)
 
-12. We can see we successfully made the connection to our forked GitHub repo. <img src="assets/development-schema-and-forking-repo/forking-repo/9_update_dbt_cloud_repo_connection_with_forked_repo.png" alt="update_dbt_cloud_repo_connection_with_forked_repo"> 
+12. We can see we successfully made the connection to our forked GitHub repo. ![assets/development-schema-and-forking-repo/forking-repo/9_update_dbt_cloud_repo_connection_with_forked_repo.png](assets/development-schema-and-forking-repo/forking-repo/9_update_dbt_cloud_repo_connection_with_forked_repo.png) 
 
 If you tried to start developing onto of this repo right now, we'd get permissions errors. So we need to give dbt Cloud write access. 
 
 ## Giving dbt cloud repo write access using github deploy keys
 
 1. Click on your git cloned repository link. dbt Cloud generated a deploy key to link the development we do in dbt cloud back to our GitHub repo. **Copy** the deploy key starting with **ssh-rsa** followed by a long hash key (full key hidden for privacy).
-<img src="assets/development-schema-and-forking-repo/github-deploy-keys/copy_deploy_key_from_dbt_cloud.png" alt="copy_deploy_key_from_dbt_cloud">
+![assets/development-schema-and-forking-repo/github-deploy-keys/copy_deploy_key_from_dbt_cloud.png](assets/development-schema-and-forking-repo/github-deploy-keys/copy_deploy_key_from_dbt_cloud.png)
 
 2. Phew almost there! Navigate **back to GitHub** again. 
 3. Ensure you're in your forked repo. Navigate to your repo **Settings**
-<img src="assets/development-schema-and-forking-repo/github-deploy-keys/git_repo_settings.png" alt="git_repo_settings">
+![assets/development-schema-and-forking-repo/github-deploy-keys/git_repo_settings.png](assets/development-schema-and-forking-repo/github-deploy-keys/git_repo_settings.png)
 
 4. Go to **Deploy keys**. 
-<img src="assets/development-schema-and-forking-repo/github-deploy-keys/deploy_keys_github.png" alt="deploy_keys_github">
+![assets/development-schema-and-forking-repo/github-deploy-keys/deploy_keys_github.png](assets/development-schema-and-forking-repo/github-deploy-keys/deploy_keys_github.png)
 
-5. Select **Add deploy key**. <img src="assets/development-schema-and-forking-repo/github-deploy-keys/new_deploy_key_button.png" alt="new_deploy_key_button">
+5. Select **Add deploy key**. ![assets/development-schema-and-forking-repo/github-deploy-keys/new_deploy_key_button.png](assets/development-schema-and-forking-repo/github-deploy-keys/new_deploy_key_button.png)
 
 6. Give your deploy key a title such as `dbt Cloud python snowpark`. Paste the ssh-rsa deploy key we copied from dbt Cloud into the **Key** box. Be sure to enable **Allow write access**. Finally, **Add key**. Your deploy key has been created. We won't have to come back to again GitHub until the end of our workshop.
-<img src="assets/development-schema-and-forking-repo/github-deploy-keys/add_new_deploy_key.png" alt="add_new_deploy_key">
-<img src="assets/development-schema-and-forking-repo/github-deploy-keys/deploy_key_created.png" alt="deploy_key_created">
+![assets/development-schema-and-forking-repo/github-deploy-keys/add_new_deploy_key.png](assets/development-schema-and-forking-repo/github-deploy-keys/add_new_deploy_key.png)
+![assets/development-schema-and-forking-repo/github-deploy-keys/deploy_key_created.png](assets/development-schema-and-forking-repo/github-deploy-keys/deploy_key_created.png)
 
 7. Head back over to dbt cloud. Navigate to **Develop**.
-<img src="assets/development-schema-and-forking-repo/github-deploy-keys/develop_panel_dbt_cloud.png" alt="develop_panel_dbt_cloud">
+![assets/development-schema-and-forking-repo/github-deploy-keys/develop_panel_dbt_cloud.png](assets/development-schema-and-forking-repo/github-deploy-keys/develop_panel_dbt_cloud.png)
 
 8. **Run "dbt deps"**
-<img src="assets/development-schema-and-forking-repo/github-deploy-keys/run_dep_deps_after_importing_forked_repo.png" alt="run_dep_deps_after_importing_forked_repo">
+![assets/development-schema-and-forking-repo/github-deploy-keys/run_dep_deps_after_importing_forked_repo.png](assets/development-schema-and-forking-repo/github-deploy-keys/run_dep_deps_after_importing_forked_repo.png)
 
 9. Since we're bringing in an existing project, your root folder should now say `dbt-python-hands-on-lab-snowpark`
-<img src="assets/development-schema-and-forking-repo/github-deploy-keys/file_tree_of_forked_repo.png" alt="file_tree_of_forked_repo">
+![assets/development-schema-and-forking-repo/github-deploy-keys/file_tree_of_forked_repo.png](assets/development-schema-and-forking-repo/github-deploy-keys/file_tree_of_forked_repo.png)
 
 Alas, now that our setup work is complete, time get a look at our production data pipeline code! 
 
@@ -517,24 +517,24 @@ Alas, now that our setup work is complete, time get a look at our production dat
 dbt Cloud's IDE will be our development space for this workshop, so let's get familiar with it. Once we've done that we'll run the pipeline we imported from our forked repo. 
 
 1. There are a couple of key features to point out about the IDE before we get to work. It is a text editor, an SQL and Python runner, and a CLI with Git version control all baked into one package! This allows you to focus on editing your SQL and Python files, previewing the results with the SQL runner (it even runs Jinja!), and building models at the command line without having to move between different applications. The Git workflow in dbt Cloud allows both Git beginners and experts alike to be able to easily version control all of their work with a couple clicks.
-<img src="assets/ide-overview-building-project/1-ide-overview.png" alt="ide-overview">
+![assets/ide-overview-building-project/1-ide-overview.png](assets/ide-overview-building-project/1-ide-overview.png)
 <!-- TODO UPDATE IDE SCREENSHOT AND MENTION NEW FEATURES SUCH AS LINTING -->
 
 2. In the file tree, click on the magnifying glass icon next to the File Explorer on the left sidebar and type in **hold_out_dataset_for_prediction.py**. Click the **Lineage** tab. To make it full screen click the viewfinder icon. Play around with the nodes being shown by removing the 2 in front or behind of `2+hold_out_dataset_for_prediction+2`and updating the graph.
-<img src="assets/ide-overview-building-project/2_lineage_viewfinder.png" alt="lineage_viewfinder">
+![assets/ide-overview-building-project/2_lineage_viewfinder.png](assets/ide-overview-building-project/2_lineage_viewfinder.png)
 
 3. Explore the DAG for a few minutes to understand everything we've done to our pipeline along the way. This includes: cleaning up and joining our data, machine learning data prep, variable encoding, and splitting the datasets. We'll go more in-depth in next steps about how we brought in raw data and then transformed it, but for now get an overall familiarization. 
-<img src="assets/ide-overview-building-project/3_lineage_fullview.png" alt="lineage_fullview"> You can view the code in each node of the DAG by selecting it and navigating out of the full screen. You can read the code on the scratchpad. 
+![assets/ide-overview-building-project/3_lineage_fullview.png](assets/ide-overview-building-project/3_lineage_fullview.png) You can view the code in each node of the DAG by selecting it and navigating out of the full screen. You can read the code on the scratchpad. 
 
 4. Let's run the pipeline we imported from our forked repo. Type `dbt build` into the command line and select **Enter** on your keyboard. When the run bar expands you'll be able to see the results of the run, where you should see the run complete successfully. 
-<img src="assets/ide-overview-building-project/4_dbt_build_initial_pipeline_ml.png" alt="dbt_build_initial_pipeline_ml"> 
+![assets/ide-overview-building-project/4_dbt_build_initial_pipeline_ml.png](assets/ide-overview-building-project/4_dbt_build_initial_pipeline_ml.png) 
 To understand more about what the [dbt build](https://docs.getdbt.com/reference/commands/build) syntax is running check out the documentation.
 
 5. You can look at the run results of each model to see the code that dbt compiles and sends to Snowflake for execution. Select the arrow beside a model **>**. Click **Details** and view the ouput. We can see that dbt automatically generates the DDL statement and is creating our models in our development schema (i.e. `dbt_hwatson`).
-<img src="assets/ide-overview-building-project/5_model_details_ddl.png" alt="model_details_ddl">
+![assets/ide-overview-building-project/5_model_details_ddl.png](assets/ide-overview-building-project/5_model_details_ddl.png)
 
 6. Now let's switch over to a new browser tab **on Snowflake** to confirm that the objects were actually created. Click on the three dots **…** above your database objects and then **Refresh**. Expand the **PC_DBT_DB** database and you should see your development schema. Select the schema, then **Tables**  and **Views**. Now you should be able to see many models we created from our forked repo. 
-<img src="assets/ide-overview-building-project/6_confirm_pipeline_build_in_snowflake.png" alt="confirm_pipeline_build_in_snowflake">
+![assets/ide-overview-building-project/6_confirm_pipeline_build_in_snowflake.png](assets/ide-overview-building-project/6_confirm_pipeline_build_in_snowflake.png)
 
 We did a lot upstream in our forked repo and we'll explore it at a high level of how we did that before moving on to machine learning model training and prediction in dbt cloud. 
 
@@ -627,7 +627,7 @@ Do check out that guide if you want to learn more. Right now we are going to org
     - training_and_prediction (we'll be creating this folder later &mdash; it doesn't exist yet )
 
 Your folder structure should look like (make sure to expand some folders if necessary):
-<img src="assets/understanding-our-existing-pipeline/folder_structure.png" alt="folder_structure">
+![assets/understanding-our-existing-pipeline/folder_structure.png](assets/understanding-our-existing-pipeline/folder_structure.png)
 
 Remember you can always reference the entire project in [GitHub](https://github.com/dbt-labs/python-snowpark-formula1) to view the complete folder and file strucutre.  
 
@@ -645,7 +645,7 @@ Since we want to focus on dbt and Python in this workshop, check out our [source
 ### Creating Sources 
 1. Open the file called `f1_sources.yml` with the following file path: `models/staging/formula1/f1_sources.yml`.
 2. You should see the following code that creates our 14 source tables in our dbt project from Snowflake:
-<img src="assets/data-modeling-sources-and-staging/sources_f1.png" alt="sources_f1">
+![assets/data-modeling-sources-and-staging/sources_f1.png](assets/data-modeling-sources-and-staging/sources_f1.png)
 
 
 3. dbt makes it really easy to:
@@ -682,7 +682,7 @@ Now that we are connected into our raw data let's do some light transformations 
     ```
 
 3. Review the SQL code. We see renaming columns using the alias in addition to reformatting using a jinja code in our project referencing a macro. At a high level a macro is a reusable piece of code and jinja is the way we can bring that code into our SQL model. Datetimes column formatting is usually tricky and repetitive. By using a macro we introduce a way to systematic format times and reduce redunant code in our Formula 1 project. Select **</> Compile** once its finished view the **Compiled Code tab**. 
-<img src="assets/data-modeling-sources-and-staging/compiled_jinja_lap_times.png" alt="compiled_jinja_lap_times">
+![assets/data-modeling-sources-and-staging/compiled_jinja_lap_times.png](assets/data-modeling-sources-and-staging/compiled_jinja_lap_times.png)
 
 4. Now click **Preview** &mdash; look how pretty and human readable our `official_laptime` column is!
 5. Feel free to view our project macros under the root folder `macros` and look at the code for our convert_laptime macro in the `convert_laptim.sql` file. 
@@ -702,17 +702,17 @@ SQL is so performant at data cleaning and transformation, that many data science
 [Dimensional modeling](https://docs.getdbt.com/terms/dimensional-modeling) is an important data modeling concept where we break up data into "facts" and "dimensions" to organize and describe data. We won't go into depth here, but think of facts as "skinny and long" transactional tables and dimensions as "wide" referential tables. We'll preview one dimension table and be building one fact table. 
 
 1. Create a new branch so we can build new models (our main branch is protected as read-only in dbt Cloud). Name your branch `snowpark-python-workshop`. 
-<img src="assets/sql-transformations/create_branch_dbt_cloud.png" alt="create_branch_dbt_cloud">
-<img src="assets/sql-transformations/name_branch_dbt_cloud.png" alt="name_branch_dbt_cloud">
+![assets/sql-transformations/create_branch_dbt_cloud.png](assets/sql-transformations/create_branch_dbt_cloud.png)
+![assets/sql-transformations/name_branch_dbt_cloud.png](assets/sql-transformations/name_branch_dbt_cloud.png)
 
 2. Navigate in the file tree to **models > marts > core > dim_races**. 
 3. **Preview** the data. We can see we have the `RACE_YEAR` in this table. That's important since we want to understand the changes in lap times over years. So we now know `dim_races` contains the time column we need to make those calculations. 
 <!-- TODO SCREENSHOT OF PREVIEWED DATA  -->
 4. Create a new file within the **core** directory **core > ... > Create file**.
-<img src="assets/sql-transformations/create_fct_file.png" alt="create_fct_file">
+![assets/sql-transformations/create_fct_file.png](assets/sql-transformations/create_fct_file.png)
  
 5. Name the file `fct_lap_times.sql`.
-<img src="assets/sql-transformations/fct_lap_times.png" alt="fct_lap_times">
+![assets/sql-transformations/fct_lap_times.png](assets/sql-transformations/fct_lap_times.png)
 
 6. Copy in the following code and save the file (**Save** or Ctrl+S):
     ```sql
@@ -732,7 +732,7 @@ SQL is so performant at data cleaning and transformation, that many data science
     ```
 7. Our `fct_lap_times` is very similar to our staging file since this is clean demo data. In your real world data project your data will probably be messier and require extra filtering and aggregation prior to becoming a fact table exposed to your business users for utilizing.
 8. Use the UI **Build** (buttom with hammer icon) to create the `fct_lap_times` model. 
-<img src="assets/sql-transformations/dbt_build_fct_lap_times.png" alt="dbt_build_fct_lap_times">
+![assets/sql-transformations/dbt_build_fct_lap_times.png](assets/sql-transformations/dbt_build_fct_lap_times.png)
 
 Now we have both `dim_races` and `fct_lap_times` separately. Next we'll to join these to create lap trend analysis through the years.
 
@@ -768,8 +768,8 @@ We'll be joining our `dim_races` and `fct_lap_times` together.
 4. Execute the model using **Build**. 
 5. **Preview** your new model. We have race years and lap times together in one joined table so we are ready to create our trend analysis. 
 6. It's a good time to commit the 2 new models we created in our repository. Click **Commit and sync** and add a commit message. 
-<img src="assets/sql-transformations/commit_and_sync_fct_mrt.png" alt="commit_and_sync_fct_mrt">
-<img src="assets/sql-transformations/commit_message_fct_mrt.png" alt="commit_message_fct_mrt">
+![assets/sql-transformations/commit_and_sync_fct_mrt.png](assets/sql-transformations/commit_and_sync_fct_mrt.png)
+![assets/sql-transformations/commit_message_fct_mrt.png](assets/sql-transformations/commit_message_fct_mrt.png)
 
 Now that we've joined and denormalized our data we're ready to use it in python development. 
 
@@ -786,13 +786,13 @@ Then once we are settled on the code we want, we can drop it into our dbt projec
 
 1. Head back over **to Snowflake**.
 2. Open up a **Python Worksheet**. The boilerplate example code when you first create a Python worksheet is fetching `information_schema.packages` available, filtering on column `language = ‘python’`, and returning that as dataframe, which is what gets shown in result (next step). 
-<img src="assets/python-development/create_python_worksheet.png" alt="create_python_worksheet">
-<img src="assets/python-development/new_python_worksheet_boilerplate_example_code.png" alt="new_python_worksheet_boilerplate_example_code">
+![assets/python-development/create_python_worksheet.png](assets/python-development/create_python_worksheet.png)
+![assets/python-development/new_python_worksheet_boilerplate_example_code.png](assets/python-development/new_python_worksheet_boilerplate_example_code.png)
 
 3. Ensure you are in your development database and schema (i.e. **PC_DBT_DB** and **DBT_HWATSON**) and run the Python worksheet (Ctrl+A and **Run**).
 The query results represent the many (about 5,400) packages snowpark for python supports that you can leverage! 
-<img src="assets/python-development/python_worksheet_db_schema.png" alt="python_worksheet_db_schema">
-<img src="assets/python-development/results_of_new_python_worksheet_boilerplate_example_code.png" alt="results_of_new_python_worksheet_boilerplate_example_code">
+![assets/python-development/python_worksheet_db_schema.png](assets/python-development/python_worksheet_db_schema.png)
+![assets/python-development/results_of_new_python_worksheet_boilerplate_example_code.png](assets/python-development/results_of_new_python_worksheet_boilerplate_example_code.png)
 
 
 4. Delete the sample boilerplate code in the new python worksheet. Copy the following code into the python worksheet to get a 5 year moving average of Formula 1 laps:
@@ -826,7 +826,7 @@ The query results represent the many (about 5,400) packages snowpark for python 
 If you have workloads that have large memory requirements such as deep learning models consider using [Snowpark dataframes](https://docs.snowflake.com/en/developer-guide/snowpark/python/working-with-dataframes) and [Snowpark-optimized warehouses](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) that are specifically engineered to handle these types of compute intensive workloads!
 
 5. Your result should have three columns: `race_year`, `lap_time_seconds`, and `lap_moving_avg_5_years`. 
-<img src="assets/python-development/chart_5yr_lap_time_avg.png" alt="chart_5yr_lap_time_avg"> 
+![assets/python-development/chart_5yr_lap_time_avg.png](assets/python-development/chart_5yr_lap_time_avg.png) 
 
 We were able to quickly calculate a 5 year moving average using python instead of having to sort our data and worry about lead and lag SQL commands. Clicking on the **Chart** button next to **Results**, we can see that lap times seem to be trending down with small fluctuations until 2010 and 2011 which coincides with drastic Formula 1 [regulation changes](https://en.wikipedia.org/wiki/History_of_Formula_One_regulations) including cost-cutting measures and in-race refueling bans. So we can safely ascertain lap times are not consistently decreasing.
 
@@ -882,7 +882,7 @@ We won’t go as in depth for our subsequent scripts, but will continue to expla
     select * from {{ ref('agg_lap_times_moving_avg') }}
     ```
 7. **Preview** the output. It should look the same as our snowflake python worksheet:
-<img src="assets/python-transformations-dbt-cloud/preview_agg_lap_times_scratchpad.png" alt="preview_agg_lap_times_scratchpad">
+![assets/python-transformations-dbt-cloud/preview_agg_lap_times_scratchpad.png](assets/python-transformations-dbt-cloud/preview_agg_lap_times_scratchpad.png)
 
 8. We can see we have the same results from our python worksheet development as we have in our codified dbt python project. 
 
@@ -925,7 +925,7 @@ There are 3 areas to break down as we go since we are working at the intersectio
 
 1. Project organization remains key, under the `ml` folder make a new subfolder called `training_and_prediction`.
 2. Now create a new file called `train_model_to_predict_position.py` 
-<img src="assets/machine-learning-training-prediction/create_train_model_file.png" alt="preview-create_train_model_file-test-position">
+![assets/machine-learning-training-prediction/create_train_model_file.png](assets/machine-learning-training-prediction/create_train_model_file.png)
 
 3. Copy and save the following code (make sure copy all the way to the right). You can also copy it from our demo repo by [clicking on this link](https://raw.githubusercontent.com/dbt-labs/python-snowpark-formula1/main/models/ml/training_and_prediction/train_model_to_predict_position.py) and using Ctrl/Cmd+A. 
 
@@ -1020,16 +1020,16 @@ There are 3 areas to break down as we go since we are working at the intersectio
     - Right now our model is only in memory, so we need to use our nifty function `save_file` to save our model file to our Snowflake stage. We save our model as a joblib file so Snowpark can easily call this model object back to create predictions. We really don’t need to know much else as a data practitioner unless we want to. It’s worth noting that joblib files aren’t able to be queried directly by SQL. To do this, we would need to transform the joblib file to an SQL queryable format such as JSON or CSV (out of scope for this workshop).
     - Finally we want to return our dataframe, but create a new column indicating what rows were used for training and those for training.
 6. Viewing our output of this model:
-<img src="assets/machine-learning-training-prediction/1-preview-train-test-position.png" alt="preview-train-test-position">
+![assets/machine-learning-training-prediction/1-preview-train-test-position.png](assets/machine-learning-training-prediction/1-preview-train-test-position.png)
 
 7. Let’s pop back over to Snowflake. To check that our logistic regression model has been stored in our `MODELSTAGE` open a **SQL Worksheet** and use the query below to list objects in your modelstage. Make sure you are in the correct database and development schema to view your stage (this should be `PC_DBT_DB` and your dev schema - for example `dbt_hwatson`). 
     ```sql
     list @modelstage
     ```
-<img src="assets/machine-learning-training-prediction/2-list-snowflake-stage.png" alt="list-snowflake-stage">
+![assets/machine-learning-training-prediction/2-list-snowflake-stage.png](assets/machine-learning-training-prediction/2-list-snowflake-stage.png)
 
 8. To investigate the commands run as part of `train_model_to_predict_position.py` script, navigate to Snowflake query history to view it **Home button > Activity > Query History**. We can view the portions of query that we wrote such as `create or replace stage MODELSTAGE`, but we also see additional queries that Snowflake uses to interpret python code.
-<img src="assets/machine-learning-training-prediction/3-view-snowflake-query-history.png" alt="view-snowflake-query-history">
+![assets/machine-learning-training-prediction/3-view-snowflake-query-history.png](assets/machine-learning-training-prediction/3-view-snowflake-query-history.png)
 
 Let's use our new trained model to create predictions!
 
@@ -1133,8 +1133,8 @@ It's time to use that 2020 data we held out to make predictions on!
     ```
 2. Use the UI Build our `apply_prediction_to_position` model.
 3. **Commit and sync** our changes to keep saving our work as we go using the commit message `logistic regression model training and application` before moving on.
-<img src="assets/machine-learning-training-prediction/commit_training_and_prediction.png" alt="commit_training_and_prediction">
-<img src="assets/machine-learning-training-prediction/commit_message_training_and_prediction.png" alt="commit_message_training_and_prediction">
+![assets/machine-learning-training-prediction/commit_training_and_prediction.png](assets/machine-learning-training-prediction/commit_training_and_prediction.png)
+![assets/machine-learning-training-prediction/commit_message_training_and_prediction.png](assets/machine-learning-training-prediction/commit_message_training_and_prediction.png)
 
 4. At a high level in this script, we are:
 - Retrieving our staged logistic regression model
@@ -1161,12 +1161,12 @@ It's time to use that 2020 data we held out to make predictions on!
     ```sql
     select * from {{ ref('apply_prediction_to_position') }} order by position_predicted
     ```
-<img src="assets/machine-learning-training-prediction/preview_predicted_position.png" alt="preview_predicted_position">
+![assets/machine-learning-training-prediction/preview_predicted_position.png](assets/machine-learning-training-prediction/preview_predicted_position.png)
 
 We can see that we created predictions in our final dataset for each result. 
 
 7. Run a fresh `dbt build` in the command bar to ensure our pipeline is working end to end. This will take a few minutes, (3 minutes and 2.4 seconds to be exact) so it's not a bad time to stretch (we know programmers slouch). This runtime is pretty performant since we're using an X-Smalll warehouse. If you want to speed up the pipeline, you can increase the [warehouse size](https://docs.snowflake.com/en/user-guide/warehouses-overview) (good for SQL) or use a [Snowpark-optimized Warehouses](https://docs.snowflake.com/en/user-guide/warehouses-snowpark-optimized) (good for Python)
-<img src="assets/machine-learning-training-prediction/fresh_dbt_build_full_pipeline.png" alt="fresh_dbt_build_full_pipeline">
+![assets/machine-learning-training-prediction/fresh_dbt_build_full_pipeline.png](assets/machine-learning-training-prediction/fresh_dbt_build_full_pipeline.png)
 
 
 <!-- ------------------------ -->
@@ -1184,10 +1184,10 @@ Now that we've completed applying prediction, we're ready to deploy our code fro
 
 1. Before getting started, let's make sure that we've committed all of our work to our feature branch. Our working branch,`snowpark-python-workshop`, should be clean. If for some reason you do still have work to commit, you'll be able to select the **Commit and sync**, provide a message, and then select **Commit changes** again.
 2. Once all of your work is committed, the git workflow button will now appear as **Create pull request**. 
-<img src="assets/pipeline-deployment/create_pull_request_dbt_cloud_button.png" alt="create_pull_request_dbt_cloud_button">
+![assets/pipeline-deployment/create_pull_request_dbt_cloud_button.png](assets/pipeline-deployment/create_pull_request_dbt_cloud_button.png)
 
 3. This will bring you to your GitHub repo. This will show the commits that encompass all changes made since the last pull request. Since we only added new files we are able to merge into `main` without conflicts.  Click **Create pull request**. 
-<img src="assets/pipeline-deployment/review_commits_create_pull_request.png" alt="review_commits_create_pull_request">
+![assets/pipeline-deployment/review_commits_create_pull_request.png](assets/pipeline-deployment/review_commits_create_pull_request.png)
 <!-- TODO This could be updated to have only the 3 commits to be a bit cleaner. I had an extra from needing to rename a folder.  -->
 
 4. This goes to a **Open a pull request** page. Usually, when merging in a pull request (PR) we would create descriptions and motivations for the work being completed, validation our models work (like a fresh dbt build), and note changes to exisiting models (we only created new models and didn't alter existing ones). Then typically your teammates will review, comment, and independently test out the code on your branch. dbt has created a [pull request template](https://docs.getdbt.com/blog/analytics-pull-request-template) to make PRs as efficient and scalable to your analytics workflow. 
@@ -1195,34 +1195,34 @@ Now that we've completed applying prediction, we're ready to deploy our code fro
 The template is also located in our root directory under `.github` in the file `pull_request_template.md`. When a PR is opened, the template will automatically be pulled in for you to fill out. For the workshop we'll do an abbreviated version of this for example. If you'd like you can just add a quick comment followed by **Merge pull request** since we're doing a workshop in an isolated Snowflake trial account (and won't break anything).
 
 Our abbreviated PR template written markdown:
-<img src="assets/pipeline-deployment/pr_template_writen_markdown.png" alt="pr_template_writen_markdown">
+![assets/pipeline-deployment/pr_template_writen_markdown.png](assets/pipeline-deployment/pr_template_writen_markdown.png)
 
 PR preview: 
-<img src="assets/pipeline-deployment/pr_template_preview.png" alt="pr_template_preview">
+![assets/pipeline-deployment/pr_template_preview.png](assets/pipeline-deployment/pr_template_preview.png)
 
 5. Our PR is looking good. Let's **Merge pull request**. 
-<img src="assets/pipeline-deployment/merge_pr_github.png" alt="merge_pr_github">
+![assets/pipeline-deployment/merge_pr_github.png](assets/pipeline-deployment/merge_pr_github.png)
 
 6. Then click **Confirm merge**. 
-<img src="assets/pipeline-deployment/confirm_merge_github.png" alt="confirm_merge_github">
+![assets/pipeline-deployment/confirm_merge_github.png](assets/pipeline-deployment/confirm_merge_github.png)
 
 7. It's best practice to keep your repo clean by deleting your working branch once merged into main. You can always restore it later, for now **Delete Branch**. We're all done in GitHub for today!
-<img src="assets/pipeline-deployment/delete_branch_github.png" alt="delete_branch_github">
+![assets/pipeline-deployment/delete_branch_github.png](assets/pipeline-deployment/delete_branch_github.png)
 
 8. Head back over to your dbt Cloud browser tab. Under **Version Control** select **Pull from "main"**. If you don't see this, refresh your browser tab and it should appear.
-<img src="assets/pipeline-deployment/pull_from_main_dbt_cloud.png" alt="pull_from_main_dbt_cloud.png">
+![assets/pipeline-deployment/pull_from_main_dbt_cloud.png](assets/pipeline-deployment/pull_from_main_dbt_cloud.png)
 
 9. Select **Change branch** to your **main** branch that now appears as (ready-only). 
-<img src="assets/pipeline-deployment/change_branch_dbt_cloud.png" alt="change_branch_dbt_cloud.png">
-<img src="assets/pipeline-deployment/change_to_main.png" alt="change_to_main.png">
-<img src="assets/pipeline-deployment/checkout_main_branch.png" alt="checkout_main_branch.png">
+![assets/pipeline-deployment/change_branch_dbt_cloud.png](assets/pipeline-deployment/change_branch_dbt_cloud.png)
+![assets/pipeline-deployment/change_to_main.png](assets/pipeline-deployment/change_to_main.png)
+![assets/pipeline-deployment/checkout_main_branch.png](assets/pipeline-deployment/checkout_main_branch.png)
 
 10. Finally, to bring our changes from our `main` branch in GitHub, select **Pull from remote**
-<img src="assets/pipeline-deployment/pull_from_remote_dbt_cloud.png" alt="pull_from_remote_dbt_cloud">
+![assets/pipeline-deployment/pull_from_remote_dbt_cloud.png](assets/pipeline-deployment/pull_from_remote_dbt_cloud.png)
 
 11. Now that all of our development work has been merged to the main branch, we can build our deployment job. Given that our production environment and production job were created automatically for us through Partner Connect, all we need to do here is update some default configurations to meet our needs.
 12. In the menu, select **Deploy** **> Environments**
-<img src="assets/pipeline-deployment/deploy_environments_ui.png" alt="deploy_environments_ui">
+![assets/pipeline-deployment/deploy_environments_ui.png](assets/pipeline-deployment/deploy_environments_ui.png)
 
 
 ### Setting your production schema 
@@ -1230,7 +1230,7 @@ PR preview:
 2. Before making any changes, let's touch on what is defined within this environment. The Snowflake connection shows the credentials that dbt Cloud is using for this environment and in our case they are the same as what was created for us through Partner Connect. Our deployment job will build in our `PC_DBT_DB` database and use the default Partner Connect role and warehouse to do so. The deployment credentials section also uses the info that was created in our Partner Connect job to create the credential connection. However, it is using the same default schema that we've been using as the schema for our development environment.
 3. Let's update the schema to create a new schema specifically for our production environment. Click **Edit** to allow you to modify the existing field values. Navigate to **Deployment Credentials >** **schema.**
 4. Update the schema name to **production**. Remember to select **Save** after you've made the change.
-<img src="assets/pipeline-deployment/setting-production-schema/name_production_schema.png" alt="name_production_schema">
+![assets/pipeline-deployment/setting-production-schema/name_production_schema.png](assets/pipeline-deployment/setting-production-schema/name_production_schema.png)
 
 5. By updating the schema for our production environment to **production**, it ensures that our deployment job for this environment will build our dbt models in the **production** schema within the `PC_DBT_DB` database as defined in the Snowflake Connection section.
 
@@ -1243,10 +1243,10 @@ With this in mind we're going to have two jobs:
 
 
 1. Let's look at over to our production job created by partner connect. Click on the deploy tab again and then select **Jobs**. 
-<img src="assets/pipeline-deployment/creating-multiple-jobs/deploy_jobs_ui.png" alt="deploy_jobs_ui"> You should see an existing and preconfigured **Partner Connect Trial Job**. <img src="assets/pipeline-deployment/creating-multiple-jobs/pc_default_job.png" alt="pc_default_job"> 
+![assets/pipeline-deployment/creating-multiple-jobs/deploy_jobs_ui.png](assets/pipeline-deployment/creating-multiple-jobs/deploy_jobs_ui.png) You should see an existing and preconfigured **Partner Connect Trial Job**. ![assets/pipeline-deployment/creating-multiple-jobs/pc_default_job.png](assets/pipeline-deployment/creating-multiple-jobs/pc_default_job.png) 
 
 2. Similar to the environment, click on the job, then select **Settings** to modify it. Let's take a look at the job to understand it before making changes.
-<img src="assets/pipeline-deployment/creating-multiple-jobs/pc_job_settings.png" alt="pc_job_settings"> 
+![assets/pipeline-deployment/creating-multiple-jobs/pc_job_settings.png](assets/pipeline-deployment/creating-multiple-jobs/pc_job_settings.png) 
 
 - The Environment section is what connects this job with the environment we want it to run in. This job is already defaulted to use the Deployment environment that we just updated and the rest of the settings we can keep as is. 
 - The Execution settings section gives us the option to generate docs, run source freshness, and defer to a previous run state. For the purposes of our lab, we're going to keep these settings as is as well and stick with just generating docs.
@@ -1256,18 +1256,18 @@ With this in mind we're going to have two jobs:
 3. So, what are we changing then? The job name and commands!
 - Click **Edit** to allow you to make changes. Then update the name of the job to **Machine learning initial model build or retraining** this may seem like a mouthful, but naming with an entire data team is helpful (or our future selves after not looking at a project for 3 months). 
 - Go to **Execution Settings > Commands**. Click **Add Command** and input `dbt build`.
-<img src="assets/pipeline-deployment/creating-multiple-jobs/edit_pc_job.png" alt="edit_pc_job"> 
+![assets/pipeline-deployment/creating-multiple-jobs/edit_pc_job.png](assets/pipeline-deployment/creating-multiple-jobs/edit_pc_job.png) 
 
 - Delete the existing commands `dbt seed`, `dbt run`, and `dbt test`. Together they make up the functions of `dbt build` so we are simplifying our code. 
-<img src="assets/pipeline-deployment/creating-multiple-jobs/edit_commands.png" alt="edit_commands"> 
-<img src="assets/pipeline-deployment/creating-multiple-jobs/delete_commands.png" alt="delete_commands"> 
+![assets/pipeline-deployment/creating-multiple-jobs/edit_commands.png](assets/pipeline-deployment/creating-multiple-jobs/edit_commands.png) 
+![assets/pipeline-deployment/creating-multiple-jobs/delete_commands.png](assets/pipeline-deployment/creating-multiple-jobs/delete_commands.png) 
 
 - After that's done, DON'T FORGET CLICK **Save**.
 4. Now let's go to run our job. Clicking on the job name in the path at the top of the screen will take you back to the job run history page where you'll be able to click **Run** to kick off the job. In total we produced 106 entities: 14 view models, 67 tests, 24 table models, 1 incremental model. 
-<img src="assets/pipeline-deployment/creating-multiple-jobs/run_job.png" alt="run_job"> 
+![assets/pipeline-deployment/creating-multiple-jobs/run_job.png](assets/pipeline-deployment/creating-multiple-jobs/run_job.png) 
 
 5. Let's go over to Snowflake to confirm that everything built as expected in our production schema. Refresh the database objects in your Snowflake account and you should see the production schema now within our default Partner Connect database. If you click into the schema and everything ran successfully, you should be able to see all of the models we developed. 
-<img src="assets/pipeline-deployment/creating-multiple-jobs/job_run_output.png" alt="job_run_output"> 
+![assets/pipeline-deployment/creating-multiple-jobs/job_run_output.png](assets/pipeline-deployment/creating-multiple-jobs/job_run_output.png) 
 
 6. Go back to dbt Cloud and navigate to **Deploy > Jobs > Create Job**. Edit the following job settings:
 - Set the **General Settings > Job Name** to **Prediction on data with existing model**
