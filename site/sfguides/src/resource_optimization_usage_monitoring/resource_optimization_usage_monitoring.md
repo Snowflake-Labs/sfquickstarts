@@ -610,7 +610,7 @@ order by COALESCE(b.execution_time_lower_bound,120000)
 Shows the warehouses that are not using enough compute to cover the cloud services portion of compute, ordered by the ratio of cloud services to total compute
 #### How to Interpret Results:
 Focus on Warehouses that are using a high volume and ratio of cloud services compute. Investigate why this is the case to reduce overall cost (might be cloning, listing files in S3, partner tools setting session parameters, etc.).  The goal to reduce cloud services credit consumption is to aim for cloud services credit to be less than 10% of overall credits.
-####Primary Schema:
+#### Primary Schema:
 Account_Usage
 #### SQL
 ```sql
